@@ -17,6 +17,9 @@ export enum PipelineExampleNames {
   PARTIAL_PIPELINE = 'partial-pipeline',
   SIMPLE_PIPELINE = 'simple-pipeline',
   CLUSTER_PIPELINE = 'cluster-pipeline',
+  BROKEN_MOCK_APP = 'broken-mock-app',
+  INVALID_PIPELINE_MISSING_TASK = 'missing-task-pipeline',
+  INVALID_PIPELINE_INVALID_TASK = 'invalid-task-pipeline',
 }
 
 type CombinedPipelineTestData = {
@@ -81,13 +84,19 @@ export const pipelineTestData: PipelineTestData = {
             'simple-pipeline-br8cxv-hello-world-1-vqkzl': {
               pipelineTaskName: 'hello-world-1',
               status: {
+                completionTime: '2019-12-10T11:18:38Z',
                 conditions: [{ status: 'Unknown', type: 'Succeeded' }],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:38Z',
               },
             },
             'simple-pipeline-br8cxv-hello-world-truncate-more-than-20--87v4h': {
               pipelineTaskName: 'hello-world-truncate-more-than-20-char',
               status: {
+                completionTime: '2019-12-10T11:18:38Z',
                 conditions: [{ status: 'Unknown', type: 'Succeeded' }],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:38Z',
               },
             },
           },
@@ -124,13 +133,19 @@ export const pipelineTestData: PipelineTestData = {
             'simple-pipeline-p1bun0-hello-world-1-rlj9b': {
               pipelineTaskName: 'hello-world-1',
               status: {
+                completionTime: '2019-12-10T11:18:38Z',
                 conditions: [{ status: 'True', type: 'Succeeded' }],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:38Z',
               },
             },
             'simple-pipeline-p1bun0-hello-world-truncate-more-than-20--cnd82': {
               pipelineTaskName: 'hello-world-truncate-more-than-20-char',
               status: {
+                completionTime: '2019-12-10T11:18:38Z',
                 conditions: [{ status: 'True', type: 'Succeeded' }],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:38Z',
               },
             },
           },
@@ -251,7 +266,10 @@ export const pipelineTestData: PipelineTestData = {
             'complex-pipeline-fm4hax-build-app-gpq78': {
               pipelineTaskName: 'build-app',
               status: {
+                completionTime: '2019-12-10T11:18:38Z',
                 conditions: [{ status: 'True', type: 'Succeeded' }],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:38Z',
               },
             },
           },
@@ -283,7 +301,10 @@ export const pipelineTestData: PipelineTestData = {
             'complex-pipeline-fm4hax-build-app-gpq78': {
               pipelineTaskName: 'build-app',
               status: {
+                completionTime: '2019-12-10T11:18:38Z',
                 conditions: [{ status: 'False', type: 'Succeeded' }],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:38Z',
               },
             },
           },
@@ -318,23 +339,19 @@ export const pipelineTestData: PipelineTestData = {
             'simple-pipeline-7ergyh-build-1-cht9h': {
               pipelineTaskName: 'build-1',
               status: {
-                conditions: [
-                  {
-                    status: 'True',
-                    type: 'Succeeded',
-                  },
-                ],
+                completionTime: '2019-12-10T11:18:38Z',
+                conditions: [{ status: 'True', type: 'Succeeded' }],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:38Z',
               },
             },
             'simple-pipeline-7ergyh-build-2-x8jq2': {
               pipelineTaskName: 'build-2',
               status: {
-                conditions: [
-                  {
-                    status: 'True',
-                    type: 'Succeeded',
-                  },
-                ],
+                completionTime: '2019-12-10T11:18:38Z',
+                conditions: [{ status: 'True', type: 'Succeeded' }],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:38Z',
               },
             },
             'simple-pipeline-7ergyh-push-n2r2q': {
@@ -348,6 +365,8 @@ export const pipelineTestData: PipelineTestData = {
                     type: 'Succeeded',
                   },
                 ],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:38Z',
               },
             },
           },
@@ -380,35 +399,28 @@ export const pipelineTestData: PipelineTestData = {
             'simple-pipeline-7ergyh-build-1-cht9h': {
               pipelineTaskName: 'build-1',
               status: {
-                conditions: [
-                  {
-                    status: 'True',
-                    type: 'Succeeded',
-                  },
-                ],
+                completionTime: '2019-12-10T11:18:38Z',
+                conditions: [{ status: 'True', type: 'Succeeded' }],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:38Z',
               },
             },
             'simple-pipeline-7ergyh-build-2-x8jq2': {
               pipelineTaskName: 'build-2',
               status: {
-                conditions: [
-                  {
-                    status: 'True',
-                    type: 'Succeeded',
-                  },
-                ],
+                completionTime: '2019-12-10T11:18:38Z',
+                conditions: [{ status: 'True', type: 'Succeeded' }],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:38Z',
               },
             },
             'simple-pipeline-7ergyh-push-n2r2q': {
               pipelineTaskName: 'push',
               status: {
-                completionTime: '2019-12-09T08:59:26Z',
-                conditions: [
-                  {
-                    status: 'False',
-                    type: 'Succeeded',
-                  },
-                ],
+                completionTime: '2019-12-10T11:18:38Z',
+                conditions: [{ status: 'False', type: 'Succeeded' }],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:38Z',
               },
             },
           },
@@ -449,6 +461,8 @@ export const pipelineTestData: PipelineTestData = {
                     type: 'Succeeded',
                   },
                 ],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:38Z',
               },
             },
             'simple-pipeline-haeml4-build-2-l5scg': {
@@ -461,18 +475,22 @@ export const pipelineTestData: PipelineTestData = {
                     type: 'Succeeded',
                   },
                 ],
+                podName: 'test',
                 startTime: '2019-12-10T11:18:58Z',
               },
             },
             'simple-pipeline-haeml4-deploy-qtpnz': {
               pipelineTaskName: 'deploy',
               status: {
+                completionTime: '2019-12-10T11:19:19Z',
                 conditions: [
                   {
                     status: 'False',
                     type: 'Succeeded',
                   },
                 ],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:58Z',
               },
             },
             'simple-pipeline-haeml4-push-4gj8n': {
@@ -485,6 +503,8 @@ export const pipelineTestData: PipelineTestData = {
                     type: 'Succeeded',
                   },
                 ],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:58Z',
               },
             },
           },
@@ -527,6 +547,8 @@ export const pipelineTestData: PipelineTestData = {
                     type: 'Succeeded',
                   },
                 ],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:58Z',
               },
             },
             'simple-pipeline-haeml4-build-2-l5scg': {
@@ -541,6 +563,7 @@ export const pipelineTestData: PipelineTestData = {
                   },
                 ],
                 startTime: '2019-12-10T11:18:58Z',
+                podName: 'test',
               },
             },
             'simple-pipeline-haeml4-deploy-qtpnz': {
@@ -552,6 +575,8 @@ export const pipelineTestData: PipelineTestData = {
                     type: 'Succeeded',
                   },
                 ],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:58Z',
               },
             },
             'simple-pipeline-haeml4-push-4gj8n': {
@@ -564,6 +589,8 @@ export const pipelineTestData: PipelineTestData = {
                     type: 'Succeeded',
                   },
                 ],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:58Z',
               },
             },
           },
@@ -590,6 +617,8 @@ export const pipelineTestData: PipelineTestData = {
               pipelineTaskName: 'build-app',
               status: {
                 conditions: [{ status: 'Unknown', type: 'Succeeded' }],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:58Z',
               },
             },
           },
@@ -616,78 +645,104 @@ export const pipelineTestData: PipelineTestData = {
               pipelineTaskName: 'test-suite-3',
               status: {
                 conditions: [{ status: 'True', type: 'Succeeded' }],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:58Z',
               },
             },
             'complex-pipeline-6w9np2-test-suite-5-2l8ms': {
               pipelineTaskName: 'test-suite-5',
               status: {
                 conditions: [{ status: 'True', type: 'Succeeded' }],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:58Z',
               },
             },
             'complex-pipeline-6w9np2-deploy-image-vrmcf': {
               pipelineTaskName: 'deploy-image',
               status: {
                 conditions: [{ status: 'True', type: 'Succeeded' }],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:58Z',
               },
             },
             'complex-pipeline-6w9np2-build-app-6gkss': {
               pipelineTaskName: 'build-app',
               status: {
                 conditions: [{ status: 'True', type: 'Succeeded' }],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:58Z',
               },
             },
             'complex-pipeline-6w9np2-build-image-rkctm': {
               pipelineTaskName: 'build-image',
               status: {
                 conditions: [{ status: 'True', type: 'Succeeded' }],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:58Z',
               },
             },
             'complex-pipeline-6w9np2-verify-6djz9': {
               pipelineTaskName: 'verify',
               status: {
                 conditions: [{ status: 'True', type: 'Succeeded' }],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:58Z',
               },
             },
             'complex-pipeline-6w9np2-test-suite-2-88mk2': {
               pipelineTaskName: 'test-suite-2',
               status: {
                 conditions: [{ status: 'True', type: 'Succeeded' }],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:58Z',
               },
             },
             'complex-pipeline-6w9np2-test-suite-4-xqk5x': {
               pipelineTaskName: 'test-suite-4',
               status: {
                 conditions: [{ status: 'True', type: 'Succeeded' }],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:58Z',
               },
             },
             'complex-pipeline-6w9np2-test-suite-6-hvd6w': {
               pipelineTaskName: 'test-suite-6',
               status: {
                 conditions: [{ status: 'True', type: 'Succeeded' }],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:58Z',
               },
             },
             'complex-pipeline-6w9np2-test-suite-1-9bddh': {
               pipelineTaskName: 'test-suite-1',
               status: {
                 conditions: [{ status: 'True', type: 'Succeeded' }],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:58Z',
               },
             },
             'complex-pipeline-6w9np2-analyse-code-wrx7t': {
               pipelineTaskName: 'analyse-code',
               status: {
                 conditions: [{ status: 'True', type: 'Succeeded' }],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:58Z',
               },
             },
             'complex-pipeline-6w9np2-find-bugs-zqsdf': {
               pipelineTaskName: 'find-bugs',
               status: {
                 conditions: [{ status: 'True', type: 'Succeeded' }],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:58Z',
               },
             },
             'complex-pipeline-6w9np2-style-checks-d9s6v': {
               pipelineTaskName: 'style-checks',
               status: {
                 conditions: [{ status: 'True', type: 'Succeeded' }],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:58Z',
               },
             },
           },
@@ -947,6 +1002,374 @@ export const pipelineTestData: PipelineTestData = {
                     },
                   },
                 ],
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  [PipelineExampleNames.BROKEN_MOCK_APP]: {
+    dataSource: 'broken-app',
+    pipeline: {
+      apiVersion: 'tekton.dev/v1beta1',
+      kind: 'Pipeline',
+      metadata: {
+        name: 'broken-app-pipeline',
+      },
+      spec: {
+        tasks: [
+          {
+            name: 'install-deps',
+            taskRef: {
+              kind: 'Task',
+              name: 'install-dependencies-2',
+            },
+          },
+          {
+            name: 'code-sanity',
+            runAfter: ['install-deps'],
+            taskRef: {
+              kind: 'Task',
+              name: 'lint-and-test-2',
+            },
+          },
+          {
+            name: 'x-compile',
+            runAfter: ['install-deps'],
+            taskRef: {
+              kind: 'Task',
+              name: 'build-dist-2',
+            },
+          },
+          {
+            name: 'e2e-tests',
+            runAfter: ['code-sanity', 'x-compile'],
+            taskRef: {
+              kind: 'Task',
+              name: 'run-e2e-tests-2',
+            },
+          },
+        ],
+      },
+    },
+    pipelineRuns: {
+      [DataState.FAILED1]: {
+        apiVersion: 'tekton.dev/v1beta1',
+        kind: 'PipelineRun',
+        metadata: {
+          name: 'broken-app-pipeline-j2nxzm',
+          labels: {
+            'pipeline.openshift.io/started-by': 'kubeadmin',
+            'tekton.dev/pipeline': 'broken-app-pipeline',
+          },
+        },
+        spec: {
+          pipelineRef: {
+            name: 'broken-app-pipeline',
+          },
+          serviceAccountName: 'pipeline',
+          timeout: '1h0m0s',
+        },
+        status: {
+          completionTime: '2020-07-13T17:22:41Z',
+          conditions: [
+            {
+              lastTransitionTime: '2020-07-13T17:22:07Z',
+              message: 'TaskRun broken-app-pipeline-j2nxzm-x-compile-8mq2h has failed',
+              reason: 'Failed',
+              status: 'False',
+              type: 'Succeeded',
+            },
+          ],
+          startTime: '2020-07-13T17:21:48Z',
+          taskRuns: {
+            'broken-app-pipeline-j2nxzm-code-sanity-7mxhc': {
+              pipelineTaskName: 'code-sanity',
+              status: {
+                completionTime: '2020-07-13T17:22:41Z',
+                conditions: [
+                  {
+                    lastTransitionTime: '2020-07-13T17:22:41Z',
+                    message: 'All Steps have completed executing',
+                    reason: 'Succeeded',
+                    status: 'True',
+                    type: 'Succeeded',
+                  },
+                ],
+                podName: 'broken-app-pipeline-j2nxzm-code-sanity-7mxhc-pod-qj8vn',
+                startTime: '2020-07-13T17:21:57Z',
+                steps: [
+                  {
+                    container: 'step-startup',
+                    imageID:
+                      'docker.io/library/ubuntu@sha256:55cd38b70425947db71112eb5dddfa3aa3e3ce307754a3df2269069d2278ce47',
+                    name: 'startup',
+                    terminated: {
+                      containerID:
+                        'cri-o://4ef0ccd72c8efeb941c98ca5d50e1ae03b8ad8f4b67eaf0dc66a1352bd0557e9',
+                      exitCode: 0,
+                      finishedAt: '2020-07-13T17:22:41Z',
+                      reason: 'Completed',
+                      startedAt: '2020-07-13T17:22:41Z',
+                    },
+                  },
+                  {
+                    container: 'step-lint-errors',
+                    imageID:
+                      'docker.io/library/ubuntu@sha256:55cd38b70425947db71112eb5dddfa3aa3e3ce307754a3df2269069d2278ce47',
+                    name: 'lint-errors',
+                    terminated: {
+                      containerID:
+                        'cri-o://a87ebbad25fbf952ceb1d61a83fdb6328cd5dead76b4456bbc43a2f71b0eb73f',
+                      exitCode: 0,
+                      finishedAt: '2020-07-13T17:22:41Z',
+                      reason: 'Completed',
+                      startedAt: '2020-07-13T17:22:41Z',
+                    },
+                  },
+                  {
+                    container: 'step-test-status',
+                    imageID:
+                      'docker.io/library/ubuntu@sha256:55cd38b70425947db71112eb5dddfa3aa3e3ce307754a3df2269069d2278ce47',
+                    name: 'test-status',
+                    terminated: {
+                      containerID:
+                        'cri-o://1801d31b66b1862f860947bc183cb73961e701590496df93cd853c2d3e93f584',
+                      exitCode: 0,
+                      finishedAt: '2020-07-13T17:22:41Z',
+                      reason: 'Completed',
+                      startedAt: '2020-07-13T17:22:41Z',
+                    },
+                  },
+                  {
+                    container: 'step-coverage-report',
+                    imageID:
+                      'docker.io/library/ubuntu@sha256:55cd38b70425947db71112eb5dddfa3aa3e3ce307754a3df2269069d2278ce47',
+                    name: 'coverage-report',
+                    terminated: {
+                      containerID:
+                        'cri-o://70a603725651d5078ed2935ea796a0e515aba3920c09f4128b87e792a2b45184',
+                      exitCode: 0,
+                      finishedAt: '2020-07-13T17:22:41Z',
+                      reason: 'Completed',
+                      startedAt: '2020-07-13T17:22:41Z',
+                    },
+                  },
+                ],
+              },
+            },
+            'broken-app-pipeline-j2nxzm-install-deps-x5z4w': {
+              pipelineTaskName: 'install-deps',
+              status: {
+                completionTime: '2020-07-13T17:21:57Z',
+                conditions: [
+                  {
+                    lastTransitionTime: '2020-07-13T17:21:57Z',
+                    message: 'All Steps have completed executing',
+                    reason: 'Succeeded',
+                    status: 'True',
+                    type: 'Succeeded',
+                  },
+                ],
+                podName: 'broken-app-pipeline-j2nxzm-install-deps-x5z4w-pod-ff5ng',
+                startTime: '2020-07-13T17:21:48Z',
+                steps: [
+                  {
+                    container: 'step-install',
+                    imageID:
+                      'docker.io/library/ubuntu@sha256:55cd38b70425947db71112eb5dddfa3aa3e3ce307754a3df2269069d2278ce47',
+                    name: 'install',
+                    terminated: {
+                      containerID:
+                        'cri-o://3f32a3a4d39c4bf44fcf63423c2db8942362584a79f4306e458d7ffd7bec814f',
+                      exitCode: 0,
+                      finishedAt: '2020-07-13T17:21:57Z',
+                      reason: 'Completed',
+                      startedAt: '2020-07-13T17:21:57Z',
+                    },
+                  },
+                ],
+              },
+            },
+            'broken-app-pipeline-j2nxzm-x-compile-8mq2h': {
+              pipelineTaskName: 'x-compile',
+              status: {
+                completionTime: '2020-07-13T17:22:07Z',
+                conditions: [
+                  {
+                    lastTransitionTime: '2020-07-13T17:22:07Z',
+                    message:
+                      '"step-build" exited with code 1 (image: "docker.io/library/ubuntu@sha256:55cd38b70425947db71112eb5dddfa3aa3e3ce307754a3df2269069d2278ce47"); for logs run: kubectl -n andrew logs broken-app-pipeline-j2nxzm-x-compile-8mq2h-pod-b9gsg -c step-build',
+                    reason: 'Failed',
+                    status: 'False',
+                    type: 'Succeeded',
+                  },
+                ],
+                podName: 'broken-app-pipeline-j2nxzm-x-compile-8mq2h-pod-b9gsg',
+                startTime: '2020-07-13T17:21:57Z',
+                steps: [
+                  {
+                    container: 'step-build',
+                    imageID:
+                      'docker.io/library/ubuntu@sha256:55cd38b70425947db71112eb5dddfa3aa3e3ce307754a3df2269069d2278ce47',
+                    name: 'build',
+                    terminated: {
+                      containerID:
+                        'cri-o://106cbbd7bc050353844377811de44def18fd5895ab42cc64b1aeef361884d310',
+                      exitCode: 1,
+                      finishedAt: '2020-07-13T17:22:07Z',
+                      reason: 'Error',
+                      startedAt: '2020-07-13T17:22:07Z',
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  [PipelineExampleNames.INVALID_PIPELINE_MISSING_TASK]: {
+    dataSource: 'missing-task-reference',
+    pipeline: {
+      apiVersion: 'tekton.dev/v1beta1',
+      kind: 'Pipeline',
+      metadata: {
+        name: 'task-ref-error',
+      },
+      spec: {
+        tasks: [{ name: 'build-dist', taskRef: { kind: 'Task', name: 'not-a-task' } }],
+      },
+    },
+    pipelineRuns: {
+      [DataState.FAILED1]: {
+        apiVersion: 'tekton.dev/v1beta1',
+        kind: 'PipelineRun',
+        metadata: {
+          name: 'task-ref-error-7f2iv4',
+          labels: {
+            'pipeline.openshift.io/started-by': 'kubeadmin',
+            'tekton.dev/pipeline': 'task-ref-error',
+          },
+        },
+        spec: {
+          pipelineRef: {
+            name: 'task-ref-error',
+          },
+          serviceAccountName: 'pipeline',
+          timeout: '1h0m0s',
+        },
+        status: {
+          completionTime: '2020-07-13T17:21:05Z',
+          conditions: [
+            {
+              lastTransitionTime: '2020-07-13T17:21:05Z',
+              message:
+                'Pipeline andrew/task-ref-error can\'t be Run; it contains Tasks that don\'t exist: Couldn\'t retrieve Task "not-a-task": task.tekton.dev "not-a-task" not found',
+              reason: 'CouldntGetTask',
+              status: 'False',
+              type: 'Succeeded',
+            },
+          ],
+          startTime: '2020-07-13T17:21:05Z',
+        },
+      },
+    },
+  },
+  [PipelineExampleNames.INVALID_PIPELINE_INVALID_TASK]: {
+    dataSource: 'git-clone-without-workspace',
+    pipeline: {
+      apiVersion: 'tekton.dev/v1beta1',
+      kind: 'Pipeline',
+      metadata: {
+        name: 'new-pipeline',
+      },
+      spec: {
+        tasks: [
+          {
+            name: 'git-clone',
+            params: [
+              {
+                name: 'url',
+                value: 'https://github.com/nodeshift-starters/nodejs-rest-http',
+              },
+              {
+                name: 'revision',
+                value: 'master',
+              },
+              {
+                name: 'submodules',
+                value: 'true',
+              },
+              {
+                name: 'depth',
+                value: '1',
+              },
+              {
+                name: 'sslVerify',
+                value: 'true',
+              },
+              {
+                name: 'deleteExisting',
+                value: 'false',
+              },
+            ],
+            taskRef: {
+              kind: 'ClusterTask',
+              name: 'git-clone',
+            },
+          },
+        ],
+      },
+    },
+    pipelineRuns: {
+      [DataState.FAILED1]: {
+        apiVersion: 'tekton.dev/v1beta1',
+        kind: 'PipelineRun',
+        metadata: {
+          name: 'new-pipeline-oxxhj5',
+          labels: {
+            'pipeline.openshift.io/started-by': 'kubeadmin',
+            'tekton.dev/pipeline': 'new-pipeline',
+          },
+        },
+        spec: {
+          pipelineRef: {
+            name: 'new-pipeline',
+          },
+          serviceAccountName: 'pipeline',
+          timeout: '1h0m0s',
+        },
+        status: {
+          completionTime: '2020-07-13T17:16:28Z',
+          conditions: [
+            {
+              lastTransitionTime: '2020-07-13T17:16:28Z',
+              message: 'TaskRun new-pipeline-oxxhj5-git-clone-pwmmj has failed',
+              reason: 'Failed',
+              status: 'False',
+              type: 'Succeeded',
+            },
+          ],
+          startTime: '2020-07-13T17:16:28Z',
+          taskRuns: {
+            'new-pipeline-oxxhj5-git-clone-pwmmj': {
+              pipelineTaskName: 'git-clone',
+              status: {
+                conditions: [
+                  {
+                    lastTransitionTime: '2020-07-13T17:16:28Z',
+                    message:
+                      "bound workspaces did not match declared workspaces: didn't provide required values: [output]",
+                    reason: 'TaskRunValidationFailed',
+                    status: 'False',
+                    type: 'Succeeded',
+                  },
+                ],
+                podName: '',
+                startTime: '2020-07-13T17:16:28Z',
               },
             },
           },

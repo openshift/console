@@ -132,8 +132,8 @@ export type PLRTaskRunData = {
     completionTime?: string;
     conditions: Condition[];
     /** Can be empty */
-    podName?: string;
-    startTime?: string;
+    podName: string;
+    startTime: string;
     steps?: PLRTaskRunStep[];
   };
 };

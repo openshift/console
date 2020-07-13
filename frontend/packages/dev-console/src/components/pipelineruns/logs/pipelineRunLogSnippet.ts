@@ -33,7 +33,7 @@ export const getLogSnippet = (pipelineRun: PipelineRun): PipelineRunErrorDetails
     return null;
   }
 
-  const succeededCondition = pipelineRun.status?.conditions?.find(
+  const succeededCondition = pipelineRun.status.conditions?.find(
     (condition: Condition) => condition.type === 'Succeeded',
   );
 
