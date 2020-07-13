@@ -165,11 +165,6 @@ export type ResourceNSLinkProps = NavLinkProps & {
   activeNamespace?: string;
 };
 
-export type ViewNSLinkProps = NavLinkProps & {
-  viewName: string;
-  activeNamespace?: string;
-};
-
 export type ResourceClusterLinkProps = NavLinkProps & {
   resource: string;
   model?: K8sKind;
