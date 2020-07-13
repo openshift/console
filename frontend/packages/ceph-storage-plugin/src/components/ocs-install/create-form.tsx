@@ -35,7 +35,7 @@ import {
   StorageClassSection,
 } from '../../utils/common-ocs-install-el';
 import { filterSCWithoutNoProv } from '../../utils/install';
-
+import { OCS_INTERNAL_CR_NAME } from '../../constants';
 import './ocs-install.scss';
 
 export const makeLabelNodesRequest = (selectedNodes: NodeKind[]): Promise<NodeKind>[] => {
@@ -99,7 +99,7 @@ export const CreateInternalCluster = withHandlePromise<
       history.push(
         `/k8s/ns/${ns}/clusterserviceversions/${appName}/${referenceForModel(
           OCSServiceModel,
-        )}/${getName(getOCSRequestData())}`,
+        )}/${OCS_INTERNAL_CR_NAME}`,
       );
     });
   };

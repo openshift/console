@@ -1,11 +1,14 @@
 import { FirehoseResource } from '@console/internal/components/utils/index';
 import { referenceForModel } from '@console/internal/module/k8s/k8s';
+import { PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
 import { PersistentVolumeModel, StorageClassModel } from '@console/internal/models';
 import { WatchK8sResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SubscriptionModel } from '@console/operator-lifecycle-manager';
 import { LocalVolumeSetModel } from '@console/local-storage-operator-plugin/src/models';
 import { LSO_NAMESPACE } from '@console/local-storage-operator-plugin/src/constants';
 import { CephClusterModel, CephBlockPoolModel } from '../models';
+import { CEPH_STORAGE_NAMESPACE } from '.';
+import { CAPACITY_USAGE_QUERIES, StorageDashboardQuery } from './queries';
 
 export const cephClusterResource: FirehoseResource = {
   kind: referenceForModel(CephClusterModel),
@@ -43,4 +46,10 @@ export const cephBlockPoolResource: WatchK8sResource = {
   kind: referenceForModel(CephBlockPoolModel),
   namespaced: true,
   isList: true,
+};
+
+export const cephCapacityResource = {
+  endpoint: PrometheusEndpoint.QUERY,
+  namespace: CEPH_STORAGE_NAMESPACE,
+  query: CAPACITY_USAGE_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_USED],
 };

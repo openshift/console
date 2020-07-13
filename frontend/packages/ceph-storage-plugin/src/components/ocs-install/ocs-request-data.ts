@@ -1,10 +1,36 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { NO_PROVISIONER, OCS_INTERNAL_CR_NAME, CEPH_STORAGE_NAMESPACE } from '../../constants';
+import {
+  NO_PROVISIONER,
+  OCS_INTERNAL_CR_NAME,
+  CEPH_STORAGE_NAMESPACE,
+  OCS_DEVICE_SET_REPLICA,
+} from '../../constants';
+
+export const createDeviceSet = (scName: string, osdSize: string, portable: boolean): DeviceSet => ({
+  name: `ocs-deviceset-${scName}`,
+  count: 1,
+  portable,
+  replica: OCS_DEVICE_SET_REPLICA,
+  resources: {},
+  placement: {},
+  dataPVCTemplate: {
+    spec: {
+      storageClassName: scName,
+      accessModes: ['ReadWriteOnce'],
+      volumeMode: 'Block',
+      resources: {
+        requests: {
+          storage: osdSize,
+        },
+      },
+    },
+  },
+});
 
 export const getOCSRequestData = (
-  scName?: string,
-  storage?: string,
-  infra?: string,
+  scName: string,
+  storage: string,
+  provisioner?: string,
 ): K8sResourceKind => {
   const requestData = {
     apiVersion: 'ocs.openshift.io/v1',
@@ -15,35 +41,34 @@ export const getOCSRequestData = (
     },
     spec: {
       manageNodes: false,
-      storageDeviceSets: [
-        {
-          name: 'ocs-deviceset',
-          count: 1,
-          replica: 3,
-          resources: {},
-          placement: {},
-          portable: true,
-          dataPVCTemplate: {
-            spec: {
-              storageClassName: scName,
-              accessModes: ['ReadWriteOnce'],
-              volumeMode: 'Block',
-              resources: {
-                requests: {
-                  storage,
-                },
-              },
-            },
-          },
-        },
-      ],
+      storageDeviceSets: [createDeviceSet(scName, storage, true)],
     },
   } as K8sResourceKind;
 
-  if (infra === NO_PROVISIONER) {
+  if (provisioner === NO_PROVISIONER) {
     requestData.spec.monDataDirHostPath = '/var/lib/rook';
     requestData.spec.storageDeviceSets[0].portable = false;
   }
-
   return requestData;
+};
+
+export type DeviceSet = {
+  name: string;
+  count: number;
+  replica: number;
+  resources?: any;
+  placement?: any;
+  portable: boolean;
+  dataPVCTemplate: {
+    spec: {
+      storageClassName: string;
+      accessModes: string[];
+      volumeMode: string;
+      resources: {
+        requests: {
+          storage: string;
+        };
+      };
+    };
+  };
 };
