@@ -36,3 +36,8 @@ ENV GOROOT "/usr/local/go"
 ENV GOPATH "$HOME"
 
 ENV PATH "$GOPATH/bin:$GOROOT/bin:$PATH"
+
+RUN git clone https://github.com/openshift/console.git /tmp/console && \
+    cd /tmp/console && \
+    ./build.sh && \
+    chmod 777 -R /tmp/console/
