@@ -12,6 +12,8 @@ namespace ExtensionProperties {
     perspective?: string;
     /** Nav section to which this item belongs to. If not specified, render item as top-level link. */
     section?: string;
+    /** Nav group to which this item belongs to. Add items to a grouping with a separator above */
+    group?: string;
     /** Props to pass to the corresponding `NavLink` component. */
     componentProps: Pick<NavLinkProps, 'name' | 'startsWith' | 'testID'>;
     /** Nav item before which this item should be placed. */

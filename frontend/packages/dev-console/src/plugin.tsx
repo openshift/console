@@ -7,7 +7,6 @@ import {
   ModelFeatureFlag,
   KebabActions,
   HrefNavItem,
-  SeparatorNavItem,
   ResourceNSNavItem,
   ResourceClusterNavItem,
   ResourceListPage,
@@ -83,7 +82,6 @@ type ConsumedExtensions =
   | ModelFeatureFlag
   | HrefNavItem
   | ResourceClusterNavItem
-  | SeparatorNavItem
   | ResourceNSNavItem
   | ResourceListPage
   | ResourceDetailsPage
@@ -132,6 +130,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'NavItem/Href',
     properties: {
       perspective: 'dev',
+      group: 'top',
       componentProps: {
         name: '+Add',
         href: '/add',
@@ -143,6 +142,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'NavItem/Href',
     properties: {
       perspective: 'dev',
+      group: 'top',
       componentProps: {
         name: 'Topology',
         href: '/topology',
@@ -157,6 +157,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'NavItem/Href',
     properties: {
       perspective: 'dev',
+      group: 'top',
       componentProps: {
         name: 'GitOps',
         href: '/gitops',
@@ -171,6 +172,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'NavItem/Href',
     properties: {
       perspective: 'dev',
+      group: 'top',
       componentProps: {
         name: 'Monitoring',
         href: '/dev-monitoring',
@@ -185,6 +187,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'NavItem/Href',
     properties: {
       perspective: 'dev',
+      group: 'top',
       componentProps: {
         name: 'Search',
         href: '/search',
@@ -193,18 +196,10 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'NavItem/Separator',
-    properties: {
-      perspective: 'dev',
-      componentProps: {
-        testID: 'dev-separator',
-      },
-    },
-  },
-  {
     type: 'NavItem/ResourceNS',
     properties: {
       perspective: 'dev',
+      group: 'resources',
       componentProps: {
         name: 'Builds',
         resource: 'buildconfigs',
@@ -219,6 +214,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'NavItem/ResourceNS',
     properties: {
       perspective: 'dev',
+      group: 'resources',
       componentProps: {
         name: PipelineModel.labelPlural,
         resource: referenceForModel(PipelineModel),
@@ -233,6 +229,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'NavItem/Href',
     properties: {
       perspective: 'dev',
+      group: 'resources',
       componentProps: {
         name: 'Helm',
         href: '/helm-releases',
@@ -247,6 +244,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'NavItem/Href',
     properties: {
       perspective: 'dev',
+      group: 'resources',
       componentProps: {
         name: 'Project',
         href: '/project-details',

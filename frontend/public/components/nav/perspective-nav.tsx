@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect, Dispatch } from 'react-redux';
 import * as _ from 'lodash-es';
-import { NavItemSeparator, Button } from '@patternfly/react-core';
+import { NavItemSeparator, NavGroup, Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import {
   useExtensions,
@@ -117,20 +117,28 @@ const PerspectiveNav: React.FC<StateProps & DispatchProps> = ({
       })
       .filter((p) => p !== null);
 
-  // track sections so that we do not create duplicates
+  // track sections and groups so that we do not create duplicates
   const renderedSections: string[] = [];
+  const renderedGroups: string[] = [];
 
   return (
     <>
       {_.compact(
         matchingNavItems.map((item, index) => {
-          const { section } = item.properties;
+          const { section, group } = item.properties;
           if (section) {
             if (renderedSections.includes(section)) {
               return;
             }
             renderedSections.push(section);
             return <NavSection title={section} key={section} />;
+          }
+          if (group) {
+            if (renderedGroups.includes(group)) {
+              return;
+            }
+            renderedGroups.push(group);
+            return <NavSection title={group} key={group} isGrouped />;
           }
           if (isSeparatorNavItem(item)) {
             return <NavItemSeparator key={`separator-${index}`} />;
@@ -139,10 +147,9 @@ const PerspectiveNav: React.FC<StateProps & DispatchProps> = ({
         }),
       )}
       {pinnedResources?.length ? (
-        <>
-          <NavItemSeparator />
+        <NavGroup className="oc-nav-group" title="" key={`group-pins`}>
           {getPinnedItems(true)}
-        </>
+        </NavGroup>
       ) : null}
     </>
   );
