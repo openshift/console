@@ -17,6 +17,7 @@ describe('active-plugins', () => {
             componentProps: {
               name: 'Foo Link',
               href: '/foo',
+              namespaced: false,
             },
           },
         },
@@ -28,6 +29,7 @@ describe('active-plugins', () => {
             componentProps: {
               name: 'Bar Link',
               href: '/bar',
+              namespaced: false,
             },
           },
         },
