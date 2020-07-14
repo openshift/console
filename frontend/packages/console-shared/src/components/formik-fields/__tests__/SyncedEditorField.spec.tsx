@@ -42,7 +42,7 @@ describe('DropdownField', () => {
       wrapper
         .find(RadioGroupField)
         .first()
-        .props().inline,
+        .props().isInline,
     ).toBe(true);
   });
 

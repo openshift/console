@@ -99,7 +99,7 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
             },
           ]}
           onChange={(val) => onChangeType(val as EditorType)}
-          inline
+          isInline
         />
       </div>
       {yamlWarning && (
