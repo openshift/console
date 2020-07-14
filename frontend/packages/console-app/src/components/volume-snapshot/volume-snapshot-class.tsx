@@ -11,6 +11,7 @@ import {
   RowFunction,
 } from '@console/internal/components/factory';
 import { VolumeSnapshotClassModel } from '@console/internal/models';
+import { getBadgeFromType, BadgeType } from '@console/shared';
 
 const tableColumnClasses = [
   '', // name
@@ -75,6 +76,7 @@ const VolumeSnapshotClassPage: React.FC = (props) => (
     ListComponent={VolumeSnapshotClassTable}
     kind={referenceForModel(VolumeSnapshotClassModel)}
     canCreate
+    badge={getBadgeFromType(BadgeType.TECH)}
   />
 );
 

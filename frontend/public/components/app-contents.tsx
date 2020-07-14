@@ -11,7 +11,7 @@ import { SearchPage } from './search';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
 import { AsyncComponent, LoadingBox } from './utils';
 import { namespacedPrefixes } from './utils/link';
-import { AlertmanagerModel } from '../models';
+import { AlertmanagerModel, VolumeSnapshotModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 import { NamespaceRedirect } from './utils/namespace-redirect';
 import { getActivePerspective } from '../reducers/ui';
@@ -431,6 +431,36 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective }) => {
                 import('./storage/create-pvc' /* webpackChunkName: "create-pvc" */).then(
                   (m) => m.CreatePVC,
                 )
+              }
+            />
+
+            <LazyRoute
+              path={`/k8s/ns/:ns/:plural/:name/${VolumeSnapshotModel.plural}/~new/form`}
+              exact
+              loader={() =>
+                import(
+                  '@console/app/src/components/volume-snapshot/create-volume-snapshot/create-volume-snapshot' /* webpackChunkName: "create-volume-snapshot" */
+                ).then((m) => m.VolumeSnapshot)
+              }
+            />
+
+            <LazyRoute
+              path="/k8s/ns/:ns/:plural/~new/form"
+              exact
+              loader={() =>
+                import(
+                  '@console/app/src/components/volume-snapshot/create-volume-snapshot/create-volume-snapshot' /* webpackChunkName: "create-volume-snapshot" */
+                ).then((m) => m.VolumeSnapshot)
+              }
+            />
+
+            <LazyRoute
+              path="/k8s/all-namespaces/:plural/~new/form"
+              exact
+              loader={() =>
+                import(
+                  '@console/app/src/components/volume-snapshot/create-volume-snapshot/create-volume-snapshot' /* webpackChunkName: "create-volume-snapshot" */
+                ).then((m) => m.VolumeSnapshot)
               }
             />
 

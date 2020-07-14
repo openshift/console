@@ -1,6 +1,6 @@
 import { VolumeSnapshotStatus } from '@console/internal/module/k8s';
 
-export const volumeSnapshotStatus = ({ status }: { status: VolumeSnapshotStatus }) => {
+export const volumeSnapshotStatus = ({ status }: { status?: VolumeSnapshotStatus }) => {
   const readyToUse = status?.readyToUse;
   const isError = !!status?.error?.message;
   return readyToUse ? 'Ready' : isError ? 'Error' : 'Pending';

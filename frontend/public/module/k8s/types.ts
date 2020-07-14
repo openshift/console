@@ -970,7 +970,7 @@ export type MachineHealthCheckKind = K8sResourceCommon & {
 };
 
 export type VolumeSnapshotKind = K8sResourceCommon & {
-  status: VolumeSnapshotStatus & {
+  status?: VolumeSnapshotStatus & {
     boundVolumeSnapshotContentName?: string;
   };
   spec: {
@@ -1013,4 +1013,20 @@ export type VolumeSnapshotStatus = {
 export type VolumeSnapshotClassKind = K8sResourceCommon & {
   deletionPolicy: string;
   driver: string;
+};
+
+export type PersistentVolumeClaimKind = K8sResourceCommon & {
+  spec: {
+    accessModes: string;
+    resources: {
+      requests: {
+        storage: string;
+      };
+    };
+    storageClassName: string;
+    volumeMode: string;
+  };
+  status: {
+    phase: string;
+  };
 };

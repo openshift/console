@@ -12,35 +12,13 @@ import {
   k8sPatch,
   referenceFor,
 } from '../../module/k8s';
-import {
-  ButtonBar,
-  history,
-  ListDropdown,
-  LoadingBox,
-  ResourceLink,
-  resourceObjPath,
-} from '../utils';
+import { ButtonBar, history, LoadingBox, ResourceLink, resourceObjPath } from '../utils';
 import { Checkbox } from '../checkbox';
 import { RadioInput } from '../radio';
 import { CreatePVCForm } from './create-pvc';
 import { PersistentVolumeClaimModel } from '../../models';
 import { ContainerSelector } from '../container-selector';
-
-const PVCDropdown: React.FC<PVCDropdownProps> = (props) => {
-  const kind = 'PersistentVolumeClaim';
-  const { namespace, selectedKey } = props;
-  const resources = [{ kind, namespace }];
-  return (
-    <ListDropdown
-      {...props}
-      desc="Persistent Volume Claim"
-      resources={resources}
-      selectedKeyKind={kind}
-      placeholder="Select claim"
-      selectedKey={selectedKey}
-    />
-  );
-};
+import { PVCDropdown } from '../utils/pvc-dropdown';
 
 export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
   const [obj, setObj] = React.useState(null);
@@ -370,13 +348,6 @@ const AttachStorage_ = ({ kindObj, kindsInFlight, match: { params } }) => {
   return <AttachStorageForm namespace={params.ns} resourceName={params.name} kindObj={kindObj} />;
 };
 export const AttachStorage = connectToPlural(AttachStorage_);
-
-export type PVCDropdownProps = {
-  namespace: string;
-  selectedKey: string;
-  onChange: (string) => void;
-  id: string;
-};
 
 export type AttachStorageFormProps = {
   kindObj: K8sKind;

@@ -1,0 +1,42 @@
+@import '~bootstrap-sass/assets/stylesheets/bootstrap/variables';
+@import '../../../../../console-shared/src/styles/skeleton-screen.scss';
+
+.co-volume-snapshot__body {
+    display: inline-flex;
+}
+
+.co-volume-snapshot__form {
+    margin: var(--pf-global--spacer--md) 0;
+}
+
+.co-volume-snapshot__details-body {
+    margin-bottom: var(--pf-global--spacer--md);
+}
+
+.co-volume-snapshot__alert-body {
+    margin-top: var(--pf-global--spacer--md);
+}
+
+.co-volume-snapshot__info {
+    max-width: 50%;
+    margin-right: 0;
+    @media(max-width: $screen-sm-max) {
+        display: none;
+      }
+}
+
+.skeleton-activity {
+  animation: $skeleton-animation;
+  background: $skeleton-color;
+  opacity: 0;
+  border-radius: 6px;
+  margin: 0.5rem 0.7em 0.5rem 0.7em;
+  height: 30px;
+  &::after {
+    background-repeat: no-repeat;
+    content: "";
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+}

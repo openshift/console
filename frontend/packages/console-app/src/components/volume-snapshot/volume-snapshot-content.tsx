@@ -21,7 +21,7 @@ import {
   VolumeSnapshotClassModel,
   VolumeSnapshotContentModel,
 } from '@console/internal/models';
-import { Status } from '@console/shared';
+import { Status, getBadgeFromType, BadgeType } from '@console/shared';
 import { snapshotStatusFilters, volumeSnapshotStatus } from '../../status';
 
 const tableColumnClasses = [
@@ -136,6 +136,7 @@ const VolumeSnapshotContentPage: React.FC = (props) => {
       ListComponent={VolumeSnapshotContentTable}
       rowFilters={snapshotStatusFilters}
       canCreate
+      badge={getBadgeFromType(BadgeType.TECH)}
     />
   );
 };
