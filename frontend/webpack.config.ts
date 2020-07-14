@@ -184,9 +184,7 @@ const config: Configuration = {
     ...(IS_WDS
       ? [
           new ReactRefreshWebpackPlugin({
-            overlay: {
-              sockPort: WDS_PORT,
-            },
+            overlay: false,
           }),
         ]
       : []),
