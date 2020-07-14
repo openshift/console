@@ -1,3 +1,5 @@
+import * as _ from 'lodash';
+import * as React from 'react';
 import { JSONSchema6 } from 'json-schema';
 import {
   K8sKind,
@@ -21,8 +23,6 @@ import { RootState } from '@console/internal/redux';
 import { SyncedEditor } from '@console/shared/src/components/synced-editor';
 import { getActivePerspective } from '@console/internal/reducers/ui';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import * as _ from 'lodash';
-import * as React from 'react';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import { match as RouterMatch } from 'react-router';
@@ -32,7 +32,7 @@ import { OperandForm } from './operand-form';
 import { OperandYAML } from './operand-yaml';
 import { exampleForModel, providedAPIForModel } from '..';
 import { FORM_HELP_TEXT, YAML_HELP_TEXT, DEFAULT_K8S_SCHEMA } from './const';
-import { getSchemaErrors } from '@console/shared/src/components/dynamic-form/utils';
+import { getSchemaErrors, prune } from '@console/shared/src/components/dynamic-form/utils';
 import { hasNoFields } from './utils';
 // eslint-disable-next-line @typescript-eslint/camelcase
 import { DEPRECATED_CreateOperandForm } from './DEPRECATED_operand-form';
@@ -87,6 +87,8 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
 
   const sample = React.useMemo<K8sResourceKind>(() => exampleForModel(csv, model), [csv, model]);
 
+  const pruneFunc = React.useCallback((data) => prune(data, sample), [sample]);
+
   const onChangeEditorType = React.useCallback((newMethod) => {
     setHelpText(newMethod === EditorType.Form ? FORM_HELP_TEXT : YAML_HELP_TEXT);
   }, []);
@@ -123,6 +125,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
             initialData={sample}
             initialType={initialEditorType}
             onChangeEditorType={onChangeEditorType}
+            prune={pruneFunc}
             YAMLEditor={OperandYAML}
           />
         </>
