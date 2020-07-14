@@ -17,12 +17,16 @@ import {
   iGetLoadedCommonData,
   iGetName,
 } from '../../selectors/immutable/selectors';
-import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
-import { CUSTOM_FLAVOR } from '../../../../constants/vm';
+import {
+  iGetRelevantTemplate,
+  iGetOSTemplate,
+} from '../../../../selectors/immutable/template/combined';
+import { CUSTOM_FLAVOR, TEMPLATE_DATAVOLUME_ANNOTATION } from '../../../../constants/vm';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { windowsToolsStorage } from '../initial-state/storage-tab-initial-state';
 import { getStorages } from '../../selectors/selectors';
 import { prefillVmTemplateUpdater } from './prefill-vm-template-state-update';
+import { iGetAnnotations } from '../../../../selectors/immutable/common';
 
 const selectUserTemplateOnLoadedUpdater = (options: UpdateOptions) => {
   const { id, dispatch, getState } = options;
@@ -83,7 +87,9 @@ const selectedUserTemplateUpdater = (options: UpdateOptions) => {
       [VMSettingsField.CONTAINER_IMAGE]: { isDisabled },
       [VMSettingsField.IMAGE_URL]: { isDisabled },
       [VMSettingsField.OPERATING_SYSTEM]: { isDisabled },
-      [VMSettingsField.WORKLOAD_PROFILE]: { isDisabled },
+      [VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE]: {
+        isHidden: asHidden(iUserTemplate != null, VMSettingsField.USER_TEMPLATE),
+      },
     }),
   );
 
@@ -151,7 +157,7 @@ const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
     return;
   }
   const os = iGetVmSettingValue(state, id, VMSettingsField.OPERATING_SYSTEM);
-  const isWindows = os && os.startsWith('win');
+  const isWindows = os?.startsWith('win');
   const windowsTools = getStorages(state, id).find(
     (storage) => !!isWinToolsImage(getVolumeContainerImage(storage.volume)),
   );
@@ -161,6 +167,71 @@ const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   }
   if (!isWindows && windowsTools) {
     dispatch(vmWizardInternalActions[InternalActionType.RemoveStorage](id, windowsTools.id));
+  }
+
+  const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
+  const iTemplate = iCommonTemplates && iGetOSTemplate(iCommonTemplates, os);
+  const pvcName =
+    iTemplate && iGetAnnotations(iTemplate).get(`${TEMPLATE_DATAVOLUME_ANNOTATION}/${os}`);
+
+  const iBaseImages = iGetLoadedCommonData(state, id, VMWizardProps.openshiftCNVBaseImages);
+  const iBaseImage =
+    pvcName &&
+    iBaseImages &&
+    iBaseImages
+      .valueSeq()
+      .filter((iPVC) => iGetName(iPVC) === pvcName)
+      .first();
+
+  dispatch(
+    vmWizardInternalActions[InternalActionType.UpdateVmSettingsField](
+      id,
+      VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE,
+      {
+        isHidden: asHidden(!iBaseImage, VMSettingsField.OPERATING_SYSTEM),
+        value: !!iBaseImage,
+      },
+    ),
+  );
+};
+
+const cloneCommonBaseDiskImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
+  const state = getState();
+  if (
+    !hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE)
+  ) {
+    return;
+  }
+
+  const userTemplate = iGetVmSettingValue(state, id, VMSettingsField.USER_TEMPLATE);
+  const cloneCommonBaseDiskImage = iGetVmSettingValue(
+    state,
+    id,
+    VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE,
+  );
+
+  dispatch(
+    vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, {
+      [VMSettingsField.PROVISION_SOURCE_TYPE]: {
+        isHidden: asHidden(cloneCommonBaseDiskImage, VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE),
+      },
+      [VMSettingsField.CONTAINER_IMAGE]: {
+        isHidden: asHidden(cloneCommonBaseDiskImage, VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE),
+      },
+      [VMSettingsField.IMAGE_URL]: {
+        isHidden: asHidden(cloneCommonBaseDiskImage, VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE),
+      },
+    }),
+  );
+
+  if (!userTemplate) {
+    dispatch(
+      vmWizardInternalActions[InternalActionType.UpdateVmSettingsField](
+        id,
+        VMSettingsField.PROVISION_SOURCE_TYPE,
+        { value: cloneCommonBaseDiskImage ? ProvisionSource.DISK.toString() : '' },
+      ),
+    );
   }
 };
 
@@ -208,6 +279,7 @@ export const updateVmSettingsState = (options: UpdateOptions) =>
     selectedUserTemplateUpdater,
     flavorUpdater,
     osUpdater,
+    cloneCommonBaseDiskImageUpdater,
     workloadConsistencyUpdater,
     provisioningSourceUpdater,
     nativeK8sUpdater,

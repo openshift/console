@@ -1,5 +1,11 @@
 import { ConfigMapKind } from '@console/internal/module/k8s';
-import { CommonData, VMWizardStorage, VMWizardStorageType, VMWizardProps } from '../../types';
+import {
+  CommonData,
+  VMWizardStorage,
+  VMWizardStorageType,
+  VMSettingsField,
+  VMWizardProps,
+} from '../../types';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import {
   DataVolumeSourceType,
@@ -19,9 +25,11 @@ import {
 } from '../../../../selectors/config-map/sc-defaults';
 import { toShallowJS } from '../../../../utils/immutable';
 import { generateDataVolumeName } from '../../../../utils';
-import { DUMMY_VM_NAME } from '../../../../constants/vm';
-import { iGetProvisionSource } from '../../selectors/immutable/vm-settings';
+import { DUMMY_VM_NAME, TEMPLATE_DATAVOLUME_ANNOTATION } from '../../../../constants/vm';
+import { iGetVmSettingValue, iGetProvisionSource } from '../../selectors/immutable/vm-settings';
 import { iGetLoadedCommonData } from '../../selectors/immutable/selectors';
+import { iGetOSTemplate } from '../../../../selectors/immutable/template/combined';
+import { iGetAnnotations } from '../../../../selectors/immutable/common';
 
 const ROOT_DISK_NAME = 'rootdisk';
 const WINTOOLS_DISK_NAME = 'windows-guest-tools';
@@ -62,6 +70,46 @@ export const windowsToolsStorage: VMWizardStorage = {
   }).asResource(),
 };
 
+export const getBaseImageStorage = (
+  storageClassConfigMap: ConfigMapKind,
+  pvcName,
+  pvcNamespace,
+) => {
+  const dataVolumeName = generateDataVolumeName(DUMMY_VM_NAME, ROOT_DISK_NAME);
+
+  return {
+    type: VMWizardStorageType.PROVISION_SOURCE_DISK,
+    disk: DiskWrapper.initializeFromSimpleData({
+      name: ROOT_DISK_NAME,
+      type: DiskType.DISK,
+      bus: DiskBus.VIRTIO,
+      bootOrder: 1,
+    }).asResource(),
+    volume: VolumeWrapper.initializeFromSimpleData({
+      name: ROOT_DISK_NAME,
+      type: VolumeType.DATA_VOLUME,
+      typeData: { name: dataVolumeName },
+    }).asResource(),
+    dataVolume: new DataVolumeWrapper()
+      .init({
+        name: dataVolumeName,
+        size: 5,
+        unit: BinaryUnit.Gi,
+      })
+      .setType(DataVolumeSourceType.PVC)
+      .setVolumeMode(getDefaultSCVolumeMode(storageClassConfigMap))
+      .setAccessModes(getDefaultSCAccessModes(storageClassConfigMap))
+      .setPesistentVolumeClaimNamespace(pvcNamespace)
+      .setPesistentVolumeClaimName(pvcName)
+      .asResource(),
+    editConfig: {
+      isFieldEditableOverride: {
+        source: false,
+      },
+    },
+  };
+};
+
 const getUrlStorage = (storageClassConfigMap: ConfigMapKind) => {
   const dataVolumeName = generateDataVolumeName(DUMMY_VM_NAME, ROOT_DISK_NAME);
 
@@ -98,6 +146,11 @@ const getUrlStorage = (storageClassConfigMap: ConfigMapKind) => {
 
 export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardStorage => {
   const provisionSource = iGetProvisionSource(state, id);
+  const cloneCommonBaseDiskImage = iGetVmSettingValue(
+    state,
+    id,
+    VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE,
+  );
 
   if (provisionSource === ProvisionSource.URL) {
     const iStorageClassConfigMap = iGetLoadedCommonData(
@@ -110,6 +163,23 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
   }
   if (provisionSource === ProvisionSource.CONTAINER) {
     return containerStorage;
+  }
+  if (provisionSource === ProvisionSource.DISK && cloneCommonBaseDiskImage) {
+    const iStorageClassConfigMap = iGetLoadedCommonData(
+      state,
+      id,
+      VMWizardProps.storageClassConfigMap,
+    );
+
+    const os = iGetVmSettingValue(state, id, VMSettingsField.OPERATING_SYSTEM);
+    const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
+    const iTemplate = iCommonTemplates && iGetOSTemplate(iCommonTemplates, os);
+    const pvcName =
+      iTemplate && iGetAnnotations(iTemplate).get(`${TEMPLATE_DATAVOLUME_ANNOTATION}/${os}`);
+    const pvcNamespace =
+      iTemplate && iGetAnnotations(iTemplate).get(`${TEMPLATE_DATAVOLUME_ANNOTATION}/namespace`);
+
+    return getBaseImageStorage(toShallowJS(iStorageClassConfigMap), pvcName, pvcNamespace);
   }
   return null;
 };

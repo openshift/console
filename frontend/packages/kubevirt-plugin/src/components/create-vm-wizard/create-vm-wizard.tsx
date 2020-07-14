@@ -9,7 +9,7 @@ import {
   featureReducerName,
   FlagsObject,
 } from '@console/internal/reducers/features';
-import { TemplateModel } from '@console/internal/models';
+import { TemplateModel, PersistentVolumeClaimModel } from '@console/internal/models';
 import { Firehose, history } from '@console/internal/components/utils';
 import { Location } from 'history';
 import { match as RouterMatch } from 'react-router';
@@ -405,6 +405,10 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
           namespace: 'openshift',
           prop: VMWizardProps.commonTemplates,
           matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_BASE },
+        }),
+        getResource(PersistentVolumeClaimModel, {
+          namespace: 'openshift-cnv-base-images',
+          prop: VMWizardProps.openshiftCNVBaseImages,
         }),
       );
     }

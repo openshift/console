@@ -11,6 +11,8 @@ import {
   VMSettingsRenderableField,
   VMWizardProps,
   VMWizardStorage,
+  VMWizardTab,
+  VMWizardTabsMetadata,
 } from '../../types';
 import { iGetVmSettings } from '../../selectors/immutable/vm-settings';
 import { ActionType } from '../../redux/types';
@@ -26,6 +28,7 @@ import { URLSource } from './url-source';
 
 import '../../create-vm-wizard-footer.scss';
 import './vm-settings-tab.scss';
+import { getStepsMetadata } from '../../selectors/immutable/wizard-selectors';
 
 export class VMSettingsTabComponent extends React.Component<VMSettingsTabComponentProps> {
   getField = (key: VMSettingsField) => iGet(this.props.vmSettings, key);
@@ -42,9 +45,12 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
       userTemplateName,
       userTemplates,
       commonTemplates,
+      commonDataVolumes,
       provisionSourceStorage,
       updateStorage,
       openshiftFlag,
+      steps,
+      goToStep,
     } = this.props;
 
     return (
@@ -81,10 +87,14 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
           commonTemplates={commonTemplates}
           operatinSystemField={this.getField(VMSettingsField.OPERATING_SYSTEM)}
           flavorField={this.getField(VMSettingsField.FLAVOR)}
+          cloneBaseDiskImageField={this.getField(VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE)}
           userTemplate={this.getFieldValue(VMSettingsField.USER_TEMPLATE)}
           workloadProfile={this.getFieldValue(VMSettingsField.WORKLOAD_PROFILE)}
+          commonDataVolumes={commonDataVolumes}
           onChange={this.props.onFieldChange}
           openshiftFlag={openshiftFlag}
+          goToStep={goToStep}
+          steps={steps}
         />
         <MemoryCPU
           memoryField={this.getField(VMSettingsField.MEMORY)}
@@ -138,8 +148,10 @@ const stateToProps = (state, { wizardReduxID }) => ({
   commonTemplates: iGetCommonData(state, wizardReduxID, VMWizardProps.commonTemplates),
   userTemplateName: iGetCommonData(state, wizardReduxID, VMWizardProps.userTemplateName),
   userTemplates: iGetCommonData(state, wizardReduxID, VMWizardProps.userTemplates),
+  commonDataVolumes: iGetCommonData(state, wizardReduxID, VMWizardProps.openshiftCNVBaseImages),
   openshiftFlag: iGetCommonData(state, wizardReduxID, VMWizardProps.openshiftFlag),
   provisionSourceStorage: iGetProvisionSourceStorage(state, wizardReduxID),
+  steps: getStepsMetadata(state, wizardReduxID),
 });
 
 type VMSettingsTabComponentProps = {
@@ -150,7 +162,10 @@ type VMSettingsTabComponentProps = {
   commonTemplates: any;
   userTemplateName: string;
   userTemplates: any;
+  commonDataVolumes: any;
   openshiftFlag: boolean;
+  goToStep: (stepID: VMWizardTab) => void;
+  steps: VMWizardTabsMetadata;
   wizardReduxID: string;
 };
 
@@ -159,6 +174,9 @@ const dispatchToProps = (dispatch, props) => ({
     dispatch(vmWizardActions[ActionType.SetVmSettingsFieldValue](props.wizardReduxID, key, value)),
   updateStorage: (storage: VMWizardStorage) => {
     dispatch(vmWizardActions[ActionType.UpdateStorage](props.wizardReduxID, storage));
+  },
+  goToStep: (stepID: VMWizardTab) => {
+    dispatch(vmWizardActions[ActionType.SetGoToStep](props.wizardReduxID, stepID));
   },
 });
 

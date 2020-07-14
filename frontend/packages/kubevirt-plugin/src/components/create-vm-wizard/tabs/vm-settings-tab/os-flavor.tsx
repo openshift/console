@@ -1,6 +1,14 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import { FormSelect, FormSelectOption } from '@patternfly/react-core';
+import {
+  FormSelect,
+  FormSelectOption,
+  Checkbox,
+  Text,
+  TextVariants,
+  Button,
+  ButtonVariant,
+} from '@patternfly/react-core';
 import { ValidationErrorType, asValidationObject } from '@console/shared/src/utils/validation';
 import {
   concatImmutableLists,
@@ -18,11 +26,21 @@ import {
   getWorkloadProfiles,
 } from '../../../../selectors/vm-template/combined-dependent';
 import { flavorSort, ignoreCaseSort } from '../../../../utils/sort';
-import { VMSettingsField } from '../../types';
+import { VMSettingsField, VMWizardTabsMetadata, VMWizardTab } from '../../types';
 import { iGetFieldValue } from '../../selectors/immutable/field';
-import { getPlaceholder } from '../../utils/renderable-field-utils';
+import { getPlaceholder, getFieldId } from '../../utils/renderable-field-utils';
 import { nullOnEmptyChange } from '../../utils/utils';
 import { operatingSystemsNative } from '../../../../constants/vm-templates/os';
+import { OperatingSystemRecord } from '../../../../types';
+import { iGetName } from '../../selectors/immutable/selectors';
+import {
+  BASE_IMAGE_AND_PVC_SHORT,
+  BASE_IMAGE_AND_PVC_MESSAGE,
+  NO_BASE_IMAGE_SHORT,
+  NO_BASE_IMAGE_AND_NO_PVC_MESSAGE,
+  NO_BASE_IMAGE_AND_NO_PVC_SHORT,
+  NO_BASE_IMAGE_MESSAGE,
+} from '../../strings/strings';
 
 export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
   ({
@@ -30,15 +48,20 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
     commonTemplates,
     userTemplate,
     operatinSystemField,
+    cloneBaseDiskImageField,
     flavorField,
     workloadProfile,
+    commonDataVolumes,
     onChange,
     openshiftFlag,
+    steps,
+    goToStep,
   }) => {
     const flavor = iGetFieldValue(flavorField);
     const os = iGetFieldValue(operatinSystemField);
     const display = iGet(operatinSystemField, 'display');
     const displayOnly = !!display;
+    const cloneBaseDiskImage = iGetFieldValue(cloneBaseDiskImageField);
 
     const params = {
       userTemplate,
@@ -91,28 +114,94 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
       }
     }
 
+    const loadedBaseImages = iGetLoadedData(commonDataVolumes);
+    const operatingSystemBaseImages = operatingSystems.map(
+      (operatingSystem: OperatingSystemRecord) => {
+        const pvcName = operatingSystem?.dataVolumeName;
+        const baseImageFoundInCluster = loadedBaseImages?.find((pvc) => iGetName(pvc) === pvcName);
+        const osField = {
+          id: operatingSystem.id,
+          name: operatingSystem.name,
+          pvcName,
+          baseImageFoundInCluster,
+          message: '',
+          longMessage: '',
+        };
+
+        if (!userTemplate) {
+          if (baseImageFoundInCluster && pvcName) {
+            osField.message = BASE_IMAGE_AND_PVC_SHORT;
+            osField.longMessage = BASE_IMAGE_AND_PVC_MESSAGE;
+          } else if (pvcName) {
+            osField.message = NO_BASE_IMAGE_SHORT;
+            osField.longMessage = NO_BASE_IMAGE_MESSAGE;
+          } else {
+            osField.message = NO_BASE_IMAGE_AND_NO_PVC_SHORT;
+            osField.longMessage = NO_BASE_IMAGE_AND_NO_PVC_MESSAGE;
+          }
+        }
+
+        return osField;
+      },
+    );
+    const baseImage = operatingSystemBaseImages.find((image) => image.id === os);
+
     return (
       <>
-        <FormFieldRow
-          field={operatinSystemField}
-          fieldType={FormFieldType.SELECT}
-          validation={operatingSystemValidation}
-          loadingResources={loadingResources}
-        >
-          <FormField value={displayOnly ? display : undefined}>
-            <FormSelect onChange={nullOnEmptyChange(onChange, VMSettingsField.OPERATING_SYSTEM)}>
-              {!displayOnly && (
-                <FormSelectPlaceholderOption
-                  placeholder={getPlaceholder(VMSettingsField.OPERATING_SYSTEM)}
-                  isDisabled={!!os}
-                />
-              )}
-              {operatingSystems.map(({ id, name }) => {
-                return <FormSelectOption key={id} value={id} label={name || id} />;
-              })}
-            </FormSelect>
-          </FormField>
-        </FormFieldRow>
+        <div className="pf-c-form__group">
+          <FormFieldRow
+            field={operatinSystemField}
+            fieldType={FormFieldType.SELECT}
+            validation={operatingSystemValidation}
+            loadingResources={loadingResources}
+          >
+            <FormField value={displayOnly ? display : undefined}>
+              <FormSelect onChange={nullOnEmptyChange(onChange, VMSettingsField.OPERATING_SYSTEM)}>
+                {!displayOnly && (
+                  <FormSelectPlaceholderOption
+                    placeholder={getPlaceholder(VMSettingsField.OPERATING_SYSTEM)}
+                    isDisabled={!!os}
+                  />
+                )}
+                {operatingSystemBaseImages.map(({ id, name, message }) => (
+                  <FormSelectOption key={id} value={id} label={`${name || id} ${message}`} />
+                ))}
+              </FormSelect>
+            </FormField>
+          </FormFieldRow>
+          <FormFieldRow
+            field={cloneBaseDiskImageField}
+            fieldType={FormFieldType.INLINE_CHECKBOX}
+            loadingResources={loadingResources}
+          >
+            <FormField>
+              <Checkbox
+                className="kubevirt-create-vm-modal__sub-field-row"
+                id={getFieldId(cloneBaseDiskImageField)}
+                onChange={(v) => onChange(VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE, v)}
+              />
+            </FormField>
+            {cloneBaseDiskImage && (
+              <Text>
+                View the cloned disk in the{' '}
+                <Button
+                  isDisabled={!steps[VMWizardTab.STORAGE]?.canJumpTo}
+                  isInline
+                  onClick={() => goToStep(VMWizardTab.STORAGE)}
+                  variant={ButtonVariant.link}
+                >
+                  <strong>storage</strong>
+                </Button>{' '}
+                step
+              </Text>
+            )}
+          </FormFieldRow>
+          {baseImage && baseImage?.longMessage && (
+            <div className="kubevirt-create-vm-modal__sub-field-row">
+              <Text component={TextVariants.small}>{baseImage?.longMessage}</Text>
+            </div>
+          )}
+        </div>
         <FormFieldRow
           field={flavorField}
           fieldType={FormFieldType.SELECT}
@@ -141,8 +230,12 @@ type OSFlavorProps = {
   commonTemplates: any;
   flavorField: any;
   operatinSystemField: any;
+  cloneBaseDiskImageField: any;
   userTemplate: string;
   workloadProfile: string;
+  commonDataVolumes: any;
   openshiftFlag: boolean;
-  onChange: (key: string, value: string) => void;
+  onChange: (key: string, value: string | boolean) => void;
+  steps: VMWizardTabsMetadata;
+  goToStep: (stepID: VMWizardTab) => void;
 };
