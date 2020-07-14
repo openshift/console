@@ -4,15 +4,6 @@ import { coFetch } from '@console/internal/co-fetch';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { K8sKind, kindToAbbr, referenceForModel } from '@console/internal/module/k8s';
 import { chart_color_red_300 as knativeEventingColor } from '@patternfly/react-tokens';
-import {
-  EventSourceContainerModel,
-  EventSourceApiServerModel,
-  EventSourceSinkBindingModel,
-  EventSourceCamelModel,
-  EventSourcePingModel,
-  EventSourceKafkaModel,
-  EventSourceCronJobModel,
-} from '../models';
 
 interface EventSourcetData {
   loaded: boolean;
@@ -24,29 +15,6 @@ const eventSourceData: EventSourcetData = {
   loaded: false,
   eventSourceModels: [],
   eventSourceChannels: [],
-};
-
-// To order sources with known followed by CamelSource and everything else
-export const orderedEventSourceModelData = (allModels: K8sKind[]): K8sKind[] => {
-  const sortModels = _.orderBy(allModels, ['kind'], ['asc']);
-  const knownSourcesList = [
-    EventSourceApiServerModel.kind,
-    EventSourceContainerModel.kind,
-    EventSourceCronJobModel.kind,
-    EventSourceKafkaModel.kind,
-    EventSourcePingModel.kind,
-    EventSourceSinkBindingModel.kind,
-  ];
-  const knownSourcesCrd = _.filter(sortModels, (model) => knownSourcesList.includes(model.kind));
-  const camelSourcesCrd = _.filter(
-    sortModels,
-    (model) => model?.kind === EventSourceCamelModel.kind,
-  );
-  const dynamicSourcesCrd = _.filter(
-    sortModels,
-    (model) => !knownSourcesList.includes(model.kind) && model.kind !== EventSourceCamelModel.kind,
-  );
-  return [...knownSourcesCrd, ...camelSourcesCrd, ...dynamicSourcesCrd];
 };
 
 export const fetchEventSourcesCrd = async () => {
@@ -93,7 +61,7 @@ export const fetchEventSourcesCrd = async () => {
       [],
     );
 
-    eventSourceData.eventSourceModels = orderedEventSourceModelData(allModels);
+    eventSourceData.eventSourceModels = allModels;
   } catch (err) {
     // show warning if there is an error fetching the CRDs
     // eslint-disable-next-line no-console
@@ -172,8 +140,7 @@ export const hideDynamicEventSourceCard = () =>
   eventSourceData.eventSourceModels && eventSourceData.eventSourceModels.length > 0;
 
 export const fetchChannelsCrd = async () => {
-  const url =
-    '/api/kubernetes/apis/apiextensions.k8s.io/v1/customresourcedefinitions?labelSelector=messaging.knative.dev/subscribable=true';
+  const url = 'api/console/knative-channels';
   try {
     const res = await coFetch(url);
     const resolvedRes = await res.json();

@@ -31,27 +31,28 @@ const EventSourceSection: React.FC<EventSourceSectionProps> = ({ namespace }) =>
     return null;
   }
   let EventSource: React.ReactElement;
+  const sectionTitle = values.data?.itemData?.title ?? values.type;
   switch (values.type) {
     case EventSources.CronJobSource:
-      EventSource = <CronJobSection />;
+      EventSource = <CronJobSection title={sectionTitle} />;
       break;
     case EventSources.SinkBinding:
-      EventSource = <SinkBindingSection />;
+      EventSource = <SinkBindingSection title={sectionTitle} />;
       break;
     case EventSources.ApiServerSource:
-      EventSource = <ApiServerSection />;
+      EventSource = <ApiServerSection title={sectionTitle} />;
       break;
     case EventSources.KafkaSource:
-      EventSource = <KafkaSourceSection />;
+      EventSource = <KafkaSourceSection title={sectionTitle} />;
       break;
     case EventSources.ContainerSource:
-      EventSource = <ContainerSourceSection />;
+      EventSource = <ContainerSourceSection title={sectionTitle} />;
       break;
     case EventSources.PingSource:
-      EventSource = <PingSourceSection />;
+      EventSource = <PingSourceSection title={sectionTitle} />;
       break;
     default:
-      EventSource = <YAMLEditorSection />;
+      EventSource = <YAMLEditorSection title={sectionTitle} />;
   }
   return (
     <>

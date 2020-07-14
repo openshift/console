@@ -35,6 +35,7 @@ const EventSourcesSelector: React.FC<EventSourcesSelectorProps> = ({ eventSource
         setFieldValue(nameData, sourceData);
         setFieldTouched(nameData, true);
       }
+      setFieldValue('data.itemData', eventSourceList[item]);
       const selDataModel = _.find(getEventSourceModels(), { kind: item });
       const selApiVersion = selDataModel
         ? `${selDataModel?.apiGroup}/${selDataModel?.apiVersion}`
@@ -50,7 +51,15 @@ const EventSourcesSelector: React.FC<EventSourcesSelectorProps> = ({ eventSource
       setFieldTouched('apiVersion', true);
       validateForm();
     },
-    [setErrors, setStatus, setFieldValue, setFieldTouched, selectedKey, validateForm],
+    [
+      setErrors,
+      setStatus,
+      setFieldValue,
+      setFieldTouched,
+      selectedKey,
+      validateForm,
+      eventSourceList,
+    ],
   );
 
   const itemSelectorField = (

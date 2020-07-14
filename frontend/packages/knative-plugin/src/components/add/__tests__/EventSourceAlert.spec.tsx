@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 import { Alert } from '@patternfly/react-core';
 import { referenceForModel } from '@console/internal/module/k8s';
 import EventSourceAlert from '../EventSourceAlert';
-import { getKnativeEventSourceIcon } from '../../../utils/get-knative-icon';
+import { getEventSourceIcon } from '../../../utils/get-knative-icon';
 import { EventSourceContainerModel } from '../../../models';
 
 describe('EventSourceAlert', () => {
@@ -13,7 +13,7 @@ describe('EventSourceAlert', () => {
       [EventSourceContainerModel.kind]: {
         name: EventSourceContainerModel.kind,
         title: EventSourceContainerModel.kind,
-        iconUrl: getKnativeEventSourceIcon(referenceForModel(EventSourceContainerModel)),
+        iconUrl: getEventSourceIcon(referenceForModel(EventSourceContainerModel)),
         displayName: EventSourceContainerModel.kind,
       },
     },

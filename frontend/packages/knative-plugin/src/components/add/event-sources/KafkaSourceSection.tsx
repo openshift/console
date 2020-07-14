@@ -10,7 +10,11 @@ import { useK8sWatchResources } from '@console/internal/components/utils/k8s-wat
 import { getBootstrapServers } from '../../../utils/create-eventsources-utils';
 import { strimziResourcesWatcher } from '../../../utils/get-knative-resources';
 
-const KafkaSourceSection: React.FC = () => {
+interface KafkaSourceSectionProps {
+  title: string;
+}
+
+const KafkaSourceSection: React.FC<KafkaSourceSectionProps> = ({ title }) => {
   const memoResources = React.useMemo(() => strimziResourcesWatcher(), []);
   const { kafkas, kafkatopics } = useK8sWatchResources<{
     [key: string]: K8sResourceKind[];
@@ -69,7 +73,7 @@ const KafkaSourceSection: React.FC = () => {
   }, [kafkatopics.data, kafkatopics.loaded, kafkatopics.loadError]);
 
   return (
-    <FormSection title="KafkaSource" extraMargin>
+    <FormSection title={title} extraMargin>
       <SelectInputField
         data-test-id="kafkasource-bootstrapservers-field"
         name="data.kafkasource.bootstrapServers"

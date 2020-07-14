@@ -20,13 +20,14 @@ jest.mock('formik', () => ({
   getFieldId: jest.fn(),
 }));
 describe('SinkBindingSection', () => {
+  const title = 'Sink Binding';
   let wrapper: ShallowWrapper<SinkBindingSectionProps>;
   beforeEach(() => {
-    wrapper = shallow(<SinkBindingSection />);
+    wrapper = shallow(<SinkBindingSection title={title} />);
   });
   it('should render FormSection', () => {
     expect(wrapper.find(FormSection)).toHaveLength(1);
-    expect(wrapper.find(FormSection).props().title).toBe('SinkBinding');
+    expect(wrapper.find(FormSection).props().title).toBe('Sink Binding');
   });
 
   it('should render NameValueEditor', () => {

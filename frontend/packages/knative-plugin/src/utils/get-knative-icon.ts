@@ -1,4 +1,5 @@
-import { kindForReference } from '@console/internal/module/k8s';
+import { kindForReference, K8sResourceKind } from '@console/internal/module/k8s';
+import { isValidUrl } from '@console/shared';
 import * as apiServerSourceImg from '../imgs/logos/apiserversource.png';
 import * as camelSourceImg from '../imgs/logos/camelsource.svg';
 import * as containerSourceImg from '../imgs/logos/containersource.png';
@@ -13,8 +14,9 @@ import {
   EventSourceKafkaModel,
   EventSourcePingModel,
 } from '../models';
+import { EVENT_SOURCE_ICON } from '../const';
 
-export const getKnativeEventSourceIcon = (kind: string): string => {
+const getEventSourceIconFromKind = (kind: string): string => {
   switch (kindForReference(kind)) {
     case EventSourceApiServerModel.kind:
       return apiServerSourceImg;
@@ -30,4 +32,10 @@ export const getKnativeEventSourceIcon = (kind: string): string => {
     default:
       return eventSourceImg;
   }
+};
+
+export const getEventSourceIcon = (kind: string, obj?: K8sResourceKind) => {
+  return obj && isValidUrl(obj.metadata?.annotations?.[EVENT_SOURCE_ICON])
+    ? obj.metadata?.annotations?.[EVENT_SOURCE_ICON]
+    : getEventSourceIconFromKind(kind);
 };

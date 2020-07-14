@@ -3,8 +3,12 @@ import { TextInputTypes } from '@patternfly/react-core';
 import { InputField } from '@console/shared';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 
-const PingSourceSection: React.FC = () => (
-  <FormSection title="PingSource" extraMargin>
+interface PingSourceSectionProps {
+  title: string;
+}
+
+const PingSourceSection: React.FC<PingSourceSectionProps> = ({ title }) => (
+  <FormSection title={title} extraMargin>
     <InputField
       type={TextInputTypes.text}
       name="data.pingsource.data"

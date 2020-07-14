@@ -7,7 +7,11 @@ import { DropdownField, getFieldId } from '@console/shared';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import ServiceAccountDropdown from '../../dropdowns/ServiceAccountDropdown';
 
-const ApiServerSection: React.FC = () => {
+interface ApiServerSectionProps {
+  title: string;
+}
+
+const ApiServerSection: React.FC<ApiServerSectionProps> = ({ title }) => {
   const { values, setFieldValue } = useFormikContext<FormikValues>();
   const initVal = values?.data?.apiserversource?.resources || [];
   const initialValueResources = !_.isEmpty(initVal)
@@ -35,7 +39,7 @@ const ApiServerSection: React.FC = () => {
   };
   const fieldId = getFieldId(values.type, 'res-input');
   return (
-    <FormSection title="ApiServerSource" extraMargin>
+    <FormSection title={title} extraMargin>
       <FormGroup
         fieldId={fieldId}
         label="Resource"

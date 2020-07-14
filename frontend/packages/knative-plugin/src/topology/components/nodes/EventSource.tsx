@@ -22,7 +22,7 @@ import {
   getFilterById,
   SHOW_LABELS_FILTER_ID,
 } from '@console/dev-console/src/components/topology';
-import { getKnativeEventSourceIcon } from '../../../utils/get-knative-icon';
+import { getEventSourceIcon } from '../../../utils/get-knative-icon';
 
 import './EventSource.scss';
 
@@ -55,7 +55,7 @@ const EventSource: React.FC<EventSourceProps> = ({
   const showLabels = showLabelsFilter?.value || hover;
   const { width, height } = element.getBounds();
   const size = Math.min(width, height);
-  const { data } = element.getData();
+  const { data, resources } = element.getData();
 
   return (
     <g
@@ -85,7 +85,7 @@ const EventSource: React.FC<EventSourceProps> = ({
         y={height * 0.25}
         width={size * 0.5}
         height={size * 0.5}
-        xlinkHref={getKnativeEventSourceIcon(data.kind)}
+        xlinkHref={getEventSourceIcon(data.kind, resources.obj)}
       />
       {showLabels && (data.kind || element.getLabel()) && (
         <SvgBoxedText

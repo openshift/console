@@ -268,6 +268,20 @@ export const EventingTriggerModel: K8sKind = {
   color: knativeEventingColor.value,
 };
 
+export const CamelIntegrationModel: K8sKind = {
+  apiGroup: 'camel.apache.org',
+  apiVersion: 'v1',
+  kind: 'Integration',
+  label: 'Integration',
+  labelPlural: 'Integrations',
+  plural: 'integrations',
+  id: 'integration',
+  abbr: 'I',
+  namespaced: true,
+  crd: true,
+  color: knativeEventingColor.value,
+};
+
 export const KafkaModel: K8sKind = {
   apiGroup: STRIMZI_KAFKA_APIGROUP,
   apiVersion: 'v1beta1',

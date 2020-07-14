@@ -14,7 +14,11 @@ const containerPaths = {
   Args: 'data.containersource.template.spec.containers[0].args',
 };
 
-const ContainerSourceSection: React.FC = () => {
+interface ContainerSourceSectionProps {
+  title: string;
+}
+
+const ContainerSourceSection: React.FC<ContainerSourceSectionProps> = ({ title }) => {
   const { values, setFieldValue } = useFormikContext<FormikValues>();
   const {
     data: {
@@ -40,7 +44,7 @@ const ContainerSourceSection: React.FC = () => {
     [setFieldValue],
   );
   return (
-    <FormSection title="ContainerSource" extraMargin>
+    <FormSection title={title} extraMargin>
       <h3 className="co-section-heading-tertiary">Container</h3>
       <InputField
         data-test-id="container-image-field"

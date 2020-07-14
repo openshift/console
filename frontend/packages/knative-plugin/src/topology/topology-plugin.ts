@@ -30,6 +30,7 @@ import {
   knativeEventingResourcesSubscriptionWatchers,
   knativeEventingBrokerResourceWatchers,
   knativeEventingTriggerResourceWatchers,
+  knativeCamelIntegrationsResourceWatchers,
 } from '../utils/get-knative-resources';
 import {
   getDynamicEventSourcesWatchers,
@@ -47,6 +48,7 @@ export const getKnativeResources = (namespace: string) => {
     ...getDynamicEventingChannelWatchers(namespace),
     ...knativeEventingBrokerResourceWatchers(namespace),
     ...knativeEventingTriggerResourceWatchers(namespace),
+    ...knativeCamelIntegrationsResourceWatchers(namespace),
   };
 };
 
