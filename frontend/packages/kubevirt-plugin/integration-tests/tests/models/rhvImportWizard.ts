@@ -3,14 +3,14 @@ import { browser, ExpectedConditions as until } from 'protractor';
 import { click, fillInput } from '@console/shared/src/test-utils/utils';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import { selectOptionByText, setCheckboxState } from '../utils/utils';
+import { InstanceConfig, rhvConfig, VMImportConfig } from '../types/types';
 import {
   IMPORT_WIZARD_CONN_TO_NEW_INSTANCE,
-  PAGE_LOAD_TIMEOUT_SECS,
   RHV_WIZARD_CREATE_SUCCESS,
-} from '../utils/consts';
+  PAGE_LOAD_TIMEOUT_SECS,
+} from '../utils/constants/common';
 import * as view from '../../views/importWizard.view';
 import * as rhvView from '../../views/rhvImportWizard.view';
-import { InstanceConfig, rhvConfig, VMImportConfig } from '../utils/types';
 import { VirtualMachine } from './virtualMachine';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import * as wizardView from '../../views/wizard.view';

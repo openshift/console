@@ -1,7 +1,7 @@
 /* eslint-disable no-undef, max-nested-callbacks */
+import * as _ from 'lodash';
 import { execSync } from 'child_process';
 import { browser, ExpectedConditions as until } from 'protractor';
-import * as _ from 'lodash';
 import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   filterForName,
@@ -15,9 +15,9 @@ import {
   withResource,
   createResources,
   deleteResources,
-  createResource,
   addLeakableResource,
   removeLeakableResource,
+  asyncForEach,
 } from '@console/shared/src/test-utils/utils';
 import * as cloneDialogView from '../views/dialogs/cloneVirtualMachineDialog.view';
 import { getVolumes, getDataVolumeTemplates } from '../../src/selectors/vm/selectors';
@@ -28,22 +28,22 @@ import {
   VM_IMPORT_TIMEOUT_SECS,
   PAGE_LOAD_TIMEOUT_SECS,
   CLONED_VM_BOOTUP_TIMEOUT_SECS,
-  TAB,
-  VM_ACTION,
-  VM_STATUS,
-} from './utils/consts';
+} from './utils/constants/common';
 import {
-  basicVMConfig,
   multusNetworkInterface,
   multusNAD,
   getVMManifest,
   cloudInitCustomScriptConfig,
   rootDisk,
   datavolumeClonerClusterRole,
-} from './utils/mocks';
+  provisionSources,
+} from './mocks/mocks';
+import { getBasicVMBuilder } from './mocks/vmBuilderPresets';
 import { VirtualMachine } from './models/virtualMachine';
 import { CloneVirtualMachineDialog } from './dialogs/cloneVirtualMachineDialog';
-import { Wizard } from './models/wizard';
+import { VM_ACTION, VM_STATUS, TAB } from './utils/constants/vm';
+import { VMBuilder } from './models/vmBuilder';
+import { Disk } from './types/types';
 
 describe('Test clone VM.', () => {
   const leakedResources = new Set<string>();
@@ -52,6 +52,7 @@ describe('Test clone VM.', () => {
 
   beforeAll(async () => {
     await createProject(testCloningNamespace);
+    await browser.get(`${appHost}/k8s/ns/${testName}/virtualization`);
   });
 
   afterAll(() => {
@@ -78,9 +79,9 @@ describe('Test clone VM.', () => {
     it(
       'ID(CNV-1730) Displays warning in clone wizard when cloned vm is running.',
       async () => {
-        await vm.action(VM_ACTION.Start, false);
+        await vm.detailViewAction(VM_ACTION.Start, false);
         await vm.waitForStatus(VM_STATUS.Starting, PAGE_LOAD_TIMEOUT_SECS);
-        await vm.action(VM_ACTION.Clone);
+        await vm.detailViewAction(VM_ACTION.Clone);
         await browser.wait(
           until.and(
             until.presenceOf(cloneDialogView.warningMessage),
@@ -94,13 +95,13 @@ describe('Test clone VM.', () => {
         expect(cloneDialogView.confirmButton.isEnabled()).toBeTruthy();
         await cloneDialog.close();
         await vm.waitForStatus(VM_STATUS.Running, VM_BOOTUP_TIMEOUT_SECS);
-        await vm.action(VM_ACTION.Stop);
+        await vm.detailViewAction(VM_ACTION.Stop);
       },
       VM_BOOTUP_TIMEOUT_SECS,
     );
 
     it('ID(CNV-1863) Prefills correct data in the clone VM dialog.', async () => {
-      await vm.action(VM_ACTION.Clone);
+      await vm.detailViewAction(VM_ACTION.Clone);
       expect(cloneDialogView.nameInput.getAttribute('value')).toEqual(`${vm.name}-clone`);
       expect(cloneDialogView.descriptionInput.getText()).toEqual(
         testContainerVM.metadata.annotations.description,
@@ -111,7 +112,7 @@ describe('Test clone VM.', () => {
     });
 
     it('ID(CNV-1732) Validates VM name.', async () => {
-      await vm.action(VM_ACTION.Clone);
+      await vm.detailViewAction(VM_ACTION.Clone);
 
       expect(cloneDialogView.warningMessage.isPresent()).toBe(false);
 
@@ -163,7 +164,7 @@ describe('Test clone VM.', () => {
       createResources([multusNAD, testVM, datavolumeClonerClusterRole, allowCloneRoleBinding]);
       await vm.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
       await vm.addNIC(multusNetworkInterface);
-      await vm.action(VM_ACTION.Start);
+      await vm.detailViewAction(VM_ACTION.Start);
     }, VM_IMPORT_TIMEOUT_SECS + VM_BOOTUP_TIMEOUT_SECS);
 
     afterAll(() => {
@@ -185,7 +186,7 @@ describe('Test clone VM.', () => {
           name: `${vm.name}-${getRandStr(4)}`,
           namespace: testCloningNamespace,
         });
-        await vm.action(VM_ACTION.Clone);
+        await vm.detailViewAction(VM_ACTION.Clone);
         await cloneDialog.fillName(vmClonedToOtherNS.name);
         await cloneDialog.selectNamespace(vmClonedToOtherNS.namespace);
         await cloneDialog.clone();
@@ -199,13 +200,12 @@ describe('Test clone VM.', () => {
     it(
       'ID(CNV-1733) Start cloned VM on creation',
       async () => {
-        await vm.action(VM_ACTION.Clone);
+        await vm.detailViewAction(VM_ACTION.Clone);
         await cloneDialog.startOnCreation();
         await cloneDialog.clone();
         addLeakableResource(leakedResources, clonedVM.asResource());
 
         await clonedVM.navigateToTab(TAB.Details);
-        await clonedVM.waitForStatus(VM_STATUS.Running, CLONE_VM_TIMEOUT_SECS);
       },
       VM_BOOTUP_TIMEOUT_SECS + CLONE_VM_TIMEOUT_SECS,
     );
@@ -234,101 +234,53 @@ describe('Test clone VM.', () => {
   });
 
   describe('Test DataVolumes of cloned VMs', () => {
-    const urlVMManifest = getVMManifest('URL', testName);
-    const urlVM = new VirtualMachine(urlVMManifest.metadata);
-    const cloudInitVmProvisionConfig = {
-      method: 'URL',
-      source: basicVMConfig.sourceURL,
-    };
+    let vm: VirtualMachine;
+    let clonedVM: VirtualMachine;
 
-    it(
-      'ID(CNV-1740) Test clone VM with URL source.',
-      async () => {
-        createResource(urlVMManifest);
-        await withResource(leakedResources, urlVM.asResource(), async () => {
-          await urlVM.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
-          await urlVM.action(VM_ACTION.Start);
-          await urlVM.action(VM_ACTION.Clone);
-          await cloneDialog.clone();
+    beforeAll(async () => {
+      vm = new VMBuilder(getBasicVMBuilder())
+        .setProvisionSource(provisionSources.URL)
+        .setDisks([rootDisk])
+        .setCloudInit(cloudInitCustomScriptConfig)
+        .setWaitForImport(true)
+        .build();
+      await vm.create();
+      clonedVM = await vm.clone();
+      await clonedVM.start();
+    }, CLONED_VM_BOOTUP_TIMEOUT_SECS + VM_IMPORT_TIMEOUT_SECS);
 
-          const clonedVM = new VirtualMachine({
-            name: `${urlVM.name}-clone`,
-            namespace: urlVM.namespace,
-          });
-          await withResource(leakedResources, clonedVM.asResource(), async () => {
-            await clonedVM.action(VM_ACTION.Start, true, CLONED_VM_BOOTUP_TIMEOUT_SECS);
+    afterAll(async () => {
+      deleteResources([vm.asResource(), clonedVM.asResource()]);
+    });
 
-            // Check cloned PVC exists
-            const clonedVMDiskName = `${clonedVM.name}-${urlVM.name}-rootdisk-clone`;
-            await browser.get(`${appHost}/k8s/ns/${testName}/persistentvolumeclaims`);
-            await isLoaded();
-            await filterForName(clonedVMDiskName);
-            await resourceRowsPresent();
+    it('ID(CNV-1740) Test clone VM with URL source.', async () => {
+      // Check cloned PVC exists
+      await browser.get(`${appHost}/k8s/ns/${testName}/persistentvolumeclaims`);
+      await isLoaded();
+      await filterForName(clonedVM.name);
+      await resourceRowsPresent();
 
-            // Verify cloned disk dataVolumeTemplate is present in cloned VM manifest
-            const clonedDataVolumeTemplate = getDataVolumeTemplates(clonedVM.getResource());
-            const result = _.find(
-              clonedDataVolumeTemplate,
-              (o) => o.metadata.name === clonedVMDiskName,
-            );
-            expect(_.get(result, 'spec.source.pvc.name')).toEqual(`${urlVM.name}-rootdisk`);
-          });
-        });
-      },
-      CLONE_VM_TIMEOUT_SECS,
-    );
+      // Verify cloned disk dataVolumeTemplate is present in cloned VM manifest
+      const clonedDataVolumeTemplate = getDataVolumeTemplates(clonedVM.getResource());
+      const result = _.find(clonedDataVolumeTemplate, (o) =>
+        o.metadata.name.includes(clonedVM.name),
+      );
+      expect(_.get(result, 'spec.source.pvc.name')).toContain(`${vm.name}-rootdisk`);
+    });
 
-    it(
-      'ID(CNV-1744) Test clone VM with URL source and Cloud Init.',
-      async () => {
-        const ciVMConfig = {
-          name: `ci-${testName}`,
-          namespace: testName,
-          description: `Default description ${testName}`,
-          provisionSource: cloudInitVmProvisionConfig,
-          storageResources: [rootDisk],
-          networkResources: [],
-          flavorConfig: basicVMConfig.flavorConfig,
-          operatingSystem: basicVMConfig.operatingSystem,
-          workloadProfile: basicVMConfig.workloadProfile,
-          startOnCreation: false,
-          cloudInit: cloudInitCustomScriptConfig,
-        };
-        const expectedDisks = [
-          rootDisk,
-          { name: 'cloudinitdisk', size: '', interface: 'VirtIO', storageClass: '-' },
-        ];
-
-        const wizard = new Wizard();
-        const ciVM = await wizard.createVirtualMachine(ciVMConfig);
-        await withResource(leakedResources, ciVM.asResource(), async () => {
-          await ciVM.action(VM_ACTION.Clone);
-          await cloneDialog.clone();
-          const clonedVM = new VirtualMachine({
-            name: `${ciVMConfig.name}-clone`,
-            namespace: ciVM.namespace,
-          });
-          await withResource(leakedResources, clonedVM.asResource(), async () => {
-            // Check disks on cloned VM
-            const disks = await clonedVM.getAttachedDisks();
-            expectedDisks.forEach((disk) => {
-              expect(_.find(disks, disk)).toBeDefined();
-            });
-
-            // Verify configuration of cloudinitdisk is the same
-            const clonedVMVolumes = getVolumes(clonedVM.getResource());
-            const result = _.find(clonedVMVolumes, (o) => o.name === 'cloudinitdisk');
-            expect(result).toBeDefined();
-            expect(_.get(result, 'cloudInitNoCloud.userData', '')).toEqual(
-              cloudInitCustomScriptConfig.customScript,
-            );
-
-            // Verify the cloned VM can boot
-            await clonedVM.action(VM_ACTION.Start, true, CLONED_VM_BOOTUP_TIMEOUT_SECS);
-          });
-        });
-      },
-      CLONE_VM_TIMEOUT_SECS,
-    );
+    it('ID(CNV-1744) Test clone VM with URL source and Cloud Init.', async () => {
+      const expectedDisks = await vm.getAttachedDisks();
+      // Check disks on cloned VM
+      await asyncForEach(expectedDisks, async (disk: Disk) => {
+        expect(await clonedVM.hasDisk(disk)).toBeTruthy();
+      });
+      // Verify configuration of cloudinitdisk is the same
+      const vmVolumes = getVolumes(vm.getResource());
+      const result = _.find(vmVolumes, (o) => o.name === 'cloudinitdisk');
+      expect(result).toBeDefined();
+      expect(_.get(result, 'cloudInitNoCloud.userData')).toEqual(
+        clonedVM.getData().cloudInit.customScript,
+      );
+    });
   });
 });

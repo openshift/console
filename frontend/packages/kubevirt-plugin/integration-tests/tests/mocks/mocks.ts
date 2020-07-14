@@ -1,20 +1,51 @@
 import { testName } from '@console/internal-integration-tests/protractor.conf';
-import { CloudInitConfig, BaseVMConfig, StorageResource } from './types';
+import { ConfigMapKind, SecretKind, ServiceAccountKind } from '@console/internal/module/k8s';
+import { CloudInitConfig, Disk } from '../types/types';
 import {
   STORAGE_CLASS,
   commonTemplateVersion,
-  NIC_MODEL,
-  NIC_TYPE,
-  DISK_INTERFACE,
   KUBEVIRT_STORAGE_CLASS_DEFAULTS,
   KUBEVIRT_PROJECT_NAME,
   COMMON_TEMPLATES_NAMESPACE,
   COMMON_TEMPLATES_REVISION,
+} from '../utils/constants/common';
+import {
+  getRandomMacAddress,
+  getResourceObject,
+  resolveStorageDataAttribute,
+  deepFreeze,
+} from '../utils/utils';
+import { Flavor, ProvisionSource } from '../utils/constants/wizard';
+import {
+  NIC_MODEL,
+  NIC_TYPE,
+  DISK_INTERFACE,
   DISK_SOURCE,
-} from './consts';
-import { getRandomMacAddress, getResourceObject, resolveStorageDataAttribute } from './utils';
-import { Flavor, OperatingSystem, WorkloadProfile } from './constants/wizard';
-import { ConfigMapKind, SecretKind, ServiceAccountKind } from '@console/internal/module/k8s/types';
+  DISK_DRIVE,
+} from '../utils/constants/vm';
+
+export const provisionSources = {
+  [ProvisionSource.URL]: {
+    method: ProvisionSource.URL,
+    source: 'https://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img',
+  },
+  [ProvisionSource.CONTAINER]: {
+    method: ProvisionSource.CONTAINER,
+    source: 'kubevirt/fedora-cloud-registry-disk-demo:latest',
+  },
+  [ProvisionSource.PXE]: { method: ProvisionSource.PXE },
+  [ProvisionSource.DISK]: { method: ProvisionSource.DISK },
+};
+deepFreeze(provisionSources);
+
+export const flavorConfigs = {
+  [Flavor.TINY]: { flavor: Flavor.TINY },
+  [Flavor.SMALL]: { flavor: Flavor.SMALL },
+  [Flavor.MEDIUM]: { flavor: Flavor.MEDIUM },
+  [Flavor.LARGE]: { flavor: Flavor.LARGE },
+  [Flavor.CUSTOM]: { flavor: Flavor.CUSTOM, cpu: '2', memory: '2Gi' },
+};
+deepFreeze(flavorConfigs);
 
 export const multusNAD = {
   apiVersion: 'k8s.cni.cncf.io/v1',
@@ -28,6 +59,7 @@ export const multusNAD = {
     config: '{ "cniVersion": "0.3.1", "type": "cnv-bridge", "bridge": "testbridge", "ipam": {} }',
   },
 };
+deepFreeze(multusNAD);
 
 export const dataVolumeManifest = ({ name, namespace, sourceURL, accessMode, volumeMode }) => {
   return {
@@ -40,7 +72,7 @@ export const dataVolumeManifest = ({ name, namespace, sourceURL, accessMode, vol
     spec: {
       pvc: {
         accessModes: [accessMode],
-        dataSource: null,
+        dataSource: {},
         resources: {
           requests: {
             storage: '1Gi',
@@ -58,17 +90,39 @@ export const dataVolumeManifest = ({ name, namespace, sourceURL, accessMode, vol
   };
 };
 
-export const basicVMConfig: BaseVMConfig = {
-  operatingSystem: OperatingSystem.RHEL7,
-  flavorConfig: { flavor: Flavor.TINY },
-  workloadProfile: WorkloadProfile.DESKTOP,
-  sourceURL:
-    'http://cnv-qe-server.rhevdev.lab.eng.rdu2.redhat.com/files/files-https/cirros/cirros-qcow2.img',
-  sourceContainer: 'kubevirt/fedora-cloud-container-disk-demo',
-  cloudInitScript: `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}\nhostname: vm-${testName}`,
+export const kubevirtStorage = getResourceObject(
+  KUBEVIRT_STORAGE_CLASS_DEFAULTS,
+  KUBEVIRT_PROJECT_NAME,
+  'configMap',
+);
+
+export const getTestDataVolume = () =>
+  dataVolumeManifest({
+    name: `testdv-${testName}`,
+    namespace: testName,
+    sourceURL: provisionSources.URL.source,
+    accessMode: resolveStorageDataAttribute(kubevirtStorage, 'accessMode'),
+    volumeMode: resolveStorageDataAttribute(kubevirtStorage, 'volumeMode'),
+  });
+
+export const getDiskToCloneFrom = (): Disk => {
+  const testDV = getTestDataVolume();
+  return {
+    name: testDV.metadata.name,
+    size: testDV.spec.pvc.resources.requests.storage.slice(0, -2),
+    drive: DISK_DRIVE.Disk,
+    interface: DISK_INTERFACE.VirtIO,
+    bootable: true,
+    storageClass: testDV.spec.pvc.storageClassName,
+    sourceConfig: {
+      PVCName: testDV.metadata.name,
+      PVCNamespace: testName,
+    },
+    source: DISK_SOURCE.AttachClonedDisk,
+  };
 };
-Object.freeze(basicVMConfig.flavorConfig);
-Object.freeze(basicVMConfig);
+
+export const cloudInitScript = `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}\nhostname: vm-${testName}`;
 
 export const defaultWizardPodNetworkingInterface = {
   name: 'nic-0',
@@ -77,6 +131,7 @@ export const defaultWizardPodNetworkingInterface = {
   type: NIC_TYPE.masquerade,
   network: 'Pod Networking',
 };
+deepFreeze(defaultWizardPodNetworkingInterface);
 
 export const defaultYAMLPodNetworkingInterface = {
   name: 'default',
@@ -85,17 +140,7 @@ export const defaultYAMLPodNetworkingInterface = {
   type: NIC_TYPE.masquerade,
   network: 'Pod Networking',
 };
-
-// Fake windows machine, still cirros in the heart
-export const windowsVMConfig: BaseVMConfig = {
-  operatingSystem: OperatingSystem.WINDOWS_10,
-  flavorConfig: { flavor: Flavor.MEDIUM },
-  workloadProfile: WorkloadProfile.DESKTOP,
-  sourceURL:
-    'http://cnv-qe-server.rhevdev.lab.eng.rdu2.redhat.com/files/files-https/cirros/cirros-qcow2.img',
-  sourceContainer: 'kubevirt/cirros-registry-disk-demo',
-  cloudInitScript: `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}\nhostname: vm-${testName}`, // reusing cirros
-};
+deepFreeze(defaultYAMLPodNetworkingInterface);
 
 export const multusNetworkInterface = {
   name: `nic1-${testName.slice(-5)}`,
@@ -104,35 +149,51 @@ export const multusNetworkInterface = {
   type: NIC_TYPE.bridge,
   network: multusNAD.metadata.name,
 };
+deepFreeze(multusNetworkInterface);
 
-export const rootDisk: StorageResource = {
+export const rootDisk: Disk = {
   name: 'rootdisk',
   size: '1',
+  drive: DISK_DRIVE.Disk,
+  bootable: true,
   interface: DISK_INTERFACE.VirtIO,
   storageClass: `${STORAGE_CLASS}`,
 };
+deepFreeze(rootDisk);
 
-export const cdGuestTools: StorageResource = {
+export const containerRootDisk: Disk = {
+  name: 'rootdisk',
+  drive: DISK_DRIVE.Disk,
+  bootable: true,
+  interface: DISK_INTERFACE.VirtIO,
+};
+deepFreeze(containerRootDisk);
+
+export const cdGuestTools: Disk = {
   source: DISK_SOURCE.Container,
   interface: DISK_INTERFACE.sata,
+  drive: DISK_DRIVE.CDROM,
   storageClass: `${STORAGE_CLASS}`,
   sourceConfig: {
     container: 'kubevirt/virtio-container-disk',
   },
 };
+deepFreeze(cdGuestTools);
 
-export const hddDisk: StorageResource = {
+export const hddDisk: Disk = {
   name: `disk-${testName.slice(-5)}`,
   size: '1',
+  drive: DISK_DRIVE.Disk,
   interface: DISK_INTERFACE.VirtIO,
   storageClass: `${STORAGE_CLASS}`,
 };
+deepFreeze(hddDisk);
 
 export const cloudInitCustomScriptConfig: CloudInitConfig = {
-  useCloudInit: true,
   useCustomScript: true,
-  customScript: basicVMConfig.cloudInitScript,
+  customScript: cloudInitScript,
 };
+deepFreeze(cloudInitCustomScriptConfig);
 
 export const getConfigMap = (namespace: string, name: string): ConfigMapKind => {
   return {
@@ -197,7 +258,7 @@ function getMetadata(
       app: vmName,
       'flavor.template.kubevirt.io/tiny': 'true',
       'os.template.kubevirt.io/rhel7.8': 'true',
-      'vm.kubevirt.io/template': `rhel7-desktop-${basicVMConfig.flavorConfig.flavor.toLowerCase()}-${commonTemplateVersion()}`,
+      'vm.kubevirt.io/template': `rhel7-desktop-${Flavor.TINY.toLowerCase()}-${commonTemplateVersion()}`,
       'vm.kubevirt.io/template.namespace': COMMON_TEMPLATES_NAMESPACE,
       'vm.kubevirt.io/template.revision': COMMON_TEMPLATES_REVISION,
       'vm.kubevirt.io/template.version': commonTemplateVersion(),
@@ -206,15 +267,11 @@ function getMetadata(
   };
   const urlSource = {
     http: {
-      url: basicVMConfig.sourceURL,
+      url: provisionSources.URL.source,
     },
   };
-  const kubevirtStorage = getResourceObject(
-    KUBEVIRT_STORAGE_CLASS_DEFAULTS,
-    KUBEVIRT_PROJECT_NAME,
-    'configMap',
-  );
   const dataVolumeTemplate = {
+    apiVersion: 'cdi.kubevirt.io/v1alpha1',
     metadata: {
       name: `${metadata.name}-rootdisk`,
     },
@@ -222,7 +279,6 @@ function getMetadata(
       pvc: {
         accessModes: [resolveStorageDataAttribute(kubevirtStorage, 'accessMode')],
         volumeMode: resolveStorageDataAttribute(kubevirtStorage, 'volumeMode'),
-        dataSource: null,
         resources: {
           requests: {
             storage: '1Gi',
@@ -241,7 +297,7 @@ function getMetadata(
   };
   const containerDisk = {
     containerDisk: {
-      image: basicVMConfig.sourceContainer,
+      image: provisionSources.Container.source,
     },
     name: 'rootdisk',
   };
@@ -387,7 +443,7 @@ export function getVMManifest(
         metadata: {
           labels: {
             'kubevirt.io/domain': metadata.name,
-            'kubevirt.io/size': basicVMConfig.flavorConfig.flavor,
+            'kubevirt.io/size': Flavor.TINY,
             'vm.kubevirt.io/name': metadata.name,
           },
         },
@@ -413,3 +469,4 @@ export const datavolumeClonerClusterRole = {
     },
   ],
 };
+deepFreeze(datavolumeClonerClusterRole);

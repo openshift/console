@@ -21,10 +21,11 @@ import {
   hddDisk,
   multusNetworkInterface,
   getVMManifest,
-  basicVMConfig,
   defaultWizardPodNetworkingInterface,
   defaultYAMLPodNetworkingInterface,
-} from './utils/mocks';
+  provisionSources,
+  flavorConfigs,
+} from './mocks/mocks';
 import {
   getSelectOptions,
   getRandomMacAddress,
@@ -35,17 +36,13 @@ import {
 import {
   VM_BOOTUP_TIMEOUT_SECS,
   VM_ACTIONS_TIMEOUT_SECS,
-  TAB,
-  VM_ACTION,
-  NIC_MODEL,
-  NIC_TYPE,
-  DISK_SOURCE,
-  networkTabCol,
   DEFAULT_YAML_VM_NAME,
-} from './utils/consts';
+} from './utils/constants/common';
+import { VM_ACTION, NIC_MODEL, NIC_TYPE, networkTabCol } from './utils/constants/vm';
 import { VirtualMachine } from './models/virtualMachine';
 import { Wizard } from './models/wizard';
 import { NetworkInterfaceDialog } from './dialogs/networkInterfaceDialog';
+import { OperatingSystem, Workload } from './utils/constants/wizard';
 
 describe('Add/remove disks and NICs on respective VM pages', () => {
   const testVm = getVMManifest('Container', testName, `vm-disk-nic-${testName}`);
@@ -63,13 +60,13 @@ describe('Add/remove disks and NICs on respective VM pages', () => {
     'ID(CNV-1502) Add/remove disk on VM disks page',
     async () => {
       await vm.addDisk(hddDisk);
-      expect(await vm.getAttachedDisks()).toContain(hddDisk);
-      await vm.action(VM_ACTION.Start);
+      expect(await vm.hasDisk(hddDisk)).toBeTruthy();
+      await vm.detailViewAction(VM_ACTION.Start);
       const vmi = getResourceObject(vm.name, vm.namespace, 'VirtualMachineInstance');
       expect(_.find(getVMIDisks(vmi), (o) => o.name === hddDisk.name)).toBeDefined();
-      await vm.action(VM_ACTION.Stop);
+      await vm.detailViewAction(VM_ACTION.Stop);
       await vm.removeDisk(hddDisk.name);
-      expect(await vm.getAttachedDisks()).not.toContain(hddDisk);
+      expect(await vm.hasDisk(hddDisk)).not.toBeTruthy();
     },
     VM_ACTIONS_TIMEOUT_SECS,
   );
@@ -78,14 +75,14 @@ describe('Add/remove disks and NICs on respective VM pages', () => {
     'ID(CNV-1501) Add/remove nic on VM Network Interfaces page',
     async () => {
       await vm.addNIC(multusNetworkInterface);
-      expect(await vm.getAttachedNICs()).toContain(multusNetworkInterface);
-      await vm.action(VM_ACTION.Start);
+      expect(await vm.hasNIC(multusNetworkInterface)).toBeTruthy();
+      await vm.detailViewAction(VM_ACTION.Start);
       expect(
         _.find(getInterfaces(vm.getResource()), (o) => o.name === multusNetworkInterface.name),
       ).toBeDefined();
-      await vm.action(VM_ACTION.Stop);
+      await vm.detailViewAction(VM_ACTION.Stop);
       await vm.removeNIC(multusNetworkInterface.name);
-      expect(await vm.getAttachedNICs()).not.toContain(multusNetworkInterface);
+      expect(await vm.hasNIC(multusNetworkInterface)).not.toBeTruthy();
     },
     VM_ACTIONS_TIMEOUT_SECS,
   );
@@ -102,19 +99,19 @@ describe('Add/remove disks and NICs on respective VM pages', () => {
       };
       await vm.addNIC(multusNetworkInterface);
       await vm.addNIC(secondMultusInterface);
-      expect(await vm.getAttachedNICs()).toContain(multusNetworkInterface);
-      expect(await vm.getAttachedNICs()).toContain(secondMultusInterface);
-      await vm.action(VM_ACTION.Start);
+      expect(await vm.hasNIC(multusNetworkInterface)).toBeTruthy();
+      expect(await vm.hasNIC(secondMultusInterface)).toBeTruthy();
+      await vm.detailViewAction(VM_ACTION.Start);
       const vmInterfaces = _.filter(
         getInterfaces(vm.getResource()),
         (o) => o.name === multusNetworkInterface.name || o.name === secondMultusInterface.name,
       );
       expect(vmInterfaces.length).toEqual(2);
-      await vm.action(VM_ACTION.Stop);
+      await vm.detailViewAction(VM_ACTION.Stop);
       await vm.removeNIC(multusNetworkInterface.name);
       await vm.removeNIC(secondMultusInterface.name);
-      expect(await vm.getAttachedNICs()).not.toContain(multusNetworkInterface);
-      expect(await vm.getAttachedNICs()).not.toContain(secondMultusInterface);
+      expect(await vm.hasNIC(multusNetworkInterface)).not.toBeTruthy();
+      expect(await vm.hasNIC(secondMultusInterface)).not.toBeTruthy();
     },
     VM_ACTIONS_TIMEOUT_SECS,
   );
@@ -141,13 +138,10 @@ describe('Test network type presets and options', () => {
 
     await wizard.fillName(getRandStr(5));
     await wizard.fillDescription(testName);
-    await wizard.selectProvisionSource({
-      method: DISK_SOURCE.Container,
-      source: basicVMConfig.sourceContainer,
-    });
-    await wizard.selectOperatingSystem(basicVMConfig.operatingSystem);
-    await wizard.selectFlavor(basicVMConfig.flavorConfig);
-    await wizard.selectWorkloadProfile(basicVMConfig.workloadProfile);
+    await wizard.selectProvisionSource(provisionSources.Container);
+    await wizard.selectOperatingSystem(OperatingSystem.RHEL7);
+    await wizard.selectFlavor(flavorConfigs.Tiny);
+    await wizard.selectWorkloadProfile(Workload.DESKTOP);
     await wizard.next();
 
     // Default type for Pod Networking NIC is masquerade
@@ -172,7 +166,7 @@ describe('Test network type presets and options', () => {
     const vm = new VirtualMachine({ name: DEFAULT_YAML_VM_NAME, namespace: testName });
     const NICDialog = new NetworkInterfaceDialog();
     await withResource(leakedResources, vm.asResource(), async () => {
-      await vm.navigateToTab(TAB.NetworkInterfaces);
+      await vm.navigateToNICs();
 
       expect(
         _.findIndex(await vm.getAttachedNICs(), (x) => {

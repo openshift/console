@@ -21,7 +21,7 @@ export const templateSelect = $('#template-dropdown');
 export const provisionSourceSelect = $('#image-source-type-dropdown');
 const provisionSourceURL = $('#provision-source-url');
 const provisionSourceContainerImage = $('#provision-source-container');
-export const provisionSources = {
+export const provisionSourceInputs = {
   URL: provisionSourceURL,
   Container: provisionSourceContainerImage,
 };
@@ -80,8 +80,9 @@ export const clickKebabAction = async (resourceName: string, actionLabel: string
   await click(actionForLabel(actionLabel));
 };
 
-export const tableRowAttribute = async (dataId: string, columnIndex: number): Promise<string> => {
-  return $(`tr[data-id="${dataId}"]`)
+export const tableRow = (name: string) => $(`tr[data-id="${name}"]`);
+export const tableRowAttribute = async (name: string, columnIndex: number): Promise<string> => {
+  return tableRow(name)
     .$$('td')
     .get(columnIndex)
     .getText();

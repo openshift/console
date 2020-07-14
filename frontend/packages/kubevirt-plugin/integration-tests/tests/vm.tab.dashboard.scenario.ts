@@ -7,20 +7,16 @@ import {
   waitForStringInElement,
 } from '@console/shared/src/test-utils/utils';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
-import { getVMManifest, hddDisk, multusNetworkInterface, multusNAD } from './utils/mocks';
+import { getVMManifest, hddDisk, multusNetworkInterface, multusNAD } from './mocks/mocks';
 import { VirtualMachine } from './models/virtualMachine';
 import {
   JASMINE_EXTENDED_TIMEOUT_INTERVAL,
   NOT_AVAILABLE,
   PAGE_LOAD_TIMEOUT_SECS,
-  TAB,
-  VM_ACTION,
-  VM_STATUS,
-  VM_BOOTUP_TIMEOUT_SECS,
   VM_CREATE_AND_EDIT_AND_CLOUDINIT_TIMEOUT_SECS,
   VM_IMPORT_TIMEOUT_SECS,
-  VM_STOP_TIMEOUT_SECS,
-} from './utils/consts';
+} from './utils/constants/common';
+import { VM_STATUS } from './utils/constants/vm';
 import * as dashboardView from '../views/dashboard.view';
 
 describe('Test VM dashboard', () => {
@@ -64,7 +60,7 @@ describe('Test VM dashboard', () => {
 
     await vm.addDisk(hddDisk);
     await vm.addNIC(multusNetworkInterface);
-    await vm.navigateToTab(TAB.Overview);
+    await vm.navigateToOverview();
 
     expect(dashboardView.vmInventoryNICs.getText()).toEqual('2 NICs');
     expect(dashboardView.vmInventoryDisks.getText()).toEqual('3 Disks');
@@ -80,8 +76,8 @@ describe('Test VM dashboard', () => {
       await vm.navigateToOverview();
       expect(dashboardView.vmStatus.getText()).toEqual(VM_STATUS.Off);
 
-      await vm.action(VM_ACTION.Start, true, VM_BOOTUP_TIMEOUT_SECS);
-      await vm.navigateToTab(TAB.Overview);
+      await vm.start();
+      await vm.navigateToOverview();
       expect(dashboardView.vmStatus.getText()).toEqual(VM_STATUS.Running);
       await browser.wait(until.stalenessOf(dashboardView.vmStatusAlert));
     },
@@ -104,8 +100,8 @@ describe('Test VM dashboard', () => {
       new RegExp(`.*/k8s/ns/${vm.namespace}/${VirtualMachineModel.plural}/${vm.name}/details`),
     );
 
-    await vm.action(VM_ACTION.Stop, true, VM_STOP_TIMEOUT_SECS);
-    await vm.navigateToTab(TAB.Overview);
+    await vm.stop();
+    await vm.navigateToOverview();
 
     expect(dashboardView.vmDetailsNode.getText()).toEqual(NOT_AVAILABLE);
     expect(dashboardView.vmDetailsIPAddress.getText()).toEqual(NOT_AVAILABLE);
@@ -122,8 +118,8 @@ describe('Test VM dashboard', () => {
       expect(dashboardView.vmUtilizationItemUsage(0).getText()).toContain(NOT_AVAILABLE);
       expect(dashboardView.vmUtilizationItemMetrics(0).getText()).toContain('No datapoints found');
 
-      await vm.action(VM_ACTION.Start, true, VM_BOOTUP_TIMEOUT_SECS);
-      await vm.navigateToTab(TAB.Overview);
+      await vm.start();
+      await vm.navigateToOverview();
       expect(dashboardView.vmStatus.getText()).toEqual(VM_STATUS.Running);
       // CPU metrics takes very long time to show up
       await browser.wait(

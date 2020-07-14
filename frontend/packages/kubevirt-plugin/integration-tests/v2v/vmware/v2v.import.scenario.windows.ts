@@ -1,7 +1,8 @@
 import { withResource } from '@console/shared/src/test-utils/utils';
-import { V2V_VM_IMPORT_TIMEOUT, VM_STATUS } from '../../tests/utils/consts';
 import { vmwareWindowsVMConfig } from './v2v.configs';
 import { VmwareImportWizard } from '../../tests/models/vmwareImportWizard';
+import { VM_STATUS } from '../../tests/utils/constants/vm';
+import { V2V_VM_IMPORT_TIMEOUT } from '../../tests/utils/constants/common';
 
 describe('Kubevirt import Windows 10 VM using wizard', () => {
   const leakedResources = new Set<string>();

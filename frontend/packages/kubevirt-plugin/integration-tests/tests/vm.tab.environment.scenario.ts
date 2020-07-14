@@ -1,9 +1,10 @@
-import { getSecret, getConfigMap, getServiceAccount } from './utils/mocks';
-import { click, createResources, deleteResources } from '@console/shared/src/test-utils/utils';
+import { execSync } from 'child_process';
 import { browser, ExpectedConditions as until, Key } from 'protractor';
+import { click, createResources, deleteResources } from '@console/shared/src/test-utils/utils';
 import { createExampleVMViaYAML } from './utils/utils';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
+import { getSecret, getConfigMap, getServiceAccount } from './mocks/mocks';
 import { saveButton } from '../views/kubevirtUIResource.view';
 import * as vmEnv from '../views/vm.environment.view';
 import { addVariableFrom } from '@console/internal-integration-tests/views/environment.view';
@@ -11,10 +12,9 @@ import {
   PAGE_LOAD_TIMEOUT_SECS,
   KUBEVIRT_SCRIPTS_PATH,
   VM_BOOTUP_TIMEOUT_SECS,
-  VM_ACTION,
-} from './utils/consts';
-import { execSync } from 'child_process';
+} from './utils/constants/common';
 import { VirtualMachine } from './models/virtualMachine';
+import { VM_ACTION } from './utils/constants/vm';
 
 const environmentExpecScriptPath = `${KUBEVIRT_SCRIPTS_PATH}/expect-vm-env-readable.sh`;
 const configmapName = 'configmap-mock';
@@ -62,13 +62,13 @@ describe('Test VM enviromnet tab', () => {
   it(
     'ID(CNV-4185) Verify all sources are readable inside the VM',
     async () => {
-      await vm.action(VM_ACTION.Start);
+      await vm.detailViewAction(VM_ACTION.Start);
       const out = execSync(
         `expect ${environmentExpecScriptPath} ${vm.name} ${vm.namespace}`,
       ).toString();
       const isFailedTest = out.split('\n').find((line) => line === 'FAILED');
       expect(!isFailedTest).toBeTruthy();
-      await vm.action(VM_ACTION.Stop);
+      await vm.detailViewAction(VM_ACTION.Stop);
     },
     VM_BOOTUP_TIMEOUT_SECS * 2, // VM boot time + test sources time
   );

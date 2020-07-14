@@ -1,5 +1,5 @@
 import { $, $$, element, by, browser, ExpectedConditions as until, Key } from 'protractor';
-import { PAGE_LOAD_TIMEOUT_SECS } from '../tests/utils/consts';
+import { PAGE_LOAD_TIMEOUT_SECS } from '../tests/utils/constants/common';
 
 export const consoleTypeSelectorId = '#console-type-selector';
 export const consoleTypeSelector = $(consoleTypeSelectorId);

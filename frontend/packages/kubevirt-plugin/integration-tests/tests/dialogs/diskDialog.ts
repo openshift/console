@@ -2,8 +2,8 @@ import { click, fillInput } from '@console/shared/src/test-utils/utils';
 import { selectOptionByText, getSelectedOptionText, getSelectOptions } from '../utils/utils';
 import * as view from '../../views/dialogs/diskDialog.view';
 import { modalSubmitButton, saveButton } from '../../views/kubevirtUIResource.view';
-import { StorageResource, DiskSourceConfig } from '../utils/types';
-import { diskAccessMode, DISK_SOURCE } from '../utils/consts';
+import { Disk, DiskSourceConfig } from '../types/types';
+import { diskAccessMode, DISK_SOURCE } from '../utils/constants/vm';
 import { waitForNoLoaders, modalCancelButton } from '../../views/wizard.view';
 import { browser, ExpectedConditions as until, $ } from 'protractor';
 
@@ -95,7 +95,7 @@ export class DiskDialog {
     return getSelectOptions(view.diskInterface);
   }
 
-  async create(disk: StorageResource) {
+  async create(disk: Disk) {
     await waitForNoLoaders();
     await selectOptionByText(view.diskSource, disk.source || DISK_SOURCE.Blank);
     if (this.sourceMethods[disk.source] !== undefined) {
@@ -114,7 +114,7 @@ export class DiskDialog {
     await waitForNoLoaders();
   }
 
-  async edit(disk: StorageResource) {
+  async edit(disk: Disk) {
     await this.fillName(disk.name);
     await this.selectInterface(disk.interface);
     await this.selectStorageClass(disk.storageClass);

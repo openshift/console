@@ -12,19 +12,17 @@ import {
   waitForCount,
   click,
 } from '@console/shared/src/test-utils/utils';
-import { getVMManifest } from './utils/mocks';
+import { getVMManifest } from './mocks/mocks';
 import { pauseVM } from './utils/utils';
 import {
   VM_BOOTUP_TIMEOUT_SECS,
   VM_ACTIONS_TIMEOUT_SECS,
   PAGE_LOAD_TIMEOUT_SECS,
-  VM_ACTION,
-  TAB,
   VM_IMPORT_TIMEOUT_SECS,
-  VM_STATUS,
-} from './utils/consts';
+} from './utils/constants/common';
 import { VirtualMachine } from './models/virtualMachine';
 import { unpauseButton } from '../views/dialogs/editStatusView';
+import { VM_STATUS, VM_ACTION } from './utils/constants/vm';
 
 describe('Test VM actions', () => {
   const leakedResources = new Set<string>();
@@ -97,14 +95,13 @@ describe('Test VM actions', () => {
       testVM.metadata.name = vmName;
       createResource(testVM);
       addLeakableResource(leakedResources, testVM);
-      await vm.navigateToTab(TAB.Details);
       await vm.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
     }, VM_IMPORT_TIMEOUT_SECS);
 
     it(
       'ID(CNV-4017) Starts VM',
       async () => {
-        await vm.action(VM_ACTION.Start);
+        await vm.detailViewAction(VM_ACTION.Start);
       },
       VM_BOOTUP_TIMEOUT_SECS,
     );
@@ -112,7 +109,7 @@ describe('Test VM actions', () => {
     it(
       'ID(CNV-4018) Restarts VM',
       async () => {
-        await vm.action(VM_ACTION.Restart);
+        await vm.detailViewAction(VM_ACTION.Restart);
       },
       VM_ACTIONS_TIMEOUT_SECS,
     );
@@ -121,7 +118,7 @@ describe('Test VM actions', () => {
       'ID(CNV-1794) Unpauses VM',
       async () => {
         pauseVM(vmName, testName);
-        await vm.action(VM_ACTION.Unpause);
+        await vm.detailViewAction(VM_ACTION.Unpause);
       },
       VM_ACTIONS_TIMEOUT_SECS,
     );
@@ -136,11 +133,11 @@ describe('Test VM actions', () => {
     });
 
     it('ID(CNV-4020) Stops VM', async () => {
-      await vm.action(VM_ACTION.Stop);
+      await vm.detailViewAction(VM_ACTION.Stop);
     });
 
     it('ID(CNV-4021) Deletes VM', async () => {
-      await vm.action(VM_ACTION.Delete, false);
+      await vm.detailViewAction(VM_ACTION.Delete, false);
       await vm.navigateToListView();
       await browser.wait(until.and(waitForCount(resourceRows, 0)), PAGE_LOAD_TIMEOUT_SECS);
       removeLeakableResource(leakedResources, testVM);

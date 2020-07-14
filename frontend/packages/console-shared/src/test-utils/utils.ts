@@ -149,6 +149,9 @@ export const waitForCount = (elementArrayFinder: any, targetCount: number) => {
 
 export const waitForStringInElement = (elem: any, needle: string) => {
   return async () => {
+    if (!(await elem.isPresent())) {
+      return false;
+    }
     const content = await elem.getText();
     return content.includes(needle);
   };
@@ -156,6 +159,9 @@ export const waitForStringInElement = (elem: any, needle: string) => {
 
 export const waitForStringNotInElement = (elem: any, needle: string) => {
   return async () => {
+    if (!(await elem.isPresent())) {
+      return false;
+    }
     const content = await elem.getText();
     return !content.includes(needle);
   };

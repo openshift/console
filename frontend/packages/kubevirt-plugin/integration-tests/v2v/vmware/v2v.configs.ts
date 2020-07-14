@@ -1,9 +1,9 @@
-import { VMImportConfig, InstanceConfig } from '../../tests/utils/types';
+import { InstanceConfig, VMImportConfig } from '../../tests/types/types';
 import {
-  IMPORT_WIZARD_CONN_NAME_PREFIX,
   IMPORT_WIZARD_CONN_TO_NEW_INSTANCE,
-} from '../../tests/utils/consts';
-import { Flavor, OperatingSystem, WorkloadProfile } from '../../tests/utils/constants/wizard';
+  IMPORT_WIZARD_CONN_NAME_PREFIX,
+} from '../../tests/utils/constants/common';
+import { Workload, OperatingSystem, Flavor } from '../../tests/utils/constants/wizard';
 
 const { V2V_INSTANCE_HOSTNAME, V2V_INSTANCE_USERNAME, V2V_INSTANCE_PASSWORD } = process.env;
 
@@ -29,7 +29,7 @@ export const vmwareVMConfig: VMImportConfig = {
   provider: 'VMware',
   instanceConfig: newInstanceConfig,
   operatingSystem: OperatingSystem.RHEL7,
-  workloadProfile: WorkloadProfile.DESKTOP,
+  workloadProfile: Workload.DESKTOP,
 };
 
 export const vmwareVMMultiNicConfig: VMImportConfig = {
@@ -38,7 +38,7 @@ export const vmwareVMMultiNicConfig: VMImportConfig = {
   provider: 'VMware',
   instanceConfig: newInstanceConfig,
   operatingSystem: OperatingSystem.RHEL7,
-  workloadProfile: WorkloadProfile.SERVER,
+  workloadProfile: Workload.SERVER,
 };
 
 export const importConfigs = [vmwareVMConfig, vmwareVMMultiNicConfig];
@@ -50,7 +50,7 @@ export const vmware2VMsConfig1: VMImportConfig = {
   provider: 'VMware',
   instanceConfig: newInstanceConfig,
   operatingSystem: OperatingSystem.RHEL7,
-  workloadProfile: WorkloadProfile.SERVER,
+  workloadProfile: Workload.SERVER,
 };
 
 export const vmware2VMsConfig2: VMImportConfig = {
@@ -59,7 +59,7 @@ export const vmware2VMsConfig2: VMImportConfig = {
   provider: 'VMware',
   instanceConfig: exInstanceConfig,
   operatingSystem: OperatingSystem.RHEL7,
-  workloadProfile: WorkloadProfile.SERVER,
+  workloadProfile: Workload.SERVER,
 };
 
 // Config for migrating Windows 10 VM
@@ -72,14 +72,14 @@ export const vmwareWindowsVMConfig: VMImportConfig = {
   provider: 'VMware',
   instanceConfig: newInstanceConfig,
   operatingSystem: OperatingSystem.WINDOWS_10,
-  workloadProfile: WorkloadProfile.DESKTOP,
+  workloadProfile: Workload.DESKTOP,
 };
 
 // Configurations for importing VMs with different flavors and workload profiles
 const importedVmName = 'smal-rhel7-imported';
 const sourceVMName = 'smal-rhel7';
 
-function getFlavorConfig(currentFlavor: Flavor, currentProfile: WorkloadProfile) {
+function getFlavorConfig(currentFlavor: Flavor, currentProfile: Workload) {
   return {
     name: importedVmName,
     sourceVMName,
@@ -96,12 +96,7 @@ function getFlavorConfig(currentFlavor: Flavor, currentProfile: WorkloadProfile)
 export const flavorWorkloadConfigs = [];
 
 const flavors = [Flavor.TINY, Flavor.SMALL, Flavor.MEDIUM, Flavor.LARGE];
-
-const profiles = [
-  WorkloadProfile.DESKTOP,
-  WorkloadProfile.SERVER,
-  WorkloadProfile.HIGH_PERFORMANCE,
-];
+const profiles = [Workload.DESKTOP, Workload.SERVER, Workload.HIGH_PERFORMANCE];
 
 flavors.forEach((currentFlavor) => {
   profiles.forEach((currentProfile) => {

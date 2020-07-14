@@ -9,27 +9,21 @@ import {
   NOT_RECOMMENDED_BUS_TYPE_WARN,
   CHARACTERS_NOT_ALLOWED,
   SEC,
-} from './utils/consts';
-import {
-  Flavor,
-  OperatingSystem,
-  ProvisionConfigName,
-  WorkloadProfile,
-} from './utils/constants/wizard';
-import { vmNameHelper } from '../views/importWizard.view';
+} from './utils/constants/common';
+import { Flavor, OperatingSystem, Workload } from './utils/constants/wizard';
 import { Wizard } from './models/wizard';
-import { FlavorConfig } from './utils/types';
+import { FlavorConfig } from './types/types';
 import { customFlavorMemoryHintBlock, clickKebabAction, diskWarning } from '../views/wizard.view';
-import { getProvisionConfigs } from './vm.wizard.configs';
 import { getRandStr } from './utils/utils';
 import { diskInterfaceHelper } from '../views/dialogs/diskDialog.view';
 import { DiskDialog } from './dialogs/diskDialog';
 import { saveButton } from '../views/kubevirtUIResource.view';
+import { provisionSources } from './mocks/mocks';
+import { vmNameHelper } from '../views/importWizard.view';
 
 describe('Wizard validation', () => {
   const wizard = new Wizard();
   const diskDialog = new DiskDialog();
-  const provisionConfig = getProvisionConfigs().get(ProvisionConfigName.CONTAINER);
   const customFlavorNotEnoughMemory: FlavorConfig = {
     flavor: Flavor.CUSTOM,
     cpu: '1',
@@ -69,10 +63,10 @@ describe('Wizard validation', () => {
 
   it('ID(CNV-3698) Disk Dialog displays warning when interface not recommended', async () => {
     const WINDOWS_NOT_RECOMMENDED_INTERFACE = 'sata';
-    await wizard.selectProvisionSource(provisionConfig.provision);
+    await wizard.selectProvisionSource(provisionSources.Container);
     await wizard.selectOperatingSystem(OperatingSystem.WINDOWS_10);
     await wizard.selectFlavor(customFlavorSufficientMemory);
-    await wizard.selectWorkloadProfile(WorkloadProfile.DESKTOP);
+    await wizard.selectWorkloadProfile(Workload.DESKTOP);
     await wizard.fillName(getRandStr(5));
     await wizard.next();
     // Network tab
@@ -95,12 +89,13 @@ describe('Wizard validation', () => {
       PAGE_LOAD_TIMEOUT_SECS,
     );
   });
-  it('Checking that wizard shows warning when using incorrect VM name', async () => {
+
+  it('Import Wizard shows warning when using incorrect VM name', async () => {
     const WRONG_VM_NAME = 'VMNAME';
-    await wizard.selectProvisionSource(provisionConfig.provision);
+    await wizard.selectProvisionSource(provisionSources.Container);
     await wizard.selectOperatingSystem(OperatingSystem.WINDOWS_10);
     await wizard.selectFlavor(customFlavorSufficientMemory);
-    await wizard.selectWorkloadProfile(WorkloadProfile.DESKTOP);
+    await wizard.selectWorkloadProfile(Workload.DESKTOP);
     await wizard.fillName(WRONG_VM_NAME);
     await browser.wait(waitForStringInElement(vmNameHelper, CHARACTERS_NOT_ALLOWED), 2 * SEC);
   });

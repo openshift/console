@@ -1,53 +1,54 @@
 import * as _ from 'lodash';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
+import { getAnnotations, getLabels } from '../../src/selectors/selectors';
 import {
   removeLeakedResources,
   withResource,
   createResources,
   deleteResources,
 } from '@console/shared/src/test-utils/utils';
-import { getAnnotations, getLabels } from '../../src/selectors/selectors';
-import {
-  getResourceObject,
-  resolveStorageDataAttribute,
-  selectNonDefaultAccessMode,
-  selectNonDefaultVolumeMode,
-} from './utils/utils';
-import { Wizard } from './models/wizard';
 import {
   VM_BOOTUP_TIMEOUT_SECS,
   CLONE_VM_TIMEOUT_SECS,
-  VM_ACTION,
-  CLONED_VM_BOOTUP_TIMEOUT_SECS,
-  VM_STATUS,
-  commonTemplateVersion,
   COMMON_TEMPLATES_REVISION,
-  DISK_INTERFACE,
+  commonTemplateVersion,
   STORAGE_CLASS,
-} from './utils/consts';
-import { multusNAD, cdGuestTools, basicVMConfig } from './utils/mocks';
+  CLONED_VM_BOOTUP_TIMEOUT_SECS,
+} from './utils/constants/common';
 import {
-  vmConfig,
-  getProvisionConfigs,
+  multusNAD,
+  cdGuestTools,
+  flavorConfigs,
+  hddDisk,
+  provisionSources,
+  rootDisk,
   getTestDataVolume,
-  VMTestCaseIDs,
   kubevirtStorage,
-} from './vm.wizard.configs';
+  getDiskToCloneFrom,
+} from './mocks/mocks';
+import { ProvisionSource, Workload, OperatingSystem } from './utils/constants/wizard';
+import { vmPresets, getBasicVMBuilder } from './mocks/vmBuilderPresets';
+import { VMBuilder } from './models/vmBuilder';
 import {
-  Flavor,
-  OperatingSystem,
-  OSIDLookup,
-  ProvisionConfigName,
-  WorkloadProfile,
-} from './utils/constants/wizard';
+  resolveStorageDataAttribute,
+  getDataVolumeByPrefix,
+  selectNonDefaultAccessMode,
+  selectNonDefaultVolumeMode,
+} from './utils/utils';
+import { DISK_DRIVE, DISK_INTERFACE, VM_STATUS } from './utils/constants/vm';
 
 describe('Kubevirt create VM using wizard', () => {
   const leakedResources = new Set<string>();
-  const provisionConfigs = getProvisionConfigs();
   const testDataVolume = getTestDataVolume();
   const defaultAccessMode = resolveStorageDataAttribute(kubevirtStorage, 'accessMode');
   const defaultVolumeMode = resolveStorageDataAttribute(kubevirtStorage, 'volumeMode');
-  const wizard = new Wizard();
+
+  const VMTestCaseIDs = {
+    'ID(CNV-870)': vmPresets[ProvisionSource.CONTAINER],
+    'ID(CNV-2446)': vmPresets[ProvisionSource.DISK],
+    'ID(CNV-869)': vmPresets[ProvisionSource.URL],
+    'ID(CNV-771)': vmPresets[ProvisionSource.PXE],
+  };
 
   beforeAll(async () => {
     createResources([multusNAD, testDataVolume]);
@@ -61,31 +62,30 @@ describe('Kubevirt create VM using wizard', () => {
     removeLeakedResources(leakedResources);
   });
 
-  provisionConfigs.forEach((provisionConfig, configName) => {
+  for (const [id, vm] of Object.entries(VMTestCaseIDs)) {
+    const { method } = vm.getData().provisionSource;
     const specTimeout =
-      configName === ProvisionConfigName.DISK ? CLONE_VM_TIMEOUT_SECS : VM_BOOTUP_TIMEOUT_SECS;
+      method === ProvisionSource.DISK ? CLONE_VM_TIMEOUT_SECS : VM_BOOTUP_TIMEOUT_SECS;
     it(
-      `${VMTestCaseIDs[configName]} Create VM using ${configName}.`,
+      `${id} Create VM using ${method}.`,
       async () => {
-        const vm = await wizard.createVirtualMachine(
-          vmConfig(configName.toLowerCase(), testName, provisionConfig),
-        );
         await withResource(leakedResources, vm.asResource(), async () => {
+          await vm.create();
           await vm.navigateToDetail();
         });
       },
       specTimeout,
     );
-  });
+  }
 
   it('ID(CNV-3657) Creates VM with CD ROM added in Wizard', async () => {
-    const vmName = 'vm-with-cdrom';
-    const provisionConfig = provisionConfigs.get(ProvisionConfigName.CONTAINER);
-    provisionConfig.CDRoms = [cdGuestTools];
-    const vm = await wizard.createVirtualMachine(
-      vmConfig(vmName, testName, provisionConfig, basicVMConfig, false),
-    );
+    const vm = new VMBuilder(getBasicVMBuilder())
+      .setProvisionSource(provisionSources.Container)
+      .setDisks([cdGuestTools])
+      .build();
+
     await withResource(leakedResources, vm.asResource(), async () => {
+      await vm.create();
       await vm.navigateToDetail();
     });
   });
@@ -93,20 +93,17 @@ describe('Kubevirt create VM using wizard', () => {
   it(
     'ID(CNV-2039) Creates windows 10 VM with correct metadata',
     async () => {
-      const testVMConfig = vmConfig(
-        'windows10',
-        testName,
-        provisionConfigs.get(ProvisionConfigName.CONTAINER),
-        _.cloneDeep(basicVMConfig),
-      );
-      testVMConfig.networkResources = [];
-      testVMConfig.operatingSystem = OperatingSystem.WINDOWS_10;
-      testVMConfig.flavorConfig.flavor = Flavor.MEDIUM;
-      testVMConfig.workloadProfile = WorkloadProfile.DESKTOP;
-      testVMConfig.startOnCreation = false; // do not check as there is only medium/large profile present and we would get insufficient memory.
-      const osID = OSIDLookup[testVMConfig.operatingSystem];
+      const builder = new VMBuilder()
+        .setNamespace(testName)
+        .setProvisionSource(provisionSources.Container)
+        .setOS(OperatingSystem.WINDOWS_10)
+        .setFlavor(flavorConfigs.Medium)
+        .setWorkload(Workload.DESKTOP)
+        .setDisks([hddDisk]);
+      const vm = builder.build();
+      const osID = builder.getOSID();
 
-      const vm = await wizard.createVirtualMachine(testVMConfig);
+      await vm.create();
       const vmResource = vm.getResource();
       await withResource(leakedResources, vmResource, async () => {
         const annotations = getAnnotations(vmResource);
@@ -118,14 +115,16 @@ describe('Kubevirt create VM using wizard', () => {
         const requiredAnnotations = {
           [`name.os.template.kubevirt.io/${osID}`]: OperatingSystem.WINDOWS_10,
         };
-
         const requiredLabels = {
-          [`workload.template.kubevirt.io/${testVMConfig.workloadProfile}`]: 'true',
+          [`workload.template.kubevirt.io/${vm.getData().workload}`]: 'true',
           [`os.template.kubevirt.io/${osID}`]: 'true',
-          'vm.kubevirt.io/template': `windows10-${testVMConfig.workloadProfile.toLowerCase()}-${testVMConfig.flavorConfig.flavor.toLowerCase()}-${commonTemplateVersion()}`,
+          'vm.kubevirt.io/template': `windows10-${vm
+            .getData()
+            .workload.toLowerCase()}-${vm
+            .getData()
+            .flavor.flavor.toLowerCase()}-${commonTemplateVersion()}`,
           'vm.kubevirt.io/template.revision': COMMON_TEMPLATES_REVISION,
         };
-
         expect(_.pick(annotations, Object.keys(requiredAnnotations))).toEqual(requiredAnnotations);
         expect(_.pick(labels, Object.keys(requiredLabels))).toEqual(requiredLabels);
       });
@@ -139,19 +138,15 @@ describe('Kubevirt create VM using wizard', () => {
       expect(defaultAccessMode).toBeDefined();
       expect(defaultVolumeMode).toBeDefined();
 
-      const testVMConfig = vmConfig(
-        'test-dv',
-        testName,
-        provisionConfigs.get(ProvisionConfigName.URL),
-      );
-      testVMConfig.networkResources = [];
-      const vm = await wizard.createVirtualMachine(testVMConfig);
-
+      const vm = new VMBuilder(getBasicVMBuilder())
+        .setProvisionSource(provisionSources.URL)
+        .setDisks([rootDisk])
+        .build();
       await withResource(leakedResources, vm.asResource(), async () => {
-        const vmDataVolume = getResourceObject(`${vm.name}-rootdisk`, vm.namespace, 'dv');
-
-        expect(vmDataVolume.spec.pvc.accessModes[0]).toEqual(defaultAccessMode);
-        expect(vmDataVolume.spec.pvc.volumeMode).toEqual(defaultVolumeMode);
+        await vm.create();
+        const dv = getDataVolumeByPrefix(`${vm.name}-${rootDisk.name}`);
+        expect(dv.spec.pvc.accessModes[0]).toEqual(defaultAccessMode);
+        expect(dv.spec.pvc.volumeMode).toEqual(defaultVolumeMode);
       });
     },
     VM_BOOTUP_TIMEOUT_SECS,
@@ -164,10 +159,10 @@ describe('Kubevirt create VM using wizard', () => {
       expect(defaultVolumeMode).toBeDefined();
       const expectedAccessMode = selectNonDefaultAccessMode(defaultAccessMode).value;
       const expectedVolumeMode = selectNonDefaultVolumeMode(defaultVolumeMode);
-
       const customAccessVolumeRootDisk = {
         name: 'rootdisk',
         size: '1',
+        drive: DISK_DRIVE.Disk,
         interface: DISK_INTERFACE.VirtIO,
         storageClass: `${STORAGE_CLASS}`,
         advanced: {
@@ -175,24 +170,17 @@ describe('Kubevirt create VM using wizard', () => {
           volumeMode: expectedVolumeMode,
         },
       };
-      const testVMConfig = vmConfig('test-dv', testName, {
-        provision: {
-          method: ProvisionConfigName.URL,
-          source: basicVMConfig.sourceURL,
-        },
-        storageResources: [customAccessVolumeRootDisk],
-        networkResources: [],
-      });
-      // Do not attempt to start or wait for import as it's likely the created PVC won't bind
-      testVMConfig.startOnCreation = false;
-      testVMConfig.waitForDiskImport = false;
 
-      const vm = await wizard.createVirtualMachine(testVMConfig);
+      // Do not attempt to start or wait for disks to import as it's likely the created PVC won't bind
+      const vm = new VMBuilder(getBasicVMBuilder())
+        .setProvisionSource(provisionSources.URL)
+        .setDisks([customAccessVolumeRootDisk])
+        .build();
       await withResource(leakedResources, vm.asResource(), async () => {
-        const vmDataVolume = getResourceObject(`${vm.name}-rootdisk`, vm.namespace, 'dv');
-
-        expect(vmDataVolume.spec.pvc.accessModes[0]).toEqual(expectedAccessMode);
-        expect(vmDataVolume.spec.pvc.volumeMode).toEqual(expectedVolumeMode);
+        await vm.create();
+        const dv = getDataVolumeByPrefix(`${vm.name}-${customAccessVolumeRootDisk.name}`);
+        expect(dv.spec.pvc.accessModes[0]).toEqual(expectedAccessMode);
+        expect(dv.spec.pvc.volumeMode).toEqual(expectedVolumeMode);
       });
     },
     VM_BOOTUP_TIMEOUT_SECS,
@@ -201,27 +189,31 @@ describe('Kubevirt create VM using wizard', () => {
   it(
     'ID(CNV-2447) Multiple VMs created using "Cloned Disk" method from single source',
     async () => {
-      const clonedDiskProvisionConfig = provisionConfigs.get(ProvisionConfigName.DISK);
-      const vm1Config = vmConfig('vm1', testName, clonedDiskProvisionConfig);
-      const vm2Config = vmConfig('vm2', testName, clonedDiskProvisionConfig);
-      vm1Config.startOnCreation = false;
-      vm1Config.networkResources = [];
+      const vm1 = new VMBuilder(getBasicVMBuilder())
+        .setProvisionSource(provisionSources.Disk)
+        .setDisks([getDiskToCloneFrom()])
+        .generateNameForPrefix('vm1')
+        .build();
 
-      const vm1 = await wizard.createVirtualMachine(vm1Config);
+      const vm2 = new VMBuilder(getBasicVMBuilder())
+        .setProvisionSource(provisionSources.Disk)
+        .setDisks([getDiskToCloneFrom()])
+        .setStartOnCreation(true)
+        .setWaitForImport(true)
+        .generateNameForPrefix('vm2')
+        .build();
+
+      await vm1.create();
       await withResource(leakedResources, vm1.asResource(), async () => {
         // Don't wait for the first VM to be running
-        await vm1.action(VM_ACTION.Start, false);
-        const vm2 = await wizard.createVirtualMachine(vm2Config);
+        await vm1.start(false);
+        await vm2.create();
         await withResource(leakedResources, vm2.asResource(), async () => {
           // Come back to the first VM and verify it is Running as well
           await vm1.waitForStatus(VM_STATUS.Running, CLONED_VM_BOOTUP_TIMEOUT_SECS);
           // Verify that DV of VM created with Cloned disk method points to correct PVC
-          const dvResource = getResourceObject(
-            `${vm1.name}-${testDataVolume.metadata.name}`,
-            vm1.namespace,
-            'dv',
-          );
-          const pvcSource = _.get(dvResource, 'spec.source.pvc', {});
+          const dv = getDataVolumeByPrefix(`${vm1.name}-${testDataVolume.metadata.name}`);
+          const pvcSource = _.get(dv, 'spec.source.pvc', {});
           expect(pvcSource).toEqual({
             name: testDataVolume.metadata.name,
             namespace: testDataVolume.metadata.namespace,

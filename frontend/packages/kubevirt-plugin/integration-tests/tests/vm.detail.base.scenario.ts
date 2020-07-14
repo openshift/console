@@ -3,11 +3,13 @@ import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { resourceTitle } from '@console/internal-integration-tests/views/crud.view';
 import { asyncForEach, createResource, deleteResource } from '@console/shared/src/test-utils/utils';
 import * as vmView from '../views/virtualMachine.view';
-import { getVMManifest, basicVMConfig } from './utils/mocks';
+import { getVMManifest } from './mocks/mocks';
 import { exposeServices } from './utils/utils';
 import { VirtualMachine } from './models/virtualMachine';
-import { TAB, VM_BOOTUP_TIMEOUT_SECS, VM_ACTION, VM_STATUS, NOT_AVAILABLE } from './utils/consts';
-import { NodePortService } from './utils/types';
+import { VM_BOOTUP_TIMEOUT_SECS, NOT_AVAILABLE } from './utils/constants/common';
+import { VM_STATUS } from './utils/constants/vm';
+import { NodePortService } from './types/types';
+import { OperatingSystem, Workload } from './utils/constants/wizard';
 
 describe('Test VM overview', () => {
   const vmName = `vm-${testName}`;
@@ -45,7 +47,7 @@ describe('Test VM overview', () => {
   });
 
   beforeEach(async () => {
-    await vm.navigateToTab(TAB.Details);
+    await vm.navigateToDetail();
   });
 
   it('ID(CNV-763) Check VM details in overview when VM is off', async () => {
@@ -53,8 +55,8 @@ describe('Test VM overview', () => {
       name: vmName,
       status: VM_STATUS.Off,
       description: testName,
-      os: basicVMConfig.operatingSystem,
-      profile: basicVMConfig.workloadProfile,
+      os: OperatingSystem.RHEL7,
+      profile: Workload.DESKTOP,
       template: NOT_AVAILABLE,
       bootOrder: ['rootdisk (Disk)', 'nic-0 (NIC)', 'cloudinitdisk (Disk)'],
       flavorConfig: 'Tiny: 1 vCPU, 1 GiB Memory',
@@ -88,7 +90,7 @@ describe('Test VM overview', () => {
   it(
     'ID(CNV-4037) Check VM details in overview when VM is running',
     async () => {
-      await vm.action(VM_ACTION.Start);
+      await vm.start();
       // Empty fields turn into non-empty
       expect(await vmView.vmDetailIP(testName, vmName).getText()).not.toEqual(NOT_AVAILABLE);
       expect(

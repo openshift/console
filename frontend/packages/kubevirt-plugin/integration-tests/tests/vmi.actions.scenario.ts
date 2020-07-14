@@ -8,14 +8,10 @@ import {
   removeLeakableResource,
   waitForCount,
 } from '@console/shared/src/test-utils/utils';
-import { getVMIManifest } from './utils/mocks';
-import {
-  VM_DELETE_TIMEOUT_SECS,
-  VMI_ACTION,
-  VM_IMPORT_TIMEOUT_SECS,
-  VM_STATUS,
-} from './utils/consts';
+import { getVMIManifest } from './mocks/mocks';
+import { VM_DELETE_TIMEOUT_SECS, VM_IMPORT_TIMEOUT_SECS } from './utils/constants/common';
 import { VirtualMachineInstance } from './models/virtualMachineInstance';
+import { VM_STATUS, VMI_ACTION } from './utils/constants/vm';
 import { BaseVirtualMachine } from './models/baseVirtualMachine';
 
 const waitForVM = async (manifest: any, status: VM_STATUS, resourcesSet: Set<string>) => {

@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { browser, ExpectedConditions as until } from 'protractor';
 import { isLoaded, resourceTitle } from '@console/internal-integration-tests/views/crud.view';
 import { selectDropdownOption, resolveTimeout } from '@console/shared/src/test-utils/utils';
@@ -5,24 +6,41 @@ import { KubevirtUIResource } from './kubevirtUIResource';
 import {
   PAGE_LOAD_TIMEOUT_SECS,
   VM_BOOTUP_TIMEOUT_SECS,
-  VM_ACTION,
-  TAB,
   UNEXPECTED_ACTION_ERROR,
   VM_ACTIONS_TIMEOUT_SECS,
   VM_STOP_TIMEOUT_SECS,
-  VM_STATUS,
-  VMI_ACTION,
-} from '../utils/consts';
+} from '../utils/constants/common';
 import * as vmView from '../../views/virtualMachine.view';
 import { nameInput as cloneDialogNameInput } from '../../views/dialogs/cloneVirtualMachineDialog.view';
+import { TAB, VM_ACTION, VMI_ACTION, VM_STATUS } from '../utils/constants/vm';
+import { Disk, Network } from '../types/types';
+import { VMBuilderData } from '../types/vm';
 
-export class BaseVirtualMachine extends KubevirtUIResource {
+export class BaseVirtualMachine extends KubevirtUIResource<VMBuilderData> {
   async waitForStatus(status: string, timeout?: number) {
     await this.navigateToTab(TAB.Details);
     await browser.wait(
       until.textToBePresentInElement(vmView.vmDetailStatus(this.namespace, this.name), status),
       resolveTimeout(timeout, VM_BOOTUP_TIMEOUT_SECS),
     );
+  }
+
+  protected hasResource(resources, resource) {
+    const found = _.find(resources, (o) => o.name === resource.name);
+    if (found) {
+      return _.isEqual(found, _.pick(resource, Object.keys(found)));
+    }
+    return false;
+  }
+
+  async hasDisk(disk: Disk) {
+    const disks = await this.getAttachedDisks();
+    return this.hasResource(disks, disk);
+  }
+
+  async hasNIC(nic: Network) {
+    const nics = await this.getAttachedNICs();
+    return this.hasResource(nics, nic);
   }
 
   async getStatus(): Promise<string> {

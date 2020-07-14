@@ -10,9 +10,10 @@ import {
   vmInventoryNICs,
   vmInventoryDisks,
 } from '../views/dashboard.view';
-import { getVMIManifest } from './utils/mocks';
-import { VM_STATUS, NOT_AVAILABLE } from './utils/consts';
+import { getVMIManifest } from './mocks/mocks';
+import { NOT_AVAILABLE } from './utils/constants/common';
 import { VirtualMachineInstance } from './models/virtualMachineInstance';
+import { VM_STATUS } from './utils/constants/vm';
 
 const waitForVM = async (manifest: any, status: VM_STATUS) => {
   const vm = new VirtualMachineInstance(manifest.metadata);

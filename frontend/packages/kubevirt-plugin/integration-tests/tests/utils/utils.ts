@@ -18,15 +18,10 @@ import {
   saveButton,
   getEditorContent,
 } from '@console/internal-integration-tests/views/yaml.view';
-import {
-  STORAGE_CLASS,
-  PAGE_LOAD_TIMEOUT_SECS,
-  SEC,
-  diskAccessMode,
-  diskVolumeMode,
-} from './consts';
-import { NodePortService, Status } from './types';
+import { STORAGE_CLASS, PAGE_LOAD_TIMEOUT_SECS, SEC } from './constants/common';
+import { NodePortService, Status } from '../types/types';
 import { filterCount } from '../../views/vms.list.view';
+import { diskVolumeMode, diskAccessMode } from './constants/vm';
 
 export async function setCheckboxState(elem: any, targetState: boolean) {
   const checkboxState = await elem.isSelected();
@@ -197,4 +192,28 @@ export function getResourceUID(kind: string, name: string, namespace: string): s
   return execSync(
     `kubectl get --ignore-not-found ${kind} ${name} -n ${namespace} -o jsonpath='{.metadata.uid}'`,
   ).toString();
+}
+
+export const getDataVolumeByPrefix = (prefix: string) => {
+  const dvs = JSON.parse(execSync(`kubectl get dv -n ${testName} -ojson | jq '.items'`).toString());
+  return _.find(dvs, (dv) => dv.metadata.name.includes(prefix));
+};
+
+/*
+ * Function recursively freezes objects including inner objects
+ * Source: https://github.com/substack/deep-freeze/
+ */
+export function deepFreeze(o: {}) {
+  Object.freeze(o);
+  Object.getOwnPropertyNames(o).forEach(function(prop) {
+    if (
+      o.hasOwnProperty(prop) &&
+      o[prop] !== null &&
+      (typeof o[prop] === 'object' || typeof o[prop] === 'function') &&
+      !Object.isFrozen(o[prop])
+    ) {
+      deepFreeze(o[prop]);
+    }
+  });
+  return o;
 }

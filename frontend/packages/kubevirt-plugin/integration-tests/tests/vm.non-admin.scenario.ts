@@ -4,27 +4,21 @@ import { appHost, testName } from '@console/internal-integration-tests/protracto
 import * as loginView from '@console/internal-integration-tests/views/login.view';
 import {
   withResource,
-  fillInput,
   removeLeakedResources,
   waitForCount,
   removeLeakableResource,
 } from '@console/shared/src/test-utils/utils';
-import {
-  isLoaded,
-  textFilter,
-  resourceRows,
-} from '@console/internal-integration-tests/views/crud.view';
+import { isLoaded, resourceRows } from '@console/internal-integration-tests/views/crud.view';
 import { restrictedAccessBlock } from '../views/vms.list.view';
 import { createProject } from './utils/utils';
-import { vmConfig, getProvisionConfigs } from './vm.wizard.configs';
-import { ProvisionConfigName } from './utils/constants/wizard';
-import { Wizard } from './models/wizard';
 import {
-  VM_ACTION,
-  VM_STATUS,
   JASMINE_EXTENDED_TIMEOUT_INTERVAL,
   PAGE_LOAD_TIMEOUT_SECS,
-} from './utils/consts';
+} from './utils/constants/common';
+import { VM_STATUS, VM_ACTION } from './utils/constants/vm';
+import { VMBuilder } from './models/vmBuilder';
+import { getBasicVMBuilder } from './mocks/vmBuilderPresets';
+import { provisionSources, rootDisk } from './mocks/mocks';
 
 const testNonAdminNamespace = `${testName}-non-admin`;
 const KUBEADMIN_IDP = 'kube:admin';
@@ -38,19 +32,17 @@ const {
 
 describe('Kubevirt non-admin Flow', () => {
   const leakedResources = new Set<string>();
-  const wizard = new Wizard();
-  const configName = ProvisionConfigName.URL;
-  const provisionConfigs = getProvisionConfigs();
-  const provisionConfig = provisionConfigs.get(configName);
-  provisionConfig.networkResources = [];
-
-  const vm1Config = vmConfig(configName.toLowerCase(), testNonAdminNamespace, provisionConfig);
-  vm1Config.startOnCreation = false;
+  const vm = new VMBuilder(getBasicVMBuilder())
+    .setProvisionSource(provisionSources.URL)
+    .setDisks([rootDisk])
+    .build();
 
   beforeAll(async () => {
     await loginView.logout();
     await loginView.login(BRIDGE_HTPASSWD_IDP, BRIDGE_HTPASSWD_USERNAME, BRIDGE_HTPASSWD_PASSWORD);
     await createProject(testNonAdminNamespace);
+    await browser.get(`${appHost}/k8s/ns/${testNonAdminNamespace}/virtualization`);
+    await isLoaded();
   });
 
   afterAll(async () => {
@@ -63,7 +55,7 @@ describe('Kubevirt non-admin Flow', () => {
   it(
     'ID(CNV-1718) non-admin create and remove a vm',
     async () => {
-      const vm = await wizard.createVirtualMachine(vm1Config);
+      await vm.create();
       await withResource(
         leakedResources,
         vm.asResource(),
@@ -72,7 +64,6 @@ describe('Kubevirt non-admin Flow', () => {
           await vm.waitForStatus(VM_STATUS.Starting); // Just to make sure it is actually starting,
           await vm.action(VM_ACTION.Delete, false);
           await vm.navigateToListView();
-          await fillInput(textFilter, vm.name);
           await isLoaded();
           await browser.wait(until.and(waitForCount(resourceRows, 0)), PAGE_LOAD_TIMEOUT_SECS);
         },

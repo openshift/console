@@ -1,7 +1,8 @@
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { createResource, deleteResource } from '@console/shared/src/test-utils/utils';
-import { getVMManifest } from './utils/mocks';
-import { VM_STATUS, VM_ACTION, PAGE_LOAD_TIMEOUT_SECS } from './utils/consts';
+import { getVMManifest } from './mocks/mocks';
+import { PAGE_LOAD_TIMEOUT_SECS } from './utils/constants/common';
+import { VM_STATUS } from './utils/constants/vm';
 import { VirtualMachine } from './models/virtualMachine';
 import { filterCount } from '../views/vms.list.view';
 import { browser } from 'protractor';
@@ -32,7 +33,7 @@ describe('Test List View Filtering', () => {
   });
 
   it('ID(CNV-3616) Displays correct count of Running VMs', async () => {
-    await vm.action(VM_ACTION.Start);
+    await vm.start();
     await vm.navigateToListView();
     const runningCount = await filterCount(VM_STATUS.Running);
     expect(runningCount).toEqual(1);

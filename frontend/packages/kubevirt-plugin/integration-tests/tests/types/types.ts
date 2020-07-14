@@ -1,13 +1,14 @@
-import { DISK_SOURCE, POD_STATUS, VM_STATUS } from './consts';
-import { Flavor, OperatingSystem, WorkloadProfile } from './constants/wizard';
+import { DISK_SOURCE, DISK_DRIVE, VM_STATUS } from '../utils/constants/vm';
+import { Flavor, OperatingSystem, Workload } from '../utils/constants/wizard';
 import { K8sKind } from '@console/internal/module/k8s';
+import { POD_STATUS } from '../utils/constants/pod';
 
-export type ProvisionOption = {
+export type ProvisionSource = {
   method: string;
   source?: string;
 };
 
-export type NetworkResource = {
+export type Network = {
   name: string;
   model: string;
   mac: string;
@@ -22,17 +23,19 @@ export type DiskSourceConfig = {
   container?: string;
 };
 
-export type StorageResource = {
+export type Disk = {
   name?: string;
   size?: string;
-  storageClass: string;
+  storageClass?: string;
   interface: string;
+  drive: DISK_DRIVE;
   advanced?: {
     volumeMode?: string;
     accessMode?: string;
   };
   sourceConfig?: DiskSourceConfig;
   source?: DISK_SOURCE;
+  bootable?: boolean;
 };
 
 export type FlavorConfig = {
@@ -42,7 +45,6 @@ export type FlavorConfig = {
 };
 
 export type CloudInitConfig = {
-  useCloudInit: boolean;
   useCustomScript?: boolean;
   customScript?: string;
   hostname?: string;
@@ -65,15 +67,15 @@ export type KubevirtResourceConfig = {
   description?: string;
   flavorConfig: FlavorConfig;
   template?: string;
-  provisionSource?: ProvisionOption;
+  provisionSource?: ProvisionSource;
   operatingSystem?: string;
   workloadProfile?: string;
   startOnCreation?: boolean;
   waitForDiskImport?: boolean;
   cloudInit?: CloudInitConfig;
-  storageResources: StorageResource[];
-  CDRoms?: StorageResource[];
-  networkResources: NetworkResource[];
+  storageResources: Disk[];
+  CDRoms?: Disk[];
+  networkResources: Network[];
   bootableDevice?: string;
 };
 
@@ -105,26 +107,26 @@ export type VMImportConfig = {
   description?: string;
   operatingSystem?: OperatingSystem;
   flavorConfig?: FlavorConfig;
-  workloadProfile?: WorkloadProfile;
-  storageResources?: StorageResource[];
-  networkResources?: NetworkResource[];
+  workloadProfile?: Workload;
+  storageResources?: Disk[];
+  networkResources?: Network[];
   cloudInit?: CloudInitConfig;
 };
 
 export type BaseVMConfig = {
   operatingSystem: OperatingSystem;
   flavorConfig: FlavorConfig;
-  workloadProfile: WorkloadProfile;
+  workloadProfile: Workload;
   sourceURL: string;
   sourceContainer: string;
   cloudInitScript: string;
 };
 
 export type ProvisionConfig = {
-  provision: ProvisionOption;
-  networkResources: NetworkResource[];
-  storageResources: StorageResource[];
-  CDRoms?: StorageResource[];
+  provision: ProvisionSource;
+  networkResources: Network[];
+  storageResources: Disk[];
+  CDRoms?: Disk[];
 };
 
 export type Status = VM_STATUS | POD_STATUS;
