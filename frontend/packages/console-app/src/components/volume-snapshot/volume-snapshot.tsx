@@ -25,7 +25,7 @@ import {
   VolumeSnapshotContentModel,
 } from '@console/internal/models';
 import { Status } from '@console/shared';
-import { volumeSnapshotStatus } from '../../status';
+import { snapshotStatusFilters, volumeSnapshotStatus } from '../../status';
 
 const tableColumnClasses = [
   '', // Name
@@ -150,19 +150,6 @@ const Row: RowFunction<VolumeSnapshotKind> = ({ key, obj, style, index }) => {
   );
 };
 
-const filters = [
-  {
-    filterGroupName: 'Status',
-    type: 'snapshot-status',
-    reducer: volumeSnapshotStatus,
-    items: [
-      { id: 'Ready', title: 'Ready' },
-      { id: 'Pending', title: 'Pending' },
-      { id: 'Error', title: 'Error' },
-    ],
-  },
-];
-
 const VolumeSnapshotTable: React.FC = (props) => (
   <Table {...props} aria-label="Volume Snapshot Table" Header={Header} Row={Row} virtualize />
 );
@@ -173,7 +160,7 @@ const VolumeSnapshotPage: React.FC = (props) => {
       {...props}
       kind={referenceForModel(VolumeSnapshotModel)}
       ListComponent={VolumeSnapshotTable}
-      rowFilters={filters}
+      rowFilters={snapshotStatusFilters}
     />
   );
 };

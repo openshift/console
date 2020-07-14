@@ -970,19 +970,42 @@ export type MachineHealthCheckKind = K8sResourceCommon & {
 };
 
 export type VolumeSnapshotKind = K8sResourceCommon & {
-  status: {
-    readyToUse: boolean;
+  status: VolumeSnapshotStatus & {
     boundVolumeSnapshotContentName?: string;
-    restoreSize?: string;
-    error?: {
-      message: string;
-      time: string;
-    };
   };
   spec: {
     source: {
-      persistentVolumeClaimName: string;
+      persistentVolumeClaimName?: string;
+      volumeSnapshotContentName?: string;
     };
     volumeSnapshotClassName: string;
+  };
+};
+
+export type VolumeSnapshotContentKind = K8sResourceCommon & {
+  status: VolumeSnapshotStatus & {
+    snapshotHandle?: string;
+  };
+  spec: {
+    volumeSnapshotRef: {
+      name: string;
+      namespace: string;
+    };
+    source: {
+      volumeHandle?: string;
+      snapshotHandle?: string;
+    };
+    volumeSnapshotClassName: string;
+    driver: string;
+    deletionPolicy: 'Delete' | 'Retain';
+  };
+};
+
+export type VolumeSnapshotStatus = {
+  readyToUse: boolean;
+  restoreSize?: number;
+  error?: {
+    message: string;
+    time: string;
   };
 };
