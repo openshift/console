@@ -1149,7 +1149,7 @@ const ruleTableHeader = () => [
   },
   {
     title: 'Alert State',
-    sortFunc: 'alertStateOrder',
+    sortFunc: 'alertingRuleStateOrder',
     transforms: [sortable],
     props: { className: tableRuleClasses[2] },
   },
