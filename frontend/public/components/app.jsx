@@ -26,6 +26,7 @@ const consoleLoader = () =>
   import(
     '@console/kubevirt-plugin/src/components/connected-vm-console/vm-console-page' /* webpackChunkName: "kubevirt" */
   ).then((m) => m.VMConsolePage);
+import GuidedTourDrawer from '@console/app/src/components/guided-tours/GuidedTourDrawer';
 import '../vendor.scss';
 import '../style.scss';
 
@@ -134,26 +135,28 @@ class App extends React.PureComponent {
     return (
       <DetectPerspective>
         <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
-        <ConsoleNotifier location="BannerTop" />
-        <Page
-          header={<Masthead onNavToggle={this._onNavToggle} />}
-          sidebar={
-            <Navigation
-              isNavOpen={isNavOpen}
-              onNavSelect={this._onNavSelect}
-              onPerspectiveSelected={this._onNavSelect}
-            />
-          }
-        >
-          <ConnectedNotificationDrawer
-            isDesktop={isDrawerInline}
-            onDrawerChange={this._onNotificationDrawerToggle}
+        <GuidedTourDrawer>
+          <ConsoleNotifier location="BannerTop" />
+          <Page
+            header={<Masthead onNavToggle={this._onNavToggle} />}
+            sidebar={
+              <Navigation
+                isNavOpen={isNavOpen}
+                onNavSelect={this._onNavSelect}
+                onPerspectiveSelected={this._onNavSelect}
+              />
+            }
           >
-            <AppContents />
-          </ConnectedNotificationDrawer>
-        </Page>
-        <CloudShell />
-        <ConsoleNotifier location="BannerBottom" />
+            <ConnectedNotificationDrawer
+              isDesktop={isDrawerInline}
+              onDrawerChange={this._onNotificationDrawerToggle}
+            >
+              <AppContents />
+            </ConnectedNotificationDrawer>
+          </Page>
+          <CloudShell />
+          <ConsoleNotifier location="BannerBottom" />
+        </GuidedTourDrawer>
       </DetectPerspective>
     );
   }

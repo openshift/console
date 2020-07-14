@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { CatalogTile } from '@patternfly/react-catalog-view-extension';
-import { GuidedTourItem, GuidedTourCatalogItem } from './utils/guided-tour-typings';
+import { GuidedTourCatalogItem } from './utils/guided-tour-typings';
 import TourItemHeader from './TourItemHeader';
 import TourItemDescription from './TourItemDescription';
 import TourItemFooter from './TourItemFooter';
 import './GuidedTourItem.scss';
 
-type GuidedTourItemProps = GuidedTourCatalogItem;
+type GuidedTourItemProps = {
+  onClick: () => void;
+} & GuidedTourCatalogItem;
 
 const GuidedTourItem: React.FC<GuidedTourItemProps> = ({
   iconURL,
@@ -18,6 +20,7 @@ const GuidedTourItem: React.FC<GuidedTourItemProps> = ({
   duration,
   prerequisites,
   unmetPrerequisite,
+  onClick,
 }) => (
   <CatalogTile
     iconImg={iconURL}
@@ -25,6 +28,7 @@ const GuidedTourItem: React.FC<GuidedTourItemProps> = ({
     className="oc-guided-tour-item"
     featured={active}
     title={<TourItemHeader name={name} status={status} duration={duration} />}
+    onClick={onClick}
     description={
       <TourItemDescription
         description={description}

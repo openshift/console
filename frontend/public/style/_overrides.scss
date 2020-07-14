@@ -352,6 +352,11 @@ h6 {
   }
 }
 
+// TODO remove this override once https://github.com/patternfly/patternfly/pull/3268 is adopted
+.pf-c-drawer .pf-c-page__main {
+  min-height: auto !important;
+}
+
 // pf table overrides
 
 .pf-c-table tr > th {

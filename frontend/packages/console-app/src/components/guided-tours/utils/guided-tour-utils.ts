@@ -15,3 +15,7 @@ export const getGuidedToursWithStatus = (): GuidedTourCatalogItem[] => {
     };
   });
 };
+
+export const getGuidedTour = (tourID: string): GuidedTourItem => {
+  return mockGuidedTours.find((tour) => tour.id === tourID);
+};
