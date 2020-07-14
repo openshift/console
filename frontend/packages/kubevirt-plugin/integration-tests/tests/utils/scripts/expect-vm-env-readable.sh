@@ -21,8 +21,9 @@ spawn virtctl console $vm_name -n $vm_namespace --timeout 7
 
 send -h "\n"
 
-sleep 3
+sleep 60
 
+# Send ctrl + D preventively to make sure user is logged out
 send -h \004
 
 set timeout 300
