@@ -62,7 +62,9 @@ export const BarChart: React.FC<BarChartProps> = ({
                   barWidth={barWidth}
                   data={[datum]}
                   horizontal
-                  labelComponent={<ChartLabel x={width} />}
+                  labelComponent={
+                    <ChartLabel x={width} textAnchor={theme.bar?.style?.labels?.textAnchor} />
+                  }
                   theme={theme}
                   height={barWidth + padding.bottom}
                   width={width}
