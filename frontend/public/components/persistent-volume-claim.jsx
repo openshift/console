@@ -7,6 +7,7 @@ import { useDispatch, connect } from 'react-redux';
 import { sortable } from '@patternfly/react-table';
 import { ChartDonut } from '@patternfly/react-charts';
 import { Status, FLAGS, calculateRadius, getNamespace, getName } from '@console/shared';
+import { useExtensions, isPVCCreateProp, isPVCAlert, isPVCStatus } from '@console/plugin-sdk';
 import { connectToFlags } from '../reducers/features';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
@@ -20,6 +21,7 @@ import {
   Selector,
   humanizeBinaryBytes,
   convertToBaseValue,
+  AsyncComponent,
 } from './utils';
 import { ResourceEventStream } from './events';
 import { PersistentVolumeClaimModel } from '../models';
@@ -34,9 +36,26 @@ const menuActions = [
   ...common,
 ];
 
-const PVCStatus = ({ pvc }) => (
-  <Status status={pvc.metadata.deletionTimestamp ? 'Terminating' : pvc.status.phase} />
-);
+const PVCStatus = ({ pvc }) => {
+  const pvcStatusExtensions = useExtensions(isPVCStatus);
+  if (pvcStatusExtensions.length > 0) {
+    const sortedByPriority = pvcStatusExtensions.sort(
+      (a, b) => b.properties.priority - a.properties.priority,
+    );
+    const priorityStatus = sortedByPriority.find((status) => status.properties.predicate(pvc));
+
+    const priorityStatusComponent = priorityStatus && (
+      <AsyncComponent loader={priorityStatus.properties.loader} pvc={pvc} />
+    );
+    return (
+      priorityStatusComponent || (
+        <Status status={pvc.metadata.deletionTimestamp ? 'Terminating' : pvc.status.phase} />
+      )
+    );
+  }
+
+  return <Status status={pvc.metadata.deletionTimestamp ? 'Terminating' : pvc.status.phase} />;
+};
 
 const getQuery = (name) => {
   const query = _.template('kubelet_volume_stats_used_bytes${name}');
@@ -197,9 +216,15 @@ const Details_ = ({ flags, obj: pvc }) => {
       ]
     : [{ x: 'Total', y: totalCapacity.value }];
 
+  const pvcAlertExtensions = useExtensions(isPVCAlert);
+  const alertComponents = pvcAlertExtensions.map(({ properties: { loader } }, i) => (
+    <AsyncComponent key={`ext-${i}`} loader={loader} pvc={pvc} />
+  ));
+
   return (
     <>
       <div className="co-m-pane__body">
+        {alertComponents}
         <SectionHeading text="Persistent Volume Claim Details" />
         {totalCapacityMetric && !loading && (
           <div className="co-pvc-donut">
@@ -311,6 +336,7 @@ export const PersistentVolumeClaimsList = (props) => {
 };
 
 export const PersistentVolumeClaimsPage = (props) => {
+  const createPropExtensions = useExtensions(isPVCCreateProp);
   const { namespace = undefined } = props;
   const query = getQuery();
   const dispatch = useDispatch();
@@ -331,10 +357,31 @@ export const PersistentVolumeClaimsPage = (props) => {
         }, {})
       : {};
   dispatch(setPVCMetrics(pvcMetrics));
+  const initPath = `/k8s/ns/${props.namespace || 'default'}/persistentvolumeclaims/`;
 
-  const createProps = {
-    to: `/k8s/ns/${props.namespace || 'default'}/persistentvolumeclaims/~new/form`,
-  };
+  const createItems = createPropExtensions.map(({ properties: { label, path } }, i) => ({
+    key: i + 1,
+    label,
+    path,
+  }));
+
+  const createProps =
+    createPropExtensions.length === 0
+      ? { to: initPath.concat('~new/form') }
+      : {
+          items: Object.assign(
+            { 0: 'New with Form' },
+            ...createItems.map(({ key, label }) => ({ [key]: label })),
+          ),
+          createLink: (wizardName) => {
+            if (wizardName === '0') {
+              return initPath.concat('~new/form');
+            }
+            const item = createItems.find(({ key }) => key.toString() === wizardName);
+            return initPath.concat(item.path);
+          },
+        };
+
   return (
     <ListPage
       {...props}

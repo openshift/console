@@ -16,3 +16,4 @@ export * from './dev-catalog';
 export * from './reducers';
 export * from './horizontal-nav';
 export * from './providers';
+export * from './pvc';
