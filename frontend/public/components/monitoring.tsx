@@ -1024,90 +1024,81 @@ const filtersToProps = ({ k8s }, { reduxID }) => {
   return { filters: filtersMap ? filtersMap.toJS() : null };
 };
 
-const MonitoringListPage = connect(filtersToProps)(
-  class InnerMonitoringListPage extends React.Component<ListPageProps> {
-    props: ListPageProps;
-
-    constructor(props) {
-      super(props);
+const MonitoringListPage_: React.FC<ListPageProps> = ({
+  CreateButton,
+  data,
+  filters,
+  Header,
+  hideLabelFilter,
+  kindPlural,
+  labelFilter,
+  labelPath,
+  loaded,
+  loadError,
+  nameFilterID,
+  reduxID,
+  Row,
+  rowFilters,
+}) => {
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (!params.get('sortBy')) {
+      // Sort by rule name by default
+      store.dispatch(UIActions.sortList(reduxID, 'name', undefined, 'asc', 'Name'));
     }
+  }, [reduxID]);
 
-    UNSAFE_componentWillMount() {
-      const { reduxID } = this.props;
-      const params = new URLSearchParams(window.location.search);
-      if (!params.get('sortBy')) {
-        // Sort by rule name by default
-        store.dispatch(UIActions.sortList(reduxID, 'name', undefined, 'asc', 'Name'));
-      }
-    }
-
-    render() {
-      const {
-        CreateButton,
-        data,
-        filters,
-        Header,
-        hideLabelFilter,
-        kindPlural,
-        labelFilter,
-        labelPath,
-        loaded,
-        loadError,
-        nameFilterID,
-        reduxID,
-        Row,
-        rowFilters,
-      } = this.props;
-
-      return (
-        <>
-          <Helmet>
-            <title>Alerting</title>
-          </Helmet>
-          <div className="co-m-pane__body">
-            {CreateButton && (
-              <div className="co-m-pane__createLink--no-title">
-                <CreateButton />
-              </div>
-            )}
-            <FilterToolbar
-              data={data}
-              hideLabelFilter={hideLabelFilter}
-              labelFilter={labelFilter}
-              labelPath={labelPath}
-              reduxIDs={[reduxID]}
-              rowFilters={rowFilters}
-              textFilter={nameFilterID}
-            />
-            <div className="row">
-              <div className="col-xs-12">
-                <Table
-                  aria-label={kindPlural}
-                  data={data}
-                  filters={filters}
-                  Header={Header}
-                  loaded={loaded}
-                  loadError={loadError}
-                  reduxID={reduxID}
-                  Row={Row}
-                  virtualize
-                />
-              </div>
-            </div>
+  return (
+    <>
+      <Helmet>
+        <title>Alerting</title>
+      </Helmet>
+      <div className="co-m-pane__body">
+        {CreateButton && (
+          <div className="co-m-pane__createLink--no-title">
+            <CreateButton />
           </div>
-        </>
-      );
-    }
-  },
-);
+        )}
+        <FilterToolbar
+          data={data}
+          hideLabelFilter={hideLabelFilter}
+          labelFilter={labelFilter}
+          labelPath={labelPath}
+          reduxIDs={[reduxID]}
+          rowFilters={rowFilters}
+          textFilter={nameFilterID}
+        />
+        <div className="row">
+          <div className="col-xs-12">
+            <Table
+              aria-label={kindPlural}
+              data={data}
+              filters={filters}
+              Header={Header}
+              loaded={loaded}
+              loadError={loadError}
+              reduxID={reduxID}
+              Row={Row}
+              virtualize
+            />
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
 
-const AlertsPage_ = (props) => (
+const MonitoringListPage = connect(filtersToProps)(MonitoringListPage_);
+
+const AlertsPage_: React.FC<Alerts> = ({ data, loaded, loadError }) => (
   <MonitoringListPage
-    {...props}
+    data={data}
     Header={alertTableHeader}
     kindPlural="Alerts"
     labelFilter="alerts"
     labelPath="labels"
+    loaded={loaded}
+    loadError={loadError}
     nameFilterID="alert-list-text"
     reduxID="monitoringAlerts"
     Row={AlertTableRow}
@@ -1174,13 +1165,15 @@ const RuleTableRow: RowFunction<Rule> = ({ index, key, obj, style }) => (
   </TableRow>
 );
 
-const RulesPage_ = (props) => (
+const RulesPage_: React.FC<Rules> = ({ data, loaded, loadError }) => (
   <MonitoringListPage
-    {...props}
+    data={data}
     Header={ruleTableHeader}
     kindPlural="Alerting Rules"
     labelFilter="alerts"
     labelPath="labels"
+    loaded={loaded}
+    loadError={loadError}
     nameFilterID="alerting-rule-name"
     reduxID="monitoringRules"
     Row={RuleTableRow}
@@ -1209,13 +1202,15 @@ const CreateButton = () => (
   </Link>
 );
 
-const SilencesPage_ = (props) => (
+const SilencesPage_: React.FC<Silences> = ({ data, loaded, loadError }) => (
   <MonitoringListPage
-    {...props}
     CreateButton={CreateButton}
+    data={data}
     Header={silenceTableHeader}
     hideLabelFilter
     kindPlural="Silences"
+    loaded={loaded}
+    loadError={loadError}
     nameFilterID="silence-name"
     reduxID="monitoringSilences"
     Row={SilenceTableRow}
