@@ -113,7 +113,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
       content={tooltipLabel}
       trigger="manual"
       isVisible={dropTarget && canDrop}
-      tippyProps={{ duration: 0, delay: 0 }}
+      animationDuration={0}
     >
       <g
         ref={hoverRef}

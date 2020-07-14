@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Button, Popover, PopoverPosition } from '@patternfly/react-core';
-import { Instance as TippyInstance } from 'tippy.js';
 
 const PopoverStatus: React.FC<PopoverStatusProps> = ({
   hideHeader,
@@ -37,7 +36,7 @@ type PopoverStatusProps = {
   title?: string;
   hideHeader?: boolean;
   isVisible?: boolean;
-  shouldClose?: (tip: TippyInstance) => void;
+  shouldClose?: (hideFunction: any) => void;
 };
 
 export default PopoverStatus;

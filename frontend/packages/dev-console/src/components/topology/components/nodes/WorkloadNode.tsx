@@ -73,7 +73,7 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
         content={tipContent}
         trigger="manual"
         isVisible={dropTarget && canDrop}
-        tippyProps={{ duration: 0, delay: 0 }}
+        animationDuration={0}
       >
         <BaseNode
           className="odc-workload-node"
