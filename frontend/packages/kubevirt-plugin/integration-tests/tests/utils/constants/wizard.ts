@@ -29,3 +29,8 @@ export enum WorkloadProfile {
   HIGH_PERFORMANCE = 'highperformance',
   SERVER = 'server',
 }
+
+export enum Provider {
+  RHV = 'Red Hat Virtualisation (RHV)',
+  VMware = 'VMware',
+}

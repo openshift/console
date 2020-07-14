@@ -43,9 +43,12 @@ export const IMPORT_WIZARD_CONN_TO_NEW_INSTANCE = 'Connect to New Instance';
 export const NOT_RECOMMENDED_BUS_TYPE_WARN = 'Not recommended bus type';
 // Some times we need to use existing VMWare instance, which name always starts from 'administrator'
 export const IMPORT_WIZARD_CONN_NAME_PREFIX = 'administrator';
+export const RHV_PROVIDER = 'Red Hat Virtualization (RHV)';
+export const VMWARE_PROVIDER = 'VMware';
 
 // Web-UI Exceptions
-export const WIZARD_CREATE_SUCCESS = 'Successfully created';
+export const RHV_WIZARD_CREATE_SUCCESS = 'Started import of virtual machine';
+export const VMWARE_WIZARD_CREATE_SUCCESS = 'Successfully created virtual machine';
 
 // Framework Exception
 export const UNEXPECTED_ACTION_ERROR = 'Received unexpected action.';
@@ -71,6 +74,8 @@ export const KUBEVIRT_SCRIPTS_PATH =
   './packages/kubevirt-plugin/integration-tests/tests/utils/scripts';
 export const KUBEVIRT_TEMPLATES_PATH =
   './packages/kubevirt-plugin/integration-tests/tests/utils/templates';
+
+export const CHARACTERS_NOT_ALLOWED = 'characters are not allowed';
 
 export enum TAB {
   Overview = 'Overview',

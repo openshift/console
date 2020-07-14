@@ -1,28 +1,20 @@
 /* eslint-disable no-await-in-loop */
 import { browser } from 'protractor';
 import { createItemButton, isLoaded } from '@console/internal-integration-tests/views/crud.view';
-import { click, fillInput, asyncForEach } from '@console/shared/src/test-utils/utils';
-import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
+import { click, asyncForEach } from '@console/shared/src/test-utils/utils';
 import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
 import { DiskDialog } from '../dialogs/diskDialog';
 import { tableRows, saveButton } from '../../views/kubevirtUIResource.view';
-import { selectOptionByText, setCheckboxState } from '../utils/utils';
-import {
-  IMPORT_WIZARD_CONN_TO_NEW_INSTANCE,
-  networkTabCol,
-  STORAGE_CLASS,
-  VIRTUALIZATION_TITLE,
-} from '../utils/consts';
+import { selectOptionByText } from '../utils/utils';
+import { networkTabCol, STORAGE_CLASS, VIRTUALIZATION_TITLE } from '../utils/consts';
 import * as view from '../../views/importWizard.view';
 import { waitForNoLoaders, clickKebabAction } from '../../views/wizard.view';
-import { InstanceConfig, VirtualMachineTemplateModel, VMImportConfig } from '../utils/types';
+import { VirtualMachineTemplateModel, NetworkResource, StorageResource } from '../utils/types';
 import { Wizard } from './wizard';
 import { virtualizationTitle } from '../../views/vms.list.view';
 import { K8sKind } from '@console/internal/module/k8s';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
 import { resourceHorizontalTab } from '../../views/uiResource.view';
-import { VirtualMachine } from './virtualMachine';
-import { testName } from '@console/internal-integration-tests/protractor.conf';
 
 export class ImportWizard extends Wizard {
   async openWizard(model: K8sKind) {
@@ -44,46 +36,6 @@ export class ImportWizard extends Wizard {
 
   async selectProvider(provider: string) {
     await selectOptionByText(view.providerSelect, provider);
-  }
-
-  async selectInstance(instance: string) {
-    await selectOptionByText(view.vcenterInstanceSelect, instance);
-  }
-
-  async fillHostname(hostname: string) {
-    await fillInput(view.vcenterHostnameInput, hostname);
-  }
-
-  async fillUsername(username: string) {
-    await fillInput(view.usernameInput, username);
-  }
-
-  async fillPassword(password: string) {
-    await fillInput(view.vcenterPasswordInput, password);
-  }
-
-  async saveInstance(saveInstance: boolean) {
-    await setCheckboxState(view.vcenterSaveInstanceCheckbox, saveInstance);
-  }
-
-  async configureInstance(instanceConfig: InstanceConfig) {
-    await selectOptionByText(view.vcenterInstanceSelect, instanceConfig.instance);
-    if (instanceConfig.instance === IMPORT_WIZARD_CONN_TO_NEW_INSTANCE) {
-      await this.fillHostname(instanceConfig.hostname);
-      await this.fillUsername(instanceConfig.username);
-      await this.fillPassword(instanceConfig.password);
-      await this.saveInstance(instanceConfig.saveInstance);
-    } else {
-      throw Error('Saved provider instances are not implemented');
-    }
-  }
-
-  async connectToInstance() {
-    await click(view.connectInstanceButton);
-  }
-
-  async selectSourceVirtualMachine(sourceVirtualMachine: string) {
-    await selectOptionByText(view.virtualMachineSelect, sourceVirtualMachine);
   }
 
   async confirmAndCreate() {
@@ -110,14 +62,12 @@ export class ImportWizard extends Wizard {
       await clickKebabAction(NIC.name, 'Edit');
       await waitForNoLoaders();
       const networks = await NICDialog.getNetworks();
-      // Change name to comply with k8s
-      await NICDialog.fillName(NIC.name.replace(/\s/g, '').toLowerCase());
       if (networks.length > 0) {
         await NICDialog.selectNetwork(networks[networks.length - 1]);
       } else {
         throw Error('No available networks to assign imported NICs');
       }
-      await await click(saveButton);
+      await click(view.confirmActionButton);
       await waitForNoLoaders();
     });
   }
@@ -140,8 +90,6 @@ export class ImportWizard extends Wizard {
     await asyncForEach(importedDisks, async (disk) => {
       await clickKebabAction(disk.name, 'Edit');
       await waitForNoLoaders();
-      // Change name to comply with k8s
-      await diskDialog.fillName(disk.name.replace(/\s/g, '').toLowerCase());
       // This if is required to workaround bug 1814611.
       // NFS is not supported for conversion PV and HPP should be used instead.
       if (disk.name === 'v2v-conversion-temp' && STORAGE_CLASS === 'nfs') {
@@ -197,93 +145,19 @@ export class ImportWizard extends Wizard {
     });
   }
 
-  async import(config: VMImportConfig) {
-    const {
-      provider,
-      instanceConfig,
-      sourceVMName,
-      name,
-      description,
-      operatingSystem,
-      flavorConfig,
-      workloadProfile,
-      storageResources,
-      networkResources,
-      cloudInit,
-    } = config;
-    const importWizard = new ImportWizard();
-    await importWizard.openWizard(VirtualMachineModel);
-
-    // General section
-    await importWizard.selectProvider(provider);
-    await importWizard.waitForSpinner();
-    await importWizard.configureInstance(instanceConfig);
-
-    await importWizard.connectToInstance();
-    await importWizard.waitForSpinner();
-
-    await importWizard.selectSourceVirtualMachine(sourceVMName);
-    await importWizard.waitForSpinner();
-
-    await importWizard.next(true);
-
-    if (operatingSystem) {
-      await importWizard.selectOperatingSystem(operatingSystem as string);
-    }
-    if (flavorConfig) {
-      await importWizard.selectFlavor(flavorConfig);
-    }
-    if (workloadProfile) {
-      await importWizard.selectWorkloadProfile(workloadProfile);
-    }
-    if (name) {
-      await importWizard.fillName(name);
-    }
-    if (description) {
-      await importWizard.fillDescription(description);
-    }
-    await importWizard.next();
-    // Networking
-    // First update imported network interfaces to comply with k8s
-    await importWizard.updateImportedNICs();
-    // Optionally add new interfaces, if any
+  async addVmNetworks(networkResources: NetworkResource[]) {
     if (networkResources) {
       for (const NIC of networkResources) {
-        await importWizard.addNIC(NIC);
+        await this.addNIC(NIC);
       }
     }
-    await importWizard.next();
+  }
 
-    // Storage
-    // First update disks that come from the source VM
-    await importWizard.updateImportedDisks();
-    // Optionally add new disks
-    if (networkResources) {
+  async addVmStorage(storageResources: StorageResource[]) {
+    if (storageResources) {
       for (const disk of storageResources) {
-        await importWizard.addDisk(disk);
+        await this.addDisk(disk);
       }
     }
-    await importWizard.next();
-
-    // Advanced - Cloud Init
-    if (cloudInit) {
-      await importWizard.configureCloudInit(cloudInit);
-    }
-    await importWizard.next();
-
-    // Advanced - Virtual HW
-    await importWizard.next();
-
-    // Review
-    await this.validateReviewTab(config);
-
-    // Import
-    await importWizard.confirmAndCreate();
-    await importWizard.waitForCreation();
-
-    // Navigate to detail page
-    await importWizard.navigateToDetail();
-
-    return new VirtualMachine({ name, namespace: testName });
   }
 }

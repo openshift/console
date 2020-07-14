@@ -22,7 +22,7 @@ import {
   KubevirtResourceConfig,
 } from '../utils/types';
 import {
-  WIZARD_CREATE_SUCCESS,
+  VMWARE_WIZARD_CREATE_SUCCESS,
   PAGE_LOAD_TIMEOUT_SECS,
   KEBAP_ACTION,
   VIRTUALIZATION_TITLE,
@@ -215,7 +215,10 @@ export class Wizard {
 
   async waitForCreation() {
     await browser.wait(
-      until.textToBePresentInElement(wizardView.creationSuccessResult, WIZARD_CREATE_SUCCESS),
+      until.textToBePresentInElement(
+        wizardView.creationSuccessResult,
+        VMWARE_WIZARD_CREATE_SUCCESS,
+      ),
       PAGE_LOAD_TIMEOUT_SECS,
     );
   }
