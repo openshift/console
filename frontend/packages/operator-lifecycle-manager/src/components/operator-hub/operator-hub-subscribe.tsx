@@ -425,7 +425,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
               operators can lead to malicious metrics data overriding existing cluster metrics. For
               more information, see the{' '}
               <ExternalLink
-                href={`${openshiftHelpBase}monitoring/cluster-monitoring/configuring-the-monitoring-stack.html#maintenance-and-support_configuring-monitoring`}
+                href={`${openshiftHelpBase}monitoring/cluster_monitoring/configuring-the-monitoring-stack.html#maintenance-and-support_configuring-monitoring`}
                 text="cluster monitoring documentation"
               />{' '}
               .
