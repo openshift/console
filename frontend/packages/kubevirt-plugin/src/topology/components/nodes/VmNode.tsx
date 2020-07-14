@@ -173,7 +173,7 @@ const ObservedVmNode: React.FC<VmNodeProps> = ({
         content={tipContent}
         trigger="manual"
         isVisible={dropTarget && canDrop}
-        tippyProps={{ duration: 0, delay: 0 }}
+        animationDuration={0}
       >
         <g
           className={classNames('odc-base-node kubevirt-vm-node', statusClass, {
