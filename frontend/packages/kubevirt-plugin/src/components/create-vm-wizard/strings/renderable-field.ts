@@ -30,6 +30,7 @@ export const titleResolver: RenderableFieldResolver = {
   [VMSettingsField.DESCRIPTION]: 'Description',
   [VMSettingsField.USER_TEMPLATE]: 'Template',
   [VMSettingsField.OPERATING_SYSTEM]: 'Operating System',
+  [VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE]: 'Clone available operating system source',
   [VMSettingsField.FLAVOR]: 'Flavor',
   [VMSettingsField.MEMORY]: 'Memory',
   [VMSettingsField.CPU]: 'CPUs',
