@@ -222,11 +222,11 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
               <DetailsItem label="Status" obj={build} path="status.phase">
                 <Status status={build.status.phase} />
               </DetailsItem>
-              <DetailsItem label="Log Snippet" obj={build} path="status.logSnippet" hideEmpty>
-                <pre>{logSnippet}</pre>
-              </DetailsItem>
               <DetailsItem label="Message" obj={build} path="status.message" hideEmpty>
                 {message}
+              </DetailsItem>
+              <DetailsItem label="Log Snippet" obj={build} path="status.logSnippet" hideEmpty>
+                <pre>{logSnippet}</pre>
               </DetailsItem>
               <DetailsItem label="Duration" obj={build} path="status.duration" hideEmpty>
                 {duration}

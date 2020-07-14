@@ -110,11 +110,37 @@ export interface Pipeline extends K8sResourceKind {
   };
 }
 
-export type TaskRunKind = { pipelineTaskName?: string } & K8sResourceKind;
+/** TODO: Define */
+export type TaskRunKind = K8sResourceKind;
 
-export interface TaskRuns {
-  [key: string]: TaskRunKind;
-}
+export type PLRTaskRunStep = {
+  container: string;
+  imageID: string;
+  name: string;
+  terminated?: {
+    containerID: string;
+    exitCode: number;
+    finishedAt: string;
+    reason: string;
+    startedAt: string;
+  };
+};
+
+export type PLRTaskRunData = {
+  pipelineTaskName: string;
+  status: {
+    completionTime?: string;
+    conditions: Condition[];
+    /** Can be empty */
+    podName: string;
+    startTime: string;
+    steps?: PLRTaskRunStep[];
+  };
+};
+
+export type PLRTaskRuns = {
+  [taskRunName: string]: PLRTaskRunData;
+};
 
 export interface PipelineRun extends K8sResourceKind {
   spec?: {
@@ -133,7 +159,7 @@ export interface PipelineRun extends K8sResourceKind {
     conditions?: Condition[];
     startTime?: string;
     completionTime?: string;
-    taskRuns?: TaskRuns;
+    taskRuns?: PLRTaskRuns;
   };
 }
 
