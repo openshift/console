@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import * as _ from 'lodash-es';
-import { NavExpandable } from '@patternfly/react-core';
+import { NavExpandable, NavGroup } from '@patternfly/react-core';
 
 import {
   withExtensions,
@@ -121,7 +121,7 @@ export const NavSection = connect(navSectionStateToProps)(
         this.setState({ isOpen: expandState });
       };
 
-      getNavItemExtensions = (perspective: string, section: string) => {
+      getNavItemExtensions = (perspective: string, title: string) => {
         const { navItemExtensions, perspectiveExtensions } = this.props;
 
         const defaultPerspective = _.find(perspectiveExtensions, (p) => p.properties.default);
@@ -134,7 +134,7 @@ export const NavSection = connect(navSectionStateToProps)(
             // or if no perspective specified, are we in the default perspective
             (item.properties.perspective === perspective ||
               (!item.properties.perspective && isDefaultPerspective)) &&
-            item.properties.section === section,
+            (item.properties.section === title || item.properties.group === title),
         );
       };
 
@@ -186,12 +186,24 @@ export const NavSection = connect(navSectionStateToProps)(
           return null;
         }
 
-        const { title } = this.props;
+        const { title, isGrouped } = this.props;
         const { isOpen, activeChild } = this.state;
         const isActive = !!activeChild;
         const children = this.getChildren();
 
-        return children.length > 0 ? (
+        if (!children.length) {
+          return null;
+        }
+
+        if (isGrouped) {
+          return (
+            <NavGroup className="oc-nav-group" title="">
+              {children}
+            </NavGroup>
+          );
+        }
+
+        return (
           <NavExpandable
             title={title}
             isActive={isActive}
@@ -200,7 +212,7 @@ export const NavSection = connect(navSectionStateToProps)(
           >
             {children}
           </NavExpandable>
-        ) : null;
+        );
       }
     },
   ),
@@ -234,6 +246,7 @@ type NavSectionExtensionProps = {
 
 type NavSectionProps = {
   title: NavSectionTitle | string;
+  isGrouped?: boolean;
   required?: string;
 };
 
