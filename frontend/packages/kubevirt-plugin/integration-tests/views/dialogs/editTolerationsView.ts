@@ -1,6 +1,0 @@
-import { $ } from 'protractor';
-
-export const addLabelBtn = $('#vm-labels-list-add-btn');
-export const tolerationKeyInputByID = (id) => $(`#toleration-${id}-key-input`);
-export const tolerationValueInputByID = (id) => $(`#toleration-${id}-value-input`);
-export const deleteBtnByID = (id) => $(`#toleration-${id}-delete-btn`);

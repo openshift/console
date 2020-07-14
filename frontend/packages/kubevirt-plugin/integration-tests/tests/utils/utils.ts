@@ -22,6 +22,7 @@ import { STORAGE_CLASS, PAGE_LOAD_TIMEOUT_SECS, SEC } from './constants/common';
 import { NodePortService, Status } from '../types/types';
 import { filterCount } from '../../views/vms.list.view';
 import { diskVolumeMode, diskAccessMode } from './constants/vm';
+import { MatchLabels } from '@console/internal/module/k8s';
 
 export async function setCheckboxState(elem: any, targetState: boolean) {
   const checkboxState = await elem.isSelected();
@@ -216,4 +217,35 @@ export function deepFreeze(o: {}) {
     }
   });
   return o;
+}
+
+export function getNodes() {
+  const nodes = execSync(`kubectl get node -l cpumanager=true | awk 'NR>1{print $1}'`)
+    .toString()
+    .trim();
+  return nodes.split('\n');
+}
+
+export function labelNode(node: string, labels: MatchLabels, add?: boolean) {
+  if (add) {
+    for (const [key, value] of Object.entries(labels)) {
+      execSync(`kubectl label --overwrite=true nodes ${node} ${key}=${value}`);
+    }
+  } else {
+    for (const key of Object.keys(labels)) {
+      execSync(`kubectl label nodes ${node} ${key}-`);
+    }
+  }
+}
+
+export function taintNode(node: string, labels: MatchLabels, effect: string, add?: boolean) {
+  if (add) {
+    for (const [key, value] of Object.entries(labels)) {
+      execSync(`kubectl taint --overwrite=true nodes ${node} ${key}=${value}:${effect}`);
+    }
+  } else {
+    for (const key of Object.keys(labels)) {
+      execSync(`kubectl taint nodes ${node} ${key}:${effect}-`);
+    }
+  }
 }
