@@ -145,5 +145,8 @@
   },
   "engines": {
     "node": ">=8.x <=10.x"
+  },
+  "resolutions": {
+    "minimist": "1.2.5"
   }
 }
