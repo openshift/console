@@ -78,6 +78,7 @@ import {
   PackageManifestKind,
   SubscriptionKind,
 } from '../types';
+import { operatorTypeAnnotation, nonStandardAnnotationValue } from '../const';
 import { subscriptionForCSV, getSubscriptionStatus } from '../status/csv-status';
 import { getInternalObjects, isInternalObject } from '../utils';
 import { ProvidedAPIsPage, ProvidedAPIPage } from './operand';
@@ -517,19 +518,33 @@ export const NamespacedClusterServiceVersionList: React.SFC<ClusterServiceVersio
   );
   const NoDataEmptyMsg = () => <MsgBox title="No Operators Found" detail={noDataDetail} />;
 
-  const isCopiedCSV = (source, kind) => {
+  const isCopiedCSV = (source: ClusterServiceVersionKind, kind: string) => {
     return (
       referenceForModel(ClusterServiceVersionModel) === kind && source.status?.reason === 'Copied'
     );
   };
 
-  const removeCopiedCSVs = (operators: (ClusterServiceVersionKind | SubscriptionKind)[]) => {
+  const isStandardCSV = (operator: ClusterServiceVersionKind) => {
+    return (
+      operator.metadata.annotations?.[operatorTypeAnnotation] !== nonStandardAnnotationValue ||
+      operator.status?.phase === ClusterServiceVersionPhase.CSVPhaseFailed
+    );
+  };
+
+  const filterOperators = (
+    operators: (ClusterServiceVersionKind | SubscriptionKind)[],
+    allNamespaceActive: boolean,
+  ): (ClusterServiceVersionKind | SubscriptionKind)[] => {
     return operators.filter((source) => {
       const kind = referenceFor(source);
-      if (isSubscription(kind)) {
+      if (isSubscription(source)) {
         return true;
       }
-      return !isCopiedCSV(source, kind);
+      const csv = source as ClusterServiceVersionKind;
+      if (allNamespaceActive) {
+        return !isCopiedCSV(csv, kind) || isStandardCSV(csv);
+      }
+      return isStandardCSV(csv);
     });
   };
 
@@ -559,37 +574,14 @@ export const NamespacedClusterServiceVersionList: React.SFC<ClusterServiceVersio
     const olmOperatorNamespace = obj.metadata?.annotations?.['olm.operatorNamespace'];
     return olmOperatorNamespace ?? getNamespace(obj);
   };
+  const allNamespaceActive = activeNamespace === ALL_NAMESPACES_KEY;
 
-  return activeNamespace === ALL_NAMESPACES_KEY ? (
+  return (
     <Table
-      data={removeCopiedCSVs(data) as any[]}
+      data={filterOperators(data, allNamespaceActive)}
       {...rest}
       aria-label="Installed Operators"
-      Header={AllProjectsTableHeader}
-      Row={(rowArgs: RowFunctionArgs<ClusterServiceVersionKind | SubscriptionKind>) => (
-        <InstalledOperatorTableRow
-          obj={rowArgs.obj}
-          index={rowArgs.index}
-          rowKey={rowArgs.key}
-          style={rowArgs.style}
-          catalogSources={catalogSources.data}
-          subscriptions={subscriptions.data}
-        />
-      )}
-      EmptyMsg={NoOperatorsMatchFilterMsg}
-      NoDataEmptyMsg={NoDataEmptyMsg}
-      virtualize
-      customSorts={{
-        formatTargetNamespaces,
-        getOperatorNamespace,
-      }}
-    />
-  ) : (
-    <Table
-      data={data}
-      {...rest}
-      aria-label="Installed Operators"
-      Header={SingleProjectTableHeader}
+      Header={allNamespaceActive ? AllProjectsTableHeader : SingleProjectTableHeader}
       Row={(rowArgs: RowFunctionArgs<ClusterServiceVersionKind | SubscriptionKind>) => (
         <InstalledOperatorTableRow
           obj={rowArgs.obj}
