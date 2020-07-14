@@ -986,3 +986,8 @@ export type VolumeSnapshotKind = K8sResourceCommon & {
     volumeSnapshotClassName: string;
   };
 };
+
+export type VolumeSnapshotClassKind = K8sResourceCommon & {
+  deletionPolicy: string;
+  driver: string;
+};
