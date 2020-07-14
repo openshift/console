@@ -86,22 +86,19 @@ export type PrometheusRulesResponse = {
 };
 
 export type ListPageProps = {
-  alertmanagerLinkPath: string;
-  CreateButton: React.ComponentType<{}>;
-  data: Rule[] | Silence[];
+  CreateButton?: React.ComponentType<{}>;
+  data: Alert[] | Rule[] | Silence[];
   filters: { [key: string]: any };
   Header: (...args) => any[];
-  itemCount: number;
+  hideLabelFilter?: boolean;
   kindPlural: string;
+  labelFilter?: string;
+  labelPath?: string;
   loaded: boolean;
   loadError?: string;
-  match: { path: string };
   nameFilterID: string;
-  labelFilter?: string;
   reduxID: string;
   Row: RowFunction;
   rowFilters: RowFilter[];
   showTitle?: boolean;
-  hideLabelFilter?: boolean;
-  labelPath?: string;
 };
