@@ -61,6 +61,7 @@ import {
   TemplateInstanceModel,
   UserModel,
   VolumeSnapshotModel,
+  VolumeSnapshotClassModel,
 } from '../models';
 
 const addResourcePage = (
@@ -322,6 +323,11 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
     import(
       '@console/app/src/components/volume-snapshot/volume-snapshot-details' /* webpackChunkName: "volume-snapshot-details" */
     ).then((m) => m.default),
+  )
+  .set(referenceForModel(VolumeSnapshotClassModel), () =>
+    import(
+      '@console/app/src/components/volume-snapshot/volume-snapshot-class-details' /* webpackChunkName: "volume-snapshot-class-details" */
+    ).then((m) => m.default),
   );
 
 export const getResourceDetailsPages = (pluginPages: ResourceDetailsPage[] = []) =>
@@ -545,6 +551,11 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(VolumeSnapshotModel), () =>
     import(
       '@console/app/src/components/volume-snapshot/volume-snapshot' /* webpackChunkName: "volume-snapshot" */
+    ).then((m) => m.default),
+  )
+  .set(referenceForModel(VolumeSnapshotClassModel), () =>
+    import(
+      '@console/app/src/components/volume-snapshot/volume-snapshot-class' /* webpackChunkName: "volume-snapshot-class" */
     ).then((m) => m.default),
   );
 

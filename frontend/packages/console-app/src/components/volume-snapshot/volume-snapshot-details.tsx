@@ -14,11 +14,12 @@ import {
   VolumeSnapshotClassModel,
 } from '@console/internal/models';
 import { referenceForModel, VolumeSnapshotKind } from '@console/internal/module/k8s';
+import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import { Status } from '@console/shared';
 import { volumeSnapshotStatus } from '../../status';
 
-const { editYaml } = navFactory;
+const { editYaml, events } = navFactory;
 
 const Details: React.FC<DetailsProps> = ({ obj }) => {
   const { namespace } = obj.metadata || {};
@@ -87,6 +88,7 @@ const pages = [
     component: Details,
   },
   editYaml(),
+  events(ResourceEventStream),
 ];
 
 const VolumeSnapshotDetailsPage: React.FC<DetailsPageProps> = (props) => (
