@@ -4,17 +4,19 @@ import { k8sGet } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { BreadCrumbs } from '@console/internal/components/utils';
 import { getAnnotations } from '@console/shared/src/selectors/common';
-import { Radio, Title } from '@patternfly/react-core';
+import { RadioGroup } from '@console/internal/components/radio';
 import { getRequiredKeys, createDownloadFile } from '../independent-mode/utils';
 import { OCSServiceModel } from '../../models';
-import InstallExternalCluster from '../independent-mode/install';
-import { CreateOCSServiceForm } from './create-form';
+import CreateExternalCluster from '../independent-mode/install';
+import { CreateInternalCluster } from './create-form';
 import { OCS_SUPPORT_ANNOTATION } from '../../constants';
+import { CreateAttachedDevicesCluster } from './attached-devices/install';
 import './install-page.scss';
 
 enum MODES {
-  CONVERGED = 'Converged',
-  INDEPENDENT = 'Independent',
+  INTERNAL = 'Internal',
+  EXTERNAL = 'External',
+  ATTACHED_DEVICES = 'Attached Devices',
 }
 
 // eslint-disable-next-line no-shadow
@@ -29,10 +31,10 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
     null,
   );
   const [downloadFile, setDownloadFile] = React.useState(null);
-  const [mode, setMode] = React.useState(MODES.CONVERGED);
+  const [mode, setMode] = React.useState(MODES.INTERNAL);
   const [clusterServiceVersion, setClusterServiceVersion] = React.useState(null);
 
-  const handleModeChange = (_checked: boolean, event: React.FormEvent<HTMLInputElement>) => {
+  const handleModeChange = (event: React.FormEvent<HTMLInputElement>) => {
     const { value } = event.currentTarget;
     setMode(value as MODES);
   };
@@ -89,47 +91,39 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
           storage, and handles the scenes such as provisioning and management.
         </p>
       </div>
-
-      <div className="co-m-pane__body co-m-pane__form">
-        {isIndependent && (
-          <div className="ceph-install__select-mode">
-            <Title headingLevel="h5" size="lg" className="ceph-install-select-mode__title">
-              Select Mode
-            </Title>
-            <div className="ceph-install-select-mode">
-              <Radio
-                value={MODES.CONVERGED}
-                isChecked={mode === MODES.CONVERGED}
-                onChange={handleModeChange}
-                id="radio-1"
-                className="ceph-install--no-margin"
-                label="Internal"
-                name="converged-mode"
-              />
-            </div>
-            <div className="ceph-install-select-mode">
-              <Radio
-                value={MODES.INDEPENDENT}
-                isChecked={mode === MODES.INDEPENDENT}
-                onChange={handleModeChange}
-                id="radio-2"
-                label="External"
-                name="independent-mode"
-                className="ceph-install--no-margin"
-              />
-            </div>
-          </div>
-        )}
-        {(isIndependent === false || mode === MODES.CONVERGED) && (
-          <CreateOCSServiceForm match={match} />
-        )}
-        {mode === MODES.INDEPENDENT && (
-          <InstallExternalCluster
+      <div className="ceph-install__mode-toggle">
+        <RadioGroup
+          label="Select Mode:"
+          currentValue={mode}
+          inline
+          items={[
+            {
+              value: MODES.INTERNAL,
+              title: MODES.INTERNAL,
+            },
+            {
+              value: MODES.EXTERNAL,
+              title: MODES.EXTERNAL,
+              disabled: !isIndependent,
+            },
+            {
+              value: MODES.ATTACHED_DEVICES,
+              title: MODES.ATTACHED_DEVICES,
+            },
+          ]}
+          onChange={handleModeChange}
+        />
+      </div>
+      <div>
+        {mode === MODES.INTERNAL && <CreateInternalCluster match={match} />}
+        {mode === MODES.EXTERNAL && (
+          <CreateExternalCluster
             match={match}
             minRequiredKeys={independentReqdKeys}
             downloadFile={downloadFile}
           />
         )}
+        {mode === MODES.ATTACHED_DEVICES && <CreateAttachedDevicesCluster match={match} />}
       </div>
     </>
   );

@@ -11,16 +11,22 @@ import {
   convertToBaseValue,
 } from '@console/internal/components/utils';
 import { NodeKind } from '@console/internal/module/k8s';
-import { getName, getNodeCPUCapacity, getNodeAllocatableMemory } from '@console/shared';
+import {
+  getName,
+  getNodeRoles,
+  getNodeCPUCapacity,
+  getNodeAllocatableMemory,
+} from '@console/shared';
 import { useSelectList } from '@console/shared/src/hooks/select-list';
+import { hasTaints } from '../../utils';
 import { GetRows } from './types';
 import './node-selection-list.scss';
 
 const tableColumnClasses = [
   classNames('pf-u-w-30-on-sm'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-20-on-sm'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-20-on-sm'),
   classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-10-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-20-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-20-on-sm'),
   classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-20-on-sm'),
 ];
 
@@ -33,36 +39,41 @@ const getColumns = () => {
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'CPU',
+      title: 'Role',
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Memory',
+      title: 'Location',
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Location',
+      title: 'CPU',
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Taints',
-      props: { className: tableColumnClasses[3] },
+      title: 'Memory',
+      props: { className: tableColumnClasses[4] },
     },
   ];
 };
 
-const isSelected = (selected: Set<string>, nodeUID: string): boolean => selected.has(nodeUID);
-
 const getRows: GetRows = ({ componentProps }, visibleRows, setVisibleRows, selectedNodes) => {
-  const { data: filteredData } = componentProps;
+  const { data } = componentProps;
 
+  const filteredData = data.filter((node: NodeKind) => !hasTaints(node));
   const rows = filteredData.map((node: NodeKind) => {
     const cpuSpec: string = getNodeCPUCapacity(node);
     const memSpec: string = getNodeAllocatableMemory(node);
-    const nodeTaints = node.spec?.taints?.length ?? 0;
+    const roles = getNodeRoles(node).sort();
     const cells: IRow['cells'] = [
       {
         title: <ResourceLink kind="Node" name={getName(node)} title={node.metadata.uid} />,
+      },
+      {
+        title: roles.join(', ') ?? '-',
+      },
+      {
+        title: node.metadata.labels?.['failure-domain.beta.kubernetes.io/zone'] ?? '-',
       },
       {
         title: `${humanizeCpuCores(cpuSpec).string || '-'}`,
@@ -70,16 +81,10 @@ const getRows: GetRows = ({ componentProps }, visibleRows, setVisibleRows, selec
       {
         title: humanizeBinaryBytes(convertToBaseValue(memSpec)).string ?? '-',
       },
-      {
-        title: node.metadata.labels?.['failure-domain.beta.kubernetes.io/zone'] ?? '-',
-      },
-      {
-        title: pluralize(nodeTaints, 'taint'),
-      },
     ];
     return {
       cells,
-      selected: selectedNodes ? isSelected(selectedNodes, node.metadata.uid) : false,
+      selected: selectedNodes.has(node.metadata.uid),
       props: {
         id: node.metadata.uid,
       },

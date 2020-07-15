@@ -6,7 +6,7 @@
   margin: 0;
 }
 
-.lso-create-lvs__max-volume-limit-help-text--margin {
+.lso-create-lvs__max-disk-limit-help-text--margin {
   margin-top: 0;
 }
 
@@ -14,6 +14,26 @@
   margin-top: 0;
 }
 
-.lso-create-lvs__volume-mode-dropdown--margin {
+.lso-create-lvs__disk-mode-dropdown--margin {
   margin-bottom: var(--pf-global--spacer--md);
+}
+
+.lso-create-lvs__disk-size-form-group--margin {
+  margin: var(--pf-global--spacer--lg) 0;
+}
+
+.lso-create-lvs__disk-size-form-group-div {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  width: 22em;
+}
+
+.lso-create-lvs__disk-size-form-group-max-min-input {
+  display: flex;
+  flex-direction: column;
+}
+
+.lso-create-lvs__disk-size-form-group-max-input {
+  max-width: 100px;
 }

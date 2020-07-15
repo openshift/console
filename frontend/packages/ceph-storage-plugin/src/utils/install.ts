@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
-import { NodeKind, Taint } from '@console/internal/module/k8s';
-import { ocsTaint } from '../constants/ocs-install';
+import { NodeKind, Taint, StorageClassResourceKind } from '@console/internal/module/k8s';
+import { ocsTaint, NO_PROVISIONER } from '../constants';
 import { humanizeBinaryBytes, convertToBaseValue } from '@console/internal/components/utils';
 
 export const hasTaints = (node: NodeKind) => {
@@ -15,3 +15,9 @@ export const hasOCSTaint = (node: NodeKind) => {
 export const getConvertedUnits = (value: string) => {
   return humanizeBinaryBytes(convertToBaseValue(value)).string ?? '-';
 };
+
+export const filterSCWithNoProv = (sc: StorageClassResourceKind) =>
+  sc?.provisioner === NO_PROVISIONER;
+
+export const filterSCWithoutNoProv = (sc: StorageClassResourceKind) =>
+  sc?.provisioner !== NO_PROVISIONER;
