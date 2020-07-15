@@ -14,6 +14,8 @@ import {
   createDeploymentItems,
   createWorkloadItems,
   createPodItems,
+  createCronJobItems,
+  getStandaloneJobs,
   formatNamespacedRouteForResource,
 } from '@console/shared';
 import {
@@ -27,12 +29,19 @@ import { coFetchJSON } from '../../co-fetch';
 import { PROMETHEUS_TENANCY_BASE_PATH } from '../graphs';
 import { TextFilter } from '../factory';
 import * as UIActions from '../../actions/ui';
-import { DeploymentKind, K8sResourceKind, PodKind, RouteKind } from '../../module/k8s';
+import {
+  CronJobKind,
+  DeploymentKind,
+  JobKind,
+  K8sResourceKind,
+  PodKind,
+  RouteKind,
+} from '../../module/k8s';
 import { CloseButton, Dropdown, Firehose, StatusBox, FirehoseResult, MsgBox } from '../utils';
 import { ProjectOverview } from './project-overview';
 import { ResourceOverviewPage } from './resource-overview-page';
 import { OverviewSpecialGroup } from './constants';
-import { DaemonSetModel, StatefulSetModel } from '../../models';
+import { DaemonSetModel, JobModel, StatefulSetModel } from '../../models';
 
 const asOverviewGroups = (keyedItems: { [name: string]: OverviewItem[] }): OverviewGroup[] => {
   const compareGroups = (a: OverviewGroup, b: OverviewGroup) => {
@@ -197,6 +206,8 @@ class OverviewMainContent_ extends React.Component<
       loaded,
       namespace,
       pods,
+      jobs,
+      cronJobs,
       replicaSets,
       replicationControllers,
       routes,
@@ -214,6 +225,8 @@ class OverviewMainContent_ extends React.Component<
       !_.isEqual(deploymentConfigs, prevProps.deploymentConfigs) ||
       !_.isEqual(deployments, prevProps.deployments) ||
       !_.isEqual(pods, prevProps.pods) ||
+      !_.isEqual(jobs, prevProps.jobs) ||
+      !_.isEqual(cronJobs, prevProps.cronJobs) ||
       !_.isEqual(replicaSets, prevProps.replicaSets) ||
       !_.isEqual(replicationControllers, prevProps.replicationControllers) ||
       !_.isEqual(routes, prevProps.routes) ||
@@ -347,6 +360,13 @@ class OverviewMainContent_ extends React.Component<
         this.props.utils,
       ),
       ...createPodItems(this.props),
+      ...createCronJobItems(this.props.cronJobs.data, this.props, this.props.utils),
+      ...createWorkloadItems(
+        JobModel,
+        getStandaloneJobs(this.props.jobs.data),
+        this.props,
+        this.props.utils,
+      ),
     ];
 
     updateResources(items);
@@ -581,6 +601,8 @@ type OverviewMainContentOwnProps = {
   loadError?: any;
   namespace: string;
   pods?: FirehoseResult<PodKind[]>;
+  jobs?: FirehoseResult<JobKind[]>;
+  cronJobs?: FirehoseResult<CronJobKind[]>;
   project?: FirehoseResult<K8sResourceKind>;
   replicationControllers?: FirehoseResult;
   replicaSets?: FirehoseResult;
