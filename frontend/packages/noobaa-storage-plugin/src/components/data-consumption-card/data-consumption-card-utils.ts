@@ -14,8 +14,8 @@ import {
   BY_EGRESS,
   PROVIDERS,
 } from '../../constants';
-import { DATA_CONSUMPTION_QUERIES, ObjectServiceDashboardQuery } from '../../constants/queries';
 import { getGaugeValue } from '../../utils';
+import { DATA_CONSUMPTION_QUERIES, ObjectServiceDashboardQuery } from '../../queries';
 
 export const DataConsumersValue = {
   [PROVIDERS]: 'PROVIDERS_',
