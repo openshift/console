@@ -1,4 +1,4 @@
-import { AlertStates, RuleStates, SilenceStates } from '../../reducers/monitoring';
+import { AlertSeverity, AlertStates, RuleStates, SilenceStates } from '../../reducers/monitoring';
 import { RowFunction } from '../factory';
 import { RowFilter } from '../filter-toolbar';
 import { PrometheusLabels } from '../graphs';
@@ -35,6 +35,7 @@ export type PrometheusAlert = {
   annotations: PrometheusLabels;
   labels: PrometheusLabels & {
     alertname: string;
+    severity?: AlertSeverity | string;
   };
   state: AlertStates;
   value?: number;
@@ -55,7 +56,9 @@ export type PrometheusRule = {
   alerts: PrometheusAlert[];
   annotations: PrometheusLabels;
   duration: number;
-  labels: PrometheusLabels;
+  labels: PrometheusLabels & {
+    severity?: AlertSeverity | string;
+  };
   name: string;
   query: string;
   state: RuleStates;
