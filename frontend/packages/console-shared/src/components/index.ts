@@ -4,6 +4,7 @@ export * from './dropdown';
 export * from './form-utils';
 export * from './formik-fields';
 export * from './lists';
+export * from './log';
 export * from './status';
 export * from './pod';
 export * from './popper';

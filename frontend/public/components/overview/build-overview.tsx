@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { SyncAltIcon } from '@patternfly/react-icons';
 import { Button } from '@patternfly/react-core';
-import { Status, StatusIconAndText, BuildConfigOverviewItem } from '@console/shared';
+import { LogSnippet, Status, StatusIconAndText, BuildConfigOverviewItem } from '@console/shared';
 import { BuildNumberLink, BuildLogLink } from '../build';
 import { errorModal } from '../modals/error-modal';
 import { fromNow } from '../utils/datetime';
@@ -29,12 +29,7 @@ const BuildStatus = ({ build }) => {
     status: { logSnippet, message, phase },
   } = build;
   const unsuccessful = [BuildPhase.Error, BuildPhase.Failed].includes(phase);
-  return unsuccessful ? (
-    <div className="build-overview__item-reason">
-      <p className="build-overview__status-message">{message}</p>
-      {logSnippet && <pre className="build-overview__log-snippet">{logSnippet}</pre>}
-    </div>
-  ) : null;
+  return unsuccessful ? <LogSnippet message={message} logSnippet={logSnippet} /> : null;
 };
 
 const BuildOverviewItem: React.SFC<BuildOverviewListItemProps> = ({ build }) => {

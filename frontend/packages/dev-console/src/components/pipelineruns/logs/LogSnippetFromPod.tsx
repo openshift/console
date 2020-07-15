@@ -6,6 +6,7 @@ import { PodModel } from '@console/internal/models';
 import { LoadingInline } from '@console/internal/components/utils';
 
 type LogSnippetFromPodProps = {
+  children: (logSnippet: string) => React.ReactNode;
   containerName: string;
   namespace: string;
   podName: string;
@@ -13,6 +14,7 @@ type LogSnippetFromPodProps = {
 };
 
 const LogSnippetFromPod: React.FC<LogSnippetFromPodProps> = ({
+  children,
   containerName,
   namespace,
   podName,
@@ -53,7 +55,7 @@ const LogSnippetFromPod: React.FC<LogSnippetFromPodProps> = ({
     return <LoadingInline />;
   }
 
-  return <pre>{logSnippet}</pre>;
+  return <>{children(logSnippet)}</>;
 };
 
 export default LogSnippetFromPod;
