@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { safeLoad } from 'js-yaml';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, referenceFor, modelFor } from '@console/internal/module/k8s';
 import { checkAccess } from '@console/internal/components/utils';
 import {
   getAppLabels,
@@ -34,8 +34,8 @@ export const getEventSourcesDepResource = (formData: EventSourceFormData): K8sRe
   const eventSrcData = data[type.toLowerCase()];
   const { name: sinkName, kind: sinkKind, apiVersion: sinkApiVersion } = sink;
   const eventSourceResource: K8sResourceKind = {
-    kind: type,
     apiVersion,
+    kind: type,
     metadata: {
       name,
       namespace,
@@ -95,6 +95,19 @@ export const getKafkaSourceResource = (formData: EventSourceFormData): K8sResour
   return _.merge({}, baseResource, kafkaSource);
 };
 
+export const loadYamlData = (formData: EventSourceFormData) => {
+  const {
+    project: { name: namespace },
+    yamlData,
+  } = formData;
+  let yamlDataObj = safeLoad(yamlData);
+  const modelData = yamlDataObj && modelFor(referenceFor(yamlDataObj));
+  if (yamlDataObj?.metadata && modelData?.namespaced && !yamlDataObj.metadata?.namespace) {
+    yamlDataObj = { ...yamlDataObj, metadata: { ...yamlDataObj.metadata, namespace } };
+  }
+  return yamlDataObj;
+};
+
 export const getEventSourceResource = (formData: EventSourceFormData): K8sResourceKind => {
   switch (formData.type) {
     case EventSources.KafkaSource:
@@ -106,7 +119,7 @@ export const getEventSourceResource = (formData: EventSourceFormData): K8sResour
     case EventSources.PingSource:
       return getEventSourcesDepResource(formData);
     default:
-      return safeLoad(formData.yamlData);
+      return loadYamlData(formData);
   }
 };
 
