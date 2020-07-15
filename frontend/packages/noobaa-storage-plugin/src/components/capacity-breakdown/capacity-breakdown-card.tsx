@@ -26,7 +26,7 @@ import {
   CLUSTERWIDE_TOOLTIP,
   Colors,
 } from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/breakdown-card/consts';
-import { PROJECTS } from '../../constants/index';
+import { PROJECTS } from '../../constants';
 import { breakdownQueryMap, CAPACITY_BREAKDOWN_QUERIES } from '../../queries';
 import './capacity-breakdown-card.scss';
 import { NooBaaBucketClassModel } from '../../models';
