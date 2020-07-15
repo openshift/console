@@ -15,7 +15,8 @@ import {
   useHover,
   useAnchor,
   RectAnchor,
-} from '@console/topology';
+  NodeModel,
+} from '@patternfly/react-topology';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import SvgBoxedText from '@console/dev-console/src/components/svg/SvgBoxedText';
@@ -30,7 +31,6 @@ import {
   getFilterById,
   SHOW_LABELS_FILTER_ID,
 } from '@console/dev-console/src/components/topology';
-import { NodeModel } from '@console/topology/src/types';
 import './VmNode.scss';
 import { VMStatus } from '../../../constants/vm/vm-status';
 import { VMNodeData } from '../../types';

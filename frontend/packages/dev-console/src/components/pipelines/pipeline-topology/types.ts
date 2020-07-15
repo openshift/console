@@ -1,4 +1,4 @@
-import { EdgeModel, NodeModel } from '@console/topology';
+import { EdgeModel, NodeModel } from '@patternfly/react-topology';
 import { Pipeline, PipelineResourceTask, PipelineRun } from '../../../utils/pipeline-augment';
 import { PipelineVisualizationTaskItem } from '../../../utils/pipeline-utils';
 import { AddNodeDirection, NodeType } from './const';

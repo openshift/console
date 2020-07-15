@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ExtPodKind, OverviewItem, PodControllerOverviewItem } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { Graph, Node as TopologyNode, EventListener, Model } from '@console/topology/src/types';
+import { Graph, Node as TopologyNode, EventListener, Model } from '@patternfly/react-topology';
 import { WatchK8sResults } from '@console/internal/components/utils/k8s-watch-hook';
 import { Pipeline, PipelineRun } from '../../utils/pipeline-augment';
 

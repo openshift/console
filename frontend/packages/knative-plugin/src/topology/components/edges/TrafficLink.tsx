@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Edge, observer, EdgeConnectorArrow } from '@console/topology';
+import { Edge, observer, EdgeConnectorArrow } from '@patternfly/react-topology';
 import { BaseEdge } from '@console/dev-console/src/components/topology';
 
 import './TrafficLink.scss';

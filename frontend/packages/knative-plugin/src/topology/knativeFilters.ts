@@ -1,4 +1,4 @@
-import { Model } from '@console/topology/src/types';
+import { Model } from '@patternfly/react-topology';
 import {
   DisplayFilters,
   getFilterById,

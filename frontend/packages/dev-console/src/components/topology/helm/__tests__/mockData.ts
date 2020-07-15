@@ -1,4 +1,4 @@
-import { BaseNode } from '@console/topology/src/elements';
+import { BaseNode } from '@patternfly/react-topology';
 import { TYPE_HELM_RELEASE } from '../components/const';
 
 export const mockManifest = [

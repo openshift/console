@@ -5,7 +5,7 @@ import {
   WithDndDropProps,
   WithSelectionProps,
   WithContextMenuProps,
-} from '@console/topology';
+} from '@patternfly/react-topology';
 import { SHOW_GROUPING_HINT_EVENT } from '../../topology-types';
 import { RegroupHint } from '../RegroupHint';
 import ApplicationNode from './ApplicationNode';

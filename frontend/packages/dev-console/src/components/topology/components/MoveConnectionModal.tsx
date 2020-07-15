@@ -10,7 +10,7 @@ import {
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import { Edge, Node } from '@console/topology';
+import { Edge, Node } from '@patternfly/react-topology';
 import FormSection from '../../import/section/FormSection';
 import { TYPE_EVENT_SOURCE_LINK } from '@console/knative-plugin/src/topology/const';
 import { createSinkConnection } from '@console/knative-plugin/src/topology/knative-topology-utils';

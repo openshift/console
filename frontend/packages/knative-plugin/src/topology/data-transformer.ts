@@ -1,5 +1,5 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { Model } from '@console/topology';
+import { Model } from '@patternfly/react-topology';
 import {
   TopologyDataResources,
   addToTopologyDataModel,

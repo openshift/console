@@ -12,7 +12,7 @@ import {
   WithContextMenuProps,
   observer,
   useCombineRefs,
-} from '@console/topology';
+} from '@patternfly/react-topology';
 import {
   NodeShadows,
   NODE_SHADOW_FILTER_ID_HOVER,

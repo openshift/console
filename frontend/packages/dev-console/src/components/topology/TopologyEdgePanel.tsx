@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
-import { Model, Edge } from '@console/topology';
+import { Model, Edge } from '@patternfly/react-topology';
 import { RootState } from '@console/internal/redux';
 import { referenceFor, K8sResourceKind } from '@console/internal/module/k8s';
 import {

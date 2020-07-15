@@ -1,4 +1,4 @@
-import { BaseNode } from '@console/topology';
+import { BaseNode } from '@patternfly/react-topology';
 import { knativeTopologyDataModel } from '@console/knative-plugin/src/topology/__tests__/topology-knative-test-data';
 import { topologyDataModel } from '../../__tests__/topology-test-data';
 import {

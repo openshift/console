@@ -1,4 +1,4 @@
-import { Model } from '@console/topology/src/types';
+import { Model } from '@patternfly/react-topology';
 import { TopologyDisplayFilterType, DisplayFilters } from '../topology-types';
 import { TYPE_OPERATOR_BACKED_SERVICE } from './components/const';
 import { getFilterById } from '../filters';

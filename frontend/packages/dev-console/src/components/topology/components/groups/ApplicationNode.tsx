@@ -13,7 +13,7 @@ import {
   WithSelectionProps,
   WithContextMenuProps,
   createSvgIdUrl,
-} from '@console/topology';
+} from '@patternfly/react-topology';
 import { useSearchFilter } from '../../filters/useSearchFilter';
 import { NodeShadows, NODE_SHADOW_FILTER_ID, NODE_SHADOW_FILTER_ID_HOVER } from '../NodeShadows';
 import { getTopologyResourceObject } from '../../topology-utils';

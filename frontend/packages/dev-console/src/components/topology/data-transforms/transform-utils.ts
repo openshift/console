@@ -10,7 +10,7 @@ import {
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src';
 import { isKnativeServing } from '@console/shared';
-import { Model, EdgeModel, NodeModel } from '@console/topology';
+import { Model, EdgeModel, NodeModel } from '@patternfly/react-topology';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
   TYPE_EVENT_SOURCE,

@@ -1,4 +1,4 @@
-import { Point } from '@console/topology';
+import { Point } from '@patternfly/react-topology';
 import { DrawDesign, NODE_SEPARATION_HORIZONTAL } from './const';
 
 type SingleDraw = (p: Point) => string;

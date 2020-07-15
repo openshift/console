@@ -12,7 +12,7 @@ import {
   getImageForCSVIcon,
   getOperatorBackedServiceKindMap,
 } from '@console/shared';
-import { Model, EdgeModel, NodeShape } from '@console/topology';
+import { Model, EdgeModel, NodeShape } from '@patternfly/react-topology';
 import { TopologyDataResources } from '../topology-types';
 import {
   OPERATOR_GROUP_WIDTH,

@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { Model, NodeModel } from '@console/topology';
+import { Model, NodeModel } from '@patternfly/react-topology';
 import { getPodStatus, podStatus } from '@console/shared';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { WorkloadData, TopologyDataResources, TrafficData } from '../../topology-types';

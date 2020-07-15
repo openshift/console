@@ -1,5 +1,5 @@
 import { Extension } from '@console/plugin-sdk/src/typings/base';
-import { ComponentFactory } from '@console/topology';
+import { ComponentFactory } from '@patternfly/react-topology';
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   TopologyApplyDisplayOptions,

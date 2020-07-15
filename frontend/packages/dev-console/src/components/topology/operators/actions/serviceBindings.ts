@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { k8sCreate, K8sResourceKind, modelFor, referenceFor } from '@console/internal/module/k8s';
-import { Node, Edge } from '@console/topology';
+import { Node, Edge } from '@patternfly/react-topology';
 import { ServiceBindingRequestModel } from '../../../../models';
 import { errorModal } from '@console/internal/components/modals';
 import { removeServiceBinding } from './removeServiceBinding';

@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { getImageForCSVIcon, ALL_APPLICATIONS_KEY } from '@console/shared';
-import { Model, NodeModel } from '@console/topology/';
+import { Model, NodeModel } from '@patternfly/react-topology';
 import { WorkloadData, TopologyDataResources } from '../../topology-types';
 import { MockResources, TEST_KINDS_MAP } from '../../__tests__/topology-test-data';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '../components/const';

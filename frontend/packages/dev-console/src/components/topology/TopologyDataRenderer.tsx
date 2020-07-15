@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Model } from '@console/topology';
+import { Model } from '@patternfly/react-topology';
 import { TopologyDataResources, TrafficData } from './topology-types';
 import ModelContext, { ExtensibleModel } from './data-transforms/ModelContext';
 import { baseDataModelGetter } from './data-transforms';

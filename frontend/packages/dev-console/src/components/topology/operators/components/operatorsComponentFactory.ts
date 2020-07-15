@@ -5,8 +5,8 @@ import {
   withDragNode,
   withSelection,
   withCreateConnector,
-} from '@console/topology';
-import { withRemoveConnector } from '@console/topology/src/behavior';
+  withRemoveConnector,
+} from '@patternfly/react-topology';
 import {
   noRegroupWorkloadContextMenu,
   nodeDragSourceSpec,
@@ -27,7 +27,7 @@ export const getOperatorsComponentFactory = (): ComponentFactory => {
   return (kind, type): React.ComponentType<{ element: GraphElement }> | undefined => {
     switch (type) {
       case TYPE_OPERATOR_BACKED_SERVICE:
-        return withSelection(false, true)(withNoDrop()(OperatorBackedService));
+        return withSelection({ controlled: true })(withNoDrop()(OperatorBackedService));
       case TYPE_OPERATOR_WORKLOAD:
         return withCreateConnector(
           createConnectorCallback(),
@@ -35,10 +35,9 @@ export const getOperatorsComponentFactory = (): ComponentFactory => {
         )(
           withEditReviewAccess('patch')(
             withDragNode(nodeDragSourceSpec(type, false))(
-              withSelection(
-                false,
-                true,
-              )(withContextMenu(noRegroupWorkloadContextMenu)(OperatorWorkloadNode)),
+              withSelection({ controlled: true })(
+                withContextMenu(noRegroupWorkloadContextMenu)(OperatorWorkloadNode),
+              ),
             ),
           ),
         );

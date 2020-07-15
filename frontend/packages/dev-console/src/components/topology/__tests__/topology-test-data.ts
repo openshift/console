@@ -1,6 +1,6 @@
 import { FirehoseResult } from '@console/internal/components/utils';
 import { DeploymentKind, PodKind, EventKind, ImagePullPolicy } from '@console/internal/module/k8s';
-import { Model } from '@console/topology';
+import { Model } from '@patternfly/react-topology';
 import { TopologyDataResources } from '../topology-types';
 import { NODE_HEIGHT, NODE_PADDING, NODE_WIDTH } from '../components/const';
 import { WorkloadModelProps } from '../data-transforms';

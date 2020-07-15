@@ -1,7 +1,7 @@
 import { createOverviewItemsForType } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { Model, EdgeModel } from '@console/topology';
+import { Model, EdgeModel } from '@patternfly/react-topology';
 import {
   TopologyDataResources,
   TrafficData,

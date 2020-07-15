@@ -5,7 +5,7 @@ import { Popover, Button, ToolbarGroup, ToolbarContent } from '@patternfly/react
 import { RootState } from '@console/internal/redux';
 import { TextFilter } from '@console/internal/components/factory';
 import { InfoCircleIcon } from '@patternfly/react-icons';
-import { Visualization } from '@console/topology';
+import { Visualization } from '@patternfly/react-topology';
 import { setTopologyFilters } from '../redux/action';
 import { DisplayFilters } from '../topology-types';
 import {

@@ -21,7 +21,8 @@ import {
   isGraph,
   withDndDrop,
   DragEvent,
-} from '@console/topology';
+  DragOperationWithType,
+} from '@patternfly/react-topology';
 import { createConnection } from './createConnection';
 import { removeConnection } from './removeConnection';
 import { moveNodeToGroup } from './moveNodeToGroup';
@@ -54,8 +55,7 @@ type EdgeComponentProps = {
  * edit: true if the operation performs an edit, used to dim invalid drop targets
  * canDropOnNode: true if the drag object can be dropped on node, used to highlight valid drop nodes
  */
-type EditableDragOperationType = {
-  type: string;
+type EditableDragOperationType = DragOperationWithType & {
   edit?: boolean;
   canDropOnNode?: (operationType: string, dragElement: GraphElement, node: Node) => boolean;
 };

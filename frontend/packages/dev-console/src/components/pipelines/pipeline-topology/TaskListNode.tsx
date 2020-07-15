@@ -4,7 +4,7 @@ import { Button, Flex, FlexItem } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import Popper from '@console/shared/src/components/popper/Popper';
 import { KebabItem, KebabOption } from '@console/internal/components/utils';
-import { observer, Node, NodeModel } from '@console/topology';
+import { observer, Node, NodeModel } from '@patternfly/react-topology';
 import { PipelineResourceTask } from '../../../utils/pipeline-augment';
 import { NewTaskNodeCallback, TaskListNodeModelData } from './types';
 

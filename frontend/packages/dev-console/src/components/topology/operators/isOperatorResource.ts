@@ -1,5 +1,5 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { Model } from '@console/topology/src/types';
+import { Model } from '@patternfly/react-topology';
 import { TYPE_OPERATOR_WORKLOAD } from './components/const';
 import { getTopologyResourceObject } from '../topology-utils';
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Node, NodeModel, observer } from '@console/topology';
+import { Node, NodeModel, observer } from '@patternfly/react-topology';
 import {
   AddNodeDirection,
   BUILDER_NODE_ADD_RADIUS,

@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as k8s from '@console/internal/module/k8s';
 import { getPodStatus, podStatus, ALL_APPLICATIONS_KEY } from '@console/shared';
-import { Model, NodeModel, EdgeModel } from '@console/topology';
+import { Model, NodeModel, EdgeModel } from '@patternfly/react-topology';
 import {
   baseDataModelGetter,
   getFilterById,

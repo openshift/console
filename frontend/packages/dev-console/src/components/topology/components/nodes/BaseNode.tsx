@@ -13,7 +13,7 @@ import {
   useHover,
   observer,
   createSvgIdUrl,
-} from '@console/topology';
+} from '@patternfly/react-topology';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
 import SvgBoxedText from '../../../svg/SvgBoxedText';

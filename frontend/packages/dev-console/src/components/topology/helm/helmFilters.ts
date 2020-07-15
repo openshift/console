@@ -1,4 +1,4 @@
-import { Model } from '@console/topology/src/types';
+import { Model } from '@patternfly/react-topology';
 import { TYPE_HELM_RELEASE } from './components/const';
 import { TopologyDisplayFilterType, DisplayFilters } from '../topology-types';
 import { getFilterById } from '../filters';

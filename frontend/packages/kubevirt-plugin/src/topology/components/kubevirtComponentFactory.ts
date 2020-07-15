@@ -8,7 +8,8 @@ import {
   withDndDrop,
   withSelection,
   Node,
-} from '@console/topology';
+  withCreateConnector,
+} from '@patternfly/react-topology';
 import {
   NodeComponentProps,
   nodeDragSourceSpec,
@@ -26,7 +27,6 @@ import { vmMenuActions } from '../../components/vms/menu-actions';
 import { VmNode } from './nodes/VmNode';
 import { TYPE_VIRTUAL_MACHINE } from './const';
 import { VMNodeData } from '../types';
-import { withCreateConnector } from '@console/topology/src/behavior';
 
 export const vmActions = (vm: TopologyDataObject<VMNodeData>): KebabOption[] => {
   const contextMenuResource = getTopologyResourceObject(vm);
@@ -69,7 +69,7 @@ export const getKubevirtComponentFactory = (): ComponentFactory => {
           >(nodeDropTargetSpec)(
             withEditReviewAccess('patch')(
               withDragNode(nodeDragSourceSpec(type))(
-                withSelection(false, true)(withContextMenu(vmContextMenu)(VmNode)),
+                withSelection({ controlled: true })(withContextMenu(vmContextMenu)(VmNode)),
               ),
             ),
           ),

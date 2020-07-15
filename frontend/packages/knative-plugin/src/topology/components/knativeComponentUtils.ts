@@ -9,7 +9,7 @@ import {
   CREATE_CONNECTOR_DROP_TYPE,
   CREATE_CONNECTOR_OPERATION,
   DragSpecOperationType,
-} from '@console/topology';
+} from '@patternfly/react-topology';
 import {
   NodeComponentProps,
   NODE_DRAG_TYPE,

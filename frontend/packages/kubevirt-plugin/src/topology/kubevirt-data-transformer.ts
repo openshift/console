@@ -12,7 +12,7 @@ import {
   getServicesForResource,
 } from '@console/shared';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { Model } from '@console/topology';
+import { Model } from '@patternfly/react-topology';
 import {
   TopologyDataObject,
   TopologyDataResources,

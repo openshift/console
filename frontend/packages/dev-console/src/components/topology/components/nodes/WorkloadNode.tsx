@@ -9,7 +9,7 @@ import {
   WithSelectionProps,
   WithDndDropProps,
   WithContextMenuProps,
-} from '@console/topology';
+} from '@patternfly/react-topology';
 import { RootState } from '@console/internal/redux';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { modelFor, referenceFor, K8sVerb } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
-import { Node } from '@console/topology';
+import { Node } from '@patternfly/react-topology';
 import { getTopologyResourceObject } from '../topology-utils';
 
 type ComponentProps = {

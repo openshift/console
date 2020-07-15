@@ -9,7 +9,7 @@ import {
   ActionsMenu,
 } from '@console/internal/components/utils';
 import * as UIActions from '@console/internal/actions/ui';
-import { Node } from '@console/topology';
+import { Node } from '@patternfly/react-topology';
 import HelmReleaseOverview from '../../helm/details/overview/HelmReleaseOverview';
 import { helmReleaseActions } from './actions/helmReleaseActions';
 import TopologyHelmReleaseResourcesPanel from './TopologyHelmReleaseResourcesPanel';

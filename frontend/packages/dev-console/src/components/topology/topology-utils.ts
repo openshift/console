@@ -3,7 +3,7 @@ import { K8sResourceKind, modelFor, referenceFor } from '@console/internal/modul
 import { RootState } from '@console/internal/redux';
 import { getRouteWebURL } from '@console/internal/components/routes';
 import { OverviewItem } from '@console/shared';
-import { Edge } from '@console/topology';
+import { Edge } from '@patternfly/react-topology';
 import {
   createResourceConnection,
   updateResourceApplication,

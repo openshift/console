@@ -5,7 +5,7 @@ import {
   LayoutFactory,
   ModelKind,
   Graph,
-} from '@console/topology';
+} from '@patternfly/react-topology';
 import { NodeType, PipelineLayout } from './const';
 import BuilderNode from './BuilderNode';
 import InvalidTaskListNode from './InvalidTaskListNode';

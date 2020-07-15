@@ -28,7 +28,7 @@
     fill: var(--edge--active--fill);
     stroke: var(--edge--active--stroke);
     .odc-base-edge__link,
-    .topology-connector-arrow {
+    .pf-topology-connector-arrow {
       stroke: var(--edge--active--stroke);
     }
   }
@@ -38,11 +38,11 @@
     fill: var(--edge--interactive--fill);
     stroke: var(--edge--interactive--stroke);
     .odc-base-edge__link,
-    .topology-connector-arrow {
+    .pf-topology-connector-arrow {
       stroke: var(--edge--interactive--stroke);
     }
   }
-  .topology-connector-arrow {
+  .pf-topology-connector-arrow {
     cursor: var(--edge__arrow--cursor);
     stroke: var(--edge--stroke);
   }
@@ -55,7 +55,7 @@
     &.is-dragging {
       opacity: var(--edge--opacity);
     }
-    .topology-connector-arrow {
+    .pf-topology-connector-arrow {
       pointer-events: none;
     }
   }

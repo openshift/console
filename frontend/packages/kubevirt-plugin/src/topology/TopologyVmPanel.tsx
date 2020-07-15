@@ -8,7 +8,7 @@ import {
   resourcePathFromModel,
 } from '@console/internal/components/utils';
 import * as UIActions from '@console/internal/actions/ui';
-import { observer } from '@console/topology';
+import { observer } from '@patternfly/react-topology';
 import { modelFor } from '@console/internal/module/k8s';
 import { vmActions } from './components/kubevirtComponentFactory';
 import { TopologyVmDetailsPanel } from './TopologyVmDetailsPanel';

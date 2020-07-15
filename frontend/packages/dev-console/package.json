@@ -11,8 +11,7 @@
   "dependencies": {
     "@console/git-service": "0.0.0-fixed",
     "@console/knative-plugin": "0.0.0-fixed",
-    "@console/plugin-sdk": "0.0.0-fixed",
-    "@console/topology": "0.0.0-fixed"
+    "@console/plugin-sdk": "0.0.0-fixed"
   },
   "consolePlugin": {
     "entry": "src/plugin.tsx",

@@ -7,7 +7,7 @@ import {
   useAccessReview,
   asAccessReview,
 } from '@console/internal/components/utils';
-import { observer } from '@console/topology';
+import { observer } from '@patternfly/react-topology';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { TemplateModel } from '@console/internal/models';
 import { VirtualMachineModel } from '../models';

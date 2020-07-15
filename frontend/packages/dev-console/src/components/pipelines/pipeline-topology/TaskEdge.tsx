@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Edge, Point } from '@console/topology';
+import { Edge, Point } from '@patternfly/react-topology';
 import { integralShapePath } from './draw-utils';
 
 const TaskEdge: React.FC<{ element: Edge }> = ({ element }) => {
