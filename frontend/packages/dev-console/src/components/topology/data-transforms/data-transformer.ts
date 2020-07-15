@@ -2,6 +2,7 @@ import { createOverviewItemsForType } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { Model, EdgeModel } from '@patternfly/react-topology';
+import { getPipelinesAndPipelineRunsForResource } from '../../../utils/pipeline-plugin-utils';
 import {
   TopologyDataResources,
   TrafficData,
@@ -71,8 +72,11 @@ const getBaseTopologyDataModel = (resources: TopologyDataResources): Model => {
 
       createOverviewItemsForType(key, resources).forEach((item) => {
         const { obj: deploymentConfig } = item;
+
+        const pipelineData = getPipelinesAndPipelineRunsForResource(deploymentConfig, resources);
+
         const data = createTopologyNodeData(
-          item,
+          { ...item, ...pipelineData },
           TYPE_WORKLOAD,
           getImageForIconClass(`icon-openshift`),
         );
