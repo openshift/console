@@ -5,9 +5,9 @@ import { isDedicatedCPUPlacement } from '../../src/selectors/vm';
 import * as editDedicatedResourcesView from '../views/dialogs/editDedicatedResourcesView';
 import * as virtualMachineView from '../views/virtualMachine.view';
 import { saveButton } from '../views/kubevirtUIResource.view';
-import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/consts';
+import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/constants/common';
 import { VirtualMachine } from './models/virtualMachine';
-import { getVMManifest } from './utils/mocks';
+import { getVMManifest } from './mocks/mocks';
 import { getRandStr } from './utils/utils';
 
 describe('KubeVirt VM detail - edit Dedicated Resources', () => {

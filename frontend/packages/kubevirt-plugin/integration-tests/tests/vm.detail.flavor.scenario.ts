@@ -1,4 +1,3 @@
-import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   withResource,
   click,
@@ -7,24 +6,19 @@ import {
 } from '@console/shared/src/test-utils/utils';
 import * as virtualMachineView from '../views/virtualMachine.view';
 import { saveButton } from '../views/kubevirtUIResource.view';
-import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/consts';
-import { Wizard } from './models/wizard';
-import { vmConfig, getProvisionConfigs } from './vm.wizard.configs';
+import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/constants/common';
 import * as editFlavorView from '../views/dialogs/editFlavorView';
 import { selectOptionByText, getSelectedOptionText } from './utils/utils';
-import { ProvisionConfigName } from './utils/constants/wizard';
 import { getCPU, getMemory } from '../../src/selectors/vm/selectors';
+import { VMBuilder } from './models/vmBuilder';
+import { getBasicVMBuilder } from './mocks/vmBuilderPresets';
+import { provisionSources } from './mocks/mocks';
 
 describe('KubeVirt VM detail - edit flavor', () => {
   const leakedResources = new Set<string>();
-  const wizard = new Wizard();
-  const provisionConfigs = getProvisionConfigs();
-  const configName = ProvisionConfigName.CONTAINER;
-  const provisionConfig = provisionConfigs.get(configName);
-
-  // not needed for testing flavor
-  provisionConfig.networkResources = [];
-  provisionConfig.storageResources = [];
+  const vm = new VMBuilder(getBasicVMBuilder())
+    .setProvisionSource(provisionSources.Container)
+    .build();
 
   afterEach(() => {
     removeLeakedResources(leakedResources);
@@ -33,10 +27,7 @@ describe('KubeVirt VM detail - edit flavor', () => {
   it(
     'ID(CNV-3076) changes tiny to custom',
     async () => {
-      const vm1Config = vmConfig(configName.toLowerCase(), testName, provisionConfig);
-      vm1Config.startOnCreation = false;
-
-      const vm = await wizard.createVirtualMachine(vm1Config);
+      await vm.create();
       await withResource(leakedResources, vm.asResource(), async () => {
         await vm.navigateToDetail();
         await vm.modalEditFlavor();

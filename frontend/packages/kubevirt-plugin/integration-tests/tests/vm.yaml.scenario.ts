@@ -24,12 +24,12 @@ import { VirtualMachine } from './models/virtualMachine';
 import {
   VM_BOOTUP_TIMEOUT_SECS,
   PAGE_LOAD_TIMEOUT_SECS,
-  VM_ACTION,
   DEFAULT_YAML_VM_NAME,
-} from './utils/consts';
-import { getVMManifest, multusNAD } from './utils/mocks';
+} from './utils/constants/common';
+import { getVMManifest, multusNAD } from './mocks/mocks';
 import { virtualizationTitle } from '../views/vms.list.view';
 import { activeTab } from '../views/uiResource.view';
+import { VM_ACTION } from './utils/constants/vm';
 
 describe('Test VM creation from YAML', () => {
   const leakedResources = new Set<string>();
@@ -58,7 +58,7 @@ describe('Test VM creation from YAML', () => {
         await click(saveButton);
         await isLoaded();
         expect(resourceTitle.getText()).toEqual(vm.name);
-        await vm.action(VM_ACTION.Start);
+        await vm.detailViewAction(VM_ACTION.Start);
       });
     },
     VM_BOOTUP_TIMEOUT_SECS,

@@ -4,11 +4,14 @@ import { createResources, deleteResources, click } from '@console/shared/src/tes
 import * as editCdView from '../views/dialogs/editCDView';
 import * as virtualMachineView from '../views/virtualMachine.view';
 import { saveButton } from '../views/kubevirtUIResource.view';
-import { VM_CREATE_AND_EDIT_TIMEOUT_SECS, STORAGE_CLASS, NOT_AVAILABLE } from './utils/consts';
+import {
+  VM_CREATE_AND_EDIT_TIMEOUT_SECS,
+  STORAGE_CLASS,
+  NOT_AVAILABLE,
+} from './utils/constants/common';
 import { selectOptionByOptionValue, getRandStr } from './utils/utils';
 import { VirtualMachine } from './models/virtualMachine';
-import { getTestDataVolume } from './vm.wizard.configs';
-import { getVMManifest } from './utils/mocks';
+import { getVMManifest, getTestDataVolume } from './mocks/mocks';
 
 describe('KubeVirt VM detail - edit cdroms', () => {
   const testDataVolume = getTestDataVolume();

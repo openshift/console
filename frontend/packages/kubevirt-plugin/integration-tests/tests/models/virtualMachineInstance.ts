@@ -1,14 +1,15 @@
 /* eslint-disable no-await-in-loop, no-console */
 import { detailViewAction, listViewAction } from '@console/shared/src/test-utils/actions.view';
-import { TAB, VMI_ACTION } from '../utils/consts';
+import { TAB, VMI_ACTION } from '../utils/constants/vm';
 import { VirtualMachineInstanceModel } from '../../../src/models/index';
 import { BaseVirtualMachine } from './baseVirtualMachine';
+import { VMBuilderData } from '../types/vm';
 
 const noConfirmDialogActions: VMI_ACTION[] = [];
 
 export class VirtualMachineInstance extends BaseVirtualMachine {
-  constructor(config) {
-    super({ ...config, model: VirtualMachineInstanceModel });
+  constructor(data: VMBuilderData) {
+    super(data, VirtualMachineInstanceModel);
   }
 
   async action(action: VMI_ACTION, waitForAction = true, timeout?: number) {

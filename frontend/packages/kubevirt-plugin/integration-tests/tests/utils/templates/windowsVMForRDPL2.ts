@@ -2,7 +2,7 @@ import {
   COMMON_TEMPLATES_NAMESPACE,
   COMMON_TEMPLATES_REVISION,
   commonTemplateVersion,
-} from '../consts';
+} from '../constants/common';
 
 export const getWindowsVM = ({ name, networkName, vmIP }) => `
 apiVersion: kubevirt.io/v1alpha3

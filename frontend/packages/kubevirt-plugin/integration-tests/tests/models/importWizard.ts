@@ -6,15 +6,16 @@ import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
 import { DiskDialog } from '../dialogs/diskDialog';
 import { tableRows, saveButton } from '../../views/kubevirtUIResource.view';
 import { selectOptionByText } from '../utils/utils';
-import { networkTabCol, STORAGE_CLASS, VIRTUALIZATION_TITLE } from '../utils/consts';
+import { STORAGE_CLASS, VIRTUALIZATION_TITLE } from '../utils/constants/common';
 import * as view from '../../views/importWizard.view';
 import { waitForNoLoaders, clickKebabAction } from '../../views/wizard.view';
-import { VirtualMachineTemplateModel, NetworkResource, StorageResource } from '../utils/types';
 import { Wizard } from './wizard';
 import { virtualizationTitle } from '../../views/vms.list.view';
 import { K8sKind } from '@console/internal/module/k8s';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
 import { resourceHorizontalTab } from '../../views/uiResource.view';
+import { VirtualMachineTemplateModel, Network, Disk } from '../types/types';
+import { networkTabCol } from '../utils/constants/vm';
 
 export class ImportWizard extends Wizard {
   async openWizard(model: K8sKind) {
@@ -145,7 +146,7 @@ export class ImportWizard extends Wizard {
     });
   }
 
-  async addVmNetworks(networkResources: NetworkResource[]) {
+  async addVmNetworks(networkResources: Network[]) {
     if (networkResources) {
       for (const NIC of networkResources) {
         await this.addNIC(NIC);
@@ -153,7 +154,7 @@ export class ImportWizard extends Wizard {
     }
   }
 
-  async addVmStorage(storageResources: StorageResource[]) {
+  async addVmStorage(storageResources: Disk[]) {
     if (storageResources) {
       for (const disk of storageResources) {
         await this.addDisk(disk);

@@ -1,14 +1,14 @@
-import { browser } from 'protractor';
 import * as _ from 'lodash';
+import { browser } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { click, createResource, deleteResource } from '@console/shared/src/test-utils/utils';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import * as bootOrderView from '../views/dialogs/editBootOrderView';
 import { saveButton } from '../views/kubevirtUIResource.view';
 import { getBootableDevicesInOrder, getNonBootableDevices } from '../../src/selectors/vm/devices';
-import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/consts';
+import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/constants/common';
 import { VirtualMachine } from './models/virtualMachine';
-import { getVMManifest, hddDisk } from './utils/mocks';
+import { getVMManifest, hddDisk } from './mocks/mocks';
 import { getRandStr, getSelectOptions, selectOptionByText } from './utils/utils';
 import { dragAndDrop } from './utils/scripts/drag-drop';
 

@@ -1,44 +1,33 @@
 /* eslint-disable no-await-in-loop */
 import { browser, ExpectedConditions as until } from 'protractor';
-import { testName } from '@console/internal-integration-tests/protractor.conf';
+import * as _ from 'lodash';
 import { createItemButton, isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
-import {
-  click,
-  fillInput,
-  asyncForEach,
-  waitForStringInElement,
-  waitForStringNotInElement,
-} from '@console/shared/src/test-utils/utils';
+import { click, fillInput, asyncForEach } from '@console/shared/src/test-utils/utils';
 import { K8sKind } from '@console/internal/module/k8s';
-import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import { selectOptionByText, enabledAsBoolean } from '../utils/utils';
 import {
   CloudInitConfig,
-  StorageResource,
-  NetworkResource,
+  Disk,
+  Network,
   FlavorConfig,
   VirtualMachineTemplateModel,
-  KubevirtResourceConfig,
-} from '../utils/types';
+} from '../types/types';
 import {
-  VMWARE_WIZARD_CREATE_SUCCESS,
+  WIZARD_CREATE_SUCCESS,
   PAGE_LOAD_TIMEOUT_SECS,
   KEBAP_ACTION,
   VIRTUALIZATION_TITLE,
   SEC,
-  VM_STATUS,
-  VM_BOOTUP_TIMEOUT_SECS,
-} from '../utils/consts';
-import * as wizardView from '../../views/wizard.view';
+} from '../utils/constants/common';
+import * as view from '../../views/wizard.view';
 import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
 import { DiskDialog } from '../dialogs/diskDialog';
-import { Flavor, ProvisionConfigName } from '../utils/constants/wizard';
+import { Flavor, ProvisionSource } from '../utils/constants/wizard';
 import { resourceHorizontalTab } from '../../views/uiResource.view';
 import { virtualizationTitle } from '../../views/vms.list.view';
-import { VirtualMachine } from './virtualMachine';
-import { vmDetailStatus } from '../../views/virtualMachine.view';
-import { VirtualMachineTemplate } from './virtualMachineTemplate';
+import { VMBuilderData } from '../types/vm';
+import { DISK_DRIVE } from '../utils/constants/vm';
 
 export class Wizard {
   async openWizard(model: K8sKind) {
@@ -48,18 +37,18 @@ export class Wizard {
     ) {
       await clickNavLink(['Workloads', 'Virtualization']);
       await isLoaded();
-      if (model === VirtualMachineTemplateModel) {
-        await click(resourceHorizontalTab(VirtualMachineTemplateModel));
-        await isLoaded();
-      }
+    }
+    if (model === VirtualMachineTemplateModel) {
+      await click(resourceHorizontalTab(VirtualMachineTemplateModel));
+      await isLoaded();
     }
     await click(createItemButton);
-    await click(wizardView.createWithWizardButton);
-    await wizardView.waitForNoLoaders();
+    await click(view.createWithWizardButton);
+    await view.waitForNoLoaders();
   }
 
   async closeWizard() {
-    await click(wizardView.cancelButton);
+    await click(view.cancelButton);
     await browser
       .switchTo()
       .alert()
@@ -67,81 +56,78 @@ export class Wizard {
   }
 
   async next(ignoreWarnings: boolean = false) {
-    await click(wizardView.nextButton);
+    await click(view.nextButton);
     if (!ignoreWarnings) {
       try {
-        await browser.wait(until.presenceOf(wizardView.footerError), 2 * SEC);
+        await browser.wait(until.presenceOf(view.footerError), 1 * SEC);
       } catch (e) {
         // footerError wasn't displayed, everything is OK
         return;
       }
       // An error is displayed
-      throw new Error(await wizardView.footerErrorDescroption.getText());
+      throw new Error(await view.footerErrorDescroption.getText());
     }
   }
 
   async fillName(name: string) {
-    await fillInput(wizardView.nameInput, name);
+    await fillInput(view.nameInput, name);
   }
 
   async fillDescription(description: string) {
-    await fillInput(wizardView.descriptionInput, description);
+    await fillInput(view.descriptionInput, description);
   }
 
   async selectTemplate(template: string) {
-    await selectOptionByText(wizardView.templateSelect, template);
+    await selectOptionByText(view.templateSelect, template);
   }
 
   async selectOperatingSystem(operatingSystem: string) {
-    await selectOptionByText(wizardView.operatingSystemSelect, operatingSystem);
+    await selectOptionByText(view.operatingSystemSelect, operatingSystem);
   }
 
   async selectFlavor(flavor: FlavorConfig) {
-    await selectOptionByText(wizardView.flavorSelect, flavor.flavor);
+    await selectOptionByText(view.flavorSelect, flavor.flavor);
     if (flavor.flavor === Flavor.CUSTOM && (!flavor.memory || !flavor.cpu)) {
       throw Error('Custom Flavor requires memory and cpu values.');
     }
     if (flavor.memory) {
-      await fillInput(wizardView.customFlavorMemoryInput, flavor.memory);
+      await fillInput(view.customFlavorMemoryInput, flavor.memory);
     }
     if (flavor.cpu) {
-      await fillInput(wizardView.customFlavorCpusInput, flavor.cpu);
+      await fillInput(view.customFlavorCpusInput, flavor.cpu);
     }
   }
 
   async selectWorkloadProfile(workloadProfile: string) {
-    await selectOptionByText(wizardView.workloadProfileSelect, workloadProfile);
+    await selectOptionByText(view.workloadProfileSelect, workloadProfile);
   }
 
   async selectProvisionSource(provisionOptions) {
-    await selectOptionByText(wizardView.provisionSourceSelect, provisionOptions.method);
+    await selectOptionByText(view.provisionSourceSelect, provisionOptions.method);
     if (Object.prototype.hasOwnProperty.call(provisionOptions, 'source')) {
-      await fillInput(
-        wizardView.provisionSources[provisionOptions.method],
-        provisionOptions.source,
-      );
+      await fillInput(view.provisionSourceInputs[provisionOptions.method], provisionOptions.source);
     }
   }
 
   async startOnCreation() {
-    await click(wizardView.startVMOnCreation);
+    await click(view.startVMOnCreation);
   }
 
   async configureCloudInit(cloudInitOptions: CloudInitConfig) {
     if (cloudInitOptions.useCustomScript) {
-      await click(wizardView.cloudInitCustomScriptCheckbox);
-      await fillInput(wizardView.customCloudInitScriptTextArea, cloudInitOptions.customScript);
+      await click(view.cloudInitCustomScriptCheckbox);
+      await fillInput(view.customCloudInitScriptTextArea, cloudInitOptions.customScript);
     } else {
-      await fillInput(wizardView.cloudInitHostname, cloudInitOptions.hostname || '');
+      await fillInput(view.cloudInitHostname, cloudInitOptions.hostname || '');
       await asyncForEach(cloudInitOptions.sshKeys, async (sshKey: string, index: number) => {
-        await fillInput(wizardView.cloudInitSSHKey(index + 1), sshKey);
-        await click(wizardView.cloudInitAddKeyButton);
+        await fillInput(view.cloudInitSSHKey(index + 1), sshKey);
+        await click(view.cloudInitAddKeyButton);
       });
     }
   }
 
-  async addNIC(nic: NetworkResource) {
-    await click(wizardView.addNICButton);
+  async addNIC(nic: Network) {
+    await click(view.addNICButton);
     const addNICDialog = new NetworkInterfaceDialog();
     await addNICDialog.create(nic);
   }
@@ -149,30 +135,30 @@ export class Wizard {
   /**
    * Edits attributes of a NIC.
    * @param   {string}              name     Name of a NIC to edit.
-   * @param   {NetworkResource}     NIC      NIC with the requested attributes.
+   * @param   {Network}     NIC      NIC with the requested attributes.
    */
-  async editNIC(name: string, NIC: NetworkResource) {
-    await wizardView.clickKebabAction(name, KEBAP_ACTION.Edit);
+  async editNIC(name: string, NIC: Network) {
+    await view.clickKebabAction(name, KEBAP_ACTION.Edit);
     const addNICDialog = new NetworkInterfaceDialog();
     await addNICDialog.edit(NIC);
   }
 
   async selectBootableNIC(networkDefinition: string) {
-    await selectOptionByText(wizardView.pxeBootSourceSelect, networkDefinition);
+    await selectOptionByText(view.pxeBootSourceSelect, networkDefinition);
   }
 
   async selectBootableDisk(diskName: string) {
-    await selectOptionByText(wizardView.storageBootSourceSelect, diskName);
+    await selectOptionByText(view.storageBootSourceSelect, diskName);
   }
 
-  async addDisk(disk: StorageResource) {
-    await click(wizardView.addDiskButton);
+  async addDisk(disk: Disk) {
+    await click(view.addDiskButton);
     const addDiskDialog = new DiskDialog();
     await addDiskDialog.create(disk);
   }
 
-  async addCD(cd: StorageResource) {
-    await click(wizardView.addCDButton);
+  async addCD(cd: Disk) {
+    await click(view.addCDButton);
     const addDiskDialog = new DiskDialog();
     await addDiskDialog.create(cd);
   }
@@ -180,117 +166,122 @@ export class Wizard {
   /**
    * Edits attributes of a disk.
    * @param   {string}              name     Name of a disk to edit.
-   * @param   {StorageResource}     disk     Disk with the requested attributes.
+   * @param   {Disk}     disk     Disk with the requested attributes.
    */
-  async editDisk(name: string, disk: StorageResource) {
-    await wizardView.clickKebabAction(name, KEBAP_ACTION.Edit);
+  async editDisk(name: string, disk: Disk) {
+    await view.clickKebabAction(name, KEBAP_ACTION.Edit);
     const addDiskDialog = new DiskDialog();
     await addDiskDialog.edit(disk);
   }
 
-  async validateReviewTab(config) {
-    expect(await wizardView.nameReviewValue.getText()).toEqual(config.name);
-    if (config.description) {
-      expect(await wizardView.descriptionReviewValue.getText()).toEqual(config.description);
+  async validateReviewTab(data) {
+    expect(await view.nameReviewValue.getText()).toEqual(data.name);
+    if (data.description) {
+      expect(await view.descriptionReviewValue.getText()).toEqual(data.description);
     }
-    if (config.operatingSystem) {
-      expect(await wizardView.osReviewValue.getText()).toEqual(config.operatingSystem);
+    if (data.operatingSystem) {
+      expect(await view.osReviewValue.getText()).toEqual(data.operatingSystem);
     }
-    if (config.flavorConfig) {
-      expect(await wizardView.flavorReviewValue.getText()).toContain(config.flavorConfig.flavor);
+    if (data.flavorConfig) {
+      expect(await view.flavorReviewValue.getText()).toContain(data.flavorConfig.flavor);
     }
-    if (config.workloadProfile) {
-      expect(await wizardView.workloadProfileReviewValue.getText()).toEqual(config.workloadProfile);
+    if (data.workloadProfile) {
+      expect(await view.workloadProfileReviewValue.getText()).toEqual(data.workloadProfile);
     }
-    if (config.cloudInit?.useCloudInit) {
-      expect(enabledAsBoolean(await wizardView.cloudInitReviewValue.getText())).toEqual(
-        config.cloudInit.useCloudInit,
+    if (data.cloudInit?.useCloudInit) {
+      expect(enabledAsBoolean(await view.cloudInitReviewValue.getText())).toEqual(
+        data.cloudInit.useCloudInit,
       );
     }
   }
 
   async confirmAndCreate() {
-    await click(wizardView.createVirtualMachineButton);
+    await click(view.createVirtualMachineButton);
   }
 
   async waitForCreation() {
     await browser.wait(
-      until.textToBePresentInElement(
-        wizardView.creationSuccessResult,
-        VMWARE_WIZARD_CREATE_SUCCESS,
-      ),
+      until.textToBePresentInElement(view.creationSuccessResult, WIZARD_CREATE_SUCCESS),
       PAGE_LOAD_TIMEOUT_SECS,
     );
   }
 
-  async processWizard(config: KubevirtResourceConfig) {
+  async processWizard(data: VMBuilderData) {
     const {
       name,
       description,
       template,
       provisionSource,
-      operatingSystem,
-      flavorConfig,
-      workloadProfile,
+      os,
+      flavor,
+      workload,
       startOnCreation,
       cloudInit,
-      storageResources,
-      CDRoms,
-      networkResources,
-      bootableDevice,
-    } = config;
-    await this.fillName(name);
+      disks,
+      networks,
+    } = data;
+    if (name) {
+      await this.fillName(name);
+    } else {
+      throw Error('VM Name not defined');
+    }
     if (description) {
       await this.fillDescription(description);
     }
-    if (template) {
+    if ((await browser.getCurrentUrl()).match(/\?template=.+$/)) {
+      // We are creating a VM from template via its action button
+      // ProvisionSource, OS and workload are prefilled and disabled - ignoring them
+    } else if (template) {
       await this.selectTemplate(template);
     } else {
       if (provisionSource) {
         await this.selectProvisionSource(provisionSource);
+      } else {
+        throw Error('VM Provision source not defined');
       }
-      if (operatingSystem) {
-        await this.selectOperatingSystem(operatingSystem);
+      if (os) {
+        await this.selectOperatingSystem(os);
+      } else {
+        throw Error('VM OS not defined');
       }
-      if (workloadProfile) {
-        await this.selectWorkloadProfile(workloadProfile);
+      if (workload) {
+        await this.selectWorkloadProfile(workload);
+      } else {
+        throw Error('VM Workload not defined');
       }
     }
-    await this.selectFlavor(flavorConfig);
+    if (flavor) {
+      await this.selectFlavor(flavor);
+    } else {
+      throw Error('VM Flavor not defined');
+    }
     await this.next();
 
     // Networking
-    for (const resource of networkResources) {
+    for (const resource of networks) {
       await this.addNIC(resource);
     }
-    if (provisionSource?.method === ProvisionConfigName.PXE && template === undefined) {
+    if (provisionSource?.method === ProvisionSource.PXE && template === undefined) {
       // Select the last NIC as the source for booting
-      await this.selectBootableNIC(networkResources[networkResources.length - 1].name);
+      await this.selectBootableNIC(networks[networks.length - 1].name);
     }
     await this.next();
 
     // Storage
-    for (const resource of storageResources) {
-      if (resource.name === 'rootdisk' && provisionSource.method === ProvisionConfigName.URL) {
-        await this.editDisk(resource.name, resource);
+    for (const disk of disks) {
+      if (await view.tableRow(disk.name).isPresent()) {
+        await this.editDisk(disk.name, disk);
       } else {
-        await this.addDisk(resource);
+        await this.addDisk(disk);
       }
-    }
-    if (provisionSource?.method === ProvisionConfigName.DISK) {
-      if (bootableDevice) {
-        await this.selectBootableDisk(bootableDevice);
-      } else if (storageResources.length > 0) {
-        // Select the last Disk as the source for booting
-        await this.selectBootableDisk(storageResources[storageResources.length - 1].name);
-      } else {
-        throw Error(`No bootable device provided for ${provisionSource.method} provision method.`);
+      if (provisionSource?.method === ProvisionSource.DISK && disk.bootable) {
+        await this.selectBootableDisk(disk.name);
       }
     }
     await this.next();
 
     // Advanced - Cloud Init
-    if (cloudInit?.useCloudInit) {
+    if (cloudInit) {
       if (template !== undefined) {
         // TODO: wizard.useCloudInit needs to check state of checkboxes before clicking them to ensure desired state is achieved with specified template
         throw new Error('Using cloud init with template not yet implemented.');
@@ -300,9 +291,10 @@ export class Wizard {
     await this.next();
 
     // Advanced - Virtual Hardware
-    if (CDRoms) {
-      for (const resource of CDRoms) {
-        await this.addCD(resource);
+    const cdroms = _.filter(disks, (disk) => disk.drive === DISK_DRIVE.CDROM);
+    if (cdroms) {
+      for (const cdrom of cdroms) {
+        await this.addCD(cdrom);
       }
     }
     await this.next();
@@ -311,45 +303,11 @@ export class Wizard {
     if (startOnCreation) {
       await this.startOnCreation();
     }
-    await this.validateReviewTab(config);
+    await this.validateReviewTab(data);
 
     // Create
     await this.confirmAndCreate();
     await this.waitForCreation();
-
     // TODO check for error and in case of error throw Error
-  }
-
-  async createVirtualMachine(config: KubevirtResourceConfig): Promise<VirtualMachine> {
-    await this.openWizard(VirtualMachineModel);
-    await this.processWizard(config);
-
-    const vm = new VirtualMachine({ name: config.name, namespace: testName });
-    await vm.navigateToDetail();
-
-    if (config.waitForDiskImport) {
-      await browser.wait(
-        waitForStringNotInElement(vmDetailStatus(vm.namespace, vm.name), VM_STATUS.Importing),
-        VM_BOOTUP_TIMEOUT_SECS,
-      );
-    }
-    if (config.startOnCreation) {
-      await browser.wait(
-        waitForStringInElement(vmDetailStatus(vm.namespace, vm.name), VM_STATUS.Running),
-        VM_BOOTUP_TIMEOUT_SECS,
-      );
-    }
-    return vm;
-  }
-
-  async createVirtualMachineTemplate(
-    config: KubevirtResourceConfig,
-  ): Promise<VirtualMachineTemplate> {
-    await this.openWizard(VirtualMachineTemplateModel);
-    await this.processWizard(config);
-
-    const vmt = new VirtualMachineTemplate({ name: config.name, namespace: testName });
-    await vmt.navigateToDetail();
-    return vmt;
   }
 }

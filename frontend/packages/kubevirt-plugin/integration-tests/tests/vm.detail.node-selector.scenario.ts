@@ -1,12 +1,12 @@
 import { browser, ExpectedConditions as until } from 'protractor';
+import { MatchLabels } from '@console/internal/module/k8s';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { createResource, deleteResource } from '@console/shared/src/test-utils/utils';
 import * as virtualMachineView from '../views/virtualMachine.view';
-import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/consts';
+import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/constants/common';
 import { VirtualMachine } from './models/virtualMachine';
-import { getVMManifest } from './utils/mocks';
+import { getVMManifest } from './mocks/mocks';
 import { getRandStr } from './utils/utils';
-import { MatchLabels } from '@console/internal/module/k8s';
 
 describe('KubeVirt VM detail - edit Node Selector', () => {
   const testVM = getVMManifest('Container', testName, `node-selector-vm-${getRandStr(5)}`);

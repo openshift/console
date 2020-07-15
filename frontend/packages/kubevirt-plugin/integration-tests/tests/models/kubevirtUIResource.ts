@@ -6,8 +6,8 @@ import { confirmAction } from '@console/shared/src/test-utils/actions.view';
 import { resourceRows, isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { clickHorizontalTab } from '@console/internal-integration-tests/views/horizontal-nav.view';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
-import { TAB, diskTabCol, networkTabCol, PAGE_LOAD_TIMEOUT_SECS } from '../utils/consts';
-import { StorageResource, NetworkResource, VirtualMachineTemplateModel } from '../utils/types';
+import { PAGE_LOAD_TIMEOUT_SECS } from '../utils/constants/common';
+import { Disk, Network, VirtualMachineTemplateModel } from '../types/types';
 import * as kubevirtDetailView from '../../views/kubevirtUIResource.view';
 import {
   vmDetailFlavorEditButton,
@@ -33,14 +33,33 @@ import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
 import { DiskDialog } from '../dialogs/diskDialog';
 import { UIResource } from './uiResource';
 import { waitForNoLoaders } from '../../views/wizard.view';
+import { TAB, diskTabCol, networkTabCol } from '../utils/constants/vm';
+import { BaseVMBuilderData } from '../types/vm';
+import { K8sKind } from '@console/internal/module/k8s';
 
-export class KubevirtUIResource extends UIResource {
-  async navigateToListView() {
+export class KubevirtUIResource<T extends BaseVMBuilderData> extends UIResource {
+  protected data: T;
+
+  constructor(data: T, model: K8sKind) {
+    super({ name: data.name, namespace: data.namespace, model });
+    this.data = data;
+  }
+
+  async isOnListView(): Promise<boolean> {
     const currentUrl = await browser.getCurrentUrl();
-    const vmsListUrl = (namespace) =>
+    const virtualizationURLs = (namespace) =>
       `${appHost}/k8s/${namespace === 'all-namespaces' ? '' : 'ns/'}${namespace}/virtualization`;
+    return [virtualizationURLs(testName), virtualizationURLs('all-namespaces')].includes(
+      currentUrl,
+    );
+  }
 
-    if (![vmsListUrl(testName), vmsListUrl('all-namespaces')].includes(currentUrl)) {
+  async isOnDetailView(): Promise<boolean> {
+    return (await this.getResourceTitle()) === this.name;
+  }
+
+  async navigateToListView() {
+    if (!(await this.isOnListView())) {
       try {
         await clickNavLink(['Workloads', 'Virtualization']);
         if ((await getClusterNamespace()) !== this.namespace) {
@@ -50,7 +69,7 @@ export class KubevirtUIResource extends UIResource {
       } catch (e) {
         // clickNavLink may fail in case there is a overlay
         // Try to navigate using URL
-        await browser.get(vmsListUrl(this.namespace));
+        await browser.get(`${appHost}/k8s/ns/${this.namespace}/virtualization`);
         await isLoaded();
       }
     }
@@ -61,7 +80,7 @@ export class KubevirtUIResource extends UIResource {
   }
 
   async navigateToTab(tabName: string) {
-    if ((await this.getResourceTitle()) !== this.name) {
+    if (!(await this.isOnDetailView())) {
       await this.navigateToListView();
       await click(vmsListView.vmLinkByName(this.name));
       await isLoaded();
@@ -76,13 +95,18 @@ export class KubevirtUIResource extends UIResource {
     }
   }
 
-  async navigateToDetail() {
-    await this.navigateToTab(TAB.Details);
+  async navigateToOverview() {
+    await this.navigateToTab(TAB.Overview);
     await isLoaded();
   }
 
-  async navigateToOverview() {
-    await this.navigateToTab(TAB.Overview);
+  async navigateToYAML() {
+    await this.navigateToTab(TAB.Yaml);
+    await isLoaded();
+  }
+
+  async navigateToDetail() {
+    await this.navigateToTab(TAB.Details);
     await isLoaded();
   }
 
@@ -96,7 +120,17 @@ export class KubevirtUIResource extends UIResource {
     await isLoaded();
   }
 
-  async getAttachedDisks(): Promise<StorageResource[]> {
+  async navigateToDisks() {
+    await this.navigateToTab(TAB.Disks);
+    await isLoaded();
+  }
+
+  async navigateToNICs() {
+    await this.navigateToTab(TAB.NetworkInterfaces);
+    await isLoaded();
+  }
+
+  async getAttachedDisks(): Promise<Disk[]> {
     await this.navigateToTab(TAB.Disks);
     const rows = await kubevirtDetailView.tableRows();
     return rows.map((line) => {
@@ -110,7 +144,7 @@ export class KubevirtUIResource extends UIResource {
     });
   }
 
-  async getAttachedNICs(): Promise<NetworkResource[]> {
+  async getAttachedNICs(): Promise<Network[]> {
     await this.navigateToTab(TAB.NetworkInterfaces);
     const rows = await kubevirtDetailView.tableRows();
     return rows.map((line) => {
@@ -125,7 +159,7 @@ export class KubevirtUIResource extends UIResource {
     });
   }
 
-  async addDisk(disk: StorageResource) {
+  async addDisk(disk: Disk) {
     await this.navigateToTab(TAB.Disks);
     const count = await resourceRows.count();
     await click(kubevirtDetailView.createDiskButton);
@@ -142,7 +176,7 @@ export class KubevirtUIResource extends UIResource {
     await browser.wait(until.and(waitForCount(resourceRows, count - 1)), PAGE_LOAD_TIMEOUT_SECS);
   }
 
-  async addNIC(nic: NetworkResource) {
+  async addNIC(nic: Network) {
     await this.navigateToTab(TAB.NetworkInterfaces);
     const count = await resourceRows.count();
     await click(kubevirtDetailView.createNICButton);

@@ -1,7 +1,8 @@
 import { withResource } from '@console/shared/src/test-utils/utils';
-import { V2V_VM_IMPORT_TIMEOUT, VM_STATUS } from '../../tests/utils/consts';
 import { vmware2VMsConfig1, vmware2VMsConfig2 } from './v2v.configs';
 import { VmwareImportWizard } from '../../tests/models/vmwareImportWizard';
+import { VM_STATUS } from '../../tests/utils/constants/vm';
+import { V2V_VM_IMPORT_TIMEOUT } from '../../tests/utils/constants/common';
 
 describe('Kubevirt create 2 VMs using wizard, one by one', () => {
   const leakedResources = new Set<string>();

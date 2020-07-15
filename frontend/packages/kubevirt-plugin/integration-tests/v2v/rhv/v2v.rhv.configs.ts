@@ -1,8 +1,8 @@
-import { VMImportConfig, InstanceConfig } from '../../tests/utils/types';
+import { InstanceConfig, VMImportConfig } from '../../tests/types/types';
 import {
-  IMPORT_WIZARD_CONN_NAME_PREFIX,
   IMPORT_WIZARD_CONN_TO_NEW_INSTANCE,
-} from '../../tests/utils/consts';
+  IMPORT_WIZARD_CONN_NAME_PREFIX,
+} from '../../tests/utils/constants/common';
 
 const {
   V2V_INSTANCE_API_URL,

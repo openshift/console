@@ -1,12 +1,13 @@
-import { V2V_VM_IMPORT_TIMEOUT, VM_STATUS } from '../../tests/utils/consts';
 import { vmwareVMMultiNicConfig } from './v2v.configs';
 import {
   withResource,
   createResources,
   deleteResources,
 } from '@console/shared/src/test-utils/utils';
-import { multusNAD } from '../../tests/utils/mocks';
 import { VmwareImportWizard } from '../../tests/models/vmwareImportWizard';
+import { multusNAD } from '../../tests/mocks/mocks';
+import { VM_STATUS } from '../../tests/utils/constants/vm';
+import { V2V_VM_IMPORT_TIMEOUT } from '../../tests/utils/constants/common';
 
 describe('Kubevirt create VM using wizard', () => {
   const leakedResources = new Set<string>();

@@ -5,11 +5,11 @@ import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import { selectOptionByText, setCheckboxState } from '../utils/utils';
 import {
   IMPORT_WIZARD_CONN_TO_NEW_INSTANCE,
+  WIZARD_CREATE_SUCCESS,
   PAGE_LOAD_TIMEOUT_SECS,
-  VMWARE_WIZARD_CREATE_SUCCESS,
-} from '../utils/consts';
+} from '../utils/constants/common';
 import * as view from '../../views/importWizard.view';
-import { InstanceConfig, vmwareConfig, VMImportConfig } from '../utils/types';
+import { InstanceConfig, vmwareConfig, VMImportConfig } from '../types/types';
 import { VirtualMachine } from './virtualMachine';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import * as wizardView from '../../views/wizard.view';
@@ -58,10 +58,7 @@ export class VmwareImportWizard extends ImportWizard {
 
   async waitForCreation() {
     await browser.wait(
-      until.textToBePresentInElement(
-        wizardView.creationSuccessResult,
-        VMWARE_WIZARD_CREATE_SUCCESS,
-      ),
+      until.textToBePresentInElement(wizardView.creationSuccessResult, WIZARD_CREATE_SUCCESS),
       PAGE_LOAD_TIMEOUT_SECS,
     );
   }

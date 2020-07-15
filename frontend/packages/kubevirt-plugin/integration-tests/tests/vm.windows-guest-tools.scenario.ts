@@ -1,43 +1,32 @@
 import { browser, ExpectedConditions as until } from 'protractor';
-import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { withResource } from '@console/shared/src/test-utils/utils';
 import { isWinToolsImage, getVolumeContainerImage, getVolumes } from '../../src/selectors/vm';
-import { Wizard } from './models/wizard';
-import { VM_BOOTUP_TIMEOUT_SECS } from './utils/consts';
-import { getProvisionConfigs, vmConfig } from './vm.wizard.configs';
-import { ProvisionConfigName } from './utils/constants/wizard';
-import { windowsVMConfig } from './utils/mocks';
+import { VM_BOOTUP_TIMEOUT_SECS } from './utils/constants/common';
+import { OperatingSystem } from './utils/constants/wizard';
+import { rootDisk, flavorConfigs, provisionSources } from './mocks/mocks';
 import { windowsGuestToolsCDElement } from '../views/dialogs/editCDView';
+import { VMBuilder } from './models/vmBuilder';
+import { getBasicVMBuilder } from './mocks/vmBuilderPresets';
 
 describe('Kubevirt Windows Guest tools', () => {
   const leakedResources = new Set<string>();
-  const wizard = new Wizard();
-  const provisionConfigs = getProvisionConfigs();
-
-  const configName = ProvisionConfigName.CONTAINER;
-  const provisionConfig = provisionConfigs.get(configName);
-
-  provisionConfig.networkResources = [];
-  provisionConfig.storageResources = [];
 
   it(
     'ID(CNV-3593) Checks that Guest Tools CD is mounted after Windows VM creation',
     async () => {
-      const windowsConfig = vmConfig(
-        configName.toLowerCase(),
-        testName,
-        provisionConfig,
-        windowsVMConfig,
-        false, // dont startOnCreation
-      );
-      const vm = await wizard.createVirtualMachine(windowsConfig);
+      const vm = new VMBuilder(getBasicVMBuilder())
+        .setProvisionSource(provisionSources.Container)
+        .setOS(OperatingSystem.WINDOWS_10)
+        .setFlavor(flavorConfigs.Medium)
+        .setDisks([rootDisk])
+        .build();
 
-      const isWindowsCDMounted = () =>
-        !!getVolumes(vm.getResource()).some((volume) =>
-          isWinToolsImage(getVolumeContainerImage(volume)),
-        );
-
+      await vm.create();
       await withResource(leakedResources, vm.asResource(), async () => {
+        const isWindowsCDMounted = () =>
+          !!getVolumes(vm.getResource()).some((volume) =>
+            isWinToolsImage(getVolumeContainerImage(volume)),
+          );
         await browser.wait(until.presenceOf(windowsGuestToolsCDElement));
         expect(isWindowsCDMounted()).toBeTruthy();
       });

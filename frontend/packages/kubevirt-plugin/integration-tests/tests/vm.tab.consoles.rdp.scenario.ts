@@ -27,10 +27,10 @@ import {
   VM_CREATE_AND_EDIT_TIMEOUT_SECS,
   PAGE_LOAD_TIMEOUT_SECS,
   VM_CREATE_AND_EDIT_AND_CLOUDINIT_TIMEOUT_SECS,
-} from './utils/consts';
+} from './utils/constants/common';
 import { VirtualMachine } from './models/virtualMachine';
 import { getWindowsVM } from './utils/templates/windowsVMForRDPL2';
-import { multusNAD } from './utils/mocks';
+import { multusNAD } from './mocks/mocks';
 
 const VM_IP = '123.123.123.123';
 

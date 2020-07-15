@@ -1,7 +1,7 @@
 import { browser, ExpectedConditions as until } from 'protractor';
 import { BROWSER_TIMEOUT, testName } from '@console/internal-integration-tests/protractor.conf';
 import { createYAMLButton, isLoaded } from '@console/internal-integration-tests/views/crud.view';
-import { PAGE_LOAD_TIMEOUT_SECS } from '@console/kubevirt-plugin/integration-tests/tests/utils/consts';
+import { PAGE_LOAD_TIMEOUT_SECS } from '@console/kubevirt-plugin/integration-tests/tests/utils/constants/common';
 import { click, selectDropdownOptionById } from '@console/shared/src/test-utils/utils';
 import * as nadFormView from '../../views/nad.form.view';
 

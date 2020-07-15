@@ -20,16 +20,16 @@ import {
 } from '../views/consolesView';
 import {
   PAGE_LOAD_TIMEOUT_SECS,
-  VM_ACTION,
   VM_BOOTUP_TIMEOUT_SECS,
   KUBEVIRT_SCRIPTS_PATH,
-} from './utils/consts';
+} from './utils/constants/common';
+import { VM_ACTION } from './utils/constants/vm';
 import { VirtualMachine } from './models/virtualMachine';
-import { ProvisionConfigName } from './utils/constants/wizard';
-import { getVMManifest } from './utils/mocks';
+import { ProvisionSource } from './utils/constants/wizard';
+import { getVMManifest } from './mocks/mocks';
 
 describe('KubeVirt VM VNC/Serial consoles', () => {
-  const vmResource = getVMManifest(ProvisionConfigName.CONTAINER, testName, 'cirros-vm');
+  const vmResource = getVMManifest(ProvisionSource.CONTAINER, testName, 'cirros-vm');
   const vm = new VirtualMachine(vmResource.metadata);
   const cirrosUsername = 'cirros';
   const cirrosPassword = 'gocubsgo';
@@ -50,7 +50,7 @@ describe('KubeVirt VM VNC/Serial consoles', () => {
 
   beforeAll(async () => {
     createResource(vmResource);
-    await vm.action(VM_ACTION.Start);
+    await vm.detailViewAction(VM_ACTION.Start);
     // wait for the VM to boot up
     execSync(`expect ${expectLoginScriptPath} ${vm.name} ${vm.namespace}`);
     await vm.navigateToConsoles();
@@ -69,7 +69,7 @@ describe('KubeVirt VM VNC/Serial consoles', () => {
     await selectDropdownOption(consoleTypeSelectorId, 'Serial Console');
 
     // Wait for Loading span element to disappear
-    await waitForStringNotInElement(serialConsoleWrapper, 'Loading');
+    await browser.wait(waitForStringNotInElement(serialConsoleWrapper, 'Loading'));
 
     // Ensure presence of control buttons
     await browser.wait(until.presenceOf(serialReconnectButton), PAGE_LOAD_TIMEOUT_SECS);

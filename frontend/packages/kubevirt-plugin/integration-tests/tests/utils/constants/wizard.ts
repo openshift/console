@@ -1,4 +1,4 @@
-export enum ProvisionConfigName {
+export enum ProvisionSource {
   URL = 'URL',
   CONTAINER = 'Container',
   PXE = 'PXE',
@@ -24,7 +24,7 @@ export enum Flavor {
   CUSTOM = 'Custom',
 }
 
-export enum WorkloadProfile {
+export enum Workload {
   DESKTOP = 'desktop',
   HIGH_PERFORMANCE = 'highperformance',
   SERVER = 'server',

@@ -3,12 +3,14 @@ import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { isLoaded, resourceTitle } from '@console/internal-integration-tests/views/crud.view';
 import { asyncForEach, createResource, deleteResource } from '@console/shared/src/test-utils/utils';
 import * as vmView from '../views/virtualMachine.view';
-import { getVMIManifest, basicVMConfig } from './utils/mocks';
+import { getVMIManifest } from './mocks/mocks';
 import { exposeServices } from './utils/utils';
 import { VirtualMachineInstance } from './models/virtualMachineInstance';
-import { TAB, VM_STATUS, NOT_AVAILABLE } from './utils/consts';
-import { NodePortService } from './utils/types';
+import { NOT_AVAILABLE } from './utils/constants/common';
+import { NodePortService } from './types/types';
 import { vmiDetailFlavor } from '../views/virtualMachineInstance.view';
+import { VM_STATUS, TAB } from './utils/constants/vm';
+import { OperatingSystem, Workload } from './utils/constants/wizard';
 
 describe('Test VMI Details', () => {
   const vmiName = `vmi-${testName}`;
@@ -57,8 +59,8 @@ describe('Test VMI Details', () => {
       name: vmiName,
       status: VM_STATUS.Running,
       description: testName,
-      os: basicVMConfig.operatingSystem,
-      profile: basicVMConfig.workloadProfile,
+      os: OperatingSystem.RHEL7,
+      profile: Workload.DESKTOP,
       bootOrderTexts: ['rootdisk (Disk)', 'nic-0 (NIC)', 'cloudinitdisk (Disk)'],
       flavorText: 'Tiny: 1 vCPU, 1 GiB Memory',
     };

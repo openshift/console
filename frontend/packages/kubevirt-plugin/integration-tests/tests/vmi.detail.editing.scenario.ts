@@ -1,11 +1,12 @@
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { createResource, deleteResource } from '@console/shared/src/test-utils/utils';
-import { VM_CREATE_AND_EDIT_TIMEOUT_SECS, VM_STATUS, TAB } from './utils/consts';
-import { getVMIManifest } from './utils/mocks';
+import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/constants/common';
+import { getVMIManifest } from './mocks/mocks';
 import { resourceRows } from '@console/internal-integration-tests/views/crud.view';
 import { vmDetailCdEditButton, vmDetailBootOrderEditButton } from '../views/virtualMachine.view';
 import { VirtualMachineInstance } from './models/virtualMachineInstance';
 import * as kubevirtDetailView from '../views/kubevirtUIResource.view';
+import { VM_STATUS, TAB } from './utils/constants/vm';
 
 const waitForVM = async (manifest: any, status: VM_STATUS) => {
   const vm = new VirtualMachineInstance(manifest.metadata);
