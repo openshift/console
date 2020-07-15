@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { match as RMatch } from 'react-router';
-import { connect } from 'react-redux';
 import { HorizontalNav, PageHeading, history } from '@console/internal/components/utils';
-import { featureReducerName } from '@console/internal/reducers/features';
-import { TechPreviewBadge, ALL_NAMESPACES_KEY, FLAGS } from '@console/shared';
+import { TechPreviewBadge, ALL_NAMESPACES_KEY } from '@console/shared';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import ProjectListPage from '../projects/ProjectListPage';
@@ -20,47 +18,31 @@ type MonitoringPageProps = {
   }>;
 };
 
-type StateProps = {
-  canAccess: boolean;
-};
-
-type Props = MonitoringPageProps & StateProps;
-
 const handleNamespaceChange = (newNamespace: string): void => {
   if (newNamespace === ALL_NAMESPACES_KEY) {
     history.push(MONITORING_ALL_NS_PAGE_URI);
   }
 };
 
-export const PageContents: React.FC<Props> = ({ match, canAccess }) => {
+export const PageContents: React.FC<MonitoringPageProps> = ({ match }) => {
   const activeNamespace = match.params.ns;
-  const canAccessPrometheus = canAccess && !!window.SERVER_FLAGS.prometheusBaseURL;
-
-  const pages = React.useMemo(
-    () => [
-      ...(canAccessPrometheus
-        ? [
-            {
-              href: '',
-              name: 'Dashboard',
-              component: ConnectedMonitoringDashboard,
-            },
-            {
-              href: 'metrics',
-              name: 'Metrics',
-              component: ConnectedMonitoringMetrics,
-            },
-          ]
-        : []),
-      {
-        href: canAccessPrometheus ? 'events' : '',
-        name: 'Events',
-        component: MonitoringEvents,
-      },
-    ],
-    [canAccessPrometheus],
-  );
-
+  const pages = [
+    {
+      href: '',
+      name: 'Dashboard',
+      component: ConnectedMonitoringDashboard,
+    },
+    {
+      href: 'metrics',
+      name: 'Metrics',
+      component: ConnectedMonitoringMetrics,
+    },
+    {
+      href: 'events',
+      name: 'Events',
+      component: MonitoringEvents,
+    },
+  ];
   return activeNamespace ? (
     <>
       <PageHeading badge={<TechPreviewBadge />} title="Monitoring" />
@@ -75,7 +57,7 @@ export const PageContents: React.FC<Props> = ({ match, canAccess }) => {
 
 const PageContentsWithStartGuide = withStartGuide(PageContents);
 
-export const MonitoringPage: React.FC<Props> = (props) => (
+export const MonitoringPage: React.FC<MonitoringPageProps> = (props) => (
   <>
     <Helmet>
       <title>Monitoring</title>
@@ -90,8 +72,4 @@ export const MonitoringPage: React.FC<Props> = (props) => (
   </>
 );
 
-const stateToProps = (state) => ({
-  canAccess: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
-});
-
-export default connect<StateProps, {}, MonitoringPageProps>(stateToProps)(MonitoringPage);
+export default MonitoringPage;
