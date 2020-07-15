@@ -6,11 +6,7 @@ import {
 import { getLanguageService, TextDocument } from 'yaml-language-server';
 import { openAPItoJSONSchema } from '@console/internal/module/k8s/openapi-to-json-schema';
 import { getStoredSwagger } from '@console/internal/module/k8s/swagger';
-import {
-  global_BackgroundColor_100 as lineNumberActiveForeground,
-  global_BackgroundColor_200 as lineNumberForeground,
-  global_BackgroundColor_dark_100 as editorBackground,
-} from '@patternfly/react-tokens';
+import { global_BackgroundColor_dark_100 as editorBackground } from '@patternfly/react-tokens';
 
 window.monaco.editor.defineTheme('console', {
   base: 'vs-dark',
@@ -25,8 +21,8 @@ window.monaco.editor.defineTheme('console', {
   colors: {
     'editor.background': editorBackground.value,
     'editorGutter.background': '#292e34', // no pf token defined
-    'editorLineNumber.activeForeground': lineNumberActiveForeground.value,
-    'editorLineNumber.foreground': lineNumberForeground.value,
+    'editorLineNumber.activeForeground': '#fff',
+    'editorLineNumber.foreground': '#f0f0f0',
   },
 });
 
