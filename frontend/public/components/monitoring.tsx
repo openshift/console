@@ -38,7 +38,6 @@ import {
   alertDescription,
   alertingRuleIsActive,
   AlertSeverity,
-  alertSeverity,
   alertState,
   AlertStates,
   silenceState,
@@ -993,6 +992,18 @@ const HeaderAlertmanagerLink = ({ path }) =>
     </span>
   );
 
+const severityRowFilter: RowFilter = {
+  filterGroupName: 'Severity',
+  items: [
+    { id: AlertSeverity.Critical, title: 'Critical' },
+    { id: AlertSeverity.Warning, title: 'Warning' },
+    { id: AlertSeverity.Info, title: 'Info' },
+    { id: AlertSeverity.None, title: 'None' },
+  ],
+  reducer: ({ labels }: Alert | Rule) => labels?.severity,
+  type: 'alert-severity',
+};
+
 const alertsRowFilters: RowFilter[] = [
   {
     defaultSelected: [AlertStates.Firing],
@@ -1005,17 +1016,7 @@ const alertsRowFilters: RowFilter[] = [
     reducer: alertState,
     type: 'alert-state',
   },
-  {
-    filterGroupName: 'Severity',
-    items: [
-      { id: AlertSeverity.Critical, title: 'Critical' },
-      { id: AlertSeverity.Warning, title: 'Warning' },
-      { id: AlertSeverity.Info, title: 'Info' },
-      { id: AlertSeverity.None, title: 'None' },
-    ],
-    reducer: alertSeverity,
-    type: 'alert-severity',
-  },
+  severityRowFilter,
 ];
 
 // Row filter settings are stored in "k8s"
@@ -1117,6 +1118,7 @@ const rulesRowFilters: RowFilter[] = [
       { id: 'false', title: 'Inactive' },
     ],
   },
+  severityRowFilter,
 ];
 
 const tableRuleClasses = [

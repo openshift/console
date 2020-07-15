@@ -19,7 +19,6 @@ import {
 import {
   alertingRuleIsActive,
   alertDescription,
-  alertSeverity,
   alertState,
   silenceState,
 } from '../../reducers/monitoring';
@@ -54,8 +53,8 @@ export const tableFilters: TableFilterMap = {
     return !!values.all.every((v) => labels.includes(v));
   },
 
-  'alert-severity': (filter, alert: Alert) =>
-    filter.selected.has(alertSeverity(alert)) || _.isEmpty(filter.selected),
+  'alert-severity': (filter, { labels }: Alert | Rule) =>
+    filter.selected.has(labels?.severity) || _.isEmpty(filter.selected),
 
   'alert-state': (filter, alert: Alert) =>
     filter.selected.has(alertState(alert)) || _.isEmpty(filter.selected),

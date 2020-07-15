@@ -27,8 +27,6 @@ export const enum SilenceStates {
   Pending = 'pending',
 }
 
-export const alertSeverity = (a: Alert): AlertStates | string => a.labels?.severity;
-
 export const alertState = (a: Alert): AlertStates => a?.state;
 export const silenceState = (s: Silence): SilenceStates => s?.status?.state;
 
