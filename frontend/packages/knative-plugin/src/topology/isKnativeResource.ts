@@ -1,7 +1,7 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Model } from '@patternfly/react-topology';
 import { TYPE_EVENT_SOURCE } from './const';
-import { getTopologyResourceObject } from '@console/dev-console/src/components/topology';
+import { OdcNodeModel } from '@console/dev-console/src/components/topology';
 import { DeploymentModel } from '@console/internal/models';
 import { EventingBrokerModel } from '../models';
 
@@ -17,7 +17,7 @@ export const isKnativeResource = (resource: K8sResourceKind, model: Model): bool
 
   const eventSources = model.nodes
     .filter((n) => n.type === TYPE_EVENT_SOURCE)
-    .map((n) => getTopologyResourceObject(n.data));
+    .map((n) => (n as OdcNodeModel).resource);
 
   const isEventSourceKind = (uid: string): boolean =>
     uid && !!eventSources?.find((eventSource) => eventSource.metadata?.uid === uid);

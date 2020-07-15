@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { modelFor, referenceFor, K8sVerb } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
 import { Node } from '@patternfly/react-topology';
-import { getTopologyResourceObject } from '../topology-utils';
+import { getResource } from '../topology-utils';
 
 type ComponentProps = {
   element: Node;
@@ -11,7 +11,7 @@ type ComponentProps = {
 
 export const withEditReviewAccess = (verb: K8sVerb) => (WrappedComponent: React.ComponentType) => {
   const Component: React.FC<ComponentProps> = (props) => {
-    const resourceObj = getTopologyResourceObject(props.element.getData());
+    const resourceObj = getResource(props.element);
     const resourceModel = modelFor(referenceFor(resourceObj));
     const editAccess = useAccessReview({
       group: resourceModel.apiGroup,

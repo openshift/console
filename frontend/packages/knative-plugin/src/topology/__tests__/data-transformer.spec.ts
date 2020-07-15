@@ -5,7 +5,6 @@ import { Model, NodeModel, EdgeModel } from '@patternfly/react-topology';
 import {
   baseDataModelGetter,
   getFilterById,
-  getTopologyResourceObject,
   getWorkloadResources,
   TopologyDataResources,
   updateModelFromFilters,
@@ -13,6 +12,7 @@ import {
   WorkloadData,
   DEFAULT_TOPOLOGY_FILTERS,
   TopologyDataModelDepicted,
+  OdcNodeModel,
 } from '@console/dev-console/src/components/topology';
 import {
   MockBaseResources,
@@ -131,8 +131,9 @@ describe('knative data transformer ', () => {
 
   it('Should delete all the specific models related to knative deployments if the build config is not present i.e. for resource created through deploy image form', async (done) => {
     const graphData = await getTransformedTopologyData(mockResources);
-    const node = graphData.nodes.find((n) => n.data.resources.obj.metadata.name === 'overlayimage');
-    const resource = node ? getTopologyResourceObject(node.data) : undefined;
+    const node = graphData.nodes.find(
+      (n) => (n as OdcNodeModel).resource.metadata.name === 'overlayimage',
+    );
     const topologyTransformedData = node?.data;
 
     const spy = spyOn(k8s, 'k8sKill');
@@ -140,7 +141,7 @@ describe('knative data transformer ', () => {
     spyAndReturn(spy)(Promise.resolve({}));
     spyAndReturn(checkAccessSpy)(Promise.resolve({ status: { allowed: true } }));
 
-    cleanUpWorkload(resource, topologyTransformedData)
+    cleanUpWorkload((node as OdcNodeModel).resource, topologyTransformedData)
       .then(() => {
         const allArgs = spy.calls.allArgs();
         const removedModels = allArgs.map((arg) => arg[0]);

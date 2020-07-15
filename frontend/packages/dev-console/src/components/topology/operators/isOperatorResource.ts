@@ -1,7 +1,7 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Model } from '@patternfly/react-topology';
 import { TYPE_OPERATOR_WORKLOAD } from './components/const';
-import { getTopologyResourceObject } from '../topology-utils';
+import { OdcNodeModel } from '../topology-types';
 
 export const isOperatorResource = (resource: K8sResourceKind, model: Model): boolean => {
   if (!model?.nodes?.length) {
@@ -11,7 +11,6 @@ export const isOperatorResource = (resource: K8sResourceKind, model: Model): boo
     if (node.type !== TYPE_OPERATOR_WORKLOAD) {
       return false;
     }
-    const nodeResource = getTopologyResourceObject(node.data);
-    return nodeResource && nodeResource.metadata?.uid === resource?.metadata?.uid;
+    return (node as OdcNodeModel).resource?.metadata?.uid === resource?.metadata?.uid;
   });
 };

@@ -10,6 +10,7 @@ import {
 import * as UIActions from '@console/internal/actions/ui';
 import { observer } from '@patternfly/react-topology';
 import { modelFor } from '@console/internal/module/k8s';
+import { getResource } from '@console/dev-console/src/components/topology';
 import { vmActions } from './components/kubevirtComponentFactory';
 import { TopologyVmDetailsPanel } from './TopologyVmDetailsPanel';
 import { TopologyVmResourcesPanel } from './TopologyVmResourcesPanel';
@@ -44,9 +45,9 @@ export const ConnectedTopologyVmPanel: React.FC<TopologyVmPanelProps> = ({
 }: TopologyVmPanelProps) => {
   const name = vmNode.getLabel();
   const vmData = vmNode.getData();
-  const vmObj = vmData.resources.obj;
+  const vmObj = getResource(vmNode);
   const { namespace } = vmObj.metadata;
-  const actions = vmActions(vmData);
+  const actions = vmActions(vmObj, vmData);
 
   return (
     <div className="overview__sidebar-pane">

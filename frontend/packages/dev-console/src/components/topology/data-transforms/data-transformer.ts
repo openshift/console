@@ -1,7 +1,7 @@
-import { createOverviewItemsForType } from '@console/shared';
+import { EdgeModel, Model } from '@patternfly/react-topology';
+import { createOverviewItemForType } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { Model, EdgeModel } from '@patternfly/react-topology';
 import { getPipelinesAndPipelineRunsForResource } from '../../../utils/pipeline-plugin-utils';
 import {
   TopologyDataResources,
@@ -70,20 +70,21 @@ const getBaseTopologyDataModel = (resources: TopologyDataResources): Model => {
         edges: [],
       };
 
-      createOverviewItemsForType(key, resources).forEach((item) => {
-        const { obj: deploymentConfig } = item;
-
-        const pipelineData = getPipelinesAndPipelineRunsForResource(deploymentConfig, resources);
-
-        const data = createTopologyNodeData(
-          { ...item, ...pipelineData },
-          TYPE_WORKLOAD,
-          getImageForIconClass(`icon-openshift`),
-        );
-        typedDataModel.nodes.push(
-          getTopologyNodeItem(deploymentConfig, TYPE_WORKLOAD, data, WorkloadModelProps),
-        );
-        mergeGroup(getTopologyGroupItems(deploymentConfig), typedDataModel.nodes);
+      resources[key].data.forEach((resource) => {
+        const item = createOverviewItemForType(key, resource, resources);
+        if (item) {
+          const pipelineData = getPipelinesAndPipelineRunsForResource(resource, resources);
+          const data = createTopologyNodeData(
+            resource,
+            { ...item, ...pipelineData },
+            TYPE_WORKLOAD,
+            getImageForIconClass(`icon-openshift`),
+          );
+          typedDataModel.nodes.push(
+            getTopologyNodeItem(resource, TYPE_WORKLOAD, data, WorkloadModelProps),
+          );
+          mergeGroup(getTopologyGroupItems(resource), typedDataModel.nodes);
+        }
       });
       addToTopologyDataModel(typedDataModel, baseDataModel);
     }

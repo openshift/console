@@ -53,9 +53,7 @@ describe('addResourceMenuUtils: ', () => {
     expect(url.pathname).toBe('/import/ns/testproject1');
     expect(url.searchParams.get('importType')).toBe('git');
     expect(url.searchParams.get('application')).toBe('application-1');
-    expect(url.searchParams.get('contextSource')).toBe(
-      'apps.openshift.io~v1~DeploymentConfig/nodejs',
-    );
+    expect(url.searchParams.get('contextSource')).toBe('apps~v1~DeploymentConfig/nodejs');
     expect(Array.from(url.searchParams.entries())).toHaveLength(3);
   });
 

@@ -10,7 +10,7 @@ import {
 } from '@patternfly/react-topology';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
-import { getTopologyResourceObject } from '../../topology-utils';
+import { getResource } from '../../topology-utils';
 import { BaseEdge } from './BaseEdge';
 import './ConnectsTo.scss';
 
@@ -28,11 +28,8 @@ const ObservedConnectsTo: React.FC<ConnectsToProps> = ({
   ...others
 }) => {
   const childEdges = element.getChildren();
-  const sourceData =
-    childEdges?.length > 0
-      ? (childEdges[0] as Edge).getSource().getData()
-      : element.getSource().getData();
-  const resourceObj = getTopologyResourceObject(sourceData);
+  const source = childEdges?.length > 0 ? (childEdges[0] as Edge).getSource() : element.getSource();
+  const resourceObj = getResource(source);
   const resourceModel = modelFor(referenceFor(resourceObj));
   const editAccess = useAccessReview({
     group: resourceModel.apiGroup,

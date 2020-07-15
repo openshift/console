@@ -8,7 +8,7 @@ import {
   WithSourceDragProps,
   WithTargetDragProps,
 } from '@patternfly/react-topology';
-import { getTopologyResourceObject, BaseEdge } from '@console/dev-console/src/components/topology';
+import { getResource, BaseEdge } from '@console/dev-console/src/components/topology';
 import { EVENT_MARKER_RADIUS } from '../../const';
 import './EventSourceLink.scss';
 
@@ -24,7 +24,7 @@ const EventSourceLink: React.FC<EventSourceLinkProps> = ({
   children,
   ...others
 }) => {
-  const resourceObj = getTopologyResourceObject(element.getSource().getData());
+  const resourceObj = getResource(element.getSource());
   const resourceModel = modelFor(referenceFor(resourceObj));
   const editAccess = useAccessReview({
     group: resourceModel.apiGroup,

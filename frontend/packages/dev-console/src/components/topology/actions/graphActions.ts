@@ -3,6 +3,7 @@ import { Node } from '@patternfly/react-topology';
 import { getKnativeContextMenuAction } from '@console/knative-plugin/src/topology/knative-topology-utils';
 import { addResourceMenu, addResourceMenuWithoutCatalog } from '../../../actions/add-resources';
 import { GraphData } from '../topology-types';
+import { getResource } from '../topology-utils';
 
 export const graphActions = (graphData: GraphData, connectorSource?: Node) => {
   let resourceMenu = connectorSource ? addResourceMenuWithoutCatalog : addResourceMenu;
@@ -14,7 +15,7 @@ export const graphActions = (graphData: GraphData, connectorSource?: Node) => {
         null,
         graphData.namespace,
         false,
-        connectorSource?.getData()?.resources?.obj,
+        getResource(connectorSource),
         graphData.createResourceAccess,
       );
       if (item) {

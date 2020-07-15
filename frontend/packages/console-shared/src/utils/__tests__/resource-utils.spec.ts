@@ -228,14 +228,14 @@ describe('TransformResourceData', () => {
   });
 
   it('should return only pods and not replication controllers for a given resource', () => {
-    const transformedData = createPodItems(MockResources);
+    const transformedData = createPodItems(MockResources.pods.data, MockResources);
     transformedData.forEach((element) => {
       expect(element).toHaveProperties(podKeys);
     });
   });
 
   it('should return pods and not replication controllers for a given resource', () => {
-    const transformedData = createPodItems(MockResources);
+    const transformedData = createOverviewItemsForType('pods', MockResources);
     transformedData.forEach((element) => {
       expect(element).not.toHaveProperties([...podKeys, 'current', 'previous']);
     });

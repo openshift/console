@@ -33,7 +33,7 @@ export const moveNodeToGroup = (node: Node, targetGroup: Node): Promise<void> =>
         },
         executeFn: () => {
           return updateTopologyResourceApplication(
-            node.getData(),
+            node,
             targetGroup ? targetGroup.getLabel() : null,
           )
             .then(resolve)
@@ -47,7 +47,7 @@ export const moveNodeToGroup = (node: Node, targetGroup: Node): Promise<void> =>
     });
   }
 
-  return updateTopologyResourceApplication(node.getData(), targetGroup.getLabel()).catch((err) => {
+  return updateTopologyResourceApplication(node, targetGroup.getLabel()).catch((err) => {
     const error = err.message;
     errorModal({ error });
   });

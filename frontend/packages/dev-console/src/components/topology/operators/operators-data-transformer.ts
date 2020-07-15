@@ -7,12 +7,12 @@ import {
 } from '@console/internal/module/k8s';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src';
 import {
-  createOverviewItemsForType,
+  createOverviewItemForType,
   getDefaultOperatorIcon,
   getImageForCSVIcon,
   getOperatorBackedServiceKindMap,
 } from '@console/shared';
-import { Model, EdgeModel, NodeShape } from '@patternfly/react-topology';
+import { EdgeModel, Model, NodeShape } from '@patternfly/react-topology';
 import { TopologyDataResources } from '../topology-types';
 import {
   OPERATOR_GROUP_WIDTH,
@@ -87,6 +87,7 @@ export const getServiceBindingEdges = (
             type: TYPE_SERVICE_BINDING,
             source,
             target,
+            resource: sbr,
             data: { sbr },
           });
         }
@@ -143,14 +144,14 @@ export const getOperatorTopologyDataModel = (
     if (resources[key]?.data && resources[key].data.length) {
       const typedDataModel: Model = { nodes: [], edges: [] };
 
-      createOverviewItemsForType(key, resources).forEach((item) => {
-        const { obj: deploymentConfig } = item;
-        if (isOperatorBackedService(deploymentConfig, installedOperators)) {
-          const ownerReference = deploymentConfig?.metadata?.ownerReferences?.[0];
+      resources[key].data.forEach((resource) => {
+        const item = createOverviewItemForType(key, resource, resources);
+        if (item && isOperatorBackedService(resource, installedOperators)) {
+          const ownerReference = resource?.metadata?.ownerReferences?.[0];
           const ownerUid = ownerReference?.uid;
           const nodeResourceKind = ownerReference?.kind;
           const operatorBackedServiceKind = operatorBackedServiceKindMap?.[nodeResourceKind];
-          const appGroup = deploymentConfig?.metadata?.labels?.['app.kubernetes.io/part-of'];
+          const appGroup = resource?.metadata?.labels?.['app.kubernetes.io/part-of'];
           let operator: K8sResourceKind = installedOperators.find(
             (op) => op.metadata.uid === ownerUid,
           ) as K8sResourceKind;
@@ -165,13 +166,14 @@ export const getOperatorTopologyDataModel = (
             ? `${appGroup}:${operator.metadata.name}`
             : operator.metadata.name;
           const data = createTopologyNodeData(
+            resource,
             item,
             TYPE_OPERATOR_WORKLOAD,
             getImageForCSVIcon(csvIcon) || getDefaultOperatorIcon(),
             true,
           );
           typedDataModel.nodes.push(
-            getTopologyNodeItem(deploymentConfig, TYPE_OPERATOR_WORKLOAD, data, WorkloadModelProps),
+            getTopologyNodeItem(resource, TYPE_OPERATOR_WORKLOAD, data, WorkloadModelProps),
           );
 
           operatorMap[operatorName] = _.merge({}, operator, {
@@ -182,11 +184,11 @@ export const getOperatorTopologyDataModel = (
           if (!(operatorName in obsGroups)) {
             obsGroups[operatorName] = [];
           }
-          obsGroups[operatorName].push(deploymentConfig.metadata.uid);
+          obsGroups[operatorName].push(resource.metadata.uid);
 
           if (appGroup) {
             const newGroup = getTopologyGroupItems(
-              _.merge({}, deploymentConfig, {
+              _.merge({}, resource, {
                 metadata: {
                   uid: `${operatorName}:${operator.metadata.uid}`,
                 },

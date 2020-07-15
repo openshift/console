@@ -10,10 +10,9 @@ import {
 } from '@console/internal/components/utils';
 import { workloadActions } from '../actions/workloadActions';
 import { groupActions } from '../actions/groupActions';
-import { nodeActions } from '../actions/nodeActions';
 import { graphActions } from '../actions/graphActions';
 import { TopologyApplicationObject } from '../topology-types';
-import { regroupActions } from '../actions/regroupActions';
+import { getResource } from '../topology-utils';
 
 const onKebabOptionClick = (option: KebabOption) => {
   if (option.callback) {
@@ -39,10 +38,10 @@ export const createMenuItems = (actions: KebabMenuOption[]) =>
   );
 
 export const workloadContextMenu = (element: Node) =>
-  createMenuItems(kebabOptionsToMenu(workloadActions(element.getData())));
+  createMenuItems(kebabOptionsToMenu(workloadActions(getResource(element))));
 
 export const noRegroupWorkloadContextMenu = (element: Node) =>
-  createMenuItems(kebabOptionsToMenu(workloadActions(element.getData(), false)));
+  createMenuItems(kebabOptionsToMenu(workloadActions(getResource(element), false)));
 
 export const groupContextMenu = (element: Node, connectorSource?: Node) => {
   const applicationData: TopologyApplicationObject = {
@@ -56,14 +55,6 @@ export const groupContextMenu = (element: Node, connectorSource?: Node) => {
     kebabOptionsToMenu(groupActions(graphData, applicationData, connectorSource)),
   );
 };
-export const nodeContextMenu = (element: Node) =>
-  createMenuItems(kebabOptionsToMenu(nodeActions(element.getData())));
 
 export const graphContextMenu = (graph: Graph, connectorSource?: Node) =>
   createMenuItems(kebabOptionsToMenu(graphActions(graph.getData(), connectorSource)));
-
-export const regroupContextMenu = (element: Node) =>
-  createMenuItems(kebabOptionsToMenu(regroupActions(element)));
-
-export const regroupGroupContextMenu = (element: Node) =>
-  createMenuItems(kebabOptionsToMenu(regroupActions(element, true)));

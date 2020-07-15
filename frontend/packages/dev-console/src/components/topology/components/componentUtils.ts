@@ -131,7 +131,7 @@ const nodeDragSourceSpec = (
     if (!monitor.isCancelled() && monitor.getOperation()?.type === REGROUP_OPERATION) {
       if (monitor.didDrop() && dropResult && props && props.element.getParent() !== dropResult) {
         const controller = props.element.getController();
-        await moveNodeToGroup(props.element, isNode(dropResult) ? dropResult : null);
+        await moveNodeToGroup(props.element, isNode(dropResult) ? (dropResult as Node) : null);
 
         // perform the optimistic update in an action so as not to render too soon
         action(() => {
@@ -175,7 +175,7 @@ const nodeDropTargetSpec: DropTargetSpec<
   accept: [EDGE_DRAG_TYPE, CREATE_CONNECTOR_DROP_TYPE],
   canDrop: (item, monitor, props) => {
     if (isEdge(item)) {
-      return canDropEdgeOnNode(monitor.getOperation()?.type, item, props.element);
+      return canDropEdgeOnNode(monitor.getOperation()?.type, item as Edge, props.element);
     }
     if (item === props.element) {
       return false;

@@ -16,7 +16,7 @@ import {
   nodeDragSourceSpec,
   withEditReviewAccess,
   createMenuItems,
-  getTopologyResourceObject,
+  getResource,
   createConnectorCallback,
   CreateConnector,
   EditableDragOperationType,
@@ -52,7 +52,7 @@ import {
 } from './knativeComponentUtils';
 
 export const knativeContextMenu = (element: Node) => {
-  const item = getTopologyResourceObject(element.getData());
+  const item = getResource(element);
   const model = modelFor(referenceFor(item));
 
   const actions = [];

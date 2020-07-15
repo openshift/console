@@ -1,11 +1,8 @@
 import * as _ from 'lodash';
 import { Kebab, KebabOption } from '@console/internal/components/utils';
-import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import { TopologyDataObject } from '../topology-types';
-import { getTopologyResourceObject } from '../topology-utils';
+import { K8sResourceKind, modelFor, referenceFor } from '@console/internal/module/k8s';
 
-export const nodeActions = (node: TopologyDataObject): KebabOption[] => {
-  const contextMenuResource = getTopologyResourceObject(node);
+export const nodeActions = (contextMenuResource: K8sResourceKind): KebabOption[] => {
   if (!contextMenuResource) {
     return null;
   }

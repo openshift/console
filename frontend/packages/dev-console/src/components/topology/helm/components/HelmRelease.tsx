@@ -8,7 +8,7 @@ import {
 } from '@patternfly/react-topology';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
-import { getTopologyResourceObject } from '../../topology-utils';
+import { getResource } from '../../topology-utils';
 import HelmReleaseNode from './HelmReleaseNode';
 import HelmReleaseGroup from './HelmReleaseGroup';
 
@@ -21,7 +21,7 @@ export type HelmReleaseProps = {
   WithDndDropProps;
 
 const HelmRelease: React.FC<HelmReleaseProps> = (props) => {
-  const secretObj = getTopologyResourceObject(props.element.getData());
+  const secretObj = getResource(props.element);
   const resourceModel = secretObj ? modelFor(referenceFor(secretObj)) : null;
   const editAccess = useAccessReview({
     group: resourceModel?.apiGroup,

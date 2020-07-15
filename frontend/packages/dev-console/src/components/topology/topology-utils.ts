@@ -3,7 +3,7 @@ import { K8sResourceKind, modelFor, referenceFor } from '@console/internal/modul
 import { RootState } from '@console/internal/redux';
 import { getRouteWebURL } from '@console/internal/components/routes';
 import { OverviewItem } from '@console/shared';
-import { Edge } from '@patternfly/react-topology';
+import { Node, Edge } from '@patternfly/react-topology';
 import {
   createResourceConnection,
   updateResourceApplication,
@@ -13,6 +13,7 @@ import { TopologyDataObject } from './topology-types';
 import { TYPE_OPERATOR_BACKED_SERVICE } from './operators/components/const';
 import { HelmReleaseResourcesMap } from '../helm/helm-types';
 import { ALLOW_SERVICE_BINDING } from '../../const';
+import { OdcBaseNode } from './elements';
 
 export const WORKLOAD_TYPES = [
   'deployments',
@@ -71,10 +72,10 @@ export const filterBasedOnActiveApplication = (
 /**
  * get the route data
  */
-const getRouteData = (ksroutes: K8sResourceKind[], resource: OverviewItem): string => {
+const getRouteData = (resource: K8sResourceKind, ksroutes: K8sResourceKind[]): string => {
   if (ksroutes && ksroutes.length > 0 && !_.isEmpty(ksroutes[0].status)) {
     const trafficData = _.find(ksroutes[0].status.traffic, {
-      revisionName: resource.obj.metadata.name,
+      revisionName: resource.metadata.name,
     });
     return _.get(trafficData, 'url', ksroutes[0].status.url);
   }
@@ -84,12 +85,12 @@ const getRouteData = (ksroutes: K8sResourceKind[], resource: OverviewItem): stri
 /**
  * get routes url
  */
-export const getRoutesURL = (resource: OverviewItem): string => {
-  const { routes, ksroutes } = resource;
+export const getRoutesURL = (resource: K8sResourceKind, overviewItem: OverviewItem): string => {
+  const { routes, ksroutes } = overviewItem;
   if (routes.length > 0 && !_.isEmpty(routes[0].spec)) {
     return getRouteWebURL(routes[0]);
   }
-  return getRouteData(ksroutes, resource);
+  return getRouteData(resource, ksroutes);
 };
 
 export const getTopologyResourceObject = (topologyObject: TopologyDataObject): K8sResourceKind => {
@@ -99,64 +100,65 @@ export const getTopologyResourceObject = (topologyObject: TopologyDataObject): K
   return _.get(topologyObject, ['resources', 'obj']);
 };
 
+export const getResource = (node: Node): K8sResourceKind => {
+  return node instanceof OdcBaseNode
+    ? (node as OdcBaseNode).getResource()
+    : getTopologyResourceObject(node?.getData());
+};
+
 export const updateTopologyResourceApplication = (
-  item: TopologyDataObject,
+  item: Node,
   application: string,
 ): Promise<any> => {
-  if (!item || !_.size(item.resources)) {
+  const itemData = item?.getData();
+  const resource = getResource(item);
+  if (!item || !resource || !_.size(itemData.resources)) {
     return Promise.reject();
   }
 
   const resources: K8sResourceKind[] = [];
   const updates: Promise<any>[] = [];
 
-  resources.push(getTopologyResourceObject(item));
+  resources.push(resource);
 
-  if (item.type === TYPE_OPERATOR_BACKED_SERVICE) {
-    _.forEach(item.groupResources, (groupResource) => {
-      resources.push(getTopologyResourceObject(groupResource));
+  if (item.getType() === TYPE_OPERATOR_BACKED_SERVICE) {
+    _.forEach(itemData.groupResources, (groupResource) => {
+      resources.push(groupResource.getResource());
     });
   }
 
-  for (const resource of resources) {
-    const resourceKind = modelFor(referenceFor(resource));
+  for (const nextResource of resources) {
+    const resourceKind = modelFor(referenceFor(nextResource));
     if (!resourceKind) {
       return Promise.reject(
-        new Error(`Unable to update application, invalid resource type: ${resource.kind}`),
+        new Error(`Unable to update application, invalid resource type: ${nextResource.kind}`),
       );
     }
-    updates.push(updateResourceApplication(resourceKind, resource, application));
+    updates.push(updateResourceApplication(resourceKind, nextResource, application));
   }
 
   return Promise.all(updates);
 };
 
 export const createTopologyResourceConnection = (
-  source: TopologyDataObject,
-  target: TopologyDataObject,
-  replaceTarget: TopologyDataObject = null,
+  source: K8sResourceKind,
+  target: K8sResourceKind,
+  replaceTarget: K8sResourceKind = null,
 ): Promise<K8sResourceKind[] | K8sResourceKind> => {
   if (!source || !target || source === target) {
     return Promise.reject(new Error('Can not create a connection from a node to itself.'));
   }
 
-  const sourceObj = getTopologyResourceObject(source);
-  const targetObj = getTopologyResourceObject(target);
-  const replaceTargetObj = replaceTarget && getTopologyResourceObject(replaceTarget);
-
-  return createResourceConnection(sourceObj, targetObj, replaceTargetObj);
+  return createResourceConnection(source, target, replaceTarget);
 };
 
 export const removeTopologyResourceConnection = (edge: Edge): Promise<any> => {
-  const source = edge.getSource().getData();
-  const target = edge.getTarget().getData();
+  const source = getResource(edge.getSource());
+  const target = getResource(edge.getTarget());
 
   if (!source || !target) {
     return Promise.reject();
   }
 
-  const sourceObj = getTopologyResourceObject(source);
-  const targetObj = getTopologyResourceObject(target);
-
-  return removeResourceConnection(sourceObj, targetObj);
+  return removeResourceConnection(source, target);
 };

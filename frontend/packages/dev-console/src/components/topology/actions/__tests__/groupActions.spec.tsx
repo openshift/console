@@ -1,15 +1,15 @@
-import { BaseNode } from '@patternfly/react-topology';
 import { knativeTopologyDataModel } from '@console/knative-plugin/src/topology/__tests__/topology-knative-test-data';
 import {
   allCatalogImageResourceAccess,
   allImportResourceAccess,
 } from '../../../../actions/add-resources';
-import { GraphData, TopologyApplicationObject } from '../../topology-types';
+import { GraphData, OdcNodeModel, TopologyApplicationObject } from '../../topology-types';
+import { OdcBaseNode } from '../../elements/OdcBaseNode';
 import { groupActions } from '../groupActions';
 import { topologyDataModel } from '../../__tests__/topology-test-data';
 
 describe('groupActions: ', () => {
-  const connectorSource = new BaseNode();
+  const connectorSource = new OdcBaseNode();
   const graphData: GraphData = {
     eventSourceEnabled: false,
     namespace: 'namespace',
@@ -38,6 +38,7 @@ describe('groupActions: ', () => {
 
   it('should not return sub menu when connector source is passed', () => {
     connectorSource.setData(topologyDataModel.nodes[0].data);
+    connectorSource.setResource((topologyDataModel.nodes[0] as OdcNodeModel).resource);
     const actions = groupActions(graphData, application, connectorSource);
     expect(actions).toHaveLength(3);
     expect(actions.filter((a) => a.path)).toHaveLength(0);
