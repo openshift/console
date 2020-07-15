@@ -50,5 +50,6 @@ export const fetchK8s = <R extends K8sResourceCommon = K8sResourceCommon>(
   kind: K8sKind,
   name?: string,
   ns?: string,
-  opts?: { [k: string]: string },
-): Promise<R> => fetchURL<R>(getK8sResourcePath(kind, { ...opts, ns, name }));
+  path?: string,
+  queryParams?: { [key: string]: string },
+): Promise<R> => fetchURL<R>(getK8sResourcePath(kind, { ns, name, path, queryParams }));
