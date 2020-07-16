@@ -31,19 +31,6 @@ describe('EventSourcesSelector', () => {
     wrapper = shallow(<EventSourcesSelector eventSourceList={eventSourceList} />);
   });
 
-  it('should not render FormSection if no more than one eventSource present', () => {
-    const eventSourceList = {
-      SinkBinding: {
-        title: 'sinkBinding',
-        iconUrl: 'sinkBindingIcon',
-        name: 'SinkBinding',
-        displayName: 'Sink Binding',
-      },
-    };
-    wrapper = shallow(<EventSourcesSelector eventSourceList={eventSourceList} />);
-    expect(wrapper.find(FormSection).exists()).toBe(false);
-  });
-
   it('should render FormSection if more than one eventSource present', () => {
     const eventSourceList = {
       SinkBinding: {
