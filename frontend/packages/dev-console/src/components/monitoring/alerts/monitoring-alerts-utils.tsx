@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { Link } from 'react-router-dom';
 import {
   expandable,
   sortable,
@@ -25,6 +26,7 @@ import {
 } from '@console/internal/reducers/monitoring';
 import { Alert, Rule } from '@console/internal/components/monitoring/types';
 import { YellowExclamationTriangleIcon } from '@console/shared';
+import { labelsToParams } from '@console/internal/components/monitoring/utils';
 
 const viewAlertRule = {
   label: 'View Alerting Rule',
@@ -61,7 +63,11 @@ export const monitoringAlertColumn: MonitoringAlertColumn[] = [
   { title: '' },
 ];
 
-export const monitoringAlertRows = (alertrules: Rule[], collapsedRowsIds: string[]) => {
+export const monitoringAlertRows = (
+  alertrules: Rule[],
+  collapsedRowsIds: string[],
+  namespace: string,
+) => {
   const rows = [];
   _.forEach(alertrules, (rls) => {
     rows.push({
@@ -102,7 +108,13 @@ export const monitoringAlertRows = (alertrules: Rule[], collapsedRowsIds: string
         cells: [
           {
             title: (
-              <div className="odc-monitoring-alerts--alert-title">{alertDescription(alert)}</div>
+              <Link
+                to={`/dev-monitoring/ns/${namespace}/alerts/${rls.id}?${labelsToParams(
+                  alert.labels,
+                )}`}
+              >
+                {alertDescription(alert)}
+              </Link>
             ),
             props: { colSpan: 3 },
           },

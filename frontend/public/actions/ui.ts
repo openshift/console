@@ -315,8 +315,14 @@ export const monitoringLoading = (key: 'alerts' | 'silences' | 'notificationAler
     key,
     data: { loaded: false, loadError: null, data: null },
   });
-export const monitoringLoaded = (key: 'alerts' | 'silences' | 'notificationAlerts', data: any) =>
-  action(ActionType.SetMonitoringData, { key, data: { loaded: true, loadError: null, data } });
+export const monitoringLoaded = (
+  key: 'alerts' | 'silences' | 'notificationAlerts' | 'devAlerts',
+  alerts: any,
+) =>
+  action(ActionType.SetMonitoringData, {
+    key,
+    data: { loaded: true, loadError: null, data: alerts },
+  });
 export const monitoringErrored = (
   key: 'alerts' | 'silences' | 'notificationAlerts',
   loadError: any,
