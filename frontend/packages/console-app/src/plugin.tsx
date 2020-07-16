@@ -15,6 +15,9 @@ import {
   DashboardsOverviewInventoryItem,
   DashboardsOverviewHealthOperator,
   ReduxReducer,
+  ResourceDetailsPage,
+  ResourceListPage,
+  ResourceClusterNavItem,
 } from '@console/plugin-sdk';
 import {
   ClusterVersionModel,
@@ -22,6 +25,7 @@ import {
   PodModel,
   StorageClassModel,
   PersistentVolumeClaimModel,
+  VolumeSnapshotContentModel,
   ClusterOperatorModel,
 } from '@console/internal/models';
 import { referenceForModel, ClusterOperator } from '@console/internal/module/k8s';
@@ -59,7 +63,10 @@ type ConsumedExtensions =
   | DashboardsOverviewHealthPrometheusSubsystem
   | DashboardsOverviewInventoryItem
   | DashboardsOverviewHealthOperator<ClusterOperator>
-  | ReduxReducer;
+  | ReduxReducer
+  | ResourceListPage
+  | ResourceDetailsPage
+  | ResourceClusterNavItem;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -208,6 +215,36 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       namespace: 'console',
       reducer,
+    },
+  },
+  {
+    type: 'NavItem/ResourceCluster',
+    properties: {
+      section: 'Storage',
+      componentProps: {
+        name: 'Volume Snapshot Contents',
+        resource: referenceForModel(VolumeSnapshotContentModel),
+      },
+    },
+  },
+  {
+    type: 'Page/Resource/List',
+    properties: {
+      model: VolumeSnapshotContentModel,
+      loader: () =>
+        import(
+          './components/volume-snapshot/volume-snapshot-content' /* webpackChunkName: "volume-snapshot-content-page" */
+        ).then((m) => m.default),
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: VolumeSnapshotContentModel,
+      loader: () =>
+        import(
+          './components/volume-snapshot/volume-snapshot-content-details' /* webpackChunkName: "volume-snapshot-content-details-page" */
+        ).then((m) => m.default),
     },
   },
 ];

@@ -968,7 +968,7 @@ export const VolumeSnapshotClassModel: K8sKind = {
   namespaced: false,
   kind: 'VolumeSnapshotClass',
   id: 'volumesnapshotclass',
-  labelPlural: 'Volume Snaphot Classes',
+  labelPlural: 'Volume Snapshot Classes',
   crd: true,
 };
 
@@ -980,7 +980,7 @@ export const VolumeSnapshotContentModel: K8sKind = {
   abbr: 'VSC',
   namespaced: false,
   kind: 'VolumeSnapshotContent',
-  id: 'volumesnapshotcontents',
-  labelPlural: 'Volume Snaphot Contents',
+  id: 'volumesnapshotcontent',
+  labelPlural: 'Volume Snapshot Contents',
   crd: true,
 };
