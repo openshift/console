@@ -3,24 +3,41 @@ import { ShallowWrapper, shallow } from 'enzyme';
 import Spy = jasmine.Spy;
 
 import {
+  StorageClassProvisioner,
+  ExtensionSCProvisionerProp,
+} from '@console/plugin-sdk/src/typings/storage-class-params';
+
+import {
   ConnectedStorageClassForm,
   StorageClassFormProps,
   StorageClassFormState,
+  StorageClassParamsExtensions,
 } from '../../public/components/storage-class-form';
 
 describe(ConnectedStorageClassForm.displayName, () => {
-  const Component: React.ComponentType<StorageClassFormProps> = ConnectedStorageClassForm.WrappedComponent as any;
+  const Component: React.ComponentType<StorageClassFormProps &
+    StorageClassParamsExtensions> = ConnectedStorageClassForm.WrappedComponent as any;
   let wrapper: ShallowWrapper<StorageClassFormProps, StorageClassFormState>;
   let onClose: Spy;
   let watchK8sList: Spy;
   let stopK8sWatch: Spy;
   let k8s: Spy;
+  let params: StorageClassProvisioner[];
+  let extensionFunction: ExtensionSCProvisionerProp;
 
   beforeEach(() => {
     onClose = jasmine.createSpy('onClose');
     watchK8sList = jasmine.createSpy('watchK8sList');
     stopK8sWatch = jasmine.createSpy('stopK8sWatch');
     k8s = jasmine.createSpy('k8s');
+    params = [
+      {
+        type: 'StorageClass/Provisioner',
+        properties: {
+          getStorageClassProvisioner: extensionFunction,
+        },
+      },
+    ];
 
     wrapper = shallow(
       <Component
@@ -28,6 +45,7 @@ describe(ConnectedStorageClassForm.displayName, () => {
         watchK8sList={watchK8sList}
         stopK8sWatch={stopK8sWatch}
         k8s={k8s}
+        params={params}
       />,
     );
   });
