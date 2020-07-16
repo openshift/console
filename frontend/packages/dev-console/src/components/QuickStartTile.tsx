@@ -14,19 +14,19 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { ArrowRightIcon } from '@patternfly/react-icons';
-import { getGuidedToursWithStatus } from '@console/app/src/components/guided-tours/utils/guided-tour-utils';
-import './GuidedTourTile.scss';
+import { getQuickStartsWithStatus } from '@console/app/src/components/quick-starts/utils/quick-start-utils';
+import './QuickStartTile.scss';
 
-export const HIDE_TOUR_TILE_STORAGE_KEY = 'bridge/hide-tour-tile';
+export const HIDE_QUICK_START_STORAGE_KEY = 'bridge/hide-tour-tile';
 
-const GuidedTourTile: React.FC = () => {
-  const isTourTileHidden = localStorage.getItem(HIDE_TOUR_TILE_STORAGE_KEY) === 'true';
-  const [showTile, setShowTile] = React.useState<boolean>(!isTourTileHidden);
+const QuickStartTile: React.FC = () => {
+  const isQsTileHidden = localStorage.getItem(HIDE_QUICK_START_STORAGE_KEY) === 'true';
+  const [showTile, setShowTile] = React.useState<boolean>(!isQsTileHidden);
   const [isOpen, setOpen] = React.useState<boolean>(false);
-  const tours = getGuidedToursWithStatus();
+  const tours = getQuickStartsWithStatus();
 
   const onRemove = () => {
-    localStorage.setItem(HIDE_TOUR_TILE_STORAGE_KEY, 'true');
+    localStorage.setItem(HIDE_QUICK_START_STORAGE_KEY, 'true');
     setShowTile(false);
   };
 
@@ -40,18 +40,18 @@ const GuidedTourTile: React.FC = () => {
       key="action"
       component="button"
     >
-      Remove guided tours
+      Remove quick starts
     </DropdownItem>,
   ];
   const slicedTours = tours.length > 3 ? tours.slice(0, 3) : tours;
 
   return slicedTours.length > 0 && showTile ? (
     <GalleryItem>
-      <Card className="odc-guidedtour-tile__card">
+      <Card className="odc-quickstart-tile__card">
         <CardHeader>
           <CardHeaderMain>
             <Title headingLevel="h1" size="xl">
-              Guided Tours
+              Quick Starts
             </Title>
           </CardHeaderMain>
           <CardActions>
@@ -66,18 +66,18 @@ const GuidedTourTile: React.FC = () => {
         </CardHeader>
         <CardBody>
           {slicedTours.map((tour) => (
-            <div key={tour.name} className="odc-guidedtour-tile__tour">
+            <div key={tour.name} className="odc-quickstart-tile__tour">
               <Link to="/#">{tour.name}</Link>
             </div>
           ))}
         </CardBody>
-        <CardFooter className="odc-guidedtour-tile__footer">
-          <ArrowRightIcon className="odc-guidedtour-tile__arrowbtn" />
-          <Link to="/tours">See all guided tours</Link>
+        <CardFooter className="odc-quickstart-tile__footer">
+          <ArrowRightIcon className="odc-quickstart-tile__arrowbtn" />
+          <Link to="/quickstart">See all Quick Starts</Link>
         </CardFooter>
       </Card>
     </GalleryItem>
   ) : null;
 };
 
-export default GuidedTourTile;
+export default QuickStartTile;

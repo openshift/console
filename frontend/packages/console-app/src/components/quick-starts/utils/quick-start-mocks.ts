@@ -1,7 +1,7 @@
-import { GuidedTourItem, TourStatus } from './guided-tour-typings';
-import { GuidedTourStatus } from './guided-tour-status';
+import { QuickStartItem, QuickStartStatus } from './quick-start-typings';
+import { QuickStartStatus as Status } from './quick-start-status';
 
-export const mockGuidedTours: GuidedTourItem[] = [
+export const mockQuickStarts: QuickStartItem[] = [
   {
     iconURL:
       '/api/kubernetes/apis/packages.operators.coreos.com/v1/namespaces/openshift-marketplace/packagemanifests/3scale-community-operator/icon?resourceVersion=3scale-community-operator.threescale-2.8.3scale-community-operator.v0.5.1',
@@ -35,10 +35,10 @@ export const mockGuidedTours: GuidedTourItem[] = [
   },
 ];
 
-export const mockStatus: Record<string, TourStatus> = {
-  'Explore Serverless': { status: GuidedTourStatus.COMPLETE },
-  'Serverless Aplications': { status: GuidedTourStatus.IN_PROGRESS, active: true },
-  'Build Pipelines': { status: GuidedTourStatus.NOT_STARTED },
+export const mockStatus: Record<string, QuickStartStatus> = {
+  'Explore Serverless': { status: Status.COMPLETE },
+  'Serverless Aplications': { status: Status.IN_PROGRESS, active: true },
+  'Build Pipelines': { status: Status.NOT_STARTED },
 };
 
 export const mockPrerequisiteStatus: Record<string, boolean> = {
