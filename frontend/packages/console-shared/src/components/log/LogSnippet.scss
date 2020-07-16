@@ -1,0 +1,17 @@
+@import '../../../../../public/style/vars';
+
+.ocs-log-snippet {
+  border-left: 2px solid $color-error;
+  display: flex;
+  flex-direction: column;
+  margin-left: 6px;
+  padding: 10px 0 10px 13px;
+
+  &__status-message {
+    margin-bottom: 10px;
+  }
+
+  &__log-snippet {
+    margin: 0;
+  }
+}

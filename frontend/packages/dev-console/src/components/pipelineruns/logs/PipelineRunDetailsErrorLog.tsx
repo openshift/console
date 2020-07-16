@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { PipelineRun } from '../../../utils/pipeline-augment';
 import { getLogSnippet } from './pipelineRunLogSnippet';
-import LogSnippetFromPod from './LogSnippetFromPod';
+import LogSnippetBlock from './LogSnippetBlock';
 
 type PipelineStatusLogProps = {
   pipelineRun: PipelineRun;
@@ -23,16 +23,9 @@ const PipelineRunDetailsErrorLog: React.FC<PipelineStatusLogProps> = ({ pipeline
       <dl>
         <dt>Log Snippet</dt>
         <dd>
-          {'podName' in logDetails ? (
-            <LogSnippetFromPod
-              containerName={logDetails.containerName}
-              namespace={pipelineRun.metadata.namespace}
-              podName={logDetails.podName}
-              title={logDetails.title}
-            />
-          ) : (
-            <pre>{logDetails.staticMessage}</pre>
-          )}
+          <LogSnippetBlock logDetails={logDetails} pipelineRun={pipelineRun}>
+            {(logSnippet: string) => <pre>{logSnippet}</pre>}
+          </LogSnippetBlock>
         </dd>
       </dl>
     </>
