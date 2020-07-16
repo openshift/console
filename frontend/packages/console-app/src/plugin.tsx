@@ -18,6 +18,7 @@ import {
   ResourceDetailsPage,
   ResourceListPage,
   ResourceClusterNavItem,
+  ResourceTabPage,
 } from '@console/plugin-sdk';
 import {
   ClusterVersionModel,
@@ -66,7 +67,8 @@ type ConsumedExtensions =
   | ReduxReducer
   | ResourceListPage
   | ResourceDetailsPage
-  | ResourceClusterNavItem;
+  | ResourceClusterNavItem
+  | ResourceTabPage;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -245,6 +247,18 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/volume-snapshot/volume-snapshot-content-details' /* webpackChunkName: "volume-snapshot-content-details-page" */
         ).then((m) => m.default),
+    },
+  },
+  {
+    type: 'Page/Resource/Tab',
+    properties: {
+      href: 'volumesnapshots',
+      model: PersistentVolumeClaimModel,
+      name: 'Volume Snapshots',
+      loader: () =>
+        import(
+          './components/volume-snapshot/volume-snapshot' /* webpackChunkName: "volume-snapshot-page" */
+        ).then((m) => m.VolumeSnapshotPVCPage),
     },
   },
 ];
