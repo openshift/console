@@ -33,13 +33,13 @@ export const silenceState = (s: Silence): SilenceStates => s?.status?.state;
 export const alertingRuleIsActive = (rule: Rule): string =>
   rule.state === 'inactive' ? 'false' : 'true';
 
-export const alertDescription = (alert: Alert): string =>
+export const alertDescription = (alert: Alert | Rule): string =>
   alert.annotations?.description || alert.annotations?.message || alert.labels?.alertname;
 
 type ListOrder = (number | string)[];
 
 // Severity sort order is "critical" > "warning" > (anything else in A-Z order) > "none"
-export const alertSeverityOrder = (alert: Alert): ListOrder => {
+export const alertSeverityOrder = (alert: Alert | Rule): ListOrder => {
   const { severity } = alert.labels;
   const order: number =
     {

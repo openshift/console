@@ -33,15 +33,15 @@ export const tableFilters: TableFilterMap = {
 
   'catalog-source-name': (filter, obj) => fuzzyCaseInsensitive(filter, obj.name),
 
-  'alert-list-text': (filter, alert: Alert) => {
-    if (fuzzyCaseInsensitive(filter, alert.labels?.alertname)) {
+  'resource-list-text': (filter, resource: Rule | Alert) => {
+    if (fuzzyCaseInsensitive(filter, resource.labels?.alertname || (resource as Rule)?.name)) {
       return true;
     }
 
     // Search in alert description. Ignore case and whitespace, but don't use fuzzy since the
     // description can be long and will often match fuzzy searches that are not really relevant.
     const needle = _.toLower(filter.replace(/\s/g, ''));
-    const haystack = _.toLower(alertDescription(alert).replace(/\s/g, ''));
+    const haystack = _.toLower(alertDescription(resource)?.replace(/\s/g, ''));
     return haystack.includes(needle);
   },
 

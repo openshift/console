@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { match as RMatch } from 'react-router';
-import { HorizontalNav, PageHeading, history } from '@console/internal/components/utils';
+import {
+  HorizontalNav,
+  PageHeading,
+  history,
+  useAccessReview,
+} from '@console/internal/components/utils';
 import { TechPreviewBadge, ALL_NAMESPACES_KEY } from '@console/shared';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
@@ -9,6 +14,7 @@ import ProjectListPage from '../projects/ProjectListPage';
 import ConnectedMonitoringDashboard from './dashboard/MonitoringDashboard';
 import ConnectedMonitoringMetrics from './metrics/MonitoringMetrics';
 import MonitoringEvents from './events/MonitoringEvents';
+import ConnectedMonitoringAlerts from './alerts/MonitoringAlerts';
 
 export const MONITORING_ALL_NS_PAGE_URI = '/dev-monitoring/all-namespaces';
 
@@ -26,6 +32,12 @@ const handleNamespaceChange = (newNamespace: string): void => {
 
 export const PageContents: React.FC<MonitoringPageProps> = ({ match }) => {
   const activeNamespace = match.params.ns;
+  const prometheousRulesAccess = useAccessReview({
+    group: 'monitoring.coreos.com',
+    resource: 'prometheusrules',
+    verb: 'get',
+    namespace: activeNamespace,
+  });
   const pages = [
     {
       href: '',
@@ -37,6 +49,15 @@ export const PageContents: React.FC<MonitoringPageProps> = ({ match }) => {
       name: 'Metrics',
       component: ConnectedMonitoringMetrics,
     },
+    ...(prometheousRulesAccess
+      ? [
+          {
+            href: 'alerts',
+            name: 'Alerts',
+            component: ConnectedMonitoringAlerts,
+          },
+        ]
+      : []),
     {
       href: 'events',
       name: 'Events',

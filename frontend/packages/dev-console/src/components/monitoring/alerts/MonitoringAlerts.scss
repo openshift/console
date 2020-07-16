@@ -1,0 +1,16 @@
+.odc-monitoring-alerts {
+  padding: var(--pf-global--spacer--lg);
+  &--state-column {
+    padding-top: var(--pf-c-table--m-compact__expandable-row-content--PaddingTop);
+    padding-bottom: var(--pf-c-table--m-compact__expandable-row-content--PaddingBottom);
+  }
+  &--kebab {
+    text-align: right;
+  }
+  &--alert-title {
+    color: var(--pf-global--link--Color);
+  }
+  .pf-c-table {
+    table-layout: auto;
+  }
+}
