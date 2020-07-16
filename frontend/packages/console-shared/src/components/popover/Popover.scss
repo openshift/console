@@ -1,0 +1,28 @@
+.ocs-popover__arrow {
+  height: 10px;
+  width: 10px;
+  transform: rotate(45deg);
+}
+.ocs-popover[x-placement^='top'] {
+  .ocs-popover__arrow {
+    bottom: -5px;
+  }
+}
+
+.ocs-popover[x-placement^='bottom'] {
+  .ocs-popover__arrow {
+    top: -5px;
+  }
+}
+
+.ocs-popover[x-placement^='left'] {
+  .ocs-popover__arrow {
+    right: -5px;
+  }
+}
+
+.ocs-popover[x-placement^='right'] {
+  .ocs-popover__arrow {
+    left: -5px;
+  }
+}

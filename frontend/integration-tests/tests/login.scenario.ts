@@ -4,6 +4,7 @@ import { appHost } from '../protractor.conf';
 import * as loginView from '../views/login.view';
 import * as sidenavView from '../views/sidenav.view';
 import * as clusterSettingsView from '../views/cluster-settings.view';
+import * as overview from '../views/overview.view';
 
 const JASMINE_DEFAULT_TIMEOUT_INTERVAL = jasmine.DEFAULT_TIMEOUT_INTERVAL;
 const JASMINE_EXTENDED_TIMEOUT_INTERVAL = 1000 * 60 * 3;
@@ -44,6 +45,7 @@ describe('Auth test', () => {
     });
 
     it('switches from dev to admin perspective', async () => {
+      await overview.closeGuidedTour();
       expect(sidenavView.switcher.getText()).toContain('Developer');
       await sidenavView.switchPerspective(sidenavView.Perspective.Administrator);
       expect(sidenavView.switcher.getText()).toContain('Administrator');

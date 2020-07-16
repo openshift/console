@@ -56,7 +56,17 @@ class NavLink<P extends NavLinkProps> extends React.PureComponent<P> {
   }
 
   render() {
-    const { isActive, id, name, tipText, onClick, testID, children, className } = this.props;
+    const {
+      isActive,
+      id,
+      name,
+      tipText,
+      onClick,
+      testID,
+      children,
+      className,
+      ...props
+    } = this.props;
 
     // onClick is now handled globally by the Nav's onSelect,
     // however onClick can still be passed if desired in certain cases
@@ -66,6 +76,7 @@ class NavLink<P extends NavLinkProps> extends React.PureComponent<P> {
     return (
       <NavItem className={itemClasses} isActive={isActive}>
         <Link
+          {...props}
           className={linkClasses}
           id={id}
           data-test-id={testID}
@@ -134,6 +145,7 @@ export type NavLinkProps = {
   activePath?: string;
   tipText?: string;
   testID?: string;
+  'data-tour-id'?: string;
 };
 
 export type ResourceNSLinkProps = NavLinkProps & {

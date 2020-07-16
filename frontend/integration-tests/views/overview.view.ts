@@ -23,3 +23,18 @@ export const getProjectOverviewListItem = (kindModel, name) => {
 export const sidebarIsLoaded = () => {
   return browser.wait(until.presenceOf($('.resource-overview')));
 };
+
+const guidedTourModal = element(by.css('[id="guided-tour-modal"]'));
+const guidedTourSkip = element(
+  by.cssContainingText('[id="tour-step-footer-secondary"]', 'Skip tour'),
+);
+const guidedTourClose = element(by.cssContainingText('[id="tour-step-footer-primary"]', 'Close'));
+
+export const closeGuidedTour = async () => {
+  if (await guidedTourModal.isPresent()) {
+    await browser.wait(until.visibilityOf(guidedTourSkip));
+    await guidedTourSkip.click();
+    await browser.wait(until.visibilityOf(guidedTourClose));
+    await guidedTourClose.click();
+  }
+};

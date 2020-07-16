@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash-es';
 import {
   Alert,
   AboutModal as PfAboutModal,
@@ -8,13 +7,10 @@ import {
   TextListItem,
 } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
-
-import { BlueArrowCircleUpIcon, FLAGS } from '@console/shared';
-import { connectToFlags, FlagsObject } from '../reducers/features';
+import { useClusterVersion, BlueArrowCircleUpIcon } from '@console/shared';
 import { getBrandingDetails } from './masthead';
-import { Firehose, useAccessReview } from './utils';
+import { useAccessReview } from './utils';
 import { ClusterVersionModel } from '../models';
-import { ClusterVersionKind, referenceForModel } from '../module/k8s';
 import { k8sVersion } from '../module/status';
 import {
   getClusterID,
@@ -25,17 +21,17 @@ import {
 } from '../module/k8s/cluster-settings';
 import { ReleaseNotesLink } from './cluster-settings/cluster-settings';
 
-const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal, cv }) => {
+const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal }) => {
   const [kubernetesVersion, setKubernetesVersion] = React.useState('');
   React.useEffect(() => {
     k8sVersion()
       .then((response) => setKubernetesVersion(getK8sGitVersion(response) || '-'))
       .catch(() => setKubernetesVersion('unknown'));
   }, []);
+  const clusterVersion = useClusterVersion();
 
-  const clusterVersion = _.get(cv, 'data') as ClusterVersionKind;
   const clusterID = getClusterID(clusterVersion);
-  const channel: string = _.get(cv, 'data.spec.channel');
+  const channel: string = clusterVersion?.spec?.channel;
   const openshiftVersion = getOpenShiftVersion(clusterVersion);
   const clusterVersionIsEditable = useAccessReview({
     group: ClusterVersionModel.apiGroup,
@@ -104,13 +100,10 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal, cv }
 };
 AboutModalItems.displayName = 'AboutModalItems';
 
-const AboutModal_: React.FC<AboutModalProps> = (props) => {
-  const { isOpen, closeAboutModal, flags } = props;
+export const AboutModal: React.FC<AboutModalProps> = (props) => {
+  const { isOpen, closeAboutModal } = props;
   const details = getBrandingDetails();
   const customBranding = window.SERVER_FLAGS.customLogoURL || window.SERVER_FLAGS.customProductName;
-  const resources = flags[FLAGS.CLUSTER_VERSION]
-    ? [{ kind: referenceForModel(ClusterVersionModel), name: 'version', isList: false, prop: 'cv' }]
-    : [];
   return (
     <PfAboutModal
       isOpen={isOpen}
@@ -126,24 +119,17 @@ const AboutModal_: React.FC<AboutModalProps> = (props) => {
           quickly develop, host, and scale applications in a cloud environment.
         </p>
       )}
-      <Firehose resources={resources}>
-        <AboutModalItems {...(props as any)} />
-      </Firehose>
+      <AboutModalItems {...(props as any)} />
     </PfAboutModal>
   );
 };
-export const AboutModal = connectToFlags(FLAGS.CLUSTER_VERSION)(AboutModal_);
 AboutModal.displayName = 'AboutModal';
 
 type AboutModalItemsProps = {
   closeAboutModal: () => void;
-  cv?: {
-    data?: ClusterVersionKind;
-  };
 };
 
 type AboutModalProps = {
   isOpen: boolean;
   closeAboutModal: () => void;
-  flags: FlagsObject;
 };

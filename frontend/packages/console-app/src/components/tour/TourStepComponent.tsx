@@ -1,0 +1,96 @@
+import * as React from 'react';
+import { Popover, PopoverPlacement } from '@console/shared';
+import { Modal, ModalVariant } from '@patternfly/react-core';
+import StepHeader from './steps/StepHeader';
+import StepFooter from './steps/StepFooter';
+import StepBadge from './steps/StepBadge';
+import { Spotlight } from './Spotlight';
+import './TourStepComponent.scss';
+
+type TourStepComponentProps = {
+  selector?: string;
+  placement?: string;
+  heading: string;
+  content: React.ReactNode;
+  showClose?: boolean;
+  step?: number;
+  totalSteps?: number;
+  showStepBadge?: boolean;
+  nextButtonText?: string;
+  backButtonText?: string;
+  onNext?: () => void;
+  onBack?: () => void;
+  onClose?: () => void;
+};
+
+const TourStepComponent: React.FC<TourStepComponentProps> = ({
+  placement,
+  heading,
+  content,
+  selector,
+  showStepBadge,
+  showClose,
+  step,
+  totalSteps,
+  nextButtonText,
+  backButtonText,
+  onNext,
+  onBack,
+  onClose,
+}) => {
+  const header = <StepHeader>{heading}</StepHeader>;
+  const footer = (
+    <StepFooter
+      primaryButton={{
+        name: nextButtonText,
+        onClick: () => {
+          onNext && onNext();
+        },
+      }}
+      secondaryButton={{
+        name: backButtonText,
+        onClick: () => {
+          onBack && onBack();
+        },
+      }}
+    >
+      {showStepBadge ? <StepBadge stepNumber={step} totalSteps={totalSteps} /> : null}
+    </StepFooter>
+  );
+  const handleClose = () => {
+    onClose && onClose();
+  };
+  return selector ? (
+    <>
+      <Spotlight selector={selector} />
+      <Popover
+        placement={placement as PopoverPlacement}
+        headerContent={header}
+        footerContent={footer}
+        open
+        onClose={handleClose}
+        trigger={selector}
+        uniqueId={step.toString()}
+        id="guided-tour-popover"
+      >
+        {content}
+      </Popover>
+    </>
+  ) : (
+    <Modal
+      className="co-tour-step-component"
+      variant={ModalVariant.small}
+      showClose={showClose}
+      isOpen
+      header={header}
+      footer={footer}
+      onClose={handleClose}
+      id="guided-tour-modal"
+      aria-label={`guided tour ${step}`}
+    >
+      {content}
+    </Modal>
+  );
+};
+
+export default TourStepComponent;

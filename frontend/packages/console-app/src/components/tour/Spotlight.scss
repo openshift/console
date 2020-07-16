@@ -1,0 +1,11 @@
+.co-tour-spotlight {
+    pointer-events: auto;
+    mix-blend-mode: hard-light;
+
+    &__element-hightlight {
+        position: fixed;
+        border: var(--pf-global--BorderWidth--xl) solid var(--pf-global--palette--blue-400);
+        z-index: 9998;
+        background-color: var(--pf-global--palette--black-500);
+    }
+};
