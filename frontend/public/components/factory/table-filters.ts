@@ -265,6 +265,7 @@ export const tableFilters: TableFilterMap = {
     const status = volumeSnapshotStatus(snapshot);
     return statuses.selected.has(status) || !_.includes(statuses.all, status);
   },
+  'node-disk-name': (name, disks) => fuzzyCaseInsensitive(name, disks?.path),
 };
 
 export interface TableFilterGroups {

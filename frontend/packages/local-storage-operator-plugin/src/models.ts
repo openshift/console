@@ -1,5 +1,18 @@
 import { K8sKind } from '@console/internal/module/k8s';
 
+export const LocalVolumeDiscoveryResult: K8sKind = {
+  label: 'Local Volume Discovery Result',
+  labelPlural: 'Local Volume Discovery Results',
+  apiVersion: 'v1alpha1',
+  apiGroup: 'local.storage.openshift.io',
+  plural: 'localvolumediscoveryresults',
+  abbr: 'LVDR',
+  namespaced: true,
+  kind: 'LocalVolumeDiscoveryResult',
+  id: 'localvolumediscoveryresults',
+  crd: true,
+};
+
 export const LocalVolumeSetModel: K8sKind = {
   label: 'Local Volume Set',
   labelPlural: 'Local Volume Sets',
