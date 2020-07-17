@@ -182,16 +182,18 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
               </div>
             </div>
             <div className="col-xs-2 pairs-list__action">
-              <Button
-                type="button"
-                onClick={() => removeRoutingLabel(i)}
-                aria-label="Remove Route Label"
-                isDisabled={!isDefaultReceiver && formValues.routeLabels.length <= 1}
-                variant="plain"
-                data-test-id="remove-routing-label"
-              >
-                <MinusCircleIcon />
-              </Button>
+              <Tooltip content="Remove">
+                <Button
+                  type="button"
+                  onClick={() => removeRoutingLabel(i)}
+                  aria-label="Remove"
+                  isDisabled={!isDefaultReceiver && formValues.routeLabels.length <= 1}
+                  variant="plain"
+                  data-test-id="remove-routing-label"
+                >
+                  <MinusCircleIcon />
+                </Button>
+              </Tooltip>
             </div>
           </div>
         );
@@ -224,7 +226,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
           data-test-id="add-routing-label"
         >
           <PlusCircleIcon className="co-icon-space-r" />
-          Add Label
+          Add
         </Button>
       )}
     </div>

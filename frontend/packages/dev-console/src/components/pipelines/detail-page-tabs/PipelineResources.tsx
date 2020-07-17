@@ -10,12 +10,11 @@ type PipelineResourcesParam = {
 };
 
 const PipelineResources: React.FC<PipelineResourcesParam> = (props) => {
-  const { addLabel = 'Add Pipeline Resource', fieldName, isReadOnly = false } = props;
+  const { fieldName, isReadOnly = false } = props;
   const emptyMessage = 'No resources are associated with this pipeline.';
   return (
     <MultiColumnField
       name={fieldName}
-      addLabel={addLabel}
       headers={['Name', 'Resource Type']}
       emptyValues={{ name: '', type: '' }}
       emptyMessage={emptyMessage}

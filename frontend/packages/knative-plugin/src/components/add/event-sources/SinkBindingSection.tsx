@@ -56,7 +56,6 @@ const SinkBindingSection: React.FC = () => {
           nameValuePairs={nameValue}
           valueString="Value"
           nameString="Name"
-          addString="Add Values"
           readOnly={false}
           allowSorting={false}
           updateParentData={handleNameValuePairs}

@@ -8,6 +8,7 @@ import {
   Button,
   ButtonVariant,
   ButtonType,
+  Tooltip,
 } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { InputField, useFormikValidationFix } from '@console/shared';
@@ -19,7 +20,7 @@ export interface TextColumnFieldProps extends FieldProps {
   required?: boolean;
   name: string;
   label: string;
-  addLabel: string;
+  addLabel?: string;
   tooltip?: string;
   placeholder?: string;
 }
@@ -33,6 +34,7 @@ const TextColumnField: React.FC<TextColumnFieldProps> = ({
   placeholder,
   isReadOnly,
   disableDeleteRow,
+  tooltip,
 }) => {
   const [field, { touched, error }] = useField<string[]>(name);
   useFormikValidationFix(field.value);
@@ -68,18 +70,20 @@ const TextColumnField: React.FC<TextColumnFieldProps> = ({
                     </FlexItem>
                     {!isReadOnly && (
                       <FlexItem>
-                        <Button
-                          aria-label="Delete"
-                          variant={ButtonVariant.plain}
-                          type={ButtonType.button}
-                          isInline
-                          isDisabled={disableDeleteRow}
-                          onClick={() => {
-                            arrayHelpers.remove(idx);
-                          }}
-                        >
-                          <MinusCircleIcon />
-                        </Button>
+                        <Tooltip content={tooltip || 'Remove'}>
+                          <Button
+                            aria-label={tooltip || 'Remove'}
+                            variant={ButtonVariant.plain}
+                            type={ButtonType.button}
+                            isInline
+                            isDisabled={disableDeleteRow}
+                            onClick={() => {
+                              arrayHelpers.remove(idx);
+                            }}
+                          >
+                            <MinusCircleIcon />
+                          </Button>
+                        </Tooltip>
                       </FlexItem>
                     )}
                   </Flex>

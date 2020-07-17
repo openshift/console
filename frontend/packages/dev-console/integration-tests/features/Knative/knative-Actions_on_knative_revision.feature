@@ -64,7 +64,7 @@ Scenario Outline: Add annotation to the exisitng annonations list : Kn-03-TC07
    Given knative revision name "nodejs-ex-git-1-q5rb8" is higlighted on topology page
    And number of annotations are "5" present in side pane details tab
    When user selects "Edit Annotaions" option from knative revision context menu
-   And clicks "Add More" button on the "Edit Annotaions" popup
+   And clicks "Add" button on the "Edit Annotaions" popup
    And types "<key_name>" into the "Key" text box
    And types "<key_value>" into the "value" text box 
    And clicks "save" button on the "Edit Annotaions" popup

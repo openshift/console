@@ -274,14 +274,16 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                       />
                       &nbsp; Use RegEx
                     </label>
-                    <Button
-                      type="button"
-                      onClick={() => removeMatcher(i)}
-                      aria-label="Remove matcher"
-                      variant="plain"
-                    >
-                      <MinusCircleIcon />
-                    </Button>
+                    <Tooltip content="Remove">
+                      <Button
+                        type="button"
+                        onClick={() => removeMatcher(i)}
+                        aria-label="Remove"
+                        variant="plain"
+                      >
+                        <MinusCircleIcon />
+                      </Button>
+                    </Tooltip>
                   </div>
                 </div>
               </div>
@@ -295,7 +297,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                 variant="link"
               >
                 <PlusCircleIcon className="co-icon-space-r" />
-                Add Label
+                Add
               </Button>
             </div>
           </div>

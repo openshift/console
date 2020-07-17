@@ -71,7 +71,6 @@ export const HTTPRequestTypeForm: React.FC<RequestTypeFormProps> = ({ probeType 
           nameValuePairs={nameValue}
           valueString="Value"
           nameString="Header Name"
-          addString="Add Header"
           readOnly={false}
           allowSorting={false}
           updateParentData={handleNameValuePairs}
@@ -105,7 +104,6 @@ export const CommandRequestTypeForm: React.FC<RequestTypeFormProps> = ({ probeTy
     <TextColumnField
       name={`healthChecks.${probeType}.data.exec.command`}
       label="Command"
-      addLabel="Add command"
       placeholder="argument"
       helpText="The command to run inside the container."
       required

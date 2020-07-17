@@ -4,15 +4,22 @@ import * as _ from 'lodash';
 import cx from 'classnames';
 import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { DropdownField, InputField, getFieldId, useFormikValidationFix } from '@console/shared';
-import { TextInputTypes, Button, FormGroup } from '@patternfly/react-core';
+import { TextInputTypes, Button, FormGroup, Tooltip } from '@patternfly/react-core';
 import './MultipleKeySelector.scss';
 
 interface MultipleKeySelectorProps {
   name: string;
   keys: { [key: string]: string };
+  addString?: string;
+  tooltip?: string;
 }
 
-const MultipleKeySelector: React.FC<MultipleKeySelectorProps> = ({ name, keys }) => {
+const MultipleKeySelector: React.FC<MultipleKeySelectorProps> = ({
+  name,
+  keys,
+  addString,
+  tooltip,
+}) => {
   const { values } = useFormikContext<FormikValues>();
   const items = _.get(values, name, [{ key: '', path: '' }]);
   useFormikValidationFix(items);
@@ -49,7 +56,9 @@ const MultipleKeySelector: React.FC<MultipleKeySelectorProps> = ({ name, keys })
                         '--disabled': items.length <= 1,
                       })}
                     >
-                      <MinusCircleIcon aria-hidden="true" onClick={() => remove(index)} />
+                      <Tooltip content={tooltip || 'Remove'}>
+                        <MinusCircleIcon aria-hidden="true" onClick={() => remove(index)} />
+                      </Tooltip>
                     </div>
                   </div>
                 );
@@ -60,7 +69,7 @@ const MultipleKeySelector: React.FC<MultipleKeySelectorProps> = ({ name, keys })
               icon={<PlusCircleIcon />}
               isInline
             >
-              Add items
+              {addString || 'Add'}
             </Button>
           </FormGroup>
         );
