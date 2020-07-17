@@ -805,6 +805,16 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/workload-hpa/:ns/:kind/:name'],
+      loader: async () =>
+        (await import('./components/hpa/HPAPage' /* webpackChunkName: "hpa-on-workload`" */))
+          .default,
+    },
+  },
+  {
     type: 'ReduxReducer',
     properties: {
       namespace: 'devconsole',

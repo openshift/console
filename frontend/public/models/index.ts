@@ -123,7 +123,7 @@ export const ReplicationControllerModel: K8sKind = {
 export const HorizontalPodAutoscalerModel: K8sKind = {
   label: 'Horizontal Pod Autoscaler',
   plural: 'horizontalpodautoscalers',
-  apiVersion: 'v2beta1',
+  apiVersion: 'v2beta2',
   apiGroup: 'autoscaling',
   abbr: 'HPA',
   namespaced: true,
