@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { K8sResourceKind, modelFor, referenceFor } from '@console/internal/module/k8s';
 import { SidebarSectionHeading } from '@console/internal/components/utils';
-import TopologyHelmReleaseResourceList from './TopologyHelmReleaseResourceList';
+import TopologyGroupResourceList from './TopologyGroupResourceList';
 
-type TopologyHelmReleaseResourcesPanelProps = {
+type TopologyGroupResourcesPanelProps = {
   manifestResources: K8sResourceKind[];
   releaseNamespace: string;
 };
 
-const TopologyHelmReleaseResourcesPanel: React.SFC<TopologyHelmReleaseResourcesPanelProps> = ({
+const TopologyGroupResourcesPanel: React.SFC<TopologyGroupResourcesPanelProps> = ({
   manifestResources,
   releaseNamespace,
 }) => {
@@ -22,24 +22,19 @@ const TopologyHelmReleaseResourcesPanel: React.SFC<TopologyHelmReleaseResourcesP
     }, [])
     .sort((a, b) => a.localeCompare(b));
 
-  const resourceLists = kinds.reduce((lists, kind) => {
+  return kinds.reduce((lists, kind) => {
     const model = modelFor(kind);
     const resources = manifestResources.filter((resource) => resource.kind === model.kind);
     if (resources.length) {
       lists.push(
         <div key={model.kind}>
           <SidebarSectionHeading text={model.labelPlural} />
-          <TopologyHelmReleaseResourceList
-            resources={resources}
-            releaseNamespace={releaseNamespace}
-          />
+          <TopologyGroupResourceList resources={resources} releaseNamespace={releaseNamespace} />
         </div>,
       );
     }
     return lists;
   }, []);
-
-  return <div className="overview__sidebar-pane-body">{resourceLists}</div>;
 };
 
-export default TopologyHelmReleaseResourcesPanel;
+export default TopologyGroupResourcesPanel;
