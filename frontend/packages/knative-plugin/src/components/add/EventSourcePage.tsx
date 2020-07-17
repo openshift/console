@@ -27,7 +27,7 @@ const EventSourcePage: React.FC<EventSourcePageProps> = ({ match, location }) =>
         Create an event source to register interest in a class of events from a particular system
       </PageHeading>
       <PageBody flexLayout>
-        <EventSourceAlert namespace={namespace} eventSourceStatus={eventSourceStatus} />
+        <EventSourceAlert eventSourceStatus={eventSourceStatus} />
         <ConnectedEventSource
           namespace={namespace}
           eventSourceStatus={eventSourceStatus}

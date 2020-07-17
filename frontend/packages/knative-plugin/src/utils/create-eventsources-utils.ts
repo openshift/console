@@ -12,6 +12,7 @@ import {
   EventSources,
   EventSourceFormData,
   EventSourceListData,
+  SinkType,
 } from '../components/add/import-types';
 import { getKnativeEventSourceIcon } from './get-knative-icon';
 import { useEventSourceModels } from './fetch-dynamic-eventsources-utils';
@@ -27,12 +28,13 @@ export const getEventSourcesDepResource = (formData: EventSourceFormData): K8sRe
     application: { name: applicationName },
     project: { name: namespace },
     data,
+    sinkType,
     sink,
   } = formData;
 
   const defaultLabel = getAppLabels(name, applicationName);
   const eventSrcData = data[type.toLowerCase()];
-  const { name: sinkName, kind: sinkKind, apiVersion: sinkApiVersion } = sink;
+  const { name: sinkName, kind: sinkKind, apiVersion: sinkApiVersion, uri: sinkUri } = sink;
   const eventSourceResource: K8sResourceKind = {
     apiVersion,
     kind: type,
@@ -45,17 +47,21 @@ export const getEventSourcesDepResource = (formData: EventSourceFormData): K8sRe
       annotations: getCommonAnnotations(),
     },
     spec: {
-      ...(sinkName &&
-        sinkApiVersion &&
-        sinkKind && {
-          sink: {
-            ref: {
-              apiVersion: sinkApiVersion,
-              kind: sinkKind,
-              name: sinkName,
+      ...(sinkType === SinkType.Resource && sinkName && sinkApiVersion && sinkKind
+        ? {
+            sink: {
+              ref: {
+                apiVersion: sinkApiVersion,
+                kind: sinkKind,
+                name: sinkName,
+              },
             },
-          },
-        }),
+          }
+        : {
+            sink: {
+              uri: sinkUri,
+            },
+          }),
       ...(eventSrcData && eventSrcData),
     },
   };

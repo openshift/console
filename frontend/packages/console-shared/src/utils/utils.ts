@@ -33,3 +33,13 @@ export const getRandomChars = (len = 6): string => {
     .replace(/[^a-z0-9]+/g, '')
     .substr(1, len);
 };
+
+export const isValidUrl = (url: string): boolean => {
+  try {
+    // eslint-disable-next-line no-new
+    new URL(url);
+    return true;
+  } catch {
+    return false;
+  }
+};

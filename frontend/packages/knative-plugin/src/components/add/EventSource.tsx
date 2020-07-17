@@ -16,7 +16,7 @@ import { sanitizeApplicationValue } from '@console/dev-console/src/utils/applica
 import { eventSourceValidationSchema } from './eventSource-validation-utils';
 import EventSourceForm from './EventSourceForm';
 import { getEventSourceResource } from '../../utils/create-eventsources-utils';
-import { EventSourceFormData, EventSourceListData } from './import-types';
+import { EventSourceFormData, EventSourceListData, SinkType } from './import-types';
 
 interface EventSourceProps {
   namespace: string;
@@ -54,10 +54,12 @@ export const EventSource: React.FC<Props> = ({
     },
     name: '',
     apiVersion: '',
+    sinkType: SinkType.Resource,
     sink: {
       apiVersion: sinkApiVersion,
       kind: sinkKind,
       name: sinkName,
+      uri: '',
     },
     limits: {
       cpu: {

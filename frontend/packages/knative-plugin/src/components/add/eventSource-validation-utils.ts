@@ -1,15 +1,33 @@
 import * as yup from 'yup';
+import { isValidUrl } from '@console/shared';
 import {
   nameValidationSchema,
   projectNameValidationSchema,
   applicationNameValidationSchema,
 } from '@console/dev-console/src/components/import/validation-schema';
-import { EventSources } from './import-types';
+import { EventSources, SinkType } from './import-types';
 import { isKnownEventSource } from '../../utils/create-eventsources-utils';
 
-const sinkServiceSchema = yup.object().shape({
-  name: yup.string().required('Required'),
-});
+const sinkServiceSchema = yup
+  .object()
+  .when('sinkType', {
+    is: SinkType.Resource,
+    then: yup.object().shape({
+      name: yup.string().required('Required'),
+    }),
+  })
+  .when('sinkType', {
+    is: SinkType.Uri,
+    then: yup.object().shape({
+      uri: yup
+        .string()
+        .max(2000, 'Please enter a URI that is less then 2000 characters.')
+        .test('validate-uri', 'Invalid URI.', function(value) {
+          return isValidUrl(value);
+        })
+        .required('Required'),
+    }),
+  });
 
 export const sourceDataSpecSchema = yup
   .object()
