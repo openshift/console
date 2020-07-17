@@ -104,7 +104,6 @@ type Server struct {
 	DexClient            api.DexClient
 	// A client with the correct TLS setup for communicating with the API server.
 	K8sClient                        *http.Client
-	PrometheusProxyConfig            *proxy.Config
 	ThanosProxyConfig                *proxy.Config
 	ThanosTenancyProxyConfig         *proxy.Config
 	ThanosTenancyProxyForRulesConfig *proxy.Config
@@ -130,7 +129,7 @@ func (s *Server) authDisabled() bool {
 }
 
 func (s *Server) prometheusProxyEnabled() bool {
-	return s.PrometheusProxyConfig != nil && s.ThanosTenancyProxyConfig != nil && s.ThanosTenancyProxyForRulesConfig != nil
+	return s.ThanosTenancyProxyConfig != nil && s.ThanosTenancyProxyForRulesConfig != nil
 }
 
 func (s *Server) alertManagerProxyEnabled() bool {

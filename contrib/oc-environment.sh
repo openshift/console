@@ -29,9 +29,6 @@ export BRIDGE_K8S_MODE_OFF_CLUSTER_SKIP_VERIFY_TLS
 BRIDGE_K8S_MODE_OFF_CLUSTER_THANOS=$(oc -n openshift-config-managed get configmap monitoring-shared-config -o jsonpath='{.data.thanosPublicURL}')
 export BRIDGE_K8S_MODE_OFF_CLUSTER_THANOS
 
-BRIDGE_K8S_MODE_OFF_CLUSTER_PROMETHEUS=$(oc -n openshift-config-managed get configmap monitoring-shared-config -o jsonpath='{.data.prometheusPublicURL}')
-export BRIDGE_K8S_MODE_OFF_CLUSTER_PROMETHEUS
-
 BRIDGE_K8S_MODE_OFF_CLUSTER_ALERTMANAGER=$(oc -n openshift-config-managed get configmap monitoring-shared-config -o jsonpath='{.data.alertmanagerPublicURL}')
 export BRIDGE_K8S_MODE_OFF_CLUSTER_ALERTMANAGER
 
