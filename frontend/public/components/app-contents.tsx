@@ -438,7 +438,7 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective }) => {
               path="/monitoring/alerts"
               exact
               loader={() =>
-                import('./monitoring' /* webpackChunkName: "monitoring" */).then(
+                import('./monitoring/alerting' /* webpackChunkName: "alerting" */).then(
                   (m) => m.MonitoringUI,
                 )
               }
@@ -447,7 +447,7 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective }) => {
               path="/monitoring/alertrules"
               exact
               loader={() =>
-                import('./monitoring' /* webpackChunkName: "monitoring" */).then(
+                import('./monitoring/alerting' /* webpackChunkName: "alerting" */).then(
                   (m) => m.MonitoringUI,
                 )
               }
@@ -456,7 +456,7 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective }) => {
               path="/monitoring/silences"
               exact
               loader={() =>
-                import('./monitoring' /* webpackChunkName: "monitoring" */).then(
+                import('./monitoring/alerting' /* webpackChunkName: "alerting" */).then(
                   (m) => m.MonitoringUI,
                 )
               }
@@ -465,7 +465,7 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective }) => {
               path="/monitoring/alertmanageryaml"
               exact
               loader={() =>
-                import('./monitoring' /* webpackChunkName: "monitoring" */).then(
+                import('./monitoring/alerting' /* webpackChunkName: "alerting" */).then(
                   (m) => m.MonitoringUI,
                 )
               }
@@ -474,7 +474,7 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective }) => {
               path="/monitoring/alertmanagerconfig"
               exact
               loader={() =>
-                import('./monitoring' /* webpackChunkName: "monitoring" */).then(
+                import('./monitoring/alerting' /* webpackChunkName: "alerting" */).then(
                   (m) => m.MonitoringUI,
                 )
               }
@@ -500,7 +500,7 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective }) => {
             <LazyRoute
               path="/monitoring"
               loader={() =>
-                import('./monitoring' /* webpackChunkName: "monitoring" */).then(
+                import('./monitoring/alerting' /* webpackChunkName: "alerting" */).then(
                   (m) => m.MonitoringUI,
                 )
               }
