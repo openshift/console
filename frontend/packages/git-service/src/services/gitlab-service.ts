@@ -38,8 +38,12 @@ export class GitlabService extends BaseService {
       return Promise.resolve(this.repo);
     }
     const repo: GitlabRepo = await this.client.Projects.show(this.metadata.fullName);
-    if (!repo || repo.path_with_namespace !== this.metadata.fullName) {
-      throw new Error('Unable to find repo');
+    if (!repo) {
+      throw new Error('Unable to find any repo');
+    } else if (repo.path_with_namespace !== this.metadata.fullName) {
+      throw new Error(
+        `Repository path ${repo.path_with_namespace} does not match expected name ${this.metadata.fullName}`,
+      );
     }
 
     this.repo = repo;
@@ -47,8 +51,10 @@ export class GitlabService extends BaseService {
   };
 
   getRepoMetadata(): RepoMetadata {
-    const { name, owner, protocol, source, full_name: fullName } = GitUrlParse(this.gitsource.url);
-    const host = `${protocol}://${source}`;
+    const { name, owner, protocol, resource, full_name: fullName } = GitUrlParse(
+      this.gitsource.url,
+    );
+    const host = `${protocol}://${resource}`;
     return {
       repoName: name,
       owner,
