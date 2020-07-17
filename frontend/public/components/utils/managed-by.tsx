@@ -6,27 +6,15 @@ import { ResourceIcon } from './resource-icon';
 import {
   groupVersionFor,
   K8sResourceCommon,
-  K8sResourceKind,
   referenceForGroupVersionKind,
   referenceForModel,
   referenceForOwnerRef,
   OwnerReference,
 } from '../../module/k8s';
+import { findOwner, matchOwnerAndCSV } from '../../module/k8s/managed-by';
+import { k8sList } from '../../module/k8s/resource';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
-import { k8sList } from '../../module/k8s/resource';
-
-const isOwnedByOperator = (csv: K8sResourceKind, owner: OwnerReference) => {
-  const { group } = groupVersionFor(owner.apiVersion);
-  return csv.spec?.customresourcedefinitions?.owned?.some((owned) => {
-    const ownedGroup = owned.name.substring(owned.name.indexOf('.') + 1);
-    return owned.kind === owner.kind && ownedGroup === group;
-  });
-};
-
-const matchOwnerAndCSV = (owner: OwnerReference, csvs: K8sResourceCommon[] = []) => {
-  return csvs.find((csv) => isOwnedByOperator(csv, owner));
-};
 
 const ManagedByOperatorResourceLink: React.SFC<ManagerLinkProps> = (props) => {
   const { csvName, namespace, owner } = props;
@@ -65,10 +53,7 @@ export const ManagedByOperatorLink: React.SFC<ManagedByLinkProps> = (props) => {
         console.error('Could not fetch CSVs', e);
       });
   }, [namespace]);
-  const ownerReferences = obj.metadata.ownerReferences || [];
-  const owner = data
-    ? ownerReferences.find((o) => data.some((csv) => isOwnedByOperator(csv, o)))
-    : undefined;
+  const owner = findOwner(obj, data);
   const csv = data && owner ? matchOwnerAndCSV(owner, data) : undefined;
 
   if (owner && csv) {
