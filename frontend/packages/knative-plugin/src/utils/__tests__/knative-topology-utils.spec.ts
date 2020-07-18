@@ -14,6 +14,9 @@ import {
   getParentResource,
   filterRevisionsByActiveApplication,
   createKnativeEventSourceSink,
+  getSinkUriTopologyNodeItems,
+  getSinkUriTopologyEdgeItems,
+  EdgeType,
 } from '../../topology/knative-topology-utils';
 import { mockServiceData, mockRevisions } from '../__mocks__/traffic-splitting-utils-mock';
 import { EventSourceCronJobModel } from '../../models';
@@ -161,5 +164,50 @@ describe('Knative Topology Utils', () => {
       .catch(() => {
         done();
       });
+  });
+});
+
+describe('SinkURI knative topology utils', () => {
+  const sinkUid = '1317f615-9636-11e9-b134-06a61d886b689_1_nodesinkuri';
+  const sinkUri = 'http://overlayimage.testproject3.svc.cluster.local';
+  const resData = {
+    ...getEventSourceResponse(EventSourceCronJobModel).data[0],
+    spec: { sink: { uri: sinkUri } },
+  };
+  const sinkUriObj = {
+    metadata: {
+      uid: sinkUid,
+    },
+    spec: { sinkUri },
+    type: { nodeType: NodeType.SinkUri },
+  };
+  const sinkData = {
+    id: sinkUid,
+    name: 'URI',
+    type: NodeType.SinkUri,
+    resources: {
+      buildConfigs: [],
+      routes: [],
+      services: [],
+      obj: sinkUriObj,
+      eventSources: [resData],
+    },
+    resource: sinkUriObj,
+    data: { sinkUri },
+  };
+
+  it('expect getSinkUriTopologyNodeItems to return node data for sinkUri', () => {
+    const knSinkUriNode = getSinkUriTopologyNodeItems(NodeType.SinkUri, sinkUid, sinkData);
+    expect(knSinkUriNode).toBeDefined();
+    expect(knSinkUriNode).toHaveLength(1);
+  });
+
+  it('expect getSinkUriTopologyEdgeItems to return edge data for eventSource and sinkuri', () => {
+    const knEventSrcEdge = getSinkUriTopologyEdgeItems(resData, sinkUid);
+    expect(knEventSrcEdge).toBeDefined();
+    expect(knEventSrcEdge).toHaveLength(1);
+    expect(knEventSrcEdge[0].source).toBe('1317f615-9636-11e9-b134-06a61d886b689_1');
+    expect(knEventSrcEdge[0].target).toBe('1317f615-9636-11e9-b134-06a61d886b689_1_nodesinkuri');
+    expect(knEventSrcEdge[0].type).toBe(EdgeType.EventSource);
   });
 });

@@ -18,14 +18,17 @@ const SinkSource: React.FC<SinkSourceProps> = ({ source, cancel, close }) => {
     spec,
   } = source;
   const isPubSubSink = !!spec?.subscriber;
-  const { name: sinkName, apiVersion, kind } = isPubSubSink
+  const isSinkRef = !!spec?.sink?.ref;
+  const { name: sinkName = '', apiVersion = '', kind = '' } = isPubSubSink
     ? spec?.subscriber?.ref
-    : spec?.sink?.ref;
+    : isSinkRef
+    ? spec?.sink?.ref
+    : {};
   const initialValues = {
     ref: {
-      apiVersion: apiVersion || '',
-      kind: kind || '',
-      name: sinkName || '',
+      apiVersion,
+      kind,
+      name: sinkName,
     },
   };
   const handleSubmit = (values: FormikValues, action: FormikHelpers<FormikValues>) => {

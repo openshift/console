@@ -33,6 +33,7 @@ export type OverviewItem<T = K8sResourceKind> = {
   ksroutes?: K8sResourceKind[];
   configurations?: K8sResourceKind[];
   ksservices?: K8sResourceKind[];
+  eventSources?: K8sResourceKind[];
   revisions?: K8sResourceKind[];
   isOperatorBackedService?: boolean;
   isMonitorable?: boolean;

@@ -1,50 +1,41 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { Model, Edge } from '@patternfly/react-topology';
-import { RootState } from '@console/internal/redux';
-import { referenceFor, K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
 import {
   ActionsMenu,
   ResourceLink,
   SidebarSectionHeading,
   ExternalLink,
 } from '@console/internal/components/utils';
-import { TYPE_CONNECTS_TO, TYPE_SERVICE_BINDING, TYPE_TRAFFIC_CONNECTOR } from './components/const';
-import { edgeActions } from './actions/edgeActions';
-import { getKialiLink, getResource } from './topology-utils';
-
-type StateProps = {
-  consoleLinks?: K8sResourceKind[];
-};
+import { edgeActions } from '@console/dev-console/src/components/topology/actions/edgeActions';
+import { TopologyDataObject } from '@console/dev-console/src/components/topology/topology-types';
+import { NodeType } from '../../topology/knative-topology-utils';
+import { TYPE_EVENT_SOURCE_LINK, TYPE_REVISION_TRAFFIC } from '../../topology/const';
 
 export type TopologyEdgePanelProps = {
   edge: Edge;
   model: Model;
-} & StateProps;
+};
 
 const connectorTypeToTitle = (type: string): string => {
   switch (type) {
-    case TYPE_CONNECTS_TO:
-      return 'Visual connector';
-    case TYPE_SERVICE_BINDING:
-      return 'Binding connector';
-    case TYPE_TRAFFIC_CONNECTOR:
-      return 'Traffic connector';
+    case TYPE_REVISION_TRAFFIC:
+      return 'Traffic distribution connector';
+    case TYPE_EVENT_SOURCE_LINK:
+      return 'Event source connector';
     default:
       return '';
   }
 };
 
-const TopologyEdgePanel: React.FC<TopologyEdgePanelProps> = ({ edge, model, consoleLinks }) => {
-  const source = getResource(edge.getSource());
-  const target = getResource(edge.getTarget());
-  const resources = [source, target];
+const KnativeTopologyEdgePanel: React.FC<TopologyEdgePanelProps> = ({ edge, model }) => {
+  const source: TopologyDataObject = edge.getSource().getData();
+  const target: TopologyDataObject = edge.getTarget().getData();
+  const resources = [source?.resources?.obj, target?.resources?.obj];
   const nodes = model.nodes.map((n) => edge.getController().getNodeById(n.id));
-  const {
-    metadata: { namespace },
-  } = resources[1];
+  const isConnectedToUri = NodeType.SinkUri === resources[1]?.type?.nodeType;
 
   return (
     <div className="overview__sidebar-pane resource-overview">
@@ -54,7 +45,7 @@ const TopologyEdgePanel: React.FC<TopologyEdgePanelProps> = ({ edge, model, cons
             {connectorTypeToTitle(edge.getType())}
           </div>
           <div className="co-actions">
-            <ActionsMenu actions={edgeActions(edge, nodes)} />
+            <ActionsMenu actions={!isConnectedToUri ? edgeActions(edge, nodes) : []} />
           </div>
         </h1>
       </div>
@@ -78,30 +69,28 @@ const TopologyEdgePanel: React.FC<TopologyEdgePanelProps> = ({ edge, model, cons
               return null;
             }
             const {
-              metadata: { name, uid },
+              metadata: { name, uid, namespace },
+              spec,
             } = resource;
+            const sinkUri = spec?.sinkUri;
             return (
               <li className="list-group-item  container-fluid" key={uid}>
-                <ResourceLink kind={referenceFor(resource)} name={name} namespace={namespace} />
+                {!sinkUri ? (
+                  <ResourceLink kind={referenceFor(resource)} name={name} namespace={namespace} />
+                ) : (
+                  <ExternalLink
+                    href={sinkUri}
+                    additionalClassName="co-external-link--block"
+                    text={sinkUri}
+                  />
+                )}
               </li>
             );
           })}
         </ul>
-
-        {edge.getType() === TYPE_TRAFFIC_CONNECTOR && (
-          <>
-            <SidebarSectionHeading text="Kiali Link" />
-            <ExternalLink href={getKialiLink(consoleLinks, namespace)} text="Kiali Graph View" />
-          </>
-        )}
       </div>
     </div>
   );
 };
 
-const TopologyEdgeStateToProps = (state: RootState) => {
-  const consoleLinks = state.UI.get('consoleLinks');
-  return { consoleLinks };
-};
-
-export default connect(TopologyEdgeStateToProps)(TopologyEdgePanel);
+export default KnativeTopologyEdgePanel;

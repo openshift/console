@@ -10,6 +10,7 @@ export const TYPE_EVENT_PUB_SUB_LINK = 'event-pubsub-link';
 export const TYPE_KNATIVE_SERVICE = 'knative-service';
 export const TYPE_REVISION_TRAFFIC = 'revision-traffic';
 export const TYPE_KNATIVE_REVISION = 'knative-revision';
+export const TYPE_SINK_URI = 'sink-uri';
 
 export const KNATIVE_GROUP_NODE_WIDTH = GROUP_WIDTH;
 export const KNATIVE_GROUP_NODE_HEIGHT = 100;

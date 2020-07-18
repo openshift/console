@@ -68,10 +68,10 @@ describe('EventSinkServicesOverviewList', () => {
   ];
 
   it('should show error info if no sink present or sink,kind is incorrect', () => {
-    const mockData = _.omit(
-      _.cloneDeep(getEventSourceResponse(EventSourceCamelModel).data[0]),
+    const mockData = _.omit(_.cloneDeep(getEventSourceResponse(EventSourceCamelModel).data[0]), [
       'spec',
-    );
+      'status',
+    ]);
     const wrapper = shallow(<EventSinkServicesOverviewList obj={mockData} />);
     expect(wrapper.find('span').text()).toBe('No sink found for this resource.');
   });
@@ -103,6 +103,18 @@ describe('EventSinkServicesOverviewList', () => {
     const findResourceLink = wrapper.find(ResourceLink);
     expect(findResourceLink).toHaveLength(1);
     expect(findResourceLink.at(0).props().kind).toEqual(referenceForModel(EventingIMCModel));
+  });
+
+  it('should have only external link and not ResourceLink for sink to uri', () => {
+    const mockData = {
+      ...getEventSourceResponse(EventSourceCamelModel).data[0],
+      spec: {
+        uri: 'http://overlayimage.testproject3.svc.cluster.local',
+      },
+    };
+    const wrapper = shallow(<EventSinkServicesOverviewList obj={mockData} />);
+    expect(wrapper.find(ExternalLink)).toHaveLength(1);
+    expect(wrapper.find(ResourceLink)).toHaveLength(0);
   });
 
   it('should have ExternaLink when sinkUri is present', () => {

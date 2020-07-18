@@ -19,6 +19,8 @@ import {
 } from '../../utils/fetch-dynamic-eventsources-utils';
 import OverviewDetailsKnativeResourcesTab from './OverviewDetailsKnativeResourcesTab';
 import KnativeOverview from './KnativeOverview';
+import SinkUriResourcesTab from './SinkUriResourcesTab';
+import { NodeType } from '../../topology/knative-topology-utils';
 
 interface StateProps {
   kindsInFlight?: boolean;
@@ -45,6 +47,9 @@ export const KnativeResourceOverviewPage: React.ComponentType<KnativeResourceOve
   knativeModels,
   kindsInFlight,
 }: KnativeResourceOverviewPageProps) => {
+  if (NodeType.SinkUri === item?.obj?.type?.nodeType) {
+    return <SinkUriResourcesTab itemData={item} />;
+  }
   if (kindsInFlight) {
     return !knativeModels ? null : <LoadingBox />;
   }

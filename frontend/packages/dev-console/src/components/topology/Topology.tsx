@@ -37,7 +37,11 @@ import { RootState } from '@console/internal/redux';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
 import { getEventSourceStatus } from '@console/knative-plugin/src/topology/knative-topology-utils';
-import { TYPE_EVENT_PUB_SUB_LINK } from '@console/knative-plugin/src/topology/const';
+import {
+  TYPE_EVENT_PUB_SUB_LINK,
+  TYPE_REVISION_TRAFFIC,
+  TYPE_EVENT_SOURCE_LINK,
+} from '@console/knative-plugin/src/topology/const';
 import KnativeResourceOverviewPage from '@console/knative-plugin/src/components/overview/KnativeResourceOverviewPage';
 import {
   getQueryArgument,
@@ -76,6 +80,7 @@ import TopologyHelmWorkloadPanel from './helm/TopologyHelmWorkloadPanel';
 import { updateModelFromFilters } from './data-transforms';
 import { setSupportedTopologyFilters, setTopologyFilters } from './redux/action';
 import { odcElementFactory } from './elements';
+import KnativeTopologyEdgePanel from '@console/knative-plugin/src/components/overview/KnativeTopologyEdgePanel';
 
 export const FILTER_ACTIVE_CLASS = 'odc-m-filter-active';
 
@@ -451,6 +456,9 @@ const Topology: React.FC<ComponentProps> = ({
       if (selectedEntity.getType() === TYPE_EVENT_PUB_SUB_LINK) {
         const itemResources = selectedEntity.getData();
         return <KnativeResourceOverviewPage item={itemResources.resources} />;
+      }
+      if ([TYPE_REVISION_TRAFFIC, TYPE_EVENT_SOURCE_LINK].includes(selectedEntity.getType())) {
+        return <KnativeTopologyEdgePanel edge={selectedEntity as BaseEdge} model={model} />;
       }
       return <ConnectedTopologyEdgePanel edge={selectedEntity as BaseEdge} model={filteredModel} />;
     }
