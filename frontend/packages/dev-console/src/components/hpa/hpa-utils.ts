@@ -159,3 +159,13 @@ export const getInvalidUsageError = (
 
   return null;
 };
+
+export const doesHpaMatch = (workload: K8sResourceKind) => (
+  thisHPA: HorizontalPodAutoscalerKind,
+) => {
+  const workloadAPI: string = workload.apiVersion;
+  const workloadKind: string = workload.kind;
+  const workloadName: string = workload.metadata.name;
+  const ref = thisHPA.spec.scaleTargetRef;
+  return ref.apiVersion === workloadAPI && ref.kind === workloadKind && ref.name === workloadName;
+};

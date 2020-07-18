@@ -54,6 +54,7 @@ import {
 } from '../constants';
 import { resourceStatus, podStatus } from './ResourceStatus';
 import { isKnativeServing, isIdled } from './pod-utils';
+import { doesHpaMatch } from '@console/dev-console/src/components/hpa/hpa-utils';
 
 export const getResourceList = (namespace: string, resList?: any): FirehoseResource[] => {
   let resources: FirehoseResource[] = [
@@ -806,10 +807,12 @@ export const getOverviewItemsForResource = (
     ...getBuildAlerts(buildConfigs),
   };
   const status = resourceStatus(obj, current, isRollingOut);
+  const hpas = resources?.hpas?.data?.filter(doesHpaMatch(obj));
   const overviewItems = {
     alerts,
     buildConfigs,
     obj,
+    hpas,
     pods,
     routes,
     services,
