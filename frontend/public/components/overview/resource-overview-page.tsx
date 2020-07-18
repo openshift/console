@@ -45,7 +45,7 @@ export const DefaultOverviewPage = connectToModel(
           ...common,
         ]}
         kindObj={kindObject}
-        resource={item.obj}
+        resources={item}
       />
       <div className="overview__sidebar-pane-body resource-overview__body">
         <div className="resource-overview__summary">

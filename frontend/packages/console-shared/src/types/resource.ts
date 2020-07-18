@@ -1,4 +1,10 @@
-import { JobKind, K8sResourceKind, PodKind, RouteKind } from '@console/internal/module/k8s';
+import {
+  HorizontalPodAutoscalerKind,
+  JobKind,
+  K8sResourceKind,
+  PodKind,
+  RouteKind,
+} from '@console/internal/module/k8s';
 import { DEPLOYMENT_STRATEGY } from '../constants';
 import { OverviewItemAlerts, PodControllerOverviewItem } from './pod';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
@@ -24,6 +30,7 @@ export type OverviewItem<T = K8sResourceKind> = {
   current?: PodControllerOverviewItem;
   isRollingOut?: boolean;
   obj: T;
+  hpas?: HorizontalPodAutoscalerKind[];
   pods?: PodKind[];
   previous?: PodControllerOverviewItem;
   routes: RouteKind[];

@@ -402,6 +402,12 @@ export const getBaseWatchedResources = (namespace: string): WatchK8sResources<an
       namespace,
       optional: true,
     },
+    hpas: {
+      isList: true,
+      kind: 'HorizontalPodAutoscaler',
+      namespace,
+      optional: true,
+    },
     clusterServiceVersions: {
       isList: true,
       kind: referenceForModel(ClusterServiceVersionModel),

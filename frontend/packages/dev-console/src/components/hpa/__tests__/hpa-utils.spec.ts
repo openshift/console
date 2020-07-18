@@ -1,5 +1,6 @@
 import { cloneDeep } from 'lodash';
 import {
+  doesHpaMatch,
   getFormData,
   getInvalidUsageError,
   getLimitWarning,
@@ -261,5 +262,19 @@ describe('getInvalidUsageError returns an error string when limits are not set',
     const memoryHPA = cloneDeep(hpaResource);
     memoryHPA.spec.metrics[0].resource.name = 'memory';
     expect(typeof getInvalidUsageError(memoryHPA, formValues)).toBe('string');
+  });
+});
+
+describe('doesHpaMatch checks if it aligns to a workload', () => {
+  it('expect not to match when hpa does not target workload', () => {
+    expect(doesHpaMatch(deploymentExamples.hasCpuAndMemoryLimits)(hpaExamples.cpuScaled)).toBe(
+      false,
+    );
+  });
+
+  it('expect to match when hpa does target workload', () => {
+    expect(
+      doesHpaMatch(deploymentConfigExamples.hasCpuAndMemoryLimits)(hpaExamples.cpuScaled),
+    ).toBe(true);
   });
 });
