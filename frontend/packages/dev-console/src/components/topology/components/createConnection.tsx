@@ -1,6 +1,6 @@
 import { Node } from '@patternfly/react-topology';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { createTopologyResourceConnection } from '../topology-utils';
+import { createTopologyResourceConnection, getResource } from '../topology-utils';
 
 export const createConnection = (
   sourceNode: Node,
@@ -8,8 +8,8 @@ export const createConnection = (
   replaceTargetNode: Node = null,
 ): Promise<K8sResourceKind[] | K8sResourceKind> => {
   return createTopologyResourceConnection(
-    sourceNode.getData(),
-    targetNode.getData(),
-    replaceTargetNode ? replaceTargetNode.getData() : null,
+    getResource(sourceNode),
+    getResource(targetNode),
+    replaceTargetNode ? getResource(replaceTargetNode) : null,
   );
 };

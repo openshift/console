@@ -9,7 +9,7 @@ import {
 } from '@patternfly/react-topology';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
-import { getTopologyResourceObject } from '@console/dev-console/src/components/topology';
+import { getResource } from '@console/dev-console/src/components/topology';
 import KnativeServiceNode from './KnativeServiceNode';
 import KnativeServiceGroup from './KnativeServiceGroup';
 
@@ -27,7 +27,7 @@ export type KnativeServiceProps = {
   WithCreateConnectorProps;
 
 const KnativeService: React.FC<KnativeServiceProps> = (props) => {
-  const resourceObj = getTopologyResourceObject(props.element.getData());
+  const resourceObj = getResource(props.element);
   const resourceModel = modelFor(referenceFor(resourceObj));
   const editAccess = useAccessReview({
     group: resourceModel.apiGroup,

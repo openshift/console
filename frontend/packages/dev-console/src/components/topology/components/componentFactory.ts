@@ -26,7 +26,6 @@ import {
   withContextMenu,
   createConnectorCallback,
 } from './componentUtils';
-import './ContextMenu.scss';
 import {
   TYPE_WORKLOAD,
   TYPE_CONNECTS_TO,
@@ -37,6 +36,8 @@ import {
 import { createConnection } from './createConnection';
 import { withEditReviewAccess } from './withEditReviewAccess';
 import { AggregateEdge, ConnectsTo, CreateConnector, TrafficConnector } from './edges';
+
+import './ContextMenu.scss';
 
 export const componentFactory = (
   kind,

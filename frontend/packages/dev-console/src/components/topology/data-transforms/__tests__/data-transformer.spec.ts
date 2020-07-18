@@ -2,7 +2,12 @@ import * as _ from 'lodash';
 import { Model, NodeModel } from '@patternfly/react-topology';
 import { getPodStatus, podStatus } from '@console/shared';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { WorkloadData, TopologyDataResources, TrafficData } from '../../topology-types';
+import {
+  WorkloadData,
+  TopologyDataResources,
+  TrafficData,
+  OdcNodeModel,
+} from '../../topology-types';
 import { TYPE_TRAFFIC_CONNECTOR, TYPE_SERVICE_BINDING } from '../../components/const';
 import { getTrafficConnectors, baseDataModelGetter } from '../data-transformer';
 import { getEditURL, WORKLOAD_TYPES } from '../../topology-utils';
@@ -41,7 +46,7 @@ function getTransformedTopologyData(
 }
 
 function getNodeForName(name: string, model: Model): NodeModel {
-  return model.nodes.find((node) => node.data?.resources?.obj?.metadata.name === name);
+  return model.nodes.find((node) => (node as OdcNodeModel)?.resource?.metadata.name === name);
 }
 
 describe('data transformer ', () => {
@@ -292,6 +297,7 @@ describe('data transformer ', () => {
         source: 'uid-app',
         target: 'uid-db-1',
         data: { sbr: sbrs[0] },
+        resource: sbrs[0],
       },
     ]);
   });
@@ -307,6 +313,7 @@ describe('data transformer ', () => {
         source: 'uid-app',
         target: 'uid-db-1',
         data: { sbr: sbrs[0] },
+        resource: sbrs[0],
       },
       {
         id: `uid-app_uid-db-2`,
@@ -314,6 +321,7 @@ describe('data transformer ', () => {
         source: 'uid-app',
         target: 'uid-db-2',
         data: { sbr: sbrs[0] },
+        resource: sbrs[0],
       },
     ]);
   });

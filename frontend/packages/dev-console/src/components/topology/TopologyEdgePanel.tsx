@@ -17,8 +17,7 @@ import {
 } from '@console/knative-plugin/src/topology/const';
 import { TYPE_CONNECTS_TO, TYPE_SERVICE_BINDING, TYPE_TRAFFIC_CONNECTOR } from './components/const';
 import { edgeActions } from './actions/edgeActions';
-import { TopologyDataObject } from './topology-types';
-import { getKialiLink } from './topology-utils';
+import { getKialiLink, getResource } from './topology-utils';
 
 type StateProps = {
   consoleLinks?: K8sResourceKind[];
@@ -47,9 +46,9 @@ const connectorTypeToTitle = (type: string): string => {
 };
 
 const TopologyEdgePanel: React.FC<TopologyEdgePanelProps> = ({ edge, model, consoleLinks }) => {
-  const source: TopologyDataObject = edge.getSource().getData();
-  const target: TopologyDataObject = edge.getTarget().getData();
-  const resources = [source?.resources?.obj, target?.resources?.obj];
+  const source = getResource(edge.getSource());
+  const target = getResource(edge.getTarget());
+  const resources = [source, target];
   const nodes = model.nodes.map((n) => edge.getController().getNodeById(n.id));
   const {
     metadata: { namespace },

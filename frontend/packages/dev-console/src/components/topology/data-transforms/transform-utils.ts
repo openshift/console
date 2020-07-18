@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { EdgeModel, Model, NodeModel } from '@patternfly/react-topology';
 import {
   apiVersionForReference,
   isGroupVersionKind,
@@ -10,7 +11,6 @@ import {
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src';
 import { isKnativeServing } from '@console/shared';
-import { Model, EdgeModel, NodeModel } from '@patternfly/react-topology';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
   TYPE_EVENT_SOURCE,
@@ -24,6 +24,7 @@ import {
   ConnectsToData,
   TopologyDataResources,
   TopologyDataModelDepicted,
+  OdcNodeModel,
 } from '../topology-types';
 import {
   TYPE_APPLICATION_GROUP,
@@ -35,13 +36,14 @@ import {
   GROUP_HEIGHT,
   GROUP_PADDING,
 } from '../components/const';
-import { getRoutesURL, getTopologyResourceObject, WORKLOAD_TYPES } from '../topology-utils';
+import { getRoutesURL, WORKLOAD_TYPES } from '../topology-utils';
 
-export const dataObjectFromModel = (node: NodeModel): TopologyDataObject => {
+export const dataObjectFromModel = (node: OdcNodeModel): TopologyDataObject => {
   return {
     id: node.id,
     name: node.label,
     type: node.type,
+    resource: node.resource,
     resources: null,
     data: null,
   };
@@ -51,55 +53,55 @@ export const dataObjectFromModel = (node: NodeModel): TopologyDataObject => {
  * create all data that need to be shown on a topology data
  */
 export const createTopologyNodeData = (
-  dc: TopologyOverviewItem,
+  resource: K8sResourceKind,
+  overviewItem: TopologyOverviewItem,
   type: string,
   defaultIcon: string,
   operatorBackedService: boolean = false,
 ): TopologyDataObject => {
   const {
-    obj: deploymentConfig,
     current,
     previous,
     isRollingOut,
     buildConfigs,
     pipelines = [],
     pipelineRuns = [],
-  } = dc;
-  const dcUID = _.get(deploymentConfig, 'metadata.uid');
-  const deploymentsLabels = _.get(deploymentConfig, 'metadata.labels', {});
-  const deploymentsAnnotations = _.get(deploymentConfig, 'metadata.annotations', {});
+  } = overviewItem;
+  const dcUID = _.get(resource, 'metadata.uid');
+  const deploymentsLabels = _.get(resource, 'metadata.labels', {});
+  const deploymentsAnnotations = _.get(resource, 'metadata.annotations', {});
 
   const builderImageIcon =
     getImageForIconClass(`icon-${deploymentsLabels['app.openshift.io/runtime']}`) ||
     getImageForIconClass(`icon-${deploymentsLabels['app.kubernetes.io/name']}`);
   return {
     id: dcUID,
-    name:
-      _.get(deploymentConfig, 'metadata.name') || deploymentsLabels['app.kubernetes.io/instance'],
+    name: resource?.metadata.name || deploymentsLabels['app.kubernetes.io/instance'],
     type,
-    resources: { ...dc, isOperatorBackedService: operatorBackedService },
-    pods: dc.pods,
+    resource,
+    resources: { ...overviewItem, isOperatorBackedService: operatorBackedService },
+    pods: overviewItem.pods,
     data: {
-      url: getRoutesURL(dc),
-      kind: referenceFor(deploymentConfig),
+      url: getRoutesURL(resource, overviewItem),
+      kind: referenceFor(resource),
       editURL: deploymentsAnnotations['app.openshift.io/edit-url'],
       vcsURI: deploymentsAnnotations['app.openshift.io/vcs-uri'],
       builderImage: builderImageIcon || defaultIcon,
       isKnativeResource:
         type && (type === TYPE_EVENT_SOURCE || type === TYPE_KNATIVE_REVISION)
           ? true
-          : isKnativeServing(deploymentConfig, 'metadata.labels'),
+          : isKnativeServing(resource, 'metadata.labels'),
       build: buildConfigs?.[0]?.builds?.[0],
       connectedPipeline: {
         pipeline: pipelines[0],
         pipelineRuns,
       },
       donutStatus: {
-        pods: dc.pods,
+        pods: overviewItem.pods,
         current,
         previous,
         isRollingOut,
-        dc: deploymentConfig,
+        dc: resource,
       },
     },
   };
@@ -109,20 +111,21 @@ export const createTopologyNodeData = (
  * create node data for graphs
  */
 export const getTopologyNodeItem = (
-  dc: K8sResourceKind,
+  resource: K8sResourceKind,
   type: string,
   data: any,
-  nodeProps?: Omit<NodeModel, 'type' | 'data' | 'children' | 'id' | 'label'>,
+  nodeProps?: Omit<OdcNodeModel, 'type' | 'data' | 'children' | 'id' | 'label'>,
   children?: string[],
-): NodeModel => {
-  const uid = _.get(dc, ['metadata', 'uid']);
-  const name = _.get(dc, ['metadata', 'name']);
-  const label = _.get(dc, ['metadata', 'labels', 'app.openshift.io/instance']);
+): OdcNodeModel => {
+  const uid = resource?.metadata.uid;
+  const name = resource?.metadata.name;
+  const label = resource?.metadata.labels?.['app.openshift.io/instance'];
 
   return {
     id: uid,
     type,
     label: label || name,
+    resource,
     data,
     ...(children && children.length && { children }),
     ...(nodeProps || {}),
@@ -176,6 +179,7 @@ export const getTopologyEdgeItems = (
       edges.push({
         id: `${uid}_${targetNode}`,
         type: TYPE_CONNECTS_TO,
+        resource: dc,
         source: uid,
         target: targetNode,
       });
@@ -270,8 +274,9 @@ export const addToTopologyDataModel = (
           if (n.id === existing.id) {
             return true;
           }
-          return !!dataModelDepicters.find((depicter) =>
-            depicter(getTopologyResourceObject(n.data), graphModel),
+          const { resource } = n as OdcNodeModel;
+          return (
+            !resource || !!dataModelDepicters.find((depicter) => depicter(resource, graphModel))
           );
         }),
     ),

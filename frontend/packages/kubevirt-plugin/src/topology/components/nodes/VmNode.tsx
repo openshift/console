@@ -22,7 +22,7 @@ import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import SvgBoxedText from '@console/dev-console/src/components/svg/SvgBoxedText';
 import {
   useDisplayFilters,
-  getTopologyResourceObject,
+  getResource,
   useSearchFilter,
   NODE_SHADOW_FILTER_ID,
   NODE_SHADOW_FILTER_ID_HOVER,
@@ -82,7 +82,7 @@ const ObservedVmNode: React.FC<VmNodeProps> = ({
   const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
   const showLabels = showLabelsFilter?.value || hover;
   const tipContent = `Create a visual connector`;
-  const resourceObj = getTopologyResourceObject(element.getData());
+  const resourceObj = getResource(element);
   const resourceModel = modelFor(referenceFor(resourceObj));
   const editAccess = useAccessReview({
     group: resourceModel.apiGroup,

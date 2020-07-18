@@ -359,7 +359,7 @@ class OverviewMainContent_ extends React.Component<
         this.props,
         this.props.utils,
       ),
-      ...createPodItems(this.props),
+      ...createPodItems(this.props.pods.data, this.props),
       ...createCronJobItems(this.props.cronJobs.data, this.props, this.props.utils),
       ...createWorkloadItems(
         JobModel,

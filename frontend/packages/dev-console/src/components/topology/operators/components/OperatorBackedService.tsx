@@ -8,7 +8,7 @@ import {
 } from '@patternfly/react-topology';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
-import { getTopologyResourceObject } from '../../topology-utils';
+import { getResource } from '../../topology-utils';
 import OperatorBackedServiceGroup from './OperatorBackedServiceGroup';
 import OperatorBackedServiceNode from './OperatorBackedServiceNode';
 
@@ -23,7 +23,7 @@ export type OperatorBackedServiceProps = {
 const OperatorBackedService: React.FC<OperatorBackedServiceProps> = (
   props: OperatorBackedServiceProps,
 ) => {
-  const resourceObj = getTopologyResourceObject(props.element.getData());
+  const resourceObj = getResource(props.element);
   const resourceModel = modelFor(referenceFor(resourceObj));
   const editAccess = useAccessReview({
     group: resourceModel.apiGroup,

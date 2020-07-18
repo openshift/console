@@ -1,15 +1,12 @@
 import * as _ from 'lodash';
 import { Kebab, KebabAction, KebabOption } from '@console/internal/components/utils';
-import { modelFor, referenceFor } from '@console/internal/module/k8s';
+import { K8sResourceKind, modelFor, referenceFor } from '@console/internal/module/k8s';
 import { ModifyApplication } from '../../../actions/modify-application';
-import { TopologyDataObject } from '../topology-types';
-import { getTopologyResourceObject } from '../topology-utils';
 
 export const workloadActions = (
-  workload: TopologyDataObject,
+  contextMenuResource: K8sResourceKind,
   allowRegroup: boolean = true,
 ): KebabOption[] => {
-  const contextMenuResource = getTopologyResourceObject(workload);
   if (!contextMenuResource) {
     return null;
   }

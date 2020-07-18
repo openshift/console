@@ -75,6 +75,7 @@ import { TYPE_OPERATOR_BACKED_SERVICE } from './operators/components/const';
 import TopologyHelmWorkloadPanel from './helm/TopologyHelmWorkloadPanel';
 import { updateModelFromFilters } from './data-transforms';
 import { setSupportedTopologyFilters, setTopologyFilters } from './redux/action';
+import { odcElementFactory } from './elements';
 
 export const FILTER_ACTIVE_CLASS = 'odc-m-filter-active';
 
@@ -228,6 +229,7 @@ const Topology: React.FC<ComponentProps> = ({
     }
 
     const vis = new Visualization();
+    vis.registerElementFactory(odcElementFactory);
     vis.registerLayoutFactory(layoutFactory);
     vis.registerComponentFactory(componentFactory);
     componentFactories.forEach((factory) => {

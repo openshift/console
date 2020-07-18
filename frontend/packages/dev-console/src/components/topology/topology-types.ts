@@ -1,11 +1,26 @@
 import * as React from 'react';
 import { ExtPodKind, OverviewItem, PodControllerOverviewItem } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { Graph, Node as TopologyNode, EventListener, Model } from '@patternfly/react-topology';
+import {
+  Graph,
+  Node,
+  Model,
+  EdgeModel,
+  NodeModel,
+  EventListener,
+} from '@patternfly/react-topology';
 import { WatchK8sResults } from '@console/internal/components/utils/k8s-watch-hook';
 import { Pipeline, PipelineRun } from '../../utils/pipeline-augment';
 
 export type Point = [number, number];
+
+export interface OdcNodeModel extends NodeModel {
+  resource?: K8sResourceKind;
+}
+
+export interface OdcEdgeModel extends EdgeModel {
+  resource?: K8sResourceKind;
+}
 
 export type TopologyResourcesObject = { [key: string]: K8sResourceKind[] };
 
@@ -20,8 +35,8 @@ export type TopologyDataModelGetter = (
 export type TopologyDataModelDepicted = (resource: K8sResourceKind, model: Model) => boolean;
 
 export type CreateConnection = (
-  source: TopologyNode,
-  target: TopologyNode | Graph,
+  source: Node,
+  target: Node | Graph,
 ) => Promise<React.ReactElement[] | null>;
 
 export type CreateConnectionGetter = (createHints: string[]) => CreateConnection;
@@ -56,6 +71,7 @@ export interface TopologyDataObject<D = {}> {
   resources: OverviewItem;
   pods?: ExtPodKind[];
   data: D;
+  resource: K8sResourceKind | null;
   groupResources?: TopologyDataObject[];
 }
 
@@ -89,88 +105,6 @@ export interface DonutStatusData {
   dc: K8sResourceKind;
   isRollingOut: boolean;
 }
-
-export interface GraphApi {
-  zoomIn(): void;
-  zoomOut(): void;
-  zoomReset(): void;
-  zoomFit(): void;
-  resetLayout(): void;
-}
-
-export enum GraphElementType {
-  node = 'node',
-  edge = 'edge',
-  group = 'group',
-}
-
-export interface Selectable {
-  selected?: boolean;
-  onSelect?(): void;
-}
-
-export interface GroupElementInterface {
-  isPointInGroup: (p: Point) => boolean;
-}
-
-export type ViewNode = {
-  id: string;
-  type?: string;
-  x: number;
-  y: number;
-  size: number;
-  name: string;
-  fx?: number;
-  fy?: number;
-};
-
-export type ViewEdge = {
-  id: string;
-  type?: string;
-  nodeSize: number;
-  source: ViewNode;
-  target: ViewNode;
-};
-
-export type ViewGroup = {
-  id: string;
-  type?: string;
-  name: string;
-  nodes: ViewNode[];
-  element?: GroupElementInterface;
-};
-
-export type NodeProps<D = {}> = ViewNode &
-  Selectable & {
-    data?: TopologyDataObject<D>;
-    dragActive?: boolean;
-    isDragging?: boolean;
-    isTarget?: boolean;
-    onHover?(hovered: boolean): void;
-  };
-
-export type DragConnectionProps = NodeProps & {
-  dragX: number;
-  dragY: number;
-  isDragging?: boolean;
-  onHover?(hovered: boolean): void;
-};
-
-export type EdgeProps<D = {}> = ViewEdge & {
-  data?: TopologyDataObject<D>;
-  dragActive?: boolean;
-  isDragging?: boolean;
-  targetArrowRef?(ref: SVGPathElement): void;
-  onRemove?: () => void;
-};
-
-export type GroupProps = ViewGroup &
-  Selectable & {
-    dragActive?: boolean;
-    dropSource?: boolean;
-    dropTarget?: boolean;
-    groupRef(element: GroupElementInterface): void;
-  };
 
 export type TrafficData = {
   nodes: KialiNode[];
@@ -209,4 +143,4 @@ export type GraphData = {
 };
 
 export const SHOW_GROUPING_HINT_EVENT = 'show-regroup-hint';
-export type ShowGroupingHintEventListener = EventListener<[TopologyNode, string]>;
+export type ShowGroupingHintEventListener = EventListener<[Node, string]>;

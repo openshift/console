@@ -5,15 +5,15 @@ import { Model, Node } from '@patternfly/react-topology';
 import { asAccessReview } from '@console/internal/components/utils';
 import { getKnativeContextMenuAction } from '@console/knative-plugin/src/topology/knative-topology-utils';
 import { addResourceMenuWithoutCatalog } from '../../../actions/add-resources';
-import { TopologyApplicationObject, GraphData } from '../topology-types';
-import { getTopologyResourceObject } from '../topology-utils';
+import { TopologyApplicationObject, GraphData, OdcNodeModel } from '../topology-types';
+import { getResource, getTopologyResourceObject } from '../topology-utils';
 import { deleteResourceModal } from '../../modals';
 import { cleanUpWorkload } from '../../../utils/application-utils';
 
 export const getGroupComponents = (groupId: string, model: Model): TopologyApplicationObject => {
   return _.values(model.nodes).reduce(
     (acc, val) => {
-      const dc = getTopologyResourceObject(val.data);
+      const dc = (val as OdcNodeModel).resource || getTopologyResourceObject(val.data);
       if (_.get(dc, ['metadata', 'labels', 'app.kubernetes.io/part-of']) === groupId) {
         acc.resources.push(model.nodes.find((n) => n.id === dc.metadata.uid));
       }
@@ -57,7 +57,7 @@ const addResourcesMenu = (
   connectorSource?: Node,
 ) => {
   const primaryResource = application.resources[0]?.resources?.obj;
-  const connectorSourceObj = connectorSource?.getData()?.resources?.obj || {};
+  const connectorSourceObj = getResource(connectorSource) || {};
   let resourceMenu = addResourceMenuWithoutCatalog;
   resourceMenu = getKnativeContextMenuAction(graphData, resourceMenu, connectorSource);
   return _.reduce(

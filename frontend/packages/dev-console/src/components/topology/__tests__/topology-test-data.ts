@@ -1,7 +1,7 @@
 import { FirehoseResult } from '@console/internal/components/utils';
 import { DeploymentKind, PodKind, EventKind, ImagePullPolicy } from '@console/internal/module/k8s';
 import { Model } from '@patternfly/react-topology';
-import { TopologyDataResources } from '../topology-types';
+import { OdcNodeModel, TopologyDataResources } from '../topology-types';
 import { NODE_HEIGHT, NODE_PADDING, NODE_WIDTH } from '../components/const';
 import { WorkloadModelProps } from '../data-transforms';
 
@@ -3337,77 +3337,85 @@ export const sampleClusterServiceVersions: FirehoseResult = {
   loaded: true,
 };
 
-export const topologyDataModel: Model = {
-  nodes: [
-    {
+const topologyDataModelNodes: OdcNodeModel[] = [
+  {
+    id: 'e187afa2-53b1-406d-a619-cf9ff1468031',
+    type: 'workload',
+    label: 'hello-openshift',
+    resource: sampleDeployments.data[0],
+    data: {
+      data: {},
       id: 'e187afa2-53b1-406d-a619-cf9ff1468031',
+      name: 'hello-openshift',
       type: 'workload',
-      label: 'hello-openshift',
-      data: {
-        data: {},
-        id: 'e187afa2-53b1-406d-a619-cf9ff1468031',
-        name: 'hello-openshift',
-        type: 'workload',
-        resources: {
-          buildConfigs: [],
-          obj: sampleDeployments.data[0],
-          routes: [],
-          services: [],
-        },
+      resources: {
+        buildConfigs: [],
+        obj: sampleDeployments.data[0],
+        routes: [],
+        services: [],
       },
-      ...WorkloadModelProps,
     },
-    {
+    ...WorkloadModelProps,
+  },
+  {
+    id: 'e187afa2-53b1-406d-a619-cf9ff1468032',
+    type: 'workload',
+    label: 'hello-openshift-1',
+    resource: sampleDeployments.data[1],
+    data: {
+      data: {},
       id: 'e187afa2-53b1-406d-a619-cf9ff1468032',
+      name: 'hello-openshift-1',
       type: 'workload',
-      label: 'hello-openshift-1',
-      data: {
-        data: {},
-        id: 'e187afa2-53b1-406d-a619-cf9ff1468032',
-        name: 'hello-openshift-1',
-        type: 'workload',
-        resources: {
-          buildConfigs: [],
-          obj: sampleDeployments.data[1],
-          routes: [],
-          services: [],
-        },
+      resources: {
+        buildConfigs: [],
+        obj: sampleDeployments.data[1],
+        routes: [],
+        services: [],
       },
-      ...WorkloadModelProps,
     },
-  ],
+    ...WorkloadModelProps,
+  },
+];
+
+export const topologyDataModel: Model = {
+  nodes: topologyDataModelNodes,
   edges: [],
 };
 
+const dataModelNodes: OdcNodeModel[] = [
+  {
+    data: topologyDataModel.nodes[0].data,
+    resource: topologyDataModelNodes[0].resource,
+    id: 'e187afa2-53b1-406d-a619-cf9ff1468031',
+    label: 'hello-openshift',
+    type: 'workload',
+    visible: true,
+    group: false,
+    width: NODE_WIDTH,
+    height: NODE_HEIGHT,
+    style: {
+      padding: NODE_PADDING,
+    },
+  },
+  {
+    data: topologyDataModel.nodes[1].data,
+    resource: topologyDataModelNodes[1].resource,
+    id: 'e187afa2-53b1-406d-a619-cf9ff1468032',
+    label: 'hello-openshift-1',
+    type: 'workload',
+    visible: true,
+    group: false,
+    width: NODE_WIDTH,
+    height: NODE_HEIGHT,
+    style: {
+      padding: NODE_PADDING,
+    },
+  },
+];
+
 export const dataModel: Model = {
-  nodes: [
-    {
-      data: topologyDataModel.nodes[0].data,
-      id: 'e187afa2-53b1-406d-a619-cf9ff1468031',
-      label: 'hello-openshift',
-      type: 'workload',
-      visible: true,
-      group: false,
-      width: NODE_WIDTH,
-      height: NODE_HEIGHT,
-      style: {
-        padding: NODE_PADDING,
-      },
-    },
-    {
-      data: topologyDataModel.nodes[1].data,
-      id: 'e187afa2-53b1-406d-a619-cf9ff1468032',
-      label: 'hello-openshift-1',
-      type: 'workload',
-      visible: true,
-      group: false,
-      width: NODE_WIDTH,
-      height: NODE_HEIGHT,
-      style: {
-        padding: NODE_PADDING,
-      },
-    },
-  ],
+  nodes: dataModelNodes,
   edges: [],
 };
 

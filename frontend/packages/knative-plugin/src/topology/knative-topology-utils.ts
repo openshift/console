@@ -19,7 +19,7 @@ import {
   getServicesForResource,
   getRandomChars,
 } from '@console/shared';
-import { Model, Edge, EdgeModel, Node, NodeModel, NodeShape } from '@patternfly/react-topology';
+import { Edge, EdgeModel, Model, Node, NodeModel, NodeShape } from '@patternfly/react-topology';
 import {
   TopologyDataResources,
   TopologyDataObject,
@@ -35,6 +35,7 @@ import {
   NODE_PADDING,
   WorkloadModelProps,
   GraphData,
+  getResource,
 } from '@console/dev-console/src/components/topology';
 import { addResourceMenuWithoutCatalog } from '@console/dev-console/src/actions/add-resources';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
@@ -574,6 +575,7 @@ export const getTrafficTopologyEdgeItems = (resource: K8sResourceKind, { data })
  * create all data that need to be shown on a topology data for knative service
  */
 export const createTopologyServiceNodeData = (
+  resource: K8sResourceKind,
   svcRes: TopologyOverviewItem,
   type: string,
 ): TopologyDataObject => {
@@ -586,6 +588,7 @@ export const createTopologyServiceNodeData = (
     id: uid,
     name: _.get(knativeSvc, 'metadata.name') || labels['app.kubernetes.io/instance'],
     type,
+    resource,
     resources: { ...svcRes },
     data: {
       url: getKnativeServiceRoutesURL(knativeSvc),
@@ -603,6 +606,7 @@ export const createTopologyServiceNodeData = (
 };
 
 export const createTopologyPubSubNodeData = (
+  resource: K8sResourceKind,
   res: TopologyOverviewItem,
   type: string,
 ): TopologyDataObject => {
@@ -615,6 +619,7 @@ export const createTopologyPubSubNodeData = (
     id: uid,
     name: name || labels?.['app.kubernetes.io/instance'],
     type,
+    resource,
     resources: { ...res },
     data: {
       kind: referenceFor(res.obj),
@@ -640,7 +645,12 @@ export const transformKnNodeData = (
     const item = createKnativeDeploymentItems(res, resources, utils);
     switch (type) {
       case NodeType.EventSource: {
-        const data = createTopologyNodeData(item, type, getImageForIconClass(`icon-openshift`));
+        const data = createTopologyNodeData(
+          res,
+          item,
+          type,
+          getImageForIconClass(`icon-openshift`),
+        );
         knDataModel.nodes.push(...getKnativeTopologyNodeItems(res, type, data, resources));
         knDataModel.edges.push(...getEventTopologyEdgeItems(res, resources.ksservices));
         // form connections for channels
@@ -657,7 +667,7 @@ export const transformKnNodeData = (
         break;
       }
       case NodeType.KnService: {
-        const data = createTopologyServiceNodeData(item, type);
+        const data = createTopologyServiceNodeData(res, item, type);
         knDataModel.nodes.push(...getKnativeTopologyNodeItems(res, type, data, resources));
         knDataModel.edges.push(...getTrafficTopologyEdgeItems(res, resources.revisions));
         const newGroup = getTopologyGroupItems(res);
@@ -667,7 +677,7 @@ export const transformKnNodeData = (
       case NodeType.PubSub: {
         if (!isInternalResource(res)) {
           const itemData = createPubSubDataItems(res, resources);
-          const data = createTopologyPubSubNodeData(itemData, type);
+          const data = createTopologyPubSubNodeData(res, itemData, type);
           knDataModel.nodes.push(...getKnativeTopologyNodeItems(res, type, data, resources));
           if (res.kind === EventingBrokerModel.kind) {
             knDataModel.edges.push(...getTriggerTopologyEdgeItems(res, resources));
@@ -703,6 +713,7 @@ export const getRevisionsData = (
     const item = createKnativeDeploymentItems(res, resources, utils);
     const revisionItem = _.omit(item, ['pipelines', 'pipelineRuns', 'buildConfigs']);
     revisionData[uid] = createTopologyNodeData(
+      res,
       revisionItem,
       NodeType.Revision,
       getImageForIconClass(`icon-openshift`),
@@ -735,24 +746,14 @@ export const createKnativeEventSourceSink = (
   return k8sUpdate(modelFor(referenceFor(source)), updatePayload);
 };
 
-export const createTopologySinkConnection = (
-  source: TopologyDataObject,
-  target: TopologyDataObject,
-): Promise<K8sResourceKind> => {
+export const createSinkConnection = (source: Node, target: Node): Promise<K8sResourceKind> => {
   if (!source || !target || source === target) {
     return Promise.reject();
   }
-  const sourceObj = getTopologyResourceObject(source);
-  const targetObj = getTopologyResourceObject(target);
+  const sourceObj = getResource(source);
+  const targetObj = getResource(target);
 
   return createKnativeEventSourceSink(sourceObj, targetObj);
-};
-
-export const createSinkConnection = (
-  sourceNode: Node,
-  targetNode: Node,
-): Promise<K8sResourceKind> => {
-  return createTopologySinkConnection(sourceNode.getData(), targetNode.getData());
 };
 
 export const createEventingPubSubSink = (subObj: K8sResourceKind, target: K8sResourceKind) => {
@@ -868,17 +869,11 @@ export const getKnativeContextMenuAction = (
   }
 };
 const createTrigger = (source: Node, target: Node) => {
-  return createEventingTrigger(
-    source.getData()?.resources?.obj,
-    target.getData()?.resources?.obj,
-  ).then(() => null);
+  return createEventingTrigger(getResource(source), getResource(target)).then(() => null);
 };
 
 const createSubscription = (source: Node, target: Node) => {
-  return createEventingSubscription(
-    source.getData()?.resources?.obj,
-    target.getData()?.resources?.obj,
-  ).then(() => null);
+  return createEventingSubscription(getResource(source), getResource(target)).then(() => null);
 };
 
 export const getCreateConnector = (createHints: string[]) => {

@@ -1,10 +1,10 @@
 import { safeLoadAll } from 'js-yaml';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { Model, NodeModel } from '@patternfly/react-topology';
+import { apiVersionForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { SecretModel } from '@console/internal/models';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { createOverviewItemsForType } from '@console/shared';
-import { Model, NodeModel } from '@patternfly/react-topology';
-import { TopologyDataResources } from '../topology-types';
+import { createOverviewItemForType } from '@console/shared';
+import { OdcNodeModel, TopologyDataResources } from '../topology-types';
 import {
   HELM_GROUP_HEIGHT,
   HELM_GROUP_WIDTH,
@@ -62,13 +62,20 @@ export const getTopologyHelmReleaseGroupItem = (
     if (appGroup) {
       mergeGroup(appGroup, returnData);
     }
+    if (!secret.apiVersion) {
+      secret.apiVersion = apiVersionForModel(SecretModel);
+    }
+    if (!secret.kind) {
+      secret.kind = SecretModel.kind;
+    }
   }
 
   const { kind, apiVersion } = SecretModel;
-  const helmGroup: NodeModel = {
+  const helmGroup: OdcNodeModel = {
     id: secret ? secret.metadata.uid : `${TYPE_HELM_RELEASE}:${releaseName}`,
     type: TYPE_HELM_RELEASE,
     group: true,
+    resource: secret,
     label: releaseName,
     children: [uid],
     width: HELM_GROUP_WIDTH,
@@ -116,25 +123,21 @@ export const getHelmGraphModelFromMap = (
         nodes: [],
         edges: [],
       };
-
-      createOverviewItemsForType(key, resources).forEach((item) => {
-        const { obj: deploymentConfig } = item;
-        const uid = deploymentConfig?.metadata?.uid;
-        if (isHelmReleaseNode(deploymentConfig, helmResourcesMap)) {
+      resources[key].data.forEach((resource) => {
+        const item = createOverviewItemForType(key, resource, resources);
+        const uid = resource?.metadata?.uid;
+        if (isHelmReleaseNode(resource, helmResourcesMap)) {
           helmResources[key].push(uid);
           const data = createTopologyNodeData(
+            resource,
             item,
             TYPE_HELM_WORKLOAD,
             getImageForIconClass(`icon-openshift`),
           );
           typedDataModel.nodes.push(
-            getTopologyNodeItem(deploymentConfig, TYPE_HELM_WORKLOAD, data, WorkloadModelProps),
+            getTopologyNodeItem(resource, TYPE_HELM_WORKLOAD, data, WorkloadModelProps),
           );
-          const groups = getTopologyHelmReleaseGroupItem(
-            deploymentConfig,
-            helmResourcesMap,
-            secrets,
-          );
+          const groups = getTopologyHelmReleaseGroupItem(resource, helmResourcesMap, secrets);
           mergeGroups(groups, typedDataModel.nodes);
         }
       });

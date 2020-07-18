@@ -10,7 +10,7 @@ import {
   TYPE_EVENT_PUB_SUB,
   TYPE_REVISION_TRAFFIC,
 } from '@console/knative-plugin/src/topology/const';
-import { getTopologyResourceObject } from '../topology-utils';
+import { getResource } from '../topology-utils';
 import { removeConnection } from '../components/removeConnection';
 import {
   TYPE_CONNECTS_TO,
@@ -20,7 +20,7 @@ import {
 import { moveConnectionModal } from '../components/MoveConnectionModal';
 
 const moveConnection = (edge: Edge, availableTargets: Node[]) => {
-  const resourceObj = getTopologyResourceObject(edge.getSource().getData());
+  const resourceObj = getResource(edge.getSource());
   const resourceModel = modelFor(referenceFor(resourceObj));
 
   return {
@@ -34,7 +34,7 @@ const moveConnection = (edge: Edge, availableTargets: Node[]) => {
 };
 
 const deleteConnection = (edge: Edge) => {
-  const resourceObj = getTopologyResourceObject(edge.getSource().getData());
+  const resourceObj = getResource(edge.getSource());
   const resourceModel = modelFor(referenceFor(resourceObj));
   return {
     label: 'Delete Connector',

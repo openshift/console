@@ -1,4 +1,3 @@
-import { BaseNode } from '@patternfly/react-topology';
 import { knativeTopologyDataModel } from '@console/knative-plugin/src/topology/__tests__/topology-knative-test-data';
 import { topologyDataModel } from '../../__tests__/topology-test-data';
 import {
@@ -7,6 +6,7 @@ import {
 } from '../../../../actions/add-resources';
 import { GraphData } from '../../topology-types';
 import { graphActions } from '../graphActions';
+import { OdcBaseNode } from '../../elements/OdcBaseNode';
 
 describe('graphActions: ', () => {
   it('should return the correct menu items when all permissions are allowed', () => {
@@ -45,7 +45,7 @@ describe('graphActions: ', () => {
       namespace: 'namespace',
       createResourceAccess: [allCatalogImageResourceAccess, allImportResourceAccess],
     };
-    const connectorSource = new BaseNode();
+    const connectorSource = new OdcBaseNode();
     connectorSource.setData(topologyDataModel.nodes[0].data);
     const actions = graphActions(graphData, connectorSource);
     expect(actions).toHaveLength(3);
@@ -57,7 +57,7 @@ describe('graphActions: ', () => {
       namespace: 'namespace',
       createResourceAccess: [allCatalogImageResourceAccess, allImportResourceAccess],
     };
-    const connectorSource = new BaseNode();
+    const connectorSource = new OdcBaseNode();
     connectorSource.setData(
       knativeTopologyDataModel.topology['e187afa2-53b1-406d-a619-cf9ff1468031'],
     );

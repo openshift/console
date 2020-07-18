@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { modelFor, referenceFor } from '@console/internal/module/k8s';
+import { K8sResourceKind, modelFor, referenceFor } from '@console/internal/module/k8s';
 import { KebabOption, kebabOptionsToMenu } from '@console/internal/components/utils';
 import {
   ComponentFactory,
@@ -18,7 +18,7 @@ import {
   withContextMenu,
   createMenuItems,
   TopologyDataObject,
-  getTopologyResourceObject,
+  getResource,
   createConnectorCallback,
   CreateConnector,
 } from '@console/dev-console/src/components/topology';
@@ -28,8 +28,10 @@ import { VmNode } from './nodes/VmNode';
 import { TYPE_VIRTUAL_MACHINE } from './const';
 import { VMNodeData } from '../types';
 
-export const vmActions = (vm: TopologyDataObject<VMNodeData>): KebabOption[] => {
-  const contextMenuResource = getTopologyResourceObject(vm);
+export const vmActions = (
+  contextMenuResource: K8sResourceKind,
+  vm: TopologyDataObject<VMNodeData>,
+): KebabOption[] => {
   if (!contextMenuResource) {
     return null;
   }
@@ -50,7 +52,7 @@ export const vmActions = (vm: TopologyDataObject<VMNodeData>): KebabOption[] => 
 };
 
 export const vmContextMenu = (element: Node) => {
-  return createMenuItems(kebabOptionsToMenu(vmActions(element.getData())));
+  return createMenuItems(kebabOptionsToMenu(vmActions(getResource(element), element.getData())));
 };
 
 export const getKubevirtComponentFactory = (): ComponentFactory => {

@@ -11,6 +11,7 @@ import {
   sampleHelmResourcesMap,
   sampleDeployments,
 } from './topology-test-data';
+import { OdcNodeModel } from '../topology-types';
 
 let patchData = null;
 
@@ -27,17 +28,17 @@ describe('Topology Utils', () => {
   });
 
   it('should create topology visual connector', async (done) => {
-    const source = topologyDataModel.nodes[0].data;
-    const target = topologyDataModel.nodes[1].data;
+    const source = (topologyDataModel.nodes[0] as OdcNodeModel).resource;
+    const target = (topologyDataModel.nodes[1] as OdcNodeModel).resource;
     await createTopologyResourceConnection(source, target, null).catch(() => {
       // Expected, network request failure for update
     });
     const expectedConnectsToValue = [
-      target.resources.obj.metadata.labels['app.kubernetes.io/instance'],
+      target.metadata.labels['app.kubernetes.io/instance'],
       {
-        apiVersion: target.resources.obj.apiVersion,
-        kind: target.resources.obj.kind,
-        name: target.resources.obj.metadata.name,
+        apiVersion: target.apiVersion,
+        kind: target.kind,
+        name: target.metadata.name,
       },
     ];
     const expectedPatchData = {
