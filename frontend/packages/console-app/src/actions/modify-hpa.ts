@@ -3,6 +3,7 @@ import {
   HorizontalPodAutoscalerKind,
   K8sKind,
   K8sResourceCommon,
+  referenceForModel,
 } from '@console/internal/module/k8s';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import deleteHPAModal from '@console/dev-console/src/components/hpa/DeleteHPAModal';
@@ -20,13 +21,31 @@ export const AddHorizontalPodAutoScaler: KebabAction = (
   resources: RelatedResources,
 ) => ({
   label: `Add ${HorizontalPodAutoscalerModel.label}`,
-  href: `/workload-hpa/${obj.metadata.namespace}/${kind.kind}/${obj.metadata.name}`,
+  href: `/workload-hpa/${obj.metadata.namespace}/${referenceForModel(kind)}/${obj.metadata.name}`,
   hidden: hasHPAs(resources),
   accessReview: {
     group: HorizontalPodAutoscalerModel.apiGroup,
     resource: HorizontalPodAutoscalerModel.plural,
     namespace: obj.metadata.namespace,
     verb: 'create',
+  },
+});
+
+export const EditHorizontalPodAutoScaler: KebabAction = (
+  kind: K8sKind,
+  obj: K8sResourceCommon,
+  resources: RelatedResources,
+) => ({
+  label: `Edit ${HorizontalPodAutoscalerModel.label}`,
+  href: `/workload-hpa/${obj.metadata.namespace}/${referenceForModel(kind)}/${
+    obj.metadata.name
+  }/edit`,
+  hidden: !hasHPAs(resources),
+  accessReview: {
+    group: HorizontalPodAutoscalerModel.apiGroup,
+    resource: HorizontalPodAutoscalerModel.plural,
+    namespace: obj.metadata.namespace,
+    verb: 'update',
   },
 });
 

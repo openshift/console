@@ -6,6 +6,7 @@ import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modi
 import {
   AddHorizontalPodAutoScaler,
   DeleteHorizontalPodAutoScaler,
+  EditHorizontalPodAutoScaler,
 } from '@console/app/src/actions/modify-hpa';
 import { DeploymentModel } from '../models';
 import { DeploymentKind, K8sKind, K8sResourceKindReference } from '../module/k8s';
@@ -63,6 +64,7 @@ export const menuActions = [
   PauseAction,
   AddHealthChecks,
   AddHorizontalPodAutoScaler,
+  EditHorizontalPodAutoScaler,
   AddStorage,
   UpdateStrategy,
   DeleteHorizontalPodAutoScaler,

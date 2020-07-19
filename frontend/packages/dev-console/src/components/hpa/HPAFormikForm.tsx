@@ -7,6 +7,7 @@ import {
   HorizontalPodAutoscalerKind,
   k8sCreate,
   K8sResourceKind,
+  k8sUpdate,
 } from '@console/internal/module/k8s';
 import { history } from '@console/internal/components/utils';
 import HPAForm from './HPAForm';
@@ -14,6 +15,7 @@ import {
   getFormData,
   getInvalidUsageError,
   getYAMLData,
+  hasCustomMetrics,
   isCpuUtilizationPossible,
   isMemoryUtilizationPossible,
   sanityForSubmit,
@@ -22,19 +24,20 @@ import { HPAFormValues } from './types';
 import { hpaValidationSchema } from './validation-utils';
 
 type HPAFormikFormProps = {
+  existingHPA?: HorizontalPodAutoscalerKind;
   targetResource: K8sResourceKind;
 };
 
-const HPAFormikForm: React.FC<HPAFormikFormProps> = ({ targetResource }) => {
+const HPAFormikForm: React.FC<HPAFormikFormProps> = ({ existingHPA, targetResource }) => {
   const initialValues: HPAFormValues = {
     showCanUseYAMLMessage: true,
     disabledFields: {
       cpuUtilization: !isCpuUtilizationPossible(targetResource),
       memoryUtilization: !isMemoryUtilizationPossible(targetResource),
     },
-    editorType: EditorType.Form,
-    formData: getFormData(targetResource),
-    yamlData: getYAMLData(targetResource),
+    editorType: hasCustomMetrics(existingHPA) ? EditorType.YAML : EditorType.Form,
+    formData: getFormData(targetResource, existingHPA),
+    yamlData: getYAMLData(targetResource, existingHPA),
   };
 
   const handleSubmit = (values: HPAFormValues, helpers: FormikHelpers<HPAFormValues>) => {
@@ -50,7 +53,8 @@ const HPAFormikForm: React.FC<HPAFormikFormProps> = ({ targetResource }) => {
     }
 
     helpers.setSubmitting(true);
-    k8sCreate(HorizontalPodAutoscalerModel, hpa)
+    const method = existingHPA ? k8sUpdate : k8sCreate;
+    method(HorizontalPodAutoscalerModel, hpa)
       .then(() => {
         helpers.setSubmitting(false);
         history.goBack();

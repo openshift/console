@@ -6,6 +6,7 @@ import {
   getLimitWarning,
   getMetricByType,
   getYAMLData,
+  hasCustomMetrics,
   isCpuUtilizationPossible,
   isMemoryUtilizationPossible,
   sanitizeHPAToForm,
@@ -276,5 +277,42 @@ describe('doesHpaMatch checks if it aligns to a workload', () => {
     expect(
       doesHpaMatch(deploymentConfigExamples.hasCpuAndMemoryLimits)(hpaExamples.cpuScaled),
     ).toBe(true);
+  });
+});
+
+describe('hasCustomMetrics accurately determines if an hpa contains non-default metrics', () => {
+  it('expect no metrics to mean no custom metrics', () => {
+    expect(hasCustomMetrics(null)).toBe(false);
+    expect(hasCustomMetrics({} as any)).toBe(false);
+    expect(hasCustomMetrics(hpaExamples.noMetrics)).toBe(false);
+  });
+
+  it('expect cpu and memory metrics to not be custom', () => {
+    expect(hasCustomMetrics(hpaExamples.cpuScaled)).toBe(false);
+
+    const memoryScaled = cloneDeep(hpaExamples.cpuScaled);
+    memoryScaled.spec.metrics[0].resource.name = 'memory';
+    expect(hasCustomMetrics(memoryScaled)).toBe(false);
+  });
+
+  it('expect any unknown metric to be custom', () => {
+    const unknownMetric = cloneDeep(hpaExamples.cpuScaled);
+    unknownMetric.spec.metrics[0].resource.name = 'custom-metric';
+    expect(hasCustomMetrics(unknownMetric)).toBe(true);
+  });
+
+  it('expect an unknown metric to trump known metrics', () => {
+    const mixedMetrics = cloneDeep(hpaExamples.cpuScaled);
+    mixedMetrics.spec.metrics.push({
+      type: 'Resource',
+      resource: {
+        name: 'custom-metric',
+        target: {
+          type: 'Utilization',
+          averageUtilization: 66,
+        },
+      },
+    });
+    expect(hasCustomMetrics(mixedMetrics)).toBe(true);
   });
 });
