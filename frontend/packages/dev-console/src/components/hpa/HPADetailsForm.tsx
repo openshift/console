@@ -13,7 +13,7 @@ const HPADetailsForm: React.FC = () => {
   const {
     setFieldValue,
     values: {
-      disabledFields: { cpuUtilization, memoryUtilization },
+      disabledFields: { name: nameDisabled, cpuUtilization, memoryUtilization },
       showCanUseYAMLMessage,
     },
   } = useFormikContext<HPAFormValues>();
@@ -63,7 +63,7 @@ const HPADetailsForm: React.FC = () => {
       <div className="row">
         <div className="col-lg-8">
           <Flex direction={{ default: 'column' }}>
-            <InputField label="Name" name={`${name}.metadata.name`} />
+            <InputField isDisabled={nameDisabled} label="Name" name={`${name}.metadata.name`} />
             <NumberSpinnerField label="Minimum Pods" name={`${name}.spec.minReplicas`} />
             <NumberSpinnerField label="Maximum Pods" name={`${name}.spec.maxReplicas`} />
             <HPAUtilizationField

@@ -55,7 +55,7 @@ const HPAForm: React.FC<FormikProps<HPAFormValues> & HPAFormProps> = ({
         errorMessage={status?.submitError}
         isSubmitting={isSubmitting}
         submitLabel="Save"
-        disableSubmit={isForm && (!isEmpty(errors) || status?.submitError)}
+        disableSubmit={isForm && !isEmpty(errors)}
         resetLabel="Cancel"
         sticky
       />
