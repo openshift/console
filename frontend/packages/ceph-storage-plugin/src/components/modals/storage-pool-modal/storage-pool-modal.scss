@@ -1,0 +1,16 @@
+.ceph-storage-pool__switch {
+  --pf-c-switch--FontSize: var(--pf-global--FontSize--xs) !important;
+  --pf-c-switch__input--focus__toggle--OutlineWidth: 0 !important; // To disable the switch focus border
+}
+
+.ceph-storage-pool__input {
+  margin: var(--pf-global--spacer--lg) 0 !important;;
+}
+
+.ceph-storage-pool__error-icon {
+  color: var(--pf-global--danger-color--100) !important;
+}
+
+.ceph-storage-pool__check-icon {
+  color: var(--pf-global--success-color--100) !important;
+}

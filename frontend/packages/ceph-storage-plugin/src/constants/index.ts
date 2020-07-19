@@ -22,3 +22,15 @@ export const dropdownUnits = {
   GiB: 'Gi',
   TiB: 'Ti',
 };
+export const CEPH_INTERNAL_CR_NAME = 'ocs-storagecluster-cephcluster';
+export const CEPH_EXTERNAL_CR_NAME = 'ocs-external-storagecluster-cephcluster';
+
+export enum OCS_PROVISIONER {
+  BLOCK = 'openshift-storage.rbd.csi.ceph.com',
+  FILE = 'openshift-storage.cephfs.csi.ceph.com',
+}
+
+export const OCS_DEVICE_REPLICA = Object.freeze({
+  '2': '2-way',
+  '3': '3-way',
+});
