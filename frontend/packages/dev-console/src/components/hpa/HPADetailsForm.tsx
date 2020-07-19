@@ -58,7 +58,11 @@ const HPADetailsForm: React.FC = () => {
               variant="info"
             />
           )}
-          <InputField label="Name" name={`${name}.metadata.name`} />
+          <InputField
+            isDisabled={values.disabledFields.name}
+            label="Name"
+            name={`${name}.metadata.name`}
+          />
           <NumberSpinnerField label="Minimum Pods" name={`${name}.spec.minReplicas`} />
           <NumberSpinnerField label="Maximum Pods" name={`${name}.spec.maxReplicas`} />
           <HPAUtilizationField

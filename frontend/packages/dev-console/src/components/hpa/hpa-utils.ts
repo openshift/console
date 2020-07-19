@@ -165,3 +165,12 @@ export const doesHpaMatch = (workload: K8sResourceKind) => (
   const ref = thisHPA.spec.scaleTargetRef;
   return ref.apiVersion === workloadAPI && ref.kind === workloadKind && ref.name === workloadName;
 };
+
+export const hasCustomMetrics = (hpa?: HorizontalPodAutoscalerKind): boolean => {
+  const metrics = hpa?.spec?.metrics;
+  if (!metrics) {
+    return false;
+  }
+
+  return !!metrics.find((metric) => !['cpu', 'memory'].includes(metric?.resource?.name));
+};

@@ -808,7 +808,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: ['/workload-hpa/:ns/:kind/:name'],
+      path: ['/workload-hpa/:ns/:resourceRef/:name'],
       loader: async () =>
         (await import('./components/hpa/HPAPage' /* webpackChunkName: "hpa-on-workload`" */))
           .default,
