@@ -36,8 +36,11 @@ import { coFetchJSON } from '../co-fetch';
 import {
   ClusterUpdate,
   ClusterVersionKind,
+  getNewerClusterVersionChannel,
+  getSimilarClusterVersionChannels,
   getSortedUpdates,
   referenceForModel,
+  splitClusterVersionChannel,
 } from '../module/k8s';
 import { ClusterVersionModel } from '../models';
 import { useK8sWatchResource, WatchK8sResource } from './utils/k8s-watch-hook';
@@ -117,25 +120,53 @@ const getAlertNotificationEntries = (
     : [];
 
 const getUpdateNotificationEntries = (
-  isLoaded: boolean,
-  updateData: ClusterUpdate[],
+  cv: ClusterVersionKind,
   isEditable: boolean,
   toggleNotificationDrawer: () => void,
-): React.ReactNode[] =>
-  isLoaded && !_.isEmpty(updateData) && isEditable
-    ? [
-        <NotificationEntry
-          actionPath="/settings/cluster"
-          actionText="Update cluster"
-          key="cluster-udpate"
-          description={updateData[0].version || 'Unknown'}
-          type={NotificationTypes.update}
-          title="Cluster update available"
-          toggleNotificationDrawer={toggleNotificationDrawer}
-          targetPath="/settings/cluster"
-        />,
-      ]
-    : [];
+): React.ReactNode[] => {
+  if (!cv || !isEditable) {
+    return [];
+  }
+  const updateData: ClusterUpdate[] = getSortedUpdates(cv);
+  const currentChannel = cv?.spec?.channel;
+  const currentPrefix = splitClusterVersionChannel(currentChannel)?.prefix;
+  const similarChannels = getSimilarClusterVersionChannels(currentPrefix);
+  const newerChannel = getNewerClusterVersionChannel(similarChannels, currentChannel);
+  const newerChannelVersion = splitClusterVersionChannel(newerChannel)?.version;
+  const entries = [];
+  if (!_.isEmpty(updateData)) {
+    entries.push(
+      <NotificationEntry
+        actionPath="/settings/cluster?showVersions"
+        actionText="Update cluster"
+        key="cluster-update"
+        description={updateData[0].version || 'Unknown'}
+        type={NotificationTypes.update}
+        title="Cluster update available"
+        toggleNotificationDrawer={toggleNotificationDrawer}
+        targetPath="/settings/cluster?showVersions"
+      />,
+    );
+  }
+  if (newerChannel) {
+    entries.push(
+      <NotificationEntry
+        actionPath="/settings/cluster?showChannels"
+        actionText="Update channel"
+        key="channel-update"
+        description={`The ${newerChannel} channel is available. If you are
+            interested in updating this cluster to ${newerChannelVersion} in the
+            future, change the update channel to ${newerChannel} to receive recommended
+            updates.`}
+        type={NotificationTypes.update}
+        title={`${newerChannel} channel available`}
+        toggleNotificationDrawer={toggleNotificationDrawer}
+        targetPath="/settings/cluster?showChannels"
+      />,
+    );
+  }
+  return entries;
+};
 
 const pollerTimeouts = {};
 const pollers = {};
@@ -215,12 +246,9 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
 
     return () => _.each(pollerTimeouts, clearTimeout);
   }, []);
-  const [clusterVersionData, clusterVersionLoaded] = useK8sWatchResource<ClusterVersionKind>(
-    cvResource,
-  );
+  const [clusterVersionData] = useK8sWatchResource<ClusterVersionKind>(cvResource);
   const alertActionExtensions = useExtensions<AlertAction>(isAlertAction);
 
-  const updateData: ClusterUpdate[] = getSortedUpdates(clusterVersionData);
   const { data, loaded, loadError } = alerts || {};
 
   const clusterVersionIsEditable = useAccessReview({
@@ -231,8 +259,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
   });
 
   const updateList: React.ReactNode[] = getUpdateNotificationEntries(
-    clusterVersionLoaded,
-    updateData,
+    clusterVersionData,
     clusterVersionIsEditable,
     toggleNotificationDrawer,
   );
@@ -309,11 +336,11 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
     </NotificationCategory>
   ) : null;
 
-  const messageCategory: React.ReactElement = !_.isEmpty(updateList) ? (
+  const recommendationsCategory: React.ReactElement = !_.isEmpty(updateList) ? (
     <NotificationCategory
-      key="messages"
+      key="recommendations"
       isExpanded={isClusterUpdateExpanded}
-      label="Messages"
+      label="Recommendations"
       count={updateList.length}
       onExpandContents={toggleClusterUpdateExpanded}
     >
@@ -332,7 +359,11 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
       className="co-notification-drawer"
       isInline={isDesktop}
       isExpanded={isDrawerExpanded}
-      notificationEntries={[criticalAlertCategory, nonCriticalAlertCategory, messageCategory]}
+      notificationEntries={[
+        criticalAlertCategory,
+        nonCriticalAlertCategory,
+        recommendationsCategory,
+      ]}
     >
       {children}
     </NotificationDrawer>
