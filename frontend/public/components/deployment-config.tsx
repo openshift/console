@@ -8,6 +8,7 @@ import {
   AddHorizontalPodAutoScaler,
   DeleteHorizontalPodAutoScaler,
   EditHorizontalPodAutoScaler,
+  hideActionForHPAs,
 } from '@console/app/src/actions/modify-hpa';
 import { k8sCreate, K8sKind, K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { errorModal } from './modals';
@@ -87,7 +88,7 @@ const { ModifyCount, AddStorage, common } = Kebab.factory;
 export const menuActions: KebabAction[] = [
   RolloutAction,
   PauseAction,
-  ModifyCount,
+  hideActionForHPAs(ModifyCount),
   AddHealthChecks,
   AddHorizontalPodAutoScaler,
   EditHorizontalPodAutoScaler,

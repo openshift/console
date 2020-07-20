@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { HorizontalPodAutoscalerKind, k8sList } from '@console/internal/module/k8s';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
+import { doesHpaMatch } from './hpa-utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 
 export const useRelatedHPA = (
   workloadAPI: string,
@@ -10,26 +12,23 @@ export const useRelatedHPA = (
 ): [HorizontalPodAutoscalerKind, boolean, string] => {
   const [loaded, setLoaded] = React.useState<boolean>(false);
   const [errorMessage, setErrorMessage] = React.useState<string>(null);
-  const [hpa, setHPA] = React.useState<HorizontalPodAutoscalerKind>(null);
+  const [hpaName, setHPAName] = React.useState<string>(null);
 
   React.useEffect(() => {
     k8sList(HorizontalPodAutoscalerModel, { ns: workloadNamespace })
       .then((hpaList: HorizontalPodAutoscalerKind[]) => {
-        const matchingHPA = hpaList.find((thisHPA: HorizontalPodAutoscalerKind) => {
-          const ref = thisHPA.spec.scaleTargetRef;
-          return (
-            ref.apiVersion === workloadAPI && ref.kind === workloadKind && ref.name === workloadName
-          );
-        });
+        const matchingHPA = hpaList.find(
+          doesHpaMatch({
+            apiVersion: workloadAPI,
+            kind: workloadKind,
+            metadata: { name: workloadName },
+          }),
+        );
         setLoaded(true);
         if (!matchingHPA) {
           return;
         }
-        setHPA({
-          apiVersion: `${HorizontalPodAutoscalerModel.apiGroup}/${HorizontalPodAutoscalerModel.apiVersion}`,
-          kind: HorizontalPodAutoscalerModel.kind,
-          ...matchingHPA,
-        });
+        setHPAName(matchingHPA.metadata.name);
       })
       .catch((error) => {
         setLoaded(true);
@@ -39,5 +38,19 @@ export const useRelatedHPA = (
       });
   }, [workloadAPI, workloadKind, workloadName, workloadNamespace]);
 
-  return [hpa, loaded, errorMessage];
+  const resource = React.useMemo(
+    () =>
+      hpaName && {
+        kind: HorizontalPodAutoscalerModel.kind,
+        name: hpaName,
+        namespace: workloadNamespace,
+      },
+    [hpaName, workloadNamespace],
+  );
+  const [hpa, hpaWatchLoaded, error] = useK8sWatchResource<HorizontalPodAutoscalerKind>(resource);
+
+  const returnHPA = !error && hpaName && loaded ? hpa : null;
+  const hpaLoaded = loaded && hpaWatchLoaded;
+  const hpaError = error || errorMessage;
+  return [returnHPA, hpaLoaded, hpaError];
 };

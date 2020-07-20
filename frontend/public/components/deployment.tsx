@@ -7,6 +7,7 @@ import {
   AddHorizontalPodAutoScaler,
   DeleteHorizontalPodAutoScaler,
   EditHorizontalPodAutoScaler,
+  hideActionForHPAs,
 } from '@console/app/src/actions/modify-hpa';
 import { DeploymentModel } from '../models';
 import { DeploymentKind, K8sKind, K8sResourceKindReference } from '../module/k8s';
@@ -60,7 +61,7 @@ const PauseAction: KebabAction = (kind: K8sKind, obj: DeploymentKind) => ({
 });
 
 export const menuActions = [
-  ModifyCount,
+  hideActionForHPAs(ModifyCount),
   PauseAction,
   AddHealthChecks,
   AddHorizontalPodAutoScaler,
