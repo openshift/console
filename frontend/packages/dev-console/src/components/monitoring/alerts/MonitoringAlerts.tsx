@@ -70,7 +70,7 @@ export const MonitoringAlerts: React.FC<props> = ({ match, rules, filters, listS
       alertingRuleStateOrder(rule),
     );
     dispatch(monitoringSetRules('devRules', sortThanosRules));
-    dispatch(monitoringLoaded('devAlerts', thanosAlertsAndRules.alerts));
+    dispatch(monitoringLoaded('devAlerts', thanosAlertsAndRules.alerts, 'dev'));
   }, [dispatch, thanosAlertsAndRules]);
 
   const filteredRules = React.useMemo(() => {

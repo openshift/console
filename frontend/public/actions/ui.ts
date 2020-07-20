@@ -310,23 +310,32 @@ export const monitoringDashboardsSetTimespan = (timespan: number) =>
   action(ActionType.MonitoringDashboardsSetTimespan, { timespan });
 export const monitoringDashboardsVariableOptionsLoaded = (key: string, newOptions: string[]) =>
   action(ActionType.MonitoringDashboardsVariableOptionsLoaded, { key, newOptions });
-export const monitoringLoading = (key: 'alerts' | 'silences' | 'notificationAlerts') =>
+export const monitoringLoading = (
+  key: 'alerts' | 'silences' | 'notificationAlerts',
+  perspective = 'admin',
+) =>
   action(ActionType.SetMonitoringData, {
     key,
-    data: { loaded: false, loadError: null, data: null },
+    data: { loaded: false, loadError: null, data: null, perspective },
   });
 export const monitoringLoaded = (
   key: 'alerts' | 'silences' | 'notificationAlerts' | 'devAlerts',
   alerts: any,
+  perspective = 'admin',
 ) =>
   action(ActionType.SetMonitoringData, {
     key,
-    data: { loaded: true, loadError: null, data: alerts },
+    data: { loaded: true, loadError: null, data: alerts, perspective },
   });
 export const monitoringErrored = (
   key: 'alerts' | 'silences' | 'notificationAlerts',
   loadError: any,
-) => action(ActionType.SetMonitoringData, { key, data: { loaded: true, loadError, data: null } });
+  perspective = 'admin',
+) =>
+  action(ActionType.SetMonitoringData, {
+    key,
+    data: { loaded: true, loadError, data: null, perspective },
+  });
 export const monitoringSetRules = (key: 'rules' | 'devRules', rules: Rule[]) =>
   action(ActionType.MonitoringSetRules, { key, data: rules });
 export const monitoringToggleGraphs = () => action(ActionType.ToggleMonitoringGraphs);

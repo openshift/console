@@ -21,7 +21,6 @@ import {
   YellowExclamationTriangleIcon,
 } from '@console/shared';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
-import { getActivePerspective, getActiveNamespace } from '../../reducers/ui';
 import * as UIActions from '../../actions/ui';
 import { coFetchJSON } from '../../co-fetch';
 import {
@@ -494,17 +493,26 @@ const HeaderAlertMessage: React.FC<{ alert: Alert; rule: Rule }> = ({ alert, rul
 };
 
 const alertStateToProps = (state: RootState, { match }): AlertsDetailsPageProps => {
-  const { data, loaded, loadError }: Alerts = alertsToProps(state);
+  const perspective = _.has(match.params, 'ns') ? 'dev' : 'admin';
+  const namespace = match.params?.ns;
+  const { data, loaded, loadError }: Alerts = alertsToProps(state, perspective);
   const { loaded: silencesLoaded }: Silences = silencesToProps(state);
-  const ruleID = _.get(match, 'params.ruleID');
+  const ruleID = match?.params?.ruleID;
   const labels = getURLSearchParams();
   const alerts = _.filter(data, (a) => a.rule.id === ruleID);
-  const rule = _.get(alerts, '[0].rule');
+  const rule = alerts?.[0]?.rule;
   const alert = _.find(alerts, (a) => _.isEqual(a.labels, labels));
-  const activePerspective = getActivePerspective(state);
-  const namespace = getActiveNamespace(state);
   const url = match.url;
-  return { alert, loaded, loadError, rule, silencesLoaded, activePerspective, namespace, url };
+  return {
+    alert,
+    loaded,
+    loadError,
+    rule,
+    silencesLoaded,
+    activePerspective: perspective,
+    namespace,
+    url,
+  };
 };
 
 export const AlertsDetailsPage = withFallback(

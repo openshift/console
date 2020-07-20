@@ -199,7 +199,7 @@ export default (state: UIState, action: UIAction): UIState => {
       return state.setIn(['monitoring', action.payload.key], action.payload.data);
 
     case ActionType.SetMonitoringData: {
-      const alertKey = state.get('activePerspective') === 'admin' ? 'alerts' : 'devAlerts';
+      const alertKey = action.payload.data.perspective === 'admin' ? 'alerts' : 'devAlerts';
       const alerts =
         action.payload.key === alertKey
           ? action.payload.data

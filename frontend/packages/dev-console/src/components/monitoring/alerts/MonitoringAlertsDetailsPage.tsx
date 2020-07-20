@@ -50,7 +50,7 @@ const MonitoringAlertsDetailsPage: React.FC<MonitoringAlertsDetailsPageProps> = 
       alertingRuleStateOrder(rule),
     );
     dispatch(monitoringSetRules('devRules', sortThanosRules));
-    dispatch(monitoringLoaded('devAlerts', thanosAlertsAndRules.alerts));
+    dispatch(monitoringLoaded('devAlerts', thanosAlertsAndRules.alerts, 'dev'));
   }, [dispatch, thanosAlertsAndRules]);
 
   if (loading && _.isEmpty(loadError)) {
