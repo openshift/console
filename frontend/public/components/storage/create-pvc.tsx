@@ -11,6 +11,14 @@ import { RadioInput } from '../radio';
 import { Checkbox } from '../checkbox';
 import { PersistentVolumeClaimModel } from '../../models';
 import { StorageClass } from '../storage-class-form';
+import {
+  cephRBDProvisionerSuffix,
+  provisionerAccessModeMapping,
+  initialAccessModes,
+  accessModeRadios,
+  dropdownUnits,
+  getAccessModeForProvisioner,
+} from './shared';
 
 const NameValueEditorComponent = (props) => (
   <AsyncComponent
@@ -19,34 +27,11 @@ const NameValueEditorComponent = (props) => (
   />
 );
 
-const cephRBDProvisionerSuffix = 'rbd.csi.ceph.com';
-
-//See https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes for more details
-const provisionerAccessModeMapping = {
-  'kubernetes.io/no-provisioner': ['ReadWriteOnce'],
-  'kubernetes.io/aws-ebs': ['ReadWriteOnce'],
-  'kubernetes.io/gce-pd': ['ReadWriteOnce', 'ReadOnlyMany'],
-  'kubernetes.io/glusterfs': ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
-  'kubernetes.io/cinder': ['ReadWriteOnce'],
-  'kubernetes.io/azure-file': ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
-  'kubernetes.io/azure-disk': ['ReadWriteOnce'],
-  'kubernetes.io/quobyte': ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
-  'kubernetes.io/rbd': ['ReadWriteOnce', 'ReadOnlyMany'],
-  'kubernetes.io/vsphere-volume': ['ReadWriteOnce', 'ReadWriteMany'],
-  'kubernetes.io/portworx-volume': ['ReadWriteOnce', 'ReadWriteMany'],
-  'kubernetes.io/scaleio': ['ReadWriteOnce', 'ReadOnlyMany'],
-  'kubernetes.io/storageos': ['ReadWriteOnce'],
-};
-
 // This form is done a little odd since it is used in both its own page and as
 // a sub form inside the attach storage page.
 export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
   const [accessModeHelp, setAccessModeHelp] = React.useState('Permissions to the mounted drive.');
-  const [allowedAccessModes, setAllowedAccessModes] = React.useState([
-    'ReadWriteOnce',
-    'ReadWriteMany',
-    'ReadOnlyMany',
-  ]);
+  const [allowedAccessModes, setAllowedAccessModes] = React.useState(initialAccessModes);
   const [storageClass, setStorageClass] = React.useState('');
   const [pvcName, setPvcName] = React.useState('');
   const [accessMode, setAccessMode] = React.useState('ReadWriteOnce');
@@ -55,25 +40,6 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
   const [useSelector, setUseSelector] = React.useState(false);
   const [nameValuePairs, setNameValuePairs] = React.useState([['', '']]);
   const [storageProvisioner, setStorageProvisioner] = React.useState('');
-  const accessModeRadios = [
-    {
-      value: 'ReadWriteOnce',
-      title: 'Single User (RWO)',
-    },
-    {
-      value: 'ReadWriteMany',
-      title: 'Shared Access (RWX)',
-    },
-    {
-      value: 'ReadOnlyMany',
-      title: 'Read Only (ROX)',
-    },
-  ];
-  const dropdownUnits = {
-    Mi: 'MiB',
-    Gi: 'GiB',
-    Ti: 'TiB',
-  };
   const { namespace, onChange } = props;
 
   React.useEffect(() => {
@@ -146,12 +112,6 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
 
   const handleNameValuePairs = ({ nameValuePairs: updatedNameValuePairs }) => {
     setNameValuePairs(updatedNameValuePairs);
-  };
-
-  const getAccessModeForProvisioner = (provisioner: string) => {
-    return provisioner && isCephProvisioner(provisioner)
-      ? ['ReadWriteOnce', 'ReadWriteMany']
-      : ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'];
   };
 
   const handleStorageClass = (updatedStorageClass) => {

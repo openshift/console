@@ -108,3 +108,27 @@ export const VirtualMachineImportModel: K8sKind = {
   kind: 'VirtualMachineImport',
   id: 'virtualmachineimport',
 };
+
+export const UploadTokenRequestModel: K8sKind = {
+  label: 'Upload Token Request',
+  labelPlural: 'Upload Token Requests',
+  apiVersion: 'v1alpha1',
+  apiGroup: 'upload.cdi.kubevirt.io',
+  namespaced: true,
+  plural: 'uploadtokenrequests',
+  abbr: 'utr',
+  kind: 'UploadTokenRequest',
+  id: 'uploadtokenrequest',
+};
+
+export const CDIConfigModel: K8sKind = {
+  label: 'CDI Config',
+  labelPlural: 'CDI Configs',
+  apiVersion: 'v1alpha1',
+  apiGroup: 'cdi.kubevirt.io',
+  namespaced: false,
+  plural: 'cdiconfigs',
+  abbr: 'cdic',
+  kind: 'CDIConfig',
+  id: 'cdiconfig',
+};
