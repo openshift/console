@@ -217,7 +217,7 @@ describe('Current Channel component', () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = mount(<CurrentChannel cv={clusterVersionProps} />);
+    wrapper = mount(<CurrentChannel cv={clusterVersionProps} clusterVersionIsEditable={true} />);
   });
 
   it('should accept props', () => {

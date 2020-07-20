@@ -69,6 +69,7 @@ import {
   SectionHeading,
   Timestamp,
   truncateMiddle,
+  useAccessReview,
 } from '../utils';
 import {
   useK8sWatchResource,
@@ -130,18 +131,23 @@ const getUpdatedOperatorsCount = (
 const calculatePercentage = (numerator: number, denominator: number): number =>
   Math.round((numerator / denominator) * 100);
 
-export const CurrentChannel: React.SFC<CurrentChannelProps> = ({ cv }) => (
-  <Button
-    type="button"
-    isInline
-    data-test-id="current-channel-update-link"
-    onClick={() => clusterChannelModal({ cv })}
-    variant="link"
-  >
-    {cv.spec.channel || '-'}
-    <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
-  </Button>
-);
+export const CurrentChannel: React.FC<CurrentChannelProps> = ({ cv, clusterVersionIsEditable }) => {
+  const label = cv.spec.channel || '-';
+  return clusterVersionIsEditable ? (
+    <Button
+      type="button"
+      isInline
+      data-test-id="current-channel-update-link"
+      onClick={() => clusterChannelModal({ cv })}
+      variant="link"
+    >
+      {label}
+      <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+    </Button>
+  ) : (
+    <>{label}</>
+  );
+};
 
 const InvalidMessage: React.SFC<CVStatusMessageProps> = ({ cv }) => (
   <>
@@ -303,7 +309,7 @@ export const CurrentVersion: React.SFC<CurrentVersionProps> = ({ cv }) => {
   );
 };
 
-export const UpdateLink: React.SFC<CurrentVersionProps> = ({ cv }) => {
+export const UpdateLink: React.FC<CurrentVersionProps> = ({ cv, clusterVersionIsEditable }) => {
   const status = getClusterUpdateStatus(cv);
   const updatesAvailable = !_.isEmpty(getAvailableClusterUpdates(cv));
   return (
@@ -312,7 +318,8 @@ export const UpdateLink: React.SFC<CurrentVersionProps> = ({ cv }) => {
       (status === ClusterUpdateStatus.ErrorRetrieving ||
         status === ClusterUpdateStatus.Failing ||
         status === ClusterUpdateStatus.UpdatesAvailable ||
-        status === ClusterUpdateStatus.Updating) ? (
+        status === ClusterUpdateStatus.Updating) &&
+      clusterVersionIsEditable ? (
         <div className="co-cluster-settings__details">
           <Button variant="primary" type="button" onClick={() => clusterUpdateModal({ cv })}>
             Update
@@ -629,7 +636,7 @@ const UpdateProgress: React.FC<UpdateProgressProps> = ({ cv }) => {
   );
 };
 
-export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = ({
+export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProps> = ({
   obj: cv,
   autoscalers,
 }) => {
@@ -640,6 +647,12 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
   const imageParts = desiredImage.split('@');
   const releaseNotes = showReleaseNotes();
   const status = getClusterUpdateStatus(cv);
+  const clusterVersionIsEditable = useAccessReview({
+    group: ClusterVersionModel.apiGroup,
+    resource: ClusterVersionModel.plural,
+    verb: 'patch',
+    name: cv.metadata.name,
+  });
 
   return (
     <>
@@ -671,10 +684,13 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
                         <ChannelHeader />
                       </dt>
                       <dd>
-                        <CurrentChannel cv={cv} />
+                        <CurrentChannel
+                          cv={cv}
+                          clusterVersionIsEditable={clusterVersionIsEditable}
+                        />
                       </dd>
                     </dl>
-                    <UpdateLink cv={cv} />
+                    <UpdateLink cv={cv} clusterVersionIsEditable={clusterVersionIsEditable} />
                   </div>
                 </div>
                 {(status === ClusterUpdateStatus.UpToDate ||
@@ -853,10 +869,12 @@ type CVStatusMessageProps = {
 
 type CurrentChannelProps = {
   cv: K8sResourceKind;
+  clusterVersionIsEditable: boolean;
 };
 
 type CurrentVersionProps = {
   cv: ClusterVersionKind;
+  clusterVersionIsEditable?: boolean;
 };
 
 type ChannelProps = {
