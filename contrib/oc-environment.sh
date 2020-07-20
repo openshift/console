@@ -12,6 +12,7 @@
 # The environment variables beginning with "BRIDGE_" act just like bridge
 # command line arguments - in fact. to get more information about any of them,
 # you can run ./bin/bridge --help
+set -x
 
 BRIDGE_USER_AUTH="disabled"
 export BRIDGE_USER_AUTH
@@ -25,13 +26,13 @@ export BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT
 BRIDGE_K8S_MODE_OFF_CLUSTER_SKIP_VERIFY_TLS=true
 export BRIDGE_K8S_MODE_OFF_CLUSTER_SKIP_VERIFY_TLS
 
-BRIDGE_K8S_MODE_OFF_CLUSTER_THANOS=$(oc -n openshift-monitoring get configmap sharing-config -o jsonpath='{.data.thanosURL}')
+BRIDGE_K8S_MODE_OFF_CLUSTER_THANOS=$(oc -n openshift-config-managed get configmap monitoring-shared-config -o jsonpath='{.data.thanosPublicURL}')
 export BRIDGE_K8S_MODE_OFF_CLUSTER_THANOS
 
-BRIDGE_K8S_MODE_OFF_CLUSTER_PROMETHEUS=$(oc -n openshift-monitoring get configmap sharing-config -o jsonpath='{.data.prometheusURL}')
+BRIDGE_K8S_MODE_OFF_CLUSTER_PROMETHEUS=$(oc -n openshift-config-managed get configmap monitoring-shared-config -o jsonpath='{.data.prometheusPublicURL}')
 export BRIDGE_K8S_MODE_OFF_CLUSTER_PROMETHEUS
 
-BRIDGE_K8S_MODE_OFF_CLUSTER_ALERTMANAGER=$(oc -n openshift-monitoring get configmap sharing-config -o jsonpath='{.data.alertmanagerURL}')
+BRIDGE_K8S_MODE_OFF_CLUSTER_ALERTMANAGER=$(oc -n openshift-config-managed get configmap monitoring-shared-config -o jsonpath='{.data.alertmanagerPublicURL}')
 export BRIDGE_K8S_MODE_OFF_CLUSTER_ALERTMANAGER
 
 BRIDGE_K8S_AUTH="bearer-token"

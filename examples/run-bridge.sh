@@ -15,6 +15,6 @@ set -exuo pipefail
     --user-auth-oidc-client-id=console-oauth-client \
     --user-auth-oidc-client-secret-file=examples/console-client-secret \
     --user-auth-oidc-ca-file=examples/ca.crt \
-    --k8s-mode-off-cluster-prometheus="$(oc -n openshift-monitoring get configmap sharing-config -o jsonpath='{.data.prometheusURL}')"  \
-    --k8s-mode-off-cluster-alertmanager="$(oc -n openshift-monitoring get configmap sharing-config -o jsonpath='{.data.alertmanagerURL}')" \
-    --k8s-mode-off-cluster-thanos="$(oc -n openshift-monitoring get configmap sharing-config -o jsonpath='{.data.prometheusURL}')"
+    --k8s-mode-off-cluster-prometheus="$(oc -n openshift-config-managed get configmap monitoring-shared-config -o jsonpath='{.data.prometheusPublicURL}')"  \
+    --k8s-mode-off-cluster-alertmanager="$(oc -n openshift-config-managed get configmap monitoring-shared-config -o jsonpath='{.data.alertmanagerPublicURL}')" \
+    --k8s-mode-off-cluster-thanos="$(oc -n openshift-config-managed get configmap monitoring-shared-config -o jsonpath='{.data.thanosPublicURL}')"
