@@ -2,11 +2,27 @@ import * as _ from 'lodash';
 import * as Immutable from 'immutable';
 import { JSONSchema6 } from 'json-schema';
 import { UiSchema } from 'react-jsonschema-form';
-import { getSchemaType } from 'react-jsonschema-form/lib/utils';
+import { getSchemaType, getUiOptions } from 'react-jsonschema-form/lib/utils';
 import { SchemaType } from './types';
 import { SORT_WEIGHT_SCALE_1, SORT_WEIGHT_SCALE_2, SORT_WEIGHT_SCALE_3 } from './const';
 
 const UNSUPPORTED_SCHEMA_PROPERTIES = ['allOf', 'anyOf', 'oneOf'];
+
+export const useSchemaLabel = (schema: JSONSchema6, uiSchema: UiSchema, defaultLabel?: string) => {
+  const options = getUiOptions(uiSchema ?? {});
+  const showLabel = options?.label ?? true;
+  const label = (options?.title || schema?.title || defaultLabel) as string;
+  return [showLabel, label] as [boolean, string];
+};
+
+export const useSchemaDescription = (
+  schema: JSONSchema6,
+  uiSchema: UiSchema,
+  defaultDescription?: string,
+) =>
+  (getUiOptions(uiSchema ?? {})?.description ||
+    schema?.description ||
+    defaultDescription) as string;
 
 export const getSchemaErrors = (schema: JSONSchema6): SchemaError[] => {
   return [
