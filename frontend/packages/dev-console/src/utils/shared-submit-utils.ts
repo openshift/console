@@ -25,16 +25,17 @@ export const createService = (
 ): K8sResourceKind => {
   const {
     project: { name: namespace },
-    application: { name: application },
+    application: { name: applicationName },
     name,
+    icon,
     labels: userLabels,
-    image: { ports: imagePorts, tag: imageTag },
+    image: { ports: imagePorts, tag: selectedTag },
   } = formData;
 
   const imageStreamName = _.get(imageStreamData, 'metadata.name') || _.get(formData, 'image.name');
   const git = _.get(formData, 'git');
 
-  const defaultLabels = getAppLabels(name, application, imageStreamName, imageTag);
+  const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag, icon });
   const podLabels = getPodLabels(name);
   const defaultAnnotations = git
     ? { ...getGitAnnotations(git.url, git.ref), ...getCommonAnnotations() }
@@ -84,17 +85,18 @@ export const createRoute = (
 ): K8sResourceKind => {
   const {
     project: { name: namespace },
-    application: { name: application },
+    application: { name: applicationName },
     name,
+    icon,
     labels: userLabels,
     route: { hostname, secure, path, tls, targetPort: routeTargetPort },
-    image: { ports: imagePorts, tag: imageTag },
+    image: { ports: imagePorts, tag: selectedTag },
   } = formData;
 
   const imageStreamName = _.get(imageStreamData, 'metadata.name') || _.get(formData, 'image.name');
   const git = _.get(formData, 'git');
 
-  const defaultLabels = getAppLabels(name, application, imageStreamName, imageTag);
+  const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag, icon });
   const defaultAnnotations = git
     ? { ...getGitAnnotations(git.url, git.ref), ...getCommonAnnotations() }
     : getCommonAnnotations();

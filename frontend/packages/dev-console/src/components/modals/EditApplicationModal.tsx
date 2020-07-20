@@ -86,18 +86,23 @@ class EditApplicationModal extends PromiseComponent<
 
   render() {
     const { resource } = this.props;
-    const application = _.get(resource, ['metadata', 'labels', 'app.kubernetes.io/part-of']);
+    const labels = _.get(resource, ['metadata', 'labels'], {});
+    const applicationName = labels['app.kubernetes.io/part-of'];
 
     const initialValues = {
       application: {
-        name: application,
-        selectedKey: application || UNASSIGNED_KEY,
+        name: applicationName,
+        selectedKey: applicationName || UNASSIGNED_KEY,
       },
     };
     return (
       <Formik initialValues={initialValues} onSubmit={this.handleSubmit}>
         {(formikProps) => (
-          <EditApplicationForm {...formikProps} {...this.props} initialApplication={application} />
+          <EditApplicationForm
+            {...formikProps}
+            {...this.props}
+            initialApplication={applicationName}
+          />
         )}
       </Formik>
     );

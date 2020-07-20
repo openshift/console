@@ -61,6 +61,7 @@ export interface DeployImageFormData {
   project: ProjectData;
   application: ApplicationData;
   name: string;
+  icon: string;
   searchTerm: string;
   allowInsecureRegistry: boolean;
   registry: string;
@@ -91,6 +92,7 @@ export interface GitImportFormData {
   name: string;
   project: ProjectData;
   application: ApplicationData;
+  icon: string;
   git: GitData;
   docker: DockerData;
   serverless?: ServerlessData;

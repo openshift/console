@@ -2,13 +2,21 @@ import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { TRIGGERS_ANNOTATION } from '@console/shared';
 
-export const getAppLabels = (
-  name: string,
-  application?: string,
-  imageStreamName?: string,
-  selectedTag?: string,
-  namespace?: string,
-) => {
+export const getAppLabels = ({
+  name,
+  applicationName,
+  imageStreamName,
+  selectedTag,
+  namespace,
+  icon,
+}: {
+  name: string;
+  applicationName?: string;
+  imageStreamName?: string;
+  selectedTag?: string;
+  namespace?: string;
+  icon?: string;
+}) => {
   const labels = {
     app: name,
     'app.kubernetes.io/instance': name,
@@ -18,9 +26,12 @@ export const getAppLabels = (
       'app.openshift.io/runtime': imageStreamName,
     }),
   };
+  if (icon) {
+    labels['app.openshift.io/icon'] = icon;
+  }
 
-  if (application && application.trim().length > 0) {
-    labels['app.kubernetes.io/part-of'] = application;
+  if (applicationName && applicationName.trim().length > 0) {
+    labels['app.kubernetes.io/part-of'] = applicationName;
   }
   if (selectedTag) {
     labels['app.openshift.io/runtime-version'] = selectedTag;

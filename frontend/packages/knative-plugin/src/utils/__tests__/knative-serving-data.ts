@@ -26,6 +26,7 @@ export const defaultData: DeployImageFormData = {
     selectedKey: '',
   },
   name: '',
+  icon: '',
   searchTerm: '',
   registry: 'external',
   allowInsecureRegistry: false,

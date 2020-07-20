@@ -13,6 +13,7 @@ export const mockFormData: GitImportFormData = {
     name: 'mock-app',
     selectedKey: 'mock-app',
   },
+  icon: 'mock-icon',
   git: {
     url: 'https://github.com/test/repo',
     type: 'github',

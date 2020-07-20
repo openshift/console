@@ -16,15 +16,21 @@ const BuilderImageSelector: React.FC<BuilderImageSelectorProps> = ({
   loadingImageStream,
   builderImages,
 }) => {
-  const { values, setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
+  const { values, initialValues, touched, setFieldValue, setFieldTouched } = useFormikContext<
+    FormikValues
+  >();
   const { selected, recommended, isRecommending, couldNotRecommend } = values.image;
 
   React.useEffect(() => {
+    initialValues.icon = selected;
     if (selected) {
       setFieldValue('image.tag', _.get(builderImages, `${selected}.recentTag.name`, ''));
       setFieldTouched('image.tag', true);
+      if (!touched.icon) {
+        setFieldValue('icon', selected);
+      }
     }
-  }, [selected, setFieldValue, setFieldTouched, builderImages]);
+  }, [selected, setFieldValue, setFieldTouched, builderImages, touched.icon, initialValues.icon]);
 
   const fieldId = getFieldId('image.name', 'selector');
 

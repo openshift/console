@@ -21,6 +21,7 @@ export const getKnativeServiceDepResource = (
     name,
     application: { name: applicationName },
     project: { name: namespace },
+    icon,
     serverless: { scaling },
     limits,
     route: { unknownTargetPort, create, targetPort },
@@ -52,13 +53,14 @@ export const getKnativeServiceDepResource = (
       limitUnit: memoryLimitUnit,
     },
   } = limits;
-  const defaultLabel = getAppLabels(
+  const defaultLabel = getAppLabels({
     name,
     applicationName,
     imageStreamName,
-    imageStreamTag || imageTag,
-    imageNamespace,
-  );
+    selectedTag: imageStreamTag || imageTag,
+    namespace: imageNamespace,
+    icon,
+  });
   delete defaultLabel.app;
   const newKnativeDeployResource: K8sResourceKind = {
     kind: ServiceModel.kind,

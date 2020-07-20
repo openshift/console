@@ -63,6 +63,7 @@ export const defaultData: GitImportFormData = {
     selectedKey: '#UNASSIGNED_KEY#',
   },
   name: 'nodejs-ex-git',
+  icon: 'nodejs',
   image: {
     tag: '10-SCL',
     ports: [

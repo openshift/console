@@ -13,6 +13,7 @@ export const mockDeployImageFormData: DeployImageFormData = {
     selectedKey: 'mock-app',
   },
   name: 'test-app',
+  icon: 'test-icon',
   searchTerm: 'test-app',
   registry: 'external',
   allowInsecureRegistry: false,

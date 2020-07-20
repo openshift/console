@@ -10,6 +10,7 @@ jest.mock('formik', () => ({
   useFormikContext: jest.fn(() => ({
     setFieldValue: jest.fn(),
     setFieldTouched: jest.fn(),
+    initialValues: {},
     values: {
       image: {
         selected: '',
@@ -21,6 +22,7 @@ jest.mock('formik', () => ({
         couldNotRecommend: false,
       },
     },
+    touched: {},
   })),
   getFieldId: jest.fn(),
 }));

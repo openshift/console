@@ -7,6 +7,7 @@ import {
 } from '@console/internal/module/k8s';
 import { BuildStrategyType } from '@console/internal/components/build';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
+import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { ServiceModel } from '@console/knative-plugin';
 import { UNASSIGNED_KEY } from '../../const';
 import { Resources, DeploymentData, GitReadableTypes } from '../import/import-types';
@@ -235,6 +236,7 @@ export const getUserLabels = (resource: K8sResourceKind) => {
     'app.kubernetes.io/component',
     'app.kubernetes.io/name',
     'app.openshift.io/runtime',
+    'app.openshift.io/icon',
     'app.kubernetes.io/part-of',
     'app.openshift.io/runtime-version',
     'app.openshift.io/runtime-namespace',
@@ -244,15 +246,38 @@ export const getUserLabels = (resource: K8sResourceKind) => {
   return userLabels;
 };
 
+/**
+ * Return the icon if one is defined or calculate the correct initial value
+ * based on the runtime and parameter so that the icon is preselected which
+ * was also shown in the Topology.
+ */
+const getIconInitialValue = (labels: Record<string, string>): string | null => {
+  const icon = labels['app.openshift.io/icon'];
+  if (icon) {
+    return icon;
+  }
+  for (const labelName of ['app.openshift.io/runtime', 'app.kubernetes.io/name']) {
+    const knownIcon = getImageForIconClass(`icon-${labels[labelName]}`);
+    if (knownIcon) {
+      return knownIcon;
+    }
+  }
+  return '';
+};
+
 export const getCommonInitialValues = (
   editAppResource: K8sResourceKind,
   route: K8sResourceKind,
   name: string,
   namespace: string,
 ) => {
-  const appGroupName = _.get(editAppResource, 'metadata.labels["app.kubernetes.io/part-of"]');
+  const labels: Record<string, string> = _.get(editAppResource, ['metadata', 'labels'], {});
+  const appGroupName = labels['app.kubernetes.io/part-of'];
+  const icon = getIconInitialValue(labels);
+
   const commonInitialValues = {
     formType: 'edit',
+    icon,
     name,
     application: {
       name: appGroupName || '',

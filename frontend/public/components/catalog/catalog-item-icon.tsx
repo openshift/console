@@ -96,7 +96,7 @@ import * as wordpressImg from '../../imgs/logos/wordpress.svg';
 import * as xamarinImg from '../../imgs/logos/xamarin.svg';
 import * as zendImg from '../../imgs/logos/zend.svg';
 
-const logos = new Map()
+const logos = new Map<string, any>()
   .set('icon-3scale', threeScaleImg)
   .set('icon-aerogear', aerogearImg)
   .set('icon-amq', amqImg)
@@ -193,6 +193,14 @@ const logos = new Map()
   .set('icon-wordpress', wordpressImg)
   .set('icon-xamarin', xamarinImg)
   .set('icon-zend', zendImg);
+
+export const getIcons = () => {
+  return logos;
+};
+
+export const getIconNames = () => {
+  return Array.from(logos.keys());
+};
 
 export const normalizeIconClass = (iconClass: string): string => {
   return _.startsWith(iconClass, 'icon-') ? `font-icon ${iconClass}` : iconClass;

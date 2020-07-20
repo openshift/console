@@ -1,0 +1,27 @@
+.icon-section {
+  .custom-icon {
+    overflow: hidden;
+    margin-right: 8px;
+  }
+  .icon {
+    margin-right: 8px;
+  }
+  .font-icon {
+    overflow: hidden;
+    font-size: 1.5rem;
+    margin-right: 8px;
+  }
+  .font-icon.icon-openshift {
+    color: var(--pf-global--palette--red-100);
+  }
+
+  .pf-c-select__toggle-text {
+    display: flex;
+    align-items: center;
+  }
+
+  .pf-c-select__menu-item {
+    display: flex;
+    align-items: center;
+  }
+}

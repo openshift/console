@@ -46,6 +46,7 @@ const DeployImage: React.FC<Props> = ({
       selectedKey: activeApplication,
     },
     name: '',
+    icon: '',
     searchTerm: '',
     registry: 'external',
     allowInsecureRegistry: false,

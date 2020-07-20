@@ -364,6 +364,7 @@ export const gitImportInitialValues: GitImportFormData = {
   formType: 'edit',
   name: 'nationalparks-py',
   application: { name: '', selectedKey: UNASSIGNED_KEY },
+  icon: 'test-file-stub',
   project: { name: 'div' },
   route: {
     disable: true,
@@ -444,6 +445,7 @@ export const externalImageValues: DeployImageFormData = {
   formType: 'edit',
   name: 'nationalparks-py',
   application: { name: '', selectedKey: '#UNASSIGNED_KEY#' },
+  icon: 'test-file-stub',
   project: { name: 'div' },
   route: {
     disable: true,
@@ -520,6 +522,7 @@ export const internalImageValues: DeployImageFormData = {
   formType: 'edit',
   name: 'nationalparks-py',
   application: { name: '', selectedKey: '#UNASSIGNED_KEY#' },
+  icon: 'test-file-stub',
   project: { name: 'div' },
   route: {
     disable: true,
@@ -644,6 +647,7 @@ export const knExternalImageValues: DeployImageFormData = {
     },
   },
   name: 'nationalparks-py',
+  icon: '',
   pipeline: { enabled: false },
   project: { name: 'div' },
   registry: 'external',

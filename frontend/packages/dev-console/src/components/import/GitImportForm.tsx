@@ -5,6 +5,7 @@ import { FormikProps, FormikValues } from 'formik';
 import { FormFooter } from '@console/shared/src/components/form-utils';
 import { GitImportFormProps } from './import-types';
 import GitSection from './git/GitSection';
+import IconSection from './section/IconSection';
 import BuilderSection from './builder/BuilderSection';
 import AppSection from './app/AppSection';
 import AdvancedSection from './advanced/AdvancedSection';
@@ -26,6 +27,7 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
   <Form onSubmit={handleSubmit} data-test-id="import-git-form">
     <GitSection />
     <BuilderSection image={values.image} builderImages={builderImages} />
+    <IconSection />
     <DockerSection buildStrategy={values.build.strategy} />
     <AppSection
       project={values.project}

@@ -55,6 +55,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       name: sanitizeApplicationValue(activeApplication),
       selectedKey: activeApplication,
     },
+    icon: '',
     git: {
       url: '',
       type: '',
