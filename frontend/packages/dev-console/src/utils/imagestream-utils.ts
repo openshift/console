@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import * as semver from 'semver';
-import { ContainerPort, K8sResourceKind } from '@console/internal/module/k8s';
+import { ContainerPort, K8sResourceKind, K8sResourceCommon } from '@console/internal/module/k8s';
 import {
   isBuilder,
   getMostRecentBuilderTag,
@@ -25,6 +25,7 @@ export interface BuilderImage {
   obj: K8sResourceKind;
   name: string;
   displayName: string;
+  description: string;
   title: string;
   iconUrl: string;
   tags: ImageTag[];
@@ -41,9 +42,9 @@ export const imageStreamLabels = ['app.kubernetes.io/name', 'app.openshift.io/ru
 export const getRuntime = (labels: { [key: string]: string }) =>
   labels?.['app.openshift.io/runtime'] || labels?.['app.kubernetes.io/name'];
 
-export const getSampleRepo = (tag) => _.get(tag, 'annotations.sampleRepo', '');
-export const getSampleRef = (tag) => _.get(tag, 'annotations.sampleRef', '');
-export const getSampleContextDir = (tag) => _.get(tag, 'annotations.sampleContextDir', '');
+export const getSampleRepo = (tag) => tag?.annotations?.sampleRepo ?? '';
+export const getSampleRef = (tag) => tag?.annotations?.sampleRef ?? '';
+export const getSampleContextDir = (tag) => tag?.annotations?.sampleContextDir ?? '';
 
 // Transform image ports to k8s structure.
 // `{ '3306/tcp': {} }` -> `{ containerPort: 3306, protocol: 'TCP' }`
@@ -73,10 +74,10 @@ const portsFromSpec = (portSpec: object): ContainerPort[] => {
   );
 };
 
-export const getPorts = (imageStreamImage: object): ContainerPort[] => {
+export const getPorts = (imageStreamImage): ContainerPort[] => {
   const portSpec =
-    _.get(imageStreamImage, 'image.dockerImageMetadata.Config.ExposedPorts') ||
-    _.get(imageStreamImage, 'image.dockerImageMetadata.ContainerConfig.ExposedPorts');
+    imageStreamImage?.image?.dockerImageMetadata?.Config?.ExposedPorts ||
+    imageStreamImage?.image?.dockerImageMetadata?.ContainerConfig?.ExposedPorts;
   return portsFromSpec(portSpec);
 };
 
@@ -91,7 +92,7 @@ export const prettifyName = (name: string) => {
 };
 
 export const normalizeBuilderImages = (
-  imageStreams: K8sResourceKind[],
+  imageStreams: K8sResourceCommon | K8sResourceCommon[],
 ): NormalizedBuilderImages => {
   const data = Array.isArray(imageStreams) ? imageStreams : [imageStreams];
   const builderImageStreams = data.filter((imageStream) => isBuilder(imageStream));
@@ -100,11 +101,8 @@ export const normalizeBuilderImages = (
     const tags = getBuilderTagsSortedByVersion(imageStream);
     const recentTag = getMostRecentBuilderTag(imageStream);
     const { name } = imageStream.metadata;
-    const displayName = _.get(imageStream, [
-      'metadata',
-      'annotations',
-      'openshift.io/display-name',
-    ]);
+    const displayName = imageStream?.metadata?.annotations?.['openshift.io/display-name'];
+    const description = recentTag?.annotations?.description;
     const imageStreamNamespace = imageStream.metadata.namespace;
     const title = displayName && displayName.length < 14 ? displayName : prettifyName(name);
     const iconClass = getImageStreamIcon(recentTag);
@@ -114,6 +112,7 @@ export const normalizeBuilderImages = (
       obj: imageStream,
       name,
       displayName,
+      description,
       title,
       iconUrl,
       tags,
@@ -130,7 +129,7 @@ export const getTagDataWithDisplayName = (
   defaultName: string,
 ): [ImageTag, string] => {
   const imageTag = _.find(imageTags, { name: selectedTag });
-  const displayName = _.get(imageTag, ['annotations', 'openshift.io/display-name'], defaultName);
+  const displayName = imageTag?.annotations?.['openshift.io/display-name'] ?? defaultName;
 
   return [imageTag, displayName];
 };
