@@ -43,7 +43,7 @@ import { DeploymentModel, PodModel } from '@console/internal/models';
 import { RootState } from '@console/internal/redux';
 import { errorModal } from '@console/internal/components/modals';
 import { KebabAction } from '@console/dev-console/src/utils/add-resources-menu-utils';
-import { FLAG_KNATIVE_EVENTING } from '../const';
+import { FLAG_KNATIVE_EVENTING, CAMEL_SOURCE_INTEGRATION } from '../const';
 import { KnativeItem } from '../utils/get-knative-resources';
 import { Traffic as TrafficData } from '../types';
 import {
@@ -264,7 +264,7 @@ const createKnativeDeploymentItems = (
 ): TopologyOverviewItem => {
   let associatedDeployment = getOwnedResources(resource, resources.deployments.data);
   // form Deployments for camelSource as they are owned by integrations
-  if (resource.kind === EventSourceCamelModel.kind) {
+  if (resource.kind === EventSourceCamelModel.kind && resources.integrations) {
     const intgrationsOwnData = getOwnedResources(resource, resources.integrations.data);
     const integrationsOwnedDeployment =
       intgrationsOwnData?.length > 0
@@ -860,6 +860,16 @@ export const createKnativeEventSourceSink = (
     spec: { ...eventSourceObj.spec, sink },
   };
   return k8sUpdate(modelFor(referenceFor(source)), updatePayload);
+};
+
+export const isOperatorBackedKnResource = (
+  obj: K8sResourceKind,
+  resources: TopologyDataResources,
+) => {
+  const eventSourceProps = getDynamicEventSourcesModelRefs();
+  return !!_.find(getKnativeDynamicResources(resources, eventSourceProps), (evsrc) =>
+    obj.metadata?.labels?.[CAMEL_SOURCE_INTEGRATION]?.startsWith(evsrc.metadata.name),
+  );
 };
 
 export const createSinkConnection = (source: Node, target: Node): Promise<K8sResourceKind> => {

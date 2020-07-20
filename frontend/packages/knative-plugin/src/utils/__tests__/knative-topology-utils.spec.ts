@@ -3,23 +3,26 @@ import * as k8s from '@console/internal/module/k8s';
 import {
   MockKnativeResources,
   getEventSourceResponse,
+  sampleDeploymentsCamelConnector,
 } from '../../topology/__tests__/topology-knative-test-data';
 import {
+  EdgeType,
+  NodeType,
   getKnativeServiceData,
   getKnativeTopologyNodeItems,
   getEventTopologyEdgeItems,
   getTrafficTopologyEdgeItems,
-  NodeType,
   filterRevisionsBaseOnTrafficStatus,
   getParentResource,
   filterRevisionsByActiveApplication,
   createKnativeEventSourceSink,
   getSinkUriTopologyNodeItems,
   getSinkUriTopologyEdgeItems,
-  EdgeType,
+  isOperatorBackedKnResource,
 } from '../../topology/knative-topology-utils';
 import { mockServiceData, mockRevisions } from '../__mocks__/traffic-splitting-utils-mock';
 import { EventSourceCronJobModel } from '../../models';
+import * as knativefetchutils from '../fetch-dynamic-eventsources-utils';
 
 describe('knative topology utils', () => {
   it('expect getKnativeServiceData to return knative resources', () => {
@@ -139,6 +142,26 @@ describe('knative topology utils', () => {
   it('should return undefined if traffic status is not defined', () => {
     const mockService = { metadata: { name: 'ser', namepspace: '' }, status: {}, spec: {} };
     expect(filterRevisionsBaseOnTrafficStatus(mockService, mockRevisions)).toBeUndefined();
+  });
+  it('expect isOperatorBackedKnResource to return true if resource is backing camel connector source', () => {
+    jest
+      .spyOn(knativefetchutils, 'getDynamicEventSourcesModelRefs')
+      .mockImplementation(() => ['sources.knative.dev~v1alpha1~CamelSource']);
+    const isOperatorbacked = isOperatorBackedKnResource(
+      sampleDeploymentsCamelConnector.data[0],
+      MockKnativeResources,
+    );
+    expect(isOperatorbacked).toBe(true);
+  });
+  it('expect isOperatorBackedKnResource to return false if resource is not backing camel connector source', () => {
+    jest
+      .spyOn(knativefetchutils, 'getDynamicEventSourcesModelRefs')
+      .mockImplementation(() => ['sources.knative.dev~v1alpha1~CamelSource']);
+    const isOperatorbacked = isOperatorBackedKnResource(
+      MockKnativeResources.deployments.data[0],
+      MockKnativeResources,
+    );
+    expect(isOperatorbacked).toBe(false);
   });
 });
 
