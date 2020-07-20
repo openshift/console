@@ -18,7 +18,7 @@ const ClusterVersionDetails: React.SFC<ClusterVersionDetailsProps> = ({ obj }) =
         <ResourceSummary resource={obj} />
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="Conditions" />
+        <SectionHeading text="Conditions" id="conditions" />
         <Conditions conditions={conditions} />
       </div>
     </>

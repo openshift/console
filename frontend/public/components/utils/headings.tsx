@@ -166,8 +166,9 @@ export const SectionHeading: React.SFC<SectionHeadingProps> = ({
   children,
   style,
   required,
+  id,
 }) => (
-  <h2 className="co-section-heading" style={style} data-test-section-heading={text}>
+  <h2 className="co-section-heading" style={style} data-test-section-heading={text} id={id}>
     <span
       className={classNames({
         'co-required': required,
@@ -274,6 +275,7 @@ export type SectionHeadingProps = {
   style?: any;
   text: string;
   required?: boolean;
+  id?: string;
 };
 
 export type SidebarSectionHeadingProps = {
