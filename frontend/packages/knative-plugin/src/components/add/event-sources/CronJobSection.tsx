@@ -3,8 +3,12 @@ import { TextInputTypes } from '@patternfly/react-core';
 import { InputField } from '@console/shared';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 
-const CronJobSection: React.FC = () => (
-  <FormSection title="CronJobSource" extraMargin>
+interface CronJobSectionProps {
+  title: string;
+}
+
+const CronJobSection: React.FC<CronJobSectionProps> = ({ title }) => (
+  <FormSection title={title} extraMargin>
     <InputField
       type={TextInputTypes.text}
       name="data.cronjobsource.data"

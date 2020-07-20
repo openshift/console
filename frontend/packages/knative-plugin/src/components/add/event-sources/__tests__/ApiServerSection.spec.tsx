@@ -18,21 +18,22 @@ jest.mock('formik', () => ({
   getFieldId: jest.fn(),
 }));
 describe('ApiServerSection', () => {
+  const title = 'Api Server Source';
   it('should render FormSection', () => {
-    const wrapper = shallow(<ApiServerSection />);
+    const wrapper = shallow(<ApiServerSection title={title} />);
     expect(wrapper.find(FormSection)).toHaveLength(1);
-    expect(wrapper.find(FormSection).props().title).toBe('ApiServerSource');
+    expect(wrapper.find(FormSection).props().title).toBe('Api Server Source');
   });
 
   it('should render NameValueEditor', () => {
-    const wrapper = shallow(<ApiServerSection />);
+    const wrapper = shallow(<ApiServerSection title={title} />);
     const nameValueEditorField = wrapper.find(AsyncComponent);
     expect(nameValueEditorField).toHaveLength(1);
     expect(nameValueEditorField.props().nameString).toBe('apiVersion');
     expect(nameValueEditorField.props().valueString).toBe('kind');
   });
   it('should render ServiceAccountDropdown', () => {
-    const wrapper = shallow(<ApiServerSection />);
+    const wrapper = shallow(<ApiServerSection title={title} />);
     expect(wrapper.find(ServiceAccountDropdown)).toHaveLength(1);
   });
 });

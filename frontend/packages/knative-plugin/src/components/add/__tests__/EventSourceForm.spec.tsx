@@ -8,7 +8,7 @@ import EventSourcesSelector from '../event-sources/EventSourcesSelector';
 import { getDefaultEventingData } from '../../../utils/__tests__/knative-serving-data';
 import { EventSources } from '../import-types';
 import EventSourceSection from '../event-sources/EventSourceSection';
-import { getKnativeEventSourceIcon } from '../../../utils/get-knative-icon';
+import { getEventSourceIcon } from '../../../utils/get-knative-icon';
 import { EventSourceContainerModel } from '../../../models';
 
 type EventSourceFormProps = React.ComponentProps<typeof EventSourceForm>;
@@ -22,7 +22,7 @@ describe('EventSource Form', () => {
       [EventSourceContainerModel.kind]: {
         name: EventSourceContainerModel.kind,
         title: EventSourceContainerModel.kind,
-        iconUrl: getKnativeEventSourceIcon(referenceForModel(EventSourceContainerModel)),
+        iconUrl: getEventSourceIcon(referenceForModel(EventSourceContainerModel)),
         displayName: EventSourceContainerModel.kind,
       },
     },

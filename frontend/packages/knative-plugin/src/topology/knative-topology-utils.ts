@@ -61,6 +61,7 @@ import {
   ServiceModel,
   EventingTriggerModel,
   EventingSubscriptionModel,
+  EventSourceCamelModel,
 } from '../models';
 import { addEventSource } from '../actions/add-event-source';
 import { addTrigger, addSubscription } from '../actions/add-pubsub-actions';
@@ -261,7 +262,16 @@ const createKnativeDeploymentItems = (
   resources: TopologyDataResources,
   utils?: KnativeUtil[],
 ): TopologyOverviewItem => {
-  const associatedDeployment = getOwnedResources(resource, resources.deployments.data);
+  let associatedDeployment = getOwnedResources(resource, resources.deployments.data);
+  // form Deployments for camelSource as they are owned by integrations
+  if (resource.kind === EventSourceCamelModel.kind) {
+    const intgrationsOwnData = getOwnedResources(resource, resources.integrations.data);
+    const integrationsOwnedDeployment =
+      intgrationsOwnData?.length > 0
+        ? getOwnedResources(intgrationsOwnData[0], resources.deployments.data)
+        : [];
+    associatedDeployment = [...associatedDeployment, ...integrationsOwnedDeployment];
+  }
   if (!_.isEmpty(associatedDeployment)) {
     const depObj: K8sResourceKind = {
       ...associatedDeployment[0],

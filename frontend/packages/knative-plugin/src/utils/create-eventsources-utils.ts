@@ -1,8 +1,16 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { safeLoad } from 'js-yaml';
-import { K8sResourceKind, referenceFor, modelFor } from '@console/internal/module/k8s';
+import {
+  K8sResourceKind,
+  referenceForModel,
+  referenceFor,
+  modelFor,
+  K8sKind,
+} from '@console/internal/module/k8s';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { checkAccess } from '@console/internal/components/utils';
+import { parseALMExamples, ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 import {
   getAppLabels,
   getCommonAnnotations,
@@ -13,9 +21,22 @@ import {
   EventSourceFormData,
   EventSourceListData,
   SinkType,
+  EventSourceList,
+  NormalizedEventSources,
 } from '../components/add/import-types';
-import { getKnativeEventSourceIcon } from './get-knative-icon';
+import { getEventSourceIcon } from './get-knative-icon';
+import { clusterServiceVersionResource } from './get-knative-resources';
 import { useEventSourceModels } from './fetch-dynamic-eventsources-utils';
+import {
+  EventSourceContainerModel,
+  EventSourceApiServerModel,
+  EventSourceSinkBindingModel,
+  EventSourceCamelModel,
+  EventSourcePingModel,
+  EventSourceKafkaModel,
+  EventSourceCronJobModel,
+} from '../models';
+import { EVENT_SOURCE_LABEL } from '../const';
 
 export const isKnownEventSource = (eventSource: string): boolean =>
   Object.keys(EventSources).includes(eventSource);
@@ -195,44 +216,150 @@ export const getEventSourceData = (source: string) => {
   return eventSourceData[source];
 };
 
+export const getEventSourceConnectorList = (
+  namespace: string,
+  csvData: ClusterServiceVersionKind[],
+) =>
+  _.reduce(
+    csvData,
+    (acm, cv) => {
+      const parseCSVData = parseALMExamples(cv);
+      _.forEach(parseCSVData, (res) => {
+        if (
+          _.findIndex(acm, res) === -1 &&
+          referenceFor(res) === referenceForModel(EventSourceCamelModel) &&
+          res?.metadata?.labels?.[EVENT_SOURCE_LABEL] === 'true'
+        ) {
+          const { apiGroup, plural, kind } = modelFor(referenceFor(res));
+          const {
+            metadata: { name },
+          } = res;
+          const modelData = {
+            [name]: {
+              name,
+              iconUrl: getEventSourceIcon(kind, res),
+              displayName: _.startCase(name),
+              title: _.startCase(name),
+              data: { almData: res },
+            },
+          };
+          acm.push(
+            checkAccess({
+              group: apiGroup,
+              resource: plural,
+              namespace,
+              verb: 'create',
+            }).then((result) => (result.status.allowed ? modelData : {})),
+          );
+        }
+      });
+      return acm;
+    },
+    [],
+  );
+
+export const getEventSourceList = (namespace: string, eventSourceModels: K8sKind[]) => {
+  const accessList = [];
+  eventSourceModels.map((model) => {
+    const { apiGroup, plural, kind } = model;
+    const modelData = {
+      [kind]: {
+        name: kind,
+        iconUrl: getEventSourceIcon(kind),
+        displayName: _.startCase(kind),
+        title: _.startCase(kind),
+      },
+    };
+    return accessList.push(
+      checkAccess({
+        group: apiGroup,
+        resource: plural,
+        namespace,
+        verb: 'create',
+      }).then((result) => (result.status.allowed ? modelData : {})),
+    );
+  });
+  return accessList;
+};
+
+// To order sources with known followed by CamelSource, followed by camelConnector and other dynamic sources
+export const sortSourcesData = (sourcesObj: NormalizedEventSources): NormalizedEventSources => {
+  const sortSourcesList: EventSourceList[] = _.orderBy(
+    Object.values(sourcesObj),
+    ['name'],
+    ['asc'],
+  );
+  const knownSourcesKind = [
+    EventSourceApiServerModel.kind,
+    EventSourceContainerModel.kind,
+    EventSourceCronJobModel.kind,
+    EventSourceKafkaModel.kind,
+    EventSourcePingModel.kind,
+    EventSourceSinkBindingModel.kind,
+  ];
+  const knownSourcesList = _.filter(sortSourcesList, (source) =>
+    knownSourcesKind.includes(source.name),
+  );
+  const camelSourcesList = _.filter(
+    sortSourcesList,
+    (source) => EventSourceCamelModel.kind === source?.name,
+  );
+  const dynamicCamelConnectorsList = _.filter(
+    sortSourcesList,
+    (source) =>
+      !knownSourcesKind.includes(source.name) &&
+      source.name !== EventSourceCamelModel.kind &&
+      !!source.data,
+  );
+  const dynamicSourcesList = _.filter(
+    sortSourcesList,
+    (source) =>
+      !knownSourcesKind.includes(source.name) &&
+      source.name !== EventSourceCamelModel.kind &&
+      !source?.data,
+  );
+
+  return [
+    ...knownSourcesList,
+    ...camelSourcesList,
+    ...dynamicCamelConnectorsList,
+    ...dynamicSourcesList,
+  ].reduce((accumulator, currentValue) => {
+    accumulator[currentValue.name] = currentValue;
+    return accumulator;
+  }, {});
+};
+
 export const useEventSourceList = (namespace: string): EventSourceListData | null => {
   const [accessData, setAccessData] = useSafetyFirst({ loaded: false, eventSourceList: {} });
   const { eventSourceModels, loaded: modelLoaded } = useEventSourceModels();
+  const getCSVResources = React.useMemo(
+    () => ({
+      ...clusterServiceVersionResource(namespace),
+    }),
+    [namespace],
+  );
+  const [csvData, csvDataLoaded] = useK8sWatchResource<ClusterServiceVersionKind[]>(
+    getCSVResources,
+  );
+
   React.useEffect(() => {
-    const accessList = [];
-    if (modelLoaded) {
-      eventSourceModels.map((model) => {
-        const { apiGroup, plural, kind } = model;
-        const modelData = {
-          [model.kind]: {
-            name: kind,
-            iconUrl: getKnativeEventSourceIcon(kind),
-            displayName: kind,
-            title: kind,
-          },
-        };
-        return accessList.push(
-          checkAccess({
-            group: apiGroup,
-            resource: plural,
-            namespace,
-            verb: 'create',
-          }).then((result) => (result.status.allowed ? modelData : {})),
-        );
-      });
-      Promise.all(accessList)
+    const eventSourcesList = getEventSourceList(namespace, eventSourceModels);
+    const camelConnectorSourceList = getEventSourceConnectorList(namespace, csvData);
+    if (modelLoaded && csvDataLoaded) {
+      Promise.all([...eventSourcesList, ...camelConnectorSourceList])
         .then((results) => {
           const eventSourceList = results.reduce((acc, result) => {
             return { ...acc, ...result };
           }, {});
-          setAccessData({ loaded: true, eventSourceList });
+          setAccessData({ loaded: true, eventSourceList: sortSourcesData(eventSourceList) });
         })
         // eslint-disable-next-line no-console
         .catch((err) => console.warn(err.message));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modelLoaded]);
-  return eventSourceModels.length === 0 && modelLoaded ? null : accessData;
+  }, [modelLoaded, csvDataLoaded]);
+  return eventSourceModels.length === 0 && accessData.loaded ? null : accessData;
 };
 
 export const getBootstrapServers = (kafkaResources: K8sResourceKind[]) => {

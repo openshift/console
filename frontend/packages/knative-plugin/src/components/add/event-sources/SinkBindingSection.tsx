@@ -6,7 +6,11 @@ import { InputField, getFieldId } from '@console/shared';
 import { AsyncComponent } from '@console/internal/components/utils/async';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 
-const SinkBindingSection: React.FC = () => {
+interface SinkBindingSectionProps {
+  title: string;
+}
+
+const SinkBindingSection: React.FC<SinkBindingSectionProps> = ({ title }) => {
   const { values, setFieldValue } = useFormikContext<FormikValues>();
   const initVal = values?.data?.sinkbinding?.subject?.selector?.matchLabels || {};
   const initialValueResources = !_.isEmpty(initVal)
@@ -30,7 +34,7 @@ const SinkBindingSection: React.FC = () => {
   );
   const fieldId = getFieldId(values.type, 'subject-matchLabels');
   return (
-    <FormSection title="SinkBinding" extraMargin>
+    <FormSection title={title} extraMargin>
       <h3 className="co-section-heading-tertiary">Subject</h3>
       <InputField
         data-test-id="sinkbinding-apiversion-field"

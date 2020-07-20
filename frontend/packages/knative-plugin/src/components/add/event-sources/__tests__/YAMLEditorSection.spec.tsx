@@ -13,10 +13,11 @@ jest.mock('formik', () => ({
 }));
 
 describe('YAMLEditorSection', () => {
-  const wrapper = shallow(<YAMLEditorSection />);
+  const title = 'Jira';
+  const wrapper = shallow(<YAMLEditorSection title={title} />);
   it('should render FormSection with proper props', () => {
     expect(wrapper.find(FormSection)).toHaveLength(1);
-    expect(wrapper.find(FormSection).props().title).toEqual('CamelSource');
+    expect(wrapper.find(FormSection).props().title).toEqual('Jira');
     expect(wrapper.find(FormSection).props().fullWidth).toBe(true);
     expect(wrapper.find(FormSection).props().flexLayout).toBe(true);
   });

@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import { K8sResourceKind, PodKind, referenceForModel } from '@console/internal/module/k8s';
 import { FirehoseResource } from '@console/internal/components/utils';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { KNATIVE_SERVING_LABEL } from '../const';
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
 import {
@@ -13,6 +14,7 @@ import {
   EventingTriggerModel,
   KafkaModel,
   KafkaTopicModel,
+  CamelIntegrationModel,
 } from '../models';
 
 export type KnativeItem = {
@@ -154,6 +156,23 @@ export const knativeEventingResourcesBroker = (namespace: string): FirehoseResou
   return knativeResource;
 };
 
+const EVENT_SOURCE_PROVIDER_CSV = 'console.openshift.io/event-source-provider';
+
+export const clusterServiceVersionResource = (namespace: string): FirehoseResource => {
+  return {
+    isList: true,
+    kind: referenceForModel(ClusterServiceVersionModel),
+    namespace,
+    prop: ClusterServiceVersionModel.plural,
+    selector: {
+      matchLabels: {
+        [EVENT_SOURCE_PROVIDER_CSV]: 'true',
+      },
+    },
+    optional: true,
+  };
+};
+
 export const knativeServingResourcesRevisionWatchers = (
   namespace: string,
 ): WatchK8sResources<any> => {
@@ -240,6 +259,19 @@ export const knativeEventingTriggerResourceWatchers = (namespace: string) => {
     [EventingTriggerModel.plural]: {
       isList: true,
       kind: referenceForModel(EventingTriggerModel),
+      namespace,
+      optional: true,
+    },
+  };
+};
+
+export const knativeCamelIntegrationsResourceWatchers = (
+  namespace: string,
+): WatchK8sResources<any> => {
+  return {
+    [CamelIntegrationModel.plural]: {
+      isList: true,
+      kind: referenceForModel(CamelIntegrationModel),
       namespace,
       optional: true,
     },

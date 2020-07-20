@@ -4,7 +4,6 @@ import { TextColumnField } from '@console/shared';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { AsyncComponent } from '@console/internal/components/utils/async';
 import ContainerSourceSection from '../ContainerSourceSection';
-import { EventSources } from '../../import-types';
 
 type ContainerSourceSectionProps = React.ComponentProps<typeof ContainerSourceSection>;
 
@@ -33,14 +32,15 @@ jest.mock('formik', () => ({
   })),
 }));
 describe('ContainerSourceSection', () => {
+  const title = 'Container Source';
   let wrapper: ShallowWrapper<ContainerSourceSectionProps>;
   beforeEach(() => {
-    wrapper = shallow(<ContainerSourceSection />);
+    wrapper = shallow(<ContainerSourceSection title={title} />);
   });
 
   it('should render ContainerSource FormSection', () => {
     expect(wrapper.find(FormSection)).toHaveLength(1);
-    expect(wrapper.find(FormSection).props().title).toBe(EventSources.ContainerSource);
+    expect(wrapper.find(FormSection).props().title).toBe('Container Source');
   });
 
   it('should render Container image and name input fields', () => {
