@@ -31,7 +31,7 @@ import {
   getOCMLink,
 } from '../../../../module/k8s';
 import { flagPending, featureReducerName } from '../../../../reducers/features';
-import { ExternalLink } from '../../../utils';
+import { ExternalLink, useAccessReview } from '../../../utils';
 import { RootState } from '../../../../redux';
 import { clusterUpdateModal } from '../../../modals';
 import { Link } from 'react-router-dom';
@@ -42,6 +42,12 @@ const ClusterVersion: React.FC<ClusterVersionProps> = ({ cv }) => {
   const desiredVersion = getDesiredClusterVersion(cv);
   const lastVersion = getLastCompletedUpdate(cv);
   const status = getClusterUpdateStatus(cv);
+  const clusterVersionIsEditable = useAccessReview({
+    group: ClusterVersionModel.apiGroup,
+    resource: ClusterVersionModel.plural,
+    verb: 'patch',
+    name: 'version',
+  });
 
   switch (status) {
     case ClusterUpdateStatus.Updating:
@@ -60,17 +66,19 @@ const ClusterVersion: React.FC<ClusterVersionProps> = ({ cv }) => {
       return (
         <>
           <span className="co-select-to-copy">{desiredVersion}</span>
-          <div>
-            <Button
-              variant="link"
-              className="btn-link--no-btn-default-values"
-              onClick={() => clusterUpdateModal({ cv })}
-              icon={<BlueArrowCircleUpIcon />}
-              isInline
-            >
-              Update
-            </Button>
-          </div>
+          {clusterVersionIsEditable && (
+            <div>
+              <Button
+                variant="link"
+                className="btn-link--no-btn-default-values"
+                onClick={() => clusterUpdateModal({ cv })}
+                icon={<BlueArrowCircleUpIcon />}
+                isInline
+              >
+                Update
+              </Button>
+            </div>
+          )}
         </>
       );
     default:
