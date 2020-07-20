@@ -810,12 +810,6 @@ export const createDeploymentConfigItem = (
   resources: any,
   utils?: OverviewResourceUtil[],
 ): OverviewItem => {
-  if (!deploymentConfig.apiVersion) {
-    deploymentConfig.apiVersion = apiVersionForModel(DeploymentConfigModel);
-  }
-  if (!deploymentConfig.kind) {
-    deploymentConfig.kind = DeploymentConfigModel.kind;
-  }
   const { mostRecentRC, visibleReplicationControllers } = getReplicationControllersForResource(
     deploymentConfig,
     resources,
@@ -871,12 +865,6 @@ export const createDeploymentItem = (
   resources: any,
   utils?: OverviewResourceUtil[],
 ): OverviewItem => {
-  if (!deployment.apiVersion) {
-    deployment.apiVersion = apiVersionForModel(DeploymentModel);
-  }
-  if (!deployment.kind) {
-    deployment.kind = DeploymentModel.kind;
-  }
   const replicaSets = getReplicaSetsForResource(deployment, resources);
   const [current, previous] = replicaSets;
   const isRollingOut = !!current && !!previous;
@@ -926,12 +914,6 @@ export const createCronJobItem = (
   resources: any,
   utils?: OverviewResourceUtil[],
 ): OverviewItem => {
-  if (!cronJob.apiVersion) {
-    cronJob.apiVersion = apiVersionForModel(CronJobModel);
-  }
-  if (!cronJob.kind) {
-    cronJob.kind = CronJobModel.kind;
-  }
   const buildConfigs = getBuildConfigsForCronJob(cronJob, resources);
   const jobs = getJobsForCronJob(cronJob, resources);
   const pods = jobs?.reduce((acc, job) => {
@@ -978,21 +960,6 @@ export const getStandaloneJobs = (jobs: JobKind[]) => {
   return jobs.filter((job) => !job.metadata?.ownerReferences?.length);
 };
 
-export const createWorkloadItem = (
-  model: K8sKind,
-  obj: K8sResourceKind,
-  resources: any,
-  utils?: OverviewResourceUtil[],
-): OverviewItem => {
-  if (!obj.apiVersion) {
-    obj.apiVersion = apiVersionForModel(model);
-  }
-  if (!obj.kind) {
-    obj.kind = model.kind;
-  }
-  return getOverviewItemsForResource(obj, resources, isKindMonitorable(model), utils);
-};
-
 export const createWorkloadItems = (
   model: K8sKind,
   typedItems: K8sResourceKind[],
@@ -1002,16 +969,12 @@ export const createWorkloadItems = (
   if (!typedItems) {
     return [];
   }
-  return typedItems.map((d) => createWorkloadItem(model, d, resources, utils));
+  return typedItems.map((d) =>
+    getOverviewItemsForResource(d, resources, isKindMonitorable(model), utils),
+  );
 };
 
 export const createPodItem = (pod: PodKind, resources: any): OverviewItem => {
-  if (!pod.apiVersion) {
-    pod.apiVersion = apiVersionForModel(PodModel);
-  }
-  if (!pod.kind) {
-    pod.kind = PodModel.kind;
-  }
   const owners = pod?.metadata?.ownerReferences;
   const phase = pod?.status?.phase;
   if (!_.isEmpty(owners) || phase === 'Succeeded' || phase === 'Failed') {
@@ -1087,13 +1050,23 @@ export const createOverviewItemForType = (
     case 'cronJobs':
       return createCronJobItem(resource as CronJobKind, resources, utils);
     case 'statefulSets':
-      return createWorkloadItem(StatefulSetModel, resource, resources, utils);
+      return getOverviewItemsForResource(
+        resource,
+        resources,
+        isKindMonitorable(StatefulSetModel),
+        utils,
+      );
     case 'daemonSets':
-      return createWorkloadItem(DaemonSetModel, resource, resources, utils);
+      return getOverviewItemsForResource(
+        resource,
+        resources,
+        isKindMonitorable(DaemonSetModel),
+        utils,
+      );
     case 'jobs':
       return resource.metadata?.ownerReferences?.length
         ? null
-        : createWorkloadItem(JobModel, resource, resources, utils);
+        : getOverviewItemsForResource(resource, resources, isKindMonitorable(JobModel), utils);
     case 'pods':
       return createPodItem(resource as PodKind, resources);
     default:
