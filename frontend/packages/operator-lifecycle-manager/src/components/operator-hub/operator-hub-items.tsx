@@ -383,7 +383,14 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     const badges = [COMMUNITY_PROVIDER_TYPE, MARKETPLACE_PROVIDER_TYPE].includes(item.providerType)
       ? [badge(item.providerType)]
       : [];
-    const icon = <img className="catalog-tile-pf-icon" loading="lazy" src={imgUrl} alt="" />;
+    const icon = (
+      <img
+        className="catalog-tile-pf-icon catalog-tile-pf-icon--align-top"
+        loading="lazy"
+        src={imgUrl}
+        alt=""
+      />
+    );
     return (
       <CatalogTile
         className="co-catalog-tile"
