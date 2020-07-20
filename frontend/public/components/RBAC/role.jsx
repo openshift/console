@@ -32,9 +32,10 @@ const menuActions = [
   // }),
   (kind, role) => ({
     label: 'Add Role Binding',
-    href: `/k8s/cluster/rolebindings/~new?rolekind=${roleKind(role)}&rolename=${
-      role.metadata.name
-    }`,
+    href: `/k8s/${
+      role.metadata.namespace ? `ns/${role.metadata.namespace}` : 'cluster'
+    }/rolebindings/~new?rolekind=${roleKind(role)}&rolename=${role.metadata.name}${role.metadata
+      .namespace && `&namespace=${role.metadata.namespace}`}`,
   }),
   Kebab.factory.Edit,
   Kebab.factory.Delete,
@@ -230,7 +231,7 @@ export const BindingsForRolePage = (props) => {
       createProps={{
         to: `/k8s/${
           ns ? `ns/${ns}` : 'cluster'
-        }/rolebindings/~new?rolekind=${kind}&rolename=${name}`,
+        }/rolebindings/~new?rolekind=${kind}&rolename=${name}${ns && `&namespace=${ns}`}`,
       }}
       ListComponent={BindingsListComponent}
       staticFilters={[{ 'role-binding-roleRef-name': name }, { 'role-binding-roleRef-kind': kind }]}
