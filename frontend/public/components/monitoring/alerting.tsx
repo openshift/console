@@ -1007,7 +1007,7 @@ export const severityRowFilter: RowFilter = {
 export const alertsRowFilters: RowFilter[] = [
   {
     defaultSelected: [AlertStates.Firing],
-    filterGroupName: 'Alert',
+    filterGroupName: 'Alert State',
     items: [
       { id: AlertStates.Firing, title: 'Firing' },
       { id: AlertStates.Silenced, title: 'Silenced' },
@@ -1111,7 +1111,7 @@ const AlertsPage = withFallback(connect(alertsToProps)(AlertsPage_));
 const rulesRowFilters: RowFilter[] = [
   {
     type: 'alerting-rule-active',
-    filterGroupName: 'Alerts',
+    filterGroupName: 'Rule State',
     reducer: alertingRuleIsActive,
     items: [
       { id: 'true', title: 'Active' },
@@ -1188,7 +1188,7 @@ const silencesRowFilters: RowFilter[] = [
   {
     defaultSelected: [SilenceStates.Active, SilenceStates.Pending],
     type: 'silence-state',
-    filterGroupName: 'Silence',
+    filterGroupName: 'Silence State',
     reducer: silenceState,
     items: [
       { id: SilenceStates.Active, title: 'Active' },
