@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { PageBody } from '@console/shared';
+import { ErrorPage404 } from '@console/internal/components/error';
 import { LoadingInline, PageComponentProps } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { getGroupVersionKind, K8sResourceKind } from '@console/internal/module/k8s';
@@ -19,7 +20,8 @@ const HPAPage: React.FC<PageComponentProps> = (props) => {
     },
   } = props;
   const editHPA = path === '/workload-hpa/:ns/:resourceRef/:name/edit';
-  const [group, version, kind] = getGroupVersionKind(resourceRef);
+  const breakdown = getGroupVersionKind(resourceRef) || [];
+  const [group, version, kind] = breakdown;
   const [hpa, hpaError] = useRelatedHPA(`${group}/${version}`, kind, name, ns);
   const resource = React.useMemo(
     () => ({
@@ -36,6 +38,11 @@ const HPAPage: React.FC<PageComponentProps> = (props) => {
 
   const validSupportedType = VALID_HPA_TARGET_KINDS.includes(kind);
   const title = `${editHPA ? 'Edit' : 'Add'} ${HorizontalPodAutoscalerModel.label}`;
+
+  if (!breakdown) {
+    return <ErrorPage404 />;
+  }
+
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light} hideApplications>
       <Helmet>
