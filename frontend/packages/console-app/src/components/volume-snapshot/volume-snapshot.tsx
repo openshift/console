@@ -33,6 +33,9 @@ import {
 import { Status, getBadgeFromType, BadgeType, getName, getNamespace } from '@console/shared';
 import { snapshotStatusFilters, volumeSnapshotStatus } from '../../status';
 
+const { common, RestorePVC } = Kebab.factory;
+const menuActions = [RestorePVC, ...common];
+
 const tableColumnClasses = [
   '', // Name
   '', // Namespace
@@ -156,7 +159,7 @@ const Row: RowFunction<VolumeSnapshotKind> = ({ key, obj, style, index, customDa
         <ResourceKebab
           kind={referenceForModel(VolumeSnapshotModel)}
           resource={obj}
-          actions={Kebab.factory.common}
+          actions={menuActions}
         />
       </TableData>
     </TableRow>

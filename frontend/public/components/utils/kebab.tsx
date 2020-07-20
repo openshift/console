@@ -16,6 +16,7 @@ import {
   deleteModal,
   expandPVCModal,
   clonePVCModal,
+  restorePVCModal,
 } from '../modals';
 import { asAccessReview, checkAccess, history, resourceObjPath, useAccessReview } from './index';
 import {
@@ -342,6 +343,15 @@ const kebabFactory: KebabFactory = {
     label: 'Clone PVC',
     callback: () =>
       clonePVCModal({
+        kind,
+        resource: obj,
+      }),
+    accessReview: asAccessReview(kind, obj, 'create'),
+  }),
+  RestorePVC: (kind, obj) => ({
+    label: 'Restore as new PVC',
+    callback: () =>
+      restorePVCModal({
         kind,
         resource: obj,
       }),

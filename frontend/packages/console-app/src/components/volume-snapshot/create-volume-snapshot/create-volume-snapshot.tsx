@@ -270,9 +270,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
               type="submit"
               variant="primary"
               id="save-changes"
-              isDisabled={
-                !snapshotClassName || !snapshotName || !pvcName || pvcObj?.status?.phase !== 'Bound'
-              }
+              isDisabled={!snapshotClassName || !snapshotName || !pvcName}
             >
               Create
             </Button>
