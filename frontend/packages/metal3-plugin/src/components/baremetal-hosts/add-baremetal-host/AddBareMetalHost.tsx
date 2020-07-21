@@ -46,7 +46,9 @@ const getInitialValues = (
   bootMACAddress: getHostBootMACAddress(host) || '',
   online: isHostOnline(host) || true,
   description: getHostDescription(host) || '',
-  enablePowerManagement: isEditing ? !!host?.spec?.bmc || enablePowerMgmt : true,
+  enablePowerManagement: isEditing
+    ? !!host?.spec?.bmc?.address || !!host?.spec?.bmc?.credentialsName || enablePowerMgmt
+    : true,
 });
 
 type AddBareMetalHostProps = {
@@ -122,7 +124,7 @@ const AddBareMetalHost: React.FC<AddBareMetalHostProps> = ({
   const initialValues = getInitialValues(host, secret, !!name, enablePowerMgmt);
   const prevInitialValues = getInitialValues(initialHost, initialSecret, !!name, enablePowerMgmt);
 
-  const showUpdated = initialHost && !_.isEqual(prevInitialValues, initialValues);
+  const showUpdated = !_.isEmpty(initialHost) && !_.isEqual(prevInitialValues, initialValues);
 
   const addHostValidationSchema = Yup.lazy(({ enablePowerManagement }) =>
     Yup.object().shape({
@@ -152,7 +154,11 @@ const AddBareMetalHost: React.FC<AddBareMetalHostProps> = ({
   ) => {
     const opts = { ...values, namespace };
     const promise = name
-      ? updateBareMetalHost(initialHost, initialSecret, opts)
+      ? updateBareMetalHost(
+          _.isEmpty(initialHost) ? host : initialHost,
+          _.isEmpty(initialSecret) ? secret : initialSecret,
+          opts,
+        )
       : createBareMetalHost(opts);
 
     promise

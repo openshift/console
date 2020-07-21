@@ -29,6 +29,7 @@ import {
   HOST_PROGRESS_STATES,
   HOST_HARDWARE_ERROR_STATES,
   HOST_STATUS_UNMANAGED,
+  HOST_INFO_STATES,
 } from '../../../constants';
 import { BareMetalHostKind } from '../../../types';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
@@ -39,7 +40,7 @@ const getHostHealthState = (obj: BareMetalHostKind): HostHealthState => {
   const { status, title } = getBareMetalHostStatus(obj);
   let state: HealthState = HealthState.UNKNOWN;
 
-  if (HOST_SUCCESS_STATES.includes(status)) {
+  if ([...HOST_SUCCESS_STATES, ...HOST_INFO_STATES].includes(status)) {
     state = HealthState.OK;
   }
 

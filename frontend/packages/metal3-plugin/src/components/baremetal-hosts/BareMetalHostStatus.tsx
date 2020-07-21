@@ -26,9 +26,11 @@ import MaintenancePopover from '../maintenance/MaintenancePopover';
 import { BareMetalHostKind } from '../../types';
 import { BareMetalHostModel } from '../../models';
 
+import './status.scss';
+
 export const HOST_STATUS_ACTIONS = {
   [HOST_STATUS_UNMANAGED]: (host: BareMetalHostKind) => (
-    <p>
+    <div className="bmh-status-action">
       <Link
         to={`${resourcePathFromModel(
           BareMetalHostModel,
@@ -38,7 +40,7 @@ export const HOST_STATUS_ACTIONS = {
       >
         Add credentials
       </Link>
-    </p>
+    </div>
   ),
 };
 
