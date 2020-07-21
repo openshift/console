@@ -109,6 +109,7 @@ export type VMImportConfig = {
   storageResources?: StorageResource[];
   networkResources?: NetworkResource[];
   cloudInit?: CloudInitConfig;
+  startOnCreation?: boolean;
 };
 
 export type BaseVMConfig = {
