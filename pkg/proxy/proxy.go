@@ -31,8 +31,9 @@ type Proxy struct {
 	config       *Config
 }
 
-func filterHeaders(r *http.Response) error {
+func filterHeaders(r *http.Response, headers []string) error {
 	badHeaders := []string{"Connection", "Keep-Alive", "Proxy-Connection", "Transfer-Encoding", "Upgrade"}
+	badHeaders = append(badHeaders, headers...)
 	for _, h := range badHeaders {
 		r.Header.Del(h)
 	}
@@ -54,7 +55,9 @@ func NewProxy(cfg *Config) *Proxy {
 	reverseProxy := httputil.NewSingleHostReverseProxy(cfg.Endpoint)
 	reverseProxy.FlushInterval = time.Millisecond * 100
 	reverseProxy.Transport = transport
-	reverseProxy.ModifyResponse = filterHeaders
+	reverseProxy.ModifyResponse = func(r *http.Response) error {
+		return filterHeaders(r, cfg.HeaderBlacklist)
+	}
 
 	proxy := &Proxy{
 		reverseProxy: reverseProxy,
