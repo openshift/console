@@ -384,53 +384,56 @@ export const quotaType = (quota) => {
 // Split each resource quota into one row per subject
 export const flatten = (resources) => _.flatMap(resources, (resource) => _.compact(resource.data));
 
-export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(({ namespace, flags, mock }) => {
-  const resources = [{ kind: 'ResourceQuota', namespaced: true }];
-  let rowFilters = null;
+export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(
+  ({ namespace, flags, mock, showTitle }) => {
+    const resources = [{ kind: 'ResourceQuota', namespaced: true }];
+    let rowFilters = null;
 
-  if (flagPending(flags[FLAGS.OPENSHIFT])) {
-    return <LoadingBox />;
-  }
-  if (flags[FLAGS.OPENSHIFT]) {
-    resources.push({
-      kind: referenceForModel(ClusterResourceQuotaModel),
-      namespaced: false,
-      optional: true,
-    });
-    rowFilters = [
-      {
-        filterGroupName: 'Role',
-        type: 'role-kind',
-        reducer: quotaType,
-        items: [
-          { id: 'cluster', title: 'Cluster-wide Resource Quotas' },
-          { id: 'namespace', title: 'Namespace Resource Quotas' },
-        ],
-      },
-    ];
-  }
-  const createNS = namespace || 'default';
-  const accessReview = {
-    model: ResourceQuotaModel,
-    namespace: createNS,
-  };
-  return (
-    <MultiListPage
-      canCreate={true}
-      createAccessReview={accessReview}
-      createButtonText="Create Resource Quota"
-      createProps={{ to: `/k8s/ns/${createNS}/resourcequotas/~new` }}
-      ListComponent={ResourceQuotasList}
-      resources={resources}
-      label="Resource Quotas"
-      namespace={namespace}
-      flatten={flatten}
-      title="Resource Quotas"
-      rowFilters={rowFilters}
-      mock={mock}
-    />
-  );
-});
+    if (flagPending(flags[FLAGS.OPENSHIFT])) {
+      return <LoadingBox />;
+    }
+    if (flags[FLAGS.OPENSHIFT]) {
+      resources.push({
+        kind: referenceForModel(ClusterResourceQuotaModel),
+        namespaced: false,
+        optional: true,
+      });
+      rowFilters = [
+        {
+          filterGroupName: 'Role',
+          type: 'role-kind',
+          reducer: quotaType,
+          items: [
+            { id: 'cluster', title: 'Cluster-wide Resource Quotas' },
+            { id: 'namespace', title: 'Namespace Resource Quotas' },
+          ],
+        },
+      ];
+    }
+    const createNS = namespace || 'default';
+    const accessReview = {
+      model: ResourceQuotaModel,
+      namespace: createNS,
+    };
+    return (
+      <MultiListPage
+        canCreate={true}
+        createAccessReview={accessReview}
+        createButtonText="Create Resource Quota"
+        createProps={{ to: `/k8s/ns/${createNS}/resourcequotas/~new` }}
+        ListComponent={ResourceQuotasList}
+        resources={resources}
+        label="Resource Quotas"
+        namespace={namespace}
+        flatten={flatten}
+        title="Resource Quotas"
+        rowFilters={rowFilters}
+        mock={mock}
+        showTitle={showTitle}
+      />
+    );
+  },
+);
 
 export const ResourceQuotasDetailsPage = (props) => (
   <DetailsPage
