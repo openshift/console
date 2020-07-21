@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Button } from '@patternfly/react-core';
 import { InProgressIcon } from '@patternfly/react-icons';
 import {
   BlueArrowCircleUpIcon,
@@ -33,7 +32,6 @@ import {
 import { flagPending, featureReducerName } from '../../../../reducers/features';
 import { ExternalLink, useAccessReview } from '../../../utils';
 import { RootState } from '../../../../redux';
-import { clusterUpdateModal } from '../../../modals';
 import { Link } from 'react-router-dom';
 import { useK8sWatchResource, WatchK8sResource } from '../../../utils/k8s-watch-hook';
 import { ClusterDashboardContext } from './context';
@@ -68,15 +66,10 @@ const ClusterVersion: React.FC<ClusterVersionProps> = ({ cv }) => {
           <span className="co-select-to-copy">{desiredVersion}</span>
           {clusterVersionIsEditable && (
             <div>
-              <Button
-                variant="link"
-                className="btn-link--no-btn-default-values"
-                onClick={() => clusterUpdateModal({ cv })}
-                icon={<BlueArrowCircleUpIcon />}
-                isInline
-              >
-                Update
-              </Button>
+              <Link to="/settings/cluster?showVersions">
+                <BlueArrowCircleUpIcon className="co-icon-space-r" />
+                Update cluster
+              </Link>
             </div>
           )}
         </>
