@@ -1,35 +1,38 @@
 import * as React from 'react';
 import { Flex, FlexItem, Button } from '@patternfly/react-core';
-import { GuidedTourStatus } from './utils/guided-tour-status';
+import { QuickStartStatus } from './utils/quick-start-status';
 
-type TourItemFooterProps = {
+type QuickStartFooterProps = {
   status: string;
   unmetPrerequisite?: boolean;
 };
-const TourItemFooter: React.FC<TourItemFooterProps> = ({ status, unmetPrerequisite = false }) => (
+const QuickStartFooter: React.FC<QuickStartFooterProps> = ({
+  status,
+  unmetPrerequisite = false,
+}) => (
   <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
-    {status === GuidedTourStatus.NOT_STARTED && (
+    {status === QuickStartStatus.NOT_STARTED && (
       <FlexItem>
         <Button variant="link" isInline isDisabled={unmetPrerequisite}>
           Start the tour
         </Button>
       </FlexItem>
     )}
-    {status === GuidedTourStatus.IN_PROGRESS && (
+    {status === QuickStartStatus.IN_PROGRESS && (
       <FlexItem>
         <Button variant="link" isInline>
           Resume the tour
         </Button>
       </FlexItem>
     )}
-    {status === GuidedTourStatus.COMPLETE && (
+    {status === QuickStartStatus.COMPLETE && (
       <FlexItem>
         <Button variant="link" isInline>
           Review the tour
         </Button>
       </FlexItem>
     )}
-    {status === GuidedTourStatus.IN_PROGRESS && (
+    {status === QuickStartStatus.IN_PROGRESS && (
       <FlexItem>
         <Button variant="link" isInline>
           Restart the tour
@@ -38,4 +41,4 @@ const TourItemFooter: React.FC<TourItemFooterProps> = ({ status, unmetPrerequisi
     )}
   </Flex>
 );
-export default TourItemFooter;
+export default QuickStartFooter;

@@ -10,31 +10,31 @@ import {
   DrawerContentBody,
   Title,
 } from '@patternfly/react-core';
-import { GuidedTourItem, GuidedTourState } from './utils/guided-tour-typings';
-import './GuidedTourDrawer.scss';
+import { QuickStartItem, QuickStartState } from './utils/quick-start-typings';
+import './QuickStartDrawer.scss';
 
-type DrawerComponentProps = {
-  guidedTour: GuidedTourItem;
-  guidedTourState?: GuidedTourState;
+type QuickStartDrawerComponentProps = {
+  quickStart: QuickStartItem;
+  quickStartState?: QuickStartState;
   expanded: boolean;
   onClose: () => void;
   children?: React.ReactNode;
   additionalHeaderContent?: React.ReactElement;
 };
 
-const DrawerComponent: React.FC<DrawerComponentProps> = ({
+const QuickStartDrawerComponent: React.FC<QuickStartDrawerComponentProps> = ({
   expanded,
-  guidedTour,
+  quickStart,
   onClose,
   children,
   additionalHeaderContent,
 }) => {
-  const { name, duration } = guidedTour ?? {};
+  const { name, duration } = quickStart ?? {};
   const panelContent = (
     <DrawerPanelContent>
       <DrawerHead>
         <div>
-          <Title headingLevel="h1" size="xl" className="co-guided-tour-drawer__title">
+          <Title headingLevel="h1" size="xl" className="co-quick-start-drawer__title">
             {name}
           </Title>
           <Title
@@ -64,4 +64,4 @@ const DrawerComponent: React.FC<DrawerComponentProps> = ({
   );
 };
 
-export default DrawerComponent;
+export default QuickStartDrawerComponent;

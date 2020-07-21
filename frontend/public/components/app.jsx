@@ -26,7 +26,7 @@ const consoleLoader = () =>
   import(
     '@console/kubevirt-plugin/src/components/connected-vm-console/vm-console-page' /* webpackChunkName: "kubevirt" */
   ).then((m) => m.VMConsolePage);
-import GuidedTourDrawer from '@console/app/src/components/guided-tours/GuidedTourDrawer';
+import QuickStartDrawer from '@console/app/src/components/quick-starts/QuickStartDrawer';
 import '../vendor.scss';
 import '../style.scss';
 
@@ -135,7 +135,7 @@ class App extends React.PureComponent {
     return (
       <DetectPerspective>
         <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
-        <GuidedTourDrawer>
+        <QuickStartDrawer>
           <ConsoleNotifier location="BannerTop" />
           <Page
             header={<Masthead onNavToggle={this._onNavToggle} />}
@@ -156,7 +156,7 @@ class App extends React.PureComponent {
           </Page>
           <CloudShell />
           <ConsoleNotifier location="BannerBottom" />
-        </GuidedTourDrawer>
+        </QuickStartDrawer>
       </DetectPerspective>
     );
   }
