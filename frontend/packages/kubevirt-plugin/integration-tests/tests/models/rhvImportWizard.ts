@@ -82,6 +82,7 @@ export class RhvImportWizard extends ImportWizard {
       sourceVMName,
       storageResources,
       networkResources,
+      startOnCreation,
     } = config;
     await this.openWizard(VirtualMachineModel);
 
@@ -133,6 +134,9 @@ export class RhvImportWizard extends ImportWizard {
 
     // Review
     await this.validateReviewTab(config);
+    if (startOnCreation) {
+      await this.startOnCreation();
+    }
 
     // Import
     await this.confirmAndCreate();

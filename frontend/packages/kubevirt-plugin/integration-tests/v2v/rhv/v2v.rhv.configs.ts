@@ -41,6 +41,7 @@ export const rhvVMConfig: VMImportConfig = {
   sourceVMName: vmName,
   provider: RHV,
   instanceConfig: newInstanceConfig,
+  startOnCreation: true,
 };
 
 export const rhvVMMultiNicConfig: VMImportConfig = {
