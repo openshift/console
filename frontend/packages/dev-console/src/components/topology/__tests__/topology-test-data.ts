@@ -460,6 +460,8 @@ export const samplePods: FirehoseResult<PodKind[]> = {
   loadError: '',
   data: [
     {
+      apiVersion: 'v1',
+      kind: 'Pod',
       metadata: {
         generateName: 'py-cron-1593000600-',
         annotations: {
@@ -498,6 +500,8 @@ export const samplePods: FirehoseResult<PodKind[]> = {
       },
     },
     {
+      apiVersion: 'v1',
+      kind: 'Pod',
       metadata: {
         generateName: 'py-cron-1593000600-',
         annotations: {
@@ -536,6 +540,8 @@ export const samplePods: FirehoseResult<PodKind[]> = {
       },
     },
     {
+      apiVersion: 'v1',
+      kind: 'Pod',
       metadata: {
         generateName: 'py-cron-1593002400-',
         annotations: {
@@ -574,6 +580,8 @@ export const samplePods: FirehoseResult<PodKind[]> = {
       },
     },
     {
+      apiVersion: 'v1',
+      kind: 'Pod',
       metadata: {
         annotations: {
           'k8s.v1.cni.cncf.io/network-status':
@@ -610,6 +618,8 @@ export const samplePods: FirehoseResult<PodKind[]> = {
       },
     },
     {
+      apiVersion: 'v1',
+      kind: 'Pod',
       metadata: {
         generateName: 'py-cron-1593002400-',
         annotations: {
@@ -648,6 +658,8 @@ export const samplePods: FirehoseResult<PodKind[]> = {
       },
     },
     {
+      apiVersion: 'v1',
+      kind: 'Pod',
       metadata: {
         generateName: 'py-cron-1593002400-',
         annotations: {
@@ -686,6 +698,8 @@ export const samplePods: FirehoseResult<PodKind[]> = {
       },
     },
     {
+      apiVersion: 'v1',
+      kind: 'Pod',
       metadata: {
         generateName: 'standalone-job-',
         annotations: {
@@ -839,6 +853,8 @@ export const samplePods: FirehoseResult<PodKind[]> = {
       },
     },
     {
+      apiVersion: 'v1',
+      kind: 'Pod',
       metadata: {
         annotations: {
           'k8s.v1.cni.cncf.io/network-status':
@@ -2059,6 +2075,8 @@ export const sampleStatefulSets: FirehoseResult = {
 export const sampleJobs: FirehoseResult = {
   data: [
     {
+      kind: 'Job',
+      apiVersion: 'batch/v1',
       metadata: {
         annotations: {
           'alpha.image.policy.openshift.io/resolve-names': '*',
@@ -2242,6 +2260,8 @@ export const sampleJobs: FirehoseResult = {
       },
     },
     {
+      kind: 'Job',
+      apiVersion: 'batch/v1',
       metadata: {
         name: 'standalone-job',
         namespace: 'jeff-project',
@@ -2542,6 +2562,8 @@ export const sampleJobs: FirehoseResult = {
 export const sampleCronJobs: FirehoseResult = {
   data: [
     {
+      kind: 'CronJob',
+      apiVersion: 'batch/v1beta1',
       metadata: {
         name: 'py-cron',
         namespace: 'jeff-project',

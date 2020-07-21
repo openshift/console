@@ -129,9 +129,14 @@ export const k8sList = (kind, params = {}, raw = false, options = {}) => {
   }).join('&');
 
   const listURL = resourceURL(kind, { ns: params.ns });
-  return coFetchJSON(`${listURL}?${query}`, 'GET', options).then((result) =>
-    raw ? result : result.items,
-  );
+  return coFetchJSON(`${listURL}?${query}`, 'GET', options).then((result) => {
+    const typedItems = result.items?.map((i) => ({
+      kind: kind.kind,
+      apiVersion: result.apiVersion,
+      ...i,
+    }));
+    return raw ? { ...result, items: typedItems } : typedItems;
+  });
 };
 
 export const k8sListPartialMetadata = (kind, params = {}, raw = false) => {
