@@ -754,6 +754,19 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: false,
+      path: ['/dev-monitoring/ns/:ns/alerts/:ruleID'],
+      loader: async () =>
+        (
+          await import(
+            './components/monitoring/alerts/MonitoringAlertsDetailsPage' /* webpackChunkName: "dev-console-monitoring-alerts" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: false,
       path: ['/dev-monitoring/all-namespaces', '/dev-monitoring/ns/:ns'],
       loader: async () =>
         (

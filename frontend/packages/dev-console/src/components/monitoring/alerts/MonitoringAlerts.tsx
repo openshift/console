@@ -9,7 +9,7 @@ import { match as RMatch } from 'react-router-dom';
 import { Table, TableHeader, TableBody, SortByDirection } from '@patternfly/react-table';
 import { FilterToolbar } from '@console/internal/components/filter-toolbar';
 import { getAlertsAndRules } from '@console/internal/components/monitoring/utils';
-import { monitoringSetRules, sortList } from '@console/internal/actions/ui';
+import { monitoringSetRules, monitoringLoaded, sortList } from '@console/internal/actions/ui';
 import { useURLPoll } from '@console/internal/components/utils/url-poll-hook';
 import { PrometheusRulesResponse, Rules } from '@console/internal/components/monitoring/types';
 import { PROMETHEUS_TENANCY_BASE_PATH } from '@console/internal/components/graphs';
@@ -60,15 +60,18 @@ export const MonitoringAlerts: React.FC<props> = ({ match, rules, filters, listS
     POLL_DELAY,
     namespace,
   );
-  const thanosRules = React.useMemo(
-    () => (!loading && !loadError ? getAlertsAndRules(response?.data).rules : []),
+  const thanosAlertsAndRules = React.useMemo(
+    () => (!loading && !loadError ? getAlertsAndRules(response?.data) : { rules: [], alerts: [] }),
     [response, loadError, loading],
   );
 
   React.useEffect(() => {
-    const sortThanosRules = _.sortBy(thanosRules, (rule) => alertingRuleStateOrder(rule));
+    const sortThanosRules = _.sortBy(thanosAlertsAndRules.rules, (rule) =>
+      alertingRuleStateOrder(rule),
+    );
     dispatch(monitoringSetRules('devRules', sortThanosRules));
-  }, [dispatch, thanosRules]);
+    dispatch(monitoringLoaded('devAlerts', thanosAlertsAndRules.alerts, 'dev'));
+  }, [dispatch, thanosAlertsAndRules]);
 
   const filteredRules = React.useMemo(() => {
     const filtersObj = filters?.toJS();
@@ -86,9 +89,9 @@ export const MonitoringAlerts: React.FC<props> = ({ match, rules, filters, listS
   }, [filters, listSorts, columnIndex, rules, listOrderBy, sortOrder]);
 
   React.useEffect(() => {
-    const tableRows = monitoringAlertRows(filteredRules, collapsedRowsIds);
+    const tableRows = monitoringAlertRows(filteredRules, collapsedRowsIds, namespace);
     setRows(tableRows);
-  }, [collapsedRowsIds, filteredRules]);
+  }, [collapsedRowsIds, filteredRules, namespace]);
 
   const onCollapse = (event: React.MouseEvent, rowKey: number, isOpen: boolean) => {
     rows[rowKey].isOpen = isOpen;

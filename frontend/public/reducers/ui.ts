@@ -199,11 +199,11 @@ export default (state: UIState, action: UIAction): UIState => {
       return state.setIn(['monitoring', action.payload.key], action.payload.data);
 
     case ActionType.SetMonitoringData: {
-      // alerts used by monitoring -> alerting pages
+      const alertKey = action.payload.data.perspective === 'admin' ? 'alerts' : 'devAlerts';
       const alerts =
-        action.payload.key === 'alerts'
+        action.payload.key === alertKey
           ? action.payload.data
-          : state.getIn(['monitoring', 'alerts']);
+          : state.getIn(['monitoring', alertKey]);
       // notificationAlerts used by notification drawer and certain dashboards
       const notificationAlerts: NotificationAlerts =
         action.payload.key === 'notificationAlerts'
@@ -221,7 +221,7 @@ export default (state: UIState, action: UIAction): UIState => {
       silenceFiringAlerts(_.filter(notificationAlerts?.data, isAlertFiring), silences);
       // filter out silenced alerts from notificationAlerts
       notificationAlerts.data = _.reject(notificationAlerts.data, { state: AlertStates.Silenced });
-      state = state.setIn(['monitoring', 'alerts'], alerts);
+      state = state.setIn(['monitoring', alertKey], alerts);
       state = state.setIn(['monitoring', 'notificationAlerts'], notificationAlerts);
 
       // For each Silence, store a list of the Alerts it is silencing
