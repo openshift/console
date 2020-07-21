@@ -140,7 +140,7 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
       const [data, error] = getPrometheusQueryResponse(prometheusResults, query);
       const bodyData = getInstantVectorStats(data, metric);
 
-      if (consumerLoaded && !consumersLoadError) {
+      if (k8sResource && consumerLoaded && !consumersLoadError) {
         for (const d of bodyData) {
           const consumerExists = consumerData.some(
             (consumer) =>
