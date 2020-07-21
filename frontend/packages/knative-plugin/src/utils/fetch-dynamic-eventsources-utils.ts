@@ -210,6 +210,9 @@ export const getDynamicChannelModelRefs = (): string[] => {
   return eventSourceData.eventSourceChannels.map((model: K8sKind) => referenceForModel(model));
 };
 
+export const hideDynamicChannelCard = () =>
+  eventSourceData.eventSourceChannels && eventSourceData.eventSourceChannels.length > 0;
+
 export const isEventingChannelResourceKind = (resourceRef: string): boolean => {
   const index = eventSourceData.eventSourceChannels.findIndex(
     (model: K8sKind) => referenceForModel(model) === resourceRef,

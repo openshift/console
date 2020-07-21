@@ -6,6 +6,9 @@ import {
   EventSourceKafkaModel,
   EventSourcePingModel,
   EventSourceSinkBindingModel,
+  EventingChannelModel,
+  EventingIMCModel,
+  EventingKafkaChannelModel,
 } from '../../models';
 
 export const EventSources = {
@@ -16,7 +19,11 @@ export const EventSources = {
   PingSource: EventSourcePingModel.kind,
   SinkBinding: EventSourceSinkBindingModel.kind,
 };
-
+export const defaultChannels = {
+  Channel: EventingChannelModel,
+  InMemoryChannel: EventingIMCModel,
+  KafkaChannel: EventingKafkaChannelModel,
+};
 export interface ProjectData {
   name: string;
   displayName: string;
@@ -85,3 +92,17 @@ export const sourceSinkType = {
     label: 'URI',
   },
 };
+export interface AddChannelFormData {
+  application: ApplicationData;
+  name: string;
+  namespace: string;
+  apiVersion: string;
+  type: string;
+  data?: EventSourceData;
+  yamlData?: string;
+}
+
+export interface ChannelListProps {
+  loaded: boolean;
+  channelList: string[];
+}

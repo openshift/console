@@ -45,9 +45,11 @@ import {
   getDynamicEventSourcesResourceList,
   getDynamicChannelResourceList,
   hideDynamicEventSourceCard,
+  hideDynamicChannelCard,
 } from './utils/fetch-dynamic-eventsources-utils';
 import { TopologyConsumedExtensions, topologyPlugin } from './topology/topology-plugin';
 import * as eventSourceIcon from './imgs/event-source.svg';
+import * as channelIcon from './imgs/channel.svg';
 
 type ConsumedExtensions =
   | ResourceNSNavItem
@@ -362,6 +364,33 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/channel'],
+      component: NamespaceRedirect,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/channel/all-namespaces', '/channel/ns/:ns'],
+      loader: async () =>
+        (
+          await import(
+            './components/add/EventingChannelPage' /* webpackChunkName: "knative-eventing-channel-page" */
+          )
+        ).default,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
+    },
+  },
+  {
     type: 'KebabActions',
     properties: {
       getKebabActionsForKind,
@@ -380,6 +409,21 @@ const plugin: Plugin<ConsumedExtensions> = [
         'Create an event source to register interest in a class of events from a particular system',
       icon: eventSourceIcon,
       hide: hideDynamicEventSourceCard,
+    },
+  },
+  {
+    type: 'AddAction',
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
+    },
+    properties: {
+      id: 'knative-eventing-channel',
+      url: '/channel',
+      label: 'Channel',
+      description:
+        'Create a Knative Channel to create an event forwarding and persistence layer with in-memory and reliable implementations',
+      icon: channelIcon,
+      hide: hideDynamicChannelCard,
     },
   },
   ...topologyPlugin,

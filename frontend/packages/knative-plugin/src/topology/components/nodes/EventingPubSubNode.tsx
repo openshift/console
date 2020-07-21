@@ -37,6 +37,7 @@ import {
   EventingBrokerModel,
   EventingSubscriptionModel,
 } from '../../../models';
+import * as eventPubSubImg from '../../../imgs/event-pub-sub.svg';
 
 export type EventingPubSubNodeProps = {
   element: Node;
@@ -132,6 +133,13 @@ const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
               ? NODE_SHADOW_FILTER_ID_HOVER
               : NODE_SHADOW_FILTER_ID,
           )}
+        />
+        <image
+          x={width * 0.1}
+          y={0}
+          width={width * 0.8}
+          height={width * 0.5}
+          xlinkHref={eventPubSubImg}
         />
         {showLabels && (data.kind || element.getLabel()) && (
           <SvgBoxedText
