@@ -14,3 +14,4 @@ export const OCS_EXTERNAL_CR_NAME = 'ocs-external-storagecluster';
 export const OCS_INTERNAL_CR_NAME = 'ocs-storagecluster';
 export const NO_PROVISIONER = 'kubernetes.io/no-provisioner';
 export const OCS_SUPPORT_ANNOTATION = 'features.ocs.openshift.io/enabled';
+export const OCS_DEVICE_SET_REPLICA = 3;

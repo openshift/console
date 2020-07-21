@@ -20,7 +20,13 @@ import {
 import { setFlag } from '@console/internal/actions/features';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { getName } from '@console/shared';
-import { minSelectedNode, defaultRequestSize, NO_PROVISIONER } from '../../../constants';
+import {
+  minSelectedNode,
+  defaultRequestSize,
+  NO_PROVISIONER,
+  OCS_INTERNAL_CR_NAME,
+  OCS_DEVICE_SET_REPLICA,
+} from '../../../constants';
 import { OCSServiceModel } from '../../../models';
 import AttachedDevicesNodeTable from './sc-node-list';
 import { PVsAvailableCapacity } from '../pvs-available-capacity';
@@ -95,7 +101,7 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
       history.push(
         `/k8s/ns/${ns}/clusterserviceversions/${appName}/${referenceForModel(
           OCSServiceModel,
-        )}/${getName(getOCSRequestData())}`,
+        )}/${OCS_INTERNAL_CR_NAME}`,
       );
     });
   };
@@ -108,9 +114,9 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
       <Form className="co-m-pane__body-group">
         <StorageClassSection handleStorageClass={handleStorageClass} filterSC={onlyNoProvSC}>
           <PVsAvailableCapacity
-            replica={getOCSRequestData().spec.storageDeviceSets[0].replica}
+            replica={OCS_DEVICE_SET_REPLICA}
             data-test-id="ceph-ocs-install-pvs-available-capacity"
-            sc={storageClass}
+            storageClass={storageClass}
           />
         </StorageClassSection>
         <h3 className="co-m-pane__heading co-m-pane__heading--baseline ceph-ocs-install__pane--margin">

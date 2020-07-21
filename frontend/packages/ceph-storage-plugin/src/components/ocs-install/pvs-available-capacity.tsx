@@ -8,7 +8,10 @@ import { calcPVsCapacity, getSCAvailablePVs } from '../../selectors';
 import '../modals/add-capacity-modal/_add-capacity-modal.scss';
 import './pvs-available-capacity.scss';
 
-export const PVsAvailableCapacity: React.FC<PVAvaialbleCapacityProps> = ({ replica, sc }) => {
+export const PVsAvailableCapacity: React.FC<PVAvaialbleCapacityProps> = ({
+  replica,
+  storageClass,
+}) => {
   const [data, loaded, loadError] = useK8sWatchResource<K8sResourceKind[]>(pvResource);
   let availableCapacity: string = '';
 
@@ -16,10 +19,10 @@ export const PVsAvailableCapacity: React.FC<PVAvaialbleCapacityProps> = ({ repli
     <div className="skeleton-text ceph-pvs-available-capacity__current-capacity--loading" />
   );
 
-  if ((loadError || data.length === 0 || !sc) && loaded) {
+  if ((loadError || data.length === 0 || !storageClass) && loaded) {
     availableStatusElement = <div className="text-muted">Not Available</div>;
   } else if (loaded) {
-    const pvs = getSCAvailablePVs(data, getName(sc));
+    const pvs = getSCAvailablePVs(data, getName(storageClass));
     availableCapacity = humanizeBinaryBytes(calcPVsCapacity(pvs)).string;
     availableStatusElement = <div>{`${availableCapacity} / ${replica} replicas`}</div>;
   }
@@ -35,6 +38,6 @@ export const PVsAvailableCapacity: React.FC<PVAvaialbleCapacityProps> = ({ repli
 };
 
 type PVAvaialbleCapacityProps = {
-  replica: string;
-  sc: StorageClassResourceKind;
+  replica: number;
+  storageClass: StorageClassResourceKind;
 };

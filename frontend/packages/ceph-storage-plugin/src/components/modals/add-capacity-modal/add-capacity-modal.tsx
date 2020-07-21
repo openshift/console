@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import * as classNames from 'classnames';
 import { FieldLevelHelp, humanizeBinaryBytes } from '@console/internal/components/utils/index';
 import {
@@ -10,40 +9,46 @@ import {
 } from '@console/internal/components/factory';
 import { usePrometheusPoll } from '@console/internal/components/graphs/prometheus-poll-hook';
 import { k8sPatch, StorageClassResourceKind } from '@console/internal/module/k8s';
-import { PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
-import { getName } from '@console/shared';
+import { getName, getRequestedPVCSize } from '@console/shared';
 import { OCSServiceModel } from '../../../models';
 import { OSD_CAPACITY_SIZES } from '../../../utils/osd-size-dropdown';
-import { CEPH_STORAGE_NAMESPACE, NO_PROVISIONER } from '../../../constants';
-import { labelTooltip, storageClassTooltip } from '../../../constants/ocs-install';
-import { CAPACITY_USAGE_QUERIES, StorageDashboardQuery } from '../../../constants/queries';
+import { NO_PROVISIONER, OCS_DEVICE_SET_REPLICA } from '../../../constants';
+import {
+  labelTooltip,
+  storageClassTooltip,
+  defaultRequestSize,
+} from '../../../constants/ocs-install';
 import { OCSStorageClassDropdown } from '../storage-class-dropdown';
 import { PVsAvailableCapacity } from '../../ocs-install/pvs-available-capacity';
+import { createDeviceSet, DeviceSet } from '../../ocs-install/ocs-request-data';
+import { cephCapacityResource } from '../../../constants/resources';
 import './_add-capacity-modal.scss';
 
 const getProvisionedCapacity = (value: number) => (value % 1 ? (value * 3).toFixed(2) : value * 3);
 
+const getCurrentDeviceSet = (deviceSets: DeviceSet[], selectedSCName: string): number =>
+  deviceSets.findIndex((ds) => ds.dataPVCTemplate.spec.storageClassName === selectedSCName);
+
 export const AddCapacityModal = (props: AddCapacityModalProps) => {
   const { ocsConfig, close, cancel } = props;
+  const deviceSets: DeviceSet[] = ocsConfig?.spec.storageDeviceSets || [];
 
-  const [response, loadError, loading] = usePrometheusPoll({
-    endpoint: PrometheusEndpoint.QUERY,
-    namespace: CEPH_STORAGE_NAMESPACE,
-    query: CAPACITY_USAGE_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_USED],
-  });
+  const [response, loadError, loading] = usePrometheusPoll(cephCapacityResource);
   const [storageClass, setStorageClass] = React.useState<StorageClassResourceKind>(null);
+  /* TBD(Afreen): Show installation storage class as preselected 
+                  Change state metadata
+  */
   const [inProgress, setProgress] = React.useState(false);
   const [errorMessage, setError] = React.useState('');
 
-  const osdSizeWithUnit = _.get(
-    ocsConfig,
-    'spec.storageDeviceSets[0].dataPVCTemplate.spec.resources.requests.storage',
-  );
-  const presentCount = _.get(ocsConfig, 'spec.storageDeviceSets[0].count');
-  const capacity = _.get(response, 'data.result[0].value[1]');
-
-  const osdSizeWithoutUnit = OSD_CAPACITY_SIZES[osdSizeWithUnit]?.size;
+  const cephCapacity: string = response?.data?.result?.[0]?.value[1];
+  const osdSizeWithUnit = getRequestedPVCSize(deviceSets[0].dataPVCTemplate);
+  const osdSizeWithoutUnit: number = OSD_CAPACITY_SIZES[osdSizeWithUnit]?.size;
   const provisionedCapacity = getProvisionedCapacity(osdSizeWithoutUnit);
+  const isNoProvionerSC: boolean = storageClass?.provisioner === NO_PROVISIONER;
+  const selectedSCName: string = getName(storageClass);
+  const deviceSetIndex: number = getCurrentDeviceSet(deviceSets, selectedSCName);
+  const replica = OCS_DEVICE_SET_REPLICA;
 
   let currentCapacity: React.ReactNode;
 
@@ -51,33 +56,45 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
     currentCapacity = (
       <div className="skeleton-text ceph-add-capacity__current-capacity--loading" />
     );
-  } else if (loadError || !capacity || !presentCount || !osdSizeWithoutUnit) {
+  } else if (loadError || !cephCapacity || !osdSizeWithoutUnit || deviceSetIndex === -1) {
     currentCapacity = <div className="text-muted">Not available</div>;
   } else {
     currentCapacity = (
       <div className="text-muted">
-        <strong>{`${humanizeBinaryBytes(capacity / 3).string} / ${presentCount *
-          osdSizeWithoutUnit} TiB`}</strong>
+        <strong>{`${humanizeBinaryBytes(Number(cephCapacity) / replica).string} / ${deviceSets[
+          deviceSetIndex
+        ].count * osdSizeWithoutUnit} TiB`}</strong>
       </div>
     );
   }
 
+  const onChange = (sc: StorageClassResourceKind) => setStorageClass(sc);
+
   const submit = (event: React.FormEvent<EventTarget>) => {
     event.preventDefault();
     setProgress(true);
-    const scName = getName(storageClass);
-    const patch = [
-      {
-        op: 'replace',
-        path: `/spec/storageDeviceSets/0/count`,
-        value: presentCount + 1,
-      },
-    ];
-    if (!scName) {
+    const patch = {
+      op: '',
+      path: '',
+      value: null,
+    };
+    const portable = !isNoProvionerSC;
+    const osdSize = isNoProvionerSC ? defaultRequestSize.BAREMETAL : osdSizeWithUnit;
+    if (deviceSetIndex === -1) {
+      patch.op = 'add';
+      patch.path = `/spec/storageDeviceSets/-`;
+      patch.value = createDeviceSet(selectedSCName, osdSize, portable);
+    } else {
+      patch.op = 'replace';
+      patch.path = `/spec/storageDeviceSets/${deviceSetIndex}/count`;
+      patch.value = deviceSets[deviceSetIndex].count + 1;
+    }
+
+    if (!selectedSCName) {
       setError('No StorageClass selected');
       setProgress(false);
     } else {
-      k8sPatch(OCSServiceModel, ocsConfig, patch)
+      k8sPatch(OCSServiceModel, ocsConfig, [patch])
         .then(() => {
           setProgress(false);
           close();
@@ -97,21 +114,20 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
         <div className="ceph-add-capacity__modal">
           <div
             className={classNames('ceph-add-capacity__sc-dropdown', {
-              'ceph-add-capacity__sc-dropdown--margin':
-                storageClass?.provisioner !== NO_PROVISIONER,
+              'ceph-add-capacity__sc-dropdown--margin': !isNoProvionerSC,
             })}
           >
             <label className="control-label" htmlFor="storageClass">
               Storage Class
               <FieldLevelHelp>{storageClassTooltip}</FieldLevelHelp>
             </label>
-            <OCSStorageClassDropdown onChange={setStorageClass} />
+            <OCSStorageClassDropdown onChange={onChange} />
           </div>
-          {storageClass?.provisioner === NO_PROVISIONER ? (
+          {isNoProvionerSC ? (
             <PVsAvailableCapacity
-              replica={ocsConfig.spec.storageDeviceSets[0].replica}
+              replica={replica}
               data-test-id="ceph-add-capacity-pvs-available-capacity"
-              sc={storageClass}
+              storageClass={storageClass}
             />
           ) : (
             <div>
@@ -129,9 +145,11 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
                   disabled
                   data-test-id="requestSize"
                 />
-                <div className="ceph-add-capacity__input--info-text">
-                  x 3 replicas = <strong>{provisionedCapacity} TiB</strong>
-                </div>
+                {provisionedCapacity && (
+                  <div className="ceph-add-capacity__input--info-text">
+                    x {replica} replicas = <strong>{provisionedCapacity} TiB</strong>
+                  </div>
+                )}
               </div>
               <div className="ceph-add-capacity__current-capacity">
                 <div className="text-secondary ceph-add-capacity__current-capacity--text">
