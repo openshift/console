@@ -456,6 +456,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
         <Modal
           className="co-catalog-page__overlay co-catalog-page__overlay--right"
           data-test-id="operator-modal-box"
+          aria-labelledby="catalog-item-header"
           header={
             <>
               <CatalogItemHeader
@@ -464,6 +465,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                 title={detailsItem.name}
                 vendor={`${detailsItem.version} provided by ${detailsItem.provider}`}
                 data-test-id="operator-modal-header"
+                id="catalog-item-header"
               />
               <div className="co-catalog-page__overlay-actions">
                 {detailsItem.marketplaceRemoteWorkflow && (
