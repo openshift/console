@@ -232,7 +232,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     !_.isEmpty(labelFilters) && applyFilter(labelFilters, FilterType.LABEL);
     !_.isEmpty(nameFilter) && applyFilter(nameFilter, FilterType.NAME);
     if (_.isEmpty(selectedRowFilters)) {
-      rowFilters.forEach((filter) => updateRowFilterSelected(filter.defaultSelected));
+      updateRowFilterSelected(_.uniq(_.flatMap(rowFilters, 'defaultSelected')));
     } else {
       applyRowFilter(selectedRowFilters);
     }
