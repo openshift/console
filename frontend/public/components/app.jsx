@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { render } from 'react-dom';
 import { Helmet } from 'react-helmet';
+import { linkify } from 'react-linkify';
 import { Provider } from 'react-redux';
 import { Route, Router, Switch } from 'react-router-dom';
 // AbortController is not supported in some older browser versions
@@ -37,6 +38,10 @@ const breakpointMD = 768;
 const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
 // Edge lacks URLSearchParams
 import 'url-search-params-polyfill';
+
+// Disable linkify 'fuzzy links' across the app.
+// Only linkify url strings beginning with a proper protocol scheme.
+linkify.set({ fuzzyLink: false });
 
 class App extends React.PureComponent {
   constructor(props) {
