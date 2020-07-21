@@ -1,0 +1,8 @@
+.odc-gitops-list-item {
+  cursor: pointer;
+  border: var(--pf-global--BorderWidth--md) solid var(--pf-global--BorderColor--100);
+  &__body {
+    font-size: var(--pf-global--FontSize--lg);
+    font-weight: var(--pf-global--FontWeight--overpass--semi-bold);
+  }
+}

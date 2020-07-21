@@ -501,7 +501,20 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: async () =>
         (
           await import(
-            './components/gitops/GitOpsDashboard' /* webpackChunkName: "dev-console-gitops" */
+            './components/gitops/GitOpsListPage' /* webpackChunkName: "dev-console-gitops" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: '/gitops/application/:appName',
+      loader: async () =>
+        (
+          await import(
+            './components/gitops/GitOpsDetailsPage' /* webpackChunkName: "dev-console-gitops" */
           )
         ).default,
     },
