@@ -4,7 +4,6 @@ import { browser, ExpectedConditions as until } from 'protractor';
 import {
   waitForStringNotInElement,
   click,
-  asyncForEach,
   waitForStringInElement,
 } from '@console/shared/src/test-utils/utils';
 import { detailViewAction, listViewAction } from '@console/shared/src/test-utils/actions.view';
@@ -12,12 +11,13 @@ import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import { annotationDialogOverlay } from '@console/internal-integration-tests/views/modal-annotations.view';
 import * as vmView from '../../views/virtualMachine.view';
 import {
-  VM_MIGRATION_TIMEOUT_SECS,
   PAGE_LOAD_TIMEOUT_SECS,
+  UNEXPECTED_ACTION_ERROR,
   VM_BOOTUP_TIMEOUT_SECS,
+  VM_MIGRATION_TIMEOUT_SECS,
 } from '../utils/constants/common';
 import { BaseVirtualMachine } from './baseVirtualMachine';
-import { NodeSelectorDialog } from '../dialogs/nodeSelectorDialog';
+import { AddDialog } from '../dialogs/schedulingDialog';
 import { saveButton } from '../../views/kubevirtUIResource.view';
 import { VMBuilderData } from '../types/vm';
 import { VM_ACTION, TAB, VM_STATUS } from '../utils/constants/vm';
@@ -78,28 +78,40 @@ export class VirtualMachine extends BaseVirtualMachine {
     );
   }
 
-  async addNodeSelectors(labels: MatchLabels) {
-    const nodeSelectorDialog = new NodeSelectorDialog();
+  async nodeSelectorsAction(action: string, labels: MatchLabels) {
+    const dialog = new AddDialog();
     await this.navigateToDetail();
     await this.modalEditNodeSelector();
-    await nodeSelectorDialog.addLabels(labels);
+    switch (action) {
+      case 'add':
+        await dialog.addLabels('label', 'key', labels);
+        break;
+      case 'delete':
+        await dialog.deleteLabels('label', 'key', labels);
+        break;
+      default:
+        throw Error(UNEXPECTED_ACTION_ERROR);
+    }
     await click(saveButton);
     await browser.wait(until.invisibilityOf(annotationDialogOverlay), PAGE_LOAD_TIMEOUT_SECS);
   }
 
-  async deleteNodeSelector(key: string) {
-    const nodeSelectorDialog = new NodeSelectorDialog();
+  async tolerationsAction(action: string, labels: MatchLabels) {
+    const dialog = new AddDialog();
     await this.navigateToDetail();
-    await this.modalEditNodeSelector();
-    await nodeSelectorDialog.deleteLabel(key);
+    await this.modalEditTolerations();
+    switch (action) {
+      case 'add':
+        await dialog.addLabels('toleration', 'taint key', labels);
+        break;
+      case 'delete':
+        await dialog.deleteLabels('toleration', 'taint key', labels);
+        break;
+      default:
+        throw Error(UNEXPECTED_ACTION_ERROR);
+    }
     await click(saveButton);
     await browser.wait(until.invisibilityOf(annotationDialogOverlay), PAGE_LOAD_TIMEOUT_SECS);
-  }
-
-  async deleteNodeSelectors(keys: string[]) {
-    return asyncForEach(keys, async (key: string) => {
-      await this.deleteNodeSelector(key);
-    });
   }
 
   async start(waitForAction = true) {
