@@ -124,7 +124,7 @@ const networkInQueriesPopup = [
   {
     query: top25ConsumerQueries[OverviewQuery.NODES_BY_NETWORK_IN],
     model: NodeModel,
-    metric: 'node',
+    metric: 'instance',
   },
 ];
 
@@ -142,7 +142,7 @@ const networkOutQueriesPopup = [
   {
     query: top25ConsumerQueries[OverviewQuery.NODES_BY_NETWORK_OUT],
     model: NodeModel,
-    metric: 'node',
+    metric: 'instance',
   },
 ];
 
