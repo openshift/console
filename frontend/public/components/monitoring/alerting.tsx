@@ -92,7 +92,7 @@ import { ResourceStatus } from '../utils/resource-status';
 import { history } from '../utils/router';
 import { LoadingInline, StatusBox } from '../utils/status-box';
 import { Timestamp } from '../utils/timestamp';
-import { getActiveNamespace, getActivePerspective } from '../../reducers/ui';
+import { getActiveNamespace } from '../../reducers/ui';
 
 const ruleURL = (rule: Rule) => `${RuleResource.plural}/${_.get(rule, 'id')}`;
 
@@ -189,7 +189,7 @@ export const StateTimestamp = ({ text, timestamp }) => (
   </div>
 );
 
-export const AlertStateDescription = ({ alert }) => {
+const AlertStateDescription = ({ alert }) => {
   if (alert && !_.isEmpty(alert.silencedBy)) {
     return <StateTimestamp text="Ends" timestamp={_.max(_.map(alert.silencedBy, 'endsAt'))} />;
   }
@@ -484,7 +484,7 @@ const AlertMessage: React.FC<AlertMessageProps> = ({ alertText, labels, template
   return <p>{messageParts}</p>;
 };
 
-export const HeaderAlertMessage: React.FC<{ alert: Alert; rule: Rule }> = ({ alert, rule }) => {
+const HeaderAlertMessage: React.FC<{ alert: Alert; rule: Rule }> = ({ alert, rule }) => {
   const annotation = alert.annotations.description ? 'description' : 'message';
   return (
     <AlertMessage
@@ -732,13 +732,13 @@ const ActiveAlerts = ({ alerts, ruleID }) => (
 );
 
 const ruleStateToProps = (state: RootState, { match }): AlertRulesDetailsPageProps => {
-  const { data, loaded, loadError }: Rules = rulesToProps(state);
+  const perspective = _.has(match.params, 'ns') ? 'dev' : 'admin';
+  const { data, loaded, loadError }: Rules = rulesToProps(state, perspective);
   const id = _.get(match, 'params.id');
   const rule = _.find(data, { id });
-  const activePerspective = getActivePerspective(state);
   const namespace = getActiveNamespace(state);
   const url = match.url;
-  return { loaded, loadError, rule, activePerspective, namespace, url };
+  return { loaded, loadError, rule, activePerspective: perspective, namespace, url };
 };
 
 export const AlertRulesDetailsPage = withFallback(

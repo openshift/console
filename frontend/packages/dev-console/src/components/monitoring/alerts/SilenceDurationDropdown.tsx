@@ -12,16 +12,21 @@ import { Rule } from '@console/internal/components/monitoring/types';
 
 type SilenceDurationDropDownProps = {
   rule: Rule;
-  namespace: string;
 };
 
-const SILENCE_FOR = 'Silence for ';
-const durations = [SILENCE_FOR, '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w'];
-const durationItems = _.zipObject(durations, durations);
+const durations = {
+  silenceFor: 'Silence for',
+  '30m': '30 minutes',
+  '1h': '1 hour',
+  '2h': '2 hours',
+  '1d': '1 day',
+};
+
 const { alertManagerBaseURL } = window.SERVER_FLAGS;
 
-const SilenceDurationDropDown: React.FC<SilenceDurationDropDownProps> = ({ rule, namespace }) => {
+const SilenceDurationDropDown: React.FC<SilenceDurationDropDownProps> = ({ rule }) => {
   const createdBy = useSelector((state: RootState) => state.UI.get('user')?.metadata?.name);
+  const ruleMatchers = _.map(rule?.labels, (value, key) => ({ isRegex: false, name: key, value }));
 
   const matchers = [
     {
@@ -29,34 +34,32 @@ const SilenceDurationDropDown: React.FC<SilenceDurationDropDownProps> = ({ rule,
       name: 'alertname',
       value: rule.name,
     },
-    {
-      isRegex: false,
-      name: 'namespace',
-      value: namespace,
-    },
+    ...ruleMatchers,
   ];
 
   const setDuration = (duration: string) => {
-    const startsAt = new Date();
-    const endsAt = new Date(startsAt.getTime() + parsePrometheusDuration(duration));
+    if (duration !== 'silenceFor') {
+      const startsAt = new Date();
+      const endsAt = new Date(startsAt.getTime() + parsePrometheusDuration(duration));
 
-    const payload = {
-      createdBy,
-      endsAt: endsAt.toISOString(),
-      startsAt: startsAt.toISOString(),
-      matchers,
-      comment: '',
-    };
+      const payload = {
+        createdBy,
+        endsAt: endsAt.toISOString(),
+        startsAt: startsAt.toISOString(),
+        matchers,
+        comment: '',
+      };
 
-    coFetchJSON.post(`${alertManagerBaseURL}/api/v2/silences`, payload);
+      coFetchJSON.post(`${alertManagerBaseURL}/api/v2/silences`, payload);
+    }
   };
 
   return (
     <Dropdown
       dropDownClassName="dropdown--full-width"
-      items={durationItems}
+      items={durations}
       onChange={(v: string) => setDuration(v)}
-      selectedKey={SILENCE_FOR}
+      selectedKey={'silenceFor'}
     />
   );
 };

@@ -805,7 +805,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: async () =>
         (
           await import(
-            './components/monitoring/alerts/MonitoringAlertsDetailsPage' /* webpackChunkName: "dev-console-monitoring-alerts" */
+            './components/monitoring/alerts/MonitoringAlertsRulesDetailsPage' /* webpackChunkName: "dev-console-monitoring-alerts" */
           )
         ).default,
     },
@@ -818,7 +818,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: async () =>
         (
           await import(
-            './components/monitoring/alerts/MonitoringRuleDetailsPage' /* webpackChunkName: "dev-console-monitoring-rules" */
+            './components/monitoring/alerts/MonitoringAlertsRulesDetailsPage' /* webpackChunkName: "dev-console-monitoring-rules" */
           )
         ).default,
     },

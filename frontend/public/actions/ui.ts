@@ -336,8 +336,11 @@ export const monitoringErrored = (
     key,
     data: { loaded: true, loadError, data: null, perspective },
   });
-export const monitoringSetRules = (key: 'rules' | 'devRules', rules: Rule[]) =>
-  action(ActionType.MonitoringSetRules, { key, data: rules });
+export const monitoringSetRules = (
+  key: 'rules' | 'devRules',
+  rules: Rule[],
+  perspective = 'admin',
+) => action(ActionType.MonitoringSetRules, { key, data: rules, perspective });
 export const monitoringToggleGraphs = () => action(ActionType.ToggleMonitoringGraphs);
 export const notificationDrawerToggleExpanded = () =>
   action(ActionType.NotificationDrawerToggleExpanded);

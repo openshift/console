@@ -67,7 +67,7 @@ export const MonitoringAlerts: React.FC<props> = ({ match, rules, filters, listS
 
   React.useEffect(() => {
     const sortThanosRules = _.sortBy(thanosAlertsAndRules.rules, alertingRuleStateOrder);
-    dispatch(monitoringSetRules('devRules', sortThanosRules));
+    dispatch(monitoringSetRules('devRules', sortThanosRules, 'dev'));
     dispatch(monitoringLoaded('devAlerts', thanosAlertsAndRules.alerts, 'dev'));
   }, [dispatch, thanosAlertsAndRules]);
 

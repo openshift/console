@@ -7,7 +7,10 @@ import { useDispatch } from 'react-redux';
 import { history, StatusBox, LoadingBox } from '@console/internal/components/utils';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import NamespacedPage, { NamespacedPageVariants } from '../../NamespacedPage';
-import { AlertsDetailsPage } from '@console/internal/components/monitoring/alerting';
+import {
+  AlertsDetailsPage,
+  AlertRulesDetailsPage,
+} from '@console/internal/components/monitoring/alerting';
 import { PrometheusRulesResponse } from '@console/internal/components/monitoring/types';
 import { useURLPoll } from '@console/internal/components/utils/url-poll-hook';
 import { PROMETHEUS_TENANCY_BASE_PATH } from '@console/internal/components/graphs';
@@ -23,6 +26,8 @@ interface MonitoringAlertsDetailsPageProps {
 }
 
 const POLL_DELAY = 15 * 1000;
+const ALERT_DETAILS_PATH = '/dev-monitoring/ns/:ns/alerts/:ruleID';
+const RULE_DETAILS_PATH = '/dev-monitoring/ns/:ns/rules/:id';
 
 const handleNamespaceChange = (newNamespace: string): void => {
   if (newNamespace === ALL_NAMESPACES_KEY) {
@@ -34,6 +39,7 @@ const handleNamespaceChange = (newNamespace: string): void => {
 
 const MonitoringAlertsDetailsPage: React.FC<MonitoringAlertsDetailsPageProps> = ({ match }) => {
   const namespace = match.params.ns;
+  const { path } = match;
   const dispatch = useDispatch();
   const [response, loadError, loading] = useURLPoll<PrometheusRulesResponse>(
     `${PROMETHEUS_TENANCY_BASE_PATH}/api/v1/rules?namespace=${namespace}`,
@@ -46,10 +52,8 @@ const MonitoringAlertsDetailsPage: React.FC<MonitoringAlertsDetailsPageProps> = 
   );
 
   React.useEffect(() => {
-    const sortThanosRules = _.sortBy(thanosAlertsAndRules.rules, (rule) =>
-      alertingRuleStateOrder(rule),
-    );
-    dispatch(monitoringSetRules('devRules', sortThanosRules));
+    const sortThanosRules = _.sortBy(thanosAlertsAndRules.rules, alertingRuleStateOrder);
+    dispatch(monitoringSetRules('devRules', sortThanosRules, 'dev'));
     dispatch(monitoringLoaded('devAlerts', thanosAlertsAndRules.alerts, 'dev'));
   }, [dispatch, thanosAlertsAndRules]);
 
@@ -67,7 +71,8 @@ const MonitoringAlertsDetailsPage: React.FC<MonitoringAlertsDetailsPageProps> = 
       hideApplications
       onNamespaceChange={handleNamespaceChange}
     >
-      <AlertsDetailsPage match={match} />
+      {path === ALERT_DETAILS_PATH && <AlertsDetailsPage match={match} />}
+      {path === RULE_DETAILS_PATH && <AlertRulesDetailsPage match={match} />}
     </NamespacedPage>
   );
 };
