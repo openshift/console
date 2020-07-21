@@ -29,6 +29,7 @@ import {
   EmptyStateVariant,
   Title,
 } from '@patternfly/react-core';
+import { isAlertAction, useExtensions, AlertAction } from '@console/plugin-sdk';
 import { usePrevious } from '@console/shared/src/hooks/previous';
 
 import { coFetchJSON } from '../co-fetch';
@@ -72,22 +73,33 @@ const AlertEmptyState: React.FC<AlertEmptyProps> = ({ drawerToggle }) => (
   </EmptyState>
 );
 
-export const alertActions = new Map().set('AlertmanagerReceiversNotConfigured', {
-  text: 'Configure',
-  path: '/monitoring/alertmanagerconfig',
-});
+export const getAlertActions = (actionsExtensions: AlertAction[]) => {
+  const alertActions = new Map().set('AlertmanagerReceiversNotConfigured', {
+    text: 'Configure',
+    path: '/monitoring/alertmanagerconfig',
+  });
+  actionsExtensions.forEach(({ properties }) =>
+    alertActions.set(properties.alert, {
+      text: properties.text,
+      path: properties.path,
+    }),
+  );
+  return alertActions;
+};
 
 const getAlertNotificationEntries = (
   isLoaded: boolean,
   alertData: Alert[],
   toggleNotificationDrawer: () => void,
+  alertActionExtensions: AlertAction[],
   isCritical: boolean,
 ): React.ReactNode[] =>
   isLoaded && !_.isEmpty(alertData)
     ? alertData
         .filter((a) => (isCritical ? criticalCompare(a) : otherAlertCompare(a)))
         .map((alert, i) => {
-          const action = alertActions.get(alert.rule.name);
+          const action = getAlertActions(alertActionExtensions).get(alert.rule.name);
+          const alertActionPath = _.isFunction(action?.path) ? action.path(alert) : action?.path;
           return (
             <NotificationEntry
               key={`${i}_${alert.activeAt}`}
@@ -98,7 +110,7 @@ const getAlertNotificationEntries = (
               toggleNotificationDrawer={toggleNotificationDrawer}
               targetPath={alertURL(alert, alert.rule.id)}
               actionText={action?.text}
-              actionPath={action?.path}
+              actionPath={alertActionPath}
             />
           );
         })
@@ -206,6 +218,8 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
   const [clusterVersionData, clusterVersionLoaded] = useK8sWatchResource<ClusterVersionKind>(
     cvResource,
   );
+  const alertActionExtensions = useExtensions<AlertAction>(isAlertAction);
+
   const updateData: ClusterUpdate[] = getSortedUpdates(clusterVersionData);
   const { data, loaded, loadError } = alerts || {};
 
@@ -226,12 +240,14 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
     true,
     data,
     toggleNotificationDrawer,
+    alertActionExtensions,
     true,
   );
   const otherAlertList: React.ReactNode[] = getAlertNotificationEntries(
     loaded,
     data,
     toggleNotificationDrawer,
+    alertActionExtensions,
     false,
   );
   const [isAlertExpanded, toggleAlertExpanded] = React.useState<boolean>(
