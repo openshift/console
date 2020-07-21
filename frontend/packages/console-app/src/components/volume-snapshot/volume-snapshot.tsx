@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { match } from 'react-router';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { referenceForModel, VolumeSnapshotKind } from '@console/internal/module/k8s';
@@ -24,7 +25,7 @@ import {
   VolumeSnapshotClassModel,
   VolumeSnapshotContentModel,
 } from '@console/internal/models';
-import { Status } from '@console/shared';
+import { Status, getBadgeFromType, BadgeType } from '@console/shared';
 import { snapshotStatusFilters, volumeSnapshotStatus } from '../../status';
 
 const tableColumnClasses = [
@@ -154,15 +155,29 @@ const VolumeSnapshotTable: React.FC = (props) => (
   <Table {...props} aria-label="Volume Snapshot Table" Header={Header} Row={Row} virtualize />
 );
 
-const VolumeSnapshotPage: React.FC = (props) => {
+const VolumeSnapshotPage: React.FC<VolumeSnapshotPageProps> = (props) => {
+  const namespace = props.namespace || props.match?.params?.ns || 'all-namespaces';
+  const createProps = {
+    to: `/k8s/${namespace === 'all-namespaces' ? namespace : `ns/${namespace}`}/${
+      props.match?.params?.plural
+    }/~new/form`,
+  };
   return (
     <ListPage
       {...props}
       kind={referenceForModel(VolumeSnapshotModel)}
       ListComponent={VolumeSnapshotTable}
       rowFilters={snapshotStatusFilters}
+      canCreate
+      createProps={createProps}
+      badge={getBadgeFromType(BadgeType.TECH)}
     />
   );
+};
+
+type VolumeSnapshotPageProps = {
+  namespace?: string;
+  match: match<{ ns?: string; plural?: string }>;
 };
 
 export default VolumeSnapshotPage;

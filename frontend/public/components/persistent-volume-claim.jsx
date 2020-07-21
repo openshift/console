@@ -29,14 +29,15 @@ import { setPVCMetrics } from '../actions/ui';
 import { PrometheusEndpoint } from './graphs/helpers';
 import { usePrometheusPoll } from './graphs/prometheus-poll-hook';
 
-const { common, ExpandPVC } = Kebab.factory;
+const { common, ExpandPVC, PVCSnapshot } = Kebab.factory;
 const menuActions = [
   ...Kebab.getExtensionsActionsForKind(PersistentVolumeClaimModel),
   ExpandPVC,
+  PVCSnapshot,
   ...common,
 ];
 
-const PVCStatus = ({ pvc }) => {
+export const PVCStatus = ({ pvc }) => {
   const pvcStatusExtensions = useExtensions(isPVCStatus);
   if (pvcStatusExtensions.length > 0) {
     const sortedByPriority = pvcStatusExtensions.sort(

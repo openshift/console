@@ -27,6 +27,7 @@ import {
 import { impersonateStateToProps } from '../../reducers/ui';
 import { connectToModel } from '../../kinds';
 import * as plugins from '../../plugins';
+import { VolumeSnapshotModel } from '../../models';
 
 export const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] => {
   const subs: { [key: string]: KebabSubMenu } = {};
@@ -328,6 +329,13 @@ const kebabFactory: KebabFactory = {
         resource: obj,
       }),
     accessReview: asAccessReview(kind, obj, 'patch'),
+  }),
+  PVCSnapshot: (kind, obj) => ({
+    label: 'Create Snapshot',
+    href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/${
+      VolumeSnapshotModel.plural
+    }/~new/form`,
+    accessReview: asAccessReview(kind, obj, 'create'),
   }),
 };
 
