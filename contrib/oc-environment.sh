@@ -12,7 +12,6 @@
 # The environment variables beginning with "BRIDGE_" act just like bridge
 # command line arguments - in fact. to get more information about any of them,
 # you can run ./bin/bridge --help
-set -x
 
 BRIDGE_USER_AUTH="disabled"
 export BRIDGE_USER_AUTH
