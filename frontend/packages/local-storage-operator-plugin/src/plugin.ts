@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import {
+  AlertAction,
   ModelDefinition,
   ModelFeatureFlag,
   Plugin,
@@ -7,11 +8,17 @@ import {
   HorizontalNavTab,
 } from '@console/plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
-import * as models from './models';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { NodeModel } from '@console/internal/models';
+import { getAlertActionPath } from './utils/alert-actions-path';
+import * as models from './models';
 
-type ConsumedExtensions = HorizontalNavTab | ModelFeatureFlag | ModelDefinition | RoutePage;
+type ConsumedExtensions =
+  | AlertAction
+  | HorizontalNavTab
+  | ModelFeatureFlag
+  | ModelDefinition
+  | RoutePage;
 
 const LSO_FLAG = 'LSO';
 const LSO_DEVICE_DISCOVERY = 'LSO_DEVICE_DISCOVERY';
@@ -65,6 +72,28 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/disks-list/disks-list-page' /* webpackChunkName: "lso-disks-list" */
         ).then((m) => m.default),
+    },
+    flags: {
+      required: [LSO_DEVICE_DISCOVERY],
+    },
+  },
+  {
+    type: 'AlertAction',
+    properties: {
+      alert: 'CephOSDDiskNotResponding',
+      text: 'Troubleshoot',
+      path: getAlertActionPath,
+    },
+    flags: {
+      required: [LSO_DEVICE_DISCOVERY],
+    },
+  },
+  {
+    type: 'AlertAction',
+    properties: {
+      alert: 'CephOSDDiskUnavailable',
+      text: 'Troubleshoot',
+      path: getAlertActionPath,
     },
     flags: {
       required: [LSO_DEVICE_DISCOVERY],

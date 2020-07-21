@@ -1,6 +1,8 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
-import { alertActions } from '@console/internal/components/notification-drawer';
+import { isAlertAction, useExtensions, AlertAction } from '@console/plugin-sdk';
+import { getAlertActions } from '@console/internal/components/notification-drawer';
 import { Timestamp } from '@console/internal/components/utils/timestamp';
 import { Alert } from '@console/internal/components/monitoring/types';
 import { alertURL } from '@console/internal/components/monitoring/utils';
@@ -42,7 +44,8 @@ export const StatusItem: React.FC<StatusItemProps> = ({ Icon, timestamp, message
 };
 
 const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
-  const action = alertActions.get(alert.rule.name);
+  const actionsExtensions = useExtensions<AlertAction>(isAlertAction);
+  const action = getAlertActions(actionsExtensions).get(alert.rule.name);
   return (
     <StatusItem
       Icon={getSeverityIcon(getAlertSeverity(alert))}
@@ -50,7 +53,7 @@ const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
       message={getAlertDescription(alert) || getAlertMessage(alert)}
     >
       {action ? (
-        <Link to={action.path}>{action.text}</Link>
+        <Link to={_.isFunction(action.path) ? action.path(alert) : action.path}>{action.text}</Link>
       ) : (
         <Link to={alertURL(alert, alert.rule.id)}>View details</Link>
       )}
