@@ -222,27 +222,28 @@ const fetchNodeMetrics = (): Promise<NodeMetrics> => {
   const metrics = [
     {
       key: 'usedMemory',
-      query: 'sum by (instance) (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes)',
+      query: 'node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes',
     },
     {
       key: 'totalMemory',
-      query: 'sum by (instance) (node_memory_MemTotal_bytes)',
+      query: 'node_memory_MemTotal_bytes',
     },
     {
       key: 'usedStorage',
-      query: 'sum by (instance) (node_filesystem_size_bytes - node_filesystem_free_bytes)',
+      query: 'instance:node_filesystem_usage:sum',
     },
     {
       key: 'totalStorage',
-      query: 'sum by (instance) (node_filesystem_size_bytes)',
+      query:
+        'sum by(instance) (topk(1, node_filesystem_size_bytes{device!="tmpfs",device!="nsfs",mountpoint!="/boot",mountpoint!="/boot/efi"}) by (device, instance))',
     },
     {
       key: 'cpu',
-      query: 'sum by(instance) (instance:node_cpu:rate:sum)',
+      query: 'instance:node_cpu:rate:sum',
     },
     {
       key: 'pods',
-      query: 'sum by(node)(kubelet_running_pod_count)',
+      query: 'kubelet_running_pod_count',
     },
   ];
   const promises = metrics.map(({ key, query }) => {
@@ -250,7 +251,7 @@ const fetchNodeMetrics = (): Promise<NodeMetrics> => {
     return coFetchJSON(url).then(({ data: { result } }) => {
       return result.reduce((acc, data) => {
         const value = Number(data.value[1]);
-        return _.set(acc, [key, data.metric.instance || data.metric.node], value);
+        return _.set(acc, [key, data.metric.node || data.metric.instance], value);
       }, {});
     });
   });

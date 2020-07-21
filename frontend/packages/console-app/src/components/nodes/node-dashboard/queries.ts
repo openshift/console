@@ -35,11 +35,13 @@ const queries = {
     `node_memory_MemTotal_bytes{instance='<%= node %>'} - node_memory_MemAvailable_bytes{instance='<%= node %>'}`,
   ),
   [NodeQueries.MEMORY_TOTAL]: _.template(`node_memory_MemTotal_bytes{instance='<%= node %>'}`),
-  [NodeQueries.POD_COUNT]: _.template(`kubelet_running_pod_count{instance=~'<%= ipAddress %>:.*'}`),
+  [NodeQueries.POD_COUNT]: _.template(`kubelet_running_pod_count{node='<%= node %>'}`),
   [NodeQueries.FILESYSTEM_USAGE]: _.template(
     `instance:node_filesystem_usage:sum{instance='<%= node %>'}`,
   ),
-  [NodeQueries.FILESYSTEM_TOTAL]: _.template(`node_filesystem_size_bytes{instance='<%= node %>'}`),
+  [NodeQueries.FILESYSTEM_TOTAL]: _.template(
+    `sum by(instance) (topk(1, node_filesystem_size_bytes{device!="tmpfs",device!="nsfs",mountpoint!="/boot",mountpoint!="/boot/efi"}) by (device, instance))`,
+  ),
   [NodeQueries.NETWORK_IN_UTILIZATION]: _.template(
     `instance:node_network_receive_bytes:rate:sum{instance='<%= node %>'}`,
   ),
@@ -150,12 +152,12 @@ export const getResourceQutoaQueries = (node: string) => ({
   ]({ node }),
 });
 
-export const getUtilizationQueries = (node: string, ipAddress: string) => ({
+export const getUtilizationQueries = (node: string) => ({
   [NodeQueries.CPU_USAGE]: queries[NodeQueries.CPU_USAGE]({ node }),
   [NodeQueries.CPU_TOTAL]: queries[NodeQueries.CPU_TOTAL]({ node }),
   [NodeQueries.MEMORY_USAGE]: queries[NodeQueries.MEMORY_USAGE]({ node }),
   [NodeQueries.MEMORY_TOTAL]: queries[NodeQueries.MEMORY_TOTAL]({ node }),
-  [NodeQueries.POD_COUNT]: queries[NodeQueries.POD_COUNT]({ ipAddress }),
+  [NodeQueries.POD_COUNT]: queries[NodeQueries.POD_COUNT]({ node }),
   [NodeQueries.FILESYSTEM_USAGE]: queries[NodeQueries.FILESYSTEM_USAGE]({
     node,
   }),

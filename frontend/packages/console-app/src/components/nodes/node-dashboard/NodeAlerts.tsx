@@ -58,8 +58,8 @@ const LimitLink: React.FC<LimitLinkProps> = ({
   const nodeName = obj.metadata.name;
   const nodeIp = getNodeAddresses(obj).find((addr) => addr.type === 'InternalIP')?.address;
   const [queries, resourceQuotaQueries] = React.useMemo(
-    () => [getUtilizationQueries(nodeName, nodeIp), getResourceQutoaQueries(nodeName)],
-    [nodeIp, nodeName],
+    () => [getUtilizationQueries(nodeName), getResourceQutoaQueries(nodeName)],
+    [nodeName],
   );
   const [current, currentError, currentValue] = usePrometheusQuery(queries[currentKey], humanize);
   const [total, totalError, totalValue] = usePrometheusQuery(queries[totalKey], humanize);

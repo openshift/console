@@ -117,7 +117,7 @@ const UtilizationCard: React.FC = () => {
   const [queries, multilineQueries, resourceQuotaQueries, consumers] = React.useMemo(() => {
     const topConsumerQueries = getTopConsumerQueries(nodeIp);
     return [
-      getUtilizationQueries(nodeName, nodeIp),
+      getUtilizationQueries(nodeName),
       getMultilineQueries(nodeName),
       getResourceQutoaQueries(nodeName),
       [
