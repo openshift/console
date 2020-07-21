@@ -16,6 +16,16 @@ form.pf-c-form {
   background: none;
 }
 
+// Positions the img in OperatorHub that are nested with <span class="catalog-tile-pf-icon"><img ...>
+.catalog-tile-pf-icon--align-top {
+  vertical-align: top;
+}
+
+// Until Patternfly-React-Extensions is updated: https://github.com/patternfly/patternfly-react/issues/1146
+.catalog-tile-pf-title {
+  @include co-break-word;
+}
+
 kbd {
   border-radius: 3px;
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
