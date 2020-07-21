@@ -151,8 +151,8 @@ const MonitoringResourceIcon: React.FC<MonitoringResourceIconProps> = ({ classNa
 
 const stateIcons = {
   [AlertStates.Firing]: <BellIcon />,
-  [AlertStates.Silenced]: <BellSlashIcon className="text-muted" />,
   [AlertStates.Pending]: <OutlinedBellIcon />,
+  [AlertStates.Silenced]: <BellSlashIcon className="text-muted" />,
 };
 
 export const AlertState: React.FC<AlertStateProps> = ({ state }) => {
@@ -1010,8 +1010,8 @@ export const alertsRowFilters: RowFilter[] = [
     filterGroupName: 'Alert State',
     items: [
       { id: AlertStates.Firing, title: 'Firing' },
-      { id: AlertStates.Silenced, title: 'Silenced' },
       { id: AlertStates.Pending, title: 'Pending' },
+      { id: AlertStates.Silenced, title: 'Silenced' },
     ],
     reducer: alertState,
     type: 'alert-state',

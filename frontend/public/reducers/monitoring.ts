@@ -53,7 +53,7 @@ export const alertSeverityOrder = (alert: Alert | Rule): ListOrder => {
 // Sort alerts and silences by their state (sort first by the state itself, then by the timestamp
 // relevant to the state)
 export const alertStateOrder = (alert: Alert): ListOrder => [
-  [AlertStates.Firing, AlertStates.Silenced, AlertStates.Pending].indexOf(alertState(alert)),
+  [AlertStates.Firing, AlertStates.Pending, AlertStates.Silenced].indexOf(alertState(alert)),
   alertState(alert) === AlertStates.Silenced
     ? _.max(_.map(alert.silencedBy, 'endsAt'))
     : _.get(alert, 'activeAt'),
