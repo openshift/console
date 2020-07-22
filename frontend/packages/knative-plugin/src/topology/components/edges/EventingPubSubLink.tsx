@@ -7,6 +7,7 @@ import {
   observer,
   WithSourceDragProps,
   WithTargetDragProps,
+  WithContextMenuProps,
 } from '@patternfly/react-topology';
 import { getTopologyResourceObject, BaseEdge } from '@console/dev-console/src/components/topology';
 import { EventingBrokerModel } from '@console/knative-plugin/src/models';
@@ -18,7 +19,8 @@ type EventingPubSubLinkProps = {
   element: Edge;
   dragging: boolean;
 } & WithSourceDragProps &
-  WithTargetDragProps;
+  WithTargetDragProps &
+  WithContextMenuProps;
 
 const EventingPubSubLink: React.FC<EventingPubSubLinkProps> = ({
   element,

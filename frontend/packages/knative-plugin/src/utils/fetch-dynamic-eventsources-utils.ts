@@ -4,6 +4,7 @@ import { coFetch } from '@console/internal/co-fetch';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { K8sKind, kindToAbbr, referenceForModel } from '@console/internal/module/k8s';
 import { chart_color_red_300 as knativeEventingColor } from '@patternfly/react-tokens';
+import { EventingSubscriptionModel, EventingTriggerModel } from '../models';
 
 interface EventSourcetData {
   loaded: boolean;
@@ -218,4 +219,8 @@ export const isEventingChannelResourceKind = (resourceRef: string): boolean => {
     (model: K8sKind) => referenceForModel(model) === resourceRef,
   );
   return index !== -1;
+};
+
+export const isEventingPubSubLinkKind = (kind: string) => {
+  return [EventingSubscriptionModel.kind, EventingTriggerModel.kind].includes(kind);
 };

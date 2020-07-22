@@ -62,6 +62,8 @@ export const knativeContextMenu = (element: Node) => {
   const actions = [];
   if (model.kind === RevisionModel.kind) {
     actions.push(...getRevisionActions());
+  } else if (element.getType() === TYPE_EVENT_PUB_SUB_LINK) {
+    actions.push(...Kebab.getExtensionsActionsForKind(model), ...Kebab.factory.common);
   } else {
     actions.push(
       ModifyApplication,
@@ -159,7 +161,9 @@ export const getKnativeComponentFactory = (): ComponentFactory => {
       case TYPE_EVENT_SOURCE_LINK:
         return withTargetDrag(eventSourceLinkDragSourceSpec())(EventSourceLink);
       case TYPE_EVENT_PUB_SUB_LINK:
-        return withTargetDrag(eventingPubSubLinkDragSourceSpec())(EventingPubSubLink);
+        return withContextMenu(knativeContextMenu)(
+          withTargetDrag(eventingPubSubLinkDragSourceSpec())(EventingPubSubLink),
+        );
       default:
         return undefined;
     }
