@@ -1,124 +1,149 @@
 import * as React from 'react';
-import { Dropdown, DropdownToggle, DropdownItem, DropdownPosition } from '@patternfly/react-core';
+import { SelectGroup, SelectOption, Select, SelectVariant } from '@patternfly/react-core';
 import {
-  ACCOUNTS,
-  PROVIDERS,
-  BY_IOPS,
-  BY_LOGICAL_USAGE,
-  BY_PHYSICAL_VS_LOGICAL_USAGE,
-  BY_EGRESS,
+  Breakdown,
+  Metrics,
+  ServiceType,
+  Groups,
+  DataConsumption,
+  defaultBreakdown,
 } from '../../constants';
+import './data-consumption-card.scss';
 
-export const DataConsumptionDropdown: React.FC<DataConsumptionDropdownProps> = ({
-  type,
-  kpi,
-  setType,
-  setKpi,
-}) => {
-  const [isOpenTypeDropdown, setIsOpenTypeDropdown] = React.useState(false);
-  const [isOpenKpiDropdown, setIsOpenKpiDropdown] = React.useState(false);
-  const typesDropdown = {
-    providers: PROVIDERS,
-    accounts: ACCOUNTS,
-  };
+type SelectItems = {
+  group: string;
+  items: string[];
+}[];
 
-  const kpiDropdown = {
-    iops: BY_IOPS,
-    usage: type === typesDropdown.accounts ? BY_LOGICAL_USAGE : BY_PHYSICAL_VS_LOGICAL_USAGE,
-    egress: BY_EGRESS,
-  };
+export const getSelectOptions = (dropdownItems: SelectItems) => {
+  return dropdownItems.map(({ group, items }) => (
+    <SelectGroup key={group} label={group}>
+      {items.map((item) => (
+        <SelectOption key={item} value={item} />
+      ))}
+    </SelectGroup>
+  ));
+};
 
-  const typeDropdownItems = [
-    <DropdownItem id="providers" key="Providers" component="button">
-      Providers
-    </DropdownItem>,
-    <DropdownItem id="accounts" key="Accounts" component="button">
-      Accounts
-    </DropdownItem>,
-  ];
+const RGWDropdown = [
+  {
+    group: Groups.METRIC,
+    items: [Metrics.LATENCY, Metrics.BANDWIDTH],
+  },
+];
 
-  const providersKpiDropdownItems = [
-    <DropdownItem id="iops" key="iops" component="button">
-      I/O Operations
-    </DropdownItem>,
-    <DropdownItem id="usage" key="phyVslog" component="button">
-      Physical vs. Logical Usage
-    </DropdownItem>,
-    <DropdownItem id="egress" key="egress" component="button">
-      Egress
-    </DropdownItem>,
-  ];
+const ServiceTypeDropdown = [
+  {
+    group: Groups.SERVICE,
+    items: [ServiceType.MCG, ServiceType.RGW],
+  },
+];
 
-  const accountKpiDropdownItems = [
-    <DropdownItem id="iops" key="iops" component="button">
-      I/O Operations
-    </DropdownItem>,
-    <DropdownItem id="usage" key="phyVslog" component="button">
-      Logical Used Capacity
-    </DropdownItem>,
-  ];
+export const DataConsumptionDropdown: React.FC<DataConsumptionDropdownProps> = (props) => {
+  const {
+    selectedService,
+    setSelectedService,
+    selectedBreakdown,
+    setSelectedBreakdown,
+    selectedMetric,
+    setSelectedMetric,
+    isRgwSupported,
+  } = props;
+  const [isOpenComboDropdown, setComboDropdown] = React.useState(false);
+  const [isOpenServiceTypeDropdown, setServiceTypeDropdown] = React.useState(false);
 
-  const onToggleTypeDropdown = React.useCallback((props) => {
-    setIsOpenTypeDropdown(props);
-  }, []);
-
-  const onSelectTypeDropdown = React.useCallback(
-    (e) => {
-      setIsOpenTypeDropdown(!isOpenTypeDropdown);
-      setType(typesDropdown[e.currentTarget.id]);
-      if (kpi === BY_LOGICAL_USAGE || kpi === BY_PHYSICAL_VS_LOGICAL_USAGE) {
-        const val =
-          e.currentTarget.id === 'accounts' ? BY_LOGICAL_USAGE : BY_PHYSICAL_VS_LOGICAL_USAGE;
-        setKpi(val);
-      }
-      if (kpi === 'Egress' && e.currentTarget.id === 'accounts') {
-        setKpi(kpiDropdown.iops);
-      }
-    },
-    [isOpenTypeDropdown, typesDropdown, kpiDropdown, kpi, setKpi, setType],
+  const MCGDropdown = React.useMemo(
+    () => [
+      {
+        group: Groups.BREAKDOWN,
+        items: [Breakdown.PROVIDERS, Breakdown.ACCOUNTS],
+      },
+      {
+        group: Groups.METRIC,
+        items: [
+          Metrics.IOPS,
+          ...(selectedBreakdown === Breakdown.ACCOUNTS ? [Metrics.LOGICAL] : [Metrics.PHY_VS_LOG]),
+          ...(selectedBreakdown === Breakdown.PROVIDERS ? [Metrics.EGRESS] : []),
+        ],
+      },
+    ],
+    [selectedBreakdown],
   );
 
-  const onToggleKpiDropdown = React.useCallback((props) => {
-    setIsOpenKpiDropdown(props);
-  }, []);
+  const onSelectComboDropdown = (_e: React.MouseEvent, selection: Breakdown | Metrics) => {
+    const isBreakdown = (MCGDropdown[0].items as Breakdown[]).includes(selection as Breakdown);
+    const breakdownBy = isBreakdown ? Groups.BREAKDOWN : Groups.METRIC;
+    switch (breakdownBy) {
+      case Groups.BREAKDOWN:
+        setSelectedBreakdown(selection as Breakdown);
+        setSelectedMetric(DataConsumption.defaultMetrics[selectedService]);
+        break;
+      case Groups.METRIC:
+        setSelectedMetric(selection as Metrics);
+        break;
+      default:
+        break;
+    }
+  };
 
-  const onSelectKpiDropdown = React.useCallback(
-    (e) => {
-      setIsOpenKpiDropdown(!isOpenKpiDropdown);
-      setKpi(kpiDropdown[e.currentTarget.id]);
-    },
-    [isOpenKpiDropdown, kpiDropdown, setKpi],
-  );
+  const onSelectServiceDropdown = (_e: React.MouseEvent, selection: ServiceType) => {
+    setSelectedService(selection);
+    setSelectedMetric(DataConsumption.defaultMetrics[selection]);
+    if (selection === ServiceType.MCG) {
+      setSelectedBreakdown(defaultBreakdown[ServiceType.MCG]);
+    } else {
+      setSelectedBreakdown(null);
+    }
+  };
+
+  const comboDropdownItems = React.useMemo(() => {
+    const dropdown = selectedService === ServiceType.MCG ? MCGDropdown : RGWDropdown;
+    return getSelectOptions(dropdown);
+  }, [selectedService, MCGDropdown]);
+
+  const serviceDropdownItems = getSelectOptions(ServiceTypeDropdown);
 
   return (
     <div className="nb-data-consumption-card__dropdown">
-      <Dropdown
-        className="nb-data-consumption-card__dropdown-item"
+      {isRgwSupported && (
+        <Select
+          variant={SelectVariant.single}
+          className="nb-data-consumption-card__dropdown-item"
+          autoFocus={false}
+          onSelect={onSelectServiceDropdown}
+          onToggle={() => setServiceTypeDropdown(!isOpenServiceTypeDropdown)}
+          isOpen={isOpenServiceTypeDropdown}
+          selections={[selectedService]}
+          isGrouped
+          placeholderText={`Type: ${selectedService}`}
+          isCheckboxSelectionBadgeHidden
+        >
+          {serviceDropdownItems}
+        </Select>
+      )}
+      <Select
+        variant={SelectVariant.typeaheadMulti}
+        className="nb-data-consumption-card__dropdown-item nb-data-consumption-card__dropdown-item--disable-typeahead"
         autoFocus={false}
-        onSelect={onSelectTypeDropdown}
-        toggle={<DropdownToggle onToggle={onToggleTypeDropdown}>{type}</DropdownToggle>}
-        position={DropdownPosition.right}
-        isOpen={isOpenTypeDropdown}
-        dropdownItems={typeDropdownItems}
-      />
-      <Dropdown
-        className="nb-data-consumption-card__dropdown-item"
-        autoFocus={false}
-        onSelect={onSelectKpiDropdown}
-        toggle={<DropdownToggle onToggle={onToggleKpiDropdown}>{kpi}</DropdownToggle>}
-        position={DropdownPosition.right}
-        isOpen={isOpenKpiDropdown}
-        dropdownItems={
-          type === typesDropdown.accounts ? accountKpiDropdownItems : providersKpiDropdownItems
-        }
-      />
+        onSelect={onSelectComboDropdown}
+        onToggle={() => setComboDropdown(!isOpenComboDropdown)}
+        isOpen={isOpenComboDropdown}
+        selections={[selectedBreakdown, selectedMetric]}
+        isGrouped
+        isCheckboxSelectionBadgeHidden
+      >
+        {comboDropdownItems}
+      </Select>
     </div>
   );
 };
 
 type DataConsumptionDropdownProps = {
-  type: string;
-  kpi: string;
-  setKpi: (value: string | ((prevVar: string) => string)) => void;
-  setType: (value: string | ((prevVar: string) => string)) => void;
+  selectedService: ServiceType;
+  setSelectedService: React.Dispatch<React.SetStateAction<ServiceType>>;
+  selectedBreakdown: Breakdown;
+  setSelectedBreakdown: React.Dispatch<React.SetStateAction<Breakdown>>;
+  selectedMetric: Metrics;
+  setSelectedMetric: React.Dispatch<React.SetStateAction<Metrics>>;
+  isRgwSupported: boolean;
 };

@@ -9,15 +9,9 @@ import { getRequiredKeys, createDownloadFile } from '../independent-mode/utils';
 import { OCSServiceModel } from '../../models';
 import CreateExternalCluster from '../independent-mode/install';
 import { CreateInternalCluster } from './create-form';
-import { OCS_SUPPORT_ANNOTATION } from '../../constants';
+import { OCS_SUPPORT_ANNOTATION, MODES } from '../../constants';
 import { CreateAttachedDevicesCluster } from './attached-devices/install';
 import './install-page.scss';
-
-enum MODES {
-  INTERNAL = 'Internal',
-  EXTERNAL = 'External',
-  ATTACHED_DEVICES = 'Internal - Attached Devices',
-}
 
 // eslint-disable-next-line no-shadow
 const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {

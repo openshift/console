@@ -8,7 +8,7 @@ import {
 } from '@console/plugin-sdk';
 import {
   HealthState,
-  healthPriority,
+  healthStateMapping,
 } from '@console/shared/src/components/dashboard/status-card/states';
 import { coFetch } from '@console/internal/co-fetch';
 import {
@@ -52,7 +52,7 @@ export const getControlPlaneComponentHealth = (
   if (error) {
     return {
       state: HealthState.NOT_AVAILABLE,
-      message: healthPriority[HealthState.NOT_AVAILABLE].message,
+      message: healthStateMapping[HealthState.NOT_AVAILABLE].message,
     };
   }
   if (!response) {
@@ -60,7 +60,7 @@ export const getControlPlaneComponentHealth = (
   }
   const value = response.data?.result?.[0]?.value?.[1];
   if (_.isNil(value)) {
-    return { state: HealthState.UNKNOWN, message: healthPriority[HealthState.UNKNOWN].message };
+    return { state: HealthState.UNKNOWN, message: healthStateMapping[HealthState.UNKNOWN].message };
   }
   const perc = humanizePercentage(value);
   if (perc.value > 90) {
@@ -72,10 +72,10 @@ export const getControlPlaneComponentHealth = (
   return { state: HealthState.ERROR, message: perc.string };
 };
 
-const getWorstStatus = (
+export const getWorstStatus = (
   componentsHealth: SubsystemHealth[],
 ): { state: HealthState; message: string; count: number } => {
-  const withPriority = componentsHealth.map((h) => healthPriority[h.state]);
+  const withPriority = componentsHealth.map((h) => healthStateMapping[h.state]);
   const mostImportantState = Math.max(...withPriority.map(({ priority }) => priority));
   const worstStatuses = withPriority.filter(({ priority }) => priority === mostImportantState);
   return {
@@ -109,15 +109,15 @@ export const getClusterOperatorStatusPriority: GetOperatorStatusPriority<Cluster
 ) => {
   const status = getClusterOperatorStatus(co);
   if (status === OperatorStatus.Degraded) {
-    return { ...healthPriority[HealthState.WARNING], title: status };
+    return { ...healthStateMapping[HealthState.WARNING], title: status };
   }
   if (status === OperatorStatus.Unknown) {
-    return { ...healthPriority[HealthState.UNKNOWN], title: status };
+    return { ...healthStateMapping[HealthState.UNKNOWN], title: status };
   }
   if (status === OperatorStatus.Updating) {
-    return { ...healthPriority[HealthState.UPDATING], title: status };
+    return { ...healthStateMapping[HealthState.UPDATING], title: status };
   }
-  return { ...healthPriority[HealthState.OK], title: status };
+  return { ...healthStateMapping[HealthState.OK], title: status };
 };
 
 export const getClusterOperatorHealthStatus: GetOperatorsWithStatuses<ClusterOperator> = (

@@ -1,90 +1,146 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import {
-  Dropdown,
-  FirehoseResource,
-  FirehoseResult,
-  humanizeBinaryBytes,
-} from '@console/internal/components/utils';
+import { Select, SelectVariant, SelectGroup, SelectOption } from '@patternfly/react-core';
+import { FirehoseResource, humanizeBinaryBytes } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import {
-  DashboardItemProps,
-  withDashboardResources,
-} from '@console/internal/components/dashboard/with-dashboard-resources';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
-import { SubscriptionModel } from '@console/operator-lifecycle-manager/src';
+import { SubscriptionModel, SubscriptionKind } from '@console/operator-lifecycle-manager/src';
 import { HeaderPrometheusViewLink } from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/breakdown-card/breakdown-header';
 import { BreakdownCardBody } from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/breakdown-card/breakdown-body';
-import { getStackChartStats } from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/breakdown-card/utils';
-import { getOCSVersion } from '@console/ceph-storage-plugin/src/selectors';
 import {
   CLUSTERWIDE,
   CLUSTERWIDE_TOOLTIP,
   Colors,
 } from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/breakdown-card/consts';
-import { PROJECTS } from '../../constants';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { usePrometheusQueries } from '@console/shared/src/components/dashboard/utilization-card/prometheus-hook';
+import { OCS_OPERATOR } from '@console/ceph-storage-plugin/src/constants';
+import { getStackChartStats } from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/breakdown-card/utils';
+import { PrometheusResponse, DataPoint } from '@console/internal/components/graphs';
+import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
+import { useFlag } from '@console/shared/src/hooks/flag';
+import { RGW_FLAG } from '@console/ceph-storage-plugin/src/features';
+import { ServiceType, CapacityBreakdown, Groups } from '../../constants';
 import { breakdownQueryMap, CAPACITY_BREAKDOWN_QUERIES } from '../../queries';
+import { getSelectOptions } from '../data-consumption-card/data-consumption-card-dropdown';
 import './capacity-breakdown-card.scss';
-import { NooBaaBucketClassModel } from '../../models';
 
-const SubscriptionResource: FirehoseResource = {
+const subscriptionResource: FirehoseResource = {
   kind: referenceForModel(SubscriptionModel),
   namespaced: false,
   prop: 'subscription',
   isList: true,
 };
 
-const keys = Object.keys(breakdownQueryMap);
-const dropdownOptions = _.zipObject(keys, keys);
+type DropdownItems = {
+  group: string;
+  items: {
+    name: string;
+    disabled: boolean;
+  }[];
+}[];
 
-const BreakdownCard: React.FC<DashboardItemProps> = ({
-  watchK8sResource,
-  stopWatchK8sResource,
-  watchPrometheus,
-  stopWatchPrometheusQuery,
-  prometheusResults,
-  resources,
-}) => {
-  const [metricType, setMetricType] = React.useState(PROJECTS);
-  const { queries, model, metric } = breakdownQueryMap[metricType];
-  React.useEffect(() => {
-    if (model.kind === NooBaaBucketClassModel.kind) {
-      watchK8sResource(SubscriptionResource);
-      return () => {
-        stopWatchK8sResource(SubscriptionResource);
-      };
-    }
-    return () => {};
-  }, [watchK8sResource, stopWatchK8sResource, model]);
+const ServiceItems = [
+  {
+    group: Groups.SERVICE,
+    items: [ServiceType.ALL, ServiceType.MCG, ServiceType.RGW],
+  },
+];
 
+const getDisableableSelectOptions = (dropdownItems: DropdownItems) => {
+  return dropdownItems.map(({ group, items }) => (
+    <SelectGroup key={group} label={group} className="co-filter-dropdown-group">
+      {items.map(({ name, disabled }) => (
+        <SelectOption key={name} value={name} disabled={disabled} />
+      ))}
+    </SelectGroup>
+  ));
+};
+
+const BreakdownCard: React.FC = () => {
+  const [serviceType, setServiceType] = React.useState(ServiceType.MCG);
+  const [metricType, setMetricType] = React.useState(
+    CapacityBreakdown.defaultMetrics[ServiceType.MCG],
+  );
+  const [isOpenServiceSelect, setServiceSelect] = React.useState(false);
+  const [isOpenBreakdownSelect, setBreakdownSelect] = React.useState(false);
+  const RGW = useFlag(RGW_FLAG);
+
+  const { queries, model, metric } = React.useMemo(() => {
+    return (
+      breakdownQueryMap[serviceType][metricType] ??
+      breakdownQueryMap[serviceType][CapacityBreakdown.defaultMetrics[serviceType]]
+    );
+  }, [serviceType, metricType]);
+  const prometheusQueries = React.useMemo(() => Object.values(queries) as string[], [queries]);
   const queryKeys = Object.keys(queries);
-
-  React.useEffect(() => {
-    queryKeys.forEach((q) => watchPrometheus(queries[q]));
-    return () => {
-      queryKeys.forEach((q) => stopWatchPrometheusQuery(queries[q]));
-    };
-  }, [watchPrometheus, stopWatchPrometheusQuery, metricType, queryKeys, queries]);
-
-  const subscription = _.get(resources, 'subscription') as FirehoseResult;
-  const ocsVersion = getOCSVersion(subscription);
-
-  const results = queryKeys.map((key) => prometheusResults.getIn([queries[key], 'data']));
-  const queriesLoadError = queryKeys.some((q) =>
-    prometheusResults.getIn([queries[q], 'loadError']),
+  const parser = React.useMemo(
+    () => (args: PrometheusResponse) => getInstantVectorStats(args, metric),
+    [metric],
   );
 
-  const queriesDataLoaded = queryKeys.some((q) => !prometheusResults.getIn([queries[q], 'data']));
+  const [subscription, loaded, loadError] = useK8sWatchResource<SubscriptionKind>(
+    subscriptionResource,
+  );
+  const [response, loading, queriesLoadError] = usePrometheusQueries<DataPoint[]>(
+    prometheusQueries,
+    parser,
+  );
 
-  const humanize = humanizeBinaryBytes;
-  const top5MetricsData = getInstantVectorStats(results[0], metric);
-  const top5MetricsStats = getStackChartStats(top5MetricsData, humanize);
-  const objectUsed = _.get(results[1], 'data.result[0].value[1]');
-  const link = `topk(20, (${CAPACITY_BREAKDOWN_QUERIES[queryKeys[0]]}))`;
+  const breakdownItems = React.useMemo(
+    () => [
+      {
+        group: Groups.BREAKDOWN,
+        items: [
+          { name: CapacityBreakdown.Metrics.TOTAL, disabled: false },
+          { name: CapacityBreakdown.Metrics.PROJECTS, disabled: serviceType !== ServiceType.MCG },
+          { name: CapacityBreakdown.Metrics.BC, disabled: serviceType !== ServiceType.MCG },
+        ],
+      },
+    ],
+    [serviceType],
+  );
+
+  const serviceSelectItems = getSelectOptions(ServiceItems);
+  const breakdownSelectItems = getDisableableSelectOptions(breakdownItems);
+
+  const handleServiceChange = (_e: React.MouseEvent, service: ServiceType) => {
+    setServiceType(service);
+    setMetricType(CapacityBreakdown.defaultMetrics[service]);
+  };
+
+  const handleMetricsChange = (_e: React.MouseEvent, breakdown: CapacityBreakdown.Metrics) =>
+    setMetricType(breakdown);
+
+  const padding =
+    serviceType !== ServiceType.MCG ? { top: 0, bottom: 0, left: 0, right: 50 } : undefined;
+
+  const ocsVersion =
+    loaded && !loadError
+      ? (() => {
+          const operator = _.find(
+            subscription,
+            (item) => _.get(item, 'spec.name') === OCS_OPERATOR,
+          );
+          return _.get(operator, 'status.installedCSV');
+        })()
+      : '';
+
+  // For charts whose datapoints are composed of multiple queries
+  const flattenedResponse = response.reduce(
+    (acc, curr, ind) => (ind < response?.length - 1 ? [...acc, ...curr] : acc),
+    [],
+  );
+  const top5MetricsStats = getStackChartStats(
+    flattenedResponse,
+    humanizeBinaryBytes,
+    CapacityBreakdown.serviceMetricMap?.[serviceType]?.[metricType],
+  );
+  const totalUsed = String(response?.[response?.length - 1]?.[0]?.y);
+  const link = `topk(20, (${CAPACITY_BREAKDOWN_QUERIES[queryKeys?.[0]]}))`;
 
   const ind = top5MetricsStats.findIndex((v) => v.name === 'Others');
   if (ind !== -1) {
@@ -98,29 +154,56 @@ const BreakdownCard: React.FC<DashboardItemProps> = ({
       <DashboardCardHeader>
         <DashboardCardTitle>Capacity breakdown</DashboardCardTitle>
         <div className="nb-capacity-breakdown-card__header">
-          <HeaderPrometheusViewLink link={link} />
-          <Dropdown
-            items={dropdownOptions}
-            onChange={setMetricType}
-            selectedKey={metricType}
-            title={metricType}
-          />
+          {serviceType === ServiceType.MCG && metricType !== CapacityBreakdown.Metrics.TOTAL && (
+            <HeaderPrometheusViewLink link={link} />
+          )}
+          {RGW && (
+            <Select
+              variant={SelectVariant.single}
+              className="nb-capacity-breakdown-card-header__dropdown nb-capacity-breakdown-card-header__dropdown--margin"
+              autoFocus={false}
+              onSelect={handleServiceChange}
+              onToggle={() => setServiceSelect(!isOpenServiceSelect)}
+              isOpen={isOpenServiceSelect}
+              selections={[serviceType]}
+              isGrouped
+              placeholderText={`Type: ${serviceType}`}
+              isCheckboxSelectionBadgeHidden
+            >
+              {serviceSelectItems}
+            </Select>
+          )}
+          <Select
+            variant={SelectVariant.single}
+            className="nb-capacity-breakdown-card-header__dropdown nb-capacity-breakdown-card-header__dropdown--margin"
+            autoFocus={false}
+            onSelect={handleMetricsChange}
+            onToggle={() => setBreakdownSelect(!isOpenBreakdownSelect)}
+            isOpen={isOpenBreakdownSelect}
+            selections={[metricType]}
+            isGrouped
+            placeholderText={`By: ${serviceType}`}
+            isCheckboxSelectionBadgeHidden
+          >
+            {breakdownSelectItems}
+          </Select>
         </div>
       </DashboardCardHeader>
       <DashboardCardBody classname="nb-capacity-breakdown-card__body">
         <BreakdownCardBody
-          isLoading={queriesDataLoaded}
+          isLoading={loading}
           hasLoadError={queriesLoadError}
           top5MetricsStats={top5MetricsStats}
-          capacityUsed={objectUsed}
-          metricTotal={objectUsed}
+          capacityUsed={totalUsed}
+          metricTotal={totalUsed}
           metricModel={model}
-          humanize={humanize}
+          humanize={humanizeBinaryBytes}
           ocsVersion={ocsVersion}
+          labelPadding={padding}
         />
       </DashboardCardBody>
     </DashboardCard>
   );
 };
 
-export default withDashboardResources(BreakdownCard);
+export default BreakdownCard;

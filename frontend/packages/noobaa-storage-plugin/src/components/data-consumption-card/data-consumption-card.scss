@@ -1,9 +1,27 @@
+@import '~@patternfly/patternfly/sass-utilities/all';
+
 .nb-data-consumption-card__dropdown {
   display: flex;
 }
 
 .nb-data-consumption-card__dropdown-item {
   margin-right: 0.4em;
+  @media screen and (min-width: $pf-global--breakpoint--lg) {
+    max-width: 12em;
+    min-width: 12em;
+  }
+  // Todo(bipuladh): Work around for https://github.com/patternfly/patternfly-react/issues/4604
+  &--disable-typeahead {
+    .pf-c-chip-group {
+      display: none;
+    }
+    .pf-c-select__toggle-clear {
+      display: none;
+    }
+    .pf-c-select__toggle-typeahead {
+      display: none;
+    }
+  }
 }
 
 .nb-data-consumption-card__chart-label {
@@ -19,4 +37,13 @@
 .nb-data-consumption-card__chart-legend-skeleton {
   margin-top: var(--pf-global--spacer--md);
   width: 80%;
+}
+
+.nb-perf__graph {
+  &--short {
+    margin-left: var(--pf-global--spacer--xs);
+  }
+  &--long {
+    margin-left: var(--pf-global--spacer--xl);
+  }
 }

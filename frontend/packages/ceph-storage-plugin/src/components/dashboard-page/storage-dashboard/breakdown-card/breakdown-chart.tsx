@@ -21,7 +21,7 @@ import './breakdown-card.scss';
 export const LinkableLegend: React.FC<LinkableLegendProps> = React.memo(
   (props: LinkableLegendProps) => {
     const { metricModel, datum, ocsVersion } = props;
-    let href: string = resourcePathFromModel(metricModel, datum.link, datum.ns);
+    let href: string = metricModel ? resourcePathFromModel(metricModel, datum.link, datum.ns) : '';
     const customLegend = (
       <Tooltip content={datum.link} enableFlip>
         <ChartLabel
@@ -34,7 +34,7 @@ export const LinkableLegend: React.FC<LinkableLegendProps> = React.memo(
         />
       </Tooltip>
     );
-    if (datum.labelId === OTHER || datum.labelId === CLUSTERWIDE) {
+    if (datum.labelId === OTHER || datum.labelId === CLUSTERWIDE || !metricModel) {
       return customLegend;
     }
     if (metricModel.kind === BUCKETCLASSKIND) {
@@ -59,6 +59,7 @@ export const BreakdownChart: React.FC<BreakdownChartProps> = ({
   legends,
   metricModel,
   ocsVersion,
+  labelPadding,
 }) => (
   <>
     <Chart
@@ -73,7 +74,19 @@ export const BreakdownChart: React.FC<BreakdownChartProps> = ({
           symbolSpacer={7}
           gutter={10}
           height={50}
-          style={{ labels: { fontSize: 8 } }}
+          style={{
+            labels: Object.assign(
+              { fontSize: 10 },
+              labelPadding
+                ? {
+                    paddingRight: labelPadding.right,
+                    paddingTop: labelPadding.top,
+                    paddingBottom: labelPadding.bottom,
+                    paddingLeft: labelPadding.left,
+                  }
+                : {},
+            ),
+          }}
         />
       }
       height={60}
@@ -110,6 +123,14 @@ export type BreakdownChartProps = {
   legends: any[];
   metricModel: K8sKind;
   ocsVersion?: string;
+  labelPadding?: LabelPadding;
+};
+
+export type LabelPadding = {
+  left: number;
+  right: number;
+  bottom: number;
+  top: number;
 };
 
 export type LinkableLegendProps = {
