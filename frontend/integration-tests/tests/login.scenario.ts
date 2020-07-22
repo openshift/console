@@ -19,8 +19,6 @@ const {
 describe('Auth test', () => {
   beforeAll(async () => {
     await browser.get(appHost);
-    // Stop the perspective detection from running by setting last perspective in localStorage
-    await browser.executeScript('window.localStorage.setItem("bridge/last-perspective", "admin")');
     await browser.sleep(3000); // Wait long enough for the login redirect to complete
   });
 
@@ -43,6 +41,12 @@ describe('Auth test', () => {
       );
       expect(browser.getCurrentUrl()).toContain(appHost);
       expect(loginView.userDropdown.getText()).toContain(BRIDGE_HTPASSWD_USERNAME);
+    });
+
+    it('switches from dev to admin perspective', async () => {
+      expect(sidenavView.switcher.getText()).toContain('Developer');
+      await sidenavView.switchPerspective(sidenavView.Perspective.Administrator);
+      expect(sidenavView.switcher.getText()).toContain('Administrator');
     });
 
     it('does not show admin nav items in Administration to htpasswd user', async () => {
