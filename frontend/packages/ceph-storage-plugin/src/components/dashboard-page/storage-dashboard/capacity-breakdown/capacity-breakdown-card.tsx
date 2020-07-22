@@ -46,7 +46,7 @@ const BreakdownCard: React.FC<DashboardItemProps> = ({
   const top5SortedMetricsData = sortInstantVectorStats(top6MetricsData);
   const top5MetricsStats = getStackChartStats(top5SortedMetricsData, humanize);
   const metricTotal = _.get(results[1], 'data.result[0].value[1]');
-  const cephTotal = _.get(results[2], 'data.result[0].value[1]');
+  const cephAvailable = _.get(results[2], 'data.result[0].value[1]');
   const cephUsed = _.get(results[3], 'data.result[0].value[1]');
   const link = `topk(20, (${CAPACITY_BREAKDOWN_QUERIES[queryKeys[0]]}))`;
 
@@ -70,7 +70,7 @@ const BreakdownCard: React.FC<DashboardItemProps> = ({
           hasLoadError={queriesLoadError}
           metricTotal={metricTotal}
           top5MetricsStats={top5MetricsStats}
-          capacityTotal={cephTotal}
+          capacityAvailable={cephAvailable}
           capacityUsed={cephUsed}
           metricModel={model}
           humanize={humanize}

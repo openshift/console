@@ -20,8 +20,7 @@ const stackData = getStackChartStats(breakdownData.top5, breakdownData.humanize)
 
 const chartData = addAvailable(
   stackData,
-  breakdownData.capacityTotal,
-  breakdownData.capacityUsed,
+  breakdownData.capacityAvailable,
   breakdownData.metricTotal,
   breakdownData.humanize,
 );

@@ -21,7 +21,7 @@ describe('<BreakdownCardBody>', () => {
         hasLoadError={false}
         metricTotal={breakdownData.metricTotal}
         capacityUsed={breakdownData.capacityUsed}
-        capacityTotal={breakdownData.capacityTotal}
+        capacityAvailable={breakdownData.capacityAvailable}
         humanize={breakdownData.humanize}
         metricModel={null}
         top5MetricsStats={top5MetricsStats}
@@ -33,7 +33,7 @@ describe('<BreakdownCardBody>', () => {
     const breakdownChart = wrapper.find(BreakdownChart);
     expect(breakdownChart.exists()).toBe(true);
     expect(breakdownChart.props().data.length).toBe(7);
-    // Last is popped if capacityTotal is available(7 - 1)
+    // Last is popped if capacityAvailable is available(7 - 1)
     expect(breakdownChart.props().legends.length).toBe(6);
     expect(breakdownChart.props().ocsVersion).toBeFalsy();
   });
@@ -44,7 +44,7 @@ describe('<BreakdownCardBody>', () => {
   });
 
   it('Hides available capacity text, legend, stack', () => {
-    wrapper.setProps({ capacityTotal: null });
+    wrapper.setProps({ capacityAvailable: null });
     expect(wrapper.find(TotalCapacityBody).exists()).toBe(true);
     expect(wrapper.find('.capacity-breakdown-card__available-body').exists()).toBe(false);
     const breakdownChart = wrapper.find(BreakdownChart);
@@ -57,7 +57,7 @@ describe('<BreakdownCardBody>', () => {
   it('Hides others capacity text, legend, stack', () => {
     wrapper.setProps({
       top5MetricsStats: getStackChartStats(breakdownData.top5.slice(0, 4), breakdownData.humanize),
-      capacityTotal: null,
+      capacityAvailable: null,
     });
     const breakdownChart = wrapper.find(BreakdownChart);
     expect(breakdownChart.exists()).toBe(true);

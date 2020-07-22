@@ -33,7 +33,7 @@ export const breakdownData = {
       metric: { namespace: 'default' },
     },
   ],
-  capacityTotal: '10000000',
+  capacityAvailable: '10000000',
   metricTotal: '10000000',
   capacityUsed: '150000',
   humanize: humanizeBinaryBytes,

@@ -19,7 +19,6 @@ import {
   StorageDashboardQuery,
   UTILIZATION_QUERY,
   utilizationPopoverQueryMap,
-  TOTAL_QUERY,
 } from '../../../../constants/queries';
 import { humanizeIOPS, humanizeLatency } from './utils';
 
@@ -49,7 +48,6 @@ const UtilizationCard: React.FC = () => {
         <PrometheusUtilizationItem
           title="Used Capacity"
           utilizationQuery={UTILIZATION_QUERY[StorageDashboardQuery.CEPH_CAPACITY_USED]}
-          totalQuery={TOTAL_QUERY[StorageDashboardQuery.CEPH_CAPACITY_TOTAL]}
           duration={duration}
           humanizeValue={humanizeBinaryBytes}
           byteDataType={ByteDataTypes.BinaryBytes}

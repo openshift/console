@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { Humanize } from '@console/internal/components/utils';
 import { K8sKind } from '@console/internal/module/k8s';
-import { addAvailable, getCapacityValue, StackDataPoint, getLegends } from './utils';
+import { addAvailable, StackDataPoint, getLegends } from './utils';
 import { BreakdownChart } from './breakdown-chart';
 import { BreakdownChartLoading } from './breakdown-loading';
 import { TotalCapacityBody } from './breakdown-capacity';
@@ -11,7 +11,7 @@ export const BreakdownCardBody: React.FC<BreakdownBodyProps> = ({
   top5MetricsStats,
   metricTotal,
   capacityUsed,
-  capacityTotal,
+  capacityAvailable,
   metricModel,
   humanize,
   isLoading,
@@ -28,24 +28,15 @@ export const BreakdownCardBody: React.FC<BreakdownBodyProps> = ({
     return <div className="text-secondary">Not enough usage data</div>;
   }
 
-  const available = getCapacityValue(capacityUsed, capacityTotal, humanize);
-  const usedCapacity = `${humanize(capacityUsed, null, 'GiB').string} used${
-    capacityTotal ? ` of ${humanize(capacityTotal).string}` : ''
-  }`;
-  const availableCapacity = `${available.string} available`;
+  const usedCapacity = `${humanize(capacityUsed).string} used`;
+  const availableCapacity = `${humanize(capacityAvailable).string} available`;
 
-  const chartData = addAvailable(
-    top5MetricsStats,
-    capacityTotal,
-    capacityUsed,
-    metricTotal,
-    humanize,
-  );
+  const chartData = addAvailable(top5MetricsStats, capacityAvailable, metricTotal, humanize);
 
   const legends = getLegends(chartData);
 
   // Removes Legend for available
-  if (capacityTotal) {
+  if (capacityAvailable) {
     legends.pop();
   }
 
@@ -56,7 +47,7 @@ export const BreakdownCardBody: React.FC<BreakdownBodyProps> = ({
       </GridItem>
       <GridItem span={4} />
       <GridItem span={4}>
-        {capacityTotal && (
+        {capacityAvailable && (
           <TotalCapacityBody
             value={availableCapacity}
             className="capacity-breakdown-card__available-body text-secondary"
@@ -81,7 +72,7 @@ export type BreakdownBodyProps = {
   metricTotal: string;
   top5MetricsStats: StackDataPoint[];
   capacityUsed: string;
-  capacityTotal?: string;
+  capacityAvailable?: string;
   metricModel: K8sKind;
   humanize: Humanize;
   ocsVersion?: string;
