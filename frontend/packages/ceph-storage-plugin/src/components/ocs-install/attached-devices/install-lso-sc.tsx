@@ -30,7 +30,7 @@ import {
 import { OCSServiceModel } from '../../../models';
 import AttachedDevicesNodeTable from './sc-node-list';
 import { PVsAvailableCapacity } from '../pvs-available-capacity';
-import { OCS_CONVERGED_FLAG, OCS_FLAG } from '../../../features';
+import { OCS_CONVERGED_FLAG, OCS_FLAG, OCS_ATTACHED_DEVICES_FLAG } from '../../../features';
 import { makeLabelNodesRequest } from '../create-form';
 import { LVSResource } from '../../../constants/resources';
 import { getOCSRequestData } from '../ocs-request-data';
@@ -96,6 +96,7 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
     event.preventDefault();
     // eslint-disable-next-line promise/catch-or-return
     handlePromise(makeOCSRequest(nodes, storageClass)).then(() => {
+      dispatch(setFlag(OCS_ATTACHED_DEVICES_FLAG, true));
       dispatch(setFlag(OCS_CONVERGED_FLAG, true));
       dispatch(setFlag(OCS_FLAG, true));
       history.push(
