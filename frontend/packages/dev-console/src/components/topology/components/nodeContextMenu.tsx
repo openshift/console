@@ -24,14 +24,14 @@ const onKebabOptionClick = (option: KebabOption) => {
 };
 
 export const createMenuItems = (actions: KebabMenuOption[]) =>
-  actions.map((option) =>
+  actions.map((option, index) =>
     isKebabSubMenu(option) ? (
       <ContextSubMenuItem label={option.label} key={option.label}>
         {createMenuItems(option.children)}
       </ContextSubMenuItem>
     ) : (
       <ContextMenuItem
-        key={option.label}
+        key={index} // eslint-disable-line react/no-array-index-key
         component={<KebabItem option={option} onClick={() => onKebabOptionClick(option)} />}
       />
     ),

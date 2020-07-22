@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import * as React from 'react';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
 import {
   K8sKind,
@@ -34,6 +35,8 @@ import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper'
 import { StatusGroup } from '../../constants/status-group';
 import { cancelVMImport } from '../../k8s/requests/vmimport';
 import { getActionMessage } from './constants';
+
+import './menu-actions.scss';
 
 type ActionArgs = {
   vmi?: VMIKind;
@@ -284,7 +287,14 @@ export const menuActionDeleteVMI = (kindObj: K8sKind, vmi: VMIKind): KebabOption
 });
 
 export const menuActionOpenConsole = (kindObj: K8sKind, vmi: VMIKind): KebabOption => ({
-  label: `Open Console`,
+  label: (
+    <>
+      Open Console
+      <span className="kubevirt-menu-actions__ext-link-icon">
+        <ExternalLinkAltIcon />
+      </span>
+    </>
+  ),
   callback: () =>
     window.open(
       `/k8s/ns/${getNamespace(vmi)}/virtualmachineinstances/${getName(vmi)}/standaloneconsole`,
