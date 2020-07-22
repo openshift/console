@@ -15,7 +15,7 @@ import {
   iGetLoadedCommonData,
   iGetName,
 } from '../../selectors/immutable/selectors';
-import { concatImmutableLists, immutableListToShallowJS } from '../../../../utils/immutable';
+import { immutableListToShallowJS } from '../../../../utils/immutable';
 import { iGetNetworks } from '../../selectors/immutable/networks';
 import { podNetwork } from '../initial-state/networks-tab-initial-state';
 import { vmWizardInternalActions } from '../internal-actions';
@@ -47,7 +47,6 @@ import {
   getTemplateWorkloadProfiles,
 } from '../../../../selectors/vm-template/advanced';
 import { V1Network } from '../../../../types/vm';
-import { getFlavors } from '../../../../selectors/vm-template/combined-dependent';
 import { getSimpleName } from '../../../../selectors/utils';
 import { getNextIDResolver } from '../../../../utils/utils';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
@@ -250,22 +249,6 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
     });
     storagesUpdate.unshift(...templateStorages);
   } else {
-    const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
-
-    const flavors = getFlavors(
-      immutableListToShallowJS(concatImmutableLists(iCommonTemplates, iUserTemplates)),
-      {
-        workload: iGetVmSettingValue(state, id, VMSettingsField.WORKLOAD_PROFILE),
-        os: iGetVmSettingValue(state, id, VMSettingsField.OPERATING_SYSTEM),
-        userTemplate: null,
-      },
-    );
-    if (flavors.length === 1) {
-      vmSettingsUpdate[VMSettingsField.FLAVOR] = {
-        value: toUIFlavor(flavors[0]),
-      };
-    }
-
     const newSourceStorage = getProvisionSourceStorage(
       iGetProvisionSource(state, id),
       iGetLoadedCommonData(state, id, VMWizardProps.storageClassConfigMap),
