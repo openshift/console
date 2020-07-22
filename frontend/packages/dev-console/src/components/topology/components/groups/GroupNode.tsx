@@ -8,8 +8,8 @@ import {
 import { Node, useSize, useHover } from '@patternfly/react-topology';
 import { RESOURCE_NAME_TRUNCATE_LENGTH } from '../../../../const';
 import SvgCircledIcon from '../../../svg/SvgCircledIcon';
-import { TopologyDataObject } from '../../topology-types';
 import { SvgResourceIcon } from '../../../svg/SvgResourceIcon';
+import { OdcNodeModel } from '../../topology-types';
 import { ResourceKindsInfo } from './ResourceKindsInfo';
 
 import './GroupNode.scss';
@@ -26,7 +26,7 @@ type GroupNodeProps = {
   element: Node;
   kind?: string;
   emptyValue?: React.ReactNode;
-  groupResources?: TopologyDataObject;
+  groupResources?: OdcNodeModel[];
   children?: React.ReactNode;
   typeIconClass?: string;
 };

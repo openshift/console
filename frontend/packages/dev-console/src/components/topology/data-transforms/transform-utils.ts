@@ -4,6 +4,7 @@ import {
   apiVersionForReference,
   isGroupVersionKind,
   K8sResourceKind,
+  K8sResourceKindReference,
   kindForReference,
   referenceFor,
   referenceForModel,
@@ -118,16 +119,18 @@ export const getTopologyNodeItem = (
   data: any,
   nodeProps?: Omit<OdcNodeModel, 'type' | 'data' | 'children' | 'id' | 'label'>,
   children?: string[],
+  resourceKind?: K8sResourceKindReference,
 ): OdcNodeModel => {
   const uid = resource?.metadata.uid;
   const name = resource?.metadata.name;
   const label = resource?.metadata.labels?.['app.openshift.io/instance'];
-
+  const kind = resourceKind || referenceFor(resource);
   return {
     id: uid,
     type,
     label: label || name,
     resource,
+    resourceKind: kind,
     data,
     ...(children && children.length && { children }),
     ...(nodeProps || {}),
@@ -238,6 +241,11 @@ export const mergeGroup = (newGroup: NodeModel, existingGroups: NodeModel[]): vo
   if (!newGroup) {
     return;
   }
+
+  // Remove any children from the new group that already belong to another group
+  newGroup.children = newGroup.children?.filter(
+    (c) => !existingGroups?.find((g) => g.children?.includes(c)),
+  );
 
   // find and add the groups
   const existingGroup = existingGroups.find((g) => g.group && g.id === newGroup.id);

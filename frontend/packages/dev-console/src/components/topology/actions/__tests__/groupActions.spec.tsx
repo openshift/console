@@ -18,7 +18,7 @@ describe('groupActions: ', () => {
   const application: TopologyApplicationObject = {
     id: 'app-test-id-123',
     name: 'application-1',
-    resources: [topologyDataModel.nodes[0].data],
+    resources: [topologyDataModel.nodes[0]],
   };
   it('should return the correct menu and sub menu items when all permissions are allowed', () => {
     const actions = groupActions(graphData, application);

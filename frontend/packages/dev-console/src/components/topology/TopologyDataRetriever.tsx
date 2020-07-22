@@ -14,6 +14,7 @@ export const TopologyDataRetriever: React.FC<TopologyDataRetrieverProps> = ({
   render,
   resourcesList,
   namespace,
+  showGraphView,
   kindsInFlight,
   trafficData,
 }) => {
@@ -23,6 +24,7 @@ export const TopologyDataRetriever: React.FC<TopologyDataRetrieverProps> = ({
     <TopologyDataRenderer
       render={render}
       namespace={namespace}
+      showGraphView={showGraphView}
       resources={resources}
       kindsInFlight={kindsInFlight}
       trafficData={trafficData}

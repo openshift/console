@@ -113,8 +113,7 @@ export const baseDataModelGetter = (
     if (n.type === TYPE_APPLICATION_GROUP) {
       // Filter out any children removed by depicters
       n.children = n.children.filter((id) => model.nodes.find((child) => child.id === id));
-      n.data.groupResources =
-        n.children?.map((id) => model.nodes.find((c) => id === c.id)?.data) ?? [];
+      n.data.groupResources = n.children?.map((id) => model.nodes.find((c) => id === c.id)) ?? [];
     }
   });
 

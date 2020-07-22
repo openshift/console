@@ -33,7 +33,7 @@ type DispatchProps = {
 };
 
 type OwnProps = {
-  visualization: Visualization;
+  visualization?: Visualization;
   onSearchChange: (searchQuery: string) => void;
 };
 
@@ -84,23 +84,25 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
           onChange={onTextFilterChange}
           className="odc-topology-filter-bar__text-filter"
         />
-        <Popover
-          aria-label="Find by name"
-          position="left"
-          bodyContent={
-            <>
-              Search results may appear outside of the visible area.{' '}
-              <Button variant="link" onClick={() => visualization.getGraph().fit(80)} isInline>
-                Click here
-              </Button>{' '}
-              to fit to the screen.
-            </>
-          }
-        >
-          <Button variant="link" className="odc-topology-filter-bar__info-icon">
-            <InfoCircleIcon />
-          </Button>
-        </Popover>
+        {visualization && (
+          <Popover
+            aria-label="Find by name"
+            position="left"
+            bodyContent={
+              <>
+                Search results may appear outside of the visible area.{' '}
+                <Button variant="link" onClick={() => visualization.getGraph().fit(80)} isInline>
+                  Click here
+                </Button>{' '}
+                to fit to the screen.
+              </>
+            }
+          >
+            <Button variant="link" className="odc-topology-filter-bar__info-icon">
+              <InfoCircleIcon />
+            </Button>
+          </Popover>
+        )}
       </ToolbarGroup>
       {kialiLink && (
         <ToolbarGroup className="odc-topology-filter-bar__kiali-link">

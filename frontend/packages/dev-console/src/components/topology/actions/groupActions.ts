@@ -27,7 +27,7 @@ export const getGroupComponents = (groupId: string, model: Model): TopologyAppli
 const deleteGroup = (application: TopologyApplicationObject) => {
   // accessReview needs a resource but group is not a k8s resource,
   // so currently picking the first resource to do the rbac checks (might change in future)
-  const primaryResource = _.get(application.resources[0], ['resources', 'obj']);
+  const primaryResource = application.resources[0].resource;
   const resourceModel = modelFor(primaryResource.kind)
     ? modelFor(primaryResource.kind)
     : modelFor(referenceFor(primaryResource));
@@ -40,9 +40,8 @@ const deleteGroup = (application: TopologyApplicationObject) => {
         resourceName: application.name,
         resourceType: 'Application',
         onSubmit: () => {
-          application.resources.forEach((workload) => {
-            const resource = _.get(workload, ['resources', 'obj']);
-            reqs.push(cleanUpWorkload(resource, workload));
+          application.resources.forEach((resource) => {
+            reqs.push(cleanUpWorkload(resource));
           });
           return Promise.all(reqs);
         },
@@ -57,7 +56,7 @@ const addResourcesMenu = (
   application: TopologyApplicationObject,
   connectorSource?: Node,
 ) => {
-  const primaryResource = application.resources[0]?.resources?.obj;
+  const primaryResource = application.resources[0].resource;
   const connectorSourceObj = getResource(connectorSource) || {};
   let resourceMenu: MenuOptions = addResourceMenuWithoutCatalog;
   resourceMenu = getKnativeContextMenuAction(graphData, resourceMenu, connectorSource);
@@ -68,7 +67,7 @@ const addResourcesMenu = (
       if (_.isFunction(menuItem)) {
         item = menuItem(
           primaryResource,
-          application.resources[0]?.resources?.obj.metadata.namespace,
+          primaryResource.metadata.namespace,
           true,
           connectorSourceObj,
           graphData.createResourceAccess,

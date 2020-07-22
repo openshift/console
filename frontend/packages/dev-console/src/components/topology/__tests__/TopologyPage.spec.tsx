@@ -4,11 +4,11 @@ import { Link } from 'react-router-dom';
 import { Tooltip } from '@patternfly/react-core';
 import { TopologyPage, renderTopology } from '../TopologyPage';
 import NamespacedPage from '../../NamespacedPage';
-import { AsyncComponent, StatusBox } from '@console/internal/components/utils';
+import { StatusBox } from '@console/internal/components/utils';
 import ConnectedTopologyDataController from '../TopologyDataController';
 import ProjectListPage from '../../projects/ProjectListPage';
 import { topologyData } from './topology-test-data';
-import Topology from '../Topology';
+import { ConnectedTopologyView } from '../TopologyView';
 
 type TopologyPageProps = React.ComponentProps<typeof TopologyPage>;
 type RenderTopologyProps = React.ComponentProps<typeof renderTopology>;
@@ -40,16 +40,17 @@ describe('Topology page tests', () => {
 
     renderTopologyProps = {
       model: topologyData,
+      showGraphView: true,
       loaded: true,
       loadError: '',
       namespace: 'topology-test',
     };
   });
 
-  it('should render topology list page', () => {
+  it('should render topology page', () => {
     topologyProps.match.path = '/topology/ns/topology-test/list';
     const wrapper = shallow(<TopologyPage {...topologyProps} />);
-    expect(wrapper.find(AsyncComponent).exists()).toBe(true);
+    expect(wrapper.find(NamespacedPage).exists()).toBe(true);
   });
 
   it('should render topology graph page', () => {
@@ -99,7 +100,7 @@ describe('Topology page tests', () => {
     const Component = () => renderTopology(renderTopologyProps);
     const wrapper = shallow(<Component />);
     expect(wrapper.find(StatusBox).exists()).toBe(true);
-    expect(wrapper.find(Topology).exists()).toBe(true);
+    expect(wrapper.find(ConnectedTopologyView).exists()).toBe(true);
   });
 
   it('should render all projects list page for graph view when no project is selected', () => {

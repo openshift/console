@@ -9,22 +9,19 @@ import {
 import { referenceFor } from '@console/internal/module/k8s';
 import TopologyOperatorBackedResources from './TopologyOperatorBackedResources';
 import { TopologyDataObject } from '../topology-types';
+import { OperatorGroupData } from './operator-topology-types';
 
 export type TopologyOperatorBackedPanelProps = {
-  item: TopologyDataObject<string>;
+  item: TopologyDataObject<OperatorGroupData>;
 };
 
 const TopologyOperatorBackedPanel: React.FC<TopologyOperatorBackedPanelProps> = ({ item }) => {
-  const {
-    name,
-    resources: { obj },
-  } = item;
-
+  const { name, resource, data } = item;
   const ResourcesSection = () => <TopologyOperatorBackedResources item={item} />;
   const DetailsSection = () => (
     <div className="overview__sidebar-pane-body">
       <SectionHeading text="Operator Details" />
-      <ResourceSummary resource={obj} />
+      <ResourceSummary resource={resource} />
     </div>
   );
 
@@ -33,11 +30,11 @@ const TopologyOperatorBackedPanel: React.FC<TopologyOperatorBackedPanelProps> = 
       <div className="overview__sidebar-pane-head resource-overview__heading">
         <h1 className="co-m-pane__heading">
           <div className="co-m-pane__name co-resource-item">
-            <ResourceIcon kind="Operator" />
+            <ResourceIcon kind={data.operatorKind || 'Operator'} />
             <ResourceLink
-              kind={referenceFor(obj)}
+              kind={referenceFor(resource)}
               name={name}
-              namespace={obj.metadata.namespace}
+              namespace={resource.metadata.namespace}
               hideIcon
             />
           </div>

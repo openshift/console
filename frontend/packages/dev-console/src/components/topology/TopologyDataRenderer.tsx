@@ -9,6 +9,7 @@ import ModelContext, { ExtensibleModel } from './data-transforms/ModelContext';
 import { baseDataModelGetter } from './data-transforms';
 
 export interface RenderProps {
+  showGraphView: boolean;
   model?: Model;
   namespace: string;
   loaded: boolean;
@@ -16,6 +17,7 @@ export interface RenderProps {
 }
 
 export interface TopologyDataRendererProps {
+  showGraphView: boolean;
   kindsInFlight: boolean;
   resources: TopologyDataResources;
   render(props: RenderProps): React.ReactElement;
@@ -28,9 +30,10 @@ const POLL_DELAY = 15 * 1000;
 export const TopologyDataRenderer: React.FC<TopologyDataRendererProps> = ({
   render,
   resources,
-  namespace,
   kindsInFlight,
   trafficData,
+  namespace,
+  showGraphView,
 }) => {
   const dataModelContext = React.useContext<ExtensibleModel>(ModelContext);
   const [model, setModel] = React.useState<Model>(null);
@@ -107,5 +110,6 @@ export const TopologyDataRenderer: React.FC<TopologyDataRendererProps> = ({
     loadError,
     namespace,
     model,
+    showGraphView,
   });
 };

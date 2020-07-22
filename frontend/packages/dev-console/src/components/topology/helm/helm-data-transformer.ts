@@ -74,6 +74,7 @@ export const getTopologyHelmReleaseGroupItem = (
   const helmGroup: OdcNodeModel = {
     id: secret ? secret.metadata.uid : `${TYPE_HELM_RELEASE}:${releaseName}`,
     type: TYPE_HELM_RELEASE,
+    resourceKind: 'HelmRelease',
     group: true,
     resource: secret,
     label: releaseName,
@@ -148,7 +149,7 @@ export const getHelmGraphModelFromMap = (
   helmDataModel.nodes.forEach((node) => {
     if (node.type === TYPE_HELM_RELEASE) {
       node.data.groupResources =
-        node.children?.map((id) => helmDataModel.nodes.find((n) => id === n.id)?.data) ?? [];
+        node.children?.map((id) => helmDataModel.nodes.find((n) => id === n.id)) ?? [];
     }
   });
 
