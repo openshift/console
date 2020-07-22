@@ -1,4 +1,4 @@
-import { MAX_DISK_SIZE, diskTypeDropdownItems, diskModeDropdownItems } from '../../constants';
+import { diskTypeDropdownItems, diskModeDropdownItems } from '../../constants';
 
 export const initialState = {
   volumeSetName: '',
@@ -8,8 +8,8 @@ export const initialState = {
   diskMode: diskModeDropdownItems.BLOCK,
   maxDiskLimit: '',
   nodeNames: [],
-  minDiskSize: 0,
-  maxDiskSize: MAX_DISK_SIZE,
+  minDiskSize: '0',
+  maxDiskSize: '',
   diskSizeUnit: 'TiB',
   isValidMaxSize: true,
   nodeNamesForLVS: [],
@@ -23,8 +23,8 @@ export type State = {
   diskMode: string;
   maxDiskLimit: string;
   nodeNames: string[];
-  minDiskSize: number | string;
-  maxDiskSize: number | string;
+  minDiskSize: string;
+  maxDiskSize: string;
   diskSizeUnit: string;
   isValidMaxSize: boolean;
   nodeNamesForLVS: string[];
@@ -38,8 +38,8 @@ export type Action =
   | { type: 'setDiskMode'; value: string }
   | { type: 'setMaxDiskLimit'; value: string }
   | { type: 'setNodeNames'; value: string[] }
-  | { type: 'setMinDiskSize'; value: number | string }
-  | { type: 'setMaxDiskSize'; value: number | string }
+  | { type: 'setMinDiskSize'; value: string }
+  | { type: 'setMaxDiskSize'; value: string }
   | { type: 'setDiskSizeUnit'; value: string }
   | { type: 'setIsValidMaxSize'; value: boolean }
   | { type: 'setNodeNamesForLVS'; value: string[] };

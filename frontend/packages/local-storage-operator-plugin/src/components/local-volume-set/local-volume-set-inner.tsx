@@ -15,12 +15,7 @@ import { getName } from '@console/shared';
 import { NodeModel } from '@console/internal/models';
 import { NodesSelectionList } from './nodes-selection-list';
 import { State, Action } from './state';
-import {
-  MAX_DISK_SIZE,
-  diskModeDropdownItems,
-  diskTypeDropdownItems,
-  diskSizeUnitOptions,
-} from '../../constants';
+import { diskModeDropdownItems, diskTypeDropdownItems, diskSizeUnitOptions } from '../../constants';
 import './create-local-volume-set.scss';
 
 export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = (props) => {
@@ -43,10 +38,7 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = (props) =
   };
 
   const onMaxSizeChange = (size: string) => {
-    if (
-      size !== MAX_DISK_SIZE &&
-      (Number.isNaN(Number(size)) || Number(size) < state.minDiskSize)
-    ) {
+    if (size && (Number.isNaN(Number(size)) || Number(size) < Number(state.minDiskSize))) {
       dispatch({ type: 'setIsValidMaxSize', value: false });
     } else {
       dispatch({ type: 'setIsValidMaxSize', value: true });
@@ -200,6 +192,7 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = (props) =
             id="create-lvs--max-disk-limit"
             value={state.maxDiskLimit}
             onChange={(maxLimit) => dispatch({ type: 'setMaxDiskLimit', value: maxLimit })}
+            placeholder="All"
           />
         </FormGroup>
       </ExpandableSection>

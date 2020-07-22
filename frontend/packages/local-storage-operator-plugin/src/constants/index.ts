@@ -1,5 +1,4 @@
 export const LSO_NAMESPACE = 'local-storage';
-export const MAX_DISK_SIZE = 'All';
 
 export const diskModeDropdownItems = {
   BLOCK: 'Block',
