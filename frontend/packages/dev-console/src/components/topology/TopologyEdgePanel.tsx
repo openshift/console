@@ -13,7 +13,7 @@ import {
 } from '@console/internal/components/utils';
 import { TYPE_CONNECTS_TO, TYPE_SERVICE_BINDING, TYPE_TRAFFIC_CONNECTOR } from './components/const';
 import { edgeActions } from './actions/edgeActions';
-import { getKialiLink, getResource } from './topology-utils';
+import { getNamespaceDashboardKialiLink, getResource } from './topology-utils';
 
 type StateProps = {
   consoleLinks?: K8sResourceKind[];
@@ -91,7 +91,10 @@ const TopologyEdgePanel: React.FC<TopologyEdgePanelProps> = ({ edge, model, cons
         {edge.getType() === TYPE_TRAFFIC_CONNECTOR && (
           <>
             <SidebarSectionHeading text="Kiali Link" />
-            <ExternalLink href={getKialiLink(consoleLinks, namespace)} text="Kiali Graph View" />
+            <ExternalLink
+              href={getNamespaceDashboardKialiLink(consoleLinks, namespace)}
+              text="Kiali Graph View"
+            />
           </>
         )}
       </div>

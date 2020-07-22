@@ -7,7 +7,7 @@ import DashboardCardLink from '@console/shared/src/components/dashboard/dashboar
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
-import { getName, getRequester } from '@console/shared';
+import { getName, getRequester, GreenCheckCircleIcon } from '@console/shared';
 import { LabelList, resourcePathFromModel } from '../../utils';
 import { ProjectModel } from '../../../models';
 import { ProjectDashboardContext } from './project-dashboard-context';
@@ -18,6 +18,7 @@ export const DetailsCard: React.FC = () => {
   const labelsSubset = _.take(keys, 3);
   const firstThreelabels = _.pick(obj.metadata.labels, labelsSubset);
   const detailsLink = `${resourcePathFromModel(ProjectModel, obj.metadata.name)}/details`;
+  const serviceMeshEnabled = obj.metadata?.labels?.['maistra.io/member-of'];
   return (
     <DashboardCard data-test-id="details-card">
       <DashboardCardHeader>
@@ -38,6 +39,11 @@ export const DetailsCard: React.FC = () => {
               {keys.length > 3 && <DashboardCardLink to={detailsLink}>View all</DashboardCardLink>}
             </div>
           </DetailItem>
+          {serviceMeshEnabled && (
+            <DetailItem isLoading={!obj} title="Service Mesh">
+              <GreenCheckCircleIcon /> Service Mesh Enabled
+            </DetailItem>
+          )}
         </DetailsBody>
       </DashboardCardBody>
     </DashboardCard>

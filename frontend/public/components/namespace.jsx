@@ -15,6 +15,7 @@ import {
   KEYBOARD_SHORTCUTS,
   NAMESPACE_LOCAL_STORAGE_KEY,
   FLAGS,
+  GreenCheckCircleIcon,
 } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 
@@ -518,6 +519,7 @@ const ResourceUsage = requirePrometheus(({ ns }) => (
 export const NamespaceSummary = ({ ns }) => {
   const displayName = getDisplayName(ns);
   const requester = getRequester(ns);
+  const serviceMeshEnabled = ns.metadata?.labels?.['maistra.io/member-of'];
   const canListSecrets = useAccessReview({
     group: SecretModel.apiGroup,
     resource: SecretModel.plural,
@@ -552,6 +554,14 @@ export const NamespaceSummary = ({ ns }) => {
           <dd>
             <Link to={`/k8s/ns/${ns.metadata.name}/networkpolicies`}>Network Policies</Link>
           </dd>
+          {serviceMeshEnabled && (
+            <>
+              <dt>Service Mesh</dt>
+              <dd>
+                <GreenCheckCircleIcon /> Service Mesh Enabled
+              </dd>
+            </>
+          )}
         </dl>
       </div>
     </div>

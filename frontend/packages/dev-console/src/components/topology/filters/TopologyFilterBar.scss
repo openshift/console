@@ -10,10 +10,10 @@
     padding-right: $grid-gutter-width;
   }
 
-  &__search {
+  &__kiali-link {
     margin-left: auto;
   }
-  &__info-icon {
+  &__text-filter {
     margin-left: var(--pf-global--spacer--sm);
   }
 }
