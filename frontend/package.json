@@ -115,7 +115,6 @@
     "react-draggable": "4.x",
     "react-helmet": "^5.2.1",
     "react-jsonschema-form": "1.7.0",
-    "react-lazyload": "^2.6.2",
     "react-linkify": "^0.2.2",
     "react-measure": "^2.2.6",
     "react-modal": "^3.4.1",
