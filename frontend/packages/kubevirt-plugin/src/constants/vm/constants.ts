@@ -35,6 +35,7 @@ export const VM_DETAIL_DISKS_HREF = 'disks';
 export const VM_DETAIL_NETWORKS_HREF = 'nics';
 export const VM_DETAIL_CONSOLES_HREF = 'consoles';
 export const VM_DETAIL_ENVIRONMENT = 'environment';
+export const VM_DETAIL_SNAPSHOTS = 'snapshots';
 
 export const CLOUDINIT_DISK = 'cloudinitdisk';
 
