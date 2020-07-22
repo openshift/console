@@ -13,7 +13,11 @@ import {
   TEMPLATE_TYPE_VM,
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../constants/vm';
-import { getCloudInitVolume } from '../vm/selectors';
+import {
+  getCloudInitVolume,
+  getOperatingSystemDataVolumeAnnotation,
+  getOperatingSystemDataVolumeNamespaceAnnotation,
+} from '../vm/selectors';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 import { selectVM } from './basic';
 import { removeOSDups } from '../../utils/sort';
@@ -82,6 +86,8 @@ export const getTemplateOperatingSystems = (templates: TemplateKind[]) => {
       return {
         id: osId,
         name: getAnnotation(template, nameAnnotation),
+        dataVolumeName: getOperatingSystemDataVolumeAnnotation(template, osId),
+        dataVolumeNamespace: getOperatingSystemDataVolumeNamespaceAnnotation(template),
       };
     }),
   );

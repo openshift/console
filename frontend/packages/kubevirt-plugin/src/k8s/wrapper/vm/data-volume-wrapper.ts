@@ -106,6 +106,18 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
     return this;
   };
 
+  setPesistentVolumeClaimName = (name: string) => {
+    this.ensurePath('spec.source.pvc');
+    this.data.spec.source.pvc.name = name;
+    return this;
+  };
+
+  setPesistentVolumeClaimNamespace = (namespace: string) => {
+    this.ensurePath('spec.source.pvc');
+    this.data.spec.source.pvc.namespace = namespace;
+    return this;
+  };
+
   addOwnerReferences = (...additionalOwnerReferences) => {
     if (!getOwnerReferences(this.data)) {
       this.data.metadata.ownerReferences = [];
