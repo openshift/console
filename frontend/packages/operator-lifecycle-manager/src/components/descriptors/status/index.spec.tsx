@@ -1,13 +1,30 @@
 import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
-import { ResourceLink } from '@console/internal/components/utils';
-import { Conditions } from '@console/internal/components/conditions';
+import { Router } from 'react-router';
+import { Provider } from 'react-redux';
+import { mount, ReactWrapper } from 'enzyme';
 import { DescriptorProps, StatusCapability, Descriptor, SpecCapability } from '../types';
-import { testModel } from '../../../../mocks';
+import { testModel, testResourceInstance } from '../../../../mocks';
 import { StatusDescriptor } from '.';
+import store from '@console/internal/redux';
+import { ResourceLink, history } from '@console/internal/components/utils';
+import { Conditions } from '@console/internal/components/conditions';
+
+const OBJ = {
+  ...testResourceInstance,
+  status: {
+    link: 'https://example.com',
+    service: 'someservice',
+    conditions: [
+      {
+        lastUpdateTime: '2017-10-16 12:00:00',
+        type: 'SomeType',
+      },
+    ],
+  },
+};
 
 describe(StatusDescriptor.displayName, () => {
-  let wrapper: ShallowWrapper<DescriptorProps>;
+  let wrapper: ReactWrapper<DescriptorProps>;
   let descriptor: Descriptor;
 
   beforeEach(() => {
@@ -17,87 +34,45 @@ describe(StatusDescriptor.displayName, () => {
       description: '',
       'x-descriptors': [],
     };
-    wrapper = shallow(
-      <StatusDescriptor
-        descriptor={descriptor}
-        value={null}
-        obj={null}
-        model={testModel}
-        namespace="foo"
-      />,
-    )
-      .childAt(0)
-      .shallow();
+    wrapper = mount(<StatusDescriptor descriptor={descriptor} obj={OBJ} model={testModel} />, {
+      wrappingComponent: (props) => (
+        <Router history={history}>
+          <Provider store={store} {...props} />,
+        </Router>
+      ),
+    });
   });
 
   it('renders status value as text if no matching capability component', () => {
     expect(wrapper.find('dt').text()).toEqual(descriptor.displayName);
-    expect(
-      wrapper
-        .find('dd')
-        .childAt(0)
-        .shallow()
-        .find('.text-muted')
-        .text(),
-    ).toEqual('None');
+    expect(wrapper.find('dd .text-muted').text()).toEqual('None');
   });
 
   it('renders a conditions status', () => {
-    const value = [
-      {
-        lastUpdateTime: '2017-10-16 12:00:00',
-        type: 'SomeType',
-      },
-    ];
     descriptor['x-descriptors'] = [StatusCapability.conditions];
-    wrapper = wrapper.setProps({ descriptor, value });
+    descriptor.path = 'conditions';
+    wrapper.setProps({ descriptor });
 
-    expect(
-      wrapper
-        .find('dd')
-        .childAt(0)
-        .shallow()
-        .find(Conditions)
-        .exists(),
-    ).toBe(true);
+    expect(wrapper.find(Conditions).exists()).toBe(true);
   });
 
   it('renders a link status', () => {
-    const value = 'https://example.com';
     descriptor['x-descriptors'] = [StatusCapability.w3Link];
-    wrapper = wrapper.setProps({ descriptor, value });
+    descriptor.path = 'link';
+    wrapper = wrapper.setProps({ descriptor });
 
-    expect(
-      wrapper
-        .find('dd')
-        .childAt(0)
-        .shallow()
-        .text(),
-    ).toEqual('example.com');
+    expect(wrapper.find('dd').text()).toEqual('example.com');
   });
 
   it('renders a resource status', () => {
-    const value = 'someservice';
     descriptor['x-descriptors'] = [
       `${StatusCapability.k8sResourcePrefix}Service`,
     ] as SpecCapability[];
-    wrapper = wrapper.setProps({ descriptor, value });
+    descriptor.path = 'service';
+    wrapper = wrapper.setProps({ descriptor });
+    const resourceLink = wrapper.find(ResourceLink);
 
-    expect(
-      wrapper
-        .find('dd')
-        .childAt(0)
-        .shallow()
-        .find(ResourceLink)
-        .props().kind,
-    ).toEqual('Service');
-    expect(
-      wrapper
-        .find('dd')
-        .childAt(0)
-        .shallow()
-        .find(ResourceLink)
-        .props().namespace,
-    ).toEqual('foo');
+    expect(resourceLink.prop('kind')).toEqual('Service');
+    expect(resourceLink.prop('namespace')).toEqual('default');
   });
 });

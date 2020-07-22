@@ -1,12 +1,17 @@
-import * as React from 'react';
 import * as _ from 'lodash';
+import * as React from 'react';
 import { Map as ImmutableMap } from 'immutable';
-import { Button, Switch, Tooltip, Checkbox } from '@patternfly/react-core';
-import { EyeIcon, EyeSlashIcon, PencilAltIcon } from '@patternfly/react-icons';
-import { LoadingInline, ResourceLink, Selector } from '@console/internal/components/utils';
+import { Button, Switch, Checkbox } from '@patternfly/react-core';
+import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
+import {
+  LoadingInline,
+  ResourceLink,
+  Selector,
+  DetailsItem,
+} from '@console/internal/components/utils';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { k8sPatch, k8sUpdate } from '@console/internal/module/k8s';
-import { YellowExclamationTriangleIcon } from '@console/shared';
+import { YellowExclamationTriangleIcon, getSchemaAtPath } from '@console/shared';
 import { SecretValue } from '@console/internal/components/configmap-and-secret-data';
 import { CapabilityProps, DescriptorProps, SpecCapability, Error } from '../types';
 import { ResourceRequirementsModalLink } from './resource-requirements';
@@ -15,21 +20,39 @@ import { configureSizeModal } from './configure-size';
 import { configureUpdateStrategyModal } from './configure-update-strategy';
 import { REGEXP_K8S_RESOURCE_SUFFIX } from '../const';
 
-const Default: React.SFC<SpecCapabilityProps> = ({ value }) => {
-  if (_.isEmpty(value) && !_.isNumber(value) && !_.isBoolean(value)) {
-    return <span className="text-muted">None</span>;
-  }
-  if (_.isObject(value)) {
-    return <span className="text-muted">Unsupported</span>;
-  }
-  return <span>{_.toString(value)}</span>;
+const Default: React.SFC<SpecCapabilityProps> = ({ description, label, obj, fullPath, value }) => {
+  const detail = React.useMemo(() => {
+    if (_.isEmpty(value) && !_.isFinite(value) && !_.isBoolean(value)) {
+      return <span className="text-muted">None</span>;
+    }
+    if (_.isObject(value)) {
+      return <span className="text-muted">Unsupported</span>;
+    }
+    return <span>{_.toString(value)}</span>;
+  }, [value]);
+
+  return (
+    <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+      {detail}
+    </DetailsItem>
+  );
 };
 
-const PodCount: React.SFC<SpecCapabilityProps> = ({ model, obj, descriptor, value }) => (
-  <Button
-    isInline
-    type="button"
-    onClick={() =>
+const PodCount: React.SFC<SpecCapabilityProps> = ({
+  description,
+  descriptor,
+  label,
+  model,
+  obj,
+  fullPath,
+  value,
+}) => (
+  <DetailsItem
+    description={description}
+    label={label}
+    obj={obj}
+    path={fullPath}
+    onEdit={() =>
       configureSizeModal({
         kindObj: model,
         resource: obj,
@@ -37,72 +60,132 @@ const PodCount: React.SFC<SpecCapabilityProps> = ({ model, obj, descriptor, valu
         specValue: value,
       })
     }
-    variant="link"
   >
     {value} pods
-    <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
-  </Button>
+  </DetailsItem>
 );
 
-const Endpoints: React.SFC<SpecCapabilityProps> = ({ value }) => <EndpointList endpoints={value} />;
+const Endpoints: React.SFC<SpecCapabilityProps> = ({
+  description,
+  label,
+  obj,
+  fullPath,
+  value,
+}) => (
+  <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+    <EndpointList endpoints={value} />
+  </DetailsItem>
+);
 
-const Label: React.SFC<SpecCapabilityProps> = ({ value }) => <span>{value || '--'}</span>;
+const Label: React.SFC<SpecCapabilityProps> = ({ description, label, obj, fullPath, value }) => (
+  <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+    {value || '--'}
+  </DetailsItem>
+);
 
-const NamespaceSelector: React.SFC<SpecCapabilityProps> = ({ value }) =>
-  _.get(value, 'matchNames[0]') ? (
-    <ResourceLink kind="Namespace" name={value.matchNames[0]} title={value.matchNames[0]} />
-  ) : (
-    <span className="text-muted">None</span>
+const NamespaceSelector: React.SFC<SpecCapabilityProps> = ({
+  description,
+  label,
+  obj,
+  fullPath,
+  value,
+}) => (
+  <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+    {value?.matchNames?.[0] ? (
+      <ResourceLink kind="Namespace" name={value.matchNames[0]} title={value.matchNames[0]} />
+    ) : (
+      <span className="text-muted">None</span>
+    )}
+  </DetailsItem>
+);
+
+const ResourceRequirements: React.SFC<SpecCapabilityProps> = ({
+  description,
+  descriptor,
+  label,
+  obj,
+  fullPath,
+}) => (
+  <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+    <dl className="co-spec-descriptor--resource-requirements">
+      <dt>Resource Limits</dt>
+      <dd>
+        <ResourceRequirementsModalLink type="limits" obj={obj} path={descriptor.path} />
+      </dd>
+      <dt>Resource Requests</dt>
+      <dd>
+        <ResourceRequirementsModalLink type="requests" obj={obj} path={descriptor.path} />
+      </dd>
+    </dl>
+  </DetailsItem>
+);
+
+const K8sResourceLink: React.SFC<SpecCapabilityProps> = ({
+  capability,
+  description,
+  descriptor,
+  label,
+  obj,
+  fullPath,
+  value,
+}) => {
+  const detail = React.useMemo(() => {
+    if (!value) {
+      return <span className="text-muted">None</span>;
+    }
+
+    const [, suffix] = capability.match(REGEXP_K8S_RESOURCE_SUFFIX) ?? [];
+    const gvk = suffix?.replace(/:/g, '~');
+    if (!_.isString(value)) {
+      return (
+        <>
+          <YellowExclamationTriangleIcon /> Invalid spec descriptor: value at path &apos;
+          {descriptor.path}&apos; must be a {gvk} resource name.
+        </>
+      );
+    }
+
+    return <ResourceLink kind={gvk} name={value} namespace={obj.metadata.namespace} />;
+  }, [capability, descriptor.path, value, obj.metadata.namespace]);
+  return (
+    <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+      {detail}
+    </DetailsItem>
   );
-
-const ResourceRequirements: React.SFC<SpecCapabilityProps> = ({ obj, descriptor }) => (
-  <dl className="co-spec-descriptor--resource-requirements">
-    <dt>Resource Limits</dt>
-    <dd>
-      <ResourceRequirementsModalLink type="limits" obj={obj} path={descriptor.path} />
-    </dd>
-    <dt>Resource Requests</dt>
-    <dd>
-      <ResourceRequirementsModalLink type="requests" obj={obj} path={descriptor.path} />
-    </dd>
-  </dl>
-);
-
-const K8sResourceLink: React.SFC<SpecCapabilityProps> = (props) => {
-  if (!props.value) {
-    return <span className="text-muted">None</span>;
-  }
-
-  const [, suffix] = props.capability.match(REGEXP_K8S_RESOURCE_SUFFIX) ?? [];
-  const gvk = suffix?.replace(/:/g, '~');
-  if (!_.isString(props.value)) {
-    return (
-      <>
-        <YellowExclamationTriangleIcon /> Invalid spec descriptor: value at path &apos;
-        {props.descriptor.path}&apos; must be a {gvk} resource name.
-      </>
-    );
-  }
-
-  return <ResourceLink kind={gvk} name={props.value} namespace={props.namespace} />;
 };
 
-const BasicSelector: React.SFC<SpecCapabilityProps> = ({ value, capability }) => (
-  <Selector selector={value} kind={capability.split(SpecCapability.selector)[1]} />
+const BasicSelector: React.SFC<SpecCapabilityProps> = ({
+  capability,
+  description,
+  label,
+  obj,
+  fullPath,
+  value,
+}) => (
+  <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+    <Selector selector={value} kind={capability.split(SpecCapability.selector)[1]} />
+  </DetailsItem>
 );
 
-const BooleanSwitch: React.FC<SpecCapabilityProps> = (props) => {
-  const { model, obj, descriptor, onHandleError } = props;
-  const convertedValue = !_.isNil(props.value) ? props.value : false;
-  const [value, setValue] = React.useState(convertedValue);
+const BooleanSwitch: React.FC<SpecCapabilityProps> = ({
+  model,
+  obj,
+  description,
+  descriptor,
+  label,
+  onError,
+  fullPath,
+  value,
+}) => {
+  const [checked, setChecked] = React.useState(Boolean(value));
   const [confirmed, setConfirmed] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState(null);
 
   const errorCb = (err: Error): void => {
     setConfirmed(false);
-    setValue(convertedValue);
+    setChecked(Boolean(value));
     setErrorMessage(err.message);
-    onHandleError(err.message);
+    onError(err);
   };
 
   const update = () => {
@@ -113,32 +196,31 @@ const BooleanSwitch: React.FC<SpecCapabilityProps> = (props) => {
       const patchFor = (val: boolean) => [
         { op: 'add', path: `/spec/${descriptor.path.replace(/\./g, '/')}`, value: val },
       ];
-      return k8sPatch(model, obj, patchFor(value)).catch((err) => errorCb(err));
+      return k8sPatch(model, obj, patchFor(checked)).catch((err) => errorCb(err));
     }
 
     const newObj = _.cloneDeep(obj);
-    _.set(newObj, `spec.${descriptor.path}`, value);
+    _.set(newObj, `spec.${descriptor.path}`, checked);
     return k8sUpdate(model, newObj).catch((err) => errorCb(err));
   };
 
   return (
-    <>
+    <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
       <div className="co-spec-descriptor--switch">
         <Switch
           id={descriptor.path}
-          isChecked={value}
+          isChecked={checked}
           onChange={(val) => {
-            setValue(val);
+            setChecked(val);
             setConfirmed(false);
             setErrorMessage(null);
-            onHandleError(null);
           }}
           label="True"
           labelOff="False"
         />
         &nbsp;&nbsp;
-        {value !== convertedValue && confirmed && <LoadingInline />}
-        {value !== convertedValue && !confirmed && (
+        {checked !== Boolean(value) && confirmed && <LoadingInline />}
+        {checked !== Boolean(value) && !confirmed && (
           <>
             &nbsp;&nbsp;
             <Button className="pf-m-link--align-left" type="button" variant="link" onClick={update}>
@@ -151,55 +233,64 @@ const BooleanSwitch: React.FC<SpecCapabilityProps> = (props) => {
       {errorMessage && (
         <div className="cos-error-title co-break-word">{errorMessage || 'An error occurred'}</div>
       )}
-    </>
+    </DetailsItem>
   );
 };
 
-const CheckboxUIComponent: React.FC<SpecCapabilityProps> = (props) => {
-  const convertedValue = !_.isNil(props.value) ? props.value : false;
-  const [value, setValue] = React.useState(convertedValue);
+const CheckboxUIComponent: React.FC<SpecCapabilityProps> = ({
+  description,
+  descriptor,
+  label,
+  model,
+  obj,
+  fullPath,
+  value,
+}) => {
+  const [checked, setChecked] = React.useState(Boolean(value));
   const [confirmed, setConfirmed] = React.useState(false);
 
   const patchFor = (val: boolean) => [
-    { op: 'add', path: `/spec/${props.descriptor.path.replace('.', '/')}`, value: val },
+    { op: 'add', path: `/spec/${descriptor.path.replace('.', '/')}`, value: val },
   ];
   const update = () => {
     setConfirmed(true);
-    return k8sPatch(props.model, props.obj, patchFor(value));
+    return k8sPatch(model, obj, patchFor(checked));
   };
 
   return (
-    <div className="co-spec-descriptor--switch">
-      <Checkbox
-        id={props.descriptor.path}
-        style={{ marginLeft: '10px' }}
-        isChecked={value}
-        label={props.descriptor.displayName}
-        onChange={(val) => {
-          setValue(val);
-          setConfirmed(false);
-        }}
-      />
-      &nbsp;&nbsp;
-      {value !== convertedValue && confirmed && <LoadingInline />}
-      {value !== convertedValue && !confirmed && (
-        <>
-          &nbsp;&nbsp;
-          <Button className="pf-m-link--align-left" type="button" variant="link" onClick={update}>
-            <YellowExclamationTriangleIcon className="co-icon-space-r pf-c-button-icon--plain" />
-            Confirm change
-          </Button>
-        </>
-      )}
-    </div>
+    <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+      <div className="co-spec-descriptor--switch">
+        <Checkbox
+          id={descriptor.path}
+          style={{ marginLeft: '10px' }}
+          isChecked={checked}
+          label={label}
+          onChange={(val) => {
+            setChecked(val);
+            setConfirmed(false);
+          }}
+        />
+        &nbsp;&nbsp;
+        {checked !== Boolean(value) && confirmed && <LoadingInline />}
+        {checked !== Boolean(value) && !confirmed && (
+          <>
+            &nbsp;&nbsp;
+            <Button className="pf-m-link--align-left" type="button" variant="link" onClick={update}>
+              <YellowExclamationTriangleIcon className="co-icon-space-r pf-c-button-icon--plain" />
+              Confirm change
+            </Button>
+          </>
+        )}
+      </div>
+    </DetailsItem>
   );
 };
 
-const Secret: React.FC<SpecCapabilityProps> = (props) => {
+const Secret: React.FC<SpecCapabilityProps> = ({ description, label, obj, fullPath, value }) => {
   const [reveal, setReveal] = React.useState(false);
 
   return (
-    <>
+    <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
       <div className="co-toggle-reveal-value">
         <Button
           type="button"
@@ -220,18 +311,26 @@ const Secret: React.FC<SpecCapabilityProps> = (props) => {
             </>
           )}
         </Button>
-        <SecretValue value={props.value} encoded={false} reveal={reveal} />
+        <SecretValue value={value} encoded={false} reveal={reveal} />
       </div>
-    </>
+    </DetailsItem>
   );
 };
 
-const UpdateStrategy: React.FC<SpecCapabilityProps> = ({ model, obj, descriptor, value }) => (
-  <Button
-    type="button"
-    variant="link"
-    isInline
-    onClick={() =>
+const UpdateStrategy: React.FC<SpecCapabilityProps> = ({
+  description,
+  descriptor,
+  label,
+  model,
+  obj,
+  fullPath,
+  value,
+}) => (
+  <DetailsItem
+    description={description}
+    label={label}
+    obj={obj}
+    onEdit={() =>
       configureUpdateStrategyModal({
         kindObj: model,
         resource: obj,
@@ -239,10 +338,10 @@ const UpdateStrategy: React.FC<SpecCapabilityProps> = ({ model, obj, descriptor,
         specValue: value,
       })
     }
+    path={fullPath}
   >
-    {_.get(value, 'type', 'None')}
-    <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
-  </Button>
+    {value?.type ?? 'None'}
+  </DetailsItem>
 );
 
 const capabilityComponents = ImmutableMap<
@@ -279,37 +378,38 @@ const capabilityFor = (specCapability: SpecCapability) => {
  * Main entrypoint component for rendering custom UI for a given spec descriptor. This should be used instead of importing
  * individual components from this module.
  */
-export const SpecDescriptor = withFallback((props: DescriptorProps) => {
-  const { model, obj, descriptor, value, namespace, onHandleError } = props;
-  const capability = _.get(descriptor, ['x-descriptors'], []).find(
-    (c) =>
-      !c.startsWith(SpecCapability.fieldGroup) &&
-      !c.startsWith(SpecCapability.arrayFieldGroup) &&
-      !c.startsWith(SpecCapability.advanced) &&
-      !c.startsWith(SpecCapability.fieldDependency),
-  ) as SpecCapability;
-  const Capability = capabilityFor(capability);
+export const SpecDescriptor = withFallback(
+  ({ model, obj, descriptor, schema, onError }: DescriptorProps) => {
+    const capability = (descriptor?.['x-descriptors'] ?? []).find(
+      (c) =>
+        !c.startsWith(SpecCapability.fieldGroup) &&
+        !c.startsWith(SpecCapability.arrayFieldGroup) &&
+        !c.startsWith(SpecCapability.advanced) &&
+        !c.startsWith(SpecCapability.fieldDependency),
+    ) as SpecCapability;
+    const CapabilityComponent = capabilityFor(capability);
+    const propertySchema = getSchemaAtPath(schema, descriptor.path);
+    const description = descriptor?.description || propertySchema?.description;
+    const label = descriptor?.displayName || propertySchema?.title;
+    const fullPath = ['spec', ..._.toPath(descriptor.path)];
+    const value = _.get(obj, fullPath, descriptor.value);
 
-  return Capability ? (
-    <dl className="olm-descriptor">
-      <Tooltip content={descriptor.description}>
-        <dt className="olm-descriptor__title" data-test-descriptor-label={descriptor.displayName}>
-          {descriptor.displayName}
-        </dt>
-      </Tooltip>
-      <dd className="olm-descriptor__value">
-        <Capability
-          descriptor={descriptor}
+    return CapabilityComponent ? (
+      <dl className="olm-descriptor">
+        <CapabilityComponent
           capability={capability}
-          value={value}
-          namespace={namespace}
+          description={description}
+          descriptor={descriptor}
+          label={label}
           model={model}
           obj={obj}
-          onHandleError={onHandleError}
+          onError={onError}
+          fullPath={fullPath}
+          value={value}
         />
-      </dd>
-    </dl>
-  ) : null;
-});
+      </dl>
+    ) : null;
+  },
+);
 
 type SpecCapabilityProps = CapabilityProps<SpecCapability>;

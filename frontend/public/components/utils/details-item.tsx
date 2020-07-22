@@ -11,17 +11,14 @@ import {
   SplitItem,
 } from '@patternfly/react-core';
 
-import {
-  getPropertyDescription,
-  K8sKind,
-  K8sResourceKind,
-  K8sResourceKindReference,
-  modelFor,
-  referenceFor,
-} from '../../module/k8s';
+import { getPropertyDescription, K8sResourceKind, referenceFor } from '../../module/k8s';
 import { LinkifyExternal } from './link';
+import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 
-const PropertyPath: React.FC<{ kind: string; path: string | string[] }> = ({ kind, path }) => {
+export const PropertyPath: React.FC<{ kind: string; path: string | string[] }> = ({
+  kind,
+  path,
+}) => {
   const pathArray: string[] = _.toPath(path);
   return (
     <Breadcrumb className="pf-c-breadcrumb--no-padding-top">
@@ -38,7 +35,9 @@ const PropertyPath: React.FC<{ kind: string; path: string | string[] }> = ({ kin
   );
 };
 
-const EditButton = (props) => (
+const EditButton: React.SFC<{ onClick: (e: React.MouseEvent<HTMLButtonElement>) => void }> = (
+  props,
+) => (
   <Button variant="link" isInline onClick={props.onClick}>
     {props.children}
     <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
@@ -48,6 +47,7 @@ const EditButton = (props) => (
 export const DetailsItem: React.FC<DetailsItemProps> = ({
   children,
   defaultValue = '-',
+  description,
   editAsGroup,
   hideEmpty,
   label,
@@ -58,29 +58,30 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
   path,
   valueClassName,
 }) => {
-  if (hideEmpty && _.isEmpty(_.get(obj, path))) {
-    return null;
-  }
-
-  const reference: K8sResourceKindReference = referenceFor(obj);
-  const model: K8sKind = modelFor(reference);
-  const description: string = getPropertyDescription(model, path);
+  const [model] = useK8sModel(referenceFor(obj));
+  const hide = hideEmpty && _.isEmpty(_.get(obj, path));
+  const popoverContent: string = description ?? getPropertyDescription(model, path);
   const value: React.ReactNode = children || _.get(obj, path, defaultValue);
   const editable = onEdit && canEdit;
-  return (
+  return hide ? null : (
     <>
-      <dt className={classnames('details-item__label', labelClassName)}>
+      <dt
+        className={classnames('details-item__label', labelClassName)}
+        data-test-selector={`details-item-label__${label}`}
+      >
         <Split>
           <SplitItem className="details-item__label">
-            {description ? (
+            {popoverContent || path ? (
               <Popover
                 headerContent={<div>{label}</div>}
-                bodyContent={
-                  <LinkifyExternal>
-                    <div className="co-pre-line">{description}</div>
-                  </LinkifyExternal>
-                }
-                footerContent={<PropertyPath kind={model.kind} path={path} />}
+                {...(popoverContent && {
+                  bodyContent: (
+                    <LinkifyExternal>
+                      <div className="co-pre-line">{popoverContent}</div>
+                    </LinkifyExternal>
+                  ),
+                })}
+                {...(path && { footerContent: <PropertyPath kind={model.kind} path={path} /> })}
                 maxWidth="30rem"
               >
                 <Button variant="plain" className="details-item__popover-button">
@@ -103,8 +104,9 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
       </dt>
       <dd
         className={classnames('details-item__value', valueClassName, {
-          'details-item__value--editable': editable,
+          'details-item__value--editable': editable && editAsGroup,
         })}
+        data-test-selector={`details-item-value__${label}`}
       >
         {editable && !editAsGroup ? <EditButton onClick={onEdit}>{value}</EditButton> : value}
       </dd>
@@ -113,14 +115,19 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
 };
 
 export type DetailsItemProps = {
+  canEdit?: boolean;
   defaultValue?: React.ReactNode;
+  description?: string;
   editAsGroup?: boolean;
   hideEmpty?: boolean;
   label: string;
   labelClassName?: string;
   obj: K8sResourceKind;
-  onEdit?: (e: Event) => void;
-  canEdit?: boolean;
+  onEdit?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   path: string | string[];
   valueClassName?: string;
 };
+
+DetailsItem.displayName = 'DetailsItem';
+PropertyPath.displayName = 'PropertyPath';
+EditButton.displayName = 'EditButton';
