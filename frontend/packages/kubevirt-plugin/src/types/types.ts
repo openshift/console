@@ -15,4 +15,6 @@ export type IDEntity = {
 export type OperatingSystemRecord = {
   id: string;
   name: string;
+  dataVolumeName?: string;
+  dataVolumeNamespace?: string;
 };

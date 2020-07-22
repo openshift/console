@@ -21,6 +21,7 @@ export const TEMPLATE_TYPE_BASE = 'base';
 export const TEMPLATE_WORKLOAD_LABEL = 'workload.template.kubevirt.io';
 export const TEMPLATE_VM_NAME_LABEL = 'vm.kubevirt.io/name';
 export const TEMPLATE_OS_NAME_ANNOTATION = 'name.os.template.kubevirt.io';
+export const TEMPLATE_DATAVOLUME_ANNOTATION = 'datavolume.template.kubevirt.io';
 export const TEMPLATE_VM_DOMAIN_LABEL = 'kubevirt.io/domain';
 export const TEMPLATE_VM_SIZE_LABEL = 'kubevirt.io/size';
 
