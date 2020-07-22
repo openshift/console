@@ -324,13 +324,6 @@ $monitoring-line-height: 18px;
   }
 }
 
-.query-browser__pagination {
-  margin-top: 15px;
-  ul {
-    list-style: none;
-  }
-}
-
 .query-browser__query {
   line-height: 1;
   margin: 0 15px 0 0;
@@ -404,7 +397,7 @@ $monitoring-line-height: 18px;
 }
 
 .query-browser__table-wrapper {
-  overflow-x: scroll;
+  overflow-x: auto;
   width: 100%;
 
   table {
