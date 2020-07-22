@@ -147,13 +147,14 @@
     "subscriptions-transport-ws": "^0.9.16",
     "text-encoding": "0.x",
     "typesafe-actions": "^4.2.1",
+    "umd-compat-loader": "2.1.1",
     "url-polyfill": "^1.1.5",
     "url-search-params-polyfill": "2.x",
     "victory-shared-events": "34.3.8",
     "vscode-languageserver-types": "^3.10.0",
     "whatwg-fetch": "2.x",
     "xterm": "^3.12.2",
-    "yaml-language-server": "0.5.4",
+    "yaml-language-server": "0.9.0",
     "yup": "^0.27.0"
   },
   "devDependencies": {
