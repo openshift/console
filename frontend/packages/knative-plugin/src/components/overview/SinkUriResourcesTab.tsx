@@ -2,21 +2,28 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { OverviewItem } from '@console/shared';
-import { referenceFor } from '@console/internal/module/k8s';
+import { referenceFor, modelFor } from '@console/internal/module/k8s';
 import {
   ActionsMenu,
   ResourceLink,
   SidebarSectionHeading,
   ExternalLink,
+  KebabAction,
 } from '@console/internal/components/utils';
 
 export type SinkUriResourcesTabProps = {
   itemData: OverviewItem;
+  menuAction: KebabAction;
 };
 
-const SinkUriResourcesTab: React.FC<SinkUriResourcesTabProps> = ({ itemData }) => {
+const SinkUriResourcesTab: React.FC<SinkUriResourcesTabProps> = ({ itemData, menuAction }) => {
   const { obj, eventSources } = itemData;
   const sinkUri = obj?.spec?.sinkUri;
+  const actions = [];
+  if (eventSources.length > 0) {
+    const sourceModel = modelFor(referenceFor(eventSources[0]));
+    actions.push(menuAction(sourceModel, obj, eventSources));
+  }
 
   return (
     <div className="overview__sidebar-pane resource-overview">
@@ -24,7 +31,7 @@ const SinkUriResourcesTab: React.FC<SinkUriResourcesTabProps> = ({ itemData }) =
         <h1 className="co-m-pane__heading">
           <div className="co-m-pane__name co-resource-item">URI</div>
           <div className="co-actions">
-            <ActionsMenu actions={[]} />
+            <ActionsMenu actions={actions} />
           </div>
         </h1>
       </div>

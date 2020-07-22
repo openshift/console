@@ -13,6 +13,7 @@ import {
 } from '../../const';
 import { RevisionModel, EventingSubscriptionModel } from '../../models';
 import { getRevisionActions } from '../../actions/getRevisionActions';
+import { editSinkUri } from '../../actions/edit-sink-uri';
 import {
   isDynamicEventResourceKind,
   isEventingChannelResourceKind,
@@ -48,7 +49,7 @@ export const KnativeResourceOverviewPage: React.ComponentType<KnativeResourceOve
   kindsInFlight,
 }: KnativeResourceOverviewPageProps) => {
   if (NodeType.SinkUri === item?.obj?.type?.nodeType) {
-    return <SinkUriResourcesTab itemData={item} />;
+    return <SinkUriResourcesTab itemData={item} menuAction={editSinkUri} />;
   }
   if (kindsInFlight) {
     return !knativeModels ? null : <LoadingBox />;
