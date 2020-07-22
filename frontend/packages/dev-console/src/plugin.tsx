@@ -1,6 +1,12 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { CodeIcon, BoltIcon, DatabaseIcon, CatalogIcon } from '@patternfly/react-icons';
+import {
+  BoltIcon,
+  CatalogIcon,
+  CodeIcon,
+  DatabaseIcon,
+  LaptopCodeIcon,
+} from '@patternfly/react-icons';
 import {
   Plugin,
   ModelDefinition,
@@ -551,7 +557,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: ['/samples/ns/:ns/is/:is/isNs/:isNs'],
+      path: ['/samples/ns/:ns/:is/:isNs'],
       loader: async () =>
         (
           await import(
@@ -900,7 +906,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       url: '/samples',
       label: 'Samples',
       description: 'Create an application from a code sample',
-      icon: <CodeIcon />,
+      icon: <LaptopCodeIcon />,
       accessReview: [
         BuildConfigModel,
         ImageStreamModel,

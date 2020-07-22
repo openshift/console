@@ -5,17 +5,11 @@ import { Gallery, GalleryItem } from '@patternfly/react-core';
 import { CatalogTile } from '@patternfly/react-catalog-view-extension';
 import { ImageStreamModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import {
-  FirehoseResource,
-  PageHeading,
-  LoadingBox,
-  history,
-} from '@console/internal/components/utils';
+import { FirehoseResource, LoadingBox, history } from '@console/internal/components/utils';
 import { normalizeBuilderImages, NormalizedBuilderImages } from '../../utils/imagestream-utils';
 import ProjectListPage from '../projects/ProjectListPage';
+import PageLayout from '../layout/PageLayout';
 import NamespacedPage from '../NamespacedPage';
-
-import '../EmptyState.scss';
 
 const imageStreamResource: FirehoseResource = {
   kind: ImageStreamModel.kind,
@@ -39,7 +33,7 @@ const SampleCatalog: React.FC<SampleCatalogProps> = ({ match }) => {
 
   const galleryItems = Object.values(builderImages).map((builderImage) => {
     const { name, title, description, iconUrl, imageStreamNamespace } = builderImage;
-    const url = `/samples/ns/${namespace}/is/${name}/isNs/${imageStreamNamespace}`;
+    const url = `/samples/ns/${namespace}/${name}/${imageStreamNamespace}`;
     const handleClick = (e: React.SyntheticEvent) => {
       history.push(url);
       e.preventDefault();
@@ -47,7 +41,7 @@ const SampleCatalog: React.FC<SampleCatalogProps> = ({ match }) => {
     return (
       <GalleryItem key={name}>
         <CatalogTile
-          className="odc-empty-state__tile"
+          className="co-catalog-tile"
           onClick={handleClick}
           href={url}
           title={title}
@@ -65,19 +59,14 @@ const SampleCatalog: React.FC<SampleCatalogProps> = ({ match }) => {
       </Helmet>
       <NamespacedPage hideApplications>
         {namespace ? (
-          <>
-            <div className="odc-empty-state__title">
-              <PageHeading title="Samples" />
-              <div className="co-catalog-page__description odc-empty-state__hint-block">
-                Get Started using applications by choosing a code sample.
-              </div>
-            </div>
-            <div className="odc-empty-state__content">
-              <Gallery className="co-catalog-tile-view" hasGutter>
-                {galleryItems}
-              </Gallery>
-            </div>
-          </>
+          <PageLayout
+            title="Samples"
+            hint="Get Started using applications by choosing a code sample."
+          >
+            <Gallery className="co-catalog-tile-view" hasGutter>
+              {galleryItems}
+            </Gallery>
+          </PageLayout>
         ) : (
           <ProjectListPage title="Samples">
             Select a project to view the list of Samples.
