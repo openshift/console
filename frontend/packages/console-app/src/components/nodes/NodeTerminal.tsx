@@ -37,7 +37,7 @@ const getDebugImage = async (): Promise<string> => {
     const istag = await k8sGet(ImageStreamTagModel, 'tools:latest', 'openshift');
     return istag.image.dockerImageReference;
   } catch (e) {
-    return 'registry.redhat.io/rhel7/support-tools';
+    return 'registry.redhat.io/rhel8/support-tools';
   }
 };
 
