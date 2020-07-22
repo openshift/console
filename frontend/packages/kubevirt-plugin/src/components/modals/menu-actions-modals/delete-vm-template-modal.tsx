@@ -47,9 +47,10 @@ export const DeleteVMTemplateModal = withHandlePromise((props: DeleteVMTemplateM
       deleteOwnedVolumeResources: deleteDisks,
     });
 
-    return handlePromise(promise)
-      .then(close)
-      .then(() => redirectToList(vmTemplateUpToDate, 'templates'));
+    return handlePromise(promise, () => {
+      close();
+      redirectToList(vmTemplateUpToDate, 'templates');
+    });
   };
 
   return (

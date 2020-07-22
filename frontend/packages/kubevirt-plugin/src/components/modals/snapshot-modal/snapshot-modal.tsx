@@ -35,12 +35,7 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
       vmName,
     });
 
-    handlePromise(k8sCreate(snapshotWrapper.getModel(), snapshotWrapper.asResource()))
-      .then(close)
-      .catch((err) => {
-        // eslint-disable-next-line no-console
-        console.error(err);
-      });
+    handlePromise(k8sCreate(snapshotWrapper.getModel(), snapshotWrapper.asResource()), close);
   };
 
   return (

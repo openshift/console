@@ -108,14 +108,14 @@ export const AffinityModal = withHandlePromise<AffinityModalProps>(
 
     const submit = async () => {
       if (!_.isEqual(affinities, getRowsDataFromAffinity(currentAffinity))) {
-        // eslint-disable-next-line promise/catch-or-return
         handlePromise(
           k8sPatch(
             getVMLikeModel(vmLikeFinal),
             vmLikeFinal,
             await getAffinityPatch(vmLikeFinal, getAffinityFromRowsData(affinities)),
           ),
-        ).then(close);
+          close,
+        );
       } else {
         close();
       }

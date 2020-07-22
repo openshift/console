@@ -98,12 +98,10 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
       },
     };
 
-    return handlePromise(k8sCreate(PersistentVolumeClaimModel, pvcCloneObj)).then(
-      (cloneResource) => {
-        close();
-        history.push(resourceObjPath(cloneResource, referenceFor(cloneResource)));
-      },
-    );
+    return handlePromise(k8sCreate(PersistentVolumeClaimModel, pvcCloneObj), (cloneResource) => {
+      close();
+      history.push(resourceObjPath(cloneResource, referenceFor(cloneResource)));
+    });
   };
 
   return (

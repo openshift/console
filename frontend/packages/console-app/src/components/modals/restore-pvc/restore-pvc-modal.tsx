@@ -109,7 +109,8 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
       };
 
       // eslint-disable-next-line promise/catch-or-return
-      handlePromise(k8sCreate(PersistentVolumeClaimModel, restorePVCTemplate, namespace)).then(
+      handlePromise(
+        k8sCreate(PersistentVolumeClaimModel, restorePVCTemplate, namespace),
         (newPVC) => {
           close();
           history.push(

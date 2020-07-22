@@ -30,7 +30,7 @@ export const ConfirmVMIModal = withHandlePromise((props: ConfirmVMIModalProps) =
   const submit = (e) => {
     e.preventDefault();
 
-    return handlePromise(executeFn()).then(close);
+    return handlePromise(executeFn(), close);
   };
 
   return (

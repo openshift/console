@@ -124,7 +124,7 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
   const submit = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     // eslint-disable-next-line promise/catch-or-return
-    handlePromise(makeOCSRequest(nodes, storageClass, isEncrypted)).then(() => {
+    handlePromise(makeOCSRequest(nodes, storageClass, isEncrypted), () => {
       dispatch(setFlag(OCS_ATTACHED_DEVICES_FLAG, true));
       dispatch(setFlag(OCS_CONVERGED_FLAG, true));
       dispatch(setFlag(OCS_FLAG, true));

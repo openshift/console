@@ -34,15 +34,13 @@ const SnapshotRestoreModal = withHandlePromise((props: SnapshotRestoreModalProps
       vmName: getVmSnapshotVmName(snapshot),
     });
 
-    handlePromise(k8sCreate(snapshotRestoreWrapper.getModel(), snapshotRestoreWrapper.asResource()))
-      .then(() => {
+    handlePromise(
+      k8sCreate(snapshotRestoreWrapper.getModel(), snapshotRestoreWrapper.asResource()),
+      () => {
         close();
         history.push(resourcePath(snapshotRestoreWrapper.getModel().kind, restoreName, namespace));
-      })
-      .catch((err) => {
-        // eslint-disable-next-line no-console
-        console.error(err);
-      });
+      },
+    );
   };
 
   return (

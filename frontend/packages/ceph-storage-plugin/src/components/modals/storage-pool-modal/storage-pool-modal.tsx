@@ -173,8 +173,9 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
       },
     };
 
-    handlePromise(k8sCreate(CephBlockPoolModel, poolObj))
-      .then(() => {
+    handlePromise(
+      k8sCreate(CephBlockPoolModel, poolObj),
+      () => {
         setIsSubmit(true);
         // The modal will wait for 15 sec to get feedback from Rook
         const timeoutTimer = setTimeout(() => {
@@ -182,10 +183,11 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
           setIsSubmit(false);
         }, 15 * SECOND);
         setTimer(timeoutTimer);
-      })
-      .catch(() => {
+      },
+      () => {
         setPoolStatus(POOL_PROGRESS.FAILED);
-      });
+      },
+    );
   };
 
   if (poolStatus) {

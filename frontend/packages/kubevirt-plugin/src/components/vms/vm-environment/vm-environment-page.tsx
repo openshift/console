@@ -364,16 +364,18 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
       );
 
       const filterdEnvDisks = envDisks.filter((ed) => getSerial(ed) && getSourceName(ed));
-      handlePromise(promise)
-        .then(() => {
+      handlePromise(
+        promise,
+        () => {
           setIsSuccess(true);
           setEnvDisks(filterdEnvDisks.length > 0 ? filterdEnvDisks : [emptyEnvDisk]);
           setSavedEnvDisks(filterdEnvDisks);
-        })
-        .catch((err) => {
+        },
+        (err) => {
           setIsSuccess(false);
           setErrMsg(err);
-        });
+        },
+      );
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
