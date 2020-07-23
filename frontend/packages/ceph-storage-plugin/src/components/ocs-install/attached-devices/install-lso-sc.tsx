@@ -38,6 +38,7 @@ import {
   OCSAlert,
   SelectNodesSection,
   StorageClassSection,
+  EncryptSection,
 } from '../../../utils/common-ocs-install-el';
 import { filterSCWithNoProv, getAssociatedNodes } from '../../../utils/install';
 import { getSCAvailablePVs } from '../../../selectors';
@@ -47,10 +48,16 @@ import './attached-devices.scss';
 const makeOCSRequest = (
   selectedData: NodeKind[],
   storageClass: StorageClassResourceKind,
+  isEncrypted: boolean,
 ): Promise<any> => {
   const promises = makeLabelNodesRequest(selectedData);
   const scName = getName(storageClass);
-  const ocsObj = getOCSRequestData(scName, defaultRequestSize.BAREMETAL, NO_PROVISIONER);
+  const ocsObj = getOCSRequestData(
+    scName,
+    defaultRequestSize.BAREMETAL,
+    isEncrypted,
+    NO_PROVISIONER,
+  );
 
   return Promise.all(promises).then(() => k8sCreate(OCSServiceModel, ocsObj));
 };
@@ -66,6 +73,7 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
   } = props;
   const { appName, ns } = match.params;
   const [filteredNodes, setFilteredNodes] = React.useState<string[]>([]);
+  const [isEncrypted, setEncrypted] = React.useState(true);
   const [storageClass, setStorageClass] = React.useState<StorageClassResourceKind>(null);
   const [nodes, setNodes] = React.useState<NodeKind[]>([]);
   // LVS: Local Volume Set
@@ -114,7 +122,7 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
   const submit = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     // eslint-disable-next-line promise/catch-or-return
-    handlePromise(makeOCSRequest(nodes, storageClass)).then(() => {
+    handlePromise(makeOCSRequest(nodes, storageClass, isEncrypted)).then(() => {
       dispatch(setFlag(OCS_ATTACHED_DEVICES_FLAG, true));
       dispatch(setFlag(OCS_CONVERGED_FLAG, true));
       dispatch(setFlag(OCS_FLAG, true));
@@ -143,6 +151,7 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
             storageClass={storageClass}
           />
         </StorageClassSection>
+        <EncryptSection onToggle={setEncrypted} isChecked={isEncrypted} />
         {storageClass && (
           <>
             <h3 className="co-m-pane__heading co-m-pane__heading--baseline ceph-ocs-install__pane--margin">

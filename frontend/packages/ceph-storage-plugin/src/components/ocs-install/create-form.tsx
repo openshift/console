@@ -33,6 +33,7 @@ import {
   OCSAlert,
   SelectNodesSection,
   StorageClassSection,
+  EncryptSection,
 } from '../../utils/common-ocs-install-el';
 import { filterSCWithoutNoProv } from '../../utils/install';
 import { OCS_INTERNAL_CR_NAME } from '../../constants';
@@ -61,10 +62,11 @@ const makeOCSRequest = (
   selectedData: NodeKind[],
   storageClass: StorageClassResourceKind,
   osdSize: string,
+  isEncrypted: boolean,
 ): Promise<any> => {
   const promises = makeLabelNodesRequest(selectedData);
   const scName = getName(storageClass);
-  const ocsObj = getOCSRequestData(scName, osdSize);
+  const ocsObj = getOCSRequestData(scName, osdSize, isEncrypted);
 
   return Promise.all(promises).then(() => {
     if (!scName) {
@@ -87,13 +89,14 @@ export const CreateInternalCluster = withHandlePromise<
   } = props;
   const [osdSize, setOSDSize] = React.useState(defaultRequestSize.NON_BAREMETAL);
   const [storageClass, setStorageClass] = React.useState<StorageClassResourceKind>(null);
+  const [isEncrypted, setEncrypted] = React.useState(true);
   const dispatch = useDispatch();
   const [nodes, setNodes] = React.useState<NodeKind[]>([]);
 
   const submit = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     // eslint-disable-next-line promise/catch-or-return
-    handlePromise(makeOCSRequest(nodes, storageClass, osdSize)).then(() => {
+    handlePromise(makeOCSRequest(nodes, storageClass, osdSize, isEncrypted)).then(() => {
       dispatch(setFlag(OCS_CONVERGED_FLAG, true));
       dispatch(setFlag(OCS_FLAG, true));
       history.push(
@@ -132,6 +135,7 @@ export const CreateInternalCluster = withHandlePromise<
             data-test-id="osd-dropdown"
           />
         </FormGroup>
+        <EncryptSection onToggle={setEncrypted} isChecked={isEncrypted} />
         <h3 className="co-m-pane__heading co-m-pane__heading--baseline ceph-ocs-install__pane--margin">
           <div className="co-m-pane__name">Nodes</div>
         </h3>
