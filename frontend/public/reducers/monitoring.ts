@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 
-import { Alert, Rule, Silence } from '../components/monitoring/types';
+import { Alert, AlertSource, Rule, Silence } from '../components/monitoring/types';
 
 export const enum AlertSeverity {
   Critical = 'critical',
@@ -32,6 +32,11 @@ export const silenceState = (s: Silence): SilenceStates => s?.status?.state;
 
 export const alertingRuleIsActive = (rule: Rule): string =>
   rule.state === 'inactive' ? 'false' : 'true';
+
+export const alertingRuleSource = (rule: Rule): AlertSource =>
+  rule.labels?.prometheus === 'openshift-monitoring/k8s' ? AlertSource.Platform : AlertSource.User;
+
+export const alertSource = (alert: Alert): AlertSource => alertingRuleSource(alert.rule);
 
 export const alertDescription = (alert: Alert | Rule): string =>
   alert.annotations?.description || alert.annotations?.message || alert.labels?.alertname;

@@ -37,7 +37,9 @@ import { K8sKind } from '../../module/k8s';
 import {
   alertDescription,
   alertingRuleIsActive,
+  alertingRuleSource,
   AlertSeverity,
+  alertSource,
   alertState,
   AlertStates,
   silenceState,
@@ -56,6 +58,7 @@ import { QueryBrowser, QueryObj } from '../monitoring/query-browser';
 import { CreateSilence, EditSilence } from '../monitoring/silence-form';
 import {
   Alert,
+  AlertSource,
   Alerts,
   ListPageProps,
   MonitoringResource,
@@ -960,9 +963,10 @@ const SilencesDetailsPage = withFallback(
 );
 
 const tableAlertClasses = [
-  classNames('col-sm-7', 'col-xs-8'),
+  classNames('col-sm-6', 'col-xs-8'),
   classNames('col-sm-2', 'hidden-xs'),
-  classNames('col-sm-3', 'col-xs-4'),
+  classNames('col-sm-2', 'col-xs-3'),
+  classNames('col-sm-2', 'col-xs-3'),
   Kebab.columnClass,
 ];
 
@@ -995,6 +999,9 @@ const AlertTableRow: RowFunction<Alert> = ({ index, key, obj, style }) => {
         <AlertStateDescription alert={obj} />
       </TableData>
       <TableData className={tableAlertClasses[3]}>
+        {alertSource(obj) === AlertSource.User ? 'User' : 'Platform'}
+      </TableData>
+      <TableData className={tableAlertClasses[4]}>
         <Kebab
           options={
             state === AlertStates.Silenced
@@ -1027,8 +1034,14 @@ const alertTableHeader = () => [
     props: { className: tableAlertClasses[2] },
   },
   {
-    title: '',
+    title: 'Source',
+    sortFunc: 'alertSource',
+    transforms: [sortable],
     props: { className: tableAlertClasses[3] },
+  },
+  {
+    title: '',
+    props: { className: tableAlertClasses[4] },
   },
 ];
 
@@ -1067,6 +1080,16 @@ export const alertsRowFilters: RowFilter[] = [
     type: 'alert-state',
   },
   severityRowFilter,
+  {
+    defaultSelected: [AlertSource.Platform],
+    filterGroupName: 'Source',
+    items: [
+      { id: AlertSource.Platform, title: 'Platform' },
+      { id: AlertSource.User, title: 'User' },
+    ],
+    reducer: alertSource,
+    type: 'alert-source',
+  },
 ];
 
 // Row filter settings are stored in "k8s"
@@ -1160,21 +1183,32 @@ const AlertsPage = withFallback(connect(alertsToProps)(AlertsPage_));
 
 const rulesRowFilters: RowFilter[] = [
   {
-    type: 'alerting-rule-active',
     filterGroupName: 'Rule State',
-    reducer: alertingRuleIsActive,
     items: [
       { id: 'true', title: 'Active' },
       { id: 'false', title: 'Inactive' },
     ],
+    reducer: alertingRuleIsActive,
+    type: 'alerting-rule-active',
   },
   severityRowFilter,
+  {
+    defaultSelected: [AlertSource.Platform],
+    filterGroupName: 'Source',
+    items: [
+      { id: AlertSource.Platform, title: 'Platform' },
+      { id: AlertSource.User, title: 'User' },
+    ],
+    reducer: alertingRuleSource,
+    type: 'alerting-rule-source',
+  },
 ];
 
 const tableRuleClasses = [
-  classNames('col-sm-6', 'col-xs-7'),
+  classNames('col-sm-4', 'col-xs-6'),
   classNames('col-sm-2', 'hidden-xs'),
-  classNames('col-sm-4', 'col-xs-5'),
+  classNames('col-sm-3', 'col-xs-4'),
+  classNames('col-sm-2', 'col-xs-2'),
 ];
 
 const ruleTableHeader = () => [
@@ -1196,6 +1230,12 @@ const ruleTableHeader = () => [
     transforms: [sortable],
     props: { className: tableRuleClasses[2] },
   },
+  {
+    title: 'Source',
+    sortFunc: 'alertingRuleSource',
+    transforms: [sortable],
+    props: { className: tableRuleClasses[3] },
+  },
 ];
 
 const RuleTableRow: RowFunction<Rule> = ({ index, key, obj, style }) => (
@@ -1213,6 +1253,9 @@ const RuleTableRow: RowFunction<Rule> = ({ index, key, obj, style }) => (
     </TableData>
     <TableData className={tableRuleClasses[2]}>
       {_.isEmpty(obj.alerts) ? 'Inactive' : <StateCounts alerts={obj.alerts} />}
+    </TableData>
+    <TableData className={tableRuleClasses[3]}>
+      {alertingRuleSource(obj) === AlertSource.User ? 'User' : 'Platform'}
     </TableData>
   </TableRow>
 );

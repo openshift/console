@@ -14,8 +14,10 @@ import {
 } from '@console/shared';
 import * as UIActions from '../../actions/ui';
 import {
+  alertingRuleSource,
   alertingRuleStateOrder,
   alertSeverityOrder,
+  alertSource,
   alertStateOrder,
   silenceFiringAlertsOrder,
   silenceStateOrder,
@@ -107,8 +109,10 @@ const filterPropType = (props, propName, componentName) => {
 };
 
 const sorts = {
+  alertingRuleSource,
   alertingRuleStateOrder,
   alertSeverityOrder,
+  alertSource,
   alertStateOrder,
   daemonsetNumScheduled: (daemonset) =>
     _.toInteger(_.get(daemonset, 'status.currentNumberScheduled')),

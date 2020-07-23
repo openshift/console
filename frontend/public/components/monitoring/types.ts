@@ -3,6 +3,11 @@ import { RowFunction } from '../factory';
 import { RowFilter } from '../filter-toolbar';
 import { PrometheusLabels } from '../graphs';
 
+export const enum AlertSource {
+  Platform = 'platform',
+  User = 'user',
+}
+
 export type MonitoringResource = {
   abbr: string;
   kind: string;

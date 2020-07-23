@@ -17,8 +17,10 @@ import {
   VolumeSnapshotKind,
 } from '../../module/k8s';
 import {
-  alertingRuleIsActive,
   alertDescription,
+  alertingRuleIsActive,
+  alertingRuleSource,
+  alertSource,
   alertState,
   silenceState,
 } from '../../reducers/monitoring';
@@ -56,6 +58,9 @@ export const tableFilters: TableFilterMap = {
   'alert-severity': (filter, { labels }: Alert | Rule) =>
     filter.selected.has(labels?.severity) || _.isEmpty(filter.selected),
 
+  'alert-source': (filter, alert: Alert) =>
+    filter.selected.has(alertSource(alert)) || _.isEmpty(filter.selected),
+
   'alert-state': (filter, alert: Alert) =>
     filter.selected.has(alertState(alert)) || _.isEmpty(filter.selected),
 
@@ -63,6 +68,9 @@ export const tableFilters: TableFilterMap = {
     filter.selected.has(alertingRuleIsActive(rule)) || _.isEmpty(filter.selected),
 
   'alerting-rule-name': (filter, rule: Rule) => fuzzyCaseInsensitive(filter, rule.name),
+
+  'alerting-rule-source': (filter, rule: Rule) =>
+    filter.selected.has(alertingRuleSource(rule)) || _.isEmpty(filter.selected),
 
   'silence-name': (filter, silence: Silence) => fuzzyCaseInsensitive(filter, silence.name),
 
