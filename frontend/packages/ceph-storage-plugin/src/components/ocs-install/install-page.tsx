@@ -16,7 +16,7 @@ import './install-page.scss';
 enum MODES {
   INTERNAL = 'Internal',
   EXTERNAL = 'External',
-  ATTACHED_DEVICES = 'Attached Devices',
+  ATTACHED_DEVICES = 'Internal - Attached Devices',
 }
 
 // eslint-disable-next-line no-shadow
@@ -31,7 +31,7 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
     null,
   );
   const [downloadFile, setDownloadFile] = React.useState(null);
-  const [mode, setMode] = React.useState(MODES.INTERNAL);
+  const [mode, setMode] = React.useState(MODES.ATTACHED_DEVICES);
   const [clusterServiceVersion, setClusterServiceVersion] = React.useState(null);
 
   const handleModeChange = (event: React.FormEvent<HTMLInputElement>) => {
@@ -102,13 +102,13 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
               title: MODES.INTERNAL,
             },
             {
+              value: MODES.ATTACHED_DEVICES,
+              title: MODES.ATTACHED_DEVICES,
+            },
+            {
               value: MODES.EXTERNAL,
               title: MODES.EXTERNAL,
               disabled: !isIndependent,
-            },
-            {
-              value: MODES.ATTACHED_DEVICES,
-              title: MODES.ATTACHED_DEVICES,
             },
           ]}
           onChange={handleModeChange}

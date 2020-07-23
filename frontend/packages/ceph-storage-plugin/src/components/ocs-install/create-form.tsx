@@ -140,7 +140,12 @@ export const CreateInternalCluster = withHandlePromise<
           customData={{
             onRowSelected: setNodes,
           }}
-        />
+        >
+          <span>
+            Select at least 3 nodes in different zones you wish to use with minimum requirements of
+            16 CPUs and 64 GiB of RAM per node.
+          </span>
+        </SelectNodesSection>
         <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
           <ActionGroup className="pf-c-form">
             <Button

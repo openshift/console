@@ -5,3 +5,38 @@
 .ceph-ocs-install__no-nodes-text--large {
   font-size: var(--pf-global--FontSize--lg);
 }
+
+.ceph-create-sc-wizard {
+  overflow-y: auto;
+}
+
+.ceph-ocs-install__auto-detect-table {
+  width: 80%;
+  margin-top: var(--pf-global--spacer--lg);
+}
+
+.ceph-ocs-install__wizard-alert {
+  width: 90%;
+  margin: var(--pf-c-wizard__main-body--PaddingTop) var(--pf-c-wizard__main-body--PaddingRight) var(--pf-c-wizard__main-body--PaddingBottom) var(--pf-c-wizard__main-body--PaddingLeft);
+}
+
+.ceph-ocs-install__create-sc-form {
+  width: 70%;
+}
+
+.ceph-ocs-install__form-wrapper {
+  display: flex;
+  margin-top: var(--pf-global--spacer--lg);
+  justify-content: space-between;
+}
+
+.ceph-ocs-install__chart-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ceph-ocs-install__create-new-sc-btn {
+  padding-left: 0;
+  padding-top: var(--pf-global--spacer--lg);
+}

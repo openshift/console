@@ -2,13 +2,19 @@ import { apiVersionForModel } from '@console/internal/module/k8s';
 import { LocalVolumeSetModel } from '../../models';
 import { LocalVolumeSetKind, DiskType, DiskMechanicalProperty } from './types';
 import { State } from './state';
-import { MAX_DISK_SIZE } from '../../constants';
+import {
+  MAX_DISK_SIZE,
+  LOCAL_STORAGE_NAMESPACE,
+  HOSTNAME_LABEL_KEY,
+  LABEL_OPERATOR,
+} from '../../constants';
+import { getNodes } from '../../utils';
 
 export const getLocalVolumeSetRequestData = (state: State): LocalVolumeSetKind => {
   const requestData = {
     apiVersion: apiVersionForModel(LocalVolumeSetModel),
     kind: LocalVolumeSetModel.kind,
-    metadata: { name: state.volumeSetName, namespace: 'local-storage' },
+    metadata: { name: state.volumeSetName, namespace: LOCAL_STORAGE_NAMESPACE },
     spec: {
       storageClassName: state.storageClassName || state.volumeSetName,
       volumeMode: state.diskMode,
@@ -24,7 +30,11 @@ export const getLocalVolumeSetRequestData = (state: State): LocalVolumeSetKind =
         nodeSelectorTerms: [
           {
             matchExpressions: [
-              { key: 'kubernetes.io/hostname', operator: 'In', values: state.nodeNames },
+              {
+                key: HOSTNAME_LABEL_KEY,
+                operator: LABEL_OPERATOR,
+                values: getNodes(state.showNodesListOnLVS, state.nodeNamesForLVS, state.nodeNames),
+              },
             ],
           },
         ],

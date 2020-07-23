@@ -3,7 +3,7 @@ import { MAX_DISK_SIZE, diskTypeDropdownItems, diskModeDropdownItems } from '../
 export const initialState = {
   volumeSetName: '',
   storageClassName: '',
-  showNodesList: false,
+  showNodesListOnLVS: false,
   diskType: diskTypeDropdownItems.SSD,
   diskMode: diskModeDropdownItems.BLOCK,
   maxDiskLimit: '',
@@ -12,13 +12,13 @@ export const initialState = {
   maxDiskSize: MAX_DISK_SIZE,
   diskSizeUnit: 'TiB',
   isValidMaxSize: true,
-  allNodeNames: [],
+  nodeNamesForLVS: [],
 };
 
 export type State = {
   volumeSetName: string;
   storageClassName: string;
-  showNodesList: boolean;
+  showNodesListOnLVS: boolean;
   diskType: string;
   diskMode: string;
   maxDiskLimit: string;
@@ -27,13 +27,13 @@ export type State = {
   maxDiskSize: number | string;
   diskSizeUnit: string;
   isValidMaxSize: boolean;
-  allNodeNames: string[];
+  nodeNamesForLVS: string[];
 };
 
 export type Action =
   | { type: 'setVolumeSetName'; name: string }
   | { type: 'setStorageClassName'; name: string }
-  | { type: 'setShowNodesList'; value: boolean }
+  | { type: 'setShowNodesListOnLVS'; value: boolean }
   | { type: 'setDiskType'; value: string }
   | { type: 'setDiskMode'; value: string }
   | { type: 'setMaxDiskLimit'; value: string }
@@ -42,7 +42,7 @@ export type Action =
   | { type: 'setMaxDiskSize'; value: number | string }
   | { type: 'setDiskSizeUnit'; value: string }
   | { type: 'setIsValidMaxSize'; value: boolean }
-  | { type: 'setAllNodeNames'; value: string[] };
+  | { type: 'setNodeNamesForLVS'; value: string[] };
 
 export const reducer = (state: State, action: Action) => {
   switch (action.type) {
@@ -50,8 +50,8 @@ export const reducer = (state: State, action: Action) => {
       return Object.assign({}, state, { volumeSetName: action.name });
     case 'setStorageClassName':
       return Object.assign({}, state, { storageClassName: action.name });
-    case 'setShowNodesList':
-      return Object.assign({}, state, { showNodesList: action.value });
+    case 'setShowNodesListOnLVS':
+      return Object.assign({}, state, { showNodesListOnLVS: action.value });
     case 'setDiskType':
       return Object.assign({}, state, { diskType: action.value });
     case 'setDiskMode':
@@ -68,8 +68,8 @@ export const reducer = (state: State, action: Action) => {
       return Object.assign({}, state, { diskSizeUnit: action.value });
     case 'setIsValidMaxSize':
       return Object.assign({}, state, { isValidMaxSize: action.value });
-    case 'setAllNodeNames':
-      return Object.assign({}, state, { allNodeNames: action.value });
+    case 'setNodeNamesForLVS':
+      return Object.assign({}, state, { nodeNamesForLVS: action.value });
     default:
       return initialState;
   }

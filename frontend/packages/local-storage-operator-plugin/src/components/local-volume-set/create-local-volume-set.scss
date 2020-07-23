@@ -37,3 +37,8 @@
 .lso-create-lvs__disk-size-form-group-max-input {
   max-width: 100px;
 }
+
+// required to hide the space between radio button and node list
+.co-m-nav-title {
+  margin-top: 0;
+}

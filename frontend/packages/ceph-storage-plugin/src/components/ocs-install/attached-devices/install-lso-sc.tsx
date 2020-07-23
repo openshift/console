@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { match } from 'react-router';
+import { match as RouterMatch } from 'react-router';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useDispatch } from 'react-redux';
-import { ActionGroup, Button, Form } from '@patternfly/react-core';
+import { Alert, ActionGroup, Button, Form } from '@patternfly/react-core';
 import {
   NodeKind,
   StorageClassResourceKind,
@@ -32,14 +32,15 @@ import AttachedDevicesNodeTable from './sc-node-list';
 import { PVsAvailableCapacity } from '../pvs-available-capacity';
 import { OCS_CONVERGED_FLAG, OCS_FLAG, OCS_ATTACHED_DEVICES_FLAG } from '../../../features';
 import { makeLabelNodesRequest } from '../create-form';
-import { LVSResource } from '../../../constants/resources';
+import { scResource, pvResource } from '../../../constants/resources';
 import { getOCSRequestData } from '../ocs-request-data';
 import {
   OCSAlert,
   SelectNodesSection,
   StorageClassSection,
 } from '../../../utils/common-ocs-install-el';
-import { filterSCWithNoProv } from '../../../utils/install';
+import { filterSCWithNoProv, getAssociatedNodes } from '../../../utils/install';
+import { getSCAvailablePVs } from '../../../selectors';
 import '../ocs-install.scss';
 import './attached-devices.scss';
 
@@ -59,38 +60,56 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
     handlePromise,
     errorMessage,
     inProgress,
-    match: {
-      params: { appName, ns },
-    },
+    match,
+    setIsNewSCToBeCreated,
+    setHasNoProvSC,
   } = props;
+  const { appName, ns } = match.params;
   const [filteredNodes, setFilteredNodes] = React.useState<string[]>([]);
   const [storageClass, setStorageClass] = React.useState<StorageClassResourceKind>(null);
   const [nodes, setNodes] = React.useState<NodeKind[]>([]);
   // LVS: Local Volume Set
   const dispatch = useDispatch();
-  const [LVSData, LVSLoaded, LVSLoadError] = useK8sWatchResource<K8sResourceKind[]>(LVSResource);
+  const [scData, scLoaded, scLoadError] = useK8sWatchResource<StorageClassResourceKind[]>(
+    scResource,
+  );
+  const [pvData, pvLoaded, pvLoadError] = useK8sWatchResource<K8sResourceKind[]>(pvResource);
+
+  React.useEffect(() => {
+    // this is needed to ensure that the useEffect should be called only when setHasNoProvSC is defined
+    // setHasNoProvSC is defined, if called from create storage cluster view, if SC is present
+    // setHasNoProvSC is undefined, if called from create storage cluster view from wizard's 3 step
+    if (setHasNoProvSC) {
+      if ((scLoadError || scData.length === 0) && scLoaded) {
+        setHasNoProvSC(false);
+      } else if (scLoaded) {
+        const filteredSCData = scData.filter(
+          (sc: StorageClassResourceKind) => sc?.provisioner === NO_PROVISIONER,
+        );
+        if (filteredSCData.length) {
+          setHasNoProvSC(true);
+        }
+      }
+    }
+  }, [scData, scLoaded, scLoadError, setHasNoProvSC]);
 
   const handleStorageClass = (sc: StorageClassResourceKind) => {
     setStorageClass(sc);
 
     if (sc) {
-      const [volumeSet] =
-        LVSLoaded &&
-        !LVSLoadError &&
-        LVSData.filter((l) => l?.spec?.storageClassName === sc?.metadata?.name);
-      setFilteredNodes(
-        volumeSet?.spec?.nodeSelector?.nodeSelectorTerms?.[0]?.matchExpressions?.[0]?.values,
-      );
+      const pvs = getSCAvailablePVs(pvData, getName(sc));
+      const scNodes = getAssociatedNodes(pvs);
+      setFilteredNodes(scNodes);
     } else {
       setFilteredNodes([]);
     }
   };
 
   React.useEffect(() => {
-    if ((LVSLoadError || LVSData.length === 0) && LVSLoaded) {
+    if ((pvLoadError || pvData.length === 0) && pvLoaded) {
       setFilteredNodes([]);
     }
-  }, [LVSData, LVSLoaded, LVSLoadError]);
+  }, [pvData, pvLoaded, pvLoadError]);
 
   const submit = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -109,6 +128,10 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
 
   const onlyNoProvSC = React.useCallback(filterSCWithNoProv, []);
 
+  const goToCreateSCUI = () => {
+    setIsNewSCToBeCreated(true);
+  };
+
   return (
     <div className="co-m-pane__form">
       <OCSAlert />
@@ -120,16 +143,33 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
             storageClass={storageClass}
           />
         </StorageClassSection>
-        <h3 className="co-m-pane__heading co-m-pane__heading--baseline ceph-ocs-install__pane--margin">
-          <div className="co-m-pane__name">Nodes</div>
-        </h3>
-        {storageClass && filteredNodes.length ? (
-          <SelectNodesSection
-            table={AttachedDevicesNodeTable}
-            customData={{ filteredNodes, nodes, setNodes }}
-          />
-        ) : (
-          <div className="ceph-ocs-install__no-nodes-text--large">No nodes available to show</div>
+        {storageClass && (
+          <>
+            <h3 className="co-m-pane__heading co-m-pane__heading--baseline ceph-ocs-install__pane--margin">
+              <div className="co-m-pane__name">Nodes</div>
+            </h3>
+            <SelectNodesSection
+              table={AttachedDevicesNodeTable}
+              customData={{ filteredNodes, nodes, setNodes }}
+            />
+          </>
+        )}
+        {storageClass && filteredNodes?.length < minSelectedNode && (
+          <Alert className="co-alert" variant="danger" title="Minimum Node Requirement" isInline>
+            The OCS Storage cluster require a minimum of 3 nodes for the initial deployment. Please
+            choose a different storage class or go to create a new volume set that matches the
+            minimum node requirement.
+            <div>
+              <Button
+                component="a"
+                variant="link"
+                onClick={goToCreateSCUI}
+                className="ceph-ocs-install__create-new-sc-btn"
+              >
+                Create new volume set instance
+              </Button>
+            </div>
+          </Alert>
         )}
         <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
           <ActionGroup className="pf-c-form">
@@ -152,5 +192,7 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
 });
 
 type CreateOCSProps = {
-  match: match<{ appName: string; ns: string }>;
+  match: RouterMatch<{ appName: string; ns: string }>;
+  setIsNewSCToBeCreated?: React.Dispatch<boolean>;
+  setHasNoProvSC?: React.Dispatch<boolean>;
 };

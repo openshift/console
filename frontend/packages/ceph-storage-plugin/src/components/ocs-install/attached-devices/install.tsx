@@ -3,26 +3,28 @@ import { match as RouterMatch } from 'react-router';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { Alert, Button } from '@patternfly/react-core';
-import { StorageClassResourceKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { history } from '@console/internal/components/utils';
+import { StorageClassResourceKind, K8sResourceKind, k8sList } from '@console/internal/module/k8s';
+import { history, LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { StorageClassModel } from '@console/internal/models';
 import { fetchK8s } from '@console/internal/graphql/client';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { LSO_NAMESPACE } from '@console/local-storage-operator-plugin/src/constants';
 import { CreateOCS } from './install-lso-sc';
-import { scResource, LSOSubscriptionResource } from '../../../constants/resources';
+import { LSOSubscriptionResource } from '../../../constants/resources';
 import { filterSCWithNoProv } from '../../../utils/install';
+import CreateSC from './create-sc/create-sc';
 import './attached-devices.scss';
 
 export const CreateAttachedDevicesCluster: React.FC<CreateAttachedDevicesClusterProps> = ({
   match,
 }) => {
+  const { appName, ns } = match.params;
   const [hasNoProvSC, setHasNoProvSC] = React.useState(false);
   // LSO stands for local-storage-operator
   const [LSOEnabled, setLSOEnabled] = React.useState(false);
-  const [scData, scLoaded, scLoadError] = useK8sWatchResource<StorageClassResourceKind[]>(
-    scResource,
-  );
+  const [isNewSCToBeCreated, setIsNewSCToBeCreated] = React.useState<boolean>(false);
+  const [LSODataLoaded, setLSODataLoaded] = React.useState(false);
   const [LSOData, LSOLoaded, LSOLoadError] = useK8sWatchResource<K8sResourceKind>(
     LSOSubscriptionResource,
   );
@@ -35,23 +37,27 @@ export const CreateAttachedDevicesCluster: React.FC<CreateAttachedDevicesCluster
       fetchK8s(ClusterServiceVersionModel, LSOData?.status?.currentCSV, LSO_NAMESPACE)
         .then(() => {
           setLSOEnabled(true);
+          setLSODataLoaded(true);
         })
         .catch(() => {
           setLSOEnabled(false);
+          setLSODataLoaded(true);
         });
     }
   }, [LSOData, LSOLoaded, LSOLoadError]);
 
   React.useEffect(() => {
-    if ((scLoadError || scData.length === 0) && scLoaded) {
-      setHasNoProvSC(false);
-    } else if (scLoaded) {
-      const filteredSCData = scData.filter(filterSCWithNoProv);
-      if (filteredSCData.length) {
-        setHasNoProvSC(true);
-      }
-    }
-  }, [scData, scLoaded, scLoadError]);
+    /* this call can't be watched here as watching will take the user back to this view 
+    once a sc gets created from ocs install in case of no sc present */
+    k8sList(StorageClassModel)
+      .then((storageClasses: StorageClassResourceKind[]) => {
+        const filteredSCData = storageClasses.filter(filterSCWithNoProv);
+        if (filteredSCData.length) {
+          setHasNoProvSC(true);
+        }
+      })
+      .catch(() => setHasNoProvSC(false));
+  }, [appName, ns]);
 
   const goToLSOInstallationPage = () => {
     history.push(
@@ -61,7 +67,8 @@ export const CreateAttachedDevicesCluster: React.FC<CreateAttachedDevicesCluster
 
   return (
     <div className="co-m-pane__body">
-      {!LSOEnabled && (
+      {!LSODataLoaded && <LoadingBox />}
+      {LSODataLoaded && !LSOEnabled && (
         <Alert
           className="co-alert"
           variant="info"
@@ -80,7 +87,14 @@ export const CreateAttachedDevicesCluster: React.FC<CreateAttachedDevicesCluster
           </div>
         </Alert>
       )}
-      {hasNoProvSC && LSOEnabled && <CreateOCS match={match} />}
+      {hasNoProvSC && LSOEnabled && !isNewSCToBeCreated && (
+        <CreateOCS
+          match={match}
+          setIsNewSCToBeCreated={setIsNewSCToBeCreated}
+          setHasNoProvSC={setHasNoProvSC}
+        />
+      )}
+      {((!hasNoProvSC && LSOEnabled) || isNewSCToBeCreated) && <CreateSC match={match} />}
     </div>
   );
 };

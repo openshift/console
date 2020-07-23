@@ -17,22 +17,21 @@ export const OCSAlert = () => (
   />
 );
 
-export const SelectNodesSection: React.FC<SelectNodesSectionProps> = ({ table, customData }) => (
+export const SelectNodesSection: React.FC<SelectNodesSectionProps> = ({
+  table,
+  customData,
+  children,
+}) => (
   <>
     <FormGroup fieldId="select-nodes">
       <p>
-        Selected nodes will be labeled with{' '}
+        {children}
+        The selected nodes will be labeled with{' '}
         <code>cluster.ocs.openshift.io/openshift-storage=&quot;&quot;</code> to create the OCS
-        Service.
+        cluster and 3 of the selected nodes will be used for initial deployment. The other selected
+        nodes will be used by OpenShift as scheduling targets for OCS scaling.
       </p>
-      <p className="co-legend" data-test-id="warning">
-        Select at least 3 nodes in different failure domains with minimum requirements of 16 CPUs
-        and 64 GiB of RAM per node.
-      </p>
-      <p>
-        3 selected nodes are used for initial deployment. The remaining selected nodes will be used
-        by OpenShift as scheduling targets for OCS scaling.
-      </p>
+
       <ListPage
         kind={NodeModel.kind}
         showTitle={false}
@@ -76,6 +75,7 @@ export const StorageClassSection: React.FC<StorageClassSectionProps> = ({
 type SelectNodesSectionProps = {
   table: React.ComponentType<any>;
   customData?: any;
+  children?: React.ReactChild;
 };
 
 type StorageClassSectionProps = {
