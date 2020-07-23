@@ -1,21 +1,24 @@
 # OCS UI Features
 
-The OCS UI requires some annotations in the OCS Operator CSV to perform various actions.
+The OCS UI requires some annotations in the OCS Operator CSV and Storage Cluster CR to perform various actions.
 
 Following table maps the annotation to its use case and accepted values:
-|Annotation Name|Purpose|Accepted Values |
-|---------------------------------------|---------------------------|--------|
-| `features.ocs.openshift.io/enabled`| Activate UI Features | "external", "snapshot" |
-| `external.features.ocs.openshift.io/validation`| Mininum required keys to be supplied by the admin to connect to an external cluster | Array of Keys that need to be validated in UI |
+|Annotation Name|Purpose|Accepted Values |CR/CSV
+|---------------------------------------|---------------------------|--------|----------------|
+| `features.ocs.openshift.io/enabled`| Activates Snapshot and External Mode Features | "external", "snapshot" | Operator CSV
+| `cluster.ocs.openshift.io/local-devices`| Activates disk replacement and ocs status column in disk inventory | "true" | Storage Cluster CR
+| `external.features.ocs.openshift.io/validation`| Mininum required keys to be supplied by the admin to connect to an external cluster | Array of Keys that need to be validated in UI | Operator CSV
 ||||
 
 ## Enabling Features in UI
 
-UI features are activated based on the values in `features.ocs.openshift.io/enabled` annotation. The following table maps a feature and the respective annotation required to activate it.
-| Feature |Feature guard|
-|------------------------------|------------|
-| External Cluster Installation| `external` |
-| Volume Snapshots| `snapshot`
+UI features are activated based on the annotations. The following table maps a feature and the respective annotation key-value pair required to activate it.
+| Feature |Annotation Value| Annotation Key
+|------------------------------|--------------------------|---------|
+| External Cluster Installation|`features.ocs.openshift.io/enabled` | `external` |
+| Volume Snapshots|`features.ocs.openshift.io/enabled` | `snapshot`|
+| Disk Replacement Action| `cluster.ocs.openshift.io/local-devices` | `true`|
+| Disk Inventory OCS Status Column | `cluster.ocs.openshift.io/local-devices` | `true`|
 
 #### Example
 

@@ -11,11 +11,13 @@ import {
   OCS_EXTERNAL_CR_NAME,
   CEPH_STORAGE_NAMESPACE,
   OCS_SUPPORT_ANNOTATION,
+  ATTACHED_DEVICES_ANNOTATION,
   OCS_INTERNAL_CR_NAME,
 } from './constants';
 
 export const OCS_INDEPENDENT_FLAG = 'OCS_INDEPENDENT';
 export const OCS_CONVERGED_FLAG = 'OCS_CONVERGED';
+export const OCS_ATTACHED_DEVICES_FLAG = 'OCS_ATTACHED_DEVICES';
 // Used to activate NooBaa dashboard
 export const OCS_FLAG = 'OCS';
 // Todo(bipuladh): Remove this completely in 4.6
@@ -41,19 +43,29 @@ const handleError = (res: any, flags: string[], dispatch: Dispatch, cb: FeatureD
 
 export const detectOCS: FeatureDetector = async (dispatch) => {
   try {
-    await fetchK8s(OCSServiceModel, OCS_INTERNAL_CR_NAME, CEPH_STORAGE_NAMESPACE);
+    const storageCluster = await fetchK8s(
+      OCSServiceModel,
+      OCS_INTERNAL_CR_NAME,
+      CEPH_STORAGE_NAMESPACE,
+    );
+    const isAttachedDevicesCluster =
+      getAnnotations(storageCluster)?.[ATTACHED_DEVICES_ANNOTATION] === 'true';
     dispatch(setFlag(OCS_FLAG, true));
+    dispatch(setFlag(OCS_ATTACHED_DEVICES_FLAG, isAttachedDevicesCluster));
     dispatch(setFlag(OCS_CONVERGED_FLAG, true));
     dispatch(setFlag(OCS_INDEPENDENT_FLAG, false));
   } catch (e) {
-    e?.response?.status !== 404
-      ? handleError(e, [OCS_CONVERGED_FLAG], dispatch, detectOCS)
-      : dispatch(setFlag(OCS_CONVERGED_FLAG, false));
+    if (e?.response?.status !== 404) handleError(e, [OCS_CONVERGED_FLAG], dispatch, detectOCS);
+    else {
+      dispatch(setFlag(OCS_CONVERGED_FLAG, false));
+      dispatch(setFlag(OCS_ATTACHED_DEVICES_FLAG, false));
+    }
     try {
       await fetchK8s(OCSServiceModel, OCS_EXTERNAL_CR_NAME, CEPH_STORAGE_NAMESPACE);
       dispatch(setFlag(OCS_FLAG, true));
       dispatch(setFlag(OCS_INDEPENDENT_FLAG, true));
       dispatch(setFlag(OCS_CONVERGED_FLAG, false));
+      dispatch(setFlag(OCS_ATTACHED_DEVICES_FLAG, false));
     } catch (err) {
       err?.response?.status !== 404
         ? handleError(err, [OCS_INDEPENDENT_FLAG], dispatch, detectOCS)

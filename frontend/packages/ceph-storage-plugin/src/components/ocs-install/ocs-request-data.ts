@@ -4,6 +4,7 @@ import {
   OCS_INTERNAL_CR_NAME,
   CEPH_STORAGE_NAMESPACE,
   OCS_DEVICE_SET_REPLICA,
+  ATTACHED_DEVICES_ANNOTATION,
 } from '../../constants';
 
 export const createDeviceSet = (scName: string, osdSize: string, portable: boolean): DeviceSet => ({
@@ -48,6 +49,12 @@ export const getOCSRequestData = (
   if (provisioner === NO_PROVISIONER) {
     requestData.spec.monDataDirHostPath = '/var/lib/rook';
     requestData.spec.storageDeviceSets[0].portable = false;
+    requestData.metadata = {
+      ...requestData.metadata,
+      annotations: {
+        [ATTACHED_DEVICES_ANNOTATION]: 'true',
+      },
+    };
   }
   return requestData;
 };
