@@ -29,14 +29,14 @@ export const titleResolver: RenderableFieldResolver = {
   [VMSettingsField.NAME]: 'Name',
   [VMSettingsField.DESCRIPTION]: 'Description',
   [VMSettingsField.USER_TEMPLATE]: 'Template',
-  [VMSettingsField.PROVISION_SOURCE_TYPE]: 'Source',
-  [VMSettingsField.CONTAINER_IMAGE]: 'Container Image',
-  [VMSettingsField.IMAGE_URL]: 'URL',
   [VMSettingsField.OPERATING_SYSTEM]: 'Operating System',
   [VMSettingsField.FLAVOR]: 'Flavor',
   [VMSettingsField.MEMORY]: 'Memory',
   [VMSettingsField.CPU]: 'CPUs',
   [VMSettingsField.WORKLOAD_PROFILE]: 'Workload Profile',
+  [VMSettingsField.PROVISION_SOURCE_TYPE]: 'Source',
+  [VMSettingsField.CONTAINER_IMAGE]: 'Container Image',
+  [VMSettingsField.IMAGE_URL]: 'URL',
   [VMSettingsField.START_VM]: 'Start virtual machine on creation',
 };
 
@@ -48,10 +48,10 @@ export const placeholderResolver = {
   [VMWareProviderField.VCENTER_SECRET_NAME]: '--- Select vCenter Instance ---',
   [VMWareProviderField.VM]: '--- Select VM or Template ---',
   [VMSettingsField.USER_TEMPLATE]: '--- Select Template ---',
-  [VMSettingsField.PROVISION_SOURCE_TYPE]: '--- Select Source ---',
   [VMSettingsField.OPERATING_SYSTEM]: '--- Select Operating System ---',
   [VMSettingsField.FLAVOR]: '--- Select Flavor ---',
   [VMSettingsField.WORKLOAD_PROFILE]: '--- Select Workload Profile ---',
+  [VMSettingsField.PROVISION_SOURCE_TYPE]: '--- Select Source ---',
 };
 
 const provisionSourceHelpResolver = {
@@ -81,8 +81,6 @@ export const helpResolver = {
     'User password to be used for connection to a vCenter instance.',
   [VMWareProviderField.VM]: () =>
     'Select a vCenter virtual machine to import. Loading of their list might take some time. The list will be enabled for selection once data are loaded.',
-  [VMSettingsField.PROVISION_SOURCE_TYPE]: (sourceType: string) =>
-    provisionSourceHelpResolver[sourceType],
   [VMSettingsField.FLAVOR]: () =>
     'The combination of processing power and memory that will be provided to the virtual machine.',
   [VMSettingsField.MEMORY]: () =>
@@ -91,4 +89,6 @@ export const helpResolver = {
     'The number of virtual CPU cores that will be dedicated to the virtual machine.',
   [VMSettingsField.WORKLOAD_PROFILE]: () =>
     'The category of workload that this virtual machine will be used for.',
+  [VMSettingsField.PROVISION_SOURCE_TYPE]: (sourceType: string) =>
+    provisionSourceHelpResolver[sourceType],
 };

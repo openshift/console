@@ -76,6 +76,30 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
           openshiftFlag={openshiftFlag}
           onChange={this.props.onFieldChange}
         />
+        <OSFlavor
+          userTemplates={userTemplates}
+          commonTemplates={commonTemplates}
+          operatinSystemField={this.getField(VMSettingsField.OPERATING_SYSTEM)}
+          flavorField={this.getField(VMSettingsField.FLAVOR)}
+          userTemplate={this.getFieldValue(VMSettingsField.USER_TEMPLATE)}
+          workloadProfile={this.getFieldValue(VMSettingsField.WORKLOAD_PROFILE)}
+          onChange={this.props.onFieldChange}
+          openshiftFlag={openshiftFlag}
+        />
+        <MemoryCPU
+          memoryField={this.getField(VMSettingsField.MEMORY)}
+          cpuField={this.getField(VMSettingsField.CPU)}
+          onChange={this.props.onFieldChange}
+        />
+        <WorkloadProfile
+          userTemplates={userTemplates}
+          commonTemplates={commonTemplates}
+          workloadProfileField={this.getField(VMSettingsField.WORKLOAD_PROFILE)}
+          userTemplate={this.getFieldValue(VMSettingsField.USER_TEMPLATE)}
+          operatingSystem={this.getFieldValue(VMSettingsField.OPERATING_SYSTEM)}
+          flavor={this.getFieldValue(VMSettingsField.FLAVOR)}
+          onChange={this.props.onFieldChange}
+        />
         <FormFieldMemoRow
           field={this.getField(VMSettingsField.PROVISION_SOURCE_TYPE)}
           fieldType={FormFieldType.SELECT}
@@ -103,30 +127,6 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
           field={this.getField(VMSettingsField.IMAGE_URL)}
           onProvisionSourceStorageChange={updateStorage}
           provisionSourceStorage={provisionSourceStorage}
-        />
-        <OSFlavor
-          userTemplates={userTemplates}
-          commonTemplates={commonTemplates}
-          operatinSystemField={this.getField(VMSettingsField.OPERATING_SYSTEM)}
-          flavorField={this.getField(VMSettingsField.FLAVOR)}
-          userTemplate={this.getFieldValue(VMSettingsField.USER_TEMPLATE)}
-          workloadProfile={this.getFieldValue(VMSettingsField.WORKLOAD_PROFILE)}
-          onChange={this.props.onFieldChange}
-          openshiftFlag={openshiftFlag}
-        />
-        <MemoryCPU
-          memoryField={this.getField(VMSettingsField.MEMORY)}
-          cpuField={this.getField(VMSettingsField.CPU)}
-          onChange={this.props.onFieldChange}
-        />
-        <WorkloadProfile
-          userTemplates={userTemplates}
-          commonTemplates={commonTemplates}
-          workloadProfileField={this.getField(VMSettingsField.WORKLOAD_PROFILE)}
-          userTemplate={this.getFieldValue(VMSettingsField.USER_TEMPLATE)}
-          operatingSystem={this.getFieldValue(VMSettingsField.OPERATING_SYSTEM)}
-          flavor={this.getFieldValue(VMSettingsField.FLAVOR)}
-          onChange={this.props.onFieldChange}
         />
       </Form>
     );

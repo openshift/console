@@ -206,10 +206,10 @@ export const updateVmSettingsState = (options: UpdateOptions) =>
   [
     selectUserTemplateOnLoadedUpdater,
     selectedUserTemplateUpdater,
-    provisioningSourceUpdater,
     flavorUpdater,
     osUpdater,
     workloadConsistencyUpdater,
+    provisioningSourceUpdater,
     nativeK8sUpdater,
   ].forEach((updater) => {
     updater && updater(options);

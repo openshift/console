@@ -3,7 +3,6 @@ import { CommonData, VMSettingsField, VMWizardProps } from '../../types';
 import { asDisabled, asHidden, asRequired } from '../../utils/utils';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { InitialStepStateGetter, VMSettings } from './types';
-import { CUSTOM_FLAVOR } from '../../../../constants/vm';
 
 export const getInitialVmSettings = (data: CommonData): VMSettings => {
   const {
@@ -29,6 +28,19 @@ export const getInitialVmSettings = (data: CommonData): VMSettings => {
       initialized: !(isVM && userTemplateName),
       value: userTemplateName || undefined,
     },
+    [VMSettingsField.OPERATING_SYSTEM]: {
+      isRequired: asRequired(true),
+    },
+    [VMSettingsField.FLAVOR]: {
+      isRequired: asRequired(true),
+    },
+    [VMSettingsField.MEMORY]: {
+      binaryUnitValidation: true,
+    },
+    [VMSettingsField.CPU]: {},
+    [VMSettingsField.WORKLOAD_PROFILE]: {
+      isRequired: asRequired(true),
+    },
     [VMSettingsField.PROVISION_SOURCE_TYPE]: {
       isHidden: hiddenByProvider,
       isRequired: asRequired(!isProviderImport),
@@ -48,20 +60,6 @@ export const getInitialVmSettings = (data: CommonData): VMSettings => {
     [VMSettingsField.IMAGE_URL]: {
       isHidden: hiddenByProvider,
       skipValidation: true, // validated in storage tab
-    },
-    [VMSettingsField.OPERATING_SYSTEM]: {
-      isRequired: asRequired(true),
-    },
-    [VMSettingsField.FLAVOR]: {
-      isRequired: asRequired(true),
-      value: CUSTOM_FLAVOR,
-    },
-    [VMSettingsField.MEMORY]: {
-      binaryUnitValidation: true,
-    },
-    [VMSettingsField.CPU]: {},
-    [VMSettingsField.WORKLOAD_PROFILE]: {
-      isRequired: asRequired(true),
     },
     [VMSettingsField.START_VM]: {
       value: false,
