@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { ProjectModel, PodModel, StorageClassModel } from '@console/internal/models';
 import { STORAGE_CLASSES, PROJECTS, PODS } from '.';
 
@@ -206,3 +207,7 @@ export const utilizationPopoverQueryMap = [
 
 export const getPVCUsedCapacityQuery = (pvcName: string): string =>
   `kubelet_volume_stats_used_bytes{persistentvolumeclaim='${pvcName}'}`;
+
+export const osdDiskInfoMetric = _.template(
+  `ceph_disk_occupation{exported_instance=~'<%= nodeName %>'}`,
+);

@@ -6,6 +6,7 @@ import {
   DashboardsOverviewHealthResourceSubsystem,
   DashboardsOverviewUtilizationItem,
   DashboardsTab,
+  HorizontalNavTab,
   KebabActions,
   ModelDefinition,
   ModelFeatureFlag,
@@ -15,7 +16,17 @@ import {
   ResourceDetailsPage,
   DashboardsOverviewResourceActivity,
   CustomFeatureFlag,
+  StorageClassProvisioner,
 } from '@console/plugin-sdk';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
+import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
+import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
+import { PersistentVolumeClaimModel, NodeModel } from '@console/internal/models';
+import { LSO_DEVICE_DISCOVERY } from '@console/local-storage-operator-plugin/src/plugin';
+import { getCephHealthState } from './components/dashboard-page/storage-dashboard/status-card/utils';
+import { isClusterExpandActivity } from './components/dashboard-page/storage-dashboard/activity-card/cluster-expand-activity';
+import { StorageClassFormProvisoners } from './utils/storage-class-params';
+import { WatchCephResource } from './types';
 import {
   detectOCS,
   detectOCSSupportedFeatures,
@@ -24,19 +35,12 @@ import {
   OCS_INDEPENDENT_FLAG,
   OCS_SUPPORT_FLAGS,
   OCS_CONVERGED_FLAG,
+  OCS_ATTACHED_DEVICES_FLAG,
 } from './features';
-import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
-import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
-import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
-import { PersistentVolumeClaimModel } from '@console/internal/models';
-import { getCephHealthState } from './components/dashboard-page/storage-dashboard/status-card/utils';
-import { isClusterExpandActivity } from './components/dashboard-page/storage-dashboard/activity-card/cluster-expand-activity';
-import { WatchCephResource } from './types';
-import { StorageClassProvisioner } from '@console/plugin-sdk/src/typings/storage-class-params';
-import { StorageClassFormProvisoners } from './utils/storage-class-params';
 
 type ConsumedExtensions =
   | ModelFeatureFlag
+  | HorizontalNavTab
   | ModelDefinition
   | DashboardsTab
   | DashboardsCard
@@ -414,6 +418,23 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [CEPH_FLAG],
+    },
+  },
+  {
+    type: 'HorizontalNavTab',
+    properties: {
+      model: NodeModel,
+      page: {
+        href: 'disks',
+        name: 'Disks',
+      },
+      loader: () =>
+        import(
+          './components/attached-devices-mode/lso-disk-inventory/ocs-disks-list' /* webpackChunkName: "ocs-nodes-disks-list" */
+        ).then((m) => m.OCSNodesDiskListPage),
+    },
+    flags: {
+      required: [OCS_ATTACHED_DEVICES_FLAG, LSO_DEVICE_DISCOVERY],
     },
   },
 ];

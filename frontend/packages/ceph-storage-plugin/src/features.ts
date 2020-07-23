@@ -20,6 +20,7 @@ import {
 
 export const OCS_INDEPENDENT_FLAG = 'OCS_INDEPENDENT';
 export const OCS_CONVERGED_FLAG = 'OCS_CONVERGED';
+/* INFO: Flag OCS_ATTACHED_DEVICES_FLAG used in local-storage-plugin without import */
 export const OCS_ATTACHED_DEVICES_FLAG = 'OCS_ATTACHED_DEVICES';
 // Used to activate NooBaa dashboard
 export const OCS_FLAG = 'OCS';
