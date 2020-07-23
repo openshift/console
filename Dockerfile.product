@@ -16,6 +16,8 @@ FROM rhscl/nodejs-8-rhel7 AS nodebuilder
 ADD . .
 
 USER 0
+# required for node-gyp
+RUN yum install -y python2
 # extract the yarn dependencies that must be provided in the dist-git lookaside cache
 RUN tar fx yarn-offline.tar
 
