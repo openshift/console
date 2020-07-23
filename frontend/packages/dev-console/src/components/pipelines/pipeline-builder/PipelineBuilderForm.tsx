@@ -89,6 +89,12 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
     highlightedIds: selectedIds,
   };
 
+  const closeSidebarAndHandleReset = React.useCallback(() => {
+    setSelectedTask(null);
+    selectedTaskRef.current = null;
+    handleReset();
+  }, [handleReset]);
+
   return (
     <Stack className="odc-pipeline-builder-form">
       <StackItem>
@@ -153,7 +159,11 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
               >
                 {existingPipeline ? 'Save' : 'Create'}
               </Button>
-              <Button type="button" variant={ButtonVariant.secondary} onClick={handleReset}>
+              <Button
+                type="button"
+                variant={ButtonVariant.secondary}
+                onClick={closeSidebarAndHandleReset}
+              >
                 Cancel
               </Button>
             </ActionGroup>
