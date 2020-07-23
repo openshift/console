@@ -94,6 +94,11 @@ export const expandPVCModal = (props) =>
     m.expandPVCModal(props),
   );
 
+export const clonePVCModal = (props) =>
+  import(
+    '@console/app/src/components/modals/clone/clone-pvc-modal' /* webpackChunkName: "clone-pvc-modal" */
+  ).then((m) => m.default(props));
+
 export const removeVolumeModal = (props) =>
   import('./remove-volume-modal' /* webpackChunkName: "remove-volume-modal" */).then((m) =>
     m.removeVolumeModal(props),
