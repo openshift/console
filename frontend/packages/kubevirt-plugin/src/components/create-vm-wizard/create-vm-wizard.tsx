@@ -145,13 +145,7 @@ class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentPro
     this.props.onResultsChanged(getResultInitialState({}).value, null, false, false);
 
   render() {
-    const {
-      reduxID,
-      tabsMetadata,
-      isLastTabErrorFatal,
-      isSimpleView,
-      isProviderImport,
-    } = this.props;
+    const { reduxID, tabsMetadata } = this.props;
 
     if (this.isClosed || _.isEmpty(tabsMetadata)) {
       // closed or not initialized
@@ -161,6 +155,8 @@ class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentPro
     const steps = [
       {
         id: VMWizardTab.IMPORT_PROVIDERS,
+        name: TabTitleResolver[VMWizardTab.IMPORT_PROVIDERS],
+        canJumpTo: tabsMetadata[VMWizardTab.IMPORT_PROVIDERS]?.canJumpTo,
         component: (
           <>
             <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
@@ -177,6 +173,8 @@ class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentPro
       },
       {
         id: VMWizardTab.VM_SETTINGS,
+        name: TabTitleResolver[VMWizardTab.VM_SETTINGS],
+        canJumpTo: tabsMetadata[VMWizardTab.VM_SETTINGS]?.canJumpTo,
         component: (
           <>
             <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
@@ -187,6 +185,8 @@ class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentPro
       },
       {
         id: VMWizardTab.NETWORKING,
+        name: TabTitleResolver[VMWizardTab.NETWORKING],
+        canJumpTo: tabsMetadata[VMWizardTab.NETWORKING]?.canJumpTo,
         component: (
           <>
             <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
@@ -197,6 +197,8 @@ class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentPro
       },
       {
         id: VMWizardTab.STORAGE,
+        name: TabTitleResolver[VMWizardTab.STORAGE],
+        canJumpTo: tabsMetadata[VMWizardTab.STORAGE]?.canJumpTo,
         component: (
           <>
             <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
@@ -210,6 +212,8 @@ class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentPro
         steps: [
           {
             id: VMWizardTab.ADVANCED_CLOUD_INIT,
+            name: TabTitleResolver[VMWizardTab.ADVANCED_CLOUD_INIT],
+            canJumpTo: tabsMetadata[VMWizardTab.ADVANCED_CLOUD_INIT]?.canJumpTo,
             component: (
               <>
                 <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
@@ -220,6 +224,8 @@ class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentPro
           },
           {
             id: VMWizardTab.ADVANCED_VIRTUAL_HARDWARE,
+            name: TabTitleResolver[VMWizardTab.ADVANCED_VIRTUAL_HARDWARE],
+            canJumpTo: tabsMetadata[VMWizardTab.ADVANCED_VIRTUAL_HARDWARE]?.canJumpTo,
             component: (
               <>
                 <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
@@ -235,6 +241,8 @@ class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentPro
       },
       {
         id: VMWizardTab.REVIEW,
+        name: TabTitleResolver[VMWizardTab.REVIEW],
+        canJumpTo: tabsMetadata[VMWizardTab.REVIEW]?.canJumpTo,
         component: (
           <>
             <WizardErrors wizardReduxID={reduxID} key="wizard-errors" />
@@ -244,68 +252,13 @@ class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentPro
       },
       {
         id: VMWizardTab.RESULT,
-        component: <ResultTab wizardReduxID={reduxID} key={VMWizardTab.RESULT} />,
+        name: TabTitleResolver[VMWizardTab.RESULT],
+        canJumpTo: tabsMetadata[VMWizardTab.RESULT]?.canJumpTo,
         isFinishedStep:
           tabsMetadata[VMWizardTab.RESULT].isPending || tabsMetadata[VMWizardTab.RESULT].isValid,
+        component: <ResultTab wizardReduxID={reduxID} key={VMWizardTab.RESULT} />,
       },
     ];
-
-    const isLocked = _.some(steps, ({ id }) => tabsMetadata[id as VMWizardTab]?.isLocked);
-
-    const calculateStepsCanJumpTo = (
-      initialSteps,
-      initialAccumulator: WizardStep[] = [],
-    ): WizardStep[] =>
-      initialSteps.reduce((stepAcc: WizardStep[], step: any) => {
-        const isFirstStep = _.isEmpty(stepAcc);
-        let innerSteps;
-        if (step.steps) {
-          // pass reference to last step but remove it afterwards
-          innerSteps = calculateStepsCanJumpTo(step.steps, isFirstStep ? [] : [_.last(stepAcc)]);
-          if (!isFirstStep) {
-            innerSteps.shift();
-          }
-        }
-        let prevStep;
-        if (!isFirstStep) {
-          prevStep = _.last<WizardStep>(stepAcc);
-          while (prevStep.steps) {
-            prevStep = _.last(prevStep.steps);
-          }
-        }
-        const isPrevStepValid =
-          isFirstStep ||
-          (isSimpleView && isProviderImport
-            ? tabsMetadata[VMWizardTab.IMPORT_PROVIDERS].isValid
-            : tabsMetadata[prevStep.id as VMWizardTab]?.isValid);
-        const canJumpToPrevStep = isFirstStep || prevStep.canJumpTo;
-
-        const calculatedStep = {
-          ...step,
-          name: TabTitleResolver[step.id] || step.name,
-          canJumpTo:
-            tabsMetadata[VMWizardTab.RESULT].isLocked ||
-            tabsMetadata[VMWizardTab.RESULT].isValid ||
-            tabsMetadata[VMWizardTab.RESULT].isPending ||
-            isLastTabErrorFatal // last tab active
-              ? step.id === VMWizardTab.RESULT
-              : !isLocked &&
-                isPrevStepValid &&
-                canJumpToPrevStep &&
-                // disable uninitialized RESULT step
-                !(
-                  step.id === VMWizardTab.RESULT && tabsMetadata[VMWizardTab.RESULT].isValid == null
-                ),
-          component: step.component,
-        };
-
-        if (innerSteps) {
-          calculatedStep.steps = innerSteps;
-        }
-
-        stepAcc.push(calculatedStep);
-        return stepAcc;
-      }, initialAccumulator);
 
     const calculateStepsVisibility = (initialSteps: WizardStep[]): WizardStep[] =>
       initialSteps
@@ -347,7 +300,7 @@ class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentPro
               this.goBackToEditingSteps();
             }
           }}
-          steps={calculateStepsVisibility(calculateStepsCanJumpTo(steps))}
+          steps={calculateStepsVisibility(steps)}
           footer={<CreateVMWizardFooter wizardReduxID={reduxID} key="footer" />}
         />
       </div>

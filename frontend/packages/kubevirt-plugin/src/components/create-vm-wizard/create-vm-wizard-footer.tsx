@@ -101,7 +101,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
 
         // Hack to make changing steps work from redux
         // goToStep should be reset to null by redux to allow the navigation in subsequent state update
-        if (canNavigateEverywhere && goToStep && goToStep !== activeStepID) {
+        if (goToStep && goToStep !== activeStepID) {
           goToStepById(goToStep);
         }
 

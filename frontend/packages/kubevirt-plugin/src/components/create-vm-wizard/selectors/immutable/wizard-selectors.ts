@@ -6,6 +6,7 @@ import {
   VMWizardProps,
   VMWizardTab,
   VMWizardTabsMetadata,
+  ALL_VM_WIZARD_TABS,
 } from '../../types';
 import { getStringEnumValues } from '../../../../utils/types';
 import { iGetCreateVMWizardTabs } from './common';
@@ -42,6 +43,9 @@ export const hasStepAllRequiredFilled = (state, wizardID: string, stepId: VMWiza
 export const getStepError = (state, wizardID: string, stepId: VMWizardTab) =>
   iGetIn(iGetCreateVMWizardTabs(state, wizardID), [stepId, 'error']);
 
+export const isLastStepErrorFatal = (state, wizardID: string) =>
+  iGetIn(iGetCreateVMWizardTabs(state, wizardID), [VMWizardTab.RESULT, 'value', 'isFatal']);
+
 export const getStepsMetadata = (state, wizardID: string): VMWizardTabsMetadata => {
   const stepData = iGetCreateVMWizardTabs(state, wizardID);
   if (!stepData) {
@@ -55,11 +59,39 @@ export const getStepsMetadata = (state, wizardID: string): VMWizardTabsMetadata 
     delete result[tab].value;
   });
 
+  const isProviderImport = iGetCommonData(state, wizardID, VMWizardProps.isProviderImport);
+  const isSimpleView = iGetCommonData(state, wizardID, VMWizardProps.isSimpleView);
+
+  const visibleTabls = ALL_VM_WIZARD_TABS.filter((tab) => !result[tab].isHidden);
+  const disableJumpToAll =
+    result[VMWizardTab.RESULT].isLocked ||
+    result[VMWizardTab.RESULT].isValid ||
+    result[VMWizardTab.RESULT].isPending;
+  const isLocked = visibleTabls.some((tab) => result[tab]?.isLocked);
+  const lastTabErrorFatal = isLastStepErrorFatal(state, wizardID);
+
+  // Can jump if form is not loacked, disabled or in fatal error state
+  result[visibleTabls[0]].canJumpTo = !disableJumpToAll && !isLocked && !lastTabErrorFatal;
+
+  // Can jump is previous tab is valid and can jump to
+  // Import Wizard tabs should be navigable even when previous is not valid
+  for (let i = 1; i < visibleTabls.length; i++) {
+    const prev = result[visibleTabls[i - 1]];
+    const isPrevStepValid =
+      isSimpleView && isProviderImport
+        ? result[VMWizardTab.IMPORT_PROVIDERS].isValid
+        : prev?.isValid;
+
+    result[visibleTabls[i]].canJumpTo =
+      !disableJumpToAll && !isLocked && !lastTabErrorFatal && prev?.canJumpTo && isPrevStepValid;
+  }
+
+  // Result tab is a special case
+  result[VMWizardTab.RESULT].canJumpTo =
+    (lastTabErrorFatal || result[VMWizardTab.RESULT].isValid != null) && !isLocked;
+
   return result;
 };
-
-export const isLastStepErrorFatal = (state, wizardID: string) =>
-  iGetIn(iGetCreateVMWizardTabs(state, wizardID), [VMWizardTab.RESULT, 'value', 'isFatal']);
 
 export const isWizardEmpty = (state, wizardID: string) => {
   const stepData = iGetCreateVMWizardTabs(state, wizardID);

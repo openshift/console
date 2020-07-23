@@ -179,6 +179,7 @@ export type VMWizardTabMetadata = {
   isLocked?: boolean;
   isHidden?: boolean;
   isPending?: boolean;
+  canJumpTo?: boolean;
   hasAllRequiredFilled?: boolean;
   error?: string;
   isCreateDisabled?: boolean;
