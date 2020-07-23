@@ -73,7 +73,7 @@ const DetailsCard = React.memo(
           >
             {infrastructurePlatform}
           </DetailItem>
-          <DetailItem title="Mode">Independent</DetailItem>
+          <DetailItem title="Mode">External</DetailItem>
           <DetailItem title="Version" isLoading={!subscriptionLoaded} error={!!subscriptionError}>
             {subscriptionVersion}
           </DetailItem>
