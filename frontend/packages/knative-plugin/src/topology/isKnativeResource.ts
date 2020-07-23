@@ -4,6 +4,7 @@ import { TYPE_EVENT_SOURCE } from './const';
 import { OdcNodeModel } from '@console/dev-console/src/components/topology';
 import { DeploymentModel } from '@console/internal/models';
 import { EventingBrokerModel } from '../models';
+import { CAMEL_SOURCE_INTEGRATION } from '../const';
 
 const KNATIVE_CONFIGURATION = 'serving.knative.dev/configuration';
 
@@ -20,7 +21,14 @@ export const isKnativeResource = (resource: K8sResourceKind, model: Model): bool
     .map((n) => (n as OdcNodeModel).resource);
 
   const isEventSourceKind = (uid: string): boolean =>
-    uid && !!eventSources?.find((eventSource) => eventSource.metadata?.uid === uid);
+    uid &&
+    !!eventSources?.find(
+      (eventSource) =>
+        eventSource.metadata?.uid === uid ||
+        resource.metadata?.labels?.[CAMEL_SOURCE_INTEGRATION]?.startsWith(
+          eventSource.metadata?.name,
+        ),
+    );
 
   if (isEventSourceKind(resource.metadata?.ownerReferences?.[0].uid)) {
     return true;

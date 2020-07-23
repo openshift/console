@@ -21,7 +21,10 @@ import {
 import { cleanUpWorkload } from '@console/dev-console/src/utils/application-utils';
 import * as utils from '@console/internal/components/utils';
 import { getKnativeTopologyDataModel } from '../data-transformer';
-import { MockKnativeResources } from './topology-knative-test-data';
+import {
+  MockKnativeResources,
+  sampleDeploymentsCamelConnector,
+} from './topology-knative-test-data';
 import { RouteModel, ServiceModel, EventingBrokerModel } from '../../models';
 import {
   applyKnativeDisplayOptions,
@@ -30,6 +33,7 @@ import {
 } from '../knativeFilters';
 import { isKnativeResource } from '../isKnativeResource';
 import { TYPE_EVENT_PUB_SUB, TYPE_EVENT_PUB_SUB_LINK } from '../const';
+import * as knativefetchutils from '../../utils/fetch-dynamic-eventsources-utils';
 
 import Spy = jasmine.Spy;
 
@@ -127,6 +131,24 @@ describe('knative data transformer ', () => {
     );
     expect(workloadResources).toHaveLength(5);
     expect(filteredResources).toHaveLength(2);
+  });
+
+  it('should filter out deployments created for camelConnector sources', async () => {
+    jest
+      .spyOn(knativefetchutils, 'getDynamicEventSourcesModelRefs')
+      .mockImplementation(() => ['sources.knative.dev~v1alpha1~CamelSource']);
+    mockResources.deployments.data = [
+      ...mockResources.deployments.data,
+      ...MockBaseResources.deployments.data,
+      ...sampleDeploymentsCamelConnector.data,
+    ];
+    const workloadResources = getWorkloadResources(mockResources, TEST_KINDS_MAP, WORKLOAD_TYPES);
+    const graphData = await getTransformedTopologyData(mockResources);
+    const filteredResources = workloadResources.filter((resource) =>
+      isKnativeResource(resource, graphData),
+    );
+    expect(workloadResources).toHaveLength(6);
+    expect(filteredResources).toHaveLength(3);
   });
 
   it('Should delete all the specific models related to knative deployments if the build config is not present i.e. for resource created through deploy image form', async (done) => {

@@ -31,6 +31,7 @@ import {
 } from '../data-transforms/transform-utils';
 import { WORKLOAD_TYPES } from '../topology-utils';
 import { TYPE_SERVICE_BINDING } from '../components';
+import { isOperatorBackedKnResource } from '@console/knative-plugin/src/topology/knative-topology-utils';
 
 export const edgesFromServiceBinding = (
   source: K8sResourceKind,
@@ -112,9 +113,14 @@ const OBSModelProps = {
 const isOperatorBackedService = (
   obj: K8sResourceKind,
   installedOperators: ClusterServiceVersionKind[],
+  resources?: TopologyDataResources,
 ): boolean => {
   const kind = _.get(obj, 'metadata.ownerReferences[0].kind', null);
   const ownerUid = _.get(obj, 'metadata.ownerReferences[0].uid');
+  // added this as needs to hide oprator backed if belong to source
+  if (resources && isOperatorBackedKnResource(obj, resources)) {
+    return false;
+  }
   const operatorBackedServiceKindMap = getOperatorBackedServiceKindMap(installedOperators);
   const operatorResource: K8sResourceKind = _.find(installedOperators, {
     metadata: { uid: ownerUid },
@@ -146,7 +152,7 @@ export const getOperatorTopologyDataModel = (
 
       resources[key].data.forEach((resource) => {
         const item = createOverviewItemForType(key, resource, resources);
-        if (item && isOperatorBackedService(resource, installedOperators)) {
+        if (item && isOperatorBackedService(resource, installedOperators, resources)) {
           const ownerReference = resource?.metadata?.ownerReferences?.[0];
           const ownerUid = ownerReference?.uid;
           const nodeResourceKind = ownerReference?.kind;
