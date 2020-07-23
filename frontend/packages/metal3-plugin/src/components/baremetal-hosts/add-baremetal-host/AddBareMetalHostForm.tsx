@@ -64,7 +64,7 @@ const AddBareMetalHostForm: React.FC<AddBareMetalHostFormProps> = ({
           type={TextInputTypes.text}
           data-test-id="add-baremetal-host-form-bmc-address-input"
           name="BMCAddress"
-          label="Baseboard Management Console (BMC) Address"
+          label="Baseboard Management Controller (BMC) Address"
           helpText="The URL for communicating with the host's baseboard management controller device."
           required
         />
