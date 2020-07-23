@@ -5,18 +5,25 @@ import { WidgetProps } from 'react-jsonschema-form';
 import { NumberSpinner, ListDropdown, Dropdown } from '@console/internal/components/utils';
 import { K8sKind, GroupVersionKind, ImagePullPolicy } from '@console/internal/module/k8s';
 import { RadioGroup } from '@console/internal/components/radio';
+import { JSON_SCHEMA_NUMBER_TYPES } from './const';
+import { getSchemaType } from 'react-jsonschema-form/lib/utils';
 
-export const TextWidget: React.FC<WidgetProps> = ({
-  disabled = false,
-  id,
-  onBlur,
-  onChange,
-  onFocus,
-  readonly = false,
-  required = false,
-  value = '',
-}) => {
-  return (
+export const TextWidget: React.FC<WidgetProps> = (props) => {
+  const {
+    disabled = false,
+    id,
+    onBlur,
+    onChange,
+    onFocus,
+    readonly = false,
+    required = false,
+    schema = {},
+    value = '',
+  } = props;
+  const schemaType = getSchemaType(schema);
+  return JSON_SCHEMA_NUMBER_TYPES.includes(schemaType) ? (
+    <NumberWidget {...props} />
+  ) : (
     <input
       className="pf-c-form-control"
       disabled={disabled}
