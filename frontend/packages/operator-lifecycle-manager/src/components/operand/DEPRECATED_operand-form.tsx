@@ -820,29 +820,25 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
         .split(SpecCapability.k8sResourcePrefix)[1]
         .replace('core~v1~', '');
       const k8sModel = modelFor(groupVersionKind);
-      const selectedKey = currentValue ? `${currentValue}-${k8sModel.kind}` : null;
-
-      return (
-        <div>
-          {!_.isUndefined(model) ? (
-            <ListDropdown
-              id={id}
-              resources={[
-                {
-                  kind: groupVersionKind,
-                  namespace: k8sModel.namespaced ? match?.params?.ns : null,
-                },
-              ]}
-              desc={displayName}
-              placeholder={`Select ${kindForReference(groupVersionKind)}`}
-              onChange={(value) => handleFormDataUpdate(path, value)}
-              selectedKey={selectedKey}
-            />
-          ) : (
-            <span>Cluster does not have resource {groupVersionKind}</span>
-          )}
-        </div>
-      );
+      if (!k8sModel) {
+        // eslint-disable-next-line no-console
+        console.warn('[Legacy CreateOperandForm] Cluster does not have resource', groupVersionKind);
+      }
+      return k8sModel ? (
+        <ListDropdown
+          id={id}
+          resources={[
+            {
+              kind: groupVersionKind,
+              namespace: k8sModel.namespaced ? match?.params?.ns : null,
+            },
+          ]}
+          desc={displayName}
+          placeholder={`Select ${kindForReference(groupVersionKind)}`}
+          onChange={(value) => handleFormDataUpdate(path, value)}
+          selectedKey={currentValue ? `${currentValue}-${k8sModel?.kind}` : null}
+        />
+      ) : null;
     }
     if (capabilities.includes(SpecCapability.checkbox)) {
       return (
