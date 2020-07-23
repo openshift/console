@@ -88,7 +88,7 @@ export const getStepsMetadata = (state, wizardID: string): VMWizardTabsMetadata 
 
   // Result tab is a special case
   result[VMWizardTab.RESULT].canJumpTo =
-   (lastTabErrorFatal || result[VMWizardTab.RESULT].isValid != null) && !isLocked;
+    (lastTabErrorFatal || result[VMWizardTab.RESULT].isValid != null) && !isLocked;
 
   return result;
 };
