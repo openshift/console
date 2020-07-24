@@ -1,9 +1,9 @@
 import { Model, NodeModel, createAggregateEdges } from '@patternfly/react-topology';
 import { ALL_APPLICATIONS_KEY } from '@console/shared/src';
 import {
-  getFilterById,
   EXPAND_APPLICATION_GROUPS_FILTER_ID,
   DEFAULT_SUPPORTED_FILTER_IDS,
+  isExpanded,
 } from '../filters';
 import { TYPE_APPLICATION_GROUP, TYPE_AGGREGATE_EDGE } from '../components/const';
 import { TopologyApplyDisplayOptions, DisplayFilters } from '../topology-types';
@@ -34,8 +34,8 @@ export const updateModelFromFilters = (
     edges: [...model.edges],
   };
   const supportedFilters = [...DEFAULT_SUPPORTED_FILTER_IDS];
-  const expandGroups = getFilterById(EXPAND_APPLICATION_GROUPS_FILTER_ID, filters)?.value ?? true;
   let appGroupFound = false;
+  const expanded = isExpanded(EXPAND_APPLICATION_GROUPS_FILTER_ID, filters);
   dataModel.nodes.forEach((d) => {
     d.visible = true;
     if (displayFilterers) {
@@ -49,7 +49,7 @@ export const updateModelFromFilters = (
         appGroupFound = true;
         supportedFilters.push(EXPAND_APPLICATION_GROUPS_FILTER_ID);
       }
-      d.collapsed = !expandGroups;
+      d.collapsed = !expanded;
     }
   });
 

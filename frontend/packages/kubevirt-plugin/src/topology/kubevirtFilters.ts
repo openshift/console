@@ -1,7 +1,7 @@
 import { Model } from '@patternfly/react-topology';
 import {
   DisplayFilters,
-  getFilterById,
+  isShown,
   TopologyDisplayFilterType,
 } from '@console/dev-console/src/components/topology';
 import { TYPE_VIRTUAL_MACHINE } from './components/const';
@@ -21,7 +21,7 @@ export const getTopologyFilters = () => {
 };
 
 export const applyKubevirtDisplayOptions = (model: Model, filters: DisplayFilters): string[] => {
-  const showVMs = getFilterById(SHOW_VMS_FILTER_ID, filters)?.value ?? true;
+  const showVMs = isShown(SHOW_VMS_FILTER_ID, filters);
   const appliedFilters = [];
   let found = false;
   model.nodes.forEach((d) => {

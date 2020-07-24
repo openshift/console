@@ -1,0 +1,32 @@
+@import '../../../../../../public/style/vars';
+
+.odc-topology-filter-dropdown {
+  &__expand-groups-switcher {
+    display: flex;
+    align-items: center;
+
+    .pf-c-select__menu-group-title {
+      flex: 1;
+    }
+
+    .pf-c-switch {
+      margin-right: var(--pf-global--spacer--sm);
+    }
+
+    .pf-m-disabled {
+      color: var(--pf-c-check__label--disabled--Color);
+    }
+  }
+
+  &__group {
+    &:not(:first-of-type) {
+      margin-top: var(--pf-global--spacer--sm);
+      border-top: 1px solid var(--pf-global--BorderColor--300);
+    }
+  }
+
+  &__expand-groups-label .pf-c-select__menu-group-title {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
