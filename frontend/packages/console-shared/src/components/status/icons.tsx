@@ -19,16 +19,20 @@ import {
   global_warning_color_100 as warningColor,
 } from '@patternfly/react-tokens';
 
-export const GreenCheckCircleIcon: React.FC<ColoredIconProps> = ({ className, alt }) => (
-  <CheckCircleIcon color={okColor.value} className={className} alt={alt} />
+export const GreenCheckCircleIcon: React.FC<ColoredIconProps> = ({ className, alt, size }) => (
+  <CheckCircleIcon size={size} color={okColor.value} className={className} alt={alt} />
 );
 
-export const RedExclamationCircleIcon: React.FC<ColoredIconProps> = ({ className, alt }) => (
-  <ExclamationCircleIcon color={dangerColor.value} className={className} alt={alt} />
+export const RedExclamationCircleIcon: React.FC<ColoredIconProps> = ({ className, alt, size }) => (
+  <ExclamationCircleIcon size={size} color={dangerColor.value} className={className} alt={alt} />
 );
 
-export const YellowExclamationTriangleIcon: React.FC<ColoredIconProps> = ({ className, alt }) => (
-  <ExclamationTriangleIcon color={warningColor.value} className={className} alt={alt} />
+export const YellowExclamationTriangleIcon: React.FC<ColoredIconProps> = ({
+  className,
+  alt,
+  size,
+}) => (
+  <ExclamationTriangleIcon size={size} color={warningColor.value} className={className} alt={alt} />
 );
 
 export const BlueInfoCircleIcon: React.FC<ColoredIconProps> = ({ className, alt }) => (
@@ -58,4 +62,5 @@ export const BlueArrowCircleUpIcon: React.FC<ColoredIconProps> = ({ className, a
 export type ColoredIconProps = {
   className?: string;
   alt?: string;
+  size?: 'sm' | 'md' | 'lg' | 'xl';
 };

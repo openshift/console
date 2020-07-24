@@ -21,6 +21,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
   const prometheusResources = new Set(['StatefulSet', 'Pod']);
   const prometheusOperatorName = 'prometheus-operator';
   const customProviderUID = 'providerType-console-e-2-e-operators';
+  const prometheusTileID = `prometheus-console-e2e-${testName}`;
 
   const catalogSource = {
     apiVersion: 'operators.coreos.com/v1alpha1',
@@ -39,7 +40,9 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     execSync(`echo '${JSON.stringify(catalogSource)}' | kubectl create -n ${testName} -f -`);
     await new Promise((resolve) =>
       (function checkForPackages() {
-        const output = execSync(`kubectl get packagemanifests -n ${testName} -o json`);
+        const output = execSync(
+          `kubectl get packagemanifests -n ${testName} --selector=catalog=console-e2e -o json`,
+        );
         if (
           JSON.parse(output.toString('utf-8')).items.find(
             (pkg) => pkg.status.catalogSource === catalogSource.metadata.name,
@@ -98,17 +101,19 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
 
   it('displays Operator as subscribed in OperatorHub', async () => {
     await operatorHubView.createSubscriptionFormBtn.click();
+    await operatorHubView.operatorInstallPageLoaded();
+    await operatorHubView.viewInstalledOperatorsBtn.click();
     await crudView.isLoaded();
     await browser.get(`${appHost}/operatorhub/ns/${testName}`);
     await crudView.isLoaded();
     await catalogPageView.clickFilterCheckbox(customProviderUID);
     await catalogPageView.clickFilterCheckbox('installState-installed');
 
-    expect(catalogPageView.catalogTileFor('Prometheus Operator').isDisplayed()).toBe(true);
+    expect(catalogPageView.catalogTileByID(prometheusTileID).isDisplayed()).toBe(true);
   });
 
   it(`displays Operator in "Cluster Service Versions" view for "${testName}" namespace`, async () => {
-    await retry(() => catalogPageView.catalogTileFor('Prometheus Operator').click());
+    await retry(() => catalogPageView.catalogTileByID(prometheusTileID).click());
     await operatorHubView.operatorModalIsLoaded();
     await operatorHubView.viewInstalledOperator();
     await crudView.isLoaded();

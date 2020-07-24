@@ -15,7 +15,6 @@ import {
   StatusBox,
   ResourceIcon,
   ResourceName,
-  resourceListPathFromModel,
 } from '@console/internal/components/utils';
 import {
   K8sResourceCommon,
@@ -29,12 +28,7 @@ import {
 } from '@console/internal/module/k8s';
 import { RadioGroup, RadioInput } from '@console/internal/components/radio';
 import { fromRequirements } from '@console/internal/module/k8s/selector';
-import {
-  SubscriptionModel,
-  OperatorGroupModel,
-  PackageManifestModel,
-  ClusterServiceVersionModel,
-} from '../../models';
+import { SubscriptionModel, OperatorGroupModel, PackageManifestModel } from '../../models';
 import { NamespaceModel, RoleBindingModel, RoleModel } from '@console/internal/models';
 import {
   OperatorGroupKind,
@@ -54,10 +48,12 @@ import {
 import { installedFor, supports, providedAPIsFor, isGlobal } from '../operator-group';
 import { CRDCard } from '../clusterserviceversion';
 import { getInternalObjects, isInternalObject } from '../../utils';
+import { OperatorInstallStatusPage } from '../operator-install-page';
 
 export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> = (props) => {
   const [targetNamespace, setTargetNamespace] = React.useState(null);
   const [installMode, setInstallMode] = React.useState(null);
+  const [showInstallStatusPage, setShowInstallStatusPage] = React.useState(false);
   const [updateChannel, setUpdateChannel] = React.useState(null);
   const [approval, setApproval] = React.useState(InstallPlanApproval.Automatic);
   const [cannotResolve, setCannotResolve] = React.useState(false);
@@ -77,6 +73,12 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     catalogSource,
     catalogSourceNamespace,
   } = props.packageManifest.data[0].status;
+
+  const search = new URLSearchParams({
+    'details-item': `${new URLSearchParams(window.location.search).get(
+      'pkg',
+    )}-${new URLSearchParams(window.location.search).get('catalogNamespace')}`,
+  });
 
   const selectedUpdateChannel = updateChannel || defaultChannelFor(props.packageManifest.data[0]);
   const selectedInstallMode =
@@ -312,12 +314,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         await k8sCreate(OperatorGroupModel, operatorGroup);
       }
       await k8sCreate(SubscriptionModel, subscription);
-      history.push(
-        resourceListPathFromModel(
-          ClusterServiceVersionModel,
-          targetNamespace || props.targetNamespace || selectedTargetNamespace,
-        ),
-      );
+      setShowInstallStatusPage(true);
     } catch (err) {
       setError(err.message || 'Could not create operator subscription.');
     }
@@ -529,132 +526,14 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     selectedUpdateChannel,
   ).filter((item) => !isInternalObject(internalObjects, item.name));
 
-  return (
-    <div className="row">
-      <div className="col-xs-6">
-        <>
-          <div className="form-group">
-            <Tooltip content="The channel to track and receive the updates from.">
-              <h5 className="co-required">Update Channel</h5>
-            </Tooltip>
-            <RadioGroup
-              currentValue={selectedUpdateChannel}
-              items={channels.map((ch) => ({ value: ch.name, title: ch.name }))}
-              onChange={(e) => {
-                setUpdateChannel(e.currentTarget.value);
-                setInstallMode(null);
-              }}
-            />
-          </div>
-          <div className="form-group">
-            <h5 className="co-required">Installation Mode</h5>
-            <div>
-              <RadioInput
-                onChange={(e) => {
-                  setInstallMode(e.target.value);
-                  setTargetNamespace(null);
-                  setCannotResolve(false);
-                }}
-                value={InstallModeType.InstallModeTypeAllNamespaces}
-                checked={selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces}
-                disabled={!supportsGlobal}
-                title="All namespaces on the cluster"
-                subTitle="(default)"
-              >
-                <div className="co-m-radio-desc">
-                  <p className="text-muted">
-                    {descFor(InstallModeType.InstallModeTypeAllNamespaces)}
-                  </p>
-                </div>
-              </RadioInput>
-            </div>
-            <div>
-              <RadioInput
-                onChange={(e) => {
-                  setInstallMode(e.target.value);
-                  setTargetNamespace(
-                    useSuggestedNSForSingleInstallMode ? suggestedNamespace : null,
-                  );
-                  setCannotResolve(false);
-                }}
-                value={InstallModeType.InstallModeTypeOwnNamespace}
-                checked={selectedInstallMode === InstallModeType.InstallModeTypeOwnNamespace}
-                disabled={!supportsSingle}
-                title="A specific namespace on the cluster"
-              >
-                <div className="co-m-radio-desc">
-                  <p className="text-muted">
-                    {descFor(InstallModeType.InstallModeTypeOwnNamespace)}
-                  </p>
-                </div>
-              </RadioInput>
-            </div>
-          </div>
-          <div className="form-group">
-            <h5 className="co-required">Installed Namespace</h5>
-            {selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces &&
-              globalNamespaceInstallMode}
-            {selectedInstallMode === InstallModeType.InstallModeTypeOwnNamespace &&
-              singleNamespaceInstallMode}
-          </div>
-          <div className="form-group">
-            <Tooltip content="The strategy to determine either manual or automatic updates.">
-              <h5 className="co-required">Approval Strategy</h5>
-            </Tooltip>
-            <RadioGroup
-              currentValue={selectedApproval}
-              items={[
-                { value: InstallPlanApproval.Automatic, title: 'Automatic' },
-                { value: InstallPlanApproval.Manual, title: 'Manual' },
-              ]}
-              onChange={(e) => setApproval(e.currentTarget.value)}
-            />
-          </div>
-        </>
-        <div className="co-form-section__separator" />
-        {formError()}
-        <ActionGroup className="pf-c-form">
-          <Button onClick={() => submit()} isDisabled={formValid()} variant="primary">
-            Install
-          </Button>
-          <Button variant="secondary" onClick={() => history.push('/operatorhub')}>
-            Cancel
-          </Button>
-        </ActionGroup>
-      </div>
-      <div className="col-xs-6">
-        <ClusterServiceVersionLogo
-          displayName={_.get(channels, '[0].currentCSVDesc.displayName')}
-          icon={iconFor(props.packageManifest.data[0])}
-          provider={provider}
-        />
-        <h4>Provided APIs</h4>
-        <div className="co-crd-card-row">
-          {!providedAPIs.length ? (
-            <span className="text-muted">No Kubernetes APIs are provided by this Operator.</span>
-          ) : (
-            providedAPIs.map((api) => (
-              <CRDCard key={referenceForProvidedAPI(api)} canCreate={false} crd={api} csv={null} />
-            ))
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const OperatorHubSubscribe: React.FC<OperatorHubSubscribeFormProps> = (props) => (
-  <StatusBox data={props.packageManifest.data[0]} loaded={props.loaded} loadError={props.loadError}>
-    <OperatorHubSubscribeForm {...props} />
-  </StatusBox>
-);
-
-export const OperatorHubSubscribePage: React.SFC<OperatorHubSubscribePageProps> = (props) => {
-  const search = new URLSearchParams({
-    'details-item': `${new URLSearchParams(window.location.search).get(
-      'pkg',
-    )}-${new URLSearchParams(window.location.search).get('catalogNamespace')}`,
-  });
+  if (showInstallStatusPage) {
+    return (
+      <OperatorInstallStatusPage
+        targetNamespace={selectedTargetNamespace}
+        pkgNameWithVersion={channels.find((ch) => ch.name === selectedUpdateChannel).currentCSV}
+      />
+    );
+  }
 
   return (
     <>
@@ -675,44 +554,168 @@ export const OperatorHubSubscribePage: React.SFC<OperatorHubSubscribePageProps> 
         </p>
       </div>
       <div className="co-m-pane__body">
-        <Firehose
-          resources={[
-            {
-              isList: true,
-              kind: referenceForModel(OperatorGroupModel),
-              prop: 'operatorGroup',
-            },
-            {
-              isList: true,
-              kind: referenceForModel(PackageManifestModel),
-              namespace: new URLSearchParams(window.location.search).get('catalogNamespace'),
-              fieldSelector: `metadata.name=${new URLSearchParams(window.location.search).get(
-                'pkg',
-              )}`,
-              selector: {
-                matchLabels: {
-                  catalog: new URLSearchParams(window.location.search).get('catalog'),
-                },
-              },
-              prop: 'packageManifest',
-            },
-            {
-              isList: true,
-              kind: referenceForModel(SubscriptionModel),
-              prop: 'subscription',
-            },
-          ]}
-        >
-          {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
-          <OperatorHubSubscribe
-            {...(props as any)}
-            targetNamespace={
-              new URLSearchParams(window.location.search).get('targetNamespace') || null
-            }
-          />
-        </Firehose>
+        <div className="row">
+          <div className="col-xs-6">
+            <>
+              <div className="form-group">
+                <Tooltip content="The channel to track and receive the updates from.">
+                  <h5 className="co-required">Update Channel</h5>
+                </Tooltip>
+                <RadioGroup
+                  currentValue={selectedUpdateChannel}
+                  items={channels.map((ch) => ({ value: ch.name, title: ch.name }))}
+                  onChange={(e) => {
+                    setUpdateChannel(e.currentTarget.value);
+                    setInstallMode(null);
+                  }}
+                />
+              </div>
+              <div className="form-group">
+                <h5 className="co-required">Installation Mode</h5>
+                <div>
+                  <RadioInput
+                    onChange={(e) => {
+                      setInstallMode(e.target.value);
+                      setTargetNamespace(null);
+                      setCannotResolve(false);
+                    }}
+                    value={InstallModeType.InstallModeTypeAllNamespaces}
+                    checked={selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces}
+                    disabled={!supportsGlobal}
+                    title="All namespaces on the cluster"
+                    subTitle="(default)"
+                  >
+                    <div className="co-m-radio-desc">
+                      <p className="text-muted">
+                        {descFor(InstallModeType.InstallModeTypeAllNamespaces)}
+                      </p>
+                    </div>
+                  </RadioInput>
+                </div>
+                <div>
+                  <RadioInput
+                    onChange={(e) => {
+                      setInstallMode(e.target.value);
+                      setTargetNamespace(
+                        useSuggestedNSForSingleInstallMode ? suggestedNamespace : null,
+                      );
+                      setCannotResolve(false);
+                    }}
+                    value={InstallModeType.InstallModeTypeOwnNamespace}
+                    checked={selectedInstallMode === InstallModeType.InstallModeTypeOwnNamespace}
+                    disabled={!supportsSingle}
+                    title="A specific namespace on the cluster"
+                  >
+                    <div className="co-m-radio-desc">
+                      <p className="text-muted">
+                        {descFor(InstallModeType.InstallModeTypeOwnNamespace)}
+                      </p>
+                    </div>
+                  </RadioInput>
+                </div>
+              </div>
+              <div className="form-group">
+                <h5 className="co-required">Installed Namespace</h5>
+                {selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces &&
+                  globalNamespaceInstallMode}
+                {selectedInstallMode === InstallModeType.InstallModeTypeOwnNamespace &&
+                  singleNamespaceInstallMode}
+              </div>
+              <div className="form-group">
+                <Tooltip content="The strategy to determine either manual or automatic updates.">
+                  <h5 className="co-required">Approval Strategy</h5>
+                </Tooltip>
+                <RadioGroup
+                  currentValue={selectedApproval}
+                  items={[
+                    { value: InstallPlanApproval.Automatic, title: 'Automatic' },
+                    { value: InstallPlanApproval.Manual, title: 'Manual' },
+                  ]}
+                  onChange={(e) => setApproval(e.currentTarget.value)}
+                />
+              </div>
+            </>
+            <div className="co-form-section__separator" />
+            {formError()}
+            <ActionGroup className="pf-c-form">
+              <Button onClick={() => submit()} isDisabled={formValid()} variant="primary">
+                Install
+              </Button>
+              <Button variant="secondary" onClick={() => history.push('/operatorhub')}>
+                Cancel
+              </Button>
+            </ActionGroup>
+          </div>
+          <div className="col-xs-6">
+            <ClusterServiceVersionLogo
+              displayName={_.get(channels, '[0].currentCSVDesc.displayName')}
+              icon={iconFor(props.packageManifest.data[0])}
+              provider={provider}
+            />
+            <h4>Provided APIs</h4>
+            <div className="co-crd-card-row">
+              {!providedAPIs.length ? (
+                <span className="text-muted">
+                  No Kubernetes APIs are provided by this Operator.
+                </span>
+              ) : (
+                providedAPIs.map((api) => (
+                  <CRDCard
+                    key={referenceForProvidedAPI(api)}
+                    canCreate={false}
+                    crd={api}
+                    csv={null}
+                  />
+                ))
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </>
+  );
+};
+
+const OperatorHubSubscribe: React.FC<OperatorHubSubscribeFormProps> = (props) => (
+  <StatusBox data={props.packageManifest.data[0]} loaded={props.loaded} loadError={props.loadError}>
+    <OperatorHubSubscribeForm {...props} />
+  </StatusBox>
+);
+
+export const OperatorHubSubscribePage: React.SFC<OperatorHubSubscribePageProps> = (props) => {
+  return (
+    <Firehose
+      resources={[
+        {
+          isList: true,
+          kind: referenceForModel(OperatorGroupModel),
+          prop: 'operatorGroup',
+        },
+        {
+          isList: true,
+          kind: referenceForModel(PackageManifestModel),
+          namespace: new URLSearchParams(window.location.search).get('catalogNamespace'),
+          fieldSelector: `metadata.name=${new URLSearchParams(window.location.search).get('pkg')}`,
+          selector: {
+            matchLabels: {
+              catalog: new URLSearchParams(window.location.search).get('catalog'),
+            },
+          },
+          prop: 'packageManifest',
+        },
+        {
+          isList: true,
+          kind: referenceForModel(SubscriptionModel),
+          prop: 'subscription',
+        },
+      ]}
+    >
+      {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
+      <OperatorHubSubscribe
+        {...(props as any)}
+        targetNamespace={new URLSearchParams(window.location.search).get('targetNamespace') || null}
+      />
+    </Firehose>
   );
 };
 
@@ -723,6 +726,7 @@ export type OperatorHubSubscribeFormProps = {
   targetNamespace?: string;
   operatorGroup: { loaded: boolean; data: OperatorGroupKind[] };
   packageManifest: { loaded: boolean; data: PackageManifestKind[] };
+  match: match;
   subscription: { loaded: boolean; data: SubscriptionKind[] };
 };
 

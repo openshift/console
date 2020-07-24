@@ -328,8 +328,8 @@ export class InstallPlanPreview extends React.Component<
   }
 
   render() {
-    const { obj } = this.props;
-    const subscription = obj.metadata.ownerReferences.find(
+    const { obj, hideApprovalBlock = false } = this.props;
+    const subscription = obj?.metadata?.ownerReferences.find(
       (ref) => referenceForOwnerRef(ref) === referenceForModel(SubscriptionModel),
     );
 
@@ -359,7 +359,7 @@ export class InstallPlanPreview extends React.Component<
         {this.state.error && (
           <div className="co-clusterserviceversion-detail__error-box">{this.state.error}</div>
         )}
-        {this.state.needsApproval && (
+        {this.state.needsApproval && !hideApprovalBlock && (
           <div className="co-m-pane__body">
             <HintBlock title="Review Manual Install Plan">
               <p>
@@ -489,6 +489,7 @@ export type InstallPlanDetailsPageProps = {
 
 export type InstallPlanPreviewProps = {
   obj: InstallPlanKind;
+  hideApprovalBlock?: boolean;
 };
 
 export type InstallPlanPreviewState = {
