@@ -17,6 +17,7 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { fromRequirements } from '@console/internal/module/k8s/selector';
 import { PackageManifestModel, OperatorGroupModel, SubscriptionModel } from '../../models';
 import { PackageManifestKind, OperatorGroupKind, SubscriptionKind } from '../../types';
+import { operatorTypeAnnotation, nonStandardAnnotationValue } from '../../const';
 import { iconFor } from '..';
 import { installedFor, subscriptionFor } from '../operator-group';
 import { getOperatorProviderType } from './operator-hub-utils';
@@ -50,8 +51,8 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
     return marketplaceItems
       .concat(localItems)
       .filter((pkg) => {
+        const { channels, defaultChannel } = getPackageStatus(pkg);
         // if a package does not have status.defaultChannel, exclude it so the app doesn't fail
-        const { defaultChannel } = getPackageStatus(pkg);
         if (!defaultChannel) {
           // eslint-disable-next-line no-console
           console.warn(
@@ -59,7 +60,12 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
           );
           return false;
         }
-        return true;
+
+        const { currentCSVDesc } = channels.find((ch) => ch.name === defaultChannel);
+        // if CSV contains annotation for a non-standalone operator, filter it out
+        return !(
+          currentCSVDesc.annotations?.[operatorTypeAnnotation] === nonStandardAnnotationValue
+        );
       })
       .map(
         (pkg): OperatorHubItem => {
