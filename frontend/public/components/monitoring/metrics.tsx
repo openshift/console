@@ -595,7 +595,6 @@ export const TablePagination = ({
 
   return (
     <Pagination
-      className="query-browser__pagination"
       itemCount={itemCount}
       onPerPageSelect={onPerPageSelect}
       onSetPage={(e, v) => setPage(v)}
