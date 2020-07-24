@@ -1,6 +1,12 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { CodeIcon, BoltIcon, DatabaseIcon, CatalogIcon } from '@patternfly/react-icons';
+import {
+  BoltIcon,
+  CatalogIcon,
+  CodeIcon,
+  DatabaseIcon,
+  LaptopCodeIcon,
+} from '@patternfly/react-icons';
 import {
   Plugin,
   ModelDefinition,
@@ -452,6 +458,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       path: [
         '/add',
         '/import',
+        '/import-sample',
+        '/samples',
         '/topology',
         '/deploy-image',
         '/project-details',
@@ -528,6 +536,32 @@ const plugin: Plugin<ConsumedExtensions> = [
         (
           await import(
             './components/import/ImportPage' /* webpackChunkName: "dev-console-import" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/samples/all-namespaces', '/samples/ns/:ns'],
+      loader: async () =>
+        (
+          await import(
+            './components/import/SamplesCatalog' /* webpackChunkName: "dev-console-samples-catalog" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/samples/ns/:ns/:is/:isNs'],
+      loader: async () =>
+        (
+          await import(
+            './components/import/ImportSamplePage' /* webpackChunkName: "dev-console-import-sample" */
           )
         ).default,
     },
@@ -863,6 +897,28 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: ClusterTaskModel,
       template: newClusterTaskTemplate,
+    },
+  },
+  {
+    type: 'AddAction',
+    properties: {
+      id: 'import-from-samples',
+      url: '/samples',
+      label: 'Samples',
+      description: 'Create an application from a code sample',
+      icon: <LaptopCodeIcon />,
+      accessReview: [
+        BuildConfigModel,
+        ImageStreamModel,
+        DeploymentConfigModel,
+        SecretModel,
+        RouteModel,
+        ServiceModel,
+      ].map((model) => ({
+        group: model.apiGroup || '',
+        resource: model.plural,
+        verb: 'create',
+      })),
     },
   },
   {

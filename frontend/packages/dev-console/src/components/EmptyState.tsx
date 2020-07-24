@@ -2,14 +2,13 @@ import * as React from 'react';
 import { Gallery, GalleryItem } from '@patternfly/react-core';
 import { CatalogTile } from '@patternfly/react-catalog-view-extension';
 import { connect } from 'react-redux';
-import { history, PageHeading, useAccessReview } from '@console/internal/components/utils';
+import { history, useAccessReview } from '@console/internal/components/utils';
 import { useExtensions } from '@console/plugin-sdk';
 import { RootState } from '@console/internal/redux';
-import { isAddAction, AddAction } from '../extensions/add-actions';
-import QuickStartTile from './QuickStartTile';
-
-import './EmptyState.scss';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
+import { isAddAction, AddAction } from '../extensions/add-actions';
+import PageLayout from './layout/PageLayout';
+import QuickStartTile from './QuickStartTile';
 
 const navigateTo = (e: React.SyntheticEvent, url: string) => {
   history.push(url);
@@ -41,7 +40,7 @@ const Item: React.FC<ItemProps> = ({
     <GalleryItem>
       <CatalogTile
         data-test-id={id}
-        className="odc-empty-state__tile"
+        className="co-catalog-tile"
         onClick={(e: React.SyntheticEvent) => navigateTo(e, resolvedUrl)}
         href={resolvedUrl}
         title={label}
@@ -75,24 +74,14 @@ const ODCEmptyState: React.FC<Props> = ({
   ).filter(({ properties: { hide } }) => (hide ? hide() : true));
 
   return (
-    <>
-      <div className="odc-empty-state__title">
-        <PageHeading title={title} />
-        {hintBlock && (
-          <div className="co-catalog-page__description odc-empty-state__hint-block">
-            {hintBlock}
-          </div>
-        )}
-      </div>
-      <div className="odc-empty-state__content">
-        <Gallery className="co-catalog-tile-view" hasGutter>
-          <QuickStartTile />
-          {addActionExtensions.map((action) => (
-            <Item key={action.properties.id} namespace={activeNamespace} action={action} />
-          ))}
-        </Gallery>
-      </div>
-    </>
+    <PageLayout title={title} hint={hintBlock}>
+      <Gallery className="co-catalog-tile-view" hasGutter>
+        <QuickStartTile />
+        {addActionExtensions.map((action) => (
+          <Item key={action.properties.id} namespace={activeNamespace} action={action} />
+        ))}
+      </Gallery>
+    </PageLayout>
   );
 };
 
