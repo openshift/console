@@ -9,6 +9,16 @@ import { EventSources, SinkType } from './import-types';
 import { isKnownEventSource } from '../../utils/create-eventsources-utils';
 import { isDefaultChannel, getChannelKind } from '../../utils/create-channel-utils';
 
+export const sinkTypeUriValidatiuon = yup.object().shape({
+  uri: yup
+    .string()
+    .max(2000, 'Please enter a URI that is less then 2000 characters.')
+    .test('validate-uri', 'Invalid URI.', function(value) {
+      return isValidUrl(value);
+    })
+    .required('Required'),
+});
+
 const sinkServiceSchema = yup
   .object()
   .when('sinkType', {
@@ -19,15 +29,7 @@ const sinkServiceSchema = yup
   })
   .when('sinkType', {
     is: SinkType.Uri,
-    then: yup.object().shape({
-      uri: yup
-        .string()
-        .max(2000, 'Please enter a URI that is less then 2000 characters.')
-        .test('validate-uri', 'Invalid URI.', function(value) {
-          return isValidUrl(value);
-        })
-        .required('Required'),
-    }),
+    then: sinkTypeUriValidatiuon,
   });
 
 export const sourceDataSpecSchema = yup

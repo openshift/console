@@ -5,6 +5,7 @@ import { EditApplication } from '@console/dev-console/src/actions/modify-applica
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
 import { setTrafficDistribution } from '../actions/traffic-splitting';
 import { setSinkSource } from '../actions/sink-source';
+import { setSinkPubsub } from '../actions/sink-pubsub';
 import {
   ServiceModel,
   EventingSubscriptionModel,
@@ -31,7 +32,7 @@ export const getKebabActionsForKind = (resourceKind: K8sKind): KebabAction[] => 
       referenceForModel(resourceKind) === referenceForModel(EventingSubscriptionModel) ||
       referenceForModel(resourceKind) === referenceForModel(EventingTriggerModel)
     ) {
-      menuActions.push(setSinkSource);
+      menuActions.push(setSinkPubsub);
     }
     if (referenceForModel(resourceKind) === referenceForModel(EventingBrokerModel)) {
       menuActions.push(addTrigger);
