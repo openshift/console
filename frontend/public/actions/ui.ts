@@ -20,7 +20,7 @@ import { setClusterID, setCreateProjectMessage, setUser, setConsoleLinks } from 
 import { Rule } from '../components/monitoring/types';
 
 export enum ActionType {
-  SetColumnManagementFilter = 'setColumnManagementFilter',
+  SetTableColumns = 'setTableColumns',
   DismissOverviewDetails = 'dismissOverviewDetails',
   SelectOverviewDetailsTab = 'selectOverviewDetailsTab',
   SelectOverviewItem = 'selectOverviewItem',
@@ -284,12 +284,19 @@ export const sortList = (
 
   return action(ActionType.SortList, { listId, field, func, orderBy });
 };
-export const setColumnManagementFilter = (id: string, filter: any) => {
-  const currentFilters =
-    JSON.parse(localStorage.getItem(COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY)) ?? {};
-  currentFilters[id] = filter;
-  localStorage.setItem(COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY, JSON.stringify(currentFilters));
-  return action(ActionType.SetColumnManagementFilter, { id, filter });
+export const setTableColumns = (id: string, selectedColumns: any) => {
+  let currentColumns;
+  try {
+    currentColumns = JSON.parse(localStorage.getItem(COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY)) || {};
+  } catch (e) {
+    // Error parsing the data, do not store the current filters
+    /* eslint-disable-next-line no-console */
+    console.error('Error parsing column filters from local storage', e);
+    return;
+  }
+  currentColumns[id] = selectedColumns;
+  localStorage.setItem(COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY, JSON.stringify(currentColumns));
+  return action(ActionType.SetTableColumns, { id, selectedColumns });
 };
 export const selectOverviewItem = (uid: string) => action(ActionType.SelectOverviewItem, { uid });
 export const selectOverviewDetailsTab = (tab: string) =>
@@ -392,7 +399,7 @@ export const setPVCMetrics = (pvcMetrics: PVCMetrics) =>
 
 // TODO(alecmerdler): Implement all actions using `typesafe-actions` and add them to this export
 const uiActions = {
-  setColumnManagementFilter,
+  setTableColumns,
   setCurrentLocation,
   setActiveApplication,
   setActiveNamespace,

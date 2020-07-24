@@ -172,7 +172,7 @@ const stateToProps = (
     reduxIDs = null,
     staticFilters = [{}],
     rowFilters = [],
-    kind = '',
+    columnManagementID = '',
   },
 ) => {
   const allFilters = staticFilters ? Object.assign({}, filters, ...staticFilters) : filters;
@@ -186,10 +186,10 @@ const stateToProps = (
   );
   const currentSortFunc = UI.getIn(['listSorts', listId, 'func'], defaultSortFunc);
   const currentSortOrder = UI.getIn(['listSorts', listId, 'orderBy'], defaultSortOrder);
-  const columnManagement = UI.getIn(['columnManagement', kind]);
+  const columnManagement = UI.getIn(['columnManagement', columnManagementID]);
   const activeColumns = columnManagement
     ? columnManagement.reduce((acc, curr) => {
-        acc[curr.title] = curr.visible;
+        acc[curr.ID] = curr.visible;
         return acc;
       }, {})
     : {};
@@ -273,14 +273,25 @@ export type TableRowProps = {
   className?: string;
 };
 
-export const TableData: React.SFC<TableDataProps> = ({ className, visible = true, ...props }) => {
-  return visible && <td {...props} className={className} role="gridcell" />;
+export const TableData: React.SFC<TableDataProps> = ({
+  className,
+  columnID,
+  columns,
+  ...props
+}) => {
+  return (
+    ((!_.isEmpty(columns) ? columns?.find((col) => col.ID === columnID && col.visible) : true) && (
+      <td {...props} className={className} role="gridcell" />
+    )) ||
+    null
+  );
 };
 TableData.displayName = 'TableData';
 export type TableDataProps = {
-  id?: string;
-  visible?: boolean;
   className?: string;
+  columnID?: string;
+  columns?: any;
+  id?: string;
 };
 
 const TableWrapper: React.SFC<TableWrapperProps> = ({
@@ -416,7 +427,7 @@ export type TableProps = {
   reduxID?: string;
   reduxIDs?: string[];
   label?: string;
-  kind?: string; // for column management
+  columnManagementID?: string;
 };
 
 type TablePropsFromState = {};
@@ -437,8 +448,14 @@ type ComponentProps = {
 
 const getActiveColumns = (Header, componentProps, activeColumns) => {
   let columns = Header(componentProps);
+  if (_.isEmpty(activeColumns) && columns.find((col) => col.additional)) {
+    activeColumns = columns.reduce((acc, curr) => {
+      acc[curr.ID] = curr.visible;
+      return acc;
+    }, {});
+  }
   if (!_.isEmpty(activeColumns)) {
-    columns = columns?.filter((col) => activeColumns?.[col.title] || col.title === '');
+    columns = columns?.filter((col) => activeColumns?.[col.ID] || col.title === '');
   }
   return columns;
 };
@@ -485,7 +502,7 @@ export const Table = connect<
       sortList: PropTypes.func,
       onSelect: PropTypes.func,
       scrollElement: PropTypes.oneOf([PropTypes.object, PropTypes.func]),
-      kind: PropTypes.string, // for column management should use gvk
+      columnManagementID: PropTypes.string, // for column management should use gvk
     };
     _columnShift: number;
 
@@ -718,7 +735,7 @@ export type TableInnerProps = {
   virtualize?: boolean;
   gridBreakPoint?: 'grid' | 'grid-md' | 'grid-lg' | 'grid-xl' | 'grid-2xl';
   scrollElement?: HTMLElement | (() => HTMLElement);
-  kind?: string; // for column management
+  columnManagementID?: string;
 };
 
 export type TableInnerState = {

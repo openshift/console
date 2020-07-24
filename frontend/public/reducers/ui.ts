@@ -79,8 +79,16 @@ export default (state: UIState, action: UIAction): UIState => {
 
     const storedPins = localStorage.getItem(PINNED_RESOURCES_LOCAL_STORAGE_KEY);
     const pinnedResources = storedPins ? JSON.parse(storedPins) : {};
-    const storedColumnFilters =
-      JSON.parse(localStorage.getItem(COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY)) ?? {};
+    let storedTableColumns;
+    try {
+      storedTableColumns =
+        JSON.parse(localStorage.getItem(COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY)) || {};
+    } catch (e) {
+      // Error parsing the data, do not store the current filters
+      /* eslint-disable-next-line no-console */
+      console.error('Error parsing column filters from local storage', e);
+      return;
+    }
 
     return ImmutableMap({
       activeNavSectionId: 'workloads',
@@ -110,15 +118,15 @@ export default (state: UIState, action: UIAction): UIState => {
         pollInterval: null,
         queries: ImmutableList([newQueryBrowserQuery()]),
       }),
-      columnManagement: ImmutableMap(storedColumnFilters),
+      columnManagement: ImmutableMap(storedTableColumns),
       pinnedResources,
     });
   }
 
   switch (action.type) {
-    case ActionType.SetColumnManagementFilter:
+    case ActionType.SetTableColumns:
       // use groupVersionKind to uniquely identify the
-      return state.setIn(['columnManagement', action.payload.id], action.payload.filter);
+      return state.setIn(['columnManagement', action.payload.id], action.payload.selectedColumns);
 
     case ActionType.SetActiveApplication:
       return state.set('activeApplication', action.payload.application);

@@ -118,7 +118,7 @@ export const ModalSubmitFooter: React.SFC<ModalSubmitFooterProps> = ({
   cancelText,
   submitDisabled,
   submitDanger,
-  resetText,
+  resetText = 'Reset',
   reset,
 }) => {
   const onCancelClick = (e) => {
@@ -134,7 +134,7 @@ export const ModalSubmitFooter: React.SFC<ModalSubmitFooterProps> = ({
   return (
     <ModalFooter inProgress={inProgress} errorMessage={errorMessage} message={message}>
       <ActionGroup className="pf-c-form pf-c-form__actions--right pf-c-form__group--no-top-margin">
-        {resetText && (
+        {reset && (
           <Button variant="link" isInline onClick={onResetClick} id="reset-action">
             {resetText}
           </Button>
@@ -196,7 +196,7 @@ export type ModalSubmitFooterProps = {
   inProgress: boolean;
   cancel: (e: React.SyntheticEvent<any, Event>) => void;
   cancelText?: React.ReactNode;
-  resetText?: string;
+  resetText?: React.ReactNode;
   reset?: (e: React.SyntheticEvent<any, Event>) => void;
   submitText: React.ReactNode;
   submitDisabled?: boolean;

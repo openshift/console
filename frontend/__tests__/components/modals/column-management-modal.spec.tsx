@@ -8,59 +8,74 @@ import {
   ColumnManagementModal,
   MAX_VIEW_COLS,
 } from '@console/internal/components/modals/column-management-modal';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { PodModel } from '@console/internal/models';
 
-const kinds = ['pod'];
-const columnFilters = [
+const columnManagementID = referenceForModel(PodModel);
+const columnManagementType = 'Pod';
+const selectedColumns = [
   {
     title: 'Name',
     visible: true,
+    ID: 'NAME',
   },
   {
     title: 'Namespace',
     visible: true,
+    ID: 'NAMESPACE',
   },
   {
     title: 'Status',
     visible: true,
+    ID: 'STATUS',
   },
   {
     title: 'Ready',
     visible: true,
+    ID: 'READY',
   },
   {
     title: 'Restarts',
     visible: true,
+    ID: 'RESTARTS',
   },
   {
     title: 'Node',
     visible: true,
+    ID: 'NODE',
   },
   {
     title: 'Memory',
     visible: true,
+    ID: 'MEMORY',
   },
   {
     title: 'CPU',
     visible: true,
+    ID: 'CPU',
   },
   {
     title: 'Created',
     visible: true,
+    ID: 'CREATED',
   },
   {
     title: 'Node',
     visible: false,
     additional: true,
+    ID: 'NODE',
   },
   {
     title: 'Labels',
     visible: false,
     additional: true,
+    ID: 'LABELS',
   },
   {
     title: 'IP Address',
     visible: false,
     additional: true,
+    ID: 'IP-ADDRESS',
   },
   {
     title: '',
@@ -68,57 +83,69 @@ const columnFilters = [
   },
 ];
 
-const columnFiltersNamespaceDisabled = [
+const selectedColumnsNamespaceDisabled = [
   {
     title: 'Name',
     visible: true,
+    ID: 'NAME',
   },
   {
     title: 'Namespace',
     visible: false,
+    ID: 'NAMESPACE',
   },
   {
     title: 'Status',
     visible: true,
+    ID: 'STATUS',
   },
   {
     title: 'Ready',
     visible: true,
+    ID: 'READY',
   },
   {
     title: 'Restarts',
     visible: true,
+    ID: 'RESTARTS',
   },
   {
     title: 'Node',
     visible: true,
+    ID: 'NODE',
   },
   {
     title: 'Memory',
     visible: true,
+    ID: 'MEMORY',
   },
   {
     title: 'CPU',
     visible: true,
+    ID: 'CPU',
   },
   {
     title: 'Created',
     visible: true,
+    ID: 'CREATED',
   },
   {
     title: 'Node',
     visible: false,
     additional: true,
+    ID: 'NODE',
   },
   {
     title: 'Labels',
     visible: false,
     additional: true,
+    ID: 'LABELS',
   },
   {
     title: 'IP Address',
     visible: false,
     additional: true,
+    ID: 'IP-ADDRESS',
   },
   {
     title: '',
@@ -131,14 +158,18 @@ describe(ColumnManagementModal.displayName, () => {
   beforeEach(() => {
     wrapper = mount(
       <Provider store={store}>
-        <ColumnManagementModal kinds={kinds} columnFilters={columnFilters} />
+        <ColumnManagementModal
+          columnManagementType={columnManagementType}
+          columnManagementID={columnManagementID}
+          selectedColumns={selectedColumns}
+        />
       </Provider>,
     );
   });
   it('renders max row info alert', () => {
     expect(wrapper.find(Alert).props().variant).toEqual('info');
     expect(wrapper.find(Alert).props().title).toEqual(
-      `You can select up to ${MAX_VIEW_COLS - 1} columns`,
+      `You can select up to ${MAX_VIEW_COLS} columns`,
     );
   });
 
@@ -159,7 +190,11 @@ describe(ColumnManagementModal.displayName, () => {
   it('renders a single disabled checkbox when under MAX columns', () => {
     wrapper = mount(
       <Provider store={store}>
-        <ColumnManagementModal kinds={kinds} columnFilters={columnFiltersNamespaceDisabled} />
+        <ColumnManagementModal
+          columnManagementType={columnManagementType}
+          columnManagementID={columnManagementID}
+          selectedColumns={selectedColumnsNamespaceDisabled}
+        />
       </Provider>,
     );
     const checkboxItems = wrapper.find(DataListCheck);
