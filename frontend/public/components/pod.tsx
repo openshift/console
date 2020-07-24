@@ -46,7 +46,6 @@ import {
   units,
   LabelList,
 } from './utils';
-import { NAME_COLUMN_ID } from './modals/column-management-modal';
 import { PodLogs } from './pod-logs';
 import {
   Area,
@@ -130,7 +129,7 @@ const getHeader = (showNodes) => {
     return [
       {
         title: 'Name',
-        ID: NAME_COLUMN_ID,
+        ID: 'NAME',
         sortField: 'metadata.name',
         transforms: [sortable],
         props: { className: tableColumnClasses[0] },

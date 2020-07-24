@@ -502,7 +502,7 @@ export const Table = connect<
       sortList: PropTypes.func,
       onSelect: PropTypes.func,
       scrollElement: PropTypes.oneOf([PropTypes.object, PropTypes.func]),
-      columnManagementID: PropTypes.string, // for column management should use gvk
+      columnManagementID: PropTypes.string, // for column management should use gvk for workloads
     };
     _columnShift: number;
 
