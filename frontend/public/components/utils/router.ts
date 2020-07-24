@@ -36,21 +36,33 @@ export const getQueryArgument = (arg: string) =>
 
 export const setQueryArgument = (k: string, v: string) => {
   const params = new URLSearchParams(window.location.search);
-  params.set(k, v);
-  const url = new URL(window.location.href);
-  history.replace(`${url.pathname}?${params.toString()}${url.hash}`);
+  if (params.get(k) !== v) {
+    params.set(k, v);
+    const url = new URL(window.location.href);
+    history.replace(`${url.pathname}?${params.toString()}${url.hash}`);
+  }
 };
 
 export const setAllQueryArguments = (newParams: { [k: string]: string }) => {
   const params = new URLSearchParams();
-  _.each(newParams, (v, k) => params.set(k, v));
-  const url = new URL(window.location.href);
-  history.replace(`${url.pathname}?${params.toString()}${url.hash}`);
+  let update = false;
+  _.each(newParams, (v, k) => {
+    if (params.get(k) !== v) {
+      update = true;
+      params.set(k, v);
+    }
+  });
+  if (update) {
+    const url = new URL(window.location.href);
+    history.replace(`${url.pathname}?${params.toString()}${url.hash}`);
+  }
 };
 
 export const removeQueryArgument = (k: string) => {
   const params = new URLSearchParams(window.location.search);
-  params.delete(k);
-  const url = new URL(window.location.href);
-  history.replace(`${url.pathname}?${params.toString()}${url.hash}`);
+  if (params.has(k)) {
+    params.delete(k);
+    const url = new URL(window.location.href);
+    history.replace(`${url.pathname}?${params.toString()}${url.hash}`);
+  }
 };
