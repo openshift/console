@@ -26,6 +26,7 @@ import { Kebab, kebabOptionsToMenu } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { RevisionModel } from '../../models';
 import { getRevisionActions } from '../../actions/getRevisionActions';
+import { editSinkUri } from '../../actions/edit-sink-uri';
 import {
   TYPE_EVENT_SOURCE,
   TYPE_EVENT_SOURCE_LINK,
@@ -74,6 +75,17 @@ export const knativeContextMenu = (element: Node) => {
   });
 
   return createMenuItems(kebabOptionsToMenu(kebabOptions));
+};
+
+export const editUriContextMenu = (element: Node) => {
+  const item = element.getData();
+  const actions = [];
+  const { obj, eventSources } = item.resources;
+  if (eventSources.length > 0) {
+    const sourceModel = modelFor(referenceFor(eventSources[0]));
+    actions.push(editSinkUri(sourceModel, obj, eventSources));
+  }
+  return createMenuItems(kebabOptionsToMenu(actions));
 };
 
 const dragOperation: EditableDragOperationType = {
@@ -131,7 +143,9 @@ export const getKnativeComponentFactory = (): ComponentFactory => {
       case TYPE_SINK_URI:
         return withDragNode(nodeDragSourceSpec(type))(
           withSelection({ controlled: true })(
-            withDndDrop<any, any, {}, NodeComponentProps>(sinkUriDropTargetSpec)(SinkUriNode),
+            withContextMenu(editUriContextMenu)(
+              withDndDrop<any, any, {}, NodeComponentProps>(sinkUriDropTargetSpec)(SinkUriNode),
+            ),
           ),
         );
       case TYPE_KNATIVE_REVISION:

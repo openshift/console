@@ -12,3 +12,8 @@ export const deleteRevisionModal = (props) =>
   import(
     '../revisions/DeleteRevisionModalController' /* webpackChunkName: "delete-revision" */
   ).then((m) => m.deleteRevisionModalLauncher(props));
+
+export const editSinkUriModal = (props) =>
+  import('../sink-uri/SinkUriController' /* webpackChunkName: "sink-uri" */).then((m) =>
+    m.sinkModalLauncher(props),
+  );
