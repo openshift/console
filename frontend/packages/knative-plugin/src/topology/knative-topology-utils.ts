@@ -45,7 +45,6 @@ import { errorModal } from '@console/internal/components/modals';
 import { KebabAction } from '@console/dev-console/src/utils/add-resources-menu-utils';
 import { FLAG_KNATIVE_EVENTING, CAMEL_SOURCE_INTEGRATION } from '../const';
 import { KnativeItem } from '../utils/get-knative-resources';
-import { Traffic as TrafficData } from '../types';
 import {
   KNATIVE_GROUP_NODE_HEIGHT,
   KNATIVE_GROUP_NODE_PADDING,
@@ -138,17 +137,6 @@ export const getKnNodeModelProps = (type: string) => {
  */
 export const getEventSourceStatus = ({ FLAGS }: RootState): boolean =>
   FLAGS.get(FLAG_KNATIVE_EVENTING);
-
-/**
- * get knative service routes url based on the revision's traffic
- */
-export const getKnativeServiceRoutesURL = (ksvc: K8sResourceKind): string => {
-  if (!ksvc.status) {
-    return '';
-  }
-  const maximumTraffic: TrafficData = _.maxBy(ksvc.status.traffic as TrafficData[], 'percent');
-  return maximumTraffic?.url || ksvc.status.url;
-};
 
 /**
  * fetch the parent resource from a resource
@@ -671,7 +659,7 @@ export const createTopologyServiceNodeData = (
     resource,
     resources: { ...svcRes },
     data: {
-      url: getKnativeServiceRoutesURL(knativeSvc),
+      url: knativeSvc.status?.url || '',
       kind: referenceFor(knativeSvc),
       editURL: annotations['app.openshift.io/edit-url'],
       vcsURI: annotations['app.openshift.io/vcs-uri'],
