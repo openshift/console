@@ -5,10 +5,10 @@ import {
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import { ResourceDropdownField } from '@console/shared';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import SinkSourceModal from '../SinkSourceModal';
 import { ServiceModel } from '../../../models';
+import { SinkUriResourcesGroup } from '../../add/event-sources/SinkSection';
 
 type SinkSourceModalProps = React.ComponentProps<typeof SinkSourceModal>;
 
@@ -16,7 +16,7 @@ describe('SinkSourceModal Form', () => {
   let formProps: SinkSourceModalProps;
   let sinkSourceModalWrapper: ShallowWrapper<SinkSourceModalProps>;
   const formValues = {
-    ref: {
+    sink: {
       apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
       kind: ServiceModel.kind,
       name: 'event-greeter',
@@ -26,10 +26,9 @@ describe('SinkSourceModal Form', () => {
     formProps = {
       ...formikFormProps,
       values: formValues,
-      resourceName: 'myappes',
+      resourceName: 'myapps',
+      namespace: 'myapp',
       initialValues: formValues,
-      resourceDropdown: [],
-      labelTitle: 'Move Sink',
     };
     sinkSourceModalWrapper = shallow(<SinkSourceModal {...formProps} />);
   });
@@ -39,19 +38,11 @@ describe('SinkSourceModal Form', () => {
     expect(sinkSourceModalWrapper.find(ModalBody)).toHaveLength(1);
     expect(sinkSourceModalWrapper.find(ModalSubmitFooter)).toHaveLength(1);
   });
-  it('should render ResourceDropdownField for service', () => {
-    const serviceDropDown = sinkSourceModalWrapper.find(ResourceDropdownField);
-    expect(serviceDropDown).toHaveLength(1);
-    expect(serviceDropDown.get(0).props.name).toBe('ref.name');
-    expect(serviceDropDown.get(0).props.selectedKey).toBe('event-greeter');
-  });
 
-  it('should call validateForm, setFieldValue onChange', () => {
-    const modal = sinkSourceModalWrapper.find(ResourceDropdownField);
-    modal.props().onChange('event-greeter');
-    expect(formProps.setFieldTouched).toHaveBeenCalled();
-    expect(formProps.setFieldValue).toHaveBeenCalled();
-    expect(formProps.validateForm).toHaveBeenCalled();
+  it('should render SinkUriResourcesGroup', () => {
+    const serviceDropDown = sinkSourceModalWrapper.find(SinkUriResourcesGroup);
+    expect(serviceDropDown).toHaveLength(1);
+    expect(serviceDropDown.get(0).props.namespace).toBe('myapp');
   });
 
   it('should call handleSubmit on form submit', () => {
@@ -66,7 +57,7 @@ describe('SinkSourceModal Form', () => {
 
   it('Save should be enabled if value is  changed', () => {
     const sinkValues = {
-      ref: {
+      sink: {
         apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
         kind: ServiceModel.kind,
         name: 'event-greeter-new',
@@ -78,8 +69,6 @@ describe('SinkSourceModal Form', () => {
         ...formProps.values,
         ...sinkValues,
       },
-      resourceDropdown: [],
-      labelTitle: 'Move Sink',
     };
     sinkSourceModalWrapper = shallow(<SinkSourceModal {...formProps} />);
     const modalSubmitFooter = sinkSourceModalWrapper.find(ModalSubmitFooter);

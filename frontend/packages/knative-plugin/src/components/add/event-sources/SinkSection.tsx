@@ -20,6 +20,7 @@ interface SinkSectionProps {
 
 interface SinkResourcesProps {
   namespace: string;
+  isMoveSink?: boolean;
 }
 
 const SinkUri: React.FC = () => (
@@ -38,7 +39,7 @@ const SinkUri: React.FC = () => (
   </>
 );
 
-const SinkResources: React.FC<SinkResourcesProps> = ({ namespace }) => {
+const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) => {
   const [resourceAlert, setResourceAlert] = React.useState(false);
   const { setFieldValue, setFieldTouched, validateForm, initialValues } = useFormikContext<
     FormikValues
@@ -61,7 +62,7 @@ const SinkResources: React.FC<SinkResourcesProps> = ({ namespace }) => {
     },
     [setFieldValue, setFieldTouched, validateForm],
   );
-  const contextAvailable = !!initialValues.sink.name;
+  const contextAvailable = isMoveSink ? false : !!initialValues.sink.name;
   const resourcesData = [
     ...knativeServingResourcesServices(namespace),
     ...getDynamicChannelResourceList(namespace),
@@ -111,6 +112,24 @@ const SinkResources: React.FC<SinkResourcesProps> = ({ namespace }) => {
   );
 };
 
+export const SinkUriResourcesGroup: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) => (
+  <RadioGroupField
+    name="sinkType"
+    options={[
+      {
+        label: sourceSinkType.Resource.label,
+        value: sourceSinkType.Resource.value,
+        activeChildren: <SinkResources namespace={namespace} isMoveSink={isMoveSink} />,
+      },
+      {
+        label: sourceSinkType.Uri.label,
+        value: sourceSinkType.Uri.value,
+        activeChildren: <SinkUri />,
+      },
+    ]}
+  />
+);
+
 const SinkSection: React.FC<SinkSectionProps> = ({ namespace }) => {
   return (
     <FormSection
@@ -118,21 +137,7 @@ const SinkSection: React.FC<SinkSectionProps> = ({ namespace }) => {
       subTitle="Add a Sink to route this Event Source to a Channel, Broker, Knative Service or another route."
       extraMargin
     >
-      <RadioGroupField
-        name="sinkType"
-        options={[
-          {
-            label: sourceSinkType.Resource.label,
-            value: sourceSinkType.Resource.value,
-            activeChildren: <SinkResources namespace={namespace} />,
-          },
-          {
-            label: sourceSinkType.Uri.label,
-            value: sourceSinkType.Uri.value,
-            activeChildren: <SinkUri />,
-          },
-        ]}
-      />
+      <SinkUriResourcesGroup namespace={namespace} />
     </FormSection>
   );
 };

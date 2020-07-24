@@ -8,6 +8,11 @@ export const setSinkSourceModal = (props) =>
     m.sinkModalLauncher(props),
   );
 
+export const setSinkPubsubModal = (props) =>
+  import('../sink-pubsub/SinkPubsubController' /* webpackChunkName: "sink-pubsub" */).then((m) =>
+    m.sinkPubsubModalLauncher(props),
+  );
+
 export const deleteRevisionModal = (props) =>
   import(
     '../revisions/DeleteRevisionModalController' /* webpackChunkName: "delete-revision" */

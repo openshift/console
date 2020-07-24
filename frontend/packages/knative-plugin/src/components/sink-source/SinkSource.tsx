@@ -1,9 +1,10 @@
+import * as yup from 'yup';
 import * as React from 'react';
 import { Formik, FormikValues, FormikHelpers } from 'formik';
 import { K8sResourceKind, k8sUpdate, referenceFor, modelFor } from '@console/internal/module/k8s';
+import { sinkTypeUriValidatiuon } from '../add/eventSource-validation-utils';
 import SinkSourceModal from './SinkSourceModal';
-import { knativeServingResourcesServices } from '../../utils/get-knative-resources';
-import { getDynamicChannelResourceList } from '../../utils/fetch-dynamic-eventsources-utils';
+import { SinkType } from '../add/import-types';
 
 export interface SinkSourceProps {
   source: K8sResourceKind;
@@ -13,31 +14,39 @@ export interface SinkSourceProps {
 
 const SinkSource: React.FC<SinkSourceProps> = ({ source, cancel, close }) => {
   const {
-    kind: sourceKind,
     metadata: { namespace, name },
     spec,
   } = source;
-  const isPubSubSink = !!spec?.subscriber;
   const isSinkRef = !!spec?.sink?.ref;
-  const { name: sinkName = '', apiVersion = '', kind = '' } = isPubSubSink
-    ? spec?.subscriber?.ref
-    : isSinkRef
+  const { name: sinkName = '', apiVersion = '', kind = '', uri = '' } = isSinkRef
     ? spec?.sink?.ref
-    : {};
+    : spec?.sink || {};
   const initialValues = {
-    ref: {
+    sinkType: uri ? SinkType.Uri : SinkType.Resource,
+    sink: {
       apiVersion,
       kind,
       name: sinkName,
+      uri,
     },
   };
   const handleSubmit = (values: FormikValues, action: FormikHelpers<FormikValues>) => {
     const updatePayload = {
       ...source,
-      ...(sinkName !== values?.ref?.name &&
-        !isPubSubSink && { spec: { ...source.spec, sink: { ...values } } }),
-      ...(sinkName !== values?.ref?.name &&
-        isPubSubSink && { spec: { ...source.spec, subscriber: { ...values } } }),
+      ...(SinkType.Uri !== values?.sinkType
+        ? {
+            spec: {
+              ...source.spec,
+              sink: {
+                ref: {
+                  apiVersion: values?.sink?.apiVersion,
+                  kind: values?.sink?.kind,
+                  name: values?.sink?.name,
+                },
+              },
+            },
+          }
+        : { spec: { ...source.spec, sink: { uri: values?.sink?.uri } } }),
     };
     k8sUpdate(modelFor(referenceFor(source)), updatePayload)
       .then(() => {
@@ -50,26 +59,26 @@ const SinkSource: React.FC<SinkSourceProps> = ({ source, cancel, close }) => {
       });
   };
 
-  const resourcesDropdownField = knativeServingResourcesServices(namespace);
-  let labelTitle = `Move ${sourceKind}`;
-  if (!isPubSubSink) {
-    resourcesDropdownField.push(...getDynamicChannelResourceList(namespace));
-    labelTitle = 'Move Sink';
-  }
-
   return (
     <Formik
       initialValues={initialValues}
       onSubmit={handleSubmit}
       onReset={cancel}
       initialStatus={{ error: '' }}
+      validationSchema={() =>
+        yup.object().shape({
+          sink: yup.object().when('sinkType', {
+            is: SinkType.Uri,
+            then: sinkTypeUriValidatiuon,
+          }),
+        })
+      }
     >
       {(formikProps) => (
         <SinkSourceModal
           {...formikProps}
           resourceName={name}
-          resourceDropdown={resourcesDropdownField}
-          labelTitle={labelTitle}
+          namespace={namespace}
           cancel={cancel}
         />
       )}
