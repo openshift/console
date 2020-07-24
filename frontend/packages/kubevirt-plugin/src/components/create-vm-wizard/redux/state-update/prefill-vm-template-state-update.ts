@@ -1,6 +1,6 @@
 import { createBasicLookup, getName } from '@console/shared/src';
 import { InternalActionType, UpdateOptions } from '../types';
-import { iGetProvisionSource, iGetVmSettingValue } from '../../selectors/immutable/vm-settings';
+import { iGetVmSettingValue } from '../../selectors/immutable/vm-settings';
 import {
   CloudInitField,
   VMSettingsField,
@@ -249,10 +249,7 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
     });
     storagesUpdate.unshift(...templateStorages);
   } else {
-    const newSourceStorage = getProvisionSourceStorage(
-      iGetProvisionSource(state, id),
-      iGetLoadedCommonData(state, id, VMWizardProps.storageClassConfigMap),
-    );
+    const newSourceStorage = getProvisionSourceStorage(state, id);
     if (newSourceStorage) {
       storagesUpdate.unshift({ ...newSourceStorage, id: getNextStorageID() });
     }
