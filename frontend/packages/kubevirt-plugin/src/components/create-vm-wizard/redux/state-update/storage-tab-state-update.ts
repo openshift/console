@@ -3,7 +3,7 @@ import { hasVmSettingsChanged } from '../../selectors/immutable/vm-settings';
 import { VMSettingsField, VMWizardStorage, VMWizardStorageType } from '../../types';
 import { InternalActionType, UpdateOptions } from '../types';
 import { hasStoragesChanged, iGetProvisionSourceStorage } from '../../selectors/immutable/storage';
-import { getProvisionSourceStorage } from '../initial-state/storage-tab-initial-state';
+import { getNewProvisionSourceStorage } from '../initial-state/storage-tab-initial-state';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { StorageUISource } from '../../../modals/disk-modal/storage-ui-source';
@@ -23,7 +23,7 @@ export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }:
   const iOldSourceStorage = iGetProvisionSourceStorage(state, id);
   const oldSourceStorage: VMWizardStorage = iOldSourceStorage && iOldSourceStorage.toJSON();
 
-  const newSourceStorage = getProvisionSourceStorage(state, id);
+  const newSourceStorage = getNewProvisionSourceStorage(state, id);
   const oldType =
     oldSourceStorage &&
     StorageUISource.fromTypes(

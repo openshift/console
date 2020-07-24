@@ -96,7 +96,7 @@ const getUrlStorage = (storageClassConfigMap: ConfigMapKind) => {
   };
 };
 
-export const getProvisionSourceStorage = (state: any, id: string): VMWizardStorage => {
+export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardStorage => {
   const provisionSource = iGetProvisionSource(state, id);
 
   if (provisionSource === ProvisionSource.URL) {
