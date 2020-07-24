@@ -1,13 +1,13 @@
 import * as React from 'react';
+import store from '@console/internal/redux';
 import { Router } from 'react-router';
 import { Provider } from 'react-redux';
 import { mount, ReactWrapper } from 'enzyme';
-import { DescriptorProps, StatusCapability, Descriptor, SpecCapability } from '../types';
+import { Descriptor, StatusCapability, SpecCapability, DescriptorType } from '../types';
 import { testModel, testResourceInstance } from '../../../../mocks';
-import { StatusDescriptor } from '.';
-import store from '@console/internal/redux';
 import { ResourceLink, history } from '@console/internal/components/utils';
 import { Conditions } from '@console/internal/components/conditions';
+import { DescriptorDetailsItem, DescriptorDetailsItemProps } from '..';
 
 const OBJ = {
   ...testResourceInstance,
@@ -23,24 +23,33 @@ const OBJ = {
   },
 };
 
-describe(StatusDescriptor.displayName, () => {
-  let wrapper: ReactWrapper<DescriptorProps>;
+describe('Status descriptors', () => {
+  let wrapper: ReactWrapper<DescriptorDetailsItemProps>;
   let descriptor: Descriptor;
 
   beforeEach(() => {
     descriptor = {
-      path: '',
+      path: 'test',
       displayName: 'Some Thing',
       description: '',
       'x-descriptors': [],
     };
-    wrapper = mount(<StatusDescriptor descriptor={descriptor} obj={OBJ} model={testModel} />, {
-      wrappingComponent: (props) => (
-        <Router history={history}>
-          <Provider store={store} {...props} />,
-        </Router>
-      ),
-    });
+    wrapper = mount(
+      <DescriptorDetailsItem
+        descriptor={descriptor}
+        obj={OBJ}
+        model={testModel}
+        schema={{}}
+        type={DescriptorType.status}
+      />,
+      {
+        wrappingComponent: (props) => (
+          <Router history={history}>
+            <Provider store={store} {...props} />,
+          </Router>
+        ),
+      },
+    );
   });
 
   it('renders status value as text if no matching capability component', () => {

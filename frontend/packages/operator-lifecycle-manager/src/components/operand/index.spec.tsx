@@ -35,10 +35,9 @@ import {
   OperandStatusProps,
 } from '.';
 import { Resources } from '../k8s-resource';
-import { StatusDescriptor } from '../descriptors/status';
-import { SpecDescriptor } from '../descriptors/spec';
 import { referenceForProvidedAPI } from '..';
 import { OperandLink } from './operand-link';
+import { DescriptorDetailsItem, DescriptorDetailsItemList } from '../descriptors';
 
 const COLUMNS = OperandTableHeader();
 const NAME_INDEX = _.findIndex(COLUMNS, { title: 'Name' });
@@ -147,6 +146,7 @@ describe(OperandDetails.displayName, () => {
     wrapper = shallow(
       <OperandDetails.WrappedComponent
         csv={testClusterServiceVersion}
+        crd={testCRD}
         obj={testResourceInstance}
         kindObj={resourceDefinition}
         appName={testClusterServiceVersion.metadata.name}
@@ -160,7 +160,7 @@ describe(OperandDetails.displayName, () => {
   });
 
   it('renders info section', () => {
-    const section = wrapper.find('OperandDetailsSection');
+    const section = wrapper.find('.co-operand-details__section.co-operand-details__section--info');
 
     expect(section.exists()).toBe(true);
   });
@@ -171,7 +171,7 @@ describe(OperandDetails.displayName, () => {
     );
     const filteredDescriptor = crd.statusDescriptors.find((sd) => sd.path === 'importantMetrics');
     const statusView = wrapper
-      .find(StatusDescriptor)
+      .find(DescriptorDetailsItem)
       .filterWhere((node) => node.props().descriptor === filteredDescriptor);
 
     expect(statusView.exists()).toBe(false);
@@ -182,11 +182,17 @@ describe(OperandDetails.displayName, () => {
     csv.spec.customresourcedefinitions.owned = [];
     wrapper = wrapper.setProps({ csv });
 
-    expect(wrapper.find(SpecDescriptor).length).toEqual(0);
+    expect(wrapper.find(DescriptorDetailsItem).length).toEqual(0);
   });
 
   it('renders spec descriptor fields if the custom resource is `owned`', () => {
-    expect(wrapper.find(SpecDescriptor).length).toEqual(
+    expect(
+      wrapper
+        .find(DescriptorDetailsItemList)
+        .last()
+        .shallow()
+        .find(DescriptorDetailsItem).length,
+    ).toEqual(
       testClusterServiceVersion.spec.customresourcedefinitions.owned[0].specDescriptors.length,
     );
   });
@@ -199,9 +205,13 @@ describe(OperandDetails.displayName, () => {
     csv.spec.customresourcedefinitions.owned = [];
     wrapper = wrapper.setProps({ csv });
 
-    expect(wrapper.find(SpecDescriptor).length).toEqual(
-      csv.spec.customresourcedefinitions.required[0].specDescriptors.length,
-    );
+    expect(
+      wrapper
+        .find(DescriptorDetailsItemList)
+        .last()
+        .shallow()
+        .find(DescriptorDetailsItem).length,
+    ).toEqual(csv.spec.customresourcedefinitions.required[0].specDescriptors.length);
   });
 });
 

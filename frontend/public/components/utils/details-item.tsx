@@ -104,7 +104,7 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
       </dt>
       <dd
         className={classnames('details-item__value', valueClassName, {
-          'details-item__value--editable': editable && editAsGroup,
+          'details-item__value--group': editable && editAsGroup,
         })}
         data-test-selector={`details-item-value__${label}`}
       >

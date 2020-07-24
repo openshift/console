@@ -5,12 +5,12 @@ import { Router } from 'react-router';
 import { mount, ReactWrapper } from 'enzyme';
 import store from '@console/internal/redux';
 import { ResourceLink, Selector, history } from '@console/internal/components/utils';
-import { DescriptorProps, SpecCapability, Descriptor } from '../types';
+import { SpecCapability, Descriptor, DescriptorType } from '../types';
 import { testResourceInstance, testModel } from '../../../../mocks';
 import { EndpointList } from './endpoint';
 import { ResourceRequirementsModalLink } from './resource-requirements';
 import * as configureSize from './configure-size';
-import { SpecDescriptor } from '.';
+import { DescriptorDetailsItem, DescriptorDetailsItemProps } from '..';
 
 const OBJ = {
   ...testResourceInstance,
@@ -23,8 +23,8 @@ const OBJ = {
   },
 };
 
-describe(SpecDescriptor.name, () => {
-  let wrapper: ReactWrapper<DescriptorProps>;
+describe('Spec descriptors', () => {
+  let wrapper: ReactWrapper<DescriptorDetailsItemProps>;
   let descriptor: Descriptor;
 
   beforeEach(() => {
@@ -34,13 +34,22 @@ describe(SpecDescriptor.name, () => {
       description: '',
       'x-descriptors': [],
     };
-    wrapper = mount(<SpecDescriptor model={testModel} obj={OBJ} descriptor={descriptor} />, {
-      wrappingComponent: (props) => (
-        <Router history={history}>
-          <Provider store={store} {...props} />
-        </Router>
-      ),
-    });
+    wrapper = mount(
+      <DescriptorDetailsItem
+        descriptor={descriptor}
+        model={testModel}
+        obj={OBJ}
+        type={DescriptorType.spec}
+        schema={{}}
+      />,
+      {
+        wrappingComponent: (props) => (
+          <Router history={history}>
+            <Provider store={store} {...props} />
+          </Router>
+        ),
+      },
+    );
   });
 
   it('renders spec value as text if no matching capability component', () => {
@@ -155,7 +164,6 @@ describe(SpecDescriptor.name, () => {
       'x-descriptors': [`${SpecCapability.selector}core:v1:Service`],
     };
     wrapper.setProps({ descriptor });
-
     expect(wrapper.find(Selector).prop('selector')).toEqual(OBJ.spec.basicSelector);
     expect(wrapper.find(Selector).prop('kind')).toEqual('core:v1:Service');
   });

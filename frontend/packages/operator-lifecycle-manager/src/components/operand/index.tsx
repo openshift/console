@@ -54,9 +54,7 @@ import { RootState } from '@console/internal/redux';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind } from '../../types';
 import { isInternalObject, getInternalAPIReferences, getInternalObjects } from '../../utils';
-import { StatusDescriptor } from '../descriptors/status';
-import { SpecDescriptor } from '../descriptors/spec';
-import { Descriptor, StatusCapability } from '../descriptors/types';
+import { DescriptorType, StatusCapability, StatusDescriptor } from '../descriptors/types';
 import { Resources } from '../k8s-resource';
 import { referenceForProvidedAPI } from '../index';
 import { OperandLink } from './operand-link';
@@ -68,6 +66,7 @@ import {
 } from '@console/plugin-sdk';
 import { CustomResourceDefinitionModel } from '@console/internal/models';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
+import { DescriptorDetailsItem, DescriptorDetailsItemList } from '../descriptors';
 
 const csvName = () =>
   window.location.pathname
@@ -446,18 +445,17 @@ export const ProvidedAPIPage = connectToModel((props: ProvidedAPIPageProps) => {
 });
 
 const OperandDetailsSection: React.FC = ({ children }) => (
-  <div className="co-operand-details__section co-operand-details__section--info">
-    <div className="row">{children}</div>
-  </div>
+  <div className="co-operand-details__section co-operand-details__section--info">{children}</div>
 );
 
 const PodStatuses: React.FC<PodStatusesProps> = ({ kindObj, obj, podStatusDescriptors, schema }) =>
   podStatusDescriptors?.length > 0 ? (
     <div className="row">
-      {podStatusDescriptors.map((statusDescriptor: Descriptor) => {
+      {podStatusDescriptors.map((statusDescriptor: StatusDescriptor) => {
         return (
           <div key={statusDescriptor.displayName} className="col-sm-6">
-            <StatusDescriptor
+            <DescriptorDetailsItem
+              type={DescriptorType.status}
               descriptor={statusDescriptor}
               model={kindObj}
               obj={obj}
@@ -482,35 +480,36 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
     [
       ...(csv?.spec?.customresourcedefinitions?.owned ?? []),
       ...(csv?.spec?.customresourcedefinitions?.required ?? []),
-    ].find((def) => def.name.split('.')[0] === kindObj.plural) ?? {};
+    ].find((def) => def.name === crd?.metadata?.name) ?? {};
 
-  const { podStatusDescriptors, otherStatusDescriptors } = _.reduce<any, any>(
-    statusDescriptors,
-    (descriptorAccumulator, descriptor) => {
-      // exclude Conditions since they are included in their own section
-      if (descriptor.path === 'conditions') {
-        return descriptorAccumulator;
-      }
+  const { podStatuses, mainStatusDescriptor, otherStatusDescriptors } = (
+    statusDescriptors ?? []
+  ).reduce((acc, descriptor) => {
+    // exclude Conditions since they are included in their own section
+    if (descriptor.path === 'conditions') {
+      return acc;
+    }
 
-      // pod status descriptors are a special case since they are always rendered at the top, above
-      // the rest of the details
-      if (descriptor['x-descriptors']?.includes(StatusCapability.podStatuses)) {
-        return {
-          ...descriptorAccumulator,
-          podStatusDescriptors: [...(descriptorAccumulator.podStatusDescripors ?? []), descriptor],
-        };
-      }
+    if (descriptor['x-descriptors']?.includes(StatusCapability.podStatuses)) {
       return {
-        ...descriptorAccumulator,
-        otherStatusDescriptors:
-          // Make sure that the statusDescriptor for 'status' is first
-          descriptor.displayName === 'Status'
-            ? [descriptor, ...(descriptorAccumulator.otherStatusDescriptors ?? [])]
-            : [...(descriptorAccumulator.otherStatusDescriptors ?? []), descriptor],
+        ...acc,
+        podStatuses: [...(acc.PodStatuses ?? []), descriptor],
       };
-    },
-    {},
-  );
+    }
+
+    if (descriptor.path === 'status' || descriptor.displayName === 'Status') {
+      return {
+        ...acc,
+        mainStatusDescriptor: descriptor,
+      };
+    }
+
+    return {
+      ...acc,
+      otherStatusDescriptors: [...(acc.otherStatusDescriptors ?? []), descriptor],
+    };
+  }, {} as any);
+
   return (
     <div className="co-operand-details co-m-pane">
       <div className="co-m-pane__body">
@@ -520,39 +519,52 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
           kindObj={kindObj}
           obj={obj}
           schema={statusSchema}
-          podStatusDescriptors={podStatusDescriptors}
+          podStatusDescriptors={podStatuses}
         />
-        <OperandDetailsSection>
-          <div className="col-sm-6">
-            <ResourceSummary resource={obj} />
-          </div>
-          {otherStatusDescriptors?.map((statusDescriptor: Descriptor) => (
-            <div className="col-sm-6" key={statusDescriptor.path}>
-              <StatusDescriptor
-                descriptor={statusDescriptor}
+        <div className="co-operand-details__section co-operand-details__section--info">
+          <div className="row">
+            <div className="col-sm-6">
+              <ResourceSummary resource={obj} />
+            </div>
+            {mainStatusDescriptor && (
+              <div className="col-sm-6" key={mainStatusDescriptor.path}>
+                <DescriptorDetailsItem
+                  descriptor={mainStatusDescriptor}
+                  model={kindObj}
+                  obj={obj}
+                  schema={statusSchema}
+                  type={DescriptorType.status}
+                />
+              </div>
+            )}
+            {otherStatusDescriptors?.length > 0 && (
+              <DescriptorDetailsItemList
+                descriptors={otherStatusDescriptors}
+                itemClassName="col-sm-6"
                 model={kindObj}
                 obj={obj}
                 schema={statusSchema}
+                type={DescriptorType.status}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+      {!_.isEmpty(specDescriptors) && (
+        <div className="co-m-pane__body">
+          <div className="co-operand-details__section co-operand-details__section--info">
+            <div className="row">
+              <DescriptorDetailsItemList
+                descriptors={specDescriptors}
+                itemClassName="col-sm-6"
+                model={kindObj}
+                obj={obj}
+                onError={handleError}
+                schema={specSchema}
+                type={DescriptorType.spec}
               />
             </div>
-          ))}
-        </OperandDetailsSection>
-      </div>
-      {specDescriptors?.length > 0 && (
-        <div className="co-m-pane__body">
-          <OperandDetailsSection>
-            {specDescriptors.map((specDescriptor: Descriptor) => (
-              <div className="col-sm-6" key={specDescriptor.path}>
-                <SpecDescriptor
-                  descriptor={specDescriptor}
-                  model={kindObj}
-                  obj={obj}
-                  onError={handleError}
-                  schema={specSchema}
-                />
-              </div>
-            ))}
-          </OperandDetailsSection>
+          </div>
         </div>
       )}
       {_.isArray(status?.conditions) && (
@@ -569,7 +581,6 @@ const ResourcesTab = (resourceProps) => (
   <Resources {...resourceProps} clusterServiceVersion={resourceProps.csv} />
 );
 
-// FIXME (jon) useK8sModel hook instead of connectToPlural
 export const OperandDetailsPage = (props: OperandDetailsPageProps) => {
   const [model] = useK8sModel(props.match.params.plural);
   const actionExtensions = useExtensions<ClusterServiceVersionAction>(
@@ -670,7 +681,7 @@ export type ProvidedAPIPageProps = {
 type PodStatusesProps = {
   kindObj: K8sKind;
   obj: K8sResourceKind;
-  podStatusDescriptors: Descriptor[];
+  podStatusDescriptors: StatusDescriptor[];
   schema?: JSONSchema6;
 };
 
