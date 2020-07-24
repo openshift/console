@@ -9,7 +9,7 @@ import {
 } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 
-import { FLAGS } from '@console/shared';
+import { BlueArrowCircleUpIcon, FLAGS } from '@console/shared';
 import { connectToFlags, FlagsObject } from '../reducers/features';
 import { getBrandingDetails } from './masthead';
 import { Firehose, useAccessReview } from './utils';
@@ -49,12 +49,14 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal, cv }
       {clusterVersion && hasAvailableUpdates(clusterVersion) && clusterVersionIsEditable && (
         <Alert
           className="co-alert co-about-modal__alert"
-          variant="info"
           title={
             <>
-              Update available.{' '}
+              {/* PatternFly does not have an `update` alert variant
+              See https://github.com/patternfly/patternfly-react/issues/4594 */}
+              <BlueArrowCircleUpIcon className="pf-c-alert__icon pf-c-alert__icon--alt" />
+              Cluster update available.{' '}
               <Link to="/settings/cluster" onClick={closeAboutModal}>
-                View cluster settings
+                Update cluster
               </Link>
             </>
           }

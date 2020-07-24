@@ -16,10 +16,13 @@
 
 .co-about-modal__alert {
   margin-bottom: var(--pf-global--spacer--xl);
-}
-
-// Temp fix until https://github.com/patternfly/patternfly-next/issues/2447 is fixed upstream
-.pf-c-backdrop {
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important; // so Safari is consistent with Chrome
+  // PatternFly does not have an `update` alert variant
+  // See https://github.com/patternfly/patternfly-react/issues/4594
+  .pf-c-alert__icon {
+    display: none;
+    &--alt {
+      display: inline-flex;
+      vertical-align: -0.25em !important;
+    }
+  }
 }

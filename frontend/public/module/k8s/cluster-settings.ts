@@ -51,6 +51,24 @@ export const getDesiredClusterVersion = (cv: ClusterVersionKind): string => {
 
 export const getClusterVersionChannel = (cv: ClusterVersionKind): string => cv?.spec?.channel;
 
+export const splitClusterVersionChannel = (channel: string) => {
+  const parsed = /^(.+)-(\d\.\d+)$/.exec(channel);
+  return parsed ? { prefix: parsed[1], version: parsed[2] } : null;
+};
+
+export const getSimilarClusterVersionChannels = (currentPrefix) => {
+  return _.keys(getAvailableClusterChannels()).filter((channel: string) => {
+    return currentPrefix && splitClusterVersionChannel(channel)?.prefix === currentPrefix;
+  });
+};
+
+export const getNewerClusterVersionChannel = (similarChannels, currentChannel) => {
+  return similarChannels.find(
+    // find the next minor version, which there should never be more than one
+    (channel) => semver.gt(semver.coerce(channel).version, semver.coerce(currentChannel).version),
+  );
+};
+
 export const getLastCompletedUpdate = (cv: ClusterVersionKind): string => {
   const history: UpdateHistory[] = _.get(cv, 'status.history', []);
   const lastCompleted: UpdateHistory = history.find((update) => update.state === 'Completed');

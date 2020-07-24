@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
-import * as semver from 'semver';
 import { Helmet } from 'react-helmet';
 import {
   Button,
@@ -16,6 +15,7 @@ import { HashLink } from 'react-router-hash-link';
 
 import { AddCircleOIcon, SyncAltIcon, PencilAltIcon } from '@patternfly/react-icons';
 import { BlueInfoCircleIcon } from '@console/shared/src/components/status';
+import { removeQueryArgument } from '@console/internal/components/utils/router';
 
 import { ClusterOperatorPage } from './cluster-operator';
 import {
@@ -37,7 +37,6 @@ import {
   ClusterVersionConditionType,
   ClusterVersionKind,
   clusterVersionReference,
-  getAvailableClusterChannels,
   getAvailableClusterUpdates,
   getClusterID,
   getClusterOperatorVersion,
@@ -46,8 +45,10 @@ import {
   getCurrentVersion,
   getDesiredClusterVersion,
   getLastCompletedUpdate,
+  getNewerClusterVersionChannel,
   getOCMLink,
   getReleaseNotesLink,
+  getSimilarClusterVersionChannels,
   getSortedUpdates,
   k8sPatch,
   K8sResourceConditionStatus,
@@ -56,6 +57,7 @@ import {
   MachineConfigPoolKind,
   referenceForModel,
   showReleaseNotes,
+  splitClusterVersionChannel,
   UpdateHistory,
 } from '../../module/k8s';
 import {
@@ -448,25 +450,15 @@ const ChannelVersionDot: React.FC<ChannelVersionDotProps> = ({ current, version 
   );
 };
 
-const splitChannel = (channel: string) => {
-  const parsed = /^(.+)-(\d\.\d+)$/.exec(channel);
-  return parsed ? { prefix: parsed[1], version: parsed[2] } : null;
-};
-
 const UpdatesGraph: React.FC<UpdatesGraphProps> = ({ cv }) => {
   const availableUpdates = getSortedUpdates(cv);
   const lastVersion = getLastCompletedUpdate(cv);
   const newestVersion = availableUpdates[0]?.version;
   const secondNewestVersion = availableUpdates[1]?.version;
   const currentChannel = cv.spec.channel;
-  const currentPrefix = splitChannel(currentChannel)?.prefix;
-  const similarChannels = _.keys(getAvailableClusterChannels()).filter((channel: string) => {
-    return currentPrefix && splitChannel(channel)?.prefix === currentPrefix;
-  });
-  const newerChannel = similarChannels.find(
-    // find the next minor version, which there should never be more than one
-    (channel) => semver.gt(semver.coerce(channel).version, semver.coerce(currentChannel).version),
-  );
+  const currentPrefix = splitClusterVersionChannel(currentChannel)?.prefix;
+  const similarChannels = getSimilarClusterVersionChannels(currentPrefix);
+  const newerChannel = getNewerClusterVersionChannel(similarChannels, currentChannel);
 
   return (
     <div className="co-cluster-settings__updates-graph">
@@ -653,6 +645,15 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
     verb: 'patch',
     name: cv.metadata.name,
   });
+  if (new URLSearchParams(window.location.search).has('showVersions')) {
+    clusterUpdateModal({ cv })
+      .then(() => removeQueryArgument('showVersions'))
+      .catch(_.noop);
+  } else if (new URLSearchParams(window.location.search).has('showChannels')) {
+    clusterChannelModal({ cv })
+      .then(() => removeQueryArgument('showChannels'))
+      .catch(_.noop);
+  }
 
   return (
     <>

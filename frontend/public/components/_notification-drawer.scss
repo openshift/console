@@ -12,3 +12,9 @@
 .pf-c-drawer__content {
   --pf-c-drawer__content--ZIndex: auto;
 }
+
+// PatternFly does not have an `update` variant
+// See https://github.com/patternfly/patternfly/issues/3312
+.pf-c-notification-drawer__list-item.pf-m-update {
+  --pf-c-notification-drawer__list-item--before--BackgroundColor: var(--pf-global--default-color--200);
+}
