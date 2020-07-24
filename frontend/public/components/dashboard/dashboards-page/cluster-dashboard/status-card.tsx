@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
+import { Link } from 'react-router-dom';
 import {
   useExtensions,
   DashboardsOverviewHealthSubsystem,
@@ -13,7 +14,7 @@ import {
   isDashboardsOverviewHealthResourceSubsystem,
   isDashboardsOverviewHealthOperator,
 } from '@console/plugin-sdk';
-import { Gallery, GalleryItem, Button } from '@patternfly/react-core';
+import { Gallery, GalleryItem } from '@patternfly/react-core';
 import { BlueArrowCircleUpIcon, FLAGS, getInfrastructurePlatform } from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
@@ -34,7 +35,6 @@ import {
   K8sKind,
 } from '../../../../module/k8s';
 import { ClusterVersionModel } from '../../../../models';
-import { clusterUpdateModal } from '../../../modals/cluster-update-modal';
 import { RootState } from '../../../../redux';
 import {
   OperatorHealthItem,
@@ -102,9 +102,7 @@ const ClusterAlerts = withDashboardResources(
     if (hasCVResource && cvLoaded && hasAvailableUpdates(cv) && clusterVersionIsEditable) {
       items.push(
         <StatusItem Icon={UpdateIcon} message="A cluster version update is available">
-          <Button variant="link" onClick={() => clusterUpdateModal({ cv })} isInline>
-            View details
-          </Button>
+          <Link to="/settings/cluster?showVersions">Update cluster</Link>
         </StatusItem>,
       );
     }

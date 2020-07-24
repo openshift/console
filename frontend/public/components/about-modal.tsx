@@ -55,7 +55,7 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal, cv }
               See https://github.com/patternfly/patternfly-react/issues/4594 */}
               <BlueArrowCircleUpIcon className="pf-c-alert__icon pf-c-alert__icon--alt" />
               Cluster update available.{' '}
-              <Link to="/settings/cluster" onClick={closeAboutModal}>
+              <Link to="/settings/cluster?showVersions" onClick={closeAboutModal}>
                 Update cluster
               </Link>
             </>
