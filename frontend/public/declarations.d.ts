@@ -35,6 +35,7 @@ declare interface Window {
     grafanaPublicURL: string;
     prometheusPublicURL: string;
     thanosPublicURL: string;
+    inactivityTimeout: number;
     statuspageID: string;
     GOARCH: string;
     GOOS: string;
