@@ -256,6 +256,15 @@ $co-affinity-row-margin: 15px;
   margin-bottom: 20px !important;
 }
 
+.olm-descriptors__group {
+  display: flex;
+  justify-content: start;
+  & > div {
+    margin-right: var(--pf-global--spacer--sm);
+    flex-grow: 1;
+  }
+}
+
 #operator-install-page {
   margin: 0 ($grid-gutter-width / 2);
   @media (min-width: $screen-sm-min) {
