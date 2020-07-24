@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { shallow } from 'enzyme';
-import { SelectOption } from '@patternfly/react-core';
+import { mount, shallow } from 'enzyme';
+import { SelectOption, Switch } from '@patternfly/react-core';
 import FilterDropdown from '../FilterDropdown';
 import { DisplayFilters } from '../../topology-types';
-import { DEFAULT_TOPOLOGY_FILTERS } from '../const';
+import { DEFAULT_TOPOLOGY_FILTERS, EXPAND_APPLICATION_GROUPS_FILTER_ID } from '../const';
 
 describe(FilterDropdown.displayName, () => {
   let dropdownFilter: DisplayFilters;
@@ -25,24 +25,40 @@ describe(FilterDropdown.displayName, () => {
   });
 
   it('should have the correct number of filters', () => {
-    const wrapper = shallow(
+    const wrapper = mount(
       <FilterDropdown
         filters={dropdownFilter}
         supportedFilters={dropdownFilter.map((f) => f.id)}
         onChange={onChange}
+        opened
       />,
     );
-    expect(wrapper.find(SelectOption)).toHaveLength(Object.keys(DEFAULT_TOPOLOGY_FILTERS).length);
+    expect(wrapper.find(SelectOption)).toHaveLength(
+      Object.keys(DEFAULT_TOPOLOGY_FILTERS).length - 1,
+    );
   });
 
   it('should hide unsupported filters', () => {
-    const wrapper = shallow(
+    const wrapper = mount(
       <FilterDropdown
         filters={dropdownFilter}
-        supportedFilters={[dropdownFilter[0].id]}
+        supportedFilters={[EXPAND_APPLICATION_GROUPS_FILTER_ID]}
         onChange={onChange}
+        opened
       />,
     );
     expect(wrapper.find(SelectOption)).toHaveLength(1);
+  });
+
+  it('should contain the show expand groups switch', () => {
+    const wrapper = mount(
+      <FilterDropdown
+        filters={dropdownFilter}
+        supportedFilters={dropdownFilter.map((f) => f.id)}
+        onChange={onChange}
+        opened
+      />,
+    );
+    expect(wrapper.find(Switch)).toHaveLength(1);
   });
 });

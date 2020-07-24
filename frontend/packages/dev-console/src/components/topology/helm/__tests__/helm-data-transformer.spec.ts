@@ -13,7 +13,7 @@ import {
   TEST_KINDS_MAP,
 } from '../../__tests__/topology-test-data';
 import { TYPE_HELM_RELEASE } from '../components/const';
-import { DEFAULT_TOPOLOGY_FILTERS } from '../../filters/const';
+import { DEFAULT_TOPOLOGY_FILTERS, EXPAND_GROUPS_FILTER_ID } from '../../filters/const';
 import {
   baseDataModelGetter,
   getWorkloadResources,
@@ -83,5 +83,18 @@ describe('HELM data transformer ', () => {
     const newModel = updateModelFromFilters(graphData, filters, ALL_APPLICATIONS_KEY, filterers);
     expect(newModel.nodes.filter((n) => n.group)).toHaveLength(4);
     expect(newModel.nodes.filter((n) => n.group && n.collapsed)).toHaveLength(1);
+  });
+
+  it('should flag helm groups as collapsed when all groups are collapsed', async () => {
+    const filters = [...DEFAULT_TOPOLOGY_FILTERS];
+    filters.push(...getTopologyFilters());
+    const graphData = await getTransformedTopologyData(mockResources);
+    getFilterById(EXPAND_HELM_RELEASE_FILTER, filters).value = true;
+    getFilterById(EXPAND_GROUPS_FILTER_ID, filters).value = false;
+    const newModel = updateModelFromFilters(graphData, filters, ALL_APPLICATIONS_KEY, filterers);
+    expect(newModel.nodes.filter((n) => n.group)).toHaveLength(4);
+    expect(newModel.nodes.filter((n) => n.type === TYPE_HELM_RELEASE && n.collapsed)).toHaveLength(
+      1,
+    );
   });
 });

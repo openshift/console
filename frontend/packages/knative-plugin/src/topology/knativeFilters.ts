@@ -1,7 +1,8 @@
 import { Model } from '@patternfly/react-topology';
 import {
   DisplayFilters,
-  getFilterById,
+  isExpanded,
+  isShown,
   TopologyDisplayFilterType,
 } from '@console/dev-console/src/components/topology';
 import { TYPE_EVENT_SOURCE, TYPE_KNATIVE_SERVICE } from './const';
@@ -29,8 +30,8 @@ export const getTopologyFilters = () => {
 };
 
 export const applyKnativeDisplayOptions = (model: Model, filters: DisplayFilters): string[] => {
-  const showEventSources = getFilterById(SHOW_EVENT_SOURCE_FILTER_ID, filters)?.value ?? true;
-  const expandServices = getFilterById(EXPAND_KNATIVE_SERVICES_FILTER_ID, filters)?.value ?? true;
+  const showEventSources = isShown(SHOW_EVENT_SOURCE_FILTER_ID, filters);
+  const expandServices = isExpanded(EXPAND_KNATIVE_SERVICES_FILTER_ID, filters);
   const appliedFilters = [];
   let sourceFound = false;
   let serviceFound = false;

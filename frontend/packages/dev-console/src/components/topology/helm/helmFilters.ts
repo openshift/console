@@ -1,7 +1,7 @@
 import { Model } from '@patternfly/react-topology';
 import { TYPE_HELM_RELEASE } from './components/const';
 import { TopologyDisplayFilterType, DisplayFilters } from '../topology-types';
-import { getFilterById } from '../filters';
+import { isExpanded } from '../filters';
 
 export const EXPAND_HELM_RELEASE_FILTER = 'helmGrouping';
 
@@ -18,9 +18,9 @@ export const getTopologyFilters = () => {
 };
 
 export const applyHelmDisplayOptions = (model: Model, filters: DisplayFilters): string[] => {
-  const expanded = getFilterById(EXPAND_HELM_RELEASE_FILTER, filters)?.value ?? true;
   let found = false;
   const appliedFilters = [];
+  const expanded = isExpanded(EXPAND_HELM_RELEASE_FILTER, filters);
   model.nodes.forEach((d) => {
     if (d.type === TYPE_HELM_RELEASE) {
       if (!found) {
