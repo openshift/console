@@ -23,6 +23,7 @@ import {
   DEFAULT_LAYER,
   VisualizationProvider,
 } from '@patternfly/react-topology';
+import { useQueryParams, useDeepCompareMemoize } from '@console/shared';
 import { useExtensions } from '@console/plugin-sdk';
 import {
   isTopologyComponentFactory,
@@ -43,11 +44,7 @@ import {
   TYPE_EVENT_SOURCE_LINK,
 } from '@console/knative-plugin/src/topology/const';
 import KnativeResourceOverviewPage from '@console/knative-plugin/src/components/overview/KnativeResourceOverviewPage';
-import {
-  getQueryArgument,
-  setQueryArgument,
-  removeQueryArgument,
-} from '@console/internal/components/utils';
+import { setQueryArgument, removeQueryArgument } from '@console/internal/components/utils';
 import { TYPE_VIRTUAL_MACHINE } from '@console/kubevirt-plugin/src/topology/components/const';
 import TopologyVmPanel from '@console/kubevirt-plugin/src/topology/TopologyVmPanel';
 import { useAddToProjectAccess } from '../../utils/useAddToProjectAccess';
@@ -124,7 +121,8 @@ const Topology: React.FC<ComponentProps> = ({
   const [layout, setLayout] = React.useState<string>(graphModel.graph.layout);
   const [filteredModel, setFilteredModel] = React.useState<Model>();
   const [graphData, setGraphData] = React.useState<GraphData>();
-  const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
+  const [storedSelectedIds, setSelectedIds] = React.useState<string[]>([]);
+  const selectedIds = useDeepCompareMemoize(storedSelectedIds);
   const createResourceAccess: string[] = useAddToProjectAccess(namespace);
   const [dragHint, setDragHint] = React.useState<string>('');
   const filters = useDisplayFilters();
@@ -147,6 +145,7 @@ const Topology: React.FC<ComponentProps> = ({
     () => componentFactoryExtensions.map((factory) => factory.properties.getFactory()),
     [componentFactoryExtensions],
   );
+  const queryParams = useQueryParams();
 
   React.useEffect(() => {
     Promise.all(componentFactoriesPromises)
@@ -280,8 +279,8 @@ const Topology: React.FC<ComponentProps> = ({
       if (selectedIds.length && !visualization.getElementById(selectedIds[0])) {
         setSelectedIds([]);
       } else {
-        const selectId = getQueryArgument('selectId');
-        const selectTab = getQueryArgument('selectTab');
+        const selectId = queryParams.get('selectId');
+        const selectTab = queryParams.get('selectTab');
         visualization.getElementById(selectId) && setSelectedIds([selectId]);
         if (selectTab) {
           onSelectTab(selectTab);
@@ -289,8 +288,18 @@ const Topology: React.FC<ComponentProps> = ({
         }
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [model, visualization, filters, application, displayFilterers, filtersLoaded]);
+  }, [
+    model,
+    visualization,
+    filters,
+    application,
+    displayFilterers,
+    filtersLoaded,
+    onSupportedFiltersChange,
+    queryParams,
+    onSelectTab,
+    selectedIds,
+  ]);
 
   React.useEffect(() => {
     if (!applicationRef.current) {

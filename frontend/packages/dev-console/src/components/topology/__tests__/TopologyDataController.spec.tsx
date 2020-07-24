@@ -15,10 +15,9 @@ describe('TopologyDataController', () => {
   let wrapper: ReactWrapper<TopologyDataControllerProps>;
 
   beforeEach(() => {
-    const testProjectMatch = { url: '', params: { name: 'test-project' }, isExact: true, path: '' };
     wrapper = mount(
       <TopologyDataController
-        match={testProjectMatch}
+        namespace="test-project"
         kindsInFlight={false}
         render={() => <TestInner />}
       />,
