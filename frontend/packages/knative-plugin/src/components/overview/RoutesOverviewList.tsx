@@ -4,6 +4,7 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { SidebarSectionHeading } from '@console/internal/components/utils';
 import { getKnativeRoutesLinks } from '../../utils/resource-overview-utils';
 import RoutesOverviewListItem from './RoutesOverviewListItem';
+import KSRoutes from './KSRoutes';
 
 export type RoutesOverviewListProps = {
   ksroutes: K8sResourceKind[];
@@ -19,9 +20,10 @@ const RoutesOverviewList: React.FC<RoutesOverviewListProps> = ({ ksroutes, resou
       <ul className="list-group">
         {_.map(ksroutes, (route) => {
           const routeLinks = getKnativeRoutesLinks(route, resource);
-          return routeLinks.map((routeLink) => (
-            <RoutesOverviewListItem key={routeLink.uid} routeLink={routeLink} />
-          ));
+          if (routeLinks.length === 1) {
+            return <RoutesOverviewListItem key={route.metadata.uid} routeLink={routeLinks[0]} />;
+          }
+          return <KSRoutes key={route.metadata.uid} route={route} routeLinks={routeLinks} />;
         })}
       </ul>
     )}
