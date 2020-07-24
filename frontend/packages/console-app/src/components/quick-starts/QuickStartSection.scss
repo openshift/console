@@ -1,0 +1,13 @@
+@import '~bootstrap-sass/assets/stylesheets/bootstrap/variables';
+
+.co-quick-start-section {
+    &__task-content {
+        @media(min-width: $screen-lg-min) {
+            min-height: calc(100vh - (var(--pf-global--spacer--4xl) + var(--pf-global--spacer--3xl)));
+        }
+    }
+    &__footer {
+        margin-top: var(--pf-global--spacer--md);
+        background-color: var(--pf-global--Color--light-100);
+    }
+}
