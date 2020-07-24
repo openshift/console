@@ -1,5 +1,5 @@
 import { testName } from '@console/internal-integration-tests/protractor.conf';
-import { SIZE_UNITS } from '../utils/consts';
+import { SIZE_UNITS, STORAGE_CLASS_PATTERNS } from '../utils/consts';
 
 export const testDeployment = {
   apiVersion: 'apps/v1',
@@ -57,4 +57,5 @@ export const testPVC = {
   namespace: testName,
   size: '5',
   sizeUnits: SIZE_UNITS.MI,
+  storageClass: STORAGE_CLASS_PATTERNS.FS,
 };
