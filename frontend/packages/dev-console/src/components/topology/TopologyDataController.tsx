@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { match as RMatch } from 'react-router';
 import { useExtensions } from '@console/plugin-sdk';
 import { isTopologyDataModelFactory, TopologyDataModelFactory } from '../../extensions/topology';
 import { RootState } from '@console/internal/redux';
@@ -13,18 +12,15 @@ interface StateProps {
 }
 
 export interface TopologyDataControllerProps extends StateProps {
-  match: RMatch<{
-    name?: string;
-  }>;
+  namespace: string;
   render(RenderProps): React.ReactElement;
 }
 
 export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
-  match,
+  namespace,
   render,
   kindsInFlight,
 }) => {
-  const namespace = match.params.name;
   const modelFactories = useExtensions<TopologyDataModelFactory>(isTopologyDataModelFactory);
 
   return (
