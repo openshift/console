@@ -1,6 +1,6 @@
 import { createBasicLookup, getName } from '@console/shared/src';
 import { InternalActionType, UpdateOptions } from '../types';
-import { iGetProvisionSource, iGetVmSettingValue } from '../../selectors/immutable/vm-settings';
+import { iGetVmSettingValue } from '../../selectors/immutable/vm-settings';
 import {
   CloudInitField,
   VMSettingsField,
@@ -53,7 +53,7 @@ import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import { V1Volume } from '../../../../types/vm/disk/V1Volume';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
-import { getProvisionSourceStorage } from '../initial-state/storage-tab-initial-state';
+import { getNewProvisionSourceStorage } from '../initial-state/storage-tab-initial-state';
 import { CloudInitDataHelper } from '../../../../k8s/wrapper/vm/cloud-init-data-helper';
 import { getStorages } from '../../selectors/selectors';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
@@ -249,10 +249,7 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
     });
     storagesUpdate.unshift(...templateStorages);
   } else {
-    const newSourceStorage = getProvisionSourceStorage(
-      iGetProvisionSource(state, id),
-      iGetLoadedCommonData(state, id, VMWizardProps.storageClassConfigMap),
-    );
+    const newSourceStorage = getNewProvisionSourceStorage(state, id);
     if (newSourceStorage) {
       storagesUpdate.unshift({ ...newSourceStorage, id: getNextStorageID() });
     }

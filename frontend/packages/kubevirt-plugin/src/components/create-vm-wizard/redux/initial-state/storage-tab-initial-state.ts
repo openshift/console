@@ -1,5 +1,5 @@
 import { ConfigMapKind } from '@console/internal/module/k8s';
-import { CommonData, VMWizardStorage, VMWizardStorageType } from '../../types';
+import { CommonData, VMWizardStorage, VMWizardStorageType, VMWizardProps } from '../../types';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import {
   DataVolumeSourceType,
@@ -20,6 +20,8 @@ import {
 import { toShallowJS } from '../../../../utils/immutable';
 import { generateDataVolumeName } from '../../../../utils';
 import { DUMMY_VM_NAME } from '../../../../constants/vm';
+import { iGetProvisionSource } from '../../selectors/immutable/vm-settings';
+import { iGetLoadedCommonData } from '../../selectors/immutable/selectors';
 
 const ROOT_DISK_NAME = 'rootdisk';
 const WINTOOLS_DISK_NAME = 'windows-guest-tools';
@@ -94,11 +96,16 @@ const getUrlStorage = (storageClassConfigMap: ConfigMapKind) => {
   };
 };
 
-export const getProvisionSourceStorage = (
-  provisionSource: ProvisionSource,
-  iStorageClassConfigMap: any,
-): VMWizardStorage => {
+export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardStorage => {
+  const provisionSource = iGetProvisionSource(state, id);
+
   if (provisionSource === ProvisionSource.URL) {
+    const iStorageClassConfigMap = iGetLoadedCommonData(
+      state,
+      id,
+      VMWizardProps.storageClassConfigMap,
+    );
+
     return getUrlStorage(toShallowJS(iStorageClassConfigMap, undefined, true));
   }
   if (provisionSource === ProvisionSource.CONTAINER) {
