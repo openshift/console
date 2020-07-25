@@ -96,6 +96,14 @@ const config: Configuration = {
         ],
       },
       {
+        test: /node_modules[\\\\|/](yaml-language-server)/,
+        loader: 'umd-compat-loader',
+      },
+      {
+        test: /node_modules[\\\\|/](vscode-json-languageservice)/,
+        loader: 'umd-compat-loader',
+      },
+      {
         test: /\.s?css$/,
         exclude: /node_modules\/(?!(@patternfly)\/).*/,
         use: [
