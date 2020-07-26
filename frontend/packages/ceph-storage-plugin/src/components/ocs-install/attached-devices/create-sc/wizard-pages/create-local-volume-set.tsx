@@ -85,25 +85,23 @@ const ConfirmationModal = ({ state, dispatch }) => {
   };
 
   return (
-    <>
-      <Modal
-        title="Create Storage Class"
-        isOpen={state.showConfirmModal}
-        onClose={cancel}
-        variant="small"
-        actions={[
-          <Button key="confirm" variant="primary" onClick={makeLVSCall}>
-            Yes
-          </Button>,
-          <Button key="cancel" variant="link" onClick={cancel}>
-            Cancel
-          </Button>,
-        ]}
-      >
-        {
-          "After the volume set and storage class are created you won't be able to go back to this step. Are you sure you want to continue?"
-        }
-      </Modal>
-    </>
+    <Modal
+      title="Create Storage Class"
+      isOpen={state.showConfirmModal}
+      onClose={cancel}
+      variant="small"
+      actions={[
+        <Button key="confirm" variant="primary" onClick={makeLVSCall}>
+          Yes
+        </Button>,
+        <Button key="cancel" variant="link" onClick={cancel}>
+          Cancel
+        </Button>,
+      ]}
+    >
+      {
+        "After the volume set and storage class are created you won't be able to go back to this step. Are you sure you want to continue?"
+      }
+    </Modal>
   );
 };

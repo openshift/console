@@ -11,14 +11,20 @@ import {
 } from '@console/internal/components/utils';
 import { history } from '@console/internal/components/utils/router';
 import { k8sCreate, k8sPatch, referenceFor, K8sResourceKind } from '@console/internal/module/k8s';
+import { fetchK8s } from '@console/internal/graphql/client';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
-import { getNodes } from '../../utils';
+import { getNodes, getLabelIndex } from '../../utils';
 import { AutoDetectVolumeInner, AutoDetectVolumeHeader } from './auto-detect-volume-inner';
 import { getDiscoveryRequestData } from './discovery-request-data';
 import { LocalVolumeDiscovery as AutoDetectVolumeModel } from '../../models';
 import { initialState, reducer } from './state';
-import { DISCOVERY_CR_NAME, LOCAL_STORAGE_NAMESPACE } from '../../constants';
-import { fetchK8s } from '@console/internal/graphql/client';
+import {
+  DISCOVERY_CR_NAME,
+  LOCAL_STORAGE_NAMESPACE,
+  HOSTNAME_LABEL_KEY,
+  AUTO_DISCOVER_ERR_MSG,
+  LABEL_OPERATOR,
+} from '../../constants';
 
 const AutoDetectVolume: React.FC = withHandlePromise<AutoDetectVolumeProps & HandlePromiseProps>(
   (props) => {
@@ -32,31 +38,43 @@ const AutoDetectVolume: React.FC = withHandlePromise<AutoDetectVolumeProps & Han
       handlePromise(
         fetchK8s(AutoDetectVolumeModel, DISCOVERY_CR_NAME, LOCAL_STORAGE_NAMESPACE)
           .then((discoveryRes: K8sResourceKind) => {
-            const nodes = new Set(
-              discoveryRes?.spec?.nodeSelector?.nodeSelectorTerms?.[0]?.matchExpressions?.[0]?.values,
-            );
-            const selectedNodes = getNodes(
-              state.showNodesListOnADV,
-              state.allNodeNamesOnADV,
-              state.nodeNamesForLVS,
-            );
-            selectedNodes.forEach((name) => nodes.add(name));
-            const patch = [
-              {
-                op: 'replace',
-                path: `/spec/nodeSelector/nodeSelectorTerms/0/matchExpressions/0/values`,
-                value: Array.from(nodes),
-              },
-            ];
-            return k8sPatch(AutoDetectVolumeModel, discoveryRes, patch);
+            const nodeSelectorTerms = discoveryRes?.spec?.nodeSelector?.nodeSelectorTerms;
+            const [selectorIndex, expIndex] = nodeSelectorTerms
+              ? getLabelIndex(nodeSelectorTerms, HOSTNAME_LABEL_KEY, LABEL_OPERATOR)
+              : [-1, -1];
+            if (selectorIndex !== -1 && expIndex !== -1) {
+              const nodes = new Set(
+                discoveryRes?.spec?.nodeSelector?.nodeSelectorTerms?.[
+                  selectorIndex
+                ]?.matchExpressions?.[expIndex]?.values,
+              );
+              const selectedNodes = getNodes(
+                state.showNodesListOnADV,
+                state.allNodeNamesOnADV,
+                state.nodeNamesForLVS,
+              );
+              selectedNodes.forEach((name) => nodes.add(name));
+              const patch = [
+                {
+                  op: 'replace',
+                  path: `/spec/nodeSelector/nodeSelectorTerms/${selectorIndex}/matchExpressions/${expIndex}/values`,
+                  value: Array.from(nodes),
+                },
+              ];
+              return k8sPatch(AutoDetectVolumeModel, discoveryRes, patch);
+            }
+            throw new Error(AUTO_DISCOVER_ERR_MSG);
           })
-          .catch(() => {
+          .catch((err) => {
+            // handle AUTO_DISCOVER_ERR_MSG and throw to next catch block to show the message
+            if (err.message === AUTO_DISCOVER_ERR_MSG) {
+              throw err;
+            }
             const requestData = getDiscoveryRequestData(state);
-
             return k8sCreate(AutoDetectVolumeModel, requestData);
           })
-          .then((resource) => history.push(resourceObjPath(resource, referenceFor(resource))))
-          .catch(() => null),
+          // eslint-disable-next-line promise/catch-or-return
+          .then((resource) => history.push(resourceObjPath(resource, referenceFor(resource)))),
       );
     };
 
