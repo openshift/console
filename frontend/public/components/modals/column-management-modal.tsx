@@ -19,23 +19,30 @@ import { setTableColumns } from '../../actions/ui';
 
 export const MAX_VIEW_COLS = 9;
 
-export const NAME_COLUMN_ID = 'NAME';
-const READ_ONLY_COLS = [NAME_COLUMN_ID];
+export const NAME_COLUMN_ID = 'name';
+const readOnlyColumns = new Set([NAME_COLUMN_ID]);
 
-const DataListRow: React.FC<DataListRowProps> = ({ column, onChange, disableUncheckedRow }) => (
-  <DataListItem aria-labelledby={`table-column-management-item-${column.ID}`} key={column.ID}>
+const DataListRow: React.FC<DataListRowProps> = ({
+  checkedColumns,
+  column,
+  onChange,
+  disableUncheckedRow,
+}) => (
+  <DataListItem aria-labelledby={`table-column-management-item-${column.id}`} key={column.id}>
     <DataListItemRow>
       <DataListCheck
-        isDisabled={(disableUncheckedRow && !column.visible) || READ_ONLY_COLS.includes(column.ID)}
-        aria-labelledby={`table-column-management-item-${column.ID}`}
-        checked={column.visible}
+        isDisabled={
+          (disableUncheckedRow && !checkedColumns.has(column.id)) || readOnlyColumns.has(column.id)
+        }
+        aria-labelledby={`table-column-management-item-${column.id}`}
+        checked={checkedColumns.has(column.id)}
         name={column.title}
-        id={column.ID}
+        id={column.id}
         onChange={onChange}
       />
       <DataListItemCells
         dataListCells={[
-          <DataListCell id={`table-column-management-item-${column.ID}`} key={column.ID}>
+          <DataListCell id={`table-column-management-item-${column.id}`} key={column.id}>
             {column.title}
           </DataListCell>,
         ]}
@@ -47,55 +54,53 @@ const DataListRow: React.FC<DataListRowProps> = ({ column, onChange, disableUnch
 export const ColumnManagementModal: React.FC<ColumnManagementModalProps> = ({
   cancel,
   close,
-  columnManagementID,
+  columnManagementId,
   columnManagementType,
   selectedColumns,
 }) => {
   const dispatch = useDispatch();
-  const initialDefaultColumns = !_.isEmpty(selectedColumns)
-    ? selectedColumns.filter((column) => column.title.length > 0 && !column.additional)
-    : {};
-  const initialAdditionalColumns = !_.isEmpty(selectedColumns)
-    ? selectedColumns.filter((column) => column.additional)
-    : {};
-  const [defaultColumns, setDefaultColumns] = React.useState<any[]>(initialDefaultColumns);
-
-  const [additionalColumns, setAdditionalColumns] = React.useState<ColumnHeaderRow[]>(
-    initialAdditionalColumns,
+  const initialSelected = new Set<string>(
+    selectedColumns.filter((column) => column.visible && column.id).map((column) => column.id),
   );
+  const defaultColumns = !_.isEmpty(selectedColumns)
+    ? selectedColumns.filter((column) => column.id && !column.additional)
+    : [];
+  const additionalColumns = !_.isEmpty(selectedColumns)
+    ? selectedColumns.filter((column) => column.additional)
+    : [];
 
-  const updateColumns = (checked: boolean, id: string, columnArray: any): any => {
-    return columnArray.map((column) => {
-      if (!id || column.ID === id) {
-        return { ...column, visible: checked };
-      }
-      return column;
-    });
-  };
+  const [checkedColumns, setCheckedColumns] = React.useState<Set<string>>(new Set(initialSelected));
 
-  const defaultColumnChange = (checked: boolean, event: React.SyntheticEvent): void => {
-    setDefaultColumns(updateColumns(checked, event?.currentTarget?.id, defaultColumns));
-  };
-
-  const additionalColumnChange = (checked: boolean, event: React.SyntheticEvent): void => {
-    setAdditionalColumns(updateColumns(checked, event?.currentTarget?.id, additionalColumns));
+  const onColumnChange = (checked: boolean, event: React.SyntheticEvent): void => {
+    const updatedCheckedColumns = new Set(checkedColumns);
+    const selectedId = event?.currentTarget?.id;
+    updatedCheckedColumns.has(selectedId)
+      ? updatedCheckedColumns.delete(selectedId)
+      : updatedCheckedColumns.add(selectedId);
+    setCheckedColumns(updatedCheckedColumns);
   };
 
   const submit = (event): void => {
     event.preventDefault();
-    dispatch(setTableColumns(columnManagementID, [...defaultColumns, ...additionalColumns]));
+    dispatch(
+      setTableColumns(
+        columnManagementId,
+        selectedColumns.map((column) => {
+          return { ...column, visible: checkedColumns.has(column.id) };
+        }),
+      ),
+    );
     close();
   };
 
-  const areMaxColumnsDisplayed =
-    additionalColumns.filter((column) => column.visible).length +
-      defaultColumns.filter((column) => column.visible).length >=
-    MAX_VIEW_COLS;
+  const areMaxColumnsDisplayed = checkedColumns.size >= MAX_VIEW_COLS;
 
   const resetColumns = (event: React.SyntheticEvent): void => {
     event.preventDefault();
-    setDefaultColumns(updateColumns(true, null, defaultColumns));
-    setAdditionalColumns(updateColumns(false, null, additionalColumns));
+    const updatedCheckedColumns = new Set(checkedColumns);
+    defaultColumns.forEach((col) => col.id && updatedCheckedColumns.add(col.id));
+    additionalColumns.forEach((col) => updatedCheckedColumns.delete(col.id));
+    setCheckedColumns(updatedCheckedColumns);
   };
 
   return (
@@ -105,7 +110,7 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps> = ({
         <div className="co-m-form-row">
           <p>Checked categories will be displayed in the table.</p>
         </div>
-        <div className="row co-m-form-row">
+        <div className="co-m-form-row">
           <Alert
             className="co-alert"
             isInline
@@ -120,10 +125,11 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps> = ({
               <DataList aria-label="default column list" id="defalt-column-management" isCompact>
                 {defaultColumns.map((defaultColumn) => (
                   <DataListRow
-                    key={defaultColumn.ID}
-                    onChange={defaultColumnChange}
+                    key={defaultColumn.id}
+                    onChange={onColumnChange}
                     disableUncheckedRow={areMaxColumnsDisplayed}
                     column={defaultColumn}
+                    checkedColumns={checkedColumns}
                   />
                 ))}
               </DataList>
@@ -137,10 +143,11 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps> = ({
               >
                 {additionalColumns.map((additionalColumn) => (
                   <DataListRow
-                    key={additionalColumn.ID}
-                    onChange={additionalColumnChange}
+                    key={additionalColumn.id}
+                    onChange={onColumnChange}
                     disableUncheckedRow={areMaxColumnsDisplayed}
                     column={additionalColumn}
+                    checkedColumns={checkedColumns}
                   />
                 ))}
               </DataList>
@@ -169,18 +176,13 @@ type DataListRowProps = {
   column: any;
   onChange: (checked: boolean, event: React.SyntheticEvent) => void;
   disableUncheckedRow: boolean;
+  checkedColumns: Set<string>;
 };
 
 export type ColumnManagementModalProps = {
   cancel?: () => void;
   close?: () => void;
-  columnManagementID: string;
+  columnManagementId: string;
   selectedColumns: any;
   columnManagementType: string;
-};
-
-type ColumnHeaderRow = {
-  ID: string;
-  title: string;
-  visible: boolean;
 };

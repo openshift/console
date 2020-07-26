@@ -11,71 +11,71 @@ import {
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PodModel } from '@console/internal/models';
 
-const columnManagementID = referenceForModel(PodModel);
+const columnManagementId = referenceForModel(PodModel);
 const columnManagementType = 'Pod';
 const selectedColumns = [
   {
     title: 'Name',
     visible: true,
-    ID: 'NAME',
+    id: 'name',
   },
   {
     title: 'Namespace',
     visible: true,
-    ID: 'NAMESPACE',
+    id: 'namespace',
   },
   {
     title: 'Status',
     visible: true,
-    ID: 'STATUS',
+    id: 'status',
   },
   {
     title: 'Ready',
     visible: true,
-    ID: 'READY',
+    id: 'ready',
   },
   {
     title: 'Restarts',
     visible: true,
-    ID: 'RESTARTS',
+    id: 'restarts',
   },
   {
-    title: 'Node',
+    title: 'Owner',
     visible: true,
-    ID: 'NODE',
+    id: 'owner',
   },
   {
     title: 'Memory',
     visible: true,
-    ID: 'MEMORY',
+    id: 'memory',
   },
   {
     title: 'CPU',
     visible: true,
-    ID: 'CPU',
+    id: 'cpu',
   },
   {
     title: 'Created',
     visible: true,
-    ID: 'CREATED',
+    id: 'created',
   },
   {
     title: 'Node',
     visible: false,
     additional: true,
-    ID: 'NODE',
+    id: 'node',
   },
   {
     title: 'Labels',
     visible: false,
     additional: true,
-    ID: 'LABELS',
+    id: 'labels',
   },
   {
     title: 'IP Address',
     visible: false,
     additional: true,
-    ID: 'IP-ADDRESS',
+    id: 'ipaddress',
   },
   {
     title: '',
@@ -87,65 +87,65 @@ const selectedColumnsNamespaceDisabled = [
   {
     title: 'Name',
     visible: true,
-    ID: 'NAME',
+    id: 'name',
   },
   {
     title: 'Namespace',
     visible: false,
-    ID: 'NAMESPACE',
+    id: 'namespace',
   },
   {
     title: 'Status',
     visible: true,
-    ID: 'STATUS',
+    id: 'status',
   },
   {
     title: 'Ready',
     visible: true,
-    ID: 'READY',
+    id: 'ready',
   },
   {
     title: 'Restarts',
     visible: true,
-    ID: 'RESTARTS',
+    id: 'restarts',
   },
   {
-    title: 'Node',
+    title: 'Owner',
     visible: true,
-    ID: 'NODE',
+    id: 'owner',
   },
   {
     title: 'Memory',
     visible: true,
-    ID: 'MEMORY',
+    id: 'memory',
   },
   {
     title: 'CPU',
     visible: true,
-    ID: 'CPU',
+    id: 'cpu',
   },
   {
     title: 'Created',
     visible: true,
-    ID: 'CREATED',
+    id: 'created',
   },
   {
     title: 'Node',
     visible: false,
     additional: true,
-    ID: 'NODE',
+    id: 'node',
   },
   {
     title: 'Labels',
     visible: false,
     additional: true,
-    ID: 'LABELS',
+    id: 'labels',
   },
   {
     title: 'IP Address',
     visible: false,
     additional: true,
-    ID: 'IP-ADDRESS',
+    id: 'ipaddress',
   },
   {
     title: '',
@@ -160,7 +160,7 @@ describe(ColumnManagementModal.displayName, () => {
       <Provider store={store}>
         <ColumnManagementModal
           columnManagementType={columnManagementType}
-          columnManagementID={columnManagementID}
+          columnManagementId={columnManagementId}
           selectedColumns={selectedColumns}
         />
       </Provider>,
@@ -192,7 +192,7 @@ describe(ColumnManagementModal.displayName, () => {
       <Provider store={store}>
         <ColumnManagementModal
           columnManagementType={columnManagementType}
-          columnManagementID={columnManagementID}
+          columnManagementId={columnManagementId}
           selectedColumns={selectedColumnsNamespaceDisabled}
         />
       </Provider>,
