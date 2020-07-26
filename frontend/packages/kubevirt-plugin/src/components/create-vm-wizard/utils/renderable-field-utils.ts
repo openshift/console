@@ -71,10 +71,10 @@ const idResolver: RenderableFieldResolver = {
   [VMSettingsField.MEMORY]: 'resources-memory',
   [VMSettingsField.CPU]: 'resources-cpu',
   [VMSettingsField.WORKLOAD_PROFILE]: 'workload-profile-dropdown',
-  [VMSettingsField.START_VM]: 'start-vm',
   [VMSettingsField.PROVISION_SOURCE_TYPE]: 'image-source-type-dropdown',
   [VMSettingsField.CONTAINER_IMAGE]: 'provision-source-container',
   [VMSettingsField.IMAGE_URL]: 'provision-source-url',
+  [VMSettingsField.START_VM]: 'start-vm',
 };
 
 export const getFieldId = (key: RenderableField) => idResolver[key];
