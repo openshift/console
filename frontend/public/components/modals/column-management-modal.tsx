@@ -16,6 +16,7 @@ import {
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory';
 import { setTableColumns } from '../../actions/ui';
+import { ITransform } from '@patternfly/react-table';
 
 export const MAX_VIEW_COLS = 9;
 
@@ -72,7 +73,7 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps> = ({
   const [checkedColumns, setCheckedColumns] = React.useState<Set<string>>(new Set(initialSelected));
 
   const onColumnChange = (checked: boolean, event: React.SyntheticEvent): void => {
-    const updatedCheckedColumns = new Set(checkedColumns);
+    const updatedCheckedColumns = new Set<string>(checkedColumns);
     const selectedId = event?.currentTarget?.id;
     updatedCheckedColumns.has(selectedId)
       ? updatedCheckedColumns.delete(selectedId)
@@ -173,7 +174,7 @@ export const createColumnManagementModal = createModalLauncher<ColumnManagementM
 ColumnManagementModal.displayName = 'ColumnManagementModal';
 
 type DataListRowProps = {
-  column: any;
+  column: ManagedColumn;
   onChange: (checked: boolean, event: React.SyntheticEvent) => void;
   disableUncheckedRow: boolean;
   checkedColumns: Set<string>;
@@ -183,6 +184,17 @@ export type ColumnManagementModalProps = {
   cancel?: () => void;
   close?: () => void;
   columnManagementId: string;
-  selectedColumns: any;
+  selectedColumns: ManagedColumn[];
   columnManagementType: string;
+};
+
+export type ManagedColumn = {
+  id?: string;
+  props?: any;
+  sortField?: string;
+  sortFunc?: any;
+  title: string;
+  transforms?: ITransform[];
+  visible: boolean;
+  additional?: boolean;
 };

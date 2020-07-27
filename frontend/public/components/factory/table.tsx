@@ -63,6 +63,7 @@ import {
 } from '@patternfly/react-virtualized-extension';
 
 import { tableFilters } from './table-filters';
+import { ManagedColumn } from '../modals/column-management-modal';
 
 const rowFiltersToFilterFuncs = (rowFilters) => {
   return (rowFilters || [])
@@ -290,7 +291,7 @@ TableData.displayName = 'TableData';
 export type TableDataProps = {
   className?: string;
   columnId?: string;
-  columns?: any;
+  columns?: ManagedColumn[];
   id?: string;
 };
 
@@ -447,7 +448,7 @@ type ComponentProps = {
 };
 
 const getActiveColumns = (Header, componentProps, activeColumns) => {
-  let columns = Header(componentProps);
+  let columns: ManagedColumn[] = Header(componentProps);
   if (_.isEmpty(activeColumns) && columns.find((col) => col.additional)) {
     activeColumns = columns.reduce((acc, curr) => {
       acc[curr.id] = curr.visible;
@@ -702,7 +703,7 @@ export type TableInnerProps = {
   data?: any[];
   defaultSortField?: string;
   defaultSortFunc?: string;
-  activeColumns?: any;
+  activeColumns?: { [name: string]: boolean };
   unfilteredData?: any[];
   NoDataEmptyMsg?: React.ComponentType<{}>;
   EmptyMsg?: React.ComponentType<{}>;

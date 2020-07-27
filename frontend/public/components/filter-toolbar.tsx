@@ -24,6 +24,7 @@ import { filterList } from '../actions/k8s';
 import AutocompleteInput from './autocomplete';
 import { storagePrefix } from './row-filter';
 import { createColumnManagementModal } from './modals';
+import { ManagedColumn } from './modals/column-management-modal';
 
 /**
  * Housing both the row filter and name/label filter in the same file.
@@ -367,8 +368,7 @@ type FilterToolbarProps = {
   parseAutoComplete?: any;
   kinds?: any;
   labelPath?: string;
-  columnFilters?: any;
-  selectedColumns?: any;
+  selectedColumns?: ManagedColumn[];
   columnManagementId?: string;
   columnManagementType?: string;
 };

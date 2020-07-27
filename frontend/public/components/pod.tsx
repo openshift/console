@@ -57,6 +57,7 @@ import { VolumesTable } from './volumes-table';
 import { PodModel } from '../models';
 import { Conditions } from './conditions';
 import { RootState } from '../redux';
+import { ManagedColumn } from './modals/column-management-modal';
 
 // Only request metrics if the device's screen width is larger than the
 // breakpoint where metrics are visible.
@@ -297,7 +298,8 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
     const restarts = podRestarts(pod);
     const bytes: number = _.get(metrics, ['memory', namespace, name]);
     const cores: number = _.get(metrics, ['cpu', namespace, name]);
-    const columns = selectedColumns?.get(columnManagementId) || getHeader(showNodes)();
+    const columns: ManagedColumn[] =
+      selectedColumns?.get(columnManagementId) || getHeader(showNodes)();
     return (
       <TableRow id={pod.metadata.uid} index={index} trKey={rowKey} style={style}>
         <TableData className={podColumnInfo.name.classes}>
@@ -813,7 +815,7 @@ type PodTableRowProps = {
 
 type PodTableRowPropsFromState = {
   metrics: UIActions.PodMetrics;
-  selectedColumns: any;
+  selectedColumns: Map<string, ManagedColumn[]>;
 };
 
 type PodListProps = {
