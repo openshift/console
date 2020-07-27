@@ -8,6 +8,9 @@ import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '.
 import { pluralize, withHandlePromise } from '../utils';
 import { RadioInput } from '../radio';
 
+export const UPDATE_STRATEGY_DESCRIPTION =
+  'How should the pods be replaced when a new revision is created?';
+
 export const getNumberOrPercent = (value) => {
   if (typeof value === 'undefined') {
     return null;
@@ -20,12 +23,14 @@ export const getNumberOrPercent = (value) => {
 };
 
 export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (props) => {
+  const { showDescription = true } = props;
   return (
     <>
-      <div className="co-m-form-row">
-        <p>How should the pods be replaced when a new revision is created?</p>
-      </div>
-
+      {showDescription && (
+        <div className="co-m-form-row">
+          <p>{UPDATE_STRATEGY_DESCRIPTION}</p>
+        </div>
+      )}
       <div className="row co-m-form-row">
         <div className="col-sm-12">
           <RadioInput
@@ -194,6 +199,7 @@ export const ConfigureUpdateStrategyModal = withHandlePromise(
 export const configureUpdateStrategyModal = createModalLauncher(ConfigureUpdateStrategyModal);
 
 export type ConfigureUpdateStrategyProps = {
+  showDescription?: boolean;
   strategyType: DeploymentUpdateStrategy['type'];
   maxUnavailable: number | string;
   maxSurge: number | string;

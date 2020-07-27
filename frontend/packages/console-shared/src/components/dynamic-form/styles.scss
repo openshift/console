@@ -9,6 +9,9 @@
   --pf-c-accordion--BoxShadow: none !important;
   --pf-c-accordion--PaddingBottom: 0rem !important;
   --pf-c-accordion--PaddingTop: 0rem !important;
+  .pf-c-accordion__toggle label {
+    margin-bottom: 0;
+  }
 }
 
 .co-dynamic-form__field-group {
@@ -25,6 +28,7 @@
   --pf-c-accordion__toggle-text--focus--FontWeight: 600 !important;
   --pf-c-accordion__toggle-text--hover--Color: var(--pf-global--Color--100) !important;
   --pf-c-accordion__toggle-text--hover--FontWeight: 600 !important;
+  margin-bottom: 0.5rem;
 
   .pf-c-accordion__toggle::before {
     display: none;
@@ -35,7 +39,10 @@
     font-size: var(--pf-global--FontSize);
   }
 
-  margin-bottom: 0.5rem;
+  .help-block {
+    margin-bottom: 8px;
+    margin-top: 0;
+  }
 }
 
 .co-dynamic-form__array-field-group-remove {
