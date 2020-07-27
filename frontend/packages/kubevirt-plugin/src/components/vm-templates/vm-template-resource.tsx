@@ -124,7 +124,7 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
         title="CD-ROMs"
         canEdit={canUpdateTemplate}
         editButtonId={prefixedID(id, 'cdrom-edit')}
-        onEditClick={() => VMCDRomModal({ vmLikeEntity: template, modalClassName: 'modal-lg' })}
+        onEditClick={() => VMCDRomModal({ vmLikeEntity: template })}
         idValue={prefixedID(id, 'cdrom')}
         isNotAvail={cds.length === 0}
       >

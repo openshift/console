@@ -6,12 +6,19 @@ import {
   HandlePromiseProps,
   withHandlePromise,
 } from '@console/internal/components/utils';
+import { getName, getNamespace } from '@console/shared';
 import { ModalTitle, ModalBody, ModalComponentProps } from '@console/internal/components/factory';
 import { PlusCircleIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
-import { k8sPatch } from '@console/internal/module/k8s';
+import { apiVersionForModel, k8sPatch } from '@console/internal/module/k8s';
 import { ModalFooter } from '../modal/modal-footer';
 import { getCDsPatch } from '../../../k8s/patches/vm/vm-cdrom-patches';
-import { getVMLikeModel, asVM, isWindows } from '../../../selectors/vm';
+import {
+  getVMLikeModel,
+  asVM,
+  isWindows,
+  getVolumeDataVolumeName,
+  getVolumes,
+} from '../../../selectors/vm';
 import {
   getCDRoms,
   getContainerImageByDisk,
@@ -30,6 +37,9 @@ import './cdrom-modal.scss';
 import { CD, CDMap } from './types';
 import { VMKind } from '../../../types/vm';
 import { useStorageClassConfigMap } from '../../../hooks/storage-class-config-map';
+import { freeOwnedResources } from '../../../k8s/requests/free-owned-resources';
+import { K8sResourceWithModel } from '../../../types/k8s-resource-with-model';
+import { DataVolumeModel } from '../../../models';
 
 export const AddCDButton = ({
   className,
@@ -79,6 +89,14 @@ export const CDRomModal = withHandlePromise((props: CDRomModalProps) => {
 
   const [storageClassConfigMap, isStorageClassConfigMapLoaded] = useStorageClassConfigMap();
   const inProgress = _inProgress || !isStorageClassConfigMapLoaded;
+  const entityModel = getVMLikeModel(vmLikeEntity);
+  const namespace = getNamespace(vmLikeEntity);
+
+  const vmLikeReference = {
+    name: getName(vmLikeEntity),
+    kind: entityModel.kind,
+    apiVersion: apiVersionForModel(entityModel),
+  } as any;
 
   const mapCDsToSource = (cds) =>
     Object.assign(
@@ -162,11 +180,26 @@ export const CDRomModal = withHandlePromise((props: CDRomModalProps) => {
   const submit = async (e) => {
     e.preventDefault();
     if (shouldPatch) {
+      const volumes = getVolumes(vm);
+      const ownedResources: K8sResourceWithModel[] = getCDRoms(vm)
+        .filter((cd) => !Object.values(cds).find((modalCD) => modalCD.name === cd.name))
+        .filter((filteredCD) => !!getURLSourceByDisk(vm, filteredCD.name))
+        .map(({ name }) => ({
+          resource: {
+            metadata: {
+              name: getVolumeDataVolumeName(volumes.find((vol) => vol.name === name)),
+              namespace,
+            },
+          },
+          model: DataVolumeModel,
+        }));
+
       const promise = k8sPatch(
         getVMLikeModel(vmLikeEntity),
         vmLikeEntity,
         getCDsPatch(vmLikeEntity, Object.values(cds), storageClassConfigMap),
-      );
+      ).then(() => freeOwnedResources(ownedResources, vmLikeReference, true));
+
       handlePromise(promise).then(close); // eslint-disable-line promise/catch-or-return
     } else {
       close();
@@ -193,7 +226,7 @@ export const CDRomModal = withHandlePromise((props: CDRomModalProps) => {
             title="Changes will be applied when the virtual machine has been restarted"
           />
         )}
-        <Form className="pf-l-grid pf-m-gutter">
+        <Form>
           {_.size(cds) > 0 ? (
             cdsValue.map((cd, i) => (
               <CDRomRow

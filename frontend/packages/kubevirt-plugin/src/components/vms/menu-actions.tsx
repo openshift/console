@@ -239,7 +239,7 @@ const menuActionCdEdit = (
       vmStatusBundle?.status?.isMigrating() ||
       isVMRunningOrExpectedRunning(vm),
     label: 'Edit CD-ROMs',
-    callback: () => VMCDRomModal({ vmLikeEntity: vm, modalClassName: 'modal-lg' }),
+    callback: () => VMCDRomModal({ vmLikeEntity: vm }),
     accessReview: asAccessReview(kindObj, vm, 'patch'),
   };
 };

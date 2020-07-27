@@ -3,7 +3,7 @@
 }
 
 .kubevirt-cdrom-modal__delete {
-  height: 60px;
   display: flex;
-  align-items: flex-end;
+  justify-content: space-between;
+  align-items: baseline;
 }
