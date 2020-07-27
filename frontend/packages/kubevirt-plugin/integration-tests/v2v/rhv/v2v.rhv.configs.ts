@@ -35,12 +35,22 @@ const exInstanceConfig: InstanceConfig = {
 export const vmName = 'cirros-vm-for-tests';
 export const RHV = 'Red Hat Virtualization (RHV)';
 
-export const rhvVMConfig: VMImportConfig = {
+export const rhvVMConfigStartOnCreate: VMImportConfig = {
   name: 'cirros-vm-migrated-rhv',
   description: 'Automated test for migration from RHV',
   sourceVMName: vmName,
   provider: RHV,
   instanceConfig: newInstanceConfig,
+  startOnCreation: true,
+};
+
+export const rhvVMConfigNoStartOnCreate: VMImportConfig = {
+  name: 'cirros-vm-migrated-rhv',
+  description: 'Automated test for migration from RHV',
+  sourceVMName: vmName,
+  provider: RHV,
+  instanceConfig: newInstanceConfig,
+  startOnCreation: false,
 };
 
 export const rhvVMMultiNicConfig: VMImportConfig = {
