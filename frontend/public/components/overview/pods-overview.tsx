@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 
+import { Alert, AlertActionLink } from '@patternfly/react-core';
 import { Status } from '@console/shared';
 import { ResourceLink, resourcePath, SidebarSectionHeading } from '../utils';
 import { podPhase, PodKind, K8sResourceKind, referenceFor } from '../../module/k8s';
@@ -52,6 +53,14 @@ const errorPhases = [
 ];
 
 const isPodError = (pod: PodKind) => _.includes(errorPhases, podPhase(pod));
+
+const isDeploymentGeneratedByWebConsole = (obj: K8sResourceKind) =>
+  obj.kind === 'Deployment' &&
+  obj.metadata?.annotations?.['openshift.io/generated-by'] === 'OpenShiftWebConsole';
+
+const isPodWithoutImageId = (pod: PodKind) =>
+  pod.status?.phase === 'Pending' &&
+  pod.status?.containerStatuses?.some((containerStatus) => !containerStatus.imageID);
 
 const podCompare = (pod1: PodKind, pod2: PodKind): number => {
   const error1 = isPodError(pod1);
@@ -123,11 +132,20 @@ export const PodsOverview: React.SFC<PodsOverviewProps> = ({
     metadata: { name, namespace },
   } = obj;
 
+  const [showWaitingPods, setShowWaitingPods] = React.useState(false);
+  const showWaitingForBuildAlert =
+    isDeploymentGeneratedByWebConsole(obj) && pods.some(isPodWithoutImageId);
+
+  let filteredPods = [...pods];
+  if (showWaitingForBuildAlert && !showWaitingPods) {
+    filteredPods = filteredPods.filter((pod) => !isPodWithoutImageId(pod));
+  }
+  filteredPods.sort(podCompare);
+
   const errorPodCount = _.size(_.filter(pods, (pod) => isPodError(pod)));
   const podsShown = Math.max(Math.min(errorPodCount, MAX_ERROR_PODS), MAX_PODS);
   const linkTo = allPodsLink || `${resourcePath(referenceFor(obj), name, namespace)}/pods`;
   const emptyMessage = emptyText || 'No Pods found for this resource.';
-  pods.sort(podCompare);
 
   return (
     <>
@@ -138,10 +156,25 @@ export const PodsOverview: React.SFC<PodsOverviewProps> = ({
           </Link>
         )}
       </SidebarSectionHeading>
-      {_.isEmpty(pods) ? (
+      {showWaitingForBuildAlert ? (
+        <Alert
+          isInline
+          variant="info"
+          title="Waiting for the build"
+          actionLinks={
+            <AlertActionLink onClick={() => setShowWaitingPods(!showWaitingPods)}>
+              {`${showWaitingPods ? 'Hide' : 'Show'} waiting pods with errors`}
+            </AlertActionLink>
+          }
+        >
+          Waiting for the first build to run successfully. You may temporarily see
+          "ImagePullBackOff" and "ErrImagePull" errors while waiting.
+        </Alert>
+      ) : null}
+      {_.isEmpty(filteredPods) ? (
         <span className="text-muted">{emptyMessage}</span>
       ) : (
-        <PodsOverviewList pods={_.take(pods, podsShown)} />
+        <PodsOverviewList pods={_.take(filteredPods, podsShown)} />
       )}
     </>
   );
