@@ -6,7 +6,7 @@ Background:
     Given user logged into the openshift application
 
 
-@regression, @smoke
+@regression
 Scenario: Create Pod type workload
     Given user is at the Administrator perspective
     When user clicks on the Workloads tab
@@ -16,14 +16,14 @@ Scenario: Create Pod type workload
     Then user will be redirected to the details page of newly created pod
 
 
-@regression, @smoke
+@regression
 Scenario: Pod type workload on Topology page
     Given user is at developer perspective
     And user is on Topology page
     Then user will see the newly created pod
 
 
-@regression, @smoke
+@regression
 Scenario: Sidebar for the Pod
     Given user is on Topology page
     When user clicks on the pod type workload

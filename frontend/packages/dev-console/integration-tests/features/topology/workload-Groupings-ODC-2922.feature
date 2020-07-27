@@ -6,7 +6,7 @@ Background:
     Given user is at developer perspecitve
 
 
-@regression, @smoke
+@regression
 Scenario: Default state of Display dropdown
     Given user is at the Topology page
     When user clicks on the Display dropdown
@@ -17,7 +17,7 @@ Scenario: Default state of Display dropdown
     And user will see the Operator Groups checkbox checked
 
 
-@regression, @smoke
+@regression
 Scenario: Uncheck the Show Groups
     Given user is at the Topology page
     When user clicks on the Display dropdown
@@ -26,7 +26,7 @@ Scenario: Uncheck the Show Groups
     And user will see that the group no longer appear in the view
 
 
-@regression, @smoke
+@regression
 Scenario: Uncheck the Expand
     Given user is at Topology page
     When user clicks on the Display dropdown
@@ -36,7 +36,7 @@ Scenario: Uncheck the Expand
     And user will see the Operator Groups checkbox is disabled
 
 
-@regression, @smoke
+@regression
 Scenario: Provide ability to expand and collapse all groups in Topology graph view
     Given user is at Topology page
     And user is on the graph view
@@ -46,7 +46,7 @@ Scenario: Provide ability to expand and collapse all groups in Topology graph vi
     And user will see the summary of workloads
 
 
-@regression, @smoke
+@regression
 Scenario: Provide ability to expand and collapse all groups in Topology list view
     Given user is at Topology page
     And user is on the list view
@@ -55,7 +55,7 @@ Scenario: Provide ability to expand and collapse all groups in Topology list vie
     Then user will see the grouped resources collapsed
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: Provide ability to hide and show Helm release groupings in Topology graph and list view
     Given user is at the Topology page
     And user is at the graph view
@@ -65,7 +65,7 @@ Scenario: Provide ability to hide and show Helm release groupings in Topology gr
     And user will see the summary of workloads
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: Provide ability to hide and show Knative Services groupings in Topology graph and list view
     Given user is at the Topology page
     And user is at the graph view
@@ -75,7 +75,7 @@ Scenario: Provide ability to hide and show Knative Services groupings in Topolog
     And user will see the summary of workloads
 
 
-@regression, @smoke, @manual 
+@regression, @manual 
 Scenario: Provide ability to hide and show Operator Groups groupings in Topology graph and list view
     Given user is at the Topology page
     And user is at the graph view

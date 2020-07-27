@@ -6,14 +6,14 @@ Background:
     Given user is at developer perspecitve
 
 
-@regression, @smoke
+@regression
 Scenario: Default state of Resources dropdown
     Given user is at Topology page
     When user clicks on the Resources dropdown 
     Then user sees that all the checkboxes are unchecked
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: Ability to show Deployment resource types in Topology graph and list view
     Given user is at Topology page
     When user clicks on the Resources dropdown 
@@ -22,7 +22,7 @@ Scenario: Ability to show Deployment resource types in Topology graph and list v
     Then user will see the workloads of Deployments resource types only
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: Ability to hide Deployment resource types in Topology graph and list view
     Given user is at Topology page
     When user clicks on the Resources dropdown 
@@ -31,7 +31,7 @@ Scenario: Ability to hide Deployment resource types in Topology graph and list v
     Then user will not see the workloads of Deployments resource types only
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: Ability to show Deployment Config resource types in Topology graph and list view
     Given user is at Topology page
     When user clicks on the Resources dropdown 
@@ -40,7 +40,7 @@ Scenario: Ability to show Deployment Config resource types in Topology graph and
     Then user will see the workloads of Deployment Configs resource types only
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: Ability to hide Deployment Config resource types in Topology graph and list view
     Given user is at Topology page
     When user clicks on the Resources dropdown 
@@ -49,7 +49,7 @@ Scenario: Ability to hide Deployment Config resource types in Topology graph and
     Then user will not see the workloads of Deployment Configs resource types only
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: Ability to show Virtual Machines resource types in Topology graph and list view
     Given user is at Topology page
     When user clicks on the Resources dropdown 
@@ -58,7 +58,7 @@ Scenario: Ability to show Virtual Machines resource types in Topology graph and 
     Then user will see the workloads of Virtual Machines resource types only
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: Ability to hide Virtual Machines resource types in Topology graph and list view
     Given user is at Topology page
     When user clicks on the Resources dropdown 
@@ -67,7 +67,7 @@ Scenario: Ability to hide Virtual Machines resource types in Topology graph and 
     Then user will not see the workloads of Virtual Machines resource types only
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: Ability to show Event Sources resource types in Topology graph and list view
     Given user is at Topology page
     When user clicks on the Resources dropdown 
@@ -76,7 +76,7 @@ Scenario: Ability to show Event Sources resource types in Topology graph and lis
     Then user will see the workloads of Event Sources resource types only
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: Ability to hide Event Sources resource types in Topology graph and list view
     Given user is at Topology page
     When user clicks on the Resources dropdown 
@@ -85,7 +85,7 @@ Scenario: Ability to hide Event Sources resource types in Topology graph and lis
     Then user will not see the workloads of Event Sources resource types only
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: Ability to show Helm Releases resource types in Topology graph and list view
     Given user is at Topology page
     When user clicks on the Resources dropdown 
@@ -94,7 +94,7 @@ Scenario: Ability to show Helm Releases resource types in Topology graph and lis
     Then user will see the workloads of Helm Releases resource types only
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: Ability to hide Helm Releases resource types in Topology graph and list view
     Given user is at Topology page
     When user clicks on the Resources dropdown 
@@ -103,7 +103,7 @@ Scenario: Ability to hide Helm Releases resource types in Topology graph and lis
     Then user will not see the workloads of Helm Releases resource types only
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: Ability to show Knative Services resource types in Topology graph and list view
     Given user is at Topology page
     When user clicks on the Resources dropdown 
@@ -112,7 +112,7 @@ Scenario: Ability to show Knative Services resource types in Topology graph and 
     Then user will see the Knative Services resource types only
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: Ability to hide Knative Services resource types in Topology graph and list view
     Given user is at Topology page
     When user clicks on the Resources dropdown 
@@ -121,7 +121,7 @@ Scenario: Ability to hide Knative Services resource types in Topology graph and 
     Then user will not see the Knative Services resource types only
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: Ability to show Stateful Set resource types in Topology graph and list view
     Given user is at Topology page
     When user clicks on the Resources dropdown 
@@ -130,7 +130,7 @@ Scenario: Ability to show Stateful Set resource types in Topology graph and list
     Then user will see the workloads of  Stateful Set resource types only
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: Ability to hide Stateful Set resource types in Topology graph and list view
     Given user is at Topology page
     When user clicks on the Resources dropdown 
@@ -139,7 +139,7 @@ Scenario: Ability to hide Stateful Set resource types in Topology graph and list
     Then user will not see the workloads of Stateful Set resource types only
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: Ability to selects all resource types in Topology graph and list view
     Given user is at Topology page
     When user clicks on the Resources dropdown 

@@ -7,27 +7,27 @@ Background:
     And user is at the developer perspective
 
 
-@regression, @smoke
+@regression
 Scenario: Filters on the Alerts page
     Given user is on the Alerts tab
     Then user will see on the Filters option on the Alerts page
 
 
-@regression, @smoke
+@regression
 Scenario: Filters dropdown on the Alerts page
     Given user is on the Alerts tab
     When user clicks on the Filter dropdown
     Then user will see filters for Alert State and Severity
 
 
-@regression, @smoke
+@regression
 Scenario: Default state of Filters dropdown items
     Given user is on the Alerts tab
     When user clicks on the Filters dropdown
     Then user sees that all the checkboxes are unchecked
 
 
-@regression, @smoke
+@regression
 Scenario: Filters for Alert State
     Given user is on the Alerts tab
     When user clicks on the Filter drop down menu
@@ -37,7 +37,7 @@ Scenario: Filters for Alert State
     And user will see the checkbox for Not Firing alert state
 
 
-@regression, @smoke
+@regression
 Scenario: Filters for Severity
     Given user is on the Alerts tab
     When user clicks on the Filter drop down menu
@@ -45,7 +45,7 @@ Scenario: Filters for Severity
     And user will see the checkbox for Warning severity
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: Ability to show only Firing Alerts on the Alerts tab
     Given user is on the Alerts tab
     When user clicks on the Filter drop down menu 
@@ -54,7 +54,7 @@ Scenario: Ability to show only Firing Alerts on the Alerts tab
     Then user will see the alerts with Firing Alert state only if there are any
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: Ability to hide only Firing Alerts on the Alerts tab
     Given user is on the Alerts tab
     When user clicks on the Filter drop down menu 
@@ -63,7 +63,7 @@ Scenario: Ability to hide only Firing Alerts on the Alerts tab
     Then user will not see the alerts with Firing Alert state only
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: Ability to show only Pending Alerts on the Alerts tab
     Given user is on the Alerts tab
     When user clicks on the Filter drop down menu 
@@ -72,7 +72,7 @@ Scenario: Ability to show only Pending Alerts on the Alerts tab
     Then user will see the alerts with Pending Alert state only if there are any
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: Ability to hide only Pending Alerts on the Alerts tab
     Given user is on the Alerts tab
     When user clicks on the Filter drop down menu 
@@ -81,7 +81,7 @@ Scenario: Ability to hide only Pending Alerts on the Alerts tab
     Then user will not see the alerts with Pending Alert state only
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: Ability to show only Silenced Alerts on the Alerts tab
     Given user is on the Alerts tab
     When user clicks on the Filter drop down menu 
@@ -90,7 +90,7 @@ Scenario: Ability to show only Silenced Alerts on the Alerts tab
     Then user will see the alerts with Silenced Alert state only if there are any
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: Ability to hide only Silenced Alerts on the Alerts tab
     Given user is on the Alerts tab
     When user clicks on the Filter drop down menu 
@@ -99,7 +99,7 @@ Scenario: Ability to hide only Silenced Alerts on the Alerts tab
     Then user will not see the alerts with Silenced Alert state only
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: Ability to show only Not Firing Alerts on the Alerts tab
     Given user is on the Alerts tab
     When user clicks on the Filter drop down menu 
@@ -108,7 +108,7 @@ Scenario: Ability to show only Not Firing Alerts on the Alerts tab
     Then user will see the alerts with Not Firing Alert state only if there are any
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: Ability to hide only Not Firing Alerts on the Alerts tab
     Given user is on the Alerts tab
     When user clicks on the Filter drop down menu 
@@ -117,7 +117,7 @@ Scenario: Ability to hide only Not Firing Alerts on the Alerts tab
     Then user will not see the alerts with Not Firing Alert state only
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: Ability to show only Critical Alerts on the Alerts tab
     Given user is on the Alerts tab
     When user clicks on the Filter drop down menu 
@@ -126,7 +126,7 @@ Scenario: Ability to show only Critical Alerts on the Alerts tab
     Then user will see the alerts with Critical Alert state only if there are any
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: Ability to hide only Critical Alerts on the Alerts tab
     Given user is on the Alerts tab
     When user clicks on the Filter drop down menu 
@@ -135,7 +135,7 @@ Scenario: Ability to hide only Critical Alerts on the Alerts tab
     Then user will not see the alerts with Critical Alert state only
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: Ability to show only Warning Alerts on the Alerts tab
     Given user is on the Alerts tab
     When user clicks on the Filter drop down menu 
@@ -144,7 +144,7 @@ Scenario: Ability to show only Warning Alerts on the Alerts tab
     Then user will see the alerts with Warning Alert state only if there are any
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: Ability to hide only Warning Alerts on the Alerts tab
     Given user is on the Alerts tab
     When user clicks on the Filter drop down menu 
