@@ -172,12 +172,7 @@ const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
 
   const iBaseImages = iGetLoadedCommonData(state, id, VMWizardProps.openshiftCNVBaseImages);
   const iBaseImage =
-    pvcName &&
-    iBaseImages &&
-    iBaseImages
-      .valueSeq()
-      .filter((iPVC) => iGetName(iPVC) === pvcName)
-      .first();
+    pvcName && iBaseImages && iBaseImages.valueSeq().find((iPVC) => iGetName(iPVC) === pvcName);
 
   dispatch(
     vmWizardInternalActions[InternalActionType.UpdateVmSettingsField](
