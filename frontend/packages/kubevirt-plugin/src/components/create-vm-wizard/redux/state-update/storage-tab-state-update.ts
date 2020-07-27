@@ -1,5 +1,5 @@
 import { ValidationErrorType } from '@console/shared/src';
-import { hasVmSettingsChanged } from '../../selectors/immutable/vm-settings';
+import { hasVmSettingsChanged, iGetVmSettingValue } from '../../selectors/immutable/vm-settings';
 import { VMSettingsField, VMWizardStorage, VMWizardStorageType } from '../../types';
 import { InternalActionType, UpdateOptions } from '../types';
 import { hasStoragesChanged, iGetProvisionSourceStorage } from '../../selectors/immutable/storage';
@@ -16,7 +16,14 @@ import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 
 export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
-  if (!hasVmSettingsChanged(prevState, state, id, VMSettingsField.PROVISION_SOURCE_TYPE)) {
+  const baseDiskImageChanged =
+    hasVmSettingsChanged(prevState, state, id, VMSettingsField.OPERATING_SYSTEM) &&
+    !!iGetVmSettingValue(state, id, VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE);
+
+  if (
+    !hasVmSettingsChanged(prevState, state, id, VMSettingsField.PROVISION_SOURCE_TYPE) &&
+    !baseDiskImageChanged
+  ) {
     return;
   }
 
@@ -38,7 +45,7 @@ export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }:
       new DataVolumeWrapper(newSourceStorage.dataVolume).getType(),
     );
 
-  if (newType !== oldType) {
+  if (newType !== oldType || baseDiskImageChanged) {
     if (!newSourceStorage) {
       // not a template provision source
       if (oldSourceStorage && oldSourceStorage.type === VMWizardStorageType.PROVISION_SOURCE_DISK) {
