@@ -17,10 +17,7 @@ import {
   iGetLoadedCommonData,
   iGetName,
 } from '../../selectors/immutable/selectors';
-import {
-  iGetRelevantTemplate,
-  iGetOSTemplate,
-} from '../../../../selectors/immutable/template/combined';
+import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
 import { CUSTOM_FLAVOR, TEMPLATE_DATAVOLUME_ANNOTATION } from '../../../../constants/vm';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { windowsToolsStorage } from '../initial-state/storage-tab-initial-state';
@@ -170,7 +167,7 @@ const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   }
 
   const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
-  const iTemplate = iCommonTemplates && iGetOSTemplate(iCommonTemplates, os);
+  const iTemplate = iCommonTemplates && iGetRelevantTemplate(null, iCommonTemplates, { os });
   const pvcName =
     iTemplate && iGetAnnotations(iTemplate).get(`${TEMPLATE_DATAVOLUME_ANNOTATION}/${os}`);
 

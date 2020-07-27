@@ -28,7 +28,7 @@ import { generateDataVolumeName } from '../../../../utils';
 import { DUMMY_VM_NAME, TEMPLATE_DATAVOLUME_ANNOTATION } from '../../../../constants/vm';
 import { iGetVmSettingValue, iGetProvisionSource } from '../../selectors/immutable/vm-settings';
 import { iGetLoadedCommonData } from '../../selectors/immutable/selectors';
-import { iGetOSTemplate } from '../../../../selectors/immutable/template/combined';
+import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
 import { iGetAnnotations } from '../../../../selectors/immutable/common';
 
 const ROOT_DISK_NAME = 'rootdisk';
@@ -173,7 +173,7 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
 
     const os = iGetVmSettingValue(state, id, VMSettingsField.OPERATING_SYSTEM);
     const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
-    const iTemplate = iCommonTemplates && iGetOSTemplate(iCommonTemplates, os);
+    const iTemplate = iCommonTemplates && iGetRelevantTemplate(null, iCommonTemplates, { os });
     const pvcName =
       iTemplate && iGetAnnotations(iTemplate).get(`${TEMPLATE_DATAVOLUME_ANNOTATION}/${os}`);
     const pvcNamespace =

@@ -97,34 +97,3 @@ export const iGetRelevantTemplates = (
 export const iGetRelevantTemplate = (
   ...args: Parameters<typeof iGetRelevantTemplates>
 ): ITemplate => iGetRelevantTemplates(...args).first();
-
-export const iGetOSTemplates = (
-  iCommonTemplates: ImmutableMap<string, ITemplate>,
-  os: string,
-): ImmutableList<ITemplate> => {
-  const osLabel = getOsLabel(os);
-
-  return ImmutableList<ITemplate>(
-    (iCommonTemplates || ImmutableMap())
-      .valueSeq()
-      .filter((iTemplate) => iGetLabels(iTemplate)?.has(osLabel))
-      .sort((a, b) => {
-        const aLabels = iGetLabels(a);
-        const bLabels = iGetLabels(b);
-
-        const aVersion = aLabels?.get(TEMPLATE_VERSION_LABEL);
-        const bVersion = bLabels?.get(TEMPLATE_VERSION_LABEL);
-
-        const versionCMP = compareVersions(splitVersion(aVersion), splitVersion(bVersion)) * -1; // descending
-
-        if (versionCMP !== 0) {
-          return versionCMP;
-        }
-
-        return new Date(iGetCreationTimestamp(a)) > new Date(iGetCreationTimestamp(b)) ? -1 : 1;
-      }),
-  );
-};
-
-export const iGetOSTemplate = (...args: Parameters<typeof iGetOSTemplates>): ITemplate =>
-  iGetOSTemplates(...args).first();
