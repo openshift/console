@@ -26,7 +26,7 @@ import {
   getWorkloadProfiles,
 } from '../../../../selectors/vm-template/combined-dependent';
 import { flavorSort, ignoreCaseSort } from '../../../../utils/sort';
-import { VMSettingsField, VMWizardTabsMetadata, VMWizardTab } from '../../types';
+import { VMSettingsField } from '../../types';
 import { iGetFieldValue } from '../../selectors/immutable/field';
 import { getPlaceholder, getFieldId } from '../../utils/renderable-field-utils';
 import { nullOnEmptyChange } from '../../utils/utils';
@@ -54,8 +54,7 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
     commonDataVolumes,
     onChange,
     openshiftFlag,
-    steps,
-    goToStep,
+    goToStorageStep,
   }) => {
     const flavor = iGetFieldValue(flavorField);
     const os = iGetFieldValue(operatinSystemField);
@@ -185,9 +184,9 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
               <Text>
                 View the cloned disk in the{' '}
                 <Button
-                  isDisabled={!steps[VMWizardTab.STORAGE]?.canJumpTo}
+                  isDisabled={!goToStorageStep}
                   isInline
-                  onClick={() => goToStep(VMWizardTab.STORAGE)}
+                  onClick={goToStorageStep}
                   variant={ButtonVariant.link}
                 >
                   <strong>storage</strong>
@@ -236,6 +235,5 @@ type OSFlavorProps = {
   commonDataVolumes: any;
   openshiftFlag: boolean;
   onChange: (key: string, value: string | boolean) => void;
-  steps: VMWizardTabsMetadata;
-  goToStep: (stepID: VMWizardTab) => void;
+  goToStorageStep: () => void;
 };

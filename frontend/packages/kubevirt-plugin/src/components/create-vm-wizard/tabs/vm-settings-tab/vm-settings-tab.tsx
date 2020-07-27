@@ -93,8 +93,9 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
           commonDataVolumes={commonDataVolumes}
           onChange={this.props.onFieldChange}
           openshiftFlag={openshiftFlag}
-          goToStep={goToStep}
-          steps={steps}
+          goToStorageStep={
+            steps[VMWizardTab.STORAGE]?.canJumpTo ? () => goToStep(VMWizardTab.STORAGE) : null
+          }
         />
         <MemoryCPU
           memoryField={this.getField(VMSettingsField.MEMORY)}
