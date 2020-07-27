@@ -52,13 +52,13 @@ export const getKnativeServiceDepResource = (
       limitUnit: memoryLimitUnit,
     },
   } = limits;
-  const defaultLabel = getAppLabels(
+  const defaultLabel = getAppLabels({
     name,
     applicationName,
     imageStreamName,
-    imageStreamTag || imageTag,
-    imageNamespace,
-  );
+    selectedTag: imageStreamTag || imageTag,
+    namespace: imageNamespace,
+  });
   delete defaultLabel.app;
   const newKnativeDeployResource: K8sResourceKind = {
     kind: ServiceModel.kind,

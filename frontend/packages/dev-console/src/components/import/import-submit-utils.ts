@@ -71,13 +71,13 @@ export const createOrUpdateImageStream = (
   const {
     name,
     project: { name: namespace },
-    application: { name: application },
+    application: { name: applicationName },
     labels: userLabels,
     git: { url: repository, ref },
-    image: { tag },
+    image: { tag: selectedTag },
   } = formData;
   const imageStreamName = imageStreamData && imageStreamData.metadata.name;
-  const defaultLabels = getAppLabels(name, application, imageStreamName, tag);
+  const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag });
   const defaultAnnotations = { ...getGitAnnotations(repository, ref), ...getCommonAnnotations() };
   const newImageStream = {
     apiVersion: 'image.openshift.io/v1',
@@ -131,7 +131,7 @@ export const createOrUpdateBuildConfig = (
   const {
     name,
     project: { name: namespace },
-    application: { name: application },
+    application: { name: applicationName },
     git: { url: repository, type: gitType, ref = 'master', dir: contextDir, secret: secretName },
     docker: { dockerfilePath },
     image: { tag: selectedTag },
@@ -142,7 +142,7 @@ export const createOrUpdateBuildConfig = (
   const imageStreamName = imageStream && imageStream.metadata.name;
   const imageStreamNamespace = imageStream && imageStream.metadata.namespace;
 
-  const defaultLabels = getAppLabels(name, application, imageStreamName, selectedTag);
+  const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag });
   const defaultAnnotations = { ...getGitAnnotations(repository, ref), ...getCommonAnnotations() };
   let buildStrategyData;
 
@@ -233,8 +233,8 @@ export const createOrUpdateDeployment = (
   const {
     name,
     project: { name: namespace },
-    application: { name: application },
-    image: { ports, tag },
+    application: { name: applicationName },
+    image: { ports, tag: selectedTag },
     deployment: {
       env,
       replicas,
@@ -247,7 +247,7 @@ export const createOrUpdateDeployment = (
   } = formData;
 
   const imageStreamName = imageStream && imageStream.metadata.name;
-  const defaultLabels = getAppLabels(name, application, imageStreamName, tag);
+  const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag });
   const annotations = {
     ...getGitAnnotations(repository, ref),
     ...getCommonAnnotations(),
@@ -321,8 +321,8 @@ export const createOrUpdateDeploymentConfig = (
   const {
     name,
     project: { name: namespace },
-    application: { name: application },
-    image: { ports, tag },
+    application: { name: applicationName },
+    image: { ports, tag: selectedTag },
     deployment: { env, replicas, triggers },
     labels: userLabels,
     limits: { cpu, memory },
@@ -331,7 +331,7 @@ export const createOrUpdateDeploymentConfig = (
   } = formData;
 
   const imageStreamName = imageStream && imageStream.metadata.name;
-  const defaultLabels = getAppLabels(name, application, imageStreamName, tag);
+  const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag });
   const defaultAnnotations = { ...getGitAnnotations(repository, ref), ...getCommonAnnotations() };
   const podLabels = getPodLabels(name);
 
