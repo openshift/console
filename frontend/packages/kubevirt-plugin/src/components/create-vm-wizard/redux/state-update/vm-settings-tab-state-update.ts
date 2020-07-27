@@ -166,6 +166,11 @@ const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
     dispatch(vmWizardInternalActions[InternalActionType.RemoveStorage](id, windowsTools.id));
   }
 
+  // Common base disk image is not available for imported vms.
+  if (iGetLoadedCommonData(state, id, VMWizardProps.isProviderImport)) {
+    return;
+  }
+
   const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
   const iTemplate = iCommonTemplates && iGetRelevantTemplate(null, iCommonTemplates, { os });
   const pvcName = iTemplate && iGetAnnotation(iTemplate, `${TEMPLATE_DATAVOLUME_ANNOTATION}/${os}`);
@@ -188,6 +193,9 @@ const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
 
 const cloneCommonBaseDiskImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
+  if (iGetLoadedCommonData(state, id, VMWizardProps.isProviderImport)) {
+    return;
+  }
   if (
     !hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE)
   ) {
@@ -201,10 +209,18 @@ const cloneCommonBaseDiskImageUpdater = ({ id, prevState, dispatch, getState }: 
     VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE,
   );
 
+  // in cases userTemplate is define we send `undefined` (undefined means no update)
+  const provisionSourceTypeValue = userTemplate
+    ? undefined
+    : cloneCommonBaseDiskImage
+    ? ProvisionSource.DISK.toString()
+    : '';
+
   dispatch(
     vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, {
       [VMSettingsField.PROVISION_SOURCE_TYPE]: {
         isHidden: asHidden(cloneCommonBaseDiskImage, VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE),
+        value: provisionSourceTypeValue,
       },
       [VMSettingsField.CONTAINER_IMAGE]: {
         isHidden: asHidden(cloneCommonBaseDiskImage, VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE),
@@ -214,16 +230,6 @@ const cloneCommonBaseDiskImageUpdater = ({ id, prevState, dispatch, getState }: 
       },
     }),
   );
-
-  if (!userTemplate) {
-    dispatch(
-      vmWizardInternalActions[InternalActionType.UpdateVmSettingsField](
-        id,
-        VMSettingsField.PROVISION_SOURCE_TYPE,
-        { value: cloneCommonBaseDiskImage ? ProvisionSource.DISK.toString() : '' },
-      ),
-    );
-  }
 };
 
 const workloadConsistencyUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
