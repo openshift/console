@@ -23,7 +23,7 @@ import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { windowsToolsStorage } from '../initial-state/storage-tab-initial-state';
 import { getStorages } from '../../selectors/selectors';
 import { prefillVmTemplateUpdater } from './prefill-vm-template-state-update';
-import { iGetAnnotations } from '../../../../selectors/immutable/common';
+import { iGetAnnotation } from '../../../../selectors/immutable/common';
 
 const selectUserTemplateOnLoadedUpdater = (options: UpdateOptions) => {
   const { id, dispatch, getState } = options;
@@ -168,8 +168,7 @@ const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
 
   const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
   const iTemplate = iCommonTemplates && iGetRelevantTemplate(null, iCommonTemplates, { os });
-  const pvcName =
-    iTemplate && iGetAnnotations(iTemplate).get(`${TEMPLATE_DATAVOLUME_ANNOTATION}/${os}`);
+  const pvcName = iTemplate && iGetAnnotation(iTemplate, `${TEMPLATE_DATAVOLUME_ANNOTATION}/${os}`);
 
   const iBaseImages = iGetLoadedCommonData(state, id, VMWizardProps.openshiftCNVBaseImages);
   const iBaseImage =

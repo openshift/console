@@ -29,7 +29,7 @@ import { DUMMY_VM_NAME, TEMPLATE_DATAVOLUME_ANNOTATION } from '../../../../const
 import { iGetVmSettingValue, iGetProvisionSource } from '../../selectors/immutable/vm-settings';
 import { iGetLoadedCommonData } from '../../selectors/immutable/selectors';
 import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
-import { iGetAnnotations } from '../../../../selectors/immutable/common';
+import { iGetAnnotation } from '../../../../selectors/immutable/common';
 
 const ROOT_DISK_NAME = 'rootdisk';
 const WINTOOLS_DISK_NAME = 'windows-guest-tools';
@@ -175,9 +175,9 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
     const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
     const iTemplate = iCommonTemplates && iGetRelevantTemplate(null, iCommonTemplates, { os });
     const pvcName =
-      iTemplate && iGetAnnotations(iTemplate).get(`${TEMPLATE_DATAVOLUME_ANNOTATION}/${os}`);
+      iTemplate && iGetAnnotation(iTemplate, `${TEMPLATE_DATAVOLUME_ANNOTATION}/${os}`);
     const pvcNamespace =
-      iTemplate && iGetAnnotations(iTemplate).get(`${TEMPLATE_DATAVOLUME_ANNOTATION}/namespace`);
+      iTemplate && iGetAnnotation(iTemplate, `${TEMPLATE_DATAVOLUME_ANNOTATION}/namespace`);
 
     return getBaseImageStorage(toShallowJS(iStorageClassConfigMap), pvcName, pvcNamespace);
   }

@@ -21,6 +21,5 @@ export type CommonTemplatesValidation = {
   justWarning?: boolean;
 };
 
-export type IAnnotaions = Map<string, string>;
 export type ILabels = Map<string, string>;
 export type ITemplate = Map<string, any>;
