@@ -1,5 +1,9 @@
-import { JSONSchema6 } from 'json-schema';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+
+export enum DescriptorType {
+  spec = 'spec',
+  status = 'status',
+}
 
 export enum SpecCapability {
   podCount = 'urn:alm:descriptor:com.tectonic.ui:podCount',
@@ -53,18 +57,10 @@ export type Descriptor<T = any> = {
 export type SpecDescriptor = Descriptor<SpecCapability>;
 export type StatusDescriptor = Descriptor<StatusCapability>;
 
-export type DescriptorProps = {
-  descriptor: Descriptor;
-  model: K8sKind;
-  obj: K8sResourceKind;
-  onError?: (error: Error) => void;
-  schema?: JSONSchema6;
-};
-
 export type CapabilityProps<C extends SpecCapability | StatusCapability> = {
-  capability: C;
-  descriptor: Descriptor;
+  capability?: C;
   description?: string;
+  descriptor: Descriptor<C>;
   fullPath?: string[];
   label?: string;
   model?: K8sKind;

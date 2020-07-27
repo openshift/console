@@ -50,7 +50,7 @@ export const connectToPlural: ConnectToPlural = connect(
       match: match<{ plural: GroupVersionKind | string }>;
     },
   ) => {
-    const plural = props.plural ?? props.match?.params?.plural;
+    const plural = props.plural || props.match?.params?.plural;
 
     const groupVersionKind = getGroupVersionKind(plural);
 

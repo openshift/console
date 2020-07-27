@@ -251,8 +251,9 @@ $co-affinity-row-margin: 15px;
   padding-bottom: 15px;
 }
 
-.olm-descriptor__title {
+.olm-descriptors__invalid-pod-descriptor {
   display: inline-block;
+  margin-bottom: 20px !important;
 }
 
 #operator-install-page .pf-c-card {
