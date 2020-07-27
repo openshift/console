@@ -8,7 +8,6 @@ import { VMKind, VMIKind } from '../../types';
 import { VMTemplateLink } from '../vm-templates/vm-template-link';
 import { getBasicID, prefixedID } from '../../utils';
 import { vmDescriptionModal, vmFlavorModal } from '../modals';
-import { VMCDRomModal } from '../modals/cdrom-vm-modal/vm-cdrom-modal';
 import { BootOrderModal } from '../modals/boot-order-modal/boot-order-modal';
 import dedicatedResourcesModal from '../modals/scheduling-modals/dedicated-resources-modal/connected-dedicated-resources-modal';
 import nodeSelectorModal from '../modals/scheduling-modals/node-selector-modal/connected-node-selector-modal';
@@ -19,7 +18,6 @@ import VMStatusModal from '../modals/vm-status-modal/vm-status-modal';
 import { getDescription } from '../../selectors/selectors';
 import { EditButton } from '../edit-button';
 import { VMStatus } from '../vm-status/vm-status';
-import { DiskSummary } from '../vm-disks/disk-summary';
 import { BootOrderSummary } from '../boot-order';
 import { getOperatingSystemName, getOperatingSystem } from '../../selectors/vm';
 import { getVmiIpAddresses } from '../../selectors/vmi/ip-address';
@@ -44,11 +42,7 @@ import { NOT_AVAILABLE_MESSAGE } from '../../strings/vm/messages';
 import { isGuestAgentInstalled } from '../dashboards-page/vm-dashboard/vm-alerts';
 import { getGuestAgentFieldNotAvailMsg } from '../../utils/guest-agent-strings';
 import { Button } from '@patternfly/react-core';
-import {
-  isFlavorChanged,
-  isCDROMChanged,
-  isBootOrderChanged,
-} from '../../selectors/vm-like/next-run-changes';
+import { isFlavorChanged, isBootOrderChanged } from '../../selectors/vm-like/next-run-changes';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 import { VMIWrapper } from '../../k8s/wrapper/vm/vmi-wrapper';
 import { isVMRunningOrExpectedRunning } from '../../selectors/vm/selectors';
@@ -171,7 +165,6 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
 
   const launcherPod = findVMIPod(vmi, pods);
   const id = getBasicID(vmiLike);
-  const cds = vmiLikeWrapper?.getCDROMs() || [];
   const devices = vmiLikeWrapper?.getLabeledDevices() || [];
   const nodeName = getVMINodeName(vmi) || getNodeName(launcherPod);
   const ipAddrs = getVmiIpAddresses(vmi).join(', ');
@@ -213,22 +206,6 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         }
       >
         <BootOrderSummary devices={devices} />
-      </VMDetailsItem>
-
-      <VMDetailsItem
-        title="CD-ROMs"
-        canEdit={canEditWhileVMRunning}
-        editButtonId={prefixedID(id, 'cdrom-edit')}
-        onEditClick={() => VMCDRomModal({ vmLikeEntity: vm, modalClassName: 'modal-lg' })}
-        idValue={prefixedID(id, 'cdrom')}
-        isNotAvail={cds.length === 0}
-        arePendingChanges={
-          isVM &&
-          isVMRunningOrExpectedRunning(vm) &&
-          isCDROMChanged(new VMWrapper(vm), new VMIWrapper(vmi))
-        }
-      >
-        <DiskSummary disks={cds} vm={vm} />
       </VMDetailsItem>
 
       <VMDetailsItem

@@ -35,7 +35,6 @@ export type VMLikeEntityTabProps = {
 
 export enum IsPendingChange {
   flavor = 'Flavor',
-  cdroms = 'CD-ROMs',
   bootOrder = 'Boot Order',
   env = 'Environment',
   nics = 'Network Interfaces',

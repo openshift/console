@@ -47,9 +47,6 @@ export const storageBootSourceSelect = $('#storage-bootsource');
 export const diskWarning = (resourceName) =>
   $(`[data-id="${resourceName}"]`).$('.kubevirt-validation-cell__cell--warning');
 
-// Virtual Hardware tab
-export const addCDButton = $('#vm-cd-add-btn');
-
 // Advanced -- Cloud-init
 export const cloudInitFormCheckbox = $('#cloud-init-edit-mode-first-option');
 export const cloudInitCustomScriptCheckbox = $('#cloud-init-edit-mode-second-option');

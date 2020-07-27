@@ -68,13 +68,6 @@ export const isDisksChanged = (
   });
 };
 
-export const isCDROMChanged = (vm: VMWrapper, vmi: VMIWrapper): boolean => {
-  if (vm.isEmpty() || vmi.isEmpty()) {
-    return false;
-  }
-  return isDisksChanged(vm, vmi, vm.getCDROMs(), vmi.getCDROMs());
-};
-
 export const isBootOrderChanged = (vm: VMWrapper, vmi: VMIWrapper): boolean => {
   if (vm.isEmpty() || vmi.isEmpty()) {
     return false;

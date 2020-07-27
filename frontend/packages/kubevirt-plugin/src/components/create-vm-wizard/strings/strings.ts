@@ -21,7 +21,6 @@ export const TabTitleResolver = {
   [VMWizardTab.NETWORKING]: 'Networking',
   [VMWizardTab.STORAGE]: 'Storage',
   [VMWizardTab.ADVANCED_CLOUD_INIT]: 'Cloud-init',
-  [VMWizardTab.ADVANCED_VIRTUAL_HARDWARE]: 'Virtual Hardware',
   [VMWizardTab.REVIEW]: 'Review',
   [VMWizardTab.RESULT]: 'Result',
 };

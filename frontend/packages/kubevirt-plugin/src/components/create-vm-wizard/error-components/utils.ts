@@ -123,8 +123,7 @@ export const computeStorageErrors = (state, wizardReduxID) => {
     (storage) => storage.getIn(['disk', 'name']),
   ).map((iStorage) => {
     const validations = toJS(iStorage.getIn(['validation', 'validations']), {});
-    const isCD = !!iStorage.getIn(['disk', 'cdrom']);
-    const tab = isCD ? VMWizardTab.ADVANCED_VIRTUAL_HARDWARE : VMWizardTab.STORAGE;
+    const tab = VMWizardTab.STORAGE;
     return {
       id: `storage:${iStorage.get('id')}`,
       path: [
