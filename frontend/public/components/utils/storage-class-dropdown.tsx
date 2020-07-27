@@ -173,7 +173,7 @@ export class StorageClassDropdownInner extends React.Component<
             />
             {describedBy && (
               <p className="help-block" id={describedBy}>
-                Storage class for the new claim.
+                Storage class for the new claim
               </p>
             )}
           </div>

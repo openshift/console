@@ -8,9 +8,11 @@ import {
   ActionGroup,
   Alert,
   Button,
-  Switch,
+  Checkbox,
   FormSelect,
   FormSelectOption,
+  Split,
+  SplitItem,
 } from '@patternfly/react-core';
 import { isCephProvisioner, isObjectSC } from '@console/shared/src/utils';
 import { K8sResourceKind, apiVersionForModel, TemplateKind } from '@console/internal/module/k8s';
@@ -142,8 +144,8 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = (props) => {
     // setting message to display for various modes when a storage class of a know provisioner is selected
     const displayMessage =
       provisionerAccessModeMapping[provisioner] || isCephProvisioner(provisioner)
-        ? 'Access mode is set by storage class and cannot be changed.'
-        : 'Permissions to the mounted drive.';
+        ? 'Access mode is set by storage class and cannot be changed'
+        : 'Permissions to the mounted drive';
     setAccessMode('ReadWriteOnce');
     setAccessModeHelp(displayMessage);
     // setting accessMode to default with the change to Storage Class selection
@@ -206,7 +208,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = (props) => {
           hideDefaultPreview
           isRequired
         />
-        <Switch
+        <Checkbox
           id="golden-os-switch"
           className="kv--create-upload__golden-switch"
           label="Attach this data to a Virtual Machine operating system"
@@ -253,7 +255,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = (props) => {
               required
             />
             <p className="help-block" id="pvc-namespace-help">
-              A unique namespace for the storage claim within the project.
+              A unique namespace for the storage claim within the project
             </p>
           </div>
         </>
@@ -274,18 +276,41 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = (props) => {
           required
         />
         <p className="help-block" id="pvc-name-help">
-          A unique name for the storage claim within the project.
+          A unique name for the storage claim within the project
         </p>
       </div>
       <div className="form-group">
-        <StorageClassDropdown
-          onChange={handleStorageClass}
-          id="storageclass-dropdown"
-          describedBy="storageclass-dropdown-help"
-          required={false}
-          name="storageClass"
-          filter={onlyPvcSCs}
-        />
+        <Split hasGutter>
+          <SplitItem className="kv--create-upload__flexitem">
+            <StorageClassDropdown
+              onChange={handleStorageClass}
+              id="storageclass-dropdown"
+              describedBy="storageclass-dropdown-help"
+              required={false}
+              name="storageClass"
+              filter={onlyPvcSCs}
+            />
+          </SplitItem>
+          <SplitItem className="kv--create-upload__flexitem">
+            <label className="control-label co-required" htmlFor="request-size-input">
+              Size
+            </label>
+            <RequestSizeInput
+              name="requestSize"
+              required
+              onChange={handleRequestSizeInputChange}
+              defaultRequestSizeUnit={requestSizeUnit}
+              defaultRequestSizeValue={requestSizeValue}
+              dropdownUnits={dropdownUnits}
+              describedBy="request-size-help"
+              inputID="request-size-input"
+            />
+            <p className="help-block" id="request-size-help">
+              Ensure your PVC size covers the requirements of the uncompressed image and any other
+              space requirements
+            </p>
+          </SplitItem>
+        </Split>
       </div>
       <label className="control-label co-required" htmlFor="access-mode">
         Access Mode
@@ -317,23 +342,6 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = (props) => {
           {accessModeHelp}
         </p>
       </div>
-      <label className="control-label co-required" htmlFor="request-size-input">
-        Size
-      </label>
-      <RequestSizeInput
-        name="requestSize"
-        required
-        onChange={handleRequestSizeInputChange}
-        defaultRequestSizeUnit={requestSizeUnit}
-        defaultRequestSizeValue={requestSizeValue}
-        dropdownUnits={dropdownUnits}
-        describedBy="request-size-help"
-        inputID="request-size-input"
-      />
-      <p className="help-block" id="request-size-help">
-        Ensure your PVC size covers the requirements of the uncompressed image and any other space
-        requirements
-      </p>
     </div>
   );
 };

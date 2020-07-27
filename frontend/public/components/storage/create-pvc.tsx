@@ -123,8 +123,8 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
     //setting message to display for various modes when a storage class of a know provisioner is selected
     const displayMessage =
       provisionerAccessModeMapping[provisioner] || isCephProvisioner(provisioner)
-        ? 'Access mode is set by storage class and cannot be changed.'
-        : 'Permissions to the mounted drive.';
+        ? 'Access mode is set by storage class and cannot be changed'
+        : 'Permissions to the mounted drive';
     setAccessMode('ReadWriteOnce');
     setAccessModeHelp(displayMessage);
     //setting accessMode to default with the change to Storage Class selection
@@ -179,7 +179,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
           required
         />
         <p className="help-block" id="pvc-name-help">
-          A unique name for the storage claim within the project.
+          A unique name for the storage claim within the project
         </p>
       </div>
       <label className="control-label co-required" htmlFor="access-mode">
@@ -226,7 +226,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
         inputID="request-size-input"
       />
       <p className="help-block" id="request-size-help">
-        Desired storage capacity.
+        Desired storage capacity
       </p>
       <Checkbox
         label="Use label selectors to request storage"
@@ -246,7 +246,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
           />
         )}
         <p className="help-block" id="label-selector-help">
-          Use label selectors to define how storage is created.
+          Use label selectors to define how storage is created
         </p>
       </div>
     </div>
