@@ -542,7 +542,7 @@ export const NamespacedClusterServiceVersionList: React.SFC<ClusterServiceVersio
       }
       const csv = source as ClusterServiceVersionKind;
       if (allNamespaceActive) {
-        return !isCopiedCSV(csv, kind) || isStandardCSV(csv);
+        return !isCopiedCSV(csv, kind) && isStandardCSV(csv);
       }
       return isStandardCSV(csv);
     });
