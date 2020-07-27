@@ -255,6 +255,10 @@ $monitoring-line-height: 18px;
   font-size: ($font-size-base - 1);
 }
 
+.query-browser__autocomplete-match {
+  font-weight: var(--pf-global--FontWeight--bold);
+}
+
 .query-browser__clear-icon {
   font-size: 18px !important;
   padding: 4px !important;
