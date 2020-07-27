@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { Button } from '@patternfly/react-core';
-import { getQuickStart } from '../utils/quick-start-utils';
-import { QuickStartStatus, TaskStatus } from '../utils/quick-start-status';
+import { getQuickStart } from '../../utils/quick-start-utils';
+import { QuickStartStatus, QuickStartTaskStatus } from '../../utils/quick-start-types';
 import QuickStartSection from '../QuickStartSection';
 import QuickStartIntroduction from '../QuickStartIntroduction';
 import QuickStartTasks from '../QuickStartTasks';
@@ -15,7 +15,7 @@ const props: QuickStartSectionProps = {
   quickStartStatus: QuickStartStatus.NOT_STARTED,
   introduction: 'introduction',
   tasks: getQuickStart('serverless-explore').tasks,
-  taskStatus: [TaskStatus.INIT, TaskStatus.INIT, TaskStatus.INIT],
+  taskStatus: [QuickStartTaskStatus.INIT, QuickStartTaskStatus.INIT, QuickStartTaskStatus.INIT],
   activeTaskIndex: 0,
   conclusion: 'conclusion',
   nextQuickStart: 'nextQuickStart',

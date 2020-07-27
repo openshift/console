@@ -1,17 +1,26 @@
 import * as React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import { RootState } from '@console/internal/redux';
-import QuickStartDrawerComponent from './QuickStartDrawerComponent';
 import {
-  getActiveQuickStartID,
-  isQuickStartDrawerExpanded,
-} from '../../redux/reducers/quick-start-reducer';
+  Drawer,
+  DrawerPanelContent,
+  DrawerContent,
+  DrawerPanelBody,
+  DrawerHead,
+  DrawerActions,
+  DrawerCloseButton,
+  DrawerContentBody,
+  Title,
+} from '@patternfly/react-core';
+import { RootState } from '@console/internal/redux';
+import { getActiveQuickStartID } from '../../redux/reducers/quick-start-reducer';
 import { setActiveQuickStart } from '../../redux/actions/quick-start-actions';
 import { getQuickStart } from './utils/quick-start-utils';
 
+import './QuickStartDrawer.scss';
+import QuickStartController from './QuickStartController';
+
 type StateProps = {
-  isExpanded: boolean;
   activeQuickStartID: string;
 };
 
@@ -22,26 +31,48 @@ type DispatchProps = {
 type QuickStartDrawerProps = StateProps & DispatchProps;
 
 const QuickStartDrawer: React.FC<QuickStartDrawerProps> = ({
-  isExpanded,
+  children,
   activeQuickStartID,
   onClose,
-  children,
 }) => {
   const quickStart = getQuickStart(activeQuickStartID);
-  // TODO: Add check for tour completed status and send complete alert based on that
-  // const tourCompleteAlert = (
-  //   <Alert variant="success" isInline title="This tour has already been completed" />
-  // );
+
+  const panelContent = (
+    <DrawerPanelContent>
+      <DrawerHead>
+        <div className="co-quick-start-drawer__title">
+          <Title headingLevel="h1" size="xl">
+            {quickStart?.name}
+          </Title>
+          <Title
+            headingLevel="h6"
+            size="md"
+            className="text-secondary"
+            style={{ marginLeft: 'var(--pf-global--spacer--md)' }}
+          >
+            {`${quickStart?.duration} minutes`}
+          </Title>
+        </div>
+        <DrawerActions>
+          <DrawerCloseButton onClick={onClose} />
+        </DrawerActions>
+      </DrawerHead>
+      <DrawerPanelBody>
+        <QuickStartController quickStart={quickStart} />
+      </DrawerPanelBody>
+    </DrawerPanelContent>
+  );
 
   return (
-    <QuickStartDrawerComponent expanded={isExpanded} quickStart={quickStart} onClose={onClose}>
-      {children}
-    </QuickStartDrawerComponent>
+    <Drawer isExpanded={!!activeQuickStartID} isInline>
+      <DrawerContent panelContent={panelContent}>
+        <DrawerContentBody style={{ zIndex: 0 }}>{children}</DrawerContentBody>
+      </DrawerContent>
+    </Drawer>
   );
 };
 
 const mapStateToProps = (state: RootState): StateProps => ({
-  isExpanded: isQuickStartDrawerExpanded(state),
   activeQuickStartID: getActiveQuickStartID(state),
 });
 

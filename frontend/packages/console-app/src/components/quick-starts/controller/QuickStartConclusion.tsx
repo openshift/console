@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { ArrowRightIcon } from '@patternfly/react-icons';
-import { QuickStartTaskItem } from './utils/quick-start-typings';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
+import { QuickStartTask, QuickStartTaskStatus } from '../utils/quick-start-types';
 import TaskHeader from './QuickStartTaskHeader';
-import { TaskStatus } from './utils/quick-start-status';
 
 type QuickStartConclusionProps = {
-  tasks: QuickStartTaskItem[];
-  taskStatus: TaskStatus[];
+  tasks: QuickStartTask[];
+  taskStatus: QuickStartTaskStatus[];
   conclusion: string;
   nextQuickStart?: string;
   launchNextQuickStart?: () => void;

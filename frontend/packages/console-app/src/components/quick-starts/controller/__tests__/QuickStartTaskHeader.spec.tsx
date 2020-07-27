@@ -2,7 +2,7 @@ import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { Title, WizardNavItem } from '@patternfly/react-core';
 import QuickStartTaskHeader from '../QuickStartTaskHeader';
-import { TaskStatus } from '../utils/quick-start-status';
+import { QuickStartTaskStatus } from '../../utils/quick-start-types';
 
 type QuickStartTaskHeaderProps = React.ComponentProps<typeof QuickStartTaskHeader>;
 let wrapper: ShallowWrapper<QuickStartTaskHeaderProps>;
@@ -10,7 +10,7 @@ const props: QuickStartTaskHeaderProps = {
   title: 'title',
   taskIndex: 1,
   subtitle: 'subtitle',
-  taskStatus: TaskStatus.INIT,
+  taskStatus: QuickStartTaskStatus.INIT,
   size: 'lg',
   isActiveTask: true,
   onTaskSelect: jest.fn(),

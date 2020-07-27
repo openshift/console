@@ -19,8 +19,8 @@ const QuickStartDescription: React.FC<QuickStartDescriptionProps> = ({
     </Text>
     {Array.isArray(prerequisites) && prerequisites?.length > 0 && (
       <div
-        className={cx('oc-quick-start-description__section', {
-          'oc-quick-start-description__unmetprerequisites': unmetPrerequisite,
+        className={cx('co-quick-start-description__section', {
+          'co-quick-start-description__unmetprerequisites': unmetPrerequisite,
         })}
       >
         <Text component={TextVariants.h5}>Prerequisites</Text>

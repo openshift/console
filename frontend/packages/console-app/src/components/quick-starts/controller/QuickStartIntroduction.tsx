@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { QuickStartTaskItem } from './utils/quick-start-typings';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
+import { QuickStartTask } from '../utils/quick-start-types';
 import TaskHeader from './QuickStartTaskHeader';
 
 type QuickStartIntroductionProps = {
-  tasks: QuickStartTaskItem[];
+  tasks: QuickStartTask[];
   introduction: string;
   onTaskSelect: (index) => void;
 };

@@ -1,7 +1,11 @@
-import { QuickStartItem, QuickStartStatus } from './quick-start-typings';
-import { QuickStartStatus as Status } from './quick-start-status';
+import {
+  QuickStart,
+  QuickStartStatus,
+  QuickStartState,
+  QuickStartTaskStatus,
+} from './quick-start-types';
 
-export const mockQuickStarts: QuickStartItem[] = [
+export const mockQuickStarts: QuickStart[] = [
   {
     iconURL:
       '/api/kubernetes/apis/packages.operators.coreos.com/v1/namespaces/openshift-marketplace/packagemanifests/3scale-community-operator/icon?resourceVersion=3scale-community-operator.threescale-2.8.3scale-community-operator.v0.5.1',
@@ -34,7 +38,7 @@ export const mockQuickStarts: QuickStartItem[] = [
             1. Go to the Installed Operators page from the Operators section of the navigation.
             2. Find OpenShift Serverless Operator in the list.
             3. Find the Status column and check the status of the OpenShift Serverless Operator.
-            
+
             Is the status Succeeded?`,
 
         recapitulation: {
@@ -58,7 +62,7 @@ export const mockQuickStarts: QuickStartItem[] = [
 
         review: `To verify that the knative-serving API was installed successfully:
             1. Make sure that you are on the Knative Serving tab of the OpenShift Serverless Operator.
-            
+
             Is there a knative-serving resource in the list?`,
         recapitulation: {
           success: `You've just created an instance of knative-serving! Next, we'll create an instance of knative-eventing`,
@@ -80,7 +84,7 @@ export const mockQuickStarts: QuickStartItem[] = [
             7. Click Create.`,
         review: `To verify that the knative-eventing API was installed successfully:
             1. Make sure that you are on the Knative Eventing tab of the OpenShift Serverless Operator.
-            
+
             Is there a knative-eventing resource in the list?`,
         recapitulation: {
           success: `You've just created an instance of knative-eventing!`,
@@ -113,10 +117,22 @@ export const mockQuickStarts: QuickStartItem[] = [
   },
 ];
 
-export const mockStatus: Record<string, QuickStartStatus> = {
-  'Explore Serverless': { status: Status.COMPLETE },
-  'Serverless Aplications': { status: Status.IN_PROGRESS, active: true },
-  'Build Pipelines': { status: Status.NOT_STARTED },
+export const mockStatus: Record<string, QuickStartState> = {
+  'serverless-explore': {
+    status: QuickStartStatus.NOT_STARTED,
+    currentTask: -1,
+    taskStatus: [QuickStartTaskStatus.INIT, QuickStartTaskStatus.INIT, QuickStartTaskStatus.INIT],
+  },
+  'serverless-applications': {
+    status: QuickStartStatus.IN_PROGRESS,
+    currentTask: 2,
+    taskStatus: [QuickStartTaskStatus.INIT, QuickStartTaskStatus.INIT, QuickStartTaskStatus.INIT],
+  },
+  'pipelines-build': {
+    status: QuickStartStatus.COMPLETE,
+    currentTask: 3,
+    taskStatus: [QuickStartTaskStatus.INIT, QuickStartTaskStatus.INIT, QuickStartTaskStatus.INIT],
+  },
 };
 
 export const mockPrerequisiteStatus: Record<string, boolean> = {

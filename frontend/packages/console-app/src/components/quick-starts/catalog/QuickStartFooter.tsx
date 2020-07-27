@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Flex, FlexItem, Button } from '@patternfly/react-core';
-import { QuickStartStatus } from './utils/quick-start-status';
+import { QuickStartStatus } from '../utils/quick-start-types';
 
 type QuickStartFooterProps = {
   status: string;

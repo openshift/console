@@ -14,7 +14,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { ArrowRightIcon } from '@patternfly/react-icons';
-import { getQuickStartsWithStatus } from '@console/app/src/components/quick-starts/utils/quick-start-utils';
+import { getQuickStarts } from '@console/app/src/components/quick-starts/utils/quick-start-utils';
 import './QuickStartTile.scss';
 
 export const HIDE_QUICK_START_STORAGE_KEY = 'bridge/hide-tour-tile';
@@ -23,7 +23,7 @@ const QuickStartTile: React.FC = () => {
   const isQuickStartTileHidden = localStorage.getItem(HIDE_QUICK_START_STORAGE_KEY) === 'true';
   const [showTile, setShowTile] = React.useState<boolean>(!isQuickStartTileHidden);
   const [isOpen, setOpen] = React.useState<boolean>(false);
-  const tours = getQuickStartsWithStatus();
+  const tours = getQuickStarts();
 
   const onRemove = () => {
     localStorage.setItem(HIDE_QUICK_START_STORAGE_KEY, 'true');

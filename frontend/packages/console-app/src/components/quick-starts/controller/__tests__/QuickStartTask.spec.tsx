@@ -2,8 +2,8 @@ import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { Alert } from '@patternfly/react-core';
-import { getQuickStart } from '../utils/quick-start-utils';
-import { TaskStatus } from '../utils/quick-start-status';
+import { getQuickStart } from '../../utils/quick-start-utils';
+import { QuickStartTaskStatus } from '../../utils/quick-start-types';
 import QuickStartTask from '../QuickStartTasks';
 import TaskHeader from '../QuickStartTaskHeader';
 
@@ -11,7 +11,7 @@ type QuickStartTaskProps = React.ComponentProps<typeof QuickStartTask>;
 let wrapper: ShallowWrapper<QuickStartTaskProps>;
 const props: QuickStartTaskProps = {
   tasks: getQuickStart('serverless-explore').tasks,
-  taskStatus: [TaskStatus.SUCCESS, TaskStatus.INIT, TaskStatus.INIT],
+  taskStatus: [QuickStartTaskStatus.SUCCESS, QuickStartTaskStatus.INIT, QuickStartTaskStatus.INIT],
   activeTaskIndex: 1,
   reviewCallback: jest.fn(),
   onTaskSelect: jest.fn(),
@@ -29,7 +29,11 @@ describe('QuickStartTask', () => {
     wrapper = shallow(
       <QuickStartTask
         {...props}
-        taskStatus={[TaskStatus.SUCCESS, TaskStatus.FAILED, TaskStatus.INIT]}
+        taskStatus={[
+          QuickStartTaskStatus.SUCCESS,
+          QuickStartTaskStatus.FAILED,
+          QuickStartTaskStatus.INIT,
+        ]}
         activeTaskIndex={2}
       />,
     );
@@ -60,7 +64,11 @@ describe('QuickStartTask', () => {
     wrapper = shallow(
       <QuickStartTask
         {...props}
-        taskStatus={[TaskStatus.SUCCESS, TaskStatus.REVIEW, TaskStatus.INIT]}
+        taskStatus={[
+          QuickStartTaskStatus.SUCCESS,
+          QuickStartTaskStatus.REVIEW,
+          QuickStartTaskStatus.INIT,
+        ]}
       />,
     );
     expect(
@@ -75,7 +83,11 @@ describe('QuickStartTask', () => {
     wrapper = shallow(
       <QuickStartTask
         {...props}
-        taskStatus={[TaskStatus.SUCCESS, TaskStatus.SUCCESS, TaskStatus.INIT]}
+        taskStatus={[
+          QuickStartTaskStatus.SUCCESS,
+          QuickStartTaskStatus.SUCCESS,
+          QuickStartTaskStatus.INIT,
+        ]}
       />,
     );
     expect(
@@ -90,7 +102,11 @@ describe('QuickStartTask', () => {
     wrapper = shallow(
       <QuickStartTask
         {...props}
-        taskStatus={[TaskStatus.SUCCESS, TaskStatus.FAILED, TaskStatus.INIT]}
+        taskStatus={[
+          QuickStartTaskStatus.SUCCESS,
+          QuickStartTaskStatus.FAILED,
+          QuickStartTaskStatus.INIT,
+        ]}
       />,
     );
     expect(

@@ -1,21 +1,7 @@
-import { mockQuickStarts, mockStatus, mockPrerequisiteStatus } from './quick-start-mocks';
-import { QuickStartCatalogItem, QuickStartItem } from './quick-start-typings';
+import { QuickStart } from './quick-start-types';
+import { mockQuickStarts } from './quick-start-mocks';
 
-const getQuickStarts = (): QuickStartItem[] => {
-  return mockQuickStarts;
-};
+export const getQuickStarts = (): QuickStart[] => mockQuickStarts;
 
-export const getQuickStartsWithStatus = (): QuickStartCatalogItem[] => {
-  const items = getQuickStarts();
-  return items.map((item) => {
-    return {
-      ...item,
-      ...mockStatus[item.name],
-      unmetPrerequisite: mockPrerequisiteStatus[item.name],
-    };
-  });
-};
-
-export const getQuickStart = (quickStartID: string): QuickStartItem => {
-  return mockQuickStarts.find((qs) => qs.id === quickStartID);
-};
+export const getQuickStart = (quickStartID: string): QuickStart =>
+  mockQuickStarts.find((qs) => qs.id === quickStartID);

@@ -1,15 +1,14 @@
 import * as React from 'react';
 import cx from 'classnames';
 import { Alert, Radio } from '@patternfly/react-core';
-import { QuickStartTaskItem } from './utils/quick-start-typings';
-import { TaskStatus } from './utils/quick-start-status';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
+import { QuickStartTask, QuickStartTaskStatus } from '../utils/quick-start-types';
 import TaskHeader from './QuickStartTaskHeader';
 import './QuickStartTasks.scss';
 
 type QuickStartTaskProps = {
-  tasks: QuickStartTaskItem[];
-  taskStatus: TaskStatus[];
+  tasks: QuickStartTask[];
+  taskStatus: QuickStartTaskStatus[];
   activeTaskIndex: number;
   reviewCallback: (reviewState: boolean) => void;
   onTaskSelect: (index) => void;
@@ -44,27 +43,29 @@ const QuickStartTasks: React.FC<QuickStartTaskProps> = ({
               content={
                 isActiveTask
                   ? description
-                  : currTaskStatus === TaskStatus.SUCCESS
+                  : currTaskStatus === QuickStartTaskStatus.SUCCESS
                   ? recapitulation.success
                   : recapitulation.failed
               }
             />
-            {isActiveTask && currTaskStatus !== TaskStatus.INIT && review && (
+            {isActiveTask && currTaskStatus !== QuickStartTaskStatus.INIT && review && (
               <Alert
                 key={`${currTaskStatus}${task.title}`}
                 isInline
                 variant={
-                  currTaskStatus === TaskStatus.SUCCESS
+                  currTaskStatus === QuickStartTaskStatus.SUCCESS
                     ? 'success'
-                    : currTaskStatus === TaskStatus.FAILED
+                    : currTaskStatus === QuickStartTaskStatus.FAILED
                     ? 'danger'
                     : 'info'
                 }
                 title={
                   <span
                     className={cx({
-                      'co-quick-start-task__review-success': currTaskStatus === TaskStatus.SUCCESS,
-                      'co-quick-start-task__review-failed': currTaskStatus === TaskStatus.FAILED,
+                      'co-quick-start-task__review-success':
+                        currTaskStatus === QuickStartTaskStatus.SUCCESS,
+                      'co-quick-start-task__review-failed':
+                        currTaskStatus === QuickStartTaskStatus.FAILED,
                     })}
                   >
                     Check your work
@@ -78,7 +79,7 @@ const QuickStartTasks: React.FC<QuickStartTaskProps> = ({
                     onChange={() => reviewCallback(true)}
                     label="Yes"
                     id="review-affirmative"
-                    isChecked={currTaskStatus === TaskStatus.SUCCESS}
+                    isChecked={currTaskStatus === QuickStartTaskStatus.SUCCESS}
                     className="co-quick-start-task__radio-button-field"
                   />
                   <Radio
@@ -86,11 +87,11 @@ const QuickStartTasks: React.FC<QuickStartTaskProps> = ({
                     onChange={() => reviewCallback(false)}
                     label="No"
                     id="review-negative"
-                    isChecked={currTaskStatus === TaskStatus.FAILED}
+                    isChecked={currTaskStatus === QuickStartTaskStatus.FAILED}
                     className="co-quick-start-task__radio-button-field"
                   />
                 </span>
-                {currTaskStatus === TaskStatus.FAILED && taskHelp && <h5>{taskHelp}</h5>}
+                {currTaskStatus === QuickStartTaskStatus.FAILED && taskHelp && <h5>{taskHelp}</h5>}
               </Alert>
             )}
           </React.Fragment>

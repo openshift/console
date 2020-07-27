@@ -2,14 +2,14 @@ import * as React from 'react';
 import cx from 'classnames';
 import { Title, WizardNavItem } from '@patternfly/react-core';
 import { CheckCircleIcon, TimesCircleIcon } from '@patternfly/react-icons';
-import { TaskStatus } from './utils/quick-start-status';
+import { QuickStartTaskStatus } from '../utils/quick-start-types';
 import './QuickStartTaskHeader.scss';
 
 type QuickStartTaskHeaderProps = {
   title: string;
   taskIndex: number;
   subtitle?: string;
-  taskStatus?: TaskStatus;
+  taskStatus?: QuickStartTaskStatus;
   size?: 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
   isActiveTask?: boolean;
   onTaskSelect: (index: number) => void;
@@ -28,13 +28,13 @@ const TaskIcon: React.FC<{ taskIndex; taskStatus; isActiveTask }> = ({
     );
   }
   switch (taskStatus) {
-    case TaskStatus.SUCCESS:
+    case QuickStartTaskStatus.SUCCESS:
       return (
         <span className="co-icon-and-text__icon">
           <CheckCircleIcon size="md" className="co-quick-start-task-header__task-icon-success" />
         </span>
       );
-    case TaskStatus.FAILED:
+    case QuickStartTaskStatus.FAILED:
       return (
         <span className="co-icon-and-text__icon">
           <TimesCircleIcon size="md" className="co-quick-start-task-header__task-icon-failed" />
@@ -67,9 +67,9 @@ const QuickStartTaskHeader: React.FC<QuickStartTaskHeaderProps> = ({
             size={size}
             className={cx('co-quick-start-task-header__title', {
               'co-quick-start-task-header__title-success':
-                taskStatus === TaskStatus.SUCCESS && !isActiveTask,
+                taskStatus === QuickStartTaskStatus.SUCCESS && !isActiveTask,
               'co-quick-start-task-header__title-failed':
-                taskStatus === TaskStatus.FAILED && !isActiveTask,
+                taskStatus === QuickStartTaskStatus.FAILED && !isActiveTask,
             })}
           >
             <TaskIcon taskIndex={taskIndex} taskStatus={taskStatus} isActiveTask={isActiveTask} />

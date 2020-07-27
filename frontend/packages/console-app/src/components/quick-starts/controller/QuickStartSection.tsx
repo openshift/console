@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@patternfly/react-core';
-import { QuickStartTaskItem } from './utils/quick-start-typings';
-import { QuickStartStatus, TaskStatus } from './utils/quick-start-status';
+import { QuickStartTask, QuickStartStatus, QuickStartTaskStatus } from '../utils/quick-start-types';
 import QuickStartIntroduction from './QuickStartIntroduction';
 import QuickStartTasks from './QuickStartTasks';
 import QuickStartConclusion from './QuickStartConclusion';
@@ -11,8 +10,8 @@ import './QuickStartSection.scss';
 type QuickStartSectionProps = {
   quickStartStatus: QuickStartStatus;
   introduction: string;
-  tasks: QuickStartTaskItem[];
-  taskStatus: TaskStatus[];
+  tasks: QuickStartTask[];
+  taskStatus: QuickStartTaskStatus[];
   activeTaskIndex: number;
   conclusion: string;
   nextQuickStart?: string;
