@@ -84,7 +84,7 @@ import { refreshNotificationPollers } from '../notification-drawer';
 import { formatPrometheusDuration } from '../utils/datetime';
 import { ActionsMenu } from '../utils/dropdown';
 import { Firehose } from '../utils/firehose';
-import { SectionHeading, ActionButtons } from '../utils/headings';
+import { SectionHeading, ActionButtons, BreadCrumbs } from '../utils/headings';
 import { Kebab } from '../utils/kebab';
 import { ExternalLink, getURLSearchParams } from '../utils/link';
 import { ResourceLink } from '../utils/resource-link';
@@ -92,7 +92,7 @@ import { ResourceStatus } from '../utils/resource-status';
 import { history } from '../utils/router';
 import { LoadingInline, StatusBox } from '../utils/status-box';
 import { Timestamp } from '../utils/timestamp';
-import { BreadCrumbs } from '../utils';
+import { getActiveNamespace } from '../../reducers/ui';
 
 const ruleURL = (rule: Rule) => `${RuleResource.plural}/${_.get(rule, 'id')}`;
 
@@ -182,7 +182,7 @@ const SilenceState = ({ silence }) => {
   ) : null;
 };
 
-const StateTimestamp = ({ text, timestamp }) => (
+export const StateTimestamp = ({ text, timestamp }) => (
   <div className="text-muted monitoring-timestamp">
     {text}&nbsp;
     <Timestamp timestamp={timestamp} />
@@ -732,25 +732,38 @@ const ActiveAlerts = ({ alerts, ruleID }) => (
 );
 
 const ruleStateToProps = (state: RootState, { match }): AlertRulesDetailsPageProps => {
-  const { data, loaded, loadError }: Rules = rulesToProps(state);
+  const perspective = _.has(match.params, 'ns') ? 'dev' : 'admin';
+  const { data, loaded, loadError }: Rules = rulesToProps(state, perspective);
   const id = _.get(match, 'params.id');
   const rule = _.find(data, { id });
-  return { loaded, loadError, rule };
+  const namespace = getActiveNamespace(state);
+  const url = match.url;
+  return { loaded, loadError, rule, activePerspective: perspective, namespace, url };
 };
 
-const AlertRulesDetailsPage = withFallback(
+export const AlertRulesDetailsPage = withFallback(
   connect(ruleStateToProps)((props: AlertRulesDetailsPageProps) => {
-    const { loaded, loadError, rule } = props;
+    const { loaded, loadError, rule, activePerspective, namespace, url } = props;
     const { alerts = [], annotations = {}, duration = null, name = '', query = '' } = rule || {};
     const severity = rule?.labels?.severity;
-
+    const alertsPath =
+      activePerspective === 'dev' ? `/dev-monitoring/ns/${namespace}/alerts` : '/monitoring/alerts';
     return (
       <>
         <Helmet>
           <title>{`${name || RuleResource.label} · Details`}</title>
         </Helmet>
         <StatusBox data={rule} label={RuleResource.label} loaded={loaded} loadError={loadError}>
-          <div className="co-m-nav-title co-m-nav-title--detail">
+          <div className="co-m-nav-title co-m-nav-title--detail co-m-nav-title--breadcrumbs">
+            <BreadCrumbs
+              breadcrumbs={[
+                {
+                  name: 'Alerts',
+                  path: alertsPath,
+                },
+                { name: 'Alert Rule Details', path: url },
+              ]}
+            />
             <h1 className="co-m-pane__heading">
               <div className="co-resource-item">
                 <MonitoringResourceIcon
@@ -791,7 +804,7 @@ const AlertRulesDetailsPage = withFallback(
                     )}
                     <dt>Expression</dt>
                     <dd>
-                      <Link to={queryBrowserURL(query)}>
+                      <Link to={queryBrowserURL(query, activePerspective, namespace)}>
                         <pre className="co-pre-wrap monitoring-query">{query}</pre>
                       </Link>
                     </dd>
@@ -806,7 +819,7 @@ const AlertRulesDetailsPage = withFallback(
               <SectionHeading text="Active Alerts" />
               <div className="row">
                 <div className="col-sm-12">
-                  <Graph rule={rule} />
+                  <Graph rule={rule} activePerspective={activePerspective} namespace={namespace} />
                 </div>
               </div>
               <div className="row">
@@ -1494,6 +1507,9 @@ type AlertRulesDetailsPageProps = {
   loaded: boolean;
   loadError?: string;
   rule: Rule;
+  activePerspective: string;
+  namespace: string;
+  url: string;
 };
 
 type SilencesDetailsPageProps = {

@@ -10,7 +10,7 @@ import {
   LAST_PERSPECTIVE_LOCAL_STORAGE_KEY,
   PINNED_RESOURCES_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants';
-import { AlertStates, isSilenced, SilenceStates } from '../reducers/monitoring';
+import { AlertStates, isSilenced, SilenceStates, RuleStates } from '../reducers/monitoring';
 import { legalNamePattern, getNamespace } from '../components/utils/link';
 import { OverviewSpecialGroup } from '../components/overview/constants';
 import { RootState } from '../redux';
@@ -40,7 +40,7 @@ const newQueryBrowserQuery = (): ImmutableMap<string, any> =>
     isExpanded: true,
   });
 
-const silenceFiringAlerts = (firingAlerts, silences) => {
+export const silenceFiringAlerts = (firingAlerts, silences) => {
   // For each firing alert, store a list of the Silences that are silencing it and set its state to show it is silenced
   _.each(firingAlerts, (a) => {
     a.silencedBy = _.filter(
@@ -55,6 +55,13 @@ const silenceFiringAlerts = (firingAlerts, silences) => {
           ruleAlert.state = AlertStates.Silenced;
         }
       });
+      if (!_.isEmpty(a.rule.alerts) && _.every(a.rule.alerts, isSilenced)) {
+        a.rule.state = RuleStates.Silenced;
+        a.rule.silencedBy = _.filter(
+          silences?.data,
+          (s) => s.status.state === SilenceStates.Active && _.some(a.rule.alerts, isSilenced),
+        );
+      }
     }
   });
 };
@@ -219,7 +226,6 @@ export default (state: UIState, action: UIAction): UIState => {
       const firingAlerts = _.filter(alerts?.data, isAlertFiring);
       silenceFiringAlerts(firingAlerts, silences);
       silenceFiringAlerts(_.filter(notificationAlerts?.data, isAlertFiring), silences);
-      // filter out silenced alerts from notificationAlerts
       notificationAlerts.data = _.reject(notificationAlerts.data, { state: AlertStates.Silenced });
       state = state.setIn(['monitoring', alertKey], alerts);
       state = state.setIn(['monitoring', 'notificationAlerts'], notificationAlerts);

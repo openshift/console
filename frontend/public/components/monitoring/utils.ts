@@ -71,9 +71,9 @@ export const getAlertsAndRules = (
 export const alertsToProps = ({ UI }, perspective?: string) =>
   UI.getIn(['monitoring', perspective === 'dev' ? 'devAlerts' : 'alerts']) || {};
 
-export const rulesToProps = (state: RootState) => {
-  const data = state.UI.getIn(['monitoring', 'rules']);
-  const { loaded, loadError }: Alerts = alertsToProps(state);
+export const rulesToProps = (state: RootState, perspective?: string) => {
+  const data = state.UI.getIn(['monitoring', perspective === 'dev' ? 'devRules' : 'rules']);
+  const { loaded, loadError }: Alerts = alertsToProps(state, perspective);
   return { data, loaded, loadError };
 };
 

@@ -27,10 +27,12 @@ import {
 import { Alert, Rule } from '@console/internal/components/monitoring/types';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { labelsToParams } from '@console/internal/components/monitoring/utils';
+import SilenceAlert from './SilenceAlert';
 
-const viewAlertRule = {
+const viewAlertRule = (rule: Rule, ns: string) => ({
   label: 'View Alerting Rule',
-};
+  href: `/dev-monitoring/ns/${ns}/rules/${rule.id}`,
+});
 
 type MonitoringAlertColumn = {
   title: string;
@@ -50,15 +52,21 @@ export const monitoringAlertColumn: MonitoringAlertColumn[] = [
   },
   {
     title: 'Severity',
-    transforms: [sortable, cellWidth(20)],
+    transforms: [sortable, cellWidth(10)],
     fieldName: 'severity',
     sortFunc: 'alertSeverityOrder',
   },
   {
     title: 'Alert State',
-    transforms: [sortable, cellWidth(20)],
+    transforms: [sortable, cellWidth(15)],
     fieldName: 'alertState',
     sortFunc: 'alertingRuleStateOrder',
+  },
+  {
+    title: 'Notifications',
+    transforms: [sortable, cellWidth(20)],
+    fieldName: 'notifications',
+    sortFunc: 'alertingRuleNotificationsOrder',
   },
   { title: '' },
 ];
@@ -72,7 +80,9 @@ export const monitoringAlertRows = (
   _.forEach(alertrules, (rls) => {
     rows.push({
       ...(rls.state !== RuleStates.Inactive && {
-        isOpen: rls.state === RuleStates.Firing && !_.includes(collapsedRowsIds, rls.name),
+        isOpen:
+          (rls.state === RuleStates.Firing && !_.includes(collapsedRowsIds, rls.id)) ||
+          (rls.state !== RuleStates.Firing && _.includes(collapsedRowsIds, rls.id)),
       }),
       cells: [
         {
@@ -84,7 +94,7 @@ export const monitoringAlertRows = (
                 <YellowExclamationTriangleIcon /> {rls.name}
               </>
             ),
-          id: rls.name,
+          id: rls.id,
         },
         {
           title: <Severity severity={rls.labels?.severity} />,
@@ -93,9 +103,12 @@ export const monitoringAlertRows = (
           title: _.isEmpty(rls.alerts) ? 'Not Firing' : <StateCounts alerts={rls.alerts} />,
         },
         {
+          title: <SilenceAlert rule={rls} />,
+        },
+        {
           title: (
             <div className="odc-monitoring-alerts--kebab">
-              <Kebab options={[viewAlertRule]} />
+              <Kebab options={[viewAlertRule(rls, namespace)]} />
             </div>
           ),
         },
@@ -103,7 +116,7 @@ export const monitoringAlertRows = (
     });
     _.forEach(rls.alerts, (alert: Alert) => {
       rows.push({
-        parent: _.findIndex(rows, (r) => r.cells[0].id === rls.name),
+        parent: _.findIndex(rows, (r) => r.cells[0].id === rls.id),
         fullWidth: true,
         cells: [
           {
@@ -124,7 +137,7 @@ export const monitoringAlertRows = (
                 <AlertState state={alertState(alert)} />
               </div>
             ),
-            props: { colSpan: 2 },
+            props: { colSpan: 3 },
           },
         ],
       });
@@ -138,7 +151,7 @@ export const alertFilters = [
     filterGroupName: 'Alert State',
     type: 'alert-state',
     reducer: alertState,
-    items: alertsRowFilters[0].items,
+    items: [...alertsRowFilters[0].items, ...[{ id: 'inactive', title: 'Not Firing' }]],
   },
   severityRowFilter,
 ];
@@ -147,10 +160,16 @@ const setOrderBy = (orderBy: SortByDirection, data: Rule[]): Rule[] => {
   return orderBy === SortByDirection.asc ? data : data.reverse();
 };
 
+const alertingRuleNotificationsOrder = (rule: Rule) => [
+  rule.state === RuleStates.Silenced ? 1 : 0,
+  rule.state,
+];
+
 const sortFunc = {
   nameOrder: (rule) => rule.name,
   alertSeverityOrder,
   alertingRuleStateOrder,
+  alertingRuleNotificationsOrder,
 };
 
 export const applyListSort = (rules: Rule[], orderBy: SortByDirection, func: string): Rule[] => {

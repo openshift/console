@@ -805,7 +805,20 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: async () =>
         (
           await import(
-            './components/monitoring/alerts/MonitoringAlertsDetailsPage' /* webpackChunkName: "dev-console-monitoring-alerts" */
+            './components/monitoring/alerts/MonitoringAlertsRulesDetailsPage' /* webpackChunkName: "dev-console-monitoring-alerts" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: false,
+      path: ['/dev-monitoring/ns/:ns/rules/:id'],
+      loader: async () =>
+        (
+          await import(
+            './components/monitoring/alerts/MonitoringAlertsRulesDetailsPage' /* webpackChunkName: "dev-console-monitoring-rules" */
           )
         ).default,
     },
