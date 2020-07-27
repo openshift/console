@@ -24,7 +24,7 @@ export type QuickStartTaskItem = {
   taskHelp?: string;
 };
 
-export type QuickStartStatus = {
+type QuickStartStatus = {
   active?: boolean;
   status: string;
 };

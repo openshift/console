@@ -20,8 +20,8 @@ import './QuickStartTile.scss';
 export const HIDE_QUICK_START_STORAGE_KEY = 'bridge/hide-tour-tile';
 
 const QuickStartTile: React.FC = () => {
-  const isQsTileHidden = localStorage.getItem(HIDE_QUICK_START_STORAGE_KEY) === 'true';
-  const [showTile, setShowTile] = React.useState<boolean>(!isQsTileHidden);
+  const isQuickStartTileHidden = localStorage.getItem(HIDE_QUICK_START_STORAGE_KEY) === 'true';
+  const [showTile, setShowTile] = React.useState<boolean>(!isQuickStartTileHidden);
   const [isOpen, setOpen] = React.useState<boolean>(false);
   const tours = getQuickStartsWithStatus();
 
@@ -47,7 +47,7 @@ const QuickStartTile: React.FC = () => {
 
   return slicedTours.length > 0 && showTile ? (
     <GalleryItem>
-      <Card className="odc-quickstart-tile__card">
+      <Card className="odc-quick-start-tile__card">
         <CardHeader>
           <CardHeaderMain>
             <Title headingLevel="h1" size="xl">
@@ -66,13 +66,13 @@ const QuickStartTile: React.FC = () => {
         </CardHeader>
         <CardBody>
           {slicedTours.map((tour) => (
-            <div key={tour.name} className="odc-quickstart-tile__tour">
+            <div key={tour.name} className="odc-quick-start-tile__tour">
               <Link to="/#">{tour.name}</Link>
             </div>
           ))}
         </CardBody>
-        <CardFooter className="odc-quickstart-tile__footer">
-          <ArrowRightIcon className="odc-quickstart-tile__arrowbtn" />
+        <CardFooter className="odc-quick-start-tile__footer">
+          <ArrowRightIcon className="odc-quick-start-tile__arrowbtn" />
           <Link to="/quickstart">See all Quick Starts</Link>
         </CardFooter>
       </Card>
