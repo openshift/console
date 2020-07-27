@@ -41,7 +41,7 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal, cv }
     group: ClusterVersionModel.apiGroup,
     resource: ClusterVersionModel.plural,
     verb: 'patch',
-    name: clusterVersion.metadata.name,
+    name: 'version',
   });
 
   return (
