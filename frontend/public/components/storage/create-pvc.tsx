@@ -224,10 +224,8 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
         dropdownUnits={dropdownUnits}
         describedBy="request-size-help"
         inputID="request-size-input"
+        helpText="Desired storage capacity"
       />
-      <p className="help-block" id="request-size-help">
-        Desired storage capacity
-      </p>
       <Checkbox
         label="Use label selectors to request storage"
         onChange={handleUseSelector}

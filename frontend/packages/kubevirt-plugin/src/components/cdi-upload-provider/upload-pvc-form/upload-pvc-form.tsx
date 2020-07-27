@@ -304,11 +304,9 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = (props) => {
               dropdownUnits={dropdownUnits}
               describedBy="request-size-help"
               inputID="request-size-input"
+              helpText="Ensure your PVC size covers the requirements of the uncompressed image and any other
+              space requirements"
             />
-            <p className="help-block" id="request-size-help">
-              Ensure your PVC size covers the requirements of the uncompressed image and any other
-              space requirements
-            </p>
           </SplitItem>
         </Split>
       </div>
