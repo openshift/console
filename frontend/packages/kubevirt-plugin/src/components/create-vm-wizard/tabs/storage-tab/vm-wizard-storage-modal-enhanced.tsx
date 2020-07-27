@@ -58,7 +58,9 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
       .map(({ dataVolumeWrapper: dvw }) => dvw.getName()),
   );
 
-  const [namespace, setNamespace] = React.useState<string>(vmNamespace);
+  const [namespace, setNamespace] = React.useState<string>(
+    new DataVolumeWrapper(dataVolume).getPesistentVolumeClaimNamespace() || vmNamespace,
+  );
 
   const resources = [
     {
