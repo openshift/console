@@ -55,7 +55,7 @@ const DataListRow: React.FC<DataListRowProps> = ({
 export const ColumnManagementModal: React.FC<ColumnManagementModalProps> = ({
   cancel,
   close,
-  columnManagementId,
+  columnManagementID,
   columnManagementType,
   selectedColumns,
 }) => {
@@ -70,7 +70,7 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps> = ({
     ? selectedColumns.filter((column) => column.additional)
     : [];
 
-  const [checkedColumns, setCheckedColumns] = React.useState<Set<string>>(new Set(initialSelected));
+  const [checkedColumns, setCheckedColumns] = React.useState(new Set(initialSelected));
 
   const onColumnChange = (checked: boolean, event: React.SyntheticEvent): void => {
     const updatedCheckedColumns = new Set<string>(checkedColumns);
@@ -85,7 +85,7 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps> = ({
     event.preventDefault();
     dispatch(
       setTableColumns(
-        columnManagementId,
+        columnManagementID,
         selectedColumns.map((column) => {
           return { ...column, visible: checkedColumns.has(column.id) };
         }),
@@ -183,7 +183,7 @@ type DataListRowProps = {
 export type ColumnManagementModalProps = {
   cancel?: () => void;
   close?: () => void;
-  columnManagementId: string;
+  columnManagementID: string;
   selectedColumns: ManagedColumn[];
   columnManagementType: string;
 };

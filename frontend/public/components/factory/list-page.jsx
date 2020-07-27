@@ -59,7 +59,7 @@ export const TextFilter = (props) => {
 TextFilter.displayName = 'TextFilter';
 
 // TODO (jon) make this into "withListPageFilters" HOC
-/** @augments {React.PureComponent<{ListComponent: React.ComponentType<any>, kinds: string[], filters?:any, flatten?: function, data?: any[], rowFilters?: any[], hideToolbar?: boolean, hideLabelFilter?: boolean, selectedColumns?: any, columnManagementId?: string, columnManagementType?: string }>} */
+/** @augments {React.PureComponent<{ListComponent: React.ComponentType<any>, kinds: string[], filters?:any, flatten?: function, data?: any[], rowFilters?: any[], hideToolbar?: boolean, hideLabelFilter?: boolean, selectedColumns?: any, columnManagementID?: string, columnManagementType?: string }>} */
 export class ListPageWrapper_ extends React.PureComponent {
   render() {
     const {
@@ -71,7 +71,7 @@ export class ListPageWrapper_ extends React.PureComponent {
       hideToolbar,
       hideLabelFilter,
       selectedColumns,
-      columnManagementId,
+      columnManagementID,
       columnManagementType,
     } = this.props;
     const data = flatten ? flatten(this.props.resources) : [];
@@ -84,7 +84,7 @@ export class ListPageWrapper_ extends React.PureComponent {
         hideToolbar={hideToolbar}
         hideLabelFilter={hideLabelFilter}
         selectedColumns={selectedColumns}
-        columnManagementId={columnManagementId}
+        columnManagementID={columnManagementID}
         columnManagementType={columnManagementType}
         {...this.props}
       />
@@ -114,7 +114,6 @@ ListPageWrapper_.propTypes = {
   hideToolbar: PropTypes.bool,
   hideLabelFilter: PropTypes.bool,
   selectedColumns: PropTypes.any,
-  hideColumnManagement: PropTypes.bool,
 };
 
 /** @type {React.FC<<WrappedComponent>, {canCreate?: Boolean, textFilter:string, createAccessReview?: Object, createButtonText?: String, createProps?: Object, fieldSelector?: String, filterLabel?: String, resources: any, badge?: React.ReactNode}>*/
@@ -312,7 +311,7 @@ FireMan_.propTypes = {
   title: PropTypes.string,
 };
 
-/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean, badge?: React.ReactNode, createHandler?: any, hideToolbar?: boolean, hideLabelFilter?: boolean, selectedColumns?: any, columnManagementId?: string, columnManagementType?: string, customData?: any} >} */
+/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean, badge?: React.ReactNode, createHandler?: any, hideToolbar?: boolean, hideLabelFilter?: boolean, selectedColumns?: any, columnManagementID?: string, columnManagementType?: string, customData?: any} >} */
 export const ListPage = withFallback((props) => {
   const {
     autoFocus,
@@ -340,7 +339,7 @@ export const ListPage = withFallback((props) => {
     hideToolbar,
     hideLabelFilter,
     selectedColumns,
-    columnManagementId,
+    columnManagementID,
     columnManagementType,
   } = props;
   let { createProps } = props;
@@ -409,7 +408,7 @@ export const ListPage = withFallback((props) => {
       hideToolbar={hideToolbar}
       hideLabelFilter={hideLabelFilter}
       selectedColumns={selectedColumns}
-      columnManagementId={columnManagementId}
+      columnManagementID={columnManagementID}
       columnManagementType={columnManagementType}
     />
   );
@@ -417,7 +416,7 @@ export const ListPage = withFallback((props) => {
 
 ListPage.displayName = 'ListPage';
 
-/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, createAccessReview?: Object, flatten?: Function, title?: string, label?: string, hideTextFilter?: boolean, showTitle?: boolean, helpText?: any, filterLabel?: string, textFilter?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string, customData?: any, badge?: React.ReactNode, hideToolbar?: boolean, hideLabelFilter?: boolean, selectedColumns?: any, columnManagementId?: string, columnManagementType?: string >} */
+/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, createAccessReview?: Object, flatten?: Function, title?: string, label?: string, hideTextFilter?: boolean, showTitle?: boolean, helpText?: any, filterLabel?: string, textFilter?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string, customData?: any, badge?: React.ReactNode, hideToolbar?: boolean, hideLabelFilter?: boolean, selectedColumns?: any, columnManagementID?: string, columnManagementType?: string >} */
 export const MultiListPage = (props) => {
   const {
     autoFocus,
@@ -442,7 +441,7 @@ export const MultiListPage = (props) => {
     hideToolbar,
     hideLabelFilter,
     selectedColumns,
-    columnManagementId,
+    columnManagementID,
     columnManagementType,
   } = props;
 
@@ -481,7 +480,7 @@ export const MultiListPage = (props) => {
           hideToolbar={hideToolbar}
           hideLabelFilter={hideLabelFilter}
           selectedColumns={selectedColumns}
-          columnManagementId={columnManagementId}
+          columnManagementID={columnManagementID}
           columnManagementType={columnManagementType}
         />
       </Firehose>

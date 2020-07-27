@@ -11,7 +11,7 @@ import {
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PodModel } from '@console/internal/models';
 
-const columnManagementId = referenceForModel(PodModel);
+const columnManagementID = referenceForModel(PodModel);
 const columnManagementType = 'Pod';
 const selectedColumns = [
   {
@@ -160,7 +160,7 @@ describe(ColumnManagementModal.displayName, () => {
       <Provider store={store}>
         <ColumnManagementModal
           columnManagementType={columnManagementType}
-          columnManagementId={columnManagementId}
+          columnManagementID={columnManagementID}
           selectedColumns={selectedColumns}
         />
       </Provider>,
@@ -192,7 +192,7 @@ describe(ColumnManagementModal.displayName, () => {
       <Provider store={store}>
         <ColumnManagementModal
           columnManagementType={columnManagementType}
-          columnManagementId={columnManagementId}
+          columnManagementID={columnManagementID}
           selectedColumns={selectedColumnsNamespaceDisabled}
         />
       </Provider>,

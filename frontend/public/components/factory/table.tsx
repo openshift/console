@@ -174,7 +174,7 @@ const stateToProps = (
     reduxIDs = null,
     staticFilters = [{}],
     rowFilters = [],
-    columnManagementId = '',
+    columnManagementID = '',
   },
 ) => {
   const allFilters = staticFilters ? Object.assign({}, filters, ...staticFilters) : filters;
@@ -188,7 +188,7 @@ const stateToProps = (
   );
   const currentSortFunc = UI.getIn(['listSorts', listId, 'func'], defaultSortFunc);
   const currentSortOrder = UI.getIn(['listSorts', listId, 'orderBy'], defaultSortOrder);
-  const columnManagement = UI.getIn(['columnManagement', columnManagementId]);
+  const columnManagement = UI.getIn(['columnManagement', columnManagementID]);
   const activeColumns = columnManagement
     ? columnManagement.reduce((acc, curr) => {
         acc[curr.id] = curr.visible;
@@ -430,7 +430,7 @@ export type TableProps = {
   reduxID?: string;
   reduxIDs?: string[];
   label?: string;
-  columnManagementId?: string;
+  columnManagementID?: string;
 };
 
 type TablePropsFromState = {};
@@ -508,7 +508,7 @@ export const Table = connect<
       sortList: PropTypes.func,
       onSelect: PropTypes.func,
       scrollElement: PropTypes.oneOf([PropTypes.object, PropTypes.func]),
-      columnManagementId: PropTypes.string, // for column management should use gvk for workloads
+      columnManagementID: PropTypes.string, // for column management should use gvk for workloads
     };
     _columnShift: number;
 
@@ -741,7 +741,7 @@ export type TableInnerProps = {
   virtualize?: boolean;
   gridBreakPoint?: 'grid' | 'grid-md' | 'grid-lg' | 'grid-xl' | 'grid-2xl';
   scrollElement?: HTMLElement | (() => HTMLElement);
-  columnManagementId?: string;
+  columnManagementID?: string;
 };
 
 export type TableInnerState = {

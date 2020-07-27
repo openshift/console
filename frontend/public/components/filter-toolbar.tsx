@@ -85,7 +85,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     rowFilters = [],
     data,
     hideNameFilter,
-    columnManagementId,
+    columnManagementID,
     columnManagementType,
     selectedColumns,
     hideLabelFilter,
@@ -334,13 +334,13 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
             </ToolbarFilter>
           </ToolbarFilter>
         </ToolbarItem>
-        {columnManagementId && (
+        {columnManagementID && (
           <ToolbarItem>
             <Button
               variant="plain"
               onClick={() =>
                 createColumnManagementModal({
-                  columnManagementId,
+                  columnManagementID,
                   columnManagementType,
                   selectedColumns,
                 })
@@ -369,7 +369,7 @@ type FilterToolbarProps = {
   kinds?: any;
   labelPath?: string;
   selectedColumns?: ManagedColumn[];
-  columnManagementId?: string;
+  columnManagementID?: string;
   columnManagementType?: string;
 };
 

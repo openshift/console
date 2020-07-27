@@ -164,7 +164,7 @@ const podColumnInfo = {
 };
 
 const kind = 'Pod';
-const columnManagementId = referenceForModel(PodModel);
+const columnManagementID = referenceForModel(PodModel);
 
 const podRowStateToProps = ({ UI }) => ({
   metrics: UI.getIn(['metrics', 'pod']),
@@ -299,7 +299,7 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
     const bytes: number = _.get(metrics, ['memory', namespace, name]);
     const cores: number = _.get(metrics, ['cpu', namespace, name]);
     const columns: ManagedColumn[] =
-      selectedColumns?.get(columnManagementId) || getHeader(showNodes)();
+      selectedColumns?.get(columnManagementID) || getHeader(showNodes)();
     return (
       <TableRow id={pod.metadata.uid} index={index} trKey={rowKey} style={style}>
         <TableData className={podColumnInfo.name.classes}>
@@ -689,7 +689,7 @@ export const PodList: React.FC<PodListProps> = (props) => {
   return (
     <Table
       {...props}
-      columnManagementId={columnManagementId}
+      columnManagementID={columnManagementID}
       aria-label="Pods"
       Header={getHeader(showNodes)}
       Row={getRow(showNodes)}
@@ -728,7 +728,7 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
 )((props: PodPageProps & PodPagePropsFromDispatch) => {
   const { canCreate = true, namespace, setPodMetrics, customData, ...listProps } = props;
   let selectedColumns = useSelector<RootState, string>(({ UI }) =>
-    UI.getIn(['columnManagement', columnManagementId]),
+    UI.getIn(['columnManagement', columnManagementID]),
   );
   if (_.isEmpty(selectedColumns)) {
     selectedColumns = getHeader(props?.customData?.showNodes)();
@@ -762,7 +762,7 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
       namespace={namespace}
       customData={customData}
       selectedColumns={selectedColumns}
-      columnManagementId={columnManagementId}
+      columnManagementID={columnManagementID}
       columnManagementType="Pod"
     />
   );
