@@ -96,11 +96,9 @@ export const getBaseImageStorage = (
         size: 5,
         unit: BinaryUnit.Gi,
       })
-      .setType(DataVolumeSourceType.PVC)
+      .setType(DataVolumeSourceType.PVC, { name: pvcName, namespace: pvcNamespace })
       .setVolumeMode(getDefaultSCVolumeMode(storageClassConfigMap))
       .setAccessModes(getDefaultSCAccessModes(storageClassConfigMap))
-      .setPesistentVolumeClaimNamespace(pvcNamespace)
-      .setPesistentVolumeClaimName(pvcName)
       .asResource(),
     editConfig: {
       isFieldEditableOverride: {
