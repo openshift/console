@@ -6,7 +6,7 @@ Background:
     Given user logged into the openshift application
 
 
-@regression, @smoke
+@regression
 Scenario: Create Cron Job type workload
     Given user is at the Administrator perspective
     When user clicks on the Workloads tab
@@ -16,14 +16,14 @@ Scenario: Create Cron Job type workload
     Then user will be redirected to the details page of newly created cron job
 
 
-@regression, @smoke
+@regression
 Scenario: Cron Job type workload on Topology graph view
     Given user is at developer perspective
     And user is on Topology page
     Then user will see the newly created cron job
 
 
-@regression, @smoke
+@regression
 Scenario: Cron Job type workload on Topology list view
     Given user is at developer perspective
     And user is on Topology page
@@ -31,7 +31,7 @@ Scenario: Cron Job type workload on Topology list view
     Then user will see the newly created cron job
 
 
-@regression, @smoke
+@regression
 Scenario: Sidebar for the Cron Job
     Given user is on Topology page
     When user clicks on the cron job type workload

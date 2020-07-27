@@ -8,7 +8,7 @@ Background:
    And BootStrapServers and Topics created
 
 
-@regression, @smoke
+@regression
 Scenario: BootStrapServers and Topics Drop Down
     Given user is at Developer Perspective
     When user goes to +Add page
@@ -18,7 +18,7 @@ Scenario: BootStrapServers and Topics Drop Down
     And user will see the items in Topics dropdown
 
 
-@regression, @smoke
+@regression
 Scenario: Multiple BootStrapServers and Topics under their dropdown
     Given user is at Developer Perspective
     When user creates a BootStrapServer
@@ -29,7 +29,7 @@ Scenario: Multiple BootStrapServers and Topics under their dropdown
     And user will see that topic in Topics dropdown
 
 
-@regression, @smoke
+@regression
 Scenario: Select multiple BootStrapServers and Topics from dropdown
     Given user is at Developer Perspective
     When user creates a BootStrapServer
@@ -46,7 +46,7 @@ Scenario: Select multiple BootStrapServers and Topics from dropdown
     And user can see the Kafka source created
 
 
-@regression, @smoke
+@regression
 Scenario: Enter BootStrapServers and Topics
     Given user is at Developer Perspective
     When user creates a BootStrapServer
@@ -63,7 +63,7 @@ Scenario: Enter BootStrapServers and Topics
     And user can see the Kafka source created
 
 
-@regression, @smoke, @manual
+@regression, @manual
 Scenario: New Event Sources Icon
     Given user is at Developer Perspective
     When user goes to +Add page

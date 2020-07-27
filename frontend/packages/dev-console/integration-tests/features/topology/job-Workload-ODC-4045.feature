@@ -6,7 +6,7 @@ Background:
     Given user logged into the openshift application
 
 
-@regression, @smoke
+@regression
 Scenario: Create Job type workload
     Given user is at Administrator perspective
     When user clicks on the Workloads tab
@@ -16,14 +16,14 @@ Scenario: Create Job type workload
     Then user will be redirected to the details page of newly created job
 
 
-@regression, @smoke
+@regression
 Scenario: Job type workload on Topology graph view
     Given user is at developer perspective
     And user is on Topology page
     Then user will see the newly created job
 
 
-@regression, @smoke
+@regression
 Scenario: Job type workload on Topology list view
     Given user is at developer perspective
     And user is on Topology page
@@ -31,7 +31,7 @@ Scenario: Job type workload on Topology list view
     Then user will see the newly created job
 
 
-@regression, @smoke
+@regression
 Scenario: Sidebar for the Job
     Given user is on Topology page
     When user clicks on the job type workload
