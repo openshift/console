@@ -78,6 +78,7 @@ import { updateModelFromFilters } from './data-transforms';
 import { setSupportedTopologyFilters, setTopologyFilters } from './redux/action';
 import { odcElementFactory } from './elements';
 import KnativeTopologyEdgePanel from '@console/knative-plugin/src/components/overview/KnativeTopologyEdgePanel';
+import TopologyOperatorBackedPanel from './operators/TopologyOperatorBackedPanel';
 
 export const FILTER_ACTIVE_CLASS = 'odc-m-filter-active';
 
@@ -453,7 +454,11 @@ const Topology: React.FC<ComponentProps> = ({
         return <TopologyHelmWorkloadPanel item={selectedEntity.getData() as TopologyDataObject} />;
       }
       if (selectedEntity.getType() === TYPE_OPERATOR_BACKED_SERVICE) {
-        return null;
+        return (
+          <TopologyOperatorBackedPanel
+            item={selectedEntity.getData() as TopologyDataObject<string>}
+          />
+        );
       }
       if (selectedEntity.getType() === TYPE_VIRTUAL_MACHINE) {
         return <TopologyVmPanel vmNode={selectedEntity} />;

@@ -2,12 +2,12 @@ import * as React from 'react';
 import { ResourceLink } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceFor, modelFor } from '@console/internal/module/k8s';
 
-type TopologyHelmReleaseResourceItemProps = {
+type TopologyGroupResourceItemProps = {
   item: K8sResourceKind;
   releaseNamespace: string;
 };
 
-const TopologyHelmReleaseResourceItem: React.FC<TopologyHelmReleaseResourceItemProps> = ({
+const TopologyGroupResourceItem: React.FC<TopologyGroupResourceItemProps> = ({
   item,
   releaseNamespace,
 }) => {
@@ -29,4 +29,4 @@ const TopologyHelmReleaseResourceItem: React.FC<TopologyHelmReleaseResourceItemP
   );
 };
 
-export default TopologyHelmReleaseResourceItem;
+export default TopologyGroupResourceItem;

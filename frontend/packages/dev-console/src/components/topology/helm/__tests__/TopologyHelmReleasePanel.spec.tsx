@@ -2,7 +2,7 @@ import * as React from 'react';
 import { shallow, mount } from 'enzyme';
 import { SidebarSectionHeading, StatusBox } from '@console/internal/components/utils';
 import { mockHelmReleaseNode, mockManifest, mockReleaseNotes } from './mockData';
-import TopologyHelmReleaseResourcesPanel from '../TopologyHelmReleaseResourcesPanel';
+import TopologyGroupResourcesPanel from '../../components/TopologyGroupResourcesPanel';
 import TopologyHelmReleaseNotesPanel from '../TopologyHelmReleaseNotesPanel';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { ConnectedTopologyHelmReleasePanel } from '../TopologyHelmReleasePanel';
@@ -13,7 +13,7 @@ describe('TopologyHelmReleasePanel', () => {
     const component = mount(
       <ConnectedTopologyHelmReleasePanel helmRelease={mockHelmReleaseNode} />,
     );
-    expect(component.find(TopologyHelmReleaseResourcesPanel)).toHaveLength(1);
+    expect(component.find(TopologyGroupResourcesPanel)).toHaveLength(1);
   });
 
   it('should render the details tab when specified', () => {
@@ -44,7 +44,7 @@ describe('TopologyHelmReleaseResourcesPanel', () => {
 
   it('should render the correct number of resource categories', () => {
     const component = shallow(
-      <TopologyHelmReleaseResourcesPanel
+      <TopologyGroupResourcesPanel
         manifestResources={manifestResources}
         releaseNamespace="mock-ns"
       />,
