@@ -374,6 +374,27 @@ const queryInputStateToProps = ({ UI }: RootState, { index }) => ({
   text: UI.getIn(['queryBrowser', 'queries', index, 'text']),
 });
 
+// Highlight characters in `text` based on the search string `token`
+const HighlightMatches: React.FC<{ text: string; token: string }> = ({ text, token }) => {
+  // Autocompletion uses fuzzy matching, so the entire `token` string may not be a substring of
+  // `text`. Instead, we find the longest starting substring of `token` that exists in `text` and
+  // highlight it. Then we repeat with the remainder of `token` and `text` and continue until all
+  // the characters of `token` have been found somewhere in `text`.
+  for (let sub = token; sub.length > 0; sub = sub.slice(0, -1)) {
+    const i = text.toLowerCase().indexOf(sub);
+    if (i !== -1) {
+      return (
+        <>
+          {text.slice(0, i)}
+          <span className="query-browser__autocomplete-match">{text.slice(i, i + sub.length)}</span>
+          <HighlightMatches text={text.slice(i + sub.length)} token={token.slice(sub.length)} />
+        </>
+      );
+    }
+  }
+  return <>{text}</>;
+};
+
 const QueryInput_: React.FC<QueryInputProps> = ({
   index,
   metrics,
@@ -388,14 +409,17 @@ const QueryInput_: React.FC<QueryInputProps> = ({
   const getTextBeforeCursor = () =>
     inputRef.current.value.substring(0, inputRef.current.selectionEnd);
 
-  const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    patchQuery({ text: e.target.value });
-
+  const updateToken = _.debounce(() => {
     // Metric and function names can only contain the characters a-z, A-Z, 0-9, '_' and ':'
     const allTokens = getTextBeforeCursor().split(/[^a-zA-Z0-9_:]+/);
 
     // We always do case insensitive autocompletion, so convert to lower case immediately
     setToken(_.toLower(_.last(allTokens)));
+  }, 200);
+
+  const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    patchQuery({ text: e.target.value });
+    updateToken();
   };
 
   const onKeyDown = (e: React.KeyboardEvent) => {
@@ -506,7 +530,7 @@ const QueryInput_: React.FC<QueryInputProps> = ({
                     onMouseDown={onMouseDown}
                     type="button"
                   >
-                    {s}
+                    <HighlightMatches text={s} token={token} />
                   </button>
                 </li>
               ))}
