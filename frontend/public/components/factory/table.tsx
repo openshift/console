@@ -11,6 +11,7 @@ import {
   nodePods,
   pvcUsed,
   snapshotSize,
+  ALL_NAMESPACES_KEY,
 } from '@console/shared';
 import * as UIActions from '../../actions/ui';
 import {
@@ -280,10 +281,11 @@ export const TableData: React.SFC<TableDataProps> = ({
   columns,
   ...props
 }) => {
+  const showNamespace =
+    columnId === 'namespace' ? UIActions.getActiveNamespace() === ALL_NAMESPACES_KEY : true;
   return (
-    ((!_.isEmpty(columns) ? columns?.find((col) => col.id === columnId && col.visible) : true) && (
-      <td {...props} className={className} role="gridcell" />
-    )) ||
+    ((!_.isEmpty(columns) ? columns?.find((col) => col.id === columnId && col.visible) : true) &&
+      showNamespace && <td {...props} className={className} role="gridcell" />) ||
     null
   );
 };
@@ -458,6 +460,9 @@ const getActiveColumns = (Header, componentProps, activeColumns) => {
   if (!_.isEmpty(activeColumns)) {
     columns = columns?.filter((col) => activeColumns?.[col.id] || col.title === '');
   }
+
+  const showNamespace = UIActions.getActiveNamespace() === ALL_NAMESPACES_KEY;
+  columns = columns.filter((column) => (column.id === 'namespace' ? showNamespace : true));
   return columns;
 };
 
