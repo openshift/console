@@ -40,3 +40,20 @@
   padding-left: 0;
   padding-top: var(--pf-global--spacer--lg);
 }
+
+.ceph-ocs-install_capacity-header {
+  font-size: var(--pf-global--FontSize--xl);
+  margin-bottom: var(--pf-c-wizard__main-body--PaddingBottom);
+}
+
+.ceph-ocs-install__stats {
+  display: flex;
+  font-size: var(--pf-global--FontSize--md);
+  margin-bottom: var(--pf-global--spacer--xs);
+}
+
+.ceph-ocs-install_stats--divider {
+  border-right: var(--pf-global--BorderWidth--sm) solid var(--pf-global--Color--light-300);
+  height: var(--pf-global--LineHeight--sm);
+  margin: 0 var(--pf-global--spacer--sm);
+}

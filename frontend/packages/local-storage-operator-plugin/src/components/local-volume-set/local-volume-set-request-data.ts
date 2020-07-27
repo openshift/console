@@ -2,12 +2,7 @@ import { apiVersionForModel } from '@console/internal/module/k8s';
 import { LocalVolumeSetModel } from '../../models';
 import { LocalVolumeSetKind, DiskType, DiskMechanicalProperty } from './types';
 import { State } from './state';
-import {
-  MAX_DISK_SIZE,
-  LOCAL_STORAGE_NAMESPACE,
-  HOSTNAME_LABEL_KEY,
-  LABEL_OPERATOR,
-} from '../../constants';
+import { LOCAL_STORAGE_NAMESPACE, HOSTNAME_LABEL_KEY, LABEL_OPERATOR } from '../../constants';
 import { getNodes } from '../../utils';
 
 export const getLocalVolumeSetRequestData = (state: State): LocalVolumeSetKind => {
@@ -45,7 +40,7 @@ export const getLocalVolumeSetRequestData = (state: State): LocalVolumeSetKind =
   if (state.maxDiskLimit) requestData.spec.maxDeviceCount = +state.maxDiskLimit;
   if (state.minDiskSize)
     requestData.spec.deviceInclusionSpec.minSize = state.minDiskSize.toString();
-  if (state.maxDiskSize && state.maxDiskSize !== MAX_DISK_SIZE)
+  if (state.maxDiskSize)
     requestData.spec.deviceInclusionSpec.maxSize = state.maxDiskSize.toString();
 
   return requestData;
