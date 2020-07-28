@@ -42,6 +42,8 @@ import { ProjectOverview } from './project-overview';
 import { ResourceOverviewPage } from './resource-overview-page';
 import { OverviewSpecialGroup } from './constants';
 import { DaemonSetModel, JobModel, StatefulSetModel } from '../../models';
+import { Alerts, Alert } from '../monitoring/types';
+import { getAlertsAndRules } from '../monitoring/utils';
 
 const asOverviewGroups = (keyedItems: { [name: string]: OverviewItem[] }): OverviewGroup[] => {
   const compareGroups = (a: OverviewGroup, b: OverviewGroup) => {
@@ -163,7 +165,8 @@ const OverviewHeading = connect<
 
 const mainContentStateToProps = ({ UI }): OverviewMainContentPropsFromState => {
   const { filterValue, metrics, selectedGroup, labels } = UI.get('overview').toJS();
-  return { filterValue, labels, metrics, selectedGroup };
+  const monitoringAlerts = UI.getIn(['monitoring', 'devAlerts']);
+  return { filterValue, labels, metrics, selectedGroup, monitoringAlerts };
 };
 
 const mainContentDispatchToProps = (dispatch): OverviewMainContentPropsFromDispatch => ({
@@ -172,6 +175,8 @@ const mainContentDispatchToProps = (dispatch): OverviewMainContentPropsFromDispa
   updateResources: (items: OverviewItem[]) => dispatch(UIActions.updateOverviewResources(items)),
   updateSelectedGroup: (group: OverviewSpecialGroup) =>
     dispatch(UIActions.updateOverviewSelectedGroup(group)),
+  updateMonitoringAlerts: (alerts: Alert[]) =>
+    dispatch(UIActions.monitoringLoaded('devAlerts', alerts, 'dev')),
 });
 
 class OverviewMainContent_ extends React.Component<
@@ -179,6 +184,7 @@ class OverviewMainContent_ extends React.Component<
   OverviewMainContentState
 > {
   private metricsInterval: any = null;
+  private monitoringAlertTimeout: any = null;
 
   readonly state: OverviewMainContentState = {
     items: [],
@@ -189,10 +195,12 @@ class OverviewMainContent_ extends React.Component<
 
   componentDidMount(): void {
     this.fetchMetrics();
+    this.fetchMonitoringAlerts();
   }
 
   componentWillUnmount(): void {
     clearInterval(this.metricsInterval);
+    clearInterval(this.monitoringAlertTimeout);
   }
 
   componentDidUpdate(prevProps: OverviewMainContentProps): void {
@@ -214,6 +222,7 @@ class OverviewMainContent_ extends React.Component<
       services,
       statefulSets,
       selectedGroup,
+      monitoringAlerts,
     } = this.props;
 
     if (
@@ -231,7 +240,8 @@ class OverviewMainContent_ extends React.Component<
       !_.isEqual(replicationControllers, prevProps.replicationControllers) ||
       !_.isEqual(routes, prevProps.routes) ||
       !_.isEqual(services, prevProps.services) ||
-      !_.isEqual(statefulSets, prevProps.statefulSets)
+      !_.isEqual(statefulSets, prevProps.statefulSets) ||
+      !_.isEqual(monitoringAlerts, prevProps.monitoringAlerts)
     ) {
       this.setState(this.createOverviewData());
     } else if (filterValue !== prevProps.filterValue) {
@@ -245,10 +255,12 @@ class OverviewMainContent_ extends React.Component<
         groupedItems: groupItems(this.state.filteredItems, selectedGroup),
       });
     }
-    // Fetch new metrics when the namespace changes.
+    // Fetch new metrics and monitoring alerts when the namespace changes.
     if (namespace !== prevProps.namespace) {
       clearInterval(this.metricsInterval);
+      clearInterval(this.monitoringAlertTimeout);
       this.fetchMetrics();
+      this.fetchMonitoringAlerts();
     }
   }
 
@@ -321,6 +333,27 @@ class OverviewMainContent_ extends React.Component<
       _.each(itemLabels, (v: string, k: string) => labelSet.add(k));
     });
     return [...labelSet].sort();
+  }
+
+  fetchMonitoringAlerts(): void {
+    const { namespace } = this.props;
+    if (!PROMETHEUS_TENANCY_BASE_PATH) {
+      return;
+    }
+    const poller = (): void => {
+      coFetchJSON(`${PROMETHEUS_TENANCY_BASE_PATH}/api/v1/rules?namespace=${namespace}`)
+        .then(({ data }) => {
+          const alerts = getAlertsAndRules(data).alerts;
+          this.props.updateMonitoringAlerts(alerts);
+        })
+        .catch((e) => {
+          console.error(e); // eslint-disable-line no-console
+        })
+        .then(() => {
+          this.monitoringAlertTimeout = setTimeout(poller, 15 * 1000);
+        });
+    };
+    poller();
   }
 
   createOverviewData(): OverviewMainContentState {
@@ -581,6 +614,7 @@ type OverviewMainContentPropsFromState = {
   labels: string[];
   metrics: OverviewMetrics;
   selectedGroup: string;
+  monitoringAlerts: Alerts;
 };
 
 type OverviewMainContentPropsFromDispatch = {
@@ -588,6 +622,7 @@ type OverviewMainContentPropsFromDispatch = {
   updateMetrics: (metrics: OverviewMetrics) => void;
   updateResources: (items: OverviewItem[]) => void;
   updateSelectedGroup: (group: OverviewSpecialGroup) => void;
+  updateMonitoringAlerts: (alerts: Alert[]) => void;
 };
 
 type OverviewMainContentOwnProps = {
@@ -614,6 +649,7 @@ type OverviewMainContentOwnProps = {
   EmptyMsg?: React.ComponentType;
   emptyBodyClass?: string;
   utils?: OverviewResourceUtil[];
+  monitoringAlerts?: Alerts;
 };
 
 export type OverviewMainContentProps = OverviewMainContentPropsFromState &

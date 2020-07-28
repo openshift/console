@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
 import {
   Accordion,
@@ -19,7 +18,9 @@ import { K8sResourceKind, EventKind, PodKind } from '@console/internal/module/k8
 import { DeploymentConfigModel } from '@console/internal/models';
 import { sortEvents } from '@console/internal/components/events';
 import { FirehoseResult, LoadingBox } from '@console/internal/components/utils';
-import MonitoringOverviewEventsWarning from './MonitoringOverviewEventsWarning';
+import { Alert } from '@console/internal/components/monitoring/types';
+import { getFiringAlerts } from '@console/shared';
+import MonitoringOverviewAlerts from './MonitoringOverviewAlerts';
 import MonitoringOverviewEvents from './MonitoringOverviewEvents';
 import WorkloadGraphs from './MonitoringMetrics';
 import './MonitoringOverview.scss';
@@ -28,11 +29,16 @@ type MonitoringOverviewProps = {
   resource: K8sResourceKind;
   pods?: PodKind[];
   resourceEvents?: FirehoseResult<EventKind[]>;
+  monitoringAlerts: Alert[];
 };
 
 const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
-  const { resource, pods, resourceEvents } = props;
-  const [expanded, setExpanded] = React.useState(['metrics']);
+  const { resource, pods, resourceEvents, monitoringAlerts } = props;
+  const firingAlerts = getFiringAlerts(monitoringAlerts);
+  const [expanded, setExpanded] = React.useState([
+    'metrics',
+    ...(firingAlerts.length > 0 ? ['monitoring-alerts'] : []),
+  ]);
 
   if (
     !resourceEvents ||
@@ -53,7 +59,6 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
   }
 
   events = sortEvents(events);
-  const eventWarning = _.filter(events, ['type', 'Warning']);
 
   const onToggle = (id: string) => {
     const index = expanded.indexOf(id);
@@ -71,31 +76,33 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
         className="odc-monitoring-overview__metric-accordion"
         headingLevel="h5"
       >
-        <AccordionItem>
-          <AccordionToggle
-            onClick={() => {
-              onToggle('events-warning');
-            }}
-            isExpanded={expanded.includes('events-warning')}
-            id="events-warning"
-            className="odc-monitoring-overview__event-warning-toggle"
-          >
-            <Split>
-              <SplitItem>Events (Warning)</SplitItem>
-              <SplitItem isFilled />
-              <SplitItem>
-                <Badge>{eventWarning.length}</Badge>
-              </SplitItem>
-            </Split>
-          </AccordionToggle>
-          <AccordionContent
-            className="odc-monitoring-overview__event-warning-body"
-            id="events-warning-content"
-            isHidden={!expanded.includes('events-warning')}
-          >
-            <MonitoringOverviewEventsWarning events={eventWarning} />
-          </AccordionContent>
-        </AccordionItem>
+        {firingAlerts.length > 0 && (
+          <AccordionItem>
+            <AccordionToggle
+              onClick={() => {
+                onToggle('monitoring-alerts');
+              }}
+              isExpanded={expanded.includes('monitoring-alerts')}
+              id="monitoring-alerts"
+              className="odc-monitoring-overview__alerts-toggle"
+            >
+              <Split>
+                <SplitItem>Alerts</SplitItem>
+                <SplitItem isFilled />
+                <SplitItem>
+                  <Badge>{monitoringAlerts.length}</Badge>
+                </SplitItem>
+              </Split>
+            </AccordionToggle>
+            <AccordionContent
+              className="odc-monitoring-overview__alerts-body"
+              id="monitoring-alerts-content"
+              isHidden={!expanded.includes('monitoring-alerts')}
+            >
+              <MonitoringOverviewAlerts alerts={firingAlerts} />
+            </AccordionContent>
+          </AccordionItem>
+        )}
 
         <AccordionItem>
           <AccordionToggle

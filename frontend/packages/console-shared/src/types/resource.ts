@@ -2,6 +2,7 @@ import { JobKind, K8sResourceKind, PodKind, RouteKind } from '@console/internal/
 import { DEPLOYMENT_STRATEGY } from '../constants';
 import { OverviewItemAlerts, PodControllerOverviewItem } from './pod';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
+import { Alert } from '@console/internal/components/monitoring/types';
 
 export type APIError = {
   status?: string;
@@ -37,6 +38,7 @@ export type OverviewItem<T = K8sResourceKind> = {
   revisions?: K8sResourceKind[];
   isOperatorBackedService?: boolean;
   isMonitorable?: boolean;
+  monitoringAlerts?: Alert[];
 };
 
 export type OperatorBackedServiceKindMap = {

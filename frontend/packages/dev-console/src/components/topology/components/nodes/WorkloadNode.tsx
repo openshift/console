@@ -20,7 +20,7 @@ import BuildDecorator from './build-decorators/BuildDecorator';
 import { BaseNode } from './BaseNode';
 import { getCheURL, getEditURL } from '../../topology-utils';
 import { useDisplayFilters, getFilterById, SHOW_POD_COUNT_FILTER_ID } from '../../filters';
-
+import MonitoringAlertsDecorator from './MonitoringAlertsDecorator';
 import './WorkloadNode.scss';
 
 interface StateProps {
@@ -122,6 +122,14 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
               workloadData={workloadData}
               x={cx - radius + decoratorRadius * 0.7}
               y={cy + radius - decoratorRadius * 0.7}
+              radius={decoratorRadius}
+            />,
+            <MonitoringAlertsDecorator
+              key="monitoringAlert"
+              monitoringAlerts={workloadData.monitoringAlerts}
+              workload={element}
+              x={cx - radius + decoratorRadius * 0.7}
+              y={cy - radius + decoratorRadius * 0.7}
               radius={decoratorRadius}
             />,
           ]}

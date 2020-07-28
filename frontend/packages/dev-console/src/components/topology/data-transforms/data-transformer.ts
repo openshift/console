@@ -2,6 +2,7 @@ import { EdgeModel, Model } from '@patternfly/react-topology';
 import { createOverviewItemForType } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
+import { Alerts } from '@console/internal/components/monitoring/types';
 import { getPipelinesAndPipelineRunsForResource } from '../../../utils/pipeline-plugin-utils';
 import {
   TopologyDataResources,
@@ -57,7 +58,9 @@ export const getTrafficConnectors = (
   }, []);
 };
 
-const getBaseTopologyDataModel = (resources: TopologyDataResources): Model => {
+const getBaseTopologyDataModel = (
+  resources: { [x: string]: Alerts } | TopologyDataResources,
+): Model => {
   const baseDataModel: Model = {
     nodes: [],
     edges: [],
@@ -100,8 +103,10 @@ export const baseDataModelGetter = (
   workloadResources: K8sResourceKind[],
   dataModelDepicters?: TopologyDataModelDepicted[],
   trafficData?: TrafficData,
+  monitoringAlerts?: Alerts,
 ): Model => {
-  const baseModel = getBaseTopologyDataModel(resources);
+  const res = { ...resources, monitoringAlerts };
+  const baseModel = getBaseTopologyDataModel(res);
   addToTopologyDataModel(baseModel, model, dataModelDepicters);
 
   model.nodes.forEach((n) => {

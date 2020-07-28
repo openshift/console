@@ -66,6 +66,7 @@ export const createTopologyNodeData = (
     buildConfigs,
     pipelines = [],
     pipelineRuns = [],
+    monitoringAlerts = [],
   } = overviewItem;
   const dcUID = _.get(resource, 'metadata.uid');
   const deploymentsLabels = _.get(resource, 'metadata.labels', {});
@@ -82,6 +83,7 @@ export const createTopologyNodeData = (
     resources: { ...overviewItem, isOperatorBackedService: operatorBackedService },
     pods: overviewItem.pods,
     data: {
+      monitoringAlerts,
       url: getRoutesURL(resource, overviewItem),
       kind: referenceFor(resource),
       editURL: deploymentsAnnotations['app.openshift.io/edit-url'],
