@@ -5,7 +5,6 @@ import {
   FormSelectOption,
   Checkbox,
   Text,
-  TextVariants,
   Button,
   ButtonVariant,
 } from '@patternfly/react-core';
@@ -167,12 +166,13 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
             </FormSelect>
           </FormField>
           {baseImage && baseImage?.longMessage && (
-            <div>
-              <Text component={TextVariants.small}>{baseImage?.longMessage}</Text>
+            <div className="pf-c-form__helper-text" aria-live="polite">
+              {baseImage?.longMessage}
             </div>
           )}
         </FormFieldRow>
         <FormFieldRow
+          className="kv-create-vm__input-checkbox"
           field={cloneBaseDiskImageField}
           fieldType={FormFieldType.INLINE_CHECKBOX}
           loadingResources={loadingResources}
