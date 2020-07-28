@@ -73,6 +73,8 @@ export type KebabAction = (
   accessData?: string[],
 ) => KebabOption;
 
+export type MenuOptions = (KebabAction | KebabOption)[];
+
 export const createKebabAction: KebabFactory = (label, icon, importType, checkAccess) => (
   obj: K8sResourceKind,
   namespace: string,

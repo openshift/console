@@ -6,8 +6,6 @@ import {
   modelFor,
   k8sUpdate,
   PodKind,
-  referenceForModel,
-  k8sCreate,
 } from '@console/internal/module/k8s';
 import {
   getResourcePausedAlert,
@@ -17,7 +15,6 @@ import {
   getReplicaSetsForResource,
   getRoutesForServices,
   getServicesForResource,
-  getRandomChars,
 } from '@console/shared';
 import { Edge, EdgeModel, Model, Node, NodeModel, NodeShape } from '@patternfly/react-topology';
 import {
@@ -34,15 +31,11 @@ import {
   NODE_HEIGHT,
   NODE_PADDING,
   WorkloadModelProps,
-  GraphData,
   getResource,
 } from '@console/dev-console/src/components/topology';
-import { addResourceMenuWithoutCatalog } from '@console/dev-console/src/actions/add-resources';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { DeploymentModel, PodModel } from '@console/internal/models';
 import { RootState } from '@console/internal/redux';
-import { errorModal } from '@console/internal/components/modals';
-import { KebabAction } from '@console/dev-console/src/utils/add-resources-menu-utils';
 import { FLAG_KNATIVE_EVENTING, CAMEL_SOURCE_INTEGRATION } from '../const';
 import { KnativeItem } from '../utils/get-knative-resources';
 import {
@@ -53,17 +46,8 @@ import {
 import {
   getDynamicEventSourcesModelRefs,
   getDynamicChannelModelRefs,
-  isEventingChannelResourceKind,
 } from '../utils/fetch-dynamic-eventsources-utils';
-import {
-  EventingBrokerModel,
-  ServiceModel,
-  EventingTriggerModel,
-  EventingSubscriptionModel,
-  EventSourceCamelModel,
-} from '../models';
-import { addEventSource } from '../actions/add-event-source';
-import { addTrigger, addSubscription } from '../actions/add-pubsub-actions';
+import { EventingBrokerModel, EventSourceCamelModel } from '../models';
 
 export enum NodeType {
   EventSource = 'event-source',
@@ -890,66 +874,6 @@ export const createEventingPubSubSink = (subObj: K8sResourceKind, target: K8sRes
   return k8sUpdate(modelFor(referenceFor(subscriptionObj)), updatePayload);
 };
 
-export const createEventingTrigger = (broker: K8sResourceKind, service: K8sResourceKind) => {
-  const trigger = {
-    apiVersion: `${EventingTriggerModel.apiGroup}/${EventingTriggerModel.apiVersion}`,
-    kind: EventingTriggerModel.kind,
-    metadata: {
-      name: `${broker.metadata.name}-trigger-${getRandomChars()}`,
-      namespace: broker.metadata.namespace,
-    },
-    spec: {
-      broker: broker.metadata.name,
-      subscriber: {
-        ref: {
-          apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
-          kind: ServiceModel.kind,
-          name: service.metadata.name,
-        },
-      },
-    },
-  };
-  return k8sCreate(EventingTriggerModel, trigger).catch((error) => {
-    errorModal({
-      title: 'Error creating trigger',
-      error: error.message,
-      showIcon: true,
-    });
-  });
-};
-
-export const createEventingSubscription = (channel: K8sResourceKind, service: K8sResourceKind) => {
-  const trigger = {
-    apiVersion: `${EventingSubscriptionModel.apiGroup}/${EventingSubscriptionModel.apiVersion}`,
-    kind: EventingSubscriptionModel.kind,
-    metadata: {
-      name: `${channel.metadata.name}-subscription-${getRandomChars()}`,
-      namespace: channel.metadata.namespace,
-    },
-    spec: {
-      channel: {
-        apiVersion: channel.apiVersion,
-        kind: channel.kind,
-        name: channel.metadata.name,
-      },
-      subscriber: {
-        ref: {
-          apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
-          kind: ServiceModel.kind,
-          name: service.metadata.name,
-        },
-      },
-    },
-  };
-  return k8sCreate(EventingSubscriptionModel, trigger).catch((error) => {
-    errorModal({
-      title: 'Error creating subscription',
-      error: error.message,
-      showIcon: true,
-    });
-  });
-};
-
 export const createSinkPubSubConnection = (
   connector: Edge,
   targetNode: Node,
@@ -961,41 +885,4 @@ export const createSinkPubSubConnection = (
   }
   const targetObj = getTopologyResourceObject(target);
   return createEventingPubSubSink(resources.obj, targetObj);
-};
-
-export const getKnativeContextMenuAction = (
-  graphData: GraphData,
-  menu: KebabAction[],
-  connectorSource?: Node,
-): KebabAction[] => {
-  if (isEventingChannelResourceKind(connectorSource?.getData().data.kind)) {
-    return [addSubscription];
-  }
-  switch (connectorSource?.getData().data.kind) {
-    case referenceForModel(ServiceModel):
-      return graphData.eventSourceEnabled
-        ? [...addResourceMenuWithoutCatalog, addEventSource]
-        : menu;
-    case referenceForModel(EventingBrokerModel):
-      return [addTrigger];
-    default:
-      return menu;
-  }
-};
-const createTrigger = (source: Node, target: Node) => {
-  return createEventingTrigger(getResource(source), getResource(target)).then(() => null);
-};
-
-const createSubscription = (source: Node, target: Node) => {
-  return createEventingSubscription(getResource(source), getResource(target)).then(() => null);
-};
-
-export const getCreateConnector = (createHints: string[]) => {
-  if (createHints.includes('createTrigger')) {
-    return createTrigger;
-  }
-  if (createHints.includes('createSubscription')) {
-    return createSubscription;
-  }
-  return null;
 };

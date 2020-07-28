@@ -24,6 +24,6 @@ export const applyDisplayOptions = () =>
   );
 
 export const getCreateConnector = () =>
-  import('./knative-topology-utils' /* webpackChunkName: "knative-create-connector" */).then(
+  import('./create-connector-utils' /* webpackChunkName: "knative-create-connector" */).then(
     (m) => m.getCreateConnector,
   );
