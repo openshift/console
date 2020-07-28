@@ -146,6 +146,8 @@ const getUrlStorage = (storageClassConfigMap: ConfigMapKind) => {
   };
 };
 
+// Create a new storage source for URL, Container and BaseImage Disk sources
+// Depends on VMSettingsField.OPERATING_SYSTEM VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE VMSettingsField.PROVISION_SOURCE
 export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardStorage => {
   const provisionSource = iGetProvisionSource(state, id);
   const cloneCommonBaseDiskImage = iGetVmSettingValue(

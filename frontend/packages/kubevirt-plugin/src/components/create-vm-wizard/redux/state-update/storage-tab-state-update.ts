@@ -30,6 +30,8 @@ export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }:
   const iOldSourceStorage = iGetProvisionSourceStorage(state, id);
   const oldSourceStorage: VMWizardStorage = iOldSourceStorage && iOldSourceStorage.toJSON();
 
+  // Create a new storage source for URL, Container and BaseImage Disk sources
+  // Depends on VMSettingsField.OPERATING_SYSTEM VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE VMSettingsField.PROVISION_SOURCE
   const newSourceStorage = getNewProvisionSourceStorage(state, id);
   const oldType =
     oldSourceStorage &&

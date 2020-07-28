@@ -249,6 +249,8 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
     });
     storagesUpdate.unshift(...templateStorages);
   } else {
+    // Create a new storage source for URL, Container and BaseImage Disk sources
+    // Depends on VMSettingsField.OPERATING_SYSTEM VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE VMSettingsField.PROVISION_SOURCE
     const newSourceStorage = getNewProvisionSourceStorage(state, id);
     if (newSourceStorage) {
       storagesUpdate.unshift({ ...newSourceStorage, id: getNextStorageID() });
