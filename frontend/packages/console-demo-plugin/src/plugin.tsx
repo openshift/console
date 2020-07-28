@@ -27,7 +27,7 @@ import {
 import { PodModel, RouteModel, NodeModel } from '@console/internal/models';
 import { FLAGS } from '@console/shared';
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
-import { OverviewQuery } from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/queries';
+import { OverviewQuery } from '@console/shared/src/promql/cluster-dashboard';
 import { FooBarModel } from './models';
 import { yamlTemplates } from './yaml-templates';
 import TestIcon from './components/test-icon';

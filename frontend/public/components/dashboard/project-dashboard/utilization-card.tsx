@@ -26,7 +26,7 @@ import {
   ProjectQueries,
   getTopConsumerQueries,
   getMultilineQueries,
-} from './queries';
+} from '@console/shared/src/promql/project-dashboard';
 import {
   PrometheusUtilizationItem,
   PrometheusMultilineUtilizationItem,

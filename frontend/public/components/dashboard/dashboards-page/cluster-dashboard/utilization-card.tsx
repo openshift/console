@@ -32,7 +32,7 @@ import {
   utilizationQueries,
   top25ConsumerQueries,
   multilineQueries,
-} from './queries';
+} from '@console/shared/src/promql/cluster-dashboard';
 import { NodeModel, PodModel, ProjectModel } from '../../../../models';
 import { getPrometheusQueryResponse } from '../../../../actions/dashboards';
 import { Humanize } from '../../../utils/types';
