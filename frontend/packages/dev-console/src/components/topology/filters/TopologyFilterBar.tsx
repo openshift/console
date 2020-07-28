@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import { Popover, Button, ToolbarGroup, ToolbarContent } from '@patternfly/react-core';
-import { RootState } from '@console/internal/redux';
-import { TextFilter } from '@console/internal/components/factory';
+import { ToolbarGroup, ToolbarContent, Popover, Button } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import { Visualization } from '@patternfly/react-topology';
+import { RootState } from '@console/internal/redux';
+import { TextFilter } from '@console/internal/components/factory';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { setTopologyFilters } from '../redux/action';
 import { DisplayFilters } from '../topology-types';
 import {
@@ -16,10 +17,15 @@ import {
 
 import FilterDropdown from './FilterDropdown';
 import './TopologyFilterBar.scss';
+import { getActiveNamespace } from '@console/internal/reducers/ui';
+import { getNamespaceDashboardKialiLink } from '../topology-utils';
+import { ExternalLink } from '@console/internal/components/utils';
 
 type StateProps = {
   filters: DisplayFilters;
   supportedFilters: string[];
+  consoleLinks: K8sResourceKind[];
+  namespace: string;
 };
 
 type DispatchProps = {
@@ -44,9 +50,11 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
   onDisplayFiltersChange,
   onSearchChange,
   visualization,
+  consoleLinks,
+  namespace,
 }) => {
   const [searchQuery, setSearchQuery] = React.useState<string>('');
-
+  const kialiLink = getNamespaceDashboardKialiLink(consoleLinks, namespace);
   React.useEffect(() => {
     const query = getTopologySearchQuery();
     setSearchQuery(query);
@@ -69,13 +77,12 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
           supportedFilters={supportedFilters}
           onChange={onDisplayFiltersChange}
         />
-      </ToolbarGroup>
-      <ToolbarGroup className="odc-topology-filter-bar__search">
         <TextFilter
           placeholder="Find by name..."
           value={searchQuery}
           autoFocus
           onChange={onTextFilterChange}
+          className="odc-topology-filter-bar__text-filter"
         />
         <Popover
           aria-label="Find by name"
@@ -90,11 +97,16 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
             </>
           }
         >
-          <Button variant="link" className="odc-topology-filter-bar__info-icon" isInline>
+          <Button variant="link" className="odc-topology-filter-bar__info-icon">
             <InfoCircleIcon />
           </Button>
         </Popover>
       </ToolbarGroup>
+      {kialiLink && (
+        <ToolbarGroup className="odc-topology-filter-bar__kiali-link">
+          <ExternalLink href={kialiLink} text="Kiali" />
+        </ToolbarGroup>
+      )}
     </ToolbarContent>
   );
 };
@@ -102,6 +114,8 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
 const mapStateToProps = (state: RootState): StateProps => ({
   filters: getTopologyFilters(state),
   supportedFilters: getSupportedTopologyFilters(state),
+  consoleLinks: state.UI.get('consoleLinks'),
+  namespace: getActiveNamespace(state),
 });
 
 const dispatchToProps = (dispatch: Dispatch): DispatchProps => ({
@@ -111,12 +125,14 @@ const dispatchToProps = (dispatch: Dispatch): DispatchProps => ({
 });
 
 const mergeProps = (
-  { filters, supportedFilters }: StateProps,
+  { filters, supportedFilters, consoleLinks, namespace }: StateProps,
   { onFiltersChange }: DispatchProps,
   { visualization, onSearchChange }: OwnProps,
 ): MergeProps => ({
   filters,
   supportedFilters,
+  consoleLinks,
+  namespace,
   onDisplayFiltersChange: (changedFilters: DisplayFilters) => {
     onFiltersChange(changedFilters);
   },
