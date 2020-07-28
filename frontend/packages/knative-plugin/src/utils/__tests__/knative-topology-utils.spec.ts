@@ -6,8 +6,6 @@ import {
   sampleDeploymentsCamelConnector,
 } from '../../topology/__tests__/topology-knative-test-data';
 import {
-  EdgeType,
-  NodeType,
   getKnativeServiceData,
   getKnativeTopologyNodeItems,
   getEventTopologyEdgeItems,
@@ -20,6 +18,7 @@ import {
   getSinkUriTopologyEdgeItems,
   isOperatorBackedKnResource,
 } from '../../topology/knative-topology-utils';
+import { EdgeType, NodeType } from '../../topology/topology-types';
 import { mockServiceData, mockRevisions } from '../__mocks__/traffic-splitting-utils-mock';
 import { EventSourceCronJobModel } from '../../models';
 import * as knativefetchutils from '../fetch-dynamic-eventsources-utils';

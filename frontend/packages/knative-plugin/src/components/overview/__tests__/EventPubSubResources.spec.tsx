@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { OverviewItem } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
 import {
@@ -11,64 +10,120 @@ import {
   EventTriggerObj,
 } from '../../../topology/__tests__/topology-knative-test-data';
 import EventPubSubResources, { PubSubResourceOverviewList } from '../EventPubSubResources';
+import PubSubSubscribers from '../EventPubSubSubscribers';
+import { Subscriber } from 'packages/knative-plugin/src/topology/topology-types';
 
 type EventPubSubResourcesProps = React.ComponentProps<typeof EventPubSubResources>;
 type PubSubResourceOverviewListProps = React.ComponentProps<typeof PubSubResourceOverviewList>;
-let itemData: OverviewItem & {
-  eventSources?: K8sResourceKind[];
-  eventingsubscription?: K8sResourceKind[];
-  connections?: K8sResourceKind[];
-};
+let sampleItemData: EventPubSubResourcesProps;
+
+const sampleSubscribers: Subscriber[] = [
+  {
+    name: 'subscriber',
+    kind: 'Service',
+    namespace: 'ns',
+    data: [
+      {
+        name: 'subcribedVia',
+        namespace: 'ns',
+        kind: 'Trigger',
+        filters: [{ key: 'type', value: 'value' }],
+      },
+    ],
+  },
+];
 
 describe('EventPubSubResources', () => {
   let wrapper: ShallowWrapper<EventPubSubResourcesProps>;
-  itemData = {
-    obj: EventSubscriptionObj,
-    buildConfigs: [],
-    eventSources: [],
-    routes: [],
-    services: [],
-    connections: [EventIMCObj, knativeServiceObj],
+  sampleItemData = {
+    item: {
+      obj: EventSubscriptionObj,
+      buildConfigs: [],
+      eventSources: [],
+      routes: [],
+      services: [],
+      subscribers: sampleSubscribers,
+    },
   };
 
-  it('should render PubSubResourceOverviewList once if obj of kind Subscription', () => {
-    wrapper = shallow(<EventPubSubResources item={itemData} />);
+  it('should render related resources for the Subscription', () => {
+    wrapper = shallow(<EventPubSubResources item={sampleItemData.item} />);
     const findPubSubList = wrapper.find(PubSubResourceOverviewList);
-    expect(findPubSubList).toHaveLength(1);
-    expect(findPubSubList.at(0).props().title).toEqual('Connections');
+    expect(findPubSubList).toHaveLength(3);
+    expect(findPubSubList.at(0).props().title).toEqual('Event Sources');
+    expect(findPubSubList.at(1).props().title).toEqual('Channel');
+    expect(findPubSubList.at(2).props().title).toEqual('Subscriber');
   });
 
-  it('should render PubSubResourceOverviewList thrice if obj not of kind Subscription', () => {
+  it('should render related resources for channel without subscribers', () => {
     const channelItemData = {
-      ...itemData,
+      ...sampleItemData.item,
       obj: EventIMCObj,
       ksservices: [knativeServiceObj],
       eventingsubscription: [EventSubscriptionObj],
     };
     wrapper = shallow(<EventPubSubResources item={channelItemData} />);
     const findPubSubList = wrapper.find(PubSubResourceOverviewList);
-    expect(findPubSubList).toHaveLength(3);
-    expect(findPubSubList.at(0).props().title).toEqual('Knative Services');
-    expect(findPubSubList.at(1).props().title).toEqual('Event Sources');
-    expect(findPubSubList.at(2).props().title).toEqual('Subscriptions');
+    expect(findPubSubList).toHaveLength(1);
+    expect(findPubSubList.at(0).props().title).toEqual('Event Sources');
   });
 
-  it('should render broker section if the kind is Broker ', () => {
+  it('should render related resources for channel with subscribers', () => {
+    const channelItemData = {
+      ...sampleItemData.item,
+      obj: EventIMCObj,
+      ksservices: [knativeServiceObj],
+      eventingsubscription: [EventSubscriptionObj],
+      subscribers: sampleSubscribers,
+    };
+    wrapper = shallow(<EventPubSubResources item={channelItemData} />);
+    const findPubSubList = wrapper.find(PubSubResourceOverviewList);
+    const findPubSubSubscriberList = wrapper.find(PubSubSubscribers);
+    expect(findPubSubList).toHaveLength(1);
+    expect(findPubSubList.at(0).props().title).toEqual('Event Sources');
+    expect(findPubSubSubscriberList).toHaveLength(1);
+    expect(
+      findPubSubSubscriberList
+        .dive()
+        .find(SidebarSectionHeading)
+        .props().text,
+    ).toEqual('Subscribers');
+  });
+
+  it('should render broker section if the kind is Broker and  without subscribers ', () => {
     const brokerItemData = {
-      ...itemData,
+      ...sampleItemData.item,
       obj: EventBrokerObj,
       ksservices: [knativeServiceObj],
       triggers: [EventTriggerObj],
-      connections: [EventBrokerObj, knativeServiceObj],
     };
     wrapper = shallow(<EventPubSubResources item={brokerItemData} />);
     const findPubSubList = wrapper.find(PubSubResourceOverviewList);
-    expect(findPubSubList).toHaveLength(5);
-    expect(findPubSubList.at(0).props().title).toEqual('Knative Services');
-    expect(findPubSubList.at(1).props().title).toEqual('Event Sources');
-    expect(findPubSubList.at(2).props().title).toEqual('Triggers');
-    expect(findPubSubList.at(3).props().title).toEqual('Pods');
-    expect(findPubSubList.at(4).props().title).toEqual('Deployments');
+    expect(findPubSubList).toHaveLength(3);
+    expect(findPubSubList.at(0).props().title).toEqual('Event Sources');
+    expect(findPubSubList.at(1).props().title).toEqual('Pods');
+    expect(findPubSubList.at(2).props().title).toEqual('Deployments');
+  });
+
+  it('should render broker section with Subscribers if the kind is Broker and subscribers available ', () => {
+    const brokerItemData = {
+      ...sampleItemData.item,
+      obj: EventBrokerObj,
+      ksservices: [knativeServiceObj],
+      triggers: [EventTriggerObj],
+      subscribers: sampleSubscribers,
+    };
+    wrapper = shallow(<EventPubSubResources item={brokerItemData} />);
+    const findPubSubSubscriberList = wrapper.find(PubSubSubscribers);
+    const findPubSubList = wrapper.find(PubSubResourceOverviewList);
+    expect(findPubSubList).toHaveLength(3);
+    expect(findPubSubSubscriberList).toHaveLength(1);
+    expect(
+      findPubSubSubscriberList
+        .dive()
+        .find(SidebarSectionHeading)
+        .props().text,
+    ).toEqual('Subscribers');
   });
 });
 
