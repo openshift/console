@@ -284,7 +284,7 @@ export const sortList = (
 
   return action(ActionType.SortList, { listId, field, func, orderBy });
 };
-export const setTableColumns = (id: string, selectedColumns: any) => {
+export const setTableColumns = (id: string, selectedColumns: Set<string>) => {
   let currentColumns;
   try {
     currentColumns = JSON.parse(localStorage.getItem(COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY)) || {};
@@ -294,7 +294,7 @@ export const setTableColumns = (id: string, selectedColumns: any) => {
     console.error('Error parsing column filters from local storage', e);
     return;
   }
-  currentColumns[id] = selectedColumns;
+  currentColumns[id] = [...selectedColumns];
   localStorage.setItem(COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY, JSON.stringify(currentColumns));
   return action(ActionType.SetTableColumns, { id, selectedColumns });
 };

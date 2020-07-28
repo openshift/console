@@ -16,7 +16,6 @@ import {
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory';
 import { setTableColumns } from '../../actions/ui';
-import { ITransform } from '@patternfly/react-table';
 
 export const MAX_VIEW_COLS = 9;
 
@@ -55,22 +54,20 @@ const DataListRow: React.FC<DataListRowProps> = ({
 export const ColumnManagementModal: React.FC<ColumnManagementModalProps> = ({
   cancel,
   close,
+  columnLayout,
   columnManagementID,
   columnManagementType,
   selectedColumns,
 }) => {
   const dispatch = useDispatch();
-  const initialSelected = new Set<string>(
-    selectedColumns.filter((column) => column.visible && column.id).map((column) => column.id),
-  );
   const defaultColumns = !_.isEmpty(selectedColumns)
-    ? selectedColumns.filter((column) => column.id && !column.additional)
+    ? columnLayout.filter((column) => column.id && !column.additional)
     : [];
   const additionalColumns = !_.isEmpty(selectedColumns)
-    ? selectedColumns.filter((column) => column.additional)
+    ? columnLayout.filter((column) => column.additional)
     : [];
 
-  const [checkedColumns, setCheckedColumns] = React.useState(new Set(initialSelected));
+  const [checkedColumns, setCheckedColumns] = React.useState(new Set(selectedColumns));
 
   const onColumnChange = (checked: boolean, event: React.SyntheticEvent): void => {
     const updatedCheckedColumns = new Set<string>(checkedColumns);
@@ -83,14 +80,7 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps> = ({
 
   const submit = (event): void => {
     event.preventDefault();
-    dispatch(
-      setTableColumns(
-        columnManagementID,
-        selectedColumns.map((column) => {
-          return { ...column, visible: checkedColumns.has(column.id) };
-        }),
-      ),
-    );
+    dispatch(setTableColumns(columnManagementID, checkedColumns));
     close();
   };
 
@@ -184,17 +174,13 @@ export type ColumnManagementModalProps = {
   cancel?: () => void;
   close?: () => void;
   columnManagementID: string;
-  selectedColumns: ManagedColumn[];
+  selectedColumns: Set<string>;
   columnManagementType: string;
+  columnLayout: ManagedColumn[];
 };
 
 export type ManagedColumn = {
   id?: string;
-  props?: any;
-  sortField?: string;
-  sortFunc?: any;
   title: string;
-  transforms?: ITransform[];
-  visible: boolean;
   additional?: boolean;
 };

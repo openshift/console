@@ -57,7 +57,6 @@ import { VolumesTable } from './volumes-table';
 import { PodModel } from '../models';
 import { Conditions } from './conditions';
 import { RootState } from '../redux';
-import { ManagedColumn } from './modals/column-management-modal';
 
 // Only request metrics if the device's screen width is larger than the
 // breakpoint where metrics are visible.
@@ -180,7 +179,6 @@ const getHeader = (showNodes) => {
         sortField: 'metadata.name',
         transforms: [sortable],
         props: { className: podColumnInfo.name.classes },
-        visible: true,
       },
       {
         title: podColumnInfo.namespace.title,
@@ -188,7 +186,6 @@ const getHeader = (showNodes) => {
         sortField: 'metadata.namespace',
         transforms: [sortable],
         props: { className: podColumnInfo.namespace.classes },
-        visible: true,
       },
       {
         title: podColumnInfo.status.title,
@@ -196,7 +193,6 @@ const getHeader = (showNodes) => {
         sortFunc: 'podPhase',
         transforms: [sortable],
         props: { className: podColumnInfo.status.classes },
-        visible: true,
       },
       {
         title: podColumnInfo.ready.title,
@@ -204,7 +200,6 @@ const getHeader = (showNodes) => {
         sortFunc: 'podReadiness',
         transforms: [sortable],
         props: { className: podColumnInfo.ready.classes },
-        visible: true,
       },
       {
         title: podColumnInfo.restarts.title,
@@ -212,7 +207,6 @@ const getHeader = (showNodes) => {
         sortFunc: 'podRestarts',
         transforms: [sortable],
         props: { className: podColumnInfo.restarts.classes },
-        visible: true,
       },
       {
         title: showNodes ? podColumnInfo.node.title : podColumnInfo.owner.title,
@@ -220,7 +214,6 @@ const getHeader = (showNodes) => {
         sortField: showNodes ? 'spec.nodeName' : 'metadata.ownerReferences[0].name',
         transforms: [sortable],
         props: { className: podColumnInfo.owner.classes },
-        visible: true,
       },
       {
         title: podColumnInfo.memory.title,
@@ -228,7 +221,6 @@ const getHeader = (showNodes) => {
         sortFunc: 'podMemory',
         transforms: [sortable],
         props: { className: podColumnInfo.memory.classes },
-        visible: true,
       },
       {
         title: podColumnInfo.cpu.title,
@@ -236,7 +228,6 @@ const getHeader = (showNodes) => {
         sortFunc: 'podCPU',
         transforms: [sortable],
         props: { className: podColumnInfo.cpu.classes },
-        visible: true,
       },
       {
         title: podColumnInfo.created.title,
@@ -244,7 +235,6 @@ const getHeader = (showNodes) => {
         sortField: 'metadata.creationTimestamp',
         transforms: [sortable],
         props: { className: podColumnInfo.created.classes },
-        visible: true,
       },
       {
         title: podColumnInfo.node.title,
@@ -252,7 +242,6 @@ const getHeader = (showNodes) => {
         sortField: 'spec.nodeName',
         transforms: [sortable],
         props: { className: podColumnInfo.node.classes },
-        visible: false,
         additional: true,
       },
       {
@@ -261,7 +250,6 @@ const getHeader = (showNodes) => {
         sortField: 'metadata.labels',
         transforms: [sortable],
         props: { className: podColumnInfo.labels.classes },
-        visible: false,
         additional: true,
       },
       {
@@ -270,16 +258,25 @@ const getHeader = (showNodes) => {
         sortField: 'status.hostIP',
         transforms: [sortable],
         props: { className: podColumnInfo.ipaddress.classes },
-        visible: false,
         additional: true,
       },
       {
         title: '',
         props: { className: Kebab.columnClass },
-        visible: true,
       },
     ];
   };
+};
+
+const getSelectedColumns = (showNodes: boolean) => {
+  return new Set(
+    getHeader(showNodes)().reduce((acc, column) => {
+      if (column.id && !column.additional) {
+        acc.push(column.id);
+      }
+      return acc;
+    }, []),
+  );
 };
 
 const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(podRowStateToProps)(
@@ -298,8 +295,9 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
     const restarts = podRestarts(pod);
     const bytes: number = _.get(metrics, ['memory', namespace, name]);
     const cores: number = _.get(metrics, ['cpu', namespace, name]);
-    const columns: ManagedColumn[] =
-      selectedColumns?.get(columnManagementID) || getHeader(showNodes)();
+    const columns = new Set(
+      selectedColumns?.get(columnManagementID) || getSelectedColumns(showNodes),
+    );
     return (
       <TableRow id={pod.metadata.uid} index={index} trKey={rowKey} style={style}>
         <TableData className={podColumnInfo.name.classes}>
@@ -727,11 +725,11 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
   dispatchToProps,
 )((props: PodPageProps & PodPagePropsFromDispatch) => {
   const { canCreate = true, namespace, setPodMetrics, customData, ...listProps } = props;
-  let selectedColumns = useSelector<RootState, string>(({ UI }) =>
-    UI.getIn(['columnManagement', columnManagementID]),
+  let selectedColumns: Set<string> = new Set(
+    useSelector<RootState, string>(({ UI }) => UI.getIn(['columnManagement', columnManagementID])),
   );
   if (_.isEmpty(selectedColumns)) {
-    selectedColumns = getHeader(props?.customData?.showNodes)();
+    selectedColumns = getSelectedColumns(props?.customData?.showNodes);
   }
   React.useEffect(() => {
     if (showMetrics) {
@@ -764,6 +762,9 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
       selectedColumns={selectedColumns}
       columnManagementID={columnManagementID}
       columnManagementType="Pod"
+      columnLayout={getHeader(props?.customData?.showNodes)().map((column) =>
+        _.pick(column, ['title', 'additional', 'id']),
+      )}
     />
   );
 });
@@ -815,7 +816,7 @@ type PodTableRowProps = {
 
 type PodTableRowPropsFromState = {
   metrics: UIActions.PodMetrics;
-  selectedColumns: Map<string, ManagedColumn[]>;
+  selectedColumns: Map<string, Set<string>>;
 };
 
 type PodListProps = {

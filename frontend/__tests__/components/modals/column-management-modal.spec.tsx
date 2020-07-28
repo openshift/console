@@ -13,143 +13,117 @@ import { PodModel } from '@console/internal/models';
 
 const columnManagementID = referenceForModel(PodModel);
 const columnManagementType = 'Pod';
-const selectedColumns = [
+const columnLayout = [
   {
     title: 'Name',
-    visible: true,
     id: 'name',
   },
   {
     title: 'Namespace',
-    visible: true,
     id: 'namespace',
   },
   {
     title: 'Status',
-    visible: true,
     id: 'status',
   },
   {
     title: 'Ready',
-    visible: true,
     id: 'ready',
   },
   {
     title: 'Restarts',
-    visible: true,
     id: 'restarts',
   },
   {
     title: 'Owner',
-    visible: true,
     id: 'owner',
   },
   {
     title: 'Memory',
-    visible: true,
     id: 'memory',
   },
   {
     title: 'CPU',
-    visible: true,
     id: 'cpu',
   },
   {
     title: 'Created',
-    visible: true,
     id: 'created',
   },
   {
     title: 'Node',
-    visible: false,
     additional: true,
     id: 'node',
   },
   {
     title: 'Labels',
-    visible: false,
     additional: true,
     id: 'labels',
   },
   {
     title: 'IP Address',
-    visible: false,
     additional: true,
     id: 'ipaddress',
   },
   {
     title: '',
-    visible: true,
   },
 ];
 
-const selectedColumnsNamespaceDisabled = [
+const columnLayoutNamespaceDisabled = [
   {
     title: 'Name',
-    visible: true,
     id: 'name',
   },
   {
     title: 'Namespace',
-    visible: false,
     id: 'namespace',
   },
   {
     title: 'Status',
-    visible: true,
     id: 'status',
   },
   {
     title: 'Ready',
-    visible: true,
     id: 'ready',
   },
   {
     title: 'Restarts',
-    visible: true,
     id: 'restarts',
   },
   {
     title: 'Owner',
-    visible: true,
     id: 'owner',
   },
   {
     title: 'Memory',
-    visible: true,
     id: 'memory',
   },
   {
     title: 'CPU',
-    visible: true,
     id: 'cpu',
   },
   {
     title: 'Created',
-    visible: true,
     id: 'created',
   },
   {
     title: 'Node',
-    visible: false,
     additional: true,
     id: 'node',
   },
   {
     title: 'Labels',
-    visible: false,
     additional: true,
     id: 'labels',
   },
   {
     title: 'IP Address',
-    visible: false,
     additional: true,
     id: 'ipaddress',
   },
   {
     title: '',
-    visible: true,
   },
 ];
 
@@ -161,7 +135,17 @@ describe(ColumnManagementModal.displayName, () => {
         <ColumnManagementModal
           columnManagementType={columnManagementType}
           columnManagementID={columnManagementID}
-          selectedColumns={selectedColumns}
+          selectedColumns={
+            new Set(
+              columnLayout.reduce((acc, column) => {
+                if (column.id && !column.additional) {
+                  acc.push(column.id);
+                }
+                return acc;
+              }, []),
+            )
+          }
+          columnLayout={columnLayout}
         />
       </Provider>,
     );
@@ -193,7 +177,17 @@ describe(ColumnManagementModal.displayName, () => {
         <ColumnManagementModal
           columnManagementType={columnManagementType}
           columnManagementID={columnManagementID}
-          selectedColumns={selectedColumnsNamespaceDisabled}
+          selectedColumns={
+            new Set(
+              columnLayoutNamespaceDisabled.reduce((acc, column) => {
+                if (column.id && !column.additional && column.id !== 'cpu') {
+                  acc.push(column.id);
+                }
+                return acc;
+              }, []),
+            )
+          }
+          columnLayout={columnLayoutNamespaceDisabled}
         />
       </Provider>,
     );

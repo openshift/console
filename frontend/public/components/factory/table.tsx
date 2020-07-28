@@ -64,7 +64,6 @@ import {
 } from '@patternfly/react-virtualized-extension';
 
 import { tableFilters } from './table-filters';
-import { ManagedColumn } from '../modals/column-management-modal';
 
 const rowFiltersToFilterFuncs = (rowFilters) => {
   return (rowFilters || [])
@@ -188,14 +187,7 @@ const stateToProps = (
   );
   const currentSortFunc = UI.getIn(['listSorts', listId, 'func'], defaultSortFunc);
   const currentSortOrder = UI.getIn(['listSorts', listId, 'orderBy'], defaultSortOrder);
-  const columnManagement = UI.getIn(['columnManagement', columnManagementID]);
-  const activeColumns = columnManagement
-    ? columnManagement.reduce((acc, curr) => {
-        acc[curr.id] = curr.visible;
-        return acc;
-      }, {})
-    : {};
-
+  const activeColumns = new Set(UI.getIn(['columnManagement', columnManagementID]));
   if (loaded) {
     let sortBy: string | Function = 'metadata.name';
     if (currentSortField) {
@@ -284,8 +276,9 @@ export const TableData: React.SFC<TableDataProps> = ({
   const showNamespace =
     columnId === 'namespace' ? UIActions.getActiveNamespace() === ALL_NAMESPACES_KEY : true;
   return (
-    ((!_.isEmpty(columns) ? columns?.find((col) => col.id === columnId && col.visible) : true) &&
-      showNamespace && <td {...props} className={className} role="gridcell" />) ||
+    ((!_.isEmpty(columns) ? columns.has(columnId) : true) && showNamespace && (
+      <td {...props} className={className} role="gridcell" />
+    )) ||
     null
   );
 };
@@ -293,7 +286,7 @@ TableData.displayName = 'TableData';
 export type TableDataProps = {
   className?: string;
   columnId?: string;
-  columns?: ManagedColumn[];
+  columns?: Set<string>;
   id?: string;
 };
 
@@ -450,15 +443,19 @@ type ComponentProps = {
 };
 
 const getActiveColumns = (Header, componentProps, activeColumns) => {
-  let columns: ManagedColumn[] = Header(componentProps);
+  let columns = Header(componentProps);
   if (_.isEmpty(activeColumns) && columns.find((col) => col.additional)) {
-    activeColumns = columns.reduce((acc, curr) => {
-      acc[curr.id] = curr.visible;
-      return acc;
-    }, {});
+    activeColumns = new Set(
+      columns.reduce((acc, curr) => {
+        if (curr.id && !curr.additional) {
+          acc.push(curr.id);
+        }
+        return acc;
+      }, []),
+    );
   }
   if (!_.isEmpty(activeColumns)) {
-    columns = columns?.filter((col) => activeColumns?.[col.id] || col.title === '');
+    columns = columns?.filter((col) => activeColumns.has(col.id) || col.title === '');
   }
 
   const showNamespace = UIActions.getActiveNamespace() === ALL_NAMESPACES_KEY;
@@ -708,7 +705,7 @@ export type TableInnerProps = {
   data?: any[];
   defaultSortField?: string;
   defaultSortFunc?: string;
-  activeColumns?: { [name: string]: boolean };
+  activeColumns?: Set<string>;
   unfilteredData?: any[];
   NoDataEmptyMsg?: React.ComponentType<{}>;
   EmptyMsg?: React.ComponentType<{}>;

@@ -86,6 +86,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     data,
     hideNameFilter,
     columnManagementID,
+    columnLayout,
     columnManagementType,
     selectedColumns,
     hideLabelFilter,
@@ -343,6 +344,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
                   columnManagementID,
                   columnManagementType,
                   selectedColumns,
+                  columnLayout,
                 })
               }
               aria-label="Column Management"
@@ -368,9 +370,10 @@ type FilterToolbarProps = {
   parseAutoComplete?: any;
   kinds?: any;
   labelPath?: string;
-  selectedColumns?: ManagedColumn[];
+  selectedColumns?: Set<string>;
   columnManagementID?: string;
   columnManagementType?: string;
+  columnLayout?: ManagedColumn;
 };
 
 export type RowFilter = {
