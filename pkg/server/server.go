@@ -80,6 +80,7 @@ type jsGlobals struct {
 	PrometheusPublicURL      string `json:"prometheusPublicURL"`
 	ThanosPublicURL          string `json:"thanosPublicURL"`
 	LoadTestFactor           int    `json:"loadTestFactor"`
+	InactivityTimeout        int    `json:"inactivityTimeout"`
 	GOARCH                   string `json:"GOARCH"`
 	GOOS                     string `json:"GOOS"`
 	GraphQLBaseURL           string `json:"graphqlBaseURL"`
@@ -102,6 +103,7 @@ type Server struct {
 	StatuspageID         string
 	LoadTestFactor       int
 	DexClient            api.DexClient
+	InactivityTimeout    int
 	// A client with the correct TLS setup for communicating with the API server.
 	K8sClient                        *http.Client
 	ThanosProxyConfig                *proxy.Config
@@ -430,6 +432,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		Branding:              s.Branding,
 		CustomProductName:     s.CustomProductName,
 		StatuspageID:          s.StatuspageID,
+		InactivityTimeout:     s.InactivityTimeout,
 		DocumentationBaseURL:  s.DocumentationBaseURL.String(),
 		AlertManagerPublicURL: s.AlertManagerPublicURL.String(),
 		GrafanaPublicURL:      s.GrafanaPublicURL.String(),

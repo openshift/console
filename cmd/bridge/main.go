@@ -77,6 +77,8 @@ func main() {
 	fUserAuthOIDCClientSecretFile := fs.String("user-auth-oidc-client-secret-file", "", "File containing the OIDC OAuth2 Client Secret.")
 	fUserAuthLogoutRedirect := fs.String("user-auth-logout-redirect", "", "Optional redirect URL on logout needed for some single sign-on identity providers.")
 
+	fInactivityTimeout := fs.Int("inactivity-timeout", 0, "Number of seconds, after which user will be logged out if inactive. Ignored if less than 300 seconds (5 minutes).")
+
 	fK8sMode := fs.String("k8s-mode", "in-cluster", "in-cluster | off-cluster")
 	fK8sModeOffClusterEndpoint := fs.String("k8s-mode-off-cluster-endpoint", "", "URL of the Kubernetes API server.")
 	fK8sModeOffClusterSkipVerifyTLS := fs.Bool("k8s-mode-off-cluster-skip-verify-tls", false, "DEV ONLY. When true, skip verification of certs presented by k8s API server.")
@@ -204,6 +206,16 @@ func main() {
 		}
 	}
 
+	if *fInactivityTimeout < 300 {
+		log.Warning("Flag inactivity-timeout is set to less then 300 seconds and will be ignored!")
+	} else {
+		if *fK8sAuth != "oidc" && *fK8sAuth != "openshift" {
+			fmt.Fprintln(os.Stderr, "In order activate the user inactivity timout, flag --user-auth must be one of: oidc, openshift")
+			os.Exit(1)
+		}
+		log.Infof("Setting user inactivity timout to %d seconds", *fInactivityTimeout)
+	}
+
 	srv := &server.Server{
 		PublicDir:             *fPublicDir,
 		BaseURL:               baseURL,
@@ -218,6 +230,7 @@ func main() {
 		PrometheusPublicURL:   prometheusPublicURL,
 		ThanosPublicURL:       thanosPublicURL,
 		LoadTestFactor:        *fLoadTestFactor,
+		InactivityTimeout:     *fInactivityTimeout,
 	}
 
 	// if !in-cluster (dev) we should not pass these values to the frontend
@@ -510,7 +523,7 @@ func main() {
 	case "disabled":
 		log.Warningf("running with AUTHENTICATION DISABLED!")
 	default:
-		bridge.FlagFatalf("user-auth", "must be one of: oidc, disabled")
+		bridge.FlagFatalf("user-auth", "must be one of: oidc, openshift, disabled")
 	}
 
 	var resourceListerToken string

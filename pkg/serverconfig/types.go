@@ -52,10 +52,11 @@ type ClusterInfo struct {
 
 // Auth holds configuration for authenticating with OpenShift. The auth method is assumed to be "openshift".
 type Auth struct {
-	ClientID            string `yaml:"clientID,omitempty"`
-	ClientSecretFile    string `yaml:"clientSecretFile,omitempty"`
-	OAuthEndpointCAFile string `yaml:"oauthEndpointCAFile,omitempty"`
-	LogoutRedirect      string `yaml:"logoutRedirect,omitempty"`
+	ClientID                 string `yaml:"clientID,omitempty"`
+	ClientSecretFile         string `yaml:"clientSecretFile,omitempty"`
+	OAuthEndpointCAFile      string `yaml:"oauthEndpointCAFile,omitempty"`
+	LogoutRedirect           string `yaml:"logoutRedirect,omitempty"`
+	InactivityTimeoutSeconds int    `yaml:"inactivityTimeoutSeconds,omitempty"`
 }
 
 // Customization holds configuration such as what logo to use.
