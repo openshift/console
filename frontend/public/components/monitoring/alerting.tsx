@@ -92,7 +92,6 @@ import { ResourceStatus } from '../utils/resource-status';
 import { history } from '../utils/router';
 import { LoadingInline, StatusBox } from '../utils/status-box';
 import { Timestamp } from '../utils/timestamp';
-import { getActiveNamespace } from '../../reducers/ui';
 
 const ruleURL = (rule: Rule) => `${RuleResource.plural}/${_.get(rule, 'id')}`;
 
@@ -287,14 +286,10 @@ const Label = ({ k, v }) => (
   </div>
 );
 
-const queryBrowserURL = (
-  query: string,
-  activePerspective: string = 'admin',
-  activeNamespace?: string,
-) =>
-  activePerspective === 'admin'
-    ? `/monitoring/query-browser?query0=${encodeURIComponent(query)}`
-    : `/dev-monitoring/ns/${activeNamespace}/metrics?query0=${encodeURIComponent(query)}`;
+const queryBrowserURL = (query: string, namespace: string) =>
+  namespace
+    ? `/dev-monitoring/ns/${namespace}/metrics?query0=${encodeURIComponent(query)}`
+    : `/monitoring/query-browser?query0=${encodeURIComponent(query)}`;
 
 const Graph_: React.FC<GraphProps> = ({
   deleteAll,
@@ -302,7 +297,6 @@ const Graph_: React.FC<GraphProps> = ({
   patchQuery,
   rule,
   namespace,
-  activePerspective,
 }) => {
   const { duration = 0, query = '' } = rule || {};
 
@@ -320,9 +314,7 @@ const Graph_: React.FC<GraphProps> = ({
   const timespan = Math.max(3 * duration, 30 * 60) * 1000;
 
   const GraphLink = () =>
-    query ? (
-      <Link to={queryBrowserURL(query, activePerspective, namespace)}>View in Metrics</Link>
-    ) : null;
+    query ? <Link to={queryBrowserURL(query, namespace)}>View in Metrics</Link> : null;
 
   return (
     <QueryBrowser
@@ -505,31 +497,19 @@ const alertStateToProps = (state: RootState, { match }): AlertsDetailsPageProps 
   const alerts = _.filter(data, (a) => a.rule.id === ruleID);
   const rule = alerts?.[0]?.rule;
   const alert = _.find(alerts, (a) => _.isEqual(a.labels, labels));
-  const url = match.url;
   return {
     alert,
     loaded,
     loadError,
+    namespace,
     rule,
     silencesLoaded,
-    activePerspective: perspective,
-    namespace,
-    url,
   };
 };
 
 export const AlertsDetailsPage = withFallback(
   connect(alertStateToProps)((props: AlertsDetailsPageProps) => {
-    const {
-      alert,
-      loaded,
-      loadError,
-      rule,
-      silencesLoaded,
-      activePerspective,
-      namespace,
-      url,
-    } = props;
+    const { alert, loaded, loadError, namespace, rule, silencesLoaded } = props;
     const { annotations = {}, labels = {}, silencedBy = [] } = alert || {};
     const { alertname, severity } = labels as any;
     const state = alertState(alert);
@@ -545,12 +525,9 @@ export const AlertsDetailsPage = withFallback(
               breadcrumbs={[
                 {
                   name: 'Alerts',
-                  path:
-                    activePerspective === 'admin'
-                      ? '/monitoring/alerts'
-                      : `/dev-monitoring/ns/${namespace}/alerts`,
+                  path: namespace ? `/dev-monitoring/ns/${namespace}/alerts` : '/monitoring/alerts',
                 },
-                { name: 'Alert Details', path: url },
+                { name: 'Alert Details', path: undefined },
               ]}
             />
             <h1 className="co-m-pane__heading">
@@ -576,12 +553,7 @@ export const AlertsDetailsPage = withFallback(
             <div className="co-m-pane__body-group">
               <div className="row">
                 <div className="col-sm-12">
-                  <Graph
-                    filterLabels={labels}
-                    rule={rule}
-                    activePerspective={activePerspective}
-                    namespace={namespace}
-                  />
+                  <Graph filterLabels={labels} namespace={namespace} rule={rule} />
                 </div>
               </div>
               <div className="row">
@@ -733,21 +705,18 @@ const ActiveAlerts = ({ alerts, ruleID }) => (
 
 const ruleStateToProps = (state: RootState, { match }): AlertRulesDetailsPageProps => {
   const perspective = _.has(match.params, 'ns') ? 'dev' : 'admin';
+  const namespace = match.params?.ns;
   const { data, loaded, loadError }: Rules = rulesToProps(state, perspective);
   const id = _.get(match, 'params.id');
   const rule = _.find(data, { id });
-  const namespace = getActiveNamespace(state);
-  const url = match.url;
-  return { loaded, loadError, rule, activePerspective: perspective, namespace, url };
+  return { loaded, loadError, namespace, rule };
 };
 
 export const AlertRulesDetailsPage = withFallback(
   connect(ruleStateToProps)((props: AlertRulesDetailsPageProps) => {
-    const { loaded, loadError, rule, activePerspective, namespace, url } = props;
+    const { loaded, loadError, namespace, rule } = props;
     const { alerts = [], annotations = {}, duration = null, name = '', query = '' } = rule || {};
     const severity = rule?.labels?.severity;
-    const alertsPath =
-      activePerspective === 'dev' ? `/dev-monitoring/ns/${namespace}/alerts` : '/monitoring/alerts';
     return (
       <>
         <Helmet>
@@ -758,10 +727,12 @@ export const AlertRulesDetailsPage = withFallback(
             <BreadCrumbs
               breadcrumbs={[
                 {
-                  name: 'Alerts',
-                  path: alertsPath,
+                  name: namespace ? 'Alerts' : 'Alerting Rules',
+                  path: namespace
+                    ? `/dev-monitoring/ns/${namespace}/alerts`
+                    : '/monitoring/alertrules',
                 },
-                { name: 'Alert Rule Details', path: url },
+                { name: 'Alerting Rule Details', path: undefined },
               ]}
             />
             <h1 className="co-m-pane__heading">
@@ -804,7 +775,7 @@ export const AlertRulesDetailsPage = withFallback(
                     )}
                     <dt>Expression</dt>
                     <dd>
-                      <Link to={queryBrowserURL(query, activePerspective, namespace)}>
+                      <Link to={queryBrowserURL(query, namespace)}>
                         <pre className="co-pre-wrap monitoring-query">{query}</pre>
                       </Link>
                     </dd>
@@ -819,7 +790,7 @@ export const AlertRulesDetailsPage = withFallback(
               <SectionHeading text="Active Alerts" />
               <div className="row">
                 <div className="col-sm-12">
-                  <Graph rule={rule} activePerspective={activePerspective} namespace={namespace} />
+                  <Graph namespace={namespace} rule={rule} />
                 </div>
               </div>
               <div className="row">
@@ -871,7 +842,7 @@ const SilencedAlertsList = ({ alerts }) =>
 
 const SilencesDetailsPage = withFallback(
   connect(silenceParamToProps)((props: SilencesDetailsPageProps) => {
-    const { alertsLoaded, loaded, loadError, silence } = props;
+    const { alertsLoaded, loaded, loadError, namespace, silence } = props;
     const {
       comment = '',
       createdBy = '',
@@ -894,7 +865,18 @@ const SilencesDetailsPage = withFallback(
           loaded={loaded}
           loadError={loadError}
         >
-          <div className="co-m-nav-title co-m-nav-title--detail">
+          <div className="co-m-nav-title co-m-nav-title--detail co-m-nav-title--breadcrumbs">
+            <BreadCrumbs
+              breadcrumbs={[
+                {
+                  name: 'Silences',
+                  path: namespace
+                    ? `/dev-monitoring/ns/${namespace}/silences`
+                    : '/monitoring/silences',
+                },
+                { name: 'Silence Details', path: undefined },
+              ]}
+            />
             <h1 className="co-m-pane__heading">
               <div className="co-resource-item">
                 <MonitoringResourceIcon
@@ -1490,11 +1472,9 @@ type AlertsDetailsPageProps = {
   alert: Alert;
   loaded: boolean;
   loadError?: string;
+  namespace: string;
   rule: Rule;
   silencesLoaded: boolean;
-  activePerspective: string;
-  namespace: string;
-  url: string;
 };
 
 type AlertMessageProps = {
@@ -1506,16 +1486,15 @@ type AlertMessageProps = {
 type AlertRulesDetailsPageProps = {
   loaded: boolean;
   loadError?: string;
-  rule: Rule;
-  activePerspective: string;
   namespace: string;
-  url: string;
+  rule: Rule;
 };
 
 type SilencesDetailsPageProps = {
   alertsLoaded: boolean;
   loaded: boolean;
   loadError?: string;
+  namespace: string;
   silence: Silence;
 };
 
@@ -1526,10 +1505,9 @@ type AlertingPageProps = {
 type GraphProps = {
   deleteAll: () => never;
   filterLabels?: PrometheusLabels;
+  namespace?: string;
   patchQuery: (index: number, patch: QueryObj) => any;
   rule: Rule;
-  namespace?: string;
-  activePerspective?: string;
 };
 
 type MonitoringResourceIconProps = {
