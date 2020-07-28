@@ -76,6 +76,10 @@ const isPendingPods = (
   (!currentPodCount && !!desiredPodCount);
 
 export const getFailedPods = (pods: ExtPodKind[]): number => {
+  if (!pods?.length) {
+    return 0;
+  }
+
   return pods.reduce((acc, currValue) => {
     if ([AllPodStatus.CrashLoopBackOff, AllPodStatus.Failed].includes(getPodStatus(currValue))) {
       return acc + 1;
