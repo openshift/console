@@ -1,17 +1,4 @@
-export const diskModeDropdownItems = {
-  BLOCK: 'Block',
-  FILESYSTEM: 'Filesystem',
-};
-
-export const diskTypeDropdownItems = {
-  SSD: 'SSD / NVMe',
-  HDD: 'HDD',
-};
-
-export const diskSizeUnitOptions = {
-  TiB: 'TiB',
-  GiB: 'GiB',
-};
+import { diskTypeDropdownItems, diskModeDropdownItems } from '../../../../constants';
 
 export const initialState: State = {
   // states for step 1
@@ -38,6 +25,7 @@ export const initialState: State = {
   chartTotalData: '',
   chartDataUnit: '',
   showConfirmModal: false,
+  finalStep: false,
 
   // common states
   isLoading: false,
@@ -86,6 +74,7 @@ export type State = {
   showConfirmModal: boolean;
   onNextClick: () => void;
   filteredDiscoveries: Discoveries[];
+  finalStep: boolean;
 };
 
 export type Action =
@@ -112,7 +101,8 @@ export type Action =
   | { type: 'setChartDataUnit'; unit: string }
   | { type: 'setShowConfirmModal'; value: boolean }
   | { type: 'setOnNextClick'; value: OnNextClick }
-  | { type: 'setFilteredDiscoveries'; value: Discoveries[] };
+  | { type: 'setFilteredDiscoveries'; value: Discoveries[] }
+  | { type: 'setFinalStep'; value: boolean };
 
 export const reducer = (state: State, action: Action) => {
   switch (action.type) {
@@ -162,6 +152,8 @@ export const reducer = (state: State, action: Action) => {
       return Object.assign({}, state, { onNextClick: action.value });
     case 'setFilteredDiscoveries':
       return Object.assign({}, state, { filteredDiscoveries: action.value });
+    case 'setFinalStep':
+      return Object.assign({}, state, { finalStep: action.value });
     default:
       return initialState;
   }

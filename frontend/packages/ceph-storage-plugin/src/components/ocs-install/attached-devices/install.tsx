@@ -30,7 +30,7 @@ export const CreateAttachedDevicesCluster: React.FC<CreateAttachedDevicesCluster
   );
 
   React.useEffect(() => {
-    if ((LSOLoadError || !LSOData) && LSOLoaded) {
+    if (LSOLoadError || (!LSOData && LSOLoaded)) {
       setLSOEnabled(false);
     } else if (LSOLoaded) {
       // checking for availability of LSO CSV
@@ -67,8 +67,8 @@ export const CreateAttachedDevicesCluster: React.FC<CreateAttachedDevicesCluster
 
   return (
     <div className="co-m-pane__body">
-      {!LSODataLoaded && <LoadingBox />}
-      {LSODataLoaded && !LSOEnabled && (
+      {!LSODataLoaded && !LSOLoadError && <LoadingBox />}
+      {(LSOLoadError || (!LSOEnabled && LSODataLoaded)) && (
         <Alert
           className="co-alert"
           variant="info"
