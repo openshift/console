@@ -184,6 +184,15 @@ $co-external-link-padding-right: 15px;
   margin-bottom: 20px;
 }
 
+// PatternFly lacks the ability to have a plain button variant without padding
+.co-help-popover-button {
+  padding: 0 !important;
+
+  &--space-l {
+    margin-left: 0.35em;
+  }
+}
+
 .co-help-text {
   color: $color-pf-black-600;
 }
