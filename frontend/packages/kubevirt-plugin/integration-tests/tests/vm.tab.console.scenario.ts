@@ -28,8 +28,8 @@ import { VirtualMachine } from './models/virtualMachine';
 import { ProvisionSource } from './utils/constants/wizard';
 import { getVMManifest } from './mocks/mocks';
 
-describe('KubeVirt VM VNC/Serial consoles', () => {
-  const vmResource = getVMManifest(ProvisionSource.CONTAINER, testName, 'cirros-vm');
+describe('KubeVirt VM console - VNC/Serial', () => {
+  const vmResource = getVMManifest(ProvisionSource.URL, testName, 'cirros-vm');
   const vm = new VirtualMachine(vmResource.metadata);
   const cirrosUsername = 'cirros';
   const cirrosPassword = 'gocubsgo';
@@ -53,7 +53,7 @@ describe('KubeVirt VM VNC/Serial consoles', () => {
     await vm.detailViewAction(VM_ACTION.Start);
     // wait for the VM to boot up
     execSync(`expect ${expectLoginScriptPath} ${vm.name} ${vm.namespace}`);
-    await vm.navigateToConsoles();
+    await vm.navigateToConsole();
   }, VM_BOOTUP_TIMEOUT_SECS);
 
   afterAll(async () => {

@@ -24,7 +24,7 @@ describe('KubeVirt VM detail - edit Dedicated Resources', () => {
   });
 
   it(
-    'ID(CNV-3731) enables dedicated resources guaranteed policy, then disables it',
+    'ID(CNV-3731) Enables dedicated resources guaranteed policy, then disables it',
     async () => {
       await vm.navigateToDetail();
       await vm.modalEditDedicatedResources();

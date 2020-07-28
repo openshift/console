@@ -85,13 +85,13 @@ describe('KubeVirt VM scheduling', () => {
       await editAffinityView.affinityKeyInputByID('expression', 0).sendKeys('key1');
       await click(editAffinityView.valuesSelectElement.first());
       await editAffinityView.valuesSelectElement.sendKeys(labels.key1);
-      await click(editAffinityView.createValueBtn);
+      await click(editAffinityView.createValueBtn(labels.key1));
 
       await click(editAffinityView.addLabelBtn.get(1));
       await editAffinityView.affinityKeyInputByID('field', 0).sendKeys('metadata.name');
       await click(editAffinityView.valuesSelectElement.get(1));
       await editAffinityView.valuesSelectElement.get(1).sendKeys(fields['metadata.name']);
-      await click(editAffinityView.createValueBtn);
+      await click(editAffinityView.createValueBtn(fields['metadata.name']));
 
       await click(editAffinityView.editSubmitBtn);
       await click(saveButton);
