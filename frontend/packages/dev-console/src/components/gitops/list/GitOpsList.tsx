@@ -10,8 +10,8 @@ import {
   EmptyStateVariant,
   EmptyStateIcon,
 } from '@patternfly/react-core';
-import { GitOpsAppGroupData } from './gitops-types';
-import * as gitopsIcon from '../../images/gitops.svg';
+import { GitOpsAppGroupData } from '../utils/gitops-types';
+import * as gitopsIcon from '../../../images/gitops.svg';
 import './GitOpsList.scss';
 
 interface GitOpsListProps {

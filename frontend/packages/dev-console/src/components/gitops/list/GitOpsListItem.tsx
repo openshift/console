@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Grid, GridItem, Card, CardBody } from '@patternfly/react-core';
 import { history, ResourceLink } from '@console/internal/components/utils';
-import { GitOpsAppGroupData } from './gitops-types';
+import { GitOpsAppGroupData } from '../utils/gitops-types';
 import './GitOpsListItem.scss';
 
 interface GitOpsListItemProps {
