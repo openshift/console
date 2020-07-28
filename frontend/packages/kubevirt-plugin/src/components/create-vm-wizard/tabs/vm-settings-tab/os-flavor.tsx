@@ -147,60 +147,57 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
 
     return (
       <>
-        <div className="pf-c-form__group">
-          <FormFieldRow
-            field={operatinSystemField}
-            fieldType={FormFieldType.SELECT}
-            validation={operatingSystemValidation}
-            loadingResources={loadingResources}
-          >
-            <FormField value={displayOnly ? display : undefined}>
-              <FormSelect onChange={nullOnEmptyChange(onChange, VMSettingsField.OPERATING_SYSTEM)}>
-                {!displayOnly && (
-                  <FormSelectPlaceholderOption
-                    placeholder={getPlaceholder(VMSettingsField.OPERATING_SYSTEM)}
-                    isDisabled={!!os}
-                  />
-                )}
-                {operatingSystemBaseImages.map(({ id, name, message }) => (
-                  <FormSelectOption key={id} value={id} label={`${name || id} ${message}`} />
-                ))}
-              </FormSelect>
-            </FormField>
-          </FormFieldRow>
-          <FormFieldRow
-            field={cloneBaseDiskImageField}
-            fieldType={FormFieldType.INLINE_CHECKBOX}
-            loadingResources={loadingResources}
-          >
-            <FormField>
-              <Checkbox
-                className="kubevirt-create-vm-modal__sub-field-row"
-                id={getFieldId(cloneBaseDiskImageField)}
-                onChange={(v) => onChange(VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE, v)}
-              />
-            </FormField>
-            {cloneBaseDiskImage && (
-              <Text>
-                View the cloned disk in the{' '}
-                <Button
-                  isDisabled={!goToStorageStep}
-                  isInline
-                  onClick={goToStorageStep}
-                  variant={ButtonVariant.link}
-                >
-                  <strong>storage</strong>
-                </Button>{' '}
-                step
-              </Text>
-            )}
-          </FormFieldRow>
+        <FormFieldRow
+          field={operatinSystemField}
+          fieldType={FormFieldType.SELECT}
+          validation={operatingSystemValidation}
+          loadingResources={loadingResources}
+        >
+          <FormField value={displayOnly ? display : undefined}>
+            <FormSelect onChange={nullOnEmptyChange(onChange, VMSettingsField.OPERATING_SYSTEM)}>
+              {!displayOnly && (
+                <FormSelectPlaceholderOption
+                  placeholder={getPlaceholder(VMSettingsField.OPERATING_SYSTEM)}
+                  isDisabled={!!os}
+                />
+              )}
+              {operatingSystemBaseImages.map(({ id, name, message }) => (
+                <FormSelectOption key={id} value={id} label={`${name || id} ${message}`} />
+              ))}
+            </FormSelect>
+          </FormField>
           {baseImage && baseImage?.longMessage && (
-            <div className="kubevirt-create-vm-modal__sub-field-row">
+            <div>
               <Text component={TextVariants.small}>{baseImage?.longMessage}</Text>
             </div>
           )}
-        </div>
+        </FormFieldRow>
+        <FormFieldRow
+          field={cloneBaseDiskImageField}
+          fieldType={FormFieldType.INLINE_CHECKBOX}
+          loadingResources={loadingResources}
+        >
+          <FormField>
+            <Checkbox
+              id={getFieldId(cloneBaseDiskImageField)}
+              onChange={(v) => onChange(VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE, v)}
+            />
+          </FormField>
+          {cloneBaseDiskImage && (
+            <Text>
+              View the cloned disk in the{' '}
+              <Button
+                isDisabled={!goToStorageStep}
+                isInline
+                onClick={goToStorageStep}
+                variant={ButtonVariant.link}
+              >
+                <strong>storage</strong>
+              </Button>{' '}
+              step
+            </Text>
+          )}
+        </FormFieldRow>
         <FormFieldRow
           field={flavorField}
           fieldType={FormFieldType.SELECT}
