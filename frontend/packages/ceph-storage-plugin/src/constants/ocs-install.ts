@@ -34,3 +34,8 @@ export const diskTypeDropdownItems = Object.freeze({
 
 export const allNodesSelectorTxt =
   'Selecting all nodes will use the available disks that match the selected filters on all nodes selected on previous step.';
+
+export enum IP_FAMILY {
+  IPV4 = 'IPV4',
+  IPV6 = 'IPV6',
+}

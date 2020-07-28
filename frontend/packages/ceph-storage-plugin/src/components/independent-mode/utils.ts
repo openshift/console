@@ -4,9 +4,15 @@ import { HealthState } from '@console/shared/src/components/dashboard/status-car
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 import { getAnnotations } from '@console/shared';
+import { IP_FAMILY } from '../../constants';
 
 const pluralize = (count: number, singular: string, plural: string = `${singular}s`): string =>
   count > 1 ? plural : singular;
+
+export const getIPFamily = (addr: string): IP_FAMILY => {
+  const ipPattern = /^[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*$/;
+  return ipPattern.test(addr) ? IP_FAMILY.IPV4 : IP_FAMILY.IPV6;
+};
 
 export const isValidJSON = (fData: string): boolean => {
   try {
@@ -24,6 +30,7 @@ export const checkError = (
   data: string = '{}',
   requiredKeys = [],
   requiresEncodingKeys = [],
+  ipFamily = IP_FAMILY.IPV4,
 ): string => {
   const parsedData = JSON.parse(data);
   const providedKeys = _.map(parsedData, (item) => item.name);
@@ -70,6 +77,15 @@ export const checkError = (
       'value',
     )}.`;
   }
+
+  // Check IP Compatibility
+  const endpoints = _.find(parsedData, { name: 'rook-ceph-mon-endpoints' });
+  const ipAddr = (endpoints as any).data?.data?.split('=')?.[1]?.split(':')?.[0];
+
+  if (ipFamily !== getIPFamily(ipAddr)) {
+    return 'The IP Family of the two clusters do not match.';
+  }
+
   return '';
 };
 
