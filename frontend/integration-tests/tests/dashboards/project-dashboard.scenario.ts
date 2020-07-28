@@ -89,14 +89,16 @@ describe('Project Dashboard', () => {
       const items = projectDashboardView.detailsCardList.$$('dt');
       const values = projectDashboardView.detailsCardList.$$('dd');
 
-      expect(items.count()).toBe(3);
-      expect(values.count()).toBe(3);
+      expect(items.count()).toBe(4);
+      expect(values.count()).toBe(4);
       expect(items.get(0).getText()).toEqual('Name');
       expect(values.get(0).getText()).toEqual(testName);
       expect(items.get(1).getText()).toEqual('Requester');
       expect(values.get(1).getText()).toEqual('kube:admin');
       expect(items.get(2).getText()).toEqual('Labels');
       expect(values.get(2).getText()).toEqual('No labels');
+      expect(items.get(3).getText()).toEqual('Description');
+      expect(values.get(3).getText()).toEqual('No description');
     });
     it('has View all link', async () => {
       const link = projectDashboardView.detailsCard.$(
