@@ -78,10 +78,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await catalogView.categoryTabsPresent();
     await catalogView.categoryTabs.get(0).click();
     await catalogPageView.clickFilterCheckbox(customProviderUID);
-    await $$('.co-catalog-page__filter')
-      .get(0)
-      .$('input')
-      .sendKeys('prometheus');
+    await catalogPageView.filterTextbox.sendKeys('prometheus');
     await browser.wait(until.visibilityOf(catalogPageView.catalogTileByID(prometheusTileID)));
     await catalogPageView.catalogTileByID(prometheusTileID).click();
     await browser.wait(until.visibilityOf(operatorHubView.operatorModalInstallBtn));
