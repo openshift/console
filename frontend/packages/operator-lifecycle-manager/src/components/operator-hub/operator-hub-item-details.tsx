@@ -4,7 +4,7 @@ import * as classNames from 'classnames';
 import { PropertiesSidePanel, PropertyItem } from '@patternfly/react-catalog-view-extension';
 import { CheckCircleIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom';
-import { ExternalLink, HintBlock } from '@console/internal/components/utils';
+import { ExternalLink, HintBlock, Timestamp } from '@console/internal/components/utils';
 import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '@console/shared';
 import { MarkdownView } from '../clusterserviceversion';
 import { OperatorHubItem } from './index';
@@ -73,6 +73,7 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
     validSubscription,
   } = item;
   const notAvailable = <span className="properties-side-panel-pf-property-label">N/A</span>;
+  const created = Date.parse(createdAt) ? <Timestamp timestamp={createdAt} /> : createdAt;
 
   const getHintBlock = () => {
     if (installed) {
@@ -164,7 +165,7 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
               )}
               <PropertyItem label="Repository" value={repository || notAvailable} />
               <PropertyItem label="Container Image" value={containerImage || notAvailable} />
-              <PropertyItem label="Created At" value={createdAt || notAvailable} />
+              <PropertyItem label="Created At" value={created || notAvailable} />
               <PropertyItem
                 label="Support"
                 value={
