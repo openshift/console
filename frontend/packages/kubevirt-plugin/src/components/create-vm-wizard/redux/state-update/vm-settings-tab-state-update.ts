@@ -153,7 +153,12 @@ const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   if (!hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.OPERATING_SYSTEM)) {
     return;
   }
-  const os = iGetVmSettingValue(state, id, VMSettingsField.OPERATING_SYSTEM);
+  if (iGetLoadedCommonData(state, id, VMWizardProps.isProviderImport)) {
+    return;
+  }
+
+  const relevantOptions = iGetRelevantTemplateSelectors(state, id);
+  const { os } = relevantOptions;
   const isWindows = os?.startsWith('win');
   const windowsTools = getStorages(state, id).find(
     (storage) => !!isWinToolsImage(getVolumeContainerImage(storage.volume)),
@@ -166,14 +171,10 @@ const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
     dispatch(vmWizardInternalActions[InternalActionType.RemoveStorage](id, windowsTools.id));
   }
 
-  // Common base disk image is not available for imported vms.
-  if (iGetLoadedCommonData(state, id, VMWizardProps.isProviderImport)) {
-    return;
-  }
-
   const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
-  const iTemplate = iCommonTemplates && iGetRelevantTemplate(null, iCommonTemplates, { os });
-  const pvcName = iTemplate && iGetAnnotation(iTemplate, `${TEMPLATE_DATAVOLUME_ANNOTATION}/${os}`);
+  const iTemplate =
+    iCommonTemplates && iGetRelevantTemplate(null, iCommonTemplates, relevantOptions);
+  const pvcName = iGetAnnotation(iTemplate, `${TEMPLATE_DATAVOLUME_ANNOTATION}/${os}`);
 
   const iBaseImages = iGetLoadedCommonData(state, id, VMWizardProps.openshiftCNVBaseImages);
   const iBaseImage =
@@ -209,6 +210,7 @@ const cloneCommonBaseDiskImageUpdater = ({ id, prevState, dispatch, getState }: 
     VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE,
   );
 
+  // userTemplate should have its own provision source
   // in cases userTemplate is define we send `undefined` (undefined means no update)
   const provisionSourceTypeValue = userTemplate
     ? undefined

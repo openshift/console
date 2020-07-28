@@ -26,7 +26,11 @@ import {
 import { toShallowJS } from '../../../../utils/immutable';
 import { generateDataVolumeName } from '../../../../utils';
 import { DUMMY_VM_NAME, TEMPLATE_DATAVOLUME_ANNOTATION } from '../../../../constants/vm';
-import { iGetVmSettingValue, iGetProvisionSource } from '../../selectors/immutable/vm-settings';
+import {
+  iGetVmSettingValue,
+  iGetProvisionSource,
+  iGetRelevantTemplateSelectors,
+} from '../../selectors/immutable/vm-settings';
 import { iGetLoadedCommonData } from '../../selectors/immutable/selectors';
 import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
 import { iGetAnnotation } from '../../../../selectors/immutable/common';
@@ -169,13 +173,19 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
       VMWizardProps.storageClassConfigMap,
     );
 
-    const os = iGetVmSettingValue(state, id, VMSettingsField.OPERATING_SYSTEM);
+    const relevantOptions = iGetRelevantTemplateSelectors(state, id);
+    if (!relevantOptions.os) {
+      return null;
+    }
+
     const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
-    const iTemplate = iCommonTemplates && iGetRelevantTemplate(null, iCommonTemplates, { os });
-    const pvcName =
-      iTemplate && iGetAnnotation(iTemplate, `${TEMPLATE_DATAVOLUME_ANNOTATION}/${os}`);
-    const pvcNamespace =
-      iTemplate && iGetAnnotation(iTemplate, `${TEMPLATE_DATAVOLUME_ANNOTATION}/namespace`);
+    const iTemplate =
+      iCommonTemplates && iGetRelevantTemplate(null, iCommonTemplates, relevantOptions);
+    const pvcName = iGetAnnotation(
+      iTemplate,
+      `${TEMPLATE_DATAVOLUME_ANNOTATION}/${relevantOptions.os}`,
+    );
+    const pvcNamespace = iGetAnnotation(iTemplate, `${TEMPLATE_DATAVOLUME_ANNOTATION}/namespace`);
 
     return getBaseImageStorage(toShallowJS(iStorageClassConfigMap), pvcName, pvcNamespace);
   }
