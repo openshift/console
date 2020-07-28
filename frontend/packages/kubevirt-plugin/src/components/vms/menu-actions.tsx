@@ -102,9 +102,14 @@ export const menuActionStart = (
   };
 };
 
-const menuActionStop = (kindObj: K8sKind, vm: VMKind, { vmi }: ActionArgs): KebabOption => {
+const menuActionStop = (
+  kindObj: K8sKind,
+  vm: VMKind,
+  { vmi, vmStatusBundle }: ActionArgs,
+): KebabOption => {
   const title = 'Stop Virtual Machine';
   return {
+    isDisabled: vmStatusBundle?.status?.isPending(),
     hidden: !isVMExpectedRunning(vm),
     label: title,
     callback: () =>
