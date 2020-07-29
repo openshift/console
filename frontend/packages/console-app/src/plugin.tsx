@@ -19,6 +19,7 @@ import {
   ResourceListPage,
   ResourceClusterNavItem,
   ResourceTabPage,
+  ContextProvider,
 } from '@console/plugin-sdk';
 import {
   ClusterVersionModel,
@@ -53,6 +54,7 @@ import {
 } from './components/dashboards-page/activity';
 import reducer from './redux/reducer';
 import * as models from './models';
+import { TourContext, useTourValuesForContext } from './components/tour/tour-context';
 
 type ConsumedExtensions =
   | Perspective
@@ -68,7 +70,8 @@ type ConsumedExtensions =
   | ResourceListPage
   | ResourceDetailsPage
   | ResourceClusterNavItem
-  | ResourceTabPage;
+  | ResourceTabPage
+  | ContextProvider;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -259,6 +262,13 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/volume-snapshot/volume-snapshot' /* webpackChunkName: "volume-snapshot-page" */
         ).then((m) => m.VolumeSnapshotPVCPage),
+    },
+  },
+  {
+    type: 'ContextProvider',
+    properties: {
+      Provider: TourContext.Provider,
+      useValueHook: useTourValuesForContext,
     },
   },
 ];

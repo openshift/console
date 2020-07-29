@@ -25,6 +25,7 @@ import {
   YAMLTemplate,
   OverviewTabSection,
   ReduxReducer,
+  GuidedTour,
 } from '@console/plugin-sdk';
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
 import { FLAGS } from '@console/shared/src/constants';
@@ -70,6 +71,7 @@ import {
   operatorsTopologyPlugin,
 } from './components/topology/operators/operatorsTopologyPlugin';
 import { usePerspectiveDetection } from './utils/usePerspectiveDetection';
+import { getGuidedTour } from './components/guided-tour';
 
 const {
   ClusterTaskModel,
@@ -101,6 +103,7 @@ type ConsumedExtensions =
   | YAMLTemplate
   | OverviewTabSection
   | AddAction
+  | GuidedTour
   | HelmTopologyConsumedExtensions
   | OperatorsTopologyConsumedExtensions;
 
@@ -183,6 +186,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         name: 'Monitoring',
         href: '/dev-monitoring',
         testID: 'monitoring-header',
+        'data-tour-id': 'tour-monitoring-nav',
       },
     },
     flags: {
@@ -198,6 +202,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         name: 'Search',
         href: '/search',
         testID: 'search-header',
+        'data-tour-id': 'tour-search-nav',
       },
     },
   },
@@ -1091,6 +1096,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [ALLOW_SERVICE_BINDING],
+    },
+  },
+  {
+    type: 'GuidedTour',
+    properties: {
+      perspective: 'dev',
+      tour: getGuidedTour(),
     },
   },
   ...helmTopologyPlugin,

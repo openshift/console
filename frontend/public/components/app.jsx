@@ -22,6 +22,8 @@ import { receivedResources, watchAPIServices } from '../actions/k8s';
 import CloudShell from '@console/app/src/components/cloud-shell/CloudShell';
 import CloudShellTab from '@console/app/src/components/cloud-shell/CloudShellTab';
 import DetectPerspective from '@console/app/src/components/detect-perspective/DetectPerspective';
+import { withExtensions, isContextProvider } from '@console/plugin-sdk';
+import { GuidedTour } from '@console/app/src/components/tour';
 
 const consoleLoader = () =>
   import(
@@ -43,7 +45,12 @@ import 'url-search-params-polyfill';
 // Only linkify url strings beginning with a proper protocol scheme.
 linkify.set({ fuzzyLink: false });
 
-class App extends React.PureComponent {
+const EnhancedProvider = ({ Provider: ContextProvider, useValueHook, children }) => {
+  const value = useValueHook();
+  return <ContextProvider value={value}>{children}</ContextProvider>;
+};
+
+class App_ extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -135,10 +142,11 @@ class App extends React.PureComponent {
 
   render() {
     const { isNavOpen, isDrawerInline } = this.state;
+    const { contextProviderExtensions } = this.props;
     const { productName } = getBrandingDetails();
 
-    return (
-      <DetectPerspective>
+    const content = (
+      <>
         <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
         <QuickStartDrawer>
           <ConsoleNotifier location="BannerTop" />
@@ -160,12 +168,26 @@ class App extends React.PureComponent {
             </ConnectedNotificationDrawer>
           </Page>
           <CloudShell />
+          <GuidedTour />
           <ConsoleNotifier location="BannerBottom" />
         </QuickStartDrawer>
+      </>
+    );
+
+    return (
+      <DetectPerspective>
+        {contextProviderExtensions.reduce(
+          (children, provider) => (
+            <EnhancedProvider {...provider.properties}>{children}</EnhancedProvider>
+          ),
+          content,
+        )}
       </DetectPerspective>
     );
   }
 }
+
+const App = withExtensions({ contextProviderExtensions: isContextProvider })(App_);
 
 const startDiscovery = () => store.dispatch(watchAPIServices());
 

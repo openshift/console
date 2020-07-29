@@ -19,3 +19,4 @@ export * from './providers';
 export * from './pvc';
 export * from './storage-class-params';
 export * from './notification-alerts';
+export * from './guided-tour';

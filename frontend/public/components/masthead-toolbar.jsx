@@ -33,6 +33,7 @@ import { openshiftHelpBase } from './utils/documentation';
 import { AboutModal } from './about-modal';
 import { clusterVersionReference, getReportBugLink } from '../module/k8s/cluster-settings';
 import * as redhatLogoImg from '../imgs/logos/redhat.svg';
+import { GuidedTourMastheadTrigger } from '@console/app/src/components/tour';
 
 const SystemStatusButton = ({ statuspageData, className }) =>
   !_.isEmpty(_.get(statuspageData, 'incidents')) ? (
@@ -312,6 +313,9 @@ class MastheadToolbarContents_ extends React.Component {
               },
             ]
           : []),
+        {
+          component: <GuidedTourMastheadTrigger />,
+        },
         ...(reportBugLink
           ? [
               {
@@ -581,6 +585,7 @@ class MastheadToolbarContents_ extends React.Component {
                 aria-label="Help menu"
                 className="co-app-launcher"
                 data-test="help-dropdown-toggle"
+                data-tour-id="tour-help-button"
                 onSelect={this._onHelpDropdownSelect}
                 onToggle={this._onHelpDropdownToggle}
                 isOpen={isHelpDropdownOpen}
