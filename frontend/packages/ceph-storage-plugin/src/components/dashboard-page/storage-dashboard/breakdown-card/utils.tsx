@@ -95,16 +95,16 @@ export const sortInstantVectorStats = (stats: DataPoint[]): DataPoint[] => {
   return stats.length === 6 ? stats.splice(0, 5) : stats;
 };
 
-export const getStackChartStats: GetStackStats = (response, humanize) =>
+export const getStackChartStats: GetStackStats = (response, humanize, labelNames) =>
   response.map((r, i) => {
     const capacity = humanize(r.y).string;
     return {
       // x value needs to be same for single bar stack chart
       x: '0',
       y: r.y,
-      name: _.truncate(`${r.x}`, { length: 12 }),
-      link: `${r.x}`,
-      color: Colors.LINK,
+      name: labelNames ? labelNames[i] : _.truncate(`${r.x}`, { length: 12 }),
+      link: labelNames ? labelNames[i] : `${r.x}`,
+      color: labelNames ? Colors.OTHER : Colors.LINK,
       fill: COLORMAP[i],
       label: capacity,
       id: i,
@@ -112,7 +112,11 @@ export const getStackChartStats: GetStackStats = (response, humanize) =>
     };
   });
 
-type GetStackStats = (response: DataPoint[], humanize: Humanize) => StackDataPoint[];
+type GetStackStats = (
+  response: DataPoint[],
+  humanize: Humanize,
+  labelNames?: string[],
+) => StackDataPoint[];
 
 export type StackDataPoint = DataPoint<string> & {
   name: string;

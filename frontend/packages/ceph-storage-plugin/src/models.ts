@@ -51,3 +51,16 @@ export const CephBlockPoolModel: K8sKind = {
   id: 'cephblockpools',
   crd: true,
 };
+
+export const CephObjectStoreModel: K8sKind = {
+  label: 'Ceph Object Store',
+  labelPlural: 'Ceph Object Stores',
+  apiVersion: 'v1',
+  apiGroup: 'ceph.rook.io',
+  plural: 'cephobjectstores',
+  abbr: 'COS',
+  namespaced: true,
+  kind: 'CephObjectStore',
+  id: 'cephobjectstores',
+  crd: true,
+};

@@ -19,84 +19,59 @@ export enum HealthState {
   NOT_AVAILABLE = 'NOT_AVAILABLE',
 }
 
-export const healthStateMapping: { [key in HealthStateMappingKeys]: HealthStateMappingValues } = {
+export const healthStateMapping: { [key in HealthState]: HealthStateMappingValues } = {
   [HealthState.OK]: {
+    priority: 0,
+    health: HealthState.OK,
     icon: <GreenCheckCircleIcon />,
   },
-  [HealthState.ERROR]: {
-    icon: <RedExclamationCircleIcon />,
-    message: 'Degraded',
-  },
-  [HealthState.WARNING]: {
-    icon: <YellowExclamationTriangleIcon />,
-    message: 'Degraded',
-  },
-  [HealthState.UPDATING]: {
-    icon: <BlueSyncIcon />,
-    message: 'Updating',
-  },
-  [HealthState.PROGRESS]: {
-    icon: <InProgressIcon />,
-    message: 'Pending',
-  },
   [HealthState.UNKNOWN]: {
+    priority: 1,
+    health: HealthState.UNKNOWN,
     icon: <GrayUnknownIcon />,
     message: 'Unknown',
   },
+  [HealthState.PROGRESS]: {
+    priority: 2,
+    health: HealthState.PROGRESS,
+    icon: <InProgressIcon />,
+    message: 'Pending',
+  },
+  [HealthState.UPDATING]: {
+    priority: 3,
+    health: HealthState.UPDATING,
+    icon: <BlueSyncIcon />,
+    message: 'Updating',
+  },
+  [HealthState.WARNING]: {
+    priority: 4,
+    health: HealthState.WARNING,
+    icon: <YellowExclamationTriangleIcon />,
+    message: 'Degraded',
+  },
+  [HealthState.ERROR]: {
+    priority: 5,
+    health: HealthState.ERROR,
+    icon: <RedExclamationCircleIcon />,
+    message: 'Degraded',
+  },
+  [HealthState.LOADING]: {
+    priority: 6,
+    health: HealthState.LOADING,
+    icon: <div className="skeleton-health" />,
+    message: 'Loading',
+  },
   [HealthState.NOT_AVAILABLE]: {
+    priority: 7,
+    health: HealthState.NOT_AVAILABLE,
     icon: <GrayUnknownIcon />,
     message: 'Not available',
   },
 };
 
-export const healthPriority: {
-  [key in HealthStateMappingKeys]: PriorityHealthState;
-} = {
-  [HealthState.OK]: {
-    priority: 0,
-    health: HealthState.OK,
-    ...healthStateMapping[HealthState.OK],
-  },
-  [HealthState.UNKNOWN]: {
-    priority: 1,
-    health: HealthState.UNKNOWN,
-    ...healthStateMapping[HealthState.UNKNOWN],
-  },
-  [HealthState.PROGRESS]: {
-    priority: 2,
-    health: HealthState.PROGRESS,
-    ...healthStateMapping[HealthState.PROGRESS],
-  },
-  [HealthState.UPDATING]: {
-    priority: 3,
-    health: HealthState.UPDATING,
-    ...healthStateMapping[HealthState.UPDATING],
-  },
-  [HealthState.WARNING]: {
-    priority: 4,
-    health: HealthState.WARNING,
-    ...healthStateMapping[HealthState.WARNING],
-  },
-  [HealthState.ERROR]: {
-    priority: 5,
-    health: HealthState.ERROR,
-    ...healthStateMapping[HealthState.ERROR],
-  },
-  [HealthState.NOT_AVAILABLE]: {
-    priority: 6,
-    health: HealthState.NOT_AVAILABLE,
-    ...healthStateMapping[HealthState.NOT_AVAILABLE],
-  },
-};
-
-export type PriorityHealthState = {
-  priority: number;
-  health: HealthState;
-} & HealthStateMappingValues;
-
-type HealthStateMappingKeys = Exclude<keyof typeof HealthState, 'LOADING'>;
-
 export type HealthStateMappingValues = {
   icon: React.ReactNode;
   message?: string;
+  priority: number;
+  health: HealthState;
 };

@@ -34,3 +34,11 @@ export const OCS_DEVICE_REPLICA = Object.freeze({
   '2': '2-way',
   '3': '3-way',
 });
+export const RGW_PROVISIONER = 'openshift-storage.ceph.rook.io/bucket';
+export const SECOND = 1000;
+
+export enum MODES {
+  INTERNAL = 'Internal',
+  EXTERNAL = 'External',
+  ATTACHED_DEVICES = 'Internal - Attached Devices',
+}

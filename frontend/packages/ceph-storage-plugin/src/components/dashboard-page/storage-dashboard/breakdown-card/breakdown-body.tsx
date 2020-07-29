@@ -3,7 +3,7 @@ import { Grid, GridItem } from '@patternfly/react-core';
 import { Humanize } from '@console/internal/components/utils';
 import { K8sKind } from '@console/internal/module/k8s';
 import { addAvailable, StackDataPoint, getLegends } from './utils';
-import { BreakdownChart } from './breakdown-chart';
+import { BreakdownChart, LabelPadding } from './breakdown-chart';
 import { BreakdownChartLoading } from './breakdown-loading';
 import { TotalCapacityBody } from './breakdown-capacity';
 
@@ -17,6 +17,7 @@ export const BreakdownCardBody: React.FC<BreakdownBodyProps> = ({
   isLoading,
   hasLoadError,
   ocsVersion = '',
+  labelPadding,
 }) => {
   if (isLoading && !hasLoadError) {
     return <BreakdownChartLoading />;
@@ -60,6 +61,7 @@ export const BreakdownCardBody: React.FC<BreakdownBodyProps> = ({
           legends={legends}
           metricModel={metricModel}
           ocsVersion={ocsVersion}
+          labelPadding={labelPadding}
         />
       </GridItem>
     </Grid>
@@ -76,4 +78,5 @@ export type BreakdownBodyProps = {
   metricModel: K8sKind;
   humanize: Humanize;
   ocsVersion?: string;
+  labelPadding?: LabelPadding;
 };

@@ -19,6 +19,7 @@ import {
 import {
   detectOCS,
   detectOCSSupportedFeatures,
+  detectRGW,
   CEPH_FLAG,
   OCS_INDEPENDENT_FLAG,
   OCS_SUPPORT_FLAGS,
@@ -78,6 +79,12 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'FeatureFlag/Custom',
     properties: {
       detect: detectOCS,
+    },
+  },
+  {
+    type: 'FeatureFlag/Custom',
+    properties: {
+      detect: detectRGW,
     },
   },
   {
