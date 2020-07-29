@@ -1,5 +1,5 @@
 import { ValidationErrorType } from '@console/shared/src';
-import { hasVmSettingsChanged, iGetVmSettingValue } from '../../selectors/immutable/vm-settings';
+import { hasVmSettingsChanged } from '../../selectors/immutable/vm-settings';
 import { VMSettingsField, VMWizardStorage, VMWizardStorageType } from '../../types';
 import { InternalActionType, UpdateOptions } from '../types';
 import { hasStoragesChanged, iGetProvisionSourceStorage } from '../../selectors/immutable/storage';
@@ -16,15 +16,15 @@ import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 
 export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
-  const baseDiskImageChanged =
-    hasVmSettingsChanged(
-      prevState,
-      state,
-      id,
-      VMSettingsField.OPERATING_SYSTEM,
-      VMSettingsField.FLAVOR,
-      VMSettingsField.WORKLOAD_PROFILE,
-    ) && iGetVmSettingValue(state, id, VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE);
+  const baseDiskImageChanged = hasVmSettingsChanged(
+    prevState,
+    state,
+    id,
+    VMSettingsField.OPERATING_SYSTEM,
+    VMSettingsField.FLAVOR,
+    VMSettingsField.WORKLOAD_PROFILE,
+    VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE,
+  );
 
   if (
     !hasVmSettingsChanged(prevState, state, id, VMSettingsField.PROVISION_SOURCE_TYPE) &&
