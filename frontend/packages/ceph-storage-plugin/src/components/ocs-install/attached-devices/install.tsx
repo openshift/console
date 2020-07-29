@@ -9,7 +9,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { StorageClassModel } from '@console/internal/models';
 import { fetchK8s } from '@console/internal/graphql/client';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
-import { LSO_NAMESPACE } from '@console/local-storage-operator-plugin/src/constants';
+import { LOCAL_STORAGE_NAMESPACE } from '@console/local-storage-operator-plugin/src/constants';
 import { CreateOCS } from './install-lso-sc';
 import { LSOSubscriptionResource } from '../../../constants/resources';
 import { filterSCWithNoProv } from '../../../utils/install';
@@ -34,7 +34,7 @@ export const CreateAttachedDevicesCluster: React.FC<CreateAttachedDevicesCluster
       setLSOEnabled(false);
     } else if (LSOLoaded) {
       // checking for availability of LSO CSV
-      fetchK8s(ClusterServiceVersionModel, LSOData?.status?.currentCSV, LSO_NAMESPACE)
+      fetchK8s(ClusterServiceVersionModel, LSOData?.status?.currentCSV, LOCAL_STORAGE_NAMESPACE)
         .then(() => {
           setLSOEnabled(true);
           setLSODataLoaded(true);

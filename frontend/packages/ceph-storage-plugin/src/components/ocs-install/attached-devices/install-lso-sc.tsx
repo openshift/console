@@ -88,6 +88,8 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
         );
         if (filteredSCData.length) {
           setHasNoProvSC(true);
+        } else {
+          setHasNoProvSC(false);
         }
       }
     }
