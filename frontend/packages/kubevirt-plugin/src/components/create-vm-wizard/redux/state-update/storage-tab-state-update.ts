@@ -17,8 +17,10 @@ import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
   const baseDiskImageChanged =
-    hasVmSettingsChanged(prevState, state, id, VMSettingsField.OPERATING_SYSTEM) &&
-    !!iGetVmSettingValue(state, id, VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE);
+    (hasVmSettingsChanged(prevState, state, id, VMSettingsField.OPERATING_SYSTEM) ||
+      hasVmSettingsChanged(prevState, state, id, VMSettingsField.FLAVOR) ||
+      hasVmSettingsChanged(prevState, state, id, VMSettingsField.WORKLOAD_PROFILE)) &&
+    iGetVmSettingValue(state, id, VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE);
 
   if (
     !hasVmSettingsChanged(prevState, state, id, VMSettingsField.PROVISION_SOURCE_TYPE) &&
