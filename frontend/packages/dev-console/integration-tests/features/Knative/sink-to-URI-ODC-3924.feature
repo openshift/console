@@ -1,5 +1,5 @@
 Feature: Event Sources can able sink to URI as well as Resource
-    User should be able to sink with resource as well as with URI
+    User should be able to sink Event Sources with resource as well as with URI
 
 
 Background: 
