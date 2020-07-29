@@ -2,11 +2,11 @@ import * as React from 'react';
 import { TourContext } from './tour-context';
 import { TourActions } from './const';
 import TourStepComponent from './TourStepComponent';
-import { StepContent } from './type';
+import { StepContentType } from './type';
 
 type StepComponentProps = {
   heading: string;
-  content: StepContent;
+  content: StepContentType;
   selector?: string;
   placement?: string;
   showClose?: boolean;
