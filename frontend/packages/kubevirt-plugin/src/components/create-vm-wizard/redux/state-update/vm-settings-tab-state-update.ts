@@ -150,16 +150,7 @@ const flavorUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => 
 
 const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
-  if (
-    !hasVMSettingsValueChanged(
-      prevState,
-      state,
-      id,
-      VMSettingsField.OPERATING_SYSTEM,
-      VMSettingsField.FLAVOR,
-      VMSettingsField.WORKLOAD_PROFILE,
-    )
-  ) {
+  if (!hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.OPERATING_SYSTEM)) {
     return;
   }
   if (iGetLoadedCommonData(state, id, VMWizardProps.isProviderImport)) {
@@ -178,9 +169,23 @@ const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   if (!isWindows && windowsTools) {
     dispatch(vmWizardInternalActions[InternalActionType.RemoveStorage](id, windowsTools.id));
   }
+};
 
-  // base image is always off for user templates
-  if (iGetVmSettingValue(state, id, VMSettingsField.USER_TEMPLATE)) {
+const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
+  const state = getState();
+  if (
+    !hasVMSettingsValueChanged(
+      prevState,
+      state,
+      id,
+      VMSettingsField.OPERATING_SYSTEM,
+      VMSettingsField.FLAVOR,
+      VMSettingsField.WORKLOAD_PROFILE,
+    )
+  ) {
+    return;
+  }
+  if (iGetLoadedCommonData(state, id, VMWizardProps.isProviderImport)) {
     return;
   }
 
@@ -188,7 +193,10 @@ const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
   const iTemplate =
     iCommonTemplates && iGetRelevantTemplate(null, iCommonTemplates, relevantOptions);
-  const pvcName = iGetAnnotation(iTemplate, `${TEMPLATE_DATAVOLUME_ANNOTATION}/${os}`);
+  const pvcName = iGetAnnotation(
+    iTemplate,
+    `${TEMPLATE_DATAVOLUME_ANNOTATION}/${relevantOptions?.os}`,
+  );
 
   const iBaseImages = iGetLoadedCommonData(state, id, VMWizardProps.openshiftCNVBaseImages);
   const iBaseImage =
@@ -292,6 +300,7 @@ export const updateVmSettingsState = (options: UpdateOptions) =>
     selectedUserTemplateUpdater,
     flavorUpdater,
     osUpdater,
+    baseImageUpdater,
     cloneCommonBaseDiskImageUpdater,
     workloadConsistencyUpdater,
     provisioningSourceUpdater,
