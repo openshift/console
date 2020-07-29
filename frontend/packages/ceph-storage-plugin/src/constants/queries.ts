@@ -24,6 +24,8 @@ export enum StorageDashboardQuery {
   USED_CAPACITY = 'USED_CAPACITY',
   REQUESTED_CAPACITY = 'REQUESTED_CAPACITY',
   CEPH_CAPACITY_AVAILABLE = 'CEPH_CAPACITY_AVAILABLE',
+  POOL_CAPACITY_RATIO = 'POOL_CAPACITY_RATIO',
+  POOL_SAVED_CAPACITY = 'POOL_SAVED_CAPACITY',
 }
 
 export const INDEPENDENT_UTILIZATION_QUERIES = {
@@ -85,6 +87,13 @@ export const CAPACITY_BREAKDOWN_QUERIES = {
     'sum(kubelet_volume_stats_used_bytes * on (namespace,persistentvolumeclaim) group_left(storageclass, provisioner) (kube_persistentvolumeclaim_info * on (storageclass)  group_left(provisioner) kube_storageclass_info {provisioner=~"(.*rbd.csi.ceph.com)|(.*cephfs.csi.ceph.com)"}))',
   [StorageDashboardQuery.CEPH_CAPACITY_AVAILABLE]:
     'max(ceph_pool_max_avail * on (pool_id) group_left(name)ceph_pool_metadata{name=~"(.*file.*)|(.*block.*)"})',
+};
+
+export const POOL_STORAGE_EFFICIENCY_QUERIES = {
+  [StorageDashboardQuery.POOL_CAPACITY_RATIO]:
+    'sum(ceph_bluestore_bluestore_compressed_original) / clamp_min(sum(ceph_bluestore_bluestore_compressed),1)',
+  [StorageDashboardQuery.POOL_SAVED_CAPACITY]:
+    '(sum(ceph_bluestore_bluestore_compressed_original) - sum(ceph_bluestore_bluestore_compressed))',
 };
 
 export const breakdownQueryMap = {

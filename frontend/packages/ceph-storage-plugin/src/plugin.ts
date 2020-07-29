@@ -159,6 +159,20 @@ const plugin: Plugin<ConsumedExtensions> = [
       required: [CEPH_FLAG],
     },
   },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'persistent-storage',
+      position: GridPosition.LEFT,
+      loader: () =>
+        import(
+          './components/dashboard-page/storage-dashboard/storage-efficiency-card/storage-efficiency-card' /* webpackChunkName: "ceph-storage-efficiency-card" */
+        ).then((m) => m.default),
+    },
+    flags: {
+      required: [CEPH_FLAG],
+    },
+  },
   // Ceph Storage Dashboard Main Cards
   {
     type: 'Dashboards/Card',
