@@ -3,4 +3,4 @@ export enum Flags {
 }
 
 export const operatorTypeAnnotation = 'operators.operatorframework.io/operator-type';
-export const nonStandardAnnotationValue = 'non-standard';
+export const nonStandaloneAnnotationValue = 'non-standalone';
