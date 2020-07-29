@@ -153,7 +153,7 @@ namespace ExtensionProperties {
     model: K8sKind;
 
     /** Function which will map various statuses to groups. */
-    mapper?: StatusGroupMapper;
+    mapper?: () => Promise<StatusGroupMapper>;
 
     /** Additional resources which will be fetched and passed to `mapper` function. */
     additionalResources?: WatchK8sResources<any>;

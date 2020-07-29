@@ -23,22 +23,24 @@ import {
 } from '@console/shared';
 import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
 import { BareMetalHostModel } from '../../models';
-import { BareMetalHostKind } from '../../types';
+import { BareMetalHostKind, CertificateSigningRequestKind } from '../../types';
 import BareMetalNodeStatus from './BareMetalNodeStatus';
 import { bareMetalNodeStatus } from '../../status/baremetal-node-status';
 
-type BareMetalNodeDetailsOverviewProps = {
+type BareMetalNodeDetailsOverview = {
   node: NodeKind;
   host: BareMetalHostKind;
   nodeMaintenance: K8sResourceKind;
+  csr: CertificateSigningRequestKind;
 };
 
-const BareMetalNodeDetailsOverview: React.FC<BareMetalNodeDetailsOverviewProps> = ({
+const BareMetalNodeDetailsOverview: React.FC<BareMetalNodeDetailsOverview> = ({
   node,
   host,
   nodeMaintenance,
+  csr,
 }) => {
-  const status = bareMetalNodeStatus({ node, nodeMaintenance });
+  const status = bareMetalNodeStatus({ node, nodeMaintenance, csr });
   const machine = getNodeMachineNameAndNamespace(node);
   const canUpdate = useAccessReview({
     group: NodeModel.apiGroup,
@@ -57,7 +59,7 @@ const BareMetalNodeDetailsOverview: React.FC<BareMetalNodeDetailsOverviewProps> 
             <dd>{node.metadata.name || DASH}</dd>
             <dt>Status</dt>
             <dd>
-              <BareMetalNodeStatus {...status} nodeMaintenance={nodeMaintenance} />
+              <BareMetalNodeStatus {...status} nodeMaintenance={nodeMaintenance} csr={csr} />
             </dd>
             <dt>External ID</dt>
             <dd>{_.get(node, 'spec.externalID', DASH)}</dd>

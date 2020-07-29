@@ -89,3 +89,19 @@ export type BareMetalHostKind = {
     errorMessage: string;
   };
 } & K8sResourceCommon;
+
+export type CertificateSigningRequestKind = {
+  spec: {
+    groups: string[];
+    request: string;
+    usages: string[];
+    username: string;
+    uid: string;
+  };
+  status?: {
+    conditions: {
+      type: string;
+      [key: string]: string;
+    }[];
+  };
+} & K8sResourceCommon;

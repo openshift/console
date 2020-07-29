@@ -5,7 +5,9 @@
   "private": true,
   "dependencies": {
     "@console/plugin-sdk": "0.0.0-fixed",
-    "@console/shared": "0.0.0-fixed"
+    "@console/shared": "0.0.0-fixed",
+    "asn1js": "^2.0.26",
+    "pkijs": "^2.1.89"
   },
   "consolePlugin": {
     "entry": "src/plugin.tsx"

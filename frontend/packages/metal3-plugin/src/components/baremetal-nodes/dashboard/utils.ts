@@ -4,16 +4,21 @@ import { getName } from '@console/shared/src/selectors/common';
 import { NodeKind } from '@console/internal/module/k8s';
 import { InventoryStatusGroup } from '@console/shared/src/components/dashboard/inventory-card/status-group';
 import { getNodeMaintenanceNodeName } from '../../../selectors';
-import { bareMetalNodeStatus } from '../../../status/baremetal-node-status';
+import { bareMetalNodeStatus, NODE_STATUS_SERVER_CSR } from '../../../status/baremetal-node-status';
 import { NODE_STATUS_TITLES } from '../../../constants';
+import { getNodeServerCSR } from '../../../selectors/csr';
+import { CertificateSigningRequestKind } from '../../../types';
 
 const BMN_STATUS_GROUP_MAPPER = {
-  [InventoryStatusGroup.PROGRESS]: ['Not Ready'],
+  [InventoryStatusGroup.PROGRESS]: ['Not Ready', NODE_STATUS_SERVER_CSR],
   [InventoryStatusGroup.NOT_MAPPED]: ['Ready'],
   'node-maintenance': Object.keys(NODE_STATUS_TITLES),
 };
 
-export const getBMNStatusGroups: StatusGroupMapper = (nodes: NodeKind[], { maintenances }) => {
+export const getBMNStatusGroups: StatusGroupMapper = (
+  nodes: NodeKind[],
+  { maintenances, csrs },
+) => {
   const groups = {
     [InventoryStatusGroup.NOT_MAPPED]: {
       statusIDs: ['ready'],
@@ -21,7 +26,7 @@ export const getBMNStatusGroups: StatusGroupMapper = (nodes: NodeKind[], { maint
       filterType: 'bare-metal-node-status',
     },
     [InventoryStatusGroup.PROGRESS]: {
-      statusIDs: ['notReady'],
+      statusIDs: ['notReady', 'approval'],
       count: 0,
       filterType: 'bare-metal-node-status',
     },
@@ -35,7 +40,8 @@ export const getBMNStatusGroups: StatusGroupMapper = (nodes: NodeKind[], { maint
   nodes.forEach((node) => {
     const nodeName = getName(node);
     const nodeMaintenance = maintenancesByNodeName[nodeName];
-    const { status } = bareMetalNodeStatus({ node, nodeMaintenance });
+    const csr = getNodeServerCSR(csrs as CertificateSigningRequestKind[], node);
+    const { status } = bareMetalNodeStatus({ node, nodeMaintenance, csr });
     const group =
       Object.keys(BMN_STATUS_GROUP_MAPPER).find((key) =>
         BMN_STATUS_GROUP_MAPPER[key].includes(status),

@@ -4,12 +4,21 @@ import {
   MarkAsUnschedulable,
   Delete,
 } from '@console/app/src/components/nodes/menu-actions';
-import { K8sKind, NodeKind, K8sResourceKind, MachineKind } from '@console/internal/module/k8s';
+import {
+  K8sKind,
+  NodeKind,
+  K8sResourceKind,
+  MachineKind,
+  k8sUpdate,
+} from '@console/internal/module/k8s';
 import { getName } from '@console/shared';
 import { startNodeMaintenanceModal } from '../modals/StartNodeMaintenanceModal';
 import stopNodeMaintenanceModal from '../modals/StopNodeMaintenanceModal';
 import { NodeMaintenanceModel } from '../../models';
 import { findNodeMaintenance } from '../../selectors';
+import { confirmModal } from '@console/internal/components/modals/confirm-modal';
+import { CertificateSigningRequestModel } from '@console/internal/models';
+import { CertificateSigningRequestKind } from '../../types';
 
 type ActionArgs = {
   nodeMaintenance?: K8sResourceKind;
@@ -46,6 +55,56 @@ export const RemoveNodeMaintenance = (
   };
 };
 
+const updateCSR = (
+  csr: CertificateSigningRequestKind,
+  type: 'Approved' | 'Denied',
+): Promise<CertificateSigningRequestKind> => {
+  const approved = {
+    ...csr,
+    status: {
+      ...(csr.status || {}),
+      conditions: [
+        {
+          lastUpdateTime: new Date().toISOString(),
+          message: `This CSR was ${type.toLowerCase()} via OpenShift Console`,
+          reason: 'OpenShiftConsoleCSRApprove',
+          type,
+        },
+        ...(csr.status?.conditions || []),
+      ],
+    },
+  };
+  return k8sUpdate(CertificateSigningRequestModel, approved, null, null, {
+    path: 'approval',
+  });
+};
+
+export const approveCSR = (
+  csr: CertificateSigningRequestKind,
+): Promise<CertificateSigningRequestKind> => updateCSR(csr, 'Approved');
+
+export const denyCSR = (
+  csr: CertificateSigningRequestKind,
+): Promise<CertificateSigningRequestKind> => updateCSR(csr, 'Denied');
+
+export const ApproveServerCSR = (
+  kindObj: K8sKind,
+  node: NodeKind,
+  resources: { csr: CertificateSigningRequestKind },
+): KebabOption => ({
+  label: 'Approve Server CSR',
+  hidden: !resources?.csr,
+  callback: () =>
+    confirmModal({
+      title: 'Approve Node Server CSR',
+      message: `Are you sure you want to approve server CSR for ${node.metadata.name} ?`,
+      cancel: () => {},
+      close: () => {},
+      executeFn: () => approveCSR(resources.csr),
+      btnText: 'Approve',
+    }),
+});
+
 const { ModifyLabels, ModifyAnnotations, Edit } = Kebab.factory;
 export const menuActions = [
   SetNodeMaintenance,
@@ -55,6 +114,7 @@ export const menuActions = [
   ModifyLabels,
   ModifyAnnotations,
   Edit,
+  ApproveServerCSR,
   Delete,
 ];
 

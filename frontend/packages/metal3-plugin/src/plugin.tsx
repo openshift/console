@@ -17,13 +17,11 @@ import {
   ResourceTabPage,
 } from '@console/plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { MachineModel, NodeModel } from '@console/internal/models';
+import { MachineModel, NodeModel, CertificateSigningRequestModel } from '@console/internal/models';
 // TODO(jtomasek): change this to '@console/shared/src/utils' once @console/shared/src/utils modules
 // no longer import from @console/internal (cyclic deps issues)
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
 import { BareMetalHostModel, NodeMaintenanceModel } from './models';
-import { getBMHStatusGroups } from './components/baremetal-hosts/dashboard/utils';
-import { getBMNStatusGroups } from './components/baremetal-nodes/dashboard/utils';
 import { getHostPowerStatus, hasPowerManagement } from './selectors';
 import { HOST_POWER_STATUS_POWERING_OFF, HOST_POWER_STATUS_POWERING_ON } from './constants';
 import { BareMetalHostKind } from './types';
@@ -95,7 +93,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       model: BareMetalHostModel,
       loader: () =>
         import(
-          './components/baremetal-hosts/BareMetalHostsPage' /* webpackChunkName: "metal3-baremetalhosts" */
+          './components/baremetal-hosts/BareMetalHostsPage' /* webpackChunkName: "metal3-baremetalhost" */
         ).then((m) => m.default),
     },
   },
@@ -147,8 +145,16 @@ const plugin: Plugin<ConsumedExtensions> = [
           kind: referenceForModel(NodeMaintenanceModel),
           optional: true,
         },
+        csrs: {
+          isList: true,
+          kind: CertificateSigningRequestModel.kind,
+          optional: true,
+        },
       },
-      mapper: getBMNStatusGroups,
+      mapper: () =>
+        import('./components/baremetal-nodes/dashboard/utils' /* webpackChunkName: "node" */).then(
+          (m) => m.getBMNStatusGroups,
+        ),
     },
     flags: {
       required: [BAREMETAL_FLAG, METAL3_FLAG],
@@ -173,7 +179,10 @@ const plugin: Plugin<ConsumedExtensions> = [
         },
       },
       model: BareMetalHostModel,
-      mapper: getBMHStatusGroups,
+      mapper: () =>
+        import(
+          './components/baremetal-hosts/dashboard/utils' /* webpackChunkName: "metal3-baremetalhost" */
+        ).then((m) => m.getBMHStatusGroups),
     },
     flags: {
       required: [BAREMETAL_FLAG, METAL3_FLAG],

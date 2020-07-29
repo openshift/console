@@ -7,15 +7,20 @@ import {
 } from '../../constants';
 import { BareMetalHostStatusProps } from '../types';
 import MaintenancePopover from '../maintenance/MaintenancePopover';
+import { NODE_STATUS_SERVER_CSR } from '../../status/baremetal-node-status';
+import CSRStatus from './CSRStatus';
 
 const BareMetalNodeStatus: React.FC<BareMetalHostStatusProps> = ({
   status,
   title,
   nodeMaintenance,
+  csr,
   className,
 }) => {
   const statusTitle = title || status;
   switch (true) {
+    case status === NODE_STATUS_SERVER_CSR:
+      return <CSRStatus title={statusTitle} csr={csr} serverCSR />;
     case [NODE_STATUS_STARTING_MAINTENANCE, NODE_STATUS_UNDER_MAINTENANCE].includes(status):
       return (
         <MaintenancePopover

@@ -294,6 +294,17 @@ export const NodeModel: K8sKind = {
   labelPlural: 'Nodes',
 };
 
+export const CertificateSigningRequestModel: K8sKind = {
+  apiVersion: 'v1beta1',
+  apiGroup: 'certificates.k8s.io',
+  label: 'Certificate Signing Request',
+  plural: 'certificatesigningrequests',
+  abbr: 'CSR',
+  kind: 'CertificateSigningRequest',
+  id: 'certificateigningrequests',
+  labelPlural: 'Certificate Signing Requests',
+};
+
 export const EventModel: K8sKind = {
   apiVersion: 'v1',
   label: 'Event',
