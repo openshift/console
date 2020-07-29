@@ -174,14 +174,18 @@ class App_ extends React.PureComponent {
       </>
     );
 
+    const GlobalProvider = contextProviderExtensions.reduce(
+      (AccProvider, curProvider) => ({ children }) => (
+        <EnhancedProvider {...curProvider.properties}>
+          <AccProvider>{children}</AccProvider>
+        </EnhancedProvider>
+      ),
+      ({ children }) => <>{children}</>,
+    );
+
     return (
       <DetectPerspective>
-        {contextProviderExtensions.reduce(
-          (children, provider) => (
-            <EnhancedProvider {...provider.properties}>{children}</EnhancedProvider>
-          ),
-          content,
-        )}
+        <GlobalProvider>{content}</GlobalProvider>
       </DetectPerspective>
     );
   }
