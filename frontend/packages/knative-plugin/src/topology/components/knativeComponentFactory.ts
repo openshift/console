@@ -21,7 +21,7 @@ import {
 import { ModifyApplication } from '@console/dev-console/src/actions/modify-application';
 import { Kebab, kebabOptionsToMenu } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import { RevisionModel, ServiceModel } from '../../models';
+import { RevisionModel } from '../../models';
 import { getRevisionActions } from '../../actions/getRevisionActions';
 import {
   TYPE_EVENT_SOURCE,
@@ -46,9 +46,6 @@ export const knativeContextMenu = (element: Node) => {
   const model = modelFor(referenceFor(item));
 
   const actions = [];
-  if (model.kind === ServiceModel.kind) {
-    actions.push(ModifyApplication);
-  }
   if (model.kind === RevisionModel.kind) {
     actions.push(...getRevisionActions());
   } else {
