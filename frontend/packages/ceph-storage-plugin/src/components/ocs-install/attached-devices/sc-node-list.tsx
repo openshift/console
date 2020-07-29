@@ -18,7 +18,7 @@ const getRows: GetRows = ({ componentProps, customData }) => {
   const { data } = componentProps;
   const { nodes, setNodes, filteredNodes } = customData;
 
-  const nodeList = filteredNodes?.length ? filteredNodes : data.map(getName);
+  const nodeList = filteredNodes ?? data.map(getName);
   const filteredData = data.filter((node) => nodeList.includes(getName(node)));
 
   const rows = filteredData.map((node) => {

@@ -1,5 +1,3 @@
-export const LSO_NAMESPACE = 'local-storage';
-
 export const diskModeDropdownItems = Object.freeze({
   BLOCK: 'Block',
   FILESYSTEM: 'Filesystem',
@@ -20,6 +18,6 @@ export const diskSizeUnitOptions = {
 };
 
 export const DISCOVERY_CR_NAME = 'auto-discover-devices';
-export const LOCAL_STORAGE_NAMESPACE = 'local-storage';
+export const LOCAL_STORAGE_NAMESPACE = 'openshift-local-storage';
 export const HOSTNAME_LABEL_KEY = 'kubernetes.io/hostname';
 export const LABEL_OPERATOR = 'In';

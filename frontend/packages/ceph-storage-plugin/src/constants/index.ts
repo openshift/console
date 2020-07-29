@@ -16,7 +16,6 @@ export const NO_PROVISIONER = 'kubernetes.io/no-provisioner';
 export const OCS_SUPPORT_ANNOTATION = 'features.ocs.openshift.io/enabled';
 export const OCS_DEVICE_SET_REPLICA = 3;
 export const ATTACHED_DEVICES_ANNOTATION = 'cluster.ocs.openshift.io/local-devices';
-export const LSO_NAMESPACE = 'local-storage';
 export const AVAILABLE = 'Available';
 export const dropdownUnits = {
   GiB: 'Gi',
