@@ -19,7 +19,7 @@ Scenario: Install GitOps Operator
     And user clicks on the GitOps Service card
     And user clicks on the install button
     And user clicks on install GitOps Operator button
-    Then user will see that GitOps Service Operator is installed
+    Then user will see a modal saying GitOps Service Operator is installed
 
 
 @regression
