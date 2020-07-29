@@ -90,7 +90,7 @@
     "@patternfly/react-topology": "4.4.30",
     "@patternfly/react-virtualized-extension": "4.5.20",
     "abort-controller": "3.0.0",
-    "ajv": "^6.7.0",
+    "ajv": "^6.12.3",
     "apollo-cache-inmemory": "^1.6.5",
     "apollo-client": "^2.6.8",
     "apollo-link-ws": "^1.0.20",
