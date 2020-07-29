@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useExtensions, isPerspective } from '@console/plugin-sdk';
+import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
 
 type PerspectiveDetectorProps = {
   setActivePerspective: (string) => void;
@@ -7,7 +7,7 @@ type PerspectiveDetectorProps = {
 
 const PerspectiveDetector: React.FC<PerspectiveDetectorProps> = ({ setActivePerspective }) => {
   let detectedPerspective: string;
-  const perspectiveExtensions = useExtensions(isPerspective);
+  const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
   const defaultPerspective = perspectiveExtensions.find((p) => p.properties.default);
   const detectors = perspectiveExtensions.filter((p) => p.properties.usePerspectiveDetection);
   const detectionResults = detectors.map((p) => p.properties.usePerspectiveDetection());
