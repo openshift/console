@@ -26,6 +26,7 @@ export const initialState: State = {
   chartDataUnit: '',
   showConfirmModal: false,
   finalStep: false,
+  showDiskList: false,
 
   // common states
   isLoading: false,
@@ -75,6 +76,7 @@ export type State = {
   onNextClick: () => void;
   filteredDiscoveries: Discoveries[];
   finalStep: boolean;
+  showDiskList: boolean;
 };
 
 export type Action =
@@ -102,7 +104,8 @@ export type Action =
   | { type: 'setShowConfirmModal'; value: boolean }
   | { type: 'setOnNextClick'; value: OnNextClick }
   | { type: 'setFilteredDiscoveries'; value: Discoveries[] }
-  | { type: 'setFinalStep'; value: boolean };
+  | { type: 'setFinalStep'; value: boolean }
+  | { type: 'setShowDiskList'; value: boolean };
 
 export const reducer = (state: State, action: Action) => {
   switch (action.type) {
@@ -154,6 +157,8 @@ export const reducer = (state: State, action: Action) => {
       return Object.assign({}, state, { filteredDiscoveries: action.value });
     case 'setFinalStep':
       return Object.assign({}, state, { finalStep: action.value });
+    case 'setShowDiskList':
+      return Object.assign({}, state, { showDiskList: action.value });
     default:
       return initialState;
   }

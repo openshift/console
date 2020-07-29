@@ -17,8 +17,11 @@ import { getDiscoveryRequestData } from '@console/local-storage-operator-plugin/
 import {
   LOCAL_STORAGE_NAMESPACE,
   DISCOVERY_CR_NAME,
+  HOSTNAME_LABEL_KEY,
+  LABEL_OPERATOR,
+  AUTO_DISCOVER_ERR_MSG,
 } from '@console/local-storage-operator-plugin/src/constants';
-import { getNodes } from '@console/local-storage-operator-plugin/src/utils';
+import { getNodes, getLabelIndex } from '@console/local-storage-operator-plugin/src/utils';
 import {
   DiskMechanicalProperty,
   DiskType,
@@ -46,20 +49,33 @@ const makeAutoDiscoveryCall = (
 
   fetchK8s(LocalVolumeDiscovery, DISCOVERY_CR_NAME, LOCAL_STORAGE_NAMESPACE)
     .then((discoveryRes: K8sResourceKind) => {
-      const nodes = new Set(
-        discoveryRes?.spec?.nodeSelector?.nodeSelectorTerms?.[0]?.matchExpressions?.[0]?.values,
-      );
-      selectedNodes.forEach((name) => nodes.add(name));
-      const patch = [
-        {
-          op: 'replace',
-          path: `/spec/nodeSelector/nodeSelectorTerms/0/matchExpressions/0/values`,
-          value: Array.from(nodes),
-        },
-      ];
-      return k8sPatch(LocalVolumeDiscovery, discoveryRes, patch);
+      const nodeSelectorTerms = discoveryRes?.spec?.nodeSelector?.nodeSelectorTerms;
+      const [selectorIndex, expIndex] = nodeSelectorTerms
+        ? getLabelIndex(nodeSelectorTerms, HOSTNAME_LABEL_KEY, LABEL_OPERATOR)
+        : [-1, -1];
+      if (selectorIndex !== -1 && expIndex !== -1) {
+        const nodes = new Set(
+          discoveryRes?.spec?.nodeSelector?.nodeSelectorTerms?.[selectorIndex]?.matchExpressions?.[
+            expIndex
+          ]?.values,
+        );
+        selectedNodes.forEach((name) => nodes.add(name));
+        const patch = [
+          {
+            op: 'replace',
+            path: `/spec/nodeSelector/nodeSelectorTerms/${selectorIndex}/matchExpressions/${expIndex}/values`,
+            value: Array.from(nodes),
+          },
+        ];
+        return k8sPatch(LocalVolumeDiscovery, discoveryRes, patch);
+      }
+      throw new Error(AUTO_DISCOVER_ERR_MSG);
     })
-    .catch(() => {
+    .catch((err) => {
+      // handle AUTO_DISCOVER_ERR_MSG and throw to next catch block to show the message
+      if (err.message === AUTO_DISCOVER_ERR_MSG) {
+        throw err;
+      }
       const requestData = getDiscoveryRequestData(state);
       return k8sCreate(LocalVolumeDiscovery, requestData);
     })

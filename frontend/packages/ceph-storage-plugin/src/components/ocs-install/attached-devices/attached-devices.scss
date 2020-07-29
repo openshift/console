@@ -57,3 +57,20 @@
   height: var(--pf-global--LineHeight--sm);
   margin: 0 var(--pf-global--spacer--sm);
 }
+
+.ceph-ocs-install__disk-list-btn {
+  padding-top: 0;
+  padding-left: 0;
+  cursor: pointer;
+}
+
+.ceph-ocs-install__disks-modal {
+  max-height: 75%;
+  width: 50%;
+}
+
+// inner class of modal for modifying margin
+.pf-c-modal-box__body {
+  margin-top: var(--pf-global--spacer--md);
+  margin-bottom: var(--pf-global--spacer--md);
+}
