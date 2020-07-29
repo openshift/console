@@ -157,8 +157,7 @@ const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
     return;
   }
 
-  const relevantOptions = iGetRelevantTemplateSelectors(state, id);
-  const { os } = relevantOptions;
+  const os = iGetVmSettingValue(state, id, VMSettingsField.OPERATING_SYSTEM);
   const isWindows = os?.startsWith('win');
   const windowsTools = getStorages(state, id).find(
     (storage) => !!isWinToolsImage(getVolumeContainerImage(storage.volume)),
@@ -171,6 +170,12 @@ const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
     dispatch(vmWizardInternalActions[InternalActionType.RemoveStorage](id, windowsTools.id));
   }
 
+  // base image is always off for user templates
+  if (iGetVmSettingValue(state, id, VMSettingsField.USER_TEMPLATE)) {
+    return;
+  }
+
+  const relevantOptions = iGetRelevantTemplateSelectors(state, id);
   const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
   const iTemplate =
     iCommonTemplates && iGetRelevantTemplate(null, iCommonTemplates, relevantOptions);
