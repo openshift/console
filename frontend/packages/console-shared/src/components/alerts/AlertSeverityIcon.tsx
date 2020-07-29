@@ -4,7 +4,7 @@ import {
   ExclamationCircleIcon,
   InfoCircleIcon,
 } from '@patternfly/react-icons';
-import { AlertSeverity } from '@console/internal/reducers/monitoring';
+import { AlertSeverity } from '@console/internal/components/monitoring/types';
 
 interface AlertSeverityIconProps {
   severityAlertType: AlertSeverity;

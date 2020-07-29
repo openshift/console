@@ -1,9 +1,10 @@
 import {
-  Alerts,
   Alert,
+  Alerts,
+  AlertStates,
   PrometheusRulesResponse,
+  RuleStates,
 } from '@console/internal/components/monitoring/types';
-import { AlertStates, RuleStates } from '@console/internal/reducers/monitoring';
 
 export const mockAlerts: Alerts = {
   loadError: null,

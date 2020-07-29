@@ -38,12 +38,9 @@ import {
   alertDescription,
   alertingRuleIsActive,
   alertingRuleSource,
-  AlertSeverity,
   alertSource,
   alertState,
-  AlertStates,
   silenceState,
-  SilenceStates,
 } from '../../reducers/monitoring';
 import store, { RootState } from '../../redux';
 import { RowFunction, Table, TableData, TableRow } from '../factory';
@@ -58,8 +55,10 @@ import { QueryBrowser, QueryObj } from '../monitoring/query-browser';
 import { CreateSilence, EditSilence } from '../monitoring/silence-form';
 import {
   Alert,
-  AlertSource,
   Alerts,
+  AlertSeverity,
+  AlertSource,
+  AlertStates,
   ListPageProps,
   MonitoringResource,
   PrometheusAlert,
@@ -67,6 +66,7 @@ import {
   Rules,
   Silence,
   Silences,
+  SilenceStates,
 } from '../monitoring/types';
 import {
   AlertResource,

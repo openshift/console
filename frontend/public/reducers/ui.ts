@@ -10,12 +10,12 @@ import {
   LAST_PERSPECTIVE_LOCAL_STORAGE_KEY,
   PINNED_RESOURCES_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants';
-import { AlertStates, isSilenced, SilenceStates, RuleStates } from '../reducers/monitoring';
+import { isSilenced } from '../reducers/monitoring';
 import { legalNamePattern, getNamespace } from '../components/utils/link';
 import { OverviewSpecialGroup } from '../components/overview/constants';
 import { RootState } from '../redux';
 import { pluginStore } from '../plugins';
-import { Alert } from '../components/monitoring/types';
+import { Alert, AlertStates, RuleStates, SilenceStates } from '../components/monitoring/types';
 import { isPerspective } from '@console/plugin-sdk';
 
 export type UIState = ImmutableMap<string, any>;
