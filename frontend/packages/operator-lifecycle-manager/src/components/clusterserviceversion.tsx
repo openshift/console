@@ -78,7 +78,7 @@ import {
   PackageManifestKind,
   SubscriptionKind,
 } from '../types';
-import { operatorTypeAnnotation, nonStandardAnnotationValue } from '../const';
+import { operatorTypeAnnotation, nonStandaloneAnnotationValue } from '../const';
 import { subscriptionForCSV, getSubscriptionStatus } from '../status/csv-status';
 import { getInternalObjects, isInternalObject } from '../utils';
 import { ProvidedAPIsPage, ProvidedAPIPage } from './operand';
@@ -524,9 +524,9 @@ export const NamespacedClusterServiceVersionList: React.SFC<ClusterServiceVersio
     );
   };
 
-  const isStandardCSV = (operator: ClusterServiceVersionKind) => {
+  const isStandaloneCSV = (operator: ClusterServiceVersionKind) => {
     return (
-      operator.metadata.annotations?.[operatorTypeAnnotation] !== nonStandardAnnotationValue ||
+      operator.metadata.annotations?.[operatorTypeAnnotation] !== nonStandaloneAnnotationValue ||
       operator.status?.phase === ClusterServiceVersionPhase.CSVPhaseFailed
     );
   };
@@ -542,9 +542,9 @@ export const NamespacedClusterServiceVersionList: React.SFC<ClusterServiceVersio
       }
       const csv = source as ClusterServiceVersionKind;
       if (allNamespaceActive) {
-        return !isCopiedCSV(csv, kind) && isStandardCSV(csv);
+        return !isCopiedCSV(csv, kind) && isStandaloneCSV(csv);
       }
-      return isStandardCSV(csv);
+      return isStandaloneCSV(csv);
     });
   };
 
