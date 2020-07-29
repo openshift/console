@@ -715,8 +715,8 @@ const ruleStateToProps = (state: RootState, { match }): AlertRulesDetailsPagePro
 export const AlertRulesDetailsPage = withFallback(
   connect(ruleStateToProps)((props: AlertRulesDetailsPageProps) => {
     const { loaded, loadError, namespace, rule } = props;
-    const { alerts = [], annotations = {}, duration = null, name = '', query = '' } = rule || {};
-    const severity = rule?.labels?.severity;
+    const { alerts = [], annotations, duration, labels, name = '', query = '' } = rule || {};
+    const severity = labels?.severity;
     return (
       <>
         <Helmet>
@@ -760,9 +760,9 @@ export const AlertRulesDetailsPage = withFallback(
                     <dd>
                       <Severity severity={severity} />
                     </dd>
-                    <Annotation title="Description">{annotations.description}</Annotation>
-                    <Annotation title="Summary">{annotations.summary}</Annotation>
-                    <Annotation title="Message">{annotations.message}</Annotation>
+                    <Annotation title="Description">{annotations?.description}</Annotation>
+                    <Annotation title="Summary">{annotations?.summary}</Annotation>
+                    <Annotation title="Message">{annotations?.message}</Annotation>
                   </dl>
                 </div>
                 <div className="col-sm-6">
@@ -778,6 +778,24 @@ export const AlertRulesDetailsPage = withFallback(
                       <Link to={queryBrowserURL(query, namespace)}>
                         <pre className="co-pre-wrap monitoring-query">{query}</pre>
                       </Link>
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-xs-12">
+                  <dl className="co-m-pane__details">
+                    <dt>Labels</dt>
+                    <dd>
+                      {_.isEmpty(labels) ? (
+                        <div className="text-muted">No labels</div>
+                      ) : (
+                        <div className={`co-text-${RuleResource.kind.toLowerCase()}`}>
+                          {_.map(labels, (v, k) => (
+                            <Label key={k} k={k} v={v} />
+                          ))}
+                        </div>
+                      )}
                     </dd>
                   </dl>
                 </div>
