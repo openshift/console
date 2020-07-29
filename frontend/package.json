@@ -26,6 +26,8 @@
     "test-gui-openshift": "yarn run test-suite --suite crud --params.openshift true",
     "test-gui": "yarn run test-suite --suite all",
     "test-suite": "ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/protractor integration-tests/protractor.conf.ts",
+    "test-cypress": "cd packages/integration-tests-cypress && cypress open --env openshift=true",
+    "test-cypress-headless": "cd packages/integration-tests-cypress && node --max-old-space-size=4096 ../../node_modules/.bin/cypress run --env openshift=true --browser chrome --headless",
     "debug-test-suite": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' node -r ts-node/register --inspect-brk ./node_modules/.bin/protractor integration-tests/protractor.conf.ts",
     "analyze": "NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=production --profile --json | awk '{if(NR>2)print}' > public/dist/stats.json && ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack-bundle-analyzer --mode static -r public/dist/report.html public/dist/stats.json",
     "prettier-all": "prettier --write '**/*.{js,jsx,ts,tsx,json}'",
@@ -54,6 +56,10 @@
     },
     "transformIgnorePatterns": [
       "<rootDir>/node_modules/(?!(lodash-es|@console|@novnc|@spice-project|@popperjs)/.*)"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/node_modules/",
+      "<rootDir>/packages/integration-tests-cypress"
     ],
     "testRegex": ".*\\.spec\\.(ts|tsx|js|jsx)$",
     "testURL": "http://localhost",
@@ -164,6 +170,7 @@
     "@graphql-codegen/typescript-graphql-files-modules": "^1.15.1",
     "@graphql-codegen/typescript-operations": "^1.15.1",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.4.1",
+    "@cypress/webpack-preprocessor": "^4.1.3",
     "@types/classnames": "^2.2.7",
     "@types/enzyme": "3.10.x",
     "@types/glob": "7.x",
@@ -191,9 +198,13 @@
     "chromedriver": "77.x",
     "circular-dependency-plugin": "5.x",
     "css-loader": "0.28.x",
+    "cypress": "^4.3.0",
+    "cypress-jest-adapter": "^0.1.1",
+    "cypress-multi-reporters": "^1.4.0",
     "enzyme": "3.10.x",
     "enzyme-adapter-react-16": "1.15.2",
     "eslint-plugin-graphql": "^4.0.0",
+    "eslint-plugin-cypress": "^2.10.3",
     "file-loader": "1.x",
     "find-up": "4.x",
     "fork-ts-checker-webpack-plugin": "0.x",
@@ -212,6 +223,7 @@
     "lint-staged": "^10.2.2",
     "mini-css-extract-plugin": "0.4.x",
     "mock-socket": "^9.0.3",
+    "mocha-junit-reporter": "^1.23.3",
     "moment": "2.22.x",
     "monaco-editor-core": "0.14.0",
     "monaco-editor-webpack-plugin": "^1.7.0",
@@ -243,7 +255,8 @@
   "resolutions": {
     "jquery": "3.5.1",
     "victory-shared-events": "34.3.8",
-    "minimist": "1.2.5"
+    "minimist": "1.2.5",
+    "@types/jest": "21.x"
   },
   "husky": {
     "hooks": {

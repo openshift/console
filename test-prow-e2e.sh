@@ -28,3 +28,9 @@ oc apply -f ./frontend/integration-tests/data/htpasswd-secret.yaml
 oc patch oauths cluster --patch "$(cat ./frontend/integration-tests/data/patch-htpasswd.yaml)" --type=merge
 
 CHROME_VERSION=$(google-chrome --version) ./test-gui.sh "${1:-e2e}"
+
+# Only run Cypress tests if no agruments passed, or if the 'release' argument was passed
+if [ $# -eq 0 ] || [ "$1" == "release" ]; then
+  ./test-cypress.sh
+fi
+

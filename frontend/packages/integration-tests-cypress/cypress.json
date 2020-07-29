@@ -1,0 +1,14 @@
+{
+  "integrationFolder": "tests",
+  "screenshotsFolder": "../../gui_test_screenshots/cypress/screenshots",
+  "videosFolder": "../../gui_test_screenshots/cypress/videos",
+  "video": true,
+  "reporter": "../../node_modules/cypress-multi-reporters",
+  "reporterOptions": {
+    "configFile": "reporter-config.json"
+  },
+  "supportFile": "support/index.ts",
+  "pluginsFile": "plugins/index.js",
+  "fixturesFolder": "fixtures",
+  "defaultCommandTimeout": 30000
+}

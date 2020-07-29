@@ -185,9 +185,10 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
               <div className="form-group col-sm-4 col-md-5">
                 <label>Silence alert from...</label>
                 {isStartNow ? (
-                  <DatetimeTextInput isDisabled value="Now" />
+                  <DatetimeTextInput isDisabled data-test="from" value="Now" />
                 ) : (
                   <DatetimeTextInput
+                    data-test="from"
                     isRequired
                     onChange={(v: string) => setStartsAt(v)}
                     value={startsAt}
@@ -207,12 +208,14 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                 <label>Until...</label>
                 {duration === durationOff ? (
                   <DatetimeTextInput
+                    data-test="until"
                     isRequired
                     onChange={(v: string) => setEndsAt(v)}
                     value={endsAt}
                   />
                 ) : (
                   <DatetimeTextInput
+                    data-test="until"
                     isDisabled
                     value={isStartNow ? `${duration} from now` : getEndsAtValue()}
                   />
@@ -222,6 +225,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
             <div className="form-group">
               <label>
                 <input
+                  data-test="start-immediately"
                   checked={isStartNow}
                   onChange={(e) => setIsStartNow(e.currentTarget.checked)}
                   type="checkbox"
@@ -318,6 +322,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                 aria-label="Comment"
                 isRequired
                 onChange={(v: string) => setComment(v)}
+                data-test="silence-comment"
                 value={comment}
               />
             </div>

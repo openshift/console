@@ -355,7 +355,12 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
           <h1 className="co-m-pane__heading co-m-pane__heading--baseline">
             <div className="co-m-pane__name">{title}</div>
             <div className="co-m-pane__heading-link">
-              <Link to={`/k8s/ns/${this.state.namespace}/routes/~new`} id="yaml-link" replace>
+              <Link
+                to={`/k8s/ns/${this.state.namespace}/routes/~new`}
+                id="yaml-link"
+                data-test="yaml-link"
+                replace
+              >
                 Edit YAML
               </Link>
             </div>

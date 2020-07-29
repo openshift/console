@@ -38,7 +38,11 @@ export class LabelList extends React.Component<LabelListProps> {
       ];
     }
 
-    return <div className="co-m-label-list">{list}</div>;
+    return (
+      <div className="co-m-label-list" data-test="label-list">
+        {list}
+      </div>
+    );
   }
 }
 

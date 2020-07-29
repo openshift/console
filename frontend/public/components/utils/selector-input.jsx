@@ -100,6 +100,7 @@ export class SelectorInput extends React.Component {
       spellCheck: 'false',
       value: inputValue,
       id: 'tags-input',
+      ['data-test']: 'tags-input',
       ...(this.props.inputProps || {}),
     };
 
