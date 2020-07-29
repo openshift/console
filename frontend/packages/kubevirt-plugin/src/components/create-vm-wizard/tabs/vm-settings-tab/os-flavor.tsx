@@ -90,6 +90,7 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
       ? {
           userTemplates,
           commonTemplates,
+          commonDataVolumes,
         }
       : {};
 
