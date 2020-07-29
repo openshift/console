@@ -6,7 +6,7 @@ import TaskHeader from './QuickStartTaskHeader';
 type QuickStartIntroductionProps = {
   tasks: QuickStartTask[];
   introduction: string;
-  onTaskSelect: (index) => void;
+  onTaskSelect: (selectedTaskNumber: number) => void;
 };
 
 const QuickStartIntroduction: React.FC<QuickStartIntroductionProps> = ({

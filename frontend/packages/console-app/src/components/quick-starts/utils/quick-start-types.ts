@@ -9,6 +9,7 @@ export type QuickStart = {
   introduction?: string;
   tasks?: QuickStartTask[];
   conclusion?: string;
+  nextQuickStart?: string;
 };
 
 export type QuickStartTask = {
@@ -22,12 +23,12 @@ export type QuickStartTask = {
   taskHelp?: string;
 };
 
-export type QuickStartStates = Record<string, QuickStartState>;
+export type AllQuickStartStates = Record<string, QuickStartState>;
 
 export type QuickStartState = {
   status: QuickStartStatus;
-  currentTask: number;
-  taskStatus?: QuickStartTaskStatus[];
+  taskNumber: number;
+  allTaskStatuses?: QuickStartTaskStatus[];
 };
 
 export enum QuickStartStatus {

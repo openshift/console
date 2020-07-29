@@ -7,20 +7,21 @@ import { EmptyBox } from '@console/internal/components/utils';
 import * as QuickStartActions from '../../../redux/actions/quick-start-actions';
 import {
   getActiveQuickStartID,
-  getQuickStartStates,
+  getAllQuickStartStates,
 } from '../../../redux/reducers/quick-start-reducer';
-import { QuickStart, QuickStartStates, QuickStartStatus } from '../utils/quick-start-types';
-import QuickStartCatalogItem from './QuickStartCatalogItem';
+import { QuickStart, AllQuickStartStates } from '../utils/quick-start-types';
+import { getQuickStartStatus } from '../utils/quick-start-utils';
+import QuickStartTile from './QuickStartTile';
 
 import './QuickStartCatalog.scss';
 
 type StateProps = {
   activeQuickStartID?: string;
-  quickStartStates?: QuickStartStates;
+  allQuickStartStates?: AllQuickStartStates;
 };
 
 type DispatchProps = {
-  setActiveQuickStart?: (quickStartID: string) => void;
+  setActiveQuickStart?: (quickStartID: string, totalTasks: number) => void;
 };
 
 type OwnProps = {
@@ -32,7 +33,7 @@ type QuickStartCatalogProps = OwnProps & DispatchProps & StateProps;
 const QuickStartCatalog: React.FC<QuickStartCatalogProps> = ({
   quickStarts,
   activeQuickStartID,
-  quickStartStates,
+  allQuickStartStates,
   setActiveQuickStart,
 }) => {
   return (
@@ -43,11 +44,11 @@ const QuickStartCatalog: React.FC<QuickStartCatalogProps> = ({
         <Gallery className="co-quick-start-catalog__gallery" hasGutter>
           {quickStarts.map((quickStart) => (
             <GalleryItem key={quickStart.id}>
-              <QuickStartCatalogItem
+              <QuickStartTile
                 quickStart={quickStart}
                 isActive={quickStart.id === activeQuickStartID}
-                status={quickStartStates?.[quickStart.id]?.status ?? QuickStartStatus.NOT_STARTED}
-                onClick={() => setActiveQuickStart(quickStart.id)}
+                status={getQuickStartStatus(allQuickStartStates, quickStart.id)}
+                onClick={() => setActiveQuickStart(quickStart.id, quickStart.tasks?.length)}
               />
             </GalleryItem>
           ))}
@@ -59,12 +60,12 @@ const QuickStartCatalog: React.FC<QuickStartCatalogProps> = ({
 
 const mapStateToProps = (state: RootState): StateProps => ({
   activeQuickStartID: getActiveQuickStartID(state),
-  quickStartStates: getQuickStartStates(state),
+  allQuickStartStates: getAllQuickStartStates(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
-  setActiveQuickStart: (quickStartID: string) =>
-    dispatch(QuickStartActions.setActiveQuickStart(quickStartID)),
+  setActiveQuickStart: (quickStartID: string, totalTasks: number) =>
+    dispatch(QuickStartActions.setActiveQuickStart(quickStartID, totalTasks)),
 });
 
 // exposed for testing

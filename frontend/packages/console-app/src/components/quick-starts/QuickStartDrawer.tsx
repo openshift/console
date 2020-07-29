@@ -13,12 +13,12 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { RootState } from '@console/internal/redux';
+import { AsyncComponent } from '@console/internal/components/utils';
 import { getActiveQuickStartID } from '../../redux/reducers/quick-start-reducer';
 import { setActiveQuickStart } from '../../redux/actions/quick-start-actions';
 import { getQuickStart } from './utils/quick-start-utils';
 
 import './QuickStartDrawer.scss';
-import QuickStartController from './QuickStartController';
 
 type StateProps = {
   activeQuickStartID: string;
@@ -37,7 +37,7 @@ const QuickStartDrawer: React.FC<QuickStartDrawerProps> = ({
 }) => {
   const quickStart = getQuickStart(activeQuickStartID);
 
-  const panelContent = (
+  const panelContent = quickStart ? (
     <DrawerPanelContent>
       <DrawerHead>
         <div className="co-quick-start-drawer__title">
@@ -58,10 +58,13 @@ const QuickStartDrawer: React.FC<QuickStartDrawerProps> = ({
         </DrawerActions>
       </DrawerHead>
       <DrawerPanelBody>
-        <QuickStartController quickStart={quickStart} />
+        <AsyncComponent
+          loader={() => import('./QuickStartController').then((c) => c.default)}
+          quickStart={quickStart}
+        />
       </DrawerPanelBody>
     </DrawerPanelContent>
-  );
+  ) : null;
 
   return (
     <Drawer isExpanded={!!activeQuickStartID} isInline>

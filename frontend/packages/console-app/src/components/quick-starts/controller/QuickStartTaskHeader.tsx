@@ -88,7 +88,7 @@ const QuickStartTaskHeader: React.FC<QuickStartTaskHeaderProps> = ({
         </>
       }
       step={taskIndex}
-      onNavItemClick={onTaskSelect}
+      onNavItemClick={() => onTaskSelect(taskIndex - 1)}
       navItemComponent="Button"
     />
   </div>

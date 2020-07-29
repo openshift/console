@@ -9,9 +9,14 @@ type QuickStartConclusionProps = React.ComponentProps<typeof QuickStartConclusio
 let wrapper: ShallowWrapper<QuickStartConclusionProps>;
 const props: QuickStartConclusionProps = {
   tasks: getQuickStart('serverless-explore').tasks,
-  taskStatus: [QuickStartTaskStatus.INIT, QuickStartTaskStatus.INIT, QuickStartTaskStatus.INIT],
+  allTaskStatuses: [
+    QuickStartTaskStatus.INIT,
+    QuickStartTaskStatus.INIT,
+    QuickStartTaskStatus.INIT,
+  ],
   conclusion: 'conclusion',
   onTaskSelect: jest.fn(),
+  onQuickStartChange: jest.fn(),
 };
 
 describe('QuickStartConclusion', () => {
@@ -24,13 +29,7 @@ describe('QuickStartConclusion', () => {
   });
 
   it('should render link for next quick start if nextQuickStart props is available', () => {
-    wrapper = shallow(
-      <QuickStartConclusion
-        {...props}
-        nextQuickStart="Serverless Application"
-        launchNextQuickStart={jest.fn()}
-      />,
-    );
+    wrapper = shallow(<QuickStartConclusion {...props} nextQuickStart="Serverless Application" />);
     expect(
       wrapper
         .find(Button)

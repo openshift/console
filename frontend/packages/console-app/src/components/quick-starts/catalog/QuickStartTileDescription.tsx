@@ -1,28 +1,23 @@
 import * as React from 'react';
-import cx from 'classnames';
 import { Text, TextVariants } from '@patternfly/react-core';
-import './QuickStartDescription.scss';
 
-type QuickStartDescriptionProps = {
+import './QuickStartTileDescription.scss';
+
+type QuickStartTileDescriptionProps = {
   description: string;
   prerequisites?: string[];
   unmetPrerequisite?: boolean;
 };
-const QuickStartDescription: React.FC<QuickStartDescriptionProps> = ({
+const QuickStartTileDescription: React.FC<QuickStartTileDescriptionProps> = ({
   description,
   prerequisites,
-  unmetPrerequisite = false,
 }) => (
   <>
-    <Text component={TextVariants.p} className="oc-quick-start-description__section">
+    <Text component={TextVariants.p} className="oc-quick-start-tile-description">
       {description}
     </Text>
     {Array.isArray(prerequisites) && prerequisites?.length > 0 && (
-      <div
-        className={cx('co-quick-start-description__section', {
-          'co-quick-start-description__unmetprerequisites': unmetPrerequisite,
-        })}
-      >
+      <div className="co-quick-start-tile-description">
         <Text component={TextVariants.h5}>Prerequisites</Text>
         {prerequisites.map((prerequisite) => (
           <Text key={prerequisite} component={TextVariants.small}>
@@ -33,4 +28,4 @@ const QuickStartDescription: React.FC<QuickStartDescriptionProps> = ({
     )}
   </>
 );
-export default QuickStartDescription;
+export default QuickStartTileDescription;

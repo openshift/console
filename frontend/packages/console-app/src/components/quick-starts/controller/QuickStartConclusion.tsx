@@ -7,19 +7,19 @@ import TaskHeader from './QuickStartTaskHeader';
 
 type QuickStartConclusionProps = {
   tasks: QuickStartTask[];
-  taskStatus: QuickStartTaskStatus[];
   conclusion: string;
+  allTaskStatuses: QuickStartTaskStatus[];
   nextQuickStart?: string;
-  launchNextQuickStart?: () => void;
-  onTaskSelect: (index) => void;
+  onQuickStartChange: (quickStartid: string) => void;
+  onTaskSelect: (selectedTaskNumber: number) => void;
 };
 
 const QuickStartConclusion: React.FC<QuickStartConclusionProps> = ({
   tasks,
-  taskStatus,
   conclusion,
+  allTaskStatuses,
   nextQuickStart,
-  launchNextQuickStart,
+  onQuickStartChange,
   onTaskSelect,
 }) => {
   return (
@@ -30,15 +30,15 @@ const QuickStartConclusion: React.FC<QuickStartConclusionProps> = ({
           title={task.title}
           taskIndex={index + 1}
           size="md"
-          taskStatus={taskStatus[index]}
+          taskStatus={allTaskStatuses[index]}
           onTaskSelect={onTaskSelect}
         />
       ))}
       <SyncMarkdownView content={conclusion} styles="div {overflow-y: visible !important}" />
       {nextQuickStart && (
-        <Button variant="link" onClick={launchNextQuickStart}>
-          {`Start ${nextQuickStart} quick start`}
-          <ArrowRightIcon />
+        <Button variant="link" onClick={() => onQuickStartChange(nextQuickStart)} isInline>
+          {`Start ${nextQuickStart} quick start`}{' '}
+          <ArrowRightIcon style={{ marginLeft: 'var(--pf-global--spacer--xs)' }} />
         </Button>
       )}
     </>

@@ -1,9 +1,4 @@
-import {
-  QuickStart,
-  QuickStartStatus,
-  QuickStartState,
-  QuickStartTaskStatus,
-} from './quick-start-types';
+import { QuickStart } from './quick-start-types';
 
 export const mockQuickStarts: QuickStart[] = [
   {
@@ -94,6 +89,7 @@ export const mockQuickStarts: QuickStart[] = [
       },
     ],
     conclusion: `Your Serverless Operator is ready! If you want to learn how to deploy a serverless application, take the Serverless Application tour.`,
+    nextQuickStart: 'serverless-applications',
   },
   {
     iconURL:
@@ -104,6 +100,55 @@ export const mockQuickStarts: QuickStart[] = [
     duration: 10,
     description: 'Learn how to create a serverless application',
     prerequisites: ['Complete "Explore Serverless" tour'],
+    introduction: `The Red Hat® OpenShift® Serverless provides an enterprise-grade serverless platform. Based on the open source Knative project, it provides a solution for efficient application development supporting dynamic scale and providing a reliable and secure event-driven mechanism to connect on-cluster and off-cluster event producers, bringing portability and consistency across hybrid and multi-cloud environments.
+    Run anywhereUse Kubernetes and OpenShift to build, scale, and manage serverless applications in any cloud, on-premise, or hybrid environment.
+    Integrate with legacyBuild modern, serverless applications and support legacy apps by using event sources. Manage all of your applications in one place: Red Hat OpenShift.
+    Focus on businessKnative allows app teams to focus on building products. Knative installs on OpenShift using Operators, simplifying installation and automating updates and management.
+    Operations friendlyKnative uses Kubernetes to achieve greater consistency and more granular scalability across applications and teams.`,
+    tasks: [
+      {
+        title: `Create Serverless Application`,
+        description: `#### To create the Serverless Application:
+
+        1. Go to the Import from Git flow.
+
+        1. Choose Serverless as option while creating the application.
+        `,
+
+        review: `To verify that the Serverless Operator was successfully installed:
+            1. Go to the Topology.
+            2. Check for an application with Knative icon.
+
+            Is the status Succeeded?`,
+
+        recapitulation: {
+          success: `You've just create the Serverless Application!`,
+          failed: `Check your work to make sure that the Serverless application is properly created`,
+        },
+        taskHelp: `Try walking through the steps again to properly create the Serverless Application`,
+      },
+      {
+        title: `Create knative-serving API`,
+        description: `#### The first Application you create is Knative Nodejs.
+        Some description and steps for application -
+
+        1. Some step 1.
+
+        1. Some step 2.`,
+
+        review: `To verify that the knative nodejs application was installed successfully:
+            1. Some step to review serverless application.
+
+            Is there a knative nodejs resource in the list?`,
+        recapitulation: {
+          success: `You've just created an instance of knative nodejs!`,
+          failed: `Check your work to make sure that the instance of knative nodejs is properly created`,
+        },
+        taskHelp: `Try walking through the steps again to properly create the instance of knative-serving`,
+      },
+    ],
+    conclusion: `Your Serverless Application is ready! If you want to learn how to deploy a openshift pipeline, take the Pipeline Builds tour.`,
+    nextQuickStart: 'pipelines-build',
   },
   {
     iconURL:
@@ -114,29 +159,28 @@ export const mockQuickStarts: QuickStart[] = [
     duration: 15,
     description: 'Release requirement if any installs x number of resources',
     prerequisites: ['Release requirement if any', 'installs x number of resources'],
+    introduction: `OpenShift Pipelines is a cloud-native, continuous integration and continuous delivery (CI/CD) solution based on Kubernetes resources. It uses Tekton building blocks to automate deployments across multiple platforms by abstracting away the underlying implementation details. Tekton introduces a number of standard Custom Resource Definitions (CRDs) for defining CI/CD pipelines that are portable across Kubernetes distributions.`,
+    tasks: [
+      {
+        title: `Create Openshift Pipeline`,
+        description: `To create the openshift pipeline build:
+            1. Go to the Import from Git flow.
+            2. Choose Pipelines as option while creating the application.
+            `,
+
+        review: `To verify that the pipeline was successfully created:
+            1. Go to the Pipelines.
+            2. Check for an pipeline in the list.
+
+            Is the status Succeeded?`,
+
+        recapitulation: {
+          success: `You've just create the pipeline!`,
+          failed: `Check your work to make sure that the pipeline is properly created`,
+        },
+        taskHelp: `Try walking through the steps again to properly create the pipeline`,
+      },
+    ],
+    conclusion: `Your Pipeline build is ready!`,
   },
 ];
-
-export const mockStatus: Record<string, QuickStartState> = {
-  'serverless-explore': {
-    status: QuickStartStatus.NOT_STARTED,
-    currentTask: -1,
-    taskStatus: [QuickStartTaskStatus.INIT, QuickStartTaskStatus.INIT, QuickStartTaskStatus.INIT],
-  },
-  'serverless-applications': {
-    status: QuickStartStatus.IN_PROGRESS,
-    currentTask: 2,
-    taskStatus: [QuickStartTaskStatus.INIT, QuickStartTaskStatus.INIT, QuickStartTaskStatus.INIT],
-  },
-  'pipelines-build': {
-    status: QuickStartStatus.COMPLETE,
-    currentTask: 3,
-    taskStatus: [QuickStartTaskStatus.INIT, QuickStartTaskStatus.INIT, QuickStartTaskStatus.INIT],
-  },
-};
-
-export const mockPrerequisiteStatus: Record<string, boolean> = {
-  'Explore Serverless': false,
-  'Serverless Aplications': false,
-  'Build Pipelines': true,
-};
