@@ -22,9 +22,8 @@ import {
   alertState,
   alertSeverityOrder,
   alertingRuleStateOrder,
-  RuleStates,
 } from '@console/internal/reducers/monitoring';
-import { Alert, Rule } from '@console/internal/components/monitoring/types';
+import { Alert, Rule, RuleStates } from '@console/internal/components/monitoring/types';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { labelsToParams } from '@console/internal/components/monitoring/utils';
 import SilenceAlert from './SilenceAlert';

@@ -1,6 +1,6 @@
+import { RuleStates } from '@console/internal/components/monitoring/types';
 import { getAlertsAndRules } from '@console/internal/components/monitoring/utils';
 import { rules } from '@console/shared/src/utils/__mocks__/alerts-and-rules-data';
-import { RuleStates } from '@console/internal/reducers/monitoring';
 import { monitoringAlertRows } from '../monitoring-alerts-utils';
 
 describe('monitoring-alerts-utils', () => {

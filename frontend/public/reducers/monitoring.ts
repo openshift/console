@@ -1,32 +1,14 @@
 import * as _ from 'lodash-es';
 
-import { Alert, AlertSource, Rule, Silence } from '../components/monitoring/types';
-
-export const enum AlertSeverity {
-  Critical = 'critical',
-  Info = 'info',
-  None = 'none',
-  Warning = 'warning',
-}
-
-export const enum AlertStates {
-  Firing = 'firing',
-  Pending = 'pending',
-  Silenced = 'silenced',
-}
-
-export const enum RuleStates {
-  Firing = 'firing',
-  Inactive = 'inactive',
-  Pending = 'pending',
-  Silenced = 'silenced',
-}
-
-export const enum SilenceStates {
-  Active = 'active',
-  Expired = 'expired',
-  Pending = 'pending',
-}
+import {
+  Alert,
+  AlertSeverity,
+  AlertSource,
+  AlertStates,
+  Rule,
+  Silence,
+  SilenceStates,
+} from '../components/monitoring/types';
 
 export const alertState = (a: Alert): AlertStates => a?.state;
 export const silenceState = (s: Silence): SilenceStates => s?.status?.state;

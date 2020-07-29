@@ -1,8 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Switch } from '@patternfly/react-core';
-import { Rule } from '@console/internal/components/monitoring/types';
-import { RuleStates } from '@console/internal/reducers/monitoring';
+import { Rule, RuleStates } from '@console/internal/components/monitoring/types';
 import { StateTimestamp } from '@console/internal/components/monitoring/alerting';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import SilenceDurationDropDown from './SilenceDurationDropdown';

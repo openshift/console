@@ -1,10 +1,6 @@
 import * as _ from 'lodash';
-import { Alert } from '@console/internal/components/monitoring/types';
-import {
-  AlertSeverity,
-  AlertStates,
-  alertSeverityOrder,
-} from '@console/internal/reducers/monitoring';
+import { Alert, AlertSeverity, AlertStates } from '@console/internal/components/monitoring/types';
+import { alertSeverityOrder } from '@console/internal/reducers/monitoring';
 
 export const sortMonitoringAlerts = (alerts: Alert[]): Alert[] =>
   _.sortBy(alerts, alertSeverityOrder) as Alert[];

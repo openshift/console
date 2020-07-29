@@ -1,4 +1,4 @@
-import { AlertSeverity } from '@console/internal/reducers/monitoring';
+import { AlertSeverity } from '@console/internal/components/monitoring/types';
 
 export const getAlertType = (severity: string): 'danger' | 'warning' | 'info' => {
   switch (severity) {
