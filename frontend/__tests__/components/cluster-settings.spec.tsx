@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { shallow, mount, ShallowWrapper } from 'enzyme';
 
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { clusterVersionProps } from '../../__mocks__/clusterVersinMock';
 import {
   ClusterSettingsPage,
@@ -17,12 +18,17 @@ import { GlobalConfigPage } from '../../public/components/cluster-settings/globa
 import { Firehose, HorizontalNav, ResourceLink, Timestamp } from '../../public/components/utils';
 import { AddCircleOIcon } from '@patternfly/react-icons';
 
+jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
+  useK8sWatchResource: jest.fn(),
+}));
+
 describe('Cluster Settings page', () => {
   let wrapper: ShallowWrapper<any>;
   const match = { url: '/settings/cluster', params: {}, isExact: true, path: '/settings/cluster' };
 
   beforeEach(() => {
     wrapper = shallow(<ClusterSettingsPage match={match} />);
+    (useK8sWatchResource as jest.Mock).mockReturnValueOnce([[], true]);
   });
 
   it('should render ClusterSettingsPage component', () => {
