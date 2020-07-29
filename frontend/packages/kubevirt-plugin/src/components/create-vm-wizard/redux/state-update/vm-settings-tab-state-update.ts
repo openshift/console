@@ -150,7 +150,16 @@ const flavorUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => 
 
 const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
-  if (!hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.OPERATING_SYSTEM)) {
+  if (
+    !hasVMSettingsValueChanged(
+      prevState,
+      state,
+      id,
+      VMSettingsField.OPERATING_SYSTEM,
+      VMSettingsField.FLAVOR,
+      VMSettingsField.WORKLOAD_PROFILE,
+    )
+  ) {
     return;
   }
   if (iGetLoadedCommonData(state, id, VMWizardProps.isProviderImport)) {
