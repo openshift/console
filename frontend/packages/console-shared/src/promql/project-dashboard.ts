@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { QueryWithDescription } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
 
 export enum ProjectQueries {
