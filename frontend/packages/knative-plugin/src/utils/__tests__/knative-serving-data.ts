@@ -48,6 +48,7 @@ export const defaultData: DeployImageFormData = {
     status: { metadata: {}, status: '' },
     ports: [],
   },
+  runtimeIcon: null,
   isSearchingForImage: false,
   resources: Resources.OpenShift,
   serverless: {

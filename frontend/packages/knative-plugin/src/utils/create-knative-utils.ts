@@ -21,6 +21,7 @@ export const getKnativeServiceDepResource = (
     name,
     application: { name: applicationName },
     project: { name: namespace },
+    runtimeIcon,
     serverless: { scaling },
     limits,
     route: { unknownTargetPort, create, targetPort },
@@ -58,6 +59,7 @@ export const getKnativeServiceDepResource = (
     imageStreamName,
     selectedTag: imageStreamTag || imageTag,
     namespace: imageNamespace,
+    runtimeIcon,
   });
   delete defaultLabel.app;
   const newKnativeDeployResource: K8sResourceKind = {

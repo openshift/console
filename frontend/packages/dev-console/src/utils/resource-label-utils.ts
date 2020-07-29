@@ -6,12 +6,14 @@ export const getAppLabels = ({
   name,
   applicationName,
   imageStreamName,
+  runtimeIcon,
   selectedTag,
   namespace,
 }: {
   name: string;
   applicationName?: string;
   imageStreamName?: string;
+  runtimeIcon?: string;
   selectedTag?: string;
   namespace?: string;
 }) => {
@@ -25,6 +27,9 @@ export const getAppLabels = ({
     }),
   };
 
+  if (runtimeIcon) {
+    labels['app.openshift.io/runtime'] = runtimeIcon;
+  }
   if (applicationName && applicationName.trim().length > 0) {
     labels['app.kubernetes.io/part-of'] = applicationName;
   }
