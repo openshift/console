@@ -358,7 +358,7 @@ spec:
   .setIn(
     [referenceForModel(k8sModels.HorizontalPodAutoscalerModel), 'default'],
     `
-apiVersion: autoscaling/v2beta1
+apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
   name: example
@@ -373,7 +373,9 @@ spec:
   - type: Resource
     resource:
       name: cpu
-      targetAverageUtilization: 50
+      target:
+        averageUtilization: 50
+        type: Utilization
 `,
   )
   .setIn(

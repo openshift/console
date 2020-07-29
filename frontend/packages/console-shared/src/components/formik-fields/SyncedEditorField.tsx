@@ -12,6 +12,7 @@ type EditorContext = {
   name: string;
   editor: React.ReactNode;
   isDisabled?: boolean;
+  sanitizeTo?: (preFormData: any) => any;
 };
 
 type SyncedEditorFieldProps = {
@@ -42,7 +43,10 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
     const newFormData = safeYAMLToJS(yamlData);
     if (!_.isEmpty(newFormData)) {
       changeEditorType(EditorType.Form);
-      setFieldValue(formContext.name, newFormData);
+      setFieldValue(
+        formContext.name,
+        formContext.sanitizeTo ? formContext.sanitizeTo(newFormData) : newFormData,
+      );
     } else {
       setYAMLWarning(true);
     }
@@ -50,7 +54,10 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
 
   const handleToggleToYAML = () => {
     const newYAML = safeJSToYAML(formData, yamlData, { skipInvalid: true });
-    setFieldValue(yamlContext.name, newYAML);
+    setFieldValue(
+      yamlContext.name,
+      yamlContext.sanitizeTo ? formContext.sanitizeTo(newYAML) : newYAML,
+    );
     changeEditorType(EditorType.YAML);
   };
 
@@ -63,7 +70,7 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
     setYAMLWarning(false);
   };
 
-  const onChangeType = (newType) => {
+  const onChangeType = (newType: EditorType) => {
     switch (newType) {
       case EditorType.YAML:
         handleToggleToYAML();
@@ -98,7 +105,7 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
               isDisabled: yamlContext.isDisabled,
             },
           ]}
-          onChange={(val) => onChangeType(val as EditorType)}
+          onChange={(val: string) => onChangeType(val as EditorType)}
           isInline
         />
       </div>
