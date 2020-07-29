@@ -8,7 +8,7 @@ Background:
 
 
 @regression
-Scenario: Resource and URI radio button
+Scenario: Resource and URI radio button on Event Sources Cards page
     Given user is at +Add page
     When user clicks on Event Sources card
     And user selects an event source card
@@ -39,7 +39,7 @@ Scenario: Event Source sink to URI
     And user fills other information
     And user clicks on the Create button
     Then user will be redirected to Topology page
-    And user will a node of URI
+    And user will have a node of URI
     And user will see that event source is sinked with URI
 
 
@@ -136,7 +136,7 @@ Scenario: Move sink from URI to new URI
 
 
 @regression, @manual
-Scenario: Move sink from Resource to Resource
+Scenario: Move sink from Resource to same Resource
     Given user has sinked an event source to Resource
     And user is at Topology page
     When user right clicks on the event source
@@ -147,7 +147,7 @@ Scenario: Move sink from Resource to Resource
 
 
 @regression, @manual
-Scenario: Move sink from Resource to Resource
+Scenario: Move sink from Resource to new Resource
     Given user has sinked an event source to Resource
     And user is at Topology page
     When user right clicks on the event source
