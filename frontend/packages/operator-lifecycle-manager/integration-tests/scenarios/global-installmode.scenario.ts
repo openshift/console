@@ -28,7 +28,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
     'ConfigMap',
   ]);
   const jaegerOperatorName = 'jaeger-operator';
-  const jaegerName = 'my-jaeger';
+  const jaegerName = 'jaeger-all-in-one-inmemory';
   const customProviderUID = 'providerType-console-e-2-e-operators';
 
   const catalogNamespace = _.get(browser.params, 'globalCatalogNamespace', 'openshift-marketplace');
@@ -46,7 +46,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
     spec: {
       sourceType: 'grpc',
       image:
-        'quay.io/operator-framework/upstream-community-operators@sha256:5ae28f6de8affdb2a2119565ea950a2a777280b159f03b6ddddf104740571e25',
+        'quay.io/operator-framework/upstream-community-operators@sha256:10121664b6ab87b0bd36b0f0011bf0f9b0dd55b41080878058f3c1052e869ed5',
       displayName: 'Console E2E Operators',
       publisher: 'Red Hat, Inc',
     },
@@ -83,7 +83,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
     [
       `kubectl delete catalogsource -n ${catalogNamespace} ${catalogSource.metadata.name}`,
       `kubectl delete subscription -n ${globalOperatorsNamespace} jaeger`,
-      `kubectl delete clusterserviceversion -n ${globalOperatorsNamespace} jaeger-operator.v1.8.2`,
+      `kubectl delete clusterserviceversion -n ${globalOperatorsNamespace} jaeger-operator.v1.18.1`,
     ].forEach((cmd) => _.attempt(() => execSync(cmd)));
   });
 
@@ -101,7 +101,9 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
     await operatorHubView.operatorModalInstallBtn.click();
     await operatorHubView.createSubscriptionFormLoaded();
 
-    expect(operatorHubView.createSubscriptionFormName.getText()).toEqual('Jaeger Tracing');
+    expect(operatorHubView.createSubscriptionFormName.getText()).toEqual(
+      'Community Jaeger Operator',
+    );
   });
 
   it('selects all namespaces for Operator subscription', async () => {
@@ -129,7 +131,10 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
     await operatorHubView.viewInstalledOperator();
     await crudView.isLoaded();
 
-    await browser.wait(until.visibilityOf(operatorView.rowForOperator('Jaeger Tracing')), 60000);
+    await browser.wait(
+      until.visibilityOf(operatorView.rowForOperator('Community Jaeger Operator')),
+      60000,
+    );
   });
 
   it('creates Operator `Deployment`', async () => {
@@ -150,7 +155,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
   it('displays metadata about Operator in the "Overview" section', async () => {
     await browser.get(`${appHost}/k8s/ns/${testName}/clusterserviceversions`);
     await crudView.isLoaded();
-    await operatorView.operatorNameLink('Jaeger Tracing').click();
+    await operatorView.operatorNameLink('Community Jaeger Operator').click();
     await browser.wait(until.presenceOf($('.loading-box__loaded')));
 
     expect($('.co-m-pane__details').isDisplayed()).toBe(true);
@@ -228,8 +233,10 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
     await browser.wait(until.visibilityOf($('.co-catalog-install-modal')));
     await element(by.cssContainingText('#confirm-action', 'Uninstall')).click();
     await crudView.isLoaded();
-    await browser.wait(until.invisibilityOf(operatorView.rowForOperator('Jaeger Tracing')));
+    await browser.wait(
+      until.invisibilityOf(operatorView.rowForOperator('Community Jaeger Operator')),
+    );
 
-    expect(operatorView.rowForOperator('Jaeger Tracing').isPresent()).toBe(false);
+    expect(operatorView.rowForOperator('Community Jaeger Operator').isPresent()).toBe(false);
   });
 });

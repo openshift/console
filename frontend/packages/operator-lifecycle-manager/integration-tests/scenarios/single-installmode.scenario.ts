@@ -30,7 +30,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     spec: {
       sourceType: 'grpc',
       image:
-        'quay.io/operator-framework/upstream-community-operators@sha256:5ae28f6de8affdb2a2119565ea950a2a777280b159f03b6ddddf104740571e25',
+        'quay.io/operator-framework/upstream-community-operators@sha256:10121664b6ab87b0bd36b0f0011bf0f9b0dd55b41080878058f3c1052e869ed5',
       displayName: 'Console E2E Operators',
       publisher: 'Red Hat, Inc',
     },
@@ -65,7 +65,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     [
       `kubectl delete catalogsource -n ${testName} ${catalogSource.metadata.name}`,
       `kubectl delete subscription -n ${testName} prometheus`,
-      `kubectl delete clusterserviceversion -n ${testName} prometheusoperator.0.27.0`,
+      `kubectl delete clusterserviceversion -n ${testName} prometheusoperator.0.37.0`,
     ].forEach((cmd) => _.attempt(() => execSync(cmd)));
   });
 
@@ -78,8 +78,10 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await catalogView.categoryTabsPresent();
     await catalogView.categoryTabs.get(0).click();
     await catalogPageView.clickFilterCheckbox(customProviderUID);
-    await catalogPageView.catalogTileFor('Prometheus Operator').click();
-    await browser.wait(until.visibilityOf(operatorHubView.operatorModal));
+    await catalogPageView.filterTextbox.sendKeys('prometheus');
+    await browser.wait(until.visibilityOf(catalogPageView.catalogTileByID(prometheusTileID)));
+    await catalogPageView.catalogTileByID(prometheusTileID).click();
+    await browser.wait(until.visibilityOf(operatorHubView.operatorModalInstallBtn));
     await operatorHubView.operatorModalInstallBtn.click();
     await operatorHubView.createSubscriptionFormLoaded();
 
@@ -226,7 +228,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await crudView.isLoaded();
     await catalogPageView.clickFilterCheckbox(customProviderUID);
     await catalogPageView.clickFilterCheckbox('installState-installed');
-    await catalogPageView.catalogTileFor('Prometheus Operator').click();
+    await catalogPageView.catalogTileByID(prometheusTileID).click();
     await operatorHubView.operatorModalIsLoaded();
 
     expect(operatorHubView.operatorModalUninstallBtn.isDisplayed()).toBe(true);
