@@ -920,9 +920,9 @@ export type GroupVersionKind = string;
 export type K8sResourceKindReference = GroupVersionKind | string;
 
 export type SecretKind = {
-  data: { [key: string]: string };
+  data?: { [key: string]: string };
   stringData?: { [key: string]: string };
-  type: string;
+  type?: string;
 } & K8sResourceCommon;
 
 export type ServiceAccountKind = {
