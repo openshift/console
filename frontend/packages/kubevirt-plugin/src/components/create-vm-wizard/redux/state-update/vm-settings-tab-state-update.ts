@@ -220,7 +220,13 @@ const cloneCommonBaseDiskImageUpdater = ({ id, prevState, dispatch, getState }: 
     return;
   }
   if (
-    !hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE)
+    !hasVMSettingsValueChanged(
+      prevState,
+      state,
+      id,
+      VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE,
+      VMSettingsField.USER_TEMPLATE,
+    )
   ) {
     return;
   }
