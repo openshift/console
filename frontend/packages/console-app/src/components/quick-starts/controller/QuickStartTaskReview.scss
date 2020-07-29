@@ -1,6 +1,5 @@
-.co-quick-start-task {
-
-  &__radio-button-group {
+.co-quick-start-task-review {
+  &__actions {
     display: flex;
     align-items: flex-start;
     input[type='radio'] {
@@ -9,17 +8,17 @@
     }
   }
 
-  &__radio-button-field {
+  &__radio {
     margin-right: var(--pf-global--spacer--xl) !important;
   }
 
-  &__review-success {
+  &--success {
     color: var(--pf-global--palette--green-500);
     font-size: var(--pf-global--FontSize--md);
     line-height: var(--pf-global--FontSize--xl);
   }
 
-  &__review-failed {
+  &--failed {
     color: var(--pf-chart-global--danger--Color--100);
     font-size: var(--pf-global--FontSize--md);
     line-height: var(--pf-global--FontSize--xl);

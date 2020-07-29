@@ -12,7 +12,7 @@ export const quickStartReducerName = 'quickStart';
 
 export const QUICK_START_REDUX_STATE_LOCAL_STORAGE_KEY = 'bridge/quick-start-redux-state';
 
-type State = Map<string, any>;
+type State = Map<string, string | Map<string, string | number>>;
 
 const getDefaultQuickStartState = (totalTasks: number) => {
   const defaultQuickStartState = {
@@ -78,8 +78,7 @@ export default (state = getInitialState(), action: QuickStartSidebarActions) => 
     }
 
     case Actions.SetQuickStartTaskNumber: {
-      const { quickStartTaskNumber } = action.payload;
-      const quickStartId = state.get('activeQuickStartId');
+      const { quickStartId, quickStartTaskNumber } = action.payload;
       const newState = state.setIn(
         ['allQuickStartStates', quickStartId, 'taskNumber'],
         quickStartTaskNumber,

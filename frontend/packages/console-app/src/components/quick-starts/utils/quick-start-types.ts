@@ -5,22 +5,27 @@ export type QuickStart = {
   name: string;
   duration: number;
   description: string;
-  prerequisites?: string[];
+  prerequisites?: string;
   introduction?: string;
   tasks?: QuickStartTask[];
   conclusion?: string;
   nextQuickStart?: string;
+  version?: string | number;
 };
 
 export type QuickStartTask = {
   title?: string;
   description: string;
-  review?: string;
+  review?: QuickStartTaskReview;
   recapitulation?: {
     success?: string;
     failed?: string;
   };
-  taskHelp?: string;
+};
+
+export type QuickStartTaskReview = {
+  instructions: string;
+  taskHelp: string;
 };
 
 export type AllQuickStartStates = Record<string, QuickStartState>;

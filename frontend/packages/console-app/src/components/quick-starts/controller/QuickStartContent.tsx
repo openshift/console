@@ -32,6 +32,7 @@ const QuickStartContent: React.FC<QuickStartContentProps> = ({
       {status === QuickStartStatus.NOT_STARTED && (
         <QuickStartIntroduction
           tasks={tasks}
+          allTaskStatuses={allTaskStatuses}
           introduction={introduction}
           onTaskSelect={onTaskSelect}
         />

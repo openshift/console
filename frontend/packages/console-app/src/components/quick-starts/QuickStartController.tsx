@@ -23,7 +23,7 @@ type StateProps = {
 type DispatchProps = {
   setActiveQuickStart: (quickStartId: string) => void;
   setQuickStartStatus: (quickStartId: string, status: QuickStartStatus) => void;
-  setQuickStartTaskNumber: (taskNumber: number) => void;
+  setQuickStartTaskNumber: (quickStartId: string, taskNumber: number) => void;
   setQuickStartTaskStatus: (taskStatus: QuickStartTaskStatus) => void;
 };
 
@@ -48,21 +48,34 @@ const QuickStartController: React.FC<QuickStartControllerProps> = ({
   setQuickStartTaskStatus,
 }) => {
   const { id, tasks } = quickStart;
+  const totalTasks = tasks?.length;
 
-  const startQuickStart = () => setQuickStartStatus(id, QuickStartStatus.IN_PROGRESS);
+  const startQuickStart = React.useCallback(
+    () => setQuickStartStatus(id, QuickStartStatus.IN_PROGRESS),
+    [id, setQuickStartStatus],
+  );
 
-  const completeQuickStart = () => setQuickStartStatus(id, QuickStartStatus.COMPLETE);
+  const completeQuickStart = React.useCallback(
+    () => setQuickStartStatus(id, QuickStartStatus.COMPLETE),
+    [id, setQuickStartStatus],
+  );
 
-  const resetQuickStart = () => setQuickStartStatus(id, QuickStartStatus.NOT_STARTED);
+  const resetQuickStart = React.useCallback(
+    () => setQuickStartStatus(id, QuickStartStatus.NOT_STARTED),
+    [id, setQuickStartStatus],
+  );
 
-  const handleQuickStartChange = (quickStartId: string) => setActiveQuickStart(quickStartId);
+  const handleQuickStartChange = React.useCallback(
+    (quickStartId: string) => setActiveQuickStart(quickStartId),
+    [setActiveQuickStart],
+  );
 
-  const handleTaskStatusChange = (newTaskStatus: QuickStartTaskStatus) =>
-    setQuickStartTaskStatus(newTaskStatus);
+  const handleTaskStatusChange = React.useCallback(
+    (newTaskStatus: QuickStartTaskStatus) => setQuickStartTaskStatus(newTaskStatus),
+    [setQuickStartTaskStatus],
+  );
 
-  const handleNext = () => {
-    const totalTasks = tasks?.length;
-
+  const handleNext = React.useCallback(() => {
     if (status === QuickStartStatus.NOT_STARTED) return startQuickStart();
     if (status === QuickStartStatus.COMPLETE) return handleQuickStartChange('');
 
@@ -76,13 +89,24 @@ const QuickStartController: React.FC<QuickStartControllerProps> = ({
     if (taskStatus === QuickStartTaskStatus.INIT)
       return handleTaskStatusChange(QuickStartTaskStatus.REVIEW);
 
-    if (taskNumber < totalTasks) return setQuickStartTaskNumber(taskNumber + 1);
+    if (taskNumber < totalTasks) return setQuickStartTaskNumber(id, taskNumber + 1);
 
     return null;
-  };
+  }, [
+    completeQuickStart,
+    handleQuickStartChange,
+    handleTaskStatusChange,
+    id,
+    setQuickStartTaskNumber,
+    startQuickStart,
+    status,
+    taskNumber,
+    taskStatus,
+    totalTasks,
+  ]);
 
-  const handleBack = () => {
-    if (status === QuickStartStatus.COMPLETE && taskNumber === tasks.length - 1)
+  const handleBack = React.useCallback(() => {
+    if (status === QuickStartStatus.COMPLETE && taskNumber === totalTasks - 1)
       return startQuickStart();
 
     if (
@@ -98,15 +122,28 @@ const QuickStartController: React.FC<QuickStartControllerProps> = ({
     if (taskStatus === QuickStartTaskStatus.REVIEW)
       return handleTaskStatusChange(QuickStartTaskStatus.INIT);
 
-    if (taskNumber > 0) return setQuickStartTaskNumber(taskNumber - 1);
+    if (taskNumber > 0) return setQuickStartTaskNumber(id, taskNumber - 1);
 
     return null;
-  };
+  }, [
+    handleTaskStatusChange,
+    id,
+    resetQuickStart,
+    setQuickStartTaskNumber,
+    startQuickStart,
+    status,
+    taskNumber,
+    taskStatus,
+    totalTasks,
+  ]);
 
-  const handleTaskSelect = (selectedTaskNumber: number) => {
-    setQuickStartTaskNumber(selectedTaskNumber);
-    startQuickStart();
-  };
+  const handleTaskSelect = React.useCallback(
+    (selectedTaskNumber: number) => {
+      setQuickStartTaskNumber(id, selectedTaskNumber);
+      startQuickStart();
+    },
+    [id, setQuickStartTaskNumber, startQuickStart],
+  );
 
   return (
     <>
@@ -133,8 +170,8 @@ const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
     dispatch(QuickStartActions.setActiveQuickStart(quickStartId, totalTasks)),
   setQuickStartStatus: (quickStartId: string, quickStartStatus: QuickStartStatus) =>
     dispatch(QuickStartActions.setQuickStartStatus(quickStartId, quickStartStatus)),
-  setQuickStartTaskNumber: (taskNumber: number) =>
-    dispatch(QuickStartActions.setQuickStartTaskNumber(taskNumber)),
+  setQuickStartTaskNumber: (quickStartId: string, taskNumber: number) =>
+    dispatch(QuickStartActions.setQuickStartTaskNumber(quickStartId, taskNumber)),
   setQuickStartTaskStatus: (taskStatus: QuickStartTaskStatus) =>
     dispatch(QuickStartActions.setQuickStartTaskStatus(taskStatus)),
 });

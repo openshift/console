@@ -20,7 +20,7 @@ const statusColorMap = {
 const QuickStartTileHeader: React.FC<QuickStartTileHeaderProps> = ({ status, duration, name }) => (
   <div className="co-quick-start-tile-header">
     <Title headingLevel="h3">{name}</Title>
-    <div className="co-quick-start-tile-header_status">
+    <div className="co-quick-start-tile-header__status">
       {status !== QuickStartStatus.NOT_STARTED && (
         <Label
           className="co-quick-start-tile-header--rightmargin"
@@ -38,5 +38,4 @@ const QuickStartTileHeader: React.FC<QuickStartTileHeaderProps> = ({ status, dur
   </div>
 );
 
-// there could be various statuses in future
 export default QuickStartTileHeader;

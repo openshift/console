@@ -4,8 +4,6 @@ import { QuickStartTask, QuickStartTaskStatus } from '../utils/quick-start-types
 import TaskHeader from './QuickStartTaskHeader';
 import QuickStartTaskReview from './QuickStartTaskReview';
 
-import './QuickStartTasks.scss';
-
 type QuickStartTaskProps = {
   tasks: QuickStartTask[];
   taskNumber: number;
@@ -25,11 +23,17 @@ const QuickStartTasks: React.FC<QuickStartTaskProps> = ({
     {tasks
       .filter((_, index) => index <= taskNumber)
       .map((task, index) => {
-        const { title, description, review, recapitulation, taskHelp } = task;
+        const { title, description, review, recapitulation } = task;
         const isActiveTask = index === taskNumber;
         const taskStatus = allTaskStatuses[index];
+        const recapitulationInstructions =
+          taskStatus === QuickStartTaskStatus.SUCCESS
+            ? recapitulation.success
+            : recapitulation.failed;
+        const taskInstructions = isActiveTask ? description : recapitulationInstructions;
+
         return (
-          <React.Fragment key={task.title}>
+          <React.Fragment key={title}>
             <TaskHeader
               taskIndex={index + 1}
               title={title}
@@ -39,19 +43,10 @@ const QuickStartTasks: React.FC<QuickStartTaskProps> = ({
               isActiveTask={isActiveTask}
               onTaskSelect={onTaskSelect}
             />
-            <SyncMarkdownView
-              content={
-                isActiveTask
-                  ? description
-                  : taskStatus === QuickStartTaskStatus.SUCCESS
-                  ? recapitulation.success
-                  : recapitulation.failed
-              }
-            />
+            <SyncMarkdownView content={taskInstructions} />
             {isActiveTask && taskStatus !== QuickStartTaskStatus.INIT && review && (
               <QuickStartTaskReview
                 review={review}
-                taskHelp={taskHelp}
                 taskStatus={taskStatus}
                 onTaskReview={onTaskReview}
               />

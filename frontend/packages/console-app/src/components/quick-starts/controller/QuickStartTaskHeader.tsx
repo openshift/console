@@ -3,6 +3,7 @@ import cx from 'classnames';
 import { Title, WizardNavItem } from '@patternfly/react-core';
 import { CheckCircleIcon, TimesCircleIcon } from '@patternfly/react-icons';
 import { QuickStartTaskStatus } from '../utils/quick-start-types';
+
 import './QuickStartTaskHeader.scss';
 
 type QuickStartTaskHeaderProps = {
@@ -57,41 +58,43 @@ const QuickStartTaskHeader: React.FC<QuickStartTaskHeaderProps> = ({
   size,
   isActiveTask,
   onTaskSelect,
-}) => (
-  <div className="co-quick-start-task-header">
-    <WizardNavItem
-      content={
-        <>
-          <Title
-            headingLevel="h3"
-            size={size}
-            className={cx('co-quick-start-task-header__title', {
-              'co-quick-start-task-header__title-success':
-                taskStatus === QuickStartTaskStatus.SUCCESS && !isActiveTask,
-              'co-quick-start-task-header__title-failed':
-                taskStatus === QuickStartTaskStatus.FAILED && !isActiveTask,
-            })}
-          >
-            <TaskIcon taskIndex={taskIndex} taskStatus={taskStatus} isActiveTask={isActiveTask} />
-            {title}
-          </Title>
-          {isActiveTask && subtitle && (
-            <Title
-              headingLevel="h6"
-              size="md"
-              className="text-secondary "
-              style={{ display: 'inline-block' }}
-            >
-              {subtitle}
-            </Title>
-          )}
-        </>
-      }
-      step={taskIndex}
-      onNavItemClick={() => onTaskSelect(taskIndex - 1)}
-      navItemComponent="Button"
-    />
-  </div>
-);
+}) => {
+  const classNames = cx('co-quick-start-task-header__title', {
+    'co-quick-start-task-header__title-success':
+      taskStatus === QuickStartTaskStatus.SUCCESS && !isActiveTask,
+    'co-quick-start-task-header__title-failed':
+      taskStatus === QuickStartTaskStatus.FAILED && !isActiveTask,
+  });
+
+  const content = (
+    <>
+      <Title headingLevel="h3" size={size} className={classNames}>
+        <TaskIcon taskIndex={taskIndex} taskStatus={taskStatus} isActiveTask={isActiveTask} />
+        {title}
+      </Title>
+      {isActiveTask && subtitle && (
+        <Title
+          headingLevel="h6"
+          size="md"
+          className="text-secondary "
+          style={{ display: 'inline-block' }}
+        >
+          {subtitle}
+        </Title>
+      )}
+    </>
+  );
+
+  return (
+    <div className="co-quick-start-task-header">
+      <WizardNavItem
+        content={content}
+        step={taskIndex}
+        onNavItemClick={() => onTaskSelect(taskIndex - 1)}
+        navItemComponent="button"
+      />
+    </div>
+  );
+};
 
 export default QuickStartTaskHeader;

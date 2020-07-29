@@ -5,7 +5,7 @@ import './QuickStartTileDescription.scss';
 
 type QuickStartTileDescriptionProps = {
   description: string;
-  prerequisites?: string[];
+  prerequisites?: string;
   unmetPrerequisite?: boolean;
 };
 const QuickStartTileDescription: React.FC<QuickStartTileDescriptionProps> = ({
@@ -16,16 +16,10 @@ const QuickStartTileDescription: React.FC<QuickStartTileDescriptionProps> = ({
     <Text component={TextVariants.p} className="oc-quick-start-tile-description">
       {description}
     </Text>
-    {Array.isArray(prerequisites) && prerequisites?.length > 0 && (
-      <div className="co-quick-start-tile-description">
-        <Text component={TextVariants.h5}>Prerequisites</Text>
-        {prerequisites.map((prerequisite) => (
-          <Text key={prerequisite} component={TextVariants.small}>
-            {prerequisite}
-          </Text>
-        ))}
-      </div>
-    )}
+    <div className="co-quick-start-tile-description">
+      <Text component={TextVariants.h5}>Prerequisites</Text>
+      <Text component={TextVariants.small}>{prerequisites}</Text>
+    </div>
   </>
 );
 export default QuickStartTileDescription;

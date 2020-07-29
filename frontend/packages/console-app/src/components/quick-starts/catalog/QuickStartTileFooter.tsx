@@ -6,6 +6,7 @@ import { QuickStartStatus } from '../utils/quick-start-types';
 
 type DispatchProps = {
   setQuickStartStatus?: (quickStartId: string, quickStartStatus: QuickStartStatus) => void;
+  setQuickStartTaskNumber?: (quickStartId: string, taskNumber: number) => void;
 };
 
 type QuickStartTileFooterProps = {
@@ -16,50 +17,61 @@ type QuickStartTileFooterProps = {
 
 type Props = QuickStartTileFooterProps & DispatchProps;
 
-const QuickStartTileFooter: React.FC<Props> = ({ quickStartId, status, setQuickStartStatus }) => (
-  <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
-    {status === QuickStartStatus.NOT_STARTED && (
-      <FlexItem>
-        <Button
-          onClick={() => setQuickStartStatus(quickStartId, QuickStartStatus.IN_PROGRESS)}
-          variant="link"
-          isInline
-        >
-          Start the tour
-        </Button>
-      </FlexItem>
-    )}
-    {status === QuickStartStatus.IN_PROGRESS && (
-      <FlexItem>
-        <Button variant="link" isInline>
-          Resume the tour
-        </Button>
-      </FlexItem>
-    )}
-    {status === QuickStartStatus.COMPLETE && (
-      <FlexItem>
-        <Button variant="link" isInline>
-          Review the tour
-        </Button>
-      </FlexItem>
-    )}
-    {status === QuickStartStatus.IN_PROGRESS && (
-      <FlexItem>
-        <Button
-          onClick={() => setQuickStartStatus(quickStartId, QuickStartStatus.NOT_STARTED)}
-          variant="link"
-          isInline
-        >
-          Restart the tour
-        </Button>
-      </FlexItem>
-    )}
-  </Flex>
-);
+const QuickStartTileFooter: React.FC<Props> = ({
+  quickStartId,
+  status,
+  setQuickStartStatus,
+  setQuickStartTaskNumber,
+}) => {
+  const startQuickStart = React.useCallback(
+    () => setQuickStartStatus(quickStartId, QuickStartStatus.IN_PROGRESS),
+    [quickStartId, setQuickStartStatus],
+  );
+
+  const restartQuickStart = React.useCallback(() => {
+    startQuickStart();
+    setQuickStartTaskNumber(quickStartId, 0);
+  }, [quickStartId, setQuickStartTaskNumber, startQuickStart]);
+
+  return (
+    <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
+      {status === QuickStartStatus.NOT_STARTED && (
+        <FlexItem>
+          <Button onClick={startQuickStart} variant="link" isInline>
+            Start the tour
+          </Button>
+        </FlexItem>
+      )}
+      {status === QuickStartStatus.IN_PROGRESS && (
+        <FlexItem>
+          <Button variant="link" isInline>
+            Resume the tour
+          </Button>
+        </FlexItem>
+      )}
+      {status === QuickStartStatus.COMPLETE && (
+        <FlexItem>
+          <Button variant="link" isInline>
+            Review the tour
+          </Button>
+        </FlexItem>
+      )}
+      {status === QuickStartStatus.IN_PROGRESS && (
+        <FlexItem>
+          <Button onClick={restartQuickStart} variant="link" isInline>
+            Restart the tour
+          </Button>
+        </FlexItem>
+      )}
+    </Flex>
+  );
+};
 
 const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
   setQuickStartStatus: (quickStartId: string, quickStartStatus: QuickStartStatus) =>
     dispatch(QuickStartActions.setQuickStartStatus(quickStartId, quickStartStatus)),
+  setQuickStartTaskNumber: (quickStartId: string, taskNumber: number) =>
+    dispatch(QuickStartActions.setQuickStartTaskNumber(quickStartId, taskNumber)),
 });
 
 export const InternalQuickStartTileFooter = QuickStartTileFooter; // for testing

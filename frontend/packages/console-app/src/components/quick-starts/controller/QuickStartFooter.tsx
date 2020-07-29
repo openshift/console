@@ -23,6 +23,7 @@ const getPrimaryButtonText = (status: string): PrimaryButtonText => {
       return PrimaryButtonText.CLOSE;
     case QuickStartStatus.IN_PROGRESS:
       return PrimaryButtonText.NEXT;
+    case QuickStartStatus.NOT_STARTED:
     default:
       return PrimaryButtonText.START;
   }

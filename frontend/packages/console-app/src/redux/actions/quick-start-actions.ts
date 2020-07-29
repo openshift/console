@@ -17,8 +17,8 @@ export const setActiveQuickStart = (quickStartId: string, totalTasks?: number) =
 export const setQuickStartStatus = (quickStartId: string, quickStartStatus: QuickStartStatus) =>
   action(Actions.SetQuickStartStatus, { quickStartId, quickStartStatus });
 
-export const setQuickStartTaskNumber = (quickStartTaskNumber: number) =>
-  action(Actions.SetQuickStartTaskNumber, { quickStartTaskNumber });
+export const setQuickStartTaskNumber = (quickStartId: string, quickStartTaskNumber: number) =>
+  action(Actions.SetQuickStartTaskNumber, { quickStartId, quickStartTaskNumber });
 
 export const setQuickStartTaskStatus = (quickStartTaskStatus: QuickStartTaskStatus) =>
   action(Actions.SetQuickStartTaskStatus, { quickStartTaskStatus });
