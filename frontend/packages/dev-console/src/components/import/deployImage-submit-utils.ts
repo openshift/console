@@ -7,7 +7,13 @@ import {
   RouteModel,
   RoleBindingModel,
 } from '@console/internal/models';
-import { k8sCreate, K8sResourceKind, K8sVerb, k8sUpdate } from '@console/internal/module/k8s';
+import {
+  K8sResourceKind,
+  K8sVerb,
+  k8sCreate,
+  k8sUpdate,
+  k8sWaitForUpdate,
+} from '@console/internal/module/k8s';
 import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
 import { getKnativeServiceDepResource } from '@console/knative-plugin/src/utils/create-knative-utils';
 import { getRandomChars } from '@console/shared/src/utils';
@@ -23,6 +29,9 @@ import { getProbesData } from '../health-checks/create-health-checks-probe-utils
 import { RegistryType, getRuntime } from '../../utils/imagestream-utils';
 import { AppResources } from '../edit-application/edit-application-types';
 import { DeployImageFormData, Resources } from './import-types';
+
+const WAIT_FOR_IMAGESTREAM_UPDATE_TIMEOUT = 5000;
+const WAIT_FOR_IMAGESTREAM_GENERATION = 2;
 
 export const createSystemImagePullerRoleBinding = (
   formData: DeployImageFormData,
@@ -52,7 +61,7 @@ export const createSystemImagePullerRoleBinding = (
   return k8sCreate(RoleBindingModel, roleBinding, dryRun ? dryRunOpt : {});
 };
 
-export const createOrUpdateImageStream = (
+export const createOrUpdateImageStream = async (
   formData: DeployImageFormData,
   dryRun: boolean,
   originalImageStream?: K8sResourceKind,
@@ -93,11 +102,25 @@ export const createOrUpdateImageStream = (
       ],
     },
   };
-  const imageStream = mergeData(originalImageStream, newImageStream);
 
-  return verb === 'update'
-    ? k8sUpdate(ImageStreamModel, imageStream)
-    : k8sCreate(ImageStreamModel, newImageStream, dryRun ? dryRunOpt : {});
+  if (verb === 'update') {
+    const mergedImageStream = mergeData(originalImageStream, newImageStream);
+    return k8sUpdate(ImageStreamModel, mergedImageStream);
+  }
+  const createdImageStream = await k8sCreate(
+    ImageStreamModel,
+    newImageStream,
+    dryRun ? dryRunOpt : {},
+  );
+  if (dryRun) {
+    return createdImageStream;
+  }
+  return k8sWaitForUpdate(
+    ImageStreamModel,
+    createdImageStream,
+    (imageStream) => imageStream.metadata.generation >= WAIT_FOR_IMAGESTREAM_GENERATION,
+    WAIT_FOR_IMAGESTREAM_UPDATE_TIMEOUT,
+  ).catch(() => createdImageStream);
 };
 
 const getMetadata = (formData: DeployImageFormData) => {

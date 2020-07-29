@@ -1,6 +1,8 @@
 import * as _ from 'lodash-es';
 import { coFetchJSON } from '../../co-fetch';
 import { k8sBasePath } from './k8s';
+// eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
+import { K8sKind, K8sResourceKind } from './types';
 import { selectorToString } from './selector';
 import { WSFactory } from '../ws-factory';
 
@@ -17,7 +19,7 @@ const getK8sAPIPath = ({ apiGroup = 'core', apiVersion }) => {
   return p;
 };
 
-/** @type {(model: GroupVersionKind, options: {ns?: string, name?: string, path?: string, queryParams?: {[k: string]: string}}) => string} */
+/** @type {(model: K8sKind, options: {ns?: string, name?: string, path?: string, queryParams?: {[k: string]: string}}) => string} */
 export const getK8sResourcePath = (model, options) => {
   let q = '';
   let u = getK8sAPIPath(model);
@@ -43,7 +45,7 @@ export const getK8sResourcePath = (model, options) => {
   return u;
 };
 
-/** @type {(model: GroupVersionKind, options: {ns?: string, name?: string, path?: string, queryParams?: {[k: string]: string}}) => string} */
+/** @type {(model: K8sKind, options: {ns?: string, name?: string, path?: string, queryParams?: {[k: string]: string}}) => string} */
 export const resourceURL = (model, options) =>
   `${k8sBasePath}${getK8sResourcePath(model, options)}`;
 
@@ -189,4 +191,46 @@ export const k8sWatch = (kind, query = {}, wsOptions = {}) => {
   const path = resourceURL(kind, opts);
   wsOptions.path = path;
   return new WSFactory(path, wsOptions);
+};
+
+/**
+ * Use k8sWatch to wait for a resource to get into an expected condition.
+ * Watches for resource by kind, namespace and optional name.
+ * Promise resolves to a new resource version or rejects with a timeout.
+ * @param {K8sKind} kind
+ * @param {K8sResourceKind} resource
+ * @param {(kind: K8sResourceKind) => boolean} checkCondition
+ * @param {number} timeoutInMs
+ * @returns {Promise<K8sResourceKind>}
+ */
+export const k8sWaitForUpdate = (kind, resource, checkCondition, timeoutInMs) => {
+  const { namespace, name, resourceVersion } = resource.metadata;
+
+  if (checkCondition(resource)) {
+    return Promise.resolve(resource);
+  }
+
+  const watcher = k8sWatch(kind, {
+    ns: namespace,
+    resourceVersion,
+  });
+  const closeConnection = () => watcher.destroy();
+
+  const waitForCondition = new Promise((resolve, reject) => {
+    watcher.onbulkmessage((messages) => {
+      messages.forEach(({ object }) => {
+        if ((!name || name === object.metadata?.name) && checkCondition(object)) {
+          resolve(object);
+        }
+      });
+    });
+    watcher.onclose(() => reject(new Error('Connection closed')));
+    watcher.ondestroy(() => reject(new Error('Connection destroyed')));
+  });
+
+  const waitForTimeout = new Promise((resolve, reject) => {
+    setTimeout(() => reject(new Error('Timed out waiting for resource to finish')), timeoutInMs);
+  });
+
+  return Promise.race([waitForCondition, waitForTimeout]).finally(closeConnection);
 };
