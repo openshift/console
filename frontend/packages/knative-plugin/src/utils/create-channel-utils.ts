@@ -83,7 +83,7 @@ export const getCreateChannelData = (formData: AddChannelFormData): K8sResourceK
   if (!isGroupVersionKind(type)) {
     return {};
   }
-  const defaultLabel = getAppLabels(name, applicationName);
+  const defaultLabel = getAppLabels({ name, applicationName });
   const [channelGroup, channelVersion, channelKind] = getGroupVersionKind(type);
   const channelSpecData = data[channelKind.toLowerCase()];
   const eventSourceResource: K8sResourceKind = {

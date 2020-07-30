@@ -53,7 +53,7 @@ export const getEventSourcesDepResource = (formData: EventSourceFormData): K8sRe
     sink,
   } = formData;
 
-  const defaultLabel = getAppLabels(name, applicationName);
+  const defaultLabel = getAppLabels({ name, applicationName });
   const eventSrcData = data[type.toLowerCase()];
   const { name: sinkName, kind: sinkKind, apiVersion: sinkApiVersion, uri: sinkUri } = sink;
   const eventSourceResource: K8sResourceKind = {

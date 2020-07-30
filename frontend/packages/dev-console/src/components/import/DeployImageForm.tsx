@@ -5,6 +5,7 @@ import { FormFooter } from '@console/shared/src/components/form-utils';
 import { Form } from '@patternfly/react-core';
 import { DeployImageFormProps } from './import-types';
 import ImageSearchSection from './image-search/ImageSearchSection';
+import IconSection from './section/IconSection';
 import AppSection from './app/AppSection';
 import AdvancedSection from './advanced/AdvancedSection';
 import ResourceSection from './section/ResourceSection';
@@ -21,6 +22,7 @@ const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps
 }) => (
   <Form className="co-deploy-image" data-test-id="deploy-image-form" onSubmit={handleSubmit}>
     <ImageSearchSection />
+    <IconSection />
     <AppSection
       project={values.project}
       noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
