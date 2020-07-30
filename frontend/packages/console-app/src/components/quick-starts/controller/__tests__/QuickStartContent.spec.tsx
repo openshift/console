@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { getQuickStart } from '../../utils/quick-start-utils';
+import { getQuickStartByName } from '../../utils/quick-start-utils';
 import { QuickStartTaskStatus } from '../../utils/quick-start-types';
 import QuickStartContent from '../QuickStartContent';
 import QuickStartIntroduction from '../QuickStartIntroduction';
@@ -12,7 +12,7 @@ type QuickStartContentProps = React.ComponentProps<typeof QuickStartContent>;
 let wrapper: ShallowWrapper<QuickStartContentProps>;
 
 const props: QuickStartContentProps = {
-  quickStart: getQuickStart('serverless-explore'),
+  quickStart: getQuickStartByName('explore-serverless'),
   allTaskStatuses: [
     QuickStartTaskStatus.INIT,
     QuickStartTaskStatus.INIT,
@@ -43,7 +43,7 @@ describe('QuickStartContent', () => {
   });
 
   it('should render QuickStartConclusion when the tour is Complete', () => {
-    wrapper = shallow(<QuickStartContent {...props} taskNumber={3} />);
+    wrapper = shallow(<QuickStartContent {...props} taskNumber={2} />);
     expect(wrapper.find(QuickStartIntroduction).length).toBe(0);
     expect(wrapper.find(QuickStartTasks).length).toBe(0);
     expect(wrapper.find(QuickStartConclusion).length).toBe(1);

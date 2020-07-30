@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { Title, WizardNavItem } from '@patternfly/react-core';
+import { Title, WizardNavItem, Text } from '@patternfly/react-core';
 import QuickStartTaskHeader from '../QuickStartTaskHeader';
 import { QuickStartTaskStatus } from '../../utils/quick-start-types';
 
@@ -27,13 +27,12 @@ describe('QuickStartTaskHeader', () => {
         .find(WizardNavItem)
         .dive()
         .find(Title).length,
-    ).toBe(2);
+    ).toBe(1);
     expect(
       wrapper
         .find(WizardNavItem)
         .dive()
-        .find(Title)
-        .at(1)
+        .find(Text)
         .props().children,
     ).toEqual(props.subtitle);
   });
@@ -50,9 +49,8 @@ describe('QuickStartTaskHeader', () => {
       wrapper
         .find(WizardNavItem)
         .dive()
-        .find(Title)
-        .at(0)
-        .props().children[1],
-    ).toEqual(props.title);
+        .find(Text)
+        .exists(),
+    ).toBe(false);
   });
 });

@@ -23,7 +23,9 @@ const QuickStartContent: React.FC<QuickStartContentProps> = ({
   onTaskReview,
   onQuickStartChange,
 }) => {
-  const { introduction, tasks, conclusion, nextQuickStart } = quickStart;
+  const {
+    spec: { introduction, tasks, conclusion, nextQuickStart },
+  } = quickStart;
   const totalTasks = tasks.length;
   return (
     <div className="co-quick-start-content">

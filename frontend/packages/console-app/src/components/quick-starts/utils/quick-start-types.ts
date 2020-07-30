@@ -1,26 +1,30 @@
 export type QuickStart = {
-  iconURL: string;
-  altIcon?: string;
-  id: string;
-  name: string;
+  apiVersion: string;
+  kind: string;
+  metadata: {
+    name: string;
+  };
+  spec: QuickStartSpec;
+};
+
+export type QuickStartSpec = {
+  version: number;
+  displayName: string;
   duration: number;
+  iconURL: string;
   description: string;
   prerequisites?: string;
   introduction?: string;
   tasks?: QuickStartTask[];
   conclusion?: string;
   nextQuickStart?: string;
-  version?: string | number;
 };
 
 export type QuickStartTask = {
   title?: string;
   description: string;
   review?: QuickStartTaskReview;
-  recapitulation?: {
-    success?: string;
-    failed?: string;
-  };
+  recapitulation?: QuickStartTaskRecapitulation;
 };
 
 export type QuickStartTaskReview = {
@@ -28,13 +32,14 @@ export type QuickStartTaskReview = {
   taskHelp: string;
 };
 
+export type QuickStartTaskRecapitulation = {
+  success?: string;
+  failed?: string;
+};
+
 export type AllQuickStartStates = Record<string, QuickStartState>;
 
-export type QuickStartState = {
-  status: QuickStartStatus;
-  taskNumber: number;
-  allTaskStatuses?: QuickStartTaskStatus[];
-};
+export type QuickStartState = Record<string, string | number | QuickStartStatus>;
 
 export enum QuickStartStatus {
   COMPLETE = 'Complete',

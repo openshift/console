@@ -1,10 +1,13 @@
-import { QuickStart, QuickStartStatus } from './quick-start-types';
-import { mockQuickStarts } from './quick-start-mocks';
+import { QuickStart, QuickStartStatus, AllQuickStartStates } from './quick-start-types';
+import { allQuickStarts } from '../data/quick-start-data';
 
-export const getQuickStarts = (): QuickStart[] => mockQuickStarts;
+export const getQuickStarts = (): QuickStart[] => allQuickStarts;
 
-export const getQuickStart = (quickStartID: string): QuickStart =>
-  mockQuickStarts.find((qs) => qs.id === quickStartID);
+export const getQuickStartByName = (name: string): QuickStart =>
+  allQuickStarts.find((quickStart) => quickStart.metadata.name === name);
 
-export const getQuickStartStatus = (allQuickStartStates, quickStartID: string) =>
-  allQuickStartStates?.[quickStartID]?.['status'] ?? QuickStartStatus.NOT_STARTED;
+export const getQuickStartStatus = (
+  allQuickStartStates: AllQuickStartStates,
+  quickStartID: string,
+): QuickStartStatus =>
+  (allQuickStartStates?.[quickStartID]?.status as QuickStartStatus) ?? QuickStartStatus.NOT_STARTED;

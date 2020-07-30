@@ -17,7 +17,7 @@ const QuickStartIntroduction: React.FC<QuickStartIntroductionProps> = ({
   onTaskSelect,
 }) => (
   <>
-    <SyncMarkdownView styles="div {overflow-y: visible !important}" content={introduction} />
+    <SyncMarkdownView content={introduction} />
     <p style={{ marginBottom: 'var(--pf-global--spacer--md)' }}>
       In this tour, you will complete {tasks.length} tasks:
     </p>

@@ -1,8 +1,4 @@
 .co-quick-start-catalog {
-  background: var(--pf-global--palette--black-150);
-  padding: var(--pf-global--spacer--lg);
-  height: 100%;
-
   &__gallery {
     --pf-l-gallery--GridTemplateColumns: repeat(auto-fill, 300px) !important;
   }

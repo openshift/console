@@ -74,21 +74,29 @@ const QuickStartTile: React.FC<DispatchProps> = ({ setActiveQuickStart }) => {
           </CardActions>
         </CardHeader>
         <CardBody>
-          {slicedTours.map((tour) => (
-            <div key={tour.name} className="odc-quick-start-tile__tour">
-              <Button
-                variant="link"
-                onClick={() => setActiveQuickStart(tour.id, tour.tasks.length)}
-                isInline
-              >
-                {tour.name}
-              </Button>
-            </div>
-          ))}
+          {slicedTours.map((tour) => {
+            const {
+              metadata: { name },
+              spec: { displayName, tasks },
+            } = tour;
+
+            return (
+              <div key={name} className="odc-quick-start-tile__tour">
+                <Button
+                  variant="link"
+                  onClick={() => setActiveQuickStart(name, tasks.length)}
+                  isInline
+                >
+                  {displayName}
+                </Button>
+              </div>
+            );
+          })}
         </CardBody>
         <CardFooter className="odc-quick-start-tile__footer">
-          <ArrowRightIcon className="odc-quick-start-tile__arrowbtn" />
-          <Link to="/quickstart">See all Quick Starts</Link>
+          <Link to="/quickstart">
+            See all Quick Starts <ArrowRightIcon className="odc-quick-start-tile__arrow" />
+          </Link>
         </CardFooter>
       </Card>
     </GalleryItem>

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
-import { getQuickStart } from '../../utils/quick-start-utils';
+import { getQuickStartByName } from '../../utils/quick-start-utils';
 import { QuickStartTaskStatus } from '../../utils/quick-start-types';
 import QuickStartTask from '../QuickStartTasks';
 import TaskHeader from '../QuickStartTaskHeader';
@@ -10,7 +10,7 @@ import QuickStartTaskReview from '../QuickStartTaskReview';
 type QuickStartTaskProps = React.ComponentProps<typeof QuickStartTask>;
 let wrapper: ShallowWrapper<QuickStartTaskProps>;
 const props: QuickStartTaskProps = {
-  tasks: getQuickStart('serverless-explore').tasks,
+  tasks: getQuickStartByName('explore-pipelines').spec.tasks,
   allTaskStatuses: [
     QuickStartTaskStatus.SUCCESS,
     QuickStartTaskStatus.INIT,
@@ -48,7 +48,7 @@ describe('QuickStartTasks', () => {
         .find(SyncMarkdownView)
         .at(0)
         .props().content,
-    ).toEqual(props.tasks[0].recapitulation.success);
+    ).toEqual(props.tasks[1].recapitulation.success);
 
     expect(
       wrapper

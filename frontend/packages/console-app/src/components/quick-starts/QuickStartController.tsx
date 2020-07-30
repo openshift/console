@@ -48,17 +48,20 @@ const QuickStartController: React.FC<QuickStartControllerProps> = ({
   setQuickStartTaskNumber,
   setQuickStartTaskStatus,
 }) => {
-  const { id, tasks } = quickStart;
+  const {
+    metadata: { name },
+    spec: { tasks },
+  } = quickStart;
   const totalTasks = tasks?.length;
 
   const startQuickStart = React.useCallback(
-    () => setQuickStartStatus(id, QuickStartStatus.IN_PROGRESS),
-    [id, setQuickStartStatus],
+    () => setQuickStartStatus(name, QuickStartStatus.IN_PROGRESS),
+    [name, setQuickStartStatus],
   );
 
   const completeQuickStart = React.useCallback(
-    () => setQuickStartStatus(id, QuickStartStatus.COMPLETE),
-    [id, setQuickStartStatus],
+    () => setQuickStartStatus(name, QuickStartStatus.COMPLETE),
+    [name, setQuickStartStatus],
   );
 
   const handleQuickStartChange = React.useCallback(
@@ -86,14 +89,14 @@ const QuickStartController: React.FC<QuickStartControllerProps> = ({
     if (taskStatus === QuickStartTaskStatus.INIT)
       return handleTaskStatusChange(QuickStartTaskStatus.REVIEW);
 
-    if (taskNumber < totalTasks) return setQuickStartTaskNumber(id, taskNumber + 1);
+    if (taskNumber < totalTasks) return setQuickStartTaskNumber(name, taskNumber + 1);
 
     return null;
   }, [
     completeQuickStart,
     handleQuickStartChange,
     handleTaskStatusChange,
-    id,
+    name,
     setQuickStartTaskNumber,
     startQuickStart,
     status,
@@ -103,17 +106,17 @@ const QuickStartController: React.FC<QuickStartControllerProps> = ({
   ]);
 
   const handleBack = React.useCallback(() => {
-    if (taskNumber > -1) return setQuickStartTaskNumber(id, taskNumber - 1);
+    if (taskNumber > -1) return setQuickStartTaskNumber(name, taskNumber - 1);
 
     return null;
-  }, [id, setQuickStartTaskNumber, taskNumber]);
+  }, [name, setQuickStartTaskNumber, taskNumber]);
 
   const handleTaskSelect = React.useCallback(
     (selectedTaskNumber: number) => {
-      setQuickStartTaskNumber(id, selectedTaskNumber);
+      setQuickStartTaskNumber(name, selectedTaskNumber);
       startQuickStart();
     },
-    [id, setQuickStartTaskNumber, startQuickStart],
+    [name, setQuickStartTaskNumber, startQuickStart],
   );
 
   return (
@@ -122,7 +125,7 @@ const QuickStartController: React.FC<QuickStartControllerProps> = ({
         <Alert
           variant="success"
           title="This tour has already been completed."
-          style={{ marginBottom: 'var(--pf-global--spacer--md)' }}
+          style={{ marginBottom: 'var(--pf-global--spacer--lg)' }}
           isInline
         />
       )}
@@ -167,10 +170,11 @@ const mergeProps = (
 ): QuickStartControllerProps => {
   const { activeQuickStartState } = stateProps;
   const { quickStart } = ownProps;
-  const { status, taskNumber } = activeQuickStartState;
-  const allTaskStatuses = quickStart.tasks.map(
+  const status = activeQuickStartState?.status as QuickStartStatus;
+  const taskNumber = activeQuickStartState?.taskNumber as number;
+  const allTaskStatuses = quickStart.spec.tasks.map(
     (task, index) => activeQuickStartState[`taskStatus${index}`],
-  );
+  ) as QuickStartTaskStatus[];
   const taskStatus = allTaskStatuses[taskNumber];
 
   return {

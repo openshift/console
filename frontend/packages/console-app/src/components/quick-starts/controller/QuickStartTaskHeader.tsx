@@ -1,6 +1,6 @@
 import * as React from 'react';
 import cx from 'classnames';
-import { Title, WizardNavItem } from '@patternfly/react-core';
+import { Title, WizardNavItem, Text, TextVariants } from '@patternfly/react-core';
 import { CheckCircleIcon, TimesCircleIcon } from '@patternfly/react-icons';
 import { QuickStartTaskStatus } from '../utils/quick-start-types';
 
@@ -67,22 +67,17 @@ const QuickStartTaskHeader: React.FC<QuickStartTaskHeaderProps> = ({
   });
 
   const content = (
-    <>
+    <span className="co-quick-start-task-header">
       <Title headingLevel="h3" size={size} className={classNames}>
         <TaskIcon taskIndex={taskIndex} taskStatus={taskStatus} isActiveTask={isActiveTask} />
         {title}
       </Title>
       {isActiveTask && subtitle && (
-        <Title
-          headingLevel="h6"
-          size="md"
-          className="text-secondary "
-          style={{ display: 'inline-block' }}
-        >
+        <Text component={TextVariants.small} className="text-secondary">
           {subtitle}
-        </Title>
+        </Text>
       )}
-    </>
+    </span>
   );
 
   return (

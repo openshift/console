@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { Button } from '@patternfly/react-core';
-import { getQuickStart } from '../../utils/quick-start-utils';
+import { getQuickStartByName } from '../../utils/quick-start-utils';
 import { QuickStartTaskStatus } from '../../utils/quick-start-types';
 import QuickStartConclusion from '../QuickStartConclusion';
 
 type QuickStartConclusionProps = React.ComponentProps<typeof QuickStartConclusion>;
 let wrapper: ShallowWrapper<QuickStartConclusionProps>;
 const props: QuickStartConclusionProps = {
-  tasks: getQuickStart('serverless-explore').tasks,
+  tasks: getQuickStartByName('explore-serverless').spec.tasks,
   allTaskStatuses: [
     QuickStartTaskStatus.INIT,
     QuickStartTaskStatus.INIT,

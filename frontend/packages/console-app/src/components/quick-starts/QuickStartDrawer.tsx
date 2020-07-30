@@ -20,7 +20,7 @@ import {
   getActiveQuickStartStatus,
 } from '../../redux/reducers/quick-start-reducer';
 import { setActiveQuickStart } from '../../redux/actions/quick-start-actions';
-import { getQuickStart } from './utils/quick-start-utils';
+import { getQuickStartByName } from './utils/quick-start-utils';
 import { QuickStartStatus } from './utils/quick-start-types';
 
 import './QuickStartDrawer.scss';
@@ -42,7 +42,7 @@ const QuickStartDrawer: React.FC<QuickStartDrawerProps> = ({
   activeQuickStartStatus,
   onClose,
 }) => {
-  const quickStart = getQuickStart(activeQuickStartID);
+  const quickStart = getQuickStartByName(activeQuickStartID);
 
   const handleClose = () => {
     if (activeQuickStartStatus === QuickStartStatus.IN_PROGRESS) {
@@ -64,16 +64,15 @@ const QuickStartDrawer: React.FC<QuickStartDrawerProps> = ({
     <DrawerPanelContent>
       <DrawerHead>
         <div className="co-quick-start-drawer__title">
-          <Title headingLevel="h1" size="xl">
-            {quickStart.name}
-          </Title>
           <Title
-            headingLevel="h6"
-            size="md"
-            className="text-secondary"
-            style={{ marginLeft: 'var(--pf-global--spacer--md)' }}
+            headingLevel="h1"
+            size="xl"
+            style={{ marginRight: 'var(--pf-global--spacer--md)' }}
           >
-            {`${quickStart?.duration} minutes`}
+            {quickStart?.spec.displayName}
+          </Title>
+          <Title headingLevel="h6" size="md" className="text-secondary">
+            {`${quickStart?.spec.duration} minutes`}
           </Title>
         </div>
         <DrawerActions>

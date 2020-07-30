@@ -35,26 +35,30 @@ const QuickStartCatalog: React.FC<QuickStartCatalogProps> = ({
   activeQuickStartID,
   allQuickStartStates,
   setActiveQuickStart,
-}) => (
-  <div className="co-quick-start-catalog">
-    {!quickStarts || quickStarts.length === 0 ? (
-      <EmptyBox label="Quick Starts" />
-    ) : (
-      <Gallery className="co-quick-start-catalog__gallery" hasGutter>
-        {quickStarts.map((quickStart) => (
-          <GalleryItem key={quickStart.id}>
+}) =>
+  !quickStarts || quickStarts.length === 0 ? (
+    <EmptyBox label="Quick Starts" />
+  ) : (
+    <Gallery className="co-quick-start-catalog__gallery" hasGutter>
+      {quickStarts.map((quickStart) => {
+        const {
+          metadata: { name: id },
+          spec: { tasks },
+        } = quickStart;
+
+        return (
+          <GalleryItem key={id}>
             <QuickStartTile
               quickStart={quickStart}
-              isActive={quickStart.id === activeQuickStartID}
-              status={getQuickStartStatus(allQuickStartStates, quickStart.id)}
-              onClick={() => setActiveQuickStart(quickStart.id, quickStart.tasks?.length)}
+              isActive={id === activeQuickStartID}
+              status={getQuickStartStatus(allQuickStartStates, id)}
+              onClick={() => setActiveQuickStart(id, tasks?.length)}
             />
           </GalleryItem>
-        ))}
-      </Gallery>
-    )}
-  </div>
-);
+        );
+      })}
+    </Gallery>
+  );
 
 const mapStateToProps = (state: RootState): StateProps => ({
   activeQuickStartID: getActiveQuickStartID(state),

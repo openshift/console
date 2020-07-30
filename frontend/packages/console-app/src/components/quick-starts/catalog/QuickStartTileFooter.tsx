@@ -1,10 +1,17 @@
 import * as React from 'react';
 import { Dispatch, connect } from 'react-redux';
 import { Flex, FlexItem, Button } from '@patternfly/react-core';
+import { RootState } from '@console/internal/redux';
 import * as QuickStartActions from '../../../redux/actions/quick-start-actions';
+import { getActiveQuickStartID } from '../../../redux/reducers/quick-start-reducer';
 import { QuickStartStatus } from '../utils/quick-start-types';
 
+type StateProps = {
+  activeQuickStartId?: string;
+};
+
 type DispatchProps = {
+  setActiveQuickStart?: (quickStartID: string, totalTasks: number) => void;
   setQuickStartStatus?: (quickStartId: string, quickStartStatus: QuickStartStatus) => void;
   setQuickStartTaskNumber?: (quickStartId: string, taskNumber: number) => void;
 };
@@ -12,30 +19,57 @@ type DispatchProps = {
 type QuickStartTileFooterProps = {
   quickStartId: string;
   status: string;
-  unmetPrerequisite?: boolean;
+  totalTasks?: number;
 };
 
-type Props = QuickStartTileFooterProps & DispatchProps;
+type Props = QuickStartTileFooterProps & StateProps & DispatchProps;
 
 const QuickStartTileFooter: React.FC<Props> = ({
   quickStartId,
+  activeQuickStartId,
   status,
+  totalTasks,
+  setActiveQuickStart,
   setQuickStartStatus,
   setQuickStartTaskNumber,
 }) => {
-  const startQuickStart = React.useCallback(
-    () => setQuickStartStatus(quickStartId, QuickStartStatus.IN_PROGRESS),
-    [quickStartId, setQuickStartStatus],
+  const stopPropagation = React.useCallback(
+    (e: React.SyntheticEvent) => {
+      if (activeQuickStartId) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    },
+    [activeQuickStartId],
   );
 
-  const restartQuickStart = React.useCallback(() => {
-    startQuickStart();
-    setQuickStartTaskNumber(quickStartId, -1);
-  }, [quickStartId, setQuickStartTaskNumber, startQuickStart]);
+  const startQuickStart = React.useCallback(
+    (e: React.SyntheticEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!activeQuickStartId || activeQuickStartId !== quickStartId)
+        setActiveQuickStart(quickStartId, totalTasks);
+      setQuickStartStatus(quickStartId, QuickStartStatus.IN_PROGRESS);
+    },
+    [activeQuickStartId, quickStartId, setActiveQuickStart, setQuickStartStatus, totalTasks],
+  );
 
-  const reviewQuickStart = React.useCallback(() => {
-    setQuickStartTaskNumber(quickStartId, -1);
-  }, [quickStartId, setQuickStartTaskNumber]);
+  const restartQuickStart = React.useCallback(
+    (e: React.SyntheticEvent) => {
+      stopPropagation(e);
+      setQuickStartStatus(quickStartId, QuickStartStatus.IN_PROGRESS);
+      setQuickStartTaskNumber(quickStartId, -1);
+    },
+    [quickStartId, setQuickStartStatus, setQuickStartTaskNumber, stopPropagation],
+  );
+
+  const reviewQuickStart = React.useCallback(
+    (e: React.SyntheticEvent) => {
+      stopPropagation(e);
+      setQuickStartTaskNumber(quickStartId, -1);
+    },
+    [quickStartId, setQuickStartTaskNumber, stopPropagation],
+  );
 
   return (
     <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
@@ -48,7 +82,7 @@ const QuickStartTileFooter: React.FC<Props> = ({
       )}
       {status === QuickStartStatus.IN_PROGRESS && (
         <FlexItem>
-          <Button variant="link" isInline>
+          <Button onClick={stopPropagation} variant="link" isInline>
             Resume the tour
           </Button>
         </FlexItem>
@@ -71,7 +105,13 @@ const QuickStartTileFooter: React.FC<Props> = ({
   );
 };
 
+const mapStateToProps = (state: RootState): StateProps => ({
+  activeQuickStartId: getActiveQuickStartID(state),
+});
+
 const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
+  setActiveQuickStart: (quickStartID: string, totalTasks: number) =>
+    dispatch(QuickStartActions.setActiveQuickStart(quickStartID, totalTasks)),
   setQuickStartStatus: (quickStartId: string, quickStartStatus: QuickStartStatus) =>
     dispatch(QuickStartActions.setQuickStartStatus(quickStartId, quickStartStatus)),
   setQuickStartTaskNumber: (quickStartId: string, taskNumber: number) =>
@@ -80,7 +120,7 @@ const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
 
 export const InternalQuickStartTileFooter = QuickStartTileFooter; // for testing
 
-export default connect<{}, DispatchProps, QuickStartTileFooterProps>(
-  null,
+export default connect<StateProps, DispatchProps, QuickStartTileFooterProps>(
+  mapStateToProps,
   mapDispatchToProps,
 )(QuickStartTileFooter);

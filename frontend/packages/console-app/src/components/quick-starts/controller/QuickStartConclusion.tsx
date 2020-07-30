@@ -34,11 +34,13 @@ const QuickStartConclusion: React.FC<QuickStartConclusionProps> = ({
           onTaskSelect={onTaskSelect}
         />
       ))}
-      <SyncMarkdownView content={conclusion} styles="div {overflow-y: visible !important}" />
+      <SyncMarkdownView content={conclusion} />
       {nextQuickStart && (
         <Button variant="link" onClick={() => onQuickStartChange(nextQuickStart)} isInline>
           {`Start ${nextQuickStart} quick start`}{' '}
-          <ArrowRightIcon style={{ marginLeft: 'var(--pf-global--spacer--xs)' }} />
+          <ArrowRightIcon
+            style={{ marginLeft: 'var(--pf-global--spacer--xs)', verticalAlign: 'middle' }}
+          />
         </Button>
       )}
     </>

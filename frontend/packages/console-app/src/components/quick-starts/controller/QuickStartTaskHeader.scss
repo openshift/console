@@ -1,4 +1,7 @@
 .co-quick-start-task-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   margin-bottom: var(--pf-global--spacer--md);
   button::before {
     content: none;
