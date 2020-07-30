@@ -1,0 +1,9 @@
+.kn-event-pubsub-expand-button {
+  &__link {
+    color: var(--pf-global--link--Color);
+  }
+  &__icon {
+    vertical-align: bottom;
+    margin-left: var(--pf-global--spacer--xs);
+  }
+}

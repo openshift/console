@@ -1,0 +1,20 @@
+.kn-event-subscriber-list {
+  &-item {
+    padding-bottom: 0;
+  }
+  &__relationship {
+    align-items: center;
+    min-height: var(--pf-global--spacer--xl);
+    margin: 0 var(--pf-global--BorderWidth--md) var(--pf-global--BorderWidth--lg)
+      var(--pf-global--spacer--2xl);
+  }
+
+  &__relationship-table {
+    position: relative;
+    left: calc(var(--pf-global--spacer--md) * -1);
+    width: calc(100% + var(--pf-global--spacer--xl));
+    &:not(:last-child) {
+      margin-bottom: 10px;
+    }
+  }
+}

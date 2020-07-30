@@ -6,8 +6,6 @@ import {
 } from '@console/dev-console/src/components/topology';
 import {
   getRevisionsData,
-  KnativeUtil,
-  NodeType,
   transformKnNodeData,
   getKnativeDynamicResources,
 } from './knative-topology-utils';
@@ -21,6 +19,7 @@ import {
   getDynamicEventSourcesModelRefs,
   getDynamicChannelModelRefs,
 } from '../utils/fetch-dynamic-eventsources-utils';
+import { KnativeUtil, NodeType } from './topology-types';
 
 const addKnativeTopologyData = (
   graphModel: Model,

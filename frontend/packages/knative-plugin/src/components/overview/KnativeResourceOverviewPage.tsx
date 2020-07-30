@@ -22,7 +22,7 @@ import {
 import OverviewDetailsKnativeResourcesTab from './OverviewDetailsKnativeResourcesTab';
 import KnativeOverview from './KnativeOverview';
 import SinkUriResourcesTab from './SinkUriResourcesTab';
-import { NodeType } from '../../topology/knative-topology-utils';
+import { NodeType } from '../../topology/topology-types';
 
 interface StateProps {
   kindsInFlight?: boolean;

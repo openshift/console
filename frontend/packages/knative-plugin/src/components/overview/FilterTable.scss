@@ -1,0 +1,10 @@
+.kn-filter-table {
+  .kn-filter-table {
+    &__row--bordered {
+      border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--palette--black-150);
+    }
+    &__padding--left {
+      padding-left: var(--pf-global--spacer--3xl);
+    }
+  }
+}
