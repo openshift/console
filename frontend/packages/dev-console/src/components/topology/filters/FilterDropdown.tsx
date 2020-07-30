@@ -55,7 +55,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
 
   const selectContent = (
     <div className="odc-topology-filter-dropdown">
-      {expandFilters.length && (
+      {expandFilters.length ? (
         <div className="odc-topology-filter-dropdown__group">
           <span className="odc-topology-filter-dropdown__expand-groups-switcher">
             <span className="pf-c-select__menu-group-title">Expand</span>
@@ -78,8 +78,8 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
             ))}
           </SelectGroup>
         </div>
-      )}
-      {showFilters.length && (
+      ) : null}
+      {showFilters.length ? (
         <div className="odc-topology-filter-dropdown__group">
           <SelectGroup label="Show">
             {showFilters.map((filter) => (
@@ -89,7 +89,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
             ))}
           </SelectGroup>
         </div>
-      )}
+      ) : null}
     </div>
   );
 

@@ -33,8 +33,9 @@ type DispatchProps = {
 };
 
 type OwnProps = {
-  visualization: Visualization;
+  visualization?: Visualization;
   onSearchChange: (searchQuery: string) => void;
+  showGraphView: boolean;
 };
 
 type MergeProps = {
@@ -50,6 +51,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
   onDisplayFiltersChange,
   onSearchChange,
   visualization,
+  showGraphView,
   consoleLinks,
   namespace,
 }) => {
@@ -84,23 +86,25 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
           onChange={onTextFilterChange}
           className="odc-topology-filter-bar__text-filter"
         />
-        <Popover
-          aria-label="Find by name"
-          position="left"
-          bodyContent={
-            <>
-              Search results may appear outside of the visible area.{' '}
-              <Button variant="link" onClick={() => visualization.getGraph().fit(80)} isInline>
-                Click here
-              </Button>{' '}
-              to fit to the screen.
-            </>
-          }
-        >
-          <Button variant="link" className="odc-topology-filter-bar__info-icon">
-            <InfoCircleIcon />
-          </Button>
-        </Popover>
+        {showGraphView && (
+          <Popover
+            aria-label="Find by name"
+            position="left"
+            bodyContent={
+              <>
+                Search results may appear outside of the visible area.{' '}
+                <Button variant="link" onClick={() => visualization.getGraph().fit(80)} isInline>
+                  Click here
+                </Button>{' '}
+                to fit to the screen.
+              </>
+            }
+          >
+            <Button variant="link" className="odc-topology-filter-bar__info-icon">
+              <InfoCircleIcon />
+            </Button>
+          </Popover>
+        )}
       </ToolbarGroup>
       {kialiLink && (
         <ToolbarGroup className="odc-topology-filter-bar__kiali-link">
@@ -127,7 +131,7 @@ const dispatchToProps = (dispatch: Dispatch): DispatchProps => ({
 const mergeProps = (
   { filters, supportedFilters, consoleLinks, namespace }: StateProps,
   { onFiltersChange }: DispatchProps,
-  { visualization, onSearchChange }: OwnProps,
+  { visualization, onSearchChange, showGraphView }: OwnProps,
 ): MergeProps => ({
   filters,
   supportedFilters,
@@ -138,6 +142,7 @@ const mergeProps = (
   },
   onSearchChange,
   visualization,
+  showGraphView,
 });
 
 export default connect<StateProps, DispatchProps, OwnProps, MergeProps>(

@@ -8,6 +8,7 @@ export type TopologyExtensionLoaderProps = Omit<TopologyDataRetrieverProps, 'res
 export const TopologyExtensionLoader: React.FC<TopologyExtensionLoaderProps> = ({
   render,
   namespace,
+  showGraphView,
   kindsInFlight,
 }) => {
   const dataModelContext = React.useContext<ExtensibleModel>(ModelContext);
@@ -35,6 +36,7 @@ export const TopologyExtensionLoader: React.FC<TopologyExtensionLoaderProps> = (
       resourcesList={resourcesList}
       namespace={namespace}
       kindsInFlight={kindsInFlight}
+      showGraphView={showGraphView}
     />
   );
 };

@@ -5,7 +5,6 @@ import {
   observer,
   WithSelectionProps,
   WithDndDropProps,
-  WithContextMenuProps,
   useDragNode,
   Layer,
   useHover,
@@ -26,21 +25,17 @@ import {
   NODE_SHADOW_FILTER_ID,
   NODE_SHADOW_FILTER_ID_HOVER,
 } from '../../components/NodeShadows';
+import { getResourceKind } from '../../topology-utils';
 
 export type OperatorBackedServiceGroupProps = {
   element: Node;
-  editAccess: boolean;
 } & WithSelectionProps &
-  WithContextMenuProps &
   WithDndDropProps;
 
 const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
   element,
-  editAccess,
   selected,
   onSelect,
-  onContextMenu,
-  contextMenuOpen,
   dndDropRef,
 }) => {
   const [hover, hoverRef] = useHover();
@@ -71,7 +66,6 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
     <g
       ref={hoverRef}
       onClick={onSelect}
-      onContextMenu={editAccess ? onContextMenu : null}
       className={classNames('odc-operator-backed-service', {
         'is-dragging': dragging || labelDragging,
         'is-filtered': filtered,
@@ -99,7 +93,7 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
             rx="5"
             ry="5"
             filter={createSvgIdUrl(
-              hover || innerHover || contextMenuOpen || dragging || labelDragging
+              hover || innerHover || dragging || labelDragging
                 ? NODE_SHADOW_FILTER_ID_HOVER
                 : NODE_SHADOW_FILTER_ID,
             )}
@@ -111,16 +105,16 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
           )}
         </g>
       </Layer>
-      {showLabels && (data.kind || element.getLabel()) && (
+      {showLabels && (getResourceKind(element) || element.getLabel()) && (
         <SvgBoxedText
           className="odc-base-node__label"
           x={x + width / 2}
           y={y + height + 20}
           paddingX={8}
           paddingY={4}
-          kind="Operator"
+          kind={data.operatorKind}
           dragRef={dragLabelRef}
-          typeIconClass={element.getData().data.builderImage}
+          typeIconClass={data.builderImage}
         >
           {element.getLabel()}
         </SvgBoxedText>

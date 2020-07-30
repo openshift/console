@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
-import { Model, Edge } from '@patternfly/react-topology';
+import { Edge, Node, isNode } from '@patternfly/react-topology';
 import { referenceFor, modelFor } from '@console/internal/module/k8s';
 import {
   ActionsMenu,
@@ -16,7 +16,6 @@ import { setSinkSource } from '../../actions/sink-source';
 
 export type TopologyEdgePanelProps = {
   edge: Edge;
-  model: Model;
 };
 
 const connectorTypeToTitle = (type: string): string => {
@@ -30,11 +29,14 @@ const connectorTypeToTitle = (type: string): string => {
   }
 };
 
-const KnativeTopologyEdgePanel: React.FC<TopologyEdgePanelProps> = ({ edge, model }) => {
+const KnativeTopologyEdgePanel: React.FC<TopologyEdgePanelProps> = ({ edge }) => {
   const source: TopologyDataObject = edge.getSource().getData();
   const target: TopologyDataObject = edge.getTarget().getData();
   const resources = [source?.resources?.obj, target?.resources?.obj];
-  const nodes = model.nodes.map((n) => edge.getController().getNodeById(n.id));
+  const nodes = edge
+    .getController()
+    .getElements()
+    .filter((e) => isNode(e) && !e.isGroup()) as Node[];
   const isEventSourceConnector = edge.getType() === TYPE_EVENT_SOURCE_LINK;
   const actions = [];
   if (isEventSourceConnector && source.resource) {

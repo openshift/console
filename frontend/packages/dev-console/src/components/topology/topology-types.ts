@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ExtPodKind, OverviewItem, PodControllerOverviewItem } from '@console/shared';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, K8sResourceKindReference } from '@console/internal/module/k8s';
 import {
   Graph,
   Node,
@@ -8,6 +8,8 @@ import {
   EdgeModel,
   NodeModel,
   EventListener,
+  ModelKind,
+  GraphElement,
 } from '@patternfly/react-topology';
 import { WatchK8sResults } from '@console/internal/components/utils/k8s-watch-hook';
 import { Pipeline, PipelineRun } from '../../utils/pipeline-augment';
@@ -16,10 +18,12 @@ export type Point = [number, number];
 
 export interface OdcNodeModel extends NodeModel {
   resource?: K8sResourceKind;
+  resourceKind?: K8sResourceKindReference;
 }
 
 export interface OdcEdgeModel extends EdgeModel {
   resource?: K8sResourceKind;
+  resourceKind?: K8sResourceKindReference;
 }
 
 export type TopologyResourcesObject = { [key: string]: K8sResourceKind[] };
@@ -31,6 +35,16 @@ export type TopologyDataModelGetter = (
   resources: TopologyDataResources,
   workloads: K8sResourceKind[],
 ) => Promise<Model>;
+
+export enum TopologyViewType {
+  graph = 'graph',
+  list = 'list',
+}
+export type ViewComponentFactory = (
+  kind: ModelKind,
+  type: string,
+  view?: TopologyViewType,
+) => React.ComponentType<{ element: GraphElement }> | undefined;
 
 export type TopologyDataModelDepicted = (resource: K8sResourceKind, model: Model) => boolean;
 
@@ -72,13 +86,13 @@ export interface TopologyDataObject<D = {}> {
   pods?: ExtPodKind[];
   data: D;
   resource: K8sResourceKind | null;
-  groupResources?: TopologyDataObject[];
+  groupResources?: OdcNodeModel[];
 }
 
 export interface TopologyApplicationObject {
   id: string;
   name: string;
-  resources: TopologyDataObject[];
+  resources: OdcNodeModel[];
 }
 
 export interface ConnectedWorkloadPipeline {

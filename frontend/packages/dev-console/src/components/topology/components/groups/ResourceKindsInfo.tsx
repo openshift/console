@@ -1,14 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { modelFor, referenceFor, referenceForModel } from '@console/internal/module/k8s';
-import { getTopologyResourceObject } from '../../topology-utils';
-import { TopologyDataObject } from '../../topology-types';
+import { modelFor, pluralizeKind, referenceForModel } from '@console/internal/module/k8s';
 import { ResourceIcon } from '@console/internal/components/utils';
 
 import './ResourceKindsInfo.scss';
+import { OdcNodeModel } from '../../topology-types';
 
 type ResourceKindsInfoProps = {
-  groupResources: TopologyDataObject;
+  groupResources: OdcNodeModel[];
   emptyValue?: React.ReactNode;
   width: number;
   height: number;
@@ -21,11 +20,9 @@ const ResourceKindsInfo: React.FC<ResourceKindsInfoProps> = ({
   height,
 }) => {
   const resourcesData = {};
-  _.forEach(groupResources, (res: TopologyDataObject) => {
-    const a = getTopologyResourceObject(res);
-    const kindObj = modelFor(referenceFor(a));
-    const key = kindObj.abbr || a.kind;
-    resourcesData[key] = [...(resourcesData[key] ? resourcesData[key] : []), a];
+  _.forEach(groupResources, (node: OdcNodeModel) => {
+    const kind = node.resourceKind || node.resource?.kind;
+    resourcesData[kind] = [...(resourcesData[kind] ? resourcesData[kind] : []), node.resource];
   });
   const resourceTypes = _.keys(resourcesData);
 
@@ -43,16 +40,23 @@ const ResourceKindsInfo: React.FC<ResourceKindsInfoProps> = ({
         <table className="odc-resource-kinds-info__table">
           <tbody className="odc-resource-kinds-info__body">
             {resourceTypes.map((key) => {
-              const kindObj = modelFor(referenceFor(resourcesData[key][0]));
+              const kindObj = modelFor(key);
+              let kind;
+              let label;
+              if (kindObj) {
+                kind = kindObj.crd ? referenceForModel(kindObj) : kindObj.kind;
+                label = resourcesData[key].length > 1 ? kindObj.labelPlural : kindObj.label;
+              } else {
+                kind = key;
+                label = resourcesData[key].length > 1 ? pluralizeKind(key) : _.startCase(key);
+              }
               return (
                 <tr key={key} className="odc-resource-kinds-info__row">
                   <td className="odc-resource-kinds-info__count">{resourcesData[key].length}</td>
                   <td className="odc-resource-kinds-info__resource-icon">
-                    <ResourceIcon kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind} />
+                    <ResourceIcon kind={kind} />
                   </td>
-                  <td className="odc-resource-kinds-info__kind">
-                    {resourcesData[key].length > 1 ? kindObj.labelPlural : kindObj.label}
-                  </td>
+                  <td className="odc-resource-kinds-info__kind">{label}</td>
                 </tr>
               );
             })}

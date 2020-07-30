@@ -13,7 +13,7 @@ import {
   getOperatorBackedServiceKindMap,
 } from '@console/shared';
 import { EdgeModel, Model, NodeShape } from '@patternfly/react-topology';
-import { TopologyDataResources } from '../topology-types';
+import { TopologyDataObject, TopologyDataResources } from '../topology-types';
 import {
   OPERATOR_GROUP_WIDTH,
   OPERATOR_GROUP_HEIGHT,
@@ -32,6 +32,7 @@ import {
 import { WORKLOAD_TYPES } from '../topology-utils';
 import { TYPE_SERVICE_BINDING } from '../components';
 import { isOperatorBackedKnResource } from '@console/knative-plugin/src/topology/knative-topology-utils';
+import { OperatorGroupData } from './operator-topology-types';
 
 export const edgesFromServiceBinding = (
   source: K8sResourceKind,
@@ -168,9 +169,10 @@ export const getOperatorTopologyDataModel = (
 
           const csvIcon = operatorBackedServiceKind?.spec?.icon?.[0] || operator?.spec?.icon?.[0];
 
-          const operatorName = appGroup
-            ? `${appGroup}:${operator.metadata.name}`
-            : operator.metadata.name;
+          const operatorName =
+            ownerReference?.name ?? appGroup
+              ? `${appGroup}:${operator.metadata.name}`
+              : operator.metadata.name;
           const data = createTopologyNodeData(
             resource,
             item,
@@ -182,9 +184,13 @@ export const getOperatorTopologyDataModel = (
             getTopologyNodeItem(resource, TYPE_OPERATOR_WORKLOAD, data, WorkloadModelProps),
           );
 
+          const groupUid = ownerReference?.uid ?? `${operatorName}:${operator.metadata.uid}`;
           operatorMap[operatorName] = _.merge({}, operator, {
+            apiVersion: ownerReference?.apiVersion ?? '',
+            kind: ownerReference?.kind ?? 'Operator',
             metadata: {
-              uid: `${operatorName}:${operator.metadata.uid}`,
+              name: ownerReference?.name ?? operator.metadata.name,
+              uid: groupUid,
             },
           });
           if (!(operatorName in obsGroups)) {
@@ -196,7 +202,7 @@ export const getOperatorTopologyDataModel = (
             const newGroup = getTopologyGroupItems(
               _.merge({}, resource, {
                 metadata: {
-                  uid: `${operatorName}:${operator.metadata.uid}`,
+                  uid: groupUid,
                 },
               }),
             );
@@ -214,7 +220,7 @@ export const getOperatorTopologyDataModel = (
 
   _.forIn(obsGroups, (children: string[], grp: string) => {
     const groupDataModel: Model = { nodes: [], edges: [] };
-    const data = {
+    const data: TopologyDataObject<OperatorGroupData> = {
       id: operatorMap[grp].metadata.uid,
       name: operatorMap[grp].metadata.name,
       type: TYPE_OPERATOR_BACKED_SERVICE,
@@ -225,8 +231,10 @@ export const getOperatorTopologyDataModel = (
         services: [],
         isOperatorBackedService: true,
       },
-      groupResources: children.map((id) => operatorsDataModel.nodes.find((n) => id === n.id)?.data),
+      resource: operatorMap[grp],
+      groupResources: children.map((id) => operatorsDataModel.nodes.find((n) => id === n.id)),
       data: {
+        operatorKind: operatorMap[grp].kind,
         builderImage:
           getImageForCSVIcon(operatorMap?.[grp]?.spec?.icon?.[0]) || getDefaultOperatorIcon(),
       },
@@ -238,6 +246,7 @@ export const getOperatorTopologyDataModel = (
         data,
         OBSModelProps,
         children,
+        'Operator Backed Service',
       ),
     );
 

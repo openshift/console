@@ -73,8 +73,7 @@ export const getKnativeTopologyDataModel = (
   knativeTopologyGraphModel.nodes.forEach((n) => {
     if (n.type === NodeType.KnService) {
       n.data.groupResources =
-        n.children?.map((id) => knativeTopologyGraphModel.nodes.find((c) => id === c.id)?.data) ??
-        [];
+        n.children?.map((id) => knativeTopologyGraphModel.nodes.find((c) => id === c.id)) ?? [];
     }
     if (n.type === NodeType.Revision) {
       n.data = revisionData[n.id];

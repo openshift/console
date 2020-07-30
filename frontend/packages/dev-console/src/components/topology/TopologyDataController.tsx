@@ -12,11 +12,13 @@ interface StateProps {
 }
 
 export interface TopologyDataControllerProps extends StateProps {
+  showGraphView: boolean;
   namespace: string;
   render(RenderProps): React.ReactElement;
 }
 
 export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
+  showGraphView,
   namespace,
   render,
   kindsInFlight,
@@ -32,6 +34,7 @@ export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
         kindsInFlight={kindsInFlight}
         render={render}
         namespace={namespace}
+        showGraphView={showGraphView}
       />
     </DataModelProvider>
   );

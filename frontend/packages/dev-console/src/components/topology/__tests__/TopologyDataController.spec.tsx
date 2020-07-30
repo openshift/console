@@ -20,6 +20,7 @@ describe('TopologyDataController', () => {
     spyUseURLPoll.mockReturnValue([{}, null, false]);
     wrapper = mount(
       <TopologyDataController
+        showGraphView
         namespace="test-project"
         kindsInFlight={false}
         render={() => <TestInner />}

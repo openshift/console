@@ -157,14 +157,13 @@ describe('knative data transformer ', () => {
     const node = graphData.nodes.find(
       (n) => (n as OdcNodeModel).resource.metadata.name === 'overlayimage',
     );
-    const topologyTransformedData = node?.data;
 
     const spy = spyOn(k8s, 'k8sKill');
     const checkAccessSpy = spyOn(utils, 'checkAccess');
     spyAndReturn(spy)(Promise.resolve({}));
     spyAndReturn(checkAccessSpy)(Promise.resolve({ status: { allowed: true } }));
 
-    cleanUpWorkload((node as OdcNodeModel).resource, topologyTransformedData)
+    cleanUpWorkload(node)
       .then(() => {
         const allArgs = spy.calls.allArgs();
         const removedModels = allArgs.map((arg) => arg[0]);

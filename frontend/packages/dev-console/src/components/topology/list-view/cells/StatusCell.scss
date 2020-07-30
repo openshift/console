@@ -1,0 +1,17 @@
+.odc-topology-list-view__detail--status {
+  text-align: right;
+  @media (min-width: $screen-md-min) {
+    grid-area: status;
+  }
+}
+
+@media (min-width: $screen-md-min) {
+  // Metrics are hidden when the sidebar is open. Adjust list row styles.
+  .odc-topology-list-view--sidebar-shown {
+    .odc-topology-list-view__detail--status {
+      grid-column: 2;
+      // Give enough margin for the chevron.
+      margin-right: 40px;
+    }
+  }
+}
