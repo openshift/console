@@ -11,9 +11,12 @@ import {
 } from '@console/internal/actions/dashboards';
 import { RootState } from '@console/internal/redux';
 import { RESULTS_TYPE } from '@console/internal/reducers/dashboards';
-import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
+import {
+  getInstantVectorStats,
+  GetRangeStats,
+  GetInstantStats,
+} from '@console/internal/components/graphs/utils';
 import { Humanize, HumanizeResult } from '@console/internal/components/utils/types';
-import { PrometheusResponse } from '@console/internal/components/graphs';
 
 export const usePrometheusQuery: UsePrometheusQuery = (query, humanize) => {
   const dispatch = useDispatch();
@@ -42,7 +45,7 @@ const customSelectorCreator = createSelectorCreator(defaultMemoize, shallowEqual
 
 export const usePrometheusQueries = <R extends any>(
   queries: string[],
-  parser?: (arg: PrometheusResponse) => R,
+  parser?: GetInstantStats | GetRangeStats,
   namespace?: string,
   timespan?: number,
 ): UsePrometheusQueriesResult<R> => {
@@ -74,7 +77,7 @@ export const usePrometheusQueries = <R extends any>(
     }
     const values = queryResults.reduce((acc: R[], curr) => {
       const data = curr.get('data');
-      const value = _.isFunction(parser) ? parser(data) : data;
+      const value = parser ? parser(data) : data;
       return [...acc, value];
     }, []);
     const loadError: boolean = queryResults.some((res) => !!res.get('loadError'));

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { createContainer } from '@patternfly/react-charts';
 import { AsyncComponent } from '../utils/async';
 
 // Constants
@@ -18,6 +19,11 @@ export const Bar = (props) => (
 export const Gauge = (props) => (
   <AsyncComponent loader={() => import('./graph-loader').then((c) => c.Gauge)} {...props} />
 );
+export const Stack = (props) => (
+  <AsyncComponent loader={() => import('./graph-loader').then((c) => c.Stack)} {...props} />
+);
+
+export const CursorVoronoiContainer = createContainer('cursor', 'voronoi');
 
 // Types
 export type DataPoint<X = Date | number | string> = {
@@ -25,7 +31,11 @@ export type DataPoint<X = Date | number | string> = {
   y?: number;
   label?: string;
   metric?: { [key: string]: string };
-  description?: (date: string, value: string) => string;
+  description?: string;
+  symbol?: {
+    type?: string;
+    fill?: string;
+  };
 };
 
 export type PrometheusLabels = { [key: string]: string };

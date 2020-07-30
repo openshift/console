@@ -45,6 +45,7 @@ import {
 import { PodLogs } from './pod-logs';
 import {
   Area,
+  Stack,
   PROMETHEUS_BASE_PATH,
   PROMETHEUS_TENANCY_BASE_PATH,
   requirePrometheus,
@@ -315,6 +316,8 @@ const PodGraphs = requirePrometheus(({ pod }) => (
           byteDataType={ByteDataTypes.BinaryBytes}
           namespace={pod.metadata.namespace}
           query={`sum(container_memory_working_set_bytes{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}',container='',}) BY (pod, namespace)`}
+          limitQuery={`sum(kube_pod_container_resource_limits_memory_bytes{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}) BY (pod, namespace)`}
+          requestedQuery={`sum(kube_pod_container_resource_requests_memory_bytes{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}) BY (pod, namespace)`}
         />
       </div>
       <div className="col-md-12 col-lg-4">
@@ -323,6 +326,8 @@ const PodGraphs = requirePrometheus(({ pod }) => (
           humanize={humanizeCpuCores}
           namespace={pod.metadata.namespace}
           query={`pod:container_cpu_usage:sum{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`}
+          limitQuery={`sum(kube_pod_container_resource_limits_cpu_cores{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}) BY (pod, namespace)`}
+          requestedQuery={`sum(kube_pod_container_resource_requests_cpu_cores{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}) BY (pod, namespace)`}
         />
       </div>
       <div className="col-md-12 col-lg-4">
@@ -337,23 +342,24 @@ const PodGraphs = requirePrometheus(({ pod }) => (
     </div>
     <div className="row">
       <div className="col-md-12 col-lg-4">
-        <Area
+        <Stack
           title="Network In"
           humanize={humanizeDecimalBytesPerSec}
           namespace={pod.metadata.namespace}
-          query={`sum(irate(container_network_receive_bytes_total{pod='${pod.metadata.name}', namespace='${pod.metadata.namespace}'}[5m])) by (pod, namespace)`}
+          query={`(sum(irate(container_network_receive_bytes_total{pod='${pod.metadata.name}', namespace='${pod.metadata.namespace}'}[5m])) by (pod, namespace, interface)) + on(namespace,pod,interface) group_left(network_name) ( pod_network_name_info )`}
+          metric="network_name"
         />
       </div>
       <div className="col-md-12 col-lg-4">
-        <Area
+        <Stack
           title="Network Out"
           humanize={humanizeDecimalBytesPerSec}
           namespace={pod.metadata.namespace}
-          query={`sum(irate(container_network_transmit_bytes_total{pod='${pod.metadata.name}', namespace='${pod.metadata.namespace}'}[5m])) by (pod, namespace)`}
+          query={`(sum(irate(container_network_transmit_bytes_total{pod='${pod.metadata.name}', namespace='${pod.metadata.namespace}'}[5m])) by (pod, namespace, interface)) + on(namespace,pod,interface) group_left(network_name) ( pod_network_name_info )`}
+          metric="network_name"
         />
       </div>
     </div>
-
     <br />
   </>
 ));

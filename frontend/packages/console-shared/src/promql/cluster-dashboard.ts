@@ -103,8 +103,8 @@ export const utilizationQueries = {
 
 export const multilineQueries = {
   [OverviewQuery.NETWORK_UTILIZATION]: [
-    { query: overviewQueries[OverviewQuery.NETWORK_IN_UTILIZATION], desc: 'In' },
-    { query: overviewQueries[OverviewQuery.NETWORK_OUT_UTILIZATION], desc: 'Out' },
+    { query: overviewQueries[OverviewQuery.NETWORK_IN_UTILIZATION], desc: 'in' },
+    { query: overviewQueries[OverviewQuery.NETWORK_OUT_UTILIZATION], desc: 'out' },
   ],
 };
 
