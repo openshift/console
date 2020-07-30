@@ -50,7 +50,7 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
     cloneBaseDiskImageField,
     flavorField,
     workloadProfile,
-    commonDataVolumes,
+    cnvBaseImages,
     onChange,
     openshiftFlag,
     goToStorageStep,
@@ -90,7 +90,7 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
       ? {
           userTemplates,
           commonTemplates,
-          commonDataVolumes,
+          cnvBaseImages,
         }
       : {};
 
@@ -113,7 +113,7 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
       }
     }
 
-    const loadedBaseImages = iGetLoadedData(commonDataVolumes);
+    const loadedBaseImages = iGetLoadedData(cnvBaseImages);
     const operatingSystemBaseImages = operatingSystems.map(
       (operatingSystem: OperatingSystemRecord) => {
         const pvcName = operatingSystem?.dataVolumeName;
@@ -230,7 +230,7 @@ type OSFlavorProps = {
   cloneBaseDiskImageField: any;
   userTemplate: string;
   workloadProfile: string;
-  commonDataVolumes: any;
+  cnvBaseImages: any;
   openshiftFlag: boolean;
   onChange: (key: string, value: string | boolean) => void;
   goToStorageStep: () => void;

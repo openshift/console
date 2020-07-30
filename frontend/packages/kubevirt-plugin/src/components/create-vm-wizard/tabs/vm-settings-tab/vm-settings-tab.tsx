@@ -45,7 +45,7 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
       userTemplateName,
       userTemplates,
       commonTemplates,
-      commonDataVolumes,
+      cnvBaseImages,
       provisionSourceStorage,
       updateStorage,
       openshiftFlag,
@@ -90,7 +90,7 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
           cloneBaseDiskImageField={this.getField(VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE)}
           userTemplate={this.getFieldValue(VMSettingsField.USER_TEMPLATE)}
           workloadProfile={this.getFieldValue(VMSettingsField.WORKLOAD_PROFILE)}
-          commonDataVolumes={commonDataVolumes}
+          cnvBaseImages={cnvBaseImages}
           onChange={this.props.onFieldChange}
           openshiftFlag={openshiftFlag}
           goToStorageStep={
@@ -109,7 +109,7 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
           userTemplate={this.getFieldValue(VMSettingsField.USER_TEMPLATE)}
           operatingSystem={this.getFieldValue(VMSettingsField.OPERATING_SYSTEM)}
           flavor={this.getFieldValue(VMSettingsField.FLAVOR)}
-          commonDataVolumes={commonDataVolumes}
+          cnvBaseImages={cnvBaseImages}
           onChange={this.props.onFieldChange}
         />
         <FormFieldMemoRow
@@ -150,7 +150,7 @@ const stateToProps = (state, { wizardReduxID }) => ({
   commonTemplates: iGetCommonData(state, wizardReduxID, VMWizardProps.commonTemplates),
   userTemplateName: iGetCommonData(state, wizardReduxID, VMWizardProps.userTemplateName),
   userTemplates: iGetCommonData(state, wizardReduxID, VMWizardProps.userTemplates),
-  commonDataVolumes: iGetCommonData(state, wizardReduxID, VMWizardProps.openshiftCNVBaseImages),
+  cnvBaseImages: iGetCommonData(state, wizardReduxID, VMWizardProps.openshiftCNVBaseImages),
   openshiftFlag: iGetCommonData(state, wizardReduxID, VMWizardProps.openshiftFlag),
   provisionSourceStorage: iGetProvisionSourceStorage(state, wizardReduxID),
   steps: getStepsMetadata(state, wizardReduxID),
@@ -164,7 +164,7 @@ type VMSettingsTabComponentProps = {
   commonTemplates: any;
   userTemplateName: string;
   userTemplates: any;
-  commonDataVolumes: any;
+  cnvBaseImages: any;
   openshiftFlag: boolean;
   goToStep: (stepID: VMWizardTab) => void;
   steps: VMWizardTabsMetadata;
