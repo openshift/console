@@ -13,7 +13,7 @@ export const HPAOverview: React.FC<HPAOverviewProps> = ({ hpas }) => {
   }
 
   return (
-    <div>
+    <>
       <SidebarSectionHeading text={HorizontalPodAutoscalerModel.labelPlural} />
       <ul className="list-group">
         {hpas.map((hpa: HorizontalPodAutoscalerKind) => (
@@ -26,6 +26,6 @@ export const HPAOverview: React.FC<HPAOverviewProps> = ({ hpas }) => {
           </li>
         ))}
       </ul>
-    </div>
+    </>
   );
 };

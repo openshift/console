@@ -82,7 +82,7 @@ const PodRing: React.FC<PodRingProps> = ({
   const resourceObj = rc || obj;
   const { title, subTitle, titleComponent } = hpaControlledScaling
     ? hpaPodRingLabel(resourceObj, hpa, pods)
-    : podRingLabel(resourceObj, obj.kind, pods);
+    : podRingLabel(resourceObj, kind, pods);
 
   return (
     <Split>
