@@ -338,7 +338,7 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = (props) => {
         <Bullseye>
           <div id="operator-install-page">
             {loading && (
-              <div>
+              <div className="co-operator-install-page__indicator">
                 Installing... <Spinner size="lg" />
               </div>
             )}
