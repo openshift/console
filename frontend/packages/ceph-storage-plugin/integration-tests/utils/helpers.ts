@@ -173,6 +173,9 @@ export const hasOCSTaint = (node) => {
   return taints.some((taint) => _.isEqual(taint, ocsTaint));
 };
 
+export const createObjectFromJson = (objectJson) =>
+  execSync(`echo '${JSON.stringify(objectJson)}' | kubectl create -f -`);
+
 export type NodeType = {
   id: number;
   name: string;
