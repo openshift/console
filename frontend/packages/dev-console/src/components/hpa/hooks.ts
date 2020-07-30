@@ -49,8 +49,8 @@ export const useRelatedHPA = (
   );
   const [hpa, hpaWatchLoaded, error] = useK8sWatchResource<HorizontalPodAutoscalerKind>(resource);
 
-  const returnHPA = !error && hpaName && loaded ? hpa : null;
   const hpaLoaded = loaded && hpaWatchLoaded;
+  const returnHPA = !error && hpa && hpaLoaded ? hpa : null;
   const hpaError = error || errorMessage;
   return [returnHPA, hpaLoaded, hpaError];
 };
