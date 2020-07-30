@@ -24,7 +24,7 @@ import { filterList } from '../actions/k8s';
 import AutocompleteInput from './autocomplete';
 import { storagePrefix } from './row-filter';
 import { createColumnManagementModal } from './modals';
-import { ManagedColumn } from './modals/column-management-modal';
+import { ColumnLayout } from './modals/column-management-modal';
 
 /**
  * Housing both the row filter and name/label filter in the same file.
@@ -85,10 +85,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     rowFilters = [],
     data,
     hideNameFilter,
-    columnManagementID,
     columnLayout,
-    columnManagementType,
-    selectedColumns,
     hideLabelFilter,
     location,
     textFilter = filterTypeMap[FilterType.NAME],
@@ -335,15 +332,12 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
             </ToolbarFilter>
           </ToolbarFilter>
         </ToolbarItem>
-        {columnManagementID && (
+        {columnLayout?.id && (
           <ToolbarItem>
             <Button
               variant="plain"
               onClick={() =>
                 createColumnManagementModal({
-                  columnManagementID,
-                  columnManagementType,
-                  selectedColumns,
                   columnLayout,
                 })
               }
@@ -370,10 +364,7 @@ type FilterToolbarProps = {
   parseAutoComplete?: any;
   kinds?: any;
   labelPath?: string;
-  selectedColumns?: Set<string>;
-  columnManagementID?: string;
-  columnManagementType?: string;
-  columnLayout?: ManagedColumn;
+  columnLayout?: ColumnLayout;
 };
 
 export type RowFilter = {

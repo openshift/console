@@ -285,14 +285,14 @@ export const sortList = (
   return action(ActionType.SortList, { listId, field, func, orderBy });
 };
 export const setTableColumns = (id: string, selectedColumns: Set<string>) => {
-  let currentColumns;
+  let currentColumns = {};
   try {
     currentColumns = JSON.parse(localStorage.getItem(COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY)) || {};
   } catch (e) {
     // Error parsing the data, do not store the current filters
     /* eslint-disable-next-line no-console */
     console.error('Error parsing column filters from local storage', e);
-    return;
+    currentColumns = {};
   }
   currentColumns[id] = [...selectedColumns];
   localStorage.setItem(COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY, JSON.stringify(currentColumns));

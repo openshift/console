@@ -99,7 +99,7 @@ export const menuActions = [
   ...Kebab.factory.common,
 ];
 
-const podColumnInfo = {
+const podColumnInfo = Object.freeze({
   name: {
     classes: '',
     id: 'name',
@@ -160,7 +160,7 @@ const podColumnInfo = {
     id: 'ipaddress',
     title: 'IP Address',
   },
-};
+});
 
 const kind = 'Pod';
 const columnManagementID = referenceForModel(PodModel);
@@ -306,35 +306,35 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
         <TableData
           className={classNames(podColumnInfo.namespace.classes, 'co-break-word')}
           columns={columns}
-          columnId={podColumnInfo.namespace.id}
+          columnID={podColumnInfo.namespace.id}
         >
           <ResourceLink kind="Namespace" name={namespace} />
         </TableData>
         <TableData
           className={podColumnInfo.status.classes}
           columns={columns}
-          columnId={podColumnInfo.status.id}
+          columnID={podColumnInfo.status.id}
         >
           <Status status={phase} />
         </TableData>
         <TableData
           className={podColumnInfo.ready.classes}
           columns={columns}
-          columnId={podColumnInfo.ready.id}
+          columnID={podColumnInfo.ready.id}
         >
           {readyCount}/{totalContainers}
         </TableData>
         <TableData
           className={podColumnInfo.restarts.classes}
           columns={columns}
-          columnId={podColumnInfo.restarts.id}
+          columnID={podColumnInfo.restarts.id}
         >
           {restarts}
         </TableData>
         <TableData
           className={podColumnInfo.owner.classes}
           columns={columns}
-          columnId={podColumnInfo.owner.id}
+          columnID={podColumnInfo.owner.id}
         >
           {showNodes ? (
             <ResourceLink kind="Node" name={pod.spec.nodeName} namespace={namespace} />
@@ -345,42 +345,42 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
         <TableData
           className={podColumnInfo.memory.classes}
           columns={columns}
-          columnId={podColumnInfo.memory.id}
+          columnID={podColumnInfo.memory.id}
         >
           {bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-'}
         </TableData>
         <TableData
           className={podColumnInfo.cpu.classes}
           columns={columns}
-          columnId={podColumnInfo.cpu.id}
+          columnID={podColumnInfo.cpu.id}
         >
           {cores ? `${formatCores(cores)} cores` : '-'}
         </TableData>
         <TableData
           className={podColumnInfo.created.classes}
           columns={columns}
-          columnId={podColumnInfo.created.id}
+          columnID={podColumnInfo.created.id}
         >
           <Timestamp timestamp={creationTimestamp} />
         </TableData>
         <TableData
           className={podColumnInfo.node.classes}
           columns={columns}
-          columnId={podColumnInfo.node.id}
+          columnID={podColumnInfo.node.id}
         >
           <ResourceLink kind="Node" name={pod.spec.nodeName} namespace={namespace} />
         </TableData>
         <TableData
           className={podColumnInfo.labels.classes}
           columns={columns}
-          columnId={podColumnInfo.labels.id}
+          columnID={podColumnInfo.labels.id}
         >
           <LabelList kind={kind} labels={labels} />
         </TableData>
         <TableData
           className={podColumnInfo.ipaddress.classes}
           columns={columns}
-          columnId={podColumnInfo.ipaddress.id}
+          columnID={podColumnInfo.ipaddress.id}
         >
           {pod?.status?.hostIP ?? '-'}
         </TableData>
@@ -725,12 +725,10 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
   dispatchToProps,
 )((props: PodPageProps & PodPagePropsFromDispatch) => {
   const { canCreate = true, namespace, setPodMetrics, customData, ...listProps } = props;
-  let selectedColumns: Set<string> = new Set(
+  const selectedColumns: Set<string> = new Set(
     useSelector<RootState, string>(({ UI }) => UI.getIn(['columnManagement', columnManagementID])),
   );
-  if (_.isEmpty(selectedColumns)) {
-    selectedColumns = getSelectedColumns(props?.customData?.showNodes);
-  }
+  /* eslint-disable react-hooks/exhaustive-deps */
   React.useEffect(() => {
     if (showMetrics) {
       const updateMetrics = () =>
@@ -748,7 +746,7 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
       const id = setInterval(updateMetrics, 30 * 1000);
       return () => clearInterval(id);
     }
-  }, [namespace, setPodMetrics]);
+  }, [namespace]);
   /* eslint-enable react-hooks/exhaustive-deps */
   return (
     <ListPage
@@ -759,12 +757,14 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
       rowFilters={filters}
       namespace={namespace}
       customData={customData}
-      selectedColumns={selectedColumns}
-      columnManagementID={columnManagementID}
-      columnManagementType="Pod"
-      columnLayout={getHeader(props?.customData?.showNodes)().map((column) =>
-        _.pick(column, ['title', 'additional', 'id']),
-      )}
+      columnLayout={{
+        columns: getHeader(props?.customData?.showNodes)().map((column) =>
+          _.pick(column, ['title', 'additional', 'id']),
+        ),
+        id: columnManagementID,
+        selectedColumns,
+        type: 'Pod',
+      }}
     />
   );
 });

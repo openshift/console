@@ -44,7 +44,7 @@ export const WorkloadTableRow: React.FC<WorkloadTableRowProps> = ({
       </TableData>
       <TableData
         className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnId="namespace"
+        columnID="namespace"
       >
         <ResourceLink
           kind="Namespace"

@@ -133,19 +133,19 @@ describe(ColumnManagementModal.displayName, () => {
     wrapper = mount(
       <Provider store={store}>
         <ColumnManagementModal
-          columnManagementType={columnManagementType}
-          columnManagementID={columnManagementID}
-          selectedColumns={
-            new Set(
+          columnLayout={{
+            columns: columnLayout,
+            id: columnManagementID,
+            selectedColumns: new Set(
               columnLayout.reduce((acc, column) => {
                 if (column.id && !column.additional) {
                   acc.push(column.id);
                 }
                 return acc;
               }, []),
-            )
-          }
-          columnLayout={columnLayout}
+            ),
+            type: columnManagementType,
+          }}
         />
       </Provider>,
     );
@@ -175,19 +175,19 @@ describe(ColumnManagementModal.displayName, () => {
     wrapper = mount(
       <Provider store={store}>
         <ColumnManagementModal
-          columnManagementType={columnManagementType}
-          columnManagementID={columnManagementID}
-          selectedColumns={
-            new Set(
+          columnLayout={{
+            columns: columnLayoutNamespaceDisabled,
+            id: columnManagementID,
+            selectedColumns: new Set(
               columnLayoutNamespaceDisabled.reduce((acc, column) => {
                 if (column.id && !column.additional && column.id !== 'cpu') {
                   acc.push(column.id);
                 }
                 return acc;
               }, []),
-            )
-          }
-          columnLayout={columnLayoutNamespaceDisabled}
+            ),
+            type: columnManagementType,
+          }}
         />
       </Provider>,
     );

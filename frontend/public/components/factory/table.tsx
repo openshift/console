@@ -269,14 +269,14 @@ export type TableRowProps = {
 
 export const TableData: React.SFC<TableDataProps> = ({
   className,
-  columnId,
+  columnID,
   columns,
   ...props
 }) => {
   const showNamespace =
-    columnId === 'namespace' ? UIActions.getActiveNamespace() === ALL_NAMESPACES_KEY : true;
+    columnID !== 'namespace' || UIActions.getActiveNamespace() === ALL_NAMESPACES_KEY;
   return (
-    ((!_.isEmpty(columns) ? columns.has(columnId) : true) && showNamespace && (
+    ((!_.isEmpty(columns) ? columns.has(columnID) : true) && showNamespace && (
       <td {...props} className={className} role="gridcell" />
     )) ||
     null
@@ -285,7 +285,7 @@ export const TableData: React.SFC<TableDataProps> = ({
 TableData.displayName = 'TableData';
 export type TableDataProps = {
   className?: string;
-  columnId?: string;
+  columnID?: string;
   columns?: Set<string>;
   id?: string;
 };
@@ -442,16 +442,19 @@ type ComponentProps = {
   kindObj?: K8sResourceKindReference;
 };
 
-const getActiveColumns = (Header, componentProps, activeColumns) => {
+const getActiveColumns = (
+  Header: any,
+  componentProps: ComponentProps,
+  activeColumns: Set<string>,
+) => {
   let columns = Header(componentProps);
   if (_.isEmpty(activeColumns) && columns.find((col) => col.additional)) {
     activeColumns = new Set(
-      columns.reduce((acc, curr) => {
-        if (curr.id && !curr.additional) {
-          acc.push(curr.id);
+      columns.map((col) => {
+        if (col.id && !col.additional) {
+          return col.id;
         }
-        return acc;
-      }, []),
+      }),
     );
   }
   if (!_.isEmpty(activeColumns)) {
@@ -459,7 +462,7 @@ const getActiveColumns = (Header, componentProps, activeColumns) => {
   }
 
   const showNamespace = UIActions.getActiveNamespace() === ALL_NAMESPACES_KEY;
-  columns = columns.filter((column) => (column.id === 'namespace' ? showNamespace : true));
+  columns = columns.filter((column) => column.id !== 'namespace' || showNamespace);
   return columns;
 };
 

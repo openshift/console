@@ -79,7 +79,7 @@ export default (state: UIState, action: UIAction): UIState => {
 
     const storedPins = localStorage.getItem(PINNED_RESOURCES_LOCAL_STORAGE_KEY);
     const pinnedResources = storedPins ? JSON.parse(storedPins) : {};
-    let storedTableColumns;
+    let storedTableColumns = {};
     try {
       storedTableColumns =
         JSON.parse(localStorage.getItem(COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY)) || {};
@@ -87,7 +87,6 @@ export default (state: UIState, action: UIAction): UIState => {
       // Error parsing the data, do not store the current filters
       /* eslint-disable-next-line no-console */
       console.error('Error parsing column filters from local storage', e);
-      return;
     }
 
     return ImmutableMap({

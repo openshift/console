@@ -3,7 +3,6 @@ import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useDispatch } from 'react-redux';
-import * as _ from 'lodash';
 import {
   Alert,
   DataList,
@@ -55,19 +54,16 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps> = ({
   cancel,
   close,
   columnLayout,
-  columnManagementID,
-  columnManagementType,
-  selectedColumns,
 }) => {
   const dispatch = useDispatch();
-  const defaultColumns = !_.isEmpty(selectedColumns)
-    ? columnLayout.filter((column) => column.id && !column.additional)
-    : [];
-  const additionalColumns = !_.isEmpty(selectedColumns)
-    ? columnLayout.filter((column) => column.additional)
-    : [];
+  const defaultColumns = columnLayout.columns.filter((column) => column.id && !column.additional);
+  const additionalColumns = columnLayout.columns.filter((column) => column.additional);
 
-  const [checkedColumns, setCheckedColumns] = React.useState(new Set(selectedColumns));
+  const [checkedColumns, setCheckedColumns] = React.useState(
+    columnLayout.selectedColumns.size !== 0
+      ? new Set(columnLayout.selectedColumns)
+      : new Set(defaultColumns.map((col) => col.id)),
+  );
 
   const onColumnChange = (checked: boolean, event: React.SyntheticEvent): void => {
     const updatedCheckedColumns = new Set<string>(checkedColumns);
@@ -80,7 +76,7 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps> = ({
 
   const submit = (event): void => {
     event.preventDefault();
-    dispatch(setTableColumns(columnManagementID, checkedColumns));
+    dispatch(setTableColumns(columnLayout.id, checkedColumns));
     close();
   };
 
@@ -112,7 +108,7 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps> = ({
         <div className="row co-m-form-row">
           <div className="col-sm-12">
             <span className="col-sm-6">
-              <label className="control-label">{`Default ${columnManagementType} Columns`}</label>
+              <label className="control-label">Default {columnLayout.type} Columns</label>
               <DataList aria-label="default column list" id="defalt-column-management" isCompact>
                 {defaultColumns.map((defaultColumn) => (
                   <DataListRow
@@ -173,10 +169,14 @@ type DataListRowProps = {
 export type ColumnManagementModalProps = {
   cancel?: () => void;
   close?: () => void;
-  columnManagementID: string;
+  columnLayout: ColumnLayout;
+};
+
+export type ColumnLayout = {
+  id: string;
+  columns: ManagedColumn[];
   selectedColumns: Set<string>;
-  columnManagementType: string;
-  columnLayout: ManagedColumn[];
+  type: string;
 };
 
 export type ManagedColumn = {
