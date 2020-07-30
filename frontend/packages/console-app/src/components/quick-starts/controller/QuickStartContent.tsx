@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { QuickStartStatus, QuickStartTaskStatus, QuickStart } from '../utils/quick-start-types';
+import { QuickStartTaskStatus, QuickStart } from '../utils/quick-start-types';
 import QuickStartIntroduction from './QuickStartIntroduction';
 import QuickStartTasks from './QuickStartTasks';
 import QuickStartConclusion from './QuickStartConclusion';
@@ -8,7 +8,6 @@ import './QuickStartContent.scss';
 
 type QuickStartContentProps = {
   quickStart: QuickStart;
-  status: QuickStartStatus;
   taskNumber: number;
   allTaskStatuses: QuickStartTaskStatus[];
   onTaskSelect: (selectedTaskNumber: number) => void;
@@ -18,7 +17,6 @@ type QuickStartContentProps = {
 
 const QuickStartContent: React.FC<QuickStartContentProps> = ({
   quickStart,
-  status,
   taskNumber,
   allTaskStatuses,
   onTaskSelect,
@@ -26,10 +24,10 @@ const QuickStartContent: React.FC<QuickStartContentProps> = ({
   onQuickStartChange,
 }) => {
   const { introduction, tasks, conclusion, nextQuickStart } = quickStart;
-
+  const totalTasks = tasks.length;
   return (
     <div className="co-quick-start-content">
-      {status === QuickStartStatus.NOT_STARTED && (
+      {taskNumber === -1 && (
         <QuickStartIntroduction
           tasks={tasks}
           allTaskStatuses={allTaskStatuses}
@@ -37,7 +35,7 @@ const QuickStartContent: React.FC<QuickStartContentProps> = ({
           onTaskSelect={onTaskSelect}
         />
       )}
-      {status === QuickStartStatus.IN_PROGRESS && (
+      {taskNumber > -1 && taskNumber < totalTasks && (
         <QuickStartTasks
           tasks={tasks}
           taskNumber={taskNumber}
@@ -46,7 +44,7 @@ const QuickStartContent: React.FC<QuickStartContentProps> = ({
           onTaskSelect={onTaskSelect}
         />
       )}
-      {status === QuickStartStatus.COMPLETE && (
+      {taskNumber === totalTasks && (
         <QuickStartConclusion
           tasks={tasks}
           conclusion={conclusion}

@@ -17,7 +17,7 @@ type State = Map<string, string | Map<string, string | number>>;
 const getDefaultQuickStartState = (totalTasks: number) => {
   const defaultQuickStartState = {
     status: QuickStartStatus.NOT_STARTED,
-    taskNumber: 0,
+    taskNumber: -1,
   };
   if (totalTasks) {
     for (let i = 0; i < totalTasks; i++) {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { getQuickStart } from '../../utils/quick-start-utils';
-import { QuickStartStatus, QuickStartTaskStatus } from '../../utils/quick-start-types';
+import { QuickStartTaskStatus } from '../../utils/quick-start-types';
 import QuickStartContent from '../QuickStartContent';
 import QuickStartIntroduction from '../QuickStartIntroduction';
 import QuickStartTasks from '../QuickStartTasks';
@@ -13,13 +13,12 @@ let wrapper: ShallowWrapper<QuickStartContentProps>;
 
 const props: QuickStartContentProps = {
   quickStart: getQuickStart('serverless-explore'),
-  status: QuickStartStatus.NOT_STARTED,
   allTaskStatuses: [
     QuickStartTaskStatus.INIT,
     QuickStartTaskStatus.INIT,
     QuickStartTaskStatus.INIT,
   ],
-  taskNumber: 0,
+  taskNumber: -1,
   onTaskReview: jest.fn(),
   onTaskSelect: jest.fn(),
   onQuickStartChange: jest.fn(),
@@ -36,15 +35,15 @@ describe('QuickStartContent', () => {
     expect(wrapper.find(QuickStartConclusion).length).toBe(0);
   });
 
-  it('should render QuickStartTasks when the tour status is In Progress', () => {
-    wrapper = shallow(<QuickStartContent {...props} status={QuickStartStatus.IN_PROGRESS} />);
+  it('should render QuickStartTasks when the tour is In Progress', () => {
+    wrapper = shallow(<QuickStartContent {...props} taskNumber={1} />);
     expect(wrapper.find(QuickStartIntroduction).length).toBe(0);
     expect(wrapper.find(QuickStartTasks).length).toBe(1);
     expect(wrapper.find(QuickStartConclusion).length).toBe(0);
   });
 
-  it('should render QuickStartConclusion when the tour status is Complete', () => {
-    wrapper = shallow(<QuickStartContent {...props} status={QuickStartStatus.COMPLETE} />);
+  it('should render QuickStartConclusion when the tour is Complete', () => {
+    wrapper = shallow(<QuickStartContent {...props} taskNumber={3} />);
     expect(wrapper.find(QuickStartIntroduction).length).toBe(0);
     expect(wrapper.find(QuickStartTasks).length).toBe(0);
     expect(wrapper.find(QuickStartConclusion).length).toBe(1);

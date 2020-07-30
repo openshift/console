@@ -1,4 +1,6 @@
 .co-quick-start-footer {
-  margin-top: var(--pf-global--spacer--md);
   background-color: var(--pf-global--Color--light-100);
+  bottom: 0;
+  position: sticky;
+  padding: var(--pf-global--spacer--sm) 0;
 }

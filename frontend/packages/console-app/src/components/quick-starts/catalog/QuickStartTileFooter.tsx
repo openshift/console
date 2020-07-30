@@ -30,8 +30,12 @@ const QuickStartTileFooter: React.FC<Props> = ({
 
   const restartQuickStart = React.useCallback(() => {
     startQuickStart();
-    setQuickStartTaskNumber(quickStartId, 0);
+    setQuickStartTaskNumber(quickStartId, -1);
   }, [quickStartId, setQuickStartTaskNumber, startQuickStart]);
+
+  const reviewQuickStart = React.useCallback(() => {
+    setQuickStartTaskNumber(quickStartId, -1);
+  }, [quickStartId, setQuickStartTaskNumber]);
 
   return (
     <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
@@ -51,7 +55,7 @@ const QuickStartTileFooter: React.FC<Props> = ({
       )}
       {status === QuickStartStatus.COMPLETE && (
         <FlexItem>
-          <Button variant="link" isInline>
+          <Button onClick={reviewQuickStart} variant="link" isInline>
             Review the tour
           </Button>
         </FlexItem>
