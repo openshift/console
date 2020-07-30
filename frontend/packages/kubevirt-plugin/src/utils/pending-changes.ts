@@ -3,14 +3,12 @@ import { VMIWrapper } from '../k8s/wrapper/vm/vmi-wrapper';
 import { PendingChanges, IsPendingChange, VMTabURLEnum, VMTabEnum } from '../components/vms/types';
 import {
   isFlavorChanged,
-  isCDROMChanged,
   isBootOrderChanged,
   isEnvDisksChanged,
   isNicsChanged,
   isDisksChanged,
 } from '../selectors/vm-like/next-run-changes';
 import { vmFlavorModal } from '../components/modals';
-import { VMCDRomModal } from '../components/modals/cdrom-vm-modal/vm-cdrom-modal';
 import { BootOrderModal } from '../components/modals/boot-order-modal';
 import { history } from '@console/internal/components/utils/router';
 import { VMKind, VMIKind } from '../types';
@@ -24,14 +22,6 @@ export const getPendingChanges = (vmWrapper: VMWrapper, vmiWrapper: VMIWrapper):
       execAction: () => {
         history.push(getVMTabURL(vm, VMTabURLEnum.details));
         vmFlavorModal({ vmLike: vm, blocking: true });
-      },
-      vmTab: VMTabEnum.details,
-    },
-    [IsPendingChange.cdroms]: {
-      isPendingChange: isCDROMChanged(vmWrapper, vmiWrapper),
-      execAction: () => {
-        history.push(getVMTabURL(vm, VMTabURLEnum.details));
-        VMCDRomModal({ vmLikeEntity: vm, modalClassName: 'modal-lg' });
       },
       vmTab: VMTabEnum.details,
     },

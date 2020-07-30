@@ -10,6 +10,7 @@ import {
   SplitItem,
   TextArea,
   TextInput,
+  Title,
 } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { confirmModal } from '@console/internal/components/modals';
@@ -289,6 +290,9 @@ const CloudInitTabComponent: React.FC<ResultTabComponentProps> = ({
         />
       )}
       <Form>
+        <Title headingLevel="h5" size="lg">
+          Cloud-init
+        </Title>
         <InlineBooleanRadio
           id="cloud-init-edit-mode"
           isDisabled={!isEditable}

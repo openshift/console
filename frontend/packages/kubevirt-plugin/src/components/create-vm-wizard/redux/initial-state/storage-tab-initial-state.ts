@@ -11,7 +11,7 @@ import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { BinaryUnit } from '../../../form/size-unit-utils';
-import { WINTOOLS_CONTAINER_NAMES } from '../../../modals/cdrom-vm-modal/constants';
+import { WINTOOLS_CONTAINER_NAMES } from '../../../../constants';
 import { InitialStepStateGetter } from './types';
 import {
   getDefaultSCAccessModes,

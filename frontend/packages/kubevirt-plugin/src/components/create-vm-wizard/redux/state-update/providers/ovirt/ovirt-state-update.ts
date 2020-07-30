@@ -296,12 +296,7 @@ const providerUpdater = (options: UpdateOptions) => {
     }),
   );
 
-  [
-    VMWizardTab.STORAGE,
-    VMWizardTab.NETWORKING,
-    VMWizardTab.ADVANCED_CLOUD_INIT,
-    VMWizardTab.ADVANCED_VIRTUAL_HARDWARE,
-  ].forEach((tab) => {
+  [VMWizardTab.STORAGE, VMWizardTab.NETWORKING, VMWizardTab.ADVANCED_CLOUD_INIT].forEach((tab) => {
     const isDisabled = isOvProvider;
     if (!!iGetIn(iGetCreateVMWizardTabs(state, id), [tab, 'isCreateDisabled']) !== isDisabled) {
       dispatch(

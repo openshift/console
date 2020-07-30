@@ -55,8 +55,8 @@ const getStoragesData = ({
     diskInterface: disk.getDiskInterface(),
     size: disk.getReadableSize(),
     storageClass: disk.getStorageClassName(),
-    type: disk.getType(),
     metadata: { name: disk.getName() },
+    type: disk.getType(),
   }));
 };
 
@@ -85,6 +85,11 @@ const getHeader = (columnClasses: string[]) => () =>
       {
         title: 'Size',
         sortField: 'size',
+        transforms: [sortable],
+      },
+      {
+        title: 'Drive',
+        sortField: 'type',
         transforms: [sortable],
       },
       {

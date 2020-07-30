@@ -11,7 +11,6 @@ import { Disk, Network, VirtualMachineTemplateModel } from '../types/types';
 import * as kubevirtDetailView from '../../views/kubevirtUIResource.view';
 import {
   vmDetailFlavorEditButton,
-  vmDetailCdEditButton,
   vmDetailBootOrderEditButton,
   vmDetailDedicatedResourcesEditButton,
   vmDetailStatusEditButton,
@@ -197,12 +196,6 @@ export class KubevirtUIResource<T extends BaseVMBuilderData> extends UIResource 
     await click(vmDetailFlavorEditButton(this.namespace, this.name));
     await browser.wait(until.presenceOf(kubevirtDetailView.modalTitle));
     await waitForNoLoaders();
-  }
-
-  async modalEditCDRoms() {
-    await click(vmDetailCdEditButton(this.namespace, this.name));
-    await browser.wait(until.presenceOf(kubevirtDetailView.modalTitle));
-    await isLoaded();
   }
 
   async modalEditBootOrder() {

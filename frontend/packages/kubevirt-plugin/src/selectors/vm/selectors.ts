@@ -8,7 +8,7 @@ import {
   TEMPLATE_OS_NAME_ANNOTATION,
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../constants/vm';
-import { CPURaw, V1Network, V1NetworkInterface, VMIKind, VMKind } from '../../types';
+import { CPURaw, V1Network, V1NetworkInterface, VMKind } from '../../types';
 import { findKeySuffixValue, getSimpleName, getValueByPrefix } from '../utils';
 import { getAnnotations, getLabels } from '../selectors';
 import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
@@ -19,10 +19,8 @@ import {
   getVolumeContainerImage,
   getVolumePersistentVolumeClaimName,
 } from './volume';
-import { getVMIDisks } from '../vmi/basic';
-import { VirtualMachineModel } from '../../models';
 import { V1Volume } from '../../types/vm/disk/V1Volume';
-import { VMGenericLikeEntityKind, VMILikeEntityKind } from '../../types/vmLike';
+import { VMGenericLikeEntityKind } from '../../types/vmLike';
 import { RunStrategy, StateChangeRequest } from '../../constants/vm/vm';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 
@@ -145,11 +143,6 @@ export const getCloudInitVolume = (vm: VMKind) => {
 
 export const hasAutoAttachPodInterface = (vm: VMKind, defaultValue = false) =>
   _.get(vm, 'spec.template.spec.domain.devices.autoattachPodInterface', defaultValue);
-
-export const getCDRoms = (vm: VMILikeEntityKind) =>
-  vm.kind === VirtualMachineModel.kind
-    ? getDisks(vm as VMKind).filter((device) => !!device.cdrom)
-    : getVMIDisks(vm as VMIKind).filter((device) => !!device.cdrom);
 
 export const getContainerImageByDisk = (vm: VMKind, name: string) =>
   getVolumeContainerImage(getVolumes(vm).find((vol) => name === vol.name));

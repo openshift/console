@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { WINTOOLS_CONTAINER_NAMES } from '../../components/modals/cdrom-vm-modal/constants';
+import { WINTOOLS_CONTAINER_NAMES } from '../../constants';
 
 export const getVolumePersistentVolumeClaimName = (volume) =>
   _.get(volume, 'persistentVolumeClaim.claimName');

@@ -112,7 +112,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   });
   const combinedDiskSize = combinedDisk.getSize();
 
-  const type = disk.getType() || DiskType.DISK;
+  const [type, setType] = React.useState<DiskType>(disk.getType() || DiskType.DISK);
 
   const [source, setSource] = React.useState<StorageUISource>(
     combinedDisk.getInitialSource(isEditing),
@@ -231,6 +231,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
       pvc: pvcValidation,
       diskInterface: busValidation,
       url: urlValidation,
+      type: typeValidation,
     },
     isValid,
     hasAllRequiredFilled,
@@ -312,6 +313,14 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
 
   const onToggleAdvancedDrawer = () => {
     setAdvancedDrawerIsOpen(!advancedDrawerIsOpen);
+  };
+
+  const onTypeChanged = (t) => {
+    const newType = DiskType.fromString(t);
+    setType(newType);
+    if (newType === DiskType.CDROM && source === StorageUISource.BLANK) {
+      onSourceChanged(StorageUISource.URL.getValue());
+    }
   };
 
   return (
@@ -417,10 +426,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
           >
             <TextInput
               validated={!isValidationError(nameValidation) ? 'default' : 'error'}
-              isDisabled={isDisabled(
-                'name',
-                !usedDiskNames || !source.isNameEditingSupported(type),
-              )}
+              isDisabled={isDisabled('name', !usedDiskNames)}
               isRequired
               id={asId('name')}
               value={name}
@@ -494,6 +500,21 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                   }`}
                 />
               ))}
+            </FormSelect>
+          </FormRow>
+          <FormRow title="Type" fieldId={asId('type')} validation={typeValidation} isRequired>
+            <FormSelect
+              onChange={onTypeChanged}
+              value={asFormSelectValue(type.getValue())}
+              id={asId('type')}
+              isDisabled={isDisabled('type')}
+            >
+              <FormSelectPlaceholderOption isDisabled placeholder="--- Select Type ---" />
+              {DiskType.getAll()
+                .filter((dtype) => !dtype.isDeprecated() || dtype === type)
+                .map((t) => (
+                  <FormSelectOption key={t.getValue()} value={t.getValue()} label={t.toString()} />
+                ))}
             </FormSelect>
           </FormRow>
           {source.requiresStorageClass() && (

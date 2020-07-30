@@ -94,7 +94,6 @@ describe('Create VM from Template using wizard', () => {
         profile: await detailView.vmDetailWorkloadProfile(testName, vmt.name).getText(),
         bootOrder: await detailView.vmDetailBootOrder(testName, vmt.name).getText(),
         flavor: await detailView.vmDetailFlavor(testName, vmt.name).getText(),
-        cdrom: await detailView.vmDetailCd(testName, vmt.name).getText(),
       };
 
       const equal = isEqual(found, expectation);
