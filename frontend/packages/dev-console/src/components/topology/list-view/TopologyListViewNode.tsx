@@ -1,14 +1,18 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import {
+  Button,
   DataList,
   DataListCell,
   DataListContent,
   DataListItem,
   DataListItemCells,
   DataListItemRow,
+  Tooltip,
+  TooltipPosition,
 } from '@patternfly/react-core';
 import { isNode, Node, observer } from '@patternfly/react-topology';
+import { getSeverityAlertType, AlertSeverityIcon, getFiringAlerts } from '@console/shared';
 import { useSearchFilter } from '../filters';
 import { getResourceKind } from '../topology-utils';
 import { labelForNodeKind } from './list-view-utils';
@@ -19,6 +23,12 @@ import {
   StatusCell,
   TypedResourceBadgeCell,
 } from './cells';
+import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
+import { connect } from 'react-redux';
+
+interface DispatchProps {
+  onSelectTab?: (name: string) => void;
+}
 
 interface TopologyListViewNodeProps {
   item: Node;
@@ -30,10 +40,11 @@ interface TopologyListViewNodeProps {
   additionalCells?: React.ReactNode[];
 }
 
-const ObservedTopologyListViewNode: React.FC<TopologyListViewNodeProps> = ({
+const ObservedTopologyListViewNode: React.FC<TopologyListViewNodeProps & DispatchProps> = ({
   item,
   selectedIds,
   onSelect,
+  onSelectTab,
   badgeCell,
   labelCell,
   groupResourcesCell,
@@ -53,12 +64,38 @@ const ObservedTopologyListViewNode: React.FC<TopologyListViewNodeProps> = ({
     labelForNodeKind(getResourceKind(a)).localeCompare(labelForNodeKind(getResourceKind(b))),
   );
 
+  let alertIndicator = null;
+  const alerts = getFiringAlerts(item.getData().data?.monitoringAlerts ?? []);
+  if (alerts?.length > 0) {
+    const onAlertClick = () => {
+      onSelect([item.getId()]);
+      onSelectTab('Monitoring');
+    };
+    const severityAlertType = getSeverityAlertType(alerts);
+    alertIndicator = (
+      <Tooltip key="monitoringAlert" content="Monitoring Alert" position={TooltipPosition.right}>
+        <Button
+          variant="plain"
+          className="odc-topology-list-view__alert-button"
+          onClick={onAlertClick}
+        >
+          <AlertSeverityIcon severityAlertType={severityAlertType} />
+        </Button>
+      </Tooltip>
+    );
+  }
+
   const cells = [];
   cells.push(badgeCell || <TypedResourceBadgeCell key="type-icon" kind={kind} />);
   cells.push(
     labelCell || (
-      <DataListCell key="label" id={`${item.getId()}_label`}>
+      <DataListCell
+        className="odc-topology-list-view__label-cell"
+        key="label"
+        id={`${item.getId()}_label`}
+      >
         {item.getLabel()}
+        {alertIndicator}
       </DataListCell>
     ),
   );
@@ -105,5 +142,12 @@ const ObservedTopologyListViewNode: React.FC<TopologyListViewNodeProps> = ({
   );
 };
 
-const TopologyListViewNode = observer(ObservedTopologyListViewNode);
+const TopologyListViewNodeDispatchToProps = (dispatch): DispatchProps => ({
+  onSelectTab: (name) => dispatch(selectOverviewDetailsTab(name)),
+});
+
+const TopologyListViewNode = connect<{}, DispatchProps, TopologyListViewNodeProps>(
+  null,
+  TopologyListViewNodeDispatchToProps,
+)(observer(ObservedTopologyListViewNode));
 export { TopologyListViewNode };

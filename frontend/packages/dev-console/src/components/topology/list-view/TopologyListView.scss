@@ -61,6 +61,14 @@
       margin-left: var(--pf-global--spacer--sm);
     }
   }
+  &__label-cell {
+    display: inline-flex;
+    align-items: start;
+  }
+  &__alert-button {
+    padding: 2px var(--pf-global--spacer--xs);
+    margin-left: var(--pf-global--spacer--xs);
+  }
   &__resource-icon-cell.pf-c-data-list__cell {
     margin-right: var(--pf-global--spacer--sm);
   }
