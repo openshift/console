@@ -1,4 +1,6 @@
 import * as _ from 'lodash';
+import { ALL_APPLICATIONS_KEY } from '@console/shared';
+import { referenceFor } from '@console/internal/module/k8s';
 import {
   topologyDataModel,
   dataModel,
@@ -8,11 +10,11 @@ import {
 import { updateModelFromFilters } from '../updateModelFromFilters';
 import { EXPAND_GROUPS_FILTER_ID, getFilterById, SHOW_GROUPS_FILTER_ID } from '../../filters';
 import { DEFAULT_TOPOLOGY_FILTERS, EXPAND_APPLICATION_GROUPS_FILTER_ID } from '../../filters/const';
-import { ALL_APPLICATIONS_KEY } from '@console/shared/src';
 import { baseDataModelGetter } from '../data-transformer';
 import { getWorkloadResources } from '../transform-utils';
 import { WORKLOAD_TYPES } from '../../topology-utils';
-import { DisplayFilters } from '../../topology-types';
+import { DisplayFilters, TopologyDisplayFilterType } from '../../topology-types';
+import { TYPE_WORKLOAD } from '../../components';
 
 const namespace = 'test-project';
 
@@ -117,5 +119,32 @@ describe('topology model ', () => {
     );
     expect(newModel.nodes.filter((n) => !n.group).length).toBe(10);
     expect(newModel.nodes.filter((n) => n.group).length).toBe(0);
+  });
+
+  it('should remove filtered kinds', () => {
+    const topologyTransformedData = getTransformedTopologyData();
+    filters.push({
+      type: TopologyDisplayFilterType.kind,
+      id: referenceFor(MockResources.deployments.data[0]),
+      label: 'DeploymentConfig',
+      priority: 1,
+      value: true,
+    });
+    filters.push({
+      type: TopologyDisplayFilterType.kind,
+      id: referenceFor(MockResources.cronJobs.data[0]),
+      label: 'DeploymentConfig',
+      priority: 1,
+      value: true,
+    });
+    const filteredModel = updateModelFromFilters(
+      topologyTransformedData,
+      filters,
+      ALL_APPLICATIONS_KEY,
+      filterers,
+    );
+    expect(filteredModel.nodes.filter((n) => n.type === TYPE_WORKLOAD).length).toBe(
+      MockResources.deployments.data.length + MockResources.cronJobs.data.length,
+    );
   });
 });

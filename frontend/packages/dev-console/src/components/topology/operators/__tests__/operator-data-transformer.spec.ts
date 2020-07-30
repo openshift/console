@@ -1,9 +1,13 @@
 import * as _ from 'lodash';
 import { getImageForCSVIcon, ALL_APPLICATIONS_KEY } from '@console/shared';
 import { Model, NodeModel } from '@patternfly/react-topology';
-import { WorkloadData, TopologyDataResources } from '../../topology-types';
+import {
+  WorkloadData,
+  TopologyDataResources,
+  TopologyDisplayFilterType,
+} from '../../topology-types';
 import { MockResources, TEST_KINDS_MAP } from '../../__tests__/topology-test-data';
-import { TYPE_OPERATOR_BACKED_SERVICE } from '../components/const';
+import { TYPE_OPERATOR_BACKED_SERVICE, TYPE_OPERATOR_WORKLOAD } from '../components/const';
 import {
   DEFAULT_TOPOLOGY_FILTERS,
   EXPAND_GROUPS_FILTER_ID,
@@ -42,9 +46,12 @@ const getNodeByName = (name: string, graphData: Model): NodeModel => {
 
 describe('operator data transformer ', () => {
   let mockResources: TopologyDataResources;
+  let filters;
 
   beforeEach(() => {
     mockResources = _.cloneDeep(MockResources);
+    filters = _.cloneDeep(DEFAULT_TOPOLOGY_FILTERS);
+    filters.push(...getTopologyFilters());
   });
 
   it('should return graph nodes for operator backed services', async () => {
@@ -71,8 +78,6 @@ describe('operator data transformer ', () => {
   });
 
   it('should flag operator groups as collapsed when display filter is set', async () => {
-    const filters = [...DEFAULT_TOPOLOGY_FILTERS];
-    filters.push(...getTopologyFilters());
     const topologyTransformedData = await getTransformedTopologyData(mockResources);
     getFilterById(EXPAND_OPERATORS_RELEASE_FILTER, filters).value = false;
     const newModel = updateModelFromFilters(
@@ -86,8 +91,6 @@ describe('operator data transformer ', () => {
   });
 
   it('should flag operator groups as collapsed when all groups are collapsed', async () => {
-    const filters = [...DEFAULT_TOPOLOGY_FILTERS];
-    filters.push(...getTopologyFilters());
     const topologyTransformedData = await getTransformedTopologyData(mockResources);
     getFilterById(EXPAND_OPERATORS_RELEASE_FILTER, filters).value = true;
     getFilterById(EXPAND_GROUPS_FILTER_ID, filters).value = false;
@@ -104,8 +107,6 @@ describe('operator data transformer ', () => {
   });
 
   it('should flag not show operator groups when show groups is false', async () => {
-    const filters = [...DEFAULT_TOPOLOGY_FILTERS];
-    filters.push(...getTopologyFilters());
     const topologyTransformedData = await getTransformedTopologyData(mockResources);
     getFilterById(SHOW_GROUPS_FILTER_ID, filters).value = false;
     const newModel = updateModelFromFilters(
@@ -115,5 +116,19 @@ describe('operator data transformer ', () => {
       filterers,
     );
     expect(newModel.nodes.filter((n) => n.type === TYPE_OPERATOR_BACKED_SERVICE).length).toBe(0);
+  });
+
+  it('should show the operator group and its children when filtered by the group', async () => {
+    const graphData = await getTransformedTopologyData(mockResources);
+    filters.push({
+      type: TopologyDisplayFilterType.kind,
+      id: 'jaegertracing.io~v1~Jaeger',
+      label: 'Jaeger',
+      priority: 1,
+      value: true,
+    });
+    const newModel = updateModelFromFilters(graphData, filters, ALL_APPLICATIONS_KEY, filterers);
+    expect(newModel.nodes.filter((n) => n.type === TYPE_OPERATOR_BACKED_SERVICE)).toHaveLength(1);
+    expect(newModel.nodes.filter((n) => n.type === TYPE_OPERATOR_WORKLOAD)).toHaveLength(1);
   });
 });

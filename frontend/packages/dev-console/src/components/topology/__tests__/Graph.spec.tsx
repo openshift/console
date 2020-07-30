@@ -23,6 +23,7 @@ describe('Graph', () => {
         onSelectTab={() => {}}
         onFiltersChange={() => {}}
         onSupportedFiltersChange={() => {}}
+        onSupportedKindsChange={() => {}}
       />,
     );
   });

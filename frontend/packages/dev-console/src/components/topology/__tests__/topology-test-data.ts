@@ -2882,6 +2882,16 @@ export const sampleClusterServiceVersions: FirehoseResult = {
           'olm.api.e43efcaa45c9f8d0': 'required',
           'olm.copiedFrom': 'openshift-operators',
         },
+        ownerReferences: [
+          {
+            apiVersion: 'operators.coreos.com/v1alpha1',
+            blockOwnerDeletion: false,
+            controller: false,
+            kind: 'ClusterServiceVersion',
+            name: 'jaeger-operator.v1.13.1',
+            uid: '244daf36-98e3-4909-b98a-12835b4ec356',
+          },
+        ],
       },
       spec: {
         customresourcedefinitions: {

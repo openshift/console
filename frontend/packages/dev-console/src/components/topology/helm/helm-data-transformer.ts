@@ -76,7 +76,6 @@ export const getTopologyHelmReleaseGroupItem = (
     type: TYPE_HELM_RELEASE,
     resourceKind: 'HelmRelease',
     group: true,
-    resource: secret,
     label: releaseName,
     children: [uid],
     width: HELM_GROUP_WIDTH,
