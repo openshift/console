@@ -16,7 +16,7 @@ import { K8sResourceKind, PodKind, NodeKind } from '../module/k8s';
 import { allModels } from '../module/k8s/k8s-models';
 import { detectFeatures, clearSSARFlags } from './features';
 import { OverviewSpecialGroup } from '../components/overview/constants';
-import { setClusterID, setCreateProjectMessage, setUser, setConsoleLinks } from './common';
+import { setClusterID, setCreateProjectMessage, setUser } from './common';
 import { Rule } from '../components/monitoring/types';
 import { subsClient } from '../graphql/client';
 
@@ -63,7 +63,6 @@ export enum ActionType {
   UpdateOverviewLabels = 'updateOverviewLabels',
   UpdateOverviewFilterValue = 'updateOverviewFilterValue',
   UpdateTimestamps = 'updateTimestamps',
-  SetConsoleLinks = 'setConsoleLinks',
   SetPodMetrics = 'setPodMetrics',
   SetNamespaceMetrics = 'setNamespaceMetrics',
   SetNodeMetrics = 'setNodeMetrics',
@@ -445,7 +444,6 @@ const uiActions = {
   queryBrowserSetPollInterval,
   queryBrowserToggleIsEnabled,
   queryBrowserToggleSeries,
-  setConsoleLinks,
   setPodMetrics,
   setNamespaceMetrics,
   setNodeMetrics,

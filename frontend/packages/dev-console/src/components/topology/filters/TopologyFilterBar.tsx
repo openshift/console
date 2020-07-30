@@ -16,8 +16,10 @@ import { useQueryParams } from '@console/shared';
 import { RootState } from '@console/internal/redux';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { ExternalLink } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { TextFilter } from '@console/internal/components/factory';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { ConsoleLinkModel } from '@console/internal/models';
 import { setTopologyFilters } from '../redux/action';
 import { DisplayFilters } from '../topology-types';
 import {
@@ -36,7 +38,6 @@ type StateProps = {
   filters: DisplayFilters;
   supportedFilters: string[];
   supportedKinds: { [key: string]: number };
-  consoleLinks: K8sResourceKind[];
   namespace: string;
 };
 
@@ -60,9 +61,13 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
   onFiltersChange,
   visualization,
   showGraphView,
-  consoleLinks,
   namespace,
 }) => {
+  const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
+    isList: true,
+    kind: referenceForModel(ConsoleLinkModel),
+    optional: true,
+  });
   const kialiLink = getNamespaceDashboardKialiLink(consoleLinks, namespace);
   const queryParams = useQueryParams();
   const searchQuery = queryParams.get('searchQuery') || '';
@@ -145,7 +150,6 @@ const mapStateToProps = (state: RootState): StateProps => {
     filters: getTopologyFilters(state),
     supportedFilters: getSupportedTopologyFilters(state),
     supportedKinds: getSupportedTopologyKinds(state),
-    consoleLinks: state.UI.get('consoleLinks'),
     namespace: getActiveNamespace(state),
   };
   return states;
@@ -158,14 +162,13 @@ const dispatchToProps = (dispatch: Dispatch): DispatchProps => ({
 });
 
 const mergeProps = (
-  { filters, supportedFilters, supportedKinds, consoleLinks, namespace }: StateProps,
+  { filters, supportedFilters, supportedKinds, namespace }: StateProps,
   { onFiltersChange }: DispatchProps,
   { visualization, showGraphView }: OwnProps,
 ): MergeProps => ({
   filters,
   supportedFilters,
   supportedKinds,
-  consoleLinks,
   namespace,
   onFiltersChange,
   visualization,

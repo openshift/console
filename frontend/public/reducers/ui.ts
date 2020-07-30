@@ -113,7 +113,6 @@ export default (state: UIState, action: UIAction): UIState => {
         filterValue: '',
       }),
       user: {},
-      consoleLinks: [],
       monitoringDashboards: ImmutableMap({
         pollInterval: 30 * 1000,
         timespan: 30 * 60 * 1000,
@@ -364,9 +363,6 @@ export default (state: UIState, action: UIAction): UIState => {
     }
     case ActionType.UpdateTimestamps:
       return state.set('lastTick', action.payload.lastTick);
-
-    case ActionType.SetConsoleLinks:
-      return state.set('consoleLinks', action.payload.consoleLinks);
 
     case ActionType.SetPodMetrics:
       return state.setIn(['metrics', 'pod'], action.payload.podMetrics);

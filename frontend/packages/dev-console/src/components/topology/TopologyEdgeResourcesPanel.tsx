@@ -1,29 +1,27 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import * as _ from 'lodash';
 import { Edge } from '@patternfly/react-topology';
-import { RootState } from '@console/internal/redux';
-import { referenceFor, K8sResourceKind } from '@console/internal/module/k8s';
+import { ConsoleLinkModel } from '@console/internal/models';
+import { K8sResourceKind, referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import {
   ResourceLink,
   SidebarSectionHeading,
   ExternalLink,
 } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { TYPE_TRAFFIC_CONNECTOR } from './components/const';
 import { getNamespaceDashboardKialiLink, getResource } from './topology-utils';
 
-type StateProps = {
-  consoleLinks?: K8sResourceKind[];
-};
-
 export type TopologyEdgeResourcesPanelProps = {
   edge: Edge;
-} & StateProps;
+};
 
-const TopologyEdgeResourcesPanel: React.FC<TopologyEdgeResourcesPanelProps> = ({
-  edge,
-  consoleLinks,
-}) => {
+const TopologyEdgeResourcesPanel: React.FC<TopologyEdgeResourcesPanelProps> = ({ edge }) => {
+  const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
+    isList: true,
+    kind: referenceForModel(ConsoleLinkModel),
+    optional: true,
+  });
   const source = getResource(edge.getSource());
   const target = getResource(edge.getTarget());
   const resources = [source, target];
@@ -62,9 +60,4 @@ const TopologyEdgeResourcesPanel: React.FC<TopologyEdgeResourcesPanelProps> = ({
   );
 };
 
-const TopologyEdgeResourcesStateToProps = (state: RootState) => {
-  const consoleLinks = state.UI.get('consoleLinks');
-  return { consoleLinks };
-};
-
-export default connect(TopologyEdgeResourcesStateToProps)(TopologyEdgeResourcesPanel);
+export default TopologyEdgeResourcesPanel;
