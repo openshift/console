@@ -1040,16 +1040,23 @@ export type VolumeSnapshotClassKind = K8sResourceCommon & {
 
 export type PersistentVolumeClaimKind = K8sResourceCommon & {
   spec: {
-    accessModes: string;
+    accessModes: string[];
     resources: {
       requests: {
         storage: string;
       };
     };
     storageClassName: string;
-    volumeMode: string;
+    volumeMode?: string;
+    /* Parameters in a cloned PVC */
+    dataSource?: {
+      name: string;
+      kind: string;
+      apiGroup: string;
+    };
+    /**/
   };
-  status: {
+  status?: {
     phase: string;
   };
 };
