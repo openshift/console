@@ -9,7 +9,10 @@ import {
   UnknownIcon,
 } from '@patternfly/react-icons';
 import { getNamespace, getName } from '@console/shared/src';
-import { RedExclamationCircleIcon } from '@console/shared/src/components/status/icons';
+import {
+  RedExclamationCircleIcon,
+  YellowExclamationTriangleIcon,
+} from '@console/shared/src/components/status/icons';
 import GenericStatus from '@console/shared/src/components/status/GenericStatus';
 import { Progress, ProgressSize, Button, ButtonVariant } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
@@ -22,6 +25,11 @@ import { getVMLikeModel } from '../../selectors/vm';
 import { VMStatus as VMStatusEnum } from '../../constants/vm/vm-status';
 import { VMILikeEntityKind } from '../../types/vmLike';
 import { VMStatusBundle } from '../../statuses/vm/types';
+import { PENDING_CHANGES_POPOVER_MSG } from '../../strings/vm/status';
+import { saveAndRestartModal } from '../modals/save-and-restart-modal/save-and-restart-modal';
+import { history } from '@console/internal/components/utils/router';
+import { getVMTabURL } from '../../utils/url';
+import { VMTabURLEnum } from '../vms/types';
 
 import './vm-status.scss';
 
@@ -53,6 +61,33 @@ const VMStatusPopoverContent: React.FC<VMStatusPopoverContentProps> = ({
         </div>
       ))}
   </>
+);
+
+type PendingChangesPopoverContentProps = {
+  vm: VMKind;
+  vmi: VMIKind;
+};
+
+// Use onMouseUp instead of onClick since PF4 popup prevents
+// child components to use onClick and onMouseDown
+const PendingChangesPopoverContent: React.FC<PendingChangesPopoverContentProps> = ({ vm, vmi }) => (
+  <VMStatusPopoverContent key="pcPopover" message={PENDING_CHANGES_POPOVER_MSG}>
+    <Button
+      key={`pcRestartBtn-${getName(vm)}`}
+      className="co-modal-btn-link--inline"
+      variant={ButtonVariant.secondary}
+      onMouseUp={() => saveAndRestartModal(vm, vmi)}
+    >
+      Restart
+    </Button>
+    <Button
+      key={`pcViewDetailsBtn-${getName(vm)}`}
+      variant={ButtonVariant.plain}
+      onMouseUp={() => history.push(getVMTabURL(vm, VMTabURLEnum.details))}
+    >
+      View Details
+    </Button>
+  </VMStatusPopoverContent>
 );
 
 type ImporterPodsProps = {
@@ -111,11 +146,17 @@ const getVMILikeLink = (vmLike: VMILikeEntityKind) =>
     getNamespace(vmLike),
   )}/${VM_DETAIL_EVENTS_HREF}`;
 
-export const VMStatus: React.FC<VMStatusProps> = ({ vm, vmi, vmStatusBundle }) => {
+export const VMStatus: React.FC<VMStatusProps> = ({
+  vm,
+  vmi,
+  vmStatusBundle,
+  arePendingChanges,
+}) => {
   const vmiLike = vm || vmi;
 
   const { status, pod, progress, importerPodsStatuses } = vmStatusBundle;
   const title = status.toString(); // TODO status.toVerboseString() should be called to pass to popup header
+  const popoverTitle = arePendingChanges ? 'Pending Changes' : null;
   const message = vmStatusBundle.message || vmStatusBundle.detailedMessage;
   const detailedMessage = vmStatusBundle.message ? vmStatusBundle.detailedMessage : null;
   const isPaused = status === VMStatusEnum.PAUSED;
@@ -147,8 +188,16 @@ export const VMStatus: React.FC<VMStatusProps> = ({ vm, vmi, vmStatusBundle }) =
     icon = InProgressIcon;
   }
 
+  if (arePendingChanges) {
+    icon = YellowExclamationTriangleIcon;
+  }
+
   return (
-    <GenericStatus title={title || VMStatusEnum.UNKNOWN.toString()} Icon={icon}>
+    <GenericStatus
+      title={title || VMStatusEnum.UNKNOWN.toString()}
+      Icon={icon}
+      popoverTitle={popoverTitle}
+    >
       {(message || isPaused) && (
         <VMStatusPopoverContent key="popover" message={message} links={links} progress={progress}>
           {isPaused && (
@@ -168,6 +217,9 @@ export const VMStatus: React.FC<VMStatusProps> = ({ vm, vmi, vmStatusBundle }) =
           <ImporterPods key="importerPods" statuses={importerPodsStatuses} />
         </VMStatusPopoverContent>
       )}
+      {arePendingChanges && (
+        <PendingChangesPopoverContent key="pcPopoverContent" vm={vm} vmi={vmi} />
+      )}
     </GenericStatus>
   );
 };
@@ -183,4 +235,5 @@ type VMStatusProps = {
   vm: VMKind;
   vmi?: VMIKind;
   vmStatusBundle?: VMStatusBundle;
+  arePendingChanges?: boolean;
 };

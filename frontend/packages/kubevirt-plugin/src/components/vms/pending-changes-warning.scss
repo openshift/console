@@ -1,0 +1,19 @@
+.kv-warning--pf-c-list {
+    --pf-c-list--li--MarginTop: 0;
+    --pf-c-list--nested--MarginLeft: 0;
+}
+
+.kv-warning--pf-c-breadcrumb {
+    padding-bottom: 0;
+    padding-top: 0;
+}
+
+.kv-warning--comma-margin {
+    margin-right: 8px;
+    padding-top: 4px;
+}
+
+.kv-warning-changed-attrs {
+    display: flex;
+    flex-direction: row;
+}

@@ -55,9 +55,9 @@ export const getVolumes = (vm: VMKind, defaultValue: V1Volume[] = []): V1Volume[
 export const getDataVolumeTemplates = (vm: VMKind, defaultValue = []) =>
   _.get(vm, 'spec.dataVolumeTemplates') == null ? defaultValue : vm.spec.dataVolumeTemplates;
 
-export const getBootableDisks = (vm: VMKind, defaultValue: V1Disk[] = []): V1Disk[] => {
-  const volumeLookup = createBasicLookup(getVolumes(vm), getSimpleName);
-  return getDisks(vm, defaultValue).filter((disk) => {
+export const getBootableDisks = (vm: VMKind, disks?: V1Disk[], volumes?: V1Volume[]): V1Disk[] => {
+  const volumeLookup = createBasicLookup(volumes || getVolumes(vm), getSimpleName);
+  return (disks || getDisks(vm)).filter((disk) => {
     const volWrapper = new VolumeWrapper(volumeLookup[disk.name]);
     return !volWrapper.isEmpty() && volWrapper.getType() && !volWrapper.getType().isEnvType();
   });

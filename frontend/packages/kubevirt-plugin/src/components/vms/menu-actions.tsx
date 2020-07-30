@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
-import { K8sKind, K8sResourceCommon, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
+import { K8sKind, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { getName, getNamespace, YellowExclamationTriangleIcon } from '@console/shared';
 import { confirmModal } from '@console/internal/components/modals';
 import { VMIKind, VMKind } from '../../types/vm';
@@ -29,18 +29,12 @@ import { deleteVMIModal } from '../modals/menu-actions-modals/delete-vmi-modal';
 import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper';
 import { StatusGroup } from '../../constants/status-group';
 import { cancelVMImport } from '../../k8s/requests/vmimport';
+import { getActionMessage } from './constants';
 
 type ActionArgs = {
   vmi?: VMIKind;
   vmStatusBundle?: VMStatusBundle;
 };
-
-const getActionMessage = (obj: K8sResourceCommon, action: VMActionType | VMIActionType) => (
-  <>
-    Are you sure you want to {action} <strong>{getName(obj)}</strong> in namespace{' '}
-    <strong>{getNamespace(obj)}</strong>?
-  </>
-);
 
 export const menuActionDeleteVMImport = (
   kindObj: K8sKind,

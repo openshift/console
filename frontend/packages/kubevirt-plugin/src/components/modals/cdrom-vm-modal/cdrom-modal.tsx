@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { Form, Button, Tooltip, Alert, Text, TextVariants } from '@patternfly/react-core';
+import { Form, Button, Tooltip, Text, TextVariants } from '@patternfly/react-core';
 import {
   FirehoseResult,
   HandlePromiseProps,
@@ -14,22 +14,26 @@ import { getCDsPatch } from '../../../k8s/patches/vm/vm-cdrom-patches';
 import { getVMLikeModel, asVM, isWindows } from '../../../selectors/vm';
 import {
   getCDRoms,
+  isVMRunningOrExpectedRunning,
   getContainerImageByDisk,
   getURLSourceByDisk,
-  getPVCSourceByDisk,
-  getStorageSizeByDisk,
   getStorageClassNameByDisk,
-  isVMRunningOrExpectedRunning,
+  getStorageSizeByDisk,
+  getPVCSourceByDisk,
 } from '../../../selectors/vm/selectors';
 import { isValidationError, validateURL } from '../../../utils/validations/common';
 import { VMLikeEntityKind } from '../../../types/vmLike';
 import { CDRomRow } from './cdrom-row';
 import { getAvailableCDName } from './helpers';
-import { initialDisk, WINTOOLS_CONTAINER_NAMES, StorageType } from './constants';
+import { initialDisk, StorageType, WINTOOLS_CONTAINER_NAMES } from './constants';
 import './cdrom-modal.scss';
-import { CD, CDMap } from './types';
-import { VMKind } from '../../../types/vm';
+import { CDMap, CD } from './types';
+import { VMKind, VMIKind } from '../../../types/vm';
 import { useStorageClassConfigMap } from '../../../hooks/storage-class-config-map';
+import { PendingChangesAlert } from '../../Alerts/PendingChangesAlert';
+import { getLoadedData } from '../../../utils';
+import { MODAL_RESTART_IS_REQUIRED } from '../../../strings/vm/status';
+import { saveAndRestartModal } from '../save-and-restart-modal/save-and-restart-modal';
 
 export const AddCDButton = ({
   className,
@@ -74,11 +78,14 @@ export const CDRomModal = withHandlePromise((props: CDRomModalProps) => {
     winToolsContainer,
     cancel,
     close,
+    vmi: vmiProp,
   } = props;
   const vm = asVM(vmLikeEntity);
 
   const [storageClassConfigMap, isStorageClassConfigMapLoaded] = useStorageClassConfigMap();
   const inProgress = _inProgress || !isStorageClassConfigMapLoaded;
+  const vmi = getLoadedData(vmiProp);
+  const isVMRunning = isVMRunningOrExpectedRunning(vm);
 
   const mapCDsToSource = (cds) =>
     Object.assign(
@@ -123,12 +130,10 @@ export const CDRomModal = withHandlePromise((props: CDRomModalProps) => {
     );
 
   const [cds, setCDs] = React.useState<CDMap>(mapCDsToSource(getCDRoms(vm)));
-  const [showRestartAlert, setShowRestartAlert] = React.useState<boolean>(false);
   const [shouldPatch, setShouldPatch] = React.useState<boolean>(false);
 
   const isMaxCDsReached = _.size(cds) > 1;
   const onCDChange = (cdName: string, key: string, value: string) => {
-    setShowRestartAlert(true);
     setShouldPatch(true);
     const cd = { ...cds[cdName], [key]: value };
     if (key === StorageType.URL) {
@@ -149,7 +154,6 @@ export const CDRomModal = withHandlePromise((props: CDRomModalProps) => {
       name,
       newCD: true,
     };
-    setShowRestartAlert(true);
     setShouldPatch(true);
     setCDs({ ...cds, [name]: newCD });
   };
@@ -159,8 +163,7 @@ export const CDRomModal = withHandlePromise((props: CDRomModalProps) => {
     setCDs(_.omit(cds, cdName));
   };
 
-  const submit = async (e) => {
-    e.preventDefault();
+  const saveChanges = () => {
     if (shouldPatch) {
       const promise = k8sPatch(
         getVMLikeModel(vmLikeEntity),
@@ -171,6 +174,11 @@ export const CDRomModal = withHandlePromise((props: CDRomModalProps) => {
     } else {
       close();
     }
+  };
+
+  const submit = async (e) => {
+    e.preventDefault();
+    saveChanges();
   };
 
   const cdsValue = Object.values(cds);
@@ -186,13 +194,7 @@ export const CDRomModal = withHandlePromise((props: CDRomModalProps) => {
     <div className="modal-content">
       <ModalTitle>Edit CD-ROMs</ModalTitle>
       <ModalBody>
-        {showRestartAlert && isVMRunningOrExpectedRunning(vm) && (
-          <Alert
-            variant="info"
-            isInline
-            title="Changes will be applied when the virtual machine has been restarted"
-          />
-        )}
+        {isVMRunning && <PendingChangesAlert warningMsg={MODAL_RESTART_IS_REQUIRED} />}
         <Form className="pf-l-grid pf-m-gutter">
           {_.size(cds) > 0 ? (
             cdsValue.map((cd, i) => (
@@ -229,12 +231,14 @@ export const CDRomModal = withHandlePromise((props: CDRomModalProps) => {
         errorMessage={errorMessage}
         inProgress={inProgress}
         isDisabled={isFormInvalid || inProgress}
+        isSaveAndRestart={isVMRunning}
         submitButtonText="Save"
         onSubmit={submit}
         onCancel={(e) => {
           e.stopPropagation();
           cancel();
         }}
+        onSaveAndRestart={() => saveAndRestartModal(vm, vmi, saveChanges)}
       />
     </div>
   );
@@ -253,5 +257,6 @@ type CDRomModalProps = HandlePromiseProps &
     vmLikeEntity: VMLikeEntityKind;
     persistentVolumeClaims?: FirehoseResult<VMKind[]>;
     storageClasses?: FirehoseResult<VMKind[]>;
+    vmi?: FirehoseResult<VMIKind>;
     winToolsContainer: string;
   };

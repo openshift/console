@@ -25,11 +25,12 @@ import {
   getTemplateValidationsFromTemplate,
 } from '../../selectors/vm-template/selectors';
 import { diskSourceFilter } from './table-filters';
-import { asVM, isVMRunningOrExpectedRunning } from '../../selectors/vm';
 import { VMLikeEntityTabProps, VMTabProps } from '../vms/types';
 import { getVMStatus } from '../../statuses/vm/vm-status';
 import { FileSystemsList } from './guest-agent-file-systems';
 import { VM_DISKS_DESCRIPTION } from '../../strings/vm/messages';
+import { isVMRunningOrExpectedRunning } from '../../selectors/vm/selectors';
+import { asVM } from '../../selectors/vm';
 
 const getStoragesData = ({
   vmLikeEntity,
@@ -148,6 +149,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, vmTemplate }) =>
   const [isLocked, setIsLocked] = useSafetyFirst(false);
   const withProgress = wrapWithProgress(setIsLocked);
   const templateValidations = getTemplateValidationsFromTemplate(getLoadedData(vmTemplate));
+  const isVMRunning = isVM(vmLikeEntity) && isVMRunningOrExpectedRunning(asVM(vmLikeEntity));
 
   const resources = [
     getResource(PersistentVolumeClaimModel, {
@@ -175,6 +177,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, vmTemplate }) =>
         blocking: true,
         vmLikeEntity: !isVMI(vmLikeEntity) && vmLikeEntity,
         templateValidations,
+        isVMRunning,
       }).result,
     );
 
@@ -186,7 +189,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, vmTemplate }) =>
       createButtonText={ADD_DISK}
       canCreate={!isVMI(vmLikeEntity)}
       createProps={{
-        isDisabled: isLocked || isVMRunningOrExpectedRunning(asVM(vmLikeEntity)),
+        isDisabled: isLocked,
         onClick: createFn,
         id: 'add-disk',
       }}
