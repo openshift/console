@@ -126,7 +126,7 @@ export const sanityForSubmit = (
   );
 
   // Remove empty metrics
-  validHPA.spec.metrics = validHPA.spec.metrics.filter(
+  validHPA.spec.metrics = validHPA.spec.metrics?.filter(
     (metric: HPAMetric) =>
       !['cpu', 'memory'].includes(metric?.resource?.name?.toLowerCase()) ||
       (metric.resource.target.type === 'Utilization' &&
@@ -148,6 +148,9 @@ export const getInvalidUsageError = (
   const invalidCPU = lackCPULimits && metricNames.includes('cpu');
   const invalidMemory = lackMemoryLimits && metricNames.includes('memory');
 
+  if (metricNames.length === 0) {
+    return `Cannot create a ${HorizontalPodAutoscalerModel.label} with no valid metrics.`;
+  }
   if (invalidCPU && invalidMemory) {
     return 'CPU and memory utilization cannot be used currently.';
   }

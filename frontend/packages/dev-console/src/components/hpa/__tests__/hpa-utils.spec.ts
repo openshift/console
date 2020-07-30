@@ -208,6 +208,11 @@ describe('sanityForSubmit covers some basic field locking and trimming', () => {
     );
   });
 
+  it('expect to work fine if there are no metrics', () => {
+    const noMetricsHPA: HorizontalPodAutoscalerKind = hpaExamples.noMetrics;
+    expect(sanityForSubmit(deploymentResource, noMetricsHPA).spec.metrics).toBeUndefined();
+  });
+
   it('expect to always scale to the same resource despite hpa settings', () => {
     const scaledTargetRef = {
       apiVersion: deploymentResource.apiVersion,
@@ -255,6 +260,15 @@ describe('getInvalidUsageError returns an error string when limits are not set',
     yamlData: null,
   };
   const hpaResource: HorizontalPodAutoscalerKind = hpaExamples.cpuScaled;
+
+  it('expect no metrics to be an error', () => {
+    const noMetricsHPA: HorizontalPodAutoscalerKind = hpaExamples.noMetrics;
+    expect(typeof getInvalidUsageError(noMetricsHPA, formValues)).toBe('string');
+
+    const emptyMetricsHPA: HorizontalPodAutoscalerKind = cloneDeep(noMetricsHPA);
+    emptyMetricsHPA.spec.metrics = [];
+    expect(typeof getInvalidUsageError(emptyMetricsHPA, formValues)).toBe('string');
+  });
 
   it('expect cpu metric not to be allowed while disabled', () => {
     expect(typeof getInvalidUsageError(hpaResource, formValues)).toBe('string');
