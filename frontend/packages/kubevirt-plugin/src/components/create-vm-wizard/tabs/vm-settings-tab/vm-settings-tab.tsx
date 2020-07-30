@@ -109,6 +109,7 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
           userTemplate={this.getFieldValue(VMSettingsField.USER_TEMPLATE)}
           operatingSystem={this.getFieldValue(VMSettingsField.OPERATING_SYSTEM)}
           flavor={this.getFieldValue(VMSettingsField.FLAVOR)}
+          commonDataVolumes={commonDataVolumes}
           onChange={this.props.onFieldChange}
         />
         <FormFieldMemoRow
