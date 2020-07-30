@@ -16,14 +16,14 @@ import {
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
-import { BinaryUnit } from '../../../form/size-unit-utils';
+import { BinaryUnit, stringValueUnitSplit } from '../../../form/size-unit-utils';
 import { WINTOOLS_CONTAINER_NAMES } from '../../../modals/cdrom-vm-modal/constants';
 import { InitialStepStateGetter } from './types';
 import {
   getDefaultSCAccessModes,
   getDefaultSCVolumeMode,
 } from '../../../../selectors/config-map/sc-defaults';
-import { toShallowJS } from '../../../../utils/immutable';
+import { toShallowJS, iGetIn } from '../../../../utils/immutable';
 import { generateDataVolumeName } from '../../../../utils';
 import { DUMMY_VM_NAME, TEMPLATE_DATAVOLUME_ANNOTATION } from '../../../../constants/vm';
 import {
@@ -31,7 +31,7 @@ import {
   iGetProvisionSource,
   iGetRelevantTemplateSelectors,
 } from '../../selectors/immutable/vm-settings';
-import { iGetLoadedCommonData } from '../../selectors/immutable/selectors';
+import { iGetLoadedCommonData, iGetName } from '../../selectors/immutable/selectors';
 import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
 import { iGetAnnotation } from '../../../../selectors/immutable/common';
 
@@ -78,8 +78,10 @@ export const getBaseImageStorage = (
   storageClassConfigMap: ConfigMapKind,
   pvcName,
   pvcNamespace,
+  pvcSize = '10Gi',
 ) => {
   const dataVolumeName = generateDataVolumeName(DUMMY_VM_NAME, ROOT_DISK_NAME);
+  const [size, unit] = stringValueUnitSplit(pvcSize);
 
   return {
     type: VMWizardStorageType.PROVISION_SOURCE_DISK,
@@ -97,8 +99,8 @@ export const getBaseImageStorage = (
     dataVolume: new DataVolumeWrapper()
       .init({
         name: dataVolumeName,
-        size: 5,
-        unit: BinaryUnit.Gi,
+        size,
+        unit,
       })
       .setType(DataVolumeSourceType.PVC, { name: pvcName, namespace: pvcNamespace })
       .setVolumeMode(getDefaultSCVolumeMode(storageClassConfigMap))
@@ -190,7 +192,12 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
     );
     const pvcNamespace = iGetAnnotation(iTemplate, `${TEMPLATE_DATAVOLUME_ANNOTATION}/namespace`);
 
-    return getBaseImageStorage(toShallowJS(iStorageClassConfigMap), pvcName, pvcNamespace);
+    const iBaseImage = iGetLoadedCommonData(state, id, VMWizardProps.openshiftCNVBaseImages)
+      .valueSeq()
+      .find((iPVC) => iGetName(iPVC) === pvcName);
+    const pvcSize = iGetIn(iBaseImage, ['spec', `resources`, `requests`, `storage`]);
+
+    return getBaseImageStorage(toShallowJS(iStorageClassConfigMap), pvcName, pvcNamespace, pvcSize);
   }
   return null;
 };
