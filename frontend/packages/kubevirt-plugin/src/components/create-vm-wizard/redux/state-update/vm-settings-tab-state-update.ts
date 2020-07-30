@@ -180,22 +180,24 @@ const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
     return;
   }
 
-  const relevantOptions = iGetRelevantTemplateSelectors(state, id);
   const userTemplate = iGetVmSettingValue(state, id, VMSettingsField.USER_TEMPLATE);
-  const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
-  const iTemplate =
-    iCommonTemplates && iGetRelevantTemplate(null, iCommonTemplates, relevantOptions);
-  const pvcName = iGetAnnotation(
-    iTemplate,
-    `${TEMPLATE_DATAVOLUME_ANNOTATION}/${relevantOptions?.os}`,
-  );
+  let iBaseImage = null;
 
-  const iBaseImages = iGetLoadedCommonData(state, id, VMWizardProps.openshiftCNVBaseImages);
-  const iBaseImage =
-    !userTemplate &&
-    pvcName &&
-    iBaseImages &&
-    iBaseImages.valueSeq().find((iPVC) => iGetName(iPVC) === pvcName);
+  // cloneCommonBaseDiskImage can be set true only if userTemplate is not used
+  if (!userTemplate) {
+    const relevantOptions = iGetRelevantTemplateSelectors(state, id);
+    const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
+    const iTemplate =
+      iCommonTemplates && iGetRelevantTemplate(null, iCommonTemplates, relevantOptions);
+    const pvcName = iGetAnnotation(
+      iTemplate,
+      `${TEMPLATE_DATAVOLUME_ANNOTATION}/${relevantOptions?.os}`,
+    );
+
+    const iBaseImages = iGetLoadedCommonData(state, id, VMWizardProps.openshiftCNVBaseImages);
+    iBaseImage =
+      pvcName && iBaseImages && iBaseImages.valueSeq().find((iPVC) => iGetName(iPVC) === pvcName);
+  }
 
   dispatch(
     vmWizardInternalActions[InternalActionType.UpdateVmSettingsField](
