@@ -35,6 +35,7 @@ type DispatchProps = {
 type OwnProps = {
   visualization?: Visualization;
   onSearchChange: (searchQuery: string) => void;
+  showGraphView: boolean;
 };
 
 type MergeProps = {
@@ -50,6 +51,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
   onDisplayFiltersChange,
   onSearchChange,
   visualization,
+  showGraphView,
   consoleLinks,
   namespace,
 }) => {
@@ -84,7 +86,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
           onChange={onTextFilterChange}
           className="odc-topology-filter-bar__text-filter"
         />
-        {visualization && (
+        {showGraphView && (
           <Popover
             aria-label="Find by name"
             position="left"
@@ -129,7 +131,7 @@ const dispatchToProps = (dispatch: Dispatch): DispatchProps => ({
 const mergeProps = (
   { filters, supportedFilters, consoleLinks, namespace }: StateProps,
   { onFiltersChange }: DispatchProps,
-  { visualization, onSearchChange }: OwnProps,
+  { visualization, onSearchChange, showGraphView }: OwnProps,
 ): MergeProps => ({
   filters,
   supportedFilters,
@@ -140,6 +142,7 @@ const mergeProps = (
   },
   onSearchChange,
   visualization,
+  showGraphView,
 });
 
 export default connect<StateProps, DispatchProps, OwnProps, MergeProps>(

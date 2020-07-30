@@ -382,7 +382,11 @@ export const TopologyView: React.FC<ComponentProps> = ({
     <div className="odc-topology">
       <Stack>
         <StackItem isFilled={false}>
-          <TopologyFilterBar onSearchChange={onSearchChange} />
+          <TopologyFilterBar
+            onSearchChange={onSearchChange}
+            showGraphView={showGraphView}
+            visualization={visualization}
+          />
         </StackItem>
         <StackItem isFilled className={containerClasses}>
           <div className="pf-topology-content">{viewContent}</div>

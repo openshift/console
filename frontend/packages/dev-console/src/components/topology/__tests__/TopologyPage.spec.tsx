@@ -25,6 +25,14 @@ jest.mock('react-redux', () => {
   };
 });
 
+jest.mock('@console/shared', () => {
+  const ActualShared = require.requireActual('@console/shared');
+  return {
+    ...ActualShared,
+    useQueryParams: () => new Map(),
+  };
+});
+
 describe('Topology page tests', () => {
   beforeEach(() => {
     topologyProps = {
