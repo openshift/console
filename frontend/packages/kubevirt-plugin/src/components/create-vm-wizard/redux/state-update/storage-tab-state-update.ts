@@ -55,8 +55,6 @@ export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }:
     state,
     id,
     VMSettingsField.OPERATING_SYSTEM,
-    VMSettingsField.FLAVOR,
-    VMSettingsField.WORKLOAD_PROFILE,
     VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE,
   );
 
