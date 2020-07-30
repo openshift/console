@@ -35,7 +35,7 @@ import {
   StorageClassSection,
   EncryptSection,
 } from '../../utils/common-ocs-install-el';
-import { filterSCWithoutNoProv } from '../../utils/install';
+import { filterSCWithoutNoProv, shouldDeployMinimally } from '../../utils/install';
 import { OCS_INTERNAL_CR_NAME } from '../../constants';
 import './ocs-install.scss';
 
@@ -63,10 +63,11 @@ const makeOCSRequest = (
   storageClass: StorageClassResourceKind,
   osdSize: string,
   isEncrypted: boolean,
+  isMinimal?: boolean,
 ): Promise<any> => {
   const promises = makeLabelNodesRequest(selectedData);
   const scName = getName(storageClass);
-  const ocsObj = getOCSRequestData(scName, osdSize, isEncrypted);
+  const ocsObj = getOCSRequestData(scName, osdSize, isEncrypted, null, isMinimal);
 
   return Promise.all(promises).then(() => {
     if (!scName) {
@@ -92,6 +93,8 @@ export const CreateInternalCluster = withHandlePromise<
   const [isEncrypted, setEncrypted] = React.useState(true);
   const dispatch = useDispatch();
   const [nodes, setNodes] = React.useState<NodeKind[]>([]);
+
+  const isMinimal = shouldDeployMinimally(nodes);
 
   const submit = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -145,10 +148,18 @@ export const CreateInternalCluster = withHandlePromise<
             onRowSelected: setNodes,
           }}
         >
-          <span>
-            Select at least 3 nodes in different zones you wish to use with minimum requirements of
-            16 CPUs and 64 GiB of RAM per node.
-          </span>
+          <>
+            <div>
+              Select at least 3 nodes in different zones you wish to use. The recommended
+              requirements are 16 CPUs and 64 GiB of RAM per node.
+            </div>
+            {isMinimal && (
+              <div className="ceph-ocs-install__minimal-msg">
+                Since the selected nodes do not satisfy the recommended requirements stated above, a
+                minimal cluster will be deployed, limited to a single storage device set.
+              </div>
+            )}
+          </>
         </SelectNodesSection>
         <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
           <ActionGroup className="pf-c-form">
