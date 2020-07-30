@@ -31,6 +31,7 @@ export const createDeviceSet = (scName: string, osdSize: string, portable: boole
 export const getOCSRequestData = (
   scName: string,
   storage: string,
+  encrypted?: boolean,
   provisioner?: string,
 ): K8sResourceKind => {
   const requestData = {
@@ -42,6 +43,9 @@ export const getOCSRequestData = (
     },
     spec: {
       manageNodes: false,
+      encryption: {
+        enable: encrypted,
+      },
       storageDeviceSets: [createDeviceSet(scName, storage, true)],
     },
   } as K8sResourceKind;
@@ -66,6 +70,7 @@ export type DeviceSet = {
   resources?: any;
   placement?: any;
   portable: boolean;
+  encryption?: { [key: string]: any };
   dataPVCTemplate: {
     spec: {
       storageClassName: string;

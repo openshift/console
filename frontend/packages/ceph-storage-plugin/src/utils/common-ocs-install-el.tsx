@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, FormGroup } from '@patternfly/react-core';
+import { Alert, FormGroup, Switch } from '@patternfly/react-core';
 import { ListPage } from '@console/internal/components/factory';
 import { NodeModel } from '@console/internal/models';
 import { FieldLevelHelp } from '@console/internal/components/utils';
@@ -71,6 +71,31 @@ export const StorageClassSection: React.FC<StorageClassSectionProps> = ({
     </FormGroup>
   </>
 );
+
+export const EncryptSection: React.FC<EncryptSectionProps> = ({ onToggle, isChecked }) => (
+  <>
+    <div className="co-m-pane__heading--baseline ceph-ocs-install__pane--margin">
+      <h3>Encryption</h3>
+      <p className="help-block">Enable data encryption for the OCS storage cluster</p>
+
+      <FormGroup fieldId="toggle-encryption">
+        <Switch
+          className="ceph-storage-encryption__switch"
+          id="ceph-ocs-install__encrytion-switch"
+          label="Enabled"
+          labelOff="Disabled"
+          isChecked={isChecked}
+          onChange={() => onToggle(!isChecked)}
+        />
+      </FormGroup>
+    </div>
+  </>
+);
+
+type EncryptSectionProps = {
+  onToggle: (isEncrypted: boolean) => void;
+  isChecked: boolean;
+};
 
 type SelectNodesSectionProps = {
   table: React.ComponentType<any>;

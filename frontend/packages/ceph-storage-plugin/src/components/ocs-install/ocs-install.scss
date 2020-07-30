@@ -12,6 +12,11 @@
   margin-bottom: var(--pf-global--spacer--3xl);
 }
 
+.ceph-storage-encryption__switch {
+  --pf-c-switch__input--focus__toggle--OutlineWidth: 0 !important; // To disable the switch focus border
+  margin-top: 0.5rem;
+}
+
 .ceph-ocs-install__ocs-service-capacity--dropdown {
   width: 15rem;
 }
