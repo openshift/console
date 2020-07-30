@@ -190,6 +190,7 @@ const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
   }
 
   const relevantOptions = iGetRelevantTemplateSelectors(state, id);
+  const userTemplate = iGetVmSettingValue(state, id, VMSettingsField.USER_TEMPLATE);
   const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
   const iTemplate =
     iCommonTemplates && iGetRelevantTemplate(null, iCommonTemplates, relevantOptions);
@@ -200,7 +201,10 @@ const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
 
   const iBaseImages = iGetLoadedCommonData(state, id, VMWizardProps.openshiftCNVBaseImages);
   const iBaseImage =
-    pvcName && iBaseImages && iBaseImages.valueSeq().find((iPVC) => iGetName(iPVC) === pvcName);
+    !userTemplate &&
+    pvcName &&
+    iBaseImages &&
+    iBaseImages.valueSeq().find((iPVC) => iGetName(iPVC) === pvcName);
 
   dispatch(
     vmWizardInternalActions[InternalActionType.UpdateVmSettingsField](

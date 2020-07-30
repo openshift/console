@@ -1,5 +1,4 @@
 import { ValidationErrorType } from '@console/shared/src';
-import { hasVmSettingsChanged } from '../../selectors/immutable/vm-settings';
 import { VMSettingsField, VMWizardStorage, VMWizardStorageType } from '../../types';
 import { InternalActionType, UpdateOptions } from '../types';
 import { hasStoragesChanged, iGetProvisionSourceStorage } from '../../selectors/immutable/storage';
@@ -13,11 +12,12 @@ import { vmWizardInternalActions } from '../internal-actions';
 import { getTemplateValidation } from '../../selectors/template';
 import { TemplateValidations } from '../../../../utils/validations/template/template-validations';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
+import { hasVMSettingsValueChanged } from '../../selectors/immutable/vm-settings';
 
 export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
   if (
-    !hasVmSettingsChanged(
+    !hasVMSettingsValueChanged(
       prevState,
       state,
       id,
@@ -34,8 +34,7 @@ export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }:
   const iOldSourceStorage = iGetProvisionSourceStorage(state, id);
   const oldSourceStorage: VMWizardStorage = iOldSourceStorage && iOldSourceStorage.toJSON();
 
-  // Create a new storage source for URL, Container and BaseImage Disk sources
-  // Depends on OPERATING_SYSTEM CLONE_COMMON_BASE_DISK_IMAGE PROVISION_SOURCE_TYPE FLAVOR and WORKLOAD_PROFILE
+  // Depends on OPERATING_SYSTEM CLONE_COMMON_BASE_DISK_IMAGE PROVISION_SOURCE_TYPE FLAVOR USER_TEMPLATE and WORKLOAD_PROFILE
   const newSourceStorage = getNewProvisionSourceStorage(state, id);
   const oldType =
     oldSourceStorage &&
@@ -51,7 +50,7 @@ export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }:
       new DataVolumeWrapper(newSourceStorage.dataVolume).getType(),
     );
 
-  const baseDiskImageChanged = hasVmSettingsChanged(
+  const baseDiskImageChanged = hasVMSettingsValueChanged(
     prevState,
     state,
     id,

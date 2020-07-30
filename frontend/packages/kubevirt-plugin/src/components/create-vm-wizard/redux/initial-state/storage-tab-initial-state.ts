@@ -147,7 +147,7 @@ const getUrlStorage = (storageClassConfigMap: ConfigMapKind) => {
 };
 
 // Create a new storage source for URL, Container and BaseImage Disk sources
-// Depends on OPERATING_SYSTEM CLONE_COMMON_BASE_DISK_IMAGE PROVISION_SOURCE_TYPE FLAVOR and WORKLOAD_PROFILE
+// Depends on OPERATING_SYSTEM CLONE_COMMON_BASE_DISK_IMAGE PROVISION_SOURCE_TYPE FLAVOR USER_TEMPLATE and WORKLOAD_PROFILE
 export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardStorage => {
   const provisionSource = iGetProvisionSource(state, id);
   const cloneCommonBaseDiskImage = iGetVmSettingValue(
@@ -155,6 +155,7 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
     id,
     VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE,
   );
+  const userTemplate = iGetVmSettingValue(state, id, VMSettingsField.USER_TEMPLATE);
 
   if (provisionSource === ProvisionSource.URL) {
     const iStorageClassConfigMap = iGetLoadedCommonData(
@@ -168,7 +169,7 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
   if (provisionSource === ProvisionSource.CONTAINER) {
     return containerStorage;
   }
-  if (provisionSource === ProvisionSource.DISK && cloneCommonBaseDiskImage) {
+  if (provisionSource === ProvisionSource.DISK && !userTemplate && cloneCommonBaseDiskImage) {
     const iStorageClassConfigMap = iGetLoadedCommonData(
       state,
       id,
