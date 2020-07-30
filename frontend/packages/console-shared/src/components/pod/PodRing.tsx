@@ -69,7 +69,12 @@ const PodRing: React.FC<PodRingProps> = ({
     handleScaling(clickCount + operation);
   };
 
-  const [hpa] = useRelatedHPA(obj.apiVersion, obj.kind, obj.metadata.name, obj.metadata.namespace);
+  const {
+    apiVersion,
+    kind,
+    metadata: { name, namespace },
+  } = obj;
+  const [hpa] = useRelatedHPA(apiVersion, kind, name, namespace);
   const hpaControlledScaling = !!hpa;
 
   const isScalingAllowed = isAccessScalingAllowed && !hpaControlledScaling;

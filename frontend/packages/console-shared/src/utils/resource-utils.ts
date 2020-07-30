@@ -807,12 +807,10 @@ export const getOverviewItemsForResource = (
     ...getBuildAlerts(buildConfigs),
   };
   const status = resourceStatus(obj, current, isRollingOut);
-  const hpas = resources?.hpas?.data?.filter(doesHpaMatch(obj));
   const overviewItems = {
     alerts,
     buildConfigs,
     obj,
-    hpas,
     pods,
     routes,
     services,
@@ -858,10 +856,12 @@ export const createDeploymentConfigItem = (
     deploymentConfig,
     resources?.monitoringAlerts,
   );
+  const hpas = resources?.hpas?.data?.filter(doesHpaMatch(deploymentConfig));
   const overviewItems = {
     alerts,
     buildConfigs,
     current,
+    hpas,
     isRollingOut,
     obj: deploymentConfig,
     previous,
@@ -910,11 +910,13 @@ export const createDeploymentItem = (
   const status = resourceStatus(deployment, current, isRollingOut);
   const pods = [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])];
   const monitoringAlerts = getWorkloadMonitoringAlerts(deployment, resources?.monitoringAlerts);
+  const hpas = resources?.hpas?.data?.filter(doesHpaMatch(deployment));
   const overviewItem = {
     obj: deployment,
     alerts,
     buildConfigs,
     current,
+    hpas,
     isRollingOut,
     previous,
     pods,

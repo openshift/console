@@ -15,15 +15,16 @@ type RelatedResources = {
 const hasHPAs = (mapOfResources: RelatedResources) =>
   Array.isArray(mapOfResources?.hpas) && mapOfResources.hpas.length > 0;
 
+const hpaRoute = ({ metadata: { name, namespace } }: K8sResourceCommon, kind: K8sKind) =>
+  `/workload-hpa/ns/${namespace}/${referenceForModel(kind)}/${name}`;
+
 export const AddHorizontalPodAutoScaler: KebabAction = (
   kind: K8sKind,
   obj: K8sResourceCommon,
   resources: RelatedResources,
 ) => ({
   label: `Add ${HorizontalPodAutoscalerModel.label}`,
-  href: `/workload-hpa/ns/${obj.metadata.namespace}/${referenceForModel(kind)}/${
-    obj.metadata.name
-  }`,
+  href: hpaRoute(obj, kind),
   hidden: hasHPAs(resources),
   accessReview: {
     group: HorizontalPodAutoscalerModel.apiGroup,
@@ -39,9 +40,7 @@ export const EditHorizontalPodAutoScaler: KebabAction = (
   resources: RelatedResources,
 ) => ({
   label: `Edit ${HorizontalPodAutoscalerModel.label}`,
-  href: `/workload-hpa/ns/${obj.metadata.namespace}/${referenceForModel(kind)}/${
-    obj.metadata.name
-  }`,
+  href: hpaRoute(obj, kind),
   hidden: !hasHPAs(resources),
   accessReview: {
     group: HorizontalPodAutoscalerModel.apiGroup,

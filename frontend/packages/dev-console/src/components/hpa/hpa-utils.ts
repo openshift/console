@@ -164,11 +164,13 @@ export const getInvalidUsageError = (
 export const doesHpaMatch = (workload: K8sResourceCommon) => (
   thisHPA: HorizontalPodAutoscalerKind,
 ) => {
-  const workloadAPI: string = workload.apiVersion;
-  const workloadKind: string = workload.kind;
-  const workloadName: string = workload.metadata.name;
-  const ref = thisHPA.spec.scaleTargetRef;
-  return ref.apiVersion === workloadAPI && ref.kind === workloadKind && ref.name === workloadName;
+  const {
+    apiVersion,
+    kind,
+    metadata: { name },
+  } = workload;
+  const ref = thisHPA?.spec?.scaleTargetRef;
+  return ref && ref.apiVersion === apiVersion && ref.kind === kind && ref.name === name;
 };
 
 export const hasCustomMetrics = (hpa?: HorizontalPodAutoscalerKind): boolean => {
