@@ -1,0 +1,25 @@
+.odc-gitops-service {
+  &__title {
+    font-weight: bold;
+    font-size: 18px;
+  }
+  &__details {
+    font-size: 12px;
+    color: var(--pf-global--palette--black-600);
+  }
+  &__pod {
+    width: 80px;
+    padding: 10px 13px 10px 0px;
+  }
+  &__pr {
+    padding-top: 20px;
+  }
+  &__url {
+    display: inline-flex;
+    align-items: center;
+    font-size: 12px;
+  }
+  article {
+    border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+  }
+}
