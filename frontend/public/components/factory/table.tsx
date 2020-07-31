@@ -448,7 +448,7 @@ const getActiveColumns = (
   activeColumns: Set<string>,
 ) => {
   let columns = Header(componentProps);
-  if (_.isEmpty(activeColumns) && columns.find((col) => col.additional)) {
+  if (_.isEmpty(activeColumns)) {
     activeColumns = new Set(
       columns.map((col) => {
         if (col.id && !col.additional) {
@@ -462,7 +462,9 @@ const getActiveColumns = (
   }
 
   const showNamespace = UIActions.getActiveNamespace() === ALL_NAMESPACES_KEY;
-  columns = columns.filter((column) => column.id !== 'namespace' || showNamespace);
+  if (!showNamespace) {
+    columns = columns.filter((column) => column.id !== 'namespace');
+  }
   return columns;
 };
 

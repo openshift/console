@@ -292,7 +292,6 @@ export const setTableColumns = (id: string, selectedColumns: Set<string>) => {
     // Error parsing the data, do not store the current filters
     /* eslint-disable-next-line no-console */
     console.error('Error parsing column filters from local storage', e);
-    currentColumns = {};
   }
   currentColumns[id] = [...selectedColumns];
   localStorage.setItem(COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY, JSON.stringify(currentColumns));
