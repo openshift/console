@@ -40,6 +40,7 @@ func (cfg *config) Configure(srv *server.Server) {
 	if cfg.repoCaFile != "" {
 		rootCAs = x509.NewCertPool()
 		certPEM, err := ioutil.ReadFile(cfg.repoCaFile)
+		srv.HelmDefaultRepoCACert = certPEM
 		if err != nil {
 			log.Fatalf("failed to read helm chart repo ca file %v : %v", cfg.repoCaFile, err)
 		}
