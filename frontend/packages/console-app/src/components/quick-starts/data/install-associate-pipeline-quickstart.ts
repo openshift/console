@@ -6,7 +6,7 @@ export const installAssociatePipelineQuickStart = {
   },
   spec: {
     version: 4.7,
-    displayName: `Install an application and associate a pipeline`,
+    displayName: `Import an application and associate a pipeline with it`,
     duration: 10,
     iconURL:
       '/api/kubernetes/apis/packages.operators.coreos.com/v1/namespaces/openshift-marketplace/packagemanifests/openshift-pipelines-operator/icon?resourceVersion=openshift-pipelines-operator.dev-preview.openshift-pipelines-operator.v0.10.7',
@@ -20,7 +20,7 @@ export const installAssociatePipelineQuickStart = {
     tasks: [
       {
         title: 'Create an application from Git',
-        description: `#### Follow these steps to create an application.
+        description: `### Follow these steps to create an application.
 1. In the **</> Developer perspective**, go to the **+Add** page.
 2. Create a new project.
 3. Click Import from Git to create an application, specifying [https://github.com/sclorg/django-ex.git](https://github.com/sclorg/django-ex.git) as the Git Repo URL.
@@ -42,7 +42,7 @@ Is there an Application and Deployment name django-ex?`,
       },
       {
         title: `Explore your application`,
-        description: `#### Let's explore your application in topology:
+        description: `### Let's explore your application in topology:
 1. Click on the deployment to see associated details in the side panel.
 2. Click on the Resources tab in the side panel to view related resources.`,
         review: {
@@ -62,7 +62,7 @@ Is there a Pipeline named django-ex-git?`,
       },
       {
         title: `Start and explore your pipeline run`,
-        description: `#### You’ve just explored the topology of your application and seen it’s related resources.  Now let’s start your pipeline.
+        description: `### You’ve just explored the topology of your application and seen it’s related resources.  Now let’s start your pipeline.
 Notice the Pipeline Runs section of the Side Panel
 1. The first row shows the Pipeline associated with the application and an action button to Start Last Run, which is disabled.
 2. Click on the Pipeline link, which should bring you to the Pipeline Details page.

@@ -27,6 +27,6 @@ describe('QuickStartCatalog', () => {
     );
     const galleryItems = QuickStartCatalogWrapper.find(GalleryItem);
     expect(galleryItems.exists()).toBeTruthy();
-    expect(galleryItems.length).toEqual(3);
+    expect(galleryItems.length).toEqual(getQuickStarts().length);
   });
 });
