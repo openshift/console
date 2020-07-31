@@ -1,6 +1,13 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import { FormSelect, FormSelectOption } from '@patternfly/react-core';
+import {
+  FormSelect,
+  FormSelectOption,
+  Checkbox,
+  Text,
+  Button,
+  ButtonVariant,
+} from '@patternfly/react-core';
 import { ValidationErrorType, asValidationObject } from '@console/shared/src/utils/validation';
 import {
   concatImmutableLists,
@@ -20,9 +27,19 @@ import {
 import { flavorSort, ignoreCaseSort } from '../../../../utils/sort';
 import { VMSettingsField } from '../../types';
 import { iGetFieldValue } from '../../selectors/immutable/field';
-import { getPlaceholder } from '../../utils/renderable-field-utils';
+import { getPlaceholder, getFieldId } from '../../utils/renderable-field-utils';
 import { nullOnEmptyChange } from '../../utils/utils';
 import { operatingSystemsNative } from '../../../../constants/vm-templates/os';
+import { OperatingSystemRecord } from '../../../../types';
+import { iGetName } from '../../selectors/immutable/selectors';
+import {
+  BASE_IMAGE_AND_PVC_SHORT,
+  BASE_IMAGE_AND_PVC_MESSAGE,
+  NO_BASE_IMAGE_SHORT,
+  NO_BASE_IMAGE_AND_NO_PVC_MESSAGE,
+  NO_BASE_IMAGE_AND_NO_PVC_SHORT,
+  NO_BASE_IMAGE_MESSAGE,
+} from '../../strings/strings';
 
 export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
   ({
@@ -30,15 +47,19 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
     commonTemplates,
     userTemplate,
     operatinSystemField,
+    cloneBaseDiskImageField,
     flavorField,
     workloadProfile,
+    cnvBaseImages,
     onChange,
     openshiftFlag,
+    goToStorageStep,
   }) => {
     const flavor = iGetFieldValue(flavorField);
     const os = iGetFieldValue(operatinSystemField);
     const display = iGet(operatinSystemField, 'display');
     const displayOnly = !!display;
+    const cloneBaseDiskImage = iGetFieldValue(cloneBaseDiskImageField);
 
     const params = {
       userTemplate,
@@ -69,6 +90,7 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
       ? {
           userTemplates,
           commonTemplates,
+          cnvBaseImages,
         }
       : {};
 
@@ -91,6 +113,38 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
       }
     }
 
+    const loadedBaseImages = iGetLoadedData(cnvBaseImages);
+    const operatingSystemBaseImages = operatingSystems.map(
+      (operatingSystem: OperatingSystemRecord) => {
+        const pvcName = operatingSystem?.dataVolumeName;
+        const baseImageFoundInCluster = loadedBaseImages?.find((pvc) => iGetName(pvc) === pvcName);
+        const osField = {
+          id: operatingSystem.id,
+          name: operatingSystem.name,
+          pvcName,
+          baseImageFoundInCluster,
+          message: '',
+          longMessage: '',
+        };
+
+        if (!userTemplate) {
+          if (baseImageFoundInCluster && pvcName) {
+            osField.message = BASE_IMAGE_AND_PVC_SHORT;
+            osField.longMessage = BASE_IMAGE_AND_PVC_MESSAGE;
+          } else if (pvcName) {
+            osField.message = NO_BASE_IMAGE_SHORT;
+            osField.longMessage = NO_BASE_IMAGE_MESSAGE;
+          } else {
+            osField.message = NO_BASE_IMAGE_AND_NO_PVC_SHORT;
+            osField.longMessage = NO_BASE_IMAGE_AND_NO_PVC_MESSAGE;
+          }
+        }
+
+        return osField;
+      },
+    );
+    const baseImage = operatingSystemBaseImages.find((image) => image.id === os);
+
     return (
       <>
         <FormFieldRow
@@ -107,11 +161,43 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
                   isDisabled={!!os}
                 />
               )}
-              {operatingSystems.map(({ id, name }) => {
-                return <FormSelectOption key={id} value={id} label={name || id} />;
-              })}
+              {operatingSystemBaseImages.map(({ id, name, message }) => (
+                <FormSelectOption key={id} value={id} label={`${name || id} ${message}`} />
+              ))}
             </FormSelect>
           </FormField>
+          {baseImage && baseImage?.longMessage && (
+            <div className="pf-c-form__helper-text" aria-live="polite">
+              {baseImage?.longMessage}
+            </div>
+          )}
+        </FormFieldRow>
+        <FormFieldRow
+          className="kv-create-vm__input-checkbox"
+          field={cloneBaseDiskImageField}
+          fieldType={FormFieldType.INLINE_CHECKBOX}
+          loadingResources={loadingResources}
+        >
+          <FormField>
+            <Checkbox
+              id={getFieldId(cloneBaseDiskImageField)}
+              onChange={(v) => onChange(VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE, v)}
+            />
+          </FormField>
+          {cloneBaseDiskImage && (
+            <Text>
+              View the cloned disk in the{' '}
+              <Button
+                isDisabled={!goToStorageStep}
+                isInline
+                onClick={goToStorageStep}
+                variant={ButtonVariant.link}
+              >
+                <strong>storage</strong>
+              </Button>{' '}
+              step
+            </Text>
+          )}
         </FormFieldRow>
         <FormFieldRow
           field={flavorField}
@@ -141,8 +227,11 @@ type OSFlavorProps = {
   commonTemplates: any;
   flavorField: any;
   operatinSystemField: any;
+  cloneBaseDiskImageField: any;
   userTemplate: string;
   workloadProfile: string;
+  cnvBaseImages: any;
   openshiftFlag: boolean;
-  onChange: (key: string, value: string) => void;
+  onChange: (key: string, value: string | boolean) => void;
+  goToStorageStep: () => void;
 };

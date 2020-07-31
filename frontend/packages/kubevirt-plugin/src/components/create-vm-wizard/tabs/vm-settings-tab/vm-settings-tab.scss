@@ -6,3 +6,7 @@
 .kubevirt-create-vm-modal__memory-row {
   margin-right: 0.5em;
 }
+
+.kv-create-vm__input-checkbox {
+  margin-top: calc(var(--pf-global--spacer--md) * -1);
+}

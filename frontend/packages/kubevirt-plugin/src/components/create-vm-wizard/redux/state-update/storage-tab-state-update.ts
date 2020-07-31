@@ -1,5 +1,4 @@
 import { ValidationErrorType } from '@console/shared/src';
-import { hasVmSettingsChanged } from '../../selectors/immutable/vm-settings';
 import { VMSettingsField, VMWizardStorage, VMWizardStorageType } from '../../types';
 import { InternalActionType, UpdateOptions } from '../types';
 import { hasStoragesChanged, iGetProvisionSourceStorage } from '../../selectors/immutable/storage';
@@ -13,16 +12,29 @@ import { vmWizardInternalActions } from '../internal-actions';
 import { getTemplateValidation } from '../../selectors/template';
 import { TemplateValidations } from '../../../../utils/validations/template/template-validations';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
+import { hasVMSettingsValueChanged } from '../../selectors/immutable/vm-settings';
 
 export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
-  if (!hasVmSettingsChanged(prevState, state, id, VMSettingsField.PROVISION_SOURCE_TYPE)) {
+  if (
+    !hasVMSettingsValueChanged(
+      prevState,
+      state,
+      id,
+      VMSettingsField.OPERATING_SYSTEM,
+      VMSettingsField.FLAVOR,
+      VMSettingsField.WORKLOAD_PROFILE,
+      VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE,
+      VMSettingsField.PROVISION_SOURCE_TYPE,
+    )
+  ) {
     return;
   }
 
   const iOldSourceStorage = iGetProvisionSourceStorage(state, id);
   const oldSourceStorage: VMWizardStorage = iOldSourceStorage && iOldSourceStorage.toJSON();
 
+  // Depends on OPERATING_SYSTEM CLONE_COMMON_BASE_DISK_IMAGE PROVISION_SOURCE_TYPE FLAVOR USER_TEMPLATE and WORKLOAD_PROFILE
   const newSourceStorage = getNewProvisionSourceStorage(state, id);
   const oldType =
     oldSourceStorage &&
@@ -38,7 +50,20 @@ export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }:
       new DataVolumeWrapper(newSourceStorage.dataVolume).getType(),
     );
 
-  if (newType !== oldType) {
+  const baseDiskImageChanged =
+    hasVMSettingsValueChanged(
+      prevState,
+      state,
+      id,
+      VMSettingsField.OPERATING_SYSTEM,
+      VMSettingsField.FLAVOR,
+      VMSettingsField.WORKLOAD_PROFILE,
+      VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE,
+    ) &&
+    newSourceStorage?.dataVolume?.spec?.source?.pvc?.name !==
+      oldSourceStorage?.dataVolume?.spec?.source?.pvc?.name;
+
+  if (newType !== oldType || baseDiskImageChanged) {
     if (!newSourceStorage) {
       // not a template provision source
       if (oldSourceStorage && oldSourceStorage.type === VMWizardStorageType.PROVISION_SOURCE_DISK) {

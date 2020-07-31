@@ -23,6 +23,7 @@ export const WorkloadProfile: React.FC<WorkloadProps> = React.memo(
     userTemplate,
     operatingSystem,
     flavor,
+    cnvBaseImages,
     onChange,
   }) => {
     const vanillaTemplates = immutableListToShallowJS(
@@ -44,6 +45,7 @@ export const WorkloadProfile: React.FC<WorkloadProps> = React.memo(
           loadingResources={{
             userTemplates,
             commonTemplates,
+            cnvBaseImages,
           }}
         >
           <FormField>
@@ -76,5 +78,6 @@ type WorkloadProps = {
   userTemplate: string;
   flavor: string;
   operatingSystem: string;
+  cnvBaseImages: any;
   onChange: (key: string, value: string) => void;
 };
