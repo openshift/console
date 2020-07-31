@@ -10,16 +10,9 @@
     max-width: 12em;
     min-width: 12em;
   }
-  // Todo(bipuladh): Work around for https://github.com/patternfly/patternfly-react/issues/4604
-  &--disable-typeahead {
-    .pf-c-chip-group {
-      display: none;
-    }
-    .pf-c-select__toggle-clear {
-      display: none;
-    }
-    .pf-c-select__toggle-typeahead {
-      display: none;
+  &--hide-list-style {
+    li {
+      list-style: none;
     }
   }
 }

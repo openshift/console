@@ -7,6 +7,9 @@ import { StorageClass } from '@console/internal/components/storage-class-form';
 export const filterNooBaaAlerts = (alerts: Alert[]): Alert[] =>
   alerts.filter((alert) => _.get(alert, 'annotations.storage_type') === 'NooBaa');
 
+export const filterRGWAlerts = (alerts: Alert[]): Alert[] =>
+  alerts.filter((alert) => alert?.annotations?.storage_type === 'RGW');
+
 export const getGaugeValue = (data) => _.get(data, 'data.result[0].value[1]');
 
 export const getMetric = (result: PrometheusResponse, metric: string): string =>

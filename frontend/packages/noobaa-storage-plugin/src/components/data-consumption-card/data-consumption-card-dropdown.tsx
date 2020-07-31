@@ -1,5 +1,15 @@
 import * as React from 'react';
-import { SelectGroup, SelectOption, Select, SelectVariant } from '@patternfly/react-core';
+import {
+  SelectGroup,
+  SelectOption,
+  Select,
+  SelectVariant,
+  OptionsMenuItemGroup,
+  OptionsMenuItem,
+  OptionsMenu,
+  OptionsMenuPosition,
+  OptionsMenuToggle,
+} from '@patternfly/react-core';
 import {
   Breakdown,
   Metrics,
@@ -22,6 +32,31 @@ export const getSelectOptions = (dropdownItems: SelectItems) => {
         <SelectOption key={item} value={item} />
       ))}
     </SelectGroup>
+  ));
+};
+
+const getOptionsMenuItems = (
+  dropdownItems: SelectItems,
+  selectedItems: string[],
+  onSelect: (e) => void,
+) => {
+  return dropdownItems.map(({ group, items }) => (
+    <OptionsMenuItemGroup
+      className="nb-data-consumption-card__dropdown-item--hide-list-style"
+      key={group}
+      groupTitle={group}
+    >
+      {items.map((item) => (
+        <OptionsMenuItem
+          onSelect={onSelect}
+          isSelected={selectedItems.includes(item)}
+          id={item}
+          key={item}
+        >
+          {item}
+        </OptionsMenuItem>
+      ))}
+    </OptionsMenuItemGroup>
   ));
 };
 
@@ -70,16 +105,17 @@ export const DataConsumptionDropdown: React.FC<DataConsumptionDropdownProps> = (
     [selectedBreakdown],
   );
 
-  const onSelectComboDropdown = (_e: React.MouseEvent, selection: Breakdown | Metrics) => {
-    const isBreakdown = (MCGDropdown[0].items as Breakdown[]).includes(selection as Breakdown);
+  const onSelectComboDropdown = (e: React.MouseEvent) => {
+    const { id } = e.currentTarget;
+    const isBreakdown = (MCGDropdown[0].items as Breakdown[]).includes(id as Breakdown);
     const breakdownBy = isBreakdown ? Groups.BREAKDOWN : Groups.METRIC;
     switch (breakdownBy) {
       case Groups.BREAKDOWN:
-        setSelectedBreakdown(selection as Breakdown);
+        setSelectedBreakdown(id as Breakdown);
         setSelectedMetric(DataConsumption.defaultMetrics[selectedService]);
         break;
       case Groups.METRIC:
-        setSelectedMetric(selection as Metrics);
+        setSelectedMetric(id as Metrics);
         break;
       default:
         break;
@@ -96,10 +132,14 @@ export const DataConsumptionDropdown: React.FC<DataConsumptionDropdownProps> = (
     }
   };
 
-  const comboDropdownItems = React.useMemo(() => {
+  const comboDropdownItems = (() => {
     const dropdown = selectedService === ServiceType.MCG ? MCGDropdown : RGWDropdown;
-    return getSelectOptions(dropdown);
-  }, [selectedService, MCGDropdown]);
+    return getOptionsMenuItems(
+      dropdown,
+      [selectedBreakdown, selectedMetric],
+      onSelectComboDropdown,
+    );
+  })();
 
   const serviceDropdownItems = getSelectOptions(ServiceTypeDropdown);
 
@@ -121,19 +161,22 @@ export const DataConsumptionDropdown: React.FC<DataConsumptionDropdownProps> = (
           {serviceDropdownItems}
         </Select>
       )}
-      <Select
-        variant={SelectVariant.typeaheadMulti}
-        className="nb-data-consumption-card__dropdown-item nb-data-consumption-card__dropdown-item--disable-typeahead"
-        autoFocus={false}
-        onSelect={onSelectComboDropdown}
-        onToggle={() => setComboDropdown(!isOpenComboDropdown)}
+      <OptionsMenu
+        id="breakdown-options"
+        className="nb-data-consumption-card__dropdown-item"
+        position={OptionsMenuPosition.right}
+        menuItems={comboDropdownItems}
+        toggle={
+          <OptionsMenuToggle
+            onToggle={() => setComboDropdown(!isOpenComboDropdown)}
+            toggleTemplate={
+              selectedBreakdown ? `${selectedMetric} by ${selectedBreakdown}` : selectedMetric
+            }
+          />
+        }
         isOpen={isOpenComboDropdown}
-        selections={[selectedBreakdown, selectedMetric]}
         isGrouped
-        isCheckboxSelectionBadgeHidden
-      >
-        {comboDropdownItems}
-      </Select>
+      />
     </div>
   );
 };

@@ -52,15 +52,19 @@ const handleError = (res: any, flags: string[], dispatch: Dispatch, cb: FeatureD
 export const detectRGW: FeatureDetector = async (dispatch) => {
   let id = null;
   const logicHandler = () =>
-    k8sList(StorageClassModel).then((data: StorageClassResourceKind[]) => {
-      const isRGWPresent = data.some((sc) => sc.provisioner === RGW_PROVISIONER);
-      if (isRGWPresent) {
-        dispatch(setFlag(RGW_FLAG, true));
+    k8sList(StorageClassModel)
+      .then((data: StorageClassResourceKind[]) => {
+        const isRGWPresent = data.some((sc) => sc.provisioner === RGW_PROVISIONER);
+        if (isRGWPresent) {
+          dispatch(setFlag(RGW_FLAG, true));
+          clearInterval(id);
+        } else {
+          dispatch(setFlag(RGW_FLAG, false));
+        }
+      })
+      .catch(() => {
         clearInterval(id);
-      } else {
-        dispatch(setFlag(RGW_FLAG, false));
-      }
-    });
+      });
   id = setInterval(logicHandler, 10 * SECOND);
 };
 
