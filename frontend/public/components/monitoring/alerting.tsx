@@ -693,7 +693,11 @@ export const AlertsDetailsPage = withFallback(
                       <div className="co-resource-item">
                         <MonitoringResourceIcon resource={RuleResource} />
                         <Link
-                          to={ruleURL(rule)}
+                          to={
+                            namespace
+                              ? `/dev-monitoring/ns/${namespace}/rules/${rule?.id}`
+                              : ruleURL(rule)
+                          }
                           data-test="alert-rules-detail-resource-link"
                           className="co-resource-item__resource-name"
                         >
@@ -730,7 +734,7 @@ export const AlertsDetailsPage = withFallback(
   }),
 );
 
-const ActiveAlerts = ({ alerts, ruleID }) => (
+const ActiveAlerts = ({ alerts, ruleID, namespace }) => (
   <div className="co-m-table-grid co-m-table-grid--bordered">
     <div className="row co-m-table-grid__head">
       <div className="col-xs-6">Description</div>
@@ -742,7 +746,15 @@ const ActiveAlerts = ({ alerts, ruleID }) => (
       {_.sortBy(alerts, alertDescription).map((a, i) => (
         <div className="row co-resource-list__item" key={i}>
           <div className="col-xs-6">
-            <Link className="co-resource-item" data-test="active-alerts" to={alertURL(a, ruleID)}>
+            <Link
+              className="co-resource-item"
+              data-test="active-alerts"
+              to={
+                namespace
+                  ? `/dev-monitoring/ns/${namespace}/alerts/${ruleID}?${labelsToParams(a.labels)}`
+                  : alertURL(a, ruleID)
+              }
+            >
               {alertDescription(a)}
             </Link>
           </div>
@@ -883,7 +895,7 @@ export const AlertRulesDetailsPage = withFallback(
                   {_.isEmpty(alerts) ? (
                     <div className="text-center">None Found</div>
                   ) : (
-                    <ActiveAlerts alerts={alerts} ruleID={rule.id} />
+                    <ActiveAlerts alerts={alerts} ruleID={rule.id} namespace={namespace} />
                   )}
                 </div>
               </div>
