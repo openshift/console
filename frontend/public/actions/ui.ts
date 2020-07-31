@@ -289,7 +289,7 @@ export const setTableColumns = (id: string, selectedColumns: Set<string>) => {
   try {
     currentColumns = JSON.parse(localStorage.getItem(COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY)) || {};
   } catch (e) {
-    // Error parsing the data, do not store the current filters
+    // Error parsing stored columns. Flag an error and add the selected columns to an empty object
     /* eslint-disable-next-line no-console */
     console.error('Error parsing column filters from local storage', e);
   }

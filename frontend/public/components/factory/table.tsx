@@ -275,12 +275,9 @@ export const TableData: React.SFC<TableDataProps> = ({
 }) => {
   const showNamespace =
     columnID !== 'namespace' || UIActions.getActiveNamespace() === ALL_NAMESPACES_KEY;
-  return (
-    ((!_.isEmpty(columns) ? columns.has(columnID) : true) && showNamespace && (
-      <td {...props} className={className} role="gridcell" />
-    )) ||
-    null
-  );
+  return (_.isEmpty(columns) || columns.has(columnID)) && showNamespace ? (
+    <td {...props} className={className} role="gridcell" />
+  ) : null;
 };
 TableData.displayName = 'TableData';
 export type TableDataProps = {
