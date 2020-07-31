@@ -26,7 +26,7 @@ const PipelineRunRow: RowFunction<PipelineRun> = ({ obj, index, key, style }) =>
           data-test-id={obj.metadata.name}
         />
       </TableData>
-      <TableData className={tableColumnClasses[1]} columnId="namespace">
+      <TableData className={tableColumnClasses[1]} columnID="namespace">
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
