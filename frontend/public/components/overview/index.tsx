@@ -305,9 +305,10 @@ class OverviewMainContent_ extends React.Component<
           throw new Error(`Could not fetch metrics, status: ${status}`);
         }
       })
-      .then(() => {
-        this.metricsInterval = setTimeout(this.fetchMetrics, METRICS_POLL_INTERVAL);
-      });
+      .then(
+        () => (this.metricsInterval = setTimeout(this.fetchMetrics, METRICS_POLL_INTERVAL)),
+        () => {},
+      );
   };
 
   filterItems(items: OverviewItem[]): OverviewItem[] {
