@@ -6,7 +6,7 @@ export const explorePipelinesQuickStart = {
   },
   spec: {
     version: 4.7,
-    displayName: `Explore Pipelines`,
+    displayName: `Getting started with Pipelines`,
     duration: 10,
     iconURL:
       '/api/kubernetes/apis/packages.operators.coreos.com/v1/namespaces/openshift-marketplace/packagemanifests/openshift-pipelines-operator/icon?resourceVersion=openshift-pipelines-operator.dev-preview.openshift-pipelines-operator.v0.10.7',
@@ -43,7 +43,7 @@ Is the status Succeeded?`,
       },
       {
         title: 'Explore your application in topology',
-        description: `#### To install the Pipelines Operator:
+        description: `### To install the Pipelines Operator:
 1. In the Administrator perspective, go to the OperatorHub from the Operators section of the navigation.
 2. Use the filter at the top of the page to search for the OpenShift® Pipelines Operator.
 3. If the card has an Installed label on it, the Operator has already been installed.  You won't be able to perform the following steps, and should cancel out of the Quick Start.
@@ -69,7 +69,7 @@ Is the status Succeeded?`,
       },
       {
         title: `Explore your pipeline run`,
-        description: `#### To install the Pipelines Operator:
+        description: `### To install the Pipelines Operator:
 1. In the Administrator perspective, go to the OperatorHub from the Operators section of the navigation.
 2. Use the filter at the top of the page to search for the OpenShift® Pipelines Operator.
 3. If the card has an Installed label on it, the Operator has already been installed.  You won't be able to perform the following steps, and should cancel out of the Quick Start

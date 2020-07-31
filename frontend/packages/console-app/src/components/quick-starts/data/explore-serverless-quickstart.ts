@@ -6,7 +6,7 @@ export const exploreServerlessQuickStart = {
   },
   spec: {
     version: 4.7,
-    displayName: `Explore Serverless`,
+    displayName: `Getting started with Serverless`,
     duration: 10,
     iconURL:
       '/api/kubernetes/apis/packages.operators.coreos.com/v1/namespaces/openshift-marketplace/packagemanifests/serverless-operator/icon?resourceVersion=serverless-operator.4.3.serverless-operator.v1.7.2',
@@ -21,7 +21,7 @@ Adding Serverless to your OpenShift cluster is quick and easy. This guided tour 
     tasks: [
       {
         title: `Install Serverless Operator`,
-        description: `#### To install the Serverless Operator:
+        description: `### To install the Serverless Operator:
 1. Go to the OperatorHub from the Operators section of the navigation.
 2. Use the filter at the top of the page to search for the **OpenShift Serverless Operator**.
 3. Click on the tile to open the Operator details.
@@ -48,7 +48,7 @@ Adding Serverless to your OpenShift cluster is quick and easy. This guided tour 
       },
       {
         title: `Create the knative-serving and knative-eventing APIs`,
-        description: `#### To create the knative-serving and knative-eventing APIs:
+        description: `### To create the knative-serving and knative-eventing APIs:
 1. Make sure you’re still on the Installed Operators page on the Details tab.
 2. Click OpenShift Serverless Operator.
 3. Click on the Knative Serving tile to create an instance of the API.
@@ -71,6 +71,6 @@ Adding Serverless to your OpenShift cluster is quick and easy. This guided tour 
     ],
     conclusion:
       'Your Serverless Operator is ready! If you want to learn how to deploy a serverless application, take the Serverless Application tour.',
-    nextQuickStart: '',
+    nextQuickStart: 'serverless-application',
   },
 };
