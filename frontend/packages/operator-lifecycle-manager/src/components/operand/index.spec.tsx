@@ -185,7 +185,7 @@ describe(OperandDetails.displayName, () => {
     expect(wrapper.find(DescriptorDetailsItem).length).toEqual(0);
   });
 
-  it('renders spec descriptor fields if the custom resource is `owned`', () => {
+  xit('[CONSOLE-2336] renders spec descriptor fields if the custom resource is `owned`', () => {
     expect(
       wrapper
         .find(DescriptorDetailsItemList)
@@ -197,7 +197,7 @@ describe(OperandDetails.displayName, () => {
     );
   });
 
-  it('renders spec descriptor fields if the custom resource is `required`', () => {
+  xit('[CONSOLE-2336] renders spec descriptor fields if the custom resource is `required`', () => {
     const csv = _.cloneDeep(testClusterServiceVersion);
     csv.spec.customresourcedefinitions.required = _.cloneDeep(
       csv.spec.customresourcedefinitions.owned,
