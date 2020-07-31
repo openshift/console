@@ -15,16 +15,15 @@ import {
   SecretKind,
 } from '@console/internal/module/k8s';
 import { TemplateModel, TemplateInstanceModel, SecretModel } from '@console/internal/models';
-import { CEPH_STORAGE_NAMESPACE } from '../../../constants';
-
-const OSD_REMOVAL_TEMPLATE = 'ocs-osd-removal';
+import { CEPH_STORAGE_NAMESPACE, OSD_REMOVAL_TEMPLATE } from '../../../constants';
+import { OCSDiskList, OCSColumnStateAction, ActionType, Status } from './state-reducer';
 
 const createTemplateSecret = async (template: TemplateKind, osdId: string) => {
   const parametersSecret: SecretKind = {
     apiVersion: SecretModel.apiVersion,
     kind: SecretModel.kind,
     metadata: {
-      name: `${OSD_REMOVAL_TEMPLATE}-parameters`,
+      name: `${OSD_REMOVAL_TEMPLATE}-${osdId}`,
       namespace: CEPH_STORAGE_NAMESPACE,
     },
     stringData: {
@@ -39,7 +38,7 @@ const createTemplateInstance = async (parametersSecret: SecretKind, template: Te
     apiVersion: apiVersionForModel(TemplateInstanceModel),
     kind: TemplateInstanceModel.kind,
     metadata: {
-      name: `${OSD_REMOVAL_TEMPLATE}-template-instance`,
+      name: parametersSecret.metadata.name,
       namespace: CEPH_STORAGE_NAMESPACE,
     },
     spec: {
@@ -63,7 +62,7 @@ const instantiateTemplate = async (osdId: string) => {
 };
 
 const DiskReplacementAction = (props: DiskReplacementActionProps) => {
-  const { diskName, osdId, cancel, close } = props;
+  const { diskName, diskOsdMap, isRebalancing, dispatch, cancel, close } = props;
 
   const [inProgress, setProgress] = React.useState(false);
   const [errorMessage, setError] = React.useState('');
@@ -71,11 +70,19 @@ const DiskReplacementAction = (props: DiskReplacementActionProps) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     setProgress(true);
-    /*
-     * TODO:(Afreen) Add validations based on ocs status (part of followup PR)
-     */
     try {
-      instantiateTemplate(osdId);
+      const { status, osd } = diskOsdMap[diskName];
+      if (isRebalancing && status !== Status.Offline)
+        throw new Error('Replacement not allowed. Rebalancing is in progress');
+      if (status === Status.Offline || status === Status.NotResponding) {
+        instantiateTemplate(osd);
+        dispatch({
+          type: ActionType.SET_REPLACEMENT_MAP,
+          payload: { [diskName]: { osd, status: Status.PreparingToReplace } },
+        });
+      } else {
+        throw new Error('Replacement not allowed');
+      }
       close();
     } catch (err) {
       setError(err.message);
@@ -107,5 +114,7 @@ export const diskReplacementModal = createModalLauncher(DiskReplacementAction);
 
 export type DiskReplacementActionProps = {
   diskName: string;
-  osdId: string;
+  diskOsdMap: OCSDiskList;
+  isRebalancing: boolean;
+  dispatch: React.Dispatch<OCSColumnStateAction>;
 } & ModalComponentProps;
