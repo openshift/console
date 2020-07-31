@@ -307,6 +307,7 @@ const ImageStreamsTableHeader = () => {
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
+      id: 'namespace',
     },
     {
       title: 'Labels',
@@ -339,7 +340,10 @@ const ImageStreamsTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, s
           title={obj.metadata.name}
         />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      <TableData
+        className={classNames(tableColumnClasses[1], 'co-break-word')}
+        columnID="namespace"
+      >
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>

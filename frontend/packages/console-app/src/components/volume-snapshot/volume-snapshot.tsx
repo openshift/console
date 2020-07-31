@@ -61,6 +61,7 @@ const Header = (disableItems = {}) => () =>
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
+      id: 'namespace',
     },
     {
       title: 'Status',
@@ -120,7 +121,7 @@ const Row: RowFunction<VolumeSnapshotKind> = ({ key, obj, style, index, customDa
           namespace={namespace}
         />
       </TableData>
-      <TableData className={tableColumnClasses[1]}>
+      <TableData className={tableColumnClasses[1]} columnID="namespace">
         <ResourceLink kind={NamespaceModel.kind} name={namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
