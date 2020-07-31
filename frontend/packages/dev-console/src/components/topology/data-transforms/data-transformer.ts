@@ -96,6 +96,34 @@ const getBaseTopologyDataModel = (
   return baseDataModel;
 };
 
+const updateAppGroupChildren = (model: Model) => {
+  model.nodes.forEach((n) => {
+    if (n.type === TYPE_APPLICATION_GROUP) {
+      // Filter out any children removed by depicters
+      n.children = n.children.filter((id) => model.nodes.find((child) => child.id === id));
+      n.data.groupResources = n.children?.map((id) => model.nodes.find((c) => id === c.id)) ?? [];
+    }
+  });
+};
+
+const createVisualConnectors = (model: Model, workloadResources: K8sResourceKind[]) => {
+  // Create all visual connectors
+  workloadResources.forEach((dc) => {
+    model.edges.push(...getTopologyEdgeItems(dc, workloadResources));
+  });
+};
+
+const createTrafficConnectors = (
+  model: Model,
+  workloadResources: K8sResourceKind[],
+  trafficData?: TrafficData,
+) => {
+  // Create traffic connectors
+  if (trafficData) {
+    model.edges.push(...getTrafficConnectors(trafficData, workloadResources));
+  }
+};
+
 export const baseDataModelGetter = (
   model: Model,
   namespace: string,
@@ -109,23 +137,9 @@ export const baseDataModelGetter = (
   const baseModel = getBaseTopologyDataModel(res);
   addToTopologyDataModel(baseModel, model, dataModelDepicters);
 
-  model.nodes.forEach((n) => {
-    if (n.type === TYPE_APPLICATION_GROUP) {
-      // Filter out any children removed by depicters
-      n.children = n.children.filter((id) => model.nodes.find((child) => child.id === id));
-      n.data.groupResources = n.children?.map((id) => model.nodes.find((c) => id === c.id)) ?? [];
-    }
-  });
-
-  // Create all visual connectors
-  workloadResources.forEach((dc) => {
-    model.edges.push(...getTopologyEdgeItems(dc, workloadResources));
-  });
-
-  // Create traffic connectors
-  if (trafficData) {
-    model.edges.push(...getTrafficConnectors(trafficData, workloadResources));
-  }
+  updateAppGroupChildren(model);
+  createVisualConnectors(model, workloadResources);
+  createTrafficConnectors(model, workloadResources, trafficData);
 
   return model;
 };

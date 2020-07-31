@@ -7,7 +7,7 @@ import {
   DisplayFilters,
   TopologyDisplayFilterType,
 } from '../topology-types';
-import { DEFAULT_TOPOLOGY_FILTERS, EXPAND_GROUPS_FILTER_ID } from './const';
+import { DEFAULT_TOPOLOGY_FILTERS, EXPAND_GROUPS_FILTER_ID, SHOW_GROUPS_FILTER_ID } from './const';
 
 export const TOPOLOGY_SEARCH_FILTER_KEY = 'searchQuery';
 
@@ -39,8 +39,12 @@ export const isExpanded = (id: string, filters: DisplayFilters): boolean => {
   if (!filters) {
     return true;
   }
-  const groupsExpanded = getFilterById(EXPAND_GROUPS_FILTER_ID, filters);
-  if (!groupsExpanded.value) {
+  const groupsShown = getFilterById(SHOW_GROUPS_FILTER_ID, filters)?.value ?? true;
+  if (!groupsShown) {
+    return true;
+  }
+  const groupsExpanded = getFilterById(EXPAND_GROUPS_FILTER_ID, filters)?.value ?? true;
+  if (!groupsExpanded) {
     return false;
   }
   const filter = getFilterById(id, filters);
@@ -59,4 +63,8 @@ export const isShown = (id: string, filters: DisplayFilters): boolean => {
     return filter.value;
   }
   return true;
+};
+
+export const allowEdgeCreation = (filters: DisplayFilters): boolean => {
+  return getFilterById(SHOW_GROUPS_FILTER_ID, filters)?.value ?? true;
 };

@@ -4,7 +4,11 @@ import { Model, NodeModel } from '@patternfly/react-topology';
 import { WorkloadData, TopologyDataResources } from '../../topology-types';
 import { MockResources, TEST_KINDS_MAP } from '../../__tests__/topology-test-data';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '../components/const';
-import { DEFAULT_TOPOLOGY_FILTERS, EXPAND_GROUPS_FILTER_ID } from '../../filters/const';
+import {
+  DEFAULT_TOPOLOGY_FILTERS,
+  EXPAND_GROUPS_FILTER_ID,
+  SHOW_GROUPS_FILTER_ID,
+} from '../../filters/const';
 import { getOperatorTopologyDataModel } from '../operators-data-transformer';
 import {
   baseDataModelGetter,
@@ -97,5 +101,19 @@ describe('operator data transformer ', () => {
     expect(
       newModel.nodes.filter((n) => n.type === TYPE_OPERATOR_BACKED_SERVICE && n.collapsed).length,
     ).toBe(1);
+  });
+
+  it('should flag not show operator groups when show groups is false', async () => {
+    const filters = [...DEFAULT_TOPOLOGY_FILTERS];
+    filters.push(...getTopologyFilters());
+    const topologyTransformedData = await getTransformedTopologyData(mockResources);
+    getFilterById(SHOW_GROUPS_FILTER_ID, filters).value = false;
+    const newModel = updateModelFromFilters(
+      topologyTransformedData,
+      filters,
+      ALL_APPLICATIONS_KEY,
+      filterers,
+    );
+    expect(newModel.nodes.filter((n) => n.type === TYPE_OPERATOR_BACKED_SERVICE).length).toBe(0);
   });
 });

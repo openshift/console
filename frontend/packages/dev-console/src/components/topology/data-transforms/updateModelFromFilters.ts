@@ -4,6 +4,8 @@ import {
   EXPAND_APPLICATION_GROUPS_FILTER_ID,
   DEFAULT_SUPPORTED_FILTER_IDS,
   isExpanded,
+  SHOW_GROUPS_FILTER_ID,
+  getFilterById,
 } from '../filters';
 import { TYPE_APPLICATION_GROUP, TYPE_AGGREGATE_EDGE } from '../components/const';
 import { TopologyApplyDisplayOptions, DisplayFilters } from '../topology-types';
@@ -36,6 +38,7 @@ export const updateModelFromFilters = (
   const supportedFilters = [...DEFAULT_SUPPORTED_FILTER_IDS];
   let appGroupFound = false;
   const expanded = isExpanded(EXPAND_APPLICATION_GROUPS_FILTER_ID, filters);
+  const showGroups = getFilterById(SHOW_GROUPS_FILTER_ID, filters)?.value ?? true;
   dataModel.nodes.forEach((d) => {
     d.visible = true;
     if (displayFilterers) {
@@ -59,6 +62,11 @@ export const updateModelFromFilters = (
       const group = getApplicationGroupForNode(g, dataModel.nodes);
       g.visible = g.visible && group?.label === application;
     });
+  }
+
+  if (!showGroups) {
+    dataModel.nodes = dataModel.nodes.filter((n) => !n.group);
+    dataModel.edges = [];
   }
 
   // create links from data, only include those which have a valid source and target

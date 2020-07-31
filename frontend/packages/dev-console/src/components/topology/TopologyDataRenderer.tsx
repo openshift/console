@@ -7,6 +7,7 @@ import { PROMETHEUS_TENANCY_BASE_PATH } from '@console/internal/components/graph
 import { TopologyDataResources, TrafficData } from './topology-types';
 import ModelContext, { ExtensibleModel } from './data-transforms/ModelContext';
 import { baseDataModelGetter } from './data-transforms';
+import { getFilterById, useDisplayFilters, SHOW_GROUPS_FILTER_ID } from './filters';
 
 export interface RenderProps {
   showGraphView: boolean;
@@ -38,6 +39,8 @@ export const TopologyDataRenderer: React.FC<TopologyDataRendererProps> = ({
   const dataModelContext = React.useContext<ExtensibleModel>(ModelContext);
   const [model, setModel] = React.useState<Model>(null);
   const [loadError, setLoadError] = React.useState<string>(null);
+  const filters = useDisplayFilters();
+  const showGroups = getFilterById(SHOW_GROUPS_FILTER_ID, filters)?.value ?? true;
 
   const url = PROMETHEUS_TENANCY_BASE_PATH
     ? `${PROMETHEUS_TENANCY_BASE_PATH}/api/v1/rules?namespace=${namespace}`
@@ -96,14 +99,14 @@ export const TopologyDataRenderer: React.FC<TopologyDataRendererProps> = ({
             dataModelContext.namespace,
             resources,
             workloadResources,
-            depicters,
+            showGroups ? depicters : [],
             trafficData,
             monitoringAlerts,
           ),
         );
       })
       .catch(() => {});
-  }, [resources, trafficData, dataModelContext, kindsInFlight, monitoringAlerts]);
+  }, [resources, trafficData, dataModelContext, kindsInFlight, monitoringAlerts, showGroups]);
 
   return render({
     loaded: !!model,

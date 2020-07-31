@@ -27,6 +27,7 @@ import {
   Decorator,
   useSearchFilter,
   useDisplayFilters,
+  useAllowEdgeCreation,
   getFilterById,
   SHOW_LABELS_FILTER_ID,
 } from '@console/dev-console/src/components/topology';
@@ -94,19 +95,20 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
 
   const [filtered] = useSearchFilter(element.getLabel());
   const displayFilters = useDisplayFilters();
+  const allowEdgeCreation = useAllowEdgeCreation();
   const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
   const showLabels = showLabelsFilter?.value || hover || innerHover;
   const { x, y, width, height } = element.getBounds();
 
   React.useLayoutEffect(() => {
-    if (editAccess) {
+    if (editAccess && allowEdgeCreation) {
       if (innerHover) {
         onShowCreateConnector && onShowCreateConnector();
       } else {
         onHideCreateConnector && onHideCreateConnector();
       }
     }
-  }, [editAccess, innerHover, onShowCreateConnector, onHideCreateConnector]);
+  }, [editAccess, innerHover, onShowCreateConnector, onHideCreateConnector, allowEdgeCreation]);
 
   return (
     <Tooltip

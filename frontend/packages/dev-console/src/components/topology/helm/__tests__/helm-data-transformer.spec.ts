@@ -13,7 +13,11 @@ import {
   TEST_KINDS_MAP,
 } from '../../__tests__/topology-test-data';
 import { TYPE_HELM_RELEASE } from '../components/const';
-import { DEFAULT_TOPOLOGY_FILTERS, EXPAND_GROUPS_FILTER_ID } from '../../filters/const';
+import {
+  DEFAULT_TOPOLOGY_FILTERS,
+  EXPAND_GROUPS_FILTER_ID,
+  SHOW_GROUPS_FILTER_ID,
+} from '../../filters/const';
 import {
   baseDataModelGetter,
   getWorkloadResources,
@@ -96,5 +100,13 @@ describe('HELM data transformer ', () => {
     expect(newModel.nodes.filter((n) => n.type === TYPE_HELM_RELEASE && n.collapsed)).toHaveLength(
       1,
     );
+  });
+  it('should flag not show helm groups when show groups is false', async () => {
+    const filters = [...DEFAULT_TOPOLOGY_FILTERS];
+    filters.push(...getTopologyFilters());
+    const graphData = await getTransformedTopologyData(mockResources);
+    getFilterById(SHOW_GROUPS_FILTER_ID, filters).value = false;
+    const newModel = updateModelFromFilters(graphData, filters, ALL_APPLICATIONS_KEY, filterers);
+    expect(newModel.nodes.filter((n) => n.type === TYPE_HELM_RELEASE)).toHaveLength(0);
   });
 });
