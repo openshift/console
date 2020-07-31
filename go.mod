@@ -23,6 +23,7 @@ require (
 	k8s.io/client-go v0.18.0
 	k8s.io/klog v1.0.0
 	rsc.io/letsencrypt v0.0.3 // indirect
+	sigs.k8s.io/yaml v1.2.0
 )
 
 replace (
