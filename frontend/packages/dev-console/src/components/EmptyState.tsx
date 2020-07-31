@@ -5,9 +5,8 @@ import { connect } from 'react-redux';
 import { history, useAccessReview } from '@console/internal/components/utils';
 import { useExtensions } from '@console/plugin-sdk';
 import { RootState } from '@console/internal/redux';
-import { ALL_NAMESPACES_KEY } from '@console/shared';
+import { ALL_NAMESPACES_KEY, PageLayout } from '@console/shared';
 import { isAddAction, AddAction } from '../extensions/add-actions';
-import PageLayout from './layout/PageLayout';
 import QuickStartTile from './QuickStartTile';
 
 const navigateTo = (e: React.SyntheticEvent, url: string) => {

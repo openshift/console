@@ -1,8 +1,11 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { shallow } from 'enzyme';
-import QuickStartTile, { HIDE_QUICK_START_STORAGE_KEY } from '../QuickStartTile';
-import { CardActions, Dropdown, CardBody, CardFooter } from '@patternfly/react-core';
+import {
+  InternalQuickStartTile as QuickStartTile,
+  HIDE_QUICK_START_ADD_TILE_STORAGE_KEY,
+} from '../QuickStartTile';
+import { CardActions, Dropdown, CardBody, CardFooter, Button } from '@patternfly/react-core';
 
 describe('QuickStartTile', () => {
   const QuickStartTileWrapper = shallow(<QuickStartTile />);
@@ -14,7 +17,7 @@ describe('QuickStartTile', () => {
   it('should show 3 tour links', () => {
     const cardBody = QuickStartTileWrapper.find(CardBody);
     expect(cardBody.exists()).toBe(true);
-    expect(cardBody.find(Link).length).toEqual(3);
+    expect(cardBody.find(Button).length).toEqual(3);
   });
   it('should show a footer link to QuickStartCatalog', () => {
     const cardFooter = QuickStartTileWrapper.find(CardFooter);
@@ -23,7 +26,7 @@ describe('QuickStartTile', () => {
     expect(cardFooter.find(Link).prop('to')).toEqual('/quickstart');
   });
   it('should hide QuickStartTile when locaStorage is set', () => {
-    localStorage.setItem(HIDE_QUICK_START_STORAGE_KEY, 'true');
+    localStorage.setItem(HIDE_QUICK_START_ADD_TILE_STORAGE_KEY, 'true');
     const emptyWrapper = shallow(<QuickStartTile />);
     expect(emptyWrapper.find(QuickStartTile).exists()).toBe(false);
   });

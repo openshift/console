@@ -14,3 +14,4 @@ export * from './health-checks';
 export * from './virtualized-grid';
 export * from './alerts';
 export * from './popover';
+export * from './layout';

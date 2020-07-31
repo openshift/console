@@ -6,9 +6,9 @@ import { CatalogTile } from '@patternfly/react-catalog-view-extension';
 import { ImageStreamModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { FirehoseResource, LoadingBox, history } from '@console/internal/components/utils';
+import { PageLayout } from '@console/shared';
 import { normalizeBuilderImages, NormalizedBuilderImages } from '../../utils/imagestream-utils';
 import ProjectListPage from '../projects/ProjectListPage';
-import PageLayout from '../layout/PageLayout';
 import NamespacedPage from '../NamespacedPage';
 
 const imageStreamResource: FirehoseResource = {

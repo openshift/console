@@ -1,0 +1,7 @@
+.co-quick-start-tile {
+  height: 100%;
+  & .catalog-tile-pf-description .has-footer {
+    display: block;
+    -webkit-line-clamp: unset;
+  }
+}

@@ -1,0 +1,7 @@
+@import '~bootstrap-sass/assets/stylesheets/bootstrap/variables';
+
+.co-quick-start-content {
+  @media (min-width: $screen-lg-min) {
+    min-height: calc(100vh - (var(--pf-global--spacer--4xl) + var(--pf-global--spacer--3xl)));
+  }
+}

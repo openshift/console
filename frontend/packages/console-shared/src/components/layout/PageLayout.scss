@@ -1,0 +1,25 @@
+.ocs-page-layout {
+  &__content {
+    padding: var(--pf-global--spacer--lg);
+    flex: 1;
+
+    &.is-dark {
+      background: var(--pf-global--palette--black-150);
+    }
+  }
+
+  &__header {
+    background-color: var(--pf-global--BackgroundColor--light-100);
+  }
+
+  &__hint {
+    padding-left: var(--pf-global--spacer--lg);
+    padding-right: var(--pf-global--spacer--lg);
+    padding-bottom: var(--pf-global--spacer--md);
+  }
+
+  &__title {
+    padding-left: var(--pf-global--spacer--lg);
+    padding-right: var(--pf-global--spacer--lg);
+  }
+}
