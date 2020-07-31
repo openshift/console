@@ -184,14 +184,16 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
 }
 
 export const GlobalConfigPage = connect(stateToProps)(
-  withExtensions<GlobalConfigPageExtensions>({ globalConfigs: isGlobalConfig })(GlobalConfigPage_),
+  withExtensions<GlobalConfigPageExtensionProps>({ globalConfigs: isGlobalConfig })(
+    GlobalConfigPage_,
+  ),
 );
 
-type GlobalConfigPageExtensions = {
+type GlobalConfigPageExtensionProps = {
   globalConfigs: GlobalConfig[];
 };
 
-type GlobalConfigPageProps = GlobalConfigPageExtensions & {
+type GlobalConfigPageProps = GlobalConfigPageExtensionProps & {
   configResources: K8sKind[];
 };
 

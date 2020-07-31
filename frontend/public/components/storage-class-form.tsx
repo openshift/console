@@ -1039,7 +1039,7 @@ const mapDispatchToProps = () => ({
   watchK8sList: k8sActions.watchK8sList,
 });
 
-export type StorageClassFormProps = StorageClassParamsExtensions & {
+export type StorageClassFormProps = StorageClassFormExtensionProps & {
   onClose: () => void;
   watchK8sList: (id: string, query: object, kind: object) => void;
   stopK8sWatch: (id: string) => void;
@@ -1084,12 +1084,12 @@ export const ConnectedStorageClassForm = connect(
   mapStateToProps,
   mapDispatchToProps,
 )(
-  withExtensions<StorageClassParamsExtensions>({ params: isStorageClassProvisioner })(
+  withExtensions<StorageClassFormExtensionProps>({ params: isStorageClassProvisioner })(
     StorageClassForm_,
   ),
 );
 
-export type StorageClassParamsExtensions = {
+export type StorageClassFormExtensionProps = {
   params: StorageClassProvisioner[];
 };
 

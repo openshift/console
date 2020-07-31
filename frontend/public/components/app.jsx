@@ -177,8 +177,10 @@ class App_ extends React.PureComponent {
     return (
       <DetectPerspective>
         {contextProviderExtensions.reduce(
-          (children, provider) => (
-            <EnhancedProvider {...provider.properties}>{children}</EnhancedProvider>
+          (children, e) => (
+            <EnhancedProvider key={e.uid} {...e.properties}>
+              {children}
+            </EnhancedProvider>
           ),
           content,
         )}
