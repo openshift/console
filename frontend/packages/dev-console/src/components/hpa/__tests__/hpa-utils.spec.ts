@@ -1,10 +1,12 @@
 import { cloneDeep } from 'lodash';
 import {
+  doesHpaMatch,
   getFormData,
   getInvalidUsageError,
   getLimitWarning,
   getMetricByType,
   getYAMLData,
+  hasCustomMetrics,
   isCpuUtilizationPossible,
   isMemoryUtilizationPossible,
   sanitizeHPAToForm,
@@ -206,6 +208,11 @@ describe('sanityForSubmit covers some basic field locking and trimming', () => {
     );
   });
 
+  it('expect to work fine if there are no metrics', () => {
+    const noMetricsHPA: HorizontalPodAutoscalerKind = hpaExamples.noMetrics;
+    expect(sanityForSubmit(deploymentResource, noMetricsHPA).spec.metrics).toBeUndefined();
+  });
+
   it('expect to always scale to the same resource despite hpa settings', () => {
     const scaledTargetRef = {
       apiVersion: deploymentResource.apiVersion,
@@ -244,6 +251,7 @@ describe('getInvalidUsageError returns an error string when limits are not set',
   const formValues: HPAFormValues = {
     showCanUseYAMLMessage: false,
     disabledFields: {
+      name: false,
       cpuUtilization: true,
       memoryUtilization: true,
     },
@@ -253,6 +261,15 @@ describe('getInvalidUsageError returns an error string when limits are not set',
   };
   const hpaResource: HorizontalPodAutoscalerKind = hpaExamples.cpuScaled;
 
+  it('expect no metrics to be an error', () => {
+    const noMetricsHPA: HorizontalPodAutoscalerKind = hpaExamples.noMetrics;
+    expect(typeof getInvalidUsageError(noMetricsHPA, formValues)).toBe('string');
+
+    const emptyMetricsHPA: HorizontalPodAutoscalerKind = cloneDeep(noMetricsHPA);
+    emptyMetricsHPA.spec.metrics = [];
+    expect(typeof getInvalidUsageError(emptyMetricsHPA, formValues)).toBe('string');
+  });
+
   it('expect cpu metric not to be allowed while disabled', () => {
     expect(typeof getInvalidUsageError(hpaResource, formValues)).toBe('string');
   });
@@ -261,5 +278,56 @@ describe('getInvalidUsageError returns an error string when limits are not set',
     const memoryHPA = cloneDeep(hpaResource);
     memoryHPA.spec.metrics[0].resource.name = 'memory';
     expect(typeof getInvalidUsageError(memoryHPA, formValues)).toBe('string');
+  });
+});
+
+describe('doesHpaMatch checks if it aligns to a workload', () => {
+  it('expect not to match when hpa does not target workload', () => {
+    expect(doesHpaMatch(deploymentExamples.hasCpuAndMemoryLimits)(hpaExamples.cpuScaled)).toBe(
+      false,
+    );
+  });
+
+  it('expect to match when hpa does target workload', () => {
+    expect(
+      doesHpaMatch(deploymentConfigExamples.hasCpuAndMemoryLimits)(hpaExamples.cpuScaled),
+    ).toBe(true);
+  });
+});
+
+describe('hasCustomMetrics accurately determines if an hpa contains non-default metrics', () => {
+  it('expect no metrics to mean no custom metrics', () => {
+    expect(hasCustomMetrics(null)).toBe(false);
+    expect(hasCustomMetrics({} as any)).toBe(false);
+    expect(hasCustomMetrics(hpaExamples.noMetrics)).toBe(false);
+  });
+
+  it('expect cpu and memory metrics to not be custom', () => {
+    expect(hasCustomMetrics(hpaExamples.cpuScaled)).toBe(false);
+
+    const memoryScaled = cloneDeep(hpaExamples.cpuScaled);
+    memoryScaled.spec.metrics[0].resource.name = 'memory';
+    expect(hasCustomMetrics(memoryScaled)).toBe(false);
+  });
+
+  it('expect any unknown metric to be custom', () => {
+    const unknownMetric = cloneDeep(hpaExamples.cpuScaled);
+    unknownMetric.spec.metrics[0].resource.name = 'custom-metric';
+    expect(hasCustomMetrics(unknownMetric)).toBe(true);
+  });
+
+  it('expect an unknown metric to trump known metrics', () => {
+    const mixedMetrics = cloneDeep(hpaExamples.cpuScaled);
+    mixedMetrics.spec.metrics.push({
+      type: 'Resource',
+      resource: {
+        name: 'custom-metric',
+        target: {
+          type: 'Utilization',
+          averageUtilization: 66,
+        },
+      },
+    });
+    expect(hasCustomMetrics(mixedMetrics)).toBe(true);
   });
 });

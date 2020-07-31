@@ -27,12 +27,13 @@ const HPAPageHeader: React.FC<HPAPageHeaderProps> = ({
           <div>
             Resource <ResourceLink inline linkTo={false} kind={kind} name={name} />
           </div>
-          {loadError && (
+          {loadError ? (
             <Alert isInline variant="danger" title="This resource is not available">
               {loadError}
             </Alert>
+          ) : (
+            limitWarning && <Alert isInline variant="warning" title={limitWarning} />
           )}
-          {limitWarning && <Alert isInline variant="warning" title={limitWarning} />}
         </>
       ) : (
         <Alert isInline variant="danger" title="This is not a supported in-context type" />

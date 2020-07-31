@@ -385,6 +385,12 @@ export type HorizontalPodAutoscalerKind = K8sResourceCommon & {
     maxReplicas: number;
     metrics?: HPAMetric[];
   };
+  status?: {
+    currentReplicas: number;
+    desiredReplicas: number;
+    currentMetrics: any;
+    conditions: NodeCondition[];
+  };
 };
 
 export type StorageClassResourceKind = {

@@ -38,6 +38,7 @@ import {
   GROUP_PADDING,
 } from '../components/const';
 import { getRoutesURL, WORKLOAD_TYPES } from '../topology-utils';
+import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 
 export const dataObjectFromModel = (node: OdcNodeModel): TopologyDataObject => {
   return {
@@ -414,6 +415,12 @@ export const getBaseWatchedResources = (namespace: string): WatchK8sResources<an
     secrets: {
       isList: true,
       kind: 'Secret',
+      namespace,
+      optional: true,
+    },
+    hpas: {
+      isList: true,
+      kind: HorizontalPodAutoscalerModel.kind,
       namespace,
       optional: true,
     },

@@ -3,6 +3,7 @@ import { safeJSToYAML, safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import {
   HorizontalPodAutoscalerKind,
   HPAMetric,
+  K8sResourceCommon,
   K8sResourceKind,
   referenceForModel,
 } from '@console/internal/module/k8s';
@@ -125,7 +126,7 @@ export const sanityForSubmit = (
   );
 
   // Remove empty metrics
-  validHPA.spec.metrics = validHPA.spec.metrics.filter(
+  validHPA.spec.metrics = validHPA.spec.metrics?.filter(
     (metric: HPAMetric) =>
       !['cpu', 'memory'].includes(metric?.resource?.name?.toLowerCase()) ||
       (metric.resource.target.type === 'Utilization' &&
@@ -147,6 +148,9 @@ export const getInvalidUsageError = (
   const invalidCPU = lackCPULimits && metricNames.includes('cpu');
   const invalidMemory = lackMemoryLimits && metricNames.includes('memory');
 
+  if (metricNames.length === 0) {
+    return `Cannot create a ${HorizontalPodAutoscalerModel.label} with no valid metrics.`;
+  }
   if (invalidCPU && invalidMemory) {
     return 'CPU and memory utilization cannot be used currently.';
   }
@@ -158,4 +162,25 @@ export const getInvalidUsageError = (
   }
 
   return null;
+};
+
+export const doesHpaMatch = (workload: K8sResourceCommon) => (
+  thisHPA: HorizontalPodAutoscalerKind,
+) => {
+  const {
+    apiVersion,
+    kind,
+    metadata: { name },
+  } = workload;
+  const ref = thisHPA?.spec?.scaleTargetRef;
+  return ref && ref.apiVersion === apiVersion && ref.kind === kind && ref.name === name;
+};
+
+export const hasCustomMetrics = (hpa?: HorizontalPodAutoscalerKind): boolean => {
+  const metrics = hpa?.spec?.metrics;
+  if (!metrics) {
+    return false;
+  }
+
+  return !!metrics.find((metric) => !['cpu', 'memory'].includes(metric?.resource?.name));
 };

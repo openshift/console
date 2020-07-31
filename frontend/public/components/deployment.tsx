@@ -3,7 +3,12 @@ import * as React from 'react';
 import { Status, PodRingController } from '@console/shared';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
-import { AddHorizontalPodAutoScaler } from '@console/app/src/actions/modify-hpa';
+import {
+  AddHorizontalPodAutoScaler,
+  DeleteHorizontalPodAutoScaler,
+  EditHorizontalPodAutoScaler,
+  hideActionForHPAs,
+} from '@console/app/src/actions/modify-hpa';
 import { DeploymentModel } from '../models';
 import { DeploymentKind, K8sKind, K8sResourceKindReference } from '../module/k8s';
 import { configureUpdateStrategyModal, errorModal } from './modals';
@@ -56,12 +61,14 @@ const PauseAction: KebabAction = (kind: K8sKind, obj: DeploymentKind) => ({
 });
 
 export const menuActions = [
-  ModifyCount,
+  hideActionForHPAs(ModifyCount),
   PauseAction,
   AddHealthChecks,
   AddHorizontalPodAutoScaler,
+  EditHorizontalPodAutoScaler,
   AddStorage,
   UpdateStrategy,
+  DeleteHorizontalPodAutoScaler,
   ...Kebab.getExtensionsActionsForKind(DeploymentModel),
   EditHealthChecks,
   ...common,

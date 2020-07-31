@@ -3,7 +3,7 @@ import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 import { Breadcrumb, BreadcrumbItem, Button, SplitItem, Split } from '@patternfly/react-core';
-import { Status, HealthChecksAlert } from '@console/shared';
+import { OverviewItem, Status, HealthChecksAlert } from '@console/shared';
 import {
   ActionsMenu,
   FirehoseResult,
@@ -199,8 +199,9 @@ export const SidebarSectionHeading: React.SFC<SidebarSectionHeadingProps> = ({
 export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = ({
   kindObj,
   actions,
-  resource,
+  resources,
 }) => {
+  const { obj: resource, ...otherResources } = resources;
   const isDeleting = !!resource.metadata.deletionTimestamp;
   return (
     <div className="overview__sidebar-pane-head resource-overview__heading">
@@ -224,7 +225,7 @@ export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = 
         </div>
         {!isDeleting && (
           <div className="co-actions">
-            <ActionsMenu actions={actions.map((a) => a(kindObj, resource))} />
+            <ActionsMenu actions={actions.map((a) => a(kindObj, resource, otherResources))} />
           </div>
         )}
       </h1>
@@ -271,7 +272,7 @@ export type PageHeadingProps = {
 export type ResourceOverviewHeadingProps = {
   actions: KebabAction[];
   kindObj: K8sKind;
-  resource: K8sResourceKind;
+  resources?: OverviewItem;
 };
 
 export type SectionHeadingProps = {

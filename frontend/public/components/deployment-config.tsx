@@ -4,7 +4,12 @@ import * as _ from 'lodash-es';
 import { Status, PodRingController } from '@console/shared';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
-import { AddHorizontalPodAutoScaler } from '@console/app/src/actions/modify-hpa';
+import {
+  AddHorizontalPodAutoScaler,
+  DeleteHorizontalPodAutoScaler,
+  EditHorizontalPodAutoScaler,
+  hideActionForHPAs,
+} from '@console/app/src/actions/modify-hpa';
 import { k8sCreate, K8sKind, K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { errorModal } from './modals';
 import { DeploymentConfigModel } from '../models';
@@ -83,10 +88,12 @@ const { ModifyCount, AddStorage, common } = Kebab.factory;
 export const menuActions: KebabAction[] = [
   RolloutAction,
   PauseAction,
-  ModifyCount,
+  hideActionForHPAs(ModifyCount),
   AddHealthChecks,
   AddHorizontalPodAutoScaler,
+  EditHorizontalPodAutoScaler,
   AddStorage,
+  DeleteHorizontalPodAutoScaler,
   ...getExtensionsKebabActionsForKind(DeploymentConfigModel),
   EditHealthChecks,
   ...common,
