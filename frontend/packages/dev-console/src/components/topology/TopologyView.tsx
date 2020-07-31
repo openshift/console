@@ -1,31 +1,32 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import {
-  Model,
-  Visualization,
-  SELECTION_EVENT,
-  SelectionEventListener,
-  GROUPS_LAYER,
-  TOP_LAYER,
+  BaseEdge,
   BOTTOM_LAYER,
   DEFAULT_LAYER,
-  isNode,
+  GROUPS_LAYER,
   isEdge,
-  BaseEdge,
+  isNode,
+  Model,
+  SELECTION_EVENT,
+  SelectionEventListener,
+  TOP_LAYER,
+  Visualization,
 } from '@patternfly/react-topology';
-import { useQueryParams, useDeepCompareMemoize } from '@console/shared';
+import { useDeepCompareMemoize, useQueryParams } from '@console/shared';
 import { useExtensions } from '@console/plugin-sdk';
 import { RootState } from '@console/internal/redux';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { getEventSourceStatus } from '@console/knative-plugin/src/topology/knative-topology-utils';
-import { setQueryArgument, removeQueryArgument } from '@console/internal/components/utils';
+import { removeQueryArgument, setQueryArgument } from '@console/internal/components/utils';
 import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
 import {
-  TopologyApplyDisplayOptions,
+  CreateConnectionGetter,
   DisplayFilters,
   GraphData,
-  CreateConnectionGetter,
+  TopologyApplyDisplayOptions,
   TopologyDataObject,
+  TopologyDisplayFilterType,
 } from './topology-types';
 import {
   isTopologyCreateConnector,
@@ -36,11 +37,15 @@ import {
 import {
   getTopologySearchQuery,
   TOPOLOGY_SEARCH_FILTER_KEY,
-  useDisplayFilters,
   useAppliedDisplayFilters,
+  useDisplayFilters,
 } from './filters';
 import { updateModelFromFilters } from './data-transforms';
-import { setSupportedTopologyFilters, setTopologyFilters } from './redux/action';
+import {
+  setSupportedTopologyFilters,
+  setSupportedTopologyKinds,
+  setTopologyFilters,
+} from './redux/action';
 import { useAddToProjectAccess } from '../../utils/useAddToProjectAccess';
 import Topology from './Topology';
 import TopologyListView from './list-view/TopologyListView';
@@ -82,6 +87,7 @@ interface DispatchProps {
   onSelectTab?: (name: string) => void;
   onFiltersChange: (filters: DisplayFilters) => void;
   onSupportedFiltersChange: (supportedFilterIds: string[]) => void;
+  onSupportedKindsChange: (supportedKinds: { [key: string]: number }) => void;
 }
 
 interface TopologyViewProps {
@@ -110,6 +116,7 @@ export const TopologyView: React.FC<ComponentProps> = ({
   onSelectTab,
   onFiltersChange,
   onSupportedFiltersChange,
+  onSupportedKindsChange,
 }) => {
   const [filteredModel, setFilteredModel] = React.useState<Model>();
   const [storedSelectedIds, setSelectedIds] = React.useState<string[]>([]);
@@ -231,11 +238,20 @@ export const TopologyView: React.FC<ComponentProps> = ({
         application,
         displayFilterers,
         onSupportedFiltersChange,
+        onSupportedKindsChange,
       );
       setFilteredModel(newModel);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [model, filters, application, displayFilterers, filtersLoaded]);
+
+  React.useEffect(() => {
+    if (filters.find((f) => f.type !== TopologyDisplayFilterType.kind)) {
+      const updatedFilters = filters.filter((f) => f.type !== TopologyDisplayFilterType.kind);
+      onFiltersChange(updatedFilters);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [namespace]);
 
   React.useEffect(() => {
     if (visualization) {
@@ -411,6 +427,9 @@ const TopologyDispatchToProps = (dispatch): DispatchProps => ({
   },
   onSupportedFiltersChange: (supportedFilterIds: string[]) => {
     dispatch(setSupportedTopologyFilters(supportedFilterIds));
+  },
+  onSupportedKindsChange: (supportedKinds: { [key: string]: number }) => {
+    dispatch(setSupportedTopologyKinds(supportedKinds));
   },
 });
 

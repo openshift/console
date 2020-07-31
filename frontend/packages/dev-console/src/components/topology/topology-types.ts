@@ -58,6 +58,7 @@ export type CreateConnectionGetter = (createHints: string[]) => CreateConnection
 export enum TopologyDisplayFilterType {
   show = 'show',
   expand = 'expand',
+  kind = 'kind',
 }
 
 export type TopologyDisplayOption = {

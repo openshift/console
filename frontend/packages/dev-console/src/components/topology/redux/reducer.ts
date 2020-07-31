@@ -40,6 +40,7 @@ export default (state: State, action: TopologyAction) => {
       filters: getDefaultTopologyFilters(),
       appliedFilters: getDefaultAppliedFilters(),
       supportedFilters: DEFAULT_TOPOLOGY_FILTERS.map((f) => f.id),
+      supportedKinds: {},
     });
   }
 
@@ -51,6 +52,10 @@ export default (state: State, action: TopologyAction) => {
 
   if (action.type === Actions.supportedTopologyFilters) {
     return state.set('supportedFilters', action.payload.supportedFilters);
+  }
+
+  if (action.type === Actions.supportedTopologyKinds) {
+    return state.set('supportedKinds', action.payload.supportedKinds);
   }
 
   return state;

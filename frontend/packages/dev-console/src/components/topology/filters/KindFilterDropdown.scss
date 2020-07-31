@@ -1,0 +1,20 @@
+@import '../../../../../../public/style/vars';
+
+.odc-kind-filter-dropdown {
+  &__clear-button {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+  }
+  &__kind-count {
+    background-color: var(--pf-global--BorderColor--300);
+    border-radius: 20px;
+    display: inline-block;
+    line-height: 16px;
+    margin-left: var(--pf-global--spacer--sm);
+    min-width: 18px;
+    padding: 1px 4px;
+    text-align: center;
+    white-space: nowrap;
+  }
+}
