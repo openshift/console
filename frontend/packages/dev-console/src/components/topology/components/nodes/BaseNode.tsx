@@ -22,6 +22,7 @@ import {
   getFilterById,
   useDisplayFilters,
   useSearchFilter,
+  useAllowEdgeCreation,
   SHOW_LABELS_FILTER_ID,
 } from '../../filters';
 import { NodeShadows, NODE_SHADOW_FILTER_ID_HOVER, NODE_SHADOW_FILTER_ID } from '../NodeShadows';
@@ -89,16 +90,17 @@ const ObservedBaseNode: React.FC<BaseNodeProps> = ({
   const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
   const showLabels = showLabelsFilter?.value || hover;
   const refs = useCombineRefs<SVGEllipseElement>(hoverRef, dragNodeRef);
+  const allowEdgeCreation = useAllowEdgeCreation();
 
   React.useLayoutEffect(() => {
-    if (editAccess) {
+    if (editAccess && allowEdgeCreation) {
       if (hover) {
         onShowCreateConnector && onShowCreateConnector();
       } else {
         onHideCreateConnector && onHideCreateConnector();
       }
     }
-  }, [hover, onShowCreateConnector, onHideCreateConnector, editAccess]);
+  }, [hover, onShowCreateConnector, onHideCreateConnector, editAccess, allowEdgeCreation]);
 
   return (
     <g

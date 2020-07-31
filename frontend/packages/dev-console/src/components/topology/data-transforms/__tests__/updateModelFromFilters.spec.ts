@@ -6,7 +6,7 @@ import {
   TEST_KINDS_MAP,
 } from '../../__tests__/topology-test-data';
 import { updateModelFromFilters } from '../updateModelFromFilters';
-import { EXPAND_GROUPS_FILTER_ID, getFilterById } from '../../filters';
+import { EXPAND_GROUPS_FILTER_ID, getFilterById, SHOW_GROUPS_FILTER_ID } from '../../filters';
 import { DEFAULT_TOPOLOGY_FILTERS, EXPAND_APPLICATION_GROUPS_FILTER_ID } from '../../filters/const';
 import { ALL_APPLICATIONS_KEY } from '@console/shared/src';
 import { baseDataModelGetter } from '../data-transformer';
@@ -79,6 +79,7 @@ describe('topology model ', () => {
   it('should flag application groups as collapsed when expand groups is false', () => {
     const topologyTransformedData = getTransformedTopologyData();
     getFilterById(EXPAND_APPLICATION_GROUPS_FILTER_ID, filters).value = true;
+    getFilterById(SHOW_GROUPS_FILTER_ID, filters).value = true;
     getFilterById(EXPAND_GROUPS_FILTER_ID, filters).value = false;
     const newModel = updateModelFromFilters(
       topologyTransformedData,
@@ -88,5 +89,33 @@ describe('topology model ', () => {
     );
     expect(newModel.nodes.filter((n) => n.group).length).toBe(2);
     expect(newModel.nodes.filter((n) => n.group && n.collapsed).length).toBe(2);
+  });
+
+  it('should show no groups when show groups is false', () => {
+    const topologyTransformedData = getTransformedTopologyData();
+    getFilterById(EXPAND_GROUPS_FILTER_ID, filters).value = true;
+    getFilterById(SHOW_GROUPS_FILTER_ID, filters).value = false;
+    const newModel = updateModelFromFilters(
+      topologyTransformedData,
+      filters,
+      ALL_APPLICATIONS_KEY,
+      filterers,
+    );
+    expect(newModel.nodes.filter((n) => !n.group).length).toBe(10);
+    expect(newModel.nodes.filter((n) => n.group).length).toBe(0);
+  });
+
+  it('should show all nodes when is false and expand groups is false', () => {
+    const topologyTransformedData = getTransformedTopologyData();
+    getFilterById(EXPAND_GROUPS_FILTER_ID, filters).value = false;
+    getFilterById(SHOW_GROUPS_FILTER_ID, filters).value = false;
+    const newModel = updateModelFromFilters(
+      topologyTransformedData,
+      filters,
+      ALL_APPLICATIONS_KEY,
+      filterers,
+    );
+    expect(newModel.nodes.filter((n) => !n.group).length).toBe(10);
+    expect(newModel.nodes.filter((n) => n.group).length).toBe(0);
   });
 });

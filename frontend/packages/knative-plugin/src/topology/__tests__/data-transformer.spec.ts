@@ -12,6 +12,7 @@ import {
   WorkloadData,
   DEFAULT_TOPOLOGY_FILTERS,
   EXPAND_GROUPS_FILTER_ID,
+  SHOW_GROUPS_FILTER_ID,
   TopologyDataModelDepicted,
   OdcNodeModel,
 } from '@console/dev-console/src/components/topology';
@@ -33,7 +34,12 @@ import {
   getTopologyFilters,
 } from '../knativeFilters';
 import { isKnativeResource } from '../isKnativeResource';
-import { TYPE_EVENT_PUB_SUB, TYPE_EVENT_PUB_SUB_LINK, TYPE_KNATIVE_SERVICE } from '../const';
+import {
+  TYPE_EVENT_PUB_SUB,
+  TYPE_EVENT_PUB_SUB_LINK,
+  TYPE_KNATIVE_REVISION,
+  TYPE_KNATIVE_SERVICE,
+} from '../const';
 import * as knativefetchutils from '../../utils/fetch-dynamic-eventsources-utils';
 
 import Spy = jasmine.Spy;
@@ -196,6 +202,16 @@ describe('knative data transformer ', () => {
     expect(
       newModel.nodes.filter((n) => n.type === TYPE_KNATIVE_SERVICE && n.collapsed).length,
     ).toBe(1);
+  });
+
+  it('should flag not show knative services when show groups is false', async () => {
+    const filters = [...DEFAULT_TOPOLOGY_FILTERS];
+    filters.push(...getTopologyFilters());
+    const graphData = await getTransformedTopologyData(mockResources);
+    getFilterById(SHOW_GROUPS_FILTER_ID, filters).value = false;
+    const newModel = updateModelFromFilters(graphData, filters, ALL_APPLICATIONS_KEY, filterers);
+    expect(newModel.nodes.filter((n) => n.type === TYPE_KNATIVE_SERVICE).length).toBe(0);
+    expect(newModel.nodes.filter((n) => n.type === TYPE_KNATIVE_REVISION).length).toBe(1);
   });
 
   it('should return eventpub nodes and link for event brokers', async () => {
