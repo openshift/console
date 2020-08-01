@@ -4,6 +4,7 @@ import { Modal, ModalVariant } from '@patternfly/react-core';
 import StepHeader from './steps/StepHeader';
 import StepFooter from './steps/StepFooter';
 import StepBadge from './steps/StepBadge';
+import StepContent from './steps/StepContent';
 import { Spotlight } from './Spotlight';
 import './TourStepComponent.scss';
 
@@ -57,6 +58,7 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
       {showStepBadge ? <StepBadge stepNumber={step} totalSteps={totalSteps} /> : null}
     </StepFooter>
   );
+  const stepContent = <StepContent>{content}</StepContent>;
   const handleClose = () => {
     onClose && onClose();
   };
@@ -73,7 +75,7 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
         uniqueId={step.toString()}
         id="guided-tour-popover"
       >
-        {content}
+        {stepContent}
       </Popover>
     </>
   ) : (
@@ -88,7 +90,7 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
       id="guided-tour-modal"
       aria-label={`guided tour ${step}`}
     >
-      {content}
+      {stepContent}
     </Modal>
   );
 };

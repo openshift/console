@@ -1,13 +1,13 @@
 import { ReactNode } from 'react';
 
-export type StepContent = ReactNode | string;
+export type StepContentType = ReactNode | string;
 
 export type Step = {
   access?: () => boolean;
   flags?: string[];
   placement?: string;
   heading: string;
-  content: StepContent;
+  content: StepContentType;
   selector?: string;
   showStepBadge?: boolean;
   showClose?: boolean;
