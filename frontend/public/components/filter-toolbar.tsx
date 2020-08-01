@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { connect } from 'react-redux';
 import {
+  Button,
   Checkbox,
   Toolbar,
   ToolbarContent,
@@ -15,12 +16,15 @@ import {
   DropdownGroup,
   Badge,
 } from '@patternfly/react-core';
-import { CaretDownIcon, FilterIcon } from '@patternfly/react-icons';
+import { CaretDownIcon, FilterIcon, ColumnsIcon } from '@patternfly/react-icons';
 import { Dropdown as DropdownInternal } from '@console/internal/components/utils';
+
 import { setQueryArgument, removeQueryArgument } from './utils';
 import { filterList } from '../actions/k8s';
 import AutocompleteInput from './autocomplete';
 import { storagePrefix } from './row-filter';
+import { createColumnManagementModal } from './modals';
+import { ColumnLayout } from './modals/column-management-modal';
 
 /**
  * Housing both the row filter and name/label filter in the same file.
@@ -81,6 +85,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     rowFilters = [],
     data,
     hideNameFilter,
+    columnLayout,
     hideLabelFilter,
     location,
     textFilter = filterTypeMap[FilterType.NAME],
@@ -327,6 +332,21 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
             </ToolbarFilter>
           </ToolbarFilter>
         </ToolbarItem>
+        {columnLayout?.id && (
+          <ToolbarItem>
+            <Button
+              variant="plain"
+              onClick={() =>
+                createColumnManagementModal({
+                  columnLayout,
+                })
+              }
+              aria-label="Column Management"
+            >
+              <ColumnsIcon />
+            </Button>
+          </ToolbarItem>
+        )}
       </ToolbarContent>
     </Toolbar>
   );
@@ -344,6 +364,7 @@ type FilterToolbarProps = {
   parseAutoComplete?: any;
   kinds?: any;
   labelPath?: string;
+  columnLayout?: ColumnLayout;
 };
 
 export type RowFilter<R = any> = {

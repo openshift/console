@@ -59,7 +59,7 @@ export const TextFilter = (props) => {
 TextFilter.displayName = 'TextFilter';
 
 // TODO (jon) make this into "withListPageFilters" HOC
-/** @augments {React.PureComponent<{ListComponent: React.ComponentType<any>, kinds: string[], filters?:any, flatten?: function, data?: any[], rowFilters?: any[], hideToolbar?: boolean, hideLabelFilter?: boolean }>} */
+/** @augments {React.PureComponent<{ListComponent: React.ComponentType<any>, kinds: string[], filters?:any, flatten?: function, data?: any[], rowFilters?: any[], hideToolbar?: boolean, hideLabelFilter?: boolean, columnLayout?: ColumnLayout }>} */
 export class ListPageWrapper_ extends React.PureComponent {
   render() {
     const {
@@ -70,6 +70,7 @@ export class ListPageWrapper_ extends React.PureComponent {
       textFilter,
       hideToolbar,
       hideLabelFilter,
+      columnLayout,
     } = this.props;
     const data = flatten ? flatten(this.props.resources) : [];
     const Filter = (
@@ -80,6 +81,7 @@ export class ListPageWrapper_ extends React.PureComponent {
         textFilter={textFilter}
         hideToolbar={hideToolbar}
         hideLabelFilter={hideLabelFilter}
+        columnLayout={columnLayout}
         {...this.props}
       />
     );
@@ -304,7 +306,7 @@ FireMan_.propTypes = {
   title: PropTypes.string,
 };
 
-/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean, badge?: React.ReactNode, createHandler?: any, hideToolbar?: boolean, hideLabelFilter?: boolean, customData?: any} >} */
+/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean, badge?: React.ReactNode, createHandler?: any, hideToolbar?: boolean, hideLabelFilter?: boolean, columnLayout?: ColumnLayout, customData?: any} >} */
 export const ListPage = withFallback((props) => {
   const {
     autoFocus,
@@ -331,6 +333,7 @@ export const ListPage = withFallback((props) => {
     badge,
     hideToolbar,
     hideLabelFilter,
+    columnLayout,
   } = props;
   let { createProps } = props;
   const ko = kindObj(kind);
@@ -397,13 +400,14 @@ export const ListPage = withFallback((props) => {
       badge={badge}
       hideToolbar={hideToolbar}
       hideLabelFilter={hideLabelFilter}
+      columnLayout={columnLayout}
     />
   );
 }, ErrorBoundaryFallback);
 
 ListPage.displayName = 'ListPage';
 
-/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, createAccessReview?: Object, flatten?: Function, title?: string, label?: string, hideTextFilter?: boolean, showTitle?: boolean, helpText?: any, filterLabel?: string, textFilter?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string, customData?: any, badge?: React.ReactNode, hideToolbar?: boolean, hideLabelFilter?: boolean >} */
+/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, createAccessReview?: Object, flatten?: Function, title?: string, label?: string, hideTextFilter?: boolean, showTitle?: boolean, helpText?: any, filterLabel?: string, textFilter?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string, customData?: any, badge?: React.ReactNode, hideToolbar?: boolean, hideLabelFilter?: boolean, columnLayout?: ColumnLayout >} */
 export const MultiListPage = (props) => {
   const {
     autoFocus,
@@ -427,6 +431,7 @@ export const MultiListPage = (props) => {
     badge,
     hideToolbar,
     hideLabelFilter,
+    columnLayout,
   } = props;
 
   const resources = _.map(props.resources, (r) => ({
@@ -463,6 +468,7 @@ export const MultiListPage = (props) => {
           customData={customData}
           hideToolbar={hideToolbar}
           hideLabelFilter={hideLabelFilter}
+          columnLayout={columnLayout}
         />
       </Firehose>
     </FireMan_>

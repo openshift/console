@@ -10,6 +10,7 @@ import {
   ALL_NAMESPACES_KEY,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
   LAST_PERSPECTIVE_LOCAL_STORAGE_KEY,
+  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants';
 import { K8sResourceKind, PodKind, NodeKind } from '../module/k8s';
 import { allModels } from '../module/k8s/k8s-models';
@@ -19,6 +20,7 @@ import { setClusterID, setCreateProjectMessage, setUser, setConsoleLinks } from 
 import { Rule } from '../components/monitoring/types';
 
 export enum ActionType {
+  SetTableColumns = 'setTableColumns',
   DismissOverviewDetails = 'dismissOverviewDetails',
   SelectOverviewDetailsTab = 'selectOverviewDetailsTab',
   SelectOverviewItem = 'selectOverviewItem',
@@ -282,6 +284,19 @@ export const sortList = (
 
   return action(ActionType.SortList, { listId, field, func, orderBy });
 };
+export const setTableColumns = (id: string, selectedColumns: Set<string>) => {
+  let currentColumns = {};
+  try {
+    currentColumns = JSON.parse(localStorage.getItem(COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY)) || {};
+  } catch (e) {
+    // Error parsing stored columns. Flag an error and add the selected columns to an empty object
+    /* eslint-disable-next-line no-console */
+    console.error('Error parsing column filters from local storage', e);
+  }
+  currentColumns[id] = [...selectedColumns];
+  localStorage.setItem(COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY, JSON.stringify(currentColumns));
+  return action(ActionType.SetTableColumns, { id, selectedColumns });
+};
 export const selectOverviewItem = (uid: string) => action(ActionType.SelectOverviewItem, { uid });
 export const selectOverviewDetailsTab = (tab: string) =>
   action(ActionType.SelectOverviewDetailsTab, { tab });
@@ -386,6 +401,7 @@ export const setPVCMetrics = (pvcMetrics: PVCMetrics) =>
 
 // TODO(alecmerdler): Implement all actions using `typesafe-actions` and add them to this export
 const uiActions = {
+  setTableColumns,
   setCurrentLocation,
   setActiveApplication,
   setActiveNamespace,
