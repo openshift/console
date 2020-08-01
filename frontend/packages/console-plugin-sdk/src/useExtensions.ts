@@ -7,7 +7,7 @@ import { RootState } from '@console/internal/redux';
 import { stateToFlagsObject, FlagsObject, FeatureState } from '@console/internal/reducers/features';
 import { pluginStore } from '@console/internal/plugins';
 import { getGatingFlagNames, isExtensionInUse } from './store';
-import { Extension, ExtensionTypeGuard } from './typings';
+import { Extension, ExtensionTypeGuard, LoadedExtension } from './typings';
 
 /**
  * React hook for consuming Console extensions.
@@ -42,7 +42,9 @@ import { Extension, ExtensionTypeGuard } from './typings';
  *
  * @param typeGuard Type guard used to narrow the extension type.
  */
-export const useExtensions: UseExtensions = (typeGuard) => {
+export const useExtensions = <E extends Extension>(
+  typeGuard: ExtensionTypeGuard<E>,
+): LoadedExtension<E>[] => {
   const allExtensions = pluginStore.getAllExtensions();
 
   // 1) Narrow extensions according to type guard
@@ -80,7 +82,5 @@ export const useExtensions: UseExtensions = (typeGuard) => {
     [matchedExtensions, gatingFlags],
   );
 
-  return extensionsInUse;
+  return extensionsInUse as LoadedExtension<E>[];
 };
-
-type UseExtensions = <E extends Extension>(typeGuard: ExtensionTypeGuard<E>) => E[];

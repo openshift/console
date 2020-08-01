@@ -11,12 +11,12 @@ import {
   ConnectedStorageClassForm,
   StorageClassFormProps,
   StorageClassFormState,
-  StorageClassParamsExtensions,
+  StorageClassFormExtensionProps,
 } from '../../public/components/storage-class-form';
 
 describe(ConnectedStorageClassForm.displayName, () => {
   const Component: React.ComponentType<StorageClassFormProps &
-    StorageClassParamsExtensions> = ConnectedStorageClassForm.WrappedComponent as any;
+    StorageClassFormExtensionProps> = ConnectedStorageClassForm.WrappedComponent as any;
   let wrapper: ShallowWrapper<StorageClassFormProps, StorageClassFormState>;
   let onClose: Spy;
   let watchK8sList: Spy;
