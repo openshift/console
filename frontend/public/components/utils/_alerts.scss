@@ -8,6 +8,11 @@
   }
 }
 
+.co-alert--margin-top {
+  margin-bottom: 0;
+  margin-top: $grid-gutter-width / 2;
+}
+
 .co-alert--scrollable .pf-c-alert__description {
   max-height: 100px;
   overflow-x: hidden;

@@ -107,6 +107,10 @@
   padding: var(--pf-global--spacer--xl) var(--pf-global--spacer--xl) var(--pf-global--spacer--lg);
 }
 
+.modal__inline-resource-link {
+  margin: 0;
+}
+
 .toleration-modal__field, .taint-modal__field  {
   padding-right: 0;
 }
