@@ -24,6 +24,7 @@ export type ExtensionSCProvisionerProp = {
     [key: string]: {
       title: string;
       provisioner: string;
+      allowVolumeExpansion: boolean;
       parameters: {
         [key: string]: {
           name: string;
