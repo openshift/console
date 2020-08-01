@@ -68,14 +68,14 @@ export const NSModal = withHandlePromise(
       }, {});
 
       if (!_.isEqual(getVMLikeNodeSelector(vmLikeFinal), k8sSelector)) {
-        // eslint-disable-next-line promise/catch-or-return
         handlePromise(
           k8sPatch(
             getVMLikeModel(vmLikeFinal),
             vmLikeFinal,
             await getNodeSelectorPatches(vmLikeFinal, k8sSelector),
           ),
-        ).then(close);
+          close,
+        );
       } else {
         close();
       }

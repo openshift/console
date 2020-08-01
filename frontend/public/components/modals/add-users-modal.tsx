@@ -21,7 +21,7 @@ export const AddUsersModal = withHandlePromise((props: AddUsersModalProps) => {
     const patch = props.group.users
       ? _.map(values, (value: string) => ({ op: 'add', path: '/users/-', value }))
       : [{ op: 'add', path: '/users', value: values }];
-    return props.handlePromise(k8sPatch(GroupModel, props.group, patch)).then(props.close);
+    return props.handlePromise(k8sPatch(GroupModel, props.group, patch), props.close);
   };
 
   return (

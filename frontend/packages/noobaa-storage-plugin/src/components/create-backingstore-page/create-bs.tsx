@@ -586,7 +586,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
     }
 
     promises.push(k8sCreate(NooBaaBackingStoreModel, bsPayload));
-    return handlePromise(Promise.all(promises)).then((resource) => {
+    return handlePromise(Promise.all(promises), (resource) => {
       const lastIndex = resource.length - 1;
       if (isPage)
         history.push(

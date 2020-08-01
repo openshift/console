@@ -208,8 +208,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
     e.preventDefault();
 
     if (isValid) {
-      // eslint-disable-next-line promise/catch-or-return
-      handlePromise(onSubmit(resultNIC, resultNetwork)).then(close);
+      handlePromise(onSubmit(resultNIC, resultNetwork), close);
     } else {
       setShowUIError(true);
     }

@@ -99,7 +99,7 @@ export const ResourceRequirementsModal = withHandlePromise(
         });
       }
 
-      return props.handlePromise(k8sUpdate(model, newObj)).then(props.close);
+      return props.handlePromise(k8sUpdate(model, newObj), props.close);
     };
 
     return (
@@ -173,7 +173,11 @@ export type ResourceRequirementsModalProps = {
   model: K8sKind;
   type: 'requests' | 'limits';
   path: string;
-  handlePromise: <T>(promise: Promise<T>) => Promise<T>;
+  handlePromise: <T>(
+    promise: Promise<T>,
+    onFulfill?: (res) => void,
+    onError?: (errorMsg: string) => void,
+  ) => void;
   inProgress: boolean;
   errorMessage: string;
   cancel?: () => void;

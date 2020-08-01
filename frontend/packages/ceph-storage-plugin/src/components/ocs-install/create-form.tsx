@@ -96,7 +96,7 @@ export const CreateInternalCluster = withHandlePromise<
   const submit = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     // eslint-disable-next-line promise/catch-or-return
-    handlePromise(makeOCSRequest(nodes, storageClass, osdSize, isEncrypted)).then(() => {
+    handlePromise(makeOCSRequest(nodes, storageClass, osdSize, isEncrypted), () => {
       dispatch(setFlag(OCS_CONVERGED_FLAG, true));
       dispatch(setFlag(OCS_FLAG, true));
       history.push(

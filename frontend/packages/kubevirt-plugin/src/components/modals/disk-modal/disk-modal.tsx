@@ -251,10 +251,10 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     e.preventDefault();
 
     if (isValid) {
-      // eslint-disable-next-line promise/catch-or-return
       handlePromise(
         onSubmit(resultDisk, resultVolume, resultDataVolume, resultPersistentVolumeClaim),
-      ).then(close);
+        close,
+      );
     } else {
       setShowUIError(true);
     }

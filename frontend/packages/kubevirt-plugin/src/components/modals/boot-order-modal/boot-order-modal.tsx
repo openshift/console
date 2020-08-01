@@ -126,9 +126,11 @@ const BootOrderModalComponent = withHandlePromise(
         getVMLikePatches(vmLikeEntity, () => patches),
       );
 
-      handlePromise(promise)
-        .then(() => close())
-        .catch(() => setPatchError(true));
+      handlePromise(
+        promise,
+        () => close(),
+        () => setPatchError(true),
+      );
     };
 
     // Send new bootOrder to k8s.

@@ -113,7 +113,7 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
       );
       if (patches.length > 0) {
         const promise = k8sPatch(getVMLikeModel(vmLike), vmLike, patches);
-        handlePromise(promise).then(close); // eslint-disable-line promise/catch-or-return
+        handlePromise(promise, close);
       } else {
         close();
       }

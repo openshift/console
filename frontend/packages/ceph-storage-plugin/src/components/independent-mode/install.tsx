@@ -117,8 +117,9 @@ const CreateExternalCluster = withHandlePromise((props: CreateExternalClusterPro
       },
     };
 
-    handlePromise(Promise.all([k8sCreate(SecretModel, secret), k8sCreate(OCSServiceModel, ocsObj)]))
-      .then((data) => {
+    handlePromise(
+      Promise.all([k8sCreate(SecretModel, secret), k8sCreate(OCSServiceModel, ocsObj)]),
+      (data) => {
         dispatch(setFlag(OCS_INDEPENDENT_FLAG, true));
         dispatch(setFlag(OCS_FLAG, true));
         history.push(
@@ -126,11 +127,8 @@ const CreateExternalCluster = withHandlePromise((props: CreateExternalClusterPro
             clusterServiceVersion,
           )}/${referenceForModel(OCSServiceModel)}/${getName(data[data.length - 1])}`,
         );
-      })
-      .catch((e) => {
-        // eslint-disable-next-line no-console
-        console.error(e);
-      });
+      },
+    );
   };
 
   const onCancel = () => {

@@ -47,8 +47,7 @@ const CreateLocalVolumeSet: React.FC = withHandlePromise<
 
     const requestData = getLocalVolumeSetRequestData(state);
 
-    // eslint-disable-next-line promise/catch-or-return
-    handlePromise(k8sCreate(LocalVolumeSetModel, requestData)).then((resource) =>
+    handlePromise(k8sCreate(LocalVolumeSetModel, requestData), (resource) =>
       history.push(resourceObjPath(resource, referenceFor(resource))),
     );
   };
