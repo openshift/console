@@ -3,10 +3,19 @@ import { VMWizardMode, VMWizardName, VMWizardView } from '../constants/vm';
 import { VMKind } from '../types';
 import { VMTabURLEnum } from '../components/vms/types';
 import { getName, getNamespace } from '@console/shared';
+import { history } from '@console/internal/components/utils/router';
 
 const ELLIPSIS = '…';
 
 const ellipsizeLeft = (word) => `${ELLIPSIS}${word}`;
+
+export const redirectToTab = (tabPath: string) => {
+  const currLocation = history.location?.pathname;
+  if (currLocation && currLocation.includes(tabPath)) {
+    return;
+  }
+  history.push(tabPath);
+};
 
 export const getVMTabURL = (vm: VMKind, tabName: VMTabURLEnum) =>
   `/ns/${getNamespace(vm)}/virtualmachines/${getName(vm)}/${tabName}`;
