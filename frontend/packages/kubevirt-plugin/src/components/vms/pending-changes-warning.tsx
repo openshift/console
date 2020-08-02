@@ -35,9 +35,21 @@ const getPendingChangesByTab = (pendingChanges: PendingChanges) =>
     .filter((key) => pendingChanges[key].isPendingChange)
     .reduce((acc, key) => {
       const pc = pendingChanges[key];
+      const changedResourceNames = pc?.resourceNames;
+
+      if (changedResourceNames) {
+        return {
+          ...acc,
+          [pc.vmTab]: {
+            resources: changedResourceNames,
+            pendingChangesKey: key,
+          },
+        };
+      }
+
       return {
         ...acc,
-        [pc.vmTab]: acc[pc.vmTab] ? [...acc[pc.vmTab], key] : [key],
+        [pc.vmTab]: acc[pc.vmTab] ? { resources: [...acc[pc.vmTab], key] } : { resources: [key] },
       };
     }, {});
 
@@ -45,20 +57,31 @@ type WarningTabRowProps = {
   tabName: string;
   tabProps: string[];
   pendingChanges: PendingChanges;
+  pendingChangesKey?: string;
 };
 
-const WarningTabRow: React.FC<WarningTabRowProps> = ({ tabName, tabProps, pendingChanges }) => (
+const WarningTabRow: React.FC<WarningTabRowProps> = ({
+  tabName,
+  tabProps,
+  pendingChanges,
+  pendingChangesKey,
+}) => (
   <Breadcrumb className="kv-warning--pf-c-breadcrumb">
     <BreadcrumbHeading key={`${tabName}-header-${tabProps.join('-')}`}>{tabName}</BreadcrumbHeading>
     <BreadcrumbItem key={`${tabName}-${tabProps.join('-')}`}>
-      {tabProps.map((key, idx) => (
-        <div key={`${tabName}-${key}`} className="kv-warning-changed-attrs">
-          <Button isInline onClick={pendingChanges[key].execAction} variant={ButtonVariant.link}>
-            {key}
-          </Button>
-          <div className="kv-warning--comma-margin">{idx === tabProps.length - 1 ? '' : ','}</div>
-        </div>
-      ))}
+      {tabProps.map((key, idx) => {
+        const onClickAction = pendingChanges[key]
+          ? pendingChanges[key].execAction
+          : pendingChanges[pendingChangesKey].execAction;
+        return (
+          <div key={`${tabName}-${key}`} className="kv-warning-changed-attrs">
+            <Button isInline onClick={onClickAction} variant={ButtonVariant.link}>
+              {key}
+            </Button>
+            <div className="kv-warning--comma-margin">{idx === tabProps.length - 1 ? '' : ','}</div>
+          </div>
+        );
+      })}
     </BreadcrumbItem>
   </Breadcrumb>
 );
@@ -92,12 +115,13 @@ export const PendingChangesWarning: React.FC<PendingChangesWarningProps> = ({
       <List className="kv-warning--pf-c-list">
         {Object.keys(pendingChangesByTab).map(
           (tabName) =>
-            pendingChangesByTab[tabName].length > 0 && (
+            pendingChangesByTab[tabName].resources.length > 0 && (
               <ListItem key={tabName}>
                 <WarningTabRow
                   tabName={tabName}
-                  tabProps={pendingChangesByTab[tabName]}
+                  tabProps={pendingChangesByTab[tabName].resources}
                   pendingChanges={pendingChanges}
+                  pendingChangesKey={pendingChangesByTab[tabName]?.pendingChangesKey}
                 />
               </ListItem>
             ),
