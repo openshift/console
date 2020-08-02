@@ -19,8 +19,7 @@ describe('Namespace', () => {
 
   const newName = `${testName}-ns`;
 
-  it('lists, creates, edits labels, and deletes', () => {
-    const labelAppFrontend = 'app=frontend';
+  it('lists, creates, and deletes', () => {
     cy.log('test Namespace list page');
     cy.visit('/k8s/cluster/namespaces');
     listPage.rows.shouldNotExist(newName);
@@ -34,17 +33,6 @@ describe('Namespace', () => {
     modal.submit();
     modal.shouldBeClosed();
     cy.url().should('include', `/k8s/cluster/namespaces/${newName}`);
-
-    cy.log('updates the Namespace labels');
-    cy.visit('/k8s/cluster/namespaces');
-    listPage.filter.byName(newName);
-    listPage.rows.hasLabel(newName, 'No labels');
-    listPage.rows.clickKebabAction(newName, 'Edit Labels');
-    modal.shouldBeOpened();
-    cy.byTestID('tags-input').type(labelAppFrontend);
-    modal.submit();
-    modal.shouldBeClosed();
-    listPage.rows.hasLabel(newName, labelAppFrontend);
 
     cy.log('delete the Namespace');
     cy.visit('/k8s/cluster/namespaces');
