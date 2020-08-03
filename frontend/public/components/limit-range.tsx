@@ -37,7 +37,7 @@ export const LimitRangeTableRow: RowFunction<K8sResourceKind> = ({ obj, index, k
           namespace={obj.metadata.namespace}
         />
       </TableData>
-      <TableData className={tableColumnClasses[1]}>
+      <TableData className={tableColumnClasses[1]} columnID="namespace">
         <ResourceLink
           kind="Namespace"
           name={obj.metadata.namespace}
@@ -67,6 +67,7 @@ export const LimitRangeTableHeader = () => {
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
+      id: 'namespace',
     },
     {
       title: 'Created',

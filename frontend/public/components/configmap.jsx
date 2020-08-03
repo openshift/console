@@ -34,6 +34,7 @@ const ConfigMapTableHeader = () => {
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
+      id: 'namespace',
     },
     {
       title: 'Size',
@@ -66,7 +67,10 @@ const ConfigMapTableRow = ({ obj: configMap, index, key, style }) => {
           title={configMap.metadata.uid}
         />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      <TableData
+        className={classNames(tableColumnClasses[1], 'co-break-word')}
+        columnID="namespace"
+      >
         <ResourceLink
           kind="Namespace"
           name={configMap.metadata.namespace}

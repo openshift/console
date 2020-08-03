@@ -113,6 +113,7 @@ const ResourceQuotaTableHeader = () => {
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
+      id: 'namespace',
     },
     {
       title: '',
@@ -133,7 +134,10 @@ export const ResourceQuotaTableRow = ({ obj: rq, index, key, style }) => {
           className="co-resource-item__resource-name"
         />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      <TableData
+        className={classNames(tableColumnClasses[1], 'co-break-word')}
+        columnID="namespace"
+      >
         {rq.metadata.namespace ? (
           <ResourceLink
             kind="Namespace"

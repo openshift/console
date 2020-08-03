@@ -72,6 +72,7 @@ const SecretTableHeader = () => {
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
+      id: 'namespace',
     },
     {
       title: 'Type',
@@ -111,7 +112,10 @@ const SecretTableRow = ({ obj: secret, index, key, style }) => {
           title={secret.metadata.uid}
         />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      <TableData
+        className={classNames(tableColumnClasses[1], 'co-break-word')}
+        columnID="namespace"
+      >
         <ResourceLink
           kind="Namespace"
           name={secret.metadata.namespace}
