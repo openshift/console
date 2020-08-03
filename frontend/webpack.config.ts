@@ -149,6 +149,22 @@ const config: Configuration = {
           },
         ],
       },
+      {
+        test: /\.feature$/,
+        use: [
+          {
+            loader: 'cypress-cucumber-preprocessor/loader',
+          },
+        ],
+      },
+      {
+        test: /\.features$/,
+        use: [
+          {
+            loader: 'cypress-cucumber-preprocessor/lib/featuresLoader',
+          },
+        ],
+      },
     ],
   },
   optimization: {

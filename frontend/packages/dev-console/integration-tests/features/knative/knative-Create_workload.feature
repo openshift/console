@@ -46,7 +46,7 @@ Scenario Outline: Create a work load from From Git card on Add page : Kn-02-TC01
    When user type "<git_url>" into the "Git Repo url" text box
    And select "Kantive Service" radio button on Add page
    And click "Create" button on Add page
-   Then user redirects to topology page
+   Then user redirects to Topology page
    And created workload is present in List View of topology page
 
 Examples:
@@ -60,7 +60,7 @@ Scenario Outline: Create a workload from Container image card on Add page : Kn-0
    When user type "<image_name>" into the "Image name from External registry" text box
    And select "Kantive Service" radio button on Add page
    And click "Create" button on Add page
-   Then user redirects to topology page
+   Then user redirects to Topology page
    And created workload is present in List View of topology page
 
 Examples:
@@ -74,7 +74,7 @@ Scenario Outline: Create a workload from Docker file card on Add page :Kn-01-TC0
    When user type "<docker_git_url>" into the "Git Repo url" text box
    And select "Kantive Service" radio button on Add page
    And click "Create" button on Add page   
-   Then user redirects to topology page
+   Then user redirects to Topology page
    And created workload is present in List View of topology page
 
 Examples:
@@ -91,6 +91,6 @@ Scenario: Create a workload from DevCatalog BuilderImages card on Add page : Kn-
    And user type "https://github.com/sclorg/nodejs-ex.git" into the "Git Repo url" text box
    And select the "Kantive Service" radio button on Add page
    And click "Create" button on Add page  
-   Then user redirects to topology page
+   Then user redirects to Topology page
    And created workload is present in List View of topology page
    

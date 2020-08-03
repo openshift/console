@@ -2,10 +2,10 @@ Feature: Operators
     As a user I want to install or uninstall the operators
 
 Background:
-    Given user logged into the openshift application
-    And user is at admin perspecitve
+   Given user is at admin perspecitve
 
-@regression, @smoke
+
+@regression
 Scenario: OpenShift Pipeline operator subscription page : P-01-TC01
    Given user is at Operator Hub page with the header name "OperatorHub"
    When user searches for "OpenShift Pipelines Operator"
@@ -18,27 +18,25 @@ Scenario: OpenShift Pipeline operator subscription page : P-01-TC01
 Scenario: Install the Pipeline Operator from Operator Hub page : P-01-TC02
    Given user is at OpenShift Pipeline Operator subscription page
    When user installs the pipeline operator with default values
-   Then page redirects to Installed operators
+   Then user redirects to Installed operators page
    And Installed operators page will contain "OpenShift Pipelines Operator"
 
 
-@regression, @smoke
+@regression
 Scenario: Uninstall the Pipeline Operator from Operator Hub page : P-013-TC01, P-013-TC02
-   Given user is at OpenShift Pipeline Operator subscription page
+   Given user is at Operator Hub page with the header name "OperatorHub"
    When user uninstalls the pipeline operator from right side pane
-   And clicks on Unistall button present in popup with header message "Uninstall Operator?"
-   Then page redirects to Installed operators
-   And OpenShift Pipeline Operator will not be displayed
-   And Pipelines will not be displayed in Dev perspective
+   And clicks on Unistall button present in popup with header message Uninstall Operator?
+   Then user redirects to Installed operators page
+   And Installed operators page will not contain "OpenShift Pipelines Operator"
 
 
 @regression, @smoke
 Scenario: Install the Serverless Operator from Operator Hub page : Kn-01-TC01, Kn-01-TC02
    Given user is at OpenShift Serverless Operator subscription page
    When user installs the Serverless operator with default values
-   Then page redirects to Installed operators
-   And page will contain openShift serverless operator
-   And serverless tab displays in navigation menu of admin page
+   Then user redirects to Installed operators page
+   And Installed operators page will contain "OpenShift Serverless Operator"
 
 
 @regression, @smoke
@@ -55,7 +53,7 @@ Scenario: Install the knative eventing operator : Kn-07-TC01, Kn-07-TC02
 @regression, @smoke
 Scenario: Install the knative apache camel operator : Kn-08-TC01
    Given cluster is installed with knative serverless and eventing operators
-   And user is at Operator Hub page with the header name "Operator Hub"
+   And user is at Operator Hub page with the header name "OperatorHub"
    When user search and installs the kantive Camel operator with default values
    Then user redirects to Installed operators page
    And page will contain knative apache camel operator
@@ -68,9 +66,17 @@ Scenario: Install the dynamic event operator : Kn-09-TC01, Kn-09-TC02
    When user executes "kubectl apply -f https://github.com/knative/eventing-contrib/releases/download/v0.14.1/github.yaml"
    And user navigates to Add page
    And user clicks on Event sources page
-   Then user redirects to page with header "Event Sources"
+   Then user redirects to Event Sources page
    And GitHub Source is displayed in Types section
 
 
 Scenario: Uninstall the Knative serverless operator from Operator Hub page 
    Given user is at OpenShift Serverless Operator subscription page
+
+
+@regression, @smoke
+Scenario: Install the Che Operator from Operator Hub page : CRW-01-TC01
+   Given user is at Eclipse che Operator subscription page
+   When user installs the Eclipse che operator with default values
+   Then page redirects to Installed operators
+   And Installed operators page will contain "Eclipse che Operator"

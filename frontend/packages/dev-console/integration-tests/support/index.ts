@@ -1,3 +1,4 @@
+import './nav';
 import 'cypress-jest-adapter';
 
 Cypress.Cookies.defaults({

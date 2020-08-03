@@ -42,8 +42,13 @@ module.exports = (on, config) => {
 
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
-  config.baseUrl = `${process.env.BRIDGE_BASE_ADDRESS ||
-    'https://console-openshift-console.apps.sgoodwin.devcluster.openshift.com'}${(
+  // config.baseUrl = `${process.env.BRIDGE_BASE_ADDRESS ||
+  //   'https://console-openshift-console.apps.sgoodwin.devcluster.openshift.com'}${(
+  // on('file:preprocessor', wp(options));
+  // on('file:preprocessor', cucumber());
+  // `on` is used to hook into various events Cypress emits
+  // `config` is the resolved Cypress config
+  config.baseUrl = `${process.env.BRIDGE_BASE_ADDRESS || 'http://localhost:9000'}${(
     process.env.BRIDGE_BASE_PATH || '/'
   ).replace(/\/$/, '')}`;
   config.env.BRIDGE_KUBEADMIN_PASSWORD = process.env.BRIDGE_KUBEADMIN_PASSWORD;

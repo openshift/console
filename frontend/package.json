@@ -164,6 +164,7 @@
     "@types/react-transition-group": "2.x",
     "@types/react-virtualized": "9.x",
     "@types/webpack": "4.x",
+    "babel-loader": "^8.1.0",
     "allure-commandline": "^2.0.0",
     "bootstrap-sass": "^3.3.7",
     "browser-env": "3.x",
@@ -179,6 +180,7 @@
     "cypress-multi-reporters": "^1.4.0",
     "enzyme": "3.10.x",
     "enzyme-adapter-react-16": "1.15.2",
+    "eslint-plugin-graphql": "^4.0.0",
     "eslint-plugin-cucumber": "^1.4.0",
     "eslint-plugin-cypress": "^2.10.3",
     "file-loader": "1.x",
@@ -240,6 +242,11 @@
     }
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,json}": "eslint --color --fix"
+    "*.{js,jsx,ts,tsx,json,gql,graphql}": "eslint --color --fix"
+  },
+  "cypress-cucumber-preprocessor": {
+    "nonGlobalStepDefinitions": false,
+    "step_definitions": "packages/dev-console/*/step_definitions/",
+    "features": "packages/dev-console/features"
   }
 }
