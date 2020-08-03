@@ -38,3 +38,8 @@
 .ceph-ocs-install__pane--margin {
   margin-bottom: 0;
 }
+
+.ceph-ocs-install__minimal-msg {
+  margin-top: var(--pf-global--spacer--sm);
+  margin-bottom: var(--pf-global--spacer--sm);
+}

@@ -5,8 +5,13 @@ import {
   StorageClassResourceKind,
   K8sResourceKind,
 } from '@console/internal/module/k8s';
-import { humanizeBinaryBytes, convertToBaseValue } from '@console/internal/components/utils';
+import {
+  humanizeBinaryBytes,
+  convertToBaseValue,
+  humanizeCpuCores,
+} from '@console/internal/components/utils';
 import { HOSTNAME_LABEL_KEY } from '@console/local-storage-operator-plugin/src/constants';
+import { getNodeCPUCapacity, getNodeAllocatableMemory } from '@console/shared';
 import { ocsTaint, NO_PROVISIONER, AVAILABLE } from '../constants';
 import { Discoveries } from '../components/ocs-install/attached-devices/create-sc/state';
 
@@ -52,3 +57,14 @@ export const getAssociatedNodes = (pvs: K8sResourceKind[]): string[] => {
 
   return Array.from(nodes);
 };
+
+export const shouldDeployMinimally = (nodes: NodeKind[]) =>
+  nodes.reduce((acc, curr) => {
+    const cpus = humanizeCpuCores(getNodeCPUCapacity(curr)).value;
+    const memoryRaw = getNodeAllocatableMemory(curr);
+    const memory = humanizeBinaryBytes(convertToBaseValue(memoryRaw)).value;
+    if (memory < 60 || cpus < 16) {
+      return [...acc, curr];
+    }
+    return acc;
+  }, []).length > 0;
