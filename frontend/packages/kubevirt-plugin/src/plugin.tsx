@@ -494,7 +494,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'PVCCreateProp',
     properties: {
-      label: 'New with Data Upload',
+      label: 'With Data upload form',
       path: '~new/upload-form',
     },
     flags: {

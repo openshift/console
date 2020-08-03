@@ -376,7 +376,7 @@ export const PersistentVolumeClaimsPage = (props) => {
       ? { to: initPath.concat('~new/form') }
       : {
           items: Object.assign(
-            { 0: 'New with Form' },
+            { 0: 'With Form' },
             ...createItems.map(({ key, label }) => ({ [key]: label })),
           ),
           createLink: (wizardName) => {
