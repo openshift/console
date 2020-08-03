@@ -51,7 +51,7 @@ import { OperandFormProps } from './operand-form';
 import { ProvidedAPI } from '../../types';
 
 /*
- * Matches a path that contains an array index. Use Sting.match against an OperandField 'path'
+ * Matches a path that contains an array index. Use String.match against an OperandField 'path'
  * property to determine if it contains an array index. It will parse the path into three parts,
  * [match, pathBeforeIndex, index, pathAfterIndex]. For example:
  *
