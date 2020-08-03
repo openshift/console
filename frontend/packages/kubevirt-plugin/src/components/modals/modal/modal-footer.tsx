@@ -82,46 +82,53 @@ export const ModalFooter: React.FC<ModalFooterProps> = ({
   saveAndRestartText = 'Save and Restart',
   infoMessage = null,
   infoTitle = null,
-}) => (
-  <footer
-    className={classNames('co-m-btn-bar modal-footer kubevirt-modal-footer__buttons', className)}
-  >
-    {warningMessage && isSimpleError && (
-      <ModalSimpleMessage message={warningMessage} variant="warning" />
-    )}
-    {errorMessage && isSimpleError && <ModalSimpleMessage message={errorMessage} />}
-    {errorMessage && !isSimpleError && <ModalErrorMessage message={errorMessage} />}
-    {infoTitle && <ModalInfoMessage title={infoTitle}>{infoMessage}</ModalInfoMessage>}
+}) => {
+  const [showSpinner, setShowSpinner] = React.useState(false);
 
-    <ActionGroup className="pf-c-form pf-c-form__actions--right pf-c-form__group--no-top-margin">
-      <Button
-        type="button"
-        variant={ButtonVariant.secondary}
-        data-test-id="modal-cancel-action"
-        onClick={onCancel}
-      >
-        {cancelButtonText}
-      </Button>
-      {isSaveAndRestart && (
+  React.useEffect(() => {
+    setTimeout(() => setShowSpinner(true), 300);
+  }, []);
+
+  return (
+    <footer
+      className={classNames('co-m-btn-bar modal-footer kubevirt-modal-footer__buttons', className)}
+    >
+      {warningMessage && isSimpleError && (
+        <ModalSimpleMessage message={warningMessage} variant="warning" />
+      )}
+      {errorMessage && isSimpleError && <ModalSimpleMessage message={errorMessage} />}
+      {errorMessage && !isSimpleError && <ModalErrorMessage message={errorMessage} />}
+      {infoTitle && <ModalInfoMessage title={infoTitle}>{infoMessage}</ModalInfoMessage>}
+
+      <ActionGroup className="pf-c-form pf-c-form__actions--right pf-c-form__group--no-top-margin">
         <Button
           type="button"
           variant={ButtonVariant.secondary}
-          id="save-and-restart"
-          onClick={onSaveAndRestart}
+          data-test-id="modal-cancel-action"
+          onClick={onCancel}
         >
-          {saveAndRestartText}
+          {cancelButtonText}
         </Button>
-      )}
-      <Button
-        variant={ButtonVariant.primary}
-        isDisabled={isDisabled}
-        id="confirm-action"
-        onClick={onSubmit}
-      >
-        {submitButtonText}
-      </Button>
-    </ActionGroup>
-
-    {inProgress && <Spinner />}
-  </footer>
-);
+        {isSaveAndRestart && (
+          <Button
+            type="button"
+            variant={ButtonVariant.secondary}
+            id="save-and-restart"
+            onClick={onSaveAndRestart}
+          >
+            {saveAndRestartText}
+          </Button>
+        )}
+        <Button
+          variant={ButtonVariant.primary}
+          isDisabled={isDisabled}
+          id="confirm-action"
+          onClick={onSubmit}
+        >
+          {inProgress && showSpinner && <Spinner id="modal-footer-spinner" size="md" />}
+          {submitButtonText}
+        </Button>
+      </ActionGroup>
+    </footer>
+  );
+};

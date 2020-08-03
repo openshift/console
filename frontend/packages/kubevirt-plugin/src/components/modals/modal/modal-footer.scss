@@ -1,3 +1,11 @@
 .kubevirt-modal-footer__buttons {
   width: 100%;
 }
+
+#confirm-action {
+  display: flex;
+}
+
+#modal-footer-spinner {
+  margin-right: var(--pf-global--spacer--sm);
+}
