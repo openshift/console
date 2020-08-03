@@ -81,8 +81,8 @@ class MastheadToolbarContents_ extends React.Component {
     this._onHelpDropdownToggle = this._onHelpDropdownToggle.bind(this);
     this._onAboutModal = this._onAboutModal.bind(this);
     this._closeAboutModal = this._closeAboutModal.bind(this);
-    this._onInactivityTimeout = this._onInactivityTimeout.bind(this);
-    this.userInctivityTimeout = null;
+    this._resetInactivityTimeout = this._resetInactivityTimeout.bind(this);
+    this.userInactivityTimeout = null;
   }
 
   componentDidMount() {
@@ -90,37 +90,35 @@ class MastheadToolbarContents_ extends React.Component {
       this._getStatuspageData(window.SERVER_FLAGS.statuspageID);
     }
     // Ignore inactivity-timeout if set to less then 300 seconds
-    if (window.SERVER_FLAGS.inactivityTimeout >= 300) {
-      window.addEventListener('click', _.throttle(this._onInactivityTimeout, 500));
-      window.addEventListener('keydown', _.throttle(this._onInactivityTimeout, 500));
+    const inactivityTimeoutEnabled = window.SERVER_FLAGS.inactivityTimeout >= 300;
+    if (inactivityTimeoutEnabled) {
+      window.addEventListener('click', _.throttle(this._resetInactivityTimeout, 500));
+      window.addEventListener('keydown', _.throttle(this._resetInactivityTimeout, 500));
+      this._resetInactivityTimeout();
     }
     this._updateUser();
   }
 
   componentDidUpdate(prevProps) {
+    const { flags, user } = this.props;
     if (
-      this.props.flags[FLAGS.OPENSHIFT] !== prevProps.flags[FLAGS.OPENSHIFT] ||
-      !_.isEqual(this.props.user, prevProps.user)
+      flags[FLAGS.OPENSHIFT] !== prevProps.flags[FLAGS.OPENSHIFT] ||
+      !_.isEqual(user, prevProps.user)
     ) {
       this._updateUser();
     }
   }
 
   componentWillUnmount() {
-    window.removeEventListener('click', this._onInactivityTimeout);
-    window.removeEventListener('keydown', this._onInactivityTimeout);
-    clearTimeout(this.userInctivityTimeout);
+    window.removeEventListener('click', this._resetInactivityTimeout);
+    window.removeEventListener('keydown', this._resetInactivityTimeout);
+    clearTimeout(this.userInactivityTimeout);
   }
 
-  _onInactivityTimeout() {
+  _resetInactivityTimeout() {
     const { flags, user } = this.props;
-
-    if (flagPending(flags[FLAGS.OPENSHIFT]) || !user) {
-      return;
-    }
-
-    clearTimeout(this.userInctivityTimeout);
-    this.userInctivityTimeout = setTimeout(() => {
+    clearTimeout(this.userInactivityTimeout);
+    this.userInactivityTimeout = setTimeout(() => {
       if (flags[FLAGS.OPENSHIFT]) {
         authSvc.logoutOpenShift(user?.metadata?.name === 'kube:admin');
       } else {
