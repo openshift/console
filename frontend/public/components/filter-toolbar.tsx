@@ -234,8 +234,13 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
 
   // Initial URL parsing
   React.useEffect(() => {
-    !_.isEmpty(labelFilters) && applyFilter(labelFilters, FilterType.LABEL);
-    !_.isEmpty(nameFilter) && applyFilter(nameFilter, FilterType.NAME);
+    if (!hideLabelFilter) {
+      applyFilter(labelFilters, FilterType.LABEL);
+    }
+    if (!hideNameFilter) {
+      setInputText(nameFilter ?? '');
+      applyFilter(nameFilter, FilterType.NAME);
+    }
     if (_.isEmpty(selectedRowFilters)) {
       updateRowFilterSelected(_.uniq(_.flatMap(rowFilters, 'defaultSelected')));
     } else {

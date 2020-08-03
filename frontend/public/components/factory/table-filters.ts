@@ -48,10 +48,10 @@ export const tableFilters: TableFilterMap = {
   },
 
   alerts: (values, alert: Alert) => {
-    const labels = getLabelsAsString(alert, 'labels');
     if (!values.all) {
       return true;
     }
+    const labels = getLabelsAsString(alert, 'labels');
     return !!values.all.every((v) => labels.includes(v));
   },
 
@@ -120,10 +120,10 @@ export const tableFilters: TableFilterMap = {
   },
 
   labels: (values, obj) => {
-    const labels = getLabelsAsString(obj);
     if (!values.all) {
       return true;
     }
+    const labels = getLabelsAsString(obj);
     return !!values.all.every((v) => labels.includes(v));
   },
 
