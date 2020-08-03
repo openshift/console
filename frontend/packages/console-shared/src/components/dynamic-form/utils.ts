@@ -11,8 +11,8 @@ const UNSUPPORTED_SCHEMA_PROPERTIES = ['allOf', 'anyOf', 'oneOf'];
 export const useSchemaLabel = (schema: JSONSchema6, uiSchema: UiSchema, defaultLabel?: string) => {
   const options = getUiOptions(uiSchema ?? {});
   const showLabel = options?.label ?? true;
-  const label = (options?.title || schema?.title || defaultLabel) as string;
-  return [showLabel, label] as [boolean, string];
+  const label = (options?.title || schema?.title) as string;
+  return [showLabel, label || _.startCase(defaultLabel)] as [boolean, string];
 };
 
 export const useSchemaDescription = (
