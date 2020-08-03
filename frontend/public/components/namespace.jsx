@@ -537,7 +537,13 @@ const ProjectTableRow = connect(projectRowStateToProps)(
   ({ obj: project, index, rowKey, style, customData = {}, metrics, selectedColumns }) => {
     const name = getName(project);
     const requester = getRequester(project);
-    const { ProjectLinkComponent, actionsEnabled = true, showMetrics, showActions } = customData;
+    const {
+      ProjectLinkComponent,
+      actionsEnabled = true,
+      showMetrics,
+      showActions,
+      isColumnManagementEnabled = true,
+    } = customData;
     const bytes = metrics?.memory?.[name];
     const cores = metrics?.cpu?.[name];
     const description = getDescription(project);
@@ -561,70 +567,103 @@ const ProjectTableRow = connect(projectRowStateToProps)(
             </span>
           )}
         </TableData>
-        <TableData
-          className={namespaceColumnInfo.displayName.classes}
-          columns={columns}
-          columnID={namespaceColumnInfo.displayName.id}
-        >
-          <span className="co-break-word co-line-clamp">
-            {getDisplayName(project) || <span className="text-muted">No display name</span>}
-          </span>
-        </TableData>
-        <TableData
-          className={namespaceColumnInfo.status.classes}
-          columns={columns}
-          columnID={namespaceColumnInfo.status.id}
-        >
-          <Status status={project.status.phase} />
-        </TableData>
-        <TableData
-          className={classNames(namespaceColumnInfo.requester.classes, 'co-break-word')}
-          columns={columns}
-          columnID={namespaceColumnInfo.requester.id}
-        >
-          {requester || <span className="text-muted">No requester</span>}
-        </TableData>
-        {showMetrics && (
+        {isColumnManagementEnabled ? (
           <>
             <TableData
-              className={namespaceColumnInfo.memory.classes}
+              className={namespaceColumnInfo.displayName.classes}
               columns={columns}
-              columnID={namespaceColumnInfo.memory.id}
+              columnID={namespaceColumnInfo.displayName.id}
             >
-              {bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-'}
+              <span className="co-break-word co-line-clamp">
+                {getDisplayName(project) || <span className="text-muted">No display name</span>}
+              </span>
             </TableData>
             <TableData
-              className={namespaceColumnInfo.cpu.classes}
+              className={namespaceColumnInfo.status.classes}
               columns={columns}
-              columnID={namespaceColumnInfo.cpu.id}
+              columnID={namespaceColumnInfo.status.id}
             >
-              {cores ? `${formatCores(cores)} cores` : '-'}
+              <Status status={project.status.phase} />
+            </TableData>
+            <TableData
+              className={classNames(namespaceColumnInfo.requester.classes, 'co-break-word')}
+              columns={columns}
+              columnID={namespaceColumnInfo.requester.id}
+            >
+              {requester || <span className="text-muted">No requester</span>}
+            </TableData>
+            {showMetrics && (
+              <>
+                <TableData
+                  className={namespaceColumnInfo.memory.classes}
+                  columns={columns}
+                  columnID={namespaceColumnInfo.memory.id}
+                >
+                  {bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-'}
+                </TableData>
+                <TableData
+                  className={namespaceColumnInfo.cpu.classes}
+                  columns={columns}
+                  columnID={namespaceColumnInfo.cpu.id}
+                >
+                  {cores ? `${formatCores(cores)} cores` : '-'}
+                </TableData>
+              </>
+            )}
+            <TableData
+              className={namespaceColumnInfo.created.classes}
+              columns={columns}
+              columnID={namespaceColumnInfo.created.id}
+            >
+              <Timestamp timestamp={project.metadata.creationTimestamp} />
+            </TableData>
+            <TableData
+              className={namespaceColumnInfo.description.classes}
+              columns={columns}
+              columnID={namespaceColumnInfo.description.id}
+            >
+              <span className="co-break-word co-line-clamp">
+                {description || <span className="text-muted">No description</span>}
+              </span>
+            </TableData>
+            <TableData
+              className={namespaceColumnInfo.labels.classes}
+              columns={columns}
+              columnID={namespaceColumnInfo.labels.id}
+            >
+              <LabelList labels={labels} kind="Project" />
+            </TableData>
+          </>
+        ) : (
+          <>
+            <TableData className={namespaceColumnInfo.displayName.classes}>
+              <span className="co-break-word co-line-clamp">
+                {getDisplayName(project) || <span className="text-muted">No display name</span>}
+              </span>
+            </TableData>
+            <TableData className={namespaceColumnInfo.status.classes}>
+              <Status status={project.status.phase} />
+            </TableData>
+            <TableData
+              className={classNames(namespaceColumnInfo.requester.classes, 'co-break-word')}
+            >
+              {requester || <span className="text-muted">No requester</span>}
+            </TableData>
+            {showMetrics && (
+              <>
+                <TableData className={namespaceColumnInfo.memory.classes}>
+                  {bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-'}
+                </TableData>
+                <TableData className={namespaceColumnInfo.cpu.classes}>
+                  {cores ? `${formatCores(cores)} cores` : '-'}
+                </TableData>
+              </>
+            )}
+            <TableData className={namespaceColumnInfo.created.classes}>
+              <Timestamp timestamp={project.metadata.creationTimestamp} />
             </TableData>
           </>
         )}
-        <TableData
-          className={namespaceColumnInfo.created.classes}
-          columns={columns}
-          columnID={namespaceColumnInfo.created.id}
-        >
-          <Timestamp timestamp={project.metadata.creationTimestamp} />
-        </TableData>
-        <TableData
-          className={namespaceColumnInfo.description.classes}
-          columns={columns}
-          columnID={namespaceColumnInfo.description.id}
-        >
-          <span className="co-break-word co-line-clamp">
-            {description || <span className="text-muted">No description</span>}
-          </span>
-        </TableData>
-        <TableData
-          className={namespaceColumnInfo.labels.classes}
-          columns={columns}
-          columnID={namespaceColumnInfo.labels.id}
-        >
-          <LabelList labels={labels} kind="Project" />
-        </TableData>
         {actionsEnabled && (
           <TableData className={Kebab.columnClass}>
             <ResourceKebab actions={projectMenuActions} kind="Project" resource={project} />
@@ -652,7 +691,11 @@ export const ProjectsTable = (props) => (
     aria-label="Projects"
     Header={projectHeaderWithoutActions}
     Row={ProjectRow}
-    customData={{ ProjectLinkComponent: ProjectLink, actionsEnabled: false }}
+    customData={{
+      ProjectLinkComponent: ProjectLink,
+      actionsEnabled: false,
+      isColumnManagementEnabled: false,
+    }}
     virtualize
   />
 );
