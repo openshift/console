@@ -6,7 +6,8 @@ import { OCSDiskList, OCSColumnStateAction } from './state-reducer';
 
 const startDiskReplacementAction = (
   diskName,
-  diskOsdMap,
+  alertsMap,
+  replacementMap,
   isRebalancing,
   dispatch,
 ): KebabOption => ({
@@ -14,21 +15,22 @@ const startDiskReplacementAction = (
   callback: () =>
     diskReplacementModal({
       diskName,
-      diskOsdMap,
+      alertsMap,
+      replacementMap,
       isRebalancing,
       dispatch,
     }),
 });
 
 export const OCSKebabOptions: React.FC<OCSKebabOptionsProps> = React.memo(
-  ({ diskName, diskOsdMap, isRebalancing, dispatch }) => {
+  ({ diskName, alertsMap, replacementMap, isRebalancing, dispatch }) => {
     const kebabOptions: KebabOption[] = [
-      startDiskReplacementAction(diskName, diskOsdMap, isRebalancing, dispatch),
+      startDiskReplacementAction(diskName, alertsMap, replacementMap, isRebalancing, dispatch),
     ];
     return (
       <TableData className={Kebab.columnClass}>
-        {/* Disable options for non OCS based disks */}
-        <Kebab options={kebabOptions} isDisabled={!diskOsdMap[diskName]} />
+        {/* Enables the options for the disk with failures */}
+        <Kebab options={kebabOptions} isDisabled={!alertsMap[diskName]} />
       </TableData>
     );
   },
@@ -36,7 +38,8 @@ export const OCSKebabOptions: React.FC<OCSKebabOptionsProps> = React.memo(
 
 type OCSKebabOptionsProps = {
   diskName: string;
-  diskOsdMap: OCSDiskList;
+  alertsMap: OCSDiskList;
+  replacementMap: OCSDiskList;
   isRebalancing: boolean;
   dispatch: React.Dispatch<OCSColumnStateAction>;
 };

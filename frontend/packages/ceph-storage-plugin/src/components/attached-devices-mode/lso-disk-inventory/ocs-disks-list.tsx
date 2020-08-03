@@ -55,11 +55,11 @@ import {
 
 const getTiBasedStatus = (status: string): OCSDiskStatus => {
   switch (status) {
-    case 'Not Ready':
+    case 'NotReady':
       return Status.PreparingToReplace;
     case 'Ready':
       return Status.ReplacementReady;
-    case 'Failed':
+    case 'InstantiateFailure':
       return Status.ReplacementFailed;
     default:
       return null;
@@ -168,7 +168,8 @@ const diskRow: RowFunction<DiskMetadata, OCSMetadata> = ({
       <TableData className={tableColumnClasses[5]}>{obj.fstype || '-'}</TableData>
       <OCSKebabOptions
         diskName={diskName}
-        diskOsdMap={ocsState.alertsMap}
+        alertsMap={ocsState.alertsMap}
+        replacementMap={ocsState.replacementMap}
         isRebalancing={ocsState.isRebalancing}
         dispatch={dispatch}
       />
@@ -231,15 +232,15 @@ const OCSDisksList: React.FC<TableProps> = React.memo((props) => {
     }
 
     if (tiLoaded && !tiLoadError && tiData.length) {
-      const { metricsMap } = ocsState;
-      const reverseMap = Object.keys(metricsMap).map((disk) => ({ [metricsMap[disk].osd]: disk }));
       const newData: OCSDiskList = tiData.reduce((data, ti) => {
-        const osd = ti.spec.template.parameters[0].value;
-        const disk = reverseMap[osd];
-        data[disk] = {
-          osd,
-          status: getTiBasedStatus(ti.status.conditions?.[0].type),
-        };
+        const disk = ti.metadata.annotations?.disk;
+        const osd = ti.metadata.annotations?.osd;
+        if (osd && disk) {
+          data[disk] = {
+            osd,
+            status: getTiBasedStatus(ti.status.conditions?.[0].type),
+          };
+        }
         return data;
       }, {});
       if (!_.isEqual(newData, ocsState.replacementMap)) {

@@ -23,7 +23,7 @@ const createTemplateSecret = async (template: TemplateKind, osdId: string) => {
     apiVersion: SecretModel.apiVersion,
     kind: SecretModel.kind,
     metadata: {
-      name: `${OSD_REMOVAL_TEMPLATE}-${osdId}`,
+      generateName: `${OSD_REMOVAL_TEMPLATE}-${osdId}-`,
       namespace: CEPH_STORAGE_NAMESPACE,
     },
     stringData: {
@@ -33,13 +33,22 @@ const createTemplateSecret = async (template: TemplateKind, osdId: string) => {
   return k8sCreate(SecretModel, parametersSecret);
 };
 
-const createTemplateInstance = async (parametersSecret: SecretKind, template: TemplateKind) => {
+const createTemplateInstance = async (
+  parametersSecret: SecretKind,
+  template: TemplateKind,
+  osd: string,
+  disk: string,
+) => {
   const templateInstance: TemplateInstanceKind = {
     apiVersion: apiVersionForModel(TemplateInstanceModel),
     kind: TemplateInstanceModel.kind,
     metadata: {
-      name: parametersSecret.metadata.name,
+      generateName: `${OSD_REMOVAL_TEMPLATE}-${osd}-`,
       namespace: CEPH_STORAGE_NAMESPACE,
+      annotations: {
+        disk,
+        osd,
+      },
     },
     spec: {
       secret: {
@@ -51,18 +60,18 @@ const createTemplateInstance = async (parametersSecret: SecretKind, template: Te
   return k8sCreate(TemplateInstanceModel, templateInstance);
 };
 
-const instantiateTemplate = async (osdId: string) => {
+const instantiateTemplate = async (osdId: string, diskName: string) => {
   const osdRemovalTemplate = await k8sGet(
     TemplateModel,
     OSD_REMOVAL_TEMPLATE,
     CEPH_STORAGE_NAMESPACE,
   );
   const templateSecret = await createTemplateSecret(osdRemovalTemplate, osdId);
-  await createTemplateInstance(templateSecret, osdRemovalTemplate);
+  await createTemplateInstance(templateSecret, osdRemovalTemplate, osdId, diskName);
 };
 
 const DiskReplacementAction = (props: DiskReplacementActionProps) => {
-  const { diskName, diskOsdMap, isRebalancing, dispatch, cancel, close } = props;
+  const { diskName, alertsMap, replacementMap, isRebalancing, dispatch, cancel, close } = props;
 
   const [inProgress, setProgress] = React.useState(false);
   const [errorMessage, setError] = React.useState('');
@@ -71,17 +80,21 @@ const DiskReplacementAction = (props: DiskReplacementActionProps) => {
     event.preventDefault();
     setProgress(true);
     try {
-      const { status, osd } = diskOsdMap[diskName];
+      const { status, osd } = alertsMap[diskName];
+      const replacementStatus = replacementMap[diskName]?.status;
       if (isRebalancing && status !== Status.Offline)
-        throw new Error('Replacement not allowed. Rebalancing is in progress');
-      if (status === Status.Offline || status === Status.NotResponding) {
-        instantiateTemplate(osd);
+        throw new Error('replacement disallowed: rebalancing is in progress');
+      else if (
+        replacementStatus === Status.PreparingToReplace ||
+        replacementStatus === Status.ReplacementReady
+      )
+        throw new Error(`replacement disallowed: disk "${diskName}" is "${replacementStatus}"`);
+      else {
+        instantiateTemplate(osd, diskName);
         dispatch({
           type: ActionType.SET_REPLACEMENT_MAP,
           payload: { [diskName]: { osd, status: Status.PreparingToReplace } },
         });
-      } else {
-        throw new Error('Replacement not allowed');
       }
       close();
     } catch (err) {
@@ -114,7 +127,8 @@ export const diskReplacementModal = createModalLauncher(DiskReplacementAction);
 
 export type DiskReplacementActionProps = {
   diskName: string;
-  diskOsdMap: OCSDiskList;
   isRebalancing: boolean;
+  alertsMap: OCSDiskList;
+  replacementMap: OCSDiskList;
   dispatch: React.Dispatch<OCSColumnStateAction>;
 } & ModalComponentProps;
