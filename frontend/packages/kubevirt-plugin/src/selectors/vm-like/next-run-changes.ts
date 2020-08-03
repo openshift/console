@@ -27,45 +27,43 @@ export const isFlavorChanged = (vm: VMWrapper, vmi: VMIWrapper): boolean => {
   );
 };
 
-export const isDisksChanged = (
+export const changedDisks = (
   vm: VMWrapper,
   vmi: VMIWrapper,
   vmDsks?: V1Disk[],
   vmiDsks?: V1Disk[],
-): boolean => {
+): string[] => {
   if (vm.isEmpty() || vmi.isEmpty()) {
-    return false;
+    return [];
   }
 
   const vmDisks = vmDsks || vm.getDisks();
   const vmiDisks = vmiDsks || vmi.getDisks();
-
-  if (vmDisks.length !== vmiDisks.length) {
-    return true;
-  }
-
   const vmVolumes = vm.getVolumesOfDisks(vmDisks);
-  const vmiVolumes = vmi.getVolumesOfDisks(vmiDisks);
 
-  if (vmVolumes.length !== vmiVolumes.length) {
-    return true;
-  }
-
-  const vmiVolLookup = createBasicLookup(vmiVolumes, getSimpleName);
-  const vmDiskLookup = createBasicLookup(vmDisks, getSimpleName);
+  const vmiVolLookup = createBasicLookup(vmi.getVolumesOfDisks(vmiDisks), getSimpleName);
+  const vmDiskLookup = createBasicLookup(vmDsks || vm.getDisks(), getSimpleName);
   const vmiDiskLookup = createBasicLookup(vmiDisks, getSimpleName);
 
-  return !vmVolumes.every((vol) => {
-    const diskWrapper = new DiskWrapper(vmDiskLookup[vol.name]);
-    const diskEquality = diskWrapper.isDiskEqual(vmiDiskLookup[vol.name], true);
+  return vmVolumes
+    .reduce((acc, vol) => {
+      let diskEquality = false;
+      let volumeEquality = false;
 
-    if (diskEquality) {
-      const volWrapper = new VolumeWrapper(vol);
-      return volWrapper.isVolumeEqual(vmiVolLookup[vol.name], true);
-    }
+      const diskWrapper = new DiskWrapper(vmDiskLookup[vol.name]);
 
-    return false;
-  });
+      diskEquality =
+        !!vmiDiskLookup[vol.name] && diskWrapper.isDiskEqual(vmiDiskLookup[vol.name], true);
+
+      if (diskEquality) {
+        const volWrapper = new VolumeWrapper(vol);
+        volumeEquality =
+          !!vmiVolLookup[vol.name] && volWrapper.isVolumeEqual(vmiVolLookup[vol.name], true);
+      }
+
+      return !diskEquality || !volumeEquality ? [...acc, diskWrapper.asResource()] : [...acc];
+    }, [])
+    .map((disk) => disk.name);
 };
 
 export const isBootOrderChanged = (vm: VMWrapper, vmi: VMIWrapper): boolean => {
@@ -98,34 +96,34 @@ export const isBootOrderChanged = (vm: VMWrapper, vmi: VMIWrapper): boolean => {
   );
 };
 
-export const isNicsChanged = (vm: VMWrapper, vmi: VMIWrapper): boolean => {
+export const changedNics = (vm: VMWrapper, vmi: VMIWrapper): string[] => {
   if (vm.isEmpty() || vmi.isEmpty()) {
-    return false;
+    return [];
   }
 
   const vmNics = vm.getNetworkInterfaces();
   const vmiNics = vmi.getNetworkInterfaces();
 
-  if (vmNics.length !== vmiNics.length) {
-    return true;
-  }
-
   const vmNicsLookup = createBasicLookup(vmNics, getSimpleName);
   const vmiNicsLookup = createBasicLookup(vmiNics, getSimpleName);
 
-  return !Object.keys(vmNicsLookup).every(
-    (vmNicName) =>
-      !!vmiNicsLookup[vmNicName] && _.isEqual(vmiNicsLookup[vmNicName], vmNicsLookup[vmNicName]),
+  return Object.keys(vmNicsLookup).reduce(
+    (acc, nicName) =>
+      !vmiNicsLookup[nicName] || !_.isEqual(vmiNicsLookup[nicName], vmNicsLookup[nicName])
+        ? [...acc, nicName]
+        : [...acc],
+    [],
   );
 };
 
-export const isEnvDisksChanged = (vm: VMWrapper, vmi: VMIWrapper): boolean => {
+export const changedEnvDisks = (vm: VMWrapper, vmi: VMIWrapper): string[] => {
   if (vm.isEmpty() || vmi.isEmpty()) {
-    return false;
+    return [];
   }
 
-  const vmEnvDiskVolumeNames = vm
-    .getVolumes()
+  const vmVolumes = vm.getVolumes();
+
+  const vmEnvDiskVolumeNames = vmVolumes
     .filter((vol) => new VolumeWrapper(vol).getType().isEnvType())
     .map((vol) => vol.name);
 
@@ -134,11 +132,11 @@ export const isEnvDisksChanged = (vm: VMWrapper, vmi: VMIWrapper): boolean => {
     .filter((vol) => new VolumeWrapper(vol).getType().isEnvType())
     .map((vol) => vol.name);
 
-  if (vmEnvDiskVolumeNames.length !== vmiEnvDiskVolumeNames.length) {
-    return true;
-  }
   const vmEnvDisks = vm.getDisks().filter((dsk) => vmEnvDiskVolumeNames.includes(dsk.name));
   const vmiEnvDisks = vmi.getDisks().filter((dsk) => vmiEnvDiskVolumeNames.includes(dsk.name));
 
-  return isDisksChanged(vm, vmi, vmEnvDisks, vmiEnvDisks);
+  const vmVolumesLookup = createBasicLookup(vmVolumes, getSimpleName);
+  return changedDisks(vm, vmi, vmEnvDisks, vmiEnvDisks).map(
+    (diskName) => new VolumeWrapper(vmVolumesLookup[diskName]).getReferencedObject()?.name,
+  );
 };

@@ -8,6 +8,7 @@ type PendingChange = {
   isPendingChange: boolean;
   execAction: () => void;
   vmTab?: VMTabEnum;
+  resourceNames?: string[];
 };
 
 export type PendingChanges = {

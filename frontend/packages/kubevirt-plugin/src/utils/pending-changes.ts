@@ -4,9 +4,9 @@ import { PendingChanges, IsPendingChange, VMTabURLEnum, VMTabEnum } from '../com
 import {
   isFlavorChanged,
   isBootOrderChanged,
-  isEnvDisksChanged,
-  isNicsChanged,
-  isDisksChanged,
+  changedDisks,
+  changedEnvDisks,
+  changedNics,
 } from '../selectors/vm-like/next-run-changes';
 import { vmFlavorModal } from '../components/modals';
 import { BootOrderModal } from '../components/modals/boot-order-modal';
@@ -15,6 +15,10 @@ import { getVMTabURL, redirectToTab } from './url';
 
 export const getPendingChanges = (vmWrapper: VMWrapper, vmiWrapper: VMIWrapper): PendingChanges => {
   const vm = vmWrapper.asResource();
+  const modifiedDisks = changedDisks(vmWrapper, vmiWrapper);
+  const modifiedEnvDisks = changedEnvDisks(vmWrapper, vmiWrapper);
+  const modifiedNics = changedNics(vmWrapper, vmiWrapper);
+
   return {
     [IsPendingChange.flavor]: {
       isPendingChange: isFlavorChanged(vmWrapper, vmiWrapper),
@@ -33,18 +37,21 @@ export const getPendingChanges = (vmWrapper: VMWrapper, vmiWrapper: VMIWrapper):
       vmTab: VMTabEnum.details,
     },
     [IsPendingChange.env]: {
-      isPendingChange: isEnvDisksChanged(vmWrapper, vmiWrapper),
+      isPendingChange: modifiedEnvDisks.length > 0,
       execAction: () => redirectToTab(getVMTabURL(vm, VMTabURLEnum.env)),
+      resourceNames: modifiedEnvDisks,
       vmTab: VMTabEnum.env,
     },
     [IsPendingChange.nics]: {
-      isPendingChange: isNicsChanged(vmWrapper, vmiWrapper),
+      isPendingChange: modifiedNics.length > 0,
       execAction: () => redirectToTab(getVMTabURL(vm, VMTabURLEnum.nics)),
+      resourceNames: modifiedNics,
       vmTab: VMTabEnum.nics,
     },
     [IsPendingChange.disks]: {
-      isPendingChange: isDisksChanged(vmWrapper, vmiWrapper),
+      isPendingChange: modifiedDisks.length > 0,
       execAction: () => redirectToTab(getVMTabURL(vm, VMTabURLEnum.disks)),
+      resourceNames: modifiedDisks,
       vmTab: VMTabEnum.disks,
     },
   };
