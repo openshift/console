@@ -41,7 +41,7 @@ func fakeHelmCR(fakeIndexFile string, name string) *unstructured.Unstructured {
 	return sampleRepoCR
 }
 
-func SetupClusterWithHelmCrs(indexFiles []string) dynamic.Interface {
+func K8sDynamicClient(indexFiles ...string) dynamic.Interface {
 	scheme := runtime.NewScheme()
 	var objs []runtime.Object
 
@@ -50,6 +50,5 @@ func SetupClusterWithHelmCrs(indexFiles []string) dynamic.Interface {
 		objs = append(objs, fakeCr)
 	}
 
-	client := fake.NewSimpleDynamicClient(scheme, objs...)
-	return client
+	return fake.NewSimpleDynamicClient(scheme, objs...)
 }

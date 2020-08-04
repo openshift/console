@@ -123,8 +123,6 @@ type Server struct {
 	MonitoringDashboardConfigMapLister ResourceLister
 	KnativeEventSourceCRDLister        ResourceLister
 	KnativeChannelCRDLister            ResourceLister
-	HelmChartRepoProxyConfig           *proxy.Config
-	HelmDefaultRepoCACert              []byte
 	GOARCH                             string
 	GOOS                               string
 	// Monitoring and Logging related URLs
@@ -381,12 +379,12 @@ func (s *Server) HTTPHandler() http.Handler {
 	handle("/api/console/version", authHandler(s.versionHandler))
 
 	// Helm Endpoints
-	helmHandlers := helmhandlerspkg.New(s.KubeAPIServerURL, s.K8sClient.Transport, s.HelmDefaultRepoCACert)
+	helmHandlers := helmhandlerspkg.New(s.KubeAPIServerURL, s.K8sClient.Transport)
 	handle("/api/helm/template", authHandlerWithUser(helmHandlers.HandleHelmRenderManifests))
 	handle("/api/helm/releases", authHandlerWithUser(helmHandlers.HandleHelmList))
 	handle("/api/helm/chart", authHandlerWithUser(helmHandlers.HandleChartGet))
 	handle("/api/helm/release/history", authHandlerWithUser(helmHandlers.HandleGetReleaseHistory))
-	handle("/api/helm/charts/index.yaml", authHandlerWithUser(helmHandlers.HandleGetRepos))
+	handle("/api/helm/charts/index.yaml", authHandlerWithUser(helmHandlers.HandleIndexFile))
 
 	handle("/api/helm/release", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
