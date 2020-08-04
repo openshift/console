@@ -57,8 +57,10 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = (props) => {
   React.useEffect(() => {
     if (textValue && visible && showSuggestions) {
       const processed = labelParser(data, labelPath);
+      // User input without whitespace
+      const processedText = textValue.trim().replace(/\s*=\s*/, '=');
       const filtered = [...processed]
-        .filter((item) => fuzzyCaseInsensitive(textValue, item))
+        .filter((item) => fuzzyCaseInsensitive(processedText, item))
         .slice(0, MAX_SUGGESTIONS);
       setSuggestions(filtered);
     }
