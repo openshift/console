@@ -20,52 +20,52 @@ Serverless reduces the needs to manage infrastructure or perform back-end develo
 Adding Serverless to your OpenShift cluster is quick and easy. This guided tour walks you through the process in just a few minutes.`,
     tasks: [
       {
-        title: `Install Serverless Operator`,
+        title: `Install the Serverless Operator`,
         description: `### To install the Serverless Operator:
-1. Go to the OperatorHub from the Operators section of the navigation.
-2. Use the filter at the top of the page to search for the **OpenShift Serverless Operator**.
-3. Click on the tile to open the Operator details.
-4. At the top of the side panel, click **Install**.
-5. Fill out the Operator Subscription form and click Install. You can leave all of the prefilled options if you&#39;d like.
-6. After a few minutes, the OpenShift Serverless Operator should appear in your Installed Operators list.
-1. Wait for the Operator to completely install. When prompted, click View Operator to view the OpenShift Serverless Operator details.
-7. Click it to see its details.
+1. In the navigation panel, click **Operators > OperatorHub**.
+2. In the filter field, type `OpenShift Serverless Operator`.
+3. Click the **OpenShift Serverless Operator** tile.
+4. Click **Install**.
+5. Complete the Operator subscription form, and then click **Install**. The default requirements suffice for most installations.
+6. On the "Installed Operators" page, wait for the OpenShift Serverless Operator's status to change from Installing to Succeeded.
+7. In the Name column, click **OpenShift Serverless Operator** to view the Operator's details.
 `,
 
         review: {
           instructions: `#### To verify that the Serverless Operator was successfully installed:
-1. Go to the Installed Operators page from the Operators section of the navigation.
+1. In the navigation panel, click **Operators > Installed Operators**.
 2. Find OpenShift Serverless Operator in the list.
-3. Find the Status column and check the status of the OpenShift Serverless Operator.`,
-          taskHelp: 'Try walking through the steps again to properly install Serverless Operator',
+3. Find the Status column, and then verify that the status of the OpenShift Serverless Operator is Succeeded.`,
+          taskHelp: 'Restart the tour from the beginning.',
         },
 
         recapitulation: {
           success:
-            "You've just installed the Serverless Operator! Next, we'll install the required CR's for this Operator to run.",
-          failed: 'Check your work to make sure that ',
+            "You just installed the Serverless Operator! Next, install the custom resources (CRs) that the Operator requires to run.",
+          failed: 'Check your configuration, and then restart the tour from the beginning.',
         },
       },
       {
         title: `Create the knative-serving and knative-eventing APIs`,
         description: `### To create the knative-serving and knative-eventing APIs:
-1. Make sure you’re still on the Installed Operators page on the Details tab.
-2. Click OpenShift Serverless Operator.
-3. Click on the Knative Serving tile to create an instance of the API.
-4. Click Create.\n  5. Click on the Details tab of the OpenShift Serverless Operator.
-5. Click on the Knative Eventing tile to create an instance of the API.
-6. Click Create`,
+1. On the Installed Operators page, click **OpenShift Serverless Operator**.
+2. On the Knative Serving tile, click **Create Instance**.
+3. Click **Create**.
+4. On the Knative Eventing tile, click **Create Instance**.
+5. Click **Create**.`,
         review: {
-          instructions: `#### To verify that the knative-serving API was installed successfully:
-1. Make sure that you are on the Knative Serving tab of the OpenShift Serverless Operator.
-2. Is there a knative-serving resource in the list?`,
+          instructions: `#### To verify that the knative-serving and knativing-eventing APIs were installed successfully:
+1. From the OpenShift Serverless Operator's details page, click the **knative-serving** tab.
+2. Verify that there is a knative-serving resource in the list.
+3. Click the **knative-eventing** tab.
+4. Verify that there is a knative-eventing resource in the list.`
           taskHelp: `Try walking through the steps again to properly create an instance of knative-eventing`,
         },
         recapitulation: {
           success:
-            "You've just created an instance of knative-serving! Next, we'll create an instance of knative-eventing",
+            "You just created instances of knative-serving and knative-eventing for the Serverless Operator! You can now deploy serverless applications.",
           failed:
-            'Check your work to make sure that the instance of knative-eventing is properly created',
+            'Check your work to make sure that instances of knative-serving and knative-eventing are created.',
         },
       },
     ],
