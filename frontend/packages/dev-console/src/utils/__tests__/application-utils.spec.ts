@@ -8,10 +8,7 @@ import {
   DaemonSetModel,
   StatefulSetModel,
 } from '@console/internal/models';
-import {
-  ServiceModel as KnativeServiceModel,
-  RouteModel as KnativeRouteModel,
-} from '@console/knative-plugin';
+import { ServiceModel as KnativeServiceModel } from '@console/knative-plugin';
 import * as utils from '@console/internal/components/utils';
 import { TopologyDataResources } from '../../components/topology/topology-types';
 import { getTopologyResourceObject } from '../../components/topology/topology-utils';
@@ -107,9 +104,8 @@ describe('ApplicationUtils ', () => {
       .then(() => {
         const allArgs = spy.calls.allArgs();
         const removedModels = allArgs.map((arg) => arg[0]);
-        expect(spy.calls.count()).toEqual(3);
+        expect(spy.calls.count()).toEqual(2);
         expect(removedModels).toContain(KnativeServiceModel);
-        expect(removedModels).toContain(KnativeRouteModel);
         expect(removedModels).toContain(ImageStreamModel);
         done();
       })
