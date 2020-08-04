@@ -190,11 +190,9 @@ const config: Configuration = {
     new MonacoWebpackPlugin({
       languages: ['yaml'],
     }),
-    new CopyWebpackPlugin([
-      { from: 'locales', to: 'locales' }
-    ]),
+    new CopyWebpackPlugin([{ from: 'locales', to: 'locales' }]),
     new MomentLocalesPlugin({
-      localesToKeep: Object.keys(SUPPORTED_LOCALES).map(key => key === 'zh' ? 'zh-cn' : key),
+      localesToKeep: Object.keys(SUPPORTED_LOCALES).map((key) => (key === 'zh' ? 'zh-cn' : key)),
     }),
     new webpack.IgnorePlugin(/prettier/),
     extractCSS,

@@ -1,11 +1,14 @@
 const SUPPORTED_LOCALES = {
-  'ar': 'عربي',
-  'en': 'English',
-  'de': 'Deutsch',
-  'zh': '中文'
+  ar: 'عربي',
+  en: 'English',
+  de: 'Deutsch',
+  zh: '中文',
 };
 
 const FALLBACK_LOCALE = 'en';
+
+/*eslint no-undef: "error"*/
+/*eslint-env node*/
 
 module.exports = {
   SUPPORTED_LOCALES,
@@ -48,7 +51,7 @@ module.exports = {
     jsx: ['JsxLexer'],
     tsx: ['JsxLexer'],
 
-    default: ['JavascriptLexer']
+    default: ['JavascriptLexer'],
   },
 
   lineEnding: 'auto',
@@ -81,6 +84,6 @@ module.exports = {
   // Whether to use the keys as the default value; ex. "Hello": "Hello", "World": "World"
   // The option `defaultValue` will not work if this is set to true
 
-  verbose: false
+  verbose: false,
   // Display info about the parsing including some stats
-}
+};
