@@ -11,6 +11,13 @@ import { DEFAULT_TOPOLOGY_FILTERS, EXPAND_GROUPS_FILTER_ID, SHOW_GROUPS_FILTER_I
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
 
 export const TOPOLOGY_SEARCH_FILTER_KEY = 'searchQuery';
+export const TOPOLOGY_SEARCH_TYPE_FILTER_KEY = 'searchType';
+
+export enum TopologySearchType {
+  name = 'name',
+  label = 'label',
+}
+export const DEFAULT_TOPOLOGY_SEARCH_TYPE = TopologySearchType.name;
 
 export const getTopologyFilters = (state: RootState): DisplayFilters => {
   const topology = state?.plugins?.devconsole?.topology;
@@ -27,12 +34,19 @@ export const getSupportedTopologyKinds = (state: RootState): { [key: string]: nu
   return topology ? topology.get('supportedKinds') : {};
 };
 
+export const getSupportedTopologyLabels = (state: RootState): string[] => {
+  const topology = state?.plugins?.devconsole?.topology;
+  return topology ? topology.get('supportedLabels') : [];
+};
+
 export const getAppliedTopologyFilters = (state: RootState): string[] => {
   const topology = state?.plugins?.devconsole?.topology;
   return topology ? topology.get('appliedFilters') : getAppliedFilters(DEFAULT_TOPOLOGY_FILTERS);
 };
 
 export const getTopologySearchQuery = () => getQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY) ?? '';
+
+export const getTopologySearchType = () => getQueryArgument(TOPOLOGY_SEARCH_TYPE_FILTER_KEY) ?? '';
 
 export const getFilterById = (id: string, filters: DisplayFilters): TopologyDisplayOption => {
   if (!filters) {

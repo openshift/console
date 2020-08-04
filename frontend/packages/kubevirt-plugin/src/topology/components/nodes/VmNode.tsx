@@ -17,6 +17,7 @@ import {
   RectAnchor,
   NodeModel,
 } from '@patternfly/react-topology';
+import { getLabelsAsString } from '@console/shared';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import SvgBoxedText from '@console/dev-console/src/components/svg/SvgBoxedText';
@@ -79,7 +80,7 @@ const ObservedVmNode: React.FC<VmNodeProps> = ({
   const { kind, osImage, vmStatusBundle } = vmData;
   const displayFilters = useDisplayFilters();
   const allowEdgeCreation = useAllowEdgeCreation();
-  const [filtered] = useSearchFilter(element.getLabel());
+  const [filtered] = useSearchFilter(element.getLabel(), getLabelsAsString(getResource(element)));
   const iconRadius = Math.min(width, height) * 0.25;
   const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
   const showLabels = showLabelsFilter?.value || hover;

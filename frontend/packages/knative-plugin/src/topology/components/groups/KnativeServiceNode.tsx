@@ -14,6 +14,7 @@ import {
   createSvgIdUrl,
   WithCreateConnectorProps,
 } from '@patternfly/react-topology';
+import { getLabelsAsString } from '@console/shared';
 import {
   NodeShadows,
   NODE_SHADOW_FILTER_ID,
@@ -22,6 +23,7 @@ import {
   GroupNode,
   useSearchFilter,
   useAllowEdgeCreation,
+  getResource,
 } from '@console/dev-console/src/components/topology';
 import { TYPE_KNATIVE_SERVICE, EVENT_MARKER_RADIUS } from '../../const';
 
@@ -60,7 +62,7 @@ const KnativeServiceNode: React.FC<KnativeServiceNodeProps> = ({
     },
   );
   const refs = useCombineRefs<SVGRectElement>(hoverRef, dragNodeRef);
-  const [filtered] = useSearchFilter(element.getLabel());
+  const [filtered] = useSearchFilter(element.getLabel(), getLabelsAsString(getResource(element)));
   const allowEdgeCreation = useAllowEdgeCreation();
   const { kind } = element.getData().data;
   const { width, height } = element.getBounds();

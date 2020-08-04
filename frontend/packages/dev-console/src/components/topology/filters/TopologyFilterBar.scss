@@ -13,4 +13,17 @@
   &__kiali-link {
     margin-left: auto;
   }
+
+  .odc-topology-filter-bar__label-filter {
+    .co-suggestion-line {
+      padding: var(--pf-global--spacer--xs) var(--pf-global--spacer--sm);
+    }
+    .pf-c-select__toggle.pf-m-typeahead {
+      min-height: 33px;
+    }
+    .pf-c-select__menu {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+  }
 }

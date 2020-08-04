@@ -12,12 +12,14 @@ import {
   observer,
   useCombineRefs,
 } from '@patternfly/react-topology';
+import { getLabelsAsString } from '@console/shared';
 import {
   NodeShadows,
   NODE_SHADOW_FILTER_ID_HOVER,
   NODE_SHADOW_FILTER_ID,
 } from '../../components/NodeShadows';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
+import { getResource } from '../../topology-utils';
 import {
   getFilterById,
   useDisplayFilters,
@@ -53,7 +55,7 @@ const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
   ] = useDragNode(dragSpec, { element });
 
   const nodeRefs = useCombineRefs(innerHoverRef, dragNodeRef);
-  const [filtered] = useSearchFilter(element.getLabel());
+  const [filtered] = useSearchFilter(element.getLabel(), getLabelsAsString(getResource(element)));
   const displayFilters = useDisplayFilters();
   const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
   const showLabels = showLabelsFilter?.value || hover || innerHover;

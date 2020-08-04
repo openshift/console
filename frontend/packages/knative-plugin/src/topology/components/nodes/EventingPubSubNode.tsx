@@ -15,6 +15,7 @@ import {
   AnchorEnd,
   WithCreateConnectorProps,
 } from '@patternfly/react-topology';
+import { getLabelsAsString } from '@console/shared';
 import SvgBoxedText from '@console/dev-console/src/components/svg/SvgBoxedText';
 import {
   NodeShadows,
@@ -26,6 +27,7 @@ import {
   getFilterById,
   SHOW_LABELS_FILTER_ID,
   getTopologyResourceObject,
+  getResource,
 } from '@console/dev-console/src/components/topology';
 import PubSubSourceAnchor from '../anchors/PubSubSourceAnchor';
 import PubSubTargetAnchor from '../anchors/PubSubTargetAnchor';
@@ -72,7 +74,7 @@ const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
   const [hover, hoverRef] = useHover();
 
   const groupRefs = useCombineRefs(dragNodeRef, dndDropRef, hoverRef);
-  const [filtered] = useSearchFilter(element.getLabel());
+  const [filtered] = useSearchFilter(element.getLabel(), getLabelsAsString(getResource(element)));
   const displayFilters = useDisplayFilters();
   const allowEdgeCreation = useAllowEdgeCreation();
   const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);

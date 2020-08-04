@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
+import { connect } from 'react-redux';
 import {
   Button,
   DataList,
@@ -12,9 +13,15 @@ import {
   TooltipPosition,
 } from '@patternfly/react-core';
 import { isNode, Node, observer } from '@patternfly/react-topology';
-import { getSeverityAlertType, AlertSeverityIcon, getFiringAlerts } from '@console/shared';
+import {
+  getSeverityAlertType,
+  AlertSeverityIcon,
+  getFiringAlerts,
+  getLabelsAsString,
+} from '@console/shared';
+import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
 import { useSearchFilter } from '../filters';
-import { getResourceKind } from '../topology-utils';
+import { getResource, getResourceKind } from '../topology-utils';
 import { labelForNodeKind } from './list-view-utils';
 import {
   AlertsCell,
@@ -23,8 +30,6 @@ import {
   StatusCell,
   TypedResourceBadgeCell,
 } from './cells';
-import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
-import { connect } from 'react-redux';
 
 interface DispatchProps {
   onSelectTab?: (name: string) => void;
@@ -51,7 +56,7 @@ const ObservedTopologyListViewNode: React.FC<TopologyListViewNodeProps & Dispatc
   additionalCells,
   children,
 }) => {
-  const [filtered] = useSearchFilter(item.getLabel());
+  const [filtered] = useSearchFilter(item.getLabel(), getLabelsAsString(getResource(item)));
   if (!item.isVisible) {
     return null;
   }

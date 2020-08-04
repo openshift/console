@@ -12,6 +12,7 @@ import {
   WithDragNodeProps,
   createSvgIdUrl,
 } from '@patternfly/react-topology';
+import { getLabelsAsString } from '@console/shared';
 import SvgBoxedText from '@console/dev-console/src/components/svg/SvgBoxedText';
 import {
   NodeShadows,
@@ -21,6 +22,7 @@ import {
   useDisplayFilters,
   getFilterById,
   SHOW_LABELS_FILTER_ID,
+  getResource,
 } from '@console/dev-console/src/components/topology';
 import { getEventSourceIcon } from '../../../utils/get-knative-icon';
 
@@ -49,7 +51,7 @@ const EventSource: React.FC<EventSourceProps> = ({
   const svgAnchorRef = useSvgAnchor();
   const [hover, hoverRef] = useHover();
   const groupRefs = useCombineRefs(dragNodeRef, dndDropRef, hoverRef);
-  const [filtered] = useSearchFilter(element.getLabel());
+  const [filtered] = useSearchFilter(element.getLabel(), getLabelsAsString(getResource(element)));
   const displayFilters = useDisplayFilters();
   const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
   const showLabels = showLabelsFilter?.value || hover;

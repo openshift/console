@@ -24,6 +24,7 @@ describe('Graph', () => {
         onFiltersChange={() => {}}
         onSupportedFiltersChange={() => {}}
         onSupportedKindsChange={() => {}}
+        onSupportedLabelsChange={() => {}}
       />,
     );
   });

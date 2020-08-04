@@ -11,6 +11,7 @@ import {
   createSvgIdUrl,
   useCombineRefs,
 } from '@patternfly/react-topology';
+import { getLabelsAsString } from '@console/shared';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
 import { nodeDragSourceSpec } from '../../components/componentUtils';
 import { TYPE_OPERATOR_BACKED_SERVICE } from './const';
@@ -25,7 +26,7 @@ import {
   NODE_SHADOW_FILTER_ID,
   NODE_SHADOW_FILTER_ID_HOVER,
 } from '../../components/NodeShadows';
-import { getResourceKind } from '../../topology-utils';
+import { getResource, getResourceKind } from '../../topology-utils';
 
 export type OperatorBackedServiceGroupProps = {
   element: Node;
@@ -56,7 +57,7 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
   const nodeRefs = useCombineRefs(innerHoverRef, dragNodeRef);
   const hasChildren = element.getChildren()?.length > 0;
   const { data } = element.getData();
-  const [filtered] = useSearchFilter(element.getLabel());
+  const [filtered] = useSearchFilter(element.getLabel(), getLabelsAsString(getResource(element)));
   const displayFilters = useDisplayFilters();
   const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
   const showLabels = showLabelsFilter?.value || hover || innerHover;

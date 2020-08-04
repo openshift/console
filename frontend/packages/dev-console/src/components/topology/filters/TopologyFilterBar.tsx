@@ -7,15 +7,11 @@ import {
   ToolbarGroupVariant,
   ToolbarItem,
   ToolbarContent,
-  Popover,
-  Button,
 } from '@patternfly/react-core';
-import { InfoCircleIcon } from '@patternfly/react-icons';
 import { Visualization } from '@patternfly/react-topology';
 import { RootState } from '@console/internal/redux';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { ExternalLink } from '@console/internal/components/utils';
-import { TextFilter } from '@console/internal/components/factory';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { setTopologyFilters } from '../redux/action';
 import { DisplayFilters } from '../topology-types';
@@ -23,13 +19,13 @@ import {
   getSupportedTopologyFilters,
   getSupportedTopologyKinds,
   getTopologyFilters,
-  getTopologySearchQuery,
 } from './filter-utils';
 import FilterDropdown from './FilterDropdown';
 import KindFilterDropdown from './KindFilterDropdown';
 import { getNamespaceDashboardKialiLink } from '../topology-utils';
 
 import './TopologyFilterBar.scss';
+import { TopologySearchFilter } from './TopologySearchFilter';
 
 type StateProps = {
   filters: DisplayFilters;
@@ -45,7 +41,7 @@ type DispatchProps = {
 
 type OwnProps = {
   visualization?: Visualization;
-  onSearchChange: (searchQuery: string) => void;
+  onSearchChange: (searchQuery: string, searchType: string) => void;
   showGraphView: boolean;
 };
 
@@ -67,21 +63,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
   consoleLinks,
   namespace,
 }) => {
-  const [searchQuery, setSearchQuery] = React.useState<string>('');
   const kialiLink = getNamespaceDashboardKialiLink(consoleLinks, namespace);
-  React.useEffect(() => {
-    const query = getTopologySearchQuery();
-    setSearchQuery(query);
-  }, []);
-
-  const onTextFilterChange = React.useCallback(
-    (text) => {
-      const query = text?.trim();
-      setSearchQuery(query);
-      onSearchChange(query);
-    },
-    [onSearchChange],
-  );
 
   return (
     <Toolbar className="co-namespace-bar odc-topology-filter-bar">
@@ -104,42 +86,11 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
             />
           </ToolbarItem>
         </ToolbarGroup>
-        <ToolbarGroup variant={ToolbarGroupVariant['filter-group']}>
-          <ToolbarItem>
-            <TextFilter
-              placeholder="Find by name..."
-              value={searchQuery}
-              autoFocus
-              onChange={onTextFilterChange}
-              className="odc-topology-filter-bar__text-filter"
-            />
-          </ToolbarItem>
-          {showGraphView ? (
-            <ToolbarItem>
-              <Popover
-                aria-label="Find by name"
-                position="left"
-                bodyContent={
-                  <>
-                    Search results may appear outside of the visible area.{' '}
-                    <Button
-                      variant="link"
-                      onClick={() => visualization.getGraph().fit(80)}
-                      isInline
-                    >
-                      Click here
-                    </Button>{' '}
-                    to fit to the screen.
-                  </>
-                }
-              >
-                <Button variant="link" className="odc-topology-filter-bar__info-icon">
-                  <InfoCircleIcon />
-                </Button>
-              </Popover>
-            </ToolbarItem>
-          ) : null}
-        </ToolbarGroup>
+        <TopologySearchFilter
+          showGraphView={showGraphView}
+          visualization={visualization}
+          onSearchChange={onSearchChange}
+        />
         {kialiLink && (
           <ToolbarItem className="odc-topology-filter-bar__kiali-link">
             <ExternalLink href={kialiLink} text="Kiali" />
@@ -150,16 +101,13 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
   );
 };
 
-const mapStateToProps = (state: RootState): StateProps => {
-  const states = {
-    filters: getTopologyFilters(state),
-    supportedFilters: getSupportedTopologyFilters(state),
-    supportedKinds: getSupportedTopologyKinds(state),
-    consoleLinks: state.UI.get('consoleLinks'),
-    namespace: getActiveNamespace(state),
-  };
-  return states;
-};
+const mapStateToProps = (state: RootState): StateProps => ({
+  filters: getTopologyFilters(state),
+  supportedFilters: getSupportedTopologyFilters(state),
+  supportedKinds: getSupportedTopologyKinds(state),
+  consoleLinks: state.UI.get('consoleLinks'),
+  namespace: getActiveNamespace(state),
+});
 
 const dispatchToProps = (dispatch: Dispatch): DispatchProps => ({
   onFiltersChange: (filters: DisplayFilters) => {

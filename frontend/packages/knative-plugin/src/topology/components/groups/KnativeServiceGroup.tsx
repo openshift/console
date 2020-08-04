@@ -18,6 +18,7 @@ import {
   useCombineRefs,
   WithCreateConnectorProps,
 } from '@patternfly/react-topology';
+import { getLabelsAsString } from '@console/shared';
 import SvgBoxedText from '@console/dev-console/src/components/svg/SvgBoxedText';
 import {
   NodeShadows,
@@ -30,6 +31,7 @@ import {
   useAllowEdgeCreation,
   getFilterById,
   SHOW_LABELS_FILTER_ID,
+  getResource,
 } from '@console/dev-console/src/components/topology';
 import BuildDecorator from '@console/dev-console/src/components/topology/components/nodes/build-decorators/BuildDecorator';
 import { TYPE_KNATIVE_SERVICE, EVENT_MARKER_RADIUS } from '../../const';
@@ -93,7 +95,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
   );
   useAnchor(React.useCallback((node: Node) => new RectAnchor(node, 1.5 + EVENT_MARKER_RADIUS), []));
 
-  const [filtered] = useSearchFilter(element.getLabel());
+  const [filtered] = useSearchFilter(element.getLabel(), getLabelsAsString(getResource(element)));
   const displayFilters = useDisplayFilters();
   const allowEdgeCreation = useAllowEdgeCreation();
   const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);

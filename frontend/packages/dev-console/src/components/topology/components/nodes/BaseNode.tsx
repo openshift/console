@@ -14,10 +14,11 @@ import {
   observer,
   createSvgIdUrl,
 } from '@patternfly/react-topology';
+import { getLabelsAsString } from '@console/shared';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
-import { getTopologyResourceObject } from '../../topology-utils';
+import { getResource } from '../../topology-utils';
 import {
   getFilterById,
   useDisplayFilters,
@@ -75,7 +76,7 @@ const ObservedBaseNode: React.FC<BaseNodeProps> = ({
   const { width, height } = element.getDimensions();
   const cx = width / 2;
   const cy = height / 2;
-  const resourceObj = getTopologyResourceObject(element.getData());
+  const resourceObj = getResource(element);
   const resourceModel = modelFor(referenceFor(resourceObj));
   const iconRadius = innerRadius * 0.9;
   const editAccess = useAccessReview({
@@ -85,7 +86,7 @@ const ObservedBaseNode: React.FC<BaseNodeProps> = ({
     name: resourceObj.metadata.name,
     namespace: resourceObj.metadata.namespace,
   });
-  const [filtered] = useSearchFilter(element.getLabel());
+  const [filtered] = useSearchFilter(element.getLabel(), getLabelsAsString(resourceObj));
   const displayFilters = useDisplayFilters();
   const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
   const showLabels = showLabelsFilter?.value || hover;

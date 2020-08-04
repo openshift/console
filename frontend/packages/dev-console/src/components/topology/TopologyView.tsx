@@ -35,8 +35,8 @@ import {
   TopologyDisplayFilters,
 } from '../../extensions/topology';
 import {
-  getTopologySearchQuery,
   TOPOLOGY_SEARCH_FILTER_KEY,
+  TOPOLOGY_SEARCH_TYPE_FILTER_KEY,
   useAppliedDisplayFilters,
   useDisplayFilters,
 } from './filters';
@@ -44,6 +44,7 @@ import { updateModelFromFilters } from './data-transforms';
 import {
   setSupportedTopologyFilters,
   setSupportedTopologyKinds,
+  setSupportedTopologyLabels,
   setTopologyFilters,
 } from './redux/action';
 import { useAddToProjectAccess } from '../../utils/useAddToProjectAccess';
@@ -88,6 +89,7 @@ interface DispatchProps {
   onFiltersChange: (filters: DisplayFilters) => void;
   onSupportedFiltersChange: (supportedFilterIds: string[]) => void;
   onSupportedKindsChange: (supportedKinds: { [key: string]: number }) => void;
+  onSupportedLabelsChange: (supportedLabels: string[]) => void;
 }
 
 interface TopologyViewProps {
@@ -117,6 +119,7 @@ export const TopologyView: React.FC<ComponentProps> = ({
   onFiltersChange,
   onSupportedFiltersChange,
   onSupportedKindsChange,
+  onSupportedLabelsChange,
 }) => {
   const [filteredModel, setFilteredModel] = React.useState<Model>();
   const [storedSelectedIds, setSelectedIds] = React.useState<string[]>([]);
@@ -134,7 +137,6 @@ export const TopologyView: React.FC<ComponentProps> = ({
   const [createConnectors, setCreateConnectors] = React.useState<CreateConnectionGetter[]>(null);
   const [filtersLoaded, setFiltersLoaded] = React.useState<boolean>(false);
   const queryParams = useQueryParams();
-  const searchParams = queryParams.get('searchQuery');
   const onSelect = (ids: string[]) => {
     // set empty selection when selecting the graph
     if (ids.length > 0 && ids[0] === TOPOLOGY_GRAPH_ID) {
@@ -239,6 +241,7 @@ export const TopologyView: React.FC<ComponentProps> = ({
         displayFilterers,
         onSupportedFiltersChange,
         onSupportedKindsChange,
+        onSupportedLabelsChange,
       );
       setFilteredModel(newModel);
     }
@@ -265,20 +268,22 @@ export const TopologyView: React.FC<ComponentProps> = ({
     }
   }, [createResourceAccess, createConnectors, eventSourceEnabled, visualization, namespace]);
 
-  const onSearchChange = (searchQuery) => {
-    if (searchQuery.length > 0) {
+  const onSearchChange = React.useCallback((searchQuery, searchType) => {
+    setQueryArgument(TOPOLOGY_SEARCH_TYPE_FILTER_KEY, searchType);
+    if (searchQuery?.length > 0) {
       setQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY, searchQuery);
       document.body.classList.add(FILTER_ACTIVE_CLASS);
     } else {
       removeQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY);
       document.body.classList.remove(FILTER_ACTIVE_CLASS);
     }
-  };
+  }, []);
 
   React.useEffect(() => {
-    const searchQuery = getTopologySearchQuery();
-    searchQuery && onSearchChange(searchQuery);
-  }, [searchParams]);
+    const searchQuery = queryParams.get(TOPOLOGY_SEARCH_FILTER_KEY);
+    const searchType = queryParams.get(TOPOLOGY_SEARCH_TYPE_FILTER_KEY);
+    searchQuery && onSearchChange(searchQuery, searchType);
+  }, [onSearchChange, queryParams]);
 
   React.useEffect(() => {
     if (filteredModel) {
@@ -430,6 +435,9 @@ const TopologyDispatchToProps = (dispatch): DispatchProps => ({
   },
   onSupportedKindsChange: (supportedKinds: { [key: string]: number }) => {
     dispatch(setSupportedTopologyKinds(supportedKinds));
+  },
+  onSupportedLabelsChange: (supportedLabels: string[]) => {
+    dispatch(setSupportedTopologyLabels(supportedLabels));
   },
 });
 

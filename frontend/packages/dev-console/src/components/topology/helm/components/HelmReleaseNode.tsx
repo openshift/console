@@ -13,11 +13,13 @@ import {
   observer,
   useCombineRefs,
 } from '@patternfly/react-topology';
+import { getLabelsAsString } from '@console/shared';
 import {
   NodeShadows,
   NODE_SHADOW_FILTER_ID_HOVER,
   NODE_SHADOW_FILTER_ID,
 } from '../../components/NodeShadows';
+import { getResource } from '../../topology-utils';
 import { useSearchFilter } from '../../filters/useSearchFilter';
 import { GroupNode } from '../../components/groups/GroupNode';
 import { nodeDragSourceSpec } from '../../components/componentUtils';
@@ -45,7 +47,7 @@ const HelmReleaseNode: React.FC<HelmReleaseNodeProps> = ({
     element,
   });
   const refs = useCombineRefs<SVGRectElement>(dragNodeRef, dndDropRef, hoverRef);
-  const [filtered] = useSearchFilter(element.getLabel());
+  const [filtered] = useSearchFilter(element.getLabel(), getLabelsAsString(getResource(element)));
   const { width, height } = element.getDimensions();
 
   return (

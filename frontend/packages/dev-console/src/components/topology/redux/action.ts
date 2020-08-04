@@ -6,6 +6,7 @@ export enum Actions {
   topologyFilters = 'topologyFilters',
   supportedTopologyFilters = 'supportedTopologyFilters',
   supportedTopologyKinds = 'supportedTopologyKinds',
+  supportedTopologyLabels = 'supportedTopologyLabels',
 }
 
 export const getAppliedFilters = (filters: DisplayFilters): { [id: string]: boolean } => {
@@ -35,10 +36,15 @@ export const setSupportedTopologyKinds = (supportedKinds: { [key: string]: numbe
   return action(Actions.supportedTopologyKinds, { supportedKinds });
 };
 
+export const setSupportedTopologyLabels = (supportedLabels: string[]) => {
+  return action(Actions.supportedTopologyLabels, { supportedLabels });
+};
+
 const actions = {
   setTopologyFilters,
   setSupportedTopologyFilters,
   setSupportedTopologyKinds,
+  setSupportedTopologyLabels,
 };
 
 export type TopologyAction = ActionType<typeof actions>;

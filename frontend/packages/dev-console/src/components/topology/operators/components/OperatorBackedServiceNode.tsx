@@ -12,6 +12,7 @@ import {
   useDragNode,
   createSvgIdUrl,
 } from '@patternfly/react-topology';
+import { getLabelsAsString } from '@console/shared';
 import { useSearchFilter } from '../../filters/useSearchFilter';
 import { nodeDragSourceSpec } from '../../components/componentUtils';
 import { TYPE_OPERATOR_BACKED_SERVICE } from './const';
@@ -21,6 +22,7 @@ import {
   NODE_SHADOW_FILTER_ID_HOVER,
 } from '../../components/NodeShadows';
 import { GroupNode } from '../../components/groups/GroupNode';
+import { getResource } from '../../topology-utils';
 
 export type OperatorBackedServiceNodeProps = {
   element: Node;
@@ -42,7 +44,7 @@ const OperatorBackedServiceNode: React.FC<OperatorBackedServiceNodeProps> = ({
     },
   );
   const refs = useCombineRefs<SVGRectElement>(hoverRef, dragNodeRef, dndDropRef);
-  const [filtered] = useSearchFilter(element.getLabel());
+  const [filtered] = useSearchFilter(element.getLabel(), getLabelsAsString(getResource(element)));
   const kind = 'Operator';
   const { width, height } = element.getDimensions();
 

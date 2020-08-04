@@ -1,5 +1,5 @@
 import { createAggregateEdges, Model, NodeModel } from '@patternfly/react-topology';
-import { ALL_APPLICATIONS_KEY } from '@console/shared/src';
+import { ALL_APPLICATIONS_KEY, getLabelsAsString } from '@console/shared/src';
 import { referenceFor } from '@console/internal/module/k8s';
 import {
   DEFAULT_SUPPORTED_FILTER_IDS,
@@ -44,6 +44,14 @@ const getNodeKind = (node: NodeModel) => {
   return null;
 };
 
+const getNodeLabels = (node: NodeModel): string[] => {
+  const resource = (node as OdcNodeModel).resource || getTopologyResourceObject(node.data);
+  if (resource) {
+    return getLabelsAsString(resource);
+  }
+  return [];
+};
+
 const isNodeShown = (node: NodeModel, filters: DisplayFilters, allNodes: NodeModel[]): boolean => {
   let shown = showKind(getNodeKind(node), filters);
   if (!shown) {
@@ -63,7 +71,8 @@ export const updateModelFromFilters = (
   application: string = ALL_APPLICATIONS_KEY,
   displayFilterers?: TopologyApplyDisplayOptions[],
   onSupportedFiltersChange?: (supportedFilterIds: string[]) => void,
-  onSupportedKindsChange?: (supportedFilterIds: { [key: string]: number }) => void,
+  onSupportedKindsChange?: (supportedKinds: { [key: string]: number }) => void,
+  onSupportedLabelsChange?: (supportedLabels: string[]) => void,
 ): Model => {
   const dataModel: Model = {
     nodes: [...model.nodes],
@@ -71,6 +80,7 @@ export const updateModelFromFilters = (
   };
   const supportedFilters = [...DEFAULT_SUPPORTED_FILTER_IDS];
   const supportedKinds = {};
+  const supportedLabels = [];
   let appGroupFound = false;
   const expanded = isExpanded(EXPAND_APPLICATION_GROUPS_FILTER_ID, filters);
   const showGroups = getFilterById(SHOW_GROUPS_FILTER_ID, filters)?.value ?? true;
@@ -96,6 +106,12 @@ export const updateModelFromFilters = (
       }
       supportedKinds[kind]++;
     }
+    const labels = getNodeLabels(d);
+    labels.forEach((label) => {
+      if (!supportedLabels.includes(label)) {
+        supportedLabels.push(label);
+      }
+    });
   });
 
   dataModel.nodes = dataModel.nodes.filter((d) => isNodeShown(d, filters, dataModel.nodes));
@@ -135,6 +151,10 @@ export const updateModelFromFilters = (
 
   if (onSupportedKindsChange) {
     onSupportedKindsChange(supportedKinds);
+  }
+
+  if (onSupportedLabelsChange) {
+    onSupportedLabelsChange(supportedLabels.sort((a, b) => a.localeCompare(b)));
   }
 
   return dataModel;

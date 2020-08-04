@@ -41,6 +41,7 @@ export default (state: State, action: TopologyAction) => {
       appliedFilters: getDefaultAppliedFilters(),
       supportedFilters: DEFAULT_TOPOLOGY_FILTERS.map((f) => f.id),
       supportedKinds: {},
+      supportedLabels: [],
     });
   }
 
@@ -56,6 +57,10 @@ export default (state: State, action: TopologyAction) => {
 
   if (action.type === Actions.supportedTopologyKinds) {
     return state.set('supportedKinds', action.payload.supportedKinds);
+  }
+
+  if (action.type === Actions.supportedTopologyLabels) {
+    return state.set('supportedLabels', action.payload.supportedLabels);
   }
 
   return state;
