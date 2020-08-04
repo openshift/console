@@ -107,7 +107,11 @@ const AdminNav = () => {
           name={t('nav~Overview')}
           required={[FLAGS.CAN_GET_NS, FLAGS.OPENSHIFT]}
         />
-        <ResourceClusterLink resource="projects" name={t('nav~Projects')} required={FLAGS.OPENSHIFT} />
+        <ResourceClusterLink
+          resource="projects"
+          name={t('nav~Projects')}
+          required={FLAGS.OPENSHIFT}
+        />
         <HrefLink href="/search" name={t('nav~Search')} startsWith={searchStartsWith} />
         <HrefLink href="/api-explorer" name={t('nav~Explore')} startsWith={apiExplorerStartsWith} />
         <ResourceNSLink resource="events" name={t('nav~Events')} />
@@ -132,7 +136,10 @@ const AdminNav = () => {
         <ResourceNSLink resource="daemonsets" name={t('nav~Daemon Sets')} />
         <ResourceNSLink resource="replicasets" name={t('nav~Replica Sets')} />
         <ResourceNSLink resource="replicationcontrollers" name={t('nav~Replication Controllers')} />
-        <ResourceNSLink resource="horizontalpodautoscalers" name={t('nav~Horizontal Pod Autoscalers')} />
+        <ResourceNSLink
+          resource="horizontalpodautoscalers"
+          name={t('nav~Horizontal Pod Autoscalers')}
+        />
       </NavSection>
 
       {/* Temporary addition of Knative Serverless section until extensibility allows for section ordering
@@ -152,12 +159,18 @@ const AdminNav = () => {
           name={t('nav~Persistent Volumes')}
           required={FLAGS.CAN_LIST_PV}
         />
-        <ResourceNSLink resource="persistentvolumeclaims" name={t('nav~Persistent Volume Claims')} />
+        <ResourceNSLink
+          resource="persistentvolumeclaims"
+          name={t('nav~Persistent Volume Claims')}
+        />
         <ResourceClusterLink resource="storageclasses" name={t('nav~Storage Classes')} />
-        <ResourceNSLink resource={referenceForModel(VolumeSnapshotModel)} name="Volume Snapshots" />
+        <ResourceNSLink
+          resource={referenceForModel(VolumeSnapshotModel)}
+          name={t('nav~Volume Snapshots')}
+        />
         <ResourceClusterLink
           resource={referenceForModel(VolumeSnapshotClassModel)}
-          name="Volume Snapshot Classes"
+          name={t('nav~Volume Snapshot Classes')}
         />
       </NavSection>
 
@@ -195,18 +208,12 @@ const AdminNav = () => {
       <NavSection title={t('nav~Compute')} required={FLAGS.CAN_LIST_NODE}>
         <ResourceClusterLink resource="nodes" name={t('nav~Nodes')} />
         <HrefLink
-          href={formatNamespacedRouteForResource(
-            referenceForModel(MachineModel),
-            machineNS
-          )}
+          href={formatNamespacedRouteForResource(referenceForModel(MachineModel), machineNS)}
           name={t('nav~Machines')}
           required={FLAGS.CLUSTER_API}
         />
         <HrefLink
-          href={formatNamespacedRouteForResource(
-            referenceForModel(MachineSetModel),
-            machineNS
-          )}
+          href={formatNamespacedRouteForResource(referenceForModel(MachineSetModel), machineNS)}
           name={t('nav~Machine Sets')}
           required={FLAGS.CLUSTER_API}
         />
@@ -267,7 +274,11 @@ const AdminNav = () => {
           required={FLAGS.CLUSTER_VERSION}
           startsWith={clusterSettingsStartsWith}
         />
-        <ResourceClusterLink resource="namespaces" name={t('nav~Namespaces')} required={FLAGS.CAN_LIST_NS} />
+        <ResourceClusterLink
+          resource="namespaces"
+          name={t('nav~Namespaces')}
+          required={FLAGS.CAN_LIST_NS}
+        />
         <ResourceNSLink
           resource="resourcequotas"
           name={t('nav~Resource Quotas')}

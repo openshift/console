@@ -60,5 +60,7 @@
   "Resource Quotas": "عربي Resource Quotas",
   "Limit Ranges": "عربي Limit Ranges",
   "Chargeback": "عربي Chargeback",
-  "Custom Resource Definitions": "عربي Custom Resource Definitions"
+  "Custom Resource Definitions": "عربي Custom Resource Definitions",
+  "Volume Snapshots": "عربي Volume Snapshots",
+  "Volume Snapshot Classes": "عربي Volume Snapshot Classes"
 }

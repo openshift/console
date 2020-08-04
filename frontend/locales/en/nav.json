@@ -60,5 +60,7 @@
   "Resource Quotas": "Resource Quotas",
   "Limit Ranges": "Limit Ranges",
   "Chargeback": "Chargeback",
-  "Custom Resource Definitions": "Custom Resource Definitions"
+  "Custom Resource Definitions": "Custom Resource Definitions",
+  "Volume Snapshots": "Volume Snapshots",
+  "Volume Snapshot Classes": "Volume Snapshot Classes"
 }

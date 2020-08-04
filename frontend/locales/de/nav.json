@@ -60,5 +60,7 @@
   "Users": "DE Users",
   "Workloads": "DE Workloads",
   "WorkloadsSeparator": "DE WorkloadsSeparator",
-  "Monitoring": "Übersicht"
+  "Monitoring": "Übersicht",
+  "Volume Snapshots": "DE Volume Snapshots",
+  "Volume Snapshot Classes": "DE Volume Snapshot Classes"
 }

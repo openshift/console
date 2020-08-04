@@ -60,5 +60,7 @@
   "Resource Quotas": "中文 Resource Quotas",
   "Limit Ranges": "中文 Limit Ranges",
   "Chargeback": "中文 Chargeback",
-  "Custom Resource Definitions": "中文 Custom Resource Definitions"
+  "Custom Resource Definitions": "中文 Custom Resource Definitions",
+  "Volume Snapshots": "中文 Volume Snapshots",
+  "Volume Snapshot Classes": "中文 Volume Snapshot Classes"
 }

@@ -8,6 +8,9 @@ import { Route, Router, Switch } from 'react-router-dom';
 // AbortController is not supported in some older browser versions
 import 'abort-controller/polyfill';
 import store from '../redux';
+import { withTranslation } from 'react-i18next';
+import moment from 'moment';
+
 import { detectFeatures } from '../actions/features';
 import AppContents from './app-contents';
 import { getBrandingDetails, Masthead } from './masthead';
@@ -30,8 +33,6 @@ const consoleLoader = () =>
     '@console/kubevirt-plugin/src/components/connected-vm-console/vm-console-page' /* webpackChunkName: "kubevirt" */
   ).then((m) => m.VMConsolePage);
 import QuickStartDrawer from '@console/app/src/components/quick-starts/QuickStartDrawer';
-import { useTranslation, withTranslation } from 'react-i18next';
-import * as moment from 'moment';
 import '../../i18n';
 import '../vendor.scss';
 import '../style.scss';
@@ -154,7 +155,11 @@ class App_ extends React.PureComponent {
         <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
         <QuickStartDrawer>
           <ConsoleNotifier location="BannerTop" />
-          <div>Current locale: {i18n.language} | moment locale: {moment.locale()} | {t('Date: It is now {{date, MM/DD/YYYY}}', { date: new Date() })} | {t('Number: ${{value, number}}', { value: 1550.95 })}</div>
+          <div>
+            Current locale: {i18n.language} | moment locale: {moment.locale()} |{' '}
+            {t('Date: It is now {{date, MM/DD/YYYY}}', { date: new Date() })} |{' '}
+            {t('Number: ${{value, number}}', { value: 1550.95 })}
+          </div>
           <Page
             header={<Masthead onNavToggle={this._onNavToggle} />}
             sidebar={
@@ -195,7 +200,9 @@ class App_ extends React.PureComponent {
   }
 }
 
-const AppWithTranslation = withExtensions({ contextProviderExtensions: isContextProvider })(withTranslation())(App_);
+const App = withExtensions({ contextProviderExtensions: isContextProvider })(App_);
+
+const AppWithTranslation = withTranslation()(App);
 
 const startDiscovery = () => store.dispatch(watchAPIServices());
 
@@ -261,7 +268,9 @@ render(
         <Switch>
           <Route
             path="/k8s/ns/:ns/virtualmachineinstances/:name/standaloneconsole"
-            render={(componentProps) => <AsyncComponent loader={consoleLoader} {...componentProps} />}
+            render={(componentProps) => (
+              <AsyncComponent loader={consoleLoader} {...componentProps} />
+            )}
           />
           <Route path="/terminal" component={CloudShellTab} />
           <Route path="/" component={AppWithTranslation} />
