@@ -38,7 +38,9 @@ const getOCSStatusBody = (status: OCSDiskStatus, diskName: string): React.ReactN
     case Status.NotResponding:
       return (
         <PopoverStatus statusBody={<ErrorStatus title={status} />}>
-          <span>Troubleshoot the status </span>{' '}
+          <span>
+            Troubleshoot disk <strong>{diskName}</strong>{' '}
+          </span>
           <span>
             <ExternalLink href="https://access.redhat.com/solutions/5194851 " text="here" />
           </span>
