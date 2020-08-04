@@ -78,11 +78,13 @@ const {
   PipelineModel,
   PipelineResourceModel,
   PipelineRunModel,
+  ConditionModel,
   TaskModel,
   TaskRunModel,
   EventListenerModel,
   TriggerTemplateModel,
   TriggerBindingModel,
+  ClusterTriggerBindingModel,
 } = models;
 
 type ConsumedExtensions =
@@ -374,6 +376,30 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Resource/Details',
     properties: {
+      model: PipelineResourceModel,
+      loader: async () =>
+        (
+          await import(
+            './components/pipelines/detail-page-tabs/PipelineResourceDetailsPage' /* webpackChunkName: "pipelineresource-details" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: ConditionModel,
+      loader: async () =>
+        (
+          await import(
+            './components/pipelines/detail-page-tabs/PipelineConditionDetailsPage' /* webpackChunkName: "pipelinecondition-details" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
       model: TaskRunModel,
       loader: async () =>
         (
@@ -381,6 +407,27 @@ const plugin: Plugin<ConsumedExtensions> = [
             './components/taskruns/TaskRunDetailsPage' /* webpackChunkName: "taskrun-details" */
           )
         ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: ClusterTaskModel,
+      loader: async () =>
+        (
+          await import(
+            './components/cluster-tasks/ClusterTaskDetailsPage' /* webpackChunkName: "clustertask-details" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: TaskModel,
+      loader: async () =>
+        (await import('./components/tasks/TaskDetailsPage' /* webpackChunkName: "task-details" */))
+          .default,
     },
   },
   {
@@ -415,6 +462,18 @@ const plugin: Plugin<ConsumedExtensions> = [
         (
           await import(
             './components/pipelines/TriggerBindingPage' /* webpackChunkName: "trigger-binding-details" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: ClusterTriggerBindingModel,
+      loader: async () =>
+        (
+          await import(
+            './components/pipelines/ClusterTriggerBindingPage' /* webpackChunkName: "cluster-trigger-binding-details" */
           )
         ).default,
     },
@@ -632,7 +691,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: async () =>
         (
           await import(
-            './components/tasks-lists/TasksListsPage' /* webpackChunkName: "admin-tasks`" */
+            './components/tasks/list-page/TasksListsPage' /* webpackChunkName: "admin-tasks`" */
           )
         ).default,
     },

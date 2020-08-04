@@ -105,7 +105,7 @@ export const ConditionModel: K8sKind = {
   id: 'condition',
   labelPlural: 'Conditions',
   crd: true,
-  badge: BadgeType.DEV,
+  badge: BadgeType.TECH,
   color,
 };
 
