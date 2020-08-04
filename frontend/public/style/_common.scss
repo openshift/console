@@ -1,5 +1,15 @@
 $co-external-link-padding-right: 15px;
 
+dl.co-inline {
+  dd {
+    margin-bottom: 1em;
+  }
+  dt {
+    float: left;
+    margin-right: 0.4em;
+  }
+}
+
 .co-m-pane__body {
   margin: $grid-gutter-width 0 0;
   padding: 0 ($grid-gutter-width / 2) $grid-gutter-width;
