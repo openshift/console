@@ -35,7 +35,7 @@ import { getName } from '@console/shared';
 import { OCSServiceModel } from '../../models';
 import FileUpload from './fileUpload';
 import { isValidJSON, checkError, prettifyJSON, getIPFamily } from './utils';
-import { OCS_INDEPENDENT_FLAG, OCS_FLAG } from '../../features';
+import { OCS_INDEPENDENT_FLAG, OCS_FLAG, OCS_CONVERGED_FLAG } from '../../features';
 import { OCS_EXTERNAL_CR_NAME, IP_FAMILY } from '../../constants';
 import './install.scss';
 
@@ -121,6 +121,7 @@ const CreateExternalCluster = withHandlePromise((props: CreateExternalClusterPro
       Promise.all([k8sCreate(SecretModel, secret), k8sCreate(OCSServiceModel, ocsObj)]),
       (data) => {
         dispatch(setFlag(OCS_INDEPENDENT_FLAG, true));
+        dispatch(setFlag(OCS_CONVERGED_FLAG, false));
         dispatch(setFlag(OCS_FLAG, true));
         history.push(
           `/k8s/ns/${ns}/clusterserviceversions/${getName(
