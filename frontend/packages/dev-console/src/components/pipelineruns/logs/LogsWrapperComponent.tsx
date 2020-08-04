@@ -14,7 +14,7 @@ type LogsWrapperComponentProps = {
 const LogsWrapperComponent: React.FC<LogsWrapperComponentProps> = ({ obj, ...props }) => {
   const ref = React.useRef(obj?.data);
   if (!_.isEmpty(obj?.data)) {
-    ref.current = obj.data;
+    ref.current = obj.data?.[0];
   }
   return ref.current ? <MultiStreamLogs {...props} resource={ref.current} /> : null;
 };

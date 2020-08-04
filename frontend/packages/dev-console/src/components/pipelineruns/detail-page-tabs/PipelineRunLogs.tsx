@@ -92,11 +92,11 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
         : undefined;
     const resources = taskCount > 0 && [
       {
-        name: _.get(taskRunFromYaml[activeItem], ['status', 'podName'], ''),
+        selector: { 'tekton.dev/taskRun': activeItem },
         kind: 'Pod',
         namespace: obj.metadata.namespace,
         prop: `obj`,
-        isList: false,
+        isList: true,
       },
     ];
     const path = `${resourcePathFromModel(
