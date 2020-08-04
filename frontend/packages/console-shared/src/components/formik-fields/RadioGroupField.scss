@@ -5,8 +5,16 @@
     margin-top: 0;
   }
 
-  &__children {
-    padding: var(--pf-global--spacer--md) 0;
+  &:not(.ocs-radio-group-field--inline) {
+    .pf-c-radio {
+      padding-bottom: var(--pf-global--spacer--md);
+    }
+    .pf-c-radio:last-of-type {
+      padding-bottom: 0;
+    }
+    .ocs-radio-group-field__children {
+      padding-top: var(--pf-global--spacer--sm);
+    }
   }
 
   &--inline {
