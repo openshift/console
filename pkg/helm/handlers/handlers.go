@@ -3,33 +3,28 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/openshift/console/pkg/helm/chartproxy"
+
 	"net/http"
 
 	"github.com/coreos/pkg/capnslog"
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/chart"
-	"helm.sh/helm/v3/pkg/release"
-	"helm.sh/helm/v3/pkg/repo"
-	"k8s.io/client-go/dynamic"
-	"k8s.io/client-go/kubernetes"
-	v1 "k8s.io/client-go/kubernetes/typed/core/v1"
-	"k8s.io/client-go/rest"
-	"sigs.k8s.io/yaml"
-
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/helm/actions"
 	"github.com/openshift/console/pkg/serverutils"
+	"helm.sh/helm/v3/pkg/action"
+	"helm.sh/helm/v3/pkg/chart"
+	"helm.sh/helm/v3/pkg/release"
+	"sigs.k8s.io/yaml"
 )
 
 var (
 	plog = capnslog.NewPackageLogger("github.com/openshift/console", "helm")
 )
 
-func New(apiUrl string, transport http.RoundTripper, defaultRepoCACert []byte) *helmHandlers {
+func New(apiUrl string, transport http.RoundTripper) *helmHandlers {
 	return &helmHandlers{
 		ApiServerHost:           apiUrl,
 		Transport:               transport,
-		DefaultRepoCACert:       defaultRepoCACert,
 		getActionConfigurations: actions.GetActionConfigurations,
 		renderManifests:         actions.RenderManifests,
 		installChart:            actions.InstallChart,
@@ -40,16 +35,13 @@ func New(apiUrl string, transport http.RoundTripper, defaultRepoCACert []byte) *
 		uninstallRelease:        actions.UninstallRelease,
 		rollbackRelease:         actions.RollbackRelease,
 		getReleaseHistory:       actions.GetReleaseHistory,
-		getHelmIndexFile:        actions.FetchIndexFile,
-		getDynamicClient:        actions.DynamicClient,
 	}
 }
 
 // helmHandlers provides handlers to handle helm related requests
 type helmHandlers struct {
-	ApiServerHost     string
-	Transport         http.RoundTripper
-	DefaultRepoCACert []byte
+	ApiServerHost string
+	Transport     http.RoundTripper
 
 	// helm action configurator
 	getActionConfigurations func(string, string, string, *http.RoundTripper) *action.Configuration
@@ -64,8 +56,6 @@ type helmHandlers struct {
 	getRelease        func(string, *action.Configuration) (*release.Release, error)
 	getChart          func(chartUrl string, conf *action.Configuration) (*chart.Chart, error)
 	getReleaseHistory func(releaseName string, conf *action.Configuration) ([]*release.Release, error)
-	getHelmIndexFile  func(client dynamic.Interface, corev1Client v1.CoreV1Interface, defaultRepoCACerts []byte) (*repo.IndexFile, error)
-	getDynamicClient  func(conf *rest.Config) (dynamic.Interface, error)
 }
 
 func (h *helmHandlers) HandleHelmRenderManifests(user *auth.User, w http.ResponseWriter, r *http.Request) {
@@ -253,30 +243,45 @@ func (h *helmHandlers) HandleGetReleaseHistory(user *auth.User, w http.ResponseW
 	w.Write(res)
 }
 
-func (h *helmHandlers) HandleGetRepos(user *auth.User, w http.ResponseWriter, r *http.Request) {
-	conf := h.getActionConfigurations(h.ApiServerHost, "", user.Token, &h.Transport)
-	config, err := conf.RESTClientGetter.ToRESTConfig()
+type indexHandler struct {
+	restConfigProvider chartproxy.RestConfigProvider
+	proxyOptions       []chartproxy.ProxyOption
+	newProxy           func() (chartproxy.Proxy, error)
+}
+
+func NewIndexHandler(restConfigProvider chartproxy.RestConfigProvider) *indexHandler {
+	return &indexHandler{
+		restConfigProvider: restConfigProvider,
+		newProxy: func() (getter chartproxy.Proxy, err error) {
+			return chartproxy.New(restConfigProvider)
+		},
+	}
+}
+
+func (h *indexHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	proxy, err := h.newProxy()
+
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: fmt.Sprintf("Failed to get k8s config: %v", err)})
-		return
-	}
-	client, err := h.getDynamicClient(config)
-	if err != nil {
-		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: fmt.Sprintf("Failed to get k8s dynamic client: %v", err)})
-		return
-	}
-
-	kubeClient, err := kubernetes.NewForConfig(config)
-	if err != nil {
-		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: fmt.Sprintf("Failed to get k8s core client: %v", err)})
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/yaml")
 	w.Header().Set("Cache-Control", "no-store, must-revalidate")
 
-	indexFile, err := h.getHelmIndexFile(client, kubeClient.CoreV1(), h.DefaultRepoCACert)
+	indexFile, err := proxy.IndexFile()
 
-	out, _ := yaml.Marshal(indexFile)
+	if err != nil {
+		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: fmt.Sprintf("Failed to get index file: %v", err)})
+		return
+	}
+
+	out, err := yaml.Marshal(indexFile)
+
+	if err != nil {
+		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: fmt.Sprintf("Failed to deserialize index file to yaml: %v", err)})
+		return
+	}
+
 	w.Write(out)
 }

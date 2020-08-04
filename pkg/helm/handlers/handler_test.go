@@ -21,6 +21,7 @@ import (
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/helm/actions"
+	"github.com/openshift/console/pkg/helm/chartproxy"
 )
 
 var fakeReleaseList = []*release.Release{
@@ -139,6 +140,16 @@ func fakeDynamicClient(err error) func(conf *rest.Config) (dynamic.Interface, er
 	return func(conf *rest.Config) (dynamic.Interface, error) {
 		return fake.NewSimpleDynamicClient(runtime.NewScheme()), err
 	}
+}
+
+type fakeProxy struct {
+	repo *repo.IndexFile
+	chartproxy.Proxy
+	error
+}
+
+func (p fakeProxy) IndexFile() (*repo.IndexFile, error) {
+	return p.repo, p.error
 }
 
 type FakeConfig struct {
@@ -662,18 +673,18 @@ func TestHelmHandlers_HandleHelmUpgradeRelease(t *testing.T) {
 	}
 }
 
-func TestHelmHandlers_HandleGetRepos(t *testing.T) {
+func TestHelmHandlers_Index(t *testing.T) {
 	tests := []struct {
 		name             string
 		indexFile        *repo.IndexFile
 		httpStatusCode   int
-		fakeError        error
+		proxyNewError    error
+		indexFileError   error
 		expectedResponse string
 	}{
 		{
 			name:           "valid repo index file should return correct response",
 			httpStatusCode: http.StatusOK,
-			fakeError:      nil,
 			indexFile: &repo.IndexFile{
 				APIVersion: "v1",
 				Entries: map[string]repo.ChartVersions{
@@ -692,42 +703,52 @@ func TestHelmHandlers_HandleGetRepos(t *testing.T) {
 		},
 		{
 			name:             "error case should return correct http header",
-			indexFile:        nil,
 			httpStatusCode:   http.StatusInternalServerError,
-			fakeError:        errors.New("Fake error"),
-			expectedResponse: "{\"error\":\"Failed to get k8s dynamic client: Fake error\"}",
+			proxyNewError:    errors.New("Fake error"),
+			expectedResponse: `{"error":"Failed to get k8s config: Fake error"}`,
+		},
+		{
+			name:             "Report error while retrieving the merged index",
+			httpStatusCode:   http.StatusInternalServerError,
+			indexFileError:   errors.New("Fake error"),
+			expectedResponse: `{"error":"Failed to get index file: Fake error"}`,
 		},
 	}
 
 	for _, tt := range tests {
-		handlers := fakeHelmHandler()
-		var request *http.Request
+		t.Run(tt.name, func(t *testing.T) {
+			var request *http.Request
 
-		handlers.getHelmIndexFile = fakeHelmGetChartRepos(tt.indexFile, tt.fakeError)
-		handlers.getDynamicClient = fakeDynamicClient(tt.fakeError)
+			request = httptest.NewRequest(http.MethodGet, "/api/helm/charts/index.yaml", strings.NewReader(""))
+			response := httptest.NewRecorder()
 
-		request = httptest.NewRequest(http.MethodGet, "/api/helm/charts/index.yaml", strings.NewReader(""))
-		response := httptest.NewRecorder()
-		handlers.HandleGetRepos(&auth.User{}, response, request)
-
-		if tt.expectedResponse == "" && tt.indexFile != nil {
-			expectedResponse, err := yaml.Marshal(tt.indexFile)
-			tt.expectedResponse = string(expectedResponse)
-			if err != nil {
-				t.Error(err)
+			handler := indexHandler{
+				newProxy: func() (proxy chartproxy.Proxy, err error) {
+					return &fakeProxy{repo: tt.indexFile, error: tt.indexFileError}, tt.proxyNewError
+				},
 			}
-		}
 
-		if tt.expectedResponse != response.Body.String() {
-			t.Errorf("Expected response isn't matching expected \n %s received \n %s", tt.expectedResponse, response.Body.String())
-		}
+			handler.ServeHTTP(response, request)
 
-		if response.Code != tt.httpStatusCode {
-			t.Errorf("Response status code isn't matching expected %d recieved %d", tt.httpStatusCode, response.Code)
-		}
+			if tt.expectedResponse == "" && tt.indexFile != nil {
+				expectedResponse, err := yaml.Marshal(tt.indexFile)
+				tt.expectedResponse = string(expectedResponse)
+				if err != nil {
+					t.Error(err)
+				}
+			}
 
-		if tt.expectedResponse != "" && tt.expectedResponse != response.Body.String() {
-			t.Errorf("Response not matching expected is %s and received %s", tt.expectedResponse, response.Body.String())
-		}
+			if tt.expectedResponse != response.Body.String() {
+				t.Errorf("Expected response isn't matching expected \n %s received \n %s", tt.expectedResponse, response.Body.String())
+			}
+
+			if response.Code != tt.httpStatusCode {
+				t.Errorf("Response status code isn't matching expected %d recieved %d", tt.httpStatusCode, response.Code)
+			}
+
+			if tt.expectedResponse != "" && tt.expectedResponse != response.Body.String() {
+				t.Errorf("Response not matching expected is %s and received %s", tt.expectedResponse, response.Body.String())
+			}
+		})
 	}
 }

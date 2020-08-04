@@ -9,13 +9,12 @@ import (
 	"github.com/coreos/pkg/capnslog"
 
 	"github.com/openshift/console/pkg/bridge"
-	"github.com/openshift/console/pkg/proxy"
-	"github.com/openshift/console/pkg/server"
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
 )
 
 var (
-	log = capnslog.NewPackageLogger("github.com/openshift/console", "pkg/helm")
+	log         = capnslog.NewPackageLogger("github.com/openshift/console", "pkg/helm")
+	DefaultRepo helmRepo
 )
 
 type config struct {
@@ -33,14 +32,13 @@ func RegisterFlags(fs *flag.FlagSet) *config {
 	return cfg
 }
 
-func (cfg *config) Configure(srv *server.Server) {
+func (cfg *config) Configure() {
 	repoURL := bridge.ValidateFlagIsURL("helm-chart-repo-repoUrl", cfg.repoUrl)
 
 	var rootCAs *x509.CertPool
 	if cfg.repoCaFile != "" {
 		rootCAs = x509.NewCertPool()
 		certPEM, err := ioutil.ReadFile(cfg.repoCaFile)
-		srv.HelmDefaultRepoCACert = certPEM
 		if err != nil {
 			log.Fatalf("failed to read helm chart repo ca file %v : %v", cfg.repoCaFile, err)
 		}
@@ -51,12 +49,13 @@ func (cfg *config) Configure(srv *server.Server) {
 		rootCAs, _ = x509.SystemCertPool()
 	}
 
-	srv.HelmChartRepoProxyConfig = &proxy.Config{
-		TLSClientConfig: oscrypto.SecureTLSConfig(&tls.Config{
-			RootCAs: rootCAs,
+	DefaultRepo = helmRepo{
+		Name: "redhat-helm-charts",
+		Url:  repoURL,
+		TlsClientConfig: oscrypto.SecureTLSConfig(&tls.Config{
+			RootCAs:      rootCAs,
+			CipherSuites: oscrypto.DefaultCiphers(),
 		}),
-		HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
-		Endpoint:        repoURL,
 	}
 
 }
