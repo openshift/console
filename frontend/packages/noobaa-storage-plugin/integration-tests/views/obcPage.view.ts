@@ -22,6 +22,7 @@ export const goToOBPage = async () => {
 
 const createOBC = element(by.buttonText('Create Object Bucket Claim'));
 
+export const namespaceDropdown = $('[data-test-id="namespace-bar-dropdown"] div div button');
 const obcNameInput = $('#obc-name');
 // doesn't work in OCP 4.3
 // const scDropdown = $('#sc-dropdown');
@@ -100,6 +101,7 @@ export class CreateOBCHandler {
 
   async createBucketClaim() {
     await goToOBCPage();
+    await selectItemFromDropdown(this.namespace, namespaceDropdown);
     await this.waitForElement(createOBC);
     await click(createOBC);
     await this.waitForElement(scDropdown);
