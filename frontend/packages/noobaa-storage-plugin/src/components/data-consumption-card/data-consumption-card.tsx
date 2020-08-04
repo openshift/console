@@ -79,7 +79,7 @@ const DataConsumptionCard: React.FC = () => {
           <PerformanceGraph
             loading={loading}
             loadError={loadError}
-            dataPoints={data as DataPoint[][]}
+            dataPoints={data as DataPoint[][][]}
             metricType={metric}
           />
         )}
