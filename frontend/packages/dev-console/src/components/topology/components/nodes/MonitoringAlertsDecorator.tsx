@@ -5,7 +5,12 @@ import { Node, SELECTION_EVENT } from '@patternfly/react-topology';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { Alert } from '@console/internal/components/monitoring/types';
 import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
-import { getSeverityAlertType, getFiringAlerts, AlertSeverityIcon } from '@console/shared';
+import {
+  getSeverityAlertType,
+  getFiringAlerts,
+  AlertSeverityIcon,
+  shouldHideMonitoringAlertDecorator,
+} from '@console/shared';
 import { Decorator } from './Decorator';
 
 type DispatchProps = {
@@ -46,16 +51,16 @@ const MonitoringAlertsDecorator: React.FC<MonitoringAlertsDecoratorType> = ({
       .fireEvent(SELECTION_EVENT, [workload.getId()]);
   };
 
+  if (shouldHideMonitoringAlertDecorator(severityAlertType)) return null;
+
   return (
-    firingAlerts.length > 0 && (
-      <Tooltip key="monitoringAlert" content="Monitoring Alert" position={TooltipPosition.left}>
-        <Decorator x={x} y={y} radius={radius} onClick={showSidebar}>
-          <g transform={`translate(-${radius / 2}, -${radius / 2})`}>
-            <AlertSeverityIcon severityAlertType={severityAlertType} fontSize={radius} />
-          </g>
-        </Decorator>
-      </Tooltip>
-    )
+    <Tooltip key="monitoringAlert" content="Monitoring Alert" position={TooltipPosition.left}>
+      <Decorator x={x} y={y} radius={radius} onClick={showSidebar}>
+        <g transform={`translate(-${radius / 2}, -${radius / 2})`}>
+          <AlertSeverityIcon severityAlertType={severityAlertType} fontSize={radius} />
+        </g>
+      </Decorator>
+    </Tooltip>
   );
 };
 

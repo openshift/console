@@ -15,6 +15,7 @@ import {
   AlertSeverityIcon,
   getSeverityAlertType,
   getFiringAlerts,
+  shouldHideMonitoringAlertDecorator,
 } from '@console/shared';
 import { K8sResourceKind } from '../../module/k8s';
 import * as UIActions from '../../actions/ui';
@@ -26,7 +27,6 @@ import {
   resourceObjPath,
   truncateMiddle,
 } from '../utils';
-
 import { OverviewGroup, OverviewMetrics } from '.';
 
 // Consider this mobile if the device screen width is less than 768. (This value shouldn't change.)
@@ -303,6 +303,13 @@ const ProjectOverviewListItem = connect<
       selectOverviewDetailsTab('Monitoring');
       selectItem(uid);
     };
+    const alertIndicator = shouldHideMonitoringAlertDecorator(severityAlertType) ? null : (
+      <Tooltip key="monitoringAlert" content="Monitoring Alert" position={TooltipPosition.right}>
+        <Button onClick={onSeverityIconClick} variant="plain">
+          <AlertSeverityIcon severityAlertType={severityAlertType} />
+        </Button>
+      </Tooltip>
+    );
 
     const heading = (
       <h3 className="project-overview__item-heading">
@@ -323,17 +330,7 @@ const ProjectOverviewListItem = connect<
               <ControllerLink controller={current} />
             </>
           )}
-          {firingAlerts.length > 0 && (
-            <Tooltip
-              key="monitoringAlert"
-              content="Monitoring Alert"
-              position={TooltipPosition.right}
-            >
-              <Button onClick={onSeverityIconClick} variant="plain">
-                <AlertSeverityIcon severityAlertType={severityAlertType} />
-              </Button>
-            </Tooltip>
-          )}
+          {alertIndicator}
           {deletionTimestamp && <ResourceItemDeleting />}
         </span>
       </h3>
