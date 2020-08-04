@@ -90,15 +90,17 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
             obj.metadata?.name,
           )
         : undefined;
-    const resources = taskCount > 0 && [
-      {
-        name: _.get(taskRunFromYaml[activeItem], ['status', 'podName'], ''),
-        kind: 'Pod',
-        namespace: obj.metadata.namespace,
-        prop: `obj`,
-        isList: false,
-      },
-    ];
+    const podName = taskRunFromYaml[activeItem]?.status?.podName;
+    const resources = taskCount > 0 &&
+      podName && [
+        {
+          name: podName,
+          kind: 'Pod',
+          namespace: obj.metadata.namespace,
+          prop: `obj`,
+          isList: false,
+        },
+      ];
     const path = `${resourcePathFromModel(
       PipelineRunModel,
       obj.metadata.name,
@@ -138,7 +140,7 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
           )}
         </div>
         <div className="odc-pipeline-run-logs__container">
-          {activeItem ? (
+          {activeItem && resources ? (
             <Firehose key={activeItem} resources={resources}>
               <LogsWrapperComponent
                 taskName={_.get(taskRunFromYaml, [activeItem, 'pipelineTaskName'], '-')}
