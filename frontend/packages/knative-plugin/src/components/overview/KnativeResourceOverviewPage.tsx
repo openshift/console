@@ -63,6 +63,10 @@ export const KnativeResourceOverviewPage: React.ComponentType<KnativeResourceOve
       model.apiVersion === apiInfo.version,
   );
 
+  if (!resourceModel) {
+    return null;
+  }
+
   const actions = [];
   if (resourceModel.kind === RevisionModel.kind) {
     actions.push(...getRevisionActions());
