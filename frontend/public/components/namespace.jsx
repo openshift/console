@@ -63,7 +63,7 @@ import { Bar, Area, PROMETHEUS_BASE_PATH, requirePrometheus } from './graphs';
 import { featureReducerName, flagPending, connectToFlags } from '../reducers/features';
 import { setFlag } from '../actions/features';
 import { OpenShiftGettingStarted } from './start-guide';
-import { Overview } from './overview';
+import { OverviewListPage } from './overview';
 import {
   getNamespaceDashboardConsoleLinks,
   ProjectDashboard,
@@ -1080,7 +1080,7 @@ export const ProjectsDetailsPage = (props) => (
         component: NamespaceDetails,
       },
       navFactory.editYaml(),
-      navFactory.workloads(Overview),
+      navFactory.workloads(OverviewListPage),
       navFactory.roles(RolesPage),
     ]}
   />

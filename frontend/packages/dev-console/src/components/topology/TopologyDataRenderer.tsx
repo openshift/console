@@ -75,7 +75,8 @@ export const ConnectedTopologyDataRenderer: React.FC<TopologyDataRendererProps &
     const resourcesLoaded =
       !kindsInFlight &&
       Object.keys(resources).length > 0 &&
-      Object.keys(resources).every((key) => resources[key].loaded || resources[key].loadError);
+      Object.keys(resources).every((key) => resources[key].loaded || resources[key].loadError) &&
+      !Object.keys(resources).every((key) => resources[key].loadError);
     if (!resourcesLoaded) {
       return;
     }

@@ -3,7 +3,12 @@ import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 import { Breadcrumb, BreadcrumbItem, Button, SplitItem, Split } from '@patternfly/react-core';
-import { OverviewItem, Status, HealthChecksAlert } from '@console/shared';
+import {
+  OverviewItem,
+  Status,
+  HealthChecksAlert,
+  YellowExclamationTriangleIcon,
+} from '@console/shared';
 import {
   ActionsMenu,
   FirehoseResult,
@@ -20,8 +25,13 @@ import {
   K8sResourceKindReference,
   referenceForModel,
 } from '../../module/k8s';
-import { ResourceItemDeleting } from '../overview/project-overview';
 import { ManagedByOperatorLink } from './managed-by';
+
+export const ResourceItemDeleting = () => (
+  <span className="co-resource-item__deleting">
+    <YellowExclamationTriangleIcon /> Deleting
+  </span>
+);
 
 export const BreadCrumbs: React.SFC<BreadCrumbsProps> = ({ breadcrumbs }) => (
   <Breadcrumb>
