@@ -8,10 +8,11 @@ import DashboardCardBody from '@console/shared/src/components/dashboard/dashboar
 import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { getCephHealthState } from '../../dashboard-page/storage-dashboard/status-card/utils';
-import { cephClusterResource } from '../../../constants/resources';
+import { DashboardItemProps } from '@console/internal/components/dashboard/with-dashboard-resources';
+import { getCephHealthState } from '../dashboard-page/storage-dashboard/status-card/utils';
+import { cephClusterResource } from '../../constants/resources';
 
-const StatusCard: React.FC = () => {
+export const StatusCard: React.FC<DashboardItemProps> = () => {
   const [data, loaded, loadError] = useK8sWatchResource<K8sResourceKind[]>(cephClusterResource);
 
   const cephHealth = getCephHealthState({ ceph: { data, loaded, loadError } });
