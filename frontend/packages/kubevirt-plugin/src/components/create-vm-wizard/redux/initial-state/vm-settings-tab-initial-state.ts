@@ -39,6 +39,10 @@ export const getInitialVmSettings = (data: CommonData): VMSettings => {
       value: false,
       isHidden: hiddenByOperatingSystem,
     },
+    [VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS]: {
+      value: false,
+      isHidden: asHidden(true, VMSettingsField.OPERATING_SYSTEM),
+    },
     [VMSettingsField.FLAVOR]: {
       isRequired: asRequired(true),
     },

@@ -159,16 +159,14 @@ const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
 
   const os = iGetVmSettingValue(state, id, VMSettingsField.OPERATING_SYSTEM);
   const isWindows = os?.startsWith('win');
-  const windowsTools = getStorages(state, id).find(
-    (storage) => !!isWinToolsImage(getVolumeContainerImage(storage.volume)),
-  );
 
-  if (isWindows && !windowsTools) {
-    dispatch(vmWizardInternalActions[InternalActionType.UpdateStorage](id, windowsToolsStorage));
-  }
-  if (!isWindows && windowsTools) {
-    dispatch(vmWizardInternalActions[InternalActionType.RemoveStorage](id, windowsTools.id));
-  }
+  dispatch(
+    vmWizardInternalActions[InternalActionType.UpdateVmSettingsField](
+      id,
+      VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS,
+      { isHidden: asHidden(!isWindows, VMSettingsField.OPERATING_SYSTEM), value: isWindows },
+    ),
+  );
 };
 
 const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
@@ -209,6 +207,28 @@ const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
       },
     ),
   );
+};
+
+const windowsToolsUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
+  const state = getState();
+  if (!hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS)) {
+    return;
+  }
+  const mountWindowsGuestTools = iGetVmSettingValue(
+    state,
+    id,
+    VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS,
+  );
+  const windowsTools = getStorages(state, id).find(
+    (storage) => !!isWinToolsImage(getVolumeContainerImage(storage.volume)),
+  );
+
+  if (mountWindowsGuestTools && !windowsTools) {
+    dispatch(vmWizardInternalActions[InternalActionType.UpdateStorage](id, windowsToolsStorage));
+  }
+  if (!mountWindowsGuestTools && windowsTools) {
+    dispatch(vmWizardInternalActions[InternalActionType.RemoveStorage](id, windowsTools.id));
+  }
 };
 
 const cloneCommonBaseDiskImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
@@ -305,6 +325,7 @@ export const updateVmSettingsState = (options: UpdateOptions) =>
     osUpdater,
     baseImageUpdater,
     cloneCommonBaseDiskImageUpdater,
+    windowsToolsUpdater,
     workloadConsistencyUpdater,
     provisioningSourceUpdater,
     nativeK8sUpdater,
