@@ -73,4 +73,19 @@
   .pf-topology-container {
     display: flex;
   }
+  .pf-topology-side-bar {
+    display: flex;
+    flex-direction: column;
+  }
+  .pf-topology-side-bar__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    .resource-overview {
+      flex: 1;
+    }
+    .overview__sidebar-pane-body {
+      min-height: initial;
+    }
+  }
 }
