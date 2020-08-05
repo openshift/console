@@ -15,16 +15,17 @@ import {
 import {
   ButtonBar,
   history,
-  ListDropdown,
   LoadingBox,
   ResourceLink,
   resourceObjPath,
+  ListDropdown,
 } from '../utils';
 import { Checkbox } from '../checkbox';
 import { RadioInput } from '../radio';
 import { CreatePVCForm } from './create-pvc';
 import { PersistentVolumeClaimModel } from '../../models';
 import { ContainerSelector } from '../container-selector';
+import { PodTemplate, PersistentVolumeClaimKind, Patch } from '../../../public/module/k8s/types';
 
 const PVCDropdown: React.FC<PVCDropdownProps> = (props) => {
   const kind = 'PersistentVolumeClaim';
@@ -49,13 +50,16 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
   const [claimName, setClaimName] = React.useState('');
   const [volumeName, setVolumeName] = React.useState('');
   const [mountPath, setMountPath] = React.useState('');
+  const [devicePath, setDevicePath] = React.useState('');
   const [subPath, setSubPath] = React.useState('');
   const [mountAsReadOnly, setMountAsReadOnly] = React.useState(false);
   const [selectedContainers, setSelectedContainers] = React.useState([]);
   const [volumeAlreadyMounted, setVolumeAlreadyMounted] = React.useState(false);
   const [error, setError] = React.useState('');
   const [showCreatePVC, setShowCreatePVC] = React.useState('existing');
+  const [claimVolumeMode, setClaimVolumeMode] = React.useState('');
   const [newPVCObj, setNewPVCObj] = React.useState(null);
+  const [selectedPVC, setSelectedPVC] = React.useState<PersistentVolumeClaimKind>(null);
 
   const { kindObj, resourceName, namespace } = props;
   const supportedKinds = [
@@ -82,12 +86,14 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
         claimName: newClaimName,
       },
     }) as any;
-
     const newVolumeName = volume ? volume.name : newClaimName;
     const newVolumeAlreadyMounted = !!volume;
     setVolumeName(newVolumeName);
     setVolumeAlreadyMounted(newVolumeAlreadyMounted);
-  }, [newPVCObj, obj, claimName, showCreatePVC]);
+    showCreatePVC === 'existing' && newClaimName.trim().length > 0
+      ? setClaimVolumeMode(selectedPVC.spec.volumeMode)
+      : setClaimVolumeMode(newPVCObj?.spec?.volumeMode);
+  }, [newPVCObj, obj, claimName, showCreatePVC, claimVolumeMode, selectedPVC, namespace]);
 
   if (!kindObj || !_.includes(supportedKinds, kindObj.kind)) {
     setError('Unsupported kind.');
@@ -139,12 +145,39 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
     validateMountPaths(event.currentTarget.value);
   };
 
+  const getDevicePaths = (podTemplate: PodTemplate): string[] => {
+    const containers: ContainerSpec[] = podTemplate?.spec?.containers;
+    return containers.reduce((acc: string[], container: ContainerSpec) => {
+      if (!isContainerSelected(container)) {
+        return acc;
+      }
+      const devicePaths: string[] = _.map(container.volumeDevices, 'devicePath');
+      return acc.concat(devicePaths);
+    }, []);
+  };
+
+  const validateDevicePath = (path: string) => {
+    const existingDevicePaths = getDevicePaths(obj.spec.template);
+    if (existingDevicePaths.includes(path)) {
+      setError('Device path is already in use.');
+    }
+  };
+
+  const handleDevicePathChange: React.ReactEventHandler<HTMLInputElement> = (event) => {
+    setDevicePath(event.currentTarget.value);
+    validateDevicePath(event.currentTarget.value);
+  };
   const handleSubPathChange: React.ReactEventHandler<HTMLInputElement> = (event) => {
     setSubPath(event.currentTarget.value);
   };
 
-  const handlePVCChange = (newClaimName: string) => {
+  const handlePVCChange = (
+    newClaimName: string,
+    kindLabel?: string,
+    resource?: PersistentVolumeClaimKind,
+  ) => {
     setClaimName(newClaimName);
+    setSelectedPVC(resource);
   };
 
   const onMountAsReadOnlyChanged: React.ReactEventHandler<HTMLInputElement> = () => {
@@ -157,16 +190,15 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
       : Promise.resolve(claimName);
   };
 
-  const getVolumePatches = (pvClaimName: string) => {
+  const getVolumeMountPatches = (): Patch[] => {
     const mount = {
       name: volumeName,
       mountPath,
       subPath,
       readOnly: mountAsReadOnly,
     };
-
     const containers: ContainerSpec[] = _.get(obj, 'spec.template.spec.containers', []);
-    const patches = containers.reduce((patch, container, i) => {
+    return containers.reduce((patch, container, i) => {
       // Only add to selected containers
       if (isContainerSelected(container)) {
         if (_.isEmpty(container.volumeMounts)) {
@@ -185,10 +217,41 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
       }
       return patch;
     }, []);
+  };
+
+  const getVolumeDevicePatches = (): Patch[] => {
+    const device = {
+      name: volumeName,
+      devicePath,
+    };
+    const containers: ContainerSpec[] = obj?.spec?.template?.spec?.containers;
+    return containers.reduce((patch, container, i) => {
+      // Only add to selected containers
+      if (isContainerSelected(container)) {
+        if (_.isEmpty(container.volumeMounts)) {
+          patch.push({
+            op: 'add',
+            path: `/spec/template/spec/containers/${i}/volumeDevices`,
+            value: [device],
+          });
+        } else {
+          patch.push({
+            op: 'add',
+            path: `/spec/template/spec/containers/${i}/volumeDevices/-`,
+            value: device,
+          });
+        }
+      }
+      return patch;
+    }, []);
+  };
+  const getVolumePatches = (pvcName: string) => {
+    const patches =
+      claimVolumeMode === 'Block' ? getVolumeDevicePatches() : getVolumeMountPatches();
     const volume = {
       name: volumeName,
       persistentVolumeClaim: {
-        claimName: pvClaimName,
+        claimName: pvcName,
       },
     };
 
@@ -210,8 +273,8 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
     }
     setInProgress(true);
     createPVCIfNecessary().then(
-      (pvClaimName: string) => {
-        return k8sPatch(kindObj, obj, getVolumePatches(pvClaimName)).then((resource) => {
+      (pvcName: string) => {
+        return k8sPatch(kindObj, obj, getVolumePatches(pvcName)).then((resource) => {
           setInProgress(false);
           history.push(resourceObjPath(resource, referenceFor(resource)));
         });
@@ -276,52 +339,76 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
           </div>
         )}
 
-        <div className="form-group">
-          <label className="control-label co-required" htmlFor="mount-path">
-            Mount Path
-          </label>
-          <div>
-            <input
-              className="pf-c-form-control"
-              type="text"
-              onChange={handleMountPathChange}
-              aria-describedby="mount-path-help"
-              name="mountPath"
-              id="mount-path"
-              value={mountPath}
-              required
-            />
-            <p className="help-block" id="mount-path-help">
-              Mount path for the volume inside the container.
-            </p>
+        {claimVolumeMode === 'Block' ? (
+          <div className="form-group">
+            <label className="control-label co-required" htmlFor="device-path">
+              Device Path
+            </label>
+            <div>
+              <input
+                className="pf-c-form-control"
+                type="text"
+                onChange={handleDevicePathChange}
+                aria-describedby="volume-device-help"
+                name="devicePath"
+                id="device-path"
+                value={devicePath}
+                required
+              />
+              <p className="help-block" id="volume-device-help">
+                Device path for the block volume inside the container.
+              </p>
+            </div>
           </div>
-        </div>
-        <Checkbox
-          label="Mount as read-only"
-          onChange={onMountAsReadOnlyChanged}
-          checked={mountAsReadOnly}
-          name="mountAsReadOnly"
-        />
-        <div className="form-group">
-          <label className="control-label" htmlFor="subpath">
-            Subpath
-          </label>
-          <div>
-            <input
-              className="pf-c-form-control"
-              type="text"
-              onChange={handleSubPathChange}
-              aria-describedby="subpath-help"
-              id="subpath"
-              name="subPath"
-              value={subPath}
+        ) : (
+          <div className="form-group">
+            <label className="control-label co-required" htmlFor="mount-path">
+              Mount Path
+            </label>
+            <div>
+              <input
+                className="pf-c-form-control"
+                type="text"
+                onChange={handleMountPathChange}
+                aria-describedby="mount-path-help"
+                name="mountPath"
+                id="mount-path"
+                value={mountPath}
+                required
+              />
+              <p className="help-block" id="mount-path-help">
+                Mount path for the volume inside the container.
+              </p>
+            </div>
+            <Checkbox
+              label="Mount as read-only"
+              onChange={onMountAsReadOnlyChanged}
+              checked={mountAsReadOnly}
+              name="mountAsReadOnly"
             />
-            <p className="help-block" id="subpath-help">
-              Optional path within the volume from which it will be mounted into the container.
-              Defaults to the root of volume.
-            </p>
+            <div className="form-group">
+              <label className="control-label" htmlFor="subpath">
+                Subpath
+              </label>
+              <div>
+                <input
+                  className="pf-c-form-control"
+                  type="text"
+                  onChange={handleSubPathChange}
+                  aria-describedby="subpath-help"
+                  id="subpath"
+                  name="subPath"
+                  value={subPath}
+                />
+                <p className="help-block" id="subpath-help">
+                  Optional path within the volume from which it will be mounted into the container.
+                  Defaults to the root of volume.
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
+        )}
+
         {!useContainerSelector && (
           <p>
             The volume will be mounted into all containers. You can{' '}

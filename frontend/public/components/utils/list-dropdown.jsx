@@ -29,9 +29,9 @@ class ListDropdown_ extends React.Component {
     this.autocompleteFilter = (text, item) => fuzzy(text, item.props.name);
     // Pass both the resource name and the resource kind to onChange()
     this.onChange = (key) => {
-      const { name, kindLabel } = _.get(this.state, ['items', key], {});
+      const { name, kindLabel, resource } = _.get(this.state, ['items', key], {});
       this.setState({ selectedKey: key, title: <ResourceName kind={kindLabel} name={name} /> });
-      this.props.onChange(name, kindLabel);
+      this.props.onChange(name, kindLabel, resource);
     };
   }
 
@@ -67,6 +67,7 @@ class ListDropdown_ extends React.Component {
               acc[`${resource.metadata.name}-${kindLabel}`] = {
                 kindLabel,
                 name: resource.metadata.name,
+                resource,
               };
             }
             return acc;
