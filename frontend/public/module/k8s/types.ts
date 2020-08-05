@@ -684,9 +684,11 @@ export type MachineConfigKind = {
 } & K8sResourceCommon;
 
 export enum MachineConfigPoolConditionType {
+  Degraded = 'Degraded',
+  NodeDegraded = 'NodeDegraded',
+  RenderDegraded = 'RenderDegraded',
   Updated = 'Updated',
   Updating = 'Updating',
-  Degraded = 'Degraded',
 }
 
 export type MachineConfigPoolCondition = {
@@ -708,9 +710,9 @@ export type MachineConfigPoolStatus = {
 
 export type MachineConfigPoolSpec = {
   machineConfigSelector?: Selector;
+  maxUnavailable?: number | string;
   nodeSelector?: Selector;
   paused: boolean;
-  maxUnavailable: number | string;
 };
 
 export type MachineConfigPoolKind = {
@@ -719,6 +721,7 @@ export type MachineConfigPoolKind = {
 } & K8sResourceKind;
 
 export type ClusterUpdate = {
+  force: boolean;
   image: string;
   version: string;
 };
@@ -729,6 +732,7 @@ export type UpdateHistory = {
   completionTime: string;
   version: string;
   image: string;
+  verified: boolean;
 };
 
 export enum ClusterVersionConditionType {
@@ -748,13 +752,15 @@ type ClusterVersionStatus = {
   conditions: ClusterVersionCondition[];
   desired: ClusterUpdate;
   history: UpdateHistory[];
+  observedGeneration: number;
+  versionHash: string;
 };
 
 type ClusterVersionSpec = {
   channel: string;
   clusterID: string;
-  desiredUpdate: ClusterUpdate;
-  upstream: string;
+  desiredUpdate?: ClusterUpdate;
+  upstream?: string;
 };
 
 export type ClusterVersionKind = {

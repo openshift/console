@@ -318,22 +318,23 @@ export const CurrentVersion: React.SFC<CurrentVersionProps> = ({ cv }) => {
 export const UpdateLink: React.FC<CurrentVersionProps> = ({ cv, clusterVersionIsEditable }) => {
   const status = getClusterUpdateStatus(cv);
   const updatesAvailable = !_.isEmpty(getAvailableClusterUpdates(cv));
-  return (
-    <>
-      {updatesAvailable &&
-      (status === ClusterUpdateStatus.ErrorRetrieving ||
-        status === ClusterUpdateStatus.Failing ||
-        status === ClusterUpdateStatus.UpdatesAvailable ||
-        status === ClusterUpdateStatus.Updating) &&
-      clusterVersionIsEditable ? (
-        <div className="co-cluster-settings__details">
-          <Button variant="primary" type="button" onClick={() => clusterUpdateModal({ cv })}>
-            Update
-          </Button>
-        </div>
-      ) : null}
-    </>
-  );
+  return updatesAvailable &&
+    (status === ClusterUpdateStatus.ErrorRetrieving ||
+      status === ClusterUpdateStatus.Failing ||
+      status === ClusterUpdateStatus.UpdatesAvailable ||
+      status === ClusterUpdateStatus.Updating) &&
+    clusterVersionIsEditable ? (
+    <div className="co-cluster-settings__details">
+      <Button
+        variant="primary"
+        type="button"
+        onClick={() => clusterUpdateModal({ cv })}
+        data-test-id="cv-update-button"
+      >
+        Update
+      </Button>
+    </div>
+  ) : null;
 };
 
 export const CurrentVersionHeader: React.SFC<CurrentVersionProps> = ({ cv }) => {
@@ -394,7 +395,7 @@ const ChannelLine: React.FC<ChannelLineProps> = ({ children, start }) => {
   );
 };
 
-const ChannelName: React.FC<ChannelNameProps> = ({ children, current }) => {
+export const ChannelName: React.FC<ChannelNameProps> = ({ children, current }) => {
   return (
     <span
       className={classNames('co-channel-name', {
@@ -418,7 +419,7 @@ const ChannelPath: React.FC<ChannelPathProps> = ({ children, current }) => {
   );
 };
 
-const ChannelVersion: React.FC<ChannelVersionProps> = ({ children, current }) => {
+export const ChannelVersion: React.FC<ChannelVersionProps> = ({ children, current }) => {
   return (
     <span
       className={classNames('co-channel-version', {
@@ -458,7 +459,7 @@ const UpdatesBar: React.FC<UpdatesBarProps> = ({ children }) => {
   return <div className="co-cluster-settings__updates-bar">{children}</div>;
 };
 
-const UpdatesGroup: React.FC<UpdatesGroupProps> = ({ children, divided }) => {
+export const UpdatesGroup: React.FC<UpdatesGroupProps> = ({ children, divided }) => {
   return (
     <div
       className={classNames('co-cluster-settings__updates-group', {
@@ -470,7 +471,7 @@ const UpdatesGroup: React.FC<UpdatesGroupProps> = ({ children, divided }) => {
   );
 };
 
-const UpdatesProgress: React.FC<UpdatesProgressProps> = ({ children }) => {
+export const UpdatesProgress: React.FC<UpdatesProgressProps> = ({ children }) => {
   return <div className="co-cluster-settings__updates-progress">{children}</div>;
 };
 
@@ -478,7 +479,7 @@ const UpdatesType: React.FC<UpdatesTypeProps> = ({ children }) => {
   return <div className="co-cluster-settings__updates-type">{children}</div>;
 };
 
-const WorkerNodes: React.FC<WorkerNodesProps> = ({
+export const WorkerNodes: React.FC<WorkerNodesProps> = ({
   percentWorkerNodes,
   totalWorkerNodes,
   updatedWorkerNodes,
@@ -516,7 +517,7 @@ const WorkerNodes: React.FC<WorkerNodesProps> = ({
   );
 };
 
-const UpdatesGraph: React.FC<UpdatesGraphProps> = ({ cv }) => {
+export const UpdatesGraph: React.FC<UpdatesGraphProps> = ({ cv }) => {
   const availableUpdates = getSortedUpdates(cv);
   const lastVersion = getLastCompletedUpdate(cv);
   const newestVersion = availableUpdates[0]?.version;
@@ -588,7 +589,7 @@ const MachineConfigPoolsResource: WatchK8sResource = {
   kind: referenceForModel(MachineConfigPoolModel),
 };
 
-const UpdateInProgress: React.FC<UpdateInProgressProps> = ({
+export const UpdateInProgress: React.FC<UpdateInProgressProps> = ({
   desiredVersion,
   machineConfigPools,
   percentWorkerNodes,
