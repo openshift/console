@@ -114,11 +114,14 @@ const BasicSelector: React.FC<SpecCapabilityProps> = ({
   obj,
   fullPath,
   value,
-}) => (
-  <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
-    <Selector selector={value} kind={capability.split(SpecCapability.selector)[1]} />
-  </DetailsItem>
-);
+}) => {
+  const [, kind] = capability.split(SpecCapability.selector);
+  return (
+    <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+      <Selector selector={value} kind={kind?.replace(/:/g, '~')} />
+    </DetailsItem>
+  );
+};
 
 const BooleanSwitch: React.FC<SpecCapabilityProps> = ({
   model,

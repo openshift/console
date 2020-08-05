@@ -165,6 +165,6 @@ describe('Spec descriptors', () => {
     };
     wrapper.setProps({ descriptor });
     expect(wrapper.find(Selector).prop('selector')).toEqual(OBJ.spec.basicSelector);
-    expect(wrapper.find(Selector).prop('kind')).toEqual('core:v1:Service');
+    expect(wrapper.find(Selector).prop('kind')).toEqual('core~v1~Service');
   });
 });
