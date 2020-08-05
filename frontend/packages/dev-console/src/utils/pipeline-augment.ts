@@ -150,6 +150,7 @@ export interface PipelineResourceTaskParam extends PipelineParam {
 export interface PipelineResourceTaskResource {
   name: string;
   type: string;
+  optional?: boolean;
 }
 export interface PipelineResourceTask extends K8sResourceKind {
   spec: {
