@@ -205,7 +205,8 @@ export const EditYAML_ = connect(stateToProps)(
         const yaml = this.convertObjToYAMLString(obj);
 
         this.displayedVersion = _.get(obj, 'metadata.resourceVersion');
-        this.setState({ yaml, initialized: true, stale: false });
+        this.getEditor().setValue(yaml);
+        this.setState({ initialized: true, stale: false });
       }
 
       addToYAML(id, obj) {
@@ -246,7 +247,6 @@ export const EditYAML_ = connect(stateToProps)(
         this.monacoRef.current.editor.focus();
 
         this.displayedVersion = _.get(obj, 'metadata.resourceVersion');
-        this.setState({ yaml: this.monacoRef.current.editor.getValue() });
       }
 
       getEditor() {
@@ -468,7 +468,7 @@ export const EditYAML_ = connect(stateToProps)(
           'co-file-dropzone--drop-over': isOver,
         });
 
-        const { error, success, stale, yaml, showSidebar } = this.state;
+        const { error, success, stale, showSidebar } = this.state;
         const {
           obj,
           download = true,
@@ -525,14 +525,11 @@ export const EditYAML_ = connect(stateToProps)(
                   >
                     <YAMLEditor
                       ref={this.monacoRef}
-                      value={yaml}
                       options={options}
                       showShortcuts={!genericYAML}
                       minHeight="100px"
                       toolbarLinks={sidebarLink ? [sidebarLink] : []}
-                      onChange={(newValue) =>
-                        this.setState({ yaml: newValue }, () => onChange(newValue))
-                      }
+                      onChange={onChange}
                       onSave={() => this.save()}
                     />
                     <div className="yaml-editor__buttons" ref={(r) => (this.buttons = r)}>
