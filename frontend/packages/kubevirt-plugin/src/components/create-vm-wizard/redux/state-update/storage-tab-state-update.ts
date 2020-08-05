@@ -51,17 +51,10 @@ export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }:
     );
 
   const baseDiskImageChanged =
-    hasVMSettingsValueChanged(
-      prevState,
-      state,
-      id,
-      VMSettingsField.OPERATING_SYSTEM,
-      VMSettingsField.FLAVOR,
-      VMSettingsField.WORKLOAD_PROFILE,
-      VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE,
-    ) &&
     newSourceStorage?.dataVolume?.spec?.source?.pvc?.name !==
-      oldSourceStorage?.dataVolume?.spec?.source?.pvc?.name;
+      oldSourceStorage?.dataVolume?.spec?.source?.pvc?.name &&
+    newSourceStorage?.dataVolume?.spec?.source?.pvc?.namespace !==
+      oldSourceStorage?.dataVolume?.spec?.source?.pvc?.namespace;
 
   if (newType !== oldType || baseDiskImageChanged) {
     if (!newSourceStorage) {

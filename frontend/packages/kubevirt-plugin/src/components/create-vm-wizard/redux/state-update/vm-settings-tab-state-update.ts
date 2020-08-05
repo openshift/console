@@ -150,10 +150,10 @@ const flavorUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => 
 
 const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
-  if (!hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.OPERATING_SYSTEM)) {
+  if (iGetCommonData(state, id, VMWizardProps.isProviderImport)) {
     return;
   }
-  if (iGetLoadedCommonData(state, id, VMWizardProps.isProviderImport)) {
+  if (!hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.OPERATING_SYSTEM)) {
     return;
   }
 
@@ -173,10 +173,10 @@ const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
 
 const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
-  if (!hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.OPERATING_SYSTEM)) {
+  if (iGetCommonData(state, id, VMWizardProps.isProviderImport)) {
     return;
   }
-  if (iGetLoadedCommonData(state, id, VMWizardProps.isProviderImport)) {
+  if (!hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.OPERATING_SYSTEM)) {
     return;
   }
 
@@ -213,7 +213,7 @@ const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
 
 const cloneCommonBaseDiskImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
-  if (iGetLoadedCommonData(state, id, VMWizardProps.isProviderImport)) {
+  if (iGetCommonData(state, id, VMWizardProps.isProviderImport)) {
     return;
   }
   if (
