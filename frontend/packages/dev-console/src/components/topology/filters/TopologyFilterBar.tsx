@@ -90,6 +90,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
           <ToolbarItem>
             <FilterDropdown
               filters={filters}
+              showGraphView={showGraphView}
               supportedFilters={supportedFilters}
               onChange={onDisplayFiltersChange}
             />

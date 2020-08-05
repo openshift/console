@@ -7,6 +7,7 @@ import './FilterDropdown.scss';
 
 type FilterDropdownProps = {
   filters: DisplayFilters;
+  showGraphView: boolean;
   supportedFilters: string[];
   onChange: (filter: DisplayFilters) => void;
   opened?: boolean; // Use only for testing
@@ -14,6 +15,7 @@ type FilterDropdownProps = {
 
 const FilterDropdown: React.FC<FilterDropdownProps> = ({
   filters,
+  showGraphView,
   supportedFilters,
   onChange,
   opened = false,
@@ -99,7 +101,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
           </SelectGroup>
         </div>
       ) : null}
-      {showFilters.length ? (
+      {showGraphView && showFilters.length ? (
         <div className="odc-topology-filter-dropdown__group">
           <SelectGroup label="Show">
             {showFilters.map((filter) => (

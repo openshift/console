@@ -11,8 +11,6 @@ import {
   getIsKubevirtResource,
   getKubevirtComponentFactory,
   getKubevirtTopologyDataModel,
-  applyDisplayOptions,
-  getTopologyFilters,
 } from './index';
 
 export type TopologyConsumedExtensions =
@@ -78,16 +76,6 @@ export const getTopologyPlugin = (required: string[]): Plugin<TopologyConsumedEx
       workloadKeys: ['virtualmachines'],
       getDataModel: getKubevirtTopologyDataModel,
       isResourceDepicted: getIsKubevirtResource,
-    },
-    flags: {
-      required,
-    },
-  },
-  {
-    type: 'Topology/DisplayFilters',
-    properties: {
-      getTopologyFilters,
-      applyDisplayOptions,
     },
     flags: {
       required,
