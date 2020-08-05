@@ -531,7 +531,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
             <K8sResourceSelectRow
               key="storage-class"
               id={asId('storage-class')}
-              isDisabled={isDisabled('storageClass')}
+              isDisabled={isDisabled('storageClass') || !isLoaded(storageClasses)}
               name={storageClassName}
               data={storageClasses}
               model={StorageClassModel}
