@@ -19,7 +19,7 @@ import {
   PersistentVolumeClaimModel,
   StorageClassModel,
 } from '@console/internal/models';
-import { getName } from '@console/shared/src';
+import { getName, getAnnotations } from '@console/shared/src';
 import { getLoadedData, isLoaded, prefixedID, resolveDataVolumeName } from '../../../utils';
 import { validateDisk } from '../../../utils/validations/vm';
 import { isValidationError } from '../../../utils/validations/common';
@@ -46,6 +46,7 @@ import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
 import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
 import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
 import { AccessMode, DiskBus, DiskType, VolumeMode } from '../../../constants/vm/storage';
+import { DEFAULT_SC_ANNOTATION } from '../../../constants/sc';
 import { getPvcStorageSize } from '../../../selectors/pvc/selectors';
 import { K8sResourceSelectRow } from '../../form/k8s-resource-select-row';
 import { SizeUnitFormRow } from '../../form/size-unit-form-row';
@@ -140,6 +141,17 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   const [storageClassName, setStorageClassName] = React.useState<string>(
     combinedDisk.getStorageClassName() || '',
   );
+
+  React.useEffect(() => {
+    if (!isEditing) {
+      const defaultStorageClass = getLoadedData(storageClasses, []).find(
+        (sc) => getAnnotations(sc, {})[DEFAULT_SC_ANNOTATION] === 'true',
+      );
+
+      setStorageClassName(getName(defaultStorageClass) || '');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded(storageClasses)]);
 
   const [size, setSize] = React.useState<string>(
     combinedDiskSize ? `${combinedDiskSize.value}` : '',
