@@ -11,8 +11,16 @@ import {
   modelFor,
 } from './index';
 
-export const getQN: (obj: K8sResourceKind) => string = ({ metadata: { name, namespace } }) =>
-  (namespace ? `(${namespace})-` : '') + name;
+export const getQN: (obj: K8sResourceKind) => string = (obj) => {
+  const { name, namespace } = obj.metadata;
+  // Name + namespace is not unique for PackageManifest resources, so include the catalog source.
+  // TODO: We should be able to remove this when the upstream OLM bug is fixed:
+  //       https://bugzilla.redhat.com/show_bug.cgi?id=1814822
+  if (obj.apiVersion === 'packages.operators.coreos.com/v1' && obj.kind === 'PackageManifest') {
+    return `(${obj.status?.catalogSource})-${name}`;
+  }
+  return (namespace ? `(${namespace})-` : '') + name;
+};
 
 export const k8sBasePath = `${window.SERVER_FLAGS.basePath}api/kubernetes`;
 
