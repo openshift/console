@@ -27,7 +27,8 @@ import {
   resourceObjPath,
   truncateMiddle,
 } from '../utils';
-import { OverviewGroup, OverviewMetrics } from '.';
+import { OverviewGroup } from '.';
+import { OverviewMetrics } from './metricUtils';
 
 // Consider this mobile if the device screen width is less than 768. (This value shouldn't change.)
 const isMobile = window.screen.width < 768;

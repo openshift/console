@@ -61,8 +61,17 @@ export function renderTopology({
   namespace,
   showGraphView,
 }: RenderProps) {
+  const skeletonOverview = (
+    <div className="skeleton-overview">
+      <div className="skeleton-overview--head" />
+      <div className="skeleton-overview--tile" />
+      <div className="skeleton-overview--tile" />
+      <div className="skeleton-overview--tile" />
+    </div>
+  );
   return (
     <StatusBox
+      skeleton={showGraphView ? undefined : skeletonOverview}
       data={model ? model.nodes : null}
       label="Topology"
       loaded={loaded}

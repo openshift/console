@@ -7,7 +7,9 @@ import { formatBytesAsMiB, formatCores, truncateMiddle } from '@console/internal
 import { useOverviewMetrics } from '../../../../utils/useOverviewMetrics';
 import { isMobile } from '../list-view-utils';
 
-type MetricsProps = {
+import './MemoryCell.scss';
+
+type MemoryCellProps = {
   item: Node;
 };
 
@@ -20,20 +22,22 @@ type MetricsTooltipProps = {
   }[];
 };
 
-const MetricsTooltip: React.FC<MetricsTooltipProps> = ({ metricLabel, byPod, children }) => {
+const MemoryTooltip: React.FC<MetricsTooltipProps> = ({ metricLabel, byPod, children }) => {
   const sortedMetrics = _.orderBy(byPod, ['value', 'name'], ['desc', 'asc']);
   const content: any[] = _.isEmpty(sortedMetrics)
     ? [<React.Fragment key="no-metrics">No {metricLabel} metrics available.</React.Fragment>]
     : _.concat(
-        <div className="project-overview__metric-tooltip-title" key="#title">
+        <div className="odc-topology-list-view__metrics-cell__tooltip-title" key="#title">
           {metricLabel} Usage by Pod
         </div>,
         sortedMetrics.map(({ name, formattedValue }) => (
-          <div key={name} className="project-overview__metric-tooltip">
-            <div className="project-overview__metric-tooltip-name">
+          <div key={name} className="odc-topology-list-view__metrics-cell__metric-tooltip">
+            <div className="odc-topology-list-view__tooltip-name">
               <span className="no-wrap">{truncateMiddle(name)}</span>
             </div>
-            <div className="project-overview__metric-tooltip-value">{formattedValue}</div>
+            <div className="odc-topology-list-view__metrics-cell__metric-tooltip-value">
+              {formattedValue}
+            </div>
           </div>
         )),
       );
@@ -62,7 +66,7 @@ const MetricsTooltip: React.FC<MetricsTooltipProps> = ({ metricLabel, byPod, chi
   );
 };
 
-export const MetricsCell: React.FC<MetricsProps> = ({ item }) => {
+export const MemoryCell: React.FC<MemoryCellProps> = ({ item }) => {
   const { resources } = item.getData();
   const metrics = useOverviewMetrics();
   const getPods = () => {
@@ -71,10 +75,6 @@ export const MetricsCell: React.FC<MetricsProps> = ({ item }) => {
     }
     return resources.current ? resources.current.pods : resources.pods;
   };
-
-  if (_.isEmpty(metrics)) {
-    return null;
-  }
 
   let totalBytes = 0;
   let totalCores = 0;
@@ -97,32 +97,21 @@ export const MetricsCell: React.FC<MetricsProps> = ({ item }) => {
     }
   });
 
-  if (!totalBytes && !totalCores) {
-    return null;
-  }
-
-  const formattedMiB = formatBytesAsMiB(totalBytes);
-  const formattedCores = formatCores(totalCores);
   return (
-    <DataListCell id={`${item.getId()}_metrics`}>
-      <div className="project-overview__detail project-overview__detail--memory">
-        <MetricsTooltip metricLabel="Memory" byPod={memoryByPod}>
-          <span>
-            <span className="project-overview__metric-value">{formattedMiB}</span>
-            &nbsp;
-            <span className="project-overview__metric-unit">MiB</span>
-          </span>
-        </MetricsTooltip>
-      </div>
-      <div className="project-overview__detail project-overview__detail--cpu">
-        <MetricsTooltip metricLabel="CPU" byPod={cpuByPod}>
-          <span>
-            <span className="project-overview__metric-value">{formattedCores}</span>
-            &nbsp;
-            <span className="project-overview__metric-unit">cores</span>
-          </span>
-        </MetricsTooltip>
-      </div>
+    <DataListCell id={`${item.getId()}_memory`}>
+      {_.isEmpty(metrics) || !totalBytes || !totalCores ? null : (
+        <div className="odc-topology-list-view__metrics-cell__detail--memory">
+          <MemoryTooltip metricLabel="Memory" byPod={memoryByPod}>
+            <span>
+              <span className="odc-topology-list-view__metrics-cell__metric-value">
+                {formatBytesAsMiB(totalBytes)}
+              </span>
+              &nbsp;
+              <span className="odc-topology-list-view__metrics-cell__metric-unit">MiB</span>
+            </span>
+          </MemoryTooltip>
+        </div>
+      )}
     </DataListCell>
   );
 };

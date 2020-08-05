@@ -27,7 +27,8 @@ import { labelForNodeKind } from './list-view-utils';
 import {
   AlertsCell,
   GroupResourcesCell,
-  MetricsCell,
+  CpuCell,
+  MemoryCell,
   StatusCell,
   TypedResourceBadgeCell,
 } from './cells';
@@ -113,7 +114,10 @@ const ObservedTopologyListViewNode: React.FC<TopologyListViewNodeProps & Dispatc
     cells.push(...additionalCells);
   } else {
     cells.push(<AlertsCell key="alerts" item={item} />);
-    cells.push(<MetricsCell key="metrics" item={item} />);
+    if (!selectedIds[0]) {
+      cells.push(<MemoryCell key="memory" item={item} />);
+      cells.push(<CpuCell key="cpu" item={item} />);
+    }
     cells.push(<StatusCell key="status" item={item} />);
   }
 
