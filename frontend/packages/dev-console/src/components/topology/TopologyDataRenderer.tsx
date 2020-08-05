@@ -1,6 +1,8 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { Model } from '@patternfly/react-topology';
 import { Alerts, PrometheusRulesResponse } from '@console/internal/components/monitoring/types';
+import { RootState } from '@console/internal/redux';
 import { useURLPoll } from '@console/internal/components/utils/url-poll-hook';
 import { getAlertsAndRules } from '@console/internal/components/monitoring/utils';
 import { PROMETHEUS_TENANCY_BASE_PATH } from '@console/internal/components/graphs';
@@ -17,9 +19,12 @@ export interface RenderProps {
   loadError: string;
 }
 
+interface StateProps {
+  kindsInFlight: boolean;
+}
+
 export interface TopologyDataRendererProps {
   showGraphView: boolean;
-  kindsInFlight: boolean;
   resources: TopologyDataResources;
   render(props: RenderProps): React.ReactElement;
   namespace: string;
@@ -28,7 +33,7 @@ export interface TopologyDataRendererProps {
 
 const POLL_DELAY = 15 * 1000;
 
-export const TopologyDataRenderer: React.FC<TopologyDataRendererProps> = ({
+export const ConnectedTopologyDataRenderer: React.FC<TopologyDataRendererProps & StateProps> = ({
   render,
   resources,
   kindsInFlight,
@@ -59,7 +64,6 @@ export const TopologyDataRenderer: React.FC<TopologyDataRendererProps> = ({
   React.useEffect(() => {
     const { extensionsLoaded, watchedResources } = dataModelContext;
     if (!extensionsLoaded) {
-      setModel(null);
       return;
     }
 
@@ -68,7 +72,6 @@ export const TopologyDataRenderer: React.FC<TopologyDataRendererProps> = ({
       Object.keys(resources).length > 0 &&
       Object.keys(resources).every((key) => resources[key].loaded || resources[key].loadError);
     if (!resourcesLoaded) {
-      setModel(null);
       return;
     }
 
@@ -80,7 +83,6 @@ export const TopologyDataRenderer: React.FC<TopologyDataRendererProps> = ({
     );
     setLoadError(loadErrorKey && resources[loadErrorKey].loadError);
     if (loadErrorKey) {
-      setModel(null);
       return;
     }
 
@@ -116,3 +118,10 @@ export const TopologyDataRenderer: React.FC<TopologyDataRendererProps> = ({
     showGraphView,
   });
 };
+const stateToProps = (state: RootState) => {
+  return {
+    kindsInFlight: state.k8s.getIn(['RESOURCES', 'inFlight']),
+  };
+};
+
+export const TopologyDataRenderer = connect(stateToProps)(ConnectedTopologyDataRenderer);

@@ -16,7 +16,7 @@
   overflow-y: auto;
   padding-left: var(--pf-global--spacer--sm);
   -webkit-overflow-scrolling: touch;
-  &.is-list-view-filtered {
+  &.odc-m-filter-active {
     .odc-topology-list-view__kind-row,
     .odc-topology-list-view__item-row,
     .odc-topology-list-view__application-row {
