@@ -31,7 +31,7 @@ const TaskSidebarResource: React.FC<TaskSidebarResourceProps> = (props) => {
         dropdownResources.length === 0 ? `No resources available. Add pipeline resources.` : ''
       }
       validated={dropdownResources.length > 0 ? 'default' : 'error'}
-      isRequired
+      isRequired={!resource?.optional}
     >
       <SidebarInputWrapper>
         <Dropdown

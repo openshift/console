@@ -1,12 +1,5 @@
 import * as yup from 'yup';
 
-const taskResourceValidation = yup.array().of(
-  yup.object({
-    name: yup.string().required('Required'),
-    resource: yup.string().required('Required'),
-  }),
-);
-
 export const validationSchema = yup.object({
   name: yup.string().required('Required'),
   params: yup.array().of(
@@ -34,10 +27,6 @@ export const validationSchema = yup.object({
             kind: yup.string(),
           })
           .required('Required'),
-        resources: yup.object({
-          inputs: taskResourceValidation,
-          outputs: taskResourceValidation,
-        }),
       }),
     )
     .min(1, 'Must define at least one task')
