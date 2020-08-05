@@ -105,6 +105,7 @@ const nsMenuActions = [
   Kebab.factory.Edit,
   deleteModal,
 ];
+export const projectMenuActions = [Kebab.factory.Edit, deleteModal];
 
 const fetchNamespaceMetrics = () => {
   const metrics = [
@@ -176,6 +177,9 @@ const namespaceColumnInfo = Object.freeze({
     title: 'Labels',
   },
 });
+
+const NamespacesColumnManagementID = referenceForModel(NamespaceModel);
+const ProjectColumnManagementID = referenceForModel(ProjectModel);
 
 const NamespacesTableHeader = () => {
   return [
@@ -249,8 +253,6 @@ const NamespacesTableHeader = () => {
 };
 NamespacesTableHeader.displayName = 'NamespacesTableHeader';
 
-const NamespacesColumnManagementID = referenceForModel(NamespaceModel);
-
 const getNamespacesSelectedColumns = () => {
   return new Set(
     NamespacesTableHeader().reduce((acc, column) => {
@@ -261,160 +263,6 @@ const getNamespacesSelectedColumns = () => {
     }, []),
   );
 };
-
-const namespacesRowStateToProps = ({ UI }) => ({
-  metrics: UI.getIn(['metrics', 'namespace']),
-  selectedColumns: UI.getIn(['columnManagement']),
-});
-
-const NamespacesTableRow = connect(namespacesRowStateToProps)(
-  ({ obj: ns, index, key, style, metrics, selectedColumns }) => {
-    const name = getName(ns);
-    const requester = getRequester(ns);
-    const bytes = metrics?.memory?.[name];
-    const cores = metrics?.cpu?.[name];
-    const description = getDescription(ns);
-    const labels = ns.metadata.labels;
-    const columns = new Set(
-      selectedColumns?.get(NamespacesColumnManagementID) || getNamespacesSelectedColumns(),
-    );
-    return (
-      <TableRow id={ns.metadata.uid} index={index} trKey={key} style={style}>
-        <TableData className={namespaceColumnInfo.name.classes}>
-          <ResourceLink kind="Namespace" name={ns.metadata.name} title={ns.metadata.uid} />
-        </TableData>
-        <TableData
-          className={namespaceColumnInfo.displayName.classes}
-          columns={columns}
-          columnID={namespaceColumnInfo.displayName.id}
-        >
-          <span className="co-break-word co-line-clamp">
-            {getDisplayName(ns) || <span className="text-muted">No display name</span>}
-          </span>
-        </TableData>
-        <TableData
-          className={classNames(namespaceColumnInfo.status.classes, 'co-break-word')}
-          columns={columns}
-          columnID={namespaceColumnInfo.status.id}
-        >
-          <Status status={ns.status.phase} />
-        </TableData>
-        <TableData
-          className={classNames(namespaceColumnInfo.requester.classes, 'co-break-word')}
-          columns={columns}
-          columnID={namespaceColumnInfo.requester.id}
-        >
-          {requester || <span className="text-muted">No requester</span>}
-        </TableData>
-        <TableData
-          className={namespaceColumnInfo.memory.classes}
-          columns={columns}
-          columnID={namespaceColumnInfo.memory.id}
-        >
-          {bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-'}
-        </TableData>
-        <TableData
-          className={namespaceColumnInfo.cpu.classes}
-          columns={columns}
-          columnID={namespaceColumnInfo.cpu.id}
-        >
-          {cores ? `${formatCores(cores)} cores` : '-'}
-        </TableData>
-        <TableData
-          className={namespaceColumnInfo.created.classes}
-          columns={columns}
-          columnID={namespaceColumnInfo.created.id}
-        >
-          <Timestamp timestamp={ns.metadata.creationTimestamp} />
-        </TableData>
-        <TableData
-          className={namespaceColumnInfo.description.classes}
-          columns={columns}
-          columnID={namespaceColumnInfo.description.id}
-        >
-          <span className="co-break-word co-line-clamp">
-            {description || <span className="text-muted">No description</span>}
-          </span>
-        </TableData>
-        <TableData
-          className={namespaceColumnInfo.labels.classes}
-          columns={columns}
-          columnID={namespaceColumnInfo.labels.id}
-        >
-          <LabelList kind="Namespace" labels={labels} />
-        </TableData>
-        <TableData className={Kebab.columnClass}>
-          <ResourceKebab actions={nsMenuActions} kind="Namespace" resource={ns} />
-        </TableData>
-      </TableRow>
-    );
-  },
-);
-
-const NamespacesRow = (rowArgs) => (
-  <NamespacesTableRow
-    obj={rowArgs.obj}
-    index={rowArgs.index}
-    rowKey={rowArgs.key}
-    style={rowArgs.style}
-  />
-);
-
-const mapDispatchToProps = (dispatch) => ({
-  setNamespaceMetrics: (metrics) => dispatch(UIActions.setNamespaceMetrics(metrics)),
-});
-
-export const NamespacesList = connect(
-  null,
-  mapDispatchToProps,
-)((props) => {
-  const { setNamespaceMetrics } = props;
-  React.useEffect(() => {
-    const updateMetrics = () => fetchNamespaceMetrics().then(setNamespaceMetrics);
-    updateMetrics();
-    const id = setInterval(updateMetrics, 30 * 1000);
-    return () => clearInterval(id);
-  }, [setNamespaceMetrics]);
-  return (
-    <Table
-      {...props}
-      columnManagementID={NamespacesColumnManagementID}
-      aria-label="Namespaces"
-      Header={NamespacesTableHeader}
-      Row={NamespacesRow}
-      virtualize
-    />
-  );
-});
-
-export const NamespacesPage = (props) => {
-  let selectedColumns = new Set(
-    useSelector(({ UI }) => UI.getIn(['columnManagement', NamespacesColumnManagementID])),
-  );
-  if (_.isEmpty(selectedColumns)) {
-    selectedColumns = getNamespacesSelectedColumns();
-  }
-  return (
-    <ListPage
-      {...props}
-      ListComponent={NamespacesList}
-      canCreate={true}
-      createHandler={() => createNamespaceModal({ blocking: true })}
-      columnLayout={{
-        columns: NamespacesTableHeader().map((column) =>
-          _.pick(column, ['title', 'additional', 'id']),
-        ),
-        id: NamespacesColumnManagementID,
-        selectedColumns,
-        type: 'Namespaces',
-      }}
-    />
-  );
-};
-
-export const projectMenuActions = [Kebab.factory.Edit, deleteModal];
-
-const projectColumnManagementID = referenceForModel(ProjectModel);
 
 const projectTableHeader = ({ showMetrics, showActions }) => {
   return [
@@ -502,62 +350,39 @@ const getProjectSelectedColumns = ({ showMetrics, showActions }) => {
   );
 };
 
-const ProjectLink = connect(null, {
-  setActiveNamespace: UIActions.setActiveNamespace,
-  filterList: k8sActions.filterList,
-})(({ project, setActiveNamespace, filterList }) => (
-  <span className="co-resource-item co-resource-item--truncate">
-    <ResourceIcon kind="Project" />
-    <Button
-      isInline
-      title={project.metadata.name}
-      type="button"
-      className="co-resource-item__resource-name"
-      onClick={() => {
-        setActiveNamespace(project.metadata.name);
-        removeQueryArgument('project-name');
-        // clear project-name filter when active namespace is changed
-        filterList(referenceForModel(ProjectModel), 'project-name', '');
-      }}
-      variant="link"
-    >
-      {project.metadata.name}
-    </Button>
-  </span>
-));
-const projectHeaderWithoutActions = () =>
-  projectTableHeader({ showMetrics: false, showActions: false });
-
-const projectRowStateToProps = ({ UI }) => ({
+const namespacesRowStateToProps = ({ UI }) => ({
   metrics: UI.getIn(['metrics', 'namespace']),
   selectedColumns: UI.getIn(['columnManagement']),
 });
 
-const ProjectTableRow = connect(projectRowStateToProps)(
-  ({ obj: project, index, rowKey, style, customData = {}, metrics, selectedColumns }) => {
-    const name = getName(project);
-    const requester = getRequester(project);
-    const { ProjectLinkComponent, actionsEnabled = true, showMetrics, showActions } = customData;
+const NamespacesTableRow = connect(namespacesRowStateToProps)(
+  ({ obj: ns, index, rowKey, style, customData = {}, metrics, selectedColumns }) => {
+    const name = getName(ns);
+    const requester = getRequester(ns);
+    const {
+      ProjectLinkComponent,
+      actionsEnabled = true,
+      showMetrics,
+      isNamespace = false,
+    } = customData;
     const bytes = metrics?.memory?.[name];
     const cores = metrics?.cpu?.[name];
-    const description = getDescription(project);
-    const labels = project.metadata.labels;
+    const description = getDescription(ns);
+    const labels = ns.metadata.labels;
     const columns = new Set(
-      selectedColumns?.get(projectColumnManagementID) ||
-        getProjectSelectedColumns({ showMetrics, showActions }),
+      isNamespace
+        ? selectedColumns?.get(NamespacesColumnManagementID) || getNamespacesSelectedColumns()
+        : selectedColumns?.get(ProjectColumnManagementID) || getProjectSelectedColumns(),
     );
+    const kind = isNamespace ? 'Namespace' : 'Project';
     return (
-      <TableRow id={project.metadata.uid} index={index} trKey={rowKey} style={style}>
+      <TableRow id={ns.metadata.uid} index={index} trKey={rowKey} style={style}>
         <TableData className={namespaceColumnInfo.name.classes}>
           {customData && ProjectLinkComponent ? (
-            <ProjectLinkComponent project={project} />
+            <ProjectLinkComponent project={ns} />
           ) : (
             <span className="co-resource-item">
-              <ResourceLink
-                kind="Project"
-                name={project.metadata.name}
-                title={project.metadata.uid}
-              />
+              <ResourceLink kind={kind} name={ns.metadata.name} title={ns.metadata.uid} />
             </span>
           )}
         </TableData>
@@ -567,7 +392,7 @@ const ProjectTableRow = connect(projectRowStateToProps)(
           columnID={namespaceColumnInfo.displayName.id}
         >
           <span className="co-break-word co-line-clamp">
-            {getDisplayName(project) || <span className="text-muted">No display name</span>}
+            {getDisplayName(ns) || <span className="text-muted">No display name</span>}
           </span>
         </TableData>
         <TableData
@@ -575,7 +400,7 @@ const ProjectTableRow = connect(projectRowStateToProps)(
           columns={columns}
           columnID={namespaceColumnInfo.status.id}
         >
-          <Status status={project.status.phase} />
+          <Status status={ns.status.phase} />
         </TableData>
         <TableData
           className={classNames(namespaceColumnInfo.requester.classes, 'co-break-word')}
@@ -607,7 +432,7 @@ const ProjectTableRow = connect(projectRowStateToProps)(
           columns={columns}
           columnID={namespaceColumnInfo.created.id}
         >
-          <Timestamp timestamp={project.metadata.creationTimestamp} />
+          <Timestamp timestamp={ns.metadata.creationTimestamp} />
         </TableData>
         <TableData
           className={namespaceColumnInfo.description.classes}
@@ -623,21 +448,113 @@ const ProjectTableRow = connect(projectRowStateToProps)(
           columns={columns}
           columnID={namespaceColumnInfo.labels.id}
         >
-          <LabelList labels={labels} kind="Project" />
+          <LabelList labels={labels} kind={kind} />
         </TableData>
         {actionsEnabled && (
           <TableData className={Kebab.columnClass}>
-            <ResourceKebab actions={projectMenuActions} kind="Project" resource={project} />
+            <ResourceKebab
+              actions={isNamespace ? nsMenuActions : projectMenuActions}
+              kind={kind}
+              resource={ns}
+            />
           </TableData>
         )}
       </TableRow>
     );
   },
 );
-ProjectTableRow.displayName = 'ProjectTableRow';
+
+const NamespacesRow = (rowArgs) => (
+  <NamespacesTableRow
+    obj={rowArgs.obj}
+    index={rowArgs.index}
+    rowKey={rowArgs.key}
+    style={rowArgs.style}
+    customData={rowArgs.customData}
+  />
+);
+
+const mapDispatchToProps = (dispatch) => ({
+  setNamespaceMetrics: (metrics) => dispatch(UIActions.setNamespaceMetrics(metrics)),
+});
+
+export const NamespacesList = connect(
+  null,
+  mapDispatchToProps,
+)((props) => {
+  const { setNamespaceMetrics } = props;
+  React.useEffect(() => {
+    const updateMetrics = () => fetchNamespaceMetrics().then(setNamespaceMetrics);
+    updateMetrics();
+    const id = setInterval(updateMetrics, 30 * 1000);
+    return () => clearInterval(id);
+  }, [setNamespaceMetrics]);
+  return (
+    <Table
+      {...props}
+      columnManagementID={NamespacesColumnManagementID}
+      aria-label="Namespaces"
+      Header={NamespacesTableHeader}
+      Row={NamespacesRow}
+      customData={{ showMetrics: true, isNamespace: true }}
+      virtualize
+    />
+  );
+});
+
+export const NamespacesPage = (props) => {
+  let selectedColumns = new Set(
+    useSelector(({ UI }) => UI.getIn(['columnManagement', NamespacesColumnManagementID])),
+  );
+  if (_.isEmpty(selectedColumns)) {
+    selectedColumns = getNamespacesSelectedColumns();
+  }
+  return (
+    <ListPage
+      {...props}
+      ListComponent={NamespacesList}
+      canCreate={true}
+      createHandler={() => createNamespaceModal({ blocking: true })}
+      columnLayout={{
+        columns: NamespacesTableHeader().map((column) =>
+          _.pick(column, ['title', 'additional', 'id']),
+        ),
+        id: NamespacesColumnManagementID,
+        selectedColumns,
+        type: 'Namespaces',
+      }}
+    />
+  );
+};
+
+const ProjectLink = connect(null, {
+  setActiveNamespace: UIActions.setActiveNamespace,
+  filterList: k8sActions.filterList,
+})(({ project, setActiveNamespace, filterList }) => (
+  <span className="co-resource-item co-resource-item--truncate">
+    <ResourceIcon kind="Project" />
+    <Button
+      isInline
+      title={project.metadata.name}
+      type="button"
+      className="co-resource-item__resource-name"
+      onClick={() => {
+        setActiveNamespace(project.metadata.name);
+        removeQueryArgument('project-name');
+        // clear project-name filter when active namespace is changed
+        filterList(referenceForModel(ProjectModel), 'project-name', '');
+      }}
+      variant="link"
+    >
+      {project.metadata.name}
+    </Button>
+  </span>
+));
+const projectHeaderWithoutActions = () =>
+  projectTableHeader({ showMetrics: false, showActions: false });
 
 const ProjectRow = (rowArgs) => (
-  <ProjectTableRow
+  <NamespacesTableRow
     obj={rowArgs.obj}
     index={rowArgs.index}
     rowKey={rowArgs.key}
@@ -692,7 +609,7 @@ const ProjectList_ = connectToFlags(
   return (
     <Table
       {...tableProps}
-      columnManagementID={projectColumnManagementID}
+      columnManagementID={ProjectColumnManagementID}
       aria-label="Projects"
       data={data}
       Header={showMetrics ? headerWithMetrics : headerNoMetrics}
@@ -718,7 +635,7 @@ export const ProjectsPage = connectToFlags(
   const showMetrics = PROMETHEUS_BASE_PATH && canGetNS && window.screen.width >= 1200;
   const showActions = showMetrics;
   const selectedColumns = new Set(
-    useSelector(({ UI }) => UI.getIn(['columnManagement', projectColumnManagementID])),
+    useSelector(({ UI }) => UI.getIn(['columnManagement', ProjectColumnManagementID])),
   );
   return (
     <ListPage
@@ -734,7 +651,7 @@ export const ProjectsPage = connectToFlags(
         columns: projectTableHeader({ showMetrics, showActions }).map((column) =>
           _.pick(column, ['title', 'additional', 'id']),
         ),
-        id: projectColumnManagementID,
+        id: ProjectColumnManagementID,
         selectedColumns,
         type: 'Project',
       }}
