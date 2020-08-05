@@ -153,6 +153,9 @@ const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   if (iGetCommonData(state, id, VMWizardProps.isProviderImport)) {
     return;
   }
+  if (iGetCommonData(state, id, VMWizardProps.isProviderImport)) {
+    return;
+  }
   if (!hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.OPERATING_SYSTEM)) {
     return;
   }
@@ -211,6 +214,9 @@ const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
 
 const windowsToolsUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
+  if (iGetCommonData(state, id, VMWizardProps.isProviderImport)) {
+    return;
+  }
   if (!hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS)) {
     return;
   }
