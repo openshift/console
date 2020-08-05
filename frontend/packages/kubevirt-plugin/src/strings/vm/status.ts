@@ -12,6 +12,10 @@ export const IMPORT_CDI_PENDING_MESSAGE =
   'The importer pod is waiting for resources to become available.';
 export const MODAL_RESTART_IS_REQUIRED =
   'The changes you are making require this virtual machine to be updated. Restart this VM to apply these changes.';
+export const MODAL_INFO_RESTART_IS_REQUIRED =
+  'If you make changes to the following settings you will need to restart the virtual machine in order for them to be applied';
+export const MODAL_WARNING_RESTART_IS_REQUIRED =
+  "The changes you've made required this virtual machine to be restarted.";
 export const PENDING_CHANGES_WARNING_MESSAGE =
   'The following areas have pending changes that will be applied when this virtual machine is restarted.';
 export const PENDING_CHANGES_POPOVER_MSG =

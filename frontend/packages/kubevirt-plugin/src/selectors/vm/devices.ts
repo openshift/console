@@ -46,8 +46,11 @@ export const getSelectedBootableDevices = (vm: VMLikeEntityKind): BootableDevice
   return [...devices];
 };
 
-export const getBootableDevicesInOrder = (vm: VMLikeEntityKind): BootableDeviceType[] =>
-  _.sortBy(getSelectedBootableDevices(vm), 'value.bootOrder');
+export const getBootableDevicesInOrder = (
+  vm: VMLikeEntityKind,
+  bootableDevices?: BootableDeviceType[],
+): BootableDeviceType[] =>
+  _.sortBy(bootableDevices || getSelectedBootableDevices(vm), 'value.bootOrder');
 
 export const getNonBootableDevices = (vm: VMLikeEntityKind): BootableDeviceType[] => {
   const devices = getBootableDevices(vm).filter((device) => !device.value.bootOrder);

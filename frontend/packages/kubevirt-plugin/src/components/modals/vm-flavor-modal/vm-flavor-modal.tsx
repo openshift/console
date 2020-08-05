@@ -23,7 +23,6 @@ import {
   getMemory,
   getVMLikeModel,
   vCPUCount,
-  isVMRunningOrExpectedRunning,
 } from '../../../selectors/vm';
 import { getUpdateFlavorPatches } from '../../../k8s/patches/vm/vm-patches';
 import { CUSTOM_FLAVOR } from '../../../constants';
@@ -41,12 +40,15 @@ import { flavorSort } from '../../../utils/sort';
 import { getTemplateFlavors } from '../../../selectors/vm-template/advanced';
 import { getVMTemplateNamespacedName } from '../../../selectors/vm-template/selectors';
 import { toUIFlavor, isCustomFlavor } from '../../../selectors/vm-like/flavor';
-import { PendingChangesAlert } from '../../Alerts/PendingChangesAlert';
+import { ModalPendingChangesAlert } from '../../Alerts/PendingChangesAlert';
 import { getNamespace, getName } from '@console/shared';
 import { VirtualMachineInstanceModel } from '../../../models';
 import { VMIKind } from '../../../types/vm';
-import { MODAL_RESTART_IS_REQUIRED } from '../../../strings/vm/status';
 import { saveAndRestartModal } from '../save-and-restart-modal/save-and-restart-modal';
+import { isVMExpectedRunning } from '../../../selectors/vm/selectors';
+import { isFlavorChanged } from '../../../selectors/vm-like/next-run-changes';
+import { VMWrapper } from '../../../k8s/wrapper/vm/vm-wrapper';
+import { VMIWrapper } from '../../../k8s/wrapper/vm/vmi-wrapper';
 
 const getId = (field: string) => `vm-flavor-modal-${field}`;
 
@@ -91,6 +93,20 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
   );
   const [cpus, setCpus] = React.useState<string>(isCustom ? `${sourceCPU}` : '');
 
+  const isChanged = () => {
+    if (isFlavorChanged(new VMWrapper(vm), new VMIWrapper(vmi)) || flavor !== vmFlavor) {
+      return true;
+    }
+
+    if (!isCustom) {
+      return false;
+    }
+
+    return sourceMemSize !== memSize || sourceMemUnit !== memUnit || `${sourceCPU}` !== cpus;
+  };
+
+  const showPendingChangesWarning = isVMExpectedRunning(vm) && isChanged();
+
   const {
     validations: { cpus: cpusValidation, memory: memoryValidation },
     hasAllRequiredFilled,
@@ -122,6 +138,9 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
     }
   };
 
+  const saveAndRestart = () =>
+    isValid ? saveAndRestartModal(vm, vmi, saveChanges) : setShowUIError(true);
+
   const submit = (e) => {
     e.preventDefault();
     saveChanges();
@@ -131,8 +150,8 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
     <div className="modal-content">
       <ModalTitle>Edit Flavor</ModalTitle>
       <ModalBody>
-        {isVMRunningOrExpectedRunning(vm) && (
-          <PendingChangesAlert warningMsg={MODAL_RESTART_IS_REQUIRED} />
+        {isVMExpectedRunning(vm) && (
+          <ModalPendingChangesAlert isChanged={showPendingChangesWarning} />
         )}
         <Form>
           <FormRow title="Flavor" fieldId={getId('flavor')} isRequired>
@@ -203,14 +222,14 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
         isSimpleError={showUIError}
         isDisabled={inProgress}
         inProgress={inProgress}
-        isSaveAndRestart={isVMRunningOrExpectedRunning(vm)}
+        isSaveAndRestart={showPendingChangesWarning}
         onSubmit={submit}
         submitButtonText="Save"
         onCancel={(e) => {
           e.stopPropagation();
           cancel();
         }}
-        onSaveAndRestart={() => saveAndRestartModal(vm, vmi, saveChanges)}
+        onSaveAndRestart={() => saveAndRestart()}
       />
     </div>
   );
