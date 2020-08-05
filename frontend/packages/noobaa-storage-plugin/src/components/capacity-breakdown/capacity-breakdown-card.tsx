@@ -168,6 +168,8 @@ const BreakdownCard: React.FC = () => {
               selections={[serviceType]}
               isGrouped
               placeholderText={`Type: ${serviceType}`}
+              aria-label="Service Type Dropdown"
+              toggleAriaLabel="Service Type Dropdown Toggle"
               isCheckboxSelectionBadgeHidden
             >
               {serviceSelectItems}
@@ -183,6 +185,7 @@ const BreakdownCard: React.FC = () => {
             selections={[metricType]}
             isGrouped
             placeholderText={`By: ${serviceType}`}
+            aria-label="Break By Dropdown"
             isCheckboxSelectionBadgeHidden
           >
             {breakdownSelectItems}

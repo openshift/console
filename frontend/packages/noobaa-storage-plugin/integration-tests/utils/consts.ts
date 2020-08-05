@@ -10,3 +10,4 @@ export const NO_ANNOTATIONS = '0 Annotations';
 export const ACCESS_KEY = '[a-zA-Z0-9]{20}';
 export const SECRET_KEY = '[a-zA-Z0-9/+]{40}';
 export const MOCK_SECRET = 'test-secret-for-bs';
+export const RGW_PROVISIONER = 'openshift-storage.ceph.rook.io/bucket';

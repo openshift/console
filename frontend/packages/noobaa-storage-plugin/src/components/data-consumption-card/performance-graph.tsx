@@ -62,6 +62,7 @@ const PerformanceGraph: React.FC<PerformanceGraphProps> = ({
           })}
         >
           <Chart
+            ariaTitle="RGW Performance Graph"
             domainPadding={{ y: 20 }}
             containerComponent={
               <ChartVoronoiContainer
