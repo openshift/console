@@ -150,7 +150,7 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
 
     const numOfMountedDisks = cloneBaseDiskImage + mountWindowsGuestTools; // using boolean addition operator to count true
     const mountedDisksHelpMsg = numOfMountedDisks > 0 && (
-      <Text className="kv-create-vm__input-checkbox">
+      <Text className="kv-create-vm__input-text-help-msg">
         View the mounted {pluralize(numOfMountedDisks, 'disk', 'disks', false)} in the{' '}
         <Button
           isDisabled={!goToStorageStep}
