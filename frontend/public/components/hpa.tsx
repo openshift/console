@@ -2,7 +2,11 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
+import {
+  K8sResourceKind,
+  K8sResourceKindReference,
+  HorizontalPodAutoscalerKind,
+} from '../module/k8s';
 import { HorizontalPodAutoscalerModel } from '../models';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
@@ -34,55 +38,51 @@ const MetricsRow: React.FC<MetricsRowProps> = ({ type, current, target }) => (
 
 const externalRow = (metric, current, key) => {
   const { external } = metric;
-  const type = external.metricName;
-  // TODO: show metric selector for external metrics?
-  const currentValue = external.targetAverageValue
-    ? _.get(current, 'object.currentAverageValue')
-    : _.get(current, 'object.currentValue');
-  const targetValue = external.targetAverageValue
-    ? external.targetAverageValue
-    : external.targetValue;
+  const type = external.metric.name;
+  const currentValue =
+    current?.external?.current?.averageValue || current?.external?.current?.value;
+  const targetValue = external.target.averageValue || external.target.value;
 
   return <MetricsRow key={key} type={type} current={currentValue} target={targetValue} />;
 };
 
-const objectRow = (metric, current, ns, key) => {
+const objectRow = (metric, current, ns, key, scaleTarget) => {
   const { object } = metric;
   const type = (
     <>
-      {object.metricName} on
+      {object.metric.name} on
       <ResourceLink
-        kind={object.target.kind}
-        name={object.target.name}
+        kind={scaleTarget.kind}
+        name={scaleTarget.name}
         namespace={ns}
-        title={object.target.name}
+        title={object.metric.name}
       />
     </>
   );
-  const currentValue = _.get(current, 'object.currentValue');
-  const targetValue = object.targetValue;
+  const currentValue = current?.object?.current.value;
+  const targetValue = object.target.value;
 
   return <MetricsRow key={key} type={type} current={currentValue} target={targetValue} />;
 };
 
 const podRow = (metric, current, key) => {
   const { pods } = metric;
-  const type = `${pods.metricName} on pods`;
-  const currentValue = _.get(current, 'pods.currentAverageValue');
-  const targetValue = pods.targetAverageValue;
+  const type = `${pods.metric.name} on pods`;
+  const currentValue = current?.pods?.current.averageValue;
+  const targetValue = pods.target.averageValue;
 
   return <MetricsRow key={key} type={type} current={currentValue} target={targetValue} />;
 };
 
 const getResourceUtilization = (currentMetric) => {
-  const currentUtilization = _.get(currentMetric, 'resource.currentAverageUtilization');
+  const currentUtilization = currentMetric?.resource?.current?.averageUtilization;
 
   // Use _.isFinite so that 0 evaluates to true, but null / undefined / NaN don't
   if (!_.isFinite(currentUtilization)) {
     return null;
   }
 
-  const currentAverageValue = _.get(currentMetric, 'resource.currentAverageValue');
+  const currentAverageValue = currentMetric?.resource?.current?.averageValue;
   // Only show currentAverageValue in parens if set and non-zero to avoid things like "0% (0)"
   return currentAverageValue && currentAverageValue !== '0'
     ? `${currentUtilization}% (${currentAverageValue})`
@@ -90,8 +90,9 @@ const getResourceUtilization = (currentMetric) => {
 };
 
 const resourceRow = (metric, current, key) => {
-  const targetUtilization = metric.resource.targetAverageUtilization;
-  const resourceLabel = `resource ${metric.resource.name}`;
+  const { resource } = metric;
+  const targetUtilization = resource.target.averageUtilization;
+  const resourceLabel = `resource ${resource.name}`;
   const type = targetUtilization ? (
     <>
       {resourceLabel}&nbsp;<span className="small text-muted">(as a percentage of request)</span>
@@ -101,10 +102,8 @@ const resourceRow = (metric, current, key) => {
   );
   const currentValue = targetUtilization
     ? getResourceUtilization(current)
-    : _.get(current, 'resource.currentAverageValue');
-  const targetValue = targetUtilization
-    ? `${targetUtilization}%`
-    : metric.resource.targetAverageValue;
+    : resource?.current?.averageValue;
+  const targetValue = targetUtilization ? `${targetUtilization}%` : resource.target.averageValue;
 
   return <MetricsRow key={key} type={type} current={currentValue} target={targetValue} />;
 };
@@ -127,7 +126,13 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ obj: hpa }) => {
               case 'External':
                 return externalRow(metric, current, i);
               case 'Object':
-                return objectRow(metric, current, hpa.metadata.namespace, i);
+                return objectRow(
+                  metric,
+                  current,
+                  hpa.metadata.namespace,
+                  i,
+                  hpa.spec.scaleTargetRef,
+                );
               case 'Pods':
                 return podRow(metric, current, i);
               case 'Resource':
@@ -339,7 +344,7 @@ export const HorizontalPodAutoscalersPage: React.FC<HorizontalPodAutoscalersPage
 HorizontalPodAutoscalersPage.displayName = 'HorizontalPodAutoscalersListPage';
 
 export type HorizontalPodAutoscalersDetailsProps = {
-  obj: any;
+  obj: HorizontalPodAutoscalerKind;
 };
 
 export type HorizontalPodAutoscalersPageProps = {
@@ -353,7 +358,7 @@ export type HorizontalPodAutoscalersDetailsPageProps = {
 };
 
 type MetricsTableProps = {
-  obj: any;
+  obj: HorizontalPodAutoscalerKind;
 };
 
 type MetricsRowProps = {
