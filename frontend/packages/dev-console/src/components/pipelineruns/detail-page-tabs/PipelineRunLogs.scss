@@ -30,12 +30,9 @@
   &__tasklist {
     max-width: 30%;
     margin-top: var(--pf-global--spacer--lg);
-    padding: 0px;
-    padding-left: var(--pf-global--spacer--xl);
   }
   &__container {
     flex: 1;
-    padding-left: var(--pf-global--spacer--xl);
     padding-right: var(--pf-global--spacer--xl);
   }
   &__container .co-m-pane__body {
