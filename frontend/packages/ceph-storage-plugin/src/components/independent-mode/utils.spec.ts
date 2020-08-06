@@ -32,6 +32,18 @@ const JSON_CORRECT_MULTIPLE_KEYNAME_VARIATION = [
     name: 'rook-csi-cephfs-provisioner',
   },
 ];
+const JSON_IPV6_VARIATION = [
+  {
+    kind: 'ConfigMap',
+    data: { maxMonId: '0', data: 'a=10:106:31:93:6789', mapping: {} },
+    name: 'rook-ceph-mon-endpoints',
+  },
+  {
+    kind: 'Secret',
+    data: { userKey: 'AQBV66pedfkUIhAAn/tnB0cvIih5n9DwwxOwBg==', userID: 'csi-cephfs-node' },
+    name: 'rook-csi-cephfs-node',
+  },
+];
 const JSON_EMPTY = [
   { kind: 'ConfigMap', data: {}, name: 'rook-ceph-mon-endpoints' },
   { kind: 'Secret', data: {}, name: 'rook-csi-cephfs-node' },
@@ -76,6 +88,11 @@ describe('Verify the data validator is working as expected', () => {
   it('Gives name of keys whose keys are malformed Base64 values', () => {
     const error = checkError(JSON.stringify(JSON_MALFORMED), REQD_KEYS, ENCODED_KEYS);
     expect(error.includes('rook-csi-cephfs-node')).toBe(true);
+  });
+
+  it('Gives an error regarding IP Family when IP Families do not match', () => {
+    const error = checkError(JSON.stringify(JSON_IPV6_VARIATION), REQD_KEYS, ENCODED_KEYS);
+    expect(error.includes('The IP Family of the two clusters do not match.')).toBe(true);
   });
 
   it('Accepts either adminKey or userKey', () => {
