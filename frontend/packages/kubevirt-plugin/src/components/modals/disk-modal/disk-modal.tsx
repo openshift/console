@@ -160,20 +160,29 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   );
 
   React.useEffect(() => {
-    if (!isEditing && isLoaded(_storageClassConfigMap)) {
+    if (!isEditing && isLoaded(_storageClassConfigMap) && isLoaded(storageClasses)) {
+      let defaultStorageClass = null;
+
+      if (!storageClassName) {
+        defaultStorageClass = getGefaultStorageClass(getLoadedData(storageClasses, []));
+
+        if (defaultStorageClass) {
+          setStorageClassName(getName(defaultStorageClass) || '');
+        }
+      }
+
       if (source.requiresVolumeMode()) {
-        setVolumeMode(getDefaultSCVolumeMode(storageClassConfigMap));
+        setVolumeMode(
+          getDefaultSCVolumeMode(storageClassConfigMap, storageClassName || defaultStorageClass),
+        );
       }
       if (source.requiresAccessModes()) {
-        setAccessMode(getDefaultSCAccessModes(storageClassConfigMap)[0]);
-      }
-    }
-
-    if (!isEditing && !storageClassName && isLoaded(storageClasses)) {
-      const defaultStorageClass = getGefaultStorageClass(getLoadedData(storageClasses, []));
-
-      if (defaultStorageClass) {
-        setStorageClassName(getName(defaultStorageClass) || '');
+        setAccessMode(
+          getDefaultSCAccessModes(
+            storageClassConfigMap,
+            storageClassName || defaultStorageClass,
+          )[0],
+        );
       }
     }
 
