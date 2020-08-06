@@ -62,13 +62,12 @@ export const AreaChart: React.FC<AreaChartProps> = ({
   // @ts-ignore
   const theme = getCustomTheme(ChartThemeColor.blue, ChartThemeVariant.light, areaTheme);
   const [containerRef, width] = useRefWidth();
-
-  const [processedData, unit] = React.useMemo(() => {
+  const { processedData, unit } = React.useMemo(() => {
+    const nonEmptyDataSets = data.filter((dataSet) => dataSet?.length);
     if (byteDataType) {
-      const result = processFrame(data, byteDataType);
-      return [result.processedData, result.unit];
+      return processFrame(nonEmptyDataSets, byteDataType);
     }
-    return [data, ''];
+    return { processedData: nonEmptyDataSets, unit: '' };
   }, [byteDataType, data]);
 
   const tickFormat = React.useCallback((tick) => `${humanize(tick, unit, unit).string}`, [
@@ -116,7 +115,7 @@ export const AreaChart: React.FC<AreaChartProps> = ({
 
   return (
     <PrometheusGraph className={className} ref={containerRef} title={title}>
-      {data?.[0]?.length ? (
+      {processedData?.length ? (
         <PrometheusGraphLink query={query}>
           <Chart
             containerComponent={container}
