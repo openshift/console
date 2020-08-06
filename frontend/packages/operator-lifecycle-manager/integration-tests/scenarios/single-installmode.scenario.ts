@@ -12,6 +12,7 @@ import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as catalogView from '@console/internal-integration-tests/views/catalog.view';
 import * as catalogPageView from '@console/internal-integration-tests/views/catalog-page.view';
 import * as sidenavView from '@console/internal-integration-tests/views/sidenav.view';
+import * as yamlView from '@console/internal-integration-tests/views/yaml.view';
 import * as operatorView from '../views/operator.view';
 import * as operatorHubView from '../views/operator-hub.view';
 import { click } from '@console/shared/src/test-utils/utils';
@@ -45,7 +46,9 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
         );
         if (
           JSON.parse(output.toString('utf-8')).items.find(
-            (pkg) => pkg.status.catalogSource === catalogSource.metadata.name,
+            (pkg) =>
+              pkg.status.catalogSource === catalogSource.metadata.name &&
+              pkg.metadata.name === 'prometheus',
           )
         ) {
           resolve();
@@ -203,13 +206,9 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
 
   it('displays the raw YAML for the `Prometheus`', async () => {
     await element(by.linkText('YAML')).click();
-    await browser.wait(until.presenceOf($('.yaml-editor__buttons')));
-    await $('.yaml-editor__buttons')
-      .element(by.buttonText('Save'))
-      .click();
-    await browser.wait(until.visibilityOf(crudView.successMessage));
-
-    expect(crudView.successMessage.getText()).toContain('example has been updated to version');
+    await yamlView.isLoaded();
+    const content = await yamlView.getEditorContent();
+    expect(content.length).not.toEqual(0);
   });
 
   xit('displays Kubernetes objects associated with the `Prometheus` in its "Resources" section', async () => {

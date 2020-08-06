@@ -63,7 +63,9 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
         );
         if (
           JSON.parse(output.toString('utf-8')).items.find(
-            (pkg) => pkg.status.catalogSource === catalogSource.metadata.name,
+            (pkg) =>
+              pkg.status.catalogSource === catalogSource.metadata.name &&
+              pkg.metadata.name === 'jaeger',
           )
         ) {
           resolve();
@@ -198,12 +200,8 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
   it('displays the raw YAML for the `Jaeger`', async () => {
     await element(by.linkText('YAML')).click();
     await yamlView.isLoaded();
-    await yamlView.saveButton.click();
-    await browser.wait(until.visibilityOf(crudView.successMessage));
-
-    expect(crudView.successMessage.getText()).toContain(
-      `${jaegerName} has been updated to version`,
-    );
+    const content = await yamlView.getEditorContent();
+    expect(content.length).not.toEqual(0);
   });
 
   it('displays Kubernetes objects associated with the `Jaeger` in its "Resources" section', async () => {
