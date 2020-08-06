@@ -3,29 +3,29 @@ import * as React from 'react';
 
 import { k8sPatch, K8sResourceKind, K8sKind } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { NumberSpinner, withHandlePromise } from '../utils';
+import { NumberSpinner, withHandlePromise, HandlePromiseProps } from '../utils';
 
 export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModalProps) => {
-  const getPath = props.path.substring(1).replace('/', '.');
-  const [value, setValue] = React.useState<number>(
-    _.get(props.resource, getPath) || props.defaultValue,
-  );
+  const { defaultValue, path, resource, resourceKind, handlePromise, close } = props;
+  const getPath = path.substring(1).replace('/', '.');
+  const [value, setValue] = React.useState<number>(_.get(resource, getPath) || defaultValue);
 
   const submit = (e) => {
     e.preventDefault();
 
-    const patch = [{ op: 'replace', path: props.path, value: _.toInteger(value) }];
+    const patch = [{ op: 'replace', path, value: _.toInteger(value) }];
 
     const invalidateState = props.invalidateState || _.noop;
 
     invalidateState(true, _.toInteger(value));
-    props
-      .handlePromise(k8sPatch(props.resourceKind, props.resource, patch))
-      .then(props.close)
-      .catch((error) => {
+    handlePromise(
+      k8sPatch(resourceKind, resource, patch),
+      () => close(),
+      (error) => {
         invalidateState(false);
         throw error;
-      });
+      },
+    );
   };
 
   return (
@@ -96,9 +96,8 @@ export type ConfigureCountModalProps = {
   resourceKind: K8sKind;
   title: string;
   invalidateState?: (isInvalid: boolean, count?: number) => void;
-  handlePromise: <T>(promise: Promise<T>) => Promise<T>;
   inProgress: boolean;
   errorMessage: string;
   cancel?: () => void;
   close?: () => void;
-};
+} & HandlePromiseProps;

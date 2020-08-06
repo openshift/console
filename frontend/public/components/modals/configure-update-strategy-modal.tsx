@@ -5,7 +5,7 @@ import { Tooltip } from '@patternfly/react-core';
 import { k8sPatch, Patch, DeploymentUpdateStrategy, K8sResourceKind } from '../../module/k8s';
 import { DeploymentModel } from '../../models';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { pluralize, withHandlePromise } from '../utils';
+import { pluralize, withHandlePromise, HandlePromiseProps } from '../utils';
 import { RadioInput } from '../radio';
 
 export const UPDATE_STRATEGY_DESCRIPTION =
@@ -161,15 +161,11 @@ export const ConfigureUpdateStrategyModal = withHandlePromise(
         };
         patch.op = 'add';
       }
-
-      props
-        .handlePromise(
-          k8sPatch(DeploymentModel, props.deployment, [
-            patch,
-            { path: '/spec/strategy/type', value: strategyType, op: 'replace' },
-          ]),
-        )
-        .then(props.close, () => {});
+      const promise = k8sPatch(DeploymentModel, props.deployment, [
+        patch,
+        { path: '/spec/strategy/type', value: strategyType, op: 'replace' },
+      ]);
+      props.handlePromise(promise, props.close);
     };
 
     return (
@@ -217,6 +213,6 @@ export type ConfigureUpdateStrategyModalProps = {
   errorMessage: string;
   cancel?: () => void;
   close?: () => void;
-};
+} & HandlePromiseProps;
 
 ConfigureUpdateStrategy.displayName = 'ConfigureUpdateStrategy';
