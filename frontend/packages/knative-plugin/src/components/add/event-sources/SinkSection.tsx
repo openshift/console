@@ -24,7 +24,12 @@ interface SinkResourcesProps {
 }
 
 const SinkUri: React.FC = () => (
-  <>
+  <FormGroup
+    fieldId={getFieldId('sink-name', 'uri')}
+    helperText={`A Universal Resource Indicator where events are going to be delivered. Ex.
+    "http://cluster.example.com/svc"`}
+    isRequired
+  >
     <InputField
       type={TextInputTypes.text}
       name="sink.uri"
@@ -32,11 +37,7 @@ const SinkUri: React.FC = () => (
       data-test-id="sink-section-uri"
       required
     />
-    <div className="help-block">
-      A Universal Resource Indicator where events are going to be delivered. Ex.
-      &quot;http://cluster.example.com/svc&quot;
-    </div>
-  </>
+  </FormGroup>
 );
 
 const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) => {
