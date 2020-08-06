@@ -180,8 +180,14 @@ export class EventsList extends React.Component {
     }
   };
 
+  removeResource = (selection) => {
+    const updateItems = new Set(this.state.selected);
+    updateItems.delete(selection);
+    this.setState({ selected: updateItems });
+  };
+
   clearSelection = () => {
-    this.setState({ selected: new Set(['All']) });
+    this.setState({ selected: new Set() });
   };
 
   render() {
@@ -195,7 +201,6 @@ export class EventsList extends React.Component {
             <ResourceListDropdown
               onChange={this.toggleSelected}
               selected={Array.from(selected)}
-              showAll
               clearSelection={this.clearSelection}
               className="co-search-group__resource"
             />
@@ -213,21 +218,19 @@ export class EventsList extends React.Component {
             />
           </div>
           <div className="form-group">
-            <ChipGroup key="resources-category" categoryName="Resource" defaultIsOpen={false}>
-              {[...selected].map((chip) => (
-                <Chip key={chip} onClick={() => this.toggleSelected(chip)}>
-                  <ResourceIcon kind={chip} />
-                  {kindForReference(chip)}
-                </Chip>
-              ))}
-              {selected.size > 0 && (
-                <>
-                  <Button variant="plain" aria-label="Close" onClick={this.clearSelection}>
-                    <CloseIcon />
-                  </Button>
-                </>
-              )}
-            </ChipGroup>
+            {selected.size > 0 && (
+              <ChipGroup key="resources-category" categoryName="Resource" defaultIsOpen={false}>
+                {[...selected].map((chip) => (
+                  <Chip key={chip} onClick={() => this.removeResource(chip)}>
+                    <ResourceIcon kind={chip} />
+                    {kindForReference(chip)}
+                  </Chip>
+                ))}
+                <Button variant="plain" aria-label="Close" onClick={this.clearSelection}>
+                  <CloseIcon />
+                </Button>
+              </ChipGroup>
+            )}
           </div>
         </PageHeading>
         <EventStream
