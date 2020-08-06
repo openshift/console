@@ -171,7 +171,7 @@ const windowsToolsUpdater = ({ id, prevState, dispatch, getState }: UpdateOption
 };
 
 export const updateStorageTabState = (options: UpdateOptions) =>
-  [prefillInitialDiskUpdater, internalStorageDiskBusUpdater, windowsToolsUpdater].forEach(
+  [prefillInitialDiskUpdater, windowsToolsUpdater, internalStorageDiskBusUpdater].forEach(
     (updater) => {
       updater && updater(options);
     },
