@@ -534,80 +534,83 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
     }
   }, [timespan]);
 
-  // Define this once for all queries so that they have exactly the same time range and X values
-  const now = Date.now();
-
-  const safeFetchQuery = (query: string) => {
-    if (_.isEmpty(query)) {
-      return Promise.resolve();
+  const tick = () => {
+    if (hideGraphs) {
+      return undefined;
     }
-    const url = getPrometheusURL({
-      endpoint: PrometheusEndpoint.QUERY_RANGE,
-      endTime: endTime || now,
-      namespace,
-      query,
-      samples,
-      timeout: '5s',
-      timespan: span,
-    });
-    return safeFetch(url);
-  };
 
-  const tick = () =>
-    hideGraphs
-      ? undefined
-      : Promise.all(_.map(queries, safeFetchQuery))
-          .then((responses: PrometheusResponse[]) => {
-            const newResults = _.map(responses, 'data.result');
-            const numDataPoints = _.sumBy(newResults, (r) => _.sumBy(r, 'values.length'));
+    // Define this once for all queries so that they have exactly the same time range and X values
+    const now = Date.now();
 
-            if (numDataPoints > maxDataPointsHard && samples === minSamples) {
-              setIsDatasetTooBig(true);
-              return;
-            }
-            setIsDatasetTooBig(false);
+    const allPromises = _.map(queries, (query) =>
+      _.isEmpty(query)
+        ? Promise.resolve()
+        : safeFetch(
+            getPrometheusURL({
+              endpoint: PrometheusEndpoint.QUERY_RANGE,
+              endTime: endTime || now,
+              namespace,
+              query,
+              samples,
+              timeout: '5s',
+              timespan: span,
+            }),
+          ),
+    );
 
-            const newSamples = _.clamp(
-              Math.floor((samples * maxDataPointsSoft) / numDataPoints),
-              minSamples,
-              maxSamplesForSpan,
-            );
+    return Promise.all(allPromises)
+      .then((responses: PrometheusResponse[]) => {
+        const newResults = _.map(responses, 'data.result');
+        const numDataPoints = _.sumBy(newResults, (r) => _.sumBy(r, 'values.length'));
 
-            // Change `samples` if either
-            //   - It will change by a proportion greater than `samplesLeeway`
-            //   - It will change to the upper or lower limit of its allowed range
-            if (
-              Math.abs(newSamples - samples) / samples > samplesLeeway ||
-              (newSamples !== samples &&
-                (newSamples === maxSamplesForSpan || newSamples === minSamples))
-            ) {
-              setSamples(newSamples);
-            } else {
-              const newGraphData = _.map(newResults, (result: PrometheusResult[]) => {
-                return _.map(result, ({ metric, values }) => {
-                  // If filterLabels is specified, ignore all series that don't match
-                  return _.some(filterLabels, (v, k) => _.has(metric, k) && metric[k] !== v)
-                    ? []
-                    : [metric, formatSeriesValues(values, samples, span)];
-                });
-              });
-              setGraphData(newGraphData);
+        if (numDataPoints > maxDataPointsHard && samples === minSamples) {
+          setIsDatasetTooBig(true);
+          return;
+        }
+        setIsDatasetTooBig(false);
 
-              _.each(newResults, (r, i) =>
-                patchQuery(i, {
-                  series: r ? _.map(r, 'metric') : undefined,
-                }),
-              );
-              setUpdating(false);
-            }
-            setError(undefined);
-          })
-          .catch((err) => {
-            if (err.name !== 'AbortError') {
-              setError(err);
-              setUpdating(false);
-            }
+        const newSamples = _.clamp(
+          Math.floor((samples * maxDataPointsSoft) / numDataPoints),
+          minSamples,
+          maxSamplesForSpan,
+        );
+
+        // Change `samples` if either
+        //   - It will change by a proportion greater than `samplesLeeway`
+        //   - It will change to the upper or lower limit of its allowed range
+        if (
+          Math.abs(newSamples - samples) / samples > samplesLeeway ||
+          (newSamples !== samples &&
+            (newSamples === maxSamplesForSpan || newSamples === minSamples))
+        ) {
+          setSamples(newSamples);
+        } else {
+          const newGraphData = _.map(newResults, (result: PrometheusResult[]) => {
+            return _.map(result, ({ metric, values }) => {
+              // If filterLabels is specified, ignore all series that don't match
+              return _.some(filterLabels, (v, k) => _.has(metric, k) && metric[k] !== v)
+                ? []
+                : [metric, formatSeriesValues(values, samples, span)];
+            });
           });
+          setGraphData(newGraphData);
+
+          _.each(newResults, (r, i) =>
+            patchQuery(i, {
+              series: r ? _.map(r, 'metric') : undefined,
+            }),
+          );
+          setUpdating(false);
+        }
+        setError(undefined);
+      })
+      .catch((err) => {
+        if (err.name !== 'AbortError') {
+          setError(err);
+          setUpdating(false);
+        }
+      });
+  };
 
   // Don't poll if an end time was set (because the latest data is not displayed) or if the graph is
   // hidden. Otherwise use a polling interval relative to the graph's timespan.
