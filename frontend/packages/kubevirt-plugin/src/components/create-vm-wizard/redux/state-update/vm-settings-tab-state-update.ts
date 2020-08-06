@@ -1,5 +1,4 @@
 import { FLAGS } from '@console/shared';
-import { isWinToolsImage, getVolumeContainerImage } from '../../../../selectors/vm';
 import {
   hasVmSettingsChanged,
   hasVMSettingsValueChanged,
@@ -20,8 +19,6 @@ import {
 import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
 import { CUSTOM_FLAVOR, TEMPLATE_DATAVOLUME_ANNOTATION } from '../../../../constants/vm';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
-import { windowsToolsStorage } from '../initial-state/storage-tab-initial-state';
-import { getStorages } from '../../selectors/selectors';
 import { prefillVmTemplateUpdater } from './prefill-vm-template-state-update';
 import { iGetAnnotation } from '../../../../selectors/immutable/common';
 
@@ -209,31 +206,6 @@ const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
   );
 };
 
-const windowsToolsUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
-  const state = getState();
-  if (iGetCommonData(state, id, VMWizardProps.isProviderImport)) {
-    return;
-  }
-  if (!hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS)) {
-    return;
-  }
-  const mountWindowsGuestTools = iGetVmSettingValue(
-    state,
-    id,
-    VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS,
-  );
-  const windowsTools = getStorages(state, id).find(
-    (storage) => !!isWinToolsImage(getVolumeContainerImage(storage.volume)),
-  );
-
-  if (mountWindowsGuestTools && !windowsTools) {
-    dispatch(vmWizardInternalActions[InternalActionType.UpdateStorage](id, windowsToolsStorage));
-  }
-  if (!mountWindowsGuestTools && windowsTools) {
-    dispatch(vmWizardInternalActions[InternalActionType.RemoveStorage](id, windowsTools.id));
-  }
-};
-
 const cloneCommonBaseDiskImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
   if (iGetCommonData(state, id, VMWizardProps.isProviderImport)) {
@@ -328,7 +300,6 @@ export const updateVmSettingsState = (options: UpdateOptions) =>
     osUpdater,
     baseImageUpdater,
     cloneCommonBaseDiskImageUpdater,
-    windowsToolsUpdater,
     workloadConsistencyUpdater,
     provisioningSourceUpdater,
     nativeK8sUpdater,
