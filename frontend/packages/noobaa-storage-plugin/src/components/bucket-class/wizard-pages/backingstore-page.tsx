@@ -71,13 +71,16 @@ const filterSelected = (list: BackingStoreStateType[], tableId: number) => {
   return list.filter((e) => e.selectedBy === tableId || e.selectedBy === '').sort(sort);
 };
 
-const getTableRows = (list: K8sResourceKind[]) => {
+const getTableRows = (list: K8sResourceKind[], selectedItems: BackingStoreStateType[]) => {
   return list.reduce((acc, bs) => {
     const type: string = nameMap[_.get(bs, 'spec.type')];
+    const currentItem = _.find(selectedItems, (item) => item.id === bs.metadata.name);
+    const selected = currentItem ? currentItem.selected : false;
+    const selectedBy = currentItem ? currentItem.selectedBy : '';
     const obj = {
-      selected: false,
+      selected,
       id: bs.metadata.name,
-      selectedBy: '',
+      selectedBy,
       cells: [
         {
           title: (
@@ -134,7 +137,7 @@ const BackingStorePage: React.FC<BackingStorePageProps> = React.memo(
     };
 
     React.useEffect(() => {
-      const stores = getTableRows(backingStoreData);
+      const stores = getTableRows(backingStoreData, storeMain);
       dispatcher({ type: 'setBackingStores', value: stores });
       // eslint-disable-next-line
     }, [JSON.stringify(backingStoreData), dispatcher]);
