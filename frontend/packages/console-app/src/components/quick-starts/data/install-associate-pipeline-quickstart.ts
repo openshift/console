@@ -1,3 +1,5 @@
+import { pipelineIcon } from './tour-icons';
+
 export const installAssociatePipelineQuickStart = {
   apiVersion: 'console.openshift.io/v1',
   kind: 'QuickStarts',
@@ -8,8 +10,7 @@ export const installAssociatePipelineQuickStart = {
     version: 4.7,
     displayName: `Import an application and associate a pipeline with it`,
     duration: 10,
-    iconURL:
-      '/api/kubernetes/apis/packages.operators.coreos.com/v1/namespaces/openshift-marketplace/packagemanifests/openshift-pipelines-operator/icon?resourceVersion=openshift-pipelines-operator.dev-preview.openshift-pipelines-operator.v0.10.7',
+    iconURL: pipelineIcon,
     description:
       'Install an application, associate a pipeline, start the pipeline and explore the pipeline run',
     prerequisites: 'OpenShift® Pipelines Operator must be installed',

@@ -1,3 +1,5 @@
+import { serverlessIcon } from './tour-icons';
+
 export const exploreServerlessQuickStart = {
   apiVersion: 'console.openshift.io/v1',
   kind: 'QuickStarts',
@@ -8,8 +10,7 @@ export const exploreServerlessQuickStart = {
     version: 4.7,
     displayName: `Getting started with Serverless`,
     duration: 10,
-    iconURL:
-      '/api/kubernetes/apis/packages.operators.coreos.com/v1/namespaces/openshift-marketplace/packagemanifests/serverless-operator/icon?resourceVersion=serverless-operator.4.3.serverless-operator.v1.7.2',
+    iconURL: serverlessIcon,
     description:
       'Install the Serverless Operator to enable containers, microservices and functions to run "serverless"',
     prerequisites: 'Release requirements if any Install X number of resources',

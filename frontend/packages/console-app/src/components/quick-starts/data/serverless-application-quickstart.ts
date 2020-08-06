@@ -1,3 +1,5 @@
+import { serverlessIcon } from './tour-icons';
+
 export const serverlessApplicationQuickStart = {
   apiVersion: 'console.openshift.io/v1',
   kind: 'QuickStarts',
@@ -8,8 +10,7 @@ export const serverlessApplicationQuickStart = {
     version: 4.7,
     displayName: `Creating a Serverless application`,
     duration: 15,
-    iconURL:
-      '/api/kubernetes/apis/packages.operators.coreos.com/v1/namespaces/openshift-marketplace/packagemanifests/serverless-operator/icon?resourceVersion=serverless-operator.4.3.serverless-operator.v1.7.2',
+    iconURL: serverlessIcon,
     description: 'Learn how to create a Serverless application.',
     prerequisites: 'Install the OpenShift® Serverless Operator to start creating Serverless apps.',
     introduction: `### OpenShift Serverless is flexible. With Serverless, you get:
