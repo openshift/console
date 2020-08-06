@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router';
 import Helmet from 'react-helmet';
 import { PageHeading } from '@console/internal/components/utils';
 import { withStartGuide } from '@console/internal/components/start-guide';
-import ProjectListPage from '../projects/ProjectListPage';
+import CreateProjectListPage from '../projects/CreateProjectListPage';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import HelmReleaseList from './list/HelmReleaseList';
 
@@ -21,9 +21,9 @@ const PageContents: React.FC<HelmReleaseListPageProps> = (props) => {
       <HelmReleaseList namespace={namespace} />
     </div>
   ) : (
-    <ProjectListPage title="Helm Releases">
+    <CreateProjectListPage title="Helm Releases">
       Select a project to view the list of Helm Releases
-    </ProjectListPage>
+    </CreateProjectListPage>
   );
 };
 

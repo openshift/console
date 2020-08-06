@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineModel } from '../../../models';
 import { PipelinesPage } from '../PipelinesPage';
-import ProjectListPage from '../../projects/ProjectListPage';
+import CreateProjectListPage from '../../projects/CreateProjectListPage';
 import PipelinesResourceList from '../PipelinesResourceList';
 
 describe('Pipeline List', () => {
@@ -38,6 +38,6 @@ describe('Pipeline List', () => {
       },
     };
     const pipelineWrapperWNS = shallow(<PipelinesPage {...pipelinePagePropsWNS} />);
-    expect(pipelineWrapperWNS.find(ProjectListPage).exists()).toBe(true);
+    expect(pipelineWrapperWNS.find(CreateProjectListPage).exists()).toBe(true);
   });
 });

@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router';
 import { getBadgeFromType } from '@console/shared';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { PipelineModel } from '../../models';
-import ProjectListPage from '../projects/ProjectListPage';
+import CreateProjectListPage from '../projects/CreateProjectListPage';
 import PipelinesResourceList from './PipelinesResourceList';
 
 type PipelinesPageProps = RouteComponentProps<{ ns: string }>;
@@ -24,12 +24,12 @@ export const PipelinesPage: React.FC<PipelinesPageProps> = (props) => {
       />
     </div>
   ) : (
-    <ProjectListPage
+    <CreateProjectListPage
       title={PipelineModel.labelPlural}
       badge={getBadgeFromType(PipelineModel.badge)}
     >
       Select a project to view the list of {PipelineModel.labelPlural}
-    </ProjectListPage>
+    </CreateProjectListPage>
   );
 };
 

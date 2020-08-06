@@ -6,7 +6,7 @@ import { TopologyPage, renderTopology } from '../TopologyPage';
 import NamespacedPage from '../../NamespacedPage';
 import { StatusBox } from '@console/internal/components/utils';
 import ConnectedTopologyDataController from '../TopologyDataController';
-import ProjectListPage from '../../projects/ProjectListPage';
+import CreateProjectListPage from '../../projects/CreateProjectListPage';
 import { topologyData } from './topology-test-data';
 import { ConnectedTopologyView } from '../TopologyView';
 
@@ -69,7 +69,7 @@ describe('Topology page tests', () => {
   it('should render projects list page', () => {
     topologyProps.match.params.name = '';
     const wrapper = shallow(<TopologyPage {...topologyProps} />);
-    expect(wrapper.find(ProjectListPage).exists()).toBe(true);
+    expect(wrapper.find(CreateProjectListPage).exists()).toBe(true);
   });
 
   it('should render view shortcuts button on topology page toolbar', () => {

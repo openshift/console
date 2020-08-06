@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { match as RMatch } from 'react-router';
-import { history, Firehose, FirehoseResource, HintBlock } from '@console/internal/components/utils';
+import { Firehose, FirehoseResource, HintBlock } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { ServiceModel } from '@console/knative-plugin';
 import ODCEmptyState from './EmptyState';
@@ -28,9 +28,6 @@ interface EmptyStateLoaderProps {
   loaded?: boolean;
   loadError?: string;
 }
-
-const handleProjectCreate = (project: K8sResourceKind) =>
-  history.push(`/add/ns/${project.metadata.name}`);
 
 const EmptyStateLoader: React.FC<EmptyStateLoaderProps> = ({ resources, loaded, loadError }) => {
   const [noWorkloads, setNoWorkloads] = React.useState(false);
@@ -130,7 +127,9 @@ const AddPage: React.FC<AddPageProps> = ({ match }) => {
             {namespace ? (
               <RenderEmptyState namespace={namespace} />
             ) : (
-              <CreateProjectListPage onCreate={handleProjectCreate} title="Add" />
+              <CreateProjectListPage title="Add">
+                Select a project to start adding to it
+              </CreateProjectListPage>
             )}
           </ProjectsExistWrapper>
         </Firehose>

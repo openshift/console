@@ -14,7 +14,7 @@ import {
 import EmptyState from '../EmptyState';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import ProjectsExistWrapper from '../ProjectsExistWrapper';
-import ProjectListPage from '../projects/ProjectListPage';
+import CreateProjectListPage from '../projects/CreateProjectListPage';
 import ConnectedTopologyDataController from './TopologyDataController';
 import { RenderProps } from './TopologyDataRenderer';
 import TopologyShortcuts from './TopologyShortcuts';
@@ -156,9 +156,9 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({ match }) => {
                 namespace={namespace}
               />
             ) : (
-              <ProjectListPage title="Topology">
+              <CreateProjectListPage title="Topology">
                 Select a project to view the topology
-              </ProjectListPage>
+              </CreateProjectListPage>
             )}
           </ProjectsExistWrapper>
         </Firehose>
