@@ -5,15 +5,15 @@ import { Alert, AlertVariant } from '@patternfly/react-core';
 import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
 import { Firehose, FirehoseResult, resourcePath } from '@console/internal/components/utils';
 import { StorageClassResourceKind } from '@console/internal/module/k8s';
-import { createLookup, getAnnotations, getName } from '@console/shared/src';
+import { createLookup, getName } from '@console/shared/src';
 import { PersistentVolumeClaimModel, StorageClassModel } from '@console/internal/models';
 import { VMWizardProps, VMWizardStorage } from '../../types';
 import { getStorages } from '../../selectors/selectors';
 import { iGetCommonData } from '../../selectors/immutable/selectors';
+import { getGefaultStorageClass } from '../../../../selectors/config-map/sc-defaults';
 import { CombinedDisk } from '../../../../k8s/wrapper/vm/combined-disk';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import { getLoadedData } from '../../../../utils';
-import { DEFAULT_SC_ANNOTATION } from '../../../../constants/sc';
 
 import './storage-review.scss';
 
@@ -81,9 +81,7 @@ const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
       combinedDisk.getSource()?.requiresStorageClass() && !combinedDisk.getStorageClassName(),
   );
 
-  const defaultStorageClass = getLoadedData(storageClasses, []).find(
-    (sc) => getAnnotations(sc, {})[DEFAULT_SC_ANNOTATION] === 'true',
-  );
+  const defaultStorageClass = getGefaultStorageClass(getLoadedData(storageClasses, []));
 
   const rows = combinedDisks.map((combinedDisk) => {
     return [

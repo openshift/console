@@ -31,6 +31,7 @@ import {
 import {
   getDefaultSCAccessModes,
   getDefaultSCVolumeMode,
+  getGefaultStorageClass,
 } from '../../../selectors/config-map/sc-defaults';
 import {
   ADD,
@@ -159,16 +160,34 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   );
 
   React.useEffect(() => {
-    if (!isEditing && isLoaded(_storageClassConfigMap)) {
+    if (!isEditing && isLoaded(_storageClassConfigMap) && isLoaded(storageClasses)) {
+      let defaultStorageClass = null;
+
+      if (!storageClassName) {
+        defaultStorageClass = getGefaultStorageClass(getLoadedData(storageClasses, []));
+
+        if (defaultStorageClass) {
+          setStorageClassName(getName(defaultStorageClass) || '');
+        }
+      }
+
       if (source.requiresVolumeMode()) {
-        setVolumeMode(getDefaultSCVolumeMode(storageClassConfigMap));
+        setVolumeMode(
+          getDefaultSCVolumeMode(storageClassConfigMap, storageClassName || defaultStorageClass),
+        );
       }
       if (source.requiresAccessModes()) {
-        setAccessMode(getDefaultSCAccessModes(storageClassConfigMap)[0]);
+        setAccessMode(
+          getDefaultSCAccessModes(
+            storageClassConfigMap,
+            storageClassName || defaultStorageClass,
+          )[0],
+        );
       }
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoaded(_storageClassConfigMap)]);
+  }, [isLoaded(_storageClassConfigMap), isLoaded(storageClasses)]);
 
   const resultDisk = DiskWrapper.initializeFromSimpleData({
     name,
@@ -322,6 +341,8 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
       onSourceChanged(StorageUISource.URL.getValue());
     }
   };
+
+  const isStorageClassDataLoading = !isLoaded(storageClasses) || !isLoaded(_storageClassConfigMap);
 
   return (
     <div className="modal-content">
@@ -521,7 +542,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
             <K8sResourceSelectRow
               key="storage-class"
               id={asId('storage-class')}
-              isDisabled={isDisabled('storageClass')}
+              isDisabled={isDisabled('storageClass') || isStorageClassDataLoading}
               name={storageClassName}
               data={storageClasses}
               model={StorageClassModel}
@@ -549,7 +570,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                     onChange={(vMode) => setVolumeMode(VolumeMode.fromString(vMode))}
                     value={asFormSelectValue(volumeMode?.getValue())}
                     id={asId('volume-mode')}
-                    isDisabled={isDisabled('volumeMode')}
+                    isDisabled={isDisabled('volumeMode') || isStorageClassDataLoading}
                   >
                     <FormSelectPlaceholderOption
                       isDisabled={inProgress}
@@ -575,7 +596,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                     onChange={(aMode) => setAccessMode(AccessMode.fromString(aMode))}
                     value={asFormSelectValue(accessMode?.getValue())}
                     id={asId('access-mode')}
-                    isDisabled={isDisabled('accessMode')}
+                    isDisabled={isDisabled('accessMode') || isStorageClassDataLoading}
                   >
                     <FormSelectPlaceholderOption
                       isDisabled={inProgress}
