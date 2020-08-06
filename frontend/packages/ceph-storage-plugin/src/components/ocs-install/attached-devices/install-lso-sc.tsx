@@ -30,7 +30,12 @@ import {
 import { OCSServiceModel } from '../../../models';
 import AttachedDevicesNodeTable from './sc-node-list';
 import { PVsAvailableCapacity } from '../pvs-available-capacity';
-import { OCS_CONVERGED_FLAG, OCS_FLAG, OCS_ATTACHED_DEVICES_FLAG } from '../../../features';
+import {
+  OCS_CONVERGED_FLAG,
+  OCS_FLAG,
+  OCS_ATTACHED_DEVICES_FLAG,
+  OCS_INDEPENDENT_FLAG,
+} from '../../../features';
 import { makeLabelNodesRequest } from '../create-form';
 import { scResource, pvResource } from '../../../constants/resources';
 import { getOCSRequestData } from '../ocs-request-data';
@@ -135,6 +140,7 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
     handlePromise(makeOCSRequest(nodes, storageClass, isEncrypted, isMinimal), () => {
       dispatch(setFlag(OCS_ATTACHED_DEVICES_FLAG, true));
       dispatch(setFlag(OCS_CONVERGED_FLAG, true));
+      dispatch(setFlag(OCS_INDEPENDENT_FLAG, false));
       dispatch(setFlag(OCS_FLAG, true));
       history.push(
         `/k8s/ns/${ns}/clusterserviceversions/${appName}/${referenceForModel(

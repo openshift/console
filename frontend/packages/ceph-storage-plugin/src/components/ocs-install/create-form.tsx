@@ -27,7 +27,7 @@ import { OCSServiceModel } from '../../models';
 import { OSDSizeDropdown } from '../../utils/osd-size-dropdown';
 import { cephStorageLabel } from '../../selectors';
 import NodeTable from './node-list';
-import { OCS_FLAG, OCS_CONVERGED_FLAG } from '../../features';
+import { OCS_FLAG, OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG } from '../../features';
 import { getOCSRequestData } from './ocs-request-data';
 import {
   OCSAlert,
@@ -101,6 +101,7 @@ export const CreateInternalCluster = withHandlePromise<
     // eslint-disable-next-line promise/catch-or-return
     handlePromise(makeOCSRequest(nodes, storageClass, osdSize, isEncrypted), () => {
       dispatch(setFlag(OCS_CONVERGED_FLAG, true));
+      dispatch(setFlag(OCS_INDEPENDENT_FLAG, false));
       dispatch(setFlag(OCS_FLAG, true));
       history.push(
         `/k8s/ns/${ns}/clusterserviceversions/${appName}/${referenceForModel(

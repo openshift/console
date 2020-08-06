@@ -9,14 +9,13 @@ import { fetchK8s } from '@console/internal/graphql/client';
 import { StorageClassModel } from '@console/internal/models';
 import { OCSServiceModel } from './models';
 import {
-  OCS_EXTERNAL_CR_NAME,
   CEPH_STORAGE_NAMESPACE,
   OCS_SUPPORT_ANNOTATION,
   ATTACHED_DEVICES_ANNOTATION,
-  OCS_INTERNAL_CR_NAME,
   RGW_PROVISIONER,
   SECOND,
 } from './constants';
+import { OCSStorageClusterKind } from './types';
 
 export const OCS_INDEPENDENT_FLAG = 'OCS_INDEPENDENT';
 export const OCS_CONVERGED_FLAG = 'OCS_CONVERGED';
@@ -70,33 +69,29 @@ export const detectRGW: FeatureDetector = async (dispatch) => {
 
 export const detectOCS: FeatureDetector = async (dispatch) => {
   try {
-    const storageCluster = await fetchK8s(
-      OCSServiceModel,
-      OCS_INTERNAL_CR_NAME,
-      CEPH_STORAGE_NAMESPACE,
+    const storageClusters = await k8sList(OCSServiceModel, { ns: CEPH_STORAGE_NAMESPACE });
+    const storageCluster = storageClusters.find(
+      (sc: OCSStorageClusterKind) => sc.status.phase !== 'Ignored',
     );
+    const isInternal = _.isEmpty(storageCluster.spec.externalStorage);
     const isAttachedDevicesCluster =
       getAnnotations(storageCluster)?.[ATTACHED_DEVICES_ANNOTATION] === 'true';
     dispatch(setFlag(OCS_FLAG, true));
     dispatch(setFlag(OCS_ATTACHED_DEVICES_FLAG, isAttachedDevicesCluster));
-    dispatch(setFlag(OCS_CONVERGED_FLAG, true));
-    dispatch(setFlag(OCS_INDEPENDENT_FLAG, false));
+    dispatch(setFlag(OCS_CONVERGED_FLAG, isInternal));
+    dispatch(setFlag(OCS_INDEPENDENT_FLAG, !isInternal));
   } catch (e) {
-    if (e?.response?.status !== 404) handleError(e, [OCS_CONVERGED_FLAG], dispatch, detectOCS);
+    if (e?.response?.status !== 404)
+      handleError(
+        e,
+        [OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG, OCS_ATTACHED_DEVICES_FLAG],
+        dispatch,
+        detectOCS,
+      );
     else {
       dispatch(setFlag(OCS_CONVERGED_FLAG, false));
+      dispatch(setFlag(OCS_INDEPENDENT_FLAG, false));
       dispatch(setFlag(OCS_ATTACHED_DEVICES_FLAG, false));
-    }
-    try {
-      await fetchK8s(OCSServiceModel, OCS_EXTERNAL_CR_NAME, CEPH_STORAGE_NAMESPACE);
-      dispatch(setFlag(OCS_FLAG, true));
-      dispatch(setFlag(OCS_INDEPENDENT_FLAG, true));
-      dispatch(setFlag(OCS_CONVERGED_FLAG, false));
-      dispatch(setFlag(OCS_ATTACHED_DEVICES_FLAG, false));
-    } catch (err) {
-      err?.response?.status !== 404
-        ? handleError(err, [OCS_INDEPENDENT_FLAG], dispatch, detectOCS)
-        : dispatch(setFlag(OCS_INDEPENDENT_FLAG, false));
     }
   }
 };
