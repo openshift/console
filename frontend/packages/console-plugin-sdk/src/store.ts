@@ -45,7 +45,7 @@ export class PluginStore {
     this.extensions = _.flatMap(
       plugins.map((p) =>
         p.extensions.map((e, index) =>
-          Object.freeze(augmentExtension(sanitizeExtension(_.cloneDeep(e)), p.name, index)),
+          Object.freeze(augmentExtension(sanitizeExtension({ ...e }), p.name, index)),
         ),
       ),
     );
