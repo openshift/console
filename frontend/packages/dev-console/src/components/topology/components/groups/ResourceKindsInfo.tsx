@@ -2,23 +2,20 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { modelFor, pluralizeKind, referenceForModel } from '@console/internal/module/k8s';
 import { ResourceIcon } from '@console/internal/components/utils';
+import { OdcNodeModel } from '../../topology-types';
 
 import './ResourceKindsInfo.scss';
-import { OdcNodeModel } from '../../topology-types';
+
+export const RESOURCE_INFO_PADDING = 32;
+export const RESOURCE_KIND_ROW_WIDTH = 250;
+export const RESOURCE_KIND_ROW_HEIGHT = 29;
 
 type ResourceKindsInfoProps = {
   groupResources: OdcNodeModel[];
   emptyValue?: React.ReactNode;
-  width: number;
-  height: number;
 };
 
-const ResourceKindsInfo: React.FC<ResourceKindsInfoProps> = ({
-  groupResources,
-  emptyValue,
-  width,
-  height,
-}) => {
+const ResourceKindsInfo: React.FC<ResourceKindsInfoProps> = ({ groupResources, emptyValue }) => {
   const resourcesData = {};
   _.forEach(groupResources, (node: OdcNodeModel) => {
     const kind = node.resourceKind || node.resource?.kind;
@@ -28,14 +25,20 @@ const ResourceKindsInfo: React.FC<ResourceKindsInfoProps> = ({
 
   if (!resourceTypes.length) {
     return (
-      <foreignObject width={width} height={height}>
+      <foreignObject
+        width={RESOURCE_KIND_ROW_WIDTH}
+        height={RESOURCE_INFO_PADDING + RESOURCE_KIND_ROW_HEIGHT}
+      >
         <div className="odc-resource-kinds-info">{emptyValue}</div>
       </foreignObject>
     );
   }
 
   return (
-    <foreignObject width={width} height={height}>
+    <foreignObject
+      width={RESOURCE_KIND_ROW_WIDTH}
+      height={RESOURCE_INFO_PADDING + resourceTypes.length * RESOURCE_KIND_ROW_HEIGHT}
+    >
       <div className="odc-resource-kinds-info">
         <table className="odc-resource-kinds-info__table">
           <tbody className="odc-resource-kinds-info__body">

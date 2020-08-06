@@ -104,6 +104,11 @@ const updateAppGroupChildren = (model: Model) => {
       n.data.groupResources = n.children?.map((id) => model.nodes.find((c) => id === c.id)) ?? [];
     }
   });
+
+  // Remove any empty groups
+  model.nodes = model.nodes.filter(
+    (n) => n.type !== TYPE_APPLICATION_GROUP || n.children.length > 0,
+  );
 };
 
 const createVisualConnectors = (model: Model, workloadResources: K8sResourceKind[]) => {
