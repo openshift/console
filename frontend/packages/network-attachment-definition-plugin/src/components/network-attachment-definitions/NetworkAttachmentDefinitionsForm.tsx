@@ -44,12 +44,11 @@ const buildConfig = (name, networkType, typeParamsData): NetworkAttachmentDefini
     // cnv-bridge should not define type on root
     delete config.type;
 
-    const vlan = _.get(typeParamsData, 'vlanTagNum.value', '');
     config.plugins = [
       {
         type: 'cnv-bridge',
         bridge: _.get(typeParamsData, 'bridge.value', ''),
-        vlan: _.isEmpty(vlan) ? undefined : vlan,
+        vlan: parseInt(typeParamsData?.vlanTagNum?.value, 10) || undefined,
         ipam,
       },
       { type: 'cnv-tuning' },
