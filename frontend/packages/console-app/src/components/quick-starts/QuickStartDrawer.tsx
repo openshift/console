@@ -91,7 +91,7 @@ const QuickStartDrawer: React.FC<QuickStartDrawerProps> = ({
   return (
     <Drawer isExpanded={!!activeQuickStartID} isInline>
       <DrawerContent panelContent={panelContent}>
-        <DrawerContentBody style={{ zIndex: 0 }}>{children}</DrawerContentBody>
+        <DrawerContentBody className="co-quick-start-drawer__body">{children}</DrawerContentBody>
       </DrawerContent>
     </Drawer>
   );
