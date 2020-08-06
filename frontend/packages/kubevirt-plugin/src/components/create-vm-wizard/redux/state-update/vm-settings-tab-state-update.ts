@@ -153,9 +153,6 @@ const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   if (iGetCommonData(state, id, VMWizardProps.isProviderImport)) {
     return;
   }
-  if (iGetCommonData(state, id, VMWizardProps.isProviderImport)) {
-    return;
-  }
   if (!hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.OPERATING_SYSTEM)) {
     return;
   }
