@@ -67,13 +67,14 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
     cancel,
     loadError,
     loaded,
-    vmi: vmiProp,
+    vmis,
   } = props;
 
   const inProgress = props.inProgress || !loaded;
   const vm = asVM(vmLike);
   const underlyingTemplate = getLoadedData(template);
-  const vmi = getLoadedData(vmiProp);
+  const loadedVMIs = getLoadedData(vmis);
+  const vmi = loadedVMIs && loadedVMIs.length > 0 && loadedVMIs[0];
 
   const flavors = getAvailableFlavors(underlyingTemplate);
   const vmFlavor = toUIFlavor(getFlavor(vmLike) || flavors[flavors.length - 1]);
@@ -235,8 +236,8 @@ const VMFlavorModalFirehose = (props) => {
   resources.push({
     kind: VirtualMachineInstanceModel.kind,
     namespace: getNamespace(vmLike),
-    name: getName(vmLike),
-    prop: 'vmi',
+    prop: 'vmis',
+    fieldSelector: `metadata.name=${getName(vmLike)}`,
   });
 
   return (
@@ -250,7 +251,7 @@ export type VMFlavornModalProps = HandlePromiseProps &
   ModalComponentProps & {
     vmLike: VMLikeEntityKind;
     template?: FirehoseResult<TemplateKind>;
-    vmi?: FirehoseResult<VMIKind>;
+    vmis?: FirehoseResult<VMIKind[]>;
     loadError?: any;
     loaded: boolean;
   };
