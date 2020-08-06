@@ -333,6 +333,8 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     }
   };
 
+  const isStorageClassDataLoading = !isLoaded(storageClasses) || !isLoaded(_storageClassConfigMap);
+
   return (
     <div className="modal-content">
       <ModalTitle>
@@ -531,7 +533,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
             <K8sResourceSelectRow
               key="storage-class"
               id={asId('storage-class')}
-              isDisabled={isDisabled('storageClass') || !isLoaded(storageClasses)}
+              isDisabled={isDisabled('storageClass') || isStorageClassDataLoading}
               name={storageClassName}
               data={storageClasses}
               model={StorageClassModel}
@@ -559,7 +561,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                     onChange={(vMode) => setVolumeMode(VolumeMode.fromString(vMode))}
                     value={asFormSelectValue(volumeMode?.getValue())}
                     id={asId('volume-mode')}
-                    isDisabled={isDisabled('volumeMode')}
+                    isDisabled={isDisabled('volumeMode') || isStorageClassDataLoading}
                   >
                     <FormSelectPlaceholderOption
                       isDisabled={inProgress}
@@ -585,7 +587,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                     onChange={(aMode) => setAccessMode(AccessMode.fromString(aMode))}
                     value={asFormSelectValue(accessMode?.getValue())}
                     id={asId('access-mode')}
-                    isDisabled={isDisabled('accessMode')}
+                    isDisabled={isDisabled('accessMode') || isStorageClassDataLoading}
                   >
                     <FormSelectPlaceholderOption
                       isDisabled={inProgress}
