@@ -24,16 +24,19 @@ import {
   getBootableDevices,
   asVM,
   isVMRunningOrExpectedRunning,
+  getBootableDevicesInOrder,
 } from '../../../selectors/vm';
 import { getVMLikePatches } from '../../../k8s/patches/vm-template';
 import { BootOrder, deviceKey } from '../../boot-order';
 import { DeviceType } from '../../../constants';
 import { ModalFooter } from '../modal/modal-footer';
-import { PendingChangesAlert } from '../../Alerts/PendingChangesAlert';
+import { ModalPendingChangesAlert } from '../../Alerts/PendingChangesAlert';
 import { VirtualMachineInstanceModel } from '../../../models';
 import { getLoadedData } from '../../../utils';
-import { MODAL_RESTART_IS_REQUIRED } from '../../../strings/vm/status';
 import { saveAndRestartModal } from '../save-and-restart-modal/save-and-restart-modal';
+import { isBootOrderChanged } from '../../../selectors/vm-like/next-run-changes';
+import { VMWrapper } from '../../../k8s/wrapper/vm/vm-wrapper';
+import { VMIWrapper } from '../../../k8s/wrapper/vm/vmi-wrapper';
 
 const BootOrderModalComponent = withHandlePromise(
   ({
@@ -45,11 +48,10 @@ const BootOrderModalComponent = withHandlePromise(
     errorMessage,
     vmi: vmiProp,
   }: BootOrderModalProps) => {
-    const [devices, setDevices] = React.useState<BootableDeviceType[]>(
-      getBootableDevices(vmLikeEntity),
-    );
+    const bootableDevices = getBootableDevices(vmLikeEntity);
+    const [devices, setDevices] = React.useState<BootableDeviceType[]>(bootableDevices);
     const [initialDeviceList, setInitialDeviceList] = React.useState<BootableDeviceType[]>(
-      getBootableDevices(vmLikeEntity),
+      bootableDevices,
     );
     const [showUpdatedAlert, setUpdatedAlert] = React.useState<boolean>(false);
     const [showPatchError, setPatchError] = React.useState<boolean>(false);
@@ -58,13 +60,20 @@ const BootOrderModalComponent = withHandlePromise(
     const vmi = getLoadedData(vmiProp);
 
     const onReload = React.useCallback(() => {
-      const updatedDevices = getBootableDevices(vmLikeEntity);
+      const updatedDevices = bootableDevices;
 
       setInitialDeviceList(updatedDevices);
       setDevices(updatedDevices);
       setUpdatedAlert(false);
       setPatchError(false);
     }, [vmLikeEntity]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const isChanged =
+      isBootOrderChanged(new VMWrapper(vm), new VMIWrapper(vmi)) ||
+      !_.isEqual(
+        getBootableDevicesInOrder(vm, devices),
+        getBootableDevicesInOrder(vm, bootableDevices),
+      );
 
     // Inform user on vmLikeEntity.
     React.useEffect(() => {
@@ -143,13 +152,13 @@ const BootOrderModalComponent = withHandlePromise(
       <div className="modal-content">
         <ModalTitle>Virtual machine boot order</ModalTitle>
         <ModalBody>
-          {isVMRunning && <PendingChangesAlert warningMsg={MODAL_RESTART_IS_REQUIRED} />}
+          {isVMRunning && <ModalPendingChangesAlert isChanged={isChanged} />}
           <BootOrder devices={devices} setDevices={setDevices} />
         </ModalBody>
         <ModalFooter
           errorMessage={showPatchError && errorMessage}
           inProgress={inProgress}
-          isSaveAndRestart={isVMRunningOrExpectedRunning(vm)}
+          isSaveAndRestart={isChanged && isVMRunning}
           onSubmit={onSubmit}
           onCancel={() => cancel()}
           submitButtonText="Save"
