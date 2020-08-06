@@ -8,6 +8,7 @@ import {
   Button,
   ButtonVariant,
 } from '@patternfly/react-core';
+import { pluralize } from '@console/internal/components/utils';
 import { ValidationErrorType, asValidationObject } from '@console/shared/src/utils/validation';
 import {
   concatImmutableLists,
@@ -147,6 +148,22 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
     );
     const baseImage = operatingSystemBaseImages.find((image) => image.id === os);
 
+    const numOfMountedDisks = cloneBaseDiskImage + mountWindowsGuestTools; // using boolean addition operator to count true
+    const mountedDisksHelpMsg = numOfMountedDisks > 0 && (
+      <Text className="kv-create-vm__input-checkbox">
+        View the mounted {pluralize(numOfMountedDisks, 'disk', 'disks', false)} in the{' '}
+        <Button
+          isDisabled={!goToStorageStep}
+          isInline
+          onClick={goToStorageStep}
+          variant={ButtonVariant.link}
+        >
+          <strong>storage</strong>
+        </Button>{' '}
+        step
+      </Text>
+    );
+
     return (
       <>
         <FormFieldRow
@@ -200,20 +217,7 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
             />
           </FormField>
         </FormFieldRow>
-        {(cloneBaseDiskImage || mountWindowsGuestTools) && (
-          <Text className="kv-create-vm__input-checkbox">
-            View the mounted disk in the{' '}
-            <Button
-              isDisabled={!goToStorageStep}
-              isInline
-              onClick={goToStorageStep}
-              variant={ButtonVariant.link}
-            >
-              <strong>storage</strong>
-            </Button>{' '}
-            step
-          </Text>
-        )}
+        {mountedDisksHelpMsg}
         <FormFieldRow
           field={flavorField}
           fieldType={FormFieldType.SELECT}
