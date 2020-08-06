@@ -48,6 +48,13 @@ export class SelectorInput extends React.Component {
     // We track the input field value in state so we can retain the input value when an invalid tag is entered.
     // Otherwise, the default behaviour of TagsInput is to clear the input field.
     const inputValue = e.target.value;
+
+    // If the user deletes an existing inputValue, set isInputValid back to true
+    if (inputValue === '') {
+      this.setState({ inputValue, isInputValid: true });
+      return;
+    }
+
     this.setState({ inputValue, isInputValid: this.isTagValid(inputValue) });
   }
 
@@ -120,7 +127,6 @@ export class SelectorInput extends React.Component {
             inputProps={inputProps}
             renderTag={renderTag}
             onChange={this.handleChange.bind(this)}
-            addOnPaste
             addOnBlur
           />
         </tags-input>
