@@ -6,7 +6,7 @@ import {
   expectedSortedAlerts,
 } from '@console/shared/src/utils/__mocks__/alerts-and-rules-data';
 import { sortMonitoringAlerts } from '@console/shared';
-import MonitoringOverviewAlerts from '../MonitoringOverviewAlerts';
+import { InternalMonitoringOverviewAlerts as MonitoringOverviewAlerts } from '../MonitoringOverviewAlerts';
 
 describe('Monitoring Alerts Section', () => {
   const monitoringOverviewProps: React.ComponentProps<typeof MonitoringOverviewAlerts> = {

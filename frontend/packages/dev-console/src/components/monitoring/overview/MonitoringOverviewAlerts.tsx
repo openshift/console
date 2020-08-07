@@ -1,7 +1,10 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import * as _ from 'lodash';
 import { Alert } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
+import { getActivePerspective } from '@console/internal/reducers/ui';
+import { RootState } from '@console/internal/redux';
 import { fromNow } from '@console/internal/components/utils/datetime';
 import { Alert as AlertType } from '@console/internal/components/monitoring/types';
 import { labelsToParams } from '@console/internal/components/monitoring/utils';
@@ -13,7 +16,14 @@ interface MonitoringOverviewAlertsProps {
   alerts: AlertType[];
 }
 
-const MonitoringOverviewAlerts: React.FC<MonitoringOverviewAlertsProps> = ({ alerts }) => {
+interface StateProps {
+  activePerspective?: string;
+}
+
+const MonitoringOverviewAlerts: React.FC<MonitoringOverviewAlertsProps & StateProps> = ({
+  alerts,
+  activePerspective,
+}) => {
   const sortedAlerts = sortMonitoringAlerts(alerts);
 
   return (
@@ -25,9 +35,10 @@ const MonitoringOverviewAlerts: React.FC<MonitoringOverviewAlertsProps> = ({ ale
           labels: { severity, alertname, namespace },
           rule: { name, id },
         } = alert;
-        const alertDetailsPageLink = `/dev-monitoring/ns/${namespace}/alerts/${id}?${labelsToParams(
-          alert.labels,
-        )}`;
+        const alertDetailsPageLink =
+          activePerspective === 'admin'
+            ? `/monitoring/alerts/${id}?${labelsToParams(alert.labels)}`
+            : `/dev-monitoring/ns/${namespace}/alerts/${id}?${labelsToParams(alert.labels)}`;
         return (
           <Alert
             variant={getAlertType(severity)}
@@ -46,4 +57,9 @@ const MonitoringOverviewAlerts: React.FC<MonitoringOverviewAlertsProps> = ({ ale
   );
 };
 
-export default MonitoringOverviewAlerts;
+const stateToProps = (state: RootState) => ({
+  activePerspective: getActivePerspective(state),
+});
+
+export const InternalMonitoringOverviewAlerts = MonitoringOverviewAlerts;
+export default connect<StateProps>(stateToProps)(MonitoringOverviewAlerts);
