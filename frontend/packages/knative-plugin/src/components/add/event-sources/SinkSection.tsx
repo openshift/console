@@ -12,7 +12,7 @@ import {
   knativeEventingResourcesBroker,
 } from '../../../utils/get-knative-resources';
 import { getDynamicChannelResourceList } from '../../../utils/fetch-dynamic-eventsources-utils';
-import { sourceSinkType } from '../import-types';
+import { sourceSinkType, SinkType } from '../import-types';
 
 interface SinkSectionProps {
   namespace: string;
@@ -41,7 +41,7 @@ const SinkUri: React.FC = () => (
 
 const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) => {
   const [resourceAlert, setResourceAlert] = React.useState(false);
-  const { setFieldValue, setFieldTouched, validateForm, initialValues } = useFormikContext<
+  const { setFieldValue, setFieldTouched, validateForm, initialValues, touched } = useFormikContext<
     FormikValues
   >();
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
@@ -69,8 +69,17 @@ const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) 
     ...knativeEventingResourcesBroker(namespace),
   ];
 
-  const handleOnLoad = (resourceList: { [key: string]: string }) =>
-    _.isEmpty(resourceList) ? setResourceAlert(true) : setResourceAlert(false);
+  const handleOnLoad = (resourceList: { [key: string]: string }) => {
+    if (_.isEmpty(resourceList)) {
+      setResourceAlert(true);
+      if (!touched.sinkType) {
+        setFieldValue('sinkType', SinkType.Uri);
+        setFieldTouched('sinkType', true);
+      }
+    } else {
+      setResourceAlert(false);
+    }
+  };
 
   // filter out channels backing brokers
   const resourceFilter = (resource: K8sResourceKind) => {
