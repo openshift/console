@@ -1,0 +1,22 @@
+// Generic popover button styling
+
+@mixin co-popover-button() {
+  // Use `background-image: linear-gradient` to draw a dotted underline. This gives us more control over the styling.
+  background-image: linear-gradient(
+    to right,
+    var(--pf-c-button--m-plain--Color) 33%,
+    rgba(255, 255, 255, 0) 0%
+  );
+  background-position: bottom;
+  background-size: 3px 1px;
+  background-repeat: repeat-x;
+  padding: 0 !important;
+  &:focus,
+  &:hover {
+    background-image: linear-gradient(
+      to right,
+      var(--pf-c-button--m-tertiary--Color) 33%,
+      rgba(255, 255, 255, 0) 0%
+    );
+  }
+}
