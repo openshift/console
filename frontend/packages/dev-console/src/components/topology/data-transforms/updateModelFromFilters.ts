@@ -126,6 +126,13 @@ export const updateModelFromFilters = (
       dataModel.nodes.find((n) => n.id === d.target),
   );
 
+  // TODO: This works until some extension adds edges they don't want to show
+  // edges may have been hidden via the createAggregateEdges call last time.
+  // make them visible now so they reappear when the hidden endpoints reappear.
+  edges.forEach((edge) => {
+    edge.visible = true;
+  });
+
   // Create any aggregate edges (those create from hidden endpoints)
   dataModel.edges = createAggregateEdges(TYPE_AGGREGATE_EDGE, edges, dataModel.nodes);
 
