@@ -1,4 +1,5 @@
 import { createContext } from 'react';
+import { observable, computed } from 'mobx';
 import { Model } from '@patternfly/react-topology';
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
 import {
@@ -27,6 +28,7 @@ export class ExtensibleModel {
 
   private namespaceP: string;
 
+  @observable
   private modelP: Model = { nodes: [], edges: [] };
 
   public dataResources: TopologyDataResources = {};
@@ -123,12 +125,17 @@ export class ExtensibleModel {
     }, []);
   }
 
-  public addDataModel = (model: Model) => {
-    addToTopologyDataModel(model, this.model, this.dataModelDepicters);
-  };
+  public set model(model: Model) {
+    this.modelP = model;
+  }
 
   public get model(): Model {
     return this.modelP;
+  }
+
+  @computed
+  public get isEmptyModel(): boolean {
+    return (this.modelP?.nodes?.length ?? 0) === 0;
   }
 
   public getExtensionModels = (resources: TopologyDataResources): Promise<Model> => {

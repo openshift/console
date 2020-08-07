@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useExtensions } from '@console/plugin-sdk';
 import { isTopologyDataModelFactory, TopologyDataModelFactory } from '../../extensions/topology';
-import DataModelProvider from './data-transforms/DataModelProvider';
 import { DataModelExtension } from './data-transforms/DataModelExtension';
 import { TopologyExtensionLoader } from './TopologyExtensionLoader';
 
@@ -17,9 +16,8 @@ export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
   render,
 }) => {
   const modelFactories = useExtensions<TopologyDataModelFactory>(isTopologyDataModelFactory);
-
   return (
-    <DataModelProvider namespace={namespace}>
+    <>
       {modelFactories.map((factory) => (
         <DataModelExtension key={factory.properties.id} dataModelFactory={factory} />
       ))}
@@ -28,7 +26,7 @@ export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
         namespace={namespace}
         showGraphView={showGraphView}
       />
-    </DataModelProvider>
+    </>
   );
 };
 
