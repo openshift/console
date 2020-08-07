@@ -77,7 +77,7 @@ const HelmReleaseNode: React.FC<HelmReleaseNodeProps> = ({
       <GroupNode
         kind="HelmRelease"
         element={element}
-        typeIconClass="icon-helm"
+        typeIconClass={element.getData().data.chartIcon || 'icon-helm'}
         groupResources={element.getData().groupResources}
       />
     </g>
