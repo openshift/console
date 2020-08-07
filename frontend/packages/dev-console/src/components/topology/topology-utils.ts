@@ -56,9 +56,8 @@ export const getNamespaceDashboardKialiLink = (
   consoleLinks: K8sResourceKind[],
   namespace: string,
 ): string => {
-  const kialiLink = _.find(consoleLinks, (consoleLink) =>
-    _.includes(consoleLink.spec?.namespaceDashboard?.namespaces, namespace),
-  )?.spec?.href;
+  const kialiLink = _.find(consoleLinks, ['metadata.name', `kiali-namespace-${namespace}`])?.spec
+    ?.href;
   return kialiLink || '';
 };
 
