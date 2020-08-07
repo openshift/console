@@ -8,7 +8,7 @@ import {
 import { RootState } from '@console/internal/redux';
 import { getRouteWebURL } from '@console/internal/components/routes';
 import { OverviewItem } from '@console/shared';
-import { Node, Edge } from '@patternfly/react-topology';
+import { Node, Edge, GraphElement } from '@patternfly/react-topology';
 import {
   createResourceConnection,
   updateResourceApplication,
@@ -161,4 +161,11 @@ export const removeTopologyResourceConnection = (edge: Edge): Promise<any> => {
   }
 
   return removeResourceConnection(source, target);
+};
+
+export const isOperatorBackedNode = (element: Node | GraphElement): boolean => {
+  if (element?.getData()?.resources?.isOperatorBackedService) {
+    return true;
+  }
+  return element?.hasParent() ? isOperatorBackedNode(element.getParent()) : false;
 };

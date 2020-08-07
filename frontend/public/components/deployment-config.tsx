@@ -1,7 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-
-import { Status, PodRingController } from '@console/shared';
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
+import { useSelector } from 'react-redux';
+import { RootState } from '@console/internal/redux';
+import { Status, PodRingController, useCsvWatchResource } from '@console/shared';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
 import {
@@ -10,6 +13,7 @@ import {
   EditHorizontalPodAutoScaler,
   hideActionForHPAs,
 } from '@console/app/src/actions/modify-hpa';
+import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { k8sCreate, K8sKind, K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { errorModal } from './modals';
 import { DeploymentConfigModel } from '../models';
@@ -33,7 +37,6 @@ import {
   togglePaused,
 } from './utils';
 import { ReplicationControllersPage } from './replication-controller';
-
 import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
 
 const DeploymentConfigsReference: K8sResourceKindReference = 'DeploymentConfig';
@@ -269,12 +272,15 @@ const pages = [
 export const DeploymentConfigsDetailsPage: React.FC<DeploymentConfigsDetailsPageProps> = (
   props,
 ) => {
+  const ns = useSelector((state: RootState) => getActiveNamespace(state));
+  const { csvData } = useCsvWatchResource(ns);
   return (
     <DetailsPage
       {...props}
       kind={DeploymentConfigsReference}
       menuActions={menuActions}
       pages={pages}
+      customData={{ csvs: csvData }}
     />
   );
 };
@@ -311,14 +317,18 @@ export const DeploymentConfigsList: React.FC = (props) => (
 );
 DeploymentConfigsList.displayName = 'DeploymentConfigsList';
 
-export const DeploymentConfigsPage: React.FC<DeploymentConfigsPageProps> = (props) => (
-  <ListPage
-    kind={DeploymentConfigsReference}
-    ListComponent={DeploymentConfigsList}
-    canCreate={true}
-    {...props}
-  />
-);
+export const DeploymentConfigsPage: React.FC<DeploymentConfigsPageProps> = (props) => {
+  const { csvData } = useCsvWatchResource(props.namespace);
+  return (
+    <ListPage
+      kind={DeploymentConfigsReference}
+      ListComponent={DeploymentConfigsList}
+      canCreate={true}
+      customData={{ csvs: csvData }}
+      {...props}
+    />
+  );
+};
 DeploymentConfigsPage.displayName = 'DeploymentConfigsListPage';
 
 type ReplicationControllersTabProps = {

@@ -13,7 +13,7 @@ import { workloadActions } from '../actions/workloadActions';
 import { groupActions } from '../actions/groupActions';
 import { graphActions } from '../actions/graphActions';
 import { TopologyApplicationObject } from '../topology-types';
-import { getResource } from '../topology-utils';
+import { getResource, isOperatorBackedNode } from '../topology-utils';
 
 const onKebabOptionClick = (option: KebabOption) => {
   if (option.callback) {
@@ -40,11 +40,22 @@ export const createMenuItems = (actions: KebabMenuOption[]) =>
 
 export const workloadContextMenu = (element: Node) =>
   createMenuItems(
-    kebabOptionsToMenu(workloadActions(getResource(element), isWorkloadRegroupable(element))),
+    kebabOptionsToMenu(
+      workloadActions(
+        getResource(element),
+        isWorkloadRegroupable(element),
+        element.getData().resources,
+        isOperatorBackedNode(element),
+      ),
+    ),
   );
 
 export const noRegroupWorkloadContextMenu = (element: Node) =>
-  createMenuItems(kebabOptionsToMenu(workloadActions(getResource(element), false)));
+  createMenuItems(
+    kebabOptionsToMenu(
+      workloadActions(getResource(element), false, null, isOperatorBackedNode(element)),
+    ),
+  );
 
 export const groupContextMenu = (element: Node, connectorSource?: Node) => {
   const applicationData: TopologyApplicationObject = {

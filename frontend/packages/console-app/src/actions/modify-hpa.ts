@@ -6,7 +6,7 @@ import {
   referenceForModel,
 } from '@console/internal/module/k8s';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
-import deleteHPAModal from '@console/dev-console/src/components/hpa/DeleteHPAModal';
+import { isOperatorBackedService, deleteHPAModal, isHelmResource } from '@console/shared';
 
 type RelatedResources = {
   hpas?: HorizontalPodAutoscalerKind[];
@@ -18,14 +18,23 @@ const hasHPAs = (mapOfResources: RelatedResources) =>
 const hpaRoute = ({ metadata: { name, namespace } }: K8sResourceCommon, kind: K8sKind) =>
   `/workload-hpa/ns/${namespace}/${referenceForModel(kind)}/${name}`;
 
+const isOperatorBackedWorkload = (
+  obj: K8sResourceCommon,
+  customData?: { [key: string]: any },
+): boolean => customData?.isOperatorBacked || isOperatorBackedService(obj, customData?.csvs);
+
+const shouldHideHPA = (obj: K8sResourceCommon, customData?: { [key: string]: any }) =>
+  isHelmResource(obj) || isOperatorBackedWorkload(obj, customData);
+
 export const AddHorizontalPodAutoScaler: KebabAction = (
   kind: K8sKind,
   obj: K8sResourceCommon,
   resources: RelatedResources,
+  customData?: { [key: string]: any },
 ) => ({
   label: `Add ${HorizontalPodAutoscalerModel.label}`,
   href: hpaRoute(obj, kind),
-  hidden: hasHPAs(resources),
+  hidden: hasHPAs(resources) || shouldHideHPA(obj, customData),
   accessReview: {
     group: HorizontalPodAutoscalerModel.apiGroup,
     resource: HorizontalPodAutoscalerModel.plural,
@@ -38,10 +47,11 @@ export const EditHorizontalPodAutoScaler: KebabAction = (
   kind: K8sKind,
   obj: K8sResourceCommon,
   resources: RelatedResources,
+  customData?: { [key: string]: any },
 ) => ({
   label: `Edit ${HorizontalPodAutoscalerModel.label}`,
   href: hpaRoute(obj, kind),
-  hidden: !hasHPAs(resources),
+  hidden: !hasHPAs(resources) || shouldHideHPA(obj, customData),
   accessReview: {
     group: HorizontalPodAutoscalerModel.apiGroup,
     resource: HorizontalPodAutoscalerModel.plural,
@@ -54,6 +64,7 @@ export const DeleteHorizontalPodAutoScaler: KebabAction = (
   kind: K8sKind,
   obj: K8sResourceCommon,
   resources: RelatedResources,
+  customData?: { [key: string]: any },
 ) => ({
   label: `Remove ${HorizontalPodAutoscalerModel.label}`,
   callback: () => {
@@ -62,7 +73,7 @@ export const DeleteHorizontalPodAutoScaler: KebabAction = (
       hpa: resources?.hpas?.[0],
     });
   },
-  hidden: !hasHPAs(resources),
+  hidden: !hasHPAs(resources) || shouldHideHPA(obj, customData),
   accessReview: {
     group: HorizontalPodAutoscalerModel.apiGroup,
     resource: HorizontalPodAutoscalerModel.plural,

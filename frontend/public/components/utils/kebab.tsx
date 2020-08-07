@@ -387,13 +387,13 @@ export const getExtensionsKebabActionsForKind = (kind: K8sKind) => {
 };
 
 export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
-  const { actions, kindObj, resource, isDisabled } = props;
+  const { actions, kindObj, resource, isDisabled, customData } = props;
 
   if (!kindObj) {
     return null;
   }
   const options = _.reject(
-    actions.map((a) => a(kindObj, resource)),
+    actions.map((a) => a(kindObj, resource, null, customData)),
     'hidden',
   );
   return (
@@ -548,6 +548,7 @@ export type ResourceKebabProps = {
   kind: K8sResourceKindReference;
   resource: K8sResourceKind;
   isDisabled?: boolean;
+  customData?: { [key: string]: any };
 };
 
 type KebabSubMenu = {
