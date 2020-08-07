@@ -27,7 +27,7 @@ import {
   MockKnativeResources,
   sampleDeploymentsCamelConnector,
 } from './topology-knative-test-data';
-import { RouteModel, ServiceModel, EventingBrokerModel } from '../../models';
+import { ServiceModel, EventingBrokerModel } from '../../models';
 import {
   applyKnativeDisplayOptions,
   EXPAND_KNATIVE_SERVICES_FILTER_ID,
@@ -173,9 +173,8 @@ describe('knative data transformer ', () => {
       .then(() => {
         const allArgs = spy.calls.allArgs();
         const removedModels = allArgs.map((arg) => arg[0]);
-        expect(spy.calls.count()).toEqual(2);
+        expect(spy.calls.count()).toEqual(1);
         expect(removedModels.find((rm) => rm.id === ServiceModel.id)).toBeTruthy();
-        expect(removedModels.find((rm) => rm.id === RouteModel.id)).toBeTruthy();
         done();
       })
       .catch((err) => fail(err));
