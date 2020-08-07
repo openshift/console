@@ -133,7 +133,7 @@ export const CreateOCSServiceForm = withHandlePromise<
         <p>
           Selected nodes will be labeled with{' '}
           <code>cluster.ocs.openshift.io/openshift-storage=&quot;&quot;</code> to create the OCS
-          Service.
+          Service unless they are already labeled.
         </p>
         <Alert
           className="co-alert"
