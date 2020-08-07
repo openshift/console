@@ -83,6 +83,31 @@ export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }:
   }
 };
 
+const windowsToolsUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
+  const state = getState();
+  if (iGetCommonData(state, id, VMWizardProps.isProviderImport)) {
+    return;
+  }
+  if (!hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS)) {
+    return;
+  }
+  const mountWindowsGuestTools = iGetVmSettingValue(
+    state,
+    id,
+    VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS,
+  );
+  const windowsTools = getStorages(state, id).find(
+    (storage) => !!isWinToolsImage(getVolumeContainerImage(storage.volume)),
+  );
+
+  if (mountWindowsGuestTools && !windowsTools) {
+    dispatch(vmWizardInternalActions[InternalActionType.UpdateStorage](id, windowsToolsStorage));
+  }
+  if (!mountWindowsGuestTools && windowsTools) {
+    dispatch(vmWizardInternalActions[InternalActionType.RemoveStorage](id, windowsTools.id));
+  }
+};
+
 export const internalStorageDiskBusUpdater = ({
   id,
   prevState,
@@ -142,31 +167,6 @@ export const internalStorageDiskBusUpdater = ({
 
   if (someBusChanged) {
     dispatch(vmWizardInternalActions[InternalActionType.SetStorages](id, updatedStorages));
-  }
-};
-
-const windowsToolsUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
-  const state = getState();
-  if (iGetCommonData(state, id, VMWizardProps.isProviderImport)) {
-    return;
-  }
-  if (!hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS)) {
-    return;
-  }
-  const mountWindowsGuestTools = iGetVmSettingValue(
-    state,
-    id,
-    VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS,
-  );
-  const windowsTools = getStorages(state, id).find(
-    (storage) => !!isWinToolsImage(getVolumeContainerImage(storage.volume)),
-  );
-
-  if (mountWindowsGuestTools && !windowsTools) {
-    dispatch(vmWizardInternalActions[InternalActionType.UpdateStorage](id, windowsToolsStorage));
-  }
-  if (!mountWindowsGuestTools && windowsTools) {
-    dispatch(vmWizardInternalActions[InternalActionType.RemoveStorage](id, windowsTools.id));
   }
 };
 
