@@ -1,5 +1,4 @@
 import { FLAGS } from '@console/shared';
-import { isWinToolsImage, getVolumeContainerImage } from '../../../../selectors/vm';
 import {
   hasVmSettingsChanged,
   hasVMSettingsValueChanged,
@@ -20,8 +19,6 @@ import {
 import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
 import { CUSTOM_FLAVOR, TEMPLATE_DATAVOLUME_ANNOTATION } from '../../../../constants/vm';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
-import { windowsToolsStorage } from '../initial-state/storage-tab-initial-state';
-import { getStorages } from '../../selectors/selectors';
 import { prefillVmTemplateUpdater } from './prefill-vm-template-state-update';
 import { iGetAnnotation } from '../../../../selectors/immutable/common';
 
@@ -159,16 +156,14 @@ const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
 
   const os = iGetVmSettingValue(state, id, VMSettingsField.OPERATING_SYSTEM);
   const isWindows = os?.startsWith('win');
-  const windowsTools = getStorages(state, id).find(
-    (storage) => !!isWinToolsImage(getVolumeContainerImage(storage.volume)),
-  );
 
-  if (isWindows && !windowsTools) {
-    dispatch(vmWizardInternalActions[InternalActionType.UpdateStorage](id, windowsToolsStorage));
-  }
-  if (!isWindows && windowsTools) {
-    dispatch(vmWizardInternalActions[InternalActionType.RemoveStorage](id, windowsTools.id));
-  }
+  dispatch(
+    vmWizardInternalActions[InternalActionType.UpdateVmSettingsField](
+      id,
+      VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS,
+      { isHidden: asHidden(!isWindows, VMSettingsField.OPERATING_SYSTEM), value: isWindows },
+    ),
+  );
 };
 
 const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {

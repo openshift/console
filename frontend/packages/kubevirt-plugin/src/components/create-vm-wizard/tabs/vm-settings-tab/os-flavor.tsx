@@ -25,6 +25,7 @@ import {
   getWorkloadProfiles,
 } from '../../../../selectors/vm-template/combined-dependent';
 import { flavorSort, ignoreCaseSort } from '../../../../utils/sort';
+import { pluralize } from '../../../../utils/strings';
 import { VMSettingsField } from '../../types';
 import { iGetFieldValue } from '../../selectors/immutable/field';
 import { getPlaceholder, getFieldId } from '../../utils/renderable-field-utils';
@@ -48,6 +49,7 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
     userTemplate,
     operatinSystemField,
     cloneBaseDiskImageField,
+    mountWindowsGuestToolsField,
     flavorField,
     workloadProfile,
     cnvBaseImages,
@@ -60,6 +62,7 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
     const display = iGet(operatinSystemField, 'display');
     const displayOnly = !!display;
     const cloneBaseDiskImage = iGetFieldValue(cloneBaseDiskImageField);
+    const mountWindowsGuestTools = iGetFieldValue(mountWindowsGuestToolsField);
 
     const params = {
       userTemplate,
@@ -145,6 +148,22 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
     );
     const baseImage = operatingSystemBaseImages.find((image) => image.id === os);
 
+    const numOfMountedDisks = cloneBaseDiskImage + mountWindowsGuestTools; // using boolean addition operator to count true
+    const mountedDisksHelpMsg = numOfMountedDisks > 0 && (
+      <Text className="kv-create-vm__input-text-help-msg">
+        View the mounted {pluralize(numOfMountedDisks, 'disk')} in the{' '}
+        <Button
+          isDisabled={!goToStorageStep}
+          isInline
+          onClick={goToStorageStep}
+          variant={ButtonVariant.link}
+        >
+          <strong>storage</strong>
+        </Button>{' '}
+        step
+      </Text>
+    );
+
     return (
       <>
         <FormFieldRow
@@ -184,21 +203,21 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
               onChange={(v) => onChange(VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE, v)}
             />
           </FormField>
-          {cloneBaseDiskImage && (
-            <Text>
-              View the cloned disk in the{' '}
-              <Button
-                isDisabled={!goToStorageStep}
-                isInline
-                onClick={goToStorageStep}
-                variant={ButtonVariant.link}
-              >
-                <strong>storage</strong>
-              </Button>{' '}
-              step
-            </Text>
-          )}
         </FormFieldRow>
+        <FormFieldRow
+          field={mountWindowsGuestToolsField}
+          fieldType={FormFieldType.INLINE_CHECKBOX}
+          loadingResources={loadingResources}
+        >
+          <FormField>
+            <Checkbox
+              className="kv-create-vm__input-checkbox"
+              id={getFieldId(VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS)}
+              onChange={(v) => onChange(VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS, v)}
+            />
+          </FormField>
+        </FormFieldRow>
+        {mountedDisksHelpMsg}
         <FormFieldRow
           field={flavorField}
           fieldType={FormFieldType.SELECT}
@@ -228,6 +247,7 @@ type OSFlavorProps = {
   flavorField: any;
   operatinSystemField: any;
   cloneBaseDiskImageField: any;
+  mountWindowsGuestToolsField: any;
   userTemplate: string;
   workloadProfile: string;
   cnvBaseImages: any;

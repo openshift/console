@@ -88,6 +88,7 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
           operatinSystemField={this.getField(VMSettingsField.OPERATING_SYSTEM)}
           flavorField={this.getField(VMSettingsField.FLAVOR)}
           cloneBaseDiskImageField={this.getField(VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE)}
+          mountWindowsGuestToolsField={this.getField(VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS)}
           userTemplate={this.getFieldValue(VMSettingsField.USER_TEMPLATE)}
           workloadProfile={this.getFieldValue(VMSettingsField.WORKLOAD_PROFILE)}
           cnvBaseImages={cnvBaseImages}

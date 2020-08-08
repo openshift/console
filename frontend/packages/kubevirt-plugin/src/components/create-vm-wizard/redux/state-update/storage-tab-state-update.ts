@@ -1,8 +1,11 @@
 import { ValidationErrorType } from '@console/shared/src';
-import { VMSettingsField, VMWizardStorage, VMWizardStorageType } from '../../types';
+import { VMSettingsField, VMWizardStorage, VMWizardStorageType, VMWizardProps } from '../../types';
 import { InternalActionType, UpdateOptions } from '../types';
 import { hasStoragesChanged, iGetProvisionSourceStorage } from '../../selectors/immutable/storage';
-import { getNewProvisionSourceStorage } from '../initial-state/storage-tab-initial-state';
+import {
+  getNewProvisionSourceStorage,
+  windowsToolsStorage,
+} from '../initial-state/storage-tab-initial-state';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { StorageUISource } from '../../../modals/disk-modal/storage-ui-source';
@@ -10,9 +13,14 @@ import { getNextIDResolver } from '../../../../utils/utils';
 import { getStorages } from '../../selectors/selectors';
 import { vmWizardInternalActions } from '../internal-actions';
 import { getTemplateValidation } from '../../selectors/template';
+import { getVolumeContainerImage, isWinToolsImage } from '../../../../selectors/vm';
 import { TemplateValidations } from '../../../../utils/validations/template/template-validations';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
-import { hasVMSettingsValueChanged } from '../../selectors/immutable/vm-settings';
+import {
+  hasVMSettingsValueChanged,
+  iGetVmSettingValue,
+} from '../../selectors/immutable/vm-settings';
+import { iGetCommonData } from '../../selectors/immutable/selectors';
 
 export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
@@ -72,6 +80,31 @@ export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }:
         }),
       );
     }
+  }
+};
+
+const windowsToolsUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
+  const state = getState();
+  if (iGetCommonData(state, id, VMWizardProps.isProviderImport)) {
+    return;
+  }
+  if (!hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS)) {
+    return;
+  }
+  const mountWindowsGuestTools = iGetVmSettingValue(
+    state,
+    id,
+    VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS,
+  );
+  const windowsTools = getStorages(state, id).find(
+    (storage) => !!isWinToolsImage(getVolumeContainerImage(storage.volume)),
+  );
+
+  if (mountWindowsGuestTools && !windowsTools) {
+    dispatch(vmWizardInternalActions[InternalActionType.UpdateStorage](id, windowsToolsStorage));
+  }
+  if (!mountWindowsGuestTools && windowsTools) {
+    dispatch(vmWizardInternalActions[InternalActionType.RemoveStorage](id, windowsTools.id));
   }
 };
 
@@ -138,6 +171,8 @@ export const internalStorageDiskBusUpdater = ({
 };
 
 export const updateStorageTabState = (options: UpdateOptions) =>
-  [prefillInitialDiskUpdater, internalStorageDiskBusUpdater].forEach((updater) => {
-    updater && updater(options);
-  });
+  [prefillInitialDiskUpdater, windowsToolsUpdater, internalStorageDiskBusUpdater].forEach(
+    (updater) => {
+      updater && updater(options);
+    },
+  );
