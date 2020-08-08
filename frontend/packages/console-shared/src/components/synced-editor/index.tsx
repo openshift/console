@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { EditorType, EditorToggle } from './editor-toggle';
-import { prune } from '../../utils';
 import { safeJSToYAML, asyncYAMLToJS } from '../../utils/yaml';
 import { Alert, Button } from '@patternfly/react-core';
 
@@ -32,6 +31,7 @@ export const SyncedEditor: React.FC<SyncedEditorProps> = ({
   initialData = {},
   onChangeEditorType = _.noop,
   onChange = _.noop,
+  prune,
   YAMLEditor,
 }) => {
   const { formContext, yamlContext } = context;
@@ -71,7 +71,7 @@ export const SyncedEditor: React.FC<SyncedEditorProps> = ({
   };
 
   const handleToggleToYAML = () => {
-    setYAML(safeJSToYAML({ ...formData, spec: prune(formData.spec) }, yaml, YAML_TO_JS_OPTIONS));
+    setYAML(safeJSToYAML(prune?.(formData) ?? formData, yaml, YAML_TO_JS_OPTIONS));
     changeEditorType(EditorType.YAML);
   };
 
@@ -119,7 +119,12 @@ export const SyncedEditor: React.FC<SyncedEditorProps> = ({
         </Alert>
       )}
       {type === EditorType.Form ? (
-        <FormEditor formData={formData} onChange={handleFormDataChange} {...formContext} />
+        <FormEditor
+          formData={formData}
+          onChange={handleFormDataChange}
+          prune={prune}
+          {...formContext}
+        />
       ) : (
         <YAMLEditor initialYAML={yaml} onChange={handleYAMLChange} {...yamlContext} />
       )}
@@ -137,5 +142,6 @@ type SyncedEditorProps = {
   initialData?: K8sResourceKind;
   onChangeEditorType?: (newType: EditorType) => void;
   onChange?: (data: K8sResourceKind) => void;
+  prune?: (data: any) => any;
   YAMLEditor: React.FC<any>;
 };
