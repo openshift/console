@@ -81,7 +81,7 @@ const ImageStreamNsDropdown: React.FC = () => {
   return (
     <ResourceDropdownField
       name="imageStream.namespace"
-      label="Projects"
+      label="Project"
       title="Select Project"
       fullWidth
       required
