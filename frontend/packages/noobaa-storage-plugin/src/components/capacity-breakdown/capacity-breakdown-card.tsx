@@ -149,6 +149,8 @@ const BreakdownCard: React.FC = () => {
     top5MetricsStats[ind].color = Colors.OTHER;
   }
 
+  const emptyData = flattenedResponse.some(_.isEmpty);
+
   return (
     <DashboardCard>
       <DashboardCardHeader>
@@ -195,7 +197,7 @@ const BreakdownCard: React.FC = () => {
       <DashboardCardBody classname="nb-capacity-breakdown-card__body">
         <BreakdownCardBody
           isLoading={loading}
-          hasLoadError={queriesLoadError}
+          hasLoadError={queriesLoadError || emptyData}
           top5MetricsStats={top5MetricsStats}
           capacityUsed={totalUsed}
           metricTotal={totalUsed}

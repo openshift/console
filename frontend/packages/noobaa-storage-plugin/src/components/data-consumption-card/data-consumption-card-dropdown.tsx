@@ -163,7 +163,7 @@ export const DataConsumptionDropdown: React.FC<DataConsumptionDropdownProps> = (
       )}
       <OptionsMenu
         id="breakdown-options"
-        className="nb-data-consumption-card__dropdown-item"
+        className="nb-data-consumption-card__dropdown-item nb-data-consumption-card__options-menu"
         position={OptionsMenuPosition.right}
         menuItems={comboDropdownItems}
         toggle={

@@ -24,7 +24,7 @@ import { Metrics, CHART_LABELS } from '../../constants';
 import './data-consumption-card.scss';
 
 type PerformanceGraphProps = {
-  dataPoints: DataPoint[][];
+  dataPoints: DataPoint[][][];
   loading: boolean;
   loadError: boolean;
   metricType: string;
@@ -36,10 +36,11 @@ const PerformanceGraph: React.FC<PerformanceGraphProps> = ({
   loadError,
   metricType,
 }) => {
-  const [getData, putData] = dataPoints;
+  const [getDataArray, putDataArray] = dataPoints;
   const [containerRef, width] = useRefWidth();
   const humanize = metricType === Metrics.BANDWIDTH ? humanizeDecimalBytesPerSec : humanizeSeconds;
-
+  const getData = getDataArray?.[0];
+  const putData = putDataArray?.[0];
   const PUTLatestValue = humanize(getLatestValue(putData)).string;
   const GETLatestValue = humanize(getLatestValue(getData)).string;
 

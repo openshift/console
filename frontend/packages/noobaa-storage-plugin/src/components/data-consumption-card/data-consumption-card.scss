@@ -17,6 +17,10 @@
   }
 }
 
+.nb-data-consumption-card__options-menu > button {
+  width: 100%;
+}
+
 .nb-data-consumption-card__chart-label {
   margin-top: var(--pf-global--spacer--md);
 }

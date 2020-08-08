@@ -61,11 +61,11 @@ export const breakdownQueryMap = {
       model: null,
       metric: '',
       queries: {
+        [ObjectServiceDashboardQuery.RGW_TOTAL_USED]:
+          CAPACITY_BREAKDOWN_QUERIES[ObjectServiceDashboardQuery.RGW_TOTAL_USED],
         [ObjectServiceDashboardQuery.NOOBAA_TOTAL_USED]: `sum(${
           CAPACITY_BREAKDOWN_QUERIES[ObjectServiceDashboardQuery.NOOBAA_TOTAL_USED]
         })`,
-        [ObjectServiceDashboardQuery.RGW_TOTAL_USED]:
-          CAPACITY_BREAKDOWN_QUERIES[ObjectServiceDashboardQuery.RGW_TOTAL_USED],
         [ObjectServiceDashboardQuery.OBJECT_STORAGE_TOTAL_USED]:
           CAPACITY_BREAKDOWN_QUERIES[ObjectServiceDashboardQuery.OBJECT_STORAGE_TOTAL_USED],
       },
