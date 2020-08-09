@@ -265,6 +265,8 @@ export const menuActionOpenConsole = (kindObj: K8sKind, vmi: VMIKind): KebabOpti
   callback: () =>
     window.open(
       `/k8s/ns/${getNamespace(vmi)}/virtualmachineinstances/${getName(vmi)}/standaloneconsole`,
+      `${getName(vmi)}-console}`,
+      'modal=yes,alwaysRaised=yes,location=yes,width=1024,height=768',
     ),
 });
 
