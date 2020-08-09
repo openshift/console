@@ -63,59 +63,50 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
     } = this.props;
 
     const provisionSourceValue = this.getFieldValue(VMSettingsField.PROVISION_SOURCE_TYPE);
+    const storageBtn = (
+      <Button
+        isDisabled={!steps[VMWizardTab.STORAGE]?.canJumpTo}
+        isInline
+        onClick={() => goToStep(VMWizardTab.STORAGE)}
+        variant={ButtonVariant.link}
+      >
+        <strong>Storage</strong>
+      </Button>
+    );
+    const networkBtn = (
+      <Button
+        isDisabled={!steps[VMWizardTab.NETWORKING]?.canJumpTo}
+        isInline
+        onClick={() => goToStep(VMWizardTab.NETWORKING)}
+        variant={ButtonVariant.link}
+      >
+        <strong>Networking</strong>
+      </Button>
+    );
 
-    const getProvisionSourceDiskHelpMsg = () => {
-      const storageBtn = (
-        <Button
-          isDisabled={!steps[VMWizardTab.STORAGE]?.canJumpTo}
-          isInline
-          onClick={() => goToStep(VMWizardTab.STORAGE)}
-          variant={ButtonVariant.link}
-        >
-          <strong>storage</strong>
-        </Button>
-      );
-
-      const getStorageMsg = () => {
-        switch (provisionSourceValue) {
-          case ProvisionSource.URL.toString():
-            return <>Enter URL here or edit the mounted disk in the {storageBtn} step</>;
-          case ProvisionSource.CONTAINER.toString():
-            return (
-              <>Enter container image here or edit the mounted disk in the {storageBtn} step</>
-            );
-          case ProvisionSource.DISK.toString():
-            return <>Add a source disk in the {storageBtn} step</>;
-          default:
-            return null;
-        }
-      };
-
-      return (
-        <div className="pf-c-form__helper-text" aria-live="polite">
-          {getStorageMsg()}
-        </div>
-      );
+    const getStorageMsg = () => {
+      switch (provisionSourceValue) {
+        case ProvisionSource.URL.toString():
+          return <>Enter URL here or edit the mounted disk in the {storageBtn} step</>;
+        case ProvisionSource.CONTAINER.toString():
+          return <>Enter container image here or edit the mounted disk in the {storageBtn} step</>;
+        case ProvisionSource.DISK.toString():
+          return <>Add a source disk in the {storageBtn} step</>;
+        default:
+          return null;
+      }
     };
+    const provisionSourceDiskHelpMsg = (
+      <div className="pf-c-form__helper-text" aria-live="polite">
+        {getStorageMsg()}
+      </div>
+    );
 
-    const getProvisionSourceNetHelpMsg = () => {
-      const networkBtn = (
-        <Button
-          isDisabled={!steps[VMWizardTab.NETWORKING]?.canJumpTo}
-          isInline
-          onClick={() => goToStep(VMWizardTab.NETWORKING)}
-          variant={ButtonVariant.link}
-        >
-          <strong>networking</strong>
-        </Button>
-      );
-
-      return (
-        <div className="pf-c-form__helper-text" aria-live="polite">
-          Add a network interface in the {networkBtn} step
-        </div>
-      );
-    };
+    const provisionSourceNetHelpMsg = (
+      <div className="pf-c-form__helper-text" aria-live="polite">
+        Add a network interface in the {networkBtn} step
+      </div>
+    );
 
     return (
       <Form className="co-m-pane__body co-m-pane__form kubevirt-create-vm-modal__form">
@@ -198,9 +189,9 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
             ProvisionSource.URL.toString(),
             ProvisionSource.CONTAINER.toString(),
             ProvisionSource.DISK.toString(),
-          ].includes(provisionSourceValue) && getProvisionSourceDiskHelpMsg()}
+          ].includes(provisionSourceValue) && provisionSourceDiskHelpMsg}
           {[ProvisionSource.PXE.toString()].includes(provisionSourceValue) &&
-            getProvisionSourceNetHelpMsg()}
+            provisionSourceNetHelpMsg}
         </FormFieldMemoRow>
         <ContainerSource
           field={this.getField(VMSettingsField.CONTAINER_IMAGE)}
