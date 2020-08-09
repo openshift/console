@@ -110,11 +110,9 @@ const provisioningSourceUpdater = ({ id, prevState, dispatch, getState }: Update
   dispatch(
     vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, {
       [VMSettingsField.CONTAINER_IMAGE]: {
-        isRequired: asRequired(isContainer, VMSettingsField.PROVISION_SOURCE_TYPE),
         isHidden: asHidden(!isContainer, VMSettingsField.PROVISION_SOURCE_TYPE),
       },
       [VMSettingsField.IMAGE_URL]: {
-        isRequired: asRequired(isUrl, VMSettingsField.PROVISION_SOURCE_TYPE),
         isHidden: asHidden(!isUrl, VMSettingsField.PROVISION_SOURCE_TYPE),
       },
     }),
