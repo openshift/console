@@ -4,7 +4,7 @@ import { Breadcrumb, BreadcrumbItem, Button } from '@patternfly/react-core';
 
 import {
   getDefinitionKey,
-  getStoredSwagger,
+  getSwaggerDefinitions,
   getSwaggerPath,
   K8sKind,
   SwaggerDefinition,
@@ -29,7 +29,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
     return null;
   }
 
-  const allDefinitions: SwaggerDefinitions = getStoredSwagger();
+  const allDefinitions: SwaggerDefinitions = getSwaggerDefinitions();
   if (!allDefinitions) {
     return null;
   }

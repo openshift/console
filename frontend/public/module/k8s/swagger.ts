@@ -21,34 +21,13 @@ export const getDefinitionKey = _.memoize(
   referenceForModel,
 );
 
-// Cache parsed swagger to avoid reparsing the JSON each call.
-let swagger: SwaggerDefinitions;
-export const getStoredSwagger = (): SwaggerDefinitions => {
-  if (swagger) {
-    return swagger;
-  }
-  const json = window.localStorage.getItem(SWAGGER_LOCAL_STORAGE_KEY);
-  if (!json) {
-    return null;
-  }
-  try {
-    swagger = JSON.parse(json);
-    return swagger;
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error('Could not parse swagger JSON.', e);
-    return null;
-  }
-};
-
-const storeSwagger = (definitions: SwaggerDefinitions) => {
-  // Only store definitions to reduce the document size.
-  const json = JSON.stringify(definitions);
-  window.localStorage.setItem(SWAGGER_LOCAL_STORAGE_KEY, json);
-  swagger = definitions;
-};
+let swaggerDefinitions: SwaggerDefinitions;
+export const getSwaggerDefinitions = (): SwaggerDefinitions => swaggerDefinitions;
 
 export const fetchSwagger = async (): Promise<SwaggerDefinitions> => {
+  // Remove any old definitions from `localSotrage`. We rely on the browser cache now.
+  // TODO: We should be able to remove this in a future release.
+  localStorage.removeItem(SWAGGER_LOCAL_STORAGE_KEY);
   try {
     const response: SwaggerAPISpec = await coFetchJSON('api/kubernetes/openapi/v2');
     if (!response.definitions) {
@@ -56,8 +35,8 @@ export const fetchSwagger = async (): Promise<SwaggerDefinitions> => {
       console.error('Definitions missing in OpenAPI response.');
       return null;
     }
-    storeSwagger(response.definitions);
-    return response.definitions;
+    swaggerDefinitions = response.definitions;
+    return swaggerDefinitions;
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error('Could not get OpenAPI definitions', e);
@@ -66,12 +45,11 @@ export const fetchSwagger = async (): Promise<SwaggerDefinitions> => {
 };
 
 export const definitionFor = _.memoize((model: K8sKind): SwaggerDefinition => {
-  const allDefinitions: SwaggerDefinitions = getStoredSwagger();
-  if (!allDefinitions) {
+  if (!swaggerDefinitions) {
     return null;
   }
-  const key = getDefinitionKey(model, allDefinitions);
-  return _.get(allDefinitions, key);
+  const key = getDefinitionKey(model, swaggerDefinitions);
+  return _.get(swaggerDefinitions, key);
 }, referenceForModel);
 
 const getRef = (definition: SwaggerDefinition): string => {
@@ -102,12 +80,11 @@ export const getSwaggerPath = (
 };
 
 const findDefinition = (kindObj: K8sKind, propertyPath: string[]): SwaggerDefinition => {
-  const allDefinitions: SwaggerDefinitions = getStoredSwagger();
-  if (!allDefinitions) {
+  if (!swaggerDefinitions) {
     return null;
   }
 
-  const rootPath = getDefinitionKey(kindObj, allDefinitions);
+  const rootPath = getDefinitionKey(kindObj, swaggerDefinitions);
   const path = propertyPath.reduce(
     (currentPath: string[], nextProperty: string, i: number): string[] => {
       if (!currentPath) {
@@ -115,12 +92,12 @@ const findDefinition = (kindObj: K8sKind, propertyPath: string[]): SwaggerDefini
       }
       // Don't follow the last reference since the description is not as good.
       const followRef = i !== propertyPath.length - 1;
-      return getSwaggerPath(allDefinitions, currentPath, nextProperty, followRef);
+      return getSwaggerPath(swaggerDefinitions, currentPath, nextProperty, followRef);
     },
     [rootPath],
   );
 
-  return path ? (_.get(allDefinitions, path) as SwaggerDefinition) : null;
+  return path ? (_.get(swaggerDefinitions, path) as SwaggerDefinition) : null;
 };
 
 export const getPropertyDescription = (
@@ -133,12 +110,11 @@ export const getPropertyDescription = (
 };
 
 export const getResourceDescription = _.memoize((kindObj: K8sKind): string => {
-  const allDefinitions: SwaggerDefinitions = getStoredSwagger();
-  if (!allDefinitions) {
+  if (!swaggerDefinitions) {
     return null;
   }
-  const key = getDefinitionKey(kindObj, allDefinitions);
-  return _.get(allDefinitions, [key, 'description']);
+  const key = getDefinitionKey(kindObj, swaggerDefinitions);
+  return _.get(swaggerDefinitions, [key, 'description']);
 }, referenceForModel);
 
 export type SwaggerDefinition = {

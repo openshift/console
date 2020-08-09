@@ -5,7 +5,7 @@ import {
 } from 'monaco-languageclient/lib/monaco-converter';
 import { getLanguageService, TextDocument } from 'yaml-language-server';
 import { openAPItoJSONSchema } from '@console/internal/module/k8s/openapi-to-json-schema';
-import { getStoredSwagger } from '@console/internal/module/k8s/swagger';
+import { getSwaggerDefinitions } from '@console/internal/module/k8s/swagger';
 import { global_BackgroundColor_dark_100 as editorBackground } from '@patternfly/react-tokens';
 
 window.monaco.editor.defineTheme('console', {
@@ -62,7 +62,7 @@ export const createYAMLService = () => {
   const yamlService = getLanguageService(resolveSchema, workspaceContext, []);
 
   // Prepare the schema
-  const yamlOpenAPI = getStoredSwagger();
+  const yamlOpenAPI = getSwaggerDefinitions();
 
   // Convert the openAPI schema to something the language server understands
   const kubernetesJSONSchema = openAPItoJSONSchema(yamlOpenAPI);
