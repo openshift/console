@@ -103,6 +103,44 @@ export class StorageClassForm_ extends React.Component<
   // For 'csi' storage type
   CSIStorageTypes = Object.freeze({
     ...this.getExtensionsStorageClassProvisioners(Provisioner.CSI),
+    'ebs.csi.aws.com': {
+      title: 'AWS CSI',
+      provisioner: 'ebs.csi.aws.com',
+      allowVolumeExpansion: true,
+      parameters: {
+        type: {
+          name: 'Type',
+          values: { gp2: 'gp2', io1: 'io1', sc1: 'sc1', st1: 'st1', standard: 'standard' },
+          hintText: 'Select AWS Type. Default is gp2',
+        },
+        iopsPerGB: {
+          name: 'IOPS Per GiB',
+          hintText: 'I/O operations per second per GiB',
+          validation: (params) => {
+            if (params.iopsPerGB.value && !params.iopsPerGB.value.match(/^\d+$/)) {
+              return 'IOPS per GiB must be a number';
+            }
+            return null;
+          },
+          visible: (params) => _.get(params, 'type.value') === 'io1',
+        },
+        fsType: {
+          name: 'Filesystem Type',
+          hintText: 'Filesystem type to use during volume creation. Default is ext4.',
+          values: { ext4: 'ext4', xfs: 'xfs', ext2: 'ext2', ext3: 'ext3' },
+        },
+        encrypted: {
+          name: 'Encrypted',
+          type: 'checkbox',
+          format: (value) => value.toString(),
+        },
+        kmsKeyId: {
+          name: 'KMS Key ID',
+          hintText: 'The full Amazon Resource Name of the key to use when encrypting the volume',
+          visible: (params) => _.get(params, 'encrypted.value', false),
+        },
+      },
+    },
   });
 
   // For 'other' storage type
@@ -130,7 +168,7 @@ export class StorageClassForm_ extends React.Component<
           name: 'IOPS Per GiB',
           hintText: 'I/O operations per second per GiB',
           validation: (params) => {
-            if (params.iopsPerGB.value !== '' && !params.iopsPerGB.value.match(/^[1-9]\d*$/)) {
+            if (params.iopsPerGB.value && !params.iopsPerGB.value.match(/^\d+$/)) {
               return 'IOPS per GiB must be a number';
             }
             return null;
@@ -139,7 +177,7 @@ export class StorageClassForm_ extends React.Component<
         },
         fsType: {
           name: 'Filesystem Type',
-          hintText: 'Filesystem to Be Laid Out',
+          hintText: 'Filesystem type to use during volume creation. Default is ext4.',
         },
         encrypted: {
           name: 'Encrypted',
