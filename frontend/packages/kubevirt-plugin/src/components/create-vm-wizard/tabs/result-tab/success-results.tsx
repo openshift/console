@@ -25,6 +25,7 @@ import { isOvirtProvider } from '../../selectors/immutable/provider/ovirt/select
 const SuccessResultsComponent: React.FC<SuccessResultsProps> = ({
   isCreateTemplate,
   isOvirtImportProvider,
+  isProviderImport,
   name,
   namespace,
   className,
@@ -55,9 +56,7 @@ const SuccessResultsComponent: React.FC<SuccessResultsProps> = ({
     <EmptyState variant={EmptyStateVariant.full} className={className}>
       <EmptyStateIcon icon={CheckIcon} color="#92d400" />
       <Title headingLevel="h5" size="lg" data-test-id="kubevirt-wizard-success-result">
-        {isOvirtImportProvider
-          ? `Started import of  ${modelName}`
-          : `Successfully created ${modelName}.`}
+        {isProviderImport ? `Started import of ${modelName}` : `Successfully created ${modelName}.`}
       </Title>
       {!isOvirtImportProvider && (
         <EmptyStateBody key="info">
@@ -76,6 +75,7 @@ const SuccessResultsComponent: React.FC<SuccessResultsProps> = ({
 type SuccessResultsProps = {
   isCreateTemplate: boolean;
   isOvirtImportProvider: boolean;
+  isProviderImport: boolean;
   name: string;
   namespace: string;
   className?: string;
@@ -84,6 +84,7 @@ type SuccessResultsProps = {
 const stateToProps = (state, { wizardReduxID }) => ({
   isCreateTemplate: iGetCommonData(state, wizardReduxID, VMWizardProps.isCreateTemplate),
   isOvirtImportProvider: isOvirtProvider(state, wizardReduxID),
+  isProviderImport: iGetCommonData(state, wizardReduxID, VMWizardProps.isProviderImport),
   name: iGetVmSettingValue(state, wizardReduxID, VMSettingsField.NAME),
   namespace: iGetCommonData(state, wizardReduxID, VMWizardProps.activeNamespace),
 });
