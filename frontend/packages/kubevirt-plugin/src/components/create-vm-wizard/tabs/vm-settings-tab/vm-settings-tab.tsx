@@ -42,9 +42,15 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
   vmSettings,
   onFieldChange,
 }) => {
-  const getField = (key: VMSettingsField) => iGet(vmSettings, key);
-  const getFieldValue = (key: VMSettingsField) => iGetIn(vmSettings, [key, 'value']);
-  const onChange = (key: VMSettingsRenderableField) => (value) => onFieldChange(key, value);
+  const getField = React.useCallback((key: VMSettingsField) => iGet(vmSettings, key), [vmSettings]);
+  const getFieldValue = React.useCallback(
+    (key: VMSettingsField) => iGetIn(vmSettings, [key, 'value']),
+    [vmSettings],
+  );
+  const onChange = React.useCallback(
+    (key: VMSettingsRenderableField) => (value) => onFieldChange(key, value),
+    [onFieldChange],
+  );
 
   const goToStorageStep = React.useCallback(() => goToStep(VMWizardTab.STORAGE), [goToStep]);
   const goToNetworkingStep = React.useCallback(() => goToStep(VMWizardTab.NETWORKING), [goToStep]);

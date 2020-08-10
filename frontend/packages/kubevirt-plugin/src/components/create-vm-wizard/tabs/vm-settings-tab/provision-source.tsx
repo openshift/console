@@ -24,12 +24,12 @@ const ProvisionSourceDiskHelpMsg: React.FC<ProvisionSourceDiskHelpMsgProps> = ({
     </Button>
   );
   const getStorageMsg = () => {
-    switch (provisionSourceValue) {
-      case ProvisionSource.URL.toString():
+    switch (ProvisionSource.fromString(provisionSourceValue)) {
+      case ProvisionSource.URL:
         return <>Enter URL here or edit the mounted disk in the {storageBtn} step</>;
-      case ProvisionSource.CONTAINER.toString():
+      case ProvisionSource.CONTAINER:
         return <>Enter container image here or edit the mounted disk in the {storageBtn} step</>;
-      case ProvisionSource.DISK.toString():
+      case ProvisionSource.DISK:
         return <>Add a source disk in the {storageBtn} step</>;
       default:
         return null;
