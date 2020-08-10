@@ -1,15 +1,12 @@
 import * as React from 'react';
 import { FormSelect, FormSelectOption, Button, ButtonVariant } from '@patternfly/react-core';
+import { FormSelectPlaceholderOption } from '../../../form/form-select-placeholder-option';
+import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { FormFieldRow } from '../../form/form-field-row';
 import { FormField, FormFieldType } from '../../form/form-field';
 import { iGetFieldValue } from '../../selectors/immutable/field';
-import { FormSelectPlaceholderOption } from '../../../form/form-select-placeholder-option';
-import { ProvisionSource } from '../../../../constants/vm/provision-source';
-import { getPlaceholder } from '../../utils/renderable-field-utils';
-
-import '../../create-vm-wizard-footer.scss';
-import './vm-settings-tab.scss';
 import { VMSettingsField } from '../../types';
+import { getPlaceholder } from '../../utils/renderable-field-utils';
 
 export const ProvisionSourceComponent: React.FC<ProvisionSourceComponentProps> = React.memo(
   ({ provisionSourceField, onChange, goToStorageStep, getProvisionSourceAttribute }) => {
