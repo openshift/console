@@ -23,7 +23,7 @@ const ProvisionSourceDiskHelpMsg: React.FC<ProvisionSourceDiskHelpMsgProps> = ({
       <strong>Storage</strong>
     </Button>
   );
-  const getStorageMsg = React.useCallback(() => {
+  const getStorageMsg = () => {
     switch (provisionSourceValue) {
       case ProvisionSource.URL.toString():
         return <>Enter URL here or edit the mounted disk in the {storageBtn} step</>;
@@ -34,7 +34,7 @@ const ProvisionSourceDiskHelpMsg: React.FC<ProvisionSourceDiskHelpMsgProps> = ({
       default:
         return null;
     }
-  }, [provisionSourceValue, storageBtn]);
+  };
 
   return (
     <div className="pf-c-form__helper-text" aria-live="polite">
