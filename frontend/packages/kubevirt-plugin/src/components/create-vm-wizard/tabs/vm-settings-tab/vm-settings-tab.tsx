@@ -1,19 +1,9 @@
 import * as React from 'react';
-import {
-  Form,
-  FormSelect,
-  FormSelectOption,
-  TextArea,
-  TextInput,
-  Button,
-  ButtonVariant,
-} from '@patternfly/react-core';
+import { Form, TextArea, TextInput } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import { iGet, iGetIn } from '../../../../utils/immutable';
 import { FormFieldMemoRow } from '../../form/form-field-row';
 import { FormField, FormFieldType } from '../../form/form-field';
-import { FormSelectPlaceholderOption } from '../../../form/form-select-placeholder-option';
-import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { vmWizardActions } from '../../redux/actions';
 import {
   VMSettingsField,
@@ -25,7 +15,6 @@ import {
 } from '../../types';
 import { iGetVmSettings } from '../../selectors/immutable/vm-settings';
 import { ActionType } from '../../redux/types';
-import { getPlaceholder } from '../../utils/renderable-field-utils';
 import { iGetCommonData } from '../../selectors/immutable/selectors';
 import { getStepsMetadata } from '../../selectors/immutable/wizard-selectors';
 import { iGetProvisionSourceStorage } from '../../selectors/immutable/storage';
@@ -34,6 +23,7 @@ import { OSFlavor } from './os-flavor';
 import { UserTemplates } from './user-templates';
 import { MemoryCPU } from './memory-cpu';
 import { ContainerSource } from './container-source';
+import { ProvisionSourceComponent } from './provision-source';
 import { URLSource } from './url-source';
 
 import '../../create-vm-wizard-footer.scss';
@@ -61,52 +51,6 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
       steps,
       goToStep,
     } = this.props;
-
-    const provisionSourceValue = this.getFieldValue(VMSettingsField.PROVISION_SOURCE_TYPE);
-    const storageBtn = (
-      <Button
-        isDisabled={!steps[VMWizardTab.STORAGE]?.canJumpTo}
-        isInline
-        onClick={() => goToStep(VMWizardTab.STORAGE)}
-        variant={ButtonVariant.link}
-      >
-        <strong>Storage</strong>
-      </Button>
-    );
-    const networkBtn = (
-      <Button
-        isDisabled={!steps[VMWizardTab.NETWORKING]?.canJumpTo}
-        isInline
-        onClick={() => goToStep(VMWizardTab.NETWORKING)}
-        variant={ButtonVariant.link}
-      >
-        <strong>Networking</strong>
-      </Button>
-    );
-
-    const getStorageMsg = () => {
-      switch (provisionSourceValue) {
-        case ProvisionSource.URL.toString():
-          return <>Enter URL here or edit the mounted disk in the {storageBtn} step</>;
-        case ProvisionSource.CONTAINER.toString():
-          return <>Enter container image here or edit the mounted disk in the {storageBtn} step</>;
-        case ProvisionSource.DISK.toString():
-          return <>Add a source disk in the {storageBtn} step</>;
-        default:
-          return null;
-      }
-    };
-    const provisionSourceDiskHelpMsg = (
-      <div className="pf-c-form__helper-text" aria-live="polite">
-        {getStorageMsg()}
-      </div>
-    );
-
-    const provisionSourceNetHelpMsg = (
-      <div className="pf-c-form__helper-text" aria-live="polite">
-        Add a network interface in the {networkBtn} step
-      </div>
-    );
 
     return (
       <Form className="co-m-pane__body co-m-pane__form kubevirt-create-vm-modal__form">
@@ -168,31 +112,16 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
           cnvBaseImages={cnvBaseImages}
           onChange={this.props.onFieldChange}
         />
-        <FormFieldMemoRow
-          field={this.getField(VMSettingsField.PROVISION_SOURCE_TYPE)}
-          fieldType={FormFieldType.SELECT}
-        >
-          <FormField>
-            <FormSelect onChange={this.onChange(VMSettingsField.PROVISION_SOURCE_TYPE)}>
-              <FormSelectPlaceholderOption
-                placeholder={getPlaceholder(VMSettingsField.PROVISION_SOURCE_TYPE)}
-                isDisabled={!!this.getFieldValue(VMSettingsField.PROVISION_SOURCE_TYPE)}
-              />
-              {(this.getFieldAttribute(VMSettingsField.PROVISION_SOURCE_TYPE, 'sources') || []).map(
-                (source) => (
-                  <FormSelectOption key={source} value={source} label={source} />
-                ),
-              )}
-            </FormSelect>
-          </FormField>
-          {[
-            ProvisionSource.URL.toString(),
-            ProvisionSource.CONTAINER.toString(),
-            ProvisionSource.DISK.toString(),
-          ].includes(provisionSourceValue) && provisionSourceDiskHelpMsg}
-          {[ProvisionSource.PXE.toString()].includes(provisionSourceValue) &&
-            provisionSourceNetHelpMsg}
-        </FormFieldMemoRow>
+        <ProvisionSourceComponent
+          provisionSourceField={this.getField(VMSettingsField.PROVISION_SOURCE_TYPE)}
+          onChange={this.props.onFieldChange}
+          goToStorageStep={
+            steps[VMWizardTab.STORAGE]?.canJumpTo ? () => goToStep(VMWizardTab.STORAGE) : null
+          }
+          getProvisionSourceAttribute={(attr: string) =>
+            this.getFieldAttribute(VMSettingsField.PROVISION_SOURCE_TYPE, attr)
+          }
+        />
         <ContainerSource
           field={this.getField(VMSettingsField.CONTAINER_IMAGE)}
           onProvisionSourceStorageChange={updateStorage}
