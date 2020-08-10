@@ -40,7 +40,7 @@ export const TagsModal = withHandlePromise((props: TagsModalProps) => {
     const op = props.tags ? 'replace' : 'add';
     const patch = [{ path: props.path, op, value: _.fromPairs(usedTags) }];
     const promise = k8sPatch(props.kind, props.resource, patch);
-    props.handlePromise(promise, close);
+    props.handlePromise(promise, props.close);
   };
 
   return (
