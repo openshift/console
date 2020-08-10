@@ -7,16 +7,12 @@ import { FormField, FormFieldType } from '../../form/form-field';
 import { iGetFieldValue } from '../../selectors/immutable/field';
 import { VMSettingsField } from '../../types';
 import { getPlaceholder } from '../../utils/renderable-field-utils';
+import { iGet } from '../../../../utils/immutable';
 
 export const ProvisionSourceComponent: React.FC<ProvisionSourceComponentProps> = React.memo(
-  ({
-    provisionSourceField,
-    onChange,
-    goToStorageStep,
-    goToNetworkingStep,
-    getProvisionSourceAttribute,
-  }) => {
+  ({ provisionSourceField, onChange, goToStorageStep, goToNetworkingStep }) => {
     const provisionSourceValue = iGetFieldValue(provisionSourceField);
+    const sources = iGet(provisionSourceField, 'sources');
     const storageBtn = (
       <Button
         isDisabled={!goToStorageStep}
@@ -37,7 +33,7 @@ export const ProvisionSourceComponent: React.FC<ProvisionSourceComponentProps> =
         <strong>Networking</strong>
       </Button>
     );
-    const getStorageMsg = () => {
+    const getStorageMsg = React.useCallback(() => {
       switch (provisionSourceValue) {
         case ProvisionSource.URL.toString():
           return <>Enter URL here or edit the mounted disk in the {storageBtn} step</>;
@@ -48,7 +44,7 @@ export const ProvisionSourceComponent: React.FC<ProvisionSourceComponentProps> =
         default:
           return null;
       }
-    };
+    }, [provisionSourceValue, storageBtn]);
 
     const provisionSourceDiskHelpMsg = (
       <div className="pf-c-form__helper-text" aria-live="polite">
@@ -69,7 +65,7 @@ export const ProvisionSourceComponent: React.FC<ProvisionSourceComponentProps> =
               placeholder={getPlaceholder(VMSettingsField.PROVISION_SOURCE_TYPE)}
               isDisabled={!!provisionSourceValue}
             />
-            {(getProvisionSourceAttribute('sources') || []).map((source) => (
+            {(sources || []).map((source) => (
               <FormSelectOption key={source} value={source} label={source} />
             ))}
           </FormSelect>
@@ -91,5 +87,4 @@ type ProvisionSourceComponentProps = {
   onChange: (key: string, value: string | boolean) => void;
   goToStorageStep: () => void;
   goToNetworkingStep: () => void;
-  getProvisionSourceAttribute: (attr: string) => any;
 };

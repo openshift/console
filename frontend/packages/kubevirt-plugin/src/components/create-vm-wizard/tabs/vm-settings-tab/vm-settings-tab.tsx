@@ -121,9 +121,6 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
           goToNetworkingStep={
             steps[VMWizardTab.NETWORKING]?.canJumpTo ? () => goToStep(VMWizardTab.NETWORKING) : null
           }
-          getProvisionSourceAttribute={(attr: string) =>
-            this.getFieldAttribute(VMSettingsField.PROVISION_SOURCE_TYPE, attr)
-          }
         />
         <ContainerSource
           field={this.getField(VMSettingsField.CONTAINER_IMAGE)}
