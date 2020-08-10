@@ -9,53 +9,65 @@ import { VMSettingsField } from '../../types';
 import { getPlaceholder } from '../../utils/renderable-field-utils';
 import { iGet } from '../../../../utils/immutable';
 
+const ProvisionSourceDiskHelpMsg: React.FC<ProvisionSourceDiskHelpMsgProps> = ({
+  provisionSourceValue,
+  goToStorageStep,
+}) => {
+  const storageBtn = (
+    <Button
+      isDisabled={!goToStorageStep}
+      isInline
+      onClick={goToStorageStep}
+      variant={ButtonVariant.link}
+    >
+      <strong>Storage</strong>
+    </Button>
+  );
+  const getStorageMsg = React.useCallback(() => {
+    switch (provisionSourceValue) {
+      case ProvisionSource.URL.toString():
+        return <>Enter URL here or edit the mounted disk in the {storageBtn} step</>;
+      case ProvisionSource.CONTAINER.toString():
+        return <>Enter container image here or edit the mounted disk in the {storageBtn} step</>;
+      case ProvisionSource.DISK.toString():
+        return <>Add a source disk in the {storageBtn} step</>;
+      default:
+        return null;
+    }
+  }, [provisionSourceValue, storageBtn]);
+
+  return (
+    <div className="pf-c-form__helper-text" aria-live="polite">
+      {getStorageMsg()}
+    </div>
+  );
+};
+
+const ProvisionSourceNetHelpMsg: React.FC<ProvisionSourceNetHelpMsgProps> = ({
+  goToNetworkingStep,
+}) => {
+  const networkBtn = (
+    <Button
+      isDisabled={!goToNetworkingStep}
+      isInline
+      onClick={goToNetworkingStep}
+      variant={ButtonVariant.link}
+    >
+      <strong>Networking</strong>
+    </Button>
+  );
+
+  return (
+    <div className="pf-c-form__helper-text" aria-live="polite">
+      Add a network interface in the {networkBtn} step
+    </div>
+  );
+};
+
 export const ProvisionSourceComponent: React.FC<ProvisionSourceComponentProps> = React.memo(
   ({ provisionSourceField, onChange, goToStorageStep, goToNetworkingStep }) => {
     const provisionSourceValue = iGetFieldValue(provisionSourceField);
     const sources = iGet(provisionSourceField, 'sources');
-    const storageBtn = (
-      <Button
-        isDisabled={!goToStorageStep}
-        isInline
-        onClick={goToStorageStep}
-        variant={ButtonVariant.link}
-      >
-        <strong>Storage</strong>
-      </Button>
-    );
-    const networkBtn = (
-      <Button
-        isDisabled={!goToNetworkingStep}
-        isInline
-        onClick={goToNetworkingStep}
-        variant={ButtonVariant.link}
-      >
-        <strong>Networking</strong>
-      </Button>
-    );
-    const getStorageMsg = React.useCallback(() => {
-      switch (provisionSourceValue) {
-        case ProvisionSource.URL.toString():
-          return <>Enter URL here or edit the mounted disk in the {storageBtn} step</>;
-        case ProvisionSource.CONTAINER.toString():
-          return <>Enter container image here or edit the mounted disk in the {storageBtn} step</>;
-        case ProvisionSource.DISK.toString():
-          return <>Add a source disk in the {storageBtn} step</>;
-        default:
-          return null;
-      }
-    }, [provisionSourceValue, storageBtn]);
-
-    const provisionSourceDiskHelpMsg = (
-      <div className="pf-c-form__helper-text" aria-live="polite">
-        {getStorageMsg()}
-      </div>
-    );
-    const provisionSourceNetHelpMsg = (
-      <div className="pf-c-form__helper-text" aria-live="polite">
-        Add a network interface in the {networkBtn} step
-      </div>
-    );
 
     return (
       <FormFieldRow field={provisionSourceField} fieldType={FormFieldType.SELECT}>
@@ -74,13 +86,28 @@ export const ProvisionSourceComponent: React.FC<ProvisionSourceComponentProps> =
           ProvisionSource.URL.toString(),
           ProvisionSource.CONTAINER.toString(),
           ProvisionSource.DISK.toString(),
-        ].includes(provisionSourceValue) && provisionSourceDiskHelpMsg}
-        {[ProvisionSource.PXE.toString()].includes(provisionSourceValue) &&
-          provisionSourceNetHelpMsg}
+        ].includes(provisionSourceValue) && (
+          <ProvisionSourceDiskHelpMsg
+            provisionSourceValue={provisionSourceValue}
+            goToStorageStep={goToStorageStep}
+          />
+        )}
+        {[ProvisionSource.PXE.toString()].includes(provisionSourceValue) && (
+          <ProvisionSourceNetHelpMsg goToNetworkingStep={goToNetworkingStep} />
+        )}
       </FormFieldRow>
     );
   },
 );
+
+type ProvisionSourceDiskHelpMsgProps = {
+  provisionSourceValue: string;
+  goToStorageStep: () => void;
+};
+
+type ProvisionSourceNetHelpMsgProps = {
+  goToNetworkingStep: () => void;
+};
 
 type ProvisionSourceComponentProps = {
   provisionSourceField: any;
