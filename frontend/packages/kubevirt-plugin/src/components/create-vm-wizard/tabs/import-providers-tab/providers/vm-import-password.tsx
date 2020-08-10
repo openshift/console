@@ -16,9 +16,11 @@ import { getCheckConnectionAction as ovirtGetCheckConnectionAction } from '../..
 import { getCheckConnectionAction as vmwareGetCheckConnectionAction } from '../../../redux/state-update/providers/vmware/vmware-provider-actions';
 import {
   iGetProviderField,
+  iGetProviderFieldAttribute,
   iGetProviderFieldValue,
 } from '../../../selectors/immutable/provider/common';
 import { iGetOvirtFieldValue } from '../../../selectors/immutable/provider/ovirt/selectors';
+import { ValidationErrorType } from '@console/shared';
 
 const VMImportPasswordConnected: React.FC<VMImportPasswordConnectedProps> = React.memo(
   ({
@@ -71,6 +73,19 @@ const stateToProps = (state, { wizardReduxID, provider }) => {
     VMWareProviderField.PASSWORD,
   );
 
+  const validationField = iGetProviderFieldAttribute(
+    state,
+    wizardReduxID,
+    provider,
+    'validation',
+    OvirtProviderField.API_URL,
+    VMWareProviderField.HOSTNAME,
+  );
+  const isValidationCritical = [
+    ValidationErrorType.TrivialError,
+    ValidationErrorType.Error,
+  ].includes(iGet(validationField, 'type'));
+
   let hasAllPrerequisiteValuesFiled =
     iGet(passwordField, 'value') &&
     iGetProviderFieldValue(
@@ -86,7 +101,8 @@ const stateToProps = (state, { wizardReduxID, provider }) => {
       provider,
       OvirtProviderField.USERNAME,
       VMWareProviderField.USERNAME,
-    );
+    ) &&
+    (!validationField || !isValidationCritical);
 
   if (provider === VMImportProvider.OVIRT && hasAllPrerequisiteValuesFiled) {
     hasAllPrerequisiteValuesFiled = !!iGetOvirtFieldValue(
