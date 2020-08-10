@@ -19,7 +19,7 @@ import {
   PersistentVolumeClaimModel,
   StorageClassModel,
 } from '@console/internal/models';
-import { getName } from '@console/shared/src';
+import { getName, getAnnotations } from '@console/shared/src';
 import { getLoadedData, isLoaded, prefixedID, resolveDataVolumeName } from '../../../utils';
 import { validateDisk } from '../../../utils/validations/vm';
 import { isValidationError } from '../../../utils/validations/common';
@@ -47,6 +47,7 @@ import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
 import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
 import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
 import { AccessMode, DiskBus, DiskType, VolumeMode } from '../../../constants/vm/storage';
+import { DEFAULT_SC_ANNOTATION } from '../../../constants/sc';
 import { getPvcStorageSize } from '../../../selectors/pvc/selectors';
 import { K8sResourceSelectRow } from '../../form/k8s-resource-select-row';
 import { SizeUnitFormRow } from '../../form/size-unit-form-row';
@@ -548,6 +549,11 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               model={StorageClassModel}
               hasPlaceholder
               onChange={(sc) => onStorageClassNameChanged(sc || '')}
+              getResourceLabel={(sc) =>
+                getAnnotations(sc, {})[DEFAULT_SC_ANNOTATION] === 'true'
+                  ? `${getName(sc)} (default)`
+                  : getName(sc)
+              }
             />
           )}
           {isPlainDataVolume && (
