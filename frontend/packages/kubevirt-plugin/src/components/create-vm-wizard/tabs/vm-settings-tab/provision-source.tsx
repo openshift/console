@@ -9,7 +9,13 @@ import { VMSettingsField } from '../../types';
 import { getPlaceholder } from '../../utils/renderable-field-utils';
 
 export const ProvisionSourceComponent: React.FC<ProvisionSourceComponentProps> = React.memo(
-  ({ provisionSourceField, onChange, goToStorageStep, getProvisionSourceAttribute }) => {
+  ({
+    provisionSourceField,
+    onChange,
+    goToStorageStep,
+    goToNetworkingStep,
+    getProvisionSourceAttribute,
+  }) => {
     const provisionSourceValue = iGetFieldValue(provisionSourceField);
     const storageBtn = (
       <Button
@@ -23,9 +29,9 @@ export const ProvisionSourceComponent: React.FC<ProvisionSourceComponentProps> =
     );
     const networkBtn = (
       <Button
-        isDisabled={!goToStorageStep}
+        isDisabled={!goToNetworkingStep}
         isInline
-        onClick={goToStorageStep}
+        onClick={goToNetworkingStep}
         variant={ButtonVariant.link}
       >
         <strong>Networking</strong>
@@ -84,5 +90,6 @@ type ProvisionSourceComponentProps = {
   provisionSourceField: any;
   onChange: (key: string, value: string | boolean) => void;
   goToStorageStep: () => void;
+  goToNetworkingStep: () => void;
   getProvisionSourceAttribute: (attr: string) => any;
 };

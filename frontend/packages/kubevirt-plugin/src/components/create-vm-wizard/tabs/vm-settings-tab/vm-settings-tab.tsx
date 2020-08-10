@@ -118,6 +118,9 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
           goToStorageStep={
             steps[VMWizardTab.STORAGE]?.canJumpTo ? () => goToStep(VMWizardTab.STORAGE) : null
           }
+          goToNetworkingStep={
+            steps[VMWizardTab.NETWORKING]?.canJumpTo ? () => goToStep(VMWizardTab.NETWORKING) : null
+          }
           getProvisionSourceAttribute={(attr: string) =>
             this.getFieldAttribute(VMSettingsField.PROVISION_SOURCE_TYPE, attr)
           }
