@@ -138,7 +138,9 @@ const calculatePercentage = (numerator: number, denominator: number): number =>
   Math.round((numerator / denominator) * 100);
 
 export const CurrentChannel: React.FC<CurrentChannelProps> = ({ cv, clusterVersionIsEditable }) => {
+  // TODO: use a more informative empty state label
   const label = cv.spec.channel || '-';
+  // TODO: do not show #current-channel-update-link when no channels are present in CV (e.g., a nightly build)
   return clusterVersionIsEditable ? (
     <Button
       type="button"
@@ -524,7 +526,7 @@ export const UpdatesGraph: React.FC<UpdatesGraphProps> = ({ cv }) => {
   const secondNewestVersion = availableUpdates[1]?.version;
   const currentChannel = cv.spec.channel;
   const currentPrefix = splitClusterVersionChannel(currentChannel)?.prefix;
-  const similarChannels = getSimilarClusterVersionChannels(currentPrefix);
+  const similarChannels = getSimilarClusterVersionChannels(cv, currentPrefix);
   const newerChannel = getNewerClusterVersionChannel(similarChannels, currentChannel);
 
   return (
