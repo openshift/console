@@ -67,11 +67,9 @@ export const getInitialVmSettings = (data: CommonData): VMSettings => {
     },
     [VMSettingsField.CONTAINER_IMAGE]: {
       isHidden: hiddenByProviderOrCloneCommonBaseDiskImage,
-      skipValidation: true, // validated in storage tab
     },
     [VMSettingsField.IMAGE_URL]: {
       isHidden: hiddenByProviderOrCloneCommonBaseDiskImage,
-      skipValidation: true, // validated in storage tab
     },
     [VMSettingsField.START_VM]: {
       value: false,
