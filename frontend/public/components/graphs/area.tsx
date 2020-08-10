@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import {
   Chart,
   ChartArea,
@@ -70,6 +71,12 @@ export const AreaChart: React.FC<AreaChartProps> = ({
     return { processedData: nonEmptyDataSets, unit: '' };
   }, [byteDataType, data]);
 
+  // If every data point of every data set is 0, force y-domain to [0,1]
+  const allZero = React.useMemo(
+    () => _.every(processedData, (dataSet) => _.every(dataSet, ({ y }) => y === 0)),
+    [processedData],
+  );
+
   const tickFormat = React.useCallback((tick) => `${humanize(tick, unit, unit).string}`, [
     humanize,
     unit,
@@ -125,6 +132,7 @@ export const AreaChart: React.FC<AreaChartProps> = ({
             theme={theme}
             scale={{ x: 'time', y: 'linear' }}
             padding={padding}
+            {...(allZero && { domain: { y: [0, 1] } })}
           >
             {xAxis && <ChartAxis tickCount={tickCount} tickFormat={formatDate} />}
             {yAxis && <ChartAxis dependentAxis tickCount={tickCount} tickFormat={tickFormat} />}
