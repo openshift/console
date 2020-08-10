@@ -2,12 +2,13 @@ import * as React from 'react';
 import {
   WithSourceDragProps,
   WithTargetDragProps,
-  WithRemoveConnectorProps,
   Edge,
   observer,
   EdgeConnectorArrow,
+  WithContextMenuProps,
 } from '@patternfly/react-topology';
 import { BaseEdge } from './BaseEdge';
+
 import './ServiceBinding.scss';
 
 type ServiceBindingProps = {
@@ -15,7 +16,7 @@ type ServiceBindingProps = {
   dragging?: boolean;
 } & WithSourceDragProps &
   WithTargetDragProps &
-  WithRemoveConnectorProps;
+  WithContextMenuProps;
 
 const ObservedServiceBinding: React.FC<ServiceBindingProps> = ({
   element,

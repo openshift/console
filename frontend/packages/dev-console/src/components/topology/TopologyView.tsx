@@ -1,5 +1,7 @@
 import * as React from 'react';
+import * as classNames from 'classnames';
 import { connect } from 'react-redux';
+import { Stack, StackItem } from '@patternfly/react-core';
 import {
   BaseEdge,
   BOTTOM_LAYER,
@@ -16,10 +18,12 @@ import {
 import { useDeepCompareMemoize, useQueryParams } from '@console/shared';
 import { useExtensions } from '@console/plugin-sdk';
 import { RootState } from '@console/internal/redux';
-import { getActiveApplication } from '@console/internal/reducers/ui';
-import { getEventSourceStatus } from '@console/knative-plugin/src/topology/knative-topology-utils';
-import { removeQueryArgument, setQueryArgument } from '@console/internal/components/utils';
 import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
+import { getActiveApplication } from '@console/internal/reducers/ui';
+import { removeQueryArgument, setQueryArgument } from '@console/internal/components/utils';
+import { getEventSourceStatus } from '@console/knative-plugin/src/topology/knative-topology-utils';
+import { TYPE_VIRTUAL_MACHINE } from '@console/kubevirt-plugin/src/topology/components/const';
+import TopologyVmPanel from '@console/kubevirt-plugin/src/topology/TopologyVmPanel';
 import {
   CreateConnectionGetter,
   DisplayFilters,
@@ -50,16 +54,14 @@ import { useAddToProjectAccess } from '../../utils/useAddToProjectAccess';
 import Topology from './Topology';
 import TopologyListView from './list-view/TopologyListView';
 import { COLA_LAYOUT, layoutFactory } from './layouts/layoutFactory';
-import { odcElementFactory } from './elements';
-import { TYPE_APPLICATION_GROUP } from './components';
+import { OdcBaseEdge, odcElementFactory } from './elements';
+import { TYPE_APPLICATION_GROUP, TYPE_SERVICE_BINDING } from './components';
 import TopologyApplicationPanel from './application-panel/TopologyApplicationPanel';
 import { TYPE_HELM_RELEASE, TYPE_HELM_WORKLOAD } from './helm/components/const';
 import TopologyHelmReleasePanel from './helm/TopologyHelmReleasePanel';
 import TopologyHelmWorkloadPanel from './helm/TopologyHelmWorkloadPanel';
 import { TYPE_OPERATOR_BACKED_SERVICE } from './operators/components/const';
 import TopologyOperatorBackedPanel from './operators/TopologyOperatorBackedPanel';
-import { TYPE_VIRTUAL_MACHINE } from '@console/kubevirt-plugin/src/topology/components/const';
-import TopologyVmPanel from '@console/kubevirt-plugin/src/topology/TopologyVmPanel';
 import TopologyResourcePanel from './TopologyResourcePanel';
 import {
   TYPE_EVENT_PUB_SUB_LINK,
@@ -71,9 +73,8 @@ import KnativeTopologyEdgePanel from '@console/knative-plugin/src/components/ove
 import ConnectedTopologyEdgePanel from './TopologyEdgePanel';
 import TopologySideBar from './TopologySideBar';
 import { OperatorGroupData } from './operators/operator-topology-types';
-import { Stack, StackItem } from '@patternfly/react-core';
+import TopologyServiceBindingRequestPanel from './operators/TopologyServiceBindingRequestPanel';
 import TopologyFilterBar from './filters/TopologyFilterBar';
-import * as classNames from 'classnames';
 
 export const FILTER_ACTIVE_CLASS = 'odc-m-filter-active';
 const TOPOLOGY_GRAPH_ID = 'odc-topology-graph';
@@ -347,6 +348,9 @@ export const TopologyView: React.FC<ComponentProps> = ({
       }
       if ([TYPE_REVISION_TRAFFIC, TYPE_EVENT_SOURCE_LINK].includes(selectedEntity.getType())) {
         return <KnativeTopologyEdgePanel edge={selectedEntity as BaseEdge} />;
+      }
+      if (selectedEntity.getType() === TYPE_SERVICE_BINDING) {
+        return <TopologyServiceBindingRequestPanel edge={selectedEntity as OdcBaseEdge} />;
       }
       return <ConnectedTopologyEdgePanel edge={selectedEntity as BaseEdge} />;
     }

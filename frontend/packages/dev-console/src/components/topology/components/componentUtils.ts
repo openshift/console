@@ -24,7 +24,6 @@ import {
   DragOperationWithType,
 } from '@patternfly/react-topology';
 import { createConnection } from './createConnection';
-import { removeConnection } from './removeConnection';
 import { moveNodeToGroup } from './moveNodeToGroup';
 import { graphContextMenu, groupContextMenu } from './nodeContextMenu';
 
@@ -345,13 +344,6 @@ const createConnectorCallback = () => (
   return Promise.resolve(createVisualConnector(source, target));
 };
 
-const removeConnectorCallback = (edge: Edge): void => {
-  removeConnection(edge).catch((error) => {
-    errorModal({ title: 'Error removing connection', error: error.message });
-  });
-  return null;
-};
-
 export {
   GraphComponentProps,
   NodeComponentProps,
@@ -366,7 +358,6 @@ export {
   edgeDragSourceSpec,
   noDropTargetSpec,
   createConnectorCallback,
-  removeConnectorCallback,
   REGROUP_OPERATION,
   MOVE_CONNECTOR_DROP_TYPE,
   NODE_DRAG_TYPE,
