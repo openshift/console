@@ -46,6 +46,9 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
   const getFieldValue = (key: VMSettingsField) => iGetIn(vmSettings, [key, 'value']);
   const onChange = (key: VMSettingsRenderableField) => (value) => onFieldChange(key, value);
 
+  const goToStorageStep = React.useCallback(() => goToStep(VMWizardTab.STORAGE), [goToStep]);
+  const goToNetworkingStep = React.useCallback(() => goToStep(VMWizardTab.NETWORKING), [goToStep]);
+
   return (
     <Form className="co-m-pane__body co-m-pane__form kubevirt-create-vm-modal__form">
       <FormFieldMemoRow field={getField(VMSettingsField.NAME)} fieldType={FormFieldType.TEXT}>
@@ -106,12 +109,8 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
       <ProvisionSourceComponent
         provisionSourceField={getField(VMSettingsField.PROVISION_SOURCE_TYPE)}
         onChange={onFieldChange}
-        goToStorageStep={
-          steps[VMWizardTab.STORAGE]?.canJumpTo ? () => goToStep(VMWizardTab.STORAGE) : null
-        }
-        goToNetworkingStep={
-          steps[VMWizardTab.NETWORKING]?.canJumpTo ? () => goToStep(VMWizardTab.NETWORKING) : null
-        }
+        goToStorageStep={steps[VMWizardTab.STORAGE]?.canJumpTo ? goToStorageStep : null}
+        goToNetworkingStep={steps[VMWizardTab.NETWORKING]?.canJumpTo ? goToNetworkingStep : null}
       />
       <ContainerSource
         field={getField(VMSettingsField.CONTAINER_IMAGE)}
