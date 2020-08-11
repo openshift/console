@@ -19,6 +19,7 @@ import {
   isDashboardsTab,
 } from '@console/plugin-sdk';
 import { RootState } from '../../../redux';
+import QuickStartBadge from './quick-start-badge';
 
 const getCardsOnPosition = (cards: DashboardsCard[], position: GridPosition): GridDashboardCard[] =>
   cards
@@ -75,7 +76,7 @@ const DashboardsPage_: React.FC<DashboardsPageProps> = ({ match, kindsInFlight, 
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <PageHeading title={title} detail={true} />
+      <PageHeading title={title} detail={true} badge={<QuickStartBadge />} />
       <HorizontalNav match={match} pages={allPages} noStatusBox />
     </>
   );
