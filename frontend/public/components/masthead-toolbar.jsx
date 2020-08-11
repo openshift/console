@@ -530,7 +530,7 @@ class MastheadToolbarContents_ extends React.Component {
       showAboutModal,
       statuspageData,
     } = this.state;
-    const { consoleLinks, drawerToggle, notificationsRead, canAccessNS } = this.props;
+    const { consoleLinks, drawerToggle, canAccessNS, notificationAlerts } = this.props;
     const launchActions = this._launchActions();
     const alertAccess = canAccessNS && !!window.SERVER_FLAGS.prometheusBaseURL;
     return (
@@ -560,7 +560,8 @@ class MastheadToolbarContents_ extends React.Component {
                 <NotificationBadge
                   aria-label="Notification Drawer"
                   onClick={drawerToggle}
-                  isRead={notificationsRead}
+                  isRead
+                  count={notificationAlerts?.data?.length || 0}
                 >
                   <BellIcon />
                 </NotificationBadge>
@@ -600,12 +601,13 @@ class MastheadToolbarContents_ extends React.Component {
           </PageHeaderToolsGroup>
           <PageHeaderToolsGroup>
             {/* mobile -- (notification drawer button) */
-            alertAccess && !notificationsRead && (
+            alertAccess && notificationAlerts?.data?.length > 0 && (
               <PageHeaderToolsItem className="visible-xs-block">
                 <NotificationBadge
                   aria-label="Notification Drawer"
                   onClick={drawerToggle}
-                  isRead={notificationsRead}
+                  isRead
+                  count={notificationAlerts?.data?.length}
                 >
                   <BellIcon />
                 </NotificationBadge>
@@ -634,7 +636,7 @@ const mastheadToolbarStateToProps = (state) => ({
   clusterID: state.UI.get('clusterID'),
   user: state.UI.get('user'),
   consoleLinks: state.UI.get('consoleLinks'),
-  notificationsRead: !!state.UI.getIn(['notifications', 'isRead']),
+  notificationAlerts: state.UI.getIn(['monitoring', 'notificationAlerts']),
   canAccessNS: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
 });
 

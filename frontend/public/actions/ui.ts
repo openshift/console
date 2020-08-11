@@ -39,7 +39,6 @@ export enum ActionType {
   SetMonitoringData = 'setMonitoringData',
   ToggleMonitoringGraphs = 'monitoringToggleGraphs',
   NotificationDrawerToggleExpanded = 'notificationDrawerExpanded',
-  NotificationDrawerToggleRead = 'notificationDrawerRead',
   QueryBrowserAddQuery = 'queryBrowserAddQuery',
   QueryBrowserDeleteAllQueries = 'queryBrowserDeleteAllQueries',
   QueryBrowserDeleteQuery = 'queryBrowserDeleteQuery',
@@ -359,7 +358,6 @@ export const monitoringSetRules = (
 export const monitoringToggleGraphs = () => action(ActionType.ToggleMonitoringGraphs);
 export const notificationDrawerToggleExpanded = () =>
   action(ActionType.NotificationDrawerToggleExpanded);
-export const notificationDrawerToggleRead = () => action(ActionType.NotificationDrawerToggleRead);
 export const queryBrowserAddQuery = () => action(ActionType.QueryBrowserAddQuery);
 export const queryBrowserDeleteAllQueries = () => action(ActionType.QueryBrowserDeleteAllQueries);
 export const queryBrowserDismissNamespaceAlert = () =>
@@ -450,7 +448,6 @@ const uiActions = {
   setNodeMetrics,
   setPVCMetrics,
   notificationDrawerToggleExpanded,
-  notificationDrawerToggleRead,
   setPinnedResources,
 };
 
