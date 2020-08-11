@@ -31,6 +31,7 @@ import {
 } from '@patternfly/react-core';
 import { isAlertAction, useExtensions, AlertAction } from '@console/plugin-sdk';
 import { usePrevious } from '@console/shared/src/hooks/previous';
+import Linkify from 'react-linkify';
 
 import { coFetchJSON } from '../co-fetch';
 import {
@@ -106,7 +107,9 @@ const getAlertNotificationEntries = (
           return (
             <NotificationEntry
               key={`${i}_${alert.activeAt}`}
-              description={getAlertDescription(alert) || getAlertMessage(alert)}
+              description={
+                <Linkify>{getAlertDescription(alert) || getAlertMessage(alert)}</Linkify>
+              }
               timestamp={getAlertTime(alert)}
               type={NotificationTypes[getAlertSeverity(alert)]}
               title={getAlertName(alert)}
