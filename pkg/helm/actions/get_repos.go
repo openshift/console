@@ -18,7 +18,7 @@ import (
 	corev1 "k8s.io/client-go/kubernetes/typed/core/v1"
 	"sigs.k8s.io/yaml"
 
-	"github.com/openshift/console/pkg/crypto"
+	oscrypto "github.com/openshift/library-go/pkg/crypto"
 )
 
 var (
@@ -157,9 +157,7 @@ type HelmConfig struct {
 }
 
 func (b HelmConfigGetter) Get(caCert, tlsCert, tlsKey []byte) (*tls.Config, error) {
-	mTLSConfig := &tls.Config{
-		CipherSuites: crypto.DefaultCiphers(),
-	}
+	mTLSConfig := oscrypto.SecureTLSConfig(&tls.Config{})
 	var rootCAs *x509.CertPool
 	var err error
 
