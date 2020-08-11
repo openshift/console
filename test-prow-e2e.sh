@@ -27,10 +27,14 @@ export BRIDGE_BASE_ADDRESS
 oc apply -f ./frontend/integration-tests/data/htpasswd-secret.yaml
 oc patch oauths cluster --patch "$(cat ./frontend/integration-tests/data/patch-htpasswd.yaml)" --type=merge
 
+# "fake" dbus address to prevent errors
+# https://github.com/SeleniumHQ/docker-selenium/issues/87
+DBUS_SESSION_BUS_ADDRESS=/dev/null
+export DBUS_SESSION_BUS_ADDRESS
+
 CHROME_VERSION=$(google-chrome --version) ./test-gui.sh "${1:-e2e}"
 
 # Only run Cypress tests if no agruments passed, or if the 'release' argument was passed
 if [ $# -eq 0 ] || [ "$1" == "release" ]; then
   ./test-cypress.sh
 fi
-
