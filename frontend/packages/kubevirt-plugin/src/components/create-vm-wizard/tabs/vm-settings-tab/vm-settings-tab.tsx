@@ -1,19 +1,9 @@
 import * as React from 'react';
-import {
-  Form,
-  FormSelect,
-  FormSelectOption,
-  TextArea,
-  TextInput,
-  Button,
-  ButtonVariant,
-} from '@patternfly/react-core';
+import { Form, TextArea, TextInput } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import { iGet, iGetIn } from '../../../../utils/immutable';
 import { FormFieldMemoRow } from '../../form/form-field-row';
 import { FormField, FormFieldType } from '../../form/form-field';
-import { FormSelectPlaceholderOption } from '../../../form/form-select-placeholder-option';
-import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { vmWizardActions } from '../../redux/actions';
 import {
   VMSettingsField,
@@ -25,7 +15,6 @@ import {
 } from '../../types';
 import { iGetVmSettings } from '../../selectors/immutable/vm-settings';
 import { ActionType } from '../../redux/types';
-import { getPlaceholder } from '../../utils/renderable-field-utils';
 import { iGetCommonData } from '../../selectors/immutable/selectors';
 import { getStepsMetadata } from '../../selectors/immutable/wizard-selectors';
 import { iGetProvisionSourceStorage } from '../../selectors/immutable/storage';
@@ -34,179 +23,114 @@ import { OSFlavor } from './os-flavor';
 import { UserTemplates } from './user-templates';
 import { MemoryCPU } from './memory-cpu';
 import { ContainerSource } from './container-source';
+import { ProvisionSourceComponent } from './provision-source';
 import { URLSource } from './url-source';
 
 import '../../create-vm-wizard-footer.scss';
 import './vm-settings-tab.scss';
 
-export class VMSettingsTabComponent extends React.Component<VMSettingsTabComponentProps> {
-  getField = (key: VMSettingsField) => iGet(this.props.vmSettings, key);
+export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
+  userTemplateName,
+  userTemplates,
+  commonTemplates,
+  cnvBaseImages,
+  provisionSourceStorage,
+  updateStorage,
+  openshiftFlag,
+  steps,
+  goToStep,
+  vmSettings,
+  onFieldChange,
+}) => {
+  const getField = React.useCallback((key: VMSettingsField) => iGet(vmSettings, key), [vmSettings]);
+  const getFieldValue = React.useCallback(
+    (key: VMSettingsField) => iGetIn(vmSettings, [key, 'value']),
+    [vmSettings],
+  );
+  const onChange = React.useCallback(
+    (key: VMSettingsRenderableField) => (value) => onFieldChange(key, value),
+    [onFieldChange],
+  );
 
-  getFieldAttribute = (key: VMSettingsField, attribute: string) =>
-    iGetIn(this.props.vmSettings, [key, attribute]);
+  const goToStorageStep = React.useCallback(() => goToStep(VMWizardTab.STORAGE), [goToStep]);
+  const goToNetworkingStep = React.useCallback(() => goToStep(VMWizardTab.NETWORKING), [goToStep]);
 
-  getFieldValue = (key: VMSettingsField) => iGetIn(this.props.vmSettings, [key, 'value']);
-
-  onChange = (key: VMSettingsRenderableField) => (value) => this.props.onFieldChange(key, value);
-
-  render() {
-    const {
-      userTemplateName,
-      userTemplates,
-      commonTemplates,
-      cnvBaseImages,
-      provisionSourceStorage,
-      updateStorage,
-      openshiftFlag,
-      steps,
-      goToStep,
-    } = this.props;
-
-    const provisionSourceValue = this.getFieldValue(VMSettingsField.PROVISION_SOURCE_TYPE);
-    const storageBtn = (
-      <Button
-        isDisabled={!steps[VMWizardTab.STORAGE]?.canJumpTo}
-        isInline
-        onClick={() => goToStep(VMWizardTab.STORAGE)}
-        variant={ButtonVariant.link}
+  return (
+    <Form className="co-m-pane__body co-m-pane__form kubevirt-create-vm-modal__form">
+      <FormFieldMemoRow field={getField(VMSettingsField.NAME)} fieldType={FormFieldType.TEXT}>
+        <FormField>
+          <TextInput onChange={onChange(VMSettingsField.NAME)} />
+        </FormField>
+      </FormFieldMemoRow>
+      <FormFieldMemoRow
+        field={getField(VMSettingsField.DESCRIPTION)}
+        fieldType={FormFieldType.TEXT_AREA}
       >
-        <strong>Storage</strong>
-      </Button>
-    );
-    const networkBtn = (
-      <Button
-        isDisabled={!steps[VMWizardTab.NETWORKING]?.canJumpTo}
-        isInline
-        onClick={() => goToStep(VMWizardTab.NETWORKING)}
-        variant={ButtonVariant.link}
-      >
-        <strong>Networking</strong>
-      </Button>
-    );
-
-    const getStorageMsg = () => {
-      switch (provisionSourceValue) {
-        case ProvisionSource.URL.toString():
-          return <>Enter URL here or edit the mounted disk in the {storageBtn} step</>;
-        case ProvisionSource.CONTAINER.toString():
-          return <>Enter container image here or edit the mounted disk in the {storageBtn} step</>;
-        case ProvisionSource.DISK.toString():
-          return <>Add a source disk in the {storageBtn} step</>;
-        default:
-          return null;
-      }
-    };
-    const provisionSourceDiskHelpMsg = (
-      <div className="pf-c-form__helper-text" aria-live="polite">
-        {getStorageMsg()}
-      </div>
-    );
-
-    const provisionSourceNetHelpMsg = (
-      <div className="pf-c-form__helper-text" aria-live="polite">
-        Add a network interface in the {networkBtn} step
-      </div>
-    );
-
-    return (
-      <Form className="co-m-pane__body co-m-pane__form kubevirt-create-vm-modal__form">
-        <FormFieldMemoRow
-          field={this.getField(VMSettingsField.NAME)}
-          fieldType={FormFieldType.TEXT}
-        >
-          <FormField>
-            <TextInput onChange={this.onChange(VMSettingsField.NAME)} />
-          </FormField>
-        </FormFieldMemoRow>
-        <FormFieldMemoRow
-          field={this.getField(VMSettingsField.DESCRIPTION)}
-          fieldType={FormFieldType.TEXT_AREA}
-        >
-          <FormField>
-            <TextArea
-              onChange={this.onChange(VMSettingsField.DESCRIPTION)}
-              className="kubevirt-create-vm-modal__description"
-            />
-          </FormField>
-        </FormFieldMemoRow>
-        <UserTemplates
-          userTemplateField={this.getField(VMSettingsField.USER_TEMPLATE)}
-          forceSingleUserTemplateName={userTemplateName}
-          userTemplates={userTemplates}
-          commonTemplates={commonTemplates}
-          openshiftFlag={openshiftFlag}
-          onChange={this.props.onFieldChange}
-        />
-        <OSFlavor
-          userTemplates={userTemplates}
-          commonTemplates={commonTemplates}
-          operatinSystemField={this.getField(VMSettingsField.OPERATING_SYSTEM)}
-          flavorField={this.getField(VMSettingsField.FLAVOR)}
-          cloneBaseDiskImageField={this.getField(VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE)}
-          mountWindowsGuestToolsField={this.getField(VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS)}
-          userTemplate={this.getFieldValue(VMSettingsField.USER_TEMPLATE)}
-          workloadProfile={this.getFieldValue(VMSettingsField.WORKLOAD_PROFILE)}
-          cnvBaseImages={cnvBaseImages}
-          onChange={this.props.onFieldChange}
-          openshiftFlag={openshiftFlag}
-          goToStorageStep={
-            steps[VMWizardTab.STORAGE]?.canJumpTo ? () => goToStep(VMWizardTab.STORAGE) : null
-          }
-        />
-        <MemoryCPU
-          memoryField={this.getField(VMSettingsField.MEMORY)}
-          cpuField={this.getField(VMSettingsField.CPU)}
-          onChange={this.props.onFieldChange}
-        />
-        <WorkloadProfile
-          userTemplates={userTemplates}
-          commonTemplates={commonTemplates}
-          workloadProfileField={this.getField(VMSettingsField.WORKLOAD_PROFILE)}
-          userTemplate={this.getFieldValue(VMSettingsField.USER_TEMPLATE)}
-          operatingSystem={this.getFieldValue(VMSettingsField.OPERATING_SYSTEM)}
-          flavor={this.getFieldValue(VMSettingsField.FLAVOR)}
-          cnvBaseImages={cnvBaseImages}
-          onChange={this.props.onFieldChange}
-        />
-        <FormFieldMemoRow
-          field={this.getField(VMSettingsField.PROVISION_SOURCE_TYPE)}
-          fieldType={FormFieldType.SELECT}
-        >
-          <FormField>
-            <FormSelect onChange={this.onChange(VMSettingsField.PROVISION_SOURCE_TYPE)}>
-              <FormSelectPlaceholderOption
-                placeholder={getPlaceholder(VMSettingsField.PROVISION_SOURCE_TYPE)}
-                isDisabled={!!this.getFieldValue(VMSettingsField.PROVISION_SOURCE_TYPE)}
-              />
-              {(this.getFieldAttribute(VMSettingsField.PROVISION_SOURCE_TYPE, 'sources') || []).map(
-                (source) => (
-                  <FormSelectOption key={source} value={source} label={source} />
-                ),
-              )}
-            </FormSelect>
-          </FormField>
-          {[
-            ProvisionSource.URL.toString(),
-            ProvisionSource.CONTAINER.toString(),
-            ProvisionSource.DISK.toString(),
-          ].includes(provisionSourceValue) && provisionSourceDiskHelpMsg}
-          {[ProvisionSource.PXE.toString()].includes(provisionSourceValue) &&
-            provisionSourceNetHelpMsg}
-        </FormFieldMemoRow>
-        <ContainerSource
-          field={this.getField(VMSettingsField.CONTAINER_IMAGE)}
-          onProvisionSourceStorageChange={updateStorage}
-          provisionSourceStorage={provisionSourceStorage}
-        />
-        <URLSource
-          field={this.getField(VMSettingsField.IMAGE_URL)}
-          onProvisionSourceStorageChange={updateStorage}
-          provisionSourceStorage={provisionSourceStorage}
-        />
-      </Form>
-    );
-  }
-}
+        <FormField>
+          <TextArea
+            onChange={onChange(VMSettingsField.DESCRIPTION)}
+            className="kubevirt-create-vm-modal__description"
+          />
+        </FormField>
+      </FormFieldMemoRow>
+      <UserTemplates
+        userTemplateField={getField(VMSettingsField.USER_TEMPLATE)}
+        forceSingleUserTemplateName={userTemplateName}
+        userTemplates={userTemplates}
+        commonTemplates={commonTemplates}
+        openshiftFlag={openshiftFlag}
+        onChange={onFieldChange}
+      />
+      <OSFlavor
+        userTemplates={userTemplates}
+        commonTemplates={commonTemplates}
+        operatinSystemField={getField(VMSettingsField.OPERATING_SYSTEM)}
+        flavorField={getField(VMSettingsField.FLAVOR)}
+        cloneBaseDiskImageField={getField(VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE)}
+        mountWindowsGuestToolsField={getField(VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS)}
+        userTemplate={getFieldValue(VMSettingsField.USER_TEMPLATE)}
+        workloadProfile={getFieldValue(VMSettingsField.WORKLOAD_PROFILE)}
+        cnvBaseImages={cnvBaseImages}
+        onChange={onFieldChange}
+        openshiftFlag={openshiftFlag}
+        goToStorageStep={
+          steps[VMWizardTab.STORAGE]?.canJumpTo ? () => goToStep(VMWizardTab.STORAGE) : null
+        }
+      />
+      <MemoryCPU
+        memoryField={getField(VMSettingsField.MEMORY)}
+        cpuField={getField(VMSettingsField.CPU)}
+        onChange={onFieldChange}
+      />
+      <WorkloadProfile
+        userTemplates={userTemplates}
+        commonTemplates={commonTemplates}
+        workloadProfileField={getField(VMSettingsField.WORKLOAD_PROFILE)}
+        userTemplate={getFieldValue(VMSettingsField.USER_TEMPLATE)}
+        operatingSystem={getFieldValue(VMSettingsField.OPERATING_SYSTEM)}
+        flavor={getFieldValue(VMSettingsField.FLAVOR)}
+        cnvBaseImages={cnvBaseImages}
+        onChange={onFieldChange}
+      />
+      <ProvisionSourceComponent
+        provisionSourceField={getField(VMSettingsField.PROVISION_SOURCE_TYPE)}
+        onChange={onFieldChange}
+        goToStorageStep={steps[VMWizardTab.STORAGE]?.canJumpTo ? goToStorageStep : null}
+        goToNetworkingStep={steps[VMWizardTab.NETWORKING]?.canJumpTo ? goToNetworkingStep : null}
+      />
+      <ContainerSource
+        field={getField(VMSettingsField.CONTAINER_IMAGE)}
+        onProvisionSourceStorageChange={updateStorage}
+        provisionSourceStorage={provisionSourceStorage}
+      />
+      <URLSource
+        field={getField(VMSettingsField.IMAGE_URL)}
+        onProvisionSourceStorageChange={updateStorage}
+        provisionSourceStorage={provisionSourceStorage}
+      />
+    </Form>
+  );
+};
 
 const stateToProps = (state, { wizardReduxID }) => ({
   vmSettings: iGetVmSettings(state, wizardReduxID),
