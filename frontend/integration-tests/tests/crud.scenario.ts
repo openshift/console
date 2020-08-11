@@ -98,7 +98,7 @@ describe('Kubernetes resource CRUD operations', () => {
     const group = 'test.example.com';
     const name = `${plural}.${group}`;
     const crd = {
-      apiVersion: 'apiextensions.k8s.io/v1beta1',
+      apiVersion: 'apiextensions.k8s.io/v1',
       kind: 'CustomResourceDefinition',
       metadata: {
         name,
@@ -106,7 +106,35 @@ describe('Kubernetes resource CRUD operations', () => {
       },
       spec: {
         group,
-        version: 'v1',
+        versions: [
+          {
+            name: 'v1',
+            served: true,
+            storage: true,
+            schema: {
+              openAPIV3Schema: {
+                type: 'object',
+                properties: {
+                  spec: {
+                    type: 'object',
+                    properties: {
+                      cronSpec: {
+                        type: 'string',
+                      },
+                      image: {
+                        type: 'string',
+                      },
+                      replicas: {
+                        type: 'integer',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        ],
+        scope: 'Namespaced',
         names: {
           plural,
           singular: `crd${testName}`,

@@ -472,14 +472,17 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
   const { kind, status } = obj;
   const [errorMessage, setErrorMessage] = React.useState(null);
   const handleError = (err: Error) => setErrorMessage(err.message);
-  const schema = crd?.spec?.validation?.openAPIV3Schema ?? (definitionFor(kindObj) as JSONSchema6);
 
   // Find the matching CRD spec for the kind of this resource in the CSV.
-  const { displayName, specDescriptors, statusDescriptors } =
+  const { displayName, specDescriptors, statusDescriptors, version } =
     [
       ...(csv?.spec?.customresourcedefinitions?.owned ?? []),
       ...(csv?.spec?.customresourcedefinitions?.required ?? []),
     ].find((def) => def.name === crd?.metadata?.name) ?? {};
+
+  const schema =
+    crd?.spec?.versions?.find((v) => v.name === version)?.schema?.openAPIV3Schema ??
+    (definitionFor(kindObj) as JSONSchema6);
 
   const { podStatuses, mainStatusDescriptor, otherStatusDescriptors } = (
     statusDescriptors ?? []

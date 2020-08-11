@@ -99,7 +99,7 @@ export const getLatestVersionForCRD = (crd: CustomResourceDefinitionKind) => {
     ?.filter((version) => version.served)
     ?.map(({ name }) => name)
     ?.sort(apiVersionCompare);
-  return parseAPIVersion(sorted?.[0]) ? sorted[0] : crd.spec.version;
+  return sorted[0];
 };
 
 export const referenceForCRD = (obj: CustomResourceDefinitionKind): GroupVersionKind =>

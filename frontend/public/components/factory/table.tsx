@@ -29,9 +29,11 @@ import {
 import { ingressValidHosts } from '../ingress';
 import { convertToBaseValue, EmptyBox, StatusBox, WithScrollContainer } from '../utils';
 import {
+  CustomResourceDefinitionKind,
   getClusterOperatorStatus,
   getClusterOperatorVersion,
   getJobTypeAndCompletions,
+  getLatestVersionForCRD,
   getTemplateInstanceStatus,
   K8sResourceKind,
   K8sResourceKindReference,
@@ -118,6 +120,7 @@ const sorts = {
   alertSeverityOrder,
   alertSource,
   alertStateOrder,
+  crdLatestVersion: (crd: CustomResourceDefinitionKind): string => getLatestVersionForCRD(crd),
   daemonsetNumScheduled: (daemonset) =>
     _.toInteger(_.get(daemonset, 'status.currentNumberScheduled')),
   dataSize: (resource) => _.size(_.get(resource, 'data')) + _.size(_.get(resource, 'binaryData')),

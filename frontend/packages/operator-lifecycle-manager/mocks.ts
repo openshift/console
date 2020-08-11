@@ -353,7 +353,7 @@ export const testSubscription: SubscriptionKind = {
 };
 
 export const testCRD: CustomResourceDefinitionKind = {
-  apiVersion: 'apiextensions.k8s.io/v1beta1',
+  apiVersion: 'apiextensions.k8s.io/v1',
   kind: 'CustomResourceDefinition',
   metadata: {
     name: 'testresources.testapp.coreos.com',
@@ -367,16 +367,23 @@ export const testCRD: CustomResourceDefinitionKind = {
   },
   spec: {
     group: 'testapp.coreos.com',
-    version: 'v1alpha1',
-    validation: {
-      openAPIV3Schema: {},
-    },
+    versions: [
+      {
+        name: 'v1alpha1',
+        served: true,
+        storage: true,
+        schema: {
+          openAPIV3Schema: {},
+        },
+      },
+    ],
     names: {
       kind: 'TestResource',
       plural: 'testresources',
       singular: 'testresource',
       listKind: 'TestResourceList',
     },
+    scope: 'Cluster',
   },
 };
 
