@@ -84,7 +84,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   const {
     rowFilters = [],
     data,
-    hideNameFilter,
+    hideToolbar,
     columnLayout,
     hideLabelFilter,
     location,
@@ -224,7 +224,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
 
   const clearAll = () => {
     updateRowFilterSelected(selectedRowFilters);
-    if (!hideNameFilter) {
+    if (!hideToolbar) {
       updateNameFilter('');
     }
     if (!hideLabelFilter) {
@@ -237,7 +237,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     if (!hideLabelFilter) {
       applyFilter(labelFilters, FilterType.LABEL);
     }
-    if (!hideNameFilter) {
+    if (!hideToolbar) {
       setInputText(nameFilter ?? '');
       applyFilter(nameFilter, FilterType.NAME);
     }
@@ -317,7 +317,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
                     title={filterType}
                   />
                 )}
-                {!hideNameFilter && (
+                {!hideToolbar && (
                   <AutocompleteInput
                     className="co-text-node"
                     onSuggestionSelect={(selected) => {
@@ -363,7 +363,7 @@ type FilterToolbarProps = {
   reduxIDs?: string[];
   filterList?: any;
   textFilter?: string;
-  hideNameFilter?: boolean;
+  hideToolbar?: boolean;
   labelFilter?: string;
   hideLabelFilter?: boolean;
   parseAutoComplete?: any;
