@@ -1,4 +1,4 @@
-import { chart_color_green_400 as tektonGroupColor } from '@patternfly/react-tokens';
+import { chart_color_green_400 as tektonGroupColor } from '@patternfly/react-tokens/dist/js/chart_color_green_400';
 import { K8sKind } from '@console/internal/module/k8s';
 import { BadgeType } from '@console/shared/src/components/badges/badge-factory';
 
