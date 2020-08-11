@@ -37,8 +37,7 @@ const KafkaSourceSection: React.FC<KafkaSourceSectionProps> = ({ title }) => {
           ];
       placeholder = 'Add Bootstrap Servers';
     } else if (kafkas.loadError) {
-      bootstrapServersOptions = [{ value: kafkas.loadError?.message, disabled: true }];
-      placeholder = 'Error loading Bootstrap Servers';
+      placeholder = `${kafkas.loadError?.message}. Try adding Bootstrap Servers manually.`;
     } else {
       bootstrapServersOptions = [{ value: 'Loading Bootstrap Servers...', disabled: true }];
       placeholder = '...';
@@ -63,8 +62,7 @@ const KafkaSourceSection: React.FC<KafkaSourceSectionProps> = ({ title }) => {
           ];
       placeholder = 'Add Topics';
     } else if (kafkatopics.loadError) {
-      topicsOptions = [{ value: kafkatopics.loadError?.message, disabled: true }];
-      placeholder = 'Error loading Topics';
+      placeholder = `${kafkatopics.loadError?.message}. Try adding Topics manually.`;
     } else {
       topicsOptions = [{ value: 'Loading Topics...', disabled: true }];
       placeholder = '...';
