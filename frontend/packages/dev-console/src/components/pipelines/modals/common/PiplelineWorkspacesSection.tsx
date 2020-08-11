@@ -52,7 +52,12 @@ const PipelineWorkspacesSection: React.FC = () => {
               name={`workspaces.${index}.type`}
               label={workspace.name}
               items={VolumeTypes}
-              onChange={() => setFieldValue(`workspaces.${index}.data`, {})}
+              onChange={(type) =>
+                setFieldValue(
+                  `workspaces.${index}.data`,
+                  VolumeTypes[type] === VolumeTypes.EmptyDirectory ? { emptyDir: {} } : {},
+                )
+              }
               fullWidth
               required
             />
