@@ -623,7 +623,7 @@ export const ClusterServiceVersionList = connect(clusterServiceVersionStateToPro
 export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProps> = (props) => {
   const title = 'Installed Operators';
   const helpText = (
-    <p className="co-help-text">
+    <>
       Installed Operators are represented by Cluster Service Versions within this namespace. For
       more information, see the{' '}
       <ExternalLink
@@ -633,7 +633,7 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
       . Or create an Operator and Cluster Service Version using the{' '}
       <ExternalLink href="https://github.com/operator-framework/operator-sdk" text="Operator SDK" />
       .
-    </p>
+    </>
   );
 
   const flatten = ({ clusterServiceVersions, subscriptions }) =>

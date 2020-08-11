@@ -128,9 +128,7 @@ export const UserPage: React.FC<UserPageProps> = (props) => (
   <ListPage
     {...props}
     title="Users"
-    helpText={
-      <p className="co-help-text">Users are automatically added the first time they log&nbsp;in.</p>
-    }
+    helpText={<>Users are automatically added the first time they log&nbsp;in.</>}
     kind={referenceForModel(UserModel)}
     ListComponent={UserList}
     canCreate={false}
