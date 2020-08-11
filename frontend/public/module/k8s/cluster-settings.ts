@@ -39,11 +39,11 @@ export const getSortedUpdates = (cv: ClusterVersionKind): ClusterUpdate[] => {
   }
 };
 
-export const getAvailableClusterChannels = () => ({
-  'stable-4.6': 'stable-4.6',
-  'fast-4.6': 'fast-4.6',
-  'candidate-4.6': 'candidate-4.6',
-});
+export const getAvailableClusterChannels = (cv) => {
+  // temporarily fall back to hard-coded values when `cv.status.desired.channels` are not present
+  // TODO: remove fall back values once `cv.status.desired.channels` are widespread
+  return cv?.status?.desired?.channels || ['stable-4.6', 'fast-4.6', 'candidate-4.6'];
+};
 
 export const getDesiredClusterVersion = (cv: ClusterVersionKind): string => {
   return _.get(cv, 'status.desired.version');
@@ -56,8 +56,8 @@ export const splitClusterVersionChannel = (channel: string) => {
   return parsed ? { prefix: parsed[1], version: parsed[2] } : null;
 };
 
-export const getSimilarClusterVersionChannels = (currentPrefix) => {
-  return _.keys(getAvailableClusterChannels()).filter((channel: string) => {
+export const getSimilarClusterVersionChannels = (cv, currentPrefix) => {
+  return getAvailableClusterChannels(cv).filter((channel: string) => {
     return currentPrefix && splitClusterVersionChannel(channel)?.prefix === currentPrefix;
   });
 };

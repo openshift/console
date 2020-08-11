@@ -42,7 +42,10 @@ class ClusterChannelModal extends PromiseComponent<
 
   render() {
     const { cv } = this.props;
-    const availableChannels = getAvailableClusterChannels();
+    const availableChannels = getAvailableClusterChannels(cv).reduce((o, val) => {
+      o[val] = val;
+      return o;
+    }, {});
     return (
       <form
         onSubmit={this._submit}
