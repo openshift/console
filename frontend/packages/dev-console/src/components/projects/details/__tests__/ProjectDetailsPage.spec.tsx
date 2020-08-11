@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 import * as _ from 'lodash';
 import * as utils from '@console/internal/components/utils';
 import { ProjectDetailsPage, PageContents } from '../ProjectDetailsPage';
-import ProjectListPage from '../../ProjectListPage';
+import CreateProjectListPage from '../../CreateProjectListPage';
 import { DetailsPage } from '@console/internal/components/factory';
 
 const testProjectMatch = { url: '', params: { ns: 'test-project' }, isExact: true, path: '' };
@@ -13,7 +13,7 @@ describe('ProjectDetailsPage', () => {
   it('expect ProjectDetailsPage to render the project list page when in the all-projects namespace', () => {
     const component = shallow(<PageContents match={allNamespaceMatch} />);
 
-    expect(component.find(ProjectListPage).exists()).toBe(true);
+    expect(component.find(CreateProjectListPage).exists()).toBe(true);
   });
 
   it('expect ProjectDetailsPage to show a namespaced details page for a namespace', () => {

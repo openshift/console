@@ -10,7 +10,7 @@ import {
 import { TechPreviewBadge, ALL_NAMESPACES_KEY } from '@console/shared';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
-import ProjectListPage from '../projects/ProjectListPage';
+import CreateProjectListPage from '../projects/CreateProjectListPage';
 import ConnectedMonitoringDashboard from './dashboard/MonitoringDashboard';
 import ConnectedMonitoringMetrics from './metrics/MonitoringMetrics';
 import MonitoringEvents from './events/MonitoringEvents';
@@ -70,9 +70,9 @@ export const PageContents: React.FC<MonitoringPageProps> = ({ match }) => {
       <HorizontalNav pages={pages} match={match} noStatusBox />
     </>
   ) : (
-    <ProjectListPage badge={<TechPreviewBadge />} title="Monitoring">
+    <CreateProjectListPage badge={<TechPreviewBadge />} title="Monitoring">
       Select a project to view monitoring metrics
-    </ProjectListPage>
+    </CreateProjectListPage>
   );
 };
 

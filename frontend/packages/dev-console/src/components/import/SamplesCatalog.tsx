@@ -8,7 +8,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { FirehoseResource, LoadingBox, history } from '@console/internal/components/utils';
 import { PageLayout } from '@console/shared';
 import { normalizeBuilderImages, NormalizedBuilderImages } from '../../utils/imagestream-utils';
-import ProjectListPage from '../projects/ProjectListPage';
+import CreateProjectListPage from '../projects/CreateProjectListPage';
 import NamespacedPage from '../NamespacedPage';
 
 const imageStreamResource: FirehoseResource = {
@@ -68,9 +68,9 @@ const SampleCatalog: React.FC<SampleCatalogProps> = ({ match }) => {
             </Gallery>
           </PageLayout>
         ) : (
-          <ProjectListPage title="Samples">
+          <CreateProjectListPage title="Samples">
             Select a project to view the list of Samples.
-          </ProjectListPage>
+          </CreateProjectListPage>
         )}
       </NamespacedPage>
     </>
