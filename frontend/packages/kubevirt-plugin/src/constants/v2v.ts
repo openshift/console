@@ -20,7 +20,7 @@ export const CONVERSION_SERVICEACCOUNT_DELAY = 2 * 1000; // in ms
 
 export const VCENTER_TYPE_LABEL = 'kubevirt.io/vcenter';
 export const OVIRT_TYPE_LABEL = 'kubevirt.io/ovirt';
-export const V2V_TEMPORARY_LABEL = 'kubevirt.io/temporary';
+export const V2V_TEMPORARY_LABEL = 'cnv.io/temporary';
 
 export const CONVERSION_VDDK_INIT_POD_NAME = 'vddk-init';
 export const CONVERSION_VOLUME_VDDK_NAME = 'volume-vddk';
