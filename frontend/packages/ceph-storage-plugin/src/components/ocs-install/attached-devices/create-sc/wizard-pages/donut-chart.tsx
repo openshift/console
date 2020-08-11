@@ -1,14 +1,17 @@
 import * as React from 'react';
-import { Button } from '@patternfly/react-core';
+import { Button, Modal } from '@patternfly/react-core';
 import { ChartDonut, ChartLabel } from '@patternfly/react-charts';
 
 import { calculateRadius } from '@console/shared';
 import { pluralize, convertToBaseValue } from '@console/internal/components/utils/';
+import { NodeModel } from '@console/internal/models';
+import { ListPage } from '@console/internal/components/factory';
 import { getNodes } from '@console/local-storage-operator-plugin/src/utils';
 import { DiskListModal } from './disk-list';
 import { State, Action, Discoveries } from '../state';
 import { dropdownUnits } from '../../../../../constants';
 import { getTotalDeviceCapacity } from '../../../../../utils/install';
+import AttachedDevicesNodeTable from '../../sc-node-list';
 import '../../attached-devices.scss';
 
 export const DiscoveryDonutChart: React.FC<DiscoveryDonutChartProps> = ({ state, dispatch }) => {
@@ -57,6 +60,12 @@ export const DiscoveryDonutChart: React.FC<DiscoveryDonutChartProps> = ({ state,
   ]);
 
   React.useEffect(() => {
+    const filteredNodes = new Set<string>();
+    state.filteredDiscoveries.forEach((discovery) => filteredNodes.add(discovery.node));
+    dispatch({ type: 'setFilteredNodes', value: Array.from(filteredNodes) });
+  }, [state.filteredDiscoveries, dispatch]);
+
+  React.useEffect(() => {
     const str = `${Number(state.chartSelectedData).toFixed(1)} ${state.chartDataUnit}`;
     setAvailableCapacityStr(str);
   }, [state.chartSelectedData, state.chartDataUnit]);
@@ -65,17 +74,32 @@ export const DiscoveryDonutChart: React.FC<DiscoveryDonutChartProps> = ({ state,
     <div className="ceph-ocs-install__chart-wrapper">
       <div className="ceph-ocs-install_capacity-header">Selected Capacity</div>
       <div className="ceph-ocs-install__stats">
-        <div>{pluralize(nodes.length, 'Node')}</div>
+        <div>
+          {state.filteredNodes.length ? (
+            <Button
+              variant="link"
+              onClick={() => dispatch({ type: 'setShowNodeList', value: true })}
+              className="ceph-ocs-install__node-list-btn"
+            >
+              {pluralize(state.filteredNodes.length, 'Node')}
+            </Button>
+          ) : (
+            <div>{`${state.filteredNodes.length} Node`}</div>
+          )}
+        </div>
         <div className="ceph-ocs-install_stats--divider" />
         <div>
-          <Button
-            component="a"
-            variant="link"
-            onClick={() => dispatch({ type: 'setShowDiskList', value: true })}
-            className="ceph-ocs-install__disk-list-btn"
-          >
-            {pluralize(state.filteredDiscoveries.length, 'Disk')}
-          </Button>
+          {state.filteredDiscoveries.length ? (
+            <Button
+              variant="link"
+              onClick={() => dispatch({ type: 'setShowDiskList', value: true })}
+              className="ceph-ocs-install__disk-list-btn"
+            >
+              {pluralize(state.filteredDiscoveries.length, 'Disk')}
+            </Button>
+          ) : (
+            <div>{`${state.filteredDiscoveries.length} Disk`}</div>
+          )}
         </div>
       </div>
       <ChartDonut
@@ -95,7 +119,35 @@ export const DiscoveryDonutChart: React.FC<DiscoveryDonutChartProps> = ({ state,
         }
       />
       <DiskListModal state={state} dispatch={dispatch} />
+      <NodeListModal state={state} dispatch={dispatch} />
     </div>
+  );
+};
+
+const NodeListModal: React.FC<DiscoveryDonutChartProps> = ({ state, dispatch }) => {
+  const cancel = () => dispatch({ type: 'setShowNodeList', value: false });
+
+  return (
+    <Modal
+      title="Selected Nodes"
+      isOpen={state.showNodeList}
+      onClose={cancel}
+      className="ceph-ocs-install__filtered-modal"
+      actions={[
+        <Button key="confirm" variant="primary" onClick={cancel}>
+          Close
+        </Button>,
+      ]}
+    >
+      <ListPage
+        kind={NodeModel.kind}
+        showTitle={false}
+        ListComponent={AttachedDevicesNodeTable}
+        hideLabelFilter
+        hideNameLabelFilters
+        customData={{ filteredNodes: state.filteredNodes }}
+      />
+    </Modal>
   );
 };
 

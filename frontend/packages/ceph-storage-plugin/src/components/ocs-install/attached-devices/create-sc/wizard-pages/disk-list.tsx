@@ -75,7 +75,7 @@ export const DiskListModal: React.FC<DiskListModalProps> = ({ state, dispatch })
       title="Selected Disks"
       isOpen={state.showDiskList}
       onClose={cancel}
-      className="ceph-ocs-install__disks-modal"
+      className="ceph-ocs-install__filtered-modal"
       actions={[
         <Button key="confirm" variant="primary" onClick={cancel}>
           Close

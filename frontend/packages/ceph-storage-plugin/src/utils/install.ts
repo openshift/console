@@ -37,8 +37,7 @@ export const filterSCWithoutNoProv = (sc: StorageClassResourceKind) =>
 export const getTotalDeviceCapacity = (list: Discoveries[]) => {
   const totalCapacity = list.reduce((res, device) => {
     if (device?.status?.state === AVAILABLE) {
-      const capacity = Number(convertToBaseValue(device.size));
-      return res + capacity;
+      return res + device.size;
     }
     return res;
   }, 0);

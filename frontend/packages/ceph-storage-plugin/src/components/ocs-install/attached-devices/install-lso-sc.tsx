@@ -88,7 +88,6 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
   const [isEncrypted, setEncrypted] = React.useState(true);
   const [storageClass, setStorageClass] = React.useState<StorageClassResourceKind>(null);
   const [nodes, setNodes] = React.useState<NodeKind[]>([]);
-  // LVS: Local Volume Set
   const dispatch = useDispatch();
   const [scData, scLoaded, scLoadError] = useK8sWatchResource<StorageClassResourceKind[]>(
     scResource,

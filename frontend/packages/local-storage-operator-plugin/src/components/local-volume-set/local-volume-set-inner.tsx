@@ -7,6 +7,7 @@ import {
   TextInputTypes,
   Text,
   TextVariants,
+  pluralize,
 } from '@patternfly/react-core';
 import { Dropdown } from '@console/internal/components/utils';
 import { ListPage } from '@console/internal/components/factory';
@@ -81,7 +82,7 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
       <FormGroup label="Node Selector" fieldId="create-lvs--radio-group-node-selector">
         <div id="create-lvs-radio-group-node-selector">
           <Radio
-            label="All nodes"
+            label={`All nodes (${pluralize(state.nodeNamesForLVS.length, 'node')})`}
             name="nodes-selection"
             id="create-lvs-radio-all-nodes"
             className="lso-create-lvs__all-nodes-radio--padding"

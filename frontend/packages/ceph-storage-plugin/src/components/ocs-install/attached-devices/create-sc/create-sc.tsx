@@ -176,7 +176,7 @@ const CreateSC: React.FC<CreateSCProps> = ({ match }) => {
         );
       case CreateStepsSC.STORAGECLASS:
         if (!state.volumeSetName.trim().length) return true;
-        if (state.showNodesListOnLVS) return state.nodeNames.length < minSelectedNode;
+        if (state.filteredNodes.length < minSelectedNode) return true;
         return !state.volumeSetName.trim().length;
 
       default:
