@@ -12,17 +12,19 @@ import {
   definitionFor,
 } from '@console/internal/module/k8s';
 import { CustomResourceDefinitionModel } from '@console/internal/models';
-import { Firehose } from '@console/internal/components/utils/firehose';
 import {
+  PageHeading,
   StatusBox,
   FirehoseResult,
   BreadCrumbs,
   resourcePathFromModel,
 } from '@console/internal/components/utils';
+import { Firehose } from '@console/internal/components/utils/firehose';
 import { RootState } from '@console/internal/redux';
 import { SyncedEditor } from '@console/shared/src/components/synced-editor';
 import { getActivePerspective } from '@console/internal/reducers/ui';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { getBadgeFromType } from '@console/shared/src/components/badges';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import { match as RouterMatch } from 'react-router';
@@ -36,6 +38,8 @@ import { getSchemaErrors, prune } from '@console/shared/src/components/dynamic-f
 import { hasNoFields } from './utils';
 // eslint-disable-next-line @typescript-eslint/camelcase
 import { DEPRECATED_CreateOperandForm } from './DEPRECATED_operand-form';
+
+import './create-operand.scss';
 
 export const CreateOperand: React.FC<CreateOperandProps> = ({
   clusterServiceVersion,
@@ -113,8 +117,13 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
                 ]}
               />
             </div>
-            <h1 className="co-create-operand__header-text">{`Create ${model.label}`}</h1>
-            <p className="help-block">{helpText}</p>
+            <PageHeading
+              badge={getBadgeFromType(model.badge)}
+              className="olm-create-operand__page-heading"
+              title={`Create ${model.label}`}
+            >
+              <span className="help-block">{helpText}</span>
+            </PageHeading>
           </div>
           <SyncedEditor
             context={{
