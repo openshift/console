@@ -201,14 +201,16 @@ const addListNode: UpdateOperationAction<UpdateOperationAddData> = (tasks, listT
   }
 };
 
+const getTaskNames = (tasks: PipelineTask[]) => tasks.map((t) => t.name);
+
 const convertListToTask: UpdateOperationAction<UpdateOperationConvertToTaskData> = (
   tasks,
   listTasks,
   data,
 ) => {
   const { name, resource, runAfter } = data;
-
-  const newPipelineTask: PipelineTask = convertResourceToTask(resource, runAfter);
+  const usedNames = getTaskNames(tasks);
+  const newPipelineTask: PipelineTask = convertResourceToTask(usedNames, resource, runAfter);
 
   return {
     tasks: [
@@ -384,8 +386,8 @@ const fixInvalidListTask: UpdateOperationAction<UpdateOperationFixInvalidTaskLis
   data,
 ) => {
   const { existingName, resource, runAfter } = data;
-
-  const newPipelineTask: PipelineTask = convertResourceToTask(resource, runAfter);
+  const usedNames = getTaskNames(tasks);
+  const newPipelineTask: PipelineTask = convertResourceToTask(usedNames, resource, runAfter);
 
   return {
     tasks: [

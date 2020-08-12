@@ -133,17 +133,14 @@ export const useNodes = (
     onUpdateTasks(taskGroupRef.current, { type: UpdateOperationType.CONVERT_LIST_TO_TASK, data });
   };
 
-  // TODO: Fix id collisions then remove this utility; we shouldn't need to trim the tasks
-  const noDuplicates = (resource: PipelineResourceTask) =>
-    !taskGroupRef.current.tasks.find((pt) => pt.name === resource.metadata.name);
   const newListNode = (
     name: string,
     runAfter?: string[],
     firstTask?: boolean,
   ): PipelineTaskListNodeModel =>
     createTaskListNode(name, {
-      namespaceTaskList: namespacedTasks?.filter(noDuplicates),
-      clusterTaskList: clusterTasks?.filter(noDuplicates),
+      namespaceTaskList: namespacedTasks,
+      clusterTaskList: clusterTasks,
       onNewTask: (resource: PipelineResourceTask) => {
         onNewTask(resource, name, runAfter);
       },
@@ -163,8 +160,8 @@ export const useNodes = (
   const soloTask = (name = 'initial-node') => newListNode(name, undefined, true);
   const newInvalidListNode = (name: string, runAfter?: string[]): PipelineTaskListNodeModel =>
     createInvalidTaskListNode(name, {
-      namespaceTaskList: namespacedTasks?.filter(noDuplicates),
-      clusterTaskList: clusterTasks?.filter(noDuplicates),
+      namespaceTaskList: namespacedTasks,
+      clusterTaskList: clusterTasks,
       onNewTask: (resource: PipelineResourceTask) => {
         const data: UpdateOperationFixInvalidTaskListData = {
           existingName: name,
