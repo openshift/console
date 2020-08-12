@@ -1,66 +1,116 @@
+import { operators } from "../constants/global";
+
+export const operatorsObj = {
+  nav: {
+    operatorHub: 'a[href="/operatorhub"]',
+    installOperators: 'a[href$="/operators.coreos.com~v1alpha1~ClusterServiceVersion"]',
+    link: 'li.pf-c-nav__item.pf-m-expandable',
+    menuItems: 'a.pf-c-nav__link',
+  },
+  operatorHub: {
+    search: 'input[placeholder="Filter by keyword..."]',
+    numOfItems: 'div.co-catalog-page__num-items',
+  },
+  pipelineOperatorSubscription: {
+    logo: 'h1.co-clusterserviceversion-logo__name__clusterserviceversion',
+  },
+  installOperators: {
+    title: 'h1.co-m-pane__heading',
+    operatorsNameRow: 'div[aria-label="Installed Operators"] td:nth-child(1)',
+    search: 'input[data-test-id="item-filter"]',
+    noOperatorFoundMessage: 'div.cos-status-box__title',
+  },
+  sidePane: {
+    install: '[data-test-id="operator-install-btn"]',
+    uninstall: '[data-test-id="operator-uninstall-btn"]',
+  },
+  alertDialog: '[role="dialog"]',
+  uninstallPopup:{
+    uninstall: '#confirm-action',
+  }
+}
+
 export const operatorsPage = {
   navigateToOperaotorHubPage: () => {
-    cy.get('[data-component="pf-nav-expandable"]')
-      .contains('Operators')
-      .click();
-    cy.get('.pf-c-nav__link')
-      .contains('OperatorHub')
-      .should('be.visible');
-    cy.get('.pf-c-nav__link')
-      .contains('OperatorHub')
-      .click();
+    cy.get(operatorsObj.nav.link).contains('Operators').click();
+    cy.get(operatorsObj.nav.operatorHub,).click();
   },
 
-  searchOperator: (operatorName) => {
-    cy.get('input[placeholder="Filter by keyword..."]').type(operatorName);
-    cy.get('.co-catalog-page__num-items').should('be.visible');
+  navigateToInstalloperatorsPage: () => {
+    cy.get(operatorsObj.nav.link).contains('Installed Operators').click();
+    cy.get(operatorsObj.nav.operatorHub,).click();
   },
 
-  installPipelineOperator: () => {
-    cy.get('.co-m-nav-title')
-      .find('h1')
-      .should('have.text', 'Install Operator');
+  searchOperator: (operatorName: string) => {
+    cy.get(operatorsObj.operatorHub.search, { timeout: 40000 }).should('be.visible').type(operatorName);
+    cy.get(operatorsObj.operatorHub.numOfItems).should('be.visible');
+  },
+
+  installOperator: () => {
+    cy.get(operatorsObj.installOperators.title).should('have.text', 'Install Operator');
     cy.byButtonText('Install').click();
-    cy.byLegacyTestID('resource-title').should('have.text', 'Installed Operators');
+    cy.byLegacyTestID('resource-title').contains('Installed Operators');
   },
 
-  verifyPipelineOperatorSubscriptionPage: () => {
-    cy.get('.co-m-nav-title')
-      .find('h1')
-      .should('have.text', 'Install Operator');
-    cy.get('h1.co-clusterserviceversion-logo__name__clusterserviceversion').should(
-      'have.text',
-      'OpenShift Pipelines Operator',
-    );
-  },
+  verifyPipelineOperatorSubscriptionPage: () => 
+    cy.get(operatorsObj.pipelineOperatorSubscription.logo).should('have.text', 'OpenShift Pipelines Operator'),
 
-  verifyInstalledOperator: (operatorName) => {
-    // cy.get('[role="dialog"]').find('[data-test-id="operator-uninstall-btn"]').should('be.exist');
-    cy.get('h1.co-clusterserviceversion-logo__name__clusterserviceversion').should(
-      'have.text',
-      operatorName,
-    );
-  },
+  verifyServerlessOperatorSubscriptionPage: () => 
+  cy.get(operatorsObj.pipelineOperatorSubscription.logo).should('have.text', 'OpenShift Serverless Operator'),
 
-  titleShouldBe: (title: string) => cy.byTestID('resource-title').contains(title),
+  verifyInstalledOperator: (operatorName: string) => 
+    cy.get(operatorsObj.installOperators.operatorsNameRow).should('contain.text', operatorName),
+  
+  verifyOperatoNotAvailable:(operatorName: string) => {
+    cy.get(operatorsObj.installOperators.search).type(operatorName);
+    cy.get(operatorsObj.installOperators.noOperatorFoundMessage).should('have.text', 'No Operators Found');
+  },
+  
   headingDisplayed: (heading: string) => cy.get('h1').contains(heading),
 
-  // installPipelineOperator: () => {
-  //   cy.byTestID('openshift-pipelines-operator-rh-redhat-operators-openshift-marketplace').click();
-  //   cy.get('[role="dialog"]')
-  //     .byLegacyTestID('operator-modal-header')
-  //     .should('be.exist');
-  //   cy.byLegacyTestID('operator-install-btn').click();
-  //   cy.get('.co-m-nav-title')
-  //     .find('h1')
-  //     .should('have.text', 'Install Operator');
-  //   cy.byButtonText('Install').click();
-  //   cy.byLegacyTestID('resource-title').should('have.text', 'Installed Operators');
-  // },
-
-  verifyPipelineoperatorInstalled: () => {
-    cy.get('[role="dialog"]')
-      .find('[data-test-id="operator-uninstall-btn"]')
-      .should('be.exist');
+  selectOperator: (opt: operators | string) => {
+    switch (opt) {
+      case 'OpenShift Pipelines Operator':
+      case operators.pipelineOperator: {
+        cy.byTestID('openshift-pipelines-operator-rh-redhat-operators-openshift-marketplace').click();
+        break;
+      }
+      case 'OpenShift Serverless Operator':
+      case operators.serverlessOperator: {
+        cy.byTestID('serverless-operator-redhat-operators-openshift-marketplace').click();
+        break;
+      }
+      default: {
+        throw new Error('operator is not available');
+      }
+    }
   },
+
+  verifySiedPane:() => cy.get(operatorsObj.alertDialog).should('be.exist'),
+
+  clickInstallOnSidePane: () => {
+    cy.get(operatorsObj.alertDialog).then(($sidePane) => {
+      if ($sidePane.find(operatorsObj.sidePane.install).length) {
+        cy.get(operatorsObj.sidePane.install).click();
+      }
+      else {
+        cy.log('Operator is already installed');
+      }
+    })   
+  },
+
+  clickUninstallOnSidePane:() => {
+    cy.get(operatorsObj.alertDialog).then(($sidePane) => {
+      if ($sidePane.find(operatorsObj.sidePane.uninstall).length) {
+        cy.get(operatorsObj.sidePane.uninstall).click();
+      }
+      else {
+        cy.log('Operator is not installed');
+      }
+    })   
+  },
+
+  verifyOperatorInNavigationMenu: (menuItem: string) => {
+    cy.get(operatorsObj.nav.menuItems, {timeout:9000}).contains(menuItem).should('be.visible');
+  }
 };

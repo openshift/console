@@ -13,7 +13,7 @@ Scenario Outline: Newly created pipeline details in Pipelines page : P-03-TC12
    When the user enters "<pipeline_name>" into the pipelines search bar
    Then pipelines table displayed with column names Name, Namespace, Last Run, Task Status, Last Run Status and Last Run Time
    And column Name display with value "<pipeline_name>"
-   And column Namespace display with value "aut-pipeline-actions"
+   # And column Namespace display with value "aut-pipeline-actions"
    And columns Last Run, Task Run Status, Last Run Status, Last Run Time with values display "-"
    And Create Pipeline button is enabled
    And kebab menu is displayed
@@ -89,7 +89,7 @@ Scenario Outline: Delete the Pipeline from pipelines Details page: P-03-TC13
    When the user enters "<pipeline_name>" into the pipelines search bar
    And click pipeline name "<pipeline_name>" from searched results on Pipelines page
    And user selects the option "Delete Pipeline" from Actions menu drop down
-   And click Delete button on Delete Pipeline? popup
+   And click Delete on Delete Pipeline popup
    Then user redirects to Pipelines page
    But "<pipeline_name>" is not displayed on Pipelines page
 
@@ -129,5 +129,5 @@ Scenario: Kebab menu options of pipeline with atleast one pipeline run in Pipeli
 Scenario: Start Last Run for the basic pipeline from pipelines page: P-05-TC03
     Given user is at pipelines page
     And pipeline "pipe-task-withoutparams-resoruces" consists of task "kn" without parameters and resources
-    When user selects "Start Last Run" from the kebab menu
+    When user selects "Start Last Run" from the kebab menu for "pipe-task-withoutparams-resoruces"
     Then page redirects to Pipeline Run Details page

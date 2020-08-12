@@ -3,7 +3,7 @@ Feature: Create event sources
 
 Background:
    Given open shift cluster is installed with Serverless and eventing operator
-   And open the project namespace "AUT-create-knative-event-source"
+   And open the project namespace "aut-create-knative-event-source"
    And user is on dev perspective
 
 

@@ -7,5 +7,5 @@
     "../../.eslintrc",
     "plugin:cypress/recommended"
   ],
-  "plugins": ["cypress"]
+  "plugins": ["cypress", "cucumber"]
 }

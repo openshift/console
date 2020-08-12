@@ -3,6 +3,7 @@ Feature: Perform actions on knative revision
 
 Background:
    Given open shift cluster is installed with Serverless operator
+   And open the project "aut-knative-actions-revision"
    And user is on dev perspective topology page
    And one workload with knative resource is available
 

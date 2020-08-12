@@ -3,6 +3,7 @@ Feature: Perform actions on knative service
 
 Background:
     Given open shift cluster is installed with Serverless operator
+    And open the project "aut-create-knative-actions-service"
     And user navigates to dev perspective - topology page
     And one workload with knative resource is available
 

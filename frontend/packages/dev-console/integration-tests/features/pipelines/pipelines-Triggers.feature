@@ -124,9 +124,9 @@ Scenario: Start the pipeline from trigger without secret : P-010-TC01
 
 @regression, @manual
 Scenario: Start the pipeline with secret from trigger with authentication key : P-010-TC02
-    Given webhook secret is created and added to workload
+    # Given webhook secret is created and added to workload
 
 
 @regression, @manual
 Scenario: Start the pipeline with secret from trigger without authentication key : P-010-TC03 
-    Given webhook secret is created and added to workload
+    # Given webhook secret is created and added to workload

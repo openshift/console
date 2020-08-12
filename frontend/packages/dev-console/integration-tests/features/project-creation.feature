@@ -14,5 +14,5 @@ Scenario Outline: Create the project namespace
     And page displays with message "No workloads found"
 
 Examples:
-| project_name  | display_name |
-| aut-m-project | automation1  |
+| project_name   |
+| AUT_MB_project |

@@ -130,7 +130,7 @@ Scenario Outline: Download the logs from Pipeline Details page : P-04-TC05
 
 @regression
 Scenario: kebab menu options in pipelines page : P-04-TC07
-    Given user is at Pipelines page
+    Given user is at pipelines page
 
 
 @regression
@@ -161,17 +161,17 @@ Scenario: Download the logs from Pipeline Details page after pipleine run: P-05-
 
 Scenario: Start the pipeline wtih cancelled tasks: P-07- TC04
     Given user is at the Pipeline Details page
-    And pi[peline run is available with cancelled tasks
+    And pipeline run is available with cancelled tasks
 
 
 Scenario: Start the pipeline wtih failed tasks: P-07- TC05
     Given user is at the Pipeline Details page
-    And pi[peline run is available with failed tasks
+    And pipeline run is available with failed tasks
 
 
 Scenario: Start the pipeline wtih successful tasks: P-07- TC06
     Given user is at the Pipeline Details page
-    And pi[peline run is available with failed tasks
+    And pipeline run is available with failed tasks
 
 
 @regression, @smoke

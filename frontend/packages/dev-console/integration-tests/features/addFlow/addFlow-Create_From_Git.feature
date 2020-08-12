@@ -59,7 +59,7 @@ Scenario: Add new git workload to the existing application : A-04-TC03
 Scenario: Cancel the git workload creation : A-04-TC04
    Given user is at Import from git page
    When user types Git Repo url as "https://github.com/sclorg/dancer-ex.git"
-   And clicks "Cancel" button on Add page 
+   And click Cancel button on Add page 
    Then user redirects to Add page
 
 
@@ -102,8 +102,8 @@ Scenario Outline: Creaete the workload by unselecting options in "Build Configur
    And unselects "Configure a webhook build trigger" checkbox in build configuration section
    And unselects "Automatically build a new image when the builder image changes" checkbox in build configuration section
    And unselects "Launch the first build when the build configuration is created" checkbox in build configuration section
-   And type Name as "<name>" in Environment Variables (Build and Runtime) section
-   And type Value as "<value>" in Environment Variables (Build and Runtime) section
+   And type Name as "<name>" in Environment Variables section
+   And type Value as "<value>" in Environment Variables section
    And click Create button on Add page
    Then user redirects to Topology page
    And build does not get started
@@ -120,8 +120,8 @@ Scenario Outline: Create a git workload with advanced option "Deployment" : A-04
    And type name as "<name>" in General section
    And click "Deployment" link in Advanced Options section
    And verify "Auto deploy when new image is available" checkbox is seleceted
-   And type Name as "<name>" in Environment Variables (Runtime only) section
-   And type Value as "<value>" in Environment Variables (Runtime only) section
+   And type Name as "<name>" in Environment Variables Runtime only section
+   And type Value as "<value>" in Environment Variables Runtime only section
    And click Create button on Add page
    Then user redirects to Topology page
 
@@ -180,7 +180,7 @@ Examples:
 
 
 @regression
-Scenario: Create a git workload with advanced option "Health Checks" : A-04-TC12
+Scenario Outline: Create a git workload with advanced option "Health Checks" : A-04-TC12
    Given user is at Import from git page
    When user types Git Repo url as "<git_url>"
    And type name as "<name>" in General section

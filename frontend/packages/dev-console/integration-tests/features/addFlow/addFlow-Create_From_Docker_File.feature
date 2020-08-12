@@ -8,9 +8,9 @@ Background:
 
 
 @regression
-Scenario: Dockerfile details after entering git repo url: A-06-TC01
+Scenario Outline: Dockerfile details after entering git repo url: A-06-TC01
    Given user is on Import from Docker file page
-   When user types Git Repo url as "<git_url>"
+   When user types Git Repo url as "<docker_git_url>"
    Then git url gets Validated
    And Application name displays as "<app_name>"
    And Name displays as "<name>"

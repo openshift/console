@@ -4,7 +4,7 @@ Feature: Apache Camel eventing
 Background:
    Given open shift cluster is installed with apache camel source operator
    And user is on dev perspective
-   And create the project "AUT-create-knative-camel-event-source"
+   And create the project "aut-knative-camel-event-source"
 
 
 @regression, @smoke

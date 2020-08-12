@@ -4,4 +4,4 @@ Feature: Create Application from Catalog file
 Background:
     Given user is at dev perspecitve
     And open project namespace "aut-addflow-catalog"
-    And user is on Add page
+    And user is at Add page

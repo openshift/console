@@ -20,5 +20,5 @@
     "supportFile": "support/index.ts",
     "pluginsFile": "plugins/index.js",
     "fixturesFolder": "fixtures",
-    "defaultCommandTimeout": 22000
+    "defaultCommandTimeout": 30000
   }
