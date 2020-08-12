@@ -19,6 +19,7 @@ import { detectGitType } from '../import/import-validation-utils';
 export enum CreateApplicationFlow {
   Git = 'Import from Git',
   Dockerfile = 'Import from Dockerfile',
+  Devfile = 'Import from Devfile',
   Container = 'Deploy Image',
 }
 
@@ -41,6 +42,8 @@ export const getPageHeading = (buildStrategy: string): string => {
       return CreateApplicationFlow.Git;
     case BuildStrategyType.Docker:
       return CreateApplicationFlow.Dockerfile;
+    case BuildStrategyType.Devfile:
+      return CreateApplicationFlow.Devfile;
     default:
       return CreateApplicationFlow.Container;
   }
@@ -116,6 +119,9 @@ export const getBuildData = (buildConfig: K8sResourceKind, gitType: string) => {
       break;
     case BuildStrategyType.Docker:
       buildStrategyData = _.get(buildConfig, 'spec.strategy.dockerStrategy');
+      break;
+    case BuildStrategyType.Devfile:
+      buildStrategyData = _.get(buildConfig, 'spec.strategy.devfileStrategy');
       break;
     default:
       buildStrategyData = { env: [] };

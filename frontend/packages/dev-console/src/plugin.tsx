@@ -60,6 +60,7 @@ import { AddAction } from './extensions/add-actions';
 import * as yamlIcon from './images/yaml.svg';
 import * as importGitIcon from './images/from-git.svg';
 import * as dockerfileIcon from './images/dockerfile.svg';
+import * as devfileIcon from './images/dockerfile.svg'; // change to devfile icon when we have it
 import * as pipelineIcon from './images/pipeline.svg';
 import { operatorResources } from './components/topology/operators/operator-resources';
 import {
@@ -1015,6 +1016,28 @@ const plugin: Plugin<ConsumedExtensions> = [
       label: 'From Dockerfile',
       description: 'Import your Dockerfile from your git repo to be built and deployed',
       icon: dockerfileIcon,
+      accessReview: [
+        BuildConfigModel,
+        ImageStreamModel,
+        DeploymentConfigModel,
+        SecretModel,
+        RouteModel,
+        ServiceModel,
+      ].map((model) => ({
+        group: model.apiGroup || '',
+        resource: model.plural,
+        verb: 'create',
+      })),
+    },
+  },
+  {
+    type: 'AddAction',
+    properties: {
+      id: 'import-from-devfile',
+      url: '/import?importType=devfile',
+      label: 'From Devfile',
+      description: 'Import your devfile from your git repository to be built and deployed',
+      icon: devfileIcon,
       accessReview: [
         BuildConfigModel,
         ImageStreamModel,

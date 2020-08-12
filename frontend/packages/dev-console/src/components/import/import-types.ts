@@ -50,6 +50,12 @@ export interface GitImportFormProps {
     loaded: boolean;
   };
 }
+export interface DevfileImportFormProps {
+  projects?: {
+    data: [];
+    loaded: boolean;
+  };
+}
 
 export interface FirehoseList {
   data?: K8sResourceKind[];
@@ -227,6 +233,7 @@ export const GitReadableTypes = {
 
 export enum ImportTypes {
   git = 'git',
+  devfile = 'devfile',
   docker = 'docker',
   s2i = 's2i',
 }
@@ -247,7 +254,7 @@ export interface ImportData {
   type: ImportTypes;
   title: string;
   buildStrategy: string;
-  loader: LazyLoader<GitImportFormProps | SourceToImageFormProps>;
+  loader: LazyLoader<GitImportFormProps | SourceToImageFormProps | DevfileImportFormProps>;
 }
 
 export enum TerminationTypes {
@@ -296,6 +303,7 @@ export enum ImportOptions {
   CONTAINER = 'CONTAINER',
   CATALOG = 'CATALOG',
   DOCKERFILE = 'DOCKERFILE',
+  DEVFILE = 'DEVFILE',
   DATABASE = 'DATABASE',
   EVENTSOURCE = 'EVENTSOURCE',
   EVENTPUBSUB = 'EVENTPUBSUB',

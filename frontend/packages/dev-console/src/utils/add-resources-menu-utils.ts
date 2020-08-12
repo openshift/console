@@ -31,6 +31,10 @@ export const getAddPageUrl = (
       pageUrl = `/import/ns/${ns}`;
       params.append('importType', 'docker');
       break;
+    case ImportOptions.DEVFILE:
+      pageUrl = `/import/ns/${ns}`;
+      params.append('importType', 'devfile');
+      break;
     case ImportOptions.DATABASE:
       pageUrl = `/catalog/ns/${ns}`;
       params.append('category', 'databases');

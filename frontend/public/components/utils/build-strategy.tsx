@@ -10,6 +10,7 @@ const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 
 export const BuildStrategy: React.SFC<BuildStrategyProps> = ({ resource, children }) => {
   const dockerfile = _.get(resource, 'spec.source.dockerfile');
+  const devfile = _.get(resource, 'spec.source.devfile');
   const jenkinsfile = _.get(resource, 'spec.strategy.jenkinsPipelineStrategy.jenkinsfile');
   const strategyType = getStrategyType(resource.spec.strategy.type);
   const buildFromPath = ['spec', 'strategy', strategyType, 'from'];
@@ -41,6 +42,11 @@ export const BuildStrategy: React.SFC<BuildStrategyProps> = ({ resource, childre
       {dockerfile && (
         <DetailsItem label="Dockerfile" obj={resource} path="spec.source.dockerfile">
           <pre>{dockerfile}</pre>
+        </DetailsItem>
+      )}
+      {devfile && (
+        <DetailsItem label="Devfile" obj={resource} path="spec.source.devfile">
+          <pre>{devfile}</pre>
         </DetailsItem>
       )}
       {jenkinsfile && (

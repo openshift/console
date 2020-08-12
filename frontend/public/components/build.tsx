@@ -99,6 +99,7 @@ const menuActions = [
 
 export enum BuildStrategyType {
   Docker = 'Docker',
+  Devfile = 'Devfile',
   Custom = 'Custom',
   JenkinsPipeline = 'JenkinsPipeline',
   Source = 'Source',
@@ -244,6 +245,8 @@ export const getStrategyType = (strategy: BuildStrategyType) => {
   switch (strategy) {
     case BuildStrategyType.Docker:
       return 'dockerStrategy';
+    case BuildStrategyType.Devfile:
+    return 'devfileStrategy';
     case BuildStrategyType.Custom:
       return 'customStrategy';
     case BuildStrategyType.JenkinsPipeline:
