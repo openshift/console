@@ -15,6 +15,13 @@ export type PendingChanges = {
   [key: string]: PendingChange;
 };
 
+export type PendingChangesByTab = {
+  [vmTab in VMTabEnum]?: {
+    resources?: string[];
+    pendingChangesKey?: string;
+  };
+};
+
 export type VMTabProps = {
   obj?: VMILikeEntityKind;
   vm?: VMKind;

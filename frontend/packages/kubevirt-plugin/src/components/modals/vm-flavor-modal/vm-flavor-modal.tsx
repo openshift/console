@@ -255,6 +255,7 @@ const VMFlavorModalFirehose = (props) => {
   resources.push({
     kind: VirtualMachineInstanceModel.kind,
     namespace: getNamespace(vmLike),
+    isList: true,
     prop: 'vmis',
     fieldSelector: `metadata.name=${getName(vmLike)}`,
   });
