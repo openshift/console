@@ -36,6 +36,7 @@ export const VMDetailsFirehose: React.FC<VMTabProps> = ({
   pods,
   migrations,
   templates,
+  pvcs,
   dataVolumes,
   customData: { kindObj },
 }) => {
@@ -57,6 +58,7 @@ export const VMDetailsFirehose: React.FC<VMTabProps> = ({
     vmi,
     pods,
     migrations,
+    pvcs,
     dataVolumes,
     vmImports,
   });

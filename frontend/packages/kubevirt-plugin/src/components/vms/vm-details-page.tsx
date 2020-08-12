@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { navFactory } from '@console/internal/components/utils';
 import { DetailsPage } from '@console/internal/components/factory';
-import { PodModel, TemplateModel } from '@console/internal/models';
+import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
 import { VMDisksAndFileSystemsPage } from '../vm-disks/vm-disks';
 import {
   DataVolumeModel,
@@ -120,6 +120,12 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
       namespace,
       prop: 'vmImports',
       optional: true,
+    },
+    {
+      kind: PersistentVolumeClaimModel.kind,
+      isList: true,
+      namespace,
+      prop: 'pvcs',
     },
     {
       kind: DataVolumeModel.kind,

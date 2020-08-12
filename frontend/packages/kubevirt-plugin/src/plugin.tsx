@@ -23,7 +23,7 @@ import {
   PVCStatus,
 } from '@console/plugin-sdk';
 import { DashboardsStorageCapacityDropdownItem } from '@console/ceph-storage-plugin';
-import { TemplateModel, PodModel } from '@console/internal/models';
+import { TemplateModel, PodModel, PersistentVolumeClaimModel } from '@console/internal/models';
 import { getName } from '@console/shared/src/selectors/common';
 import { AddAction } from '@console/dev-console/src/extensions/add-actions';
 import { FirehoseResource } from '@console/internal/components/utils';
@@ -101,6 +101,12 @@ const virtualMachineConfigurations = (namespace: string): FirehoseResource[] => 
       namespace,
       prop: 'migrations',
       optional: true,
+    },
+    {
+      isList: true,
+      optional: true,
+      kind: PersistentVolumeClaimModel.kind,
+      prop: 'pvcs',
     },
     {
       isList: true,
@@ -333,6 +339,11 @@ const plugin: Plugin<ConsumedExtensions> = [
           isList: true,
           kind: models.VirtualMachineInstanceMigrationModel.kind,
         },
+        pvcs: {
+          isList: true,
+          kind: PersistentVolumeClaimModel.kind,
+          optional: true,
+        },
         dataVolumes: {
           kind: models.DataVolumeModel.kind,
           isList: true,
@@ -404,6 +415,12 @@ const plugin: Plugin<ConsumedExtensions> = [
           isList: true,
           kind: models.VirtualMachineInstanceMigrationModel.kind,
           prop: 'migrations',
+        },
+        {
+          isList: true,
+          optional: true,
+          kind: PersistentVolumeClaimModel.kind,
+          prop: 'pvcs',
         },
         {
           isList: true,

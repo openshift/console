@@ -1,4 +1,5 @@
-import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
+import * as _ from 'lodash';
+import { K8sResourceKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
 import { createBasicLookup } from '@console/shared/src/utils/utils';
 import { getName, getNamespace, getOwnerReferences } from '@console/shared/src/selectors/common'; // do not import just from shared - causes cycles
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
@@ -10,7 +11,6 @@ import {
 } from '../../utils';
 import {
   getAnnotationKeySuffix,
-  getLabelValue,
   getStatusConditionOfType,
   getStatusPhase,
 } from '../../selectors/selectors';
@@ -19,7 +19,11 @@ import {
   getMigrationStatusPhase,
   isMigrating,
 } from '../../selectors/vmi-migration';
-import { findVMIPod, getPodStatusPhase, getVMImporterPods } from '../../selectors/pod/selectors';
+import {
+  findVMIPod,
+  getPodStatusPhase,
+  getPVCNametoImporterPodsMapForVM,
+} from '../../selectors/pod/selectors';
 import { findConversionPod, isVMCreated, isVMExpectedRunning } from '../../selectors/vm';
 import { getPodStatus } from '../pod/pod';
 import {
@@ -45,7 +49,6 @@ import {
   STARTING_MESSAGE,
   VMI_WAITING_MESSAGE,
 } from '../../strings/vm/status';
-import { CDI_KUBEVIRT_IO, STORAGE_IMPORT_PVC_NAME } from '../../constants';
 import { CONVERSION_PROGRESS_ANNOTATION } from '../../constants/v2v';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 import { VMIPhase } from '../../constants/vmi/phase';
@@ -143,57 +146,61 @@ const isBeingMigrated = (
 const isBeingImported = (
   vm: VMKind,
   pods?: PodKind[],
+  pvcs?: PersistentVolumeClaimKind[],
   dataVolumes?: V1alpha1DataVolume[],
 ): VMStatusBundle => {
-  const importerPods = getVMImporterPods(vm, pods);
-  if (importerPods && importerPods.length > 0 && !isVMCreated(vm)) {
-    const dvLookup = createBasicLookup(dataVolumes, getName);
-    const importerPodsStatuses = importerPods.map((pod) => {
-      const podStatus = getPodStatus(pod);
-      const dvName = getLabelValue(pod, `${CDI_KUBEVIRT_IO}/${STORAGE_IMPORT_PVC_NAME}`);
-      const dataVolume = dvLookup[dvName];
-
-      if (POD_STATUS_ALL_ERROR.includes(podStatus.status)) {
-        let status = VMStatus.CDI_IMPORT_ERROR;
-        if (
-          podStatus.status === POD_STATUS_NOT_SCHEDULABLE &&
-          getPodStatusPhase(pod) === POD_PHASE_PENDING
-        ) {
-          status = VMStatus.CDI_IMPORT_PENDING;
-        }
-
-        return {
-          message: podStatus.message,
-          status,
-          progress: null,
-          dataVolume,
-          pod,
-        };
-      }
-      return {
-        status: VMStatus.CDI_IMPORTING,
-        message: podStatus.message,
-        pod,
-        dataVolume,
-        progress: parsePercentage(dataVolume?.status?.progress, 0),
-      };
-    });
-    const importStatus =
-      importerPodsStatuses.find(({ status }) => status.isError()) ||
-      importerPodsStatuses.find(({ status }) => status.isPending()) ||
-      importerPodsStatuses[0];
-    const resultStatus = importStatus?.status || VMStatus.CDI_IMPORT_PENDING;
-    return {
-      status: resultStatus,
-      message: resultStatus.isError()
-        ? IMPORTING_CDI_ERROR_MESSAGE
-        : resultStatus.isPending()
-        ? IMPORT_CDI_PENDING_MESSAGE
-        : IMPORTING_CDI_MESSAGE,
-      importerPodsStatuses,
-    };
+  const importerPods = getPVCNametoImporterPodsMapForVM(vm, pods, pvcs);
+  if (_.isEmpty(importerPods) || isVMCreated(vm)) {
+    return null;
   }
-  return null;
+
+  const dvLookup = createBasicLookup(dataVolumes, getName);
+
+  const importerPodsStatuses = _.map(importerPods, (pod, pvcName) => {
+    const podStatus = getPodStatus(pod);
+    const dataVolume = dvLookup[pvcName];
+
+    if (POD_STATUS_ALL_ERROR.includes(podStatus.status)) {
+      let status = VMStatus.CDI_IMPORT_ERROR;
+      if (
+        podStatus.status === POD_STATUS_NOT_SCHEDULABLE &&
+        getPodStatusPhase(pod) === POD_PHASE_PENDING
+      ) {
+        status = VMStatus.CDI_IMPORT_PENDING;
+      }
+
+      return {
+        message: podStatus.message,
+        status,
+        progress: null,
+        dataVolume,
+        pod,
+      };
+    }
+    return {
+      status: VMStatus.CDI_IMPORTING,
+      message: podStatus.message,
+      pod,
+      dataVolume,
+      progress: parsePercentage(dataVolume?.status?.progress, 0),
+    };
+  });
+
+  const importStatus =
+    importerPodsStatuses.find(({ status }) => status.isError()) ||
+    importerPodsStatuses.find(({ status }) => status.isPending()) ||
+    importerPodsStatuses[0];
+  const resultStatus = importStatus?.status || VMStatus.CDI_IMPORT_PENDING;
+
+  return {
+    status: resultStatus,
+    message: resultStatus.isError()
+      ? IMPORTING_CDI_ERROR_MESSAGE
+      : resultStatus.isPending()
+      ? IMPORT_CDI_PENDING_MESSAGE
+      : IMPORTING_CDI_MESSAGE,
+    importerPodsStatuses,
+  };
 };
 
 const isVMError = (vm: VMKind): VMStatusBundle => {
@@ -282,12 +289,14 @@ export const getVMStatus = ({
   vmi,
   pods,
   migrations,
+  pvcs,
   dataVolumes,
   vmImports,
 }: {
   vm?: VMKind;
   vmi?: VMIKind;
   pods?: PodKind[];
+  pvcs?: PersistentVolumeClaimKind[];
   dataVolumes?: V1alpha1DataVolume[];
   migrations?: K8sResourceKind[];
   vmImports?: VMImportKind[];
@@ -299,7 +308,7 @@ export const getVMStatus = ({
     isV2VVMWareConversion(vm, pods) || // these statuses must precede isRunning() because they do not rely on ready vms
     isV2VVMImportConversion(vm, vmImports) ||
     isBeingMigrated(vm, vmi, migrations) ||
-    isBeingImported(vm, pods, dataVolumes) ||
+    isBeingImported(vm, pods, pvcs, dataVolumes) ||
     isVMError(vm) ||
     isBeingStopped(vm) ||
     isOff(vm) ||
