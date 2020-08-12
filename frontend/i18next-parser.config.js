@@ -1,8 +1,7 @@
 const SUPPORTED_LOCALES = {
-  ar: 'عربي',
   en: 'English',
-  de: 'Deutsch',
   zh: '中文',
+  ja: '日本語',
 };
 
 const FALLBACK_LOCALE = 'en';

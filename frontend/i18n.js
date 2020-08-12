@@ -4,9 +4,8 @@ import detector from 'i18next-browser-languagedetector';
 import httpBackend from 'i18next-http-backend';
 
 // Load moment.js locales (en is default and always loaded)
-import 'moment/locale/ar';
 import 'moment/locale/zh-cn';
-import 'moment/locale/de';
+import 'moment/locale/ja';
 import moment from 'moment';
 
 const { FALLBACK_LOCALE } = require('./i18next-parser.config');

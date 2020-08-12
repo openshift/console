@@ -10,12 +10,8 @@ import { LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY } from '@console/shared/src/const
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 
 import {
-  BuildConfigModel,
-  BuildModel,
   ChargebackReportModel,
-  DeploymentConfigModel,
   GroupModel,
-  ImageStreamModel,
   MachineAutoscalerModel,
   MachineConfigModel,
   MachineConfigPoolModel,
@@ -124,7 +120,7 @@ const AdminNav = () => {
         <ResourceNSLink resource="deployments" name={t('nav~Deployments')} />
         <ResourceNSLink
           resource="deploymentconfigs"
-          name={DeploymentConfigModel.labelPlural}
+          name={t('nav~Deployment Configs')}
           required={FLAGS.OPENSHIFT}
         />
         <ResourceNSLink resource="statefulsets" name={t('nav~Stateful Sets')} />
@@ -175,11 +171,11 @@ const AdminNav = () => {
       </NavSection>
 
       <NavSection title={t('nav~Builds')} required={FLAGS.OPENSHIFT}>
-        <ResourceNSLink resource="buildconfigs" name={BuildConfigModel.labelPlural} />
-        <ResourceNSLink resource="builds" name={BuildModel.labelPlural} />
+        <ResourceNSLink resource="buildconfigs" name={t('nav~Build Configs')} />
+        <ResourceNSLink resource="builds" name={t('nav~Builds')} />
         <ResourceNSLink
           resource="imagestreams"
-          name={ImageStreamModel.labelPlural}
+          name={t('nav~Image Streams')}
           startsWith={imagestreamsStartsWith}
         />
       </NavSection>

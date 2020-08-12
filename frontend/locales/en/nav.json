@@ -62,5 +62,8 @@
   "Chargeback": "Chargeback",
   "Custom Resource Definitions": "Custom Resource Definitions",
   "Volume Snapshots": "Volume Snapshots",
-  "Volume Snapshot Classes": "Volume Snapshot Classes"
+  "Volume Snapshot Classes": "Volume Snapshot Classes",
+  "Build Configs": "Build Configs",
+  "Deployment Configs": "Deployment Configs",
+  "Image Streams": "Image Streams"
 }
