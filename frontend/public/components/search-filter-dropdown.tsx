@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Dropdown, DropdownToggle, DropdownItem } from '@patternfly/react-core';
+import { Dropdown, DropdownToggle, DropdownItem, Tooltip } from '@patternfly/react-core';
 import { CaretDownIcon, FilterIcon } from '@patternfly/react-icons';
 import { TextFilter } from './factory';
 
@@ -12,7 +12,7 @@ export const SearchFilterDropdown: React.SFC<SearchFilterDropdownProps> = (props
   const [isOpen, setOpen] = React.useState(false);
   const [selected, setSelected] = React.useState(searchFilterValues.Label);
 
-  const { onChange, nameFilterInput, labelFilterInput } = props;
+  const { onChange, nameFilterInput, labelFilterInput, validated, validationMsg } = props;
 
   const onToggle = (open: boolean) => setOpen(open);
   const onSelect = (event: React.SyntheticEvent) => {
@@ -52,16 +52,23 @@ export const SearchFilterDropdown: React.SFC<SearchFilterDropdownProps> = (props
         isOpen={isOpen}
         dropdownItems={dropdownItems}
       />
-      <TextFilter
-        parentClassName="co-search__filter-input"
-        onChange={handleInputValue}
-        placeholder={selected === searchFilterValues.Label ? 'app=frontend' : 'my-resource'}
-        name="search-filter-input"
-        id="search-filter-input"
-        value={selected === searchFilterValues.Label ? labelFilterInput : nameFilterInput}
-        onKeyDown={handleKeyDown}
-        aria-labelledby="toggle-id"
-      />
+      <Tooltip
+        content={validationMsg}
+        isVisible={!!validationMsg}
+        trigger={validationMsg ? 'mouseenter focus' : 'manual'}
+      >
+        <TextFilter
+          parentClassName="co-search__filter-input"
+          onChange={handleInputValue}
+          placeholder={selected === searchFilterValues.Label ? 'app=frontend' : 'my-resource'}
+          name="search-filter-input"
+          id="search-filter-input"
+          value={selected === searchFilterValues.Label ? labelFilterInput : nameFilterInput}
+          onKeyDown={handleKeyDown}
+          aria-labelledby="toggle-id"
+          validated={validated}
+        />
+      </Tooltip>
     </div>
   );
 };
@@ -70,4 +77,6 @@ export type SearchFilterDropdownProps = {
   onChange: (type: string, value: string, endOfString: boolean) => void;
   nameFilterInput: string;
   labelFilterInput: string;
+  validated?: string;
+  validationMsg?: string;
 };

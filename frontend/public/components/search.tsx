@@ -12,6 +12,7 @@ import {
   ToolbarContent,
   ToolbarFilter,
   ToolbarItem,
+  ValidatedOptions,
 } from '@patternfly/react-core';
 import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { getBadgeFromType } from '@console/shared';
@@ -82,6 +83,7 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
   const [collapsedKinds, setCollapsedKinds] = React.useState(new Set<string>([]));
   const [labelFilter, setLabelFilter] = React.useState([]);
   const [labelFilterInput, setLabelFilterInput] = React.useState('');
+  const [labelFilterInputError, setLabelFilterInputError] = React.useState(false);
   const [typeaheadNameFilter, setTypeaheadNameFilter] = React.useState('');
   const { namespace, noProjectsAvailable, pinnedResources } = props;
 
@@ -160,17 +162,21 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
   };
 
   const updateNameFilter = (value: string) => {
+    setLabelFilterInputError(false);
     setTypeaheadNameFilter(value);
     setQueryArgument('name', value);
   };
 
   const updateLabelFilter = (value: string, endOfString: boolean) => {
     setLabelFilterInput(value);
+    setLabelFilterInputError(false);
     if (requirementFromString(value) !== undefined && endOfString) {
       const updatedLabels = _.uniq([...labelFilter, value]);
       setLabelFilter(updatedLabels);
       setQueryArgument('q', updatedLabels.join(','));
       setLabelFilterInput('');
+    } else if (requirementFromString(value) === undefined && endOfString) {
+      setLabelFilterInputError(true);
     }
   };
 
@@ -248,6 +254,12 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
                     onChange={updateSearchFilter}
                     nameFilterInput={typeaheadNameFilter}
                     labelFilterInput={labelFilterInput}
+                    validated={labelFilterInputError ? ValidatedOptions.error : ''}
+                    validationMsg={
+                      labelFilterInputError
+                        ? 'Label must start and end with alphanumeric characters.'
+                        : ''
+                    }
                   />
                 </ToolbarFilter>
               </ToolbarFilter>
