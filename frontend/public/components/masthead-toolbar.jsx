@@ -35,7 +35,6 @@ import { clusterVersionReference, getReportBugLink } from '../module/k8s/cluster
 import * as redhatLogoImg from '../imgs/logos/redhat.svg';
 import { GuidedTourMastheadTrigger } from '@console/app/src/components/tour';
 import { ConsoleLinkModel } from '../models';
-import { LangSelector } from './lang-selector';
 
 const SystemStatusButton = ({ statuspageData, className }) =>
   !_.isEmpty(_.get(statuspageData, 'incidents')) ? (
@@ -605,9 +604,6 @@ class MastheadToolbarContents_ extends React.Component {
                 toggleIcon={<QuestionCircleIcon alt="" />}
                 isGrouped
               />
-            </PageHeaderToolsItem>
-            <PageHeaderToolsItem>
-              <LangSelector />
             </PageHeaderToolsItem>
           </PageHeaderToolsGroup>
           <PageHeaderToolsGroup>

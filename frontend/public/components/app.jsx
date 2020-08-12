@@ -9,7 +9,6 @@ import { Route, Router, Switch } from 'react-router-dom';
 import 'abort-controller/polyfill';
 import store from '../redux';
 import { withTranslation } from 'react-i18next';
-import moment from 'moment';
 
 import { detectFeatures } from '../actions/features';
 import AppContents from './app-contents';
@@ -148,18 +147,12 @@ class App_ extends React.PureComponent {
     const { isNavOpen, isDrawerInline } = this.state;
     const { contextProviderExtensions } = this.props;
     const { productName } = getBrandingDetails();
-    const { t, i18n } = this.props;
 
     const content = (
       <>
         <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
         <QuickStartDrawer>
           <ConsoleNotifier location="BannerTop" />
-          <div>
-            Current locale: {i18n.language} | moment locale: {moment.locale()} |{' '}
-            {t('Date: It is now {{date, MM/DD/YYYY}}', { date: new Date() })} |{' '}
-            {t('Number: ${{value, number}}', { value: 1550.95 })}
-          </div>
           <Page
             header={<Masthead onNavToggle={this._onNavToggle} />}
             sidebar={
