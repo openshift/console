@@ -25,6 +25,7 @@ Cypress.Commands.add('login', (provider: string, username: string, password: str
   }
   const idp = provider || KUBEADMIN_IDP;
   cy.task('log', `  Logging into IDP ${idp}, using baseUrl ${Cypress.config('baseUrl')}`);
+  cy.clearCookie('openshift-session-token');
   cy.visit(''); // visits baseUrl which is set in plugins/index.js
   cy.byLegacyTestID('login').should('be.visible');
   cy.contains(idp)
