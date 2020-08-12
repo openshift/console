@@ -81,7 +81,7 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
       operatingSystems = [{ name: display, id: display }];
     } else {
       operatingSystems = openshiftFlag
-        ? ignoreCaseSort(getOperatingSystems(vanillaTemplates, params), ['name'])
+        ? ignoreCaseSort(getOperatingSystems(vanillaTemplates, params.userTemplate), ['name'])
         : operatingSystemsNative;
     }
 

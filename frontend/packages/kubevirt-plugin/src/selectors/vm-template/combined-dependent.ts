@@ -34,22 +34,13 @@ export const getFlavorLabel = (flavor: string) => {
   return undefined;
 };
 
-export const getOperatingSystems = (
-  templates: TemplateKind[],
-  { workload, flavor, userTemplate }: { workload: string; flavor: string; userTemplate: string },
-) => {
-  let templatesWithLabels;
+export const getOperatingSystems = (templates: TemplateKind[], userTemplate: string) => {
   if (userTemplate) {
-    templatesWithLabels = [
+    return getTemplateOperatingSystems([
       getTemplatesOfLabelType(templates, TEMPLATE_TYPE_VM).find((t) => getName(t) === userTemplate),
-    ];
-  } else {
-    templatesWithLabels = getTemplatesWithLabels(
-      getTemplatesOfLabelType(templates, TEMPLATE_TYPE_BASE),
-      [getWorkloadLabel(workload), getFlavorLabel(flavor)],
-    );
+    ]);
   }
-  return getTemplateOperatingSystems(templatesWithLabels);
+  return getTemplateOperatingSystems(getTemplatesOfLabelType(templates, TEMPLATE_TYPE_BASE));
 };
 
 export const getWorkloadProfiles = (
