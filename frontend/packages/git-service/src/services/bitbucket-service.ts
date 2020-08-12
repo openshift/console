@@ -100,6 +100,16 @@ export class BitbucketService extends BaseService {
     }
   };
 
+  isDevfilePresent = async (): Promise<boolean> => {
+    const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/src/${this.metadata.defaultBranch}/devfile.yaml`;
+    try {
+      await coFetchJSON(url);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
   getPackageJsonContent = async (): Promise<string | null> => {
     const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/src/${this.metadata.defaultBranch}/package.json`;
     try {

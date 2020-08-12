@@ -56,6 +56,11 @@ export abstract class BaseService {
   abstract async getDockerfileContent(): Promise<string>;
 
   /**
+   * Check if Devfile present in the repo.
+   */
+  abstract async isDevfilePresent(): Promise<boolean>;
+
+  /**
    * Checks if package.json exist in the repo and returns content of the file.
    */
   abstract async getPackageJsonContent(): Promise<string>;

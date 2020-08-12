@@ -169,4 +169,32 @@ describe('Bitbucket Service', () => {
       nockDone();
     });
   });
+
+  it('should detect Devfile', () => {
+    const gitSource: GitSource = {
+      url: 'https://bitbucket.org/reginapizza/che',
+    };
+
+    const gitService = new BitbucketService(gitSource);
+
+    return nockBack('devfile.json').then(async ({ nockDone, context }) => {
+      const isDevfilePresent = await gitService.isDevfilePresent();
+      expect(isDevfilePresent).toBe(true);
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
+
+  it('should not detect devfile', () => {
+    const gitSource: GitSource = { url: 'https://bitbucket.org/akshinde/testgitsource' };
+
+    const gitService = new BitbucketService(gitSource);
+
+    return nockBack('no-devfile.json').then(async ({ nockDone, context }) => {
+      const isDevfilePresent = await gitService.isDevfilePresent();
+      expect(isDevfilePresent).toBe(false);
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
 });

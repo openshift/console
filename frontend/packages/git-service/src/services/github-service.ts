@@ -130,6 +130,19 @@ export class GithubService extends BaseService {
     }
   };
 
+  isDevfilePresent = async (): Promise<boolean> => {
+    try {
+      const resp = await this.client.repos.getContents({
+        owner: this.metadata.owner,
+        repo: this.metadata.repoName,
+        path: 'devfile.yaml',
+      });
+      return resp.status === 200;
+    } catch (e) {
+      return false;
+    }
+  };
+
   getPackageJsonContent = async (): Promise<string | null> => {
     try {
       const resp = await this.client.repos.getContents({
