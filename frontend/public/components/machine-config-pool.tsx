@@ -214,11 +214,12 @@ export const MachineConfigPoolDetailsPage: React.SFC<any> = (props) => (
 );
 
 const tableColumnClasses = [
-  classNames('col-lg-4', 'col-xs-6'),
+  classNames('col-lg-3', 'col-xs-6', 'col-sm-4'),
   classNames('col-lg-5', 'hidden-md', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-1', 'col-sm-2', 'col-xs-3'),
-  classNames('col-lg-1', 'col-sm-2', 'hidden-xs'),
-  classNames('col-lg-1', 'col-sm-2', 'col-xs-3'),
+  classNames('col-lg-1', 'col-sm-2', 'col-xs-3', 'pf-u-w-10-on-lg'),
+  classNames('col-lg-1', 'col-sm-2', 'hidden-xs', 'pf-u-w-10-on-lg'),
+  classNames('col-lg-1', 'hidden-sm', 'hidden-xs', 'pf-u-w-10-on-lg'),
+  classNames('col-lg-1', 'col-sm-2', 'col-xs-3', 'pf-u-w-10-on-lg'),
   Kebab.columnClass,
 ];
 
@@ -245,16 +246,27 @@ const MachineConfigPoolTableHeader = () => {
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Degraded',
+      title: 'Paused',
       props: { className: tableColumnClasses[4] },
     },
     {
-      title: '',
+      title: 'Degraded',
       props: { className: tableColumnClasses[5] },
+    },
+    {
+      title: '',
+      props: { className: tableColumnClasses[6] },
     },
   ];
 };
 MachineConfigPoolTableHeader.displayName = 'MachineConfigPoolTableHeader';
+
+const getMCPPausedState = (obj: MachineConfigPoolKind) => {
+  if (_.isUndefined(obj.spec?.paused)) {
+    return 'Unknown';
+  }
+  return obj.spec?.paused ? 'True' : 'False';
+};
 
 const MachineConfigPoolTableRow: RowFunction<MachineConfigPoolKind> = ({
   obj,
@@ -288,10 +300,11 @@ const MachineConfigPoolTableRow: RowFunction<MachineConfigPoolKind> = ({
       <TableData className={tableColumnClasses[3]}>
         {getConditionStatus(obj, MachineConfigPoolConditionType.Updating)}
       </TableData>
-      <TableData className={classNames(tableColumnClasses[4], 'co-truncate')}>
+      <TableData className={tableColumnClasses[4]}>{getMCPPausedState(obj)}</TableData>
+      <TableData className={classNames(tableColumnClasses[5], 'co-truncate')}>
         {getConditionStatus(obj, MachineConfigPoolConditionType.Degraded)}
       </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      <TableData className={tableColumnClasses[6]}>
         <ResourceKebab
           actions={machineConfigPoolMenuActions}
           kind={machineConfigPoolReference}
