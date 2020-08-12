@@ -1,3 +1,5 @@
+import { pipelineIcon } from './tour-icons';
+
 export const explorePipelinesQuickStart = {
   apiVersion: 'console.openshift.io/v1',
   kind: 'QuickStarts',
@@ -8,8 +10,7 @@ export const explorePipelinesQuickStart = {
     version: 4.7,
     displayName: `Getting started with Pipelines`,
     duration: 10,
-    iconURL:
-      '/api/kubernetes/apis/packages.operators.coreos.com/v1/namespaces/openshift-marketplace/packagemanifests/openshift-pipelines-operator/icon?resourceVersion=openshift-pipelines-operator.dev-preview.openshift-pipelines-operator.v0.10.7',
+    iconURL: pipelineIcon,
     description:
       'Install the OpenShift® Pipelines Operator to start building pipelines using Tekton',
     prerequisites: 'User must have access to install operators to run this Quick Start.',
