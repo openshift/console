@@ -21,10 +21,10 @@ import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import { SubscriptionModel, SubscriptionKind } from '@console/operator-lifecycle-manager';
 import { CEPH_STORAGE_NAMESPACE, OCS_OPERATOR } from '../../../../constants/index';
 import { DATA_RESILIENCY_QUERY, StorageDashboardQuery } from '../../../../constants/queries';
-import { getResiliencyProgress } from '../../../../utils';
 import { OCSServiceModel } from '../../../../models';
 import { isClusterExpandActivity, ClusterExpandActivity } from './cluster-expand-activity';
 import { isOCSUpgradeActivity, OCSUpgradeActivity } from './ocs-upgrade-activity';
+import { isResilencyActivity } from './data-resiliency-activity';
 import './activity-card.scss';
 
 const eventsResource: FirehoseResource = { isList: true, kind: EventModel.kind, prop: 'events' };
@@ -110,7 +110,7 @@ const OngoingActivity = withDashboardResources(
     const prometheusActivities = [];
     const resourceActivities = [];
 
-    if (getResiliencyProgress(progressResponse) < 1) {
+    if (isResilencyActivity(progressResponse)) {
       prometheusActivities.push({
         results: progressResponse,
         loader: () => import('./data-resiliency-activity').then((m) => m.DataResiliency),

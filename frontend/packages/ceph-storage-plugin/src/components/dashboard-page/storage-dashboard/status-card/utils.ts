@@ -1,6 +1,6 @@
 import { PrometheusHealthHandler, ResourceHealthHandler } from '@console/plugin-sdk';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
-import { getResiliencyProgress } from '../../../../utils';
+import { getGaugeValue } from '../../../../utils';
 import { WatchCephResource } from '../../../../types';
 
 const CephHealthStatus = {
@@ -33,17 +33,18 @@ export const getCephHealthState: ResourceHealthHandler<WatchCephResource> = ({ c
 };
 
 export const getDataResiliencyState: PrometheusHealthHandler = (responses) => {
-  const progress: number = getResiliencyProgress(responses[0].response);
-  if (responses[0].error) {
+  const progress = getGaugeValue(responses[0].response);
+  const formattedProgress = parseFloat(progress);
+  if (responses[0].error || !progress) {
     return { state: HealthState.NOT_AVAILABLE };
   }
   if (!responses[0].response) {
     return { state: HealthState.LOADING };
   }
-  if (Number.isNaN(progress)) {
+  if (Number.isNaN(formattedProgress)) {
     return { state: HealthState.UNKNOWN };
   }
-  if (progress < 1) {
+  if (formattedProgress < 1) {
     return { state: HealthState.PROGRESS, message: 'Progressing' };
   }
   return { state: HealthState.OK };

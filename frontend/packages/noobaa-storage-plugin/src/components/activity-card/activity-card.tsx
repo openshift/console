@@ -16,8 +16,8 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
-import { getResiliencyProgress } from '@console/ceph-storage-plugin/src/utils';
 import { CephObjectStoreModel } from '@console/ceph-storage-plugin/src/models';
+import { isResilencyActivity } from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/activity-card/data-resiliency-activity';
 import { DATA_RESILIENCE_QUERIES } from '../../queries';
 import {
   NooBaaBackingStoreModel,
@@ -103,7 +103,7 @@ const OngoingActivity = withDashboardResources(
 
     const prometheusActivities = [];
 
-    if (getResiliencyProgress(progress) < 1) {
+    if (isResilencyActivity(progress)) {
       prometheusActivities.push({
         results: [progress, eta],
         loader: () =>
@@ -113,7 +113,7 @@ const OngoingActivity = withDashboardResources(
       });
     }
 
-    if (getResiliencyProgress(rgwProgress) < 1) {
+    if (isResilencyActivity(rgwProgress)) {
       prometheusActivities.push({
         results: [rgwProgress],
         loader: () =>

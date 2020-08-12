@@ -1,11 +1,22 @@
 import * as React from 'react';
 import { Progress, ProgressSize } from '@patternfly/react-core';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import { getResiliencyProgress } from '../../../../utils';
+import { getGaugeValue } from '../../../../utils';
+
+export const isResilencyActivity = (results: PrometheusResponse): boolean => {
+  /**
+   * Possible values for progress:
+   *   - A float value of String type
+   *   - 'NaN'
+   *   - undefined
+   */
+  const progress: string = getGaugeValue(results);
+  return parseFloat(progress) < 1;
+};
 
 export const DataResiliency: React.FC<DataResiliencyProps> = ({ results }) => {
-  const progress: number = getResiliencyProgress(results);
-  const formattedProgress = Math.round(progress * 100);
+  const progress = getGaugeValue(results);
+  const formattedProgress = Math.round(parseFloat(progress) * 100);
   return (
     <>
       <Progress
