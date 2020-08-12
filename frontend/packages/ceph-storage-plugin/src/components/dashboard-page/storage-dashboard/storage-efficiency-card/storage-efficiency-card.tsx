@@ -59,18 +59,18 @@ const StorageEfficiencyCard: React.FC<DashboardItemProps> = ({
 
   const compressionStats = () => {
     const capacityRatio = Number(ratio);
-    return capacityRatio === 0 ? '1:1' : `${Math.round(capacityRatio)}:1`;
+    return `${Math.round(capacityRatio)}:1`;
   };
 
   const savingStats = () => {
     const savingsValue = Number(saved);
     const savedBytes = humanizeBinaryBytes(savingsValue).string;
-    return savingsValue === 0 ? 'No Savings' : savedBytes;
+    return savedBytes;
   };
 
   const compressionRatioProps = {
-    isLoading: !poolCapacityRatioResult,
-    error: !!poolCapacityRatioResultError || !ratio,
+    isLoading: !poolCapacityRatioResult && !poolCapacityRatioResultError,
+    error: !!poolCapacityRatioResultError || !ratio || Number(ratio) === 0,
     title: 'Compression ratio',
     infoText:
       'The ratio of the data physical stored (after compression), compared to the size of the data received from the client.',
@@ -78,8 +78,8 @@ const StorageEfficiencyCard: React.FC<DashboardItemProps> = ({
   };
 
   const savingsProps = {
-    isLoading: !poolSavedResult,
-    error: !!poolSavedResultError || !saved,
+    isLoading: !poolSavedResult && !poolSavedResultError,
+    error: !!poolSavedResultError || !saved || Number(saved) === 0,
     title: 'Savings',
     infoText: 'The amount of physical storage saved after applying compression.',
     getStats: savingStats,

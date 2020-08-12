@@ -25,7 +25,7 @@ import { PersistentVolumeClaimModel, NodeModel } from '@console/internal/models'
 import { LSO_DEVICE_DISCOVERY } from '@console/local-storage-operator-plugin/src/plugin';
 import { getCephHealthState } from './components/dashboard-page/storage-dashboard/status-card/utils';
 import { isClusterExpandActivity } from './components/dashboard-page/storage-dashboard/activity-card/cluster-expand-activity';
-import { StorageClassFormProvisoners } from './utils/storage-class-params';
+import { StorageClassFormProvisoners } from './utils/ocs-storage-class-params';
 import { WatchCephResource } from './types';
 import {
   detectOCS,
