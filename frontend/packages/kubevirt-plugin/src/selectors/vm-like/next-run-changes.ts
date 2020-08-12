@@ -84,7 +84,7 @@ export const isBootOrderChanged = (vm: VMWrapper, vmi: VMIWrapper): boolean => {
     const vmDevices = getDevices(vm.asResource());
     const vmiDevices = getVMIDevices(vmi.asResource());
 
-    return vmDevices.every((bootableDevice, index) => _.isEqual(bootableDevice, vmiDevices[index]));
+    return vmDevices.some((bootableDevice, index) => !_.isEqual(bootableDevice, vmiDevices[index]));
   }
 
   return !vmBootOrder.every(
