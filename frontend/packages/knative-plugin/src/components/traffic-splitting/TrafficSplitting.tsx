@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { Formik, FormikValues, FormikHelpers } from 'formik';
 import { K8sResourceKind, k8sUpdate } from '@console/internal/module/k8s';
 import { ServiceModel } from '../../models';
@@ -27,17 +26,15 @@ const TrafficSplitting: React.FC<TrafficSplittingProps> = ({
   cancel,
   close,
 }) => {
-  const traffic = _.get(
-    service,
-    ['status', 'traffic'],
-    [{ percent: 0, tag: '', revisionName: '' }],
-  );
+  const traffic = service.spec?.traffic ?? [{ percent: 0, tag: '', revisionName: '' }];
+  const latestCreatedRevName = service.status?.latestCreatedRevisionName;
   const revisionItems = getRevisionItems(revisions);
   const initialValues: TrafficSplittingType = {
     trafficSplitting: traffic.map((t) => ({
       percent: t.percent,
       tag: t.tag || '',
-      revisionName: t.revisionName || '',
+      revisionName:
+        t.revisionName || (t.latestRevision && latestCreatedRevName ? latestCreatedRevName : ''),
     })),
   };
   const handleSubmit = (values: FormikValues, action: FormikHelpers<FormikValues>) => {
