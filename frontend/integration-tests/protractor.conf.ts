@@ -37,6 +37,7 @@ const htmlReporter = new HtmlScreenshotReporter({
 });
 const junitReporter = new JUnitXmlReporter({
   savePath: `./${screenshotsDir}`,
+  filePrefix: 'junit_protractor',
   consolidateAll: true,
 });
 const browserLogs = [];
