@@ -3,11 +3,11 @@ import * as _ from 'lodash';
 import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Nav, NavItem, NavList } from '@patternfly/react-core';
-import { StatusIcon } from '@console/shared';
 import { Firehose, resourcePathFromModel } from '@console/internal/components/utils';
 import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
 import { PipelineRun } from '../../../utils/pipeline-augment';
 import { PipelineRunModel } from '../../../models';
+import { ColoredStatusIcon } from '../../pipelines/detail-page-tabs/pipeline-details/StatusIcon';
 import LogsWrapperComponent from '../logs/LogsWrapperComponent';
 import { getDownloadAllLogsCallback } from '../logs/logs-utils';
 import './PipelineRunLogs.scss';
@@ -119,7 +119,7 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
                       className="odc-pipeline-run-logs__navitem"
                     >
                       <Link to={path + _.get(taskRunFromYaml, [task, `pipelineTaskName`], '-')}>
-                        <StatusIcon
+                        <ColoredStatusIcon
                           status={pipelineRunFilterReducer(
                             _.get(obj, ['status', 'taskRuns', task]),
                           )}
