@@ -21,7 +21,11 @@ import {
   LABEL_OPERATOR,
   AUTO_DISCOVER_ERR_MSG,
 } from '@console/local-storage-operator-plugin/src/constants';
-import { getNodes, getLabelIndex } from '@console/local-storage-operator-plugin/src/utils';
+import {
+  getNodes,
+  getLabelIndex,
+  getHostNames,
+} from '@console/local-storage-operator-plugin/src/utils';
 import {
   DiskMechanicalProperty,
   DiskType,
@@ -59,7 +63,8 @@ const makeAutoDiscoveryCall = (
             expIndex
           ]?.values,
         );
-        selectedNodes.forEach((name) => nodes.add(name));
+        const hostNames = getHostNames(selectedNodes, state.hostNamesMapForADV);
+        hostNames.forEach((name) => nodes.add(name));
         const patch = [
           {
             op: 'replace',
@@ -138,6 +143,11 @@ const CreateSC: React.FC<CreateSCProps> = ({ match }) => {
     state.showNodesListOnADV,
     state.allNodeNamesOnADV,
   ]);
+
+  React.useEffect(() => {
+    // this is required to set the hostnames for LVS too
+    dispatch({ type: 'setHostNamesMapForLVS', value: state.hostNamesMapForADV });
+  }, [state.hostNamesMapForADV]);
 
   const steps = [
     {

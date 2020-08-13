@@ -13,8 +13,8 @@ export const allNodesSelectorTxt =
 export const AUTO_DISCOVER_ERR_MSG = 'Failed to update the Auto Detect Volume!';
 
 export const diskSizeUnitOptions = {
-  TiB: 'TiB',
-  GiB: 'GiB',
+  Ti: 'TiB',
+  Gi: 'GiB',
 };
 
 export const DISCOVERY_CR_NAME = 'auto-discover-devices';

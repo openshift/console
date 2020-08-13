@@ -3,9 +3,10 @@ import { LocalVolumeSetModel } from '../../models';
 import { LocalVolumeSetKind, DiskType, DiskMechanicalProperty } from './types';
 import { State } from './state';
 import { LOCAL_STORAGE_NAMESPACE, HOSTNAME_LABEL_KEY, LABEL_OPERATOR } from '../../constants';
-import { getNodes } from '../../utils';
+import { getNodes, getHostNames } from '../../utils';
 
 export const getLocalVolumeSetRequestData = (state: State): LocalVolumeSetKind => {
+  const nodes = getNodes(state.showNodesListOnLVS, state.nodeNamesForLVS, state.nodeNames);
   const requestData = {
     apiVersion: apiVersionForModel(LocalVolumeSetModel),
     kind: LocalVolumeSetModel.kind,
@@ -28,7 +29,7 @@ export const getLocalVolumeSetRequestData = (state: State): LocalVolumeSetKind =
               {
                 key: HOSTNAME_LABEL_KEY,
                 operator: LABEL_OPERATOR,
-                values: getNodes(state.showNodesListOnLVS, state.nodeNamesForLVS, state.nodeNames),
+                values: getHostNames(nodes, state.hostNamesMapForLVS),
               },
             ],
           },
@@ -39,9 +40,9 @@ export const getLocalVolumeSetRequestData = (state: State): LocalVolumeSetKind =
 
   if (state.maxDiskLimit) requestData.spec.maxDeviceCount = +state.maxDiskLimit;
   if (state.minDiskSize)
-    requestData.spec.deviceInclusionSpec.minSize = state.minDiskSize.toString();
+    requestData.spec.deviceInclusionSpec.minSize = `${state.minDiskSize}${state.diskSizeUnit}`;
   if (state.maxDiskSize)
-    requestData.spec.deviceInclusionSpec.maxSize = state.maxDiskSize.toString();
+    requestData.spec.deviceInclusionSpec.maxSize = `${state.maxDiskSize}${state.diskSizeUnit}`;
 
   return requestData;
 };
