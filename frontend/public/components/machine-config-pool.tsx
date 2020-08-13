@@ -17,6 +17,7 @@ import {
 } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import {
+  DetailsItem,
   Kebab,
   KebabAction,
   navFactory,
@@ -93,6 +94,9 @@ const MachineConfigPoolCharacteristics: React.SFC<MachineConfigPoolCharacteristi
                 ))
               : '-'}
           </dd>
+          <DetailsItem label="Paused" obj={obj} path={'spec.paused'}>
+            {obj.spec?.paused ? 'True' : 'False'}
+          </DetailsItem>
         </>
       )}
     </dl>
@@ -261,13 +265,6 @@ const MachineConfigPoolTableHeader = () => {
 };
 MachineConfigPoolTableHeader.displayName = 'MachineConfigPoolTableHeader';
 
-const getMCPPausedState = (obj: MachineConfigPoolKind) => {
-  if (_.isUndefined(obj.spec?.paused)) {
-    return 'Unknown';
-  }
-  return obj.spec?.paused ? 'True' : 'False';
-};
-
 const MachineConfigPoolTableRow: RowFunction<MachineConfigPoolKind> = ({
   obj,
   index,
@@ -300,7 +297,7 @@ const MachineConfigPoolTableRow: RowFunction<MachineConfigPoolKind> = ({
       <TableData className={tableColumnClasses[3]}>
         {getConditionStatus(obj, MachineConfigPoolConditionType.Updating)}
       </TableData>
-      <TableData className={tableColumnClasses[4]}>{getMCPPausedState(obj)}</TableData>
+      <TableData className={tableColumnClasses[4]}>{obj.spec?.paused ? 'True' : 'False'}</TableData>
       <TableData className={classNames(tableColumnClasses[5], 'co-truncate')}>
         {getConditionStatus(obj, MachineConfigPoolConditionType.Degraded)}
       </TableData>
