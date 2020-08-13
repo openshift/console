@@ -1,39 +1,39 @@
 import { JSONSchema6 } from 'json-schema';
 import { hasNoFields, prune } from './utils';
-import { SchemaType } from './types';
+import { JSONSchemaType } from './types';
 
 const OBJECT: JSONSchema6 = {
-  type: SchemaType.object,
+  type: JSONSchemaType.object,
   properties: {
-    test: { type: SchemaType.string },
+    test: { type: JSONSchemaType.string },
   },
 };
 
 const ARRAY: JSONSchema6 = {
-  type: SchemaType.array,
+  type: JSONSchemaType.array,
   items: {
-    type: SchemaType.string,
+    type: JSONSchemaType.string,
   },
 };
 
 const ADDITIONAL_PROPERTIES_OBJECT: JSONSchema6 = {
-  type: SchemaType.object,
-  additionalProperties: { type: SchemaType.string },
+  type: JSONSchemaType.object,
+  additionalProperties: { type: JSONSchemaType.string },
 };
 
 const NESTED: JSONSchema6 = {
-  type: SchemaType.object,
+  type: JSONSchemaType.object,
   properties: {
     emptyArray: {
-      type: SchemaType.array,
+      type: JSONSchemaType.array,
       items: {
-        type: SchemaType.object,
+        type: JSONSchemaType.object,
         properties: {
-          empty: { type: SchemaType.object },
+          empty: { type: JSONSchemaType.object },
         },
       },
     },
-    emptyObject: { type: SchemaType.object },
+    emptyObject: { type: JSONSchemaType.object },
   },
 };
 
@@ -106,7 +106,7 @@ describe('hasNoFields', () => {
   });
 
   it('Returns false for primitive schema type', () => {
-    expect(hasNoFields({ type: SchemaType.string })).toBeFalsy();
+    expect(hasNoFields({ type: JSONSchemaType.string })).toBeFalsy();
   });
 
   it('Returns false for object schema type with properly defined properties', () => {

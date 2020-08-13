@@ -12,6 +12,7 @@ import { getUiOptions, getSchemaType } from 'react-jsonschema-form/lib/utils';
 import { ExpandCollapse } from '@console/internal/components/utils';
 import { FieldSet, FormField } from './fields';
 import { useSchemaLabel } from './utils';
+import { UiSchemaOptionsWithDependency } from './types';
 
 export const AtomicFieldTemplate: React.FC<FieldTemplateProps> = ({
   children,
@@ -53,11 +54,15 @@ export const FieldTemplate: React.FC<FieldTemplateProps> = (props) => {
   const type = getSchemaType(schema);
   const [dependencyMet, setDependencyMet] = React.useState(true);
   React.useEffect(() => {
-    const { dependency } = getUiOptions(uiSchema ?? {}) as DependencyUIOption; // Type defs for this function are awful
+    const { dependency } = getUiOptions(uiSchema ?? {}) as UiSchemaOptionsWithDependency; // Type defs for this function are awful
     if (dependency) {
       setDependencyMet(
-        dependency.value ===
-          _.get(formContext.formData ?? {}, ['spec', ...(dependency.path ?? [])], '').toString(),
+        dependency?.controlFieldValue ===
+          _.get(
+            formContext.formData ?? {},
+            ['spec', ...(dependency?.controlFieldPath ?? [])],
+            '',
+          ).toString(),
       );
     }
   }, [uiSchema, formContext]);
@@ -162,10 +167,3 @@ export const ErrorTemplate: React.FC<{ errors: string[] }> = ({ errors }) => (
     </ul>
   </Alert>
 );
-
-type DependencyUIOption = {
-  dependency?: {
-    path: string;
-    value: string;
-  };
-};
