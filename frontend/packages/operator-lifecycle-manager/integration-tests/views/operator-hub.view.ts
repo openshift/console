@@ -58,4 +58,4 @@ export const acceptForeverCommunityWarningModal = () =>
     .then(() => acceptCommunityWarningModal());
 export const viewInstalledOperatorsBtn = $('[data-test="view-installed-operators-btn"]');
 export const operatorInstallPageLoaded = () =>
-  browser.wait(until.presenceOf(viewInstalledOperatorsBtn), 20000);
+  browser.wait(until.presenceOf(viewInstalledOperatorsBtn), 60000);
