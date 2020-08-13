@@ -4,13 +4,12 @@ import { ActionGroup, Button, Form } from '@patternfly/react-core';
 import {
   resourcePathFromModel,
   BreadCrumbs,
-  resourceObjPath,
   withHandlePromise,
   HandlePromiseProps,
   ButtonBar,
 } from '@console/internal/components/utils';
 import { history } from '@console/internal/components/utils/router';
-import { k8sCreate, referenceFor, NodeKind } from '@console/internal/module/k8s';
+import { k8sCreate, NodeKind, referenceForModel } from '@console/internal/module/k8s';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { getName } from '@console/shared';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
@@ -18,7 +17,7 @@ import { LocalVolumeSetModel } from '../../models';
 import { LocalVolumeSetHeader, LocalVolumeSetInner } from './local-volume-set-inner';
 import { reducer, initialState } from './state';
 import { nodeResource } from '../../constants/resources';
-import { hasTaints } from '../../utils';
+import { hasTaints, createMapForHostNames } from '../../utils';
 import { getLocalVolumeSetRequestData } from './local-volume-set-request-data';
 
 import './create-local-volume-set.scss';
@@ -38,7 +37,9 @@ const CreateLocalVolumeSet: React.FC = withHandlePromise<
       dispatch({ type: 'setNodeNamesForLVS', value: [] });
     } else if (nodeLoaded) {
       const allNodeNames = nodeData.filter((node) => !hasTaints(node)).map((node) => getName(node));
+      const hostNames = createMapForHostNames(nodeData);
       dispatch({ type: 'setNodeNamesForLVS', value: allNodeNames });
+      dispatch({ type: 'setHostNamesMapForLVS', value: hostNames });
     }
   }, [nodeData, nodeLoaded, nodeLoadError]);
 
@@ -47,8 +48,12 @@ const CreateLocalVolumeSet: React.FC = withHandlePromise<
 
     const requestData = getLocalVolumeSetRequestData(state);
 
-    handlePromise(k8sCreate(LocalVolumeSetModel, requestData), (resource) =>
-      history.push(resourceObjPath(resource, referenceFor(resource))),
+    handlePromise(k8sCreate(LocalVolumeSetModel, requestData), () =>
+      history.push(
+        `/k8s/ns/${ns}/clusterserviceversions/${appName}/${referenceForModel(
+          LocalVolumeSetModel,
+        )}/${state.volumeSetName}`,
+      ),
     );
   };
 

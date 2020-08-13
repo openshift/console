@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import { NodeKind, MatchExpression } from '@console/internal/module/k8s';
-import { NodeAffinityTerm } from '../components/auto-detect-volume/types';
+import { NodeAffinityTerm, HostNamesMap } from '../components/auto-detect-volume/types';
+import { getName } from '@console/shared';
 
 export const hasTaints = (node: NodeKind): boolean => {
   return !_.isEmpty(node.spec?.taints);
@@ -32,4 +33,17 @@ export const getLabelIndex = (
   });
 
   return [selectorIndex, expIndex];
+};
+
+export const createMapForHostNames = (nodes: NodeKind[]) => {
+  return nodes.reduce((acc, node) => {
+    acc[getName(node)] = node.metadata.labels?.['kubernetes.io/hostname'] ?? '';
+    return acc;
+  }, {});
+};
+
+export const getHostNames = (nodes: string[], hostNamesMap: HostNamesMap) => {
+  return nodes.reduce((acc, node) => {
+    return [...acc, hostNamesMap[node]];
+  }, []);
 };

@@ -1,3 +1,4 @@
+import { HostNamesMap } from '@console/local-storage-operator-plugin/src/components/auto-detect-volume/types';
 import { diskTypeDropdownItems, diskModeDropdownItems } from '../../../../constants';
 
 export const initialState: State = {
@@ -5,6 +6,7 @@ export const initialState: State = {
   showNodesListOnADV: false,
   nodeNamesForLVS: [], // nodes selected on discovery step, used in LVS step
   allNodeNamesOnADV: [], // all nodes present in the env
+  hostNamesMapForADV: {},
 
   // states for step 2
   volumeSetName: '',
@@ -18,6 +20,7 @@ export const initialState: State = {
   maxDiskSize: '',
   diskSizeUnit: 'TiB',
   isValidMaxSize: true,
+  hostNamesMapForLVS: {},
   // states for chart
   nodesDiscoveries: [],
   filteredDiscoveries: [],
@@ -77,6 +80,8 @@ export type State = {
   filteredDiscoveries: Discoveries[];
   finalStep: boolean;
   showDiskList: boolean;
+  hostNamesMapForADV: HostNamesMap;
+  hostNamesMapForLVS: HostNamesMap;
 };
 
 export type Action =
@@ -105,7 +110,9 @@ export type Action =
   | { type: 'setOnNextClick'; value: OnNextClick }
   | { type: 'setFilteredDiscoveries'; value: Discoveries[] }
   | { type: 'setFinalStep'; value: boolean }
-  | { type: 'setShowDiskList'; value: boolean };
+  | { type: 'setShowDiskList'; value: boolean }
+  | { type: 'setHostNamesMapForADV'; value: HostNamesMap }
+  | { type: 'setHostNamesMapForLVS'; value: HostNamesMap };
 
 export const reducer = (state: State, action: Action) => {
   switch (action.type) {
@@ -159,6 +166,10 @@ export const reducer = (state: State, action: Action) => {
       return Object.assign({}, state, { finalStep: action.value });
     case 'setShowDiskList':
       return Object.assign({}, state, { showDiskList: action.value });
+    case 'setHostNamesMapForADV':
+      return Object.assign({}, state, { hostNamesMapForADV: action.value });
+    case 'setHostNamesMapForLVS':
+      return Object.assign({}, state, { hostNamesMapForLVS: action.value });
     default:
       return initialState;
   }
