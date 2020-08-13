@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as classNames from 'classnames';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import {
@@ -15,6 +16,7 @@ import {
 import { RootState } from '@console/internal/redux';
 import { AsyncComponent } from '@console/internal/components/utils';
 import { confirmModal } from '@console/internal/components/modals';
+import { useScrollDirection, ScrollDirection } from '@console/shared/';
 import {
   getActiveQuickStartID,
   getActiveQuickStartStatus,
@@ -43,6 +45,7 @@ const QuickStartDrawer: React.FC<QuickStartDrawerProps> = ({
   onClose,
 }) => {
   const quickStart = getQuickStartByName(activeQuickStartID);
+  const [scrollDirection, handleScrollCallback] = useScrollDirection();
 
   const handleClose = () => {
     if (activeQuickStartStatus === QuickStartStatus.IN_PROGRESS) {
@@ -60,25 +63,32 @@ const QuickStartDrawer: React.FC<QuickStartDrawerProps> = ({
     return onClose();
   };
 
+  const headerClasses = classNames('co-quick-start-drawer-head', {
+    'pf-u-box-shadow-sm-bottom':
+      scrollDirection && scrollDirection !== ScrollDirection.scrolledToTop,
+  });
+
   const panelContent = quickStart ? (
-    <DrawerPanelContent>
-      <DrawerHead>
-        <div className="co-quick-start-drawer__title">
-          <Title
-            headingLevel="h1"
-            size="xl"
-            style={{ marginRight: 'var(--pf-global--spacer--md)' }}
-          >
-            {quickStart?.spec.displayName}
-          </Title>
-          <Title headingLevel="h6" size="md" className="text-secondary">
-            {`${quickStart?.spec.duration} minutes`}
-          </Title>
-        </div>
-        <DrawerActions>
-          <DrawerCloseButton onClick={handleClose} />
-        </DrawerActions>
-      </DrawerHead>
+    <DrawerPanelContent onScroll={handleScrollCallback}>
+      <div className={headerClasses}>
+        <DrawerHead>
+          <div className="co-quick-start-drawer__title">
+            <Title
+              headingLevel="h1"
+              size="xl"
+              style={{ marginRight: 'var(--pf-global--spacer--md)' }}
+            >
+              {quickStart?.spec.displayName}
+            </Title>
+            <Title headingLevel="h6" size="md" className="text-secondary">
+              {`${quickStart?.spec.duration} minutes`}
+            </Title>
+          </div>
+          <DrawerActions>
+            <DrawerCloseButton onClick={handleClose} />
+          </DrawerActions>
+        </DrawerHead>
+      </div>
       <DrawerPanelBody>
         <AsyncComponent
           loader={() => import('./QuickStartController').then((c) => c.default)}
