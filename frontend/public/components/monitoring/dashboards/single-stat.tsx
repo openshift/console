@@ -25,6 +25,7 @@ const SingleStat: React.FC<Props> = ({ panel, pollInterval, query }) => {
     prefix,
     prefixFontSize,
     valueFontSize,
+    valueMaps,
   } = panel;
 
   const [error, setError] = React.useState<string>();
@@ -50,6 +51,12 @@ const SingleStat: React.FC<Props> = ({ panel, pollInterval, query }) => {
 
   usePoll(tick, pollInterval, query);
 
+  const filteredVMs = valueMaps?.filter((vm) => vm.op === '=');
+  const valueMap =
+    value === undefined
+      ? filteredVMs?.find((vm) => vm.value === 'null')
+      : filteredVMs?.find((vm) => vm.value === value);
+
   if (isLoading) {
     return <LoadingInline />;
   }
@@ -60,7 +67,9 @@ const SingleStat: React.FC<Props> = ({ panel, pollInterval, query }) => {
   return (
     <Body>
       {prefix && <span style={{ fontSize: prefixFontSize }}>{prefix}</span>}
-      <span style={{ fontSize: valueFontSize }}>{formatNumber(value, decimals, format)}</span>
+      <span style={{ fontSize: valueFontSize }}>
+        {valueMap ? valueMap.text : formatNumber(value, decimals, format)}
+      </span>
       {postfix && <span style={{ fontSize: postfixFontSize }}>{postfix}</span>}
     </Body>
   );

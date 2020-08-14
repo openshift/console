@@ -6,6 +6,12 @@ export type ColumnStyle = {
   type: string;
 };
 
+type ValueMap = {
+  op: string;
+  text: string;
+  value: string;
+};
+
 export type Panel = {
   breakpoint?: string;
   decimals?: number;
@@ -37,4 +43,5 @@ export type Panel = {
   type: string;
   units?: string;
   valueFontSize?: string;
+  valueMaps?: ValueMap[];
 };
