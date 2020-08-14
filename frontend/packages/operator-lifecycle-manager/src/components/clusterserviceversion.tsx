@@ -533,7 +533,8 @@ export const NamespacedClusterServiceVersionList: React.SFC<ClusterServiceVersio
 
   const isCopiedCSV = (source: ClusterServiceVersionKind, kind: string) => {
     return (
-      referenceForModel(ClusterServiceVersionModel) === kind && source.status?.reason === 'Copied'
+      referenceForModel(ClusterServiceVersionModel) === kind &&
+      (source.status?.reason === 'Copied' || source.metadata?.labels?.['olm.copiedFrom'])
     );
   };
 
