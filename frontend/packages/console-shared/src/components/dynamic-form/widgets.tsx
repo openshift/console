@@ -7,6 +7,7 @@ import { K8sKind, GroupVersionKind, ImagePullPolicy } from '@console/internal/mo
 import { RadioGroup } from '@console/internal/components/radio';
 import { JSON_SCHEMA_NUMBER_TYPES } from './const';
 import { getSchemaType } from 'react-jsonschema-form/lib/utils';
+import { DynamicFormFieldOptionsList } from './types';
 
 export const TextWidget: React.FC<WidgetProps> = (props) => {
   const {
@@ -157,7 +158,7 @@ export const SelectWidget: React.FC<WidgetProps> = ({
 }) => {
   const { enumOptions = [], title } = options;
   const items = _.reduce(
-    enumOptions as OptionsList,
+    enumOptions as DynamicFormFieldOptionsList,
     (itemAccumulator, option) => {
       return {
         ...itemAccumulator,
@@ -177,11 +178,6 @@ export const SelectWidget: React.FC<WidgetProps> = ({
     />
   );
 };
-
-type OptionsList = {
-  label: string;
-  value: string;
-}[];
 
 type K8sResourceWidgetProps = WidgetProps & {
   options: {

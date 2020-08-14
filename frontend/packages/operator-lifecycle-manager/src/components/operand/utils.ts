@@ -56,11 +56,19 @@ const k8sResourceCapabilityToUISchema = (capability: SpecCapability): UiSchema =
 };
 
 const fieldDependencyCapabilityToUISchema = (capability: SpecCapability): UiSchema => {
-  const [, path, value] = capability.match(REGEXP_FIELD_DEPENDENCY_PATH_VALUE) ?? [];
-  if (!!path && !!value) {
-    return { 'ui:dependency': { path: descriptorPathToUISchemaPath(path), value } };
-  }
-  return {};
+  const [, path, controlFieldValue] = capability.match(REGEXP_FIELD_DEPENDENCY_PATH_VALUE) ?? [];
+  const controlFieldPath = descriptorPathToUISchemaPath(path);
+  const controlFieldName = _.last(controlFieldPath);
+  return {
+    ...(path &&
+      controlFieldValue && {
+        'ui:dependency': {
+          controlFieldPath,
+          controlFieldValue,
+          controlFieldName,
+        },
+      }),
+  };
 };
 
 const selectCapabilitiesToUISchema = (capabilities: SpecCapability[]): UiSchema => {
@@ -141,6 +149,7 @@ export const descriptorsToUISchema = (
     (
       uiSchemaAccumulator,
       { path, description, displayName, 'x-descriptors': capabilities = [] },
+      index,
     ) => {
       const uiSchemaPath = descriptorPathToUISchemaPath(path);
       if (!jsonSchemaHas(jsonSchema, uiSchemaPath)) {
@@ -166,6 +175,7 @@ export const descriptorsToUISchema = (
             ...(description && { 'ui:description': description }),
             ...(displayName && { 'ui:title': displayName }),
             ...capabilitiesUISchema,
+            'ui:sortOrder': index + 1,
           }),
         );
       });
