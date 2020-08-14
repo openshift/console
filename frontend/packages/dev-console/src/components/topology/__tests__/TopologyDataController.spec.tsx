@@ -22,7 +22,6 @@ describe('TopologyDataController', () => {
       <TopologyDataController
         showGraphView
         namespace="test-project"
-        kindsInFlight={false}
         render={() => <TestInner />}
       />,
       {

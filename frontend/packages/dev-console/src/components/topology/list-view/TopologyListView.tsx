@@ -1,18 +1,13 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
 import { DataList } from '@patternfly/react-core';
 import { isGraph, Node, isNode, Visualization, GraphElement } from '@patternfly/react-topology';
-import { useDeepCompareMemoize } from '@console/shared/src';
-import { setQueryArgument, removeQueryArgument } from '@console/internal/components/utils';
+import { useDeepCompareMemoize } from '@console/shared';
 import { TYPE_APPLICATION_GROUP } from '../components';
-import { getTopologySearchQuery, TOPOLOGY_SEARCH_FILTER_KEY } from '../filters';
 import { TopologyListViewAppGroup } from './TopologyListViewAppGroup';
 import { getChildKinds, sortGroupChildren } from './list-view-utils';
 import { TopologyListViewUnassignedGroup } from './TopologyListViewUnassignedGroup';
 
 import './TopologyListView.scss';
-
-export const FILTER_ACTIVE_CLASS = 'odc-m-filter-active';
 
 interface TopologyListViewProps {
   visualization: Visualization;
@@ -27,11 +22,7 @@ const TopologyListView: React.FC<TopologyListViewProps> = ({
   selectedIds,
   onSelect,
 }) => {
-  const searchParams = window.location.search;
   const selectedId = selectedIds[0];
-  const [searchClass, setSearchClass] = React.useState<string>(
-    getTopologySearchQuery() ? 'is-list-view-filtered' : '',
-  );
   const [applicationGroups, setApplicationGroups] = React.useState<Node[]>();
   const [unassignedItems, setUnassignedItems] = React.useState<Node[]>();
 
@@ -57,22 +48,6 @@ const TopologyListView: React.FC<TopologyListViewProps> = ({
       }
     }
   }, [selectedId]);
-
-  const onSearchChange = (searchQuery) => {
-    if (searchQuery.length > 0) {
-      setQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY, searchQuery);
-      document.body.classList.add(FILTER_ACTIVE_CLASS);
-    } else {
-      removeQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY);
-      document.body.classList.remove(FILTER_ACTIVE_CLASS);
-    }
-  };
-
-  React.useEffect(() => {
-    const searchQuery = getTopologySearchQuery();
-    searchQuery && onSearchChange(searchQuery);
-    setSearchClass(searchQuery ? 'is-list-view-filtered' : '');
-  }, [searchParams]);
 
   React.useEffect(() => {
     const getFlattenedItems = (): Node[] => {
@@ -168,9 +143,8 @@ const TopologyListView: React.FC<TopologyListViewProps> = ({
     return null;
   }
 
-  const classes = classNames('odc-topology-list-view', searchClass);
   return (
-    <div className={classes}>
+    <div className="odc-topology-list-view">
       <DataList
         aria-label="Topology List View"
         className="odc-topology-list-view__data-list"

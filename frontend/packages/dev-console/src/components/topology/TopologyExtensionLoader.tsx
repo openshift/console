@@ -9,7 +9,6 @@ export const TopologyExtensionLoader: React.FC<TopologyExtensionLoaderProps> = (
   render,
   namespace,
   showGraphView,
-  kindsInFlight,
 }) => {
   const dataModelContext = React.useContext<ExtensibleModel>(ModelContext);
   const [resourcesList, setResourcesList] = React.useState<WatchK8sResources<any>>(
@@ -24,18 +23,17 @@ export const TopologyExtensionLoader: React.FC<TopologyExtensionLoaderProps> = (
   }, [dataModelContext]);
 
   React.useEffect(() => {
-    if (kindsInFlight || !loadedState?.extensionsLoaded) {
+    if (!loadedState?.extensionsLoaded) {
       return;
     }
     setResourcesList(loadedState.watchedResources);
-  }, [kindsInFlight, loadedState]);
+  }, [loadedState]);
 
   return (
     <TopologyDataRetriever
       render={render}
       resourcesList={resourcesList}
       namespace={namespace}
-      kindsInFlight={kindsInFlight}
       showGraphView={showGraphView}
     />
   );

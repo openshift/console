@@ -1,5 +1,9 @@
 import { RootState } from '@console/internal/redux';
-import { getQueryArgument } from '@console/internal/components/utils';
+import {
+  getQueryArgument,
+  removeQueryArgument,
+  setQueryArgument,
+} from '@console/internal/components/utils';
 import { getDefaultTopologyFilters } from '../redux/reducer';
 import { getAppliedFilters } from '../redux/action';
 import {
@@ -11,6 +15,14 @@ import { DEFAULT_TOPOLOGY_FILTERS, EXPAND_GROUPS_FILTER_ID, SHOW_GROUPS_FILTER_I
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
 
 export const TOPOLOGY_SEARCH_FILTER_KEY = 'searchQuery';
+
+export const onSearchChange = (searchQuery: string): void => {
+  if (searchQuery.length > 0) {
+    setQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY, searchQuery);
+  } else {
+    removeQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY);
+  }
+};
 
 export const getTopologyFilters = (state: RootState): DisplayFilters => {
   const topology = state?.plugins?.devconsole?.topology;

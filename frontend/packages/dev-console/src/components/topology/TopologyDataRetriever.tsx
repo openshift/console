@@ -15,7 +15,6 @@ export const TopologyDataRetriever: React.FC<TopologyDataRetrieverProps> = ({
   resourcesList,
   namespace,
   showGraphView,
-  kindsInFlight,
   trafficData,
 }) => {
   const resources = useK8sWatchResources<TopologyResourcesObject>(resourcesList);
@@ -26,7 +25,6 @@ export const TopologyDataRetriever: React.FC<TopologyDataRetrieverProps> = ({
       namespace={namespace}
       showGraphView={showGraphView}
       resources={resources}
-      kindsInFlight={kindsInFlight}
       trafficData={trafficData}
     />
   );

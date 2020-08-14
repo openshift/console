@@ -1,17 +1,11 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { useExtensions } from '@console/plugin-sdk';
 import { isTopologyDataModelFactory, TopologyDataModelFactory } from '../../extensions/topology';
-import { RootState } from '@console/internal/redux';
 import DataModelProvider from './data-transforms/DataModelProvider';
 import { DataModelExtension } from './data-transforms/DataModelExtension';
 import { TopologyExtensionLoader } from './TopologyExtensionLoader';
 
-interface StateProps {
-  kindsInFlight: boolean;
-}
-
-export interface TopologyDataControllerProps extends StateProps {
+export interface TopologyDataControllerProps {
   showGraphView: boolean;
   namespace: string;
   render(RenderProps): React.ReactElement;
@@ -21,7 +15,6 @@ export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
   showGraphView,
   namespace,
   render,
-  kindsInFlight,
 }) => {
   const modelFactories = useExtensions<TopologyDataModelFactory>(isTopologyDataModelFactory);
 
@@ -31,7 +24,6 @@ export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
         <DataModelExtension key={factory.properties.id} dataModelFactory={factory} />
       ))}
       <TopologyExtensionLoader
-        kindsInFlight={kindsInFlight}
         render={render}
         namespace={namespace}
         showGraphView={showGraphView}
@@ -40,10 +32,4 @@ export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
   );
 };
 
-const DataControllerStateToProps = (state: RootState) => {
-  return {
-    kindsInFlight: state.k8s.getIn(['RESOURCES', 'inFlight']),
-  };
-};
-
-export default connect(DataControllerStateToProps)(TopologyDataController);
+export default TopologyDataController;

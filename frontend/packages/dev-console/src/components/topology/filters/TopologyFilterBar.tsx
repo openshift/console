@@ -24,6 +24,7 @@ import {
   getSupportedTopologyKinds,
   getTopologyFilters,
   getTopologySearchQuery,
+  onSearchChange,
 } from './filter-utils';
 import FilterDropdown from './FilterDropdown';
 import KindFilterDropdown from './KindFilterDropdown';
@@ -45,14 +46,10 @@ type DispatchProps = {
 
 type OwnProps = {
   visualization?: Visualization;
-  onSearchChange: (searchQuery: string) => void;
   showGraphView: boolean;
 };
 
-type MergeProps = {
-  onDisplayFiltersChange: (display: DisplayFilters) => void;
-} & StateProps &
-  OwnProps;
+type MergeProps = StateProps & DispatchProps & OwnProps;
 
 type TopologyFilterBarProps = MergeProps;
 
@@ -60,8 +57,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
   filters,
   supportedFilters,
   supportedKinds,
-  onDisplayFiltersChange,
-  onSearchChange,
+  onFiltersChange,
   visualization,
   showGraphView,
   consoleLinks,
@@ -74,14 +70,11 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
     setSearchQuery(query);
   }, []);
 
-  const onTextFilterChange = React.useCallback(
-    (text) => {
-      const query = text?.trim();
-      setSearchQuery(query);
-      onSearchChange(query);
-    },
-    [onSearchChange],
-  );
+  const onTextFilterChange = (text) => {
+    const query = text?.trim();
+    setSearchQuery(query);
+    onSearchChange(query);
+  };
 
   return (
     <Toolbar className="co-namespace-bar odc-topology-filter-bar">
@@ -91,7 +84,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
             <FilterDropdown
               filters={filters}
               supportedFilters={supportedFilters}
-              onChange={onDisplayFiltersChange}
+              onChange={onFiltersChange}
             />
           </ToolbarItem>
         </ToolbarGroup>
@@ -100,7 +93,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
             <KindFilterDropdown
               filters={filters}
               supportedKinds={supportedKinds}
-              onChange={onDisplayFiltersChange}
+              onChange={onFiltersChange}
             />
           </ToolbarItem>
         </ToolbarGroup>
@@ -170,17 +163,14 @@ const dispatchToProps = (dispatch: Dispatch): DispatchProps => ({
 const mergeProps = (
   { filters, supportedFilters, supportedKinds, consoleLinks, namespace }: StateProps,
   { onFiltersChange }: DispatchProps,
-  { visualization, onSearchChange, showGraphView }: OwnProps,
+  { visualization, showGraphView }: OwnProps,
 ): MergeProps => ({
   filters,
   supportedFilters,
   supportedKinds,
   consoleLinks,
   namespace,
-  onDisplayFiltersChange: (changedFilters: DisplayFilters) => {
-    onFiltersChange(changedFilters);
-  },
-  onSearchChange,
+  onFiltersChange,
   visualization,
   showGraphView,
 });

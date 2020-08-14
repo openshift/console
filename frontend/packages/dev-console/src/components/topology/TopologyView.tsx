@@ -35,8 +35,9 @@ import {
   TopologyDisplayFilters,
 } from '../../extensions/topology';
 import {
+  getFilterById,
   getTopologySearchQuery,
-  TOPOLOGY_SEARCH_FILTER_KEY,
+  SHOW_GROUPS_FILTER_ID,
   useAppliedDisplayFilters,
   useDisplayFilters,
 } from './filters';
@@ -75,8 +76,8 @@ import { Stack, StackItem } from '@patternfly/react-core';
 import TopologyFilterBar from './filters/TopologyFilterBar';
 import * as classNames from 'classnames';
 
-export const FILTER_ACTIVE_CLASS = 'odc-m-filter-active';
 const TOPOLOGY_GRAPH_ID = 'odc-topology-graph';
+export const FILTER_ACTIVE_CLASS = 'odc-m-filter-active';
 
 interface StateProps {
   application: string;
@@ -122,7 +123,10 @@ export const TopologyView: React.FC<ComponentProps> = ({
   const [storedSelectedIds, setSelectedIds] = React.useState<string[]>([]);
   const selectedIds = useDeepCompareMemoize(storedSelectedIds);
   const createResourceAccess: string[] = useAddToProjectAccess(namespace);
-  const filters = useDisplayFilters();
+  const displayFilters = useDisplayFilters();
+  const showGroupsRef = React.useRef<boolean>();
+  const groupsShown = getFilterById(SHOW_GROUPS_FILTER_ID, displayFilters)?.value ?? true;
+  const filters = useDeepCompareMemoize(displayFilters);
   const appliedFilters = useAppliedDisplayFilters();
   const [displayFilterers, setDisplayFilterers] = React.useState<TopologyApplyDisplayOptions[]>(
     null,
@@ -265,19 +269,13 @@ export const TopologyView: React.FC<ComponentProps> = ({
     }
   }, [createResourceAccess, createConnectors, eventSourceEnabled, visualization, namespace]);
 
-  const onSearchChange = (searchQuery) => {
-    if (searchQuery.length > 0) {
-      setQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY, searchQuery);
-      document.body.classList.add(FILTER_ACTIVE_CLASS);
-    } else {
-      removeQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY);
-      document.body.classList.remove(FILTER_ACTIVE_CLASS);
-    }
-  };
-
   React.useEffect(() => {
     const searchQuery = getTopologySearchQuery();
-    searchQuery && onSearchChange(searchQuery);
+    if (searchQuery.length > 0) {
+      document.body.classList.add(FILTER_ACTIVE_CLASS);
+    } else {
+      document.body.classList.remove(FILTER_ACTIVE_CLASS);
+    }
   }, [searchParams]);
 
   React.useEffect(() => {
@@ -294,8 +292,40 @@ export const TopologyView: React.FC<ComponentProps> = ({
           removeQueryArgument('selectTab');
         }
       }
+      if (showGraphView) {
+        if (groupsShown && showGroupsRef.current === false) {
+          showGroupsRef.current = groupsShown;
+          visualization.getGraph().layout();
+        }
+        showGroupsRef.current = groupsShown;
+      } else {
+        showGroupsRef.current = undefined;
+      }
     }
-  }, [filteredModel, onSelectTab, queryParams, selectedIds, visualization]);
+    // Do not update on groupsShown change, filterModel will get updated and we want to wait to layout
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filteredModel, onSelectTab, queryParams, selectedIds, showGraphView, visualization]);
+
+  const viewContent = React.useMemo(
+    () =>
+      showGraphView ? (
+        <Topology
+          visualization={visualization}
+          namespace={namespace}
+          application={application}
+          selectedIds={selectedIds}
+        />
+      ) : (
+        <TopologyListView
+          visualization={visualization}
+          namespace={namespace}
+          application={application}
+          selectedIds={selectedIds}
+          onSelect={onSelect}
+        />
+      ),
+    [application, namespace, selectedIds, showGraphView, visualization],
+  );
 
   if (!filteredModel) {
     return null;
@@ -372,23 +402,6 @@ export const TopologyView: React.FC<ComponentProps> = ({
 
   const sideBar = renderSideBar();
 
-  const viewContent = showGraphView ? (
-    <Topology
-      visualization={visualization}
-      namespace={namespace}
-      application={application}
-      selectedIds={selectedIds}
-    />
-  ) : (
-    <TopologyListView
-      visualization={visualization}
-      namespace={namespace}
-      application={application}
-      selectedIds={selectedIds}
-      onSelect={onSelect}
-    />
-  );
-
   const containerClasses = classNames('pf-topology-container', {
     'pf-topology-container__with-sidebar': sideBar,
     'pf-topology-container__with-sidebar--open': sideBar,
@@ -398,11 +411,7 @@ export const TopologyView: React.FC<ComponentProps> = ({
     <div className="odc-topology">
       <Stack>
         <StackItem isFilled={false}>
-          <TopologyFilterBar
-            onSearchChange={onSearchChange}
-            showGraphView={showGraphView}
-            visualization={visualization}
-          />
+          <TopologyFilterBar showGraphView={showGraphView} visualization={visualization} />
         </StackItem>
         <StackItem isFilled className={containerClasses}>
           <div className="pf-topology-content">{viewContent}</div>
