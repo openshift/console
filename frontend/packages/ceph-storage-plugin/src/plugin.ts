@@ -308,7 +308,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.LEFT,
       loader: () =>
         import(
-          './components/independent-dashboard-page/details-card/card' /* webpackChunkName: "indepedent-details-card" */
+          './components/independent-dashboard-page/details-card' /* webpackChunkName: "indepedent-details-card" */
         ).then((m) => m.default),
     },
     flags: {
@@ -337,7 +337,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.MAIN,
       loader: () =>
         import(
-          './components/independent-dashboard-page/status-card/card' /* webpackChunkName: "indepedent-status-card" */
+          './components/independent-dashboard-page/status-card' /* webpackChunkName: "indepedent-status-card" */
         ).then((m) => m.default),
     },
     flags: {
@@ -351,7 +351,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.MAIN,
       loader: () =>
         import(
-          './components/independent-dashboard-page/breakdown-card/card' /* webpackChunkName: "independent-breakdown-card" */
+          './components/independent-dashboard-page/breakdown-card' /* webpackChunkName: "independent-breakdown-card" */
         ).then((m) => m.default),
     },
     flags: {
@@ -365,7 +365,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.MAIN,
       loader: () =>
         import(
-          './components/independent-dashboard-page/utilization-card/card' /* webpackChunkName: "utilization-card" */
+          './components/independent-dashboard-page/utilization-card' /* webpackChunkName: "utilization-card" */
         ).then((m) => m.default),
     },
     flags: {

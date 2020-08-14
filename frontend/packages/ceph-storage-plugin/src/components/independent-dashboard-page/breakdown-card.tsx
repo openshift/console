@@ -10,23 +10,20 @@ import DashboardCard from '@console/shared/src/components/dashboard/dashboard-ca
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
-import {
-  breakdownIndependentQueryMap,
-  CAPACITY_BREAKDOWN_QUERIES,
-} from '../../../constants/queries';
-import { PROJECTS } from '../../../constants';
+import { breakdownIndependentQueryMap, CAPACITY_BREAKDOWN_QUERIES } from '../../constants/queries';
+import { PROJECTS } from '../../constants';
 import {
   sortInstantVectorStats,
   getStackChartStats,
-} from '../../dashboard-page/storage-dashboard/breakdown-card/utils';
-import { HeaderPrometheusViewLink } from '../../dashboard-page/storage-dashboard/breakdown-card/breakdown-header';
-import { BreakdownCardBody } from '../../dashboard-page/storage-dashboard/breakdown-card/breakdown-body';
-import '../../dashboard-page/storage-dashboard/capacity-breakdown/capacity-breakdown-card.scss';
+} from '../dashboard-page/storage-dashboard/breakdown-card/utils';
+import { HeaderPrometheusViewLink } from '../dashboard-page/storage-dashboard/breakdown-card/breakdown-header';
+import { BreakdownCardBody } from '../dashboard-page/storage-dashboard/breakdown-card/breakdown-body';
+import '../dashboard-page/storage-dashboard/capacity-breakdown/capacity-breakdown-card.scss';
 
 const keys = Object.keys(breakdownIndependentQueryMap);
 const dropdownOptions = _.zipObject(keys, keys);
 
-const BreakdownCard: React.FC<DashboardItemProps> = ({
+export const BreakdownCard: React.FC<DashboardItemProps> = ({
   watchPrometheus,
   stopWatchPrometheusQuery,
   prometheusResults,
