@@ -141,7 +141,7 @@ export const TopologyView: React.FC<ComponentProps> = ({
   const searchParams = queryParams.get('searchQuery');
   const onSelect = (ids: string[]) => {
     // set empty selection when selecting the graph
-    if (ids.length > 0 && ids[0] === TOPOLOGY_GRAPH_ID) {
+    if (!ids || ids.length === 0 || ids[0] === TOPOLOGY_GRAPH_ID) {
       setSelectedIds([]);
       removeQueryArgument('selectId');
     } else {
@@ -281,16 +281,24 @@ export const TopologyView: React.FC<ComponentProps> = ({
   React.useEffect(() => {
     if (filteredModel) {
       visualization.fromModel(filteredModel);
-      if (selectedIds.length && !visualization.getElementById(selectedIds[0])) {
-        setSelectedIds([]);
+      let selectedItem = selectedIds.length ? visualization.getElementById(selectedIds[0]) : null;
+      if (!selectedItem || !selectedItem.isVisible()) {
+        onSelect([]);
       } else {
         const selectId = queryParams.get('selectId');
-        const selectTab = queryParams.get('selectTab');
-        visualization.getElementById(selectId) && setSelectedIds([selectId]);
-        if (selectTab) {
-          onSelectTab(selectTab);
-          removeQueryArgument('selectTab');
+        if (selectId) {
+          selectedItem = visualization.getElementById(selectId);
+          if (selectedItem && selectedItem.isVisible()) {
+            setSelectedIds([selectId]);
+            const selectTab = queryParams.get('selectTab');
+            if (selectTab) {
+              onSelectTab(selectTab);
+            }
+          } else {
+            onSelect([]);
+          }
         }
+        removeQueryArgument('selectTab');
       }
       if (showGraphView) {
         if (groupsShown && showGroupsRef.current === false) {

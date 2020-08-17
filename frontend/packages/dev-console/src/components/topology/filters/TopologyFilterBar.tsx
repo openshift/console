@@ -12,6 +12,7 @@ import {
 } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import { Visualization } from '@patternfly/react-topology';
+import { useQueryParams } from '@console/shared';
 import { RootState } from '@console/internal/redux';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { ExternalLink } from '@console/internal/components/utils';
@@ -23,7 +24,6 @@ import {
   getSupportedTopologyFilters,
   getSupportedTopologyKinds,
   getTopologyFilters,
-  getTopologySearchQuery,
   onSearchChange,
 } from './filter-utils';
 import FilterDropdown from './FilterDropdown';
@@ -63,16 +63,12 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
   consoleLinks,
   namespace,
 }) => {
-  const [searchQuery, setSearchQuery] = React.useState<string>('');
   const kialiLink = getNamespaceDashboardKialiLink(consoleLinks, namespace);
-  React.useEffect(() => {
-    const query = getTopologySearchQuery();
-    setSearchQuery(query);
-  }, []);
+  const queryParams = useQueryParams();
+  const searchQuery = queryParams.get('searchQuery') || '';
 
   const onTextFilterChange = (text) => {
     const query = text?.trim();
-    setSearchQuery(query);
     onSearchChange(query);
   };
 
