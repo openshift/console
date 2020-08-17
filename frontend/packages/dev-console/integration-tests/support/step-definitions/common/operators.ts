@@ -1,6 +1,8 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { operatorsPage, operatorsObj } from '../../pages/operators_page';
-import  { operators } from '../../constants/global'
+import  { operators, switchPerspective, devNavigationMenu } from '../../constants/global'
+import { projectNameSpace, perspective, naviagteTo } from '../../pages/app';
+import { addPage } from '../../pages/add_page';
 
 Given('user is at Operator Hub page with the header name {string}', (headerName) => {
   operatorsPage.navigateToOperaotorHubPage();
@@ -21,24 +23,23 @@ When('click install button present on the right side pane', () => {
 });
 
 Then('OpenShift Pipeline operator subscription page will be displayed', () => {
-  operatorsPage.verifyPipelineOperatorSubscriptionPage();
+  operatorsPage.verifySubscriptionPage('OpenShift Pipelines Operator');
 });
 
 Given('user is at OpenShift Pipeline Operator subscription page', () => {
   operatorsPage.navigateToOperaotorHubPage();
-  cy.titleShouldBe('OperatorHub');
   operatorsPage.searchOperator('OpenShift Pipelines Operator');
   operatorsPage.selectOperator(operators.pipelineOperator);
   operatorsPage.verifySiedPane();
   operatorsPage.clickInstallOnSidePane();
-  operatorsPage.verifyPipelineOperatorSubscriptionPage();
+  operatorsPage.verifySubscriptionPage('OpenShift Pipelines Operator');
 });
 
 When('user installs the pipeline operator with default values', () => {
   operatorsPage.installOperator();
 });
 
-Then('user redirects to Installed operators page', () => {
+Then('page redirects to Installed operators', () => {
   cy.titleShouldBe('Installed Operators');
 });
 
@@ -46,14 +47,26 @@ Then('Installed operators page will contain {string}', (operatorName: string) =>
   operatorsPage.verifyInstalledOperator(operatorName);
 });
 
+Then('user will see a modal with title {string}', (operatorName: string) => {
+  cy.get('article h1').should('contain.text', operatorName);
+});
+
+Then('user will see a View Operator button', () => {
+  cy.get('[role="progressbar"]', {timeout: 15000}).should('not.be.visible');
+  cy.get('button', {timeout: 15000}).contains('View Operator').should('be.visible');
+});
+
 Given('user is at OpenShift Serverless Operator subscription page', () => {
   operatorsPage.navigateToOperaotorHubPage();
-  cy.titleShouldBe('OperatorHub');
   operatorsPage.searchOperator('OpenShift Serverless Operator');
   operatorsPage.selectOperator(operators.serverlessOperator);
   operatorsPage.verifySiedPane();
   operatorsPage.clickInstallOnSidePane();
-  operatorsPage.verifyServerlessOperatorSubscriptionPage();
+  operatorsPage.verifySubscriptionPage('OpenShift Serverless Operator');
+});
+
+When('user installs the Serverless operator with default values', () => {
+  operatorsPage.installOperator();
 });
 
 Given('cluster is installed with kantive serverless operator', () => {
@@ -61,19 +74,23 @@ Given('cluster is installed with kantive serverless operator', () => {
 });
 
 Given('user is on the knative-eventing namespace', () => {
-  // TODO: implement step
+  projectNameSpace.selectProject('knative-eventing');
 });
 
 Given('cluster is installed with knative serverless and eventing operators', () => {
-  // TODO: implement step
-});
-
-Given('cluster is installed with knative serverless operator', () => {
-  // TODO: implement step
+  operatorsPage.verifyOperatorInNavigationMenu('Serverless');
+  operatorsPage.navigateToInstalloperatorsPage();
+  operatorsPage.verifyInstalledOperator('OpenShift Serverless Operator');
+  cy.get('a[title="knativeeventings.operator.knative.dev"]').should('be.visible');
 });
 
 Given('user is at Eclipse che Operator subscription page', () => {
-  // TODO: implement step
+  operatorsPage.navigateToOperaotorHubPage();
+  operatorsPage.searchOperator('Eclipse Che');
+  operatorsPage.selectOperator(operators.eclipseCheOperator);
+  operatorsPage.verifySiedPane();
+  operatorsPage.clickInstallOnSidePane();
+  operatorsPage.verifySubscriptionPage('Eclipse Che');
 });
 
 When('user uninstalls the pipeline operator from right side pane', () => {
@@ -86,32 +103,34 @@ When('clicks on Unistall button present in popup with header message Uninstall O
   cy.get(operatorsObj.uninstallPopup.uninstall).click();
 });
 
-When('user installs the Serverless operator with default values', () => {
-  operatorsPage.installOperator();
-});
-
 When('user navigates to installed operators page in Admin perspecitve', () => {
-  // TODO: implement step
+  operatorsPage.navigateToInstalloperatorsPage();
 });
 
 When('clicks kantive eventing provided api pressent in kantive serverless operator', () => {
-  // TODO: implement step
+  cy.get('a[title="knativeeventings.operator.knative.dev"]').click();
 });
 
 When('click Create Kantive Eventing button present in kantive Eventing tab', () => {
-  // TODO: implement step
+  cy.titleShouldBe('Knative Eventings');
+  cy.get('[data-test="yaml-create"]').click();
 });
 
 When('click on create button', () => {
-  // TODO: implement step
+  cy.get('[type="submit"]').click();
 });
 
 When('user search and installs the kantive Camel operator with default values', () => {
-  // TODO: implement step
+  operatorsPage.searchOperator('OpenShift Serverless Operator');
+  operatorsPage.selectOperator(operators.knativeCamelOperator);
+  operatorsPage.verifySiedPane();
+  operatorsPage.clickInstallOnSidePane();
+  operatorsPage.verifySubscriptionPage('Knative Apache Camel Operator');
+  operatorsPage.installOperator();
 });
 
 When('user installs the Eclipse che operator with default values', () => {
-  // TODO: implement step
+  operatorsPage.installOperator();
 });
 
 Then('serverless tab displays in navigation menu of admin page', () => {
@@ -119,7 +138,9 @@ Then('serverless tab displays in navigation menu of admin page', () => {
 });
 
 Then('Event sources card display in +Add page in dev perspecitve', () => {
-  // TODO: implement step
+  perspective.switchTo(switchPerspective.Developer);
+  naviagteTo(devNavigationMenu.Add);
+  addPage.verifyCard('Event Source');
 });
 
 Then('user redirects to Installed operators page', () => {

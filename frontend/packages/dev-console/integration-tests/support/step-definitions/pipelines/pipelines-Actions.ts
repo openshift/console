@@ -8,6 +8,7 @@ import { devNavigationMenu } from '../../constants/global';
 
 
 Given('pipeline run is available for {string}', (pipelineName: string) => {
+  // To Do
   cy.log(pipelineName);
 });
 
@@ -57,9 +58,9 @@ Given('pipeline with name {string} is present on Pipelines page', (pipelineName:
   naviagteTo(devNavigationMenu.Pipelines);
 });
 
-Given('pipeline {string} consists of task {string} without parameters and resources', (pipelineName: string, taskName: string) => {
+Given('pipeline {string} consists of task {string} without parameters and resources', (pipelineName: string, b: string) => {
   pipelinesPage.createPipeline();
-  pipelineBuilderPage.createPipelineFromBuilderPage(pipelineName, taskName);
+  pipelineBuilderPage.createPipelineFromBuilderPage(pipelineName);
   naviagteTo(devNavigationMenu.Pipelines);
 });
 

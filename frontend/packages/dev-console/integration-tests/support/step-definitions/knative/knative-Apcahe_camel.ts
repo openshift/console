@@ -17,11 +17,11 @@ Given('user is on Add page', () => {
 });
 
 When('user clicks on {string} card', (a: string) => {
- cy.log(a)
+  cy.log(a)
 });
 
-Then('user redirects to page with header name {string}', (a: string) => {
- cy.log(a)
+Then('user redirects to page with header name {string}', (headerName: string) => {
+  cy.titleShouldBe(headerName);
 });
 
 Then('able to see CamelSource event type', () => {

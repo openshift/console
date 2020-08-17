@@ -38,6 +38,21 @@ Given('user is at developer perspecitve', () => {
   perspective.verifyPerspective('Developer');
 });
 
+Given('open shift cluster is installed with Serverless operator', () => {
+  perspective.switchTo(switchPerspective.Administrator);
+  operatorsPage.verifyOperatorInNavigationMenu('Serverless');
+});
+
+Given('open shift cluster is installed with Serverless and eventing operator', () => {
+  perspective.switchTo(switchPerspective.Administrator);
+  operatorsPage.verifyOperatorInNavigationMenu('Serverless');
+});
+
+Given('user is on dev perspective +Add page', () => {
+  perspective.switchTo(switchPerspective.Developer);
+  naviagteTo(devNavigationMenu.Add);
+});
+
 Given('openshift cluster is installed with pipeline operator', () => {
     perspective.switchTo(switchPerspective.Developer);
     perspective.verifyPerspective('Developer');
@@ -56,7 +71,7 @@ Given('user is at the project namespace {string} in dev perspecitve', (projectNa
 Given('openshift cluster is installed with knative operator', () => {
   perspective.switchTo(switchPerspective.Administrator);
   perspective.verifyPerspective('Administrator');
-  // cy.wait(5000);
+  cy.wait(5000);
   operatorsPage.verifyOperatorInNavigationMenu('Serverless');
 });
 
@@ -96,6 +111,10 @@ When('user switches to developer perspective', () => {
 
 When('user navigates to Topology page', () => {
   naviagteTo(devNavigationMenu.Topology);
+});
+
+When('user navigates to Add page', () => {
+  naviagteTo(devNavigationMenu.Add);
 });
 
 When('user selects {string} option from kebab menu', (option: string) => {

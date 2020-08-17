@@ -1,73 +1,79 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { addPage, seelctCardFromOptions, addPageObj, containerImage, catalogPage } from '../../pages/add_page';
+import { addOptions } from '../../constants/add';
+import { naviagteTo } from '../../pages/app';
+import { devNavigationMenu } from '../../constants/global';
+import { topologyPage } from '../../pages/topology_page';
 
-Given('open shift cluster is installed with Serverless operator', () => {
-  // TODO: implement step
-});
-
-Given('user is on dev perspective +Add page', () => {
-  // TODO: implement step
-});
-
-Given('create the project {string}', (a: string) => {
- cy.log(a)
-});
-
-Given('user is on Add flow page', () => {
-  // TODO: implement step
-});
-
-Given('user is on {string} form with header name {string}', (a: string, b: string) => {
- cy.log(a, b,)
+Given('user is on {string} form', (formName: string) => {
+  naviagteTo(devNavigationMenu.Add);
+  seelctCardFromOptions(formName);
 });
 
 Given('builder images are displayed', () => {
   // TODO: implement step
 });
 
-When('user clicks on {string} card', (a: string) => {
- cy.log(a)
+When('user clicks on From git card', () => {
+  seelctCardFromOptions(addOptions.Git);
+});
+
+When('user clicks on Container Image card', () => {
+  seelctCardFromOptions(addOptions.ContainerImage);
+});
+
+When('user clicks on From Dockerfile card', () => {
+  seelctCardFromOptions(addOptions.DockerFile);
+});
+
+When('user clicks on From Catalog card', () => {
+  seelctCardFromOptions(addOptions.Catalog);
 });
 
 When('create the application with s2i builder image', () => {
   // TODO: implement step
 });
 
-When('user type {string} into the {string} text box', (a: string, b: string) => {
- cy.log(a, b,)
+When('user type {string} into the Git Repo url text box', (gitRepoUrl: string) => {
+  addPage.enterGitUrl(gitRepoUrl);
 });
 
-When('select {string} radio button on Add page', (a: string) => {
- cy.log(a)
+When('user type {string} into the Image name from External registry text box', (imageName: string) => {
+  containerImage.enterExternalRegistryImageName(imageName);
 });
 
-When('click {string} button on Add page', (a: string) => {
- cy.log(a)
+When('select {string} radio button on Add page', (resourceType: string) => {
+ addPage.selectResource(resourceType)
 });
 
-When('user search and select the {string} card', (a: string) => {
- cy.log(a)
+When('click Create button on Add page', () => {
+ addPage.clicKCreate();
+});
+
+When('user search and select the {string} card', (cardName: string) => {
+ catalogPage.search(cardName);
 });
 
 When('create the application with the selected builder image', () => {
   // TODO: implement step
 });
 
-When('select the {string} radio button on Add page', (a: string) => {
- cy.log(a)
+When('type name as {string}', (workloadName: string) => {
+  addPage.enterComponentName(workloadName)
 });
 
-Then('user redirects to page with header name {string}', (a: string) => {
- cy.log(a)
+When('select the resource type {string} radio button on Add page', (optionName: string) => {
+  addPage.selectResource(optionName);
+});
+
+Then('user redirects to page with header name {string}', (headerName: string) => {
+  addPage.verifyTitle(headerName);
 });
 
 Then('Knaive Service option is displayed in Resources section', () => {
-  // TODO: implement step
+  cy.get(addPageObj.resources.knative).should('be.visible');
 });
 
-Then('user redirects to Topology page', () => {
-  // TODO: implement step
-});
-
-Then('created workload is present in List View of topology page', () => {
-  // TODO: implement step
+Then('created workload {string} is present in List View of topology page', (workloadName: string) => {
+  topologyPage.verifyWorkloadInTopologyPage(workloadName);
 });

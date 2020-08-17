@@ -203,7 +203,7 @@ Given('pipeline {string} is created from git page', (name: string) => {
 
   addPage.enterComponentName(name);
   addPage.selectAddPipeline();
-  addPage.createWorkload();
+  addPage.clicKCreate();
   topologyPage.verifyTopologyPage();
 })
 

@@ -128,46 +128,56 @@ export const catalogPageObj = {
   }
 }
 
-export const seelctCardFromOptions = (card: addOptions) => {
+export const seelctCardFromOptions = (card: addOptions | string) => {
   switch (card) {
+    case 'Git':
     case addOptions.Git:
       cy.byLegacyTestID('import-from-git').click();
       cy.titleShouldBe('Import from git');
       break;
+    case 'Deploy Image':
     case addOptions.ContainerImage:
       cy.byLegacyTestID('deploy-image').click();
       cy.titleShouldBe('Deploy Image');
       break;
+    case 'Import from Dockerfile':
     case addOptions.DockerFile:
       cy.byLegacyTestID('import-from-dockerfile').click();
       cy.titleShouldBe('Import from Dockerfile');
       break;
+    case 'Catalog file':
     case addOptions.Catalog:
       cy.byLegacyTestID('dev-catalog').click();
       cy.titleShouldBe('Developer Catalog');
       break;
+    case 'Database':
     case addOptions.Database:
       cy.byLegacyTestID('dev-catalog-databases').click();
       cy.titleShouldBe('Developer Catalog');
       break;
+    case 'Event Sources':
     case addOptions.EventSource:
       cy.byLegacyTestID('knative-event-source').click();
       cy.titleShouldBe('Event Sources');
       break;
+    case 'Helm Chart':
     case addOptions.HelmChart:
       cy.byLegacyTestID('helm').click();
       cy.titleShouldBe('Developer Catalog');
       cy.byTestID('kind-helm-chart').should('be.checked');
       break;
+    case 'Operator Backed':
     case addOptions.OperatorBacked:
       cy.byLegacyTestID('operator-backed').click();
       cy.titleShouldBe('Developer Catalog');
       cy.byTestID('kind-cluster-service-version').should('be.checked');
       break;
+    case 'Pipelines':
     case addOptions.Pipeline:
       cy.byLegacyTestID('pipeline').click();
       cy.get('h1.odc-pipeline-builder-header__title').should('have.text', 'Pipeline Builder');
       break;
+    case 'Yaml':
     case addOptions.YAML:
       cy.byLegacyTestID('import-yaml').click();
       cy.titleShouldBe('Import YAML');
@@ -177,6 +187,17 @@ export const seelctCardFromOptions = (card: addOptions) => {
       break;
   }
 };
+
+export const eventSourceObj = {
+  search: '[placeholder="Filter by type..."]',
+  create: '[data-test-id="submit-button"]',
+  cancel: '[data-test-id="reset-button"]',
+  apiServerSource: {
+    apiVersion: 'input[placeholder="apiversion"]',
+    kind: 'input[placeholder="kind"]',
+    serviceAccountName: '#form-ns-dropdown-data-apiserversource-serviceAccountName-field',
+  },
+}
 
 export const addPage = {
   verifyNoWorkLoadsText:(text: string) => cy.get('h2.co-hint-block__title').should('contain.text', text),
@@ -218,7 +239,7 @@ export const addPage = {
         cy.get(addPageObj.resources.deploymentConfig).check();
         break;
       case 'knative':
-      case 'Kantive':
+      case 'Knative':
         cy.get(addPageObj.resources.knative).check();
         break;
       default:
@@ -255,7 +276,7 @@ export const addPage = {
     }
   },
   selectAddPipeline: () => cy.get(addPageObj.pipeline.addPipeline).scrollIntoView().check(),
-  createWorkload: () => cy.get(addPageObj.create).click(),
+  clicKCreate: () => cy.get(addPageObj.create).click(),
   clickCancel:() => cy.get(addPageObj.cancel).click(),
   verifyValidatedMessage:() => cy.get(addPageObj.gitSection.validatedMessage).should('have.text', 'Validated'),
   verifyBuilderImageDetectedMessage:() => cy.get(addPageObj.builderSection.builderImageDetected).should('be.visible'),
@@ -267,11 +288,16 @@ export const addPage = {
     addPage.enterAppName(appName);
     addPage.enterComponentName(componentName);
     addPage.selectResource(resourceType);
-    addPage.createWorkload();
+    addPage.clicKCreate();
   },
 };
 
-export const dockerPage = {
+export const eventSourcesPage = {
+  verifyTitle: (title: string = 'Event Sources') => cy.titleShouldBe(title),
+  search: (type: string) => cy.get(eventSourceObj.search).type(type),
+  verifyEventSourceType: (eventSourceName: string) => cy.get(`button[aria-label="${eventSourceName}"]`).should('be.visible'),
+  clickEventSourceType: (eventSourceName: string) => cy.get(`button[aria-label="${eventSourceName}"]`).click(),
+  clickCreate:() => cy.get(eventSourceObj.create).click(),
 }
 
 export const containerImage = {

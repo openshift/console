@@ -32,7 +32,7 @@ Then('Name displays as {string}', (nodeName: string) => {
 });
 
 When('clicks Create button on Add page', () => {
-  addPage.createWorkload();
+  addPage.clicKCreate();
 });
 
 When('selects {string} resource type', (resourceType: string) => {
@@ -40,7 +40,7 @@ When('selects {string} resource type', (resourceType: string) => {
 });
 
 When('click Create button on Add page', () => {
-  addPage.createWorkload();
+  addPage.clicKCreate();
 });
 
 Then('created workload {string} is present in topology page', (workloadName: string) => {

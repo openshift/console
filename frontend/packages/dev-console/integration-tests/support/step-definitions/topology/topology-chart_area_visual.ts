@@ -94,7 +94,7 @@ Then('user sees build decorator on bottom left which will take user to either bu
 });
 
 Then('user checks node label having {string} for deployment and then name of node', (a: string) => {
- cy.log(a)
+  // TODO: implement step
 });
 
 Then('deployment-config can have application url on top-right of the node', () => {
@@ -102,7 +102,7 @@ Then('deployment-config can have application url on top-right of the node', () =
 });
 
 Then('user checks node label having {string} for deployment-config and then name of node', (a: string) => {
- cy.log(a)
+  // TODO: implement step
 });
 
 Then('user can view knative service are rectangular shaped with round corners', () => {
@@ -110,7 +110,7 @@ Then('user can view knative service are rectangular shaped with round corners', 
 });
 
 Then('user can see dotted boundary with text {string} mentioned', (a: string) => {
- cy.log(a)
+  // TODO: implement step
 });
 
 Then('knative sevice app can have application url on top-right of the node', () => {
@@ -122,7 +122,7 @@ Then('user sees build decorator on bottom left on knative service app which will
 });
 
 Then('user checks knative service having label {string} and then the name of service', (a: string) => {
- cy.log(a)
+  // TODO: implement step
 });
 
 Then('user can see knative service app with dotted boundary with revision present inside it', () => {
@@ -150,7 +150,7 @@ Then('user sees build decorator on bottom left on knative service app which will
 });
 
 Then('user checks revisions having label {string} and then the name', (a: string) => {
- cy.log(a)
+  // TODO: implement step
 });
 
 Then('user sees context menu', () => {

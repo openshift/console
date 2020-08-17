@@ -5,14 +5,14 @@ import { naviagteTo } from '../../pages/app';
 import { devNavigationMenu } from '../../constants/global';
 
 let gitUrl = 'https://github.com/sclorg/nodejs-ex.git';
-// let appName = '';
+let appName = '';
 
 Given('topology has application name with node name {string}', (componentName: string) => {
   // cy.byLegacyTestID('topology-header').click();
   // cy.byLegacyTestID('topology-header').should('be.visible');
   // cy.get('body div', {timeout: 5000}).then(($el) => {
   //   if($el.find('div.ocs-page-layout__header').length !== 0) {
-      // appName = componentName;
+      appName = componentName;
       naviagteTo(devNavigationMenu.Add);
       addPage.createGitWorkload(gitUrl, componentName);
       topologyPage.verifyTopologyPage();

@@ -11,12 +11,13 @@ export const operatorsObj = {
     search: 'input[placeholder="Filter by keyword..."]',
     numOfItems: 'div.co-catalog-page__num-items',
   },
-  pipelineOperatorSubscription: {
+  subscription: {
     logo: 'h1.co-clusterserviceversion-logo__name__clusterserviceversion',
+    create: 'button[type="submit"]',
   },
   installOperators: {
     title: 'h1.co-m-pane__heading',
-    operatorsNameRow: 'div[aria-label="Installed Operators"] td:nth-child(1)',
+    operatorsNameRow: 'div[aria-label="Installed Operators"] td:nth-child(1) h1',
     search: 'input[data-test-id="item-filter"]',
     noOperatorFoundMessage: 'div.cos-status-box__title',
   },
@@ -27,13 +28,14 @@ export const operatorsObj = {
   alertDialog: '[role="dialog"]',
   uninstallPopup:{
     uninstall: '#confirm-action',
-  }
+  },
 }
 
 export const operatorsPage = {
   navigateToOperaotorHubPage: () => {
     cy.get(operatorsObj.nav.link).contains('Operators').click();
     cy.get(operatorsObj.nav.operatorHub,).click();
+    cy.titleShouldBe('OperatorHub');
   },
 
   navigateToInstalloperatorsPage: () => {
@@ -49,14 +51,12 @@ export const operatorsPage = {
   installOperator: () => {
     cy.get(operatorsObj.installOperators.title).should('have.text', 'Install Operator');
     cy.byButtonText('Install').click();
-    cy.byLegacyTestID('resource-title').contains('Installed Operators');
+    cy.get('article h1').should('be.visible');
+    // cy.byLegacyTestID('resource-title').contains('Installed Operators');
   },
 
-  verifyPipelineOperatorSubscriptionPage: () => 
-    cy.get(operatorsObj.pipelineOperatorSubscription.logo).should('have.text', 'OpenShift Pipelines Operator'),
-
-  verifyServerlessOperatorSubscriptionPage: () => 
-  cy.get(operatorsObj.pipelineOperatorSubscription.logo).should('have.text', 'OpenShift Serverless Operator'),
+  verifySubscriptionPage: (operatorLogo: string) => 
+    cy.get(operatorsObj.subscription.logo).should('have.text', operatorLogo),
 
   verifyInstalledOperator: (operatorName: string) => 
     cy.get(operatorsObj.installOperators.operatorsNameRow).should('contain.text', operatorName),
@@ -66,7 +66,9 @@ export const operatorsPage = {
     cy.get(operatorsObj.installOperators.noOperatorFoundMessage).should('have.text', 'No Operators Found');
   },
   
-  headingDisplayed: (heading: string) => cy.get('h1').contains(heading),
+  heading: (heading: string) => {
+    return cy.get('h1').contains(heading)
+  },
 
   selectOperator: (opt: operators | string) => {
     switch (opt) {
@@ -80,6 +82,25 @@ export const operatorsPage = {
         cy.byTestID('serverless-operator-redhat-operators-openshift-marketplace').click();
         break;
       }
+      case 'OpenShift Virtualization':
+      case operators.virtualizationOperator: {
+        cy.byTestID('kubevirt-hyperconverged-redhat-operators-openshift-marketplace').click();
+        break;
+      }
+      case 'Knative Apache Camel Operator':
+      case operators.knativeCamelOperator: {
+        cy.byTestID('knative-camel-operator-community-operators-openshift-marketplace').click();
+        cy.alertTitleShouldBe('Show Community Operator');
+        cy.byTestID('confirm-action').click();
+        break;
+      }
+      case 'Eclipse Che':
+        case operators.eclipseCheOperator: {
+          cy.byTestID('eclipse-che-community-operators-openshift-marketplace').click();
+          cy.alertTitleShouldBe('Show Community Operator');
+          cy.byTestID('confirm-action').click();
+          break;
+        }
       default: {
         throw new Error('operator is not available');
       }
@@ -112,5 +133,10 @@ export const operatorsPage = {
 
   verifyOperatorInNavigationMenu: (menuItem: string) => {
     cy.get(operatorsObj.nav.menuItems, {timeout:9000}).contains(menuItem).should('be.visible');
-  }
+  },
+
+  clickOnCreate:() => {
+    cy.get(operatorsObj.subscription.create).click();
+  },
+
 };

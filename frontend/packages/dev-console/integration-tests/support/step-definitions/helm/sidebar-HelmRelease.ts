@@ -7,6 +7,9 @@ Given('helm release {string} is present in topology page', (workloadName: string
     if($el.find('h2.co-hint-block__title h4').length === 0) {
       catalogPage.createHelmChartFromAddPage(workloadName);
     }
+    else {
+      cy.log('helm release is available');
+    }
   });
   // topologyPage.searchHelmRelease(workloadName);
 });

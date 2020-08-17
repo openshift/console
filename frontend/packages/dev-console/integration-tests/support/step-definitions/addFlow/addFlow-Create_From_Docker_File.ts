@@ -16,7 +16,7 @@ When('select {string} radio button in Resoruce type section', (resourceType: str
 });
 
 When('click Create button on Add page', () => {
-  addPage.createWorkload();
+  addPage.clicKCreate();
 });
 
 Then('created workload {string} is present in topology page', (workloadName: string) => {

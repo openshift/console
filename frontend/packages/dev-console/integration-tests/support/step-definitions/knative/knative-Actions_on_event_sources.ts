@@ -1,17 +1,5 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 
-Given('open shift cluster is installed with Serverless operator', () => {
-  // TODO: implement step
-});
-
-Given('user is on dev perspective +Add page', () => {
-  // TODO: implement step
-});
-
-Given('open the project {string}', (a: string) => {
-  cy.log(a);
-});
-
 Given('event source {string} is higlighted on topology page', (a: string) => {
   cy.log(a);
 });

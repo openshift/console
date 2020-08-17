@@ -67,6 +67,7 @@ Then('tasks displayed parallel in pipelines section', () => {
 
 When('user adds another task {string} in series', (a: string) => {
   cy.log(a);
+  // TODO: implement step
 });
 
 Then('tasks displayed serially in pipelines section', () => {
@@ -74,7 +75,7 @@ Then('tasks displayed serially in pipelines section', () => {
 });
 
 When('add {string} resource with name {string} to the {string}', (resourceType: string, resourceName: string, taskName: string) => {
-  cy.log(resourceType, resourceName, taskName);
+  
 });
 
 When('user clicks {string} button on Pipeline Builder page', (buttonName: string) => {

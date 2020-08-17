@@ -73,6 +73,7 @@ export const naviagteTo = (opt: devNavigationMenu) => {
     }
     case devNavigationMenu.Pipelines: {
       cy.byLegacyTestID('pipeline-header').click()
+        // cy.wait(5000);
         cy.titleShouldBe('Pipelines');
       break;
     }
@@ -131,7 +132,7 @@ export const projectNameSpace = {
     .eq(0)
     .click();
   cy.byLegacyTestID('dropdown-text-filter').type(projectName);
-  // cy.wait(2000);
+  cy.wait(2000);
   cy.get('[role="listbox"]', { timeout: 20000 }).then(($el) => {
     if ($el.find('li[role="option"]').length === 0) {
       cy.get('[data-test-dropdown-menu="#CREATE_RESOURCE_ACTION#"]').click();
@@ -146,7 +147,7 @@ export const projectNameSpace = {
       .eq(0)
       .click();
     cy.byLegacyTestID('dropdown-text-filter').type(projectName);
-    // cy.wait(3000);
+    cy.wait(3000);
     cy.get('[role="listbox"]', { timeout: 20000 }).then(($el) => {
       if ($el.find('li[role="option"]').length === 0) {
         // let str = $el.find('li[role="option"]').text();

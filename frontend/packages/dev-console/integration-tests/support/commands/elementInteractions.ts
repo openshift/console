@@ -34,11 +34,10 @@ Cypress.Commands.add('selectByDropDownText', (selector: string, dropdownText: st
 Cypress.Commands.add('selectRowByColumnName', (columnName: string, referenceRowValue: string) => {
     cy.get('div[role="grid"]').should('exist');
     cy.get('thead th').each(($el, columnNumber) => {
-      const text = $el.text()
-      if(text.includes(columnName)) {
+      if($el.text().includes(columnName)) {
         cy.get(`tr td:nth-child(${columnNumber})`).each(($el1, index) => {
           if($el1.text().includes(referenceRowValue)) {
-            return cy.get(`tr td:nth-child(${columnNumber})`).eq(index);
+            return cy.get(`tr td:nth-child(${columnNumber})`).eq(index)
           }
         });
       }

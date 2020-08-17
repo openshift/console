@@ -47,7 +47,7 @@ When('select Add Pipeline checkbox in Pipelines section', () => {
 });
 
 When('click Create button on Add page', () => {
-  addPage.createWorkload();
+  addPage.clicKCreate();
 });
 
 Then('user redirects to Topology page', () => {
@@ -90,5 +90,5 @@ Given('workload {string} is created from add page with pipeline', (pipelineName:
   addPage.enterGitUrl("https://github.com/sclorg/nodejs-ex.git");
   addPage.enterComponentName(pipelineName);
   addPage.selectAddPipeline();
-  addPage.createWorkload();
+  addPage.clicKCreate();
 });

@@ -18,11 +18,11 @@ When('user clicks on Display Options on top of topology', () => {
 });
 
 When('user sees {string} and {string} under {string} and {string} have options according to their presence which are {string} and {string}', (a: string, b: string, c: string, d: string, e: string, f: string) => {
-  cy.log(a, b, c, d, e, f);
+  
 });
 
 When('user deselect {string} which is selected by default', (a: string) => {
- cy.log(a)
+  // TODO: implement step
 });
 
 When('user sees the labels under the workloads have dissapeared', () => {
@@ -34,7 +34,7 @@ When('user hover over application grouping the label appears', () => {
 });
 
 When('user select {string} which is deselected by default', (a: string) => {
- cy.log(a)
+  // TODO: implement step
 });
 
 When('user checks the workloads which shows pod count instead of buider images', () => {
@@ -42,7 +42,7 @@ When('user checks the workloads which shows pod count instead of buider images',
 });
 
 When('user deselect {string} in the Expand section', (a: string) => {
- cy.log(a)
+  // TODO: implement step
 });
 
 Then('user can see workloads squashed in Application grouping', () => {
@@ -50,11 +50,11 @@ Then('user can see workloads squashed in Application grouping', () => {
 });
 
 Then('user select {string} in the Expand section', (a: string) => {
- cy.log(a)
+  // TODO: implement step
 });
 
 Then('user deselect {string} in the Expand section', (a: string) => {
- cy.log(a)
+  // TODO: implement step
 });
 
 Then('user can see knative workload squashed in Application grouping', () => {

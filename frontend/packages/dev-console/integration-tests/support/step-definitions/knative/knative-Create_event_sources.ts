@@ -1,59 +1,50 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-
-Given('open shift cluster is installed with Serverless and eventing operator', () => {
-  // TODO: implement step
-});
-
-Given('open the project namespace {string}', (a: string) => {
- cy.log(a)
-});
-
-Given('user is on dev perspective', () => {
-  // TODO: implement step
-});
-
-Given('user is on Add page', () => {
-  // TODO: implement step
-});
+import { seelctCardFromOptions, eventSourcesPage, addPage, eventSourceObj } from '../../pages/add_page';
+import { naviagteTo } from '../../pages/app';
+import { devNavigationMenu } from '../../constants/global';
+import { addOptions } from '../../constants/add';
 
 Given('knative service is not available for selected namespace', () => {
   // TODO: implement step
 });
 
 Given('user is on Event Sources page', () => {
-  // TODO: implement step
+  naviagteTo(devNavigationMenu.Add);
+  seelctCardFromOptions(addOptions.EventSource);
+  eventSourcesPage.verifyTitle();
 });
 
 Given('knative service is available for selected namespace', () => {
-  // TODO: implement step
+  
 });
 
-When('user clicks on {string} card', (a: string) => {
- cy.log(a)
+When('user clicks on {string} card', (cardName: string) => {
+  seelctCardFromOptions(cardName);
 });
 
-When('user selects {string} type', (a: string) => {
- cy.log(a)
+When('user selects event source type {string}', (eventSourceType: string) => {
+  eventSourcesPage.clickEventSourceType(eventSourceType);
 });
 
-When('type Resoruce APIVERSION as {string}', (a: string) => {
- cy.log(a)
+When('type Resoruce APIVERSION as {string}', (apiVersion: string) => {
+  cy.get(eventSourceObj.apiServerSource.apiVersion).type(apiVersion);
 });
 
-When('type Resource KIND as {string}', (a: string) => {
- cy.log(a)
+When('type Resource KIND as {string}', (version: string) => {
+  cy.get(eventSourceObj.apiServerSource.kind).type(version);
 });
 
-When('selects {string} option from Service Account Name field', (a: string) => {
- cy.log(a)
+When('selects {string} option from Service Account Name field', (serviceAccountName: string) => {
+  cy.get(eventSourceObj.apiServerSource.serviceAccountName).click();
+  cy.get('li').contains(serviceAccountName).click();
 });
 
 When('selects an option from Kantive service field', () => {
-  // TODO: implement step
+  
 });
 
 When('user clicks on Create button', () => {
-  // TODO: implement step
+  eventSourcesPage.clickCreate();
 });
 
 When('type Container Image as {string}', (a: string) => {
@@ -72,16 +63,20 @@ When('type Subject Kind as {string}', (a: string) => {
  cy.log(a)
 });
 
-Then('user redirects to page with header name {string}', (a: string) => {
- cy.log(a)
+Then('user redirects to page with header name {string}', (pageTitle: string) => {
+ eventSourcesPage.verifyTitle(pageTitle);
 });
 
 Then('able to see event source types like ApiServerSource, ContainerSource, CronJobSource, PingSource, SinkBinding', () => {
-  // TODO: implement step
+  eventSourcesPage.verifyEventSourceType('Api Server Source');
+  eventSourcesPage.verifyEventSourceType('Container Source');
+  eventSourcesPage.verifyEventSourceType('Cron Job Source');
+  eventSourcesPage.verifyEventSourceType('Ping Source');
+  eventSourcesPage.verifyEventSourceType('Sink Binding');
 });
 
 Then('able to see Knative Eventing card', () => {
-  // TODO: implement step
+  addPage.verifyCard('Knative Eventing');
 });
 
 Then('able to see notifier with header {string}', (a: string) => {
@@ -157,10 +152,6 @@ Then('page contains CamelSource section', () => {
 });
 
 Then('Create button is enabled', () => {
-  // TODO: implement step
-});
-
-Then('user redirects to the topology page', () => {
   // TODO: implement step
 });
 
