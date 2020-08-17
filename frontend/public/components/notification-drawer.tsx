@@ -46,6 +46,7 @@ import {
 import { ClusterVersionModel } from '../models';
 import { useK8sWatchResource, WatchK8sResource } from './utils/k8s-watch-hook';
 import { useAccessReview } from './utils/rbac';
+import { LinkifyExternal } from './utils';
 
 const criticalCompare = (a: Alert): boolean => getAlertSeverity(a) === 'critical';
 const otherAlertCompare = (a: Alert): boolean => getAlertSeverity(a) !== 'critical';
@@ -91,6 +92,13 @@ export const getAlertActions = (actionsExtensions: AlertAction[]) => {
   return alertActions;
 };
 
+const AlertDescription: React.FC<AlertDescriptionProps> = ({ alert }) => {
+  if (getAlertName(alert) === 'UpdateAvailable') {
+    return <Linkify>{getAlertDescription(alert) || getAlertMessage(alert)}</Linkify>;
+  }
+  return <LinkifyExternal>{getAlertDescription(alert) || getAlertMessage(alert)}</LinkifyExternal>;
+};
+
 const getAlertNotificationEntries = (
   isLoaded: boolean,
   alertData: Alert[],
@@ -107,9 +115,7 @@ const getAlertNotificationEntries = (
           return (
             <NotificationEntry
               key={`${i}_${alert.activeAt}`}
-              description={
-                <Linkify>{getAlertDescription(alert) || getAlertMessage(alert)}</Linkify>
-              }
+              description={<AlertDescription alert={alert} />}
               timestamp={getAlertTime(alert)}
               type={NotificationTypes[getAlertSeverity(alert)]}
               title={getAlertName(alert)}
@@ -371,6 +377,10 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
       {children}
     </NotificationDrawer>
   );
+};
+
+type AlertDescriptionProps = {
+  alert: Alert;
 };
 
 type NotificationPoll = (
