@@ -25,7 +25,7 @@ describe('KubeVirt VM detail - edit flavor', () => {
   });
 
   it(
-    'ID(CNV-3076) changes tiny to custom',
+    'ID(CNV-3076) Changes tiny to custom',
     async () => {
       await vm.create();
       await withResource(leakedResources, vm.asResource(), async () => {

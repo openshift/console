@@ -12,37 +12,20 @@ import { VirtualMachine } from './models/virtualMachine';
 import {
   JASMINE_EXTENDED_TIMEOUT_INTERVAL,
   NOT_AVAILABLE,
-  PAGE_LOAD_TIMEOUT_SECS,
-  VM_CREATE_AND_EDIT_AND_CLOUDINIT_TIMEOUT_SECS,
-  VM_IMPORT_TIMEOUT_SECS,
+  VM_BOOTUP_TIMEOUT_SECS,
 } from './utils/constants/common';
 import { VM_STATUS } from './utils/constants/vm';
 import * as dashboardView from '../views/dashboard.view';
 
-describe('Test VM dashboard', () => {
+describe('Kubevirt VM dashboard tab', () => {
   const cloudInit = `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}\nruncmd:\n- dnf install -y qemu-guest-agent\n- systemctl start qemu-guest-agent`;
   const testVM = getVMManifest('Container', testName, null, cloudInit);
-
-  let vm: VirtualMachine;
+  const vm = new VirtualMachine(testVM.metadata);
 
   beforeAll(async () => {
     createResources([multusNAD, testVM]);
-    vm = new VirtualMachine(testVM.metadata);
     await vm.navigateToOverview();
-    try {
-      await browser.wait(
-        until.not(until.textToBePresentInElement(dashboardView.vmStatus, VM_STATUS.Off)),
-        PAGE_LOAD_TIMEOUT_SECS,
-      );
-    } catch (ex) {
-      // continue, this is optional condition
-      // we want to wait for import to start but in some cases it may have already completed
-    }
-    await browser.wait(
-      until.textToBePresentInElement(dashboardView.vmStatus, VM_STATUS.Off),
-      VM_IMPORT_TIMEOUT_SECS,
-    );
-  }, VM_IMPORT_TIMEOUT_SECS);
+  });
 
   afterAll(() => {
     deleteResources([vm.asResource(), multusNAD]);
@@ -81,7 +64,7 @@ describe('Test VM dashboard', () => {
       expect(dashboardView.vmStatus.getText()).toEqual(VM_STATUS.Running);
       await browser.wait(until.stalenessOf(dashboardView.vmStatusAlert));
     },
-    VM_CREATE_AND_EDIT_AND_CLOUDINIT_TIMEOUT_SECS,
+    VM_BOOTUP_TIMEOUT_SECS,
   );
 
   it('ID(CNV-3332) Details card', async () => {

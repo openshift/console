@@ -117,7 +117,8 @@ export const diskTabCol = {
   name: 0,
   source: 1,
   size: 2,
-  interface: 3,
-  storageClass: 4,
+  drive: 3,
+  interface: 4,
+  storageClass: 5,
 };
 Object.freeze(diskTabCol);

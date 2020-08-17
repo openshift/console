@@ -56,7 +56,7 @@ describe('Test clone VM.', () => {
   });
 
   afterAll(() => {
-    execSync(`kubectl delete namespace ${testCloningNamespace}`);
+    execSync(`kubectl delete --ignore-not-found=true namespace ${testCloningNamespace}`);
   });
 
   describe('Test Clone VM dialog validation', () => {

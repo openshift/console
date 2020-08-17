@@ -7,6 +7,8 @@ import {
   KEBAP_ACTION,
   PAGE_LOAD_TIMEOUT_SECS,
   NOT_RECOMMENDED_BUS_TYPE_WARN,
+  CHARACTERS_NOT_ALLOWED,
+  SEC,
 } from './utils/constants/common';
 import { Flavor, OperatingSystem, Workload } from './utils/constants/wizard';
 import { Wizard } from './models/wizard';
@@ -17,6 +19,7 @@ import { diskInterfaceHelper } from '../views/dialogs/diskDialog.view';
 import { DiskDialog } from './dialogs/diskDialog';
 import { saveButton } from '../views/kubevirtUIResource.view';
 import { provisionSources } from './mocks/mocks';
+import { vmNameHelper } from '../views/importWizard.view';
 
 describe('Wizard validation', () => {
   const wizard = new Wizard();
@@ -37,7 +40,9 @@ describe('Wizard validation', () => {
   });
 
   afterAll(() => {
-    execSync(`kubectl delete -f ${KUBEVIRT_TEMPLATES_PATH}/validationCommonTemplate.yaml`);
+    execSync(
+      `kubectl delete --ignore-not-found=true -f ${KUBEVIRT_TEMPLATES_PATH}/validationCommonTemplate.yaml`,
+    );
   });
 
   beforeEach(async () => {
@@ -85,5 +90,15 @@ describe('Wizard validation', () => {
       waitForStringInElement(diskWarning('rootdisk'), NOT_RECOMMENDED_BUS_TYPE_WARN),
       PAGE_LOAD_TIMEOUT_SECS,
     );
+  });
+
+  it('ID(CNV-4551) Import Wizard shows warning when using incorrect VM name', async () => {
+    const WRONG_VM_NAME = 'VMNAME';
+    await wizard.selectProvisionSource(provisionSources.Container);
+    await wizard.selectOperatingSystem(OperatingSystem.WINDOWS_10);
+    await wizard.selectFlavor(customFlavorSufficientMemory);
+    await wizard.selectWorkloadProfile(Workload.DESKTOP);
+    await wizard.fillName(WRONG_VM_NAME);
+    await browser.wait(waitForStringInElement(vmNameHelper, CHARACTERS_NOT_ALLOWED), 2 * SEC);
   });
 });

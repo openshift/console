@@ -42,7 +42,7 @@ describe('KubeVirt VM console - RDP', () => {
     const vmName = 'windows-rdp';
 
     // for cmd-line scripts only
-    execSync(`kubectl config set-context --current --namespace=${testName}`, { stdio: 'inherit' });
+    execSync(`kubectl config set-context --current --namespace=${testName}`);
     execSync('kubectl create -f -', {
       input: getWindowsVM({
         name: vmName,
@@ -56,13 +56,13 @@ describe('KubeVirt VM console - RDP', () => {
   afterAll(async () => {
     deleteResource(multusNAD);
     deleteResource(vm.asResource());
-    execSync(`kubectl config set-context --current --namespace=default`, { stdio: 'inherit' });
+    execSync(`kubectl config set-context --current --namespace=default`);
   });
 
   it(
     'ID(CNV-1721) connects via exposed service',
     async () => {
-      await vm.navigateToConsoles();
+      await vm.navigateToConsole();
       await browser.wait(until.presenceOf(consoleTypeSelector));
       await click(consoleTypeSelector);
       await browser.wait(
@@ -84,7 +84,6 @@ describe('KubeVirt VM console - RDP', () => {
       // the next command follows recommendation by documentation
       execSync(
         `virtctl expose virtualmachine ${vm.name} --name ${vm.name}-rdp --port 4567 --target-port 3389 --type NodePort`,
-        { stdio: 'inherit' },
       );
 
       await browser.wait(until.presenceOf(desktopClientTitle));
@@ -138,17 +137,14 @@ describe('KubeVirt VM console - RDP', () => {
        */
 
       await vm.navigateToDetail();
-      // eslint-disable-next-line no-console
-      console.log(
-        'Waiting for static IP to be reported by the guest-agent (can take up to several minutes ...)',
-      );
       // Waiting for instllation & start of the guest-agent and reporting the static IP back
+      // It can take up to several minutes.
       await browser.wait(
         waitForStringInElement(vmDetailIP(vm.namespace, vm.name), VM_IP),
         VM_CREATE_AND_EDIT_AND_CLOUDINIT_TIMEOUT_SECS,
       );
 
-      await vm.navigateToConsoles();
+      await vm.navigateToConsole();
 
       await browser.wait(until.presenceOf(consoleTypeSelector));
       await click(consoleTypeSelector);

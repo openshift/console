@@ -11,10 +11,7 @@ import {
 import { isLoaded, resourceRows } from '@console/internal-integration-tests/views/crud.view';
 import { restrictedAccessBlock } from '../views/vms.list.view';
 import { createProject } from './utils/utils';
-import {
-  JASMINE_EXTENDED_TIMEOUT_INTERVAL,
-  PAGE_LOAD_TIMEOUT_SECS,
-} from './utils/constants/common';
+import { PAGE_LOAD_TIMEOUT_SECS, VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/constants/common';
 import { VM_STATUS, VM_ACTION } from './utils/constants/vm';
 import { VMBuilder } from './models/vmBuilder';
 import { getBasicVMBuilder } from './mocks/vmBuilderPresets';
@@ -33,6 +30,7 @@ const {
 describe('Kubevirt non-admin Flow', () => {
   const leakedResources = new Set<string>();
   const vm = new VMBuilder(getBasicVMBuilder())
+    .setNamespace(testNonAdminNamespace)
     .setProvisionSource(provisionSources.URL)
     .setDisks([rootDisk])
     .build();
@@ -47,13 +45,13 @@ describe('Kubevirt non-admin Flow', () => {
 
   afterAll(async () => {
     removeLeakedResources(leakedResources);
-    execSync(`kubectl delete project ${testNonAdminNamespace}`);
+    execSync(`kubectl delete --ignore-not-found=true project ${testNonAdminNamespace}`);
     await loginView.logout();
     await loginView.login(KUBEADMIN_IDP, KUBEADMIN_USERNAME, BRIDGE_KUBEADMIN_PASSWORD);
   });
 
   it(
-    'ID(CNV-1718) non-admin create and remove a vm',
+    'ID(CNV-1718) Non-admin create and remove a vm in its own namespace',
     async () => {
       await vm.create();
       await withResource(
@@ -71,13 +69,12 @@ describe('Kubevirt non-admin Flow', () => {
       );
       removeLeakableResource(leakedResources, vm.asResource());
     },
-    JASMINE_EXTENDED_TIMEOUT_INTERVAL,
+    VM_CREATE_AND_EDIT_TIMEOUT_SECS,
   );
 
-  it('ID(CNV-1720) non-admin cannot create vm in foreign namespace', async () => {
-    // Navigate to Virtual Machines page with foreign default namespace
+  it('ID(CNV-1720) Non-admin cannot create vm in a foreign namespace', async () => {
+    // Check access is restricted on foreign namespace.
     await browser.get(`${appHost}/k8s/ns/default/virtualmachines`);
-    // Check to make sure Access is Restricted.
     await browser.wait(until.textToBePresentInElement(restrictedAccessBlock, 'Restricted Access'));
   });
 });
