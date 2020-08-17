@@ -36,6 +36,8 @@ export const JASMINE_EXTENDED_TIMEOUT_INTERVAL = 500 * SEC;
 export const V2V_INSTANCE_CONNECTION_TIMEOUT = 30 * SEC;
 export const V2V_VM_IMPORT_TIMEOUT = 3600 * SEC;
 
+export const CDI_UPLOAD_TIMEOUT_SECS = 300 * SEC;
+
 export const VIRTUALIZATION_TITLE = 'Virtualization';
 
 // Wizard strings
