@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { createAggregateEdges, Model, NodeModel } from '@patternfly/react-topology';
 import { ALL_APPLICATIONS_KEY } from '@console/shared/src';
 import { referenceFor } from '@console/internal/module/k8s';
@@ -66,9 +67,10 @@ export const updateModelFromFilters = (
   onSupportedKindsChange?: (supportedFilterIds: { [key: string]: number }) => void,
 ): Model => {
   const dataModel: Model = {
-    nodes: [...model.nodes],
-    edges: [...model.edges],
+    nodes: _.cloneDeep(model.nodes),
+    edges: _.cloneDeep(model.edges),
   };
+
   const supportedFilters = [...DEFAULT_SUPPORTED_FILTER_IDS];
   const supportedKinds = {};
   let appGroupFound = false;
@@ -78,7 +80,7 @@ export const updateModelFromFilters = (
     d.visible = true;
     if (displayFilterers) {
       displayFilterers.forEach((displayFilterer) => {
-        const appliedFilters = displayFilterer(model, filters);
+        const appliedFilters = displayFilterer(dataModel, filters);
         supportedFilters.push(...appliedFilters.filter((f) => !supportedFilters.includes(f)));
       });
     }
@@ -125,13 +127,6 @@ export const updateModelFromFilters = (
       dataModel.nodes.find((n) => n.id === d.source) &&
       dataModel.nodes.find((n) => n.id === d.target),
   );
-
-  // TODO: This works until some extension adds edges they don't want to show
-  // edges may have been hidden via the createAggregateEdges call last time.
-  // make them visible now so they reappear when the hidden endpoints reappear.
-  edges.forEach((edge) => {
-    edge.visible = true;
-  });
 
   // Create any aggregate edges (those create from hidden endpoints)
   dataModel.edges = createAggregateEdges(TYPE_AGGREGATE_EDGE, edges, dataModel.nodes);
