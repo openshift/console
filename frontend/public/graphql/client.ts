@@ -1,4 +1,5 @@
 import { ApolloClient } from 'apollo-client';
+import { SubscriptionClient } from 'subscriptions-transport-ws';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { WebSocketLink } from 'apollo-link-ws';
 
@@ -6,15 +7,19 @@ import { getK8sResourcePath } from '../module/k8s/resource';
 import { K8sKind, K8sResourceCommon } from '../module/k8s/types';
 import { URLQuery } from './client.gql';
 import { URLQueryType, URLQueryVariables } from '../../@types/gql/schema';
+import { getImpersonateHeaders } from '../co-fetch';
 
-const link = new WebSocketLink({
-  uri: `${location.protocol === 'https:' ? 'wss://' : 'ws://'}${location.host}${
+export const subsClient = new SubscriptionClient(
+  `${location.protocol === 'https:' ? 'wss://' : 'ws://'}${location.host}${
     window.SERVER_FLAGS.graphqlBaseURL
   }`,
-  options: {
+  {
     reconnect: true,
+    connectionParams: getImpersonateHeaders,
   },
-});
+);
+
+const link = new WebSocketLink(subsClient);
 
 const client = new ApolloClient({
   link,

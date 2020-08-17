@@ -18,6 +18,7 @@ import { detectFeatures, clearSSARFlags } from './features';
 import { OverviewSpecialGroup } from '../components/overview/constants';
 import { setClusterID, setCreateProjectMessage, setUser, setConsoleLinks } from './common';
 import { Rule } from '../components/monitoring/types';
+import { subsClient } from '../graphql/client';
 
 export enum ActionType {
   SetTableColumns = 'setTableColumns',
@@ -259,12 +260,14 @@ export const startImpersonate = (kind: string, name: string) => async (dispatch,
   }
 
   dispatch(beginImpersonate(kind, name, subprotocols));
+  subsClient.close(false, true);
   dispatch(clearSSARFlags());
   dispatch(detectFeatures());
   history.push(window.SERVER_FLAGS.basePath);
 };
 export const stopImpersonate = () => (dispatch) => {
   dispatch(endImpersonate());
+  subsClient.close(false, true);
   dispatch(clearSSARFlags());
   dispatch(detectFeatures());
   history.push(window.SERVER_FLAGS.basePath);

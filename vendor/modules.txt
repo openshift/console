@@ -309,7 +309,7 @@ github.com/prometheus/common/model
 github.com/prometheus/procfs
 github.com/prometheus/procfs/internal/fs
 github.com/prometheus/procfs/internal/util
-# github.com/rawagner/graphql-transport-ws v0.0.0-20200506141829-b08019af7525
+# github.com/rawagner/graphql-transport-ws v0.0.0-20200817140314-dcfbf0388067
 github.com/rawagner/graphql-transport-ws/graphqlws
 github.com/rawagner/graphql-transport-ws/graphqlws/internal/connection
 # github.com/rubenv/sql-migrate v0.0.0-20200212082348-64f95ea68aa3
