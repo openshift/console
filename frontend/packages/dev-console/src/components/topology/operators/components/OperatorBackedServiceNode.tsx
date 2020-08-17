@@ -6,11 +6,11 @@ import {
   WithSelectionProps,
   WithDndDropProps,
   useAnchor,
-  RectAnchor,
   useCombineRefs,
   useHover,
   useDragNode,
   createSvgIdUrl,
+  useSize,
 } from '@patternfly/react-topology';
 import { useSearchFilter } from '../../filters/useSearchFilter';
 import { nodeDragSourceSpec } from '../../components/componentUtils';
@@ -21,6 +21,7 @@ import {
   NODE_SHADOW_FILTER_ID_HOVER,
 } from '../../components/NodeShadows';
 import { GroupNode } from '../../components/groups/GroupNode';
+import { GroupNodeAnchor } from '../../components/groups/GroupNodeAnchor';
 
 export type OperatorBackedServiceNodeProps = {
   element: Node;
@@ -33,7 +34,6 @@ const OperatorBackedServiceNode: React.FC<OperatorBackedServiceNodeProps> = ({
   onSelect,
   dndDropRef,
 }) => {
-  useAnchor(React.useCallback((node: Node) => new RectAnchor(node, 1.5), []));
   const [hover, hoverRef] = useHover();
   const [{ dragging }, dragNodeRef] = useDragNode(
     nodeDragSourceSpec(TYPE_OPERATOR_BACKED_SERVICE, false),
@@ -44,7 +44,16 @@ const OperatorBackedServiceNode: React.FC<OperatorBackedServiceNodeProps> = ({
   const refs = useCombineRefs<SVGRectElement>(hoverRef, dragNodeRef, dndDropRef);
   const [filtered] = useSearchFilter(element.getLabel());
   const kind = 'Operator';
-  const { width, height } = element.getDimensions();
+  const { groupResources } = element.getData();
+  const [groupSize, groupRef] = useSize([groupResources]);
+  const width = groupSize ? groupSize.width : 0;
+  const height = groupSize ? groupSize.height : 0;
+  useAnchor(
+    React.useCallback((node: Node) => new GroupNodeAnchor(node, width, height, 1.5), [
+      width,
+      height,
+    ]),
+  );
 
   return (
     <g
@@ -70,9 +79,10 @@ const OperatorBackedServiceNode: React.FC<OperatorBackedServiceNodeProps> = ({
         ry="5"
       />
       <GroupNode
+        ref={groupRef}
         kind={kind}
         element={element}
-        groupResources={element.getData().groupResources}
+        groupResources={groupResources}
         typeIconClass={element.getData().data.builderImage}
       />
     </g>
