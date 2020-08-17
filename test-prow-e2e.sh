@@ -32,6 +32,10 @@ oc patch oauths cluster --patch "$(cat ./frontend/integration-tests/data/patch-h
 DBUS_SESSION_BUS_ADDRESS=/dev/null
 export DBUS_SESSION_BUS_ADDRESS
 
+# set to 4 minutes
+BRIDGE_JASMINE_TIMEOUT=240000
+export BRIDGE_JASMINE_TIMEOUT
+
 CHROME_VERSION=$(google-chrome --version) ./test-gui.sh "${1:-e2e}"
 
 # Only run Cypress tests if no agruments passed, or if the 'release' argument was passed
