@@ -44,6 +44,7 @@ export const ZONE = 'zone';
 export const OSD = 'osd';
 
 export const SUCCESS = 'Succeeded';
+export const READY_FOR_USE = 'ready for use';
 
 export const ocsTaint = Object.freeze({
   key: 'node.ocs.openshift.io/storage',

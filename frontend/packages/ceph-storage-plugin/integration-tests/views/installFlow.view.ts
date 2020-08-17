@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as sideNavView from '@console/internal-integration-tests/views/sidenav.view';
 import { click, getOperatorHubCardIndex } from '@console/shared/src/test-utils/utils';
-import { OCS_OP, SECOND, OCS_OPERATOR_NAME } from '../utils/consts';
+import { OCS_OP, SECOND, OCS_OPERATOR_NAME, SUCCESS, READY_FOR_USE } from '../utils/consts';
 import { waitFor, refreshIfNotVisible, waitUntil } from '../utils/helpers';
 
 enum Version {
@@ -44,6 +44,7 @@ const DEFAULTS = {
   createLink: $('.pf-c-card__footer a'),
   searchInputOperatorHub: $('input[placeholder="Filter by keyword..."]'),
   searchInputOperators: $('[data-test-id="list-page-search-input"]'),
+  ocsOperatorInstallHeading: $('.co-clusterserviceversion-install__heading'),
 
   // Subscription Page
   dropdownForNamespace: $('#dropdown-selectbox'),
@@ -166,16 +167,34 @@ export class InstallCluster {
     await browser.refresh();
     await browser.wait(until.and(crudView.untilNoLoadersPresent), 100000);
     await click(currentSelectors.primaryButton);
-    await browser.wait(until.visibilityOf(currentSelectors.searchInputOperators));
-    await currentSelectors.searchInputOperators.sendKeys(OCS_OPERATOR_NAME);
-    // Sometimes operator changes few times its status so we will wait for
-    // for 5 Succeeded status in row to be sure we have operator is
-    // installed properly.
-    await waitFor(currentSelectors.ocsOperatorStatus, 'Succeeded', 5);
+  }
+
+  async checkOCSOperatorInstallation() {
+    if (VERSION === 'LATEST') {
+      await browser.wait(until.and(crudView.untilNoLoadersPresent));
+      await browser.wait(until.presenceOf(currentSelectors.ocsOperatorInstallHeading));
+      await waitFor(currentSelectors.ocsOperatorInstallHeading, READY_FOR_USE);
+      const text = await currentSelectors.ocsOperatorInstallHeading.getText();
+      // Operator is installed successfully
+      expect(text.includes(READY_FOR_USE)).toBe(true);
+      await click(currentSelectors.primaryButton);
+    } else {
+      await browser.wait(until.visibilityOf(currentSelectors.searchInputOperators));
+      await currentSelectors.searchInputOperators.sendKeys(OCS_OPERATOR_NAME);
+      // Sometimes operator changes few times its status so we will wait for
+      // for 5 Succeeded status in row to be sure we have operator is
+      // installed properly.
+      await waitFor(currentSelectors.ocsOperatorStatus, SUCCESS, 5);
+      const text = await currentSelectors.ocsOperatorStatus.getText();
+      // Operator is installed successfully
+      expect(text.includes(SUCCESS)).toBe(true);
+    }
   }
 
   async storageClusterCreationCommon() {
-    await click(currentSelectors.ocsOperator);
+    if (VERSION !== 'LATEST') {
+      await click(currentSelectors.ocsOperator);
+    }
     // In fresh clusters APIs are not shown (Last seen in OCP 4.3)
     try {
       await browser.wait(until.visibilityOf(currentSelectors.createLink), 10 * SECOND);
