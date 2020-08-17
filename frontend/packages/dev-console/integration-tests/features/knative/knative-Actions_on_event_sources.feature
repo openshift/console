@@ -21,3 +21,11 @@ Scenario: Move the sink via context menu to link differnt knative Service : Kn-1
    And  selects "Move Sink" from context menu
    Then modal displays with the header name "Move Sink" 
    And knative service dropdown is displayed
+
+
+@regression, @smoke
+Scenario: Delete kantive Service : Kn-11-TC06
+   Given knative service, event source and sink connector are present in topology page
+   When user right clicks on the event source
+   And  selects "Delete" from context menu
+   Then modal displays with the header name "Delete"

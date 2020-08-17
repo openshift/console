@@ -60,7 +60,7 @@ Scenario: Edit Annotation popup details : Kn-03-TC06
    And save button is disabled
 
 
-@regression
+@regression, @smoke
 Scenario Outline: Add annotation to the exisitng annonations list : Kn-03-TC07
    Given knative revision name "nodejs-ex-git-1-q5rb8" is higlighted on topology page
    And number of annotations are "5" present in side pane details tab

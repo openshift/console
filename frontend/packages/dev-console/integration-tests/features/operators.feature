@@ -37,6 +37,7 @@ Scenario: Install the Serverless Operator from Operator Hub page : Kn-01-TC01, K
    When user installs the Serverless operator with default values
    Then user will see a modal with title "OpenShift Serverless Operator"
    And user will see a View Operator button
+   And user will see serverless option on left side navigation menu
 
 
 @regression, @smoke

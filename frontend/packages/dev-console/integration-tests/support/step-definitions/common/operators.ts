@@ -56,6 +56,10 @@ Then('user will see a View Operator button', () => {
   cy.get('button', {timeout: 15000}).contains('View Operator').should('be.visible');
 });
 
+Then('user will see serverless option on left side navigation menu', () => {
+  operatorsPage.verifyOperatorInNavigationMenu('Serverless');
+});
+
 Given('user is at OpenShift Serverless Operator subscription page', () => {
   operatorsPage.navigateToOperaotorHubPage();
   operatorsPage.searchOperator('OpenShift Serverless Operator');

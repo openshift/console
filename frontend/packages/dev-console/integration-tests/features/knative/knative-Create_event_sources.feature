@@ -8,11 +8,19 @@ Background:
 
 
 @regression, @smoke
-Scenario: Different event source types display in event sources add page - Kn-07-TC03
+Scenario: Different event source types display in event sources add page - Kn-07-TC03, Kn-08-TC02
    Given user is at Add page 
    When user clicks on "Event Sources" card
    Then user redirects to page with header name "Event Sources"
    And able to see event source types like ApiServerSource, ContainerSource, CronJobSource, PingSource, SinkBinding
+
+
+@regression, @smoke
+Scenario: CamelSource event source - Kn-08-TC03
+   Given cluster is installed with knative Apache camel operator 
+   When user clicks on "Event Sources" card
+   Then user redirects to page with header name "Event Sources"
+   And user able to see "CamelSource" event source type
 
 
 Scenario: knative eventing in operator backed - Kn-07-TC04
@@ -158,7 +166,7 @@ Scenario: Create SinkBinding event source - Kn-10-TC12
 
 
 @regression, @manual
-Scenario: Create CamelSource event source - Kn-10-TC13
+Scenario: Create CamelSource event source - Kn-10-TC13, Kn-08-TC03
    Given user is on Event Sources page
    And knative service is available for selected namespace
    When user selects event source type "CamelSource"

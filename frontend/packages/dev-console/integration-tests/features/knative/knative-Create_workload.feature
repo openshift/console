@@ -56,7 +56,7 @@ Examples:
 
 
 @regression
-Scenario Outline: Create knative workload from Container image card on Add page : Kn-01-TC02
+Scenario Outline: Create knative workload from Container image card on Add page : 
    Given user is on "<form_name>" form
    When user type "<image_name>" into the Image name from External registry text box
    And type name as "<workload_name>"

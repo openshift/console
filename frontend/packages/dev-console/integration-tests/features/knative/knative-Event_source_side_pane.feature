@@ -8,7 +8,7 @@ Background:
 
 
 @regression, @smoke
-Scenario: Side pane display of event source : Kn-12-TC02
+Scenario: Side pane display of event source : Kn-12-TC01
    Given knative service, event source and sink connector are present in topology page
    When user clicks on event source
    Then side pane is dsiplays with header name as "{event source name}"
