@@ -18,7 +18,7 @@ export default class TopologyColaLayout extends ColaLayout {
     initialRun: boolean,
     addingNodes: boolean,
   ): void {
-    if (graph.getNodes()?.length === 0) {
+    if (graph.getNodes()?.filter((n) => n.isVisible()).length === 0) {
       return;
     }
     super.startLayout(graph, initialRun, addingNodes);

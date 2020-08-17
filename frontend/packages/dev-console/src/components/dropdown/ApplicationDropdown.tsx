@@ -26,6 +26,10 @@ interface ApplicationDropdownProps {
     allSelectorKey?: string;
     allSelectorTitle?: string;
   };
+  noneSelectorItem?: {
+    noneSelectorKey?: string;
+    noneSelectorTitle?: string;
+  };
   namespace?: string;
   actionItems?: {
     actionTitle: string;

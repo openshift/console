@@ -34,7 +34,7 @@ const ObservedTopologyListViewUnassignedGroup: React.FC<TopologyListViewUnassign
       className="odc-topology-list-view__application-label"
       id="unassigned_label"
     >
-      Unassigned
+      unassigned
     </DataListCell>,
   );
   return (

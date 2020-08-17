@@ -9,7 +9,7 @@ import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
 import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/imagestream-utils';
 import { doContextualBinding, sanitizeApplicationValue } from '../../utils/application-utils';
-import { ALLOW_SERVICE_BINDING } from '../../const';
+import { ALLOW_SERVICE_BINDING, UNASSIGNED_KEY } from '../../const';
 import { GitImportFormData, FirehoseList, ImportData, Resources } from './import-types';
 import { createOrUpdateResources, handleRedirect } from './import-submit-utils';
 import { validationSchema } from './import-validation-utils';
@@ -53,7 +53,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
     application: {
       initial: sanitizeApplicationValue(activeApplication),
       name: sanitizeApplicationValue(activeApplication),
-      selectedKey: activeApplication,
+      selectedKey: activeApplication === 'unassigned' ? UNASSIGNED_KEY : activeApplication,
     },
     git: {
       url: '',

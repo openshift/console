@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { createAggregateEdges, Model, NodeModel } from '@patternfly/react-topology';
-import { ALL_APPLICATIONS_KEY } from '@console/shared/src';
+import { ALL_APPLICATIONS_KEY, UNASSIGNED_APPLICATIONS_KEY } from '@console/shared/src';
 import { referenceFor } from '@console/internal/module/k8s';
 import {
   DEFAULT_SUPPORTED_FILTER_IDS,
@@ -112,7 +112,9 @@ export const updateModelFromFilters = (
   if (application !== ALL_APPLICATIONS_KEY) {
     dataModel.nodes.forEach((g) => {
       const group = getApplicationGroupForNode(g, dataModel.nodes);
-      g.visible = g.visible && group?.label === application;
+      g.visible =
+        (g.visible && group?.label === application) ||
+        (!group && application === UNASSIGNED_APPLICATIONS_KEY);
     });
   }
 

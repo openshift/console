@@ -10,7 +10,7 @@ import {
   GraphElement,
 } from '@patternfly/react-topology';
 import { DataList } from '@patternfly/react-core';
-import { METRICS_POLL_INTERVAL, useDeepCompareMemoize } from '@console/shared';
+import { METRICS_POLL_INTERVAL } from '@console/shared';
 import { PROMETHEUS_TENANCY_BASE_PATH } from '@console/internal/components/graphs';
 import {
   fetchOverviewMetrics,
@@ -57,22 +57,13 @@ const ConnectedTopologyListView: React.FC<TopologyListViewProps &
     updateMonitoringAlerts,
   }) => {
     const selectedId = selectedIds[0];
-    const [applicationGroups, setApplicationGroups] = React.useState<Node[]>();
-    const [unassignedItems, setUnassignedItems] = React.useState<Node[]>();
 
-    const nodes = useDeepCompareMemoize(
-      visualization.getElements().filter((e) => isNode(e)) as Node[],
+    const nodes = visualization.getElements().filter((e) => isNode(e)) as Node[];
+    const applicationGroups = nodes.filter((n) => n.getType() === TYPE_APPLICATION_GROUP);
+    applicationGroups.sort((a, b) => a.getLabel().localeCompare(b.getLabel()));
+    const unassignedItems = nodes.filter(
+      (n) => n.getType() !== TYPE_APPLICATION_GROUP && isGraph(n.getParent()) && n.isVisible(),
     );
-
-    React.useEffect(() => {
-      const appGroups = nodes.filter((n) => n.getType() === TYPE_APPLICATION_GROUP);
-      appGroups.sort((a, b) => a.getLabel().localeCompare(b.getLabel()));
-      const items = nodes.filter(
-        (n) => n.getType() !== TYPE_APPLICATION_GROUP && isGraph(n.getParent()),
-      );
-      setApplicationGroups(appGroups);
-      setUnassignedItems(items);
-    }, [nodes]);
 
     React.useEffect(() => {
       if (selectedId) {

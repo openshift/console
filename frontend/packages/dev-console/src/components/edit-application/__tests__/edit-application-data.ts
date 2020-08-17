@@ -443,7 +443,7 @@ export const gitImportInitialValues: GitImportFormData = {
 export const externalImageValues: DeployImageFormData = {
   formType: 'edit',
   name: 'nationalparks-py',
-  application: { name: '', selectedKey: '#UNASSIGNED_KEY#' },
+  application: { name: '', selectedKey: UNASSIGNED_KEY },
   project: { name: 'div' },
   runtimeIcon: 'python',
   route: {
@@ -520,7 +520,7 @@ export const externalImageValues: DeployImageFormData = {
 export const internalImageValues: DeployImageFormData = {
   formType: 'edit',
   name: 'nationalparks-py',
-  application: { name: '', selectedKey: '#UNASSIGNED_KEY#' },
+  application: { name: '', selectedKey: UNASSIGNED_KEY },
   project: { name: 'div' },
   runtimeIcon: 'python',
   route: {
@@ -618,7 +618,7 @@ export const knAppResources: AppResources = {
 };
 
 export const knExternalImageValues: DeployImageFormData = {
-  application: { name: '', selectedKey: '#UNASSIGNED_KEY#' },
+  application: { name: '', selectedKey: UNASSIGNED_KEY },
   build: { env: [], strategy: '', triggers: {} },
   deployment: { env: [], replicas: 1, triggers: { image: false } },
   formType: 'edit',
