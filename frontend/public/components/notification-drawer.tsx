@@ -93,7 +93,10 @@ export const getAlertActions = (actionsExtensions: AlertAction[]) => {
 };
 
 const AlertDescription: React.FC<AlertDescriptionProps> = ({ alert }) => {
-  if (getAlertName(alert) === 'UpdateAvailable') {
+  if (
+    getAlertName(alert) === 'UpdateAvailable' ||
+    getAlertName(alert) === 'CannotRetrieveUpdates'
+  ) {
     return <Linkify>{getAlertDescription(alert) || getAlertMessage(alert)}</Linkify>;
   }
   return <LinkifyExternal>{getAlertDescription(alert) || getAlertMessage(alert)}</LinkifyExternal>;
