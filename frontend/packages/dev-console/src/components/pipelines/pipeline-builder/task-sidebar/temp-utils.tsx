@@ -1,8 +1,16 @@
 import * as React from 'react';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { global_disabled_color_200 as disabledColor } from '@patternfly/react-tokens';
-import { Flex, FlexItem, TextInput, Tooltip } from '@patternfly/react-core';
+import {
+  Flex,
+  FlexItem,
+  TextInput,
+  Tooltip,
+  ValidatedOptions,
+  FormGroup,
+} from '@patternfly/react-core';
 import MultiColumnFieldFooter from '@console/shared/src/components/formik-fields/multi-column-field/MultiColumnFieldFooter';
+import { isFieldValid } from '../utils';
 
 export type ParamValueType = string | string[];
 export type ParameterProps = {
@@ -10,7 +18,9 @@ export type ParameterProps = {
   defaultValue: ParamValueType;
   description?: string;
   isValid: boolean;
+  emptyIsInvalid: boolean;
   name: string;
+  dirty: boolean;
   onChange: (value: ParamValueType) => void;
   setDirty: (dirty: boolean) => void;
 };
@@ -34,58 +44,74 @@ export const StringParam: React.FC<ParameterProps> = (props) => {
 };
 
 export const ArrayParam: React.FC<ParameterProps> = (props) => {
-  const { currentValue, defaultValue, description, name, onChange, setDirty } = props;
-
+  const {
+    currentValue,
+    defaultValue,
+    description,
+    name,
+    onChange,
+    setDirty,
+    dirty,
+    emptyIsInvalid,
+  } = props;
   const values = (currentValue || defaultValue || ['']) as string[];
 
   return (
     <>
-      {values.map((value, index) => {
-        return (
-          <Flex
-            key={`${index.toString()}`}
-            style={{ marginBottom: 'var(--pf-global--spacer--xs)' }}
-          >
-            <FlexItem grow={{ default: 'grow' }}>
-              <StringParam
-                {...props}
-                name={`${name}-${index}`}
-                currentValue={value}
-                onChange={(changedValue: string) => {
-                  const newValues: string[] = [...values];
-                  newValues[index] = changedValue;
-                  onChange(newValues);
-                }}
-              />
-            </FlexItem>
-            <FlexItem>
-              <Tooltip content="Remove">
-                <MinusCircleIcon
-                  aria-hidden="true"
-                  style={{ color: values.length === 1 ? disabledColor.value : null }}
-                  onClick={() => {
-                    if (values.length === 1) {
-                      return;
-                    }
-
-                    setDirty(true);
-                    setTimeout(
-                      () => onChange([...values.slice(0, index), ...values.slice(index + 1)]),
-                      0,
-                    );
+      <FormGroup
+        fieldId={name}
+        label={name}
+        helperText={description}
+        helperTextInvalid="Required"
+        validated={
+          isFieldValid(values, dirty, emptyIsInvalid)
+            ? ValidatedOptions.default
+            : ValidatedOptions.error
+        }
+        isRequired={emptyIsInvalid}
+      >
+        {values.map((value, index) => {
+          return (
+            <Flex
+              key={`${index.toString()}`}
+              style={{ marginBottom: 'var(--pf-global--spacer--xs)' }}
+            >
+              <FlexItem grow={{ default: 'grow' }}>
+                <StringParam
+                  {...props}
+                  name={`${name}-${index}`}
+                  currentValue={value}
+                  isValid={isFieldValid(value, dirty, emptyIsInvalid)}
+                  onChange={(changedValue: string) => {
+                    const newValues: string[] = [...values];
+                    newValues[index] = changedValue;
+                    onChange(newValues);
                   }}
                 />
-              </Tooltip>
-            </FlexItem>
-          </Flex>
-        );
-      })}
-      <p
-        className="pf-c-form__helper-text"
-        style={{ marginBottom: 'var(--pf-global--spacer--sm)' }}
-      >
-        {description}
-      </p>
+              </FlexItem>
+              <FlexItem>
+                <Tooltip content="Remove">
+                  <MinusCircleIcon
+                    aria-hidden="true"
+                    style={{ color: values.length === 1 ? disabledColor.value : null }}
+                    onClick={() => {
+                      if (values.length === 1) {
+                        return;
+                      }
+
+                      setDirty(true);
+                      setTimeout(
+                        () => onChange([...values.slice(0, index), ...values.slice(index + 1)]),
+                        0,
+                      );
+                    }}
+                  />
+                </Tooltip>
+              </FlexItem>
+            </Flex>
+          );
+        })}
+      </FormGroup>
       <MultiColumnFieldFooter
         onAdd={() => {
           setDirty(true);

@@ -13,7 +13,6 @@ import {
 } from '../../../../utils/pipeline-augment';
 import { getTaskParameters, getTaskResources } from '../../resource-utils';
 import { ResourceTarget, TaskErrorMap, UpdateOperationUpdateTaskData } from '../types';
-import { TaskErrorType } from '../const';
 import TaskSidebarParam from './TaskSidebarParam';
 import TaskSidebarResource from './TaskSidebarResource';
 import TaskSidebarName from './TaskSidebarName';
@@ -31,7 +30,6 @@ type TaskSidebarProps = {
 
 const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
   const {
-    errorMap,
     onRemoveTask,
     onUpdateTask,
     resourceList,
@@ -44,8 +42,6 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
   const updateTask = (newData: Partial<UpdateOperationUpdateTaskData>) => {
     onUpdateTask({ thisPipelineTask: taskField.value, taskResource, ...newData });
   };
-
-  const thisTaskError = errorMap[taskField.value.name];
 
   const params = getTaskParameters(taskResource);
   const resources = getTaskResources(taskResource);
@@ -121,7 +117,6 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
               return (
                 <div key={param.name} className="odc-task-sidebar__param">
                   <TaskSidebarParam
-                    hasParamError={!!thisTaskError?.includes(TaskErrorType.MISSING_REQUIRED_PARAMS)}
                     resourceParam={param}
                     taskParam={thisParam}
                     onChange={(value) => {

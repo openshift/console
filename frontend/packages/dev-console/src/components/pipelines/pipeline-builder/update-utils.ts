@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { getRandomChars } from '@console/shared/src/utils';
 import {
   PipelineResourceTask,
@@ -25,7 +26,7 @@ import {
   UpdateTaskParamData,
   UpdateTaskResourceData,
 } from './types';
-import { convertResourceToTask, taskParamIsRequired } from './utils';
+import { convertResourceToTask, taskParamIsRequired, hasEmptyString } from './utils';
 
 const mapReplaceRelatedInOthers = <TaskType extends PipelineBuilderTaskBase>(
   taskName: string,
@@ -120,7 +121,7 @@ const getErrors = (task: PipelineTask, resource: PipelineResourceTask): TaskErro
   const requiredParamNames = resourceParams.filter(taskParamIsRequired).map((param) => param.name);
   const hasNonDefaultParams = task.params
     ?.filter(({ name }) => requiredParamNames.includes(name))
-    ?.map(({ value }) => !value)
+    ?.map(({ value }) => !value || (_.isArray(value) && hasEmptyString(value)))
     .reduce((acc, missingDefault) => missingDefault || acc, false);
 
   const needsName = !task.name;
