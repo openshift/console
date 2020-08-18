@@ -18,7 +18,7 @@ import * as operatorHubView from '../views/operator-hub.view';
 import { click } from '@console/shared/src/test-utils/utils';
 import { NAME_FIELD_ID, formFieldIsPresent } from '../views/descriptors.view';
 
-describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', () => {
+xdescribe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', () => {
   const jaegerResources = new Set([
     'Deployment',
     'Service',
