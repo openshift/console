@@ -73,7 +73,7 @@ const ODCEmptyState: React.FC<Props> = ({
   ).filter(({ properties: { hide } }) => (hide ? hide() : true));
 
   return (
-    <PageLayout title={title} hint={hintBlock}>
+    <PageLayout title={title} hint={hintBlock} isDark>
       <Gallery className="co-catalog-tile-view" hasGutter>
         <QuickStartTile />
         {addActionExtensions.map((action) => (

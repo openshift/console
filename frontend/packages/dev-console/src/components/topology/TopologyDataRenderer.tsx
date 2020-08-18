@@ -95,17 +95,17 @@ export const ConnectedTopologyDataRenderer: React.FC<TopologyDataRendererProps &
     dataModelContext
       .getExtensionModels(resources)
       .then((extensionsModel) => {
-        setModel(
-          baseDataModelGetter(
-            extensionsModel,
-            dataModelContext.namespace,
-            resources,
-            workloadResources,
-            showGroups ? depicters : [],
-            trafficData,
-            monitoringAlerts,
-          ),
+        const fullModel = baseDataModelGetter(
+          extensionsModel,
+          dataModelContext.namespace,
+          resources,
+          workloadResources,
+          showGroups ? depicters : [],
+          trafficData,
+          monitoringAlerts,
         );
+        dataModelContext.model = fullModel;
+        setModel(fullModel);
       })
       .catch(() => {});
   }, [resources, trafficData, dataModelContext, kindsInFlight, monitoringAlerts, showGroups]);
