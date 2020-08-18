@@ -376,21 +376,20 @@ const Receivers = () => {
   return (
     <div className="co-m-pane__body">
       <SectionHeading text="Receivers" />
-      <div className="co-m-pane__filter-bar co-m-pane__filter-bar--alt">
-        <div className="co-m-pane__filter-bar-group">
-          <Link className="co-m-primary-action" to="/monitoring/alertmanagerconfig/receivers/~new">
-            <Button variant="primary" data-test-id="create-receiver">
-              Create Receiver
-            </Button>
-          </Link>
-        </div>
-        <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-          <TextFilter
-            defaultValue=""
-            label="Receivers by Name"
-            onChange={(val) => setReceiverFilter(val)}
-          />
-        </div>
+      <div className="co-m-pane__filter-row">
+        <TextFilter
+          defaultValue=""
+          label="Receivers by Name"
+          onChange={(val) => setReceiverFilter(val)}
+        />
+        <Link
+          className="co-m-primary-action co-m-pane__filter-row-action"
+          to="/monitoring/alertmanagerconfig/receivers/~new"
+        >
+          <Button variant="primary" data-test-id="create-receiver">
+            Create Receiver
+          </Button>
+        </Link>
       </div>
       {numOfIncompleteReceivers > 0 && (
         <Alert

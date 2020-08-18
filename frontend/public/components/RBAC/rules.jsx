@@ -11,7 +11,7 @@ export const RulesList = ({ rules, name, namespace }) =>
   _.isEmpty(rules) ? (
     <EmptyBox label="Rules" />
   ) : (
-    <div className="co-m-table-grid co-m-table-grid--bordered rbac-rules-list">
+    <div className="co-m-table-grid co-m-table-grid--bordered">
       <div className="row co-m-table-grid__head">
         <div className="col-xs-5 col-sm-4 col-md-3 col-lg-2">Actions</div>
         <div className="hidden-xs col-sm-4 col-md-3 col-lg-3">API Groups</div>
