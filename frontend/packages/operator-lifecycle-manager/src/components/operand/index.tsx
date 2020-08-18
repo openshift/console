@@ -5,7 +5,7 @@ import { match } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { sortable } from '@patternfly/react-table';
 import { JSONSchema6 } from 'json-schema';
-import { Status, SuccessStatus } from '@console/shared';
+import { Status, SuccessStatus, getBadgeFromType } from '@console/shared';
 import { Conditions } from '@console/internal/components/conditions';
 import { ErrorPage404 } from '@console/internal/components/error';
 import {
@@ -440,6 +440,7 @@ export const ProvidedAPIPage = connectToModel((props: ProvidedAPIPageProps) => {
       canCreate={_.get(kindObj, 'verbs', [] as string[]).some((v) => v === 'create')}
       createProps={{ to }}
       namespace={kindObj.namespaced ? namespace : null}
+      badge={getBadgeFromType(kindObj.badge)}
     />
   );
 });
