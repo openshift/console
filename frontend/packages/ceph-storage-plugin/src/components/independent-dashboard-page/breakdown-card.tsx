@@ -1,6 +1,6 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { Dropdown, humanizeBinaryBytes } from '@console/internal/components/utils';
+import { Select, SelectProps } from '@patternfly/react-core';
+import { humanizeBinaryBytes } from '@console/internal/components/utils';
 import {
   DashboardItemProps,
   withDashboardResources,
@@ -18,10 +18,11 @@ import {
 } from '../dashboard-page/storage-dashboard/breakdown-card/utils';
 import { HeaderPrometheusViewLink } from '../dashboard-page/storage-dashboard/breakdown-card/breakdown-header';
 import { BreakdownCardBody } from '../dashboard-page/storage-dashboard/breakdown-card/breakdown-body';
+import { getSelectOptions } from '../dashboard-page/storage-dashboard/breakdown-card/breakdown-dropdown';
 import '../dashboard-page/storage-dashboard/capacity-breakdown/capacity-breakdown-card.scss';
 
 const keys = Object.keys(breakdownIndependentQueryMap);
-const dropdownOptions = _.zipObject(keys, keys);
+const breakdownSelectItems = getSelectOptions(keys);
 
 export const BreakdownCard: React.FC<DashboardItemProps> = ({
   watchPrometheus,
@@ -29,6 +30,7 @@ export const BreakdownCard: React.FC<DashboardItemProps> = ({
   prometheusResults,
 }) => {
   const [metricType, setMetricType] = React.useState(PROJECTS);
+  const [isOpenBreakdownSelect, setBreakdownSelect] = React.useState(false);
   const { queries, model, metric } = breakdownIndependentQueryMap[metricType];
   const queryKeys = Object.keys(queries);
 
@@ -51,18 +53,30 @@ export const BreakdownCard: React.FC<DashboardItemProps> = ({
   const metricTotal = results[1]?.data?.result[0]?.value[1];
   const link = `topk(20, (${CAPACITY_BREAKDOWN_QUERIES[queryKeys[0]]}))`;
 
+  const handleMetricsChange: SelectProps['onSelect'] = (_e, breakdown) => {
+    setMetricType(breakdown as string);
+    setBreakdownSelect(!isOpenBreakdownSelect);
+  };
+
   return (
     <DashboardCard>
       <DashboardCardHeader>
         <DashboardCardTitle>Capacity breakdown</DashboardCardTitle>
         <div className="ceph-capacity-breakdown-card__header">
           <HeaderPrometheusViewLink link={link} />
-          <Dropdown
-            items={dropdownOptions}
-            onChange={setMetricType}
-            selectedKey={metricType}
-            title={metricType}
-          />
+          <Select
+            className="ceph-capacity-breakdown-card-header__dropdown"
+            autoFocus={false}
+            onSelect={handleMetricsChange}
+            onToggle={() => setBreakdownSelect(!isOpenBreakdownSelect)}
+            isOpen={isOpenBreakdownSelect}
+            selections={[metricType]}
+            placeholderText={metricType}
+            aria-label="Break By Dropdown"
+            isCheckboxSelectionBadgeHidden
+          >
+            {breakdownSelectItems}
+          </Select>
         </div>
       </DashboardCardHeader>
       <DashboardCardBody classname="ceph-capacity-breakdown-card__body">
