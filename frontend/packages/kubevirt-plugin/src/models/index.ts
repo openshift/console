@@ -107,6 +107,7 @@ export const VirtualMachineImportModel: K8sKind = {
   namespaced: true,
   kind: 'VirtualMachineImport',
   id: 'virtualmachineimport',
+  color: '#FF1493',
 };
 
 export const UploadTokenRequestModel: K8sKind = {
