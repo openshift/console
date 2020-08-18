@@ -204,6 +204,14 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
     setMultusNetworkName(newMultusNetworkName);
   };
 
+  const onNetworkInterfaceChange = (iType: string) => {
+    if (iType === NetworkInterfaceType.SRIOV.toString()) {
+      setModel(NetworkInterfaceModel.VIRTIO);
+    }
+
+    setInterfaceType(NetworkInterfaceType.fromString(iType));
+  };
+
   const submit = (e) => {
     e.preventDefault();
 
@@ -246,7 +254,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
               }
               value={asFormSelectValue(model)}
               id={asId('model')}
-              isDisabled={isDisabled('model')}
+              isDisabled={isDisabled('model') || interfaceType === NetworkInterfaceType.SRIOV}
             >
               <FormSelectPlaceholderOption isDisabled placeholder="--- Select Model ---" />
               {NetworkInterfaceModel.getAll().map((ifaceModel) => {
@@ -275,7 +283,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
           />
           <FormRow title="Type" fieldId={asId('type')} isRequired>
             <FormSelect
-              onChange={(iType) => setInterfaceType(NetworkInterfaceType.fromString(iType))}
+              onChange={onNetworkInterfaceChange}
               value={asFormSelectValue(interfaceType)}
               id={asId('type')}
               isDisabled={isDisabled('type')}
