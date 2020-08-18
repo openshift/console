@@ -18,14 +18,17 @@ import { K8sResourceKind } from '@console/internal/module/k8s/index';
 import { getName } from '@console/shared/src/selectors/common';
 import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { CephClusterModel } from '../../../models';
+import { OCSServiceModel } from '../../../models';
 import { getOCSVersion } from '../../../selectors';
+import { CEPH_STORAGE_NAMESPACE } from '../../../constants';
+import { OCSStorageClusterKind } from '../../../types';
 
-const cephClusterResource: FirehoseResource = {
-  kind: referenceForModel(CephClusterModel),
-  namespaced: false,
+const ocsResource: FirehoseResource = {
+  kind: referenceForModel(OCSServiceModel),
+  namespaced: true,
   isList: true,
-  prop: 'ceph',
+  namespace: CEPH_STORAGE_NAMESPACE,
+  prop: 'ocs',
 };
 
 const SubscriptionResource: FirehoseResource = {
@@ -45,20 +48,21 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
     'cluster',
   );
   React.useEffect(() => {
-    watchK8sResource(cephClusterResource);
     watchK8sResource(SubscriptionResource);
+    watchK8sResource(ocsResource);
     return () => {
-      stopWatchK8sResource(cephClusterResource);
       stopWatchK8sResource(SubscriptionResource);
+      stopWatchK8sResource(ocsResource);
     };
   }, [watchK8sResource, stopWatchK8sResource]);
 
   const infrastructurePlatform = getInfrastructurePlatform(infrastructure);
-
-  const cephCluster = _.get(resources, 'ceph');
-  const cephClusterLoaded = _.get(cephCluster, 'loaded', false);
-  const cephClusterData = _.get(cephCluster, 'data') as K8sResourceKind[];
-  const cephClusterName = getName(_.get(cephClusterData, 0));
+  const ocs = resources?.ocs;
+  const ocsLoaded = ocs?.loaded || false;
+  const ocsError = ocs?.loadError;
+  const ocsData = ocs?.data as K8sResourceKind[];
+  const cluster = ocsData?.find((item: OCSStorageClusterKind) => item.status.phase !== 'Ignored');
+  const ocsName = getName(cluster);
 
   const subscription = _.get(resources, 'subscription') as FirehoseResult;
   const subscriptionLoaded = _.get(subscription, 'loaded');
@@ -77,10 +81,10 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
           <DetailItem
             key="cluster_name"
             title="Cluster Name"
-            error={cephClusterLoaded && !cephClusterName}
-            isLoading={!cephClusterLoaded}
+            error={!!ocsError}
+            isLoading={!ocsLoaded}
           >
-            {cephClusterName}
+            {ocsName}
           </DetailItem>
           <DetailItem
             key="provider"
