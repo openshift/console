@@ -76,7 +76,8 @@ export const PoolResourceComponent: React.FC<ProvisionerProps> = ({ onParamChang
     (res, pool: StoragePoolKind) => {
       if (
         usedPool.indexOf(pool?.metadata.name) === -1 &&
-        pool?.status?.phase === POOL_STATE.READY
+        pool?.status?.phase === POOL_STATE.READY &&
+        cephClusterObj[0]?.status?.phase === POOL_STATE.READY
       ) {
         res.push(
           <DropdownItem
@@ -125,7 +126,7 @@ export const PoolResourceComponent: React.FC<ProvisionerProps> = ({ onParamChang
               className="dropdown dropdown--full-width"
               toggle={
                 <DropdownToggle
-                  id="toggle-id"
+                  id="pool-dropdown-id"
                   onToggle={() => setOpen(!isOpen)}
                   toggleIndicator={CaretDownIcon}
                 >
