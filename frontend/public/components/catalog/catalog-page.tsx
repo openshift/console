@@ -11,6 +11,7 @@ import {
   DevCatalogModel,
   useExtensions,
 } from '@console/plugin-sdk';
+import CreateProjectListPage from '@console/dev-console/src/components/projects/CreateProjectListPage';
 import { CatalogTileViewPage } from './catalog-items';
 import {
   k8sListPartialMetadata,
@@ -516,17 +517,23 @@ export const CatalogPage = withStartGuide(({ match, noProjectsAvailable }) => {
       <Helmet>
         <title>Developer Catalog</title>
       </Helmet>
-      <div className="co-m-page__body">
-        <div className="co-catalog">
-          <PageHeading title="Developer Catalog" />
-          <p className="co-catalog-page__description">
-            Add shared apps, services, or source-to-image builders to your project from the
-            Developer Catalog. Cluster admins can install additional apps which will show up here
-            automatically.
-          </p>
-          <Catalog namespace={namespace} mock={noProjectsAvailable} />
+      {namespace ? (
+        <div className="co-m-page__body">
+          <div className="co-catalog">
+            <PageHeading title="Developer Catalog" />
+            <p className="co-catalog-page__description">
+              Add shared apps, services, or source-to-image builders to your project from the
+              Developer Catalog. Cluster admins can install additional apps which will show up here
+              automatically.
+            </p>
+            <Catalog namespace={namespace} mock={noProjectsAvailable} />
+          </div>
         </div>
-      </div>
+      ) : (
+        <CreateProjectListPage title="Developer Catalog">
+          Select a project to view the Developer Catalog
+        </CreateProjectListPage>
+      )}
     </>
   );
 });
