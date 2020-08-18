@@ -421,6 +421,9 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     detailsItem &&
     `/k8s/ns/${detailsItem.subscription.metadata.namespace}/${SubscriptionModel.plural}/${detailsItem.subscription.metadata.name}?showDelete=true`;
 
+  const paramDelim = detailsItem.marketplaceRemoteWorkflow &&
+    detailsItem.marketplaceRemoteWorkflow.includes("?") ? "&" : "?";
+
   if (_.isEmpty(filteredItems)) {
     return (
       <>
@@ -471,7 +474,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                 {detailsItem.marketplaceRemoteWorkflow && (
                   <ExternalLink
                     additionalClassName="pf-c-button pf-m-primary co-catalog-page__overlay-action"
-                    href={detailsItem.marketplaceRemoteWorkflow}
+                    href={`${detailsItem.marketplaceRemoteWorkflow}${paramDelim}utm_source=openshift_console`}
                     text={
                       <>
                         <div className="co-catalog-page__overlay-action-label">
