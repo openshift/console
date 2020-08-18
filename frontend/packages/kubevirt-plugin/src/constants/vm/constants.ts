@@ -60,3 +60,5 @@ export const WINTOOLS_CONTAINER_NAMES = {
   azure: 'registry.redhat.io/container-native-virtualization/virtio-win',
   okd: 'kubevirt/virtio-container-disk',
 };
+
+export const PENDING_RESTART_LABEL = '(pending restart)';

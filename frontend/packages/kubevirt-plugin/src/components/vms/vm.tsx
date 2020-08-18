@@ -149,7 +149,7 @@ const VMRow: RowFunction<VMRowObjType> = ({ obj, index, key, style }) => {
           vmStatusBundle={vmStatusBundle}
           arePendingChanges={arePendingChanges}
         />
-        {arePendingChanges && <div>Pending changes</div>}
+        {arePendingChanges && <div className="kv-vm-row_status-extra-label">Pending changes</div>}
       </TableData>
       <TableData className={dimensify()}>
         <Timestamp timestamp={creationTimestamp} />
@@ -168,7 +168,7 @@ const VMRow: RowFunction<VMRowObjType> = ({ obj, index, key, style }) => {
 };
 
 const VMList: React.FC<React.ComponentProps<typeof Table> & VMListProps> = (props) => (
-  <div className="kubevirt-vm-list">
+  <div className="kv-vm-list">
     <Table
       {...props}
       aria-label={VirtualMachineModel.labelPlural}

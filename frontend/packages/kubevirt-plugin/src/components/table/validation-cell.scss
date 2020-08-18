@@ -1,6 +1,16 @@
-.kubevirt-validation-cell__cell--error {
+.kv-validation-cell__cell--error {
   color: var(--pf-global--danger-color--100);
 }
-.kubevirt-validation-cell__cell--warning {
+.kv-validation-cell__cell--warning {
   color: var(--pf-global--Color--200);
+}
+
+.kv-validation-cell__additional-label {
+  color: #795600;
+  padding-left: var(--pf-global--spacer--sm);
+}
+
+.kv-validation-cell__cell--row-flex-direction {
+  display: flex;
+  flex-direction: row;
 }
