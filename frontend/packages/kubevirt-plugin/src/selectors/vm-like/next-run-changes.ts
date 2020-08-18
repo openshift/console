@@ -9,6 +9,7 @@ import { getSimpleName } from '../utils';
 import { V1Disk } from '../../types/vm/disk/V1Disk';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 import { DiskWrapper } from '../../k8s/wrapper/vm/disk-wrapper';
+import { V1NetworkInterface } from '../../types/vm/index';
 
 const cpuOmitPaths = ['dedicatedCpuPlacement', 'features', 'isolateEmulatorThread', 'model'];
 
@@ -53,7 +54,7 @@ export const changedDisks = (
       const diskWrapper = new DiskWrapper(vmDiskLookup[vol.name]);
 
       diskEquality =
-        !!vmiDiskLookup[vol.name] && diskWrapper.isDiskEqual(vmiDiskLookup[vol.name], true);
+        !!vmiDiskLookup[vol.name] && diskWrapper.isDiskEqual(vmiDiskLookup[vol.name], true, true);
 
       if (diskEquality) {
         const volWrapper = new VolumeWrapper(vol);
@@ -104,12 +105,22 @@ export const changedNics = (vm: VMWrapper, vmi: VMIWrapper): string[] => {
   const vmNics = vm.getNetworkInterfaces();
   const vmiNics = vmi.getNetworkInterfaces();
 
-  const vmNicsLookup = createBasicLookup(vmNics, getSimpleName);
-  const vmiNicsLookup = createBasicLookup(vmiNics, getSimpleName);
+  const vmNicsLookup: { [name: string]: V1NetworkInterface } = createBasicLookup(
+    vmNics,
+    getSimpleName,
+  );
+  const vmiNicsLookup: { [name: string]: V1NetworkInterface } = createBasicLookup(
+    vmiNics,
+    getSimpleName,
+  );
 
   return Object.keys(vmNicsLookup).reduce(
     (acc, nicName) =>
-      !vmiNicsLookup[nicName] || !_.isEqual(vmiNicsLookup[nicName], vmNicsLookup[nicName])
+      !vmiNicsLookup[nicName] ||
+      !_.isEqual(
+        _.omit(vmiNicsLookup[nicName], 'bootOrder'),
+        _.omit(vmNicsLookup[nicName], 'bootOrder'),
+      )
         ? [...acc, nicName]
         : [...acc],
     [],
