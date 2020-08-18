@@ -4,6 +4,7 @@ import './selectors';
 import './nav';
 import './resources';
 import 'cypress-jest-adapter';
+import 'cypress-plugin-retries';
 
 Cypress.Cookies.defaults({
   whitelist: ['openshift-session-token', 'csrf-token'],

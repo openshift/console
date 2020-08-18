@@ -10,5 +10,6 @@
   "supportFile": "support/index.ts",
   "pluginsFile": "plugins/index.js",
   "fixturesFolder": "fixtures",
-  "defaultCommandTimeout": 30000
+  "defaultCommandTimeout": 30000,
+  "env": { "RETRIES": 2 }
 }

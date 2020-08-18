@@ -1,8 +1,10 @@
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
 const wp = require('@cypress/webpack-preprocessor');
+const retries = require('cypress-plugin-retries/lib/plugin');
 
 module.exports = (on, config) => {
+  retries(on);
   const options = {
     webpackOptions: {
       resolve: {
