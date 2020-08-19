@@ -90,59 +90,6 @@ const selectedUserTemplateUpdater = (options: UpdateOptions) => {
   prefillVmTemplateUpdater(options);
 };
 
-const provisioningSourceUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
-  const state = getState();
-  if (
-    !hasVmSettingsChanged(
-      prevState,
-      state,
-      id,
-      VMSettingsField.PROVISION_SOURCE_TYPE,
-      VMSettingsField.USER_TEMPLATE,
-    )
-  ) {
-    return;
-  }
-  const source = iGetProvisionSource(state, id);
-  const isContainer = source === ProvisionSource.CONTAINER;
-  const isUrl = source === ProvisionSource.URL;
-
-  dispatch(
-    vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, {
-      [VMSettingsField.CONTAINER_IMAGE]: {
-        isHidden: asHidden(!isContainer, VMSettingsField.PROVISION_SOURCE_TYPE),
-      },
-      [VMSettingsField.IMAGE_URL]: {
-        isHidden: asHidden(!isUrl, VMSettingsField.PROVISION_SOURCE_TYPE),
-      },
-    }),
-  );
-};
-
-const flavorUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
-  const state = getState();
-  if (!hasVmSettingsChanged(prevState, state, id, VMSettingsField.FLAVOR)) {
-    return;
-  }
-  const flavor = iGetVmSettingValue(state, id, VMSettingsField.FLAVOR);
-
-  const isHidden = asHidden(flavor !== CUSTOM_FLAVOR, VMSettingsField.FLAVOR);
-  const isRequired = asRequired(flavor === CUSTOM_FLAVOR, VMSettingsField.FLAVOR);
-
-  dispatch(
-    vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, {
-      [VMSettingsField.MEMORY]: {
-        isHidden,
-        isRequired,
-      },
-      [VMSettingsField.CPU]: {
-        isHidden,
-        isRequired,
-      },
-    }),
-  );
-};
-
 const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
   if (iGetCommonData(state, id, VMWizardProps.isProviderImport)) {
@@ -252,9 +199,17 @@ const cloneCommonBaseDiskImageUpdater = ({ id, prevState, dispatch, getState }: 
   );
 };
 
-const workloadConsistencyUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
+const templateConsistencyUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
-  if (!hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.WORKLOAD_PROFILE)) {
+  if (
+    !hasVMSettingsValueChanged(
+      prevState,
+      state,
+      id,
+      VMSettingsField.WORKLOAD_PROFILE,
+      VMSettingsField.OPERATING_SYSTEM,
+    )
+  ) {
     return;
   }
   const selectors = iGetRelevantTemplateSelectors(state, id);
@@ -262,15 +217,44 @@ const workloadConsistencyUpdater = ({ id, prevState, dispatch, getState }: Updat
   const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
 
   if (!iGetRelevantTemplate(iUserTemplates, iCommonTemplates, selectors)) {
-    // reset workload profile if no relevant template found - could be triggered by provider prefil
+    // Reset workload and flavor profile if no relevant template found
+    // Could be triggered by provider prefil or os selection
     dispatch(
-      vmWizardInternalActions[InternalActionType.UpdateVmSettingsField](
-        id,
-        VMSettingsField.WORKLOAD_PROFILE,
-        { value: null },
-      ),
+      vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, {
+        [VMSettingsField.WORKLOAD_PROFILE]: { value: null },
+        [VMSettingsField.FLAVOR]: { value: null },
+      }),
     );
   }
+};
+
+const provisioningSourceUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
+  const state = getState();
+  if (
+    !hasVmSettingsChanged(
+      prevState,
+      state,
+      id,
+      VMSettingsField.PROVISION_SOURCE_TYPE,
+      VMSettingsField.USER_TEMPLATE,
+    )
+  ) {
+    return;
+  }
+  const source = iGetProvisionSource(state, id);
+  const isContainer = source === ProvisionSource.CONTAINER;
+  const isUrl = source === ProvisionSource.URL;
+
+  dispatch(
+    vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, {
+      [VMSettingsField.CONTAINER_IMAGE]: {
+        isHidden: asHidden(!isContainer, VMSettingsField.PROVISION_SOURCE_TYPE),
+      },
+      [VMSettingsField.IMAGE_URL]: {
+        isHidden: asHidden(!isUrl, VMSettingsField.PROVISION_SOURCE_TYPE),
+      },
+    }),
+  );
 };
 
 const nativeK8sUpdater = ({ id, dispatch, getState, changedCommonData }: UpdateOptions) => {
@@ -290,17 +274,41 @@ const nativeK8sUpdater = ({ id, dispatch, getState, changedCommonData }: UpdateO
   );
 };
 
+const flavorUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
+  const state = getState();
+  if (!hasVmSettingsChanged(prevState, state, id, VMSettingsField.FLAVOR)) {
+    return;
+  }
+  const flavor = iGetVmSettingValue(state, id, VMSettingsField.FLAVOR);
+
+  const isHidden = asHidden(flavor !== CUSTOM_FLAVOR, VMSettingsField.FLAVOR);
+  const isRequired = asRequired(flavor === CUSTOM_FLAVOR, VMSettingsField.FLAVOR);
+
+  dispatch(
+    vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, {
+      [VMSettingsField.MEMORY]: {
+        isHidden,
+        isRequired,
+      },
+      [VMSettingsField.CPU]: {
+        isHidden,
+        isRequired,
+      },
+    }),
+  );
+};
+
 export const updateVmSettingsState = (options: UpdateOptions) =>
   [
     selectUserTemplateOnLoadedUpdater,
     selectedUserTemplateUpdater,
-    flavorUpdater,
     osUpdater,
     baseImageUpdater,
     cloneCommonBaseDiskImageUpdater,
-    workloadConsistencyUpdater,
+    templateConsistencyUpdater,
     provisioningSourceUpdater,
     nativeK8sUpdater,
+    flavorUpdater,
   ].forEach((updater) => {
     updater && updater(options);
   });
