@@ -320,7 +320,7 @@ export const ImageManifestVulnPage: React.FC<ImageManifestVulnPageProps> = (prop
       title="Image Manifest Vulnerabilities"
       canCreate={false}
       showTitle
-      hideToolbar
+      hideNameLabelFilters
       ListComponent={ImageManifestVulnList}
     />
   );
