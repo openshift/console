@@ -13,7 +13,6 @@
 
   &__title {
     color: var(--pf-global--primary-color--100) !important;
-    display: inline-block;
     margin-right: var(--pf-global--spacer--md) !important;
   }
 
@@ -30,7 +29,8 @@
       background-color: var(--pf-global--palette--blue-400);
       border-radius: var(--pf-global--BorderRadius--lg);
       color: var(--pf-global--Color--light-100);
-      display: inline-block;
+      display: inline-flex;
+      justify-content: center;
       height: 1.5em;
       width: 1.5em;
     }
