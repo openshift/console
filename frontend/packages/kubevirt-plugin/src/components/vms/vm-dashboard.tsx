@@ -25,6 +25,7 @@ export const VMDashboard: React.FC<VMTabProps> = (props) => {
     vmis: vmisProp,
     pods,
     migrations,
+    pvcs,
     dataVolumes,
     vmImports,
   } = props;
@@ -37,6 +38,7 @@ export const VMDashboard: React.FC<VMTabProps> = (props) => {
     vmi,
     pods,
     migrations,
+    pvcs,
     dataVolumes,
     vmImports,
   });

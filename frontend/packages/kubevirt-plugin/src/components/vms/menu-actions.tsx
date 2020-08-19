@@ -1,7 +1,12 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
-import { K8sKind, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
+import {
+  K8sKind,
+  K8sResourceKind,
+  PersistentVolumeClaimKind,
+  PodKind,
+} from '@console/internal/module/k8s';
 import { getName, getNamespace, YellowExclamationTriangleIcon } from '@console/shared';
 import { confirmModal } from '@console/internal/components/modals';
 import { VMIKind, VMKind } from '../../types/vm';
@@ -300,6 +305,7 @@ export type ExtraResources = {
   vmis: VMIKind[];
   pods: PodKind[];
   migrations: K8sResourceKind[];
+  pvcs?: PersistentVolumeClaimKind[];
   dataVolumes: V1alpha1DataVolume[];
   vmImports: VMImportKind[];
 };
@@ -307,10 +313,10 @@ export type ExtraResources = {
 export const vmMenuActionsCreator = (
   kindObj: K8sKind,
   vm: VMKind,
-  { vmis, pods, migrations, vmImports, dataVolumes }: ExtraResources,
+  { vmis, pods, migrations, vmImports, pvcs, dataVolumes }: ExtraResources,
 ) => {
   const vmi = vmis && vmis[0];
-  const vmStatusBundle = getVMStatus({ vm, vmi, pods, migrations, dataVolumes, vmImports });
+  const vmStatusBundle = getVMStatus({ vm, vmi, pods, migrations, pvcs, dataVolumes, vmImports });
 
   return vmMenuActions.map((action) => {
     return action(kindObj, vm, { vmi, vmStatusBundle });

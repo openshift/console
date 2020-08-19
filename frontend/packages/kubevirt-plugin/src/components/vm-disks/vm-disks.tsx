@@ -238,6 +238,7 @@ export const VMDisksAndFileSystemsPage: React.FC<VMTabProps> = ({
   vmImports,
   pods,
   migrations,
+  pvcs,
   dataVolumes,
   customData: { kindObj },
 }) => {
@@ -270,6 +271,7 @@ export const VMDisksAndFileSystemsPage: React.FC<VMTabProps> = ({
     vmi,
     pods,
     migrations,
+    pvcs,
     dataVolumes,
     vmImports,
   });
