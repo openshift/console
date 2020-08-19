@@ -849,6 +849,9 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
     }
   }
 
+  const paramDelim =
+    marketplaceSupportWorkflow && marketplaceSupportWorkflow.includes('?') ? '&' : '?';
+
   return (
     <>
       <ScrollToTopOnMount />
@@ -886,7 +889,10 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
                   <>
                     <dt>Support</dt>
                     <dd>
-                      <ExternalLink href={marketplaceSupportWorkflow} text="Get support" />
+                      <ExternalLink
+                        href={`${marketplaceSupportWorkflow}${paramDelim}utm_source=openshift_console`}
+                        text="Get support"
+                      />
                     </dd>
                   </>
                 )}

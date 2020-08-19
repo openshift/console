@@ -138,6 +138,9 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
   const mappedInfraFeatures = mappedData(infraFeatures);
   const mappedValidSubscription = mappedData(validSubscription);
 
+  const paramDelim =
+    marketplaceSupportWorkflow && marketplaceSupportWorkflow.includes('?') ? '&' : '?';
+
   return (
     <div className="modal-body modal-body-border">
       <div className="modal-body-content">
@@ -170,7 +173,10 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
                 label="Support"
                 value={
                   marketplaceSupportWorkflow ? (
-                    <ExternalLink href={marketplaceSupportWorkflow} text="Get support" />
+                    <ExternalLink
+                      href={`${marketplaceSupportWorkflow}${paramDelim}utm_source=openshift_console`}
+                      text="Get support"
+                    />
                   ) : (
                     support || notAvailable
                   )
