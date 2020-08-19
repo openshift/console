@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import { Formik } from 'formik';
 import { k8sUpdate, K8sResourceKind } from '@console/internal/module/k8s';
 import { PipelineModel } from '../../../models';
+import { removeEmptyDefaultFromPipelineParams } from './utils';
 
 export interface PipelineFormProps {
   PipelineFormComponent: React.ComponentType<any>;
@@ -27,7 +28,14 @@ const PipelineForm: React.FC<PipelineFormProps> = ({
 
     k8sUpdate(
       PipelineModel,
-      { ...obj, spec: { ...obj.spec, params: values.parameters, resources: values.resources } },
+      {
+        ...obj,
+        spec: {
+          ...obj.spec,
+          params: removeEmptyDefaultFromPipelineParams(values.parameters),
+          resources: values.resources,
+        },
+      },
       obj.metadata.namespace,
       obj.metadata.name,
     )
