@@ -113,8 +113,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await crudView.isLoaded();
     await catalogPageView.clickFilterCheckbox(customProviderUID);
     await catalogPageView.clickFilterCheckbox('installState-installed');
-
-    expect(catalogPageView.catalogTileByID(prometheusTileID).isDisplayed()).toBe(true);
+    await browser.wait(until.visibilityOf(catalogPageView.catalogTileByID(prometheusTileID)));
   });
 
   it(`displays Operator in "Cluster Service Versions" view for "${testName}" namespace`, async () => {
