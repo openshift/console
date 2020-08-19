@@ -2,7 +2,6 @@ import * as _ from 'lodash';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { GitOpsManifestData, GitOpsAppGroupData } from './gitops-types';
-import { mockEnvsData } from './gitops-data';
 
 export const getManifestURLs = (namespaces: K8sResourceKind[]): string[] => {
   const annotation = 'app.openshift.io/vcs-uri';
@@ -58,7 +57,6 @@ export const getEnvData = async (envURI: string, env: string, appURI: string) =>
   try {
     data = await coFetchJSON(`${envURI}/${env}${appURI}`);
   } catch {} // eslint-disable-line no-empty
-  data = await Promise.resolve(mockEnvsData[env]); // will remove this once backend is ready
   return data;
 };
 

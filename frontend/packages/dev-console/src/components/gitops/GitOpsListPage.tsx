@@ -37,17 +37,17 @@ const GitOpsListPage: React.FC = () => {
     };
   }, [baseURL, namespaces, nsError, nsLoaded]);
 
-  if (!appGroups && !emptyStateMsg) {
-    return <LoadingBox />;
-  }
-
   return (
     <>
       <Helmet>
         <title>Application Stages</title>
       </Helmet>
       <PageHeading title="Application Stages" />
-      <GitOpsList appGroups={appGroups} emptyStateMsg={emptyStateMsg} />
+      {!appGroups && !emptyStateMsg ? (
+        <LoadingBox />
+      ) : (
+        <GitOpsList appGroups={appGroups} emptyStateMsg={emptyStateMsg} />
+      )}
     </>
   );
 };
