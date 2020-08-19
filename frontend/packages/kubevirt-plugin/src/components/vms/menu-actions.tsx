@@ -90,12 +90,29 @@ export const menuActionStart = (
 ): KebabOption => {
   const title = 'Start Virtual Machine';
   return {
-    hidden:
-      vmStatusBundle?.status?.isImporting() ||
-      vmStatusBundle?.status?.isMigrating() ||
-      isVMRunningOrExpectedRunning(vm),
+    hidden: vmStatusBundle?.status?.isMigrating() || isVMRunningOrExpectedRunning(vm),
     label: title,
-    callback: () => startVM(vm),
+    callback: () => {
+      if (!vmStatusBundle?.status?.isImporting()) {
+        startVM(vm);
+      } else {
+        confirmModal({
+          title,
+          message: (
+            <>
+              <p>
+                This virtual machine will start as soon as the import has been completed. If you
+                proceed you will not be able to change this option.
+              </p>
+              Are you sure you want to start <strong>{getName(vm)}</strong> in namespace{' '}
+              <strong>{getNamespace(vm)}</strong> after it has imported?
+            </>
+          ),
+          btnText: _.capitalize(VMActionType.Start),
+          executeFn: () => startVM(vm),
+        });
+      }
+    },
     accessReview: asAccessReview(kindObj, vm, 'patch'),
   };
 };
@@ -106,9 +123,10 @@ const menuActionStop = (
   { vmi, vmStatusBundle }: ActionArgs,
 ): KebabOption => {
   const title = 'Stop Virtual Machine';
+  const isImporting = vmStatusBundle?.status?.isImporting();
   return {
-    isDisabled: vmStatusBundle?.status?.isPending(),
-    hidden: !isVMExpectedRunning(vm),
+    isDisabled: isImporting,
+    hidden: !isImporting && !isVMExpectedRunning(vm),
     label: title,
     callback: () =>
       confirmVMIModal({
