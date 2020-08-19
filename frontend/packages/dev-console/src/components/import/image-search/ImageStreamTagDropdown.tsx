@@ -96,7 +96,8 @@ const ImageStreamTagDropdown: React.FC = () => {
 
   React.useEffect(() => {
     imageStream.tag && searchImageTag(imageStream.tag);
-  }, [imageStream.tag, searchImageTag]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [imageStream.tag]);
 
   React.useEffect(() => {
     if (
