@@ -72,13 +72,20 @@ export class DiskWrapper extends ObjectWithTypePropertyWrapper<
     }
   }
 
-  isDiskEqual = (otherDisk: V1Disk, omitRuntimeData?: boolean): boolean => {
+  isDiskEqual = (
+    otherDisk: V1Disk,
+    omitRuntimeData?: boolean,
+    omitBootOrder?: boolean,
+  ): boolean => {
     if (!otherDisk) {
       return false;
     }
 
+    const currDisk = omitBootOrder ? _.omit(this.data, 'bootOrder') : this.data;
+    const othrDisk = omitBootOrder ? _.omit(otherDisk, 'bootOrder') : otherDisk;
+
     if (!omitRuntimeData) {
-      return _.isEqual(this.data, otherDisk);
+      return _.isEqual(currDisk, othrDisk);
     }
 
     const diskWrapper = new DiskWrapper(otherDisk);
@@ -91,11 +98,11 @@ export class DiskWrapper extends ObjectWithTypePropertyWrapper<
     switch (thisDiskType) {
       case DiskType.CDROM:
         return _.isEqual(
-          _.omit(this.data, 'cdrom.readonly', 'cdrom.tray'),
-          _.omit(otherDisk, 'cdrom.readonly', 'cdrom.tray'),
+          _.omit(currDisk, 'cdrom.readonly', 'cdrom.tray'),
+          _.omit(othrDisk, 'cdrom.readonly', 'cdrom.tray'),
         );
       default:
-        return _.isEqual(this.data, otherDisk);
+        return _.isEqual(currDisk, othrDisk);
     }
   };
 }
