@@ -127,11 +127,11 @@ const getErrors = (task: PipelineTask, resource: PipelineResourceTask): TaskErro
   const resources = getTaskResources(resource);
 
   const taskInputResources = task.resources?.inputs?.length || 0;
-  const requiredInputResources = resources.inputs?.length || 0;
+  const requiredInputResources = (resources.inputs || []).filter((r) => !r?.optional).length;
   const missingInputResources = requiredInputResources - taskInputResources > 0;
 
   const taskOutputResources = task.resources?.outputs?.length || 0;
-  const requiredOutputResources = resources.outputs?.length || 0;
+  const requiredOutputResources = (resources.outputs || []).filter((r) => !r?.optional).length;
   const missingOutputResources = requiredOutputResources - taskOutputResources > 0;
 
   const errorListing: TaskErrorType[] = [];
