@@ -1,5 +1,5 @@
 import { execSync } from 'child_process';
-import { browser } from 'protractor';
+import { browser, ExpectedConditions as until } from 'protractor';
 import { clickKebabAction } from '@console/internal-integration-tests/views/crud.view';
 import { click } from '@console/shared/src/test-utils/utils';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
@@ -28,7 +28,8 @@ const createDeployment = () =>
 const expandPVC = async (pvcName: string, value: string, sizeUnit: SIZE_UNITS) => {
   await goToPersistentVolumeClaims();
   await clickKebabAction(pvcName, 'Expand PVC');
-  await browser.sleep(2 * SECOND);
+  await browser.wait(until.visibilityOf(inputPVCSize));
+  await inputPVCSize.clear();
   await sendKeys(inputPVCSize, value);
   await click(capacityUnitDropdown);
   await click(expandSizeOption(sizeUnit));
