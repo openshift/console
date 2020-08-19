@@ -9,6 +9,7 @@ const CephHealthStatus = {
   },
   HEALTH_WARN: {
     state: HealthState.WARNING,
+    message: 'Warning',
   },
   HEALTH_ERR: {
     state: HealthState.ERROR,
