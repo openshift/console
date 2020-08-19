@@ -5,9 +5,11 @@
     font-size: 14px !important;
     fill: var(--pf-global--Color--200) !important;
   }
-  tspan:first-of-type {
-    font-size: 24px !important;
-    fill: var(--pf-global--Color--100) !important;
+  &:not(.pod-ring__long-text) {
+    tspan:first-of-type {
+      font-size: var(--pf-chart-global--FontSize--2xl) !important;
+      fill: var(--pf-global--Color--100) !important;
+    }
   }
 }
 
