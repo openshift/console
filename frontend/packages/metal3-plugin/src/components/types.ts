@@ -29,13 +29,17 @@ export type BareMetalHostBundle = {
 };
 
 export type CSRBundle = {
-  name: string;
+  metadata: {
+    name: string;
+  };
   status: StatusProps;
   csr: CertificateSigningRequestKind;
 };
 
 export type BareMetalNodeBundle = {
-  name: string;
+  metadata: {
+    name: string;
+  };
   node: NodeKind;
   machine: MachineKind;
   host: BareMetalHostKind;

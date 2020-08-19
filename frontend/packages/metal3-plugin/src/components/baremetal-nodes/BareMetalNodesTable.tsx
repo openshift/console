@@ -74,7 +74,7 @@ const CSRTableRow: React.FC<BareMetalNodesTableRowProps<CSRBundle>> = ({
 }) => {
   return (
     <TableRow id={obj.csr.metadata.uid} index={index} trKey={rowKey} style={style}>
-      <TableData className={tableColumnClasses.name}>{obj.name}</TableData>
+      <TableData className={tableColumnClasses.name}>{obj.metadata.name}</TableData>
       <TableData className={tableColumnClasses.status}>
         <CSRStatus csr={obj.csr} title={obj.status.status} />
       </TableData>
