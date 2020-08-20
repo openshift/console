@@ -76,7 +76,6 @@ export function renderTopology({
 
 export const TopologyPageContext: React.FC<TopologyPageProps> = observer(({ match }) => {
   const queryParams = useQueryParams();
-  const searchParams = queryParams.get('searchQuery');
   const namespace = match.params.name;
   const dataModelContext = React.useContext<ExtensibleModel>(ModelContext);
   const showListView = !!matchPath(match.path, {
@@ -104,7 +103,7 @@ export const TopologyPageContext: React.FC<TopologyPageProps> = observer(({ matc
       <Redirect
         to={`/topology/${namespace ? `ns/${namespace}` : 'all-namespaces'}/${
           getTopologyActiveView() === 'list' ? 'list' : 'graph'
-        }`}
+        }${queryParams ? `?${queryParams.toString()}` : ''}`}
       />
     );
   }
@@ -143,7 +142,7 @@ export const TopologyPageContext: React.FC<TopologyPageProps> = observer(({ matc
                   className="pf-c-button pf-m-plain"
                   to={`/topology/${namespace ? `ns/${namespace}` : 'all-namespaces'}${
                     showListView ? '/graph' : '/list'
-                  }${searchParams ? `?searchQuery=${searchParams}` : ''}`}
+                  }${queryParams ? `?${queryParams.toString()}` : ''}`}
                 >
                   {showListView ? <TopologyIcon size="md" /> : <ListIcon size="md" />}
                 </Link>

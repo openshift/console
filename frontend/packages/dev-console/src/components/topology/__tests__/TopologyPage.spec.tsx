@@ -85,14 +85,18 @@ describe('Topology page tests', () => {
     const wrapper = shallow(<TopologyPageContext {...topologyProps} />);
     const namespacesPageWrapper = wrapper.find(NamespacedPage).shallow();
     expect(namespacesPageWrapper.find(Tooltip).props().content).toBe('Topology View');
-    expect(namespacesPageWrapper.find(Link).props().to).toBe('/topology/ns/topology-test/graph');
+    expect(namespacesPageWrapper.find(Link).props().to).toContain(
+      '/topology/ns/topology-test/graph',
+    );
   });
 
   it('should show the topology list icon when on topology page', () => {
     const wrapper = shallow(<TopologyPageContext {...topologyProps} />);
     const namespacesPageWrapper = wrapper.find(NamespacedPage).shallow();
     expect(namespacesPageWrapper.find(Tooltip).props().content).toBe('List View');
-    expect(namespacesPageWrapper.find(Link).props().to).toBe('/topology/ns/topology-test/list');
+    expect(namespacesPageWrapper.find(Link).props().to).toContain(
+      '/topology/ns/topology-test/list',
+    );
   });
 
   it('should render topology when workload is loaded', () => {
