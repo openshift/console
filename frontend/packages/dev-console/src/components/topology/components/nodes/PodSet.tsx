@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { get } from 'lodash';
 import {
   PodStatus,
   calculateRadius,
@@ -8,6 +7,7 @@ import {
   podDataInProgress,
   hpaPodRingLabel,
 } from '@console/shared';
+import { RevisionModel } from '@console/knative-plugin/src/models';
 import { DonutStatusData } from '../../topology-types';
 import { useRelatedHPA } from '../../../hpa/hooks';
 
@@ -77,10 +77,11 @@ const PodSet: React.FC<PodSetProps> = ({ size, data, x = 0, y = 0, showPodCount 
   );
   const hpaControlledScaling = !!hpa;
 
-  const obj = get(data, ['current', 'obj'], null) || data.dc;
+  const obj = data.current?.obj || data.dc;
+  const ownerKind = RevisionModel.kind === data.dc?.kind ? data.dc.kind : obj.kind;
   const { title, subTitle, titleComponent } = hpaControlledScaling
     ? hpaPodRingLabel(obj, hpa, data?.pods)
-    : podRingLabel(obj, obj.kind, data?.pods);
+    : podRingLabel(obj, ownerKind, data?.pods);
   return (
     <>
       <PodStatus
