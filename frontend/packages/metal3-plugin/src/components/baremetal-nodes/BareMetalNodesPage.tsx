@@ -47,7 +47,7 @@ const flattenResources = (resources: {
     const status = bareMetalNodeStatus({ node, nodeMaintenance, csr });
     // TODO(jtomasek): name is needed to make 'name' textFilter work.
     // Remove it when it is possible to pass custom textFilter as a function
-    return { name: nodeName, host, machine, node, nodeMaintenance, status, csr };
+    return { metadata: { name: nodeName }, host, machine, node, nodeMaintenance, status, csr };
   });
   const csrBundle = getNodeClientCSRs(csrs.data);
   return [...csrBundle, ...nodeBundle];

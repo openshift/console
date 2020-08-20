@@ -37,18 +37,20 @@ export const getNodeClientCSRs = (csrs: CertificateSigningRequestKind[] = []): C
       // '2.5.4.3' is commonName code
       const commonName = pkcs10.subject.typesAndValues.find(({ type }) => type === '2.5.4.3');
       return {
-        name: commonName.value.valueBlock.value.replace('system:node:', ''),
+        metadata: {
+          name: commonName.value.valueBlock.value.replace('system:node:', ''),
+        },
         csr,
         status: { status: 'Discovered' },
       };
     });
 
-  const groupped = _.groupBy<CSRBundle>(nodeCSRs, (csr) => csr.name);
+  const groupped = _.groupBy<CSRBundle>(nodeCSRs, (csr) => csr.metadata.name);
 
   return Object.keys(groupped).map((key) => {
     const { csr, status } = groupped[key][0];
     return {
-      name: key,
+      metadata: { name: key },
       status,
       csr,
     };
