@@ -1,9 +1,7 @@
 import * as _ from 'lodash';
 import { k8sCreate, K8sResourceKind, modelFor, referenceFor } from '@console/internal/module/k8s';
-import { Node, Edge } from '@patternfly/react-topology';
+import { Node } from '@patternfly/react-topology';
 import { ServiceBindingRequestModel } from '../../../../models';
-import { errorModal } from '@console/internal/components/modals';
-import { removeServiceBinding } from './removeServiceBinding';
 
 export const createServiceBinding = (
   source: K8sResourceKind,
@@ -62,12 +60,5 @@ export const getCreateConnector = (createHints: string[]) => {
   if (createHints && createHints.includes('createServiceBinding')) {
     return createServiceBindingConnection;
   }
-  return null;
-};
-
-export const removeServiceBindingCallback = (edge: Edge): void => {
-  removeServiceBinding(edge).catch((error) => {
-    errorModal({ title: 'Error removing connection', error: error.message });
-  });
   return null;
 };
