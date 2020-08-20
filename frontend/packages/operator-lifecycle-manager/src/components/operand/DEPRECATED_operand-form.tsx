@@ -106,7 +106,7 @@ enum Validations {
   pattern = 'pattern',
 }
 
-const idFromPath = (path) => `root_${path.split('.').join('_')}`;
+const idFromPath = (path) => `DEPRECATED_root_${path.split('.').join('_')}`;
 
 /*
  * Determines if a field contains a descriptor in it's capabilities. If only prefix is
@@ -466,12 +466,16 @@ const FieldGroup: React.FC<FieldGroupProps> = ({ children, isExpanded = false, i
   };
 
   return (
-    <div id={`${id}_field-group`} className="co-dynamic-form__field-group">
+    <div id={`DEPRECATED_${id}_field-group`} className="co-dynamic-form__field-group">
       <AccordionItem>
-        <AccordionToggle id={`${id}_accordion-toggle`} onClick={onToggle} isExpanded={expanded}>
-          <label htmlFor={`${id}_accordion-content`}>{label}</label>
+        <AccordionToggle
+          id={`DEPRECATED_${id}_accordion-toggle`}
+          onClick={onToggle}
+          isExpanded={expanded}
+        >
+          <label htmlFor={`DEPRECATED_${id}_accordion-content`}>{label}</label>
         </AccordionToggle>
-        <AccordionContent id={`${id}_accordion-content`} isHidden={!expanded}>
+        <AccordionContent id={`DEPRECATED_${id}_accordion-content`} isHidden={!expanded}>
           {children}
         </AccordionContent>
       </AccordionItem>
@@ -484,13 +488,17 @@ const OperandFormInputGroup: React.FC<OperandFormInputGroupProps> = ({ error, fi
   const { description, displayName, path, required } = field;
   const id = idFromPath(path);
   return input ? (
-    <div className="form-group co-dynamic-form__form-group" data-test-selector={path}>
+    <div
+      id={`DEPRECATED_${id}_field`}
+      className="form-group co-dynamic-form__form-group"
+      data-test-selector={path}
+    >
       <label className={classNames('form-label', { 'co-required': required })} htmlFor={id}>
         {displayName}
       </label>
       {input}
       {description && (
-        <span id={`${id}__description`} className="help-block">
+        <span id={`DEPRECATED_${id}__description`} className="help-block">
           {description}
         </span>
       )}
@@ -1159,8 +1167,12 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
           />
           <form className="co-dynamic-form" onSubmit={submit}>
             <Accordion asDefinitionList={false} className="co-dynamic-form__accordion">
-              <div key={'metadata.name'} className="form-group">
-                <label className="control-label co-required" htmlFor="name">
+              <div
+                id="DEPRECATED_root_metadata_name_field"
+                key="root_metadata_name_field"
+                className="form-group"
+              >
+                <label className="form-label co-required" htmlFor="DEPRECATED_root_metadata_name">
                   Name
                 </label>
                 <input
@@ -1168,12 +1180,16 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
                   type="text"
                   onChange={({ target: { value } }) => handleFormDataUpdate('metadata.name', value)}
                   value={immutableFormData.getIn(['metadata', 'name']) || 'example'}
-                  id="root_metadata_name"
+                  id="DEPRECATED_root_metadata_name"
                   required
                 />
               </div>
-              <div key={'root_metadata_labels'} className="form-group">
-                <label className="control-label" htmlFor="tags-input">
+              <div
+                id="DEPRECATED_root_metadata_labels_field"
+                key="root_metadata_labels_field"
+                className="form-group"
+              >
+                <label className="form-label" htmlFor="tags-input">
                   Labels
                 </label>
                 <SelectorInput

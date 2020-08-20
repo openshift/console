@@ -72,15 +72,19 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
     model,
   ]);
 
-  // TODO This logic should be removed in 4.6 and we should only be using
-  // the OperandForm component. We are providing a temporary fallback
-  // to the old form component to ease the transition to structural schemas
-  // over descriptors. In 4.6, structural schemas will be required, and
-  // the fallback will no longer be necessary/provided. If no structural schema
-  // is provided in 4.6, a form will not be generated.
+  const baseSchema = React.useMemo(
+    () =>
+      crd?.spec?.versions?.find?.((version) => version.name === providedAPI?.version)?.schema
+        ?.openAPIV3Schema ?? (definitionFor(model) as JSONSchema6),
+    [crd, model, providedAPI],
+  );
+
+  // TODO This logic should be removed in a later release and we should only be using the
+  // OperandForm component. We are providing a temporary fallback to the old form component to ease
+  // the transition to structural schemas over descriptors. Once structural schemas are required,
+  // the fallback will no longer be necessary. If no structural schema is provided after this
+  // fallback is fully deprecated, a form will not be generated.
   const [schema, FormComponent] = React.useMemo(() => {
-    const baseSchema =
-      crd?.spec?.validation?.openAPIV3Schema ?? (definitionFor(model) as JSONSchema6);
     const useFallback =
       getSchemaErrors(baseSchema).length ||
       hasNoFields((baseSchema?.properties?.spec ?? {}) as JSONSchema6);
@@ -91,7 +95,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
           _.defaultsDeep({}, DEFAULT_K8S_SCHEMA, _.omit(baseSchema, 'properties.status')),
           OperandForm,
         ];
-  }, [crd, model]);
+  }, [baseSchema]);
 
   const sample = React.useMemo<K8sResourceKind>(() => exampleForModel(csv, model), [csv, model]);
 
