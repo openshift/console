@@ -1,23 +1,27 @@
 import * as _ from 'lodash';
+import * as classnames from 'classnames';
 import * as React from 'react';
-import { FieldProps } from 'react-jsonschema-form';
+import { JSONSchema6 } from 'json-schema';
+import { getUiOptions } from 'react-jsonschema-form/lib/utils';
+import { FieldProps, UiSchema } from 'react-jsonschema-form';
+import SchemaField, {
+  SchemaFieldProps,
+} from 'react-jsonschema-form/lib/components/fields/SchemaField';
 import { LinkifyExternal, SelectorInput, Dropdown } from '@console/internal/components/utils';
+import { AccordionContent, AccordionItem, AccordionToggle, Switch } from '@patternfly/react-core';
+import { MatchExpressions } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/match-expressions';
 import { ResourceRequirements } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/resource-requirements';
-import { FieldSet, FormField } from './templates';
-import { ConfigureUpdateStrategy } from '@console/internal/components/modals/configure-update-strategy-modal';
+import {
+  ConfigureUpdateStrategy,
+  UPDATE_STRATEGY_DESCRIPTION,
+} from '@console/internal/components/modals/configure-update-strategy-modal';
 import {
   NodeAffinity,
   PodAffinity,
 } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/affinity';
-import { MatchExpressions } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/match-expressions';
-import { getUiOptions } from 'react-jsonschema-form/lib/utils';
-import { Switch } from '@patternfly/react-core';
-import SchemaField, {
-  SchemaFieldProps,
-} from 'react-jsonschema-form/lib/components/fields/SchemaField';
-import { getSchemaErrors } from './utils';
+import { getSchemaErrors, useSchemaDescription, useSchemaLabel } from './utils';
 
-export const DescriptionField: React.FC<FieldProps> = ({ id, description }) =>
+const Description = ({ id, description }) =>
   description ? (
     <span id={id} className="help-block">
       <LinkifyExternal>
@@ -26,75 +30,144 @@ export const DescriptionField: React.FC<FieldProps> = ({ id, description }) =>
     </span>
   ) : null;
 
-const FieldWrapper: React.FC<FieldProps> = ({
+export const DescriptionField: React.FC<FieldProps> = ({ id, description }) => (
+  <Description id={id} description={description} />
+);
+
+export const FormField: React.FC<FormFieldProps> = ({
   children,
-  name,
-  idSchema,
+  id,
+  defaultLabel,
   required,
   schema,
   uiSchema,
-  registry,
 }) => {
-  const options = getUiOptions(uiSchema);
-  const title = (options?.title || schema?.title || name) as string;
-  const description = options?.description || schema?.description;
-  const DescriptionFieldComponent = _.get(registry, 'DescriptionField', DescriptionField);
-
+  const [showLabel, label] = useSchemaLabel(schema, uiSchema, defaultLabel || 'Value');
   return (
-    <FormField id={idSchema.$id} displayTitle title={title} required={required}>
-      <>
-        {children}
+    <div id={`${id}_field`} className="form-group">
+      {showLabel && label && (
+        <label className={classnames('form-label', { 'co-required': required })} htmlFor={id}>
+          {label}
+        </label>
+      )}
+      {children}
+    </div>
+  );
+};
+
+export const FieldSet: React.FC<FieldSetProps> = ({
+  children,
+  defaultLabel,
+  idSchema,
+  required = false,
+  schema,
+  uiSchema,
+}) => {
+  const [expanded, setExpanded] = React.useState(false);
+  const [showLabel, label] = useSchemaLabel(schema, uiSchema, defaultLabel);
+  const description = useSchemaDescription(schema, uiSchema);
+  const onToggle = (e) => {
+    e.preventDefault();
+    setExpanded((current) => !current);
+  };
+  return showLabel && label ? (
+    <div id={`${idSchema.$id}_field-group`} className="form-group co-dynamic-form__field-group">
+      <AccordionItem>
+        <AccordionToggle
+          id={`${idSchema.$id}_accordion-toggle`}
+          onClick={onToggle}
+          isExpanded={expanded}
+        >
+          <label
+            className={classnames({ 'co-required': required })}
+            htmlFor={`${idSchema.$id}_accordion-content`}
+          >
+            {_.startCase(label)}
+          </label>
+        </AccordionToggle>
         {description && (
-          <DescriptionFieldComponent description={description} id={`${idSchema.$id}_description`} />
+          <Description id={`${idSchema.$id}_description`} description={description} />
         )}
-      </>
-    </FormField>
+        <AccordionContent id={`${idSchema.$id}_accordion-content`} isHidden={!expanded}>
+          {children}
+        </AccordionContent>
+      </AccordionItem>
+    </div>
+  ) : (
+    <>{children}</>
   );
 };
 
-export const ResourceRequirementsField: React.FC<FieldProps> = (props) => {
-  const { formData = {}, idSchema, onChange } = props;
-  return (
-    <FieldSet {...props}>
-      <dl id={idSchema.$id} style={{ marginLeft: '15px' }}>
-        <dt>Limits</dt>
-        <dd>
-          <ResourceRequirements
-            cpu={formData?.limits?.cpu || ''}
-            memory={formData?.limits?.memory || ''}
-            storage={formData?.limits?.['ephemeral-storage'] || ''}
-            onChangeCPU={(cpu) => onChange(_.set(_.cloneDeep(formData), 'limits.cpu', cpu))}
-            onChangeMemory={(mem) => onChange(_.set(_.cloneDeep(formData), 'limits.memory', mem))}
-            onChangeStorage={(sto) =>
-              onChange(_.set(_.cloneDeep(formData), 'limits.ephemeral-storage', sto))
-            }
-            path={`${idSchema.$id}.limits`}
-          />
-        </dd>
-        <dt>Requests</dt>
-        <dd>
-          <ResourceRequirements
-            cpu={formData?.requests?.cpu || ''}
-            memory={formData?.requests?.memory || ''}
-            storage={formData?.requests?.['ephemeral-storage'] || ''}
-            onChangeCPU={(cpu) => onChange(_.set(_.cloneDeep(formData), 'requests.cpu', cpu))}
-            onChangeMemory={(mem) => onChange(_.set(_.cloneDeep(formData), 'requests.memory', mem))}
-            onChangeStorage={(sto) =>
-              onChange(_.set(_.cloneDeep(formData), 'requests.ephemeral-storage', sto))
-            }
-            path={`${idSchema.$id}.requests`}
-          />
-        </dd>
-      </dl>
-    </FieldSet>
-  );
-};
+export const ResourceRequirementsField: React.FC<FieldProps> = ({
+  formData,
+  idSchema,
+  name,
+  onChange,
+  required,
+  schema,
+  uiSchema,
+}) => (
+  <FieldSet
+    defaultLabel={name || 'Resource Requirements'}
+    idSchema={idSchema}
+    required={required}
+    schema={schema}
+    uiSchema={uiSchema}
+  >
+    <dl id={idSchema.$id}>
+      <dt>Limits</dt>
+      <dd>
+        <ResourceRequirements
+          cpu={formData?.limits?.cpu || ''}
+          memory={formData?.limits?.memory || ''}
+          storage={formData?.limits?.['ephemeral-storage'] || ''}
+          onChangeCPU={(cpu) => onChange(_.set(_.cloneDeep(formData), 'limits.cpu', cpu))}
+          onChangeMemory={(mem) => onChange(_.set(_.cloneDeep(formData), 'limits.memory', mem))}
+          onChangeStorage={(sto) =>
+            onChange(_.set(_.cloneDeep(formData), 'limits.ephemeral-storage', sto))
+          }
+          path={`${idSchema.$id}.limits`}
+        />
+      </dd>
+      <dt>Requests</dt>
+      <dd>
+        <ResourceRequirements
+          cpu={formData?.requests?.cpu || ''}
+          memory={formData?.requests?.memory || ''}
+          storage={formData?.requests?.['ephemeral-storage'] || ''}
+          onChangeCPU={(cpu) => onChange(_.set(_.cloneDeep(formData), 'requests.cpu', cpu))}
+          onChangeMemory={(mem) => onChange(_.set(_.cloneDeep(formData), 'requests.memory', mem))}
+          onChangeStorage={(sto) =>
+            onChange(_.set(_.cloneDeep(formData), 'requests.ephemeral-storage', sto))
+          }
+          path={`${idSchema.$id}.requests`}
+        />
+      </dd>
+    </dl>
+  </FieldSet>
+);
 
-export const UpdateStrategyField: React.FC<FieldProps> = (props) => {
-  const { formData = {}, idSchema, onChange } = props;
+export const UpdateStrategyField: React.FC<FieldProps> = ({
+  formData,
+  idSchema,
+  name,
+  onChange,
+  required,
+  schema,
+  uiSchema,
+}) => {
+  const description = useSchemaDescription(schema, uiSchema, UPDATE_STRATEGY_DESCRIPTION);
   return (
-    <FieldWrapper {...props}>
+    <FormField
+      defaultLabel={name || 'Update Strategy'}
+      id={idSchema.$id}
+      required={required}
+      schema={schema}
+      uiSchema={uiSchema}
+    >
+      <Description description={description} id={idSchema.$id} />
       <ConfigureUpdateStrategy
+        showDescription={false}
         strategyType={formData?.type || 'RollingUpdate'}
         maxUnavailable={formData?.rollingUpdate?.maxUnavailable || ''}
         maxSurge={formData?.rollingUpdate?.maxSurge || ''}
@@ -108,51 +181,89 @@ export const UpdateStrategyField: React.FC<FieldProps> = (props) => {
         replicas={1}
         uid={idSchema.$id}
       />
-    </FieldWrapper>
+    </FormField>
   );
 };
 
-export const NodeAffinityField: React.FC<FieldProps> = (props) => {
-  const { formData = {}, idSchema, onChange } = props;
-  return (
-    <FieldSet {...props}>
-      <NodeAffinity
-        affinity={formData}
-        onChange={(affinity) => onChange(affinity)}
-        uid={idSchema.$id}
-      />
-    </FieldSet>
-  );
-};
+export const NodeAffinityField: React.FC<FieldProps> = ({
+  formData,
+  idSchema,
+  name,
+  onChange,
+  required,
+  schema,
+  uiSchema,
+}) => (
+  <FieldSet
+    defaultLabel={name || 'Node Affinity'}
+    idSchema={idSchema}
+    required={required}
+    schema={schema}
+    uiSchema={uiSchema}
+  >
+    <NodeAffinity
+      affinity={formData}
+      onChange={(affinity) => onChange(affinity)}
+      uid={idSchema.$id}
+    />
+  </FieldSet>
+);
 
-export const PodAffinityField: React.FC<FieldProps> = (props) => {
-  const { formData = {}, idSchema, onChange } = props;
-  return (
-    <FieldSet {...props}>
-      <PodAffinity
-        affinity={formData}
-        onChange={(affinity) => onChange(affinity)}
-        uid={idSchema.$id}
-      />
-    </FieldSet>
-  );
-};
+export const PodAffinityField: React.FC<FieldProps> = ({
+  formData,
+  idSchema,
+  name,
+  onChange,
+  required,
+  schema,
+  uiSchema,
+}) => (
+  <FieldSet
+    defaultLabel={name || 'Pod Affinity'}
+    idSchema={idSchema}
+    required={required}
+    schema={schema}
+    uiSchema={uiSchema}
+  >
+    <PodAffinity
+      affinity={formData}
+      onChange={(affinity) => onChange(affinity)}
+      uid={idSchema.$id}
+    />
+  </FieldSet>
+);
 
-export const MatchExpressionsField: React.FC<FieldProps> = (props) => {
-  const { formData = {}, idSchema, onChange } = props;
-  return (
-    <FieldSet {...props}>
-      <MatchExpressions
-        matchExpressions={formData}
-        onChange={(v) => onChange(v)}
-        uid={idSchema.$id}
-      />
-    </FieldSet>
-  );
-};
+export const MatchExpressionsField: React.FC<FieldProps> = ({
+  formData,
+  idSchema,
+  name,
+  onChange,
+  required,
+  schema,
+  uiSchema,
+}) => (
+  <FieldSet
+    defaultLabel={name || 'Match Expressions'}
+    idSchema={idSchema}
+    required={required}
+    schema={schema}
+    uiSchema={uiSchema}
+  >
+    <MatchExpressions
+      matchExpressions={formData}
+      onChange={(v) => onChange(v)}
+      uid={idSchema.$id}
+    />
+  </FieldSet>
+);
 
-export const BooleanField: React.FC<FieldProps> = (props) => {
-  const { formData, idSchema, name, onChange, uiSchema } = props;
+export const BooleanField: React.FC<FieldProps> = ({
+  formData,
+  idSchema,
+  name,
+  onChange,
+  uiSchema,
+}) => {
   const { labelOn = 'true', labelOff = 'false' } = getUiOptions(uiSchema);
   return (
     <Switch
@@ -166,18 +277,29 @@ export const BooleanField: React.FC<FieldProps> = (props) => {
   );
 };
 
-export const LabelsField: React.FC<FieldProps> = (props) => {
-  const { idSchema, onChange, formData } = props;
-  return (
-    <FieldWrapper {...props}>
-      <SelectorInput
-        inputProps={{ id: idSchema.$id }}
-        onChange={(newValue) => onChange(SelectorInput.objectify(newValue))}
-        tags={SelectorInput.arrayify(formData)}
-      />
-    </FieldWrapper>
-  );
-};
+export const LabelsField: React.FC<FieldProps> = ({
+  formData,
+  idSchema,
+  name,
+  onChange,
+  required,
+  schema,
+  uiSchema,
+}) => (
+  <FormField
+    defaultLabel={name}
+    id={idSchema.$id}
+    required={required}
+    schema={schema}
+    uiSchema={uiSchema}
+  >
+    <SelectorInput
+      inputProps={{ id: idSchema.$id }}
+      onChange={(newValue) => onChange(SelectorInput.objectify(newValue))}
+      tags={SelectorInput.arrayify(formData)}
+    />
+  </FormField>
+);
 
 export const DropdownField: React.FC<FieldProps> = ({
   formData,
@@ -187,14 +309,14 @@ export const DropdownField: React.FC<FieldProps> = ({
   schema,
   uiSchema = {},
 }) => {
-  const { items = {}, title } = getUiOptions(uiSchema);
+  const { items, title } = getUiOptions(uiSchema);
   return (
     <Dropdown
       id={idSchema.$id}
       key={idSchema.$id}
       title={`Select ${title || schema?.title || name}`}
       selectedKey={formData}
-      items={items}
+      items={items ?? {}}
       onChange={(val) => onChange(val)}
     />
   );
@@ -225,4 +347,16 @@ export default {
   ResourceRequirementsField,
   SchemaField: CustomSchemaField,
   UpdateStrategyField,
+};
+
+type FormFieldProps = {
+  id: string;
+  defaultLabel?: string;
+  required: boolean;
+  schema: JSONSchema6;
+  uiSchema: UiSchema;
+};
+
+type FieldSetProps = Pick<FieldProps, 'idSchema' | 'required' | 'schema' | 'uiSchema'> & {
+  defaultLabel?: string;
 };
