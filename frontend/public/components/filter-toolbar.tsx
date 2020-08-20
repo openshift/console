@@ -72,7 +72,9 @@ const getDropdownItems = (rowFilters: RowFilter[], selectedItems, data, props) =
               </span>
               <span className="co-filter-dropdown-item__name">{item.title}</span>
               <Badge key={item.id} isRead>
-                {_.countBy(data, grp.reducer)?.[item.id] ?? '0'}
+                {grp.isMatch
+                  ? _.filter(data, (d) => grp.isMatch(d, item.id)).length
+                  : _.countBy(data, grp.reducer)?.[item.id] ?? '0'}
               </Badge>
             </div>
           </DropdownItem>
@@ -378,12 +380,13 @@ type FilterToolbarProps = {
 export type RowFilter<R = any> = {
   defaultSelected?: string[];
   filterGroupName: string;
+  isMatch?: (param: R, id: string) => boolean;
   type: string;
   items?: {
     [key: string]: string;
   }[];
   itemsGenerator?: (...args) => { [key: string]: string }[];
-  reducer: (param: R) => React.ReactText;
+  reducer?: (param: R) => React.ReactText;
   filter?: any;
 };
 
