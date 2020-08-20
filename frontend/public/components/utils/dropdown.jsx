@@ -51,6 +51,7 @@ export class DropdownMixin extends React.PureComponent {
   onClick_(selectedKey, e) {
     e.preventDefault();
     e.stopPropagation();
+    e.nativeEvent?.stopImmediatePropagation?.();
 
     const { items, actionItems, onChange, noSelection, title } = this.props;
 
