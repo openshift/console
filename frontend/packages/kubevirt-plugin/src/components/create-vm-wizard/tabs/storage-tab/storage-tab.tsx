@@ -101,7 +101,7 @@ const StorageTabFirehose: React.FC<StorageTabFirehoseProps> = ({
           wizardReduxID,
         }).result,
       ),
-    isDisabled: isLocked || isCreateDisabled,
+    isDisabled: isLocked,
   };
 
   return (
@@ -112,7 +112,7 @@ const StorageTabFirehose: React.FC<StorageTabFirehoseProps> = ({
             Disks
           </Title>
         </SplitItem>
-        {showStorages && (
+        {showStorages && !isCreateDisabled && (
           <SplitItem>
             <Button {...addButtonProps} variant={ButtonVariant.secondary}>
               {ADD_DISK}
@@ -152,9 +152,11 @@ const StorageTabFirehose: React.FC<StorageTabFirehoseProps> = ({
             <Title headingLevel="h5" size="lg">
               No disks attached
             </Title>
-            <Button {...addButtonProps} icon={<PlusCircleIcon />} variant={ButtonVariant.link}>
-              {ADD_DISK}
-            </Button>
+            {!isCreateDisabled && (
+              <Button {...addButtonProps} icon={<PlusCircleIcon />} variant={ButtonVariant.link}>
+                {ADD_DISK}
+              </Button>
+            )}
           </EmptyState>
         </Bullseye>
       )}
