@@ -142,7 +142,7 @@ export const CreateInitializationResourceButton: React.FC<InitializationResource
         ClusterServiceVersionModel,
         obj.metadata.name,
         initializationResourceNamespace,
-      )}/${reference}/~new`}
+      )}/${reference}/~new?useInitializationResource`}
     >
       <Button isDisabled={disabled} variant="primary">
         Create {kind}
