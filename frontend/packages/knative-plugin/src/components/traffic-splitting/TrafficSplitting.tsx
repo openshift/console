@@ -4,6 +4,7 @@ import { K8sResourceKind, k8sUpdate } from '@console/internal/module/k8s';
 import { ServiceModel } from '../../models';
 import { getRevisionItems, constructObjForUpdate } from '../../utils/traffic-splitting-utils';
 import TrafficSplittingModal from './TrafficSplittingModal';
+import { Traffic } from '../../types';
 
 export interface TrafficSplittingProps {
   service: K8sResourceKind;
@@ -13,11 +14,7 @@ export interface TrafficSplittingProps {
 }
 
 export interface TrafficSplittingType {
-  trafficSplitting: {
-    percent: number;
-    tag: string;
-    revisionName: string;
-  }[];
+  trafficSplitting: Traffic[];
 }
 
 const TrafficSplitting: React.FC<TrafficSplittingProps> = ({
@@ -26,16 +23,25 @@ const TrafficSplitting: React.FC<TrafficSplittingProps> = ({
   cancel,
   close,
 }) => {
-  const traffic = service.spec?.traffic ?? [{ percent: 0, tag: '', revisionName: '' }];
+  const traffic: Traffic[] = service.spec?.traffic ?? [{ percent: 0, tag: '', revisionName: '' }];
   const latestCreatedRevName = service.status?.latestCreatedRevisionName;
   const revisionItems = getRevisionItems(revisions);
   const initialValues: TrafficSplittingType = {
-    trafficSplitting: traffic.map((t) => ({
-      percent: t.percent,
-      tag: t.tag || '',
-      revisionName:
-        t.revisionName || (t.latestRevision && latestCreatedRevName ? latestCreatedRevName : ''),
-    })),
+    trafficSplitting: traffic.reduce((acc: Traffic[], currentValue) => {
+      const trafficIndex = acc.findIndex((val) => val.revisionName === currentValue.revisionName);
+      if (trafficIndex >= 0) {
+        acc[trafficIndex].percent += currentValue.percent;
+      } else {
+        acc.push({
+          percent: currentValue.percent,
+          tag: currentValue.tag || '',
+          revisionName:
+            currentValue.revisionName ||
+            (currentValue.latestRevision && latestCreatedRevName ? latestCreatedRevName : ''),
+        });
+      }
+      return acc;
+    }, []),
   };
   const handleSubmit = (values: FormikValues, action: FormikHelpers<FormikValues>) => {
     const obj = constructObjForUpdate(values.trafficSplitting, service);
