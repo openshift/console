@@ -140,22 +140,25 @@ export const navFactory: NavFactory = {
   }),
 };
 
-export const NavBar = withRouter<NavBarProps>(({ pages, basePath }) => {
+export const NavBar = withRouter<NavBarProps>(({ pages, baseURL, basePath }) => {
   basePath = basePath.replace(/\/$/, '');
 
   const tabs = (
     <>
       {pages.map(({ name, href, path }) => {
-        const matchUrl = matchPath(location.pathname, {
+        const matchURL = matchPath(location.pathname, {
           path: `${basePath}/${path || href}`,
           exact: true,
         });
         const klass = classNames('co-m-horizontal-nav__menu-item', {
-          'co-m-horizontal-nav-item--active': matchUrl && matchUrl.isExact,
+          'co-m-horizontal-nav-item--active': matchURL?.isExact,
         });
         return (
           <li className={klass} key={name}>
-            <Link to={`${basePath}/${href}`} data-test-id={`horizontal-link-${name}`}>
+            <Link
+              to={`${baseURL.replace(/\/$/, '')}/${href}`}
+              data-test-id={`horizontal-link-${name}`}
+            >
               {name}
             </Link>
           </li>
@@ -233,7 +236,7 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
   const pages = (props.pages || props.pagesFor(props.obj?.data)).concat(pluginPages);
 
   const routes = pages.map((p) => {
-    const path = `${props.match.url}/${p.path || p.href}`;
+    const path = `${props.match.path}/${p.path || p.href}`;
     const render = (params) => {
       return (
         <p.component
@@ -251,7 +254,9 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
   return (
     <div className={classNames('co-m-page__body', props.className)}>
       <div className="co-m-horizontal-nav">
-        {!props.hideNav && <NavBar pages={pages} basePath={props.match.url} />}
+        {!props.hideNav && (
+          <NavBar pages={pages} baseURL={props.match.url} basePath={props.match.path} />
+        )}
       </div>
       {renderContent(routes)}
     </div>
@@ -265,6 +270,7 @@ export type PodsComponentProps = {
 
 export type NavBarProps = {
   pages: Page[];
+  baseURL: string;
   basePath: string;
   history: History;
   location: Location<any>;
