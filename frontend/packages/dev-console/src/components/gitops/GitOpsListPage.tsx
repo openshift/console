@@ -44,9 +44,9 @@ const GitOpsListPage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>GitOps</title>
+        <title>Application Stages</title>
       </Helmet>
-      <PageHeading title="GitOps" />
+      <PageHeading title="Application Stages" />
       <GitOpsList appGroups={appGroups} emptyStateMsg={emptyStateMsg} />
     </>
   );

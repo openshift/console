@@ -168,21 +168,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       perspective: 'dev',
       group: 'top',
       componentProps: {
-        name: 'GitOps',
-        href: '/gitops',
-        testID: 'gitops-header',
-      },
-    },
-    flags: {
-      required: [FLAG_OPENSHIFT_GITOPS],
-    },
-  },
-  {
-    type: 'NavItem/Href',
-    properties: {
-      perspective: 'dev',
-      group: 'top',
-      componentProps: {
         name: 'Monitoring',
         href: '/dev-monitoring',
         testID: 'monitoring-header',
@@ -234,6 +219,21 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [FLAG_OPENSHIFT_PIPELINE],
+    },
+  },
+  {
+    type: 'NavItem/Href',
+    properties: {
+      perspective: 'dev',
+      group: 'resources',
+      componentProps: {
+        name: 'Application Stages',
+        href: '/applicationstages',
+        testID: 'application-stages-header',
+      },
+    },
+    flags: {
+      required: [FLAG_OPENSHIFT_GITOPS],
     },
   },
   {
@@ -510,7 +510,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: '/gitops',
+      path: '/applicationstages',
       loader: async () =>
         (
           await import(
@@ -523,7 +523,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: '/gitops/application/:appName',
+      path: '/applicationstages/:appName',
       loader: async () =>
         (
           await import(

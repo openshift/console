@@ -30,8 +30,8 @@ const GitOpsDetailsPage: React.FC<GitOpsDetailsPageProps> = ({ match, location }
 
   const breadcrumbs = [
     {
-      name: 'GitOps',
-      path: '/gitops',
+      name: 'Application Stages',
+      path: '/applicationstages',
     },
     {
       name: 'Application Details',
@@ -80,7 +80,7 @@ const GitOpsDetailsPage: React.FC<GitOpsDetailsPageProps> = ({ match, location }
   return (
     <>
       <Helmet>
-        <title>GitOps</title>
+        <title>{`${appName} · Details`}</title>
       </Helmet>
       <div className="co-m-nav-title co-m-nav-title--breadcrumbs">
         <BreadCrumbs breadcrumbs={breadcrumbs} />
