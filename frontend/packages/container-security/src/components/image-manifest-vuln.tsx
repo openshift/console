@@ -302,16 +302,14 @@ export const ImageManifestVulnList: React.FC<ImageManifestVulnListProps> = (prop
 };
 
 export const ImageManifestVulnPage: React.FC<ImageManifestVulnPageProps> = (props) => {
-  const namespace = props.match.params?.ns;
-
   return (
     <MultiListPage
       {...props}
-      namespace={namespace}
+      namespace={props.namespace}
       resources={[
         {
           kind: referenceForModel(ImageManifestVulnModel),
-          namespace,
+          namespace: props.namespace,
           namespaced: true,
           prop: 'imageManifestVuln',
         },
