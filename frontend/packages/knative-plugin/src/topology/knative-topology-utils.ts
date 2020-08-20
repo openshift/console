@@ -37,7 +37,6 @@ import { RootState } from '@console/internal/redux';
 import { FLAG_KNATIVE_EVENTING } from '../const';
 import { ServiceModel as knServiceModel } from '../models';
 import { KnativeItem } from '../utils/get-knative-resources';
-import { Traffic as TrafficData } from '../types';
 
 export enum NodeType {
   EventSource = 'event-source',
@@ -59,17 +58,6 @@ type RevK8sResourceKind = K8sResourceKind & {
  */
 export const getEventSourceStatus = ({ FLAGS }: RootState): boolean =>
   FLAGS.get(FLAG_KNATIVE_EVENTING);
-
-/**
- * get knative service routes url based on the revision's traffic
- */
-export const getKnativeServiceRoutesURL = (ksvc: K8sResourceKind): string => {
-  if (!ksvc.status) {
-    return '';
-  }
-  const maximumTraffic: TrafficData = _.maxBy(ksvc.status.traffic as TrafficData[], 'percent');
-  return maximumTraffic?.url || ksvc.status.url;
-};
 
 /**
  * fetch the parent resource from a resource
@@ -350,7 +338,7 @@ export const createTopologyServiceNodeData = (
     resources: { ...svcRes },
     operatorBackedService: nodeResourceKind in operatorBackedServiceKindMap,
     data: {
-      url: getKnativeServiceRoutesURL(knativeSvc),
+      url: knativeSvc.status?.url || '',
       kind: referenceFor(knativeSvc),
       editURL: annotations['app.openshift.io/edit-url'],
       vcsURI: annotations['app.openshift.io/vcs-uri'],
