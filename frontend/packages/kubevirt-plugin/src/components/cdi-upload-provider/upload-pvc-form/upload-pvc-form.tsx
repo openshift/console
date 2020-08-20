@@ -42,7 +42,7 @@ import { createUploadPVC } from '../../../k8s/requests/cdi-upload/cdi-upload-req
 import { CDIUploadContext } from '../cdi-upload-provider';
 import { UploadPVCFormStatus } from './upload-pvc-form-status';
 import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/models';
-import { getName } from '@console/shared';
+import { getName, getNamespace } from '@console/shared';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
 import { getTemplateOperatingSystems } from '../../../selectors/vm-template/advanced';
 import { FormSelectPlaceholderOption } from '../../form/form-select-placeholder-option';
@@ -361,7 +361,7 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
   );
 
   const { uploads, uploadData } = React.useContext(CDIUploadContext);
-  const namespace = props?.match?.params?.ns;
+  const namespace = getNamespace(dvObj) || props?.match?.params?.ns;
   const title = 'Upload Data to Persistent Volume Claim';
 
   const save = (e: React.FormEvent<EventTarget>) => {
