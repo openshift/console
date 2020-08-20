@@ -65,6 +65,7 @@ export const Status: React.FC<StatusProps> = ({
     case 'ErrImagePull':
     case 'Error':
     case 'Failed':
+    case 'Failure':
     case 'ImagePullBackOff':
     case 'InstallCheckFailed':
     case 'Lost':
