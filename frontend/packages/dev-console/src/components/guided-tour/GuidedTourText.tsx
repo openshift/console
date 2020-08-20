@@ -11,9 +11,9 @@ const DevPerspectiveTourText: React.FC = () => {
   const openshiftVersion = useOpenshiftVersion();
   return (
     <>
-      Welcome to OpenShift {openshiftVersion?.slice(0, 3) ?? '4.x'}. Get started with a tour of some
-      of the key areas in the Developer perspective that can help you complete your workflows and be
-      more productive.
+      Get started with a tour of some of the key areas in OpenShift{' '}
+      {`${openshiftVersion?.slice(0, 3)}'s` ?? "4.x's"} Developer perspective that can help you
+      complete workflows and be more productive.
     </>
   );
 };
@@ -22,11 +22,9 @@ export const devPerspectiveTourText = <DevPerspectiveTourText />;
 
 export const perspectiveSwitcherTourText = (
   <>
+    <p>Switch between the Developer and Admin perspectives.</p>
     <p>
-      The Perspective Switcher allows you to switch between the Developer and Admin perspectives.
-    </p>
-    <p>
-      Use the Admin perspective to manage workloads storage, networking, cluster settings, and more.
+      Use the Admin perspective to manage workload storage, networking, cluster settings, and more.
       This may require additional user access.
     </p>
     <p>
@@ -62,15 +60,13 @@ const FinishTourText: React.FC = () => {
   // declaring openshiftHelpBase instead of importing because it throws error while using it as tour extension
   const openshiftHelpBase =
     window.SERVER_FLAGS.documentationBaseURL || 'https://docs.okd.io/latest/';
-  const openshiftVersion: string = useOpenshiftVersion();
   return (
     <>
-      Thanks for using OpenShift {openshiftVersion?.slice(0, 3) ?? '4.x'}. Stay up-to-date with
-      everything OpenShift on our{' '}
+      Stay up-to-date with everything OpenShift on our{' '}
       <a href={openshiftBlogLink} target="_blank" rel="noopener noreferrer">
         blog
       </a>{' '}
-      or can continue to learn more in our{' '}
+      or continue to learn more in our{' '}
       <a href={openshiftHelpBase} target="_blank" rel="noopener noreferrer">
         documentation
       </a>
