@@ -260,9 +260,6 @@ export default (state: UIState, action: UIAction): UIState => {
         !state.getIn(['notifications', 'isExpanded']),
       );
 
-    case ActionType.NotificationDrawerToggleRead:
-      return state.setIn(['notifications', 'isRead'], !state.getIn(['notifications', 'isRead']));
-
     case ActionType.QueryBrowserAddQuery:
       return state.setIn(
         ['queryBrowser', 'queries'],

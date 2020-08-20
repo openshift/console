@@ -194,10 +194,8 @@ const getAlerts = (alertsResults: PrometheusRulesResponse): Alert[] =>
 export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerProps> = ({
   isDesktop,
   toggleNotificationDrawer,
-  toggleNotificationsRead,
   isDrawerExpanded,
   onDrawerChange,
-  notificationsRead,
   alerts,
   children,
 }) => {
@@ -348,12 +346,6 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
     </NotificationCategory>
   ) : null;
 
-  if (_.isEmpty(data) && _.isEmpty(updateList) && !notificationsRead) {
-    toggleNotificationsRead();
-  } else if ((!_.isEmpty(data) || !_.isEmpty(updateList)) && notificationsRead) {
-    toggleNotificationsRead();
-  }
-
   return (
     <NotificationDrawer
       className="co-notification-drawer"
@@ -378,7 +370,6 @@ type NotificationPoll = (
 
 export type WithNotificationsProps = {
   isDrawerExpanded: boolean;
-  notificationsRead: boolean;
   alerts?: {
     data: Alert[];
     loaded: boolean;
@@ -391,17 +382,14 @@ export type WithNotificationsProps = {
 
 export type ConnectedNotificationDrawerProps = {
   isDesktop: boolean;
-  toggleNotificationsRead: () => any;
   toggleNotificationDrawer: () => any;
   isDrawerExpanded: boolean;
-  notificationsRead: boolean;
   onDrawerChange: () => void;
   alerts: NotificationAlerts;
 };
 
 const notificationStateToProps = ({ UI }: RootState): WithNotificationsProps => ({
   isDrawerExpanded: !!UI.getIn(['notifications', 'isExpanded']),
-  notificationsRead: !!UI.getIn(['notifications', 'isRead']),
   alerts: UI.getIn(['monitoring', 'notificationAlerts']),
   silences: UI.getIn(['monitoring', 'silences']),
 });
@@ -416,6 +404,5 @@ type AlertEmptyProps = {
 
 const connectToNotifications = connect((state: RootState) => notificationStateToProps(state), {
   toggleNotificationDrawer: UIActions.notificationDrawerToggleExpanded,
-  toggleNotificationsRead: UIActions.notificationDrawerToggleRead,
 });
 export const ConnectedNotificationDrawer = connectToNotifications(ConnectedNotificationDrawer_);

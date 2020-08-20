@@ -1,7 +1,5 @@
-import {
-  chart_color_cyan_400 as knativeServingColor,
-  chart_color_red_300 as knativeEventingColor,
-} from '@patternfly/react-tokens';
+import { chart_color_cyan_400 as knativeServingColor } from '@patternfly/react-tokens/dist/js/chart_color_cyan_400';
+import { chart_color_red_300 as knativeEventingColor } from '@patternfly/react-tokens/dist/js/chart_color_red_300';
 import { K8sKind } from '@console/internal/module/k8s';
 import { BadgeType } from '@console/shared/src/components/badges/badge-factory';
 import {

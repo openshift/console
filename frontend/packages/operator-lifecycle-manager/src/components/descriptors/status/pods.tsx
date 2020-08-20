@@ -1,13 +1,11 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import { ChartDonut } from '@patternfly/react-charts';
-import {
-  /* eslint-disable camelcase */
-  chart_color_blue_100 as blue100,
-  chart_color_blue_200 as blue200,
-  chart_color_blue_300 as blue300,
-  /* eslint-enable camelcase */
-} from '@patternfly/react-tokens';
+/* eslint-disable camelcase */
+import { chart_color_blue_100 as blue100 } from '@patternfly/react-tokens/dist/js/chart_color_blue_100';
+import { chart_color_blue_200 as blue200 } from '@patternfly/react-tokens/dist/js/chart_color_blue_200';
+import { chart_color_blue_300 as blue300 } from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
+/* eslint-enable camelcase */
 import { useRefWidth } from '@console/internal/components/utils';
 import { calculateRadius } from '@console/shared/';
 
