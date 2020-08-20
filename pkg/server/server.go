@@ -259,12 +259,12 @@ func (s *Server) HTTPHandler() http.Handler {
 	k8sResolver := resolver.K8sResolver{K8sProxy: k8sProxy}
 	rootResolver := resolver.RootResolver{K8sResolver: &k8sResolver}
 	schema := graphql.MustParseSchema(string(graphQLSchema), &rootResolver, opts...)
-	graphQLHandler := graphqlws.NewHandlerFunc(schema, &relay.Handler{Schema: schema})
+	handler := graphqlws.NewHandler()
+	handler.InitPayload = resolver.InitPayload
+	graphQLHandler := handler.NewHandlerFunc(schema, &relay.Handler{Schema: schema})
 	handle("/api/graphql", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(context.Background(), resolver.HeadersKey, map[string]string{
-			"Authorization":     fmt.Sprintf("Bearer %s", user.Token),
-			"Impersonate-User":  r.Header.Get("Impersonate-User"),
-			"Impersonate-Group": r.Header.Get("Impersonate-Group"),
+			"Authorization": fmt.Sprintf("Bearer %s", user.Token),
 		})
 		graphQLHandler(w, r.WithContext(ctx))
 	}))
