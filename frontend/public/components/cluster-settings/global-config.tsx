@@ -134,23 +134,21 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
     });
     return (
       <>
-        {!loading && (
-          <div className="co-m-pane__filter-bar co-m-pane__filter-bar--with-help-text">
-            <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--help-text">
+        <div className="co-m-pane__body">
+          {!loading && (
+            <>
               <p className="co-help-text">
                 Edit the following resources to manage the configuration of your cluster.
               </p>
-            </div>
-            <div className="co-m-pane__fiter-bar-group co-m-pane__filter-bar-group--filter">
-              <TextFilter
-                value={textFilter}
-                label="by name or description"
-                onChange={(val) => this.setState({ textFilter: val })}
-              />
-            </div>
-          </div>
-        )}
-        <div className="co-m-pane__body">
+              <div className="co-m-pane__filter-row">
+                <TextFilter
+                  value={textFilter}
+                  label="by name or description"
+                  onChange={(val) => this.setState({ textFilter: val })}
+                />
+              </div>
+            </>
+          )}
           {!_.isEmpty(errors) && (
             <ExpandableAlert
               variant={AlertVariant.danger}

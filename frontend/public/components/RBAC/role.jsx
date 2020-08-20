@@ -137,7 +137,7 @@ class Details extends React.Component {
         </div>
         <div className="co-m-pane__body">
           <SectionHeading text="Rules" />
-          <div className="co-m-pane__filter-bar co-m-pane__filter-bar--alt">
+          <div className="co-m-pane__filter-row">
             {/* This page is temporarily disabled until we update the safe resources list.
           <div className="co-m-pane__filter-bar-group">
             <Link to={addHref(name, namespace)} className="co-m-primary-action">
@@ -145,9 +145,8 @@ class Details extends React.Component {
             </Link>
           </div>
           */}
-            <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-              <TextFilter label="Rules by action or resource" onChange={this.changeFilter} />
-            </div>
+
+            <TextFilter label="Rules by action or resource" onChange={this.changeFilter} />
           </div>
           <RulesList rules={rules} name={name} namespace={namespace} />
         </div>
