@@ -19,26 +19,26 @@ export const PROGRESS_STATUS = [
   {
     name: POOL_PROGRESS.PROGRESS,
     icon: LoadingComponent,
-    desc: 'Pool {name} creation in progress',
+    desc: 'Pool "{name}" creation in progress',
     className: '',
   },
   {
     name: POOL_PROGRESS.CREATED,
     icon: CheckCircleIcon,
-    desc: 'Pool {name} was successfully created',
+    desc: 'Pool "{name}" was successfully created',
     className: 'ceph-storage-pool__check-icon',
   },
   {
     name: POOL_PROGRESS.FAILED,
     icon: ExclamationCircleIcon,
-    desc: 'An error occurred, Pool {name} was not created',
+    desc: 'An error occurred, Pool "{name}" was not created',
     className: 'ceph-storage-pool__error-icon',
   },
   {
     name: POOL_PROGRESS.TIMEOUT,
     icon: DisconnectedIcon,
     desc:
-      'Pool {name} creation timed out. Please check if ocs-operator and rook operator are running',
+      'Pool "{name}" creation timed out. Please check if ocs-operator and rook operator are running',
     className: '',
   },
   {

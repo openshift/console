@@ -41,6 +41,7 @@ import {
   MODAL_DESC,
   POOL_PROGRESS,
   COMPRESSION_ON,
+  ROOK_MODEL,
 } from '../../../constants/storage-pool-const';
 
 import './storage-pool-modal.scss';
@@ -51,7 +52,9 @@ const PoolStatusComponent: React.FC<PoolStatusComponentProps> = ({ status, name,
     <>
       <EmptyState>
         <EmptyStateIcon icon={statusObj.icon} className={statusObj.className} />
-        <EmptyStateBody>{error || statusObj.desc.replace('{name}', name)}</EmptyStateBody>
+        <EmptyStateBody>
+          {error ? error.replace(ROOK_MODEL, 'Pool') : statusObj.desc.replace('{name}', name)}
+        </EmptyStateBody>
       </EmptyState>
     </>
   );
@@ -69,14 +72,16 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
   } = props;
   const [newPoolName, setNewPoolName] = React.useState('sc-pool');
   const [isReplicaOpen, setReplicaOpen] = React.useState(false);
-  const [isPerfObjOpen, setPerfObjOpen] = React.useState(false);
   const [replicaSize, setReplicaSize] = React.useState('');
   const [isCompressed, setCompression] = React.useState(false);
-  const [deviceClass, setdeviceClass] = React.useState('');
   const [poolStatus, setPoolStatus] = React.useState('');
   /* TODO: use reducer */
   const [isSubmit, setIsSubmit] = React.useState(false);
   const [timer, setTimer] = React.useState<NodeJS.Timer>(null);
+
+  /* Not to be exposed for 4.6
+  const [isPerfObjOpen, setPerfObjOpen] = React.useState(false);
+  const [deviceClass, setdeviceClass] = React.useState(''); */
 
   const poolResource = React.useMemo(() => {
     return {
@@ -122,6 +127,7 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
     );
   });
 
+  /* Not to be exposed for 4.6
   const availableDeviceClasses = cephClusterObj[0]?.status?.storage?.deviceClasses.map((device) => {
     return (
       <DropdownItem
@@ -133,7 +139,7 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
         {device?.name}
       </DropdownItem>
     );
-  });
+  }); */
 
   const handleFinishButton = (e: React.FormEvent<EventTarget>) => {
     e.preventDefault();
@@ -163,7 +169,7 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
       },
       spec: {
         compressionMode: isCompressed ? COMPRESSION_ON : '',
-        deviceClass: deviceClass || '',
+        // deviceClass: deviceClass || '',
         parameters: {
           compression_mode: isCompressed ? COMPRESSION_ON : '', // eslint-disable-line @typescript-eslint/camelcase
         },
@@ -290,6 +296,7 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
                 />
               </div>
             </div>
+            {/* Not to be exposed for 4.6
             {cephClusterObj[0]?.status?.storage?.deviceClasses && (
               <div className="form-group ceph-storage-pool__input">
                 <label className="control-label co-required" htmlFor="pool-device-type">
@@ -312,7 +319,7 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
                   id="pool-device-type"
                 />
               </div>
-            )}
+            )} */}
           </>
         ) : (
           <PoolStatusComponent status={POOL_PROGRESS.NOTREADY} />
