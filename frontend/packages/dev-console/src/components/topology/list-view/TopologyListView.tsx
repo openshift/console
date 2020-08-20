@@ -1,6 +1,13 @@
 import * as React from 'react';
 import { DataList } from '@patternfly/react-core';
-import { isGraph, Node, isNode, Visualization, GraphElement } from '@patternfly/react-topology';
+import {
+  observer,
+  isGraph,
+  Node,
+  isNode,
+  Visualization,
+  GraphElement,
+} from '@patternfly/react-topology';
 import { useDeepCompareMemoize } from '@console/shared';
 import { TYPE_APPLICATION_GROUP } from '../components';
 import { TopologyListViewAppGroup } from './TopologyListViewAppGroup';
@@ -172,4 +179,4 @@ const TopologyListView: React.FC<TopologyListViewProps> = ({
   );
 };
 
-export default TopologyListView;
+export default observer(TopologyListView);
