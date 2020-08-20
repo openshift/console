@@ -1357,7 +1357,7 @@ const RuleTableRow: RowFunction<Rule> = ({ index, key, obj, style }) => (
       <Severity severity={obj.labels?.severity} />
     </TableData>
     <TableData className={tableRuleClasses[2]}>
-      {_.isEmpty(obj.alerts) ? 'Inactive' : <StateCounts alerts={obj.alerts} />}
+      {_.isEmpty(obj.alerts) ? '-' : <StateCounts alerts={obj.alerts} />}
     </TableData>
     <TableData className={tableRuleClasses[3]}>
       {alertingRuleSource(obj) === AlertSource.User ? 'User' : 'Platform'}
