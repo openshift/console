@@ -42,7 +42,7 @@ export const getGuidedTour = (): TourDataType => ({
     {
       placement: 'bottom',
       heading: 'Help',
-      content: `Help also provides the ability to re-start this tour, access our new Quick Starts.`,
+      content: `Restart this tour or access our new quick starts to learn basic OpenShift functions.`,
       selector: getSelector('tour-help-button'),
     },
   ],

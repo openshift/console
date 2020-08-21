@@ -10,7 +10,12 @@ const TourCloseModal = () => {
       heading="Are you sure you want to leave?"
       showClose={false}
       showStepBadge={false}
-      content="If you get stuck or need help, you can take this tour again by accessing it through the Help menu."
+      content={
+        <>
+          If you get stuck or need help, you can take this tour again by accessing it through the{' '}
+          <b>Help</b> menu.
+        </>
+      }
       onNext={() => tourDispatch(TourActions.complete)}
       onBack={() => tourDispatch(TourActions.resume)}
       nextButtonText="Close"
