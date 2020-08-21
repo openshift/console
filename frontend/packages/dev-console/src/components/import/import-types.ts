@@ -254,7 +254,7 @@ export interface ImportData {
   type: ImportTypes;
   title: string;
   buildStrategy: string;
-  loader: LazyLoader<GitImportFormProps | SourceToImageFormProps | DevfileImportFormProps>;
+  loader: LazyLoader<GitImportFormProps | SourceToImageFormProps>;
 }
 
 export enum TerminationTypes {
