@@ -4,4 +4,10 @@
     align-items: center;
     flex-wrap: wrap;
   }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    z-index: 0;
+  }
 }
