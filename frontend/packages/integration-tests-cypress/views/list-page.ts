@@ -24,6 +24,9 @@ export const listPage = {
     byName: (name: string) => {
       cy.byLegacyTestID('item-filter').type(name);
     },
+    numberOfActiveFiltersShouldBe: (numFilters: number) => {
+      cy.get("[class='pf-c-toolbar__item pf-m-chip-group']").should('have.length', numFilters);
+    },
   },
   rows: {
     shouldBeLoaded: () => {

@@ -193,9 +193,6 @@ export const EditYAML_ = connect(stateToProps)(
 
       loadYaml(reload = false, obj = this.props.obj) {
         if (this.state.initialized && !reload) {
-          if (window.Cypress) {
-            window.yamlEditorReady = true;
-          }
           return;
         }
 

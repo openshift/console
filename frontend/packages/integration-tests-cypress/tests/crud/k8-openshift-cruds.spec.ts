@@ -82,6 +82,8 @@ describe('Kubernetes resource CRUD operations', () => {
         if (resourcesWithCreationForm.has(kind)) {
           cy.byTestID('yaml-link').click();
         }
+        // sidebar needs to be fully loaded, else it sometimes overlays the Create button
+        cy.byTestID('resource-sidebar').should('exist');
         yamlEditor.isLoaded();
         let newContent;
         // get, update, and set yaml editor content.
@@ -143,6 +145,9 @@ describe('Kubernetes resource CRUD operations', () => {
             namespaced ? `ns/${testName}` : 'all-namespaces'
           }?kind=${kind}&q=${testLabel}%3d${testName}&name=${name}`,
         );
+
+        // filter should have 3 chip groups: resource, label, and name
+        listPage.filter.numberOfActiveFiltersShouldBe(3);
         listPage.rows.shouldExist(name);
 
         cy.log('link to to details page');

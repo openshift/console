@@ -46,7 +46,6 @@ declare interface Window {
   store?: {}; // Redux store
   pluginStore?: {}; // Console plugin store
   Cypress?: {};
-  yamlEditorReady?: boolean;
 }
 
 // From https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html
