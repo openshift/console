@@ -10,30 +10,39 @@ import {
   referenceForModel,
   referenceForOwnerRef,
   OwnerReference,
+  modelFor,
 } from '../../module/k8s';
 import { findOwner, matchOwnerAndCSV } from '../../module/k8s/managed-by';
 import { k8sList } from '../../module/k8s/resource';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
+import { ResourceLink } from '.';
 
-const ManagedByOperatorResourceLink: React.SFC<ManagerLinkProps> = (props) => {
-  const { csvName, namespace, owner } = props;
+export const ManagedByOperatorResourceLink: React.SFC<ManagerLinkProps> = (props) => {
+  const { csvName, namespace, owner, className } = props;
   const name = owner.name;
   const { group, version } = groupVersionFor(owner.apiVersion);
   const kind = owner.kind;
 
   const reference = referenceForGroupVersionKind(group)(version)(kind);
+  const { namespaced } = modelFor(reference);
 
   const link = `/k8s/ns/${namespace}/${referenceForModel(
     ClusterServiceVersionModel,
   )}/${csvName}/${reference}/${name}`;
 
   return (
-    <span className="co-resource-item">
-      <ResourceIcon kind={referenceForOwnerRef(owner)} />
-      <Link to={link} className="co-resource-item__resource-name" data-test-operand-link={name}>
-        {name}
-      </Link>
+    <span className={className}>
+      {namespaced ? (
+        <>
+          <ResourceIcon kind={referenceForOwnerRef(owner)} />
+          <Link to={link} className="co-resource-item__resource-name" data-test-operand-link={name}>
+            {name}
+          </Link>
+        </>
+      ) : (
+        <ResourceLink kind={reference} name={name} />
+      )}
     </span>
   );
 };
@@ -61,6 +70,7 @@ export const ManagedByOperatorLink: React.SFC<ManagedByLinkProps> = (props) => {
       <div className={classNames('co-m-pane__heading-owner', className)}>
         Managed by{' '}
         <ManagedByOperatorResourceLink
+          className="co-resource-item"
           namespace={namespace}
           csvName={csv.metadata.name}
           owner={owner}
@@ -80,4 +90,5 @@ type ManagerLinkProps = {
   csvName: string;
   namespace: string;
   owner: OwnerReference;
+  className?: string;
 };
