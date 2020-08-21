@@ -1,7 +1,6 @@
 import { submitButton } from '../views/form';
 
 declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace,no-redeclare
   namespace Cypress {
     interface Chainable<Subject> {
       login(providerName?: string, username?: string, password?: string): Chainable<Element>;

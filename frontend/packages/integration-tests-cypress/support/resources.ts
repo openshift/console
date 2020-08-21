@@ -4,7 +4,6 @@ import { K8sResourceKindReference } from '@console/internal/module/k8s';
 
 export {};
 declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace,no-redeclare
   namespace Cypress {
     interface Chainable<Subject> {
       resourceShouldBeDeleted(

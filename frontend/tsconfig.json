@@ -11,7 +11,7 @@
     "experimentalDecorators": true,
     "sourceMap": true,
     "noUnusedLocals": true,
-    "types": ["jest", "cypress"],
+    "types": ["jest", "cypress", "cypress-axe"],
     "paths": {
       "protractor": ["integration-tests/protractor.d.ts"]
     },

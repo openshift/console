@@ -1,6 +1,5 @@
 export {}; // needed in files which don't have an import to trigger ES6 module usage
 declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace,no-redeclare
   namespace Cypress {
     interface Chainable<Subject> {
       clickNavLink(path: [string, string]): Chainable<Element>;

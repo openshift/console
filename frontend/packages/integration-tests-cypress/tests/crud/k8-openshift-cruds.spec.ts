@@ -85,6 +85,7 @@ describe('Kubernetes resource CRUD operations', () => {
         // sidebar needs to be fully loaded, else it sometimes overlays the Create button
         cy.byTestID('resource-sidebar').should('exist');
         yamlEditor.isLoaded();
+        cy.testA11y(`YAML Editor for ${kind}: ${name}`);
         let newContent;
         // get, update, and set yaml editor content.
         return yamlEditor.getEditorContent().then((content) => {
@@ -123,6 +124,7 @@ describe('Kubernetes resource CRUD operations', () => {
       it('displays detail view for newly created resource instance', () => {
         cy.url().should('include', `/${name}`);
         detailsPage.titleShouldContain(name);
+        cy.testA11y(`Details page for ${kind}: ${name}`);
       });
 
       it(`displays a list view for the resource`, () => {
@@ -137,6 +139,8 @@ describe('Kubernetes resource CRUD operations', () => {
           cy.log('does not have a namespace dropdown on non-namespaced objects');
           listPage.projectDropdownShouldNotExist();
         }
+        listPage.rows.shouldBeLoaded();
+        cy.testA11y(`List page for ${kind}: ${name}`);
       });
 
       it('search view displays created resource instance', () => {
@@ -149,6 +153,7 @@ describe('Kubernetes resource CRUD operations', () => {
         // filter should have 3 chip groups: resource, label, and name
         listPage.filter.numberOfActiveFiltersShouldBe(3);
         listPage.rows.shouldExist(name);
+        cy.testA11y(`Search page for ${kind}: ${name}`);
 
         cy.log('link to to details page');
         listPage.rows.clickRowByName(name);
