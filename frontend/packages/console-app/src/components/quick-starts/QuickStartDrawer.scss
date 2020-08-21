@@ -1,3 +1,10 @@
+.co-quick-start-drawer-head {
+  position: sticky;
+  top: 0px;
+  background: inherit;
+  z-index: var(--pf-global--ZIndex--xs);
+}
+
 .co-quick-start-drawer {
   &__title {
     display: flex;
