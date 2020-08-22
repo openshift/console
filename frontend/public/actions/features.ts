@@ -6,7 +6,7 @@ import { GroupModel, UserModel } from '../models';
 import { ClusterVersionKind } from '../module/k8s';
 import { receivedResources } from './k8s';
 import { pluginStore } from '../plugins';
-import { setClusterID, setCreateProjectMessage, setUser, setConsoleLinks } from './common';
+import { setClusterID, setCreateProjectMessage, setUser } from './common';
 import { isCustomFeatureFlag } from '@console/plugin-sdk';
 import client, { fetchURL } from '../graphql/client';
 import { SSARQuery } from './features.gql';
@@ -206,18 +206,6 @@ const detectUser = (dispatch) =>
     },
   );
 
-const detectConsoleLinks = (dispatch) =>
-  fetchURL('/apis/console.openshift.io/v1/consolelinks').then(
-    (consoleLinks) => {
-      dispatch(setConsoleLinks(_.get(consoleLinks, 'items')));
-    },
-    (err) => {
-      if (!_.includes([401, 403, 404, 500], err?.response?.status)) {
-        setTimeout(() => detectConsoleLinks(dispatch), 15000);
-      }
-    },
-  );
-
 const ssarCheckActions = ssarChecks.map(({ flag, resourceAttributes, after }) => {
   const fn = (dispatch: Dispatch) =>
     client
@@ -244,7 +232,6 @@ export const detectFeatures = () => (dispatch: Dispatch) =>
     detectCanCreateProject,
     detectClusterVersion,
     detectUser,
-    detectConsoleLinks,
     ...ssarCheckActions,
     ...pluginStore
       .getAllExtensions()

@@ -27,13 +27,14 @@ import CloudShellMastheadButton from '@console/app/src/components/cloud-shell/Cl
 import * as UIActions from '../actions/ui';
 import { connectToFlags, flagPending, featureReducerName } from '../reducers/features';
 import { authSvc } from '../module/auth';
-import { getOCMLink } from '../module/k8s';
+import { getOCMLink, referenceForModel } from '../module/k8s';
 import { Firehose } from './utils';
 import { openshiftHelpBase } from './utils/documentation';
 import { AboutModal } from './about-modal';
 import { clusterVersionReference, getReportBugLink } from '../module/k8s/cluster-settings';
 import * as redhatLogoImg from '../imgs/logos/redhat.svg';
 import { GuidedTourMastheadTrigger } from '@console/app/src/components/tour';
+import { ConsoleLinkModel } from '../models';
 
 const SystemStatusButton = ({ statuspageData, className }) =>
   !_.isEmpty(_.get(statuspageData, 'incidents')) ? (
@@ -241,7 +242,7 @@ class MastheadToolbarContents_ extends React.Component {
 
   _launchActions = () => {
     const { clusterID, consoleLinks } = this.props;
-    const launcherItems = this._getAdditionalLinks(consoleLinks, 'ApplicationMenu');
+    const launcherItems = this._getAdditionalLinks(consoleLinks?.data, 'ApplicationMenu');
 
     const sections = [];
     if (
@@ -411,10 +412,10 @@ class MastheadToolbarContents_ extends React.Component {
     const { flags, consoleLinks } = this.props;
     const { isUserDropdownOpen, isKebabDropdownOpen, username } = this.state;
     const additionalUserActions = this._getAdditionalActions(
-      this._getAdditionalLinks(consoleLinks, 'UserMenu'),
+      this._getAdditionalLinks(consoleLinks?.data, 'UserMenu'),
     );
     const helpActions = this._helpActions(
-      this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'HelpMenu')),
+      this._getAdditionalActions(this._getAdditionalLinks(consoleLinks?.data, 'HelpMenu')),
     );
     const launchActions = this._launchActions();
 
@@ -590,7 +591,9 @@ class MastheadToolbarContents_ extends React.Component {
                 isOpen={isHelpDropdownOpen}
                 items={this._renderApplicationItems(
                   this._helpActions(
-                    this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'HelpMenu')),
+                    this._getAdditionalActions(
+                      this._getAdditionalLinks(consoleLinks?.data, 'HelpMenu'),
+                    ),
                   ),
                 )}
                 position="right"
@@ -635,7 +638,6 @@ const mastheadToolbarStateToProps = (state) => ({
   activeNamespace: state.UI.get('activeNamespace'),
   clusterID: state.UI.get('clusterID'),
   user: state.UI.get('user'),
-  consoleLinks: state.UI.get('consoleLinks'),
   notificationAlerts: state.UI.getIn(['monitoring', 'notificationAlerts']),
   canAccessNS: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
 });
@@ -651,16 +653,22 @@ const MastheadToolbarContents = connect(mastheadToolbarStateToProps, {
 );
 
 export const MastheadToolbar = connectToFlags(FLAGS.CLUSTER_VERSION)(({ flags }) => {
-  const resources = flags[FLAGS.CLUSTER_VERSION]
-    ? [
-        {
-          kind: clusterVersionReference,
-          name: 'version',
-          isList: false,
-          prop: 'cv',
-        },
-      ]
-    : [];
+  const resources = [];
+  if (flags[FLAGS.CLUSTER_VERSION]) {
+    resources.push({
+      kind: clusterVersionReference,
+      name: 'version',
+      isList: false,
+      prop: 'cv',
+    });
+  }
+  resources.push({
+    kind: referenceForModel(ConsoleLinkModel),
+    isList: true,
+    prop: 'consoleLinks',
+    optional: true,
+  });
+
   return (
     <Firehose resources={resources}>
       <MastheadToolbarContents />

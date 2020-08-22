@@ -24,7 +24,7 @@ import {
 } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 
-import { NamespaceModel, ProjectModel, SecretModel } from '../models';
+import { ConsoleLinkModel, NamespaceModel, ProjectModel, SecretModel } from '../models';
 import { coFetchJSON } from '../co-fetch';
 import { k8sGet, referenceForModel } from '../module/k8s';
 import * as k8sActions from '../actions/k8s';
@@ -69,6 +69,7 @@ import {
   ProjectDashboard,
 } from './dashboard/project-dashboard/project-dashboard';
 import { removeQueryArgument } from './utils/router';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 
 const getModel = (useProjects) => (useProjects ? ProjectModel : NamespaceModel);
 const getDisplayName = (obj) =>
@@ -871,7 +872,12 @@ export const NamespaceSummary = ({ ns }) => {
   );
 };
 
-const NamespaceDetails_ = ({ obj: ns, consoleLinks, customData }) => {
+export const NamespaceDetails = ({ obj: ns, customData }) => {
+  const [consoleLinks] = useK8sWatchResource({
+    isList: true,
+    kind: referenceForModel(ConsoleLinkModel),
+    optional: true,
+  });
   const links = getNamespaceDashboardConsoleLinks(ns, consoleLinks);
   return (
     <div>
@@ -897,12 +903,6 @@ const NamespaceDetails_ = ({ obj: ns, consoleLinks, customData }) => {
     </div>
   );
 };
-
-const DetailsStateToProps = ({ UI }) => ({
-  consoleLinks: UI.get('consoleLinks'),
-});
-
-export const NamespaceDetails = connect(DetailsStateToProps)(NamespaceDetails_);
 
 const RolesPage = ({ obj: { metadata } }) => (
   <RoleBindingsPage

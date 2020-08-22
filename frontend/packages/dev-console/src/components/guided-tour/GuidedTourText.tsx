@@ -1,11 +1,9 @@
 import * as React from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
-import { useSelector } from 'react-redux';
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import { RootState } from '@console/internal/redux';
 import { useOpenshiftVersion } from '@console/shared/src/hooks/version';
-import { K8sResourceCommon } from '@console/internal/module/k8s';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { ConsoleLinkModel } from '@console/internal/models';
 
 const DevPerspectiveTourText: React.FC = () => {
   const openshiftVersion = useOpenshiftVersion();
@@ -51,11 +49,13 @@ export const searchTourText = (
 );
 
 const FinishTourText: React.FC = () => {
-  const consoleLinks = useSelector<K8sResourceCommon[]>((state: RootState) =>
-    state.UI.get('consoleLinks'),
-  );
+  const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
+    isList: true,
+    kind: referenceForModel(ConsoleLinkModel),
+    optional: true,
+  });
   const openshiftBlogLink = consoleLinks.filter(
-    (link: K8sResourceCommon) => link.metadata.name === 'openshift-blog',
+    (link: K8sResourceKind) => link.metadata.name === 'openshift-blog',
   )[0]?.spec?.href;
   // declaring openshiftHelpBase instead of importing because it throws error while using it as tour extension
   const openshiftHelpBase =
