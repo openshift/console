@@ -3,7 +3,6 @@ import { listPage } from '../views/list-page';
 import { modal } from '../views/modal';
 
 declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace,no-redeclare
   namespace Cypress {
     interface Chainable<Subject> {
       createProject(name: string): Chainable<Element>;

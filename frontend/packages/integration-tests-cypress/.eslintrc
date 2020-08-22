@@ -7,5 +7,10 @@
     "../.eslintrc",
     "plugin:cypress/recommended"
   ],
-  "plugins": ["cypress"]
+  "plugins": ["cypress"],
+  "rules": {
+    "no-console": "off",
+    "no-namespace" : "off",
+    "no-redeclare": "off"
+  }
 }
