@@ -74,3 +74,39 @@ Scenario: Install the dynamic event operator : Kn-09-TC01, Kn-09-TC02
 
 Scenario: Uninstall the Knative serverless operator from Operator Hub page 
    Given user is at OpenShift Serverless Operator subscription page
+
+
+@regression
+Scenario: Install ElasticSearch Operator
+    Given user is at OperatorHub page
+    When user searches for ElasticSearch Operator
+    And user clicks on the ElasticSearch Operator provided by Red Hat card
+    And user clicks on the Install button
+    Then user will see a modal saying ElasticSearch Operator is installed
+
+
+@regression
+Scenario: Install Jaeger Operator
+    Given user is at OperatorHub page
+    When user searches for Red Hat OpenShift Jaeger Operator
+    And user clicks on the Red Hat OpenShift Jaeger card
+    And user clicks on Install button
+    Then user will see a modal saying Jaeger Operator is installed
+
+
+@regression
+Scenario: Install Kiali Operator
+    Given user is at OperatorHub page
+    When user searches for Kiali Operator
+    And user clicks on the Kiali Operator provided by Red Hat card
+    And user clicks on Install button
+    Then user will see a modal saying Kiali Operator is installed
+
+
+@regression
+Scenario: Install Red Hat OpenShift Service Mesh Operator
+    Given user is at OperatorHub page
+    When user searches for Red Hat OpenShift Service Mesh Operator
+    And user clicks on the Red Hat OpenShift Service Mesh Operator card
+    And user clicks on Install button
+    Then user will see a modal saying Jaeger Operator is installed
