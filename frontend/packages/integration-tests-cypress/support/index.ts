@@ -6,7 +6,7 @@ import './resources';
 import 'cypress-jest-adapter';
 
 Cypress.Cookies.defaults({
-  whitelist: ['openshift-session-token', 'csrf-token'],
+  preserve: ['openshift-session-token', 'csrf-token'],
 });
 
 export const checkErrors = () =>

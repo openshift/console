@@ -1,4 +1,4 @@
-FROM quay.io/coreos/tectonic-console-builder:v20 AS build
+FROM quay.io/coreos/tectonic-console-builder:v21 AS build
 
 RUN mkdir -p /go/src/github.com/openshift/console/
 ADD . /go/src/github.com/openshift/console/
