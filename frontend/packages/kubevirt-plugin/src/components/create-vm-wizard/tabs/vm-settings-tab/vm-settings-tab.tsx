@@ -20,7 +20,6 @@ import { getStepsMetadata } from '../../selectors/immutable/wizard-selectors';
 import { iGetProvisionSourceStorage } from '../../selectors/immutable/storage';
 import { WorkloadProfile } from './workload-profile';
 import { OSFlavor } from './os-flavor';
-import { UserTemplates } from './user-templates';
 import { MemoryCPU } from './memory-cpu';
 import { ContainerSource } from './container-source';
 import { ProvisionSourceComponent } from './provision-source';
@@ -30,8 +29,7 @@ import '../../create-vm-wizard-footer.scss';
 import './vm-settings-tab.scss';
 
 export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
-  userTemplateName,
-  userTemplates,
+  iUserTemplate,
   commonTemplates,
   cnvBaseImages,
   provisionSourceStorage,
@@ -73,22 +71,13 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
           />
         </FormField>
       </FormFieldMemoRow>
-      <UserTemplates
-        userTemplateField={getField(VMSettingsField.USER_TEMPLATE)}
-        forceSingleUserTemplateName={userTemplateName}
-        userTemplates={userTemplates}
-        commonTemplates={commonTemplates}
-        openshiftFlag={openshiftFlag}
-        onChange={onFieldChange}
-      />
       <OSFlavor
-        userTemplates={userTemplates}
+        iUserTemplate={iUserTemplate}
         commonTemplates={commonTemplates}
         operatinSystemField={getField(VMSettingsField.OPERATING_SYSTEM)}
         flavorField={getField(VMSettingsField.FLAVOR)}
         cloneBaseDiskImageField={getField(VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE)}
         mountWindowsGuestToolsField={getField(VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS)}
-        userTemplate={getFieldValue(VMSettingsField.USER_TEMPLATE)}
         workloadProfile={getFieldValue(VMSettingsField.WORKLOAD_PROFILE)}
         cnvBaseImages={cnvBaseImages}
         onChange={onFieldChange}
@@ -103,10 +92,9 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
         onChange={onFieldChange}
       />
       <WorkloadProfile
-        userTemplates={userTemplates}
+        iUserTemplate={iUserTemplate}
         commonTemplates={commonTemplates}
         workloadProfileField={getField(VMSettingsField.WORKLOAD_PROFILE)}
-        userTemplate={getFieldValue(VMSettingsField.USER_TEMPLATE)}
         operatingSystem={getFieldValue(VMSettingsField.OPERATING_SYSTEM)}
         flavor={getFieldValue(VMSettingsField.FLAVOR)}
         cnvBaseImages={cnvBaseImages}
@@ -135,8 +123,7 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
 const stateToProps = (state, { wizardReduxID }) => ({
   vmSettings: iGetVmSettings(state, wizardReduxID),
   commonTemplates: iGetCommonData(state, wizardReduxID, VMWizardProps.commonTemplates),
-  userTemplateName: iGetCommonData(state, wizardReduxID, VMWizardProps.userTemplateName),
-  userTemplates: iGetCommonData(state, wizardReduxID, VMWizardProps.userTemplates),
+  iUserTemplate: iGetCommonData(state, wizardReduxID, VMWizardProps.userTemplate),
   cnvBaseImages: iGetCommonData(state, wizardReduxID, VMWizardProps.openshiftCNVBaseImages),
   openshiftFlag: iGetCommonData(state, wizardReduxID, VMWizardProps.openshiftFlag),
   provisionSourceStorage: iGetProvisionSourceStorage(state, wizardReduxID),
@@ -149,8 +136,7 @@ type VMSettingsTabComponentProps = {
   vmSettings: any;
   provisionSourceStorage: VMWizardStorage;
   commonTemplates: any;
-  userTemplateName: string;
-  userTemplates: any;
+  iUserTemplate: any;
   cnvBaseImages: any;
   openshiftFlag: boolean;
   goToStep: (stepID: VMWizardTab) => void;

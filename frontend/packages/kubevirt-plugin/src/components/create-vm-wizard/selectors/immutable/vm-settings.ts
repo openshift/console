@@ -38,10 +38,9 @@ export const iGetProvisionSource = (state, id: string): ProvisionSource =>
   ProvisionSource.fromString(iGetVmSettingValue(state, id, VMSettingsField.PROVISION_SOURCE_TYPE));
 
 export const iGetRelevantTemplateSelectors = (state, id: string) => {
-  const userTemplateName = iGetVmSettingValue(state, id, VMSettingsField.USER_TEMPLATE);
   const os = iGetVmSettingAttribute(state, id, VMSettingsField.OPERATING_SYSTEM);
   const flavor = iGetVmSettingAttribute(state, id, VMSettingsField.FLAVOR);
   const workload = iGetVmSettingAttribute(state, id, VMSettingsField.WORKLOAD_PROFILE);
 
-  return { userTemplateName, os, flavor, workload };
+  return { os, flavor, workload };
 };

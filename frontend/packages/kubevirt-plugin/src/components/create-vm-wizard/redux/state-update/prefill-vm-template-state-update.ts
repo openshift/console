@@ -1,6 +1,5 @@
 import { createBasicLookup, getName } from '@console/shared/src';
 import { InternalActionType, UpdateOptions } from '../types';
-import { iGetVmSettingValue } from '../../selectors/immutable/vm-settings';
 import {
   CloudInitField,
   VMSettingsField,
@@ -10,12 +9,8 @@ import {
   VMWizardStorage,
   VMWizardStorageType,
 } from '../../types';
-import {
-  iGetCommonData,
-  iGetLoadedCommonData,
-  iGetName,
-} from '../../selectors/immutable/selectors';
-import { immutableListToShallowJS } from '../../../../utils/immutable';
+import { iGetCommonData, iGetLoadedCommonData } from '../../selectors/immutable/selectors';
+import { immutableListToShallowJS, toShallowJS } from '../../../../utils/immutable';
 import { iGetNetworks } from '../../selectors/immutable/networks';
 import { podNetwork } from '../initial-state/networks-tab-initial-state';
 import { vmWizardInternalActions } from '../internal-actions';
@@ -66,16 +61,9 @@ import { generateDataVolumeName } from '../../../../utils';
 export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptions) => {
   const state = getState();
 
-  const userTemplateName = iGetVmSettingValue(state, id, VMSettingsField.USER_TEMPLATE);
-
-  const iUserTemplates = iGetLoadedCommonData(state, id, VMWizardProps.userTemplates);
+  const iUserTemplate = iGetLoadedCommonData(state, id, VMWizardProps.userTemplate);
   const isProviderImport = iGetCommonData(state, id, VMWizardProps.isProviderImport);
   const activeNamespace = iGetCommonData(state, id, VMWizardProps.activeNamespace);
-
-  const iUserTemplate =
-    userTemplateName && iUserTemplates
-      ? iUserTemplates.find((template) => iGetName(template) === userTemplateName)
-      : null;
 
   let isCloudInitForm = null;
   const vmSettingsUpdate = {
@@ -112,7 +100,7 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
   }
 
   if (iUserTemplate) {
-    const userTemplate = iUserTemplate.toJS();
+    const userTemplate = toShallowJS(iUserTemplate);
 
     const vm = selectVM(userTemplate);
     const dataVolumes = immutableListToShallowJS<V1alpha1DataVolume>(

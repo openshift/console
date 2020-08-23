@@ -35,7 +35,11 @@ import {
   iGetProvisionSource,
   iGetRelevantTemplateSelectors,
 } from '../../selectors/immutable/vm-settings';
-import { iGetLoadedCommonData, iGetName } from '../../selectors/immutable/selectors';
+import {
+  iGetLoadedCommonData,
+  iGetName,
+  iGetCommonData,
+} from '../../selectors/immutable/selectors';
 import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
 import { iGetPrameterValue } from '../../../../selectors/immutable/common';
 
@@ -161,7 +165,7 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
     id,
     VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE,
   );
-  const userTemplate = iGetVmSettingValue(state, id, VMSettingsField.USER_TEMPLATE);
+  const iUserTemplate = iGetCommonData(state, id, VMWizardProps.userTemplate);
 
   if (provisionSource === ProvisionSource.URL) {
     const iStorageClassConfigMap = iGetLoadedCommonData(
@@ -175,7 +179,7 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
   if (provisionSource === ProvisionSource.CONTAINER) {
     return containerStorage;
   }
-  if (provisionSource === ProvisionSource.DISK && !userTemplate && cloneCommonBaseDiskImage) {
+  if (provisionSource === ProvisionSource.DISK && !iUserTemplate && cloneCommonBaseDiskImage) {
     const iStorageClassConfigMap = iGetLoadedCommonData(
       state,
       id,
@@ -188,8 +192,7 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
     }
 
     const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
-    const iTemplate =
-      iCommonTemplates && iGetRelevantTemplate(null, iCommonTemplates, relevantOptions);
+    const iTemplate = iCommonTemplates && iGetRelevantTemplate(iCommonTemplates, relevantOptions);
     const pvcName = iGetPrameterValue(iTemplate, TEMPLATE_DATAVOLUME_NAME_PARAMETER);
     const pvcNamespace = iGetPrameterValue(iTemplate, TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER);
 

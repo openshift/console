@@ -11,18 +11,18 @@ import {
 import { Link } from 'react-router-dom';
 import { ValidationErrorType, asValidationObject } from '@console/shared/src/utils/validation';
 import {
-  concatImmutableLists,
   iGet,
   iGetIsLoaded,
   iGetLoadedData,
   immutableListToShallowJS,
+  iGetLoadError,
+  toShallowJS,
 } from '../../../../utils/immutable';
 import { FormFieldRow } from '../../form/form-field-row';
 import { FormField, FormFieldType } from '../../form/form-field';
 import { FormSelectPlaceholderOption } from '../../../form/form-select-placeholder-option';
 import {
   getFlavors,
-  getOperatingSystems,
   getWorkloadProfiles,
 } from '../../../../selectors/vm-template/combined-dependent';
 import { flavorSort, ignoreCaseSort } from '../../../../utils/sort';
@@ -50,12 +50,12 @@ import {
   CDI_UPLOAD_POD_ANNOTATION,
   CDI_UPLOAD_RUNNING,
 } from '../../../cdi-upload-provider/consts';
+import { getTemplateOperatingSystems } from '../../../../selectors/vm-template/advanced';
 
 export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
   ({
-    userTemplates,
+    iUserTemplate,
     commonTemplates,
-    userTemplate,
     operatinSystemField,
     cloneBaseDiskImageField,
     mountWindowsGuestToolsField,
@@ -72,16 +72,19 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
     const displayOnly = !!display;
     const cloneBaseDiskImage = iGetFieldValue(cloneBaseDiskImageField);
     const mountWindowsGuestTools = iGetFieldValue(mountWindowsGuestToolsField);
+    const isUserTemplateValid = iGetIsLoaded(iUserTemplate) && !iGetLoadError(iUserTemplate);
+
     const params = {
-      userTemplate,
       flavor,
       workload: workloadProfile,
       os,
     };
 
-    const vanillaTemplates = immutableListToShallowJS(
-      concatImmutableLists(iGetLoadedData(commonTemplates), iGetLoadedData(userTemplates)),
-    );
+    const templates = iUserTemplate
+      ? isUserTemplateValid
+        ? [toShallowJS(iGetLoadedData(iUserTemplate))]
+        : []
+      : immutableListToShallowJS(iGetLoadedData(commonTemplates));
 
     let operatingSystems;
 
@@ -89,28 +92,31 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
       operatingSystems = [{ name: display, id: display }];
     } else {
       operatingSystems = openshiftFlag
-        ? ignoreCaseSort(getOperatingSystems(vanillaTemplates, params.userTemplate), ['name'])
+        ? ignoreCaseSort(getTemplateOperatingSystems(templates), ['name'])
         : operatingSystemsNative;
     }
 
-    const flavors = flavorSort(getFlavors(vanillaTemplates, params));
+    const flavors = flavorSort(getFlavors(templates, params));
 
-    const workloadProfiles = getWorkloadProfiles(vanillaTemplates, params);
+    const workloadProfiles = getWorkloadProfiles(templates, params);
 
     const loadingResources = openshiftFlag
       ? {
-          userTemplates,
           commonTemplates,
           cnvBaseImages,
         }
       : {};
+
+    if (openshiftFlag && iUserTemplate) {
+      Object.assign(loadingResources, { iUserTemplate });
+    }
 
     let operatingSystemValidation;
     let flavorValidation;
 
     if (
       iGetIsLoaded(commonTemplates) &&
-      iGetIsLoaded(userTemplates) &&
+      (!iUserTemplate || isUserTemplateValid) &&
       (operatingSystems.length === 0 || flavors.length === 0 || workloadProfiles.length === 0)
     ) {
       const validation = asValidationObject(
@@ -144,7 +150,7 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
           checkboxDescription: '',
         };
 
-        if (!userTemplate) {
+        if (!iUserTemplate) {
           if (baseImageFoundInCluster && pvcName) {
             osField.message = isBaseImageUploading
               ? BASE_IMAGE_AND_PVC_UPLOADING_SHORT
@@ -268,13 +274,12 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
 );
 
 type OSFlavorProps = {
-  userTemplates: any;
+  iUserTemplate: any;
   commonTemplates: any;
   flavorField: any;
   operatinSystemField: any;
   cloneBaseDiskImageField: any;
   mountWindowsGuestToolsField: any;
-  userTemplate: string;
   workloadProfile: string;
   cnvBaseImages: any;
   openshiftFlag: boolean;
