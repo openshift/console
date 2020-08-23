@@ -10,6 +10,10 @@ import { iGetIn, toJS } from '../../../utils/immutable';
 import { joinGrammaticallyListOfItems } from '@console/shared/src';
 import { getValidationNameByKey } from '../../../utils/validations/strings';
 import { iGetStorages } from '../selectors/immutable/storage';
+import {
+  INSUFFICIENT_PERMISSIONS_ERROR_TITLE,
+  INSUFFICIENT_PERMISSIONS_ERROR_DESC,
+} from '../../../constants/errors/common';
 
 export const computeVMSettingsErrors = (state, wizardReduxID) => {
   const vmSettingsFields = iGetVmSettings(state, wizardReduxID);
@@ -162,4 +166,31 @@ export const computeStorageErrors = (state, wizardReduxID) => {
   const isValid = hasAllRequiredFilled && invalidStorages.length === 0;
 
   return { hasAllRequiredFilled, isValid, errors };
+};
+
+const isPermissionError = (title: string, message: string): boolean =>
+  title.includes('roles.rbac.authorization.k8s.io') ||
+  message.includes('roles.rbac.authorization.k8s.io');
+
+type FormattedErrorMessage = {
+  isLong: boolean;
+  errTitle: string;
+  description: string;
+};
+
+export const formatError = (errTitle: string, message: string): FormattedErrorMessage => {
+  if (!/\n/.test(message)) {
+    return { isLong: false, errTitle, description: null };
+  }
+
+  if (isPermissionError(errTitle, message)) {
+    return {
+      isLong: true,
+      errTitle: INSUFFICIENT_PERMISSIONS_ERROR_TITLE,
+      description: INSUFFICIENT_PERMISSIONS_ERROR_DESC,
+    };
+  }
+
+  const [desc] = message.split('\n');
+  return { isLong: true, errTitle, description: desc };
 };

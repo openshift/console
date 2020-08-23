@@ -34,6 +34,7 @@ const asError = ({
 }): Error => {
   const firehoseResult = iGetCommonData(state, wizardReduxID, key);
   const loadError = iGet(firehoseResult, 'loadError');
+
   if (firehoseResult && (!loadError || (ignore404 && loadError?.response?.status === 404))) {
     return null;
   }

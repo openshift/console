@@ -132,7 +132,7 @@ export const startV2VVMWareController = async (
     kubevirtVmwareConfigMap = await getVmwareConfigMap({ k8sGet });
 
     if (!kubevirtVmwareConfigMap) {
-      return; // pass through finally()
+      throw new Error('V2V VMWare: v2v-vmware configMap not found');
     }
 
     activeDeployment = await k8sGet(DeploymentModel, name, namespace);
@@ -159,6 +159,7 @@ export const startV2VVMWareController = async (
       { name, namespace },
       enhancedK8sMethods,
     );
+
     await startVmWare(
       { name, namespace, serviceAccount, role, roleBinding, kubevirtVmwareConfigMap },
       enhancedK8sMethods,
