@@ -154,6 +154,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
             )}
             {!isLastStep && (
               <Button
+                id="create-vm-wizard-submit-btn"
                 key="submit"
                 variant={ButtonVariant.primary}
                 type="submit"
