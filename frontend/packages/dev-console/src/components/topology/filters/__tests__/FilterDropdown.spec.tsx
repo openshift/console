@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { mount, shallow } from 'enzyme';
-import { SelectOption, Switch } from '@patternfly/react-core';
+import { Radio, SelectOption, Switch } from '@patternfly/react-core';
 import FilterDropdown from '../FilterDropdown';
 import { DisplayFilters, TopologyDisplayFilterType } from '../../topology-types';
 import {
@@ -72,7 +72,39 @@ describe(FilterDropdown.displayName, () => {
     expect(wrapper.find(SelectOption)).toHaveLength(1);
   });
 
-  it('should contain the show groups and expand groups switches', () => {
+  it('should contain the connectivity mode radio buttons', () => {
+    let wrapper = mount(
+      <FilterDropdown
+        filters={dropdownFilter}
+        showGraphView
+        supportedFilters={dropdownFilter.map((f) => f.id)}
+        onChange={onChange}
+        opened
+      />,
+    );
+    let radioButtons = wrapper.find(Radio);
+    expect(radioButtons).toHaveLength(2);
+    // expect(radioButtons.at(0).prop('isChecked')).toBe(true);
+    // expect(radioButtons.at(1).prop('isChecked')).toBe(false);
+
+    getFilterById(SHOW_GROUPS_FILTER_ID, dropdownFilter).value = false;
+
+    wrapper = mount(
+      <FilterDropdown
+        filters={dropdownFilter}
+        showGraphView
+        supportedFilters={dropdownFilter.map((f) => f.id)}
+        onChange={onChange}
+        opened
+      />,
+    );
+    radioButtons = wrapper.find(Radio);
+    expect(radioButtons).toHaveLength(2);
+    expect(radioButtons.at(0).prop('isChecked')).toBe(false);
+    expect(radioButtons.at(1).prop('isChecked')).toBe(true);
+  });
+
+  it('should contain the expand groups switch', () => {
     const wrapper = mount(
       <FilterDropdown
         filters={dropdownFilter}
@@ -82,7 +114,7 @@ describe(FilterDropdown.displayName, () => {
         opened
       />,
     );
-    expect(wrapper.find(Switch)).toHaveLength(2);
+    expect(wrapper.find(Switch)).toHaveLength(1);
   });
 
   it('should disable individual group expand when expand groups is false', () => {
@@ -118,7 +150,7 @@ describe(FilterDropdown.displayName, () => {
     expect(
       wrapper
         .find(Switch)
-        .at(1)
+        .at(0)
         .props().isDisabled,
     ).toBeTruthy();
     expect(
