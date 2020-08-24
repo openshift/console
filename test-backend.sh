@@ -20,6 +20,9 @@ export GOFLAGS="-mod=vendor"
 # Invoke ./cover for HTML output
 COVER=${COVER:-"-cover"}
 
+# https://ci-operator-configresolver-ui-ci.apps.ci.l2s4.p1.openshiftapps.com/help#env
+OPENSHIFT_CI=${OPENSHIFT_CI:=false}
+
 TESTABLE="./..."
 FORMATTABLE=(cmd pkg)
 
@@ -43,7 +46,12 @@ read -ra split <<<"$TEST"
 TEST=("${split[@]/#/github.com/openshift/console/}")
 
 echo "Running tests..."
-go test "${COVER}" "$@" "${TEST[@]}"
+if [ "$OPENSHIFT_CI" = true ]; then
+    go test -v "${COVER}" "$@" "${TEST[@]}" 2>&1 | tee /tmp/artifacts/test.out
+    go-junit-report < /tmp/artifacts/test.out > /tmp/artifacts/junit.xml
+else
+    go test "${COVER}" "$@" "${TEST[@]}"
+fi
 
 echo "Checking gofmt..."
 fmtRes=$(gofmt -l "${FMT[@]}")
