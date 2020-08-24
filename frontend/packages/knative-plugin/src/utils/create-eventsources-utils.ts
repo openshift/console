@@ -157,7 +157,7 @@ export const getEventSourceData = (source: string) => {
       schedule: '',
     },
     pingsource: {
-      data: '',
+      jsonData: '',
       schedule: '',
     },
     sinkbinding: {

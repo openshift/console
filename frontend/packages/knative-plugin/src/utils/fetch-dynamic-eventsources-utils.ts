@@ -2,7 +2,12 @@ import * as _ from 'lodash';
 import { useEffect } from 'react';
 import { coFetch } from '@console/internal/co-fetch';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
-import { K8sKind, kindToAbbr, referenceForModel } from '@console/internal/module/k8s';
+import {
+  K8sKind,
+  kindToAbbr,
+  referenceForModel,
+  getLatestVersionForCRD,
+} from '@console/internal/module/k8s';
 import { chart_color_red_300 as knativeEventingColor } from '@patternfly/react-tokens/dist/js/chart_color_red_300';
 import { EventingSubscriptionModel, EventingTriggerModel } from '../models';
 
@@ -35,15 +40,14 @@ export const fetchEventSourcesCrd = async () => {
           metadata: { labels },
           spec: {
             group,
-            versions,
             names: { kind, plural, singular },
           },
         } = crd;
-        const { name: version } = versions?.find((ver) => ver.served && ver.storage);
-        if (version) {
+        const crdLatestVersion = getLatestVersionForCRD(crd);
+        if (crdLatestVersion) {
           const sourceModel = {
             apiGroup: group,
-            apiVersion: version,
+            apiVersion: crdLatestVersion,
             kind,
             plural,
             id: singular,
@@ -154,14 +158,13 @@ export const fetchChannelsCrd = async () => {
         const {
           spec: {
             group,
-            versions,
             names: { kind, plural, singular },
           },
         } = crd;
-        const { name: version } = versions?.find((ver) => ver.served && ver.storage);
+        const crdLatestVersion = getLatestVersionForCRD(crd);
         const sourceModel = {
           apiGroup: group,
-          apiVersion: version,
+          apiVersion: crdLatestVersion,
           kind,
           plural,
           id: singular,
