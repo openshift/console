@@ -58,7 +58,9 @@ const QuickStartTaskReview: React.FC<QuickStartTaskReviewProps> = ({
           onChange={() => onTaskReview(QuickStartTaskStatus.FAILED)}
         />
       </span>
-      {taskStatus === QuickStartTaskStatus.FAILED && taskHelp && <h5>{taskHelp}</h5>}
+      {taskStatus === QuickStartTaskStatus.FAILED && taskHelp && (
+        <SyncMarkdownView content={taskHelp} />
+      )}
     </Alert>
   );
 };
