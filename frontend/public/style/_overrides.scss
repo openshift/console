@@ -362,6 +362,11 @@ h6 {
   }
 }
 
+// Necessary due to setting $pf-global--enable-reset to false
+.pf-c-pagination .pf-c-options-menu__menu {
+  list-style: none;
+}
+
 // pf table overrides
 
 .pf-c-table tr > th {
