@@ -10,14 +10,12 @@ import {
   STORAGE_CLASS_PATTERNS,
   STORAGE_CLUSTER_NAME,
   SECOND,
-  SUCCESS,
   NS as OCS_NS,
 } from '../../utils/consts';
 import {
   InstallCluster,
   filterInput,
   goToStorageClasses,
-  currentSelectors,
   TEST_PLATFORM,
   MODE,
   Platform,
@@ -51,9 +49,7 @@ describe('Testing OCS Subscription', () => {
     'tests subscription flow for OCS Operator',
     async () => {
       await Installer.subscribeToOperator();
-      const text = await currentSelectors.ocsOperatorStatus.getText();
-      // Operator is installed successfully
-      expect(text.includes(SUCCESS)).toBe(true);
+      await Installer.checkOCSOperatorInstallation();
     },
     3 * MINUTE,
   );
