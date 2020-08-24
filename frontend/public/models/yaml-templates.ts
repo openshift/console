@@ -1211,6 +1211,48 @@ spec:
             - "for i in 9 8 7 6 5 4 3 2 1 ; do echo $i ; done"
           restartPolicy: Never
 `,
+  )
+  .setIn(
+    [referenceForModel(k8sModels.VolumeSnapshotModel), 'default'],
+    `
+apiVersion: snapshot.storage.k8s.io/v1beta1
+kind: VolumeSnapshot
+metadata:
+  name: example-snap
+spec:
+  volumeSnapshotClassName: example-snapclass
+  source:
+    persistentVolumeClaimName: pvc-test
+`,
+  )
+  .setIn(
+    [referenceForModel(k8sModels.VolumeSnapshotClassModel), 'default'],
+    `
+apiVersion: snapshot.storage.k8s.io/v1beta1
+kind: VolumeSnapshotClass
+metadata:
+  name: example-snapclass
+driver: hostpath.csi.k8s.io #csi-hostpath
+deletionPolicy: Delete
+`,
+  )
+  .setIn(
+    [referenceForModel(k8sModels.VolumeSnapshotContentModel), 'default'],
+    `
+apiVersion: snapshot.storage.k8s.io/v1beta1
+kind: VolumeSnapshotContent
+metadata:
+  name: example-snapcontent
+spec:
+  deletionPolicy: Delete
+  driver: hostpath.csi.k8s.io
+  source:
+    snapshotHandle: 7bdd0de3-aaeb-11e8-9aae-0242ac110002
+  volumeSnapshotClassName: example-snapclass
+  volumeSnapshotRef:
+    name: example-snap
+    namespace: default
+`,
   );
 
 export const getYAMLTemplates = (extensionTemplates: YAMLTemplate[] = []) =>

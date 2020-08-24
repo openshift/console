@@ -45,7 +45,18 @@ describe('Kubernetes resource CRUD operations', () => {
     .set('limitranges', { kind: 'LimitRange' })
     .set('horizontalpodautoscalers', { kind: 'HorizontalPodAutoscaler' })
     .set('networkpolicies', { kind: 'NetworkPolicy' })
-    .set('roles', { kind: 'Role' });
+    .set('roles', { kind: 'Role' })
+    .set('snapshot.storage.k8s.io~v1beta1~VolumeSnapshot', {
+      kind: 'snapshot.storage.k8s.io~v1beta1~VolumeSnapshot',
+    })
+    .set('snapshot.storage.k8s.io~v1beta1~VolumeSnapshotClass', {
+      kind: 'snapshot.storage.k8s.io~v1beta1~VolumeSnapshotClass',
+      namespaced: false,
+    })
+    .set('snapshot.storage.k8s.io~v1beta1~VolumeSnapshotContent', {
+      kind: 'snapshot.storage.k8s.io~v1beta1~VolumeSnapshotContent',
+      namespaced: false,
+    });
   const openshiftObjs = OrderedMap<string, { kind: string; namespaced?: boolean }>()
     .set('deploymentconfigs', { kind: 'DeploymentConfig' })
     .set('buildconfigs', { kind: 'BuildConfig' })
@@ -63,7 +74,12 @@ describe('Kubernetes resource CRUD operations', () => {
   let testObjs = Cypress.env('openshift') === true ? k8sObjs.merge(openshiftObjs) : k8sObjs;
   testObjs = Cypress.env('servicecatalog') === true ? testObjs.merge(serviceCatalogObjs) : testObjs;
   const testLabel = 'automated-test-name';
-  const resourcesWithCreationForm = new Set(['StorageClass', 'Route', 'PersistentVolumeClaim']);
+  const resourcesWithCreationForm = new Set([
+    'StorageClass',
+    'Route',
+    'PersistentVolumeClaim',
+    'snapshot.storage.k8s.io~v1beta1~VolumeSnapshot',
+  ]);
 
   testObjs.forEach(({ kind, namespaced = true }, resource) => {
     describe(kind, () => {
