@@ -31,7 +31,6 @@ import {
 } from '@patternfly/react-core';
 import { isAlertAction, useExtensions, AlertAction } from '@console/plugin-sdk';
 import { usePrevious } from '@console/shared/src/hooks/previous';
-import Linkify from 'react-linkify';
 
 import { coFetchJSON } from '../co-fetch';
 import {
@@ -92,16 +91,6 @@ export const getAlertActions = (actionsExtensions: AlertAction[]) => {
   return alertActions;
 };
 
-const AlertDescription: React.FC<AlertDescriptionProps> = ({ alert }) => {
-  if (
-    getAlertName(alert) === 'UpdateAvailable' ||
-    getAlertName(alert) === 'CannotRetrieveUpdates'
-  ) {
-    return <Linkify>{getAlertDescription(alert) || getAlertMessage(alert)}</Linkify>;
-  }
-  return <LinkifyExternal>{getAlertDescription(alert) || getAlertMessage(alert)}</LinkifyExternal>;
-};
-
 const getAlertNotificationEntries = (
   isLoaded: boolean,
   alertData: Alert[],
@@ -118,7 +107,11 @@ const getAlertNotificationEntries = (
           return (
             <NotificationEntry
               key={`${i}_${alert.activeAt}`}
-              description={<AlertDescription alert={alert} />}
+              description={
+                <LinkifyExternal>
+                  {getAlertDescription(alert) || getAlertMessage(alert)}
+                </LinkifyExternal>
+              }
               timestamp={getAlertTime(alert)}
               type={NotificationTypes[getAlertSeverity(alert)]}
               title={getAlertName(alert)}
@@ -380,10 +373,6 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
       {children}
     </NotificationDrawer>
   );
-};
-
-type AlertDescriptionProps = {
-  alert: Alert;
 };
 
 type NotificationPoll = (
