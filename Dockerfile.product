@@ -1,7 +1,7 @@
 ##################################################
 #
 # go backend build
-FROM openshift/origin-release:golang AS gobuilder
+FROM registry.svc.ci.openshift.org/ocp/builder:rhel-8-golang-openshift-4.6 AS gobuilder
 RUN mkdir -p /go/src/github.com/openshift/console/
 ADD . /go/src/github.com/openshift/console/
 WORKDIR /go/src/github.com/openshift/console/
@@ -11,7 +11,7 @@ RUN ./build-backend.sh
 ##################################################
 #
 # nodejs frontend build
-FROM rhscl/nodejs-8-rhel7 AS nodebuilder
+FROM registry.svc.ci.openshift.org/ocp/builder:ubi8.nodejs.12 AS nodebuilder
 
 ADD . .
 
@@ -38,7 +38,7 @@ RUN container-entrypoint ./build-frontend.sh
 ##################################################
 #
 # actual base image for final product
-FROM openshift3/origin-base
+FROM registry.svc.ci.openshift.org/ocp/4.6:base
 RUN mkdir -p /opt/bridge/bin
 COPY --from=gobuilder /go/src/github.com/openshift/console/bin/bridge /opt/bridge/bin
 COPY --from=nodebuilder /opt/app-root/src/frontend/public/dist /opt/bridge/static
