@@ -67,6 +67,16 @@ export default (state = getInitialState(), action: QuickStartSidebarActions) => 
       return newState;
     }
 
+    case Actions.ResetQuickStart: {
+      const { quickStartId, totalTasks } = action.payload;
+      const newState = state.setIn(
+        ['allQuickStartStates', quickStartId],
+        getDefaultQuickStartState(totalTasks),
+      );
+      persistState(newState);
+      return newState;
+    }
+
     case Actions.SetQuickStartStatus: {
       const { quickStartId, quickStartStatus } = action.payload;
       const newState = state.setIn(
