@@ -4,7 +4,6 @@ import FormSection from '@console/dev-console/src/components/import/section/Form
 import { InputField, TextColumnField } from '@console/shared';
 import { TextInputTypes } from '@patternfly/react-core';
 import KafkaSourceNetSection from './KafkaSourceNetSection';
-import ServiceAccountDropdown from '../../dropdowns/ServiceAccountDropdown';
 
 const KafkaSourceSection: React.FC = () => {
   const { values } = useFormikContext<FormikValues>();
@@ -42,7 +41,6 @@ const KafkaSourceSection: React.FC = () => {
         required
       />
       <KafkaSourceNetSection />
-      <ServiceAccountDropdown name="data.kafkasource.serviceAccountName" />
     </FormSection>
   );
 };

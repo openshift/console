@@ -4,7 +4,6 @@ import FormSection from '@console/dev-console/src/components/import/section/Form
 import KafkaSourceSection from '../KafkaSourceSection';
 import { EventSources } from '../../import-types';
 import KafkaSourceNetSection from '../KafkaSourceNetSection';
-import ServiceAccountDropdown from '../../../dropdowns/ServiceAccountDropdown';
 
 type KafkaSourceSectionProps = React.ComponentProps<typeof KafkaSourceSection>;
 
@@ -48,12 +47,11 @@ describe('KafkaSourceSection', () => {
     expect(topicsField.props().required).toBeTruthy();
   });
 
-  it('should render consumergroup, netsection and service dropdown', () => {
+  it('should render consumergroup, netsection', () => {
     const consumerGroupField = wrapper.find('[data-test-id="kafkasource-consumergroup-field"]');
     expect(consumerGroupField).toHaveLength(1);
     expect(consumerGroupField.props().required).toBeTruthy();
 
     expect(wrapper.find(KafkaSourceNetSection)).toHaveLength(1);
-    expect(wrapper.find(ServiceAccountDropdown)).toHaveLength(1);
   });
 });
