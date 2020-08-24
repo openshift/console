@@ -173,6 +173,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
             )}
             {!isFinishingStep && !(isSimpleView && areMainTabsHidden) && (
               <Button
+                id="create-vm-wizard-reviewandcreate-btn"
                 key="reviewandcreate"
                 variant={ButtonVariant.secondary}
                 isDisabled={isReviewButtonDisabled}
@@ -197,6 +198,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
             )}
             {areMainTabsHidden && canNavigateEverywhere && (
               <Button
+                id="create-vm-wizard-edit-btn"
                 key="edit"
                 variant={ButtonVariant.secondary}
                 onClick={() => onEdit(activeStepID)}
@@ -206,6 +208,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
             )}
             {!hideBackButton && (
               <Button
+                id="create-vm-wizard-back-btn"
                 key="back"
                 variant={ButtonVariant.secondary}
                 onClick={onBack}
@@ -217,6 +220,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
             )}
             {!activeStep.hideCancelButton && (
               <Button
+                id="create-vm-wizard-cancel-btn"
                 key="cancel"
                 variant={ButtonVariant.link}
                 onClick={() => {
