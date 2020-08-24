@@ -2,7 +2,7 @@ import { VMWizardTab } from '../types';
 
 export const CREATE_VM = 'Create Virtual Machine';
 export const CREATE_VM_TEMPLATE = `${CREATE_VM} Template`;
-export const IMPORT = `Import`;
+export const IMPORT = 'Import';
 export const IMPORT_VM = 'Import Virtual Machine';
 export const REVIEW_AND_CONFIRM = 'Review and confirm';
 export const NO_TEMPLATE = 'None';
