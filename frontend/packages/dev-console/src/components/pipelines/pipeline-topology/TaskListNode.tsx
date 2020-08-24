@@ -3,20 +3,28 @@ import * as FocusTrap from 'focus-trap-react';
 import { Button, Flex, FlexItem } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import Popper from '@console/shared/src/components/popper/Popper';
-import { KebabItem, KebabOption } from '@console/internal/components/utils';
+import { KebabItem, KebabOption, ResourceIcon } from '@console/internal/components/utils';
 import { observer, Node, NodeModel } from '@patternfly/react-topology';
 import { PipelineResourceTask } from '../../../utils/pipeline-augment';
 import { NewTaskNodeCallback, TaskListNodeModelData } from './types';
 
 import './TaskListNode.scss';
 
-const taskToOption = (task: PipelineResourceTask, callback: NewTaskNodeCallback): KebabOption => {
+type KeyedKebabOption = KebabOption & { key: string };
+
+const taskToOption = (
+  task: PipelineResourceTask,
+  callback: NewTaskNodeCallback,
+): KeyedKebabOption => {
   const {
+    kind,
     metadata: { name },
   } = task;
 
   return {
+    key: `${name}-${kind}`,
     label: name,
+    icon: <ResourceIcon kind={kind} />,
     callback: () => {
       callback(task);
     },
@@ -82,7 +90,7 @@ const TaskListNode: React.FC<TaskListNodeProps> = ({ element, unselectedText }) 
           <div className="pf-c-dropdown pf-m-expanded">
             <ul className="pf-c-dropdown__menu pf-m-align-right oc-kebab__popper-items odc-task-list-node__list-items">
               {options.map((option) => (
-                <li key={option.label}>
+                <li key={option.key}>
                   <KebabItem
                     option={option}
                     onClick={() => {
