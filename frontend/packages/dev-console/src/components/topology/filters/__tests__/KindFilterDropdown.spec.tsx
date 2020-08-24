@@ -14,13 +14,13 @@ describe(KindFilterDropdown.displayName, () => {
     dropdownFilter = [...DEFAULT_TOPOLOGY_FILTERS];
     onChange = jasmine.createSpy();
     supportedKinds = {
-      'apps~v1~Deployment': 1,
-      'apps.openshift.io~v1~DeploymentConfig': 1,
-      'apps~v1~DaemonSet': 1,
-      'apps~v1~StatefulSet': 1,
-      'batch~v1~Job': 1,
-      'batch~v1beta1~CronJob': 1,
-      'core~v1~Pod': 1,
+      'Kind-B': 3,
+      'Kind-A': 4,
+      'Kind-D': 5,
+      'Kind-E': 6,
+      'Kind-F': 7,
+      'Kind-C': 2,
+      'Kind-G': 8,
     };
   });
 
@@ -47,13 +47,52 @@ describe(KindFilterDropdown.displayName, () => {
     expect(wrapper.find(SelectOption)).toHaveLength(Object.keys(supportedKinds).length);
   });
 
-  it('should kinds when filtered', () => {
-    getFilterById(SHOW_GROUPS_FILTER_ID, dropdownFilter).value = false;
-    const keys = Object.keys(supportedKinds);
+  it('should have no badge when there are no filters', () => {
+    const wrapper = mount(
+      <KindFilterDropdown
+        filters={dropdownFilter}
+        supportedKinds={supportedKinds}
+        onChange={onChange}
+        opened
+      />,
+    );
+    expect(wrapper.find('.odc-kind-filter-dropdown__kind-count').exists()).toBeFalsy();
+  });
+
+  it('should have the correct badge count when there are filters', () => {
     dropdownFilter.push({
       type: TopologyDisplayFilterType.kind,
-      id: keys[0],
-      label: keys[0],
+      id: 'Kind-A',
+      label: 'Kind-A',
+      priority: 1,
+      value: true,
+    });
+    dropdownFilter.push({
+      type: TopologyDisplayFilterType.kind,
+      id: 'Kind-C',
+      label: 'Kind-C',
+      priority: 1,
+      value: true,
+    });
+    const wrapper = mount(
+      <KindFilterDropdown
+        filters={dropdownFilter}
+        supportedKinds={supportedKinds}
+        onChange={onChange}
+        opened
+      />,
+    );
+    const badge = wrapper.find('.odc-kind-filter-dropdown__kind-count');
+    expect(badge.exists()).toBeTruthy();
+    expect(badge.first().text()).toEqual('2');
+  });
+
+  it('should select kinds when filtered', () => {
+    getFilterById(SHOW_GROUPS_FILTER_ID, dropdownFilter).value = false;
+    dropdownFilter.push({
+      type: TopologyDisplayFilterType.kind,
+      id: 'Kind-A',
+      label: 'Kind-A',
       priority: 1,
       value: true,
     });
@@ -71,5 +110,23 @@ describe(KindFilterDropdown.displayName, () => {
         .first()
         .props().isChecked,
     ).toBeTruthy();
+  });
+
+  it('should show resource counts correctly', () => {
+    const wrapper = mount(
+      <KindFilterDropdown
+        filters={dropdownFilter}
+        supportedKinds={supportedKinds}
+        onChange={onChange}
+        opened
+      />,
+    );
+    const selectOptions = wrapper.find(SelectOption);
+    const firstType = selectOptions.at(0);
+    const secondType = selectOptions.at(1);
+    const thirdType = selectOptions.at(2);
+    expect(firstType.find('.pf-c-check__label').text()).toContain('(4)');
+    expect(secondType.find('.pf-c-check__label').text()).toContain('(3)');
+    expect(thirdType.find('.pf-c-check__label').text()).toContain('(2)');
   });
 });
