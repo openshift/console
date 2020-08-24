@@ -4,6 +4,7 @@ import {
   CDI_UPLOAD_RUNNING,
   CDI_UPLOAD_POD_ANNOTATION,
   CDI_UPLOAD_POD_NAME_ANNOTATION,
+  CDI_BOUND_PVC_ANNOTATION,
 } from '../../components/cdi-upload-provider/consts';
 import { STORAGE_IMPORT_POD_LABEL } from '../../constants';
 
@@ -24,3 +25,5 @@ export const getPvcUploadPhase = (pvc) => getAnnotation(pvc, CDI_UPLOAD_POD_ANNO
 
 export const isPvcUploading = (pvc) =>
   getPvcUploadPodName(pvc) && getPvcUploadPhase(pvc) === CDI_UPLOAD_RUNNING;
+
+export const isPvcBoundToCDI = (pvc) => getAnnotation(pvc, CDI_BOUND_PVC_ANNOTATION) === 'true';

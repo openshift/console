@@ -22,20 +22,32 @@ import {
   humanizeBinaryBytes,
   convertToBaseValue,
   AsyncComponent,
+  asAccessReview,
 } from './utils';
 import { ResourceEventStream } from './events';
 import { PersistentVolumeClaimModel } from '../models';
 import { setPVCMetrics } from '../actions/ui';
 import { PrometheusEndpoint } from './graphs/helpers';
 import { usePrometheusPoll } from './graphs/prometheus-poll-hook';
+import deletePVCModal from './modals/delete-pvc-modal';
 
-const { common, ExpandPVC, PVCSnapshot, ClonePVC } = Kebab.factory;
+const { ModifyLabels, ModifyAnnotations, Edit, ExpandPVC, PVCSnapshot, ClonePVC } = Kebab.factory;
 const menuActions = [
   ...Kebab.getExtensionsActionsForKind(PersistentVolumeClaimModel),
   ExpandPVC,
   PVCSnapshot,
   ClonePVC,
-  ...common,
+  ModifyLabels,
+  ModifyAnnotations,
+  Edit,
+  (kind, obj) => ({
+    label: `Delete ${kind.label}`,
+    callback: () =>
+      deletePVCModal({
+        pvc: obj,
+      }),
+    accessReview: asAccessReview(kind, obj, 'delete'),
+  }),
 ];
 
 export const PVCStatus = ({ pvc }) => {
