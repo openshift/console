@@ -64,7 +64,14 @@ const ImageStreamNsDropdown: React.FC = () => {
   );
 
   React.useEffect(() => {
+    if (
+      initialValues.imageStream.image &&
+      values.imageStream.image !== initialValues.imageStream.image
+    ) {
+      initialValues.imageStream.image = values.imageStream.image;
+    }
     values.imageStream.namespace && onDropdownChange(values.imageStream.namespace);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onDropdownChange, values.imageStream.namespace]);
 
   React.useEffect(() => {

@@ -378,7 +378,7 @@ export const getInternalImageInitialValues = (editAppResource: K8sResourceKind) 
     'metadata.labels["app.openshift.io/runtime-namespace"]',
     '',
   );
-  const imageStreamName = _.get(editAppResource, 'metadata.labels["app.openshift.io/runtime"]', '');
+  const imageStreamName = _.get(editAppResource, 'metadata.labels["app.kubernetes.io/name"]', '');
   const imageStreamTag = _.get(
     editAppResource,
     'metadata.labels["app.openshift.io/runtime-version"]',
