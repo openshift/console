@@ -17,13 +17,13 @@ export type NetworkMapping = {
 export type StorageMapping = {
   source: Source; // Storage Domain ID
   target: Target;
-  volumeMode?: 'Block' | 'Filesystem';
+  volumeMode?: string;
 };
 
 export type DiskMapping = {
   source: Source; // Disk ID
   target: Target;
-  volumeMode?: 'Block' | 'Filesystem';
+  volumeMode?: string;
 };
 
 export type VMImportOvirtSource = {
