@@ -34,6 +34,9 @@
       margin-top: var(--pf-global--spacer--sm);
       border-top: 1px solid var(--pf-global--BorderColor--300);
     }
+    .pf-c-check__input {
+      margin-top: 0;
+    }
   }
 
   .pf-c-select__menu-group-title {

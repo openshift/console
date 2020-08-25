@@ -24,6 +24,7 @@ const KindFilterDropdown: React.FC<KindFilterDropdownProps> = ({
   let kindFilters = filters.filter(
     (f) => f.type === TopologyDisplayFilterType.kind && supportedKinds[f.id],
   );
+  const selectedFilterCount = kindFilters.filter((f) => f.value).length;
   kindFilters = Object.keys(supportedKinds).reduce((acc, kind) => {
     if (!filters.find((f) => f.id === kind)) {
       const model = modelFor(kind);
@@ -62,7 +63,7 @@ const KindFilterDropdown: React.FC<KindFilterDropdownProps> = ({
   };
 
   const selectContent = (
-    <div className="odc-kind-filter-dropdown">
+    <div className="odc-topology-filter-dropdown__group odc-kind-filter-dropdown">
       <span className="odc-kind-filter-dropdown__clear-button">
         <Button variant="link" onClick={onClearFilters}>
           Clear all filters
@@ -71,8 +72,7 @@ const KindFilterDropdown: React.FC<KindFilterDropdownProps> = ({
       {kindFilters.map((filter) => (
         <SelectOption key={filter.id} value={filter.id} isChecked={filter.value}>
           <ResourceIcon kind={filter.id} />
-          {filter.label}
-          <span className="odc-kind-filter-dropdown__kind-count">{supportedKinds[filter.id]}</span>
+          {filter.label} ({supportedKinds[filter.id]})
         </SelectOption>
       ))}
     </div>
@@ -84,7 +84,14 @@ const KindFilterDropdown: React.FC<KindFilterDropdownProps> = ({
       customContent={selectContent}
       isOpen={isOpen}
       onSelect={onSelect}
-      placeholderText="Filter by Resource"
+      placeholderText={
+        <span>
+          Filter by Resource
+          {selectedFilterCount ? (
+            <span className="odc-kind-filter-dropdown__kind-count">{selectedFilterCount}</span>
+          ) : null}
+        </span>
+      }
       isCheckboxSelectionBadgeHidden
     />
   );
