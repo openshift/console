@@ -1,5 +1,5 @@
 export const VIRT_LAUNCHER_POD_PREFIX = 'virt-launcher-';
-export const READABLE_VIRTIO = 'VirtIO';
+export const READABLE_VIRTIO = 'virtio';
 export const ANNOTATION_FIRST_BOOT = 'kubevirt.ui/firstBoot';
 export const ANNOTATION_DESCRIPTION = 'description';
 export const ANNOTATION_PXE_INTERFACE = 'kubevirt.ui/pxeInterface';
