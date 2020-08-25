@@ -44,6 +44,7 @@ import { OverviewSpecialGroup } from './constants';
 import { DaemonSetModel, JobModel, StatefulSetModel } from '../../models';
 import { Alerts, Alert } from '../monitoring/types';
 import { getAlertsAndRules } from '../monitoring/utils';
+import { OverviewMetrics, fetchOverviewMetrics, METRICS_FAILURE_CODES } from './metricUtils';
 
 const asOverviewGroups = (keyedItems: { [name: string]: OverviewItem[] }): OverviewGroup[] => {
   const compareGroups = (a: OverviewGroup, b: OverviewGroup) => {
@@ -270,38 +271,17 @@ class OverviewMainContent_ extends React.Component<
     }
 
     const { metrics: previousMetrics, namespace } = this.props;
-    const queries = {
-      memory: `sum(container_memory_working_set_bytes{namespace='${namespace}',container='',pod!=''}) BY (pod, namespace)`,
-      cpu: `pod:container_cpu_usage:sum{namespace="${namespace}"}`,
-    };
 
-    const promises = _.map(queries, (query, name) => {
-      const url = `${PROMETHEUS_TENANCY_BASE_PATH}/api/v1/query?namespace=${namespace}&query=${encodeURIComponent(
-        query,
-      )}`;
-      return coFetchJSON(url).then(({ data: { result } }) => {
-        const byPod: MetricValuesByPod = result.reduce((acc, { metric, value }) => {
-          acc[metric.pod] = Number(value[1]);
-          return acc;
-        }, {});
-        return { [name]: byPod };
-      });
-    });
-
-    Promise.all(promises)
-      .then((data) => {
-        const metrics = data.reduce(
-          (acc: OverviewMetrics, metric): OverviewMetrics => _.assign(acc, metric),
-          {},
-        );
-        this.props.updateMetrics(metrics);
+    fetchOverviewMetrics(namespace)
+      .then((updatedMetrics) => {
+        this.props.updateMetrics(updatedMetrics);
       })
       .catch((res) => {
         const status = _.get(res, 'response.status');
         // eslint-disable-next-line no-console
         console.error('Could not fetch metrics, status:', status);
         // Don't retry on some status codes unless a previous request succeeded.
-        if (_.includes([401, 403, 502, 503], status) && _.isEmpty(previousMetrics)) {
+        if (_.includes(METRICS_FAILURE_CODES, status) && _.isEmpty(previousMetrics)) {
           throw new Error(`Could not fetch metrics, status: ${status}`);
         }
       })
@@ -579,15 +559,6 @@ export type PodOverviewItem = {
 export type OverviewGroup = {
   name: string;
   items: OverviewItem[];
-};
-
-type MetricValuesByPod = {
-  [podName: string]: number;
-};
-
-export type OverviewMetrics = {
-  cpu?: MetricValuesByPod;
-  memory?: MetricValuesByPod;
 };
 
 type OverviewHeadingPropsFromState = {

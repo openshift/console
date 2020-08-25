@@ -6,6 +6,8 @@ import { Status as TooltipStatus } from '@console/shared';
 import { pluralize } from '@console/internal/components/utils';
 import { isMobile } from '../list-view-utils';
 
+import './AlertsCell.scss';
+
 type AlertsProps = {
   item: Node;
 };
@@ -20,7 +22,7 @@ const AlertTooltip = ({ alerts, severity, noSeverityLabel = false }) => {
   const message = _.uniq(alerts.map((a) => a.message)).join('\n');
 
   const status = (
-    <span className="project-overview__status">
+    <span className="odc-topology-list-view__alert-cell--status">
       <TooltipStatus
         status={severity}
         title={noSeverityLabel ? String(count) : pluralize(count, label)}
@@ -72,12 +74,12 @@ export const AlertsCell: React.FC<AlertsProps> = ({ item }) => {
   } = _.groupBy(alerts, 'severity');
   return (
     <DataListCell id={`${item.getId()}_alerts`}>
-      <div className="project-overview__detail project-overview__detail--alert">
+      <div className="odc-topology-list-view__alert-cell">
         {error && <AlertTooltip severity="Error" alerts={error} />}
         {warning && <AlertTooltip severity="Warning" alerts={warning} />}
         {info && <AlertTooltip severity="Info" alerts={info} />}
         {(buildNew || buildPending || buildRunning || buildFailed || buildError) && (
-          <div className="project-overview__builds">
+          <div className="odc-topology-list-view__alert-cell__builds">
             Builds {buildNew && <AlertTooltip severity="New" alerts={buildNew} noSeverityLabel />}{' '}
             {buildPending && (
               <AlertTooltip severity="Pending" alerts={buildPending} noSeverityLabel />
