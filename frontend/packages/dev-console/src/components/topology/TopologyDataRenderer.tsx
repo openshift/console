@@ -61,6 +61,11 @@ export const ConnectedTopologyDataRenderer: React.FC<TopologyDataRendererProps &
     return { data: alerts, loaded: !loading, loadError: error };
   }, [response, error, loading]);
 
+  // Wipe the current model on a namespace change
+  React.useEffect(() => {
+    setModel(null);
+  }, [namespace]);
+
   React.useEffect(() => {
     const { extensionsLoaded, watchedResources } = dataModelContext;
     if (!extensionsLoaded) {

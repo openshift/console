@@ -148,7 +148,7 @@ export const TopologyPageContext: React.FC<TopologyPageProps> = observer(({ matc
               )}
               <Tooltip position="left" content={showListView ? 'Topology View' : 'List View'}>
                 <Link
-                  className="pf-c-button pf-m-plain"
+                  className="pf-c-button pf-m-plain odc-topology__view-switcher"
                   to={`/topology/${namespace ? `ns/${namespace}` : 'all-namespaces'}${
                     showListView ? '/graph' : '/list'
                   }${queryParams ? `?${queryParams.toString()}` : ''}`}
