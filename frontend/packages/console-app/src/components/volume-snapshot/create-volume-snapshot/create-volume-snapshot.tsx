@@ -92,7 +92,7 @@ const SnapshotClassDropdown: React.FC<SnapshotClassDropdownProps> = (props) => {
       dataFilter={filter}
       resources={resources}
       selectedKeyKind={kind}
-      placeholder="Select snapshot class"
+      placeholder="Select volume snapshot class"
       selectedKey={selectedKey}
     />
   );
@@ -252,7 +252,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
         {pvcObj && (
           <div className="form-group co-volume-snapshot__form">
             <label className="control-label co-required" htmlFor="snapshot-class">
-              Snapshot Class
+              Volume Snapshot Class
             </label>
             <SnapshotClassDropdown
               onChange={setSnapshotClassName}
