@@ -114,6 +114,7 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
           <FormGroup label="Size" isRequired fieldId="clone-pvc-modal__size">
             <RequestSizeInput
               name="requestSize"
+              testID="input-request-size"
               onChange={requestedSizeInputChange}
               defaultRequestSizeUnit={requestedUnit}
               defaultRequestSizeValue={requestedSize}
