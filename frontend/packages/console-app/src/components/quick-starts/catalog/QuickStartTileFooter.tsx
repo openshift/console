@@ -12,6 +12,7 @@ type StateProps = {
 
 type DispatchProps = {
   setActiveQuickStart?: (quickStartID: string, totalTasks: number) => void;
+  resetQuickStart?: (quickStartID: string, totalTasks: number) => void;
   setQuickStartStatus?: (quickStartId: string, quickStartStatus: QuickStartStatus) => void;
   setQuickStartTaskNumber?: (quickStartId: string, taskNumber: number) => void;
 };
@@ -31,18 +32,8 @@ const QuickStartTileFooter: React.FC<Props> = ({
   totalTasks,
   setActiveQuickStart,
   setQuickStartStatus,
-  setQuickStartTaskNumber,
+  resetQuickStart,
 }) => {
-  const stopPropagation = React.useCallback(
-    (e: React.SyntheticEvent) => {
-      if (activeQuickStartId) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-    },
-    [activeQuickStartId],
-  );
-
   const startQuickStart = React.useCallback(
     (e: React.SyntheticEvent) => {
       e.preventDefault();
@@ -56,19 +47,10 @@ const QuickStartTileFooter: React.FC<Props> = ({
 
   const restartQuickStart = React.useCallback(
     (e: React.SyntheticEvent) => {
-      stopPropagation(e);
-      setQuickStartStatus(quickStartId, QuickStartStatus.IN_PROGRESS);
-      setQuickStartTaskNumber(quickStartId, -1);
+      resetQuickStart(quickStartId, totalTasks);
+      startQuickStart(e);
     },
-    [quickStartId, setQuickStartStatus, setQuickStartTaskNumber, stopPropagation],
-  );
-
-  const reviewQuickStart = React.useCallback(
-    (e: React.SyntheticEvent) => {
-      stopPropagation(e);
-      setQuickStartTaskNumber(quickStartId, -1);
-    },
-    [quickStartId, setQuickStartTaskNumber, stopPropagation],
+    [quickStartId, resetQuickStart, startQuickStart, totalTasks],
   );
 
   return (
@@ -80,17 +62,17 @@ const QuickStartTileFooter: React.FC<Props> = ({
           </Button>
         </FlexItem>
       )}
-      {status === QuickStartStatus.IN_PROGRESS && (
+      {status === QuickStartStatus.IN_PROGRESS && activeQuickStartId !== quickStartId && (
         <FlexItem>
-          <Button onClick={stopPropagation} variant="link" isInline>
+          <Button variant="link" isInline>
             Resume the tour
           </Button>
         </FlexItem>
       )}
       {status === QuickStartStatus.COMPLETE && (
         <FlexItem>
-          <Button onClick={reviewQuickStart} variant="link" isInline>
-            Review the tour
+          <Button onClick={restartQuickStart} variant="link" isInline>
+            Start the tour
           </Button>
         </FlexItem>
       )}
@@ -112,6 +94,8 @@ const mapStateToProps = (state: RootState): StateProps => ({
 const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
   setActiveQuickStart: (quickStartID: string, totalTasks: number) =>
     dispatch(QuickStartActions.setActiveQuickStart(quickStartID, totalTasks)),
+  resetQuickStart: (quickStartID: string, totalTasks: number) =>
+    dispatch(QuickStartActions.resetQuickStart(quickStartID, totalTasks)),
   setQuickStartStatus: (quickStartId: string, quickStartStatus: QuickStartStatus) =>
     dispatch(QuickStartActions.setQuickStartStatus(quickStartId, quickStartStatus)),
   setQuickStartTaskNumber: (quickStartId: string, taskNumber: number) =>
