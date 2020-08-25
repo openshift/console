@@ -1,7 +1,9 @@
 package server
 
 import (
+	"crypto/sha256"
 	"crypto/tls"
+	"encoding/base64"
 	"fmt"
 	"html/template"
 	"io"
@@ -9,6 +11,7 @@ import (
 	"net/url"
 	"os"
 	"path"
+	"strings"
 
 	"github.com/coreos/dex/api"
 	"github.com/coreos/pkg/capnslog"
@@ -38,6 +41,8 @@ const (
 	meteringProxyEndpoint          = "/api/metering"
 	customLogoEndpoint             = "/custom-logo"
 	helmChartRepoProxyEndpoint     = "/api/helm/charts/"
+
+	sha256Prefix = "sha256~"
 )
 
 var (
@@ -455,8 +460,13 @@ func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWr
 		return
 	}
 
+	tokenName := user.Token
+	if strings.HasPrefix(tokenName, sha256Prefix) {
+		tokenName = tokenToObjectName(tokenName)
+	}
+
 	// Delete the OpenShift OAuthAccessToken.
-	path := "/apis/oauth.openshift.io/v1/oauthaccesstokens/" + user.Token
+	path := "/apis/oauth.openshift.io/v1/oauthaccesstokens/" + tokenName
 	url := proxy.SingleJoiningSlash(s.K8sProxyConfig.Endpoint.String(), path)
 	req, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
@@ -474,4 +484,12 @@ func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWr
 	w.WriteHeader(resp.StatusCode)
 	io.Copy(w, resp.Body)
 	resp.Body.Close()
+}
+
+// tokenToObjectName returns the oauthaccesstokens object name for the given raw token,
+// i.e. the sha256 hash prefixed with "sha256~".
+func tokenToObjectName(token string) string {
+	name := strings.TrimPrefix(token, sha256Prefix)
+	h := sha256.Sum256([]byte(name))
+	return sha256Prefix + base64.RawURLEncoding.EncodeToString(h[0:])
 }
