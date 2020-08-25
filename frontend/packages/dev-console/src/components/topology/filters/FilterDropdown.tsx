@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { Select, SelectGroup, SelectOption, SelectVariant, Switch } from '@patternfly/react-core';
+import {
+  Radio,
+  Select,
+  SelectGroup,
+  SelectOption,
+  SelectVariant,
+  Switch,
+} from '@patternfly/react-core';
 import { TopologyDisplayFilterType, DisplayFilters } from '../topology-types';
 import { EXPAND_GROUPS_FILTER_ID, SHOW_GROUPS_FILTER_ID } from './const';
 
@@ -71,10 +78,25 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
   const selectContent = (
     <div className="odc-topology-filter-dropdown">
       <div className="odc-topology-filter-dropdown__group">
-        <span className="odc-topology-filter-dropdown__expand-groups-switcher">
-          <span className="pf-c-select__menu-group-title">Show Groups</span>
-          <Switch aria-label="Show Groups" isChecked={showGroups} onChange={onShowGroupsChange} />
-        </span>
+        <span className="pf-c-select__menu-group-title">Mode</span>
+        <div className="odc-topology-filter-dropdown__radio-group">
+          <Radio
+            className="odc-topology-filter-dropdown__radio"
+            id="showGroups"
+            isChecked={showGroups}
+            label="Connectivity"
+            name="Connectivity"
+            onChange={() => onShowGroupsChange(true)}
+          />
+          <Radio
+            className="odc-topology-filter-dropdown__radio"
+            id="hideGroups"
+            isChecked={!showGroups}
+            label="Consumption"
+            name="Consumption"
+            onChange={() => onShowGroupsChange(false)}
+          />
+        </div>
       </div>
       {expandFilters.length ? (
         <div className="odc-topology-filter-dropdown__group">

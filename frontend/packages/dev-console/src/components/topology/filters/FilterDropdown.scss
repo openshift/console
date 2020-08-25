@@ -1,9 +1,20 @@
 @import '../../../../../../public/style/vars';
 
 .odc-topology-filter-dropdown {
+  &__radio-group {
+    padding-left: var(--pf-global--spacer--md);
+  }
+  &__radio {
+    padding-top: var(--pf-global--spacer--sm);
+    padding-bottom: var(--pf-global--spacer--sm);
+    .pf-c-radio__input {
+      margin: 0;
+    }
+  }
   &__expand-groups-switcher {
     display: flex;
     align-items: center;
+    margin-top: var(--pf-global--spacer--sm);
 
     .pf-c-select__menu-group-title {
       flex: 1;
@@ -25,8 +36,11 @@
     }
   }
 
-  &__expand-groups-label .pf-c-select__menu-group-title {
-    padding-top: 0;
+  .pf-c-select__menu-group-title {
     padding-bottom: 0;
+  }
+
+  &__expand-groups-label > .pf-c-select__menu-group-title {
+    padding-top: 0;
   }
 }
