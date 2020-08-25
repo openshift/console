@@ -6,7 +6,14 @@ import * as classNames from 'classnames';
 import { useDispatch, connect } from 'react-redux';
 import { sortable } from '@patternfly/react-table';
 import { ChartDonut } from '@patternfly/react-charts';
-import { Status, FLAGS, calculateRadius, getNamespace, getName } from '@console/shared';
+import {
+  Status,
+  FLAGS,
+  calculateRadius,
+  getNamespace,
+  getName,
+  getRequestedPVCSize,
+} from '@console/shared';
 import { useExtensions, isPVCCreateProp, isPVCAlert, isPVCStatus } from '@console/plugin-sdk';
 import { connectToFlags } from '../reducers/features';
 import { Conditions } from './conditions';
@@ -193,6 +200,7 @@ const Details_ = ({ flags, obj: pvc }) => {
   const storageClassName = pvc?.spec?.storageClassName;
   const volumeName = pvc?.spec?.volumeName;
   const storage = pvc?.status?.capacity?.storage;
+  const requestedStorage = getRequestedPVCSize(pvc);
   const accessModes = pvc?.status?.accessModes;
   const volumeMode = pvc?.spec?.volumeMode;
   const conditions = pvc?.status?.conditions;
@@ -204,6 +212,7 @@ const Details_ = ({ flags, obj: pvc }) => {
   });
 
   const totalCapacityMetric = convertToBaseValue(storage);
+  const totalRequestMetric = convertToBaseValue(requestedStorage);
   const usedMetrics = response?.data?.result?.[0]?.value?.[1];
   const availableMetrics = usedMetrics ? totalCapacityMetric - usedMetrics : null;
   const totalCapacity = humanizeBinaryBytes(totalCapacityMetric);
@@ -264,6 +273,10 @@ const Details_ = ({ flags, obj: pvc }) => {
               <dt>Status</dt>
               <dd data-test-id="pvc-status">
                 <PVCStatus pvc={pvc} />
+              </dd>
+              <dt>Requested Capacity</dt>
+              <dd data-test="pvc-requested-capacity">
+                {humanizeBinaryBytes(totalRequestMetric).string}
               </dd>
               {storage && (
                 <>
