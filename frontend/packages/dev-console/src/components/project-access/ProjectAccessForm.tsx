@@ -23,6 +23,7 @@ const ProjectAccessForm: React.FC<FormikProps<FormikValues>> = ({
     <div className="co-m-pane__form">
       <MultiColumnField
         name="projectAccess"
+        addLabel="Add Access"
         headers={['Name', 'Role']}
         emptyValues={{ user: '', role: '' }}
       >

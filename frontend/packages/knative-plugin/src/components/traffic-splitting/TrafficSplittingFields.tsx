@@ -20,6 +20,7 @@ const TrafficSplittingFields: React.FC<Props> = ({ revisionItems, values }) => {
   return (
     <MultiColumnField
       name="trafficSplitting"
+      addLabel="Add Revision"
       headers={[{ name: 'Split', required: true }, 'Tag', { name: 'Revision', required: true }]}
       emptyValues={{ percent: '', tag: '', revisionName: '' }}
       disableDeleteRow={values.trafficSplitting.length === 1}

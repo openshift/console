@@ -69,7 +69,7 @@ const MultipleKeySelector: React.FC<MultipleKeySelectorProps> = ({
               icon={<PlusCircleIcon />}
               isInline
             >
-              {addString || 'Add'}
+              {addString || 'Add items'}
             </Button>
           </FormGroup>
         );
