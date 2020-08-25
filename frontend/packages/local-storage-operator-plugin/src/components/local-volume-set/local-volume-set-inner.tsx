@@ -58,19 +58,19 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
 
   return (
     <>
-      <FormGroup label="Volume Set Name" isRequired fieldId="create-lvs--volume-set-name">
+      <FormGroup label="Volume Set Name" isRequired fieldId="create-lvs-volume-set-name">
         <TextInput
           type={TextInputTypes.text}
-          id="create-lvs--volume-set-name"
+          id="create-lvs-volume-set-name"
           value={state.volumeSetName}
           onChange={(name: string) => dispatch({ type: 'setVolumeSetName', name })}
           isRequired
         />
       </FormGroup>
-      <FormGroup label="Storage Class Name" fieldId="create-lvs--storage-class-name">
+      <FormGroup label="Storage Class Name" fieldId="create-lvs-storage-class-name">
         <TextInput
           type={TextInputTypes.text}
-          id="create-lvs--storage-class-name"
+          id="create-lvs-storage-class-name"
           value={state.storageClassName}
           placeholder={state.volumeSetName}
           onChange={(name: string) => dispatch({ type: 'setStorageClassName', name })}
@@ -79,7 +79,7 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
       <Text component={TextVariants.h3} className="lso-create-lvs__filter-volumes-text--margin">
         Filter Disks
       </Text>
-      <FormGroup label="Node Selector" fieldId="create-lvs--radio-group-node-selector">
+      <FormGroup label="Node Selector" fieldId="create-lvs-radio-group-node-selector">
         <div id="create-lvs-radio-group-node-selector">
           <Radio
             label={`All nodes (${pluralize(state.nodeNamesForLVS.length, 'node')})`}
@@ -117,9 +117,9 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
           }}
         />
       )}
-      <FormGroup label="Disk Type" fieldId="create-lvs--disk-type-dropdown">
+      <FormGroup label="Disk Type" fieldId="create-lvs-disk-type-dropdown">
         <Dropdown
-          id="create-lvs--disk-type-dropdown"
+          id="create-lvs-disk-type-dropdown"
           dropDownClassName="dropdown--full-width"
           items={diskTypeOptions}
           title={state.diskType}
@@ -132,11 +132,11 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
       <ExpandableSection toggleText="Advanced" data-test-id="create-lvs-form-advanced">
         <FormGroup
           label="Disk Mode"
-          fieldId="create-lso--disk-mode-dropdown"
+          fieldId="create-lso-disk-mode-dropdown"
           className="lso-create-lvs__disk-mode-dropdown--margin"
         >
           <Dropdown
-            id="create-lso--disk-mode-dropdown"
+            id="create-lso-disk-mode-dropdown"
             dropDownClassName="dropdown--full-width"
             items={diskModeOptions}
             title={state.diskMode}
@@ -148,18 +148,18 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
         </FormGroup>
         <FormGroup
           label="Disk Size"
-          fieldId="create-lvs--disk-size"
+          fieldId="create-lvs-disk-size"
           className="lso-create-lvs__disk-size-form-group--margin"
         >
-          <div id="create-lvs--disk-size" className="lso-create-lvs__disk-size-form-group-div">
+          <div id="create-lvs-disk-size" className="lso-create-lvs__disk-size-form-group-div">
             <FormGroup
               label="Min"
-              fieldId="create-lvs--min-disk-size"
+              fieldId="create-lvs-min-disk-size"
               className="lso-create-lvs__disk-size-form-group-max-min-input"
             >
               <TextInput
                 type={TextInputTypes.number}
-                id="create-lvs--min-disk-size"
+                id="create-lvs-min-disk-size"
                 value={state.minDiskSize}
                 onChange={(size: string) => {
                   dispatch({ type: 'setMinDiskSize', value: size });
@@ -169,12 +169,12 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
             <div>-</div>
             <FormGroup
               label="Max"
-              fieldId="create-lvs--max-disk-size"
+              fieldId="create-lvs-max-disk-size"
               className="lso-create-lvs__disk-size-form-group-max-min-input"
             >
               <TextInput
                 type={TextInputTypes.text}
-                id="create-lvs--max-disk-size"
+                id="create-lvs-max-disk-size"
                 value={state.maxDiskSize}
                 validated={state.isValidMaxSize ? 'default' : 'error'}
                 className="lso-create-lvs__disk-size-form-group-max-input"
@@ -182,7 +182,7 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
               />
             </FormGroup>
             <Dropdown
-              id="create-lvs--disk-size-unit-dropdown"
+              id="create-lvs-disk-size-unit-dropdown"
               items={diskSizeUnitOptions}
               title={state.diskSizeUnit}
               selectedKey={state.diskSizeUnit}
@@ -192,14 +192,14 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
             />
           </div>
         </FormGroup>
-        <FormGroup label="Max Disk Limit" fieldId="create-lvs--max-disk-limit">
+        <FormGroup label="Max Disk Limit" fieldId="create-lvs-max-disk-limit">
           <p className="help-block lso-create-lvs__max-disk-limit-help-text--margin">
             Disk limit will set the maximum number of PVs to create on a node. If the field is
             empty, will create PVs for all available disks on the matching nodes.
           </p>
           <TextInput
             type={TextInputTypes.number}
-            id="create-lvs--max-disk-limit"
+            id="create-lvs-max-disk-limit"
             value={state.maxDiskLimit}
             onChange={(maxLimit) => dispatch({ type: 'setMaxDiskLimit', value: maxLimit })}
             placeholder="All"
