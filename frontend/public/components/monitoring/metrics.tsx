@@ -330,7 +330,7 @@ const SeriesButton_: React.FC<SeriesButtonProps> = ({
   toggleSeries,
 }) => {
   if (isSeriesEmpty) {
-    return null;
+    return <div className="query-browser__series-btn-wrap"></div>;
   }
   const title = `${isDisabled ? 'Show' : 'Hide'} series`;
 
