@@ -19,7 +19,7 @@ export const TEST_KINDS_MAP = {
   statefulSets: 'StatefulSet',
   secrets: 'Secret',
   clusterServiceVersions: 'operators.coreos.com~v1alpha1~ClusterServiceVersion',
-  serviceBindingRequests: 'apps.openshift.io~v1alpha1~ServiceBinding',
+  serviceBindingRequests: 'operators.coreos.com~v1alpha1~ServiceBinding',
   revisions: 'serving.knative.dev~v1~Revision',
   configurations: 'serving.knative.dev~v1~Configuration',
   ksroutes: 'serving.knative.dev~v1~Route',
