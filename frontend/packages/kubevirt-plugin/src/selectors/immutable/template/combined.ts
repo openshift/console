@@ -86,6 +86,13 @@ export const iGetRelevantTemplates = (
         const versionCMP = compareVersions(splitVersion(aVersion), splitVersion(bVersion)) * -1; // descending
 
         if (versionCMP !== 0) {
+          // 'devel' version if exist is always the highst version.
+          if (aVersion === 'devel') {
+            return -1;
+          }
+          if (bVersion === 'devel') {
+            return 1;
+          }
           return versionCMP;
         }
 
