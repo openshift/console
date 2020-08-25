@@ -13,7 +13,7 @@ import {
   getOperatorBackedServiceKindMap,
 } from '@console/shared';
 import { EdgeModel, Model, NodeShape } from '@patternfly/react-topology';
-import { TopologyDataObject, TopologyDataResources } from '../topology-types';
+import { OdcNodeModel, TopologyDataObject, TopologyDataResources } from '../topology-types';
 import {
   OPERATOR_GROUP_WIDTH,
   OPERATOR_GROUP_HEIGHT,
@@ -65,7 +65,7 @@ export const edgesFromServiceBinding = (
 
 export const getServiceBindingEdges = (
   dc: K8sResourceKind,
-  resources: K8sResourceKind[],
+  nodes: OdcNodeModel[],
   sbrs: K8sResourceKind[],
 ): EdgeModel[] => {
   const edges = [];
@@ -76,13 +76,14 @@ export const getServiceBindingEdges = (
     _.forEach(sbr.spec.backingServiceSelectors || [sbr.spec.backingServiceSelector], (bss) => {
       if (bss) {
         // handles multiple edges
-        const targetResource = resources.find(
-          (deployment) =>
-            deployment?.metadata?.ownerReferences?.[0]?.kind === bss.kind &&
-            deployment?.metadata?.ownerReferences?.[0]?.name === bss.resourceRef,
+        const targetGroup = nodes.find(
+          (node) =>
+            node.type === TYPE_OPERATOR_BACKED_SERVICE &&
+            node.resource?.kind === bss.kind &&
+            node.resource?.metadata.name === bss.resourceRef,
         );
-        const target = targetResource?.metadata?.uid;
         const source = dc?.metadata?.uid;
+        const target = targetGroup?.id;
         if (source && target) {
           edges.push({
             id: `${source}_${target}`,
@@ -214,10 +215,6 @@ export const getOperatorTopologyDataModel = (
     }
   });
 
-  workloads.forEach((dc) => {
-    operatorsDataModel.edges.push(...getServiceBindingEdges(dc, workloads, serviceBindingRequests));
-  });
-
   _.forIn(obsGroups, (children: string[], grp: string) => {
     const groupDataModel: Model = { nodes: [], edges: [] };
     const data: TopologyDataObject<OperatorGroupData> = {
@@ -251,6 +248,12 @@ export const getOperatorTopologyDataModel = (
     );
 
     addToTopologyDataModel(groupDataModel, operatorsDataModel);
+  });
+
+  workloads.forEach((dc) => {
+    operatorsDataModel.edges.push(
+      ...getServiceBindingEdges(dc, operatorsDataModel.nodes, serviceBindingRequests),
+    );
   });
 
   return Promise.resolve(operatorsDataModel);

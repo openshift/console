@@ -364,4 +364,6 @@ export {
   EDGE_DRAG_TYPE,
   withNoDrop,
   withContextMenu,
+  canDropEdgeOnNode,
+  highlightNode,
 };

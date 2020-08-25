@@ -13,7 +13,10 @@ import {
   EXPAND_GROUPS_FILTER_ID,
   SHOW_GROUPS_FILTER_ID,
 } from '../../filters/const';
-import { getOperatorTopologyDataModel } from '../operators-data-transformer';
+import {
+  getOperatorTopologyDataModel,
+  getServiceBindingEdges,
+} from '../operators-data-transformer';
 import {
   baseDataModelGetter,
   getWorkloadResources,
@@ -26,6 +29,11 @@ import {
   getTopologyFilters,
 } from '../operatorFilters';
 import { getFilterById } from '../../filters';
+import {
+  sbrBackingServiceSelector,
+  sbrBackingServiceSelectors,
+} from '../../__tests__/service-binding-test-data';
+import { TYPE_SERVICE_BINDING } from '../../components';
 
 const filterers = [applyOperatorDisplayOptions];
 
@@ -130,5 +138,46 @@ describe('operator data transformer ', () => {
     const newModel = updateModelFromFilters(graphData, filters, ALL_APPLICATIONS_KEY, filterers);
     expect(newModel.nodes.filter((n) => n.type === TYPE_OPERATOR_BACKED_SERVICE)).toHaveLength(1);
     expect(newModel.nodes.filter((n) => n.type === TYPE_OPERATOR_WORKLOAD)).toHaveLength(1);
+  });
+  it('should support single  binding service selectors', async () => {
+    const topologyTransformedData = await getTransformedTopologyData(mockResources);
+    const deployments = sbrBackingServiceSelector.deployments.data;
+    const sbrs = sbrBackingServiceSelector.serviceBindingRequests.data;
+
+    expect(getServiceBindingEdges(deployments[0], topologyTransformedData.nodes, sbrs)).toEqual([
+      {
+        id: `uid-app_3006a8f3-6e2b-4a19-b37e-fbddd9a41f51`,
+        type: TYPE_SERVICE_BINDING,
+        source: 'uid-app',
+        target: '3006a8f3-6e2b-4a19-b37e-fbddd9a41f51',
+        data: { sbr: sbrs[0] },
+        resource: sbrs[0],
+      },
+    ]);
+  });
+
+  it('should support multiple binding service selectors', async () => {
+    const topologyTransformedData = await getTransformedTopologyData(mockResources);
+    const deployments = sbrBackingServiceSelectors.deployments.data;
+    const sbrs = sbrBackingServiceSelectors.serviceBindingRequests.data;
+
+    expect(getServiceBindingEdges(deployments[0], topologyTransformedData.nodes, sbrs)).toEqual([
+      {
+        id: `uid-app_3006a8f3-6e2b-4a19-b37e-fbddd9a41f51`,
+        type: TYPE_SERVICE_BINDING,
+        source: 'uid-app',
+        target: '3006a8f3-6e2b-4a19-b37e-fbddd9a41f51',
+        data: { sbr: sbrs[0] },
+        resource: sbrs[0],
+      },
+      {
+        id: `uid-app_3006a8f3-6e2b-4a19-b37e-fbddd9a41f51`,
+        type: TYPE_SERVICE_BINDING,
+        source: 'uid-app',
+        target: '3006a8f3-6e2b-4a19-b37e-fbddd9a41f51',
+        data: { sbr: sbrs[0] },
+        resource: sbrs[0],
+      },
+    ]);
   });
 });
