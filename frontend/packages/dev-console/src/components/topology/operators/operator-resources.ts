@@ -8,7 +8,7 @@ export const operatorResources = (namespace: string): FirehoseResource[] => {
       isList: true,
       kind: referenceForModel(ServiceBindingRequestModel),
       namespace,
-      prop: 'serviceBindingRequests',
+      prop: 'ServiceBindings',
       optional: true,
     },
   ];

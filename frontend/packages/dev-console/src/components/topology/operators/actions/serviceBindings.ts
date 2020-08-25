@@ -23,25 +23,25 @@ export const createServiceBinding = (
   }`;
 
   const serviceBindingRequest = {
-    apiVersion: 'apps.openshift.io/v1alpha1',
-    kind: 'ServiceBindingRequest',
+    apiVersion: 'operators.coreos.com/v1alpha1',
+    kind: 'ServiceBinding',
     metadata: {
       name: sbrName,
       namespace,
     },
     spec: {
-      applicationSelector: {
-        resourceRef: sourceName,
+      application: {
+        name: sourceName,
         group: sourceGroup[0],
         version: sourceGroup[1],
         resource: modelFor(referenceFor(source)).plural,
       },
-      backingServiceSelector: {
+      services: [{
         group: targetResourceGroup[0],
         version: targetResourceGroup[1],
         kind: targetResourceKind,
-        resourceRef: targetResourceRefName,
-      },
+        name: targetResourceRefName,
+      }],
       detectBindingResources: true,
     },
   };

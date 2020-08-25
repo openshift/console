@@ -3,25 +3,25 @@ import { TopologyDataResources } from '../topology-types';
 
 export const serviceBindingRequest: K8sResourceKind = {
   data: {
-    apiVersion: 'apps.openshift.io/v1alpha1',
-    kind: 'ServiceBindingRequest',
+    apiVersion: 'operators.coreos.com/v1alpha1',
+    kind: 'ServiceBinding',
     metadata: {
       name: 'analytics-deployment-D-wit-deployment-D',
       namespace: 'testproject1',
     },
     spec: {
-      applicationSelector: {
+      application: {
         group: 'apps',
         resource: 'deployments',
-        resourceRef: 'analytics-deployment',
+        name: 'analytics-deployment',
         version: 'v1',
       },
-      backingServiceSelector: {
+      services: [{
         group: '',
         kind: undefined,
-        resourceRef: undefined,
+        name: undefined,
         version: undefined,
-      },
+      }],
       detectBindingResources: true,
     },
   },
@@ -79,30 +79,30 @@ export const sbrBackingServiceSelectors: Partial<TopologyDataResources> = {
     loadError: null,
     data: [
       {
-        apiVersion: 'apps.openshift.io/v1alpha1',
-        kind: 'ServiceBindingRequest',
+        apiVersion: 'operators.coreos.com/v1alpha1',
+        kind: 'ServiceBinding',
         metadata: {
           name: 'sbr-1',
         },
         spec: {
-          applicationSelector: {
-            resourceRef: 'app',
+          application: {
+            name: 'app',
             group: 'apps',
             version: 'v1',
             resource: 'deployments',
           },
-          backingServiceSelectors: [
+          services: [
             {
               group: 'postgresql.baiju.dev',
               version: 'v1alpha1',
               kind: 'Database',
-              resourceRef: 'db-demo1',
+              name: 'db-demo1',
             },
             {
               group: 'postgresql.baiju.dev',
               version: 'v1alpha1',
               kind: 'Database',
-              resourceRef: 'db-demo2',
+              name: 'db-demo2',
             },
           ],
           detectBindingResources: true,
@@ -148,23 +148,23 @@ export const sbrBackingServiceSelector: Partial<TopologyDataResources> = {
     loadError: null,
     data: [
       {
-        apiVersion: 'apps.openshift.io/v1alpha1',
-        kind: 'ServiceBindingRequest',
+        apiVersion: 'operators.coreos.com/v1alpha1',
+        kind: 'ServiceBinding',
         metadata: {
           name: 'sbr-2',
         },
         spec: {
-          applicationSelector: {
-            resourceRef: 'app',
+          application: {
+            name: 'app',
             group: 'apps',
             version: 'v1',
             resource: 'deployments',
           },
-          backingServiceSelector: {
+          services: {
             group: 'postgresql.baiju.dev',
             version: 'v1alpha1',
             kind: 'Database',
-            resourceRef: 'db-demo1',
+            name: 'db-demo1',
           },
           detectBindingResources: true,
         },

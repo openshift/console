@@ -14,7 +14,7 @@ export const gitRepoUrl = element(by.id('form-input-git-url-field'));
 export const importFromGitHeader = $('[data-test-id="resource-title"]');
 export const applicationNameField = element(by.id('form-input-application-name-field'));
 
-export const applicationSelector = element(by.id('form-dropdown-application-name-field'));
+export const application = element(by.id('form-dropdown-application-name-field'));
 export const applicationDropdown = element(
   by.className('dropdown-menu__autocomplete-filter pf-c-dropdown__menu dropdown-menu--text-wrap'),
 );
@@ -237,7 +237,7 @@ export const safeSendKeys = async function(
 
 export const addApplication = async function(name: string, nodeName: string) {
   // These are not visible when a user first runs the UI on an empty project
-  //  await applicationSelector.click();
+  //  await application.click();
   //  await browser.wait(until.presenceOf(applicationDropdown));
   //  await createApplication.click();
   await applicationNameField.click();
@@ -246,9 +246,9 @@ export const addApplication = async function(name: string, nodeName: string) {
 };
 
 export const addApplicationWithExistingApps = async function(name: string, nodeName: string) {
-  await browser.wait(until.visibilityOf(applicationSelector));
-  await browser.wait(until.elementToBeClickable(applicationSelector));
-  await applicationSelector.click();
+  await browser.wait(until.visibilityOf(application));
+  await browser.wait(until.elementToBeClickable(application));
+  await application.click();
   await browser.wait(until.presenceOf(applicationDropdown));
   await createApplication.click();
   await applicationNameField.click();

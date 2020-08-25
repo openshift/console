@@ -45,13 +45,13 @@ export const edgesFromServiceBinding = (
   sbrs.forEach((sbr) => {
     let edgeExists = false;
     const reference = referenceFor(source);
-    if (reference && sbr?.spec?.applicationSelector?.resource === modelFor(reference)?.plural) {
-      if (sbr?.spec?.applicationSelector?.resourceRef === source.metadata.name) {
+    if (reference && sbr?.spec?.application?.resource === modelFor(reference)?.plural) {
+      if (sbr?.spec?.application?.name === source.metadata.name) {
         edgeExists = true;
       } else {
-        const matchLabels = sbr?.spec?.applicationSelector?.matchLabels;
+        const matchLabels = sbr?.spec?.application?.matchLabels;
         if (matchLabels) {
-          const sbrSelector = new LabelSelector(sbr.spec.applicationSelector);
+          const sbrSelector = new LabelSelector(sbr.spec.application);
           if (sbrSelector.matches(source)) {
             edgeExists = true;
           }
@@ -71,15 +71,14 @@ export const getServiceBindingEdges = (
   const edges = [];
 
   _.forEach(edgesFromServiceBinding(dc, sbrs), (sbr) => {
-    // look for multiple backing services first in `backingServiceSelectors`
-    // followed by a fallback to the single reference in `backingServiceSelector`
-    _.forEach(sbr.spec.backingServiceSelectors || [sbr.spec.backingServiceSelector], (bss) => {
+    // look for multiple backing services in `services`
+    _.forEach(sbr.spec.services, (bss) => {
       if (bss) {
         // handles multiple edges
         const targetResource = resources.find(
           (deployment) =>
             deployment?.metadata?.ownerReferences?.[0]?.kind === bss.kind &&
-            deployment?.metadata?.ownerReferences?.[0]?.name === bss.resourceRef,
+            deployment?.metadata?.ownerReferences?.[0]?.name === bss.name,
         );
         const target = targetResource?.metadata?.uid;
         const source = dc?.metadata?.uid;
