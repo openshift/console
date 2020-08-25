@@ -82,6 +82,7 @@ export const getDisks = (vm: OvirtVM, storageClassConfigMap: ConfigMapKind): VMW
         disableEditing: true,
         isFieldEditableOverride: {
           storageClass: true,
+          volumeMode: true,
         },
       },
     };
