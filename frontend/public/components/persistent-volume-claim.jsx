@@ -251,7 +251,7 @@ const Details_ = ({ flags, obj: pvc }) => {
           </div>
         )}
         <div className="row">
-          <div className="col-md-4 col-xl-5">
+          <div className="col-sm-6">
             <ResourceSummary resource={pvc}>
               <dt>Label Selector</dt>
               <dd data-test-id="pvc-name">
@@ -259,7 +259,7 @@ const Details_ = ({ flags, obj: pvc }) => {
               </dd>
             </ResourceSummary>
           </div>
-          <div className="col-md-4 col-xl-5">
+          <div className="col-sm-6">
             <dl>
               <dt>Status</dt>
               <dd data-test-id="pvc-status">
