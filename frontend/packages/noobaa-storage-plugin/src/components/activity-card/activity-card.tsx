@@ -4,7 +4,7 @@ import DashboardCard from '@console/shared/src/components/dashboard/dashboard-ca
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import { EventKind } from '@console/internal/module/k8s';
+import { EventKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
 import { EventModel, StatefulSetModel, PodModel } from '@console/internal/models';
 import ActivityBody, {
@@ -18,12 +18,17 @@ import {
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { getResiliencyProgress } from '@console/ceph-storage-plugin/src/utils';
 import { CephObjectStoreModel } from '@console/ceph-storage-plugin/src/models';
-import { DATA_RESILIENCE_QUERIES } from '../../queries';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { useFlag } from '@console/shared/src/hooks/flag';
+import { RGW_FLAG } from '@console/ceph-storage-plugin/src/features';
+import { dataResiliencyQueryMap, ObjectServiceDashboardQuery } from '../../queries';
 import {
   NooBaaBackingStoreModel,
   NooBaaBucketClassModel,
   NooBaaObjectBucketClaimModel,
 } from '../../models';
+import { secretResource } from '../../constants';
+import { decodeRGWPrefix } from '../../utils';
 import './activity-card.scss';
 
 const eventsResource: FirehoseResource = { isList: true, kind: EventModel.kind, prop: 'events' };
@@ -66,40 +71,45 @@ const RecentEvent = withDashboardResources(
 
 const OngoingActivity = withDashboardResources(
   ({ watchPrometheus, stopWatchPrometheusQuery, prometheusResults }: DashboardItemProps) => {
+    const [data, loaded, loadError] = useK8sWatchResource<K8sResourceKind>(secretResource);
+    const isRGWSupported = useFlag(RGW_FLAG);
+    const rgwPrefix = React.useMemo(
+      () => (isRGWSupported && loaded && !loadError ? decodeRGWPrefix(data) : ''),
+      [data, loaded, loadError, isRGWSupported],
+    );
+
+    const rgwResiliencyQuery = dataResiliencyQueryMap[
+      ObjectServiceDashboardQuery.RGW_REBUILD_PROGRESS_QUERY
+    ](rgwPrefix);
+
     React.useEffect(() => {
-      watchPrometheus(DATA_RESILIENCE_QUERIES.REBUILD_PROGRESS_QUERY);
-      watchPrometheus(DATA_RESILIENCE_QUERIES.REBUILD_TIME_QUERY);
-      watchPrometheus(DATA_RESILIENCE_QUERIES.RGW_PROGRESS_QUERY);
+      watchPrometheus(dataResiliencyQueryMap.MCG_REBUILD_PROGRESS_QUERY);
+      watchPrometheus(dataResiliencyQueryMap.MCG_REBUILD_TIME_QUERY);
+      isRGWSupported && watchPrometheus(rgwResiliencyQuery);
       return () => {
-        stopWatchPrometheusQuery(DATA_RESILIENCE_QUERIES.REBUILD_PROGRESS_QUERY);
-        stopWatchPrometheusQuery(DATA_RESILIENCE_QUERIES.REBUILD_TIME_QUERY);
-        stopWatchPrometheusQuery(DATA_RESILIENCE_QUERIES.RGW_PROGRESS_QUERY);
+        stopWatchPrometheusQuery(dataResiliencyQueryMap.MCG_REBUILD_PROGRESS_QUERY);
+        stopWatchPrometheusQuery(dataResiliencyQueryMap.MCG_REBUILD_TIME_QUERY);
+        isRGWSupported && stopWatchPrometheusQuery(rgwResiliencyQuery);
       };
-    }, [watchPrometheus, stopWatchPrometheusQuery]);
+    }, [watchPrometheus, stopWatchPrometheusQuery, isRGWSupported, rgwResiliencyQuery]);
 
     const progress = prometheusResults.getIn([
-      DATA_RESILIENCE_QUERIES.REBUILD_PROGRESS_QUERY,
+      dataResiliencyQueryMap.MCG_REBUILD_PROGRESS_QUERY,
       'data',
     ]) as PrometheusResponse;
     const progressError = prometheusResults.getIn([
-      DATA_RESILIENCE_QUERIES.REBUILD_PROGRESS_QUERY,
+      dataResiliencyQueryMap.MCG_REBUILD_PROGRESS_QUERY,
       'loadError',
     ]);
 
     const eta = prometheusResults.getIn([
-      DATA_RESILIENCE_QUERIES.REBUILD_TIME_QUERY,
+      dataResiliencyQueryMap.MCG_REBUILD_TIME_QUERY,
       'data',
     ]) as PrometheusResponse;
 
-    const rgwProgress = prometheusResults.getIn([
-      DATA_RESILIENCE_QUERIES.REBUILD_PROGRESS_QUERY,
-      'data',
-    ]) as PrometheusResponse;
+    const rgwProgress = prometheusResults.getIn([rgwResiliencyQuery, 'data']) as PrometheusResponse;
 
-    const rgwProgressError = prometheusResults.getIn([
-      DATA_RESILIENCE_QUERIES.REBUILD_PROGRESS_QUERY,
-      'loadError',
-    ]);
+    const rgwProgressError = prometheusResults.getIn([rgwResiliencyQuery, 'loadError']);
 
     const prometheusActivities = [];
 
@@ -113,7 +123,7 @@ const OngoingActivity = withDashboardResources(
       });
     }
 
-    if (getResiliencyProgress(rgwProgress) < 1) {
+    if (isRGWSupported && getResiliencyProgress(rgwProgress) < 1) {
       prometheusActivities.push({
         results: [rgwProgress],
         loader: () =>
@@ -125,7 +135,9 @@ const OngoingActivity = withDashboardResources(
 
     return (
       <OngoingActivityBody
-        loaded={progress || progressError || rgwProgress || rgwProgressError}
+        loaded={
+          (progress || progressError) && (isRGWSupported ? rgwProgress || rgwProgressError : true)
+        }
         prometheusActivities={prometheusActivities}
       />
     );

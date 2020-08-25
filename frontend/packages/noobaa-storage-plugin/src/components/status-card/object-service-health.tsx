@@ -39,7 +39,7 @@ export const ObjectServiceStatus: React.FC<ObjectServiceStatusProps> = ({
       {statusType === StatusType.HEALTH ? healthString : dataResiliency}
       <StatusPopupSection firstColumn="Services" secondColumn="Status">
         <Status icon={healthStateMapping[MCGMetrics.state]?.icon}>Multi Cloud Gateway </Status>
-        <Status icon={healthStateMapping[RGWMetrics.state]?.icon}>RADOS Gateway </Status>
+        <Status icon={healthStateMapping[RGWMetrics.state]?.icon}>Object Gateway (RGW) </Status>
       </StatusPopupSection>
     </HealthItem>
   );

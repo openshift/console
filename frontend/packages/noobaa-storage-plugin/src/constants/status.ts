@@ -4,12 +4,8 @@ export enum StatusType {
 }
 
 export enum Phase {
-  READY = 'Ready',
-  FAILURE = 'Failure',
-}
-
-export enum Health {
-  HEALTHY = 'Healthy',
+  CONNECTED = 'Connected',
+  PROGRESSING = 'Progressing',
   FAILURE = 'Failure',
 }
 
