@@ -16,6 +16,7 @@ export enum FormFieldType {
   TEXT = 'TEXT',
   TEXT_AREA = 'TEXT_AREA',
   SELECT = 'SELECT',
+  PF_SELECT = 'PF_SELECT',
   CHECKBOX = 'CHECKBOX',
   INLINE_CHECKBOX = 'INLINE_CHECKBOX',
   FILE_UPLOAD = 'FILE_UPLOAD',
@@ -35,6 +36,7 @@ const hasIsDisabled = new Set([
   FormFieldType.INLINE_CHECKBOX,
   FormFieldType.FILE_UPLOAD,
   FormFieldType.CUSTOM,
+  FormFieldType.PF_SELECT,
 ]);
 const hasDisabled = new Set([FormFieldType.TEXT_AREA]);
 const hasIsChecked = new Set([FormFieldType.CHECKBOX, FormFieldType.INLINE_CHECKBOX]);
@@ -54,6 +56,8 @@ const hasIsRequired = new Set([
   FormFieldType.CUSTOM,
 ]);
 const hasLabel = new Set([FormFieldType.INLINE_CHECKBOX]);
+const hasSelections = new Set([FormFieldType.PF_SELECT]);
+const hasPlaceholderText = new Set([FormFieldType.PF_SELECT]);
 
 const validatedValidationErrorTypes = new Set([
   ValidationErrorType.Error,
@@ -99,6 +103,8 @@ export const FormField: React.FC<FormFieldProps> = ({ children, isDisabled, valu
               validated: set(hasValidated, validated),
               id: getFieldId(key),
               label: set(hasLabel, getFieldTitle(key)),
+              selections: set(hasSelections, val),
+              placeholderText: set(hasPlaceholderText, getPlaceholder(key)),
             },
             _.isUndefined,
           ),

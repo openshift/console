@@ -15,6 +15,13 @@ import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 import { VolumeType } from './storage';
+import {
+  PROVISION_SOURCE_PXE_DESC,
+  PROVISION_SOURCE_CONTAINER_DESC,
+  PROVISION_SOURCE_URL_DESC,
+  PROVISION_SOURCE_DISK_DESC,
+} from '../../utils/strings';
+import { SelectDropdownObjectEnum } from '../select-dropdown-object-enum';
 
 type ProvisionSourceDetails = {
   type?: ProvisionSource;
@@ -22,11 +29,27 @@ type ProvisionSourceDetails = {
   error?: string;
 };
 
-export class ProvisionSource extends ObjectEnum<string> {
-  static readonly PXE = new ProvisionSource('PXE');
-  static readonly CONTAINER = new ProvisionSource('Container');
-  static readonly URL = new ProvisionSource('URL');
-  static readonly DISK = new ProvisionSource('Disk');
+export class ProvisionSource extends SelectDropdownObjectEnum<string> {
+  static readonly URL = new ProvisionSource('URL', {
+    label: 'URL (adds disk)',
+    description: PROVISION_SOURCE_URL_DESC,
+    order: 1,
+  });
+  static readonly DISK = new ProvisionSource('Disk', {
+    label: 'Existing PVC (adds disk)',
+    description: PROVISION_SOURCE_DISK_DESC,
+    order: 2,
+  });
+  static readonly CONTAINER = new ProvisionSource('Container', {
+    label: 'Container',
+    description: PROVISION_SOURCE_CONTAINER_DESC,
+    order: 3,
+  });
+  static readonly PXE = new ProvisionSource('PXE', {
+    label: 'PXE (network boot - adds network interface)',
+    description: PROVISION_SOURCE_PXE_DESC,
+    order: 4,
+  });
 
   private static readonly ALL = Object.freeze(
     ObjectEnum.getAllClassEnumProperties<ProvisionSource>(ProvisionSource),

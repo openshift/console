@@ -7,6 +7,7 @@ import {
   FormSelectOption,
   TextInput,
   ExpandableSection,
+  SelectOption,
 } from '@patternfly/react-core';
 import {
   FirehoseResult,
@@ -61,6 +62,7 @@ import { UIStorageEditConfig } from '../../../types/ui/storage';
 import { isFieldDisabled } from '../../../utils/ui/edit-config';
 import { PendingChangesAlert } from '../../Alerts/PendingChangesAlert';
 import { MODAL_RESTART_IS_REQUIRED } from '../../../strings/vm/status';
+import { FormPFSelect } from '../../form/form-pf-select';
 
 import './disk-modal.scss';
 
@@ -308,7 +310,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     }
   };
 
-  const onSourceChanged = (uiSource) => {
+  const onSourceChanged = (e, uiSource) => {
     setSize('');
     setUnit('Gi');
     setURL('');
@@ -339,7 +341,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     const newType = DiskType.fromString(t);
     setType(newType);
     if (newType === DiskType.CDROM && source === StorageUISource.BLANK) {
-      onSourceChanged(StorageUISource.URL.getValue());
+      onSourceChanged(null, StorageUISource.URL.getValue());
     }
   };
 
@@ -354,11 +356,11 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
         {isVMRunning && <PendingChangesAlert warningMsg={MODAL_RESTART_IS_REQUIRED} />}
         <Form>
           <FormRow title="Source" fieldId={asId('source')} isRequired>
-            <FormSelect
-              onChange={onSourceChanged}
-              value={asFormSelectValue(source)}
-              id={asId('source')}
+            <FormPFSelect
+              menuAppendTo={() => document.body}
               isDisabled={isDisabled('source', !source.canBeChangedToThisSource(type))}
+              selections={asFormSelectValue(source.toString())}
+              onSelect={onSourceChanged}
             >
               {StorageUISource.getAll()
                 .filter(
@@ -366,16 +368,19 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                     storageUISource.canBeChangedToThisSource(type) ||
                     !source.canBeChangedToThisSource(type),
                 )
+                .sort((a, b) => a.getOrder() - b.getOrder())
                 .map((uiType) => {
                   return (
-                    <FormSelectOption
+                    <SelectOption
                       key={uiType.getValue()}
                       value={uiType.getValue()}
-                      label={uiType.toString()}
-                    />
+                      description={uiType.getDescription()}
+                    >
+                      {uiType.toString()}
+                    </SelectOption>
                   );
                 })}
-            </FormSelect>
+            </FormPFSelect>
           </FormRow>
           {source.requiresURL() && (
             <FormRow title="URL" fieldId={asId('url')} isRequired validation={urlValidation}>

@@ -1,13 +1,5 @@
-import * as _ from 'lodash';
 import * as React from 'react';
-import {
-  FormSelect,
-  FormSelectOption,
-  Checkbox,
-  Text,
-  Button,
-  ButtonVariant,
-} from '@patternfly/react-core';
+import { Checkbox, Text, Button, ButtonVariant, SelectOption } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { ValidationErrorType, asValidationObject } from '@console/shared/src/utils/validation';
 import {
@@ -19,17 +11,15 @@ import {
 } from '../../../../utils/immutable';
 import { FormFieldRow } from '../../form/form-field-row';
 import { FormField, FormFieldType } from '../../form/form-field';
-import { FormSelectPlaceholderOption } from '../../../form/form-select-placeholder-option';
 import {
-  getFlavors,
   getOperatingSystems,
   getWorkloadProfiles,
 } from '../../../../selectors/vm-template/combined-dependent';
-import { flavorSort, ignoreCaseSort } from '../../../../utils/sort';
+import { ignoreCaseSort } from '../../../../utils/sort';
 import { pluralize } from '../../../../utils/strings';
 import { VMSettingsField } from '../../types';
 import { iGetFieldValue } from '../../selectors/immutable/field';
-import { getPlaceholder, getFieldId } from '../../utils/renderable-field-utils';
+import { getFieldId } from '../../utils/renderable-field-utils';
 import { nullOnEmptyChange } from '../../utils/utils';
 import { operatingSystemsNative } from '../../../../constants/vm-templates/os';
 import { OperatingSystemRecord } from '../../../../types';
@@ -50,8 +40,9 @@ import {
   CDI_UPLOAD_POD_ANNOTATION,
   CDI_UPLOAD_RUNNING,
 } from '../../../cdi-upload-provider/consts';
+import { FormPFSelect } from '../../../form/form-pf-select';
 
-export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
+export const OS: React.FC<OSProps> = React.memo(
   ({
     userTemplates,
     commonTemplates,
@@ -59,14 +50,13 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
     operatinSystemField,
     cloneBaseDiskImageField,
     mountWindowsGuestToolsField,
-    flavorField,
+    flavor,
     workloadProfile,
     cnvBaseImages,
     onChange,
     openshiftFlag,
     goToStorageStep,
   }) => {
-    const flavor = iGetFieldValue(flavorField);
     const os = iGetFieldValue(operatinSystemField);
     const display = iGet(operatinSystemField, 'display');
     const displayOnly = !!display;
@@ -93,8 +83,6 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
         : operatingSystemsNative;
     }
 
-    const flavors = flavorSort(getFlavors(vanillaTemplates, params));
-
     const workloadProfiles = getWorkloadProfiles(vanillaTemplates, params);
 
     const loadingResources = openshiftFlag
@@ -106,12 +94,11 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
       : {};
 
     let operatingSystemValidation;
-    let flavorValidation;
 
     if (
       iGetIsLoaded(commonTemplates) &&
       iGetIsLoaded(userTemplates) &&
-      (operatingSystems.length === 0 || flavors.length === 0 || workloadProfiles.length === 0)
+      (operatingSystems.length === 0 || workloadProfiles.length === 0)
     ) {
       const validation = asValidationObject(
         'There is no valid template for this combination. Please install required template or select different os/flavor/workload profile combination.',
@@ -119,8 +106,6 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
       );
       if (!operatinSystemField.get('validation')) {
         operatingSystemValidation = validation;
-      } else if (!flavorField.get('validation')) {
-        flavorValidation = validation;
       }
     }
 
@@ -193,22 +178,23 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
       <>
         <FormFieldRow
           field={operatinSystemField}
-          fieldType={FormFieldType.SELECT}
+          fieldType={FormFieldType.PF_SELECT}
           validation={operatingSystemValidation}
           loadingResources={loadingResources}
         >
-          <FormField value={displayOnly ? display : undefined}>
-            <FormSelect onChange={nullOnEmptyChange(onChange, VMSettingsField.OPERATING_SYSTEM)}>
-              {!displayOnly && (
-                <FormSelectPlaceholderOption
-                  placeholder={getPlaceholder(VMSettingsField.OPERATING_SYSTEM)}
-                  isDisabled={!!os}
-                />
-              )}
+          <FormField value={displayOnly ? display : os}>
+            <FormPFSelect
+              onSelect={(e, v) =>
+                nullOnEmptyChange(onChange, VMSettingsField.OPERATING_SYSTEM)(v.toString())
+              }
+            >
               {operatingSystemBaseImages.map(({ id, name, message }) => (
-                <FormSelectOption key={id} value={id} label={`${name || id} ${message}`} />
+                <SelectOption key={id} value={id}>
+                  {name || id}
+                  {message ? ` ${message}` : ''}
+                </SelectOption>
               ))}
-            </FormSelect>
+            </FormPFSelect>
           </FormField>
           {baseImage && baseImage?.longMessage && (
             <div className="pf-c-form__helper-text" aria-live="polite">
@@ -244,33 +230,15 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
           </FormField>
         </FormFieldRow>
         {mountedDisksHelpMsg}
-        <FormFieldRow
-          field={flavorField}
-          fieldType={FormFieldType.SELECT}
-          validation={flavorValidation}
-          loadingResources={loadingResources}
-        >
-          <FormField isDisabled={flavor && flavors.length === 1}>
-            <FormSelect onChange={nullOnEmptyChange(onChange, VMSettingsField.FLAVOR)}>
-              <FormSelectPlaceholderOption
-                placeholder={getPlaceholder(VMSettingsField.FLAVOR)}
-                isDisabled={!!flavor}
-              />
-              {flavors.map((f) => {
-                return <FormSelectOption key={f} value={f} label={_.capitalize(f)} />;
-              })}
-            </FormSelect>
-          </FormField>
-        </FormFieldRow>
       </>
     );
   },
 );
 
-type OSFlavorProps = {
+type OSProps = {
   userTemplates: any;
   commonTemplates: any;
-  flavorField: any;
+  flavor: string;
   operatinSystemField: any;
   cloneBaseDiskImageField: any;
   mountWindowsGuestToolsField: any;

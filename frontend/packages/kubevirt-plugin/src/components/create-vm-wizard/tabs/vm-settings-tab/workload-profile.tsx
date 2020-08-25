@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormSelect, FormSelectOption } from '@patternfly/react-core';
+import { SelectOption } from '@patternfly/react-core';
 import {
   concatImmutableLists,
   iGetLoadedData,
@@ -7,13 +7,12 @@ import {
 } from '../../../../utils/immutable';
 import { FormFieldRow } from '../../form/form-field-row';
 import { FormField, FormFieldType } from '../../form/form-field';
-import { FormSelectPlaceholderOption } from '../../../form/form-select-placeholder-option';
 import { getWorkloadProfiles } from '../../../../selectors/vm-template/combined-dependent';
 import { ignoreCaseSort } from '../../../../utils/sort';
 import { VMSettingsField } from '../../types';
-import { getPlaceholder } from '../../utils/renderable-field-utils';
 import { nullOnEmptyChange } from '../../utils/utils';
 import { iGetFieldValue } from '../../selectors/immutable/field';
+import { FormPFSelect } from '../../../form/form-pf-select';
 
 export const WorkloadProfile: React.FC<WorkloadProps> = React.memo(
   ({
@@ -41,29 +40,23 @@ export const WorkloadProfile: React.FC<WorkloadProps> = React.memo(
       <>
         <FormFieldRow
           field={workloadProfileField}
-          fieldType={FormFieldType.SELECT}
+          fieldType={FormFieldType.PF_SELECT}
           loadingResources={{
             userTemplates,
             commonTemplates,
             cnvBaseImages,
           }}
         >
-          <FormField>
-            <FormSelect onChange={nullOnEmptyChange(onChange, VMSettingsField.WORKLOAD_PROFILE)}>
-              <FormSelectPlaceholderOption
-                placeholder={getPlaceholder(VMSettingsField.WORKLOAD_PROFILE)}
-                isDisabled={!!iGetFieldValue(workloadProfileField)}
-              />
+          <FormField value={iGetFieldValue(workloadProfileField)}>
+            <FormPFSelect
+              onSelect={(e, v) =>
+                nullOnEmptyChange(onChange, VMSettingsField.WORKLOAD_PROFILE)(v.toString())
+              }
+            >
               {workloadProfiles.map((workloadProfile) => {
-                return (
-                  <FormSelectOption
-                    key={workloadProfile}
-                    value={workloadProfile}
-                    label={workloadProfile}
-                  />
-                );
+                return <SelectOption key={workloadProfile} value={workloadProfile} />;
               })}
-            </FormSelect>
+            </FormPFSelect>
           </FormField>
         </FormFieldRow>
       </>

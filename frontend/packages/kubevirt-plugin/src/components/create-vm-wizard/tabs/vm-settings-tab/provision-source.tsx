@@ -1,18 +1,19 @@
 import * as React from 'react';
-import { FormSelect, FormSelectOption, Button, ButtonVariant } from '@patternfly/react-core';
-import { FormSelectPlaceholderOption } from '../../../form/form-select-placeholder-option';
+import { Button, ButtonVariant, SelectOption, Text } from '@patternfly/react-core';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { FormFieldRow } from '../../form/form-field-row';
 import { FormField, FormFieldType } from '../../form/form-field';
 import { iGetFieldValue } from '../../selectors/immutable/field';
 import { VMSettingsField } from '../../types';
-import { getPlaceholder } from '../../utils/renderable-field-utils';
 import { iGet } from '../../../../utils/immutable';
+import { FormPFSelect } from '../../../form/form-pf-select';
+import { EXAMPLE_CONTAINER, RHEL_IMAGE_LINK, FEDORA_IMAGE_LINK } from '../../../../utils/strings';
 
 const ProvisionSourceDiskHelpMsg: React.FC<ProvisionSourceDiskHelpMsgProps> = ({
   provisionSourceValue,
   goToStorageStep,
 }) => {
+  const isUpstream = window.SERVER_FLAGS.branding === 'okd';
   const storageBtn = (
     <Button
       isDisabled={!goToStorageStep}
@@ -26,9 +27,31 @@ const ProvisionSourceDiskHelpMsg: React.FC<ProvisionSourceDiskHelpMsgProps> = ({
   const getStorageMsg = () => {
     switch (ProvisionSource.fromString(provisionSourceValue)) {
       case ProvisionSource.URL:
-        return <>Enter URL here or edit the mounted disk in the {storageBtn} step</>;
+        return (
+          <>
+            <Text> Enter URL here or edit the mounted disk in the {storageBtn} step</Text>
+            <Text>
+              For example, you can obtain the download link for {isUpstream ? 'Fedora' : 'RHEL'}{' '}
+              cloud image from{' '}
+              <a
+                href={isUpstream ? FEDORA_IMAGE_LINK : RHEL_IMAGE_LINK}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <strong>here</strong>
+              </a>
+            </Text>
+          </>
+        );
       case ProvisionSource.CONTAINER:
-        return <>Enter container image here or edit the mounted disk in the {storageBtn} step</>;
+        return (
+          <>
+            <Text>
+              Enter container image here or edit the mounted disk in the {storageBtn} step.
+            </Text>
+            <Text>Example: {EXAMPLE_CONTAINER}</Text>
+          </>
+        );
       case ProvisionSource.DISK:
         return <>Add a source disk in the {storageBtn} step</>;
       default:
@@ -70,22 +93,31 @@ export const ProvisionSourceComponent: React.FC<ProvisionSourceComponentProps> =
     const sources = iGet(provisionSourceField, 'sources');
 
     return (
-      <FormFieldRow field={provisionSourceField} fieldType={FormFieldType.SELECT}>
-        <FormField>
-          <FormSelect onChange={(v) => onChange(VMSettingsField.PROVISION_SOURCE_TYPE, v)}>
-            <FormSelectPlaceholderOption
-              placeholder={getPlaceholder(VMSettingsField.PROVISION_SOURCE_TYPE)}
-              isDisabled={!!provisionSourceValue}
-            />
-            {(sources || []).map((source) => (
-              <FormSelectOption key={source} value={source} label={source} />
-            ))}
-          </FormSelect>
+      <FormFieldRow field={provisionSourceField} fieldType={FormFieldType.PF_SELECT}>
+        <FormField value={provisionSourceValue}>
+          <FormPFSelect
+            onSelect={(e, v) => {
+              onChange(VMSettingsField.PROVISION_SOURCE_TYPE, v.toString());
+            }}
+          >
+            {(sources || [])
+              .map(ProvisionSource.fromString)
+              .sort((a, b) => a.getOrder() - b.getOrder())
+              .map((source) => (
+                <SelectOption
+                  key={source.getValue()}
+                  value={source.getValue()}
+                  description={source.getDescription()}
+                >
+                  {source.toString()}
+                </SelectOption>
+              ))}
+          </FormPFSelect>
         </FormField>
         {[
-          ProvisionSource.URL.toString(),
-          ProvisionSource.CONTAINER.toString(),
-          ProvisionSource.DISK.toString(),
+          ProvisionSource.URL.getValue(),
+          ProvisionSource.CONTAINER.getValue(),
+          ProvisionSource.DISK.getValue(),
         ].includes(provisionSourceValue) && (
           <ProvisionSourceDiskHelpMsg
             provisionSourceValue={provisionSourceValue}
