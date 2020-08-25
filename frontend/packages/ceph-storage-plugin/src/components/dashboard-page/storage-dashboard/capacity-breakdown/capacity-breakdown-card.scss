@@ -1,7 +1,16 @@
+@import '~@patternfly/patternfly/sass-utilities/all';
+
 .ceph-capacity-breakdown-card__body {
-    padding-top: 24px;
+  padding-top: 24px;
 }
 
-.ceph-capacity-breakdown-card__header{
-    display: flex;
+.ceph-capacity-breakdown-card__header {
+  display: flex;
+}
+
+.ceph-capacity-breakdown-card-header__dropdown {
+  max-width: 12em;
+  @media screen and (min-width: $pf-global--breakpoint--lg) {
+    min-width: 12em;
+  }
 }

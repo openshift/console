@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { Select, SelectVariant, SelectGroup, SelectOption } from '@patternfly/react-core';
+import { Select, SelectGroup, SelectOption, SelectProps } from '@patternfly/react-core';
 import { FirehoseResource, humanizeBinaryBytes } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -23,9 +23,9 @@ import { PrometheusResponse, DataPoint } from '@console/internal/components/grap
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { RGW_FLAG } from '@console/ceph-storage-plugin/src/features';
+import { getGroupedSelectOptions } from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/breakdown-card/breakdown-dropdown';
 import { ServiceType, CapacityBreakdown, Groups } from '../../constants';
 import { breakdownQueryMap, CAPACITY_BREAKDOWN_QUERIES } from '../../queries';
-import { getSelectOptions } from '../data-consumption-card/data-consumption-card-dropdown';
 import './capacity-breakdown-card.scss';
 
 const subscriptionResource: FirehoseResource = {
@@ -104,16 +104,19 @@ const BreakdownCard: React.FC = () => {
     [serviceType],
   );
 
-  const serviceSelectItems = getSelectOptions(ServiceItems);
+  const serviceSelectItems = getGroupedSelectOptions(ServiceItems);
   const breakdownSelectItems = getDisableableSelectOptions(breakdownItems);
 
   const handleServiceChange = (_e: React.MouseEvent, service: ServiceType) => {
     setServiceType(service);
     setMetricType(CapacityBreakdown.defaultMetrics[service]);
+    setServiceSelect(!isOpenServiceSelect);
   };
 
-  const handleMetricsChange = (_e: React.MouseEvent, breakdown: CapacityBreakdown.Metrics) =>
-    setMetricType(breakdown);
+  const handleMetricsChange: SelectProps['onSelect'] = (_e, breakdown) => {
+    setMetricType(breakdown as CapacityBreakdown.Metrics);
+    setBreakdownSelect(!isOpenBreakdownSelect);
+  };
 
   const padding =
     serviceType !== ServiceType.MCG ? { top: 0, bottom: 0, left: 0, right: 50 } : undefined;
@@ -161,7 +164,6 @@ const BreakdownCard: React.FC = () => {
           )}
           {RGW && (
             <Select
-              variant={SelectVariant.single}
               className="nb-capacity-breakdown-card-header__dropdown nb-capacity-breakdown-card-header__dropdown--margin"
               autoFocus={false}
               onSelect={handleServiceChange}
@@ -178,8 +180,7 @@ const BreakdownCard: React.FC = () => {
             </Select>
           )}
           <Select
-            variant={SelectVariant.single}
-            className="nb-capacity-breakdown-card-header__dropdown nb-capacity-breakdown-card-header__dropdown--margin"
+            className="nb-capacity-breakdown-card-header__dropdown"
             autoFocus={false}
             onSelect={handleMetricsChange}
             onToggle={() => setBreakdownSelect(!isOpenBreakdownSelect)}

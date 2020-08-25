@@ -1,6 +1,6 @@
 export enum ServiceType {
   MCG = 'Multi Cloud Gateway',
-  RGW = 'Rados Gateway',
+  RGW = 'RADOS Gateway',
   ALL = 'All',
 }
 

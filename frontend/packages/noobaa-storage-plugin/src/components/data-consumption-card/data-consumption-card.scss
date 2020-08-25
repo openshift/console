@@ -5,15 +5,21 @@
 }
 
 .nb-data-consumption-card__dropdown-item {
-  margin-right: 0.4em;
+  max-width: 12em;
   @media screen and (min-width: $pf-global--breakpoint--lg) {
-    max-width: 12em;
     min-width: 12em;
   }
   &--hide-list-style {
     li {
       list-style: none;
     }
+  }
+  &--margin {
+    margin-right: var(--pf-global--spacer--xs);
+  }
+  /* Override Options Menu item style to make it similar to Select Menu */
+  .pf-c-options-menu__menu-item {
+    padding-left: 0;
   }
 }
 
