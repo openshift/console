@@ -11,7 +11,7 @@ const PingSourceSection: React.FC<PingSourceSectionProps> = ({ title }) => (
   <FormSection title={title} extraMargin>
     <InputField
       type={TextInputTypes.text}
-      name="data.pingsource.data"
+      name="data.pingsource.jsonData"
       label="Data"
       helpText="The data posted to the target function"
     />

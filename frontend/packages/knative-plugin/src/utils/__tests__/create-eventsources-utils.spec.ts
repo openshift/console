@@ -59,6 +59,7 @@ describe('Create knative Utils', () => {
     const defaultEventingData = getDefaultEventingData(EventSources.CronJobSource);
     const mockData = _.cloneDeep(defaultEventingData);
     mockData.type = 'SinkBinding';
+    mockData.apiVersion = 'sources.knative.dev/v1alpha2';
     const knEventingResource: k8sModels.K8sResourceKind = getEventSourceResource(mockData);
     expect(knEventingResource.kind).toBe(EventSourceSinkBindingModel.kind);
     expect(knEventingResource.apiVersion).toBe(
