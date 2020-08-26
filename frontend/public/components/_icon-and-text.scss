@@ -1,6 +1,11 @@
 .co-icon-and-text {
   align-items: baseline;
   display: flex;
+
+  // fix bug where concurrent .pf-c-label are misaligned vertically
+  .pf-c-label__icon & {
+    display: block;
+  }
 }
 
 .co-icon-and-text__icon {
