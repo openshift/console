@@ -90,7 +90,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.9.0",
-    "@patternfly/patternfly": "4.31.4",
+    "@patternfly/patternfly": "4.34.1",
     "@patternfly/react-catalog-view-extension": "4.8.3",
     "@patternfly/react-charts": "6.9.2",
     "@patternfly/react-core": "4.40.2",
