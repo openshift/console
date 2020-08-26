@@ -45,6 +45,7 @@ import {
 import { ClusterVersionModel } from '../models';
 import { useK8sWatchResource, WatchK8sResource } from './utils/k8s-watch-hook';
 import { useAccessReview } from './utils/rbac';
+import { LinkifyExternal } from './utils';
 
 const criticalCompare = (a: Alert): boolean => getAlertSeverity(a) === 'critical';
 const otherAlertCompare = (a: Alert): boolean => getAlertSeverity(a) !== 'critical';
@@ -106,7 +107,11 @@ const getAlertNotificationEntries = (
           return (
             <NotificationEntry
               key={`${i}_${alert.activeAt}`}
-              description={getAlertDescription(alert) || getAlertMessage(alert)}
+              description={
+                <LinkifyExternal>
+                  {getAlertDescription(alert) || getAlertMessage(alert)}
+                </LinkifyExternal>
+              }
               timestamp={getAlertTime(alert)}
               type={NotificationTypes[getAlertSeverity(alert)]}
               title={getAlertName(alert)}

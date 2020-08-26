@@ -100,7 +100,7 @@ const NotificationEntry: React.FC<NotificationEntryProps> = ({
 export type NotificationEntryProps = {
   actionText?: string;
   actionPath?: string;
-  description: string;
+  description: React.ReactNode;
   isRead?: boolean;
   targetPath?: string;
   timestamp?: string;
