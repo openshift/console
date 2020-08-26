@@ -356,6 +356,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
         nonCriticalAlertCategory,
         recommendationsCategory,
       ]}
+      onClose={toggleNotificationDrawer}
     >
       {children}
     </NotificationDrawer>
