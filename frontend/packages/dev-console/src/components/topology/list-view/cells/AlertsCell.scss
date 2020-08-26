@@ -11,10 +11,9 @@
 
   &--status .co-icon-and-text {
     display: inline-flex;
-    margin-right: 12px;
-
-    .odc-topology-list-view__alert-cell__builds & {
-      margin-right: 4px;
-    }
+    margin-right: var(--pf-global--spacer--sm);
+  }
+  &__label {
+    margin-right: var(--pf-global--spacer--sm);
   }
 }
