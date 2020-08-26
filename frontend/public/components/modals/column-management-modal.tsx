@@ -95,7 +95,7 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps> = ({
       <ModalTitle className="modal-header">Manage Columns</ModalTitle>
       <ModalBody>
         <div className="co-m-form-row">
-          <p>Checked categories will be displayed in the table.</p>
+          <p>Selected columns will appear in the table.</p>
         </div>
         <div className="co-m-form-row">
           <Alert

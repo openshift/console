@@ -3,18 +3,19 @@ import * as _ from 'lodash';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { connect } from 'react-redux';
 import {
+  Badge,
   Button,
   Checkbox,
+  Dropdown,
+  DropdownGroup,
+  DropdownItem,
+  DropdownToggle,
   Toolbar,
+  ToolbarChip,
   ToolbarContent,
   ToolbarFilter,
-  ToolbarChip,
   ToolbarItem,
-  DropdownItem,
-  Dropdown,
-  DropdownToggle,
-  DropdownGroup,
-  Badge,
+  Tooltip,
 } from '@patternfly/react-core';
 import { CaretDownIcon, FilterIcon, ColumnsIcon } from '@patternfly/react-icons';
 import { Dropdown as DropdownInternal } from '@console/internal/components/utils';
@@ -339,17 +340,19 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
         </ToolbarItem>
         {columnLayout?.id && (
           <ToolbarItem>
-            <Button
-              variant="plain"
-              onClick={() =>
-                createColumnManagementModal({
-                  columnLayout,
-                })
-              }
-              aria-label="Column Management"
-            >
-              <ColumnsIcon />
-            </Button>
+            <Tooltip content="Manage columns">
+              <Button
+                variant="plain"
+                onClick={() =>
+                  createColumnManagementModal({
+                    columnLayout,
+                  })
+                }
+                aria-label="Column Management"
+              >
+                <ColumnsIcon />
+              </Button>
+            </Tooltip>
           </ToolbarItem>
         )}
       </ToolbarContent>
