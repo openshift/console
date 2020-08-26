@@ -42,4 +42,5 @@ export type VMStorageRowCustomData = {
   vmLikeEntity: VMLikeEntityKind;
   columnClasses: string[];
   isDisabled: boolean;
+  pendingChangesDisks?: Set<string>;
 } & VMStorageRowActionOpts;

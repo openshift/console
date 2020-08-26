@@ -25,6 +25,7 @@ import {
   VMStorageRowCustomData,
 } from './types';
 import { validateDisk } from '../../utils/validations/vm/disk';
+import { PENDING_RESTART_LABEL } from '../../constants';
 
 const menuActionEdit = (
   disk: CombinedDisk,
@@ -97,6 +98,7 @@ export type VMDiskSimpleRowProps = {
   actionsComponent: React.ReactNode;
   index: number;
   style: object;
+  isPendingRestart?: boolean;
 };
 
 export const DiskSimpleRow: React.FC<VMDiskSimpleRowProps> = ({
@@ -106,6 +108,7 @@ export const DiskSimpleRow: React.FC<VMDiskSimpleRowProps> = ({
   actionsComponent,
   index,
   style,
+  isPendingRestart,
 }) => {
   const dimensify = dimensifyRow(columnClasses);
 
@@ -114,7 +117,12 @@ export const DiskSimpleRow: React.FC<VMDiskSimpleRowProps> = ({
   return (
     <TableRow id={name} index={index} trKey={name} style={style}>
       <TableData className={dimensify()}>
-        <ValidationCell validation={validation.name}>{name}</ValidationCell>
+        <ValidationCell
+          validation={validation.name}
+          additionalLabel={isPendingRestart ? PENDING_RESTART_LABEL : null}
+        >
+          {name}
+        </ValidationCell>
       </TableData>
       <TableData className={dimensify()}>
         <ValidationCell validation={validation.source}>{source || DASH}</ValidationCell>
@@ -146,7 +154,14 @@ export const DiskSimpleRow: React.FC<VMDiskSimpleRowProps> = ({
 
 export const DiskRow: RowFunction<StorageBundle, VMStorageRowCustomData> = ({
   obj: { disk, ...restData },
-  customData: { isDisabled, withProgress, vmLikeEntity, columnClasses, templateValidations },
+  customData: {
+    isDisabled,
+    withProgress,
+    vmLikeEntity,
+    columnClasses,
+    templateValidations,
+    pendingChangesDisks,
+  },
   index,
   style,
 }) => {
@@ -157,6 +172,7 @@ export const DiskRow: RowFunction<StorageBundle, VMStorageRowCustomData> = ({
     disk.persistentVolumeClaimWrapper,
     { templateValidations },
   );
+  const isPendingRestart = !!pendingChangesDisks?.has(restData.name);
   return (
     <DiskSimpleRow
       data={restData}
@@ -171,6 +187,7 @@ export const DiskRow: RowFunction<StorageBundle, VMStorageRowCustomData> = ({
             diskValidations.validations.pvc,
         }
       }
+      isPendingRestart={isPendingRestart}
       columnClasses={columnClasses}
       index={index}
       style={style}

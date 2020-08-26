@@ -1,4 +1,8 @@
-.kubevirt-vm-list {
+.kv-vm-list {
   // Give kebab from last row enough space so it will be included in WindowScroller computation
   padding-bottom: 15em;
+}
+
+.kv-vm-row_status-extra-label {
+  color: var(--pf-global--Color--100);
 }

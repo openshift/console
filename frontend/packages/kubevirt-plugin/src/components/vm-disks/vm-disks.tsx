@@ -31,6 +31,10 @@ import { FileSystemsList } from './guest-agent-file-systems';
 import { VM_DISKS_DESCRIPTION } from '../../strings/vm/messages';
 import { isVMRunningOrExpectedRunning } from '../../selectors/vm/selectors';
 import { asVM } from '../../selectors/vm';
+import { VMIKind } from '../../types';
+import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
+import { VMIWrapper } from '../../k8s/wrapper/vm/vmi-wrapper';
+import { changedDisks } from '../../selectors/vm-like/next-run-changes';
 
 const getStoragesData = ({
   vmLikeEntity,
@@ -147,14 +151,18 @@ type VMDisksProps = {
   pvcs?: FirehoseResult<K8sResourceKind[]>;
   datavolumes?: FirehoseResult<V1alpha1DataVolume[]>;
   vmTemplate?: FirehoseResult<TemplateKind>;
+  vmi?: VMIKind;
 };
 
-export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, vmTemplate }) => {
+export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, vmTemplate, vmi }) => {
   const namespace = getNamespace(vmLikeEntity);
   const [isLocked, setIsLocked] = useSafetyFirst(false);
   const withProgress = wrapWithProgress(setIsLocked);
   const templateValidations = getTemplateValidationsFromTemplate(getLoadedData(vmTemplate));
   const isVMRunning = isVM(vmLikeEntity) && isVMRunningOrExpectedRunning(asVM(vmLikeEntity));
+  const pendingChangesDisks: Set<string> = vmi
+    ? new Set(changedDisks(new VMWrapper(asVM(vmLikeEntity)), new VMIWrapper(vmi)))
+    : null;
 
   const resources = [
     getResource(PersistentVolumeClaimModel, {
@@ -206,6 +214,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, vmTemplate }) =>
         templateValidations,
         columnClasses: diskTableColumnClasses,
         showGuestAgentHelp: true,
+        pendingChangesDisks,
       }}
       hideLabelFilter
     />
@@ -278,7 +287,7 @@ export const VMDisksAndFileSystemsPage: React.FC<VMTabProps> = ({
 
   return (
     <Firehose resources={resources}>
-      <VMDisks vmLikeEntity={vmLikeEntity} />
+      <VMDisks vmLikeEntity={vmLikeEntity} vmi={vmi} />
       <FileSystemsList vmi={vmi} vmStatusBundle={vmStatusBundle} />
     </Firehose>
   );

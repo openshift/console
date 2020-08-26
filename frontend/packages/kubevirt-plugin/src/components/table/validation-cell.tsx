@@ -7,20 +7,34 @@ import './validation-cell.scss';
 export type SimpleCellProps = {
   children?: React.ReactNode;
   validation?: ValidationObject;
+  additionalLabel?: string;
 };
 
-export const ValidationCell: React.FC<SimpleCellProps> = ({ children, validation }) => {
+export const ValidationCell: React.FC<SimpleCellProps> = ({
+  children,
+  validation,
+  additionalLabel,
+}) => {
   return (
     <>
-      {children}
+      <div
+        className={classNames({
+          'kv-validation-cell__cell--row-flex-direction': !!additionalLabel,
+        })}
+      >
+        {children}
+        {additionalLabel && (
+          <div className="kv-validation-cell__additional-label">{additionalLabel}</div>
+        )}
+      </div>
       {validation && (
         <div
           className={classNames({
-            'kubevirt-validation-cell__cell--error': [
+            'kv-validation-cell__cell--error': [
               ValidationErrorType.Error,
               ValidationErrorType.TrivialError,
             ].includes(validation.type),
-            'kubevirt-validation-cell__cell--warning': validation.type === ValidationErrorType.Warn,
+            'kv-validation-cell__cell--warning': validation.type === ValidationErrorType.Warn,
           })}
         >
           {validation.message}
