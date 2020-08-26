@@ -32,7 +32,7 @@ import { getPlaceholder, getFieldId } from '../../utils/renderable-field-utils';
 import { nullOnEmptyChange } from '../../utils/utils';
 import { operatingSystemsNative } from '../../../../constants/vm-templates/os';
 import { OperatingSystemRecord } from '../../../../types';
-import { iGetName } from '../../selectors/immutable/selectors';
+import { iGetName, iGetNamespace } from '../../selectors/immutable/selectors';
 import {
   BASE_IMAGE_AND_PVC_SHORT,
   BASE_IMAGE_AND_PVC_MESSAGE,
@@ -120,7 +120,10 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
     const operatingSystemBaseImages = operatingSystems.map(
       (operatingSystem: OperatingSystemRecord) => {
         const pvcName = operatingSystem?.dataVolumeName;
-        const baseImageFoundInCluster = loadedBaseImages?.find((pvc) => iGetName(pvc) === pvcName);
+        const pvcNamespace = operatingSystem?.dataVolumeNamespace;
+        const baseImageFoundInCluster = loadedBaseImages?.find(
+          (pvc) => iGetName(pvc) === pvcName && iGetNamespace(pvc) === pvcNamespace,
+        );
         const osField = {
           id: operatingSystem.id,
           name: operatingSystem.name,

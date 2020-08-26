@@ -15,12 +15,17 @@ import {
   iGetCommonData,
   iGetLoadedCommonData,
   iGetName,
+  iGetNamespace,
 } from '../../selectors/immutable/selectors';
 import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
-import { CUSTOM_FLAVOR, TEMPLATE_DATAVOLUME_ANNOTATION } from '../../../../constants/vm';
+import {
+  CUSTOM_FLAVOR,
+  TEMPLATE_DATAVOLUME_NAME_PARAMETER,
+  TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER,
+} from '../../../../constants/vm';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { prefillVmTemplateUpdater } from './prefill-vm-template-state-update';
-import { iGetAnnotation } from '../../../../selectors/immutable/common';
+import { iGetPrameterValue } from '../../../../selectors/immutable/common';
 
 const selectUserTemplateOnLoadedUpdater = (options: UpdateOptions) => {
   const { id, dispatch, getState } = options;
@@ -116,7 +121,16 @@ const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
   if (iGetCommonData(state, id, VMWizardProps.isProviderImport)) {
     return;
   }
-  if (!hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.OPERATING_SYSTEM)) {
+  if (
+    !hasVMSettingsValueChanged(
+      prevState,
+      state,
+      id,
+      VMSettingsField.OPERATING_SYSTEM,
+      VMSettingsField.FLAVOR,
+      VMSettingsField.WORKLOAD_PROFILE,
+    )
+  ) {
     return;
   }
 
@@ -129,14 +143,16 @@ const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
     const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
     const iTemplate =
       iCommonTemplates && iGetRelevantTemplate(null, iCommonTemplates, relevantOptions);
-    const pvcName = iGetAnnotation(
-      iTemplate,
-      `${TEMPLATE_DATAVOLUME_ANNOTATION}/${relevantOptions?.os}`,
-    );
+    const pvcName = iGetPrameterValue(iTemplate, TEMPLATE_DATAVOLUME_NAME_PARAMETER);
+    const pvcNamespace = iGetPrameterValue(iTemplate, TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER);
 
     const iBaseImages = iGetLoadedCommonData(state, id, VMWizardProps.openshiftCNVBaseImages);
     iBaseImage =
-      pvcName && iBaseImages && iBaseImages.valueSeq().find((iPVC) => iGetName(iPVC) === pvcName);
+      pvcName &&
+      iBaseImages &&
+      iBaseImages
+        .valueSeq()
+        .find((iPVC) => iGetName(iPVC) === pvcName && iGetNamespace(iPVC) === pvcNamespace);
   }
 
   dispatch(

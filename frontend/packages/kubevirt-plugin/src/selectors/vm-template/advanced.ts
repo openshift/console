@@ -4,7 +4,7 @@ import {
   CloudInitDataHelper,
   CloudInitDataFormKeys,
 } from '../../k8s/wrapper/vm/cloud-init-data-helper';
-import { getAnnotation, getAnnotations, getLabels } from '../selectors';
+import { getAnnotation, getAnnotations, getLabels, getParameterValue } from '../selectors';
 import {
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_OS_LABEL,
@@ -12,12 +12,10 @@ import {
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_TYPE_VM,
   TEMPLATE_WORKLOAD_LABEL,
+  TEMPLATE_DATAVOLUME_NAME_PARAMETER,
+  TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER,
 } from '../../constants/vm';
-import {
-  getCloudInitVolume,
-  getOperatingSystemDataVolumeAnnotation,
-  getOperatingSystemDataVolumeNamespaceAnnotation,
-} from '../vm/selectors';
+import { getCloudInitVolume } from '../vm/selectors';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 import { selectVM } from './basic';
 import { removeOSDups } from '../../utils/sort';
@@ -83,11 +81,12 @@ export const getTemplateOperatingSystems = (templates: TemplateKind[]) => {
         (t) =>
           !!Object.keys(getAnnotations(t, {})).find((annotation) => annotation === nameAnnotation),
       );
+
       return {
         id: osId,
         name: getAnnotation(template, nameAnnotation),
-        dataVolumeName: getOperatingSystemDataVolumeAnnotation(template, osId),
-        dataVolumeNamespace: getOperatingSystemDataVolumeNamespaceAnnotation(template),
+        dataVolumeName: getParameterValue(template, TEMPLATE_DATAVOLUME_NAME_PARAMETER),
+        dataVolumeNamespace: getParameterValue(template, TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER),
       };
     }),
   );

@@ -36,6 +36,10 @@ export const getAnnotation = (
   defaultValue?: string,
 ): string => _.get(entity, ['metadata', 'annotations', annotationName], defaultValue);
 
+export const getParameterValue = (obj, name: string, defaultValue = null): string =>
+  _.get(obj, ['parameters'], []).find((parameter) => parameter.name === name)?.value ||
+  defaultValue;
+
 export const getAnnotationKeySuffix = (
   entity: K8sResourceKind,
   annotationPrefix: string,

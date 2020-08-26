@@ -21,6 +21,7 @@ import {
   TEMPLATE_TYPE_VM,
   VMWizardMode,
   VMWizardView,
+  TEMPLATE_VM_GOLDEN_OS_NAMESPACE,
 } from '../../constants/vm';
 import { getResource } from '../../utils';
 import { IDReferences, makeIDReferences } from '../../utils/redux/id-reference';
@@ -386,7 +387,7 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
           matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_BASE },
         }),
         getResource(PersistentVolumeClaimModel, {
-          namespace: 'openshift-cnv-base-images',
+          namespace: TEMPLATE_VM_GOLDEN_OS_NAMESPACE,
           prop: VMWizardProps.openshiftCNVBaseImages,
         }),
       );

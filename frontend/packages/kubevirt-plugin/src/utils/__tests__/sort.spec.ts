@@ -10,16 +10,17 @@ import { OperatingSystemRecord } from '../../types/types';
  */
 
 describe('compareVersions', () => {
-  const osVersion0: number[] = null;
-  const osVersion1: number[] = [1, 2, 3];
-  const osVersion2: number[] = [1, 2, 4];
-  const osVersion3: number[] = [1, 1];
-  const osVersion4: number[] = [1];
-  const osVersion5: number[] = [2];
-  const osVersion6: number[] = [1, 0];
-  const osVersion7: number[] = [1, 0, 0];
-  const osVersion8: number[] = [0];
-  const osVersion9: number[] = [0, 0, 0];
+  const osVersion0: string = null;
+  const osVersion1: string = 'v1.2.3';
+  const osVersion2: string = 'v1.2.4';
+  const osVersion3: string = '1.1';
+  const osVersion4: string = '1';
+  const osVersion5: string = '2';
+  const osVersion6: string = '1.0';
+  const osVersion7: string = '1.0.0';
+  const osVersion8: string = '0';
+  const osVersion9: string = '0.0.0';
+  const osVersion10: string = 'devel';
 
   it('check non-equal versions with same length', () => {
     expect(compareVersions(osVersion1, osVersion2)).toEqual(-1);
@@ -58,6 +59,10 @@ describe('compareVersions', () => {
 
   it('check equal versions when both of them are null', () => {
     expect(compareVersions(osVersion0, osVersion0)).toEqual(0);
+  });
+
+  it('check devel version when both of them are not null', () => {
+    expect(compareVersions(osVersion10, osVersion9)).toEqual(1);
   });
 });
 
