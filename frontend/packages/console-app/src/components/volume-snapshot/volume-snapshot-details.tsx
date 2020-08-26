@@ -69,7 +69,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
                 </dd>
               </>
             )}
-            <dt>Snapshot Class</dt>
+            <dt>Volume Snapshot Class</dt>
             <dd>
               <ResourceLink
                 kind={referenceForModel(VolumeSnapshotClassModel)}
