@@ -3,6 +3,7 @@ import { connect, Dispatch } from 'react-redux';
 import {
   ALL_NAMESPACES_KEY,
   ALL_APPLICATIONS_KEY,
+  UNASSIGNED_APPLICATIONS_KEY,
   APPLICATION_LOCAL_STORAGE_KEY,
 } from '@console/shared';
 import { setActiveApplication } from '@console/internal/actions/ui';
@@ -29,7 +30,13 @@ const ApplicationSelector: React.FC<Props> = ({ namespace, application, onChange
   if (namespace === ALL_NAMESPACES_KEY) return null;
 
   const allApplicationsTitle = 'all applications';
-  const title: string = application === ALL_APPLICATIONS_KEY ? allApplicationsTitle : application;
+  const noApplicationsTitle = 'unassigned';
+  const title: string =
+    application === ALL_APPLICATIONS_KEY
+      ? allApplicationsTitle
+      : application === UNASSIGNED_APPLICATIONS_KEY
+      ? noApplicationsTitle
+      : application;
 
   const onApplicationChange = (newApplication: string, key: string) => {
     key === ALL_APPLICATIONS_KEY ? onChange(key) : onChange(newApplication);
@@ -46,6 +53,10 @@ const ApplicationSelector: React.FC<Props> = ({ namespace, application, onChange
       allSelectorItem={{
         allSelectorKey: ALL_APPLICATIONS_KEY,
         allSelectorTitle: allApplicationsTitle,
+      }}
+      noneSelectorItem={{
+        noneSelectorKey: UNASSIGNED_APPLICATIONS_KEY,
+        noneSelectorTitle: noApplicationsTitle,
       }}
       selectedKey={application || ALL_APPLICATIONS_KEY}
       onChange={onApplicationChange}

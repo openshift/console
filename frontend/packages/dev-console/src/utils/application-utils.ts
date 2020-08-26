@@ -43,6 +43,7 @@ export const sanitizeApplicationValue = (
 ): string => {
   switch (applicationType) {
     case UNASSIGNED_KEY:
+      return 'unassigned';
     case CREATE_APPLICATION_KEY:
       return '';
     default:
