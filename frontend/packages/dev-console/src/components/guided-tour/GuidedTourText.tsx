@@ -20,10 +20,10 @@ export const devPerspectiveTourText = <DevPerspectiveTourText />;
 
 export const perspectiveSwitcherTourText = (
   <>
-    <p>Switch between the Developer and Admin perspectives.</p>
+    <p>Switch between the Developer and Administrator perspectives.</p>
     <p>
-      Use the Admin perspective to manage workload storage, networking, cluster settings, and more.
-      This may require additional user access.
+      Use the Administrator perspective to manage workload storage, networking, cluster settings,
+      and more. This may require additional user access.
     </p>
     <p>
       Use the Developer perspective to build applications and associated components and services,
