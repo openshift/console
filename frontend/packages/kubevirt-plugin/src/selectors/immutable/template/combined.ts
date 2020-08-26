@@ -8,7 +8,7 @@ import {
 import { iGetName } from '../../../components/create-vm-wizard/selectors/immutable/selectors';
 import { ITemplate } from '../../../types/template';
 import { iGetCreationTimestamp, iGetLabels } from '../common';
-import { compareVersions, splitVersion } from '../../../utils/sort';
+import { compareVersions } from '../../../utils/sort';
 
 type FindTemplateOptions = {
   userTemplateName?: string;
@@ -83,16 +83,9 @@ export const iGetRelevantTemplates = (
         const aVersion = aLabels?.get(TEMPLATE_VERSION_LABEL);
         const bVersion = bLabels?.get(TEMPLATE_VERSION_LABEL);
 
-        const versionCMP = compareVersions(splitVersion(aVersion), splitVersion(bVersion)) * -1; // descending
+        const versionCMP = compareVersions(aVersion, bVersion) * -1; // descending
 
         if (versionCMP !== 0) {
-          // 'devel' version if exist is always the highst version.
-          if (aVersion === 'devel') {
-            return -1;
-          }
-          if (bVersion === 'devel') {
-            return 1;
-          }
           return versionCMP;
         }
 
