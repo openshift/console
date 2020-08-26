@@ -75,7 +75,7 @@ Is the status Succeeded?`,
         },
         recapitulation: {
           success: `You just run your pipeline successfully`,
-          failed: `This task is not verified yet. You might have missed a step! Try the task again, or [read more](https://docs.openshift.com/container-platform/4.5/pipelines/working-with-pipelines-using-the-developer-perspective.html#creating-applications-with-openshift-pipelines) about this topic.`,
+          failed: `This task is not verified yet. You might have missed a step! Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/pipelines/working-with-pipelines-using-the-developer-perspective.html#creating-applications-with-openshift-pipelines) about this topic.`,
         },
       },
     ],
