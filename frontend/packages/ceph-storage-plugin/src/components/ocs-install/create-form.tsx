@@ -34,8 +34,9 @@ import {
   SelectNodesSection,
   StorageClassSection,
   EncryptSection,
+  MinimalDeploymentAlert,
 } from '../../utils/common-ocs-install-el';
-import { filterSCWithoutNoProv, shouldDeployMinimally } from '../../utils/install';
+import { filterSCWithoutNoProv, shouldDeployInternalAsMinimal } from '../../utils/install';
 import { OCS_INTERNAL_CR_NAME } from '../../constants';
 import './ocs-install.scss';
 
@@ -94,12 +95,28 @@ export const CreateInternalCluster = withHandlePromise<
   const dispatch = useDispatch();
   const [nodes, setNodes] = React.useState<NodeKind[]>([]);
 
-  const isMinimal = shouldDeployMinimally(nodes);
+  const isMinimal = shouldDeployInternalAsMinimal(nodes);
+  const [showMessage, setShowMessage] = React.useState(false);
+
+  const timeoutID = React.useRef(null);
+
+  React.useEffect(() => {
+    if (timeoutID.current !== null) {
+      clearTimeout(timeoutID.current);
+    }
+    if (nodes.length >= minSelectedNode) {
+      timeoutID.current = setTimeout(() => {
+        setShowMessage(true);
+      }, 1000);
+    } else {
+      setShowMessage(false);
+    }
+  }, [nodes, setShowMessage]);
 
   const submit = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     // eslint-disable-next-line promise/catch-or-return
-    handlePromise(makeOCSRequest(nodes, storageClass, osdSize, isEncrypted), () => {
+    handlePromise(makeOCSRequest(nodes, storageClass, osdSize, isEncrypted, isMinimal), () => {
       dispatch(setFlag(OCS_CONVERGED_FLAG, true));
       dispatch(setFlag(OCS_INDEPENDENT_FLAG, false));
       dispatch(setFlag(OCS_FLAG, true));
@@ -154,14 +171,13 @@ export const CreateInternalCluster = withHandlePromise<
               Select at least 3 nodes in different zones you wish to use. The recommended
               requirements are 16 CPUs and 64 GiB of RAM per node.
             </div>
-            {isMinimal && (
-              <div className="ceph-ocs-install__minimal-msg">
-                Since the selected nodes do not satisfy the recommended requirements stated above, a
-                minimal cluster will be deployed, limited to a single storage device set.
-              </div>
-            )}
+            <div className="text-muted ceph-ocs-install__minimal-msg">
+              A minimal deployment is also available if needed with the requirements of 8 CPUs and
+              32 GiB RAM.
+            </div>
           </>
         </SelectNodesSection>
+        <>{isMinimal && showMessage && <MinimalDeploymentAlert isInternalMode />}</>
         <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
           <ActionGroup className="pf-c-form">
             <Button

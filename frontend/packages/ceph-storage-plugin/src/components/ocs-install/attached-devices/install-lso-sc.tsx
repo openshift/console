@@ -44,11 +44,12 @@ import {
   SelectNodesSection,
   StorageClassSection,
   EncryptSection,
+  MinimalDeploymentAlert,
 } from '../../../utils/common-ocs-install-el';
 import {
   filterSCWithNoProv,
   getAssociatedNodes,
-  shouldDeployMinimally,
+  shouldDeployAttachedAsMinimal,
 } from '../../../utils/install';
 import { getSCAvailablePVs } from '../../../selectors';
 import '../ocs-install.scss';
@@ -94,7 +95,7 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
   );
   const [pvData, pvLoaded, pvLoadError] = useK8sWatchResource<K8sResourceKind[]>(pvResource);
 
-  const isMinimal = shouldDeployMinimally(nodes);
+  const isMinimal = shouldDeployAttachedAsMinimal(nodes);
 
   React.useEffect(() => {
     // this is needed to ensure that the useEffect should be called only when setHasNoProvSC is defined
@@ -176,15 +177,7 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
             <SelectNodesSection
               table={AttachedDevicesNodeTable}
               customData={{ filteredNodes, nodes, setNodes }}
-            >
-              {isMinimal && (
-                <div className="ceph-ocs-install__minimal-msg">
-                  Since the selected nodes do not satisfy the recommended requirements of 16 CPUs
-                  and 64 GiB of RAM per node, a minimal cluster will be deployed, limited to a
-                  single storage device set.
-                </div>
-              )}
-            </SelectNodesSection>
+            />
           </>
         )}
         {storageClass && filteredNodes?.length < minSelectedNode && (
@@ -204,6 +197,7 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
             </div>
           </Alert>
         )}
+        <>{isMinimal && <MinimalDeploymentAlert />}</>
         <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
           <ActionGroup className="pf-c-form">
             <Button

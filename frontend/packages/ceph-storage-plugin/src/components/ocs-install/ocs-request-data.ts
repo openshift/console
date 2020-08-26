@@ -52,7 +52,7 @@ export const getOCSRequestData = (
   } as K8sResourceKind;
 
   if (isMinimal) {
-    requestData.spec = {
+    requestData.spec = Object.assign(requestData.spec, {
       resources: {
         mds: {
           limits: {
@@ -65,7 +65,7 @@ export const getOCSRequestData = (
           },
         },
       },
-    };
+    });
   }
 
   if (provisioner === NO_PROVISIONER) {

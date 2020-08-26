@@ -40,6 +40,10 @@
 }
 
 .ceph-ocs-install__minimal-msg {
-  margin-top: var(--pf-global--spacer--sm);
   margin-bottom: var(--pf-global--spacer--sm);
+}
+
+.ceph-minimal-deployment-alert__header {
+  display: flex;
+  justify-content: space-between;
 }
