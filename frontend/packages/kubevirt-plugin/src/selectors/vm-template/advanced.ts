@@ -4,7 +4,7 @@ import {
   CloudInitDataHelper,
   CloudInitDataFormKeys,
 } from '../../k8s/wrapper/vm/cloud-init-data-helper';
-import { getAnnotation, getAnnotations, getLabels, getParameter } from '../selectors';
+import { getAnnotation, getAnnotations, getLabels, getParameterValue } from '../selectors';
 import {
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_OS_LABEL,
@@ -85,8 +85,8 @@ export const getTemplateOperatingSystems = (templates: TemplateKind[]) => {
       return {
         id: osId,
         name: getAnnotation(template, nameAnnotation),
-        dataVolumeName: getParameter(template, TEMPLATE_DATAVOLUME_NAME_PARAMETER)?.value,
-        dataVolumeNamespace: getParameter(template, TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER)?.value,
+        dataVolumeName: getParameterValue(template, TEMPLATE_DATAVOLUME_NAME_PARAMETER),
+        dataVolumeNamespace: getParameterValue(template, TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER),
       };
     }),
   );

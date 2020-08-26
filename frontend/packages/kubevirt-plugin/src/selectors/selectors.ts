@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { K8sResourceKind, TemplateParameter } from '@console/internal/module/k8s';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { VMGenericLikeEntityKind } from '../types/vmLike';
 
 export const getKind = (value) => _.get(value, 'kind') as K8sResourceKind['kind'];
@@ -36,8 +36,9 @@ export const getAnnotation = (
   defaultValue?: string,
 ): string => _.get(entity, ['metadata', 'annotations', annotationName], defaultValue);
 
-export const getParameter = (obj, name: string, defaultValue = {}): TemplateParameter =>
-  _.get(obj, ['parameters'], []).find((parameter) => parameter.name === name) || defaultValue;
+export const getParameterValue = (obj, name: string, defaultValue = null): string =>
+  _.get(obj, ['parameters'], []).find((parameter) => parameter.name === name)?.value ||
+  defaultValue;
 
 export const getAnnotationKeySuffix = (
   entity: K8sResourceKind,
