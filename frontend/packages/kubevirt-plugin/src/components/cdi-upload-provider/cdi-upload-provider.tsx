@@ -89,6 +89,23 @@ export const useCDIUploadHook = (): CDIUploadContextProps => {
               ...newUpload,
               uploadStatus: UPLOAD_STATUS.CANCELED,
             });
+          } else if (typeof err.response === 'undefined') {
+            updateUpload({
+              ...newUpload,
+              uploadStatus: UPLOAD_STATUS.ERROR,
+              uploadError: {
+                message: (
+                  <>
+                    It seems that your browser does not trust the certificate of the upload proxy.
+                    Please{' '}
+                    <a href={`https://${uploadProxyURL}`} rel="noopener noreferrer" target="_blank">
+                      approve this certificate
+                    </a>{' '}
+                    and try again
+                  </>
+                ),
+              },
+            });
           } else {
             updateUpload({ ...newUpload, uploadStatus: UPLOAD_STATUS.ERROR, uploadError: err });
           }
