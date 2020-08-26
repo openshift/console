@@ -11,7 +11,7 @@ interface GitOpsListItemProps {
 
 const GitOpsListItem: React.FC<GitOpsListItemProps> = ({ appGroup }) => {
   const handleCardClick = () => {
-    history.push(`/gitops/application/${appGroup.name}?url=${appGroup.repo_url}`);
+    history.push(`/applicationstages/${appGroup.name}?url=${appGroup.repo_url}`);
   };
 
   return (
