@@ -19,7 +19,7 @@ The console is a more friendly `kubectl` in the form of a single page webapp.  I
 1. [node.js](https://nodejs.org/) >= 10 & [yarn](https://yarnpkg.com/en/docs/install) >= 1.3.2
 2. [go](https://golang.org/) >= 1.13+
 3. [oc](https://mirror.openshift.com/pub/openshift-v4/clients/oc/4.4/) or [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) and an OpenShift or Kubernetes cluster
-4. `jq` (for `contrib/environment.sh`)
+4. [jq](https://stedolan.github.io/jq/download/) (for `contrib/environment.sh`)
 5. Google Chrome/Chromium or Firefox for integration tests
 
 ### Build everything:
@@ -144,6 +144,7 @@ All frontend code lives in the `frontend/` directory.  The frontend uses node, y
 
 To install the build tools and dependencies:
 ```
+cd frontend
 yarn install
 ```
 You must run this command once, and every time the dependencies change. `node_modules` are not committed to git.
@@ -155,7 +156,7 @@ If you would like to disable hot reloading, set the environment variable `HOT_RE
 ```
 yarn run dev
 ```
-If changes aren't detected, you might need to increase `fs.inotify.max_user_watches`. See <https://webpack.js.org/configuration/watch/#not-enough-watchers>.
+If changes aren't detected, you might need to increase `fs.inotify.max_user_watches`. See <https://webpack.js.org/configuration/watch/#not-enough-watchers>. If you need to increase your watchers, it's common to see multiple errors beginning with `Error from chokidar`.
 
 ### Unit Tests
 
