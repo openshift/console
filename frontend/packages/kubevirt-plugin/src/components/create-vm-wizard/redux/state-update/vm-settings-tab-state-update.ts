@@ -121,7 +121,16 @@ const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
   if (iGetCommonData(state, id, VMWizardProps.isProviderImport)) {
     return;
   }
-  if (!hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.OPERATING_SYSTEM)) {
+  if (
+    !hasVMSettingsValueChanged(
+      prevState,
+      state,
+      id,
+      VMSettingsField.OPERATING_SYSTEM,
+      VMSettingsField.FLAVOR,
+      VMSettingsField.WORKLOAD_PROFILE,
+    )
+  ) {
     return;
   }
 
