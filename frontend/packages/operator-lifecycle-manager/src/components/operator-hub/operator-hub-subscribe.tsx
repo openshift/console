@@ -687,7 +687,9 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           </div>
           <div className="col-xs-6">
             <ClusterServiceVersionLogo
-              displayName={_.get(channels, '[0].currentCSVDesc.displayName')}
+              displayName={
+                currentCSVDesc?.displayName || channels?.[0]?.currentCSVDesc?.displayName
+              }
               icon={iconFor(props.packageManifest.data[0])}
               provider={provider}
             />
