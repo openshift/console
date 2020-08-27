@@ -1,17 +1,12 @@
 import * as _ from 'lodash';
 import { Dispatch } from 'react-redux';
-import { k8sGet } from '@console/internal/module/k8s';
+import { k8sGet, k8sList } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel, SubscriptionModel } from '@console/operator-lifecycle-manager';
 import { setFlag } from '@console/internal/actions/features';
 import { FeatureDetector } from '@console/plugin-sdk';
 import { getAnnotations } from '@console/shared/src/selectors/common';
 import { OCSServiceModel } from './models';
-import {
-  OCS_INDEPENDENT_CR_NAME,
-  CEPH_STORAGE_NAMESPACE,
-  OCS_SUPPORT_ANNOTATION,
-  OCS_CONVERGED_CR_NAME,
-} from './constants';
+import { CEPH_STORAGE_NAMESPACE, OCS_SUPPORT_ANNOTATION } from './constants';
 
 export const OCS_INDEPENDENT_FLAG = 'OCS_INDEPENDENT';
 export const OCS_CONVERGED_FLAG = 'OCS_CONVERGED';
@@ -40,23 +35,18 @@ const handleError = (res: any, flags: string[], dispatch: Dispatch, cb: FeatureD
 
 export const detectOCS: FeatureDetector = async (dispatch) => {
   try {
-    await k8sGet(OCSServiceModel, OCS_CONVERGED_CR_NAME, CEPH_STORAGE_NAMESPACE);
+    const storageClusters = await k8sList(OCSServiceModel, { ns: CEPH_STORAGE_NAMESPACE });
+    const storageCluster = storageClusters.find((sc) => sc.status.phase !== 'Ignored');
+    const isInternal = _.isEmpty(storageCluster.spec.externalStorage);
     dispatch(setFlag(OCS_FLAG, true));
-    dispatch(setFlag(OCS_CONVERGED_FLAG, true));
-    dispatch(setFlag(OCS_INDEPENDENT_FLAG, false));
+    dispatch(setFlag(OCS_CONVERGED_FLAG, isInternal));
+    dispatch(setFlag(OCS_INDEPENDENT_FLAG, !isInternal));
   } catch (e) {
-    e?.response?.status !== 404
-      ? handleError(e, [OCS_CONVERGED_FLAG], dispatch, detectOCS)
-      : dispatch(setFlag(OCS_CONVERGED_FLAG, false));
-    try {
-      await k8sGet(OCSServiceModel, OCS_INDEPENDENT_CR_NAME, CEPH_STORAGE_NAMESPACE);
-      dispatch(setFlag(OCS_FLAG, true));
-      dispatch(setFlag(OCS_INDEPENDENT_FLAG, true));
+    if (e?.response?.status !== 404)
+      handleError(e, [OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG], dispatch, detectOCS);
+    else {
       dispatch(setFlag(OCS_CONVERGED_FLAG, false));
-    } catch (err) {
-      err?.response?.status !== 404
-        ? handleError(err, [OCS_INDEPENDENT_FLAG], dispatch, detectOCS)
-        : dispatch(setFlag(OCS_INDEPENDENT_FLAG, false));
+      dispatch(setFlag(OCS_INDEPENDENT_FLAG, false));
     }
   }
 };
