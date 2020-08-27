@@ -969,6 +969,7 @@ export const transformKnNodeData = (
               },
               spec: { sinkUri },
               type: { nodeType: NodeType.SinkUri },
+              kind: 'SinkUri',
             };
             const sinkData: TopologyDataObject = {
               id: sinkTargetUid,
