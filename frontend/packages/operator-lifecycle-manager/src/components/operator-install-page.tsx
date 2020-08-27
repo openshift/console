@@ -195,7 +195,8 @@ const InstallSucceededMessage: React.FC<InstallSuccededMessageProps> = ({
   return (
     <>
       <h2 className="co-clusterserviceversion-install__heading">
-        Installed operator - ready for use
+        Installed operator -{' '}
+        {getInitializationResourceJSON(obj) ? 'operand required' : 'ready for use'}
       </h2>
       <span>{initializationResourceMessage}</span>
       <InitializationResourceRequiredMessage obj={obj} />
@@ -222,9 +223,9 @@ const InstallingMessage: React.FC<InstallingMessageProps> = ({ namespace, obj })
     <>
       <h2 className="co-clusterserviceversion-install__heading">Installing operator</h2>
       {reason && (
-        <div className="text-muted">
+        <p className="text-muted">
           {reason}: {message}
-        </div>
+        </p>
       )}
       <p>{installMessage}</p>
       <InitializationResourceRequiredMessage obj={obj} />
