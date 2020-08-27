@@ -432,7 +432,8 @@ const fetchNodeMetrics = (): Promise<NodeMetrics> => {
     },
     {
       key: 'usedStorage',
-      query: 'sum by (instance) (node_filesystem_size_bytes - node_filesystem_free_bytes)',
+      query:
+        'sum by (instance) (node_filesystem_size_bytes{fstype!=""} - node_filesystem_avail_bytes{fstype!=""})',
     },
     {
       key: 'totalStorage',
@@ -444,7 +445,7 @@ const fetchNodeMetrics = (): Promise<NodeMetrics> => {
     },
     {
       key: 'pods',
-      query: 'sum by(node)(kubelet_running_pod_count)',
+      query: 'sum by(node)(kubelet_running_pods)',
     },
   ];
   const promises = metrics.map(({ key, query }) => {
