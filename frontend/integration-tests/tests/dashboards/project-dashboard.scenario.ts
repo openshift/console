@@ -35,7 +35,7 @@ const launcherLink = {
     namespaceDashboard: {
       namespaces: [testName],
     },
-    text: 'Help Menu Link',
+    text: 'Namespace Dashboard Link',
   },
 };
 
@@ -177,10 +177,7 @@ describe('Project Dashboard', () => {
       expect(projectDashboardView.launcherCard.isPresent()).toBe(false);
       createResource(launcherLink);
       addLeakableResource(leakedResources, launcherLink);
-      // refresh browser to reload launcher links
-      await browser.refresh();
-      await dashboardView.isLoaded();
-      expect(projectDashboardView.launcherCard.isDisplayed()).toBe(true);
+      await browser.wait(until.visibilityOf(projectDashboardView.launcherCard));
       const link = await projectDashboardView.launcherCard.$('a');
       expect(link.getText()).toEqual(launcherLink.spec.text);
       expect(link.getAttribute('href')).toEqual(launcherLink.spec.href);
