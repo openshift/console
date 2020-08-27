@@ -99,7 +99,7 @@ export const monitoringAlertRows = (
           title: <Severity severity={rls.labels?.severity} />,
         },
         {
-          title: _.isEmpty(rls.alerts) ? 'Not Firing' : <StateCounts alerts={rls.alerts} />,
+          title: _.isEmpty(rls.alerts) ? '-' : <StateCounts alerts={rls.alerts} />,
         },
         {
           title: <SilenceAlert rule={rls} />,
@@ -150,7 +150,7 @@ export const alertFilters = [
     filterGroupName: 'Alert State',
     type: 'alert-state',
     reducer: alertState,
-    items: [...alertsRowFilters[0].items, ...[{ id: 'inactive', title: 'Not Firing' }]],
+    items: [...alertsRowFilters[0].items, ...[{ id: 'inactive', title: 'Inactive' }]],
   },
   severityRowFilter,
 ];
