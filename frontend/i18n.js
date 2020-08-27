@@ -29,6 +29,7 @@ i18n
       fallbackLng: FALLBACK_LOCALE,
       load: 'languageOnly',
       debug: process.env.NODE_ENV === 'development',
+      detection: { caches: [] },
       ns: ['public', 'nav'],
       defaultNS: 'public',
       nsSeparator: '~',
