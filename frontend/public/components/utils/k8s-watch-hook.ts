@@ -70,7 +70,11 @@ export const useK8sWatchResource = <R extends K8sResourceCommon | K8sResourceCom
     resource ? k8s.getIn(['RESOURCES', 'models', resource.kind]) : null,
   );
 
-  const reduxID = React.useMemo(() => getIDAndDispatch(resource, k8sModel), [k8sModel, resource]);
+  const reduxID = React.useMemo(
+    () => getIDAndDispatch(resource, k8sModel),
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+    [k8sModel, JSON.stringify(resource)],
+  );
 
   const dispatch = useDispatch();
   React.useEffect(() => {
@@ -103,7 +107,8 @@ export const useK8sWatchResource = <R extends K8sResourceCommon | K8sResourceCom
     const loaded = resourceK8s.get('loaded');
     const loadError = resourceK8s.get('loadError');
     return [data, loaded, loadError];
-  }, [resourceK8s, resource, modelsLoaded, k8sModel]);
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resourceK8s, JSON.stringify(resource), modelsLoaded, k8sModel]);
 };
 
 export const useK8sWatchResources = <R extends ResourcesObject>(
@@ -118,7 +123,8 @@ export const useK8sWatchResources = <R extends ResourcesObject>(
         (oldModels: ImmutableMap<string, any>, newModels: ImmutableMap<string, any>) =>
           Object.values(resources).every(({ kind }) => oldModels.get(kind) === newModels.get(kind)),
       ),
-    [resources],
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+    [JSON.stringify(resources)],
   );
 
   const k8sModelSelector = React.useMemo(
@@ -130,7 +136,8 @@ export const useK8sWatchResources = <R extends ResourcesObject>(
           return models.filter((model, key) => requiredModels.includes(key));
         },
       ),
-    [k8sModelSelectorCreator, resources],
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+    [k8sModelSelectorCreator, JSON.stringify(resources)],
   );
 
   const k8sModels = useSelector<RootState, ImmutableMap<string, any>>(k8sModelSelector);
@@ -153,7 +160,8 @@ export const useK8sWatchResources = <R extends ResourcesObject>(
             return ids;
           }, {})
         : {},
-    [resources, k8sModels, hasAllModelsLoaded],
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+    [JSON.stringify(resources), k8sModels, hasAllModelsLoaded],
   );
 
   const dispatch = useDispatch();
@@ -218,7 +226,8 @@ export const useK8sWatchResources = <R extends ResourcesObject>(
         : { data, loaded: false, loadError: undefined };
       return acc;
     }, {});
-  }, [reduxIDs, resources, resourceK8s, noModels]);
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reduxIDs, JSON.stringify(resources), resourceK8s, noModels]);
 
   return results;
 };
