@@ -680,10 +680,13 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
     setSpan(to - from);
   };
 
+  const isGraphDataEmpty = !graphData || graphData.every((d) => d.length === 0);
+
   return (
     <div
       className={classNames('query-browser__wrapper', {
-        'graph-empty-state': _.isEmpty(graphData),
+        'graph-empty-state': isGraphDataEmpty,
+        'graph-empty-state__loaded': isGraphDataEmpty && !updating,
       })}
     >
       {hideControls ? (
@@ -702,8 +705,8 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
         </div>
       )}
       {error && <Error error={error} />}
-      {_.isEmpty(graphData) && !updating && <GraphEmpty />}
-      {!_.isEmpty(graphData) && (
+      {isGraphDataEmpty && !updating && <GraphEmpty />}
+      {!isGraphDataEmpty && (
         <>
           {samples < maxSamplesForSpan && !updating && (
             <Alert
