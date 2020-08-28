@@ -69,8 +69,7 @@ describe('Kubernetes resource CRUD operations', () => {
     describe(kind, () => {
       const name = `${testName}-${_.kebabCase(kind)}`;
 
-      const createResource = () => {
-        cy.log(`Create ${kind}: ${name}`);
+      it(`creates the resource instance`, () => {
         cy.visit(
           `${namespaced ? `/k8s/ns/${testName}` : '/k8s/cluster'}/${resource}?name=${testName}`,
         );
@@ -99,26 +98,6 @@ describe('Kubernetes resource CRUD operations', () => {
           yamlEditor.clickSaveCreateButton();
           cy.get(errorMessage).should('not.exist');
         });
-      };
-
-      const deleteResource = () => {
-        cy.log(`Delete ${name}`);
-        cy.visit(`${namespaced ? `/k8s/ns/${testName}` : '/k8s/cluster'}/${resource}`);
-        listPage.filter.byName(name);
-        listPage.rows.countShouldBe(1);
-        listPage.rows.clickKebabAction(name, deleteHumanizedKind(kind));
-        modal.shouldBeOpened();
-        modal.submit();
-        modal.shouldBeClosed();
-        cy.resourceShouldBeDeleted(testName, resource, name);
-      };
-
-      before(() => {
-        createResource();
-      });
-
-      after(() => {
-        deleteResource();
       });
 
       it('displays detail view for newly created resource instance', () => {
@@ -173,6 +152,17 @@ describe('Kubernetes resource CRUD operations', () => {
           yamlEditor.clickReloadButton();
         }
         yamlEditor.clickSaveCreateButton();
+      });
+
+      it(`deletes the resource instance`, () => {
+        cy.visit(`${namespaced ? `/k8s/ns/${testName}` : '/k8s/cluster'}/${resource}`);
+        listPage.filter.byName(name);
+        listPage.rows.countShouldBe(1);
+        listPage.rows.clickKebabAction(name, deleteHumanizedKind(kind));
+        modal.shouldBeOpened();
+        modal.submit();
+        modal.shouldBeClosed();
+        cy.resourceShouldBeDeleted(testName, resource, name);
       });
     });
   });
