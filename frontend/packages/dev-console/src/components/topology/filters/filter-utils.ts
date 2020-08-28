@@ -4,6 +4,7 @@ import {
   removeQueryArgument,
   setQueryArgument,
 } from '@console/internal/components/utils';
+import { K8sResourceKindReference } from '@console/internal/module/k8s';
 import { getDefaultTopologyFilters } from '../redux/reducer';
 import { getAppliedFilters } from '../redux/action';
 import {
@@ -12,7 +13,7 @@ import {
   TopologyDisplayOption,
 } from '../topology-types';
 import { DEFAULT_TOPOLOGY_FILTERS, EXPAND_GROUPS_FILTER_ID, SHOW_GROUPS_FILTER_ID } from './const';
-import { K8sResourceKindReference } from '@console/internal/module/k8s';
+import { TYPE_APPLICATION_GROUP } from '../components/const';
 
 export const TOPOLOGY_SEARCH_FILTER_KEY = 'searchQuery';
 
@@ -87,8 +88,12 @@ export const allowEdgeCreation = (filters: DisplayFilters): boolean => {
   return getFilterById(SHOW_GROUPS_FILTER_ID, filters)?.value ?? true;
 };
 
-export const showKind = (kind: K8sResourceKindReference, filters: DisplayFilters): boolean => {
-  if (!filters || !kind) {
+export const showKind = (
+  kind: K8sResourceKindReference,
+  filters: DisplayFilters,
+  type?: string,
+): boolean => {
+  if (!filters || (!kind && type === TYPE_APPLICATION_GROUP)) {
     return true;
   }
   // If no kinds are shown, show all

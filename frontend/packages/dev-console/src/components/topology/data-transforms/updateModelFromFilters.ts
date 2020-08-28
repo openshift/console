@@ -46,7 +46,7 @@ const getNodeKind = (node: NodeModel) => {
 };
 
 const isNodeShown = (node: NodeModel, filters: DisplayFilters, allNodes: NodeModel[]): boolean => {
-  let shown = showKind(getNodeKind(node), filters);
+  let shown = showKind(getNodeKind(node), filters, node.type);
   if (!shown) {
     const showGroups = getFilterById(SHOW_GROUPS_FILTER_ID, filters)?.value ?? true;
     const parentNode = allNodes.find(
