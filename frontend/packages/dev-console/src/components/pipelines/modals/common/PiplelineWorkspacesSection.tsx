@@ -17,6 +17,7 @@ const getVolumeTypeFields = (volumeType: VolumeTypes, index: number) => {
           resourceKeysField={`workspaces.${index}.data.secret.items`}
           label="Secret"
           resourceModel={SecretModel}
+          addString="Add item"
           required
         />
       );
@@ -28,6 +29,7 @@ const getVolumeTypeFields = (volumeType: VolumeTypes, index: number) => {
           resourceKeysField={`workspaces.${index}.data.configMap.items`}
           label="Config Map"
           resourceModel={ConfigMapModel}
+          addString="Add item"
           required
         />
       );
