@@ -9,14 +9,13 @@ describe('guided-tour-context', () => {
   describe('tour-reducer', () => {
     let mockState: TourState;
     beforeEach(() => {
-      mockState = { closeTour: false, startTour: false, completedTour: false, stepNumber: 2 };
+      mockState = { startTour: false, completedTour: false, stepNumber: 2 };
     });
 
     it('should return startTour as true for StartAction', () => {
       const result = tourReducer(mockState, TourActions.start);
       expect(result).toEqual({
         startTour: true,
-        closeTour: false,
         completedTour: false,
         stepNumber: 0,
       });
@@ -32,23 +31,10 @@ describe('guided-tour-context', () => {
       expect(result.stepNumber).toEqual(mockState.stepNumber - 1);
     });
 
-    it('should return closeTour as true  for pause action', () => {
-      const result = tourReducer(mockState, TourActions.pause);
-      expect(result.closeTour).toBeTruthy();
-      expect(result.stepNumber).toEqual(mockState.stepNumber);
-    });
-
-    it('should return closeTour as false  for resume action', () => {
-      const result = tourReducer({ ...mockState, closeTour: true }, TourActions.resume);
-      expect(result.closeTour).toBeFalsy();
-      expect(result.stepNumber).toEqual(mockState.stepNumber);
-    });
-
     it('should return completedTour as true for complete action', () => {
       const result = tourReducer(mockState, TourActions.complete);
       expect(result).toEqual({
         startTour: false,
-        closeTour: false,
         completedTour: true,
         stepNumber: 0,
       });
@@ -91,7 +77,6 @@ describe('guided-tour-context', () => {
         expect(tourState).toEqual({
           startTour: true,
           completedTour: false,
-          closeTour: false,
           stepNumber: 0,
         });
         expect(tour).toEqual({
