@@ -288,10 +288,9 @@ $co-affinity-row-margin: 15px;
 }
 
 .co-clusterserviceversion__box {
-  border: 1px solid black;
-  padding: 15px;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  border: 1px solid var(--pf-global--BorderColor--300);
+  margin: var(--pf-global--spacer--md) 0;
+  padding: var(--pf-global--spacer--md) var(--pf-global--spacer--md) var(--pf-global--spacer--xs);
 }
 
 .co-operator-install-page__indicator {
