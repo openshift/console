@@ -5,8 +5,9 @@ import { serverlessApplicationQuickStart } from './serverless-application-quicks
 import { sampleApplicationQuickStart } from './sample-application-quickstart';
 import { addHealthChecksQuickStart } from './add-healthchecks-quickstart';
 import { monitorSampleAppQuickStart } from './monitor-sampleapp-quickstart';
+import { QuickStart } from '../utils/quick-start-types';
 
-export const allQuickStarts = [
+export const allQuickStarts: QuickStart[] = [
   exploreServerlessQuickStart,
   serverlessApplicationQuickStart,
   explorePipelinesQuickStart,

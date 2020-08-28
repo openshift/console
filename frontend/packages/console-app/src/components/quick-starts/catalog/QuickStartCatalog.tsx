@@ -3,7 +3,7 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { RootState } from '@console/internal/redux';
 import { Gallery, GalleryItem } from '@patternfly/react-core';
-import { EmptyBox } from '@console/internal/components/utils';
+import { EmptyBox, LoadingBox } from '@console/internal/components/utils';
 import * as QuickStartActions from '../../../redux/actions/quick-start-actions';
 import {
   getActiveQuickStartID,
@@ -35,8 +35,10 @@ const QuickStartCatalog: React.FC<QuickStartCatalogProps> = ({
   activeQuickStartID,
   allQuickStartStates,
   setActiveQuickStart,
-}) =>
-  !quickStarts || quickStarts.length === 0 ? (
+}) => {
+  if (!quickStarts) return <LoadingBox />;
+
+  return quickStarts.length === 0 ? (
     <EmptyBox label="Quick Starts" />
   ) : (
     <Gallery className="co-quick-start-catalog__gallery" hasGutter>
@@ -59,6 +61,7 @@ const QuickStartCatalog: React.FC<QuickStartCatalogProps> = ({
       })}
     </Gallery>
   );
+};
 
 const mapStateToProps = (state: RootState): StateProps => ({
   activeQuickStartID: getActiveQuickStartID(state),

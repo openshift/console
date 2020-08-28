@@ -16,7 +16,7 @@ import {
   Button,
 } from '@patternfly/react-core';
 import { ArrowRightIcon } from '@patternfly/react-icons';
-import { getQuickStarts } from '@console/app/src/components/quick-starts/utils/quick-start-utils';
+import useQuickStarts from '@console/app/src/components/quick-starts/utils/useQuickStarts';
 import * as QuickStartActions from '@console/app/src/redux/actions/quick-start-actions';
 
 import './QuickStartTile.scss';
@@ -32,7 +32,7 @@ const QuickStartTile: React.FC<DispatchProps> = ({ setActiveQuickStart }) => {
     localStorage.getItem(HIDE_QUICK_START_ADD_TILE_STORAGE_KEY) === 'true';
   const [showTile, setShowTile] = React.useState<boolean>(!isQuickStartTileHidden);
   const [isOpen, setOpen] = React.useState<boolean>(false);
-  const tours = getQuickStarts();
+  const tours = useQuickStarts();
 
   const onRemove = () => {
     localStorage.setItem(HIDE_QUICK_START_ADD_TILE_STORAGE_KEY, 'true');

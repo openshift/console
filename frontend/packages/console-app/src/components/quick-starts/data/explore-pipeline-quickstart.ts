@@ -1,6 +1,8 @@
+import { FLAG_OPENSHIFT_PIPELINE } from '@console/dev-console/src/const';
+import { QuickStart } from '../utils/quick-start-types';
 import { pipelineIcon } from './tour-icons';
 
-export const explorePipelinesQuickStart = {
+export const explorePipelinesQuickStart: QuickStart = {
   apiVersion: 'console.openshift.io/v1',
   kind: 'QuickStarts',
   metadata: {
@@ -49,5 +51,20 @@ In the status column, is the status of the OpenShift Pipelines Operator **Succee
     ],
     conclusion: `You successfully installed the OpenShift Pipelines Operator! If you want to learn how to deploy an application and associate a Pipeline with it, take the Creating a Pipeline quick start.`,
     nextQuickStart: `install-app-and-associate-pipeline`,
+    accessReviewResources: [
+      {
+        group: 'operators.coreos.com',
+        resource: 'operatorgroups',
+        verb: 'list',
+      },
+      {
+        group: 'packages.operators.coreos.com',
+        resource: 'packagemanifests',
+        verb: 'list',
+      },
+    ],
+    flags: {
+      disallowed: [FLAG_OPENSHIFT_PIPELINE],
+    },
   },
 };
