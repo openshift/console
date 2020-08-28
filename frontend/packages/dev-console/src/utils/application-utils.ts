@@ -24,10 +24,7 @@ import {
   StatefulSetModel,
 } from '@console/internal/models';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
-import {
-  ServiceModel as KnativeServiceModel,
-  RouteModel as KnativeRouteModel,
-} from '@console/knative-plugin';
+import { ServiceModel as KnativeServiceModel } from '@console/knative-plugin/src/models';
 import { isDynamicEventResourceKind } from '@console/knative-plugin/src/utils/fetch-dynamic-eventsources-utils';
 import { checkAccess } from '@console/internal/components/utils';
 import { getOperatorBackedServiceKindMap } from '@console/shared';
@@ -458,7 +455,7 @@ export const cleanUpWorkload = (
   const isBuildConfigPresent = !_.isEmpty(workload?.resources?.buildConfigs);
 
   const deleteModels = [ServiceModel, RouteModel];
-  const knativeDeleteModels = [KnativeServiceModel, KnativeRouteModel, ImageStreamModel];
+  const knativeDeleteModels = [KnativeServiceModel, ImageStreamModel];
   if (isBuildConfigPresent) {
     deleteModels.push(BuildConfigModel);
     knativeDeleteModels.push(BuildConfigModel);
