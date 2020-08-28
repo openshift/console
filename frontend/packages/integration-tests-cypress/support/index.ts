@@ -3,6 +3,7 @@ import './project';
 import './selectors';
 import './nav';
 import './resources';
+
 import { a11yTestResults } from './a11y';
 
 Cypress.Cookies.defaults({
@@ -38,11 +39,22 @@ after(() => {
   });
 });
 
+const formatWindowError = (windowError: Error | PromiseRejectionEvent) => {
+  if (!windowError) {
+    return 'no window error detected';
+  }
+  const { reason } = windowError as PromiseRejectionEvent;
+  if (reason) {
+    return reason;
+  }
+  const { message, stack } = windowError as Error;
+  const formattedStack = stack?.replace(/\\n/g, '\n');
+  return `window error detected: ${message} ${formattedStack}`;
+};
+
 export const checkErrors = () =>
   cy.window().then((win) => {
-    if (win.windowError) {
-      throw new Error(`window/js runtime error detected: ${win.windowError}`);
-    }
+    assert.isTrue(!win.windowError, formatWindowError(win.windowError));
   });
 
 export const testName = `test-${Math.random()

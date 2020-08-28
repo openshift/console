@@ -41,7 +41,7 @@ declare interface Window {
     GOOS: string;
     graphqlBaseURL: string;
   };
-  windowError?: boolean | string;
+  windowError?: Error | PromiseRejectionEvent;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: Function;
   store?: {}; // Redux store
   pluginStore?: {}; // Console plugin store
