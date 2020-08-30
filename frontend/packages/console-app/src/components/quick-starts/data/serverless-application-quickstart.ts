@@ -33,7 +33,7 @@ From the **Topology** view, look for your new application. Wait for the build to
 After the build completes, a green checkmark appears in the lower-left corner of the service. Your application will say  “No Revisions” in the center.
 
 Do you see the completed application and build?`,
-          taskHelp: `This task isn’t verified yet. You might have missed a step! Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/serverless/serving-creating-managing-apps.html#creating-serverless-applications-using-the-openshift-container-platform-web-console) about this topic.`,
+          taskHelp: `This task isn’t verified yet. Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/serverless/serving-creating-managing-apps.html#creating-serverless-applications-using-the-openshift-container-platform-web-console) about this topic.`,
         },
         recapitulation: {
           success: `You just created a Serverless app!`,
@@ -56,7 +56,7 @@ In the **Topology** view, you can see that your application scaled up to one Pod
 2. Click the **Details** tab in the side panel.
 
 Is the Pod ring autoscaled to zero?`,
-          taskHelp: `This task isn’t verified yet. You might have missed a step! Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/applications/application_life_cycle_management/odc-viewing-application-composition-using-topology-view.html#odc-scaling-application-pods-and-checking-builds-and-routes_viewing-application-composition-using-topology-view) about this topic.`,
+          taskHelp: `This task isn’t verified yet. Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/applications/application_life_cycle_management/odc-viewing-application-composition-using-topology-view.html#odc-scaling-application-pods-and-checking-builds-and-routes_viewing-application-composition-using-topology-view) about this topic.`,
         },
         recapitulation: {
           success: `You just scaled up your application to accomodate a traffic request!`,
@@ -80,7 +80,7 @@ Is the Pod ring autoscaled to zero?`,
 Go to the **Topology** view.
 
 Do you see a PingSource connected by a gray line to the side of your application?`,
-          taskHelp: `This task isn’t verified yet. You might have missed a step! Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/serverless/event_sources/knative-event-sources.html) about this topic.`,
+          taskHelp: `This task isn’t verified yet. Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/serverless/event_sources/knative-event-sources.html) about this topic.`,
         },
         recapitulation: {
           success: `You just wired an Event Source to your Knative Service!`,
@@ -114,7 +114,7 @@ You should now be able to watch as the Pod rings for each revision scale up and 
 Make sure you are still in **Topology** view.
 
 Do you see two revisions in your Knative Service?`,
-          taskHelp: `This task isn’t verified yet. You might have missed a step! Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/serverless/knative_serving/splitting-traffic-between-revisions.html) about this topic.`,
+          taskHelp: `This task isn’t verified yet. Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/serverless/knative_serving/splitting-traffic-between-revisions.html) about this topic.`,
         },
         recapitulation: {
           success: `You just set a traffic distribution for your Serverless app!`,
@@ -136,7 +136,7 @@ Do you see two revisions in your Knative Service?`,
 Make sure you are still in **Topology** view.
 
 Has the Sample Serverless App been removed?`,
-          taskHelp: `This task is not verified yet. You might have missed a step! Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/applications/application_life_cycle_management/odc-deleting-applications.html) about this topic.`,
+          taskHelp: `This task is not verified yet. Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/applications/application_life_cycle_management/odc-deleting-applications.html) about this topic.`,
         },
         recapitulation: {
           success: `You just deleted your Serverless app!`,

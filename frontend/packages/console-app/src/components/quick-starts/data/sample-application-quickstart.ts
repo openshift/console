@@ -10,15 +10,15 @@ export const sampleApplicationQuickStart = {
     duration: 10,
     iconURL: '',
     description: `Is this the first time you’ve used OpenShift? Let's start with a simple sample app to learn the basics.`,
-    prerequisites: `None`,
+    prerequisites: ``,
     introduction: `### This Quick Start shows you how to deploy a sample application to OpenShift.`,
     tasks: [
       {
         title: `Creating a sample application`,
         description: `### To create a sample application:
 1. Using the perspective switcher at the top of the navigation, go to **</> Developer**.
-2. Using the project dropdown, select the project you would like to create the demo application in. You can also create a new one if you’d like.
-3. Go to the **+Add** page in the navigation.
+2. Go to the **+Add** page in the navigation.
+3. Using the project dropdown, select the project you would like to create the demo application in. You can also create a new one if you’d like.
 4. Click **Samples** to create an application from a code sample.
 5. Click on the **Node.js** card.
 6. Scroll down and click **Create**.
@@ -28,10 +28,10 @@ The Topology view will load with your new sample application. The application is
           instructions: `#### To verify the application was successfully created:
 1. Do you see a **sample-app** application?
 2. Do you see a **nodejs-sample** Deployment?`,
-          taskHelp: `Try walking through the steps again`,
+          taskHelp: `This task isn’t verified yet. Try the task again.`,
         },
         recapitulation: {
-          success: `You've just created a sample app!`,
+          success: `You have created a sample application!`,
           failed: `Try the steps again.`,
         },
       },
@@ -45,7 +45,7 @@ You should be able to see the log stream of the **nodejs-sample-1** build on the
         review: {
           instructions: `#### To verify the build is complete:
 Wait for the build to complete. It may take a few minutes.  Do you see a Completed badge on the page header?`,
-          taskHelp: `Try walking through the steps again`,
+          taskHelp: `This task isn’t verified yet. Try the task again.`,
         },
         recapitulation: {
           success: `Your sample app is now built!`,
@@ -61,10 +61,10 @@ Wait for the build to complete. It may take a few minutes.  Do you see a Complet
         review: {
           instructions: `#### Verify you can see the code associated with the sample app:
 Was a new browser tab opened with https://github.com/sclorg/nodejs-ex?`,
-          taskHelp: `Try walking through the steps again.`,
+          taskHelp: `This task isn’t verified yet. Try the task again.`,
         },
         recapitulation: {
-          success: `You've just viewed the associated git repo.`,
+          success: `You have viewed the associated git repo.`,
           failed: `Try the steps again.`,
         },
       },
@@ -79,10 +79,10 @@ You should now see the pod status in a tooltip.`,
         review: {
           instructions: `#### To verify you see the pod status:
 Do you see the number of associated pods and their statuses?`,
-          taskHelp: `Try walking through the steps again.`,
+          taskHelp: `This task isn’t verified yet. Try the task again.`,
         },
         recapitulation: {
-          success: `You've just viewed the pod status for your app!`,
+          success: `You have viewed the pod status for your app!`,
           failed: `Try the steps again.`,
         },
       },
@@ -97,10 +97,10 @@ The application will be run in a new tab.`,
           instructions: `#### To verify your sample application is running:
 1. Make sure you are in the new tab.
 2. Does the page have a **Welcome to your Node.js application on OpenShift** title?`,
-          taskHelp: `Try walking through the steps again.`,
+          taskHelp: `This task isn’t verified yet. Try the task again.`,
         },
         recapitulation: {
-          success: `You've just run your sample app!`,
+          success: `You have run your sample app!`,
           failed: `Try the steps again.`,
         },
       },

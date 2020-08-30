@@ -6,14 +6,13 @@ export const addHealthChecksQuickStart = {
   },
   spec: {
     version: 4.7,
-    displayName: 'Adding Health Checks to your sample application',
+    displayName: 'Adding health checks to your sample application',
     duration: 10,
     iconURL: '',
-    description: `You just created a sample application. Now, let’s add Health Checks to it.`,
-    prerequisites: `You should have just created a sample application. If you haven’t, please follow the instructions on the **Get started with a sample** quick start.
-
-    If you have an existing application to add Health Checks to, you can follow this procedure using that app instead.`,
-    introduction: `### This Quick Start shows you how to add Health Checks to your sample application.`,
+    description: `You just created a sample application. Now, let’s add health checks to it.`,
+    prerequisites: `You completed the "Getting started with a sample" quick start.`,
+    introduction: `### This quick start shows you how to add health checks to your sample application.
+You should have previously created the **sample-app** application and **nodejs-sample** deployment via the **Get started with a sample** quick start. If you haven't, you may be able to follow these tasks with any existing deployment without configured health checks.`,
     tasks: [
       {
         title: `Viewing the details of your sample application`,
@@ -26,10 +25,10 @@ Momentarily, a side panel will be displayed containing the details of your sampl
         review: {
           instructions: `#### To verify you are viewing the details of your sample application:
 Is the side panel titled **nodejs-sample**?`,
-          taskHelp: `Try walking through the steps again`,
+          taskHelp: `This task isn’t verified yet. Try the task again.`,
         },
         recapitulation: {
-          success: `You've just viewed the details of your sample app!`,
+          success: `You have viewed the details of your sample app!`,
           failed: `Try the steps again.`,
         },
       },
@@ -40,7 +39,7 @@ Is the side panel titled **nodejs-sample**?`,
         review: {
           instructions: `#### To verify there are no health checks configured:
 Do you see an inline alert stating that **nodejs-sample** does not have health checks?`,
-          taskHelp: `Try walking through the steps again`,
+          taskHelp: `This task isn’t verified yet. Try the task again.`,
         },
         recapitulation: {
           success: `You have verified that there are no existing Health Checks!`,
@@ -60,10 +59,10 @@ Momentarily, the form will disappear and you will be brought back to Topology, w
         review: {
           instructions: `#### Verify that health checks are now configured:
 Is the inline notification gone?`,
-          taskHelp: `Try walking through the steps again.`,
+          taskHelp: `This task isn’t verified yet. Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/applications/application-health.html#odc-adding-health-checks) about this topic.`,
         },
         recapitulation: {
-          success: `You've just added health checks to your sample app!`,
+          success: `You have added health checks to your sample app!`,
           failed: `Try the steps again.`,
         },
       },

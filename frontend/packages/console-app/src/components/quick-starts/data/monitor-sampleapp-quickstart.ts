@@ -9,11 +9,10 @@ export const monitorSampleAppQuickStart = {
     displayName: 'Monitoring your sample application',
     duration: 10,
     iconURL: '',
-    description: `Now that you’ve created a sample application and added Health Checks, let’s monitor your app`,
-    prerequisites: `You should have just created a sample application and added Health Checks to it. If you haven’t done either step, follow the instructions in the **Create a sample application** and/or **Add Health Checks to your sample application** quick starts.
-
-If you have an existing application to monitor, you can follow this procedure using that app instead.`,
-    introduction: `### This quick start shows you how to monitor your sample application.`,
+    description: `Now that you’ve created a sample application and added health checks, let’s monitor your application.`,
+    prerequisites: `You completed the "Getting started with a sample" quick start.`,
+    introduction: `### This quick start shows you how to monitor your sample application.
+You should have previously created the **sample-app** application and **nodejs-sample** deployment via the **Get started with a sample** quick start. If you haven't, you may be able to follow these tasks with any existing deployment.`,
     tasks: [
       {
         title: `Viewing the monitoring details of your sample application`,
@@ -29,10 +28,10 @@ You can see context sensitive metrics and alerts in the Monitoring tab.`,
 1. Do you see a **Metrics** accordion in the side panel?
 2. Do you see a **View monitoring dashboard** link in the Metrics accordion?
 3. Do you see three charts in the **Metrics** accordion: **CPU Usage**, **Memory Usage** and **Receive Bandwidth**?`,
-          taskHelp: `Try walking through the steps again`,
+          taskHelp: `This task isn’t verified yet. Try the task again.`,
         },
         recapitulation: {
-          success: `You've learned how you can monitor your sample app!`,
+          success: `You have learned how you can monitor your sample app!`,
           failed: `Try the steps again.`,
         },
       },
@@ -44,11 +43,11 @@ You can see context sensitive metrics and alerts in the Monitoring tab.`,
 3. You can change the context of the dashboard as well by clicking on the dropdown. Select a specific workload or **All Workloads** to view the dashboard in context of the entire project.`,
         review: {
           instructions: `#### To verify that you are able to view the monitoring dashboard:
-Do you see eight metrics charts in the dashboard?`,
-          taskHelp: `Try walking through the steps again`,
+Do you see metrics charts in the dashboard?`,
+          taskHelp: `This task isn’t verified yet. Try the task again.`,
         },
         recapitulation: {
-          success: `You've learned how to view the dashboard in context of your sample app!`,
+          success: `You have learned how to view the dashboard in context of your sample app!`,
           failed: `Try the steps again.`,
         },
       },
@@ -62,15 +61,15 @@ Do you see eight metrics charts in the dashboard?`,
           instructions: `#### Verify you can see the chart associated with the query:
 Do you see a chart displayed with filesystem usage for your project?  Note: select **Custom Query** from the dropdown to create and run a custom query utilizing PromQL.
 `,
-          taskHelp: `Try walking through the steps again.`,
+          taskHelp: `This task isn’t verified yet. Try the task again.`,
         },
         recapitulation: {
-          success: `You've learned how to run a query!`,
+          success: `You have learned how to run a query!`,
           failed: `Try the steps again.`,
         },
       },
     ],
-    conclusion: `You've learned how to access workload monitoring and metrics!`,
+    conclusion: `You have learned how to access workload monitoring and metrics!`,
 
     nextQuickStart: ``,
   },

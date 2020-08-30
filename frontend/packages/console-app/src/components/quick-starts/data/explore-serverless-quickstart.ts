@@ -39,7 +39,7 @@ In the Status column of the **Installed Operators** page, is the OpenShift Serve
         },
 
         recapitulation: {
-          success: `You've just installed the OpenShift Serverless Operator! Next, we'll install the required CR's for this Operator to run.`,
+          success: `You just installed the OpenShift Serverless Operator! Next, we'll install the required CR's for this Operator to run.`,
           failed: `This task is incomplete. Try the task again, or read more about this topic.`,
         },
       },
@@ -63,10 +63,10 @@ Go to the **All Instances** tab of the OpenShift Serverless Operator.
 
 Are the Knative Serving and Knative Eventing resources in the list of instances?
 `,
-          taskHelp: `This task isn’t verified yet. You might have missed a step! Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/serverless/installing_serverless/installing-knative-serving.html#serverless-create-serving-project-web-console_installing-knative-serving) about this topic.`,
+          taskHelp: `This task isn’t verified yet. Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/serverless/installing_serverless/installing-knative-serving.html#serverless-create-serving-project-web-console_installing-knative-serving) about this topic.`,
         },
         recapitulation: {
-          success: `You've just created instances of the Knative Service and Knative Eventing resources.`,
+          success: `You just created instances of the Knative Service and Knative Eventing resources.`,
           failed: `Check your work to make sure that the Knative Service and Knative Eventing resources were created.`,
         },
       },

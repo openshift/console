@@ -30,7 +30,7 @@ export const installAssociatePipelineQuickStart = {
 1. Momentarily, you should be brought to the **Topology** view.
 
 Is there an Application and Deployment name \`django-ex?\``,
-          taskHelp: `Try walking through the steps again to properly create your application.`,
+          taskHelp: `This task isn’t verified yet. Try the task again.`,
         },
         recapitulation: {
           success: `You just installed a deployment with an assocated pipeline! Next, we'll explore your application in topology.`,
@@ -44,11 +44,11 @@ Is there an Application and Deployment name \`django-ex?\``,
 2. Click on the Resources tab in the side panel to view related resources.`,
         review: {
           instructions: `#### To verify that the application has been created an a pipeline was associated:
-1. The **Resources** tab of the side panel shows many associated resources including **Pods**, **Pipeline Runs** and **Routes**.
+1. The **Resources** tab of the side panel shows many associated resources, including **Pods**, **Pipeline Runs**, and **Routes**.
 2. The **Pipeline Runs** section displays the associated pipeline.
 
 Is there a Pipeline named django-ex-git?`,
-          taskHelp: `Try walking through the steps again to find associated resources and locate the pipeline`,
+          taskHelp: `This task isn’t verified yet. Try the task again.`,
         },
         recapitulation: {
           success: `You just located the associated Pipeline! Next, we'll start and explore your Pipeline.`,
@@ -71,11 +71,11 @@ Notice the Pipeline Runs section of the Side Panel
 5. When the pipeline run is complete, you will see a Succeeded badge on the page title.
 
 Is the status Succeeded?`,
-          taskHelp: `Try walking through the steps again to properly start your pipeline`,
+          taskHelp: `This task isn’t verified yet. Try the task again.`,
         },
         recapitulation: {
-          success: `You just run your pipeline successfully`,
-          failed: `This task is not verified yet. You might have missed a step! Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/pipelines/working-with-pipelines-using-the-developer-perspective.html#creating-applications-with-openshift-pipelines) about this topic.`,
+          success: `You have run your pipeline successfully`,
+          failed: `This task is not verified yet. Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/pipelines/working-with-pipelines-using-the-developer-perspective.html#creating-applications-with-openshift-pipelines) about this topic.`,
         },
       },
     ],

@@ -39,11 +39,11 @@ To start using Pipelines, install the OpenShift® Pipelines Operator on your clu
 2. Verify that the **OpenShift Pipelines Operator** appears in the list of Operators.
 
 In the status column, is the status of the OpenShift Serverless Operator **Succeeded**?`,
-          taskHelp: `This task isn’t verified yet. You might have missed a step! Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/pipelines/installing-pipelines.html#op-installing-pipelines-operator-in-web-console_installing-pipelines) about this topic.`,
+          taskHelp: `This task isn’t verified yet. Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/pipelines/installing-pipelines.html#op-installing-pipelines-operator-in-web-console_installing-pipelines) about this topic.`,
         },
         recapitulation: {
-          success: `You've just installed the Pipelines Operator!`,
-          failed: `Check your work to make sure that `,
+          success: `You have installed the Pipelines Operator!`,
+          failed: `Try the steps again.`,
         },
       },
     ],
