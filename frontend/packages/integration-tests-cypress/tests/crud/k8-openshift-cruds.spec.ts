@@ -87,16 +87,17 @@ describe('Kubernetes resource CRUD operations', () => {
         cy.testA11y(`YAML Editor for ${kind}: ${name}`);
         let newContent;
         // get, update, and set yaml editor content.
-        return yamlEditor.getEditorContent().then((content) => {
+        yamlEditor.getEditorContent().then((content) => {
           newContent = _.defaultsDeep(
             {},
             { metadata: { name, labels: { [testLabel]: testName } } },
             safeLoad(content),
           );
-          yamlEditor.setEditorContent(safeDump(newContent, { sortKeys: true }));
           cy.log('creates a new resource instance');
-          yamlEditor.clickSaveCreateButton();
-          cy.get(errorMessage).should('not.exist');
+          yamlEditor.setEditorContent(safeDump(newContent, { sortKeys: true })).then(() => {
+            yamlEditor.clickSaveCreateButton();
+            cy.get(errorMessage).should('not.exist');
+          });
         });
       });
 
