@@ -11,7 +11,7 @@ import {
 import { iGetCommonData } from '../../selectors/immutable/selectors';
 import { VMWizardProps, VMWizardTab } from '../../types';
 import { getVMLikeModelName } from '../../../../utils/utils';
-import { iGetIn } from '../../../../utils/immutable';
+import { iGet, iGetIn } from '../../../../utils/immutable';
 import { iGetCreateVMWizardTabs } from '../../selectors/immutable/common';
 
 const ErrorResultsComponent: React.FC<ErrorResultsProps> = ({
@@ -25,9 +25,12 @@ const ErrorResultsComponent: React.FC<ErrorResultsProps> = ({
     <EmptyState variant={EmptyStateVariant.full} className={className}>
       <EmptyStateIcon icon={ExclamationCircleIcon} color="#a30000" />
       <Title headingLevel="h5" size="lg" data-test-id="kubevirt-wizard-error-result">
-        {`Error creating ${modelName}.`}
+        {iGet(mainError, 'title') || `Error creating ${modelName}.`}
       </Title>
-      <EmptyStateBody>{mainError}</EmptyStateBody>
+      <EmptyStateBody>
+        {iGet(mainError, 'message')}
+        {iGet(mainError, 'detail') ? <div>${iGet(mainError, 'detail')}</div> : null}
+      </EmptyStateBody>
     </EmptyState>
   );
 };
@@ -35,7 +38,11 @@ const ErrorResultsComponent: React.FC<ErrorResultsProps> = ({
 type ErrorResultsProps = {
   wizardReduxID: string;
   isCreateTemplate: boolean;
-  mainError: string;
+  mainError: {
+    title?: string;
+    message: string;
+    detail?: string;
+  };
   className?: string;
 };
 

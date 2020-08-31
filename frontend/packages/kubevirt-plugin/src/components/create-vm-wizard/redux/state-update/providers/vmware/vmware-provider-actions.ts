@@ -31,7 +31,7 @@ export const startV2VVMWareControllerWithCleanup = ({ getState, id, dispatch }: 
   const namespace = iGetCommonData(state, id, VMWizardProps.activeNamespace);
   const enhancedK8sMethods = new EnhancedK8sMethods();
 
-  return startV2VVMWareController({ namespace }, enhancedK8sMethods)
+  return startV2VVMWareController({ namespace }, enhancedK8sMethods, VMImportProvider.VMWARE)
     .then(() =>
       dispatch(
         vmWizardInternalActions[InternalActionType.UpdateImportProviderField](
@@ -50,7 +50,7 @@ export const startV2VVMWareControllerWithCleanup = ({ getState, id, dispatch }: 
       cleanupAndGetResults(enhancedK8sMethods, e).then((results) => {
         const errors = errorsFirstSort([...results.errors, ...results.requestResults]);
         if (results.mainError) {
-          consoleWarn(results.mainError);
+          consoleWarn(results.mainError?.message, results.mainError?.detail);
         }
         errors.forEach((o) => consoleWarn(o.title, o.content.data));
         return dispatch(
