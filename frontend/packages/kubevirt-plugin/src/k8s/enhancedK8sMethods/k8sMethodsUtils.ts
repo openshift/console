@@ -35,7 +35,7 @@ const asResult = ({
 
 export const cleanupAndGetResults = async (
   enhancedK8sMethods: EnhancedK8sMethods,
-  { message, failedObject, failedPatches },
+  { message, title, detail, failedObject, failedPatches },
 ): Promise<ResultsWrapper> => {
   const actualState = enhancedK8sMethods.getActualState(); // actual state will differ after cleanup
 
@@ -87,7 +87,7 @@ export const cleanupAndGetResults = async (
   return {
     isFatal,
     isValid: false,
-    mainError: message,
+    mainError: { message, title, detail },
     errors: [],
     requestResults: [...failureResults, ...cleanupResults],
   };

@@ -27,3 +27,21 @@ export const CONVERSION_VOLUME_VDDK_NAME = 'volume-vddk';
 export const CONVERSION_VDDK_MOUNT_PATH = '/opt/vmware-vix-disklib-distrib';
 
 export const CONVERSION_PROGRESS_ANNOTATION = 'v2vConversionProgress';
+
+export const V2V_DATA_TTL_KEY = 'timeToLive';
+
+export enum V2VConfigMapAttribute {
+  kubevirtVmwareImage = 'kubevirt-vmware-image', // the kubevirt-vmware provider is responsible for reading VMs list/details from the VMware API
+  kubevirtVmwareImagePullPolicy = 'kubevirt-vmware-image-pull-policy',
+  v2vConversionImage = 'v2v-conversion-image', // full image name of kubevirt-v2v-conversion
+  vddkInitImage = 'vddk-init-image',
+}
+
+export const VMWARE_DOCURL =
+  'https://docs.openshift.com/container-platform/4.5/virt/virtual_machines/importing_vms/virt-importing-vmware-vm.html';
+export const OVIRT_DOCURL =
+  'https://docs.openshift.com/container-platform/4.5/virt/virtual_machines/importing_vms/virt-importing-rhv-vm.html';
+
+export enum V2VProviderErrorSpecialUIMessageRequest {
+  supplyDoclink = '__supplyDoclink__',
+}

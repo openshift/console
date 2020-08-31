@@ -1,7 +1,7 @@
 import { DeploymentModel, RoleModel } from '@console/internal/models';
 import { getName } from '@console/shared/src';
 import { V2VVMWARE_DEPLOYMENT_NAME } from '../../../constants/v2v';
-import { getVmwareConfigMap } from './v2vvmware-configmap';
+import { getVmwareConfigMap, validateV2VConfigMap } from './v2vvmware-configmap';
 import { getContainerImage } from '../../../selectors/pod/container';
 import { getKubevirtV2vVmwareContainerImage, getV2vImagePullPolicy } from '../../../selectors/v2v';
 import { ConfigMapKind, DeploymentKind, K8sResourceCommon } from '@console/internal/module/k8s';
@@ -14,6 +14,12 @@ import { PatchBuilder } from '@console/shared/src/k8s';
 import { buildOwnerReference } from '../../../utils';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { RoleWrappper } from '../../wrapper/k8s/role-wrapper';
+import { VMImportProvider } from 'packages/kubevirt-plugin/src/components/create-vm-wizard/types';
+import { K8sDetailError } from '../../enhancedK8sMethods/errors';
+import {
+  INSUFFICIENT_PERMISSIONS_ERROR_TITLE,
+  INSUFFICIENT_PERMISSIONS_ERROR_DESC,
+} from '../../../constants/errors/common';
 
 const { info } = console;
 
@@ -112,6 +118,7 @@ const startVmWare = async (
 export const startV2VVMWareController = async (
   { namespace }: { namespace: string },
   enhancedK8sMethods: EnhancedK8sMethods,
+  type: VMImportProvider,
 ) => {
   if (!namespace) {
     throw new Error('V2V VMWare: namespace must be selected');
@@ -129,43 +136,57 @@ export const startV2VVMWareController = async (
   let kubevirtVmwareConfigMap = null;
 
   try {
-    kubevirtVmwareConfigMap = await getVmwareConfigMap({ k8sGet });
-
-    if (!kubevirtVmwareConfigMap) {
-      throw new Error('V2V VMWare: v2v-vmware configMap not found');
+    try {
+      kubevirtVmwareConfigMap = await getVmwareConfigMap();
+    } catch (error) {
+      if (error?.json.code === 403) {
+        throw new K8sDetailError({
+          title: INSUFFICIENT_PERMISSIONS_ERROR_TITLE,
+          message: INSUFFICIENT_PERMISSIONS_ERROR_DESC,
+          detail: error?.message,
+        });
+      }
+      // other cases are validated in validateV2VConfigMap
     }
 
-    activeDeployment = await k8sGet(DeploymentModel, name, namespace);
-
-    const container = (activeDeployment?.spec?.template?.spec?.containers || []).find(
-      (c) => c.name === name,
-    );
-
-    if (
-      getContainerImage(container) !== getKubevirtV2vVmwareContainerImage(kubevirtVmwareConfigMap)
-    ) {
-      throw new Error(OLD_VERSION);
+    const err = validateV2VConfigMap(kubevirtVmwareConfigMap, type);
+    if (err) {
+      throw err;
     }
-  } catch (e) {
-    // Deployment does not exist or does not have permissions to see Deployments in this namespace
-    info(
-      e && e.message === OLD_VERSION
-        ? 'updating V2V VMWare controller'
-        : 'V2V VMWare controller deployment not found, so creating one ...',
-    );
 
-    await cleanupOldDeployment({ activeDeployment }, enhancedK8sMethods);
-    const { serviceAccount, role, roleBinding } = await resolveRolesAndServiceAccount(
-      { name, namespace },
-      enhancedK8sMethods,
-    );
+    try {
+      activeDeployment = await k8sGet(DeploymentModel, name, namespace);
 
-    await startVmWare(
-      { name, namespace, serviceAccount, role, roleBinding, kubevirtVmwareConfigMap },
-      enhancedK8sMethods,
-    );
+      const container = (activeDeployment?.spec?.template?.spec?.containers || []).find(
+        (c) => c.name === name,
+      );
 
-    info(`startV2VVMWareController for "${namespace}" namespace finished.`);
+      if (
+        getContainerImage(container) !== getKubevirtV2vVmwareContainerImage(kubevirtVmwareConfigMap)
+      ) {
+        throw new Error(OLD_VERSION);
+      }
+    } catch (e) {
+      // Deployment does not exist or does not have permissions to see Deployments in this namespace
+      info(
+        e && e.message === OLD_VERSION
+          ? 'updating V2V VMWare controller'
+          : 'V2V VMWare controller deployment not found, so creating one ...',
+      );
+
+      await cleanupOldDeployment({ activeDeployment }, enhancedK8sMethods);
+      const { serviceAccount, role, roleBinding } = await resolveRolesAndServiceAccount(
+        { name, namespace },
+        enhancedK8sMethods,
+      );
+
+      await startVmWare(
+        { name, namespace, serviceAccount, role, roleBinding, kubevirtVmwareConfigMap },
+        enhancedK8sMethods,
+      );
+
+      info(`startV2VVMWareController for "${namespace}" namespace finished.`);
+    }
   } finally {
     delete semaphors[namespace];
   }

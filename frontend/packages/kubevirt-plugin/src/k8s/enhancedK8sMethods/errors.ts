@@ -53,3 +53,23 @@ export class K8sMultipleErrors extends Error {
     this.errors = errors;
   }
 }
+
+export class K8sDetailError extends Error {
+  readonly title: string;
+
+  readonly detail: string;
+
+  constructor({
+    message,
+    title = '',
+    detail = '',
+  }: {
+    message: string;
+    title?: string;
+    detail?: string;
+  }) {
+    super(message);
+    this.title = title;
+    this.detail = detail;
+  }
+}

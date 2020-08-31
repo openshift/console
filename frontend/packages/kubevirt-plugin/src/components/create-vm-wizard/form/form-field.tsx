@@ -38,11 +38,10 @@ const hasIsDisabled = new Set([
 ]);
 const hasDisabled = new Set([FormFieldType.TEXT_AREA]);
 const hasIsChecked = new Set([FormFieldType.CHECKBOX, FormFieldType.INLINE_CHECKBOX]);
-const hasValidated = new Set([FormFieldType.FILE_UPLOAD]);
+const hasValidated = new Set([FormFieldType.SELECT, FormFieldType.FILE_UPLOAD]);
 const hasIsValid = new Set([
   FormFieldType.TEXT,
   FormFieldType.TEXT_AREA,
-  FormFieldType.SELECT,
   FormFieldType.CHECKBOX,
   FormFieldType.INLINE_CHECKBOX,
   FormFieldType.CUSTOM,
@@ -55,6 +54,11 @@ const hasIsRequired = new Set([
   FormFieldType.CUSTOM,
 ]);
 const hasLabel = new Set([FormFieldType.INLINE_CHECKBOX]);
+
+const validatedValidationErrorTypes = new Set([
+  ValidationErrorType.Error,
+  ValidationErrorType.Warn,
+]);
 
 const setSupported = (fieldType: FormFieldType, supportedTypes: Set<FormFieldType>, value) =>
   supportedTypes.has(fieldType) ? value : undefined;
@@ -76,7 +80,11 @@ export const FormField: React.FC<FormFieldProps> = ({ children, isDisabled, valu
         const val = value || iGetFieldValue(field);
         const key = iGetFieldKey(field);
         const disabled = isDisabled || isFieldDisabled(field) || isLoading;
-        const isValid = iGetIn(field, ['validation', 'type']) !== ValidationErrorType.Error;
+        const validationType = iGetIn(field, ['validation', 'type']);
+        const isValid = validationType !== ValidationErrorType.Error;
+        const validated = validatedValidationErrorTypes.has(validationType)
+          ? validationType
+          : undefined;
 
         return inject(
           children,
@@ -88,7 +96,7 @@ export const FormField: React.FC<FormFieldProps> = ({ children, isDisabled, valu
               disabled: set(hasDisabled, disabled),
               isRequired: set(hasIsRequired, isFieldRequired(field)),
               isValid: set(hasIsValid, isValid),
-              validated: set(hasValidated, isValid ? undefined : 'error'),
+              validated: set(hasValidated, validated),
               id: getFieldId(key),
               label: set(hasLabel, getFieldTitle(key)),
             },
