@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { history, resourcePathFromModel } from '@console/internal/components/utils';
 import { apiVersionForModel, referenceForModel } from '@console/internal/module/k8s';
 import { getRandomChars } from '@console/shared';
@@ -147,3 +148,8 @@ export const goToYAML = (existingPipeline?: Pipeline, namespace?: string) => {
       : `${getPipelineURL(namespace)}/~new`,
   );
 };
+
+export const hasEmptyString = (arr: string[]) => _.find(arr, _.isEmpty) === '';
+
+export const isFieldValid = (value: string | string[], dirty: boolean, emptyIsInvalid: boolean) =>
+  dirty && emptyIsInvalid ? (_.isArray(value) ? !hasEmptyString(value) : !_.isEmpty(value)) : true;
