@@ -31,7 +31,10 @@ const getApplicationGroupForNode = (node: NodeModel, groups: NodeModel[]): NodeM
 const getNodeKind = (node: NodeModel) => {
   let { resource } = node as OdcNodeModel;
   if (resource) {
-    return referenceFor(resource);
+    const ref = referenceFor(resource);
+    if (ref) {
+      return ref;
+    }
   }
   const kind = (node as OdcNodeModel).resourceKind;
   if (kind) {
