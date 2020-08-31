@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { match as Rmatch } from 'react-router-dom';
-import MultiTabListPage from '../multi-tab-list/MultiTabListPage';
+import MultiTabListPage from '../../multi-tab-list/MultiTabListPage';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { TaskModel, ClusterTaskModel, TaskRunModel } from '../../models';
+import { TaskModel, ClusterTaskModel, TaskRunModel } from '../../../models';
 import { Page } from '@console/internal/components/utils';
 import { TechPreviewBadge } from '@console/shared';
 import { DefaultPage } from '@console/internal/components/default-resource';
-import TaskRunsListPage from '../taskruns/list-page/TaskRunsListPage';
-import { MenuActions } from '../multi-tab-list/multi-tab-list-page-types';
+import TaskRunsListPage from '../../taskruns/list-page/TaskRunsListPage';
+import { MenuActions } from '../../multi-tab-list/multi-tab-list-page-types';
 
 interface TasksListsPageProps {
   match: Rmatch<any>;
