@@ -45,6 +45,7 @@ const MetricsQueryInput: React.FC<MetricsQueryInputProps> = ({ query }) => {
   const dispatch = useDispatch();
   const [title, setTitle] = React.useState('Select Query');
   const [selectedKey, setSelectedKey] = React.useState('');
+  const [changeKey, setChangeKey] = React.useState(false);
   const [metric, setMetric] = React.useState('');
   const [showPromQl, setShowPromQl] = React.useState(false);
   const [isPromQlDisabled, setIsPromQlDisabled] = React.useState(false);
@@ -57,7 +58,7 @@ const MetricsQueryInput: React.FC<MetricsQueryInputProps> = ({ query }) => {
       patchQuery({ text: queryMetrics || '' });
       runQueries();
     }
-  }, [dispatch, metric, namespace]);
+  }, [dispatch, metric, namespace, changeKey]);
 
   React.useEffect(() => {
     const q = queries?.query;
@@ -102,6 +103,7 @@ const MetricsQueryInput: React.FC<MetricsQueryInputProps> = ({ query }) => {
 
   const onChange = (selectedValue: string) => {
     setMetric(metricsQuery[selectedValue]);
+    setChangeKey(!changeKey);
     if (selectedValue && selectedValue === ADD_NEW_QUERY) {
       setTitle(CUSTOM_QUERY);
       setIsPromQlDisabled(true);
