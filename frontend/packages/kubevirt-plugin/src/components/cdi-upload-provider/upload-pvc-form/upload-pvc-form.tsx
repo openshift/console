@@ -21,6 +21,7 @@ import {
   RequestSizeInput,
   history,
   resourcePath,
+  ExternalLink,
 } from '@console/internal/components/utils';
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import { RadioInput } from '@console/internal/components/radio';
@@ -52,7 +53,7 @@ import {
   TEMPLATE_VM_GOLDEN_OS_NAMESPACE,
   TEMPLATE_VM_COMMON_NAMESPACE,
 } from '../../../constants';
-import { CDI_UPLOAD_OS_URL_PARAM } from '../consts';
+import { CDI_UPLOAD_OS_URL_PARAM, CDI_UPLOAD_SUPPORTED_TYPES_URL } from '../consts';
 import './upload-pvc-form.scss';
 
 const templatesResource: WatchK8sResource = {
@@ -72,6 +73,31 @@ const goldenPvcsResource: WatchK8sResource = {
   namespace: TEMPLATE_VM_GOLDEN_OS_NAMESPACE,
 };
 
+const uploadErrorType = {
+  MISSING: 'missing',
+  ALLOCATE: 'allocate',
+  TYPE: 'type',
+};
+
+const uploadErrorMessage = {
+  [uploadErrorType.MISSING]: 'File input is missing',
+  [uploadErrorType.ALLOCATE]: 'Could not create persistent volume claim',
+  [uploadErrorType.TYPE]: (
+    <>
+      <p>
+        The format of the file you are uploading is not supported. Please use one of the supported
+        formats
+      </p>
+      <p>
+        <ExternalLink
+          text="Learn more about supported formats"
+          href={CDI_UPLOAD_SUPPORTED_TYPES_URL}
+        />
+      </p>
+    </>
+  ),
+};
+
 export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   onChange,
   fileName,
@@ -81,6 +107,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   goldenPvcs,
   osParam,
   isLoading,
+  setIsFileRejected,
   ...props
 }) => {
   const operatingSystems = getTemplateOperatingSystems(commonTemplates);
@@ -235,6 +262,11 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
           hideDefaultPreview
           isRequired
           isDisabled={isLoading}
+          dropzoneProps={{
+            accept: '.iso,.img,.qcow2,.gz,.xz',
+            onDropRejected: () => setIsFileRejected(true),
+            onDropAccepted: () => setIsFileRejected(false),
+          }}
         />
         <Checkbox
           id="golden-os-switch"
@@ -388,7 +420,8 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [fileValue, setFileValue] = React.useState<File>(null);
   const [fileName, setFileName] = React.useState('');
-  const [error, setError] = React.useState('');
+  const [isFileRejected, setIsFileRejected] = React.useState(false);
+  const [error, setError] = React.useState<string>('');
   const [isAllocating, setIsAllocating] = React.useState(false);
   const [dvObj, setDvObj] = React.useState<V1alpha1DataVolume>(null);
   const [commonTemplates, loadedTemplates, errorTemplates] = useK8sWatchResource<TemplateKind[]>(
@@ -408,7 +441,9 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
   const save = (e: React.FormEvent<EventTarget>) => {
     e.preventDefault();
     if (!fileName) {
-      setError('File input is missing');
+      setError(uploadErrorType.MISSING);
+    } else if (isFileRejected) {
+      setError(uploadErrorType.TYPE);
     } else {
       setError('');
       setIsAllocating(true);
@@ -425,7 +460,7 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
         })
         .catch(({ message }: { message: string }) => {
           setIsAllocating(false);
-          setError(message || 'Could not create persistent volume claim.');
+          setError(message || uploadErrorType.ALLOCATE);
         });
     }
   };
@@ -433,6 +468,7 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
   const handleFileChange = (value, filename) => {
     setFileName(filename);
     setFileValue(value);
+    setError('');
   };
 
   React.useEffect(() => {
@@ -440,6 +476,8 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
       setError(errorTemplates?.message || errorPvcs?.message);
     }
   }, [errorTemplates, errorPvcs]);
+
+  const errorMessage = uploadErrorMessage[error] || error;
 
   return (
     <>
@@ -461,12 +499,13 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
             fileValue={fileValue}
             fileName={fileName}
             handleFileChange={handleFileChange}
+            setIsFileRejected={setIsFileRejected}
             commonTemplates={commonTemplates}
             goldenPvcs={goldenPvcs}
             osParam={osParam}
             isLoading={!loadedTemplates}
           />
-          <ButtonBar inProgress={!loadedTemplates || !loadedPvcs} errorMessage={error}>
+          <ButtonBar inProgress={!loadedTemplates || !loadedPvcs} errorMessage={errorMessage}>
             <ActionGroup className="pf-c-form">
               <Button id="save-changes" type="submit" variant="primary">
                 Upload
@@ -484,7 +523,7 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
         )}
         isSubmitting={isSubmitting}
         isAllocating={isAllocating}
-        allocateError={error}
+        allocateError={errorMessage}
         onErrorClick={() => {
           setIsSubmitting(false);
           setError('');
@@ -506,6 +545,7 @@ export type UploadPVCFormProps = {
   isLoading: boolean;
   commonTemplates: TemplateKind[];
   goldenPvcs: K8sResourceKind[];
+  setIsFileRejected: React.Dispatch<React.SetStateAction<boolean>>;
   onChange: (K8sResourceKind) => void;
   handleFileChange: (value, filename, event) => void;
 };
