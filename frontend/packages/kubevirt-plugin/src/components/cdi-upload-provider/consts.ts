@@ -9,3 +9,4 @@ export enum UPLOAD_STATUS {
 export const CDI_UPLOAD_POD_ANNOTATION = 'cdi.kubevirt.io/storage.pod.phase';
 export const CDI_UPLOAD_POD_NAME_ANNOTATION = 'cdi.kubevirt.io/storage.uploadPodName';
 export const CDI_UPLOAD_RUNNING = 'Running';
+export const CDI_UPLOAD_OS_URL_PARAM = 'os';

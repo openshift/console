@@ -11,3 +11,5 @@ export const iGetPrameterValue = (obj, name: string, defaultValue = null): any =
 
   return iGetIn(parameter, ['value'], defaultValue);
 };
+export const iGetAnnotation = (obj, key: string, defaultValue = undefined): string =>
+  iGetIn(obj, ['metadata', 'annotations', key], defaultValue);

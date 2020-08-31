@@ -8,6 +8,7 @@ import {
   Button,
   ButtonVariant,
 } from '@patternfly/react-core';
+import { Link } from 'react-router-dom';
 import { ValidationErrorType, asValidationObject } from '@console/shared/src/utils/validation';
 import {
   concatImmutableLists,
@@ -32,15 +33,23 @@ import { getPlaceholder, getFieldId } from '../../utils/renderable-field-utils';
 import { nullOnEmptyChange } from '../../utils/utils';
 import { operatingSystemsNative } from '../../../../constants/vm-templates/os';
 import { OperatingSystemRecord } from '../../../../types';
+import { iGetAnnotation } from '../../../../selectors/immutable/common';
 import { iGetName, iGetNamespace } from '../../selectors/immutable/selectors';
+import { PVC_UPLOAD_URL } from '../../../../constants';
 import {
   BASE_IMAGE_AND_PVC_SHORT,
   BASE_IMAGE_AND_PVC_MESSAGE,
   NO_BASE_IMAGE_SHORT,
   NO_BASE_IMAGE_AND_NO_PVC_MESSAGE,
   NO_BASE_IMAGE_AND_NO_PVC_SHORT,
-  NO_BASE_IMAGE_MESSAGE,
+  BASE_IMAGE_AND_PVC_UPLOADING_SHORT,
+  BASE_IMAGE_UPLOADING_MESSAGE,
 } from '../../strings/strings';
+import {
+  CDI_UPLOAD_OS_URL_PARAM,
+  CDI_UPLOAD_POD_ANNOTATION,
+  CDI_UPLOAD_RUNNING,
+} from '../../../cdi-upload-provider/consts';
 
 export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
   ({
@@ -63,7 +72,6 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
     const displayOnly = !!display;
     const cloneBaseDiskImage = iGetFieldValue(cloneBaseDiskImageField);
     const mountWindowsGuestTools = iGetFieldValue(mountWindowsGuestToolsField);
-
     const params = {
       userTemplate,
       flavor,
@@ -124,22 +132,36 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
         const baseImageFoundInCluster = loadedBaseImages?.find(
           (pvc) => iGetName(pvc) === pvcName && iGetNamespace(pvc) === pvcNamespace,
         );
-        const osField = {
+        const isBaseImageUploading =
+          iGetAnnotation(baseImageFoundInCluster, CDI_UPLOAD_POD_ANNOTATION) === CDI_UPLOAD_RUNNING;
+        const osField: any = {
           id: operatingSystem.id,
           name: operatingSystem.name,
           pvcName,
           baseImageFoundInCluster,
           message: '',
           longMessage: '',
+          checkboxDescription: '',
         };
 
         if (!userTemplate) {
           if (baseImageFoundInCluster && pvcName) {
-            osField.message = BASE_IMAGE_AND_PVC_SHORT;
+            osField.message = isBaseImageUploading
+              ? BASE_IMAGE_AND_PVC_UPLOADING_SHORT
+              : BASE_IMAGE_AND_PVC_SHORT;
             osField.longMessage = BASE_IMAGE_AND_PVC_MESSAGE;
+            osField.checkboxDescription = isBaseImageUploading ? BASE_IMAGE_UPLOADING_MESSAGE : '';
           } else if (pvcName) {
             osField.message = NO_BASE_IMAGE_SHORT;
-            osField.longMessage = NO_BASE_IMAGE_MESSAGE;
+            osField.longMessage = (
+              <>
+                Operating system image not available. You can either{' '}
+                <Link to={`${PVC_UPLOAD_URL}?${CDI_UPLOAD_OS_URL_PARAM}=${operatingSystem.id}`}>
+                  upload a new disk image
+                </Link>{' '}
+                or define a boot source manually in the boot source dropdown
+              </>
+            );
           } else {
             osField.message = NO_BASE_IMAGE_AND_NO_PVC_SHORT;
             osField.longMessage = NO_BASE_IMAGE_AND_NO_PVC_MESSAGE;
@@ -204,6 +226,7 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
             <Checkbox
               id={getFieldId(cloneBaseDiskImageField)}
               onChange={(v) => onChange(VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE, v)}
+              description={baseImage?.checkboxDescription}
             />
           </FormField>
         </FormFieldRow>

@@ -25,7 +25,8 @@ import {
 } from '../../../../constants/vm';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { prefillVmTemplateUpdater } from './prefill-vm-template-state-update';
-import { iGetPrameterValue } from '../../../../selectors/immutable/common';
+import { iGetPrameterValue, iGetAnnotation } from '../../../../selectors/immutable/common';
+import { CDI_UPLOAD_POD_ANNOTATION, CDI_UPLOAD_RUNNING } from '../../../cdi-upload-provider/consts';
 
 const selectUserTemplateOnLoadedUpdater = (options: UpdateOptions) => {
   const { id, dispatch, getState } = options;
@@ -136,6 +137,7 @@ const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
 
   const userTemplate = iGetVmSettingValue(state, id, VMSettingsField.USER_TEMPLATE);
   let iBaseImage = null;
+  let iBaseImageUploading = false;
 
   // cloneCommonBaseDiskImage can be set true only if userTemplate is not used
   if (!userTemplate) {
@@ -153,6 +155,8 @@ const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
       iBaseImages
         .valueSeq()
         .find((iPVC) => iGetName(iPVC) === pvcName && iGetNamespace(iPVC) === pvcNamespace);
+    iBaseImageUploading =
+      iGetAnnotation(iBaseImage, CDI_UPLOAD_POD_ANNOTATION) === CDI_UPLOAD_RUNNING;
   }
 
   dispatch(
@@ -161,7 +165,8 @@ const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
       VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE,
       {
         isHidden: asHidden(!iBaseImage, VMSettingsField.OPERATING_SYSTEM),
-        value: !!iBaseImage,
+        isDisabled: asDisabled(iBaseImageUploading, VMSettingsField.OPERATING_SYSTEM),
+        value: iBaseImageUploading ? false : !!iBaseImage,
       },
     ),
   );
