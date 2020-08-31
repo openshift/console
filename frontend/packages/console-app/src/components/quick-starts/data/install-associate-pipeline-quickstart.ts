@@ -19,7 +19,7 @@ export const installAssociatePipelineQuickStart = {
       {
         title: `Importing an application and associate it with a pipeline`,
         description: `### Follow these steps to create an application.
-1. From the **developer** perspective, in the navigation menu, click **+Add**.
+1. From the **Developer** perspective, in the navigation menu, click **+Add**.
 2. At the top of the page, in the Projects list, select a project or create a new project to put the application in.
 3. Click **From Git**.
 4. In the **Git Repo URL** field, enter \`https://github.com/sclorg/django-ex.git\`.

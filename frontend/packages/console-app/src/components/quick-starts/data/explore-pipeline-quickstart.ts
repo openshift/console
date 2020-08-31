@@ -32,13 +32,13 @@ To start using Pipelines, install the OpenShift® Pipelines Operator on your clu
 4. Click the **tile** to open the Operator details.
 5. At the top of the OpenShift Pipelines Operator panel that opens, click **Install**.
 6. Fill out the Operator subscription form by selecting the channel that matches your OpenShift cluster, and then click **Install**.
-7. On the Installed Operators page, wait for the OpenShift Serverless Operator's status to change from **Installing** to **Succeeded**. `,
+7. On the Installed Operators page, wait for the OpenShift Pipelines Operator's status to change from **Installing** to **Succeeded**. `,
         review: {
           instructions: `#### To verify that the OpenShift Pipelines Operator is installed:
 1. From the **Operators** section of the navigation, go to the **Installed Operators** page.
 2. Verify that the **OpenShift Pipelines Operator** appears in the list of Operators.
 
-In the status column, is the status of the OpenShift Serverless Operator **Succeeded**?`,
+In the status column, is the status of the OpenShift Pipelines Operator **Succeeded**?`,
           taskHelp: `This task isn’t verified yet. Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/pipelines/installing-pipelines.html#op-installing-pipelines-operator-in-web-console_installing-pipelines) about this topic.`,
         },
         recapitulation: {

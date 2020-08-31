@@ -12,7 +12,7 @@ export const addHealthChecksQuickStart = {
     description: `You just created a sample application. Now, let’s add health checks to it.`,
     prerequisites: `You completed the "Getting started with a sample" quick start.`,
     introduction: `### This quick start shows you how to add health checks to your sample application.
-You should have previously created the **sample-app** application and **nodejs-sample** deployment via the **Get started with a sample** quick start. If you haven't, you may be able to follow these tasks with any existing deployment without configured health checks.`,
+You should have previously created the **sample-app** application and **nodejs-sample** deployment using the **Get started with a sample** quick start. If you haven't, you may be able to follow these tasks with any existing deployment without configured health checks.`,
     tasks: [
       {
         title: `Viewing the details of your sample application`,
@@ -21,7 +21,7 @@ You should have previously created the **sample-app** application and **nodejs-s
 2. In the **</> Developer** perspective, go to **Topology**.
 3. Click on the **nodejs-sample** deployment to view its details.
 
-Momentarily, a side panel will be displayed containing the details of your sample application.`,
+A side panel is displayed containing the details of your sample application.`,
         review: {
           instructions: `#### To verify you are viewing the details of your sample application:
 Is the side panel titled **nodejs-sample**?`,
@@ -42,7 +42,7 @@ Do you see an inline alert stating that **nodejs-sample** does not have health c
           taskHelp: `This task isn’t verified yet. Try the task again.`,
         },
         recapitulation: {
-          success: `You have verified that there are no existing Health Checks!`,
+          success: `You have verified that there are no existing health checks!`,
           failed: `Try the steps again.`,
         },
       },
@@ -55,7 +55,7 @@ Do you see an inline alert stating that **nodejs-sample** does not have health c
 4. Click on the **Add Startup Probe** link.  Leave the default values, and click on the check to add the Startup Probe.
 5. Click **Add** when you’re done.
 
-Momentarily, the form will disappear and you will be brought back to Topology, with the side panel displayed.`,
+You will be brought back to the Topology View.`,
         review: {
           instructions: `#### Verify that health checks are now configured:
 Is the inline notification gone?`,
@@ -67,7 +67,7 @@ Is the inline notification gone?`,
         },
       },
     ],
-    conclusion: `Your sample application now has Health Checks. To ensure that your application is running correctly, take the **Monitor your sample application** quick start.`,
+    conclusion: `Your sample application now has health checks. To ensure that your application is running correctly, take the **Monitor your sample application** quick start.`,
 
     nextQuickStart: `monitor-sampleapp`,
   },

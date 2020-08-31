@@ -22,7 +22,7 @@ Adding OpenShift Serverless to your OpenShift Container Platform cluster is quic
       {
         title: `Install the OpenShift Serverless Operator`,
         description: `### To install the Serverless Operator:
-1. From the administrator perspective, go to the **OperatorHub** from the **Operators** section of the navigation.
+1. From the **Administrator** perspective, go to the **OperatorHub** from the **Operators** section of the navigation.
 2. In the **Filter by keyword** field at the top of the page, type \`OpenShift Serverless Operator\`.
 3. If the tile has an **Installed** label on it, the Operator is already installed. Proceed to task two.
 4. Click the **OpenShift Serverless Operator** tile.

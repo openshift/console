@@ -18,7 +18,7 @@ export const serverlessApplicationQuickStart = {
       {
         title: `Creating a serverless application`,
         description: `### To create a serverless application:
-1. From the **developer** perspective, in the navigation menu, click [+Add](/add).
+1. From the **Developer** perspective, in the navigation menu, click [+Add](/add).
 2. At the top of the page, in the **Projects** list, select a project to create the application in.
 3. Click **From Git**.
 4. In the **Git Repo URL** field, type \`https://github.com/sclorg/django-ex.git\`.

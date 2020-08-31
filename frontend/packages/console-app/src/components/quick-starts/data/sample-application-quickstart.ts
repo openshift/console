@@ -56,7 +56,7 @@ Wait for the build to complete. It may take a few minutes.  Do you see a Complet
         title: `Viewing the associated git repo`,
         description: `### To view the associated code:
 1. If you aren't already there, go to the **Topology** page in the navigation.
-2. The icon on the bottom right quadrant of the **nodejs-sample** deployment represents the git repo of the associated code.  The icon shown can be bitbucket, github, gitlab or generic git. Click on it to navigate to the associated git repository.
+2. The icon on the bottom right quadrant of the **nodejs-sample** deployment represents the git repo of the associated code.  The icon shown can be for Bitbucket, GitHub, gitLab or generic git. Click on it to navigate to the associated Git repository.
 `,
         review: {
           instructions: `#### Verify you can see the code associated with the sample app:
@@ -90,7 +90,7 @@ Do you see the number of associated pods and their statuses?`,
       {
         title: `Running the sample application`,
         description: `### To run the sample application:
-1. The icon on the top right quadrant of the **nodejs-sample** deployment represents the route URL.Click on it to open the URL and run the application.
+1. The icon on the top right quadrant of the **nodejs-sample** deployment represents the route URL. Click on it to open the URL and run the application.
 
 The application will be run in a new tab.`,
         review: {
