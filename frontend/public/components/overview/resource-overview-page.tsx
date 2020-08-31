@@ -2,12 +2,7 @@ import * as React from 'react';
 
 import { connectToModel } from '../../kinds';
 import { referenceForModel } from '../../module/k8s';
-import OperatorBackedOwnerReferences, {
-  AsyncComponent,
-  Kebab,
-  ResourceOverviewHeading,
-  ResourceSummary,
-} from '../utils';
+import { AsyncComponent, Kebab, ResourceOverviewHeading, ResourceSummary } from '../utils';
 
 import { BuildOverview } from './build-overview';
 import { HPAOverview } from './hpa-overview';
@@ -15,6 +10,7 @@ import { NetworkingOverview } from './networking-overview';
 import { PodsOverview } from './pods-overview';
 import { resourceOverviewPages } from './resource-overview-pages';
 import { OverviewItem, usePluginsOverviewTabSection } from '@console/shared';
+import { ManagedByOperatorLink } from '../utils/managed-by';
 
 const { common } = Kebab.factory;
 
@@ -25,7 +21,7 @@ export const OverviewDetailsResourcesTab: React.SFC<OverviewDetailsResourcesTabP
   const pluginComponents = usePluginsOverviewTabSection(item);
   return (
     <div className="overview__sidebar-pane-body">
-      <OperatorBackedOwnerReferences item={item} />
+      <ManagedByOperatorLink obj={item.obj} />
       <PodsOverview pods={pods} obj={obj} />
       <BuildOverview buildConfigs={buildConfigs} />
       <HPAOverview hpas={hpas} />

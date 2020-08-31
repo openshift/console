@@ -26,6 +26,7 @@ import {
   NODE_SHADOW_FILTER_ID_HOVER,
 } from '../../components/NodeShadows';
 import { getResourceKind } from '../../topology-utils';
+import { referenceFor } from '@console/internal/module/k8s';
 
 export type OperatorBackedServiceGroupProps = {
   element: Node;
@@ -56,6 +57,7 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
   const nodeRefs = useCombineRefs(innerHoverRef, dragNodeRef);
   const hasChildren = element.getChildren()?.length > 0;
   const { data } = element.getData();
+  const ownerReferenceKind = referenceFor({ kind: data.operatorKind, apiVersion: data.apiVersion });
   const [filtered] = useSearchFilter(element.getLabel());
   const displayFilters = useDisplayFilters();
   const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
@@ -112,7 +114,7 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
           y={y + height + 20}
           paddingX={8}
           paddingY={4}
-          kind={data.operatorKind}
+          kind={ownerReferenceKind}
           dragRef={dragLabelRef}
           typeIconClass={data.builderImage}
         >

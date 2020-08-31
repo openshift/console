@@ -237,6 +237,7 @@ export const getOperatorTopologyDataModel = (
         operatorKind: operatorMap[grp].kind,
         builderImage:
           getImageForCSVIcon(operatorMap?.[grp]?.spec?.icon?.[0]) || getDefaultOperatorIcon(),
+        apiVersion: operatorMap[grp].apiVersion,
       },
     };
     groupDataModel.nodes.push(

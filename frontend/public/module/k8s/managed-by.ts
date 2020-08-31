@@ -9,12 +9,15 @@ const isOwnedByOperator = (csv: ClusterServiceVersionKind, owner: OwnerReference
   });
 };
 
+const isOwnedByCSV = (csv: ClusterServiceVersionKind, owner: OwnerReference) =>
+  csv.kind === owner.kind && csv.apiVersion === owner.apiVersion;
+
 export const matchOwnerAndCSV = (owner: OwnerReference, csvs: ClusterServiceVersionKind[] = []) => {
-  return csvs.find((csv) => isOwnedByOperator(csv, owner));
+  return csvs.find((csv) => isOwnedByOperator(csv, owner) || isOwnedByCSV(csv, owner));
 };
 
 export const findOwner = (obj: K8sResourceCommon, data: ClusterServiceVersionKind[]) => {
   return obj?.metadata?.ownerReferences?.find((o) =>
-    data?.some((csv) => isOwnedByOperator(csv, o)),
+    data?.some((csv) => isOwnedByOperator(csv, o) || isOwnedByCSV(csv, o)),
   );
 };
