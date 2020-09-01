@@ -38,9 +38,9 @@ export enum V2VConfigMapAttribute {
 }
 
 export const VMWARE_DOCURL =
-  'https://docs.openshift.com/container-platform/4.5/virt/virtual_machines/importing_vms/virt-importing-vmware-vm.html';
+  'https://docs.openshift.com/container-platform/latest/virt/virtual_machines/importing_vms/virt-importing-vmware-vm.html';
 export const OVIRT_DOCURL =
-  'https://docs.openshift.com/container-platform/4.5/virt/virtual_machines/importing_vms/virt-importing-rhv-vm.html';
+  'https://docs.openshift.com/container-platform/latest/virt/virtual_machines/importing_vms/virt-importing-rhv-vm.html';
 
 export enum V2VProviderErrorSpecialUIMessageRequest {
   supplyDoclink = '__supplyDoclink__',

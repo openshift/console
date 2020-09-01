@@ -47,24 +47,26 @@ export const startVMImportOperatorWithCleanup = ({ getState, id, dispatch }: Upd
     )
     .catch((e) =>
       // eslint-disable-next-line promise/no-nesting
-      cleanupAndGetResults(enhancedK8sMethods, e).then((results) => {
-        const errors = errorsFirstSort([...results.errors, ...results.requestResults]);
-        if (results.mainError) {
-          consoleWarn(results.mainError?.message, results.mainError?.detail);
-        }
-        errors.forEach((o) => consoleWarn(o.title, o.content.data));
-        return dispatch(
-          vmWizardInternalActions[InternalActionType.UpdateImportProviderField](
-            id,
-            VMImportProvider.OVIRT,
-            OvirtProviderField.CONTROLLER_LAST_ERROR,
-            {
-              isHidden: asHidden(false, OvirtProviderField.CONTROLLER_LAST_ERROR),
-              errors: results,
-            },
-          ),
-        );
-      }),
+      cleanupAndGetResults(enhancedK8sMethods, e, { prettyPrintPermissionErrors: true }).then(
+        (results) => {
+          const errors = errorsFirstSort([...results.errors, ...results.requestResults]);
+          if (results.mainError) {
+            consoleWarn(results.mainError?.message, results.mainError?.detail);
+          }
+          errors.forEach((o) => consoleWarn(o.title, o.content.data));
+          return dispatch(
+            vmWizardInternalActions[InternalActionType.UpdateImportProviderField](
+              id,
+              VMImportProvider.OVIRT,
+              OvirtProviderField.CONTROLLER_LAST_ERROR,
+              {
+                isHidden: asHidden(false, OvirtProviderField.CONTROLLER_LAST_ERROR),
+                errors: results,
+              },
+            ),
+          );
+        },
+      ),
     )
     .catch((le) => consoleError(le));
 };

@@ -36,7 +36,7 @@ const resolveUIMessageTemplating = (message: string, provider: VMImportProvider)
       {...chunks.map((chunk, idx) => {
         const key = `${idx}`;
         if (idx === chunks.length - 1) {
-          return <React.Fragment key={key}> {chunk}</React.Fragment>;
+          return <React.Fragment key={key}>{chunk}</React.Fragment>;
         }
         return (
           <React.Fragment key={key}>
