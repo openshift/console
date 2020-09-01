@@ -18,7 +18,7 @@ import {
 } from '../../module/k8s';
 import {
   alertDescription,
-  alertingRuleIsActive,
+  alertingRuleHasAlertState,
   alertingRuleSource,
   alertSource,
   alertState,
@@ -64,8 +64,8 @@ export const tableFilters: TableFilterMap = {
   'alert-state': (filter, alert: Alert) =>
     filter.selected.has(alertState(alert)) || _.isEmpty(filter.selected),
 
-  'alerting-rule-active': (filter, rule: Rule) =>
-    filter.selected.has(alertingRuleIsActive(rule)) || _.isEmpty(filter.selected),
+  'alerting-rule-has-alert-state': (filter, rule: Rule) =>
+    alertingRuleHasAlertState(rule, filter.selected) || _.isEmpty(filter.selected),
 
   'alerting-rule-name': (filter, rule: Rule) => fuzzyCaseInsensitive(filter, rule.name),
 

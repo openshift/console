@@ -36,7 +36,6 @@ import {
 import { K8sKind } from '../../module/k8s';
 import {
   alertDescription,
-  alertingRuleIsActive,
   alertingRuleSource,
   alertSource,
   alertState,
@@ -1273,6 +1272,7 @@ const MonitoringListPage_: React.FC<ListPageProps> = ({
               loadError={loadError}
               reduxID={reduxID}
               Row={Row}
+              rowFilters={rowFilters}
               virtualize
             />
           </div>
@@ -1301,15 +1301,24 @@ const AlertsPage_: React.FC<Alerts> = ({ data, loaded, loadError }) => (
 );
 const AlertsPage = withFallback(connect(alertsToProps)(AlertsPage_));
 
+const ruleHasAlertState = (rule: Rule, state: AlertStates): boolean =>
+  _.some(rule.alerts, { state });
+
+const ruleAlertStateFilter = (filter, rule: Rule) =>
+  _.some(rule.alerts, (a) => filter.selected.has(a.state)) || _.isEmpty(filter.selected);
+
 const rulesRowFilters: RowFilter[] = [
   {
-    filterGroupName: 'Rule State',
+    filter: ruleAlertStateFilter,
+    filterGroupName: 'Alert State',
+    isMatch: ruleHasAlertState,
     items: [
-      { id: 'true', title: 'Active' },
-      { id: 'false', title: 'Inactive' },
+      { id: AlertStates.Firing, title: 'Firing' },
+      { id: AlertStates.Pending, title: 'Pending' },
+      { id: AlertStates.Silenced, title: 'Silenced' },
+      { id: AlertStates.NotFiring, title: 'Not Firing' },
     ],
-    reducer: alertingRuleIsActive,
-    type: 'alerting-rule-active',
+    type: 'alerting-rule-has-alert-state',
   },
   severityRowFilter,
   {

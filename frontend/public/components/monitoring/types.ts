@@ -16,6 +16,7 @@ export const enum AlertSource {
 
 export const enum AlertStates {
   Firing = 'firing',
+  NotFiring = 'not-firing',
   Pending = 'pending',
   Silenced = 'silenced',
 }

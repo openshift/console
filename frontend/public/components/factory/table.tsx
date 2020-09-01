@@ -428,6 +428,7 @@ export type TableProps = {
   loaded?: boolean;
   reduxID?: string;
   reduxIDs?: string[];
+  rowFilters?: any[];
   label?: string;
   columnManagementID?: string;
 };
