@@ -268,6 +268,13 @@ export default (state: UIState, action: UIAction): UIState => {
     case ActionType.QueryBrowserDeleteAllQueries:
       return state.setIn(['queryBrowser', 'queries'], ImmutableList([newQueryBrowserQuery()]));
 
+    case ActionType.QueryBrowserDeleteAllSeries: {
+      return state.setIn(
+        ['queryBrowser', 'queries'],
+        state.getIn(['queryBrowser', 'queries']).map((q) => q.set('series', undefined)),
+      );
+    }
+
     case ActionType.QueryBrowserDeleteQuery: {
       let queries = state.getIn(['queryBrowser', 'queries']).delete(action.payload.index);
       if (queries.size === 0) {
