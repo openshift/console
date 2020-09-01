@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, AlertVariant, ExpandableSection } from '@patternfly/react-core';
+import { Alert, AlertVariant, Expandable } from '@patternfly/react-core';
 import * as classNames from 'classnames';
 
 import './errors.scss';
@@ -37,12 +37,9 @@ export const Errors: React.FC<ErrorsProps> = ({ errors, endMargin }) => {
               {detail && (
                 <div>
                   <div className="kubevirt-errors__detailed-message">{message}</div>
-                  <ExpandableSection
-                    toggleTextCollapsed="View details"
-                    toggleTextExpanded="Hide details"
-                  >
+                  <Expandable toggleTextCollapsed="View details" toggleTextExpanded="Hide details">
                     <pre className="kubevirt-errors__expendable">{detail}</pre>
-                  </ExpandableSection>
+                  </Expandable>
                 </div>
               )}
             </Alert>

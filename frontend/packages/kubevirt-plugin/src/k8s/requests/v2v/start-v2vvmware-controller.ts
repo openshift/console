@@ -15,11 +15,6 @@ import { buildOwnerReference } from '../../../utils';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { RoleWrappper } from '../../wrapper/k8s/role-wrapper';
 import { VMImportProvider } from 'packages/kubevirt-plugin/src/components/create-vm-wizard/types';
-import { K8sDetailError } from '../../enhancedK8sMethods/errors';
-import {
-  INSUFFICIENT_PERMISSIONS_ERROR_TITLE,
-  INSUFFICIENT_PERMISSIONS_ERROR_DESC,
-} from '../../../constants/errors/common';
 
 const { info } = console;
 
@@ -139,12 +134,8 @@ export const startV2VVMWareController = async (
     try {
       kubevirtVmwareConfigMap = await getVmwareConfigMap();
     } catch (error) {
-      if (error?.json.code === 403) {
-        throw new K8sDetailError({
-          title: INSUFFICIENT_PERMISSIONS_ERROR_TITLE,
-          message: INSUFFICIENT_PERMISSIONS_ERROR_DESC,
-          detail: error?.message,
-        });
+      if (error?.json?.code === 403) {
+        throw error;
       }
       // other cases are validated in validateV2VConfigMap
     }

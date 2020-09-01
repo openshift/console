@@ -11,6 +11,10 @@ import { getGeneratedName, getKind } from '../../selectors/selectors';
 import { getFullResourceId } from '../../utils/utils';
 import { EnhancedK8sMethods } from './enhancedK8sMethods';
 import { Result, ResultContentType, ResultsWrapper } from './types';
+import {
+  INSUFFICIENT_PERMISSIONS_ERROR_MESSAGE,
+  INSUFFICIENT_PERMISSIONS_ERROR_DESC,
+} from '../../constants/errors/common';
 
 const asResult = ({
   obj,
@@ -35,7 +39,8 @@ const asResult = ({
 
 export const cleanupAndGetResults = async (
   enhancedK8sMethods: EnhancedK8sMethods,
-  { message, title, detail, failedObject, failedPatches },
+  { message, title, detail, json, failedObject, failedPatches },
+  { prettyPrintPermissionErrors = false },
 ): Promise<ResultsWrapper> => {
   const actualState = enhancedK8sMethods.getActualState(); // actual state will differ after cleanup
 
@@ -84,10 +89,16 @@ export const cleanupAndGetResults = async (
     );
   }
 
+  const isUnauthorized = json?.code === 403 && prettyPrintPermissionErrors;
+
+  const mainErrorTitle = isUnauthorized ? INSUFFICIENT_PERMISSIONS_ERROR_MESSAGE : title;
+  const mainErrorMessage = isUnauthorized ? INSUFFICIENT_PERMISSIONS_ERROR_DESC : message;
+  const mainErrorDetail = isUnauthorized ? message : detail;
+
   return {
     isFatal,
     isValid: false,
-    mainError: { message, title, detail },
+    mainError: { title: mainErrorTitle, message: mainErrorMessage, detail: mainErrorDetail },
     errors: [],
     requestResults: [...failureResults, ...cleanupResults],
   };

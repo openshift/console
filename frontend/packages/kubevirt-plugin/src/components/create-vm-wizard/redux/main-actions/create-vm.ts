@@ -61,7 +61,9 @@ export const createVMAction = (id: string) => (dispatch, getState) => {
   const create = isCreateTemplate ? createVMTemplate : _createVM;
   create(params)
     .then(() => getResults(enhancedK8sMethods))
-    .catch((error) => cleanupAndGetResults(enhancedK8sMethods, error))
+    .catch((error) =>
+      cleanupAndGetResults(enhancedK8sMethods, error, { prettyPrintPermissionErrors: false }),
+    )
     .then(({ isValid, ...tabState }: ResultsWrapper) =>
       dispatch(
         vmWizardInternalActions[InternalActionType.SetResults](id, tabState, isValid, false, false),
