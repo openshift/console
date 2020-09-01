@@ -61,10 +61,15 @@
 .ceph-ocs-install__disk-list-btn {
   padding-top: 0;
   padding-left: 0;
-  cursor: pointer;
 }
 
-.ceph-ocs-install__disks-modal {
+.ceph-ocs-install__node-list-btn {
+  padding-top: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.ceph-ocs-install__filtered-modal {
   max-height: 75%;
   width: 50%;
 }

@@ -50,7 +50,7 @@ const getRows: GetRows = ({ componentProps, customData }) => {
     };
   });
 
-  if (!_.isEqual(filteredData, nodes)) {
+  if (setNodes && !_.isEqual(filteredData, nodes)) {
     setNodes(filteredData);
   }
 
