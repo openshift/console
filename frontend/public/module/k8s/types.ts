@@ -364,16 +364,71 @@ export type DeploymentKind = {
   };
 } & K8sResourceCommon;
 
+type CurrentObject = {
+  averageUtilization?: number;
+  averageValue?: string;
+  value?: string;
+};
+
+type MetricObject = {
+  name: string;
+  selector?: Selector;
+};
+
+type TargetObjcet = {
+  averageUtilization?: number;
+  type: string;
+  averageValue?: string;
+  value?: string;
+};
+
+type DescribedObject = {
+  apiVersion?: string;
+  kind: string;
+  name: string;
+};
 export type HPAMetric = {
-  type: 'Object' | 'Pods' | 'Resource';
-  resource: {
+  type: 'Object' | 'Pods' | 'Resource' | 'External';
+  resource?: {
     name: string;
-    target: {
-      averageUtilization?: number;
-      type: string;
-    };
+    target: TargetObjcet;
+  };
+  external?: {
+    metric: MetricObject;
+    target: TargetObjcet;
+  };
+  object?: {
+    describedObjec: DescribedObject;
+    metric: MetricObject;
+    target: TargetObjcet;
+  };
+  pods?: {
+    metric: MetricObject;
+    target: TargetObjcet;
   };
 };
+
+type HPACurrentMetrics = {
+  type: 'Object' | 'Pods' | 'Resource' | 'External';
+  external?: {
+    current: CurrentObject;
+    metric: MetricObject;
+  };
+  object?: {
+    current: CurrentObject;
+    describedObject: DescribedObject;
+    metric: MetricObject;
+  };
+  pods?: {
+    current: CurrentObject;
+    metric: MetricObject;
+  };
+  resource?: {
+    name: string;
+    current: CurrentObject;
+  };
+};
+
 export type HorizontalPodAutoscalerKind = K8sResourceCommon & {
   spec: {
     scaleTargetRef: {
@@ -388,8 +443,9 @@ export type HorizontalPodAutoscalerKind = K8sResourceCommon & {
   status?: {
     currentReplicas: number;
     desiredReplicas: number;
-    currentMetrics: any;
+    currentMetrics?: HPACurrentMetrics[];
     conditions: NodeCondition[];
+    lastScaleTime?: string;
   };
 };
 
