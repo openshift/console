@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import * as virtualMachineIcon from './images/virtual-machine.svg';
+import { AlertVariant } from '@patternfly/react-core';
 import {
   Plugin,
   ResourceNSNavItem,
@@ -21,6 +22,7 @@ import {
   PVCCreateProp,
   PVCAlert,
   PVCStatus,
+  PVCDelete,
 } from '@console/plugin-sdk';
 import { DashboardsStorageCapacityDropdownItem } from '@console/ceph-storage-plugin';
 import { TemplateModel, PodModel, PersistentVolumeClaimModel } from '@console/internal/models';
@@ -42,8 +44,9 @@ import {
   CDIUploadContext,
   useCDIUploadHook,
 } from './components/cdi-upload-provider/cdi-upload-provider';
+import { killCDIBoundPVC } from './components/cdi-upload-provider/pvc-delete-extension';
+import { isPvcBoundToCDI, isPvcUploading } from './selectors/pvc/selectors';
 import './style.scss';
-import { isPvcUploading } from './selectors/pvc/selectors';
 
 type ConsumedExtensions =
   | ResourceNSNavItem
@@ -66,7 +69,8 @@ type ConsumedExtensions =
   | ContextProvider
   | PVCCreateProp
   | PVCAlert
-  | PVCStatus;
+  | PVCStatus
+  | PVCDelete;
 
 export const FLAG_KUBEVIRT = 'KUBEVIRT';
 
@@ -539,6 +543,24 @@ const plugin: Plugin<ConsumedExtensions> = [
         import('./components/cdi-upload-provider/upload-pvc-popover').then(
           (m) => m.UploadPVCPopover,
         ),
+    },
+    flags: {
+      required: [FLAG_KUBEVIRT],
+    },
+  },
+  {
+    type: 'PVCDelete',
+    properties: {
+      predicate: isPvcBoundToCDI,
+      onPVCKill: killCDIBoundPVC,
+      alert: {
+        type: AlertVariant.warning,
+        title: 'PVC Delete',
+        body: () =>
+          import('./components/cdi-upload-provider/pvc-delete-extension').then(
+            (m) => m.PVCDeleteAlertExtension,
+          ),
+      },
     },
     flags: {
       required: [FLAG_KUBEVIRT],
