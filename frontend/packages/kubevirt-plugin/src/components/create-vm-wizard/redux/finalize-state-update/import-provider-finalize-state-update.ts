@@ -5,7 +5,11 @@ import {
   VMWizardProps,
   VMWizardTab,
 } from '../../types';
-import { isStepHidden, isStepValid } from '../../selectors/immutable/wizard-selectors';
+import {
+  isStepHidden,
+  isStepValid,
+  isStepPending,
+} from '../../selectors/immutable/wizard-selectors';
 import { vmWizardInternalActions } from '../internal-actions';
 import { iGetCommonData } from '../../selectors/immutable/selectors';
 
@@ -17,7 +21,7 @@ export const finalizeImportProviderStateUpdate = (options: UpdateOptions) => {
     return;
   }
 
-  if (isStepValid(state, id, VMWizardTab.RESULT)) {
+  if (isStepValid(state, id, VMWizardTab.RESULT) || isStepPending(state, id, VMWizardTab.RESULT)) {
     return;
   }
 
