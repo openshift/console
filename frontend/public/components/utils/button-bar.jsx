@@ -36,7 +36,7 @@ const SuccessMessage = ({ message }) => (
 // NOTE: DO NOT use <a> elements within a ButtonBar.
 // They don't support the disabled attribute, and therefore
 // can't be disabled during a pending promise/request.
-/** @type {React.SFC<{children: any, className?: string, errorMessage?: string, infoMessage?: string, successMessage?: string, inProgress?: boolean}}>} */
+/** @type {React.SFC<{children: any, className?: string, errorMessage?: React.ReactNode, infoMessage?: string, successMessage?: string, inProgress?: boolean}}>} */
 export const ButtonBar = ({
   children,
   className,
@@ -59,7 +59,7 @@ export const ButtonBar = ({
 ButtonBar.propTypes = {
   children: PropTypes.node.isRequired,
   successMessage: PropTypes.string,
-  errorMessage: PropTypes.string,
+  errorMessage: PropTypes.node,
   infoMessage: PropTypes.string,
   inProgress: PropTypes.bool,
   className: PropTypes.string,
