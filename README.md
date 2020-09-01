@@ -198,8 +198,10 @@ yarn run test-cypress
 ```
 
 This will launch the Cypress test runner where you can run one or all cypress tests.
+By default, it will look for Chrome in the system and use it, but if you want to use Firefox instead, set `BRIDGE_E2E_BROWSER_NAME` environment variable in your shell with the value `firefox`.
 
 [**_More information on Console's Cypress usage_**](frontend/packages/integration-tests-cypress/README.md)
+
 #### Protractor
 
 Integration tests are run in a headless browser driven by [protractor](http://www.protractortest.org/#/).
