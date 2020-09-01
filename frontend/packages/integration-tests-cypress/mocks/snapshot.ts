@@ -1,3 +1,5 @@
+import { Patch } from '@console/internal/module/k8s';
+
 export const testerDeployment = {
   apiVersion: 'apps/v1',
   kind: 'Deployment',
@@ -79,4 +81,15 @@ export const SnapshotClass = {
   },
   driver: 'ebs.csi.aws.com',
   deletionPolicy: 'Delete',
+};
+
+export const patchForVolume: Patch = {
+  op: 'add',
+  path: '/spec/template/spec/volumes/-',
+  value: {
+    name: 'testpvc-snapshot-restore',
+    persistentVolumeClaim: {
+      claimName: 'testpvc-snapshot-restore',
+    },
+  },
 };
