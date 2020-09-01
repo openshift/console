@@ -8,7 +8,7 @@ import {
   TrafficData,
   OdcNodeModel,
 } from '../../topology-types';
-import { TYPE_TRAFFIC_CONNECTOR, TYPE_SERVICE_BINDING } from '../../components/const';
+import { TYPE_TRAFFIC_CONNECTOR } from '../../components/const';
 import { getTrafficConnectors, baseDataModelGetter } from '../data-transformer';
 import { getEditURL, WORKLOAD_TYPES } from '../../topology-utils';
 import {
@@ -19,11 +19,6 @@ import {
   MockKialiGraphData,
   TEST_KINDS_MAP,
 } from '../../__tests__/topology-test-data';
-import {
-  sbrBackingServiceSelector,
-  sbrBackingServiceSelectors,
-} from '../../__tests__/service-binding-test-data';
-import { getServiceBindingEdges } from '../../operators/operators-data-transformer';
 import { getWorkloadResources } from '../transform-utils';
 
 const namespace = 'test-project';
@@ -284,45 +279,5 @@ describe('data transformer ', () => {
     );
     expect(transformedData.edges).toHaveLength(2);
     expect(transformedData.edges.filter((e) => e.type === TYPE_TRAFFIC_CONNECTOR)).toHaveLength(1);
-  });
-
-  it('should support single  binding service selectors', () => {
-    const testResources = sbrBackingServiceSelector.deployments.data;
-    const deployments = sbrBackingServiceSelector.deployments.data;
-    const sbrs = sbrBackingServiceSelector.serviceBindingRequests.data;
-    expect(getServiceBindingEdges(deployments[0], testResources, sbrs)).toEqual([
-      {
-        id: `uid-app_uid-db-1`,
-        type: TYPE_SERVICE_BINDING,
-        source: 'uid-app',
-        target: 'uid-db-1',
-        data: { sbr: sbrs[0] },
-        resource: sbrs[0],
-      },
-    ]);
-  });
-
-  it('should support multiple binding service selectors', () => {
-    const testResources = sbrBackingServiceSelectors.deployments.data;
-    const deployments = sbrBackingServiceSelectors.deployments.data;
-    const sbrs = sbrBackingServiceSelectors.serviceBindingRequests.data;
-    expect(getServiceBindingEdges(deployments[0], testResources, sbrs)).toEqual([
-      {
-        id: `uid-app_uid-db-1`,
-        type: TYPE_SERVICE_BINDING,
-        source: 'uid-app',
-        target: 'uid-db-1',
-        data: { sbr: sbrs[0] },
-        resource: sbrs[0],
-      },
-      {
-        id: `uid-app_uid-db-2`,
-        type: TYPE_SERVICE_BINDING,
-        source: 'uid-app',
-        target: 'uid-db-2',
-        data: { sbr: sbrs[0] },
-        resource: sbrs[0],
-      },
-    ]);
   });
 });
