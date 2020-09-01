@@ -53,7 +53,7 @@ import {
   OCSDiskStatus,
 } from './state-reducer';
 
-const getTiBasedStatus = (status: string): OCSDiskStatus => {
+export const getTiBasedStatus = (status: string): OCSDiskStatus => {
   switch (status) {
     case 'NotReady':
       return Status.PreparingToReplace;
@@ -168,7 +168,7 @@ const diskRow: RowFunction<DiskMetadata, OCSMetadata> = ({
       <TableData className={tableColumnClasses[5]}>{obj.fstype || '-'}</TableData>
       <OCSKebabOptions
         diskName={diskName}
-        alertsMap={ocsState.alertsMap}
+        alertsMap={ocsState.metricsMap}
         replacementMap={ocsState.replacementMap}
         isRebalancing={ocsState.isRebalancing}
         dispatch={dispatch}
@@ -194,7 +194,7 @@ const OCSDisksList: React.FC<TableProps> = React.memo((props) => {
     NotificationAlerts
   >(({ UI }) => UI.getIn(['monitoring', 'notificationAlerts']));
 
-  const error = alertsLoadError || cephDiskLoadError || progressLoadError;
+  const error = !alertsLoadError || cephDiskLoadError || progressLoadError;
   const isLoading = !alertsLoaded || cephDiskLoading || progressLoading;
 
   if (!error && !isLoading) {
@@ -205,7 +205,7 @@ const OCSDisksList: React.FC<TableProps> = React.memo((props) => {
     const newMetricsMap: OCSDiskList = cephDisks.reduce((ocsDiskList: OCSDiskList, { metric }) => {
       ocsDiskList[metric.device] = {
         osd: metric.ceph_daemon,
-        status: Status.Online,
+        status: Status.NotResponding,
       };
       return ocsDiskList;
     }, {});

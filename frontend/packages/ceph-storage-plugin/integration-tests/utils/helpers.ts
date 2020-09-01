@@ -1,4 +1,4 @@
-import { execSync } from 'child_process';
+import { execSync, ExecFileOptionsWithStringEncoding } from 'child_process';
 import * as _ from 'lodash';
 import { ExpectedConditions as until, browser, $ } from 'protractor';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
@@ -175,6 +175,13 @@ export const hasOCSTaint = (node) => {
 
 export const createObjectFromJson = (objectJson) =>
   execSync(`echo '${JSON.stringify(objectJson)}' | kubectl create -f -`);
+
+export const execCommand = (command: string) => {
+  const options: ExecFileOptionsWithStringEncoding = {
+    encoding: 'utf8',
+  };
+  return JSON.parse(execSync(command, options));
+};
 
 export type NodeType = {
   id: number;

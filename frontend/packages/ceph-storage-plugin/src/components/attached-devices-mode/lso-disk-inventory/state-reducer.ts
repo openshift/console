@@ -63,8 +63,8 @@ export type OCSColumnStateAction =
 export type OCSColumnState = {
   metricsMap: OCSDiskList;
   alertsMap: OCSDiskList;
-  isRebalancing: boolean;
   replacementMap: OCSDiskList;
+  isRebalancing: boolean;
 };
 
 export type OCSDiskList = {

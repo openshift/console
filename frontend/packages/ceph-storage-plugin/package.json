@@ -22,6 +22,9 @@
       ],
       "ceph-storage": [
         "integration-tests/**/*.scenario.ts"
+      ],
+      "disk-rep": [
+        "integration-tests/**/3-tests/disk-replacement.scenario.ts"
       ]
     }
   }

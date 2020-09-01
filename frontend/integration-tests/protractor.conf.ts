@@ -44,7 +44,7 @@ const browserLogs = [];
 
 const suite = (tests: string[]): string[] =>
   (!_.isNil(process.env.BRIDGE_KUBEADMIN_PASSWORD) ? ['tests/login.scenario.ts'] : []).concat([
-    'tests/base.scenario.ts',
+    // 'tests/base.scenario.ts',
     ...tests,
   ]);
 

@@ -42,7 +42,11 @@ const getOCSStatusBody = (status: OCSDiskStatus, diskName: string): React.ReactN
             Troubleshoot disk <strong>{diskName}</strong>{' '}
           </span>
           <span>
-            <ExternalLink href="https://access.redhat.com/solutions/5194851 " text="here" />
+            <ExternalLink
+              dataTestID="disk-troubleshoot-link"
+              href="https://access.redhat.com/solutions/5194851 "
+              text="here"
+            />
           </span>
         </PopoverStatus>
       );
@@ -60,10 +64,18 @@ export const OCSStatus: React.FC<{
 }> = React.memo(({ ocsState, className, diskName }) => {
   const { replacementMap, alertsMap, metricsMap } = ocsState;
   let status: OCSDiskStatus;
+
   if (replacementMap[diskName]) status = replacementMap[diskName].status;
   else if (alertsMap[diskName]) status = alertsMap[diskName].status;
   else if (metricsMap[diskName]) status = metricsMap[diskName].status;
+
+  const testProps = {
+    'data-test-status': `ocs-status-${status}`,
+    'data-test-disk': diskName,
+  };
   return (
-    <TableData className={className}>{status ? getOCSStatusBody(status, diskName) : '-'}</TableData>
+    <TableData {...testProps} className={className}>
+      {status ? getOCSStatusBody(status, diskName) : '-'}
+    </TableData>
   );
 });
