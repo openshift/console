@@ -488,6 +488,7 @@ const Loading = () => (
 const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   defaultSamples,
   defaultTimespan = parsePrometheusDuration('30m'),
+  deleteAllSeries,
   disabledSeries = [],
   filterLabels,
   formatLegendLabel,
@@ -533,6 +534,11 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
       setSpan(timespan);
     }
   }, [timespan]);
+
+  // Clear any existing series data when the namespace is changed
+  React.useEffect(() => {
+    deleteAllSeries();
+  }, [deleteAllSeries, namespace]);
 
   const tick = () => {
     if (hideGraphs) {
@@ -749,6 +755,7 @@ export const QueryBrowser = withFallback(
       tickInterval: pollInterval ?? UI.getIn(['queryBrowser', 'pollInterval']),
     }),
     {
+      deleteAllSeries: UIActions.queryBrowserDeleteAllSeries,
       patchQuery: UIActions.queryBrowserPatchQuery,
     },
   )(QueryBrowser_),
@@ -807,6 +814,7 @@ type ZoomableGraphProps = GraphProps & { onZoom: (from: number, to: number) => v
 export type QueryBrowserProps = {
   defaultSamples?: number;
   defaultTimespan?: number;
+  deleteAllSeries: () => never;
   disabledSeries?: PrometheusLabels[][];
   filterLabels?: PrometheusLabels;
   formatLegendLabel?: FormatLegendLabel;
