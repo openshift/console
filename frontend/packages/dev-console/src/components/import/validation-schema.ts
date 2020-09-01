@@ -241,7 +241,7 @@ export const gitValidationSchema = yup.object().shape({
 });
 
 export const dockerValidationSchema = yup.object().when('build', {
-  is: (build) => build.strategy === 'Docker' && build.strategy === 'Devfile',
+  is: (build) => build.strategy === 'Docker',
   then: yup.object().shape({
     containerPort: yup.number().test(isInteger('Container port should be an Integer')),
   }),
