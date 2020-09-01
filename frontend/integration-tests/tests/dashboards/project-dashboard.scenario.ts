@@ -174,7 +174,8 @@ describe('Project Dashboard', () => {
     });
 
     it('is displayed when CR exists', async () => {
-      expect(projectDashboardView.launcherCard.isPresent()).toBe(false);
+      const isLauncherCardPresent = await projectDashboardView.launcherCard.isPresent();
+      expect(isLauncherCardPresent).toBe(false);
       createResource(launcherLink);
       addLeakableResource(leakedResources, launcherLink);
       await browser.wait(until.visibilityOf(projectDashboardView.launcherCard));
