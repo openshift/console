@@ -564,7 +564,7 @@ class MastheadToolbarContents_ extends React.Component {
                   isRead
                   count={notificationAlerts?.data?.length || 0}
                 >
-                  <BellIcon />
+                  <BellIcon alt="" />
                 </NotificationBadge>
               </PageHeaderToolsItem>
             )}
@@ -575,7 +575,7 @@ class MastheadToolbarContents_ extends React.Component {
                   className="pf-c-button pf-m-plain"
                   aria-label="Import YAML"
                 >
-                  <PlusCircleIcon className="co-masthead-icon" />
+                  <PlusCircleIcon className="co-masthead-icon" alt="" />
                 </Link>
               </Tooltip>
             </PageHeaderToolsItem>
@@ -597,7 +597,7 @@ class MastheadToolbarContents_ extends React.Component {
                   ),
                 )}
                 position="right"
-                toggleIcon={<QuestionCircleIcon />}
+                toggleIcon={<QuestionCircleIcon alt="" />}
                 isGrouped
               />
             </PageHeaderToolsItem>
