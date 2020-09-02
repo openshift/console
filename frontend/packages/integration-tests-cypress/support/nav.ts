@@ -2,14 +2,14 @@ export {}; // needed in files which don't have an import to trigger ES6 module u
 declare global {
   namespace Cypress {
     interface Chainable<Subject> {
-      clickNavLink(path: [string, string]): Chainable<Element>;
+      clickNavLink(path: string[]): Chainable<Element>;
     }
   }
 }
 
 // any command added below, must be added to global Cypress interface above
 
-Cypress.Commands.add('clickNavLink', (path: [string, string]) => {
+Cypress.Commands.add('clickNavLink', (path: string[]) => {
   cy.get('#page-sidebar')
     .contains(path[0])
     .click();

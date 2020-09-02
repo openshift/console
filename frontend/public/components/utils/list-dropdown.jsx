@@ -125,6 +125,7 @@ class ListDropdown_ extends React.Component {
         dropDownClassName="dropdown--full-width"
         menuClassName="dropdown-menu--text-wrap"
         disabled={disabled}
+        dataTest={this.props.dataTest}
       />
     );
 

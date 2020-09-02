@@ -51,7 +51,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
               </>
             )}
             <dt>Persistent Volume Claim</dt>
-            <dd>
+            <dd data-test="details-item-value__PVC">
               <ResourceLink
                 kind={PersistentVolumeClaimModel.kind}
                 name={pvcName}
@@ -61,7 +61,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
             {snapshotContent && (
               <>
                 <dt>Volume Snapshot Content</dt>
-                <dd>
+                <dd data-test="details-item-value__VSC">
                   <ResourceLink
                     kind={referenceForModel(VolumeSnapshotContentModel)}
                     name={snapshotContent}
@@ -70,7 +70,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
               </>
             )}
             <dt>Volume Snapshot Class</dt>
-            <dd>
+            <dd data-test="details-item-value__SC">
               <ResourceLink
                 kind={referenceForModel(VolumeSnapshotClassModel)}
                 name={obj?.spec?.volumeSnapshotClassName}

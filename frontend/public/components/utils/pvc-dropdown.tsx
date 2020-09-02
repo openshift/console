@@ -22,6 +22,7 @@ export type PVCDropdownProps = {
   namespace: string;
   selectedKey: string;
   onChange: (string) => void;
-  id: string;
+  id?: string;
   desc?: string;
+  dataTest?: string;
 };
