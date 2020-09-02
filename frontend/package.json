@@ -27,7 +27,7 @@
     "test-gui": "yarn run test-suite --suite all",
     "test-suite": "ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/protractor integration-tests/protractor.conf.ts",
     "test-cypress": "cd packages/integration-tests-cypress && cypress open --env openshift=true",
-    "test-cypress-headless": "cd packages/integration-tests-cypress && node --max-old-space-size=4096 ../../node_modules/.bin/cypress run --env openshift=true --browser chrome --headless",
+    "test-cypress-headless": "cd packages/integration-tests-cypress && node --max-old-space-size=4096 ../../node_modules/.bin/cypress run --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:=chrome} --headless",
     "cypress-merge": "mochawesome-merge ./gui_test_screenshots/cypress_report*.json > ./gui_test_screenshots/cypress.json",
     "cypress-generate": "marge -o ./gui_test_screenshots/ -f cypress-report -t 'OpenShift Console Cypress Test Results' -p 'OpenShift Cypress Test Results' --showPassed false --assetsDir ./gui_test_screenshots/cypress/assets ./gui_test_screenshots/cypress.json",
     "cypress-postreport": "yarn run cypress-merge && yarn run cypress-generate && rm -f ./gui_test_screenshots/cypress*.json",
