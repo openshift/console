@@ -79,7 +79,7 @@ module.exports = {
   sort: false,
   // Whether or not to sort the catalog
 
-  useKeysAsDefaultValue: true,
+  useKeysAsDefaultValue: false,
   // Whether to use the keys as the default value; ex. "Hello": "Hello", "World": "World"
   // The option `defaultValue` will not work if this is set to true
 
