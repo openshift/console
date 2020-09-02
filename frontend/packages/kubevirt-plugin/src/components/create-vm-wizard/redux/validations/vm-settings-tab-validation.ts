@@ -16,7 +16,7 @@ import {
   VIRTUAL_MACHINE_TEMPLATE_EXISTS,
 } from '../../../../utils/validations/strings';
 import { getFieldTitle } from '../../utils/renderable-field-utils';
-import { iGet } from '../../../../utils/immutable';
+import { iGet, immutableListToJS } from '../../../../utils/immutable';
 import {
   checkTabValidityChanged,
   iGetCommonData,
@@ -29,6 +29,7 @@ import { combineIntegerValidationResults } from '../../../../utils/validations/t
 import { getFieldsValidity, getValidationUpdate } from './utils';
 import { getTemplateValidations } from '../../selectors/template';
 import { BinaryUnit, convertToBytes } from '../../../form/size-unit-utils';
+import { UIValidation } from '../../../../types/ui/ui';
 
 const validateVm: Validator = (field, options) => {
   const { getState, id } = options;
@@ -49,6 +50,7 @@ const validateVm: Validator = (field, options) => {
         ? VIRTUAL_MACHINE_TEMPLATE_EXISTS
         : VIRTUAL_MACHINE_EXISTS,
       subject: getFieldTitle(iGetFieldKey(field)),
+      validations: immutableListToJS(iGet(field, 'validations')) as UIValidation[],
     },
   );
 };
