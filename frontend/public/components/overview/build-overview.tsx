@@ -40,13 +40,15 @@ const BuildOverviewItem: React.SFC<BuildOverviewListItemProps> = ({ build }) => 
   const lastUpdated = completionTimestamp || startTimestamp || creationTimestamp;
 
   const statusTitle = (
-    <>
-      Build &nbsp;
-      <BuildNumberLink build={build} />
-      &nbsp;
-      {conjugateBuildPhase(phase)}
-      {lastUpdated && <span className="text-muted">&nbsp;({fromNow(lastUpdated)})</span>}
-    </>
+    <div>
+      Build <BuildNumberLink build={build} /> {conjugateBuildPhase(phase)}
+      {lastUpdated && (
+        <>
+          {' '}
+          <span className="build-overview__item-time text-muted">({fromNow(lastUpdated)})</span>
+        </>
+      )}
+    </div>
   );
 
   return (
