@@ -18,11 +18,12 @@ export const OverviewDetailsResourcesTab: React.SFC<OverviewDetailsResourcesTabP
   item,
 }) => {
   const { buildConfigs, hpas, routes, services, pods, obj } = item;
+  const hasBuildConfig = buildConfigs?.length > 0;
   const pluginComponents = usePluginsOverviewTabSection(item);
   return (
     <div className="overview__sidebar-pane-body">
       <ManagedByOperatorLink obj={item.obj} />
-      <PodsOverview pods={pods} obj={obj} />
+      <PodsOverview pods={pods} obj={obj} hasBuildConfig={hasBuildConfig} />
       <BuildOverview buildConfigs={buildConfigs} />
       <HPAOverview hpas={hpas} />
       {pluginComponents.map(({ Component, key }) => (
