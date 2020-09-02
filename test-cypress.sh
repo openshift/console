@@ -8,4 +8,8 @@ function generateReport {
 }
 trap generateReport EXIT
 
-yarn run test-cypress-headless
+if [ $# -gt 0 ] && [ -n "$1" ]; then
+  yarn run test-cypress-headless --spec "$1"
+else
+  yarn run test-cypress-headless
+fi

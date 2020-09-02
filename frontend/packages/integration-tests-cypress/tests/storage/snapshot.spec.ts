@@ -4,6 +4,7 @@ import { listPage } from '../../views/list-page';
 import { PVC, testerDeployment, SnapshotClass } from '../../mocks/snapshot';
 import { detailsPage } from '../../views/details-page';
 import { modal } from '../../views/modal';
+import { nav } from '../../views/nav';
 import { resourceStatusShouldContain } from '../../views/common';
 
 const snapshotName = `${PVC.metadata.name}-snapshot`;
@@ -17,7 +18,7 @@ if (Cypress.env('BRIDGE_AWS')) {
       cy.exec(`echo '${JSON.stringify(PVC)}' | oc apply -n ${testName} -f -`);
       cy.exec(`echo '${JSON.stringify(testerDeployment)}' | oc apply -n ${testName} -f -`);
       cy.exec(`echo '${JSON.stringify(SnapshotClass)}' | oc apply -f -`);
-      cy.clickNavLink(['Storage', 'Persistent Volume Claims']);
+      nav.sidenav.clickNavLink(['Storage', 'Persistent Volume Claims']);
       listPage.filter.byName(PVC.metadata.name);
       resourceStatusShouldContain('Bound');
     });
@@ -35,7 +36,7 @@ if (Cypress.env('BRIDGE_AWS')) {
     });
 
     it('Creates Snapshot', () => {
-      cy.clickNavLink(['Volume Snapshots']);
+      nav.sidenav.clickNavLink(['Volume Snapshots']);
       listPage.clickCreateYAMLbutton();
       cy.byTestID('pvc-dropdown').click();
       cy.get(dropdownFirstItem)
@@ -69,7 +70,7 @@ if (Cypress.env('BRIDGE_AWS')) {
     });
 
     it('Lists Snapshot', () => {
-      cy.clickNavLink(['Volume Snapshots']);
+      nav.sidenav.clickNavLink(['Volume Snapshots']);
       listPage.rows.shouldBeLoaded();
       listPage.rows.shouldExist(snapshotName);
       listPage.rows.shouldNotExist(`${snapshotName}dup`);
