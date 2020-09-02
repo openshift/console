@@ -149,14 +149,14 @@ const isBeingImported = (
   pvcs?: PersistentVolumeClaimKind[],
   dataVolumes?: V1alpha1DataVolume[],
 ): VMStatusBundle => {
-  const importerPods = getPVCNametoImporterPodsMapForVM(vm, pods, pvcs);
-  if (_.isEmpty(importerPods) || isVMCreated(vm)) {
+  const pvcNameToImporterPodMap = getPVCNametoImporterPodsMapForVM(vm, pods, pvcs);
+  if (_.isEmpty(pvcNameToImporterPodMap) || isVMCreated(vm)) {
     return null;
   }
 
   const dvLookup = createBasicLookup(dataVolumes, getName);
 
-  const importerPodsStatuses = _.map(importerPods, (pod, pvcName) => {
+  const importerPodsStatuses = _.map(pvcNameToImporterPodMap, (pod, pvcName) => {
     const podStatus = getPodStatus(pod);
     const dataVolume = dvLookup[pvcName];
 

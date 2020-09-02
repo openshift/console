@@ -104,7 +104,10 @@ export const getPVCNametoImporterPodsMapForVM = (
   const podLookup = createBasicLookup(pods, getName);
 
   return (vmPVCs || []).reduce((podsMap, pvc) => {
-    podsMap[getName(pvc)] = podLookup[getPvcImportPodName(pvc)];
+    const pod = podLookup[getPvcImportPodName(pvc)];
+    if (pod) {
+      podsMap[getName(pvc)] = pod;
+    }
     return podsMap;
   }, {});
 };
