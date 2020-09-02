@@ -22,6 +22,7 @@ export const login = async (providerName: string, username: string, password: st
   if (providerName) {
     await selectProvider(providerName);
   }
+  console.log('### Waiting for name input ###');
   await browser.wait(until.visibilityOf(nameInput));
   await nameInput.sendKeys(username);
   await passwordInput.sendKeys(password);
@@ -30,9 +31,13 @@ export const login = async (providerName: string, username: string, password: st
 };
 
 export const logout = async () => {
+  console.log('### Waiting for user dropdown ###');
   await browser.wait(until.presenceOf(userDropdown));
   await userDropdown.click();
+  console.log('### Waiting for logout button ###');
   await browser.wait(until.presenceOf(logOutButton));
   await logOutButton.click();
+  console.log('### Waiting for login form ###');
   await browser.wait(until.or(pf3Login, pf4Login));
+  console.log('### Found login form ###');
 };

@@ -95,10 +95,12 @@ describe('Auth test', () => {
     });
 
     it('logs out kubeadmin user', async () => {
+      console.log('### Logging out user ###');
       await loginView.logout();
       expect(browser.getCurrentUrl()).toContain('oauth-openshift');
       expect(until.or(loginView.pf3Login, loginView.pf4Login)).toBeTruthy();
 
+      console.log('### Logging back in ###');
       // Log back in so that remaining tests can be run
       await loginView.login(KUBEADMIN_IDP, KUBEADMIN_USERNAME, BRIDGE_KUBEADMIN_PASSWORD);
       expect(loginView.userDropdown.getText()).toContain('kube:admin');
