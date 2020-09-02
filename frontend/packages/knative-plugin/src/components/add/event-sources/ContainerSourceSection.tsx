@@ -68,6 +68,7 @@ const ContainerSourceSection: React.FC<ContainerSourceSectionProps> = ({ title }
         data-test-id="container-arg-field"
         name={containerPaths.Args}
         label="Arguments"
+        addLabel="Add args"
         placeholder="argument"
         helpText="Arguments passed to the container"
         disableDeleteRow={args?.length === 1}

@@ -226,7 +226,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
           data-test-id="add-routing-label"
         >
           <PlusCircleIcon className="co-icon-space-r" />
-          Add
+          Add Label
         </Button>
       )}
     </div>

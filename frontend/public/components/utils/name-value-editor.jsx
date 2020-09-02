@@ -191,7 +191,7 @@ NameValueEditor.propTypes = {
 NameValueEditor.defaultProps = {
   nameString: 'Key',
   valueString: 'Value',
-  addString: 'Add',
+  addString: 'Add More',
   allowSorting: false,
   readOnly: false,
   nameValueId: 0,

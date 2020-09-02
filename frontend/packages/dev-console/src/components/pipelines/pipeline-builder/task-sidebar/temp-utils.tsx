@@ -113,6 +113,7 @@ export const ArrayParam: React.FC<ParameterProps> = (props) => {
         })}
       </FormGroup>
       <MultiColumnFieldFooter
+        addLabel="Add another value"
         onAdd={() => {
           setDirty(true);
           onChange([...values, '']);

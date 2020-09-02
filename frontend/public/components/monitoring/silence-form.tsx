@@ -302,7 +302,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                 variant="link"
               >
                 <PlusCircleIcon className="co-icon-space-r" />
-                Add
+                Add Label
               </Button>
             </div>
           </div>

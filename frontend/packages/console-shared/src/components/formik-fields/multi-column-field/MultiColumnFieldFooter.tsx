@@ -20,7 +20,7 @@ const MultiColumnFieldFooter: React.FC<MultiColumnFieldHeader> = ({
     icon={<PlusCircleIcon />}
     isInline
   >
-    {addLabel || 'Add'}
+    {addLabel || 'Add values'}
   </Button>
 );
 

@@ -64,9 +64,9 @@ Scenario Outline: Add annotation to the exisitng annonations list : Kn-03-TC07
    Given knative revision name "nodejs-ex-git-1-q5rb8" is higlighted on topology page
    And number of annotations are "5" present in side pane details tab
    When user selects "Edit Annotaions" option from knative revision context menu
-   And clicks "Add" button on the "Edit Annotaions" popup
+   And clicks "Add More" button on the "Edit Annotaions" popup
    And types "<key_name>" into the "Key" text box
-   And types "<key_value>" into the "value" text box 
+   And types "<key_value>" into the "value" text box
    And clicks "save" button on the "Edit Annotaions" popup
    Then number of annotaions increased to "6" in revision side pane details
 
@@ -89,7 +89,7 @@ Examples:
 | serving.knative.dev/creator |
 
 
-Scenario Outline: Remove annotation from exisitng annonations list : Kn-03-TC08 
+Scenario Outline: Remove annotation from exisitng annonations list : Kn-03-TC08
    Given knative revision name "nodejs-ex-git-1-q5rb8" is higlighted on topology page
    And number of annotations are "6" present in side pane - details tab
    When user selects "Edit Annotaions" option from knative revision context menu
@@ -124,7 +124,7 @@ Scenario: Update the revision detials : Kn-03-TC11
 @regression
 Scenario Outline: Delete revision popup details for service with multiple revisions : Kn-03-TC13
    Given knative revision name "nodejs-ex-git-1-q5rb8" is higlighted on topology page
-   And service should contain multiple revisions 
+   And service should contain multiple revisions
    When user selects "Delete Revision" option from knative revision context menu
    Then popup displayed with message as "Update the traffic distribution among the remaining Revisions"
    And modal should get closed on clicking "OK" button

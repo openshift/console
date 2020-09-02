@@ -60,6 +60,7 @@ const SinkBindingSection: React.FC<SinkBindingSectionProps> = ({ title }) => {
           nameValuePairs={nameValue}
           valueString="Value"
           nameString="Name"
+          addLabel="Add Values"
           readOnly={false}
           allowSorting={false}
           updateParentData={handleNameValuePairs}
