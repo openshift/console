@@ -96,6 +96,7 @@ export enum OvirtProviderProps {
   deploymentPods = 'ovirtDeploymentPods',
   deployment = 'ovirtDeployment',
   ovirtProvider = 'ovirtProvider',
+  networkAttachmentDefinitions = 'ovirtNads',
 }
 
 export enum VMWareProviderField {
@@ -222,7 +223,8 @@ export type ChangedCommonDataProp =
   | OvirtProviderProps.deployment
   | OvirtProviderProps.deploymentPods
   | OvirtProviderProps.ovirtEngineSecrets
-  | OvirtProviderProps.ovirtProvider;
+  | OvirtProviderProps.ovirtProvider
+  | OvirtProviderProps.networkAttachmentDefinitions;
 
 export type CommonDataProp =
   | VMWizardProps.isSimpleView
@@ -251,6 +253,7 @@ export const DetectCommonDataChanges = new Set<ChangedCommonDataProp>([
   OvirtProviderProps.deploymentPods,
   OvirtProviderProps.ovirtEngineSecrets,
   OvirtProviderProps.ovirtProvider,
+  OvirtProviderProps.networkAttachmentDefinitions,
 ]);
 
 export type CommonData = {
