@@ -14,7 +14,7 @@ export enum DiskType {
   Partition = 'Partition',
 }
 
-export enum DiskMechanicalProperty {
+export enum DiskMechanicalProperties {
   SSD = 'Rotational',
   HDD = 'NonRotational',
 }
@@ -25,7 +25,7 @@ export type LocalVolumeSetKind = K8sResourceCommon & {
     volumeMode: string;
     deviceInclusionSpec: {
       deviceTypes: DiskType[];
-      deviceMechanicalProperty: DiskMechanicalProperty[];
+      deviceMechanicalProperties: DiskMechanicalProperties[];
       minSize?: string;
       maxSize?: string;
     };

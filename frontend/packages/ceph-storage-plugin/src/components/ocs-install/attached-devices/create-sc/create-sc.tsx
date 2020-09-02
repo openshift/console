@@ -27,7 +27,7 @@ import {
   getHostNames,
 } from '@console/local-storage-operator-plugin/src/utils';
 import {
-  DiskMechanicalProperty,
+  DiskMechanicalProperties,
   DiskType,
 } from '@console/local-storage-operator-plugin/src/components/local-volume-set/types';
 import { initialState, reducer, State, Action, Discoveries, OnNextClick } from './state';
@@ -118,7 +118,7 @@ const CreateSC: React.FC<CreateSCProps> = ({ match }) => {
             // filter out non supported disks
             if (
               discovery?.status?.state === AVAILABLE &&
-              discovery.property === DiskMechanicalProperty.SSD &&
+              discovery.property === DiskMechanicalProperties.SSD &&
               discovery.type === DiskType.RawDisk
             ) {
               discovery.node = name;

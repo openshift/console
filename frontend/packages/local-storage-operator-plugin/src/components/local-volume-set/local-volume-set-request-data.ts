@@ -1,6 +1,6 @@
 import { apiVersionForModel } from '@console/internal/module/k8s';
 import { LocalVolumeSetModel } from '../../models';
-import { LocalVolumeSetKind, DiskType, DiskMechanicalProperty } from './types';
+import { LocalVolumeSetKind, DiskType, DiskMechanicalProperties } from './types';
 import { State } from './state';
 import { LOCAL_STORAGE_NAMESPACE, HOSTNAME_LABEL_KEY, LABEL_OPERATOR } from '../../constants';
 import { getNodes, getHostNames } from '../../utils';
@@ -17,10 +17,10 @@ export const getLocalVolumeSetRequestData = (state: State): LocalVolumeSetKind =
       deviceInclusionSpec: {
         // Only Raw disk supported for 4.6
         deviceTypes: [DiskType.RawDisk],
-        deviceMechanicalProperty:
+        deviceMechanicalProperties:
           state.diskType === 'HDD'
-            ? [DiskMechanicalProperty[state.diskType]]
-            : [DiskMechanicalProperty.SSD],
+            ? [DiskMechanicalProperties[state.diskType]]
+            : [DiskMechanicalProperties.SSD],
       },
       nodeSelector: {
         nodeSelectorTerms: [
