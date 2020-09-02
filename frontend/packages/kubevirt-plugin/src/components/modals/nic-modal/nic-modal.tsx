@@ -237,7 +237,10 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
             >
               <FormSelectPlaceholderOption isDisabled placeholder="--- Select Model ---" />
               {NetworkInterfaceModel.getAll()
-                .filter((ifaceModel) => ifaceModel.isSupported())
+                .filter(
+                  (ifaceModel) =>
+                    ifaceModel.isSupported() || ifaceModel.toString() === model.toString(),
+                )
                 .map((ifaceModel) => {
                   return (
                     <FormSelectOption
