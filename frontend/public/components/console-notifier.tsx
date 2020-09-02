@@ -27,7 +27,7 @@ const ConsoleNotifier_: React.FC<ConsoleNotifierProps> = ({ obj, location }) => 
             data-test={`${notification.metadata.name}-${notification.spec.location}`}
           >
             <div className="co-global-notification__content">
-              <p className="co-global-notification__text">
+              <p className="co-global-notification__text" data-test="global-notification-text">
                 {notification.spec.text}{' '}
                 {_.get(notification.spec, ['link', 'href']) && (
                   <a

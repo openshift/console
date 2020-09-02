@@ -21,12 +21,22 @@ const StepFooter: React.FC<StepFooterProps> = ({
   <Flex>
     {children && <FlexItem>{children}</FlexItem>}
     <FlexItem align={{ default: 'alignRight' }}>
-      <Button variant="secondary" id="tour-step-footer-secondary" onClick={secondaryButtonCallback}>
+      <Button
+        variant="secondary"
+        id="tour-step-footer-secondary"
+        data-test="tour-step-footer-secondary"
+        onClick={secondaryButtonCallback}
+      >
         {secondaryButton}
       </Button>
     </FlexItem>
     <FlexItem>
-      <Button variant="primary" id="tour-step-footer-primary" onClick={primaryButtonCallback}>
+      <Button
+        variant="primary"
+        id="tour-step-footer-primary"
+        data-test="tour-step-footer-primary"
+        onClick={primaryButtonCallback}
+      >
         {primaryButton}
       </Button>
     </FlexItem>
