@@ -180,7 +180,13 @@ describe('enhancedK8sMethods', () => {
   it('rollback does not fail on 404', async () => {
     const methods = spyEnhancedK8sMethods();
     (methods as any).k8sKill = async (kind: K8sKind, data: K8sResourceCommon) =>
-      Promise.reject(new K8sKillError('delete failed', { code: 404 }, data));
+      Promise.reject(
+        new K8sKillError(
+          'delete failed',
+          { message: 'delete failed', json: { code: 404 } } as any,
+          data,
+        ),
+      );
 
     await methods.k8sCreate(VirtualMachineModel, testVM);
     await methods.k8sPatch(VirtualMachineModel, testVM, []);

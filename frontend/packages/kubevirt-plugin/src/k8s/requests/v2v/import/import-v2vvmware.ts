@@ -216,7 +216,7 @@ const startConversionPod = async (
     conversionPodSecret: K8sResourceCommon;
   },
 ) => {
-  const kubevirtVmwareConfigMap = await getVmwareConfigMap({ k8sGet });
+  const kubevirtVmwareConfigMap = await getVmwareConfigMap();
 
   const conversionPodWrapper = new PodWrappper(
     buildConversionPod({

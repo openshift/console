@@ -39,5 +39,9 @@ export type ResultsWrapper = {
   isValid: boolean;
   requestResults: Result[];
   errors: Result[];
-  mainError: string;
+  mainError: {
+    title?: string;
+    message: string;
+    detail?: string;
+  };
 };

@@ -31,7 +31,7 @@ export const startV2VVMWareControllerWithCleanup = ({ getState, id, dispatch }: 
   const namespace = iGetCommonData(state, id, VMWizardProps.activeNamespace);
   const enhancedK8sMethods = new EnhancedK8sMethods();
 
-  return startV2VVMWareController({ namespace }, enhancedK8sMethods)
+  return startV2VVMWareController({ namespace }, enhancedK8sMethods, VMImportProvider.VMWARE)
     .then(() =>
       dispatch(
         vmWizardInternalActions[InternalActionType.UpdateImportProviderField](
@@ -47,24 +47,26 @@ export const startV2VVMWareControllerWithCleanup = ({ getState, id, dispatch }: 
     )
     .catch((e) =>
       // eslint-disable-next-line promise/no-nesting
-      cleanupAndGetResults(enhancedK8sMethods, e).then((results) => {
-        const errors = errorsFirstSort([...results.errors, ...results.requestResults]);
-        if (results.mainError) {
-          consoleWarn(results.mainError);
-        }
-        errors.forEach((o) => consoleWarn(o.title, o.content.data));
-        return dispatch(
-          vmWizardInternalActions[InternalActionType.UpdateImportProviderField](
-            id,
-            VMImportProvider.VMWARE,
-            VMWareProviderField.CONTROLLER_LAST_ERROR,
-            {
-              isHidden: asHidden(false, VMWareProviderField.CONTROLLER_LAST_ERROR),
-              errors: results,
-            },
-          ),
-        );
-      }),
+      cleanupAndGetResults(enhancedK8sMethods, e, { prettyPrintPermissionErrors: true }).then(
+        (results) => {
+          const errors = errorsFirstSort([...results.errors, ...results.requestResults]);
+          if (results.mainError) {
+            consoleWarn(results.mainError?.message, results.mainError?.detail);
+          }
+          errors.forEach((o) => consoleWarn(o.title, o.content.data));
+          return dispatch(
+            vmWizardInternalActions[InternalActionType.UpdateImportProviderField](
+              id,
+              VMImportProvider.VMWARE,
+              VMWareProviderField.CONTROLLER_LAST_ERROR,
+              {
+                isHidden: asHidden(false, VMWareProviderField.CONTROLLER_LAST_ERROR),
+                errors: results,
+              },
+            ),
+          );
+        },
+      ),
     )
     .catch((le) => consoleError(le));
 };
