@@ -227,9 +227,9 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
               {PersistentVolumeModel.label}
             </label>
             <PVCDropdown
+              dataTest="pvc-dropdown"
               namespace={namespace}
               onChange={handlePVCName}
-              id="claimName"
               selectedKey={pvcName}
               desc={`Persistent Volume Claim in ${namespace} namespace`}
             />
@@ -255,8 +255,8 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
               Volume Snapshot Class
             </label>
             <SnapshotClassDropdown
+              dataTest="snapshot-dropdown"
               onChange={setSnapshotClassName}
-              id="claimName"
               selectedKey={snapshotClassName}
               pvcSC={pvcObj?.spec?.storageClassName}
             />
@@ -310,8 +310,9 @@ export const VolumeSnapshot = connectToPlural(VolumeSnapshotComponent);
 type SnapshotClassDropdownProps = {
   selectedKey: string;
   onChange: (string) => void;
-  id: string;
+  id?: string;
   pvcSC: string;
+  dataTest?: string;
 };
 
 type SnapshotResourceProps = HandlePromiseProps & {
