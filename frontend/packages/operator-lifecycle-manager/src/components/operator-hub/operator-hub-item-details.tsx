@@ -138,8 +138,15 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
   const mappedInfraFeatures = mappedData(infraFeatures);
   const mappedValidSubscription = mappedData(validSubscription);
 
-  const paramDelim =
-    marketplaceSupportWorkflow && marketplaceSupportWorkflow.includes('?') ? '&' : '?';
+  let supportWorkflowUrl = marketplaceSupportWorkflow;
+  try {
+    const url = new URL(supportWorkflowUrl);
+    url.searchParams.set('utm_source', 'openshift_console');
+    supportWorkflowUrl = url.toString();
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(error.message);
+  }
 
   return (
     <div className="modal-body modal-body-border">
@@ -172,11 +179,8 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
               <PropertyItem
                 label="Support"
                 value={
-                  marketplaceSupportWorkflow ? (
-                    <ExternalLink
-                      href={`${marketplaceSupportWorkflow}${paramDelim}utm_source=openshift_console`}
-                      text="Get support"
-                    />
+                  supportWorkflowUrl ? (
+                    <ExternalLink href={supportWorkflowUrl} text="Get support" />
                   ) : (
                     support || notAvailable
                   )

@@ -421,8 +421,15 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     detailsItem &&
     `/k8s/ns/${detailsItem.subscription.metadata.namespace}/${SubscriptionModel.plural}/${detailsItem.subscription.metadata.name}?showDelete=true`;
 
-  const paramDelim = detailsItem.marketplaceRemoteWorkflow &&
-    detailsItem.marketplaceRemoteWorkflow.includes("?") ? "&" : "?";
+  let remoteWorkflowUrl = detailsItem.marketplaceRemoteWorkflow;
+  try {
+    const url = new URL(remoteWorkflowUrl);
+    url.searchParams.set('utm_source', 'openshift_console');
+    remoteWorkflowUrl = url.toString();
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(error.message);
+  }
 
   if (_.isEmpty(filteredItems)) {
     return (
@@ -471,10 +478,10 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                 id="catalog-item-header"
               />
               <div className="co-catalog-page__overlay-actions">
-                {detailsItem.marketplaceRemoteWorkflow && (
+                {remoteWorkflowUrl && (
                   <ExternalLink
                     additionalClassName="pf-c-button pf-m-primary co-catalog-page__overlay-action"
-                    href={`${detailsItem.marketplaceRemoteWorkflow}${paramDelim}utm_source=openshift_console`}
+                    href={remoteWorkflowUrl}
                     text={
                       <>
                         <div className="co-catalog-page__overlay-action-label">
@@ -489,8 +496,8 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                   <Link
                     className={classNames(
                       'pf-c-button',
-                      { 'pf-m-secondary': detailsItem.marketplaceRemoteWorkflow },
-                      { 'pf-m-primary': !detailsItem.marketplaceRemoteWorkflow },
+                      { 'pf-m-secondary': remoteWorkflowUrl },
+                      { 'pf-m-primary': !remoteWorkflowUrl },
                       'co-catalog-page__overlay-action',
                     )}
                     data-test-id="operator-install-btn"

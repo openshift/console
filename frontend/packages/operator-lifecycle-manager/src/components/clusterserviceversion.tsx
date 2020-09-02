@@ -849,8 +849,15 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
     }
   }
 
-  const paramDelim =
-    marketplaceSupportWorkflow && marketplaceSupportWorkflow.includes('?') ? '&' : '?';
+  let supportWorkflowUrl = marketplaceSupportWorkflow;
+  try {
+    const url = new URL(supportWorkflowUrl);
+    url.searchParams.set('utm_source', 'openshift_console');
+    supportWorkflowUrl = url.toString();
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(error.message);
+  }
 
   return (
     <>
@@ -885,14 +892,11 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
                 <dd>
                   {spec.provider && spec.provider.name ? spec.provider.name : 'Not available'}
                 </dd>
-                {marketplaceSupportWorkflow && (
+                {supportWorkflowUrl && (
                   <>
                     <dt>Support</dt>
                     <dd>
-                      <ExternalLink
-                        href={`${marketplaceSupportWorkflow}${paramDelim}utm_source=openshift_console`}
-                        text="Get support"
-                      />
+                      <ExternalLink href={supportWorkflowUrl} text="Get support" />
                     </dd>
                   </>
                 )}
