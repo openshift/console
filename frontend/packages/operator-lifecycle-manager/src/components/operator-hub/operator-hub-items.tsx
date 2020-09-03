@@ -10,12 +10,12 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateVariant,
-  Modal,
   Title,
 } from '@patternfly/react-core';
 import {
   COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY,
   GreenCheckCircleIcon,
+  Modal,
 } from '@console/shared';
 import { history } from '@console/internal/components/utils/router';
 import { TileViewPage } from '@console/internal/components/utils/tile-view-page';

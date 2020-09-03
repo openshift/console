@@ -16,5 +16,10 @@
     display: flex;
     flex-direction: column;
     z-index: 0;
+    position: relative;
+  }
+
+  &__modal > .pf-c-modal-box__footer {
+    display: block;
   }
 }
