@@ -1302,10 +1302,12 @@ const AlertsPage_: React.FC<Alerts> = ({ data, loaded, loadError }) => (
 const AlertsPage = withFallback(connect(alertsToProps)(AlertsPage_));
 
 const ruleHasAlertState = (rule: Rule, state: AlertStates): boolean =>
-  _.some(rule.alerts, { state });
+  state === AlertStates.NotFiring ? _.isEmpty(rule.alerts) : _.some(rule.alerts, { state });
 
 const ruleAlertStateFilter = (filter, rule: Rule) =>
-  _.some(rule.alerts, (a) => filter.selected.has(a.state)) || _.isEmpty(filter.selected);
+  (filter.selected.has(AlertStates.NotFiring) && _.isEmpty(rule.alerts)) ||
+  _.some(rule.alerts, (a) => filter.selected.has(a.state)) ||
+  _.isEmpty(filter.selected);
 
 const rulesRowFilters: RowFilter[] = [
   {
