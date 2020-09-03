@@ -47,10 +47,11 @@ describe('Auth test', () => {
 
   it(`log in as kubeadmin user, verify sidenav menus`, () => {
     cy.login(KUBEADMIN_IDP, KUBEADMIN_USERNAME, Cypress.env('BRIDGE_KUBEADMIN_PASSWORD'));
-    cy.visit(``);
+    cy.visit('');
     cy.url().should('include', Cypress.env('appHost'));
     masthead.username.shouldHaveText(KUBEADMIN_IDP);
     cy.byTestID('global-notification-text').contains(
+      // cy.get('.co-global-notifications').contains(
       'You are logged in as a temporary administrative user. Update the cluster OAuth configuration to allow others to log in.',
     );
 

@@ -38,3 +38,6 @@ CHROME_VERSION=$(google-chrome --version) ./test-gui.sh "${1:-e2e}"
 if [ $# -eq 0 ] || [ "$1" == "release" ]; then
   ./test-cypress.sh
 fi
+if ["$1" == "login" ]; then
+  ./test-cypress.sh --spec 'tests/app/auth-multiuser-login.spec.ts'
+fi
