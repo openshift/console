@@ -41,7 +41,7 @@ The Topology view will load with your new sample application. The application is
 1. Hover over the icon on the bottom left quadrant of the **nodejs-sample** deployment to see the build status in a tooltip.
 2. Click on the icon for quick access to the build log.
 
-You should be able to see the log stream of the **nodejs-sample-1** build on the Build Details page.`,
+You should be able to see the log stream of the **nodejs-sample-1** build on the **Build Details** page.`,
         review: {
           instructions: `#### To verify the build is complete:
 Wait for the build to complete. It may take a few minutes.  Do you see a Completed badge on the page header?`,

@@ -54,7 +54,7 @@ Do you see metrics charts in the dashboard?`,
       {
         title: `Viewing custom metrics`,
         description: `### To view custom metrics:
-1. Click on the **Metrics** tab of the Monitoring page.
+1. Click on the **Metrics** tab of the **Monitoring** page.
 2. Click on the dropdown which says **Select Query** to see the available queries.
 3. Click on **Filesystem Usage** from the list to view run the query.`,
         review: {

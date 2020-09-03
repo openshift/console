@@ -60,10 +60,10 @@ Is there a Pipeline named django-ex-git?`,
         description: `### You’ve just explored the topology of your application and seen it’s related resources.  Now let’s start your pipeline.
 Notice the Pipeline Runs section of the Side Panel
 1. The first row shows the Pipeline associated with the application and an action button to **Start Last Run**, which is disabled.
-2. Click on the Pipeline link, which should bring you to the Pipeline Details page.
+2. Click on the Pipeline link, which should bring you to the **Pipeline Details** page.
 3. From the Action menu, click on Start to Start your Pipeline.`,
         review: {
-          instructions: `#### Momentarily, you should be brought to the **Pipeline Run** details page. To verify that your pipeline has started,
+          instructions: `#### Momentarily, you should be brought to the **Pipeline Run Details** page. To verify that your pipeline has started,
 1. Note that the **Pipeline Runs** Details section shows a visualization of the pipeline run status.
 2. The pills in the visualization represent the tasks in the pipeline.
 3. Hovering over a task will show a popover with the details of the associated steps.
