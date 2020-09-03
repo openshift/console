@@ -168,8 +168,8 @@ export const CreateInternalCluster = withHandlePromise<
         >
           <>
             <div>
-              Select at least 3 nodes in different zones you wish to use. The recommended
-              requirements are 16 CPUs and 64 GiB of RAM per node.
+              Select at least 3 nodes in different zones you wish to use with a recommended
+              requirement of 14 CPUs and 34GiB RAM per node.
             </div>
             <div className="text-muted ceph-ocs-install__minimal-msg">
               A minimal deployment is also available if needed with the requirements of 8 CPUs and
