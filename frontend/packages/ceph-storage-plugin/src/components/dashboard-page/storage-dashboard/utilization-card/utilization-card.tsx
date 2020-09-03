@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { SelectProps, Select } from '@patternfly/react-core';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import { Dropdown } from '@console/internal/components/utils/dropdown';
 import {
   humanizeBinaryBytes,
   humanizeDecimalBytesPerSec,
@@ -21,10 +21,23 @@ import {
   utilizationPopoverQueryMap,
 } from '../../../../constants/queries';
 import { humanizeIOPS, humanizeLatency } from './utils';
+import { getSelectOptions } from '../breakdown-card/breakdown-dropdown';
+
+const durationSelectItems = getSelectOptions([
+  Duration.ONE_HR,
+  Duration.SIX_HR,
+  Duration.TWENTY_FOUR_HR,
+]);
 
 const UtilizationCard: React.FC = () => {
   const [duration, setDuration] = useMetricDuration();
   const [timestamps, setTimestamps] = React.useState<Date[]>();
+  const [isOpen, setOpen] = React.useState(false);
+
+  const handleChange: SelectProps['onSelect'] = (_e, item) => {
+    setDuration(item as Duration);
+    setOpen(false);
+  };
 
   const storagePopover = React.useCallback(
     ({ current }) => (
@@ -42,7 +55,18 @@ const UtilizationCard: React.FC = () => {
     <DashboardCard>
       <DashboardCardHeader>
         <DashboardCardTitle>Utilization</DashboardCardTitle>
-        <Dropdown items={Duration} onChange={setDuration} selectedKey={duration} title={duration} />
+        <Select
+          autoFocus={false}
+          onSelect={handleChange}
+          onToggle={() => setOpen(!isOpen)}
+          isOpen={isOpen}
+          selections={[duration]}
+          placeholderText={duration}
+          aria-label="Utilization data time range"
+          isCheckboxSelectionBadgeHidden
+        >
+          {durationSelectItems}
+        </Select>
       </DashboardCardHeader>
       <UtilizationBody timestamps={timestamps}>
         <PrometheusUtilizationItem

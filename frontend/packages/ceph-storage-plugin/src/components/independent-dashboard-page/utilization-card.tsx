@@ -1,8 +1,9 @@
 import * as React from 'react';
+import { SelectProps, Select } from '@patternfly/react-core';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import { Dropdown, humanizeBinaryBytes } from '@console/internal/components/utils';
+import { humanizeBinaryBytes } from '@console/internal/components/utils';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
@@ -12,16 +13,39 @@ import {
 } from '@console/shared/src/components/dashboard/duration-hook';
 import { PrometheusUtilizationItem } from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/utilization-card';
 import { StorageDashboardQuery, INDEPENDENT_UTILIZATION_QUERIES } from '../../constants/queries';
+import { getSelectOptions } from '../dashboard-page/storage-dashboard/breakdown-card/breakdown-dropdown';
+
+const durationSelectItems = getSelectOptions([
+  Duration.ONE_HR,
+  Duration.SIX_HR,
+  Duration.TWENTY_FOUR_HR,
+]);
 
 export const UtilizationCard: React.FC = () => {
   const [duration, setDuration] = useMetricDuration();
   const [timestamps, setTimestamps] = React.useState<Date[]>();
+  const [isOpen, setOpen] = React.useState(false);
 
+  const handleChange: SelectProps['onSelect'] = (_e, item) => {
+    setDuration(item as Duration);
+    setOpen(false);
+  };
   return (
     <DashboardCard>
       <DashboardCardHeader>
         <DashboardCardTitle>Utilization</DashboardCardTitle>
-        <Dropdown items={Duration} onChange={setDuration} selectedKey={duration} title={duration} />
+        <Select
+          autoFocus={false}
+          onSelect={handleChange}
+          onToggle={() => setOpen(!isOpen)}
+          isOpen={isOpen}
+          selections={[duration]}
+          placeholderText={duration}
+          aria-label="Utilization data time range"
+          isCheckboxSelectionBadgeHidden
+        >
+          {durationSelectItems}
+        </Select>
       </DashboardCardHeader>
       <DashboardCardBody>
         <UtilizationBody timestamps={timestamps}>
