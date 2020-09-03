@@ -30,7 +30,7 @@ const ImageStreamNsDropdown: React.FC = () => {
             resource: RoleBindingModel.plural,
             verb: 'create',
             name: 'system:image-puller',
-            namespace: selectedProject,
+            namespace: values.project.name,
           })
             .then((resp) =>
               dispatch({ type: Action.setHasCreateAccess, value: resp.status.allowed }),
@@ -38,7 +38,7 @@ const ImageStreamNsDropdown: React.FC = () => {
             .catch(() => dispatch({ type: Action.setHasAccessToPullImage, value: false })),
         );
         promiseArr.push(
-          k8sGet(RoleBindingModel, 'system:image-puller', selectedProject)
+          k8sGet(RoleBindingModel, `system:image-puller-${selectedProject}`, values.project.name)
             .then(() => {
               dispatch({
                 type: Action.setHasAccessToPullImage,
@@ -59,6 +59,7 @@ const ImageStreamNsDropdown: React.FC = () => {
       initialValues.imageStream.tag,
       initialValues.isi,
       setFieldValue,
+      values.project.name,
     ],
   );
 
