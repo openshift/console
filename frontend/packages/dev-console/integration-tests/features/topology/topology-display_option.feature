@@ -2,13 +2,15 @@ Feature: Display options in topology
 	As a user, I want to see display options  
 
 Background:
-    Given user is in topology
+    Given user is at the Topolgy page
+    And user has selected namespace "aut-topology-displayOptions"
 
-@regression, @smoke
+
+@regression
 Scenario: Display options menu in topology with defaut options: T-07-TC10
-   Given topology has deplotment,deployment-config and knative workloads
+   Given topology has deployment,deployment-config and knative workloads
    When user clicks on Display Options on top of topology
-   And user sees "Pod Count"and "Labels" under "Show" and "Expand" have options according to their presence which are "Application Groupings" and "Knative Services"
+   And user sees "Pod Count" and "Labels" under "Show" and "Expand" have options according to their presence which are "Application Groupings" and "Knative Services"
    And user deselect "Labels" which is selected by default
    And user sees the labels under the workloads have dissapeared
    And user hover over application grouping the label appears
@@ -18,4 +20,4 @@ Scenario: Display options menu in topology with defaut options: T-07-TC10
    Then user can see workloads squashed in Application grouping
    And user select "Application Groupings" in the Expand section
    And user deselect "Knative Services" in the Expand section
-   Then user can see knative workload squashed in Application grouping
+   And user can see knative workload squashed in Application grouping

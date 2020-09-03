@@ -1,27 +1,31 @@
 Feature: Secrets
-    As a user I want to add or remove secrets details to pipeline
+    As a user, I want to add or remove secrets details to pipeline
 
 Background:
-    Given user logged into the openshift application
-    And openshift cluster is installed with pipeline operator
-    And user is at the project namespace "AUT_MB_Demo" in dev perspecitve
+    Given user has installed OpenShift Pipelines operator
+    And user has selected namespace "aut-pipeline-secrets"
+    And user is at pipelines page
 
 
 @regression, @smoke
-Scenario: Add Secret details : P-011-TC01
-   Given user able to see pipeline with git resources in pipeiles page
-   When user selects "Start" option from kebab menu
-   And clicks on Show Credentials link present in "Start Pipeline" popup
-   And clicks on "+Add Secret" link
-   Then user able to see Create Source Secret section
-   And able to see "Secret Name", "Access to", "Server UrL" fields and authernication type sections
+Scenario Outline: Add Secret details : P-011-TC01
+   Given user able to see pipeline "<pipeline_name>" with git resources in pipeiles page
+   When user selects "Start" option from kebab menu for pipeline "<pipeline_name>"
+   And clicks on Show Credentials link present in Start Pipeline popup
+   And clicks on "Add Secret" link
+   Then user is able to see Create Source Secret section
+   And able to see Secret Name, Access to, Server UrL fields and authernication type fields
+
+Examples:
+| pipeline_name           |
+| pipe-task-with-resoruce |
 
 
 @regression, @smoke
-Scenario: Add secret to pipeline with authentication type as Basic Authernication : P-011-TC02
-   Given pipeline with git resources
+Scenario Outline: Add secret to pipeline with authentication type as Basic Authernication : P-011-TC02
+   Given user able to see pipeline "pipe-task-with-resoruce-1" with git resources in pipeiles page
    And user is at Start Pipeline popup
-   When the user enters URL, Revision as "<git_private_repo_url>" and "master"
+   When user enters URL, Revision as "<git_private_repo_url>" and "master"
    And enters Secret Name as "<secret_name>"
    And selects the "Git Server" option from Access to drop down
    And enters the server url as "https://github.com"
@@ -37,9 +41,9 @@ Examples:
 
 @regression
 Scenario Outline: Add secret to pipeline with authentication type as SSH Key : P-011-TC04   
-   Given pipeline with git resources
+   Given user able to see pipeline "pipe-task-with-resoruce-2" with git resources in pipeiles page
    And user is at Start Pipeline popup
-   When the user enters URL, Revision as "<git_private_repo_url>" and "master"
+   When user enters URL, Revision as "<git_private_repo_url>" and "master"
    And enters Secret Name as "<secret_name>"
    And selects the "Git Server" option from Access to drop down
    And enters the server url as "https://github.com"
@@ -55,9 +59,9 @@ Examples:
 
 @regression
 Scenario Outline: Add secret to pipeline with authentication type as Image Registry Credentials : P-011-TC03
-   Given pipeline with git resources
+   Given user able to see pipeline "pipe-task-with-resoruce-2" with git resources in pipeiles page
    And user is at Start Pipeline popup
-   When the user enters URL, Revision as "<git_private_repo_url>" and "master"
+   When user enters URL, Revision as "<git_private_repo_url>" and "master"
    And enters Secret Name as "<secret_name>"
    And selects the "Git Server" option from Access to drop down
    And enters the server url as "https://github.com"

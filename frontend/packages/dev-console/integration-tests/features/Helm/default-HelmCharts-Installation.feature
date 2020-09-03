@@ -1,47 +1,42 @@
-Feature: Helm Chart
-    User will be able to install the helm charts
+Feature: Install the Helm Release
+    As a user, I want to install the helm release
 
 Background:
-    Given user logged into the openshift application
-    And user is at developer perspecitve
+    Given user is at developer perspecitve
+    And user has selected namespace "aut-helm-installation"
 
 
 @regression, @smoke
 Scenario: The Helm Chart option on the +Add Page: HR-01-TC01
-    Given user is at +Add page
-    Then user can see Helm Chart card on the +Add page
+    Given user is at Add page
+    Then user can see Helm Chart card on the Add page
 
 
 @regression, @smoke
-Scenario: Install Helm Chart from +Add Page: HR-02-TC01
-    Given user is at +Add page
-    When user clicks on the Helm Chart card on the +Add page
-    And user searches for the 'Node-ex-k' helm chart
-    And user clicks on the 'Node-ex-k' helm chart card
-    And user clicks on the Install Helm Chart button
-    And user clicks on the Install button
-    Then user is redirected to Topology page
-    And Topology page have the helm chart workload
+Scenario: Catalog Page display on selecitng Helm chart: HR-01-TC02, HR-02-TC02
+    Given user is at Add page
+    When user clicks on the Helm Chart card on the Add page
+    Then user will get redirected to Developer Catalog page
+    And user is able to see Helm Chart option is selected in Developer Catalog page
+    And user is able to see Helm Charts cards
 
 
 @regression
-Scenario: Install Helm Chart from Developer Catalog Page: HR-03-TC01
-    Given user is at +Add page
-    When user clicks on the Developer Catalog card on the +Add page
+Scenario: Install Helm Chart from Developer Catalog Page: HR-03
+    Given user is at Add page
+    When user clicks on the Developer Catalog card on the Add page
     And user checks the Helm Charts checkbox
-    And user searches for the 'Node-ex-k' helm chart
-    And user clicks on the 'Node-ex-k' helm chart card
-    And user clicks on the Install Helm Chart button
+    And user searches for the "Nodejs Ex K v0.2.0" helm chart
+    And user clicks on the "Nodejs Ex K v0.2.0" helm chart card
+    And user clicks on the Install Helm Chart button on side bar
+    And user enters Release Name as "nodejs-ex-k"
     And user clicks on the Install button
-    Then user is redirected to Topology page
-    And Topology page have the helm chart workload
+    Then user will be redirected to Topology page
+    And Topology page have the helm chart workload "nodejs-ex-k"
 
 
 @regression, @smoke
 Scenario: Open context menu and check the actions available: HR-07-TC01
-    Given user is on the Topology page
-    When user right clicks on the workload
-    Then user sees the context menu with actions
-    And user sees the Upgrade action item
-    And user sees the Rollback action item
-    And user sees the Uninstall Helm Release action item
+    Given user is at the Topolgy page
+    When user right clicks on the helm release "nodejs-ex-k"
+    Then user is able to see the context menu with actions Upgrade, Rollback and Uninstall Helm Release

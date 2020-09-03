@@ -2,7 +2,9 @@ Feature: Connecting nodes
 	As a user, I want to connect two application   
 
 Background:
-    Given user is in topology
+    Given user is at developer perspecitve
+    And user has selected namespace "aut-topology-connectingNodes"
+
 
 @regression, @smoke
 Scenario: Create visual connection between two nodes using Annotations : T-05-TC01, T-05-TC02
@@ -11,7 +13,8 @@ Scenario: Create visual connection between two nodes using Annotations : T-05-TC
    And user opens action menu and selects "Edit Annotations" option
    And user enters key as "app.openshift.io/connects-to"
    And user enters value as name of the node to which it will be associated
-   Then user can see the arrow connecting them with head pointing to the node whose value is provided in the "Edit Annotations"
+   Then user can see the arrow between two nodes
+
 
 @regression, @smoke, @manual
 Scenario: Create visual connection between two nodes using drag and drop : T-05-TC04

@@ -1,15 +1,15 @@
 Feature: Perform Actions on created VM
-    User should be able to perform Actions on imported VM
+    As a user, I should be able to perform Actions on imported VM
 
 
 Background: 
-    Given user is at Developer perspective
+    Given user is at developer perspecitve
     And user has already created VM
 
 
 @regression
 Scenario: Sidebar for VM: VM-03
-    Given user is at Developer Perspective
+    Given user is at developer perspecitve
     And user is having VM on the Topology page
     When user clicks on the VM to open the sidebar
     Then user can see the Details tab
@@ -19,7 +19,7 @@ Scenario: Sidebar for VM: VM-03
 
 @regression
 Scenario: Edit Application Groupings action on VM: VM-04-TC02
-    Given user is at Developer Perspective
+    Given user is at developer perspecitve
     And user is having VM on the Topology page
     When user right clicks on the VM to open the context menu
     And user clicks on the Edit Application Groupings
@@ -31,7 +31,7 @@ Scenario: Edit Application Groupings action on VM: VM-04-TC02
 
 @regression
 Scenario: Edit Application Groupings to unassigned action on VM: VM-04-TC02
-    Given user is at Developer Perspective
+    Given user is at developer perspecitve
     And user is having VM on the Topology page
     When user right clicks on the VM to open the context menu
     And user clicks on the Edit Application Groupings
@@ -43,7 +43,7 @@ Scenario: Edit Application Groupings to unassigned action on VM: VM-04-TC02
 
 @regression
 Scenario: Start VM action on VM: VM-04-TC03
-    Given user is at Developer Perspective
+    Given user is at developer perspecitve
     And user is having VM on the Topology page
     When user right clicks on the VM to open the context menu
     And user clicks on the Start VM
@@ -52,7 +52,7 @@ Scenario: Start VM action on VM: VM-04-TC03
 
 @regression
 Scenario: Clone VM action on VM: VM-04-TC04
-    Given user is at Developer Perspective
+    Given user is at developer perspecitve
     And user is having VM on the Topology page
     When user right clicks on the VM to open the context menu
     And user clicks on the Clone VM
@@ -65,7 +65,7 @@ Scenario: Clone VM action on VM: VM-04-TC04
 
 @regression
 Scenario: Edit CD-ROMs action on VM: VM-04-TC05
-    Given user is at Developer Perspective
+    Given user is at developer perspecitve
     And user is having VM on the Topology page
     When user right clicks on the VM to open the context menu
     And user clicks on the Edit CD-ROMs
@@ -74,7 +74,7 @@ Scenario: Edit CD-ROMs action on VM: VM-04-TC05
 
 @regression
 Scenario: Edit Labels action on VM: VM-04-TC06
-    Given user is at Developer Perspective
+    Given user is at developer perspecitve
     And user is having VM on the Topology page
     When user right clicks on the VM to open the context menu
     And user clicks on the Edit Labels
@@ -87,7 +87,7 @@ Scenario: Edit Labels action on VM: VM-04-TC06
 
 @regression
 Scenario: Edit Annotations action on VM: VM-04-TC07
-    Given user is at Developer Perspective
+    Given user is at developer perspecitve
     And user is having VM on the Topology page
     When user right clicks on the VM to open the context menu
     And user clicks on the Edit Annotations
@@ -100,10 +100,9 @@ Scenario: Edit Annotations action on VM: VM-04-TC07
 
 @regression
 Scenario: Delete VM action on VM: VM-04-TC08
-    Given user is at Developer Perspective
+    Given user is at developer perspecitve
     And user is having VM on the Topology page
     When user right clicks on the VM to open the context menu
     And user clicks on the Delete VM
     And user clicks on the Delete button on the modal
     Then VM will get deleted
-    And user won't be able to see the VM again
