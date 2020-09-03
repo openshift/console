@@ -212,8 +212,8 @@ const InstallSucceededMessage: React.FC<InstallSuccededMessageProps> = ({
   );
 };
 const InstallingMessage: React.FC<InstallingMessageProps> = ({ namespace, obj }) => {
-  const reason = (obj as ClusterServiceVersionKind)?.status?.reason || '';
-  const message = (obj as ClusterServiceVersionKind)?.status?.message || '';
+  const reason = obj?.status?.reason || '';
+  const message = obj?.status?.message || '';
   const initializationResourceMessage = getInitializationResourceJSON(obj)
     ? 'Once the operator is installed the required custom resource will be available for creation.'
     : '';
@@ -239,64 +239,67 @@ const InstallingMessage: React.FC<InstallingMessageProps> = ({ namespace, obj })
 };
 
 const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = (props) => {
+  const [error, setError] = React.useState(false);
   const { resources, targetNamespace, pkgNameWithVersion } = props;
-
+  let installPlan: InstallPlanKind = null;
   let loading = true;
-  let status = '';
-  let installObj: ClusterServiceVersionKind | InstallPlanKind =
-    resources?.clusterServiceVersions?.data;
+  const clusterServiceVersion: ClusterServiceVersionKind = resources?.clusterServiceVersions?.data;
   const subscription = resources?.subscription?.data;
-  status = installObj?.status?.phase;
-  if (installObj && status) {
+  let status = clusterServiceVersion?.status?.phase || '';
+
+  if (clusterServiceVersion && status) {
     loading = false;
   } else if (subscription) {
     // There is no ClusterServiceVersion for the package, so look at Subscriptions/InstallPlans
+    loading = false;
     status = subscription?.status?.state || null;
     const installPlanName = subscription?.status?.installplan?.name || '';
-    const installPlan: InstallPlanKind = resources?.installPlan?.data?.find(
-      (ip) => ip.metadata.name === installPlanName,
-    );
-    if (installPlan) {
-      installObj = installPlan;
-      loading = false;
-    }
+    installPlan = resources?.installPlan?.data?.find((ip) => ip.metadata.name === installPlanName);
   }
 
-  const isStatusSucceeded = status === 'Succeeded';
-  const isStatusFailed = status === 'Failed';
-  const isApprovalNeeded =
-    installObj?.spec?.approval === 'Manual' && installObj?.spec?.approved === false;
+  React.useEffect(() => {
+    setTimeout(() => {
+      if (!clusterServiceVersion && !installPlan) {
+        setError(true);
+      }
+    }, 10000);
+  }, [clusterServiceVersion, installPlan]);
+
+  const isStatusSucceeded = () => status === 'Succeeded';
+  const isStatusFailed = () => status === 'Failed' || error;
+  const isApprovalNeeded = () =>
+    installPlan?.spec?.approval === 'Manual' && installPlan?.spec?.approved === false;
 
   const approve = () => {
-    k8sPatch(InstallPlanModel, installObj, [
+    k8sPatch(InstallPlanModel, installPlan, [
       { op: 'replace', path: '/spec/approved', value: true },
-    ]).catch((error) => {
-      const errorMsg = error.message;
+    ]).catch((err) => {
+      const errorMsg = err.message;
       errorModal({ errorMsg });
     });
   };
 
   let indicator = <Spinner size="lg" />;
-  if (isStatusFailed) {
+  if (isStatusFailed()) {
     indicator = <RedExclamationCircleIcon size="lg" />;
-  }
-  if (isApprovalNeeded) {
+  } else if (isApprovalNeeded()) {
     indicator = <YellowExclamationTriangleIcon size="lg" />;
-  }
-  if (isStatusSucceeded) {
+  } else if (isStatusSucceeded()) {
     indicator = <GreenCheckCircleIcon size="lg" />;
   }
 
-  let installMessage = <InstallingMessage namespace={targetNamespace} obj={installObj} />;
-  if (isStatusFailed) {
+  let installMessage = (
+    <InstallingMessage namespace={targetNamespace} obj={clusterServiceVersion} />
+  );
+  if (isStatusFailed()) {
     installMessage = (
       <InstallFailedMessage
         namespace={targetNamespace}
-        obj={installObj}
+        obj={clusterServiceVersion}
         csvName={pkgNameWithVersion}
       />
     );
-  } else if (isApprovalNeeded) {
+  } else if (isApprovalNeeded()) {
     installMessage = (
       <InstallNeedsApprovalMessage
         namespace={targetNamespace}
@@ -304,12 +307,12 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = (props) => {
         approve={approve}
       />
     );
-  } else if (isStatusSucceeded) {
+  } else if (isStatusSucceeded()) {
     installMessage = (
       <InstallSucceededMessage
         namespace={targetNamespace}
         csvName={pkgNameWithVersion}
-        obj={installObj}
+        obj={clusterServiceVersion}
       />
     );
   }
@@ -339,12 +342,12 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = (props) => {
           <div id="operator-install-page">
             {loading && (
               <div className="co-operator-install-page__indicator">
-                Installing... <Spinner size="lg" />
+                Waiting for subscription... <Spinner size="lg" />
               </div>
             )}
-            {!loading && isStatusFailed && (
+            {!loading && isStatusFailed() && (
               <Alert variant="danger" isInline title="Installation Failed">
-                {status}: {(installObj as ClusterServiceVersionKind)?.status?.message || ''}
+                {status}: {clusterServiceVersion?.status?.message || ''}
               </Alert>
             )}
             {!loading && (
@@ -365,9 +368,7 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = (props) => {
           </div>
         </Bullseye>
       </div>
-      {!loading && isApprovalNeeded && (
-        <InstallPlanPreview obj={installObj as InstallPlanKind} hideApprovalBlock />
-      )}
+      {!loading && isApprovalNeeded() && <InstallPlanPreview obj={installPlan} hideApprovalBlock />}
     </>
   );
 };
@@ -431,7 +432,7 @@ export type OperatorInstallPageProps = {
 
 type InstallSuccededMessageProps = {
   namespace: string;
-  obj: ClusterServiceVersionKind | InstallPlanKind;
+  obj: ClusterServiceVersionKind;
   csvName: string;
 };
 type InstallNeedsApprovalMessageProps = {
@@ -441,15 +442,15 @@ type InstallNeedsApprovalMessageProps = {
 };
 type InstallingMessageProps = {
   namespace: string;
-  obj: ClusterServiceVersionKind | InstallPlanKind;
+  obj: ClusterServiceVersionKind;
 };
 type InstallFailedMessageProps = {
   namespace: string;
-  obj: ClusterServiceVersionKind | InstallPlanKind;
+  obj: ClusterServiceVersionKind;
   csvName: string;
 };
 type InitializationResourceRequiredMessageProps = {
-  obj: ClusterServiceVersionKind | InstallPlanKind;
+  obj: ClusterServiceVersionKind;
 };
 type InitializationResourceButtonProps = {
   obj: ClusterServiceVersionKind | InstallPlanKind | SubscriptionKind;
