@@ -628,7 +628,7 @@ func main() {
 		bridge.FlagFatalf("listen", "scheme must be one of: http, https")
 	}
 
-	helmConfig.Configure(srv)
+	helmConfig.Configure()
 
 	httpsrv := &http.Server{
 		Addr:    listenURL.Host,
