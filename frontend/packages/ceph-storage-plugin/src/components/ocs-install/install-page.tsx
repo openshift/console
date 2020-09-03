@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { match } from 'react-router';
+import { match as RouteMatch } from 'react-router';
 import { k8sGet } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { BreadCrumbs } from '@console/internal/components/utils';
 import { getAnnotations } from '@console/shared/src/selectors/common';
 import { RadioGroup } from '@console/internal/components/radio';
+import { InfrastructureModel } from '@console/internal/models';
 import { getRequiredKeys, createDownloadFile } from '../independent-mode/utils';
 import { OCSServiceModel } from '../../models';
 import CreateExternalCluster from '../independent-mode/install';
@@ -13,14 +14,16 @@ import { OCS_SUPPORT_ANNOTATION, MODES } from '../../constants';
 import { CreateAttachedDevicesCluster } from './attached-devices/install';
 import './install-page.scss';
 
-// eslint-disable-next-line no-shadow
+const INDEP_MODE_SUPPORTED_PLATFORMS = ['Baremetal', 'None', 'VSphere'];
+
 const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
   const {
     params: { ns, appName },
     url,
   } = match;
 
-  const [isIndependent, setIsIndependent] = React.useState(false);
+  const [isIndependent, setIndependent] = React.useState(false);
+  const [isIndepModeSupportedPlatform, setIndepModeSupportedPlatform] = React.useState(false);
   const [independentReqdKeys, setIndependentReqdKeys] = React.useState<{ [key: string]: string[] }>(
     null,
   );
@@ -36,11 +39,12 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
   React.useEffect(() => {
     k8sGet(ClusterServiceVersionModel, appName, ns)
       .then((clusterServiceVersionObj) => {
+        // Todo(bipuladh): Remove this check in 4.7
         const isIndependentSupported = getAnnotations(clusterServiceVersionObj)[
           OCS_SUPPORT_ANNOTATION
         ].includes('external');
         if (isIndependentSupported) {
-          setIsIndependent(true);
+          setIndependent(true);
           const { configMaps = [], secrets = [], storageClasses = [] } = getRequiredKeys(
             clusterServiceVersionObj,
           );
@@ -62,6 +66,17 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
       })
       .catch(() => setClusterServiceVersion(null));
   }, [appName, ns]);
+
+  React.useEffect(() => {
+    // eslint-disable-next-line promise/catch-or-return
+    k8sGet(InfrastructureModel, 'cluster')
+      // Todo(bipuladh): Add type for InfraObject
+      .then((infraObj) => {
+        if (INDEP_MODE_SUPPORTED_PLATFORMS.includes(infraObj?.spec?.platformSpec?.type)) {
+          setIndepModeSupportedPlatform(true);
+        }
+      });
+  });
 
   return (
     <>
@@ -102,7 +117,7 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
             {
               value: MODES.EXTERNAL,
               title: MODES.EXTERNAL,
-              disabled: !isIndependent,
+              disabled: !isIndependent && isIndepModeSupportedPlatform,
             },
           ]}
           onChange={handleModeChange}
@@ -126,5 +141,5 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
 export default InstallCluster;
 
 type InstallClusterProps = {
-  match: match<{ ns: string; appName: string }>;
+  match: RouteMatch<{ ns: string; appName: string }>;
 };
