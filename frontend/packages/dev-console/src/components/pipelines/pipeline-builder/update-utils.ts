@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { getRandomChars } from '@console/shared/src/utils';
+import { getRandomChars } from '@console/shared';
 import {
   PipelineResourceTask,
   PipelineTask,
@@ -306,26 +306,37 @@ const applyResourceUpdate = (
   };
 };
 
-const applyParamsUpdate = (
+export const applyParamsUpdate = (
   pipelineTask: PipelineTask,
   params: UpdateTaskParamData,
 ): PipelineTask => {
   const { newValue, taskParamName } = params;
 
-  return {
-    ...pipelineTask,
-    params: pipelineTask.params.map(
+  let foundParam = false;
+  const changedParams =
+    pipelineTask.params?.map(
       (param): PipelineTaskParam => {
         if (param.name !== taskParamName) {
           return param;
         }
-
+        foundParam = true;
         return {
           ...param,
           value: newValue,
         };
       },
-    ),
+    ) || [];
+
+  if (!foundParam) {
+    changedParams.push({
+      name: taskParamName,
+      value: newValue,
+    });
+  }
+
+  return {
+    ...pipelineTask,
+    params: changedParams,
   };
 };
 
