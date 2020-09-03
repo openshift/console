@@ -8,7 +8,6 @@ import DashboardCard from '@console/shared/src/components/dashboard/dashboard-ca
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import { SubscriptionModel, SubscriptionKind } from '@console/operator-lifecycle-manager/src';
-import { HeaderPrometheusViewLink } from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/breakdown-card/breakdown-header';
 import { BreakdownCardBody } from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/breakdown-card/breakdown-body';
 import {
   CLUSTERWIDE,
@@ -25,7 +24,7 @@ import { useFlag } from '@console/shared/src/hooks/flag';
 import { RGW_FLAG } from '@console/ceph-storage-plugin/src/features';
 import { getGroupedSelectOptions } from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/breakdown-card/breakdown-dropdown';
 import { ServiceType, CapacityBreakdown, Groups } from '../../constants';
-import { breakdownQueryMap, CAPACITY_BREAKDOWN_QUERIES } from '../../queries';
+import { breakdownQueryMap } from '../../queries';
 import './capacity-breakdown-card.scss';
 
 const subscriptionResource: FirehoseResource = {
@@ -76,7 +75,6 @@ const BreakdownCard: React.FC = () => {
     );
   }, [serviceType, metricType]);
   const prometheusQueries = React.useMemo(() => Object.values(queries) as string[], [queries]);
-  const queryKeys = Object.keys(queries);
   const parser = React.useMemo(
     () => (args: PrometheusResponse) => getInstantVectorStats(args, metric),
     [metric],
@@ -143,7 +141,6 @@ const BreakdownCard: React.FC = () => {
     CapacityBreakdown.serviceMetricMap?.[serviceType]?.[metricType],
   );
   const totalUsed = String(response?.[response?.length - 1]?.[0]?.y);
-  const link = `topk(20, (${CAPACITY_BREAKDOWN_QUERIES[queryKeys?.[0]]}))`;
 
   const ind = top5MetricsStats.findIndex((v) => v.name === 'Others');
   if (ind !== -1) {
@@ -159,9 +156,6 @@ const BreakdownCard: React.FC = () => {
       <DashboardCardHeader>
         <DashboardCardTitle>Capacity breakdown</DashboardCardTitle>
         <div className="nb-capacity-breakdown-card__header">
-          {serviceType === ServiceType.MCG && metricType !== CapacityBreakdown.Metrics.TOTAL && (
-            <HeaderPrometheusViewLink link={link} />
-          )}
           {RGW && (
             <Select
               className="nb-capacity-breakdown-card-header__dropdown nb-capacity-breakdown-card-header__dropdown--margin"
