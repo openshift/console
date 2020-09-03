@@ -39,7 +39,7 @@ export const getColumns = () => {
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Location',
+      title: 'Zone',
       props: { className: tableColumnClasses[3] },
     },
     {
