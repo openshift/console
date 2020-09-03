@@ -2,13 +2,4 @@
   padding: var(--pf-global--spacer--lg);
   flex: 1;
   border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
-  &__empty-state {
-    &__msg {
-      font-size: var(--pf-global--FontSize--lg);
-    }
-    &__icon {
-      height: var(--pf-c-empty-state__icon--FontSize);
-      max-width: 100%;
-    }
-  }
 }

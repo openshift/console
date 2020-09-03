@@ -51,7 +51,7 @@ const PodRingWrapper: React.FC<PodRingWrapperProps> = ({ workload }) => {
           enableScaling={false}
         />
       ) : (
-        <div>Pod Info Not Available</div>
+        <div style={{ border: '1px solid' }}>Pod Info Not Available</div>
       )}
     </>
   );

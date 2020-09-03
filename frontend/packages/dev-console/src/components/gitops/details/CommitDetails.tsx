@@ -17,7 +17,7 @@ interface CommitDetailsProps {
 const CommitDetails: React.FC<CommitDetailsProps> = ({ imageName }) => {
   const [commitData, setCommitData] = React.useState<CommitData>(null);
   const namespace = useSelector(getActiveNamespace);
-  const importImage = {
+  const importImage = imageName && {
     kind: 'ImageStreamImport',
     apiVersion: 'image.openshift.io/v1',
     metadata: {
@@ -46,11 +46,13 @@ const CommitDetails: React.FC<CommitDetailsProps> = ({ imageName }) => {
       let lastCommitData: CommitData = { author: '', timestamp: '', id: '' };
       let imageStreamImport;
       try {
-        imageStreamImport = await k8sCreate(ImageStreamImportsModel, importImage);
+        imageStreamImport = importImage
+          ? await k8sCreate(ImageStreamImportsModel, importImage)
+          : {};
       } catch {} // eslint-disable-line no-empty
       if (ignore) return;
       const status = imageStreamImport?.status?.images?.[0]?.status;
-      if (status.status === 'Success') {
+      if (status?.status === 'Success') {
         const imageLabels =
           imageStreamImport?.status?.images?.[0]?.image?.dockerImageMetadata?.Config?.Labels;
         lastCommitData = {
@@ -67,7 +69,6 @@ const CommitDetails: React.FC<CommitDetailsProps> = ({ imageName }) => {
     return () => {
       ignore = true;
     };
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
