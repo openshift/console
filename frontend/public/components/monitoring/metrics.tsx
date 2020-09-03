@@ -716,7 +716,10 @@ const QueryTable_: React.FC<QueryTableProps> = ({
 
     columns = [
       '',
-      ...allLabelKeys.map((k) => ({ title: k === '__name__' ? 'Name' : k, ...cellProps })),
+      ...allLabelKeys.map((k) => ({
+        title: <span>{k === '__name__' ? 'Name' : k}</span>,
+        ...cellProps,
+      })),
       { title: 'Value', ...cellProps },
     ];
 
