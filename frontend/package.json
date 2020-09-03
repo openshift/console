@@ -35,7 +35,9 @@
     "analyze": "NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=production --profile --json | awk '{if(NR>2)print}' > public/dist/stats.json && ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack-bundle-analyzer --mode static -r public/dist/report.html public/dist/stats.json",
     "prettier-all": "prettier --write '**/*.{js,jsx,ts,tsx,json}'",
     "gql-generate": "graphql-codegen",
-    "i18n": "i18next 'public/!(dist)**/**/*.{js,jsx,ts,tsx}' [-oc]"
+    "i18n": "i18next 'public/!(dist)**/**/*.{js,jsx,ts,tsx}' [-oc] && node set-english-defaults.js",
+    "i18n-to-pot": "node i18n-to-pot.js",
+    "po-to-i18n": "node po-to-i18n.js"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -116,6 +118,7 @@
     "history": "4.x",
     "i18next": "^19.4.3",
     "i18next-browser-languagedetector": "^4.1.1",
+    "i18next-conv": "^10.0.2",
     "i18next-http-backend": "^1.0.4",
     "immutable": "3.x",
     "js-base64": "^2.5.1",
