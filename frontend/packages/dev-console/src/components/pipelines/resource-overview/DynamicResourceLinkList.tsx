@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as classNames from 'classnames';
 import { ResourceLink } from '@console/internal/components/utils';
 import { K8sKind, referenceForModel } from '@console/internal/module/k8s';
 
@@ -13,21 +14,27 @@ export type ResourceModelLink = {
 type DynamicResourceLinkListProps = {
   links: ResourceModelLink[];
   namespace: string;
-  title: string;
+  title?: string;
+  removeSpaceBelow?: boolean;
 };
 
 const DynamicResourceLinkList: React.FC<DynamicResourceLinkListProps> = ({
   links = [],
   namespace,
   title,
+  removeSpaceBelow,
 }) => {
   if (links.length === 0) {
     return null;
   }
   return (
-    <div className="odc-dynamic-resource-link-list">
+    <div
+      className={classNames('odc-dynamic-resource-link-list', {
+        'odc-dynamic-resource-link-list--addSpaceBelow': !removeSpaceBelow,
+      })}
+    >
       <dl>
-        <dt>{title}</dt>
+        {title && <dt>{title}</dt>}
         <dd>
           {links.map(({ name, model, displayName = '' }) => {
             const kind = referenceForModel(model);
