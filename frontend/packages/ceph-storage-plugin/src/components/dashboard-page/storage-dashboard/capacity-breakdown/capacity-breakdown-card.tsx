@@ -11,10 +11,9 @@ import DashboardCard from '@console/shared/src/components/dashboard/dashboard-ca
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
-import { breakdownQueryMap, CAPACITY_BREAKDOWN_QUERIES } from '../../../../constants/queries';
+import { breakdownQueryMap } from '../../../../constants/queries';
 import { PROJECTS } from '../../../../constants/index';
 import { BreakdownCardBody } from '../breakdown-card/breakdown-body';
-import { HeaderPrometheusViewLink } from '../breakdown-card/breakdown-header';
 import { getStackChartStats, sortInstantVectorStats } from '../breakdown-card/utils';
 import { getSelectOptions } from '../breakdown-card/breakdown-dropdown';
 import './capacity-breakdown-card.scss';
@@ -51,7 +50,6 @@ const BreakdownCard: React.FC<DashboardItemProps> = ({
   const metricTotal = _.get(results[1], 'data.result[0].value[1]');
   const cephAvailable = _.get(results[2], 'data.result[0].value[1]');
   const cephUsed = _.get(results[3], 'data.result[0].value[1]');
-  const link = `topk(20, (${CAPACITY_BREAKDOWN_QUERIES[queryKeys[0]]}))`;
 
   const handleMetricsChange: SelectProps['onSelect'] = (_e, breakdown) => {
     setMetricType(breakdown as string);
@@ -63,7 +61,6 @@ const BreakdownCard: React.FC<DashboardItemProps> = ({
       <DashboardCardHeader>
         <DashboardCardTitle>Capacity breakdown</DashboardCardTitle>
         <div className="ceph-capacity-breakdown-card__header">
-          <HeaderPrometheusViewLink link={link} />
           <Select
             className="ceph-capacity-breakdown-card-header__dropdown"
             autoFocus={false}

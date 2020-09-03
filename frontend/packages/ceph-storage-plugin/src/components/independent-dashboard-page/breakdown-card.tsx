@@ -10,13 +10,12 @@ import DashboardCard from '@console/shared/src/components/dashboard/dashboard-ca
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
-import { breakdownIndependentQueryMap, CAPACITY_BREAKDOWN_QUERIES } from '../../constants/queries';
+import { breakdownIndependentQueryMap } from '../../constants/queries';
 import { PROJECTS } from '../../constants';
 import {
   sortInstantVectorStats,
   getStackChartStats,
 } from '../dashboard-page/storage-dashboard/breakdown-card/utils';
-import { HeaderPrometheusViewLink } from '../dashboard-page/storage-dashboard/breakdown-card/breakdown-header';
 import { BreakdownCardBody } from '../dashboard-page/storage-dashboard/breakdown-card/breakdown-body';
 import { getSelectOptions } from '../dashboard-page/storage-dashboard/breakdown-card/breakdown-dropdown';
 import '../dashboard-page/storage-dashboard/capacity-breakdown/capacity-breakdown-card.scss';
@@ -51,7 +50,6 @@ export const BreakdownCard: React.FC<DashboardItemProps> = ({
   const top5SortedMetricsData = sortInstantVectorStats(top6MetricsData);
   const top5MetricsStats = getStackChartStats(top5SortedMetricsData, humanize);
   const metricTotal = results[1]?.data?.result[0]?.value[1];
-  const link = `topk(20, (${CAPACITY_BREAKDOWN_QUERIES[queryKeys[0]]}))`;
 
   const handleMetricsChange: SelectProps['onSelect'] = (_e, breakdown) => {
     setMetricType(breakdown as string);
@@ -63,7 +61,6 @@ export const BreakdownCard: React.FC<DashboardItemProps> = ({
       <DashboardCardHeader>
         <DashboardCardTitle>Capacity breakdown</DashboardCardTitle>
         <div className="ceph-capacity-breakdown-card__header">
-          <HeaderPrometheusViewLink link={link} />
           <Select
             className="ceph-capacity-breakdown-card-header__dropdown"
             autoFocus={false}

@@ -8,7 +8,6 @@ import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboa
 import { Select } from '@patternfly/react-core';
 import { BreakdownCard } from '../components/independent-dashboard-page/breakdown-card';
 import { dashboardData } from '../__mocks__/independent-mode-dashboard-data';
-import { HeaderPrometheusViewLink } from '../components/dashboard-page/storage-dashboard/breakdown-card/breakdown-header';
 import { BreakdownCardBody } from '../components/dashboard-page/storage-dashboard/breakdown-card/breakdown-body';
 import { getSelectOptions } from '../components/dashboard-page/storage-dashboard/breakdown-card/breakdown-dropdown';
 import { breakdownIndependentQueryMap } from '../constants/queries';
@@ -41,13 +40,6 @@ describe('BreakdownCard', () => {
 
   it('Should render Card Title', () => {
     expect(wrapper.find(DashboardCardTitle).exists()).toBe(true);
-  });
-
-  it('Should render Prometheus Header Link', () => {
-    expect(wrapper.find(HeaderPrometheusViewLink).exists()).toBe(true);
-    expect(wrapper.find(HeaderPrometheusViewLink).props().link).toEqual(
-      dashboardData.expectedHeaderLink,
-    );
   });
 
   it('Should render Dropdown', () => {
