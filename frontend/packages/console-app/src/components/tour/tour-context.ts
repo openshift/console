@@ -20,7 +20,7 @@ export const tourReducer = (state: TourState, action: TourActions) => {
   const { stepNumber } = state;
   switch (action) {
     case TourActions.start:
-      return { closeTour: false, startTour: true, completedTour: false, stepNumber: 0 };
+      return { startTour: true, completedTour: false, stepNumber: 0 };
     case TourActions.next:
       return {
         ...state,
@@ -32,15 +32,8 @@ export const tourReducer = (state: TourState, action: TourActions) => {
         ...state,
         stepNumber: stepNumber - 1,
       };
-    case TourActions.pause:
-      return {
-        ...state,
-        closeTour: true,
-      };
-    case TourActions.resume:
-      return { ...state, closeTour: false };
     case TourActions.complete:
-      return { ...state, closeTour: false, completedTour: true, stepNumber: 0 };
+      return { ...state, completedTour: true, stepNumber: 0 };
     default:
       return state;
   }
@@ -59,7 +52,6 @@ type TourContextType = {
 export type TourState = {
   stepNumber: number;
   startTour: boolean;
-  closeTour: boolean;
   completedTour: boolean;
 };
 
@@ -95,7 +87,6 @@ export const useTourValuesForContext = (): TourContextType => {
   const [tourState, tourDispatch] = useReducer<TourReducer>(tourReducer, {
     completedTour: completed,
     stepNumber: 0,
-    closeTour: false,
     startTour: !completed,
   });
   if (!tour) return { tour: null };
