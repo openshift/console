@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { pluralize } from '@patternfly/react-core';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { QuickStartTask, QuickStartTaskStatus } from '../utils/quick-start-types';
 import TaskHeader from './QuickStartTaskHeader';
@@ -19,7 +20,7 @@ const QuickStartIntroduction: React.FC<QuickStartIntroductionProps> = ({
   <>
     <SyncMarkdownView content={introduction} />
     <p style={{ marginBottom: 'var(--pf-global--spacer--md)' }}>
-      In this tour, you will complete {tasks.length} tasks:
+      In this quick start, you will complete {pluralize(tasks.length, 'task')}:
     </p>
     {tasks.map((task, index) => (
       <TaskHeader

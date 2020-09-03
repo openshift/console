@@ -24,9 +24,9 @@ Serverless gives you access to a rich ecosystem of built-in and third-party even
 **Iteration**
 Deploying new versions of apps is simple with Serverless. Perform canary, A/B, and blue-green testing with confidence. By using app revisions, you can roll things back, or split traffic between revisions, as needed.
 
-This guided tour shows you how to create a Serverless app that realizes these benefits.
+This quick start shows you how to create a Serverless app that realizes these benefits.
 
-In this tour, you perform five tasks:
+In this quick start, you perform five tasks:
 1. Create a Serverless application
 2. Demo scalability
 3. Wire an event source to your Knative Service

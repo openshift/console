@@ -14,7 +14,7 @@ export const explorePipelinesQuickStart = {
     description:
       'Install the OpenShift® Pipelines Operator to start building pipelines using Tekton',
     prerequisites: 'User must have access to install operators to run this Quick Start.',
-    introduction: `### In this tour, you will complete 3 tasks:
+    introduction: `### In this quick start, you will complete 3 tasks:
 1. Create an application from git.
 2. Explore your application in topology.
 3. Explore your pipeline run.`,

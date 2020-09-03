@@ -18,7 +18,7 @@ export const exploreServerlessQuickStart = {
 
 Serverless reduces the needs to manage infrastructure or perform back-end development. Application scaling is automated. Choosing Serverless means simplicity, portability, and efficiency.
 
-Adding Serverless to your OpenShift cluster is quick and easy. This guided tour walks you through the process in just a few minutes.`,
+Adding Serverless to your OpenShift cluster is quick and easy. This quick start walks you through the process in just a few minutes.`,
     tasks: [
       {
         title: `Install Serverless Operator`,
@@ -71,7 +71,7 @@ Adding Serverless to your OpenShift cluster is quick and easy. This guided tour 
       },
     ],
     conclusion:
-      'Your Serverless Operator is ready! If you want to learn how to deploy a serverless application, take the Serverless Application tour.',
+      'Your Serverless Operator is ready! If you want to learn how to deploy a serverless application, take the Serverless Application quick start.',
     nextQuickStart: 'serverless-application',
   },
 };

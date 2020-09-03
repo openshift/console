@@ -14,7 +14,7 @@ export const installAssociatePipelineQuickStart = {
     description:
       'Install an application, associate a pipeline, start the pipeline and explore the pipeline run',
     prerequisites: 'OpenShift® Pipelines Operator must be installed',
-    introduction: `### In this tour you will complete 3 tasks:
+    introduction: `### In this quick start you will complete 3 tasks:
 1. Create an application from Git.
 2. Explore your application
 3. Explore your Pipeline Run`,
