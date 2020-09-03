@@ -9,7 +9,7 @@ import {
   ServiceModel,
   RouteModel,
 } from '@console/internal/models';
-import { k8sCreate, K8sResourceKind, k8sUpdate, K8sVerb } from '@console/internal/module/k8s';
+import { k8sCreate, devfileCreate, K8sResourceKind, k8sUpdate, K8sVerb } from '@console/internal/module/k8s';
 import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
 import { getKnativeServiceDepResource } from '@console/knative-plugin/src/utils/create-knative-utils';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
@@ -56,6 +56,44 @@ export const createProject = (projectData: ProjectData): Promise<K8sResourceKind
 
   return k8sCreate(ProjectRequestModel, project);
 };
+
+export const devfileFlow = (
+  formData: GitImportFormData,
+  imageStream: K8sResourceKind,
+  dryRun: boolean,
+  originalBuildConfig?: K8sResourceKind,
+  verb: K8sVerb = 'create',
+  generatedImageStreamName: string = '',
+): Promise<K8sResourceKind> => {
+  const {
+    name,
+    project: { name: namespace },
+    application: { name: applicationName },
+    git: { url: repository, type: gitType, ref = 'master', dir: contextDir, secret: secretName },
+    // docker: { dockerfilePath },
+    // devfilePath: { url },
+    image: { tag: selectedTag },
+    build: { env, triggers, strategy: buildStrategy },
+    labels: userLabels,
+  } = formData;
+  // return verb === 'update'
+    // ? k8sUpdate(BuildConfigModel, buildConfig)
+    // : 
+
+    const devfileData = {
+      name: name,
+      project: { name: namespace },
+      application: { name: applicationName },
+      git: { url: repository, type: gitType, ref: 'master', dir: contextDir, secret: secretName },
+      // docker: { dockerfilePath },
+      // devfilePath: { url },
+      image: { tag: selectedTag },
+      build: { env, triggers, strategy: buildStrategy },
+      labels: userLabels,
+    };
+  
+    return devfileCreate(null, devfileData, dryRun ? dryRunOpt : {});
+}
 
 export const createOrUpdateImageStream = (
   formData: GitImportFormData,
@@ -538,6 +576,27 @@ export const createOrUpdateResources = async (
     } else if (canCreateRoute) {
       requests.push(k8sCreate(RouteModel, route, dryRun ? dryRunOpt : {}));
     }
+  }
+
+  if (buildStrategy === 'Devfile'){
+    requests.push(
+      createOrUpdateImageStream(
+        formData,
+        imageStream,
+        dryRun,
+        appResources,
+        generatedImageStreamName ? 'create' : verb,
+        generatedImageStreamName,
+      ),
+      devfileFlow(
+        formData,
+        imageStream,
+        dryRun,
+        _.get(appResources, 'buildConfig.data'),
+        verb,
+        generatedImageStreamName,
+      ),
+    );
   }
 
   if (webhookTrigger && verb === 'create') {

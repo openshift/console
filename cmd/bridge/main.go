@@ -56,6 +56,9 @@ const (
 
 	// Well-known location of the GitOps service. This is only accessible in-cluster
 	openshiftGitOpsHost = "cluster.openshift-pipelines-app-delivery.svc:8080"
+
+	// Well-known location of the GitOps service. This is only accessible in-cluster
+	openshiftDevfileParserHost = "cluster.openshift-pipelines-app-delivery.svc:8080"
 )
 
 func main() {

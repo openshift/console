@@ -76,6 +76,20 @@ export const k8sCreate = (kind, data, opts = {}) => {
   );
 };
 
+export const devfileCreate = (kind, data, opts = {}) => {
+  console.log("********************Huzzah it works!***********************")
+  data.metadata = data.metadata || {};
+  data.metadata.namespace = data.metadata.namespace || "default";
+  
+  let temp = coFetchJSON.post(resourceURL(kind, Object.assign({ ns: data.metadata.namespace }, opts)),
+    data,);
+  return temp;
+  // return coFetchJSON.post(
+  //   resourceURL(kind, Object.assign({ ns: data.metadata.namespace }, opts)),
+  //   data,
+  // );
+};
+
 export const k8sUpdate = (kind, data, ns, name, opts) =>
   coFetchJSON.put(
     resourceURL(kind, {
