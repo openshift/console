@@ -93,3 +93,11 @@ export const EXAMPLE_PVC = {
 export const CHANNEL_43 = 'stable-4.3';
 export const CHANNEL_44 = 'stable-4.4';
 export const CHANNEL_45 = 'stable-4.5';
+
+export const LSO_INFO_MSG = 'Local Storage Operator Not Installed';
+export const SC_STEPS_NAME = {
+  DISCOVERY: 'Discover Disks',
+  STORAGECLASS: 'Create Storage Class',
+  STORAGECLUSTER: 'Create Storage Cluster',
+};
+export const CONFIRM_MODAL_TITLE = 'Create Storage Class';

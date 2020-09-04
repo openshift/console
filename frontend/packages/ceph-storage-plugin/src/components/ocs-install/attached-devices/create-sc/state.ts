@@ -18,7 +18,7 @@ export const initialState: State = {
   nodeNames: [], // nodes selected on the LVS step
   minDiskSize: '0',
   maxDiskSize: '',
-  diskSizeUnit: 'TiB',
+  diskSizeUnit: 'Ti',
   isValidMaxSize: true,
   hostNamesMapForLVS: {},
   // states for chart
