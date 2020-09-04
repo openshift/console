@@ -68,7 +68,7 @@ Is the Pod ring autoscaled to zero?`,
         description: `### To connect an event source to your Knative Service:
 1. On the **Topology** View, hover over your service with your cursor. You should see a blue arrow.
 2. Click and drag the blue arrow, then drop it anywhere outside the service.
-3. In the dropdown menu that appears, click **Event Source**.
+3. In the list that appears, click **Event Source**.
 4. Under the **Type** field, click **PingSource**.
 5. In the **Data** field, type \`This message is from PingSource\`. This message is posted when the service is called.
 6. In the **Schedule** field, type \`* * * * *\`.  This means that the PingSource will make a call every minute.

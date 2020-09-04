@@ -11,7 +11,7 @@ export const installAssociatePipelineQuickStart = {
     displayName: `Deploying an application with a pipeline`,
     duration: 10,
     iconURL: pipelineIcon,
-    description: `Import an application from git, add a pipeline to it, and run the Pipeline.`,
+    description: `Import an application from Git, add a pipeline to it, and run the Pipeline.`,
     prerequisites: '',
     introduction: `This quick start guides you through creating an application and associating it with a CI/CD pipeline.
 `,

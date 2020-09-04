@@ -105,7 +105,7 @@ The application will be run in a new tab.`,
         },
       },
     ],
-    conclusion: `Your sample application is deployed and ready! To add health checks to your sample app, take the **Adding Health Checks to your sample application** quick start`,
+    conclusion: `Your sample application is deployed and ready! To add health checks to your sample app, take the **Adding health checks to your sample application** quick start`,
 
     nextQuickStart: `add-healthchecks`,
   },
