@@ -72,13 +72,14 @@ const mapStitchReplaceInOthers = <TaskType extends PipelineBuilderTaskBase>(
   }
 
   const updatedIterationTask = mapRemoveRelatedInOthers(removalTask.name, iterationTask);
+  let newRunAfter: string[] = removalTask.runAfter;
   if (updatedIterationTask.runAfter.length > 0) {
-    return updatedIterationTask;
+    newRunAfter = [...updatedIterationTask.runAfter, ...newRunAfter];
   }
 
   return {
     ...updatedIterationTask,
-    runAfter: removalTask.runAfter,
+    runAfter: newRunAfter,
   };
 };
 
