@@ -79,7 +79,11 @@ const CreateLocalVolumeSet: React.FC = withHandlePromise<
         </div>
         <LocalVolumeSetHeader />
       </div>
-      <Form noValidate={false} className="co-m-pane__body co-m-pane__form" onSubmit={onSubmit}>
+      <Form
+        noValidate={false}
+        className="co-m-pane__body lso-create-lvs__node-list"
+        onSubmit={onSubmit}
+      >
         <LocalVolumeSetInner dispatch={dispatch} state={state} />
         <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
           <ActionGroup>

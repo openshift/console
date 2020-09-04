@@ -157,7 +157,7 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
   };
 
   return (
-    <div className="co-m-pane__form">
+    <>
       <OCSAlert />
       <Form className="co-m-pane__body-group">
         <StorageClassSection handleStorageClass={handleStorageClass} filterSC={onlyNoProvSC}>
@@ -213,7 +213,7 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
           </ActionGroup>
         </ButtonBar>
       </Form>
-    </div>
+    </>
   );
 });
 

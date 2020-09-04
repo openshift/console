@@ -20,38 +20,35 @@ import { GetRows, NodeTableProps } from './types';
 import './ocs-install.scss';
 
 const tableColumnClasses = [
-  classNames('col-md-1', 'col-sm-1', 'col-xs-1'),
-  classNames('col-md-4', 'col-sm-8', 'col-xs-11'),
-  classNames('col-md-2', 'col-sm-3', 'hidden-xs'),
-  classNames('col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-md-1', 'hidden-sm', 'hidden-xs'),
-  classNames('col-md-2', 'hidden-sm', 'hidden-xs'),
+  classNames('pf-u-w-50-on-sm'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-10-on-sm'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-10-on-sm'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-10-on-sm'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-10-on-sm'),
 ];
 
-export const getColumns = () => {
-  return [
-    {
-      title: 'Name',
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: 'Role',
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Zone',
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: 'CPU',
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: 'Memory',
-      props: { className: tableColumnClasses[5] },
-    },
-  ];
-};
+export const getColumns = () => [
+  {
+    title: 'Name',
+    props: { className: tableColumnClasses[0] },
+  },
+  {
+    title: 'Role',
+    props: { className: tableColumnClasses[1] },
+  },
+  {
+    title: 'Zone',
+    props: { className: tableColumnClasses[2] },
+  },
+  {
+    title: 'CPU',
+    props: { className: tableColumnClasses[3] },
+  },
+  {
+    title: 'Memory',
+    props: { className: tableColumnClasses[4] },
+  },
+];
 
 const getRows: GetRows = (
   { componentProps },
@@ -70,13 +67,13 @@ const getRows: GetRows = (
     const memSpec: string = getNodeAllocatableMemory(node);
     const cells: IRow['cells'] = [
       {
-        title: <ResourceLink kind="Node" name={getName(node)} title={node.metadata.uid} />,
+        title: <ResourceLink kind="Node" name={getName(node)} title={getName(node)} />,
       },
       {
-        title: roles.join(', ') || '-',
+        title: roles.join(', ') ?? '-',
       },
       {
-        title: node.metadata.labels?.['failure-domain.beta.kubernetes.io/zone'] || '-',
+        title: node.metadata.labels?.['failure-domain.beta.kubernetes.io/zone'] ?? '-',
       },
       {
         title: `${humanizeCpuCores(cpuSpec).string || '-'}`,
@@ -120,7 +117,7 @@ const NodeTable: React.FC<NodeTableProps> = (props) => {
 
   return (
     <>
-      <div className="ceph-node-list__max-height">
+      <div className="ceph-node-list__max-height ceph-ocs-install__node-list">
         <Table
           aria-label="Node Table"
           data-test-id="select-nodes-table"
