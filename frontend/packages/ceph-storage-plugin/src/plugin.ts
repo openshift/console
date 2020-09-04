@@ -134,6 +134,19 @@ const plugin: Plugin<ConsumedExtensions> = [
         ),
     },
   },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: `/k8s/ns/:ns/${referenceForModel(
+        ClusterServiceVersionModel,
+      )}/:appName/${apiObjectRef}/~new`,
+      loader: () =>
+        import('./components/ocs-install/install-page' /* webpackChunkName: "install-page" */).then(
+          (m) => m.default,
+        ),
+    },
+  },
   // Ceph Storage Dashboard Left cards
   {
     type: 'Dashboards/Card',
