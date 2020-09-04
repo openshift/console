@@ -42,14 +42,14 @@ export const createSystemImagePullerRoleBinding = (
     kind: RoleBindingModel.kind,
     apiVersion: `${RoleBindingModel.apiGroup}/${RoleBindingModel.apiVersion}`,
     metadata: {
-      name: 'system:image-puller',
-      namespace: imageStream.namespace,
+      name: `system:image-puller-${imageStream.namespace}`,
+      namespace: formData.project.name,
     },
     subjects: [
       {
         kind: 'ServiceAccount',
         name: 'default',
-        namespace: formData.project.name,
+        namespace: imageStream.namespace,
       },
     ],
     roleRef: {
