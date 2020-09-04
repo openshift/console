@@ -12,7 +12,8 @@
   "fixturesFolder": "fixtures",
   "defaultCommandTimeout": 30000,
   "retries": {
-    "runMode": 2,
-    "openMode": 1
-  }
+    "runMode": 1,
+    "openMode": 0
+  },
+  "videoCompression": 0
 }
