@@ -100,7 +100,7 @@ export const OVirtProviderModel: K8sKind = {
 export const VirtualMachineImportModel: K8sKind = {
   label: 'Virtual Machine Import',
   labelPlural: 'Virtual Machine Imports',
-  apiVersion: 'v1alpha1',
+  apiVersion: 'v1beta1',
   apiGroup: 'v2v.kubevirt.io',
   plural: 'virtualmachineimports',
   abbr: 'VIM',
