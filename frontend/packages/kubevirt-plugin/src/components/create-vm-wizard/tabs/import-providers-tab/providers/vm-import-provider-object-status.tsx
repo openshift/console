@@ -36,7 +36,7 @@ const ConnectionFailed: React.FC<StatusProps> = ({ provider }) => (
   <Alert
     isInline
     variant={AlertVariant.warning}
-    title={`Could not connect to  ${getProviderEndpointName(
+    title={`Could not connect to ${getProviderEndpointName(
       provider,
     )} using the provided credentials.`}
   />
@@ -46,9 +46,9 @@ const ConnectionFailedInfra: React.FC<StatusProps> = ({ provider }) => (
   <Alert
     isInline
     variant={AlertVariant.warning}
-    title={`Can not verify ${getProviderEndpointName(provider)} credentials, connection to the ${
-      provider === VMImportProvider.OVIRT ? 'OvirtProvider' : 'V2V VMWare'
-    } failed.`}
+    title={`Provided connection information is not correct. Connection to ${getProviderEndpointName(
+      provider,
+    )} failed.`}
   />
 );
 
@@ -60,7 +60,7 @@ const ReadVmsListFailed: React.FC<StatusProps> = ({ provider }) => (
   <Alert
     isInline
     variant={AlertVariant.warning}
-    title={`Connection succeeded but could not read list of virtual machines from the ${getProviderEndpointName(
+    title={`Connection succeeded but could not read list of virtual machines from ${getProviderEndpointName(
       provider,
     )} instance`}
   />
@@ -70,7 +70,7 @@ const ReadVmDetailFailed: React.FC<StatusProps> = ({ provider }) => (
   <Alert
     isInline
     variant={AlertVariant.warning}
-    title={`Connection succeeded but could not read detail of virtual machines from the ${getProviderEndpointName(
+    title={`Connection succeeded but could not read detail of virtual machines from ${getProviderEndpointName(
       provider,
     )} instance`}
   />
