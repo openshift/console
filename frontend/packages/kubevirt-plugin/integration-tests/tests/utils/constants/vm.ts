@@ -50,11 +50,7 @@ export enum VM_STATUS {
 // Network
 export enum NIC_MODEL {
   VirtIO = 'VirtIO',
-  e1000 = 'e1000',
   e1000e = 'e1000e',
-  net2kPCI = 'net2kPCI',
-  pcnet = 'pcnet',
-  rtl8139 = 'rtl8139',
 }
 
 export enum NIC_TYPE {

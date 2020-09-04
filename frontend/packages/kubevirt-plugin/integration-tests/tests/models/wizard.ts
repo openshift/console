@@ -198,20 +198,8 @@ export class Wizard {
     );
   }
 
-  async processWizard(data: VMBuilderData) {
-    const {
-      name,
-      description,
-      template,
-      provisionSource,
-      os,
-      flavor,
-      workload,
-      startOnCreation,
-      cloudInit,
-      disks,
-      networks,
-    } = data;
+  async processGeneralStep(data: VMBuilderData) {
+    const { name, description, template, provisionSource, os, flavor, workload } = data;
     if (name) {
       await this.fillName(name);
     } else {
@@ -248,8 +236,10 @@ export class Wizard {
       throw Error('VM Flavor not defined');
     }
     await this.next();
+  }
 
-    // Networking
+  async processNetworkStep(data: VMBuilderData) {
+    const { networks, provisionSource, template } = data;
     for (const resource of networks) {
       await this.addNIC(resource);
     }
@@ -258,8 +248,10 @@ export class Wizard {
       await this.selectBootableNIC(networks[networks.length - 1].name);
     }
     await this.next();
+  }
 
-    // Storage
+  async processStorageStep(data: VMBuilderData) {
+    const { disks, provisionSource } = data;
     for (const disk of disks) {
       if (await view.tableRow(disk.name).isPresent()) {
         await this.editDisk(disk.name, disk);
@@ -271,8 +263,10 @@ export class Wizard {
       }
     }
     await this.next();
+  }
 
-    // Advanced - Cloud Init
+  async processAdvanceStep(data: VMBuilderData) {
+    const { cloudInit, template } = data;
     if (cloudInit) {
       if (template !== undefined) {
         // TODO: wizard.useCloudInit needs to check state of checkboxes before clicking them to ensure desired state is achieved with specified template
@@ -281,12 +275,22 @@ export class Wizard {
       await this.configureCloudInit(cloudInit);
     }
     await this.next();
+  }
 
-    // Review page
+  async processReviewStep(data: VMBuilderData) {
+    const { startOnCreation } = data;
     if (startOnCreation) {
       await this.startOnCreation();
     }
     await this.validateReviewTab(data);
+  }
+
+  async processWizard(data: VMBuilderData) {
+    await this.processGeneralStep(data);
+    await this.processNetworkStep(data);
+    await this.processStorageStep(data);
+    await this.processAdvanceStep(data);
+    await this.processReviewStep(data);
 
     // Create
     await this.confirmAndCreate();
