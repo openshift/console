@@ -41,6 +41,7 @@ export const chartStatusColors = {
 
 // @ts-ignore
 export const AreaChart: React.FC<AreaChartProps> = ({
+  ariaTitle,
   className,
   data = [],
   formatDate = twentyFourHourTime,
@@ -123,6 +124,7 @@ export const AreaChart: React.FC<AreaChartProps> = ({
       {processedData?.length ? (
         <PrometheusGraphLink query={query}>
           <Chart
+            ariaTitle={ariaTitle}
             containerComponent={container}
             domainPadding={{ y: 20 }}
             height={height}
@@ -198,6 +200,7 @@ export const Area: React.FC<AreaProps> = ({
 };
 
 export type AreaChartProps = {
+  ariaTitle?: string;
   className?: string;
   formatDate?: (date: Date) => string;
   humanize?: Humanize;

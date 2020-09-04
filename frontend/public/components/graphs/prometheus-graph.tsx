@@ -49,7 +49,11 @@ export const PrometheusGraphLink_: React.FC<PrometheusGraphLinkProps> = ({
       : `/dev-monitoring/ns/${namespace}/metrics?${params.toString()}`;
 
   return (
-    <Link to={url} style={{ color: 'inherit', textDecoration: 'none' }}>
+    <Link
+      to={url}
+      style={{ color: 'inherit', textDecoration: 'none' }}
+      aria-label="Monitoring Link"
+    >
       {children}
     </Link>
   );

@@ -41,6 +41,7 @@ const getCurrentData = (
 
 export const MultilineUtilizationItem: React.FC<MultilineUtilizationItemProps> = React.memo(
   ({
+    ariaTitle = 'Utilization Chart',
     title,
     data,
     dataUnits,
@@ -56,6 +57,7 @@ export const MultilineUtilizationItem: React.FC<MultilineUtilizationItemProps> =
     );
     const chart = (
       <AreaChart
+        ariaTitle={ariaTitle}
         data={error ? [[]] : data}
         loading={!error && isLoading}
         query={queries[0].query}
@@ -97,6 +99,7 @@ export const MultilineUtilizationItem: React.FC<MultilineUtilizationItemProps> =
 
 export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
   ({
+    ariaTitle = 'Utilization Chart',
     title,
     utilization,
     humanizeValue,
@@ -135,6 +138,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
 
     const chart = (
       <AreaChart
+        ariaTitle={ariaTitle}
         data={data}
         loading={!error && isLoading}
         query={query}
@@ -236,6 +240,7 @@ export type LimitRequested = {
 };
 
 type UtilizationItemProps = {
+  ariaTitle?: string;
   title: string;
   utilization?: PrometheusResponse;
   limit?: PrometheusResponse;
@@ -252,6 +257,7 @@ type UtilizationItemProps = {
 };
 
 type MultilineUtilizationItemProps = {
+  ariaTitle?: string;
   title: string;
   data?: DataPoint[][];
   dataUnits?: string[];
@@ -265,6 +271,7 @@ type MultilineUtilizationItemProps = {
 };
 
 export type TopConsumerPopoverProp = {
+  ariaTitle?: string;
   current: string;
   max?: string;
   limit?: string;

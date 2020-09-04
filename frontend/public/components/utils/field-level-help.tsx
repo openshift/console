@@ -8,7 +8,7 @@ export const FieldLevelHelp: React.FC<FieldLevelHelpProps> = React.memo(({ child
   }
   return (
     <Popover aria-label="Help" bodyContent={children} enableFlip>
-      <Button variant="link" isInline className="co-field-level-help">
+      <Button variant="link" isInline className="co-field-level-help" aria-label="Help Button">
         <QuestionCircleIcon className="co-field-level-help__icon" />
       </Button>
     </Popover>

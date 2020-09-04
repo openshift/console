@@ -63,6 +63,7 @@ export const BreakdownChart: React.FC<BreakdownChartProps> = ({
 }) => (
   <>
     <Chart
+      ariaTitle="Breakdown Chart"
       legendPosition="bottom-left"
       legendComponent={
         <ChartLegend

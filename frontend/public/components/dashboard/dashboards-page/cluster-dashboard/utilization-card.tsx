@@ -156,6 +156,7 @@ export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtiliz
     duration,
     adjustDuration,
     title,
+    ariaTitle = title,
     TopConsumerPopover,
     humanizeValue,
     byteDataType,
@@ -229,6 +230,7 @@ export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtiliz
 
     return (
       <UtilizationItem
+        ariaTitle={ariaTitle}
         title={title}
         utilization={utilization}
         limit={limit}
@@ -491,6 +493,7 @@ type PrometheusCommonProps = {
 
 type PrometheusUtilizationItemProps = DashboardItemProps &
   PrometheusCommonProps & {
+    ariaTitle?: string;
     utilizationQuery: string;
     totalQuery?: string;
     limitQuery?: string;

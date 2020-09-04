@@ -80,6 +80,7 @@ const DataConsumptionGraph: React.FC<DataConsumptionGraphProps> = ({
           {CHART_LABELS[metric]} {suffixLabel}
         </div>
         <Chart
+          ariaTitle={`MCG ${metric} by ${breakdownBy}`}
           containerComponent={
             <ChartVoronoiContainer
               labelComponent={<ChartTooltip style={{ fontSize: 8, paddingBottom: 0 }} />}

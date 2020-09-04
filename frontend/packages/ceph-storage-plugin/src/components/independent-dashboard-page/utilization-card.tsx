@@ -26,6 +26,7 @@ export const UtilizationCard: React.FC = () => {
       <DashboardCardBody>
         <UtilizationBody timestamps={timestamps}>
           <PrometheusUtilizationItem
+            ariaTitle="Used Capacity Chart"
             title="Used Capacity"
             utilizationQuery={INDEPENDENT_UTILIZATION_QUERIES[StorageDashboardQuery.USED_CAPACITY]}
             duration={duration}
@@ -34,6 +35,7 @@ export const UtilizationCard: React.FC = () => {
             setTimestamps={setTimestamps}
           />
           <PrometheusUtilizationItem
+            ariaTitle="Requested Capacity Chart"
             title="Requested capacity"
             utilizationQuery={
               INDEPENDENT_UTILIZATION_QUERIES[StorageDashboardQuery.REQUESTED_CAPACITY]
