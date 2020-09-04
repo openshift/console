@@ -215,6 +215,7 @@
     "cypress": "^5.0.0",
     "cypress-axe": "^0.8.1",
     "cypress-jest-adapter": "^0.1.1",
+    "cypress-log-to-output": "^1.1.2",
     "cypress-multi-reporters": "^1.4.0",
     "enzyme": "3.10.x",
     "enzyme-adapter-react-16": "1.15.2",

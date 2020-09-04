@@ -1,6 +1,7 @@
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
 const wp = require('@cypress/webpack-preprocessor');
+const log2output = require('cypress-log-to-output');
 
 module.exports = (on, config) => {
   const options = {
@@ -35,15 +36,30 @@ module.exports = (on, config) => {
     },
   });
   on('file:preprocessor', wp(options));
-  /* In a Docker container, the default size of the /dev/shm shared memory space is 64MB. This is not typically enough
-   to run Chrome and can cause the browser to crash. You can fix this by passing the --disable-dev-shm-usage flag to
-   Chrome with the following workaround: */
   on('before:browser:launch', (browser = {}, launchOptions) => {
+    log2output.install(on, (type, event) => {
+      // return true or false from this plugin to control if the event is logged
+      // `type` is either `console` or `browser`
+      // if `type` is `browser`, `event` is an object of the type `LogEntry`:
+      //  https://chromedevtools.github.io/devtools-protocol/tot/Log#type-LogEntry
+      // if `type` is `console`, `event` is an object of the type passed to `Runtime.consoleAPICalled`:
+      //  https://chromedevtools.github.io/devtools-protocol/tot/Runtime#event-consoleAPICalled
+
+      return (
+        (type === 'console' && event.type === 'error') ||
+        (type === 'browser' && event.level === 'error')
+      );
+    });
+    launchOptions.args = log2output.browserLaunchHandler(browser, launchOptions.args);
+    /* In a Docker container, the default size of the /dev/shm shared memory space is 64MB. This is not typically enough
+ to run Chrome and can cause the browser to crash. You can fix this by passing the --disable-dev-shm-usage flag to
+ Chrome with the following workaround: */
     if (browser.family === 'chromium' && browser.name !== 'electron') {
       launchOptions.args.push('--disable-dev-shm-usage');
     }
     return launchOptions;
   });
+
   // `config` is the resolved Cypress config
   config.baseUrl = `${process.env.BRIDGE_BASE_ADDRESS || 'http://localhost:9000'}${(
     process.env.BRIDGE_BASE_PATH || '/'
