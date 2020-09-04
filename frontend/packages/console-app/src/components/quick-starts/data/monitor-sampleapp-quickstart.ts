@@ -37,17 +37,17 @@ You can see context sensitive metrics and alerts in the **Monitoring** tab.`,
       },
       {
         title: `Viewing your project monitoring dashboard`,
-        description: `### To view the project monitoring dashboard in context of **nodejs-sample**:
+        description: `### To view the project monitoring dashboard in the context of **nodejs-sample**:
 1. Click on the **View monitoring dashboard** link in the side panel.
 2. You can change the **Time Range** and **Refresh Interval** of the dashboard.
-3. You can change the context of the dashboard as well by clicking on the drop-down list. Select a specific workload or **All Workloads** to view the dashboard in context of the entire project.`,
+3. You can change the context of the dashboard as well by clicking on the drop-down list. Select a specific workload or **All Workloads** to view the dashboard in the context of the entire project.`,
         review: {
           instructions: `#### To verify that you are able to view the monitoring dashboard:
 Do you see metrics charts in the dashboard?`,
           taskHelp: `This task isn’t verified yet. Try the task again.`,
         },
         recapitulation: {
-          success: `You have learned how to view the dashboard in context of your sample app!`,
+          success: `You have learned how to view the dashboard in the context of your sample app!`,
           failed: `Try the steps again.`,
         },
       },

@@ -18,7 +18,7 @@ export const sampleApplicationQuickStart = {
         description: `### To create a sample application:
 1. Using the perspective switcher at the top of the navigation, go to **</> Developer**.
 2. Go to the **+Add** page in the navigation.
-3. Using the project dropdown, select the project you would like to create the demo application in. You can also create a new one if you’d like.
+3. Using the project drop-down list, select the project you would like to create the sample application in. You can also create a new one if you’d like.
 4. Click **Samples** to create an application from a code sample.
 5. Click on the **Node.js** card.
 6. Scroll down and click **Create**.

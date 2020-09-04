@@ -65,10 +65,9 @@ Notice the Pipeline Runs section of the Side Panel
         review: {
           instructions: `#### Momentarily, you should be brought to the **Pipeline Run Details** page. To verify that your pipeline has started,
 1. Note that the **Pipeline Runs Details** section shows a visualization of the pipeline run status and the tasks in the pipeline.
-2. The pills in the visualization represent the tasks in the pipeline.
-3. Hovering over a task shows a tooltip with the details of the associated steps.
-4. Click on the **Logs** tab to watch the progress of your pipeline run.
-5. When the pipeline run is complete, you will see a Succeeded badge on the page title.
+2. Hovering over a task shows a tooltip with the details of the associated steps.
+3. Click on the **Logs** tab to watch the progress of your pipeline run.
+4. When the pipeline run is complete, you will see a **Succeeded** badge on the page title.
 
 Is the status Succeeded?`,
           taskHelp: `This task isn’t verified yet. Try the task again.`,
