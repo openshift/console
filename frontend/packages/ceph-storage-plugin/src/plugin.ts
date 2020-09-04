@@ -20,8 +20,8 @@ import {
 } from '@console/plugin-sdk';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
-import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
-import { PersistentVolumeClaimModel, NodeModel } from '@console/internal/models';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { NodeModel } from '@console/internal/models';
 import { LSO_DEVICE_DISCOVERY } from '@console/local-storage-operator-plugin/src/plugin';
 import { getCephHealthState } from './components/dashboard-page/storage-dashboard/status-card/utils';
 import { isClusterExpandActivity } from './components/dashboard-page/storage-dashboard/activity-card/cluster-expand-activity';
@@ -33,7 +33,6 @@ import {
   detectRGW,
   CEPH_FLAG,
   OCS_INDEPENDENT_FLAG,
-  OCS_SUPPORT_FLAGS,
   OCS_CONVERGED_FLAG,
   OCS_ATTACHED_DEVICES_FLAG,
 } from './features';
@@ -95,21 +94,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'StorageClass/Provisioner',
     properties: {
       getStorageClassProvisioner: StorageClassFormProvisoners,
-    },
-  },
-  {
-    type: 'Page/Resource/Tab',
-    properties: {
-      href: 'volumesnapshots',
-      model: PersistentVolumeClaimModel,
-      name: 'Volume Snapshots',
-      loader: () =>
-        import('./components/volume-snapshot/volume-snapshot').then(
-          (m) => m.VolumeSnapshotPage,
-        ) /* webpackChunkName: "ceph-storage-volume-snapshot" */,
-    },
-    flags: {
-      required: [OCS_SUPPORT_FLAGS.SNAPSHOT, CEPH_FLAG],
     },
   },
   {
@@ -385,20 +369,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [OCS_INDEPENDENT_FLAG],
-    },
-  },
-  {
-    type: 'Page/Resource/Details',
-    properties: {
-      model: models.VolumeSnapshotModel,
-      loader: async () =>
-        import(
-          './components/volume-snapshot/volume-snapshot' /* webpackChunkName: "ceph-storage-volume-snapshot-details" */
-        ).then((m) => m.VolumeSnapshotDetails),
-      modelParser: referenceFor,
-    },
-    flags: {
-      required: [OCS_SUPPORT_FLAGS.SNAPSHOT, CEPH_FLAG],
     },
   },
   {
