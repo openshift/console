@@ -78,7 +78,7 @@ export const getRouteData = (route: K8sResourceKind, resource: K8sResourceKind) 
     disable: !_.isEmpty(route),
     create: true,
     targetPort: _.get(route, 'spec.port.targetPort', ''),
-    unknownTargetPort: '',
+    unknownTargetPort: _.toString(route?.spec?.port?.targetPort?.split('-')?.[0]) || '',
     defaultUnknownPort: 8080,
     path: _.get(route, 'spec.path', ''),
     hostname: _.get(route, 'spec.host', ''),

@@ -95,6 +95,7 @@ const ImportSamplePage: React.FC<ImportSamplePageProps> = ({ match }) => {
       disable: false,
       create: true,
       targetPort: '',
+      defaultUnknownPort: 8080,
       path: '',
       hostname: '',
       secure: false,

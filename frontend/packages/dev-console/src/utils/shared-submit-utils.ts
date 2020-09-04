@@ -29,6 +29,7 @@ export const createService = (
     name,
     labels: userLabels,
     image: { ports: imagePorts, tag: selectedTag },
+    route: { unknownTargetPort, defaultUnknownPort },
   } = formData;
 
   const imageStreamName = _.get(imageStreamData, 'metadata.name') || _.get(formData, 'image.name');
@@ -49,6 +50,10 @@ export const createService = (
       isi: { ports: isiPorts },
     } = formData;
     ports = isiPorts;
+  } else if (_.isEmpty(ports)) {
+    const portData = _.toInteger(unknownTargetPort) || defaultUnknownPort;
+    const port = { containerPort: portData, protocol: 'TCP' };
+    ports = [port];
   }
 
   const newService: any = {
@@ -87,7 +92,15 @@ export const createRoute = (
     application: { name: applicationName },
     name,
     labels: userLabels,
-    route: { hostname, secure, path, tls, targetPort: routeTargetPort },
+    route: {
+      hostname,
+      unknownTargetPort,
+      defaultUnknownPort,
+      secure,
+      path,
+      tls,
+      targetPort: routeTargetPort,
+    },
     image: { ports: imagePorts, tag: selectedTag },
   } = formData;
 
@@ -112,6 +125,11 @@ export const createRoute = (
     const port = _.get(formData, 'docker.containerPort');
     targetPort = makePortName({
       containerPort: _.toInteger(port),
+      protocol: 'TCP',
+    });
+  } else if (_.isEmpty(ports)) {
+    targetPort = makePortName({
+      containerPort: _.toInteger(unknownTargetPort) || defaultUnknownPort,
       protocol: 'TCP',
     });
   } else {

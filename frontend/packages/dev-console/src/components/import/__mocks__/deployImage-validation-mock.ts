@@ -88,6 +88,7 @@ export const mockDeployImageFormData: DeployImageFormData = {
   route: {
     create: true,
     targetPort: '',
+    defaultUnknownPort: 8080,
     path: '',
     hostname: '',
     secure: false,
