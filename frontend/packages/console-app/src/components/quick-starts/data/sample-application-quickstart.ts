@@ -53,10 +53,10 @@ Wait for the build to complete. It may take a few minutes.  Do you see a Complet
         },
       },
       {
-        title: `Viewing the associated git repo`,
+        title: `Viewing the associated Git repo`,
         description: `### To view the associated code:
 1. If you aren't already there, go to the **Topology** page in the navigation.
-2. The icon on the bottom right quadrant of the **nodejs-sample** deployment represents the git repo of the associated code.  The icon shown can be for Bitbucket, GitHub, gitLab or generic git. Click on it to navigate to the associated Git repository.
+2. The icon on the bottom right quadrant of the **nodejs-sample** deployment represents the Git repo of the associated code.  The icon shown can be for Bitbucket, GitHub, GitLab or generic Git. Click on it to navigate to the associated Git repository.
 `,
         review: {
           instructions: `#### Verify you can see the code associated with the sample app:
@@ -64,7 +64,7 @@ Was a new browser tab opened with https://github.com/sclorg/nodejs-ex?`,
           taskHelp: `This task isn’t verified yet. Try the task again.`,
         },
         recapitulation: {
-          success: `You have viewed the associated git repo.`,
+          success: `You have viewed the associated Git repo.`,
           failed: `Try the steps again.`,
         },
       },
