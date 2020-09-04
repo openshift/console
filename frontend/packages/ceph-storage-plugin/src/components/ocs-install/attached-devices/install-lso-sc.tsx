@@ -20,6 +20,7 @@ import {
 import { setFlag } from '@console/internal/actions/features';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { getName } from '@console/shared';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import {
   minSelectedNode,
   defaultRequestSize,
@@ -35,6 +36,7 @@ import {
   OCS_FLAG,
   OCS_ATTACHED_DEVICES_FLAG,
   OCS_INDEPENDENT_FLAG,
+  OCS_SUPPORT_FLAGS,
 } from '../../../features';
 import { makeLabelNodesRequest } from '../create-form';
 import { scResource, pvResource } from '../../../constants/resources';
@@ -60,6 +62,7 @@ const makeOCSRequest = (
   storageClass: StorageClassResourceKind,
   isEncrypted: boolean,
   isMinimal?: boolean,
+  isEncryptionSupported?: boolean,
 ): Promise<any> => {
   const promises = makeLabelNodesRequest(selectedData);
   const scName = getName(storageClass);
@@ -69,6 +72,7 @@ const makeOCSRequest = (
     isEncrypted,
     NO_PROVISIONER,
     isMinimal,
+    isEncryptionSupported,
   );
 
   return Promise.all(promises).then(() => k8sCreate(OCSServiceModel, ocsObj));
@@ -85,7 +89,7 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
   } = props;
   const { appName, ns } = match.params;
   const [filteredNodes, setFilteredNodes] = React.useState<string[]>([]);
-  const [isEncrypted, setEncrypted] = React.useState(true);
+  const [isEncrypted, setEncrypted] = React.useState(false);
   const [storageClass, setStorageClass] = React.useState<StorageClassResourceKind>(null);
   const [nodes, setNodes] = React.useState<NodeKind[]>([]);
   const dispatch = useDispatch();
@@ -93,6 +97,8 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
     scResource,
   );
   const [pvData, pvLoaded, pvLoadError] = useK8sWatchResource<K8sResourceKind[]>(pvResource);
+  const isMinimalSupported = useFlag(OCS_SUPPORT_FLAGS.MINIMAL_DEPLOYMENT);
+  const isEncryptionSupported = useFlag(OCS_SUPPORT_FLAGS.ENCRPYTION);
 
   const isMinimal = shouldDeployAttachedAsMinimal(nodes);
 
@@ -137,17 +143,20 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
   const submit = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     // eslint-disable-next-line promise/catch-or-return
-    handlePromise(makeOCSRequest(nodes, storageClass, isEncrypted, isMinimal), () => {
-      dispatch(setFlag(OCS_ATTACHED_DEVICES_FLAG, true));
-      dispatch(setFlag(OCS_CONVERGED_FLAG, true));
-      dispatch(setFlag(OCS_INDEPENDENT_FLAG, false));
-      dispatch(setFlag(OCS_FLAG, true));
-      history.push(
-        `/k8s/ns/${ns}/clusterserviceversions/${appName}/${referenceForModel(
-          OCSServiceModel,
-        )}/${OCS_INTERNAL_CR_NAME}`,
-      );
-    });
+    handlePromise(
+      makeOCSRequest(nodes, storageClass, isEncrypted, isMinimal, isEncryptionSupported),
+      () => {
+        dispatch(setFlag(OCS_ATTACHED_DEVICES_FLAG, true));
+        dispatch(setFlag(OCS_CONVERGED_FLAG, true));
+        dispatch(setFlag(OCS_INDEPENDENT_FLAG, false));
+        dispatch(setFlag(OCS_FLAG, true));
+        history.push(
+          `/k8s/ns/${ns}/clusterserviceversions/${appName}/${referenceForModel(
+            OCSServiceModel,
+          )}/${OCS_INTERNAL_CR_NAME}`,
+        );
+      },
+    );
   };
 
   const onlyNoProvSC = React.useCallback(filterSCWithNoProv, []);
@@ -167,7 +176,9 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
             storageClass={storageClass}
           />
         </StorageClassSection>
-        <EncryptSection onToggle={setEncrypted} isChecked={isEncrypted} />
+        {isEncryptionSupported && (
+          <EncryptSection onToggle={setEncrypted} isChecked={isEncrypted} />
+        )}
         {storageClass && (
           <>
             <h3 className="co-m-pane__heading co-m-pane__heading--baseline ceph-ocs-install__pane--margin">
@@ -196,7 +207,7 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
             </div>
           </Alert>
         )}
-        <>{isMinimal && <MinimalDeploymentAlert />}</>
+        <>{isMinimalSupported && isMinimal && <MinimalDeploymentAlert />}</>
         <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
           <ActionGroup className="pf-c-form">
             <Button
