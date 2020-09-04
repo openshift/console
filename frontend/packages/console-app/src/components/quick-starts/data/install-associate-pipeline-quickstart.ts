@@ -27,13 +27,13 @@ export const installAssociatePipelineQuickStart = {
 5. Click **Create** when you’re done.`,
         review: {
           instructions: `#### To verify that your application was successfully created:
-1. Momentarily, you should be brought to the **Topology** view.
+Momentarily, you should be brought to the **Topology** view.
 
 Is there an Application and Deployment name \`django-ex?\``,
           taskHelp: `This task isn’t verified yet. Try the task again.`,
         },
         recapitulation: {
-          success: `You just installed a deployment with an assocated pipeline! Next, we'll explore your application in topology.`,
+          success: `You just installed a deployment with an associated pipeline! Next, we'll explore your application in topology.`,
           failed: `Check your work to make sure that the application and deployment are successfully created.`,
         },
       },
@@ -43,7 +43,7 @@ Is there an Application and Deployment name \`django-ex?\``,
 1. Click on the deployment to see associated details in the side panel.
 2. Click on the Resources tab in the side panel to view related resources.`,
         review: {
-          instructions: `#### To verify that the application has been created an a pipeline was associated:
+          instructions: `#### To verify that the application has been created and a pipeline was associated:
 1. The **Resources** tab of the side panel shows many associated resources, including **Pods**, **Pipeline Runs**, and **Routes**.
 2. The **Pipeline Runs** section displays the associated pipeline.
 
@@ -61,13 +61,13 @@ Is there a Pipeline named django-ex-git?`,
 Notice the Pipeline Runs section of the Side Panel
 1. The first row shows the Pipeline associated with the application and an action button to **Start Last Run**, which is disabled.
 2. Click on the Pipeline link, which should bring you to the **Pipeline Details** page.
-3. From the Action menu, click on Start to Start your Pipeline.`,
+3. From the Action menu, click on **Start** to start your Pipeline.`,
         review: {
           instructions: `#### Momentarily, you should be brought to the **Pipeline Run Details** page. To verify that your pipeline has started,
-1. Note that the **Pipeline Runs** Details section shows a visualization of the pipeline run status.
+1. Note that the **Pipeline Runs Details** section shows a visualization of the pipeline run status and the tasks in the pipeline.
 2. The pills in the visualization represent the tasks in the pipeline.
-3. Hovering over a task will show a popover with the details of the associated steps.
-4. Click on the Logs tab to watch the progress of your pipeline run.
+3. Hovering over a task shows a tooltip with the details of the associated steps.
+4. Click on the **Logs** tab to watch the progress of your pipeline run.
 5. When the pipeline run is complete, you will see a Succeeded badge on the page title.
 
 Is the status Succeeded?`,

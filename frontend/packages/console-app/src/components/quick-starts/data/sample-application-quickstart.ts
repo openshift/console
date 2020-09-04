@@ -23,11 +23,11 @@ export const sampleApplicationQuickStart = {
 5. Click on the **Node.js** card.
 6. Scroll down and click **Create**.
 
-The Topology view will load with your new sample application. The application is represented by the light grey area with the white border. The deployment is a white circle.`,
+The **Topology** view will load with your new sample application. The application is represented by the light grey area with the white border. The deployment is a white circle.`,
         review: {
           instructions: `#### To verify the application was successfully created:
 1. Do you see a **sample-app** application?
-2. Do you see a **nodejs-sample** Deployment?`,
+2. Do you see a **nodejs-sample** deployment?`,
           taskHelp: `This task isn’t verified yet. Try the task again.`,
         },
         recapitulation: {
@@ -44,7 +44,7 @@ The Topology view will load with your new sample application. The application is
 You should be able to see the log stream of the **nodejs-sample-1** build on the **Build Details** page.`,
         review: {
           instructions: `#### To verify the build is complete:
-Wait for the build to complete. It may take a few minutes.  Do you see a Completed badge on the page header?`,
+Wait for the build to complete. It may take a few minutes.  Do you see a **Completed** badge on the page header?`,
           taskHelp: `This task isn’t verified yet. Try the task again.`,
         },
         recapitulation: {
