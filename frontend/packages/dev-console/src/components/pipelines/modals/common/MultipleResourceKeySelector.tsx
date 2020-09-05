@@ -21,6 +21,7 @@ interface MultipleResourceKeySelectorProps {
   required?: boolean;
   resourceNameField: string;
   resourceKeysField: string;
+  addString?: string;
 }
 
 interface StateProps {
@@ -34,6 +35,7 @@ const MultipleResourceKeySelector: React.FC<StateProps & MultipleResourceKeySele
   required,
   resourceNameField,
   resourceKeysField,
+  addString,
 }) => {
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const [field, { touched, error }] = useField(resourceNameField);
@@ -61,7 +63,7 @@ const MultipleResourceKeySelector: React.FC<StateProps & MultipleResourceKeySele
     const selectedResource: K8sResourceKind = _.find(resources, (res) => {
       return _.get(res, 'metadata.name') === resourceName;
     });
-    const keyMap = selectedResource?.data;
+    const keyMap = selectedResource?.data ?? {};
     const itemKeys = Object.keys(keyMap).reduce((acc, key) => ({ ...acc, [key]: key }), {});
     setKeys(itemKeys);
   };
@@ -93,7 +95,9 @@ const MultipleResourceKeySelector: React.FC<StateProps & MultipleResourceKeySele
         }}
         showBadge
       />
-      {field.value && <MultipleKeySelector name={resourceKeysField} keys={keys} />}
+      {field.value && !_.isEmpty(keys) && (
+        <MultipleKeySelector name={resourceKeysField} keys={keys} addString={addString} />
+      )}
     </FormGroup>
   );
 };
