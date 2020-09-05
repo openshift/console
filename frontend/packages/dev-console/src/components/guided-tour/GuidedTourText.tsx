@@ -10,8 +10,8 @@ const DevPerspectiveTourText: React.FC = () => {
   return (
     <>
       Get started with a tour of some of the key areas in OpenShift{' '}
-      {`${openshiftVersion?.slice(0, 3)}'s` ?? "4.x's"} Developer perspective that can help you
-      complete workflows and be more productive.
+      {openshiftVersion ? `${openshiftVersion?.slice(0, 3)}'s` : '4.x'} Developer perspective that
+      can help you complete workflows and be more productive.
     </>
   );
 };
