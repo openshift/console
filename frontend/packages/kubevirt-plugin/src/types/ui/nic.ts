@@ -23,5 +23,6 @@ export type UINetworkEditConfig = {
     network?: boolean;
   };
   allowPodNetworkOverride?: boolean;
+  allowedMultusNetworkTypes?: string[];
   warning?: string;
 };

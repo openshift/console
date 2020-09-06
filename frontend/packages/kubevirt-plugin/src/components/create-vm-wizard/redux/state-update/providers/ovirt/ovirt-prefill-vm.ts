@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { alignWithDNS1123, joinGrammaticallyListOfItems } from '@console/shared/src';
+import { alignWithDNS1123, joinGrammaticallyListOfItems, getName } from '@console/shared/src';
 import { InternalActionType, UpdateOptions } from '../../../types';
 import {
   OvirtProviderField,
@@ -9,6 +9,7 @@ import {
   VMWizardProps,
   VMWizardStorage,
   VMWizardStorageType,
+  OvirtProviderProps,
 } from '../../../../types';
 import { vmWizardInternalActions } from '../../../internal-actions';
 import {
@@ -25,14 +26,14 @@ import { NetworkInterfaceWrapper } from '../../../../../../k8s/wrapper/vm/networ
 import { BinaryUnit, convertToHighestUnit } from '../../../../../form/size-unit-utils';
 import { OvirtVM } from '../../../../../../types/vm-import/ovirt/ovirt-vm';
 import { iGetOvirtFieldAttribute } from '../../../../selectors/immutable/provider/ovirt/selectors';
-import { ConfigMapKind } from '@console/internal/module/k8s';
+import { ConfigMapKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { DiskWrapper } from '../../../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../../../k8s/wrapper/vm/volume-wrapper';
 import {
   getDefaultSCAccessModes,
   getDefaultSCVolumeMode,
 } from '../../../../../../selectors/config-map/sc-defaults';
-import { toShallowJS } from '../../../../../../utils/immutable';
+import { toShallowJS, immutableListToShallowJS } from '../../../../../../utils/immutable';
 import { iGetLoadedCommonData } from '../../../../selectors/immutable/selectors';
 import { OvirtDiskBus } from '../../../../../../constants/v2v-import/ovirt/ovirt-disk-bus';
 import { OvirtNetworkInterfaceModel } from '../../../../../../constants/v2v-import/ovirt/ovirt-network-interface-model';
@@ -89,13 +90,18 @@ export const getDisks = (vm: OvirtVM, storageClassConfigMap: ConfigMapKind): VMW
   });
 };
 
-export const getNics = (vm: OvirtVM): VMWizardNetwork[] => {
+export const getNics = (vm: OvirtVM, nads: K8sResourceKind[]): VMWizardNetwork[] => {
   const getUniqueName = createUniqueNameResolver(vm.nics);
   const nics = (vm.nics || []).filter(
     (nic) => nic?.name && nic?.vnicid != null && nic?.vnicid !== '',
   );
 
   const nicProfileMapping = {};
+
+  const sriovNicCount = nics.filter((nic) => nic.sriov).length;
+  const sriovNads = nads.filter(
+    (nad) => JSON.parse(nad?.spec?.config)?.type === NetworkInterfaceType.SRIOV.getValue(),
+  );
 
   const results: VMWizardNetwork[] = nics.map((nic, idx) => {
     const name = alignWithDNS1123(getUniqueName(nic.name) || nic.id);
@@ -106,7 +112,11 @@ export const getNics = (vm: OvirtVM): VMWizardNetwork[] => {
 
     const networkWrapper = new NetworkWrapper().init({ name });
 
-    if (nics.length === 1) {
+    if (nic.sriov) {
+      if (sriovNicCount === 1 && sriovNads.length === 1) {
+        networkWrapper.setType(NetworkType.MULTUS, { networkName: getName(sriovNads[0]) });
+      }
+    } else if (nics.length - sriovNicCount === 1) {
       networkWrapper.setType(NetworkType.POD); // default to POD
     }
 
@@ -123,7 +133,7 @@ export const getNics = (vm: OvirtVM): VMWizardNetwork[] => {
             )?.getKubevirtNetworkInterfaceModel() || NetworkInterfaceModel.VIRTIO,
           macAddress: nic.mac,
         })
-        .setType(NetworkInterfaceType.BRIDGE)
+        .setType(nic.sriov ? NetworkInterfaceType.SRIOV : NetworkInterfaceType.BRIDGE)
         .asResource(),
       importData: {
         id: nic.id,
@@ -134,6 +144,8 @@ export const getNics = (vm: OvirtVM): VMWizardNetwork[] => {
         isFieldEditableOverride: {
           network: true,
         },
+        allowPodNetworkOverride: nic.sriov ? false : undefined,
+        allowedMultusNetworkTypes: nic.sriov ? [NetworkInterfaceType.SRIOV.getValue()] : undefined,
       },
     };
   });
@@ -187,6 +199,9 @@ export const prefillUpdateCreator = (options: UpdateOptions) => {
     undefined,
     true,
   );
+  const nads = immutableListToShallowJS(
+    iGetLoadedCommonData(state, id, OvirtProviderProps.networkAttachmentDefinitions),
+  );
 
   dispatch(
     vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, {
@@ -213,7 +228,7 @@ export const prefillUpdateCreator = (options: UpdateOptions) => {
       },
     }),
   );
-  dispatch(vmWizardInternalActions[InternalActionType.SetNetworks](id, getNics(vm)));
+  dispatch(vmWizardInternalActions[InternalActionType.SetNetworks](id, getNics(vm, nads)));
   dispatch(
     vmWizardInternalActions[InternalActionType.SetStorages](
       id,
