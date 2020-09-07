@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { shallow } from 'enzyme';
-import useQuickStarts from '@console/app/src/components/quick-starts/utils/useQuickStarts';
 import { getQuickStarts } from '@console/app/src/components/quick-starts/utils/quick-start-utils';
 import {
   InternalQuickStartTile as QuickStartTile,
@@ -9,15 +8,10 @@ import {
 } from '../QuickStartTile';
 import { CardActions, Dropdown, CardBody, CardFooter, Button } from '@patternfly/react-core';
 
-jest.mock('@console/app/src/components/quick-starts/utils/useQuickStarts', () => ({
-  default: jest.fn(),
-}));
-
 const mockQuickStarts = getQuickStarts();
 
 describe('QuickStartTile', () => {
-  (useQuickStarts as jest.Mock).mockReturnValue(mockQuickStarts);
-  const QuickStartTileWrapper = shallow(<QuickStartTile />);
+  const QuickStartTileWrapper = shallow(<QuickStartTile quickStarts={mockQuickStarts} />);
 
   it('should show proper CardAction', () => {
     const cardAction = QuickStartTileWrapper.find(CardActions);
@@ -40,7 +34,7 @@ describe('QuickStartTile', () => {
 
   it('should hide QuickStartTile when locaStorage is set', () => {
     localStorage.setItem(HIDE_QUICK_START_ADD_TILE_STORAGE_KEY, 'true');
-    const emptyWrapper = shallow(<QuickStartTile />);
+    const emptyWrapper = shallow(<QuickStartTile quickStarts={mockQuickStarts} />);
     expect(emptyWrapper.find(QuickStartTile).exists()).toBe(false);
   });
 });

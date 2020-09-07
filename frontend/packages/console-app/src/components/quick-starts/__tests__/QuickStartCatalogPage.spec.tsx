@@ -2,11 +2,7 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { PageLayout } from '@console/shared';
 import QuickStartCatalogPage from '../QuickStartCatalogPage';
-import QuickStartCatalog from '../catalog/QuickStartCatalog';
-
-jest.mock('../utils/useQuickStarts', () => ({
-  default: jest.fn(),
-}));
+import QuickStartsLoader from '../loader/QuickStartsLoader';
 
 describe('QuickStarts', () => {
   const quickStartWrapper = shallow(<QuickStartCatalogPage />);
@@ -17,6 +13,6 @@ describe('QuickStarts', () => {
   });
 
   it('should load a QuickStartCatalog', () => {
-    expect(quickStartWrapper.find(QuickStartCatalog).exists()).toBeTruthy();
+    expect(quickStartWrapper.find(QuickStartsLoader).exists()).toBeTruthy();
   });
 });
