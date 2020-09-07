@@ -7,7 +7,7 @@ import {
   iGetVmSettingValue,
   iGetVmSettingAttribute,
 } from '../../selectors/immutable/vm-settings';
-import { VMSettingsField, VMWizardProps } from '../../types';
+import { CloudInitField, VMSettingsField, VMWizardProps, VMWizardStorageType } from '../../types';
 import { InternalActionType, UpdateOptions } from '../types';
 import { asDisabled, asHidden, asRequired } from '../../utils/utils';
 import { vmWizardInternalActions } from '../internal-actions';
@@ -17,16 +17,27 @@ import {
   iGetName,
   iGetNamespace,
 } from '../../selectors/immutable/selectors';
-import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
+import {
+  iGetCommonTemplateCloudInit,
+  iGetRelevantTemplate,
+} from '../../../../selectors/immutable/template/combined';
 import {
   CUSTOM_FLAVOR,
   TEMPLATE_DATAVOLUME_NAME_PARAMETER,
   TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER,
+  CLOUDINIT_DISK,
+  DiskType,
+  DiskBus,
+  VolumeType,
 } from '../../../../constants/vm';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { prefillVmTemplateUpdater } from './prefill-vm-template-state-update';
 import { iGetPrameterValue, iGetAnnotation } from '../../../../selectors/immutable/common';
 import { CDI_UPLOAD_POD_ANNOTATION, CDI_UPLOAD_RUNNING } from '../../../cdi-upload-provider/consts';
+import { CloudInitDataHelper } from '../../../../k8s/wrapper/vm/cloud-init-data-helper';
+import { toShallowJS } from '../../../../utils/immutable';
+import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
+import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 
 const selectUserTemplateOnLoadedUpdater = (options: UpdateOptions) => {
   const { id, dispatch, getState } = options;
@@ -115,6 +126,40 @@ const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
       { isHidden: asHidden(!isWindows, VMSettingsField.OPERATING_SYSTEM), value: isWindows },
     ),
   );
+
+  const relevantOptions = iGetRelevantTemplateSelectors(state, id);
+  const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
+  const iTemplate =
+    iCommonTemplates && iGetRelevantTemplate(null, iCommonTemplates, relevantOptions);
+  const iCloudInitVolume = iGetCommonTemplateCloudInit(iTemplate);
+  const [data, isBase64] = CloudInitDataHelper.getUserData(
+    toShallowJS(iCloudInitVolume)?.cloudInitNoCloud,
+  );
+
+  if (data) {
+    dispatch(
+      vmWizardInternalActions[InternalActionType.SetCloudInitFieldValue](
+        id,
+        CloudInitField.IS_FORM,
+        false,
+      ),
+    );
+    dispatch(
+      vmWizardInternalActions[InternalActionType.UpdateStorage](id, {
+        type: VMWizardStorageType.UI_INPUT,
+        disk: DiskWrapper.initializeFromSimpleData({
+          name: CLOUDINIT_DISK,
+          type: DiskType.DISK,
+          bus: DiskBus.VIRTIO,
+        }).asResource(),
+        volume: VolumeWrapper.initializeFromSimpleData({
+          name: CLOUDINIT_DISK,
+          type: VolumeType.CLOUD_INIT_NO_CLOUD,
+          typeData: CloudInitDataHelper.toCloudInitNoCloudSource(data, isBase64),
+        }).asResource(),
+      }),
+    );
+  }
 };
 
 const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {

@@ -9,6 +9,7 @@ import { iGetName } from '../../../components/create-vm-wizard/selectors/immutab
 import { ITemplate } from '../../../types/template';
 import { iGetCreationTimestamp, iGetLabels } from '../common';
 import { compareVersions } from '../../../utils/sort';
+import { iGetIn } from '../../../utils/immutable';
 
 type FindTemplateOptions = {
   userTemplateName?: string;
@@ -97,3 +98,8 @@ export const iGetRelevantTemplates = (
 export const iGetRelevantTemplate = (
   ...args: Parameters<typeof iGetRelevantTemplates>
 ): ITemplate => iGetRelevantTemplates(...args).first();
+
+export const iGetCommonTemplateCloudInit = (tmp: ITemplate) =>
+  iGetIn(tmp, ['objects', '0', 'spec', 'template', 'spec', 'volumes'])?.find((storage) =>
+    iGetIn(storage, ['cloudInitNoCloud']),
+  );
