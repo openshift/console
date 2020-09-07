@@ -53,11 +53,9 @@ const MetricsQueryInput: React.FC<MetricsQueryInputProps> = ({ query }) => {
   React.useEffect(() => {
     const runQueries = () => dispatch(queryBrowserRunQueries());
     const patchQuery = (v: QueryObj) => dispatch(queryBrowserPatchQuery(0, v));
-    if (metric) {
-      const queryMetrics = getTopMetricsQueries(namespace)[metric];
-      patchQuery({ text: queryMetrics || '' });
-      runQueries();
-    }
+    const queryMetrics = metric && getTopMetricsQueries(namespace)[metric];
+    patchQuery({ text: queryMetrics || '' });
+    runQueries();
   }, [dispatch, metric, namespace, changeKey]);
 
   React.useEffect(() => {
