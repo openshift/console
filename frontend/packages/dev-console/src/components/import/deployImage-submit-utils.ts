@@ -129,10 +129,9 @@ const getMetadata = (formData: DeployImageFormData) => {
     name,
     isi: { image },
     labels: userLabels,
-    imageStream: { tag: selectedTag, namespace },
+    imageStream: { image: imageStreamName, tag: selectedTag, namespace },
     runtimeIcon,
   } = formData;
-  const imageStreamName = getRuntime(image.metadata?.labels);
   const defaultLabels = getAppLabels({
     name,
     applicationName,
