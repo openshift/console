@@ -34,6 +34,7 @@ export const getOCSRequestData = (
   encrypted?: boolean,
   provisioner?: string,
   isMinimal?: boolean,
+  isEncryptionSupported?: boolean,
 ): K8sResourceKind => {
   const requestData = {
     apiVersion: 'ocs.openshift.io/v1',
@@ -42,13 +43,19 @@ export const getOCSRequestData = (
       name: OCS_INTERNAL_CR_NAME,
       namespace: CEPH_STORAGE_NAMESPACE,
     },
-    spec: {
-      manageNodes: false,
-      encryption: {
-        enable: encrypted,
+    spec: Object.assign(
+      isEncryptionSupported
+        ? {
+            encryption: {
+              enable: encrypted,
+            },
+          }
+        : {},
+      {
+        manageNodes: false,
+        storageDeviceSets: [createDeviceSet(scName, storage, true)],
       },
-      storageDeviceSets: [createDeviceSet(scName, storage, true)],
-    },
+    ),
   } as K8sResourceKind;
 
   if (isMinimal) {

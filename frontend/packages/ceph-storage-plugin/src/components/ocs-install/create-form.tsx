@@ -27,7 +27,12 @@ import { OCSServiceModel } from '../../models';
 import { OSDSizeDropdown } from '../../utils/osd-size-dropdown';
 import { cephStorageLabel } from '../../selectors';
 import NodeTable from './node-list';
-import { OCS_FLAG, OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG } from '../../features';
+import {
+  OCS_FLAG,
+  OCS_CONVERGED_FLAG,
+  OCS_INDEPENDENT_FLAG,
+  OCS_SUPPORT_FLAGS,
+} from '../../features';
 import { getOCSRequestData } from './ocs-request-data';
 import {
   OCSAlert,
@@ -39,6 +44,7 @@ import {
 import { filterSCWithoutNoProv, shouldDeployInternalAsMinimal } from '../../utils/install';
 import { OCS_INTERNAL_CR_NAME } from '../../constants';
 import './ocs-install.scss';
+import { useFlag } from '@console/shared/src/hooks/flag';
 
 export const makeLabelNodesRequest = (selectedNodes: NodeKind[]): Promise<NodeKind>[] => {
   const patch = [
@@ -65,10 +71,18 @@ const makeOCSRequest = (
   osdSize: string,
   isEncrypted: boolean,
   isMinimal?: boolean,
+  isEncryptionSupported?: boolean,
 ): Promise<any> => {
   const promises = makeLabelNodesRequest(selectedData);
   const scName = getName(storageClass);
-  const ocsObj = getOCSRequestData(scName, osdSize, isEncrypted, null, isMinimal);
+  const ocsObj = getOCSRequestData(
+    scName,
+    osdSize,
+    isEncrypted,
+    null,
+    isMinimal,
+    isEncryptionSupported,
+  );
 
   return Promise.all(promises).then(() => {
     if (!scName) {
@@ -91,12 +105,13 @@ export const CreateInternalCluster = withHandlePromise<
   } = props;
   const [osdSize, setOSDSize] = React.useState(defaultRequestSize.NON_BAREMETAL);
   const [storageClass, setStorageClass] = React.useState<StorageClassResourceKind>(null);
-  const [isEncrypted, setEncrypted] = React.useState(true);
   const dispatch = useDispatch();
   const [nodes, setNodes] = React.useState<NodeKind[]>([]);
-
+  const [isEncrypted, setEncrypted] = React.useState(false);
   const isMinimal = shouldDeployInternalAsMinimal(nodes);
   const [showMessage, setShowMessage] = React.useState(false);
+  const isMinimalSupported = useFlag(OCS_SUPPORT_FLAGS.MINIMAL_DEPLOYMENT);
+  const isEncryptionSupported = useFlag(OCS_SUPPORT_FLAGS.ENCRPYTION);
 
   const timeoutID = React.useRef(null);
 
@@ -156,7 +171,9 @@ export const CreateInternalCluster = withHandlePromise<
             data-test-id="osd-dropdown"
           />
         </FormGroup>
-        <EncryptSection onToggle={setEncrypted} isChecked={isEncrypted} />
+        {isEncryptionSupported && (
+          <EncryptSection onToggle={setEncrypted} isChecked={isEncrypted} />
+        )}
         <h3 className="co-m-pane__heading co-m-pane__heading--baseline ceph-ocs-install__pane--margin">
           <div className="co-m-pane__name">Nodes</div>
         </h3>
@@ -171,13 +188,19 @@ export const CreateInternalCluster = withHandlePromise<
               Select at least 3 nodes in different zones you wish to use with a recommended
               requirement of 14 CPUs and 34GiB RAM per node.
             </div>
-            <div className="text-muted ceph-ocs-install__minimal-msg">
-              A minimal deployment is also available if needed with the requirements of 8 CPUs and
-              32 GiB RAM.
-            </div>
+            {isMinimalSupported && (
+              <div className="text-muted ceph-ocs-install__minimal-msg">
+                A minimal deployment is also available if needed with the requirements of 8 CPUs and
+                32 GiB RAM.
+              </div>
+            )}
           </>
         </SelectNodesSection>
-        <>{isMinimal && showMessage && <MinimalDeploymentAlert isInternalMode />}</>
+        <>
+          {isMinimalSupported && isMinimal && showMessage && (
+            <MinimalDeploymentAlert isInternalMode />
+          )}
+        </>
         <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
           <ActionGroup className="pf-c-form">
             <Button
