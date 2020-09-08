@@ -33,12 +33,13 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal }) =>
   const clusterID = getClusterID(clusterVersion);
   const channel: string = clusterVersion?.spec?.channel;
   const openshiftVersion = getOpenShiftVersion(clusterVersion);
-  const clusterVersionIsEditable = useAccessReview({
-    group: ClusterVersionModel.apiGroup,
-    resource: ClusterVersionModel.plural,
-    verb: 'patch',
-    name: 'version',
-  });
+  const clusterVersionIsEditable =
+    useAccessReview({
+      group: ClusterVersionModel.apiGroup,
+      resource: ClusterVersionModel.plural,
+      verb: 'patch',
+      name: 'version',
+    }) && window.SERVER_FLAGS.branding !== 'dedicated';
 
   return (
     <>
