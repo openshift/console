@@ -40,12 +40,13 @@ const ClusterVersion: React.FC<ClusterVersionProps> = ({ cv }) => {
   const desiredVersion = getDesiredClusterVersion(cv);
   const lastVersion = getLastCompletedUpdate(cv);
   const status = getClusterUpdateStatus(cv);
-  const clusterVersionIsEditable = useAccessReview({
-    group: ClusterVersionModel.apiGroup,
-    resource: ClusterVersionModel.plural,
-    verb: 'patch',
-    name: 'version',
-  });
+  const clusterVersionIsEditable =
+    useAccessReview({
+      group: ClusterVersionModel.apiGroup,
+      resource: ClusterVersionModel.plural,
+      verb: 'patch',
+      name: 'version',
+    }) && window.SERVER_FLAGS.branding !== 'dedicated';
 
   switch (status) {
     case ClusterUpdateStatus.Updating:
