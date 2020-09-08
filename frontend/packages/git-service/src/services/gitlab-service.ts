@@ -167,6 +167,19 @@ export class GitlabService extends BaseService {
     }
   };
 
+  getDevfileContent = async (): Promise<string | null> => {
+    try {
+      const projectID = await this.getProjectId();
+      return await this.client.RepositoryFiles.showRaw(
+        projectID,
+        'devfile.yaml',
+        this.metadata.defaultBranch,
+      );
+    } catch (e) {
+      return null;
+    }
+  };
+
   getPackageJsonContent = async (): Promise<string | null> => {
     try {
       const projectID = await this.getProjectId();

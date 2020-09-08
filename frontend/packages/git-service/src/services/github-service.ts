@@ -143,6 +143,23 @@ export class GithubService extends BaseService {
     }
   };
 
+  getDevfileContent = async (): Promise<string | null> => {
+    try {
+      const resp = await this.client.repos.getContents({
+        owner: this.metadata.owner,
+        repo: this.metadata.repoName,
+        path: 'devfile.yaml',
+      });
+      if (resp.status === 200) {
+        // eslint-disable-next-line dot-notation
+        return Buffer.from(resp.data['content'], 'base64').toString();
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  };
+
   getPackageJsonContent = async (): Promise<string | null> => {
     try {
       const resp = await this.client.repos.getContents({

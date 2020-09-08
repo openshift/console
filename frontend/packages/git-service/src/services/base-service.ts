@@ -60,6 +60,11 @@ export abstract class BaseService {
    */
   abstract async isDevfilePresent(): Promise<boolean>;
 
+   /**
+   * Check if Devfile present in the repo.
+   */
+  abstract async getDevfileContent(): Promise<string>;
+
   /**
    * Checks if package.json exist in the repo and returns content of the file.
    */

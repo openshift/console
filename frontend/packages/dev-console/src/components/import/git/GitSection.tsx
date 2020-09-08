@@ -18,9 +18,10 @@ import { UNASSIGNED_KEY, CREATE_APPLICATION_KEY } from '../../../const';
 
 export interface GitSectionProps {
   showSample?: boolean;
+  buildStrategy? : string
 }
 
-const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
+const GitSection: React.FC<GitSectionProps> = ({ showSample, buildStrategy }) => {
   const { values, setFieldValue, setFieldTouched, touched, dirty } = useFormikContext<
     FormikValues
   >();
@@ -47,8 +48,27 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
 
       const gitService = getGitService({ url, ref }, gitType as GitProvider);
       const isReachable = gitService && (await gitService.isRepoReachable());
+      const isDevfilePresent = gitService && (await gitService.isDevfilePresent());
+      const getDevfile = gitService && (await gitService.getDevfileContent());
       setFieldValue('git.isUrlValidating', false);
-      if (isReachable) {
+      // do something extra if Devfile is present? What should it do?
+      // is there a way we can detect if the build strategy type is for devfiles here?
+      // if it isn't doing anything extra here then delete this if statement, 
+      // because otherwise it will be useless if it isn't checking the build strategy
+      if (buildStrategy === "Devfile" ) {
+        if (isReachable && isDevfilePresent){
+          gitRepoName && !values.name && setFieldValue('name', gitRepoName);
+          gitRepoName &&
+            !values.application.name &&
+            values.application.selectedKey !== UNASSIGNED_KEY &&
+            setFieldValue('application.name', `${gitRepoName}-app`);
+          console.log(getDevfile);
+        }
+        else if (isReachable && !isDevfilePresent){
+          console.log("*************Repo is reachable but devfile not present**********************");
+        }
+      }
+      else if (isReachable) {
         setValidated(ValidatedOptions.success);
         gitRepoName && !values.name && setFieldValue('name', gitRepoName);
         gitRepoName &&

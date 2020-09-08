@@ -18,7 +18,7 @@ const DevfileImportForm: React.FC<FormikProps<FormikValues> & DevfileImportFormP
   projects,
 }) => (
   <Form onSubmit={handleSubmit} data-test-id="import-devfile-form">
-    <GitSection />
+    <GitSection buildStrategy= "Devfile" />
     <AppSection
       project={values.project}
       noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
