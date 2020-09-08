@@ -207,7 +207,7 @@ const BreakdownCard: React.FC = () => {
           </Select>
         </div>
       </DashboardCardHeader>
-      <DashboardCardBody classname="nb-capacity-breakdown-card__body">
+      <DashboardCardBody className="nb-capacity-breakdown-card__body">
         <BreakdownCardBody
           isLoading={loading}
           hasLoadError={queriesLoadError}
