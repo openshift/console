@@ -7,6 +7,10 @@ import { YAMLTemplate } from '@console/plugin-sdk';
 /**
  * Sample YAML manifests for some of the statically-defined Kubernetes models.
  */
+
+const sampleContainerImage = 'registry.redhat.io/openshift4/ose-hello-openshift-rhel8';
+const sampleContainerCmd = '[ "/bin/bash", "-c", "sleep infinity" ]';
+
 export const baseTemplates = ImmutableMap<GroupVersionKind, ImmutableMap<string, string>>()
   .setIn(
     ['DEFAULT', 'default'],
@@ -229,6 +233,17 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: example
+  annotations:
+    image.openshift.io/triggers: |-
+      [
+        {
+          "from": {
+            "kind": "ImageStreamTag",
+            "name": "openshift/hello-openshift:latest"
+          },
+          "fieldPath": "spec.template.spec.containers[0].image"
+        }
+      ]
 spec:
   selector:
     matchLabels:
@@ -241,9 +256,10 @@ spec:
     spec:
       containers:
       - name: hello-openshift
-        image: openshift/hello-openshift
+        image: ${sampleContainerImage}
         ports:
         - containerPort: 8080
+        command: ${sampleContainerCmd}
 `,
   )
   .setIn(
@@ -347,11 +363,23 @@ spec:
       labels:
         app: hello-openshift
     spec:
+      triggers: 
+        image.openshift.io/triggers: |-
+          [
+            {
+              "from": {
+                "kind": "ImageStreamTag",
+                "name": "openshift/hello-openshift:latest"
+              },
+              "fieldPath": "spec.template.spec.containers[0].image"
+            }
+          ]
       containers:
       - name: hello-openshift
-        image: openshift/hello-openshift
+        image: ${sampleContainerImage}
         ports:
         - containerPort: 8080
+        command: ${sampleContainerCmd}
 `,
   )
   .setIn(
@@ -408,9 +436,10 @@ metadata:
 spec:
   containers:
     - name: hello-openshift
-      image: openshift/hello-openshift
+      image: ${sampleContainerImage}
       ports:
         - containerPort: 8080
+      command: ${sampleContainerCmd}
 `,
   )
   .setIn(
@@ -598,6 +627,17 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: example
+  annotations:
+    image.openshift.io/triggers: |-
+      [
+        {
+          "from": {
+            "kind": "ImageStreamTag",
+            "name": "openshift/hello-openshift:latest"
+          },
+          "fieldPath": "spec.template.spec.containers[0].image"
+        }
+      ]
 spec:
   selector:
     matchLabels:
@@ -609,9 +649,10 @@ spec:
     spec:
       containers:
       - name: hello-openshift
-        image: openshift/hello-openshift
+        image: ${sampleContainerImage}
         ports:
         - containerPort: 8080
+        command: ${sampleContainerCmd}
 `,
   )
   .setIn(
@@ -741,6 +782,17 @@ apiVersion: apps/v1
 kind: ReplicaSet
 metadata:
   name: example
+  annotations:
+    image.openshift.io/triggers: |-
+      [
+        {
+          "from": {
+            "kind": "ImageStreamTag",
+            "name": "openshift/hello-openshift:latest"
+          },
+          "fieldPath": "spec.template.spec.containers[0].image"
+        }
+      ]
 spec:
   replicas: 2
   selector:
@@ -754,9 +806,10 @@ spec:
     spec:
       containers:
       - name: hello-openshift
-        image: openshift/hello-openshift
+        image: ${sampleContainerImage}
         ports:
         - containerPort: 8080
+        command: ${sampleContainerCmd}
 `,
   )
   .setIn(
@@ -782,6 +835,17 @@ apiVersion: v1
 kind: ReplicationController
 metadata:
   name: example
+  annotations:
+    image.openshift.io/triggers: |-
+      [
+        {
+          "from": {
+            "kind": "ImageStreamTag",
+            "name": "openshift/hello-openshift:latest"
+          },
+          "fieldPath": "spec.template.spec.containers[0].image"
+        }
+      ]
 spec:
   replicas: 2
   selector:
@@ -794,9 +858,10 @@ spec:
     spec:
       containers:
       - name: hello-openshift
-        image: openshift/hello-openshift
+        image: ${sampleContainerImage}
         ports:
         - containerPort: 8080
+        command: ${sampleContainerCmd}
 `,
   )
   .setIn(
