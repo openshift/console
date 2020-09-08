@@ -1309,19 +1309,21 @@ const ruleAlertStateFilter = (filter, rule: Rule) =>
   _.some(rule.alerts, (a) => filter.selected.has(a.state)) ||
   _.isEmpty(filter.selected);
 
+export const alertStateFilter: RowFilter = {
+  filter: ruleAlertStateFilter,
+  filterGroupName: 'Alert State',
+  isMatch: ruleHasAlertState,
+  items: [
+    { id: AlertStates.Firing, title: 'Firing' },
+    { id: AlertStates.Pending, title: 'Pending' },
+    { id: AlertStates.Silenced, title: 'Silenced' },
+    { id: AlertStates.NotFiring, title: 'Not Firing' },
+  ],
+  type: 'alerting-rule-has-alert-state',
+};
+
 const rulesRowFilters: RowFilter[] = [
-  {
-    filter: ruleAlertStateFilter,
-    filterGroupName: 'Alert State',
-    isMatch: ruleHasAlertState,
-    items: [
-      { id: AlertStates.Firing, title: 'Firing' },
-      { id: AlertStates.Pending, title: 'Pending' },
-      { id: AlertStates.Silenced, title: 'Silenced' },
-      { id: AlertStates.NotFiring, title: 'Not Firing' },
-    ],
-    type: 'alerting-rule-has-alert-state',
-  },
+  alertStateFilter,
   severityRowFilter,
   {
     defaultSelected: [AlertSource.Platform],
