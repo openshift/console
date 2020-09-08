@@ -1,14 +1,14 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
 import { PageHeading, LoadingBox } from '@console/internal/components/utils';
-import { NamespaceModel } from '@console/internal/models';
+import { ProjectModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import GitOpsList from './list/GitOpsList';
 import { fetchAllAppGroups, getManifestURLs, getPipelinesBaseURI } from './utils/gitops-utils';
 import useDefaultSecret from './utils/useDefaultSecret';
 
-const projectRes = { isList: true, kind: NamespaceModel.kind, optional: true };
+const projectRes = { isList: true, kind: ProjectModel.kind, optional: true };
 
 const GitOpsListPage: React.FC = () => {
   const [appGroups, setAppGroups] = React.useState(null);
