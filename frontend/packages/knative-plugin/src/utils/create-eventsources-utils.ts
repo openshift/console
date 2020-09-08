@@ -223,7 +223,7 @@ export const getEventSourceConnectorList = (
   _.reduce(
     csvData,
     (acm, cv) => {
-      const parseCSVData = parseALMExamples(cv);
+      const parseCSVData = parseALMExamples(cv, false);
       _.forEach(parseCSVData, (res) => {
         if (
           _.findIndex(acm, res) === -1 &&
