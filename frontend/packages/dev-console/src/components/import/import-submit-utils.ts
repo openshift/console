@@ -95,6 +95,10 @@ export const devfileFlow = (
     return devfileCreate(null, devfileData, dryRun ? dryRunOpt : {});
 }
 
+export const createOrUpdateBuildResource = (
+  devfileFlow
+)
+
 export const createOrUpdateImageStream = (
   formData: GitImportFormData,
   imageStreamData: K8sResourceKind,
