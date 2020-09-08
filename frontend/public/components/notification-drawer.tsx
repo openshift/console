@@ -36,6 +36,7 @@ import { ClusterVersionModel } from '../models';
 import { getSortedUpdates } from './modals/cluster-update-modal';
 import { usePrevious } from '@console/metal3-plugin/src/hooks';
 import { useK8sWatchResource, WatchK8sResource } from './utils/k8s-watch-hook';
+import { useAccessReview } from './utils/rbac';
 
 const criticalCompare = (a: Alert): boolean => getAlertSeverity(a) === 'critical';
 const otherAlertCompare = (a: Alert): boolean => getAlertSeverity(a) !== 'critical';
@@ -102,9 +103,10 @@ const getAlertNotificationEntries = (
 const getUpdateNotificationEntries = (
   isLoaded: boolean,
   updateData: ClusterUpdate[],
+  isEditable: boolean,
   toggleNotificationDrawer: () => void,
 ): React.ReactNode[] =>
-  isLoaded && !_.isEmpty(updateData)
+  isLoaded && !_.isEmpty(updateData) && isEditable
     ? [
         <NotificationEntry
           actionPath="/settings/cluster"
@@ -196,9 +198,17 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
   const updateData: ClusterUpdate[] = getSortedUpdates(clusterVersionData);
   const { data, loaded, loadError } = alerts || {};
 
+  const clusterVersionIsEditable = useAccessReview({
+    group: ClusterVersionModel.apiGroup,
+    resource: ClusterVersionModel.plural,
+    verb: 'patch',
+    name: 'version',
+  });
+
   const updateList: React.ReactNode[] = getUpdateNotificationEntries(
     clusterVersionLoaded,
     updateData,
+    clusterVersionIsEditable,
     toggleNotificationDrawer,
   );
   const criticalAlertList: React.ReactNode[] = getAlertNotificationEntries(

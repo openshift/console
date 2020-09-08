@@ -46,6 +46,7 @@ import {
 import { WatchK8sResource, useK8sWatchResource } from '../../../utils/k8s-watch-hook';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { ClusterDashboardContext } from './context';
+import { useAccessReview } from '../../../utils';
 
 const filterSubsystems = (
   subsystems: DashboardsOverviewHealthSubsystem[],
@@ -95,7 +96,14 @@ const ClusterAlerts = withDashboardResources(
 
     const items: React.ReactNode[] = [];
 
-    if (hasCVResource && cvLoaded && hasAvailableUpdates(cv)) {
+    const clusterVersionIsEditable = useAccessReview({
+      group: ClusterVersionModel.apiGroup,
+      resource: ClusterVersionModel.plural,
+      verb: 'patch',
+      name: 'version',
+    });
+
+    if (hasCVResource && cvLoaded && hasAvailableUpdates(cv) && clusterVersionIsEditable) {
       items.push(
         <StatusItem Icon={UpdateIcon} message="A cluster version update is available">
           <Button variant="link" onClick={() => clusterUpdateModal({ cv })} isInline>

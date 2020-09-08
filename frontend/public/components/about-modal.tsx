@@ -12,7 +12,7 @@ import { Link } from 'react-router-dom';
 import { FLAGS } from '@console/shared';
 import { connectToFlags, FlagsObject } from '../reducers/features';
 import { getBrandingDetails } from './masthead';
-import { ExternalLink, Firehose } from './utils';
+import { useAccessReview, ExternalLink, Firehose } from './utils';
 import { ClusterVersionModel } from '../models';
 import { ClusterVersionKind, referenceForModel } from '../module/k8s';
 import { k8sVersion } from '../module/status';
@@ -37,9 +37,15 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal, cv }
   const channel: string = _.get(cv, 'data.spec.channel');
   const openshiftVersion = getOpenShiftVersion(clusterVersion);
   const errataLink = getErrataLink(clusterVersion);
+  const clusterVersionIsEditable = useAccessReview({
+    group: ClusterVersionModel.apiGroup,
+    resource: ClusterVersionModel.plural,
+    verb: 'patch',
+    name: 'version',
+  });
   return (
     <>
-      {clusterVersion && hasAvailableUpdates(clusterVersion) && (
+      {clusterVersion && hasAvailableUpdates(clusterVersion) && clusterVersionIsEditable && (
         <Alert
           className="co-alert co-about-modal__alert"
           variant="info"
