@@ -11,6 +11,7 @@ import {
 import { GitReadableTypes, GitTypes } from '../import-types';
 import { detectGitType, detectGitRepoName } from '../import-validation-utils';
 import { getSampleRepo, getSampleRef, getSampleContextDir } from '../../../utils/imagestream-utils';
+import { DevfileParser } from '@console/git-service/src/utils/devfile-parser';
 import FormSection from '../section/FormSection';
 import SampleRepo from './SampleRepo';
 import AdvancedGitOptions from './AdvancedGitOptions';
@@ -45,11 +46,14 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, buildStrategy }) =>
       setFieldValue('git.type', gitType);
       setFieldValue('git.showGitType', showGitType);
       showGitType && setFieldTouched('git.type', false);
-
+      
       const gitService = getGitService({ url, ref }, gitType as GitProvider);
       const isReachable = gitService && (await gitService.isRepoReachable());
       const isDevfilePresent = gitService && (await gitService.isDevfilePresent());
-      const getDevfile = gitService && (await gitService.getDevfileContent());
+      const DevfileContents = gitService && (await gitService.getDevfileContent());
+      const devfileParser = new DevfileParser(DevfileContents);
+      const DevfileVersion = await devfileParser.getDevfileVersion(DevfileContents)
+
       setFieldValue('git.isUrlValidating', false);
       // do something extra if Devfile is present? What should it do?
       // is there a way we can detect if the build strategy type is for devfiles here?
@@ -57,12 +61,18 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, buildStrategy }) =>
       // because otherwise it will be useless if it isn't checking the build strategy
       if (buildStrategy === "Devfile" ) {
         if (isReachable && isDevfilePresent){
-          gitRepoName && !values.name && setFieldValue('name', gitRepoName);
-          gitRepoName &&
+          if (DevfileVersion === "2.1.0"){
+            gitRepoName && !values.name && setFieldValue('name', gitRepoName);
+            gitRepoName &&
             !values.application.name &&
             values.application.selectedKey !== UNASSIGNED_KEY &&
             setFieldValue('application.name', `${gitRepoName}-app`);
-          console.log(getDevfile);
+            setFieldValue("devfile.devfilePath", `${url}/devfile.yaml`)
+            setFieldValue("devfile.devfileContent", DevfileContents)
+          }
+          else {
+            console.error("***** INVALID DEVFILE VERSION**************")
+          }
         }
         else if (isReachable && !isDevfilePresent){
           console.log("*************Repo is reachable but devfile not present**********************");

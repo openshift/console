@@ -100,6 +100,7 @@ export interface GitImportFormData {
   application: ApplicationData;
   git: GitData;
   docker: DockerData;
+  devfile: DevfileData;
   serverless?: ServerlessData;
   pipeline?: PipelineData;
   image: ImageData;
@@ -158,6 +159,12 @@ export interface GitData {
 export interface DockerData {
   dockerfilePath?: string;
   containerPort?: number;
+}
+
+
+export interface DevfileData {
+  devfilePath?: string;
+  devfileContent?: string;
 }
 
 export interface RouteData {
