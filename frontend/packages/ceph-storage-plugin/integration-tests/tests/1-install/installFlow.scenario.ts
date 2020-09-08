@@ -42,7 +42,7 @@ import {
   testPodIsSucceeded,
 } from '../../utils/helpers';
 import { ClusterMetadata } from '../../mocks/independent-external-cluster-data';
-import { storageClass } from '../../mocks/storage-class';
+import { testNoProvisionerSC } from '../../mocks/storage-class';
 import { minSelectedNode } from '../../../src/constants';
 import { goToInstalledOperators } from '../../views/add-capacity.view';
 
@@ -170,7 +170,7 @@ if (TEST_PLATFORM === Platform.OCS && MODE === Mode.ATTACHED_DEVICES) {
     });
 
     it('Create Storage Cluster View should be present when LSO is installed and storage class is present', async () => {
-      execSync(`echo '${JSON.stringify(storageClass)}' | oc apply -f -`);
+      execSync(`echo '${JSON.stringify(testNoProvisionerSC)}' | oc apply -f -`);
       await goToInstalledOperators();
       await Installer.selectOCSOperator();
       await Installer.createAttachedStorageCluster();
@@ -179,20 +179,20 @@ if (TEST_PLATFORM === Platform.OCS && MODE === Mode.ATTACHED_DEVICES) {
       // installation page should not be present
       const msg = await currentSelectors.LSOAlert.getText();
       expect(msg.includes(LSO_INFO_MSG)).toBe(false);
-      execSync(`echo '${JSON.stringify(storageClass)}' | oc delete -f -`);
+      execSync(`echo '${JSON.stringify(testNoProvisionerSC)}' | oc delete -f -`);
     });
 
     it('Should show error message on Create Storage Cluster View, if storage class does not contain minimum 3 nodes ', async () => {
-      execSync(`echo '${JSON.stringify(storageClass)}' | oc apply -f -`);
+      execSync(`echo '${JSON.stringify(testNoProvisionerSC)}' | oc apply -f -`);
       await goToInstalledOperators();
       await Installer.selectOCSOperator();
       await Installer.createAttachedStorageCluster();
       await click(currentSelectors.scDropdown);
-      await click(currentSelectors.selectSC(storageClass.metadata.name));
+      await click(currentSelectors.selectSC(testNoProvisionerSC.metadata.name));
       await browser.wait(until.visibilityOf(currentSelectors.createNewSCBtn));
       await browser.wait(until.and(crudView.untilNoLoadersPresent));
       expect(currentSelectors.errorAlert.isPresent()).toBeTruthy();
-      execSync(`echo '${JSON.stringify(storageClass)}' | oc delete -f -`);
+      execSync(`echo '${JSON.stringify(testNoProvisionerSC)}' | oc delete -f -`);
     });
 
     describe('Should be able to create storage class via the wizard, when no storage class is present for attached devices', async () => {

@@ -11,6 +11,7 @@ import { usePrometheusPoll } from '@console/internal/components/graphs/prometheu
 import { k8sPatch, StorageClassResourceKind } from '@console/internal/module/k8s';
 import { getName, getRequestedPVCSize } from '@console/shared';
 import { OCSServiceModel } from '../../../models';
+import { getCurrentDeviceSetIndex } from '../../../utils/add-capacity';
 import { OSD_CAPACITY_SIZES } from '../../../utils/osd-size-dropdown';
 import { NO_PROVISIONER, OCS_DEVICE_SET_REPLICA } from '../../../constants';
 import {
@@ -25,9 +26,6 @@ import { cephCapacityResource } from '../../../constants/resources';
 import './_add-capacity-modal.scss';
 
 const getProvisionedCapacity = (value: number) => (value % 1 ? (value * 3).toFixed(2) : value * 3);
-
-const getCurrentDeviceSet = (deviceSets: DeviceSet[], selectedSCName: string): number =>
-  deviceSets.findIndex((ds) => ds.dataPVCTemplate.spec.storageClassName === selectedSCName);
 
 export const AddCapacityModal = (props: AddCapacityModalProps) => {
   const { ocsConfig, close, cancel } = props;
@@ -47,7 +45,7 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
   const provisionedCapacity = getProvisionedCapacity(osdSizeWithoutUnit);
   const isNoProvionerSC: boolean = storageClass?.provisioner === NO_PROVISIONER;
   const selectedSCName: string = getName(storageClass);
-  const deviceSetIndex: number = getCurrentDeviceSet(deviceSets, selectedSCName);
+  const deviceSetIndex: number = getCurrentDeviceSetIndex(deviceSets, selectedSCName);
   const replica = OCS_DEVICE_SET_REPLICA;
 
   let currentCapacity: React.ReactNode;
