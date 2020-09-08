@@ -7,6 +7,10 @@ import { YAMLTemplate } from '@console/plugin-sdk';
 /**
  * Sample YAML manifests for some of the statically-defined Kubernetes models.
  */
+
+const sampleContainerImage = 'registry.redhat.io/rhel8/support-tools';
+const sampleContainerCmd = '[ "/bin/bash", "-c", "sleep infinity" ]';
+
 export const baseTemplates = ImmutableMap<GroupVersionKind, ImmutableMap<string, string>>()
   .setIn(
     ['DEFAULT', 'default'],
@@ -241,9 +245,10 @@ spec:
     spec:
       containers:
       - name: hello-openshift
-        image: openshift/hello-openshift
+        image: ${sampleContainerImage}
         ports:
         - containerPort: 8080
+        command: ${sampleContainerCmd}
 `,
   )
   .setIn(
@@ -349,9 +354,10 @@ spec:
     spec:
       containers:
       - name: hello-openshift
-        image: openshift/hello-openshift
+        image: ${sampleContainerImage}
         ports:
         - containerPort: 8080
+        command: ${sampleContainerCmd}
 `,
   )
   .setIn(
@@ -408,9 +414,10 @@ metadata:
 spec:
   containers:
     - name: hello-openshift
-      image: openshift/hello-openshift
+      image: ${sampleContainerImage}
       ports:
         - containerPort: 8080
+      command: ${sampleContainerCmd}
 `,
   )
   .setIn(
@@ -609,9 +616,10 @@ spec:
     spec:
       containers:
       - name: hello-openshift
-        image: openshift/hello-openshift
+        image: ${sampleContainerImage}
         ports:
         - containerPort: 8080
+        command: ${sampleContainerCmd}
 `,
   )
   .setIn(
@@ -753,9 +761,10 @@ spec:
     spec:
       containers:
       - name: hello-openshift
-        image: openshift/hello-openshift
+        image: ${sampleContainerImage}
         ports:
         - containerPort: 8080
+        command: ${sampleContainerCmd}
 `,
   )
   .setIn(
@@ -793,9 +802,10 @@ spec:
     spec:
       containers:
       - name: hello-openshift
-        image: openshift/hello-openshift
+        image: ${sampleContainerImage}
         ports:
         - containerPort: 8080
+        command: ${sampleContainerCmd}
 `,
   )
   .setIn(
