@@ -6,6 +6,7 @@ import { SettingsFieldType } from '../../types';
 import { isFieldRequired } from '../../selectors/immutable/field';
 import { describeFields } from '../../utils/renderable-field-utils';
 import { BinaryUnit } from '../../../form/size-unit-utils';
+import { SELECT_PXE_NAD_ERROR, SELECT_PXE_NAD_ERROR_INFO } from '../../strings/networking';
 
 export const getValidationUpdate = <FieldType>(
   config: ValidationConfig<FieldType>,
@@ -64,6 +65,9 @@ export const getInvalidFields = (fields) =>
     .filter((field) => field.getIn(['validation', 'type']) === ValidationErrorType.Error)
     .toArray();
 
+export const getInvalidFieldValues = (fields): string[] =>
+  fields.map((field) => field.getIn(['value']));
+
 export const getFieldsValidity = (fields) => {
   // check if all required fields are defined
   const emptyRequiredFields = getEmptyRequiredFields(fields);
@@ -76,5 +80,12 @@ export const getFieldsValidity = (fields) => {
     error = describeFields('Please correct', invalidFields);
   }
   const isValid = hasAllRequiredFilled && invalidFields.length === 0;
+
+  // check for missing network attachment definition error
+  const invalidFieldValues = getInvalidFieldValues(invalidFields);
+  if (invalidFieldValues.length === 1 && invalidFieldValues[0] === SELECT_PXE_NAD_ERROR) {
+    error = SELECT_PXE_NAD_ERROR_INFO;
+  }
+
   return { error, hasAllRequiredFilled, isValid };
 };

@@ -33,6 +33,7 @@ import { combineIntegerValidationResults } from '../../../../utils/validations/t
 import { getFieldsValidity, getValidationUpdate } from './utils';
 import { getTemplateValidations } from '../../selectors/template';
 import { BinaryUnit, convertToBytes } from '../../../form/size-unit-utils';
+import { PXE_NAD_NOT_FOUND_ERROR, SELECT_PXE_NAD_ERROR } from '../../strings/networking';
 
 const validateVm: Validator = (field, options) => {
   const { getState, id } = options;
@@ -144,6 +145,14 @@ const asVMSettingsFieldValidator = (
     subject: getFieldTitle(iGetFieldKey(field)),
   });
 
+const validateSource = (value: string): ValidationObject => {
+  const emptyError = validateEmptyValue(value);
+  if (emptyError) {
+    return emptyError;
+  }
+  return value === SELECT_PXE_NAD_ERROR ? asValidationObject(PXE_NAD_NOT_FOUND_ERROR) : null;
+};
+
 const validationConfig: ValidationConfig = {
   [VMSettingsField.NAME]: {
     detectValueChanges: [VMSettingsField.NAME],
@@ -184,6 +193,10 @@ const validationConfig: ValidationConfig = {
     ],
     detectCommonDataChanges: [VMWizardProps.userTemplates, VMWizardProps.commonTemplates],
     validator: memoryValidation,
+  },
+  [VMSettingsField.PROVISION_SOURCE_TYPE]: {
+    detectValueChanges: [VMSettingsField.PROVISION_SOURCE_TYPE],
+    validator: asVMSettingsFieldValidator(validateSource),
   },
 };
 
