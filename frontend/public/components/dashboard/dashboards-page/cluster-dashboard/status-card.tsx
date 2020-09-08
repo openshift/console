@@ -102,7 +102,11 @@ const ClusterAlerts = withDashboardResources(
 
     if (hasCVResource && cvLoaded && hasAvailableUpdates(cv) && clusterVersionIsEditable) {
       items.push(
-        <StatusItem Icon={UpdateIcon} message="A cluster version update is available">
+        <StatusItem
+          key="clusterUpdate"
+          Icon={UpdateIcon}
+          message="A cluster version update is available"
+        >
           <Link to="/settings/cluster?showVersions">Update cluster</Link>
         </StatusItem>,
       );
