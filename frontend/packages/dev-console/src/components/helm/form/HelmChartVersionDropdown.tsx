@@ -7,8 +7,6 @@ import { InfoCircleIcon } from '@patternfly/react-icons';
 import { coFetchJSON, coFetch } from '@console/internal/co-fetch';
 import { DropdownField } from '@console/shared';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';
-import { k8sVersion } from '@console/internal/module/status';
-import { getK8sGitVersion } from '@console/internal/module/k8s';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { HelmChartMetaData, HelmChart, HelmActionType, HelmChartEntries } from '../helm-types';
 import {
@@ -40,7 +38,6 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
   } = useFormikContext<FormikValues>();
   const [helmChartVersions, setHelmChartVersions] = React.useState({});
   const [helmChartEntries, setHelmChartEntries] = React.useState<HelmChartMetaData[]>([]);
-  const [kubernetesVersion, setKubernetesVersion] = React.useState<string>();
   const [initialYamlData, setInitialYamlData] = React.useState<string>('');
   const [initialFormData, setInitialFormData] = React.useState<object>();
 
@@ -78,12 +75,6 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
   };
 
   React.useEffect(() => {
-    k8sVersion()
-      .then((response) => setKubernetesVersion(getK8sGitVersion(response) || '-'))
-      .catch(() => setKubernetesVersion('unknown'));
-  }, []);
-
-  React.useEffect(() => {
     setInitialYamlData(yamlData);
     setInitialFormData(formData);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -104,13 +95,13 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
       }
       if (ignore) return;
       setHelmChartEntries(json?.entries?.[chartName]);
-      setHelmChartVersions(getChartVersions(json?.entries?.[chartName], kubernetesVersion));
+      setHelmChartVersions(getChartVersions(json?.entries?.[chartName]));
     };
     fetchChartVersions();
     return () => {
       ignore = true;
     };
-  }, [chartName, kubernetesVersion]);
+  }, [chartName]);
 
   const onChartVersionChange = (value: string) => {
     const chartURL = getChartURL(helmChartEntries, value);
