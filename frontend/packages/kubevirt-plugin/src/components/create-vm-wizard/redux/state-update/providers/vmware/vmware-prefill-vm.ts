@@ -129,7 +129,7 @@ export const getDisks = (parsedVm, storageClassConfigMap: ConfigMapKind): VMWiza
       importData: {
         fileName: _.get(device, ['Backing', 'FileName']),
         mountPath: `/data/vm/disk${idx + 1}`, // hardcoded
-        devicePath: `/data/vm/disk${idx + 1}`, // hardcoded
+        devicePath: `/data/vm/disk${idx + 1}/disk.img`, // hardcoded
       },
     };
   });
