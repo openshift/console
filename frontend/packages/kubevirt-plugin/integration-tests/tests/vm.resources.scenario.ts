@@ -12,7 +12,7 @@ import {
 } from '@console/shared/src/test-utils/utils';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import { createNICButton } from '../views/kubevirtUIResource.view';
-import { nicType } from '../views/dialogs/networkInterface.view';
+import { nicModel, nicType } from '../views/dialogs/networkInterface.view';
 import { getInterfaces } from '../../src/selectors/vm/selectors';
 import { getVMIDisks } from '../../src/selectors/vmi/basic';
 import * as wizardView from '../views/wizard.view';
@@ -24,14 +24,14 @@ import {
   defaultWizardPodNetworkingInterface,
   defaultYAMLPodNetworkingInterface,
   provisionSources,
-  flavorConfigs,
 } from './mocks/mocks';
+import { getBasicVMBuilder } from './mocks/vmBuilderPresets';
 import {
   getSelectOptions,
   getRandomMacAddress,
-  getRandStr,
   createExampleVMViaYAML,
   getResourceObject,
+  selectOptionByText,
 } from './utils/utils';
 import {
   VM_BOOTUP_TIMEOUT_SECS,
@@ -42,7 +42,7 @@ import { VM_ACTION, NIC_MODEL, NIC_TYPE, networkTabCol } from './utils/constants
 import { VirtualMachine } from './models/virtualMachine';
 import { Wizard } from './models/wizard';
 import { NetworkInterfaceDialog } from './dialogs/networkInterfaceDialog';
-import { OperatingSystem, Workload } from './utils/constants/wizard';
+import { VMBuilder } from './models/vmBuilder';
 
 describe('Add/remove disks and NICs on respective VM pages', () => {
   const testVm = getVMManifest('Container', testName, `vm-disk-nic-${testName}`);
@@ -123,6 +123,10 @@ describe('Test network type presets and options', () => {
   const wizard = new Wizard();
   const leakedResources = new Set<string>();
 
+  const vm = new VMBuilder(getBasicVMBuilder())
+    .setProvisionSource(provisionSources.Container)
+    .build();
+
   beforeAll(async () => {
     createResource(multusNAD);
   });
@@ -136,13 +140,7 @@ describe('Test network type presets and options', () => {
     await isLoaded();
     await wizard.openWizard(VirtualMachineModel);
 
-    await wizard.fillName(getRandStr(5));
-    await wizard.fillDescription(testName);
-    await wizard.selectProvisionSource(provisionSources.Container);
-    await wizard.selectOperatingSystem(OperatingSystem.RHEL7);
-    await wizard.selectFlavor(flavorConfigs.Tiny);
-    await wizard.selectWorkloadProfile(Workload.DESKTOP);
-    await wizard.next();
+    await wizard.processGeneralStep(vm.getData());
 
     // Default type for Pod Networking NIC is masquerade
     expect(
@@ -163,13 +161,13 @@ describe('Test network type presets and options', () => {
 
   it('ID(CNV-4038) Test NIC default type in example VM', async () => {
     await createExampleVMViaYAML();
-    const vm = new VirtualMachine({ name: DEFAULT_YAML_VM_NAME, namespace: testName });
+    const exampleVM = new VirtualMachine({ name: DEFAULT_YAML_VM_NAME, namespace: testName });
     const NICDialog = new NetworkInterfaceDialog();
-    await withResource(leakedResources, vm.asResource(), async () => {
-      await vm.navigateToNICs();
+    await withResource(leakedResources, exampleVM.asResource(), async () => {
+      await exampleVM.navigateToNICs();
 
       expect(
-        _.findIndex(await vm.getAttachedNICs(), (x) => {
+        _.findIndex(await exampleVM.getAttachedNICs(), (x) => {
           return _.isMatch(
             x,
             _.pick(defaultYAMLPodNetworkingInterface, ['name', 'model', 'network']),
@@ -180,7 +178,36 @@ describe('Test network type presets and options', () => {
       await click(createNICButton);
       await NICDialog.selectNetwork(multusNAD.metadata.name);
       expect((await getSelectOptions(nicType)).sort()).toEqual(nonPodNetworkBindingMethods);
-      await vm.navigateToListView();
+      await exampleVM.navigateToListView();
     });
+  });
+
+  it('ID(CNV-4781) Test NIC supported models in VM Wizard', async () => {
+    await browser.get(`${appHost}/k8s/ns/${testName}/virtualization`);
+    await isLoaded();
+    await wizard.openWizard(VirtualMachineModel);
+
+    await wizard.processGeneralStep(vm.getData());
+
+    await click(wizardView.addNICButton);
+    expect(await getSelectOptions(nicModel)).toEqual([NIC_MODEL.VirtIO, NIC_MODEL.e1000e]);
+
+    await click(wizardView.modalCancelButton);
+    await wizard.closeWizard();
+  });
+
+  it('ID(CNV-4780) NIC model is disabled when sriov is selected in VM Wizard', async () => {
+    await browser.get(`${appHost}/k8s/ns/${testName}/virtualization`);
+    await isLoaded();
+    await wizard.openWizard(VirtualMachineModel);
+
+    await wizard.processGeneralStep(vm.getData());
+
+    await click(wizardView.addNICButton);
+    await selectOptionByText(nicType, 'sriov');
+    expect(nicModel.isEnabled()).toBe(false);
+
+    await click(wizardView.modalCancelButton);
+    await wizard.closeWizard();
   });
 });
