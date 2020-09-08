@@ -16,6 +16,7 @@ export const NO_PROVISIONER = 'kubernetes.io/no-provisioner';
 export const OCS_SUPPORT_ANNOTATION = 'features.ocs.openshift.io/enabled';
 export const OCS_DEVICE_SET_REPLICA = 3;
 export const ATTACHED_DEVICES_ANNOTATION = 'cluster.ocs.openshift.io/local-devices';
+export const DASHBOARD_LINK = '/dashboards/persistent-storage';
 export const AVAILABLE = 'Available';
 export const OSD_REMOVAL_TEMPLATE = 'ocs-osd-removal';
 export const dropdownUnits = {
