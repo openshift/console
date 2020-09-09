@@ -208,11 +208,6 @@ const isBeingImported = (
   };
 };
 
-const isDeleting = (vm: VMKind, vmi: VMIKind): VMStatusBundle =>
-  (vm && !!getDeletetionTimestamp(vm)) || (!vm && vmi && !!getDeletetionTimestamp(vmi))
-    ? { status: VMStatus.DELETING }
-    : null;
-
 const isVMError = (vm: VMKind): VMStatusBundle => {
   const vmFailureCond = getStatusConditionOfType(vm, 'Failure');
   if (vmFailureCond) {
@@ -224,6 +219,11 @@ const isVMError = (vm: VMKind): VMStatusBundle => {
 
   return null;
 };
+
+const isDeleting = (vm: VMKind, vmi: VMIKind): VMStatusBundle =>
+  (vm && !!getDeletetionTimestamp(vm)) || (!vm && vmi && !!getDeletetionTimestamp(vmi))
+    ? { status: VMStatus.DELETING }
+    : null;
 
 const isBeingStopped = (vm: VMKind): VMStatusBundle => {
   if (vm && !isVMExpectedRunning(vm) && isVMCreated(vm)) {
@@ -319,8 +319,8 @@ export const getVMStatus = ({
     isV2VVMImportConversion(vm, vmImports) ||
     isBeingMigrated(vm, vmi, migrations) ||
     isBeingImported(vm, pods, pvcs, dataVolumes) ||
-    isDeleting(vm, vmi) ||
     isVMError(vm) ||
+    isDeleting(vm, vmi) ||
     isBeingStopped(vm) ||
     isOff(vm) ||
     isError(vm, vmi, launcherPod) ||
