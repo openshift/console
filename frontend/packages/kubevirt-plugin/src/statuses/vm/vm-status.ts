@@ -62,11 +62,6 @@ import { PAUSED_VM_MODAL_MESSAGE } from '../../strings/vm/messages';
 const isPaused = (vmi: VMIKind): VMStatusBundle =>
   isVMIPaused(vmi) ? { status: VMStatus.PAUSED, message: PAUSED_VM_MODAL_MESSAGE } : null;
 
-const isDeleting = (vm: VMKind, vmi: VMIKind): VMStatusBundle =>
-  (vm && !!getDeletetionTimestamp(vm)) || (!vm && vmi && !!getDeletetionTimestamp(vmi))
-    ? { status: VMStatus.DELETING }
-    : null;
-
 const isV2VVMWareConversion = (vm: VMKind, pods?: PodKind[]): VMStatusBundle => {
   if (!vm || !pods) {
     return null;
@@ -212,6 +207,11 @@ const isBeingImported = (
     importerPodsStatuses,
   };
 };
+
+const isDeleting = (vm: VMKind, vmi: VMIKind): VMStatusBundle =>
+  (vm && !!getDeletetionTimestamp(vm)) || (!vm && vmi && !!getDeletetionTimestamp(vmi))
+    ? { status: VMStatus.DELETING }
+    : null;
 
 const isVMError = (vm: VMKind): VMStatusBundle => {
   const vmFailureCond = getStatusConditionOfType(vm, 'Failure');
