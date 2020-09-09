@@ -11,7 +11,7 @@ import { VMSettingsField } from '../../types';
 import { iGet } from '../../../../utils/immutable';
 import { connect } from 'react-redux';
 import { RootState } from '@console/internal/redux';
-import { SELECT_PXE_NAD_ERROR, PXE_NAD_NOT_FOUND_INFO } from '../../strings/networking';
+import { SELECT_PXE_NAD_ERROR } from '../../strings/networking';
 import { FormPFSelect } from '../../../form/form-pf-select';
 import { EXAMPLE_CONTAINER, RHEL_IMAGE_LINK, FEDORA_IMAGE_LINK } from '../../../../utils/strings';
 
@@ -126,7 +126,7 @@ export const ProvisionSourceComponentWithNamespace: React.FC<ProvisionSourceComp
                     <SelectOption
                       key={source.getValue()}
                       value={SELECT_PXE_NAD_ERROR}
-                      description={`${source.getDescription()}\n${PXE_NAD_NOT_FOUND_INFO}`}
+                      description={source.getDescription()}
                     >
                       {source.toString()}
                     </SelectOption>
