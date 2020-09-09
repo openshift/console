@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ResourceSummary, LabelList } from '@console/internal/components/utils';
-import { TemplateKind } from '@console/internal/module/k8s';
+import { TemplateKind, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 import { K8sEntityMap } from '@console/shared/src';
 import { getBasicID, prefixedID } from '../../utils';
 import { vmDescriptionModal } from '../modals/vm-description-modal';
@@ -91,6 +91,7 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
 export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
   template,
   dataVolumeLookup,
+  baseImageLookup,
 }) => {
   const id = getBasicID(template);
   const devices = getDevices(template);
@@ -108,7 +109,12 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
       </VMDetailsItem>
 
       <VMDetailsItem title="Provision Source" idValue={prefixedID(id, 'provisioning-source')}>
-        <TemplateSource template={template} dataVolumeLookup={dataVolumeLookup} detailed />
+        <TemplateSource
+          template={template}
+          dataVolumeLookup={dataVolumeLookup}
+          baseImageLookup={baseImageLookup}
+          detailed
+        />
       </VMDetailsItem>
     </dl>
   );
@@ -218,6 +224,7 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
 type VMTemplateResourceListProps = {
   template: TemplateKind;
   dataVolumeLookup: K8sEntityMap<V1alpha1DataVolume>;
+  baseImageLookup: K8sEntityMap<PersistentVolumeClaimKind>;
   canUpdateTemplate?: boolean;
 };
 

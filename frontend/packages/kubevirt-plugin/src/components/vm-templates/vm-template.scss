@@ -2,3 +2,7 @@
   // Give kebab from last row enough space so it will be included in WindowScroller computation
   padding-bottom: 15em;
 }
+
+.kubevirt-vm-template-logo {
+  padding-right: var(--pf-global--spacer--sm);
+}

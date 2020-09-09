@@ -6,7 +6,7 @@ import { InitialStepStateGetter, VMSettings } from './types';
 
 export const getInitialVmSettings = (data: CommonData): VMSettings => {
   const {
-    data: { isCreateTemplate, isProviderImport, userTemplateName },
+    data: { isCreateTemplate, isProviderImport, userTemplateName, name, commonTemplateName },
   } = data;
 
   const hiddenByProvider = asHidden(isProviderImport, VMWizardProps.isProviderImport);
@@ -23,6 +23,7 @@ export const getInitialVmSettings = (data: CommonData): VMSettings => {
   const fields = {
     [VMSettingsField.NAME]: {
       isRequired: asRequired(true),
+      value: name || undefined,
     },
     [VMSettingsField.HOSTNAME]: {},
     [VMSettingsField.DESCRIPTION]: {},
@@ -33,6 +34,7 @@ export const getInitialVmSettings = (data: CommonData): VMSettings => {
       value: userTemplateName || undefined,
     },
     [VMSettingsField.OPERATING_SYSTEM]: {
+      initialized: !(isVM && commonTemplateName),
       isRequired: asRequired(true),
     },
     [VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE]: {

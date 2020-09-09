@@ -16,11 +16,20 @@ import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 import { VolumeType } from './storage';
 
-type ProvisionSourceDetails = {
+export type ProvisionSourceDetails = {
   type?: ProvisionSource;
   source?: string;
   error?: string;
 };
+
+type ProvisionSourceDetailsFunc = (
+  vmLikeEntity: VMLikeEntityKind,
+  opts: {
+    convertTemplateDataVolumesToAttachClonedDisk?: boolean;
+    dataVolumes?: V1alpha1DataVolume[];
+    dataVolumeLookup?: K8sEntityMap<V1alpha1DataVolume>;
+  },
+) => ProvisionSourceDetails;
 
 export class ProvisionSource extends ObjectEnum<string> {
   static readonly PXE = new ProvisionSource('PXE');
@@ -44,18 +53,10 @@ export class ProvisionSource extends ObjectEnum<string> {
 
   static fromString = (source: string): ProvisionSource => ProvisionSource.stringMapper[source];
 
-  static getProvisionSourceDetails = (
-    vmLikeEntity: VMLikeEntityKind,
-    {
-      convertTemplateDataVolumesToAttachClonedDisk,
-      dataVolumes,
-      dataVolumeLookup,
-    }: {
-      convertTemplateDataVolumesToAttachClonedDisk?: boolean;
-      dataVolumes?: V1alpha1DataVolume[];
-      dataVolumeLookup?: K8sEntityMap<V1alpha1DataVolume>;
-    } = {},
-  ): ProvisionSourceDetails => {
+  static getProvisionSourceDetails: ProvisionSourceDetailsFunc = (
+    vmLikeEntity,
+    { convertTemplateDataVolumesToAttachClonedDisk, dataVolumes, dataVolumeLookup },
+  ) => {
     const vm = asVM(vmLikeEntity);
     if (getInterfaces(vm).some((i) => i.bootOrder === 1)) {
       return {

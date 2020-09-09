@@ -10,8 +10,8 @@ import {
   asAccessReview,
   FirehoseResult,
 } from '@console/internal/components/utils';
-import { TemplateKind } from '@console/internal/module/k8s';
-import { TemplateModel } from '@console/internal/models';
+import { TemplateKind, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
+import { TemplateModel, PersistentVolumeClaimModel } from '@console/internal/models';
 import { DataVolumeModel } from '../../models';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 import {
@@ -20,6 +20,7 @@ import {
   VMTemplateSchedulingList,
 } from './vm-template-resource';
 import { HashAnchor } from '../hash-anchor/hash-anchor';
+import { TEMPLATE_VM_GOLDEN_OS_NAMESPACE } from '../../constants';
 
 const VMTemplateDetailsFirehose: React.FC<VMTemplateDetailsFirehoseProps> = (props) => {
   const { obj: template, hasDataVolumes } = props;
@@ -31,6 +32,13 @@ const VMTemplateDetailsFirehose: React.FC<VMTemplateDetailsFirehoseProps> = (pro
       isList: true,
       namespace,
       prop: 'dataVolumes',
+      optional: true,
+    },
+    {
+      kind: PersistentVolumeClaimModel.kind,
+      isList: true,
+      namespace: TEMPLATE_VM_GOLDEN_OS_NAMESPACE,
+      prop: 'baseImages',
       optional: true,
     },
   ];
@@ -59,7 +67,7 @@ const stateToProps = ({ k8s }) => {
 export const VMTemplateDetailsConnected = connect(stateToProps)(VMTemplateDetailsFirehose);
 
 const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = (props) => {
-  const { template, dataVolumes, ...restProps } = props;
+  const { template, dataVolumes, baseImages, ...restProps } = props;
   const loaded = props.loaded || !props.hasDataVolumes;
 
   const canUpdate = useAccessReview(asAccessReview(TemplateModel, template, 'patch'));
@@ -78,6 +86,7 @@ const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = (props) => {
             <VMTemplateDetailsList
               template={template}
               dataVolumeLookup={createLookup(dataVolumes, getName)}
+              baseImageLookup={createLookup(baseImages, getName)}
               canUpdateTemplate={canUpdate}
             />
           </div>
@@ -97,6 +106,7 @@ const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = (props) => {
 type VMTemplateDetailsProps = {
   template: TemplateKind;
   dataVolumes?: FirehoseResult<V1alpha1DataVolume[]>;
+  baseImages?: FirehoseResult<PersistentVolumeClaimKind[]>;
   loaded?: boolean;
   hasDataVolumes?: boolean;
 };

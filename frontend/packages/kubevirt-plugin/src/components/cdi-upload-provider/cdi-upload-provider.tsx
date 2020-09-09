@@ -141,7 +141,7 @@ type CDIUploadContextProps = {
   uploadData: ({ file, token, pvcName, namespace }: UploadDataProps) => void;
 };
 
-type UploadDataProps = {
+export type UploadDataProps = {
   file: File;
   token: string;
   pvcName: string;

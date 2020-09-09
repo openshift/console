@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { ConfigMapKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { ConfigMapKind, StorageClassResourceKind } from '@console/internal/module/k8s';
 import { AccessMode, VolumeMode } from '../../constants/vm/storage';
 import { getAnnotations } from '@console/shared';
 import { DEFAULT_SC_ANNOTATION } from '../../constants/sc';
@@ -51,5 +51,7 @@ export const getDefaultSCAccessModes = (
   return accessMode ? [accessMode] : [AccessMode.READ_WRITE_ONCE];
 };
 
-export const getGefaultStorageClass = (storageClasses: K8sResourceKind[]): K8sResourceKind =>
+export const getGefaultStorageClass = (
+  storageClasses: StorageClassResourceKind[],
+): StorageClassResourceKind =>
   (storageClasses || []).find((sc) => getAnnotations(sc, {})[DEFAULT_SC_ANNOTATION] === 'true');

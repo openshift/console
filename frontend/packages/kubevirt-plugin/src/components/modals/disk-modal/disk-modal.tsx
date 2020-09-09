@@ -56,7 +56,7 @@ import { PersistentVolumeClaimWrapper } from '../../../k8s/wrapper/vm/persistent
 import { BinaryUnit, stringValueUnitSplit } from '../../form/size-unit-utils';
 import { StorageUISource } from './storage-ui-source';
 import { TemplateValidations } from '../../../utils/validations/template/template-validations';
-import { ConfigMapKind } from '@console/internal/module/k8s';
+import { ConfigMapKind, StorageClassResourceKind } from '@console/internal/module/k8s';
 import { UIStorageEditConfig } from '../../../types/ui/storage';
 import { isFieldDisabled } from '../../../utils/ui/edit-config';
 import { PendingChangesAlert } from '../../Alerts/PendingChangesAlert';
@@ -656,7 +656,7 @@ export type DiskModalProps = {
     persistentVolumeClaim: PersistentVolumeClaimWrapper,
   ) => Promise<any>;
   namespaces?: FirehoseResult;
-  storageClasses?: FirehoseResult;
+  storageClasses?: FirehoseResult<StorageClassResourceKind[]>;
   persistentVolumeClaims?: FirehoseResult;
   vmName: string;
   vmNamespace: string;

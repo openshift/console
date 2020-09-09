@@ -308,8 +308,10 @@ const wizardDispatchToProps = (dispatch, props) => ({
           isCreateTemplate: props.isCreateTemplate,
           isProviderImport: props.isProviderImport,
           userTemplateName: props.userTemplateName,
+          commonTemplateName: props.commonTemplateName,
           storageClassConfigMap: undefined,
           isSimpleView: props.isSimpleView,
+          name: props.name,
         },
         dataIDReferences: props.dataIDReferences,
       } as CommonData),
@@ -404,6 +406,9 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
 
   const userMode = searchParams.get('mode') || VMWizardMode.VM;
   const userTemplateName = (userMode === VMWizardMode.VM && searchParams.get('template')) || '';
+  const name = (userMode === VMWizardMode.VM && searchParams.get('name')) || '';
+  const commonTemplateName =
+    (userMode === VMWizardMode.VM && searchParams.get('common-template')) || '';
   const isSimpleView =
     userMode === VMWizardMode.IMPORT &&
     searchParams.get('view')?.toLowerCase() !== VMWizardView.ADVANCED; // normal mode defaults to advanced
@@ -414,11 +419,13 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
         isCreateTemplate={userMode === VMWizardMode.TEMPLATE}
         isProviderImport={userMode === VMWizardMode.IMPORT}
         userTemplateName={userTemplateName}
+        name={name}
+        commonTemplateName={commonTemplateName}
         isSimpleView={isSimpleView}
         dataIDReferences={dataIDReferences}
         storageClassConfigMap={storageClassConfigMap}
         reduxID={reduxID}
-        onClose={() => history.goBack()}
+        onClose={history.goBack}
       />
     </Firehose>
   );

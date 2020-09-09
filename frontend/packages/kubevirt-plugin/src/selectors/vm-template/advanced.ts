@@ -4,7 +4,7 @@ import {
   CloudInitDataHelper,
   CloudInitDataFormKeys,
 } from '../../k8s/wrapper/vm/cloud-init-data-helper';
-import { getAnnotation, getAnnotations, getLabels, getParameterValue } from '../selectors';
+import { getAnnotation, getAnnotations, getLabels } from '../selectors';
 import {
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_OS_LABEL,
@@ -12,8 +12,7 @@ import {
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_TYPE_VM,
   TEMPLATE_WORKLOAD_LABEL,
-  TEMPLATE_DATAVOLUME_NAME_PARAMETER,
-  TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER,
+  TEMPLATE_VM_GOLDEN_OS_NAMESPACE,
 } from '../../constants/vm';
 import { getCloudInitVolume } from '../vm/selectors';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
@@ -85,8 +84,9 @@ export const getTemplateOperatingSystems = (templates: TemplateKind[]) => {
       return {
         id: osId,
         name: getAnnotation(template, nameAnnotation),
-        dataVolumeName: getParameterValue(template, TEMPLATE_DATAVOLUME_NAME_PARAMETER),
-        dataVolumeNamespace: getParameterValue(template, TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER),
+        // TODO remove this change, just for testing
+        dataVolumeName: osId, // getParameterValue(template, TEMPLATE_DATAVOLUME_NAME_PARAMETER),
+        dataVolumeNamespace: TEMPLATE_VM_GOLDEN_OS_NAMESPACE, // getParameterValue(template, TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER),
       };
     }),
   );

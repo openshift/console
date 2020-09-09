@@ -18,7 +18,7 @@ const vmTemplateCreateVMAction = (kind: K8sKind, obj: TemplateKind) => ({
     namespace: getNamespace(obj),
     wizardName: VMWizardName.WIZARD,
     mode: VMWizardMode.VM,
-    template: getName(obj),
+    template: obj,
   }),
   accessReview: { model: VirtualMachineModel, namespace: getNamespace(obj), verb: 'create' },
 });

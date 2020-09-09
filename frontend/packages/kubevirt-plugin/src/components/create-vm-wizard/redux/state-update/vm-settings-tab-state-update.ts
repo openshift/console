@@ -18,14 +18,10 @@ import {
   iGetNamespace,
 } from '../../selectors/immutable/selectors';
 import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
-import {
-  CUSTOM_FLAVOR,
-  TEMPLATE_DATAVOLUME_NAME_PARAMETER,
-  TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER,
-} from '../../../../constants/vm';
+import { CUSTOM_FLAVOR, TEMPLATE_VM_GOLDEN_OS_NAMESPACE } from '../../../../constants/vm';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { prefillVmTemplateUpdater } from './prefill-vm-template-state-update';
-import { iGetPrameterValue } from '../../../../selectors/immutable/common';
+import { iGetIsLoaded } from '../../../../utils/immutable';
 
 const selectUserTemplateOnLoadedUpdater = (options: UpdateOptions) => {
   const { id, dispatch, getState } = options;
@@ -140,19 +136,23 @@ const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
   // cloneCommonBaseDiskImage can be set true only if userTemplate is not used
   if (!userTemplate) {
     const relevantOptions = iGetRelevantTemplateSelectors(state, id);
-    const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
-    const iTemplate =
-      iCommonTemplates && iGetRelevantTemplate(null, iCommonTemplates, relevantOptions);
-    const pvcName = iGetPrameterValue(iTemplate, TEMPLATE_DATAVOLUME_NAME_PARAMETER);
-    const pvcNamespace = iGetPrameterValue(iTemplate, TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER);
+    // const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
+    // const iTemplate =
+    //  iCommonTemplates && iGetRelevantTemplate(null, iCommonTemplates, relevantOptions);
+
+    // TODO revert the change
+    const pvcName = relevantOptions.os;
+    const pvcNamespace = TEMPLATE_VM_GOLDEN_OS_NAMESPACE;
 
     const iBaseImages = iGetLoadedCommonData(state, id, VMWizardProps.openshiftCNVBaseImages);
     iBaseImage =
       pvcName &&
       iBaseImages &&
-      iBaseImages
-        .valueSeq()
-        .find((iPVC) => iGetName(iPVC) === pvcName && iGetNamespace(iPVC) === pvcNamespace);
+      iBaseImages.valueSeq().find((iPVC) => {
+        const iPVCName = iGetName(iPVC);
+        const iPVCNS = iGetNamespace(iPVC);
+        return iPVCName === pvcName && iPVCNS === pvcNamespace;
+      });
   }
 
   dispatch(
@@ -314,8 +314,21 @@ const flavorUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => 
   );
 };
 
+const commonTemplateOnLoadedUpdater = (options: UpdateOptions) => {
+  const { id, getState } = options;
+  const state = getState();
+  if (
+    !iGetVmSettingAttribute(state, id, VMSettingsField.OPERATING_SYSTEM, 'initialized') &&
+    iGetIsLoaded(iGetCommonData(state, id, VMWizardProps.commonTemplates)) &&
+    iGetIsLoaded(iGetCommonData(state, id, VMWizardProps.openshiftCNVBaseImages))
+  ) {
+    prefillVmTemplateUpdater(options, true);
+  }
+};
+
 export const updateVmSettingsState = (options: UpdateOptions) =>
   [
+    commonTemplateOnLoadedUpdater,
     selectUserTemplateOnLoadedUpdater,
     selectedUserTemplateUpdater,
     osUpdater,

@@ -247,6 +247,7 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
 type OSFlavorProps = {
   userTemplates: any;
   commonTemplates: any;
+  commonTemplateName: string;
   flavorField: any;
   operatinSystemField: any;
   cloneBaseDiskImageField: any;

@@ -34,7 +34,7 @@ export const getFlavorLabel = (flavor: string) => {
   return undefined;
 };
 
-export const getOperatingSystems = (templates: TemplateKind[], userTemplate: string) => {
+export const getOperatingSystems = (templates: TemplateKind[], userTemplate?: string) => {
   if (userTemplate) {
     return getTemplateOperatingSystems([
       getTemplatesOfLabelType(templates, TEMPLATE_TYPE_VM).find((t) => getName(t) === userTemplate),

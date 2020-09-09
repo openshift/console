@@ -1,9 +1,16 @@
-import { k8sBasePath } from '@console/internal/module/k8s';
-import { VMWizardMode, VMWizardName, VMWizardView } from '../constants/vm';
+import { k8sBasePath, TemplateKind } from '@console/internal/module/k8s';
+import {
+  VMWizardMode,
+  VMWizardName,
+  VMWizardView,
+  TEMPLATE_TYPE_LABEL,
+  TEMPLATE_TYPE_BASE,
+} from '../constants/vm';
 import { VMKind } from '../types';
 import { VMTabURLEnum } from '../components/vms/types';
 import { getName, getNamespace } from '@console/shared';
 import { history } from '@console/internal/components/utils/router';
+import { getLabelValue } from '../selectors/selectors';
 
 const ELLIPSIS = '…';
 
@@ -68,12 +75,14 @@ export const getVMWizardCreateLink = ({
   mode,
   view,
   template,
+  name,
 }: {
   namespace: string;
   wizardName: VMWizardName;
   mode: VMWizardMode;
   view?: VMWizardView;
-  template?: string;
+  template?: TemplateKind;
+  name?: string;
 }) => {
   const type = wizardName === VMWizardName.YAML ? '~new' : '~new-wizard';
 
@@ -84,7 +93,18 @@ export const getVMWizardCreateLink = ({
   }
 
   if (template) {
-    params.append('template', template);
+    if (
+      template.metadata.namespace === 'openshift' &&
+      getLabelValue(template, TEMPLATE_TYPE_LABEL) === TEMPLATE_TYPE_BASE
+    ) {
+      params.append('common-template', template.metadata.name);
+    } else {
+      params.append('template', template.metadata.name);
+    }
+  }
+
+  if (name) {
+    params.append('name', name);
   }
 
   if (mode === VMWizardMode.IMPORT && view === VMWizardView.ADVANCED) {

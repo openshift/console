@@ -1,103 +1,84 @@
 import * as React from 'react';
-import { TemplateKind } from '@console/internal/module/k8s';
-import { Tooltip } from '@patternfly/react-core';
-import { K8sEntityMap } from '@console/shared/src';
-import { parseURL, resolveURL } from '../../utils/url';
+import { TemplateKind, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
+import { Button, ButtonVariant } from '@patternfly/react-core';
+import { K8sEntityMap, SuccessStatus } from '@console/shared/src';
 import { ProvisionSource } from '../../constants/vm/provision-source';
+import {
+  TEMPLATE_VM_GOLDEN_OS_NAMESPACE,
+  TEMPLATE_TYPE_BASE,
+  TEMPLATE_TYPE_LABEL,
+} from '../../constants/vm/constants';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
+import { CDIUploadContext } from '../cdi-upload-provider/cdi-upload-provider';
+import { getTemplateOperatingSystems } from '../../selectors/vm-template/advanced';
+import { isPvcUploading } from '../../selectors/pvc/selectors';
+import { UploadPVCPopover } from '../cdi-upload-provider/upload-pvc-popover';
+import { uploadBaseImageModal } from '../modals/upload-base-image/upload-base-image';
 
-export const URLObj: React.FC<URLObjProps> = ({
-  urlPath,
-  short = false,
-  maxHostnameParts = 3,
-  maxPathnameParts = 1,
-}) => {
-  const urlObj = short ? parseURL(urlPath) : undefined;
+const SourceAvailable: React.FC = () => <SuccessStatus title="Source available" />;
 
-  const resolvedURL = urlObj ? resolveURL({ urlObj, maxHostnameParts, maxPathnameParts }) : urlPath;
-  const resolvedTitle = resolvedURL === urlPath ? undefined : urlPath;
-
-  return (
-    <a href={urlPath} title={resolvedTitle}>
-      {resolvedURL}
-    </a>
-  );
+type UserTemplateSource = {
+  template: TemplateKind;
+  dataVolumeLookup: K8sEntityMap<V1alpha1DataVolume>;
 };
 
-type URLObjProps = {
-  urlPath: string;
-  short?: boolean;
-  maxHostnameParts?: number;
-  maxPathnameParts?: number;
-};
+const UserTemplateSource: React.FC<UserTemplateSource> = ({ template, dataVolumeLookup }) => {
+  const { type, error } = ProvisionSource.getProvisionSourceDetails(template, {
+    dataVolumeLookup,
+  });
 
-const Type: React.FC<TypeProps> = ({ type, source, error, detailed = false }) => {
-  if (!source && !error && type) {
-    // for PXE - a valid PXE configuration has no source nor error
-    return <>{type.getValue()}</>;
+  if (type && !error) {
+    return <SourceAvailable />;
   }
-  if (!detailed) {
+
+  return <>{error}</>;
+};
+
+type CommonTemplateSource = {
+  template: TemplateKind;
+  baseImageLookup: K8sEntityMap<PersistentVolumeClaimKind>;
+};
+
+const CommonTemplateSource: React.FC<CommonTemplateSource> = ({ template, baseImageLookup }) => {
+  const { uploads, uploadData } = React.useContext(CDIUploadContext);
+  const osName = getTemplateOperatingSystems([template])[0].id;
+  const baseImage = baseImageLookup[osName];
+  if (!baseImage) {
+    const upload = uploads.find(
+      (upl) => upl.pvcName === osName && upl.namespace === TEMPLATE_VM_GOLDEN_OS_NAMESPACE,
+    );
     return (
-      <Tooltip position="bottom" enableFlip={false} content={<>{error || source}</>} exitDelay={0}>
-        <div>{error ? 'Invalid source' : type.getValue()}</div>
-      </Tooltip>
+      <>
+        <Button
+          variant={ButtonVariant.link}
+          isInline
+          onClick={() => uploadBaseImageModal({ uploadData, osName, upload })}
+        >
+          Add source
+        </Button>
+      </>
     );
   }
-
-  return error || type ? <>{error || type.getValue()}</> : null;
-};
-
-type TypeProps = {
-  type: ProvisionSource;
-  source?: string;
-  error?: string;
-  detailed?: boolean;
-};
-
-const Source: React.FC<SourceProps> = ({ type, source, error }) => {
-  if (!source && !error) {
-    // for PXE - a valid PXE configuration has no source nor error
-    return null;
+  if (isPvcUploading(baseImage)) {
+    return <UploadPVCPopover pvc={baseImage} />;
   }
-
-  const sourceElem =
-    type && type.getValue() === ProvisionSource.URL.getValue() ? (
-      <URLObj urlPath={source} short />
-    ) : (
-      source || error
-    );
-
-  return <div>{sourceElem}</div>;
-};
-
-type SourceProps = {
-  type: ProvisionSource;
-  source?: string;
-  error?: string;
+  return <SourceAvailable />;
 };
 
 export const TemplateSource: React.FC<TemplateSourceProps> = ({
   template,
   dataVolumeLookup,
-  detailed = false,
+  baseImageLookup,
 }) => {
-  const provisionSource = ProvisionSource.getProvisionSourceDetails(template, { dataVolumeLookup });
-  const { type, source, error } = provisionSource;
-
-  if (!detailed) {
-    return <Type type={type} source={source} error={error} />;
+  if (template.metadata.labels?.[TEMPLATE_TYPE_LABEL] === TEMPLATE_TYPE_BASE) {
+    return <CommonTemplateSource template={template} baseImageLookup={baseImageLookup} />;
   }
-
-  return (
-    <>
-      <Type type={type} source={source} detailed />
-      <Source type={type} source={source} error={error} />
-    </>
-  );
+  return <UserTemplateSource template={template} dataVolumeLookup={dataVolumeLookup} />;
 };
 
 type TemplateSourceProps = {
   template: TemplateKind;
   dataVolumeLookup: K8sEntityMap<V1alpha1DataVolume>;
+  baseImageLookup: K8sEntityMap<PersistentVolumeClaimKind>;
   detailed?: boolean;
 };
