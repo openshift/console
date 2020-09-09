@@ -91,8 +91,12 @@ export const devfileFlow = (
       build: { env, triggers, strategy: buildStrategy },
       labels: userLabels,
     };
+
+    
   
     return devfileCreate(null, devfileData, dryRun ? dryRunOpt : {});
+
+    // call createOrUpdateBuildResouce --> pass buildResourceObj
 }
 
 
@@ -267,6 +271,7 @@ export const createOrUpdateBuildResource = (
   return verb === 'update'
   // Need to change the model here, but might need to define more models depending on what types of builds we want to support. 
   // Leaving as is for buildconfig example
+  // add switch case 
 
     ? k8sUpdate(BuildConfigModel, buildResource)
     : k8sCreate(BuildConfigModel, buildResource, dryRun ? dryRunOpt : {});
