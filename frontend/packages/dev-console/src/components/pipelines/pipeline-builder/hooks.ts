@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { k8sList } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ClusterTaskModel, TaskModel } from '../../../models';
 import {
   PipelineResource,
@@ -40,62 +41,32 @@ type UseTasks = {
   errorMsg?: string;
 };
 export const useTasks = (namespace?: string): UseTasks => {
-  const [namespacedTasks, setNamespacedTasks] = React.useState<PipelineResourceTask[]>(null);
-  const [clusterTasks, setClusterTasks] = React.useState<PipelineResourceTask[]>(null);
-  const [loadErrorMsg, setLoadErrorMsg] = React.useState<string>(undefined);
-
-  React.useEffect(() => {
-    let ignore = false;
-    if (loadErrorMsg) {
-      return null;
-    }
-
-    if (!namespacedTasks) {
-      if (!namespace) {
-        setNamespacedTasks([]);
-      } else {
-        k8sList(TaskModel, { ns: namespace })
-          .then((res: PipelineResourceTask[]) => {
-            if (ignore) {
-              return;
-            }
-            setNamespacedTasks(res);
-          })
-          .catch(() => {
-            setLoadErrorMsg(`Failed to load namespace Tasks. ${loadErrorMsg || ''}`);
-          });
-      }
-    }
-
-    if (!clusterTasks) {
-      k8sList(ClusterTaskModel)
-        .then((res: PipelineResourceTask[]) => {
-          if (ignore) {
-            return;
-          }
-          setClusterTasks(res);
-        })
-        .catch(() => {
-          setLoadErrorMsg(`Failed to load ClusterTasks. ${loadErrorMsg || ''}`);
-        });
-    }
-    return () => {
-      ignore = true;
-    };
-  }, [
-    namespace,
-    namespacedTasks,
-    setNamespacedTasks,
-    clusterTasks,
-    setClusterTasks,
-    setLoadErrorMsg,
-    loadErrorMsg,
-  ]);
+  const memoizedResources = React.useMemo(
+    () => ({
+      tasks: { kind: referenceForModel(TaskModel), isList: true, namespace },
+      clusterTasks: {
+        kind: referenceForModel(ClusterTaskModel),
+        isList: true,
+        namespaced: false,
+      },
+    }),
+    [namespace],
+  );
+  const { tasks, clusterTasks } = useK8sWatchResources<{ [kind: string]: PipelineResourceTask[] }>(
+    memoizedResources,
+  );
+  let errorMsg: string;
+  if (tasks.loadError) {
+    errorMsg = `Failed to load namespace Tasks. ${tasks.loadError}`;
+  }
+  if (clusterTasks.loadError) {
+    errorMsg = `Failed to load ClusterTasks. ${clusterTasks.loadError}`;
+  }
 
   return {
-    namespacedTasks,
-    clusterTasks,
-    errorMsg: loadErrorMsg,
+    namespacedTasks: tasks.loaded && !tasks.loadError ? tasks.data : null,
+    clusterTasks: clusterTasks.loaded && !clusterTasks.loadError ? clusterTasks.data : null,
+    errorMsg,
   };
 };
 
