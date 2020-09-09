@@ -124,9 +124,9 @@ export const getHelmGraphModelFromMap = (
         edges: [],
       };
       resources[key].data.forEach((resource) => {
-        const item = createOverviewItemForType(key, resource, resources);
-        const uid = resource?.metadata?.uid;
         if (isHelmReleaseNode(resource, helmResourcesMap)) {
+          const item = createOverviewItemForType(key, resource, resources);
+          const uid = resource?.metadata?.uid;
           helmResources[key].push(uid);
           const data = createTopologyNodeData(
             resource,
@@ -186,15 +186,24 @@ const getHelmReleaseMap = (namespace: string) => {
 export const getHelmTopologyDataModel = () => {
   let secretCount = -1;
   let mapNamespace = '';
-  let helmResourcesMap = null;
+  let helmResourcesMap = {};
 
   return (namespace: string, resources: TopologyDataResources): Promise<Model> => {
-    const count = resources?.secrets?.data?.length ?? 0;
+    const helmSecrets =
+      resources?.secrets?.data?.filter((s) => s.metadata?.labels?.owner === 'helm') ?? [];
+    const helmReleaseCount = Object.keys(helmResourcesMap).reduce((acc, key) => {
+      if (!acc.includes(helmResourcesMap[key].releaseName)) {
+        acc.push(helmResourcesMap[key].releaseName);
+      }
+      return acc;
+    }, []).length;
+    const count = helmSecrets.length;
     let retrieveNewReleaseMap = false;
     if (
       namespace !== mapNamespace ||
       (resources.secrets?.loaded && count !== secretCount) ||
-      resources.secrets?.loadError
+      resources.secrets?.loadError ||
+      secretCount !== helmReleaseCount
     ) {
       secretCount = count;
       mapNamespace = namespace;
