@@ -95,9 +95,7 @@ export const devfileFlow = (
     return devfileCreate(null, devfileData, dryRun ? dryRunOpt : {});
 }
 
-export const createOrUpdateBuildResource = (
-  devfileFlow
-)
+
 
 export const createOrUpdateImageStream = (
   formData: GitImportFormData,
@@ -160,6 +158,119 @@ export const createWebhookSecret = (
   };
 
   return k8sCreate(SecretModel, webhookSecret, dryRun ? dryRunOpt : {});
+};
+
+export const createOrUpdateBuildResource = (
+  buildResourceObj: any,
+  formData: GitImportFormData,
+  imageStream: K8sResourceKind,
+  dryRun: boolean,
+  originalBuildResource?: K8sResourceKind,
+  verb: K8sVerb = 'create',
+  generatedImageStreamName: string = '',
+): Promise<K8sResourceKind> => {
+  const {
+    name,
+    project: { name: namespace },
+    application: { name: applicationName },
+    git: { url: repository, type: gitType, ref = 'master', dir: contextDir, secret: secretName },
+    
+    image: { tag: selectedTag },
+    build: { env, triggers},
+    labels: userLabels,
+  } = formData;
+
+  const imageStreamName = imageStream && imageStream.metadata.name;
+  const imageStreamNamespace = imageStream && imageStream.metadata.namespace;
+
+  const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag });
+  const defaultAnnotations = { ...getGitAnnotations(repository, ref), ...getCommonAnnotations() };
+  let buildStrategyData;
+
+  let buildStrategy = buildResourceObj.buildStrategy;
+  let dockerfileLocation = buildResourceObj.dockerfileLocation;
+
+  const devfileSourceStrategy = {
+      kind: 'ImageStreamTag',
+      name: buildResourceObj.sourceStrategy.name,
+      namespace: buildResourceObj.sourceStrategy.namespace,
+  };
+
+  switch (buildStrategy) {
+    case 'Dockerfile':
+      buildStrategyData = {
+        dockerStrategy: { env, dockerfileLocation },
+      };
+      break;
+    case 's2i':
+      buildStrategyData = {
+        sourceStrategy: {
+          env,
+          ...(devfileSourceStrategy),
+        },
+      };
+      break;
+  }
+
+  const webhookTriggerData = {
+    type: GitReadableTypes[gitType],
+    [gitType]: {
+      secretReference: { name: `${name}-${gitType}-webhook-secret` },
+    },
+  };
+
+  const newBuildResource = {
+    apiVersion: buildResourceObj.apiVersion,
+    kind: buildResourceObj.kind,
+    metadata: {
+      name,
+      namespace,
+      labels: { ...defaultLabels, ...userLabels },
+      annotations: defaultAnnotations,
+    },
+    spec: {
+      output: {
+        to: {
+          kind: 'ImageStreamTag',
+          name: `${generatedImageStreamName || name}:latest`,
+        },
+      },
+      source: {
+        contextDir,
+        git: {
+          uri: repository,
+          ref,
+          type: 'Git',
+        },
+        ...(secretName ? { sourceSecret: { name: secretName } } : {}),
+      },
+      strategy: {
+        type: buildStrategy,
+        ...buildStrategyData,
+      },
+      triggers: [
+        {
+          type: 'Generic',
+          generic: {
+            secretReference: { name: `${name}-generic-webhook-secret` },
+          },
+        },
+        ...(triggers.webhook && gitType !== GitTypes.unsure ? [webhookTriggerData] : []),
+        ...(triggers.image ? [{ type: 'ImageChange', imageChange: {} }] : []),
+        ...(triggers.config ? [{ type: 'ConfigChange' }] : []),
+      ],
+    },
+  };
+
+  const buildResource = mergeData(originalBuildResource, newBuildResource);
+
+  return verb === 'update'
+  // Need to change the model here, but might need to define more models depending on what types of builds we want to support. 
+  // Leaving as is for buildconfig example
+
+    ? k8sUpdate(BuildConfigModel, buildResource)
+    : k8sCreate(BuildConfigModel, buildResource, dryRun ? dryRunOpt : {});
+
 };
 
 export const createOrUpdateBuildConfig = (
