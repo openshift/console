@@ -66,6 +66,7 @@ type CreateVMWizardComponentProps = {
   isProviderImport: boolean;
   isCreateTemplate: boolean;
   isLastTabErrorFatal: boolean;
+  userTemplateName: string;
   dataIDReferences: IDReferences;
   reduxID: string;
   tabsMetadata: VMWizardTabsMetadata;
@@ -131,14 +132,14 @@ class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentPro
   };
 
   getWizardTitle() {
-    const { isCreateTemplate, isProviderImport } = this.props;
+    const { isCreateTemplate, isProviderImport, userTemplateName } = this.props;
     if (isCreateTemplate) {
       return CREATE_VM_TEMPLATE;
     }
     if (isProviderImport) {
       return IMPORT_VM;
     }
-    return CREATE_VM;
+    return userTemplateName ? `${CREATE_VM} from ${userTemplateName} template` : CREATE_VM;
   }
 
   goBackToEditingSteps = () =>
