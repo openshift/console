@@ -33,13 +33,13 @@ const UsersTableHeader = () => {
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Login time',
+      title: 'Time of login',
       sortField: 'metadata.loginTime',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Elapsed logged in time',
+      title: 'Elapsed time since login',
       props: { className: tableColumnClasses[3] },
     },
   ];
@@ -95,7 +95,7 @@ export const VMUsersList: React.FC<VMUsersListProps> = ({ vmi, vmStatusBundle })
       data={data}
       loadError={error?.message}
       loaded={!loading}
-      EmptyMsg={() => <div className="text-center">No Logged In Users</div>}
+      EmptyMsg={() => <div className="text-center">No Active Users</div>}
       virtualize
     />
   );
