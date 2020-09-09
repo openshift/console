@@ -50,6 +50,7 @@ export const getVMStatusGroups: StatusGroupMapper = (
         VMStatusSimpleLabel.Migrating,
         VMStatusSimpleLabel.Stopping,
         StatusSimpleLabel.Pending,
+        VMStatusSimpleLabel.Deleting,
       ],
       count: 0,
       filterType: 'vm-status',

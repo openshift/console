@@ -125,6 +125,7 @@ const ObservedVmNode: React.FC<VmNodeProps> = ({
     case VMStatus.STARTING:
       statusClass = 'kubevirt-m-not-ready';
       break;
+    case VMStatus.DELETING:
     case VMStatus.STOPPING:
       statusClass = 'kubevirt-m-terminating';
       break;

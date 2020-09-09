@@ -8,14 +8,11 @@ import {
   dimensifyHeader,
   dimensifyRow,
   getCreationTimestamp,
-  getDeletetionTimestamp,
   getName,
   getNamespace,
-  getOwnerReferences,
   getUID,
   getLabels,
 } from '@console/shared';
-import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import {
   NamespaceModel,
   PodModel,
@@ -46,7 +43,7 @@ import {
   VirtualMachineModel,
 } from '../../models';
 import { VMIKind, VMKind } from '../../types';
-import { buildOwnerReferenceForModel, getBasicID, getLoadedData } from '../../utils';
+import { getBasicID, getLoadedData } from '../../utils';
 import { getVMStatus } from '../../statuses/vm/vm-status';
 import { getVmiIpAddresses, getVMINodeName } from '../../selectors/vmi';
 import { isVMImport, isVM, isVMI } from '../../selectors/check-type';
@@ -359,21 +356,7 @@ const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
           ...objectBundle,
         };
       })
-      .filter(({ vm, vmi, vmImport, metadata }) => {
-        if (vmImport && metadata.vmImportStatus?.isCompleted()) {
-          return false;
-        }
-
-        if (vm || !getDeletetionTimestamp(vmi)) {
-          return true;
-        }
-        const vmOwnerReference = buildOwnerReferenceForModel(VirtualMachineModel, getName(vmi));
-
-        // show finalizing VMIs only if they are not owned by VM
-        return !(getOwnerReferences(vmi) || []).some((o) =>
-          compareOwnerReference(o, vmOwnerReference),
-        );
-      });
+      .filter(({ vmImport, metadata }) => !(vmImport && metadata.vmImportStatus?.isCompleted()));
   };
 
   const createAccessReview = skipAccessReview ? null : { model: VirtualMachineModel, namespace };
