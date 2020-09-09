@@ -21,7 +21,6 @@ import { iGetProvisionSourceStorage } from '../../selectors/immutable/storage';
 import { WorkloadProfile } from './workload-profile';
 import { OS } from './os';
 import { Flavor } from './flavor';
-import { UserTemplates } from './user-templates';
 import { MemoryCPU } from './memory-cpu';
 import { ContainerSource } from './container-source';
 import { ProvisionSourceComponent } from './provision-source';
@@ -31,7 +30,6 @@ import '../../create-vm-wizard-footer.scss';
 import './vm-settings-tab.scss';
 
 export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
-  userTemplateName,
   userTemplates,
   commonTemplates,
   cnvBaseImages,
@@ -74,14 +72,6 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
           />
         </FormField>
       </FormFieldMemoRow>
-      <UserTemplates
-        userTemplateField={getField(VMSettingsField.USER_TEMPLATE)}
-        forceSingleUserTemplateName={userTemplateName}
-        userTemplates={userTemplates}
-        commonTemplates={commonTemplates}
-        openshiftFlag={openshiftFlag}
-        onChange={onFieldChange}
-      />
       <OS
         userTemplates={userTemplates}
         commonTemplates={commonTemplates}
@@ -147,7 +137,6 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
 const stateToProps = (state, { wizardReduxID }) => ({
   vmSettings: iGetVmSettings(state, wizardReduxID),
   commonTemplates: iGetCommonData(state, wizardReduxID, VMWizardProps.commonTemplates),
-  userTemplateName: iGetCommonData(state, wizardReduxID, VMWizardProps.userTemplateName),
   userTemplates: iGetCommonData(state, wizardReduxID, VMWizardProps.userTemplates),
   cnvBaseImages: iGetCommonData(state, wizardReduxID, VMWizardProps.openshiftCNVBaseImages),
   openshiftFlag: iGetCommonData(state, wizardReduxID, VMWizardProps.openshiftFlag),
@@ -161,7 +150,6 @@ type VMSettingsTabComponentProps = {
   vmSettings: any;
   provisionSourceStorage: VMWizardStorage;
   commonTemplates: any;
-  userTemplateName: string;
   userTemplates: any;
   cnvBaseImages: any;
   openshiftFlag: boolean;
