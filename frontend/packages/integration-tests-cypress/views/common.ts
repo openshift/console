@@ -1,2 +1,2 @@
-export const resourceStatusShouldContain = (desiredStatus: string) =>
-  cy.contains('[data-test="status-text"]', desiredStatus);
+export const resourceStatusShouldContain = (desiredStatus: string, options?: any) =>
+  cy.contains('[data-test="status-text"]', desiredStatus, options);

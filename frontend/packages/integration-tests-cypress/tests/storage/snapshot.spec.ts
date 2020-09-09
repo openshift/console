@@ -1,7 +1,7 @@
 import { testName, checkErrors } from '../../support';
 import { SnapshotDetails, dropdownFirstItem } from '../../views/storage/snapshot';
 import { listPage } from '../../views/list-page';
-import { PVC, testerDeployment, SnapshotClass } from '../../mocks/snapshot';
+import { PVC, testerDeployment, SnapshotClass, patchForVolume } from '../../mocks/snapshot';
 import { detailsPage } from '../../views/details-page';
 import { modal } from '../../views/modal';
 import { resourceStatusShouldContain } from '../../views/common';
@@ -29,6 +29,7 @@ if (Cypress.env('BRIDGE_AWS')) {
     after(() => {
       cy.exec(`echo '${JSON.stringify(testerDeployment)}' | oc delete -n ${testName} -f -`);
       cy.exec(`echo '${JSON.stringify(PVC)}' | oc delete -n ${testName} -f -`);
+      cy.exec(`oc delete pvc ${snapshotName}-restore -n ${testName}`);
       cy.exec(`echo '${JSON.stringify(SnapshotClass)}' | oc delete -f -`);
       cy.deleteProject(testName);
       cy.logout();
@@ -51,7 +52,7 @@ if (Cypress.env('BRIDGE_AWS')) {
         `snapshot.storage.k8s.io~v1beta1~VolumeSnapshot/${PVC.metadata.name}-snapshot`,
       );
       detailsPage.titleShouldContain(PVC.metadata.name);
-      resourceStatusShouldContain('Ready');
+      resourceStatusShouldContain('Ready', { timeout: 40000 });
       cy.exec(`oc get VolumeSnapshot ${PVC.metadata.name}-snapshot -n ${testName} -o json`)
         .its('stdout')
         .then((res) => {
@@ -75,7 +76,28 @@ if (Cypress.env('BRIDGE_AWS')) {
       listPage.rows.shouldNotExist(`${snapshotName}dup`);
     });
 
+    it('Restore a Snapshot to create a new claim from it', () => {
+      cy.clickNavLink(['Volume Snapshots']);
+      listPage.rows.clickKebabAction(snapshotName, 'Restore as new PVC');
+      modal.shouldBeOpened();
+      cy.byTestID('pvc-name').should('have.value', `${snapshotName}-restore`);
+      cy.get(SnapshotDetails.scDropdown).click();
+      cy.get(dropdownFirstItem)
+        .eq(1)
+        .click();
+      modal.submit();
+      modal.shouldBeClosed();
+      cy.exec(
+        `oc patch Deployment ${
+          testerDeployment.metadata.name
+        } --type='json' -n ${testName} -p '[${JSON.stringify(patchForVolume)}]'`,
+      )
+        .its('stdout')
+        .then(() => resourceStatusShouldContain('Bound', { timeout: 40000 }));
+    });
+
     it('Deletes Snapshot', () => {
+      cy.clickNavLink(['Volume Snapshots']);
       listPage.rows.clickKebabAction(snapshotName, 'Delete Volume Snapshot');
       modal.shouldBeOpened();
       modal.submitShouldBeEnabled();
