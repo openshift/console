@@ -27,7 +27,6 @@ import {
 } from '@patternfly/react-core';
 import { ChartLineIcon } from '@patternfly/react-icons';
 import { connect } from 'react-redux';
-import { APIError } from '@console/shared';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 
 import * as UIActions from '../../actions/ui';
@@ -50,6 +49,7 @@ import {
   twentyFourHourTime,
   twentyFourHourTimeWithSeconds,
 } from '../utils/datetime';
+import { PrometheusAPIError } from './types';
 
 const spans = ['5m', '15m', '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w', '2w'];
 const dropdownItems = _.zipObject(spans, spans);
@@ -514,7 +514,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
     defaultSamples || _.clamp(Math.round(span / minStep), minSamples, maxSamples);
 
   const [xDomain, setXDomain] = React.useState<AxisDomain>();
-  const [error, setError] = React.useState<QueryBrowserError>();
+  const [error, setError] = React.useState<PrometheusAPIError>();
   const [isDatasetTooBig, setIsDatasetTooBig] = React.useState(false);
   const [graphData, setGraphData] = React.useState(null);
   const [samples, setSamples] = React.useState(maxSamplesForSpan);
@@ -783,14 +783,8 @@ export type FormatLegendLabel = (labels: PrometheusLabels, i: number) => string;
 
 export type PatchQuery = (index: number, patch: QueryObj) => any;
 
-type QueryBrowserError = {
-  json?: {
-    error?: string;
-  };
-} & APIError;
-
 type ErrorProps = {
-  error: QueryBrowserError;
+  error: PrometheusAPIError;
   title?: string;
 };
 

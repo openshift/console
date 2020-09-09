@@ -1,3 +1,5 @@
+import { APIError } from '@console/shared';
+
 import { RowFunction } from '../factory';
 import { RowFilter } from '../filter-toolbar';
 import { PrometheusLabels } from '../graphs';
@@ -112,6 +114,15 @@ type Group = {
   file: string;
   name: string;
 };
+
+export type PrometheusAPIError = {
+  response?: {
+    status: number;
+  };
+  json?: {
+    error?: string;
+  };
+} & APIError;
 
 export type PrometheusRulesResponse = {
   data: {

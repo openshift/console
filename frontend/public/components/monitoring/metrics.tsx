@@ -55,6 +55,7 @@ import {
 import { setAllQueryArguments } from '../utils/router';
 import IntervalDropdown from './poll-interval-dropdown';
 import { colors, Error, QueryObj, QueryBrowser } from './query-browser';
+import { PrometheusAPIError } from './types';
 
 const operators = [
   'and',
@@ -224,7 +225,7 @@ export const ToggleGraph = connect(graphStateToProps, { toggle: UIActions.monito
 
 const MetricsDropdown_: React.FC<MetricsDropdownProps> = ({ insertText, setMetrics }) => {
   const [items, setItems] = React.useState<MetricsDropdownItems>();
-  const [isError, setIsError] = React.useState(false);
+  const [error, setError] = React.useState<PrometheusAPIError>();
 
   const safeFetch = React.useCallback(useSafeFetch(), []);
 
@@ -235,7 +236,11 @@ const MetricsDropdown_: React.FC<MetricsDropdownProps> = ({ insertText, setMetri
         setItems(_.zipObject(metrics, metrics));
         setMetrics(metrics);
       })
-      .catch(() => setIsError(true));
+      .catch((err) => {
+        if (err.name !== 'AbortError') {
+          setError(err);
+        }
+      });
   }, [safeFetch, setMetrics]);
 
   const onChange = (metric: string) => {
@@ -252,10 +257,12 @@ const MetricsDropdown_: React.FC<MetricsDropdownProps> = ({ insertText, setMetri
   };
 
   let title: React.ReactNode = 'Insert Metric at Cursor';
-  if (isError) {
+  if (error !== undefined) {
+    const message =
+      error?.response?.status === 403 ? 'Access restricted.' : 'Failed to load metrics list.';
     title = (
       <span>
-        <RedExclamationCircleIcon /> Failed to load metrics list.
+        <RedExclamationCircleIcon /> {message}
       </span>
     );
   } else if (items === undefined) {
@@ -271,7 +278,7 @@ const MetricsDropdown_: React.FC<MetricsDropdownProps> = ({ insertText, setMetri
   return (
     <Dropdown
       autocompleteFilter={fuzzyCaseInsensitive}
-      disabled={isError}
+      disabled={error !== undefined}
       id="metrics-dropdown"
       items={items || {}}
       menuClassName="query-browser__metrics-dropdown-menu query-browser__metrics-dropdown-menu--insert"
@@ -625,7 +632,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({
   series,
 }) => {
   const [data, setData] = React.useState<PrometheusData>();
-  const [error, setError] = React.useState();
+  const [error, setError] = React.useState<PrometheusAPIError>();
   const [page, setPage] = React.useState(1);
   const [perPage, setPerPage] = React.useState(50);
   const [sortBy, setSortBy] = React.useState<ISortBy>();
