@@ -246,7 +246,7 @@ const cloneCommonBaseDiskImageUpdater = ({ id, prevState, dispatch, getState }: 
   const provisionSourceTypeValue = userTemplate
     ? undefined
     : cloneCommonBaseDiskImage
-    ? ProvisionSource.DISK.toString()
+    ? ProvisionSource.DISK.getValue()
     : '';
 
   dispatch(
