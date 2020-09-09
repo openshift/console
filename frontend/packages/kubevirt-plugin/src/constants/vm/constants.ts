@@ -25,7 +25,7 @@ export const TEMPLATE_DATAVOLUME_NAME_PARAMETER = 'SRC_PVC_NAME';
 export const TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER = 'SRC_PVC_NAMESPACE';
 export const TEMPLATE_VM_DOMAIN_LABEL = 'kubevirt.io/domain';
 export const TEMPLATE_VM_SIZE_LABEL = 'kubevirt.io/size';
-export const TEMPLATE_VM_GOLDEN_OS_NAMESPACE = 'openshift-kubevirt-base-images';
+export const TEMPLATE_VM_GOLDEN_OS_NAMESPACE = 'kubevirt-os-images';
 export const TEMPLATE_VM_COMMON_NAMESPACE = 'openshift';
 
 export const LABEL_USED_TEMPLATE_NAME = 'vm.kubevirt.io/template';
