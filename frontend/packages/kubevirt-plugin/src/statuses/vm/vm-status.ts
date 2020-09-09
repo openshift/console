@@ -1,7 +1,12 @@
 import * as _ from 'lodash';
 import { K8sResourceKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
 import { createBasicLookup } from '@console/shared/src/utils/utils';
-import { getName, getNamespace, getOwnerReferences } from '@console/shared/src/selectors/common'; // do not import just from shared - causes cycles
+import {
+  getName,
+  getNamespace,
+  getOwnerReferences,
+  getDeletetionTimestamp,
+} from '@console/shared/src/selectors/common'; // do not import just from shared - causes cycles
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import {
   buildOwnerReference,
@@ -56,6 +61,11 @@ import { PAUSED_VM_MODAL_MESSAGE } from '../../strings/vm/messages';
 
 const isPaused = (vmi: VMIKind): VMStatusBundle =>
   isVMIPaused(vmi) ? { status: VMStatus.PAUSED, message: PAUSED_VM_MODAL_MESSAGE } : null;
+
+const isDeleting = (vm: VMKind, vmi: VMIKind): VMStatusBundle =>
+  (vm && !!getDeletetionTimestamp(vm)) || (!vm && vmi && !!getDeletetionTimestamp(vmi))
+    ? { status: VMStatus.DELETING }
+    : null;
 
 const isV2VVMWareConversion = (vm: VMKind, pods?: PodKind[]): VMStatusBundle => {
   if (!vm || !pods) {
@@ -309,6 +319,7 @@ export const getVMStatus = ({
     isV2VVMImportConversion(vm, vmImports) ||
     isBeingMigrated(vm, vmi, migrations) ||
     isBeingImported(vm, pods, pvcs, dataVolumes) ||
+    isDeleting(vm, vmi) ||
     isVMError(vm) ||
     isBeingStopped(vm) ||
     isOff(vm) ||
