@@ -10,16 +10,18 @@ const ActionGroupWithIcons: React.FC<ActionGroupWithIconsProps> = ({
 }) => {
   return (
     <ActionGroup className="pf-c-form pf-c-form__actions--right">
-      <Button
-        type="submit"
-        onClick={onSubmit}
-        variant={ButtonVariant.plain}
-        data-test-id="check-icon"
-        style={{ padding: '0' }}
-        isDisabled={isDisabled}
-      >
-        <CheckIcon />
-      </Button>
+      {onSubmit && (
+        <Button
+          type="submit"
+          onClick={onSubmit}
+          variant={ButtonVariant.plain}
+          data-test-id="check-icon"
+          style={{ padding: '0' }}
+          isDisabled={isDisabled}
+        >
+          <CheckIcon />
+        </Button>
+      )}
       <Button
         type="button"
         data-test-id="close-icon"

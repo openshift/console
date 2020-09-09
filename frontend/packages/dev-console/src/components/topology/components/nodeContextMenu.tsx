@@ -7,6 +7,7 @@ import {
   KebabMenuOption,
   kebabOptionsToMenu,
   isKebabSubMenu,
+  // useAccessReview,
 } from '@console/internal/components/utils';
 import { workloadActions } from '../actions/workloadActions';
 import { groupActions } from '../actions/groupActions';
@@ -23,8 +24,15 @@ const onKebabOptionClick = (option: KebabOption) => {
   }
 };
 
+// const Item: React.FC<{ option: KebabOption }> = ({ option }) => {
+//   const isAllowed = useAccessReview(option?.accessReview ?? {});
+//   return isAllowed ? (
+//     <KebabItem option={option} onClick={() => onKebabOptionClick(option)} />
+//   ) : null;
+// };
+
 export const createMenuItems = (actions: KebabMenuOption[]) =>
-  actions.map((option, index) =>
+  actions.map((option: KebabMenuOption, index) =>
     isKebabSubMenu(option) ? (
       <ContextSubMenuItem label={option.label} key={option.label}>
         {createMenuItems(option.children)}

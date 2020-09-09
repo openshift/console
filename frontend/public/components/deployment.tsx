@@ -2,7 +2,11 @@ import * as React from 'react';
 
 import { Status, PodRingController } from '@console/shared';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
-import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
+import {
+  AddHealthChecks,
+  EditHealthChecks,
+  ViewHealthChecks,
+} from '@console/app/src/actions/modify-health-checks';
 import {
   AddHorizontalPodAutoScaler,
   DeleteHorizontalPodAutoScaler,
@@ -71,6 +75,7 @@ export const menuActions = [
   DeleteHorizontalPodAutoScaler,
   ...Kebab.getExtensionsActionsForKind(DeploymentModel),
   EditHealthChecks,
+  ViewHealthChecks,
   ...common,
 ];
 

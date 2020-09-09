@@ -50,3 +50,18 @@ export const EditHealthChecks = (model: K8sKind, obj: K8sResourceKind): KebabOpt
     },
   };
 };
+
+export const ViewHealthChecks = (model: K8sKind, obj: K8sResourceKind): KebabOption => {
+  const accessReview = {
+    group: model.apiGroup,
+    resource: model.plural,
+    name: obj.metadata.name,
+    namespace: obj.metadata.namespace,
+  };
+  return {
+    label: 'View Health Checks',
+    hidden: false,
+    href: healthChecksUrl(model, obj),
+    accessReview: { ...accessReview, verb: 'get' },
+  };
+};
