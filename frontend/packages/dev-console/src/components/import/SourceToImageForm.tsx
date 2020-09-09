@@ -24,7 +24,7 @@ const SourceToImageForm: React.FC<FormikProps<FormikValues> & SourceToImageFormP
 }) => (
   <Form onSubmit={handleSubmit}>
     <BuilderSection image={values.image} builderImages={builderImages} />
-    <GitSection showSample />
+    <GitSection showSample builderImages={builderImages} />
     <AppSection
       project={values.project}
       noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
