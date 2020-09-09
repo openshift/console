@@ -155,7 +155,7 @@ export const ProvisionSourceComponentWithNamespace: React.FC<ProvisionSourceComp
             goToStorageStep={goToStorageStep}
           />
         )}
-        {[ProvisionSource.PXE.toString()].includes(provisionSourceValue) && (
+        {[ProvisionSource.PXE.getValue()].includes(provisionSourceValue) && (
           <ProvisionSourceNetHelpMsg goToNetworkingStep={goToNetworkingStep} />
         )}
       </FormFieldRow>
