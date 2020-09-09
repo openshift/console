@@ -9,7 +9,6 @@ import {
   PodTemplate,
   RouteKind,
   apiVersionForModel,
-  referenceForModel,
   K8sKind,
   ObjectMetadata,
   JobKind,
@@ -26,11 +25,7 @@ import {
   CronJobModel,
 } from '@console/internal/models';
 import { getBuildNumber } from '@console/internal/module/k8s/builds';
-import { FirehoseResource } from '@console/internal/components/utils';
-import {
-  ClusterServiceVersionModel,
-  ClusterServiceVersionKind,
-} from '@console/operator-lifecycle-manager';
+import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 import { Alert, Alerts } from '@console/internal/components/monitoring/types';
 import { alertMessageResources } from '@console/internal/components/monitoring/alerting';
 import {
@@ -55,124 +50,6 @@ import {
 import { resourceStatus, podStatus } from './ResourceStatus';
 import { isKnativeServing, isIdled } from './pod-utils';
 import { doesHpaMatch } from '@console/dev-console/src/components/hpa/hpa-utils';
-
-export const getResourceList = (namespace: string, resList?: any): FirehoseResource[] => {
-  let resources: FirehoseResource[] = [
-    {
-      isList: true,
-      kind: 'DeploymentConfig',
-      namespace,
-      prop: 'deploymentConfigs',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: 'Deployment',
-      namespace,
-      prop: 'deployments',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: 'DaemonSet',
-      namespace,
-      prop: 'daemonSets',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: 'Pod',
-      namespace,
-      prop: 'pods',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: 'Job',
-      namespace,
-      prop: 'jobs',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: 'CronJob',
-      namespace,
-      prop: 'cronJobs',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: 'ReplicationController',
-      namespace,
-      prop: 'replicationControllers',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: 'Route',
-      namespace,
-      prop: 'routes',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: 'Service',
-      namespace,
-      prop: 'services',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: 'ReplicaSet',
-      namespace,
-      prop: 'replicaSets',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: 'BuildConfig',
-      namespace,
-      prop: 'buildConfigs',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: 'Build',
-      namespace,
-      prop: 'builds',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: 'StatefulSet',
-      namespace,
-      prop: 'statefulSets',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: 'Secret',
-      namespace,
-      prop: 'secrets',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: referenceForModel(ClusterServiceVersionModel),
-      namespace,
-      prop: 'clusterServiceVersions',
-      optional: true,
-    },
-  ];
-
-  if (resList) {
-    resList.forEach((resource) => {
-      resources = [...resources, ...resource.properties.resources(namespace)];
-    });
-  }
-
-  return resources;
-};
 
 export const getResourcePausedAlert = (resource: K8sResourceKind): OverviewItemAlerts => {
   if (!resource.spec.paused) {

@@ -36,17 +36,16 @@ describe('Visiting Overview page', () => {
         await crudView.createNamespacedTestResource(kindModel, resourceName);
       });
 
-      it(`displays a ${kindModel.id} in the project overview list`, async () => {
+      it(`displays a ${kindModel.id} in the overview list page`, async () => {
         await browser.wait(until.presenceOf(overviewView.projectOverview));
         await overviewView.itemsAreVisible();
-        expect(
-          overviewView.getProjectOverviewListItem(kindModel, resourceName).isPresent(),
-        ).toBeTruthy();
+        expect(overviewView.getGroupLabelItem(kindModel).isPresent()).toBeTruthy();
+        expect(overviewView.getProjectOverviewListItem(resourceName).isPresent()).toBeTruthy();
       });
 
       // Disabling for now due to flake https://jira.coreos.com/browse/CONSOLE-1298
       xit(`CONSOLE-1298 - shows ${kindModel.id} details sidebar when item is clicked`, async () => {
-        const overviewListItem = overviewView.getProjectOverviewListItem(kindModel, resourceName);
+        const overviewListItem = overviewView.getProjectOverviewListItem(resourceName);
         expect(overviewView.detailsSidebar.isPresent()).toBeFalsy();
         await browser.wait(until.elementToBeClickable(overviewListItem));
         await overviewListItem.click();
