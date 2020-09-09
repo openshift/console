@@ -41,16 +41,12 @@ Cypress.Commands.add(
       )
       .then((result) => {
         if (result.code !== 0) {
-          if (result.stderr.includes('NotFound')) {
-            cy.log(
-              `'oc get -n ${namespace} ${resource}/${name}' returned 'NotFound' indicating resource was successfully deleted`,
-            );
-          } else {
-            // this typically would be a 'You must be logged in to the server (Unauthorized)'
+          // if stderr === NotFound, means resource was succesfully deleted
+          if (!result.stderr.includes('NotFound')) {
+            // error other than 'NotFound', this typically would be a 'You must be logged in to the server (Unauthorized)'
             assert.fail('', '', `Error during 'oc get ${resource}/${name}', ${result.stderr} `);
           }
         } else {
-          cy.log(`expect ${resource}/${name} to have a deletionTimestamp`);
           expect(result.stdout).not.toContain(`<no value>`);
         }
       }),
