@@ -9,8 +9,8 @@ Background:
 Scenario: OpenShift Pipeline operator subscription page : P-01-TC01
    Given user is at Operator Hub page with the header name "OperatorHub"
    When user searches for "OpenShift Pipelines Operator"
-   And clicks OpenShift Pipelines Operator card on Operator Hub page
-   And clicks install button present on the right side bar
+   And user clicks OpenShift Pipelines Operator card on Operator Hub page
+   And user clicks install button present on the right side bar
    Then OpenShift Pipeline operator subscription page will be displayed
 
 
@@ -33,18 +33,18 @@ Scenario: Install the Serverless Operator from Operator Hub page : Kn-01-TC01, K
 
 @regression, @smoke
 Scenario: Install the knative eventing operator : Kn-07-TC01, Kn-07-TC02
-   Given cluster is installed with knative serverless operator
+   Given user has installed OpenShift Serverless Operator
    And user is on the knative-eventing namespace
    When user navigates to installed operators page in Admin perspecitve
-   And clicks knative eventing provided api pressent in knative serverless operator
-   And click Create knative Eventing button present in knative Eventing tab
-   And click on create button
+   And user clicks knative eventing provided api pressent in knative serverless operator
+   And user clicks Create knative Eventing button present in knative Eventing tab
+   And user clicks create button
    Then Event sources card display in Add page in dev perspecitve
 
 
 @regression, @smoke
 Scenario: Install the knative apache camel operator : Kn-08-TC01
-   Given cluster is installed with knative serverless and eventing operators
+   Given user has installed Serverless and eventing operator
    And user is at Operator Hub page with the header name "OperatorHub"
    When user search and installs the knative Camel operator with default values
    Then user will see a modal with title "knative Apache Camel Operator"
@@ -53,7 +53,7 @@ Scenario: Install the knative apache camel operator : Kn-08-TC01
 
 @regression, @smoke, @manual
 Scenario: Install the dynamic event operator : Kn-09-TC01, Kn-09-TC02
-   Given cluster is installed with knative serverless operator
+   Given user has installed OpenShift Serverless Operator
    When user executes commands from cli as "kubectl apply -f https://github.com/knative/eventing-contrib/releases/download/v0.14.1/github.yaml"
    And user navigates to Add page
    And user clicks on "Event sources" card
@@ -74,8 +74,8 @@ Scenario: Install OpenShift Virtualization Operator: VM-01-TC01
     Given user is at Operator Hub page with the header name "OperatorHub" 
     And user has selected namespace "openshift-cnv"
     When user searches for "OpenShift Virtualization"
-    And clicks on the OpenShift Virtualization Operator card
-    And clicks install button present on the right side bar
+    And user clicks on the OpenShift Virtualization Operator card
+    And user clicks install button present on the right side bar
     And user installs the OpenShift Virtualization operator with default values
     Then user will see a modal with title "OpenShift Virtualization"
     And user will see a View Operator button
@@ -97,7 +97,7 @@ Scenario: Create HyperConverged Cluster: VM-01-TC02
 Scenario: Uninstall the Pipeline Operator from Operator Hub page : P-013-TC01, P-013-TC02
    Given user is at Operator Hub page with the header name "OperatorHub"
    When user uninstalls the pipeline operator from right side bar
-   And clicks on Unistall button present in popup with header message Uninstall Operator?
+   And user clicks unistall button present in modal with header message Uninstall Operator?
    Then user will be redirected to Installed operators page
    And Installed operators page will not contain "OpenShift Pipelines Operator"
 
