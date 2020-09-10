@@ -37,3 +37,18 @@
 .lso-create-lvs__disk-size-form-group-max-input {
   max-width: 100px;
 }
+
+// Restrict node-list widths
+.lso-create-lvs__node-list {
+  @media (min-width: 769px) {
+    max-width: 100%;
+  }
+
+  @media (min-width: 992px) {
+    min-width: 650px;
+  }
+
+  @media (min-width: 1200px) {
+    max-width: 70%;
+  }
+}

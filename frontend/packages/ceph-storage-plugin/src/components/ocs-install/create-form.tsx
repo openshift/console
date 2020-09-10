@@ -151,7 +151,7 @@ export const CreateInternalCluster = withHandlePromise<
   const filterSC = React.useCallback(filterSCWithoutNoProv, []);
 
   return (
-    <div className="co-m-pane__body co-m-pane__form">
+    <div className="co-m-pane__body">
       <OCSAlert />
       <Form className="co-m-pane__body-group">
         <StorageClassSection handleStorageClass={handleStorageClass} filterSC={filterSC} />

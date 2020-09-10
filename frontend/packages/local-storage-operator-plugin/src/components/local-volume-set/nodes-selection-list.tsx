@@ -23,39 +23,37 @@ import { GetRows } from './types';
 import './node-selection-list.scss';
 
 const tableColumnClasses = [
-  classNames('pf-u-w-30-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-20-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-20-on-sm'),
+  classNames('pf-u-w-40-on-sm'),
   classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-10-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-20-on-sm'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-10-on-sm'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-10-on-sm'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-10-on-sm'),
 ];
 
-const getColumns = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Role',
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: 'Zone',
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'CPU',
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: 'Memory',
-      props: { className: tableColumnClasses[4] },
-    },
-  ];
-};
+const getColumns = () => [
+  {
+    title: 'Name',
+    sortField: 'metadata.name',
+    transforms: [sortable],
+    props: { className: tableColumnClasses[0] },
+  },
+  {
+    title: 'Role',
+    props: { className: tableColumnClasses[1] },
+  },
+  {
+    title: 'Zone',
+    props: { className: tableColumnClasses[2] },
+  },
+  {
+    title: 'CPU',
+    props: { className: tableColumnClasses[3] },
+  },
+  {
+    title: 'Memory',
+    props: { className: tableColumnClasses[4] },
+  },
+];
 
 const getRows: GetRows = (
   { componentProps, customData },
@@ -78,7 +76,7 @@ const getRows: GetRows = (
     const roles = getNodeRoles(node).sort();
     const cells: IRow['cells'] = [
       {
-        title: <ResourceLink kind="Node" name={getName(node)} title={node.metadata.uid} />,
+        title: <ResourceLink kind="Node" name={getName(node)} title={getName(node)} />,
       },
       {
         title: roles.join(', ') ?? '-',

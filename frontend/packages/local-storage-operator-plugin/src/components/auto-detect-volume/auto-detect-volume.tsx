@@ -29,6 +29,8 @@ import {
   AUTO_DISCOVER_ERR_MSG,
   LABEL_OPERATOR,
 } from '../../constants';
+import './auto-detect-volume.scss';
+import '../local-volume-set/create-local-volume-set.scss';
 
 const AutoDetectVolume: React.FC = withHandlePromise<AutoDetectVolumeProps & HandlePromiseProps>(
   (props) => {
@@ -106,7 +108,11 @@ const AutoDetectVolume: React.FC = withHandlePromise<AutoDetectVolumeProps & Han
 
           <AutoDetectVolumeHeader />
         </div>
-        <Form noValidate={false} className="co-m-pane__body co-m-pane__form" onSubmit={onSubmit}>
+        <Form
+          noValidate={false}
+          className="co-m-pane__body lso-create-lvs__node-list"
+          onSubmit={onSubmit}
+        >
           <AutoDetectVolumeInner state={state} dispatch={dispatch} />
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
             <ActionGroup>

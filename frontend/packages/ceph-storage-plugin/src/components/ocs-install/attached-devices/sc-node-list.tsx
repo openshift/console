@@ -27,7 +27,7 @@ const getRows: GetRows = ({ componentProps, customData }) => {
     const memSpec: string = getNodeAllocatableMemory(node);
     const cells: IRow['cells'] = [
       {
-        title: <ResourceLink kind="Node" name={getName(node)} title={node.metadata.uid} />,
+        title: <ResourceLink kind="Node" name={getName(node)} title={getName(node)} />,
       },
       {
         title: roles.join(', ') || '-',
@@ -58,7 +58,7 @@ const getRows: GetRows = ({ componentProps, customData }) => {
 };
 
 const AttachedDevicesNodeTable: React.FC<NodeTableProps> = (props) => (
-  <div className="ceph-node-list__max-height">
+  <div className="ceph-node-list__max-height ceph-ocs-install__node-list">
     <Table
       aria-label="Node Table"
       data-test-id="attached-devices-nodes-table"
