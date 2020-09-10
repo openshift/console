@@ -10,9 +10,11 @@ import 'moment/locale/ja';
 import moment from 'moment';
 
 const { FALLBACK_LOCALE } = require('./i18next-parser.config');
+const params = new URLSearchParams(window.location.search);
+const isPseudoLocalizationEnabled = params.get('pseudolocalization');
 
 i18n
-  .use(new Pseudo({ enabled: true, wrapped: true }))
+  .use(new Pseudo({ enabled: isPseudoLocalizationEnabled, wrapped: true }))
   // fetch json files
   // learn more: https://github.com/i18next/i18next-http-backend
   .use(httpBackend)
