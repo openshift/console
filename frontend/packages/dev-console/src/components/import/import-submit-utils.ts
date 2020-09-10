@@ -62,9 +62,9 @@ export const devfileFlow = (
   imageStream: K8sResourceKind,
   dryRun: boolean,
   appResources: AppResources,
-  originalBuildConfig?: K8sResourceKind,
   verb: K8sVerb = 'create',
   generatedImageStreamName: string = '',
+  originalBuildConfig?: K8sResourceKind,
 ): Promise<K8sResourceKind> => {
   const {
     name,
@@ -80,7 +80,7 @@ export const devfileFlow = (
   // return verb === 'update'
     // ? k8sUpdate(BuildConfigModel, buildConfig)
     // : 
-    const requests: Promise<K8sResourceKind>[] = [];
+    // const requests: Promise<K8sResourceKind>[] = [];
 
     const devfileData = {
       name: name,
@@ -98,22 +98,14 @@ export const devfileFlow = (
   
     let buildResourceObj =  devfileCreate(null, devfileData, dryRun ? dryRunOpt : {});
 
-    requests.push(
-      createOrUpdateBuildResource(
-        buildResourceObj,
-        formData,
-        imageStream,
-        dryRun,
-        _.get(appResources, 'buildConfig.data'),
-        verb,
-        generatedImageStreamName,
-      ),
-      
-    );
-
-    return Promise.all(requests);
-
-    // call createOrUpdateBuildResouce --> pass buildResourceObj
+    return createOrUpdateBuildResource (
+      buildResourceObj,
+      formData,
+      imageStream,
+      dryRun,
+      _.get(appResources, 'buildConfig.data'),
+      verb,
+      generatedImageStreamName,)
 }
 
 export const createOrUpdateBuildResource = (
