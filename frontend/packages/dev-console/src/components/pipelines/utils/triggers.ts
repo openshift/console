@@ -19,6 +19,7 @@ import {
   EventListenerKindTrigger,
   TriggerBindingKind,
   TriggerTemplateKind,
+  EventListenerKindBindingReference,
 } from '../resource-types';
 import { ResourceModelLink } from '../resource-overview/DynamicResourceLinkList';
 
@@ -162,28 +163,13 @@ export const useEventListenerURL = (
   return routeLoaded && route?.status?.ingress ? getRouteWebURL(route) : null;
 };
 
-export const getEventListenerTriggerTemplateNames = (
-  eventListener: EventListenerKind,
-): ResourceModelLink[] =>
-  eventListener.spec.triggers.map((trigger) => ({
-    model: TriggerTemplateModel,
-    name: trigger.template.name,
-  }));
-
 export const getEventListenerTriggerBindingNames = (
-  eventListener: EventListenerKind,
-): ResourceModelLink[] => {
-  return eventListener.spec.triggers.reduce(
-    (acc, trigger) => [
-      ...acc,
-      ...trigger.bindings.map((binding) => ({
-        model: getResourceModelFromBindingKind(binding.kind),
-        name: binding.name,
-      })),
-    ],
-    [] as ResourceModelLink[],
-  );
-};
+  bindings: EventListenerKindBindingReference[],
+): ResourceModelLink[] =>
+  bindings?.map((binding) => ({
+    model: getResourceModelFromBindingKind(binding.kind),
+    name: binding.name,
+  }));
 
 export const getTriggerTemplatePipelineName = (triggerTemplate: TriggerTemplateKind): string => {
   return (
