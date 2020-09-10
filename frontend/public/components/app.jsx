@@ -16,7 +16,7 @@ import { getBrandingDetails, Masthead } from './masthead';
 import { ConsoleNotifier } from './console-notifier';
 import { ConnectedNotificationDrawer } from './notification-drawer';
 import { Navigation } from './nav';
-import { history, AsyncComponent } from './utils';
+import { history, AsyncComponent, LoadingBox } from './utils';
 import * as UIActions from '../actions/ui';
 import { fetchSwagger, getCachedResources } from '../module/k8s';
 import { receivedResources, watchAPIServices } from '../actions/k8s';
@@ -32,12 +32,12 @@ const consoleLoader = () =>
     '@console/kubevirt-plugin/src/components/connected-vm-console/vm-console-page' /* webpackChunkName: "kubevirt" */
   ).then((m) => m.VMConsolePage);
 import QuickStartDrawer from '@console/app/src/components/quick-starts/QuickStartDrawer';
-import '../../i18n';
+import '../i18n';
 import '../vendor.scss';
 import '../style.scss';
 
 //PF4 Imports
-import { Page, Spinner } from '@patternfly/react-core';
+import { Page } from '@patternfly/react-core';
 
 const breakpointMD = 768;
 const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
@@ -255,7 +255,7 @@ if ('serviceWorker' in navigator) {
 }
 
 render(
-  <React.Suspense fallback={<Spinner />}>
+  <React.Suspense fallback={<LoadingBox />}>
     <Provider store={store}>
       <Router history={history} basename={window.SERVER_FLAGS.basePath}>
         <Switch>

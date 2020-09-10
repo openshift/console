@@ -11,10 +11,10 @@ import moment from 'moment';
 
 const { FALLBACK_LOCALE } = require('./i18next-parser.config');
 const params = new URLSearchParams(window.location.search);
-const isPseudoLocalizationEnabled = params.get('pseudolocalization');
+const pseudolocalizationEnabled = params.get('pseudolocalization') === 'true';
 
 i18n
-  .use(new Pseudo({ enabled: isPseudoLocalizationEnabled, wrapped: true }))
+  .use(new Pseudo({ enabled: pseudolocalizationEnabled, wrapped: true }))
   // fetch json files
   // learn more: https://github.com/i18next/i18next-http-backend
   .use(httpBackend)
@@ -55,7 +55,7 @@ i18n
         escapeValue: false, // not needed for react as it escapes by default
       },
       react: {
-        useSuspense: false,
+        useSuspense: true,
         wait: true,
       },
     },
