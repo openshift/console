@@ -23,13 +23,11 @@ import {
 import { iGetCommonData, iGetLoadedCommonData } from '../../../../selectors/immutable/selectors';
 import { vmWizardInternalActions } from '../../../internal-actions';
 import {
-  AccessMode,
   CUSTOM_FLAVOR,
   DiskBus,
   DiskType,
   NetworkInterfaceModel,
   NetworkInterfaceType,
-  VolumeMode,
   NetworkType,
   VolumeType,
 } from '../../../../../../constants/vm';
@@ -42,7 +40,6 @@ import { NetworkWrapper } from '../../../../../../k8s/wrapper/vm/network-wrapper
 import { NetworkInterfaceWrapper } from '../../../../../../k8s/wrapper/vm/network-interface-wrapper';
 import { DiskWrapper } from '../../../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../../../k8s/wrapper/vm/volume-wrapper';
-import { CONVERSION_POD_TEMP_MOUNT_PATH } from '../../../../../../constants/v2v';
 import { PersistentVolumeClaimWrapper } from '../../../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { BinaryUnit, convertToHighestUnit } from '../../../../../form/size-unit-utils';
 
@@ -93,7 +90,7 @@ export const getDisks = (parsedVm, storageClassConfigMap: ConfigMapKind): VMWiza
     (device) => _.has(device, 'CapacityInKB') || _.has(device, 'CapacityInBytes'),
   );
 
-  const diskRows = diskDevices.map((device, idx) => {
+  return diskDevices.map((device, idx) => {
     const unit = _.isNumber(device.CapacityInKB) ? BinaryUnit.Ki : BinaryUnit.B;
     const size = convertToHighestUnit(
       (unit === BinaryUnit.B ? device.CapacityInBytes : device.CapacityInKB) || 0,
@@ -133,37 +130,6 @@ export const getDisks = (parsedVm, storageClassConfigMap: ConfigMapKind): VMWiza
       },
     };
   });
-
-  // temp disk needed for conversion pod
-  const name = 'v2v-conversion-temp';
-  diskRows.push({
-    id: diskRows.length + 1,
-    type: VMWizardStorageType.V2V_VMWARE_IMPORT_TEMP,
-    disk: DiskWrapper.initializeFromSimpleData({
-      name,
-      bus: DiskBus.VIRTIO,
-      type: DiskType.DISK,
-    }).asResource(),
-    volume: VolumeWrapper.initializeFromSimpleData({
-      name,
-      type: VolumeType.PERSISTENT_VOLUME_CLAIM,
-      typeData: { claimName: name },
-    }).asResource(),
-    persistentVolumeClaim: new PersistentVolumeClaimWrapper()
-      .init({
-        name,
-        size: 2,
-        unit: BinaryUnit.Gi,
-      })
-      .setVolumeMode(VolumeMode.FILESYSTEM)
-      .setAccessModes([AccessMode.READ_WRITE_ONCE])
-      .asResource(),
-    importData: {
-      mountPath: CONVERSION_POD_TEMP_MOUNT_PATH, // hardcoded; always Filesystem mode
-    },
-  });
-
-  return diskRows;
 };
 
 // update checks done in vmWareStateUpdate

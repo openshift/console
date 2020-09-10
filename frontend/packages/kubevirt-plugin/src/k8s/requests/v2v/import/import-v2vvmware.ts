@@ -37,11 +37,6 @@ import { delay } from '../../../../utils/utils';
 import { getFieldValue } from '../../../../components/create-vm-wizard/selectors/vm-settings';
 import { getGeneratedName } from '../../../../selectors/selectors';
 
-const isImportStorage = (storage: VMWizardStorage) =>
-  [VMWizardStorageType.V2V_VMWARE_IMPORT, VMWizardStorageType.V2V_VMWARE_IMPORT_TEMP].includes(
-    storage.type,
-  );
-
 const createConversionPodSecret = async ({
   enhancedK8sMethods: { k8sWrapperCreate, k8sGet },
   importProviders,
@@ -133,7 +128,7 @@ const resolveStorages = async ({
   namespace,
 }: CreateVMParams) => {
   const extImportPvcsPromises = storages
-    .filter(isImportStorage)
+    .filter((storage) => storage.type === VMWizardStorageType.V2V_VMWARE_IMPORT)
     .map(({ persistentVolumeClaim }) => {
       const pvcWrapper = new PersistentVolumeClaimWrapper(persistentVolumeClaim, true);
 
@@ -148,7 +143,7 @@ const resolveStorages = async ({
   );
 
   const resolvedStorages = storages.map((storage) => {
-    if (isImportStorage(storage)) {
+    if (storage.type === VMWizardStorageType.V2V_VMWARE_IMPORT) {
       const persistentVolumeClaim = resultImportPvcs[`${getName(storage.persistentVolumeClaim)}-`];
       return {
         ...storage,
@@ -230,23 +225,25 @@ const startConversionPod = async (
     }),
   );
 
-  storages.filter(isImportStorage).forEach(({ volume, persistentVolumeClaim, importData }) => {
-    const volumeWrapper = new VolumeWrapper(volume);
-    const pvcWrapper = new PersistentVolumeClaimWrapper(persistentVolumeClaim);
-    const container = conversionPodWrapper.getContainers()[0];
-    if (pvcWrapper.getVolumeModeEnum() === VolumeMode.BLOCK) {
-      container.volumeDevices.push({
-        name: volumeWrapper.getName(),
-        devicePath: importData.devicePath,
-      });
-    } else {
-      container.volumeMounts.push({
-        name: volumeWrapper.getName(),
-        mountPath: importData.mountPath,
-      });
-    }
-    conversionPodWrapper.getVolumes().push(volumeWrapper.asResource(true));
-  });
+  storages
+    .filter((storage) => storage.type === VMWizardStorageType.V2V_VMWARE_IMPORT)
+    .forEach(({ volume, persistentVolumeClaim, importData }) => {
+      const volumeWrapper = new VolumeWrapper(volume);
+      const pvcWrapper = new PersistentVolumeClaimWrapper(persistentVolumeClaim);
+      const container = conversionPodWrapper.getContainers()[0];
+      if (pvcWrapper.getVolumeModeEnum() === VolumeMode.BLOCK) {
+        container.volumeDevices.push({
+          name: volumeWrapper.getName(),
+          devicePath: importData.devicePath,
+        });
+      } else {
+        container.volumeMounts.push({
+          name: volumeWrapper.getName(),
+          mountPath: importData.mountPath,
+        });
+      }
+      conversionPodWrapper.getVolumes().push(volumeWrapper.asResource(true));
+    });
   //
   //
   await waitForServiceAccountSecrets(serviceAccount, { k8sGet });
@@ -255,16 +252,12 @@ const startConversionPod = async (
 
   if (conversionPod) {
     const newOwnerReference = buildOwnerReference(conversionPod);
-    const pvcwrappers = storages
-      .filter(({ type }) => type === VMWizardStorageType.V2V_VMWARE_IMPORT_TEMP)
-      .map(({ persistentVolumeClaim }) => new PersistentVolumeClaimWrapper(persistentVolumeClaim));
 
     const patchPromises = [
       new ServiceAccountWrappper(serviceAccount),
       new RoleWrappper(role),
       new RoleBindingWrappper(roleBinding),
       new SecretWrappper(conversionPodSecret),
-      ...pvcwrappers,
     ].map((wrapper) =>
       k8sWrapperPatch(wrapper, [
         new PatchBuilder('/metadata/ownerReferences')
@@ -281,16 +274,14 @@ const startConversionPod = async (
 };
 
 const finalizeStorages = (storages: VMWizardStorage[]) =>
-  storages
-    .filter((storage) => storage.type !== VMWizardStorageType.V2V_VMWARE_IMPORT_TEMP)
-    .map((storage) => {
-      if (storage.type === VMWizardStorageType.V2V_VMWARE_IMPORT) {
-        const result = { ...storage };
-        delete result.persistentVolumeClaim;
-        return result;
-      }
-      return storage;
-    });
+  storages.map((storage) => {
+    if (storage.type === VMWizardStorageType.V2V_VMWARE_IMPORT) {
+      const result = { ...storage };
+      delete result.persistentVolumeClaim;
+      return result;
+    }
+    return storage;
+  });
 
 export const importV2VVMwareVm = async (params: CreateVMParams): Promise<ImporterResult> => {
   const { networks, enhancedK8sMethods } = params;

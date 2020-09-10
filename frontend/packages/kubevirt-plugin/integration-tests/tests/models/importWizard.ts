@@ -91,13 +91,7 @@ export class ImportWizard extends Wizard {
     await asyncForEach(importedDisks, async (disk) => {
       await clickKebabAction(disk.name, 'Edit');
       await waitForNoLoaders();
-      // This if is required to workaround bug 1814611.
-      // NFS is not supported for conversion PV and HPP should be used instead.
-      if (disk.name === 'v2v-conversion-temp' && STORAGE_CLASS === 'nfs') {
-        await diskDialog.selectStorageClass('hostpath-provisioner');
-      } else {
-        await diskDialog.selectStorageClass(disk.storageClass);
-      }
+      await diskDialog.selectStorageClass(disk.storageClass);
       await click(saveButton);
       await waitForNoLoaders();
     });

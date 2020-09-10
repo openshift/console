@@ -24,6 +24,7 @@ export const V2V_TEMPORARY_LABEL = 'cnv.io/temporary';
 
 export const CONVERSION_VDDK_INIT_POD_NAME = 'vddk-init';
 export const CONVERSION_VOLUME_VDDK_NAME = 'volume-vddk';
+export const CONVERSION_VOLUME_TEMP_NAME = 'v2v-conversion-temp';
 export const CONVERSION_VDDK_MOUNT_PATH = '/opt/vmware-vix-disklib-distrib';
 
 export const CONVERSION_PROGRESS_ANNOTATION = 'v2vConversionProgress';
