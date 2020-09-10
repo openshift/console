@@ -49,7 +49,7 @@ Do you see an inline alert stating that **nodejs-sample** does not have health c
       {
         title: `Adding health checks to your sample`,
         description: `### To add health checks to your sample:
-1. Add health checks to your **nodejs-sample** deployment in one of the following ways: (a) On the side panel, click on the **Actions** menu, where you will see an Add Health Checks menu item or (b)Click on the **Add Health Checks** link on the inline notification in the side panel.
+1. Add health checks to your **nodejs-sample** deployment in one of the following ways: (a) On the side panel, click on the **Actions** menu, where you will see an **Add Health Checks** menu item or (b) Click on the **Add Health Checks** link on the inline notification in the side panel.
 2. In the Add Health Checks form, click on the **Add Readiness Probe** link.  Leave the default values, and click on the check to add the Readiness Probe.
 3. Click on the **Add Liveness Probe** link.  Leave the default values, and click on the check to add the Liveness Probe.
 4. Click on the **Add Startup Probe** link.  Leave the default values, and click on the check to add the Startup Probe.

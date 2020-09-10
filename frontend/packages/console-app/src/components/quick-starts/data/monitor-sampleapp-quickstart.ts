@@ -26,7 +26,7 @@ You can see context sensitive metrics and alerts in the **Monitoring** tab.`,
         review: {
           instructions: `#### To verify you can view the monitoring information:
 1. Do you see a **Metrics** accordion in the side panel?
-2. Do you see a **View monitoring dashboard** link in the **Metrics* accordion?
+2. Do you see a **View monitoring dashboard** link in the **Metrics** accordion?
 3. Do you see three charts in the **Metrics** accordion: **CPU Usage**, **Memory Usage** and **Receive Bandwidth**?`,
           taskHelp: `This task isn’t verified yet. Try the task again.`,
         },
