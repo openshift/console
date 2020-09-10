@@ -100,9 +100,9 @@ export const devfileCreate = (kind, data, opts = {}) => {
     return buildResourceObj;
   }
   
-  let temp = coFetchJSON.post(resourceURL(kind, Object.assign({ ns: data.metadata.namespace }, opts)),
-    data,);
-  return temp;
+  // let temp = coFetchJSON.post(resourceURL(kind, Object.assign({ ns: data.metadata.namespace }, opts)),
+  //   data,);
+  // return temp;
   // return coFetchJSON.post(
   //   resourceURL(kind, Object.assign({ ns: data.metadata.namespace }, opts)),
   //   data,

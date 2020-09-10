@@ -111,7 +111,16 @@ export const devfileFlow = (
       
     );
 
-    return Promise.all(requests);
+    // return Promise.all(requests);
+    return  createOrUpdateBuildResource(
+      buildResourceObj,
+      formData,
+      imageStream,
+      dryRun,
+      _.get(appResources, 'buildConfig.data'),
+      verb,
+      generatedImageStreamName,
+    )
 
     // call createOrUpdateBuildResouce --> pass buildResourceObj
 }
