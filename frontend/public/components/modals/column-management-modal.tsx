@@ -76,7 +76,11 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps> = ({
 
   const submit = (event): void => {
     event.preventDefault();
-    dispatch(setTableColumns(columnLayout.id, checkedColumns));
+    const orderedCheckedColumns = new Set<string>();
+    columnLayout.columns.forEach(
+      (column) => checkedColumns.has(column.id) && orderedCheckedColumns.add(column.id),
+    );
+    dispatch(setTableColumns(columnLayout.id, orderedCheckedColumns));
     close();
   };
 

@@ -137,7 +137,7 @@ const namespaceColumnInfo = Object.freeze({
     title: 'Name',
   },
   displayName: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
+    classes: 'co-break-word',
     id: 'displayName',
     title: 'Display Name',
   },
@@ -147,32 +147,32 @@ const namespaceColumnInfo = Object.freeze({
     title: 'Status',
   },
   requester: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+    classes: '',
     id: 'requester',
     title: 'Requester',
   },
   memory: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+    classes: '',
     id: 'memory',
     title: 'Memory',
   },
   cpu: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+    classes: '',
     id: 'cpu',
     title: 'CPU',
   },
   created: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-2xl'),
+    classes: '',
     id: 'created',
     title: 'Created',
   },
   description: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+    classes: '',
     id: 'description',
     title: 'Description',
   },
   labels: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+    classes: '',
     id: 'labels',
     title: 'Labels',
   },

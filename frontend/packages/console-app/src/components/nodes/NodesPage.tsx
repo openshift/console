@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
 // FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
@@ -58,47 +57,47 @@ const nodeColumnInfo = Object.freeze({
     title: 'Role',
   },
   pods: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+    classes: '',
     id: 'pods',
     title: 'Pods',
   },
   memory: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+    classes: '',
     id: 'memory',
     title: 'Memory',
   },
   cpu: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+    classes: '',
     id: 'cpu',
     title: 'CPU',
   },
   filesystem: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+    classes: '',
     id: 'filesystem',
     title: 'Filesystem',
   },
   created: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+    classes: '',
     id: 'created',
     title: 'Created',
   },
   instanceType: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+    classes: '',
     id: 'instanceType',
     title: 'Instance type',
   },
   machine: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+    classes: '',
     id: 'machine',
     title: 'Machine',
   },
   labels: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+    classes: '',
     id: 'labels',
     title: 'Labels',
   },
   zone: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+    classes: '',
     id: 'zone',
     title: 'Zone',
   },
