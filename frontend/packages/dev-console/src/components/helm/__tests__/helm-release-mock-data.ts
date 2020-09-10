@@ -138,7 +138,6 @@ export const mockHelmChartData: HelmChartMetaData[] = [
     version: '1.0.3',
   },
   {
-    appVersion: '3.12',
     apiVersion: 'v1',
     description: 'abc',
     name: 'hazelcast-enterprise',
@@ -146,7 +145,6 @@ export const mockHelmChartData: HelmChartMetaData[] = [
       'https://raw.githubusercontent.com/IBM/charts/master/repo/community/hazelcast-enterprise-1.0.2.tgz',
     ],
     version: '1.0.2',
-    kubeVersion: '>=1.10.0',
   },
   {
     appVersion: '3.10.5',
@@ -157,27 +155,6 @@ export const mockHelmChartData: HelmChartMetaData[] = [
       'https://raw.githubusercontent.com/IBM/charts/master/repo/community/hazelcast-enterprise-1.0.1.tgz',
     ],
     version: '1.0.1',
-    kubeVersion: '>=1.11.0',
-  },
-];
-
-export const mockHelmChartData2: HelmChartMetaData[] = [
-  {
-    appVersion: '3.12',
-    apiVersion: 'v1',
-    name: 'hazelcast-enterprise',
-    urls: [
-      'https://raw.githubusercontent.com/IBM/charts/master/repo/community/hazelcast-enterprise-1.0.3.tgz',
-    ],
-    version: '1.0.3',
-  },
-  {
-    apiVersion: 'v1',
-    name: 'hazelcast-enterprise',
-    urls: [
-      'https://raw.githubusercontent.com/IBM/charts/master/repo/community/hazelcast-enterprise-1.0.2.tgz',
-    ],
-    version: '1.0.2',
   },
 ];
 
