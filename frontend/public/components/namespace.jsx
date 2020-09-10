@@ -822,6 +822,7 @@ const ResourceUsage = requirePrometheus(({ ns }) => (
 
 export const NamespaceSummary = ({ ns }) => {
   const displayName = getDisplayName(ns);
+  const description = getDescription(ns);
   const requester = getRequester(ns);
   const serviceMeshEnabled = ns.metadata?.labels?.['maistra.io/member-of'];
   const canListSecrets = useAccessReview({
@@ -830,13 +831,32 @@ export const NamespaceSummary = ({ ns }) => {
     verb: 'patch',
     namespace: ns.metadata.name,
   });
+
   return (
     <div className="row">
       <div className="col-sm-6 col-xs-12">
         {/* Labels aren't editable on kind Project, only Namespace. */}
         <ResourceSummary resource={ns} showLabelEditor={ns.kind === 'Namespace'}>
-          {displayName && <dt>Display Name</dt>}
-          {displayName && <dd>{displayName}</dd>}
+          <dt>Display Name</dt>
+          <dd
+            className={classNames({
+              'text-muted': !displayName,
+            })}
+          >
+            {displayName || 'No display name'}
+          </dd>
+          <dt>Description</dt>
+          <dd>
+            <p
+              className={classNames({
+                'text-muted': !description,
+                'co-pre-wrap': description,
+                'co-namespace-summary__description': description,
+              })}
+            >
+              {description || 'No description'}
+            </p>
+          </dd>
           {requester && <dt>Requester</dt>}
           {requester && <dd>{requester}</dd>}
         </ResourceSummary>
