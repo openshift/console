@@ -37,6 +37,14 @@ export const vmWizardInternalActions: VMWizardInternalActions = {
     },
     type: InternalActionType.Update,
   }),
+  [InternalActionType.UpdateCommonDataValue]: (id, path, value) => ({
+    payload: {
+      id,
+      path,
+      value,
+    },
+    type: InternalActionType.UpdateCommonDataValue,
+  }),
   [InternalActionType.UpdateCommonData]: (id, value) => ({
     payload: {
       id,

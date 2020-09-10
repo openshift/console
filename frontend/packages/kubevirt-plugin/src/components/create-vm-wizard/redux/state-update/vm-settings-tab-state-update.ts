@@ -5,7 +5,6 @@ import {
   iGetProvisionSource,
   iGetRelevantTemplateSelectors,
   iGetVmSettingValue,
-  iGetVmSettingAttribute,
 } from '../../selectors/immutable/vm-settings';
 import { VMSettingsField, VMWizardProps } from '../../types';
 import { InternalActionType, UpdateOptions } from '../types';
@@ -33,53 +32,22 @@ const selectUserTemplateOnLoadedUpdater = (options: UpdateOptions) => {
   const state = getState();
 
   if (
-    iGetVmSettingAttribute(state, id, VMSettingsField.USER_TEMPLATE, 'initialized') ||
-    !options.changedCommonData.has(VMWizardProps.userTemplates)
+    iGetCommonData(state, id, VMWizardProps.isUserTemplateInitialized) ||
+    !iGetLoadedCommonData(state, id, VMWizardProps.userTemplate)
   ) {
     return;
   }
 
-  const userTemplateName = iGetCommonData(state, id, VMWizardProps.userTemplateName);
-  if (!userTemplateName) {
-    return;
-  }
-
-  const userTemplates = iGetLoadedCommonData(state, id, VMWizardProps.userTemplates);
-  const isUserTemplateValid = userTemplates?.find(
-    (template) => iGetName(template) === userTemplateName,
-  );
-
-  if (!isUserTemplateValid) {
-    return;
-  }
-
   dispatch(
-    vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, {
-      [VMSettingsField.USER_TEMPLATE]: {
-        initialized: true,
-        value: userTemplateName,
-      },
-    }),
+    vmWizardInternalActions[InternalActionType.UpdateCommonDataValue](
+      id,
+      [VMWizardProps.isUserTemplateInitialized],
+      true,
+    ),
   );
-};
 
-const selectedUserTemplateUpdater = (options: UpdateOptions) => {
-  const { id, prevState, dispatch, getState } = options;
-  const state = getState();
-  if (!hasVmSettingsChanged(prevState, state, id, VMSettingsField.USER_TEMPLATE)) {
-    return;
-  }
-
-  const userTemplates = iGetLoadedCommonData(state, id, VMWizardProps.userTemplates);
-
-  const userTemplateName = iGetVmSettingValue(state, id, VMSettingsField.USER_TEMPLATE);
-
-  const iUserTemplate =
-    userTemplateName && userTemplates
-      ? userTemplates.find((template) => iGetName(template) === userTemplateName)
-      : null;
-
-  const isDisabled = asDisabled(iUserTemplate != null, VMSettingsField.USER_TEMPLATE);
+  const iUserTemplate = iGetLoadedCommonData(state, id, VMWizardProps.userTemplate);
+  const isDisabled = asDisabled(iUserTemplate != null, VMWizardProps.userTemplate);
 
   dispatch(
     vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, {
@@ -87,8 +55,9 @@ const selectedUserTemplateUpdater = (options: UpdateOptions) => {
       [VMSettingsField.CONTAINER_IMAGE]: { isDisabled },
       [VMSettingsField.IMAGE_URL]: { isDisabled },
       [VMSettingsField.OPERATING_SYSTEM]: { isDisabled },
+      [VMSettingsField.WORKLOAD_PROFILE]: { isDisabled },
       [VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE]: {
-        isHidden: asHidden(iUserTemplate != null, VMSettingsField.USER_TEMPLATE),
+        isHidden: asHidden(iUserTemplate != null, VMWizardProps.userTemplate),
       },
     }),
   );
@@ -135,16 +104,15 @@ const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
     return;
   }
 
-  const userTemplate = iGetVmSettingValue(state, id, VMSettingsField.USER_TEMPLATE);
+  const iUserTemplate = iGetCommonData(state, id, VMWizardProps.userTemplate);
   let iBaseImage = null;
   let iBaseImageUploading = false;
 
   // cloneCommonBaseDiskImage can be set true only if userTemplate is not used
-  if (!userTemplate) {
+  if (!iUserTemplate) {
     const relevantOptions = iGetRelevantTemplateSelectors(state, id);
     const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
-    const iTemplate =
-      iCommonTemplates && iGetRelevantTemplate(null, iCommonTemplates, relevantOptions);
+    const iTemplate = iCommonTemplates && iGetRelevantTemplate(iCommonTemplates, relevantOptions);
     const pvcName = iGetPrameterValue(iTemplate, TEMPLATE_DATAVOLUME_NAME_PARAMETER);
     const pvcNamespace = iGetPrameterValue(iTemplate, TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER);
 
@@ -174,22 +142,17 @@ const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
 
 const cloneCommonBaseDiskImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
+
   if (iGetCommonData(state, id, VMWizardProps.isProviderImport)) {
     return;
   }
   if (
-    !hasVMSettingsValueChanged(
-      prevState,
-      state,
-      id,
-      VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE,
-      VMSettingsField.USER_TEMPLATE,
-    )
+    !hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE)
   ) {
     return;
   }
 
-  const userTemplate = iGetVmSettingValue(state, id, VMSettingsField.USER_TEMPLATE);
+  const iUserTemplate = iGetLoadedCommonData(state, id, VMWizardProps.userTemplate);
   const cloneCommonBaseDiskImage = iGetVmSettingValue(
     state,
     id,
@@ -198,7 +161,7 @@ const cloneCommonBaseDiskImageUpdater = ({ id, prevState, dispatch, getState }: 
 
   // userTemplate should have its own provision source
   // in cases userTemplate is define we send `undefined` (undefined means no update)
-  const provisionSourceTypeValue = userTemplate
+  const provisionSourceTypeValue = iUserTemplate
     ? undefined
     : cloneCommonBaseDiskImage
     ? ProvisionSource.DISK.toString()
@@ -234,10 +197,10 @@ const templateConsistencyUpdater = ({ id, prevState, dispatch, getState }: Updat
     return;
   }
   const selectors = iGetRelevantTemplateSelectors(state, id);
-  const iUserTemplates = iGetLoadedCommonData(state, id, VMWizardProps.userTemplates);
+  const iUserTemplate = iGetLoadedCommonData(state, id, VMWizardProps.userTemplate);
   const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
 
-  if (!iGetRelevantTemplate(iUserTemplates, iCommonTemplates, selectors)) {
+  if (!iUserTemplate && !iGetRelevantTemplate(iCommonTemplates, selectors)) {
     // Reset workload and flavor profile if no relevant template found
     // Could be triggered by provider prefil or os selection
     dispatch(
@@ -251,15 +214,7 @@ const templateConsistencyUpdater = ({ id, prevState, dispatch, getState }: Updat
 
 const provisioningSourceUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
-  if (
-    !hasVmSettingsChanged(
-      prevState,
-      state,
-      id,
-      VMSettingsField.PROVISION_SOURCE_TYPE,
-      VMSettingsField.USER_TEMPLATE,
-    )
-  ) {
+  if (!hasVmSettingsChanged(prevState, state, id, VMSettingsField.PROVISION_SOURCE_TYPE)) {
     return;
   }
   const source = iGetProvisionSource(state, id);
@@ -322,7 +277,6 @@ const flavorUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => 
 export const updateVmSettingsState = (options: UpdateOptions) =>
   [
     selectUserTemplateOnLoadedUpdater,
-    selectedUserTemplateUpdater,
     osUpdater,
     baseImageUpdater,
     cloneCommonBaseDiskImageUpdater,

@@ -1,12 +1,12 @@
 import { OrderedSet } from 'immutable';
 import { CommonData, VMSettingsField, VMWizardProps } from '../../types';
-import { asDisabled, asHidden, asRequired } from '../../utils/utils';
+import { asHidden, asRequired } from '../../utils/utils';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { InitialStepStateGetter, VMSettings } from './types';
 
 export const getInitialVmSettings = (data: CommonData): VMSettings => {
   const {
-    data: { isCreateTemplate, isProviderImport, userTemplateName },
+    data: { isCreateTemplate, isProviderImport },
   } = data;
 
   const hiddenByProvider = asHidden(isProviderImport, VMWizardProps.isProviderImport);
@@ -18,20 +18,12 @@ export const getInitialVmSettings = (data: CommonData): VMSettings => {
     : asHidden(false);
   const hiddenByOperatingSystem = asHidden(true, VMSettingsField.OPERATING_SYSTEM);
 
-  const isVM = !isCreateTemplate && !isProviderImport;
-
   const fields = {
     [VMSettingsField.NAME]: {
       isRequired: asRequired(true),
     },
     [VMSettingsField.HOSTNAME]: {},
     [VMSettingsField.DESCRIPTION]: {},
-    [VMSettingsField.USER_TEMPLATE]: {
-      isHidden: hiddenByProviderOrTemplate,
-      isDisabled: asDisabled(!!userTemplateName, VMWizardProps.userTemplateName),
-      initialized: !(isVM && userTemplateName),
-      value: userTemplateName || undefined,
-    },
     [VMSettingsField.OPERATING_SYSTEM]: {
       isRequired: asRequired(true),
     },

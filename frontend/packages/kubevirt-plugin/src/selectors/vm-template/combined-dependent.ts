@@ -1,18 +1,13 @@
 import * as _ from 'lodash';
-import { getName } from '@console/shared';
 import { TemplateKind } from '@console/internal/module/k8s';
 import {
   CUSTOM_FLAVOR,
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_OS_LABEL,
-  TEMPLATE_TYPE_BASE,
-  TEMPLATE_TYPE_VM,
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../constants/vm';
 import {
-  getTemplatesOfLabelType,
   getTemplateFlavors,
-  getTemplateOperatingSystems,
   getTemplatesWithLabels,
   getTemplateWorkloadProfiles,
 } from './advanced';
@@ -34,48 +29,27 @@ export const getFlavorLabel = (flavor: string) => {
   return undefined;
 };
 
-export const getOperatingSystems = (templates: TemplateKind[], userTemplate: string) => {
-  if (userTemplate) {
-    return getTemplateOperatingSystems([
-      getTemplatesOfLabelType(templates, TEMPLATE_TYPE_VM).find((t) => getName(t) === userTemplate),
-    ]);
-  }
-  return getTemplateOperatingSystems(getTemplatesOfLabelType(templates, TEMPLATE_TYPE_BASE));
-};
-
 export const getWorkloadProfiles = (
   templates: TemplateKind[],
-  { flavor, os, userTemplate }: { flavor: string; os: string; userTemplate: string },
+  { flavor, os }: { flavor: string; os: string },
 ) => {
-  let templatesWithLabels;
-  if (userTemplate) {
-    templatesWithLabels = [
-      getTemplatesOfLabelType(templates, TEMPLATE_TYPE_VM).find((t) => getName(t) === userTemplate),
-    ];
-  } else {
-    templatesWithLabels = getTemplatesWithLabels(
-      getTemplatesOfLabelType(templates, TEMPLATE_TYPE_BASE),
-      [getOsLabel(os), getFlavorLabel(flavor)],
-    );
-  }
+  const templatesWithLabels = getTemplatesWithLabels(templates, [
+    getOsLabel(os),
+    getFlavorLabel(flavor),
+  ]);
+
   return getTemplateWorkloadProfiles(templatesWithLabels);
 };
 
 export const getFlavors = (
   templates: TemplateKind[],
-  { workload, os, userTemplate }: { workload: string; os: string; userTemplate: string },
+  { workload, os }: { workload: string; os: string },
 ) => {
-  let templatesWithLabels;
-  if (userTemplate) {
-    templatesWithLabels = [
-      getTemplatesOfLabelType(templates, TEMPLATE_TYPE_VM).find((t) => getName(t) === userTemplate),
-    ];
-  } else {
-    templatesWithLabels = getTemplatesWithLabels(
-      getTemplatesOfLabelType(templates, TEMPLATE_TYPE_BASE),
-      [getWorkloadLabel(workload), getOsLabel(os)],
-    );
-  }
+  const templatesWithLabels = getTemplatesWithLabels(templates, [
+    getWorkloadLabel(workload),
+    getOsLabel(os),
+  ]);
+
   const flavors = getTemplateFlavors(templatesWithLabels).filter((f) => !isCustomFlavor(f));
   flavors.push(CUSTOM_FLAVOR);
 

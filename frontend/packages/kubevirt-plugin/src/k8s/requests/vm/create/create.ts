@@ -30,16 +30,16 @@ import { importV2VOvirtVm } from '../../v2v/import/import-ovirt';
 import { getOS } from '../../../../components/create-vm-wizard/selectors/combined';
 
 export const getInitializedVMTemplate = (params: CreateVMParams) => {
-  const { vmSettings, iCommonTemplates, iUserTemplates } = params;
+  const { vmSettings, iCommonTemplates, iUserTemplate } = params;
   const settings = asSimpleSettings(vmSettings);
 
   const temp = toShallowJS(
-    iGetRelevantTemplate(iUserTemplates, iCommonTemplates, {
-      userTemplateName: settings[VMSettingsField.USER_TEMPLATE],
-      workload: settings[VMSettingsField.WORKLOAD_PROFILE],
-      flavor: settings[VMSettingsField.FLAVOR],
-      os: settings[VMSettingsField.OPERATING_SYSTEM],
-    }),
+    iUserTemplate ||
+      iGetRelevantTemplate(iCommonTemplates, {
+        workload: settings[VMSettingsField.WORKLOAD_PROFILE],
+        flavor: settings[VMSettingsField.FLAVOR],
+        os: settings[VMSettingsField.OPERATING_SYSTEM],
+      }),
   );
 
   if (!temp) {

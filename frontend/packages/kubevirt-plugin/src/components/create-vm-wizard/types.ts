@@ -22,12 +22,13 @@ export enum VMWizardProps {
   isSimpleView = 'isSimpleView',
   isCreateTemplate = 'isCreateTemplate',
   isProviderImport = 'isProviderImport',
-  userTemplateName = 'userTemplateName',
+  isUserTemplateInitialized = 'isUserTemplateInitialized',
+  userTemplates = 'userTemplates',
+  userTemplate = 'userTemplate',
   activeNamespace = 'activeNamespace',
   openshiftFlag = 'openshiftFlag',
   reduxID = 'reduxID',
   virtualMachines = 'virtualMachines',
-  userTemplates = 'userTemplates',
   commonTemplates = 'commonTemplates',
   dataVolumes = 'dataVolumes',
   openshiftCNVBaseImages = 'openshiftCNVBaseImages',
@@ -59,7 +60,6 @@ export enum VMSettingsField {
   NAME = 'NAME',
   HOSTNAME = 'HOSTNAME',
   DESCRIPTION = 'DESCRIPTION',
-  USER_TEMPLATE = 'USER_TEMPLATE',
   OPERATING_SYSTEM = 'OPERATING_SYSTEM',
   CLONE_COMMON_BASE_DISK_IMAGE = 'CLONE_COMMON_BASE_DISK_IMAGE',
   MOUNT_WINDOWS_GUEST_TOOLS = 'MOUNT_WINDOWS_GUEST_TOOLS',
@@ -210,6 +210,7 @@ export type ChangedCommonDataProp =
   | VMWizardProps.activeNamespace
   | VMWizardProps.openshiftFlag
   | VMWizardProps.virtualMachines
+  | VMWizardProps.userTemplate
   | VMWizardProps.userTemplates
   | VMWizardProps.commonTemplates
   | VMWizardProps.dataVolumes
@@ -230,7 +231,7 @@ export type CommonDataProp =
   | VMWizardProps.isSimpleView
   | VMWizardProps.isCreateTemplate
   | VMWizardProps.isProviderImport
-  | VMWizardProps.userTemplateName
+  | VMWizardProps.isUserTemplateInitialized
   | ChangedCommonDataProp;
 
 export type ChangedCommonData = Set<ChangedCommonDataProp>;
@@ -238,8 +239,9 @@ export type ChangedCommonData = Set<ChangedCommonDataProp>;
 export const DetectCommonDataChanges = new Set<ChangedCommonDataProp>([
   VMWizardProps.activeNamespace,
   VMWizardProps.openshiftFlag,
-  VMWizardProps.virtualMachines,
+  VMWizardProps.userTemplate,
   VMWizardProps.userTemplates,
+  VMWizardProps.virtualMachines,
   VMWizardProps.commonTemplates,
   VMWizardProps.storageClassConfigMap,
   VMWizardProps.dataVolumes,
@@ -261,7 +263,7 @@ export type CommonData = {
     isSimpleView?: boolean;
     isCreateTemplate?: boolean;
     isProviderImport?: boolean;
-    userTemplateName?: string;
+    isUserTemplateInitialized?: boolean;
     storageClassConfigMap?: {
       loaded: boolean;
       loadError: string;

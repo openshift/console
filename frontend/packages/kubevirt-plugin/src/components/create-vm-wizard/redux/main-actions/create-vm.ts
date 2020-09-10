@@ -41,7 +41,7 @@ export const createVMAction = (id: string) => (dispatch, getState) => {
   const isProviderImport = iGetCommonData<boolean>(state, id, VMWizardProps.isProviderImport);
   const openshiftFlag = iGetCommonData<boolean>(state, id, VMWizardProps.openshiftFlag);
 
-  const iUserTemplates = iGetLoadedCommonData(state, id, VMWizardProps.userTemplates);
+  const iUserTemplate = iGetLoadedCommonData(state, id, VMWizardProps.userTemplate);
   const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
 
   const params = {
@@ -50,7 +50,7 @@ export const createVMAction = (id: string) => (dispatch, getState) => {
     vmSettings,
     networks,
     storages,
-    iUserTemplates,
+    iUserTemplate,
     iCommonTemplates,
     namespace,
     openshiftFlag,

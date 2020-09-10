@@ -60,14 +60,19 @@ const stateToProps = (state, { wizardReduxID }) => {
         isList: true,
         model: TemplateModel,
       }),
-      asError({
-        state,
-        wizardReduxID,
-        key: VMWizardProps.userTemplates,
-        isList: true,
-        model: TemplateModel,
-      }),
     );
+
+    if (iGetCommonData(state, wizardReduxID, VMWizardProps.userTemplate)) {
+      errors.push(
+        asError({
+          state,
+          wizardReduxID,
+          key: VMWizardProps.userTemplate,
+          isList: false,
+          model: TemplateModel,
+        }),
+      );
+    }
   }
 
   errors.push(
