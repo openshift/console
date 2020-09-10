@@ -421,7 +421,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     detailsItem &&
     `/k8s/ns/${detailsItem.subscription.metadata.namespace}/${SubscriptionModel.plural}/${detailsItem.subscription.metadata.name}?showDelete=true`;
 
-  let remoteWorkflowUrl = detailsItem.marketplaceRemoteWorkflow;
+  let remoteWorkflowUrl = detailsItem && detailsItem.marketplaceRemoteWorkflow;
   try {
     const url = new URL(remoteWorkflowUrl);
     url.searchParams.set('utm_source', 'openshift_console');
