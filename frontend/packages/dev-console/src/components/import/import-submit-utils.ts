@@ -61,6 +61,7 @@ export const devfileFlow = (
   formData: GitImportFormData,
   imageStream: K8sResourceKind,
   dryRun: boolean,
+  appResources: AppResources,
   originalBuildConfig?: K8sResourceKind,
   verb: K8sVerb = 'create',
   generatedImageStreamName: string = '',
@@ -79,6 +80,7 @@ export const devfileFlow = (
   // return verb === 'update'
     // ? k8sUpdate(BuildConfigModel, buildConfig)
     // : 
+    const requests: Promise<K8sResourceKind>[] = [];
 
     const devfileData = {
       name: name,
@@ -94,75 +96,25 @@ export const devfileFlow = (
 
     
   
-    return devfileCreate(null, devfileData, dryRun ? dryRunOpt : {});
+    let buildResourceObj =  devfileCreate(null, devfileData, dryRun ? dryRunOpt : {});
+
+    requests.push(
+      createOrUpdateBuildResource(
+        buildResourceObj,
+        formData,
+        imageStream,
+        dryRun,
+        _.get(appResources, 'buildConfig.data'),
+        verb,
+        generatedImageStreamName,
+      ),
+      
+    );
+
+    return Promise.all(requests);
 
     // call createOrUpdateBuildResouce --> pass buildResourceObj
 }
-
-
-
-export const createOrUpdateImageStream = (
-  formData: GitImportFormData,
-  imageStreamData: K8sResourceKind,
-  dryRun: boolean,
-  appResources: AppResources,
-  verb: K8sVerb = 'create',
-  generatedImageStreamName: string = '',
-): Promise<K8sResourceKind> => {
-  const imageStreamList = appResources?.imageStream?.data;
-  const imageStreamFilterData = _.orderBy(imageStreamList, ['metadata.resourceVersion'], ['desc']);
-  const originalImageStream = (imageStreamFilterData.length && imageStreamFilterData[0]) || {};
-  const {
-    name,
-    project: { name: namespace },
-    application: { name: applicationName },
-    labels: userLabels,
-    git: { url: repository, ref },
-    image: { tag: selectedTag },
-  } = formData;
-  const imageStreamName = imageStreamData && imageStreamData.metadata.name;
-  const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag });
-  const defaultAnnotations = { ...getGitAnnotations(repository, ref), ...getCommonAnnotations() };
-  const newImageStream = {
-    apiVersion: 'image.openshift.io/v1',
-    kind: 'ImageStream',
-    metadata: {
-      name: `${generatedImageStreamName || name}`,
-      namespace,
-      labels: { ...defaultLabels, ...userLabels },
-      annotations: defaultAnnotations,
-    },
-  };
-  const imageStream = mergeData(originalImageStream, newImageStream);
-  return verb === 'update'
-    ? k8sUpdate(ImageStreamModel, imageStream)
-    : k8sCreate(ImageStreamModel, newImageStream, dryRun ? dryRunOpt : {});
-};
-
-export const createWebhookSecret = (
-  formData: GitImportFormData,
-  secretType: string,
-  dryRun: boolean,
-): Promise<K8sResourceKind> => {
-  const {
-    name,
-    project: { name: namespace },
-  } = formData;
-
-  const webhookSecret = {
-    apiVersion: 'v1',
-    data: {},
-    kind: 'Secret',
-    metadata: {
-      name: `${name}-${secretType}-webhook-secret`,
-      namespace,
-    },
-    stringData: { WebHookSecretKey: generateSecret() },
-    type: SecretType.opaque,
-  };
-
-  return k8sCreate(SecretModel, webhookSecret, dryRun ? dryRunOpt : {});
-};
 
 export const createOrUpdateBuildResource = (
   buildResourceObj: any,
@@ -192,7 +144,7 @@ export const createOrUpdateBuildResource = (
   let buildStrategyData;
 
   let buildStrategy = buildResourceObj.buildStrategy;
-  let dockerfileLocation = buildResourceObj.dockerfileLocation;
+  let dockerfileLocation = buildResourceObj.dockerStrategy.dockerfileLocation;
 
   const devfileSourceStrategy = {
       kind: 'ImageStreamTag',
@@ -277,6 +229,71 @@ export const createOrUpdateBuildResource = (
     : k8sCreate(BuildConfigModel, buildResource, dryRun ? dryRunOpt : {});
 
 };
+
+export const createOrUpdateImageStream = (
+  formData: GitImportFormData,
+  imageStreamData: K8sResourceKind,
+  dryRun: boolean,
+  appResources: AppResources,
+  verb: K8sVerb = 'create',
+  generatedImageStreamName: string = '',
+): Promise<K8sResourceKind> => {
+  const imageStreamList = appResources?.imageStream?.data;
+  const imageStreamFilterData = _.orderBy(imageStreamList, ['metadata.resourceVersion'], ['desc']);
+  const originalImageStream = (imageStreamFilterData.length && imageStreamFilterData[0]) || {};
+  const {
+    name,
+    project: { name: namespace },
+    application: { name: applicationName },
+    labels: userLabels,
+    git: { url: repository, ref },
+    image: { tag: selectedTag },
+  } = formData;
+  const imageStreamName = imageStreamData && imageStreamData.metadata.name;
+  const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag });
+  const defaultAnnotations = { ...getGitAnnotations(repository, ref), ...getCommonAnnotations() };
+  const newImageStream = {
+    apiVersion: 'image.openshift.io/v1',
+    kind: 'ImageStream',
+    metadata: {
+      name: `${generatedImageStreamName || name}`,
+      namespace,
+      labels: { ...defaultLabels, ...userLabels },
+      annotations: defaultAnnotations,
+    },
+  };
+  const imageStream = mergeData(originalImageStream, newImageStream);
+  return verb === 'update'
+    ? k8sUpdate(ImageStreamModel, imageStream)
+    : k8sCreate(ImageStreamModel, newImageStream, dryRun ? dryRunOpt : {});
+};
+
+export const createWebhookSecret = (
+  formData: GitImportFormData,
+  secretType: string,
+  dryRun: boolean,
+): Promise<K8sResourceKind> => {
+  const {
+    name,
+    project: { name: namespace },
+  } = formData;
+
+  const webhookSecret = {
+    apiVersion: 'v1',
+    data: {},
+    kind: 'Secret',
+    metadata: {
+      name: `${name}-${secretType}-webhook-secret`,
+      namespace,
+    },
+    stringData: { WebHookSecretKey: generateSecret() },
+    type: SecretType.opaque,
+  };
+
+  return k8sCreate(SecretModel, webhookSecret, dryRun ? dryRunOpt : {});
+};
+
+
 
 export const createOrUpdateBuildConfig = (
   formData: GitImportFormData,

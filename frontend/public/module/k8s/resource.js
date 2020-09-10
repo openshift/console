@@ -70,19 +70,6 @@ export const k8sCreate = (kind, data, opts = {}) => {
     data.metadata.name = data.metadata.name.toLowerCase();
   }
 
-  let isMOck = true;
-
-  // if(isMock) {
-
-  //   //build obj here, return 
-  //   const buildResourceObj = {
-  //     apiVersion: "xyz",
-  //     kind: "xyz",
-  //     // ...
-  //   }
-
-  //   return buildResourceObj;
-  // }
 
   return coFetchJSON.post(
     resourceURL(kind, Object.assign({ ns: data.metadata.namespace }, opts)),
@@ -94,6 +81,24 @@ export const devfileCreate = (kind, data, opts = {}) => {
   console.log("********************Huzzah it works!***********************")
   data.metadata = data.metadata || {};
   data.metadata.namespace = data.metadata.namespace || "default";
+
+
+  let isMOck = true;
+
+  if(isMock) {
+
+    //build obj here, return 
+    const buildResourceObj = {
+      apiVersion: 'build.openshift.io/v1',
+      kind: 'BuildConfig',
+      buildStrategy: 'Dockerfile',
+      dockerStrategy : {
+        dockerfileLocation : "abc"
+      }
+    }
+
+    return buildResourceObj;
+  }
   
   let temp = coFetchJSON.post(resourceURL(kind, Object.assign({ ns: data.metadata.namespace }, opts)),
     data,);
