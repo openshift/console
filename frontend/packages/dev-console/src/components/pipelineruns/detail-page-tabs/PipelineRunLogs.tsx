@@ -51,15 +51,15 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
   getSortedTaskRun = (taskRunFromYaml) => {
     const taskRuns = Object.keys(taskRunFromYaml).sort((a, b) => {
       if (_.get(taskRunFromYaml, [a, 'status', 'completionTime'], false)) {
-        return taskRunFromYaml[b].status.completionTime &&
+        return taskRunFromYaml[b].status?.completionTime &&
           new Date(taskRunFromYaml[a].status.completionTime) >
             new Date(taskRunFromYaml[b].status.completionTime)
           ? 1
           : -1;
       }
-      return taskRunFromYaml[b].status.completionTime ||
-        new Date(taskRunFromYaml[a].status.startTime) >
-          new Date(taskRunFromYaml[b].status.startTime)
+      return taskRunFromYaml[b].status?.completionTime ||
+        new Date(taskRunFromYaml[a].status?.startTime) >
+          new Date(taskRunFromYaml[b].status?.startTime)
         ? 1
         : -1;
     });
