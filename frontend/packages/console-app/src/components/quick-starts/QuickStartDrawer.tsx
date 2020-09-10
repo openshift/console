@@ -15,7 +15,6 @@ import {
 } from '@patternfly/react-core';
 import { RootState } from '@console/internal/redux';
 import { AsyncComponent } from '@console/internal/components/utils';
-import { confirmModal } from '@console/internal/components/modals';
 import { useScrollDirection, ScrollDirection } from '@console/shared/';
 import {
   getActiveQuickStartID,
@@ -26,6 +25,7 @@ import { getQuickStartByName } from './utils/quick-start-utils';
 import { QuickStartStatus } from './utils/quick-start-types';
 
 import './QuickStartDrawer.scss';
+import QuickStartCloseModal from './QuickStartCloseModal';
 
 type StateProps = {
   activeQuickStartID: string;
@@ -44,24 +44,24 @@ const QuickStartDrawer: React.FC<QuickStartDrawerProps> = ({
   activeQuickStartStatus,
   onClose,
 }) => {
+  const [modalOpen, setModalOpen] = React.useState<boolean>(false);
   const quickStart = getQuickStartByName(activeQuickStartID);
   const [scrollDirection, handleScrollCallback] = useScrollDirection();
 
   const handleClose = () => {
     if (activeQuickStartStatus === QuickStartStatus.IN_PROGRESS) {
-      return confirmModal({
-        title: 'Are you sure you want to leave the tour?',
-        message: "Any progress you've made will be saved.",
-        btnText: 'Leave',
-        executeFn: () => {
-          onClose();
-          return Promise.resolve();
-        },
-      });
+      setModalOpen(true);
+    } else {
+      onClose();
     }
-
-    return onClose();
   };
+
+  const onModalConfirm = () => {
+    setModalOpen(false);
+    onClose();
+  };
+
+  const onModalCancel = () => setModalOpen(false);
 
   const headerClasses = classNames('co-quick-start-drawer-head', {
     'pf-u-box-shadow-sm-bottom':
@@ -99,11 +99,18 @@ const QuickStartDrawer: React.FC<QuickStartDrawerProps> = ({
   ) : null;
 
   return (
-    <Drawer isExpanded={!!activeQuickStartID} isInline>
-      <DrawerContent panelContent={panelContent}>
-        <DrawerContentBody className="co-quick-start-drawer__body">{children}</DrawerContentBody>
-      </DrawerContent>
-    </Drawer>
+    <>
+      <Drawer isExpanded={!!activeQuickStartID} isInline>
+        <DrawerContent panelContent={panelContent}>
+          <DrawerContentBody className="co-quick-start-drawer__body">{children}</DrawerContentBody>
+        </DrawerContent>
+      </Drawer>
+      <QuickStartCloseModal
+        isOpen={modalOpen}
+        onConfirm={onModalConfirm}
+        onCancel={onModalCancel}
+      />
+    </>
   );
 };
 

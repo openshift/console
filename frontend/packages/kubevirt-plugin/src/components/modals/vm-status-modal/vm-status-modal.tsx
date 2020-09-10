@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Modal } from '@patternfly/react-core';
+import { Modal } from '@console/shared';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { ModalComponentProps } from '@console/internal/components/factory';
 import { ModalFooter } from '../modal/modal-footer';

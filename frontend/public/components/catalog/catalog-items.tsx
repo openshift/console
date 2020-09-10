@@ -1,9 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
-import { Modal } from '@patternfly/react-core';
 import { CatalogItemHeader } from '@patternfly/react-catalog-view-extension';
-import { DEV_CATALOG_FILTER_KEY as filterKey } from '@console/shared';
+import { DEV_CATALOG_FILTER_KEY as filterKey, Modal } from '@console/shared';
 import { history } from '../utils/router';
 import { CatalogTileDetails } from './catalog-item-details';
 import { TileViewPage } from '../utils/tile-view-page';

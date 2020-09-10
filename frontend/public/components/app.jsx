@@ -167,6 +167,7 @@ class App_ extends React.PureComponent {
               <AppContents />
             </ConnectedNotificationDrawer>
           </Page>
+          <div id="modal-container" />
           <CloudShell />
           <GuidedTour />
           <ConsoleNotifier location="BannerBottom" />

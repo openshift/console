@@ -2,7 +2,8 @@ import * as React from 'react';
 import * as cx from 'classnames';
 import { Table, TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { sortable, SortByDirection } from '@patternfly/react-table';
-import { Button, Modal } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
+import { Modal } from '@console/shared';
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
 import { Discoveries, State, Action } from '../state';
 

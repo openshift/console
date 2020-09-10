@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Form, Alert, Modal, Button, pluralize } from '@patternfly/react-core';
+import { Form, Alert, Button, pluralize } from '@patternfly/react-core';
+import { Modal } from '@console/shared';
 import { k8sCreate } from '@console/internal/module/k8s';
 import { LocalVolumeSetModel } from '@console/local-storage-operator-plugin/src/models';
 import {

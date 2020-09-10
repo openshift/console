@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Button, Modal } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
 import { ChartDonut, ChartLabel } from '@patternfly/react-charts';
 
-import { calculateRadius } from '@console/shared';
+import { calculateRadius, Modal } from '@console/shared';
 import { pluralize, convertToBaseValue } from '@console/internal/components/utils/';
 import { NodeModel } from '@console/internal/models';
 import { ListPage } from '@console/internal/components/factory';

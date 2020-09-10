@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import TourStepComponent from '../TourStepComponent';
-import { Popover } from '@console/shared';
-import { Modal } from '@patternfly/react-core';
+import { Popover, Modal } from '@console/shared';
+
 import { Spotlight } from '../Spotlight';
 
 describe('TourStepComponent', () => {
