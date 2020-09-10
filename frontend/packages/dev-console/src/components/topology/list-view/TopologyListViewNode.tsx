@@ -85,7 +85,6 @@ const ObservedTopologyListViewNode: React.FC<TopologyListViewNodeProps & Dispatc
   }
 
   const cells = [];
-  cells.push(badgeCell || <TypedResourceBadgeCell key="type-icon" kind={kind} />);
   cells.push(
     labelCell || (
       <DataListCell
@@ -93,6 +92,7 @@ const ObservedTopologyListViewNode: React.FC<TopologyListViewNodeProps & Dispatc
         key="label"
         id={`${item.getId()}_label`}
       >
+        {badgeCell || <TypedResourceBadgeCell key="type-icon" kind={kind} />}
         {item.getLabel()}
         {alertIndicator}
       </DataListCell>

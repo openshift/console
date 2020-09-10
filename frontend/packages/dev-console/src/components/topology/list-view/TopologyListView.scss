@@ -3,7 +3,7 @@
 @import '~@patternfly/patternfly/sass-utilities/colors';
 
 .odc-topology-list-view {
-  --odc-topology-list-view-type-icon-size: 24px;
+  --odc-topology-list-view-type-icon-size: 16px;
   --odc-topology-list-view-sidebar-width: 550px;
   --pf-c-data-list__item--m-selectable--OutlineOffset: 0;
   background-color: var(--pf-global--palette--white);
@@ -75,20 +75,23 @@
   &__resource-icon__container {
     display: flex;
     align-items: center;
+    margin-right: var(--pf-global--spacer--sm);
   }
   &__resource-icon {
     margin: 2px 0;
   }
-  &__type-icon {
+  &__type-icon-bg {
     background-color: var(--pf-global--palette--white);
     border: solid 1px var(--pf-global--BorderColor--300);
-    border-radius: calc(var(--odc-topology-list-view-type-icon-size) / 2);
+    border-radius: 12px;
     box-shadow: 2px 2px 3px var(--pf-global--BorderColor--100);
-    font-size: var(--odc-topology-list-view-type-icon-size);
-    max-height: var(--odc-topology-list-view-type-icon-size);
-    max-width: var(--odc-topology-list-view-type-icon-size);
     margin-left: var(--pf-global--spacer--xs);
-    padding: 3px;
+    padding: 0 3px 1px;
+  }
+  &__type-icon {
+    font-size: var(--odc-topology-list-view-type-icon-size);
+    height: var(--odc-topology-list-view-type-icon-size);
+    min-width: var(--odc-topology-list-view-type-icon-size);
   }
   &__application {
     margin-top: var(--pf-global--spacer--sm);

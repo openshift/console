@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { DataListCell } from '@patternfly/react-core';
 import { observer } from '@patternfly/react-topology';
 import { isValidUrl } from '@console/shared';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
@@ -34,20 +33,20 @@ const ObservedTypedResourceBadgeCell: React.FC<TypedResourceBadgeCellProps> = ({
   }
 
   const typeIcon = typeIconClass ? (
-    <img
-      className="odc-topology-list-view__type-icon"
-      alt={kind}
-      src={isValidUrl(typeIconClass) ? typeIconClass : getImageForIconClass(typeIconClass)}
-    />
+    <span className="odc-topology-list-view__type-icon-bg">
+      <img
+        className="odc-topology-list-view__type-icon"
+        alt={kind}
+        src={isValidUrl(typeIconClass) ? typeIconClass : getImageForIconClass(typeIconClass)}
+      />
+    </span>
   ) : null;
 
   return (
-    <DataListCell isIcon className="odc-topology-list-view__resource-icon-cell">
-      <span className="odc-topology-list-view__resource-icon__container">
-        {itemIcon}
-        {typeIcon}
-      </span>
-    </DataListCell>
+    <span className="odc-topology-list-view__resource-icon__container">
+      {itemIcon}
+      {typeIcon}
+    </span>
   );
 };
 
