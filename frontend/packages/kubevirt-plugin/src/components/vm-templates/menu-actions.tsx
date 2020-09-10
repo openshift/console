@@ -20,7 +20,11 @@ const vmTemplateCreateVMAction = (kind: K8sKind, obj: TemplateKind) => ({
     mode: VMWizardMode.VM,
     template: getName(obj),
   }),
-  accessReview: { model: VirtualMachineModel, namespace: getNamespace(obj), verb: 'create' },
+  accessReview: asAccessReview(
+    VirtualMachineModel,
+    { metadata: { namespace: getNamespace(obj) } },
+    'create',
+  ),
 });
 
 export const menuActionDeleteVMTemplate = (
