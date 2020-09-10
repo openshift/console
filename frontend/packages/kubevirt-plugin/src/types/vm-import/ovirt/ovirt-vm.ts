@@ -15,6 +15,7 @@ export type OvirtDisk = {
   interface: string;
   name: string;
   size: number;
+  mode: string;
   sdname: string;
   sdid: string;
 };

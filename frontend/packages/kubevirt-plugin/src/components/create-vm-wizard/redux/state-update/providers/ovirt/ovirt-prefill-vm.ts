@@ -20,6 +20,7 @@ import {
   NetworkInterfaceType,
   NetworkType,
   VolumeType,
+  AccessMode,
 } from '../../../../../../constants/vm';
 import { NetworkWrapper } from '../../../../../../k8s/wrapper/vm/network-wrapper';
 import { NetworkInterfaceWrapper } from '../../../../../../k8s/wrapper/vm/network-interface-wrapper';
@@ -49,6 +50,7 @@ export const getDisks = (vm: OvirtVM, storageClassConfigMap: ConfigMapKind): VMW
     const name = alignWithDNS1123(getUniqueName(disk.name) || disk.id);
     const size = convertToHighestUnit(disk.size, BinaryUnit.B);
     const bootable = boot.includes('hd') && disk.bootable;
+    const accessMode = AccessMode.fromString(disk.mode);
 
     if (bootable) {
       bootOrder++;
@@ -74,7 +76,7 @@ export const getDisks = (vm: OvirtVM, storageClassConfigMap: ConfigMapKind): VMW
           unit: size.unit,
         })
         .setVolumeMode(getDefaultSCVolumeMode(storageClassConfigMap))
-        .setAccessModes(getDefaultSCAccessModes(storageClassConfigMap))
+        .setAccessModes(accessMode ? [accessMode] : getDefaultSCAccessModes(storageClassConfigMap))
         .asResource(),
       importData: {
         id: disk.id,
