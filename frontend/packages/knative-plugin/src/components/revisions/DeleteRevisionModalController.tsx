@@ -87,7 +87,7 @@ const Controller: React.FC<ControllerProps> = ({ loaded, resources, revision, ca
 
   const revisionItems = getRevisionItems(revisions);
 
-  const traffic = service?.status?.traffic ?? [{ percent: 0, tag: '', revisionName: '' }];
+  const traffic = service?.spec?.traffic ?? [{ percent: 0, tag: '', revisionName: '' }];
   const deleteTraffic = traffic.find((t) => t.revisionName === revision.metadata.name);
 
   const initialValues: TrafficSplittingType = {
@@ -160,6 +160,7 @@ const Controller: React.FC<ControllerProps> = ({ loaded, resources, revision, ca
           revisionItems={revisionItems}
           deleteRevision={revision}
           showTraffic={deleteTraffic?.percent > 0}
+          cancel={cancel}
         />
       )}
     </Formik>
