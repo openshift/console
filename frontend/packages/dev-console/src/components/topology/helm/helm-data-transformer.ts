@@ -14,7 +14,7 @@ import {
 } from './components/const';
 import { HelmReleaseResourcesMap } from '../../helm/helm-types';
 import { fetchHelmReleases } from '../../helm/helm-utils';
-import { getHelmReleaseKey, WORKLOAD_TYPES } from '../topology-utils';
+import { WORKLOAD_TYPES } from '../topology-utils';
 import {
   addToTopologyDataModel,
   createTopologyNodeData,
@@ -24,6 +24,8 @@ import {
   mergeGroups,
   WorkloadModelProps,
 } from '../data-transforms/transform-utils';
+
+const getHelmReleaseKey = (resource) => `${resource.kind}---${resource.metadata.name}`;
 
 export const isHelmReleaseNode = (
   obj: K8sResourceKind,
@@ -127,13 +129,15 @@ export const getHelmGraphModelFromMap = (
         if (isHelmReleaseNode(resource, helmResourcesMap)) {
           const item = createOverviewItemForType(key, resource, resources);
           const uid = resource?.metadata?.uid;
+          const helmResourcesData = helmResourcesMap[getHelmReleaseKey(resource)];
+          const deploymentsLabels = resource?.metadata?.labels ?? {};
+          const nodeIcon =
+            getImageForIconClass(`icon-${deploymentsLabels['app.openshift.io/runtime']}`) ||
+            getImageForIconClass(`icon-${deploymentsLabels['app.kubernetes.io/name']}`) ||
+            helmResourcesData?.chartIcon ||
+            getImageForIconClass(`icon-helm`);
           helmResources[key].push(uid);
-          const data = createTopologyNodeData(
-            resource,
-            item,
-            TYPE_HELM_WORKLOAD,
-            getImageForIconClass(`icon-openshift`),
-          );
+          const data = createTopologyNodeData(resource, item, TYPE_HELM_WORKLOAD, nodeIcon);
           typedDataModel.nodes.push(
             getTopologyNodeItem(resource, TYPE_HELM_WORKLOAD, data, WorkloadModelProps),
           );

@@ -2,6 +2,8 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Node, isNode } from '@patternfly/react-topology';
 import { listViewNodeComponentFactory } from './listViewComponentFactory';
+import { labelForNodeKind } from './list-view-utils';
+import { getResourceKind } from '../topology-utils';
 
 interface ListElementWrapperProps {
   item: Node;
@@ -29,6 +31,9 @@ const ListElementChildren: React.FC<ListElementWrapperProps> = observer(
       {item
         .getChildren()
         .filter(isNode)
+        .sort((a, b) =>
+          labelForNodeKind(getResourceKind(a)).localeCompare(labelForNodeKind(getResourceKind(b))),
+        )
         .map((e) => (
           <ListElementWrapper
             key={e.getId()}

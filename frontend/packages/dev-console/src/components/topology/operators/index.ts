@@ -13,6 +13,11 @@ export const getIsOperatorResource = () =>
     (m) => m.isOperatorResource,
   );
 
+export const getDataModelReconciler = () =>
+  import(
+    './operatorsDataModelReconciler' /* webpackChunkName: "operators-topology-components" */
+  ).then((m) => m.operatorsDataModelReconciler);
+
 export const getTopologyFilters = () =>
   import('./operatorFilters' /* webpackChunkName: "operators-topology-components" */).then(
     (m) => m.getTopologyFilters,

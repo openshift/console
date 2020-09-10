@@ -85,8 +85,8 @@
     border-radius: calc(var(--odc-topology-list-view-type-icon-size) / 2);
     box-shadow: 2px 2px 3px var(--pf-global--BorderColor--100);
     font-size: var(--odc-topology-list-view-type-icon-size);
-    height: var(--odc-topology-list-view-type-icon-size);
-    width: var(--odc-topology-list-view-type-icon-size);
+    max-height: var(--odc-topology-list-view-type-icon-size);
+    max-width: var(--odc-topology-list-view-type-icon-size);
     margin-left: var(--pf-global--spacer--xs);
     padding: 3px;
   }
@@ -127,8 +127,18 @@
       }
     }
   }
-  .odc-topology-list-view__group-children .odc-topology-list-view__item-row {
-    padding-left: var(--pf-global--spacer--2xl);
+  .odc-topology-list-view__group-children {
+    .odc-topology-list-view__item-row {
+      padding-left: var(--pf-global--spacer--2xl);
+    }
+    .odc-topology-list-view__group-children {
+      .odc-topology-list-view__item-row {
+        padding-left: var(--pf-global--spacer--3xl);
+      }
+      .odc-topology-list-view__group-children .odc-topology-list-view__item-row {
+        padding-left: var(--pf-global--spacer--4xl);
+      }
+    }
   }
 
   // PF Overrides

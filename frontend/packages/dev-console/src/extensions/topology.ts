@@ -7,6 +7,7 @@ import {
   TopologyDisplayOption,
   CreateConnectionGetter,
   ViewComponentFactory,
+  TopologyDataModelReconciler,
 } from '../components/topology';
 
 namespace ExtensionProperties {
@@ -28,6 +29,8 @@ namespace ExtensionProperties {
     getDataModel: () => Promise<TopologyDataModelGetter>;
     /** Getter for function to determine if a resource is depicted by this model factory */
     isResourceDepicted: () => Promise<TopologyDataModelDepicted>;
+    /** Getter for function to reconcile data model after all extensions' models have loaded */
+    getDataModelReconciler?: () => Promise<TopologyDataModelReconciler>;
   }
 
   export interface TopologyCreateConnector {

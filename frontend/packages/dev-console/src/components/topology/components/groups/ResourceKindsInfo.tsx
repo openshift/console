@@ -18,6 +18,9 @@ type ResourceKindsInfoProps = {
 const ResourceKindsInfo: React.FC<ResourceKindsInfoProps> = ({ groupResources, emptyValue }) => {
   const resourcesData = {};
   _.forEach(groupResources, (node: OdcNodeModel) => {
+    if (!node) {
+      return;
+    }
     const kind = node.resourceKind || node.resource?.kind;
     resourcesData[kind] = [...(resourcesData[kind] ? resourcesData[kind] : []), node.resource];
   });

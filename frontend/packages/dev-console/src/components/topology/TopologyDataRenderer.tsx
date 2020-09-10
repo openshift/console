@@ -96,8 +96,7 @@ export const ConnectedTopologyDataRenderer: React.FC<TopologyDataRendererProps &
     const workloadResources = dataModelContext.getWorkloadResources(resources);
 
     // Get model from each extension
-    const extensions = dataModelContext.getExtensions();
-    const depicters = Object.keys(extensions).map((key) => extensions[key].dataModelDepicter);
+    const depicters = dataModelContext.dataModelDepicters;
     dataModelContext
       .getExtensionModels(resources)
       .then((extensionsModel) => {
@@ -110,6 +109,7 @@ export const ConnectedTopologyDataRenderer: React.FC<TopologyDataRendererProps &
           trafficData,
           monitoringAlerts,
         );
+        dataModelContext.reconcileModel(fullModel, resources);
         dataModelContext.model = fullModel;
         setModel(fullModel);
       })

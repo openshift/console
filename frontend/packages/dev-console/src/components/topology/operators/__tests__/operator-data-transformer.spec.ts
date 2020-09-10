@@ -7,13 +7,14 @@ import {
   TopologyDisplayFilterType,
 } from '../../topology-types';
 import { MockResources, TEST_KINDS_MAP } from '../../__tests__/topology-test-data';
-import { TYPE_OPERATOR_BACKED_SERVICE, TYPE_OPERATOR_WORKLOAD } from '../components/const';
+import { TYPE_OPERATOR_BACKED_SERVICE } from '../components/const';
 import {
   DEFAULT_TOPOLOGY_FILTERS,
   EXPAND_GROUPS_FILTER_ID,
   SHOW_GROUPS_FILTER_ID,
 } from '../../filters/const';
 import {
+  getOperatorGroupResources,
   getOperatorTopologyDataModel,
   getServiceBindingEdges,
 } from '../operators-data-transformer';
@@ -33,14 +34,17 @@ import {
   sbrBackingServiceSelector,
   sbrBackingServiceSelectors,
 } from '../../__tests__/service-binding-test-data';
-import { TYPE_SERVICE_BINDING } from '../../components';
+import { TYPE_SERVICE_BINDING, TYPE_WORKLOAD } from '../../components';
+import { operatorsDataModelReconciler } from '../operatorsDataModelReconciler';
 
 const filterers = [applyOperatorDisplayOptions];
 
 const getTransformedTopologyData = (mockData: TopologyDataResources) => {
   const workloadResources = getWorkloadResources(mockData, TEST_KINDS_MAP, WORKLOAD_TYPES);
   return getOperatorTopologyDataModel('test-project', mockData, workloadResources).then((model) => {
-    return baseDataModelGetter(model, 'test-project', mockData, workloadResources, []);
+    const fullModel = baseDataModelGetter(model, 'test-project', mockData, workloadResources, []);
+    operatorsDataModelReconciler(fullModel, mockData);
+    return fullModel;
   });
 };
 
@@ -137,14 +141,16 @@ describe('operator data transformer ', () => {
     });
     const newModel = updateModelFromFilters(graphData, filters, ALL_APPLICATIONS_KEY, filterers);
     expect(newModel.nodes.filter((n) => n.type === TYPE_OPERATOR_BACKED_SERVICE)).toHaveLength(1);
-    expect(newModel.nodes.filter((n) => n.type === TYPE_OPERATOR_WORKLOAD)).toHaveLength(1);
+    expect(newModel.nodes.filter((n) => n.type === TYPE_WORKLOAD)).toHaveLength(1);
   });
-  it('should support single  binding service selectors', async () => {
-    const topologyTransformedData = await getTransformedTopologyData(mockResources);
-    const deployments = sbrBackingServiceSelector.deployments.data;
-    const sbrs = sbrBackingServiceSelector.serviceBindingRequests.data;
 
-    expect(getServiceBindingEdges(deployments[0], topologyTransformedData.nodes, sbrs)).toEqual([
+  it('should support single  binding service selectors', async () => {
+    const deployments = sbrBackingServiceSelector.deployments.data;
+    const obsGroups = getOperatorGroupResources(mockResources);
+    const sbrs = sbrBackingServiceSelector.serviceBindingRequests.data;
+    const installedOperators = mockResources?.clusterServiceVersions?.data;
+
+    expect(getServiceBindingEdges(deployments[0], obsGroups, sbrs, installedOperators)).toEqual([
       {
         id: `uid-app_3006a8f3-6e2b-4a19-b37e-fbddd9a41f51`,
         type: TYPE_SERVICE_BINDING,
@@ -157,11 +163,12 @@ describe('operator data transformer ', () => {
   });
 
   it('should support multiple binding service selectors', async () => {
-    const topologyTransformedData = await getTransformedTopologyData(mockResources);
     const deployments = sbrBackingServiceSelectors.deployments.data;
+    const obsGroups = getOperatorGroupResources(mockResources);
     const sbrs = sbrBackingServiceSelectors.serviceBindingRequests.data;
+    const installedOperators = mockResources?.clusterServiceVersions?.data;
 
-    expect(getServiceBindingEdges(deployments[0], topologyTransformedData.nodes, sbrs)).toEqual([
+    expect(getServiceBindingEdges(deployments[0], obsGroups, sbrs, installedOperators)).toEqual([
       {
         id: `uid-app_3006a8f3-6e2b-4a19-b37e-fbddd9a41f51`,
         type: TYPE_SERVICE_BINDING,
