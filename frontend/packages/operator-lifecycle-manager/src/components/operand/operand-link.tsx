@@ -4,20 +4,22 @@ import { referenceForModel, K8sResourceKind, referenceFor } from '@console/inter
 import { ResourceIcon } from '@console/internal/components/utils';
 import { ClusterServiceVersionModel } from '../../models';
 
+export const csvNameFromWindow = () =>
+  window.location.pathname
+    .split('/')
+    .find(
+      (part, i, allParts) =>
+        allParts[i - 1] === referenceForModel(ClusterServiceVersionModel) ||
+        allParts[i - 1] === ClusterServiceVersionModel.plural,
+    );
+
 export const OperandLink: React.SFC<OperandLinkProps> = (props) => {
   const { namespace, name } = props.obj.metadata;
-  const csvName = () =>
-    window.location.pathname
-      .split('/')
-      .find(
-        (part, i, allParts) =>
-          allParts[i - 1] === referenceForModel(ClusterServiceVersionModel) ||
-          allParts[i - 1] === ClusterServiceVersionModel.plural,
-      );
+  const csvName = props.csvName || csvNameFromWindow();
 
   const reference = referenceFor(props.obj);
   const to = namespace
-    ? `/k8s/ns/${namespace}/${ClusterServiceVersionModel.plural}/${csvName()}/${reference}/${name}`
+    ? `/k8s/ns/${namespace}/${ClusterServiceVersionModel.plural}/${csvName}/${reference}/${name}`
     : `/k8s/cluster/${reference}/${name}`;
   return (
     <span className="co-resource-item">
@@ -31,6 +33,7 @@ export const OperandLink: React.SFC<OperandLinkProps> = (props) => {
 
 export type OperandLinkProps = {
   obj: K8sResourceKind;
+  csvName?: string;
 };
 
 OperandLink.displayName = 'OperandLink';

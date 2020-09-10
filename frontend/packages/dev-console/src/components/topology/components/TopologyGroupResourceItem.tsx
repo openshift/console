@@ -5,11 +5,13 @@ import { K8sResourceKind, referenceFor, modelFor } from '@console/internal/modul
 type TopologyGroupResourceItemProps = {
   item: K8sResourceKind;
   releaseNamespace: string;
+  linkForResource?: (obj: K8sResourceKind) => React.ReactElement;
 };
 
 const TopologyGroupResourceItem: React.FC<TopologyGroupResourceItemProps> = ({
   item,
   releaseNamespace,
+  linkForResource,
 }) => {
   const {
     metadata: { name, namespace },
@@ -17,13 +19,15 @@ const TopologyGroupResourceItem: React.FC<TopologyGroupResourceItemProps> = ({
   const kind = referenceFor(item);
   const model = modelFor(kind);
   const resourceNamespace = model.namespaced ? namespace || releaseNamespace : null;
-
+  const link = linkForResource ? (
+    linkForResource(item)
+  ) : (
+    <ResourceLink kind={kind} name={name} namespace={resourceNamespace} />
+  );
   return (
     <li className="list-group-item container-fluid">
       <div className="row">
-        <span className="col-xs-12">
-          <ResourceLink kind={kind} name={name} namespace={resourceNamespace} />
-        </span>
+        <span className="col-xs-12">{link}</span>
       </div>
     </li>
   );
