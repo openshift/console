@@ -17,8 +17,12 @@ const QuickStartTileDescription: React.FC<QuickStartTileDescriptionProps> = ({
       {description}
     </Text>
     <div className="co-quick-start-tile-description">
-      <Text component={TextVariants.h5}>Prerequisites</Text>
-      <Text component={TextVariants.small}>{prerequisites}</Text>
+      {prerequisites && (
+        <>
+          <Text component={TextVariants.h5}>Prerequisites</Text>
+          <Text component={TextVariants.small}>{prerequisites}</Text>
+        </>
+      )}
     </div>
   </>
 );
