@@ -118,15 +118,18 @@ const stateToProps = ({ k8s }, { resources }) => {
     (models, { kind }) => models.set(kind, k8s.getIn(['RESOURCES', 'models', kind])),
     ImmutableMap(),
   );
-  const loaded = (r) =>
-    r.optional ||
-    k8s.getIn([
-      makeReduxID(
-        k8sModels.get(r.kind),
-        makeQuery(r.namespace, r.selector, r.fieldSelector, r.name),
-      ),
-      'loaded',
-    ]);
+  const loaded = (r) => {
+    return (
+      (r.optional && _.isUndefined(k8sModels.get(r.kind))) ||
+      k8s.getIn([
+        makeReduxID(
+          k8sModels.get(r.kind),
+          makeQuery(r.namespace, r.selector, r.fieldSelector, r.name),
+        ),
+        'loaded',
+      ])
+    );
+  };
 
   return {
     k8sModels,
