@@ -2,6 +2,7 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import detector from 'i18next-browser-languagedetector';
 import httpBackend from 'i18next-http-backend';
+import Pseudo from 'i18next-pseudo';
 
 // Load moment.js locales (en is default and always loaded)
 import 'moment/locale/zh-cn';
@@ -11,6 +12,7 @@ import moment from 'moment';
 const { FALLBACK_LOCALE } = require('./i18next-parser.config');
 
 i18n
+  .use(new Pseudo({ enabled: true, wrapped: true }))
   // fetch json files
   // learn more: https://github.com/i18next/i18next-http-backend
   .use(httpBackend)
@@ -33,6 +35,7 @@ i18n
       ns: ['public', 'nav'],
       defaultNS: 'public',
       nsSeparator: '~',
+      postProcess: ['pseudo'],
       interpolation: {
         format: function(value, format, lng, options) {
           if (format === 'number') {
