@@ -120,7 +120,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
       <g
         ref={hoverRef}
         onClick={onSelect}
-        onContextMenu={editAccess ? onContextMenu : null}
+        onContextMenu={onContextMenu}
         className={classNames('odc-knative-service', {
           'is-dragging': dragging || labelDragging,
           'is-highlight': canDrop || edgeDragging,

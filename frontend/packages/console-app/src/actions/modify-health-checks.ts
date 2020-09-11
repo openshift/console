@@ -1,6 +1,11 @@
 import * as _ from 'lodash';
-import { K8sKind, K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
-import { KebabOption } from '@console/internal/components/utils';
+import {
+  K8sKind,
+  K8sResourceKind,
+  referenceFor,
+  AccessReviewResourceAttributes,
+} from '@console/internal/module/k8s';
+import { KebabOption, checkAccess } from '@console/internal/components/utils';
 
 const healthChecksAdded = (resource: K8sResourceKind): boolean => {
   const containers = resource?.spec?.template?.spec?.containers;
@@ -21,6 +26,18 @@ const healthChecksUrl = (model: K8sKind, obj: K8sResourceKind): string => {
   return `/k8s/ns/${namespace}/${resourceKind}/${name}/containers/${containerName}/health-checks`;
 };
 
+const canEditHealthCheck = async (accessReview: AccessReviewResourceAttributes) => {
+  let canEdit: boolean;
+  try {
+    const result = await checkAccess(accessReview);
+    canEdit = result.status?.allowed;
+  } catch {
+    canEdit = false;
+  }
+
+  return canEdit;
+};
+
 export const AddHealthChecks = (model: K8sKind, obj: K8sResourceKind): KebabOption => {
   return {
     label: 'Add Health Checks',
@@ -37,31 +54,20 @@ export const AddHealthChecks = (model: K8sKind, obj: K8sResourceKind): KebabOpti
 };
 
 export const EditHealthChecks = (model: K8sKind, obj: K8sResourceKind): KebabOption => {
-  return {
-    label: 'Edit Health Checks',
-    hidden: !healthChecksAdded(obj),
-    href: healthChecksUrl(model, obj),
-    accessReview: {
-      group: model.apiGroup,
-      resource: model.plural,
-      name: obj.metadata.name,
-      namespace: obj.metadata.namespace,
-      verb: 'update',
-    },
-  };
-};
-
-export const ViewHealthChecks = (model: K8sKind, obj: K8sResourceKind): KebabOption => {
   const accessReview = {
     group: model.apiGroup,
     resource: model.plural,
     name: obj.metadata.name,
     namespace: obj.metadata.namespace,
   };
+  const editAccess = canEditHealthCheck({ ...accessReview, verb: 'update' });
   return {
-    label: 'View Health Checks',
-    hidden: false,
+    label: `${editAccess ? 'Edit' : 'View'} Health Checks`,
+    hidden: !healthChecksAdded(obj),
     href: healthChecksUrl(model, obj),
-    accessReview: { ...accessReview, verb: 'get' },
+    accessReview: {
+      ...accessReview,
+      verb: 'get',
+    },
   };
 };
