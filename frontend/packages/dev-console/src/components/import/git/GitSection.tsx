@@ -52,8 +52,7 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, buildStrategy }) =>
       const isDevfilePresent = gitService && (await gitService.isDevfilePresent());
       const DevfileContents = gitService && (await gitService.getDevfileContent());
       const devfileParser = new DevfileParser(DevfileContents);
-      const DevfileVersion = await devfileParser.getDevfileVersion(DevfileContents)
-
+      
       setFieldValue('git.isUrlValidating', false);
       // do something extra if Devfile is present? What should it do?
       // is there a way we can detect if the build strategy type is for devfiles here?
@@ -61,6 +60,7 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, buildStrategy }) =>
       // because otherwise it will be useless if it isn't checking the build strategy
       if (buildStrategy === "Devfile" ) {
         if (isReachable && isDevfilePresent){
+          const DevfileVersion = await devfileParser.getDevfileVersion(DevfileContents)
           if (DevfileVersion === "2.1.0"){
             gitRepoName && !values.name && setFieldValue('name', gitRepoName);
             gitRepoName &&
@@ -69,13 +69,19 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, buildStrategy }) =>
             setFieldValue('application.name', `${gitRepoName}-app`);
             setFieldValue("devfile.devfilePath", `${url}/devfile.yaml`)
             setFieldValue("devfile.devfileContent", DevfileContents)
+            setValidated(ValidatedOptions.success);
           }
           else {
-            console.error("***** INVALID DEVFILE VERSION**************")
+            setValidated(ValidatedOptions.warning);
+            // console.error("***** INVALID DEVFILE VERSION**************")
           }
         }
         else if (isReachable && !isDevfilePresent){
-          console.log("*************Repo is reachable but devfile not present**********************");
+          setValidated(ValidatedOptions.warning);
+          // console.log("*************Repo is reachable but devfile not present**********************");
+        }
+        else {
+          setValidated(ValidatedOptions.error);
         }
       }
       else if (isReachable) {
@@ -173,6 +179,9 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, buildStrategy }) =>
     }
     if (validated === ValidatedOptions.error) {
       return 'Git repository is not reachable.';
+    }
+    if (validated === ValidatedOptions.warning) {
+      return 'Valid URL but devfile buildguidance not available.';
     }
     return '';
   };

@@ -98,39 +98,15 @@ export const devfileFlow = (
   
     let buildResourceObj =  devfileCreate(null, devfileData, dryRun ? dryRunOpt : {});
 
-<<<<<<< HEAD
-    requests.push(
-      createOrUpdateBuildResource(
-        buildResourceObj,
-        formData,
-        imageStream,
-        dryRun,
-        _.get(appResources, 'buildConfig.data'),
-        verb,
-        generatedImageStreamName,
-      ),
-      
-    );
-
-    // return Promise.all(requests);
-    return  createOrUpdateBuildResource(
-=======
-    return createOrUpdateBuildResource (
->>>>>>> f0478f9b21c2ec2a847462db5d1308d867338616
+    let temp = createOrUpdateBuildResource (
       buildResourceObj,
       formData,
       imageStream,
       dryRun,
       _.get(appResources, 'buildConfig.data'),
       verb,
-<<<<<<< HEAD
-      generatedImageStreamName,
-    )
-
-    // call createOrUpdateBuildResouce --> pass buildResourceObj
-=======
       generatedImageStreamName,)
->>>>>>> f0478f9b21c2ec2a847462db5d1308d867338616
+    return temp;
 }
 
 export const createOrUpdateBuildResource = (
@@ -162,13 +138,16 @@ export const createOrUpdateBuildResource = (
 
   let buildStrategy = buildResourceObj.buildStrategy;
   let dockerfileLocation = buildResourceObj.dockerStrategy.dockerfileLocation;
-
-  const devfileSourceStrategy = {
+  let devfileSourceStrategy;
+  if(buildStrategy === 's2i') {
+    devfileSourceStrategy = {
       kind: 'ImageStreamTag',
       name: buildResourceObj.sourceStrategy.name,
       namespace: buildResourceObj.sourceStrategy.namespace,
-  };
+    };
 
+  }
+  
   switch (buildStrategy) {
     case 'Dockerfile':
       buildStrategyData = {
