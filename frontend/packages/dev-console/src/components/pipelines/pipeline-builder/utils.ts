@@ -1,6 +1,7 @@
 import { history, resourcePathFromModel } from '@console/internal/components/utils';
 import { apiVersionForModel, referenceForModel } from '@console/internal/module/k8s';
-import { ClusterTaskModel, PipelineModel } from '../../../models';
+import { getRandomChars } from '@console/shared';
+import { PipelineModel, TaskModel } from '../../../models';
 import {
   Pipeline,
   PipelineResourceTask,
@@ -29,15 +30,28 @@ export const taskParamIsRequired = (param: PipelineResourceTaskParam): boolean =
   return !('default' in param);
 };
 
+export const safeName = (reservedNames: string[], desiredName: string): string => {
+  if (reservedNames.includes(desiredName)) {
+    const newName = `${desiredName}-${getRandomChars(3)}`;
+    if (reservedNames.includes(newName)) {
+      return safeName(reservedNames, desiredName);
+    }
+    return newName;
+  }
+  return desiredName;
+};
+
 export const convertResourceToTask = (
+  usedNames: string[],
   resource: PipelineResourceTask,
   runAfter?: string[],
 ): PipelineTask => {
+  const kind = resource.kind ?? TaskModel.kind;
   return {
-    name: resource.metadata.name,
+    name: safeName(usedNames, resource.metadata.name),
     runAfter,
     taskRef: {
-      kind: resource.kind === ClusterTaskModel.kind ? ClusterTaskModel.kind : undefined,
+      kind,
       name: resource.metadata.name,
     },
     params: getTaskParameters(resource).map((param) => ({
