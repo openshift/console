@@ -282,24 +282,12 @@ export const TopologyView: React.FC<ComponentProps> = ({
   React.useEffect(() => {
     if (filteredModel) {
       visualization.fromModel(filteredModel);
-      let selectedItem = selectedIds.length ? visualization.getElementById(selectedIds[0]) : null;
+      const selectId = selectedIds.length ? selectedIds[0] : queryParams.get('selectId');
+      const selectedItem = selectId ? visualization.getElementById(selectId) : null;
       if (!selectedItem || !selectedItem.isVisible()) {
         onSelect([]);
-      } else {
-        const selectId = queryParams.get('selectId');
-        if (selectId) {
-          selectedItem = visualization.getElementById(selectId);
-          if (selectedItem && selectedItem.isVisible()) {
-            setSelectedIds([selectId]);
-            const selectTab = queryParams.get('selectTab');
-            if (selectTab) {
-              onSelectTab(selectTab);
-            }
-          } else {
-            onSelect([]);
-          }
-        }
-        removeQueryArgument('selectTab');
+      } else if (!selectedIds.length) {
+        setSelectedIds([selectId]);
       }
       if (showGraphView) {
         if (groupsShown && showGroupsRef.current === false) {
