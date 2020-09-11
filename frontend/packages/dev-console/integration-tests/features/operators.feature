@@ -16,7 +16,8 @@ Scenario: OpenShift Pipeline operator subscription page : P-01-TC01
 
 @regression, @smoke
 Scenario: Install the Pipeline Operator from Operator Hub page : P-01-TC02
-   Given user is at OpenShift Pipeline Operator subscription page
+   Given user executed command "oc apply -f https://gist.githubusercontent.com/nikhil-thomas/f6069b00b0e3b0359ae1cbdb929a04d6/raw/7b19be0c52355d041bf3d6a883db06b578f15f0d/openshift-pipelines-early-release-catalog-source.yaml"
+   And user is at OpenShift Pipeline Operator subscription page
    When user installs the pipeline operator with default values
    Then user will see a modal with title "OpenShift Pipelines Operator"
    And user will see a View Operator button
@@ -25,7 +26,7 @@ Scenario: Install the Pipeline Operator from Operator Hub page : P-01-TC02
 @regression, @smoke
 Scenario: Install the Serverless Operator from Operator Hub page : Kn-01-TC01, Kn-01-TC02
    Given user is at OpenShift Serverless Operator subscription page
-   When user installs the Serverless operator with default values
+   When user installs the OpenShift Serverless operator with default values
    Then user will see a modal with title "OpenShift Serverless Operator"
    And user will see a View Operator button
    And user will see serverless option on left side navigation menu
@@ -44,21 +45,21 @@ Scenario: Install the knative eventing operator : Kn-07-TC01, Kn-07-TC02
 
 @regression, @smoke
 Scenario: Install the knative apache camel operator : Kn-08-TC01
-   Given user has installed Serverless and eventing operator
+   Given user has installed OpenShift Serverless and eventing operator
    And user is at Operator Hub page with the header name "OperatorHub"
    When user search and installs the knative Camel operator with default values
    Then user will see a modal with title "knative Apache Camel Operator"
    And user will see a View Operator button
 
 
-@regression, @smoke, @manual
+@regression, @smoke
 Scenario: Install the dynamic event operator : Kn-09-TC01, Kn-09-TC02
    Given user has installed OpenShift Serverless Operator
    When user executes commands from cli as "kubectl apply -f https://github.com/knative/eventing-contrib/releases/download/v0.14.1/github.yaml"
    And user navigates to Add page
-   And user clicks on "Event sources" card
+   And user clicks on "Event source" card
    Then user will be redirected to Event Sources page
-   And GitHub Source is displayed in enters section
+   And GitHub Source is displayed in types section
 
 
 @regression, @smoke

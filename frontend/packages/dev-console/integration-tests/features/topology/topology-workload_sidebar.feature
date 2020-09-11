@@ -12,7 +12,7 @@ Scenario Outline: Sidebar for workload: T-05-TC01
    When user clicks on workload "<workload_name>"
    Then user can see sidebar opens with Resources tab selected by default
    And user can see sidebar Details, Resources and Monitoring tabs
-   And user verifies name of the node "<workload_name>" and Action menu present on top of the sidebar
+   And user verifies name of the node "<workload_name>" and Action drop down present on top of the sidebar
    And user is able to see health check notifiation
    And user can see close button
    

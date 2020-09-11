@@ -189,9 +189,9 @@ Scenario Outline: Create a git workload with advanced option "Health Checks" : A
    When user enters Git Repo url as "<git_url>"
    And user enters name as "<name>" in General section
    And user clicks "Health Checks" link in Advanced Options section
-   And fill the Readiness Probe details
-   And fill the Liveness Probe details
-   And fill the Startup Probe details
+   And user fills the Readiness Probe details
+   And user fills the Liveness Probe details
+   And user fills the Startup Probe details
    And user clicks Create button on Add page
    Then user will be redirected to Topology page
 

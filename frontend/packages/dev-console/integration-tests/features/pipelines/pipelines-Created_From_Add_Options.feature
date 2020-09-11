@@ -11,7 +11,7 @@ Background:
 Scenario: From Git Page pipelines section: P-01-TC03
    Given user is at Add page
    When user clicks From Git card on the Add page
-   Then user will be redirected to Import from git page
+   Then user will be redirected to Import from git form
    And pipeline section is displayed with message "Select a builder image and resource to see if there is a pipeline template available for this runtime."
 
 
@@ -19,7 +19,7 @@ Scenario: From Git Page pipelines section: P-01-TC03
 Scenario: From Dockerfile Page Pipelines section : P-01-TC04
    Given user is at Add page
    When user clicks From Dockerfile card on the Add page
-   Then user will be redirected to Import from git page
+   Then user will be redirected to Import from Dockerfile form
    And Add pipeline section is displayed
 
 

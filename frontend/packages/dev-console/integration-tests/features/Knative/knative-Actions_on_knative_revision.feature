@@ -51,7 +51,7 @@ Scenario: Add labels to existing labels list and cancel the activity : Kn-03-TC0
    And user is at the Topolgy page
    When user selects "Edit Labels" option from knative revision context menu
    And user adds the label "app=label" to existing labels list in Edit Labels modal
-   And clicks cancel button on the "Edit Labels" modal
+   And user clicks cancel button on the "Edit Labels" modal
    Then user will not see the label "app-label" in the Details tab of the Sidebar of "nodejs-ex-git-2"
 
 
@@ -73,9 +73,9 @@ Scenario Outline: Add annotation to the existing annonations list : Kn-03-TC07
    And number of annotations are "5" present in revision side bar details of service "nodejs-ex-git-2"
    When user right clicks on the revision of knative service "nodejs-ex-git-2" to open the context menu
    And user selects "Edit Annotaions" option from knative revision context menu
-   And clicks Add button on the Edit Annotaions modal
-   And enters annotation key as "serving.knative.dev/creator"
-   And enters annotation value as "kube:admin"
+   And user clicks Add button on the Edit Annotaions modal
+   And user enters annotation key as "serving.knative.dev/creator"
+   And user enters annotation value as "kube:admin"
    And user clicks the save button on the "Edit Annotaions" modal
    Then number of annotaions increased to "6" in revision side bar details of service "nodejs-ex-git-2"
 
@@ -86,8 +86,8 @@ Scenario: perform cancel action on Edit Annotations : Kn-03-TC09
    And user is at the Topolgy page
    And number of annotations are "6" present in side bar - details tab- annotation section
    When user selects "Edit Annotations" option from knative revision context menu
-   And click on "remove" icon for the annotation with key "serving.knative.dev/creator" present in "Edit Annotaions" modal
-   And clicks cancel button on the "Edit Annotaions" modal
+   And user clicks on "remove" icon for the annotation with key "serving.knative.dev/creator" present in "Edit Annotaions" modal
+   And user clicks cancel button on the "Edit Annotaions" modal
    Then verify the number of annotaions equal to "6" in side bar details
 
 
@@ -96,7 +96,7 @@ Scenario Outline: Remove annotation from existing annonations list : Kn-03-TC08
    And user is at the Topolgy page
    And number of annotations are "6" present in side bar - details tab
    When user selects "Edit Annotaions" option from knative revision context menu
-   And click on "remove" icon for the annotation with key "<key_name>" present in "Edit Annotaions" modal
+   And user clicks on "remove" icon for the annotation with key "<key_name>" present in "Edit Annotaions" modal
    And user clicks the save button on the "Edit Annotaions" modal
    Then verify the number of annotaions decreased to "5" in side bar details
 
@@ -120,7 +120,7 @@ Scenario: Update the revision detials : Kn-03-TC11
    Given user has created knative service "nodejs-ex-git-2"
    And user is at the Topolgy page
    When user selects "Edit Revision" option from knative revision context menu
-   And modify the Yaml file of the Revision details page
+   And user modifies the Yaml file of the Revision details page
    And user clicks "save" button on Revision Yaml page
    Then the message display as "{revision name} has been updated to version {nnnnnn}"
    And another message display as "This object has been updated."
