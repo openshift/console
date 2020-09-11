@@ -64,7 +64,7 @@ export const UploadPVCPopover: React.FC<PVCUploadStatusProps> = ({ pvc }) => {
       case UPLOAD_STATUS.UPLOADING:
         return {
           title: `Uploading`,
-          body: 'Please do not close this window, you can keep navigating the app freely.',
+          body: "Please don't close this browser tab until the upload is complete.",
           icon: <InProgressIcon className="co-icon-and-text__icon" />,
         };
       case UPLOAD_STATUS.SUCCESS:

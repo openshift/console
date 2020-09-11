@@ -376,8 +376,8 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
               inputID="request-size-input"
             />
             <p className="help-block" id="request-size-help">
-              Ensure your PVC size covers the requirements of the uncompressed image and any other
-              space requirements
+              Ensure that the Persistent Volume Claim is larger than the uncompressed image and meets any other
+              space requirements.
             </p>
           </SplitItem>
         </Split>

@@ -91,7 +91,7 @@ const AllocatingStatus: React.FC = () => (
       Allocating Resources
     </Title>
     <EmptyStateBody>
-      Please wait, once the Data Volume has been created The data will start uploading into this
+      Please wait. After the Data Volume is created the data will start uploading into the
       Persistent Volume Claim.
     </EmptyStateBody>
   </>
@@ -101,7 +101,7 @@ const CancellingStatus: React.FC = () => (
   <>
     <EmptyStateIcon icon={Spinner} />
     <Title headingLevel="h4" size="lg">
-      Cancelling Upload
+      Canceling Upload
     </Title>
     <EmptyStateBody>Resources are being removed, please wait.</EmptyStateBody>
   </>
@@ -138,15 +138,15 @@ const UploadingStatus: React.FC<UploadingStatusProps> = ({
               className="kv--create-upload__alert"
               isInline
               variant={AlertVariant.warning}
-              title="Please don’t close this browser tab"
+              title="Please don't close this browser tab"
             >
-              Closing it will cause the upload to fail. You may still navigate the console.
+              Closing this tab will cause the upload to fail. Please wait until it completes.
             </Alert>
           </StackItem>
         )}
         <StackItem>
-          Persistent Volume Claim has been created and your data source is now being uploaded to it.
-          Once the uploading is completed the Persisten Volume Claim will become available
+          A Persistent Volume Claim has been created and your data source is now being uploaded to it.
+          Once the upload is complete the Persistent Volume Claim will become available.
         </StackItem>
         <StackItem>
           <Progress value={upload?.progress} variant={getProgressVariant(upload?.uploadStatus)} />
