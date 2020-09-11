@@ -2,111 +2,106 @@ Feature: Operators
     As a user I want to install or uninstall the operators
 
 Background:
-    Given user logged into the openshift application
-    And user is at admin perspecitve
+   Given user is at administrator perspective
 
-@regression, @smoke
+
+@regression
 Scenario: OpenShift Pipeline operator subscription page : P-01-TC01
-   Given user is at Operator Hub page with the header name "Operator Hub"
+   Given user is at Operator Hub page with the header name "OperatorHub"
    When user searches for "OpenShift Pipelines Operator"
-   And clicks "OpenShift Pipelines Operator" card on Operator Hub page
-   And click install button present on the right side pane
-   Then OpenShift Pipeline operator will be displayed
+   And user clicks OpenShift Pipelines Operator card on Operator Hub page
+   And user clicks install button present on the right side bar
+   Then OpenShift Pipeline operator subscription page will be displayed
 
 
 @regression, @smoke
 Scenario: Install the Pipeline Operator from Operator Hub page : P-01-TC02
-   Given user is at OpenShift Pipeline Operator subscription page
+   Given user executed command "oc apply -f https://gist.githubusercontent.com/nikhil-thomas/f6069b00b0e3b0359ae1cbdb929a04d6/raw/7b19be0c52355d041bf3d6a883db06b578f15f0d/openshift-pipelines-early-release-catalog-source.yaml"
+   And user is at OpenShift Pipeline Operator subscription page
    When user installs the pipeline operator with default values
-   Then page redirects to Installed operators
-   And page will contain OpenShift Pipeline Operator 
-
-
-@regression, @smoke
-Scenario: Uninstall the Pipeline Operator from Operator Hub page : P-013-TC01, P-013-TC02
-   Given user is at OpenShift Pipeline Operator subscription page
-   When user uninstalls the pipeline operator from right side pane
-   And clicks on Unistall button present in popup with header message "Uninstall Operator?"
-   Then page redirects to Installed operators
-   And OpenShift Pipeline Operator will not be displayed
-   And Pipelines will not be displayed in Dev perspective
+   Then user will see a modal with title "OpenShift Pipelines Operator"
+   And user will see a View Operator button
 
 
 @regression, @smoke
 Scenario: Install the Serverless Operator from Operator Hub page : Kn-01-TC01, Kn-01-TC02
    Given user is at OpenShift Serverless Operator subscription page
-   When user installs the Serverless operator with default values
-   Then page redirects to Installed operators
-   And page will contain openShift serverless operator
-   And serverless tab displays in navigation menu of admin page
+   When user installs the OpenShift Serverless operator with default values
+   Then user will see a modal with title "OpenShift Serverless Operator"
+   And user will see a View Operator button
+   And user will see serverless option on left side navigation menu
 
 
 @regression, @smoke
 Scenario: Install the knative eventing operator : Kn-07-TC01, Kn-07-TC02
-   Given cluster is installed with kantive serverless operator
+   Given user has installed OpenShift Serverless Operator
    And user is on the knative-eventing namespace
    When user navigates to installed operators page in Admin perspecitve
-   And clicks kantive eventing provided api pressent in kantive serverless operator
-   And click Create Kantive Eventing button present in kantive Eventing tab
-   And click on create button
-   Then Event sources card display in +Add page in dev perspecitve
+   And user clicks knative eventing provided api pressent in knative serverless operator
+   And user clicks Create knative Eventing button present in knative Eventing tab
+   And user clicks create button
+   Then Event sources card display in Add page in dev perspecitve
 
 
 @regression, @smoke
 Scenario: Install the knative apache camel operator : Kn-08-TC01
-   Given cluster is installed with knative serverless and eventing operators
-   And user is at operator hub page
-   When user search and installs the kantive Camel operator with default values
-   Then user redirects to Installed operators page
-   And page will contain knative apache camel operator
+   Given user has installed OpenShift Serverless and eventing operator
+   And user is at Operator Hub page with the header name "OperatorHub"
+   When user search and installs the knative Camel operator with default values
+   Then user will see a modal with title "knative Apache Camel Operator"
+   And user will see a View Operator button
 
 
-@regression, @smoke, @manual
+@regression, @smoke
 Scenario: Install the dynamic event operator : Kn-09-TC01, Kn-09-TC02
-   Given cluster is installed with knative serverless operator
-   And user logged into the cluster via cli
-   When user executes "kubectl apply -f https://github.com/knative/eventing-contrib/releases/download/v0.14.1/github.yaml"
+   Given user has installed OpenShift Serverless Operator
+   When user executes commands from cli as "kubectl apply -f https://github.com/knative/eventing-contrib/releases/download/v0.14.1/github.yaml"
    And user navigates to Add page
-   And user clicks on Event sources page
-   Then user redirects to page with header "Event Sources"
-   And GitHub Source is displayed in Types section
+   And user clicks on "Event source" card
+   Then user will be redirected to Event Sources page
+   And GitHub Source is displayed in types section
 
 
-Scenario: Uninstall the Knative serverless operator from Operator Hub page 
+@regression, @smoke
+Scenario: Install the Che Operator from Operator Hub page : CRW-01-TC01
+   Given user is at Eclipse che Operator subscription page
+   When user installs the Eclipse che operator with default values
+   Then user will see a modal with title "Eclipse Che"
+   And user will see a View Operator button
+
+
+@regression, @smoke
+Scenario: Install OpenShift Virtualization Operator: VM-01-TC01
+    Given user is at Operator Hub page with the header name "OperatorHub" 
+    And user has selected namespace "openshift-cnv"
+    When user searches for "OpenShift Virtualization"
+    And user clicks on the OpenShift Virtualization Operator card
+    And user clicks install button present on the right side bar
+    And user installs the OpenShift Virtualization operator with default values
+    Then user will see a modal with title "OpenShift Virtualization"
+    And user will see a View Operator button
+
+
+@regression, @smoke
+Scenario: Create HyperConverged Cluster: VM-01-TC02
+    Given user has selected namespace "openshift-cnv"
+    And user is at Installed Operator page
+    When user clicks on OpenShift Virtualization Operator
+    And user clicks on CNV Operator Deployment tab
+    And user clicks on the Create HyperConverged Cluster button
+    And user clicks on Create button
+    Then user will see a HyperConverged Cluster created
+    And user will see Virtualization item under Workloads
+
+
+@regression
+Scenario: Uninstall the Pipeline Operator from Operator Hub page : P-013-TC01, P-013-TC02
+   Given user is at Operator Hub page with the header name "OperatorHub"
+   When user uninstalls the pipeline operator from right side bar
+   And user clicks unistall button present in modal with header message Uninstall Operator?
+   Then user will be redirected to Installed operators page
+   And Installed operators page will not contain "OpenShift Pipelines Operator"
+
+
+Scenario: Uninstall the knative serverless operator from Operator Hub page 
    Given user is at OpenShift Serverless Operator subscription page
-
-
-@regression
-Scenario: Install ElasticSearch Operator
-    Given user is at OperatorHub page
-    When user searches for ElasticSearch Operator
-    And user clicks on the ElasticSearch Operator provided by Red Hat card
-    And user clicks on the Install button
-    Then user will see a modal saying ElasticSearch Operator is installed
-
-
-@regression
-Scenario: Install Jaeger Operator
-    Given user is at OperatorHub page
-    When user searches for Red Hat OpenShift Jaeger Operator
-    And user clicks on the Red Hat OpenShift Jaeger card
-    And user clicks on Install button
-    Then user will see a modal saying Jaeger Operator is installed
-
-
-@regression
-Scenario: Install Kiali Operator
-    Given user is at OperatorHub page
-    When user searches for Kiali Operator
-    And user clicks on the Kiali Operator provided by Red Hat card
-    And user clicks on Install button
-    Then user will see a modal saying Kiali Operator is installed
-
-
-@regression
-Scenario: Install Red Hat OpenShift Service Mesh Operator
-    Given user is at OperatorHub page
-    When user searches for Red Hat OpenShift Service Mesh Operator
-    And user clicks on the Red Hat OpenShift Service Mesh Operator card
-    And user clicks on Install button
-    Then user will see a modal saying Jaeger Operator is installed
