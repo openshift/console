@@ -874,9 +874,10 @@ export const createCronJobItems = (
   return cronJobs.map((d) => createCronJobItem(d, resources, utils));
 };
 
-export const getStandaloneJobs = (jobs: JobKind[]) => {
-  return jobs.filter((job) => !job.metadata?.ownerReferences?.length);
-};
+const isStandaloneJob = (job: K8sResourceKind) =>
+  !_.find(job.metadata?.ownerReferences, (owner) => owner.kind === CronJobModel.kind);
+
+export const getStandaloneJobs = (jobs: JobKind[]) => jobs.filter((job) => isStandaloneJob(job));
 
 export const createWorkloadItems = (
   model: K8sKind,
@@ -987,9 +988,9 @@ export const createOverviewItemForType = (
         utils,
       );
     case 'jobs':
-      return resource.metadata?.ownerReferences?.length
-        ? null
-        : getOverviewItemsForResource(resource, resources, isKindMonitorable(JobModel), utils);
+      return isStandaloneJob(resource)
+        ? getOverviewItemsForResource(resource, resources, isKindMonitorable(JobModel), utils)
+        : null;
     case 'pods':
       return createPodItem(resource as PodKind, resources);
     default:

@@ -4,6 +4,7 @@ import { TopologyDataResources, TopologyDisplayFilterType } from '../../topology
 import {
   getHelmGraphModelFromMap,
   getTopologyHelmReleaseGroupItem,
+  isHelmReleaseNode,
 } from '../helm-data-transformer';
 import {
   MockResources,
@@ -119,5 +120,10 @@ describe('HELM data transformer ', () => {
     const newModel = updateModelFromFilters(graphData, filters, ALL_APPLICATIONS_KEY, filterers);
     expect(newModel.nodes.filter((n) => n.type === TYPE_HELM_RELEASE)).toHaveLength(1);
     expect(newModel.nodes.filter((n) => n.type === TYPE_HELM_WORKLOAD)).toHaveLength(1);
+  });
+
+  it('should return true for nodes created by helm charts', () => {
+    expect(isHelmReleaseNode(sampleDeploymentConfigs.data[0], sampleHelmResourcesMap)).toBe(false);
+    expect(isHelmReleaseNode(sampleHelmChartDeploymentConfig, sampleHelmResourcesMap)).toBe(true);
   });
 });

@@ -48,6 +48,22 @@ export const DataModelExtension: React.FC<DataModelExtensionProps> = ({ dataMode
           extensionContext.current.dataModelDepicter = () => false;
           dataModelContext.updateExtension(id, extensionContext.current);
         });
+
+      const reconcilerPromise = dataModelFactory.properties.getDataModelReconciler;
+      if (reconcilerPromise) {
+        reconcilerPromise()
+          .then((reconciler) => {
+            extensionContext.current.dataModelReconciler = reconciler;
+            dataModelContext.updateExtension(id, extensionContext.current);
+          })
+          .catch(() => {
+            extensionContext.current.dataModelReconciler = () => {};
+            dataModelContext.updateExtension(id, extensionContext.current);
+          });
+      } else {
+        extensionContext.current.dataModelReconciler = () => {};
+        dataModelContext.updateExtension(id, extensionContext.current);
+      }
     }
   }, [dataModelContext, dataModelFactory.properties, id, priority, resources, workloadKeys]);
 

@@ -8,6 +8,7 @@ import {
   kebabOptionsToMenu,
   isKebabSubMenu,
 } from '@console/internal/components/utils';
+import { isWorkloadRegroupable } from '../../../utils/application-utils';
 import { workloadActions } from '../actions/workloadActions';
 import { groupActions } from '../actions/groupActions';
 import { graphActions } from '../actions/graphActions';
@@ -38,7 +39,9 @@ export const createMenuItems = (actions: KebabMenuOption[]) =>
   );
 
 export const workloadContextMenu = (element: Node) =>
-  createMenuItems(kebabOptionsToMenu(workloadActions(getResource(element))));
+  createMenuItems(
+    kebabOptionsToMenu(workloadActions(getResource(element), isWorkloadRegroupable(element))),
+  );
 
 export const noRegroupWorkloadContextMenu = (element: Node) =>
   createMenuItems(kebabOptionsToMenu(workloadActions(getResource(element), false)));

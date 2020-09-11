@@ -23,6 +23,7 @@ import {
   DragEvent,
   DragOperationWithType,
 } from '@patternfly/react-topology';
+import { isWorkloadRegroupable } from '../../../utils/application-utils';
 import { createConnection } from './createConnection';
 import { moveNodeToGroup } from './moveNodeToGroup';
 import { graphContextMenu, groupContextMenu } from './nodeContextMenu';
@@ -113,7 +114,7 @@ const nodeDragSourceSpec = (
 > => ({
   item: { type: NODE_DRAG_TYPE },
   operation: (monitor, props) => {
-    return (canEdit || props.canEdit) && allowRegroup
+    return (canEdit || props.canEdit) && allowRegroup && isWorkloadRegroupable(props.element)
       ? {
           [Modifiers.SHIFT]: { type: REGROUP_OPERATION, edit: true },
         }
@@ -123,7 +124,8 @@ const nodeDragSourceSpec = (
   begin: (monitor, props): DragNodeObject => {
     return {
       element: props.element,
-      allowRegroup: (canEdit || props.canEdit) && allowRegroup,
+      allowRegroup:
+        (canEdit || props.canEdit) && allowRegroup && isWorkloadRegroupable(props.element),
     };
   },
   end: async (dropResult, monitor, props) => {

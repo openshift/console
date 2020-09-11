@@ -5,6 +5,7 @@ import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-
 import {
   TopologyDataModelDepicted,
   TopologyDataModelGetter,
+  TopologyDataModelReconciler,
   TopologyDataResources,
 } from '../topology-types';
 import {
@@ -21,6 +22,7 @@ export type ModelExtensionContext = {
   workloadKeys?: string[];
   dataModelGetter?: TopologyDataModelGetter;
   dataModelDepicter?: TopologyDataModelDepicted;
+  dataModelReconciler?: TopologyDataModelReconciler;
 };
 
 export class ExtensibleModel {
@@ -57,7 +59,10 @@ export class ExtensibleModel {
     this.extensionsLoaded =
       extensionKeys.length > 1 &&
       extensionKeys.every(
-        (key) => !!this.extensions[key].dataModelGetter && !!this.extensions[key].dataModelDepicter,
+        (key) =>
+          !!this.extensions[key].dataModelGetter &&
+          !!this.extensions[key].dataModelDepicter &&
+          !!this.extensions[key].dataModelReconciler,
       );
     if (!prev && this.extensionsLoaded && this.onExtensionsLoaded) {
       this.onExtensionsLoaded(this);
@@ -116,10 +121,34 @@ export class ExtensibleModel {
     return getWorkloadResources(resources, kindsMap, this.workloadKeys);
   };
 
+  public get prioritizedKeys(): string[] {
+    return Object.keys(this.extensions).sort(
+      (k1, k2) => this.extensions[k1].priority - this.extensions[k2].priority,
+    );
+  }
+
+  public get dataModelGetters(): TopologyDataModelGetter[] {
+    return this.prioritizedKeys.reduce((acc, key) => {
+      if (this.extensions[key].dataModelGetter) {
+        acc.push(this.extensions[key].dataModelGetter);
+      }
+      return acc;
+    }, []);
+  }
+
   public get dataModelDepicters(): TopologyDataModelDepicted[] {
-    return Object.keys(this.extensions).reduce((acc, key) => {
+    return this.prioritizedKeys.reduce((acc, key) => {
       if (this.extensions[key].dataModelDepicter) {
         acc.push(this.extensions[key].dataModelDepicter);
+      }
+      return acc;
+    }, []);
+  }
+
+  public get dataModelReconcilers(): TopologyDataModelReconciler[] {
+    return this.prioritizedKeys.reduce((acc, key) => {
+      if (this.extensions[key].dataModelReconciler) {
+        acc.push(this.extensions[key].dataModelReconciler);
       }
       return acc;
     }, []);
@@ -138,28 +167,35 @@ export class ExtensibleModel {
     return (this.modelP?.nodes?.length ?? 0) === 0;
   }
 
-  public getExtensionModels = (resources: TopologyDataResources): Promise<Model> => {
-    const extensionKeys = Object.keys(this.extensions);
-    const getters = extensionKeys.map((key) => this.extensions[key].dataModelGetter);
-    const depicters = extensionKeys.map((key) => this.extensions[key].dataModelDepicter);
+  public getExtensionModels = async (resources: TopologyDataResources): Promise<Model> => {
+    const getters = this.dataModelGetters;
+    const depicters = this.dataModelDepicters;
     const workloadResources = this.getWorkloadResources(resources);
-    const promises = getters?.length
-      ? getters.map((getter) => getter(this.namespace, resources, workloadResources))
-      : [Promise.resolve(null)];
+    const promises = getters?.length ? getters : [Promise.resolve];
 
-    return Promise.all(promises).then((models) => {
-      const topologyModel: Model = {
-        nodes: [],
-        edges: [],
-      };
+    const topologyModel: Model = {
+      nodes: [],
+      edges: [],
+    };
 
-      models.forEach((model) => {
-        if (model) {
-          addToTopologyDataModel(model, topologyModel, depicters);
-        }
-      });
+    const addToModel = async (promise: any): Promise<Model> => {
+      const model = await promise(this.namespace, resources, workloadResources);
+      addToTopologyDataModel(model, topologyModel, depicters);
       return topologyModel;
-    });
+    };
+
+    for (const i in promises) {
+      if (promises[i]) {
+        // eslint-disable-next-line no-await-in-loop
+        await addToModel(promises[i]);
+      }
+    }
+
+    return Promise.resolve(topologyModel);
+  };
+
+  public reconcileModel = (model: Model, resources: TopologyDataResources): void => {
+    this.dataModelReconcilers.forEach((reconciler) => reconciler(model, resources));
   };
 }
 

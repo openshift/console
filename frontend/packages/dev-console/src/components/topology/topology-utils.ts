@@ -16,7 +16,6 @@ import {
 } from '../../utils/application-utils';
 import { TopologyDataObject } from './topology-types';
 import { TYPE_OPERATOR_BACKED_SERVICE } from './operators/components/const';
-import { HelmReleaseResourcesMap } from '../helm/helm-types';
 import { ALLOW_SERVICE_BINDING } from '../../const';
 import { OdcBaseNode } from './elements';
 
@@ -38,18 +37,6 @@ export const getCheURL = (consoleLinks: K8sResourceKind[]) =>
 
 export const getEditURL = (gitURL: string, cheURL: string) => {
   return gitURL && cheURL ? `${cheURL}/f?url=${gitURL}&policies.create=peruser` : gitURL;
-};
-
-export const getHelmReleaseKey = (resource) => `${resource.kind}---${resource.metadata.name}`;
-
-export const isHelmReleaseNode = (
-  obj: K8sResourceKind,
-  helmResourcesMap: HelmReleaseResourcesMap,
-): boolean => {
-  if (helmResourcesMap) {
-    return helmResourcesMap.hasOwnProperty(getHelmReleaseKey(obj));
-  }
-  return false;
 };
 
 export const getNamespaceDashboardKialiLink = (

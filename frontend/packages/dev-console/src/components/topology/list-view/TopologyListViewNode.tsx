@@ -12,7 +12,7 @@ import {
   Tooltip,
   TooltipPosition,
 } from '@patternfly/react-core';
-import { isNode, Node, observer } from '@patternfly/react-topology';
+import { Node, observer } from '@patternfly/react-topology';
 import {
   getSeverityAlertType,
   AlertSeverityIcon,
@@ -23,7 +23,6 @@ import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
 
 import { useSearchFilter } from '../filters';
 import { getResourceKind } from '../topology-utils';
-import { labelForNodeKind } from './list-view-utils';
 import {
   AlertsCell,
   GroupResourcesCell,
@@ -63,13 +62,6 @@ const ObservedTopologyListViewNode: React.FC<TopologyListViewNodeProps & Dispatc
     return null;
   }
   const kind = getResourceKind(item);
-  const childNodes =
-    item.isGroup() && !item.isCollapsed()
-      ? (item.getChildren().filter((n) => isNode(n)) as Node[])
-      : [];
-  childNodes.sort((a, b) =>
-    labelForNodeKind(getResourceKind(a)).localeCompare(labelForNodeKind(getResourceKind(b))),
-  );
 
   let alertIndicator = null;
   const alerts = getFiringAlerts(item.getData().data?.monitoringAlerts ?? []);
@@ -93,7 +85,6 @@ const ObservedTopologyListViewNode: React.FC<TopologyListViewNodeProps & Dispatc
   }
 
   const cells = [];
-  cells.push(badgeCell || <TypedResourceBadgeCell key="type-icon" kind={kind} />);
   cells.push(
     labelCell || (
       <DataListCell
@@ -101,6 +92,7 @@ const ObservedTopologyListViewNode: React.FC<TopologyListViewNodeProps & Dispatc
         key="label"
         id={`${item.getId()}_label`}
       >
+        {badgeCell || <TypedResourceBadgeCell key="type-icon" kind={kind} />}
         {item.getLabel()}
         {alertIndicator}
       </DataListCell>
@@ -127,7 +119,7 @@ const ObservedTopologyListViewNode: React.FC<TopologyListViewNodeProps & Dispatc
       key={item.getId()}
       id={item.getId()}
       aria-labelledby={`${item.getId()}_label`}
-      isExpanded={childNodes.length > 0}
+      isExpanded={children !== undefined}
     >
       <DataListItemRow className={className}>
         <DataListItemCells dataListCells={cells} />
