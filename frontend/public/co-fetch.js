@@ -31,6 +31,16 @@ export const shouldLogout = (url) => {
 };
 
 const validateStatus = (response, url) => {
+  if (url.includes('rules') || url.includes('silences')) {
+    // eslint-disable-next-line no-console
+    console.log(
+      `Alerting response: ${JSON.stringify(
+        response,
+        ['url', 'ok', 'redirected', 'status', 'statusText'],
+        ' ',
+      )}`,
+    );
+  }
   if (response.ok) {
     return response;
   }
@@ -108,7 +118,10 @@ export const coFetch = (url, options = {}, timeout = 60000) => {
     delete allOptions.headers.Authorization;
     delete allOptions.headers['X-CSRFToken'];
   }
-
+  if (url.includes('rules') || url.includes('silences')) {
+    // eslint-disable-next-line no-console
+    console.log(`Alerting fetch: url = ${url}, options = ${JSON.stringify(allOptions, null, ' ')}`);
+  }
   const fetchPromise = fetch(url, allOptions).then((response) => validateStatus(response, url));
 
   // return fetch promise directly if timeout <= 0
