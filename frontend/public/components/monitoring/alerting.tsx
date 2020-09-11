@@ -1563,6 +1563,13 @@ const PollerPages = () => {
         coFetchJSON(`${prometheusBaseURL}/api/v1/rules`)
           .then(({ data }) => {
             const { alerts, rules } = getAlertsAndRules(data);
+            const time = (new Date()).toISOString();
+            // eslint-disable-next-line no-console
+            console.warn('Alerting data', time, JSON.stringify(data));
+            // eslint-disable-next-line no-console
+            console.warn('Alerting rules', time, rules.length);
+            // eslint-disable-next-line no-console
+            console.warn('Alerting alerts', time, alerts.length, JSON.stringify(alerts));
             store.dispatch(UIActions.monitoringLoaded(alertsKey, alerts));
             store.dispatch(UIActions.monitoringSetRules(rulesKey, rules));
           })
