@@ -652,7 +652,10 @@ const MastheadToolbarContents = connect(mastheadToolbarStateToProps, {
   )(MastheadToolbarContents_),
 );
 
-export const MastheadToolbar = connectToFlags(FLAGS.CLUSTER_VERSION)(({ flags }) => {
+export const MastheadToolbar = connectToFlags(
+  FLAGS.CLUSTER_VERSION,
+  FLAGS.CONSOLE_LINK,
+)(({ flags }) => {
   const resources = [];
   if (flags[FLAGS.CLUSTER_VERSION]) {
     resources.push({
@@ -662,12 +665,13 @@ export const MastheadToolbar = connectToFlags(FLAGS.CLUSTER_VERSION)(({ flags })
       prop: 'cv',
     });
   }
-  resources.push({
-    kind: referenceForModel(ConsoleLinkModel),
-    isList: true,
-    prop: 'consoleLinks',
-    optional: true,
-  });
+  if (flags[FLAGS.CONSOLE_LINK]) {
+    resources.push({
+      kind: referenceForModel(ConsoleLinkModel),
+      isList: true,
+      prop: 'consoleLinks',
+    });
+  }
 
   return (
     <Firehose resources={resources}>
