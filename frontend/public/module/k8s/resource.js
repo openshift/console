@@ -83,7 +83,7 @@ export const devfileCreate = (kind, data, opts = {}) => {
   data.metadata.namespace = data.metadata.namespace || "default";
 
 
-  let isMOck = true;
+  let isMock = true;
 
   if(isMock) {
 
