@@ -8,7 +8,7 @@ export class DevfileParser {
 
   constructor(devfileContent: string) {
     this.devfileContent = devfileContent;
-    this.parsedCommands = this.parse();
+    // this.parsedCommands = this.parse();
   }
 
   parse(): CommandEntry[] {
