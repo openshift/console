@@ -58,17 +58,18 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, buildStrategy }) =>
       // is there a way we can detect if the build strategy type is for devfiles here?
       // if it isn't doing anything extra here then delete this if statement, 
       // because otherwise it will be useless if it isn't checking the build strategy
-      if (buildStrategy === "Devfile" ) {
+      if (buildStrategy === 'Devfile' ) {
         if (isReachable && isDevfilePresent){
           const DevfileVersion = await devfileParser.getDevfileVersion(DevfileContents)
-          if (DevfileVersion === "2.1.0"){
+          const semver = require('semver')
+          if (semver.gte(DevfileVersion, '2.1.0')) {
             gitRepoName && !values.name && setFieldValue('name', gitRepoName);
             gitRepoName &&
             !values.application.name &&
             values.application.selectedKey !== UNASSIGNED_KEY &&
             setFieldValue('application.name', `${gitRepoName}-app`);
-            setFieldValue("devfile.devfilePath", `${url}/devfile.yaml`)
-            setFieldValue("devfile.devfileContent", DevfileContents)
+            setFieldValue('devfile.devfilePath', `${url}/devfile.yaml`)
+            setFieldValue('devfile.devfileContent', DevfileContents)
             setValidated(ValidatedOptions.success);
           }
           else {
@@ -181,7 +182,7 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, buildStrategy }) =>
       return 'Git repository is not reachable.';
     }
     if (validated === ValidatedOptions.warning) {
-      return 'Valid URL but devfile buildguidance not available.';
+      return 'Valid URL but devfile build guidance not available.';
     }
     return '';
   };
