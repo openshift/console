@@ -20,7 +20,7 @@ export const sizeUnitsDropdown = $('[data-test-id=dropdown-button]');
 
 // expand pvc
 export const expandButton = $('#confirm-action');
-export const capacityUnitDropdown = $('[aria-label="Number of GiB"]');
+export const capacityUnitDropdown = $('.modal-body [data-test-id="dropdown-button"]');
 export const expandSizeOption = (size: string) => $(`[data-test-dropdown-menu="${size}"]`);
 
 // pvc details
