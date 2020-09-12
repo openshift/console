@@ -498,7 +498,11 @@ class MastheadToolbarContents_ extends React.Component {
     }
 
     if (_.isEmpty(actions)) {
-      return <div className="co-username">{username}</div>;
+      return (
+        <div data-test="username" className="co-username">
+          {username}
+        </div>
+      );
     }
 
     const userToggle = (

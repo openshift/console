@@ -32,9 +32,14 @@ oc patch oauths cluster --patch "$(cat ./frontend/integration-tests/data/patch-h
 DBUS_SESSION_BUS_ADDRESS=/dev/null
 export DBUS_SESSION_BUS_ADDRESS
 
-CHROME_VERSION=$(google-chrome --version) ./test-gui.sh "${1:-e2e}"
+SCENARIO="${1:-e2e}"
 
-# Only run Cypress tests if no agruments passed, or if the 'release' argument was passed
-if [ $# -eq 0 ] || [ "$1" == "release" ]; then
+if [ "$SCENARIO" != "login" ]; then
+  CHROME_VERSION=$(google-chrome --version) ./test-gui.sh "$SCENARIO"
+fi
+
+if [ "$SCENARIO" == "e2e" ] || [ "$SCENARIO" == "release" ]; then
   ./test-cypress.sh
+elif [ "$SCENARIO" == "login" ]; then
+  ./test-cypress.sh 'tests/app/auth-multiuser-login.spec.ts'
 fi
