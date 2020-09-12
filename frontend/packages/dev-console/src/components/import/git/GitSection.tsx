@@ -74,12 +74,10 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, buildStrategy }) =>
           }
           else {
             setValidated(ValidatedOptions.warning);
-            // console.error("***** INVALID DEVFILE VERSION**************")
           }
         }
         else if (isReachable && !isDevfilePresent){
           setValidated(ValidatedOptions.warning);
-          // console.log("*************Repo is reachable but devfile not present**********************");
         }
         else {
           setValidated(ValidatedOptions.error);

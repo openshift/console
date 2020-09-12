@@ -57,7 +57,7 @@ export const createProject = (projectData: ProjectData): Promise<K8sResourceKind
   return k8sCreate(ProjectRequestModel, project);
 };
 
-export const devfileFlow = (
+export const createOrUpdateDevfileResources = (
   formData: GitImportFormData,
   imageStream: K8sResourceKind,
   dryRun: boolean,
@@ -65,105 +65,45 @@ export const devfileFlow = (
   verb: K8sVerb = 'create',
   generatedImageStreamName: string = '',
   originalBuildConfig?: K8sResourceKind,
-): Promise<K8sResourceKind> => {
+  originalDeployment?: K8sResourceKind,
+  originalDeploymentConfig?: K8sResourceKind,
+): Promise<K8sResourceKind[]> => {
   const {
     name,
     project: { name: namespace },
     application: { name: applicationName },
+    route: { create: canCreateRoute, disable },
+    build: {
+      env: buildEnv,
+      strategy: buildStrategy,
+      triggers: { webhook: webhookTrigger },
+    },
+    deployment: {
+      env: deployEnv,
+      replicas,
+      triggers: { image: imageChange },
+    },
     git: { url: repository, type: gitType, ref = 'master', dir: contextDir, secret: secretName },
-    // docker: { dockerfilePath },
     devfile: { devfileContent, devfilePath },
-    image: { tag: selectedTag },
-    build: { env, triggers, strategy: buildStrategy },
+    image: { ports: imagePorts, tag: selectedTag },
     labels: userLabels,
-  } = formData;
-  // return verb === 'update'
-    // ? k8sUpdate(BuildConfigModel, buildConfig)
-    // : 
-    // const requests: Promise<K8sResourceKind>[] = [];
-
-    const devfileData = {
-      name: name,
-      project: { name: namespace },
-      application: { name: applicationName },
-      git: { url: repository, type: gitType, ref: 'master', dir: contextDir, secret: secretName },
-      // docker: { dockerfilePath },
-      devfile: { devfileContent, devfilePath },
-      image: { tag: selectedTag },
-      build: { env, triggers, strategy: buildStrategy },
-      labels: userLabels,
-    };
-
-    
-  
-    let buildResourceObj =  devfileCreate(null, devfileData, dryRun ? dryRunOpt : {});
-
-    let temp = createOrUpdateBuildResource (
-      buildResourceObj,
-      formData,
-      imageStream,
-      dryRun,
-      _.get(appResources, 'buildConfig.data'),
-      verb,
-      generatedImageStreamName,)
-    return temp;
-}
-
-export const createOrUpdateBuildResource = (
-  buildResourceObj: any,
-  formData: GitImportFormData,
-  imageStream: K8sResourceKind,
-  dryRun: boolean,
-  originalBuildResource?: K8sResourceKind,
-  verb: K8sVerb = 'create',
-  generatedImageStreamName: string = '',
-): Promise<K8sResourceKind> => {
-  const {
-    name,
-    project: { name: namespace },
-    application: { name: applicationName },
-    git: { url: repository, type: gitType, ref = 'master', dir: contextDir, secret: secretName },
-    
-    image: { tag: selectedTag },
-    build: { env, triggers},
-    labels: userLabels,
+    limits: { cpu, memory },
+    pipeline,
+    resources,
+    healthChecks,
+    route: { hostname, secure, path, tls, targetPort: routeTargetPort },
   } = formData;
 
+  const requests: Promise<K8sResourceKind>[] = [];
+ 
+  const imageStreamList = appResources?.imageStream?.data;
+  const imageStreamFilterData = _.orderBy(imageStreamList, ['metadata.resourceVersion'], ['desc']);
+  const originalImageStream = (imageStreamFilterData.length && imageStreamFilterData[0]) || {};
   const imageStreamName = imageStream && imageStream.metadata.name;
-  const imageStreamNamespace = imageStream && imageStream.metadata.namespace;
 
   const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag });
   const defaultAnnotations = { ...getGitAnnotations(repository, ref), ...getCommonAnnotations() };
-  let buildStrategyData;
-
-  let buildStrategy = buildResourceObj.buildStrategy;
-  let dockerfileLocation = buildResourceObj.dockerStrategy.dockerfileLocation;
-  let devfileSourceStrategy;
-  if(buildStrategy === 's2i') {
-    devfileSourceStrategy = {
-      kind: 'ImageStreamTag',
-      name: buildResourceObj.sourceStrategy.name,
-      namespace: buildResourceObj.sourceStrategy.namespace,
-    };
-
-  }
   
-  switch (buildStrategy) {
-    case 'Dockerfile':
-      buildStrategyData = {
-        dockerStrategy: { env, dockerfileLocation },
-      };
-      break;
-    case 's2i':
-      buildStrategyData = {
-        sourceStrategy: {
-          env,
-          ...(devfileSourceStrategy),
-        },
-      };
-      break;
-  }
-
   const webhookTriggerData = {
     type: GitReadableTypes[gitType],
     [gitType]: {
@@ -171,58 +111,187 @@ export const createOrUpdateBuildResource = (
     },
   };
 
-  const newBuildResource = {
-    apiVersion: buildResourceObj.apiVersion,
-    kind: buildResourceObj.kind,
-    metadata: {
-      name,
-      namespace,
-      labels: { ...defaultLabels, ...userLabels },
-      annotations: defaultAnnotations,
-    },
-    spec: {
-      output: {
-        to: {
-          kind: 'ImageStreamTag',
-          name: `${generatedImageStreamName || name}:latest`,
-        },
-      },
-      source: {
-        contextDir,
-        git: {
-          uri: repository,
-          ref,
-          type: 'Git',
-        },
-        ...(secretName ? { sourceSecret: { name: secretName } } : {}),
-      },
-      strategy: {
-        type: buildStrategy,
-        ...buildStrategyData,
-      },
-      triggers: [
-        {
-          type: 'Generic',
-          generic: {
-            secretReference: { name: `${name}-generic-webhook-secret` },
-          },
-        },
-        ...(triggers.webhook && gitType !== GitTypes.unsure ? [webhookTriggerData] : []),
-        ...(triggers.image ? [{ type: 'ImageChange', imageChange: {} }] : []),
-        ...(triggers.config ? [{ type: 'ConfigChange' }] : []),
-      ],
-    },
+  const annotations = {
+    ...getGitAnnotations(repository, ref),
+    ...getCommonAnnotations(),
+    'alpha.image.policy.openshift.io/resolve-names': '*',
+    ...getTriggerAnnotation(name, namespace, imageChange),
   };
+  
+  const podLabels = getPodLabels(name);
+  let ProbesData = getProbesData(healthChecks)
 
-  const buildResource = mergeData(originalBuildResource, newBuildResource);
+  const originalService = _.get(appResources, 'service.data');
+  
+  const originalRoute = _.get(appResources, 'route.data');
+
+  let webhookSecret = generateSecret(); 
+
+    const devfileData = {
+      name: name,
+      namespace: namespace,
+      project: { name: namespace },
+      application: { name: applicationName },
+      route: { create: canCreateRoute, disable },
+      build: {
+        buildEnv,
+        strategy: buildStrategy,
+        triggers: { webhook: webhookTrigger },
+      },
+      deployment: {
+        deployEnv,
+        replicas,
+        triggers: { image: imageChange },
+      },
+      git: { url: repository, type: gitType, ref, dir: contextDir, secret: secretName },
+      devfile: { devfileContent, devfilePath },
+      image: { ports: imagePorts, tag: selectedTag },
+      userLabels: userLabels,
+      limits: { cpu, memory },
+      pipeline: pipeline,
+      resources: resources,
+      healthchecks: healthChecks,
+      routeSpec: { hostname, secure, path, tls, targetPort: imagePorts },
+      imageStreamName: imageStreamName,
+      generatedImageStreamName: generatedImageStreamName,
+      defaultLabels: defaultLabels,
+      annotations: annotations,
+      defaultAnnotations: defaultAnnotations,
+      webhookTriggerData: webhookTriggerData,
+      webhookSecret: webhookSecret,
+      probesData: ProbesData,
+      podLabels: podLabels,
+    };
+
+    
+    let devfileResourceObjects =  devfileCreate(null, devfileData, dryRun ? dryRunOpt : {});
+
+    requests.push(
+      createOrUpdateDevfileImageStream(
+        devfileResourceObjects.imageStream,
+        dryRun,
+        originalImageStream,
+        generatedImageStreamName ? 'create' : verb,
+      ),
+
+      createOrUpdateDevfileBuildResource(
+        devfileResourceObjects.buildResource,
+        dryRun,
+        originalBuildConfig,
+        generatedImageStreamName ? 'create' : verb,
+      ),
+
+      // createDevfileWebhookSecret(
+      //   devfileResourceObjects.webhookSecret,
+      //   dryRun,
+      // ),
+
+      createOrUpdateDevfileDeployResource(
+        devfileResourceObjects.deployResource,
+        dryRun,
+        originalDeployment,
+        generatedImageStreamName ? 'create' : verb,
+      ),
+
+      createOrUpdateDevfileService(
+        devfileResourceObjects.service,
+        dryRun,
+        originalService,
+        generatedImageStreamName ? 'create' : verb,
+      ),
+
+      createOrUpdateDevfileRoute(
+        devfileResourceObjects.route,
+        devfileData.name,
+        devfileData.namespace,
+        dryRun,
+        generatedImageStreamName ? 'create' : verb,
+        devfileData.route.create,
+        devfileData.route.disable,
+        originalRoute,       
+      ),
+    );
+
+    return Promise.all(requests);
+}
+
+
+export const createOrUpdateDevfileImageStream = (
+  devfileImageStream: K8sResourceKind,
+  dryRun: boolean,
+  originalImageStream?: K8sResourceKind,
+  verb: K8sVerb = 'create',
+): Promise<K8sResourceKind> => {
+  const imageStream = mergeData(originalImageStream, devfileImageStream);
+  return verb === 'update'
+    ? k8sUpdate(ImageStreamModel, imageStream)
+    : k8sCreate(ImageStreamModel, devfileImageStream, dryRun ? dryRunOpt : {});
+};
+
+
+export const createOrUpdateDevfileBuildResource = (
+  devfileBuildResource: K8sResourceKind,
+  dryRun: boolean,
+  originalBuildConfig?: K8sResourceKind,
+  verb: K8sVerb = 'create',
+): Promise<K8sResourceKind> => {
+  const buildResource = mergeData(originalBuildConfig, devfileBuildResource);
 
   return verb === 'update'
-  // Need to change the model here, but might need to define more models depending on what types of builds we want to support. 
-  // Leaving as is for buildconfig example
-  // add switch case 
-
     ? k8sUpdate(BuildConfigModel, buildResource)
     : k8sCreate(BuildConfigModel, buildResource, dryRun ? dryRunOpt : {});
+};
+
+export const createOrUpdateDevfileDeployResource = (
+  devfileDeployResource: K8sResourceKind,
+  dryRun: boolean,
+  originalDeployment?: K8sResourceKind,
+  verb: K8sVerb = 'create',
+): Promise<K8sResourceKind> => {
+  const deployment = mergeData(originalDeployment, devfileDeployResource);
+
+  return verb === 'update'
+    ? k8sUpdate(DeploymentModel, deployment)
+    : k8sCreate(DeploymentModel, deployment, dryRun ? dryRunOpt : {});
+};
+
+export const createOrUpdateDevfileService = (
+  devfileService: K8sResourceKind,
+  dryRun: boolean,
+  originalService?: K8sResourceKind,
+  verb: K8sVerb = 'create',
+): Promise<K8sResourceKind> => {
+  const service = mergeData(originalService, devfileService);
+
+  return verb === 'update'
+  ? k8sUpdate(ServiceModel, service)
+  : k8sCreate(ServiceModel, service, dryRun ? dryRunOpt : {});
+};
+
+export const createOrUpdateDevfileRoute = (
+  devfileRoute: K8sResourceKind,
+  name: string,
+  namespace: string,
+  dryRun: boolean,
+  verb: K8sVerb = 'create',
+  canCreateRoute: boolean,
+  disable: boolean,
+  originalRoute?: K8sResourceKind,
+): Promise<K8sResourceKind> => {
+  const route = mergeData(originalRoute, devfileRoute);
+
+  if (verb === 'update' && disable) {
+    return k8sUpdate(RouteModel, route, namespace, name);
+  } else if (canCreateRoute) {
+    return k8sCreate(RouteModel, route, dryRun ? dryRunOpt : {});
+  }
+};
+
+export const createDevfileWebhookSecret = (
+  devfileWebhookSecret: K8sResourceKind,
+  dryRun: boolean,
+): Promise<K8sResourceKind> => {
+  return k8sCreate(SecretModel, devfileWebhookSecret, dryRun ? dryRunOpt : {});
 
 };
 
@@ -610,6 +679,24 @@ export const createOrUpdateResources = async (
   ) {
     generatedImageStreamName = `${name}-${getRandomChars()}`;
   }
+
+  if (buildStrategy === 'Devfile'){
+    const port = { containerPort: 8080, protocol: 'TCP' };
+    formData.image.ports = [port];
+    return createOrUpdateDevfileResources(
+      formData,
+      imageStream,
+      dryRun,
+      appResources,
+      verb,
+      generatedImageStreamName,
+      _.get(appResources, 'buildConfig.data'),
+      _.get(appResources, 'editAppResource.data'),
+      _.get(appResources, 'editAppResource.data'),
+    );
+  }
+      
+  
   requests.push(
     createOrUpdateImageStream(
       formData,
@@ -711,26 +798,7 @@ export const createOrUpdateResources = async (
     }
   }
 
-  if (buildStrategy === 'Devfile'){
-    requests.push(
-      createOrUpdateImageStream(
-        formData,
-        imageStream,
-        dryRun,
-        appResources,
-        generatedImageStreamName ? 'create' : verb,
-        generatedImageStreamName,
-      ),
-      devfileFlow(
-        formData,
-        imageStream,
-        dryRun,
-        _.get(appResources, 'buildConfig.data'),
-        verb,
-        generatedImageStreamName,
-      ),
-    );
-  }
+
 
   if (webhookTrigger && verb === 'create') {
     requests.push(createWebhookSecret(formData, gitType, dryRun));
