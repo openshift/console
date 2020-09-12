@@ -538,15 +538,23 @@ const ProjectTableRow = connect(projectRowStateToProps)(
   ({ obj: project, index, rowKey, style, customData = {}, metrics, selectedColumns }) => {
     const name = getName(project);
     const requester = getRequester(project);
-    const { ProjectLinkComponent, actionsEnabled = true, showMetrics, showActions } = customData;
+    const {
+      ProjectLinkComponent,
+      actionsEnabled = true,
+      showMetrics,
+      showActions,
+      isColumnManagementEnabled = true,
+    } = customData;
     const bytes = metrics?.memory?.[name];
     const cores = metrics?.cpu?.[name];
     const description = getDescription(project);
     const labels = project.metadata.labels;
-    const columns = new Set(
-      selectedColumns?.get(projectColumnManagementID) ||
-        getProjectSelectedColumns({ showMetrics, showActions }),
-    );
+    const columns = isColumnManagementEnabled
+      ? new Set(
+          selectedColumns?.get(projectColumnManagementID) ||
+            getProjectSelectedColumns({ showMetrics, showActions }),
+        )
+      : null;
     return (
       <TableRow id={project.metadata.uid} index={index} trKey={rowKey} style={style}>
         <TableData className={namespaceColumnInfo.name.classes}>
@@ -610,22 +618,26 @@ const ProjectTableRow = connect(projectRowStateToProps)(
         >
           <Timestamp timestamp={project.metadata.creationTimestamp} />
         </TableData>
-        <TableData
-          className={namespaceColumnInfo.description.classes}
-          columns={columns}
-          columnID={namespaceColumnInfo.description.id}
-        >
-          <span className="co-break-word co-line-clamp">
-            {description || <span className="text-muted">No description</span>}
-          </span>
-        </TableData>
-        <TableData
-          className={namespaceColumnInfo.labels.classes}
-          columns={columns}
-          columnID={namespaceColumnInfo.labels.id}
-        >
-          <LabelList labels={labels} kind="Project" />
-        </TableData>
+        {isColumnManagementEnabled && (
+          <>
+            <TableData
+              className={namespaceColumnInfo.description.classes}
+              columns={columns}
+              columnID={namespaceColumnInfo.description.id}
+            >
+              <span className="co-break-word co-line-clamp">
+                {description || <span className="text-muted">No description</span>}
+              </span>
+            </TableData>
+            <TableData
+              className={namespaceColumnInfo.labels.classes}
+              columns={columns}
+              columnID={namespaceColumnInfo.labels.id}
+            >
+              <LabelList labels={labels} kind="Project" />
+            </TableData>
+          </>
+        )}
         {actionsEnabled && (
           <TableData className={Kebab.columnClass}>
             <ResourceKebab actions={projectMenuActions} kind="Project" resource={project} />
@@ -653,7 +665,11 @@ export const ProjectsTable = (props) => (
     aria-label="Projects"
     Header={projectHeaderWithoutActions}
     Row={ProjectRow}
-    customData={{ ProjectLinkComponent: ProjectLink, actionsEnabled: false }}
+    customData={{
+      ProjectLinkComponent: ProjectLink,
+      actionsEnabled: false,
+      isColumnManagementEnabled: false,
+    }}
     virtualize
   />
 );
