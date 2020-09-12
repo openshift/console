@@ -421,14 +421,16 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     detailsItem &&
     `/k8s/ns/${detailsItem.subscription.metadata.namespace}/${SubscriptionModel.plural}/${detailsItem.subscription.metadata.name}?showDelete=true`;
 
-  let remoteWorkflowUrl = detailsItem && detailsItem.marketplaceRemoteWorkflow;
-  try {
-    const url = new URL(remoteWorkflowUrl);
-    url.searchParams.set('utm_source', 'openshift_console');
-    remoteWorkflowUrl = url.toString();
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error(error.message);
+  let remoteWorkflowUrl = detailsItem?.marketplaceRemoteWorkflow;
+  if (remoteWorkflowUrl) {
+    try {
+      const url = new URL(remoteWorkflowUrl);
+      url.searchParams.set('utm_source', 'openshift_console');
+      remoteWorkflowUrl = url.toString();
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error.message);
+    }
   }
 
   if (_.isEmpty(filteredItems)) {

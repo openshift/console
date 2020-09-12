@@ -138,15 +138,16 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
   const mappedInfraFeatures = mappedData(infraFeatures);
   const mappedValidSubscription = mappedData(validSubscription);
 
-  let supportWorkflowUrl = marketplaceSupportWorkflow;
-  try {
-    const url = new URL(supportWorkflowUrl);
-    url.searchParams.set('utm_source', 'openshift_console');
-    supportWorkflowUrl = url.toString();
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error(error.message);
-  }
+  let supportWorkflowUrl;
+  if (marketplaceSupportWorkflow)
+    try {
+      const url = new URL(marketplaceSupportWorkflow);
+      url.searchParams.set('utm_source', 'openshift_console');
+      supportWorkflowUrl = url.toString();
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error.message);
+    }
 
   return (
     <div className="modal-body modal-body-border">
