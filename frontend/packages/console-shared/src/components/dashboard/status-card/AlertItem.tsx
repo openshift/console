@@ -14,13 +14,15 @@ import {
   getAlertTime,
 } from './alert-utils';
 
+const CriticalIcon = () => <RedExclamationCircleIcon alt="Critical" title="Critical" />;
+const WarningIcon = () => <YellowExclamationTriangleIcon alt="Warning" title="Warning" />;
 const getSeverityIcon = (severity: string) => {
   switch (severity) {
     case 'critical':
-      return RedExclamationCircleIcon;
+      return CriticalIcon;
     case 'warning':
     default:
-      return YellowExclamationTriangleIcon;
+      return WarningIcon;
   }
 };
 
