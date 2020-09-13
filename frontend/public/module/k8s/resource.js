@@ -236,7 +236,7 @@ export const devfileCreate = (kind, data, opts = {}) => {
             // at endpoints, not services, when resolving ports, so port numbers
             // will not resolve correctly if the service port and container port
             // numbers don't match.
-            targetPort: data.routeSpec.targetPort.port, 
+            targetPort: `${data.routeSpec.targetPort.containerPort}-${data.routeSpec.targetPort.protocol}`.toLowerCase(),
           },
           wildcardPolicy: 'None',
         },
