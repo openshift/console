@@ -252,6 +252,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         name: 'Application Stages',
         href: '/applicationstages',
         testID: 'application-stages-header',
+        namespaced: false,
       },
     },
     flags: {
