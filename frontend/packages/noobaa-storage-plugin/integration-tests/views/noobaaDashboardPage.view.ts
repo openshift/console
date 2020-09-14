@@ -9,11 +9,11 @@ export const healthOfMCG = $('div > div > div:nth-child(1) > div > div.co-dashbo
 export const resiliencyOfMCG = $(
   'div > div > div:nth-child(2) > div > div.co-dashboard-icon > svg',
 );
-export const efficiencyValue = $(
-  'div:nth-child(1) > div.nb-object-data-reduction-card__row-status-item > span',
+export const compressionValue = $(
+  'div:nth-child(1) > div.ceph-storage-efficiency-card__item-status > span',
 );
 export const savingsValue = $(
-  'div:nth-child(2) > div.nb-object-data-reduction-card__row-status-item > span',
+  'div:nth-child(2) > div.ceph-storage-efficiency-card__item-status > span',
 );
 
 export const resourceProviders = $('.nb-resource-providers-card__row-title');

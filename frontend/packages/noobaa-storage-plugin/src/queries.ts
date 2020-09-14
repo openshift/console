@@ -33,8 +33,8 @@ export enum DATA_RESILIENCE_QUERIES {
   RGW_PROGRESS_QUERY = '(sum(ceph_pool_metadata{name=~".*rgw.*"} *on (job, namesapce, pool_id) group_right(name) ceph_pg_clean) / sum(ceph_pool_metadata{name=~".*rgw.*"} *on (job, namesapce, pool_id) group_right(name) ceph_pg_total))',
 }
 
-export enum ObjectDataReductionQueries {
-  EFFICIENCY_QUERY = 'NooBaa_reduction_ratio',
+export enum ObjectStorageEfficiencyQueries {
+  COMPRESSION_RATIO = 'NooBaa_reduction_ratio',
   SAVINGS_QUERY = '(NooBaa_object_savings_logical_size - NooBaa_object_savings_physical_size)',
   LOGICAL_SAVINGS_QUERY = 'NooBaa_object_savings_logical_size',
 }
