@@ -61,16 +61,16 @@ export const k8sGet = (kind, name, ns, opts) =>
   coFetchJSON(resourceURL(kind, Object.assign({ ns, name }, opts)));
 
 export const k8sCreate = (kind, data, opts = {}) => {
-  // Occassionally, a resource won't have a metadata property.
-  // For example: apps.openshift.io/v1 DeploymentRequest
-  // https://github.com/openshift/api/blob/master/apps/v1/types.go
-  data.metadata = data.metadata || {};
+  // // Occassionally, a resource won't have a metadata property.
+  // // For example: apps.openshift.io/v1 DeploymentRequest
+  // // https://github.com/openshift/api/blob/master/apps/v1/types.go
+  // data.metadata = data.metadata || {};
 
-  // Lowercase the resource name
-  // https://github.com/kubernetes/kubernetes/blob/HEAD/docs/user-guide/identifiers.md#names
-  if (data.metadata.name && _.isString(data.metadata.name) && !data.metadata.generateName) {
-    data.metadata.name = data.metadata.name.toLowerCase();
-  }
+  // // Lowercase the resource name
+  // // https://github.com/kubernetes/kubernetes/blob/HEAD/docs/user-guide/identifiers.md#names
+  // if (data.metadata.name && _.isString(data.metadata.name) && !data.metadata.generateName) {
+  //   data.metadata.name = data.metadata.name.toLowerCase();
+  // }
 
 
   return coFetchJSON.post(
