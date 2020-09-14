@@ -64,8 +64,14 @@ export interface PipelineTask {
   taskRef: PipelineTaskRef;
   params?: PipelineTaskParam[];
   resources?: PipelineTaskResources;
+  workspaces?: PipelineTaskWorkspace[];
 }
-
+export interface PipelineTaskWorkspace {
+  name: string;
+  description?: string;
+  mountPath?: string;
+  readOnly?: boolean;
+}
 export interface Resource {
   propsReferenceForRuns: string[];
   resources: FirehoseResource[];
@@ -92,6 +98,8 @@ export type PipelineRunReferenceResource = PipelineRunResourceCommonProperties &
   };
 };
 export type PipelineRunResource = PipelineRunReferenceResource | PipelineRunInlineResource;
+
+export type PipelineWorkspace = Param;
 
 export interface Runs {
   data?: PipelineRun[];
@@ -239,13 +247,6 @@ export type VolumeTypeConfigMaps = {
 export type VolumeTypePVC = {
   claimName: string;
 };
-
-export interface PipelineWorkspace extends Param {
-  type: string;
-  data?: {
-    [volumeType: string]: VolumeTypeSecret | VolumeTypeConfigMaps | VolumeTypePVC | {};
-  };
-}
 
 export interface PipelineRunWorkspace extends Param {
   [volumeType: string]: VolumeTypeSecret | VolumeTypeConfigMaps | VolumeTypePVC | {};

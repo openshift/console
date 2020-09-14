@@ -26,7 +26,6 @@ import {
   PipelineParam,
   PipelineRunParam,
   PipelineTaskRef,
-  PipelineWorkspace,
   PipelineRunWorkspace,
   TaskRunKind,
 } from './pipeline-augment';
@@ -44,6 +43,7 @@ import {
   TaskModel,
   EventListenerModel,
 } from '../models';
+import { PipelineRunWorkspaceFormEntry } from '../components/pipelines/modals/start-pipeline/types';
 
 interface Resources {
   inputs?: Resource[];
@@ -336,7 +336,7 @@ export const getPipelineRunParams = (pipelineParams: PipelineParam[]): PipelineR
 };
 
 export const getPipelineRunWorkspaces = (
-  pipelineWorkspaces: PipelineWorkspace[],
+  pipelineWorkspaces: PipelineRunWorkspaceFormEntry[],
 ): PipelineRunWorkspace[] => {
   return (
     pipelineWorkspaces &&
