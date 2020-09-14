@@ -78,28 +78,184 @@ export const k8sCreate = (kind, data, opts = {}) => {
 };
 
 export const devfileCreate = (kind, data, opts = {}) => {
-  console.log("********************Huzzah it works!***********************")
+
   data.metadata = data.metadata || {};
   data.metadata.namespace = data.metadata.namespace || "default";
 
 
   let isMock = true;
+  let buildStrategyData = {
+    dockerStrategy: { env:data.build.buildEnv, dockerfileLocation: "mock-dockerfile-location" }
+  };
 
+  let devfileResources; 
   if(isMock) {
 
-    //build obj here, return 
-    const buildResourceObj = {
-      apiVersion: 'build.openshift.io/v1',
-      kind: 'BuildConfig',
-      buildStrategy: 'Dockerfile',
-      dockerStrategy : {
-        dockerfileLocation : "abc"
+    //devfile obj here, return 
+    devfileResources = {
+     imageStream : {
+      apiVersion: 'image.openshift.io/v1',
+      kind: 'ImageStream',
+      metadata: {
+        name: `${data.generatedImageStreamName || data.name}`,
+        namespace: data.namespace,
+        labels: { ...data.defaultLabels, ...data.userLabels },
+        annotations: data.defaultAnnotations,
       }
+     },
+     buildResource: {
+        apiVersion: 'build.openshift.io/v1',
+        kind: 'BuildConfig',
+        metadata: {
+          name: data.name,
+          namespace: data.namespace,
+          labels: { ...data.defaultLabels, ...data.userLabels },
+          annotations: data.defaultAnnotations,
+        },
+        spec: {
+          output: {
+            to: {
+              kind: 'ImageStreamTag',
+              name: `${data.generatedImageStreamName || data.name}:latest`,
+            },
+          },
+          source: {
+            contexDir: data.git.dir,
+            git: {
+              uri: data.git.url,
+              ref: data.git.ref,
+              type: 'Git',
+            },
+            ...(data.git.secretName ? { sourceSecret: { name: data.git.secretName } } : {}),
+          },
+          strategy: {
+            type: 'Docker',
+            ...buildStrategyData,
+          },
+          triggers: [
+            {
+              type: 'Generic',
+              generic: {
+                secretReference: { name: `${data.name}-generic-webhook-secret` },
+              },
+            },
+            // ...(data.build.triggers.webhook && data.git.type !== GitTypes.unsure ? [data.webhookTriggerData] : []),
+            // ...(data.build.triggers.image ? [{ type: 'ImageChange', imageChange: {} }] : []),
+            // ...(data.build.triggers.config ? [{ type: 'ConfigChange' }] : []),
+          ],
+        }, 
+      },
+     deployResource: {
+        apiVersion: 'apps/v1',
+        kind: 'Deployment',
+        metadata: {
+          name: data.name,
+          namespace: data.namespace,
+          labels: { ...data.defaultLabels, ...data.userLabels },
+          annotations: data.annotations,
+        },
+        spec: {
+          selector: {
+            matchLabels: {
+              app: data.name,
+            },
+          },
+          replicas: data.deployment.replicas,
+          template: {
+            metadata: {
+              labels: { ...data.userLabels, ...data.podLabels },
+            },
+            spec: {
+              containers: [
+                {
+                  name: data.name,
+                  image: `${data.name}:latest`,
+                  ports: data.image.ports,
+                  env: data.deployment.deployEnv,
+                  resources: {
+                    ...((data.limits.cpu.limit || data.limits.memory.limit) && {
+                      limits: {
+                        ...(data.limits.cpu.limit && { cpu: `${data.limits.cpu.limit}${data.limits.cpu.limitUnit}` }),
+                        ...(data.limits.memory.limit && { memory: `${data.limits.memory.limit}${data.limits.memory.limitUnit}` }),
+                      },
+                    }),
+                    ...((data.limits.cpu.request || data.limits.memory.request) && {
+                      requests: {
+                        ...(data.limits.cpu.request && { cpu: `${data.limits.cpu.request}${data.limits.cpu.requestUnit}` }),
+                        ...(data.limits.memory.request && { memory: `${data.limits.memory.request}${data.limits.memory.requestUnit}` }),
+                      },
+                    }),
+                  },
+                  ...data.probesData,
+                },
+              ],
+            },
+          },
+        },
+      },
+     service: {
+        kind: 'Service',
+        apiVersion: 'v1',
+        metadata: {
+          name: data.name,
+          namespace: data.namespace,
+          labels: { ...data.defaultLabels, ...data.userLabels },
+          annotations: data.defaultAnnotations,
+        },
+        spec: {
+          selector: data.podLabels,
+          ports: _.map(data.image.ports, (port) => ({
+            port: port.containerPort,
+            targetPort: port.containerPort,
+            protocol: port.protocol,
+            // Use the same naming convention as CLI new-app.
+            name: `${port.containerPort}-${port.protocol}`.toLowerCase(),
+          })),
+        },
+      },
+     route: {
+        kind: 'Route',
+        apiVersion: 'route.openshift.io/v1',
+        metadata: {
+          name: data.name,
+          namespace: data.namespace,
+          labels: { ...data.defaultLabels, ...data.userLabels },
+          annotations: data.defaultAnnotations,
+        },
+        spec: {
+          to: {
+            kind: 'Service',
+            name: data.name,
+          },
+          ...(data.routeSpec.secure ? { tls: data.routeSpec.tls } : {}),
+          host: data.routeSpec.hostname,
+          path: data.routeSpec.path,
+          // The service created by `createService` uses the same port as the container port.
+          port: {
+            // Use the port name, not the number for targetPort. The router looks
+            // at endpoints, not services, when resolving ports, so port numbers
+            // will not resolve correctly if the service port and container port
+            // numbers don't match.
+            targetPort: `${data.routeSpec.targetPort.containerPort}-${data.routeSpec.targetPort.protocol}`.toLowerCase(),
+          },
+          wildcardPolicy: 'None',
+        },
+      },
+    //  webhookSecret: {
+    //     apiVersion: 'v1',
+    //     data: {},
+    //     kind: 'Secret',
+    //     metadata: {
+    //       name: `${data.name}-generic-webhook-secret`,
+    //       namespace: data.namespace,
+    //     },
+    //     stringData: { WebHookSecretKey: data.webhookSecret },
+    //     type: SecretType.opaque,
+    //   }
     }
-
-    return buildResourceObj;
+     
   }
-  
+  return devfileResources;
   // let temp = coFetchJSON.post(resourceURL(kind, Object.assign({ ns: data.metadata.namespace }, opts)),
   //   data,);
   // return temp;
