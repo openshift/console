@@ -104,7 +104,7 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
             variant={ButtonVariant.link}
             onClick={showProbe}
           >
-            {'  '}
+            &nbsp;&nbsp;
             {`${viewOnly ? 'View' : 'Edit'} Probe`}
           </Button>
         )}
