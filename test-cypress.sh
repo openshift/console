@@ -3,6 +3,9 @@ set -exuo pipefail
 cd frontend
 yarn install
 
+echo "LANG = $LANG"
+locale
+
 function generateReport {
   yarn run cypress-postreport
 }

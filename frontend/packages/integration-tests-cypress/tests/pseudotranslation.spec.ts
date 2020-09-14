@@ -1,5 +1,6 @@
 import { checkErrors, testName } from '../support';
 import { navigation } from '../views/navigation';
+import { nav } from '../views/nav';
 
 describe('Localization', () => {
   before(() => {
@@ -20,7 +21,7 @@ describe('Localization', () => {
     cy.log('test navigation');
     cy.visit('/dashboards?pseudolocalization=true');
     navigation.items.shouldBeLoaded();
-    navigation.items.shouldExist('[Ḥṓṓṃḛḛ]');
+    nav.sidenav.shouldHaveNavSection(['[Ḥṓṓṃḛḛ]']);
   });
 
   /* it('pseudolocalizes timestamp', () => {

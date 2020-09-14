@@ -44,11 +44,12 @@ module.exports = (on, config) => {
       //  https://chromedevtools.github.io/devtools-protocol/tot/Log#type-LogEntry
       // if `type` is `console`, `event` is an object of the type passed to `Runtime.consoleAPICalled`:
       //  https://chromedevtools.github.io/devtools-protocol/tot/Runtime#event-consoleAPICalled
-
       return (
-        (type === 'console' && event.type === 'error') ||
-        (type === 'browser' && event.level === 'error')
+        type === 'console' &&
+        event.type === 'log' &&
+        event.args[0].value.includes('i18next: languageChanged')
       );
+      // return true;
     });
     launchOptions.args = log2output.browserLaunchHandler(browser, launchOptions.args);
     /* In a Docker container, the default size of the /dev/shm shared memory space is 64MB. This is not typically enough
@@ -56,6 +57,7 @@ module.exports = (on, config) => {
  Chrome with the following workaround: */
     if (browser.family === 'chromium' && browser.name !== 'electron') {
       launchOptions.args.push('--disable-dev-shm-usage');
+      launchOptions.preferences.default.intl = { accept_languages: 'en,en-US' };
     }
     return launchOptions;
   });
