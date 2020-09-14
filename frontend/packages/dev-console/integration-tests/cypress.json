@@ -1,0 +1,34 @@
+{
+    "baseUrl": "http://localhost:9000",
+    "integrationFolder": "features",
+    "testFiles": "**/*.{feature,features}",
+    "defaultCommandTimeout": 30000,
+    "viewportWidth":1920,
+    "viewportHeight":1080,
+    "watchForFileChanges": true,
+    "chromeWebSecurity": true,
+    "waitForAnimation": true,
+    "animationDistanceThreshold": 20,
+    "execTimeout": 90000,
+    "pageLoadTimeout": 90000,
+    "requestTimeout": 15000,
+    "responseTimeout": 15000,
+    "supportFile": "support/commands/index.ts",
+    "pluginsFile": "plugins/index.js",
+    "fixturesFolder": "testData",
+    "video": true,
+    "screenshotsFolder": "screenshots",
+    "videosFolder": "videos",
+    "reporter": "./node_modules/mochawesome/src/mochawesome.js",
+    "reporterOptions": {
+      "reportDir": "reports/separate-reports",
+      "overwrite": false,
+      "html": false,
+      "json": true,
+      "charts": true
+    },
+    "env": {
+      "TAGS": "@smoke and not @manual"
+    }
+  }
+  
