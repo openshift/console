@@ -193,6 +193,7 @@
     "@types/react-router-dom": "5.1.2",
     "@types/react-transition-group": "2.x",
     "@types/react-virtualized": "9.x",
+    "@types/semver": "^6.0.0",
     "@types/webpack": "4.x",
     "babel-loader": "^8.1.0",
     "bootstrap-sass": "^3.3.7",
