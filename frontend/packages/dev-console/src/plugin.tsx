@@ -60,7 +60,7 @@ import { AddAction } from './extensions/add-actions';
 import * as yamlIcon from './images/yaml.svg';
 import * as importGitIcon from './images/from-git.svg';
 import * as dockerfileIcon from './images/dockerfile.svg';
-import * as devfileIcon from './images/dockerfile.svg'; // change to devfile icon when we have it
+import * as devfileIcon from './images/devfile.svg';
 import * as pipelineIcon from './images/pipeline.svg';
 import { operatorResources } from './components/topology/operators/operator-resources';
 import {
