@@ -20,5 +20,8 @@
         "integration-tests/**/*.scenario.ts"
       ]
     }
+  },
+  "cypress-cucumber-preprocessor": {
+    "step_definitions": "support/step-definitions/*/"
   }
 }
