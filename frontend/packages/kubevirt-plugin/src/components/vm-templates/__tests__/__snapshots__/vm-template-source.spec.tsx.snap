@@ -105,7 +105,13 @@ ShallowWrapper {
       "error": undefined,
       "source": undefined,
       "type": ProvisionSource {
+        "description": "Boot an operating system from a server on a network. Requires a PXE bootable network attachment definition",
+        "getDescription": [Function],
+        "getOrder": [Function],
         "getValue": [Function],
+        "label": "PXE (network boot - adds network interface)",
+        "order": 4,
+        "toString": [Function],
         "value": "PXE",
       },
     },
@@ -122,7 +128,13 @@ ShallowWrapper {
         "error": undefined,
         "source": undefined,
         "type": ProvisionSource {
+          "description": "Boot an operating system from a server on a network. Requires a PXE bootable network attachment definition",
+          "getDescription": [Function],
+          "getOrder": [Function],
           "getValue": [Function],
+          "label": "PXE (network boot - adds network interface)",
+          "order": 4,
+          "toString": [Function],
           "value": "PXE",
         },
       },
@@ -269,7 +281,13 @@ ShallowWrapper {
           source={undefined}
           type={
             ProvisionSource {
+              "description": "Boot an operating system from a server on a network. Requires a PXE bootable network attachment definition",
+              "getDescription": [Function],
+              "getOrder": [Function],
               "getValue": [Function],
+              "label": "PXE (network boot - adds network interface)",
+              "order": 4,
+              "toString": [Function],
               "value": "PXE",
             }
           }
@@ -279,7 +297,13 @@ ShallowWrapper {
           source={undefined}
           type={
             ProvisionSource {
+              "description": "Boot an operating system from a server on a network. Requires a PXE bootable network attachment definition",
+              "getDescription": [Function],
+              "getOrder": [Function],
               "getValue": [Function],
+              "label": "PXE (network boot - adds network interface)",
+              "order": 4,
+              "toString": [Function],
               "value": "PXE",
             }
           }
@@ -296,7 +320,13 @@ ShallowWrapper {
           "detailed": true,
           "source": undefined,
           "type": ProvisionSource {
+            "description": "Boot an operating system from a server on a network. Requires a PXE bootable network attachment definition",
+            "getDescription": [Function],
+            "getOrder": [Function],
             "getValue": [Function],
+            "label": "PXE (network boot - adds network interface)",
+            "order": 4,
+            "toString": [Function],
             "value": "PXE",
           },
         },
@@ -312,7 +342,13 @@ ShallowWrapper {
           "error": undefined,
           "source": undefined,
           "type": ProvisionSource {
+            "description": "Boot an operating system from a server on a network. Requires a PXE bootable network attachment definition",
+            "getDescription": [Function],
+            "getOrder": [Function],
             "getValue": [Function],
+            "label": "PXE (network boot - adds network interface)",
+            "order": 4,
+            "toString": [Function],
             "value": "PXE",
           },
         },
@@ -335,7 +371,13 @@ ShallowWrapper {
             source={undefined}
             type={
               ProvisionSource {
+                "description": "Boot an operating system from a server on a network. Requires a PXE bootable network attachment definition",
+                "getDescription": [Function],
+                "getOrder": [Function],
                 "getValue": [Function],
+                "label": "PXE (network boot - adds network interface)",
+                "order": 4,
+                "toString": [Function],
                 "value": "PXE",
               }
             }
@@ -345,7 +387,13 @@ ShallowWrapper {
             source={undefined}
             type={
               ProvisionSource {
+                "description": "Boot an operating system from a server on a network. Requires a PXE bootable network attachment definition",
+                "getDescription": [Function],
+                "getOrder": [Function],
                 "getValue": [Function],
+                "label": "PXE (network boot - adds network interface)",
+                "order": 4,
+                "toString": [Function],
                 "value": "PXE",
               }
             }
@@ -362,7 +410,13 @@ ShallowWrapper {
             "detailed": true,
             "source": undefined,
             "type": ProvisionSource {
+              "description": "Boot an operating system from a server on a network. Requires a PXE bootable network attachment definition",
+              "getDescription": [Function],
+              "getOrder": [Function],
               "getValue": [Function],
+              "label": "PXE (network boot - adds network interface)",
+              "order": 4,
+              "toString": [Function],
               "value": "PXE",
             },
           },
@@ -378,7 +432,13 @@ ShallowWrapper {
             "error": undefined,
             "source": undefined,
             "type": ProvisionSource {
+              "description": "Boot an operating system from a server on a network. Requires a PXE bootable network attachment definition",
+              "getDescription": [Function],
+              "getOrder": [Function],
               "getValue": [Function],
+              "label": "PXE (network boot - adds network interface)",
+              "order": 4,
+              "toString": [Function],
               "value": "PXE",
             },
           },
@@ -526,7 +586,14 @@ ShallowWrapper {
       "error": undefined,
       "source": "fooContainer",
       "type": ProvisionSource {
+        "description": "Link to a bootable operating system container located in a registry accessible from the cluster. Example: kubevirt/fedora-cloud-container-disk-demo. The container disk is meant to be used only for read-only filesystems such
+as CD-ROMs or for small short-lived throw-away VMs. This will show up as a disk in the Storage step",
+        "getDescription": [Function],
+        "getOrder": [Function],
         "getValue": [Function],
+        "label": "Container",
+        "order": 3,
+        "toString": [Function],
         "value": "Container",
       },
     },
@@ -543,7 +610,14 @@ ShallowWrapper {
         "error": undefined,
         "source": "fooContainer",
         "type": ProvisionSource {
+          "description": "Link to a bootable operating system container located in a registry accessible from the cluster. Example: kubevirt/fedora-cloud-container-disk-demo. The container disk is meant to be used only for read-only filesystems such
+as CD-ROMs or for small short-lived throw-away VMs. This will show up as a disk in the Storage step",
+          "getDescription": [Function],
+          "getOrder": [Function],
           "getValue": [Function],
+          "label": "Container",
+          "order": 3,
+          "toString": [Function],
           "value": "Container",
         },
       },
@@ -692,7 +766,14 @@ ShallowWrapper {
           source="fooContainer"
           type={
             ProvisionSource {
+              "description": "Link to a bootable operating system container located in a registry accessible from the cluster. Example: kubevirt/fedora-cloud-container-disk-demo. The container disk is meant to be used only for read-only filesystems such
+as CD-ROMs or for small short-lived throw-away VMs. This will show up as a disk in the Storage step",
+              "getDescription": [Function],
+              "getOrder": [Function],
               "getValue": [Function],
+              "label": "Container",
+              "order": 3,
+              "toString": [Function],
               "value": "Container",
             }
           }
@@ -702,7 +783,14 @@ ShallowWrapper {
           source="fooContainer"
           type={
             ProvisionSource {
+              "description": "Link to a bootable operating system container located in a registry accessible from the cluster. Example: kubevirt/fedora-cloud-container-disk-demo. The container disk is meant to be used only for read-only filesystems such
+as CD-ROMs or for small short-lived throw-away VMs. This will show up as a disk in the Storage step",
+              "getDescription": [Function],
+              "getOrder": [Function],
               "getValue": [Function],
+              "label": "Container",
+              "order": 3,
+              "toString": [Function],
               "value": "Container",
             }
           }
@@ -719,7 +807,14 @@ ShallowWrapper {
           "detailed": true,
           "source": "fooContainer",
           "type": ProvisionSource {
+            "description": "Link to a bootable operating system container located in a registry accessible from the cluster. Example: kubevirt/fedora-cloud-container-disk-demo. The container disk is meant to be used only for read-only filesystems such
+as CD-ROMs or for small short-lived throw-away VMs. This will show up as a disk in the Storage step",
+            "getDescription": [Function],
+            "getOrder": [Function],
             "getValue": [Function],
+            "label": "Container",
+            "order": 3,
+            "toString": [Function],
             "value": "Container",
           },
         },
@@ -735,7 +830,14 @@ ShallowWrapper {
           "error": undefined,
           "source": "fooContainer",
           "type": ProvisionSource {
+            "description": "Link to a bootable operating system container located in a registry accessible from the cluster. Example: kubevirt/fedora-cloud-container-disk-demo. The container disk is meant to be used only for read-only filesystems such
+as CD-ROMs or for small short-lived throw-away VMs. This will show up as a disk in the Storage step",
+            "getDescription": [Function],
+            "getOrder": [Function],
             "getValue": [Function],
+            "label": "Container",
+            "order": 3,
+            "toString": [Function],
             "value": "Container",
           },
         },
@@ -758,7 +860,14 @@ ShallowWrapper {
             source="fooContainer"
             type={
               ProvisionSource {
+                "description": "Link to a bootable operating system container located in a registry accessible from the cluster. Example: kubevirt/fedora-cloud-container-disk-demo. The container disk is meant to be used only for read-only filesystems such
+as CD-ROMs or for small short-lived throw-away VMs. This will show up as a disk in the Storage step",
+                "getDescription": [Function],
+                "getOrder": [Function],
                 "getValue": [Function],
+                "label": "Container",
+                "order": 3,
+                "toString": [Function],
                 "value": "Container",
               }
             }
@@ -768,7 +877,14 @@ ShallowWrapper {
             source="fooContainer"
             type={
               ProvisionSource {
+                "description": "Link to a bootable operating system container located in a registry accessible from the cluster. Example: kubevirt/fedora-cloud-container-disk-demo. The container disk is meant to be used only for read-only filesystems such
+as CD-ROMs or for small short-lived throw-away VMs. This will show up as a disk in the Storage step",
+                "getDescription": [Function],
+                "getOrder": [Function],
                 "getValue": [Function],
+                "label": "Container",
+                "order": 3,
+                "toString": [Function],
                 "value": "Container",
               }
             }
@@ -785,7 +901,14 @@ ShallowWrapper {
             "detailed": true,
             "source": "fooContainer",
             "type": ProvisionSource {
+              "description": "Link to a bootable operating system container located in a registry accessible from the cluster. Example: kubevirt/fedora-cloud-container-disk-demo. The container disk is meant to be used only for read-only filesystems such
+as CD-ROMs or for small short-lived throw-away VMs. This will show up as a disk in the Storage step",
+              "getDescription": [Function],
+              "getOrder": [Function],
               "getValue": [Function],
+              "label": "Container",
+              "order": 3,
+              "toString": [Function],
               "value": "Container",
             },
           },
@@ -801,7 +924,14 @@ ShallowWrapper {
             "error": undefined,
             "source": "fooContainer",
             "type": ProvisionSource {
+              "description": "Link to a bootable operating system container located in a registry accessible from the cluster. Example: kubevirt/fedora-cloud-container-disk-demo. The container disk is meant to be used only for read-only filesystems such
+as CD-ROMs or for small short-lived throw-away VMs. This will show up as a disk in the Storage step",
+              "getDescription": [Function],
+              "getOrder": [Function],
               "getValue": [Function],
+              "label": "Container",
+              "order": 3,
+              "toString": [Function],
               "value": "Container",
             },
           },
