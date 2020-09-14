@@ -17,7 +17,7 @@ export type LocalVolumeDiscoveryResultKind = K8sResourceCommon & {
       model: string;
       path: string;
       serial: string;
-      size: string;
+      size: number;
       status: {
         state: keyof typeof DiskStates;
       };

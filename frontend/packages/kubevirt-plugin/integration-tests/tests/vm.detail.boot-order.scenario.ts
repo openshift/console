@@ -19,15 +19,11 @@ describe('KubeVirt VM detail - Boot Order Dialog', () => {
   beforeAll(async () => {
     createResource(testVM);
     await vm.addDisk(hddDisk);
+    await vm.navigateToDetail();
   });
 
   afterAll(() => {
     deleteResource(testVM);
-  });
-
-  beforeEach(async () => {
-    await vm.navigateToDetail();
-    await vm.modalEditBootOrder();
   });
 
   afterEach(async () => {
@@ -51,6 +47,7 @@ describe('KubeVirt VM detail - Boot Order Dialog', () => {
   it(
     'ID(CNV-3549) Deletes bootable device',
     async () => {
+      await vm.modalEditBootOrder();
       const FIRST_DEVICE_POSITION = 1;
       const initialBootableDevices = getBootableDevicesInOrder(vm.getResource());
       await click(bootOrderView.deleteDeviceButton(FIRST_DEVICE_POSITION));
@@ -75,6 +72,7 @@ describe('KubeVirt VM detail - Boot Order Dialog', () => {
   it(
     'ID(CNV-3548) Adds bootable device',
     async () => {
+      await vm.modalEditBootOrder();
       const initialVMObject = vm.getResource();
       const initialBootableDevices = getBootableDevicesInOrder(initialVMObject);
       const nonBootableDevices = getNonBootableDevices(initialVMObject).map(
@@ -113,13 +111,14 @@ describe('KubeVirt VM detail - Boot Order Dialog', () => {
   it(
     'ID(CNV-3547) Drags and drops to change boot order',
     async () => {
+      await vm.modalEditBootOrder();
       const initialBootableDevices = getBootableDevicesInOrder(vm.getResource()).map(
         (device) => `${_.get(device, 'value.name')}`,
       );
 
       // Find devices at indexes 0 and 1 representing first and second device
-      const source = bootOrderView.draggablePointer(0);
-      const destination = bootOrderView.draggablePointer(1);
+      const source = bootOrderView.draggablePointer(1);
+      const destination = bootOrderView.draggablePointer(2);
 
       await browser.executeScript(dragAndDrop, source, destination);
       // Wait for the DOM structure to update

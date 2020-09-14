@@ -570,7 +570,7 @@ export const NetworkPolicyModel: K8sKind = {
 export const CustomResourceDefinitionModel: K8sKind = {
   label: 'Custom Resource Definition',
   apiGroup: 'apiextensions.k8s.io',
-  apiVersion: 'v1beta1',
+  apiVersion: 'v1',
   abbr: 'CRD',
   namespaced: false,
   plural: 'customresourcedefinitions',

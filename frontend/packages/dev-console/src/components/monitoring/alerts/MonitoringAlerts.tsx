@@ -11,11 +11,12 @@ import { FilterToolbar } from '@console/internal/components/filter-toolbar';
 import { getAlertsAndRules } from '@console/internal/components/monitoring/utils';
 import { monitoringSetRules, monitoringLoaded, sortList } from '@console/internal/actions/ui';
 import { useURLPoll } from '@console/internal/components/utils/url-poll-hook';
-import { PrometheusRulesResponse, Rules } from '@console/internal/components/monitoring/types';
+import { PrometheusRulesResponse, Rule } from '@console/internal/components/monitoring/types';
 import { PROMETHEUS_TENANCY_BASE_PATH } from '@console/internal/components/graphs';
 import { RootState } from '@console/internal/redux';
-import { alertingRuleStateOrder } from '@console/internal/reducers/monitoring';
+import { getURLSearchParams } from '@console/internal/components/utils';
 import { getFilteredRows } from '@console/internal/components/factory';
+import { alertingRuleStateOrder } from '@console/internal/reducers/monitoring';
 import {
   monitoringAlertRows,
   monitoringAlertColumn,
@@ -23,7 +24,6 @@ import {
   applyListSort,
 } from './monitoring-alerts-utils';
 import './MonitoringAlerts.scss';
-import { getURLSearchParams } from '@console/internal/components/utils';
 
 type MonitoringAlertsProps = {
   match: RMatch<{
@@ -32,7 +32,7 @@ type MonitoringAlertsProps = {
 };
 
 type StateProps = {
-  rules: Rules;
+  rules: Rule[];
   filters: { [key: string]: any };
   listSorts: { [key: string]: any };
 };

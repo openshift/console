@@ -17,12 +17,14 @@ import {
   resourcesValidationSchema,
 } from './detail-page-tabs';
 import { usePipelineTriggerTemplateNames } from './utils/triggers';
+import { usePipelinesBreadcrumbsFor } from './hooks';
 
 const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const [errorCode, setErrorCode] = React.useState(null);
   const [latestPipelineRun, setLatestPipelineRun] = React.useState<PipelineRun>({});
-  const { name, namespace } = props;
+  const { name, namespace, kindObj, match } = props;
   const templateNames = usePipelineTriggerTemplateNames(name, namespace) || [];
+  const breadcrumbsFor = usePipelinesBreadcrumbsFor(kindObj, match);
 
   React.useEffect(() => {
     k8sGet(PipelineModel, name, namespace)
@@ -55,6 +57,7 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
       {...props}
       menuActions={augmentedMenuActions}
       customData={templateNames}
+      breadcrumbsFor={() => breadcrumbsFor}
       pages={[
         navFactory.details(PipelineDetails),
         navFactory.editYaml(),

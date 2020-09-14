@@ -22,7 +22,6 @@ const ImportSampleForm: React.FC<Props> = ({
   builderImage,
   status,
   isSubmitting,
-  dirty,
 }) => {
   const {
     image: { tag: selectedImagetag },
@@ -55,7 +54,7 @@ const ImportSampleForm: React.FC<Props> = ({
         errorMessage={status && status.submitError}
         isSubmitting={isSubmitting}
         submitLabel="Create"
-        disableSubmit={!dirty || !_.isEmpty(errors)}
+        disableSubmit={!_.isEmpty(errors)}
         resetLabel="Cancel"
         sticky
       />

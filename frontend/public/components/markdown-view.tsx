@@ -50,6 +50,7 @@ export class SyncMarkdownView extends React.Component<
   {}
 > {
   private frame: any;
+  private timeoutHandle: any;
 
   constructor(props) {
     super(props);
@@ -59,6 +60,10 @@ export class SyncMarkdownView extends React.Component<
     this.updateDimensions();
   }
 
+  componentWillUnmount() {
+    clearTimeout(this.timeoutHandle);
+  }
+
   updateDimensions() {
     if (!this.frame?.contentWindow?.document.body.firstChild) {
       return;
@@ -66,7 +71,7 @@ export class SyncMarkdownView extends React.Component<
     this.frame.style.height = `${this.frame.contentWindow.document.body.firstChild.scrollHeight}px`;
 
     // Let the new height take effect, then reset again once we recompute
-    setTimeout(() => {
+    this.timeoutHandle = setTimeout(() => {
       if (this.props.exactHeight) {
         this.frame.style.height = `${this.frame.contentWindow.document.body.firstChild.scrollHeight}px`;
       } else {

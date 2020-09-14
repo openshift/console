@@ -48,7 +48,7 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
       children: createHelpText(
         DeploymentConfigModel,
         `A ${DeploymentConfigModel.label} defines the template for a pod \
-        and manages deploying new images or configuration changes`,
+        and manages deploying new images or configuration changes.`,
       ),
     });
   }
@@ -67,7 +67,10 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
     radioOptions.push({
       label: ReadableResourcesNames[Resources.KnativeService],
       value: Resources.KnativeService,
-      children: createHelpText(ServiceModel, `A Knative Service enables scaling to zero when idle`),
+      children: createHelpText(
+        ServiceModel,
+        `A type of deployment that enables Serverless scaling to 0 when idle.`,
+      ),
     });
   }
   return (

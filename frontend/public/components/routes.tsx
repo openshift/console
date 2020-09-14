@@ -390,7 +390,7 @@ const RouteIngressStatus: React.FC<RouteIngressStatusProps> = ({ route }) => (
             obj={route}
             path="status.ingress.routerCanonicalHostname"
           >
-            {ingress.routerCanonicalHostname || '-'}
+            <div>{ingress.routerCanonicalHostname || '-'}</div>
             {showCustomRouteHelp(ingress, route.metadata.annotations) && (
               <CustomRouteHelp
                 host={ingress.host}
@@ -448,16 +448,14 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
                   obj={route}
                   path="status.ingress.routerCanonicalHostname"
                 >
-                  {primaryIngressStatus.routerCanonicalHostname || '-'}
+                  <div>{primaryIngressStatus.routerCanonicalHostname || '-'}</div>
+                  {showCustomRouteHelp(primaryIngressStatus, route.metadata.annotations) && (
+                    <CustomRouteHelp
+                      host={primaryIngressStatus.host}
+                      routerCanonicalHostname={primaryIngressStatus.routerCanonicalHostname}
+                    />
+                  )}
                 </DetailsItem>
-              )}
-              {showCustomRouteHelp(primaryIngressStatus, route.metadata.annotations) && (
-                <dd>
-                  <CustomRouteHelp
-                    host={primaryIngressStatus.host}
-                    routerCanonicalHostname={primaryIngressStatus.routerCanonicalHostname}
-                  />
-                </dd>
               )}
             </dl>
           </div>

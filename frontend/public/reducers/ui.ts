@@ -113,7 +113,6 @@ export default (state: UIState, action: UIAction): UIState => {
         filterValue: '',
       }),
       user: {},
-      consoleLinks: [],
       monitoringDashboards: ImmutableMap({
         pollInterval: 30 * 1000,
         timespan: 30 * 60 * 1000,
@@ -260,9 +259,6 @@ export default (state: UIState, action: UIAction): UIState => {
         !state.getIn(['notifications', 'isExpanded']),
       );
 
-    case ActionType.NotificationDrawerToggleRead:
-      return state.setIn(['notifications', 'isRead'], !state.getIn(['notifications', 'isRead']));
-
     case ActionType.QueryBrowserAddQuery:
       return state.setIn(
         ['queryBrowser', 'queries'],
@@ -271,6 +267,13 @@ export default (state: UIState, action: UIAction): UIState => {
 
     case ActionType.QueryBrowserDeleteAllQueries:
       return state.setIn(['queryBrowser', 'queries'], ImmutableList([newQueryBrowserQuery()]));
+
+    case ActionType.QueryBrowserDeleteAllSeries: {
+      return state.setIn(
+        ['queryBrowser', 'queries'],
+        state.getIn(['queryBrowser', 'queries']).map((q) => q.set('series', undefined)),
+      );
+    }
 
     case ActionType.QueryBrowserDeleteQuery: {
       let queries = state.getIn(['queryBrowser', 'queries']).delete(action.payload.index);
@@ -367,9 +370,6 @@ export default (state: UIState, action: UIAction): UIState => {
     }
     case ActionType.UpdateTimestamps:
       return state.set('lastTick', action.payload.lastTick);
-
-    case ActionType.SetConsoleLinks:
-      return state.set('consoleLinks', action.payload.consoleLinks);
 
     case ActionType.SetPodMetrics:
       return state.setIn(['metrics', 'pod'], action.payload.podMetrics);

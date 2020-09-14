@@ -1,4 +1,5 @@
-import { K8sResourceCommon } from '@console/internal/module/k8s';
+import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
+import { AlertVariant } from '@patternfly/react-core';
 import { Extension, LazyLoader } from './base';
 
 namespace ExtensionProperties {
@@ -11,7 +12,7 @@ namespace ExtensionProperties {
     /** Loader for the corresponding Status component. */
     loader: LazyLoader<T>;
     /** predicate that tells if to render the status or not */
-    predicate: (pvc: K8sResourceCommon) => boolean;
+    predicate: (pvc: PersistentVolumeClaimKind) => boolean;
     /** priority for the corresponding Status component. bigger is prioritized */
     priority: number;
   }
@@ -21,6 +22,22 @@ namespace ExtensionProperties {
     label: string;
     /** path for the create prop */
     path: string;
+  }
+
+  export interface PVCDelete {
+    /** predicate that tells if to use the extension or not */
+    predicate: (pvc: PersistentVolumeClaimKind) => boolean;
+    /** method for the pvc delete operation */
+    onPVCKill: (pvc: PersistentVolumeClaimKind) => Promise<void>;
+    /** alert for additional info */
+    alert?: {
+      /** alert title */
+      title: string;
+      /** alert variant */
+      type: AlertVariant;
+      /** alert body */
+      body: LazyLoader<{ pvc: PersistentVolumeClaimKind }>;
+    };
   }
 }
 
@@ -36,6 +53,10 @@ export interface PVCCreateProp extends Extension<ExtensionProperties.PVCCreatePr
   type: 'PVCCreateProp';
 }
 
+export interface PVCDelete extends Extension<ExtensionProperties.PVCDelete> {
+  type: 'PVCDelete';
+}
+
 export const isPVCAlert = (e: Extension): e is PVCAlert => {
   return e.type === 'PVCAlert';
 };
@@ -46,4 +67,8 @@ export const isPVCStatus = (e: Extension): e is PVCStatus => {
 
 export const isPVCCreateProp = (e: Extension): e is PVCCreateProp => {
   return e.type === 'PVCCreateProp';
+};
+
+export const isPVCDelete = (e: Extension): e is PVCDelete => {
+  return e.type === 'PVCDelete';
 };

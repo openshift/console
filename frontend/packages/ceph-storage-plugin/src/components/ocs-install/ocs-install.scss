@@ -40,6 +40,25 @@
 }
 
 .ceph-ocs-install__minimal-msg {
-  margin-top: var(--pf-global--spacer--sm);
   margin-bottom: var(--pf-global--spacer--sm);
+}
+
+.ceph-minimal-deployment-alert__header {
+  display: flex;
+  justify-content: space-between;
+}
+
+// Restrict node-list widths
+.ceph-ocs-install__node-list {
+  @media (min-width: 769px) {
+    max-width: 100%;
+  }
+
+  @media (min-width: 992px) {
+    min-width: 650px;
+  }
+
+  @media (min-width: 1200px) {
+    max-width: 70%;
+  }
 }

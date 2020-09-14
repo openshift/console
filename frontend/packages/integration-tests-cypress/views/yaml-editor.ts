@@ -10,6 +10,8 @@ export const setEditorContent = (text: string) => {
   });
 };
 
-export const isLoaded = () => cy.window().should('have.property', 'yamlEditorReady', true);
+// initially yamlEditor loads with all grey text, finished loading when editor is color coded
+// class='mtk26' is the light blue color of property such as 'apiVersion'
+export const isLoaded = () => cy.get("[class='mtk26']").should('exist');
 export const clickSaveCreateButton = () => cy.byTestID('save-changes').click();
 export const clickReloadButton = () => cy.byTestID('reload-object').click();

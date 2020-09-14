@@ -18,6 +18,12 @@
     top: var(--pf-global--spacer--sm);
   }
 
+  &__view-switcher.pf-m-plain {
+    @media (min-width: 768px) {
+      padding-bottom: 7px !important;
+    }
+  }
+
   &__layout-group {
     display: flex;
     flex-wrap: wrap;

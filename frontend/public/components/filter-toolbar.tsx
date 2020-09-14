@@ -3,18 +3,19 @@ import * as _ from 'lodash';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { connect } from 'react-redux';
 import {
+  Badge,
   Button,
   Checkbox,
+  Dropdown,
+  DropdownGroup,
+  DropdownItem,
+  DropdownToggle,
   Toolbar,
+  ToolbarChip,
   ToolbarContent,
   ToolbarFilter,
-  ToolbarChip,
   ToolbarItem,
-  DropdownItem,
-  Dropdown,
-  DropdownToggle,
-  DropdownGroup,
-  Badge,
+  Tooltip,
 } from '@patternfly/react-core';
 import { CaretDownIcon, FilterIcon, ColumnsIcon } from '@patternfly/react-icons';
 import { Dropdown as DropdownInternal } from '@console/internal/components/utils';
@@ -71,7 +72,9 @@ const getDropdownItems = (rowFilters: RowFilter[], selectedItems, data, props) =
               </span>
               <span className="co-filter-dropdown-item__name">{item.title}</span>
               <Badge key={item.id} isRead>
-                {_.countBy(data, grp.reducer)?.[item.id] ?? '0'}
+                {grp.isMatch
+                  ? _.filter(data, (d) => grp.isMatch(d, item.id)).length
+                  : _.countBy(data, grp.reducer)?.[item.id] ?? '0'}
               </Badge>
             </div>
           </DropdownItem>
@@ -84,9 +87,10 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   const {
     rowFilters = [],
     data,
-    hideNameFilter,
-    columnLayout,
+    hideColumnManagement,
     hideLabelFilter,
+    hideNameLabelFilters,
+    columnLayout,
     location,
     textFilter = filterTypeMap[FilterType.NAME],
     labelFilter = filterTypeMap[FilterType.LABEL],
@@ -224,20 +228,20 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
 
   const clearAll = () => {
     updateRowFilterSelected(selectedRowFilters);
-    if (!hideNameFilter) {
+    if (!hideNameLabelFilters) {
       updateNameFilter('');
     }
-    if (!hideLabelFilter) {
+    if (!hideNameLabelFilters || !hideLabelFilter) {
       updateLabelFilter([]);
     }
   };
 
   // Initial URL parsing
   React.useEffect(() => {
-    if (!hideLabelFilter) {
+    if (!hideNameLabelFilters || !hideLabelFilter) {
       applyFilter(labelFilters, FilterType.LABEL);
     }
-    if (!hideNameFilter) {
+    if (!hideNameLabelFilters) {
       setInputText(nameFilter ?? '');
       applyFilter(nameFilter, FilterType.NAME);
     }
@@ -255,7 +259,6 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   };
 
   const dropdownItems = getDropdownItems(rowFilters, selectedRowFilters, data, props);
-
   return (
     <Toolbar id="filter-toolbar" clearAllFilters={clearAll}>
       <ToolbarContent>
@@ -294,30 +297,30 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
             )}
           </ToolbarItem>
         )}
-        <ToolbarItem className="co-filter-search--full-width">
-          <ToolbarFilter
-            deleteChipGroup={() => updateLabelFilter([])}
-            chips={[...labelFilters]}
-            deleteChip={(filter, chip: string) =>
-              updateLabelFilter(_.difference(labelFilters, [chip]))
-            }
-            categoryName="Label"
-          >
+        {!hideNameLabelFilters && (
+          <ToolbarItem className="co-filter-search--full-width">
             <ToolbarFilter
-              chips={nameFilter && nameFilter.length > 0 ? [nameFilter] : []}
-              deleteChip={() => updateNameFilter('')}
-              categoryName="Name"
+              deleteChipGroup={() => updateLabelFilter([])}
+              chips={[...labelFilters]}
+              deleteChip={(filter, chip: string) =>
+                updateLabelFilter(_.difference(labelFilters, [chip]))
+              }
+              categoryName="Label"
             >
-              <div className="pf-c-input-group">
-                {!hideLabelFilter && (
-                  <DropdownInternal
-                    items={FilterType}
-                    onChange={switchFilter}
-                    selectedKey={filterType}
-                    title={filterType}
-                  />
-                )}
-                {!hideNameFilter && (
+              <ToolbarFilter
+                chips={nameFilter && nameFilter.length > 0 ? [nameFilter] : []}
+                deleteChip={() => updateNameFilter('')}
+                categoryName="Name"
+              >
+                <div className="pf-c-input-group">
+                  {!hideLabelFilter && (
+                    <DropdownInternal
+                      items={FilterType}
+                      onChange={switchFilter}
+                      selectedKey={filterType}
+                      title={filterType}
+                    />
+                  )}
                   <AutocompleteInput
                     className="co-text-node"
                     onSuggestionSelect={(selected) => {
@@ -332,24 +335,26 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
                     data={data}
                     labelPath={props.labelPath}
                   />
-                )}
-              </div>
+                </div>
+              </ToolbarFilter>
             </ToolbarFilter>
-          </ToolbarFilter>
-        </ToolbarItem>
-        {columnLayout?.id && (
+          </ToolbarItem>
+        )}
+        {columnLayout?.id && !hideColumnManagement && (
           <ToolbarItem>
-            <Button
-              variant="plain"
-              onClick={() =>
-                createColumnManagementModal({
-                  columnLayout,
-                })
-              }
-              aria-label="Column Management"
-            >
-              <ColumnsIcon />
-            </Button>
+            <Tooltip content="Manage columns">
+              <Button
+                variant="plain"
+                onClick={() =>
+                  createColumnManagementModal({
+                    columnLayout,
+                  })
+                }
+                aria-label="Column Management"
+              >
+                <ColumnsIcon />
+              </Button>
+            </Tooltip>
           </ToolbarItem>
         )}
       </ToolbarContent>
@@ -363,9 +368,10 @@ type FilterToolbarProps = {
   reduxIDs?: string[];
   filterList?: any;
   textFilter?: string;
-  hideNameFilter?: boolean;
-  labelFilter?: string;
+  hideColumnManagement?: boolean;
   hideLabelFilter?: boolean;
+  hideNameLabelFilters?: boolean;
+  labelFilter?: string;
   parseAutoComplete?: any;
   kinds?: any;
   labelPath?: string;
@@ -375,12 +381,13 @@ type FilterToolbarProps = {
 export type RowFilter<R = any> = {
   defaultSelected?: string[];
   filterGroupName: string;
+  isMatch?: (param: R, id: string) => boolean;
   type: string;
   items?: {
     [key: string]: string;
   }[];
   itemsGenerator?: (...args) => { [key: string]: string }[];
-  reducer: (param: R) => React.ReactText;
+  reducer?: (param: R) => React.ReactText;
   filter?: any;
 };
 

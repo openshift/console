@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
-import { PodModel, ServiceModel } from '@console/internal/models';
+import { K8sResourceKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
+import { PersistentVolumeClaimModel, PodModel, ServiceModel } from '@console/internal/models';
 import { getVMStatus } from '../../statuses/vm/vm-status';
 import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
@@ -24,6 +24,7 @@ const ConnectedVMConsole: React.FC<ConnectedVMConsoleProps> = ({
   vmis,
   pods,
   migrations,
+  pvcs,
   dataVolumes,
   vmImports,
 }) => {
@@ -31,6 +32,7 @@ const ConnectedVMConsole: React.FC<ConnectedVMConsoleProps> = ({
   const loadedVMIs = getLoadedData(vmis);
   const loadedPods = getLoadedData(pods);
   const loadedMigrations = getLoadedData(migrations);
+  const loadedPVCs = getLoadedData(pvcs);
   const loadedDataVolumes = getLoadedData(dataVolumes);
   const loadedImports = getLoadedData(vmImports);
   const vmi = loadedVMIs?.[0];
@@ -40,6 +42,7 @@ const ConnectedVMConsole: React.FC<ConnectedVMConsoleProps> = ({
     vmi,
     pods: loadedPods,
     migrations: loadedMigrations,
+    pvcs: loadedPVCs,
     dataVolumes: loadedDataVolumes,
     vmImports: loadedImports,
   });
@@ -62,6 +65,7 @@ type ConnectedVMConsoleProps = {
   vmis?: FirehoseResult<VMIKind[]>;
   pods?: FirehoseResult<PodKind[]>;
   migrations?: FirehoseResult<K8sResourceKind[]>;
+  pvcs?: FirehoseResult<PersistentVolumeClaimKind[]>;
   dataVolumes?: FirehoseResult<V1alpha1DataVolume[]>;
   vmImports?: FirehoseResult<VMImportKind[]>;
   services?: FirehoseResult;
@@ -106,6 +110,12 @@ const FirehoseVMConsole: React.FC<FirehoseVMConsoleProps> = ({
       namespace,
       prop: 'vmImports',
       optional: true,
+    },
+    {
+      kind: PersistentVolumeClaimModel.kind,
+      isList: true,
+      namespace,
+      prop: 'pvcs',
     },
     {
       kind: DataVolumeModel.kind,

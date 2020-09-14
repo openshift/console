@@ -584,7 +584,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                     headerContent={<div>Update Channel</div>}
                     bodyContent={<div>The channel to track and receive the updates from.</div>}
                   >
-                    <h5 className="co-required">
+                    <h5 className="co-required co-form-heading__popover">
                       <Button variant="plain" className="co-form-heading__popover-button">
                         Update Channel
                       </Button>
@@ -657,7 +657,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                       <div>The strategy to determine either manual or automatic updates.</div>
                     }
                   >
-                    <h5 className="co-required">
+                    <h5 className="co-required co-form-heading__popover">
                       <Button variant="plain" className="co-form-heading__popover-button">
                         Approval Strategy
                       </Button>
@@ -687,7 +687,9 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           </div>
           <div className="col-xs-6">
             <ClusterServiceVersionLogo
-              displayName={_.get(channels, '[0].currentCSVDesc.displayName')}
+              displayName={
+                currentCSVDesc?.displayName || channels?.[0]?.currentCSVDesc?.displayName
+              }
               icon={iconFor(props.packageManifest.data[0])}
               provider={provider}
             />

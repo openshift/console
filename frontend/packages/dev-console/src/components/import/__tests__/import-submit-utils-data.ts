@@ -1,5 +1,6 @@
 import { GitImportFormData, Resources } from '../import-types';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
+import { UNASSIGNED_KEY } from '../../../const';
 
 export const mockPipelineTemplate = {
   apiVersion: 'tekton.dev/v1alpha1',
@@ -60,7 +61,7 @@ export const defaultData: GitImportFormData = {
   application: {
     initial: '',
     name: '',
-    selectedKey: '#UNASSIGNED_KEY#',
+    selectedKey: UNASSIGNED_KEY,
   },
   name: 'nodejs-ex-git',
   image: {

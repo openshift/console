@@ -1,7 +1,25 @@
+.co-quick-start-drawer-head {
+  position: sticky;
+  top: 0px;
+  background: inherit;
+  z-index: var(--pf-global--ZIndex--xs);
+}
+
 .co-quick-start-drawer {
   &__title {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    z-index: 0;
+    position: relative;
+  }
+
+  &__modal > .pf-c-modal-box__footer {
+    display: block;
   }
 }

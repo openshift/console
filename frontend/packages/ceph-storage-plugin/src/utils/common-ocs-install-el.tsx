@@ -4,6 +4,7 @@ import { ListPage } from '@console/internal/components/factory';
 import { NodeModel } from '@console/internal/models';
 import { FieldLevelHelp } from '@console/internal/components/utils';
 import { StorageClassResourceKind } from '@console/internal/module/k8s';
+import { TechPreviewBadge } from '@console/shared';
 import { OCSStorageClassDropdown } from '../components/modals/storage-class-dropdown';
 import { storageClassTooltip } from '../constants/ocs-install';
 import '../components/ocs-install/ocs-install.scss';
@@ -15,6 +16,30 @@ export const OCSAlert = () => (
     title="A bucket will be created to provide the OCS Service."
     isInline
   />
+);
+
+type MinimalDeploymentAlertProps = {
+  isInternalMode?: boolean;
+};
+
+export const MinimalDeploymentAlert: React.FC<MinimalDeploymentAlertProps> = ({
+  isInternalMode,
+}) => (
+  <Alert
+    className="co-alert"
+    variant="warning"
+    title={
+      <div className="ceph-minimal-deployment-alert__header">
+        A minimal cluster deployment will be performed.
+        <TechPreviewBadge />
+      </div>
+    }
+    isInline
+  >
+    {isInternalMode
+      ? 'The selected nodes do not match the OCS storage cluster recommended requirements of an aggregated 30 CPUs and 72 GiB of RAM. If the selection won’t be modified, a minimal cluster will be deployed and may face some performance issues.'
+      : 'The selected nodes do not match the OCS storage cluster recommended requirements of at least 10 CPU and 64 GiB of RAM per node. If the selection won’t be modified, a minimal cluster will be deployed and may face some performance issues.'}
+  </Alert>
 );
 
 export const SelectNodesSection: React.FC<SelectNodesSectionProps> = ({

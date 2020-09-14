@@ -15,3 +15,5 @@ export * from './virtualized-grid';
 export * from './alerts';
 export * from './popover';
 export * from './layout';
+export * from './utils';
+export * from './modal';

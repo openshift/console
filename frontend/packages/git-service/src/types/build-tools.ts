@@ -32,7 +32,7 @@ export const Golang: BuildTool = {
   name: 'Golang',
   type: 'golang',
   language: 'go',
-  expectedRegexps: RegExp([`main.go`, `Gopkg.toml`, `glide.yaml`].join('|')),
+  expectedRegexps: RegExp([`.*.go`, `Gopkg.toml`, `glide.yaml`].join('|')),
   expectedFiles: ['main.go', 'Gopkg.toml', 'glide.yaml'],
 };
 

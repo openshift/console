@@ -49,6 +49,7 @@ export const createModalLauncher: CreateModalLauncher = (Component) => (props) =
             className={classNames('modal-dialog', props.modalClassName)}
             overlayClassName="co-overlay"
             shouldCloseOnOverlayClick={!props.blocking}
+            parentSelector={() => document.getElementById('modal-container')}
           >
             <Component
               {...(_.omit(props, 'blocking', 'modalClassName') as any)}

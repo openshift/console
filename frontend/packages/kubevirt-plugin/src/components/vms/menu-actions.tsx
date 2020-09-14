@@ -1,7 +1,13 @@
 import * as _ from 'lodash';
 import * as React from 'react';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
-import { K8sKind, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
+import {
+  K8sKind,
+  K8sResourceKind,
+  PersistentVolumeClaimKind,
+  PodKind,
+} from '@console/internal/module/k8s';
 import { getName, getNamespace, YellowExclamationTriangleIcon } from '@console/shared';
 import { confirmModal } from '@console/internal/components/modals';
 import { VMIKind, VMKind } from '../../types/vm';
@@ -29,6 +35,8 @@ import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper'
 import { StatusGroup } from '../../constants/status-group';
 import { cancelVMImport } from '../../k8s/requests/vmimport';
 import { getActionMessage } from './constants';
+
+import './menu-actions.scss';
 
 type ActionArgs = {
   vmi?: VMIKind;
@@ -85,12 +93,29 @@ export const menuActionStart = (
 ): KebabOption => {
   const title = 'Start Virtual Machine';
   return {
-    hidden:
-      vmStatusBundle?.status?.isImporting() ||
-      vmStatusBundle?.status?.isMigrating() ||
-      isVMRunningOrExpectedRunning(vm),
+    hidden: vmStatusBundle?.status?.isMigrating() || isVMRunningOrExpectedRunning(vm),
     label: title,
-    callback: () => startVM(vm),
+    callback: () => {
+      if (!vmStatusBundle?.status?.isImporting()) {
+        startVM(vm);
+      } else {
+        confirmModal({
+          title,
+          message: (
+            <>
+              <p>
+                This virtual machine will start as soon as the import has been completed. If you
+                proceed you will not be able to change this option.
+              </p>
+              Are you sure you want to start <strong>{getName(vm)}</strong> in namespace{' '}
+              <strong>{getNamespace(vm)}</strong> after it has imported?
+            </>
+          ),
+          btnText: _.capitalize(VMActionType.Start),
+          executeFn: () => startVM(vm),
+        });
+      }
+    },
     accessReview: asAccessReview(kindObj, vm, 'patch'),
   };
 };
@@ -101,9 +126,10 @@ const menuActionStop = (
   { vmi, vmStatusBundle }: ActionArgs,
 ): KebabOption => {
   const title = 'Stop Virtual Machine';
+  const isImporting = vmStatusBundle?.status?.isImporting();
   return {
-    isDisabled: vmStatusBundle?.status?.isPending(),
-    hidden: !isVMExpectedRunning(vm),
+    isDisabled: isImporting,
+    hidden: !isImporting && !isVMExpectedRunning(vm),
     label: title,
     callback: () =>
       confirmVMIModal({
@@ -261,7 +287,14 @@ export const menuActionDeleteVMI = (kindObj: K8sKind, vmi: VMIKind): KebabOption
 });
 
 export const menuActionOpenConsole = (kindObj: K8sKind, vmi: VMIKind): KebabOption => ({
-  label: `Open Console`,
+  label: (
+    <>
+      Open Console
+      <span className="kubevirt-menu-actions__ext-link-icon">
+        <ExternalLinkAltIcon />
+      </span>
+    </>
+  ),
   callback: () =>
     window.open(
       `/k8s/ns/${getNamespace(vmi)}/virtualmachineinstances/${getName(vmi)}/standaloneconsole`,
@@ -300,6 +333,7 @@ export type ExtraResources = {
   vmis: VMIKind[];
   pods: PodKind[];
   migrations: K8sResourceKind[];
+  pvcs?: PersistentVolumeClaimKind[];
   dataVolumes: V1alpha1DataVolume[];
   vmImports: VMImportKind[];
 };
@@ -307,10 +341,10 @@ export type ExtraResources = {
 export const vmMenuActionsCreator = (
   kindObj: K8sKind,
   vm: VMKind,
-  { vmis, pods, migrations, vmImports, dataVolumes }: ExtraResources,
+  { vmis, pods, migrations, vmImports, pvcs, dataVolumes }: ExtraResources,
 ) => {
   const vmi = vmis && vmis[0];
-  const vmStatusBundle = getVMStatus({ vm, vmi, pods, migrations, dataVolumes, vmImports });
+  const vmStatusBundle = getVMStatus({ vm, vmi, pods, migrations, pvcs, dataVolumes, vmImports });
 
   return vmMenuActions.map((action) => {
     return action(kindObj, vm, { vmi, vmStatusBundle });

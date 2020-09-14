@@ -139,6 +139,7 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
                 isRequired
                 type="text"
                 id="pvc-name"
+                data-test="pvc-name"
                 name="restore-pvc-modal__name"
                 value={restorePVCName}
                 onChange={setPVCName}

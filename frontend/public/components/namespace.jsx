@@ -24,7 +24,7 @@ import {
 } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 
-import { NamespaceModel, ProjectModel, SecretModel } from '../models';
+import { ConsoleLinkModel, NamespaceModel, ProjectModel, SecretModel } from '../models';
 import { coFetchJSON } from '../co-fetch';
 import { k8sGet, referenceForModel } from '../module/k8s';
 import * as k8sActions from '../actions/k8s';
@@ -63,12 +63,13 @@ import { Bar, Area, PROMETHEUS_BASE_PATH, requirePrometheus } from './graphs';
 import { featureReducerName, flagPending, connectToFlags } from '../reducers/features';
 import { setFlag } from '../actions/features';
 import { OpenShiftGettingStarted } from './start-guide';
-import { Overview } from './overview';
+import { OverviewListPage } from './overview';
 import {
   getNamespaceDashboardConsoleLinks,
   ProjectDashboard,
 } from './dashboard/project-dashboard/project-dashboard';
 import { removeQueryArgument } from './utils/router';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 
 const getModel = (useProjects) => (useProjects ? ProjectModel : NamespaceModel);
 const getDisplayName = (obj) =>
@@ -136,7 +137,7 @@ const namespaceColumnInfo = Object.freeze({
     title: 'Name',
   },
   displayName: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
+    classes: 'co-break-word',
     id: 'displayName',
     title: 'Display Name',
   },
@@ -146,32 +147,32 @@ const namespaceColumnInfo = Object.freeze({
     title: 'Status',
   },
   requester: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+    classes: '',
     id: 'requester',
     title: 'Requester',
   },
   memory: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+    classes: '',
     id: 'memory',
     title: 'Memory',
   },
   cpu: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+    classes: '',
     id: 'cpu',
     title: 'CPU',
   },
   created: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-2xl'),
+    classes: '',
     id: 'created',
     title: 'Created',
   },
   description: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+    classes: '',
     id: 'description',
     title: 'Description',
   },
   labels: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+    classes: '',
     id: 'labels',
     title: 'Labels',
   },
@@ -537,15 +538,23 @@ const ProjectTableRow = connect(projectRowStateToProps)(
   ({ obj: project, index, rowKey, style, customData = {}, metrics, selectedColumns }) => {
     const name = getName(project);
     const requester = getRequester(project);
-    const { ProjectLinkComponent, actionsEnabled = true, showMetrics, showActions } = customData;
+    const {
+      ProjectLinkComponent,
+      actionsEnabled = true,
+      showMetrics,
+      showActions,
+      isColumnManagementEnabled = true,
+    } = customData;
     const bytes = metrics?.memory?.[name];
     const cores = metrics?.cpu?.[name];
     const description = getDescription(project);
     const labels = project.metadata.labels;
-    const columns = new Set(
-      selectedColumns?.get(projectColumnManagementID) ||
-        getProjectSelectedColumns({ showMetrics, showActions }),
-    );
+    const columns = isColumnManagementEnabled
+      ? new Set(
+          selectedColumns?.get(projectColumnManagementID) ||
+            getProjectSelectedColumns({ showMetrics, showActions }),
+        )
+      : null;
     return (
       <TableRow id={project.metadata.uid} index={index} trKey={rowKey} style={style}>
         <TableData className={namespaceColumnInfo.name.classes}>
@@ -609,22 +618,26 @@ const ProjectTableRow = connect(projectRowStateToProps)(
         >
           <Timestamp timestamp={project.metadata.creationTimestamp} />
         </TableData>
-        <TableData
-          className={namespaceColumnInfo.description.classes}
-          columns={columns}
-          columnID={namespaceColumnInfo.description.id}
-        >
-          <span className="co-break-word co-line-clamp">
-            {description || <span className="text-muted">No description</span>}
-          </span>
-        </TableData>
-        <TableData
-          className={namespaceColumnInfo.labels.classes}
-          columns={columns}
-          columnID={namespaceColumnInfo.labels.id}
-        >
-          <LabelList labels={labels} kind="Project" />
-        </TableData>
+        {isColumnManagementEnabled && (
+          <>
+            <TableData
+              className={namespaceColumnInfo.description.classes}
+              columns={columns}
+              columnID={namespaceColumnInfo.description.id}
+            >
+              <span className="co-break-word co-line-clamp">
+                {description || <span className="text-muted">No description</span>}
+              </span>
+            </TableData>
+            <TableData
+              className={namespaceColumnInfo.labels.classes}
+              columns={columns}
+              columnID={namespaceColumnInfo.labels.id}
+            >
+              <LabelList labels={labels} kind="Project" />
+            </TableData>
+          </>
+        )}
         {actionsEnabled && (
           <TableData className={Kebab.columnClass}>
             <ResourceKebab actions={projectMenuActions} kind="Project" resource={project} />
@@ -652,7 +665,11 @@ export const ProjectsTable = (props) => (
     aria-label="Projects"
     Header={projectHeaderWithoutActions}
     Row={ProjectRow}
-    customData={{ ProjectLinkComponent: ProjectLink, actionsEnabled: false }}
+    customData={{
+      ProjectLinkComponent: ProjectLink,
+      actionsEnabled: false,
+      isColumnManagementEnabled: false,
+    }}
     virtualize
   />
 );
@@ -821,6 +838,7 @@ const ResourceUsage = requirePrometheus(({ ns }) => (
 
 export const NamespaceSummary = ({ ns }) => {
   const displayName = getDisplayName(ns);
+  const description = getDescription(ns);
   const requester = getRequester(ns);
   const serviceMeshEnabled = ns.metadata?.labels?.['maistra.io/member-of'];
   const canListSecrets = useAccessReview({
@@ -829,13 +847,32 @@ export const NamespaceSummary = ({ ns }) => {
     verb: 'patch',
     namespace: ns.metadata.name,
   });
+
   return (
     <div className="row">
       <div className="col-sm-6 col-xs-12">
         {/* Labels aren't editable on kind Project, only Namespace. */}
         <ResourceSummary resource={ns} showLabelEditor={ns.kind === 'Namespace'}>
-          {displayName && <dt>Display Name</dt>}
-          {displayName && <dd>{displayName}</dd>}
+          <dt>Display Name</dt>
+          <dd
+            className={classNames({
+              'text-muted': !displayName,
+            })}
+          >
+            {displayName || 'No display name'}
+          </dd>
+          <dt>Description</dt>
+          <dd>
+            <p
+              className={classNames({
+                'text-muted': !description,
+                'co-pre-wrap': description,
+                'co-namespace-summary__description': description,
+              })}
+            >
+              {description || 'No description'}
+            </p>
+          </dd>
           {requester && <dt>Requester</dt>}
           {requester && <dd>{requester}</dd>}
         </ResourceSummary>
@@ -871,7 +908,12 @@ export const NamespaceSummary = ({ ns }) => {
   );
 };
 
-const NamespaceDetails_ = ({ obj: ns, consoleLinks, customData }) => {
+export const NamespaceDetails = ({ obj: ns, customData }) => {
+  const [consoleLinks] = useK8sWatchResource({
+    isList: true,
+    kind: referenceForModel(ConsoleLinkModel),
+    optional: true,
+  });
   const links = getNamespaceDashboardConsoleLinks(ns, consoleLinks);
   return (
     <div>
@@ -897,12 +939,6 @@ const NamespaceDetails_ = ({ obj: ns, consoleLinks, customData }) => {
     </div>
   );
 };
-
-const DetailsStateToProps = ({ UI }) => ({
-  consoleLinks: UI.get('consoleLinks'),
-});
-
-export const NamespaceDetails = connect(DetailsStateToProps)(NamespaceDetails_);
 
 const RolesPage = ({ obj: { metadata } }) => (
   <RoleBindingsPage
@@ -1080,7 +1116,7 @@ export const ProjectsDetailsPage = (props) => (
         component: NamespaceDetails,
       },
       navFactory.editYaml(),
-      navFactory.workloads(Overview),
+      navFactory.workloads(OverviewListPage),
       navFactory.roles(RolesPage),
     ]}
   />

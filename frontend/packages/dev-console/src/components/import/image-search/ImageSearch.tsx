@@ -15,6 +15,7 @@ import { InputField, useDebounceCallback, CheckboxField } from '@console/shared'
 import { getSuggestedName, getPorts, makePortName } from '../../../utils/imagestream-utils';
 import { secretModalLauncher } from '../CreateSecretModal';
 import { UNASSIGNED_KEY, CREATE_APPLICATION_KEY } from '../../../const';
+import './ImageSearch.scss';
 
 const ImageSearch: React.FC = () => {
   const { values, setFieldValue, dirty, initialValues, touched } = useFormikContext<FormikValues>();
@@ -204,13 +205,15 @@ const ImageSearch: React.FC = () => {
           actionClose={<AlertActionCloseButton onClose={() => shouldHideAlert(false)} />}
         />
       )}
-      <CheckboxField
-        name="allowInsecureRegistry"
-        label="Allow images from insecure registries"
-        onChange={(val: boolean) => {
-          values.searchTerm && handleSearch(values.searchTerm, val);
-        }}
-      />
+      <div className="odc-image-search__advanced-options">
+        <CheckboxField
+          name="allowInsecureRegistry"
+          label="Allow images from insecure registries"
+          onChange={(val: boolean) => {
+            values.searchTerm && handleSearch(values.searchTerm, val);
+          }}
+        />
+      </div>
     </>
   );
 };

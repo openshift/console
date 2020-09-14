@@ -24,6 +24,8 @@ import {
   OVIRT_TYPE_LABEL,
 } from '../../../../../../constants/v2v';
 import { OVirtProviderModel } from '../../../../../../models';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
 
 type GetQueriesParams = {
   namespace: string;
@@ -71,6 +73,16 @@ const getQueries = ({
       name: V2VVMWARE_DEPLOYMENT_NAME,
       isList: false,
       prop: OvirtProviderProps.deployment,
+      errorBehaviour: {
+        ignore404: true,
+      },
+    },
+    {
+      kind: referenceForModel(NetworkAttachmentDefinitionModel),
+      model: NetworkAttachmentDefinitionModel,
+      isList: true,
+      namespace,
+      prop: OvirtProviderProps.networkAttachmentDefinitions,
       errorBehaviour: {
         ignore404: true,
       },

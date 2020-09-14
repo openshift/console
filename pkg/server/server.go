@@ -2,7 +2,9 @@ package server
 
 import (
 	"context"
+	"crypto/sha256"
 	"crypto/tls"
+	"encoding/base64"
 	"fmt"
 	"html/template"
 	"io"
@@ -11,6 +13,7 @@ import (
 	"net/url"
 	"os"
 	"path"
+	"strings"
 
 	"github.com/coreos/dex/api"
 	"github.com/coreos/pkg/capnslog"
@@ -48,6 +51,8 @@ const (
 	customLogoEndpoint             = "/custom-logo"
 	helmChartRepoProxyEndpoint     = "/api/helm/charts/"
 	gitopsEndpoint                 = "/api/gitops/"
+
+	sha256Prefix = "sha256~"
 )
 
 var (
@@ -118,8 +123,6 @@ type Server struct {
 	MonitoringDashboardConfigMapLister ResourceLister
 	KnativeEventSourceCRDLister        ResourceLister
 	KnativeChannelCRDLister            ResourceLister
-	HelmChartRepoProxyConfig           *proxy.Config
-	HelmDefaultRepoCACert              []byte
 	GOARCH                             string
 	GOOS                               string
 	// Monitoring and Logging related URLs
@@ -259,12 +262,12 @@ func (s *Server) HTTPHandler() http.Handler {
 	k8sResolver := resolver.K8sResolver{K8sProxy: k8sProxy}
 	rootResolver := resolver.RootResolver{K8sResolver: &k8sResolver}
 	schema := graphql.MustParseSchema(string(graphQLSchema), &rootResolver, opts...)
-	graphQLHandler := graphqlws.NewHandlerFunc(schema, &relay.Handler{Schema: schema})
+	handler := graphqlws.NewHandler()
+	handler.InitPayload = resolver.InitPayload
+	graphQLHandler := handler.NewHandlerFunc(schema, &relay.Handler{Schema: schema})
 	handle("/api/graphql", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(context.Background(), resolver.HeadersKey, map[string]string{
-			"Authorization":     fmt.Sprintf("Bearer %s", user.Token),
-			"Impersonate-User":  r.Header.Get("Impersonate-User"),
-			"Impersonate-Group": r.Header.Get("Impersonate-Group"),
+			"Authorization": fmt.Sprintf("Bearer %s", user.Token),
 		})
 		graphQLHandler(w, r.WithContext(ctx))
 	}))
@@ -376,12 +379,12 @@ func (s *Server) HTTPHandler() http.Handler {
 	handle("/api/console/version", authHandler(s.versionHandler))
 
 	// Helm Endpoints
-	helmHandlers := helmhandlerspkg.New(s.KubeAPIServerURL, s.K8sClient.Transport, s.HelmDefaultRepoCACert)
+	helmHandlers := helmhandlerspkg.New(s.KubeAPIServerURL, s.K8sClient.Transport)
 	handle("/api/helm/template", authHandlerWithUser(helmHandlers.HandleHelmRenderManifests))
 	handle("/api/helm/releases", authHandlerWithUser(helmHandlers.HandleHelmList))
 	handle("/api/helm/chart", authHandlerWithUser(helmHandlers.HandleChartGet))
 	handle("/api/helm/release/history", authHandlerWithUser(helmHandlers.HandleGetReleaseHistory))
-	handle("/api/helm/charts/index.yaml", authHandlerWithUser(helmHandlers.HandleGetRepos))
+	handle("/api/helm/charts/index.yaml", authHandlerWithUser(helmHandlers.HandleIndexFile))
 
 	handle("/api/helm/release", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
@@ -516,8 +519,13 @@ func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWr
 		return
 	}
 
+	tokenName := user.Token
+	if strings.HasPrefix(tokenName, sha256Prefix) {
+		tokenName = tokenToObjectName(tokenName)
+	}
+
 	// Delete the OpenShift OAuthAccessToken.
-	path := "/apis/oauth.openshift.io/v1/oauthaccesstokens/" + user.Token
+	path := "/apis/oauth.openshift.io/v1/oauthaccesstokens/" + tokenName
 	url := proxy.SingleJoiningSlash(s.K8sProxyConfig.Endpoint.String(), path)
 	req, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
@@ -535,4 +543,12 @@ func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWr
 	w.WriteHeader(resp.StatusCode)
 	io.Copy(w, resp.Body)
 	resp.Body.Close()
+}
+
+// tokenToObjectName returns the oauthaccesstokens object name for the given raw token,
+// i.e. the sha256 hash prefixed with "sha256~".
+func tokenToObjectName(token string) string {
+	name := strings.TrimPrefix(token, sha256Prefix)
+	h := sha256.Sum256([]byte(name))
+	return sha256Prefix + base64.RawURLEncoding.EncodeToString(h[0:])
 }

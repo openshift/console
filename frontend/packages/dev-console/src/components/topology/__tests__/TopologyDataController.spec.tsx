@@ -5,6 +5,7 @@ import store from '@console/internal/redux';
 import * as utils from '@console/internal/components/utils/url-poll-hook';
 import { TopologyDataControllerProps, TopologyDataController } from '../TopologyDataController';
 import { TopologyExtensionLoader } from '../TopologyExtensionLoader';
+import DataModelProvider from '../data-transforms/DataModelProvider';
 
 const TestInner = () => null;
 
@@ -19,12 +20,13 @@ describe('TopologyDataController', () => {
   beforeEach(() => {
     spyUseURLPoll.mockReturnValue([{}, null, false]);
     wrapper = mount(
-      <TopologyDataController
-        showGraphView
-        namespace="test-project"
-        kindsInFlight={false}
-        render={() => <TestInner />}
-      />,
+      <DataModelProvider namespace="test-project">
+        <TopologyDataController
+          showGraphView
+          namespace="test-project"
+          render={() => <TestInner />}
+        />
+      </DataModelProvider>,
       {
         wrappingComponent: ({ children }) => <Provider store={store}>{children}</Provider>,
       },

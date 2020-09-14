@@ -48,6 +48,8 @@ export type ViewComponentFactory = (
 
 export type TopologyDataModelDepicted = (resource: K8sResourceKind, model: Model) => boolean;
 
+export type TopologyDataModelReconciler = (model: Model, resources: TopologyDataResources) => void;
+
 export type CreateConnection = (
   source: Node,
   target: Node | Graph,

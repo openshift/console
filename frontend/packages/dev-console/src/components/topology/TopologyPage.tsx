@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet';
 import { matchPath, match as RMatch, Link, Redirect } from 'react-router-dom';
 import { Tooltip, Popover, Button } from '@patternfly/react-core';
 import { ListIcon, TopologyIcon, QuestionCircleIcon } from '@patternfly/react-icons';
+import { observer } from '@patternfly/react-topology';
 import { useQueryParams } from '@console/shared/src';
 import {
   StatusBox,
@@ -10,7 +11,6 @@ import {
   HintBlock,
   removeQueryArgument,
 } from '@console/internal/components/utils';
-
 import EmptyState from '../EmptyState';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import ProjectsExistWrapper from '../ProjectsExistWrapper';
@@ -21,6 +21,8 @@ import TopologyShortcuts from './TopologyShortcuts';
 import { ConnectedTopologyView } from './TopologyView';
 import { LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY } from './components/const';
 import { TOPOLOGY_SEARCH_FILTER_KEY } from './filters';
+import DataModelProvider from './data-transforms/DataModelProvider';
+import ModelContext, { ExtensibleModel } from './data-transforms/ModelContext';
 
 import './TopologyPage.scss';
 
@@ -59,8 +61,17 @@ export function renderTopology({
   namespace,
   showGraphView,
 }: RenderProps) {
+  const skeletonOverview = (
+    <div className="skeleton-overview">
+      <div className="skeleton-overview--head" />
+      <div className="skeleton-overview--tile" />
+      <div className="skeleton-overview--tile" />
+      <div className="skeleton-overview--tile" />
+    </div>
+  );
   return (
     <StatusBox
+      skeleton={showGraphView ? undefined : skeletonOverview}
       data={model ? model.nodes : null}
       label="Topology"
       loaded={loaded}
@@ -72,10 +83,10 @@ export function renderTopology({
   );
 }
 
-export const TopologyPage: React.FC<TopologyPageProps> = ({ match }) => {
+export const TopologyPageContext: React.FC<TopologyPageProps> = observer(({ match }) => {
   const queryParams = useQueryParams();
-  const searchParams = queryParams.get('searchQuery');
   const namespace = match.params.name;
+  const dataModelContext = React.useContext<ExtensibleModel>(ModelContext);
   const showListView = !!matchPath(match.path, {
     path: '*/list',
     exact: true,
@@ -101,7 +112,7 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({ match }) => {
       <Redirect
         to={`/topology/${namespace ? `ns/${namespace}` : 'all-namespaces'}/${
           getTopologyActiveView() === 'list' ? 'list' : 'graph'
-        }`}
+        }${queryParams ? `?${queryParams.toString()}` : ''}`}
       />
     );
   }
@@ -115,36 +126,38 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({ match }) => {
         variant={showListView ? NamespacedPageVariants.light : NamespacedPageVariants.default}
         onNamespaceChange={handleNamespaceChange}
         toolbar={
-          <>
-            {!showListView && namespace && (
-              <Popover
-                aria-label="Shortcuts"
-                bodyContent={TopologyShortcuts}
-                position="left"
-                maxWidth="100vw"
-              >
-                <Button
-                  type="button"
-                  variant="link"
-                  className="odc-topology__shortcuts-button"
-                  icon={<QuestionCircleIcon />}
-                  data-test-id="topology-view-shortcuts"
+          namespace && !dataModelContext.isEmptyModel ? (
+            <>
+              {!showListView && namespace && (
+                <Popover
+                  aria-label="Shortcuts"
+                  bodyContent={TopologyShortcuts}
+                  position="left"
+                  maxWidth="100vw"
                 >
-                  View shortcuts
-                </Button>
-              </Popover>
-            )}
-            <Tooltip position="left" content={showListView ? 'Topology View' : 'List View'}>
-              <Link
-                className="pf-c-button pf-m-plain"
-                to={`/topology/${namespace ? `ns/${namespace}` : 'all-namespaces'}${
-                  showListView ? '/graph' : '/list'
-                }${searchParams ? `?searchQuery=${searchParams}` : ''}`}
-              >
-                {showListView ? <TopologyIcon size="md" /> : <ListIcon size="md" />}
-              </Link>
-            </Tooltip>
-          </>
+                  <Button
+                    type="button"
+                    variant="link"
+                    className="odc-topology__shortcuts-button"
+                    icon={<QuestionCircleIcon />}
+                    data-test-id="topology-view-shortcuts"
+                  >
+                    View shortcuts
+                  </Button>
+                </Popover>
+              )}
+              <Tooltip position="left" content={showListView ? 'Topology View' : 'List View'}>
+                <Link
+                  className="pf-c-button pf-m-plain odc-topology__view-switcher"
+                  to={`/topology/${namespace ? `ns/${namespace}` : 'all-namespaces'}${
+                    showListView ? '/graph' : '/list'
+                  }${queryParams ? `?${queryParams.toString()}` : ''}`}
+                >
+                  {showListView ? <TopologyIcon size="md" /> : <ListIcon size="md" />}
+                </Link>
+              </Tooltip>
+            </>
+          ) : null
         }
       >
         <Firehose resources={[{ kind: 'Project', prop: 'projects', isList: true }]}>
@@ -164,6 +177,15 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({ match }) => {
         </Firehose>
       </NamespacedPage>
     </>
+  );
+});
+
+export const TopologyPage: React.FC<TopologyPageProps> = ({ match }) => {
+  const namespace = match.params.name;
+  return (
+    <DataModelProvider namespace={namespace}>
+      <TopologyPageContext match={match} />
+    </DataModelProvider>
   );
 };
 

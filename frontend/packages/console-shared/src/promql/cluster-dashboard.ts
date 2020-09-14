@@ -44,9 +44,9 @@ const top25Queries = {
   [OverviewQuery.NODES_BY_MEMORY]:
     'topk(25, sort_desc(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes))',
   [OverviewQuery.NODES_BY_STORAGE]:
-    'topk(25, sort_desc(avg_over_time(instance:node_filesystem_usage:sum[5m])))',
+    'topk(25, sort_desc(sum(node_filesystem_size_bytes{fstype!="tmpfs",mountpoint!="/boot|/boot/efi"} - node_filesystem_avail_bytes{instance=~".*",fstype!="tmpfs",mountpoint!="/boot|/boot/efi"}) BY (instance)))',
   [OverviewQuery.NODES_BY_PODS]:
-    'topk(25, sort_desc(sum(avg_over_time(kube_pod_info[5m])) BY (node)))',
+    'topk(25, sort_desc(sum(avg_over_time(kubelet_running_pods[5m])) BY (node)))',
   [OverviewQuery.NODES_BY_NETWORK_IN]:
     'topk(25, sort_desc(sum(instance:node_network_receive_bytes_excluding_lo:rate1m) BY (instance)))',
   [OverviewQuery.NODES_BY_NETWORK_OUT]:

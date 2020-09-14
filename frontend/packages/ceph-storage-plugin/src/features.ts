@@ -32,8 +32,9 @@ export const RGW_FLAG = 'RGW';
 
 /* Key and Value should be same value received in CSV  */
 export const OCS_SUPPORT_FLAGS = {
-  SNAPSHOT: 'SNAPSHOT',
   EXTERNAL: 'EXTERNAL',
+  MINIMAL_DEPLOYMENT: 'MINIMAL_DEPLOYMENT',
+  ENCRPYTION: 'ENCRYPTION',
 };
 
 const handleError = (res: any, flags: string[], dispatch: Dispatch, cb: FeatureDetector) => {

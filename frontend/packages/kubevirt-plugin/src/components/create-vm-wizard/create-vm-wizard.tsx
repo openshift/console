@@ -21,6 +21,7 @@ import {
   TEMPLATE_TYPE_VM,
   VMWizardMode,
   VMWizardView,
+  TEMPLATE_VM_GOLDEN_OS_NAMESPACE,
 } from '../../constants/vm';
 import { getResource } from '../../utils';
 import { IDReferences, makeIDReferences } from '../../utils/redux/id-reference';
@@ -37,7 +38,7 @@ import { CREATE_VM, CREATE_VM_TEMPLATE, IMPORT_VM, TabTitleResolver } from './st
 import { vmWizardActions } from './redux/actions';
 import { ActionType } from './redux/types';
 import { getResultInitialState } from './redux/initial-state/result-tab-initial-state';
-import { iGetCommonData } from './selectors/immutable/selectors';
+import { iGetCommonData, iGetName, iGetLoadedCommonData } from './selectors/immutable/selectors';
 import { getExtraWSQueries } from './selectors/selectors';
 import {
   getStepsMetadata,
@@ -57,6 +58,7 @@ import { CloudInitTab } from './tabs/cloud-init-tab/cloud-init-tab';
 import { useStorageClassConfigMapWrapped } from '../../hooks/storage-class-config-map';
 import { ValidTabGuard } from './tabs/valid-tab-guard';
 import { FirehoseResourceEnhanced } from '../../types/custom';
+import { ITemplate } from '../../types/template';
 
 import './create-vm-wizard.scss';
 
@@ -68,6 +70,7 @@ type CreateVMWizardComponentProps = {
   dataIDReferences: IDReferences;
   reduxID: string;
   tabsMetadata: VMWizardTabsMetadata;
+  iUserTemplate: ITemplate;
   onInitialize: () => void;
   onClose: (disposeOnly: boolean) => void;
   createVM: () => void;
@@ -130,14 +133,14 @@ class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentPro
   };
 
   getWizardTitle() {
-    const { isCreateTemplate, isProviderImport } = this.props;
+    const { isCreateTemplate, isProviderImport, iUserTemplate } = this.props;
     if (isCreateTemplate) {
       return CREATE_VM_TEMPLATE;
     }
     if (isProviderImport) {
       return IMPORT_VM;
     }
-    return CREATE_VM;
+    return iUserTemplate ? `${CREATE_VM} from ${iGetName(iUserTemplate)}` : CREATE_VM;
   }
 
   goBackToEditingSteps = () =>
@@ -290,6 +293,7 @@ class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentPro
 const wizardStateToProps = (state, { reduxID }) => ({
   isLastTabErrorFatal: isLastStepErrorFatal(state, reduxID),
   tabsMetadata: getStepsMetadata(state, reduxID),
+  iUserTemplate: iGetLoadedCommonData(state, reduxID, VMWizardProps.userTemplate),
   // fetch data from store to detect and fire changes
   ...[...DetectCommonDataChanges]
     .filter((v) => v !== VMWizardProps.storageClassConfigMap) // passed directly
@@ -306,7 +310,7 @@ const wizardDispatchToProps = (dispatch, props) => ({
         data: {
           isCreateTemplate: props.isCreateTemplate,
           isProviderImport: props.isProviderImport,
-          userTemplateName: props.userTemplateName,
+          isUserTemplateInitialized: false,
           storageClassConfigMap: undefined,
           isSimpleView: props.isSimpleView,
         },
@@ -358,6 +362,8 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
 }) => {
   const activeNamespace = match && match.params && match.params.ns;
   const searchParams = new URLSearchParams(location && location.search);
+  const userMode = searchParams.get('mode') || VMWizardMode.VM;
+  const userTemplateName = (userMode === VMWizardMode.VM && searchParams.get('template')) || '';
 
   let resources: FirehoseResourceEnhanced[] = [];
 
@@ -376,20 +382,37 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
     if (flags[FLAGS.OPENSHIFT]) {
       resources.push(
         getResource(TemplateModel, {
-          namespace: activeNamespace,
-          prop: VMWizardProps.userTemplates,
-          matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM },
-        }),
-        getResource(TemplateModel, {
           namespace: 'openshift',
           prop: VMWizardProps.commonTemplates,
           matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_BASE },
         }),
         getResource(PersistentVolumeClaimModel, {
-          namespace: 'openshift-cnv-base-images',
+          namespace: TEMPLATE_VM_GOLDEN_OS_NAMESPACE,
           prop: VMWizardProps.openshiftCNVBaseImages,
         }),
       );
+
+      if (userMode === VMWizardMode.TEMPLATE) {
+        resources.push(
+          getResource(TemplateModel, {
+            namespace: activeNamespace,
+            prop: VMWizardProps.userTemplates,
+            matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM },
+          }),
+        );
+      }
+
+      if (userTemplateName) {
+        resources.push(
+          getResource(TemplateModel, {
+            name: userTemplateName,
+            namespace: activeNamespace,
+            prop: VMWizardProps.userTemplate,
+            isList: false,
+            matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM },
+          }),
+        );
+      }
     }
     resources.push(...wsResources);
   }
@@ -401,8 +424,6 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
   dataIDReferences[VMWizardProps.activeNamespace] = ['UI', 'activeNamespace'];
   dataIDReferences[VMWizardProps.openshiftFlag] = [featureReducerName, FLAGS.OPENSHIFT];
 
-  const userMode = searchParams.get('mode') || VMWizardMode.VM;
-  const userTemplateName = (userMode === VMWizardMode.VM && searchParams.get('template')) || '';
   const isSimpleView =
     userMode === VMWizardMode.IMPORT &&
     searchParams.get('view')?.toLowerCase() !== VMWizardView.ADVANCED; // normal mode defaults to advanced
@@ -412,7 +433,6 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
       <CreateVMWizard
         isCreateTemplate={userMode === VMWizardMode.TEMPLATE}
         isProviderImport={userMode === VMWizardMode.IMPORT}
-        userTemplateName={userTemplateName}
         isSimpleView={isSimpleView}
         dataIDReferences={dataIDReferences}
         storageClassConfigMap={storageClassConfigMap}

@@ -1,15 +1,15 @@
 import * as React from 'react';
 import {
-  SelectGroup,
-  SelectOption,
   Select,
   SelectVariant,
-  OptionsMenuItemGroup,
-  OptionsMenuItem,
   OptionsMenu,
   OptionsMenuPosition,
   OptionsMenuToggle,
 } from '@patternfly/react-core';
+import {
+  getOptionsMenuItems,
+  getGroupedSelectOptions,
+} from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/breakdown-card/breakdown-dropdown';
 import {
   Breakdown,
   Metrics,
@@ -19,46 +19,6 @@ import {
   defaultBreakdown,
 } from '../../constants';
 import './data-consumption-card.scss';
-
-type SelectItems = {
-  group: string;
-  items: string[];
-}[];
-
-export const getSelectOptions = (dropdownItems: SelectItems) => {
-  return dropdownItems.map(({ group, items }) => (
-    <SelectGroup key={group} label={group}>
-      {items.map((item) => (
-        <SelectOption key={item} value={item} />
-      ))}
-    </SelectGroup>
-  ));
-};
-
-const getOptionsMenuItems = (
-  dropdownItems: SelectItems,
-  selectedItems: string[],
-  onSelect: (e) => void,
-) => {
-  return dropdownItems.map(({ group, items }) => (
-    <OptionsMenuItemGroup
-      className="nb-data-consumption-card__dropdown-item--hide-list-style"
-      key={group}
-      groupTitle={group}
-    >
-      {items.map((item) => (
-        <OptionsMenuItem
-          onSelect={onSelect}
-          isSelected={selectedItems.includes(item)}
-          id={item}
-          key={item}
-        >
-          {item}
-        </OptionsMenuItem>
-      ))}
-    </OptionsMenuItemGroup>
-  ));
-};
 
 const RGWDropdown = [
   {
@@ -120,6 +80,9 @@ export const DataConsumptionDropdown: React.FC<DataConsumptionDropdownProps> = (
       default:
         break;
     }
+    if (selectedService !== ServiceType.MCG) {
+      setComboDropdown(!isOpenComboDropdown);
+    }
   };
 
   const onSelectServiceDropdown = (_e: React.MouseEvent, selection: ServiceType) => {
@@ -130,6 +93,7 @@ export const DataConsumptionDropdown: React.FC<DataConsumptionDropdownProps> = (
     } else {
       setSelectedBreakdown(null);
     }
+    setServiceTypeDropdown(!isOpenServiceTypeDropdown);
   };
 
   const comboDropdownItems = (() => {
@@ -141,14 +105,14 @@ export const DataConsumptionDropdown: React.FC<DataConsumptionDropdownProps> = (
     );
   })();
 
-  const serviceDropdownItems = getSelectOptions(ServiceTypeDropdown);
+  const serviceDropdownItems = getGroupedSelectOptions(ServiceTypeDropdown);
 
   return (
     <div className="nb-data-consumption-card__dropdown">
       {isRgwSupported && (
         <Select
           variant={SelectVariant.single}
-          className="nb-data-consumption-card__dropdown-item"
+          className="nb-data-consumption-card__dropdown-item nb-data-consumption-card__dropdown-item--margin"
           autoFocus={false}
           onSelect={onSelectServiceDropdown}
           onToggle={() => setServiceTypeDropdown(!isOpenServiceTypeDropdown)}

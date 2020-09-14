@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Dispatch, connect } from 'react-redux';
 import { RootState } from '@console/internal/redux';
-import { Alert } from '@patternfly/react-core';
 import * as QuickStartActions from '../../redux/actions/quick-start-actions';
 import { getActiveQuickStartState } from '../../redux/reducers/quick-start-reducer';
 import {
@@ -121,14 +120,6 @@ const QuickStartController: React.FC<QuickStartControllerProps> = ({
 
   return (
     <>
-      {status === QuickStartStatus.COMPLETE && (
-        <Alert
-          variant="success"
-          title="This tour has already been completed."
-          style={{ marginBottom: 'var(--pf-global--spacer--lg)' }}
-          isInline
-        />
-      )}
       <QuickStartContent
         quickStart={quickStart}
         taskNumber={taskNumber}

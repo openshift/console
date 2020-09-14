@@ -81,7 +81,7 @@ export const getRouteData = (route: K8sResourceKind, resource: K8sResourceKind) 
     disable: !_.isEmpty(route),
     create: true,
     targetPort: _.get(route, 'spec.port.targetPort', ''),
-    unknownTargetPort: '',
+    unknownTargetPort: _.toString(route?.spec?.port?.targetPort?.split('-')?.[0]) || '',
     defaultUnknownPort: 8080,
     path: _.get(route, 'spec.path', ''),
     hostname: _.get(route, 'spec.host', ''),
@@ -384,7 +384,7 @@ export const getInternalImageInitialValues = (editAppResource: K8sResourceKind) 
     'metadata.labels["app.openshift.io/runtime-namespace"]',
     '',
   );
-  const imageStreamName = _.get(editAppResource, 'metadata.labels["app.openshift.io/runtime"]', '');
+  const imageStreamName = _.get(editAppResource, 'metadata.labels["app.kubernetes.io/name"]', '');
   const imageStreamTag = _.get(
     editAppResource,
     'metadata.labels["app.openshift.io/runtime-version"]',

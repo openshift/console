@@ -8,20 +8,21 @@ import {
   Button,
   ButtonVariant,
 } from '@patternfly/react-core';
+import { Link } from 'react-router-dom';
 import { ValidationErrorType, asValidationObject } from '@console/shared/src/utils/validation';
 import {
-  concatImmutableLists,
   iGet,
   iGetIsLoaded,
   iGetLoadedData,
   immutableListToShallowJS,
+  iGetLoadError,
+  toShallowJS,
 } from '../../../../utils/immutable';
 import { FormFieldRow } from '../../form/form-field-row';
 import { FormField, FormFieldType } from '../../form/form-field';
 import { FormSelectPlaceholderOption } from '../../../form/form-select-placeholder-option';
 import {
   getFlavors,
-  getOperatingSystems,
   getWorkloadProfiles,
 } from '../../../../selectors/vm-template/combined-dependent';
 import { flavorSort, ignoreCaseSort } from '../../../../utils/sort';
@@ -32,21 +33,29 @@ import { getPlaceholder, getFieldId } from '../../utils/renderable-field-utils';
 import { nullOnEmptyChange } from '../../utils/utils';
 import { operatingSystemsNative } from '../../../../constants/vm-templates/os';
 import { OperatingSystemRecord } from '../../../../types';
-import { iGetName } from '../../selectors/immutable/selectors';
+import { iGetAnnotation } from '../../../../selectors/immutable/common';
+import { iGetName, iGetNamespace } from '../../selectors/immutable/selectors';
+import { PVC_UPLOAD_URL } from '../../../../constants';
 import {
   BASE_IMAGE_AND_PVC_SHORT,
   BASE_IMAGE_AND_PVC_MESSAGE,
   NO_BASE_IMAGE_SHORT,
   NO_BASE_IMAGE_AND_NO_PVC_MESSAGE,
   NO_BASE_IMAGE_AND_NO_PVC_SHORT,
-  NO_BASE_IMAGE_MESSAGE,
+  BASE_IMAGE_AND_PVC_UPLOADING_SHORT,
+  BASE_IMAGE_UPLOADING_MESSAGE,
 } from '../../strings/strings';
+import {
+  CDI_UPLOAD_OS_URL_PARAM,
+  CDI_UPLOAD_POD_ANNOTATION,
+  CDI_UPLOAD_RUNNING,
+} from '../../../cdi-upload-provider/consts';
+import { getTemplateOperatingSystems } from '../../../../selectors/vm-template/advanced';
 
 export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
   ({
-    userTemplates,
+    iUserTemplate,
     commonTemplates,
-    userTemplate,
     operatinSystemField,
     cloneBaseDiskImageField,
     mountWindowsGuestToolsField,
@@ -63,17 +72,19 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
     const displayOnly = !!display;
     const cloneBaseDiskImage = iGetFieldValue(cloneBaseDiskImageField);
     const mountWindowsGuestTools = iGetFieldValue(mountWindowsGuestToolsField);
+    const isUserTemplateValid = iGetIsLoaded(iUserTemplate) && !iGetLoadError(iUserTemplate);
 
     const params = {
-      userTemplate,
       flavor,
       workload: workloadProfile,
       os,
     };
 
-    const vanillaTemplates = immutableListToShallowJS(
-      concatImmutableLists(iGetLoadedData(commonTemplates), iGetLoadedData(userTemplates)),
-    );
+    const templates = iUserTemplate
+      ? isUserTemplateValid
+        ? [toShallowJS(iGetLoadedData(iUserTemplate))]
+        : []
+      : immutableListToShallowJS(iGetLoadedData(commonTemplates));
 
     let operatingSystems;
 
@@ -81,28 +92,31 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
       operatingSystems = [{ name: display, id: display }];
     } else {
       operatingSystems = openshiftFlag
-        ? ignoreCaseSort(getOperatingSystems(vanillaTemplates, params), ['name'])
+        ? ignoreCaseSort(getTemplateOperatingSystems(templates), ['name'])
         : operatingSystemsNative;
     }
 
-    const flavors = flavorSort(getFlavors(vanillaTemplates, params));
+    const flavors = flavorSort(getFlavors(templates, params));
 
-    const workloadProfiles = getWorkloadProfiles(vanillaTemplates, params);
+    const workloadProfiles = getWorkloadProfiles(templates, params);
 
     const loadingResources = openshiftFlag
       ? {
-          userTemplates,
           commonTemplates,
           cnvBaseImages,
         }
       : {};
+
+    if (openshiftFlag && iUserTemplate) {
+      Object.assign(loadingResources, { iUserTemplate });
+    }
 
     let operatingSystemValidation;
     let flavorValidation;
 
     if (
       iGetIsLoaded(commonTemplates) &&
-      iGetIsLoaded(userTemplates) &&
+      (!iUserTemplate || isUserTemplateValid) &&
       (operatingSystems.length === 0 || flavors.length === 0 || workloadProfiles.length === 0)
     ) {
       const validation = asValidationObject(
@@ -120,23 +134,40 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
     const operatingSystemBaseImages = operatingSystems.map(
       (operatingSystem: OperatingSystemRecord) => {
         const pvcName = operatingSystem?.dataVolumeName;
-        const baseImageFoundInCluster = loadedBaseImages?.find((pvc) => iGetName(pvc) === pvcName);
-        const osField = {
+        const pvcNamespace = operatingSystem?.dataVolumeNamespace;
+        const baseImageFoundInCluster = loadedBaseImages?.find(
+          (pvc) => iGetName(pvc) === pvcName && iGetNamespace(pvc) === pvcNamespace,
+        );
+        const isBaseImageUploading =
+          iGetAnnotation(baseImageFoundInCluster, CDI_UPLOAD_POD_ANNOTATION) === CDI_UPLOAD_RUNNING;
+        const osField: any = {
           id: operatingSystem.id,
           name: operatingSystem.name,
           pvcName,
           baseImageFoundInCluster,
           message: '',
           longMessage: '',
+          checkboxDescription: '',
         };
 
-        if (!userTemplate) {
+        if (!iUserTemplate) {
           if (baseImageFoundInCluster && pvcName) {
-            osField.message = BASE_IMAGE_AND_PVC_SHORT;
+            osField.message = isBaseImageUploading
+              ? BASE_IMAGE_AND_PVC_UPLOADING_SHORT
+              : BASE_IMAGE_AND_PVC_SHORT;
             osField.longMessage = BASE_IMAGE_AND_PVC_MESSAGE;
+            osField.checkboxDescription = isBaseImageUploading ? BASE_IMAGE_UPLOADING_MESSAGE : '';
           } else if (pvcName) {
             osField.message = NO_BASE_IMAGE_SHORT;
-            osField.longMessage = NO_BASE_IMAGE_MESSAGE;
+            osField.longMessage = (
+              <>
+                Operating system image not available. You can either{' '}
+                <Link to={`${PVC_UPLOAD_URL}?${CDI_UPLOAD_OS_URL_PARAM}=${operatingSystem.id}`}>
+                  upload a new disk image
+                </Link>{' '}
+                or define a boot source manually in the boot source dropdown
+              </>
+            );
           } else {
             osField.message = NO_BASE_IMAGE_AND_NO_PVC_SHORT;
             osField.longMessage = NO_BASE_IMAGE_AND_NO_PVC_MESSAGE;
@@ -201,6 +232,7 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
             <Checkbox
               id={getFieldId(cloneBaseDiskImageField)}
               onChange={(v) => onChange(VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE, v)}
+              description={baseImage?.checkboxDescription}
             />
           </FormField>
         </FormFieldRow>
@@ -242,13 +274,12 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
 );
 
 type OSFlavorProps = {
-  userTemplates: any;
+  iUserTemplate: any;
   commonTemplates: any;
   flavorField: any;
   operatinSystemField: any;
   cloneBaseDiskImageField: any;
   mountWindowsGuestToolsField: any;
-  userTemplate: string;
   workloadProfile: string;
   cnvBaseImages: any;
   openshiftFlag: boolean;

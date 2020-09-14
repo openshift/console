@@ -781,7 +781,7 @@ export const createOrUpdateResources = async (
     );
   }
 
-  if (!_.isEmpty(ports) || buildStrategy === 'Docker') {
+  if (!_.isEmpty(ports) || buildStrategy === 'Docker' || buildStrategy === 'Source') {
     const originalService = _.get(appResources, 'service.data');
     const service = createService(formData, imageStream, originalService);
     requests.push(

@@ -194,6 +194,7 @@ export const VMConsoleFirehose: React.FC<VMTabProps> = ({
   vmImports,
   pods,
   migrations,
+  pvcs,
   dataVolumes,
   customData: { kindObj },
   showOpenInNewWindow,
@@ -215,6 +216,7 @@ export const VMConsoleFirehose: React.FC<VMTabProps> = ({
     vmi,
     pods,
     migrations,
+    pvcs,
     dataVolumes,
     vmImports,
   });

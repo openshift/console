@@ -47,11 +47,6 @@ export const mockEventSourcCRDData = {
             served: true,
             storage: true,
           },
-          {
-            name: 'v1alpha2',
-            served: false,
-            storage: false,
-          },
         ],
       },
     },

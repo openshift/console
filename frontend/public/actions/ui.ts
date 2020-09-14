@@ -16,8 +16,9 @@ import { K8sResourceKind, PodKind, NodeKind } from '../module/k8s';
 import { allModels } from '../module/k8s/k8s-models';
 import { detectFeatures, clearSSARFlags } from './features';
 import { OverviewSpecialGroup } from '../components/overview/constants';
-import { setClusterID, setCreateProjectMessage, setUser, setConsoleLinks } from './common';
+import { setClusterID, setCreateProjectMessage, setUser } from './common';
 import { Rule } from '../components/monitoring/types';
+import { subsClient } from '../graphql/client';
 
 export enum ActionType {
   SetTableColumns = 'setTableColumns',
@@ -39,9 +40,9 @@ export enum ActionType {
   SetMonitoringData = 'setMonitoringData',
   ToggleMonitoringGraphs = 'monitoringToggleGraphs',
   NotificationDrawerToggleExpanded = 'notificationDrawerExpanded',
-  NotificationDrawerToggleRead = 'notificationDrawerRead',
   QueryBrowserAddQuery = 'queryBrowserAddQuery',
   QueryBrowserDeleteAllQueries = 'queryBrowserDeleteAllQueries',
+  QueryBrowserDeleteAllSeries = 'queryBrowserDeleteAllSeries',
   QueryBrowserDeleteQuery = 'queryBrowserDeleteQuery',
   QueryBrowserDismissNamespaceAlert = 'queryBrowserDismissNamespaceAlert',
   QueryBrowserInsertText = 'queryBrowserInsertText',
@@ -63,7 +64,6 @@ export enum ActionType {
   UpdateOverviewLabels = 'updateOverviewLabels',
   UpdateOverviewFilterValue = 'updateOverviewFilterValue',
   UpdateTimestamps = 'updateTimestamps',
-  SetConsoleLinks = 'setConsoleLinks',
   SetPodMetrics = 'setPodMetrics',
   SetNamespaceMetrics = 'setNamespaceMetrics',
   SetNodeMetrics = 'setNodeMetrics',
@@ -259,12 +259,14 @@ export const startImpersonate = (kind: string, name: string) => async (dispatch,
   }
 
   dispatch(beginImpersonate(kind, name, subprotocols));
+  subsClient.close(false, true);
   dispatch(clearSSARFlags());
   dispatch(detectFeatures());
   history.push(window.SERVER_FLAGS.basePath);
 };
 export const stopImpersonate = () => (dispatch) => {
   dispatch(endImpersonate());
+  subsClient.close(false, true);
   dispatch(clearSSARFlags());
   dispatch(detectFeatures());
   history.push(window.SERVER_FLAGS.basePath);
@@ -359,9 +361,9 @@ export const monitoringSetRules = (
 export const monitoringToggleGraphs = () => action(ActionType.ToggleMonitoringGraphs);
 export const notificationDrawerToggleExpanded = () =>
   action(ActionType.NotificationDrawerToggleExpanded);
-export const notificationDrawerToggleRead = () => action(ActionType.NotificationDrawerToggleRead);
 export const queryBrowserAddQuery = () => action(ActionType.QueryBrowserAddQuery);
 export const queryBrowserDeleteAllQueries = () => action(ActionType.QueryBrowserDeleteAllQueries);
+export const queryBrowserDeleteAllSeries = () => action(ActionType.QueryBrowserDeleteAllSeries);
 export const queryBrowserDismissNamespaceAlert = () =>
   action(ActionType.QueryBrowserDismissNamespaceAlert);
 export const queryBrowserDeleteQuery = (index: number) =>
@@ -434,6 +436,7 @@ const uiActions = {
   monitoringToggleGraphs,
   queryBrowserAddQuery,
   queryBrowserDeleteAllQueries,
+  queryBrowserDeleteAllSeries,
   queryBrowserDeleteQuery,
   queryBrowserDismissNamespaceAlert,
   queryBrowserInsertText,
@@ -444,13 +447,11 @@ const uiActions = {
   queryBrowserSetPollInterval,
   queryBrowserToggleIsEnabled,
   queryBrowserToggleSeries,
-  setConsoleLinks,
   setPodMetrics,
   setNamespaceMetrics,
   setNodeMetrics,
   setPVCMetrics,
   notificationDrawerToggleExpanded,
-  notificationDrawerToggleRead,
   setPinnedResources,
 };
 

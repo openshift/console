@@ -55,6 +55,7 @@ const ApiServerSection: React.FC<ApiServerSectionProps> = ({ title }) => {
           nameValuePairs={nameValue}
           valueString="kind"
           nameString="apiVersion"
+          addString="Add Resource"
           readOnly={false}
           allowSorting={false}
           updateParentData={handleNameValuePairs}

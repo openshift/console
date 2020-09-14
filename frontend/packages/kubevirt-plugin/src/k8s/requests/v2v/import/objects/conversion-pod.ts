@@ -6,6 +6,8 @@ import {
   CONVERSION_VDDK_INIT_POD_NAME,
   CONVERSION_VDDK_MOUNT_PATH,
   CONVERSION_VOLUME_VDDK_NAME,
+  CONVERSION_VOLUME_TEMP_NAME,
+  CONVERSION_POD_TEMP_MOUNT_PATH,
 } from '../../../../../constants/v2v';
 
 export const buildConversionPod = ({
@@ -62,6 +64,10 @@ export const buildConversionPod = ({
           name: CONVERSION_VOLUME_VDDK_NAME,
           mountPath: CONVERSION_VDDK_MOUNT_PATH,
         },
+        {
+          name: CONVERSION_VOLUME_TEMP_NAME,
+          mountPath: CONVERSION_POD_TEMP_MOUNT_PATH,
+        },
       ],
       volumeDevices: [],
     })
@@ -80,6 +86,10 @@ export const buildConversionPod = ({
       },
       {
         name: CONVERSION_VOLUME_VDDK_NAME,
+        emptyDir: {},
+      },
+      {
+        name: CONVERSION_VOLUME_TEMP_NAME,
         emptyDir: {},
       },
     )

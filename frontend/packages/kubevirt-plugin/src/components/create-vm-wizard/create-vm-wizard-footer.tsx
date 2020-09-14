@@ -36,6 +36,7 @@ import {
 import { vmWizardActions } from './redux/actions';
 import { ActionType } from './redux/types';
 import { getGoToStep } from './selectors/selectors';
+import { iGetLoadError, iGetIsLoaded } from '../../utils/immutable';
 
 import './create-vm-wizard-footer.scss';
 
@@ -54,6 +55,7 @@ type CreateVMWizardFooterComponentProps = {
   isCreateTemplate: boolean;
   isProviderImport: boolean;
   isSimpleView: boolean;
+  isInvalidUserTemplate: boolean;
   onEdit: (activeStepID: VMWizardTab) => void;
   setActiveNS: (ns: string) => void;
 };
@@ -68,6 +70,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
   goToStep,
   onEdit,
   setActiveNS,
+  isInvalidUserTemplate,
 }) => {
   const [showError, setShowError, checkValidity] = useShowErrorToggler();
   const activeNS = getActiveNamespace();
@@ -118,7 +121,8 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
         const isLastStep = activeStepID === VMWizardTab.RESULT;
 
         const isNextButtonDisabled = isAnyStepLocked;
-        const isReviewButtonDisabled = isAnyStepLocked;
+        const isReviewButtonDisabled = isAnyStepLocked || isInvalidUserTemplate;
+        const isCreateButtonDisabled = isNextButtonDisabled || isInvalidUserTemplate;
 
         const hideBackButton = activeStep.hideBackButton || (isLastStep && isLastStepValid);
         const isBackButtonDisabled = isFirstStep || isAnyStepLocked || isLastTabErrorFatal;
@@ -154,6 +158,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
             )}
             {!isLastStep && (
               <Button
+                id="create-vm-wizard-submit-btn"
                 key="submit"
                 variant={ButtonVariant.primary}
                 type="submit"
@@ -163,7 +168,11 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
                     onNext();
                   }
                 }}
-                isDisabled={isNextButtonDisabled}
+                isDisabled={
+                  activeStepID === VMWizardTab.REVIEW
+                    ? isCreateButtonDisabled
+                    : isNextButtonDisabled
+                }
               >
                 {activeStepID === VMWizardTab.REVIEW
                   ? getCreateVMLikeEntityLabel(isCreateTemplate, isProviderImport)
@@ -172,6 +181,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
             )}
             {!isFinishingStep && !(isSimpleView && areMainTabsHidden) && (
               <Button
+                id="create-vm-wizard-reviewandcreate-btn"
                 key="reviewandcreate"
                 variant={ButtonVariant.secondary}
                 isDisabled={isReviewButtonDisabled}
@@ -196,6 +206,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
             )}
             {areMainTabsHidden && canNavigateEverywhere && (
               <Button
+                id="create-vm-wizard-edit-btn"
                 key="edit"
                 variant={ButtonVariant.secondary}
                 onClick={() => onEdit(activeStepID)}
@@ -205,6 +216,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
             )}
             {!hideBackButton && (
               <Button
+                id="create-vm-wizard-back-btn"
                 key="back"
                 variant={ButtonVariant.secondary}
                 onClick={onBack}
@@ -216,6 +228,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
             )}
             {!activeStep.hideCancelButton && (
               <Button
+                id="create-vm-wizard-cancel-btn"
                 key="cancel"
                 variant={ButtonVariant.link}
                 onClick={() => {
@@ -238,15 +251,23 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
   );
 };
 
-const stateToProps = (state, { wizardReduxID }) => ({
-  goToStep: getGoToStep(state, wizardReduxID),
-  steps: getStepsMetadata(state, wizardReduxID),
-  isLastTabErrorFatal: isLastStepErrorFatal(state, wizardReduxID),
-  isWizardEmpty: _isWizardEmpty(state, wizardReduxID),
-  isCreateTemplate: iGetCommonData(state, wizardReduxID, VMWizardProps.isCreateTemplate),
-  isProviderImport: iGetCommonData(state, wizardReduxID, VMWizardProps.isProviderImport),
-  isSimpleView: iGetCommonData(state, wizardReduxID, VMWizardProps.isSimpleView),
-});
+const stateToProps = (state, { wizardReduxID }) => {
+  const iUserTemplate = iGetCommonData(state, wizardReduxID, VMWizardProps.userTemplate);
+  const isInvalidUserTemplate = iUserTemplate
+    ? !iGetIsLoaded(iUserTemplate) || !!iGetLoadError(iUserTemplate)
+    : false;
+
+  return {
+    goToStep: getGoToStep(state, wizardReduxID),
+    steps: getStepsMetadata(state, wizardReduxID),
+    isLastTabErrorFatal: isLastStepErrorFatal(state, wizardReduxID),
+    isWizardEmpty: _isWizardEmpty(state, wizardReduxID),
+    isCreateTemplate: iGetCommonData(state, wizardReduxID, VMWizardProps.isCreateTemplate),
+    isProviderImport: iGetCommonData(state, wizardReduxID, VMWizardProps.isProviderImport),
+    isSimpleView: iGetCommonData(state, wizardReduxID, VMWizardProps.isSimpleView),
+    isInvalidUserTemplate,
+  };
+};
 
 const dispatchToProps = (dispatch, { wizardReduxID }) => ({
   //  no callback like this can be passed through the Wizard component

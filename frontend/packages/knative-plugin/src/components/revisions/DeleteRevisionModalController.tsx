@@ -31,6 +31,7 @@ import {
 } from '../../utils/traffic-splitting-utils';
 import { TrafficSplittingType } from '../traffic-splitting/TrafficSplitting';
 import DeleteRevisionModal from './DeleteRevisionModal';
+import { Traffic } from '../../types';
 
 type ControllerProps = {
   loaded?: boolean;
@@ -86,17 +87,22 @@ const Controller: React.FC<ControllerProps> = ({ loaded, resources, revision, ca
 
   const revisionItems = getRevisionItems(revisions);
 
-  const traffic = service?.status?.traffic ?? [{ percent: 0, tag: '', revisionName: '' }];
+  const traffic = service?.spec?.traffic ?? [{ percent: 0, tag: '', revisionName: '' }];
   const deleteTraffic = traffic.find((t) => t.revisionName === revision.metadata.name);
 
   const initialValues: TrafficSplittingType = {
-    trafficSplitting: traffic.reduce((acc, t) => {
+    trafficSplitting: traffic.reduce((acc: Traffic[], t) => {
       if (!t.revisionName || revisions.find((r) => r.metadata.name === t.revisionName)) {
-        acc.push({
-          percent: t.percent,
-          tag: t.tag || '',
-          revisionName: t.revisionName || '',
-        });
+        const trafficIndex = acc.findIndex((val) => val.revisionName === t.revisionName);
+        if (trafficIndex >= 0) {
+          acc[trafficIndex].percent += t.percent;
+        } else {
+          acc.push({
+            percent: t.percent,
+            tag: t.tag || '',
+            revisionName: t.revisionName || '',
+          });
+        }
       }
       return acc;
     }, []),
@@ -154,6 +160,7 @@ const Controller: React.FC<ControllerProps> = ({ loaded, resources, revision, ca
           revisionItems={revisionItems}
           deleteRevision={revision}
           showTraffic={deleteTraffic?.percent > 0}
+          cancel={cancel}
         />
       )}
     </Formik>

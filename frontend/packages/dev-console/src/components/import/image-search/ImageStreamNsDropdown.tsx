@@ -30,7 +30,7 @@ const ImageStreamNsDropdown: React.FC = () => {
             resource: RoleBindingModel.plural,
             verb: 'create',
             name: 'system:image-puller',
-            namespace: selectedProject,
+            namespace: values.project.name,
           })
             .then((resp) =>
               dispatch({ type: Action.setHasCreateAccess, value: resp.status.allowed }),
@@ -38,7 +38,7 @@ const ImageStreamNsDropdown: React.FC = () => {
             .catch(() => dispatch({ type: Action.setHasAccessToPullImage, value: false })),
         );
         promiseArr.push(
-          k8sGet(RoleBindingModel, 'system:image-puller', selectedProject)
+          k8sGet(RoleBindingModel, `system:image-puller-${selectedProject}`, values.project.name)
             .then(() => {
               dispatch({
                 type: Action.setHasAccessToPullImage,
@@ -59,11 +59,19 @@ const ImageStreamNsDropdown: React.FC = () => {
       initialValues.imageStream.tag,
       initialValues.isi,
       setFieldValue,
+      values.project.name,
     ],
   );
 
   React.useEffect(() => {
+    if (
+      initialValues.imageStream.image &&
+      values.imageStream.image !== initialValues.imageStream.image
+    ) {
+      initialValues.imageStream.image = values.imageStream.image;
+    }
     values.imageStream.namespace && onDropdownChange(values.imageStream.namespace);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onDropdownChange, values.imageStream.namespace]);
 
   React.useEffect(() => {

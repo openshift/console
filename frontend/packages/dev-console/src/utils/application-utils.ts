@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { isGraph, Node } from '@patternfly/react-topology';
 import {
   K8sKind,
   k8sGet,
@@ -36,6 +37,10 @@ import {
 } from '../components/topology/topology-types';
 import { detectGitType } from '../components/import/import-validation-utils';
 import { createServiceBinding } from '../components/topology/operators/actions/serviceBindings';
+import { TYPE_APPLICATION_GROUP } from '../components/topology/components/const';
+
+export const isWorkloadRegroupable = (node: Node): boolean =>
+  isGraph(node?.getParent()) || node?.getParent().getType() === TYPE_APPLICATION_GROUP;
 
 export const sanitizeApplicationValue = (
   application: string,
@@ -43,6 +48,7 @@ export const sanitizeApplicationValue = (
 ): string => {
   switch (applicationType) {
     case UNASSIGNED_KEY:
+      return 'unassigned';
     case CREATE_APPLICATION_KEY:
       return '';
     default:

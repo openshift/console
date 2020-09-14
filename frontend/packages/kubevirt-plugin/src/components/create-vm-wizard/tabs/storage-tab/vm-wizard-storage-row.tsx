@@ -40,7 +40,6 @@ const menuActionRemove = (
     [
       VMWizardStorageType.PROVISION_SOURCE_DISK,
       VMWizardStorageType.PROVISION_SOURCE_TEMPLATE_DISK,
-      VMWizardStorageType.V2V_VMWARE_IMPORT_TEMP,
     ].includes(type),
   callback: () =>
     withProgress(

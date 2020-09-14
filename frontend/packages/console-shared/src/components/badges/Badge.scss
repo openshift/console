@@ -5,7 +5,11 @@
   }
 }
 
-.tech-preview {
+.ocs-preview-badge {
+  &.pf-c-label {
+    background-color: #d93f00;
+    border-radius: var(--pf-global--BorderRadius--sm);
+  }
   .pf-c-label__content {
     color: var(--pf-global--Color--light-100);
   }

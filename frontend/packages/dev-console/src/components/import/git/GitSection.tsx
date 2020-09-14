@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useFormikContext, FormikValues, FormikTouched } from 'formik';
 import { Alert, TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
-import { getGitService, GitProvider } from '@console/git-service';
+import { getGitService, GitProvider, BuildType } from '@console/git-service';
 import {
   InputField,
   DropdownField,
@@ -10,8 +10,13 @@ import {
 } from '@console/shared';
 import { GitReadableTypes, GitTypes } from '../import-types';
 import { detectGitType, detectGitRepoName } from '../import-validation-utils';
-import { getSampleRepo, getSampleRef, getSampleContextDir } from '../../../utils/imagestream-utils';
 import { DevfileParser } from '@console/git-service/src/utils/devfile-parser';
+import {
+  getSampleRepo,
+  getSampleRef,
+  getSampleContextDir,
+  NormalizedBuilderImages,
+} from '../../../utils/imagestream-utils';
 import FormSection from '../section/FormSection';
 import SampleRepo from './SampleRepo';
 import AdvancedGitOptions from './AdvancedGitOptions';
@@ -20,9 +25,10 @@ import { UNASSIGNED_KEY, CREATE_APPLICATION_KEY } from '../../../const';
 export interface GitSectionProps {
   showSample?: boolean;
   buildStrategy? : string
+  builderImages: NormalizedBuilderImages;
 }
 
-const GitSection: React.FC<GitSectionProps> = ({ showSample, buildStrategy }) => {
+const GitSection: React.FC<GitSectionProps> = ({ showSample, buildStrategy, builderImages }) => {
   const { values, setFieldValue, setFieldTouched, touched, dirty } = useFormikContext<
     FormikValues
   >();
@@ -91,12 +97,14 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, buildStrategy }) =>
           values.application.selectedKey !== UNASSIGNED_KEY &&
           setFieldValue('application.name', `${gitRepoName}-app`);
         setFieldValue('image.isRecommending', true);
-        const buildTools = await gitService.detectBuildTypes();
+        const buildTools: BuildType[] = await gitService.detectBuildTypes();
         setFieldValue('image.isRecommending', false);
-        if (buildTools.length > 0) {
-          const buildTool = buildTools[0].buildType;
+        const buildTool = buildTools.find(
+          ({ buildType: recommended }) => recommended && builderImages.hasOwnProperty(recommended),
+        );
+        if (buildTool && buildTool.buildType) {
           setFieldValue('image.couldNotRecommend', false);
-          setFieldValue('image.recommended', buildTool);
+          setFieldValue('image.recommended', buildTool.buildType);
         } else {
           setFieldValue('image.couldNotRecommend', true);
           setFieldValue('image.recommended', '');
@@ -108,6 +116,7 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, buildStrategy }) =>
       }
     },
     [
+      builderImages,
       gitTypeTouched,
       setFieldTouched,
       setFieldValue,
@@ -123,7 +132,7 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, buildStrategy }) =>
   const handleGitUrlBlur = React.useCallback(() => {
     const { url } = values.git;
     const gitRepoName = detectGitRepoName(url);
-    gitRepoName && setFieldValue('name', gitRepoName);
+    values.formType !== 'edit' && gitRepoName && setFieldValue('name', gitRepoName);
     gitRepoName &&
       !values.application.name &&
       values.application.selectedKey !== UNASSIGNED_KEY &&
@@ -135,6 +144,7 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, buildStrategy }) =>
     values.application.name,
     values.application.selectedKey,
     values.git,
+    values.formType,
   ]);
 
   const fillSample: React.ReactEventHandler<HTMLButtonElement> = React.useCallback(() => {

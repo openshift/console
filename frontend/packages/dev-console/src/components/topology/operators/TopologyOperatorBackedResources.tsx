@@ -10,7 +10,7 @@ const TopologyOperatorBackedResources: React.FC<TopologyOperatorBackedResourcesP
   item,
 }) => {
   const { groupResources = [] } = item;
-  const finalRes = groupResources.map((val) => val.resource);
+  const finalRes = groupResources.map((val) => val.resource).filter((r) => r !== undefined);
 
   return (
     <div className="overview__sidebar-pane-body">

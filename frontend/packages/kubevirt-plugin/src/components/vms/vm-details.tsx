@@ -36,6 +36,7 @@ export const VMDetailsFirehose: React.FC<VMTabProps> = ({
   pods,
   migrations,
   templates,
+  pvcs,
   dataVolumes,
   customData: { kindObj },
 }) => {
@@ -57,6 +58,7 @@ export const VMDetailsFirehose: React.FC<VMTabProps> = ({
     vmi,
     pods,
     migrations,
+    pvcs,
     dataVolumes,
     vmImports,
   });
@@ -142,7 +144,7 @@ export const VMDetails: React.FC<VMDetailsProps> = (props) => {
       </div>
       <div id="logged-in-users" className="co-m-pane__body">
         <HashAnchor hash="logged-in-users" />
-        <SectionHeading text="Logged in users" />
+        <SectionHeading text="Active Users" />
         <VMUsersList {...restProps} vmi={vmi} vmStatusBundle={vmStatusBundle} />
       </div>
     </StatusBox>

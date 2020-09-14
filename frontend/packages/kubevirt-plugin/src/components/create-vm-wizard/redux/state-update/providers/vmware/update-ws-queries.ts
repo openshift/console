@@ -61,6 +61,9 @@ const getQueries = ({ namespace, v2vVmwareName }: GetQueriesParams): FirehoseRes
       isList: false,
       prop: VMWareProviderProps.vmwareToKubevirtOsConfigMap,
       optional: true,
+      errorBehaviour: {
+        ignore404: true,
+      },
     },
     {
       kind: PodModel.kind,

@@ -10,10 +10,6 @@
     cursor: pointer;
     position: absolute;
     right: -22px;
-    top: 25px;
-    &.--disabled {
-      pointer-events: none;
-      color: var(--pf-global--disabled-color--200);
-    }
+    top: 10px;
   }
 }

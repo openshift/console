@@ -22,6 +22,7 @@ const QuickStartConclusion: React.FC<QuickStartConclusionProps> = ({
   onQuickStartChange,
   onTaskSelect,
 }) => {
+  const hasFailedTask = allTaskStatuses.includes(QuickStartTaskStatus.FAILED);
   return (
     <>
       {tasks.map((task, index) => (
@@ -34,8 +35,14 @@ const QuickStartConclusion: React.FC<QuickStartConclusionProps> = ({
           onTaskSelect={onTaskSelect}
         />
       ))}
-      <SyncMarkdownView content={conclusion} />
-      {nextQuickStart && (
+      <SyncMarkdownView
+        content={
+          hasFailedTask
+            ? 'One or more verifications did not pass during this quick start. Revisit the tasks or the help links, and then try again.'
+            : conclusion
+        }
+      />
+      {nextQuickStart && !hasFailedTask && (
         <Button variant="link" onClick={() => onQuickStartChange(nextQuickStart)} isInline>
           {`Start ${nextQuickStart} quick start`}{' '}
           <ArrowRightIcon

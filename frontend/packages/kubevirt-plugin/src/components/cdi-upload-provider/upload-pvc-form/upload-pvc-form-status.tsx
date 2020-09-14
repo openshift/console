@@ -170,7 +170,7 @@ export type UploadPVCStatusProps = {
   upload: DataUpload;
   isSubmitting: boolean;
   isAllocating: boolean;
-  allocateError: string;
+  allocateError: React.ReactNode;
   onErrorClick: () => void;
   onSuccessClick: () => void;
   onCancelFinish: () => void;
@@ -180,7 +180,7 @@ export type UploadPVCFormStatusProps = {
   upload: DataUpload;
   isSubmitting: boolean;
   isAllocating: boolean;
-  allocateError: string;
+  allocateError: React.ReactNode;
   onErrorClick: () => void;
   onSuccessClick: () => void;
   onCancelFinish: () => void;

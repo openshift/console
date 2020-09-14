@@ -34,7 +34,7 @@ const StatusIconAndText: React.FC<StatusIconAndTextProps> = ({
             !iconOnly && 'co-icon-and-text__icon co-icon-flex-child',
           ),
         })}
-      {!iconOnly && <CamelCaseWrap value={title} />}
+      {!iconOnly && <CamelCaseWrap value={title} dataTest="status-text" />}
     </span>
   );
 };

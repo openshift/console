@@ -48,17 +48,6 @@ dl.co-inline {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  &--alt {
-    margin-left: 0;
-    margin-right: 0;
-  }
-  &--with-help-text {
-    align-items: baseline;
-    flex-wrap: nowrap;
-    @media (max-width: $grid-float-breakpoint-max) {
-      display: block;
-    }
-  }
   .btn-group,
   .co-m-primary-action,
   .pf-c-form-control {
@@ -77,12 +66,6 @@ dl.co-inline {
   min-width: 0;
 }
 
-.co-m-pane__filter-bar-group--badge {
-  // Don't fill the available height.
-  align-self: start;
-}
-
-.co-m-pane__filter-bar-group--badge,
 .co-m-pane__filter-bar-group--filter {
   @media (min-width: $screen-xs-min) {
     flex: 1 0 auto;
@@ -90,12 +73,18 @@ dl.co-inline {
   }
 }
 
-.co-m-pane__filter-bar-group--help-text {
-  @media (min-width: $screen-sm-min) {
-    margin-right: 20px;
-    > p {
-      margin-bottom: 0;
-    }
+// Use to left align content filters that aren't using .pf-c-toolbar
+.co-m-pane__filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-bottom: $grid-gutter-width;
+}
+
+.co-m-pane__filter-row-action {
+  padding-top: ($grid-gutter-width / 2);
+  @media (min-width: $screen-xs-min) {
+    padding-top: 0;
   }
 }
 

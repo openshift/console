@@ -15,26 +15,19 @@ const getValidationsFromTemplates = (templates): TemplateValidations[] =>
 
 export const getTemplateValidations = (state, id: string): TemplateValidations[] => {
   const relevantOptions = iGetRelevantTemplateSelectors(state, id);
-  const { userTemplateName, flavor, os, workload } = relevantOptions;
+  const { flavor, os, workload } = relevantOptions;
 
-  const iUserTemplates = iGetLoadedCommonData(state, id, VMWizardProps.userTemplates);
+  const iUserTemplate = iGetLoadedCommonData(state, id, VMWizardProps.userTemplate);
   const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
 
-  if (userTemplateName || (flavor && os && workload)) {
+  if (iUserTemplate || (flavor && os && workload)) {
     // all information is filled to select a final template
-    const relevantTemplate = iGetRelevantTemplate(
-      iUserTemplates,
-      iCommonTemplates,
-      relevantOptions,
-    );
+    const relevantTemplate =
+      iUserTemplate || iGetRelevantTemplate(iCommonTemplates, relevantOptions);
     return getValidationsFromTemplates(relevantTemplate ? [relevantTemplate] : []);
   }
 
-  const relevantTemplates = iGetRelevantTemplates(
-    iUserTemplates,
-    iCommonTemplates,
-    relevantOptions,
-  );
+  const relevantTemplates = iGetRelevantTemplates(iCommonTemplates, relevantOptions);
 
   return getValidationsFromTemplates(relevantTemplates.toArray());
 };

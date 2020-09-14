@@ -3,9 +3,12 @@
     "cypress/globals": true,
     "node": true
   },
-  "extends": [
-    "../.eslintrc",
-    "plugin:cypress/recommended"
-  ],
-  "plugins": ["cypress"]
+  "extends": ["../.eslintrc", "plugin:cypress/recommended"],
+  "plugins": ["cypress"],
+  "rules": {
+    "no-console": "off",
+    "no-namespace": "off",
+    "no-redeclare": "off",
+    "promise/catch-or-return": "off"
+  }
 }

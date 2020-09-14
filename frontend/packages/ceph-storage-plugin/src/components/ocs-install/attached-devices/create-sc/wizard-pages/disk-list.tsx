@@ -2,7 +2,8 @@ import * as React from 'react';
 import * as cx from 'classnames';
 import { Table, TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { sortable, SortByDirection } from '@patternfly/react-table';
-import { Button, Modal } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
+import { Modal } from '@console/shared';
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
 import { Discoveries, State, Action } from '../state';
 
@@ -75,7 +76,7 @@ export const DiskListModal: React.FC<DiskListModalProps> = ({ state, dispatch })
       title="Selected Disks"
       isOpen={state.showDiskList}
       onClose={cancel}
-      className="ceph-ocs-install__disks-modal"
+      className="ceph-ocs-install__filtered-modal"
       actions={[
         <Button key="confirm" variant="primary" onClick={cancel}>
           Close

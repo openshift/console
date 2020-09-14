@@ -1,9 +1,7 @@
 import * as _ from 'lodash';
 import { k8sCreate, K8sResourceKind, modelFor, referenceFor } from '@console/internal/module/k8s';
-import { Node, Edge } from '@patternfly/react-topology';
+import { Node } from '@patternfly/react-topology';
 import { ServiceBindingRequestModel } from '../../../../models';
-import { errorModal } from '@console/internal/components/modals';
-import { removeServiceBinding } from './removeServiceBinding';
 
 export const createServiceBinding = (
   source: K8sResourceKind,
@@ -13,16 +11,13 @@ export const createServiceBinding = (
     return Promise.reject();
   }
 
-  const targetName = _.get(target, 'metadata.name');
-  const sourceName = _.get(source, 'metadata.name');
-  const namespace = _.get(source, 'metadata.namespace');
-  const sourceGroup = _.split(_.get(source, 'apiVersion'), '/');
-  const targetResourceGroup = _.split(_.get(target, 'metadata.ownerReferences[0].apiVersion'), '/');
-  const targetResourceKind = _.get(target, 'metadata.ownerReferences[0].kind');
-  const targetResourceRefName = _.get(target, 'metadata.ownerReferences[0].name');
-  const sbrName = `${sourceName}-${modelFor(referenceFor(source)).abbr}-${targetName}-${
-    modelFor(target.kind).abbr
-  }`;
+  const sourceModel = modelFor(referenceFor(source));
+  const targetModel = modelFor(referenceFor(target));
+  const targetName = target.metadata.name;
+  const { namespace, name: sourceName } = source.metadata;
+  const sourceGroup = _.split(source.apiVersion, '/');
+  const targetGroup = _.split(target.apiVersion, '/');
+  const sbrName = `${sourceName}-${sourceModel.abbr.toLowerCase()}-${targetName}-${targetModel.abbr.toLowerCase()}`;
 
   const serviceBindingRequest = {
     apiVersion: 'apps.openshift.io/v1alpha1',
@@ -39,10 +34,10 @@ export const createServiceBinding = (
         resource: modelFor(referenceFor(source)).plural,
       },
       backingServiceSelector: {
-        group: targetResourceGroup[0],
-        version: targetResourceGroup[1],
-        kind: targetResourceKind,
-        resourceRef: targetResourceRefName,
+        group: targetGroup[0],
+        version: targetGroup[1],
+        kind: target.kind,
+        resourceRef: targetName,
       },
       detectBindingResources: true,
     },
@@ -52,22 +47,19 @@ export const createServiceBinding = (
 };
 
 const createServiceBindingConnection = (source: Node, target: Node) => {
-  return createServiceBinding(
-    source.getData()?.resources?.obj,
-    target.getData()?.resources?.obj,
-  ).then(() => null);
+  const sourceResource = source.getData().resource || source.getData().resources?.obj;
+  const targetResource = target.getData().resource || target.getData().resources?.obj;
+
+  return createServiceBinding(sourceResource, targetResource).then(() => null);
 };
 
 export const getCreateConnector = (createHints: string[]) => {
-  if (createHints && createHints.includes('createServiceBinding')) {
+  if (
+    createHints &&
+    createHints.includes('createServiceBinding') &&
+    !createHints.includes('operator-workload')
+  ) {
     return createServiceBindingConnection;
   }
-  return null;
-};
-
-export const removeServiceBindingCallback = (edge: Edge): void => {
-  removeServiceBinding(edge).catch((error) => {
-    errorModal({ title: 'Error removing connection', error: error.message });
-  });
   return null;
 };

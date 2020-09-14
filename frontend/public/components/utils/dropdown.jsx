@@ -51,6 +51,7 @@ export class DropdownMixin extends React.PureComponent {
   onClick_(selectedKey, e) {
     e.preventDefault();
     e.stopPropagation();
+    e.nativeEvent?.stopImmediatePropagation?.();
 
     const { items, actionItems, onChange, noSelection, title } = this.props;
 
@@ -503,6 +504,7 @@ export class Dropdown extends DropdownMixin {
               id={this.props.id}
               aria-describedby={describedBy}
               disabled={disabled}
+              data-test={this.props.dataTest}
             >
               <div className="btn-dropdown__content-wrap">
                 <span className="pf-c-dropdown__toggle-text">
@@ -573,6 +575,7 @@ export class Dropdown extends DropdownMixin {
             onKeyDown={this.onKeyDown}
             type="button"
             id={this.props.id}
+            data-test={this.props.dataTest}
             aria-describedby={describedBy}
             disabled={disabled}
           >

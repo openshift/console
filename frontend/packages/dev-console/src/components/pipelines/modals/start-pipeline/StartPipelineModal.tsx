@@ -30,6 +30,7 @@ const StartPipelineModal: React.FC<StartPipelineModalProps & ModalComponentProps
     workspaces: (pipeline.spec.workspaces || []).map((workspace: PipelineWorkspace) => ({
       ...workspace,
       type: 'EmptyDirectory',
+      data: { emptyDir: {} },
     })),
     secretOpen: false,
   };

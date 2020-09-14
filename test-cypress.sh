@@ -2,4 +2,14 @@
 set -exuo pipefail
 cd frontend
 yarn install
-yarn run test-cypress-headless
+
+function generateReport {
+  yarn run cypress-postreport
+}
+trap generateReport EXIT
+
+if [ $# -gt 0 ] && [ -n "$1" ]; then
+  yarn run test-cypress-headless --spec "$1"
+else
+  yarn run test-cypress-headless
+fi

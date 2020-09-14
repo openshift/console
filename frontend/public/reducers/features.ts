@@ -7,6 +7,7 @@ import {
   ClusterServiceClassModel,
   ConsoleCLIDownloadModel,
   ConsoleExternalLogLinkModel,
+  ConsoleLinkModel,
   ConsoleNotificationModel,
   ConsoleYAMLSampleModel,
   MachineAutoscalerModel,
@@ -30,6 +31,7 @@ export const defaults = _.mapValues(FLAGS, (flag) =>
 export const baseCRDs = {
   [referenceForModel(ChargebackReportModel)]: FLAGS.CHARGEBACK,
   [referenceForModel(ClusterServiceClassModel)]: FLAGS.SERVICE_CATALOG,
+  [referenceForModel(ConsoleLinkModel)]: FLAGS.CONSOLE_LINK,
   [referenceForModel(ConsoleCLIDownloadModel)]: FLAGS.CONSOLE_CLI_DOWNLOAD,
   [referenceForModel(ConsoleExternalLogLinkModel)]: FLAGS.CONSOLE_EXTERNAL_LOG_LINK,
   [referenceForModel(ConsoleNotificationModel)]: FLAGS.CONSOLE_NOTIFICATION,

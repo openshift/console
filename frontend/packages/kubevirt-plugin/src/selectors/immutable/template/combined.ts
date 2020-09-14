@@ -5,13 +5,11 @@ import {
   TEMPLATE_TYPE_BASE,
   TEMPLATE_TYPE_LABEL,
 } from '../../../constants/vm';
-import { iGetName } from '../../../components/create-vm-wizard/selectors/immutable/selectors';
 import { ITemplate } from '../../../types/template';
 import { iGetCreationTimestamp, iGetLabels } from '../common';
-import { compareVersions, splitVersion } from '../../../utils/sort';
+import { compareVersions } from '../../../utils/sort';
 
 type FindTemplateOptions = {
-  userTemplateName?: string;
   workload?: string;
   flavor?: string;
   os?: string;
@@ -26,17 +24,9 @@ const flavorOrder = {
 };
 
 export const iGetRelevantTemplates = (
-  iUserTemplates: ImmutableMap<string, ITemplate>,
   iCommonTemplates: ImmutableMap<string, ITemplate>,
-  { userTemplateName, workload, flavor, os }: FindTemplateOptions,
+  { workload, flavor, os }: FindTemplateOptions,
 ): ImmutableList<ITemplate> => {
-  if (userTemplateName && iUserTemplates) {
-    const relevantTemplate = iUserTemplates.find(
-      (template) => iGetName(template) === userTemplateName,
-    );
-    return ImmutableList.of(relevantTemplate);
-  }
-
   const osLabel = getOsLabel(os);
   const workloadLabel = getWorkloadLabel(workload);
   const flavorLabel = getFlavorLabel(flavor);
@@ -83,7 +73,7 @@ export const iGetRelevantTemplates = (
         const aVersion = aLabels?.get(TEMPLATE_VERSION_LABEL);
         const bVersion = bLabels?.get(TEMPLATE_VERSION_LABEL);
 
-        const versionCMP = compareVersions(splitVersion(aVersion), splitVersion(bVersion)) * -1; // descending
+        const versionCMP = compareVersions(aVersion, bVersion) * -1; // descending
 
         if (versionCMP !== 0) {
           return versionCMP;

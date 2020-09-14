@@ -15,6 +15,7 @@ import {
   getIsOperatorResource,
   getOperatorsComponentFactory,
   getOperatorTopologyDataModel,
+  getDataModelReconciler,
   getTopologyFilters,
   applyDisplayOptions,
 } from './index';
@@ -57,6 +58,7 @@ export const operatorsTopologyPlugin: Plugin<OperatorsTopologyConsumedExtensions
       getDataModel: getOperatorTopologyDataModel,
       resources: getOperatorWatchedResources,
       isResourceDepicted: getIsOperatorResource,
+      getDataModelReconciler,
     },
   },
   {

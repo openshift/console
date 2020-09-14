@@ -1,7 +1,7 @@
 import { submitButton } from '../views/form';
+import { masthead } from '../views/masthead';
 
 declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace,no-redeclare
   namespace Cypress {
     interface Chainable<Subject> {
       login(providerName?: string, username?: string, password?: string): Chainable<Element>;
@@ -33,7 +33,7 @@ Cypress.Commands.add('login', (provider: string, username: string, password: str
   cy.get('#inputUsername').type(username || KUBEADMIN_USERNAME);
   cy.get('#inputPassword').type(password || Cypress.env('BRIDGE_KUBEADMIN_PASSWORD'));
   cy.get(submitButton).click();
-  cy.byTestID('user-dropdown').should('be.visible');
+  masthead.username.shouldBeVisible();
 });
 
 Cypress.Commands.add('logout', () => {

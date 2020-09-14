@@ -18,7 +18,7 @@ import * as operatorHubView from '../views/operator-hub.view';
 import { click } from '@console/shared/src/test-utils/utils';
 import { NAME_FIELD_ID, formFieldIsPresent } from '../views/descriptors.view';
 
-describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', () => {
+xdescribe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', () => {
   const jaegerResources = new Set([
     'Deployment',
     'Service',
@@ -98,6 +98,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
     await catalogView.categoryTabsPresent();
     await catalogView.categoryTabs.get(0).click();
     await catalogPageView.clickFilterCheckbox(customProviderUID);
+    await browser.wait(until.visibilityOf(catalogPageView.catalogTileByID(jaegerTileID)));
     await catalogPageView.catalogTileByID(jaegerTileID).click();
     await browser.wait(until.visibilityOf(operatorHubView.operatorModalInstallBtn));
     await operatorHubView.operatorModalInstallBtn.click();
@@ -123,8 +124,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
     await browser.get(`${appHost}/operatorhub/ns/${testName}`);
     await crudView.isLoaded();
     await catalogPageView.clickFilterCheckbox('installState-installed');
-
-    expect(catalogPageView.catalogTileByID(jaegerTileID).isDisplayed()).toBe(true);
+    await browser.wait(until.visibilityOf(catalogPageView.catalogTileByID(jaegerTileID)));
   });
 
   it(`displays Operator in "Cluster Service Versions" view for "${testName}" namespace`, async () => {
@@ -220,6 +220,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
     await crudView.isLoaded();
     await catalogPageView.clickFilterCheckbox(customProviderUID);
     await catalogPageView.clickFilterCheckbox('installState-installed');
+    await browser.wait(until.visibilityOf(catalogPageView.catalogTileByID(jaegerTileID)));
     await catalogPageView.catalogTileByID(jaegerTileID).click();
     await operatorHubView.operatorModalIsLoaded();
 

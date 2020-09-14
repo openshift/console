@@ -1,6 +1,7 @@
 import {
   apiVersionForModel,
   K8sResourceKind,
+  PersistentVolumeClaimKind,
   PodKind,
   referenceFor,
 } from '@console/internal/module/k8s';
@@ -84,6 +85,7 @@ const createTopologyVMNodeData = (
   const vmi = vmis.find((instance) => instance.metadata.name === name) as VMIKind;
   const pods = resources.pods?.data as PodKind[];
   const migrations = resources.migrations?.data;
+  const pvcs = resources.pvcs?.data as PersistentVolumeClaimKind[];
   const dataVolumes = resources.dataVolumes?.data as V1alpha1DataVolume[];
   const vmImports = resources.vmImports?.data as VMImportKind[];
 
@@ -92,6 +94,7 @@ const createTopologyVMNodeData = (
     vmi,
     pods,
     migrations,
+    pvcs,
     dataVolumes,
     vmImports,
   });

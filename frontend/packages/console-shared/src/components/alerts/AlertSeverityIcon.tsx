@@ -1,9 +1,5 @@
 import * as React from 'react';
-import {
-  ExclamationTriangleIcon,
-  ExclamationCircleIcon,
-  InfoCircleIcon,
-} from '@patternfly/react-icons';
+import { ExclamationTriangleIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
 import { AlertSeverity } from '@console/internal/components/monitoring/types';
 
 interface AlertSeverityIconProps {
@@ -37,15 +33,7 @@ const AlertSeverityIcon: React.FC<AlertSeverityIconProps> = ({
         />
       );
     default:
-      return (
-        <InfoCircleIcon
-          style={{
-            fontSize,
-            color: 'var(--pf-global--info-color--100)',
-          }}
-          alt="Monitoring Alert"
-        />
-      );
+      return null;
   }
 };
 

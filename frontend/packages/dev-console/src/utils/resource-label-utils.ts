@@ -30,7 +30,7 @@ export const getAppLabels = ({
   if (runtimeIcon) {
     labels['app.openshift.io/runtime'] = runtimeIcon;
   }
-  if (applicationName && applicationName.trim().length > 0) {
+  if (applicationName && applicationName !== 'unassigned' && applicationName.trim().length > 0) {
     labels['app.kubernetes.io/part-of'] = applicationName;
   }
   if (selectedTag) {

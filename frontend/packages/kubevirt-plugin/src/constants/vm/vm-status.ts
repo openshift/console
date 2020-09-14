@@ -13,6 +13,7 @@ export enum VMStatusSimpleLabel {
   Stopping = 'Stopping',
   Running = 'Running',
   Off = 'Off',
+  Deleting = 'Deleting',
 }
 
 export const VM_STATUS_SIMPLE_LABELS = [
@@ -41,6 +42,9 @@ export class VMStatus extends StatusEnum<VMStatusSimpleLabel | StatusSimpleLabel
     isPending: true,
   });
   static readonly STOPPING = new VMStatus('VMStatus_STOPPING', VMStatusSimpleLabel.Stopping, {
+    isInProgress: true,
+  });
+  static readonly DELETING = new VMStatus('VMStatus_DELETING', VMStatusSimpleLabel.Deleting, {
     isInProgress: true,
   });
   static readonly VM_ERROR = new VMStatus('VMStatus_VM_ERROR', 'VM error', { isError: true });

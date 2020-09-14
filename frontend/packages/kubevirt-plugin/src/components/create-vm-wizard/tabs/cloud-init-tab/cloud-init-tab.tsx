@@ -11,11 +11,18 @@ import {
   TextArea,
   TextInput,
   Title,
+  Alert,
 } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { confirmModal } from '@console/internal/components/modals';
 import { joinGrammaticallyListOfItems } from '@console/shared/src';
-import { CloudInitField, VMWizardStorage, VMWizardStorageType, VMWizardTab } from '../../types';
+import {
+  CloudInitField,
+  VMWizardStorage,
+  VMWizardStorageType,
+  VMWizardTab,
+  VMWizardProps,
+} from '../../types';
 import { vmWizardActions } from '../../redux/actions';
 import { ActionType } from '../../redux/types';
 import { iGetCloudInitNoCloudStorage } from '../../selectors/immutable/storage';
@@ -42,6 +49,8 @@ import {
 
 import '../../create-vm-wizard-footer.scss';
 import './cloud-init-tab.scss';
+import { iGetCommonData } from '../../selectors/immutable/selectors';
+import { V2V_IMPORT_CLOUD_INIT_NOT_AVAILABLE } from '../../../../strings/vm/messages';
 
 type CustomScriptProps = {
   id: string;
@@ -164,6 +173,7 @@ const CloudInitFormRows: React.FC<CloudInitFormRowsProps> = ({
 const CloudInitTabComponent: React.FC<ResultTabComponentProps> = ({
   iCloudInitStorage,
   isForm,
+  isProviderImport,
   setIsForm,
   updateStorage,
   removeStorage,
@@ -275,6 +285,7 @@ const CloudInitTabComponent: React.FC<ResultTabComponentProps> = ({
       setIsForm(form);
     }
   };
+
   return (
     <div className={isForm && 'co-m-pane__body co-m-pane__form kubevirt-create-vm-modal__form'}>
       {!isDisabled && !isEditable && (
@@ -293,6 +304,15 @@ const CloudInitTabComponent: React.FC<ResultTabComponentProps> = ({
         <Title headingLevel="h5" size="lg">
           Cloud-init
         </Title>
+        {isDisabled && isProviderImport && (
+          <Alert
+            title="Partial data available prior to the import"
+            isInline
+            variant={AlertVariant.info}
+          >
+            {V2V_IMPORT_CLOUD_INIT_NOT_AVAILABLE}
+          </Alert>
+        )}
         <InlineBooleanRadio
           id="cloud-init-edit-mode"
           isDisabled={!isEditable}
@@ -340,6 +360,7 @@ type ResultTabComponentProps = {
   wizardReduxID: string;
   iCloudInitStorage: any;
   isDisabled: boolean;
+  isProviderImport: boolean;
   updateStorage: (storage: VMWizardStorage) => void;
   removeStorage: (storageId: string) => void;
   isForm: boolean;
@@ -351,6 +372,7 @@ const stateToProps = (state, { wizardReduxID }) => {
   return {
     iCloudInitStorage: iGetCloudInitNoCloudStorage(state, wizardReduxID),
     isForm,
+    isProviderImport: iGetCommonData(state, wizardReduxID, VMWizardProps.isProviderImport),
     isDisabled:
       hasStepCreateDisabled(state, wizardReduxID, VMWizardTab.ADVANCED_CLOUD_INIT) ||
       hasStepUpdateDisabled(state, wizardReduxID, VMWizardTab.ADVANCED_CLOUD_INIT) ||

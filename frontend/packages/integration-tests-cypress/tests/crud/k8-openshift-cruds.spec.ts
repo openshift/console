@@ -69,8 +69,7 @@ describe('Kubernetes resource CRUD operations', () => {
     describe(kind, () => {
       const name = `${testName}-${_.kebabCase(kind)}`;
 
-      const createResource = () => {
-        cy.log(`Create ${kind}: ${name}`);
+      it(`creates the resource instance`, () => {
         cy.visit(
           `${namespaced ? `/k8s/ns/${testName}` : '/k8s/cluster'}/${resource}?name=${testName}`,
         );
@@ -82,7 +81,10 @@ describe('Kubernetes resource CRUD operations', () => {
         if (resourcesWithCreationForm.has(kind)) {
           cy.byTestID('yaml-link').click();
         }
+        // sidebar needs to be fully loaded, else it sometimes overlays the Create button
+        cy.byTestID('resource-sidebar').should('exist');
         yamlEditor.isLoaded();
+        cy.testA11y(`YAML Editor for ${kind}: ${name}`);
         let newContent;
         // get, update, and set yaml editor content.
         return yamlEditor.getEditorContent().then((content) => {
@@ -96,31 +98,12 @@ describe('Kubernetes resource CRUD operations', () => {
           yamlEditor.clickSaveCreateButton();
           cy.get(errorMessage).should('not.exist');
         });
-      };
-
-      const deleteResource = () => {
-        cy.log(`Delete ${name}`);
-        cy.visit(`${namespaced ? `/k8s/ns/${testName}` : '/k8s/cluster'}/${resource}`);
-        listPage.filter.byName(name);
-        listPage.rows.countShouldBe(1);
-        listPage.rows.clickKebabAction(name, deleteHumanizedKind(kind));
-        modal.shouldBeOpened();
-        modal.submit();
-        modal.shouldBeClosed();
-        cy.resourceShouldBeDeleted(testName, resource, name);
-      };
-
-      before(() => {
-        createResource();
-      });
-
-      after(() => {
-        deleteResource();
       });
 
       it('displays detail view for newly created resource instance', () => {
         cy.url().should('include', `/${name}`);
         detailsPage.titleShouldContain(name);
+        cy.testA11y(`Details page for ${kind}: ${name}`);
       });
 
       it(`displays a list view for the resource`, () => {
@@ -135,6 +118,8 @@ describe('Kubernetes resource CRUD operations', () => {
           cy.log('does not have a namespace dropdown on non-namespaced objects');
           listPage.projectDropdownShouldNotExist();
         }
+        listPage.rows.shouldBeLoaded();
+        cy.testA11y(`List page for ${kind}: ${name}`);
       });
 
       it('search view displays created resource instance', () => {
@@ -143,7 +128,11 @@ describe('Kubernetes resource CRUD operations', () => {
             namespaced ? `ns/${testName}` : 'all-namespaces'
           }?kind=${kind}&q=${testLabel}%3d${testName}&name=${name}`,
         );
+
+        // filter should have 3 chip groups: resource, label, and name
+        listPage.filter.numberOfActiveFiltersShouldBe(3);
         listPage.rows.shouldExist(name);
+        cy.testA11y(`Search page for ${kind}: ${name}`);
 
         cy.log('link to to details page');
         listPage.rows.clickRowByName(name);
@@ -163,6 +152,17 @@ describe('Kubernetes resource CRUD operations', () => {
           yamlEditor.clickReloadButton();
         }
         yamlEditor.clickSaveCreateButton();
+      });
+
+      it(`deletes the resource instance`, () => {
+        cy.visit(`${namespaced ? `/k8s/ns/${testName}` : '/k8s/cluster'}/${resource}`);
+        listPage.filter.byName(name);
+        listPage.rows.countShouldBe(1);
+        listPage.rows.clickKebabAction(name, deleteHumanizedKind(kind));
+        modal.shouldBeOpened();
+        modal.submit();
+        modal.shouldBeClosed();
+        cy.resourceShouldBeDeleted(testName, resource, name);
       });
     });
   });

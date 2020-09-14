@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { PendingChanges } from './types';
+import { PendingChanges, PendingChangesByTab } from './types';
 import { FirehoseResult, Firehose } from '@console/internal/components/utils';
 import { VMIKind, VMKind } from '../../types';
 import { VMLikeEntityKind } from '../../types/vmLike';
@@ -30,12 +30,12 @@ type PendingChangesWarningProps = {
   vmLikeEntity?: FirehoseResult<VMLikeEntityKind>;
 };
 
-const getPendingChangesByTab = (pendingChanges: PendingChanges) =>
+const getPendingChangesByTab = (pendingChanges: PendingChanges): PendingChangesByTab =>
   Object.keys(pendingChanges)
     .filter((key) => pendingChanges[key].isPendingChange)
     .reduce((acc, key) => {
       const pc = pendingChanges[key];
-      const changedResourceNames = pc?.resourceNames;
+      const changedResourceNames: string[] = pc?.resourceNames;
 
       if (changedResourceNames) {
         return {
@@ -49,7 +49,9 @@ const getPendingChangesByTab = (pendingChanges: PendingChanges) =>
 
       return {
         ...acc,
-        [pc.vmTab]: acc[pc.vmTab] ? { resources: [...acc[pc.vmTab], key] } : { resources: [key] },
+        [pc.vmTab]: acc[pc.vmTab]
+          ? { resources: [...acc[pc.vmTab].resources, key] }
+          : { resources: [key] },
       };
     }, {});
 

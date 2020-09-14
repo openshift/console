@@ -27,26 +27,29 @@ const PubSubModal: React.FC<Props> = ({
   cancel,
   isSubmitting,
   status,
-  dirty,
   errors,
-}) => (
-  <form className="modal-content modal-content--no-inner-scroll" onSubmit={handleSubmit}>
-    <ModalTitle>{labelTitle}</ModalTitle>
-    <ModalBody>
-      <FormSection fullWidth>
-        <InputField type={TextInputTypes.text} name="metadata.name" label="Name" required />
-        <PubSubSubscriber />
-        {filterEnabled && <PubSubFilter />}
-      </FormSection>
-    </ModalBody>
-    <ModalSubmitFooter
-      inProgress={isSubmitting}
-      submitText="Add"
-      submitDisabled={!dirty || !_.isEmpty(errors)}
-      cancel={cancel}
-      errorMessage={status.error}
-    />
-  </form>
-);
+  values,
+}) => {
+  const dirty = values?.metadata?.name && values?.spec?.subscriber?.ref?.name;
+  return (
+    <form className="modal-content modal-content--no-inner-scroll" onSubmit={handleSubmit}>
+      <ModalTitle>{labelTitle}</ModalTitle>
+      <ModalBody>
+        <FormSection fullWidth>
+          <InputField type={TextInputTypes.text} name="metadata.name" label="Name" required />
+          <PubSubSubscriber />
+          {filterEnabled && <PubSubFilter />}
+        </FormSection>
+      </ModalBody>
+      <ModalSubmitFooter
+        inProgress={isSubmitting}
+        submitText="Add"
+        submitDisabled={!dirty || !_.isEmpty(errors)}
+        cancel={cancel}
+        errorMessage={status.error}
+      />
+    </form>
+  );
+};
 
 export default PubSubModal;

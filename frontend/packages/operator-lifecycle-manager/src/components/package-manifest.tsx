@@ -213,11 +213,11 @@ export const PackageManifestsPage: React.SFC<PackageManifestsPageProps> = (props
   type Flatten = (resources: { [kind: string]: { data: K8sResourceKind[] } }) => K8sResourceKind[];
   const flatten: Flatten = (resources) => _.get(resources.packageManifest, 'data', []);
   const helpText = (
-    <p className="co-help-text">
+    <>
       Catalogs are groups of Operators you can make available on the cluster. Use{' '}
       <Link to="/operatorhub">OperatorHub</Link> to subscribe and grant namespaces access to use
       installed Operators.
-    </p>
+    </>
   );
 
   return (

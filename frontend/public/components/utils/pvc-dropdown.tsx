@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ListDropdown } from './list-dropdown';
 import { PersistentVolumeClaimModel } from '../../models';
+import { PersistentVolumeClaimKind } from '../../../public/module/k8s/types';
 
 export const PVCDropdown: React.FC<PVCDropdownProps> = (props) => {
   const kind = PersistentVolumeClaimModel.kind;
@@ -21,7 +22,8 @@ export const PVCDropdown: React.FC<PVCDropdownProps> = (props) => {
 export type PVCDropdownProps = {
   namespace: string;
   selectedKey: string;
-  onChange: (string) => void;
-  id: string;
+  onChange: (claimName: string, kindLabel?: string, pvc?: PersistentVolumeClaimKind) => void;
+  id?: string;
   desc?: string;
+  dataTest?: string;
 };

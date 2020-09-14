@@ -3,6 +3,7 @@ import { submitButton, errorMessage } from '../../views/form';
 import { listPage } from '../../views/list-page';
 import { detailsPage } from '../../views/details-page';
 import { modal } from '../../views/modal';
+import { nav } from '../../views/nav';
 
 const shouldBeWatchdogAlertDetailsPage = () => {
   cy.byTestID('resource-title').contains('Watchdog');
@@ -39,7 +40,7 @@ describe('Monitoring: Alerts', () => {
 
   it('displays and filters the Alerts list page, links to detail pages', () => {
     cy.log('use vert. nav. menu to goto Monitoring -> Alerting');
-    cy.clickNavLink(['Monitoring', 'Alerting']);
+    nav.sidenav.clickNavLink(['Monitoring', 'Alerting']);
     // TODO, switch to 'listPage.titleShouldHaveText('Alerting');', when we switch to new test id
     cy.byLegacyTestID('resource-title').should('have.text', 'Alerting');
     listPage.projectDropdownShouldNotExist();

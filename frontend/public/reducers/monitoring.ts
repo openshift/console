@@ -13,8 +13,8 @@ import {
 export const alertState = (a: Alert): AlertStates => a?.state;
 export const silenceState = (s: Silence): SilenceStates => s?.status?.state;
 
-export const alertingRuleIsActive = (rule: Rule): string =>
-  rule.state === 'inactive' ? 'false' : 'true';
+export const alertingRuleHasAlertState = (rule: Rule, state: AlertStates) =>
+  state === AlertStates.NotFiring ? rule.alerts.length === 0 : _.some(rule.alerts, { state });
 
 export const alertingRuleSource = (rule: Rule): AlertSource =>
   rule.labels?.prometheus === 'openshift-monitoring/k8s' ? AlertSource.Platform : AlertSource.User;

@@ -1,6 +1,5 @@
 export const catalogListPageProps = {
   namespace: 'default',
-  kubernetesVersion: 'v1.18.0+ui896hui',
   helmCharts: {
     data: [
       {

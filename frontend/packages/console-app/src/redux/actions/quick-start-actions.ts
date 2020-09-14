@@ -9,6 +9,7 @@ export enum Actions {
   SetQuickStartStatus = 'setQuickStartStatus',
   SetQuickStartTaskNumber = 'setQuickStartTaskNumber',
   SetQuickStartTaskStatus = 'setQuickStartTaskStatus',
+  ResetQuickStart = 'resetQuickStart',
 }
 
 export const setActiveQuickStart = (quickStartId: string, totalTasks?: number) =>
@@ -23,11 +24,15 @@ export const setQuickStartTaskNumber = (quickStartId: string, quickStartTaskNumb
 export const setQuickStartTaskStatus = (quickStartTaskStatus: QuickStartTaskStatus) =>
   action(Actions.SetQuickStartTaskStatus, { quickStartTaskStatus });
 
+export const resetQuickStart = (quickStartId: string, totalTasks?: number) =>
+  action(Actions.ResetQuickStart, { quickStartId, totalTasks });
+
 const actions = {
   setActiveQuickStart,
   setQuickStartStatus,
   setQuickStartTaskNumber,
   setQuickStartTaskStatus,
+  resetQuickStart,
 };
 
 export type QuickStartSidebarActions = ActionType<typeof actions>;

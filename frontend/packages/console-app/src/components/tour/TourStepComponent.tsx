@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Popover, PopoverPlacement } from '@console/shared';
-import { Modal, ModalVariant } from '@patternfly/react-core';
+import { Popover, PopoverPlacement, Modal } from '@console/shared';
+import { ModalVariant } from '@patternfly/react-core';
 import StepHeader from './steps/StepHeader';
 import StepFooter from './steps/StepFooter';
 import StepBadge from './steps/StepBadge';
@@ -88,7 +88,9 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
       footer={footer}
       onClose={handleClose}
       id="guided-tour-modal"
+      data-test="guided-tour-modal"
       aria-label={`guided tour ${step}`}
+      isFullScreen
     >
       {stepContent}
     </Modal>

@@ -4,7 +4,6 @@ import {
   observer,
   Node,
   useAnchor,
-  RectAnchor,
   useCombineRefs,
   useHover,
   useDragNode,
@@ -13,6 +12,7 @@ import {
   WithContextMenuProps,
   createSvgIdUrl,
   WithCreateConnectorProps,
+  useSize,
 } from '@patternfly/react-topology';
 import {
   NodeShadows,
@@ -20,6 +20,7 @@ import {
   NODE_SHADOW_FILTER_ID_HOVER,
   nodeDragSourceSpec,
   GroupNode,
+  GroupNodeAnchor,
   useSearchFilter,
   useAllowEdgeCreation,
 } from '@console/dev-console/src/components/topology';
@@ -51,7 +52,6 @@ const KnativeServiceNode: React.FC<KnativeServiceNodeProps> = ({
   onHideCreateConnector,
   onShowCreateConnector,
 }) => {
-  useAnchor(React.useCallback((node: Node) => new RectAnchor(node, 1.5 + EVENT_MARKER_RADIUS), []));
   const [hover, hoverRef] = useHover();
   const [{ dragging }, dragNodeRef] = useDragNode(
     nodeDragSourceSpec(TYPE_KNATIVE_SERVICE, true, editAccess),
@@ -63,8 +63,16 @@ const KnativeServiceNode: React.FC<KnativeServiceNodeProps> = ({
   const [filtered] = useSearchFilter(element.getLabel());
   const allowEdgeCreation = useAllowEdgeCreation();
   const { kind } = element.getData().data;
-  const { width, height } = element.getBounds();
-
+  const { groupResources } = element.getData();
+  const [groupSize, groupRef] = useSize([groupResources]);
+  const width = groupSize ? groupSize.width : 0;
+  const height = groupSize ? groupSize.height : 0;
+  useAnchor(
+    React.useCallback(
+      (node: Node) => new GroupNodeAnchor(node, width, height, 1.5 + EVENT_MARKER_RADIUS),
+      [height, width],
+    ),
+  );
   React.useLayoutEffect(() => {
     if (editAccess && allowEdgeCreation) {
       if (hover) {
@@ -105,10 +113,11 @@ const KnativeServiceNode: React.FC<KnativeServiceNodeProps> = ({
         ry="5"
       />
       <GroupNode
+        ref={groupRef}
         kind={kind}
         element={element}
         typeIconClass="icon-knative"
-        groupResources={element.getData().groupResources}
+        groupResources={groupResources}
         emptyValue="No Revisions"
       />
     </g>

@@ -2,7 +2,6 @@ import * as _ from 'lodash';
 import { getName } from '@console/shared/src/selectors/common';
 import { createBasicLookup } from '@console/shared/src/utils/utils';
 import {
-  TEMPLATE_DATAVOLUME_ANNOTATION,
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_OS_LABEL,
   TEMPLATE_OS_NAME_ANNOTATION,
@@ -182,15 +181,3 @@ export const getIsGraphicsConsoleAttached = (vm: VMKind) =>
 
 export const getIsSerialConsoleAttached = (vm: VMKind) =>
   vm?.spec?.template?.spec?.domain?.devices?.autoattachSerialConsole;
-
-export const getOperatingSystemDataVolumeAnnotation = (
-  vmLike: VMGenericLikeEntityKind,
-  osId?: string,
-) =>
-  getValueByPrefix(
-    getAnnotations(vmLike),
-    `${TEMPLATE_DATAVOLUME_ANNOTATION}/${osId || getOperatingSystem(vmLike)}`,
-  );
-
-export const getOperatingSystemDataVolumeNamespaceAnnotation = (vmLike: VMGenericLikeEntityKind) =>
-  getValueByPrefix(getAnnotations(vmLike), `${TEMPLATE_DATAVOLUME_ANNOTATION}/namespace`);

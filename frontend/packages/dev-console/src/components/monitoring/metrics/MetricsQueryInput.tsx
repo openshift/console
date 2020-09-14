@@ -7,7 +7,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import * as fuzzy from 'fuzzysearch';
 import { RootState } from '@console/internal/redux';
 import { Button } from '@patternfly/react-core';
-import { Dropdown, removeQueryArgument, useSafeFetch } from '@console/internal/components/utils';
+import {
+  Dropdown,
+  removeQueryArgument,
+  useSafeFetch,
+  getURLSearchParams,
+} from '@console/internal/components/utils';
 import {
   queryBrowserRunQueries,
   queryBrowserPatchQuery,
@@ -24,11 +29,9 @@ import './MetricsQueryInput.scss';
 const ADD_NEW_QUERY = '#ADD_NEW_QUERY#';
 const CUSTOM_QUERY = 'Custom Query';
 
-type MetricsQueryInputProps = {
-  query?: string;
-};
-
-const MetricsQueryInput: React.FC<MetricsQueryInputProps> = ({ query }) => {
+const MetricsQueryInput: React.FC = () => {
+  const params = getURLSearchParams();
+  const query = params.query0;
   const items = metricsQuery;
   const autocompleteFilter = (strText, item) => fuzzy(strText, item);
   const defaultActionItem = [
@@ -45,6 +48,7 @@ const MetricsQueryInput: React.FC<MetricsQueryInputProps> = ({ query }) => {
   const dispatch = useDispatch();
   const [title, setTitle] = React.useState('Select Query');
   const [selectedKey, setSelectedKey] = React.useState('');
+  const [changeKey, setChangeKey] = React.useState(false);
   const [metric, setMetric] = React.useState('');
   const [showPromQl, setShowPromQl] = React.useState(false);
   const [isPromQlDisabled, setIsPromQlDisabled] = React.useState(false);
@@ -52,12 +56,10 @@ const MetricsQueryInput: React.FC<MetricsQueryInputProps> = ({ query }) => {
   React.useEffect(() => {
     const runQueries = () => dispatch(queryBrowserRunQueries());
     const patchQuery = (v: QueryObj) => dispatch(queryBrowserPatchQuery(0, v));
-    if (metric) {
-      const queryMetrics = getTopMetricsQueries(namespace)[metric];
-      patchQuery({ text: queryMetrics || '' });
-      runQueries();
-    }
-  }, [dispatch, metric, namespace]);
+    const queryMetrics = metric && getTopMetricsQueries(namespace)[metric];
+    patchQuery({ text: queryMetrics || query || '' });
+    runQueries();
+  }, [dispatch, metric, query, namespace, changeKey]);
 
   React.useEffect(() => {
     const q = queries?.query;
@@ -102,6 +104,7 @@ const MetricsQueryInput: React.FC<MetricsQueryInputProps> = ({ query }) => {
 
   const onChange = (selectedValue: string) => {
     setMetric(metricsQuery[selectedValue]);
+    setChangeKey(!changeKey);
     if (selectedValue && selectedValue === ADD_NEW_QUERY) {
       setTitle(CUSTOM_QUERY);
       setIsPromQlDisabled(true);

@@ -4,7 +4,7 @@ import { compareOwnerReference } from '@console/shared/src/utils/owner-reference
 import { getLabels, getOwnerReferences } from '@console/shared/src';
 import { SecretModel } from '@console/internal/models';
 import { PatchBuilder } from '@console/shared/src/k8s';
-import { V2V_TEMPORARY_LABEL } from '../../../constants/v2v';
+import { V2V_TEMPORARY_LABEL, V2V_DATA_TTL_KEY } from '../../../constants/v2v';
 import { buildOwnerReferenceForModel } from '../../../utils';
 import { VMImportProvider } from '../../../components/create-vm-wizard/types';
 import { OVirtProviderModel, V2VVMwareModel } from '../../../models';
@@ -33,6 +33,7 @@ export const correctVMImportProviderSecretLabels = async ({
       new PatchBuilder('/metadata/labels')
         .setObjectRemove(V2V_TEMPORARY_LABEL, getLabels(secret))
         .build(),
+      new PatchBuilder('/data').setObjectRemove(V2V_DATA_TTL_KEY, secret?.data).build(),
     );
     const ownerReferences = getOwnerReferences(secret);
     if (ownerReferences) {

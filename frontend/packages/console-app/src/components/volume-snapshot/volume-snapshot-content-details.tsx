@@ -25,7 +25,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
 
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text="Volume Snapshot Details" />
+      <SectionHeading text="Volume Snapshot Content Details" />
       <div className="row">
         <div className="col-md-6 col-xs-12">
           <ResourceSummary resource={obj}>
@@ -51,7 +51,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
                 namespace={snapshotNamespace}
               />
             </dd>
-            <dt>Snapshot Class</dt>
+            <dt>Volume Snapshot Class</dt>
             <dd>
               <ResourceLink
                 kind={referenceForModel(VolumeSnapshotClassModel)}

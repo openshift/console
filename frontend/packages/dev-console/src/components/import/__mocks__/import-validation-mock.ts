@@ -38,6 +38,7 @@ export const mockFormData: GitImportFormData = {
   route: {
     create: false,
     targetPort: '',
+    defaultUnknownPort: 8080,
     path: '',
     hostname: '',
     secure: false,

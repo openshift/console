@@ -140,7 +140,7 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] CreateOperandForm', (
         model={testModel}
         providedAPI={testClusterServiceVersion.spec.customresourcedefinitions.owned[0]}
         csv={testClusterServiceVersion}
-        schema={testCRD.spec.validation.openAPIV3Schema}
+        schema={testCRD.spec.versions[0].schema.openAPIV3Schema}
       />,
     );
   });

@@ -1,5 +1,7 @@
 import * as React from 'react';
+import * as classNames from 'classnames';
 import { connect } from 'react-redux';
+import { Stack, StackItem } from '@patternfly/react-core';
 import {
   BaseEdge,
   BOTTOM_LAYER,
@@ -16,10 +18,12 @@ import {
 import { useDeepCompareMemoize, useQueryParams } from '@console/shared';
 import { useExtensions } from '@console/plugin-sdk';
 import { RootState } from '@console/internal/redux';
-import { getActiveApplication } from '@console/internal/reducers/ui';
-import { getEventSourceStatus } from '@console/knative-plugin/src/topology/knative-topology-utils';
-import { removeQueryArgument, setQueryArgument } from '@console/internal/components/utils';
 import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
+import { getActiveApplication } from '@console/internal/reducers/ui';
+import { removeQueryArgument, setQueryArgument } from '@console/internal/components/utils';
+import { getEventSourceStatus } from '@console/knative-plugin/src/topology/knative-topology-utils';
+import { TYPE_VIRTUAL_MACHINE } from '@console/kubevirt-plugin/src/topology/components/const';
+import TopologyVmPanel from '@console/kubevirt-plugin/src/topology/TopologyVmPanel';
 import {
   CreateConnectionGetter,
   DisplayFilters,
@@ -35,8 +39,9 @@ import {
   TopologyDisplayFilters,
 } from '../../extensions/topology';
 import {
+  getFilterById,
   getTopologySearchQuery,
-  TOPOLOGY_SEARCH_FILTER_KEY,
+  SHOW_GROUPS_FILTER_ID,
   useAppliedDisplayFilters,
   useDisplayFilters,
 } from './filters';
@@ -50,16 +55,14 @@ import { useAddToProjectAccess } from '../../utils/useAddToProjectAccess';
 import Topology from './Topology';
 import TopologyListView from './list-view/TopologyListView';
 import { COLA_LAYOUT, layoutFactory } from './layouts/layoutFactory';
-import { odcElementFactory } from './elements';
-import { TYPE_APPLICATION_GROUP } from './components';
+import { OdcBaseEdge, odcElementFactory } from './elements';
+import { TYPE_APPLICATION_GROUP, TYPE_SERVICE_BINDING } from './components';
 import TopologyApplicationPanel from './application-panel/TopologyApplicationPanel';
 import { TYPE_HELM_RELEASE, TYPE_HELM_WORKLOAD } from './helm/components/const';
 import TopologyHelmReleasePanel from './helm/TopologyHelmReleasePanel';
 import TopologyHelmWorkloadPanel from './helm/TopologyHelmWorkloadPanel';
 import { TYPE_OPERATOR_BACKED_SERVICE } from './operators/components/const';
 import TopologyOperatorBackedPanel from './operators/TopologyOperatorBackedPanel';
-import { TYPE_VIRTUAL_MACHINE } from '@console/kubevirt-plugin/src/topology/components/const';
-import TopologyVmPanel from '@console/kubevirt-plugin/src/topology/TopologyVmPanel';
 import TopologyResourcePanel from './TopologyResourcePanel';
 import {
   TYPE_EVENT_PUB_SUB_LINK,
@@ -71,12 +74,11 @@ import KnativeTopologyEdgePanel from '@console/knative-plugin/src/components/ove
 import ConnectedTopologyEdgePanel from './TopologyEdgePanel';
 import TopologySideBar from './TopologySideBar';
 import { OperatorGroupData } from './operators/operator-topology-types';
-import { Stack, StackItem } from '@patternfly/react-core';
+import TopologyServiceBindingRequestPanel from './operators/TopologyServiceBindingRequestPanel';
 import TopologyFilterBar from './filters/TopologyFilterBar';
-import * as classNames from 'classnames';
 
-export const FILTER_ACTIVE_CLASS = 'odc-m-filter-active';
 const TOPOLOGY_GRAPH_ID = 'odc-topology-graph';
+export const FILTER_ACTIVE_CLASS = 'odc-m-filter-active';
 
 interface StateProps {
   application: string;
@@ -122,7 +124,10 @@ export const TopologyView: React.FC<ComponentProps> = ({
   const [storedSelectedIds, setSelectedIds] = React.useState<string[]>([]);
   const selectedIds = useDeepCompareMemoize(storedSelectedIds);
   const createResourceAccess: string[] = useAddToProjectAccess(namespace);
-  const filters = useDisplayFilters();
+  const displayFilters = useDisplayFilters();
+  const showGroupsRef = React.useRef<boolean>();
+  const groupsShown = getFilterById(SHOW_GROUPS_FILTER_ID, displayFilters)?.value ?? true;
+  const filters = useDeepCompareMemoize(displayFilters);
   const appliedFilters = useAppliedDisplayFilters();
   const [displayFilterers, setDisplayFilterers] = React.useState<TopologyApplyDisplayOptions[]>(
     null,
@@ -137,7 +142,7 @@ export const TopologyView: React.FC<ComponentProps> = ({
   const searchParams = queryParams.get('searchQuery');
   const onSelect = (ids: string[]) => {
     // set empty selection when selecting the graph
-    if (ids.length > 0 && ids[0] === TOPOLOGY_GRAPH_ID) {
+    if (!ids || ids.length === 0 || ids[0] === TOPOLOGY_GRAPH_ID) {
       setSelectedIds([]);
       removeQueryArgument('selectId');
     } else {
@@ -265,37 +270,71 @@ export const TopologyView: React.FC<ComponentProps> = ({
     }
   }, [createResourceAccess, createConnectors, eventSourceEnabled, visualization, namespace]);
 
-  const onSearchChange = (searchQuery) => {
-    if (searchQuery.length > 0) {
-      setQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY, searchQuery);
-      document.body.classList.add(FILTER_ACTIVE_CLASS);
-    } else {
-      removeQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY);
-      document.body.classList.remove(FILTER_ACTIVE_CLASS);
-    }
-  };
-
   React.useEffect(() => {
     const searchQuery = getTopologySearchQuery();
-    searchQuery && onSearchChange(searchQuery);
+    if (searchQuery.length > 0) {
+      document.body.classList.add(FILTER_ACTIVE_CLASS);
+    } else {
+      document.body.classList.remove(FILTER_ACTIVE_CLASS);
+    }
   }, [searchParams]);
 
   React.useEffect(() => {
     if (filteredModel) {
       visualization.fromModel(filteredModel);
-      if (selectedIds.length && !visualization.getElementById(selectedIds[0])) {
-        setSelectedIds([]);
+      let selectedItem = selectedIds.length ? visualization.getElementById(selectedIds[0]) : null;
+      if (!selectedItem || !selectedItem.isVisible()) {
+        onSelect([]);
       } else {
         const selectId = queryParams.get('selectId');
-        const selectTab = queryParams.get('selectTab');
-        visualization.getElementById(selectId) && setSelectedIds([selectId]);
-        if (selectTab) {
-          onSelectTab(selectTab);
-          removeQueryArgument('selectTab');
+        if (selectId) {
+          selectedItem = visualization.getElementById(selectId);
+          if (selectedItem && selectedItem.isVisible()) {
+            setSelectedIds([selectId]);
+            const selectTab = queryParams.get('selectTab');
+            if (selectTab) {
+              onSelectTab(selectTab);
+            }
+          } else {
+            onSelect([]);
+          }
         }
+        removeQueryArgument('selectTab');
+      }
+      if (showGraphView) {
+        if (groupsShown && showGroupsRef.current === false) {
+          showGroupsRef.current = groupsShown;
+          visualization.getGraph().layout();
+        }
+        showGroupsRef.current = groupsShown;
+      } else {
+        showGroupsRef.current = undefined;
       }
     }
-  }, [filteredModel, onSelectTab, queryParams, selectedIds, visualization]);
+    // Do not update on groupsShown change, filterModel will get updated and we want to wait to layout
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filteredModel, onSelectTab, queryParams, selectedIds, showGraphView, visualization]);
+
+  const viewContent = React.useMemo(
+    () =>
+      showGraphView ? (
+        <Topology
+          visualization={visualization}
+          namespace={namespace}
+          application={application}
+          selectedIds={selectedIds}
+        />
+      ) : (
+        <TopologyListView
+          visualization={visualization}
+          namespace={namespace}
+          application={application}
+          selectedIds={selectedIds}
+          onSelect={onSelect}
+        />
+      ),
+    [application, namespace, selectedIds, showGraphView, visualization],
+  );
 
   if (!filteredModel) {
     return null;
@@ -348,6 +387,9 @@ export const TopologyView: React.FC<ComponentProps> = ({
       if ([TYPE_REVISION_TRAFFIC, TYPE_EVENT_SOURCE_LINK].includes(selectedEntity.getType())) {
         return <KnativeTopologyEdgePanel edge={selectedEntity as BaseEdge} />;
       }
+      if (selectedEntity.getType() === TYPE_SERVICE_BINDING) {
+        return <TopologyServiceBindingRequestPanel edge={selectedEntity as OdcBaseEdge} />;
+      }
       return <ConnectedTopologyEdgePanel edge={selectedEntity as BaseEdge} />;
     }
     return null;
@@ -372,23 +414,6 @@ export const TopologyView: React.FC<ComponentProps> = ({
 
   const sideBar = renderSideBar();
 
-  const viewContent = showGraphView ? (
-    <Topology
-      visualization={visualization}
-      namespace={namespace}
-      application={application}
-      selectedIds={selectedIds}
-    />
-  ) : (
-    <TopologyListView
-      visualization={visualization}
-      namespace={namespace}
-      application={application}
-      selectedIds={selectedIds}
-      onSelect={onSelect}
-    />
-  );
-
   const containerClasses = classNames('pf-topology-container', {
     'pf-topology-container__with-sidebar': sideBar,
     'pf-topology-container__with-sidebar--open': sideBar,
@@ -398,11 +423,7 @@ export const TopologyView: React.FC<ComponentProps> = ({
     <div className="odc-topology">
       <Stack>
         <StackItem isFilled={false}>
-          <TopologyFilterBar
-            onSearchChange={onSearchChange}
-            showGraphView={showGraphView}
-            visualization={visualization}
-          />
+          <TopologyFilterBar showGraphView={showGraphView} visualization={visualization} />
         </StackItem>
         <StackItem isFilled className={containerClasses}>
           <div className="pf-topology-content">{viewContent}</div>

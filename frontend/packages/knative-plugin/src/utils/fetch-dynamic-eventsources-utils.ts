@@ -2,8 +2,13 @@ import * as _ from 'lodash';
 import { useEffect } from 'react';
 import { coFetch } from '@console/internal/co-fetch';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
-import { K8sKind, kindToAbbr, referenceForModel } from '@console/internal/module/k8s';
-import { chart_color_red_300 as knativeEventingColor } from '@patternfly/react-tokens';
+import {
+  K8sKind,
+  kindToAbbr,
+  referenceForModel,
+  getLatestVersionForCRD,
+} from '@console/internal/module/k8s';
+import { chart_color_red_300 as knativeEventingColor } from '@patternfly/react-tokens/dist/js/chart_color_red_300';
 import { EventingSubscriptionModel, EventingTriggerModel } from '../models';
 
 interface EventSourcetData {
@@ -18,6 +23,11 @@ const eventSourceData: EventSourcetData = {
   eventSourceChannels: [],
 };
 
+interface EventChannelData {
+  loaded: boolean;
+  channels: string[];
+}
+
 export const fetchEventSourcesCrd = async () => {
   const url = 'api/console/knative-event-sources';
   try {
@@ -30,15 +40,14 @@ export const fetchEventSourcesCrd = async () => {
           metadata: { labels },
           spec: {
             group,
-            versions,
             names: { kind, plural, singular },
           },
         } = crd;
-        const { name: version } = versions?.find((ver) => ver.served && ver.storage);
-        if (version) {
+        const crdLatestVersion = getLatestVersionForCRD(crd);
+        if (crdLatestVersion) {
           const sourceModel = {
             apiGroup: group,
-            apiVersion: version,
+            apiVersion: crdLatestVersion,
             kind,
             plural,
             id: singular,
@@ -76,7 +85,7 @@ export const fetchEventSourcesCrd = async () => {
 export const useEventSourceModels = (): EventSourcetData => {
   const [modelsData, setModelsData] = useSafetyFirst({ loaded: false, eventSourceModels: [] });
   useEffect(() => {
-    if (!eventSourceData.loaded) {
+    if (eventSourceData.eventSourceModels.length === 0) {
       fetchEventSourcesCrd()
         .then((data) => {
           setModelsData({ loaded: true, eventSourceModels: data });
@@ -137,9 +146,6 @@ export const isDynamicEventResourceKind = (resourceRef: string): boolean => {
   return index !== -1;
 };
 
-export const hideDynamicEventSourceCard = () =>
-  eventSourceData.eventSourceModels && eventSourceData.eventSourceModels.length > 0;
-
 export const fetchChannelsCrd = async () => {
   const url = 'api/console/knative-channels';
   try {
@@ -152,14 +158,13 @@ export const fetchChannelsCrd = async () => {
         const {
           spec: {
             group,
-            versions,
             names: { kind, plural, singular },
           },
         } = crd;
-        const { name: version } = versions?.find((ver) => ver.served && ver.storage);
+        const crdLatestVersion = getLatestVersionForCRD(crd);
         const sourceModel = {
           apiGroup: group,
-          apiVersion: version,
+          apiVersion: crdLatestVersion,
           kind,
           plural,
           id: singular,
@@ -206,13 +211,40 @@ export const getDynamicEventingChannelWatchers = (namespace: string) => {
     return acc;
   }, {});
 };
+export const useChannelResourcesList = (): EventChannelData => {
+  const [modelRefs, setModelRefs] = useSafetyFirst<EventChannelData>({
+    channels: [],
+    loaded: false,
+  });
+  useEffect(() => {
+    if (eventSourceData.eventSourceChannels.length === 0) {
+      fetchChannelsCrd()
+        .then((data) => {
+          setModelRefs({
+            channels: data.map((model: K8sKind) => referenceForModel(model)),
+            loaded: true,
+          });
+        })
+        .catch((err) => {
+          setModelRefs({ channels: [], loaded: true });
+          // eslint-disable-next-line no-console
+          console.warn('Error fetching CRDs for dynamic channel model refs', err);
+        });
+    } else {
+      setModelRefs({
+        channels: eventSourceData.eventSourceChannels.map((model: K8sKind) =>
+          referenceForModel(model),
+        ),
+        loaded: true,
+      });
+    }
+  }, [setModelRefs]);
+  return modelRefs;
+};
 
 export const getDynamicChannelModelRefs = (): string[] => {
   return eventSourceData.eventSourceChannels.map((model: K8sKind) => referenceForModel(model));
 };
-
-export const hideDynamicChannelCard = () =>
-  eventSourceData.eventSourceChannels && eventSourceData.eventSourceChannels.length > 0;
 
 export const isEventingChannelResourceKind = (resourceRef: string): boolean => {
   const index = eventSourceData.eventSourceChannels.findIndex(

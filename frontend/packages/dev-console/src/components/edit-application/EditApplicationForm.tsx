@@ -36,7 +36,9 @@ const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationF
   <>
     <PageHeading title={createFlowType} style={{ padding: '0px' }} />
     <Form onSubmit={handleSubmit}>
-      {createFlowType !== CreateApplicationFlow.Container && <GitSection />}
+      {createFlowType !== CreateApplicationFlow.Container && (
+        <GitSection builderImages={builderImages} />
+      )}
       {createFlowType === CreateApplicationFlow.Git && (
         <BuilderSection image={values.image} builderImages={builderImages} />
       )}

@@ -21,6 +21,7 @@ import {
   RequestSizeInput,
   history,
   resourcePath,
+  ExternalLink,
 } from '@console/internal/components/utils';
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import { RadioInput } from '@console/internal/components/radio';
@@ -42,7 +43,7 @@ import { createUploadPVC } from '../../../k8s/requests/cdi-upload/cdi-upload-req
 import { CDIUploadContext } from '../cdi-upload-provider';
 import { UploadPVCFormStatus } from './upload-pvc-form-status';
 import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/models';
-import { getName } from '@console/shared';
+import { getName, getNamespace } from '@console/shared';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
 import { getTemplateOperatingSystems } from '../../../selectors/vm-template/advanced';
 import { FormSelectPlaceholderOption } from '../../form/form-select-placeholder-option';
@@ -52,6 +53,7 @@ import {
   TEMPLATE_VM_GOLDEN_OS_NAMESPACE,
   TEMPLATE_VM_COMMON_NAMESPACE,
 } from '../../../constants';
+import { CDI_UPLOAD_OS_URL_PARAM, CDI_UPLOAD_SUPPORTED_TYPES_URL } from '../consts';
 import './upload-pvc-form.scss';
 
 const templatesResource: WatchK8sResource = {
@@ -71,19 +73,57 @@ const goldenPvcsResource: WatchK8sResource = {
   namespace: TEMPLATE_VM_GOLDEN_OS_NAMESPACE,
 };
 
-export const UploadPVCForm: React.FC<UploadPVCFormProps> = (props) => {
+const uploadErrorType = {
+  MISSING: 'missing',
+  ALLOCATE: 'allocate',
+  TYPE: 'type',
+};
+
+const uploadErrorMessage = {
+  [uploadErrorType.MISSING]: 'File input is missing',
+  [uploadErrorType.ALLOCATE]: 'Could not create persistent volume claim',
+  [uploadErrorType.TYPE]: (
+    <>
+      <p>
+        The format of the file you are uploading is not supported. Please use one of the supported
+        formats
+      </p>
+      <p>
+        <ExternalLink
+          text="Learn more about supported formats"
+          href={CDI_UPLOAD_SUPPORTED_TYPES_URL}
+        />
+      </p>
+    </>
+  ),
+};
+
+export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
+  onChange,
+  fileName,
+  handleFileChange,
+  fileValue,
+  commonTemplates,
+  goldenPvcs,
+  osParam,
+  isLoading,
+  setIsFileRejected,
+  ...props
+}) => {
+  const operatingSystems = getTemplateOperatingSystems(commonTemplates);
   const [accessModeHelp, setAccessModeHelp] = React.useState('Permissions to the mounted drive.');
   const [allowedAccessModes, setAllowedAccessModes] = React.useState(initialAccessModes);
   const [storageClass, setStorageClass] = React.useState('');
   const [pvcName, setPvcName] = React.useState('');
-  const [namespace, setNamespace] = React.useState(props.namespace);
+  const [namespace, setNamespace] = React.useState(
+    osParam ? TEMPLATE_VM_GOLDEN_OS_NAMESPACE : props.namespace,
+  );
   const [accessMode, setAccessMode] = React.useState('ReadWriteOnce');
   const [requestSizeValue, setRequestSizeValue] = React.useState('');
   const [requestSizeUnit, setRequestSizeUnit] = React.useState('Gi');
   const [storageProvisioner, setStorageProvisioner] = React.useState('');
-  const [isGolden, setIsGolden] = React.useState(false);
+  const [isGolden, setIsGolden] = React.useState(!!osParam);
   const [os, setOs] = React.useState('');
-  const { onChange, fileName, handleFileChange, fileValue, commonTemplates, goldenPvcs } = props;
 
   React.useEffect(() => {
     const updateDV = (): K8sResourceKind => {
@@ -167,26 +207,40 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = (props) => {
     setAccessMode(event.currentTarget.value);
   };
 
-  const onlyPvcSCs = React.useCallback((sc: StorageClass) => !isObjectSC(sc), []);
-
-  const operatingSystems = getTemplateOperatingSystems(commonTemplates);
-
-  const handleOs = (osKey) => {
-    const operatingSystem = operatingSystems.find((newOs) => newOs.id === osKey);
-
-    setOs(osKey);
-    setPvcName(operatingSystem?.dataVolumeName || osKey);
-    setNamespace(operatingSystem?.dataVolumeNamespace || TEMPLATE_VM_GOLDEN_OS_NAMESPACE);
-  };
-
-  React.useEffect(() => {
-    if (isGolden && pvcName && !os) {
-      setPvcName('');
+  const handleGoldenCheckbox = (checked) => {
+    setIsGolden(checked);
+    if (checked) {
+      const operatingSystem = operatingSystems.find((newOs) => newOs.id === os);
+      setNamespace(operatingSystem?.dataVolumeNamespace || TEMPLATE_VM_GOLDEN_OS_NAMESPACE);
+      if (pvcName && !os) {
+        setPvcName('');
+      } else {
+        setPvcName(operatingSystem?.dataVolumeName || os);
+      }
     }
-    if (!isGolden) {
+    if (!checked) {
       setNamespace(props.namespace);
     }
-  }, [isGolden, os, props.namespace, pvcName]);
+  };
+
+  const handleOs = (newOs) => {
+    setOs(newOs);
+    const operatingSystem = operatingSystems.find((o) => o.id === newOs);
+    setPvcName(operatingSystem?.dataVolumeName || newOs);
+  };
+
+  const onlyPvcSCs = React.useCallback((sc: StorageClass) => !isObjectSC(sc), []);
+
+  React.useEffect(() => {
+    if (!isLoading) {
+      // os url param might already have a golden image
+      const isGoldenExists = goldenPvcs?.find((pvc) => getName(pvc) === osParam);
+      if (!isGoldenExists) {
+        handleOs(osParam);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading]);
 
   return (
     <div>
@@ -207,13 +261,20 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = (props) => {
           onChange={handleFileChange}
           hideDefaultPreview
           isRequired
+          isDisabled={isLoading}
+          dropzoneProps={{
+            accept: '.iso,.img,.qcow2,.gz,.xz',
+            onDropRejected: () => setIsFileRejected(true),
+            onDropAccepted: () => setIsFileRejected(false),
+          }}
         />
         <Checkbox
           id="golden-os-switch"
           className="kv--create-upload__golden-switch"
           label="Attach this data to a Virtual Machine operating system"
           isChecked={isGolden}
-          onChange={(checked) => setIsGolden(checked)}
+          onChange={handleGoldenCheckbox}
+          isDisabled={isLoading}
         />
       </div>
       {isGolden && (
@@ -222,13 +283,21 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = (props) => {
             Operating System
           </label>
           <div className="form-group">
-            <FormSelect id="golden-os-select" onChange={handleOs} value={os} isRequired>
+            <FormSelect
+              id="golden-os-select"
+              isDisabled={isLoading}
+              onChange={handleOs}
+              value={os || ''}
+              isRequired
+            >
               <FormSelectPlaceholderOption
                 placeholder="--- Pick an Operating system ---"
                 isDisabled={!!os}
               />
               {operatingSystems.map(({ id, name, dataVolumeName }) =>
-                goldenPvcs?.find((pvc) => getName(pvc) === dataVolumeName) ? (
+                goldenPvcs?.find((pvc) =>
+                  dataVolumeName ? getName(pvc) === dataVolumeName : getName(pvc) === id,
+                ) ? (
                   <FormSelectOption
                     isDisabled
                     key={id}
@@ -251,7 +320,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = (props) => {
               type="text"
               aria-describedby="pvc-namespace-help"
               id="pvc-namespace"
-              value={namespace}
+              value={namespace || ''}
               required
             />
             <p className="help-block" id="pvc-namespace-help">
@@ -265,14 +334,14 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = (props) => {
       </label>
       <div className="form-group">
         <input
-          disabled={isGolden}
+          disabled={isGolden || isLoading}
           className="pf-c-form-control"
           type="text"
           onChange={handlePvcName}
-          placeholder={isGolden ? '' : 'my-storage-claim'}
+          placeholder={isGolden ? 'pick an operating system' : 'my-storage-claim'}
           aria-describedby="pvc-name-help"
           id="pvc-name"
-          value={pvcName}
+          value={pvcName || ''}
           required
         />
         <p className="help-block" id="pvc-name-help">
@@ -283,6 +352,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = (props) => {
         <Split hasGutter>
           <SplitItem className="kv--create-upload__flexitem">
             <StorageClassDropdown
+              isDisabled={isLoading}
               onChange={handleStorageClass}
               id="storageclass-dropdown"
               describedBy="storageclass-dropdown-help"
@@ -350,7 +420,8 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [fileValue, setFileValue] = React.useState<File>(null);
   const [fileName, setFileName] = React.useState('');
-  const [error, setError] = React.useState('');
+  const [isFileRejected, setIsFileRejected] = React.useState(false);
+  const [error, setError] = React.useState<string>('');
   const [isAllocating, setIsAllocating] = React.useState(false);
   const [dvObj, setDvObj] = React.useState<V1alpha1DataVolume>(null);
   const [commonTemplates, loadedTemplates, errorTemplates] = useK8sWatchResource<TemplateKind[]>(
@@ -361,13 +432,18 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
   );
 
   const { uploads, uploadData } = React.useContext(CDIUploadContext);
-  const namespace = props?.match?.params?.ns;
+  const initialNamespace = props?.match?.params?.ns;
+  const namespace = getNamespace(dvObj) || initialNamespace;
+  const urlParams = new URLSearchParams(window.location.search);
+  const osParam = urlParams.get(CDI_UPLOAD_OS_URL_PARAM);
   const title = 'Upload Data to Persistent Volume Claim';
 
   const save = (e: React.FormEvent<EventTarget>) => {
     e.preventDefault();
     if (!fileName) {
-      setError('File input is missing');
+      setError(uploadErrorType.MISSING);
+    } else if (isFileRejected) {
+      setError(uploadErrorType.TYPE);
     } else {
       setError('');
       setIsAllocating(true);
@@ -384,7 +460,7 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
         })
         .catch(({ message }: { message: string }) => {
           setIsAllocating(false);
-          setError(message || 'Could not create persistent volume claim.');
+          setError(message || uploadErrorType.ALLOCATE);
         });
     }
   };
@@ -392,13 +468,16 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
   const handleFileChange = (value, filename) => {
     setFileName(filename);
     setFileValue(value);
+    setError('');
   };
 
   React.useEffect(() => {
     if (errorTemplates || errorPvcs) {
-      setError(errorTemplates || errorPvcs);
+      setError(errorTemplates?.message || errorPvcs?.message);
     }
   }, [errorTemplates, errorPvcs]);
+
+  const errorMessage = uploadErrorMessage[error] || error;
 
   return (
     <>
@@ -416,14 +495,17 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
         <form className="co-m-pane__body-group" onSubmit={save}>
           <UploadPVCForm
             onChange={setDvObj}
-            namespace={namespace}
+            namespace={initialNamespace}
             fileValue={fileValue}
             fileName={fileName}
             handleFileChange={handleFileChange}
+            setIsFileRejected={setIsFileRejected}
             commonTemplates={commonTemplates}
             goldenPvcs={goldenPvcs}
+            osParam={osParam}
+            isLoading={!loadedTemplates}
           />
-          <ButtonBar inProgress={!loadedTemplates || !loadedPvcs} errorMessage={error}>
+          <ButtonBar inProgress={!loadedTemplates || !loadedPvcs} errorMessage={errorMessage}>
             <ActionGroup className="pf-c-form">
               <Button id="save-changes" type="submit" variant="primary">
                 Upload
@@ -441,7 +523,7 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
         )}
         isSubmitting={isSubmitting}
         isAllocating={isAllocating}
-        allocateError={error}
+        allocateError={errorMessage}
         onErrorClick={() => {
           setIsSubmitting(false);
           setError('');
@@ -459,8 +541,11 @@ export type UploadPVCFormProps = {
   namespace: string;
   fileValue: string | File;
   fileName: string;
+  osParam?: string;
+  isLoading: boolean;
   commonTemplates: TemplateKind[];
   goldenPvcs: K8sResourceKind[];
+  setIsFileRejected: React.Dispatch<React.SetStateAction<boolean>>;
   onChange: (K8sResourceKind) => void;
   handleFileChange: (value, filename, event) => void;
 };

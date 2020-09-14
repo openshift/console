@@ -2,7 +2,7 @@ import * as React from 'react';
 
 const MEMO = {};
 
-export const CamelCaseWrap: React.SFC<CamelCaseWrapProps> = ({ value }) => {
+export const CamelCaseWrap: React.SFC<CamelCaseWrapProps> = ({ value, dataTest }) => {
   if (!value) {
     return '-';
   }
@@ -14,7 +14,7 @@ export const CamelCaseWrap: React.SFC<CamelCaseWrapProps> = ({ value }) => {
   // Add word break points before capital letters (but keep consecutive capital letters together).
   const words = value.match(/[A-Z]+[^A-Z]*|[^A-Z]+/g);
   const rendered = (
-    <span>
+    <span data-test={dataTest}>
       {words.map((word, i) => (
         <React.Fragment key={i}>
           {word}
@@ -29,4 +29,5 @@ export const CamelCaseWrap: React.SFC<CamelCaseWrapProps> = ({ value }) => {
 
 export type CamelCaseWrapProps = {
   value: string;
+  dataTest?: string;
 };

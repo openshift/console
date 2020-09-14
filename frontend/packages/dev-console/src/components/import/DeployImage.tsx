@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Formik } from 'formik';
+import { Formik, FormikHelpers } from 'formik';
 import { connect } from 'react-redux';
 import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { history } from '@console/internal/components/utils';
@@ -142,7 +142,10 @@ const DeployImage: React.FC<Props> = ({
     healthChecks: healthChecksProbeInitialData,
   };
 
-  const handleSubmit = (values, actions) => {
+  const handleSubmit = (
+    values: DeployImageFormData,
+    helpers: FormikHelpers<DeployImageFormData>,
+  ) => {
     const {
       project: { name: projectName },
     } = values;
@@ -163,14 +166,12 @@ const DeployImage: React.FC<Props> = ({
         .catch(() => {});
     }
 
-    resourceActions
+    return resourceActions
       .then(() => {
-        actions.setSubmitting(false);
         history.push(`/topology/ns/${projectName}`);
       })
       .catch((err) => {
-        actions.setSubmitting(false);
-        actions.setStatus({ submitError: err.message });
+        helpers.setStatus({ submitError: err.message });
       });
   };
 

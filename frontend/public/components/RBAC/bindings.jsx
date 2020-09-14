@@ -288,7 +288,9 @@ export const RoleBindingsPage = ({
   showTitle = true,
   mock = false,
   staticFilters = undefined,
-  createPath = '/k8s/cluster/rolebindings/~new',
+  createPath = `/k8s/${namespace ? `ns/${namespace}` : 'cluster'}/rolebindings/~new${
+    namespace ? `?namespace=${namespace}` : ''
+  }`,
 }) => (
   <MultiListPage
     canCreate={!mock}

@@ -23,6 +23,10 @@
       display: inline-flex;
       align-items: center;
     }
+    &__url-empty-state {
+      font-size: 12px;
+      color: var(--pf-global--palette--black-600);
+    }
     article {
       border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
     }

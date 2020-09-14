@@ -86,8 +86,6 @@
 @import 'components/overview/build-overview';
 @import 'components/overview/job-overview';
 @import 'components/overview/overview';
-@import 'components/overview/list-view/list-view';
-@import 'components/overview/project-overview';
 @import 'components/deploy-image';
 @import 'components/instantiate-template';
 @import 'components/routes/create-route';
@@ -107,5 +105,6 @@
 @import 'components/dashboard/dashboards-page/cluster-dashboard/status-card';
 
 @import 'components/dashboard/project-dashboard/activity-card';
+@import 'components/dashboard/project-dashboard/details-card';
 
 @import 'components/nav/nav-header';

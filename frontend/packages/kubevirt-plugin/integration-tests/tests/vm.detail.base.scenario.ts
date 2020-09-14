@@ -11,7 +11,7 @@ import { VM_STATUS } from './utils/constants/vm';
 import { NodePortService } from './types/types';
 import { OperatingSystem, Workload } from './utils/constants/wizard';
 
-describe('Test VM overview', () => {
+describe('Kubevirt VM details tab', () => {
   const vmName = `vm-${testName}`;
   const cloudInit = `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}`;
   const serviceCommon = { name: vmName, kind: 'vm', type: 'NodePort', namespace: testName };
@@ -50,7 +50,7 @@ describe('Test VM overview', () => {
     await vm.navigateToDetail();
   });
 
-  it('ID(CNV-763) Check VM details in overview when VM is off', async () => {
+  it('ID(CNV-763) Check VM details when VM is off', async () => {
     const expectation = {
       name: vmName,
       status: VM_STATUS.Off,
@@ -88,7 +88,7 @@ describe('Test VM overview', () => {
   });
 
   it(
-    'ID(CNV-4037) Check VM details in overview when VM is running',
+    'ID(CNV-4037) Check VM details when VM is running',
     async () => {
       await vm.start();
       // Empty fields turn into non-empty
@@ -109,7 +109,7 @@ describe('Test VM overview', () => {
     VM_BOOTUP_TIMEOUT_SECS,
   );
 
-  it('ID(CNV-2081) Check exposed vm services', async () => {
+  it('ID(CNV-2081) Check exposed services', async () => {
     await asyncForEach(nodePortServices, async (srv) => {
       expect(await vmView.vmDetailService(srv.exposeName).getText()).toEqual(srv.exposeName);
       expect(await vmView.vmDetailService(srv.exposeName).getAttribute('href')).toContain(

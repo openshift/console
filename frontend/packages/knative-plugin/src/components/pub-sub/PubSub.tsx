@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Formik, FormikValues, FormikHelpers } from 'formik';
 import { K8sResourceKind, k8sCreate } from '@console/internal/module/k8s';
+import { getRandomChars } from '@console/shared/src/utils';
 import PubSubModal from './PubSubModal';
 import { EventingBrokerModel, EventingTriggerModel, EventingSubscriptionModel } from '../../models';
 import { pubsubValidationSchema } from './pubsub-validation-utils';
@@ -49,7 +50,7 @@ const PubSub: React.FC<PubSubProps> = ({
   const initialValues = {
     apiVersion: `${apiGroup}/${apiVersion}`,
     kind,
-    metadata: { name: '', namespace },
+    metadata: { name: `${sourceName}-${getRandomChars()}`, namespace },
     spec: {
       ...getSpecForKind(kind),
       subscriber: {

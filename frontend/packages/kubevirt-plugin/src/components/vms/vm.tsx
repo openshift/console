@@ -8,15 +8,17 @@ import {
   dimensifyHeader,
   dimensifyRow,
   getCreationTimestamp,
-  getDeletetionTimestamp,
   getName,
   getNamespace,
-  getOwnerReferences,
   getUID,
   getLabels,
 } from '@console/shared';
-import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
-import { NamespaceModel, PodModel, NodeModel } from '@console/internal/models';
+import {
+  NamespaceModel,
+  PodModel,
+  NodeModel,
+  PersistentVolumeClaimModel,
+} from '@console/internal/models';
 import {
   Table,
   MultiListPage,
@@ -31,7 +33,7 @@ import {
   ResourceLink,
   Timestamp,
 } from '@console/internal/components/utils';
-import { K8sKind, PodKind } from '@console/internal/module/k8s';
+import { K8sKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
 import { VMStatus } from '../vm-status/vm-status';
 import {
   DataVolumeModel,
@@ -41,7 +43,7 @@ import {
   VirtualMachineModel,
 } from '../../models';
 import { VMIKind, VMKind } from '../../types';
-import { buildOwnerReferenceForModel, getBasicID, getLoadedData } from '../../utils';
+import { getBasicID, getLoadedData } from '../../utils';
 import { getVMStatus } from '../../statuses/vm/vm-status';
 import { getVmiIpAddresses, getVMINodeName } from '../../selectors/vmi';
 import { isVMImport, isVM, isVMI } from '../../selectors/check-type';
@@ -149,7 +151,7 @@ const VMRow: RowFunction<VMRowObjType> = ({ obj, index, key, style }) => {
           vmStatusBundle={vmStatusBundle}
           arePendingChanges={arePendingChanges}
         />
-        {arePendingChanges && <div>Pending changes</div>}
+        {arePendingChanges && <div className="kv-vm-row_status-extra-label">Pending changes</div>}
       </TableData>
       <TableData className={dimensify()}>
         <Timestamp timestamp={creationTimestamp} />
@@ -168,7 +170,7 @@ const VMRow: RowFunction<VMRowObjType> = ({ obj, index, key, style }) => {
 };
 
 const VMList: React.FC<React.ComponentProps<typeof Table> & VMListProps> = (props) => (
-  <div className="kubevirt-vm-list">
+  <div className="kv-vm-list">
     <Table
       {...props}
       aria-label={VirtualMachineModel.labelPlural}
@@ -226,6 +228,12 @@ const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
       prop: 'migrations',
     },
     {
+      kind: PersistentVolumeClaimModel.kind,
+      isList: true,
+      namespace,
+      prop: 'pvcs',
+    },
+    {
       kind: DataVolumeModel.kind,
       isList: true,
       namespace,
@@ -245,6 +253,7 @@ const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
     vmis,
     pods,
     migrations,
+    pvcs,
     dataVolumes,
     vmImports,
   }: {
@@ -252,6 +261,7 @@ const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
     vmis: FirehoseResult<VMIKind[]>;
     pods: FirehoseResult<PodKind[]>;
     migrations: FirehoseResult;
+    pvcs: FirehoseResult<PersistentVolumeClaimKind[]>;
     dataVolumes: FirehoseResult<V1alpha1DataVolume[]>;
     vmImports: FirehoseResult<VMImportKind[]>;
   }) => {
@@ -260,6 +270,7 @@ const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
     const loadedPods = getLoadedData(pods);
     const loadedMigrations = getLoadedData(migrations);
     const loadedVMImports = getLoadedData(vmImports);
+    const loadedPVCs = getLoadedData(pvcs);
     const loadedDataVolumes = getLoadedData(dataVolumes);
     const isVMImportLoaded = !vmImports || vmImports.loaded || vmImports.loadError; // go in when CRD missing or no permissions
 
@@ -323,6 +334,7 @@ const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
             vmi: objectBundle.vmi,
             pods: loadedPods,
             migrations: loadedMigrations,
+            pvcs: loadedPVCs,
             dataVolumes: loadedDataVolumes,
             vmImports: loadedVMImports,
           });
@@ -344,21 +356,7 @@ const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
           ...objectBundle,
         };
       })
-      .filter(({ vm, vmi, vmImport, metadata }) => {
-        if (vmImport && metadata.vmImportStatus?.isCompleted()) {
-          return false;
-        }
-
-        if (vm || !getDeletetionTimestamp(vmi)) {
-          return true;
-        }
-        const vmOwnerReference = buildOwnerReferenceForModel(VirtualMachineModel, getName(vmi));
-
-        // show finalizing VMIs only if they are not owned by VM
-        return !(getOwnerReferences(vmi) || []).some((o) =>
-          compareOwnerReference(o, vmOwnerReference),
-        );
-      });
+      .filter(({ vmImport, metadata }) => !(vmImport && metadata.vmImportStatus?.isCompleted()));
   };
 
   const createAccessReview = skipAccessReview ? null : { model: VirtualMachineModel, namespace };

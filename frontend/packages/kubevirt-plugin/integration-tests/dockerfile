@@ -1,4 +1,4 @@
-FROM centos:7
+FROM centos:8
 
 USER root
 
@@ -6,7 +6,7 @@ RUN curl -sL https://rpm.nodesource.com/setup_10.x | bash - && \
     curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | tee /etc/yum.repos.d/yarn.repo && \
     rpm --import https://dl.yarnpkg.com/rpm/pubkey.gpg
 
-RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
 
 RUN yum update -y && yum install -y \
     git \
@@ -36,8 +36,3 @@ ENV GOROOT "/usr/local/go"
 ENV GOPATH "$HOME"
 
 ENV PATH "$GOPATH/bin:$GOROOT/bin:$PATH"
-
-RUN git clone https://github.com/openshift/console.git /tmp/console && \
-    cd /tmp/console && \
-    ./build.sh && \
-    chmod 777 -R /tmp/console/

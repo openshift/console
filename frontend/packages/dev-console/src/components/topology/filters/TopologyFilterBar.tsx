@@ -12,18 +12,21 @@ import {
 } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import { Visualization } from '@patternfly/react-topology';
+import { useQueryParams } from '@console/shared';
 import { RootState } from '@console/internal/redux';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { ExternalLink } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { TextFilter } from '@console/internal/components/factory';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { ConsoleLinkModel } from '@console/internal/models';
 import { setTopologyFilters } from '../redux/action';
 import { DisplayFilters } from '../topology-types';
 import {
   getSupportedTopologyFilters,
   getSupportedTopologyKinds,
   getTopologyFilters,
-  getTopologySearchQuery,
+  onSearchChange,
 } from './filter-utils';
 import FilterDropdown from './FilterDropdown';
 import KindFilterDropdown from './KindFilterDropdown';
@@ -35,7 +38,6 @@ type StateProps = {
   filters: DisplayFilters;
   supportedFilters: string[];
   supportedKinds: { [key: string]: number };
-  consoleLinks: K8sResourceKind[];
   namespace: string;
 };
 
@@ -45,14 +47,10 @@ type DispatchProps = {
 
 type OwnProps = {
   visualization?: Visualization;
-  onSearchChange: (searchQuery: string) => void;
   showGraphView: boolean;
 };
 
-type MergeProps = {
-  onDisplayFiltersChange: (display: DisplayFilters) => void;
-} & StateProps &
-  OwnProps;
+type MergeProps = StateProps & DispatchProps & OwnProps;
 
 type TopologyFilterBarProps = MergeProps;
 
@@ -60,28 +58,24 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
   filters,
   supportedFilters,
   supportedKinds,
-  onDisplayFiltersChange,
-  onSearchChange,
+  onFiltersChange,
   visualization,
   showGraphView,
-  consoleLinks,
   namespace,
 }) => {
-  const [searchQuery, setSearchQuery] = React.useState<string>('');
+  const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
+    isList: true,
+    kind: referenceForModel(ConsoleLinkModel),
+    optional: true,
+  });
   const kialiLink = getNamespaceDashboardKialiLink(consoleLinks, namespace);
-  React.useEffect(() => {
-    const query = getTopologySearchQuery();
-    setSearchQuery(query);
-  }, []);
+  const queryParams = useQueryParams();
+  const searchQuery = queryParams.get('searchQuery') || '';
 
-  const onTextFilterChange = React.useCallback(
-    (text) => {
-      const query = text?.trim();
-      setSearchQuery(query);
-      onSearchChange(query);
-    },
-    [onSearchChange],
-  );
+  const onTextFilterChange = (text) => {
+    const query = text?.trim();
+    onSearchChange(query);
+  };
 
   return (
     <Toolbar className="co-namespace-bar odc-topology-filter-bar">
@@ -90,8 +84,9 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
           <ToolbarItem>
             <FilterDropdown
               filters={filters}
+              showGraphView={showGraphView}
               supportedFilters={supportedFilters}
-              onChange={onDisplayFiltersChange}
+              onChange={onFiltersChange}
             />
           </ToolbarItem>
         </ToolbarGroup>
@@ -100,7 +95,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
             <KindFilterDropdown
               filters={filters}
               supportedKinds={supportedKinds}
-              onChange={onDisplayFiltersChange}
+              onChange={onFiltersChange}
             />
           </ToolbarItem>
         </ToolbarGroup>
@@ -155,7 +150,6 @@ const mapStateToProps = (state: RootState): StateProps => {
     filters: getTopologyFilters(state),
     supportedFilters: getSupportedTopologyFilters(state),
     supportedKinds: getSupportedTopologyKinds(state),
-    consoleLinks: state.UI.get('consoleLinks'),
     namespace: getActiveNamespace(state),
   };
   return states;
@@ -168,19 +162,15 @@ const dispatchToProps = (dispatch: Dispatch): DispatchProps => ({
 });
 
 const mergeProps = (
-  { filters, supportedFilters, supportedKinds, consoleLinks, namespace }: StateProps,
+  { filters, supportedFilters, supportedKinds, namespace }: StateProps,
   { onFiltersChange }: DispatchProps,
-  { visualization, onSearchChange, showGraphView }: OwnProps,
+  { visualization, showGraphView }: OwnProps,
 ): MergeProps => ({
   filters,
   supportedFilters,
   supportedKinds,
-  consoleLinks,
   namespace,
-  onDisplayFiltersChange: (changedFilters: DisplayFilters) => {
-    onFiltersChange(changedFilters);
-  },
-  onSearchChange,
+  onFiltersChange,
   visualization,
   showGraphView,
 });

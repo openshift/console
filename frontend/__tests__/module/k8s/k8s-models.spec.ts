@@ -20,10 +20,8 @@ import {
   testCRDVersionV2Alpha1,
   testCRDVersionV3Beta1,
   testCRDVersionV1,
-  testForNoVersionsCRD,
   testForValidVersionsCRD,
   testForUnservedVersionsCRD,
-  testForInvalidVersionsCRD,
 } from '../../../__mocks__/crds';
 import { testNamespace, testOwnedResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
 import {
@@ -157,15 +155,7 @@ describe('getLatestVersionForCRD', () => {
     expect(getLatestVersionForCRD(testForValidVersionsCRD)).toEqual(testCRDVersionV1.name);
   });
 
-  it('returns deprecated version string from array of unserved versions', () => {
-    expect(getLatestVersionForCRD(testForUnservedVersionsCRD)).toEqual('correct-version');
-  });
-
-  it('returns deprecated version string from array of invalid versions', () => {
-    expect(getLatestVersionForCRD(testForInvalidVersionsCRD)).toEqual('correct-version');
-  });
-
-  it('returns deprecated version string for crd with no versions', () => {
-    expect(getLatestVersionForCRD(testForNoVersionsCRD)).toEqual('correct-version');
+  it('returns undefined from array of unserved versions', () => {
+    expect(getLatestVersionForCRD(testForUnservedVersionsCRD)).toBeUndefined();
   });
 });

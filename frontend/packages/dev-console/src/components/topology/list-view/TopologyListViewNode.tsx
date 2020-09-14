@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
+import { connect } from 'react-redux';
 import {
   Button,
   DataList,
@@ -11,20 +12,25 @@ import {
   Tooltip,
   TooltipPosition,
 } from '@patternfly/react-core';
-import { isNode, Node, observer } from '@patternfly/react-topology';
-import { getSeverityAlertType, AlertSeverityIcon, getFiringAlerts } from '@console/shared';
+import { Node, observer } from '@patternfly/react-topology';
+import {
+  getSeverityAlertType,
+  AlertSeverityIcon,
+  getFiringAlerts,
+  shouldHideMonitoringAlertDecorator,
+} from '@console/shared';
+import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
+
 import { useSearchFilter } from '../filters';
 import { getResourceKind } from '../topology-utils';
-import { labelForNodeKind } from './list-view-utils';
 import {
   AlertsCell,
   GroupResourcesCell,
-  MetricsCell,
+  CpuCell,
+  MemoryCell,
   StatusCell,
   TypedResourceBadgeCell,
 } from './cells';
-import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
-import { connect } from 'react-redux';
 
 interface DispatchProps {
   onSelectTab?: (name: string) => void;
@@ -56,13 +62,6 @@ const ObservedTopologyListViewNode: React.FC<TopologyListViewNodeProps & Dispatc
     return null;
   }
   const kind = getResourceKind(item);
-  const childNodes =
-    item.isGroup() && !item.isCollapsed()
-      ? (item.getChildren().filter((n) => isNode(n)) as Node[])
-      : [];
-  childNodes.sort((a, b) =>
-    labelForNodeKind(getResourceKind(a)).localeCompare(labelForNodeKind(getResourceKind(b))),
-  );
 
   let alertIndicator = null;
   const alerts = getFiringAlerts(item.getData().data?.monitoringAlerts ?? []);
@@ -72,7 +71,7 @@ const ObservedTopologyListViewNode: React.FC<TopologyListViewNodeProps & Dispatc
       onSelectTab('Monitoring');
     };
     const severityAlertType = getSeverityAlertType(alerts);
-    alertIndicator = (
+    alertIndicator = shouldHideMonitoringAlertDecorator(severityAlertType) ? null : (
       <Tooltip key="monitoringAlert" content="Monitoring Alert" position={TooltipPosition.right}>
         <Button
           variant="plain"
@@ -86,7 +85,6 @@ const ObservedTopologyListViewNode: React.FC<TopologyListViewNodeProps & Dispatc
   }
 
   const cells = [];
-  cells.push(badgeCell || <TypedResourceBadgeCell key="type-icon" kind={kind} />);
   cells.push(
     labelCell || (
       <DataListCell
@@ -94,6 +92,7 @@ const ObservedTopologyListViewNode: React.FC<TopologyListViewNodeProps & Dispatc
         key="label"
         id={`${item.getId()}_label`}
       >
+        {badgeCell || <TypedResourceBadgeCell key="type-icon" kind={kind} />}
         {item.getLabel()}
         {alertIndicator}
       </DataListCell>
@@ -107,7 +106,10 @@ const ObservedTopologyListViewNode: React.FC<TopologyListViewNodeProps & Dispatc
     cells.push(...additionalCells);
   } else {
     cells.push(<AlertsCell key="alerts" item={item} />);
-    cells.push(<MetricsCell key="metrics" item={item} />);
+    if (!selectedIds[0]) {
+      cells.push(<MemoryCell key="memory" item={item} />);
+      cells.push(<CpuCell key="cpu" item={item} />);
+    }
     cells.push(<StatusCell key="status" item={item} />);
   }
 
@@ -117,7 +119,7 @@ const ObservedTopologyListViewNode: React.FC<TopologyListViewNodeProps & Dispatc
       key={item.getId()}
       id={item.getId()}
       aria-labelledby={`${item.getId()}_label`}
-      isExpanded={childNodes.length > 0}
+      isExpanded={children !== undefined}
     >
       <DataListItemRow className={className}>
         <DataListItemCells dataListCells={cells} />

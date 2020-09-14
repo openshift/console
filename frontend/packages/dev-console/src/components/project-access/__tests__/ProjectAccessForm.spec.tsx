@@ -79,6 +79,7 @@ describe('Project Access Form', () => {
     const formWrapper = projectAccessForm.find(MultiColumnField);
     expect(formWrapper.getElements()[0].props.name).toBe('projectAccess');
     expect(formWrapper.getElements()[0].props.headers).toEqual(['Name', 'Role']);
+    expect(formWrapper.getElements()[0].props.addLabel).toEqual('Add Access');
     expect(formWrapper.children()).toHaveLength(2);
     expect(
       formWrapper

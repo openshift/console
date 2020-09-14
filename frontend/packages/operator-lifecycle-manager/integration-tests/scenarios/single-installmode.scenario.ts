@@ -18,7 +18,7 @@ import * as operatorHubView from '../views/operator-hub.view';
 import { click } from '@console/shared/src/test-utils/utils';
 import { NAME_FIELD_ID, formFieldIsPresent } from '../views/descriptors.view';
 
-describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)', () => {
+xdescribe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)', () => {
   const prometheusResources = new Set(['StatefulSet', 'Pod']);
   const prometheusOperatorName = 'prometheus-operator';
   const customProviderUID = 'providerType-console-e-2-e-operators';
@@ -113,8 +113,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await crudView.isLoaded();
     await catalogPageView.clickFilterCheckbox(customProviderUID);
     await catalogPageView.clickFilterCheckbox('installState-installed');
-
-    expect(catalogPageView.catalogTileByID(prometheusTileID).isDisplayed()).toBe(true);
+    await browser.wait(until.visibilityOf(catalogPageView.catalogTileByID(prometheusTileID)));
   });
 
   it(`displays Operator in "Cluster Service Versions" view for "${testName}" namespace`, async () => {

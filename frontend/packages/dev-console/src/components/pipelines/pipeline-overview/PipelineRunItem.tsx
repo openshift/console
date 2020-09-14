@@ -10,6 +10,7 @@ import { PipelineRunModel } from '../../../models';
 import { PipelineRun } from '../../../utils/pipeline-augment';
 import LogSnippetBlock from '../../pipelineruns/logs/LogSnippetBlock';
 import { getLogSnippet } from '../../pipelineruns/logs/pipelineRunLogSnippet';
+import './PipelineRunItem.scss';
 
 type PipelineRunItemProps = {
   pipelineRun: PipelineRun;
@@ -27,11 +28,20 @@ const PipelineRunItem: React.FC<PipelineRunItemProps> = ({ pipelineRun }) => {
   const logDetails = getLogSnippet(pipelineRun);
 
   return (
-    <li className="list-group-item">
+    <li className="odc-pipeline-run-item list-group-item">
       <Grid hasGutter>
         <GridItem span={6}>
-          <Link to={`${path}`}>{name}</Link>
-          {lastUpdated && <span className="text-muted">&nbsp;({fromNow(lastUpdated)})</span>}
+          <div>
+            <Link to={`${path}`}>{name}</Link>
+            {lastUpdated && (
+              <>
+                {' '}
+                <span className="odc-pipeline-run-item__time text-muted">
+                  ({fromNow(lastUpdated)})
+                </span>
+              </>
+            )}
+          </div>
         </GridItem>
         <GridItem span={3}>
           <Status status={pipelineRunStatus(pipelineRun) || 'Pending'} />

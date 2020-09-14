@@ -1,12 +1,13 @@
 import * as React from 'react';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
-import { PodOverviewItem } from '.';
+import { OverviewItem } from '@console/shared';
 import { PodResourceSummary, PodDetailsList, menuActions } from '../pod';
 import { PodModel } from '../../models';
 import { ResourceOverviewDetails } from './resource-overview-details';
 import { NetworkingOverview } from './networking-overview';
 import { KebabAction } from '../utils';
 import { PodsOverview } from './pods-overview';
+import { PodKind } from '../../module/k8s';
 
 const PodOverviewDetails: React.SFC<PodOverviewDetailsProps> = ({ item: { obj: pod } }) => {
   return (
@@ -61,6 +62,10 @@ export const PodOverviewPage: React.SFC<PodOverviewPageProps> = ({ item, customA
     tabs={tabs}
   />
 );
+
+type PodOverviewItem = {
+  obj: PodKind;
+} & OverviewItem;
 
 type PodOverviewDetailsProps = {
   item: PodOverviewItem;

@@ -1,3 +1,5 @@
+import { serverlessIcon } from './tour-icons';
+
 export const serverlessApplicationQuickStart = {
   apiVersion: 'console.openshift.io/v1',
   kind: 'QuickStarts',
@@ -6,164 +8,143 @@ export const serverlessApplicationQuickStart = {
   },
   spec: {
     version: 4.7,
-    displayName: `Creating a Serverless application`,
+    displayName: `Exploring Serverless applications`,
     duration: 15,
-    iconURL:
-      '/api/kubernetes/apis/packages.operators.coreos.com/v1/namespaces/openshift-marketplace/packagemanifests/serverless-operator/icon?resourceVersion=serverless-operator.4.3.serverless-operator.v1.7.2',
-    description: 'Learn how to create a Serverless application.',
-    prerequisites: 'Install the OpenShift® Serverless Operator to start creating Serverless apps.',
-    introduction: `### OpenShift Serverless is flexible. With Serverless, you get:
-
-**Scalability**
-Your apps scale automatically, increasing containers to handle peak loads and rolling them back at lulls.
-
-**Interoperability**
-Serverless gives you access to a rich ecosystem of built-in and third-party event sources, like Kafka, GitHub, and other SaaS solutions.
-
-**Iteration**
-Deploying new versions of apps is simple with Serverless. Perform canary, A/B, and blue-green testing with confidence. By using app revisions, you can roll things back, or split traffic between revisions, as needed.
-
-This guided tour shows you how to create a Serverless app that realizes these benefits.
-
-In this tour, you perform five tasks:
-1. Create a Serverless application
-2. Demo scalability
-3. Wire an event source to your Knative Service
-4. Force a new revision & set traffic distribution
-5. Delete your application`,
+    iconURL: serverlessIcon,
+    description: `Learn how to create a Serverless application.`,
+    prerequisites: '',
+    introduction: `This quick start guides you through creating and using a serverless application.`,
     tasks: [
       {
-        title: `Create a Serverless application`,
-        description: `### Follow these steps to create an Serverless application:
-1. Using the perspective switcher at the top of the navigation, go to **</> Developer**.
-2. Using the project dropdown, select the project you would like to create the demo application in. You can also create a new one if you’d like.
-3. Once there, go to the **+Add** page in the navigation.
-3. Click **From Git** to create an application.
-4. In the field labeled **Git Repo URL**, copy and paste [https://github.com/sclorg/django-ex.git](https://github.com/sclorg/django-ex.git).
-5. In the field labeled Application Name, add the name Sample Serverless App.
-6. Under **Resources**, select **Knative Service**.
-7. Scroll down and click **Create**.
-The Topology view will load with your new Serverless application. The application is represented by the light grey area with the white border. The Knative Service is the darker grey area with the dotted border. The pod donut in the middle represents the revision.`,
+        title: `Creating a serverless application`,
+        description: `### To create a serverless application:
+1. From the **Developer** perspective, in the navigation menu, click [+Add](/add).
+2. At the top of the page, in the **Projects** list, select a project to create the application in.
+3. Click **From Git**.
+4. In the **Git Repo URL** field, type \`https://github.com/sclorg/django-ex.git\`.
+5. Under Resources, select **Knative Service**.
+6. At the end of the page, click **Create**.
+
+The **Topology** view displays your new Serverless application. The application is represented by the light gray area with the white border. The Knative Service is the darker gray area with the dotted border. The Pod ring in the middle represents the revision.`,
         review: {
           instructions: `#### To verify the application was successfully created:
-1. From Topology, look for your new application. While the build completes, it will say “No Revisions.”
-2. Do you see your application?
+From the **Topology** view, look for your new application. Wait for the build to complete. It may take a few minutes.
 
-Is the status Succeeded?`,
-          taskHelp: 'Try walking through the steps again',
+After the build completes, a green checkmark appears in the lower-left corner of the service. Your application will say  “No Revisions” in the center.
+
+Do you see the completed application and build?`,
+          taskHelp: `This task isn’t verified yet. Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/serverless/serving-creating-managing-apps.html#creating-serverless-applications-using-the-openshift-container-platform-web-console) about this topic.`,
         },
         recapitulation: {
-          success: `You've just created a Serverless app!`,
-          failed: 'Try the steps again.',
+          success: `You just created a Serverless app!`,
+          failed: `Try the steps again.`,
         },
       },
       {
-        title: 'Demo scalability',
+        title: `Demoing scalability`,
         description: `### To see your application scale:
-1. Wait for the build to complete. It may take a few minutes. You will see a green checkmark in the bottom left corner of the service.
-2. From the **Display Options** dropdown at the top of the Topology view, select **Pod Count**.
-3. Wait for the Pod Count to scale down to 0 pods. This may take a few minutes.
-4. Click the route URL icon in the top right corner of the Knative Service. The application will open in a new tab.
-5. Close the new browser tab and go back to the Topology view.
+1. From the **Display Options** list at the top of the **Topology** view, click **Pod Count**.
+2. Wait for the Pod count to scale down to zero Pods. Scaling down may take a few minutes.
+3. Click the **Route URL** icon in the upper-right corner of the Knative Service panel. The application opens in a new tab.
+4. Close the new browser tab and return to the **Topology** view.
 
-You should be able to see that your application scaled up to 1 Pod to accommodate the traffic request when you accessed the application. After a few minutes, you should see your application scale back down to 0 pods.`,
+In the **Topology** view, you can see that your application scaled up to one Pod to accommodate your request.  After a few minutes, your application scales back down to zero Pods.
+`,
         review: {
           instructions: `#### To verify the application scaled down:
-1. Click on the pod donut inside your service. The badge at the top of the side panel should be (REV).
-2. Click on the **Details** tab in the side panel.
-3. Is the pod donut autoscaled to 0?
+1. Click the revision inside your service. The badges under the Pod ring and at the top of the side panel should be (REV).
+2. Click the **Details** tab in the side panel.
 
-Is the status Succeeded?`,
-          taskHelp: 'Try walking through the steps again',
+Is the Pod ring autoscaled to zero?`,
+          taskHelp: `This task isn’t verified yet. Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/applications/application_life_cycle_management/odc-viewing-application-composition-using-topology-view.html#odc-scaling-application-pods-and-checking-builds-and-routes_viewing-application-composition-using-topology-view) about this topic.`,
         },
         recapitulation: {
-          success: "You've just scaled up your application to accomodate a traffic request!",
-          failed: 'Try the steps again.',
+          success: `You just scaled up your application to accomodate a traffic request!`,
+          failed: `Try the steps again.`,
         },
       },
       {
-        title: `Wire an event source to your Knative Service`,
-        description: `### To wire an event source to your Knative Service:
-1. Hover over your service with your mouse. You should see a blue arrow.
-2. Click the blue arrow, then drag and drop the **(+)** anywhere outside the service.
-3. In the dropdown menu that appears, click **Event Source**.
+        title: `Connecting an event source to your Knative Service`,
+        description: `### To connect an event source to your Knative Service:
+1. On the **Topology** View, hover over your service with your cursor. You should see a blue arrow.
+2. Click and drag the blue arrow, then drop it anywhere outside the service.
+3. In the list that appears, click **Event Source**.
 4. Under the **Type** field, click **PingSource**.
-5. In the field labeled **Data**, type “This message is from PingSource.” This is the message that gets posted when the service is called.
-6. In the field labeled Schedule, type “* * * * *”. This means that every minute it will make a call.
-7. In the Application field, select the application Sample Serverless App.
-8. Click Create.`,
+5. In the **Data** field, type \`This message is from PingSource\`. This message is posted when the service is called.
+6. In the **Schedule** field, type \`* * * * *\`.  This means that the PingSource will make a call every minute.
+7. In the **Application** field, select **Sample Serverless App**.
+8. Click **Create**.`,
         review: {
-          instructions: `#### To verify the PingSource was created:
-1. Make sure you are still in Topology view.
-2. Do you see a PingSource to the right of your application, connected by a grey sink connector line?
+          instructions: `#### To verify that the event connected to your Knative service:
 
-Is the status Succeeded?`,
-          taskHelp: 'Try walking through the steps again.',
+Go to the **Topology** view.
+
+Do you see a PingSource connected by a gray line to the side of your application?`,
+          taskHelp: `This task isn’t verified yet. Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/serverless/event_sources/knative-event-sources.html) about this topic.`,
         },
         recapitulation: {
-          success: "You've just wired an Event Source to your Knative Service!",
-          failed: 'Try the steps again.',
+          success: `You just wired an Event Source to your Knative Service!`,
+          failed: `Try the steps again.`,
         },
       },
 
       {
-        title: `Force a new revision & set traffic distribution`,
-        description: `### To force a new revision and set traffic distribution:
-1. Click on the pod donut inside your service. The badge at the top of the side panel should be (REV).
-1. In the side panel, click on the **Resources** tab.
-1. Scroll down and click on the configuration associated with your service.
-1. Go to the resource’s **YAML** tab.
-1. Scroll all the way down until you see timeoutSeconds.
-1. Change the value from 300 to 30 and click **Save**.
-1. Go back to the **Topology** view.
-1. Click on your service. The badge at the top of the side panel should be (KSVC).
-1. In the side panel, click on the **Resources** tab.
-1. Next to **Revisions**, click **Set Traffic Distribution**.
-1. Click **Add Revision**.
-1. In the **Revision** dropdown, select the new revision.
-1. In the **Split** column, set both revisions to 50.
-1. Click **Save**.
+        title: `Forcing a new revision and set traffic distribution`,
+        description: `### To force a revision and set traffic distribution:
 
-You should now be able to watch as the pod donuts for each revision scale up and down each time the application is pinged.`,
+1. In **Topology**, click on the revision inside your service to view its details. The badges under the Pod ring and at the top of the detail panel should be (REV).
+2. In the side panel, click on the **Resources** tab.
+3. Scroll down and click on the configuration associated with your service.
+4. Go to the resource’s **YAML** tab.
+5. Scroll all the way down until you see \`timeoutSeconds\`.
+6. Change the value from \`300\` to \`30\` and click **Save**.
+7. Go back to the **Topology** view.
+8. Click on your service. The badge at the top of the side panel should be (KSVC).
+9. In the side panel, click on the **Resources** tab.
+10. Next to **Revisions**, click **Set Traffic Distribution**.
+11. Click **Add Revision**.
+12. In the **Revision** dropdown, select the new revision.
+13. In the **Split** column, set both revisions to **50**.
+14. Click **Save**.
+
+You should now be able to watch as the Pod rings for each revision scale up and down each time the application is pinged.`,
         review: {
-          instructions: `#### To verify you forced a new revision and set traffic distribution:
-1. Make sure you are still in Topology view.
-2. Do you see two pod donuts in your Knative Service?
+          instructions: `#### To verify that you forced a new revision and set traffic distribution:
 
-Is the status Succeeded?`,
-          taskHelp: 'Try walking through the steps again.',
+Make sure you are still in **Topology** view.
+
+Do you see two revisions in your Knative Service?`,
+          taskHelp: `This task isn’t verified yet. Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/serverless/knative_serving/splitting-traffic-between-revisions.html) about this topic.`,
         },
         recapitulation: {
-          success: "You've just set a traffic distribution for your Serverless app!",
-          failed: 'Try the steps again.',
+          success: `You just set a traffic distribution for your Serverless app!`,
+          failed: `Try the steps again.`,
         },
       },
 
       {
-        title: `Delete your application`,
+        title: `Deleting your application`,
         description: `### To delete the application you just created:
-1. Click on your application. The badge at the top of the side panel should be (A).
-2. At the top of the side panel, click on the Actions dropdown.
-3. Click Delete Application.
-4. Confirm deletion by typing the application name in the field and click Delete.
 
-Deleting this application will remove the application and all related resources from your cluster.`,
+1. Click your application’s name. The badge at the top of the side panel should be (A).
+2. At the top of the resource details panel, click on the **Actions** list.
+3. Click **Delete application**.
+4. To confirm deletion, type the application’s name in the **Name** field, and then click **Delete**.`,
         review: {
           instructions: `#### To verify you deleted your application:          :
-1. Make sure you are still in Topology view.
-2. Has the Sample Serverless App been removed?
 
-Is the status Succeeded?`,
-          taskHelp: 'Try walking through the steps again.',
+Make sure you are still in **Topology** view.
+
+Has the Sample Serverless App been removed?`,
+          taskHelp: `This task is not verified yet. Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/applications/application_life_cycle_management/odc-deleting-applications.html) about this topic.`,
         },
         recapitulation: {
-          success: "You've just deleted your Serverless app!",
-          failed: 'Try the steps again.',
+          success: `You just deleted your Serverless app!`,
+          failed: `Try the steps again.`,
         },
       },
     ],
-    conclusion:
-      'You now know how to use Serverless applications in your cluster! If you want to learn how to build more Serverless apps, take a look a our [Knative Cookbook](https://redhat-developer-demos.github.io/knative-tutorial/knative-tutorial/index.html).',
+    conclusion: `You just learned how to use Serverless applications in your cluster! To learn more about building Serverless apps, take a look at our [Knative Cookbook](https://redhat-developer-demos.github.io/knative-tutorial/knative-tutorial/index.html).`,
 
     nextQuickStart: '',
   },

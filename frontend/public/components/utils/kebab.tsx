@@ -4,7 +4,7 @@ import * as classNames from 'classnames';
 import * as FocusTrap from 'focus-trap-react';
 import { connect } from 'react-redux';
 import { KEY_CODES, Tooltip } from '@patternfly/react-core';
-import { EllipsisVIcon, AngleRightIcon } from '@patternfly/react-icons';
+import { AngleRightIcon, EllipsisVIcon } from '@patternfly/react-icons';
 import Popper from '@console/shared/src/components/popper/Popper';
 import {
   annotationsModal,
@@ -222,8 +222,8 @@ export const KebabMenuItems: React.FC<KebabMenuItemsProps> = ({
     className={classNames('pf-c-dropdown__menu pf-m-align-right', className)}
     data-test-id="action-items"
   >
-    {_.map(options, (o) => (
-      <li key={o.label}>
+    {_.map(options, (o, index) => (
+      <li key={index}>
         {isKebabSubMenu(o) ? (
           <KebabSubMenu option={o} onClick={onClick} />
         ) : (
@@ -516,7 +516,7 @@ export class Kebab extends React.Component<any, { active: boolean }> {
 
 export type KebabOption = {
   hidden?: boolean;
-  label: string;
+  label: React.ReactNode;
   href?: string;
   callback?: () => any;
   accessReview?: AccessReviewResourceAttributes;

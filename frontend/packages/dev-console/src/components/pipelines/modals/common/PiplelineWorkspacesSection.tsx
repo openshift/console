@@ -17,6 +17,7 @@ const getVolumeTypeFields = (volumeType: VolumeTypes, index: number) => {
           resourceKeysField={`workspaces.${index}.data.secret.items`}
           label="Secret"
           resourceModel={SecretModel}
+          addString="Add item"
           required
         />
       );
@@ -28,6 +29,7 @@ const getVolumeTypeFields = (volumeType: VolumeTypes, index: number) => {
           resourceKeysField={`workspaces.${index}.data.configMap.items`}
           label="Config Map"
           resourceModel={ConfigMapModel}
+          addString="Add item"
           required
         />
       );
@@ -52,7 +54,12 @@ const PipelineWorkspacesSection: React.FC = () => {
               name={`workspaces.${index}.type`}
               label={workspace.name}
               items={VolumeTypes}
-              onChange={() => setFieldValue(`workspaces.${index}.data`, {})}
+              onChange={(type) =>
+                setFieldValue(
+                  `workspaces.${index}.data`,
+                  VolumeTypes[type] === VolumeTypes.EmptyDirectory ? { emptyDir: {} } : {},
+                )
+              }
               fullWidth
               required
             />

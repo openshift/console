@@ -12,17 +12,19 @@ import {
   definitionFor,
 } from '@console/internal/module/k8s';
 import { CustomResourceDefinitionModel } from '@console/internal/models';
-import { Firehose } from '@console/internal/components/utils/firehose';
 import {
+  PageHeading,
   StatusBox,
   FirehoseResult,
   BreadCrumbs,
   resourcePathFromModel,
 } from '@console/internal/components/utils';
+import { Firehose } from '@console/internal/components/utils/firehose';
 import { RootState } from '@console/internal/redux';
 import { SyncedEditor } from '@console/shared/src/components/synced-editor';
 import { getActivePerspective } from '@console/internal/reducers/ui';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { getBadgeFromType } from '@console/shared/src/components/badges';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import { match as RouterMatch } from 'react-router';
@@ -40,6 +42,8 @@ import {
 
 // eslint-disable-next-line @typescript-eslint/camelcase
 import { DEPRECATED_CreateOperandForm } from './DEPRECATED_operand-form';
+
+import './create-operand.scss';
 
 export const CreateOperand: React.FC<CreateOperandProps> = ({
   clusterServiceVersion,
@@ -68,15 +72,19 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
     model,
   ]);
 
-  // TODO This logic should be removed in 4.6 and we should only be using
-  // the OperandForm component. We are providing a temporary fallback
-  // to the old form component to ease the transition to structural schemas
-  // over descriptors. In 4.6, structural schemas will be required, and
-  // the fallback will no longer be necessary/provided. If no structural schema
-  // is provided in 4.6, a form will not be generated.
+  const baseSchema = React.useMemo(
+    () =>
+      crd?.spec?.versions?.find?.((version) => version.name === providedAPI?.version)?.schema
+        ?.openAPIV3Schema ?? (definitionFor(model) as JSONSchema6),
+    [crd, model, providedAPI],
+  );
+
+  // TODO This logic should be removed in a later release and we should only be using the
+  // OperandForm component. We are providing a temporary fallback to the old form component to ease
+  // the transition to structural schemas over descriptors. Once structural schemas are required,
+  // the fallback will no longer be necessary. If no structural schema is provided after this
+  // fallback is fully deprecated, a form will not be generated.
   const [schema, FormComponent] = React.useMemo(() => {
-    const baseSchema =
-      crd?.spec?.validation?.openAPIV3Schema ?? (definitionFor(model) as JSONSchema6);
     const useFallback =
       getSchemaErrors(baseSchema).length ||
       hasNoFields((baseSchema?.properties?.spec ?? {}) as JSONSchema6);
@@ -87,7 +95,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
           _.defaultsDeep({}, DEFAULT_K8S_SCHEMA, _.omit(baseSchema, 'properties.status')),
           OperandForm,
         ];
-  }, [crd, model]);
+  }, [baseSchema]);
 
   const sample = React.useMemo<K8sResourceKind>(() => exampleForModel(csv, model), [csv, model]);
 
@@ -117,8 +125,13 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
                 ]}
               />
             </div>
-            <h1 className="co-create-operand__header-text">{`Create ${model.label}`}</h1>
-            <p className="help-block">{helpText}</p>
+            <PageHeading
+              badge={getBadgeFromType(model.badge)}
+              className="olm-create-operand__page-heading"
+              title={`Create ${model.label}`}
+            >
+              <span className="help-block">{helpText}</span>
+            </PageHeading>
           </div>
           <SyncedEditor
             context={{

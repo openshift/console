@@ -20,10 +20,29 @@ export const CONVERSION_SERVICEACCOUNT_DELAY = 2 * 1000; // in ms
 
 export const VCENTER_TYPE_LABEL = 'kubevirt.io/vcenter';
 export const OVIRT_TYPE_LABEL = 'kubevirt.io/ovirt';
-export const V2V_TEMPORARY_LABEL = 'kubevirt.io/temporary';
+export const V2V_TEMPORARY_LABEL = 'cnv.io/temporary';
 
 export const CONVERSION_VDDK_INIT_POD_NAME = 'vddk-init';
 export const CONVERSION_VOLUME_VDDK_NAME = 'volume-vddk';
+export const CONVERSION_VOLUME_TEMP_NAME = 'v2v-conversion-temp';
 export const CONVERSION_VDDK_MOUNT_PATH = '/opt/vmware-vix-disklib-distrib';
 
 export const CONVERSION_PROGRESS_ANNOTATION = 'v2vConversionProgress';
+
+export const V2V_DATA_TTL_KEY = 'timeToLive';
+
+export enum V2VConfigMapAttribute {
+  kubevirtVmwareImage = 'kubevirt-vmware-image', // the kubevirt-vmware provider is responsible for reading VMs list/details from the VMware API
+  kubevirtVmwareImagePullPolicy = 'kubevirt-vmware-image-pull-policy',
+  v2vConversionImage = 'v2v-conversion-image', // full image name of kubevirt-v2v-conversion
+  vddkInitImage = 'vddk-init-image',
+}
+
+export const VMWARE_DOCURL =
+  'https://docs.openshift.com/container-platform/latest/virt/virtual_machines/importing_vms/virt-importing-vmware-vm.html';
+export const OVIRT_DOCURL =
+  'https://docs.openshift.com/container-platform/latest/virt/virtual_machines/importing_vms/virt-importing-rhv-vm.html';
+
+export enum V2VProviderErrorSpecialUIMessageRequest {
+  supplyDoclink = '__supplyDoclink__',
+}

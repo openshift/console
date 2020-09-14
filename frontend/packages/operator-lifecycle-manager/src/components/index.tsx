@@ -112,8 +112,17 @@ export const providedAPIForModel = (csv: ClusterServiceVersionKind, model: K8sKi
     (crd) => referenceForProvidedAPI(crd) === referenceForModel(model),
   );
 
-export const parseALMExamples = (csv: ClusterServiceVersionKind) => {
+export const parseALMExamples = (
+  csv: ClusterServiceVersionKind,
+  useInitializationResource: boolean,
+) => {
   try {
+    if (useInitializationResource) {
+      const resource = JSON.parse(
+        csv?.metadata?.annotations?.['operatorframework.io/initialization-resource'],
+      );
+      return [resource];
+    }
     return JSON.parse(csv?.metadata?.annotations?.['alm-examples'] ?? '[]');
   } catch (e) {
     // eslint-disable-next-line no-console
@@ -130,7 +139,10 @@ export const exampleForModel = (csv: ClusterServiceVersionKind, model: K8sKind) 
       apiVersion: `${model.apiGroup}/${model.apiVersion}`,
     },
     _.find(
-      parseALMExamples(csv),
+      parseALMExamples(
+        csv,
+        new URLSearchParams(window.location.search).has('useInitializationResource'),
+      ),
       (s: K8sResourceKind) => referenceFor(s) === referenceForModel(model),
     ),
   );

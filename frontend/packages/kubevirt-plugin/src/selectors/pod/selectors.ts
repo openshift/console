@@ -1,17 +1,14 @@
 import { get } from 'lodash';
 import { getName, getNamespace, getOwnerReferences, getUID } from '@console/shared/src/selectors';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
-import { PodKind } from '@console/internal/module/k8s';
-import { getLabelValue } from '../selectors';
+import { createBasicLookup } from '@console/shared/src/utils/utils';
+import { PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
 import { VMKind, VMIKind } from '../../types';
-import { getDataVolumeTemplates } from '../vm';
-import {
-  CDI_KUBEVIRT_IO,
-  STORAGE_IMPORT_PVC_NAME,
-  VIRT_LAUNCHER_POD_PREFIX,
-} from '../../constants';
+import { VIRT_LAUNCHER_POD_PREFIX } from '../../constants';
 import { buildOwnerReferenceForModel } from '../../utils';
 import { VirtualMachineInstanceModel } from '../../models';
+import { getPvcImportPodName } from '../pvc/selectors';
+import { getDataVolumeTemplates } from '../vm';
 
 export const getHostName = (pod: PodKind) =>
   get(pod, 'spec.hostname') as PodKind['spec']['hostname'];
@@ -77,7 +74,7 @@ export const findVMIPod = (
     );
   });
 
-  // Return the newet most ready Pod created
+  // Return the newest, most ready Pod created
   return prefixedPods
     .sort((a: PodKind, b: PodKind) =>
       a.metadata.creationTimestamp > b.metadata.creationTimestamp ? -1 : 1,
@@ -85,23 +82,32 @@ export const findVMIPod = (
     .sort((a: PodKind) => (isPodReady(a) ? -1 : 1))[0];
 };
 
-export const getVMImporterPods = (
+export const getPVCNametoImporterPodsMapForVM = (
   vm: VMKind,
   pods?: PodKind[],
-  pvcNameLabel = `${CDI_KUBEVIRT_IO}/${STORAGE_IMPORT_PVC_NAME}`,
+  pvcs?: PersistentVolumeClaimKind[],
 ) => {
   if (!pods) {
     return null;
   }
 
-  const datavolumeNames = getDataVolumeTemplates(vm)
-    .map((dataVolumeTemplate) => getName(dataVolumeTemplate))
-    .filter((dataVolumeTemplate) => dataVolumeTemplate);
+  const dataVolumeNames = getDataVolumeTemplates(vm).reduce((dataVolumeNameAcc, dvTemplate) => {
+    const dataVolumeName = getName(dvTemplate);
+    if (dataVolumeName) {
+      dataVolumeNameAcc.add(dataVolumeName);
+    }
+    return dataVolumeNameAcc;
+  }, new Set()) as Set<string>;
 
-  return pods.filter(
-    (p) =>
-      getNamespace(p) === getNamespace(vm) &&
-      getLabelValue(p, CDI_KUBEVIRT_IO) === 'importer' &&
-      datavolumeNames.some((name) => getLabelValue(p, pvcNameLabel) === name),
-  );
+  const vmPVCs = pvcs?.filter((pvc) => dataVolumeNames?.has(getName(pvc)));
+
+  const podLookup = createBasicLookup(pods, getName);
+
+  return (vmPVCs || []).reduce((podsMap, pvc) => {
+    const pod = podLookup[getPvcImportPodName(pvc)];
+    if (pod) {
+      podsMap[getName(pvc)] = pod;
+    }
+    return podsMap;
+  }, {});
 };

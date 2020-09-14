@@ -1,6 +1,6 @@
 import { execSync } from 'child_process';
 
-export const { STORAGE_CLASS = 'rook-ceph-block' } = process.env;
+export const { STORAGE_CLASS = 'standard' } = process.env;
 
 const rhelTinyCommonTemplateName = execSync(
   "kubectl get template -n openshift | grep rhel7-desktop-tiny | awk '{print $1}'",

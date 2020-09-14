@@ -3,28 +3,25 @@ import * as _ from 'lodash';
 import { Node } from '@patternfly/react-topology';
 import { DataListCell, Tooltip } from '@patternfly/react-core';
 import { Status as TooltipStatus } from '@console/shared';
-import { pluralize } from '@console/internal/components/utils';
 import { isMobile } from '../list-view-utils';
+
+import './AlertsCell.scss';
 
 type AlertsProps = {
   item: Node;
 };
 
-const AlertTooltip = ({ alerts, severity, noSeverityLabel = false }) => {
+const AlertTooltip = ({ alerts, severity }) => {
   if (!alerts) {
     return null;
   }
 
-  const label = severity === 'Info' ? 'Message' : severity;
   const count = alerts.length;
   const message = _.uniq(alerts.map((a) => a.message)).join('\n');
 
   const status = (
-    <span className="project-overview__status">
-      <TooltipStatus
-        status={severity}
-        title={noSeverityLabel ? String(count) : pluralize(count, label)}
-      />
+    <span className="odc-topology-list-view__alert-cell--status">
+      <TooltipStatus status={severity} title={String(count)} />
     </span>
   );
 
@@ -72,21 +69,23 @@ export const AlertsCell: React.FC<AlertsProps> = ({ item }) => {
   } = _.groupBy(alerts, 'severity');
   return (
     <DataListCell id={`${item.getId()}_alerts`}>
-      <div className="project-overview__detail project-overview__detail--alert">
-        {error && <AlertTooltip severity="Error" alerts={error} />}
-        {warning && <AlertTooltip severity="Warning" alerts={warning} />}
-        {info && <AlertTooltip severity="Info" alerts={info} />}
+      <div className="odc-topology-list-view__alert-cell">
+        {(error || warning || info) && (
+          <div className="odc-topology-list-view__alert-cell__status">
+            <span className="odc-topology-list-view__alert-cell__label">Alerts:</span>
+            <AlertTooltip severity="Error" alerts={error} />
+            <AlertTooltip severity="Warning" alerts={warning} />
+            <AlertTooltip severity="Info" alerts={info} />
+          </div>
+        )}
         {(buildNew || buildPending || buildRunning || buildFailed || buildError) && (
-          <div className="project-overview__builds">
-            Builds {buildNew && <AlertTooltip severity="New" alerts={buildNew} noSeverityLabel />}{' '}
-            {buildPending && (
-              <AlertTooltip severity="Pending" alerts={buildPending} noSeverityLabel />
-            )}{' '}
-            {buildRunning && (
-              <AlertTooltip severity="Running" alerts={buildRunning} noSeverityLabel />
-            )}{' '}
-            {buildFailed && <AlertTooltip severity="Failed" alerts={buildFailed} noSeverityLabel />}{' '}
-            {buildError && <AlertTooltip severity="Error" alerts={buildError} noSeverityLabel />}
+          <div className="odc-topology-list-view__alert-cell__status">
+            <span className="odc-topology-list-view__alert-cell__label">Builds:</span>
+            <AlertTooltip severity="New" alerts={buildNew} />
+            <AlertTooltip severity="Pending" alerts={buildPending} />
+            <AlertTooltip severity="Running" alerts={buildRunning} />
+            <AlertTooltip severity="Failed" alerts={buildFailed} />
+            <AlertTooltip severity="Error" alerts={buildError} />
           </div>
         )}
       </div>

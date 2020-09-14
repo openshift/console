@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { calculateRadius } from '@console/shared';
 import {
   Node,
@@ -10,9 +9,11 @@ import {
   WithDndDropProps,
   WithContextMenuProps,
 } from '@patternfly/react-topology';
-import { RootState } from '@console/internal/redux';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { ConsoleLinkModel } from '@console/internal/models';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { routeDecoratorIcon } from '../../../import/render-utils';
 import { Decorator } from './Decorator';
 import PodSet, { podSetInnerRadius } from './PodSet';
@@ -22,10 +23,6 @@ import { getCheURL, getEditURL } from '../../topology-utils';
 import { useDisplayFilters, getFilterById, SHOW_POD_COUNT_FILTER_ID } from '../../filters';
 import MonitoringAlertsDecorator from './MonitoringAlertsDecorator';
 import './WorkloadNode.scss';
-
-interface StateProps {
-  cheURL: string;
-}
 
 export type WorkloadNodeProps = {
   element: Node;
@@ -40,8 +37,7 @@ export type WorkloadNodeProps = {
   WithDragNodeProps &
   WithDndDropProps &
   WithContextMenuProps &
-  WithCreateConnectorProps &
-  StateProps;
+  WithCreateConnectorProps;
 
 const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
   element,
@@ -49,9 +45,14 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
   canDrop,
   dropTarget,
   dropTooltip,
-  cheURL,
   ...rest
 }) => {
+  const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
+    isList: true,
+    kind: referenceForModel(ConsoleLinkModel),
+    optional: true,
+  });
+  const cheURL = getCheURL(consoleLinks);
   const { width, height } = element.getDimensions();
   const workloadData = element.getData().data;
   const filters = useDisplayFilters();
@@ -141,12 +142,5 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
   );
 };
 
-const mapStateToProps = (state: RootState): StateProps => {
-  const consoleLinks = state.UI.get('consoleLinks');
-  return {
-    cheURL: getCheURL(consoleLinks),
-  };
-};
-
-const WorkloadNode = connect(mapStateToProps)(observer(ObservedWorkloadNode));
+const WorkloadNode = observer(ObservedWorkloadNode);
 export { WorkloadNode };

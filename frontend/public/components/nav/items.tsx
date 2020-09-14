@@ -65,7 +65,7 @@ class NavLink<P extends NavLinkProps> extends React.PureComponent<P> {
       testID,
       children,
       className,
-      ...props
+      'data-tour-id': dataTourId,
     } = this.props;
 
     // onClick is now handled globally by the Nav's onSelect,
@@ -76,13 +76,13 @@ class NavLink<P extends NavLinkProps> extends React.PureComponent<P> {
     return (
       <NavItem className={itemClasses} isActive={isActive}>
         <Link
-          {...props}
           className={linkClasses}
           id={id}
           data-test-id={testID}
           to={this.to}
           onClick={onClick}
           title={tipText}
+          data-tour-id={dataTourId}
         >
           {name}
           {children}

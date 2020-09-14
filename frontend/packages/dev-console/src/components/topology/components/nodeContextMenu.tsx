@@ -8,6 +8,7 @@ import {
   kebabOptionsToMenu,
   isKebabSubMenu,
 } from '@console/internal/components/utils';
+import { isWorkloadRegroupable } from '../../../utils/application-utils';
 import { workloadActions } from '../actions/workloadActions';
 import { groupActions } from '../actions/groupActions';
 import { graphActions } from '../actions/graphActions';
@@ -24,21 +25,23 @@ const onKebabOptionClick = (option: KebabOption) => {
 };
 
 export const createMenuItems = (actions: KebabMenuOption[]) =>
-  actions.map((option) =>
+  actions.map((option, index) =>
     isKebabSubMenu(option) ? (
       <ContextSubMenuItem label={option.label} key={option.label}>
         {createMenuItems(option.children)}
       </ContextSubMenuItem>
     ) : (
       <ContextMenuItem
-        key={option.label}
+        key={index} // eslint-disable-line react/no-array-index-key
         component={<KebabItem option={option} onClick={() => onKebabOptionClick(option)} />}
       />
     ),
   );
 
 export const workloadContextMenu = (element: Node) =>
-  createMenuItems(kebabOptionsToMenu(workloadActions(getResource(element))));
+  createMenuItems(
+    kebabOptionsToMenu(workloadActions(getResource(element), isWorkloadRegroupable(element))),
+  );
 
 export const noRegroupWorkloadContextMenu = (element: Node) =>
   createMenuItems(kebabOptionsToMenu(workloadActions(getResource(element), false)));

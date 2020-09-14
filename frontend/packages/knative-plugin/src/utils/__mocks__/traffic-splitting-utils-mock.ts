@@ -3,11 +3,11 @@ import {
   knativeServiceObj,
   revisionObj,
 } from '../../topology/__tests__/topology-knative-test-data';
-import { RevisionKind, ServiceKind as knativeServiceKind } from '../../types';
+import { RevisionKind, ServiceKind as knativeServiceKind, Traffic } from '../../types';
 
 export const mockServiceData: knativeServiceKind = _.cloneDeep(knativeServiceObj);
 
-export const mockTrafficData = [
+export const mockTrafficData: Traffic[] = [
   { percent: 25, tag: 'tag-1', revisionName: 'overlayimage-fdqsf' },
   { percent: 25, tag: 'tag-2', revisionName: 'overlayimage-tkvz5' },
   { percent: 25, tag: 'tag-3', revisionName: 'overlayimage-bwpxq' },

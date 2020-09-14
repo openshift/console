@@ -36,7 +36,6 @@ import {
 import { K8sKind } from '../../module/k8s';
 import {
   alertDescription,
-  alertingRuleIsActive,
   alertingRuleSource,
   alertSource,
   alertState,
@@ -282,17 +281,28 @@ const PopoverField: React.FC<{ body: React.ReactNode; label: string }> = ({ body
 const alertStateHelp = (
   <dl className="co-inline">
     <dt>
-      <AlertStateIcon state={AlertStates.Firing} /> <strong>Firing: </strong>
-    </dt>
-    <dd>The alert condition is true for the duration of the timeout.</dd>
-    <dt>
       <AlertStateIcon state={AlertStates.Pending} /> <strong>Pending: </strong>
     </dt>
-    <dd>The alert condition is true, but the timeout has not been reached.</dd>
+    <dd>
+      The alert is active but is waiting for the duration that is specified in the alerting rule
+      before it fires.
+    </dd>
+    <dt>
+      <AlertStateIcon state={AlertStates.Firing} /> <strong>Firing: </strong>
+    </dt>
+    <dd>
+      The alert is firing because the alert condition is true and the optional `for` duration has
+      passed. The alert will continue to fire as long as the condition remains true.
+    </dd>
     <dt>
       <AlertStateIcon state={AlertStates.Silenced} /> <strong>Silenced: </strong>
     </dt>
-    <dd>The alert is now silenced.</dd>
+    <dt></dt>
+    <dd>
+      The alert is now silenced for a defined time period. Silences temporarily mute alerts based on
+      a set of label selectors that you define. Notifications will not be sent for alerts that match
+      all the listed values or regular expressions.
+    </dd>
   </dl>
 );
 
@@ -303,14 +313,16 @@ const severityHelp = (
     </dt>
     <dd>
       The condition that triggered the alert could have a critical impact. The alert requires
-      immediate attention when fired.
+      immediate attention when fired and is typically paged to an individual or to a critical
+      response team.
     </dd>
     <dt>
       <SeverityIcon severity={AlertSeverity.Warning} /> <strong>Warning: </strong>
     </dt>
     <dd>
       The alert provides a warning notification about something that might require attention in
-      order to prevent a problem from occurring.
+      order to prevent a problem from occurring. Warnings are typically routed to a ticketing system
+      for non-immediate review.
     </dd>
     <dt>
       <SeverityIcon severity={AlertSeverity.Info} /> <strong>Info: </strong>
@@ -320,6 +332,7 @@ const severityHelp = (
       <SeverityIcon severity={AlertSeverity.None} /> <strong>None: </strong>
     </dt>
     <dd>The alert has no defined severity.</dd>
+    <dd>You can also create custom severity definitions for user workload alerts.</dd>
   </dl>
 );
 
@@ -336,8 +349,9 @@ const sourceHelp = (
       <strong>User: </strong>
     </dt>
     <dd>
-      User workload alerts relate to user-defined namespaces and are customizable. User workload
-      monitoring can be enabled post-installation to provide observability into your own services.
+      User workload alerts relate to user-defined namespaces. These alerts are user-created and are
+      customizable. User workload monitoring can be enabled post-installation to provide
+      observability into your own services.
     </dd>
   </dl>
 );
@@ -1258,6 +1272,7 @@ const MonitoringListPage_: React.FC<ListPageProps> = ({
               loadError={loadError}
               reduxID={reduxID}
               Row={Row}
+              rowFilters={rowFilters}
               virtualize
             />
           </div>
@@ -1286,16 +1301,29 @@ const AlertsPage_: React.FC<Alerts> = ({ data, loaded, loadError }) => (
 );
 const AlertsPage = withFallback(connect(alertsToProps)(AlertsPage_));
 
+const ruleHasAlertState = (rule: Rule, state: AlertStates): boolean =>
+  state === AlertStates.NotFiring ? _.isEmpty(rule.alerts) : _.some(rule.alerts, { state });
+
+const ruleAlertStateFilter = (filter, rule: Rule) =>
+  (filter.selected.has(AlertStates.NotFiring) && _.isEmpty(rule.alerts)) ||
+  _.some(rule.alerts, (a) => filter.selected.has(a.state)) ||
+  _.isEmpty(filter.selected);
+
+export const alertStateFilter: RowFilter = {
+  filter: ruleAlertStateFilter,
+  filterGroupName: 'Alert State',
+  isMatch: ruleHasAlertState,
+  items: [
+    { id: AlertStates.Firing, title: 'Firing' },
+    { id: AlertStates.Pending, title: 'Pending' },
+    { id: AlertStates.Silenced, title: 'Silenced' },
+    { id: AlertStates.NotFiring, title: 'Not Firing' },
+  ],
+  type: 'alerting-rule-has-alert-state',
+};
+
 const rulesRowFilters: RowFilter[] = [
-  {
-    filterGroupName: 'Rule State',
-    items: [
-      { id: 'true', title: 'Active' },
-      { id: 'false', title: 'Inactive' },
-    ],
-    reducer: alertingRuleIsActive,
-    type: 'alerting-rule-active',
-  },
+  alertStateFilter,
   severityRowFilter,
   {
     defaultSelected: [AlertSource.Platform],
@@ -1357,7 +1385,7 @@ const RuleTableRow: RowFunction<Rule> = ({ index, key, obj, style }) => (
       <Severity severity={obj.labels?.severity} />
     </TableData>
     <TableData className={tableRuleClasses[2]}>
-      {_.isEmpty(obj.alerts) ? 'Inactive' : <StateCounts alerts={obj.alerts} />}
+      {_.isEmpty(obj.alerts) ? '-' : <StateCounts alerts={obj.alerts} />}
     </TableData>
     <TableData className={tableRuleClasses[3]}>
       {alertingRuleSource(obj) === AlertSource.User ? 'User' : 'Platform'}

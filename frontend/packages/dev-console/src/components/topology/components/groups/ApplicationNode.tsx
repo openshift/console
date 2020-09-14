@@ -1,11 +1,9 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import * as classNames from 'classnames';
 import {
   observer,
   Node,
   useAnchor,
-  RectAnchor,
   useCombineRefs,
   useHover,
   useDragNode,
@@ -13,11 +11,13 @@ import {
   WithSelectionProps,
   WithContextMenuProps,
   createSvgIdUrl,
+  useSize,
 } from '@patternfly/react-topology';
 import { useSearchFilter } from '../../filters/useSearchFilter';
 import { NodeShadows, NODE_SHADOW_FILTER_ID, NODE_SHADOW_FILTER_ID_HOVER } from '../NodeShadows';
-import { GroupNode } from './GroupNode';
 import { ApplicationModel } from '../../../../models';
+import { GroupNodeAnchor } from './GroupNodeAnchor';
+import { GroupNode } from './GroupNode';
 
 type ApplicationGroupProps = {
   element: Node;
@@ -39,18 +39,20 @@ const ApplicationNode: React.FC<ApplicationGroupProps> = ({
   contextMenuOpen,
   dragging,
 }) => {
-  useAnchor(React.useCallback((node: Node) => new RectAnchor(node, 1.5), []));
   const [hover, hoverRef] = useHover();
   const dragNodeRef = useDragNode()[1];
   const refs = useCombineRefs<SVGRectElement>(dragNodeRef, hoverRef);
   const [filtered] = useSearchFilter(element.getLabel());
-  const { width, height } = element.getDimensions();
-
-  const resourcesData = {};
-  _.forEach(element.getData().groupResources, (res) => {
-    const a = res.resource;
-    resourcesData[a.kind] = [...(resourcesData[a.kind] ? resourcesData[a.kind] : []), a];
-  });
+  const { groupResources } = element.getData();
+  const [groupSize, groupRef] = useSize([groupResources]);
+  const width = groupSize ? groupSize.width : 0;
+  const height = groupSize ? groupSize.height : 0;
+  useAnchor(
+    React.useCallback((node: Node) => new GroupNodeAnchor(node, width, height, 1.5), [
+      width,
+      height,
+    ]),
+  );
 
   return (
     <g
@@ -82,6 +84,7 @@ const ApplicationNode: React.FC<ApplicationGroupProps> = ({
         ry="5"
       />
       <GroupNode
+        ref={groupRef}
         element={element}
         kind={ApplicationModel.kind}
         groupResources={element.getData().groupResources}

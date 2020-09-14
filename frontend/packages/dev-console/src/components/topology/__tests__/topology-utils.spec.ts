@@ -1,16 +1,6 @@
 import * as k8s from '@console/internal/module/k8s';
-import {
-  createTopologyResourceConnection,
-  getTopologyResourceObject,
-  isHelmReleaseNode,
-} from '../topology-utils';
-import {
-  topologyDataModel,
-  sampleHelmChartDeploymentConfig,
-  sampleDeploymentConfigs,
-  sampleHelmResourcesMap,
-  sampleDeployments,
-} from './topology-test-data';
+import { createTopologyResourceConnection, getTopologyResourceObject } from '../topology-utils';
+import { topologyDataModel, sampleDeployments } from './topology-test-data';
 import { OdcNodeModel } from '../topology-types';
 
 let patchData = null;
@@ -51,11 +41,6 @@ describe('Topology Utils', () => {
 
     expect(patchData[0]).toEqual(expectedPatchData);
     done();
-  });
-
-  it('should return true for nodes created by helm charts', () => {
-    expect(isHelmReleaseNode(sampleDeploymentConfigs.data[0], sampleHelmResourcesMap)).toBe(false);
-    expect(isHelmReleaseNode(sampleHelmChartDeploymentConfig, sampleHelmResourcesMap)).toBe(true);
   });
 
   it('should return topology resource object', () => {

@@ -67,9 +67,7 @@ export const setStoragesTabValidity = (options: UpdateOptions) => {
   const { id, dispatch, getState } = options;
   const state = getState();
 
-  const iStorages = iGetStorages(state, id).filter(
-    (iStorage) => !iGetIn(iStorage, ['disk', 'cdrom']),
-  );
+  const iStorages = iGetStorages(state, id);
   let error = null;
 
   let hasAllRequiredFilled = iStorages.every((iStorage) =>
@@ -80,7 +78,7 @@ export const setStoragesTabValidity = (options: UpdateOptions) => {
     const hasBootSource = !!iStorages.find(
       (storageBundle) =>
         iGetIn(storageBundle, ['disk', 'bootOrder']) === 1 &&
-        iGetIn(storageBundle, ['disk', 'disk']) &&
+        (iGetIn(storageBundle, ['disk', 'disk']) || iGetIn(storageBundle, ['disk', 'cdrom'])) &&
         (iGetIn(storageBundle, ['volume', 'persistentVolumeClaim']) ||
           iGetIn(storageBundle, ['dataVolume', 'spec', 'source', 'pvc']) ||
           iGetIn(storageBundle, ['dataVolume', 'spec', 'source', 'http'])),

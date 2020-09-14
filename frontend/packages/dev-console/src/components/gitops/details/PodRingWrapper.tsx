@@ -35,9 +35,9 @@ const PodRingWrapper: React.FC<PodRingWrapperProps> = ({ workload }) => {
     [workload, workloadData],
   );
 
-  const [pods, loaded] = useK8sWatchResource<ExtPodKind[]>(podResource);
+  const [pods, loaded, loadError] = useK8sWatchResource<ExtPodKind[]>(podResource);
 
-  if (!loaded) {
+  if (!loaded && !loadError) {
     return <LoadingInline />;
   }
 
@@ -51,7 +51,7 @@ const PodRingWrapper: React.FC<PodRingWrapperProps> = ({ workload }) => {
           enableScaling={false}
         />
       ) : (
-        <div>Pod Info Not Available</div>
+        <div style={{ border: '1px solid' }}>Pod Info Not Available</div>
       )}
     </>
   );

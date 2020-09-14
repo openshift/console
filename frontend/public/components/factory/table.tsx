@@ -29,9 +29,11 @@ import {
 import { ingressValidHosts } from '../ingress';
 import { convertToBaseValue, EmptyBox, StatusBox, WithScrollContainer } from '../utils';
 import {
+  CustomResourceDefinitionKind,
   getClusterOperatorStatus,
   getClusterOperatorVersion,
   getJobTypeAndCompletions,
+  getLatestVersionForCRD,
   getTemplateInstanceStatus,
   K8sResourceKind,
   K8sResourceKindReference,
@@ -118,6 +120,7 @@ const sorts = {
   alertSeverityOrder,
   alertSource,
   alertStateOrder,
+  crdLatestVersion: (crd: CustomResourceDefinitionKind): string => getLatestVersionForCRD(crd),
   daemonsetNumScheduled: (daemonset) =>
     _.toInteger(_.get(daemonset, 'status.currentNumberScheduled')),
   dataSize: (resource) => _.size(_.get(resource, 'data')) + _.size(_.get(resource, 'binaryData')),
@@ -273,15 +276,53 @@ export type TableRowProps = {
   className?: string;
 };
 
+const BREAKPOINT_SM = 576;
+const BREAKPOINT_MD = 768;
+const BREAKPOINT_LG = 992;
+const BREAKPOINT_XL = 1200;
+const BREAKPOINT_XXL = 1400;
+const MAX_COL_XS = 2;
+const MAX_COL_SM = 4;
+const MAX_COL_MD = 4;
+const MAX_COL_LG = 6;
+const MAX_COL_XL = 8;
+
+const isColumnVisible = (columnID: string, columns: Set<string> = new Set()) => {
+  const showNamespace =
+    columnID !== 'namespace' || UIActions.getActiveNamespace() === ALL_NAMESPACES_KEY;
+  if (_.isEmpty(columns) && showNamespace) {
+    return true;
+  }
+  if (!columns.has(columnID)) {
+    return false;
+  }
+  const widthInPixels = window.innerWidth;
+  const columnIndex = [...columns].indexOf(columnID);
+  if (widthInPixels < BREAKPOINT_SM) {
+    return columnIndex < MAX_COL_XS;
+  }
+  if (widthInPixels < BREAKPOINT_MD) {
+    return columnIndex < MAX_COL_SM;
+  }
+  if (widthInPixels < BREAKPOINT_LG) {
+    return columnIndex < MAX_COL_MD;
+  }
+  if (widthInPixels < BREAKPOINT_XL) {
+    return columnIndex < MAX_COL_LG;
+  }
+  if (widthInPixels < BREAKPOINT_XXL) {
+    return columnIndex < MAX_COL_XL;
+  }
+  return true;
+};
+
 export const TableData: React.SFC<TableDataProps> = ({
   className,
   columnID,
   columns,
   ...props
 }) => {
-  const showNamespace =
-    columnID !== 'namespace' || UIActions.getActiveNamespace() === ALL_NAMESPACES_KEY;
-  return (_.isEmpty(columns) || columns.has(columnID)) && showNamespace ? (
+  return isColumnVisible(columnID, columns) ? (
     <td {...props} className={className} role="gridcell" />
   ) : null;
 };
@@ -425,6 +466,7 @@ export type TableProps = {
   loaded?: boolean;
   reduxID?: string;
   reduxIDs?: string[];
+  rowFilters?: any[];
   label?: string;
   columnManagementID?: string;
 };
@@ -449,6 +491,7 @@ const getActiveColumns = (
   Header: any,
   componentProps: ComponentProps,
   activeColumns: Set<string>,
+  columnManagementID: string,
 ) => {
   let columns = Header(componentProps);
   if (_.isEmpty(activeColumns)) {
@@ -460,7 +503,9 @@ const getActiveColumns = (
       }),
     );
   }
-  if (!_.isEmpty(activeColumns)) {
+  if (columnManagementID) {
+    columns = columns?.filter((col) => isColumnVisible(col.id, activeColumns) || col.title === '');
+  } else {
     columns = columns?.filter((col) => activeColumns.has(col.id) || col.title === '');
   }
 
@@ -526,7 +571,12 @@ export const Table = connect<
         'match',
         'kindObj',
       ]);
-      const columns = getActiveColumns(this.props.Header, componentProps, this.props.activeColumns);
+      const columns = getActiveColumns(
+        this.props.Header,
+        componentProps,
+        this.props.activeColumns,
+        this.props.columnManagementID,
+      );
       const { currentSortField, currentSortFunc, currentSortOrder } = props;
 
       this._columnShift = props.onSelect ? 1 : 0; //shift indexes by 1 if select provided
@@ -557,7 +607,12 @@ export const Table = connect<
         'match',
         'kindObj',
       ]);
-      const columns = getActiveColumns(this.props.Header, componentProps, this.props.activeColumns);
+      const columns = getActiveColumns(
+        this.props.Header,
+        componentProps,
+        this.props.activeColumns,
+        this.props.columnManagementID,
+      );
       const sp = new URLSearchParams(window.location.search);
       const columnIndex = _.findIndex(columns, { title: sp.get('sortBy') });
 
@@ -600,7 +655,12 @@ export const Table = connect<
         'match',
         'kindObj',
       ]);
-      const columns = getActiveColumns(this.props.Header, componentProps, this.props.activeColumns);
+      const columns = getActiveColumns(
+        this.props.Header,
+        componentProps,
+        this.props.activeColumns,
+        this.props.columnManagementID,
+      );
       const sortColumn = columns[index - this._columnShift];
       this._applySort(sortColumn.sortField, sortColumn.sortFunc, direction, sortColumn.title);
       this.setState({
@@ -613,6 +673,7 @@ export const Table = connect<
 
     render() {
       const {
+        columnManagementID,
         scrollElement,
         Rows,
         Row,
@@ -636,7 +697,7 @@ export const Table = connect<
         'match',
         'kindObj',
       ]);
-      const columns = getActiveColumns(Header, componentProps, activeColumns);
+      const columns = getActiveColumns(Header, componentProps, activeColumns, columnManagementID);
       const ariaRowCount = componentProps.data && componentProps.data.length;
       const scrollNode = typeof scrollElement === 'function' ? scrollElement() : scrollElement;
       const renderVirtualizedTable = (scrollContainer) => (

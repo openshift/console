@@ -26,6 +26,17 @@ form.pf-c-form {
   @include co-break-word;
 }
 
+// For input & label alignment while using bootstrap with @patternfly/react-catalog-view-extension
+.filter-panel-pf-category-item {
+  .pf-c-check {
+    align-items: inherit;
+  }
+
+  .pf-c-check__input {
+    margin-top: 2px;
+  }
+}
+
 kbd {
   border-radius: 3px;
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
@@ -362,9 +373,9 @@ h6 {
   }
 }
 
-// TODO remove this override once https://github.com/patternfly/patternfly/pull/3268 is adopted
-.pf-c-drawer .pf-c-page__main {
-  min-height: auto !important;
+// Necessary due to setting $pf-global--enable-reset to false
+.pf-c-pagination .pf-c-options-menu__menu {
+  list-style: none;
 }
 
 // pf table overrides
@@ -481,4 +492,8 @@ button.pf-c-dropdown__menu-item.pf-m-disabled {
 
 .pf-c-select__menu {
   list-style-type: none;
+}
+
+#modal-container .pf-c-backdrop {
+  position: absolute !important;
 }

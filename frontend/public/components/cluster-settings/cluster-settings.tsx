@@ -665,12 +665,13 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
   const imageParts = desiredImage.split('@');
   const releaseNotes = showReleaseNotes();
   const status = getClusterUpdateStatus(cv);
-  const clusterVersionIsEditable = useAccessReview({
-    group: ClusterVersionModel.apiGroup,
-    resource: ClusterVersionModel.plural,
-    verb: 'patch',
-    name: cv.metadata.name,
-  });
+  const clusterVersionIsEditable =
+    useAccessReview({
+      group: ClusterVersionModel.apiGroup,
+      resource: ClusterVersionModel.plural,
+      verb: 'patch',
+      name: cv.metadata.name,
+    }) && window.SERVER_FLAGS.branding !== 'dedicated';
   const [machineConfigPools] = useK8sWatchResource<MachineConfigPoolKind[]>(
     MachineConfigPoolsResource,
   );

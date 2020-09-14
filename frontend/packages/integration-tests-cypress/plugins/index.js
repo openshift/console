@@ -22,13 +22,15 @@ module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   on('task', {
     log(message) {
-      // eslint-disable-next-line no-console
       console.log(message);
       return null;
     },
     logError(message) {
-      // eslint-disable-next-line no-console
       console.error(message);
+      return null;
+    },
+    logTable(data) {
+      console.table(data);
       return null;
     },
   });
@@ -46,6 +48,9 @@ module.exports = (on, config) => {
   config.baseUrl = `${process.env.BRIDGE_BASE_ADDRESS || 'http://localhost:9000'}${(
     process.env.BRIDGE_BASE_PATH || '/'
   ).replace(/\/$/, '')}`;
+  config.env.BRIDGE_HTPASSWD_IDP = process.env.BRIDGE_HTPASSWD_IDP;
+  config.env.BRIDGE_HTPASSWD_USERNAME = process.env.BRIDGE_HTPASSWD_USERNAME;
+  config.env.BRIDGE_HTPASSWD_PASSWORD = process.env.BRIDGE_HTPASSWD_PASSWORD;
   config.env.BRIDGE_KUBEADMIN_PASSWORD = process.env.BRIDGE_KUBEADMIN_PASSWORD;
   return config;
 };
