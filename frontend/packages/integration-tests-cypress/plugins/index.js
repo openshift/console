@@ -46,8 +46,9 @@ module.exports = (on, config) => {
       //  https://chromedevtools.github.io/devtools-protocol/tot/Runtime#event-consoleAPICalled
 
       return (
-        (type === 'console' && event.type === 'error') ||
-        (type === 'browser' && event.level === 'error')
+        // (type === 'console' && event.type === 'error') ||
+        type === 'console' && event.type === 'debug' // ||
+        // (type === 'browser' && event.level === 'error')
       );
     });
     launchOptions.args = log2output.browserLaunchHandler(browser, launchOptions.args);

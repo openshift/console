@@ -46,7 +46,7 @@ export const getAlertsAndRules = (
   // Flatten the rules data to make it easier to work with, discard non-alerting rules since those
   // are the only ones we will be using and add a unique ID to each rule.
   // eslint-disable-next-line no-console
-  console.log(`----> getAlertsAndRules: initial #groups = ${data?.groups.length}`);
+  console.debug(`----> getAlertsAndRules: initial #groups = ${data?.groups.length}`);
   const groups = _.get(data, 'groups') as PrometheusRulesResponse['data']['groups'];
   const rules = _.flatMap(groups, (g) => {
     const addID = (r: PrometheusRule): Rule => {
@@ -67,7 +67,7 @@ export const getAlertsAndRules = (
   // Add `rule` object to each alert
   const alerts = _.flatMap(rules, (rule) => rule.alerts.map((a) => ({ rule, ...a })));
   // eslint-disable-next-line no-console
-  console.log(`----> getAlertsAndRules: #alerts = ${alerts.length}`);
+  console.debug(`----> getAlertsAndRules: #alerts = ${alerts.length}`);
   return { alerts, rules };
 };
 

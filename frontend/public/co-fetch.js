@@ -33,7 +33,7 @@ export const shouldLogout = (url) => {
 const validateStatus = (response, url) => {
   if (url.includes('rules') || url.includes('silences')) {
     // eslint-disable-next-line no-console
-    console.log(
+    console.debug(
       `Alerting response: ${JSON.stringify(
         response,
         ['url', 'ok', 'redirected', 'status', 'statusText'],
@@ -120,7 +120,9 @@ export const coFetch = (url, options = {}, timeout = 60000) => {
   }
   if (url.includes('rules') || url.includes('silences')) {
     // eslint-disable-next-line no-console
-    console.log(`Alerting fetch: url = ${url}, options = ${JSON.stringify(allOptions, null, ' ')}`);
+    console.debug(
+      `Alerting fetch: url = ${url}, options = ${JSON.stringify(allOptions, null, ' ')}`,
+    );
   }
   const fetchPromise = fetch(url, allOptions).then((response) => validateStatus(response, url));
 
