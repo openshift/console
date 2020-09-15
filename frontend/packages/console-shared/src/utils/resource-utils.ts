@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import { OverviewResourceUtil } from '@console/plugin-sdk';
 import {
   DeploymentKind,
   K8sResourceKind,
@@ -50,6 +49,12 @@ import {
 import { resourceStatus, podStatus } from './ResourceStatus';
 import { isKnativeServing, isIdled } from './pod-utils';
 import { doesHpaMatch } from '@console/dev-console/src/components/hpa/hpa-utils';
+
+type ResourceItem = {
+  [key: string]: K8sResourceKind[];
+};
+
+export type ResourceUtil = (obj: K8sResourceKind, props: any) => ResourceItem | undefined;
 
 export const getResourcePausedAlert = (resource: K8sResourceKind): OverviewItemAlerts => {
   if (!resource.spec.paused) {
@@ -664,7 +669,7 @@ export const getOverviewItemsForResource = (
   obj: K8sResourceKind,
   resources: any,
   isMonitorable: boolean,
-  utils?: OverviewResourceUtil[],
+  utils?: ResourceUtil[],
   current?: PodControllerOverviewItem,
   previous?: PodControllerOverviewItem,
   isRollingOut?: boolean,
@@ -701,7 +706,7 @@ export const getOverviewItemsForResource = (
 
   if (utils) {
     return utils.reduce((acc, util) => {
-      return { ...acc, ...util.properties.getResources(obj, resources) };
+      return { ...acc, ...util(obj, resources) };
     }, overviewItems);
   }
   return overviewItems;
@@ -710,7 +715,7 @@ export const getOverviewItemsForResource = (
 export const createDeploymentConfigItem = (
   deploymentConfig: K8sResourceKind,
   resources: any,
-  utils?: OverviewResourceUtil[],
+  utils?: ResourceUtil[],
 ): OverviewItem => {
   const { mostRecentRC, visibleReplicationControllers } = getReplicationControllersForResource(
     deploymentConfig,
@@ -752,7 +757,7 @@ export const createDeploymentConfigItem = (
 
   if (utils) {
     return utils.reduce((acc, util) => {
-      return { ...acc, ...util.properties.getResources(deploymentConfig, resources) };
+      return { ...acc, ...util(deploymentConfig, resources) };
     }, overviewItems);
   }
   return overviewItems;
@@ -761,7 +766,7 @@ export const createDeploymentConfigItem = (
 export const createDeploymentConfigItems = (
   deployments: K8sResourceKind[],
   resources: any,
-  utils?: OverviewResourceUtil[],
+  utils?: ResourceUtil[],
 ): OverviewItem[] => {
   if (!deployments) {
     return [];
@@ -772,7 +777,7 @@ export const createDeploymentConfigItems = (
 export const createDeploymentItem = (
   deployment: K8sResourceKind,
   resources: any,
-  utils?: OverviewResourceUtil[],
+  utils?: ResourceUtil[],
 ): OverviewItem => {
   const replicaSets = getReplicaSetsForResource(deployment, resources);
   const [current, previous] = replicaSets;
@@ -805,7 +810,7 @@ export const createDeploymentItem = (
   };
   if (utils) {
     return utils.reduce((acc, util) => {
-      return { ...acc, ...util.properties.getResources(deployment, resources) };
+      return { ...acc, ...util(deployment, resources) };
     }, overviewItem);
   }
   return overviewItem;
@@ -814,7 +819,7 @@ export const createDeploymentItem = (
 export const createDeploymentItems = (
   deployments: DeploymentKind[],
   resources: any,
-  utils?: OverviewResourceUtil[],
+  utils?: ResourceUtil[],
 ): OverviewItem[] => {
   if (!deployments) {
     return [];
@@ -825,7 +830,7 @@ export const createDeploymentItems = (
 export const createCronJobItem = (
   cronJob: CronJobKind,
   resources: any,
-  utils?: OverviewResourceUtil[],
+  utils?: ResourceUtil[],
 ): OverviewItem => {
   const buildConfigs = getBuildConfigsForCronJob(cronJob, resources);
   const jobs = getJobsForCronJob(cronJob, resources);
@@ -857,7 +862,7 @@ export const createCronJobItem = (
 
   if (utils) {
     return utils.reduce((acc, util) => {
-      return { ...acc, ...util.properties.getResources(cronJob, resources) };
+      return { ...acc, ...util(cronJob, resources) };
     }, overviewItem);
   }
   return overviewItem;
@@ -866,7 +871,7 @@ export const createCronJobItem = (
 export const createCronJobItems = (
   cronJobs: CronJobKind[],
   resources: any,
-  utils?: OverviewResourceUtil[],
+  utils?: ResourceUtil[],
 ): OverviewItem[] => {
   if (!cronJobs) {
     return [];
@@ -883,7 +888,7 @@ export const createWorkloadItems = (
   model: K8sKind,
   typedItems: K8sResourceKind[],
   resources: any,
-  utils?: OverviewResourceUtil[],
+  utils?: ResourceUtil[],
 ): OverviewItem[] => {
   if (!typedItems) {
     return [];
@@ -937,7 +942,7 @@ export const createPodItems = (pods: K8sResourceKind[], resources: any): Overvie
 export const createOverviewItemsForType = (
   type: string,
   resources: any,
-  utils?: OverviewResourceUtil[],
+  utils?: ResourceUtil[],
 ): OverviewItem[] => {
   const typedItems = resources[type]?.data ?? [];
   switch (type) {
@@ -964,7 +969,7 @@ export const createOverviewItemForType = (
   type: string,
   resource: K8sResourceKind,
   resources: any,
-  utils?: OverviewResourceUtil[],
+  utils?: ResourceUtil[],
 ): OverviewItem => {
   switch (type) {
     case 'deployments':
