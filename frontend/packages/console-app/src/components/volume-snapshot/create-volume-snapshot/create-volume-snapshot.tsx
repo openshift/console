@@ -200,6 +200,8 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
     });
   };
 
+  const isBound = (pvc: PersistentVolumeClaimKind) => pvc?.status?.phase === 'Bound';
+
   return (
     <div className="co-m-pane__body co-volume-snapshot__body">
       <Helmet>
@@ -212,14 +214,6 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
             Creating snapshot for claim <strong>{resourceName}</strong>
           </p>
         )}
-        {pvcName && pvcObj && pvcObj?.status?.phase !== 'Bound' && (
-          <Alert
-            className="co-alert co-volume-snapshot__alert-body"
-            variant="warning"
-            title="Snapshot creation for unbound claim is not recommended."
-            isInline
-          />
-        )}
         {kindObj.kind === VolumeSnapshotModel.kind && (
           /* eslint-disable jsx-a11y/label-has-associated-control */
           <>
@@ -231,6 +225,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
               namespace={namespace}
               onChange={handlePVCName}
               selectedKey={pvcName}
+              dataFilter={isBound}
               desc={`Persistent Volume Claim in ${namespace} namespace`}
             />
           </>

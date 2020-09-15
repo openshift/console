@@ -3,7 +3,7 @@ import './_clone-pvc-modal.scss';
 import * as React from 'react';
 
 import { Form, FormGroup, TextInput } from '@patternfly/react-core';
-import { K8sResourceKind, k8sCreate, referenceFor } from '@console/internal/module/k8s';
+import { k8sCreate, referenceFor, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 import {
   LoadingInline,
   ResourceIcon,
@@ -32,18 +32,7 @@ import { PrometheusEndpoint } from '@console/internal/components/graphs/helpers'
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { usePrometheusPoll } from '@console/internal/components/graphs/prometheus-poll-hook';
 import { getRequestedPVCSize } from '@console/shared/src/selectors';
-
-const accessModeLabels = Object.freeze({
-  ReadWriteOnce: 'Single User (RWO)',
-  ReadWriteMany: 'Shared Access (RWX)',
-  ReadOnlyMany: 'Read Only (ROX)',
-});
-
-const dropdownUnits = {
-  Mi: 'MiB',
-  Gi: 'GiB',
-  Ti: 'TiB',
-};
+import { dropdownUnits, accessModeRadios } from '@console/internal/components/storage/shared';
 
 const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
   const { close, cancel, resource, handlePromise, errorMessage, inProgress } = props;
@@ -54,6 +43,9 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
   const [clonePVCName, setClonePVCName] = React.useState(`${pvcName}-clone`);
   const [requestedSize, setRequestedSize] = React.useState(defaultSize[0] || '');
   const [requestedUnit, setRequestedUnit] = React.useState(defaultSize[1] || 'Gi');
+  const accessMode = accessModeRadios.find(
+    (mode) => mode.value === resource?.spec?.accessModes?.[0],
+  );
 
   const pvcUsedCapacityQuery: string = `kubelet_volume_stats_used_bytes{persistentvolumeclaim='${pvcName}'}`;
   const [response, error, loading] = usePrometheusPoll({
@@ -75,7 +67,7 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
   const submit = (event: React.FormEvent<EventTarget>) => {
     event.preventDefault();
 
-    const pvcCloneObj = {
+    const pvcCloneObj: PersistentVolumeClaimKind = {
       apiVersion: PersistentVolumeClaimModel.apiVersion,
       kind: PersistentVolumeClaimModel.kind,
       metadata: {
@@ -95,6 +87,7 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
           },
         },
         accessModes: resource.spec.accessModes,
+        volumeMode: resource.spec.volumeMode,
       },
     };
 
@@ -164,7 +157,7 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
               <div>
                 <div>
                   <p className="co-clone-pvc-modal__pvc-details">Access Mode</p>
-                  <p>{accessModeLabels[resource.spec.accessModes]}</p>
+                  <p>{accessMode.title || '-'}</p>
                 </div>
                 <div>
                   <p className="co-clone-pvc-modal__pvc-details">Volume Mode</p>
@@ -186,7 +179,7 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
 });
 
 export type ClonePVCModalProps = {
-  resource?: K8sResourceKind;
+  resource?: PersistentVolumeClaimKind;
 } & HandlePromiseProps &
   ModalComponentProps;
 

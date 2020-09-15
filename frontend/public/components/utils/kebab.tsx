@@ -334,6 +334,8 @@ const kebabFactory: KebabFactory = {
   }),
   PVCSnapshot: (kind, obj) => ({
     label: 'Create Snapshot',
+    isDisabled: obj?.status?.phase !== 'Bound',
+    tooltip: obj?.status?.phase !== 'Bound' ? 'PVC is not Bound' : '',
     href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/${
       VolumeSnapshotModel.plural
     }/~new/form`,
@@ -341,6 +343,8 @@ const kebabFactory: KebabFactory = {
   }),
   ClonePVC: (kind, obj) => ({
     label: 'Clone PVC',
+    isDisabled: obj?.status?.phase !== 'Bound',
+    tooltip: obj?.status?.phase !== 'Bound' ? 'PVC is not Bound' : '',
     callback: () =>
       clonePVCModal({
         kind,
@@ -350,6 +354,8 @@ const kebabFactory: KebabFactory = {
   }),
   RestorePVC: (kind, obj) => ({
     label: 'Restore as new PVC',
+    isDisabled: obj?.status?.phase !== 'Ready',
+    tooltip: obj?.status?.phase !== 'Ready' ? 'Volume Snapshot is not Ready' : '',
     callback: () =>
       restorePVCModal({
         kind,
