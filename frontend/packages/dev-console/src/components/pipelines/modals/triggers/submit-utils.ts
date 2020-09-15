@@ -57,12 +57,9 @@ export const submitTrigger = async (
   const { triggerBinding } = formValues;
   const thisNamespace = pipeline.metadata.namespace;
 
-  const pipelineRun: PipelineRun = getPipelineRunFromForm(
-    pipeline,
-    formValues,
-    {},
-    { generateName: true },
-  );
+  const pipelineRun: PipelineRun = getPipelineRunFromForm(pipeline, formValues, null, null, {
+    generateName: true,
+  });
   const triggerTemplateParams: TriggerTemplateKindParam[] = triggerBinding.resource.spec.params.map(
     ({ name }) => ({ name } as TriggerTemplateKindParam),
   );

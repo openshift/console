@@ -28,7 +28,8 @@ export const resourceSubmit = async (
 export const submitStartPipeline = async (
   values: StartPipelineFormValues,
   pipeline: Pipeline,
-  labels: { [key: string]: string },
+  labels?: { [key: string]: string },
+  annotations?: { [key: string]: string },
 ): Promise<PipelineRun> => {
   const { namespace, resources } = values;
 
@@ -64,7 +65,7 @@ export const submitStartPipeline = async (
 
   const pipelineRunResource: PipelineRun = await k8sCreate(
     PipelineRunModel,
-    getPipelineRunFromForm(pipeline, formValues, labels),
+    getPipelineRunFromForm(pipeline, formValues, labels, annotations),
   );
 
   return Promise.resolve(pipelineRunResource);

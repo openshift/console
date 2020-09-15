@@ -70,6 +70,7 @@ export const getPipelineRunData = (
         : {
             name: `${pipelineName}-${getRandomChars()}`,
           }),
+      annotations: _.merge({}, pipeline?.metadata?.annotations, latestRun?.metadata?.annotations),
       namespace: pipeline ? pipeline.metadata.namespace : latestRun.metadata.namespace,
       labels: _.merge({}, pipeline?.metadata?.labels, latestRun?.metadata?.labels, {
         'tekton.dev/pipeline': pipelineName,
@@ -144,12 +145,14 @@ export const getPipelineRunFromForm = (
   pipeline: Pipeline,
   formValues: CommonPipelineModalFormikValues,
   labels?: { [key: string]: string },
+  annotations?: { [key: string]: string },
   options?: { generateName: boolean },
 ) => {
   const { parameters, resources, workspaces } = formValues;
 
   const pipelineRunData: PipelineRun = {
     metadata: {
+      annotations,
       labels,
     },
     spec: {

@@ -1,6 +1,8 @@
 export enum StartedByLabel {
-  user = 'pipeline.openshift.io/started-by',
   triggers = 'triggers.tekton.dev/eventlistener',
+}
+export enum StartedByAnnotation {
+  user = 'pipeline.openshift.io/started-by',
 }
 
 export enum PipelineResourceType {
