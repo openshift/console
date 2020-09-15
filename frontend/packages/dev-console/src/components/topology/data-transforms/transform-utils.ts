@@ -18,7 +18,6 @@ import {
   TYPE_KNATIVE_REVISION,
 } from '@console/knative-plugin/src/topology/const';
 import { edgesFromAnnotations } from '../../../utils/application-utils';
-import { tknPipelineAndPipelineRunsWatchResources } from '../../../utils/pipeline-plugin-utils';
 import {
   TopologyDataObject,
   TopologyOverviewItem,
@@ -435,6 +434,5 @@ export const getBaseWatchedResources = (namespace: string): WatchK8sResources<an
       namespace,
       optional: true,
     },
-    ...tknPipelineAndPipelineRunsWatchResources(namespace),
   };
 };
