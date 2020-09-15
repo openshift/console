@@ -85,7 +85,7 @@ const toTypeAbstraction = (obj): SecretTypeAbstraction => {
     case SecretType.dockercfg:
       return SecretTypeAbstraction.image;
     default:
-      if (data[WebHookSecretKey] && _.size(data) === 1) {
+      if (data?.[WebHookSecretKey] && _.size(data) === 1) {
         return SecretTypeAbstraction.webhook;
       }
       return SecretTypeAbstraction.generic;
