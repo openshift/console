@@ -44,8 +44,6 @@ export const PROVISION_SOURCE_URL_DESC =
 export const PROVISION_SOURCE_DISK_DESC = UI_SOURCE_ATTACH_DISK_DESC;
 
 // nics descriptions
-export const NIC_MODEL_VIRTIO_DESC =
-  'Optimized for best performance. Supported by most Linux distributions. Windows requires additional drivers to use this model.';
 export const NIC_MODEL_E1000E_DESC =
   'Supported by most operating systems including Windows out of the box. Offers lower performance compared to virtio.';
 export const NIC_TYPE_MASQUERADE_DESC =
@@ -54,6 +52,16 @@ export const NIC_TYPE_BRIDGE_DESC =
   'The VM will be bridged to the selected network, ideal for L2 devices';
 export const NIC_TYPE_SRIOV_DESC =
   'Attach a virtual function network device to the VM for high performance';
+
+// disk interface descriptions
+export const DISK_TYPE_VIRTIO_DESC =
+  'Optimized for best performance. Supported by most Linux distributions. Windows requires additional drivers to use this model';
+
+export const DISK_TYPE_SATA_DESC =
+  'Supported by most operating systems including Windows out of the box. Offers lower performance compared to virtio. Consider using it for CD-ROM devices';
+
+export const DISK_TYPE_SCSI_DESC =
+  'Useful when the VM wants to interact with the device using direct scsi commands. Supported by most operating systems including Windows out of the box. Offers lower performance compared to virtio';
 
 export const getDialogUIError = (hasAllRequiredFilled) =>
   hasAllRequiredFilled
