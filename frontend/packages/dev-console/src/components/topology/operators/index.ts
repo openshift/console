@@ -8,11 +8,6 @@ export const getOperatorsComponentFactory = () =>
     './components/operatorsComponentFactory' /* webpackChunkName: "operators-topology-components" */
   ).then((m) => m.getOperatorsComponentFactory());
 
-export const getIsOperatorResource = () =>
-  import('./isOperatorResource' /* webpackChunkName: "operators-topology-components" */).then(
-    (m) => m.isOperatorResource,
-  );
-
 export const getDataModelReconciler = () =>
   import(
     './operatorsDataModelReconciler' /* webpackChunkName: "operators-topology-components" */
