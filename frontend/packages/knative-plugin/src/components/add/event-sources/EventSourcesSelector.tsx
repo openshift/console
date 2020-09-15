@@ -18,6 +18,7 @@ const EventSourcesSelector: React.FC<EventSourcesSelectorProps> = ({ eventSource
   const {
     values: {
       application: { selectedKey },
+      type,
     },
     setFieldValue,
     setFieldTouched,
@@ -27,29 +28,31 @@ const EventSourcesSelector: React.FC<EventSourcesSelectorProps> = ({ eventSource
   } = useFormikContext<FormikValues>();
   const handleItemChange = React.useCallback(
     (item: string) => {
-      setErrors({});
-      setStatus({});
-      if (isKnownEventSource(item)) {
-        const nameData = `data.${item.toLowerCase()}`;
-        const sourceData = getEventSourceData(item.toLowerCase());
-        setFieldValue(nameData, sourceData);
-        setFieldTouched(nameData, true);
+      if (item !== type) {
+        setErrors({});
+        setStatus({});
+        if (isKnownEventSource(item)) {
+          const nameData = `data.${item.toLowerCase()}`;
+          const sourceData = getEventSourceData(item.toLowerCase());
+          setFieldValue(nameData, sourceData);
+          setFieldTouched(nameData, true);
+        }
+        setFieldValue('data.itemData', eventSourceList[item]);
+        const selDataModel = _.find(getEventSourceModels(), { kind: item });
+        const selApiVersion = selDataModel
+          ? `${selDataModel?.apiGroup}/${selDataModel?.apiVersion}`
+          : `${KNATIVE_EVENT_SOURCE_APIGROUP}/v1alpha1`;
+        const name = _.kebabCase(item);
+        setFieldValue('name', name);
+        setFieldTouched('name', true);
+        if (!selectedKey || selectedKey === CREATE_APPLICATION_KEY) {
+          setFieldValue('application.name', `${name}-app`);
+          setFieldTouched('application.name', true);
+        }
+        setFieldValue('apiVersion', selApiVersion);
+        setFieldTouched('apiVersion', true);
+        validateForm();
       }
-      setFieldValue('data.itemData', eventSourceList[item]);
-      const selDataModel = _.find(getEventSourceModels(), { kind: item });
-      const selApiVersion = selDataModel
-        ? `${selDataModel?.apiGroup}/${selDataModel?.apiVersion}`
-        : `${KNATIVE_EVENT_SOURCE_APIGROUP}/v1alpha1`;
-      const name = _.kebabCase(item);
-      setFieldValue('name', name);
-      setFieldTouched('name', true);
-      if (!selectedKey || selectedKey === CREATE_APPLICATION_KEY) {
-        setFieldValue('application.name', `${name}-app`);
-        setFieldTouched('application.name', true);
-      }
-      setFieldValue('apiVersion', selApiVersion);
-      setFieldTouched('apiVersion', true);
-      validateForm();
     },
     [
       setErrors,
@@ -59,6 +62,7 @@ const EventSourcesSelector: React.FC<EventSourcesSelectorProps> = ({ eventSource
       selectedKey,
       validateForm,
       eventSourceList,
+      type,
     ],
   );
 

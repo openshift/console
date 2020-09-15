@@ -72,6 +72,17 @@ describe('EventSourcesSelector', () => {
     expect(wrapper.find(ItemSelectorField).props().loadingItems).toBe(false);
   });
 
+  it('should not call getEventSourceData onSelect if selected type is same', () => {
+    const spyGetEventSourceData = jest.spyOn(sourceUtils, 'getEventSourceData');
+    const spyKebabCase = jest.spyOn(lodash, 'kebabCase');
+    wrapper
+      .find(ItemSelectorField)
+      .props()
+      .onSelect('SinkBinding');
+    expect(spyGetEventSourceData).toHaveBeenCalledTimes(0);
+    expect(spyKebabCase).toHaveBeenCalledTimes(0);
+  });
+
   it('should call getEventSourceData onSelect', () => {
     const spyGetEventSourceData = jest.spyOn(sourceUtils, 'getEventSourceData');
     const spyKebabCase = jest.spyOn(lodash, 'kebabCase');
