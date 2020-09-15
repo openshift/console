@@ -1,4 +1,7 @@
 .co-quick-start-task-review {
+  font-size: var(--pf-global--FontSize--md);
+  line-height: var(--pf-global--FontSize--xl);
+
   &__actions {
     display: flex;
     align-items: flex-start;
@@ -14,13 +17,9 @@
 
   &--success {
     color: var(--pf-global--palette--green-500);
-    font-size: var(--pf-global--FontSize--md);
-    line-height: var(--pf-global--FontSize--xl);
   }
 
   &--failed {
     color: var(--pf-chart-global--danger--Color--100);
-    font-size: var(--pf-global--FontSize--md);
-    line-height: var(--pf-global--FontSize--xl);
   }
 }
