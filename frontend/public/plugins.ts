@@ -2,7 +2,7 @@ import { Store } from 'redux';
 import { RootState } from '@console/internal/redux';
 import { PluginStore } from '@console/plugin-sdk/src/store';
 import { ActivePlugin } from '@console/plugin-sdk/src/typings';
-import { initSubscriptionService } from '@console/plugin-sdk/src/subscribeToExtensions';
+import { initSubscriptionService } from '@console/plugin-sdk/src/api/subscribeToExtensions';
 import { fetchPluginManifest } from '@console/dynamic-plugin-sdk/src/runtime/plugin-manifest';
 import {
   loadDynamicPlugin,

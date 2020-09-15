@@ -5,21 +5,23 @@ import { ConsolePluginManifestJSON } from '@console/dynamic-plugin-sdk/src/schem
 import { Extension, LoadedExtension, ActivePlugin } from './typings';
 import { ExtensionRegistry } from './registry';
 
-export const sanitizeExtension = (e: Extension): Extension => {
+export const sanitizeExtension = <E extends Extension>(e: E): E => {
   e.flags = e.flags || {};
   e.flags.required = _.uniq(e.flags.required || []);
   e.flags.disallowed = _.uniq(e.flags.disallowed || []);
   return e;
 };
 
-export const augmentExtension = (
-  e: Extension,
+export const augmentExtension = <E extends Extension>(
+  e: E,
+  pluginID: string,
   pluginName: string,
   index: number,
-): LoadedExtension<typeof e> =>
+): LoadedExtension<E> =>
   Object.assign(e, {
+    pluginID,
     pluginName,
-    uid: `${pluginName}[${index}]`,
+    uid: `${pluginID}[${index}]`,
   });
 
 export const isExtensionInUse = (e: Extension, flags: FlagsObject): boolean =>
@@ -55,7 +57,7 @@ export class PluginStore {
     this.staticExtensions = _.flatMap(
       plugins.map((p) =>
         p.extensions.map((e, index) =>
-          Object.freeze(augmentExtension(sanitizeExtension({ ...e }), p.name, index)),
+          Object.freeze(augmentExtension(sanitizeExtension({ ...e }), p.name, p.name, index)),
         ),
       ),
     );
@@ -98,7 +100,9 @@ export class PluginStore {
     if (!this.dynamicPlugins.has(pluginID)) {
       this.dynamicPlugins.set(pluginID, {
         manifest: Object.freeze(manifest),
-        resolvedExtensions: resolvedExtensions.map((e) => Object.freeze(sanitizeExtension(e))),
+        resolvedExtensions: resolvedExtensions.map((e, index) =>
+          Object.freeze(augmentExtension(sanitizeExtension(e), pluginID, manifest.name, index)),
+        ),
         enabled: false,
       });
     } else {

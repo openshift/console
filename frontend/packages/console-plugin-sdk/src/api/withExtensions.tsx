@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as hoistStatics from 'hoist-non-react-statics';
 import { useExtensions } from './useExtensions';
-import { Extension, ExtensionTypeGuard, LoadedExtension } from './typings';
+import { Extension, ExtensionTypeGuard, LoadedExtension } from '../typings';
 
 /**
  * React higher-order component (HOC) for consuming Console extensions.
@@ -13,14 +13,6 @@ import { Extension, ExtensionTypeGuard, LoadedExtension } from './typings';
  * Example usage:
  *
  * ```ts
- * import {
- *   withExtensions,
- *   NavItem,
- *   Perspective,
- *   isNavItem,
- *   isPerspective,
- * } from '@console/plugin-sdk';
- *
  * const Example = withExtensions<ExampleExtensionProps>({
  *   navItemExtensions: isNavItem,
  *   perspectiveExtensions: isPerspective,

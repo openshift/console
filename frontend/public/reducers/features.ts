@@ -7,7 +7,7 @@ import { isModelFeatureFlag } from '@console/plugin-sdk/src/typings';
 import {
   subscribeToExtensions,
   extensionDiffListener,
-} from '@console/plugin-sdk/src/subscribeToExtensions';
+} from '@console/plugin-sdk/src/api/subscribeToExtensions';
 import {
   ChargebackReportModel,
   ClusterServiceClassModel,

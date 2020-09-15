@@ -26,7 +26,7 @@ export type ExtensionFlags = Partial<{
  *
  * TODO(vojtech): write ESLint rule to guard against extension type duplicity
  */
-export type Extension<P = any> = {
+export type Extension<P extends {} = any> = {
   type: string;
   properties: P;
   flags?: ExtensionFlags;
@@ -35,7 +35,7 @@ export type Extension<P = any> = {
 /**
  * An extension that is always effective, regardless of feature flags.
  */
-export type AlwaysOnExtension<P = any> = Omit<Extension<P>, 'flags'>;
+export type AlwaysOnExtension<P extends {} = any> = Omit<Extension<P>, 'flags'>;
 
 /**
  * From plugin author perspective, a plugin is simply a list of extensions.
@@ -101,6 +101,7 @@ export type ActivePlugin = {
  * Runtime extension interface, exposing additional metadata.
  */
 export type LoadedExtension<E extends Extension> = E & {
+  pluginID: string;
   pluginName: string;
   uid: string;
 };
