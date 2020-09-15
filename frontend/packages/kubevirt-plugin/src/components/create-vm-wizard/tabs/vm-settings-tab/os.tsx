@@ -57,6 +57,7 @@ export const OS: React.FC<OSProps> = React.memo(
     onChange,
     openshiftFlag,
     goToStorageStep,
+    activePerspective,
   }) => {
     const os = iGetFieldValue(operatinSystemField);
     const display = iGet(operatinSystemField, 'display');
@@ -64,6 +65,7 @@ export const OS: React.FC<OSProps> = React.memo(
     const cloneBaseDiskImage = iGetFieldValue(cloneBaseDiskImageField);
     const mountWindowsGuestTools = iGetFieldValue(mountWindowsGuestToolsField);
     const isUserTemplateValid = iGetIsLoaded(iUserTemplate) && !iGetLoadError(iUserTemplate);
+    const isAdminPerspective = activePerspective === 'admin';
 
     const params = {
       flavor,
@@ -147,13 +149,18 @@ export const OS: React.FC<OSProps> = React.memo(
             osField.checkboxDescription = isBaseImageUploading ? BASE_IMAGE_UPLOADING_MESSAGE : '';
           } else if (pvcName) {
             osField.message = NO_BASE_IMAGE_SHORT;
-            osField.longMessage = (
+            osField.longMessage = isAdminPerspective ? (
               <>
                 Operating system image not available. You can either{' '}
                 <Link to={`${PVC_UPLOAD_URL}?${CDI_UPLOAD_OS_URL_PARAM}=${operatingSystem.id}`}>
                   upload a new disk image
                 </Link>{' '}
                 or define a boot source manually in the boot source dropdown
+              </>
+            ) : (
+              <>
+                Operating system source not available. Define a boot source manually below or
+                request your administrator to define a source for the cluster.
               </>
             );
           } else {
@@ -254,6 +261,7 @@ type OSProps = {
   workloadProfile: string;
   cnvBaseImages: any;
   openshiftFlag: boolean;
+  activePerspective: string;
   onChange: (key: string, value: string | boolean) => void;
   goToStorageStep: () => void;
 };
