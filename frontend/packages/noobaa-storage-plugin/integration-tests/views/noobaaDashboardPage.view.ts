@@ -1,5 +1,7 @@
 import { $ } from 'protractor';
 
+export const rgwSystemName = $('p[data-test-id="system-name-rgw"]');
+
 export const noobaaCount = $('div:nth-child(1) > div.co-inventory-card__item-title');
 export const obCount = $('div:nth-child(2) > div.co-inventory-card__item-title');
 export const obcCount = $('div:nth-child(3) > div.co-inventory-card__item-title');

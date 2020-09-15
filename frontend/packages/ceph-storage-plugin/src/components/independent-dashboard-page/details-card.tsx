@@ -65,7 +65,7 @@ export const DetailsCard: React.FC<DashboardItemProps> = ({
         <DashboardCardTitle>Details</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
-        <DetailItem title="Service Name">OpenShift Container Storage (OCS)</DetailItem>
+        <DetailItem title="Service Name">OpenShift Container Storage</DetailItem>
         <DetailItem
           title="Cluster Name"
           error={!!ocsError}
