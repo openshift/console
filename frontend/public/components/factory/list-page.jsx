@@ -68,6 +68,7 @@ export class ListPageWrapper_ extends React.PureComponent {
       reduxIDs,
       rowFilters,
       textFilter,
+      filterPlaceholder,
       hideNameLabelFilters,
       hideLabelFilter,
       columnLayout,
@@ -77,6 +78,7 @@ export class ListPageWrapper_ extends React.PureComponent {
       <FilterToolbar
         rowFilters={rowFilters}
         data={data}
+        filterPlaceholder={filterPlaceholder}
         reduxIDs={reduxIDs}
         textFilter={textFilter}
         hideNameLabelFilters={hideNameLabelFilters}
@@ -306,7 +308,7 @@ FireMan_.propTypes = {
   title: PropTypes.string,
 };
 
-/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean, badge?: React.ReactNode, createHandler?: any, hideNameLabelFilters?: boolean, hideLabelFilter?: boolean, columnLayout?: ColumnLayout, customData?: any, hideColumnManagement?: boolean } >} */
+/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean, badge?: React.ReactNode, createHandler?: any, hideNameLabelFilters?: boolean, hideLabelFilter?: boolean, columnLayout?: ColumnLayout, customData?: any, hideColumnManagement?: boolean, filterPlaceholder?: string } >} */
 export const ListPage = withFallback((props) => {
   const {
     autoFocus,
@@ -316,6 +318,7 @@ export const ListPage = withFallback((props) => {
     customData,
     fieldSelector,
     filterLabel,
+    filterPlaceholder,
     filters,
     helpText,
     kind,
@@ -386,6 +389,7 @@ export const ListPage = withFallback((props) => {
       createProps={createProps}
       customData={customData}
       filterLabel={filterLabel || 'by name'}
+      filterPlaceholder={filterPlaceholder}
       flatten={(_resources) => _.get(_resources, name || kind, {}).data}
       helpText={helpText}
       label={labelPlural}
@@ -418,6 +422,7 @@ export const MultiListPage = (props) => {
     createButtonText,
     createProps,
     filterLabel,
+    filterPlaceholder,
     flatten,
     helpText,
     label,
@@ -473,6 +478,7 @@ export const MultiListPage = (props) => {
           hideNameLabelFilters={hideNameLabelFilters}
           hideColumnManagement={hideColumnManagement}
           columnLayout={columnLayout}
+          filterPlaceholder={filterPlaceholder}
         />
       </Firehose>
     </FireMan_>
