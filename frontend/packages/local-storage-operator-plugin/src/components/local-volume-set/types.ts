@@ -11,7 +11,7 @@ export type NodeTableRow = {
 
 export enum DiskType {
   RawDisk = 'disk',
-  Partition = 'Partition',
+  Partition = 'part',
 }
 
 export enum DiskMechanicalProperties {
@@ -24,7 +24,7 @@ export type LocalVolumeSetKind = K8sResourceCommon & {
     storageClassName: string;
     volumeMode: string;
     deviceInclusionSpec: {
-      deviceTypes: DiskType[];
+      deviceTypes?: DiskType[];
       deviceMechanicalProperties: DiskMechanicalProperties[];
       minSize?: string;
       maxSize?: string;
