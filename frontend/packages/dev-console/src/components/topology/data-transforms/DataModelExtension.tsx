@@ -32,6 +32,7 @@ export const DataModelExtension: React.FC<DataModelExtensionProps> = ({ dataMode
         isResourceDepicted,
         getDataModelReconciler,
       } = dataModelFactory.properties;
+
       if (getDataModel) {
         getDataModel()
           .then((getter) => {

@@ -18,7 +18,6 @@ import {
   TYPE_KNATIVE_REVISION,
 } from '@console/knative-plugin/src/topology/const';
 import { edgesFromAnnotations } from '../../../utils/application-utils';
-import { tknPipelineAndPipelineRunsWatchResources } from '../../../utils/pipeline-plugin-utils';
 import {
   TopologyDataObject,
   TopologyOverviewItem,
@@ -277,9 +276,11 @@ export const addToTopologyDataModel = (
   graphModel: Model,
   dataModelDepicters: TopologyDataModelDepicted[] = [],
 ) => {
-  graphModel.edges.push(...(newModel?.edges || []));
+  const edges = [...(newModel.edges || [])];
+  const nodes = [...(newModel.nodes || [])];
+  graphModel.edges.push(...edges);
   graphModel.nodes.push(
-    ...(newModel?.nodes || []).filter(
+    ...nodes.filter(
       (n) =>
         !n.group &&
         !graphModel.nodes.find((existing) => {
@@ -294,7 +295,7 @@ export const addToTopologyDataModel = (
     ),
   );
   mergeGroups(
-    (newModel?.nodes || []).filter((n) => n.group),
+    nodes.filter((n) => n.group),
     graphModel.nodes,
   );
 };
@@ -431,6 +432,5 @@ export const getBaseWatchedResources = (namespace: string): WatchK8sResources<an
       namespace,
       optional: true,
     },
-    ...tknPipelineAndPipelineRunsWatchResources(namespace),
   };
 };
