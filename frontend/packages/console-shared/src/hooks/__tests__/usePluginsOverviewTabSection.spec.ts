@@ -9,7 +9,7 @@ import { OverviewItem } from '../../types/resource';
 import { testHook } from '../../test-utils/hooks-utils';
 import { usePluginsOverviewTabSection } from '../plugins-overview-tab-section';
 
-jest.mock('@console/plugin-sdk/src/useExtensions', () => ({
+jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({
   useExtensions: jest.fn(),
 }));
 describe('usePluginsOverviewTabSection', () => {

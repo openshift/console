@@ -3,17 +3,33 @@
 import * as _ from 'lodash';
 import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { SupportedExtension } from '../schema/console-extensions';
-import { RemoteEntryModule, EncodedCodeRef, CodeRef } from '../types';
+import {
+  RemoteEntryModule,
+  EncodedCodeRef,
+  CodeRef,
+  ResolvedCodeRefProperties,
+  ExtensionProperties,
+} from '../types';
 
 // TODO(vojtech): support code refs at any level within the properties object
 
-const isEncodedCodeRef = (obj: object): obj is EncodedCodeRef =>
+const codeRefSymbol = Symbol('CodeRef');
+
+const isEncodedCodeRef = (obj): obj is EncodedCodeRef =>
   _.isPlainObject(obj) &&
   _.isEqual(Object.getOwnPropertyNames(obj), ['$codeRef']) &&
   typeof (obj as EncodedCodeRef).$codeRef === 'string';
 
-export const filterCodeRefProperties = (properties: object) =>
+const isExecutableCodeRef = (obj): obj is CodeRef =>
+  _.isFunction(obj) &&
+  _.isEqual(Object.getOwnPropertySymbols(obj), [codeRefSymbol]) &&
+  obj[codeRefSymbol] === true;
+
+export const filterEncodedCodeRefProperties = (properties) =>
   _.pickBy(properties, isEncodedCodeRef) as { [propName: string]: EncodedCodeRef };
+
+export const filterExecutableCodeRefProperties = (properties) =>
+  _.pickBy(properties, isExecutableCodeRef) as { [propName: string]: CodeRef };
 
 /**
  * Parse the `EncodedCodeRef` value into `[moduleName, exportName]` tuple.
@@ -75,14 +91,33 @@ export const resolveEncodedCodeRefs = (
   errorCallback: VoidFunction,
 ): Extension[] =>
   _.cloneDeep(extensions).map((e) => {
-    const codeRefProperties = filterCodeRefProperties(e.properties);
+    const refs = filterEncodedCodeRefProperties(e.properties);
 
-    Object.entries(codeRefProperties).forEach(([propName, ref]) => {
-      const resolvedCodeRef: CodeRef<any> = async () =>
+    Object.entries(refs).forEach(([propName, ref]) => {
+      const executableCodeRef: CodeRef = async () =>
         loadReferencedObject(ref, entryModule, pluginID, errorCallback);
 
-      e.properties[propName] = resolvedCodeRef;
+      executableCodeRef[codeRefSymbol] = true;
+      e.properties[propName] = executableCodeRef;
     });
 
     return e;
   });
+
+/**
+ * Returns an object representing resolved `CodeRef` properties for the given extension.
+ */
+export const resolveCodeRefProperties = async <E extends Extension<P>, P = ExtensionProperties<E>>(
+  extension: E,
+): Promise<ResolvedCodeRefProperties<P>> => {
+  const refs = filterExecutableCodeRefProperties(extension.properties);
+  const resolvedValues = {} as ResolvedCodeRefProperties<P>;
+
+  await Promise.all(
+    Object.entries(refs).map(async ([propName, ref]) => {
+      resolvedValues[propName] = await ref();
+    }),
+  );
+
+  return resolvedValues;
+};

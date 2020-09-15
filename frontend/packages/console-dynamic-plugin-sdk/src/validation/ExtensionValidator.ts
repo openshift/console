@@ -3,7 +3,10 @@ import * as _ from 'lodash';
 import { ValidationResult } from './ValidationResult';
 import { ConsolePluginMetadata } from '../schema/plugin-package';
 import { SupportedExtension } from '../schema/console-extensions';
-import { filterCodeRefProperties, parseEncodedCodeRefValue } from '../coderefs/coderef-resolver';
+import {
+  filterEncodedCodeRefProperties,
+  parseEncodedCodeRefValue,
+} from '../coderefs/coderef-resolver';
 
 type ExtensionCodeRefData = {
   index: number;
@@ -14,12 +17,9 @@ type ExposedPluginModules = ConsolePluginMetadata['exposedModules'];
 
 const collectCodeRefData = (extensions: SupportedExtension[]) =>
   extensions.reduce((acc, e, index) => {
-    const codeRefProperties = filterCodeRefProperties(e.properties);
-    if (!_.isEmpty(codeRefProperties)) {
-      acc.push({
-        index,
-        propToCodeRefValue: _.mapValues(codeRefProperties, (obj) => obj.$codeRef),
-      });
+    const refs = filterEncodedCodeRefProperties(e.properties);
+    if (!_.isEmpty(refs)) {
+      acc.push({ index, propToCodeRefValue: _.mapValues(refs, (obj) => obj.$codeRef) });
     }
     return acc;
   }, [] as ExtensionCodeRefData[]);

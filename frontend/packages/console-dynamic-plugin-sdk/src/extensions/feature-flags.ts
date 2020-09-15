@@ -1,5 +1,5 @@
 import { Extension } from '@console/plugin-sdk/src/typings/base';
-import { CodeRef, EncodedCodeRef, Update } from '../types';
+import { CodeRef, EncodedCodeRef, UpdateExtensionProperties } from '../types';
 
 export namespace ExtensionProperties {
   export type FeatureFlag = {
@@ -7,12 +7,9 @@ export namespace ExtensionProperties {
     handler: EncodedCodeRef;
   };
 
-  export type ResolvedFeatureFlag = Update<
-    FeatureFlag,
-    {
-      handler: CodeRef<FeatureFlagHandler>;
-    }
-  >;
+  export type FeatureFlagCodeRefs = {
+    handler: CodeRef<FeatureFlagHandler>;
+  };
 
   export type ModelFeatureFlag = {
     /** The name of the flag to set once the CRD is detected. */
@@ -32,11 +29,9 @@ export type FeatureFlag = Extension<ExtensionProperties.FeatureFlag> & {
   type: 'console.flag';
 };
 
-export type ResolvedFeatureFlag = Update<
+export type ResolvedFeatureFlag = UpdateExtensionProperties<
   FeatureFlag,
-  {
-    properties: ExtensionProperties.ResolvedFeatureFlag;
-  }
+  ExtensionProperties.FeatureFlagCodeRefs
 >;
 
 export type ModelFeatureFlag = Extension<ExtensionProperties.ModelFeatureFlag> & {
