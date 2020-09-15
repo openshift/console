@@ -12,7 +12,6 @@ import { ALLOW_SERVICE_BINDING } from '../../../const';
 import { ServiceBindingModel } from '../../../models';
 import { getCreateConnector } from './actions';
 import {
-  getIsOperatorResource,
   getOperatorsComponentFactory,
   getOperatorTopologyDataModel,
   getDataModelReconciler,
@@ -62,7 +61,6 @@ export const operatorsTopologyPlugin: Plugin<OperatorsTopologyConsumedExtensions
       priority: 500,
       getDataModel: getOperatorTopologyDataModel,
       resources: getOperatorWatchedResources,
-      isResourceDepicted: getIsOperatorResource,
       getDataModelReconciler,
     },
   },
