@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { OverviewResourceUtil } from '@console/plugin-sdk/src';
+import { ResourceUtil } from '@console/shared';
 import {
   MockResources,
   sampleDeploymentConfigs,
@@ -39,31 +39,11 @@ declare global {
   }
 }
 
-const knativeOverviewResourceUtils: OverviewResourceUtil[] = [
-  {
-    type: 'Overview/ResourceUtil',
-    properties: {
-      getResources: getKnativeServingRevisions,
-    },
-  },
-  {
-    type: 'Overview/ResourceUtil',
-    properties: {
-      getResources: getKnativeServingConfigurations,
-    },
-  },
-  {
-    type: 'Overview/ResourceUtil',
-    properties: {
-      getResources: getKnativeServingRoutes,
-    },
-  },
-  {
-    type: 'Overview/ResourceUtil',
-    properties: {
-      getResources: getKnativeServingServices,
-    },
-  },
+const knativeOverviewResourceUtils: ResourceUtil[] = [
+  getKnativeServingRevisions,
+  getKnativeServingConfigurations,
+  getKnativeServingRoutes,
+  getKnativeServingServices,
 ];
 
 expect.extend({

@@ -4,7 +4,6 @@ import { AlertVariant } from '@patternfly/react-core';
 import {
   Plugin,
   ResourceNSNavItem,
-  OverviewCRD,
   ResourceListPage,
   ResourceDetailsPage,
   ModelFeatureFlag,
@@ -26,7 +25,6 @@ import {
 import { DashboardsStorageCapacityDropdownItem } from '@console/ceph-storage-plugin';
 import { TemplateModel, PodModel, PersistentVolumeClaimModel } from '@console/internal/models';
 import { getName } from '@console/shared/src/selectors/common';
-import { FirehoseResource } from '@console/internal/components/utils';
 import * as models from './models';
 import { VMTemplateYAMLTemplates, VirtualMachineYAMLTemplates } from './models/templates';
 import { getKubevirtHealthState } from './components/dashboards-page/overview-dashboard/health';
@@ -47,7 +45,6 @@ import './style.scss';
 
 type ConsumedExtensions =
   | ResourceNSNavItem
-  | OverviewCRD
   | ResourceListPage
   | ResourceDetailsPage
   | ModelFeatureFlag
@@ -70,60 +67,6 @@ type ConsumedExtensions =
 
 export const FLAG_KUBEVIRT = 'KUBEVIRT';
 
-const virtualMachineConfigurations = (namespace: string): FirehoseResource[] => {
-  const virtualMachineResource = [
-    {
-      isList: true,
-      kind: models.VirtualMachineModel.kind,
-      namespace,
-      prop: 'virtualmachines',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: models.VirtualMachineInstanceModel.kind,
-      namespace,
-      prop: 'virtualmachineinstances',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: TemplateModel.kind,
-      prop: 'virtualmachinetemplates',
-      selector: {
-        matchLabels: { 'template.kubevirt.io/type': 'base' },
-      },
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: models.VirtualMachineInstanceMigrationModel.kind,
-      namespace,
-      prop: 'migrations',
-      optional: true,
-    },
-    {
-      isList: true,
-      optional: true,
-      kind: PersistentVolumeClaimModel.kind,
-      prop: 'pvcs',
-    },
-    {
-      isList: true,
-      optional: true,
-      kind: models.DataVolumeModel.kind,
-      prop: 'dataVolumes',
-    },
-    {
-      isList: true,
-      optional: true,
-      kind: models.VirtualMachineImportModel.kind,
-      prop: 'vmImports',
-    },
-  ];
-  return virtualMachineResource;
-};
-
 const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'ModelDefinition',
@@ -136,15 +79,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.VirtualMachineModel,
       flag: FLAG_KUBEVIRT,
-    },
-  },
-  {
-    type: 'Overview/CRD',
-    properties: {
-      resources: virtualMachineConfigurations,
-    },
-    flags: {
-      required: [FLAG_KUBEVIRT],
     },
   },
   {
