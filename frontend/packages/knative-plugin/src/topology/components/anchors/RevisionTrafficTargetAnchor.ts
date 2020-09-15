@@ -22,7 +22,8 @@ export default class RevisionTrafficTargetAnchor extends AbstractAnchor {
     }
 
     // location is edge of outer node
-    return getEllipseAnchorPoint(bounds.getCenter(), bounds.width, bounds.height, reference);
+    const center = new Point(bounds.right() - 13, bounds.y + 13);
+    return getEllipseAnchorPoint(center, 0, 0, reference);
   }
 
   getReferencePoint(): Point {
