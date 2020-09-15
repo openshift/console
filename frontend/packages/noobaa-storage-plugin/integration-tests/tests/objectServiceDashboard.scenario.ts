@@ -9,7 +9,7 @@ import {
 } from '@console/ceph-storage-plugin/integration-tests/utils/consts';
 import { click } from '@console/shared/src/test-utils/utils';
 import {
-  efficiencyValue,
+  compressionValue,
   healthOfMCG,
   noobaaCount,
   obcCount,
@@ -82,19 +82,23 @@ if (!isRGWPresent) {
   });
 }
 
-describe('Test Object Data Reduction Card', () => {
+describe('Test Object Storage Efficiency Card', () => {
   beforeAll(async () => {
     await loadAndWait();
   });
 
   it('Check if Efficiency Ratio is in acceptable data range', async () => {
     await browser.wait(until.and(untilNoLoadersPresent));
-    await browser.wait(until.visibilityOf(efficiencyValue));
-    const effValue = await efficiencyValue.getText();
+    await browser.wait(until.visibilityOf(compressionValue));
+    const effValue = await compressionValue.getText();
     const [ratioA, ratioB] = effValue.split(':');
     const [numA, numB] = [Number(ratioA), Number(ratioB)];
-    expect(numA).toBeGreaterThan(0);
-    expect(numB).toEqual(1);
+    if (Number.isNaN(numA) || Number.isNaN(numB)) {
+      expect(effValue).toEqual('Not available');
+    } else {
+      expect(numA).toBeGreaterThan(0);
+      expect(numB).toEqual(1);
+    }
   });
 
   it('Check for savings value to be in acceptable data range', async () => {
@@ -103,7 +107,7 @@ describe('Test Object Data Reduction Card', () => {
     const [savDigits] = savVal.split(' ');
     const numSav = Number(savDigits);
     if (Number.isNaN(numSav)) {
-      expect(savVal.trim()).toEqual('No Savings');
+      expect(savVal.trim()).toEqual('Not available');
     } else {
       expect(numSav).toBeGreaterThanOrEqual(0);
     }
