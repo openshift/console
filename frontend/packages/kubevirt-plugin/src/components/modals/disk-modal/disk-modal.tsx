@@ -498,36 +498,28 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
             isRequired
             validation={busValidation}
           >
-            <FormSelect
-              onChange={React.useCallback((diskBus) => setBus(DiskBus.fromString(diskBus)), [
-                setBus,
-              ])}
-              validated={!isValidationError(busValidation) ? 'default' : 'error'}
-              value={asFormSelectValue(bus)}
-              id={asId('interface')}
+            <FormPFSelect
+              menuAppendTo={() => document.body}
               isDisabled={isDisabled('interface')}
-            >
-              <FormSelectPlaceholderOption isDisabled placeholder="--- Select Interface ---" />
-              {!validAllowedBuses.has(bus) && (
-                <FormSelectOption
-                  isDisabled
-                  key={bus.getValue()}
-                  value={bus.getValue()}
-                  label={bus.toString()}
-                />
+              selections={asFormSelectValue(bus.toString())}
+              onSelect={React.useCallback(
+                (e, diskBus) => setBus(DiskBus.fromString(diskBus.toString())),
+                [setBus],
               )}
+            >
               {[...validAllowedBuses].map((b) => (
-                <FormSelectOption
+                <SelectOption
                   key={b.getValue()}
                   value={b.getValue()}
-                  label={`${b.toString()}${
-                    recommendedBuses.size !== validAllowedBuses.size && recommendedBuses.has(b)
-                      ? ' --- Recommended ---'
-                      : ''
-                  }`}
-                />
+                  description={b.getDescription()}
+                >
+                  {b.toString()}
+                  {recommendedBuses.size !== validAllowedBuses.size && recommendedBuses.has(b)
+                    ? ' --- Recommended ---'
+                    : ''}
+                </SelectOption>
               ))}
-            </FormSelect>
+            </FormPFSelect>
           </FormRow>
           <FormRow title="Type" fieldId={asId('type')} validation={typeValidation} isRequired>
             <FormSelect

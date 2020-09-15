@@ -1,7 +1,7 @@
 /* eslint-disable lines-between-class-members */
 import { ObjectEnum } from '../../object-enum';
 import { READABLE_VIRTIO } from '../constants';
-import { NIC_MODEL_E1000E_DESC, NIC_MODEL_VIRTIO_DESC } from '../../../utils/strings';
+import { NIC_MODEL_E1000E_DESC, DISK_TYPE_VIRTIO_DESC } from '../../../utils/strings';
 import { SelectDropdownObjectEnum, SelectDropdownData } from '../../select-dropdown-object-enum';
 
 export class NetworkInterfaceModel extends SelectDropdownObjectEnum<string> {
@@ -10,7 +10,7 @@ export class NetworkInterfaceModel extends SelectDropdownObjectEnum<string> {
     { isSupported: true },
     {
       label: READABLE_VIRTIO,
-      description: NIC_MODEL_VIRTIO_DESC,
+      description: DISK_TYPE_VIRTIO_DESC,
       order: 1,
     },
   );
