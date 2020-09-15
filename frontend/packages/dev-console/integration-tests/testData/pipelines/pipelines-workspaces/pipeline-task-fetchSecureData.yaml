@@ -1,0 +1,19 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: fetch-secure-data
+spec:
+  workspaces:
+    - name: super-secret-password
+    - name: secure-store
+    - name: filedrop
+  steps:
+    - name: fetch-and-write
+      image: ubuntu
+      script: |
+        if [ "hunter2" = "$(cat $(workspaces.super-secret-password.path)/password)" ]; then
+          cp $(workspaces.secure-store.path)/recipe.txt $(workspaces.filedrop.path)
+        else
+          echo "wrong password!"
+          exit 1
+        fi
