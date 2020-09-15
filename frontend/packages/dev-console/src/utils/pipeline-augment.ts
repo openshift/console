@@ -45,6 +45,15 @@ export interface PipelineTaskRef {
   name: string;
 }
 
+export interface PipelineTaskSpec {
+  steps: {
+    name: string;
+    image?: string;
+    args?: string[];
+    script?: string[];
+  }[];
+}
+
 export interface PipelineTaskParam {
   name: string;
   value: any;
@@ -61,7 +70,8 @@ export interface PipelineTaskResource {
 export interface PipelineTask {
   name: string;
   runAfter?: string[];
-  taskRef: PipelineTaskRef;
+  taskRef?: PipelineTaskRef;
+  taskSpec?: PipelineTaskSpec;
   params?: PipelineTaskParam[];
   resources?: PipelineTaskResources;
 }
@@ -209,6 +219,7 @@ export interface Param {
 }
 
 export interface PipelineParam extends Param {
+  type?: string | string[];
   default?: string | string[];
   description?: string;
 }
