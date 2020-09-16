@@ -15,7 +15,12 @@ import {
   SplitItem,
 } from '@patternfly/react-core';
 import { isCephProvisioner, isObjectSC } from '@console/shared/src/utils';
-import { K8sResourceKind, apiVersionForModel, TemplateKind } from '@console/internal/module/k8s';
+import {
+  K8sResourceKind,
+  apiVersionForModel,
+  TemplateKind,
+  PersistentVolumeClaimKind,
+} from '@console/internal/module/k8s';
 import {
   ButtonBar,
   RequestSizeInput,
@@ -38,6 +43,7 @@ import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
+import { usePVCBaseImages } from '../../../hooks/use-pvc-base-images';
 import { DataVolumeModel } from '../../../models';
 import { createUploadPVC } from '../../../k8s/requests/cdi-upload/cdi-upload-requests';
 import { CDIUploadContext } from '../cdi-upload-provider';
@@ -50,10 +56,10 @@ import { FormSelectPlaceholderOption } from '../../form/form-select-placeholder-
 import {
   TEMPLATE_TYPE_BASE,
   TEMPLATE_TYPE_LABEL,
-  TEMPLATE_VM_GOLDEN_OS_NAMESPACE,
   TEMPLATE_VM_COMMON_NAMESPACE,
 } from '../../../constants';
 import { CDI_UPLOAD_OS_URL_PARAM, CDI_UPLOAD_SUPPORTED_TYPES_URL } from '../consts';
+
 import './upload-pvc-form.scss';
 
 const templatesResource: WatchK8sResource = {
@@ -64,13 +70,6 @@ const templatesResource: WatchK8sResource = {
   selector: {
     matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_BASE },
   },
-};
-
-const goldenPvcsResource: WatchK8sResource = {
-  isList: true,
-  optional: true,
-  kind: PersistentVolumeClaimModel.kind,
-  namespace: TEMPLATE_VM_GOLDEN_OS_NAMESPACE,
 };
 
 const uploadErrorType = {
@@ -115,9 +114,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   const [allowedAccessModes, setAllowedAccessModes] = React.useState(initialAccessModes);
   const [storageClass, setStorageClass] = React.useState('');
   const [pvcName, setPvcName] = React.useState('');
-  const [namespace, setNamespace] = React.useState(
-    osParam ? TEMPLATE_VM_GOLDEN_OS_NAMESPACE : props.namespace,
-  );
+  const [namespace, setNamespace] = React.useState(props.namespace);
   const [accessMode, setAccessMode] = React.useState('ReadWriteOnce');
   const [requestSizeValue, setRequestSizeValue] = React.useState('');
   const [requestSizeUnit, setRequestSizeUnit] = React.useState('Gi');
@@ -211,11 +208,11 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
     setIsGolden(checked);
     if (checked) {
       const operatingSystem = operatingSystems.find((newOs) => newOs.id === os);
-      setNamespace(operatingSystem?.dataVolumeNamespace || TEMPLATE_VM_GOLDEN_OS_NAMESPACE);
+      setNamespace(operatingSystem?.dataVolumeNamespace);
       if (pvcName && !os) {
         setPvcName('');
       } else {
-        setPvcName(operatingSystem?.dataVolumeName || os);
+        setPvcName(operatingSystem?.dataVolumeName);
       }
     }
     if (!checked) {
@@ -226,7 +223,8 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   const handleOs = (newOs) => {
     setOs(newOs);
     const operatingSystem = operatingSystems.find((o) => o.id === newOs);
-    setPvcName(operatingSystem?.dataVolumeName || newOs);
+    setPvcName(operatingSystem?.dataVolumeName);
+    setNamespace(operatingSystem?.dataVolumeNamespace);
   };
 
   const onlyPvcSCs = React.useCallback((sc: StorageClass) => !isObjectSC(sc), []);
@@ -234,7 +232,12 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   React.useEffect(() => {
     if (!isLoading) {
       // os url param might already have a golden image
-      const isGoldenExists = goldenPvcs?.find((pvc) => getName(pvc) === osParam);
+      const operatingSystem = operatingSystems.find((o) => o.id === osParam);
+      const isGoldenExists = goldenPvcs?.find(
+        (pvc) =>
+          getName(pvc) === operatingSystem?.dataVolumeName &&
+          getNamespace(pvc) === operatingSystem?.dataVolumeNamespace,
+      );
       if (!isGoldenExists) {
         handleOs(osParam);
       }
@@ -294,15 +297,23 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
                 placeholder="--- Pick an Operating system ---"
                 isDisabled={!!os}
               />
-              {operatingSystems.map(({ id, name, dataVolumeName }) =>
-                goldenPvcs?.find((pvc) =>
-                  dataVolumeName ? getName(pvc) === dataVolumeName : getName(pvc) === id,
+              {operatingSystems.map(({ id, name, dataVolumeName, dataVolumeNamespace }) =>
+                goldenPvcs?.find(
+                  (pvc) =>
+                    getName(pvc) === dataVolumeName && getNamespace(pvc) === dataVolumeNamespace,
                 ) ? (
                   <FormSelectOption
                     isDisabled
                     key={id}
                     value={id}
                     label={`${name || id} - Default data image already exists`}
+                  />
+                ) : !dataVolumeName ? (
+                  <FormSelectOption
+                    isDisabled
+                    key={id}
+                    value={id}
+                    label={`${name || id} - Template missing data image definition`}
                   />
                 ) : (
                   <FormSelectOption key={id} value={id} label={name || id} />
@@ -427,10 +438,7 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
   const [commonTemplates, loadedTemplates, errorTemplates] = useK8sWatchResource<TemplateKind[]>(
     templatesResource,
   );
-  const [goldenPvcs, loadedPvcs, errorPvcs] = useK8sWatchResource<K8sResourceKind[]>(
-    goldenPvcsResource,
-  );
-
+  const [goldenPvcs, loadedPvcs, errorPvcs] = usePVCBaseImages(commonTemplates);
   const { uploads, uploadData } = React.useContext(CDIUploadContext);
   const initialNamespace = props?.match?.params?.ns;
   const namespace = getNamespace(dvObj) || initialNamespace;
@@ -544,7 +552,7 @@ export type UploadPVCFormProps = {
   osParam?: string;
   isLoading: boolean;
   commonTemplates: TemplateKind[];
-  goldenPvcs: K8sResourceKind[];
+  goldenPvcs: PersistentVolumeClaimKind[];
   setIsFileRejected: React.Dispatch<React.SetStateAction<boolean>>;
   onChange: (K8sResourceKind) => void;
   handleFileChange: (value, filename, event) => void;
