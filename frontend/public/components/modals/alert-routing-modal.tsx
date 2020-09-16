@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import { useTranslation } from 'react-i18next';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { K8sResourceKind } from '../../module/k8s';
@@ -29,6 +30,7 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
 }) => {
   const [errorMessage, setErrorMessage] = React.useState();
   const [inProgress, setInProgress] = React.useState(false);
+  const { t } = useTranslation();
 
   const submit = (event): void => {
     event.preventDefault();
@@ -58,12 +60,14 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
 
   return (
     <form onSubmit={submit} name="form" className="modal-content">
-      <ModalTitle className="modal-header">Edit Routing Configuration</ModalTitle>
+      <ModalTitle className="modal-header">
+        {t('alert-routing-modal~Edit routing configuration')}
+      </ModalTitle>
       <ModalBody>
         <div className="row co-m-form-row">
           <div className="col-sm-12">
             <label htmlFor="group-by" className="control-label">
-              Group By
+              {t('alert-routing-modal~Group by')}
             </label>
           </div>
           <div className="co-m-form-col col-sm-12">
@@ -85,7 +89,7 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
         <div className="row co-m-form-row">
           <div className="col-sm-12">
             <label htmlFor="group-wait" className="control-label">
-              Group Wait
+              {t('alert-routing-modal~Group wait')}
             </label>
           </div>
           <div className="co-m-form-col col-sm-12">
@@ -107,7 +111,7 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
         <div className="row co-m-form-row">
           <div className="col-sm-12">
             <label htmlFor="group-interval" className="control-label">
-              Group Interval
+              {t('alert-routing-modal~Group interval')}
             </label>
           </div>
           <div className="co-m-form-col col-sm-12">
@@ -129,7 +133,7 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
         <div className="row co-m-form-row">
           <div className="col-sm-12">
             <label htmlFor="repeat-interval" className="control-label">
-              Repeat Interval
+              {t('alert-routing-modal~Repeat interval')}
             </label>
           </div>
           <div className="co-m-form-col col-sm-12">
@@ -153,7 +157,8 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
         inProgress={inProgress}
         errorMessage={errorMessage}
         cancel={cancel}
-        submitText="Save"
+        submitText={t('public~Save')}
+        cancelText={t('public~Cancel')}
       />
     </form>
   );

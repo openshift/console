@@ -12,6 +12,7 @@ import {
 } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { HashLink } from 'react-router-hash-link';
+import { useTranslation } from 'react-i18next';
 
 import {
   AddCircleOIcon,
@@ -157,22 +158,28 @@ export const CurrentChannel: React.FC<CurrentChannelProps> = ({ cv, clusterVersi
   );
 };
 
-const InvalidMessage: React.SFC<CVStatusMessageProps> = ({ cv }) => (
-  <>
-    <div>
-      <RedExclamationCircleIcon /> Invalid cluster version
-    </div>
-    <Button onClick={() => cancelUpdate(cv)} variant="primary">
-      Cancel update
-    </Button>
-  </>
-);
+const InvalidMessage: React.FC<CVStatusMessageProps> = ({ cv }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <div>
+        <RedExclamationCircleIcon /> {t('cluster-settings~Invalid cluster version')}
+      </div>
+      <Button onClick={() => cancelUpdate(cv)} variant="primary">
+        {t('cluster-settings~Cancel update')}
+      </Button>
+    </>
+  );
+};
 
-const UpdatesAvailableMessage: React.SFC<CVStatusMessageProps> = () => (
-  <div className="co-update-status">
-    <BlueArrowCircleUpIcon /> Available Updates
-  </div>
-);
+const UpdatesAvailableMessage: React.FC<CVStatusMessageProps> = () => {
+  const { t } = useTranslation();
+  return (
+    <div className="co-update-status">
+      <BlueArrowCircleUpIcon /> {t('cluster-settings~Available updates')}
+    </div>
+  );
+};
 
 const FailingMessageText: React.FC<CVStatusMessageProps> = ({ cv }) => {
   const failingCondition = getClusterVersionCondition(
@@ -180,11 +187,12 @@ const FailingMessageText: React.FC<CVStatusMessageProps> = ({ cv }) => {
     ClusterVersionConditionType.Failing,
     K8sResourceConditionStatus.True,
   );
+  const { t } = useTranslation();
   return (
     <div>
       <Tooltip content={truncateMiddle(failingCondition.message, { length: 256 })}>
         <span>
-          <RedExclamationCircleIcon /> Failing
+          <RedExclamationCircleIcon /> {t('cluster-settings~Failing')}
         </span>
       </Tooltip>
     </div>
@@ -193,18 +201,22 @@ const FailingMessageText: React.FC<CVStatusMessageProps> = ({ cv }) => {
 
 export const ClusterVersionConditionsLink: React.FC<ClusterVersionConditionsLinkProps> = ({
   cv,
-}) => (
-  <HashLink
-    smooth
-    to={`${resourcePathFromModel(ClusterVersionModel, cv.metadata.name)}#conditions`}
-  >
-    View conditions
-  </HashLink>
-);
+}) => {
+  const { t } = useTranslation();
+  return (
+    <HashLink
+      smooth
+      to={`${resourcePathFromModel(ClusterVersionModel, cv.metadata.name)}#conditions`}
+    >
+      {t('cluster-settings~View conditions')}
+    </HashLink>
+  );
+};
 
 export const UpdatingMessageText: React.FC<CVStatusMessageProps> = ({ cv }) => {
   const version = getDesiredClusterVersion(cv);
-  return <>Update to {version} in progress</>;
+  const { t } = useTranslation();
+  return <>{t('cluster-settings~Update to {{version}} in progress', { version })}</>;
 };
 
 const UpdatingMessage: React.FC<CVStatusMessageProps> = ({ cv, isFailing }) => {
@@ -220,21 +232,22 @@ const UpdatingMessage: React.FC<CVStatusMessageProps> = ({ cv, isFailing }) => {
   );
 };
 
-const ErrorRetrievingMessage: React.SFC<CVStatusMessageProps> = ({ cv }) => {
+const ErrorRetrievingMessage: React.FC<CVStatusMessageProps> = ({ cv }) => {
   const retrievedUpdatesCondition = getClusterVersionCondition(
     cv,
     ClusterVersionConditionType.RetrievedUpdates,
     K8sResourceConditionStatus.False,
   );
+  const { t } = useTranslation();
   return retrievedUpdatesCondition.reason === 'NoChannel' ? (
-    <span className="text-muted">No update channel selected</span>
+    <span className="text-muted">{t('cluster-settings~No update channel selected')}</span>
   ) : (
     <Tooltip content={truncateMiddle(retrievedUpdatesCondition.message, { length: 256 })}>
       <span>
         <RedExclamationCircleIcon />{' '}
         {retrievedUpdatesCondition.reason === 'VersionNotFound'
-          ? 'Version not found'
-          : 'Error retrieving'}
+          ? t('cluster-settings~Version not found')
+          : t('cluster-settings~Error retrieving')}
       </span>
     </Tooltip>
   );
@@ -249,11 +262,14 @@ const FailingMessage: React.FC<CVStatusMessageProps> = ({ cv }) => {
   );
 };
 
-const UpToDateMessage: React.SFC<{}> = () => (
-  <span>
-    <GreenCheckCircleIcon /> Up to date
-  </span>
-);
+const UpToDateMessage: React.FC<{}> = () => {
+  const { t } = useTranslation();
+  return (
+    <span>
+      <GreenCheckCircleIcon /> {t('cluster-settings~Up to date')}
+    </span>
+  );
+};
 
 export const UpdateStatus: React.FC<UpdateStatusProps> = ({ cv }) => {
   const status = getClusterUpdateStatus(cv);
@@ -277,13 +293,19 @@ export const UpdateStatus: React.FC<UpdateStatusProps> = ({ cv }) => {
 
 export const ReleaseNotesLink: React.FC<ReleaseNotesLinkProps> = ({ version }) => {
   const releaseNotesLink = getReleaseNotesLink(version);
-  return releaseNotesLink && <ExternalLink text="View release notes" href={releaseNotesLink} />;
+  const { t } = useTranslation();
+  return (
+    releaseNotesLink && (
+      <ExternalLink text={t('cluster-settings~View release notes')} href={releaseNotesLink} />
+    )
+  );
 };
 
-export const CurrentVersion: React.SFC<CurrentVersionProps> = ({ cv }) => {
+export const CurrentVersion: React.FC<CurrentVersionProps> = ({ cv }) => {
   const desiredVersion = getDesiredClusterVersion(cv);
   const lastVersion = getLastCompletedUpdate(cv);
   const status = getClusterUpdateStatus(cv);
+  const { t } = useTranslation();
 
   if (status === ClusterUpdateStatus.UpToDate || status === ClusterUpdateStatus.UpdatesAvailable) {
     return desiredVersion ? (
@@ -298,7 +320,7 @@ export const CurrentVersion: React.SFC<CurrentVersionProps> = ({ cv }) => {
     ) : (
       <>
         <YellowExclamationTriangleIcon />
-        &nbsp;Unknown
+        &nbsp;{t('cluster-settings~Unknown')}
       </>
     );
   }
@@ -313,13 +335,14 @@ export const CurrentVersion: React.SFC<CurrentVersionProps> = ({ cv }) => {
       <ReleaseNotesLink version={getLastCompletedUpdate(cv)} />
     </>
   ) : (
-    <>None</>
+    <>{t('cluster-settings~None')}</>
   );
 };
 
 export const UpdateLink: React.FC<CurrentVersionProps> = ({ cv, clusterVersionIsEditable }) => {
   const status = getClusterUpdateStatus(cv);
   const updatesAvailable = !_.isEmpty(getAvailableClusterUpdates(cv));
+  const { t } = useTranslation();
   return updatesAvailable &&
     (status === ClusterUpdateStatus.ErrorRetrieving ||
       status === ClusterUpdateStatus.Failing ||
@@ -333,47 +356,52 @@ export const UpdateLink: React.FC<CurrentVersionProps> = ({ cv, clusterVersionIs
         onClick={() => clusterUpdateModal({ cv })}
         data-test-id="cv-update-button"
       >
-        Update
+        {t('public~Update')}
       </Button>
     </div>
   ) : null;
 };
 
-export const CurrentVersionHeader: React.SFC<CurrentVersionProps> = ({ cv }) => {
+export const CurrentVersionHeader: React.FC<CurrentVersionProps> = ({ cv }) => {
   const status = getClusterUpdateStatus(cv);
+  const { t } = useTranslation();
   return (
     <>
       {status === ClusterUpdateStatus.UpToDate || status === ClusterUpdateStatus.UpdatesAvailable
-        ? 'Current Version'
-        : 'Last Completed Version'}
+        ? t('cluster-settings~Current version')
+        : t('cluster-settings~Last completed version')}
     </>
   );
 };
 
-export const ChannelDocLink: React.FC<{}> = () => (
-  <ExternalLink
-    href={`${openshiftHelpBase}updating/updating-cluster-between-minor.html#understanding-upgrade-channels_updating-cluster-between-minor`}
-    text="Learn more about OpenShift update channels"
-  />
-);
+export const ChannelDocLink: React.FC<{}> = () => {
+  const { t } = useTranslation();
+  return (
+    <ExternalLink
+      href={`${openshiftHelpBase}updating/updating-cluster-between-minor.html#understanding-upgrade-channels_updating-cluster-between-minor`}
+      text={t('cluster-settings~Learn more about OpenShift update channels')}
+    />
+  );
+};
 
 const ChannelHeader: React.FC<{}> = () => {
+  const { t } = useTranslation();
   return (
     <Popover
-      headerContent={<>Channel</>}
+      headerContent={<>{t('cluster-settings~Channel')}</>}
       bodyContent={
         <>
           <p>
-            Channels help to control the pace of updates and recommend the appropriate release
-            versions. Update channels are tied to a minor version of OpenShift Container Platform,
-            for example 4.5.
+            {t(
+              'cluster-settings~Channels help to control the pace of updates and recommend the appropriate release versions. Update channels are tied to a minor version of OpenShift Container Platform, for example 4.5.',
+            )}
           </p>
           <ChannelDocLink />
         </>
       }
     >
       <Button variant="plain" className="details-item__popover-button">
-        Channel
+        {t('cluster-settings~Channel')}
       </Button>
     </Popover>
   );
@@ -435,10 +463,15 @@ export const ChannelVersion: React.FC<ChannelVersionProps> = ({ children, curren
 
 const ChannelVersionDot: React.FC<ChannelVersionDotProps> = ({ current, version }) => {
   const releaseNotesLink = getReleaseNotesLink(version);
+  const { t } = useTranslation();
 
   return releaseNotesLink ? (
     <Popover
-      headerContent={<>Version {version}</>}
+      headerContent={
+        <>
+          {t('cluster-settings~Version')} {version}
+        </>
+      }
       bodyContent={<ReleaseNotesLink version={version} />}
     >
       <Button
@@ -486,15 +519,19 @@ export const WorkerNodes: React.FC<WorkerNodesProps> = ({
   totalWorkerNodes,
   updatedWorkerNodes,
 }) => {
+  const { t } = useTranslation();
   return (
     <UpdatesGroup divided>
       <UpdatesType>
-        <Link to="/k8s/cluster/nodes?rowFilter-node-role=worker">Worker Nodes</Link>
+        <Link to="/k8s/cluster/nodes?rowFilter-node-role=worker">
+          {t('cluster-settings~Worker nodes')}
+        </Link>
         <Popover
           bodyContent={
             <>
-              Worker nodes may continue to update after the update of master nodes and operators are
-              complete.
+              {t(
+                'cluster-settings~Worker nodes may continue to update after the update of master nodes and operators are complete.',
+              )}
             </>
           }
         >
@@ -509,7 +546,10 @@ export const WorkerNodes: React.FC<WorkerNodesProps> = ({
       </UpdatesType>
       <UpdatesBar>
         <Progress
-          title={`${updatedWorkerNodes} of ${totalWorkerNodes}`}
+          title={t('cluster-settings~{{updatedWorkerNodes}} of {{totalWorkerNodes}}', {
+            updatedWorkerNodes,
+            totalWorkerNodes,
+          })}
           value={!_.isNaN(percentWorkerNodes) ? percentWorkerNodes : null}
           size={ProgressSize.sm}
           variant={percentWorkerNodes === 100 ? ProgressVariant.success : null}
@@ -528,6 +568,7 @@ export const UpdatesGraph: React.FC<UpdatesGraphProps> = ({ cv }) => {
   const currentPrefix = splitClusterVersionChannel(currentChannel)?.prefix;
   const similarChannels = getSimilarClusterVersionChannels(cv, currentPrefix);
   const newerChannel = getNewerClusterVersionChannel(similarChannels, currentChannel);
+  const { t } = useTranslation();
 
   return (
     <div className="co-cluster-settings__updates-graph">
@@ -550,7 +591,7 @@ export const UpdatesGraph: React.FC<UpdatesGraphProps> = ({ cv }) => {
                 className="co-channel-more-versions"
                 onClick={() => clusterMoreUpdatesModal({ cv })}
               >
-                + More
+                {t('cluster-settings~+ More')}
               </Button>
             )}
           </ChannelLine>
@@ -563,7 +604,9 @@ export const UpdatesGraph: React.FC<UpdatesGraphProps> = ({ cv }) => {
             )}
           </ChannelLine>
         </ChannelPath>
-        <ChannelName current>{currentChannel} channel</ChannelName>
+        <ChannelName current>
+          {t('cluster-settings~{{currentChannel}} channel', { currentChannel })}
+        </ChannelName>
       </Channel>
       {newerChannel && (
         <Channel>
@@ -574,7 +617,9 @@ export const UpdatesGraph: React.FC<UpdatesGraphProps> = ({ cv }) => {
             <ChannelLine />
             <ChannelLine />
           </ChannelPath>
-          <ChannelName>{newerChannel} channel</ChannelName>
+          <ChannelName>
+            {t('cluster-settings~{{newerChannel}} channel', { newerChannel })}
+          </ChannelName>
         </Channel>
       )}
     </div>
@@ -612,16 +657,22 @@ export const UpdateInProgress: React.FC<UpdateInProgressProps> = ({
       ? masterMachinePoolConfig?.status?.updatedMachineCount
       : 0;
   const percentMasterNodes = calculatePercentage(updatedMasterNodes, totalMasterNodes);
+  const { t } = useTranslation();
 
   return (
     <UpdatesProgress>
       <UpdatesGroup>
         <UpdatesType>
-          <Link to="/settings/cluster/clusteroperators">Cluster Operators</Link>
+          <Link to="/settings/cluster/clusteroperators">
+            {t('cluster-settings~Cluster operators')}
+          </Link>
         </UpdatesType>
         <UpdatesBar>
           <Progress
-            title={`${updatedOperatorsCount} of ${totalOperatorsCount}`}
+            title={t('cluster-settings~{{updatedOperatorsCount}} of {{totalOperatorsCount}}', {
+              updatedOperatorsCount,
+              totalOperatorsCount,
+            })}
             value={!_.isNaN(percentOperators) ? percentOperators : null}
             size={ProgressSize.sm}
             variant={percentOperators === 100 ? ProgressVariant.success : null}
@@ -631,11 +682,16 @@ export const UpdateInProgress: React.FC<UpdateInProgressProps> = ({
       {masterMachinePoolConfig && (
         <UpdatesGroup>
           <UpdatesType>
-            <Link to="/k8s/cluster/nodes?rowFilter-node-role=master">Master Nodes</Link>
+            <Link to="/k8s/cluster/nodes?rowFilter-node-role=master">
+              {t('cluster-settings~Master nodes')}
+            </Link>
           </UpdatesType>
           <UpdatesBar>
             <Progress
-              title={`${updatedMasterNodes} of ${totalMasterNodes}`}
+              title={t('cluster-settings~{{updatedMasterNodes}} of {{totalMasterNodes}}', {
+                updatedMasterNodes,
+                totalMasterNodes,
+              })}
               value={!_.isNaN(percentMasterNodes) ? percentMasterNodes : null}
               size={ProgressSize.sm}
               variant={percentMasterNodes === 100 ? ProgressVariant.success : null}
@@ -694,6 +750,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
       .then(() => removeQueryArgument('showChannels'))
       .catch(_.noop);
   }
+  const { t } = useTranslation();
 
   return (
     <>
@@ -714,7 +771,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
               <div className="co-cluster-settings__section">
                 <div className="co-cluster-settings__row">
                   <dl className="co-m-pane__details co-cluster-settings__details co-cluster-settings__details--status">
-                    <dt>Update Status</dt>
+                    <dt>{t('cluster-settings~Update status')}</dt>
                     <dd>
                       <UpdateStatus cv={cv} />
                     </dd>
@@ -770,17 +827,21 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
           <dl className="co-m-pane__details">
             {window.SERVER_FLAGS.branding !== 'okd' && window.SERVER_FLAGS.branding !== 'azure' && (
               <>
-                <dt>Subscription</dt>
+                <dt>{t('cluster-settings~Subscription')}</dt>
                 <dd>
-                  <ExternalLink text="OpenShift Cluster Manager" href={getOCMLink(clusterID)} />.
+                  <ExternalLink
+                    text={t('cluster-settings~OpenShift Cluster Manager')}
+                    href={getOCMLink(clusterID)}
+                  />
+                  .
                 </dd>
               </>
             )}
-            <dt>Cluster ID</dt>
+            <dt>{t('cluster-settings~Cluster ID')}</dt>
             <dd className="co-break-all co-select-to-copy" data-test-id="cv-details-table-cid">
               {clusterID}
             </dd>
-            <dt>Desired Release Image</dt>
+            <dt>{t('cluster-settings~Desired release image')}</dt>
             <dd className="co-break-all co-select-to-copy" data-test-id="cv-details-table-image">
               {imageParts.length === 2 ? (
                 <>
@@ -791,16 +852,16 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
                 desiredImage || '-'
               )}
             </dd>
-            <dt>Cluster Version Configuration</dt>
+            <dt>{t('cluster-settings~Cluster version configuration')}</dt>
             <dd>
               <ResourceLink kind={referenceForModel(ClusterVersionModel)} name={cv.metadata.name} />
             </dd>
-            <dt>Cluster Autoscaler</dt>
+            <dt>{t('cluster-settings~Cluster autoscaler')}</dt>
             <dd>
               {_.isEmpty(autoscalers) ? (
                 <Link to={`${resourcePathFromModel(ClusterAutoscalerModel)}/~new`}>
                   <AddCircleOIcon className="co-icon-space-r" />
-                  Create Autoscaler
+                  {t('cluster-settings~Create autoscaler')}
                 </Link>
               ) : (
                 autoscalers.map((autoscaler) => (
@@ -817,19 +878,21 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="Update History" />
+        <SectionHeading text={t('cluster-settings~Update history')} />
         {_.isEmpty(history) ? (
-          <EmptyBox label="History" />
+          <EmptyBox label={t('cluster-settings~History')} />
         ) : (
           <div className="co-table-container">
             <table className="table">
               <thead>
                 <tr>
-                  <th>Version</th>
-                  <th>State</th>
-                  <th>Started</th>
-                  <th>Completed</th>
-                  {releaseNotes && <th className="hidden-xs hidden-sm">Release Notes</th>}
+                  <th>{t('cluster-settings~Version')}</th>
+                  <th>{t('cluster-settings~State')}</th>
+                  <th>{t('cluster-settings~Started')}</th>
+                  <th>{t('cluster-settings~Completed')}</th>
+                  {releaseNotes && (
+                    <th className="hidden-xs hidden-sm">{t('cluster-settings~Release notes')}</th>
+                  )}
                 </tr>
               </thead>
               <tbody>
@@ -872,35 +935,35 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
   );
 };
 
-export const ClusterOperatorTabPage: React.SFC<ClusterOperatorTabPageProps> = ({ obj: cv }) => (
+export const ClusterOperatorTabPage: React.FC<ClusterOperatorTabPageProps> = ({ obj: cv }) => (
   <ClusterOperatorPage cv={cv} autoFocus={false} showTitle={false} />
 );
 
-const pages = [
-  {
-    href: '',
-    name: 'Details',
-    component: ClusterVersionDetailsTable,
-  },
-  {
-    href: 'clusteroperators',
-    name: 'Cluster Operators',
-    component: ClusterOperatorTabPage,
-  },
-  {
-    href: 'globalconfig',
-    name: 'Global Configuration',
-    component: GlobalConfigPage,
-  },
-];
-
-export const ClusterSettingsPage: React.SFC<ClusterSettingsPageProps> = ({ match }) => {
-  const title = 'Cluster Settings';
+export const ClusterSettingsPage: React.FC<ClusterSettingsPageProps> = ({ match }) => {
+  const { t } = useTranslation();
+  const title = t('cluster-settings~Cluster Settings');
   const resources = [
     { kind: clusterVersionReference, name: 'version', isList: false, prop: 'obj' },
     { kind: clusterAutoscalerReference, isList: true, prop: 'autoscalers', optional: true },
   ];
   const resourceKeys = _.map(resources, 'prop');
+  const pages = [
+    {
+      href: '',
+      name: t('cluster-settings~Details'),
+      component: ClusterVersionDetailsTable,
+    },
+    {
+      href: 'clusteroperators',
+      name: ClusterOperatorModel.labelPlural,
+      component: ClusterOperatorTabPage,
+    },
+    {
+      href: 'globalconfig',
+      name: t('cluster-settings~Global configuration'),
+      component: GlobalConfigPage,
+    },
+  ];
   return (
     <>
       <Helmet>

@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
+import { Trans, useTranslation } from 'react-i18next';
 import { MinusCircleIcon, PlusCircleIcon, InfoCircleIcon } from '@patternfly/react-icons';
 import { Button, Tooltip } from '@patternfly/react-core';
 
@@ -67,13 +68,17 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
     });
   };
 
+  const { t } = useTranslation();
+
   const InvalidLabelName = () => (
     <span data-test-id="invalid-label-name-error">
-      Invalid name.
+      {t('routing-labels-editor~Invalid name.')}
       <Tooltip
         content={
           <p>
-            Label name must not begin with a digit and contain only alphanumeric characters or '_'.
+            {t(
+              "routing-labels-editor~Label name must not begin with a digit and contain only alphanumeric characters or '_'.",
+            )}
           </p>
         }
       >
@@ -84,15 +89,24 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
 
   return (
     <div data-test-id="receiver-routing-labels-editor" className="form-group">
-      <SectionHeading text="Routing Labels" required={!isDefaultReceiver} />
+      <SectionHeading
+        text={t('routing-labels-editor~Routing labels')}
+        required={!isDefaultReceiver}
+      />
       <p className="co-help-text">
-        Firing alerts with labels that match all of these selectors will be sent to this receiver.
-        Label values can be matched exactly or with a &nbsp;
-        <ExternalLink href="https://github.com/google/re2/wiki/Syntax" text="regular expression" />.
+        <Trans ns="routing-labels-editor">
+          Firing alerts with labels that match all of these selectors will be sent to this receiver.
+          Label values can be matched exactly or with a{' '}
+          <ExternalLink
+            href="https://github.com/google/re2/wiki/Syntax"
+            text={t('routing-labels-editor~regular expression')}
+          />
+          .
+        </Trans>
       </p>
       <div className="row monitoring-grid-head text-secondary text-uppercase">
-        <div className="col-xs-5">Name</div>
-        <div className="col-xs-6">Value</div>
+        <div className="col-xs-5">{t('routing-labels-editor~Name')}</div>
+        <div className="col-xs-6">{t('routing-labels-editor~Value')}</div>
       </div>
       {isDefaultReceiver && (
         <div className="row form-group" key="default">
@@ -174,7 +188,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
                           onChange={(e) => onRoutingLabelRegexChange(e, i)}
                           checked={routeLabel.isRegex}
                         />
-                        Regular Expression
+                        {t('routing-labels-editor~Regular expression')}
                       </label>
                     </div>
                   </div>
@@ -182,11 +196,11 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
               </div>
             </div>
             <div className="col-xs-2 pairs-list__action">
-              <Tooltip content="Remove">
+              <Tooltip content={t('routing-labels-editor~Remove')}>
                 <Button
                   type="button"
                   onClick={() => removeRoutingLabel(i)}
-                  aria-label="Remove"
+                  aria-label={t('routing-labels-editor~Remove')}
                   isDisabled={!isDefaultReceiver && formValues.routeLabels.length <= 1}
                   variant="plain"
                   data-test-id="remove-routing-label"
@@ -210,7 +224,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
         <span className="help-block">
           {formValues.routeLabelDuplicateNamesError ? (
             <span data-test-id="duplicate-label-name-error">
-              Routing label names must be unique.
+              {t('routing-labels-editor~Routing label names must be unique.')}
             </span>
           ) : (
             ''
@@ -226,7 +240,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
           data-test-id="add-routing-label"
         >
           <PlusCircleIcon className="co-icon-space-r" />
-          Add Label
+          {t('routing-labels-editor~Add label')}
         </Button>
       )}
     </div>

@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import { Trans, withTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { SecretModel, ConfigMapModel } from '../../models';
@@ -9,7 +11,10 @@ import { addIDP, getOAuthResource, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
 
-export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
+class AddGitHubPageWithTranslation extends PromiseComponent<
+  AddGitHubPageProps,
+  AddGitHubPageState
+> {
   readonly state: AddGitHubPageState = {
     name: 'github',
     clientID: '',
@@ -98,7 +103,11 @@ export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
   submit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     if (this.state.organizations.length > 0 && this.state.teams.length > 0) {
-      this.setState({ errorMessage: 'Specify either organizations or teams, but not both.' });
+      this.setState({
+        errorMessage: this.props.t(
+          'github-idp-form~Specify either organizations or teams, but not both.',
+        ),
+      });
       return;
     }
 
@@ -153,7 +162,8 @@ export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
 
   render() {
     const { name, clientID, clientSecret, hostname, caFileContent } = this.state;
-    const title = 'Add Identity Provider: GitHub';
+    const { t } = this.props;
+    const title = t('github-idp-form~Add Identity Provider: GitHub');
     return (
       <div className="co-m-pane__body">
         <Helmet>
@@ -162,14 +172,14 @@ export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
         <form onSubmit={this.submit} name="form" className="co-m-pane__body-group co-m-pane__form">
           <h1 className="co-m-pane__heading">{title}</h1>
           <p className="co-m-pane__explanation">
-            You can use the GitHub integration to connect to either GitHub or GitHub Enterprise. For
-            GitHub Enterprise, you must provide the hostname of your instance and can optionally
-            provide a CA certificate bundle to use in requests to the server.
+            {t(
+              'github-idp-form~You can use the GitHub integration to connect to either GitHub or GitHub Enterprise. For GitHub Enterprise, you must provide the hostname of your instance and can optionally provide a CA certificate bundle to use in requests to the server.',
+            )}
           </p>
           <IDPNameInput value={name} onChange={this.nameChanged} />
           <div className="form-group">
             <label className="control-label co-required" htmlFor="client-id">
-              Client ID
+              {t('github-idp-form~Client ID')}
             </label>
             <input
               className="pf-c-form-control"
@@ -182,7 +192,7 @@ export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
           </div>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="client-secret">
-              Client Secret
+              {t('github-idp-form~Client secret')}
             </label>
             <input
               className="pf-c-form-control"
@@ -195,7 +205,7 @@ export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
           </div>
           <div className="form-group">
             <label className="control-label" htmlFor="hostname">
-              Hostname
+              {t('github-idp-form~Hostname')}
             </label>
             <input
               className="pf-c-form-control"
@@ -206,41 +216,49 @@ export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
               aria-describedby="idp-hostname-help"
             />
             <p className="help-block" id="idp-hostname-help">
-              Optional domain for use with a hosted instance of GitHub Enterprise.
+              {t(
+                'github-idp-form~Optional domain for use with a hosted instance of GitHub Enterprise.',
+              )}
             </p>
           </div>
           <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
           <div className="co-form-section__separator" />
-          <h3>Organizations</h3>
+          <h3>{t('github-idp-form~Organizations')}</h3>
           <p className="co-help-text">
-            Optionally list organizations. If specified, only GitHub users that are members of at
-            least one of the listed organizations will be allowed to log in. Cannot be used in
-            combination with <strong>teams</strong>.
+            <Trans i18nKey="teams-help" ns="github-idp-form">
+              Optionally list organizations. If specified, only GitHub users that are members of at
+              least one of the listed organizations will be allowed to log in. Cannot be used in
+              combination with <strong>teams</strong>.
+            </Trans>
           </p>
           <ListInput
-            label="Organization"
+            label={t('github-idp-form~Organization')}
             onChange={this.organizationsChanged}
-            helpText="Restricts which organizations are allowed to log in."
+            helpText={t('github-idp-form~Restricts which organizations are allowed to log in.')}
           />
           <div className="co-form-section__separator" />
-          <h3>Teams</h3>
+          <h3>{t('github-idp-form~Teams')}</h3>
           <p className="co-help-text">
-            Optionally list teams. If specified, only GitHub users that are members of at least one
-            of the listed teams will be allowed to log in. Cannot be used in combination with{' '}
-            <strong>organizations</strong>.
+            <Trans i18nKey="organizations-help" ns="github-idp-form">
+              Optionally list teams. If specified, only GitHub users that are members of at least
+              one of the listed teams will be allowed to log in. Cannot be used in combination with{' '}
+              <strong>organizations</strong>.
+            </Trans>
           </p>
           <ListInput
-            label="Team"
+            label={t('github-idp-form~Team')}
             onChange={this.teamsChanged}
-            helpText="Restricts which teams are allowed to log in. The format is <org>/<team>."
+            helpText={t(
+              'github-idp-form~Restricts which teams are allowed to log in. The format is <org>/<team>.',
+            )}
           />
           <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
             <ActionGroup className="pf-c-form">
               <Button type="submit" variant="primary" data-test-id="add-idp">
-                Add
+                {t('public~Add')}
               </Button>
               <Button type="button" variant="secondary" onClick={history.goBack}>
-                Cancel
+                {t('public~Cancel')}
               </Button>
             </ActionGroup>
           </ButtonBar>
@@ -249,6 +267,8 @@ export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
     );
   }
 }
+
+export const AddGitHubPage = withTranslation()(AddGitHubPageWithTranslation);
 
 export type AddGitHubPageState = {
   name: string;
@@ -260,4 +280,8 @@ export type AddGitHubPageState = {
   caFileContent: string;
   inProgress: boolean;
   errorMessage: string;
+};
+
+type AddGitHubPageProps = {
+  t: TFunction;
 };

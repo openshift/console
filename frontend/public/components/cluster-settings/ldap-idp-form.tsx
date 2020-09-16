@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
+import { withTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { ConfigMapModel, SecretModel } from '../../models';
@@ -10,7 +12,7 @@ import { addIDP, getOAuthResource, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
 
-export class AddLDAPPage extends PromiseComponent<{}, AddLDAPPageState> {
+class AddLDAPPageWithTranslation extends PromiseComponent<AddLDAPPageProps, AddLDAPPageState> {
   readonly state: AddLDAPPageState = {
     name: 'ldap',
     url: '',
@@ -193,7 +195,8 @@ export class AddLDAPPage extends PromiseComponent<{}, AddLDAPPageState> {
       attributesName,
       caFileContent,
     } = this.state;
-    const title = 'Add Identity Provider: LDAP';
+    const { t } = this.props;
+    const title = t('ldap-idp-form~Add Identity Provider: LDAP');
     return (
       <div className="co-m-pane__body">
         <Helmet>
@@ -201,11 +204,13 @@ export class AddLDAPPage extends PromiseComponent<{}, AddLDAPPageState> {
         </Helmet>
         <form onSubmit={this.submit} name="form" className="co-m-pane__body-group co-m-pane__form">
           <h1 className="co-m-pane__heading">{title}</h1>
-          <p className="co-m-pane__explanation">Integrate with an LDAP identity provider.</p>
+          <p className="co-m-pane__explanation">
+            {t('ldap-idp-form~Integrate with an LDAP identity provider.')}
+          </p>
           <IDPNameInput value={name} onChange={this.nameChanged} />
           <div className="form-group">
             <label className="control-label co-required" htmlFor="url">
-              URL
+              {t('ldap-idp-form~URL')}
             </label>
             <input
               className="pf-c-form-control"
@@ -217,12 +222,14 @@ export class AddLDAPPage extends PromiseComponent<{}, AddLDAPPageState> {
               aria-describedby="url-help"
             />
             <div className="help-block" id="url-help">
-              An RFC 2255 URL which specifies the LDAP search parameters to use.
+              {t(
+                'ldap-idp-form~An RFC 2255 URL which specifies the LDAP search parameters to use.',
+              )}
             </div>
           </div>
           <div className="form-group">
             <label className="control-label" htmlFor="bind-dn">
-              Bind DN
+              {t('ldap-idp-form~Bind DN')}
             </label>
             <input
               className="pf-c-form-control"
@@ -233,12 +240,12 @@ export class AddLDAPPage extends PromiseComponent<{}, AddLDAPPageState> {
               aria-describedby="bind-dn-help"
             />
             <div className="help-block" id="bind-dn-help">
-              DN to bind with during the search phase.
+              {t('ldap-idp-form~DN to bind with during the search phase.')}
             </div>
           </div>
           <div className="form-group">
             <label className="control-label" htmlFor="bind-password">
-              Bind Password
+              {t('ldap-idp-form~Bind password')}
             </label>
             <input
               className="pf-c-form-control"
@@ -249,46 +256,56 @@ export class AddLDAPPage extends PromiseComponent<{}, AddLDAPPageState> {
               aria-describedby="bind-password-help"
             />
             <div className="help-block" id="bind-password-help">
-              Password to bind with during the search phase.
+              {t('ldap-idp-form~Password to bind with during the search phase.')}
             </div>
           </div>
           <div className="co-form-section__separator" />
-          <h3>Attributes</h3>
-          <p className="co-help-text">Attributes map LDAP attributes to identities.</p>
+          <h3>{t('ldap-idp-form~Attributes')}</h3>
+          <p className="co-help-text">
+            {t('ldap-idp-form~Attributes map LDAP attributes to identities.')}
+          </p>
           <ListInput
-            label="ID"
+            label={t('ldap-idp-form~ID')}
             required
             initialValues={attributesID}
             onChange={this.attributesIDChanged}
-            helpText="The list of attributes whose values should be used as the user ID."
+            helpText={t(
+              'ldap-idp-form~The list of attributes whose values should be used as the user ID.',
+            )}
           />
           <ListInput
-            label="Preferred Username"
+            label={t('ldap-idp-form~Preferred username')}
             initialValues={attributesPreferredUsername}
             onChange={this.attributesPreferredUsernameChanged}
-            helpText="The list of attributes whose values should be used as the preferred username."
+            helpText={t(
+              'ldap-idp-form~The list of attributes whose values should be used as the preferred username.',
+            )}
           />
           <ListInput
-            label="Name"
+            label={t('ldap-idp-form~Name')}
             initialValues={attributesName}
             onChange={this.attributesNameChanged}
-            helpText="The list of attributes whose values should be used as the display name."
+            helpText={t(
+              'ldap-idp-form~The list of attributes whose values should be used as the display name.',
+            )}
           />
           <ListInput
-            label="Email"
+            label={t('ldap-idp-form~Email')}
             onChange={this.attributesEmailChanged}
-            helpText="The list of attributes whose values should be used as the email address."
+            helpText={t(
+              'ldap-idp-form~The list of attributes whose values should be used as the email address.',
+            )}
           />
           <div className="co-form-section__separator" />
-          <h3>More Options</h3>
+          <h3>{t('ldap-idp-form~More options')}</h3>
           <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
           <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
             <ActionGroup className="pf-c-form">
               <Button type="submit" variant="primary" data-test-id="add-idp">
-                Add
+                {t('public~Add')}
               </Button>
               <Button type="button" variant="secondary" onClick={history.goBack}>
-                Cancel
+                {t('public~Cancel')}
               </Button>
             </ActionGroup>
           </ButtonBar>
@@ -297,6 +314,8 @@ export class AddLDAPPage extends PromiseComponent<{}, AddLDAPPageState> {
     );
   }
 }
+
+export const AddLDAPPage = withTranslation()(AddLDAPPageWithTranslation);
 
 export type AddLDAPPageState = {
   name: string;
@@ -310,4 +329,8 @@ export type AddLDAPPageState = {
   caFileContent: string;
   inProgress: boolean;
   errorMessage: string;
+};
+
+type AddLDAPPageProps = {
+  t: TFunction;
 };

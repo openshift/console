@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
 import { K8sResourceKindReference, K8sResourceKind } from '../module/k8s';
 import { LimitRangeModel } from '../models';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
@@ -54,49 +55,51 @@ export const LimitRangeTableRow: RowFunction<K8sResourceKind> = ({ obj, index, k
   );
 };
 
-export const LimitRangeTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Namespace',
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-      id: 'namespace',
-    },
-    {
-      title: 'Created',
-      sortField: 'metadata.creationTimestamp',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[3] },
-    },
-  ];
+export const LimitRangeList: React.FC = (props) => {
+  const { t } = useTranslation();
+  const LimitRangeTableHeader = () => {
+    return [
+      {
+        title: t('limit-range~Name'),
+        sortField: 'metadata.name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[0] },
+      },
+      {
+        title: t('limit-range~Namespace'),
+        sortField: 'metadata.namespace',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[1] },
+        id: 'namespace',
+      },
+      {
+        title: t('limit-range~Created'),
+        sortField: 'metadata.creationTimestamp',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[2] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[3] },
+      },
+    ];
+  };
+
+  return (
+    <Table
+      {...props}
+      aria-label={LimitRangeModel.labelPlural}
+      Header={LimitRangeTableHeader}
+      Row={LimitRangeTableRow}
+      virtualize
+    />
+  );
 };
-LimitRangeTableHeader.displayName = 'LimitRangeTableHeader';
 
-export const LimitRangeList: React.SFC = (props) => (
-  <Table
-    {...props}
-    aria-label="Limit Ranges"
-    Header={LimitRangeTableHeader}
-    Row={LimitRangeTableRow}
-    virtualize
-  />
-);
-
-export const LimitRangeListPage: React.SFC<LimitRangeListPageProps> = (props) => (
+export const LimitRangeListPage: React.FC<LimitRangeListPageProps> = (props) => (
   <ListPage
     {...props}
-    title="Limit Ranges"
+    title={LimitRangeModel.labelPlural}
     kind={LimitRangeReference}
     ListComponent={LimitRangeList}
     canCreate={true}
@@ -143,20 +146,21 @@ const LimitRangeDetailsRows: React.SFC<LimitRangeDetailsRowsProps> = ({ limit })
 };
 
 export const LimitRangeDetailsList = (resource) => {
+  const { t } = useTranslation();
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text="Limits" />
+      <SectionHeading text={t('limit-range~Limits')} />
       <div className="table-responsive">
         <table className="co-m-table-grid co-m-table-grid--bordered table">
           <thead className="co-m-table-grid__head">
             <tr>
-              <td>Type</td>
-              <td>Resource</td>
-              <td>Min</td>
-              <td>Max</td>
-              <td>Default Request</td>
-              <td>Default Limit</td>
-              <td>Max Limit/Request Ratio</td>
+              <td>{t('limit-range~Type')}</td>
+              <td>{t('limit-range~Resource')}</td>
+              <td>{t('limit-range~Min')}</td>
+              <td>{t('limit-range~Max')}</td>
+              <td>{t('limit-range~Default request')}</td>
+              <td>{t('limit-range~Default limit')}</td>
+              <td>{t('limit-range~Max limit/request ratio')}</td>
             </tr>
           </thead>
           <tbody className="co-m-table-grid__body">
@@ -170,23 +174,27 @@ export const LimitRangeDetailsList = (resource) => {
   );
 };
 
-const Details = ({ obj: rq }) => (
-  <>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Limit Range Details" />
-      <ResourceSummary resource={rq} />
-    </div>
-    <LimitRangeDetailsList resource={rq} />
-  </>
-);
-
-export const LimitRangeDetailsPage = (props) => (
-  <DetailsPage
-    {...props}
-    menuActions={menuActions}
-    pages={[navFactory.details(Details), navFactory.editYaml()]}
-  />
-);
+export const LimitRangeDetailsPage = (props) => {
+  const { t } = useTranslation();
+  const Details = ({ obj: rq }) => (
+    <>
+      <div className="co-m-pane__body">
+        <SectionHeading
+          text={t('limit-range~{{resource}} details', { resource: LimitRangeModel.label })}
+        />
+        <ResourceSummary resource={rq} />
+      </div>
+      <LimitRangeDetailsList resource={rq} />
+    </>
+  );
+  return (
+    <DetailsPage
+      {...props}
+      menuActions={menuActions}
+      pages={[navFactory.details(Details), navFactory.editYaml()]}
+    />
+  );
+};
 
 export type LimitRangeProps = {
   obj: any;

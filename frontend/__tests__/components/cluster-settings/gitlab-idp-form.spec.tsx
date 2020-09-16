@@ -9,6 +9,19 @@ import {
 } from '../../../public/components/cluster-settings/gitlab-idp-form';
 import { controlButtonTest } from './basicauth-idp-form.spec';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    withTranslation: () => (Component) => {
+      Component.defaultProps = { ...Component.defaultProps, t: (s) => s };
+      return Component;
+    },
+  };
+});
+
+const i18nNS = 'gitlab-idp-form';
+
 describe('Add Identity Provider: GitLab', () => {
   let wrapper: ShallowWrapper<{}, AddGitLabPageState>;
 
@@ -21,7 +34,7 @@ describe('Add Identity Provider: GitLab', () => {
   });
 
   it('should render correct GitLab IDP page title', () => {
-    expect(wrapper.contains('Add Identity Provider: GitLab')).toBeTruthy();
+    expect(wrapper.contains(`${i18nNS}~Add Identity Provider: GitLab`)).toBeTruthy();
   });
 
   it('should render the form elements of AddGitLabPage component', () => {
@@ -33,7 +46,7 @@ describe('Add Identity Provider: GitLab', () => {
   });
 
   it('should render control buttons in a button bar', () => {
-    controlButtonTest(wrapper);
+    controlButtonTest(wrapper, 'public');
   });
 
   it('should prefill gitlab in name field by default', () => {

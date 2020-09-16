@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import { withTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { SecretModel } from '../../models';
@@ -8,7 +10,10 @@ import { ButtonBar, PromiseComponent, history } from '../utils';
 import { addIDP, getOAuthResource, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 
-export class AddGooglePage extends PromiseComponent<{}, AddGooglePageState> {
+class AddGooglePageWithTranslation extends PromiseComponent<
+  AddGooglePageProps,
+  AddGooglePageState
+> {
   readonly state: AddGooglePageState = {
     name: 'google',
     clientID: '',
@@ -97,7 +102,8 @@ export class AddGooglePage extends PromiseComponent<{}, AddGooglePageState> {
 
   render() {
     const { name, clientID, clientSecret, hostedDomain } = this.state;
-    const title = 'Add Identity Provider: Google';
+    const { t } = this.props;
+    const title = t('google-idp-form~Add Identity Provider: Google');
     return (
       <div className="co-m-pane__body">
         <Helmet>
@@ -106,12 +112,14 @@ export class AddGooglePage extends PromiseComponent<{}, AddGooglePageState> {
         <form onSubmit={this.submit} name="form" className="co-m-pane__body-group co-m-pane__form">
           <h1 className="co-m-pane__heading">{title}</h1>
           <p className="co-m-pane__explanation">
-            You can use Google integration for users authenticating with Google credentials.
+            {t(
+              'google-idp-form~You can use Google integration for users authenticating with Google credentials.',
+            )}
           </p>
           <IDPNameInput value={name} onChange={this.nameChanged} />
           <div className="form-group">
             <label className="control-label co-required" htmlFor="client-id">
-              Client ID
+              {t('google-idp-form~Client ID')}
             </label>
             <input
               className="pf-c-form-control"
@@ -124,7 +132,7 @@ export class AddGooglePage extends PromiseComponent<{}, AddGooglePageState> {
           </div>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="client-secret">
-              Client Secret
+              {t('google-idp-form~Client secret')}
             </label>
             <input
               className="pf-c-form-control"
@@ -137,7 +145,7 @@ export class AddGooglePage extends PromiseComponent<{}, AddGooglePageState> {
           </div>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="hosted-domain">
-              Hosted Domain
+              {t('google-idp-form~Hosted domain')}
             </label>
             <input
               className="pf-c-form-control"
@@ -149,16 +157,16 @@ export class AddGooglePage extends PromiseComponent<{}, AddGooglePageState> {
               required
             />
             <p className="help-block" id="idp-hosted-domain-help">
-              Restrict users to a Google App domain.
+              {t('google-idp-form~Restrict users to a Google App domain.')}
             </p>
           </div>
           <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
             <ActionGroup className="pf-c-form">
               <Button type="submit" variant="primary" data-test-id="add-idp">
-                Add
+                {t('public~Add')}
               </Button>
               <Button type="button" variant="secondary" onClick={history.goBack}>
-                Cancel
+                {t('public~Cancel')}
               </Button>
             </ActionGroup>
           </ButtonBar>
@@ -168,6 +176,8 @@ export class AddGooglePage extends PromiseComponent<{}, AddGooglePageState> {
   }
 }
 
+export const AddGooglePage = withTranslation()(AddGooglePageWithTranslation);
+
 export type AddGooglePageState = {
   name: string;
   hostedDomain: string;
@@ -175,4 +185,8 @@ export type AddGooglePageState = {
   clientSecret: string;
   inProgress: boolean;
   errorMessage: string;
+};
+
+type AddGooglePageProps = {
+  t: TFunction;
 };

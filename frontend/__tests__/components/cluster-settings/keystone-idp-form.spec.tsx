@@ -10,6 +10,19 @@ import {
 } from '../../../public/components/cluster-settings/keystone-idp-form';
 import { controlButtonTest } from './basicauth-idp-form.spec';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    withTranslation: () => (Component) => {
+      Component.defaultProps = { ...Component.defaultProps, t: (s) => s };
+      return Component;
+    },
+  };
+});
+
+const i18nNS = 'keystone-idp-form';
+
 describe('Add Identity Provider: Keystone', () => {
   let wrapper: ShallowWrapper<{}, AddKeystonePageState>;
 
@@ -22,7 +35,9 @@ describe('Add Identity Provider: Keystone', () => {
   });
 
   it('should render correct Keystone IDP page title', () => {
-    expect(wrapper.contains('Add Identity Provider: Keystone Authentication')).toBeTruthy();
+    expect(
+      wrapper.contains(`${i18nNS}~Add Identity Provider: Keystone Authentication`),
+    ).toBeTruthy();
   });
 
   it('should render the form elements of AddKeystonePage component', () => {
@@ -34,7 +49,7 @@ describe('Add Identity Provider: Keystone', () => {
   });
 
   it('should render control buttons in a button bar', () => {
-    controlButtonTest(wrapper);
+    controlButtonTest(wrapper, 'public');
   });
 
   it('should prefill keystone in name field by default', () => {

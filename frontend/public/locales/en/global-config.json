@@ -1,0 +1,11 @@
+{
+  "Edit {{name}} resource": "Edit {{name}} resource",
+  "Explore {{name}} API": "Explore {{name}} API",
+  "Create Receiver": "Create Receiver",
+  "Edit configuration YAML": "Edit configuration YAML",
+  "Edit the following resources to manage the configuration of your cluster.": "Edit the following resources to manage the configuration of your cluster.",
+  "by name or description": "by name or description",
+  "Configuration resources": "Configuration resources",
+  "Configuration resource": "Configuration resource",
+  "Description": "Description"
+}

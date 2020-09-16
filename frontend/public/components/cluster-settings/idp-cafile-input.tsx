@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { AsyncComponent } from '../utils';
 
 const DroppableFileInput = (props: any) => (
@@ -12,18 +13,21 @@ export const IDPCAFileInput: React.FC<IDPCAFileInputProps> = ({
   value,
   onChange,
   isRequired = false,
-}) => (
-  <div className="form-group">
-    <DroppableFileInput
-      onChange={onChange}
-      inputFileData={value}
-      id="idp-file-input"
-      label="CA File"
-      isRequired={isRequired}
-      hideContents
-    />
-  </div>
-);
+}) => {
+  const { t } = useTranslation();
+  return (
+    <div className="form-group">
+      <DroppableFileInput
+        onChange={onChange}
+        inputFileData={value}
+        id="idp-file-input"
+        label={t('idp-cafile-input~CA file')}
+        isRequired={isRequired}
+        hideContents
+      />
+    </div>
+  );
+};
 
 type IDPCAFileInputProps = {
   value: string;

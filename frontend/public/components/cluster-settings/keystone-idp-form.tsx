@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import * as _ from 'lodash-es';
+import { withTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { SecretModel, ConfigMapModel } from '../../models';
@@ -17,7 +19,10 @@ export const DroppableFileInput = (props: any) => (
   />
 );
 
-export class AddKeystonePage extends PromiseComponent<{}, AddKeystonePageState> {
+class AddKeystonePageWithTranslation extends PromiseComponent<
+  AddKeystonePageProps,
+  AddKeystonePageState
+> {
   readonly state: AddKeystonePageState = {
     name: 'keystone',
     domainName: '',
@@ -115,7 +120,9 @@ export class AddKeystonePage extends PromiseComponent<{}, AddKeystonePageState> 
     e.preventDefault();
     if (_.isEmpty(this.state.keyFileContent) !== _.isEmpty(this.state.certFileContent)) {
       this.setState({
-        errorMessage: 'Values for Certificate and Key should both be either excluded or provided.',
+        errorMessage: this.props.t(
+          'keystone-idp-form~Values for certificate and key should both be either excluded or provided.',
+        ),
       });
       return;
     }
@@ -168,7 +175,8 @@ export class AddKeystonePage extends PromiseComponent<{}, AddKeystonePageState> 
 
   render() {
     const { name, domainName, url, caFileContent, certFileContent, keyFileContent } = this.state;
-    const title = 'Add Identity Provider: Keystone Authentication';
+    const { t } = this.props;
+    const title = t('keystone-idp-form~Add Identity Provider: Keystone Authentication');
     return (
       <div className="co-m-pane__body">
         <Helmet>
@@ -177,13 +185,14 @@ export class AddKeystonePage extends PromiseComponent<{}, AddKeystonePageState> 
         <form onSubmit={this.submit} name="form" className="co-m-pane__body-group co-m-pane__form">
           <h1 className="co-m-pane__heading">{title}</h1>
           <p className="co-m-pane__explanation">
-            Adding Keystone enables shared authentication with an OpenStack server configured to
-            store users in an internal Keystone database.
+            {t(
+              'keystone-idp-form~Adding Keystone enables shared authentication with an OpenStack server configured to store users in an internal Keystone database.',
+            )}
           </p>
           <IDPNameInput value={name} onChange={this.nameChanged} />
           <div className="form-group">
             <label className="control-label co-required" htmlFor="domain-name">
-              Domain Name
+              {t('keystone-idp-form~Domain name')}
             </label>
             <input
               className="pf-c-form-control"
@@ -196,7 +205,7 @@ export class AddKeystonePage extends PromiseComponent<{}, AddKeystonePageState> 
           </div>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="url">
-              URL
+              {t('keystone-idp-form~URL')}
             </label>
             <input
               className="pf-c-form-control"
@@ -208,7 +217,7 @@ export class AddKeystonePage extends PromiseComponent<{}, AddKeystonePageState> 
               required
             />
             <p className="help-block" id="idp-url-help">
-              The remote URL to connect to.
+              {t('keystone-idp-form~The remote URL to connect to.')}
             </p>
           </div>
           <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
@@ -217,9 +226,11 @@ export class AddKeystonePage extends PromiseComponent<{}, AddKeystonePageState> 
               onChange={this.certFileChanged}
               inputFileData={certFileContent}
               id="cert-file-input"
-              label="Certificate"
+              label={t('keystone-idp-form~Certificate')}
               hideContents
-              inputFieldHelpText="PEM-encoded TLS client certificate to present when connecting to the server."
+              inputFieldHelpText={t(
+                'keystone-idp-form~PEM-encoded TLS client certificate to present when connecting to the server.',
+              )}
             />
           </div>
           <div className="form-group">
@@ -227,18 +238,20 @@ export class AddKeystonePage extends PromiseComponent<{}, AddKeystonePageState> 
               onChange={this.keyFileChanged}
               inputFileData={keyFileContent}
               id="key-file-input"
-              label="Key"
+              label={t('keystone-idp-form~Key')}
               hideContents
-              inputFieldHelpText="PEM-encoded TLS private key for the client certificate. Required if Certificate is specified."
+              inputFieldHelpText={t(
+                'keystone-idp-form~PEM-encoded TLS private key for the client certificate. Required if certificate is specified.',
+              )}
             />
           </div>
           <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
             <ActionGroup className="pf-c-form">
               <Button type="submit" variant="primary" data-test-id="add-idp">
-                Add
+                {t('public~Add')}
               </Button>
               <Button type="button" variant="secondary" onClick={history.goBack}>
-                Cancel
+                {t('public~Cancel')}
               </Button>
             </ActionGroup>
           </ButtonBar>
@@ -247,6 +260,8 @@ export class AddKeystonePage extends PromiseComponent<{}, AddKeystonePageState> 
     );
   }
 }
+
+export const AddKeystonePage = withTranslation()(AddKeystonePageWithTranslation);
 
 export type AddKeystonePageState = {
   name: string;
@@ -257,4 +272,8 @@ export type AddKeystonePageState = {
   keyFileContent: string;
   inProgress: boolean;
   errorMessage: string;
+};
+
+type AddKeystonePageProps = {
+  t: TFunction;
 };

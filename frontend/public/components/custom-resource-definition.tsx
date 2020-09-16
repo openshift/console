@@ -9,8 +9,8 @@ import {
   TableHeader,
   TableVariant,
 } from '@patternfly/react-table';
-
 import { BanIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import {
@@ -19,6 +19,7 @@ import {
   EmptyBox,
   Kebab,
   KebabAction,
+  LoadingBox,
   navFactory,
   ResourceKebab,
   ResourceLink,
@@ -48,7 +49,8 @@ const crdInstancesPath = (crd: CustomResourceDefinitionKind) =>
     : `/k8s/cluster/${referenceForCRD(crd)}`;
 
 const instances = (kind: K8sKind, obj: CustomResourceDefinitionKind) => ({
-  label: 'View Instances',
+  // t('custom-resource-definition~View instances')
+  labelKey: 'custom-resource-definition~View instances',
   href: crdInstancesPath(obj),
 });
 
@@ -67,44 +69,6 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const CRDTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'spec.names.kind',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Group',
-      sortField: 'spec.group',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: 'Latest Version',
-      sortFunc: 'crdLatestVersion',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Namespaced',
-      sortField: 'spec.scope',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: 'Established',
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[5] },
-    },
-  ];
-};
-CRDTableHeader.displayName = 'CRDTableHeader';
-
 const isEstablished = (conditions: any[]) => {
   const condition = _.find(conditions, (c) => c.type === 'Established');
   return condition && condition.status === 'True';
@@ -113,33 +77,22 @@ const isEstablished = (conditions: any[]) => {
 const namespaced = (crd: CustomResourceDefinitionKind) => crd.spec.scope === 'Namespaced';
 
 const Established: React.FC<{ crd: CustomResourceDefinitionKind }> = ({ crd }) => {
+  const { t } = useTranslation();
   return crd.status && isEstablished(crd.status.conditions) ? (
     <span>
-      <GreenCheckCircleIcon title="true" />
+      <GreenCheckCircleIcon title={t('custom-resource-definition~true')} />
     </span>
   ) : (
     <span>
-      <BanIcon title="false" />
+      <BanIcon title={t('custom-resource-definition~false')} />
     </span>
   );
 };
 
-const EmptyVersionsMsg: React.FC<{}> = () => <EmptyBox label="CRD Versions" />;
-
-const crdVersionTableHeaders = [
-  {
-    title: 'Name',
-    transforms: [sortable],
-  },
-  {
-    title: 'Served',
-    transforms: [sortable],
-  },
-  {
-    title: 'Storage',
-    transforms: [sortable],
-  },
-];
+const EmptyVersionsMsg: React.FC<{}> = () => {
+  const { t } = useTranslation();
+  return <EmptyBox label={t('custom-resource-definition~CRD versions')} />;
+};
 
 const CRDVersionTable: React.FC<CRDVersionProps> = ({ versions }) => {
   const [sortBy, setSortBy] = React.useState<PFSortState>({});
@@ -164,10 +117,26 @@ const CRDVersionTable: React.FC<CRDVersionProps> = ({ versions }) => {
     setSortBy({ index, direction });
   };
 
+  const { t } = useTranslation();
+  const crdVersionTableHeaders = [
+    {
+      title: t('custom-resource-definition~Name'),
+      transforms: [sortable],
+    },
+    {
+      title: t('custom-resource-definition~Served'),
+      transforms: [sortable],
+    },
+    {
+      title: t('custom-resource-definition~Storage'),
+      transforms: [sortable],
+    },
+  ];
+
   return versionRows.length > 0 ? (
     <PFTable
       variant={TableVariant.compact}
-      aria-label="CRD Versions"
+      aria-label={t('custom-resource-definition~CRD versions')}
       cells={crdVersionTableHeaders}
       rows={versionRows}
       onSort={onSort}
@@ -181,44 +150,16 @@ const CRDVersionTable: React.FC<CRDVersionProps> = ({ versions }) => {
   );
 };
 
-const CRDTableRow: RowFunction<CustomResourceDefinitionKind> = ({
-  obj: crd,
-  index,
-  key,
-  style,
-}) => {
-  return (
-    <TableRow id={crd.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
-        <span className="co-resource-item">
-          <ResourceLink
-            kind="CustomResourceDefinition"
-            name={crd.metadata.name}
-            namespace={crd.metadata.namespace}
-            displayName={_.get(crd, 'spec.names.kind')}
-          />
-        </span>
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
-        {crd.spec.group}
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>{getLatestVersionForCRD(crd)}</TableData>
-      <TableData className={tableColumnClasses[3]}>{namespaced(crd) ? 'Yes' : 'No'}</TableData>
-      <TableData className={tableColumnClasses[4]}>
-        <Established crd={crd} />
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
-        <ResourceKebab actions={menuActions} kind="CustomResourceDefinition" resource={crd} />
-      </TableData>
-    </TableRow>
-  );
-};
-
 const Details: React.FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) => {
+  const { t } = useTranslation();
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Custom Resource Definition Details" />
+        <SectionHeading
+          text={t('custom-resource-definition~{{resource}} details', {
+            resource: CustomResourceDefinitionModel.label,
+          })}
+        />
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-6">
@@ -226,25 +167,33 @@ const Details: React.FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) 
             </div>
             <div className="col-sm-6">
               <dl className="co-m-pane__details">
-                <dt>Established</dt>
+                <dt>{t('custom-resource-definition~Established')}</dt>
                 <dd>
                   <Established crd={crd} />
                 </dd>
-                <DetailsItem label="Group" obj={crd} path="spec.group" />
-                <dt>Latest Version</dt>
+                <DetailsItem
+                  label={t('custom-resource-definition~Group')}
+                  obj={crd}
+                  path="spec.group"
+                />
+                <dt>{t('custom-resource-definition~Latest version')}</dt>
                 <dd>{getLatestVersionForCRD(crd)}</dd>
-                <DetailsItem label="Scope" obj={crd} path="spec.scope" />
+                <DetailsItem
+                  label={t('custom-resource-definition~Scope')}
+                  obj={crd}
+                  path="spec.scope"
+                />
               </dl>
             </div>
           </div>
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="Conditions" />
+        <SectionHeading text={t('custom-resource-definition~Conditions')} />
         <Conditions conditions={crd.status.conditions} />
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="Versions" />
+        <SectionHeading text={t('custom-resource-definition~Versions')} />
         <CRDVersionTable versions={crd.spec.versions} />
       </div>
     </>
@@ -270,16 +219,94 @@ const Instances: React.FC<InstancesProps> = ({ obj, namespace }) => {
 
 export const CustomResourceDefinitionsList: React.FC<CustomResourceDefinitionsListProps> = (
   props,
-) => (
-  <Table
-    {...props}
-    aria-label="Custom Resource Definitions"
-    Header={CRDTableHeader}
-    Row={CRDTableRow}
-    defaultSortField="spec.names.kind"
-    virtualize
-  />
-);
+) => {
+  const { t } = useTranslation();
+  const CRDTableHeader = () => {
+    return [
+      {
+        title: t('custom-resource-definition~Name'),
+        sortField: 'spec.names.kind',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[0] },
+      },
+      {
+        title: t('custom-resource-definition~Group'),
+        sortField: 'spec.group',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[1] },
+      },
+      {
+        title: t('custom-resource-definition~Latest version'),
+        sortFunc: 'crdLatestVersion',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[2] },
+      },
+      {
+        title: t('custom-resource-definition~Namespaced'),
+        sortField: 'spec.scope',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[3] },
+      },
+      {
+        title: t('custom-resource-definition~Established'),
+        props: { className: tableColumnClasses[4] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[5] },
+      },
+    ];
+  };
+  const CRDTableRow: RowFunction<CustomResourceDefinitionKind> = ({
+    obj: crd,
+    index,
+    key,
+    style,
+  }) => {
+    return (
+      <TableRow id={crd.metadata.uid} index={index} trKey={key} style={style}>
+        <TableData className={tableColumnClasses[0]}>
+          <span className="co-resource-item">
+            <ResourceLink
+              kind="CustomResourceDefinition"
+              name={crd.metadata.name}
+              namespace={crd.metadata.namespace}
+              displayName={_.get(crd, 'spec.names.kind')}
+            />
+          </span>
+        </TableData>
+        <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+          {crd.spec.group}
+        </TableData>
+        <TableData className={tableColumnClasses[2]}>{getLatestVersionForCRD(crd)}</TableData>
+        <TableData className={tableColumnClasses[3]}>
+          {namespaced(crd)
+            ? t('custom-resource-definition~Yes')
+            : t('custom-resource-definition~No')}
+        </TableData>
+        <TableData className={tableColumnClasses[4]}>
+          <Established crd={crd} />
+        </TableData>
+        <TableData className={tableColumnClasses[5]}>
+          <ResourceKebab actions={menuActions} kind="CustomResourceDefinition" resource={crd} />
+        </TableData>
+      </TableRow>
+    );
+  };
+
+  return (
+    <React.Suspense fallback={<LoadingBox />}>
+      <Table
+        {...props}
+        aria-label={CustomResourceDefinitionModel.label}
+        Header={CRDTableHeader}
+        Row={CRDTableRow}
+        defaultSortField="spec.names.kind"
+        virtualize
+      />
+    </React.Suspense>
+  );
+};
 
 export const CustomResourceDefinitionsPage: React.FC<CustomResourceDefinitionsPageProps> = (
   props,
@@ -293,18 +320,25 @@ export const CustomResourceDefinitionsPage: React.FC<CustomResourceDefinitionsPa
 );
 export const CustomResourceDefinitionsDetailsPage: React.FC<CustomResourceDefinitionsDetailsPageProps> = (
   props,
-) => (
-  <DetailsPage
-    {...props}
-    kind="CustomResourceDefinition"
-    menuActions={menuActions}
-    pages={[
-      navFactory.details(Details),
-      navFactory.editYaml(),
-      { name: 'Instances', href: 'instances', component: Instances },
-    ]}
-  />
-);
+) => {
+  const { t } = useTranslation();
+  return (
+    <DetailsPage
+      {...props}
+      kind="CustomResourceDefinition"
+      menuActions={menuActions}
+      pages={[
+        navFactory.details(Details),
+        navFactory.editYaml(),
+        {
+          name: t('custom-resource-definition~Instances'),
+          href: 'instances',
+          component: Instances,
+        },
+      ]}
+    />
+  );
+};
 
 export type CustomResourceDefinitionsListProps = {};
 

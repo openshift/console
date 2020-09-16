@@ -1,0 +1,17 @@
+{
+  "Add Identity Provider: OpenID Connect": "Add Identity Provider: OpenID Connect",
+  "Integrate with an OpenID Connect identity provider using an Authorization Code Flow.": "Integrate with an OpenID Connect identity provider using an Authorization Code Flow.",
+  "Client ID": "Client ID",
+  "Client secret": "Client secret",
+  "Issuer URL": "Issuer URL",
+  "The URL that the OpenID provider asserts as its issuer identifier. It must use the https scheme with no URL query parameters or fragment.": "The URL that the OpenID provider asserts as its issuer identifier. It must use the https scheme with no URL query parameters or fragment.",
+  "Claims": "Claims",
+  "Claims map metadata from the OpenID provider to an OpenShift user. The first non-empty claim is used.": "Claims map metadata from the OpenID provider to an OpenShift user. The first non-empty claim is used.",
+  "Preferred username": "Preferred username",
+  "Any scopes to request in addition to the standard openid scope.": "Any scopes to request in addition to the standard openid scope.",
+  "Name": "Name",
+  "The list of claims whose values should be used as the display name.": "The list of claims whose values should be used as the display name.",
+  "Email": "Email",
+  "The list of claims whose values should be used as the email address.": "The list of claims whose values should be used as the email address.",
+  "Extra scopes": "Extra scopes"
+}

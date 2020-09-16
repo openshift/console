@@ -13,7 +13,7 @@ export const saveButton = $('button[type=submit]');
 export const successAlert = $('.pf-m-success');
 
 // Configuration Overview
-export const alertRoutingHeader = $('[data-test-section-heading="Alert Routing"]');
+export const alertRoutingHeader = $('[data-test-section-heading="Alert routing"]');
 export const alertRoutingEditButton = $('.co-alert-manager-config__edit-alert-routing-btn');
 export const disabledDeleteReceiverMenuItem = $(
   '.pf-c-dropdown__menu-item.pf-m-disabled[data-test-action="Delete Receiver"]',
