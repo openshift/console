@@ -3,18 +3,7 @@ import './project';
 import './selectors';
 import './nav';
 import './resources';
-import 'cypress-jest-adapter';
-import 'cypress-axe';
-import { Result } from 'axe-core';
-
-declare global {
-  namespace Cypress {
-    interface Chainable<Subject> {
-      logA11yViolations(violations: Result[], target: string): Chainable<Element>;
-      testA11y(target: string): Chainable<Element>;
-    }
-  }
-}
+import { a11yTestResults } from './a11y';
 
 Cypress.Cookies.defaults({
   preserve: ['openshift-session-token', 'csrf-token'],
@@ -25,40 +14,28 @@ Cypress.Commands.overwrite('log', (originalFn, message) => {
   originalFn(message); // calls original cy.log(message)
 });
 
-Cypress.Commands.add('logA11yViolations', (violations: Result[], target: string) => {
-  // pluck specific keys to keep the table readable
-  const violationData = violations.map(({ id, impact, description, nodes }) => ({
-    id,
-    impact,
-    description,
-    nodes: nodes.length,
-  }));
-  cy.task(
-    'log',
-    `${violations.length} accessibility violation${violations.length === 1 ? '' : 's'} ${
-      violations.length === 1 ? 'was' : 'were'
-    } detected ${target ? `for ${target}` : ''}`,
-  );
-  cy.task('logTable', violationData);
+before(() => {
+  cy.task('readFileIfExists', 'cypress-a11y-report.json').then((a11yReportOrNull) => {
+    if (a11yReportOrNull !== null) {
+      try {
+        const a11yReport = JSON.parse(a11yReportOrNull);
+        a11yTestResults.numberViolations = Number(a11yReport.numberViolations);
+        a11yTestResults.numberChecks = Number(a11yReport.numberChecks);
+        return;
+      } catch (e) {
+        cy.task('logError', `couldn't parse cypress-a11y-results.json.  ${e}`);
+      }
+    }
+    a11yTestResults.numberViolations = 0;
+    a11yTestResults.numberChecks = 0;
+  });
 });
 
-Cypress.Commands.add('testA11y', (target: string) => {
-  cy.injectAxe();
-  cy.configureAxe({
-    rules: [
-      { id: 'color-contrast', enabled: false }, // seem to be somewhat inaccurate and has difficulty always picking up the correct colors, tons of open issues for it on axe-core
-      { id: 'focusable-content', enabled: false }, // recently updated and need to give the PF team time to fix issues before enabling
-      { id: 'scrollable-region-focusable', enabled: false }, // recently updated and need to give the PF team time to fix issues before enabling
-    ],
+after(() => {
+  cy.writeFile('cypress-a11y-report.json', {
+    numberChecks: `${a11yTestResults.numberChecks}`,
+    numberViolations: `${a11yTestResults.numberViolations}`,
   });
-  cy.checkA11y(
-    null,
-    {
-      includedImpacts: ['serious', 'critical'],
-    },
-    (violations) => cy.logA11yViolations(violations, target),
-    true,
-  );
 });
 
 export const checkErrors = () =>

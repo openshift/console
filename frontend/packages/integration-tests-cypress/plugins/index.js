@@ -1,6 +1,7 @@
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
 const wp = require('@cypress/webpack-preprocessor');
+const fs = require('fs');
 
 module.exports = (on, config) => {
   const options = {
@@ -31,6 +32,12 @@ module.exports = (on, config) => {
     },
     logTable(data) {
       console.table(data);
+      return null;
+    },
+    readFileIfExists(filename) {
+      if (fs.existsSync(filename)) {
+        return fs.readFileSync(filename, 'utf8');
+      }
       return null;
     },
   });

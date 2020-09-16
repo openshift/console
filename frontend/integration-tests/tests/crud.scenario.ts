@@ -237,43 +237,4 @@ describe('Kubernetes resource CRUD operations', () => {
       leakedResources.delete(JSON.stringify({ name, plural, namespace: testName }));
     });
   });
-
-  describe('Visiting other routes', () => {
-    const otherRoutes = [
-      '/',
-      '/k8s/cluster/clusterroles/view',
-      '/k8s/cluster/nodes',
-      '/k8s/all-namespaces/events',
-      '/k8s/all-namespaces/import',
-      '/api-explorer',
-      '/api-resource/ns/default/core~v1~Pod',
-      '/api-resource/ns/default/core~v1~Pod/schema',
-      '/api-resource/ns/default/core~v1~Pod/instances',
-      ...(browser.params.openshift === 'true'
-        ? [
-            '/api-resource/ns/default/core~v1~Pod/access',
-            '/k8s/cluster/user.openshift.io~v1~User',
-            '/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~Machine',
-            '/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~MachineSet',
-            '/k8s/ns/openshift-machine-api/autoscaling.openshift.io~v1beta1~MachineAutoscaler',
-            '/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~MachineHealthCheck',
-            '/k8s/cluster/machineconfiguration.openshift.io~v1~MachineConfig',
-            '/k8s/cluster/machineconfiguration.openshift.io~v1~MachineConfigPool',
-            '/k8s/all-namespaces/monitoring.coreos.com~v1~Alertmanager',
-            '/k8s/ns/openshift-monitoring/monitoring.coreos.com~v1~Alertmanager/main',
-            '/settings/cluster',
-            '/monitoring/query-browser',
-            // Test loading search page for a kind with no static model.
-            '/search/all-namespaces?kind=config.openshift.io~v1~Console',
-          ]
-        : []),
-    ];
-    otherRoutes.forEach((route) => {
-      it(`successfully displays view for route: ${route}`, async () => {
-        await browser.get(`${appHost}${route}`);
-        await browser.sleep(5000);
-        expect(crudView.errorPage.isPresent()).toBe(false);
-      });
-    });
-  });
 });
