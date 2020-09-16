@@ -117,7 +117,7 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
             {
               value: MODES.EXTERNAL,
               title: MODES.EXTERNAL,
-              disabled: !isIndependent && isIndepModeSupportedPlatform,
+              disabled: !isIndependent || !isIndepModeSupportedPlatform,
             },
           ]}
           onChange={handleModeChange}
