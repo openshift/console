@@ -69,10 +69,10 @@ export const filterBasedOnActiveApplication = (
  */
 const getRouteData = (resource: K8sResourceKind, ksroutes: K8sResourceKind[]): string => {
   if (ksroutes && ksroutes.length > 0 && !_.isEmpty(ksroutes[0].status)) {
-    const trafficData = _.find(ksroutes[0].status.traffic, {
+    const trafficData: { [x: string]: any } = _.find(ksroutes[0].status.traffic, {
       revisionName: resource.metadata.name,
     });
-    return _.get(trafficData, 'url', ksroutes[0].status.url);
+    return trafficData?.url;
   }
   return null;
 };
