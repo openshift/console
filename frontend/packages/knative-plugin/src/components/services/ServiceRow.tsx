@@ -10,6 +10,7 @@ import {
   kindObj,
 } from '@console/internal/components/utils';
 import { referenceForModel, referenceFor, K8sKind } from '@console/internal/module/k8s';
+import { ClampedText } from '@console/shared';
 import { ServiceModel } from '../../models';
 import { getConditionString, getCondition } from '../../utils/condition-utils';
 import { ServiceKind, ConditionTypes } from '../../types';
@@ -58,7 +59,10 @@ const ServiceRow: RowFunction<ServiceKind> = ({ obj, index, key, style }) => {
         {(readyCondition && readyCondition.status) || '-'}
       </TableData>
       <TableData className={tableColumnClasses[7]}>
-        {(readyCondition && readyCondition.message) || '-'}
+        {(readyCondition?.message && (
+          <ClampedText lineClamp={5}>{readyCondition?.message}</ClampedText>
+        )) ||
+          '-'}
       </TableData>
       <TableData className={tableColumnClasses[8]}>
         <ResourceKebab actions={menuActions} kind={serviceReference} resource={obj} />

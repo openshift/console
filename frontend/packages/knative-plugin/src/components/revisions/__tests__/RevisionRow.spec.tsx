@@ -1,5 +1,6 @@
 import { shallow } from 'enzyme';
 import * as _ from 'lodash';
+import { ClampedText } from '@console/shared';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { K8sResourceConditionStatus } from '@console/internal/module/k8s';
@@ -91,6 +92,12 @@ describe('RevisionRow', () => {
     const readyColData = wrapper.find(TableData).at(5);
     const reasonColData = wrapper.find(TableData).at(6);
     expect(readyColData.props().children).toEqual('False');
-    expect(reasonColData.props().children).toEqual('Something went wrong.');
+    expect(
+      reasonColData
+        .dive()
+        .find(ClampedText)
+        .at(0)
+        .props().children,
+    ).toEqual('Something went wrong.');
   });
 });
