@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Alert, ExpandableSection } from '@patternfly/react-core';
 import { DaemonSetModel, PodModel } from '@console/internal/models';
-import { FirehoseResult, ResourceLink } from '@console/internal/components/utils';
+import { ResourceLink } from '@console/internal/components/utils';
 import { PodKind } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared';
 import {
@@ -16,7 +16,7 @@ import './PowerOffStatusValidations.scss';
 
 type StatusValidationProps = {
   status: string;
-  nodePods: FirehoseResult<PodKind[]>;
+  nodePods: PodKind[];
   loadError?: any;
   onLinkClicked?: () => void;
 };
@@ -120,8 +120,10 @@ export const StatusValidations: React.FC<StatusValidationProps> = ({
   onLinkClicked,
 }) => {
   const validations = [];
-  const daemonSets = React.useMemo(() => getDaemonSetsOfPods(nodePods?.data), [nodePods]);
-  const staticPods = React.useMemo(() => getStaticPods(nodePods?.data), [nodePods]);
+  const [daemonSets, staticPods] = React.useMemo(
+    () => [getDaemonSetsOfPods(nodePods), getStaticPods(nodePods)],
+    [nodePods],
+  );
 
   if (loadError) {
     validations.push({
