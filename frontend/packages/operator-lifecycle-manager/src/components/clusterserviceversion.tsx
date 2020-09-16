@@ -67,6 +67,7 @@ import {
   KebabOption,
   resourceObjPath,
   KebabAction,
+  openshiftHelpBase,
 } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
@@ -628,8 +629,8 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
       Installed Operators are represented by Cluster Service Versions within this namespace. For
       more information, see the{' '}
       <ExternalLink
-        href="https://github.com/operator-framework/operator-lifecycle-manager/blob/master/doc/design/architecture.md"
-        text="Operator Lifecycle Manager documentation"
+        href={`${openshiftHelpBase}operators/olm-what-operators-are.html`}
+        text="Understanding Operators documentation"
       />
       . Or create an Operator and Cluster Service Version using the{' '}
       <ExternalLink href="https://github.com/operator-framework/operator-sdk" text="Operator SDK" />
