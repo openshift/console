@@ -1,6 +1,8 @@
+import { FLAG_KNATIVE_SERVING } from '@console/knative-plugin';
+import { QuickStart } from '../utils/quick-start-types';
 import { serverlessIcon } from './tour-icons';
 
-export const exploreServerlessQuickStart = {
+export const exploreServerlessQuickStart: QuickStart = {
   apiVersion: 'console.openshift.io/v1',
   kind: 'QuickStarts',
   metadata: {
@@ -73,5 +75,20 @@ Are the Knative Serving and Knative Eventing resources in the list of instances?
     ],
     conclusion: `Your Serverless Operator is ready! If you want to learn how to deploy a serverless application, take the **Creating a Serverless application** quick start.`,
     nextQuickStart: `serverless-application`,
+    accessReviewResources: [
+      {
+        group: 'operators.coreos.com',
+        resource: 'operatorgroups',
+        verb: 'list',
+      },
+      {
+        group: 'packages.operators.coreos.com',
+        resource: 'packagemanifests',
+        verb: 'list',
+      },
+    ],
+    flags: {
+      disallowed: [FLAG_KNATIVE_SERVING],
+    },
   },
 };

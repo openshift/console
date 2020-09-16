@@ -1,6 +1,8 @@
+import { FLAG_KNATIVE_SERVING, FLAG_KNATIVE_EVENTING } from '@console/knative-plugin';
+import { QuickStart } from '../utils/quick-start-types';
 import { serverlessIcon } from './tour-icons';
 
-export const serverlessApplicationQuickStart = {
+export const serverlessApplicationQuickStart: QuickStart = {
   apiVersion: 'console.openshift.io/v1',
   kind: 'QuickStarts',
   metadata: {
@@ -147,5 +149,8 @@ Has the Sample Serverless App been removed?`,
     conclusion: `You just learned how to use Serverless applications in your cluster! To learn more about building Serverless apps, take a look at our [Knative Cookbook](https://redhat-developer-demos.github.io/knative-tutorial/knative-tutorial/index.html).`,
 
     nextQuickStart: '',
+    flags: {
+      required: [FLAG_KNATIVE_SERVING, FLAG_KNATIVE_EVENTING],
+    },
   },
 };
