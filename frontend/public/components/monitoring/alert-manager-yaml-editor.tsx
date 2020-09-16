@@ -3,6 +3,7 @@ import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { Alert } from '@patternfly/react-core';
 import { safeLoad } from 'js-yaml';
+import { useTranslation } from 'react-i18next';
 
 import { K8sResourceKind } from '../../module/k8s';
 import { AsyncComponent, StatusBox } from '../utils';
@@ -22,6 +23,7 @@ const AlertmanagerYAMLEditor: React.FC<AlertmanagerYAMLEditorProps> = ({ obj }) 
   const [errorMsg, setErrorMsg] = React.useState<string>();
   const [loadErrorMsg, setloadErrorMsg] = React.useState<string>();
   const [successMsg, setSuccessMsg] = React.useState<string>();
+  const { t } = useTranslation();
 
   const save = (yaml: string) => {
     if (_.isEmpty(yaml)) {
@@ -69,8 +71,9 @@ const AlertmanagerYAMLEditor: React.FC<AlertmanagerYAMLEditorProps> = ({ obj }) 
     <>
       <div className="co-m-nav-title">
         <p className="help-block">
-          Update this YAML to configure Routes, Receivers, Groupings and other Alertmanager
-          settings.
+          {t(
+            'alert-manager-yaml-editor~Update this YAML to configure Routes, Receivers, Groupings and other Alertmanager settings.',
+          )}
         </p>
       </div>
       <EditAlertmanagerYAML onSave={save} obj={alertmanagerYAML}>
@@ -92,10 +95,11 @@ const AlertmanagerYAMLEditor: React.FC<AlertmanagerYAMLEditorProps> = ({ obj }) 
 
 export const AlertmanagerYAMLEditorWrapper: React.FC<AlertmanagerYAMLEditorWrapperProps> = React.memo(
   ({ obj, ...props }) => {
+    const { t } = useTranslation();
     return (
       <>
         <Helmet>
-          <title>Alerting</title>
+          <title>{t('alert-manager-yaml-editor~Alerting')}</title>
         </Helmet>
         <StatusBox {...obj}>
           <AlertmanagerYAMLEditor {...props} obj={obj.data} />

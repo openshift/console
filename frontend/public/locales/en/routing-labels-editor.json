@@ -1,0 +1,13 @@
+{
+  "Invalid name.": "Invalid name.",
+  "Label name must not begin with a digit and contain only alphanumeric characters or '_'.": "Label name must not begin with a digit and contain only alphanumeric characters or '_'.",
+  "Routing labels": "Routing labels",
+  "Firing alerts with labels that match all of these selectors will be sent to this receiver. Label values can be matched exactly or with a <2></2>.": "Firing alerts with labels that match all of these selectors will be sent to this receiver. Label values can be matched exactly or with a <2></2>.",
+  "regular expression": "regular expression",
+  "Name": "Name",
+  "Value": "Value",
+  "Regular expression": "Regular expression",
+  "Remove": "Remove",
+  "Routing label names must be unique.": "Routing label names must be unique.",
+  "Add label": "Add label"
+}

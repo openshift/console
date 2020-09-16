@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import { useTranslation } from 'react-i18next';
 
 import { ClusterVersionModel } from '../../models';
 import { DetailsPage } from '../factory';
@@ -9,23 +10,26 @@ import { navFactory, ResourceSummary, SectionHeading } from '../utils';
 
 const clusterVersionReference: K8sResourceKindReference = referenceForModel(ClusterVersionModel);
 
-const ClusterVersionDetails: React.SFC<ClusterVersionDetailsProps> = ({ obj }) => {
+const ClusterVersionDetails: React.FC<ClusterVersionDetailsProps> = ({ obj }) => {
   const conditions = _.get(obj, 'status.conditions', []);
+  const { t } = useTranslation();
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Cluster Version Details" />
+        <SectionHeading
+          text={t('cluster-version~{{resource}} details', { resource: ClusterVersionModel.label })}
+        />
         <ResourceSummary resource={obj} />
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="Conditions" id="conditions" />
+        <SectionHeading text={t('cluster-version~Conditions')} id="conditions" />
         <Conditions conditions={conditions} />
       </div>
     </>
   );
 };
 
-export const ClusterVersionDetailsPage: React.SFC<ClusterVersionDetailsPageProps> = (props) => (
+export const ClusterVersionDetailsPage: React.FC<ClusterVersionDetailsPageProps> = (props) => (
   <DetailsPage
     {...props}
     kind={clusterVersionReference}

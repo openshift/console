@@ -9,6 +9,19 @@ import {
 } from '../../../public/components/cluster-settings/htpasswd-idp-form';
 import { controlButtonTest } from './basicauth-idp-form.spec';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    withTranslation: () => (Component) => {
+      Component.defaultProps = { ...Component.defaultProps, t: (s) => s };
+      return Component;
+    },
+  };
+});
+
+const i18nNS = 'htpasswd-idp-form';
+
 describe('Add Identity Provider: HTPasswd', () => {
   let wrapper: ShallowWrapper<{}, AddHTPasswdPageState>;
 
@@ -21,7 +34,7 @@ describe('Add Identity Provider: HTPasswd', () => {
   });
 
   it('should render correct HTPasswd IDP page title', () => {
-    expect(wrapper.contains('Add Identity Provider: HTPasswd')).toBeTruthy();
+    expect(wrapper.contains(`${i18nNS}~Add Identity Provider: HTPasswd`)).toBeTruthy();
   });
 
   it('should render the form elements of AddHTPasswdPage component', () => {
@@ -30,7 +43,7 @@ describe('Add Identity Provider: HTPasswd', () => {
   });
 
   it('should render control buttons in a button bar', () => {
-    controlButtonTest(wrapper);
+    controlButtonTest(wrapper, 'public');
   });
 
   it('should prefill htpasswd in name field by default', () => {

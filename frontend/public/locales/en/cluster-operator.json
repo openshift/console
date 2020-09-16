@@ -1,0 +1,10 @@
+{
+  "Name": "Name",
+  "Status": "Status",
+  "Version": "Version",
+  "Message": "Message",
+  "{{resource}} details": "{{resource}} details",
+  "Conditions": "Conditions",
+  "Operand versions": "Operand versions",
+  "Related objects": "Related objects"
+}

@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import * as _ from 'lodash-es';
+import { withTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { SecretModel, ConfigMapModel } from '../../models';
@@ -17,7 +19,10 @@ export const DroppableFileInput = (props: any) => (
   />
 );
 
-export class AddBasicAuthPage extends PromiseComponent<{}, AddBasicAuthPageState> {
+class AddBasicAuthPageWithTranslation extends PromiseComponent<
+  AddBasicAuthPageProps,
+  AddBasicAuthPageState
+> {
   readonly state: AddBasicAuthPageState = {
     name: 'basic-auth',
     url: '',
@@ -113,7 +118,9 @@ export class AddBasicAuthPage extends PromiseComponent<{}, AddBasicAuthPageState
     e.preventDefault();
     if (_.isEmpty(this.state.keyFileContent) !== _.isEmpty(this.state.certFileContent)) {
       this.setState({
-        errorMessage: 'Values for Certificate and Key should both be either excluded or provided.',
+        errorMessage: this.props.t(
+          'basicauth-idp-form~Values for certificate and key should both be either excluded or provided.',
+        ),
       });
       return;
     }
@@ -162,7 +169,8 @@ export class AddBasicAuthPage extends PromiseComponent<{}, AddBasicAuthPageState
 
   render() {
     const { name, url, caFileContent, certFileContent, keyFileContent } = this.state;
-    const title = 'Add Identity Provider: Basic Authentication';
+    const { t } = this.props;
+    const title = t('basicauth-idp-form~Add Identity Provider: Basic Authentication');
     return (
       <div className="co-m-pane__body">
         <Helmet>
@@ -171,13 +179,14 @@ export class AddBasicAuthPage extends PromiseComponent<{}, AddBasicAuthPageState
         <form onSubmit={this.submit} name="form" className="co-m-pane__body-group co-m-pane__form">
           <h1 className="co-m-pane__heading">{title}</h1>
           <p className="co-m-pane__explanation">
-            Basic authentication is a generic backend integration mechanism that allows users to
-            authenticate with credentials validated against a remote identity provider.
+            {t(
+              'basicauth-idp-form~Basic authentication is a generic backend integration mechanism that allows users to authenticate with credentials validated against a remote identity provider.',
+            )}
           </p>
           <IDPNameInput value={name} onChange={this.nameChanged} />
           <div className="form-group">
             <label className="control-label co-required" htmlFor="url">
-              URL
+              {t('basicauth-idp-form~URL')}
             </label>
             <input
               className="pf-c-form-control"
@@ -189,7 +198,7 @@ export class AddBasicAuthPage extends PromiseComponent<{}, AddBasicAuthPageState
               required
             />
             <p className="help-block" id="idp-url-help">
-              The remote URL to connect to.
+              {t('basicauth-idp-form~The remote URL to connect to.')}
             </p>
           </div>
           <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
@@ -198,9 +207,11 @@ export class AddBasicAuthPage extends PromiseComponent<{}, AddBasicAuthPageState
               onChange={this.certFileChanged}
               inputFileData={certFileContent}
               id="cert-file-input"
-              label="Certificate"
+              label={t('basicauth-idp-form~Certificate')}
               hideContents
-              inputFieldHelpText="PEM-encoded TLS client certificate to present when connecting to the server."
+              inputFieldHelpText={t(
+                'basicauth-idp-form~PEM-encoded TLS client certificate to present when connecting to the server.',
+              )}
             />
           </div>
           <div className="form-group">
@@ -208,18 +219,20 @@ export class AddBasicAuthPage extends PromiseComponent<{}, AddBasicAuthPageState
               onChange={this.keyFileChanged}
               inputFileData={keyFileContent}
               id="key-file-input"
-              label="Key"
+              label={t('basicauth-idp-form~Key')}
               hideContents
-              inputFieldHelpText="PEM-encoded TLS private key for the client certificate. Required if Certificate is specified."
+              inputFieldHelpText={t(
+                'basicauth-idp-form~PEM-encoded TLS private key for the client certificate. Required if certificate is specified.',
+              )}
             />
           </div>
           <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
             <ActionGroup className="pf-c-form">
               <Button type="submit" variant="primary" data-test-id="add-idp">
-                Add
+                {t('public~Add')}
               </Button>
               <Button type="button" variant="secondary" onClick={history.goBack}>
-                Cancel
+                {t('public~Cancel')}
               </Button>
             </ActionGroup>
           </ButtonBar>
@@ -229,6 +242,8 @@ export class AddBasicAuthPage extends PromiseComponent<{}, AddBasicAuthPageState
   }
 }
 
+export const AddBasicAuthPage = withTranslation()(AddBasicAuthPageWithTranslation);
+
 export type AddBasicAuthPageState = {
   name: string;
   url: string;
@@ -237,4 +252,8 @@ export type AddBasicAuthPageState = {
   keyFileContent: string;
   inProgress: boolean;
   errorMessage: string;
+};
+
+type AddBasicAuthPageProps = {
+  t: TFunction;
 };

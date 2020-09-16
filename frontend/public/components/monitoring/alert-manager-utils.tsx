@@ -7,6 +7,10 @@ import { k8sPatch, K8sResourceKind } from '../../module/k8s';
 import { AlertmanagerConfig } from './alert-manager-config';
 import { SecretModel } from '../../models';
 
+// t('alert-manager-receiver-forms~PagerDuty')
+// t('alert-manager-receiver-forms~Webhook')
+// t('alert-manager-receiver-forms~Email')
+// t('alert-manager-receiver-forms~Slack')
 export const receiverTypes = Object.freeze({
   pagerduty_configs: 'PagerDuty',
   webhook_configs: 'Webhook',

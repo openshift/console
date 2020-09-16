@@ -69,12 +69,18 @@ export const actions = Object.freeze({
   delete: 'Delete',
 });
 
-const actionOnKind = (action: string, kind: string) => {
+const actionOnKind = (action: string, kind: string, humanizeKind: boolean) => {
+  if (!humanizeKind) {
+    return `${action} ${kind}`;
+  }
+
   const humanizedKind = (kind.includes('~') ? kind.split('~')[2] : kind)
     .split(/(?=[A-Z])/)
     .join(' ');
 
   return `${action} ${humanizedKind}`;
 };
-export const editHumanizedKind = (kind: string) => actionOnKind(actions.edit, kind);
-export const deleteHumanizedKind = (kind: string) => actionOnKind(actions.delete, kind);
+export const editKind = (kind: string, humanizeKind: boolean) =>
+  actionOnKind(actions.edit, kind, humanizeKind);
+export const deleteKind = (kind: string, humanizeKind: boolean) =>
+  actionOnKind(actions.delete, kind, humanizeKind);

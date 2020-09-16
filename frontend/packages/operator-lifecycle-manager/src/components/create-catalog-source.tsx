@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
 import { match } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { ActionGroup, Button, Form, FormGroup, TextInput } from '@patternfly/react-core';
 import {
   ButtonBar,
@@ -17,19 +18,6 @@ enum AvailabilityValue {
   ALL_NAMESPACES = '0',
   SINGLE_NAMESPACE = '1',
 }
-
-const availabilityKinds = [
-  {
-    value: AvailabilityValue.ALL_NAMESPACES,
-    title: 'Cluster-wide catalog source',
-    desc: 'Catalog will be available in all namespaces',
-  },
-  {
-    value: AvailabilityValue.SINGLE_NAMESPACE,
-    title: 'Namespace catalog source',
-    desc: 'Catalog will only be available in a single namespace',
-  },
-];
 
 export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandlePromise(
   ({ handlePromise, inProgress, errorMessage }) => {
@@ -74,17 +62,47 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
       setAvailability(value as AvailabilityValue);
     };
 
+    const { t } = useTranslation();
+    const availabilityKinds = [
+      {
+        value: AvailabilityValue.ALL_NAMESPACES,
+        title: t('create-catalog-source~Cluster-wide {{resource}}', {
+          resource: CatalogSourceModel.label,
+        }),
+        desc: t('create-catalog-source~Catalog will be available in all namespaces'),
+      },
+      {
+        value: AvailabilityValue.SINGLE_NAMESPACE,
+        title: t('create-catalog-source~Namespace {{resource}}', {
+          resource: CatalogSourceModel.label,
+        }),
+        desc: t('create-catalog-source~Catalog will only be available in a single namespace'),
+      },
+    ];
+
+    const title = t('create-catalog-source~Create {{resource}}', {
+      resource: CatalogSourceModel.label,
+    });
     return (
       <div className="co-m-pane__body">
         <Helmet>
-          <title>Create Catalog Source</title>
+          <title>{title}</title>
         </Helmet>
-        <h1 className="co-m-pane__heading">Create Catalog Source</h1>
+        <h1 className="co-m-pane__heading">{title}</h1>
         <p className="co-m-pane__explanation">
-          Create a catalog source in order to make operators available in OperatorHub.
+          {t(
+            'create-catalog-source~Create a {{resource}} in order to make operators available in OperatorHub.',
+            { resource: CatalogSourceModel.label },
+          )}
         </p>
         <Form onSubmit={onSave}>
-          <FormGroup fieldId="catalog-source-name" isRequired label="Catalog source name">
+          <FormGroup
+            fieldId="catalog-source-name"
+            isRequired
+            label={t('create-catalog-source~{{resource}} name', {
+              resource: CatalogSourceModel.label,
+            })}
+          >
             <TextInput
               id="catalog-source-name"
               isRequired
@@ -95,17 +113,23 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
               value={name}
             />
           </FormGroup>
-          <FormGroup fieldId="catalog-source-display-name" label="Display name">
+          <FormGroup
+            fieldId="catalog-source-display-name"
+            label={t('create-catalog-source~Display name')}
+          >
             <TextInput
               id="catalog-source-display-name"
               name="caltalog-source-display-name"
               onChange={setDisplayName}
-              placeholder="e.g. Custom Catalog Source"
+              placeholder="e.g. Custom catalog source"
               type="text"
               value={displayName}
             />
           </FormGroup>
-          <FormGroup fieldId="catalog-source-publisher" label="Publisher name">
+          <FormGroup
+            fieldId="catalog-source-publisher"
+            label={t('create-catalog-source~Publisher name')}
+          >
             <TextInput
               id="catalog-source-publisher"
               isRequired
@@ -117,10 +141,10 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
             />
           </FormGroup>
           <FormGroup
-            label="Image (URL of container image)"
+            label={t('create-catalog-source~Image (URL of container image)')}
             isRequired
             fieldId="catalog-source-image"
-            helperText="URL of container image hosted on a registry"
+            helperText={t('create-catalog-source~URL of container image hosted on a registry')}
           >
             <TextInput
               aria-describedby="catalog-source-image-helper"
@@ -133,7 +157,10 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
               value={image}
             />
           </FormGroup>
-          <FormGroup fieldId="catalog-source-availability" label="Availability">
+          <FormGroup
+            fieldId="catalog-source-availability"
+            label={t('create-catalog-source~Availability')}
+          >
             <RadioGroup
               currentValue={availability}
               items={availabilityKinds}
@@ -141,7 +168,11 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
             />
           </FormGroup>
           {availability === AvailabilityValue.SINGLE_NAMESPACE && (
-            <FormGroup fieldId="catalog-source-namespace" label="Namespace" isRequired>
+            <FormGroup
+              fieldId="catalog-source-namespace"
+              label={t('create-catalog-source~Namespace')}
+              isRequired
+            >
               <NsDropdown
                 selectedKey={namespace}
                 onChange={onNamespaceChange}
@@ -152,10 +183,10 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
             <ActionGroup className="pf-c-form__group--no-top-margin">
               <Button type="submit" variant="primary" id="save-changes">
-                Create
+                {t('create-catalog-source~Create')}
               </Button>
               <Button type="button" variant="secondary" id="cancel" onClick={history.goBack}>
-                Cancel
+                {t('create-catalog-source~Cancel')}
               </Button>
             </ActionGroup>
           </ButtonBar>

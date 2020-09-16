@@ -13,6 +13,7 @@ import {
   EmptyStateVariant,
   Title,
 } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 import { K8sResourceKind } from '../../module/k8s';
 import { history, Kebab, MsgBox, SectionHeading, StatusBox } from '../utils';
@@ -37,35 +38,36 @@ export enum InitialReceivers {
 
 const AlertRouting = () => {
   const groupBy = _.get(config, ['route', 'group_by'], []);
+  const { t } = useTranslation();
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text="Alert Routing">
+      <SectionHeading text={t('alert-manager-config~Alert routing')}>
         <Button
           className="co-alert-manager-config__edit-alert-routing-btn"
           onClick={() => createAlertRoutingModal({ config, secret })}
           variant="secondary"
         >
-          Edit
+          {t('public~Edit')}
         </Button>
       </SectionHeading>
       <div className="row">
         <div className="col-sm-6">
           <dl className="co-m-pane__details">
-            <dt>Group By</dt>
+            <dt>{t('alert-manager-config~Group by')}</dt>
             <dd data-test-id="group_by_value">
               {_.isEmpty(groupBy) ? '-' : _.join(groupBy, ', ')}
             </dd>
-            <dt>Group Wait</dt>
+            <dt>{t('alert-manager-config~Group wait')}</dt>
             <dd data-test-id="group_wait_value">{_.get(config, ['route', 'group_wait'], '-')}</dd>
           </dl>
         </div>
         <div className="col-sm-6">
           <dl className="co-m-pane__details">
-            <dt>Group Interval</dt>
+            <dt>{t('alert-manager-config~Group interval')}</dt>
             <dd data-test-id="group_interval_value">
               {_.get(config, ['route', 'group_interval'], '-')}
             </dd>
-            <dt>Repeat Interval</dt>
+            <dt>{t('alert-manager-config~Repeat interval')}</dt>
             <dd data-test-id="repeat_interval_value">
               {_.get(config, ['route', 'repeat_interval'], '-')}
             </dd>
@@ -82,30 +84,6 @@ const tableColumnClasses = [
   classNames('col-lg-6', 'col-md-6', 'col-sm-6', 'col-xs-6'),
   Kebab.columnClass,
 ];
-
-const ReceiverTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Integration Type',
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: 'Routing Labels',
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[3] },
-    },
-  ];
-};
-ReceiverTableHeader.displayName = 'ReceiverTableHeader';
 
 const getIntegrationTypes = (receiver: AlertmanagerReceiver): string[] => {
   /* Given receiver = {
@@ -247,97 +225,127 @@ const deleteReceiver = (receiverName: string) => {
   });
 };
 
-const receiverMenuItems = (receiverName: string, canDelete: boolean, canUseEditForm: boolean) => [
-  {
-    label: `Edit ${canUseEditForm ? 'Receiver' : 'YAML'}`,
-    callback: () => {
-      const targetUrl = canUseEditForm
-        ? `/monitoring/alertmanagerconfig/receivers/${receiverName}/edit`
-        : `/monitoring/alertmanageryaml`;
-      return history.push(targetUrl);
-    },
-  },
-  {
-    label: 'Delete Receiver',
-    isDisabled: !canDelete,
-    tooltip: !canDelete
-      ? 'Cannot delete the default receiver, or a receiver which has a sub-route'
-      : '',
-    callback: () =>
-      confirmModal({
-        title: 'Delete Receiver',
-        message: `Are you sure you want to delete receiver '${receiverName}' ?`,
-        btnText: 'Delete Receiver',
-        executeFn: () => deleteReceiver(receiverName),
-      }),
-  },
-];
-
-const ReceiverTableRow: RowFunction<
-  AlertmanagerReceiver,
-  {
-    routingLabelsByReceivers: RoutingLabelsByReceivers[];
-    defaultReceiverName: string;
-  }
-> = ({ obj: receiver, index, key, style, customData }) => {
-  const { routingLabelsByReceivers, defaultReceiverName } = customData;
-  // filter to routing labels belonging to current Receiver
-  const receiverRoutingLabels = _.filter(routingLabelsByReceivers, { receiver: receiver.name });
-  const receiverIntegrationTypes = getIntegrationTypes(receiver);
-  const integrationTypesLabel = _.join(
-    _.map(receiverIntegrationTypes, (type) => type.substr(0, type.indexOf('_configs'))),
-    ', ',
-  );
-  const isDefaultReceiver = receiver.name === defaultReceiverName;
-  const receiverHasSimpleRoute = hasSimpleRoute(receiver, receiverRoutingLabels);
-
-  // Receiver form can only handle simple configurations. Can edit via form if receiver
-  // has a simple route and receiver
-  const canUseEditForm =
-    receiverHasSimpleRoute && hasSimpleReceiver(receiver, receiverIntegrationTypes);
-
-  // Receivers can be deleted if it has a simple route and not the default receiver
-  const canDelete = !isDefaultReceiver && receiverHasSimpleRoute;
-
-  return (
-    <TableRow id={index} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>{receiver.name}</TableData>
-      <TableData className={tableColumnClasses[1]}>
-        {(receiver.name === InitialReceivers.Critical ||
-          receiver.name === InitialReceivers.Default) &&
-        !integrationTypesLabel ? (
-          <Link to={`/monitoring/alertmanagerconfig/receivers/${receiver.name}/edit`}>
-            <PencilAltIcon className="co-icon-space-r pf-c-button-icon--plain" />
-            Configure
-          </Link>
-        ) : (
-          integrationTypesLabel
-        )}
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        {isDefaultReceiver && <RoutingLabel labels={{ default: 'all' }} />}
-        {_.map(receiverRoutingLabels, (route, i) => {
-          return !_.isEmpty(route.labels) ? <RoutingLabel key={i} labels={route.labels} /> : null;
-        })}
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        <Kebab options={receiverMenuItems(receiver.name, canDelete, canUseEditForm)} />
-      </TableData>
-    </TableRow>
-  );
-};
-
 const ReceiversTable: React.FC<ReceiverTableProps> = (props) => {
   const { filterValue } = props;
   const { route } = config;
   const { receiver: defaultReceiverName, routes } = route;
+  const { t } = useTranslation();
 
   const routingLabelsByReceivers = _.isEmpty(routes) ? [] : getRoutingLabelsByReceivers(routes, {});
-  const EmptyMsg = () => <MsgBox title={`No Receivers match filter '${filterValue}'`} />;
+  const EmptyMsg = () => (
+    <MsgBox
+      title={t('alert-manager-config~No Receivers match filter {{filterValue}}', { filterValue })}
+    />
+  );
+  const ReceiverTableHeader = () => {
+    return [
+      {
+        title: t('alert-manager-config~Name'),
+        sortField: 'name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[0] },
+      },
+      {
+        title: t('alert-manager-config~Integration type'),
+        props: { className: tableColumnClasses[1] },
+      },
+      {
+        title: t('alert-manager-config~Routing labels'),
+        props: { className: tableColumnClasses[2] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[3] },
+      },
+    ];
+  };
+  const ReceiverTableRow: RowFunction<
+    AlertmanagerReceiver,
+    {
+      routingLabelsByReceivers: RoutingLabelsByReceivers[];
+      defaultReceiverName: string;
+    }
+  > = ({ obj: receiver, index, key, style }) => {
+    // filter to routing labels belonging to current Receiver
+    const receiverRoutingLabels = _.filter(routingLabelsByReceivers, { receiver: receiver.name });
+    const receiverIntegrationTypes = getIntegrationTypes(receiver);
+    const integrationTypesLabel = _.join(
+      _.map(receiverIntegrationTypes, (type) => type.substr(0, type.indexOf('_configs'))),
+      ', ',
+    );
+    const isDefaultReceiver = receiver.name === defaultReceiverName;
+    const receiverHasSimpleRoute = hasSimpleRoute(receiver, receiverRoutingLabels);
+
+    // Receiver form can only handle simple configurations. Can edit via form if receiver
+    // has a simple route and receiver
+    const canUseEditForm =
+      receiverHasSimpleRoute && hasSimpleReceiver(receiver, receiverIntegrationTypes);
+
+    // Receivers can be deleted if it has a simple route and not the default receiver
+    const canDelete = !isDefaultReceiver && receiverHasSimpleRoute;
+
+    const receiverMenuItems = (receiverName: string) => [
+      {
+        label: t('alert-manager-config~Edit Receiver'),
+        callback: () => {
+          const targetUrl = canUseEditForm
+            ? `/monitoring/alertmanagerconfig/receivers/${receiverName}/edit`
+            : `/monitoring/alertmanageryaml`;
+          return history.push(targetUrl);
+        },
+      },
+      {
+        label: t('alert-manager-config~Delete Receiver'),
+        isDisabled: !canDelete,
+        tooltip: !canDelete
+          ? t(
+              'alert-manager-config~Cannot delete the default receiver, or a receiver which has a sub-route',
+            )
+          : '',
+        callback: () =>
+          confirmModal({
+            title: t('alert-manager-config~Delete Receiver'),
+            message: t(
+              'alert-manager-config~Are you sure you want to delete receiver {{receiverName}}?',
+              { receiverName },
+            ),
+            btnText: t('alert-manager-config~Delete Receiver'),
+            executeFn: () => deleteReceiver(receiverName),
+          }),
+      },
+    ];
+
+    return (
+      <TableRow id={index} index={index} trKey={key} style={style}>
+        <TableData className={tableColumnClasses[0]}>{receiver.name}</TableData>
+        <TableData className={tableColumnClasses[1]}>
+          {(receiver.name === InitialReceivers.Critical ||
+            receiver.name === InitialReceivers.Default) &&
+          !integrationTypesLabel ? (
+            <Link to={`/monitoring/alertmanagerconfig/receivers/${receiver.name}/edit`}>
+              <PencilAltIcon className="co-icon-space-r pf-c-button-icon--plain" />
+              {t('alert-manager-config~Configure')}
+            </Link>
+          ) : (
+            integrationTypesLabel
+          )}
+        </TableData>
+        <TableData className={tableColumnClasses[2]}>
+          {isDefaultReceiver && <RoutingLabel labels={{ default: 'all' }} />}
+          {_.map(receiverRoutingLabels, (rte, i) => {
+            return !_.isEmpty(rte.labels) ? <RoutingLabel key={i} labels={rte.labels} /> : null;
+          })}
+        </TableData>
+        <TableData className={tableColumnClasses[3]}>
+          <Kebab options={receiverMenuItems(receiver.name)} />
+        </TableData>
+      </TableRow>
+    );
+  };
   return (
     <Table
       {...props}
-      aria-label="Receivers"
+      aria-label={t('alert-manager-config~Receivers')}
       customData={{ routingLabelsByReceivers, defaultReceiverName }}
       EmptyMsg={EmptyMsg}
       Header={ReceiverTableHeader}
@@ -350,19 +358,21 @@ const ReceiversTable: React.FC<ReceiverTableProps> = (props) => {
 };
 ReceiversTable.displayName = 'ReceiversTable';
 
-const ReceiversEmptyState: React.FC = () => (
-  <EmptyState variant={EmptyStateVariant.full}>
-    <Title headingLevel="h2" size="lg">
-      No Receivers Found
-    </Title>
-    <EmptyStateBody>
-      Create a receiver to get OpenShift alerts through other services such as email or a chat
-      platform. The first receiver you create will become the default receiver and will
-      automatically receive all alerts from this cluster. Subsequent receivers can have specific
-      sets of alerts routed to them.
-    </EmptyStateBody>
-  </EmptyState>
-);
+const ReceiversEmptyState: React.FC = () => {
+  const { t } = useTranslation();
+  return (
+    <EmptyState variant={EmptyStateVariant.full}>
+      <Title headingLevel="h2" size="lg">
+        {t('alert-manager-config~No receivers found')}
+      </Title>
+      <EmptyStateBody>
+        {t(
+          'alert-manager-config~Create a receiver to get OpenShift alerts through other services such as email or a chat platform. The first receiver you create will become the default receiver and will automatically receive all alerts from this cluster. Subsequent receivers can have specific sets of alerts routed to them.',
+        )}
+      </EmptyStateBody>
+    </EmptyState>
+  );
+};
 
 const Receivers = () => {
   const [receiverFilter, setReceiverFilter] = React.useState('');
@@ -373,13 +383,18 @@ const Receivers = () => {
   }
 
   const numOfIncompleteReceivers = numberOfIncompleteReceivers();
+  const { t } = useTranslation();
+  const receiverString = t('alert-manager-config~receiver', { count: numOfIncompleteReceivers });
+  const thisString = t('alert-manager-config~this', {
+    count: numOfIncompleteReceivers,
+  });
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text="Receivers" />
+      <SectionHeading text={t('alert-manager-config~Receivers')} />
       <div className="co-m-pane__filter-row">
         <TextFilter
           defaultValue=""
-          label="Receivers by Name"
+          label={t('alert-manager-config~Receivers by name')}
           onChange={(val) => setReceiverFilter(val)}
         />
         <Link
@@ -387,7 +402,7 @@ const Receivers = () => {
           to="/monitoring/alertmanagerconfig/receivers/~new"
         >
           <Button variant="primary" data-test-id="create-receiver">
-            Create Receiver
+            {t('alert-manager-config~Create Receiver')}
           </Button>
         </Link>
       </div>
@@ -396,11 +411,13 @@ const Receivers = () => {
           isInline
           className="co-alert co-alert--scrollable"
           variant="info"
-          title={`Incomplete Alert Receiver${numOfIncompleteReceivers > 1 ? 's' : ''}`}
+          title={t('alert-manager-config~Incomplete alert {{receiverString}}', { receiverString })}
         >
           <div className="co-pre-line">
-            Configure {numOfIncompleteReceivers === 1 ? 'this receiver' : 'these receivers'} to
-            ensure that you learn about important issues with your cluster.
+            {t(
+              'alert-manager-config~Configure {{thisString}} {{receiverString}} to ensure that you learn about important issues with your cluster.',
+              { thisString, receiverString },
+            )}
           </div>
         </Alert>
       )}
@@ -416,6 +433,7 @@ const Receivers = () => {
 const AlertmanagerConfiguration: React.FC<AlertmanagerConfigurationProps> = ({ obj }) => {
   const [errorMsg, setErrorMsg] = React.useState('');
   secret = obj; // alertmanager-main Secret which holds encoded alertmanager configuration yaml
+  const { t } = useTranslation();
   if (!errorMsg) {
     config = getAlertmanagerConfig(secret, setErrorMsg);
   }
@@ -426,7 +444,7 @@ const AlertmanagerConfiguration: React.FC<AlertmanagerConfigurationProps> = ({ o
         isInline
         className="co-alert co-alert--scrollable"
         variant="danger"
-        title="An error occurred"
+        title={t('alert-manager-config~An error occurred')}
       >
         <div className="co-pre-line">{errorMsg}</div>
       </Alert>
@@ -443,10 +461,11 @@ const AlertmanagerConfiguration: React.FC<AlertmanagerConfigurationProps> = ({ o
 
 export const AlertmanagerConfigWrapper: React.FC<AlertmanagerConfigWrapperProps> = React.memo(
   ({ obj, ...props }) => {
+    const { t } = useTranslation();
     return (
       <>
         <Helmet>
-          <title>Alerting</title>
+          <title>{t('alert-manager-config~Alerting')}</title>
         </Helmet>
         <StatusBox {...obj}>
           <AlertmanagerConfiguration {...props} obj={obj.data} />

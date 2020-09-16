@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import { withTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { SecretModel } from '../../models';
@@ -15,7 +17,10 @@ export const DroppableFileInput = (props: any) => (
   />
 );
 
-export class AddHTPasswdPage extends PromiseComponent<{}, AddHTPasswdPageState> {
+class AddHTPasswdPageWithTranslation extends PromiseComponent<
+  AddHTPasswdPageProps,
+  AddHTPasswdPageState
+> {
   readonly state: AddHTPasswdPageState = {
     name: 'htpasswd',
     htpasswdFileContent: '',
@@ -62,7 +67,9 @@ export class AddHTPasswdPage extends PromiseComponent<{}, AddHTPasswdPageState> 
   submit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     if (!this.state.htpasswdFileContent) {
-      this.setState({ errorMessage: 'You must specify an HTPasswd file.' });
+      this.setState({
+        errorMessage: this.props.t('htpasswd-idp-form~You must specify an HTPasswd file.'),
+      });
       return;
     }
 
@@ -91,7 +98,8 @@ export class AddHTPasswdPage extends PromiseComponent<{}, AddHTPasswdPageState> 
 
   render() {
     const { name, htpasswdFileContent } = this.state;
-    const title = 'Add Identity Provider: HTPasswd';
+    const { t } = this.props;
+    const title = t('htpasswd-idp-form~Add Identity Provider: HTPasswd');
 
     return (
       <div className="co-m-pane__body">
@@ -101,8 +109,9 @@ export class AddHTPasswdPage extends PromiseComponent<{}, AddHTPasswdPageState> 
         <form onSubmit={this.submit} name="form" className="co-m-pane__body-group co-m-pane__form">
           <h1 className="co-m-pane__heading">{title}</h1>
           <p className="co-m-pane__explanation">
-            HTPasswd validates usernames and passwords against a flat file generated using the
-            htpasswd command.
+            {t(
+              'htpasswd-idp-form~HTPasswd validates usernames and passwords against a flat file generated using the htpasswd command.',
+            )}
           </p>
           <IDPNameInput value={name} onChange={this.nameChanged} />
           <div className="form-group">
@@ -110,8 +119,10 @@ export class AddHTPasswdPage extends PromiseComponent<{}, AddHTPasswdPageState> 
               onChange={this.htpasswdFileChanged}
               inputFileData={htpasswdFileContent}
               id="htpasswd-file"
-              label="HTPasswd File"
-              inputFieldHelpText="Upload an HTPasswd file created using the htpasswd command."
+              label={t('htpasswd-idp-form~HTPasswd file')}
+              inputFieldHelpText={t(
+                'htpasswd-idp-form~Upload an HTPasswd file created using the htpasswd command.',
+              )}
               isRequired
               hideContents
             />
@@ -119,10 +130,10 @@ export class AddHTPasswdPage extends PromiseComponent<{}, AddHTPasswdPageState> 
           <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
             <ActionGroup className="pf-c-form">
               <Button type="submit" variant="primary">
-                Add
+                {t('public~Add')}
               </Button>
               <Button type="button" variant="secondary" onClick={history.goBack}>
-                Cancel
+                {t('public~Cancel')}
               </Button>
             </ActionGroup>
           </ButtonBar>
@@ -132,9 +143,15 @@ export class AddHTPasswdPage extends PromiseComponent<{}, AddHTPasswdPageState> 
   }
 }
 
+export const AddHTPasswdPage = withTranslation()(AddHTPasswdPageWithTranslation);
+
 export type AddHTPasswdPageState = {
   name: string;
   htpasswdFileContent: string;
   inProgress: boolean;
   errorMessage: string;
+};
+
+type AddHTPasswdPageProps = {
+  t: TFunction;
 };

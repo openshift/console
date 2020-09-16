@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import { withTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { SecretModel, ConfigMapModel } from '../../models';
@@ -9,7 +11,10 @@ import { addIDP, getOAuthResource, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
 
-export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
+class AddGitLabPageWithTranslation extends PromiseComponent<
+  AddGitLabPageProps,
+  AddGitLabPageState
+> {
   readonly state: AddGitLabPageState = {
     name: 'gitlab',
     clientID: '',
@@ -137,7 +142,8 @@ export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
 
   render() {
     const { name, clientID, clientSecret, url, caFileContent } = this.state;
-    const title = 'Add Identity Provider: GitLab';
+    const { t } = this.props;
+    const title = t('gitlab-idp-form~Add Identity Provider: GitLab');
     return (
       <div className="co-m-pane__body">
         <Helmet>
@@ -146,12 +152,14 @@ export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
         <form onSubmit={this.submit} name="form" className="co-m-pane__body-group co-m-pane__form">
           <h1 className="co-m-pane__heading">{title}</h1>
           <p className="co-m-pane__explanation">
-            You can use GitLab integration for users authenticating with GitLab credentials.
+            {t(
+              'gitlab-idp-form~You can use GitLab integration for users authenticating with GitLab credentials.',
+            )}
           </p>
           <IDPNameInput value={name} onChange={this.nameChanged} />
           <div className="form-group">
             <label className="control-label co-required" htmlFor="url">
-              URL
+              {t('gitlab-idp-form~URL')}
             </label>
             <input
               className="pf-c-form-control"
@@ -163,12 +171,12 @@ export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
               required
             />
             <p className="help-block" id="idp-url-help">
-              The OAuth server base URL.
+              {t('gitlab-idp-form~The OAuth server base URL.')}
             </p>
           </div>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="client-id">
-              Client ID
+              {t('gitlab-idp-form~Client ID')}
             </label>
             <input
               className="pf-c-form-control"
@@ -181,7 +189,7 @@ export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
           </div>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="client-secret">
-              Client Secret
+              {t('gitlab-idp-form~Client secret')}
             </label>
             <input
               className="pf-c-form-control"
@@ -196,10 +204,10 @@ export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
           <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
             <ActionGroup className="pf-c-form">
               <Button type="submit" variant="primary" data-test-id="add-idp">
-                Add
+                {t('public~Add')}
               </Button>
               <Button type="button" variant="secondary" onClick={history.goBack}>
-                Cancel
+                {t('public~Cancel')}
               </Button>
             </ActionGroup>
           </ButtonBar>
@@ -209,6 +217,8 @@ export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
   }
 }
 
+export const AddGitLabPage = withTranslation()(AddGitLabPageWithTranslation);
+
 export type AddGitLabPageState = {
   name: string;
   url: string;
@@ -217,4 +227,8 @@ export type AddGitLabPageState = {
   caFileContent: string;
   inProgress: boolean;
   errorMessage: string;
+};
+
+type AddGitLabPageProps = {
+  t: TFunction;
 };

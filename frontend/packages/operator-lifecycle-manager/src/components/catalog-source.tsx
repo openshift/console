@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import * as classNames from 'classnames';
 import { match } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { CreateYAML } from '@console/internal/components/create-yaml';
 import { ListPageProps } from '@console/internal/components/monitoring/types';
 import { sortable } from '@patternfly/react-table';
@@ -68,7 +69,8 @@ const disableSourceModal = (
   operatorHub: OperatorHubKind,
   sourceName: string,
 ): KebabOption => ({
-  label: 'Disable',
+  // t('catalog-source~Disable')
+  labelKey: 'catalog-source~Disable',
   callback: () => disableDefaultSourceModal({ kind, operatorHub, sourceName }),
   accessReview: asAccessReview(kind, operatorHub, 'patch'),
 });
@@ -78,7 +80,8 @@ const enableSource = (
   operatorHub: OperatorHubKind,
   sourceName: string,
 ): KebabOption => ({
-  label: 'Enable',
+  // t('catalog-source~Enable')
+  labelKey: 'catalog-source~Enable',
   callback: () => {
     const currentSources = _.get(operatorHub, 'spec.sources', []);
     const patch = [
@@ -105,32 +108,33 @@ const DefaultSourceKebab: React.FC<DefaultSourceKebabProps> = ({
   return <Kebab options={options} />;
 };
 
-export const CatalogSourceDetails: React.SFC<CatalogSourceDetailsProps> = ({
+export const CatalogSourceDetails: React.FC<CatalogSourceDetailsProps> = ({
   obj,
   packageManifests,
   subscriptions,
   operatorGroups,
 }) => {
   const toData = <T extends K8sResourceKind>(data: T[]) => ({ loaded: true, data });
+  const { t } = useTranslation();
 
   return !_.isEmpty(obj) ? (
     <div className="co-catalog-details co-m-pane">
       <div className="co-m-pane__body">
         <div className="col-xs-4">
           <dl className="co-m-pane__details">
-            <dt>Name</dt>
-            <dd>{obj.spec.displayName}</dd>
+            <dt>{t('catalog-source~Name')}</dt>
+            <dd data-test-id="catalog-source-name">{obj.spec.displayName}</dd>
           </dl>
         </div>
         <div className="col-xs-4">
           <dl className="co-m-pane__details">
-            <dt>Publisher</dt>
-            <dd>{obj.spec.publisher}</dd>
+            <dt>{t('catalog-source~Publisher')}</dt>
+            <dd data-test-id="catalog-source-publisher">{obj.spec.publisher}</dd>
           </dl>
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="Packages" />
+        <SectionHeading text={t('catalog-source~Packages')} />
         <PackageManifestList
           loaded
           data={packageManifests}
@@ -144,7 +148,7 @@ export const CatalogSourceDetails: React.SFC<CatalogSourceDetailsProps> = ({
   );
 };
 
-export const CatalogSourceDetailsPage: React.SFC<CatalogSourceDetailsPageProps> = (props) => (
+export const CatalogSourceDetailsPage: React.FC<CatalogSourceDetailsPageProps> = (props) => (
   <DetailsPage
     {...props}
     namespace={props.match.params.ns}
@@ -176,11 +180,12 @@ export const CatalogSourceDetailsPage: React.SFC<CatalogSourceDetailsPageProps> 
   />
 );
 
-export const CreateSubscriptionYAML: React.SFC<CreateSubscriptionYAMLProps> = (props) => {
+export const CreateSubscriptionYAML: React.FC<CreateSubscriptionYAMLProps> = (props) => {
   type CreateProps = {
     packageManifest: { loaded: boolean; data?: PackageManifestKind };
     operatorGroup: { loaded: boolean; data?: OperatorGroupKind[] };
   };
+  const { t } = useTranslation();
   const Create = requireOperatorGroup(
     withFallback<CreateProps>(
       (createProps) => {
@@ -211,8 +216,8 @@ export const CreateSubscriptionYAML: React.SFC<CreateSubscriptionYAMLProps> = (p
       },
       () => (
         <MsgBox
-          title="Package Not Found"
-          detail="Cannot create a Subscription to a non-existent package."
+          title={t('catalog-source~Package not found')}
+          detail={t('catalog-source~Cannot create a Subscription to a non-existent package.')}
         />
       ),
     ),
@@ -250,45 +255,6 @@ const tableColumnClasses = [
   classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
   Kebab.columnClass,
 ];
-
-const CatalogSourceHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Publisher',
-      sortField: 'publisher',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: 'Availability',
-      sortField: 'availabilitySort',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Endpoint',
-      sortField: 'endpoint',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: '# of Operators',
-      sortField: 'operatorCount',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[5] },
-    },
-  ];
-};
 
 const getEndpoint = (catalogSource: CatalogSourceKind): React.ReactNode => {
   if (catalogSource.spec.configmap) {
@@ -372,14 +338,55 @@ const CatalogSourceTableRow: RowFunction<CatalogSourceTableRowObj> = ({
   </TableRow>
 );
 
-const CatalogSourceList: React.FC<TableProps> = (props) => (
-  <Table
-    {...props}
-    aria-label="Catalog Sources"
-    Header={CatalogSourceHeader}
-    Row={CatalogSourceTableRow}
-  />
-);
+const CatalogSourceList: React.FC<TableProps> = (props) => {
+  const { t } = useTranslation();
+  const CatalogSourceHeader = () => {
+    return [
+      {
+        title: t('catalog-source~Name'),
+        sortField: 'name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[0] },
+      },
+      {
+        title: t('catalog-source~Publisher'),
+        sortField: 'publisher',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[1] },
+      },
+      {
+        title: t('catalog-source~Availability'),
+        sortField: 'availabilitySort',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[2] },
+      },
+      {
+        title: t('catalog-source~Endpoint'),
+        sortField: 'endpoint',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[3] },
+      },
+      {
+        title: t('catalog-source~# of Operators'),
+        sortField: 'operatorCount',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[4] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[5] },
+      },
+    ];
+  };
+  return (
+    <Table
+      {...props}
+      aria-label={`${CatalogSourceModel.labelPlural}`}
+      Header={CatalogSourceHeader}
+      Row={CatalogSourceTableRow}
+    />
+  );
+};
 
 const DisabledPopover: React.FC<DisabledPopoverProps> = ({ operatorHub, sourceName }) => {
   const [visible, setVisible] = React.useState<boolean>(null);
@@ -393,19 +400,21 @@ const DisabledPopover: React.FC<DisabledPopoverProps> = ({ operatorHub, sourceNa
         .then(close),
     [close, operatorHub, sourceName],
   );
+  const { t } = useTranslation();
   return (
     <PopoverStatus
-      title="Disabled"
+      title={t('catalog-source~Disabled')}
       isVisible={visible}
       shouldClose={close}
-      statusBody={<StatusIconAndText title="Disabled" />}
+      statusBody={<StatusIconAndText title={t('catalog-source~Disabled')} />}
     >
       <p>
-        Operators provided by this source will not appear in OperatorHub and any operators installed
-        from this source will not receive updates until this source is re-enabled.
+        {t(
+          'catalog-source~Operators provided by this source will not appear in OperatorHub and any operators installed from this source will not receive updates until this source is re-enabled.',
+        )}
       </p>
       <Button isInline variant="link" onClick={onClickEnable}>
-        Enable source
+        {t('catalog-source~Enable source')}
       </Button>
     </PopoverStatus>
   );
@@ -467,31 +476,36 @@ const flatten = ({
   );
 };
 
-export const CatalogSourceListPage: React.FC<CatalogSourceListPageProps> = (props) => (
-  <MultiListPage
-    {...props}
-    canCreate
-    createAccessReview={{ model: CatalogSourceModel }}
-    createButtonText="Create Catalog Source"
-    createProps={{ to: `/k8s/cluster/${referenceForModel(CatalogSourceModel)}/~new` }}
-    flatten={(data) => flatten({ operatorHub: props.obj, ...data })}
-    ListComponent={CatalogSourceList}
-    textFilter="catalog-source-name"
-    hideLabelFilter
-    resources={[
-      {
-        isList: true,
-        kind: referenceForModel(PackageManifestModel),
-        prop: 'packageManifests',
-      },
-      {
-        isList: true,
-        kind: catalogSourceModelReference,
-        prop: 'catalogSources',
-      },
-    ]}
-  />
-);
+export const CatalogSourceListPage: React.FC<CatalogSourceListPageProps> = (props) => {
+  const { t } = useTranslation();
+  return (
+    <MultiListPage
+      {...props}
+      canCreate
+      createAccessReview={{ model: CatalogSourceModel }}
+      createButtonText={t('catalog-source~Create {{resource}}', {
+        resource: CatalogSourceModel.label,
+      })}
+      createProps={{ to: `/k8s/cluster/${referenceForModel(CatalogSourceModel)}/~new` }}
+      flatten={(data) => flatten({ operatorHub: props.obj, ...data })}
+      ListComponent={CatalogSourceList}
+      textFilter="catalog-source-name"
+      hideLabelFilter
+      resources={[
+        {
+          isList: true,
+          kind: referenceForModel(PackageManifestModel),
+          prop: 'packageManifests',
+        },
+        {
+          isList: true,
+          kind: catalogSourceModelReference,
+          prop: 'catalogSources',
+        },
+      ]}
+    />
+  );
+};
 
 type CatalogSourceTableRowObj = {
   availability: React.ReactNode;

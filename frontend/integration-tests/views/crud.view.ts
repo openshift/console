@@ -109,8 +109,9 @@ export const editRow = (kind: string) => (name: string) =>
 /**
  * Deletes a row from a list. Does not wait until the row is no longer visible.
  */
-export const deleteRow = (kind: string) => (name: string) =>
-  clickKebabAction(name, deleteHumanizedKind(kind)).then(async () => {
+export const deleteRow = (kind: string, useResourceLabel: boolean = false) => (name: string) => {
+  const label = useResourceLabel ? `${actions.delete} ${kind}` : deleteHumanizedKind(kind);
+  return clickKebabAction(name, label).then(async () => {
     switch (kind) {
       case 'Namespace':
         await browser.wait(until.presenceOf($('input[placeholder="Enter name"]')));
@@ -130,6 +131,7 @@ export const deleteRow = (kind: string) => (name: string) =>
     const rowIsGone = until.not(until.presenceOf(rowForName(name).$('.co-kebab')));
     return browser.wait(until.or(kebabIsDisabled, until.or(listIsEmpty, rowIsGone)));
   });
+};
 
 export const rowFiltersButton = $('[data-test-id="filter-dropdown-toggle"]');
 export const rowFiltersPresent = () => browser.wait(until.presenceOf(rowFiltersButton));

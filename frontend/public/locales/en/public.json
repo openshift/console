@@ -1,4 +1,10 @@
 {
+  "Add": "Add",
+  "Cancel": "Cancel",
+  "Update": "Update",
+  "Save": "Save",
+  "Edit": "Edit",
+  "Create": "Create",
   "{{date, MMM D, h:mm a}}": "{{date, MMM D, h:mm a}}",
   "Resume": "Resume",
   "Pause": "Pause",

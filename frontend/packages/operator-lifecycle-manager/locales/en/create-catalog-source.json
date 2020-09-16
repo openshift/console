@@ -1,0 +1,17 @@
+{
+  "Cluster-wide {{resource}}": "Cluster-wide {{resource}}",
+  "Catalog will be available in all namespaces": "Catalog will be available in all namespaces",
+  "Namespace {{resource}}": "Namespace {{resource}}",
+  "Catalog will only be available in a single namespace": "Catalog will only be available in a single namespace",
+  "Create {{resource}}": "Create {{resource}}",
+  "Create a {{resource}} in order to make operators available in OperatorHub.": "Create a {{resource}} in order to make operators available in OperatorHub.",
+  "{{resource}} name": "{{resource}} name",
+  "Display name": "Display name",
+  "Publisher name": "Publisher name",
+  "Image (URL of container image)": "Image (URL of container image)",
+  "URL of container image hosted on a registry": "URL of container image hosted on a registry",
+  "Availability": "Availability",
+  "Namespace": "Namespace",
+  "Create": "Create",
+  "Cancel": "Cancel"
+}
