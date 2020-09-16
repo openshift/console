@@ -154,10 +154,10 @@ Scenario: Set traffic distribution greater than 100% for the Revisions of the kn
    Given knative service named "nodejs-ex-git-1" is higlighted on topology page
    And service should have at least 1 revision 
    When user selects "Set Traffic Distribution" context menu option of knative service "nodejs-ex-git-1"
-   And user clicks on "Add Revision" button present in "Set Traffic Dsitribution" modal
+   And user clicks on "Add Revision" button present in "Set Traffic Distribution" modal
    And user enters "50" into the "Split" text box of new revision
    And user selects the "Revision" option from "revision" drop down
-   And user clicks the save button on the "Set Traffic Dsitribution" modal
+   And user clicks the save button on the "Set Traffic Distribution" modal
    Then error message displays as "validation failed: Traffic targets sum to 150, want 100: spec.traffic"
 
 
@@ -167,10 +167,10 @@ Scenario: Set traffic distribution less than 100% for the Revisions of the knati
    And service should have at least 1 revision 
    When user selects "Set Traffic Distribution" context menu option of knative service "nodejs-ex-git-1"
    And user enters "25" into the "Split" text box
-   And user clicks on "Add Revision" button present in "Set Traffic Dsitribution" modal
+   And user clicks on "Add Revision" button present in "Set Traffic Distribution" modal
    And user enters "50" into the "Split" text box of new revision
    And user selects the "Revision" option from "revision" drop down
-   And user clicks the save button on the "Set Traffic Dsitribution" modal
+   And user clicks the save button on the "Set Traffic Distribution" modal
    Then error message displays as "validation failed: Traffic targets sum to 75, want 100: spec.traffic"
 
 
@@ -180,10 +180,10 @@ Scenario: Set traffic distribution equal to 100% for the Revisions of the knativ
    And service should have at least 1 revision 
    When user selects "Set Traffic Distribution" context menu option of knative service "nodejs-ex-git-1"
    And user enters "50" into the "Split" text box
-   And user clicks on "Add Revision" button present in "Set Traffic Dsitribution" modal
+   And user clicks on "Add Revision" button present in "Set Traffic Distribution" modal
    And user enters "50" into the "Split" text box of new revision
    And user selects the "Revision" option from "revision" drop down
-   And user clicks the save button on the "Set Traffic Dsitribution" modal
+   And user clicks the save button on the "Set Traffic Distribution" modal
    Then number of routes should get increased in side bar - resources tab - routes section
 
 
