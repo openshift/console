@@ -33,7 +33,8 @@
         "integration-tests/v2v/*.scenario.ts"
       ],
       "kubevirt-gating": [
-        "integration-tests/tests/example.scenario.ts"
+        "integration-tests/tests/example.scenario.ts",
+        "integration-tests/tests/vm.action.base.scenario.ts"
       ]
     }
   }
