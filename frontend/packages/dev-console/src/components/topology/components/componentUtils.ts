@@ -86,6 +86,7 @@ const highlightNode = (monitor: DropTargetMonitor, element: Node): boolean => {
   if (operation.type === CREATE_CONNECTOR_OPERATION) {
     return (
       monitor.getItem() !== element &&
+      monitor.getItem().getParent() !== element &&
       !monitor
         .getItem()
         .getSourceEdges()
