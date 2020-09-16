@@ -27,7 +27,7 @@ import {
   hasPowerManagement,
   getPoweroffAnnotation,
 } from '../../selectors';
-import { BareMetalHostModel, NodeMaintenanceModel } from '../../models';
+import { BareMetalHostModel } from '../../models';
 import { getHostStatus } from '../../status/host-status';
 import {
   HOST_POWER_STATUS_POWERED_OFF,
@@ -57,6 +57,7 @@ type ActionArgs = {
   nodeName?: string;
   nodeMaintenance?: K8sResourceKind;
   hasNodeMaintenanceCapability?: boolean;
+  maintenanceModel: K8sKind;
   status: StatusProps;
   bmoEnabled: string;
 };
@@ -79,12 +80,12 @@ export const SetNodeMaintenance = (
 export const RemoveNodeMaintenance = (
   kindObj: K8sKind,
   host: BareMetalHostKind,
-  { hasNodeMaintenanceCapability, nodeMaintenance, nodeName }: ActionArgs,
+  { hasNodeMaintenanceCapability, nodeMaintenance, nodeName, maintenanceModel }: ActionArgs,
 ): KebabOption => ({
   hidden: !nodeName || !hasNodeMaintenanceCapability || !nodeMaintenance,
   label: 'Stop Maintenance',
   callback: () => stopNodeMaintenanceModal(nodeMaintenance),
-  accessReview: nodeMaintenance && asAccessReview(NodeMaintenanceModel, nodeMaintenance, 'delete'),
+  accessReview: nodeMaintenance && asAccessReview(maintenanceModel, nodeMaintenance, 'delete'),
 });
 
 export const PowerOn = (kindObj: K8sKind, host: BareMetalHostKind, { bmoEnabled }): KebabOption => {
@@ -225,7 +226,7 @@ export const menuActionsCreator = (
   kindObj: K8sKind,
   host: BareMetalHostKind,
   { machines, machineSets, nodes, nodeMaintenances }: ExtraResources,
-  { hasNodeMaintenanceCapability, bmoEnabled },
+  { hasNodeMaintenanceCapability, maintenanceModel, bmoEnabled },
 ) => {
   const machine = getHostMachine(host, machines);
   const node = getMachineNode(machine, nodes);
@@ -245,6 +246,7 @@ export const menuActionsCreator = (
       machineSet,
       status,
       bmoEnabled,
+      maintenanceModel,
     });
   });
 };

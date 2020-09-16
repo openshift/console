@@ -8,12 +8,11 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { MachineModel, NodeModel, CertificateSigningRequestModel } from '@console/internal/models';
 import { connectToPlural } from '@console/internal/kinds';
 import { ResourceDetailsPageProps } from '@console/internal/components/resource-list';
-import { useFlag } from '@console/shared/src/hooks/flag';
-import { NodeMaintenanceModel, BareMetalHostModel } from '../../models';
+import { BareMetalHostModel } from '../../models';
 import { menuActionsCreator } from './menu-actions';
 import BareMetalNodeDetails from './BareMetalNodeDetails';
-import { NODE_MAINTENANCE_FLAG } from '../../features';
 import BareMetalNodeDashboard from './dashboard/BareMetalNodeDashboard';
+import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 
 const { editYaml, events, pods } = navFactory;
 
@@ -40,7 +39,7 @@ type BareMetalNodeDetailsPageProps = ResourceDetailsPageProps & {
 };
 
 const BareMetalNodeDetailsPage = connectToPlural((props: BareMetalNodeDetailsPageProps) => {
-  const hasNodeMaintenanceCapability = useFlag(NODE_MAINTENANCE_FLAG);
+  const [hasNodeMaintenanceCapability, maintenanceModel] = useMaintenanceCapability();
   const resources: FirehoseResource[] = [
     {
       kind: referenceForModel(MachineModel),
@@ -64,7 +63,7 @@ const BareMetalNodeDetailsPage = connectToPlural((props: BareMetalNodeDetailsPag
 
   if (hasNodeMaintenanceCapability) {
     resources.push({
-      kind: referenceForModel(NodeMaintenanceModel),
+      kind: referenceForModel(maintenanceModel),
       namespaced: false,
       isList: true,
       prop: 'nodeMaintenances',
@@ -86,7 +85,7 @@ const BareMetalNodeDetailsPage = connectToPlural((props: BareMetalNodeDetailsPag
         pages={pages}
         resources={resources}
         kind={modelRef}
-        customData={{ hasNodeMaintenanceCapability }}
+        customData={{ hasNodeMaintenanceCapability, maintenanceModel }}
         breadcrumbsFor={() => [
           {
             name: `${kindObj.labelPlural}`,

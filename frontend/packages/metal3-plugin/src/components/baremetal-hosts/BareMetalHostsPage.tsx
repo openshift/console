@@ -10,8 +10,7 @@ import {
   NodeKind,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { useFlag } from '@console/shared/src/hooks/flag';
-import { BareMetalHostModel, NodeMaintenanceModel } from '../../models';
+import { BareMetalHostModel } from '../../models';
 import { getHostMachine, getNodeMaintenanceNodeName } from '../../selectors';
 import { getHostStatus } from '../../status/host-status';
 import { BareMetalHostBundle } from '../types';
@@ -19,7 +18,7 @@ import { BareMetalHostKind } from '../../types';
 import { getMachineMachineSetOwner } from '../../selectors/machine';
 import { hostStatusFilter } from './table-filters';
 import BareMetalHostsTable from './BareMetalHostsTable';
-import { NODE_MAINTENANCE_FLAG } from '../../features';
+import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 
 type Resources = {
   hosts: FirehoseResult<BareMetalHostKind[]>;
@@ -103,7 +102,7 @@ const getCreateProps = ({ namespace }: { namespace: string }) => {
 };
 
 const BareMetalHostsPage: React.FC<BareMetalHostsPageProps> = (props) => {
-  const hasNodeMaintenanceCapability = useFlag(NODE_MAINTENANCE_FLAG);
+  const [hasNodeMaintenanceCapability, model] = useMaintenanceCapability();
   const { namespace } = props;
   const resources: FirehoseResource[] = [
     {
@@ -131,7 +130,7 @@ const BareMetalHostsPage: React.FC<BareMetalHostsPageProps> = (props) => {
 
   if (hasNodeMaintenanceCapability) {
     resources.push({
-      kind: referenceForModel(NodeMaintenanceModel),
+      kind: referenceForModel(model),
       namespaced: false,
       isList: true,
       prop: 'nodeMaintenances',
