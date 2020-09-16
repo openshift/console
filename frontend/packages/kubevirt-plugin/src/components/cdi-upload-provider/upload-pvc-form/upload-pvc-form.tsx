@@ -27,6 +27,7 @@ import {
   history,
   resourcePath,
   ExternalLink,
+  ResourceLink,
 } from '@console/internal/components/utils';
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import { RadioInput } from '@console/internal/components/radio';
@@ -59,6 +60,7 @@ import {
   TEMPLATE_VM_COMMON_NAMESPACE,
 } from '../../../constants';
 import { CDI_UPLOAD_OS_URL_PARAM, CDI_UPLOAD_SUPPORTED_TYPES_URL } from '../consts';
+import { OperatingSystemRecord } from '../../../types';
 
 import './upload-pvc-form.scss';
 
@@ -107,6 +109,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   osParam,
   isLoading,
   setIsFileRejected,
+  setDisableFormSubmit,
   ...props
 }) => {
   const operatingSystems = getTemplateOperatingSystems(commonTemplates);
@@ -120,7 +123,8 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   const [requestSizeUnit, setRequestSizeUnit] = React.useState('Gi');
   const [storageProvisioner, setStorageProvisioner] = React.useState('');
   const [isGolden, setIsGolden] = React.useState(!!osParam);
-  const [os, setOs] = React.useState('');
+  const [os, setOs] = React.useState<OperatingSystemRecord>();
+  const [osImageExists, setOsImageExists] = React.useState(false);
 
   React.useEffect(() => {
     const updateDV = (): K8sResourceKind => {
@@ -207,12 +211,11 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   const handleGoldenCheckbox = (checked) => {
     setIsGolden(checked);
     if (checked) {
-      const operatingSystem = operatingSystems.find((newOs) => newOs.id === os);
-      setNamespace(operatingSystem?.dataVolumeNamespace);
+      setNamespace(os?.dataVolumeNamespace);
       if (pvcName && !os) {
         setPvcName('');
       } else {
-        setPvcName(operatingSystem?.dataVolumeName);
+        setPvcName(os?.dataVolumeName);
       }
     }
     if (!checked) {
@@ -220,9 +223,9 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
     }
   };
 
-  const handleOs = (newOs) => {
-    setOs(newOs);
+  const handleOs = (newOs: string) => {
     const operatingSystem = operatingSystems.find((o) => o.id === newOs);
+    setOs(operatingSystem);
     setPvcName(operatingSystem?.dataVolumeName);
     setNamespace(operatingSystem?.dataVolumeNamespace);
   };
@@ -231,19 +234,24 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
 
   React.useEffect(() => {
     if (!isLoading) {
-      // os url param might already have a golden image
-      const operatingSystem = operatingSystems.find((o) => o.id === osParam);
-      const isGoldenExists = goldenPvcs?.find(
-        (pvc) =>
-          getName(pvc) === operatingSystem?.dataVolumeName &&
-          getNamespace(pvc) === operatingSystem?.dataVolumeNamespace,
-      );
-      if (!isGoldenExists) {
-        handleOs(osParam);
-      }
+      handleOs(osParam);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
+
+  React.useEffect(() => {
+    const goldenImagePVC = goldenPvcs?.find(
+      (pvc) => getName(pvc) === os?.dataVolumeName && getNamespace(pvc) === os?.dataVolumeNamespace,
+    );
+    if (goldenImagePVC) {
+      setOsImageExists(true);
+      setDisableFormSubmit(true);
+    } else if (osImageExists) {
+      setOsImageExists(false);
+      setDisableFormSubmit(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [goldenPvcs, os]);
 
   return (
     <div>
@@ -290,7 +298,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
               id="golden-os-select"
               isDisabled={isLoading}
               onChange={handleOs}
-              value={os || ''}
+              value={os?.id || ''}
               isRequired
             >
               <FormSelectPlaceholderOption
@@ -303,7 +311,6 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
                     getName(pvc) === dataVolumeName && getNamespace(pvc) === dataVolumeNamespace,
                 ) ? (
                   <FormSelectOption
-                    isDisabled
                     key={id}
                     value={id}
                     label={`${name || id} - Default data image already exists`}
@@ -321,6 +328,21 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
               )}
             </FormSelect>
           </div>
+          {osImageExists && (
+            <div className="form-group">
+              <Alert isInline variant="danger" title="Operating system source already defined">
+                In order to add a new source for {os?.name} you will need to delete the following
+                PVC:{' '}
+                <ResourceLink
+                  hideIcon
+                  inline
+                  kind={PersistentVolumeClaimModel.kind}
+                  name={os?.dataVolumeName}
+                  namespace={os?.dataVolumeNamespace}
+                />
+              </Alert>
+            </div>
+          )}
           <label className="control-label co-required" htmlFor="pvc-namespace">
             Namespace
           </label>
@@ -429,6 +451,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
 
 export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [disableFormSubmit, setDisableFormSubmit] = React.useState(false);
   const [fileValue, setFileValue] = React.useState<File>(null);
   const [fileName, setFileName] = React.useState('');
   const [isFileRejected, setIsFileRejected] = React.useState(false);
@@ -512,10 +535,16 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
             goldenPvcs={goldenPvcs}
             osParam={osParam}
             isLoading={!loadedTemplates}
+            setDisableFormSubmit={setDisableFormSubmit}
           />
           <ButtonBar inProgress={!loadedTemplates || !loadedPvcs} errorMessage={errorMessage}>
             <ActionGroup className="pf-c-form">
-              <Button id="save-changes" type="submit" variant="primary">
+              <Button
+                isDisabled={disableFormSubmit}
+                id="save-changes"
+                type="submit"
+                variant="primary"
+              >
                 Upload
               </Button>
               <Button onClick={history.goBack} type="button" variant="secondary">
@@ -551,6 +580,7 @@ export type UploadPVCFormProps = {
   fileName: string;
   osParam?: string;
   isLoading: boolean;
+  setDisableFormSubmit: React.Dispatch<React.SetStateAction<boolean>>;
   commonTemplates: TemplateKind[];
   goldenPvcs: PersistentVolumeClaimKind[];
   setIsFileRejected: React.Dispatch<React.SetStateAction<boolean>>;
