@@ -236,12 +236,15 @@ const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
   );
 };
 
+type GraphSeries = GraphDataPoint[] | null;
+
 const Graph: React.FC<GraphProps> = React.memo(
   ({ allSeries, disabledSeries, formatLegendLabel, isStack, span, width, xDomain }) => {
     // Remove any disabled series
-    const data = _.flatMap(allSeries, (series, i) => {
-      return _.map(series, ([metric, values]) => {
-        return _.some(disabledSeries[i], (s) => _.isEqual(s, metric)) ? [{}] : values;
+    const data: GraphSeries[] = [];
+    _.each(allSeries, (series, i) => {
+      _.each(series, ([metric, values]) => {
+        data.push(_.some(disabledSeries[i], (s) => _.isEqual(s, metric)) ? null : values);
       });
     });
 
@@ -259,10 +262,10 @@ const Graph: React.FC<GraphProps> = React.memo(
       }
     } else {
       // Set a reasonable Y-axis range based on the min and max values in the data
-      const findMin = (series: GraphDataPoint[]) => _.minBy(series, 'y');
-      const findMax = (series: GraphDataPoint[]) => _.maxBy(series, 'y');
-      let minY = _.get(findMin(_.map(data, findMin)), 'y', 0);
-      let maxY = _.get(findMax(_.map(data, findMax)), 'y', 0);
+      const findMin = (series: GraphSeries) => _.minBy(series, 'y');
+      const findMax = (series: GraphSeries) => _.maxBy(series, 'y');
+      let minY: number = findMin(data.map(findMin))?.y ?? 0;
+      let maxY: number = findMax(data.map(findMax))?.y ?? 0;
       if (minY === 0 && maxY === 0) {
         minY = -1;
         maxY = 1;
@@ -313,7 +316,7 @@ const Graph: React.FC<GraphProps> = React.memo(
         <ChartAxis crossAxis={false} dependentAxis tickCount={6} tickFormat={yTickFormat} />
         {isStack ? (
           <ChartStack>
-            {_.map(data, (values, i) => (
+            {data.map((values, i) => (
               <ChartArea
                 key={i}
                 data={values}
@@ -324,14 +327,18 @@ const Graph: React.FC<GraphProps> = React.memo(
           </ChartStack>
         ) : (
           <ChartGroup>
-            {_.map(data, (values, i) => (
-              <ChartLine
-                key={i}
-                data={values}
-                labels={() => ' '}
-                labelComponent={graphLabelComponent}
-              />
-            ))}
+            {data.map((values, i) =>
+              values === null ? (
+                <ChartLine key={i} />
+              ) : (
+                <ChartLine
+                  key={i}
+                  data={values}
+                  labels={() => ' '}
+                  labelComponent={graphLabelComponent}
+                />
+              ),
+            )}
           </ChartGroup>
         )}
         {legendData && (
@@ -768,7 +775,7 @@ type GraphDataPoint = {
   y: number;
 };
 
-type Series = [PrometheusLabels, GraphDataPoint[][]];
+type Series = [PrometheusLabels, GraphDataPoint[]];
 
 export type QueryObj = {
   disabledSeries?: PrometheusLabels[];
