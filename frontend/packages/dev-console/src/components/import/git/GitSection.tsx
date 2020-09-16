@@ -172,7 +172,8 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, builderImages }) =>
       return;
     }
     !nameTouched && setFieldValue('name', '');
-    values.application.selectedKey !== UNASSIGNED_KEY &&
+    !values.application.isInContext &&
+      values.application.selectedKey !== UNASSIGNED_KEY &&
       !applicationNameTouched &&
       setFieldValue('application.name', '');
   };

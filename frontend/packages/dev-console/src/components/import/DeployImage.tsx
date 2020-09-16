@@ -23,7 +23,6 @@ export interface DeployImageProps {
 interface StateProps {
   activeApplication: string;
   serviceBindingAvailable: boolean;
-  isInContext: boolean;
 }
 
 type Props = DeployImageProps & StateProps;
@@ -34,7 +33,6 @@ const DeployImage: React.FC<Props> = ({
   activeApplication,
   contextualSource,
   serviceBindingAvailable,
-  isInContext,
 }) => {
   const initialValues: DeployImageFormData = {
     project: {
@@ -46,7 +44,7 @@ const DeployImage: React.FC<Props> = ({
       initial: sanitizeApplicationValue(activeApplication),
       name: sanitizeApplicationValue(activeApplication),
       selectedKey: activeApplication,
-      isInContext,
+      isInContext: !!sanitizeApplicationValue(activeApplication),
     },
     name: '',
     searchTerm: '',
@@ -192,11 +190,10 @@ interface OwnProps extends DeployImageProps {
 }
 const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => {
   const activeApplication = ownProps.forApplication || getActiveApplication(state);
-  const isInContext = !!ownProps.forApplication;
+
   return {
     activeApplication: activeApplication !== ALL_APPLICATIONS_KEY ? activeApplication : '',
     serviceBindingAvailable: state.FLAGS.get(ALLOW_SERVICE_BINDING),
-    isInContext,
   };
 };
 

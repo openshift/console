@@ -54,6 +54,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       initial: sanitizeApplicationValue(activeApplication),
       name: sanitizeApplicationValue(activeApplication),
       selectedKey: activeApplication === 'unassigned' ? UNASSIGNED_KEY : activeApplication,
+      isInContext: !!sanitizeApplicationValue(activeApplication),
     },
     git: {
       url: '',
