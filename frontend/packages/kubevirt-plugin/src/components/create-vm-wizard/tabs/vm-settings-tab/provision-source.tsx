@@ -112,7 +112,7 @@ export const ProvisionSourceComponent: React.FC<ProvisionSourceComponentProps> =
             goToStorageStep={goToStorageStep}
           />
         )}
-        {[ProvisionSource.PXE.toString()].includes(provisionSourceValue) && (
+        {[ProvisionSource.PXE.getValue()].includes(provisionSourceValue) && (
           <ProvisionSourceNetHelpMsg goToNetworkingStep={goToNetworkingStep} />
         )}
       </FormFieldRow>

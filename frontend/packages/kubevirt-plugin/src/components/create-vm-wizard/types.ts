@@ -1,4 +1,4 @@
-import { ConfigMapKind } from '@console/internal/module/k8s';
+import { ConfigMapKind, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 import { V1Network, V1NetworkInterface } from '../../types/vm';
 import { IDReferences } from '../../utils/redux/id-reference';
 import { UINetworkEditConfig, UINetworkInterfaceValidation } from '../../types/ui/nic';
@@ -268,6 +268,11 @@ export type CommonData = {
       loaded: boolean;
       loadError: string;
       data: ConfigMapKind;
+    };
+    [VMWizardProps.openshiftCNVBaseImages]?: {
+      loaded: boolean;
+      loadError: string;
+      data: PersistentVolumeClaimKind[];
     };
   };
   dataIDReferences?: IDReferences;

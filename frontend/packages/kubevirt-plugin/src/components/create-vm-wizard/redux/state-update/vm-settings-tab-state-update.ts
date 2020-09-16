@@ -104,14 +104,11 @@ const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
     return;
   }
   if (
-    !hasVMSettingsValueChanged(
-      prevState,
-      state,
-      id,
-      VMSettingsField.OPERATING_SYSTEM,
-      VMSettingsField.FLAVOR,
-      VMSettingsField.WORKLOAD_PROFILE,
-    )
+    // Note(Yaacov Sep-16): We it is not allowd to change baseImage when changing the flavor
+    // or workload, user should not see that we have a bug settings the image:
+    // we are incurrectly setting the base image using templates instead of using just the os.
+    // we should fix that in the future, but currently we should not expose users to that.
+    !hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.OPERATING_SYSTEM)
   ) {
     return;
   }
@@ -176,7 +173,7 @@ const cloneCommonBaseDiskImageUpdater = ({ id, prevState, dispatch, getState }: 
   const provisionSourceTypeValue = iUserTemplate
     ? undefined
     : cloneCommonBaseDiskImage
-    ? ProvisionSource.DISK.toString()
+    ? ProvisionSource.DISK.getValue()
     : '';
 
   dispatch(
