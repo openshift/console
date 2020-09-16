@@ -8,7 +8,8 @@ import {
   ModalTitle,
 } from '@console/internal/components/factory';
 import { usePrometheusPoll } from '@console/internal/components/graphs/prometheus-poll-hook';
-import { k8sPatch, StorageClassResourceKind } from '@console/internal/module/k8s';
+import { k8sPatch, StorageClassResourceKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { getName, getRequestedPVCSize } from '@console/shared';
 import { OCSServiceModel } from '../../../models';
 import { getCurrentDeviceSetIndex } from '../../../utils/add-capacity';
@@ -22,7 +23,9 @@ import {
 import { OCSStorageClassDropdown } from '../storage-class-dropdown';
 import { PVsAvailableCapacity } from '../../ocs-install/pvs-available-capacity';
 import { createDeviceSet, DeviceSet } from '../../ocs-install/ocs-request-data';
-import { cephCapacityResource } from '../../../constants/resources';
+import { cephCapacityResource, pvResource } from '../../../constants/resources';
+import { getSCAvailablePVs, getMinSizePVCapacity } from '../../../selectors';
+
 import './_add-capacity-modal.scss';
 
 const getProvisionedCapacity = (value: number) => (value % 1 ? (value * 3).toFixed(2) : value * 3);
@@ -47,6 +50,7 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
   const selectedSCName: string = getName(storageClass);
   const deviceSetIndex: number = getCurrentDeviceSetIndex(deviceSets, selectedSCName);
   const replica = OCS_DEVICE_SET_REPLICA;
+  const pvsList = useK8sWatchResource<K8sResourceKind[]>(pvResource);
 
   let currentCapacity: React.ReactNode;
 
@@ -68,16 +72,15 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
 
   const onChange = (sc: StorageClassResourceKind) => setStorageClass(sc);
 
-  const submit = (event: React.FormEvent<EventTarget>) => {
-    event.preventDefault();
-    setProgress(true);
+  const makeAddCapacityRequest = (osdSize: string) => {
     const patch = {
       op: '',
       path: '',
       value: null,
     };
+
     const portable = !isNoProvionerSC;
-    const osdSize = isNoProvionerSC ? defaultRequestSize.BAREMETAL : osdSizeWithUnit;
+
     if (deviceSetIndex === -1) {
       patch.op = 'add';
       patch.path = `/spec/storageDeviceSets/-`;
@@ -104,6 +107,28 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
     }
   };
 
+  const submit = (event: React.FormEvent<EventTarget>) => {
+    event.preventDefault();
+    setProgress(true);
+
+    if (isNoProvionerSC) {
+      const [pvsData, pvsLoaded, pvsLoadError] = pvsList;
+      if ((pvsLoadError || pvsData.length === 0 || !storageClass) && pvsLoaded) {
+        // if pv list fails, pass the size as 1
+        makeAddCapacityRequest(defaultRequestSize.BAREMETAL);
+      } else if (pvsLoaded) {
+        const pvs = getSCAvailablePVs(pvsData, getName(storageClass));
+        // empty pvs list will return infinity, hence added this condition
+        const size = pvs.length
+          ? getMinSizePVCapacity(pvs).toString()
+          : defaultRequestSize.BAREMETAL;
+        makeAddCapacityRequest(size);
+      }
+    } else {
+      makeAddCapacityRequest(osdSizeWithUnit);
+    }
+  };
+
   return (
     <form onSubmit={submit} className="modal-content modal-content--no-inner-scroll">
       <ModalTitle>Add Capacity</ModalTitle>
@@ -126,6 +151,7 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
               replica={replica}
               data-test-id="ceph-add-capacity-pvs-available-capacity"
               storageClass={storageClass}
+              pvsList={pvsList}
             />
           ) : (
             <div>

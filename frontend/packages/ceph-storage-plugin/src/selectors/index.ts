@@ -72,3 +72,10 @@ export const calcPVsCapacity = (pvs: K8sResourceKind[]): number =>
 
 export const getSCAvailablePVs = (pvsData: K8sResourceKind[], sc: string): K8sResourceKind[] =>
   pvsData.filter((pv) => getPVStorageClass(pv) === sc && pv.status.phase === status.AVAILABLE);
+
+export const getMinSizePVCapacity = (pvs: K8sResourceKind[]): number => {
+  const capacities: number[] = pvs.map((pv) =>
+    Number(convertToBaseValue(pv.spec.capacity.storage)),
+  );
+  return Math.min(...capacities);
+};

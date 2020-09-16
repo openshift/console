@@ -1,9 +1,7 @@
 import * as React from 'react';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { StorageClassResourceKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { humanizeBinaryBytes } from '@console/internal/components/utils/';
 import { getName } from '@console/shared';
-import { pvResource } from '../../constants/resources';
 import { calcPVsCapacity, getSCAvailablePVs } from '../../selectors';
 import '../modals/add-capacity-modal/_add-capacity-modal.scss';
 import './pvs-available-capacity.scss';
@@ -11,8 +9,9 @@ import './pvs-available-capacity.scss';
 export const PVsAvailableCapacity: React.FC<PVAvaialbleCapacityProps> = ({
   replica,
   storageClass,
+  pvsList,
 }) => {
-  const [data, loaded, loadError] = useK8sWatchResource<K8sResourceKind[]>(pvResource);
+  const [data, loaded, loadError] = pvsList;
   let availableCapacity: string = '';
 
   let availableStatusElement = (
@@ -40,4 +39,5 @@ export const PVsAvailableCapacity: React.FC<PVAvaialbleCapacityProps> = ({
 type PVAvaialbleCapacityProps = {
   replica: number;
   storageClass: StorageClassResourceKind;
+  pvsList: [K8sResourceKind[], boolean, any];
 };

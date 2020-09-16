@@ -53,7 +53,7 @@ import {
   getAssociatedNodes,
   shouldDeployAttachedAsMinimal,
 } from '../../../utils/install';
-import { getSCAvailablePVs } from '../../../selectors';
+import { getSCAvailablePVs, getMinSizePVCapacity } from '../../../selectors';
 import '../ocs-install.scss';
 import './attached-devices.scss';
 
@@ -61,20 +61,39 @@ const makeOCSRequest = (
   selectedData: NodeKind[],
   storageClass: StorageClassResourceKind,
   isEncrypted: boolean,
+  pvsList: [K8sResourceKind[], boolean, any],
   isMinimal?: boolean,
   isEncryptionSupported?: boolean,
 ): Promise<any> => {
+  let ocsObj = null;
   const promises = makeLabelNodesRequest(selectedData);
   const scName = getName(storageClass);
-  const ocsObj = getOCSRequestData(
+  const [pvsData, pvsLoaded, pvsLoadError] = pvsList;
+
+  if ((pvsLoadError || pvsData.length === 0 || !storageClass) && pvsLoaded) {
+    // if pv list fails, pass the size as 1
+    ocsObj = getOCSRequestData(
+      scName,
+      defaultRequestSize.BAREMETAL,
+      isEncrypted,
+      NO_PROVISIONER,
+      isMinimal,
+      isEncryptionSupported,
+    );
+    return Promise.all(promises).then(() => k8sCreate(OCSServiceModel, ocsObj));
+  }
+  const pvs = getSCAvailablePVs(pvsData, scName);
+  // empty pvs list will return infinity, hence added this condition
+  const size = pvs.length ? getMinSizePVCapacity(pvs).toString() : defaultRequestSize.BAREMETAL;
+
+  ocsObj = getOCSRequestData(
     scName,
-    defaultRequestSize.BAREMETAL,
+    size,
     isEncrypted,
     NO_PROVISIONER,
     isMinimal,
     isEncryptionSupported,
   );
-
   return Promise.all(promises).then(() => k8sCreate(OCSServiceModel, ocsObj));
 };
 
@@ -99,6 +118,7 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
   const [pvData, pvLoaded, pvLoadError] = useK8sWatchResource<K8sResourceKind[]>(pvResource);
   const isMinimalSupported = useFlag(OCS_SUPPORT_FLAGS.MINIMAL_DEPLOYMENT);
   const isEncryptionSupported = useFlag(OCS_SUPPORT_FLAGS.ENCRPYTION);
+  const pvsList = useK8sWatchResource<K8sResourceKind[]>(pvResource);
 
   const isMinimal = shouldDeployAttachedAsMinimal(nodes);
 
@@ -144,7 +164,7 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
     event.preventDefault();
     // eslint-disable-next-line promise/catch-or-return
     handlePromise(
-      makeOCSRequest(nodes, storageClass, isEncrypted, isMinimal, isEncryptionSupported),
+      makeOCSRequest(nodes, storageClass, isEncrypted, pvsList, isMinimal, isEncryptionSupported),
       () => {
         dispatch(setFlag(OCS_ATTACHED_DEVICES_FLAG, true));
         dispatch(setFlag(OCS_CONVERGED_FLAG, true));
@@ -174,6 +194,7 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
             replica={OCS_DEVICE_SET_REPLICA}
             data-test-id="ceph-ocs-install-pvs-available-capacity"
             storageClass={storageClass}
+            pvsList={pvsList}
           />
         </StorageClassSection>
         {isEncryptionSupported && (
