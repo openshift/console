@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { PopoverPosition } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import {
   useMetricDuration,
   Duration,
@@ -64,10 +65,11 @@ export const CPUPopover: React.FC<PopoverProps> = ({
       getPodConsumers(queries[NodeQueries.PODS_BY_CPU], nodeName),
     ];
   }, [nodeIp, nodeName]);
+  const { t } = useTranslation();
   return (
     <ConsumerPopover
       current={title}
-      title="CPU"
+      title={t('nodes~CPU')}
       consumers={consumers}
       humanize={humanizeCpuCores}
       position={position}
@@ -92,10 +94,11 @@ export const MemoryPopover: React.FC<PopoverProps> = ({
       getPodConsumers(queries[NodeQueries.PODS_BY_MEMORY], nodeName),
     ];
   }, [nodeIp, nodeName]);
+  const { t } = useTranslation();
   return (
     <ConsumerPopover
       current={title}
-      title="Memory"
+      title={t('nodes~Memory')}
       consumers={consumers}
       humanize={humanizeBinaryBytes}
       position={position}
@@ -150,44 +153,44 @@ const UtilizationCard: React.FC = () => {
     ),
     [nodeIp, nodeName],
   );
-
+  const { t } = useTranslation();
   const filesystemPopover = React.useCallback(
     ({ current }: TopConsumerPopoverProp) => (
       <ConsumerPopover
-        title="Filesystem"
+        title={t('nodes~Filesystem')}
         current={current}
         consumers={consumers[0]}
         humanize={humanizeBinaryBytes}
         position={PopoverPosition.top}
       />
     ),
-    [consumers],
+    [consumers, t],
   );
 
   const networkPopoverIn = React.useCallback(
     ({ current }: TopConsumerPopoverProp) => (
       <ConsumerPopover
-        title="Network In"
+        title={t('nodes~Network in')}
         current={current}
         consumers={consumers[1]}
         humanize={humanizeDecimalBytesPerSec}
         position={PopoverPosition.top}
       />
     ),
-    [consumers],
+    [consumers, t],
   );
 
   const networkPopoverOut = React.useCallback(
     ({ current }: TopConsumerPopoverProp) => (
       <ConsumerPopover
-        title="Network Out"
+        title={t('nodes~Network out')}
         current={current}
         consumers={consumers[2]}
         humanize={humanizeDecimalBytesPerSec}
         position={PopoverPosition.top}
       />
     ),
-    [consumers],
+    [consumers, t],
   );
 
   const networkPopovers = React.useMemo(() => [networkPopoverIn, networkPopoverOut], [
@@ -198,12 +201,12 @@ const UtilizationCard: React.FC = () => {
   return (
     <DashboardCard data-test-id="utilization-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>Utilization</DashboardCardTitle>
+        <DashboardCardTitle>{t('nodes~Utilization')}</DashboardCardTitle>
         <Dropdown items={Duration} onChange={setDuration} selectedKey={duration} title={duration} />
       </DashboardCardHeader>
       <UtilizationBody timestamps={timestamps}>
         <PrometheusUtilizationItem
-          title="CPU"
+          title={t('nodes~CPU')}
           humanizeValue={humanizeCpuCores}
           utilizationQuery={queries[NodeQueries.CPU_USAGE]}
           totalQuery={queries[NodeQueries.CPU_TOTAL]}
@@ -215,7 +218,7 @@ const UtilizationCard: React.FC = () => {
           setLimitReqState={setCPULimit}
         />
         <PrometheusUtilizationItem
-          title="Memory"
+          title={t('nodes~Memory')}
           humanizeValue={humanizeBinaryBytes}
           utilizationQuery={queries[NodeQueries.MEMORY_USAGE]}
           totalQuery={queries[NodeQueries.MEMORY_TOTAL]}
@@ -227,7 +230,7 @@ const UtilizationCard: React.FC = () => {
           setLimitReqState={setMemoryLimit}
         />
         <PrometheusUtilizationItem
-          title="Filesystem"
+          title={t('nodes~Filesystem')}
           humanizeValue={humanizeBinaryBytes}
           utilizationQuery={queries[NodeQueries.FILESYSTEM_USAGE]}
           totalQuery={queries[NodeQueries.FILESYSTEM_TOTAL]}
@@ -236,14 +239,14 @@ const UtilizationCard: React.FC = () => {
           duration={duration}
         />
         <PrometheusMultilineUtilizationItem
-          title="Network Transfer"
+          title={t('nodes~Network transfer')}
           humanizeValue={humanizeDecimalBytesPerSec}
           queries={multilineQueries[NodeQueries.NETWORK_UTILIZATION]}
           TopConsumerPopovers={networkPopovers}
           duration={duration}
         />
         <PrometheusUtilizationItem
-          title="Pod count"
+          title={t('nodes~Pod count')}
           humanizeValue={humanizeNumber}
           utilizationQuery={queries[NodeQueries.POD_COUNT]}
           duration={duration}

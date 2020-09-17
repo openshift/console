@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import {
   getMachineAddresses,
   getMachineInstanceType,
@@ -42,59 +43,6 @@ const tableColumnClasses = [
   classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
   Kebab.columnClass,
 ];
-
-const MachineTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Namespace',
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-      id: 'namespace',
-    },
-    {
-      title: 'Node',
-      sortField: 'status.nodeRef.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Phase',
-      sortFunc: 'machinePhase',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: 'Provider State',
-      sortField: 'status.providerStatus.instanceState',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: 'Region',
-      sortField: "metadata.labels['machine.openshift.io/region']",
-      transforms: [sortable],
-      props: { className: tableColumnClasses[5] },
-    },
-    {
-      title: 'Availability Zone',
-      sortField: "metadata.labels['machine.openshift.io/zone']",
-      transforms: [sortable],
-      props: { className: tableColumnClasses[6] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[7] },
-    },
-  ];
-};
-MachineTableHeader.displayName = 'MachineTableHeader';
 
 const getMachineProviderState = (obj: MachineKind): string =>
   obj?.status?.providerStatus?.instanceState;
@@ -143,10 +91,11 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineK
   const region = getMachineRegion(obj);
   const zone = getMachineZone(obj);
   const providerState = getMachineProviderState(obj);
+  const { t } = useTranslation();
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Machine Details" />
+        <SectionHeading text={t('machines~Machine details')} />
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-6">
@@ -154,11 +103,11 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineK
             </div>
             <div className="col-sm-6">
               <dl className="co-m-pane__details">
-                <DetailsItem label="Phase" obj={obj} path="status.phase">
+                <DetailsItem label={t('machines~Phase')} obj={obj} path="status.phase">
                   <Status status={getMachinePhase(obj)} />
                 </DetailsItem>
                 <DetailsItem
-                  label="Provider State"
+                  label={t('machines~Provider state')}
                   obj={obj}
                   path="status.providerStatus.instanceState"
                 >
@@ -166,7 +115,7 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineK
                 </DetailsItem>
                 {nodeName && (
                   <>
-                    <dt>Node</dt>
+                    <dt>{t('machines~Node')}</dt>
                     <dd>
                       <NodeLink name={nodeName} />
                     </dd>
@@ -174,29 +123,29 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineK
                 )}
                 {machineRole && (
                   <>
-                    <dt>Machine Role</dt>
+                    <dt>{t('machines~Machine role')}</dt>
                     <dd>{machineRole}</dd>
                   </>
                 )}
                 {instanceType && (
                   <>
-                    <dt>Instance Type</dt>
+                    <dt>{t('machines~Instance type')}</dt>
                     <dd>{instanceType}</dd>
                   </>
                 )}
                 {region && (
                   <>
-                    <dt>Region</dt>
+                    <dt>{t('machines~Region')}</dt>
                     <dd>{region}</dd>
                   </>
                 )}
                 {zone && (
                   <>
-                    <dt>Availability Zone</dt>
+                    <dt>{t('machines~Availability zone')}</dt>
                     <dd>{zone}</dd>
                   </>
                 )}
-                <dt>Machine Addresses</dt>
+                <dt>{t('machines~Machine addresses')}</dt>
                 <dd>
                   <NodeIPList ips={getMachineAddresses(obj)} expand />
                 </dd>
@@ -206,33 +155,91 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineK
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="Conditions" />
+        <SectionHeading text={t('machines~Conditions')} />
         <Conditions conditions={obj.status?.providerStatus?.conditions} />
       </div>
     </>
   );
 };
 
-export const MachineList: React.SFC = (props) => (
-  <Table
-    {...props}
-    aria-label="Machines"
-    Header={MachineTableHeader}
-    Row={MachineTableRow}
-    virtualize
-  />
-);
+export const MachineList: React.SFC = (props) => {
+  const { t } = useTranslation();
+  const MachineTableHeader = () => {
+    return [
+      {
+        title: t('machines~Name'),
+        sortField: 'metadata.name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[0] },
+      },
+      {
+        title: t('machines~Namespace'),
+        sortField: 'metadata.namespace',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[1] },
+        id: 'namespace',
+      },
+      {
+        title: t('machines~Node'),
+        sortField: 'status.nodeRef.name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[2] },
+      },
+      {
+        title: t('machines~Phase'),
+        sortFunc: 'machinePhase',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[3] },
+      },
+      {
+        title: t('machines~Provider state'),
+        sortField: 'status.providerStatus.instanceState',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[4] },
+      },
+      {
+        title: t('machines~Region'),
+        sortField: "metadata.labels['machine.openshift.io/region']",
+        transforms: [sortable],
+        props: { className: tableColumnClasses[5] },
+      },
+      {
+        title: t('machines~Availability zone'),
+        sortField: "metadata.labels['machine.openshift.io/zone']",
+        transforms: [sortable],
+        props: { className: tableColumnClasses[6] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[7] },
+      },
+    ];
+  };
+  return (
+    <Table
+      {...props}
+      aria-label={t('machines~Machines')}
+      Header={MachineTableHeader}
+      Row={MachineTableRow}
+      virtualize
+    />
+  );
+};
 
-export const MachinePage: React.SFC<MachinePageProps> = (props) => (
-  <ListPage
-    {...props}
-    ListComponent={MachineList}
-    kind={machineReference}
-    textFilter="machine"
-    filterLabel="by machine or node name"
-    canCreate
-  />
-);
+export const MachinePage: React.SFC<MachinePageProps> = (props) => {
+  const { t } = useTranslation();
+
+  return (
+    <ListPage
+      {...props}
+      ListComponent={MachineList}
+      kind={machineReference}
+      textFilter="machine"
+      filterLabel={t('machines~by machine or node name')}
+      canCreate
+    />
+  );
+};
 
 export const MachineDetailsPage: React.SFC<MachineDetailsPageProps> = (props) => (
   <DetailsPage

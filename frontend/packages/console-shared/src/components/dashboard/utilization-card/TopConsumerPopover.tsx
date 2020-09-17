@@ -286,7 +286,7 @@ type PopoverProps = {
   humanize: Humanize;
   consumers: { model: K8sKind; query: string; metric: string; fieldSelector?: string }[];
   namespace?: string;
-  description?: React.ReactText;
+  description?: string;
 };
 
 type PopoverBodyProps = PopoverProps & {

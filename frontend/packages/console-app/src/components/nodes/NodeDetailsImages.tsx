@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { NodeKind } from '@console/internal/module/k8s';
 import { SectionHeading, units } from '@console/internal/components/utils';
 
@@ -9,9 +10,10 @@ type NodeDetailsImagesProps = {
 
 const NodeDetailsImages: React.FC<NodeDetailsImagesProps> = ({ node }) => {
   const images = _.filter(node.status.images, 'names');
+  const { t } = useTranslation();
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text="Images" />
+      <SectionHeading text={t('nodes~Images')} />
       <div className="co-table-container">
         <table className="table table--layout-fixed">
           <colgroup>
@@ -20,8 +22,8 @@ const NodeDetailsImages: React.FC<NodeDetailsImagesProps> = ({ node }) => {
           </colgroup>
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Size</th>
+              <th>{t('nodes~Name')}</th>
+              <th>{t('nodes~Size')}</th>
             </tr>
           </thead>
           <tbody>

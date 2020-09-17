@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
@@ -45,11 +46,12 @@ export const NodeInventoryItem: React.FC<NodeInventoryItemProps> = ({
 
 const InventoryCard: React.FC = () => {
   const { obj } = React.useContext(NodeDashboardContext);
+  const { t } = useTranslation();
 
   return (
     <DashboardCard data-test-id="inventory-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>Inventory</DashboardCardTitle>
+        <DashboardCardTitle>{t('nodes~Inventory')}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
         <NodeInventoryItem
@@ -59,8 +61,8 @@ const InventoryCard: React.FC = () => {
         />
         <InventoryItem
           isLoading={!obj}
-          title="Image"
-          titlePlural="Images"
+          title={t('nodes~Image')}
+          titlePlural={t('nodes~Images')}
           count={obj.status?.images?.length}
           error={!obj.status?.images}
         />

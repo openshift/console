@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { K8sKind, NodeKind } from '@console/internal/module/k8s';
 import { Kebab, KebabAction, asAccessReview } from '@console/internal/components/utils';
 import { isNodeUnschedulable } from '@console/shared';
@@ -8,7 +9,7 @@ import { NodeModel } from '@console/internal/models';
 import { deleteModal } from '@console/internal/components/modals/delete-modal';
 
 export const MarkAsUnschedulable: KebabAction = (kind: K8sKind, obj: NodeKind) => ({
-  label: 'Mark as Unschedulable',
+  labelKey: 'nodes~Mark as unschedulable',
   hidden: isNodeUnschedulable(obj),
   callback: () => createConfigureUnschedulableModal({ resource: obj }),
   accessReview: {
@@ -26,7 +27,7 @@ export const MarkAsSchedulable: KebabAction = (
   resources: {},
   { nodeMaintenance } = { nodeMaintenance: false }, // NOTE: used by node actions in metal3-plugin
 ) => ({
-  label: 'Mark as Schedulable',
+  labelKey: 'nodes~Mark as schedulable',
   hidden: !isNodeUnschedulable(obj) || nodeMaintenance,
   callback: () => makeNodeSchedulable(obj),
   accessReview: {
@@ -39,18 +40,18 @@ export const MarkAsSchedulable: KebabAction = (
 });
 
 export const Delete: KebabAction = (kindObj: K8sKind, node: NodeKind) => {
+  const { t } = useTranslation();
   const message = (
     <p>
-      This action cannot be undone. Deleting a node will instruct Kubernetes that the node is down
-      or unrecoverable and delete all pods scheduled to that node. If the node is still running but
-      unresponsive and the node is deleted, stateful workloads and persistent volumes may suffer
-      corruption or data loss. Only delete a node that you have confirmed is completely stopped and
-      cannot be restored.
+      {t(
+        'nodes~This action cannot be undone. Deleting a node will instruct Kubernetes that the node is down or unrecoverable and delete all pods scheduled to that node. If the node is still running but unresponsive and the node is deleted, stateful workloads and persistent volumes may suffer corruption or data loss. Only delete a node that you have confirmed is completely stopped and cannot be restored.',
+      )}
     </p>
   );
 
   return {
-    label: 'Delete Node',
+    // t('nodes~Delete node')
+    labelKey: 'nodes~Delete node',
     callback: () =>
       deleteModal({
         kind: kindObj,

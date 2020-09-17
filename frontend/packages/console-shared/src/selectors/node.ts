@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import { NodeKind } from '@console/internal/module/k8s';
 import { NodeAddress, NodeCondition } from '../types';
+import i18next from 'i18next';
 
 const NODE_ROLE_PREFIX = 'node-role.kubernetes.io/';
 
@@ -50,7 +51,7 @@ export const isNodeReady = (node: NodeKind): boolean => {
 export const getNodeSecondaryStatus = (node: NodeKind): string[] => {
   const states = [];
   if (isNodeUnschedulable(node)) {
-    states.push('Scheduling disabled');
+    states.push(i18next.t('nodes~Scheduling disabled'));
   }
   return states;
 };

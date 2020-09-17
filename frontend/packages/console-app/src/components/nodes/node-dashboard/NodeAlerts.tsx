@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { PopoverPosition } from '@patternfly/react-core';
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import { NodeDashboardContext } from '@console/app/src/components/nodes/node-dashboard/NodeDashboardContext';
@@ -68,19 +69,21 @@ const LimitLink: React.FC<LimitLinkProps> = ({
     resourceQuotaQueries[requestedKey],
     humanize,
   );
-
+  const { t } = useTranslation();
   const available =
-    currentValue && totalValue ? humanize(totalValue - currentValue).string : 'Not available';
+    currentValue && totalValue
+      ? humanize(totalValue - currentValue).string
+      : t('nodes~Not available');
 
   return (
     <Popover
-      title="See breakdown"
+      title={t('nodes~See breakdown')}
       nodeName={nodeName}
       nodeIp={nodeIp}
-      current={currentError ? 'Not available' : current.string}
-      total={totalError ? 'Not available' : total.string}
-      limit={limitError ? 'Not available' : limit.string}
-      requested={requestedError ? 'Not available' : requested.string}
+      current={currentError ? t('nodes~Not available') : current.string}
+      total={totalError ? t('nodes~Not available') : total.string}
+      limit={limitError ? t('nodes~Not available') : limit.string}
+      requested={requestedError ? t('nodes~Not available') : requested.string}
       available={available}
       limitState={limitState}
       requestedState={requestedState}
@@ -129,10 +132,11 @@ const HealthChecksLink: React.FC = () => {
   const machine = useK8sWatchResource<MachineKind>(machineResource);
   const healthChecks = useK8sWatchResource<MachineHealthCheckKind[]>(machineHealthChecksResource);
   const healthState = getMachineHealth(obj, machine, healthChecks);
+  const { t } = useTranslation();
   return (
     <DashboardCardPopupLink
-      linkTitle="See details"
-      popupTitle="Health Checks"
+      linkTitle={t('nodes~See details')}
+      popupTitle={t('nodes~Health checks')}
       className="co-status-card__popup"
     >
       <HealthChecksPopup
@@ -145,6 +149,7 @@ const HealthChecksLink: React.FC = () => {
 
 const NodeAlerts: React.FC = ({ children }) => {
   const { cpuLimit, memoryLimit, healthCheck } = React.useContext(NodeDashboardContext);
+  const { t } = useTranslation();
 
   const cpuMessage = getMessage(cpuLimit, {
     limReqErr: msg.CPU_LIMIT_REQ_ERROR,
@@ -172,7 +177,10 @@ const NodeAlerts: React.FC = ({ children }) => {
         </StatusItem>
       )}
       {!!cpuMessage && (
-        <StatusItem Icon={cpuMessage.Icon} message={cpuMessage.message}>
+        <StatusItem
+          Icon={cpuMessage.Icon}
+          message={t('nodes~{{ cpuMessage }}', { cpuMessage: cpuMessage.message })}
+        >
           <LimitLink
             humanize={humanizeCpuCores}
             currentKey={NodeQueries.CPU_USAGE}
@@ -186,7 +194,10 @@ const NodeAlerts: React.FC = ({ children }) => {
         </StatusItem>
       )}
       {!!memoryMessage && (
-        <StatusItem Icon={memoryMessage.Icon} message={memoryMessage.message}>
+        <StatusItem
+          Icon={memoryMessage.Icon}
+          message={t('nodes~{{ memoryMessage }}', { memoryMessage: memoryMessage.message })}
+        >
           <LimitLink
             humanize={humanizeBinaryBytes}
             currentKey={NodeQueries.MEMORY_USAGE}

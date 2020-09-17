@@ -2,6 +2,8 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
+
 import { MachineAutoscalerModel } from '../models';
 import {
   groupVersionFor,
@@ -47,47 +49,6 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const MachineAutoscalerTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Namespace',
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-      id: 'namespace',
-    },
-    {
-      title: 'Scale Target',
-      sortField: 'spec.scaleTargetRef.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Min',
-      sortField: 'spec.minReplicas',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: 'Max',
-      sortField: 'spec.maxReplicas',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[5] },
-    },
-  ];
-};
-MachineAutoscalerTableHeader.displayName = 'MachineAutoscalerTableHeader';
-
 const MachineAutoscalerTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
@@ -120,29 +81,73 @@ const MachineAutoscalerTableRow: RowFunction<K8sResourceKind> = ({ obj, index, k
   );
 };
 
-const MachineAutoscalerList: React.FC = (props) => (
-  <Table
-    {...props}
-    aria-label="Machine Autoscalers"
-    Header={MachineAutoscalerTableHeader}
-    Row={MachineAutoscalerTableRow}
-    virtualize
-  />
-);
+const MachineAutoscalerList: React.FC = (props) => {
+  const { t } = useTranslation();
+  const MachineAutoscalerTableHeader = () => {
+    return [
+      {
+        title: t('machine-autoscalers~Name'),
+        sortField: 'metadata.name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[0] },
+      },
+      {
+        title: t('machine-autoscalers~Namespace'),
+        sortField: 'metadata.namespace',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[1] },
+        id: 'namespace',
+      },
+      {
+        title: t('machine-autoscalers~Scale target'),
+        sortField: 'spec.scaleTargetRef.name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[2] },
+      },
+      {
+        title: t('machine-autoscalers~Min'),
+        sortField: 'spec.minReplicas',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[3] },
+      },
+      {
+        title: t('machine-autoscalers~Max'),
+        sortField: 'spec.maxReplicas',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[4] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[5] },
+      },
+    ];
+  };
+
+  return (
+    <Table
+      {...props}
+      aria-label={t('machine-autoscalers~Machine autoscalers')}
+      Header={MachineAutoscalerTableHeader}
+      Row={MachineAutoscalerTableRow}
+      virtualize
+    />
+  );
+};
 
 const MachineAutoscalerDetails: React.FC<MachineAutoscalerDetailsProps> = ({ obj }) => {
+  const { t } = useTranslation();
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Machine Autoscaler Details" />
+        <SectionHeading text={t('machine-autoscalers~MachineAutoscaler details')} />
         <ResourceSummary resource={obj}>
-          <dt>Scale Target</dt>
+          <dt>{t('machine-autoscalers~Scale target')}</dt>
           <dd>
             <MachineAutoscalerTargetLink obj={obj} />
           </dd>
-          <dt>Min Replicas</dt>
+          <dt>{t('machine-autoscalers~Min replicas')}</dt>
           <dd>{_.get(obj, 'spec.minReplicas') || '-'}</dd>
-          <dt>Max Replicas</dt>
+          <dt>{t('machine-autoscalers~Max replicas')}</dt>
           <dd>{_.get(obj, 'spec.maxReplicas') || '-'}</dd>
         </ResourceSummary>
       </div>
