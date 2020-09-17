@@ -29,7 +29,8 @@ export const addPageObj = {
     routing: {
       hostname: '#form-input-route-hostname-field',
       path: '#form-input-route-path-field',
-      targetPort: 'button#form-dropdown-route-targetPort-field',
+      targetPort: '#form-input-route-unknownTargetPort-field',
+      // targetPort: 'button#form-dropdown-route-targetPort-field',
       secureRoute: 'input#form-checkbox-route-secure-field',
       tlsTermination: 'button#form-dropdown-route-tls-termination-field',
       insecureTraffic: 'button#form-dropdown-route-tls-insecureEdgeTerminationPolicy-field',
@@ -87,18 +88,18 @@ export const addPage = {
   enterGitUrl: (gitUrl: string) => cy.get(addPageObj.gitRepoUrl).type(gitUrl),
   verifyPipelineCheckBox: () => cy.get(addPageObj.pipeline.addPipeline).should('be.visible'),
   enterAppName: (appName: string) => {
-    cy.get(addPageObj.appName).as('appName');
-    cy.get('@appName').then(($el) => {
-      cy.wait(1000);
-      if ($el.prop('tagName').includes('button') === true) {
-        cy.get('@appName').click();
+    cy.get(addPageObj.appName).then(($el) => {
+      cy.wait(2000);
+      if ($el.prop('tagName').includes('button')) {
+        cy.log('button tagname is available');
+        cy.get(addPageObj.appName).click();
         cy.get(`li #${appName}-link`).click();
-      } else if ($el.prop('tagName').includes('input') === true) {
-        cy.get('@appName')
+      } else if ($el.prop('tagName').includes('input')) {
+        cy.get(addPageObj.appName)
           .clear()
           .type(appName);
       } else {
-        cy.log('Unable to select or enter App Name');
+        cy.log('Some issue is there, please check once');
       }
     });
   },
@@ -179,7 +180,7 @@ export const addPage = {
         cy.byLegacyTestID('import-from-dockerfile').click();
         cy.titleShouldBe('Import from Dockerfile');
         break;
-      case 'Catalog file':
+      case 'From Catalog':
       case addOptions.DeveloperCatalog:
         cy.byLegacyTestID('dev-catalog').click();
         cy.titleShouldBe('Developer Catalog');
@@ -189,7 +190,7 @@ export const addPage = {
         cy.byLegacyTestID('dev-catalog-databases').click();
         cy.titleShouldBe('Developer Catalog');
         break;
-      case 'Event Sources':
+      case 'Event Source':
       case addOptions.EventSource:
         cy.byLegacyTestID('knative-event-source').click();
         cy.titleShouldBe('Event Sources');
@@ -260,8 +261,9 @@ export const addPage = {
     addPage.clicKCreate();
   },
   selectTargetPortForRouting: () => {
-    cy.get(addPageObj.advancedOptions.routing.targetPort).click();
-    cy.get('[data-test-dropdown-menu="8080-tcp"]').click();
+    // cy.get(addPageObj.advancedOptions.routing.targetPort).click();
+    // cy.get('[data-test-dropdown-menu="8080-tcp"]').click();
+    cy.get(addPageObj.advancedOptions.routing.targetPort).type('8080');
   },
   enterRoutingHostName: (hostName: string) =>
     cy.get(addPageObj.advancedOptions.routing.hostname).type(hostName),
