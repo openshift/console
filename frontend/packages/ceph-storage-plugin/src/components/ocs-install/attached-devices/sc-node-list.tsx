@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { IRow } from '@patternfly/react-table';
 import {
   getName,
   getNodeRoles,
@@ -8,7 +9,7 @@ import {
 } from '@console/shared';
 import { humanizeCpuCores, ResourceLink } from '@console/internal/components/utils/';
 import { Table } from '@console/internal/components/factory';
-import { IRow } from '@patternfly/react-table';
+import { createMapForHostNames } from '@console/local-storage-operator-plugin/src/utils';
 import { getConvertedUnits } from '../../../utils/install';
 import { getColumns } from '../node-list';
 import { GetRows, NodeTableProps } from '../types';
@@ -19,7 +20,8 @@ const getRows: GetRows = ({ componentProps, customData }) => {
   const { nodes, setNodes, filteredNodes } = customData;
 
   const nodeList = filteredNodes ?? data.map(getName);
-  const filteredData = data.filter((node) => nodeList.includes(getName(node)));
+  const hostNames = createMapForHostNames(data);
+  const filteredData = data.filter((node) => nodeList.includes(hostNames[getName(node)]));
 
   const rows = filteredData.map((node) => {
     const roles = getNodeRoles(node).sort();
