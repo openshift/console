@@ -8,32 +8,27 @@ Background:
 
 
 @regression
-Scenario Outline: Dockerfile details after entering git repo url: A-06-TC01
+Scenario: Dockerfile details after entering git repo url: A-06-TC01
    Given user is on Import from Docker file page
-   When user enters Git Repo url as "<docker_git_url>"
+   When user enters Git Repo url as "https://github.com/sclorg/nodejs-ex.git"
    Then git url gets Validated
-   And application name displays as "<app_name>"
-   And name field auto populates with value "<name>" in Import from Docker file page
-
-Examples:
-| docker_git_url                           | app_name           | name           |
-| https://github.com/sclorg/dancer-ex.git  | dancer-ex-git-app  | dancer-ex-git  |
-| https://github.com/sclorg/cakephp-ex.git | cakephp-ex-git-app | cakephp-ex-git |
+   And application name displays as "nodejs-ex-git-app"
+   And name field auto populates with value "nodejs-ex-git" in Import from Docker file page
 
 
 @regression, @smoke
 Scenario Outline: Create a workload from Docker file with "<resource_type>" as resource type : A-06-TC03, A-06-TC04
    Given user is on Import from Docker file page
-   When user enters docker git url as "<docker_git_url>"
+   When user enters docker git url as "https://github.com/sclorg/nodejs-ex.git"
    And user selects "<resource_type>" radio button in Resoruce type section
    And user clicks Create button on Add page   
    Then user will be redirected to Topology page
    And user is able to see workload "<name>" in topology page
 
 Examples:
-| docker_git_url                          | resource_type     | name          |
-| https://github.com/sclorg/nodejs-ex.git | Deployment        | nodejs-ex-git |
-| https://github.com/sclorg/nginx-ex.git  | Deployment Config | nginx-ex-git  |
+| resource_type     | name            |
+| Deployment        | nodejs-ex-git   |
+| Deployment Config | nodejs-ex-1-git |
 
 
 @regression

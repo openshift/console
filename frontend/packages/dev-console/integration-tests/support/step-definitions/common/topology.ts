@@ -3,7 +3,7 @@ import { topologyPage } from '../../pages/topology-page';
 import { naviagteTo } from '../../pages/app';
 import { devNavigationMenu } from '../../constants/global';
 
-Given('user is at the Topolgy page', () => {
+Given('user is at the Topology page', () => {
   naviagteTo(devNavigationMenu.Topology);
   topologyPage.verifyTopologyPage();
 });

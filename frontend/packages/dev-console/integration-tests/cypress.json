@@ -19,16 +19,7 @@
     "video": true,
     "screenshotsFolder": "screenshots",
     "videosFolder": "videos",
-    "reporter": "./node_modules/mochawesome/src/mochawesome.js",
-    "reporterOptions": {
-      "reportDir": "reports/separate-reports",
-      "overwrite": false,
-      "html": false,
-      "json": true,
-      "charts": true
-    },
     "env": {
       "TAGS": "@smoke and not @manual"
     }
   }
-  

@@ -13,9 +13,9 @@ When('user selects {string} database on Developer Catalog', (database: string) =
 });
 
 When('user clicks Instantiate Template button on side bar', () => {
-  catalogPage.clickInstantiateButtonOnSidePane();
+  catalogPage.clickButtonOnCatalogPageSidePane();
 });
 
 When('user clicks create button on Instantiate Template page with default values', () => {
-  addPage.clicKCreate();
+  addPage.clickCreate();
 });

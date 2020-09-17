@@ -48,7 +48,7 @@ export const helmPage = {
     naviagteTo(devNavigationMenu.Add);
     addPage.selectCardFromOptions(addOptions.HelmChart);
     catalogPage.search(helmCardName);
-    catalogPage.clickInstallHelmChartOnSidePane();
+    catalogPage.clickButtonOnCatalogPageSidePane();
     catalogPage.clickOnInstallButton();
   },
 };

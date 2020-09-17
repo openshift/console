@@ -6,7 +6,7 @@ Background:
    And user is at Add page
    And user has selected namespace "aut-addflow-git"
 
-@regression
+@regression-1
 Scenario Outline: Builder iamge detected for git url "<git_url>" : A-04-TC01
    Given user is at Import from git page
    When user enters Git Repo url as "<git_url>"
@@ -33,8 +33,8 @@ Examples:
 @regression, @smoke
 Scenario Outline: Add new git workload with new application for resoruce type "<resource_type>" : A-04-TC02, A-04-TC13
    Given user is at Import from git page
-   When user enters Git Repo url as "<git_url>"
-   And user enters Application name as "<app_name>"
+   When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
+   And user enters Application name as "dancer-ex-git-app"
    And user enters Name as "<name>"
    And user selects resource type as "<resource_type>"
    And user clicks Create button on Add page 
@@ -42,9 +42,9 @@ Scenario Outline: Add new git workload with new application for resoruce type "<
    And user is able to see workload "<name>" in topology page
 
 Examples:
-| git_url                                  | app_name           | name            | resource_type     |
-| https://github.com/sclorg/dancer-ex.git  | dancer-ex-git-app  | dancer-ex-1-git | Deployment        |
-| https://github.com/sclorg/nodejs-ex.git  | nodejs-ex-git-app  | nodejs-ex-git   | Deployment Config |
+| name          | resource_type     |
+| dancer-ex-git | Deployment        |
+| nodejs-ex-git | Deployment Config |
 
 
 @regression
@@ -54,11 +54,11 @@ Scenario: Add new git workload to the existing application : A-04-TC03
    And user is at Import from git page
    When user enters Git Repo url as "https://github.com/sclorg/nodejs-ex.git"
    And user enters Application name as "nodejs-ex-git-app"
-   And user enters Name as "nodejs-ex-2-git"
+   And user enters Name as "nodejs-ex-git"
    And user selects resource type as "Deployment Config"
    And user clicks Create button on Add page
    Then user will be redirected to Topology page
-   And created workload "nodejs-ex-2-git" is linked to existing application "nodejs-ex-git-app"
+   And created workload "nodejs-ex-git" is linked to existing application "nodejs-ex-git-app"
 
 
 @regression
@@ -78,125 +78,97 @@ Scenario: Create workload without application route : A-04-TC05
    And user unselects the advanced option Create a route to the application
    And user clicks Create button on Add page 
    Then user will be redirected to Topology page
-   And public url is not created for node "app-no-route"
+   And public url is not created for node "name-no-route"
 
 
 @regression
-Scenario Outline: Create a git workload with advanced option "Routing" : A-04-TC06
+Scenario: Create a git workload with advanced option "Routing" : A-04-TC06
    Given user is at Import from git page
-   When user enters Git Repo url as "<git_url>"
-   And user enters name as "<name>" in General section
+   When user enters Git Repo url as "https://github.com/sclorg/nodejs-ex.git"
+   And user enters name as "nodejs-ex-3-git" in General section
    And user clicks "Routing" link in Advanced Options section
-   And user enters Hostname as "<hostname>"
-   And user enters Path as "<path>"
+   And user enters Hostname as "home"
+   And user enters Path as "/home"
    And select default Target Port
    And user clicks Create button on Add page
    Then user will be redirected to Topology page
-   And the route of application "<name>" contains "<hostname>"
-
-Examples:
-| git_url                                 | hostname | path  | name            |
-| https://github.com/sclorg/nodejs-ex.git | home     | /home | nodejs-ex-3-git |
+   And the route of application "nodejs-ex-3-git" contains "home"
 
 
 @regression
-Scenario Outline: Creaete the workload by unselecting options in "Build Configuration" section: A-04-TC07
+Scenario: Creaete the workload by unselecting options in "Build Configuration" section: A-04-TC07
    Given user is at Import from git page
-   When user enters Git Repo url as "<git_url>"
-   And user enters name as "<name>" in General section
+   When user enters Git Repo url as "https://github.com/sclorg/nodejs-ex.git"
+   And user enters name as "nodejs-ex-4-git" in General section
    And user clicks "Build Configuration" link in Advanced Options section
    And unselects "Configure a webhook build trigger" checkbox in build configuration section
    And unselects "Automatically build a new image when the builder image changes" checkbox in build configuration section
    And unselects "Launch the first build when the build configuration is created" checkbox in build configuration section
-   And user enters Name as "<name>" in Environment Variables section
-   And user enters Value as "<value>" in Environment Variables section
+   And user enters Name as "home" in Environment Variables section
+   And user enters Value as "value" in Environment Variables section
    And user clicks Create button on Add page
    Then user will be redirected to Topology page
-   And build does not get started for "<name>"
-
-Examples:
-| git_url                                 | name | value | name            |
-| https://github.com/sclorg/nodejs-ex.git | home | value | nodejs-ex-4-git |
+   And build does not get started for "nodejs-ex-4-git"
 
 
 @regression
-Scenario Outline: Create a git workload with advanced option "Deployment" : A-04-TC08
+Scenario: Create a git workload with advanced option "Deployment" : A-04-TC08
    Given user is at Import from git page
-   When user enters Git Repo url as "<git_url>"
-   And user enters name as "<name>" in General section
+   When user enters Git Repo url as "https://github.com/sclorg/nodejs-ex.git"
+   And user enters name as "nodejs-ex-5-git" in General section
    And user clicks "Deployment" link in Advanced Options section
    And verify "Auto deploy when new image is available" checkbox is seleceted
-   And user enters Name as "<name>" in Environment Variables Runtime only section
-   And user enters Value as "<value>" in Environment Variables Runtime only section
+   And user enters Name as "home" in Environment Variables Runtime only section
+   And user enters Value as "value" in Environment Variables Runtime only section
    And user clicks Create button on Add page
    Then user will be redirected to Topology page
 
-Examples:
-| git_url                                 | name | value | name            |
-| https://github.com/sclorg/nodejs-ex.git | home | value | nodejs-ex-5-git |
-
 
 @regression
-Scenario Outline: Create a git workload with advanced option "Resource Limits" : A-04-TC09
+Scenario: Create a git workload with advanced option "Resource Limits" : A-04-TC09
    Given user is at Import from git page
-   When user enters Git Repo url as "<git_url>"
-   And user enters name as "<name>" in General section
+   When user enters Git Repo url as "https://github.com/sclorg/nodejs-ex.git"
+   And user enters name as "nodejs-ex-6-git" in General section
    And user clicks "Resource Limits" link in Advanced Options section
-   And user enters CPU Request as "<cpu_request>" in CPU section
-   And user enters CPU Limits as "<cpu_limit>" in CPU section
-   And user enters Memory Request as "<memory_request>" in Memory section
-   And user enters Memory Limit as "<memory_limit>" in Memory section
+   And user enters CPU Request as "10" in CPU section
+   And user enters CPU Limits as "12" in CPU section
+   And user enters Memory Request as "200" in Memory section
+   And user enters Memory Limit as "300" in Memory section
    And user clicks Create button on Add page
    Then user will be redirected to Topology page
 
-Examples:
-| git_url                                 | cpu_request | cpu_limit | memory_request | memory_limit | name            |
-| https://github.com/sclorg/nodejs-ex.git | 10          | 12        | 200            | 300          | nodejs-ex-6-git |
-
 
 @regression
-Scenario Outline: Create a git workload with advanced option "Scaling" : A-04-TC10
+Scenario: Create a git workload with advanced option "Scaling" : A-04-TC10
    Given user is at Import from git page
-   When user enters Git Repo url as "<git_url>"
-   And user enters name as "<name>" in General section
+   When user enters Git Repo url as "https://github.com/sclorg/nodejs-ex.git"
+   And user enters name as "nodejs-ex-7-git" in General section
    And user clicks "Scaling" link in Advanced Options section
-   And user enters number of replicas as "<replica_set_value>" in Replicas section
+   And user enters number of replicas as "5" in Replicas section
    And user clicks Create button on Add page
    Then user will be redirected to Topology page
 
-Examples:
-| git_url                                 | replica_set_value | name            |
-| https://github.com/sclorg/nodejs-ex.git | 5                 | nodejs-ex-7-git |
-
 
 @regression
-Scenario Outline: Create a git workload with advanced option "Labels" : A-04-TC11
+Scenario: Create a git workload with advanced option "Labels" : A-04-TC11
    Given user is at Import from git page
-   When user enters Git Repo url as "<git_url>"
-   And user enters name as "<name>" in General section
+   When user enters Git Repo url as "https://github.com/sclorg/nodejs-ex.git"
+   And user enters name as "nodejs-ex-8-git" in General section
    And user clicks "Labels" link in Advanced Options section
-   And user enters label as "<label_name>"
+   And user enters label as "app=frontend"
    And user clicks Create button on Add page
    Then user will be redirected to Topology page
-   And verify the label "<label_name>" in side bar of application node "<name>"
-
-Examples:
-| git_url                                 | label_name   | name            |
-| https://github.com/sclorg/nodejs-ex.git | app=frontend | nodejs-ex-8-git |
+   And verify the label "app=frontend" in side bar of application node "nodejs-ex-8-git"
 
 
 @regression
-Scenario Outline: Create a git workload with advanced option "Health Checks" : A-04-TC12
+Scenario: Create a git workload with advanced option "Health Checks" : A-04-TC12
    Given user is at Import from git page
-   When user enters Git Repo url as "<git_url>"
-   And user enters name as "<name>" in General section
+   When user enters Git Repo url as "https://github.com/sclorg/nodejs-ex.git"
+   And user enters name as "nodejs-ex-9-git" in General section
    And user clicks "Health Checks" link in Advanced Options section
    And user fills the Readiness Probe details
    And user fills the Liveness Probe details
    And user fills the Startup Probe details
    And user clicks Create button on Add page
    Then user will be redirected to Topology page
-
-Examples:
-| git_url                                 | label_name   | name            |
-| https://github.com/sclorg/nodejs-ex.git | app=frontend | nodejs-ex-9-git |   

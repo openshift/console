@@ -31,6 +31,7 @@ export enum caatalogCards {
   mariaDB = 'MariaDB',
   dotnetCoreExample = '.NET Core Example',
   cakePhp = 'CakePHP + MySQL',
+  nodeJs = 'Node.js',
 }
 
 export enum catalogTypes {

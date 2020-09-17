@@ -1,4 +1,4 @@
-import { operators } from "../constants/global";
+import { operators } from '../constants/global';
 
 export const operatorsObj = {
   nav: {
@@ -25,25 +25,33 @@ export const operatorsObj = {
     uninstall: '[data-test-id="operator-uninstall-btn"]',
   },
   alertDialog: '[role="dialog"]',
-  uninstallPopup:{
+  uninstallPopup: {
     uninstall: '#confirm-action',
   },
-}
+};
 
 export const operatorsPage = {
   navigateToOperaotorHubPage: () => {
-    cy.get(operatorsObj.nav.link).contains('Operators').click();
-    cy.get(operatorsObj.nav.operatorHub,).click({force:true});
-    cy.titleShouldBe('OperatorHub');
+    cy.get(operatorsObj.nav.link)
+      .contains('Operators')
+      .click();
+    cy.get(operatorsObj.nav.operatorHub).click({ force: true });
+    cy.pageTitleShouldContain('OperatorHub');
   },
 
   navigateToInstalloperatorsPage: () => {
-    cy.get(operatorsObj.nav.link).contains('Operators').click();
-    cy.get(operatorsObj.nav.link).contains('Installed Operators').click();
+    cy.get(operatorsObj.nav.link)
+      .contains('Operators')
+      .click();
+    cy.get(operatorsObj.nav.link)
+      .contains('Installed Operators')
+      .click();
   },
 
   searchOperator: (operatorName: string) => {
-    cy.get(operatorsObj.operatorHub.search).should('be.visible').type(operatorName);
+    cy.get(operatorsObj.operatorHub.search)
+      .should('be.visible')
+      .type(operatorName);
     cy.get(operatorsObj.operatorHub.numOfItems).should('be.visible');
   },
 
@@ -53,28 +61,33 @@ export const operatorsPage = {
     cy.get('article h1').should('be.visible');
   },
 
-  verifySubscriptionPage: (operatorLogo: string) => 
+  verifySubscriptionPage: (operatorLogo: string) =>
     cy.get(operatorsObj.subscription.logo).should('have.text', operatorLogo),
 
   verifyInstalledOperator: (operatorName: string) => {
     cy.get(operatorsObj.installOperators.search).type(operatorName);
     cy.get(operatorsObj.installOperators.operatorsNameRow).should('contain.text', operatorName);
   },
-  
-  verifyOperatoNotAvailable:(operatorName: string) => {
+
+  verifyOperatoNotAvailable: (operatorName: string) => {
     cy.get(operatorsObj.installOperators.search).type(operatorName);
-    cy.get(operatorsObj.installOperators.noOperatorFoundMessage).should('have.text', 'No Operators Found');
+    cy.get(operatorsObj.installOperators.noOperatorFoundMessage).should(
+      'have.text',
+      'No Operators Found',
+    );
   },
-  
+
   heading: (heading: string) => {
-    return cy.get('h1').contains(heading)
+    return cy.get('h1').contains(heading);
   },
 
   selectOperator: (opt: operators | string) => {
     switch (opt) {
       case 'OpenShift Pipelines Operator':
       case operators.pipelineOperator: {
-        cy.byTestID('openshift-pipelines-operator-rh-redhat-operators-openshift-marketplace').click();
+        cy.byTestID(
+          'openshift-pipelines-operator-rh-redhat-operators-openshift-marketplace',
+        ).click();
         break;
       }
       case 'OpenShift Serverless Operator':
@@ -90,54 +103,54 @@ export const operatorsPage = {
       case 'knative Apache Camel Operator':
       case operators.knativeCamelOperator: {
         cy.byTestID('knative-camel-operator-community-operators-openshift-marketplace').click();
-        cy.alertTitleShouldBe('Show Community Operator');
+        cy.alertTitleShouldContain('Show Community Operator');
         cy.byTestID('confirm-action').click();
         break;
       }
       case 'Eclipse Che':
-        case operators.eclipseCheOperator: {
-          cy.byTestID('eclipse-che-community-operators-openshift-marketplace').click();
-          cy.alertTitleShouldBe('Show Community Operator');
-          cy.byTestID('confirm-action').click();
-          break;
-        }
+      case operators.eclipseCheOperator: {
+        cy.byTestID('eclipse-che-community-operators-openshift-marketplace').click();
+        cy.alertTitleShouldContain('Show Community Operator');
+        cy.byTestID('confirm-action').click();
+        break;
+      }
       default: {
         throw new Error('operator is not available');
       }
     }
   },
 
-  verifySiedPane:() => cy.get(operatorsObj.alertDialog).should('be.exist'),
+  verifySiedPane: () => cy.get(operatorsObj.alertDialog).should('be.exist'),
 
   clickInstallOnSidePane: () => {
     cy.get(operatorsObj.alertDialog)
-    // .should('be.visible');
-    .then(($sidePane) => {
-      if ($sidePane.find(operatorsObj.sidePane.install).length) {
-        cy.get(operatorsObj.sidePane.install).click();
-      }
-      else {
-        cy.log('Operator is already installed');
-      }
-    })   
+      // .should('be.visible');
+      .then(($sidePane) => {
+        if ($sidePane.find(operatorsObj.sidePane.install).length) {
+          cy.get(operatorsObj.sidePane.install).click();
+        } else {
+          cy.log('Operator is already installed');
+        }
+      });
   },
 
-  clickUninstallOnSidePane:() => {
+  clickUninstallOnSidePane: () => {
     cy.get(operatorsObj.alertDialog).then(($sidePane) => {
       if ($sidePane.find(operatorsObj.sidePane.uninstall).length) {
         cy.get(operatorsObj.sidePane.uninstall).click();
-      }
-      else {
+      } else {
         cy.log('Operator is not installed');
       }
-    });   
+    });
   },
 
   verifyOperatorInNavigationMenu: (menuItem: string) => {
     cy.get(operatorsObj.nav.menuItems).should('have.length.greaterThan', '62');
-    cy.get(operatorsObj.nav.menuItems).contains(menuItem).should('be.visible');
+    cy.get(operatorsObj.nav.menuItems)
+      .contains(menuItem)
+      .should('be.visible');
   },
 
-  clickOnCreate:() => cy.byButtonText('Install').click(),
-  clickOnCancel:() => cy.byButtonText('Cancel').click(),
+  clickOnCreate: () => cy.byButtonText('Install').click(),
+  clickOnCancel: () => cy.byButtonText('Cancel').click(),
 };

@@ -57,7 +57,7 @@ Then('user is able to see cards related to {string}', (type: string) => {
 });
 
 Then('user will be redirected to Developer Catalog page', () => {
-  cy.titleShouldBe('Developer Catalog');
+  cy.pageTitleShouldContain('Developer Catalog');
 });
 
 When('user eneters Name as {string} in Instantiate Template page', (name: string) => {

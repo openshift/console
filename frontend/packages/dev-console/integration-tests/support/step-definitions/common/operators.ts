@@ -7,7 +7,7 @@ import { eventSourcesPage } from '../../pages/add-flow/eventSource-page';
 
 Given('user is at Operator Hub page with the header name {string}', (headerName) => {
   operatorsPage.navigateToOperaotorHubPage();
-  cy.titleShouldBe(headerName);
+  cy.pageTitleShouldContain(headerName);
 });
 
 When('user searches for {string}', (operatorName: operators) => {
@@ -19,7 +19,7 @@ When('user executes commands from cli as {string}', (command: string) => {
 });
 
 Then('user will be redirected to Event Sources page', () => {
-  cy.titleShouldBe('Event Sources');
+  cy.pageTitleShouldContain('Event Sources');
 });
 
 Then('GitHub Source is displayed in types section', () => {
@@ -54,7 +54,7 @@ When('user installs the pipeline operator with default values', () => {
 });
 
 Then('page will be redirected to Installed operators', () => {
-  cy.titleShouldBe('Installed Operators');
+  cy.pageTitleShouldContain('Installed Operators');
 });
 
 Then('Installed operators page will contain {string}', (operatorName: string) => {
@@ -117,7 +117,7 @@ When('user uninstalls the pipeline operator from right side bar', () => {
 });
 
 When('user clicks unistall button present in modal with header message Uninstall Operator?', () => {
-  cy.alertTitleShouldBe('Uninstall Operator?');
+  cy.alertTitleShouldContain('Uninstall Operator?');
   cy.get(operatorsObj.uninstallPopup.uninstall).click();
 });
 
@@ -130,7 +130,7 @@ When('user clicks knative eventing provided api pressent in knative serverless o
 });
 
 When('user clicks Create knative Eventing button present in knative Eventing tab', () => {
-  cy.titleShouldBe('knative Eventings');
+  cy.pageTitleShouldContain('knative Eventings');
   cy.get('[data-test="yaml-create"]').click();
 });
 
@@ -162,7 +162,7 @@ Then('Event sources card display in +Add page in dev perspecitve', () => {
 });
 
 Then('user will be redirected to Installed operators page', () => {
-  cy.titleShouldBe('Installed Operators');
+  cy.pageTitleShouldContain('Installed Operators');
 });
 
 Then('page will contain knative apache camel operator', () => {

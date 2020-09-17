@@ -7,20 +7,10 @@ Given('user is at Import from git page', () => {
   addPage.selectCardFromOptions(addOptions.Git);
 });
 
-Given(
-  'user created workload {string} with resource type {string}',
-  (componentName: string, resourceType: string = 'Deployment') => {
-    addPage.createGitWorkload(
-      'https://github.com/sclorg/nodejs-ex.git',
-      componentName,
-      resourceType,
-      'nodejs-ex-git-app',
-    );
-  },
-);
-
 When('user enters Git Repo url as {string}', (gitUrl: string) => {
   addPage.enterGitUrl(gitUrl);
+  addPage.verifyValidatedMessage();
+  addPage.verifyBuilderImageDetectedMessage();
 });
 
 Then('git url gets Validated', () => {

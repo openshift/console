@@ -23,7 +23,7 @@ export const eventSourceObj = {
 };
 
 export const eventSourcesPage = {
-  verifyTitle: (title: string = 'Event Sources') => cy.titleShouldBe(title),
+  verifyTitle: (title: string = 'Event Sources') => cy.pageTitleShouldContain(title),
   search: (type: string) => cy.get(eventSourceObj.search).type(type),
   verifyEventSourceType: (eventSourceName: string) => {
     cy.get(`button[aria-label="${eventSourceName}"]`).should('be.visible');
@@ -64,7 +64,12 @@ export const eventSourcesPage = {
     cy.get(eventSourceObj.sinkBinding.kind).type(kind);
     cy.get(eventSourceObj.sinkBinding.resource).click();
     cy.get(eventSourceObj.sinkBinding.sinkResource).then(($el) => {
-      if ($el.prop('disabled') === false) {
+      if ($el.prop('disabled') === true) {
+        cy.log('knative workload is not available, due to which Event Resource is disabled');
+        // naviagteTo(devNavigationMenu.Add);
+        // addPage.createGitWorkload('https://github.com/sclorg/nodejs-ex.git');
+        // topologyPage.verifyTopologyPage();
+      } else {
         eventSourcesPage.selectknativeService('nodejs-ex-git');
       }
     });

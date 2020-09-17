@@ -41,7 +41,7 @@ Then('advanced option Create a route to the application is selected', () => {
 });
 
 When('user clicks Create button on Deploy Image page', () => {
-  addPage.clicKCreate();
+  addPage.clickCreate();
 });
 
 Then('node is displayed with name {string}', (nodeName: string) => {

@@ -78,7 +78,7 @@ export const addPage = {
   unselectRoute: () => cy.get(addPageObj.advancedOptions.createRoute).uncheck(),
   verifyNoWorkLoadsText: (text: string) =>
     cy.get('h2.co-hint-block__title').should('contain.text', text),
-  verifyTitle: (title: string) => cy.titleShouldBe(title),
+  verifyTitle: (title: string) => cy.pageTitleShouldContain(title),
   verifyPipelinesSection: (message: string) => {
     cy.get(addPageObj.sectionTitle)
       .eq(5)
@@ -89,27 +89,27 @@ export const addPage = {
   verifyPipelineCheckBox: () => cy.get(addPageObj.pipeline.addPipeline).should('be.visible'),
   enterAppName: (appName: string) => {
     cy.get(addPageObj.appName).then(($el) => {
-      cy.wait(2000);
       if ($el.prop('tagName').includes('button')) {
-        cy.log('button tagname is available');
         cy.get(addPageObj.appName).click();
         cy.get(`li #${appName}-link`).click();
       } else if ($el.prop('tagName').includes('input')) {
         cy.get(addPageObj.appName)
           .clear()
-          .type(appName);
+          .should('be.empty')
+          .type(appName)
+          .should('have.value', appName);
       } else {
-        cy.log('Some issue is there, please check once');
+        cy.log(`App name doesn't contain button or input tags`);
       }
     });
   },
   veirfyAppName: (nodeName: string) => cy.get(addPageObj.appName).should('have.value', nodeName),
   enterComponentName: (name: string) => {
-    cy.get(addPageObj.nodeName).as('nodeName');
-    cy.wait(2000);
-    cy.get('@nodeName').clear();
-    cy.get('@nodeName').type(name);
-    cy.get('@nodeName').should('have.value', name);
+    cy.get(addPageObj.nodeName)
+      .clear()
+      .should('be.empty')
+      .type(name)
+      .should('have.value', name);
   },
   veirfyNodeName: (componentName: string) =>
     cy.get(addPageObj.nodeName).should('have.value', componentName),
@@ -131,7 +131,7 @@ export const addPage = {
           .check();
         break;
       default:
-        throw new Error('Option is not available');
+        throw new Error('Resource option is not available');
         break;
     }
   },
@@ -159,7 +159,7 @@ export const addPage = {
         cy.byButtonText('Health Checks').click();
         break;
       default:
-        throw new Error('Option is not available');
+        throw new Error('Advanced option is not available');
         break;
     }
   },
@@ -168,43 +168,44 @@ export const addPage = {
       case 'Git':
       case addOptions.Git:
         cy.byLegacyTestID('import-from-git').click();
-        cy.titleShouldBe('Import from git');
+        cy.pageTitleShouldContain('Import from git');
         break;
       case 'Deploy Image':
       case addOptions.ContainerImage:
         cy.byLegacyTestID('deploy-image').click();
-        cy.titleShouldBe('Deploy Image');
+        cy.pageTitleShouldContain('Deploy Image');
         break;
       case 'Import from Dockerfile':
       case addOptions.DockerFile:
         cy.byLegacyTestID('import-from-dockerfile').click();
-        cy.titleShouldBe('Import from Dockerfile');
+        cy.pageTitleShouldContain('Import from Dockerfile');
         break;
+      case 'Developer Catalog':
       case 'From Catalog':
       case addOptions.DeveloperCatalog:
         cy.byLegacyTestID('dev-catalog').click();
-        cy.titleShouldBe('Developer Catalog');
+        cy.pageTitleShouldContain('Developer Catalog');
         break;
       case 'Database':
       case addOptions.Database:
         cy.byLegacyTestID('dev-catalog-databases').click();
-        cy.titleShouldBe('Developer Catalog');
+        cy.pageTitleShouldContain('Developer Catalog');
         break;
       case 'Event Source':
       case addOptions.EventSource:
         cy.byLegacyTestID('knative-event-source').click();
-        cy.titleShouldBe('Event Sources');
+        cy.pageTitleShouldContain('Event Sources');
         break;
       case 'Helm Chart':
       case addOptions.HelmChart:
         cy.byLegacyTestID('helm').click();
-        cy.titleShouldBe('Developer Catalog');
+        cy.pageTitleShouldContain('Developer Catalog');
         cy.byTestID('kind-helm-chart').should('be.checked');
         break;
       case 'Operator Backed':
       case addOptions.OperatorBacked:
         cy.byLegacyTestID('operator-backed').click();
-        cy.titleShouldBe('Developer Catalog');
+        cy.pageTitleShouldContain('Developer Catalog');
         cy.byTestID('kind-cluster-service-version').should('be.checked');
         break;
       case 'Pipelines':
@@ -226,7 +227,7 @@ export const addPage = {
       .get(addPageObj.pipeline.addPipeline)
       .scrollIntoView()
       .check(),
-  clicKCreate: () =>
+  clickCreate: () =>
     cy
       .get(addPageObj.create)
       .should('be.enabled')
@@ -258,11 +259,9 @@ export const addPage = {
     addPage.enterAppName(appName);
     addPage.enterComponentName(componentName);
     addPage.selectResource(resourceType);
-    addPage.clicKCreate();
+    addPage.clickCreate();
   },
   selectTargetPortForRouting: () => {
-    // cy.get(addPageObj.advancedOptions.routing.targetPort).click();
-    // cy.get('[data-test-dropdown-menu="8080-tcp"]').click();
     cy.get(addPageObj.advancedOptions.routing.targetPort).type('8080');
   },
   enterRoutingHostName: (hostName: string) =>

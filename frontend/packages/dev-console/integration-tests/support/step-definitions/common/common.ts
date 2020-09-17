@@ -61,7 +61,8 @@ Given('user has selected namespace {string}', (projectName: string) => {
   perspective.switchTo(switchPerspective.Developer);
   const d = new Date();
   const timestamp = d.getTime();
-  project.selectProject(`${projectName}-${timestamp}`);
+  project.selectProject(`${projectName}-${timestamp}-ns`);
+  cy.log(`User has selected namespace "${projectName}-${timestamp}-ns"`);
 });
 
 Given('user has installed OpenShift Serverless Operator', () => {
@@ -96,7 +97,7 @@ When('user navigates to Add page', () => {
 });
 
 When('user clicks Create button on Add page', () => {
-  addPage.clicKCreate();
+  addPage.clickCreate();
 });
 
 When('user selects {string} option from kebab menu', (option: string) => {
@@ -108,7 +109,7 @@ When('user selects {string} option from Actions menu', (option: string) => {
 });
 
 Then('modal with {string} appears', (header: string) => {
-  cy.alertTitleShouldBe(header);
+  cy.alertTitleShouldContain(header);
 });
 
 Then('user will be redirected to Add page', () => {
@@ -116,5 +117,5 @@ Then('user will be redirected to Add page', () => {
 });
 
 Then('user will be redirected to Pipelines page', () => {
-  cy.titleShouldBe('Pipelines');
+  cy.pageTitleShouldContain('Pipelines');
 });
