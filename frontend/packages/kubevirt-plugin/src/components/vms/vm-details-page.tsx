@@ -9,6 +9,7 @@ import {
   VirtualMachineInstanceMigrationModel,
   VirtualMachineInstanceModel,
   VirtualMachineModel,
+  VirtualMachineSnapshotModel,
 } from '../../models';
 import { getResource } from '../../utils';
 import {
@@ -28,6 +29,7 @@ import { VMEnvironmentFirehose } from './vm-environment/vm-environment-page';
 import { VMSnapshotsPage } from '../vm-snapshots/vm-snapshots';
 import { VMNics } from '../vm-nics';
 import { PendingChangesWarningFirehose } from './pending-changes-warning';
+import { useK8sGet } from '../../../../../public/components/utils/k8s-get-hook';
 
 export const breadcrumbsForVMPage = (match: any) => () => [
   {
@@ -43,6 +45,8 @@ export const breadcrumbsForVMPage = (match: any) => () => [
 
 export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProps> = (props) => {
   const { name, ns: namespace } = props.match.params;
+  const [snapData, snapLoaded, snapErr] = useK8sGet(VirtualMachineSnapshotModel);
+  const isSnapshotSupported = snapData && snapLoaded && !snapErr;
 
   const dashboardPage = {
     href: '', // default landing page
@@ -95,8 +99,12 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
     consolePage,
     nicsPage,
     disksPage,
-    snapshotsPage,
   ];
+
+  // Check if snapshots CRD exists in the cluster (BZ 1878690)
+  if (isSnapshotSupported) {
+    pages.push(snapshotsPage);
+  }
 
   const resources = [
     getResource(VirtualMachineInstanceModel, {
