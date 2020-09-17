@@ -27,6 +27,11 @@ func TestProxy_IndexFile(t *testing.T) {
 			indexFiles: []string{"testdata/azureRepoIndex.yaml", "testdata/sampleRepoIndex.yaml"},
 			mergedFile: "testdata/mergedRepoIndex.yaml",
 		},
+		{
+			name:       "return empty index file when no repositories declared in cluster",
+			indexFiles: []string{},
+			mergedFile: "",
+		},
 	}
 
 	for _, tt := range tests {
@@ -54,12 +59,21 @@ func TestProxy_IndexFile(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-			expectedIndexFile, err := repo.LoadIndexFile(tt.mergedFile)
-			if err != nil {
-				t.Error(err)
-			}
-			if reflect.DeepEqual(indexFile, expectedIndexFile) {
-				t.Errorf("Expected index content \n%v but got \n%v", expectedIndexFile, indexFile)
+			if tt.mergedFile != "" {
+				expectedIndexFile, err := repo.LoadIndexFile(tt.mergedFile)
+				if err != nil {
+					t.Error(err)
+				}
+				if reflect.DeepEqual(indexFile, expectedIndexFile) {
+					t.Errorf("Expected index content \n%v but got \n%v", expectedIndexFile, indexFile)
+				}
+			} else {
+				if len(indexFile.Entries) > 0 {
+					t.Errorf("Expected empty index file, but got %v", indexFile)
+				}
+				if indexFile.APIVersion == "" {
+					t.Error("apiversion in index file should be set")
+				}
 			}
 		})
 	}

@@ -23,9 +23,9 @@ func TestHelmRepoGetter_List(t *testing.T) {
 			expectedRepoName:          []string{"sample-repo-1"},
 		},
 		{
-			name:                      "return default repo when none are declared in cluster",
+			name:                      "return no repos when none are declared in cluster",
 			HelmChartRepoCRSInCluster: 0,
-			expectedRepoName:          []string{"redhat-helm-charts"},
+			expectedRepoName:          []string{},
 		},
 	}
 
@@ -36,8 +36,6 @@ func TestHelmRepoGetter_List(t *testing.T) {
 				indexFileContennts = append(indexFileContennts, "")
 			}
 			client := fake.K8sDynamicClient(indexFileContennts...)
-			cfg := config{repoURL: "https://default-url.com"}
-			cfg.Configure()
 			repoGetter := NewRepoGetter(client, nil)
 			repos, err := repoGetter.List()
 			if err != nil {
@@ -47,9 +45,9 @@ func TestHelmRepoGetter_List(t *testing.T) {
 			if len(repos) != len(tt.expectedRepoName) {
 				t.Errorf("expected num of repos: %d received %d", len(tt.expectedRepoName), len(repos))
 			}
-			for i, repo := range repos {
-				if repo.Name != tt.expectedRepoName[i] {
-					t.Errorf("Repo name mismatch expected is %s received %s", tt.expectedRepoName[i], repo.Name)
+			for i, expectedName := range tt.expectedRepoName {
+				if repos[i].Name != expectedName {
+					t.Errorf("Repo name mismatch expected is %s received %s", expectedName, repos[i].Name)
 				}
 			}
 		})

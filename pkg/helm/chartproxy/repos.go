@@ -188,10 +188,8 @@ func mergeIndexFiles(files ...*repo.IndexFile) *repo.IndexFile {
 func (b *helmRepoGetter) List() ([]*helmRepo, error) {
 	var helmRepos []*helmRepo
 	repos, err := b.Client.Resource(helmChartRepositoryGVK).List(context.TODO(), v1.ListOptions{})
-	if err != nil || len(repos.Items) == 0 {
-		// In case no HelmRepoCRs configured or error reading them, use default redhat helm chart repo
-		helmRepos = append(helmRepos, &DefaultRepo)
-		return helmRepos, nil
+	if err != nil {
+		return helmRepos, err
 	}
 	for _, item := range repos.Items {
 		helmConfig, err := b.unmarshallConfig(item)
