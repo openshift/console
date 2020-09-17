@@ -7,6 +7,7 @@ import DashboardCardHeader from '@console/shared/src/components/dashboard/dashbo
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import {
   DashboardItemProps,
   withDashboardResources,
@@ -16,9 +17,11 @@ import { InfrastructureModel } from '@console/internal/models/index';
 import { SubscriptionModel } from '@console/operator-lifecycle-manager/src/models';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import { getOCSVersion } from '@console/ceph-storage-plugin/src/selectors';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
+import { getOCSVersion } from '@console/ceph-storage-plugin/src/selectors';
+import { RGW_FLAG } from '@console/ceph-storage-plugin/src/features';
 import { getMetric } from '../../utils';
+import './details-card.scss';
 
 const NOOBAA_SYSTEM_NAME_QUERY = 'NooBaa_system_info';
 const NOOBAA_DASHBOARD_LINK_QUERY = 'NooBaa_system_links';
@@ -76,6 +79,8 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
   const subscriptionLoaded = _.get(subscription, 'loaded');
   const ocsVersion = getOCSVersion(subscription);
 
+  const hasRGW = useFlag(RGW_FLAG);
+
   return (
     <DashboardCard>
       <DashboardCardHeader>
@@ -84,7 +89,7 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
       <DashboardCardBody>
         <DetailsBody>
           <DetailItem key="service_name" title="Service Name" error={false} isLoading={false}>
-            OpenShift Container Storage (OCS)
+            OpenShift Container Storage
           </DetailItem>
           <DetailItem
             key="system_name"
@@ -92,7 +97,19 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
             isLoading={!systemResult || !dashboardLinkResult}
             error={systemLoadError || dashboardLinkLoadError || !systemName || !systemLink}
           >
-            <ExternalLink href={systemLink} text={systemName} />
+            <ExternalLink
+              href={systemLink}
+              dataTestID="system-name-mcg"
+              text="Multicloud Object Gateway"
+            />
+            {hasRGW && (
+              <p
+                className="ceph__detail-card-rgw-system-name--margin"
+                data-test-id="system-name-rgw"
+              >
+                RADOS Object Gateway
+              </p>
+            )}
           </DetailItem>
           <DetailItem
             key="provider"

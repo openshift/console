@@ -23,6 +23,7 @@ import {
   unifiedDataResiliencyButton,
   mcgPopover,
   rgwPopover,
+  rgwSystemName,
 } from '../views/noobaaDashboardPage.view';
 import { testBucket } from '../mocks/obcData';
 import { RGW_PROVISIONER } from '../utils/consts';
@@ -132,6 +133,11 @@ if (isRGWPresent) {
     beforeAll(async () => {
       await loadAndWait();
       await browser.sleep(10 * SECOND);
+    });
+
+    it('Check if Details Card has added RGW service in `System Name`', async () => {
+      browser.wait(until.visibilityOf(rgwSystemName));
+      expect(rgwSystemName.getText()).toBe('Object Gateway (RGW)');
     });
 
     it('Check if dropdown for Service Type is available in Capacity Breakdown Card', async () => {
