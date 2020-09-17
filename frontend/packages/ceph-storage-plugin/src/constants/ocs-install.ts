@@ -12,6 +12,8 @@ export const storageClassTooltip =
   'The Storage Class will be used to request storage from the underlying infrastructure to create the backing persistent volumes that will be used to provide the OpenShift Container Storage (OCS) service.';
 export const labelTooltip =
   'The backing storage requested will be higher as it will factor in the requested capacity, replica factor, and fault tolerant costs associated with the requested capacity.';
+export const recommendedReqTooltip =
+  'The recommended configuration will allow you to expand up to 3 storage device set. The minimum configuration will require you to add additional nodes or migrate to larger nodes.';
 
 export enum defaultRequestSize {
   BAREMETAL = '1',

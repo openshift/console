@@ -5,6 +5,7 @@ import { match } from 'react-router';
 // @ts-ignore
 import { useDispatch } from 'react-redux';
 import { ActionGroup, Button, Form, FormGroup } from '@patternfly/react-core';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import {
   NodeKind,
   k8sPatch,
@@ -22,7 +23,12 @@ import {
   ButtonBar,
 } from '@console/internal/components/utils';
 import { setFlag } from '@console/internal/actions/features';
-import { labelTooltip, minSelectedNode, defaultRequestSize } from '../../constants/ocs-install';
+import {
+  labelTooltip,
+  minSelectedNode,
+  defaultRequestSize,
+  recommendedReqTooltip,
+} from '../../constants/ocs-install';
 import { OCSServiceModel } from '../../models';
 import { OSDSizeDropdown } from '../../utils/osd-size-dropdown';
 import { cephStorageLabel } from '../../selectors';
@@ -186,14 +192,25 @@ export const CreateInternalCluster = withHandlePromise<
           <>
             <div>
               Select at least 3 nodes in different zones you wish to use with a recommended
-              requirement of 14 CPUs and 34GiB RAM per node.
+              requirement of 14 CPUs and 34GiB RAM per node. The minimal requirement is 8 CPUs and
+              32 GiB RAM.{' '}
+              <FieldLevelHelp>
+                <>
+                  {recommendedReqTooltip}
+                  <div>
+                    <Button
+                      className="ceph-ocs-install__recommened-req-toottip"
+                      variant="link"
+                      component="a"
+                      href="https://access.redhat.com/documentation/en-us/red_hat_openshift_container_storage/"
+                      target="_blank"
+                    >
+                      Planning Guide <ExternalLinkAltIcon />
+                    </Button>
+                  </div>
+                </>
+              </FieldLevelHelp>
             </div>
-            {isMinimalSupported && (
-              <div className="text-muted ceph-ocs-install__minimal-msg">
-                A minimal deployment is also available if needed with the requirements of 8 CPUs and
-                32 GiB RAM.
-              </div>
-            )}
           </>
         </SelectNodesSection>
         <>
