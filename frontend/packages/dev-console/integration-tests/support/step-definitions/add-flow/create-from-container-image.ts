@@ -24,13 +24,19 @@ Then('application name displays as {string}', (appName: string) => {
   addPage.veirfyAppName(appName);
 });
 
-Then('name field auto populates with value {string} in Import from Docker file page', (nodeName: string) => {
-  addPage.veirfyNodeName(nodeName);
-  addPage.clickCancel();
-});
+Then(
+  'name field auto populates with value {string} in Import from Docker file page',
+  (nodeName: string) => {
+    addPage.veirfyNodeName(nodeName);
+    addPage.clickCancel();
+  },
+);
 
 Then('advanced option Create a route to the application is selected', () => {
-  cy.get(addPageObj.advancedOptions.createRoute).scrollIntoView().should('be.visible').and('be.checked');
+  cy.get(addPageObj.advancedOptions.createRoute)
+    .scrollIntoView()
+    .should('be.visible')
+    .and('be.checked');
   addPage.clickCancel();
 });
 
@@ -43,7 +49,7 @@ Then('node is displayed with name {string}', (nodeName: string) => {
 });
 
 When('user selects Project as {string} from internal registry', (projectName: string) => {
-  containerImagePage.selectProject(projectName)
+  containerImagePage.selectProject(projectName);
 });
 
 When('user selects Image stream tag from internal registry', () => {
@@ -59,5 +65,5 @@ When('user selects tag as {string} from internal registry', (tag: string) => {
 });
 
 When('user clicks Cancel button on Deploy Image page', () => {
-    addPage.clickCancel();
+  addPage.clickCancel();
 });

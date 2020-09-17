@@ -1,7 +1,11 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { perspective, projectNameSpace as project, naviagteTo } from '../../pages/app';
 import { operatorsPage } from '../../pages/operators-page';
-import {switchPerspective, devNavigationMenu as menu, devNavigationMenu} from '../../constants/global';
+import {
+  switchPerspective,
+  devNavigationMenu as menu,
+  devNavigationMenu,
+} from '../../constants/global';
 import { addPage } from '../../pages/add-flow/add-page';
 import { addOptions } from '../../constants/add';
 
@@ -32,7 +36,7 @@ Given('user has installed apache camel source operator', () => {
   operatorsPage.verifyInstalledOperator('apache camel source Operator');
 });
 
-Given ('user has installed OpenShift Virtualization operator', () => {
+Given('user has installed OpenShift Virtualization operator', () => {
   perspective.switchTo(switchPerspective.Administrator);
   operatorsPage.navigateToInstalloperatorsPage();
   operatorsPage.verifyInstalledOperator('OpenShift Virtualization operator');
@@ -44,22 +48,22 @@ Given('user has installed OpenShift Serverless and eventing operator', () => {
 });
 
 Given('user has installed OpenShift Pipelines operator', () => {
-    perspective.switchTo(switchPerspective.Developer);
-    perspective.verifyPerspective('Developer');
-    cy.get('#page-sidebar').then(($navMenu) => {
-      if ($navMenu.find('[data-test-id="pipeline-header"]').length) {
-        cy.log('pipeline operator is installed');
-      }
-    });
+  perspective.switchTo(switchPerspective.Developer);
+  perspective.verifyPerspective('Developer');
+  cy.get('#page-sidebar').then(($navMenu) => {
+    if ($navMenu.find('[data-test-id="pipeline-header"]').length) {
+      cy.log('pipeline operator is installed');
+    }
+  });
 });
 
 Given('user has selected namespace {string}', (projectName: string) => {
   perspective.switchTo(switchPerspective.Developer);
-  let d = new Date();
-  let timestamp = d.getTime();
+  const d = new Date();
+  const timestamp = d.getTime();
   project.selectProject(`${projectName}-${timestamp}`);
 });
-  
+
 Given('user has installed OpenShift Serverless Operator', () => {
   perspective.switchTo(switchPerspective.Administrator);
   perspective.verifyPerspective('Administrator');
@@ -72,7 +76,7 @@ Given('user is at Add page', () => {
 });
 
 Given('user is at Developer Catlog page', () => {
-  addPage.selectCardFromOptions(addOptions.Catalog);
+  addPage.selectCardFromOptions(addOptions.DeveloperCatalog);
 });
 
 Given('user is at pipelines page', () => {
@@ -101,7 +105,7 @@ When('user selects {string} option from kebab menu', (option: string) => {
 
 When('user selects {string} option from Actions menu', (option: string) => {
   cy.byTestActionID(option).click();
-})
+});
 
 Then('modal with {string} appears', (header: string) => {
   cy.alertTitleShouldBe(header);

@@ -26,8 +26,10 @@ Cypress.Commands.add('byButtonText', (selector: string) =>
 );
 Cypress.Commands.add('byDataID', (selector: string) => cy.get(`[data-id="${selector}"]`));
 
-Cypress.Commands.add('byTestSelector', (selector: string) => cy.get(`[data-test-selector="${selector}"]`));
+Cypress.Commands.add('byTestSelector', (selector: string) =>
+  cy.get(`[data-test-selector="${selector}"]`),
+);
 
-Cypress.Commands.add('byTestDropDownMenu', (selector: string) => 
+Cypress.Commands.add('byTestDropDownMenu', (selector: string) =>
   cy.get(`[data-test-dropdown-menu="${selector}"]`),
 );

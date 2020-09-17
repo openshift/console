@@ -35,9 +35,7 @@ When('user selects resource type as {string}', (resourceType: string) => {
   addPage.selectResource(resourceType);
 });
 
-Then('created workload is linked to existing application', () => {
-  
-});
+Then('created workload is linked to existing application', () => {});
 
 When('user enters Application name as {string}', (appName: string) => {
   addPage.enterAppName(appName);
@@ -88,22 +86,31 @@ When('user enters Value as {string} in Environment Variables section', (envValue
 });
 
 Then('build does not get started for {string}', (nodeName: string) => {
-  topologyPage.componentNode(nodeName).click({force:true});
+  topologyPage.componentNode(nodeName).click({ force: true });
   topologySidePane.verify();
-  cy.get('div.build-overview li.list-group-item > span').should('contain.text', 'No Builds found for this Build Config.');
+  cy.get('div.build-overview li.list-group-item > span').should(
+    'contain.text',
+    'No Builds found for this Build Config.',
+  );
 });
 
 When('verify {string} checkbox is seleceted', (checkBoxName: string) => {
   addPage.verifyDeploymentOptionIsChecked(checkBoxName);
 });
 
-When('user enters Name as {string} in Environment Variables Runtime only section', (envName: string) => {
-  addPage.enterDeploymentEnvName(envName);
-});
+When(
+  'user enters Name as {string} in Environment Variables Runtime only section',
+  (envName: string) => {
+    addPage.enterDeploymentEnvName(envName);
+  },
+);
 
-When('user enters Value as {string} in Environment Variables Runtime only section', (envValue: string) => {
-  addPage.enterDeploymentEnvValue(envValue);
-});
+When(
+  'user enters Value as {string} in Environment Variables Runtime only section',
+  (envValue: string) => {
+    addPage.enterDeploymentEnvValue(envValue);
+  },
+);
 
 When('user enters CPU Request as {string} in CPU section', (cpuRequestValue: string) => {
   addPage.enterResourceLimitCPURequest(cpuRequestValue);
@@ -130,11 +137,11 @@ When('user fills the Readiness Probe details', () => {
 });
 
 When('user fills the Liveness Probe details', () => {
-
+  addHealthChecksPage.addLivenessProbe();
 });
 
 When('user fills the Startup Probe details', () => {
-
+  addHealthChecksPage.addStartupProbe();
 });
 
 When('user enters label as {string}', (labelName: string) => {
@@ -143,22 +150,34 @@ When('user enters label as {string}', (labelName: string) => {
 
 Then('public url is not created for node {string}', (nodeName: string) => {
   topologyPage.verifyWorkloadInTopologyPage(nodeName);
-  topologyPage.componentNode(nodeName).click({force:true});
+  topologyPage.componentNode(nodeName).click({ force: true });
   topologySidePane.selectTab('Resources');
   topologySidePane.verifySection('Routes').should('be.visible');
-  cy.get('[role="dialog"] h2').contains('Routes').next('span').should('contain.text', 'No Routes found for this resource.');
+  cy.get('[role="dialog"] h2')
+    .contains('Routes')
+    .next('span')
+    .should('contain.text', 'No Routes found for this resource.');
 });
 
-Then('the route of application {string} contains {string}', (nodeName: string, routeName: string) => {
-  topologyPage.verifyWorkloadInTopologyPage(nodeName);
-  topologyPage.componentNode(nodeName).click({force:true});
-  topologySidePane.selectTab('Resources');
-  topologySidePane.verifySection('Routes').should('be.visible');
-  cy.get('[role="dialog"] h2').contains('Routes').next('span').should('contain.text', routeName);
-});
+Then(
+  'the route of application {string} contains {string}',
+  (nodeName: string, routeName: string) => {
+    topologyPage.verifyWorkloadInTopologyPage(nodeName);
+    topologyPage.componentNode(nodeName).click({ force: true });
+    topologySidePane.selectTab('Resources');
+    topologySidePane.verifySection('Routes').should('be.visible');
+    cy.get('[role="dialog"] h2')
+      .contains('Routes')
+      .next('span')
+      .should('contain.text', routeName);
+  },
+);
 
-Then('verify the label {string} in side bar of application node {string}', (labelName: string, nodeName: string) => {
-  topologyPage.componentNode(nodeName).click({force:true});
-  topologySidePane.selectTab('Details');
-  topologySidePane.verifyLabel(labelName);
-});
+Then(
+  'verify the label {string} in side bar of application node {string}',
+  (labelName: string, nodeName: string) => {
+    topologyPage.componentNode(nodeName).click({ force: true });
+    topologySidePane.selectTab('Details');
+    topologySidePane.verifyLabel(labelName);
+  },
+);

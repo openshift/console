@@ -1,6 +1,6 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { operatorsPage, operatorsObj } from '../../pages/operators-page';
-import  { operators, switchPerspective, devNavigationMenu } from '../../constants/global'
+import { operators, switchPerspective, devNavigationMenu } from '../../constants/global';
 import { projectNameSpace, perspective, naviagteTo } from '../../pages/app';
 import { addPage } from '../../pages/add-flow/add-page';
 import { eventSourcesPage } from '../../pages/add-flow/eventSource-page';
@@ -177,6 +177,6 @@ Then('Installed operators page will not contain {string}', (operatorName: string
   operatorsPage.verifyOperatoNotAvailable(operatorName);
 });
 
-Given('user executed command {string}', (command:string) => {
+Given('user executed command {string}', (command: string) => {
   cy.exec(command);
-})
+});

@@ -22,7 +22,7 @@ export const addPageObj = {
   resources: {
     deployment: '#form-radiobutton-resources-kubernetes-field',
     deploymentConfig: '#form-radiobutton-resources-openshift-field',
-    knative: '#form-radiobutton-resources-knative-field'
+    knative: '#form-radiobutton-resources-knative-field',
   },
   advancedOptions: {
     createRoute: '#form-checkbox-route-create-field',
@@ -59,7 +59,7 @@ export const addPageObj = {
       increment: 'button[aria-label="Increment"]',
       replicaCount: 'input#form-number-spinner-deployment-replicas-field',
     },
-    resourceLimit:{
+    resourceLimit: {
       cpuRequest: 'input[name="limits.cpu.requestValue"]',
       cpuLimit: 'input[name="limits.cpu.limitValue"]',
       memoryRequest: 'input[name="limits.memory.requestValue"]',
@@ -71,35 +71,38 @@ export const addPageObj = {
     },
     labels: 'input#tags-input',
   },
-}
+};
 
 export const addPage = {
-  unselectRoute:() => cy.get(addPageObj.advancedOptions.createRoute).uncheck(),
-  verifyNoWorkLoadsText:(text: string) => cy.get('h2.co-hint-block__title').should('contain.text', text),
+  unselectRoute: () => cy.get(addPageObj.advancedOptions.createRoute).uncheck(),
+  verifyNoWorkLoadsText: (text: string) =>
+    cy.get('h2.co-hint-block__title').should('contain.text', text),
   verifyTitle: (title: string) => cy.titleShouldBe(title),
   verifyPipelinesSection: (message: string) => {
-    cy.get(addPageObj.sectionTitle).eq(5).should('have.text', 'Pipelines');
+    cy.get(addPageObj.sectionTitle)
+      .eq(5)
+      .should('have.text', 'Pipelines');
     cy.get(addPageObj.pipeline.infoMessage).should('have.text', message);
   },
   enterGitUrl: (gitUrl: string) => cy.get(addPageObj.gitRepoUrl).type(gitUrl),
   verifyPipelineCheckBox: () => cy.get(addPageObj.pipeline.addPipeline).should('be.visible'),
-  enterAppName:(appName: string) => {
+  enterAppName: (appName: string) => {
     cy.get(addPageObj.appName).as('appName');
     cy.get('@appName').then(($el) => {
       cy.wait(1000);
-      if($el.prop("tagName").includes('button') === true) {
+      if ($el.prop('tagName').includes('button') === true) {
         cy.get('@appName').click();
         cy.get(`li #${appName}-link`).click();
-      }
-      else if($el.prop("tagName").includes('input') === true){
-        cy.get('@appName').clear().type(appName);
-      }
-      else {
+      } else if ($el.prop('tagName').includes('input') === true) {
+        cy.get('@appName')
+          .clear()
+          .type(appName);
+      } else {
         cy.log('Unable to select or enter App Name');
       }
     });
   },
-  veirfyAppName:(nodeName: string) => cy.get(addPageObj.appName).should('have.value', nodeName),
+  veirfyAppName: (nodeName: string) => cy.get(addPageObj.appName).should('have.value', nodeName),
   enterComponentName: (name: string) => {
     cy.get(addPageObj.nodeName).as('nodeName');
     cy.wait(2000);
@@ -107,7 +110,7 @@ export const addPage = {
     cy.get('@nodeName').type(name);
     cy.get('@nodeName').should('have.value', name);
   },
-  veirfyNodeName:(componentName: string) => 
+  veirfyNodeName: (componentName: string) =>
     cy.get(addPageObj.nodeName).should('have.value', componentName),
   selectResource: (resource: string = 'deployment') => {
     switch (resource) {
@@ -122,7 +125,9 @@ export const addPage = {
       case 'Knative':
       case 'knative':
       case 'Knative Service':
-        cy.get(addPageObj.resources.knative).scrollIntoView().check();
+        cy.get(addPageObj.resources.knative)
+          .scrollIntoView()
+          .check();
         break;
       default:
         throw new Error('Option is not available');
@@ -175,7 +180,7 @@ export const addPage = {
         cy.titleShouldBe('Import from Dockerfile');
         break;
       case 'Catalog file':
-      case addOptions.Catalog:
+      case addOptions.DeveloperCatalog:
         cy.byLegacyTestID('dev-catalog').click();
         cy.titleShouldBe('Developer Catalog');
         break;
@@ -215,14 +220,38 @@ export const addPage = {
         throw new Error(`Unable to find the "${card}" card on Add page`);
     }
   },
-  selectAddPipeline: () => cy.get(addPageObj.pipeline.addPipeline).scrollIntoView().check(),
-  clicKCreate: () => cy.get(addPageObj.create).should('be.enabled').click(),
-  clickCancel:() => cy.get(addPageObj.cancel).should('be.enabled').click(),
-  verifyValidatedMessage:() => cy.get(addPageObj.gitSection.validatedMessage).should('have.text', 'Validated'),
-  verifyBuilderImageDetectedMessage:() => cy.get(addPageObj.builderSection.builderImageDetected).should('be.visible'),
-  verifyBuilderImageVersion:() => cy.get(addPageObj.builderSection.builderImageVersion).should('be.visible'),
-  verifyCard:(cardName: string) => cy.get(addPageObj.cardTitle).contains(cardName).should('be.visible'),
-  createGitWorkload: (gitUrl: string = 'https://github.com/sclorg/nodejs-ex.git', componentName: string = 'nodejs-ex-git', resourceType: string = 'Deployment', appName: string = 'nodejs-ex-git-app') => {
+  selectAddPipeline: () =>
+    cy
+      .get(addPageObj.pipeline.addPipeline)
+      .scrollIntoView()
+      .check(),
+  clicKCreate: () =>
+    cy
+      .get(addPageObj.create)
+      .should('be.enabled')
+      .click(),
+  clickCancel: () =>
+    cy
+      .get(addPageObj.cancel)
+      .should('be.enabled')
+      .click(),
+  verifyValidatedMessage: () =>
+    cy.get(addPageObj.gitSection.validatedMessage).should('have.text', 'Validated'),
+  verifyBuilderImageDetectedMessage: () =>
+    cy.get(addPageObj.builderSection.builderImageDetected).should('be.visible'),
+  verifyBuilderImageVersion: () =>
+    cy.get(addPageObj.builderSection.builderImageVersion).should('be.visible'),
+  verifyCard: (cardName: string) =>
+    cy
+      .get(addPageObj.cardTitle)
+      .contains(cardName)
+      .should('be.visible'),
+  createGitWorkload: (
+    gitUrl: string = 'https://github.com/sclorg/nodejs-ex.git',
+    componentName: string = 'nodejs-ex-git',
+    resourceType: string = 'Deployment',
+    appName: string = 'nodejs-ex-git-app',
+  ) => {
     addPage.selectCardFromOptions(addOptions.Git);
     addPage.enterGitUrl(gitUrl);
     addPage.enterAppName(appName);
@@ -230,14 +259,17 @@ export const addPage = {
     addPage.selectResource(resourceType);
     addPage.clicKCreate();
   },
-  selectTargetPortForRouting:() => {
+  selectTargetPortForRouting: () => {
     cy.get(addPageObj.advancedOptions.routing.targetPort).click();
     cy.get('[data-test-dropdown-menu="8080-tcp"]').click();
   },
-  enterRoutingHostName:(hostName: string) => cy.get(addPageObj.advancedOptions.routing.hostname).type(hostName),
-  eneterRoutingPath:(path: string) => cy.get(addPageObj.advancedOptions.routing.path).type(path),
-  uncheckBuildConfigOption:(checkBoxName: string) => {
-    cy.get('div.pf-c-check label').contains(checkBoxName).should('be.visible');
+  enterRoutingHostName: (hostName: string) =>
+    cy.get(addPageObj.advancedOptions.routing.hostname).type(hostName),
+  eneterRoutingPath: (path: string) => cy.get(addPageObj.advancedOptions.routing.path).type(path),
+  uncheckBuildConfigOption: (checkBoxName: string) => {
+    cy.get('div.pf-c-check label')
+      .contains(checkBoxName)
+      .should('be.visible');
     switch (checkBoxName) {
       case 'Configure a webhook build trigger':
         cy.get(addPageObj.advancedOptions.buildConfig.webHookBuildTrigger).uncheck();
@@ -249,11 +281,15 @@ export const addPage = {
         cy.get(addPageObj.advancedOptions.buildConfig.buildTriggerConfigField).uncheck();
         break;
       default:
-        throw new Error(`Unable to find the "${checkBoxName}" checbox in Build Configuration Section`);
+        throw new Error(
+          `Unable to find the "${checkBoxName}" checbox in Build Configuration Section`,
+        );
     }
   },
-  enterBuildConfigEnvName: (envName:string) =>   cy.get(addPageObj.advancedOptions.buildConfig.envName).type(envName),
-  enterBuildConfigEnvValue: (envValue: string) =>   cy.get(addPageObj.advancedOptions.buildConfig.envValue).type(envValue),
+  enterBuildConfigEnvName: (envName: string) =>
+    cy.get(addPageObj.advancedOptions.buildConfig.envName).type(envName),
+  enterBuildConfigEnvValue: (envValue: string) =>
+    cy.get(addPageObj.advancedOptions.buildConfig.envValue).type(envValue),
   verifyDeploymentOptionIsChecked: (checkBoxName: string) => {
     switch (checkBoxName) {
       case 'Auto deploy when new image is available':
@@ -263,12 +299,19 @@ export const addPage = {
         throw new Error(`Unable to find the "${checkBoxName}" checbox in Deployment Section`);
     }
   },
-  enterDeploymentEnvName: (envName:string) =>   cy.get(addPageObj.advancedOptions.deployment.envName).type(envName),
-  enterDeploymentEnvValue: (envValue: string) =>   cy.get(addPageObj.advancedOptions.deployment.envValue).type(envValue),
-  enterResourceLimitCPURequest:(cpuResquestValue:string) => cy.get(addPageObj.advancedOptions.resourceLimit.cpuRequest).type(cpuResquestValue),
-  enterResourceLimitCPULimit:(cpuLimitValue:string) => cy.get(addPageObj.advancedOptions.resourceLimit.cpuLimit).type(cpuLimitValue),
-  enterResourceLimitMemoryRequest:(memoryRequestValue:string) => cy.get(addPageObj.advancedOptions.resourceLimit.memoryRequest).type(memoryRequestValue),
-  enterResourceLimitMemoryLimit:(memoryLimitValue:string) =>  cy.get(addPageObj.advancedOptions.resourceLimit.memoryLimit).type(memoryLimitValue),
-  enterScalingReplicaCount:(replicaCount:string) => cy.get(addPageObj.advancedOptions.scaling.replicaCount).type(replicaCount),
-  enterLabels:(labelName: string) => cy.get(addPageObj.advancedOptions.labels).type(labelName),
+  enterDeploymentEnvName: (envName: string) =>
+    cy.get(addPageObj.advancedOptions.deployment.envName).type(envName),
+  enterDeploymentEnvValue: (envValue: string) =>
+    cy.get(addPageObj.advancedOptions.deployment.envValue).type(envValue),
+  enterResourceLimitCPURequest: (cpuResquestValue: string) =>
+    cy.get(addPageObj.advancedOptions.resourceLimit.cpuRequest).type(cpuResquestValue),
+  enterResourceLimitCPULimit: (cpuLimitValue: string) =>
+    cy.get(addPageObj.advancedOptions.resourceLimit.cpuLimit).type(cpuLimitValue),
+  enterResourceLimitMemoryRequest: (memoryRequestValue: string) =>
+    cy.get(addPageObj.advancedOptions.resourceLimit.memoryRequest).type(memoryRequestValue),
+  enterResourceLimitMemoryLimit: (memoryLimitValue: string) =>
+    cy.get(addPageObj.advancedOptions.resourceLimit.memoryLimit).type(memoryLimitValue),
+  enterScalingReplicaCount: (replicaCount: string) =>
+    cy.get(addPageObj.advancedOptions.scaling.replicaCount).type(replicaCount),
+  enterLabels: (labelName: string) => cy.get(addPageObj.advancedOptions.labels).type(labelName),
 };
