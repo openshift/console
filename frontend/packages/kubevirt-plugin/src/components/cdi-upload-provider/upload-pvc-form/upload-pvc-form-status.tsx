@@ -91,7 +91,7 @@ const AllocatingStatus: React.FC = () => (
       Allocating Resources
     </Title>
     <EmptyStateBody>
-      Please wait, once the Data Volume has been created The data will start uploading into this
+      Please wait, once the Data Volume has been created the data will start uploading into this
       Persistent Volume Claim.
     </EmptyStateBody>
   </>
