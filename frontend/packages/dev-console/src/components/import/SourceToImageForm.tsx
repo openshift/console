@@ -37,7 +37,7 @@ const SourceToImageForm: React.FC<FormikProps<FormikValues> & SourceToImageFormP
       errorMessage={status && status.submitError}
       isSubmitting={isSubmitting}
       submitLabel="Create"
-      disableSubmit={!dirty || !_.isEmpty(errors)}
+      disableSubmit={!dirty || !_.isEmpty(errors) || isSubmitting}
       resetLabel="Cancel"
       sticky
     />

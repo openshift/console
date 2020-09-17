@@ -50,14 +50,12 @@ const EditApplication: React.FC<EditApplicationProps & StateProps> = ({
   };
 
   const handleSubmit = (values, actions) => {
-    updateResources(values)
+    return updateResources(values)
       .then(() => {
-        actions.setSubmitting(false);
         actions.setStatus({ submitError: '' });
         handleRedirect(namespace, perspective, perspectiveExtensions);
       })
       .catch((err) => {
-        actions.setSubmitting(false);
         actions.setStatus({ submitError: err.message });
       });
   };
