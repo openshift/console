@@ -23,14 +23,18 @@ const CheckingCredentials: React.FC<StatusProps> = ({ provider }) => (
   />
 );
 
-const LoadingData: React.FC<StatusProps> = () => (
-  <StatusIconAndText
-    spin
-    noTooltip
-    title="Connection successful. Loading data"
-    icon={<InProgressIcon />}
-  />
-);
+const LoadingData: React.FC<StatusProps> = (props) => {
+  return props.provider === VMImportProvider.OVIRT ? (
+    CheckingCredentials(props)
+  ) : (
+    <StatusIconAndText
+      spin
+      noTooltip
+      title="Connection successful. Loading data"
+      icon={<InProgressIcon />}
+    />
+  );
+};
 
 const ConnectionFailed: React.FC<StatusProps> = ({ provider }) => (
   <Alert
@@ -56,13 +60,11 @@ const ConnectionSuccessful: React.FC<StatusProps> = () => <>Connection successfu
 
 const ConnectionUnknown: React.FC<StatusProps> = () => <>Status unknown</>;
 
-const ReadVmsListFailed: React.FC<StatusProps> = ({ provider }) => (
+const ReadVmsListFailed: React.FC<StatusProps> = () => (
   <Alert
     isInline
     variant={AlertVariant.warning}
-    title={`Connection succeeded but could not read list of virtual machines from ${getProviderEndpointName(
-      provider,
-    )} instance`}
+    title={`Connection failed. Please check your credentials and ensure that the API you're attempting to connect to is operational.`}
   />
 );
 
