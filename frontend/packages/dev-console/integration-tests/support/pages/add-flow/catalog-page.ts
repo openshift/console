@@ -65,7 +65,7 @@ export const catalogPage = {
       .should('have.text', 'Install Helm Chart'),
   clickInstantiateButtonOnSidePane: () => {
     catalogPage.verifyDialog();
-    cy.get(catalogPageObj.sidePane.instantiateTemplate).click();
+    cy.get(catalogPageObj.sidePane.instantiateTemplate).click({ force: true });
   },
   clickCreateButtonOnSidePane: () => {
     catalogPage.verifyDialog();

@@ -13,7 +13,7 @@ Scenario: Developer Catalog page details
     And user is ale to see Operator Backed, Helm Charts, Builder Image, Template, Service Class types are not selected by default
     And search option is displayed in Developer Catalog page
     And GroupBy filter is selected with default option None
-    
+
 
 Scenario: Search builder image from Catalog page
     Given user is at Developer Catlog page

@@ -1,10 +1,10 @@
 Feature: Create Application from git form
-    As a user, I want to create the application, component or service from Add options
+   As a user, I want to create the application, component or service from Add options
 
 Background:
-    Given user is at developer perspecitve
-    And user is at Add page
-    And user has selected namespace "aut-addflow-git"
+   Given user is at developer perspecitve
+   And user is at Add page
+   And user has selected namespace "aut-addflow-git"
 
 @regression
 Scenario Outline: Builder iamge detected for git url "<git_url>" : A-04-TC01
@@ -42,21 +42,23 @@ Scenario Outline: Add new git workload with new application for resoruce type "<
    And user is able to see workload "<name>" in topology page
 
 Examples:
-| git_url                                  | app_name           | name             | resource_type     |
-| https://github.com/sclorg/dancer-ex.git  | dancer-ex-git-app  | dancer-ex-1-git  | Deployment        |
-| https://github.com/sclorg/cakephp-ex.git | dancer-ex-git-app  | cakephp-ex-1-git | Deployment Config |
+| git_url                                  | app_name           | name            | resource_type     |
+| https://github.com/sclorg/dancer-ex.git  | dancer-ex-git-app  | dancer-ex-1-git | Deployment        |
+| https://github.com/sclorg/nodejs-ex.git  | nodejs-ex-git-app  | nodejs-ex-git   | Deployment Config |
 
 
 @regression
 Scenario: Add new git workload to the existing application : A-04-TC03
-   Given user is at Import from git page
+   Given user created workload "nodejs-ex-git" with resource type "Deployment"
+   And user is at Add page
+   And user is at Import from git page
    When user enters Git Repo url as "https://github.com/sclorg/nodejs-ex.git"
    And user enters Application name as "nodejs-ex-git-app"
    And user enters Name as "nodejs-ex-2-git"
-   And user selects resource type as "deployment config"
+   And user selects resource type as "Deployment Config"
    And user clicks Create button on Add page
    Then user will be redirected to Topology page
-   And created workload is linked to existing application
+   And created workload "nodejs-ex-2-git" is linked to existing application "nodejs-ex-git-app"
 
 
 @regression
@@ -70,9 +72,9 @@ Scenario: Cancel the git workload creation : A-04-TC04
 @regression
 Scenario: Create workload without application route : A-04-TC05
    Given user is at Import from git page
-   When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
+   When user enters Git Repo url as "https://github.com/sclorg/nodejs-ex.git"
    And user enters Application name as "app-no-route"
-   And user enters Name as "app-no-route"
+   And user enters Name as "name-no-route"
    And user unselects the advanced option Create a route to the application
    And user clicks Create button on Add page 
    Then user will be redirected to Topology page

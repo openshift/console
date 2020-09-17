@@ -7,6 +7,18 @@ Given('user is at Import from git page', () => {
   addPage.selectCardFromOptions(addOptions.Git);
 });
 
+Given(
+  'user created workload {string} with resource type {string}',
+  (componentName: string, resourceType: string = 'Deployment') => {
+    addPage.createGitWorkload(
+      'https://github.com/sclorg/nodejs-ex.git',
+      componentName,
+      resourceType,
+      'nodejs-ex-git-app',
+    );
+  },
+);
+
 When('user enters Git Repo url as {string}', (gitUrl: string) => {
   addPage.enterGitUrl(gitUrl);
 });
@@ -35,7 +47,13 @@ When('user selects resource type as {string}', (resourceType: string) => {
   addPage.selectResource(resourceType);
 });
 
-Then('created workload is linked to existing application', () => {});
+Then(
+  'created workload {string} is linked to existing application {string}',
+  (workloadName: string, appName: string) => {
+    topologyPage.appNode(appName).click({ force: true });
+    topologySidePane.verifyResource(workloadName);
+  },
+);
 
 When('user enters Application name as {string}', (appName: string) => {
   addPage.enterAppName(appName);
