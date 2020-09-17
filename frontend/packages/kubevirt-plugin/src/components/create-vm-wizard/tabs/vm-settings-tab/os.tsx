@@ -96,7 +96,6 @@ export const OS: React.FC<OSProps> = React.memo(
     const loadingResources = openshiftFlag
       ? {
           commonTemplates,
-          cnvBaseImages,
         }
       : {};
 
@@ -121,6 +120,7 @@ export const OS: React.FC<OSProps> = React.memo(
     }
 
     const loadedBaseImages = iGetLoadedData(cnvBaseImages);
+    const baseImagesLoadError = iGetLoadError(cnvBaseImages);
     const operatingSystemBaseImages = operatingSystems.map(
       (operatingSystem: OperatingSystemRecord) => {
         const pvcName = operatingSystem?.dataVolumeName;
@@ -140,7 +140,7 @@ export const OS: React.FC<OSProps> = React.memo(
           checkboxDescription: '',
         };
 
-        if (!iUserTemplate) {
+        if (!iUserTemplate && !baseImagesLoadError) {
           if (baseImageFoundInCluster && pvcName) {
             osField.message = isBaseImageUploading
               ? BASE_IMAGE_AND_PVC_UPLOADING_SHORT
@@ -176,7 +176,7 @@ export const OS: React.FC<OSProps> = React.memo(
 
     const numOfMountedDisks = cloneBaseDiskImage + mountWindowsGuestTools; // using boolean addition operator to count true
     const mountedDisksHelpMsg = numOfMountedDisks > 0 && (
-      <Text className="kv-create-vm__input-text-help-msg">
+      <Text className="pf-c-form__helper-text kv-create-vm__input-text-help-msg">
         View the mounted {pluralize(numOfMountedDisks, 'disk')} in the{' '}
         <Button
           isDisabled={!goToStorageStep}
@@ -187,6 +187,12 @@ export const OS: React.FC<OSProps> = React.memo(
           <strong>storage</strong>
         </Button>{' '}
         step
+      </Text>
+    );
+    const mountedDisksErrorMsg = baseImagesLoadError && (
+      <Text className="pf-c-form__helper-text kv-create-vm__input-text-help-msg">
+        Could not access default operating system images. Contact your administrator to gain access
+        to these images. Otherwise provide a manual boot source below.
       </Text>
     );
 
@@ -232,6 +238,7 @@ export const OS: React.FC<OSProps> = React.memo(
             />
           </FormField>
         </FormFieldRow>
+        {mountedDisksErrorMsg}
         <FormFieldRow
           field={mountWindowsGuestToolsField}
           fieldType={FormFieldType.INLINE_CHECKBOX}

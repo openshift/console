@@ -112,7 +112,6 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
         os={getFieldValue(VMSettingsField.OPERATING_SYSTEM)}
         flavorField={getField(VMSettingsField.FLAVOR)}
         workloadProfile={getFieldValue(VMSettingsField.WORKLOAD_PROFILE)}
-        cnvBaseImages={cnvBaseImages}
         onChange={onFieldChange}
         openshiftFlag={openshiftFlag}
       />
@@ -127,7 +126,6 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
         workloadProfileField={getField(VMSettingsField.WORKLOAD_PROFILE)}
         operatingSystem={getFieldValue(VMSettingsField.OPERATING_SYSTEM)}
         flavor={getFieldValue(VMSettingsField.FLAVOR)}
-        cnvBaseImages={cnvBaseImages}
         onChange={onFieldChange}
       />
     </Form>
