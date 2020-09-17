@@ -25,7 +25,7 @@ import { UNASSIGNED_KEY, CREATE_APPLICATION_KEY } from '../../../const';
 export interface GitSectionProps {
   showSample?: boolean;
   buildStrategy? : string
-  builderImages: NormalizedBuilderImages;
+  builderImages?: NormalizedBuilderImages;
 }
 
 const GitSection: React.FC<GitSectionProps> = ({ showSample, buildStrategy, builderImages }) => {

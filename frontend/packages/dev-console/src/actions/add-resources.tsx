@@ -4,6 +4,7 @@ import {
   OsImageIcon,
   CatalogIcon,
   CubeIcon,
+  LayerGroupIcon,
   DatabaseIcon,
 } from '@patternfly/react-icons';
 import { ImportOptions } from '../components/import/import-types';
@@ -41,7 +42,7 @@ export const fromDockerfile = createKebabAction(
 
 export const fromDevfile = createKebabAction(
   'From Devfile',
-  <CubeIcon />,
+  <LayerGroupIcon />,
   ImportOptions.DEVFILE,
   allImportResourceAccess,
 );
