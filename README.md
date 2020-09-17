@@ -29,6 +29,11 @@ build 후, ./frontend/public/dist 폴더에 파일들이 생성되며, 이 파�
 ### 실행 
 
 #### 순정 kubernetes 
+
+$GOPATH/github.com/openshift/console 경로에서 
+./example/run-bridge.sh 실행 
+
+(사용되지않음)
 - kubernetes 인증서 파일 필요 
   - kubernetes가 설치 된 node의 ```/root/.kube/config ``` 를 console 노드의 ``` /root/.kube/``` 에 config 파일 저장 
 ```
