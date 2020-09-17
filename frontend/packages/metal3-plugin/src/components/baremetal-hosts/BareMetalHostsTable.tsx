@@ -20,7 +20,7 @@ import BareMetalHostStatus from './BareMetalHostStatus';
 import BareMetalHostRole from './BareMetalHostRole';
 import { menuActions } from './host-menu-actions';
 import BareMetalHostSecondaryStatus from './BareMetalHostSecondaryStatus';
-import { NODE_MAINTENANCE_FLAG } from '../../features';
+import { NODE_MAINTENANCE_FLAG, BMO_ENABLED_FLAG } from '../../features';
 
 const tableColumnClasses = {
   name: classNames('col-lg-2', 'col-md-4', 'col-sm-12', 'col-xs-12'),
@@ -82,6 +82,7 @@ const HostsTableRow: React.FC<RowFunctionArgs<BareMetalHostBundle>> = ({
   style,
 }) => {
   const hasNodeMaintenanceCapability = useFlag(NODE_MAINTENANCE_FLAG);
+  const bmoEnabled = useFlag(BMO_ENABLED_FLAG);
   const name = getName(host);
   const namespace = getNamespace(host);
   const address = getHostBMCAddress(host);
@@ -120,6 +121,7 @@ const HostsTableRow: React.FC<RowFunctionArgs<BareMetalHostBundle>> = ({
               machine,
               machineSet,
               status,
+              bmoEnabled,
             }),
           )}
           key={`kebab-for-${uid}`}
