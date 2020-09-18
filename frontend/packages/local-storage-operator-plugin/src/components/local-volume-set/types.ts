@@ -15,8 +15,8 @@ export enum DiskType {
 }
 
 export enum DiskMechanicalProperties {
-  SSD = 'Rotational',
-  HDD = 'NonRotational',
+  SSD = 'NonRotational',
+  HDD = 'Rotational',
 }
 
 export type LocalVolumeSetKind = K8sResourceCommon & {
