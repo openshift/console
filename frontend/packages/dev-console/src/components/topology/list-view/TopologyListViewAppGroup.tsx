@@ -31,7 +31,7 @@ const ObservedTopologyListViewAppGroup: React.FC<TopologyListViewAppGroupProps> 
   const collapsed = appGroup.isCollapsed();
   const children = appGroup.getChildren();
 
-  if (!visible) {
+  if (!visible || !children?.length) {
     return null;
   }
 
