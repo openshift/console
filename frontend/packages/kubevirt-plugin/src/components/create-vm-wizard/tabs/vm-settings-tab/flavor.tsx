@@ -28,7 +28,6 @@ export const Flavor: React.FC<FlavorProps> = React.memo(
     os,
     flavorField,
     workloadProfile,
-    cnvBaseImages,
     onChange,
     openshiftFlag,
   }) => {
@@ -54,7 +53,6 @@ export const Flavor: React.FC<FlavorProps> = React.memo(
     const loadingResources = openshiftFlag
       ? {
           commonTemplates,
-          cnvBaseImages,
         }
       : {};
 
@@ -109,7 +107,6 @@ type FlavorProps = {
   flavorField: any;
   os: string;
   workloadProfile: string;
-  cnvBaseImages: any;
   openshiftFlag: boolean;
   onChange: (key: string, value: string | boolean) => void;
 };

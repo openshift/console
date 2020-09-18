@@ -104,7 +104,11 @@ const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) 
 
   // Store previuse props
   const prevProps = usePrevious<CreateVMWizardComponentProps>(props);
-  const prevPVCsProp = usePrevious<PersistentVolumeClaimKind[]>(dataVolumePVCs);
+  const prevDataVolumePVCData = usePrevious<[PersistentVolumeClaimKind[], boolean, string]>([
+    dataVolumePVCs,
+    dataVolumePVCsLoaded,
+    dataVolumePVCsLoadError,
+  ]);
 
   // componentDidUpdate
   React.useEffect(() => {
@@ -119,9 +123,13 @@ const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) 
       return changedPropsAcc;
     }, new Set()) as ChangedCommonData;
     const referencesChanged = !_.isEqual(prevProps.dataIDReferences, props.dataIDReferences);
-    const dataPVCsChanged = !_.isEqual(prevPVCsProp, dataVolumePVCs);
+    const dataVolumePVCsChanged = !_.isEqual(prevDataVolumePVCData, [
+      dataVolumePVCs,
+      dataVolumePVCsLoaded,
+      dataVolumePVCsLoadError,
+    ]);
 
-    if (changedProps.size > 0 || referencesChanged || dataPVCsChanged) {
+    if (changedProps.size > 0 || referencesChanged || dataVolumePVCsChanged) {
       let commonDataUpdate: CommonData = referencesChanged
         ? { dataIDReferences: props.dataIDReferences }
         : undefined;
@@ -133,7 +141,7 @@ const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) 
           },
         };
       }
-      if (dataPVCsChanged && dataVolumePVCsLoaded && !dataVolumePVCsLoadError) {
+      if (dataVolumePVCsChanged) {
         commonDataUpdate = {
           ...commonDataUpdate,
           data: {

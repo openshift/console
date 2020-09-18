@@ -17,15 +17,7 @@ import { iGetFieldValue } from '../../selectors/immutable/field';
 import { FormPFSelect } from '../../../form/form-pf-select';
 
 export const WorkloadProfile: React.FC<WorkloadProps> = React.memo(
-  ({
-    iUserTemplate,
-    commonTemplates,
-    workloadProfileField,
-    operatingSystem,
-    flavor,
-    cnvBaseImages,
-    onChange,
-  }) => {
+  ({ iUserTemplate, commonTemplates, workloadProfileField, operatingSystem, flavor, onChange }) => {
     const isUserTemplateValid = iGetIsLoaded(iUserTemplate) && !iGetLoadError(iUserTemplate);
 
     const templates = iUserTemplate
@@ -43,7 +35,6 @@ export const WorkloadProfile: React.FC<WorkloadProps> = React.memo(
 
     const loadingResources = {
       commonTemplates,
-      cnvBaseImages,
     };
 
     if (iUserTemplate) {
@@ -80,6 +71,5 @@ type WorkloadProps = {
   workloadProfileField: any;
   flavor: string;
   operatingSystem: string;
-  cnvBaseImages: any;
   onChange: (key: string, value: string) => void;
 };
