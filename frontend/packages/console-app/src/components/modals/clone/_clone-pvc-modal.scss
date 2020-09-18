@@ -1,5 +1,5 @@
 .co-clone-pvc-modal__details {
-  margin-top: var(--pf-global--spacer--xl);
+  margin-top: var(--pf-global--spacer--md);
 }
 
 .co-clone-pvc-modal__details-section {
@@ -12,5 +12,9 @@
 }
 
 .co-clone-pvc-modal__name--margin {
+  margin-bottom: var(--pf-global--spacer--sm);
+}
+
+.co-clone-pvc-modal__ocs-size .form-group{
   margin-bottom: var(--pf-global--spacer--sm);
 }

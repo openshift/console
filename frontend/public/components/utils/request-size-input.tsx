@@ -38,6 +38,7 @@ export class RequestSizeInput extends React.Component<RequestSizeInputProps> {
             required={this.props.required}
             value={this.props.defaultRequestSizeValue}
             min={this.props.minValue}
+            disabled={this.props.isInputDisabled}
           />
           <Dropdown
             title={this.props.dropdownUnits[this.props.defaultRequestSizeUnit]}
@@ -46,6 +47,7 @@ export class RequestSizeInput extends React.Component<RequestSizeInputProps> {
             className="btn-group"
             items={this.props.dropdownUnits}
             onChange={this.onUnitChange}
+            disabled={this.props.isInputDisabled}
             required={this.props.required}
             ariaLabel={`Number of ${this.props.dropdownUnits[this.props.defaultRequestSizeUnit]}`}
           />
@@ -69,4 +71,5 @@ export type RequestSizeInputProps = {
   inputClassName?: string;
   inputID?: string;
   testID?: string;
+  isInputDisabled?: boolean;
 };
