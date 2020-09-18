@@ -6,25 +6,25 @@ export enum DiskStates {
   Unknown = 'Unknown',
 }
 
+export type DiskMetadata = {
+  deviceID: string;
+  fstype: string;
+  model: string;
+  path: string;
+  serial: string;
+  size: number;
+  status: {
+    state: keyof typeof DiskStates;
+  };
+  type: string;
+  vendor: string;
+};
+
 export type LocalVolumeDiscoveryResultKind = K8sResourceCommon & {
   spec: {
     nodeName: string;
   };
   status: {
-    discoveredDevices: {
-      deviceID: string;
-      fstype: string;
-      model: string;
-      path: string;
-      serial: string;
-      size: number;
-      status: {
-        state: keyof typeof DiskStates;
-      };
-      type: string;
-      vendor: string;
-    };
+    discoveredDevices: DiskMetadata[];
   };
 };
-
-export type DiskMetadata = LocalVolumeDiscoveryResultKind['status']['discoveredDevices'];
