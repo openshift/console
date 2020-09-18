@@ -251,12 +251,13 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
   const desiredImage: string = _.get(cv, 'status.desired.image') || '';
   // Split image on `@` to emphasize the digest.
   const imageParts = desiredImage.split('@');
-  const clusterVersionIsEditable = useAccessReview({
-    group: ClusterVersionModel.apiGroup,
-    resource: ClusterVersionModel.plural,
-    verb: 'patch',
-    name: cv.metadata.name,
-  });
+  const clusterVersionIsEditable =
+    useAccessReview({
+      group: ClusterVersionModel.apiGroup,
+      resource: ClusterVersionModel.plural,
+      verb: 'patch',
+      name: cv.metadata.name,
+    }) && window.SERVER_FLAGS.branding !== 'dedicated';
 
   return (
     <>

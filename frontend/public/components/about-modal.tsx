@@ -37,12 +37,13 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal, cv }
   const channel: string = _.get(cv, 'data.spec.channel');
   const openshiftVersion = getOpenShiftVersion(clusterVersion);
   const errataLink = getErrataLink(clusterVersion);
-  const clusterVersionIsEditable = useAccessReview({
-    group: ClusterVersionModel.apiGroup,
-    resource: ClusterVersionModel.plural,
-    verb: 'patch',
-    name: 'version',
-  });
+  const clusterVersionIsEditable =
+    useAccessReview({
+      group: ClusterVersionModel.apiGroup,
+      resource: ClusterVersionModel.plural,
+      verb: 'patch',
+      name: 'version',
+    }) && window.SERVER_FLAGS.branding !== 'dedicated';
   return (
     <>
       {clusterVersion && hasAvailableUpdates(clusterVersion) && clusterVersionIsEditable && (
