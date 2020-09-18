@@ -1,4 +1,4 @@
-import { element, by, browser, $$, $ } from 'protractor';
+import { element, by, browser, $$, $, ExpectedConditions as until } from 'protractor';
 import { waitForNone } from '../protractor.conf';
 
 export const heading = element(
@@ -16,3 +16,5 @@ export const clusterOperatorResourceLink = $('[data-test-id="console"]');
 export const globalConfigResourceLink = $('[data-test-id="Console"]');
 export const clusterResourceDetailsTitle = $('[data-test-id="resource-title"]');
 export const globalConfigDetailsTitle = $('[data-test-id="api-explorer-resource-title"]');
+export const globalConfigDetailsTitleIsLoaded = async () =>
+  await browser.wait(until.presenceOf(globalConfigDetailsTitle));
