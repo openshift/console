@@ -27,9 +27,16 @@ export type TriggerTemplateKind = K8sResourceCommon & {
 };
 
 export type EventListenerKindBindingReference = {
-  // TriggerBinding / ClusterTriggerBinding name reference
-  name: string;
-  kind?: string;
+  // TriggerBinding / ClusterTriggerBinding reference
+  kind: string;
+  // Ref is used since Tekton Triggers 0.5 (part of OpenShift Pipeline Operator 1.1)
+  ref: string;
+  // We also support older operators, so need to show & save the old field as well.
+  // https://github.com/tektoncd/triggers/pull/603/files
+  // https://github.com/tektoncd/triggers/releases/tag/v0.5.0 and
+  // https://github.com/tektoncd/triggers/releases/tag/v0.6.0
+  /** @deprecated use ref instead */
+  name?: string;
 };
 
 export type EventListenerKindTrigger = {
