@@ -78,6 +78,8 @@ export enum OCP_HEALTH_ICON_COLORS {
   GREEN = '#486b00',
   YELLOW = '#f0ab00',
   RED = '#c9190b',
+  // in version 4.6 green is a little different
+  GREEN46 = '#3e8635',
 }
 
 export const EXAMPLE_PVC = {

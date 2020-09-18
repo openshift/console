@@ -49,7 +49,7 @@ describe('Test PVC creation with options.', () => {
       accessMode: VOLUME_ACCESS_MODES.RWO,
     };
     await createNewPersistentVolumeClaim(testPvc, true);
-    expect(pvcSize.getText()).toEqual('2Gi');
+    expect(['2Gi', '2 GiB']).toContain(pvcSize.getText());
     await goToPersistentVolumeClaims();
     await resourceRowsPresent();
     await deletePersistentVolumeClaim('rbdpvc', NS);

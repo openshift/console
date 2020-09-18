@@ -19,7 +19,9 @@ describe('Check data on Persistent Storage Dashboard.', () => {
   });
 
   it('Check cluster is healthy', () => {
-    expect(clusterHealth.getAttribute('fill')).toEqual(OCP_HEALTH_ICON_COLORS.GREEN);
+    expect([OCP_HEALTH_ICON_COLORS.GREEN, OCP_HEALTH_ICON_COLORS.GREEN46]).toContain(
+      clusterHealth.getAttribute('fill'),
+    );
   });
 
   it('Check service name is OCS', () => {
@@ -28,7 +30,7 @@ describe('Check data on Persistent Storage Dashboard.', () => {
 
   it('Check if cluster name is correct', async () => {
     const cephClusterName = execSync(
-      "kubectl get cephcluster -n openshift-storage -o jsonpath='{.items..metadata.name}'",
+      "kubectl get storagecluster -n openshift-storage -o jsonpath='{.items..metadata.name}'",
     );
     expect(clusterName.getText()).toEqual(cephClusterName.toString().trim());
   });
