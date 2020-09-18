@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as _ from 'lodash';
 
 import {
-  Switch,
   Dropdown,
   DropdownToggle,
   DropdownItem,
@@ -28,7 +27,10 @@ import {
 } from '@console/internal/components/utils/promise-component';
 import { k8sCreate } from '@console/internal/module/k8s/resource';
 import { referenceForModel, apiVersionForModel } from '@console/internal/module/k8s';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import {
+  useK8sWatchResource,
+  WatchK8sResource,
+} from '@console/internal/components/utils/k8s-watch-hook';
 
 import { CephClusterKind, StoragePoolKind } from '../../../types';
 import { CephBlockPoolModel } from '../../../models';
@@ -83,12 +85,13 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
   const [isPerfObjOpen, setPerfObjOpen] = React.useState(false);
   const [deviceClass, setdeviceClass] = React.useState(''); */
 
-  const poolResource = React.useMemo(() => {
+  const poolResource: WatchK8sResource = React.useMemo(() => {
     return {
       kind: referenceForModel(CephBlockPoolModel),
       namespaced: true,
       isList: false,
       name: newPoolName,
+      namespace: CEPH_STORAGE_NAMESPACE,
     };
   }, [newPoolName]);
 
@@ -120,6 +123,7 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
         key={`replica-${OCS_DEVICE_REPLICA[replica]}`}
         component="button"
         id={replica}
+        data-test-id={replica}
         onClick={(e) => setReplicaSize(e.currentTarget.id)}
       >
         {`${OCS_DEVICE_REPLICA[replica]} Replication`}
@@ -187,7 +191,7 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
         const timeoutTimer = setTimeout(() => {
           setPoolStatus(POOL_PROGRESS.TIMEOUT);
           setIsSubmit(false);
-        }, 15 * SECOND);
+        }, 30 * SECOND);
         setTimer(timeoutTimer);
       },
       () => {
@@ -266,7 +270,7 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
                 className="dropdown dropdown--full-width"
                 toggle={
                   <DropdownToggle
-                    id="toggle-id"
+                    id="replica-dropdown"
                     onToggle={() => setReplicaOpen(!isReplicaOpen)}
                     toggleIndicator={CaretDownIcon}
                   >
@@ -282,18 +286,19 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
               />
             </div>
             <div className="form-group ceph-storage-pool__input">
-              <label className="control-label co-required" htmlFor="compression-switch">
+              <label className="control-label co-required" htmlFor="compression-check">
                 Compression
               </label>
-              <div>
-                <Switch
-                  className="ceph-storage-pool__switch"
-                  id="compression-switch"
-                  label="Enabled"
-                  labelOff="Disabled"
-                  isChecked={isCompressed}
-                  onChange={setCompression}
-                />
+              <div className="checkbox">
+                <label>
+                  <input
+                    type="checkbox"
+                    onChange={(event) => setCompression(event.target.checked)}
+                    checked={isCompressed}
+                    name="compression-check"
+                  />
+                  Enable Compression
+                </label>
               </div>
             </div>
             {/* Not to be exposed for 4.6
