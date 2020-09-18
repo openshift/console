@@ -10,7 +10,7 @@ export const getHelmComponentFactory = () =>
 
 export const getIsHelmResource = () =>
   import('./isHelmResource' /* webpackChunkName: "helm-topology-components" */).then(
-    (m) => m.isHelmResource,
+    (m) => m.isHelmResourceInModel,
   );
 
 export const getTopologyFilters = () =>
