@@ -51,6 +51,7 @@ export interface GitImportFormProps {
   };
 }
 export interface DevfileImportFormProps {
+  builderImages?: NormalizedBuilderImages;
   projects?: {
     data: [];
     loaded: boolean;
