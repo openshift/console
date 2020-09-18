@@ -26,4 +26,5 @@ export type PVCDropdownProps = {
   id?: string;
   desc?: string;
   dataTest?: string;
+  dataFilter?: (pvc: PersistentVolumeClaimKind) => boolean;
 };
