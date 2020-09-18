@@ -27,3 +27,16 @@ export const getPhase = (obj: K8sResourceKind): string => {
 export const isBound = (obj: K8sResourceKind): boolean => getPhase(obj) === 'Bound';
 
 export const getSCProvisioner = (obj: StorageClass) => obj.provisioner;
+
+export const isFunctionThenApply = (fn: any) => (args: string) =>
+  typeof fn === 'function' ? fn(args) : fn;
+
+export const decodeRGWPrefix = (secretData: K8sResourceKind) => {
+  try {
+    return JSON.parse(atob(secretData?.data?.external_cluster_details)).find(
+      (item) => item?.name === 'ceph-rgw',
+    )?.data?.poolPrefix;
+  } catch {
+    return '';
+  }
+};

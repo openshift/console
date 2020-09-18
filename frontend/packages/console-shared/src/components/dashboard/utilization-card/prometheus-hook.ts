@@ -81,7 +81,7 @@ export const usePrometheusQueries = <R extends any>(
       return [...acc, value];
     }, []);
     const loadError: boolean = queryResults.some((res) => !!res.get('loadError'));
-    const loading: boolean = values.some((res) => _.isEmpty(res));
+    const loading: boolean = values.some((res) => !res);
     return [values, loading, loadError];
   }, [queryResults, queries, parser]);
 

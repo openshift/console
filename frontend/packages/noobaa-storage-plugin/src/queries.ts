@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { ProjectModel } from '@console/internal/models';
 import { CapacityBreakdown, ServiceType, Metrics, Breakdown } from './constants';
 import { NooBaaBucketClassModel } from './models';
@@ -25,13 +26,24 @@ export enum ObjectServiceDashboardQuery {
   PROVIDERS_BY_PHYSICAL_VS_LOGICAL_USAGE = 'PROVIDERS_BY_PHYSICAL_VS_LOGICAL_USAGE',
   RGW_TOTAL_USED = 'RGW_TOTAL_USED',
   RGW_USED = 'RGW_USED',
+  // Data Resiliency Query
+  MCG_REBUILD_PROGRESS_QUERY = 'MCG_REBUILD_PROGRESS_QUERY',
+  MCG_REBUILD_TIME_QUERY = 'MCG_REBUILD_TIME_QUERY',
+  RGW_REBUILD_PROGRESS_QUERY = 'RGW_REBUILD_PROGRESS_QUERY',
 }
 
-export enum DATA_RESILIENCE_QUERIES {
-  REBUILD_PROGRESS_QUERY = 'NooBaa_rebuild_progress/100',
-  REBUILD_TIME_QUERY = 'NooBaa_rebuild_time',
-  RGW_PROGRESS_QUERY = '(sum(ceph_pool_metadata{name=~".*rgw.*"} *on (job, namesapce, pool_id) group_right(name) ceph_pg_clean) / sum(ceph_pool_metadata{name=~".*rgw.*"} *on (job, namesapce, pool_id) group_right(name) ceph_pg_total))',
-}
+export const dataResiliencyQueryMap = {
+  [ObjectServiceDashboardQuery.MCG_REBUILD_PROGRESS_QUERY]: 'NooBaa_rebuild_progress/100',
+  [ObjectServiceDashboardQuery.MCG_REBUILD_TIME_QUERY]: 'NooBaa_rebuild_time',
+  [ObjectServiceDashboardQuery.RGW_REBUILD_PROGRESS_QUERY]: (rgwPrefix: string = '') =>
+    _.template(
+      'sum(ceph_pool_metadata{name=~"<%= name %>"}*on (job, namesapce, pool_id) group_right(name) (ceph_pg_active and ceph_pg_clean)) / sum(ceph_pool_metadata{name=~"<%= name %>"} *on (job, namesapce, pool_id) group_right(name) ceph_pg_total)',
+    )({
+      name: rgwPrefix
+        ? `${rgwPrefix}.rgw.*`
+        : '(ocs-storagecluster-cephblockpool)|(ocs-storagecluster-cephfilesystem-data0)',
+    }),
+};
 
 export enum ObjectStorageEfficiencyQueries {
   COMPRESSION_RATIO = 'NooBaa_reduction_ratio',
@@ -42,17 +54,22 @@ export enum ObjectStorageEfficiencyQueries {
 export enum StatusCardQueries {
   HEALTH_QUERY = 'NooBaa_health_status',
   MCG_REBUILD_PROGRESS_QUERY = 'NooBaa_rebuild_progress',
-  RGW_RESILIENCY_QUERY = '(sum(ceph_pool_metadata{name=~".*rgw.*"} *on (job, namesapce, pool_id) group_right(name) ceph_pg_clean) / sum(ceph_pool_metadata{name=~".*rgw.*"} *on (job, namesapce, pool_id) group_right(name) ceph_pg_total)) * 100 ',
 }
 
 export const CAPACITY_BREAKDOWN_QUERIES = {
   [ObjectServiceDashboardQuery.PROJECTS_BY_USED]: 'NooBaa_projects_capacity_usage',
   [ObjectServiceDashboardQuery.BUCKETS_BY_USED]: 'NooBaa_bucket_class_capacity_usage',
   [ObjectServiceDashboardQuery.NOOBAA_TOTAL_USED]: 'NooBaa_total_usage',
-  [ObjectServiceDashboardQuery.RGW_TOTAL_USED]:
-    'sum(ceph_pool_metadata{name=~".*rgw.*"} *on (job, namesapce, pool_id) group_right(name) ceph_pool_stored_raw) - sum(NooBaa_projects_capacity_usage)',
-  [ObjectServiceDashboardQuery.OBJECT_STORAGE_TOTAL_USED]:
-    'sum(ceph_pool_metadata{name=~".*rgw.*"} *on (job, namesapce, pool_id) group_right(name) ceph_pool_stored_raw)',
+  [ObjectServiceDashboardQuery.RGW_TOTAL_USED]: (rgwPrefix: string = '') =>
+    _.template(
+      'sum(ceph_pool_metadata{name=~"<%= name %>rgw.*"} *on (job, namesapce, pool_id) group_right(name) ceph_pool_stored_raw) - sum(NooBaa_projects_capacity_usage)',
+    )({ name: rgwPrefix ? `${rgwPrefix}.` : '.*' }),
+  [ObjectServiceDashboardQuery.OBJECT_STORAGE_TOTAL_USED]: (rgwPrefix: string = '') =>
+    _.template(
+      'sum(ceph_pool_metadata{name=~"<%= name %>rgw.*"} *on (job, namesapce, pool_id) group_right(name) ceph_pool_stored_raw)',
+    )({
+      name: rgwPrefix ? `${rgwPrefix}.` : '.*',
+    }),
 };
 
 export const breakdownQueryMap = {
@@ -60,15 +77,16 @@ export const breakdownQueryMap = {
     [CapacityBreakdown.Metrics.TOTAL]: {
       model: null,
       metric: '',
-      queries: {
-        [ObjectServiceDashboardQuery.RGW_TOTAL_USED]:
-          CAPACITY_BREAKDOWN_QUERIES[ObjectServiceDashboardQuery.RGW_TOTAL_USED],
-        [ObjectServiceDashboardQuery.NOOBAA_TOTAL_USED]: `sum(${
-          CAPACITY_BREAKDOWN_QUERIES[ObjectServiceDashboardQuery.NOOBAA_TOTAL_USED]
-        })`,
-        [ObjectServiceDashboardQuery.OBJECT_STORAGE_TOTAL_USED]:
-          CAPACITY_BREAKDOWN_QUERIES[ObjectServiceDashboardQuery.OBJECT_STORAGE_TOTAL_USED],
-      },
+      queries: (rgwPrefix: string = '') => ({
+        [ObjectServiceDashboardQuery.RGW_TOTAL_USED]: (() =>
+          CAPACITY_BREAKDOWN_QUERIES[ObjectServiceDashboardQuery.RGW_TOTAL_USED](rgwPrefix))(),
+        [ObjectServiceDashboardQuery.NOOBAA_TOTAL_USED]:
+          CAPACITY_BREAKDOWN_QUERIES[ObjectServiceDashboardQuery.NOOBAA_TOTAL_USED],
+        [ObjectServiceDashboardQuery.OBJECT_STORAGE_TOTAL_USED]: (() =>
+          CAPACITY_BREAKDOWN_QUERIES[ObjectServiceDashboardQuery.OBJECT_STORAGE_TOTAL_USED](
+            rgwPrefix,
+          ))(),
+      }),
     },
   },
   [ServiceType.MCG]: {
@@ -109,19 +127,16 @@ export const breakdownQueryMap = {
       },
     },
   },
-  // Todo: Change these with RGW Metrics
   [ServiceType.RGW]: {
     [CapacityBreakdown.Metrics.TOTAL]: {
       model: null,
       metric: '',
-      queries: {
-        [ObjectServiceDashboardQuery.RGW_TOTAL_USED]: `sum(${
-          CAPACITY_BREAKDOWN_QUERIES[ObjectServiceDashboardQuery.RGW_TOTAL_USED]
-        })`,
-        [ObjectServiceDashboardQuery.RGW_USED]: `sum(${
-          CAPACITY_BREAKDOWN_QUERIES[ObjectServiceDashboardQuery.RGW_TOTAL_USED]
-        })`,
-      },
+      queries: (rgwPrefix: string = '') => ({
+        [ObjectServiceDashboardQuery.RGW_TOTAL_USED]: (() =>
+          CAPACITY_BREAKDOWN_QUERIES[ObjectServiceDashboardQuery.RGW_TOTAL_USED](rgwPrefix))(),
+        [ObjectServiceDashboardQuery.RGW_USED]: (() =>
+          CAPACITY_BREAKDOWN_QUERIES[ObjectServiceDashboardQuery.RGW_TOTAL_USED](rgwPrefix))(),
+      }),
     },
   },
 };

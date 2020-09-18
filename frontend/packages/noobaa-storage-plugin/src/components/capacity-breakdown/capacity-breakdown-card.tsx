@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Select, SelectGroup, SelectOption, SelectProps } from '@patternfly/react-core';
 import { FirehoseResource, humanizeBinaryBytes } from '@console/internal/components/utils';
-import { referenceForModel } from '@console/internal/module/k8s';
+import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
@@ -23,8 +23,9 @@ import { getInstantVectorStats } from '@console/internal/components/graphs/utils
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { RGW_FLAG } from '@console/ceph-storage-plugin/src/features';
 import { getGroupedSelectOptions } from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/breakdown-card/breakdown-dropdown';
-import { ServiceType, CapacityBreakdown, Groups } from '../../constants';
+import { ServiceType, CapacityBreakdown, Groups, secretResource } from '../../constants';
 import { breakdownQueryMap } from '../../queries';
+import { isFunctionThenApply, decodeRGWPrefix } from '../../utils';
 import './capacity-breakdown-card.scss';
 
 const subscriptionResource: FirehoseResource = {
@@ -66,14 +67,33 @@ const BreakdownCard: React.FC = () => {
   );
   const [isOpenServiceSelect, setServiceSelect] = React.useState(false);
   const [isOpenBreakdownSelect, setBreakdownSelect] = React.useState(false);
-  const RGW = useFlag(RGW_FLAG);
+  const isRGWSupported = useFlag(RGW_FLAG);
+  const prevRGWVal = React.useRef(null);
+
+  React.useEffect(() => {
+    if (isRGWSupported !== prevRGWVal.current) {
+      prevRGWVal.current = isRGWSupported;
+      if (isRGWSupported) {
+        setServiceType(ServiceType.ALL);
+        setMetricType(CapacityBreakdown.defaultMetrics[ServiceType.ALL]);
+      }
+    }
+  }, [isRGWSupported]);
+
+  const [secretData, secretLoaded, secretLoadError] = useK8sWatchResource<K8sResourceKind>(
+    secretResource,
+  );
+  const rgwPrefix = React.useMemo(
+    () => (isRGWSupported && secretLoaded && !secretLoadError ? decodeRGWPrefix(secretData) : ''),
+    [secretData, secretLoaded, secretLoadError, isRGWSupported],
+  );
 
   const { queries, model, metric } = React.useMemo(() => {
-    return (
+    const { queries: q, model: mo, metric: me } =
       breakdownQueryMap[serviceType][metricType] ??
-      breakdownQueryMap[serviceType][CapacityBreakdown.defaultMetrics[serviceType]]
-    );
-  }, [serviceType, metricType]);
+      breakdownQueryMap[serviceType][CapacityBreakdown.defaultMetrics[serviceType]];
+    return { queries: isFunctionThenApply(q)(rgwPrefix), model: mo, metric: me };
+  }, [serviceType, metricType, rgwPrefix]);
   const prometheusQueries = React.useMemo(() => Object.values(queries) as string[], [queries]);
   const parser = React.useMemo(
     () => (args: PrometheusResponse) => getInstantVectorStats(args, metric),
@@ -149,14 +169,12 @@ const BreakdownCard: React.FC = () => {
     top5MetricsStats[ind].color = Colors.OTHER;
   }
 
-  const emptyData = flattenedResponse.some(_.isEmpty);
-
   return (
     <DashboardCard>
       <DashboardCardHeader>
         <DashboardCardTitle>Capacity breakdown</DashboardCardTitle>
         <div className="nb-capacity-breakdown-card__header">
-          {RGW && (
+          {isRGWSupported && (
             <Select
               className="nb-capacity-breakdown-card-header__dropdown nb-capacity-breakdown-card-header__dropdown--margin"
               autoFocus={false}
@@ -192,7 +210,7 @@ const BreakdownCard: React.FC = () => {
       <DashboardCardBody classname="nb-capacity-breakdown-card__body">
         <BreakdownCardBody
           isLoading={loading}
-          hasLoadError={queriesLoadError || emptyData}
+          hasLoadError={queriesLoadError}
           top5MetricsStats={top5MetricsStats}
           capacityUsed={totalUsed}
           metricTotal={totalUsed}
