@@ -7,7 +7,7 @@ export const mainHealthCardStatus = $(
   '.co-dashboard-card__body--top-margin.co-status-card__health-body',
 );
 export const smallDivInside = mainHealthCardStatus.$$('.co-dashboard-icon').get(3);
-export const mainHealtGreenSvg = smallDivInside.$(`svg[fill="${OCP_HEALTH_ICON_COLORS.GREEN}"]`);
+export const mainHealtGreenSvg = smallDivInside.$(`svg[fill="${OCP_HEALTH_ICON_COLORS.GREEN46}"]`);
 
 export const mainHealtYellowSvg = smallDivInside.$(`svg[fill="${OCP_HEALTH_ICON_COLORS.YELLOW}"]`);
 export const noOutChange = (setNoOut: string) => {
