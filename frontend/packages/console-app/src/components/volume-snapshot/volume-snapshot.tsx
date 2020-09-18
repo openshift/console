@@ -30,7 +30,14 @@ import {
   VolumeSnapshotClassModel,
   VolumeSnapshotContentModel,
 } from '@console/internal/models';
-import { Status, getBadgeFromType, BadgeType, getName, getNamespace } from '@console/shared';
+import {
+  Status,
+  getBadgeFromType,
+  BadgeType,
+  getName,
+  getNamespace,
+  snapshotSource,
+} from '@console/shared';
 import { snapshotStatusFilters, volumeSnapshotStatus } from '../../status';
 
 const { common, RestorePVC } = Kebab.factory;
@@ -76,8 +83,8 @@ const Header = (disableItems = {}) => () =>
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'PVC',
-      sortField: 'spec.source.persistentVolumeClaimName',
+      title: 'Source',
+      sortFunc: 'volumeSnapshotSource',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
     },
@@ -110,8 +117,12 @@ const Row: RowFunction<VolumeSnapshotKind> = ({ key, obj, style, index, customDa
   const size = obj?.status?.restoreSize;
   const sizeBase = convertToBaseValue(size);
   const sizeMetrics = size ? humanizeBinaryBytes(sizeBase).string : '-';
-  const pvcName = obj?.spec?.source?.persistentVolumeClaimName;
+  const sourceModel = obj?.spec?.source?.persistentVolumeClaimName
+    ? PersistentVolumeClaimModel
+    : VolumeSnapshotContentModel;
+  const sourceName = snapshotSource(obj);
   const snapshotContent = obj?.status?.boundVolumeSnapshotContentName;
+  const snapshotClass = obj?.spec?.volumeSnapshotClassName;
   return (
     <TableRow id={obj?.metadata?.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -131,8 +142,8 @@ const Row: RowFunction<VolumeSnapshotKind> = ({ key, obj, style, index, customDa
       {!customData?.disableItems?.PVC && (
         <TableData className={tableColumnClasses[4]}>
           <ResourceLink
-            kind={PersistentVolumeClaimModel.kind}
-            name={pvcName}
+            kind={referenceForModel(sourceModel)}
+            name={sourceName}
             namespace={namespace}
           />
         </TableData>
@@ -148,10 +159,11 @@ const Row: RowFunction<VolumeSnapshotKind> = ({ key, obj, style, index, customDa
         )}
       </TableData>
       <TableData className={tableColumnClasses[6]}>
-        <ResourceLink
-          kind={referenceForModel(VolumeSnapshotClassModel)}
-          name={obj?.spec?.volumeSnapshotClassName}
-        />
+        {snapshotClass ? (
+          <ResourceLink kind={referenceForModel(VolumeSnapshotClassModel)} name={snapshotClass} />
+        ) : (
+          '-'
+        )}
       </TableData>
       <TableData className={tableColumnClasses[7]}>
         <Timestamp timestamp={creationTimestamp} />
