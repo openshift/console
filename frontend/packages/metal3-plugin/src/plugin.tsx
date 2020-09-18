@@ -25,7 +25,12 @@ import { BareMetalHostModel, NodeMaintenanceModel } from './models';
 import { getHostPowerStatus, hasPowerManagement } from './selectors';
 import { HOST_POWER_STATUS_POWERING_OFF, HOST_POWER_STATUS_POWERING_ON } from './constants';
 import { BareMetalHostKind } from './types';
-import { detectBaremetalPlatform, BAREMETAL_FLAG, NODE_MAINTENANCE_FLAG } from './features';
+import {
+  detectBaremetalPlatform,
+  BAREMETAL_FLAG,
+  NODE_MAINTENANCE_FLAG,
+  detectBMOEnabled,
+} from './features';
 
 type ConsumedExtensions =
   | DashboardsOverviewInventoryItem
@@ -68,6 +73,12 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'FeatureFlag/Custom',
     properties: {
       detect: detectBaremetalPlatform,
+    },
+  },
+  {
+    type: 'FeatureFlag/Custom',
+    properties: {
+      detect: detectBMOEnabled,
     },
   },
   {

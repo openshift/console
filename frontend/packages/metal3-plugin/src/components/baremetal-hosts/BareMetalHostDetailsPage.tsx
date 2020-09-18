@@ -11,7 +11,7 @@ import BareMetalHostNICs from './BareMetalHostNICs';
 import { menuActionsCreator } from './host-menu-actions';
 import BareMetalHostDisks from './BareMetalHostDisks';
 import BareMetalHostDetails from './BareMetalHostDetails';
-import { NODE_MAINTENANCE_FLAG } from '../../features';
+import { NODE_MAINTENANCE_FLAG, BMO_ENABLED_FLAG } from '../../features';
 
 type BareMetalHostDetailsPageProps = {
   namespace: string;
@@ -21,6 +21,7 @@ type BareMetalHostDetailsPageProps = {
 
 const BareMetalHostDetailsPage: React.FC<BareMetalHostDetailsPageProps> = (props) => {
   const hasNodeMaintenanceCapability = useFlag(NODE_MAINTENANCE_FLAG);
+  const bmoEnabled = useFlag(BMO_ENABLED_FLAG);
   const resources: FirehoseResource[] = [
     {
       kind: referenceForModel(MachineModel),
@@ -86,7 +87,7 @@ const BareMetalHostDetailsPage: React.FC<BareMetalHostDetailsPageProps> = (props
       kind={referenceForModel(BareMetalHostModel)}
       resources={resources}
       menuActions={menuActionsCreator}
-      customData={{ hasNodeMaintenanceCapability }}
+      customData={{ hasNodeMaintenanceCapability, bmoEnabled }}
     />
   );
 };

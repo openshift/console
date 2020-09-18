@@ -4,9 +4,11 @@ import { getInfrastructurePlatform } from '@console/shared/src/selectors/infrast
 import { setFlag, handleError } from '@console/internal/actions/features';
 import { FeatureDetector } from '@console/plugin-sdk';
 import { fetchK8s } from '@console/internal/graphql/client';
+import { ProvisioningModel } from './models';
 
 export const BAREMETAL_FLAG = 'BAREMETAL';
 export const NODE_MAINTENANCE_FLAG = 'NODE_MAINTENANCE';
+export const BMO_ENABLED_FLAG = 'BMO_ENABLED';
 
 export const detectBaremetalPlatform: FeatureDetector = (dispatch) =>
   fetchK8s<K8sResourceKind>(InfrastructureModel, 'cluster').then(
@@ -15,5 +17,15 @@ export const detectBaremetalPlatform: FeatureDetector = (dispatch) =>
       err?.response?.status === 404
         ? dispatch(setFlag(BAREMETAL_FLAG, false))
         : handleError(err, BAREMETAL_FLAG, dispatch, detectBaremetalPlatform);
+    },
+  );
+
+export const detectBMOEnabled: FeatureDetector = (dispatch) =>
+  fetchK8s<K8sResourceKind>(ProvisioningModel, 'provisioning-configuration').then(
+    () => dispatch(setFlag(BMO_ENABLED_FLAG, true)),
+    (err) => {
+      err?.response?.status === 404
+        ? dispatch(setFlag(BMO_ENABLED_FLAG, false))
+        : handleError(err, BMO_ENABLED_FLAG, dispatch, detectBMOEnabled);
     },
   );
