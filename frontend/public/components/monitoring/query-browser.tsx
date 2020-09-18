@@ -215,8 +215,7 @@ const Tooltip_: React.FC<TooltipProps> = ({ datum, x, y }) =>
   ) : null;
 const Tooltip = withFallback(Tooltip_);
 
-// The `center` prop is required by ChartTooltip, but is actually overridden by our custom tooltip
-const graphLabelComponent = <ChartTooltip center={{ x: 0, y: 0 }} flyoutComponent={<Tooltip />} />;
+const graphLabelComponent = <ChartTooltip flyoutComponent={<Tooltip />} />;
 
 // Set activateData to false to work around VictoryVoronoiContainer crash (see
 // https://github.com/FormidableLabs/victory/issues/1314)
