@@ -320,6 +320,7 @@ const Graph: React.FC<GraphProps> = React.memo(
               <ChartArea
                 key={i}
                 data={values}
+                groupComponent={<g />}
                 labels={() => ' '}
                 labelComponent={graphLabelComponent}
               />
@@ -329,11 +330,12 @@ const Graph: React.FC<GraphProps> = React.memo(
           <ChartGroup>
             {data.map((values, i) =>
               values === null ? (
-                <ChartLine key={i} />
+                <ChartLine key={i} groupComponent={<g />} />
               ) : (
                 <ChartLine
                   key={i}
                   data={values}
+                  groupComponent={<g />}
                   labels={() => ' '}
                   labelComponent={graphLabelComponent}
                 />
