@@ -1,11 +1,17 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Button, Flex, FlexItem, FocusTrap } from '@patternfly/react-core';
+import * as cx from 'classnames';
+import { FocusTrap } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import Popper from '@console/shared/src/components/popper/Popper';
-import { KebabItem, KebabOption, ResourceIcon } from '@console/internal/components/utils';
-import { observer, Node, NodeModel } from '@patternfly/react-topology';
+import {
+  KebabItem,
+  KebabOption,
+  ResourceIcon,
+  truncateMiddle,
+} from '@console/internal/components/utils';
+import { observer, Node, NodeModel, useHover } from '@patternfly/react-topology';
 import { PipelineResourceTask } from '../../../utils/pipeline-augment';
 import { NewTaskNodeCallback, TaskListNodeModelData } from './types';
 
@@ -52,31 +58,55 @@ const TaskListNode: React.FC<TaskListNodeProps> = ({ element, unselectedText }) 
     (o) => o.label,
   );
 
+  const unselectedTaskText = React.useMemo(
+    () =>
+      truncateMiddle(unselectedText, { length: 10, truncateEnd: true }) ||
+      t('pipelines-plugin~Select Task'),
+    [unselectedText, t],
+  );
+
+  const [hover, hoverRef] = useHover();
+
   return (
-    <foreignObject width={width} height={height} className="odc-task-list-node">
-      <div ref={triggerRef} className="odc-task-list-node__trigger-background" style={{ height }}>
-        <Button
-          className="odc-task-list-node__trigger"
-          isDisabled={options.length === 0}
-          onClick={() => {
-            setMenuOpen(!isMenuOpen);
-          }}
-          variant="control"
-        >
-          {options.length === 0 ? (
-            t('pipelines-plugin~No Tasks')
-          ) : (
-            <Flex flexWrap={{ default: 'nowrap' }} spaceItems={{ default: 'spaceItemsNone' }}>
-              <FlexItem className="odc-task-list-node__label" grow={{ default: 'grow' }}>
-                {unselectedText || t('pipelines-plugin~Select Task')}
-              </FlexItem>
-              <FlexItem>
-                <CaretDownIcon />
-              </FlexItem>
-            </Flex>
-          )}
-        </Button>
-      </div>
+    <>
+      <g
+        ref={hoverRef}
+        className="odc-task-list-node__trigger"
+        onClick={() => setMenuOpen(!isMenuOpen)}
+      >
+        <rect
+          ref={triggerRef}
+          className={cx('odc-task-list-node__trigger-background', {
+            'is-disabled': options.length === 0,
+          })}
+          width={width}
+          height={height}
+        />
+        {options.length === 0 ? (
+          <text className="odc-task-list-node__trigger-disabled" x={width / 2} y={height / 2 + 1}>
+            {t('pipelines-plugin~No Tasks')}
+          </text>
+        ) : (
+          <g>
+            <rect
+              className={
+                hover
+                  ? 'odc-task-list-node__trigger-underline--hover'
+                  : 'odc-task-list-node__trigger-underline'
+              }
+              y={height}
+              width={width}
+              height={hover ? 2 : 1}
+            />
+            <text x={width / 2 - 10} y={height / 2 + 1}>
+              {unselectedTaskText}
+            </text>
+            <g transform={`translate(${width - 30}, ${height / 4})`}>
+              <CaretDownIcon />
+            </g>
+          </g>
+        )}
+      </g>
       <Popper
         open={isMenuOpen}
         placement="bottom-start"
@@ -121,7 +151,7 @@ const TaskListNode: React.FC<TaskListNodeProps> = ({ element, unselectedText }) 
           </div>
         </FocusTrap>
       </Popper>
-    </foreignObject>
+    </>
   );
 };
 

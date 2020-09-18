@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as cx from 'classnames';
 import { useTranslation } from 'react-i18next';
 import {
   AngleDoubleRightIcon,
@@ -11,17 +12,25 @@ import {
 } from '@patternfly/react-icons';
 import { getRunStatusColor, runStatus } from '../../../../utils/pipeline-augment';
 
+import './StatusIcon.scss';
+
 interface StatusIconProps {
   status: string;
   height?: number;
   width?: number;
+  shiftOrigin?: boolean;
 }
 
-export const StatusIcon: React.FC<StatusIconProps> = ({ status, ...props }) => {
+export const StatusIcon: React.FC<StatusIconProps> = ({ status, shiftOrigin, ...props }) => {
   switch (status) {
     case runStatus['In Progress']:
     case runStatus.Running:
-      return <SyncAltIcon {...props} className="fa-spin" />;
+      return (
+        <SyncAltIcon
+          {...props}
+          className={cx('fa-spin', { 'pipeline-status-icon--spin': shiftOrigin })}
+        />
+      );
 
     case runStatus.Succeeded:
       return <CheckCircleIcon {...props} />;
