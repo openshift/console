@@ -14,6 +14,7 @@ import {
   nodeZone,
   pvcUsed,
   snapshotSize,
+  snapshotSource,
   ALL_NAMESPACES_KEY,
 } from '@console/shared';
 import * as UIActions from '../../actions/ui';
@@ -166,6 +167,7 @@ const sorts = {
   nodePods: (node: NodeKind): number => nodePods(node),
   pvcUsed: (pvc: K8sResourceKind): number => pvcUsed(pvc),
   volumeSnapshotSize: (snapshot: VolumeSnapshotKind): number => snapshotSize(snapshot),
+  volumeSnapshotSource: (snapshot: VolumeSnapshotKind): string => snapshotSource(snapshot),
 };
 
 const stateToProps = (
