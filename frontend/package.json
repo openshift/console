@@ -160,6 +160,7 @@
     "@types/react-router-dom": "4.2.7",
     "@types/react-transition-group": "2.x",
     "@types/react-virtualized": "9.x",
+    "@types/semver": "^6.0.0",
     "@types/webpack": "4.x",
     "bootstrap-sass": "^3.3.7",
     "browser-env": "3.x",
