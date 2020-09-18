@@ -96,11 +96,11 @@ describe('Monitoring: Alerts', () => {
     cy.byTestID('start-immediately').should('not.be.checked');
     // Allow for some difference in times
     cy.byTestID('from').should('not.have.value', 'Now');
-    return cy.byTestID('from').then(($fromElement) => {
+    cy.byTestID('from').then(($fromElement) => {
       const fromText = $fromElement[0].getAttribute('value');
       expect(Date.parse(fromText) - Date.now()).toBeLessThan(10000);
       // eslint-disable-next-line promise/no-nesting
-      return cy.byTestID('until').then(($untilElement) => {
+      cy.byTestID('until').then(($untilElement) => {
         expect(Date.parse($untilElement[0].getAttribute('value')) - Date.parse(fromText)).toEqual(
           60 * 60 * 1000,
         );
