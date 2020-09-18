@@ -7,6 +7,7 @@ import {
   MachineSetKind,
   NodeKind,
   referenceForModel,
+  Patch,
 } from '@console/internal/module/k8s';
 import {
   getMachineNode,
@@ -17,12 +18,14 @@ import {
 } from '@console/shared';
 import { confirmModal, deleteModal } from '@console/internal/components/modals';
 import { MachineModel, MachineSetModel } from '@console/internal/models';
+import { patchSafeValue } from '@console/shared/src/k8s';
 import {
   findNodeMaintenance,
   getHostMachine,
   getHostPowerStatus,
   isHostScheduledForRestart,
   hasPowerManagement,
+  getPoweroffAnnotation,
 } from '../../selectors';
 import { BareMetalHostModel, NodeMaintenanceModel } from '../../models';
 import { getHostStatus } from '../../status/host-status';
@@ -95,7 +98,15 @@ export const PowerOn = (kindObj: K8sKind, host: BareMetalHostKind, { bmoEnabled 
       !bmoEnabled,
     label: title,
     callback: () => {
-      k8sPatch(BareMetalHostModel, host, [{ op: 'replace', path: '/spec/online', value: true }]);
+      const patches: Patch[] = [{ op: 'replace', path: '/spec/online', value: true }];
+      const poweroffAnnotation = getPoweroffAnnotation(host);
+      if (poweroffAnnotation) {
+        patches.push({
+          op: 'remove',
+          path: `/metadata/annotations/${patchSafeValue(poweroffAnnotation)}`,
+        });
+      }
+      k8sPatch(BareMetalHostModel, host, patches);
     },
     accessReview: host && asAccessReview(BareMetalHostModel, host, 'update'),
   };
