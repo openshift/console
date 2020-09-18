@@ -48,7 +48,9 @@ const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationF
       {createFlowType === CreateApplicationFlow.Container && <ImageSearchSection />}
       {createFlowType === CreateApplicationFlow.Container && <IconSection />}
       <AppSection project={values.project} />
-      <AdvancedSection values={values} appResources={appResources} />
+      {createFlowType !== CreateApplicationFlow.Devfile && (
+        <AdvancedSection values={values} appResources={appResources} />
+      )}
       <FormFooter
         handleReset={handleReset}
         errorMessage={status && status.submitError}

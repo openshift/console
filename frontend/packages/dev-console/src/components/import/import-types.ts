@@ -51,6 +51,7 @@ export interface GitImportFormProps {
   };
 }
 export interface DevfileImportFormProps {
+  builderImages?: NormalizedBuilderImages;
   projects?: {
     data: [];
     loaded: boolean;
@@ -100,7 +101,7 @@ export interface GitImportFormData {
   application: ApplicationData;
   git: GitData;
   docker: DockerData;
-  devfile: DevfileData;
+  devfile?: DevfileData;
   serverless?: ServerlessData;
   pipeline?: PipelineData;
   image: ImageData;
@@ -160,7 +161,6 @@ export interface DockerData {
   dockerfilePath?: string;
   containerPort?: number;
 }
-
 
 export interface DevfileData {
   devfilePath?: string;

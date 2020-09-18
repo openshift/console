@@ -182,6 +182,7 @@ const buildStrategy = (buildConfig: K8sResourceKind): BuildStrategyType =>
 
 const allStrategies = [
   BuildStrategyType.Docker,
+  BuildStrategyType.Devfile,
   BuildStrategyType.JenkinsPipeline,
   BuildStrategyType.Source,
   BuildStrategyType.Custom,

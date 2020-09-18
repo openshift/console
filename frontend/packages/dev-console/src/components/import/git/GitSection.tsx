@@ -60,10 +60,7 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, buildStrategy, buil
       const devfileParser = new DevfileParser(DevfileContents);
       
       setFieldValue('git.isUrlValidating', false);
-      // do something extra if Devfile is present? What should it do?
-      // is there a way we can detect if the build strategy type is for devfiles here?
-      // if it isn't doing anything extra here then delete this if statement, 
-      // because otherwise it will be useless if it isn't checking the build strategy
+
       if (buildStrategy === 'Devfile' ) {
         if (isReachable && isDevfilePresent){
           const DevfileVersion = await devfileParser.getDevfileVersion(DevfileContents)
