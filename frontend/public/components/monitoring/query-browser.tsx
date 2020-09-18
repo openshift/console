@@ -11,7 +11,6 @@ import {
   ChartStack,
   ChartThemeColor,
   ChartThemeVariant,
-  ChartTooltip,
   ChartVoronoiContainer,
   getCustomTheme,
 } from '@patternfly/react-charts';
@@ -27,6 +26,7 @@ import {
 } from '@patternfly/react-core';
 import { ChartLineIcon } from '@patternfly/react-icons';
 import { connect } from 'react-redux';
+import { VictoryTooltip } from 'victory';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 
 import * as UIActions from '../../actions/ui';
@@ -215,7 +215,8 @@ const Tooltip_: React.FC<TooltipProps> = ({ datum, x, y }) =>
   ) : null;
 const Tooltip = withFallback(Tooltip_);
 
-const graphLabelComponent = <ChartTooltip flyoutComponent={<Tooltip />} />;
+// Use VictoryTooltip directly instead of PatternFly's ChartTooltip for performance
+const graphLabelComponent = <VictoryTooltip flyoutComponent={<Tooltip />} />;
 
 // Set activateData to false to work around VictoryVoronoiContainer crash (see
 // https://github.com/FormidableLabs/victory/issues/1314)
