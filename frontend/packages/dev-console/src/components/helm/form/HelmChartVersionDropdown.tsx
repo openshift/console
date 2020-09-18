@@ -156,7 +156,11 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
         items={helmChartVersions}
         helpText={helpText}
         disabled={_.isEmpty(helmChartVersions) || _.keys(helmChartVersions).length === 1}
-        title={helmChartVersions[chartVersion] || concatVersions(chartVersion, appVersion)}
+        title={
+          _.isEmpty(helmChartVersions) && !chartVersion
+            ? 'No versions available'
+            : helmChartVersions[chartVersion] || concatVersions(chartVersion, appVersion)
+        }
         onChange={handleChartVersionChange}
         required
         fullWidth
