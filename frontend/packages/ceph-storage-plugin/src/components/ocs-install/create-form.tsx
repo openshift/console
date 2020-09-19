@@ -188,6 +188,7 @@ export const CreateInternalCluster = withHandlePromise<
           customData={{
             onRowSelected: setNodes,
           }}
+          filterPlaceholder="Search by node name..."
         >
           <>
             <div>

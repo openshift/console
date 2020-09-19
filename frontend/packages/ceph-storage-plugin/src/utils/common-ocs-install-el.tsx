@@ -46,6 +46,7 @@ export const SelectNodesSection: React.FC<SelectNodesSectionProps> = ({
   table,
   customData,
   children,
+  filterPlaceholder,
 }) => (
   <>
     <FormGroup fieldId="select-nodes">
@@ -62,6 +63,7 @@ export const SelectNodesSection: React.FC<SelectNodesSectionProps> = ({
         showTitle={false}
         ListComponent={table}
         customData={customData}
+        filterPlaceholder={filterPlaceholder}
       />
     </FormGroup>
   </>
@@ -126,6 +128,7 @@ type SelectNodesSectionProps = {
   table: React.ComponentType<any>;
   customData?: any;
   children?: React.ReactChild;
+  filterPlaceholder?: string;
 };
 
 type StorageClassSectionProps = {
