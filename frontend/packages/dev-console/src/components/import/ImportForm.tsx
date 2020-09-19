@@ -170,13 +170,11 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
         .catch(() => {});
     }
 
-    resourceActions
+    return resourceActions
       .then(() => {
-        actions.setSubmitting(false);
         handleRedirect(projectName, perspective, perspectiveExtensions);
       })
       .catch((err) => {
-        actions.setSubmitting(false);
         actions.setStatus({ submitError: err.message });
       });
   };
