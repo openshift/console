@@ -11,7 +11,6 @@ import {
   ChartStack,
   ChartThemeColor,
   ChartThemeVariant,
-  ChartTooltip,
   ChartVoronoiContainer,
   getCustomTheme,
 } from '@patternfly/react-charts';
@@ -27,6 +26,7 @@ import {
 } from '@patternfly/react-core';
 import { ChartLineIcon } from '@patternfly/react-icons';
 import { connect } from 'react-redux';
+import { VictoryTooltip } from 'victory';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 
 import * as UIActions from '../../actions/ui';
@@ -215,8 +215,8 @@ const Tooltip_: React.FC<TooltipProps> = ({ datum, x, y }) =>
   ) : null;
 const Tooltip = withFallback(Tooltip_);
 
-// The `center` prop is required by ChartTooltip, but is actually overridden by our custom tooltip
-const graphLabelComponent = <ChartTooltip center={{ x: 0, y: 0 }} flyoutComponent={<Tooltip />} />;
+// Use VictoryTooltip directly instead of PatternFly's ChartTooltip for performance
+const graphLabelComponent = <VictoryTooltip flyoutComponent={<Tooltip />} />;
 
 // Set activateData to false to work around VictoryVoronoiContainer crash (see
 // https://github.com/FormidableLabs/victory/issues/1314)
@@ -320,6 +320,7 @@ const Graph: React.FC<GraphProps> = React.memo(
               <ChartArea
                 key={i}
                 data={values}
+                groupComponent={<g />}
                 labels={() => ' '}
                 labelComponent={graphLabelComponent}
               />
@@ -329,11 +330,12 @@ const Graph: React.FC<GraphProps> = React.memo(
           <ChartGroup>
             {data.map((values, i) =>
               values === null ? (
-                <ChartLine key={i} />
+                <ChartLine key={i} groupComponent={<g />} />
               ) : (
                 <ChartLine
                   key={i}
                   data={values}
+                  groupComponent={<g />}
                   labels={() => ' '}
                   labelComponent={graphLabelComponent}
                 />
