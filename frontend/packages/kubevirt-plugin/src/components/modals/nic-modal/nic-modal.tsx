@@ -41,6 +41,10 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PendingChangesAlert } from '../../Alerts/PendingChangesAlert';
 import { MODAL_RESTART_IS_REQUIRED } from '../../../strings/vm/status';
 import { FormPFSelect } from '../../form/form-pf-select';
+import {
+  SELECT_PXE_NAD_ERROR_INFO,
+  SELECT_PXE_NAD_MISSING_INFO,
+} from '../../create-vm-wizard/strings/networking';
 
 const getNetworkChoices = (
   nads: K8sResourceKind[],
@@ -96,15 +100,22 @@ export const Network: React.FC<NetworkProps> = ({
     allowPodNetwork,
     allowedMultusNetworkTypes,
   ).filter((n) => n.getType().isSupported());
+  const validationMessage = nadsLoadError
+    ? SELECT_PXE_NAD_ERROR_INFO
+    : networkChoices.length === 0
+    ? SELECT_PXE_NAD_MISSING_INFO
+    : null;
+  const validationType =
+    nadsLoadError || networkChoices.length === 0 ? ValidationErrorType.Error : null;
 
   return (
     <FormRow
       title="Network"
       fieldId={id}
       isRequired
-      isLoading={nadsLoading}
-      validationMessage={nadsLoadError}
-      validationType={nadsLoadError && ValidationErrorType.Error}
+      isLoading={nadsLoading && !nadsLoadError}
+      validationMessage={validationMessage}
+      validationType={validationType}
     >
       <FormSelect
         onChange={(net, event) => {
@@ -116,15 +127,11 @@ export const Network: React.FC<NetworkProps> = ({
         }}
         value={asFormSelectValue(network?.getReadableName())}
         id={id}
-        isDisabled={isDisabled || nadsLoading || nadsLoadError}
+        isDisabled={isDisabled || nadsLoading || nadsLoadError || networkChoices.length === 0}
       >
         <FormSelectPlaceholderOption
           isDisabled={!acceptEmptyValues}
-          placeholder={
-            networkChoices.length === 0
-              ? '--- No Network Attachment Definitions available ---'
-              : '--- Select Network Attachment Definition ---'
-          }
+          placeholder={'--- Select Network Attachment Definition ---'}
         />
         {ignoreCaseSort(networkChoices, undefined, (n) => n.getReadableName()).map(
           (networkWrapper: NetworkWrapper) => {

@@ -5,8 +5,9 @@ import { FormFieldRow } from '../../form/form-field-row';
 import { FormField, FormFieldType } from '../../form/form-field';
 import { iGetFieldValue } from '../../selectors/immutable/field';
 import { VMSettingsField } from '../../types';
-import { iGet } from '../../../../utils/immutable';
+import { iGet, iGetIn } from '../../../../utils/immutable';
 import { FormPFSelect } from '../../../form/form-pf-select';
+import { ValidationErrorType } from '@console/shared';
 
 const ProvisionSourceDiskHelpMsg: React.FC<ProvisionSourceDiskHelpMsgProps> = ({
   provisionSourceValue,
@@ -79,6 +80,7 @@ export const ProvisionSourceComponent: React.FC<ProvisionSourceComponentProps> =
   ({ provisionSourceField, onChange, goToStorageStep, goToNetworkingStep }) => {
     const provisionSourceValue = iGetFieldValue(provisionSourceField);
     const sources = iGet(provisionSourceField, 'sources');
+    const validationType = iGetIn(provisionSourceField, ['validation', 'type']);
 
     return (
       <FormFieldRow field={provisionSourceField} fieldType={FormFieldType.PF_SELECT}>
@@ -112,9 +114,10 @@ export const ProvisionSourceComponent: React.FC<ProvisionSourceComponentProps> =
             goToStorageStep={goToStorageStep}
           />
         )}
-        {[ProvisionSource.PXE.getValue()].includes(provisionSourceValue) && (
-          <ProvisionSourceNetHelpMsg goToNetworkingStep={goToNetworkingStep} />
-        )}
+        {[ProvisionSource.PXE.getValue()].includes(provisionSourceValue) &&
+          validationType !== ValidationErrorType.Error && (
+            <ProvisionSourceNetHelpMsg goToNetworkingStep={goToNetworkingStep} />
+          )}
       </FormFieldRow>
     );
   },

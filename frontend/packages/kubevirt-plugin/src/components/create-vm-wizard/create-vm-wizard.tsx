@@ -12,6 +12,8 @@ import {
 import { TemplateModel } from '@console/internal/models';
 import { Firehose, history } from '@console/internal/components/utils';
 import { usePrevious } from '@console/shared/src/hooks/previous';
+import { PersistentVolumeClaimKind, referenceForModel } from '@console/internal/module/k8s';
+import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
 import { Location } from 'history';
 import { match as RouterMatch } from 'react-router';
 import { withReduxID } from '../../utils/redux/common';
@@ -63,7 +65,6 @@ import { ValidTabGuard } from './tabs/valid-tab-guard';
 import { FirehoseResourceEnhanced } from '../../types/custom';
 
 import './create-vm-wizard.scss';
-import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 
 type CreateVMWizardComponentProps = {
   isSimpleView: boolean;
@@ -407,6 +408,19 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
         prop: VMWizardProps.dataVolumes,
       }),
     ];
+
+    if (userMode !== VMWizardMode.IMPORT) {
+      resources.push({
+        kind: referenceForModel(NetworkAttachmentDefinitionModel),
+        model: NetworkAttachmentDefinitionModel,
+        isList: true,
+        namespace: activeNamespace,
+        prop: VMWizardProps.nads,
+        errorBehaviour: {
+          ignore404: true,
+        },
+      });
+    }
 
     if (flags[FLAGS.OPENSHIFT]) {
       resources.push(
