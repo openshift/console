@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { createContext } from 'react';
 import {
   K8sResourceKind,
@@ -5,11 +6,10 @@ import {
   referenceFor,
   modelFor,
 } from '@console/internal/module/k8s';
-import * as _ from 'lodash';
+import { useAccessReview } from '@console/internal/components/utils';
 import { getProbesData } from './create-health-checks-probe-utils';
 import { getResourcesType } from '../edit-application/edit-application-utils';
 import { HealthChecksProbeType } from './health-checks-types';
-import { useAccessReview } from '@console/internal/components/utils';
 
 export const updateHealthChecksProbe = (
   values,

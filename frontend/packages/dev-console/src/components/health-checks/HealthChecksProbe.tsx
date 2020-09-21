@@ -61,7 +61,12 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
     if (healthChecks?.[probeType]?.enabled) {
       return (
         <>
-          <Button variant={ButtonVariant.plain} onClick={showProbe}>
+          <Button
+            className="odc-heath-check-probe__successButton"
+            variant={ButtonVariant.plain}
+            isInline
+            onClick={showProbe}
+          >
             <span className="odc-heath-check-probe__successText">
               <GreenCheckCircleIcon /> {`${getHealthChecksProbeConfig(probeType).formTitle} Added`}
             </span>
