@@ -240,12 +240,12 @@ github.com/opencontainers/image-spec/specs-go/v1
 # github.com/opencontainers/runc v0.1.1
 github.com/opencontainers/runc/libcontainer/system
 github.com/opencontainers/runc/libcontainer/user
+# github.com/openshift/library-go v0.0.0-20190731063920-9fac0f4cee90
+github.com/openshift/library-go/pkg/crypto
 # github.com/peterbourgon/diskv v2.0.1+incompatible
 github.com/peterbourgon/diskv
 # github.com/pkg/errors v0.8.1
 github.com/pkg/errors
-# github.com/pmezard/go-difflib v1.0.0
-github.com/pmezard/go-difflib/difflib
 # github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35
 github.com/pquerna/cachecontrol
 github.com/pquerna/cachecontrol/cacheobject
@@ -273,8 +273,6 @@ github.com/spf13/cast
 github.com/spf13/cobra
 # github.com/spf13/pflag v1.0.5
 github.com/spf13/pflag
-# github.com/stretchr/testify v1.4.0
-github.com/stretchr/testify/assert
 # github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f
 github.com/xeipuuv/gojsonpointer
 # github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415
@@ -396,7 +394,6 @@ helm.sh/helm/v3/pkg/chart
 helm.sh/helm/v3/pkg/chart/loader
 helm.sh/helm/v3/pkg/chartutil
 helm.sh/helm/v3/pkg/cli
-helm.sh/helm/v3/pkg/cli/values
 helm.sh/helm/v3/pkg/downloader
 helm.sh/helm/v3/pkg/engine
 helm.sh/helm/v3/pkg/getter
@@ -414,7 +411,6 @@ helm.sh/helm/v3/pkg/releaseutil
 helm.sh/helm/v3/pkg/repo
 helm.sh/helm/v3/pkg/storage
 helm.sh/helm/v3/pkg/storage/driver
-helm.sh/helm/v3/pkg/strvals
 helm.sh/helm/v3/pkg/time
 # k8s.io/api v0.0.0-20191016110408-35e52d86657a
 k8s.io/api/admission/v1
@@ -513,6 +509,8 @@ k8s.io/apimachinery/pkg/watch
 k8s.io/apimachinery/third_party/forked/golang/json
 k8s.io/apimachinery/third_party/forked/golang/netutil
 k8s.io/apimachinery/third_party/forked/golang/reflect
+# k8s.io/apiserver v0.0.0-20191016112112-5190913f932d
+k8s.io/apiserver/pkg/authentication/user
 # k8s.io/cli-runtime v0.0.0-20191016114015-74ad18325ed5
 k8s.io/cli-runtime/pkg/genericclioptions
 k8s.io/cli-runtime/pkg/kustomize

@@ -340,6 +340,8 @@ github.com/opencontainers/image-spec v1.0.1 h1:JMemWkRwHx4Zj+fVxWoMCFm/8sYGGrUVo
 github.com/opencontainers/image-spec v1.0.1/go.mod h1:BtxoFyWECRxE4U/7sNtV5W15zMzWCbyJoFRP3s7yZA0=
 github.com/opencontainers/runc v0.1.1 h1:GlxAyO6x8rfZYN9Tt0Kti5a/cP41iuiO2yYT0IJGY8Y=
 github.com/opencontainers/runc v0.1.1/go.mod h1:qT5XzbpPznkRYVz/mWwUaVBUv2rmF59PVA73FjuZG0U=
+github.com/openshift/library-go v0.0.0-20190731063920-9fac0f4cee90 h1:eHhIFDmTpbEEfY/yaowXgsvXn+PykUQULLvpw10eHlE=
+github.com/openshift/library-go v0.0.0-20190731063920-9fac0f4cee90/go.mod h1:NBttNjZpWwup/nthuLbPAPSYC8Qyo+BBK5bCtFoyYjo=
 github.com/pborman/uuid v1.2.0/go.mod h1:X/NO0urCmaxf9VXbdlT7C2Yzkj2IKimNn4k+gtPdI/k=
 github.com/pelletier/go-toml v1.2.0/go.mod h1:5z9KED0ma1S8pY6P1sdut58dfprrGBbd/94hg7ilaic=
 github.com/peterbourgon/diskv v2.0.1+incompatible h1:UBdAOUP5p4RWqPBg048CAvpKN+vxiaj6gdUUzhl4XmI=
@@ -584,6 +586,7 @@ k8s.io/apiextensions-apiserver v0.0.0-20191016113550-5357c4baaf65 h1:kThoiqgMsSw
 k8s.io/apiextensions-apiserver v0.0.0-20191016113550-5357c4baaf65/go.mod h1:5BINdGqggRXXKnDgpwoJ7PyQH8f+Ypp02fvVNcIFy9s=
 k8s.io/apimachinery v0.0.0-20191004115801-a2eda9f80ab8 h1:Iieh/ZEgT3BWwbLD5qEKcY06jKuPEl6zC7gPSehoLw4=
 k8s.io/apimachinery v0.0.0-20191004115801-a2eda9f80ab8/go.mod h1:llRdnznGEAqC3DcNm6yEj472xaFVfLM7hnYofMb12tQ=
+k8s.io/apiserver v0.0.0-20191016112112-5190913f932d h1:leksCBKKBrPJmW1jV4dZUvwqmVtXpKdzpHsqXfFS094=
 k8s.io/apiserver v0.0.0-20191016112112-5190913f932d/go.mod h1:7OqfAolfWxUM/jJ/HBLyE+cdaWFBUoo5Q5pHgJVj2ws=
 k8s.io/cli-runtime v0.0.0-20191016114015-74ad18325ed5 h1:8ZfMjkMBzcXEawLsYHg9lDM7aLEVso3NiVKfUTnN56A=
 k8s.io/cli-runtime v0.0.0-20191016114015-74ad18325ed5/go.mod h1:sDl6WKSQkDM6zS1u9F49a0VooQ3ycYFBFLqd2jf2Xfo=

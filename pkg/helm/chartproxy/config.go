@@ -9,9 +9,9 @@ import (
 	"github.com/coreos/pkg/capnslog"
 
 	"github.com/openshift/console/pkg/bridge"
-	"github.com/openshift/console/pkg/crypto"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/server"
+	oscrypto "github.com/openshift/library-go/pkg/crypto"
 )
 
 var (
@@ -51,10 +51,9 @@ func (cfg *config) Configure(srv *server.Server) {
 	}
 
 	srv.HelmChartRepoProxyConfig = &proxy.Config{
-		TLSClientConfig: &tls.Config{
-			RootCAs:      rootCAs,
-			CipherSuites: crypto.DefaultCiphers(),
-		},
+		TLSClientConfig: oscrypto.SecureTLSConfig(&tls.Config{
+			RootCAs: rootCAs,
+		}),
 		HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 		Endpoint:        repoURL,
 	}

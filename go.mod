@@ -7,8 +7,8 @@ require (
 	github.com/coreos/go-oidc v2.1.0+incompatible
 	github.com/coreos/pkg v0.0.0-20180108230652-97fdf19511ea
 	github.com/gorilla/websocket v1.4.0
+	github.com/openshift/library-go v0.0.0-20190731063920-9fac0f4cee90
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
-	github.com/stretchr/testify v1.4.0
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	google.golang.org/grpc v1.24.0
 	gopkg.in/square/go-jose.v2 v2.4.1 // indirect
