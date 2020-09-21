@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Form, TextArea, TextInput } from '@patternfly/react-core';
 import { connect } from 'react-redux';
-import { getActivePerspective } from '@console/internal/reducers/ui';
 import { iGet, iGetIn } from '../../../../utils/immutable';
 import { FormFieldMemoRow } from '../../form/form-field-row';
 import { FormField, FormFieldType } from '../../form/form-field';
@@ -41,7 +40,6 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
   goToStep,
   vmSettings,
   onFieldChange,
-  activePerspective,
 }) => {
   const getField = React.useCallback((key: VMSettingsField) => iGet(vmSettings, key), [vmSettings]);
   const getFieldValue = React.useCallback(
@@ -85,7 +83,6 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
         cnvBaseImages={cnvBaseImages}
         onChange={onFieldChange}
         openshiftFlag={openshiftFlag}
-        activePerspective={activePerspective}
         goToStorageStep={
           steps[VMWizardTab.STORAGE]?.canJumpTo ? () => goToStep(VMWizardTab.STORAGE) : null
         }
@@ -140,7 +137,6 @@ const stateToProps = (state, { wizardReduxID }) => ({
   openshiftFlag: iGetCommonData(state, wizardReduxID, VMWizardProps.openshiftFlag),
   provisionSourceStorage: iGetProvisionSourceStorage(state, wizardReduxID),
   steps: getStepsMetadata(state, wizardReduxID),
-  activePerspective: getActivePerspective(state),
 });
 
 type VMSettingsTabComponentProps = {
@@ -155,7 +151,6 @@ type VMSettingsTabComponentProps = {
   goToStep: (stepID: VMWizardTab) => void;
   steps: VMWizardTabsMetadata;
   wizardReduxID: string;
-  activePerspective: string;
 };
 
 const dispatchToProps = (dispatch, props) => ({

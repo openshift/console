@@ -43,6 +43,8 @@ import {
 } from '../../../cdi-upload-provider/consts';
 import { getTemplateOperatingSystems } from '../../../../selectors/vm-template/advanced';
 import { FormPFSelect } from '../../../form/form-pf-select';
+import { useAccessReview } from '@console/internal/components/utils';
+import { PersistentVolumeClaimModel } from '@console/internal/models';
 
 export const OS: React.FC<OSProps> = React.memo(
   ({
@@ -57,7 +59,6 @@ export const OS: React.FC<OSProps> = React.memo(
     onChange,
     openshiftFlag,
     goToStorageStep,
-    activePerspective,
   }) => {
     const os = iGetFieldValue(operatinSystemField);
     const display = iGet(operatinSystemField, 'display');
@@ -65,7 +66,6 @@ export const OS: React.FC<OSProps> = React.memo(
     const cloneBaseDiskImage = iGetFieldValue(cloneBaseDiskImageField);
     const mountWindowsGuestTools = iGetFieldValue(mountWindowsGuestToolsField);
     const isUserTemplateValid = iGetIsLoaded(iUserTemplate) && !iGetLoadError(iUserTemplate);
-    const isAdminPerspective = activePerspective === 'admin';
 
     const params = {
       flavor,
@@ -119,6 +119,14 @@ export const OS: React.FC<OSProps> = React.memo(
       }
     }
 
+    const osSystemRecord = operatingSystems?.find((image) => image.id === os);
+    const canUploadGoldenImage = useAccessReview({
+      group: PersistentVolumeClaimModel.apiGroup,
+      resource: PersistentVolumeClaimModel.plural,
+      namespace: osSystemRecord?.dataVolumeNamespace,
+      verb: 'create',
+    });
+
     const loadedBaseImages = iGetLoadedData(cnvBaseImages);
     const baseImagesLoadError = iGetLoadError(cnvBaseImages);
     const operatingSystemBaseImages = operatingSystems.map(
@@ -149,7 +157,7 @@ export const OS: React.FC<OSProps> = React.memo(
             osField.checkboxDescription = isBaseImageUploading ? BASE_IMAGE_UPLOADING_MESSAGE : '';
           } else if (pvcName) {
             osField.message = NO_BASE_IMAGE_SHORT;
-            osField.longMessage = isAdminPerspective ? (
+            osField.longMessage = canUploadGoldenImage ? (
               <>
                 Operating system image not available. You can either{' '}
                 <Link to={`${PVC_UPLOAD_URL}?${CDI_UPLOAD_OS_URL_PARAM}=${operatingSystem.id}`}>
@@ -268,7 +276,6 @@ type OSProps = {
   workloadProfile: string;
   cnvBaseImages: any;
   openshiftFlag: boolean;
-  activePerspective: string;
   onChange: (key: string, value: string | boolean) => void;
   goToStorageStep: () => void;
 };
