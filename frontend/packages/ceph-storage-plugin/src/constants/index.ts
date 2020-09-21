@@ -46,3 +46,8 @@ export enum MODES {
 
 export const OSD_DOWN_ALERT = 'CephOSDDiskNotResponding';
 export const OSD_DOWN_AND_OUT_ALERT = 'CephOSDDiskUnavailable';
+
+export enum CLUSTER_STATUS {
+  READY = 'Ready',
+  PROGRESSING = 'Progressing',
+}
