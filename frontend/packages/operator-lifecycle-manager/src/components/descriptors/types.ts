@@ -41,6 +41,7 @@ export enum StatusCapability {
   prometheusEndpoint = 'urn:alm:descriptor:prometheusEndpoint',
   k8sPhase = 'urn:alm:descriptor:io.kubernetes.phase',
   k8sPhaseReason = 'urn:alm:descriptor:io.kubernetes.phase:reason',
+  password = 'urn:alm:descriptor:com.tectonic.ui:password',
   // Prefix for all kubernetes resource status descriptors.
   k8sResourcePrefix = 'urn:alm:descriptor:io.kubernetes:',
   hidden = 'urn:alm:descriptor:com.tectonic.ui:hidden',
