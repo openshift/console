@@ -34,3 +34,16 @@ data:
   accessMode: ReadWriteOnce
   volumeMode: Filesystem
 EOF
+
+# Enable live-migration feature-gate
+oc create -f - <<EOF
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kubevirt-config
+  namespace: kubevirt-hyperconverged
+  labels:
+  kubevirt.io: ""
+data:
+  feature-gates: "LiveMigration"
+EOF
