@@ -6,7 +6,6 @@ import { DASH, getName, getUID, getNamespace, SecondaryStatus } from '@console/s
 import { TableRow, TableData, Table, RowFunction } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import NodeRoles from '@console/app/src/components/nodes/NodeRoles';
-import { useFlag } from '@console/shared/src/hooks/flag';
 import { MachineModel, NodeModel } from '@console/internal/models';
 
 import { BareMetalNodeBundle, BareMetalNodeListBundle, isCSRBundle, CSRBundle } from '../types';
@@ -15,10 +14,10 @@ import { BareMetalHostModel } from '../../models';
 import { baremetalNodeSecondaryStatus } from '../../status/baremetal-node-status';
 import { menuActions } from './menu-actions';
 import BareMetalNodeStatus from './BareMetalNodeStatus';
-import { NODE_MAINTENANCE_FLAG } from '../../features';
 
 import './baremetal-nodes-table.scss';
 import CSRStatus from './CSRStatus';
+import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 
 const tableColumnClasses = {
   name: classNames('col-lg-3', 'col-md-4', 'col-sm-12', 'col-xs-12'),
@@ -99,7 +98,7 @@ const BareMetalNodesTableRow: React.FC<BareMetalNodesTableRowProps<BareMetalNode
   rowKey,
   style,
 }) => {
-  const hasNodeMaintenanceCapability = useFlag(NODE_MAINTENANCE_FLAG);
+  const [hasNodeMaintenanceCapability, maintenanceModel] = useMaintenanceCapability();
   const nodeName = getName(node);
   const hostName = getName(host);
   const namespace = getNamespace(host);
@@ -141,7 +140,12 @@ const BareMetalNodesTableRow: React.FC<BareMetalNodesTableRowProps<BareMetalNode
       <TableData className={tableColumnClasses.kebab}>
         <Kebab
           options={menuActions.map((action) =>
-            action(NodeModel, node, { csr }, { nodeMaintenance, hasNodeMaintenanceCapability }),
+            action(
+              NodeModel,
+              node,
+              { csr },
+              { nodeMaintenance, hasNodeMaintenanceCapability, maintenanceModel },
+            ),
           )}
           key={`kebab-for-${uid}`}
           id={`kebab-for-${uid}`}

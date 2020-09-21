@@ -5,13 +5,14 @@ import { navFactory, FirehoseResource } from '@console/internal/components/utils
 import { MachineModel, MachineSetModel, NodeModel } from '@console/internal/models';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { useFlag } from '@console/shared/src/hooks/flag';
-import { BareMetalHostModel, NodeMaintenanceModel } from '../../models';
+import { BareMetalHostModel } from '../../models';
 import BareMetalHostDashboard from './dashboard/BareMetalHostDashboard';
 import BareMetalHostNICs from './BareMetalHostNICs';
 import { menuActionsCreator } from './host-menu-actions';
 import BareMetalHostDisks from './BareMetalHostDisks';
 import BareMetalHostDetails from './BareMetalHostDetails';
-import { NODE_MAINTENANCE_FLAG, BMO_ENABLED_FLAG } from '../../features';
+import { BMO_ENABLED_FLAG } from '../../features';
+import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 
 type BareMetalHostDetailsPageProps = {
   namespace: string;
@@ -20,7 +21,7 @@ type BareMetalHostDetailsPageProps = {
 };
 
 const BareMetalHostDetailsPage: React.FC<BareMetalHostDetailsPageProps> = (props) => {
-  const hasNodeMaintenanceCapability = useFlag(NODE_MAINTENANCE_FLAG);
+  const [hasNodeMaintenanceCapability, maintenanceModel] = useMaintenanceCapability();
   const bmoEnabled = useFlag(BMO_ENABLED_FLAG);
   const resources: FirehoseResource[] = [
     {
@@ -45,7 +46,7 @@ const BareMetalHostDetailsPage: React.FC<BareMetalHostDetailsPageProps> = (props
 
   if (hasNodeMaintenanceCapability) {
     resources.push({
-      kind: referenceForModel(NodeMaintenanceModel),
+      kind: referenceForModel(maintenanceModel),
       namespaced: false,
       isList: true,
       prop: 'nodeMaintenances',
@@ -87,7 +88,7 @@ const BareMetalHostDetailsPage: React.FC<BareMetalHostDetailsPageProps> = (props
       kind={referenceForModel(BareMetalHostModel)}
       resources={resources}
       menuActions={menuActionsCreator}
-      customData={{ hasNodeMaintenanceCapability, bmoEnabled }}
+      customData={{ hasNodeMaintenanceCapability, maintenanceModel, bmoEnabled }}
     />
   );
 };

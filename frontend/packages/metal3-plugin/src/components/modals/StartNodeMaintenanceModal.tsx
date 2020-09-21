@@ -13,6 +13,7 @@ import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s
 import { CephClusterModel } from '@console/ceph-storage-plugin/src/models';
 import { startNodeMaintenance } from '../../k8s/requests/node-maintenance';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 
 const cephClusterResource = {
   kind: referenceForModel(CephClusterModel),
@@ -27,12 +28,13 @@ export type StartNodeMaintenanceModalProps = HandlePromiseProps &
 
 const StartNodeMaintenanceModal = withHandlePromise<StartNodeMaintenanceModalProps>((props) => {
   const { nodeName, inProgress, errorMessage, handlePromise, close, cancel } = props;
+  const [, model] = useMaintenanceCapability();
 
   const [reason, setReason] = React.useState('');
 
   const submit = (event) => {
     event.preventDefault();
-    const promise = startNodeMaintenance(nodeName, reason);
+    const promise = startNodeMaintenance(nodeName, reason, model);
     return handlePromise(promise, close);
   };
 

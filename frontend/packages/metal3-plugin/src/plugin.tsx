@@ -21,7 +21,7 @@ import { MachineModel, NodeModel, CertificateSigningRequestModel } from '@consol
 // TODO(jtomasek): change this to '@console/shared/src/utils' once @console/shared/src/utils modules
 // no longer import from @console/internal (cyclic deps issues)
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
-import { BareMetalHostModel, NodeMaintenanceModel } from './models';
+import { BareMetalHostModel, NodeMaintenanceModel, NodeMaintenanceOldModel } from './models';
 import { getHostPowerStatus, hasPowerManagement } from './selectors';
 import { HOST_POWER_STATUS_POWERING_OFF, HOST_POWER_STATUS_POWERING_ON } from './constants';
 import { BareMetalHostKind } from './types';
@@ -30,6 +30,7 @@ import {
   BAREMETAL_FLAG,
   NODE_MAINTENANCE_FLAG,
   detectBMOEnabled,
+  NODE_MAINTENANCE_OLD_FLAG,
 } from './features';
 
 type ConsumedExtensions =
@@ -52,7 +53,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'ModelDefinition',
     properties: {
-      models: [BareMetalHostModel, NodeMaintenanceModel],
+      models: [BareMetalHostModel, NodeMaintenanceModel, NodeMaintenanceOldModel],
     },
   },
   {
@@ -67,6 +68,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: NodeMaintenanceModel,
       flag: NODE_MAINTENANCE_FLAG,
+    },
+  },
+  {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: NodeMaintenanceOldModel,
+      flag: NODE_MAINTENANCE_OLD_FLAG,
     },
   },
   {
@@ -151,6 +159,11 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: NodeModel,
       additionalResources: {
+        oldMaintenances: {
+          isList: true,
+          kind: referenceForModel(NodeMaintenanceOldModel),
+          optional: true,
+        },
         maintenances: {
           isList: true,
           kind: referenceForModel(NodeMaintenanceModel),
@@ -182,6 +195,11 @@ const plugin: Plugin<ConsumedExtensions> = [
         nodes: {
           isList: true,
           kind: NodeModel.kind,
+        },
+        oldMaintenances: {
+          isList: true,
+          kind: referenceForModel(NodeMaintenanceOldModel),
+          optional: true,
         },
         maintenances: {
           isList: true,
@@ -242,7 +260,26 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.default),
     },
     flags: {
-      required: [BAREMETAL_FLAG, METAL3_FLAG],
+      required: [BAREMETAL_FLAG, METAL3_FLAG, NODE_MAINTENANCE_FLAG],
+    },
+  },
+  {
+    type: 'Dashboards/Overview/Activity/Resource',
+    properties: {
+      k8sResource: {
+        isList: true,
+        kind: referenceForModel(NodeMaintenanceOldModel),
+        prop: 'maintenances',
+      },
+      isActivity: (resource) => _.get(resource.status, 'phase') === 'Running',
+      getTimestamp: (resource) => new Date(resource.metadata.creationTimestamp),
+      loader: () =>
+        import(
+          './components/maintenance/MaintenanceDashboardActivity' /* webpackChunkName: "node-maintenance" */
+        ).then((m) => m.default),
+    },
+    flags: {
+      required: [BAREMETAL_FLAG, METAL3_FLAG, NODE_MAINTENANCE_OLD_FLAG],
     },
   },
   {

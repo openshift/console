@@ -14,7 +14,6 @@ import {
 import { getName } from '@console/shared';
 import { startNodeMaintenanceModal } from '../modals/StartNodeMaintenanceModal';
 import stopNodeMaintenanceModal from '../modals/StopNodeMaintenanceModal';
-import { NodeMaintenanceModel } from '../../models';
 import { findNodeMaintenance } from '../../selectors';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';
 import { CertificateSigningRequestModel } from '@console/internal/models';
@@ -23,6 +22,7 @@ import { CertificateSigningRequestKind } from '../../types';
 type ActionArgs = {
   nodeMaintenance?: K8sResourceKind;
   hasNodeMaintenanceCapability?: boolean;
+  maintenanceModel: K8sKind;
 };
 
 export const SetNodeMaintenance = (
@@ -43,15 +43,14 @@ export const RemoveNodeMaintenance = (
   kindObj: K8sKind,
   node: NodeKind,
   resources: {},
-  { hasNodeMaintenanceCapability, nodeMaintenance }: ActionArgs,
+  { hasNodeMaintenanceCapability, nodeMaintenance, maintenanceModel }: ActionArgs,
 ): KebabOption => {
   const nodeName = getName(node);
   return {
     hidden: !nodeName || !hasNodeMaintenanceCapability || !nodeMaintenance,
     label: 'Stop Maintenance',
     callback: () => stopNodeMaintenanceModal(nodeMaintenance),
-    accessReview:
-      nodeMaintenance && asAccessReview(NodeMaintenanceModel, nodeMaintenance, 'delete'),
+    accessReview: nodeMaintenance && asAccessReview(maintenanceModel, nodeMaintenance, 'delete'),
   };
 };
 
@@ -128,13 +127,14 @@ export const menuActionsCreator = (
   kindObj: K8sKind,
   node: NodeKind,
   { nodeMaintenances }: ExtraResources,
-  { hasNodeMaintenanceCapability },
+  { hasNodeMaintenanceCapability, maintenanceModel },
 ) => {
   const nodeMaintenance = findNodeMaintenance(nodeMaintenances, getName(node));
   return menuActions.map((action) => {
     return action(kindObj, node, null, {
       hasNodeMaintenanceCapability,
       nodeMaintenance,
+      maintenanceModel,
     });
   });
 };
