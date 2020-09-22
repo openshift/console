@@ -21,6 +21,8 @@ export const EXAMPLE_CONTAINER = 'kubevirt/fedora-cloud-container-disk-demo';
 export const FEDORA_IMAGE_LINK = 'https://alt.fedoraproject.org/cloud/';
 export const RHEL_IMAGE_LINK =
   'https://access.redhat.com/downloads/content/479/ver=/rhel---8/8.2/x86_64/product-software';
+export const CLOUD_INIT_MISSING_USERNAME =
+  'No username set, see operating system documentation for the default username.';
 
 // storage ui sources descriptions
 export const UI_SOURCE_BLANK_DESC = 'Create an empty disk (PVC)';
