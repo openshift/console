@@ -29,6 +29,89 @@ import { TopologyListViewUnassignedGroup } from './TopologyListViewUnassignedGro
 
 import './TopologyListView.scss';
 
+interface TopologyGraphViewProps {
+  visualizationReady: boolean;
+  visualization: Visualization;
+  selectedId: string;
+  onSelect: (entity?: GraphElement) => void;
+  applicationGroups: Node[];
+  unassignedItems: Node[];
+}
+
+const TopologyListViewComponent: React.FC<TopologyGraphViewProps> = React.memo(
+  ({
+    visualizationReady,
+    visualization,
+    onSelect,
+    applicationGroups,
+    unassignedItems,
+    selectedId,
+  }) => {
+    if (!visualizationReady) {
+      return null;
+    }
+
+    return (
+      <div className="odc-topology-list-view">
+        <DataList
+          aria-label="Topology List View"
+          className="odc-topology-list-view__data-list"
+          selectedDataListItemId={selectedId}
+          onSelectDataListItem={(id) =>
+            onSelect(selectedId === id ? undefined : visualization.getElementById(id))
+          }
+        >
+          {applicationGroups.map((g) => (
+            <TopologyListViewAppGroup
+              key={g.getId()}
+              appGroup={g}
+              selectedIds={[selectedId]}
+              onSelect={(ids) => onSelect(ids ? visualization.getElementById(ids[0]) : undefined)}
+            />
+          ))}
+          {unassignedItems.length > 0 ? (
+            <TopologyListViewUnassignedGroup
+              key="unassigned"
+              showCategory={applicationGroups.length > 0}
+              items={unassignedItems}
+              selectedIds={[selectedId]}
+              onSelect={(ids) => onSelect(ids ? visualization.getElementById(ids[0]) : undefined)}
+            />
+          ) : null}
+        </DataList>
+      </div>
+    );
+  },
+  (prevProps, nextProps) => {
+    if (
+      prevProps.visualizationReady !== nextProps.visualizationReady ||
+      prevProps.visualization !== nextProps.visualization ||
+      prevProps.onSelect !== nextProps.onSelect ||
+      prevProps.selectedId !== nextProps.selectedId
+    ) {
+      return false;
+    }
+    return (
+      _.isEqual(
+        prevProps.applicationGroups.map((g) => ({
+          label: g.getId(),
+        })),
+        nextProps.applicationGroups.map((g) => ({
+          label: g.getId(),
+        })),
+      ) &&
+      _.isEqual(
+        prevProps.unassignedItems.map((g) => ({
+          label: g.getId(),
+        })),
+        nextProps.unassignedItems.map((g) => ({
+          label: g.getId(),
+        })),
+      )
+    );
+  },
+);
+
 const TOPOLOGY_LIST_ID = 'odc-topology-list';
 const listModel: Model = {
   graph: {
@@ -47,7 +130,6 @@ interface TopologyListViewPropsFromDispatch {
 
 interface TopologyListViewProps {
   model: Model;
-  application: string;
   namespace: string;
   onSelect: (entity?: GraphElement) => void;
   setVisualization: (vis: Visualization) => void;
@@ -259,39 +341,15 @@ const ConnectedTopologyListView: React.FC<TopologyListViewProps &
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [namespace, updateMetrics, updateMonitoringAlerts]);
 
-    if (!visualizationReady) {
-      return null;
-    }
-
     return (
-      <div className="odc-topology-list-view">
-        <DataList
-          aria-label="Topology List View"
-          className="odc-topology-list-view__data-list"
-          selectedDataListItemId={selectedId}
-          onSelectDataListItem={(id) =>
-            onSelect(selectedId === id ? undefined : visualization.getElementById(id))
-          }
-        >
-          {applicationGroups.map((g) => (
-            <TopologyListViewAppGroup
-              key={g.getId()}
-              appGroup={g}
-              selectedIds={[selectedId]}
-              onSelect={(ids) => onSelect(ids ? visualization.getElementById(ids[0]) : undefined)}
-            />
-          ))}
-          {unassignedItems.length > 0 ? (
-            <TopologyListViewUnassignedGroup
-              key="unassigned"
-              showCategory={applicationGroups.length > 0}
-              items={unassignedItems}
-              selectedIds={[selectedId]}
-              onSelect={(ids) => onSelect(ids ? visualization.getElementById(ids[0]) : undefined)}
-            />
-          ) : null}
-        </DataList>
-      </div>
+      <TopologyListViewComponent
+        visualizationReady={visualizationReady}
+        visualization={visualization}
+        selectedId={selectedId}
+        onSelect={onSelect}
+        applicationGroups={applicationGroups}
+        unassignedItems={unassignedItems}
+      />
     );
   },
 );
@@ -313,6 +371,6 @@ const TopologyListView = connect<
 >(
   stateToProps,
   dispatchToProps,
-)(ConnectedTopologyListView);
+)(React.memo(ConnectedTopologyListView));
 
 export default TopologyListView;

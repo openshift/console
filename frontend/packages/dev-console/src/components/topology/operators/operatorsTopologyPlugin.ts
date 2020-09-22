@@ -34,6 +34,11 @@ const getOperatorWatchedResources = (namespace: string): WatchK8sResources<any> 
       namespace,
       optional: true,
     },
+  };
+};
+
+const getServiceBindingWatchedResources = (namespace: string): WatchK8sResources<any> => {
+  return {
     serviceBindingRequests: {
       isList: true,
       kind: referenceForModel(ServiceBindingModel),
@@ -59,6 +64,17 @@ export const operatorsTopologyPlugin: Plugin<OperatorsTopologyConsumedExtensions
       resources: getOperatorWatchedResources,
       isResourceDepicted: getIsOperatorResource,
       getDataModelReconciler,
+    },
+  },
+  {
+    type: 'Topology/DataModelFactory',
+    properties: {
+      id: 'service-binding-topology-model-factory',
+      priority: 501,
+      resources: getServiceBindingWatchedResources,
+    },
+    flags: {
+      required: [ALLOW_SERVICE_BINDING],
     },
   },
   {

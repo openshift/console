@@ -28,29 +28,27 @@ export type ModelExtensionContext = {
 export class ExtensibleModel {
   private extensions: { [id: string]: ModelExtensionContext } = {};
 
-  private namespaceP: string;
+  public namespace: string;
 
   @observable.ref
-  private modelP: Model = { nodes: [], edges: [] };
+  public model: Model = { nodes: [], edges: [] };
 
-  public dataResources: TopologyDataResources = {};
+  @observable
+  public loaded: boolean = false;
 
+  @observable
+  public loadError: string;
+
+  @observable
   public extensionsLoaded: boolean = false;
 
+  @observable.ref
   public watchedResources: WatchK8sResources<any> = {};
 
   public onExtensionsLoaded: (extensibleModel: ExtensibleModel) => void;
 
   public constructor(namespace?: string) {
     this.namespace = namespace;
-  }
-
-  public get namespace(): string {
-    return this.namespaceP;
-  }
-
-  public set namespace(namespace: string) {
-    this.namespaceP = namespace;
   }
 
   private updateExtensionsLoaded(): void {
@@ -154,31 +152,25 @@ export class ExtensibleModel {
     }, []);
   }
 
-  public set model(model: Model) {
-    this.modelP = model;
-  }
-
-  public get model(): Model {
-    return this.modelP;
-  }
-
   @computed
   public get isEmptyModel(): boolean {
-    return (this.modelP?.nodes?.length ?? 0) === 0;
+    return (this.model?.nodes?.length ?? 0) === 0;
   }
 
   public getExtensionModels = async (resources: TopologyDataResources): Promise<Model> => {
-    const getters = this.dataModelGetters;
-    const depicters = this.dataModelDepicters;
-    const workloadResources = this.getWorkloadResources(resources);
-    const promises = getters?.length
-      ? getters.map((getter) => getter(this.namespace, resources, workloadResources))
-      : [Promise.resolve(null)];
-
     const topologyModel: Model = {
       nodes: [],
       edges: [],
     };
+    const getters = this.dataModelGetters;
+
+    if (!getters?.length) {
+      return Promise.resolve(topologyModel);
+    }
+
+    const depicters = this.dataModelDepicters;
+    const workloadResources = this.getWorkloadResources(resources);
+    const promises = getters.map((getter) => getter(this.namespace, resources, workloadResources));
 
     await Promise.all(promises).then((models) => {
       models.forEach((model) => {

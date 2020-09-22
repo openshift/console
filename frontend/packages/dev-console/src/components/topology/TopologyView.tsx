@@ -58,7 +58,7 @@ interface TopologyViewProps {
 
 type ComponentProps = TopologyViewProps & StateProps & DispatchProps;
 
-export const TopologyView: React.FC<ComponentProps> = ({
+export const ConnectedTopologyView: React.FC<ComponentProps> = ({
   model,
   namespace,
   showGraphView,
@@ -87,7 +87,7 @@ export const TopologyView: React.FC<ComponentProps> = ({
   const queryParams = useQueryParams();
   const searchParams = queryParams.get('searchQuery');
 
-  const onSelect = (entity?: GraphElement) => {
+  const onSelect = React.useCallback((entity?: GraphElement) => {
     // set empty selection when selecting the graph
     const selEntity = isGraph(entity) ? undefined : entity;
     setSelectedEntity(selEntity);
@@ -96,7 +96,7 @@ export const TopologyView: React.FC<ComponentProps> = ({
     } else {
       setQueryArgument('selectId', selEntity.getId());
     }
-  };
+  }, []);
 
   const onVisualizationChange = React.useCallback(
     (vis: Visualization) => {
@@ -228,12 +228,11 @@ export const TopologyView: React.FC<ComponentProps> = ({
         <TopologyListView
           model={filteredModel}
           namespace={namespace}
-          application={application}
           onSelect={onSelect}
           setVisualization={onVisualizationChange}
         />
       ),
-    [application, filteredModel, namespace, onVisualizationChange, showGraphView],
+    [application, filteredModel, namespace, onSelect, onVisualizationChange, showGraphView],
   );
 
   const topologyFilterBar = React.useMemo(
@@ -243,7 +242,7 @@ export const TopologyView: React.FC<ComponentProps> = ({
 
   const topologySideBar = React.useMemo(
     () => getTopologySideBar(visualization, selectedEntity, () => onSelect()),
-    [selectedEntity, visualization],
+    [onSelect, selectedEntity, visualization],
   );
 
   if (!filteredModel) {
@@ -288,7 +287,7 @@ const TopologyDispatchToProps = (dispatch): DispatchProps => ({
   },
 });
 
-export const ConnectedTopologyView = connect<StateProps, DispatchProps, TopologyViewProps>(
+export const TopologyView = connect<StateProps, DispatchProps, TopologyViewProps>(
   TopologyStateToProps,
   TopologyDispatchToProps,
-)(TopologyView);
+)(ConnectedTopologyView);

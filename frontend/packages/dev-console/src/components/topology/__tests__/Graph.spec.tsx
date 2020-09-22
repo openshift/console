@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { mount } from 'enzyme';
-import { TopologyView } from '../TopologyView';
+import { ConnectedTopologyView } from '../TopologyView';
 import { MockGraphResources } from './graph-test-data';
 import { baseDataModelGetter } from '../data-transforms';
 
@@ -14,7 +14,7 @@ describe('Graph', () => {
     const model = { nodes: [], edges: [] };
     topologyData = baseDataModelGetter(model, 'test-project', MockGraphResources, []);
     graphWrapper = mount(
-      <TopologyView
+      <ConnectedTopologyView
         model={topologyData}
         namespace="test"
         showGraphView
