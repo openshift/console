@@ -40,7 +40,7 @@ const queries = {
     `sum(node_filesystem_size_bytes{instance="<%= node %>",fstype!~"tmpfs|squashfs",mountpoint!~"/usr|/var"} - node_filesystem_avail_bytes{instance="<%= node %>",fstype!~"tmpfs|squashfs",mountpoint!~"/usr|/var"})`,
   ),
   [NodeQueries.FILESYSTEM_TOTAL]: _.template(
-    `node_filesystem_size_bytes{instance='<%= node %>',fstype!~"tmpfs|squashfs",mountpoint!~"/usr|/var"}`,
+    `sum(node_filesystem_size_bytes{instance='<%= node %>',fstype!~"tmpfs|squashfs",mountpoint!~"/usr|/var"})`,
   ),
   [NodeQueries.NETWORK_IN_UTILIZATION]: _.template(
     `instance:node_network_receive_bytes:rate:sum{instance='<%= node %>'}`,
