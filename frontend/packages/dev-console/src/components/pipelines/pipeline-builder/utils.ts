@@ -12,6 +12,7 @@ import {
 import { getTaskParameters } from '../resource-utils';
 import { TASK_ERROR_STRINGS, TaskErrorType } from './const';
 import { PipelineBuilderFormikValues, PipelineBuilderFormValues, TaskErrorMap } from './types';
+import { removeEmptyDefaultFromPipelineParams } from '../detail-page-tabs/utils';
 
 export const getErrorMessage = (errorTypes: TaskErrorType[], errorMap: TaskErrorMap) => (
   taskName: string,
@@ -113,7 +114,7 @@ export const convertBuilderFormToPipeline = (
     },
     spec: {
       ...existingPipeline?.spec,
-      params,
+      params: removeEmptyDefaultFromPipelineParams(params),
       resources,
       tasks: tasks.map((task) => removeEmptyDefaultParams(removeListRunAfters(task, listIds))),
     },
