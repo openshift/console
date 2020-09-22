@@ -13,7 +13,7 @@ describe('guided-tour-context', () => {
     });
 
     it('should return startTour as true for StartAction', () => {
-      const result = tourReducer(mockState, TourActions.start);
+      const result = tourReducer(mockState, { type: TourActions.start });
       expect(result).toEqual({
         startTour: true,
         completedTour: false,
@@ -22,17 +22,17 @@ describe('guided-tour-context', () => {
     });
 
     it('should return increment in stepNumber  for next action', () => {
-      const result = tourReducer(mockState, TourActions.next);
+      const result = tourReducer(mockState, { type: TourActions.next });
       expect(result.stepNumber).toEqual(mockState.stepNumber + 1);
     });
 
     it('should return decrease in stepNumber  for back action', () => {
-      const result = tourReducer(mockState, TourActions.back);
+      const result = tourReducer(mockState, { type: TourActions.back });
       expect(result.stepNumber).toEqual(mockState.stepNumber - 1);
     });
 
     it('should return completedTour as true for complete action', () => {
-      const result = tourReducer(mockState, TourActions.complete);
+      const result = tourReducer(mockState, { type: TourActions.complete });
       expect(result).toEqual({
         startTour: false,
         completedTour: true,
