@@ -1,24 +1,14 @@
 {
   "name": "@console/insights-plugin",
   "version": "0.0.0-fixed",
-  "description": "Plugin for Insights operator",
+  "description": "Insights - provide cluster health data and integrate with OpenShift Cluster Manager",
   "private": true,
   "main": "src/index.ts",
   "scripts": {
-    "test": "yarn --cwd ../.. run test packages/insights-plugin"
+    "test": "yarn --cwd ../.. test packages/insights-plugin"
   },
   "dependencies": {
-    "@console/ceph-storage-plugin": "0.0.0-fixed",
-    "@console/container-security": "0.0.0-fixed",
-    "@console/dev-console": "0.0.0-fixed",
     "@console/internal": "0.0.0-fixed",
-    "@console/knative-plugin": "0.0.0-fixed",
-    "@console/kubevirt-plugin": "0.0.0-fixed",
-    "@console/local-storage-operator-plugin": "0.0.0-fixed",
-    "@console/metal3-plugin": "0.0.0-fixed",
-    "@console/network-attachment-definition-plugin": "0.0.0-fixed",
-    "@console/noobaa-storage-plugin": "0.0.0-fixed",
-    "@console/operator-lifecycle-manager": "0.0.0-fixed",
     "@console/patternfly": "0.0.0-fixed",
     "@console/plugin-sdk": "0.0.0-fixed",
     "@console/shared": "0.0.0-fixed"
