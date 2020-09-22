@@ -176,7 +176,7 @@ export const topologyPage = {
   },
   verifyContextMenuOptions: (...options: string[]) => {
     cy.get('#popper-container li[role="menuitem"]').each(($el) => {
-      expect(options).toContain($el.text());
+      expect(options).contains($el.text());
     });
   },
   clickContextMenuOption: (menuOption: string) =>
@@ -218,7 +218,7 @@ export const topologySidePane = {
       .should('be.visible'),
   verifyActions: (...actions: string[]) => {
     cy.get('[data-test-id="action-items"] li').each(($el) => {
-      expect(actions).toContain($el.text());
+      expect(actions).contains($el.text());
     });
   },
   verifyFieldinDetailsTab: (fieldName: string) =>
@@ -261,7 +261,7 @@ export const topologySidePane = {
       .should('be.visible');
     cy.get(topologyObj.sidePane.editAnnotations).then(($el) => {
       const res = $el.text().split(' ');
-      expect(res[0]).toEqual(num);
+      expect(res[0]).eq(num);
     });
   },
   verifyResource: (resourceName: string) => {

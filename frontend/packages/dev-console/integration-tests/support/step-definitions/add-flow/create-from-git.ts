@@ -10,7 +10,7 @@ Given('user is at Import from git page', () => {
 When('user enters Git Repo url as {string}', (gitUrl: string) => {
   addPage.enterGitUrl(gitUrl);
   addPage.verifyValidatedMessage();
-  addPage.verifyBuilderImageDetectedMessage();
+  cy.get('[aria-label$="Alert"]').should('be.visible');
 });
 
 Then('git url gets Validated', () => {

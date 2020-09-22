@@ -14,6 +14,7 @@ export const addPageObj = {
   builderSection: {
     builderImageDetected: '[aria-label="Success Alert"]',
     builderImageVersion: '#form-dropdown-image-tag-field',
+    unableToDetectBuilderImage: '[aria-label="Warning Alert"]',
   },
   pipeline: {
     infoMessage: '[aria-label="Info Alert"]',
@@ -80,9 +81,10 @@ export const addPage = {
     cy.get('h2.co-hint-block__title').should('contain.text', text),
   verifyTitle: (title: string) => cy.pageTitleShouldContain(title),
   verifyPipelinesSection: (message: string) => {
+    cy.get('body').scrollTo('bottom');
     cy.get(addPageObj.sectionTitle)
-      .eq(5)
-      .should('have.text', 'Pipelines');
+      .contains('Pipelines')
+      .should('be.visible');
     cy.get(addPageObj.pipeline.infoMessage).should('have.text', message);
   },
   enterGitUrl: (gitUrl: string) => cy.get(addPageObj.gitRepoUrl).type(gitUrl),
@@ -106,6 +108,7 @@ export const addPage = {
   veirfyAppName: (nodeName: string) => cy.get(addPageObj.appName).should('have.value', nodeName),
   enterComponentName: (name: string) => {
     cy.get(addPageObj.nodeName)
+      .should('be.visible')
       .clear()
       .should('be.empty')
       .type(name)

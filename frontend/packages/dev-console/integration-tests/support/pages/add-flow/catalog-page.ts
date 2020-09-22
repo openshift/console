@@ -122,7 +122,7 @@ export const catalogPage = {
       .type(releaseName),
   createHelmChartFromAddPage: (
     releaseName: string = 'nodejs-ex-k',
-    helmChartName: string = 'Nodejs Ex K v0.2.0',
+    helmChartName: string = 'Nodejs Ex K v0.2.1',
   ) => {
     addPage.verifyCard('Helm Chart');
     addPage.selectCardFromOptions(addOptions.HelmChart);
@@ -131,7 +131,7 @@ export const catalogPage = {
     catalogPage.search(helmChartName);
     catalogPage.selectHelmChartCard(helmChartName);
     catalogPage.verifyDialog();
-    cy.get(catalogPageObj.sidePane.installHelmChart).click();
+    catalogPage.clickButtonOnCatalogPageSidePane();
     catalogPage.verifyInstallHelmChartPage();
     catalogPage.enterReleaseName(releaseName);
     catalogPage.clickOnInstallButton();

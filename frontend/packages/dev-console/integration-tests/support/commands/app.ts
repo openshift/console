@@ -6,7 +6,7 @@ declare global {
       pageTitleShouldContain(title: string): Chainable<Element>;
       alertTitleShouldContain(title: string): Chainable<Element>;
       clickBreadcrumbLink(linkName: string): Chainable<Element>;
-      selectKebabMenuOption(kebabMenuOption: string): Chainable<Element>;
+      clickKebabAction(resourceName: string, actionName: string): Chainable<Element>;
       selectActionsMenuOption(actionsMenuOption: string): Chainable<Element>;
     }
   }
@@ -28,8 +28,12 @@ Cypress.Commands.add('clickBreadcrumbLink', (linkName: string) => {
     .click();
 });
 
-Cypress.Commands.add('selectKebabMenuOption', (kebabMenuOption: string) => {
-  cy.byTestActionID(kebabMenuOption).click();
+Cypress.Commands.add('clickKebabAction', (resourceName: string, actionName: string) => {
+  cy.get(`[data-test-rows="resource-row"]`)
+    .contains(resourceName)
+    .byLegacyTestID('kebab-button')
+    .click();
+  cy.byTestActionID(actionName).click();
 });
 
 Cypress.Commands.add('selectActionsMenuOption', (actionsMenuOption: string) => {

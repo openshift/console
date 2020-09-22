@@ -60,7 +60,7 @@ Then('user will be redirected to Developer Catalog page', () => {
   cy.pageTitleShouldContain('Developer Catalog');
 });
 
-When('user eneters Name as {string} in Instantiate Template page', (name: string) => {
+When('user enters Name as {string} in Instantiate Template page', (name: string) => {
   cy.get('#NAME')
     .clear()
     .type(name);

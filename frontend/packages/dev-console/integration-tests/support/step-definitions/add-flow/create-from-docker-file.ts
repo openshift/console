@@ -8,10 +8,11 @@ Given('user is on Import from Docker file page', () => {
 
 When('user enters docker git url as {string}', (gitUrl: string) => {
   addPage.enterGitUrl(gitUrl);
+  addPage.verifyValidatedMessage();
 });
 
 When('user selects {string} radio button in Resoruce type section', (resourceType: string) => {
-  addPage.selectResource(resourceType)
+  addPage.selectResource(resourceType);
 });
 
 When('user clicks Cancel button on Add page', () => {

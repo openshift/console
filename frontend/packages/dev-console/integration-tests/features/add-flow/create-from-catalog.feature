@@ -46,7 +46,7 @@ Scenario: Create the workload using template
     When user selects "Template" option from Type section
     And user selects Template card "CakePHP + MySQL" from catalog page
     And user clicks Instantiate Template button on side bar
-    And user eneters Name as "php-one" in Instantiate Template page
+    And user enters Name as "php-one" in Instantiate Template page
     And user clicks create button on Instantiate Template page with default values
     And user will be redirected to Topology page
     And user is able to see workload "php-one" in topology page

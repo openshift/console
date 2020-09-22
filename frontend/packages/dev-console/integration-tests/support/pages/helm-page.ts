@@ -11,6 +11,7 @@ export const helmPageObj = {
   resourcesTab: '[data-test-id="horizontal-link-Resources"]',
   revisionHistoryTab: '[data-test-id="horizontal-link-Revision History"]',
   releaseNotesTab: '[data-test-id="horizontal-link-Release Notes"]',
+  filterDropdown: 'button[data-test-id="filter-dropdown-toggle"]',
   details: {
     title: '[data-test-section-heading="Helm Release Details"]',
   },
@@ -48,8 +49,42 @@ export const helmPage = {
     naviagteTo(devNavigationMenu.Add);
     addPage.selectCardFromOptions(addOptions.HelmChart);
     catalogPage.search(helmCardName);
+    catalogPage.selectHelmChartCard(helmCardName);
     catalogPage.clickButtonOnCatalogPageSidePane();
     catalogPage.clickOnInstallButton();
+  },
+  selectHelmFilter: (filterName: string) => {
+    cy.get(helmPageObj.filterDropdown).click();
+    switch (filterName) {
+      case 'Deployed': {
+        cy.get('#deployed').check();
+        break;
+      }
+      case 'Failed': {
+        cy.get('#failed').check();
+        break;
+      }
+      case 'Other': {
+        cy.get('#other').check();
+        break;
+      }
+      default: {
+        throw new Error(`${filterName} filter is not available in filter drop down`);
+      }
+    }
+    cy.byButtonText('Clear all filters').should('be.visible');
+  },
+  verifyStatusInHelmReleasesTable: (helmReleaseName: string = 'Nodejs Ex K v0.2.1') => {
+    cy.get(helmPageObj.table).should('exist');
+    cy.get('tr td:nth-child(1)').each(($el, index) => {
+      const text = $el.text();
+      if (text.includes(helmReleaseName)) {
+        cy.get('tbody tr')
+          .eq(index)
+          .find('td:nth-child(4) button')
+          .click();
+      }
+    });
   },
 };
 

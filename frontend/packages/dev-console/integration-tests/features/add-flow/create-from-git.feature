@@ -6,7 +6,7 @@ Background:
    And user is at Add page
    And user has selected namespace "aut-addflow-git"
 
-@regression-1
+@regression
 Scenario Outline: Builder iamge detected for git url "<git_url>" : A-04-TC01
    Given user is at Import from git page
    When user enters Git Repo url as "<git_url>"
@@ -52,13 +52,13 @@ Scenario: Add new git workload to the existing application : A-04-TC03
    Given user created workload "nodejs-ex-git" with resource type "Deployment"
    And user is at Add page
    And user is at Import from git page
-   When user enters Git Repo url as "https://github.com/sclorg/nodejs-ex.git"
-   And user enters Application name as "nodejs-ex-git-app"
+   When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
+   And user enters Application name as "dancer-ex-git-app"
    And user enters Name as "nodejs-ex-git"
    And user selects resource type as "Deployment Config"
    And user clicks Create button on Add page
    Then user will be redirected to Topology page
-   And created workload "nodejs-ex-git" is linked to existing application "nodejs-ex-git-app"
+   And created workload "nodejs-ex-git" is linked to existing application "dancer-ex-git-app"
 
 
 @regression
@@ -72,7 +72,7 @@ Scenario: Cancel the git workload creation : A-04-TC04
 @regression
 Scenario: Create workload without application route : A-04-TC05
    Given user is at Import from git page
-   When user enters Git Repo url as "https://github.com/sclorg/nodejs-ex.git"
+   When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
    And user enters Application name as "app-no-route"
    And user enters Name as "name-no-route"
    And user unselects the advanced option Create a route to the application
@@ -84,7 +84,7 @@ Scenario: Create workload without application route : A-04-TC05
 @regression
 Scenario: Create a git workload with advanced option "Routing" : A-04-TC06
    Given user is at Import from git page
-   When user enters Git Repo url as "https://github.com/sclorg/nodejs-ex.git"
+   When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
    And user enters name as "nodejs-ex-3-git" in General section
    And user clicks "Routing" link in Advanced Options section
    And user enters Hostname as "home"
@@ -98,7 +98,7 @@ Scenario: Create a git workload with advanced option "Routing" : A-04-TC06
 @regression
 Scenario: Creaete the workload by unselecting options in "Build Configuration" section: A-04-TC07
    Given user is at Import from git page
-   When user enters Git Repo url as "https://github.com/sclorg/nodejs-ex.git"
+   When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
    And user enters name as "nodejs-ex-4-git" in General section
    And user clicks "Build Configuration" link in Advanced Options section
    And unselects "Configure a webhook build trigger" checkbox in build configuration section
@@ -114,7 +114,7 @@ Scenario: Creaete the workload by unselecting options in "Build Configuration" s
 @regression
 Scenario: Create a git workload with advanced option "Deployment" : A-04-TC08
    Given user is at Import from git page
-   When user enters Git Repo url as "https://github.com/sclorg/nodejs-ex.git"
+   When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
    And user enters name as "nodejs-ex-5-git" in General section
    And user clicks "Deployment" link in Advanced Options section
    And verify "Auto deploy when new image is available" checkbox is seleceted
@@ -127,7 +127,7 @@ Scenario: Create a git workload with advanced option "Deployment" : A-04-TC08
 @regression
 Scenario: Create a git workload with advanced option "Resource Limits" : A-04-TC09
    Given user is at Import from git page
-   When user enters Git Repo url as "https://github.com/sclorg/nodejs-ex.git"
+   When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
    And user enters name as "nodejs-ex-6-git" in General section
    And user clicks "Resource Limits" link in Advanced Options section
    And user enters CPU Request as "10" in CPU section
@@ -141,7 +141,7 @@ Scenario: Create a git workload with advanced option "Resource Limits" : A-04-TC
 @regression
 Scenario: Create a git workload with advanced option "Scaling" : A-04-TC10
    Given user is at Import from git page
-   When user enters Git Repo url as "https://github.com/sclorg/nodejs-ex.git"
+   When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
    And user enters name as "nodejs-ex-7-git" in General section
    And user clicks "Scaling" link in Advanced Options section
    And user enters number of replicas as "5" in Replicas section
@@ -152,7 +152,7 @@ Scenario: Create a git workload with advanced option "Scaling" : A-04-TC10
 @regression
 Scenario: Create a git workload with advanced option "Labels" : A-04-TC11
    Given user is at Import from git page
-   When user enters Git Repo url as "https://github.com/sclorg/nodejs-ex.git"
+   When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
    And user enters name as "nodejs-ex-8-git" in General section
    And user clicks "Labels" link in Advanced Options section
    And user enters label as "app=frontend"
@@ -164,7 +164,7 @@ Scenario: Create a git workload with advanced option "Labels" : A-04-TC11
 @regression
 Scenario: Create a git workload with advanced option "Health Checks" : A-04-TC12
    Given user is at Import from git page
-   When user enters Git Repo url as "https://github.com/sclorg/nodejs-ex.git"
+   When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
    And user enters name as "nodejs-ex-9-git" in General section
    And user clicks "Health Checks" link in Advanced Options section
    And user fills the Readiness Probe details

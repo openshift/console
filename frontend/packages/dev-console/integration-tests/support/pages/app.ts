@@ -45,6 +45,7 @@ export const perspective = {
         cy.get('body div').then(($el) => {
           if ($el.find('#guided-tour-modal').length !== 0) {
             cy.get('#tour-step-footer-secondary').click();
+            // cy.get('#tour-step-footer-primary').should('be.visible').click();
           }
         });
         break;
