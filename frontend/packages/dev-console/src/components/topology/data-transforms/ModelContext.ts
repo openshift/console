@@ -30,7 +30,7 @@ export class ExtensibleModel {
 
   private namespaceP: string;
 
-  @observable
+  @observable.ref
   private modelP: Model = { nodes: [], edges: [] };
 
   public dataResources: TopologyDataResources = {};
