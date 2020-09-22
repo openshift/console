@@ -110,6 +110,7 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
         flavorField={getField(VMSettingsField.FLAVOR)}
         workloadProfile={getFieldValue(VMSettingsField.WORKLOAD_PROFILE)}
         onChange={onFieldChange}
+        cnvBaseImages={cnvBaseImages}
         openshiftFlag={openshiftFlag}
       />
       <MemoryCPU
@@ -123,6 +124,7 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
         workloadProfileField={getField(VMSettingsField.WORKLOAD_PROFILE)}
         operatingSystem={getFieldValue(VMSettingsField.OPERATING_SYSTEM)}
         flavor={getFieldValue(VMSettingsField.FLAVOR)}
+        cnvBaseImages={cnvBaseImages}
         onChange={onFieldChange}
       />
     </Form>
