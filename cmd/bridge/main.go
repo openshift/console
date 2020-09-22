@@ -34,6 +34,8 @@ const (
 	k8sInClusterCA          = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
 	k8sInClusterBearerToken = "/var/run/secrets/kubernetes.io/serviceaccount/token"
 
+	openshiftPrometheusHost = "prometheus-k8s.openshift-monitoring.svc:9091"
+
 	// Well-known location of the tenant aware Thanos service for OpenShift exposing the query and query_range endpoints. This is only accessible in-cluster.
 	// Thanos proxies requests to both cluster monitoring and user workload monitoring prometheus instances.
 	openshiftThanosTenancyHost = "thanos-querier.openshift-monitoring.svc:9092"
@@ -87,6 +89,9 @@ func main() {
 	fK8sMode := fs.String("k8s-mode", "in-cluster", "in-cluster | off-cluster")
 	fK8sModeOffClusterEndpoint := fs.String("k8s-mode-off-cluster-endpoint", "", "URL of the Kubernetes API server.")
 	fK8sModeOffClusterSkipVerifyTLS := fs.Bool("k8s-mode-off-cluster-skip-verify-tls", false, "DEV ONLY. When true, skip verification of certs presented by k8s API server.")
+
+	fK8sModeOffClusterPrometheus := fs.String("k8s-mode-off-cluster-prometheus", "", "DEV ONLY. URL of the cluster's Prometheus server.")
+
 	fK8sModeOffClusterThanos := fs.String("k8s-mode-off-cluster-thanos", "", "DEV ONLY. URL of the cluster's Thanos server.")
 	fK8sModeOffClusterAlertmanager := fs.String("k8s-mode-off-cluster-alertmanager", "", "DEV ONLY. URL of the cluster's AlertManager server.")
 	fK8sModeOffClusterMetering := fs.String("k8s-mode-off-cluster-metering", "", "DEV ONLY. URL of the cluster's metering server.")
@@ -334,6 +339,11 @@ func main() {
 			serviceProxyTLSConfig := oscrypto.SecureTLSConfig(&tls.Config{
 				RootCAs: serviceProxyRootCAs,
 			})
+			srv.PrometheusProxyConfig = &proxy.Config{
+				TLSClientConfig: serviceProxyTLSConfig,
+				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				Endpoint:        &url.URL{Scheme: "https", Host: openshiftPrometheusHost, Path: "/api"},
+			}
 			srv.ThanosProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
@@ -384,7 +394,14 @@ func main() {
 			Endpoint:        k8sEndpoint,
 		}
 
-		if *fK8sModeOffClusterThanos != "" {
+		if *fK8sModeOffClusterPrometheus != "" {
+			offClusterPrometheusURL := bridge.ValidateFlagIsURL("k8s-mode-off-cluster-prometheus", *fK8sModeOffClusterPrometheus)
+			offClusterPrometheusURL.Path = "/api"
+			srv.PrometheusProxyConfig = &proxy.Config{
+				TLSClientConfig: serviceProxyTLSConfig,
+				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				Endpoint:        offClusterPrometheusURL,
+			}
 			offClusterThanosURL := bridge.ValidateFlagIsURL("k8s-mode-off-cluster-thanos", *fK8sModeOffClusterThanos)
 			offClusterThanosURL.Path = "/api"
 			srv.ThanosTenancyProxyConfig = &proxy.Config{
