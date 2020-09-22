@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { CatalogTile } from '@patternfly/react-catalog-view-extension';
-import { RouteIcon } from '@patternfly/react-icons';
+import { RocketIcon } from '@patternfly/react-icons';
 import { FallbackImg } from '@console/shared';
 import { QuickStartStatus, QuickStart } from '../utils/quick-start-types';
 import QuickStartTileHeader from './QuickStartTileHeader';
@@ -31,7 +31,7 @@ const QuickStartTile: React.FC<QuickStartTileProps> = ({
     <FallbackImg
       className="co-catalog-item-icon__img--large"
       src={iconURL}
-      fallback={<RouteIcon />}
+      fallback={<RocketIcon />}
     />
   );
 

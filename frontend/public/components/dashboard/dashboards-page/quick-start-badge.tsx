@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Label } from '@patternfly/react-core';
-import { RouteIcon } from '@patternfly/react-icons';
+import { RocketIcon } from '@patternfly/react-icons';
 import { history } from '../../utils';
 
 import './quick-start-badge.scss';
@@ -36,7 +36,7 @@ const QuickStartBadge: React.FC = () => {
       color="green"
       className="co-quick-start-badge"
       href="/quickstart"
-      icon={<RouteIcon />}
+      icon={<RocketIcon />}
       onClick={handleQuickStartBadgeClick}
       onClose={handleQuickStartBadgeClose}
     >
