@@ -1,18 +1,29 @@
 import * as React from 'react';
-import { shallow } from 'enzyme';
+import { Provider } from 'react-redux';
+import { shallow, mount } from 'enzyme';
 import { Link } from 'react-router-dom';
 import { Tooltip } from '@patternfly/react-core';
-import { renderTopology, TopologyPageContext } from '../TopologyPage';
-import NamespacedPage from '../../NamespacedPage';
 import { StatusBox } from '@console/internal/components/utils';
-import ConnectedTopologyDataController from '../TopologyDataController';
+import store from '@console/internal/redux';
+import { TopologyPageContext } from '../TopologyPage';
+import NamespacedPage from '../../NamespacedPage';
 import CreateProjectListPage from '../../projects/CreateProjectListPage';
-import { topologyData } from './topology-test-data';
+import { topologyDataModel } from './topology-test-data';
 import { ConnectedTopologyView } from '../TopologyView';
+import { TopologyDataRenderer } from '../TopologyDataRenderer';
+import { ExtensibleModel } from '../data-transforms/ModelContext';
 
 type TopologyPageProps = React.ComponentProps<typeof TopologyPageContext>;
 
 let topologyProps: TopologyPageProps;
+
+jest.mock('react', () => {
+  const ActualReact = require.requireActual('react');
+  return {
+    ...ActualReact,
+    useContext: () => jest.fn(),
+  };
+});
 
 jest.mock('react-redux', () => {
   const ActualReactRedux = require.requireActual('react-redux');
@@ -33,7 +44,6 @@ jest.mock('@console/shared', () => {
 
 describe('Topology page tests', () => {
   beforeEach(() => {
-    spyOn(React, 'useContext').and.returnValue({ isEmptyModel: false });
     topologyProps = {
       match: {
         params: {
@@ -54,7 +64,7 @@ describe('Topology page tests', () => {
 
   it('should render topology graph page', () => {
     const wrapper = shallow(<TopologyPageContext {...topologyProps} />);
-    expect(wrapper.find(ConnectedTopologyDataController).exists()).toBe(true);
+    expect(wrapper.find(TopologyDataRenderer).exists()).toBe(true);
   });
 
   it('should render projects list page', () => {
@@ -99,16 +109,24 @@ describe('Topology page tests', () => {
     );
   });
 
-  it('should render topology when workload is loaded', () => {
-    const Component = () =>
-      renderTopology({
-        model: topologyData,
-        showGraphView: true,
-        loaded: true,
-        loadError: '',
-        namespace: 'topology-test',
-      });
-    const wrapper = shallow(<Component />);
+  it('should render topology when model is loaded', () => {
+    spyOn(React, 'useContext').and.returnValue({
+      isEmptyModel: false,
+      namespace: 'topology-test',
+      model: topologyDataModel,
+      loaded: true,
+    });
+    const extensibleModel = new ExtensibleModel('topology-test');
+    extensibleModel.model = topologyDataModel;
+    extensibleModel.loaded = true;
+    const Context = React.createContext<any>(extensibleModel);
+    const wrapper = mount(
+      <Context.Provider value={extensibleModel}>
+        <Provider store={store}>
+          <TopologyDataRenderer showGraphView />
+        </Provider>
+      </Context.Provider>,
+    );
     expect(wrapper.find(StatusBox).exists()).toBe(true);
     expect(wrapper.find(ConnectedTopologyView).exists()).toBe(true);
   });

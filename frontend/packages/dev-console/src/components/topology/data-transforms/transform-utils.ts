@@ -277,9 +277,9 @@ export const addToTopologyDataModel = (
   graphModel: Model,
   dataModelDepicters: TopologyDataModelDepicted[] = [],
 ) => {
-  graphModel.edges.push(...newModel.edges);
+  graphModel.edges.push(...(newModel?.edges || []));
   graphModel.nodes.push(
-    ...newModel.nodes.filter(
+    ...(newModel?.nodes || []).filter(
       (n) =>
         !n.group &&
         !graphModel.nodes.find((existing) => {
@@ -294,7 +294,7 @@ export const addToTopologyDataModel = (
     ),
   );
   mergeGroups(
-    newModel.nodes.filter((n) => n.group),
+    (newModel?.nodes || []).filter((n) => n.group),
     graphModel.nodes,
   );
 };

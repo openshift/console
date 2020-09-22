@@ -33,10 +33,18 @@ export class ExtensibleModel {
   @observable.ref
   private modelP: Model = { nodes: [], edges: [] };
 
+  @observable
+  private loadedP: boolean = false;
+
+  @observable
+  private loadErrorP: string;
+
   public dataResources: TopologyDataResources = {};
 
+  @observable
   public extensionsLoaded: boolean = false;
 
+  @observable.ref
   public watchedResources: WatchK8sResources<any> = {};
 
   public onExtensionsLoaded: (extensibleModel: ExtensibleModel) => void;
@@ -160,6 +168,22 @@ export class ExtensibleModel {
 
   public get model(): Model {
     return this.modelP;
+  }
+
+  public set loaded(loaded: boolean) {
+    this.loadedP = loaded;
+  }
+
+  public get loaded(): boolean {
+    return this.loadedP;
+  }
+
+  public set loadError(loadError: string) {
+    this.loadErrorP = loadError;
+  }
+
+  public get loadeError(): string {
+    return this.loadErrorP;
   }
 
   @computed
