@@ -5,6 +5,7 @@ import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager'
 import { BreadCrumbs } from '@console/internal/components/utils';
 import { getAnnotations } from '@console/shared/src/selectors/common';
 import { Radio, Title } from '@patternfly/react-core';
+import { InfrastructureModel } from '@console/internal/models';
 import { getRequiredKeys, createDownloadFile } from '../independent-mode/utils';
 import { OCSServiceModel } from '../../models';
 import InstallExternalCluster from '../independent-mode/install';
@@ -17,6 +18,8 @@ enum MODES {
   INDEPENDENT = 'Independent',
 }
 
+const INDEP_MODE_SUPPORTED_PLATFORMS = ['Baremetal', 'None', 'VSphere'];
+
 // eslint-disable-next-line no-shadow
 const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
   const {
@@ -24,7 +27,8 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
     url,
   } = match;
 
-  const [isIndependent, setIsIndependent] = React.useState(false);
+  const [isIndependent, setIndependent] = React.useState(false);
+  const [isIndepModeSupportedPlatform, setIndepModeSupportedPlatform] = React.useState(false);
   const [independentReqdKeys, setIndependentReqdKeys] = React.useState<{ [key: string]: string[] }>(
     null,
   );
@@ -44,7 +48,7 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
           OCS_SUPPORT_ANNOTATION
         ].includes('external');
         if (isIndependentSupported) {
-          setIsIndependent(true);
+          setIndependent(true);
           const { configMaps = [], secrets = [], storageClasses = [] } = getRequiredKeys(
             clusterServiceVersionObj,
           );
@@ -66,6 +70,17 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
       })
       .catch(() => setClusterServiceVersion(null));
   }, [appName, ns]);
+
+  React.useEffect(() => {
+    // eslint-disable-next-line promise/catch-or-return
+    k8sGet(InfrastructureModel, 'cluster')
+      // Todo(bipuladh): Add type for InfraObject
+      .then((infraObj) => {
+        if (INDEP_MODE_SUPPORTED_PLATFORMS.includes(infraObj?.spec?.platformSpec?.type)) {
+          setIndepModeSupportedPlatform(true);
+        }
+      });
+  }, []);
 
   return (
     <>
@@ -91,7 +106,7 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
       </div>
 
       <div className="co-m-pane__body co-m-pane__form">
-        {isIndependent && (
+        {isIndependent && isIndepModeSupportedPlatform && (
           <div className="ceph-install__select-mode">
             <Title headingLevel="h5" size="lg" className="ceph-install-select-mode__title">
               Select Mode
