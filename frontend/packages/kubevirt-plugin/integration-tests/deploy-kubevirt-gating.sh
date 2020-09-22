@@ -41,7 +41,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: kubevirt-config
-  namespace: kubevirt-hyperconverged
+  namespace: kubevirt
   labels:
   kubevirt.io: ""
 data:
