@@ -111,7 +111,7 @@ export const getRouteData = (route: K8sResourceKind, resource: K8sResourceKind) 
 };
 
 export const getBuildData = (buildConfig: K8sResourceKind, gitType: string) => {
-  const buildStrategyType = _.get(buildConfig, 'spec.strategy.type', '');
+  let buildStrategyType = _.get(buildConfig, 'spec.strategy.type', '');
   let buildStrategyData;
   switch (buildStrategyType) {
     case BuildStrategyType.Source:
@@ -120,11 +120,11 @@ export const getBuildData = (buildConfig: K8sResourceKind, gitType: string) => {
     case BuildStrategyType.Docker:
       buildStrategyData = _.get(buildConfig, 'spec.strategy.dockerStrategy');
       break;
-    case BuildStrategyType.Devfile:
-      buildStrategyData = _.get(buildConfig, 'spec.strategy.devfileStrategy');
-      break;
     default:
       buildStrategyData = { env: [] };
+  }
+  if (buildConfig.metadata.annotations['isFromDevfile'] === "true") {
+    buildStrategyType = BuildStrategyType.Devfile
   }
   const triggers = _.get(buildConfig, 'spec.triggers');
   const buildData = {

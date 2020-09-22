@@ -84,8 +84,8 @@ export const devfileCreate = (kind, data, opts = {}) => {
   data.metadata = data.metadata || {};
   data.metadata.namespace = data.metadata.namespace || "default";
 
-
-  let isMock = true;
+  let isMock = true; 
+  data.defaultAnnotations['isFromDevfile'] = "true"
   let buildStrategyData = {
     dockerStrategy: { env:data.build.buildEnv, dockerfileLocation: "mock-dockerfile-location" }
   };

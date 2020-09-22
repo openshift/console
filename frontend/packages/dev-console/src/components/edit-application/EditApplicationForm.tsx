@@ -8,6 +8,7 @@ import GitSection from '../import/git/GitSection';
 import BuilderSection from '../import/builder/BuilderSection';
 import DockerSection from '../import/git/DockerSection';
 import IconSection from '../import/section/IconSection';
+import DevPreviewBadge from '@console/shared/src/components/badges/DevPreviewBadge';
 import AdvancedSection from '../import/advanced/AdvancedSection';
 import AppSection from '../import/app/AppSection';
 import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
@@ -34,7 +35,10 @@ const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationF
   appResources,
 }) => (
   <>
-    <PageHeading title={createFlowType} style={{ padding: '0px' }} />
+    {createFlowType === CreateApplicationFlow.Devfile
+      ? <PageHeading title={createFlowType} style={{ padding: '0px' }} badge={<DevPreviewBadge />} />
+      : <PageHeading title={createFlowType} style={{ padding: '0px' }} />
+    }
     <Form onSubmit={handleSubmit}>
       {createFlowType !== CreateApplicationFlow.Container && (
         <GitSection builderImages={builderImages} />

@@ -246,7 +246,7 @@ export const getStrategyType = (strategy: BuildStrategyType) => {
     case BuildStrategyType.Docker:
       return 'dockerStrategy';
     case BuildStrategyType.Devfile:
-    return 'devfileStrategy';
+      return 'devfileStrategy';
     case BuildStrategyType.Custom:
       return 'customStrategy';
     case BuildStrategyType.JenkinsPipeline:

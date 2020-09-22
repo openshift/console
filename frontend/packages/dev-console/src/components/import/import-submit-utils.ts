@@ -64,6 +64,7 @@ export const createOrUpdateDevfileResources = (
   appResources: AppResources,
   verb: K8sVerb = 'create',
   generatedImageStreamName: string = '',
+  isFromDevfile?: boolean,
   originalBuildConfig?: K8sResourceKind,
   originalDeployment?: K8sResourceKind,
   originalDeploymentConfig?: K8sResourceKind,
@@ -102,7 +103,7 @@ export const createOrUpdateDevfileResources = (
   const imageStreamName = imageStream && imageStream.metadata.name;
 
   const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag });
-  const defaultAnnotations = { ...getGitAnnotations(repository, ref), ...getCommonAnnotations() };
+  const defaultAnnotations = { ...getGitAnnotations(repository, ref), ...getCommonAnnotations(), isFromDevfile };
   
   const webhookTriggerData = {
     type: GitReadableTypes[gitType],
@@ -647,6 +648,7 @@ export const createOrUpdateResources = async (
   dryRun: boolean = false,
   verb: K8sVerb = 'create',
   appResources?: AppResources,
+  isFromDevfile?: boolean,
 ): Promise<K8sResourceKind[]> => {
   const {
     name,
@@ -690,6 +692,7 @@ export const createOrUpdateResources = async (
       appResources,
       verb,
       generatedImageStreamName,
+      isFromDevfile = true,
       _.get(appResources, 'buildConfig.data'),
       _.get(appResources, 'editAppResource.data'),
       _.get(appResources, 'editAppResource.data'),
