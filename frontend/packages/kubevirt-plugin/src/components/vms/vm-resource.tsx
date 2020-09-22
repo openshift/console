@@ -14,7 +14,7 @@ import nodeSelectorModal from '../modals/scheduling-modals/node-selector-modal/c
 import tolerationsModal from '../modals/scheduling-modals/tolerations-modal/connected-tolerations-modal';
 import affinityModal from '../modals/scheduling-modals/affinity-modal/connected-affinity-modal';
 import { getRowsDataFromAffinity } from '../modals/scheduling-modals/affinity-modal/helpers';
-import VMStatusModal from '../modals/vm-status-modal/vm-status-modal';
+import { vmStatusModal } from '../modals/vm-status-modal/vm-status-modal';
 import { getDescription } from '../../selectors/selectors';
 import { EditButton } from '../edit-button';
 import { VMStatus } from '../vm-status/vm-status';
@@ -161,8 +161,6 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
 
   const canEditWhileVMRunning = vmiLike && canUpdateVM && kindObj !== VirtualMachineInstanceModel;
 
-  const [isStatusModalOpen, setStatusModalOpen] = React.useState<boolean>(false);
-
   const launcherPod = findVMIPod(vmi, pods);
   const id = getBasicID(vmiLike);
   const devices = vmiLikeWrapper?.getLabeledDevices() || [];
@@ -176,10 +174,9 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         title="Status"
         canEdit={isVMIPaused(vmi)}
         editButtonId={prefixedID(id, 'status-edit')}
-        onEditClick={() => setStatusModalOpen(true)}
+        onEditClick={() => vmStatusModal({ vmi })}
         idValue={prefixedID(id, 'vm-statuses')}
       >
-        <VMStatusModal isOpen={isStatusModalOpen} setOpen={setStatusModalOpen} vmi={vmi} />
         <VMStatus vm={vm} vmi={vmi} vmStatusBundle={vmStatusBundle} />
       </VMDetailsItem>
 
