@@ -11,7 +11,7 @@ Background:
 Scenario: From Git Page pipelines section: P-01-TC03
    Given user is at Add page
    When user clicks From Git card on the Add page
-   Then user will be redirected to Import from git form
+   Then user will be redirected to Import from Git form
    And pipeline section is displayed with message "Select a builder image and resource to see if there is a pipeline template available for this runtime."
 
 
@@ -25,7 +25,7 @@ Scenario: From Dockerfile Page Pipelines section : P-01-TC04
 
 @regression
 Scenario Outline: Add Pipeline display in git workload for builder image : P-02-TC08
-   Given user is at Import from git form
+   Given user is at Import from Git form
    When user enters Git Repo url as "<git_url>"
    Then Add pipeline checkbox is displayed
 
@@ -45,7 +45,7 @@ Examples:
 
 @regression, @smoke
 Scenario Outline: Create a pipeline from git workload with resource type "<resource>" : P-02-TC01, P-02-TC06
-   Given user is at Import from git form
+   Given user is at Import from Git form
    When user enters Git Repo url as "<git_url>"
    And user enters Name as "<pipeline_name>" in General section
    And user selects resource type as "<resource>"
@@ -63,7 +63,7 @@ Examples:
 @regression
 Scenario Outline: Create a pipeline from git workload with knative resource type  : P-02-TC07
    Given user has installed OpenShift Serverless Operator
-   And user is at Import from git form
+   And user is at Import from Git form
    When user enters Git Repo url as "<git_url>"
    And user enters Name as "<name>" in General section
    And user selects resource type as "knative"
