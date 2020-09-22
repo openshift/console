@@ -58,7 +58,7 @@ const hasIsRequired = new Set([
 const hasLabel = new Set([FormFieldType.INLINE_CHECKBOX]);
 const hasSelections = new Set([FormFieldType.PF_SELECT]);
 const hasPlaceholderText = new Set([FormFieldType.PF_SELECT]);
-
+const hasToggleId = new Set([FormFieldType.PF_SELECT]);
 const validatedValidationErrorTypes = new Set([
   ValidationErrorType.Error,
   ValidationErrorType.Warn,
@@ -105,6 +105,7 @@ export const FormField: React.FC<FormFieldProps> = ({ children, isDisabled, valu
               label: set(hasLabel, getFieldTitle(key)),
               selections: set(hasSelections, val),
               placeholderText: set(hasPlaceholderText, getPlaceholder(key)),
+              toggleId: set(hasToggleId, getFieldId(key)),
             },
             _.isUndefined,
           ),
