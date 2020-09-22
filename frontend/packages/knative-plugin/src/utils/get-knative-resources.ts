@@ -117,7 +117,10 @@ export const knativeServingResourcesRoutes = (namespace: string): FirehoseResour
   return knativeResource;
 };
 
-export const knativeServingResourcesServices = (namespace: string): FirehoseResource[] => {
+export const knativeServingResourcesServices = (
+  namespace: string,
+  limit?: number,
+): FirehoseResource[] => {
   const knativeResource = [
     {
       isList: true,
@@ -125,6 +128,7 @@ export const knativeServingResourcesServices = (namespace: string): FirehoseReso
       namespace,
       prop: 'ksservices',
       optional: true,
+      ...(limit && { limit }),
     },
   ];
   return knativeResource;
@@ -143,7 +147,10 @@ export const knativeEventingResourcesSubscription = (namespace: string): Firehos
   return knativeResource;
 };
 
-export const knativeEventingResourcesBroker = (namespace: string): FirehoseResource[] => {
+export const knativeEventingResourcesBroker = (
+  namespace: string,
+  limit?: number,
+): FirehoseResource[] => {
   const knativeResource = [
     {
       isList: true,
@@ -151,6 +158,7 @@ export const knativeEventingResourcesBroker = (namespace: string): FirehoseResou
       namespace,
       prop: EventingBrokerModel.plural,
       optional: true,
+      ...(limit && { limit }),
     },
   ];
   return knativeResource;

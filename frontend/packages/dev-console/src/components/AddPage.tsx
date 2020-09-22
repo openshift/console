@@ -3,8 +3,20 @@ import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { match as RMatch } from 'react-router';
 import { Firehose, FirehoseResource, HintBlock } from '@console/internal/components/utils';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import { ServiceModel } from '@console/knative-plugin';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { TopologyDataResources } from '@console/dev-console/src/components/topology';
+import { EventingBrokerModel } from '@console/knative-plugin/src/models';
+import {
+  getDynamicChannelResourceList,
+  getDynamicEventSourcesResourceList,
+  getDynamicChannelModelRefs,
+  getDynamicEventSourcesModelRefs,
+} from '@console/knative-plugin/src/utils/fetch-dynamic-eventsources-utils';
+import { getKnativeDynamicResources } from '@console/knative-plugin/src/topology/knative-topology-utils';
+import {
+  knativeEventingResourcesBroker,
+  knativeServingResourcesServices,
+} from '@console/knative-plugin/src/utils/get-knative-resources';
 import ODCEmptyState from './EmptyState';
 import NamespacedPage from './NamespacedPage';
 import ProjectsExistWrapper from './ProjectsExistWrapper';
@@ -16,15 +28,8 @@ export interface AddPageProps {
   }>;
 }
 
-interface ResourcesType {
-  deploymentConfigs?: K8sResourceKind;
-  deployments?: K8sResourceKind;
-  daemonSets?: K8sResourceKind;
-  statefulSets?: K8sResourceKind;
-  knativeService?: K8sResourceKind;
-}
 interface EmptyStateLoaderProps {
-  resources?: ResourcesType;
+  resources?: TopologyDataResources;
   loaded?: boolean;
   loadError?: string;
 }
@@ -35,7 +40,12 @@ const EmptyStateLoader: React.FC<EmptyStateLoaderProps> = ({ resources, loaded, 
   const deploymentConfigs = resources?.deploymentConfigs?.data;
   const deployments = resources?.deployments?.data;
   const statefulSets = resources?.statefulSets?.data;
-  const knativeService = resources?.knativeService?.data;
+  const knativeServices = resources?.ksservices?.data;
+  const knDynamicResources: K8sResourceKind[] = getKnativeDynamicResources(resources, [
+    ...getDynamicChannelModelRefs(),
+    ...getDynamicEventSourcesModelRefs(),
+    EventingBrokerModel.plural,
+  ]);
 
   React.useEffect(() => {
     if (loaded) {
@@ -44,12 +54,22 @@ const EmptyStateLoader: React.FC<EmptyStateLoaderProps> = ({ resources, loaded, 
           _.isEmpty(deploymentConfigs) &&
           _.isEmpty(deployments) &&
           _.isEmpty(statefulSets) &&
-          _.isEmpty(knativeService),
+          _.isEmpty(knativeServices) &&
+          _.isEmpty(knDynamicResources),
       );
     } else if (loadError) {
       setNoWorkloads(false);
     }
-  }, [loaded, loadError, daemonSets, deploymentConfigs, deployments, statefulSets, knativeService]);
+  }, [
+    loaded,
+    loadError,
+    daemonSets,
+    deploymentConfigs,
+    deployments,
+    statefulSets,
+    knativeServices,
+    knDynamicResources,
+  ]);
   return noWorkloads ? (
     <ODCEmptyState
       title="Add"
@@ -97,14 +117,10 @@ const RenderEmptyState = ({ namespace }) => {
       prop: 'statefulSets',
       limit: 1,
     },
-    {
-      isList: true,
-      kind: referenceForModel(ServiceModel),
-      namespace,
-      prop: 'knativeService',
-      optional: true,
-      limit: 1,
-    },
+    ...knativeServingResourcesServices(namespace, 1),
+    ...knativeEventingResourcesBroker(namespace, 1),
+    ...getDynamicChannelResourceList(namespace, 1),
+    ...getDynamicEventSourcesResourceList(namespace, 1),
   ];
   return (
     <Firehose resources={resources}>
