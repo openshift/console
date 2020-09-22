@@ -104,7 +104,7 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
             />
             {hasRGW && (
               <p
-                className="ceph__detail-card-rgw-system-name--margin"
+                className="ceph-details-card__rgw-system-name--margin"
                 data-test-id="system-name-rgw"
               >
                 RADOS Object Gateway
