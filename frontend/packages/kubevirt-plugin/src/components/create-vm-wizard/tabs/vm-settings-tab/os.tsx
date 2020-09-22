@@ -167,8 +167,9 @@ export const OS: React.FC<OSProps> = React.memo(
               </>
             ) : (
               <>
-                Operating system source not available. Define a boot source manually below or
-                request your administrator to define a source for the cluster.
+                Default operating system image not available. Define a boot source manually below or
+                request your administrator to define one for this operating system via the PVC
+                upload form.
               </>
             );
           } else {
