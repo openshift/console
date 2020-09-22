@@ -25,7 +25,7 @@ import { UNASSIGNED_KEY, CREATE_APPLICATION_KEY } from '../../../const';
 export interface GitSectionProps {
   showSample?: boolean;
   buildStrategy? : string
-  builderImages?: NormalizedBuilderImages;
+  builderImages: NormalizedBuilderImages;
 }
 
 const GitSection: React.FC<GitSectionProps> = ({ showSample, buildStrategy, builderImages }) => {
@@ -60,6 +60,7 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, buildStrategy, buil
       const devfileParser = new DevfileParser(DevfileContents);
       
       setFieldValue('git.isUrlValidating', false);
+      
       if (buildStrategy === 'Devfile' ) {
         if (isReachable && isDevfilePresent){
           const DevfileVersion = await devfileParser.getDevfileVersion(DevfileContents)
