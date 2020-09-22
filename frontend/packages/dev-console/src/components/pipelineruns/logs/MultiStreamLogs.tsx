@@ -136,12 +136,12 @@ export const MultiStreamLogs: React.FC<MultiStreamLogsProps> = ({
           </span>
         )}
       </div>
-      <div className="odc-multi-stream-logs__container" data-test-id="logs-task-container">
-        <div
-          className="odc-multi-stream-logs__container__logs"
-          ref={scrollPane}
-          onScroll={handleScrollCallback}
-        >
+      <div
+        className="odc-multi-stream-logs__container"
+        onScroll={handleScrollCallback}
+        data-test-id="logs-task-container"
+      >
+        <div className="odc-multi-stream-logs__container__logs" ref={scrollPane}>
           {containers.map((container, idx) => {
             const resourceStatus = containerToLogSourceStatus(containerStatus[idx]);
             return (
