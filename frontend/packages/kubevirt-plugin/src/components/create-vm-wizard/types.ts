@@ -261,6 +261,11 @@ export const DetectCommonDataChanges = new Set<ChangedCommonDataProp>([
   OvirtProviderProps.networkAttachmentDefinitions,
 ]);
 
+export const DirectCommonDataProps = new Set<ChangedCommonDataProp>([
+  VMWizardProps.storageClassConfigMap,
+  VMWizardProps.openshiftCNVBaseImages,
+]);
+
 export type CommonData = {
   data?: {
     isSimpleView?: boolean;
