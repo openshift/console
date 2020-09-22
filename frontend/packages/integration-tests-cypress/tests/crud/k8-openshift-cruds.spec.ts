@@ -93,7 +93,6 @@ describe('Kubernetes resource CRUD operations', () => {
             { metadata: { name, labels: { [testLabel]: testName } } },
             safeLoad(content),
           );
-          cy.log('creates a new resource instance');
           yamlEditor.setEditorContent(safeDump(newContent, { sortKeys: true })).then(() => {
             yamlEditor.clickSaveCreateButton();
             cy.get(errorMessage).should('not.exist');
@@ -112,11 +111,11 @@ describe('Kubernetes resource CRUD operations', () => {
           `${namespaced ? `/k8s/ns/${testName}` : '/k8s/cluster'}/${resource}?name=${testName}`,
         );
         if (namespaced) {
-          cy.log('has a working namespace dropdown on namespaced objects');
+          // should have a namespace dropdown for namespaced objects');
           listPage.projectDropdownShouldExist();
           listPage.projectDropdownShouldContain(testName);
         } else {
-          cy.log('does not have a namespace dropdown on non-namespaced objects');
+          // should not have a namespace dropdown for non-namespaced objects');
           listPage.projectDropdownShouldNotExist();
         }
         listPage.rows.shouldBeLoaded();
@@ -135,7 +134,7 @@ describe('Kubernetes resource CRUD operations', () => {
         listPage.rows.shouldExist(name);
         cy.testA11y(`Search page for ${kind}: ${name}`);
 
-        cy.log('link to to details page');
+        // link to to details page
         listPage.rows.clickRowByName(name);
         cy.url().should('include', `/${name}`);
         detailsPage.titleShouldContain(name);

@@ -39,7 +39,7 @@ describe('Monitoring: Alerts', () => {
   });
 
   it('displays and filters the Alerts list page, links to detail pages', () => {
-    cy.log('use vert. nav. menu to goto Monitoring -> Alerting');
+    cy.log('use sidebar nav to goto Monitoring -> Alerting');
     nav.sidenav.clickNavLink(['Monitoring', 'Alerting']);
     // TODO, switch to 'listPage.titleShouldHaveText('Alerting');', when we switch to new test id
     cy.byLegacyTestID('resource-title').should('have.text', 'Alerting');

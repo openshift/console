@@ -16,6 +16,7 @@ declare global {
 // This will add to 'createProject(...)' to cy
 // ex: cy.createProject(name)
 Cypress.Commands.add('createProject', (name: string) => {
+  cy.log(`create project`);
   cy.visit(`/k8s/cluster/projects`);
   listPage.clickCreateYAMLbutton();
   modal.shouldBeOpened();
@@ -27,6 +28,7 @@ Cypress.Commands.add('createProject', (name: string) => {
 });
 
 Cypress.Commands.add('deleteProject', (name: string) => {
+  cy.log(`delete project`);
   cy.visit(`/k8s/cluster/projects/${name}`);
   detailsPage.clickPageActionFromDropdown('Delete Project');
   modal.shouldBeOpened();

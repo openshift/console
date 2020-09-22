@@ -20,6 +20,11 @@ Cypress.Cookies.defaults({
   preserve: ['openshift-session-token', 'csrf-token'],
 });
 
+Cypress.Commands.overwrite('log', (originalFn, message) => {
+  cy.task('log', `      ${message}`, { log: false }); // log:false means do not log task in runner GUI
+  originalFn(message); // calls original cy.log(message)
+});
+
 Cypress.Commands.add('logA11yViolations', (violations: Result[], target: string) => {
   // pluck specific keys to keep the table readable
   const violationData = violations.map(({ id, impact, description, nodes }) => ({
