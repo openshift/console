@@ -295,7 +295,7 @@ const isColumnVisible = (columnID: string, columns: Set<string> = new Set()) => 
   if (_.isEmpty(columns) && showNamespace) {
     return true;
   }
-  if (!columns.has(columnID)) {
+  if (!columns.has(columnID) || !showNamespace) {
     return false;
   }
   const widthInPixels = window.innerWidth;
