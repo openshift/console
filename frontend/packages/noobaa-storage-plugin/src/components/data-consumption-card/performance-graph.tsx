@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
+import * as _ from 'lodash';
 import {
   humanizeDecimalBytesPerSec,
   useRefWidth,
@@ -44,9 +45,11 @@ const PerformanceGraph: React.FC<PerformanceGraphProps> = ({
   const PUTLatestValue = humanize(getLatestValue(putData)).string;
   const GETLatestValue = humanize(getLatestValue(getData)).string;
 
-  const legends = [{ name: `PUT ${PUTLatestValue}` }, { name: `GET ${GETLatestValue}` }];
+  const legends = [{ name: `GET ${GETLatestValue}` }, { name: `PUT ${PUTLatestValue}` }];
 
-  if (loadError) {
+  const emptyData = dataPoints.some(_.isEmpty);
+
+  if (loadError || emptyData) {
     return <GraphEmpty />;
   }
   if (!loading && !loadError) {
