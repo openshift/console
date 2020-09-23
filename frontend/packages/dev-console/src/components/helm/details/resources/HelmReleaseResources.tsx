@@ -24,8 +24,9 @@ export interface HelmReleaseResourcesProps {
 const HelmReleaseResources: React.FC<HelmReleaseResourcesProps> = ({ match, customData }) => {
   const namespace = match.params.ns;
   const helmManifest = customData ? safeLoadAll(customData.manifest) : [];
-  const helmManifestResources: FirehoseResource[] = helmManifest.map(
-    (resource: K8sResourceKind) => {
+  const helmManifestResources: FirehoseResource[] = helmManifest
+    .filter((obj) => obj)
+    .map((resource: K8sResourceKind) => {
       const resourceKind = referenceFor(resource);
       const model = modelFor(resourceKind);
       return {
@@ -36,8 +37,7 @@ const HelmReleaseResources: React.FC<HelmReleaseResourcesProps> = ({ match, cust
         isList: false,
         optional: true,
       };
-    },
-  );
+    });
   return (
     <MultiListPage
       filterLabel="Resources by name"
