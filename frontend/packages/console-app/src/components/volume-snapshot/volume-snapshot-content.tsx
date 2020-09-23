@@ -109,7 +109,7 @@ const Row: RowFunction<VolumeSnapshotContentKind> = ({ key, obj, style, index })
       </TableData>
       <TableData className={tableColumnClasses[6]}>
         <ResourceKebab
-          kind={referenceForModel(VolumeSnapshotModel)}
+          kind={referenceForModel(VolumeSnapshotContentModel)}
           resource={obj}
           actions={Kebab.factory.common}
         />
