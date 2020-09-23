@@ -15,14 +15,15 @@ export const resourceSubmit = async (
   namespace: string,
 ): Promise<K8sResourceCommon> => {
   const {
+    name,
     data: { params, secrets, type },
   } = resourceValues;
 
   return secrets
     ? createSecretResource(secrets, type, namespace).then((secretResp) => {
-        return createPipelineResource(params, type, namespace, secretResp);
+        return createPipelineResource(name, namespace, type, secretResp);
       })
-    : createPipelineResource(params, type, namespace);
+    : createPipelineResource(name, namespace, type, params);
 };
 
 export const submitStartPipeline = async (

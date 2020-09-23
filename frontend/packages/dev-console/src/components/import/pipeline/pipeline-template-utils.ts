@@ -9,17 +9,21 @@ const getImageUrl = (name: string, namespace: string) => {
   return `image-registry.openshift-image-registry.svc:5000/${namespace}/${name}`;
 };
 
-export const createGitResource = (url: string, namespace: string, ref: string = 'master') => {
+export const createGitResource = (
+  name: string,
+  namespace: string,
+  url: string,
+  ref: string = 'master',
+) => {
   const params = { url, revision: ref };
-  return createPipelineResource(params, 'git', namespace);
+  return createPipelineResource(name, namespace, 'git', params);
 };
 
 export const createImageResource = (name: string, namespace: string) => {
   const params = {
     url: getImageUrl(name, namespace),
   };
-
-  return createPipelineResource(params, 'image', namespace);
+  return createPipelineResource(name, namespace, 'image', params);
 };
 
 export const createPipelineForImportFlow = async (formData: GitImportFormData) => {
@@ -53,7 +57,7 @@ export const createPipelineForImportFlow = async (formData: GitImportFormData) =
   });
 
   if (template.spec.resources?.find((r) => r.type === 'git' && r.name === 'app-source')) {
-    await createGitResource(git.url, namespace, git.ref);
+    await createGitResource(name, namespace, git.url, git.ref);
   }
   if (template.spec.resources?.find((r) => r.type === 'image' && r.name === 'app-image')) {
     await createImageResource(name, namespace);

@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
 import { SecretModel } from '@console/internal/models';
 import { getRandomChars } from '@console/shared/src/utils/utils';
+import { getCommonAnnotations } from 'packages/dev-console/src/utils/resource-label-utils';
 import { PipelineResourceModel } from '../../../models';
 import { convertMapToNameValueArray } from '../modals/common/utils';
 
@@ -14,9 +15,10 @@ export const getDefinedObj = (objData: ParamData): ParamData => {
 };
 
 export const createPipelineResource = (
-  params: ParamData,
-  type: string,
+  pipelineName: string,
   namespace: string,
+  type: string,
+  params: ParamData,
   secretResp?: K8sResourceKind,
 ): Promise<K8sResourceKind> => {
   const resourceName = `${type}-${getRandomChars(6)}`;
@@ -26,6 +28,10 @@ export const createPipelineResource = (
     metadata: {
       name: resourceName,
       namespace,
+      labels: {
+        ...getCommonAnnotations(),
+        'tekton.dev/pipeline': pipelineName,
+      },
     },
     spec: {
       type,
