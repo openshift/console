@@ -24,7 +24,7 @@ import {
   modelFor,
   referenceForGroupVersionKind,
 } from '@console/internal/module/k8s';
-import { CRDDescription, ClusterServiceVersionKind } from '../types';
+import { CRDDescription, ClusterServiceVersionKind, ProvidedAPI } from '../types';
 import { referenceForProvidedAPI, providedAPIsFor } from './index';
 import { OperandLink } from './operand/operand-link';
 
@@ -65,11 +65,12 @@ export const ResourceTableHeader = () => [
 export const ResourceTableRow: RowFunction<
   K8sResourceKind,
   {
-    linkFor: (obj: K8sResourceKind) => JSX.Element;
+    linkFor: (obj: K8sResourceKind, providedAPI: ProvidedAPI) => JSX.Element;
+    providedAPI: ProvidedAPI;
   }
-> = ({ obj, index, style, customData: { linkFor } }) => (
+> = ({ obj, index, style, customData: { linkFor, providedAPI } }) => (
   <TableRow id={obj.metadata.uid} index={index} trKey={obj.metadata.uid} style={style}>
-    <TableData className={tableColumnClasses[0]}>{linkFor(obj)}</TableData>
+    <TableData className={tableColumnClasses[0]}>{linkFor(obj, providedAPI)}</TableData>
     <TableData className={tableColumnClasses[1]}>{obj.kind}</TableData>
     <TableData className={tableColumnClasses[2]}>
       <Status status={_.get(obj.status, 'phase', 'Created')} />
@@ -96,6 +97,41 @@ export const ResourceTable: React.FC<ResourceTableProps> = (props) => (
   />
 );
 
+export const flattenCsvResources = (parentObj: K8sResourceKind) => (resources: {
+  [kind: string]: { data: K8sResourceKind[] };
+}): K8sResourceKind[] => {
+  return _.flatMap(resources, (resource, kind: string) =>
+    _.map(resource.data, (item) => ({ ...item, kind })),
+  ).reduce((owned, resource) => {
+    return (resource.metadata.ownerReferences || []).some(
+      (ref) =>
+        ref.uid === parentObj.metadata.uid ||
+        owned.some(({ metadata }) => metadata.uid === ref.uid),
+    )
+      ? owned.concat([resource])
+      : owned;
+  }, [] as K8sResourceKind[]);
+};
+
+// NOTE: This is us building the `ownerReferences` graph client-side
+// FIXME: Comparing `kind` is not enough to determine if an object is a custom resource
+export const linkForCsvResource = (
+  obj: K8sResourceKind,
+  providedAPI: ProvidedAPI,
+  csvName?: string,
+) =>
+  obj.metadata.namespace &&
+  _.get(providedAPI, 'resources', []).some(({ kind, name }) => name && kind === obj.kind) ? (
+    <OperandLink obj={obj} csvName={csvName} />
+  ) : (
+    <ResourceLink
+      kind={obj.kind}
+      name={obj.metadata.name}
+      namespace={obj.metadata.namespace}
+      title={obj.metadata.name}
+    />
+  );
+
 export const Resources: React.FC<ResourcesProps> = (props) => {
   const providedAPI = providedAPIsFor(props.clusterServiceVersion).find(
     (desc) => referenceForProvidedAPI(desc) === props.match.params.plural,
@@ -121,37 +157,6 @@ export const Resources: React.FC<ResourcesProps> = (props) => {
     },
   );
 
-  // NOTE: This is us building the `ownerReferences` graph client-side
-  const flattenFor = (parentObj: K8sResourceKind) => (resources: {
-    [kind: string]: { data: K8sResourceKind[] };
-  }) => {
-    return _.flatMap(resources, (resource, kind: string) =>
-      _.map(resource.data, (item) => ({ ...item, kind })),
-    ).reduce((owned, resource) => {
-      return (resource.metadata.ownerReferences || []).some(
-        (ref) =>
-          ref.uid === parentObj.metadata.uid ||
-          owned.some(({ metadata }) => metadata.uid === ref.uid),
-      )
-        ? owned.concat([resource])
-        : owned;
-    }, [] as K8sResourceKind[]);
-  };
-
-  // FIXME: Comparing `kind` is not enough to determine if an object is a custom resource
-  const linkFor = (obj: K8sResourceKind) =>
-    obj.metadata.namespace &&
-    _.get(providedAPI, 'resources', []).some(({ kind, name }) => name && kind === obj.kind) ? (
-      <OperandLink obj={obj} />
-    ) : (
-      <ResourceLink
-        kind={obj.kind}
-        name={obj.metadata.name}
-        namespace={obj.metadata.namespace}
-        title={obj.metadata.name}
-      />
-    );
-
   return (
     <MultiListPage
       filterLabel="Resources by name"
@@ -167,10 +172,10 @@ export const Resources: React.FC<ResourcesProps> = (props) => {
           })),
         },
       ]}
-      flatten={flattenFor(props.obj)}
+      flatten={flattenCsvResources(props.obj)}
       namespace={props.obj.metadata.namespace}
       ListComponent={ResourceTable}
-      customData={{ linkFor }}
+      customData={{ linkFor: linkForCsvResource, providedAPI }}
     />
   );
 };
@@ -187,7 +192,8 @@ export type ResourceTableProps = {
   loaded: boolean;
   loadError?: string;
   data: K8sResourceKind[];
-  linkFor: (obj: K8sResourceKind) => JSX.Element;
+  linkFor: (obj: K8sResourceKind, providedAPI: ProvidedAPI) => JSX.Element;
+  providedAPI: ProvidedAPI;
 };
 
 ResourceTableHeader.displayName = 'ResourceTableHeader';

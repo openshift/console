@@ -57,7 +57,7 @@ import { isInternalObject, getInternalAPIReferences, getInternalObjects } from '
 import { DescriptorType, StatusCapability, StatusDescriptor } from '../descriptors/types';
 import { Resources } from '../k8s-resource';
 import { referenceForProvidedAPI } from '../index';
-import { OperandLink } from './operand-link';
+import { csvNameFromWindow, OperandLink } from './operand-link';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 import {
   ClusterServiceVersionAction,
@@ -68,18 +68,10 @@ import { CustomResourceDefinitionModel } from '@console/internal/models';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { DescriptorDetailsItem, DescriptorDetailsItemList } from '../descriptors';
 
-const csvName = () =>
-  window.location.pathname
-    .split('/')
-    .find(
-      (part, i, allParts) =>
-        allParts[i - 1] === referenceForModel(ClusterServiceVersionModel) ||
-        allParts[i - 1] === ClusterServiceVersionModel.plural,
-    );
-
-const getActions = (
+export const getOperandActions = (
   ref: K8sResourceKindReference,
   actionExtensions: ClusterServiceVersionAction[],
+  csvName?: string,
 ) => {
   const actions = actionExtensions.filter(
     (action) =>
@@ -95,9 +87,8 @@ const getActions = (
     (kind, obj) => {
       const reference = referenceFor(obj);
       const href = kind.namespaced
-        ? `/k8s/ns/${obj.metadata.namespace}/${
-            ClusterServiceVersionModel.plural
-          }/${csvName()}/${reference}/${obj.metadata.name}/yaml`
+        ? `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csvName ||
+            csvNameFromWindow()}/${reference}/${obj.metadata.name}/yaml`
         : `/k8s/cluster/${reference}/${obj.metadata.name}/yaml`;
       return {
         label: `Edit ${kind.label}`,
@@ -121,7 +112,7 @@ const getActions = (
           namespace: obj.metadata.namespace,
           redirectTo: `/k8s/ns/${obj.metadata.namespace}/${
             ClusterServiceVersionModel.plural
-          }/${csvName()}/${referenceFor(obj)}`,
+          }/${csvName || csvNameFromWindow()}/${referenceFor(obj)}`,
         }),
       accessReview: {
         group: kind.apiGroup,
@@ -248,7 +239,7 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({ obj, index, ro
     isClusterServiceVersionAction,
   );
   const objReference = referenceFor(obj);
-  const actions = React.useMemo(() => getActions(objReference, actionExtensions), [
+  const actions = React.useMemo(() => getOperandActions(objReference, actionExtensions), [
     objReference,
     actionExtensions,
   ]);
@@ -588,10 +579,10 @@ export const OperandDetailsPage = (props: OperandDetailsPageProps) => {
   const actionExtensions = useExtensions<ClusterServiceVersionAction>(
     isClusterServiceVersionAction,
   );
-  const menuActions = React.useMemo(() => getActions(props.match.params.plural, actionExtensions), [
-    props.match.params.plural,
-    actionExtensions,
-  ]);
+  const menuActions = React.useMemo(
+    () => getOperandActions(props.match.params.plural, actionExtensions),
+    [props.match.params.plural, actionExtensions],
+  );
   return (
     <DetailsPage
       match={props.match}
