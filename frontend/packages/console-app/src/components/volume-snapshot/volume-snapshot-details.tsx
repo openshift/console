@@ -16,7 +16,8 @@ import {
 import { referenceForModel, VolumeSnapshotKind } from '@console/internal/module/k8s';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
-import { Status, snapshotSource } from '@console/shared';
+import { Status, snapshotSource, FLAGS } from '@console/shared';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { volumeSnapshotStatus } from '../../status';
 
 const { editYaml, events } = navFactory;
@@ -34,6 +35,9 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
   const sizeMetrics = size ? humanizeBinaryBytes(sizeBase).string : '-';
   const snapshotContent = obj?.status?.boundVolumeSnapshotContentName;
   const snapshotClass = obj?.spec?.volumeSnapshotClassName;
+
+  const canListVSC = useFlag(FLAGS.CAN_LIST_VSC);
+
   return (
     <div className="co-m-pane__body">
       <SectionHeading text="Volume Snapshot Details" />
@@ -58,17 +62,21 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
                 namespace={namespace}
               />
             </dd>
-            <dt>{VolumeSnapshotContentModel.label}</dt>
-            <dd data-test="details-item-value__VSC">
-              {snapshotContent ? (
-                <ResourceLink
-                  kind={referenceForModel(VolumeSnapshotContentModel)}
-                  name={snapshotContent}
-                />
-              ) : (
-                '-'
-              )}
-            </dd>
+            {canListVSC && (
+              <>
+                <dt>{VolumeSnapshotContentModel.label}</dt>
+                <dd data-test="details-item-value__VSC">
+                  {snapshotContent ? (
+                    <ResourceLink
+                      kind={referenceForModel(VolumeSnapshotContentModel)}
+                      name={snapshotContent}
+                    />
+                  ) : (
+                    '-'
+                  )}
+                </dd>
+              </>
+            )}
             <dt>{VolumeSnapshotClassModel.label}</dt>
             <dd data-test="details-item-value__SC">
               {snapshotClass ? (
