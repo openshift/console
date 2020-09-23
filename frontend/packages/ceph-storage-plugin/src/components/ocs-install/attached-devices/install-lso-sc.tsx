@@ -137,8 +137,12 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
   React.useEffect(() => {
     if ((pvLoadError || pvData.length === 0) && pvLoaded) {
       setFilteredNodes([]);
+    } else if (pvLoaded) {
+      const pvs = getSCAvailablePVs(pvData, getName(storageClass));
+      const scNodes = getAssociatedNodes(pvs);
+      setFilteredNodes(scNodes);
     }
-  }, [pvData, pvLoaded, pvLoadError]);
+  }, [pvData, pvLoaded, pvLoadError, storageClass]);
 
   const submit = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();

@@ -9,7 +9,7 @@ import {
 } from '@console/shared';
 import { humanizeCpuCores, ResourceLink } from '@console/internal/components/utils/';
 import { Table } from '@console/internal/components/factory';
-import { createMapForHostNames } from '@console/local-storage-operator-plugin/src/utils';
+import { NodeKind } from '@console/internal/module/k8s';
 import { getConvertedUnits } from '../../../utils/install';
 import { getColumns } from '../node-list';
 import { GetRows, NodeTableProps } from '../types';
@@ -18,10 +18,15 @@ import '../ocs-install.scss';
 const getRows: GetRows = ({ componentProps, customData }) => {
   const { data } = componentProps;
   const { nodes, setNodes, filteredNodes } = customData;
+  let filteredData: NodeKind[] = data;
 
-  const nodeList = filteredNodes ?? data.map(getName);
-  const hostNames = createMapForHostNames(data);
-  const filteredData = data.filter((node) => nodeList.includes(hostNames[getName(node)]));
+  if (filteredNodes) {
+    filteredData = data.filter(
+      (node: NodeKind) =>
+        filteredNodes.includes(getName(node)) ||
+        filteredNodes.includes(node.metadata.labels?.['kubernetes.io/hostname']),
+    );
+  }
 
   const rows = filteredData.map((node) => {
     const roles = getNodeRoles(node).sort();
