@@ -214,11 +214,16 @@ setInterval(() => store.dispatch(UIActions.updateTimestamps(Date.now())), 10000)
 fetchSwagger();
 
 // Used by GUI tests to check for unhandled exceptions
-window.windowError = false;
-window.onerror = window.onunhandledrejection = (e) => {
+window.windowError = null;
+window.onerror = (message, source, lineno, colno, error) => {
   // eslint-disable-next-line no-console
-  console.error('Uncaught error', e);
-  window.windowError = e || true;
+  console.error('Uncaught error', error);
+  window.windowError = error;
+};
+window.onunhandledrejection = (promiseRejectionEvent) => {
+  // eslint-disable-next-line no-console
+  console.error('Unhandled promise rejection', promiseRejectionEvent);
+  window.windowError = promiseRejectionEvent;
 };
 
 if ('serviceWorker' in navigator) {

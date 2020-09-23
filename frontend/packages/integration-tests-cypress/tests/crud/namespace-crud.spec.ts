@@ -46,6 +46,6 @@ describe('Namespace', () => {
     cy.testA11y('Delete Namespace modal');
     modal.submit();
     modal.shouldBeClosed();
-    listPage.rows.shouldNotExist(newName);
+    cy.resourceShouldBeDeleted(testName, 'namespaces', newName);
   });
 });
