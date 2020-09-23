@@ -13,7 +13,7 @@ import {
   removeTriggerModal,
 } from '../components/pipelines/modals';
 import { getPipelineRunData } from '../components/pipelines/modals/common/utils';
-import { StartedByLabel } from '../components/pipelines/const';
+import { StartedByAnnotation } from '../components/pipelines/const';
 import { EventListenerModel, PipelineModel, PipelineRunModel } from '../models';
 import { Pipeline, PipelineRun } from './pipeline-augment';
 import { pipelineRunFilterReducer } from './pipeline-filter-reducer';
@@ -203,7 +203,7 @@ const addTrigger: KebabAction = (kind: K8sKind, pipeline: Pipeline) => ({
       ...pipeline,
       metadata: {
         ...pipeline.metadata,
-        labels: _.omit(pipeline.metadata.labels, [StartedByLabel.user]),
+        annotations: _.omit(pipeline.metadata.annotations, [StartedByAnnotation.user]),
       },
     };
     addTriggerModal({ pipeline: cleanPipeline, modalClassName: 'modal-lg' });

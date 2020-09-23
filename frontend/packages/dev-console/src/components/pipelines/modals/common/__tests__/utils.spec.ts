@@ -124,13 +124,14 @@ describe('PipelineAction testing getPipelineRunFromForm', () => {
       anotherlabel: 'another-label-value',
     };
 
-    const runData = getPipelineRunFromForm(actionPipelines[0], formValues, labels, {
+    const runData = getPipelineRunFromForm(actionPipelines[0], formValues, labels, null, {
       generateName: true,
     });
     expect(runData).toEqual({
       apiVersion: 'abhiapi/v1',
       kind: 'PipelineRun',
       metadata: {
+        annotations: {},
         namespace: 'corazon',
         generateName: 'sansa-stark-',
         labels: { ...labels, 'tekton.dev/pipeline': 'sansa-stark' },
