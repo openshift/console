@@ -98,21 +98,20 @@ export const getPipelineRunData = (
   return migratePipelineRun(newPipelineRun);
 };
 
-export const convertPipelineToModalData = (
-  pipeline: Pipeline,
-  alwaysCreateResources: boolean = false,
-): CommonPipelineModalFormikValues => {
+export const convertPipelineToModalData = (pipeline: Pipeline): CommonPipelineModalFormikValues => {
   const {
-    metadata: { namespace },
+    metadata: { name, namespace },
     spec: { params, resources },
   } = pipeline;
 
   return {
+    name,
     namespace,
     parameters: params || [],
     resources: (resources || []).map((resource: PipelineResource) => ({
+      pipelineName: name,
       name: resource.name,
-      selection: alwaysCreateResources ? CREATE_PIPELINE_RESOURCE : null,
+      selection: null,
       data: {
         ...initialResourceFormValues[resource.type],
         type: resource.type,

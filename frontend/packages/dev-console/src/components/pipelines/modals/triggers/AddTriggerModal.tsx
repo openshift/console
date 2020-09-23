@@ -19,7 +19,7 @@ type AddTriggerModalProps = ModalComponentProps & {
 
 const AddTriggerModal: React.FC<AddTriggerModalProps> = ({ pipeline, close }) => {
   const initialValues: AddTriggerFormValues = {
-    ...convertPipelineToModalData(pipeline, true),
+    ...convertPipelineToModalData(pipeline),
     triggerBinding: {
       name: TRIGGER_BINDING_EMPTY,
       resource: null,

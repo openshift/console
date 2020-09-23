@@ -8,8 +8,10 @@ import { PipelineModalFormResource } from './types';
 import PipelineResourceDropdown from './PipelineResourceDropdown';
 
 type PipelineResourceDropdownFieldProps = DropdownFieldProps & {
+  pipelineName: string;
   filterType?: string;
 };
+
 const PipelineResourceDropdownField: React.FC<PipelineResourceDropdownFieldProps> = (props) => {
   const { filterType, name, label } = props;
 

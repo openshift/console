@@ -59,6 +59,7 @@ const PipelineResourceSection: React.FC = () => {
                       name={`resources.${formikIndex}`}
                       filterType={type}
                       label={resource.name}
+                      pipelineName={resource.pipelineName}
                     />
                   );
                 })}

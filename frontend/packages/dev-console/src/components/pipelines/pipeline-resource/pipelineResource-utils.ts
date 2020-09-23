@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
 import { SecretModel } from '@console/internal/models';
 import { getRandomChars } from '@console/shared/src/utils/utils';
-import { getCommonAnnotations } from 'packages/dev-console/src/utils/resource-label-utils';
+import { getCommonAnnotations } from '@console/dev-console/src/utils/resource-label-utils';
 import { PipelineResourceModel } from '../../../models';
 import { convertMapToNameValueArray } from '../modals/common/utils';
 

@@ -2,6 +2,7 @@ import { FormikValues } from 'formik';
 import { PipelineParam } from '../../../../utils/pipeline-augment';
 
 export type PipelineModalFormResource = {
+  pipelineName: string;
   name: string;
   selection: string;
   data: {

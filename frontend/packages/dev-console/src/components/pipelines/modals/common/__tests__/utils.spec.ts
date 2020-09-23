@@ -192,6 +192,7 @@ describe('PipelineAction testing getPipelineRunFromForm', () => {
       parameters: [],
       resources: [
         {
+          pipelineName: 'PipelineA',
           name: 'ResourceA',
           selection: 'SelectionA',
           data: {

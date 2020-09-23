@@ -16,6 +16,7 @@ import './PipelineResourceDropdown.scss';
 
 type PipelineResourceDropdownProps = {
   autoSelect?: boolean;
+  pipelineName?: string;
   filterType: string;
   name: string;
   namespace: string;
@@ -23,7 +24,7 @@ type PipelineResourceDropdownProps = {
 };
 
 const PipelineResourceDropdown: React.FC<PipelineResourceDropdownProps> = (props) => {
-  const { autoSelect, filterType, name, namespace, selectedKey } = props;
+  const { autoSelect, pipelineName, filterType, name, namespace, selectedKey } = props;
 
   const [isExpanded, setExpanded] = React.useState(false);
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
@@ -41,21 +42,23 @@ const PipelineResourceDropdown: React.FC<PipelineResourceDropdownProps> = (props
     resourceDefinition,
   );
 
-  const availableResources: PipelineResourceKind[] = resources.filter(
-    (resource) => resource.spec.type === filterType,
+  const availableResources: PipelineResourceKind[] = React.useMemo(
+    () => resources.filter((resource) => resource.spec.type === filterType),
+    [filterType, resources],
   );
 
-  const canAutoSelect = autoSelect && !touched && loaded && !error;
+  const canAutoSelect = autoSelect && !touched && loaded && !error && !!pipelineName;
   React.useEffect(() => {
     if (canAutoSelect) {
-      if (availableResources.length === 0) {
-        setFieldValue(name, CREATE_PIPELINE_RESOURCE);
-      } else {
-        setFieldValue(name, availableResources[0].metadata.name);
+      const matchingResource = availableResources.find(
+        (resource) => resource.metadata?.labels?.['tekton.dev/pipeline'] === pipelineName,
+      );
+      if (matchingResource) {
+        setFieldValue(name, matchingResource.metadata.name, false);
+        setFieldTouched(name);
       }
-      setFieldTouched(name);
     }
-  }, [canAutoSelect, name, availableResources, setFieldTouched, setFieldValue]);
+  }, [canAutoSelect, pipelineName, name, availableResources, setFieldTouched, setFieldValue]);
 
   const options = [
     { label: 'Create Pipeline Resource', value: CREATE_PIPELINE_RESOURCE },
