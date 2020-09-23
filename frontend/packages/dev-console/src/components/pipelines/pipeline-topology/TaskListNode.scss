@@ -1,6 +1,10 @@
 .odc-task-list-node {
   border: 1px solid var(--pf-global--BorderColor--light-100);
 
+  &__container {
+    overflow: hidden;
+    box-shadow: var(--pf-c-dropdown__menu--BoxShadow);
+  }
   &__label {
     overflow: hidden;
     text-overflow: ellipsis;
