@@ -63,4 +63,5 @@ export const WINTOOLS_CONTAINER_NAMES = {
 };
 
 export const PENDING_RESTART_LABEL = '(pending restart)';
-export const PVC_UPLOAD_URL = `/k8s/ns/${TEMPLATE_VM_GOLDEN_OS_NAMESPACE}/persistentvolumeclaims/~new/upload-form`;
+export const getPVCUploadURL = (pvcNamespace: string): string =>
+  `/k8s/ns/${pvcNamespace}/persistentvolumeclaims/~new/upload-form`;
