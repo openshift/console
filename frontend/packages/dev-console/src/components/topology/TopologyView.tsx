@@ -2,15 +2,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { connect } from 'react-redux';
 import { Stack, StackItem } from '@patternfly/react-core';
-import {
-  BaseEdge,
-  GraphElement,
-  isGraph,
-  isEdge,
-  isNode,
-  Model,
-  Visualization,
-} from '@patternfly/react-topology';
+import { GraphElement, isGraph, Model, Visualization } from '@patternfly/react-topology';
 import { useDeepCompareMemoize, useQueryParams } from '@console/shared';
 import { useExtensions } from '@console/plugin-sdk';
 import { RootState } from '@console/internal/redux';
@@ -18,14 +10,11 @@ import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { removeQueryArgument, setQueryArgument } from '@console/internal/components/utils';
 import { getEventSourceStatus } from '@console/knative-plugin/src/topology/knative-topology-utils';
-import { TYPE_VIRTUAL_MACHINE } from '@console/kubevirt-plugin/src/topology/components/const';
-import TopologyVmPanel from '@console/kubevirt-plugin/src/topology/TopologyVmPanel';
 import {
   CreateConnectionGetter,
   DisplayFilters,
   GraphData,
   TopologyApplyDisplayOptions,
-  TopologyDataObject,
   TopologyDisplayFilterType,
 } from './topology-types';
 import {
@@ -43,28 +32,9 @@ import {
 } from './redux/action';
 import Topology from './Topology';
 import TopologyListView from './list-view/TopologyListView';
-import { OdcBaseEdge } from './elements';
-import { TYPE_APPLICATION_GROUP, TYPE_SERVICE_BINDING } from './components';
-import TopologyApplicationPanel from './application-panel/TopologyApplicationPanel';
-import { TYPE_HELM_RELEASE, TYPE_HELM_WORKLOAD } from './helm/components/const';
-import TopologyHelmReleasePanel from './helm/TopologyHelmReleasePanel';
-import TopologyHelmWorkloadPanel from './helm/TopologyHelmWorkloadPanel';
-import { TYPE_OPERATOR_BACKED_SERVICE } from './operators/components/const';
-import TopologyOperatorBackedPanel from './operators/TopologyOperatorBackedPanel';
-import TopologyResourcePanel from './TopologyResourcePanel';
-import {
-  TYPE_EVENT_PUB_SUB_LINK,
-  TYPE_EVENT_SOURCE_LINK,
-  TYPE_REVISION_TRAFFIC,
-} from '@console/knative-plugin/src/topology/const';
-import KnativeResourceOverviewPage from '@console/knative-plugin/src/components/overview/KnativeResourceOverviewPage';
-import KnativeTopologyEdgePanel from '@console/knative-plugin/src/components/overview/KnativeTopologyEdgePanel';
-import ConnectedTopologyEdgePanel from './TopologyEdgePanel';
-import TopologySideBar from './TopologySideBar';
-import { OperatorGroupData } from './operators/operator-topology-types';
-import TopologyServiceBindingRequestPanel from './operators/TopologyServiceBindingRequestPanel';
 import TopologyFilterBar from './filters/TopologyFilterBar';
 import { useAddToProjectAccess } from '../../utils/useAddToProjectAccess';
+import { getTopologySideBar } from './TopologySideBar';
 
 export const FILTER_ACTIVE_CLASS = 'odc-m-filter-active';
 
@@ -266,100 +236,32 @@ export const TopologyView: React.FC<ComponentProps> = ({
     [application, filteredModel, namespace, onVisualizationChange, showGraphView],
   );
 
+  const topologyFilterBar = React.useMemo(
+    () => <TopologyFilterBar showGraphView={showGraphView} visualization={visualization} />,
+    [showGraphView, visualization],
+  );
+
+  const topologySideBar = React.useMemo(
+    () => getTopologySideBar(visualization, selectedEntity, () => onSelect()),
+    [selectedEntity, visualization],
+  );
+
   if (!filteredModel) {
     return null;
   }
 
-  const onSidebarClose = () => {
-    onSelect();
-  };
-
-  const selectedItemDetails = () => {
-    if (!selectedEntity) {
-      return null;
-    }
-
-    if (isNode(selectedEntity)) {
-      if (selectedEntity.getType() === TYPE_APPLICATION_GROUP) {
-        return (
-          <TopologyApplicationPanel
-            graphData={visualization.getGraph().getData()}
-            application={{
-              id: selectedEntity.getId(),
-              name: selectedEntity.getLabel(),
-              resources: selectedEntity.getData().groupResources,
-            }}
-          />
-        );
-      }
-      // TODO: Use Plugins
-      if (selectedEntity.getType() === TYPE_HELM_RELEASE) {
-        return <TopologyHelmReleasePanel helmRelease={selectedEntity} />;
-      }
-      if (selectedEntity.getType() === TYPE_HELM_WORKLOAD) {
-        return <TopologyHelmWorkloadPanel item={selectedEntity.getData() as TopologyDataObject} />;
-      }
-      if (selectedEntity.getType() === TYPE_OPERATOR_BACKED_SERVICE) {
-        return (
-          <TopologyOperatorBackedPanel
-            item={selectedEntity.getData() as TopologyDataObject<OperatorGroupData>}
-          />
-        );
-      }
-      if (selectedEntity.getType() === TYPE_VIRTUAL_MACHINE) {
-        return <TopologyVmPanel vmNode={selectedEntity} />;
-      }
-      return <TopologyResourcePanel item={selectedEntity.getData() as TopologyDataObject} />;
-    }
-
-    if (isEdge(selectedEntity)) {
-      if (selectedEntity.getType() === TYPE_EVENT_PUB_SUB_LINK) {
-        const itemResources = selectedEntity.getData();
-        return <KnativeResourceOverviewPage item={itemResources.resources} />;
-      }
-      if ([TYPE_REVISION_TRAFFIC, TYPE_EVENT_SOURCE_LINK].includes(selectedEntity.getType())) {
-        return <KnativeTopologyEdgePanel edge={selectedEntity as BaseEdge} />;
-      }
-      if (selectedEntity.getType() === TYPE_SERVICE_BINDING) {
-        return <TopologyServiceBindingRequestPanel edge={selectedEntity as OdcBaseEdge} />;
-      }
-      return <ConnectedTopologyEdgePanel edge={selectedEntity as BaseEdge} />;
-    }
-    return null;
-  };
-
-  const renderSideBar = () => {
-    if (!selectedEntity) {
-      return null;
-    }
-    const details = selectedItemDetails();
-    if (!selectedEntity || !details) {
-      return null;
-    }
-
-    return (
-      <TopologySideBar show={!!selectedEntity && !!details} onClose={onSidebarClose}>
-        {selectedEntity && details}
-      </TopologySideBar>
-    );
-  };
-
-  const sideBar = renderSideBar();
-
   const containerClasses = classNames('pf-topology-container', {
-    'pf-topology-container__with-sidebar': sideBar,
-    'pf-topology-container__with-sidebar--open': sideBar,
+    'pf-topology-container__with-sidebar': topologySideBar.shown,
+    'pf-topology-container__with-sidebar--open': topologySideBar.shown,
   });
 
   return (
     <div className="odc-topology">
       <Stack>
-        <StackItem isFilled={false}>
-          <TopologyFilterBar showGraphView={showGraphView} visualization={visualization} />
-        </StackItem>
+        <StackItem isFilled={false}>{topologyFilterBar}</StackItem>
         <StackItem isFilled className={containerClasses}>
           <div className="pf-topology-content">{viewContent}</div>
-          {sideBar}
+          {topologySideBar.sidebar}
         </StackItem>
       </Stack>
     </div>

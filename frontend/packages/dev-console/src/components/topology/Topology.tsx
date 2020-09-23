@@ -30,6 +30,8 @@ import { COLA_LAYOUT, COLA_FORCE_LAYOUT, layoutFactory } from './layouts/layoutF
 import { componentFactory } from './components';
 import { odcElementFactory } from './elements';
 
+import './Topology.scss';
+
 const TOPOLOGY_GRAPH_ID = 'odc-topology-graph';
 const graphModel: Model = {
   graph: {
@@ -235,11 +237,13 @@ const Topology: React.FC<TopologyProps> = ({ model, application, onSelect, setVi
   }
 
   return (
-    <VisualizationProvider controller={visualization}>
-      <VisualizationSurface state={{ selectedIds: [selectedId] }} />
-      {dragHint && <div className="odc-topology__hint-container">{dragHint}</div>}
-      <span className="pf-topology-control-bar">{renderControlBar()}</span>
-    </VisualizationProvider>
+    <div className="odc-topology-graph-view">
+      <VisualizationProvider controller={visualization}>
+        <VisualizationSurface state={{ selectedIds: [selectedId] }} />
+        {dragHint && <div className="odc-topology__hint-container">{dragHint}</div>}
+        <span className="pf-topology-control-bar">{renderControlBar()}</span>
+      </VisualizationProvider>
+    </div>
   );
 };
 
