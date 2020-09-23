@@ -10,6 +10,7 @@
     background: var(--pf-global--BackgroundColor--light-100);
   }
   &__trigger {
+    position: fixed;
     padding: var(--pf-global--spacer--xs) var(--pf-global--spacer--md);
     width: 100%;
   }

@@ -49,7 +49,7 @@ const TaskListNode: React.FC<TaskListNodeProps> = ({ element, unselectedText }) 
 
   return (
     <foreignObject width={width} height={height} className="odc-task-list-node">
-      <div className="odc-task-list-node__trigger-background" ref={triggerRef}>
+      <div ref={triggerRef} className="odc-task-list-node__trigger-background" style={{ height }}>
         <Button
           className="odc-task-list-node__trigger"
           isDisabled={options.length === 0}
