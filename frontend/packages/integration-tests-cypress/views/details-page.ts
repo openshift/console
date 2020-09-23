@@ -13,3 +13,8 @@ export const detailsPage = {
       .click();
   },
 };
+
+export namespace DetailsPageSelector {
+  export const name = 'dd[data-test-selector="details-item-value__Name"]';
+  export const namespace = 'dd[data-test-selector="details-item-value__Namespace"] a';
+}

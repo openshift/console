@@ -2,7 +2,7 @@ import { testName, checkErrors } from '../../support';
 import { SnapshotDetails, dropdownFirstItem } from '../../views/storage/snapshot';
 import { listPage } from '../../views/list-page';
 import { PVC, testerDeployment, SnapshotClass, patchForVolume } from '../../mocks/snapshot';
-import { detailsPage } from '../../views/details-page';
+import { detailsPage, DetailsPageSelector } from '../../views/details-page';
 import { modal } from '../../views/modal';
 import { nav } from '../../views/nav';
 import { resourceStatusShouldContain } from '../../views/common';
@@ -58,8 +58,8 @@ if (Cypress.env('BRIDGE_AWS')) {
         .its('stdout')
         .then((res) => {
           const volumeSnapshot = JSON.parse(res);
-          cy.get(SnapshotDetails.name).contains(volumeSnapshot.metadata.name);
-          cy.get(SnapshotDetails.namespace).contains(volumeSnapshot.metadata.namespace);
+          cy.get(DetailsPageSelector.name).contains(volumeSnapshot.metadata.name);
+          cy.get(DetailsPageSelector.namespace).contains(volumeSnapshot.metadata.namespace);
           cy.get(SnapshotDetails.vsc).contains(
             volumeSnapshot.status.boundVolumeSnapshotContentName,
           );
