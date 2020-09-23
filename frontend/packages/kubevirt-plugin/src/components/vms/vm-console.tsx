@@ -37,6 +37,7 @@ import { VMStatus } from '../../constants/vm/vm-status';
 import { ConsoleType } from '../../constants/vm/console-type';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 import { CloudInitDataHelper } from '../../k8s/wrapper/vm/cloud-init-data-helper';
+import { CLOUD_INIT_MISSING_USERNAME } from '../../utils/strings';
 
 const VMIsDown: React.FC = () => (
   <div className="co-m-pane__body">
@@ -153,7 +154,7 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
             <strong>Cloud-init</strong>. If unsuccessful cloud-init could be improperly configured.
             Please contact the image provider for more information.
             <p>
-              <strong>User name: </strong> {cloudInitUsername || cloudInitPassword}
+              <strong>User name: </strong> {cloudInitUsername || CLOUD_INIT_MISSING_USERNAME}
               {'  '}
               <strong>Password: </strong>{' '}
               {showPassword ? (
