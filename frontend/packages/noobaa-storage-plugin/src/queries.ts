@@ -176,14 +176,12 @@ export const DATA_CONSUMPTION_QUERIES = {
   },
   [ServiceType.RGW]: {
     [Metrics.LATENCY]: {
-      latencyGet:
-        'ceph_rgw_get_initial_lat_sum{ceph_daemon="rgw.ocs.storagecluster.cephobjectstore.a"}',
-      latencyPut:
-        'ceph_rgw_put_initial_lat_sum{ceph_daemon="rgw.ocs.storagecluster.cephobjectstore.a"}',
+      latencyGet: 'avg(rate(ceph_rgw_get_initial_lat_sum[1m]))',
+      latencyPut: 'avg(rate(ceph_rgw_put_initial_lat_sum[1m]))',
     },
     [Metrics.BANDWIDTH]: {
-      bandwidthGet: 'ceph_rgw_get_b{ceph_daemon="rgw.ocs.storagecluster.cephobjectstore.a"}',
-      bandwidthPut: 'ceph_rgw_put_b{ceph_daemon="rgw.ocs.storagecluster.cephobjectstore.a"}',
+      bandwidthGet: 'sum(rate(ceph_rgw_get_b[1m]))',
+      bandwidthPut: 'sum(rate(ceph_rgw_put_b[1m]))',
     },
   },
 };

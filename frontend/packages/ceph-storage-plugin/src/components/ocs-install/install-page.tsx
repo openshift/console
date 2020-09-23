@@ -76,7 +76,7 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
           setIndepModeSupportedPlatform(true);
         }
       });
-  });
+  }, []);
 
   return (
     <>
