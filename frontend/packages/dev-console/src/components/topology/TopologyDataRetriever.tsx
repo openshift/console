@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { useDeepCompareMemoize } from '@console/shared';
 import {
   useK8sWatchResources,
   WatchK8sResources,
@@ -42,16 +43,34 @@ export const ConnectedTopologyDataRetriever: React.FC<TopologyDataRetrieverProps
   const url = PROMETHEUS_TENANCY_BASE_PATH
     ? `${PROMETHEUS_TENANCY_BASE_PATH}/api/v1/rules?namespace=${namespace}`
     : null;
-  const [response, error, loading] = useURLPoll<PrometheusRulesResponse>(
+  const [alertsResponse, alertsError, alertsLoading] = useURLPoll<PrometheusRulesResponse>(
     url,
     POLL_DELAY,
     namespace,
   );
 
-  const monitoringAlerts: Alerts = React.useMemo(() => {
-    const { alerts } = getAlertsAndRules(response?.data);
-    return { data: alerts, loaded: !loading, loadError: error };
-  }, [response, error, loading]);
+  const alerts = React.useMemo(() => {
+    let alertData;
+    if (!alertsLoading && !alertsError) {
+      alertData = getAlertsAndRules(alertsResponse?.data).alerts;
+
+      // Don't update due to time changes
+      alertData.forEach((alert) => {
+        delete alert.activeAt;
+        if (alert.rule) {
+          delete alert.rule.evaluationTime;
+          delete alert.rule.lastEvaluation;
+          alert.rule.alerts &&
+            alert.rule.alerts.forEach((ruleAlert) => {
+              delete ruleAlert.activeAt;
+            });
+        }
+      });
+    }
+    return { data: alertData, loaded: !alertsLoading, loadError: alertsError };
+  }, [alertsError, alertsLoading, alertsResponse]);
+
+  const memoizedAlerts = useDeepCompareMemoize<Alerts>(alerts);
 
   // Wipe the current model on a namespace change
   React.useEffect(() => {
@@ -100,14 +119,14 @@ export const ConnectedTopologyDataRetriever: React.FC<TopologyDataRetrieverProps
           workloadResources,
           showGroups ? depicters : [],
           trafficData,
-          monitoringAlerts,
+          memoizedAlerts,
         );
         dataModelContext.reconcileModel(fullModel, resources);
         dataModelContext.loaded = true;
         dataModelContext.model = fullModel;
       })
       .catch(() => {});
-  }, [resources, trafficData, dataModelContext, kindsInFlight, monitoringAlerts, showGroups]);
+  }, [resources, trafficData, dataModelContext, kindsInFlight, memoizedAlerts, showGroups]);
 
   return null;
 };
