@@ -231,7 +231,9 @@ export const TopologyView: React.FC<ComponentProps> = ({
       const updatedFilters = filters.filter((f) => f.type !== TopologyDisplayFilterType.kind);
       onFiltersChange(updatedFilters);
     }
-  }, [filters, namespace, onFiltersChange]);
+    // Only clear kind filters on namespace change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [namespace]);
 
   React.useEffect(() => {
     const searchQuery = getTopologySearchQuery();
