@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import { TemplateKind } from '@console/internal/module/k8s';
+import { getLabel } from '@console/shared';
 import {
   CloudInitDataHelper,
   CloudInitDataFormKeys,
@@ -14,11 +15,12 @@ import {
   TEMPLATE_WORKLOAD_LABEL,
   TEMPLATE_DATAVOLUME_NAME_PARAMETER,
   TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER,
+  TEMPLATE_VERSION_LABEL,
 } from '../../constants/vm';
 import { getCloudInitVolume } from '../vm/selectors';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 import { selectVM } from './basic';
-import { removeOSDups } from '../../utils/sort';
+import { compareVersions, removeOSDups } from '../../utils/sort';
 
 export const getTemplatesWithLabels = (templates: TemplateKind[], labels: string[]) => {
   const requiredLabels = labels.filter((label) => label);
@@ -74,10 +76,17 @@ export const getTemplateHostname = (template: TemplateKind) => {
 
 export const getTemplateOperatingSystems = (templates: TemplateKind[]) => {
   const osIds = getTemplatesLabelValues(templates, TEMPLATE_OS_LABEL);
+  const sortedTemplates = [...templates].sort((a, b) => {
+    const aVersion = getLabel(a, TEMPLATE_VERSION_LABEL);
+    const bVersion = getLabel(b, TEMPLATE_VERSION_LABEL);
+
+    return -1 * compareVersions(aVersion, bVersion);
+  });
+
   return removeOSDups(
     osIds.map((osId) => {
       const nameAnnotation = `${TEMPLATE_OS_NAME_ANNOTATION}/${osId}`;
-      const template = templates.find(
+      const template = sortedTemplates.find(
         (t) =>
           !!Object.keys(getAnnotations(t, {})).find((annotation) => annotation === nameAnnotation),
       );
