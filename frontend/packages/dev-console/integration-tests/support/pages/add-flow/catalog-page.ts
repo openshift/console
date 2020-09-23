@@ -103,7 +103,7 @@ export const catalogPage = {
   },
   selectknativeServingCard: () =>
     cy
-      .get('div.catalog-tile-pf-title')
+      .get('div.catalog-tile-pf-title', { timeout: 40000 })
       .contains('knative Serving')
       .click(),
   selectHelmChartCard: (cardName: string) =>

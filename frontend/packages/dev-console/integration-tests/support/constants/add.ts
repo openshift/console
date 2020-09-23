@@ -11,6 +11,12 @@ export enum addOptions {
   EventSource = 'Event Source',
 }
 
+export enum buildConfigOptions {
+  webhookBuildTrigger = 'Configure a webhook build trigger',
+  automaticBuildImage = 'Automatically build a new image when the builder image changes',
+  launchBuildOnCreatingBuildConfig = 'Launch the first build when the build configuration is created',
+}
+
 export enum resourceTypes {
   Deployment = 'Deployment',
   DeploymentConfig = 'Deployment Config',

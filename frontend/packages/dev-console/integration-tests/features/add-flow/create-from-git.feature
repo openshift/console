@@ -53,12 +53,12 @@ Scenario: Add new git workload to the existing application : A-04-TC03
    And user is at Add page
    And user is at Import from git page
    When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
-   And user enters Application name as "dancer-ex-git-app"
-   And user enters Name as "nodejs-ex-git"
+   And user enters Application name as "nodejs-ex-git-app"
+   And user enters Name as "dancer-ex.git"
    And user selects resource type as "Deployment Config"
    And user clicks Create button on Add page
    Then user will be redirected to Topology page
-   And created workload "nodejs-ex-git" is linked to existing application "dancer-ex-git-app"
+   And created workload "dancer-ex.git" is linked to existing application "nodejs-ex-git-app"
 
 
 @regression
@@ -85,30 +85,30 @@ Scenario: Create workload without application route : A-04-TC05
 Scenario: Create a git workload with advanced option "Routing" : A-04-TC06
    Given user is at Import from git page
    When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
-   And user enters name as "nodejs-ex-3-git" in General section
+   And user enters name as "nodejs-ex-git" in General section
    And user clicks "Routing" link in Advanced Options section
    And user enters Hostname as "home"
    And user enters Path as "/home"
    And select default Target Port
    And user clicks Create button on Add page
    Then user will be redirected to Topology page
-   And the route of application "nodejs-ex-3-git" contains "home"
+   And the route of application "nodejs-ex-git" contains "home"
 
 
 @regression
 Scenario: Creaete the workload by unselecting options in "Build Configuration" section: A-04-TC07
    Given user is at Import from git page
    When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
-   And user enters name as "nodejs-ex-4-git" in General section
+   And user enters name as "nodejs-ex-git" in General section
    And user clicks "Build Configuration" link in Advanced Options section
-   And unselects "Configure a webhook build trigger" checkbox in build configuration section
-   And unselects "Automatically build a new image when the builder image changes" checkbox in build configuration section
-   And unselects "Launch the first build when the build configuration is created" checkbox in build configuration section
+   And user unselects Configure a webhook build trigger checkbox in build configuration section
+   And user unselects Automatically build a new image when the builder image changes checkbox in build configuration section
+   And user unselects Launch the first build when the build configuration is created checkbox in build configuration section
    And user enters Name as "home" in Environment Variables section
    And user enters Value as "value" in Environment Variables section
    And user clicks Create button on Add page
    Then user will be redirected to Topology page
-   And build does not get started for "nodejs-ex-4-git"
+   And build does not get started for "nodejs-ex-git"
 
 
 @regression
@@ -128,7 +128,7 @@ Scenario: Create a git workload with advanced option "Deployment" : A-04-TC08
 Scenario: Create a git workload with advanced option "Resource Limits" : A-04-TC09
    Given user is at Import from git page
    When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
-   And user enters name as "nodejs-ex-6-git" in General section
+   And user enters name as "nodejs-ex-git" in General section
    And user clicks "Resource Limits" link in Advanced Options section
    And user enters CPU Request as "10" in CPU section
    And user enters CPU Limits as "12" in CPU section
@@ -142,7 +142,7 @@ Scenario: Create a git workload with advanced option "Resource Limits" : A-04-TC
 Scenario: Create a git workload with advanced option "Scaling" : A-04-TC10
    Given user is at Import from git page
    When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
-   And user enters name as "nodejs-ex-7-git" in General section
+   And user enters name as "nodejs-ex-git" in General section
    And user clicks "Scaling" link in Advanced Options section
    And user enters number of replicas as "5" in Replicas section
    And user clicks Create button on Add page
@@ -153,19 +153,19 @@ Scenario: Create a git workload with advanced option "Scaling" : A-04-TC10
 Scenario: Create a git workload with advanced option "Labels" : A-04-TC11
    Given user is at Import from git page
    When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
-   And user enters name as "nodejs-ex-8-git" in General section
+   And user enters name as "nodejs-ex-git" in General section
    And user clicks "Labels" link in Advanced Options section
    And user enters label as "app=frontend"
    And user clicks Create button on Add page
    Then user will be redirected to Topology page
-   And verify the label "app=frontend" in side bar of application node "nodejs-ex-8-git"
+   And verify the label "app=frontend" in side bar of application node "nodejs-ex-git"
 
 
 @regression
 Scenario: Create a git workload with advanced option "Health Checks" : A-04-TC12
    Given user is at Import from git page
    When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
-   And user enters name as "nodejs-ex-9-git" in General section
+   And user enters name as "nodejs-ex-git" in General section
    And user clicks "Health Checks" link in Advanced Options section
    And user fills the Readiness Probe details
    And user fills the Liveness Probe details

@@ -68,7 +68,6 @@ Given('user has selected namespace {string}', (projectName: string) => {
 Given('user has installed OpenShift Serverless Operator', () => {
   perspective.switchTo(switchPerspective.Administrator);
   perspective.verifyPerspective('Administrator');
-  cy.wait(5000);
   operatorsPage.verifyOperatorInNavigationMenu('Serverless');
 });
 

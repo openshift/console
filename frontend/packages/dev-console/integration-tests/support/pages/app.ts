@@ -148,7 +148,6 @@ export const projectNameSpace = {
 
   clickCreateButton: () => {
     cy.get('#confirm-action').click();
-    // cy.get('[data-test-id="modal-title"]').contains('Create Project').should('not.be.visible');
   },
 
   createNewProject: (projectName: string) => {
@@ -157,8 +156,7 @@ export const projectNameSpace = {
       .eq(0)
       .click();
     cy.byLegacyTestID('dropdown-text-filter').type(projectName);
-    cy.wait(3000);
-    cy.get('[role="listbox"]').then(($el) => {
+    cy.get('[role="listbox"]', { timeout: 5000 }).then(($el) => {
       if ($el.find('li[role="option"]').length === 0) {
         cy.byTestDropDownMenu('#CREATE_RESOURCE_ACTION#').click();
         projectNameSpace.enterProjectName(projectName);
@@ -199,27 +197,6 @@ export const projectNameSpace = {
   },
 
   deleteProjectNameSpace: (project: string) => {
-    // requester: string = 'kube:admin') => {
-    //   naviagteTo(devNavigationMenu.Project);
-    //   projectNameSpace.selectProject('all projects');
-    //   cy.get('data-test-id="item-filter"').type('aut-');
-    //   cy.get('tbody').should('exist');
-    //   cy.get('tr td:nth-child(4)').each(($el, index) => {
-    //     const text = $el.text()
-    //     if(text.includes(requester)) {
-    //       cy.get('tbody tr').eq(index).find('td:nth-child(1) button').click();
-    //     }
-    //   });
-    //   // cy.get(`button[title="${projectName}"]`).click();
-    //   cy.get('[title="Project"]', {timeout:8000} ).should('be.visible');
-    //   cy.selectByDropDownText('[data-test-id="actions-menu-button"]', 'Delete Project');
-    //   cy.get('form [data-test-id="modal-title"]').should('contain.text', 'Delete Project?');
-    //   cy.get('p strong').eq(1).then(($el) => {
-    //     const text = $el.text()
-    //     cy.get('input[placeholder="Enter name"]').type(text);
-    //     cy.get('#confirm-action').should('be.enabled').click();
-    //   })
-    // },
     cy.exec(`oc delete project ${project}`);
   },
 };
