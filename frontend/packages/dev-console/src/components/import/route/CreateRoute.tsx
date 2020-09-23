@@ -1,26 +1,19 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { useFormikContext, FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import { TextInputTypes } from '@patternfly/react-core';
-import { InputField, DropdownField } from '@console/shared';
-import { makePortName } from '../../../utils/imagestream-utils';
+import { InputField } from '@console/shared';
+import { DeployImageFormData, GitImportFormData } from '../import-types';
+import PortInputField from './PortInputField';
 
 const CreateRoute: React.FC = () => {
   const {
     values: {
       image: { ports },
-      route: { defaultUnknownPort, targetPort },
+      route: { defaultUnknownPort },
     },
-  } = useFormikContext<FormikValues>();
-  const portOptions = ports.reduce((acc, port) => {
-    const name = makePortName(port);
-    acc[name] = (
-      <>
-        {port.containerPort} &rarr; {port.containerPort} ({port.protocol})
-      </>
-    );
-    return acc;
-  }, {});
+  } = useFormikContext<DeployImageFormData | GitImportFormData>();
+  const portOptions = ports.map((port) => port.containerPort.toString());
+  const placeholderPort = ports[0]?.containerPort || defaultUnknownPort;
 
   return (
     <>
@@ -37,24 +30,13 @@ const CreateRoute: React.FC = () => {
         placeholder="/"
         helpText="Path that the router watches to route traffic to the service."
       />
-      {_.isEmpty(ports) ? (
-        <InputField
-          type={TextInputTypes.text}
-          name="route.unknownTargetPort"
-          label="Target Port"
-          placeholder={defaultUnknownPort}
-          helpText="Target port for traffic."
-        />
-      ) : (
-        <DropdownField
-          name="route.targetPort"
-          label="Target Port"
-          items={portOptions}
-          title={portOptions[targetPort] || 'Select target port'}
-          helpText="Target port for traffic."
-          fullWidth
-        />
-      )}
+      <PortInputField
+        name="route.unknownTargetPort"
+        label="Target Port"
+        placeholderText={placeholderPort.toString()}
+        helpText="Target port for traffic."
+        options={portOptions}
+      />
     </>
   );
 };

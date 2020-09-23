@@ -8,12 +8,14 @@ import { defaultData } from './knative-serving-data';
 
 describe('Create knative Utils', () => {
   describe('knative Service creation', () => {
-    it('expect knativeServingResourcesConfigurations to not have Ports id if unknownTargetPort is empty', () => {
+    it('expect knativeServingResourcesConfigurations to use defaultUnknownPort if unknownTargetPort is empty', () => {
       const knDeploymentResource: K8sResourceKind = getKnativeServiceDepResource(
         defaultData,
         'imgStream',
       );
-      expect(knDeploymentResource.spec.template.spec.containers[0].ports).toBeUndefined();
+      expect(knDeploymentResource.spec.template.spec.containers[0].ports[0].containerPort).toBe(
+        8080,
+      );
     });
     it('expect to have Ports if unknownTargetPort is defined', () => {
       defaultData.route.unknownTargetPort = '8080';

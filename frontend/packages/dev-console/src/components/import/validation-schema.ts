@@ -136,8 +136,11 @@ export const routeValidationSchema = yup.object().shape({
     .string()
     .matches(pathRegex, { message: 'Path must start with /.', excludeEmptyString: true }),
   unknownTargetPort: yup
-    .string()
-    .matches(/^\d+$/, { message: 'Port must be an Integer.', excludeEmptyString: true }),
+    .number()
+    .typeError('Port must be an Integer.')
+    .integer('Port must be an Integer.')
+    .min(1, 'Port must be between 1 and 65535.')
+    .max(65535, 'Port must be between 1 and 65535.'),
 });
 
 export const limitsValidationSchema = yup.object().shape({

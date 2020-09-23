@@ -51,7 +51,7 @@ describe('Shared submit utils', () => {
       routeObj = createRoute(mockDeployImageData);
       expect(routeObj.spec.port.targetPort).toEqual('8082-tcp');
 
-      mockDeployImageData.route.targetPort = '8081-tcp';
+      mockDeployImageData.route.unknownTargetPort = '8081';
       routeObj = createRoute(mockDeployImageData);
       expect(routeObj.spec.port.targetPort).toEqual('8081-tcp');
     });
