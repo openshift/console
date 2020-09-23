@@ -44,7 +44,7 @@ const EmptyMsg = () => (
   <EmptyState
     title="Topology"
     hintBlock={
-      <HintBlock title="No workloads found">
+      <HintBlock title="No resources found">
         <p>
           To add content to your project, create an application, component or service using one of
           these options.
