@@ -17,8 +17,8 @@
     "pluginsFile": "plugins/index.js",
     "fixturesFolder": "testData",
     "video": true,
-    "screenshotsFolder": "screenshots",
-    "videosFolder": "videos",
+    "screenshotsFolder": "../../../gui_test_screenshots/cypress/screenshots",
+    "videosFolder": "../../../gui_test_screenshots/cypress/videos",
     "env": {
       "TAGS": "@smoke and not @manual"
     }
