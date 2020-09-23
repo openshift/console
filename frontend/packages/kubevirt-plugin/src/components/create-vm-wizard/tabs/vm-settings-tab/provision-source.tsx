@@ -28,7 +28,7 @@ const ProvisionSourceDiskHelpMsg: React.FC<ProvisionSourceDiskHelpMsgProps> = ({
         return (
           <TextContent>
             <div className="pf-c-form__helper-text" aria-live="polite">
-              Enter URL here or edit the mounted disk in the {storageBtn} step.
+              Enter URL here or edit the rootdisk in the {storageBtn} step.
             </div>
             <div className="pf-c-form__helper-text" aria-live="polite">
               To boot this source from a CD-ROM edit the disk in the storage step and change to
@@ -38,10 +38,10 @@ const ProvisionSourceDiskHelpMsg: React.FC<ProvisionSourceDiskHelpMsgProps> = ({
         );
       case ProvisionSource.CONTAINER:
         return (
-          <Text>Enter container image here or edit the mounted disk in the {storageBtn} step.</Text>
+          <Text>Enter container image here or edit the rootdisk in the {storageBtn} step.</Text>
         );
       case ProvisionSource.DISK:
-        return <>Add a source disk in the {storageBtn} step</>;
+        return <>Add a disk in the {storageBtn} step and select it from the boot source dropdown</>;
       default:
         return null;
     }
