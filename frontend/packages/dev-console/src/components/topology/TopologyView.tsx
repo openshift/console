@@ -4,15 +4,11 @@ import { connect } from 'react-redux';
 import { Stack, StackItem } from '@patternfly/react-core';
 import {
   BaseEdge,
-  BOTTOM_LAYER,
-  DEFAULT_LAYER,
-  GROUPS_LAYER,
+  GraphElement,
+  isGraph,
   isEdge,
   isNode,
   Model,
-  SELECTION_EVENT,
-  SelectionEventListener,
-  TOP_LAYER,
   Visualization,
 } from '@patternfly/react-topology';
 import { useDeepCompareMemoize, useQueryParams } from '@console/shared';
@@ -38,24 +34,16 @@ import {
   TopologyCreateConnector,
   TopologyDisplayFilters,
 } from '../../extensions/topology';
-import {
-  getFilterById,
-  getTopologySearchQuery,
-  SHOW_GROUPS_FILTER_ID,
-  useAppliedDisplayFilters,
-  useDisplayFilters,
-} from './filters';
+import { getTopologySearchQuery, useAppliedDisplayFilters, useDisplayFilters } from './filters';
 import { updateModelFromFilters } from './data-transforms';
 import {
   setSupportedTopologyFilters,
   setSupportedTopologyKinds,
   setTopologyFilters,
 } from './redux/action';
-import { useAddToProjectAccess } from '../../utils/useAddToProjectAccess';
 import Topology from './Topology';
 import TopologyListView from './list-view/TopologyListView';
-import { COLA_LAYOUT, layoutFactory } from './layouts/layoutFactory';
-import { OdcBaseEdge, odcElementFactory } from './elements';
+import { OdcBaseEdge } from './elements';
 import { TYPE_APPLICATION_GROUP, TYPE_SERVICE_BINDING } from './components';
 import TopologyApplicationPanel from './application-panel/TopologyApplicationPanel';
 import { TYPE_HELM_RELEASE, TYPE_HELM_WORKLOAD } from './helm/components/const';
@@ -76,8 +64,8 @@ import TopologySideBar from './TopologySideBar';
 import { OperatorGroupData } from './operators/operator-topology-types';
 import TopologyServiceBindingRequestPanel from './operators/TopologyServiceBindingRequestPanel';
 import TopologyFilterBar from './filters/TopologyFilterBar';
+import { useAddToProjectAccess } from '../../utils/useAddToProjectAccess';
 
-const TOPOLOGY_GRAPH_ID = 'odc-topology-graph';
 export const FILTER_ACTIVE_CLASS = 'odc-m-filter-active';
 
 interface StateProps {
@@ -100,34 +88,22 @@ interface TopologyViewProps {
 
 type ComponentProps = TopologyViewProps & StateProps & DispatchProps;
 
-const graphModel: Model = {
-  graph: {
-    id: TOPOLOGY_GRAPH_ID,
-    type: 'graph',
-    layout: COLA_LAYOUT,
-    layers: [BOTTOM_LAYER, GROUPS_LAYER, 'groups2', DEFAULT_LAYER, TOP_LAYER],
-  },
-};
-
 export const TopologyView: React.FC<ComponentProps> = ({
   model,
   namespace,
   showGraphView,
   eventSourceEnabled,
   application,
-  onSelectTab,
   onFiltersChange,
   onSupportedFiltersChange,
   onSupportedKindsChange,
 }) => {
   const [filteredModel, setFilteredModel] = React.useState<Model>();
-  const [storedSelectedIds, setSelectedIds] = React.useState<string[]>([]);
-  const selectedIds = useDeepCompareMemoize(storedSelectedIds);
-  const createResourceAccess: string[] = useAddToProjectAccess(namespace);
+  const [selectedEntity, setSelectedEntity] = React.useState<GraphElement>(null);
+  const [visualization, setVisualization] = React.useState<Visualization>();
   const displayFilters = useDisplayFilters();
-  const showGroupsRef = React.useRef<boolean>();
-  const groupsShown = getFilterById(SHOW_GROUPS_FILTER_ID, displayFilters)?.value ?? true;
   const filters = useDeepCompareMemoize(displayFilters);
+  const createResourceAccess: string[] = useAddToProjectAccess(namespace);
   const appliedFilters = useAppliedDisplayFilters();
   const [displayFilterers, setDisplayFilterers] = React.useState<TopologyApplyDisplayOptions[]>(
     null,
@@ -140,39 +116,32 @@ export const TopologyView: React.FC<ComponentProps> = ({
   const [filtersLoaded, setFiltersLoaded] = React.useState<boolean>(false);
   const queryParams = useQueryParams();
   const searchParams = queryParams.get('searchQuery');
-  const onSelect = (ids: string[]) => {
+
+  const onSelect = (entity?: GraphElement) => {
     // set empty selection when selecting the graph
-    if (!ids || ids.length === 0 || ids[0] === TOPOLOGY_GRAPH_ID) {
-      setSelectedIds([]);
+    const selEntity = isGraph(entity) ? undefined : entity;
+    setSelectedEntity(selEntity);
+    if (!selEntity) {
       removeQueryArgument('selectId');
     } else {
-      setSelectedIds(ids);
-      setQueryArgument('selectId', ids[0]);
+      setQueryArgument('selectId', selEntity.getId());
     }
   };
-  const createVisualization = () => {
-    const newVisualization = new Visualization();
-    newVisualization.registerElementFactory(odcElementFactory);
-    newVisualization.registerLayoutFactory(layoutFactory);
-    newVisualization.fromModel(graphModel);
-    newVisualization.addEventListener<SelectionEventListener>(SELECTION_EVENT, onSelect);
-    const newGraphData: GraphData = {
-      createResourceAccess,
-      namespace,
-      eventSourceEnabled,
-      createConnectorExtensions: createConnectors,
-    };
-    newVisualization.getGraph().setData(newGraphData);
-    if (filteredModel) {
-      newVisualization.fromModel(filteredModel);
-    }
-    return newVisualization;
-  };
-  const visualizationRef = React.useRef<Visualization>();
-  if (!visualizationRef.current) {
-    visualizationRef.current = createVisualization();
-  }
-  const visualization = visualizationRef.current;
+
+  const onVisualizationChange = React.useCallback(
+    (vis: Visualization) => {
+      const graphData: GraphData = {
+        createResourceAccess,
+        namespace,
+        eventSourceEnabled,
+        createConnectorExtensions: createConnectors,
+      };
+      vis.getGraph().setData(graphData);
+
+      setVisualization(vis);
+    },
+    [createConnectors, createResourceAccess, eventSourceEnabled, namespace],
+  );
 
   const createConnectorPromises = React.useMemo(
     () => createConnectorExtensions.map((creator) => creator.properties.getCreateConnector()),
@@ -247,28 +216,22 @@ export const TopologyView: React.FC<ComponentProps> = ({
       );
       setFilteredModel(newModel);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [model, filters, application, displayFilterers, filtersLoaded]);
+  }, [
+    model,
+    filters,
+    application,
+    displayFilterers,
+    filtersLoaded,
+    onSupportedFiltersChange,
+    onSupportedKindsChange,
+  ]);
 
   React.useEffect(() => {
     if (filters.find((f) => f.type !== TopologyDisplayFilterType.kind)) {
       const updatedFilters = filters.filter((f) => f.type !== TopologyDisplayFilterType.kind);
       onFiltersChange(updatedFilters);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [namespace]);
-
-  React.useEffect(() => {
-    if (visualization) {
-      const newGraphData: GraphData = {
-        createResourceAccess,
-        namespace,
-        eventSourceEnabled,
-        createConnectorExtensions: createConnectors,
-      };
-      visualization.getGraph().setData(newGraphData);
-    }
-  }, [createResourceAccess, createConnectors, eventSourceEnabled, visualization, namespace]);
+  }, [filters, namespace, onFiltersChange]);
 
   React.useEffect(() => {
     const searchQuery = getTopologySearchQuery();
@@ -279,49 +242,26 @@ export const TopologyView: React.FC<ComponentProps> = ({
     }
   }, [searchParams]);
 
-  React.useEffect(() => {
-    if (filteredModel) {
-      visualization.fromModel(filteredModel);
-      const selectId = selectedIds.length ? selectedIds[0] : queryParams.get('selectId');
-      const selectedItem = selectId ? visualization.getElementById(selectId) : null;
-      if (!selectedItem || !selectedItem.isVisible()) {
-        onSelect([]);
-      } else if (!selectedIds.length) {
-        setSelectedIds([selectId]);
-      }
-      if (showGraphView) {
-        if (groupsShown && showGroupsRef.current === false) {
-          showGroupsRef.current = groupsShown;
-          visualization.getGraph().layout();
-        }
-        showGroupsRef.current = groupsShown;
-      } else {
-        showGroupsRef.current = undefined;
-      }
-    }
-    // Do not update on groupsShown change, filterModel will get updated and we want to wait to layout
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filteredModel, onSelectTab, queryParams, selectedIds, showGraphView, visualization]);
-
   const viewContent = React.useMemo(
     () =>
       showGraphView ? (
         <Topology
-          visualization={visualization}
+          model={filteredModel}
           namespace={namespace}
           application={application}
-          selectedIds={selectedIds}
+          onSelect={onSelect}
+          setVisualization={onVisualizationChange}
         />
       ) : (
         <TopologyListView
-          visualization={visualization}
+          model={filteredModel}
           namespace={namespace}
           application={application}
-          selectedIds={selectedIds}
           onSelect={onSelect}
+          setVisualization={onVisualizationChange}
         />
       ),
-    [application, namespace, selectedIds, showGraphView, visualization],
+    [application, filteredModel, namespace, onVisualizationChange, showGraphView],
   );
 
   if (!filteredModel) {
@@ -329,11 +269,14 @@ export const TopologyView: React.FC<ComponentProps> = ({
   }
 
   const onSidebarClose = () => {
-    onSelect([]);
+    onSelect();
   };
 
   const selectedItemDetails = () => {
-    const selectedEntity = selectedIds[0] ? visualization.getElementById(selectedIds[0]) : null;
+    if (!selectedEntity) {
+      return null;
+    }
+
     if (isNode(selectedEntity)) {
       if (selectedEntity.getType() === TYPE_APPLICATION_GROUP) {
         return (
@@ -384,10 +327,9 @@ export const TopologyView: React.FC<ComponentProps> = ({
   };
 
   const renderSideBar = () => {
-    if (!visualization || selectedIds.length === 0) {
+    if (!selectedEntity) {
       return null;
     }
-    const selectedEntity = visualization.getElementById(selectedIds[0]);
     const details = selectedItemDetails();
     if (!selectedEntity || !details) {
       return null;
