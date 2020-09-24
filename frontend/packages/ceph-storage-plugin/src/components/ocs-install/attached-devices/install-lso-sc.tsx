@@ -51,7 +51,7 @@ import {
 import {
   filterSCWithNoProv,
   getAssociatedNodes,
-  shouldDeployAttachedAsMinimal,
+  shouldDeployAsMinimal,
 } from '../../../utils/install';
 import { getSCAvailablePVs } from '../../../selectors';
 import '../ocs-install.scss';
@@ -100,7 +100,7 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
   const isMinimalSupported = useFlag(OCS_SUPPORT_FLAGS.MINIMAL_DEPLOYMENT);
   const isEncryptionSupported = useFlag(OCS_SUPPORT_FLAGS.ENCRPYTION);
 
-  const isMinimal = shouldDeployAttachedAsMinimal(nodes);
+  const isMinimal = nodes.length > minSelectedNode ? shouldDeployAsMinimal(nodes) : false;
 
   React.useEffect(() => {
     // this is needed to ensure that the useEffect should be called only when setHasNoProvSC is defined
@@ -187,7 +187,9 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
             <SelectNodesSection
               table={AttachedDevicesNodeTable}
               customData={{ filteredNodes, nodes, setNodes }}
-            />
+            >
+              <span>Selected nodes are based on the selected storage class.</span>
+            </SelectNodesSection>
           </>
         )}
         {storageClass && filteredNodes?.length < minSelectedNode && (
