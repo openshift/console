@@ -30,6 +30,7 @@ const DropdownItem: React.FC<DropdownItemProps> = ({ model, name }) => (
 );
 
 interface State {
+  resources: {};
   items: {};
   title: React.ReactNode;
 }
@@ -70,10 +71,11 @@ interface ResourceDropdownProps {
   selectedKey: string;
   autoSelect?: boolean;
   resourceFilter?: (resource: K8sResourceKind) => boolean;
-  onChange?: (key: string, name?: string | object, isListEmpty?: boolean) => void;
+  onChange?: (key: string, name?: string | object, selectedResource?: K8sResourceKind) => void;
   onLoad?: (items: ResourceDropdownItems) => void;
   showBadge?: boolean;
   autocompleteFilter?: (strText: string, item: object) => boolean;
+  customResourceKey?: (key: string, resource: K8sResourceKind) => string;
   appendItems?: ResourceDropdownItems;
 }
 
@@ -81,6 +83,7 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
   constructor(props) {
     super(props);
     this.state = {
+      resources: this.props.loaded ? this.getResourceList(props) : {},
       items: this.props.loaded ? this.getDropdownList(props, false) : {},
       title: this.props.loaded ? (
         <span className="btn-dropdown__item--placeholder">{this.props.placeholder}</span>
@@ -101,7 +104,6 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
       title,
       actionItems,
     } = nextProps;
-
     if (!loaded) {
       this.setState({ title: <LoadingInline /> });
       return;
@@ -131,6 +133,7 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
     if (nextProps.loaded && onLoad) {
       onLoad(resourceList);
     }
+    this.setState({ resources: this.getResourceList(nextProps) });
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -140,44 +143,69 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
     return true;
   }
 
-  private getDropdownList = (
-    {
+  private craftResourceKey = (
+    resource: K8sResourceKind,
+    props: ResourceDropdownProps,
+  ): { customKey: string; key: string } => {
+    const { customResourceKey, resourceFilter, dataSelector } = props;
+    let key;
+    if (resourceFilter && resourceFilter(resource)) {
+      key = _.get(resource, dataSelector);
+    } else if (!resourceFilter) {
+      key = _.get(resource, dataSelector);
+    }
+    return {
+      customKey: customResourceKey ? customResourceKey(key, resource) : key,
+      key,
+    };
+  };
+
+  private getResourceList = (nextProps: ResourceDropdownProps) => {
+    const { resources } = nextProps;
+    const resourceList = {};
+    _.each(resources, ({ data }) => {
+      _.each(data, (resource) => {
+        const { customKey, key } = this.craftResourceKey(resource, nextProps);
+        const indexKey = customKey || key;
+        if (indexKey) {
+          resourceList[indexKey] = resource;
+        }
+      });
+    });
+    return resourceList;
+  };
+
+  private getDropdownList = (props: ResourceDropdownProps, updateSelection: boolean) => {
+    const {
       loaded,
       actionItems,
       autoSelect,
       selectedKey,
       resources,
-      resourceFilter,
-      dataSelector,
       transformLabel,
       allSelectorItem,
       noneSelectorItem,
       showBadge = false,
       appendItems,
-    }: ResourceDropdownProps,
-    updateSelection: boolean,
-  ) => {
+    } = props;
+
     const unsortedList = { ...appendItems };
     _.each(resources, ({ data, kind }) => {
       _.reduce(
         data,
         (acc, resource) => {
-          let dataValue;
-          if (resourceFilter && resourceFilter(resource)) {
-            dataValue = _.get(resource, dataSelector);
-          } else if (!resourceFilter) {
-            dataValue = _.get(resource, dataSelector);
-          }
+          const { customKey, key: name } = this.craftResourceKey(resource, props);
+          const dataValue = customKey || name;
           if (dataValue) {
             if (showBadge) {
               const model = modelFor(referenceFor(resource)) || (kind && modelFor(kind));
               acc[dataValue] = model ? (
-                <DropdownItem key={resource.metadata.uid} model={model} name={dataValue} />
+                <DropdownItem key={resource.metadata.uid} model={model} name={name} />
               ) : (
-                dataValue
+                name
               );
             } else {
-              acc[dataValue] = transformLabel ? transformLabel(resource) : dataValue;
+              acc[dataValue] = transformLabel ? transformLabel(resource) : name;
             }
           }
           return acc;
@@ -185,7 +213,6 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
         unsortedList,
       );
     });
-
     const sortedList = {};
 
     if (allSelectorItem && !_.isEmpty(unsortedList)) {
@@ -229,7 +256,7 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
       this.setState({ title });
     }
     if (key !== selectedKey) {
-      onChange && onChange(key, name, _.isEmpty(items));
+      onChange && onChange(key, name, this.state.resources[key]);
     }
   };
 
