@@ -50,6 +50,9 @@ const (
 	// Well-known location of Alert Manager service for OpenShift. This is only accessible in-cluster.
 	openshiftAlertManagerHost = "alertmanager-main.openshift-monitoring.svc:9094"
 
+	// Well-known location of the tenant aware Alert Manager service for OpenShift. This is only accessible in-cluster.
+	openshiftAlertManagerTenancyHost = "alertmanager-main.openshift-monitoring.svc:9092"
+
 	// Well-known location of metering service for OpenShift. This is only accessible in-cluster.
 	openshiftMeteringHost = "reporting-operator.openshift-metering.svc:8080"
 
@@ -351,6 +354,11 @@ func main() {
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftAlertManagerHost, Path: "/api"},
 			}
+			srv.AlertManagerTenancyProxyConfig = &proxy.Config{
+				TLSClientConfig: serviceProxyTLSConfig,
+				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				Endpoint:        &url.URL{Scheme: "https", Host: openshiftAlertManagerTenancyHost, Path: "/api"},
+			}
 			srv.MeteringProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
@@ -400,6 +408,11 @@ func main() {
 			offClusterAlertManagerURL := bridge.ValidateFlagIsURL("k8s-mode-off-cluster-alertmanager", *fK8sModeOffClusterAlertmanager)
 			offClusterAlertManagerURL.Path = "/api"
 			srv.AlertManagerProxyConfig = &proxy.Config{
+				TLSClientConfig: serviceProxyTLSConfig,
+				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				Endpoint:        offClusterAlertManagerURL,
+			}
+			srv.AlertManagerTenancyProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 				Endpoint:        offClusterAlertManagerURL,

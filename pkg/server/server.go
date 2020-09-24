@@ -37,20 +37,21 @@ const (
 	indexPageTemplateName     = "index.html"
 	tokenizerPageTemplateName = "tokener.html"
 
-	authLoginEndpoint              = "/auth/login"
-	AuthLoginCallbackEndpoint      = "/auth/callback"
-	AuthLoginSuccessEndpoint       = "/"
-	AuthLoginErrorEndpoint         = "/error"
-	authLogoutEndpoint             = "/auth/logout"
-	k8sProxyEndpoint               = "/api/kubernetes/"
-	graphQLEndpoint                = "/api/graphql"
-	prometheusProxyEndpoint        = "/api/prometheus"
-	prometheusTenancyProxyEndpoint = "/api/prometheus-tenancy"
-	alertManagerProxyEndpoint      = "/api/alertmanager"
-	meteringProxyEndpoint          = "/api/metering"
-	customLogoEndpoint             = "/custom-logo"
-	helmChartRepoProxyEndpoint     = "/api/helm/charts/"
-	gitopsEndpoint                 = "/api/gitops/"
+	authLoginEndpoint                = "/auth/login"
+	AuthLoginCallbackEndpoint        = "/auth/callback"
+	AuthLoginSuccessEndpoint         = "/"
+	AuthLoginErrorEndpoint           = "/error"
+	authLogoutEndpoint               = "/auth/logout"
+	k8sProxyEndpoint                 = "/api/kubernetes/"
+	graphQLEndpoint                  = "/api/graphql"
+	prometheusProxyEndpoint          = "/api/prometheus"
+	prometheusTenancyProxyEndpoint   = "/api/prometheus-tenancy"
+	alertManagerProxyEndpoint        = "/api/alertmanager"
+	alertManagerTenancyProxyEndpoint = "/api/alertmanager-tenancy"
+	meteringProxyEndpoint            = "/api/metering"
+	customLogoEndpoint               = "/custom-logo"
+	helmChartRepoProxyEndpoint       = "/api/helm/charts/"
+	gitopsEndpoint                   = "/api/gitops/"
 
 	sha256Prefix = "sha256~"
 )
@@ -116,6 +117,7 @@ type Server struct {
 	ThanosTenancyProxyConfig         *proxy.Config
 	ThanosTenancyProxyForRulesConfig *proxy.Config
 	AlertManagerProxyConfig          *proxy.Config
+	AlertManagerTenancyProxyConfig   *proxy.Config
 	MeteringProxyConfig              *proxy.Config
 	TerminalProxyTLSConfig           *tls.Config
 	GitOpsProxyConfig                *proxy.Config
@@ -350,13 +352,27 @@ func (s *Server) HTTPHandler() http.Handler {
 	}
 
 	if s.alertManagerProxyEnabled() {
-		alertManagerProxyAPIPath := alertManagerProxyEndpoint + "/api/"
-		alertManagerProxy := proxy.NewProxy(s.AlertManagerProxyConfig)
+		var (
+			alertManagerProxyAPIPath        = alertManagerProxyEndpoint + "/api/"
+			alertManagerTenancyProxyAPIPath = alertManagerTenancyProxyEndpoint + "/api/"
+
+			alertManagerProxy        = proxy.NewProxy(s.AlertManagerProxyConfig)
+			alertManagerTenancyProxy = proxy.NewProxy(s.AlertManagerProxyConfig)
+		)
+
 		handle(alertManagerProxyAPIPath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, alertManagerProxyAPIPath),
 			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				alertManagerProxy.ServeHTTP(w, r)
+			})),
+		)
+
+		handle(alertManagerTenancyProxyAPIPath, http.StripPrefix(
+			proxy.SingleJoiningSlash(s.BaseURL.Path, alertManagerTenancyProxyAPIPath),
+			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+				alertManagerTenancyProxy.ServeHTTP(w, r)
 			})),
 		)
 	}
