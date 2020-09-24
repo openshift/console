@@ -643,22 +643,6 @@ spec:
 `,
   )
   .setIn(
-    [referenceForModel(k8sModels.LimitRangeModel), 'sample'],
-    `
-apiVersion: v1
-kind: LimitRange-sample
-metadata:
-  name: mem-limit-range-sample
-spec:
-  limits:
-  - default:
-      memory: 512Mi
-    defaultRequest:
-      memory: 256Mi
-    type: Container
-`,
-  )
-  .setIn(
     [referenceForModel(k8sModels.StatefulSetModel), 'default'],
     `
 apiVersion: apps/v1
