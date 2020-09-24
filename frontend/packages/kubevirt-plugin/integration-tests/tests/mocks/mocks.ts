@@ -63,7 +63,7 @@ deepFreeze(multusNAD);
 
 export const dataVolumeManifest = ({ name, namespace, sourceURL, accessMode, volumeMode }) => {
   return {
-    apiVersion: 'cdi.kubevirt.io/v1alpha1',
+    apiVersion: 'cdi.kubevirt.io/v1beta1',
     kind: 'DataVolume',
     metadata: {
       name,
@@ -271,7 +271,7 @@ function getMetadata(
     },
   };
   const dataVolumeTemplate = {
-    apiVersion: 'cdi.kubevirt.io/v1alpha1',
+    apiVersion: 'cdi.kubevirt.io/v1beta1',
     metadata: {
       name: `${metadata.name}-rootdisk`,
     },
