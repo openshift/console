@@ -131,6 +131,7 @@ describe('PipelineAction testing getPipelineRunFromForm', () => {
       apiVersion: 'abhiapi/v1',
       kind: 'PipelineRun',
       metadata: {
+        annotations: {},
         namespace: 'corazon',
         generateName: 'sansa-stark-',
         labels: { ...labels, 'tekton.dev/pipeline': 'sansa-stark' },
