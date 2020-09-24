@@ -77,7 +77,7 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, builderImages }) =>
       } else {
         setFieldValue('image.recommended', '');
         setFieldValue('image.couldNotRecommend', false);
-        setValidated(ValidatedOptions.error);
+        setValidated(ValidatedOptions.warning);
       }
     },
     [
@@ -151,8 +151,8 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, builderImages }) =>
     if (validated === ValidatedOptions.success) {
       return 'Validated';
     }
-    if (validated === ValidatedOptions.error) {
-      return 'Git repository is not reachable.';
+    if (validated === ValidatedOptions.warning) {
+      return 'URL is valid but cannot be reached. If this is a private repository, enter a source secret in Advanced Git Options';
     }
     return '';
   };
