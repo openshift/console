@@ -227,13 +227,15 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
     const operatingSystem = operatingSystems.find((o) => o.id === newOs);
     setOs(operatingSystem);
     setPvcName(operatingSystem?.dataVolumeName);
-    setNamespace(operatingSystem?.dataVolumeNamespace);
+    if (operatingSystem?.dataVolumeNamespace) {
+      setNamespace(operatingSystem.dataVolumeNamespace);
+    }
   };
 
   const onlyPvcSCs = React.useCallback((sc: StorageClass) => !isObjectSC(sc), []);
 
   React.useEffect(() => {
-    if (!isLoading) {
+    if (!isLoading && osParam) {
       handleOs(osParam);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
