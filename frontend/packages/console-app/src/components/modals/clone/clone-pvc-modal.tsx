@@ -3,7 +3,12 @@ import './_clone-pvc-modal.scss';
 import * as React from 'react';
 
 import { Form, FormGroup, TextInput } from '@patternfly/react-core';
-import { k8sCreate, referenceFor, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
+import {
+  k8sCreate,
+  referenceFor,
+  PersistentVolumeClaimKind,
+  StorageClassResourceKind,
+} from '@console/internal/module/k8s';
 import {
   LoadingInline,
   ResourceIcon,
@@ -13,6 +18,7 @@ import {
   RequestSizeInput,
   validate,
   resourceObjPath,
+  convertToBaseValue,
 } from '@console/internal/components/utils';
 import {
   ModalBody,
@@ -33,6 +39,8 @@ import { getInstantVectorStats } from '@console/internal/components/graphs/utils
 import { usePrometheusPoll } from '@console/internal/components/graphs/prometheus-poll-hook';
 import { getRequestedPVCSize } from '@console/shared/src/selectors';
 import { dropdownUnits, accessModeRadios } from '@console/internal/components/storage/shared';
+import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
+import { isCephProvisioner } from '@console/shared';
 
 const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
   const { close, cancel, resource, handlePromise, errorMessage, inProgress } = props;
@@ -42,9 +50,16 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
 
   const [clonePVCName, setClonePVCName] = React.useState(`${pvcName}-clone`);
   const [requestedSize, setRequestedSize] = React.useState(defaultSize[0] || '');
-  const [requestedUnit, setRequestedUnit] = React.useState(defaultSize[1] || 'Gi');
   const accessMode = accessModeRadios.find(
     (mode) => mode.value === resource?.spec?.accessModes?.[0],
+  );
+
+  const [requestedUnit, setRequestedUnit] = React.useState(defaultSize[1] || 'Ti');
+  const [validSize, setValidSize] = React.useState(true);
+
+  const [scResource, scResourceLoaded, scResourceLoadError] = useK8sGet<StorageClassResourceKind>(
+    StorageClassModel,
+    resource?.spec?.storageClassName,
   );
 
   const pvcUsedCapacityQuery: string = `kubelet_volume_stats_used_bytes{persistentvolumeclaim='${pvcName}'}`;
@@ -62,6 +77,10 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
   const requestedSizeInputChange = ({ value, unit }) => {
     setRequestedSize(value);
     setRequestedUnit(unit);
+    const cloneSizeInBytes = convertToBaseValue(value + unit);
+    const pvcSizeInBytes = convertToBaseValue(getRequestedPVCSize(resource));
+    const isValid = cloneSizeInBytes >= pvcSizeInBytes;
+    setValidSize(isValid);
   };
 
   const submit = (event: React.FormEvent<EventTarget>) => {
@@ -111,16 +130,28 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
               aria-label="Clone Pvc"
             />
           </FormGroup>
-          <FormGroup label="Size" isRequired fieldId="clone-pvc-modal__size">
-            <RequestSizeInput
-              name="requestSize"
-              testID="input-request-size"
-              onChange={requestedSizeInputChange}
-              defaultRequestSizeUnit={requestedUnit}
-              defaultRequestSizeValue={requestedSize}
-              dropdownUnits={dropdownUnits}
-              required
-            />
+          <FormGroup
+            label="Size"
+            isRequired
+            fieldId="clone-pvc-modal__size"
+            className="co-clone-pvc-modal__ocs-size"
+            helperTextInvalid="Size should be equal or greater than the requested size of PVC"
+            validated={validSize ? 'default' : 'error'}
+          >
+            {scResourceLoaded ? (
+              <RequestSizeInput
+                name="requestSize"
+                testID="input-request-size"
+                onChange={requestedSizeInputChange}
+                defaultRequestSizeUnit={requestedUnit}
+                defaultRequestSizeValue={requestedSize}
+                dropdownUnits={dropdownUnits}
+                isInputDisabled={scResourceLoadError || isCephProvisioner(scResource?.provisioner)}
+                required
+              />
+            ) : (
+              <div className="skeleton-text" />
+            )}
           </FormGroup>
           <div className="co-clone-pvc-modal__details">
             <p className="text-muted">PVC Details</p>
@@ -170,6 +201,7 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
         </ModalBody>
         <ModalSubmitFooter
           inProgress={inProgress}
+          submitDisabled={!validSize}
           errorMessage={errorMessage}
           submitText="Clone"
           cancel={cancel}
