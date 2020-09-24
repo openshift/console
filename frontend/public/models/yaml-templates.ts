@@ -4,6 +4,7 @@ import { GroupVersionKind, referenceForModel } from '../module/k8s';
 import * as k8sModels from '../models';
 import * as plugins from '../plugins';
 
+import { hyperCloudTemplates } from '../models/hypercloud/yaml-templates';
 /**
  * Sample YAML manifests for some of the statically-defined Kubernetes models.
  */
@@ -642,6 +643,22 @@ spec:
 `,
   )
   .setIn(
+    [referenceForModel(k8sModels.LimitRangeModel), 'sample'],
+    `
+apiVersion: v1
+kind: LimitRange-sample
+metadata:
+  name: mem-limit-range-sample
+spec:
+  limits:
+  - default:
+      memory: 512Mi
+    defaultRequest:
+      memory: 256Mi
+    type: Container
+`,
+  )
+  .setIn(
     [referenceForModel(k8sModels.StatefulSetModel), 'default'],
     `
 apiVersion: apps/v1
@@ -1207,4 +1224,4 @@ const pluginTemplates = ImmutableMap<
   });
 });
 
-export const yamlTemplates = baseTemplates.merge(pluginTemplates);
+export const yamlTemplates = baseTemplates.merge(pluginTemplates).merge(hyperCloudTemplates);
