@@ -9,6 +9,7 @@ import { RootState } from '@console/internal/redux';
 import { parsePrometheusDuration } from '@console/internal/components/utils/datetime';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { Rule } from '@console/internal/components/monitoring/types';
+import { ALERT_MANAGER_TENANCY_BASE_PATH } from '@console/internal/components/graphs';
 
 type SilenceDurationDropDownProps = {
   rule: Rule;
@@ -21,8 +22,6 @@ const durations = {
   '2h': '2 hours',
   '1d': '1 day',
 };
-
-const { alertManagerBaseURL } = window.SERVER_FLAGS;
 
 const SilenceDurationDropDown: React.FC<SilenceDurationDropDownProps> = ({ rule }) => {
   const createdBy = useSelector((state: RootState) => state.UI.get('user')?.metadata?.name);
@@ -50,7 +49,7 @@ const SilenceDurationDropDown: React.FC<SilenceDurationDropDownProps> = ({ rule 
         comment: '',
       };
 
-      coFetchJSON.post(`${alertManagerBaseURL}/api/v2/silences`, payload);
+      coFetchJSON.post(`${ALERT_MANAGER_TENANCY_BASE_PATH}/api/v2/silences`, payload);
     }
   };
 
