@@ -49,29 +49,37 @@ export const commonTemplatesUpdater = ({ id, prevState, dispatch, getState }: Up
   const cloudInitHelper = new CloudInitDataHelper(
     toShallowJS(iGetCommonTemplateCloudInit(iTemplate)),
   );
-  // generate new password if the common template has a password for cloud ionit
+
   if (!cloudInitHelper.isEmpty()) {
-    cloudInitHelper.set(CloudInitDataFormKeys.PASSWORD, generateCloudInitPassword());
+    if (cloudInitHelper.hasKey(CloudInitDataFormKeys.PASSWORD)) {
+      cloudInitHelper.set(CloudInitDataFormKeys.PASSWORD, generateCloudInitPassword());
+    }
+
+    let isCloudInitForm = false;
+    if (cloudInitHelper.includesOnlyFormValues()) {
+      isCloudInitForm = true;
+      cloudInitHelper.makeFormCompliant();
+    }
 
     dispatch(
       vmWizardInternalActions[InternalActionType.SetCloudInitFieldValue](
         id,
         CloudInitField.IS_FORM,
-        false,
+        isCloudInitForm,
       ),
     );
     dispatch(
       vmWizardInternalActions[InternalActionType.UpdateStorage](id, {
         id: iGet(iCloudInitStorage, 'id'),
-        type: iGet(iCloudInitStorage, 'type') || VMWizardStorageType.TEMPLATE_CLOUD_INIT,
+        type: VMWizardStorageType.TEMPLATE_CLOUD_INIT,
         disk: new DiskWrapper()
           .init({
-            name: iGetIn(iCloudInitStorage, ['volume', 'name']) || CLOUDINIT_DISK,
+            name: CLOUDINIT_DISK,
           })
           .setType(DiskType.DISK, { bus: DiskBus.VIRTIO })
           .asResource(),
         volume: new VolumeWrapper()
-          .init({ name: iGetIn(iCloudInitStorage, ['volume', 'name']) || CLOUDINIT_DISK })
+          .init({ name: CLOUDINIT_DISK })
           .setType(VolumeType.CLOUD_INIT_NO_CLOUD, cloudInitHelper.asCloudInitNoCloudSource())
           .asResource(),
       }),

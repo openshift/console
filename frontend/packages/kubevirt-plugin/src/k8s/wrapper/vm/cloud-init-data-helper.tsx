@@ -25,10 +25,15 @@ export const formAllowedKeys = new Set([
   CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS,
 ]);
 
-export const generateCloudInitPassword = () =>
-  getRandomChars(12)
-    .match(/.{1,4}/g)
-    .join('-');
+export const generateCloudInitPassword = () => {
+  let result = '';
+
+  for (let i = 0; i < 3; i++) {
+    result += i === 0 ? getRandomChars(4) : `-${getRandomChars(4)}`;
+  }
+
+  return result;
+};
 
 export class CloudInitDataHelper {
   static getUserData = (cloudInitNoCloud?: V1CloudInitNoCloudSource) => {
@@ -102,6 +107,8 @@ export class CloudInitDataHelper {
   get = (key: string) => this.cloudConfigData && this.cloudConfigData[key];
 
   has = (key: string) => !!this.get(key);
+
+  hasKey = (key: string) => this.cloudConfigData && _.has(this.cloudConfigData, key);
 
   set = (key: string, value: string) => {
     if (key && !this.otherFormatData) {
