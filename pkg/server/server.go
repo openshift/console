@@ -40,6 +40,7 @@ const (
 	AuthLoginErrorEndpoint         = "/error"
 	authLogoutEndpoint             = "/auth/logout"
 	k8sProxyEndpoint               = "/api/kubernetes/"
+	devfileEndpoint                = "/api/devfile/"
 	graphQLEndpoint                = "/api/graphql"
 	prometheusProxyEndpoint        = "/api/prometheus"
 	prometheusTenancyProxyEndpoint = "/api/prometheus-tenancy"
@@ -233,6 +234,8 @@ func (s *Server) HTTPHandler() http.Handler {
 			k8sProxy.ServeHTTP(w, r)
 		})),
 	)
+
+	handleFunc(devfileEndpoint, s.devfileHandler)
 
 	terminalProxy := terminal.NewProxy(
 		s.TerminalProxyTLSConfig,
