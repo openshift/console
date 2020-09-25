@@ -6,6 +6,7 @@ import { K8sKind, K8sResourceKind } from './types';
 import { selectorToString } from './selector';
 import { WSFactory } from '../ws-factory';
 
+
 /** @type {(model: K8sKind) => string} */
 const getK8sAPIPath = ({ apiGroup = 'core', apiVersion }) => {
   const isLegacy = apiGroup === 'core' && apiVersion === 'v1';
@@ -87,7 +88,7 @@ export const devfileCreate = (kind, data, opts = {}) => {
   let isMock = true; 
   data.defaultAnnotations['isFromDevfile'] = "true"
   let buildStrategyData = {
-    dockerStrategy: { env:data.build.buildEnv, dockerfileLocation: "mock-dockerfile-location" }
+    dockerStrategy: { env:data.build.buildEnv, dockerfilePath: "Dockerfile" }
   };
 
   let devfileResources; 
@@ -141,9 +142,9 @@ export const devfileCreate = (kind, data, opts = {}) => {
                 secretReference: { name: `${data.name}-generic-webhook-secret` },
               },
             },
-            // ...(data.build.triggers.webhook && data.git.type !== GitTypes.unsure ? [data.webhookTriggerData] : []),
-            // ...(data.build.triggers.image ? [{ type: 'ImageChange', imageChange: {} }] : []),
-            // ...(data.build.triggers.config ? [{ type: 'ConfigChange' }] : []),
+            ...(data.build.triggers.webhook && data.git.type !== 'other' ? [data.webhookTriggerData] : []),
+            ...(data.build.triggers.image ? [{ type: 'ImageChange', imageChange: {} }] : []),
+            ...(data.build.triggers.config ? [{ type: 'ConfigChange' }] : []),
           ],
         }, 
       },
