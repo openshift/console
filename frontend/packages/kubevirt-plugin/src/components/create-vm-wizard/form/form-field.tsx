@@ -40,10 +40,13 @@ const hasIsDisabled = new Set([
 ]);
 const hasDisabled = new Set([FormFieldType.TEXT_AREA]);
 const hasIsChecked = new Set([FormFieldType.CHECKBOX, FormFieldType.INLINE_CHECKBOX]);
-const hasValidated = new Set([FormFieldType.SELECT, FormFieldType.FILE_UPLOAD]);
-const hasIsValid = new Set([
+const hasValidated = new Set([
   FormFieldType.TEXT,
   FormFieldType.TEXT_AREA,
+  FormFieldType.SELECT,
+  FormFieldType.FILE_UPLOAD,
+]);
+const hasIsValid = new Set([
   FormFieldType.CHECKBOX,
   FormFieldType.INLINE_CHECKBOX,
   FormFieldType.CUSTOM,
