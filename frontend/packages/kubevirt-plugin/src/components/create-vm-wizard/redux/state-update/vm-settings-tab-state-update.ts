@@ -6,7 +6,7 @@ import {
   iGetRelevantTemplateSelectors,
   iGetVmSettingValue,
 } from '../../selectors/immutable/vm-settings';
-import { CloudInitField, VMSettingsField, VMWizardProps, VMWizardStorageType } from '../../types';
+import { VMSettingsField, VMWizardProps } from '../../types';
 import { InternalActionType, UpdateOptions } from '../types';
 import { asDisabled, asHidden, asRequired } from '../../utils/utils';
 import { vmWizardInternalActions } from '../internal-actions';
@@ -16,28 +16,17 @@ import {
   iGetName,
   iGetNamespace,
 } from '../../selectors/immutable/selectors';
-import {
-  iGetCommonTemplateCloudInit,
-  iGetRelevantTemplate,
-} from '../../../../selectors/immutable/template/combined';
+import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
 import {
   CUSTOM_FLAVOR,
   TEMPLATE_DATAVOLUME_NAME_PARAMETER,
   TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER,
-  CLOUDINIT_DISK,
-  DiskType,
-  DiskBus,
-  VolumeType,
 } from '../../../../constants/vm';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { prefillVmTemplateUpdater } from './prefill-vm-template-state-update';
 import { iGetPrameterValue, iGetAnnotation } from '../../../../selectors/immutable/common';
 import { CDI_UPLOAD_POD_ANNOTATION, CDI_UPLOAD_RUNNING } from '../../../cdi-upload-provider/consts';
-import { CloudInitDataHelper } from '../../../../k8s/wrapper/vm/cloud-init-data-helper';
-import { toShallowJS } from '../../../../utils/immutable';
-import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
-import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
-import { getStorages } from '../../selectors/selectors';
+import { commonTemplatesUpdater } from './vm-common-templates-updater';
 
 const selectUserTemplateOnLoadedUpdater = (options: UpdateOptions) => {
   const { id, dispatch, getState } = options;
@@ -281,62 +270,6 @@ const flavorUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => 
       },
     }),
   );
-};
-
-const commonTemplatesUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
-  const state = getState();
-  if (
-    !hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.OPERATING_SYSTEM) &&
-    !hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.FLAVOR) &&
-    !hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.WORKLOAD_PROFILE)
-  ) {
-    return;
-  }
-  const iCloudInitStorage = getStorages(state, id).find((stor) => stor?.volume?.cloudInitNoCloud);
-
-  const relevantOptions = iGetRelevantTemplateSelectors(state, id);
-  const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
-  const iTemplate = iCommonTemplates && iGetRelevantTemplate(iCommonTemplates, relevantOptions);
-  const [data, isBase64] = CloudInitDataHelper.getUserData(
-    toShallowJS(iGetCommonTemplateCloudInit(iTemplate))?.cloudInitNoCloud,
-  );
-  const typeData = CloudInitDataHelper.toCloudInitNoCloudSource(data, isBase64);
-  const hasCloudInitData = !!typeData?.userData;
-
-  if (hasCloudInitData) {
-    dispatch(
-      vmWizardInternalActions[InternalActionType.SetCloudInitFieldValue](
-        id,
-        CloudInitField.IS_FORM,
-        false,
-      ),
-    );
-    dispatch(
-      vmWizardInternalActions[InternalActionType.UpdateStorage](id, {
-        id: iCloudInitStorage?.id,
-        type: iCloudInitStorage?.type || VMWizardStorageType.UI_INPUT,
-        disk: new DiskWrapper()
-          .init({
-            name: iCloudInitStorage?.volume?.name || CLOUDINIT_DISK,
-          })
-          .setType(DiskType.DISK, { bus: DiskBus.VIRTIO })
-          .asResource(),
-        volume: new VolumeWrapper()
-          .init({ name: iCloudInitStorage?.volume?.name || CLOUDINIT_DISK })
-          .setType(VolumeType.CLOUD_INIT_NO_CLOUD, typeData)
-          .asResource(),
-      }),
-    );
-  } else if (iCloudInitStorage && !hasCloudInitData) {
-    dispatch(
-      vmWizardInternalActions[InternalActionType.SetCloudInitFieldValue](
-        id,
-        CloudInitField.IS_FORM,
-        true,
-      ),
-    );
-    dispatch(vmWizardInternalActions[InternalActionType.RemoveStorage](id, iCloudInitStorage?.id));
-  }
 };
 
 export const updateVmSettingsState = (options: UpdateOptions) =>

@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { getRandomChars } from '@console/shared';
 import { safeLoad, safeDump } from 'js-yaml';
 import { V1CloudInitNoCloudSource } from '../../../types/vm/disk/V1CloudInitNoCloudSource';
 
@@ -14,6 +15,7 @@ export enum CloudInitDataFormKeys {
   NAME = 'name',
   HOSTNAME = 'hostname',
   SSH_AUTHORIZED_KEYS = 'ssh_authorized_keys',
+  PASSWORD = 'password',
 }
 export const CLOUD_CONFIG_HEADER = '#cloud-config';
 
@@ -22,6 +24,16 @@ export const formAllowedKeys = new Set([
   CloudInitDataFormKeys.HOSTNAME,
   CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS,
 ]);
+
+export const generateCloudInitPassword = () => {
+  let result = '';
+
+  for (let i = 0; i < 3; i++) {
+    result += i === 0 ? getRandomChars(4) : `-${getRandomChars(4)}`;
+  }
+
+  return result;
+};
 
 export class CloudInitDataHelper {
   static getUserData = (cloudInitNoCloud?: V1CloudInitNoCloudSource) => {
@@ -95,6 +107,8 @@ export class CloudInitDataHelper {
   get = (key: string) => this.cloudConfigData && this.cloudConfigData[key];
 
   has = (key: string) => !!this.get(key);
+
+  hasKey = (key: string) => this.cloudConfigData && _.has(this.cloudConfigData, key);
 
   set = (key: string, value: string) => {
     if (key && !this.otherFormatData) {

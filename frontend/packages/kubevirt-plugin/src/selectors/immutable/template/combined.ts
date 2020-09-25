@@ -93,7 +93,9 @@ export const iGetRelevantTemplate = (
 export const iSelectVM = (tmp: ITemplate) =>
   iGetIn(tmp, ['objects'])?.find((obj) => iGet(obj, 'kind') === VirtualMachineModel.kind);
 
-export const iGetCommonTemplateCloudInit = (tmp: ITemplate) =>
-  iGetIn(iSelectVM(tmp), ['spec', 'template', 'spec', 'volumes'])?.find((storage) =>
-    iGetIn(storage, ['cloudInitNoCloud']),
+export const iGetCommonTemplateCloudInit = (tmp: ITemplate) => {
+  const iCloudInitStorage = iGetIn(iSelectVM(tmp), ['spec', 'template', 'spec', 'volumes'])?.find(
+    (storage) => !!iGet(storage, 'cloudInitNoCloud'),
   );
+  return iGet(iCloudInitStorage, 'cloudInitNoCloud');
+};
