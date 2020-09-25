@@ -194,7 +194,7 @@ const OCSDisksList: React.FC<TableProps> = React.memo((props) => {
     NotificationAlerts
   >(({ UI }) => UI.getIn(['monitoring', 'notificationAlerts']));
 
-  const error = !alertsLoadError || cephDiskLoadError || progressLoadError;
+  const error = alertsLoadError || cephDiskLoadError || progressLoadError;
   const isLoading = !alertsLoaded || cephDiskLoading || progressLoading;
 
   if (!error && !isLoading) {
@@ -205,7 +205,7 @@ const OCSDisksList: React.FC<TableProps> = React.memo((props) => {
     const newMetricsMap: OCSDiskList = cephDisks.reduce((ocsDiskList: OCSDiskList, { metric }) => {
       ocsDiskList[metric.device] = {
         osd: metric.ceph_daemon,
-        status: Status.NotResponding,
+        status: Status.Online,
       };
       return ocsDiskList;
     }, {});

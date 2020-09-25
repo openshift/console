@@ -57,7 +57,7 @@ xdescribe('Test disk replacement flow in non failure scenarios', () => {
 
 describe('Test disk replacement flow in failure scenarios', () => {
   beforeAll(async () => {
-    // execCommand(`kubectl scale deployment rook-ceph-osd-0 --replicas=0 -n ${NS}`);
+    execCommand(`kubectl scale deployment rook-ceph-osd-0 --replicas=0 -n ${NS}`);
     const lvdrJson = execCommand(
       `kubectl get localvolumediscoveryresults -n ${LOCAL_STORAGE_NAMESPACE} -o json`,
     );
@@ -72,9 +72,9 @@ describe('Test disk replacement flow in failure scenarios', () => {
     await page.isLoaded();
     browser.sleep(5000); // Ensures page is completely loaded for the following tests cases to get verified
   });
-  // afterAll(() => {
-  //   execCommand(`kubectl scale deployment rook-ceph-osd-0 --replicas=1 -n ${NS}`);
-  // });
+  afterAll(() => {
+    execCommand(`kubectl scale deployment rook-ceph-osd-0 --replicas=1 -n ${NS}`);
+  });
 
   it(`'OCS Disk' column is reflecting '${Status.NotResponding}'`, async () => {
     await browser.wait(until.presenceOf(cells.notResponding));
