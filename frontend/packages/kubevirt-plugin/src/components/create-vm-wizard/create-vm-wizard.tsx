@@ -83,7 +83,29 @@ type CreateVMWizardComponentProps = {
 } & { [k in ChangedCommonDataProp]: any };
 
 const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) => {
-  const [closed, setClosed] = React.useState(false);
+  const closed = React.useRef(false);
+
+  const onClose = React.useCallback(
+    (disposeOnly?: boolean) => {
+      if (closed.current) {
+        return;
+      }
+      closed.current = true;
+      props.onClose(disposeOnly);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+  React.useEffect(() => {
+    props.onInitialize();
+
+    return () => {
+      onClose(true);
+    };
+    // constuctor/desctructor logic - should run only once
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const commonTemplates = React.useMemo(
     () => immutableListToShallowJS(iGetLoadedData(props.commonTemplates)),
     [props.commonTemplates],
@@ -91,17 +113,6 @@ const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) 
   const [dataVolumePVCs, dataVolumePVCsLoaded, dataVolumePVCsLoadError] = usePVCBaseImages(
     commonTemplates,
   );
-
-  React.useEffect(() => {
-    if (!(props[VMWizardProps.isProviderImport] && props[VMWizardProps.isCreateTemplate])) {
-      props.onInitialize();
-    } else {
-      console.error('It is not possible to make an import VM template'); // eslint-disable-line no-console
-      setClosed(true);
-    }
-    // No need to run the effect multiple times
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   // Store previuse props
   const prevProps = usePrevious<CreateVMWizardComponentProps>(props);
@@ -113,7 +124,7 @@ const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) 
 
   // componentDidUpdate
   React.useEffect(() => {
-    if (closed || !prevProps) {
+    if (closed.current || !prevProps) {
       return;
     }
 
@@ -159,11 +170,6 @@ const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) 
     }
   });
 
-  const onClose = (disposeOnly?: boolean) => {
-    setClosed(true);
-    props.onClose(disposeOnly);
-  };
-
   const getWizardTitle = () => {
     const { isCreateTemplate, isProviderImport, iUserTemplate } = props;
     if (isCreateTemplate) {
@@ -180,7 +186,7 @@ const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) 
 
   const { reduxID, tabsMetadata } = props;
 
-  if (closed || _.isEmpty(tabsMetadata)) {
+  if (closed.current || _.isEmpty(tabsMetadata)) {
     // closed or not initialized
     return null;
   }
