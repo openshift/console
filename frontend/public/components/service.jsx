@@ -23,7 +23,7 @@ const menuActions = [
   ...Kebab.getExtensionsActionsForKind(ServiceModel),
   ...Kebab.factory.common,
 ];
-
+// test change
 const ServiceIP = ({ s }) => {
   const children = _.map(s.spec.ports, (portObj, i) => {
     const clusterIP = s.spec.clusterIP === 'None' ? 'None' : `${s.spec.clusterIP}:${portObj.port}`;
