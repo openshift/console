@@ -28,6 +28,7 @@ import { getProbesData } from '../health-checks/create-health-checks-probe-utils
 import { AppResources } from '../edit-application/edit-application-types';
 import {
   GitImportFormData,
+  DeployImageFormData,
   ProjectData,
   GitTypes,
   GitReadableTypes,
@@ -68,12 +69,25 @@ export const createOrUpdateDevfileResources = (
   originalBuildConfig?: K8sResourceKind,
   originalDeployment?: K8sResourceKind,
   originalDeploymentConfig?: K8sResourceKind,
+  imageStreamData?: K8sResourceKind,
+  // originalRoute?: K8sResourceKind,
 ): Promise<K8sResourceKind[]> => {
   const {
     name,
     project: { name: namespace },
     application: { name: applicationName },
-    route: { create: canCreateRoute, disable },
+    // route: { create: canCreateRoute, disable },
+    route: { 
+      disable, 
+      create: canCreateRoute,
+      targetPort: routeTargetPort,
+      unknownTargetPort,
+      defaultUnknownPort,
+      path,
+      hostname, 
+      secure, 
+      tls,  
+    },
     build: {
       env: buildEnv,
       strategy: buildStrategy,
@@ -86,13 +100,14 @@ export const createOrUpdateDevfileResources = (
     },
     git: { url: repository, type: gitType, ref = 'master', dir: contextDir, secret: secretName },
     devfile: { devfileContent, devfilePath },
+    docker: { dockerfilePath },
     image: { ports: imagePorts, tag: selectedTag },
     labels: userLabels,
     limits: { cpu, memory },
     pipeline,
     resources,
     healthChecks,
-    route: { hostname, secure, path, tls, targetPort: routeTargetPort },
+    // route: { hostname, secure, path, tls, targetPort: routeTargetPort },
   } = formData;
 
   const requests: Promise<K8sResourceKind>[] = [];
@@ -105,6 +120,40 @@ export const createOrUpdateDevfileResources = (
   const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag });
   const defaultAnnotations = { ...getGitAnnotations(repository, ref), ...getCommonAnnotations(), isFromDevfile };
   
+
+  const isDeployImageFormData = (
+    formData: DeployImageFormData | GitImportFormData,
+  ): formData is DeployImageFormData => {
+    return 'isi' in (formData as DeployImageFormData);
+  };
+
+  const makePortName = (port: ContainerPort): string =>
+  `${port.containerPort}-${port.protocol}`.toLowerCase();
+
+  let ports = imagePorts;
+  if (isDeployImageFormData(formData)) {
+    const {
+      isi: { ports: isiPorts },
+    } = formData;
+    ports = isiPorts;
+  }
+
+  let targetPort;
+  if (_.get(formData, 'build.strategy') === 'Docker') {
+    const port = _.get(formData, 'docker.containerPort');
+    targetPort = makePortName({
+      containerPort: _.toInteger(port),
+      protocol: 'TCP',
+    });
+  } else if (_.isEmpty(ports)) {
+    targetPort = makePortName({
+      containerPort: _.toInteger(unknownTargetPort) || defaultUnknownPort,
+      protocol: 'TCP',
+    });
+  } else {
+    targetPort = routeTargetPort || makePortName(_.head(ports));
+  }
+
   const webhookTriggerData = {
     type: GitReadableTypes[gitType],
     [gitType]: {
@@ -146,6 +195,7 @@ export const createOrUpdateDevfileResources = (
       },
       git: { url: repository, type: gitType, ref, dir: contextDir, secret: secretName },
       devfile: { devfileContent, devfilePath },
+      docker: { dockerfilePath },
       image: { ports: imagePorts, tag: selectedTag },
       userLabels: userLabels,
       limits: { cpu, memory },

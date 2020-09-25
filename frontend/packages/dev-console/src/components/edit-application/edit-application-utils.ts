@@ -124,7 +124,8 @@ export const getBuildData = (buildConfig: K8sResourceKind, gitType: string) => {
       buildStrategyData = { env: [] };
   }
   if (buildConfig.metadata.annotations['isFromDevfile'] === "true") {
-    buildStrategyType = BuildStrategyType.Devfile
+    buildStrategyType = BuildStrategyType.Devfile;
+    // buildStrategyData = _.get(buildConfig, 'spec.strategy.dockerStrategy');
   }
   const triggers = _.get(buildConfig, 'spec.triggers');
   const buildData = {
