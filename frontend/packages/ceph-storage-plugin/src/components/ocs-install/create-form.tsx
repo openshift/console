@@ -5,7 +5,6 @@ import { match } from 'react-router';
 // @ts-ignore
 import { useDispatch } from 'react-redux';
 import { ActionGroup, Button, Form, FormGroup } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import {
   NodeKind,
   k8sPatch,
@@ -23,12 +22,7 @@ import {
   ButtonBar,
 } from '@console/internal/components/utils';
 import { setFlag } from '@console/internal/actions/features';
-import {
-  labelTooltip,
-  minSelectedNode,
-  defaultRequestSize,
-  recommendedReqTooltip,
-} from '../../constants/ocs-install';
+import { labelTooltip, minSelectedNode, defaultRequestSize } from '../../constants/ocs-install';
 import { OCSServiceModel } from '../../models';
 import { OSDSizeDropdown } from '../../utils/osd-size-dropdown';
 import { cephStorageLabel } from '../../selectors';
@@ -47,7 +41,7 @@ import {
   EncryptSection,
   MinimalDeploymentAlert,
 } from '../../utils/common-ocs-install-el';
-import { filterSCWithoutNoProv, shouldDeployInternalAsMinimal } from '../../utils/install';
+import { filterSCWithoutNoProv, shouldDeployAsMinimal } from '../../utils/install';
 import { OCS_INTERNAL_CR_NAME } from '../../constants';
 import './ocs-install.scss';
 import { useFlag } from '@console/shared/src/hooks/flag';
@@ -114,7 +108,7 @@ export const CreateInternalCluster = withHandlePromise<
   const dispatch = useDispatch();
   const [nodes, setNodes] = React.useState<NodeKind[]>([]);
   const [isEncrypted, setEncrypted] = React.useState(false);
-  const isMinimal = shouldDeployInternalAsMinimal(nodes);
+  const isMinimal = shouldDeployAsMinimal(nodes);
   const [showMessage, setShowMessage] = React.useState(false);
   const isMinimalSupported = useFlag(OCS_SUPPORT_FLAGS.MINIMAL_DEPLOYMENT);
   const isEncryptionSupported = useFlag(OCS_SUPPORT_FLAGS.ENCRPYTION);
@@ -191,34 +185,10 @@ export const CreateInternalCluster = withHandlePromise<
           filterPlaceholder="Search by node name..."
         >
           <>
-            <div>
-              Select at least 3 nodes in different zones you wish to use with a recommended
-              requirement of 14 CPUs and 34GiB RAM per node. The minimal requirement is 8 CPUs and
-              32 GiB RAM.{' '}
-              <FieldLevelHelp>
-                <>
-                  {recommendedReqTooltip}
-                  <div>
-                    <Button
-                      className="ceph-ocs-install__recommened-req-toottip"
-                      variant="link"
-                      component="a"
-                      href="https://access.redhat.com/documentation/en-us/red_hat_openshift_container_storage/"
-                      target="_blank"
-                    >
-                      Planning Guide <ExternalLinkAltIcon />
-                    </Button>
-                  </div>
-                </>
-              </FieldLevelHelp>
-            </div>
+            <span>Select at least 3 nodes, preferably in 3 different zones.</span>
           </>
         </SelectNodesSection>
-        <>
-          {isMinimalSupported && isMinimal && showMessage && (
-            <MinimalDeploymentAlert isInternalMode />
-          )}
-        </>
+        <>{isMinimalSupported && isMinimal && showMessage && <MinimalDeploymentAlert />}</>
         <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
           <ActionGroup className="pf-c-form">
             <Button
