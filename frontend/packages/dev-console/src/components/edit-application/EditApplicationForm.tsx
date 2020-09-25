@@ -41,7 +41,7 @@ const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationF
     }
     <Form onSubmit={handleSubmit}>
       {createFlowType !== CreateApplicationFlow.Container && (
-        <GitSection builderImages={builderImages} />
+        <GitSection buildStrategy={values.build.strategy} builderImages={builderImages} />
       )}
       {createFlowType === CreateApplicationFlow.Git && (
         <BuilderSection image={values.image} builderImages={builderImages} />
