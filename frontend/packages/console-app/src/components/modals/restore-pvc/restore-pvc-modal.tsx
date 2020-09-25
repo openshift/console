@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 
 import { Form, FormGroup, Grid, GridItem, TextInput } from '@patternfly/react-core';
 import {
@@ -34,7 +35,10 @@ import {
 } from '@console/internal/models';
 import { getName, getNamespace, Status, isCephProvisioner } from '@console/shared';
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
-import { dropdownUnits } from '@console/internal/components/storage/shared';
+import {
+  dropdownUnits,
+  cephRBDProvisionerSuffix,
+} from '@console/internal/components/storage/shared';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 
 import './restore-pvc-modal.scss';
@@ -113,6 +117,18 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
           },
         },
       };
+
+      if (pvcResource) {
+        // should set block only for RBD + RWX
+        if (
+          _.endsWith(snapshotClassResource?.driver, cephRBDProvisionerSuffix) &&
+          accessModes.includes('ReadWriteMany')
+        ) {
+          restorePVCTemplate.spec.volumeMode = 'Block';
+        } else {
+          restorePVCTemplate.spec.volumeMode = pvcResource?.spec?.volumeMode;
+        }
+      }
 
       // eslint-disable-next-line promise/catch-or-return
       handlePromise(
@@ -227,8 +243,8 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
             </div>
           </ModalBody>
           <ModalSubmitFooter
+            submitDisabled={!pvcSC || !validSize}
             inProgress={inProgress}
-            submitDisabled={!validSize}
             errorMessage={errorMessage}
             submitText="Restore"
             cancel={cancel}
