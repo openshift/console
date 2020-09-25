@@ -58,6 +58,14 @@ export const getPipelineRunData = (
   const latestRunParams = latestRun?.spec.params;
   const pipelineParams = pipeline?.spec.params;
   const params = latestRunParams || getPipelineRunParams(pipelineParams);
+  // TODO: We should craft a better method to allow us to provide configurable annotations and labels instead of
+  // blinding merging existing content from potential real Pipeline and PipelineRun resources
+  const annotations = _.merge(
+    {},
+    pipeline?.metadata?.annotations,
+    latestRun?.metadata?.annotations,
+  );
+  delete annotations['kubectl.kubernetes.io/last-applied-configuration'];
 
   const newPipelineRun = {
     apiVersion: pipeline ? pipeline.apiVersion : latestRun.apiVersion,
@@ -70,7 +78,7 @@ export const getPipelineRunData = (
         : {
             name: `${pipelineName}-${getRandomChars()}`,
           }),
-      annotations: _.merge({}, pipeline?.metadata?.annotations, latestRun?.metadata?.annotations),
+      annotations,
       namespace: pipeline ? pipeline.metadata.namespace : latestRun.metadata.namespace,
       labels: _.merge({}, pipeline?.metadata?.labels, latestRun?.metadata?.labels, {
         'tekton.dev/pipeline': pipelineName,
