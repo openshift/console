@@ -155,13 +155,13 @@ export const LogControls = ({
 LogControls.propTypes = {
   isFullscreen: PropTypes.bool.isRequired,
   dropdown: PropTypes.node,
+  logURL: PropTypes.string.required,
   status: PropTypes.string,
   resource: PropTypes.object,
   containerName: PropTypes.string,
   podLogLinks: PropTypes.arrayOf(PropTypes.object), // k8sResourceKind
   namespaceUID: PropTypes.string,
   toggleStreaming: PropTypes.func,
-  onDownload: PropTypes.func.isRequired,
   toggleFullscreen: PropTypes.func.isRequired,
 };
 
@@ -289,7 +289,7 @@ class ResourceLog_ extends React.Component {
       const linesAdded = this._buffer.ingest(text);
       this.setState({
         linesBehind: status === STREAM_PAUSED ? linesBehind + linesAdded : linesBehind,
-        lines: this._buffer.getLines(),
+        lines: [...this._buffer.getLines(), this._buffer.getTail()],
         hasTruncated: this._buffer.getHasTruncated(),
       });
     }

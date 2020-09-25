@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 export const LINE_PATTERN = /^.*(\n|$)/gm;
+const TRUNCATE_LENGTH = 1024;
 
 export class LineBuffer {
   private _maxSize: number;
@@ -19,15 +20,14 @@ export class LineBuffer {
     let lineCount = 0;
     lines.forEach((line) => {
       const next = `${this._tail}${line}`;
+      if (next.length > TRUNCATE_LENGTH) {
+        this._hasTruncated = true;
+      }
       if (/\n$/.test(line)) {
         if (this._buffer.length === this._maxSize) {
           this._buffer.shift();
         }
-        const truncated = _.truncate(next, { length: 1024 });
-        if (truncated.length !== next.length) {
-          this._hasTruncated = true;
-        }
-        this._buffer.push(truncated.trimEnd());
+        this._buffer.push(_.truncate(next, { length: TRUNCATE_LENGTH }).trimEnd());
         lineCount++;
         this._tail = '';
       } else {
@@ -53,6 +53,10 @@ export class LineBuffer {
 
   getHasTruncated(): boolean {
     return this._hasTruncated;
+  }
+
+  getTail() {
+    return _.truncate(this._tail, { length: TRUNCATE_LENGTH });
   }
 
   length(): number {
