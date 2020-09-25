@@ -4,6 +4,7 @@ import { PROMETHEUS_BASE_PATH, PROMETHEUS_TENANCY_BASE_PATH } from './index';
 
 export enum PrometheusEndpoint {
   LABEL = 'api/v1/label',
+  RULES = 'api/v1/rules',
   QUERY = 'api/v1/query',
   QUERY_RANGE = 'api/v1/query_range',
 }
@@ -44,7 +45,7 @@ export const getPrometheusURL = (
   props: PrometheusURLProps,
   basePath: string = props.namespace ? PROMETHEUS_TENANCY_BASE_PATH : PROMETHEUS_BASE_PATH,
 ): string => {
-  if (!props.query) {
+  if (props.endpoint !== PrometheusEndpoint.RULES && !props.query) {
     return '';
   }
   const params = getSearchParams(props);
@@ -55,7 +56,7 @@ type PrometheusURLProps = {
   endpoint: PrometheusEndpoint;
   endTime?: number;
   namespace?: string;
-  query: string;
+  query?: string;
   samples?: number;
   timeout?: string;
   timespan?: number;

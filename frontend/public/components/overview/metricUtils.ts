@@ -3,6 +3,7 @@ import { PROMETHEUS_TENANCY_BASE_PATH } from '../graphs';
 import { coFetchJSON } from '../../co-fetch';
 import { getAlertsAndRules } from '../monitoring/utils';
 import { Alert } from '../monitoring/types';
+import { getPrometheusURL, PrometheusEndpoint } from '../graphs/helpers';
 
 export type MetricValuesByPod = {
   [podName: string]: number;
@@ -53,10 +54,12 @@ export const fetchMonitoringAlerts = (namespace: string): Promise<Alert[]> => {
   if (!PROMETHEUS_TENANCY_BASE_PATH) {
     return Promise.resolve(null);
   }
-  return coFetchJSON(`${PROMETHEUS_TENANCY_BASE_PATH}/api/v1/rules?namespace=${namespace}`).then(
-    ({ data }) => {
-      const { alerts } = getAlertsAndRules(data);
-      return alerts;
-    },
-  );
+  const url = getPrometheusURL({
+    endpoint: PrometheusEndpoint.RULES,
+    namespace,
+  });
+  return coFetchJSON(url).then(({ data }) => {
+    const { alerts } = getAlertsAndRules(data);
+    return alerts;
+  });
 };

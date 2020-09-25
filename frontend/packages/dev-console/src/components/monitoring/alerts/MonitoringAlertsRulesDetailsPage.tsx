@@ -11,12 +11,10 @@ import {
   AlertsDetailsPage,
   AlertRulesDetailsPage,
 } from '@console/internal/components/monitoring/alerting';
-import { PrometheusRulesResponse } from '@console/internal/components/monitoring/types';
-import { useURLPoll } from '@console/internal/components/utils/url-poll-hook';
-import { PROMETHEUS_TENANCY_BASE_PATH } from '@console/internal/components/graphs';
 import { getAlertsAndRules } from '@console/internal/components/monitoring/utils';
 import { alertingRuleStateOrder } from '@console/internal/reducers/monitoring';
 import { monitoringSetRules, monitoringLoaded } from '@console/internal/actions/ui';
+import { usePrometheusRulesPoll } from '@console/internal/components/graphs/prometheus-rules-hook';
 
 interface MonitoringAlertsDetailsPageProps {
   match: RMatch<{
@@ -25,7 +23,6 @@ interface MonitoringAlertsDetailsPageProps {
   }>;
 }
 
-const POLL_DELAY = 15 * 1000;
 const ALERT_DETAILS_PATH = '/dev-monitoring/ns/:ns/alerts/:ruleID';
 const RULE_DETAILS_PATH = '/dev-monitoring/ns/:ns/rules/:id';
 
@@ -41,11 +38,7 @@ const MonitoringAlertsDetailsPage: React.FC<MonitoringAlertsDetailsPageProps> = 
   const namespace = match.params.ns;
   const { path } = match;
   const dispatch = useDispatch();
-  const [response, loadError, loading] = useURLPoll<PrometheusRulesResponse>(
-    `${PROMETHEUS_TENANCY_BASE_PATH}/api/v1/rules?namespace=${namespace}`,
-    POLL_DELAY,
-    namespace,
-  );
+  const [response, loadError, loading] = usePrometheusRulesPoll({ namespace });
   const thanosAlertsAndRules = React.useMemo(
     () => (!loading && !loadError ? getAlertsAndRules(response?.data) : { rules: [], alerts: [] }),
     [response, loadError, loading],
