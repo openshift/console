@@ -26,7 +26,7 @@ import {
 } from '@patternfly/react-core';
 import { ChartLineIcon } from '@patternfly/react-icons';
 import { connect } from 'react-redux';
-import { VictoryTooltip } from 'victory';
+import { VictoryPortal } from 'victory';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 
 import * as UIActions from '../../actions/ui';
@@ -207,16 +207,22 @@ const TooltipInner_: React.FC<TooltipInnerProps> = ({
     </foreignObject>
   );
 };
-const TooltipInner = connect(tooltipStateToProps)(TooltipInner_);
+const TooltipInner = withFallback(connect(tooltipStateToProps)(TooltipInner_));
 
-const Tooltip_: React.FC<TooltipProps> = ({ datum, x, y }) =>
-  datum && _.isFinite(datum.y) && _.isFinite(x) && _.isFinite(y) ? (
-    <TooltipInner datumX={datum.x} datumY={datum.y} seriesIndex={datum._stack - 1} x={x} y={y} />
-  ) : null;
-const Tooltip = withFallback(Tooltip_);
+// For performance, use this instead of PatternFly's ChartTooltip or Victory VictoryTooltip
+const Tooltip: React.FC<TooltipProps> = ({ active, datum, x, y }) => {
+  if (!active || !datum || !_.isFinite(datum.y) || !_.isFinite(x) || !_.isFinite(y)) {
+    return null;
+  }
 
-// Use VictoryTooltip directly instead of PatternFly's ChartTooltip for performance
-const graphLabelComponent = <VictoryTooltip flyoutComponent={<Tooltip />} />;
+  return (
+    <VictoryPortal>
+      <TooltipInner datumX={datum.x} datumY={datum.y} seriesIndex={datum._stack - 1} x={x} y={y} />
+    </VictoryPortal>
+  );
+};
+
+const graphLabelComponent = <Tooltip />;
 
 // Set activateData to false to work around VictoryVoronoiContainer crash (see
 // https://github.com/FormidableLabs/victory/issues/1314)
@@ -855,6 +861,7 @@ type TooltipInnerProps = {
 };
 
 type TooltipProps = {
+  active?: boolean;
   datum?: TooltipDatum;
   x?: number;
   y?: number;
