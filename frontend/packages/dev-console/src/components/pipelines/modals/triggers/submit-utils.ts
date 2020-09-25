@@ -65,7 +65,8 @@ export const submitTrigger = async (
     pipelineRun,
     triggerTemplateParams,
   );
-  const eventListener: EventListenerKind = createEventListener(
+  const eventListener: EventListenerKind = await createEventListener(
+    thisNamespace,
     [triggerBinding.resource],
     triggerTemplate,
   );

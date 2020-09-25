@@ -4,9 +4,11 @@ import { RouteModel } from '@console/internal/models';
 import { EventListenerModel, TriggerTemplateModel } from '../../../../models';
 import { PipelineRun } from '../../../../utils/pipeline-augment';
 import { PIPELINE_SERVICE_ACCOUNT } from '../../const';
+import { getPipelineOperatorVersion } from '../../utils/pipeline-operator';
 import {
-  TriggerBindingKind,
   EventListenerKind,
+  EventListenerKindBindingReference,
+  TriggerBindingKind,
   TriggerTemplateKind,
   TriggerTemplateKindParam,
 } from '../../resource-types';
@@ -28,10 +30,33 @@ export const createTriggerTemplate = (
   };
 };
 
-export const createEventListener = (
+export const createEventListener = async (
+  namespace: string,
   triggerBindings: TriggerBindingKind[],
   triggerTemplate: TriggerTemplateKind,
-): EventListenerKind => {
+): Promise<EventListenerKind> => {
+  const pipelineOperatorVersion = await getPipelineOperatorVersion(namespace);
+
+  const mapTriggerBindings: (
+    triggerBinding: TriggerBindingKind,
+  ) => EventListenerKindBindingReference = (triggerBinding: TriggerBindingKind) => {
+    // The Tekton CRD `EventListeners` before Tekton Triggers 0.5 requires a name
+    // instead of a ref here to link `TriggerBinding` or `ClusterTriggerBinding`.
+    if (
+      pipelineOperatorVersion?.major === 0 ||
+      (pipelineOperatorVersion?.major === 1 && pipelineOperatorVersion?.minor === 0)
+    ) {
+      return {
+        kind: triggerBinding.kind,
+        name: triggerBinding.metadata.name,
+      } as EventListenerKindBindingReference;
+    }
+    return {
+      kind: triggerBinding.kind,
+      ref: triggerBinding.metadata.name,
+    };
+  };
+
   return {
     apiVersion: apiVersionForModel(EventListenerModel),
     kind: EventListenerModel.kind,
@@ -42,7 +67,7 @@ export const createEventListener = (
       serviceAccountName: PIPELINE_SERVICE_ACCOUNT,
       triggers: [
         {
-          bindings: triggerBindings.map(({ kind, metadata: { name } }) => ({ kind, name })),
+          bindings: triggerBindings.map(mapTriggerBindings),
           template: { name: triggerTemplate.metadata.name },
         },
       ],

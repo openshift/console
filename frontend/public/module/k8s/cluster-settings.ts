@@ -135,20 +135,13 @@ export const getOpenShiftVersion = (cv: ClusterVersionKind): string => {
   return lastUpdate.state === 'Partial' ? `Updating to ${lastUpdate.version}` : lastUpdate.version;
 };
 
-type ParsedVersion = {
-  major: number;
-  minor: number;
-  patch: number;
-  prerelease: string[];
-};
-
 const getCurrentVersion = (cv: ClusterVersionKind): string => {
   return _.get(cv, 'status.history[0].version') || _.get(cv, 'spec.desiredUpdate.version');
 };
 
 export const getReportBugLink = (cv: ClusterVersionKind): { label: string; href: string } => {
   const version: string = getCurrentVersion(cv);
-  const parsed: ParsedVersion = semver.parse(version);
+  const parsed = semver.parse(version);
   if (!parsed) {
     return null;
   }
@@ -174,7 +167,7 @@ Browser: ${window.navigator.userAgent}
 // example link: https://access.redhat.com/downloads/content/290/ver=4.1/rhel---7/4.1.13/x86_64/product-errata
 export const getErrataLink = (cv: ClusterVersionKind): string => {
   const version: string = getCurrentVersion(cv);
-  const parsed: ParsedVersion = semver.parse(version);
+  const parsed = semver.parse(version);
   if (!parsed) {
     return null;
   }
