@@ -19,11 +19,11 @@ import (
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/bridge"
-	"github.com/openshift/console/pkg/crypto"
 	"github.com/openshift/console/pkg/helm/chartproxy"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/server"
 	"github.com/openshift/console/pkg/serverconfig"
+	oscrypto "github.com/openshift/library-go/pkg/crypto"
 )
 
 var (
@@ -285,10 +285,9 @@ func main() {
 		if !rootCAs.AppendCertsFromPEM(k8sCertPEM) {
 			log.Fatalf("No CA found for the API server")
 		}
-		tlsConfig := &tls.Config{
-			RootCAs:      rootCAs,
-			CipherSuites: crypto.DefaultCiphers(),
-		}
+		tlsConfig := oscrypto.SecureTLSConfig(&tls.Config{
+			RootCAs: rootCAs,
+		})
 
 		bearerToken, err := ioutil.ReadFile(k8sInClusterBearerToken)
 		if err != nil {
@@ -313,10 +312,9 @@ func main() {
 			if !serviceProxyRootCAs.AppendCertsFromPEM(serviceCertPEM) {
 				log.Fatalf("no CA found for Kubernetes services")
 			}
-			serviceProxyTLSConfig := &tls.Config{
-				RootCAs:      serviceProxyRootCAs,
-				CipherSuites: crypto.DefaultCiphers(),
-			}
+			serviceProxyTLSConfig := oscrypto.SecureTLSConfig(&tls.Config{
+				RootCAs: serviceProxyRootCAs,
+			})
 			srv.PrometheusProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
@@ -346,10 +344,9 @@ func main() {
 
 	case "off-cluster":
 		k8sEndpoint = bridge.ValidateFlagIsURL("k8s-mode-off-cluster-endpoint", *fK8sModeOffClusterEndpoint)
-		serviceProxyTLSConfig := &tls.Config{
+		serviceProxyTLSConfig := oscrypto.SecureTLSConfig(&tls.Config{
 			InsecureSkipVerify: *fK8sModeOffClusterSkipVerifyTLS,
-			CipherSuites:       crypto.DefaultCiphers(),
-		}
+		})
 		srv.K8sProxyConfig = &proxy.Config{
 			TLSClientConfig: serviceProxyTLSConfig,
 			HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
