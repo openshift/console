@@ -8,6 +8,7 @@ require (
 	github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f
 	github.com/gorilla/websocket v1.4.0
 	github.com/graph-gophers/graphql-go v0.0.0-20200309224638-dae41bde9ef9
+	github.com/openshift/api v0.0.0-20200326142103-b6c626c7d56e // indirect
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/rawagner/graphql-transport-ws v0.0.0-20200506141829-b08019af7525
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
