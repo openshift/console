@@ -57,7 +57,7 @@ export const createProject = (projectData: ProjectData): Promise<K8sResourceKind
   return k8sCreate(ProjectRequestModel, project);
 };
 
-export const createOrUpdateDevfileResources = (
+export const createOrUpdateDevfileResources = async (
   formData: GitImportFormData,
   imageStream: K8sResourceKind,
   dryRun: boolean,
@@ -165,7 +165,10 @@ export const createOrUpdateDevfileResources = (
     };
 
     
-    let devfileResourceObjects =  devfileCreate(null, devfileData, dryRun ? dryRunOpt : {});
+    // let devfileResourceObjects =  devfileCreate(null, devfileData, dryRun ? dryRunOpt : {});
+    let x = await devfileCreate(null, devfileData, dryRun ? dryRunOpt : {});
+    let devfileResourceObjects = JSON.parse(x.devfileResources)
+
 
     requests.push(
       createOrUpdateDevfileImageStream(

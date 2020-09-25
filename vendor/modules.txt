@@ -282,17 +282,14 @@ github.com/opencontainers/image-spec/specs-go/v1
 # github.com/opencontainers/runc v0.1.1
 github.com/opencontainers/runc/libcontainer/system
 github.com/opencontainers/runc/libcontainer/user
-<<<<<<< HEAD
-# github.com/openshift/api v0.0.0-20200326142103-b6c626c7d56e
+# github.com/openshift/api v0.0.0-20200326160804-ecb9283fe820
 github.com/openshift/api/build/v1
 github.com/openshift/api/image/docker10
 github.com/openshift/api/image/dockerpre012
 github.com/openshift/api/image/v1
 github.com/openshift/api/route/v1
-=======
 # github.com/openshift/library-go v0.0.0-20200402123743-4015ba624cae
 github.com/openshift/library-go/pkg/crypto
->>>>>>> 0999bc26b2150a771a1372fbac5e6ab7eb2251ba
 # github.com/opentracing/opentracing-go v1.1.0
 github.com/opentracing/opentracing-go
 github.com/opentracing/opentracing-go/ext
@@ -362,11 +359,7 @@ golang.org/x/crypto/openpgp/s2k
 golang.org/x/crypto/pbkdf2
 golang.org/x/crypto/scrypt
 golang.org/x/crypto/ssh/terminal
-<<<<<<< HEAD
-# golang.org/x/net v0.0.0-20191209160850-c0dbc17a3553
-=======
 # golang.org/x/net v0.0.0-20200202094626-16171245cfb2
->>>>>>> 0999bc26b2150a771a1372fbac5e6ab7eb2251ba
 golang.org/x/net/context
 golang.org/x/net/context/ctxhttp
 golang.org/x/net/http/httpguts

@@ -4,8 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
-	"io/ioutil"
+	"strings"
 
 	buildv1 "github.com/openshift/api/build/v1"
 	imagev1 "github.com/openshift/api/image/v1"
@@ -26,11 +25,6 @@ var (
 )
 
 func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
-
-	fmt.Printf("REACHED DEVFILEHANDLER -----------------------------")
-	d1 := []byte("hello\ngo\n")
-	err := ioutil.WriteFile("testEXPERIMENT", d1, 0644)
-
 	_ = json.NewDecoder(r.Body).Decode(&data)
 
 	// devfileContentBytes := []byte(data.Devfile.DevfileContent)
@@ -87,9 +81,9 @@ func getBuildResource() buildv1.BuildConfig {
 						URI: data.Git.URL,
 						Ref: data.Git.Ref,
 					},
-					SourceSecret: &corev1.LocalObjectReference{
-						Name: data.Git.Secret,
-					},
+					// SourceSecret: &corev1.LocalObjectReference{
+					// 	Name: data.Git.Secret,
+					// },
 				},
 				Strategy: buildv1.BuildStrategy{
 					Type: buildv1.DockerBuildStrategyType,
@@ -129,9 +123,9 @@ func getDeployResource() appsv1.Deployment {
 								Limits:   corev1.ResourceList{},
 								Requests: corev1.ResourceList{},
 							},
-							LivenessProbe:  &data.Healthchecks.LivenessProbe,
-							ReadinessProbe: &data.Healthchecks.ReadinessProble,
-							StartupProbe:   &data.Healthchecks.StartupProbe,
+							// LivenessProbe:  &data.Healthchecks.LivenessProbe,
+							// ReadinessProbe: &data.Healthchecks.ReadinessProble,
+							// StartupProbe:   &data.Healthchecks.StartupProbe,
 						},
 					},
 				},
@@ -151,7 +145,7 @@ func getService() corev1.Service {
 			Selector: data.PodLabels,
 			Ports: []corev1.ServicePort{
 				{
-					Name: fmt.Sprintf("%d-%s", data.Image.Ports[0].ContainerPort, data.Image.Ports[0].Protocol),
+					Name: fmt.Sprintf("%d-%s", data.Image.Ports[0].ContainerPort, strings.ToLower(fmt.Sprintf("%s", data.Image.Ports[0].Protocol))),
 					Port: data.Image.Ports[0].ContainerPort,
 					TargetPort: intstr.IntOrString{
 						Type:   intstr.Int,
@@ -172,13 +166,17 @@ func getRoute() routev1.Route {
 		TypeMeta:   createTypeMeta("Route", "route.openshift.io/v1"),
 		ObjectMeta: createObjectMeta(data.Name, data.Namespace, addmap(data.DefaultLabels, data.UserLabls), data.Annotations),
 		Spec: routev1.RouteSpec{
+			To: routev1.RouteTargetReference{
+				Kind: "Service",
+				Name: data.Name,
+			},
 			Host: data.RouteSpec.Hostname,
 			Path: data.RouteSpec.Path,
 			Port: &routev1.RoutePort{
 				TargetPort: intstr.IntOrString{
-					Type:   intstr.Int,
+					Type:   intstr.String,
 					IntVal: int32(0),
-					StrVal: fmt.Sprintf("%d-%s", data.Image.Ports[0].ContainerPort, data.Image.Ports[0].Protocol),
+					StrVal: fmt.Sprintf("%d-%s", data.Image.Ports[0].ContainerPort, strings.ToLower(fmt.Sprintf("%s", data.Image.Ports[0].Protocol))),
 				},
 			},
 			WildcardPolicy: routev1.WildcardPolicyNone,
