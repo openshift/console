@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Formik } from 'formik';
+import { Formik, FormikHelpers } from 'formik';
 import { connect } from 'react-redux';
 import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { history } from '@console/internal/components/utils';
@@ -23,6 +23,7 @@ export interface DeployImageProps {
 interface StateProps {
   activeApplication: string;
   serviceBindingAvailable: boolean;
+  isInContext: boolean;
 }
 
 type Props = DeployImageProps & StateProps;
@@ -33,6 +34,7 @@ const DeployImage: React.FC<Props> = ({
   activeApplication,
   contextualSource,
   serviceBindingAvailable,
+  isInContext,
 }) => {
   const initialValues: DeployImageFormData = {
     project: {
@@ -44,6 +46,7 @@ const DeployImage: React.FC<Props> = ({
       initial: sanitizeApplicationValue(activeApplication),
       name: sanitizeApplicationValue(activeApplication),
       selectedKey: activeApplication,
+      isInContext,
     },
     name: '',
     searchTerm: '',
@@ -69,6 +72,7 @@ const DeployImage: React.FC<Props> = ({
       status: { metadata: {}, status: '' },
       ports: [],
     },
+    runtimeIcon: null,
     isSearchingForImage: false,
     serverless: {
       scaling: {
@@ -138,7 +142,10 @@ const DeployImage: React.FC<Props> = ({
     healthChecks: healthChecksProbeInitialData,
   };
 
-  const handleSubmit = (values, actions) => {
+  const handleSubmit = (
+    values: DeployImageFormData,
+    helpers: FormikHelpers<DeployImageFormData>,
+  ) => {
     const {
       project: { name: projectName },
     } = values;
@@ -159,14 +166,12 @@ const DeployImage: React.FC<Props> = ({
         .catch(() => {});
     }
 
-    resourceActions
+    return resourceActions
       .then(() => {
-        actions.setSubmitting(false);
         history.push(`/topology/ns/${projectName}`);
       })
       .catch((err) => {
-        actions.setSubmitting(false);
-        actions.setStatus({ submitError: err.message });
+        helpers.setStatus({ submitError: err.message });
       });
   };
 
@@ -187,9 +192,11 @@ interface OwnProps extends DeployImageProps {
 }
 const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => {
   const activeApplication = ownProps.forApplication || getActiveApplication(state);
+  const isInContext = !!ownProps.forApplication;
   return {
     activeApplication: activeApplication !== ALL_APPLICATIONS_KEY ? activeApplication : '',
     serviceBindingAvailable: state.FLAGS.get(ALLOW_SERVICE_BINDING),
+    isInContext,
   };
 };
 

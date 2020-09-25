@@ -28,4 +28,5 @@ export type VMNicRowCustomData = {
   vmLikeEntity: VMLikeEntityKind;
   columnClasses: string[];
   isDisabled: boolean;
+  pendingChangesNICs?: Set<string>;
 } & VMNicRowActionOpts;

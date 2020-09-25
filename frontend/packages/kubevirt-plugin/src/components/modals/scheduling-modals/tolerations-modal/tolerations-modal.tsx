@@ -87,14 +87,14 @@ export const TModal = withHandlePromise(
       const k8sTolerations = tolerationsLabels.filter(({ key }) => !!key);
 
       if (!_.isEqual(getVMLikeTolerations(vmLikeFinal), k8sTolerations)) {
-        // eslint-disable-next-line promise/catch-or-return
         handlePromise(
           k8sPatch(
             getVMLikeModel(vmLikeFinal),
             vmLikeFinal,
             await getTolerationsPatch(vmLikeFinal, k8sTolerations),
           ),
-        ).then(close);
+          close,
+        );
       } else {
         close();
       }

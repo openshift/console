@@ -16,7 +16,9 @@ export function removeLeakedResources(leakedResources: Set<string>) {
       .map((r) => JSON.parse(r) as { name: string; namespace: string; kind: string })
       .forEach(({ name, namespace, kind }) => {
         try {
-          execSync(`kubectl delete -n ${namespace} --cascade ${kind} ${name}`);
+          execSync(
+            `kubectl delete --ignore-not-found=true -n ${namespace} --cascade ${kind} ${name}`,
+          );
         } catch (error) {
           console.error(`Failed to delete ${kind} ${name}:\n${error}`);
         }
@@ -53,10 +55,14 @@ export function createResources(resources) {
   resources.forEach(createResource);
 }
 
-export function deleteResource(resource) {
+export function applyResource(resource) {
+  execSync(`echo '${JSON.stringify(resource)}' | kubectl apply -f -`);
+}
+
+export function deleteResource(resource, ignoreNotFound = true) {
   const kind = resource.kind === 'NetworkAttachmentDefinition' ? 'net-attach-def' : resource.kind;
   execSync(
-    `kubectl delete -n ${resource.metadata.namespace} --cascade ${kind} ${resource.metadata.name}`,
+    `kubectl delete --ignore-not-found=${ignoreNotFound} -n ${resource.metadata.namespace} --cascade ${kind} ${resource.metadata.name}`,
   );
 }
 

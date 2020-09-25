@@ -18,12 +18,7 @@ import {
   ResourceStatus,
   resourcePathFromModel,
 } from '@console/internal/components/utils';
-import {
-  groupVersionFor,
-  k8sPatch,
-  referenceForModel,
-  referenceForGroupVersionKind,
-} from '@console/internal/module/k8s';
+import { k8sPatch, modelFor, referenceForModel, referenceFor } from '@console/internal/module/k8s';
 import { errorModal } from '@console/internal/components/modals';
 import {
   ClusterServiceVersionModel,
@@ -45,7 +40,9 @@ import {
 } from '@console/shared/src/components/status/icons';
 import { InstallPlanPreview } from './install-plan';
 
-const getCRDFromObject = (obj: ClusterServiceVersionKind | InstallPlanKind | SubscriptionKind) => {
+const getInitializationResourceJSON = (
+  obj: ClusterServiceVersionKind | InstallPlanKind | SubscriptionKind,
+) => {
   return obj?.metadata?.annotations?.['operatorframework.io/initialization-resource'];
 };
 
@@ -68,14 +65,14 @@ const ViewInstalledOperatorsButton: React.FC<ViewOperatorButtonProps> = ({ names
 );
 
 const InstallFailedMessage: React.FC<InstallFailedMessageProps> = ({ namespace, csvName, obj }) => {
-  const crdMessage = getCRDFromObject(obj)
+  const initializationResourceMessage = getInitializationResourceJSON(obj)
     ? "The required custom resource can be created in the Operator's details view."
     : '';
 
   return (
     <>
       <h2 className="co-clusterserviceversion-install__heading">Operator installation failed</h2>
-      <p>The operator did not install successfully. {crdMessage}</p>
+      <p>The operator did not install successfully. {initializationResourceMessage}</p>
       <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
         <Link to={resourcePathFromModel(ClusterServiceVersionModel, csvName, namespace)}>
           <Button variant="primary">View Error</Button>
@@ -118,29 +115,34 @@ const InstallNeedsApprovalMessage: React.FC<InstallNeedsApprovalMessageProps> = 
   </>
 );
 
-const CreateCRDButton: React.FC<CRDButtonProps> = ({ obj, disabled }) => {
-  if (!getCRDFromObject(obj)) {
+export const CreateInitializationResourceButton: React.FC<InitializationResourceButtonProps> = ({
+  obj,
+  disabled,
+  targetNamespace,
+}) => {
+  if (!getInitializationResourceJSON(obj)) {
     return null;
   }
-  let cr = null;
+  let initializationResource = null;
   try {
-    cr = JSON.parse(getCRDFromObject(obj));
+    initializationResource = JSON.parse(getInitializationResourceJSON(obj));
   } catch (error) {
     const errorMsg = error.message;
     errorModal({ errorMsg });
   }
-  const crNamespace = cr?.[0]?.metadata.namespace;
-  const apiVersion = cr?.[0]?.apiVersion;
-  const kind = cr?.[0]?.kind;
-  const { group, version } = groupVersionFor(apiVersion);
-  const reference = referenceForGroupVersionKind(group)(version)(kind);
+  const reference = referenceFor(initializationResource);
+  const model = modelFor(reference);
+  const initializationResourceNamespace = model?.namespaced
+    ? initializationResource?.metadata?.namespace || targetNamespace
+    : null;
+  const kind = initializationResource?.kind;
   return (
     <Link
       to={`${resourcePathFromModel(
         ClusterServiceVersionModel,
         obj.metadata.name,
-        crNamespace,
-      )}/${reference}/~new`}
+        initializationResourceNamespace,
+      )}/${reference}/~new?useInitializationResource`}
     >
       <Button isDisabled={disabled} variant="primary">
         Create {kind}
@@ -149,24 +151,30 @@ const CreateCRDButton: React.FC<CRDButtonProps> = ({ obj, disabled }) => {
   );
 };
 
-const InstallPageCRDRequiredMessage: React.FC<InstallCRDMessageProps> = ({ obj }) => {
-  if (!getCRDFromObject(obj)) {
+const InitializationResourceRequiredMessage: React.FC<InitializationResourceRequiredMessageProps> = ({
+  obj,
+}) => {
+  if (!getInitializationResourceJSON(obj)) {
     return null;
   }
-  let cr = null;
+  let initializationResource = null;
   try {
-    cr = JSON.parse(getCRDFromObject(obj));
+    initializationResource = JSON.parse(getInitializationResourceJSON(obj));
   } catch (error) {
     const errorMsg = error.message;
     errorModal({ errorMsg });
   }
-  const crdKind = cr?.[0]?.kind;
-  const crNamespace = cr?.[0]?.metadata?.namespace;
+  const initializationResourceKind = initializationResource?.kind;
+  const initializationResourceNamespace = initializationResource?.metadata?.namespace;
   const description = obj?.metadata?.annotations?.description;
   return (
     <div className="co-clusterserviceversion__box">
       <span className="co-resource-item">
-        <ResourceLink kind={crdKind} name={crdKind} namepace={crNamespace} />
+        <ResourceLink
+          kind={initializationResourceKind}
+          name={initializationResourceKind}
+          namepace={initializationResourceNamespace}
+        />
         <ResourceStatus badgeAlt>
           <StatusIconAndText icon={<RedExclamationCircleIcon />} title="Required" />
         </ResourceStatus>
@@ -181,23 +189,24 @@ const InstallSucceededMessage: React.FC<InstallSuccededMessageProps> = ({
   csvName,
   obj,
 }) => {
-  const crdMessage = getCRDFromObject(obj)
+  const initializationResourceMessage = getInitializationResourceJSON(obj)
     ? 'The operator has installed successfully. Create the required custom resource to be able to use this operator.'
     : '';
   return (
     <>
       <h2 className="co-clusterserviceversion-install__heading">
-        Installed operator - ready for use
+        Installed operator -{' '}
+        {getInitializationResourceJSON(obj) ? 'operand required' : 'ready for use'}
       </h2>
-      <span>{crdMessage}</span>
-      <InstallPageCRDRequiredMessage obj={obj} />
+      <span>{initializationResourceMessage}</span>
+      <InitializationResourceRequiredMessage obj={obj} />
       <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
-        {!getCRDFromObject(obj) && (
+        {!getInitializationResourceJSON(obj) && (
           <Link to={resourcePathFromModel(ClusterServiceVersionModel, csvName, namespace)}>
             <Button variant="primary">View Operator</Button>
           </Link>
         )}
-        <CreateCRDButton obj={obj} />
+        <CreateInitializationResourceButton obj={obj} targetNamespace={namespace} />
         <ViewInstalledOperatorsButton namespace={namespace} />
       </ActionGroup>
     </>
@@ -206,22 +215,24 @@ const InstallSucceededMessage: React.FC<InstallSuccededMessageProps> = ({
 const InstallingMessage: React.FC<InstallingMessageProps> = ({ namespace, obj }) => {
   const reason = (obj as ClusterServiceVersionKind)?.status?.reason || '';
   const message = (obj as ClusterServiceVersionKind)?.status?.message || '';
-  const crdMessage = getCRDFromObject(obj)
+  const initializationResourceMessage = getInitializationResourceJSON(obj)
     ? 'Once the operator is installed the required custom resource will be available for creation.'
     : '';
-  const installMessage = `The operator is being installed. This may take a few minutes. ${crdMessage}`;
+  const installMessage = `The operator is being installed. This may take a few minutes. ${initializationResourceMessage}`;
   return (
     <>
       <h2 className="co-clusterserviceversion-install__heading">Installing operator</h2>
       {reason && (
-        <div className="text-muted">
+        <p className="text-muted">
           {reason}: {message}
-        </div>
+        </p>
       )}
       <p>{installMessage}</p>
-      <InstallPageCRDRequiredMessage obj={obj} />
+      <InitializationResourceRequiredMessage obj={obj} />
       <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
-        {getCRDFromObject(obj) && <CreateCRDButton obj={obj} disabled />}
+        {getInitializationResourceJSON(obj) && (
+          <CreateInitializationResourceButton obj={obj} targetNamespace={namespace} disabled />
+        )}
         <ViewInstalledOperatorsButton namespace={namespace} />
       </ActionGroup>
     </>
@@ -328,7 +339,7 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = (props) => {
         <Bullseye>
           <div id="operator-install-page">
             {loading && (
-              <div>
+              <div className="co-operator-install-page__indicator">
                 Installing... <Spinner size="lg" />
               </div>
             )}
@@ -438,12 +449,13 @@ type InstallFailedMessageProps = {
   obj: ClusterServiceVersionKind | InstallPlanKind;
   csvName: string;
 };
-type InstallCRDMessageProps = {
+type InitializationResourceRequiredMessageProps = {
   obj: ClusterServiceVersionKind | InstallPlanKind;
 };
-type CRDButtonProps = {
+type InitializationResourceButtonProps = {
   obj: ClusterServiceVersionKind | InstallPlanKind | SubscriptionKind;
   disabled?: boolean;
+  targetNamespace: string;
 };
 type ViewOperatorButtonProps = {
   namespace: string;

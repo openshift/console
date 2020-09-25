@@ -21,6 +21,7 @@ type K8sResourceSelectProps = {
   title?: string;
   validation?: ValidationObject;
   filter?: (obj: K8sResourceKind) => boolean;
+  getResourceLabel?: (resource: K8sResourceKind) => string;
 };
 
 export const K8sResourceSelectRow: React.FC<K8sResourceSelectProps> = ({
@@ -36,6 +37,7 @@ export const K8sResourceSelectRow: React.FC<K8sResourceSelectProps> = ({
   title,
   validation,
   filter,
+  getResourceLabel,
 }) => {
   const isLoading = !isLoaded(data);
   const loadError = getLoadError(data, model);
@@ -84,7 +86,11 @@ export const K8sResourceSelectRow: React.FC<K8sResourceSelectProps> = ({
         )}
         {ignoreCaseSort(loadedData, ['metadata', 'name']).map((entity) => {
           const selectName = getName(entity);
-          return <FormSelectOption key={selectName} value={selectName} label={selectName} />;
+          const label = getResourceLabel && getResourceLabel(entity);
+
+          return (
+            <FormSelectOption key={selectName} value={selectName} label={label || selectName} />
+          );
         })}
       </FormSelect>
     </FormRow>

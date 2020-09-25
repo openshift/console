@@ -1,7 +1,7 @@
 ##################################################
 #
 # go backend build
-FROM openshift/origin-release:golang AS gobuilder
+FROM registry.svc.ci.openshift.org/ocp/builder:rhel-8-golang-openshift-4.6 AS gobuilder
 RUN mkdir -p /go/src/github.com/openshift/console/
 ADD . /go/src/github.com/openshift/console/
 WORKDIR /go/src/github.com/openshift/console/
@@ -11,7 +11,7 @@ RUN ./build-backend.sh
 ##################################################
 #
 # nodejs frontend build
-FROM rhscl/nodejs-8-rhel7 AS nodebuilder
+FROM registry.svc.ci.openshift.org/ocp/builder:ubi8.nodejs.12 AS nodebuilder
 
 ADD . .
 
@@ -24,10 +24,12 @@ RUN tar fx yarn-offline.tar
 # bootstrap yarn so we can install and run the other tools.
 RUN container-entrypoint npm install ./yarn-1.9.4.tgz
 
-# prevent download of chromedriver, geckodriver, sass binary, and node headers as part of module installs
+# prevent download of chromedriver, geckodriver, sass, cypress binary, and node headers as part of module installs
 ENV CHROMEDRIVER_SKIP_DOWNLOAD=true \
     GECKODRIVER_SKIP_DOWNLOAD=true \
     SKIP_SASS_BINARY_DOWNLOAD_FOR_CI=true \
+    CYPRESS_INSTALL_BINARY=0 \
+    RHEL_ALLOW_PYTHON2_FOR_BUILD=1 \
     NPM_CONFIG_TARBALL=$HOME/node-v12.16.1-headers.tar.gz
 
 # run the build
@@ -37,7 +39,7 @@ RUN container-entrypoint ./build-frontend.sh
 ##################################################
 #
 # actual base image for final product
-FROM openshift3/origin-base
+FROM registry.svc.ci.openshift.org/ocp/4.6:base
 RUN mkdir -p /opt/bridge/bin
 COPY --from=gobuilder /go/src/github.com/openshift/console/bin/bridge /opt/bridge/bin
 COPY --from=nodebuilder /opt/app-root/src/frontend/public/dist /opt/bridge/static

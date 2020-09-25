@@ -49,7 +49,7 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
       actionKey: CREATE_APPLICATION_KEY,
     },
     {
-      actionTitle: 'Unassigned',
+      actionTitle: 'unassigned',
       actionKey: UNASSIGNED_KEY,
     },
   ];
@@ -62,7 +62,7 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
           label="Application"
           helperTextInvalid={errorMessage}
           validated={isValid ? 'default' : 'error'}
-          helperText="Select an application for your grouping or Unassigned to not use an application grouping."
+          helperText="Select an application for your grouping or unassigned to not use an application grouping."
         >
           <ApplicationDropdown
             dropDownClassName="dropdown--full-width"

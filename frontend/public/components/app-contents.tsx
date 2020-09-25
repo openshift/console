@@ -25,8 +25,6 @@ import {
   Perspective,
   RoutePage,
   isRoutePage,
-  ContextProvider,
-  isContextProvider,
 } from '@console/plugin-sdk';
 
 const RedirectComponent = (props) => {
@@ -96,24 +94,18 @@ const getPluginPageRoutes = (activePerspective: string, routePages: RoutePage[])
     return <Component {...r.properties} key={Array.from(r.properties.path).join(',')} />;
   });
 
-const EnhancedProvider = ({ Provider, useValueHook, children }) => {
-  const value = useValueHook();
-  return <Provider value={value}>{children}</Provider>;
-};
-
 type AppContentsProps = {
   activePerspective: string;
 };
 
 const AppContents_: React.FC<AppContentsProps> = ({ activePerspective }) => {
-  const contextProviderExtensions = useExtensions<ContextProvider>(isContextProvider);
   const routePageExtensions = useExtensions<RoutePage>(isRoutePage);
   const pluginPageRoutes = React.useMemo(
     () => getPluginPageRoutes(activePerspective, routePageExtensions),
     [activePerspective, routePageExtensions],
   );
 
-  const content = (
+  return (
     <PageSection variant={PageSectionVariants.light}>
       <div id="content">
         <GlobalNotifications />
@@ -684,13 +676,6 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective }) => {
         </div>
       </div>
     </PageSection>
-  );
-
-  return contextProviderExtensions.reduce(
-    (children, provider) => (
-      <EnhancedProvider {...provider.properties}>{children}</EnhancedProvider>
-    ),
-    content,
   );
 };
 

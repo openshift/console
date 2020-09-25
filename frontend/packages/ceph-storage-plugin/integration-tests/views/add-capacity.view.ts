@@ -40,7 +40,7 @@ export const verifyFields = async () => {
   expect(currentACSelector.totalRequestedcapacity.getText()).toEqual(`6 ${CAPACITY_UNIT}`);
 };
 
-const clickKebabAction = async (uid: string, actionLabel: string) => {
+export const clickKebabAction = async (uid: string, actionLabel: string) => {
   await browser.wait(until.presenceOf(currentACSelector.storageClusterRow(uid)));
   const kebabMenu = currentACSelector
     .storageClusterRow(uid)

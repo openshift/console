@@ -21,12 +21,12 @@ export const resourceOverviewPages = ImmutableMap<
     ),
   )
   .set(referenceForModel(DeploymentModel), () =>
-    import('./deployment-overview' /* webpackChunkName: "deployment"*/).then(
+    import('./deployment-overview' /* webpackChunkName: "deployment-overview"*/).then(
       (m) => m.DeploymentOverviewPage,
     ),
   )
   .set(referenceForModel(DeploymentConfigModel), () =>
-    import('./deployment-config-overview' /* webpackChunkName: "deployment-config"*/).then(
+    import('./deployment-config-overview' /* webpackChunkName: "deployment-config-overview"*/).then(
       (m) => m.DeploymentConfigOverviewPage,
     ),
   )

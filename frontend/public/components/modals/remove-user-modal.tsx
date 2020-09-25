@@ -18,7 +18,7 @@ export const RemoveUserModal = withHandlePromise((props: RemoveUserModalProps) =
     e.preventDefault();
     const value = _.filter(props.group.users, (user: string) => user !== props.user);
     const patch = [{ op: 'replace', path: '/users', value }];
-    return props.handlePromise(k8sPatch(GroupModel, props.group, patch)).then(props.close);
+    return props.handlePromise(k8sPatch(GroupModel, props.group, patch), props.close);
   };
 
   return (

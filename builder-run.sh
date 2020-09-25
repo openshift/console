@@ -11,7 +11,7 @@ set -e
 # Without env vars:
 #   ./builder-run.sh ./my-script --my-script-arg1 --my-script-arg2
 
-BUILDER_IMAGE="quay.io/coreos/tectonic-console-builder:v19"
+BUILDER_IMAGE="quay.io/coreos/tectonic-console-builder:v21"
 
 # forward whitelisted env variables to docker
 ENV_STR=()

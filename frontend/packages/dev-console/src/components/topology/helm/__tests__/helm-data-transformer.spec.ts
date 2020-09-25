@@ -1,9 +1,10 @@
 import * as _ from 'lodash';
 import { ALL_APPLICATIONS_KEY } from '@console/shared';
-import { TopologyDataResources } from '../../topology-types';
+import { TopologyDataResources, TopologyDisplayFilterType } from '../../topology-types';
 import {
   getHelmGraphModelFromMap,
   getTopologyHelmReleaseGroupItem,
+  isHelmReleaseNode,
 } from '../helm-data-transformer';
 import {
   MockResources,
@@ -12,8 +13,12 @@ import {
   sampleHelmResourcesMap,
   TEST_KINDS_MAP,
 } from '../../__tests__/topology-test-data';
-import { TYPE_HELM_RELEASE } from '../components/const';
-import { DEFAULT_TOPOLOGY_FILTERS, EXPAND_GROUPS_FILTER_ID } from '../../filters/const';
+import { TYPE_HELM_RELEASE, TYPE_HELM_WORKLOAD } from '../components/const';
+import {
+  DEFAULT_TOPOLOGY_FILTERS,
+  EXPAND_GROUPS_FILTER_ID,
+  SHOW_GROUPS_FILTER_ID,
+} from '../../filters/const';
 import {
   baseDataModelGetter,
   getWorkloadResources,
@@ -48,9 +53,11 @@ export function getTransformedTopologyData(mockData: TopologyDataResources) {
 
 describe('HELM data transformer ', () => {
   let mockResources: TopologyDataResources;
-
+  let filters;
   beforeEach(() => {
     mockResources = _.cloneDeep(MockResources);
+    filters = _.cloneDeep(DEFAULT_TOPOLOGY_FILTERS);
+    filters.push(...getTopologyFilters());
   });
 
   it('should add to groups with helm grouping type for a helm chart node', () => {
@@ -76,8 +83,6 @@ describe('HELM data transformer ', () => {
   });
 
   it('should flag helm groups as collapsed when display filter is set', async () => {
-    const filters = [...DEFAULT_TOPOLOGY_FILTERS];
-    filters.push(...getTopologyFilters());
     const graphData = await getTransformedTopologyData(mockResources);
     getFilterById(EXPAND_HELM_RELEASE_FILTER, filters).value = false;
     const newModel = updateModelFromFilters(graphData, filters, ALL_APPLICATIONS_KEY, filterers);
@@ -86,8 +91,6 @@ describe('HELM data transformer ', () => {
   });
 
   it('should flag helm groups as collapsed when all groups are collapsed', async () => {
-    const filters = [...DEFAULT_TOPOLOGY_FILTERS];
-    filters.push(...getTopologyFilters());
     const graphData = await getTransformedTopologyData(mockResources);
     getFilterById(EXPAND_HELM_RELEASE_FILTER, filters).value = true;
     getFilterById(EXPAND_GROUPS_FILTER_ID, filters).value = false;
@@ -96,5 +99,31 @@ describe('HELM data transformer ', () => {
     expect(newModel.nodes.filter((n) => n.type === TYPE_HELM_RELEASE && n.collapsed)).toHaveLength(
       1,
     );
+  });
+
+  it('should flag not show helm groups when show groups is false', async () => {
+    const graphData = await getTransformedTopologyData(mockResources);
+    getFilterById(SHOW_GROUPS_FILTER_ID, filters).value = false;
+    const newModel = updateModelFromFilters(graphData, filters, ALL_APPLICATIONS_KEY, filterers);
+    expect(newModel.nodes.filter((n) => n.type === TYPE_HELM_RELEASE)).toHaveLength(0);
+  });
+
+  it('should show helm releases and their children when filtered by HelmRelease', async () => {
+    const graphData = await getTransformedTopologyData(mockResources);
+    filters.push({
+      type: TopologyDisplayFilterType.kind,
+      id: 'HelmRelease',
+      label: 'HelmRelease',
+      priority: 1,
+      value: true,
+    });
+    const newModel = updateModelFromFilters(graphData, filters, ALL_APPLICATIONS_KEY, filterers);
+    expect(newModel.nodes.filter((n) => n.type === TYPE_HELM_RELEASE)).toHaveLength(1);
+    expect(newModel.nodes.filter((n) => n.type === TYPE_HELM_WORKLOAD)).toHaveLength(1);
+  });
+
+  it('should return true for nodes created by helm charts', () => {
+    expect(isHelmReleaseNode(sampleDeploymentConfigs.data[0], sampleHelmResourcesMap)).toBe(false);
+    expect(isHelmReleaseNode(sampleHelmChartDeploymentConfig, sampleHelmResourcesMap)).toBe(true);
   });
 });

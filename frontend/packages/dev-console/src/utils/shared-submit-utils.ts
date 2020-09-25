@@ -25,16 +25,17 @@ export const createService = (
 ): K8sResourceKind => {
   const {
     project: { name: namespace },
-    application: { name: application },
+    application: { name: applicationName },
     name,
     labels: userLabels,
-    image: { ports: imagePorts, tag: imageTag },
+    image: { ports: imagePorts, tag: selectedTag },
+    route: { unknownTargetPort, defaultUnknownPort },
   } = formData;
 
   const imageStreamName = _.get(imageStreamData, 'metadata.name') || _.get(formData, 'image.name');
   const git = _.get(formData, 'git');
 
-  const defaultLabels = getAppLabels(name, application, imageStreamName, imageTag);
+  const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag });
   const podLabels = getPodLabels(name);
   const defaultAnnotations = git
     ? { ...getGitAnnotations(git.url, git.ref), ...getCommonAnnotations() }
@@ -49,6 +50,10 @@ export const createService = (
       isi: { ports: isiPorts },
     } = formData;
     ports = isiPorts;
+  } else if (_.isEmpty(ports)) {
+    const portData = _.toInteger(unknownTargetPort) || defaultUnknownPort;
+    const port = { containerPort: portData, protocol: 'TCP' };
+    ports = [port];
   }
 
   const newService: any = {
@@ -84,17 +89,25 @@ export const createRoute = (
 ): K8sResourceKind => {
   const {
     project: { name: namespace },
-    application: { name: application },
+    application: { name: applicationName },
     name,
     labels: userLabels,
-    route: { hostname, secure, path, tls, targetPort: routeTargetPort },
-    image: { ports: imagePorts, tag: imageTag },
+    route: {
+      hostname,
+      unknownTargetPort,
+      defaultUnknownPort,
+      secure,
+      path,
+      tls,
+      targetPort: routeTargetPort,
+    },
+    image: { ports: imagePorts, tag: selectedTag },
   } = formData;
 
   const imageStreamName = _.get(imageStreamData, 'metadata.name') || _.get(formData, 'image.name');
   const git = _.get(formData, 'git');
 
-  const defaultLabels = getAppLabels(name, application, imageStreamName, imageTag);
+  const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag });
   const defaultAnnotations = git
     ? { ...getGitAnnotations(git.url, git.ref), ...getCommonAnnotations() }
     : getCommonAnnotations();
@@ -112,6 +125,11 @@ export const createRoute = (
     const port = _.get(formData, 'docker.containerPort');
     targetPort = makePortName({
       containerPort: _.toInteger(port),
+      protocol: 'TCP',
+    });
+  } else if (_.isEmpty(ports)) {
+    targetPort = makePortName({
+      containerPort: _.toInteger(unknownTargetPort) || defaultUnknownPort,
       protocol: 'TCP',
     });
   } else {

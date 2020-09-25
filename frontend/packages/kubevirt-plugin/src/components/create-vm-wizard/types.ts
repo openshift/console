@@ -14,7 +14,6 @@ export enum VMWizardTab {
   NETWORKING = 'NETWORKING',
   STORAGE = 'STORAGE',
   ADVANCED_CLOUD_INIT = 'ADVANCED_CLOUD_INIT',
-  ADVANCED_VIRTUAL_HARDWARE = 'ADVANCED_VIRTUAL_HARDWARE',
   REVIEW = 'REVIEW',
   RESULT = 'RESULT',
 }
@@ -23,14 +22,16 @@ export enum VMWizardProps {
   isSimpleView = 'isSimpleView',
   isCreateTemplate = 'isCreateTemplate',
   isProviderImport = 'isProviderImport',
-  userTemplateName = 'userTemplateName',
+  isUserTemplateInitialized = 'isUserTemplateInitialized',
+  userTemplates = 'userTemplates',
+  userTemplate = 'userTemplate',
   activeNamespace = 'activeNamespace',
   openshiftFlag = 'openshiftFlag',
   reduxID = 'reduxID',
   virtualMachines = 'virtualMachines',
-  userTemplates = 'userTemplates',
   commonTemplates = 'commonTemplates',
   dataVolumes = 'dataVolumes',
+  openshiftCNVBaseImages = 'openshiftCNVBaseImages',
   storageClassConfigMap = 'storageClassConfigMap',
 }
 
@@ -41,7 +42,6 @@ export const ALL_VM_WIZARD_TABS = [
   VMWizardTab.NETWORKING,
   VMWizardTab.STORAGE,
   VMWizardTab.ADVANCED_CLOUD_INIT,
-  VMWizardTab.ADVANCED_VIRTUAL_HARDWARE,
   VMWizardTab.REVIEW,
   VMWizardTab.RESULT,
 ];
@@ -60,8 +60,9 @@ export enum VMSettingsField {
   NAME = 'NAME',
   HOSTNAME = 'HOSTNAME',
   DESCRIPTION = 'DESCRIPTION',
-  USER_TEMPLATE = 'USER_TEMPLATE',
   OPERATING_SYSTEM = 'OPERATING_SYSTEM',
+  CLONE_COMMON_BASE_DISK_IMAGE = 'CLONE_COMMON_BASE_DISK_IMAGE',
+  MOUNT_WINDOWS_GUEST_TOOLS = 'MOUNT_WINDOWS_GUEST_TOOLS',
   FLAVOR = 'FLAVOR',
   MEMORY = 'MEMORY',
   CPU = 'CPU',
@@ -95,6 +96,7 @@ export enum OvirtProviderProps {
   deploymentPods = 'ovirtDeploymentPods',
   deployment = 'ovirtDeployment',
   ovirtProvider = 'ovirtProvider',
+  networkAttachmentDefinitions = 'ovirtNads',
 }
 
 export enum VMWareProviderField {
@@ -208,9 +210,11 @@ export type ChangedCommonDataProp =
   | VMWizardProps.activeNamespace
   | VMWizardProps.openshiftFlag
   | VMWizardProps.virtualMachines
+  | VMWizardProps.userTemplate
   | VMWizardProps.userTemplates
   | VMWizardProps.commonTemplates
   | VMWizardProps.dataVolumes
+  | VMWizardProps.openshiftCNVBaseImages
   | VMWizardProps.storageClassConfigMap
   | VMWareProviderProps.deployment
   | VMWareProviderProps.deploymentPods
@@ -220,13 +224,14 @@ export type ChangedCommonDataProp =
   | OvirtProviderProps.deployment
   | OvirtProviderProps.deploymentPods
   | OvirtProviderProps.ovirtEngineSecrets
-  | OvirtProviderProps.ovirtProvider;
+  | OvirtProviderProps.ovirtProvider
+  | OvirtProviderProps.networkAttachmentDefinitions;
 
 export type CommonDataProp =
   | VMWizardProps.isSimpleView
   | VMWizardProps.isCreateTemplate
   | VMWizardProps.isProviderImport
-  | VMWizardProps.userTemplateName
+  | VMWizardProps.isUserTemplateInitialized
   | ChangedCommonDataProp;
 
 export type ChangedCommonData = Set<ChangedCommonDataProp>;
@@ -234,11 +239,13 @@ export type ChangedCommonData = Set<ChangedCommonDataProp>;
 export const DetectCommonDataChanges = new Set<ChangedCommonDataProp>([
   VMWizardProps.activeNamespace,
   VMWizardProps.openshiftFlag,
-  VMWizardProps.virtualMachines,
+  VMWizardProps.userTemplate,
   VMWizardProps.userTemplates,
+  VMWizardProps.virtualMachines,
   VMWizardProps.commonTemplates,
   VMWizardProps.storageClassConfigMap,
   VMWizardProps.dataVolumes,
+  VMWizardProps.openshiftCNVBaseImages,
   VMWareProviderProps.deployment,
   VMWareProviderProps.deploymentPods,
   VMWareProviderProps.v2vvmware,
@@ -248,6 +255,7 @@ export const DetectCommonDataChanges = new Set<ChangedCommonDataProp>([
   OvirtProviderProps.deploymentPods,
   OvirtProviderProps.ovirtEngineSecrets,
   OvirtProviderProps.ovirtProvider,
+  OvirtProviderProps.networkAttachmentDefinitions,
 ]);
 
 export type CommonData = {
@@ -255,7 +263,7 @@ export type CommonData = {
     isSimpleView?: boolean;
     isCreateTemplate?: boolean;
     isProviderImport?: boolean;
-    userTemplateName?: string;
+    isUserTemplateInitialized?: boolean;
     storageClassConfigMap?: {
       loaded: boolean;
       loadError: string;
@@ -293,7 +301,6 @@ export enum VMWizardStorageType {
   PROVISION_SOURCE_DISK = 'PROVISION_SOURCE_DISK',
   UI_INPUT = 'UI_INPUT',
   V2V_VMWARE_IMPORT = 'V2V_VMWARE_IMPORT',
-  V2V_VMWARE_IMPORT_TEMP = 'V2V_VMWARE_IMPORT_TEMP',
   V2V_OVIRT_IMPORT = 'V2V_OVIRT_IMPORT',
   WINDOWS_GUEST_TOOLS = 'WINDOWS_GUEST_TOOLS',
   WINDOWS_GUEST_TOOLS_TEMPLATE = 'WINDOWS_GUEST_TOOLS_TEMPLATE',

@@ -11,7 +11,6 @@ import { Disk, Network, VirtualMachineTemplateModel } from '../types/types';
 import * as kubevirtDetailView from '../../views/kubevirtUIResource.view';
 import {
   vmDetailFlavorEditButton,
-  vmDetailCdEditButton,
   vmDetailBootOrderEditButton,
   vmDetailDedicatedResourcesEditButton,
   vmDetailStatusEditButton,
@@ -26,7 +25,6 @@ import {
   switchClusterNamespace,
 } from '../../views/uiResource.view';
 import * as vmsListView from '../../views/vms.list.view';
-import * as editBootOrder from '../../views/dialogs/editBootOrderView';
 import * as editDedicatedResourcesView from '../../views/dialogs/editDedicatedResourcesView';
 import * as editStatusView from '../../views/dialogs/editStatusView';
 import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
@@ -110,7 +108,7 @@ export class KubevirtUIResource<T extends BaseVMBuilderData> extends UIResource 
     await isLoaded();
   }
 
-  async navigateToConsoles() {
+  async navigateToConsole() {
     await this.navigateToTab(TAB.Console);
     await isLoaded();
   }
@@ -138,6 +136,7 @@ export class KubevirtUIResource<T extends BaseVMBuilderData> extends UIResource 
       return {
         name: cols[diskTabCol.name],
         size: cols[diskTabCol.size].slice(0, -4),
+        drive: cols[diskTabCol.drive],
         interface: cols[diskTabCol.interface],
         storageClass: cols[diskTabCol.storageClass],
       };
@@ -165,6 +164,7 @@ export class KubevirtUIResource<T extends BaseVMBuilderData> extends UIResource 
     await click(kubevirtDetailView.createDiskButton);
     const dialog = new DiskDialog();
     await dialog.create(disk);
+    await isLoaded();
     await browser.wait(until.and(waitForCount(resourceRows, count + 1)), PAGE_LOAD_TIMEOUT_SECS);
   }
 
@@ -173,6 +173,7 @@ export class KubevirtUIResource<T extends BaseVMBuilderData> extends UIResource 
     const count = await resourceRows.count();
     await kubevirtDetailView.selectKebabOption(name, 'Delete');
     await confirmAction();
+    await isLoaded();
     await browser.wait(until.and(waitForCount(resourceRows, count - 1)), PAGE_LOAD_TIMEOUT_SECS);
   }
 
@@ -182,6 +183,7 @@ export class KubevirtUIResource<T extends BaseVMBuilderData> extends UIResource 
     await click(kubevirtDetailView.createNICButton);
     const dialog = new NetworkInterfaceDialog();
     await dialog.create(nic);
+    await isLoaded();
     await browser.wait(until.and(waitForCount(resourceRows, count + 1)), PAGE_LOAD_TIMEOUT_SECS);
   }
 
@@ -190,6 +192,7 @@ export class KubevirtUIResource<T extends BaseVMBuilderData> extends UIResource 
     const count = await resourceRows.count();
     await kubevirtDetailView.selectKebabOption(name, 'Delete');
     await confirmAction();
+    await isLoaded();
     await browser.wait(until.and(waitForCount(resourceRows, count - 1)), PAGE_LOAD_TIMEOUT_SECS);
   }
 
@@ -199,15 +202,9 @@ export class KubevirtUIResource<T extends BaseVMBuilderData> extends UIResource 
     await waitForNoLoaders();
   }
 
-  async modalEditCDRoms() {
-    await click(vmDetailCdEditButton(this.namespace, this.name));
-    await browser.wait(until.presenceOf(kubevirtDetailView.modalTitle));
-    await isLoaded();
-  }
-
   async modalEditBootOrder() {
     await click(vmDetailBootOrderEditButton(this.namespace, this.name));
-    await browser.wait(until.presenceOf(editBootOrder.bootOrderDialog));
+    await browser.wait(until.presenceOf(kubevirtDetailView.modalTitle));
     await isLoaded();
   }
 

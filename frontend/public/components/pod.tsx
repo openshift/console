@@ -1,5 +1,8 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
+// FIXME upgrading redux types is causing many errors at this time
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+import { connect, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
@@ -9,7 +12,7 @@ import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 
 import * as UIActions from '../actions/ui';
 import { coFetchJSON } from '../co-fetch';
-import { ContainerSpec, K8sResourceKindReference, PodKind } from '../module/k8s';
+import { ContainerSpec, K8sResourceKindReference, PodKind, referenceForModel } from '../module/k8s';
 import {
   getRestartPolicyLabel,
   podPhase,
@@ -41,10 +44,12 @@ import {
   navFactory,
   pluralize,
   units,
+  LabelList,
 } from './utils';
 import { PodLogs } from './pod-logs';
 import {
   Area,
+  Stack,
   PROMETHEUS_BASE_PATH,
   PROMETHEUS_TENANCY_BASE_PATH,
   requirePrometheus,
@@ -52,6 +57,7 @@ import {
 import { VolumesTable } from './volumes-table';
 import { PodModel } from '../models';
 import { Conditions } from './conditions';
+import { RootState } from '../redux';
 
 // Only request metrics if the device's screen width is larger than the
 // breakpoint where metrics are visible.
@@ -94,24 +100,185 @@ export const menuActions = [
   ...Kebab.factory.common,
 ];
 
-const tableColumnClasses = [
-  '',
-  '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-u-w-10-on-lg', 'pf-u-w-8-on-xl'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-2xl', 'pf-u-w-8-on-2xl'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
-  classNames('pf-m-hidden', { 'pf-m-visible-on-xl pf-u-w-10-on-2xl': showMetrics }),
-  classNames('pf-m-hidden', { 'pf-m-visible-on-xl pf-u-w-10-on-2xl': showMetrics }),
-  classNames('pf-m-hidden', 'pf-m-visible-on-2xl pf-u-w-10-on-2xl'),
-  Kebab.columnClass,
-];
+const podColumnInfo = Object.freeze({
+  name: {
+    classes: '',
+    id: 'name',
+    title: 'Name',
+  },
+  namespace: {
+    classes: '',
+    id: 'namespace',
+    title: 'Namespace',
+  },
+  status: {
+    classes: '',
+    id: 'status',
+    title: 'Status',
+  },
+  ready: {
+    classes: classNames('pf-m-nowrap', 'pf-u-w-10-on-lg', 'pf-u-w-8-on-xl'),
+    id: 'ready',
+    title: 'Ready',
+  },
+  restarts: {
+    classes: classNames('pf-m-nowrap', 'pf-u-w-8-on-2xl'),
+    id: 'restarts',
+    title: 'Restarts',
+  },
+  owner: {
+    classes: '',
+    id: 'owner',
+    title: 'Owner',
+  },
+  node: {
+    classes: '',
+    id: 'node',
+    title: 'Node',
+  },
+  memory: {
+    classes: classNames({ 'pf-u-w-10-on-2xl': showMetrics }),
+    id: 'memory',
+    title: 'Memory',
+  },
+  cpu: {
+    classes: classNames({ 'pf-u-w-10-on-2xl': showMetrics }),
+    id: 'cpu',
+    title: 'CPU',
+  },
+  created: {
+    classes: classNames('pf-u-w-10-on-2xl'),
+    id: 'created',
+    title: 'Created',
+  },
+  labels: {
+    classes: '',
+    id: 'labels',
+    title: 'Labels',
+  },
+  ipaddress: {
+    classes: '',
+    id: 'ipaddress',
+    title: 'IP Address',
+  },
+});
 
 const kind = 'Pod';
+const columnManagementID = referenceForModel(PodModel);
 
 const podRowStateToProps = ({ UI }) => ({
   metrics: UI.getIn(['metrics', 'pod']),
+  selectedColumns: UI.getIn(['columnManagement']),
 });
+
+const getHeader = (showNodes) => {
+  return () => {
+    return [
+      {
+        title: podColumnInfo.name.title,
+        id: podColumnInfo.name.id,
+        sortField: 'metadata.name',
+        transforms: [sortable],
+        props: { className: podColumnInfo.name.classes },
+      },
+      {
+        title: podColumnInfo.namespace.title,
+        id: podColumnInfo.namespace.id,
+        sortField: 'metadata.namespace',
+        transforms: [sortable],
+        props: { className: podColumnInfo.namespace.classes },
+      },
+      {
+        title: podColumnInfo.status.title,
+        id: podColumnInfo.status.id,
+        sortFunc: 'podPhase',
+        transforms: [sortable],
+        props: { className: podColumnInfo.status.classes },
+      },
+      {
+        title: podColumnInfo.ready.title,
+        id: podColumnInfo.ready.id,
+        sortFunc: 'podReadiness',
+        transforms: [sortable],
+        props: { className: podColumnInfo.ready.classes },
+      },
+      {
+        title: podColumnInfo.restarts.title,
+        id: podColumnInfo.restarts.id,
+        sortFunc: 'podRestarts',
+        transforms: [sortable],
+        props: { className: podColumnInfo.restarts.classes },
+      },
+      {
+        title: showNodes ? podColumnInfo.node.title : podColumnInfo.owner.title,
+        id: podColumnInfo.owner.id,
+        sortField: showNodes ? 'spec.nodeName' : 'metadata.ownerReferences[0].name',
+        transforms: [sortable],
+        props: { className: podColumnInfo.owner.classes },
+      },
+      {
+        title: podColumnInfo.memory.title,
+        id: podColumnInfo.memory.id,
+        sortFunc: 'podMemory',
+        transforms: [sortable],
+        props: { className: podColumnInfo.memory.classes },
+      },
+      {
+        title: podColumnInfo.cpu.title,
+        id: podColumnInfo.cpu.id,
+        sortFunc: 'podCPU',
+        transforms: [sortable],
+        props: { className: podColumnInfo.cpu.classes },
+      },
+      {
+        title: podColumnInfo.created.title,
+        id: podColumnInfo.created.id,
+        sortField: 'metadata.creationTimestamp',
+        transforms: [sortable],
+        props: { className: podColumnInfo.created.classes },
+      },
+      {
+        title: podColumnInfo.node.title,
+        id: podColumnInfo.node.id,
+        sortField: 'spec.nodeName',
+        transforms: [sortable],
+        props: { className: podColumnInfo.node.classes },
+        additional: true,
+      },
+      {
+        title: podColumnInfo.labels.title,
+        id: podColumnInfo.labels.id,
+        sortField: 'metadata.labels',
+        transforms: [sortable],
+        props: { className: podColumnInfo.labels.classes },
+        additional: true,
+      },
+      {
+        title: podColumnInfo.ipaddress.title,
+        id: podColumnInfo.ipaddress.id,
+        sortField: 'status.hostIP',
+        transforms: [sortable],
+        props: { className: podColumnInfo.ipaddress.classes },
+        additional: true,
+      },
+      {
+        title: '',
+        props: { className: Kebab.columnClass },
+      },
+    ];
+  };
+};
+
+const getSelectedColumns = (showNodes: boolean) => {
+  return new Set(
+    getHeader(showNodes)().reduce((acc, column) => {
+      if (column.id && !column.additional) {
+        acc.push(column.id);
+      }
+      return acc;
+    }, []),
+  );
+};
 
 const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(podRowStateToProps)(
   ({
@@ -121,45 +288,104 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
     style,
     metrics,
     showNodes,
+    selectedColumns,
   }: PodTableRowProps & PodTableRowPropsFromState) => {
-    const { name, namespace, creationTimestamp } = pod.metadata;
+    const { name, namespace, creationTimestamp, labels } = pod.metadata;
     const { readyCount, totalContainers } = podReadiness(pod);
     const phase = podPhase(pod);
     const restarts = podRestarts(pod);
     const bytes: number = _.get(metrics, ['memory', namespace, name]);
     const cores: number = _.get(metrics, ['cpu', namespace, name]);
+    const columns = new Set(
+      selectedColumns?.get(columnManagementID) || getSelectedColumns(showNodes),
+    );
     return (
       <TableRow id={pod.metadata.uid} index={index} trKey={rowKey} style={style}>
-        <TableData className={tableColumnClasses[0]}>
+        <TableData className={podColumnInfo.name.classes}>
           <ResourceLink kind={kind} name={name} namespace={namespace} />
         </TableData>
-        <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+        <TableData
+          className={classNames(podColumnInfo.namespace.classes, 'co-break-word')}
+          columns={columns}
+          columnID={podColumnInfo.namespace.id}
+        >
           <ResourceLink kind="Namespace" name={namespace} />
         </TableData>
-        <TableData className={tableColumnClasses[2]}>
+        <TableData
+          className={podColumnInfo.status.classes}
+          columns={columns}
+          columnID={podColumnInfo.status.id}
+        >
           <Status status={phase} />
         </TableData>
-        <TableData className={tableColumnClasses[3]}>
+        <TableData
+          className={podColumnInfo.ready.classes}
+          columns={columns}
+          columnID={podColumnInfo.ready.id}
+        >
           {readyCount}/{totalContainers}
         </TableData>
-        <TableData className={tableColumnClasses[4]}>{restarts}</TableData>
-        <TableData className={tableColumnClasses[5]}>
+        <TableData
+          className={podColumnInfo.restarts.classes}
+          columns={columns}
+          columnID={podColumnInfo.restarts.id}
+        >
+          {restarts}
+        </TableData>
+        <TableData
+          className={podColumnInfo.owner.classes}
+          columns={columns}
+          columnID={podColumnInfo.owner.id}
+        >
           {showNodes ? (
             <ResourceLink kind="Node" name={pod.spec.nodeName} namespace={namespace} />
           ) : (
             <OwnerReferences resource={pod} />
           )}
         </TableData>
-        <TableData className={tableColumnClasses[6]}>
+        <TableData
+          className={podColumnInfo.memory.classes}
+          columns={columns}
+          columnID={podColumnInfo.memory.id}
+        >
           {bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-'}
         </TableData>
-        <TableData className={tableColumnClasses[7]}>
+        <TableData
+          className={podColumnInfo.cpu.classes}
+          columns={columns}
+          columnID={podColumnInfo.cpu.id}
+        >
           {cores ? `${formatCores(cores)} cores` : '-'}
         </TableData>
-        <TableData className={tableColumnClasses[8]}>
+        <TableData
+          className={podColumnInfo.created.classes}
+          columns={columns}
+          columnID={podColumnInfo.created.id}
+        >
           <Timestamp timestamp={creationTimestamp} />
         </TableData>
-        <TableData className={tableColumnClasses[9]}>
+        <TableData
+          className={podColumnInfo.node.classes}
+          columns={columns}
+          columnID={podColumnInfo.node.id}
+        >
+          <ResourceLink kind="Node" name={pod.spec.nodeName} namespace={namespace} />
+        </TableData>
+        <TableData
+          className={podColumnInfo.labels.classes}
+          columns={columns}
+          columnID={podColumnInfo.labels.id}
+        >
+          <LabelList kind={kind} labels={labels} />
+        </TableData>
+        <TableData
+          className={podColumnInfo.ipaddress.classes}
+          columns={columns}
+          columnID={podColumnInfo.ipaddress.id}
+        >
+          {pod?.status?.hostIP ?? '-'}
+        </TableData>
+        <TableData className={Kebab.columnClass}>
           <ResourceKebab
             actions={menuActions}
             kind={kind}
@@ -172,71 +398,6 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
   },
 );
 PodTableRow.displayName = 'PodTableRow';
-
-const getHeader = (showNodes) => {
-  return () => {
-    return [
-      {
-        title: 'Name',
-        sortField: 'metadata.name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
-      },
-      {
-        title: 'Namespace',
-        sortField: 'metadata.namespace',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
-      },
-      {
-        title: 'Status',
-        sortFunc: 'podPhase',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[2] },
-      },
-      {
-        title: 'Ready',
-        sortFunc: 'podReadiness',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[3] },
-      },
-      {
-        title: 'Restarts',
-        sortFunc: 'podRestarts',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[4] },
-      },
-      {
-        title: showNodes ? 'Node' : 'Owner',
-        sortField: showNodes ? 'spec.nodeName' : 'metadata.ownerReferences[0].name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[5] },
-      },
-      {
-        title: 'Memory',
-        sortFunc: 'podMemory',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[6] },
-      },
-      {
-        title: 'CPU',
-        sortFunc: 'podCPU',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[7] },
-      },
-      {
-        title: 'Created',
-        sortField: 'metadata.creationTimestamp',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[8] },
-      },
-      {
-        title: '',
-        props: { className: tableColumnClasses[9] },
-      },
-    ];
-  };
-};
 
 export const ContainerLink: React.FC<ContainerLinkProps> = ({ pod, name }) => (
   <span className="co-resource-item co-resource-item--inline">
@@ -315,6 +476,8 @@ const PodGraphs = requirePrometheus(({ pod }) => (
           byteDataType={ByteDataTypes.BinaryBytes}
           namespace={pod.metadata.namespace}
           query={`sum(container_memory_working_set_bytes{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}',container='',}) BY (pod, namespace)`}
+          limitQuery={`sum(kube_pod_container_resource_limits_memory_bytes{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}) BY (pod, namespace)`}
+          requestedQuery={`sum(kube_pod_container_resource_requests_memory_bytes{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}) BY (pod, namespace)`}
         />
       </div>
       <div className="col-md-12 col-lg-4">
@@ -323,6 +486,8 @@ const PodGraphs = requirePrometheus(({ pod }) => (
           humanize={humanizeCpuCores}
           namespace={pod.metadata.namespace}
           query={`pod:container_cpu_usage:sum{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`}
+          limitQuery={`sum(kube_pod_container_resource_limits_cpu_cores{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}) BY (pod, namespace)`}
+          requestedQuery={`sum(kube_pod_container_resource_requests_cpu_cores{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}) BY (pod, namespace)`}
         />
       </div>
       <div className="col-md-12 col-lg-4">
@@ -337,23 +502,24 @@ const PodGraphs = requirePrometheus(({ pod }) => (
     </div>
     <div className="row">
       <div className="col-md-12 col-lg-4">
-        <Area
+        <Stack
           title="Network In"
           humanize={humanizeDecimalBytesPerSec}
           namespace={pod.metadata.namespace}
-          query={`sum(irate(container_network_receive_bytes_total{pod='${pod.metadata.name}', namespace='${pod.metadata.namespace}'}[5m])) by (pod, namespace)`}
+          query={`(sum(irate(container_network_receive_bytes_total{pod='${pod.metadata.name}', namespace='${pod.metadata.namespace}'}[5m])) by (pod, namespace, interface)) + on(namespace,pod,interface) group_left(network_name) ( pod_network_name_info )`}
+          metric="network_name"
         />
       </div>
       <div className="col-md-12 col-lg-4">
-        <Area
+        <Stack
           title="Network Out"
           humanize={humanizeDecimalBytesPerSec}
           namespace={pod.metadata.namespace}
-          query={`sum(irate(container_network_transmit_bytes_total{pod='${pod.metadata.name}', namespace='${pod.metadata.namespace}'}[5m])) by (pod, namespace)`}
+          query={`(sum(irate(container_network_transmit_bytes_total{pod='${pod.metadata.name}', namespace='${pod.metadata.namespace}'}[5m])) by (pod, namespace, interface)) + on(namespace,pod,interface) group_left(network_name) ( pod_network_name_info )`}
+          metric="network_name"
         />
       </div>
     </div>
-
     <br />
   </>
 ));
@@ -527,6 +693,7 @@ export const PodList: React.FC<PodListProps> = (props) => {
   return (
     <Table
       {...props}
+      columnManagementID={columnManagementID}
       aria-label="Pods"
       Header={getHeader(showNodes)}
       Row={getRow(showNodes)}
@@ -564,6 +731,9 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
   dispatchToProps,
 )((props: PodPageProps & PodPagePropsFromDispatch) => {
   const { canCreate = true, namespace, setPodMetrics, customData, ...listProps } = props;
+  const selectedColumns: Set<string> = new Set(
+    useSelector<RootState, string>(({ UI }) => UI.getIn(['columnManagement', columnManagementID])),
+  );
   /* eslint-disable react-hooks/exhaustive-deps */
   React.useEffect(() => {
     if (showMetrics) {
@@ -588,11 +758,19 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
     <ListPage
       {...listProps}
       canCreate={canCreate}
-      kind="Pod"
+      kind={kind}
       ListComponent={PodList}
       rowFilters={filters}
       namespace={namespace}
       customData={customData}
+      columnLayout={{
+        columns: getHeader(props?.customData?.showNodes)().map((column) =>
+          _.pick(column, ['title', 'additional', 'id']),
+        ),
+        id: columnManagementID,
+        selectedColumns,
+        type: 'Pod',
+      }}
     />
   );
 });
@@ -644,6 +822,7 @@ type PodTableRowProps = {
 
 type PodTableRowPropsFromState = {
   metrics: UIActions.PodMetrics;
+  selectedColumns: Map<string, Set<string>>;
 };
 
 type PodListProps = {

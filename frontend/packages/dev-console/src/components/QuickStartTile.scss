@@ -1,16 +1,19 @@
 @import '../../../../public/style/vars';
 
-.odc-quickstart-tile {
+.odc-quick-start-tile {
   &__card {
     height: $co-m-catalog-tile-height;
     width: $co-m-catalog-tile-width;
   }
+
   &__tour {
     margin-bottom: var(--pf-global--spacer--sm);
   }
-  &__arrowbtn {
-    margin-right: var(--pf-global--spacer--sm);
+
+  &__arrow {
+    margin-left: var(--pf-global--spacer--xs);
   }
+
   &__footer {
     border-top: 1px solid var(--pf-global--BorderColor--100);
     padding-top: var(--pf-global--spacer--sm);

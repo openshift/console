@@ -28,7 +28,6 @@ export const K8S_UI_SCHEMA = {
 export const JSON_SCHEMA_GROUP_TYPES: string[] = ['object', 'array'];
 export const JSON_SCHEMA_NUMBER_TYPES: string[] = ['number', 'integer'];
 
-const SORT_WEIGHT_BASE = 10;
-export const SORT_WEIGHT_SCALE_1 = SORT_WEIGHT_BASE ** 1;
-export const SORT_WEIGHT_SCALE_2 = SORT_WEIGHT_BASE ** 2;
-export const SORT_WEIGHT_SCALE_3 = SORT_WEIGHT_BASE ** 3;
+export const THOUSAND = 10 ** 3;
+export const MILLION = 10 ** 6;
+export const BILLION = 10 ** 9;

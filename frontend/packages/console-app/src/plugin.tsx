@@ -19,6 +19,7 @@ import {
   ResourceListPage,
   ResourceClusterNavItem,
   ResourceTabPage,
+  ContextProvider,
 } from '@console/plugin-sdk';
 import {
   ClusterVersionModel,
@@ -30,11 +31,6 @@ import {
   ClusterOperatorModel,
 } from '@console/internal/models';
 import { referenceForModel, ClusterOperator } from '@console/internal/module/k8s';
-import {
-  getNodeStatusGroups,
-  getPodStatusGroups,
-  getPVCStatusGroups,
-} from '@console/shared/src/components/dashboard/inventory-card/utils';
 import {
   fetchK8sHealth,
   getK8sHealthState,
@@ -53,6 +49,7 @@ import {
 } from './components/dashboards-page/activity';
 import reducer from './redux/reducer';
 import * as models from './models';
+import { TourContext, useTourValuesForContext } from './components/tour/tour-context';
 
 type ConsumedExtensions =
   | Perspective
@@ -68,7 +65,8 @@ type ConsumedExtensions =
   | ResourceListPage
   | ResourceDetailsPage
   | ResourceClusterNavItem
-  | ResourceTabPage;
+  | ResourceTabPage
+  | ContextProvider;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -152,14 +150,20 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Overview/Inventory/Item',
     properties: {
       model: NodeModel,
-      mapper: getNodeStatusGroups,
+      mapper: () =>
+        import(
+          '@console/shared/src/components/dashboard/inventory-card/utils' /* webpackChunkName: "console-app" */
+        ).then((m) => m.getNodeStatusGroups),
     },
   },
   {
     type: 'Dashboards/Overview/Inventory/Item',
     properties: {
       model: PodModel,
-      mapper: getPodStatusGroups,
+      mapper: () =>
+        import(
+          '@console/shared/src/components/dashboard/inventory-card/utils' /* webpackChunkName: "console-app" */
+        ).then((m) => m.getPodStatusGroups),
     },
   },
   {
@@ -172,7 +176,10 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Overview/Inventory/Item',
     properties: {
       model: PersistentVolumeClaimModel,
-      mapper: getPVCStatusGroups,
+      mapper: () =>
+        import(
+          '@console/shared/src/components/dashboard/inventory-card/utils' /* webpackChunkName: "console-app" */
+        ).then((m) => m.getPVCStatusGroups),
       useAbbr: true,
     },
   },
@@ -207,7 +214,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: async () =>
         (
           await import(
-            './components/quick-starts/QuickStartsPage' /* webpackChunkName: "co-quick-start" */
+            './components/quick-starts/QuickStartCatalogPage' /* webpackChunkName: "co-quick-start" */
           )
         ).default,
     },
@@ -259,6 +266,13 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/volume-snapshot/volume-snapshot' /* webpackChunkName: "volume-snapshot-page" */
         ).then((m) => m.VolumeSnapshotPVCPage),
+    },
+  },
+  {
+    type: 'ContextProvider',
+    properties: {
+      Provider: TourContext.Provider,
+      useValueHook: useTourValuesForContext,
     },
   },
 ];

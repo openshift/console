@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 )
@@ -19,6 +20,26 @@ func contextToHeaders(ctx context.Context, request *http.Request) {
 			}
 		}
 	}
+}
+
+type initPayload struct {
+	ImpersonateUser  string `json:"Impersonate-User"`
+	ImpersonateGroup string `json:"Impersonate-Group"`
+}
+
+func InitPayload(ctx context.Context, payload json.RawMessage) context.Context {
+	initPayload := initPayload{}
+	err := json.Unmarshal(payload, &initPayload)
+	if err != nil {
+		return ctx
+	}
+	headers, ok := ctx.Value(HeadersKey).(map[string]string)
+	if ok {
+		headers["Impersonate-User"] = initPayload.ImpersonateUser
+		headers["Impersonate-Group"] = initPayload.ImpersonateGroup
+		ctx = context.WithValue(ctx, HeadersKey, headers)
+	}
+	return ctx
 }
 
 type resolverError struct {

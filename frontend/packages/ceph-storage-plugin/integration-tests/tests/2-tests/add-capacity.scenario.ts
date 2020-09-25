@@ -34,7 +34,7 @@ import {
   verifyZoneOSDMapping,
 } from '../../utils/helpers';
 import { TEST_PLATFORM } from '../../views/installFlow.view';
-import { storageClass } from '../../mocks/storage-class';
+import { testNoProvisionerSC } from '../../mocks/storage-class';
 
 const storageCluster = JSON.parse(execSync(`kubectl get -o json -n ${NS} ${KIND}`).toString());
 const cephValue = JSON.parse(execSync(`kubectl get cephCluster -n ${NS} -o json`).toString());
@@ -119,14 +119,14 @@ describe('Check add capacity functionality for ocs service', () => {
   describe('Addition tests for Baremetal infra', () => {
     beforeAll(async () => {
       await selectSCDropdown(expansionObjects.uid);
-      execSync(`echo '${JSON.stringify(storageClass)}' | oc apply -f -`);
+      execSync(`echo '${JSON.stringify(testNoProvisionerSC)}' | oc apply -f -`);
       // need to wait for some time in order to reflect the storage class
       await browser.sleep(40 * SECOND);
-      await click(currentACSelector.getSCOption(storageClass.metadata.name));
+      await click(currentACSelector.getSCOption(testNoProvisionerSC.metadata.name));
     });
 
     afterAll(async () => {
-      execSync(`echo '${JSON.stringify(storageClass)}' | oc delete -f -`);
+      execSync(`echo '${JSON.stringify(testNoProvisionerSC)}' | oc delete -f -`);
     });
 
     it('Raw Capacity field should be hidden', () => {

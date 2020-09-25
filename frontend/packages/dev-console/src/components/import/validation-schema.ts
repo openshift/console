@@ -220,7 +220,7 @@ export const limitsValidationSchema = yup.object().shape({
 });
 
 export const imageValidationSchema = yup.object().when('build', {
-  is: (build) => build.strategy !== 'Docker',
+  is: (build) => build.strategy !== 'Docker' && build.strategy !== 'Devfile',
   then: yup.object().shape({
     selected: yup.string().required('Required'),
     tag: yup.string().required('Required'),

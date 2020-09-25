@@ -37,14 +37,28 @@ import { useShowErrorToggler } from '../../../hooks/use-show-error-toggler';
 import { UINetworkEditConfig } from '../../../types/ui/nic';
 import { isFieldDisabled } from '../../../utils/ui/edit-config';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { PendingChangesAlert } from '../../Alerts/PendingChangesAlert';
+import { MODAL_RESTART_IS_REQUIRED } from '../../../strings/vm/status';
 
-const getNetworkChoices = (nads: K8sResourceKind[], allowPodNetwork): NetworkWrapper[] => {
-  const networkChoices = nads.map((nad) => {
-    const networkName = getName(nad);
-    return new NetworkWrapper().setType(NetworkType.MULTUS, {
-      networkName,
-    });
-  });
+const getNetworkChoices = (
+  nads: K8sResourceKind[],
+  allowPodNetwork,
+  allowedMultusNetworkTypes?: string[],
+): NetworkWrapper[] => {
+  const networkChoices = nads
+    .map((nad) => {
+      const networkName = getName(nad);
+      const type = JSON.parse(nad?.spec?.config)?.type;
+
+      if (allowedMultusNetworkTypes && !allowedMultusNetworkTypes?.includes(type)) {
+        return null;
+      }
+
+      return new NetworkWrapper().setType(NetworkType.MULTUS, {
+        networkName,
+      });
+    })
+    .filter((nad) => nad);
 
   if (allowPodNetwork) {
     networkChoices.push(new NetworkWrapper().setType(NetworkType.POD));
@@ -57,6 +71,7 @@ export type NetworkProps = {
   isDisabled: boolean;
   nads?: FirehoseResult;
   allowPodNetwork: boolean;
+  allowedMultusNetworkTypes?: string[];
   network?: NetworkWrapper;
   onChange: (networkChoice: NetworkType, network: string) => void;
   acceptEmptyValues?: boolean;
@@ -69,13 +84,16 @@ export const Network: React.FC<NetworkProps> = ({
   onChange,
   nads,
   allowPodNetwork,
+  allowedMultusNetworkTypes,
   acceptEmptyValues,
 }) => {
   const nadsLoading = !isLoaded(nads);
   const nadsLoadError = getLoadError(nads, NetworkAttachmentDefinitionModel);
-  const networkChoices = getNetworkChoices(getLoadedData(nads, []), allowPodNetwork).filter((n) =>
-    n.getType().isSupported(),
-  );
+  const networkChoices = getNetworkChoices(
+    getLoadedData(nads, []),
+    allowPodNetwork,
+    allowedMultusNetworkTypes,
+  ).filter((n) => n.getType().isSupported());
 
   return (
     <FormRow
@@ -131,6 +149,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
     isEditing,
     usedInterfacesNames,
     allowPodNetwork,
+    allowedMultusNetworkTypes,
     onSubmit,
     inProgress,
     errorMessage,
@@ -138,6 +157,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
     close,
     cancel,
     editConfig,
+    isVMRunning,
   } = props;
   const isDisabled = (fieldName: string, disabled?: boolean) =>
     inProgress || disabled || isFieldDisabled(editConfig, fieldName);
@@ -201,12 +221,19 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
     setMultusNetworkName(newMultusNetworkName);
   };
 
+  const onNetworkInterfaceChange = (iType: string) => {
+    if (iType === NetworkInterfaceType.SRIOV.toString()) {
+      setModel(NetworkInterfaceModel.VIRTIO);
+    }
+
+    setInterfaceType(NetworkInterfaceType.fromString(iType));
+  };
+
   const submit = (e) => {
     e.preventDefault();
 
     if (isValid) {
-      // eslint-disable-next-line promise/catch-or-return
-      handlePromise(onSubmit(resultNIC, resultNetwork)).then(close);
+      handlePromise(onSubmit(resultNIC, resultNetwork), close);
     } else {
       setShowUIError(true);
     }
@@ -216,6 +243,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
     <div className="modal-content">
       <ModalTitle>{isEditing ? EDIT : ADD} Network Interface</ModalTitle>
       <ModalBody>
+        {isVMRunning && <PendingChangesAlert warningMsg={MODAL_RESTART_IS_REQUIRED} />}
         <Form>
           {editConfig?.warning && (
             <Alert variant={AlertVariant.warning} isInline title={editConfig?.warning} />
@@ -243,18 +271,20 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
               }
               value={asFormSelectValue(model)}
               id={asId('model')}
-              isDisabled={isDisabled('model')}
+              isDisabled={isDisabled('model') || interfaceType === NetworkInterfaceType.SRIOV}
             >
               <FormSelectPlaceholderOption isDisabled placeholder="--- Select Model ---" />
-              {NetworkInterfaceModel.getAll().map((ifaceModel) => {
-                return (
-                  <FormSelectOption
-                    key={ifaceModel.getValue()}
-                    value={ifaceModel.getValue()}
-                    label={ifaceModel.toString()}
-                  />
-                );
-              })}
+              {NetworkInterfaceModel.getAll()
+                .filter((ifaceModel) => ifaceModel.isSupported() || ifaceModel === model)
+                .map((ifaceModel) => {
+                  return (
+                    <FormSelectOption
+                      key={ifaceModel.getValue()}
+                      value={ifaceModel.getValue()}
+                      label={ifaceModel.toString()}
+                    />
+                  );
+                })}
             </FormSelect>
           </FormRow>
           <Network
@@ -268,11 +298,16 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
                 ? editConfig?.allowPodNetworkOverride
                 : allowPodNetwork
             }
+            allowedMultusNetworkTypes={
+              editConfig?.allowedMultusNetworkTypes != null
+                ? editConfig?.allowedMultusNetworkTypes
+                : allowedMultusNetworkTypes
+            }
             acceptEmptyValues={editConfig?.acceptEmptyValuesOverride?.network}
           />
           <FormRow title="Type" fieldId={asId('type')} isRequired>
             <FormSelect
-              onChange={(iType) => setInterfaceType(NetworkInterfaceType.fromString(iType))}
+              onChange={onNetworkInterfaceChange}
               value={asFormSelectValue(interfaceType)}
               id={asId('type')}
               isDisabled={isDisabled('type')}
@@ -332,6 +367,8 @@ export type NICModalProps = {
   nads?: FirehoseResult;
   usedInterfacesNames: Set<string>;
   allowPodNetwork: boolean;
+  allowedMultusNetworkTypes?: string[];
   editConfig?: UINetworkEditConfig;
+  isVMRunning?: boolean;
 } & ModalComponentProps &
   HandlePromiseProps;

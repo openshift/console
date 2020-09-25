@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { connect, Dispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
   Card,
@@ -12,21 +13,29 @@ import {
   GalleryItem,
   KebabToggle,
   Title,
+  Button,
 } from '@patternfly/react-core';
 import { ArrowRightIcon } from '@patternfly/react-icons';
-import { getQuickStartsWithStatus } from '@console/app/src/components/quick-starts/utils/quick-start-utils';
+import { getQuickStarts } from '@console/app/src/components/quick-starts/utils/quick-start-utils';
+import * as QuickStartActions from '@console/app/src/redux/actions/quick-start-actions';
+
 import './QuickStartTile.scss';
 
-export const HIDE_QUICK_START_STORAGE_KEY = 'bridge/hide-tour-tile';
+export const HIDE_QUICK_START_ADD_TILE_STORAGE_KEY = 'bridge/hide-quick-start-add-tile';
 
-const QuickStartTile: React.FC = () => {
-  const isQsTileHidden = localStorage.getItem(HIDE_QUICK_START_STORAGE_KEY) === 'true';
-  const [showTile, setShowTile] = React.useState<boolean>(!isQsTileHidden);
+type DispatchProps = {
+  setActiveQuickStart?: (quickStartID: string, totalTasks: number) => void;
+};
+
+const QuickStartTile: React.FC<DispatchProps> = ({ setActiveQuickStart }) => {
+  const isQuickStartTileHidden =
+    localStorage.getItem(HIDE_QUICK_START_ADD_TILE_STORAGE_KEY) === 'true';
+  const [showTile, setShowTile] = React.useState<boolean>(!isQuickStartTileHidden);
   const [isOpen, setOpen] = React.useState<boolean>(false);
-  const tours = getQuickStartsWithStatus();
+  const tours = getQuickStarts();
 
   const onRemove = () => {
-    localStorage.setItem(HIDE_QUICK_START_STORAGE_KEY, 'true');
+    localStorage.setItem(HIDE_QUICK_START_ADD_TILE_STORAGE_KEY, 'true');
     setShowTile(false);
   };
 
@@ -47,7 +56,7 @@ const QuickStartTile: React.FC = () => {
 
   return slicedTours.length > 0 && showTile ? (
     <GalleryItem>
-      <Card className="odc-quickstart-tile__card">
+      <Card className="odc-quick-start-tile__card">
         <CardHeader>
           <CardHeaderMain>
             <Title headingLevel="h1" size="xl">
@@ -65,19 +74,40 @@ const QuickStartTile: React.FC = () => {
           </CardActions>
         </CardHeader>
         <CardBody>
-          {slicedTours.map((tour) => (
-            <div key={tour.name} className="odc-quickstart-tile__tour">
-              <Link to="/#">{tour.name}</Link>
-            </div>
-          ))}
+          {slicedTours.map((tour) => {
+            const {
+              metadata: { name },
+              spec: { displayName, tasks },
+            } = tour;
+
+            return (
+              <div key={name} className="odc-quick-start-tile__tour">
+                <Button
+                  variant="link"
+                  onClick={() => setActiveQuickStart(name, tasks.length)}
+                  isInline
+                >
+                  {displayName}
+                </Button>
+              </div>
+            );
+          })}
         </CardBody>
-        <CardFooter className="odc-quickstart-tile__footer">
-          <ArrowRightIcon className="odc-quickstart-tile__arrowbtn" />
-          <Link to="/quickstart">See all Quick Starts</Link>
+        <CardFooter className="odc-quick-start-tile__footer">
+          <Link to="/quickstart">
+            See all Quick Starts <ArrowRightIcon className="odc-quick-start-tile__arrow" />
+          </Link>
         </CardFooter>
       </Card>
     </GalleryItem>
   ) : null;
 };
 
-export default QuickStartTile;
+const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
+  setActiveQuickStart: (quickStartID: string, totalTasks: number) =>
+    dispatch(QuickStartActions.setActiveQuickStart(quickStartID, totalTasks)),
+});
+
+export const InternalQuickStartTile = QuickStartTile; // for testing
+
+export default connect<{}, DispatchProps>(null, mapDispatchToProps)(QuickStartTile);

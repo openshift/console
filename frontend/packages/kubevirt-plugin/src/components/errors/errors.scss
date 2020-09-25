@@ -5,3 +5,13 @@
 .kubevirt-errors__error-group--end {
   margin-bottom: 1.5em;
 }
+
+.kubevirt-errors__expendable {
+  background-color: var(--pf-global--palette--red-50);
+  white-space: pre-wrap;
+  border-width: 0;
+}
+
+.kubevirt-errors__detailed-message {
+  margin-bottom: var(--pf-global--spacer--xs);
+}

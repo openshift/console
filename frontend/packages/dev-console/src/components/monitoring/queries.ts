@@ -111,7 +111,7 @@ export const topWorkloadMetricsQueries: MonitoringQuery[] = [
     byteDataType: ByteDataTypes.BinaryBytes,
     query: _.template(
       `sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{cluster='', namespace='<%= namespace %>'}
-          * on(namespace,pod) group_left(workload, workload_type) mixin_pod_workload{cluster='',
+          * on(namespace,pod) group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster='',
           namespace='<%= namespace %>', workload='<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)`,
     ),
   },
@@ -122,7 +122,7 @@ export const topWorkloadMetricsQueries: MonitoringQuery[] = [
     byteDataType: ByteDataTypes.BinaryBytes,
     query: _.template(
       `sum(container_memory_working_set_bytes{cluster='', namespace='<%= namespace %>', container!=""}
-          * on(namespace,pod) group_left(workload, workload_type) mixin_pod_workload{cluster='',
+          * on(namespace,pod) group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster='',
           namespace='<%= namespace %>', workload='<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)`,
     ),
   },
@@ -133,7 +133,7 @@ export const topWorkloadMetricsQueries: MonitoringQuery[] = [
     byteDataType: ByteDataTypes.DecimalBytes,
     query: _.template(
       `sum(irate(container_network_receive_bytes_total{cluster="", namespace=~'<%= namespace %>'}[4h])
-          * on (namespace,pod) group_left(workload,workload_type) mixin_pod_workload{cluster="",
+          * on (namespace,pod) group_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster="",
           namespace=~'<%= namespace %>', workload=~'<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)`,
     ),
   },
@@ -147,7 +147,7 @@ export const workloadMetricsQueries: MonitoringQuery[] = [
     byteDataType: ByteDataTypes.DecimalBytes,
     query: _.template(
       `sum(irate(container_network_receive_bytes_total{cluster="", namespace=~'<%= namespace %>'}[4h])
-         * on (namespace,pod) group_left(workload,workload_type) mixin_pod_workload{cluster="",
+         * on (namespace,pod) group_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster="",
          namespace=~'<%= namespace %>', workload=~'<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)`,
     ),
   },
@@ -157,7 +157,7 @@ export const workloadMetricsQueries: MonitoringQuery[] = [
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
     query: _.template(
-      `sum(irate(container_network_receive_packets_total{cluster="", namespace=~'<%= namespace %>'}[4h])* on (namespace,pod)group_left(workload,workload_type) mixin_pod_workload{cluster="", namespace=~'<%= namespace %>', workload=~'<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)`,
+      `sum(irate(container_network_receive_packets_total{cluster="", namespace=~'<%= namespace %>'}[4h])* on (namespace,pod)group_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster="", namespace=~'<%= namespace %>', workload=~'<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)`,
     ),
   },
   {
@@ -166,7 +166,7 @@ export const workloadMetricsQueries: MonitoringQuery[] = [
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
     query: _.template(
-      `sum(irate(container_network_transmit_packets_total{cluster="", namespace=~'<%= namespace %>'}[4h])* on (namespace,pod)group_left(workload,workload_type) mixin_pod_workload{cluster="", namespace=~'<%= namespace %>', workload=~'<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)`,
+      `sum(irate(container_network_transmit_packets_total{cluster="", namespace=~'<%= namespace %>'}[4h])* on (namespace,pod)group_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster="", namespace=~'<%= namespace %>', workload=~'<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)`,
     ),
   },
   {
@@ -175,7 +175,7 @@ export const workloadMetricsQueries: MonitoringQuery[] = [
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
     query: _.template(
-      `sum(irate(container_network_receive_packets_dropped_total{cluster="", namespace=~'<%= namespace %>'}[4h])* on (namespace,pod) group_left(workload,workload_type) mixin_pod_workload{cluster="", namespace=~'<%= namespace %>', workload=~'<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)`,
+      `sum(irate(container_network_receive_packets_dropped_total{cluster="", namespace=~'<%= namespace %>'}[4h])* on (namespace,pod) group_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster="", namespace=~'<%= namespace %>', workload=~'<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)`,
     ),
   },
   {
@@ -185,7 +185,7 @@ export const workloadMetricsQueries: MonitoringQuery[] = [
     byteDataType: ByteDataTypes.DecimalBytes,
     query: _.template(
       `sum(irate(container_network_transmit_packets_dropped_total{cluster="", namespace=~'<%= namespace %>'}[4h])* on (namespace,pod)
-      group_left(workload,workload_type) mixin_pod_workload{cluster="", namespace=~'<%= namespace %>', workload=~'<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)
+      group_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster="", namespace=~'<%= namespace %>', workload=~'<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)
       `,
     ),
   },
@@ -195,7 +195,7 @@ export const workloadMetricsQueries: MonitoringQuery[] = [
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
     query: _.template(
-      `avg(irate(container_network_receive_bytes_total{cluster="", namespace=~'<%= namespace %>'}[4h])* on (namespace,pod)group_left(workload,workload_type) mixin_pod_workload{cluster="", namespace=~'<%= namespace %>', workload=~'<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)`,
+      `avg(irate(container_network_receive_bytes_total{cluster="", namespace=~'<%= namespace %>'}[4h])* on (namespace,pod)group_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster="", namespace=~'<%= namespace %>', workload=~'<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)`,
     ),
   },
   {
@@ -204,7 +204,7 @@ export const workloadMetricsQueries: MonitoringQuery[] = [
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
     query: _.template(
-      `avg(irate(container_network_transmit_bytes_total{cluster="", namespace=~'<%= namespace %>'}[4h])* on (namespace,pod)group_left(workload,workload_type) mixin_pod_workload{cluster="", namespace=~'<%= namespace %>', workload=~'<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)`,
+      `avg(irate(container_network_transmit_bytes_total{cluster="", namespace=~'<%= namespace %>'}[4h])* on (namespace,pod)group_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster="", namespace=~'<%= namespace %>', workload=~'<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)`,
     ),
   },
 ];

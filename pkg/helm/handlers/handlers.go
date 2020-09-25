@@ -3,24 +3,27 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/openshift/console/pkg/helm/chartproxy"
+
 	"net/http"
 
 	"github.com/coreos/pkg/capnslog"
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/chart"
-	"helm.sh/helm/v3/pkg/release"
-
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/helm/actions"
 	"github.com/openshift/console/pkg/serverutils"
+	"helm.sh/helm/v3/pkg/action"
+	"helm.sh/helm/v3/pkg/chart"
+	"helm.sh/helm/v3/pkg/release"
+	"k8s.io/client-go/rest"
+	"sigs.k8s.io/yaml"
 )
 
 var (
-	plog = capnslog.NewPackageLogger("github.com/openshift/console", "helm")
+	plog = capnslog.NewPackageLogger("github.com/openshift/console", "helm/handlers")
 )
 
 func New(apiUrl string, transport http.RoundTripper) *helmHandlers {
-	return &helmHandlers{
+	h := &helmHandlers{
 		ApiServerHost:           apiUrl,
 		Transport:               transport,
 		getActionConfigurations: actions.GetActionConfigurations,
@@ -34,6 +37,12 @@ func New(apiUrl string, transport http.RoundTripper) *helmHandlers {
 		rollbackRelease:         actions.RollbackRelease,
 		getReleaseHistory:       actions.GetReleaseHistory,
 	}
+	h.newProxy = func(bearerToken string) (getter chartproxy.Proxy, err error) {
+		return chartproxy.New(func() (*rest.Config, error) {
+			return h.restConfig(bearerToken), nil
+		})
+	}
+	return h
 }
 
 // helmHandlers provides handlers to handle helm related requests
@@ -54,6 +63,15 @@ type helmHandlers struct {
 	getRelease        func(string, *action.Configuration) (*release.Release, error)
 	getChart          func(chartUrl string, conf *action.Configuration) (*chart.Chart, error)
 	getReleaseHistory func(releaseName string, conf *action.Configuration) ([]*release.Release, error)
+	newProxy          func(bearerToken string) (chartproxy.Proxy, error)
+}
+
+func (h *helmHandlers) restConfig(bearerToken string) *rest.Config {
+	return &rest.Config{
+		Host:        h.ApiServerHost,
+		BearerToken: bearerToken,
+		Transport:   h.Transport,
+	}
 }
 
 func (h *helmHandlers) HandleHelmRenderManifests(user *auth.User, w http.ResponseWriter, r *http.Request) {
@@ -239,4 +257,32 @@ func (h *helmHandlers) HandleGetReleaseHistory(user *auth.User, w http.ResponseW
 	res, _ := json.Marshal(rels)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(res)
+}
+
+func (h *helmHandlers) HandleIndexFile(user *auth.User, w http.ResponseWriter, r *http.Request) {
+	proxy, err := h.newProxy(user.Token)
+
+	if err != nil {
+		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: fmt.Sprintf("Failed to get k8s config: %v", err)})
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/yaml")
+	w.Header().Set("Cache-Control", "no-store, must-revalidate")
+
+	indexFile, err := proxy.IndexFile()
+
+	if err != nil {
+		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: fmt.Sprintf("Failed to get index file: %v", err)})
+		return
+	}
+
+	out, err := yaml.Marshal(indexFile)
+
+	if err != nil {
+		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: fmt.Sprintf("Failed to deserialize index file to yaml: %v", err)})
+		return
+	}
+
+	w.Write(out)
 }

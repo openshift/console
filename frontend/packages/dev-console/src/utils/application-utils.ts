@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { isGraph, Node } from '@patternfly/react-topology';
 import {
   K8sKind,
   k8sGet,
@@ -20,19 +21,26 @@ import {
   SecretModel,
   DaemonSetModel,
   StatefulSetModel,
+  JobModel,
+  CronJobModel,
 } from '@console/internal/models';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
-import {
-  ServiceModel as KnativeServiceModel,
-  RouteModel as KnativeRouteModel,
-} from '@console/knative-plugin/src/models';
+import { ServiceModel as KnativeServiceModel } from '@console/knative-plugin/src/models';
 import { isDynamicEventResourceKind } from '@console/knative-plugin/src/utils/fetch-dynamic-eventsources-utils';
 import { checkAccess } from '@console/internal/components/utils';
 import { getOperatorBackedServiceKindMap } from '@console/shared';
 import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '../const';
-import { TopologyDataObject, ConnectsToData } from '../components/topology/topology-types';
+import {
+  TopologyDataObject,
+  ConnectsToData,
+  OdcNodeModel,
+} from '../components/topology/topology-types';
 import { detectGitType } from '../components/import/import-validation-utils';
 import { createServiceBinding } from '../components/topology/operators/actions/serviceBindings';
+import { TYPE_APPLICATION_GROUP } from '../components/topology/components/const';
+
+export const isWorkloadRegroupable = (node: Node): boolean =>
+  isGraph(node?.getParent()) || node?.getParent().getType() === TYPE_APPLICATION_GROUP;
 
 export const sanitizeApplicationValue = (
   application: string,
@@ -40,6 +48,7 @@ export const sanitizeApplicationValue = (
 ): string => {
   switch (applicationType) {
     case UNASSIGNED_KEY:
+      return 'unassigned';
     case CREATE_APPLICATION_KEY:
       return '';
     default:
@@ -373,12 +382,10 @@ const deleteWebhooks = (
   }, []);
 };
 
-export const cleanUpWorkload = async (
-  resource: K8sResourceKind,
-  workload: TopologyDataObject,
-): Promise<K8sResourceKind[]> => {
+export const cleanUpWorkload = async (workload: OdcNodeModel): Promise<K8sResourceKind[]> => {
+  const { resource } = workload;
   const reqs = [];
-  const isBuildConfigPresent = !_.isEmpty(workload?.resources?.buildConfigs);
+  const isBuildConfigPresent = !_.isEmpty(workload.data?.resources?.buildConfigs);
   const isImageStreamPresent = await k8sGet(
     ImageStreamModel,
     resource.metadata.name,
@@ -387,7 +394,7 @@ export const cleanUpWorkload = async (
     .then(() => true)
     .catch(() => false);
   const deleteModels = [ServiceModel, RouteModel];
-  const knativeDeleteModels = [KnativeServiceModel, KnativeRouteModel];
+  const knativeDeleteModels = [KnativeServiceModel];
   if (isBuildConfigPresent) {
     deleteModels.push(BuildConfigModel);
     knativeDeleteModels.push(BuildConfigModel);
@@ -409,6 +416,8 @@ export const cleanUpWorkload = async (
   switch (resource.kind) {
     case DaemonSetModel.kind:
     case StatefulSetModel.kind:
+    case JobModel.kind:
+    case CronJobModel.kind:
       deleteRequest(modelFor(resource.kind), resource);
       break;
     case DeploymentModel.kind:
@@ -422,7 +431,7 @@ export const cleanUpWorkload = async (
     default:
       break;
   }
-  isBuildConfigPresent && reqs.push(...deleteWebhooks(resource, workload));
+  isBuildConfigPresent && reqs.push(...deleteWebhooks(resource, workload.data));
   return Promise.all(reqs);
 };
 

@@ -1,3 +1,5 @@
 .odc-dynamic-resource-link-list {
-  margin-bottom: var(--pf-global--spacer--lg);
+  &--addSpaceBelow {
+    margin-bottom: var(--pf-global--spacer--lg);
+  }
 }

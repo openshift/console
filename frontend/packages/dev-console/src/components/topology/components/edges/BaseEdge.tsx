@@ -9,6 +9,7 @@ import {
   observer,
   useHover,
   useSelection,
+  WithContextMenuProps,
 } from '@patternfly/react-topology';
 import { getResource } from '../../topology-utils';
 import './BaseEdge.scss';
@@ -17,7 +18,8 @@ type BaseEdgeProps = {
   element: Edge;
   dragging?: boolean;
   className?: string;
-} & WithRemoveConnectorProps;
+} & WithRemoveConnectorProps &
+  Partial<WithContextMenuProps>;
 
 const ObservedBaseEdge: React.FC<BaseEdgeProps> = ({
   element,
@@ -26,6 +28,7 @@ const ObservedBaseEdge: React.FC<BaseEdgeProps> = ({
   onHideRemoveConnector,
   children,
   className,
+  onContextMenu,
 }) => {
   const [hover, hoverRef] = useHover();
   const [selected, onSelect] = useSelection({ controlled: true });
@@ -63,6 +66,7 @@ const ObservedBaseEdge: React.FC<BaseEdgeProps> = ({
           'is-selected': selected,
         })}
         onClick={onSelect}
+        onContextMenu={onContextMenu}
       >
         <line
           x1={startPoint.x}

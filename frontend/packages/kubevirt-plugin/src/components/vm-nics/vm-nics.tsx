@@ -6,8 +6,8 @@ import { createBasicLookup, dimensifyHeader } from '@console/shared';
 import { EmptyBox } from '@console/internal/components/utils';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 import { VMGenericLikeEntityKind } from '../../types/vmLike';
-import { isVMI } from '../../selectors/check-type';
-import { VMLikeEntityTabProps } from '../vms/types';
+import { isVMI, isVM } from '../../selectors/check-type';
+import { VMTabProps } from '../vms/types';
 import { NetworkInterfaceWrapper } from '../../k8s/wrapper/vm/network-interface-wrapper';
 import { nicModalEnhanced } from '../modals/nic-modal/nic-modal-enhanced';
 import { getSimpleName } from '../../selectors/utils';
@@ -18,7 +18,11 @@ import { NetworkBundle } from './types';
 import { nicTableColumnClasses } from './utils';
 import { asVMILikeWrapper } from '../../k8s/wrapper/utils/convert';
 import { ADD_NETWORK_INTERFACE } from '../../utils/strings';
-import { asVM, isVMRunningOrExpectedRunning } from '../../selectors/vm';
+import { isVMRunningOrExpectedRunning } from '../../selectors/vm/selectors';
+import { asVM } from '../../selectors/vm';
+import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
+import { VMIWrapper } from '../../k8s/wrapper/vm/vmi-wrapper';
+import { changedNics } from '../../selectors/vm-like/next-run-changes';
 
 const getNicsData = (vmLikeEntity: VMGenericLikeEntityKind): NetworkBundle[] => {
   const vmiLikeWrapper = asVMILikeWrapper(vmLikeEntity);
@@ -108,9 +112,15 @@ export const VMNicsTable: React.FC<VMNicsTableProps> = ({
   );
 };
 
-export const VMNics: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) => {
+export const VMNics: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis: vmisProp }) => {
   const [isLocked, setIsLocked] = useSafetyFirst(false);
   const withProgress = wrapWithProgress(setIsLocked);
+  const isVMRunning = isVM(vmLikeEntity) && isVMRunningOrExpectedRunning(asVM(vmLikeEntity));
+  const pendingChangesNICs: Set<string> =
+    vmisProp.length > 0 && isVMI(vmisProp[0])
+      ? new Set(changedNics(new VMWrapper(asVM(vmLikeEntity)), new VMIWrapper(vmisProp[0])))
+      : null;
+
   return (
     <div className="co-m-list">
       {!isVMI(vmLikeEntity) && (
@@ -124,10 +134,11 @@ export const VMNics: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) =>
                   nicModalEnhanced({
                     blocking: true,
                     vmLikeEntity,
+                    isVMRunning,
                   }).result,
                 )
               }
-              isDisabled={isLocked || isVMRunningOrExpectedRunning(asVM(vmLikeEntity))}
+              isDisabled={isLocked}
             >
               {ADD_NETWORK_INTERFACE}
             </Button>
@@ -141,6 +152,7 @@ export const VMNics: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) =>
             vmLikeEntity,
             withProgress,
             isDisabled: isLocked,
+            pendingChangesNICs,
           }}
           row={NicRow}
           columnClasses={nicTableColumnClasses}

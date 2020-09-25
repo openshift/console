@@ -7,12 +7,12 @@ const KafkaChannelSection: React.FC = () => (
     <NumberSpinnerField
       name="data.kafkachannel.numPartitions"
       label="Number of Partitions"
-      helpText="The number of partitions of a Kafka topic. By defatul is, set to 1."
+      helpText="The number of partitions of a Kafka topic. By default is, set to 1."
     />
     <NumberSpinnerField
       name="data.kafkachannel.replicationFactor"
       label="Replication Factor"
-      helpText="The Replication Factor of a Kafka topic. By defatul is, set to 1."
+      helpText="The Replication Factor of a Kafka topic. By default is, set to 1."
     />
   </FormSection>
 );

@@ -6,26 +6,18 @@ import {
   HumanizeResult,
 } from '@console/internal/components/utils';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import {
-  ACCOUNTS,
-  BY_IOPS,
-  BY_LOGICAL_USAGE,
-  BY_PHYSICAL_VS_LOGICAL_USAGE,
-  BY_EGRESS,
-  PROVIDERS,
-} from '../../constants';
 import { getGaugeValue } from '../../utils';
-import { DATA_CONSUMPTION_QUERIES, ObjectServiceDashboardQuery } from '../../queries';
+import { Metrics, Breakdown } from '../../constants';
 
 export const DataConsumersValue = {
-  [PROVIDERS]: 'PROVIDERS_',
-  [ACCOUNTS]: 'ACCOUNTS_',
+  [Breakdown.PROVIDERS]: 'PROVIDERS_',
+  [Breakdown.ACCOUNTS]: 'ACCOUNTS_',
 };
 export const DataConsumersSortByValue = {
-  [BY_IOPS]: 'BY_IOPS',
-  [BY_LOGICAL_USAGE]: 'BY_LOGICAL_USAGE',
-  [BY_PHYSICAL_VS_LOGICAL_USAGE]: 'BY_PHYSICAL_VS_LOGICAL_USAGE',
-  [BY_EGRESS]: 'BY_EGRESS',
+  [Metrics.IOPS]: 'BY_IOPS',
+  [Metrics.LOGICAL]: 'BY_LOGICAL_USAGE',
+  [Metrics.PHY_VS_LOG]: 'BY_PHYSICAL_VS_LOGICAL_USAGE',
+  [Metrics.EGRESS]: 'BY_EGRESS',
 };
 
 /* utility mapper to convert number in words */
@@ -34,15 +26,6 @@ export const numberInWords: { [k: string]: string } = {
   k: 'thousands',
   m: 'millions',
   b: 'billions',
-};
-
-export const getQueries: GetQueries = (metric, kpi) => {
-  const queries =
-    DATA_CONSUMPTION_QUERIES[
-      ObjectServiceDashboardQuery[DataConsumersValue[metric] + DataConsumersSortByValue[kpi]]
-    ];
-  const keys = Object.keys(queries);
-  return { queries, keys };
 };
 
 const getMaxVal: GetMaxVal = (response, humanize) => {
@@ -86,8 +69,7 @@ export const getDataConsumptionChartData: GetDataConsumptionChartData = (
   let secondBarMax: HumanizeResult;
   let nonFormattedData: ChartDataPoint[];
   switch (dropdownValue) {
-    case 'PROVIDERS_BY_IOPS':
-    case 'ACCOUNTS_BY_IOPS':
+    case Metrics.IOPS:
       firstBarMax = getMaxVal(result.read, humanizeNumber);
       secondBarMax = getMaxVal(result.write, humanizeNumber);
       max = firstBarMax.value > secondBarMax.value ? firstBarMax : secondBarMax;
@@ -100,7 +82,7 @@ export const getDataConsumptionChartData: GetDataConsumptionChartData = (
         { name: `Total Writes ${getLegendData(result.totalWrite, humanizeNumber)}` },
       ];
       break;
-    case 'ACCOUNTS_BY_LOGICAL_USAGE':
+    case Metrics.LOGICAL:
       max = getMaxVal(result.logicalUsage, humanizeBinaryBytes);
       chartData = [
         getChartData(
@@ -120,7 +102,7 @@ export const getDataConsumptionChartData: GetDataConsumptionChartData = (
         },
       ];
       break;
-    case 'PROVIDERS_BY_PHYSICAL_VS_LOGICAL_USAGE':
+    case Metrics.PHY_VS_LOG:
       firstBarMax = getMaxVal(result.physicalUsage, humanizeBinaryBytes);
       secondBarMax = getMaxVal(result.logicalUsage, humanizeBinaryBytes);
       max = firstBarMax.value > secondBarMax.value ? firstBarMax : secondBarMax;
@@ -155,7 +137,7 @@ export const getDataConsumptionChartData: GetDataConsumptionChartData = (
         },
       ];
       break;
-    case 'PROVIDERS_BY_EGRESS':
+    case Metrics.EGRESS:
       max = getMaxVal(result.egress, humanizeBinaryBytes);
       nonFormattedData = getChartData(result.egress, metric, humanizeBinaryBytes, max.unit);
       chartData = nonFormattedData.length ? nonFormattedData.map((dataPoint) => [dataPoint]) : [[]];
@@ -183,10 +165,6 @@ type ChartData = ChartDataPoint[][];
 
 type LegendData = { name: string }[];
 
-type QueryObject = {
-  [key: string]: string;
-};
-
 type GetChartData = (
   response: PrometheusResponse,
   metric: string,
@@ -198,14 +176,12 @@ type GetChartData = (
 type GetDataConsumptionChartData = (
   result: { [key: string]: PrometheusResponse },
   metric: string,
-  dropdownValue: string,
+  dropdownValue: Metrics,
 ) => {
   chartData: ChartData;
   legendData: LegendData;
   max: HumanizeResult;
 };
-
-type GetQueries = (metric: string, kpi: string) => { queries: QueryObject; keys: string[] };
 
 type GetMaxVal = (response: PrometheusResponse, humanize: Humanize) => HumanizeResult;
 

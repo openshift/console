@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { safeLoad } from 'js-yaml';
 import { checkAccess } from '@console/internal/components/utils';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
-import { getDynamicChannelModelRefs } from './fetch-dynamic-eventsources-utils';
+import { useChannelResourcesList } from './fetch-dynamic-eventsources-utils';
 import {
   getGroupVersionKind,
   modelFor,
@@ -36,38 +36,41 @@ export const getChannelKind = (ref: string): string => {
 
 export const useChannelList = (namespace: string): ChannelListProps => {
   const [accessData, setAccessData] = useSafetyFirst({ loaded: false, channelList: [] });
-  const channelResourcesList = getDynamicChannelModelRefs();
-  const accessList = [];
+  const { channels, loaded: channelsLoaded } = useChannelResourcesList();
   React.useEffect(() => {
-    _.forIn(channelResourcesList, (channelRef: string) => {
-      if (isGroupVersionKind(channelRef)) {
-        const [group] = getGroupVersionKind(channelRef) ?? [];
-        const { plural } = modelFor(channelRef) || {};
-        accessList.push(
-          checkAccess({
-            group,
-            resource: plural,
-            namespace,
-            verb: 'create',
-          }).then((result) => (result.status.allowed ? channelRef : '')),
-        );
-      }
-    });
-    Promise.all(accessList)
-      .then((results) => {
-        const channelList = results.reduce((acc, result) => {
-          if (result.length > 0) {
-            return [...acc, result];
-          }
-          return acc;
-        }, []);
+    const accessList = [];
+    if (channelsLoaded) {
+      _.forIn(channels, (channelRef: string) => {
+        if (isGroupVersionKind(channelRef)) {
+          const [group] = getGroupVersionKind(channelRef) ?? [];
+          const { plural } = modelFor(channelRef) || {};
+          accessList.push(
+            checkAccess({
+              group,
+              resource: plural,
+              namespace,
+              verb: 'create',
+            }).then((result) => (result.status.allowed ? channelRef : '')),
+          );
+        }
+      });
+      Promise.all(accessList)
+        .then((results) => {
+          const channelList = results.reduce((acc, result) => {
+            if (result.length > 0) {
+              return [...acc, result];
+            }
+            return acc;
+          }, []);
 
-        setAccessData({ loaded: true, channelList });
-      })
-      // eslint-disable-next-line no-console
-      .catch((err) => console.warn(err.message));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+          setAccessData({ loaded: true, channelList });
+        })
+        .catch((err) =>
+          // eslint-disable-next-line no-console
+          console.warn('Error while checking create access for channels', err.message),
+        );
+    }
+  }, [namespace, channels, channelsLoaded, setAccessData]);
 
   return accessData;
 };
@@ -83,7 +86,7 @@ export const getCreateChannelData = (formData: AddChannelFormData): K8sResourceK
   if (!isGroupVersionKind(type)) {
     return {};
   }
-  const defaultLabel = getAppLabels(name, applicationName);
+  const defaultLabel = getAppLabels({ name, applicationName });
   const [channelGroup, channelVersion, channelKind] = getGroupVersionKind(type);
   const channelSpecData = data[channelKind.toLowerCase()];
   const eventSourceResource: K8sResourceKind = {

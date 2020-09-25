@@ -37,12 +37,16 @@ const INSTANT_VECTOR_RESPONSE: PrometheusResponse = {
 describe('getRangeVectorStats()', () => {
   it('should return a properly formatted data object', () => {
     const data = getRangeVectorStats(RANGE_VECTOR_RESPONSE);
-    expect(data.length).toBe(2);
+    expect(data[0].length).toBe(2);
 
-    const [d1, d2] = data;
-    expect(d1.x).toEqual(new Date(1000));
+    const [d1, d2] = data[0];
+    const date1 = new Date(1000);
+    date1.setSeconds(0, 0);
+    const date2 = new Date(2000);
+    date2.setSeconds(0, 0);
+    expect(d1.x).toEqual(date1);
     expect(d1.y).toEqual(123.4);
-    expect(d2.x).toEqual(new Date(2000));
+    expect(d2.x).toEqual(date2);
     expect(d2.y).toEqual(5678.9);
   });
 });

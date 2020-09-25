@@ -123,10 +123,14 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
       {showOpenInNewWindow && consoleType && (
         <StackItem>
           <Button
-            component="a"
-            target="_blank"
             variant="secondary"
-            href={`/k8s/ns/${namespace}/virtualmachineinstances/${vmName}/standaloneconsole?type=${consoleType.toString()}`}
+            onClick={() =>
+              window.open(
+                `/k8s/ns/${namespace}/virtualmachineinstances/${vmName}/standaloneconsole?type=${consoleType.toString()}`,
+                `${vmName}-console`,
+                'modal=yes,alwaysRaised=yes,width=1024,height=768',
+              )
+            }
           >
             Open Console in new Window
           </Button>
@@ -190,6 +194,7 @@ export const VMConsoleFirehose: React.FC<VMTabProps> = ({
   vmImports,
   pods,
   migrations,
+  pvcs,
   dataVolumes,
   customData: { kindObj },
   showOpenInNewWindow,
@@ -211,6 +216,7 @@ export const VMConsoleFirehose: React.FC<VMTabProps> = ({
     vmi,
     pods,
     migrations,
+    pvcs,
     dataVolumes,
     vmImports,
   });

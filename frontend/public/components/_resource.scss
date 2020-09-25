@@ -158,3 +158,9 @@
     }
   }
 }
+
+.co-namespace-summary__description {
+  max-height: 15rem;
+  overflow-y: auto;
+  padding-right: var(--pf-global--spacer--sm);
+}

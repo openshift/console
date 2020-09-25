@@ -135,6 +135,10 @@ func addAuth(fs *flag.FlagSet, auth *Auth) {
 	if auth.LogoutRedirect != "" {
 		fs.Set("user-auth-logout-redirect", auth.LogoutRedirect)
 	}
+
+	if auth.InactivityTimeoutSeconds != 0 {
+		fs.Set("inactivity-timeout", strconv.Itoa(auth.InactivityTimeoutSeconds))
+	}
 }
 
 func addProviders(fs *flag.FlagSet, providers *Providers) {

@@ -30,7 +30,7 @@ export const VMDescriptionModal = withHandlePromise((props: VMDescriptionModalPr
       close();
     } else {
       const promise = k8sPatch(getVMLikeModel(vmLikeEntity), vmLikeEntity, patches);
-      handlePromise(promise).then(close); // eslint-disable-line promise/catch-or-return
+      handlePromise(promise, close);
     }
   };
 

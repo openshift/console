@@ -4,19 +4,20 @@ export const withHandlePromise: WithHandlePromise = (Component) => (props) => {
   const [inProgress, setInProgress] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
 
-  const handlePromise = (promise) => {
+  const handlePromise = (promise, onFulfill, onError) => {
     setInProgress(true);
-    return promise.then(
+    promise.then(
       (res) => {
         setInProgress(false);
         setErrorMessage('');
-        return res;
+        onFulfill && onFulfill(res);
       },
       (error) => {
         const errorMsg = error.message || 'An error occurred. Please try again.';
         setInProgress(false);
         setErrorMessage(errorMsg);
-        return Promise.reject(errorMsg);
+        // eslint-disable-next-line no-console
+        onError ? onError(errorMsg) : console.error(error);
       },
     );
   };
@@ -69,7 +70,11 @@ export class PromiseComponent<P, S extends PromiseComponentState> extends React.
 }
 
 export type HandlePromiseProps = {
-  handlePromise: <T>(promise: Promise<T>) => Promise<T>;
+  handlePromise: <T>(
+    promise: Promise<T>,
+    onFulfill?: (res) => void,
+    onError?: (errorMsg: string) => void,
+  ) => void;
   inProgress: boolean;
   errorMessage: string;
 };

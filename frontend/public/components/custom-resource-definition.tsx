@@ -82,8 +82,8 @@ const CRDTableHeader = () => {
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Version',
-      sortField: 'spec.version',
+      title: 'Latest Version',
+      sortFunc: 'crdLatestVersion',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
@@ -231,7 +231,8 @@ const Details: React.FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) 
                   <Established crd={crd} />
                 </dd>
                 <DetailsItem label="Group" obj={crd} path="spec.group" />
-                <DetailsItem label="Version" obj={crd} path="spec.version" />
+                <dt>Latest Version</dt>
+                <dd>{getLatestVersionForCRD(crd)}</dd>
                 <DetailsItem label="Scope" obj={crd} path="spec.scope" />
               </dl>
             </div>

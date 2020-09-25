@@ -45,6 +45,7 @@ import {
 import { ClusterVersionModel } from '../models';
 import { useK8sWatchResource, WatchK8sResource } from './utils/k8s-watch-hook';
 import { useAccessReview } from './utils/rbac';
+import { LinkifyExternal } from './utils';
 
 const criticalCompare = (a: Alert): boolean => getAlertSeverity(a) === 'critical';
 const otherAlertCompare = (a: Alert): boolean => getAlertSeverity(a) !== 'critical';
@@ -106,7 +107,11 @@ const getAlertNotificationEntries = (
           return (
             <NotificationEntry
               key={`${i}_${alert.activeAt}`}
-              description={getAlertDescription(alert) || getAlertMessage(alert)}
+              description={
+                <LinkifyExternal>
+                  {getAlertDescription(alert) || getAlertMessage(alert)}
+                </LinkifyExternal>
+              }
               timestamp={getAlertTime(alert)}
               type={NotificationTypes[getAlertSeverity(alert)]}
               title={getAlertName(alert)}
@@ -130,7 +135,7 @@ const getUpdateNotificationEntries = (
   const updateData: ClusterUpdate[] = getSortedUpdates(cv);
   const currentChannel = cv?.spec?.channel;
   const currentPrefix = splitClusterVersionChannel(currentChannel)?.prefix;
-  const similarChannels = getSimilarClusterVersionChannels(currentPrefix);
+  const similarChannels = getSimilarClusterVersionChannels(cv, currentPrefix);
   const newerChannel = getNewerClusterVersionChannel(similarChannels, currentChannel);
   const newerChannelVersion = splitClusterVersionChannel(newerChannel)?.version;
   const entries = [];
@@ -194,10 +199,8 @@ const getAlerts = (alertsResults: PrometheusRulesResponse): Alert[] =>
 export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerProps> = ({
   isDesktop,
   toggleNotificationDrawer,
-  toggleNotificationsRead,
   isDrawerExpanded,
   onDrawerChange,
-  notificationsRead,
   alerts,
   children,
 }) => {
@@ -251,12 +254,13 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
 
   const { data, loaded, loadError } = alerts || {};
 
-  const clusterVersionIsEditable = useAccessReview({
-    group: ClusterVersionModel.apiGroup,
-    resource: ClusterVersionModel.plural,
-    verb: 'patch',
-    name: 'version',
-  });
+  const clusterVersionIsEditable =
+    useAccessReview({
+      group: ClusterVersionModel.apiGroup,
+      resource: ClusterVersionModel.plural,
+      verb: 'patch',
+      name: 'version',
+    }) && window.SERVER_FLAGS.branding !== 'dedicated';
 
   const updateList: React.ReactNode[] = getUpdateNotificationEntries(
     clusterVersionData,
@@ -348,12 +352,6 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
     </NotificationCategory>
   ) : null;
 
-  if (_.isEmpty(data) && _.isEmpty(updateList) && !notificationsRead) {
-    toggleNotificationsRead();
-  } else if ((!_.isEmpty(data) || !_.isEmpty(updateList)) && notificationsRead) {
-    toggleNotificationsRead();
-  }
-
   return (
     <NotificationDrawer
       className="co-notification-drawer"
@@ -364,6 +362,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
         nonCriticalAlertCategory,
         recommendationsCategory,
       ]}
+      onClose={toggleNotificationDrawer}
     >
       {children}
     </NotificationDrawer>
@@ -378,7 +377,6 @@ type NotificationPoll = (
 
 export type WithNotificationsProps = {
   isDrawerExpanded: boolean;
-  notificationsRead: boolean;
   alerts?: {
     data: Alert[];
     loaded: boolean;
@@ -391,17 +389,14 @@ export type WithNotificationsProps = {
 
 export type ConnectedNotificationDrawerProps = {
   isDesktop: boolean;
-  toggleNotificationsRead: () => any;
   toggleNotificationDrawer: () => any;
   isDrawerExpanded: boolean;
-  notificationsRead: boolean;
   onDrawerChange: () => void;
   alerts: NotificationAlerts;
 };
 
 const notificationStateToProps = ({ UI }: RootState): WithNotificationsProps => ({
   isDrawerExpanded: !!UI.getIn(['notifications', 'isExpanded']),
-  notificationsRead: !!UI.getIn(['notifications', 'isRead']),
   alerts: UI.getIn(['monitoring', 'notificationAlerts']),
   silences: UI.getIn(['monitoring', 'silences']),
 });
@@ -416,6 +411,5 @@ type AlertEmptyProps = {
 
 const connectToNotifications = connect((state: RootState) => notificationStateToProps(state), {
   toggleNotificationDrawer: UIActions.notificationDrawerToggleExpanded,
-  toggleNotificationsRead: UIActions.notificationDrawerToggleRead,
 });
 export const ConnectedNotificationDrawer = connectToNotifications(ConnectedNotificationDrawer_);

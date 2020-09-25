@@ -33,10 +33,11 @@ const htmlReporter = new HtmlScreenshotReporter({
   dest: `./${screenshotsDir}`,
   inlineImages: true,
   captureOnlyFailedSpecs: true,
-  filename: 'test-gui-report.html',
+  filename: 'protractor-report.html',
 });
 const junitReporter = new JUnitXmlReporter({
   savePath: `./${screenshotsDir}`,
+  filePrefix: 'junit_protractor',
   consolidateAll: true,
 });
 const browserLogs = [];

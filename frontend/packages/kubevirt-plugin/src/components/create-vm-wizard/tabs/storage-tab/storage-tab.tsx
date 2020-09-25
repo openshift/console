@@ -33,13 +33,11 @@ import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { CombinedDisk } from '../../../../k8s/wrapper/vm/combined-disk';
 import { isLoaded } from '../../../../utils';
 import { DeviceType } from '../../../../constants/vm';
-import { VHW_TYPES } from '../virtual-hardware-tab/types';
 import { VmWizardStorageRow } from './vm-wizard-storage-row';
 import { VMWizardStorageBundle } from './types';
 import { vmWizardStorageModalEnhanced } from './vm-wizard-storage-modal-enhanced';
 import { StorageBootSource } from './storage-boot-source';
 import { ADD_DISK } from '../../../../utils/strings';
-import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 
 import './storage-tab.scss';
@@ -50,32 +48,31 @@ const getStoragesData = (
 ): VMWizardStorageBundle[] => {
   const pvcLookup = createLookup(pvcs, getName);
 
-  return storages
-    .filter((storage) => !VHW_TYPES.has(new DiskWrapper(storage.disk).getType()))
-    .map((wizardStorageData) => {
-      const { disk, volume, dataVolume, persistentVolumeClaim } = wizardStorageData;
+  return storages.map((wizardStorageData) => {
+    const { disk, volume, dataVolume, persistentVolumeClaim } = wizardStorageData;
 
-      const pvc = pvcLookup[new VolumeWrapper(volume).getPersistentVolumeClaimName()];
+    const pvc = pvcLookup[new VolumeWrapper(volume).getPersistentVolumeClaimName()];
 
-      const combinedDisk = new CombinedDisk({
-        disk,
-        volume,
-        dataVolume,
-        persistentVolumeClaim: persistentVolumeClaim || pvc,
-        isNewPVC: !!persistentVolumeClaim,
-        pvcsLoading: !isLoaded(pvcs),
-      });
-
-      return {
-        wizardStorageData,
-        // for sorting
-        name: combinedDisk.getName(),
-        source: combinedDisk.getSourceValue(),
-        diskInterface: combinedDisk.getDiskInterface(),
-        size: combinedDisk.getReadableSize(),
-        storageClass: combinedDisk.getStorageClassName(),
-      };
+    const combinedDisk = new CombinedDisk({
+      disk,
+      volume,
+      dataVolume,
+      persistentVolumeClaim: persistentVolumeClaim || pvc,
+      isNewPVC: !!persistentVolumeClaim,
+      pvcsLoading: !isLoaded(pvcs),
     });
+
+    return {
+      wizardStorageData,
+      // for sorting
+      name: combinedDisk.getName(),
+      source: combinedDisk.getSourceValue(),
+      diskInterface: combinedDisk.getDiskInterface(),
+      size: combinedDisk.getReadableSize(),
+      storageClass: combinedDisk.getStorageClassName(),
+      type: combinedDisk.getType(),
+    };
+  });
 };
 
 const StorageTabFirehose: React.FC<StorageTabFirehoseProps> = ({
@@ -104,7 +101,7 @@ const StorageTabFirehose: React.FC<StorageTabFirehoseProps> = ({
           wizardReduxID,
         }).result,
       ),
-    isDisabled: isLocked || isCreateDisabled,
+    isDisabled: isLocked,
   };
 
   return (
@@ -115,7 +112,7 @@ const StorageTabFirehose: React.FC<StorageTabFirehoseProps> = ({
             Disks
           </Title>
         </SplitItem>
-        {showStorages && (
+        {showStorages && !isCreateDisabled && (
           <SplitItem>
             <Button {...addButtonProps} variant={ButtonVariant.secondary}>
               {ADD_DISK}
@@ -155,9 +152,11 @@ const StorageTabFirehose: React.FC<StorageTabFirehoseProps> = ({
             <Title headingLevel="h5" size="lg">
               No disks attached
             </Title>
-            <Button {...addButtonProps} icon={<PlusCircleIcon />} variant={ButtonVariant.link}>
-              {ADD_DISK}
-            </Button>
+            {!isCreateDisabled && (
+              <Button {...addButtonProps} icon={<PlusCircleIcon />} variant={ButtonVariant.link}>
+                {ADD_DISK}
+              </Button>
+            )}
           </EmptyState>
         </Bullseye>
       )}

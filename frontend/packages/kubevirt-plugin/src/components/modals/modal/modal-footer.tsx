@@ -1,7 +1,13 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { Alert, Button, ButtonVariant, AlertProps, ActionGroup } from '@patternfly/react-core';
-import { LoadingInline } from '@console/internal/components/utils';
+import {
+  Alert,
+  Button,
+  ButtonVariant,
+  AlertProps,
+  ActionGroup,
+  Spinner,
+} from '@patternfly/react-core';
 
 import './modal-footer.scss';
 
@@ -49,10 +55,13 @@ type ModalFooterProps = {
   isSimpleError?: boolean;
   onSubmit: (e) => void;
   onCancel: (e) => void;
+  onSaveAndRestart?: (e) => void;
   isDisabled?: boolean;
   inProgress?: boolean;
+  isSaveAndRestart?: boolean;
   submitButtonText?: string;
   cancelButtonText?: string;
+  saveAndRestartText?: string;
   infoTitle?: string;
   infoMessage?: React.ReactNode;
 };
@@ -63,43 +72,63 @@ export const ModalFooter: React.FC<ModalFooterProps> = ({
   warningMessage = null,
   isDisabled = false,
   inProgress = false,
+  isSaveAndRestart = false,
   isSimpleError = false,
   onSubmit,
   onCancel,
+  onSaveAndRestart,
   submitButtonText = 'Add',
   cancelButtonText = 'Cancel',
+  saveAndRestartText = 'Save and Restart',
   infoMessage = null,
   infoTitle = null,
-}) => (
-  <footer
-    className={classNames('co-m-btn-bar modal-footer kubevirt-modal-footer__buttons', className)}
-  >
-    {warningMessage && isSimpleError && (
-      <ModalSimpleMessage message={warningMessage} variant="warning" />
-    )}
-    {errorMessage && isSimpleError && <ModalSimpleMessage message={errorMessage} />}
-    {errorMessage && !isSimpleError && <ModalErrorMessage message={errorMessage} />}
-    {infoTitle && <ModalInfoMessage title={infoTitle}>{infoMessage}</ModalInfoMessage>}
+}) => {
+  const [showSpinner, setShowSpinner] = React.useState(false);
 
-    <ActionGroup className="pf-c-form pf-c-form__actions--right pf-c-form__group--no-top-margin">
-      <Button
-        type="button"
-        variant={ButtonVariant.secondary}
-        data-test-id="modal-cancel-action"
-        onClick={onCancel}
-      >
-        {cancelButtonText}
-      </Button>
-      <Button
-        variant={ButtonVariant.primary}
-        isDisabled={isDisabled}
-        id="confirm-action"
-        onClick={onSubmit}
-      >
-        {submitButtonText}
-      </Button>
-    </ActionGroup>
+  React.useEffect(() => {
+    setTimeout(() => setShowSpinner(true), 300);
+  }, []);
 
-    {inProgress && <LoadingInline />}
-  </footer>
-);
+  return (
+    <footer
+      className={classNames('co-m-btn-bar modal-footer kubevirt-modal-footer__buttons', className)}
+    >
+      {warningMessage && isSimpleError && (
+        <ModalSimpleMessage message={warningMessage} variant="warning" />
+      )}
+      {errorMessage && isSimpleError && <ModalSimpleMessage message={errorMessage} />}
+      {errorMessage && !isSimpleError && <ModalErrorMessage message={errorMessage} />}
+      {infoTitle && <ModalInfoMessage title={infoTitle}>{infoMessage}</ModalInfoMessage>}
+
+      <ActionGroup className="pf-c-form pf-c-form__actions--right pf-c-form__group--no-top-margin">
+        <Button
+          type="button"
+          variant={ButtonVariant.secondary}
+          data-test-id="modal-cancel-action"
+          onClick={onCancel}
+        >
+          {cancelButtonText}
+        </Button>
+        {isSaveAndRestart && (
+          <Button
+            type="button"
+            variant={ButtonVariant.secondary}
+            id="save-and-restart"
+            onClick={onSaveAndRestart}
+          >
+            {saveAndRestartText}
+          </Button>
+        )}
+        <Button
+          variant={ButtonVariant.primary}
+          isDisabled={isDisabled}
+          id="confirm-action"
+          onClick={onSubmit}
+        >
+          {inProgress && showSpinner && <Spinner id="modal-footer-spinner" size="md" />}
+          {submitButtonText}
+        </Button>
+      </ActionGroup>
+    </footer>
+  );
+};

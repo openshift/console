@@ -121,8 +121,6 @@ export class StorageUISource extends ObjectEnum<string> {
 
   requiresVolumeModeOrAccessModes = () => this.requiresAccessModes() || this.requiresVolumeMode();
 
-  isNameEditingSupported = (diskType: DiskType) => diskType !== DiskType.CDROM;
-
   isSizeEditingSupported = (size: number) => size === 0 || this !== StorageUISource.IMPORT_DISK; // if imported disk has 0 size, leave the user to decide
 
   isPlainDataVolume = (isCreateTemplate: boolean) =>
@@ -134,6 +132,7 @@ export class StorageUISource extends ObjectEnum<string> {
     if (diskType === DiskType.CDROM) {
       return (
         this === StorageUISource.ATTACH_DISK ||
+        this === StorageUISource.ATTACH_CLONED_DISK ||
         this === StorageUISource.URL ||
         this === StorageUISource.CONTAINER
       );

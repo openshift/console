@@ -9,7 +9,7 @@ type MonitoringTabProps = {
 };
 
 const MonitoringTab: React.FC<MonitoringTabProps> = ({ item }) => {
-  const { pods } = item;
+  const { pods, monitoringAlerts } = item;
   const {
     kind,
     metadata: { uid, name, namespace },
@@ -39,7 +39,7 @@ const MonitoringTab: React.FC<MonitoringTabProps> = ({ item }) => {
 
   return (
     <Firehose resources={resources}>
-      <MonitoringOverview resource={item.obj} pods={pods} />
+      <MonitoringOverview resource={item.obj} pods={pods} monitoringAlerts={monitoringAlerts} />
     </Firehose>
   );
 };

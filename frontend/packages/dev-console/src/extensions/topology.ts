@@ -1,5 +1,4 @@
 import { Extension } from '@console/plugin-sdk/src/typings/base';
-import { ComponentFactory } from '@patternfly/react-topology';
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   TopologyApplyDisplayOptions,
@@ -7,12 +6,14 @@ import {
   TopologyDataModelGetter,
   TopologyDisplayOption,
   CreateConnectionGetter,
+  ViewComponentFactory,
+  TopologyDataModelReconciler,
 } from '../components/topology';
 
 namespace ExtensionProperties {
   export interface TopologyComponentFactory {
-    /** Getter for a ComponentFactory */
-    getFactory: () => Promise<ComponentFactory>;
+    /** Getter for a ViewComponentFactory */
+    getFactory: () => Promise<ViewComponentFactory>;
   }
 
   export interface TopologyDataModelFactory {
@@ -28,6 +29,8 @@ namespace ExtensionProperties {
     getDataModel: () => Promise<TopologyDataModelGetter>;
     /** Getter for function to determine if a resource is depicted by this model factory */
     isResourceDepicted: () => Promise<TopologyDataModelDepicted>;
+    /** Getter for function to reconcile data model after all extensions' models have loaded */
+    getDataModelReconciler?: () => Promise<TopologyDataModelReconciler>;
   }
 
   export interface TopologyCreateConnector {

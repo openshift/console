@@ -1,25 +1,44 @@
 import * as React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import { Popover, Button, ToolbarGroup, ToolbarContent } from '@patternfly/react-core';
-import { RootState } from '@console/internal/redux';
-import { TextFilter } from '@console/internal/components/factory';
+import {
+  Toolbar,
+  ToolbarGroup,
+  ToolbarGroupVariant,
+  ToolbarItem,
+  ToolbarContent,
+  Popover,
+  Button,
+} from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import { Visualization } from '@patternfly/react-topology';
+import { useQueryParams } from '@console/shared';
+import { RootState } from '@console/internal/redux';
+import { getActiveNamespace } from '@console/internal/reducers/ui';
+import { ExternalLink } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { TextFilter } from '@console/internal/components/factory';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { ConsoleLinkModel } from '@console/internal/models';
 import { setTopologyFilters } from '../redux/action';
 import { DisplayFilters } from '../topology-types';
 import {
   getSupportedTopologyFilters,
+  getSupportedTopologyKinds,
   getTopologyFilters,
-  getTopologySearchQuery,
+  onSearchChange,
 } from './filter-utils';
-
 import FilterDropdown from './FilterDropdown';
+import KindFilterDropdown from './KindFilterDropdown';
+import { getNamespaceDashboardKialiLink } from '../topology-utils';
+
 import './TopologyFilterBar.scss';
 
 type StateProps = {
   filters: DisplayFilters;
   supportedFilters: string[];
+  supportedKinds: { [key: string]: number };
+  namespace: string;
 };
 
 type DispatchProps = {
@@ -27,82 +46,114 @@ type DispatchProps = {
 };
 
 type OwnProps = {
-  visualization: Visualization;
-  onSearchChange: (searchQuery: string) => void;
+  visualization?: Visualization;
+  showGraphView: boolean;
 };
 
-type MergeProps = {
-  onDisplayFiltersChange: (display: DisplayFilters) => void;
-} & StateProps &
-  OwnProps;
+type MergeProps = StateProps & DispatchProps & OwnProps;
 
 type TopologyFilterBarProps = MergeProps;
 
 const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
   filters,
   supportedFilters,
-  onDisplayFiltersChange,
-  onSearchChange,
+  supportedKinds,
+  onFiltersChange,
   visualization,
+  showGraphView,
+  namespace,
 }) => {
-  const [searchQuery, setSearchQuery] = React.useState<string>('');
+  const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
+    isList: true,
+    kind: referenceForModel(ConsoleLinkModel),
+    optional: true,
+  });
+  const kialiLink = getNamespaceDashboardKialiLink(consoleLinks, namespace);
+  const queryParams = useQueryParams();
+  const searchQuery = queryParams.get('searchQuery') || '';
 
-  React.useEffect(() => {
-    const query = getTopologySearchQuery();
-    setSearchQuery(query);
-  }, []);
-
-  const onTextFilterChange = React.useCallback(
-    (text) => {
-      const query = text?.trim();
-      setSearchQuery(query);
-      onSearchChange(query);
-    },
-    [onSearchChange],
-  );
+  const onTextFilterChange = (text) => {
+    const query = text?.trim();
+    onSearchChange(query);
+  };
 
   return (
-    <ToolbarContent className="co-namespace-bar odc-topology-filter-bar">
-      <ToolbarGroup>
-        <FilterDropdown
-          filters={filters}
-          supportedFilters={supportedFilters}
-          onChange={onDisplayFiltersChange}
-        />
-      </ToolbarGroup>
-      <ToolbarGroup className="odc-topology-filter-bar__search">
-        <TextFilter
-          placeholder="Find by name..."
-          value={searchQuery}
-          autoFocus
-          onChange={onTextFilterChange}
-        />
-        <Popover
-          aria-label="Find by name"
-          position="left"
-          bodyContent={
-            <>
-              Search results may appear outside of the visible area.{' '}
-              <Button variant="link" onClick={() => visualization.getGraph().fit(80)} isInline>
-                Click here
-              </Button>{' '}
-              to fit to the screen.
-            </>
-          }
-        >
-          <Button variant="link" className="odc-topology-filter-bar__info-icon" isInline>
-            <InfoCircleIcon />
-          </Button>
-        </Popover>
-      </ToolbarGroup>
-    </ToolbarContent>
+    <Toolbar className="co-namespace-bar odc-topology-filter-bar">
+      <ToolbarContent>
+        <ToolbarGroup variant={ToolbarGroupVariant['filter-group']}>
+          <ToolbarItem>
+            <FilterDropdown
+              filters={filters}
+              showGraphView={showGraphView}
+              supportedFilters={supportedFilters}
+              onChange={onFiltersChange}
+            />
+          </ToolbarItem>
+        </ToolbarGroup>
+        <ToolbarGroup variant={ToolbarGroupVariant['filter-group']}>
+          <ToolbarItem>
+            <KindFilterDropdown
+              filters={filters}
+              supportedKinds={supportedKinds}
+              onChange={onFiltersChange}
+            />
+          </ToolbarItem>
+        </ToolbarGroup>
+        <ToolbarGroup variant={ToolbarGroupVariant['filter-group']}>
+          <ToolbarItem>
+            <TextFilter
+              placeholder="Find by name..."
+              value={searchQuery}
+              autoFocus
+              onChange={onTextFilterChange}
+              className="odc-topology-filter-bar__text-filter"
+            />
+          </ToolbarItem>
+          {showGraphView ? (
+            <ToolbarItem>
+              <Popover
+                aria-label="Find by name"
+                position="left"
+                bodyContent={
+                  <>
+                    Search results may appear outside of the visible area.{' '}
+                    <Button
+                      variant="link"
+                      onClick={() => visualization.getGraph().fit(80)}
+                      isInline
+                    >
+                      Click here
+                    </Button>{' '}
+                    to fit to the screen.
+                  </>
+                }
+              >
+                <Button variant="link" className="odc-topology-filter-bar__info-icon">
+                  <InfoCircleIcon />
+                </Button>
+              </Popover>
+            </ToolbarItem>
+          ) : null}
+        </ToolbarGroup>
+        {kialiLink && (
+          <ToolbarItem className="odc-topology-filter-bar__kiali-link">
+            <ExternalLink href={kialiLink} text="Kiali" />
+          </ToolbarItem>
+        )}
+      </ToolbarContent>
+    </Toolbar>
   );
 };
 
-const mapStateToProps = (state: RootState): StateProps => ({
-  filters: getTopologyFilters(state),
-  supportedFilters: getSupportedTopologyFilters(state),
-});
+const mapStateToProps = (state: RootState): StateProps => {
+  const states = {
+    filters: getTopologyFilters(state),
+    supportedFilters: getSupportedTopologyFilters(state),
+    supportedKinds: getSupportedTopologyKinds(state),
+    namespace: getActiveNamespace(state),
+  };
+  return states;
+};
 
 const dispatchToProps = (dispatch: Dispatch): DispatchProps => ({
   onFiltersChange: (filters: DisplayFilters) => {
@@ -111,17 +162,17 @@ const dispatchToProps = (dispatch: Dispatch): DispatchProps => ({
 });
 
 const mergeProps = (
-  { filters, supportedFilters }: StateProps,
+  { filters, supportedFilters, supportedKinds, namespace }: StateProps,
   { onFiltersChange }: DispatchProps,
-  { visualization, onSearchChange }: OwnProps,
+  { visualization, showGraphView }: OwnProps,
 ): MergeProps => ({
   filters,
   supportedFilters,
-  onDisplayFiltersChange: (changedFilters: DisplayFilters) => {
-    onFiltersChange(changedFilters);
-  },
-  onSearchChange,
+  supportedKinds,
+  namespace,
+  onFiltersChange,
   visualization,
+  showGraphView,
 });
 
 export default connect<StateProps, DispatchProps, OwnProps, MergeProps>(

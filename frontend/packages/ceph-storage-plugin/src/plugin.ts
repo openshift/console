@@ -6,6 +6,7 @@ import {
   DashboardsOverviewHealthResourceSubsystem,
   DashboardsOverviewUtilizationItem,
   DashboardsTab,
+  HorizontalNavTab,
   KebabActions,
   ModelDefinition,
   ModelFeatureFlag,
@@ -15,27 +16,30 @@ import {
   ResourceDetailsPage,
   DashboardsOverviewResourceActivity,
   CustomFeatureFlag,
+  StorageClassProvisioner,
 } from '@console/plugin-sdk';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
+import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { NodeModel } from '@console/internal/models';
+import { LSO_DEVICE_DISCOVERY } from '@console/local-storage-operator-plugin/src/plugin';
+import { getCephHealthState } from './components/dashboard-page/storage-dashboard/status-card/utils';
+import { isClusterExpandActivity } from './components/dashboard-page/storage-dashboard/activity-card/cluster-expand-activity';
+import { StorageClassFormProvisoners } from './utils/ocs-storage-class-params';
+import { WatchCephResource } from './types';
 import {
   detectOCS,
   detectOCSSupportedFeatures,
+  detectRGW,
   CEPH_FLAG,
   OCS_INDEPENDENT_FLAG,
-  OCS_SUPPORT_FLAGS,
   OCS_CONVERGED_FLAG,
+  OCS_ATTACHED_DEVICES_FLAG,
 } from './features';
-import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
-import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
-import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
-import { PersistentVolumeClaimModel } from '@console/internal/models';
-import { getCephHealthState } from './components/dashboard-page/storage-dashboard/status-card/utils';
-import { isClusterExpandActivity } from './components/dashboard-page/storage-dashboard/activity-card/cluster-expand-activity';
-import { WatchCephResource } from './types';
-import { StorageClassProvisioner } from '@console/plugin-sdk/src/typings/storage-class-params';
-import { StorageClassFormProvisoners } from './utils/storage-class-params';
 
 type ConsumedExtensions =
   | ModelFeatureFlag
+  | HorizontalNavTab
   | ModelDefinition
   | DashboardsTab
   | DashboardsCard
@@ -81,24 +85,15 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'StorageClass/Provisioner',
+    type: 'FeatureFlag/Custom',
     properties: {
-      getStorageClassProvisioner: StorageClassFormProvisoners,
+      detect: detectRGW,
     },
   },
   {
-    type: 'Page/Resource/Tab',
+    type: 'StorageClass/Provisioner',
     properties: {
-      href: 'volumesnapshots',
-      model: PersistentVolumeClaimModel,
-      name: 'Volume Snapshots',
-      loader: () =>
-        import('./components/volume-snapshot/volume-snapshot').then(
-          (m) => m.VolumeSnapshotPage,
-        ) /* webpackChunkName: "ceph-storage-volume-snapshot" */,
-    },
-    flags: {
-      required: [OCS_SUPPORT_FLAGS.SNAPSHOT, CEPH_FLAG],
+      getStorageClassProvisioner: StorageClassFormProvisoners,
     },
   },
   {
@@ -117,6 +112,19 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       exact: true,
       path: `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/${apiObjectRef}/~new`,
+      loader: () =>
+        import('./components/ocs-install/install-page' /* webpackChunkName: "install-page" */).then(
+          (m) => m.default,
+        ),
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: `/k8s/ns/:ns/${referenceForModel(
+        ClusterServiceVersionModel,
+      )}/:appName/${apiObjectRef}/~new`,
       loader: () =>
         import('./components/ocs-install/install-page' /* webpackChunkName: "install-page" */).then(
           (m) => m.default,
@@ -146,6 +154,20 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: () =>
         import(
           './components/dashboard-page/storage-dashboard/inventory-card' /* webpackChunkName: "ceph-storage-inventory-card" */
+        ).then((m) => m.default),
+    },
+    flags: {
+      required: [CEPH_FLAG],
+    },
+  },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'persistent-storage',
+      position: GridPosition.LEFT,
+      loader: () =>
+        import(
+          './components/dashboard-page/storage-dashboard/storage-efficiency-card/storage-efficiency-card' /* webpackChunkName: "ceph-storage-efficiency-card" */
         ).then((m) => m.default),
     },
     flags: {
@@ -283,7 +305,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.LEFT,
       loader: () =>
         import(
-          './components/independent-dashboard-page/details-card/card' /* webpackChunkName: "indepedent-details-card" */
+          './components/independent-dashboard-page/details-card' /* webpackChunkName: "indepedent-details-card" */
         ).then((m) => m.default),
     },
     flags: {
@@ -312,7 +334,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.MAIN,
       loader: () =>
         import(
-          './components/independent-dashboard-page/status-card/card' /* webpackChunkName: "indepedent-status-card" */
+          './components/independent-dashboard-page/status-card' /* webpackChunkName: "indepedent-status-card" */
         ).then((m) => m.default),
     },
     flags: {
@@ -326,7 +348,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.MAIN,
       loader: () =>
         import(
-          './components/independent-dashboard-page/breakdown-card/card' /* webpackChunkName: "independent-breakdown-card" */
+          './components/independent-dashboard-page/breakdown-card' /* webpackChunkName: "independent-breakdown-card" */
         ).then((m) => m.default),
     },
     flags: {
@@ -340,7 +362,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.MAIN,
       loader: () =>
         import(
-          './components/independent-dashboard-page/utilization-card/card' /* webpackChunkName: "utilization-card" */
+          './components/independent-dashboard-page/utilization-card' /* webpackChunkName: "utilization-card" */
         ).then((m) => m.default),
     },
     flags: {
@@ -363,20 +385,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'Page/Resource/Details',
-    properties: {
-      model: models.VolumeSnapshotModel,
-      loader: async () =>
-        import(
-          './components/volume-snapshot/volume-snapshot' /* webpackChunkName: "ceph-storage-volume-snapshot-details" */
-        ).then((m) => m.VolumeSnapshotDetails),
-      modelParser: referenceFor,
-    },
-    flags: {
-      required: [OCS_SUPPORT_FLAGS.SNAPSHOT, CEPH_FLAG],
-    },
-  },
-  {
     type: 'Dashboards/Overview/Activity/Resource',
     properties: {
       k8sResource: {
@@ -393,6 +401,23 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [CEPH_FLAG],
+    },
+  },
+  {
+    type: 'HorizontalNavTab',
+    properties: {
+      model: NodeModel,
+      page: {
+        href: 'disks',
+        name: 'Disks',
+      },
+      loader: () =>
+        import(
+          './components/attached-devices-mode/lso-disk-inventory/ocs-disks-list' /* webpackChunkName: "ocs-nodes-disks-list" */
+        ).then((m) => m.OCSNodesDiskListPage),
+    },
+    flags: {
+      required: [OCS_ATTACHED_DEVICES_FLAG, LSO_DEVICE_DISCOVERY],
     },
   },
 ];

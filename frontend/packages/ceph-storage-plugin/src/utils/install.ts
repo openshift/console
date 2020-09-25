@@ -5,8 +5,13 @@ import {
   StorageClassResourceKind,
   K8sResourceKind,
 } from '@console/internal/module/k8s';
-import { humanizeBinaryBytes, convertToBaseValue } from '@console/internal/components/utils';
+import {
+  humanizeBinaryBytes,
+  convertToBaseValue,
+  humanizeCpuCores,
+} from '@console/internal/components/utils';
 import { HOSTNAME_LABEL_KEY } from '@console/local-storage-operator-plugin/src/constants';
+import { getNodeCPUCapacity, getNodeAllocatableMemory } from '@console/shared';
 import { ocsTaint, NO_PROVISIONER, AVAILABLE } from '../constants';
 import { Discoveries } from '../components/ocs-install/attached-devices/create-sc/state';
 
@@ -32,8 +37,7 @@ export const filterSCWithoutNoProv = (sc: StorageClassResourceKind) =>
 export const getTotalDeviceCapacity = (list: Discoveries[]) => {
   const totalCapacity = list.reduce((res, device) => {
     if (device?.status?.state === AVAILABLE) {
-      const capacity = Number(convertToBaseValue(device.size));
-      return res + capacity;
+      return res + device.size;
     }
     return res;
   }, 0);
@@ -52,3 +56,32 @@ export const getAssociatedNodes = (pvs: K8sResourceKind[]): string[] => {
 
   return Array.from(nodes);
 };
+
+export const shouldDeployInternalAsMinimal = (nodes: NodeKind[]) => {
+  const { totalCPU, totalMemory } = nodes.reduce(
+    (acc, curr) => {
+      const cpus = humanizeCpuCores(getNodeCPUCapacity(curr)).value;
+      const memoryRaw = getNodeAllocatableMemory(curr);
+      const memory = humanizeBinaryBytes(convertToBaseValue(memoryRaw)).value;
+      acc.totalCPU += cpus;
+      acc.totalMemory += memory;
+      return acc;
+    },
+    {
+      totalCPU: 0,
+      totalMemory: 0,
+    },
+  );
+  return totalCPU < 30 || totalMemory < 60;
+};
+
+export const shouldDeployAttachedAsMinimal = (nodes: NodeKind[]) =>
+  nodes.reduce((acc, curr) => {
+    const cpus = humanizeCpuCores(getNodeCPUCapacity(curr)).value;
+    const memoryRaw = getNodeAllocatableMemory(curr);
+    const memory = humanizeBinaryBytes(convertToBaseValue(memoryRaw)).value;
+    if (memory < 60 || cpus < 10) {
+      return [...acc, curr];
+    }
+    return acc;
+  }, []).length > 0;

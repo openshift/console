@@ -7,6 +7,7 @@ import {
   k8sGet,
   SecretKind,
   K8sResourceCommon,
+  K8sKind,
 } from '@console/internal/module/k8s';
 import {
   LOG_SOURCE_RESTARTING,
@@ -30,6 +31,19 @@ import {
   TaskRunKind,
 } from './pipeline-augment';
 import { pipelineFilterReducer, pipelineRunStatus } from './pipeline-filter-reducer';
+import {
+  PipelineRunModel,
+  TaskRunModel,
+  PipelineResourceModel,
+  ConditionModel,
+  ClusterTaskModel,
+  TriggerTemplateModel,
+  TriggerBindingModel,
+  ClusterTriggerBindingModel,
+  PipelineModel,
+  TaskModel,
+  EventListenerModel,
+} from '../models';
 
 interface Resources {
   inputs?: Resource[];
@@ -402,4 +416,31 @@ export const getSecretAnnotations = (annotation: KeyValuePair) => {
     annotations[`${annotationPrefix}/${SecretAnnotationId.Image}-0`] = annotation?.value;
   }
   return annotations;
+};
+
+export const pipelinesTab = (kindObj: K8sKind) => {
+  switch (kindObj.kind) {
+    case PipelineModel.kind:
+    case TaskModel.kind:
+    case EventListenerModel.kind:
+      return '';
+    case PipelineRunModel.kind:
+      return 'pipeline-runs';
+    case PipelineResourceModel.kind:
+      return 'pipeline-resources';
+    case ConditionModel.kind:
+      return 'conditions';
+    case TaskRunModel.kind:
+      return 'task-runs';
+    case ClusterTaskModel.kind:
+      return 'cluster-tasks';
+    case TriggerTemplateModel.kind:
+      return 'trigger-templates';
+    case TriggerBindingModel.kind:
+      return 'trigger-bindings';
+    case ClusterTriggerBindingModel.kind:
+      return 'cluster-trigger-bindings';
+    default:
+      return null;
+  }
 };

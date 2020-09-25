@@ -11,9 +11,12 @@ import {
 } from '@console/internal/actions/dashboards';
 import { RootState } from '@console/internal/redux';
 import { RESULTS_TYPE } from '@console/internal/reducers/dashboards';
-import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
+import {
+  getInstantVectorStats,
+  GetRangeStats,
+  GetInstantStats,
+} from '@console/internal/components/graphs/utils';
 import { Humanize, HumanizeResult } from '@console/internal/components/utils/types';
-import { DataPoint } from '@console/internal/components/graphs';
 
 export const usePrometheusQuery: UsePrometheusQuery = (query, humanize) => {
   const dispatch = useDispatch();
@@ -40,18 +43,26 @@ export const usePrometheusQuery: UsePrometheusQuery = (query, humanize) => {
 
 const customSelectorCreator = createSelectorCreator(defaultMemoize, shallowEqual);
 
-export const usePrometheusQueries: UsePrometheusQueries = (queries, metric) => {
+export const usePrometheusQueries = <R extends any>(
+  queries: string[],
+  parser?: GetInstantStats | GetRangeStats,
+  namespace?: string,
+  timespan?: number,
+): UsePrometheusQueriesResult<R> => {
   const dispatch = useDispatch();
   React.useEffect(() => {
-    queries.forEach((query) => dispatch(watchPrometheusQuery(query)));
+    queries.forEach((query) => dispatch(watchPrometheusQuery(query, namespace, timespan)));
     return () => {
-      queries.forEach((query) => dispatch(stopWatchPrometheusQuery(query)));
+      queries.forEach((query) => dispatch(stopWatchPrometheusQuery(query, timespan)));
     };
-  }, [dispatch, queries]);
+  }, [dispatch, queries, namespace, timespan]);
 
   const selectors = React.useMemo(
-    () => queries.map((q) => ({ dashboards }) => dashboards.getIn([RESULTS_TYPE.PROMETHEUS, q])),
-    [queries],
+    () =>
+      queries.map((q) => ({ dashboards }) =>
+        dashboards.getIn([RESULTS_TYPE.PROMETHEUS, timespan ? `${q}@${timespan}` : q]),
+      ),
+    [queries, timespan],
   );
 
   const querySelector = React.useMemo(() => customSelectorCreator(selectors, (...data) => data), [
@@ -60,20 +71,23 @@ export const usePrometheusQueries: UsePrometheusQueries = (queries, metric) => {
 
   const queryResults = useSelector<RootState, ImmutableMap<string, any>>(querySelector);
 
-  const results = React.useMemo<UsePrometheusQueriesResult>(() => {
+  const results = React.useMemo<UsePrometheusQueriesResult<R>>(() => {
     if (_.isEmpty(queryResults?.[0])) {
-      return queries.map(() => [null, true, null]) as UsePrometheusQueriesResult;
+      return [queries.map(() => []), true, null];
     }
-    return queryResults.reduce((acc, curr) => {
+    const values = queryResults.reduce((acc: R[], curr) => {
       const data = curr.get('data');
-      const value = getInstantVectorStats(curr.get('data'), metric);
-      return [...acc, [value, !data, curr.get('loadError')]];
+      const value = parser ? parser(data) : data;
+      return [...acc, value];
     }, []);
-  }, [queryResults, metric, queries]);
+    const loadError: boolean = queryResults.some((res) => !!res.get('loadError'));
+    const loading: boolean = values.some((res) => _.isEmpty(res));
+    return [values, loading, loadError];
+  }, [queryResults, queries, parser]);
 
   return results;
 };
 
 type UsePrometheusQuery = (query: string, humanize: Humanize) => [HumanizeResult, any, number];
-type UsePrometheusQueries = (queries: string[], metric?: string) => UsePrometheusQueriesResult;
-type UsePrometheusQueriesResult = [DataPoint[], boolean, any][];
+// [data, loading, loadError]
+type UsePrometheusQueriesResult<R> = [R[], boolean, boolean];

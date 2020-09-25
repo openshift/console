@@ -47,6 +47,7 @@ class DeleteNamespaceModal extends PromiseComponent {
           </p>
           <input
             type="text"
+            data-test="project-name-input"
             className="pf-c-form-control"
             onKeyUp={this._matchTypedNamespace}
             placeholder="Enter name"

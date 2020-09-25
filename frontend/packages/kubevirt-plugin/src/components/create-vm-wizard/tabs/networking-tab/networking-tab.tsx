@@ -77,7 +77,7 @@ const NetworkingTabComponent: React.FC<NetworkingTabComponentProps> = ({
           wizardReduxID,
         }).result,
       ),
-    isDisabled: isLocked || isCreateDisabled,
+    isDisabled: isLocked,
   };
 
   return (
@@ -88,7 +88,7 @@ const NetworkingTabComponent: React.FC<NetworkingTabComponentProps> = ({
             Network Interfaces
           </Title>
         </SplitItem>
-        {showNetworks && (
+        {showNetworks && !isCreateDisabled && (
           <SplitItem>
             <Button {...addButtonProps} variant={ButtonVariant.secondary}>
               {ADD_NETWORK_INTERFACE}
@@ -127,9 +127,11 @@ const NetworkingTabComponent: React.FC<NetworkingTabComponentProps> = ({
             <Title headingLevel="h5" size="lg">
               No network interface added
             </Title>
-            <Button {...addButtonProps} icon={<PlusCircleIcon />} variant={ButtonVariant.link}>
-              {ADD_NETWORK_INTERFACE}
-            </Button>
+            {!isCreateDisabled && (
+              <Button {...addButtonProps} icon={<PlusCircleIcon />} variant={ButtonVariant.link}>
+                {ADD_NETWORK_INTERFACE}
+              </Button>
+            )}
           </EmptyState>
         </Bullseye>
       )}

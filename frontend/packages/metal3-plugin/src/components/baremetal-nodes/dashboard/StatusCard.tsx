@@ -15,8 +15,8 @@ import NodeAlerts from '@console/app/src/components/nodes/node-dashboard/NodeAle
 
 const StatusCard: React.FC = () => {
   const { obj } = React.useContext(NodeDashboardContext);
-  const { nodeMaintenance } = React.useContext(BareMetalNodeDashboardContext);
-  const status = bareMetalNodeStatus({ node: obj, nodeMaintenance });
+  const { nodeMaintenance, csr } = React.useContext(BareMetalNodeDashboardContext);
+  const status = bareMetalNodeStatus({ node: obj, nodeMaintenance, csr });
   return (
     <DashboardCard gradient data-test-id="status-card">
       <DashboardCardHeader>
@@ -30,6 +30,7 @@ const StatusCard: React.FC = () => {
                 {...status}
                 nodeMaintenance={nodeMaintenance}
                 className="co-node-health__status"
+                csr={csr}
               />
             </GalleryItem>
             <GalleryItem>

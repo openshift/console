@@ -10,7 +10,6 @@ import DashboardCardBody from '@console/shared/src/components/dashboard/dashboar
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
-import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import {
   withDashboardResources,
@@ -19,10 +18,16 @@ import {
 import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { getDataResiliencyState } from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/status-card/utils';
-import { filterNooBaaAlerts } from '../../utils';
+import { CephObjectStoreModel } from '@console/ceph-storage-plugin/src/models';
+import { RGW_FLAG, OCS_INDEPENDENT_FLAG } from '@console/ceph-storage-plugin/src/features';
+import { useFlag } from '@console/shared/src/hooks/flag';
+import { MODES } from '@console/ceph-storage-plugin/src/constants';
+import { filterNooBaaAlerts, filterRGWAlerts } from '../../utils';
 import { StatusCardQueries } from '../../queries';
 import { NooBaaSystemModel } from '../../models';
-import { getNooBaaState } from './statuses';
+import { getNooBaaState, getRGWHealthState } from './statuses';
+import { ObjectServiceStatus } from './object-service-health';
+import { StatusType } from '../../constants';
 import './status-card.scss';
 
 const statusCardQueries = Object.keys(StatusCardQueries);
@@ -33,7 +38,13 @@ const noobaaResource: FirehoseResource = {
   prop: 'noobaa',
 };
 
-const NooBaaAlerts = withDashboardResources(
+const cephObjectStoreResource: FirehoseResource = {
+  kind: referenceForModel(CephObjectStoreModel),
+  isList: true,
+  prop: 'rgw',
+};
+
+const ObjectStorageAlerts = withDashboardResources(
   ({ watchAlerts, stopWatchAlerts, notificationAlerts }) => {
     React.useEffect(() => {
       watchAlerts();
@@ -43,7 +54,7 @@ const NooBaaAlerts = withDashboardResources(
     }, [watchAlerts, stopWatchAlerts]);
 
     const { data, loaded, loadError } = notificationAlerts || {};
-    const alerts = filterNooBaaAlerts(data);
+    const alerts = [...filterNooBaaAlerts(data), ...filterRGWAlerts(data)];
 
     return (
       <AlertsBody error={!_.isEmpty(loadError)}>
@@ -63,14 +74,20 @@ const StatusCard: React.FC<DashboardItemProps> = ({
   stopWatchPrometheusQuery,
   prometheusResults,
 }) => {
+  const RGW = useFlag(RGW_FLAG);
   React.useEffect(() => {
     watchK8sResource(noobaaResource);
+    watchK8sResource(cephObjectStoreResource);
     statusCardQueries.forEach((key) => watchPrometheus(StatusCardQueries[key]));
     return () => {
       stopWatchK8sResource(noobaaResource);
+      stopWatchK8sResource(cephObjectStoreResource);
       statusCardQueries.forEach((key) => stopWatchPrometheusQuery(StatusCardQueries[key]));
     };
   }, [watchK8sResource, stopWatchK8sResource, watchPrometheus, stopWatchPrometheusQuery]);
+
+  const isExternal = useFlag(OCS_INDEPENDENT_FLAG);
+  const MODE = isExternal ? MODES.EXTERNAL : MODES.INTERNAL;
 
   const healthStatusResult = prometheusResults.getIn([
     StatusCardQueries.HEALTH_QUERY,
@@ -78,7 +95,7 @@ const StatusCard: React.FC<DashboardItemProps> = ({
   ]) as PrometheusResponse;
 
   const progressResult = prometheusResults.getIn([
-    StatusCardQueries.REBUILD_PROGRESS_QUERY,
+    StatusCardQueries.MCG_REBUILD_PROGRESS_QUERY,
     'data',
   ]) as PrometheusResponse;
 
@@ -88,19 +105,36 @@ const StatusCard: React.FC<DashboardItemProps> = ({
   ]) as PrometheusResponse;
 
   const progressError = prometheusResults.getIn([
-    StatusCardQueries.REBUILD_PROGRESS_QUERY,
+    StatusCardQueries.MCG_REBUILD_PROGRESS_QUERY,
+    'loadError',
+  ]);
+
+  const rgwResiliencyResult = prometheusResults.getIn([
+    StatusCardQueries.RGW_RESILIENCY_QUERY,
+    'data',
+  ]) as PrometheusResponse;
+
+  const rgwResiliencyError = prometheusResults.getIn([
+    StatusCardQueries.MCG_REBUILD_PROGRESS_QUERY,
     'loadError',
   ]);
 
   const noobaa = _.get(resources, 'noobaa') as FirehoseResult;
+  const rgw = resources?.rgw?.data?.[0];
 
-  const objectServiceState: SubsystemHealth = getNooBaaState(
+  const MCGState = getNooBaaState(
     [{ response: healthStatusResult, error: healthStatusError }],
     noobaa,
   );
 
+  const RGWState = getRGWHealthState(rgw, MODE);
+
   const dataResiliencyState: SubsystemHealth = getDataResiliencyState([
     { response: progressResult, error: progressError },
+  ]);
+
+  const RGWResiliencyState = getDataResiliencyState([
+    { response: rgwResiliencyResult, error: rgwResiliencyError },
   ]);
 
   return (
@@ -112,22 +146,22 @@ const StatusCard: React.FC<DashboardItemProps> = ({
         <HealthBody>
           <Gallery className="nb-status-card__health" hasGutter>
             <GalleryItem>
-              <HealthItem
-                title="Multi Cloud Object Gateway"
-                state={objectServiceState.state}
-                details={objectServiceState.message}
+              <ObjectServiceStatus
+                RGWMetrics={RGW ? RGWState : undefined}
+                MCGMetrics={MCGState}
+                statusType={StatusType.HEALTH}
               />
             </GalleryItem>
             <GalleryItem>
-              <HealthItem
-                title="Data Resiliency"
-                state={dataResiliencyState.state}
-                details={dataResiliencyState.message}
+              <ObjectServiceStatus
+                RGWMetrics={RGW ? RGWResiliencyState : undefined}
+                MCGMetrics={dataResiliencyState}
+                statusType={StatusType.RESILIENCY}
               />
             </GalleryItem>
           </Gallery>
         </HealthBody>
-        <NooBaaAlerts />
+        <ObjectStorageAlerts />
       </DashboardCardBody>
     </DashboardCard>
   );

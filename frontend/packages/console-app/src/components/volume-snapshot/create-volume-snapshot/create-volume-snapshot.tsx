@@ -92,7 +92,7 @@ const SnapshotClassDropdown: React.FC<SnapshotClassDropdownProps> = (props) => {
       dataFilter={filter}
       resources={resources}
       selectedKeyKind={kind}
-      placeholder="Select snapshot class"
+      placeholder="Select volume snapshot class"
       selectedKey={selectedKey}
     />
   );
@@ -195,8 +195,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
       },
     };
 
-    // eslint-disable-next-line promise/catch-or-return
-    handlePromise(k8sCreate(VolumeSnapshotModel, snapshotTemplate)).then((resource) => {
+    handlePromise(k8sCreate(VolumeSnapshotModel, snapshotTemplate), (resource) => {
       history.push(resourceObjPath(resource, referenceFor(resource)));
     });
   };
@@ -228,9 +227,9 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
               {PersistentVolumeModel.label}
             </label>
             <PVCDropdown
+              dataTest="pvc-dropdown"
               namespace={namespace}
               onChange={handlePVCName}
-              id="claimName"
               selectedKey={pvcName}
               desc={`Persistent Volume Claim in ${namespace} namespace`}
             />
@@ -253,11 +252,11 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
         {pvcObj && (
           <div className="form-group co-volume-snapshot__form">
             <label className="control-label co-required" htmlFor="snapshot-class">
-              Snapshot Class
+              Volume Snapshot Class
             </label>
             <SnapshotClassDropdown
+              dataTest="snapshot-dropdown"
               onChange={setSnapshotClassName}
-              id="claimName"
               selectedKey={snapshotClassName}
               pvcSC={pvcObj?.spec?.storageClassName}
             />
@@ -270,9 +269,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
               type="submit"
               variant="primary"
               id="save-changes"
-              isDisabled={
-                !snapshotClassName || !snapshotName || !pvcName || pvcObj?.status?.phase !== 'Bound'
-              }
+              isDisabled={!snapshotClassName || !snapshotName || !pvcName}
             >
               Create
             </Button>
@@ -313,8 +310,9 @@ export const VolumeSnapshot = connectToPlural(VolumeSnapshotComponent);
 type SnapshotClassDropdownProps = {
   selectedKey: string;
   onChange: (string) => void;
-  id: string;
+  id?: string;
   pvcSC: string;
+  dataTest?: string;
 };
 
 type SnapshotResourceProps = HandlePromiseProps & {

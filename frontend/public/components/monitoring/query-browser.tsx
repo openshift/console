@@ -27,7 +27,6 @@ import {
 } from '@patternfly/react-core';
 import { ChartLineIcon } from '@patternfly/react-icons';
 import { connect } from 'react-redux';
-import { APIError } from '@console/shared';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 
 import * as UIActions from '../../actions/ui';
@@ -50,6 +49,7 @@ import {
   twentyFourHourTime,
   twentyFourHourTimeWithSeconds,
 } from '../utils/datetime';
+import { PrometheusAPIError } from './types';
 
 const spans = ['5m', '15m', '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w', '2w'];
 const dropdownItems = _.zipObject(spans, spans);
@@ -488,6 +488,7 @@ const Loading = () => (
 const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   defaultSamples,
   defaultTimespan = parsePrometheusDuration('30m'),
+  deleteAllSeries,
   disabledSeries = [],
   filterLabels,
   formatLegendLabel,
@@ -513,7 +514,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
     defaultSamples || _.clamp(Math.round(span / minStep), minSamples, maxSamples);
 
   const [xDomain, setXDomain] = React.useState<AxisDomain>();
-  const [error, setError] = React.useState<QueryBrowserError>();
+  const [error, setError] = React.useState<PrometheusAPIError>();
   const [isDatasetTooBig, setIsDatasetTooBig] = React.useState(false);
   const [graphData, setGraphData] = React.useState(null);
   const [samples, setSamples] = React.useState(maxSamplesForSpan);
@@ -534,80 +535,88 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
     }
   }, [timespan]);
 
-  // Define this once for all queries so that they have exactly the same time range and X values
-  const now = Date.now();
+  // Clear any existing series data when the namespace is changed
+  React.useEffect(() => {
+    deleteAllSeries();
+  }, [deleteAllSeries, namespace]);
 
-  const safeFetchQuery = (query: string) => {
-    if (_.isEmpty(query)) {
-      return Promise.resolve();
+  const tick = () => {
+    if (hideGraphs) {
+      return undefined;
     }
-    const url = getPrometheusURL({
-      endpoint: PrometheusEndpoint.QUERY_RANGE,
-      endTime: endTime || now,
-      namespace,
-      query,
-      samples,
-      timeout: '5s',
-      timespan: span,
-    });
-    return safeFetch(url);
-  };
 
-  const tick = () =>
-    hideGraphs
-      ? undefined
-      : Promise.all(_.map(queries, safeFetchQuery))
-          .then((responses: PrometheusResponse[]) => {
-            const newResults = _.map(responses, 'data.result');
-            const numDataPoints = _.sumBy(newResults, (r) => _.sumBy(r, 'values.length'));
+    // Define this once for all queries so that they have exactly the same time range and X values
+    const now = Date.now();
 
-            if (numDataPoints > maxDataPointsHard && samples === minSamples) {
-              setIsDatasetTooBig(true);
-              return;
-            }
-            setIsDatasetTooBig(false);
+    const allPromises = _.map(queries, (query) =>
+      _.isEmpty(query)
+        ? Promise.resolve()
+        : safeFetch(
+            getPrometheusURL({
+              endpoint: PrometheusEndpoint.QUERY_RANGE,
+              endTime: endTime || now,
+              namespace,
+              query,
+              samples,
+              timeout: '5s',
+              timespan: span,
+            }),
+          ),
+    );
 
-            const newSamples = _.clamp(
-              Math.floor((samples * maxDataPointsSoft) / numDataPoints),
-              minSamples,
-              maxSamplesForSpan,
-            );
+    return Promise.all(allPromises)
+      .then((responses: PrometheusResponse[]) => {
+        const newResults = _.map(responses, 'data.result');
+        const numDataPoints = _.sumBy(newResults, (r) => _.sumBy(r, 'values.length'));
 
-            // Change `samples` if either
-            //   - It will change by a proportion greater than `samplesLeeway`
-            //   - It will change to the upper or lower limit of its allowed range
-            if (
-              Math.abs(newSamples - samples) / samples > samplesLeeway ||
-              (newSamples !== samples &&
-                (newSamples === maxSamplesForSpan || newSamples === minSamples))
-            ) {
-              setSamples(newSamples);
-            } else {
-              const newGraphData = _.map(newResults, (result: PrometheusResult[]) => {
-                return _.map(result, ({ metric, values }) => {
-                  // If filterLabels is specified, ignore all series that don't match
-                  return _.some(filterLabels, (v, k) => _.has(metric, k) && metric[k] !== v)
-                    ? []
-                    : [metric, formatSeriesValues(values, samples, span)];
-                });
-              });
-              setGraphData(newGraphData);
+        if (numDataPoints > maxDataPointsHard && samples === minSamples) {
+          setIsDatasetTooBig(true);
+          return;
+        }
+        setIsDatasetTooBig(false);
 
-              _.each(newResults, (r, i) =>
-                patchQuery(i, {
-                  series: r ? _.map(r, 'metric') : undefined,
-                }),
-              );
-              setUpdating(false);
-            }
-            setError(undefined);
-          })
-          .catch((err) => {
-            if (err.name !== 'AbortError') {
-              setError(err);
-              setUpdating(false);
-            }
+        const newSamples = _.clamp(
+          Math.floor((samples * maxDataPointsSoft) / numDataPoints),
+          minSamples,
+          maxSamplesForSpan,
+        );
+
+        // Change `samples` if either
+        //   - It will change by a proportion greater than `samplesLeeway`
+        //   - It will change to the upper or lower limit of its allowed range
+        if (
+          Math.abs(newSamples - samples) / samples > samplesLeeway ||
+          (newSamples !== samples &&
+            (newSamples === maxSamplesForSpan || newSamples === minSamples))
+        ) {
+          setSamples(newSamples);
+        } else {
+          const newGraphData = _.map(newResults, (result: PrometheusResult[]) => {
+            return _.map(result, ({ metric, values }) => {
+              // If filterLabels is specified, ignore all series that don't match
+              return _.some(filterLabels, (v, k) => _.has(metric, k) && metric[k] !== v)
+                ? []
+                : [metric, formatSeriesValues(values, samples, span)];
+            });
           });
+          setGraphData(newGraphData);
+
+          _.each(newResults, (r, i) =>
+            patchQuery(i, {
+              series: r ? _.map(r, 'metric') : undefined,
+            }),
+          );
+          setUpdating(false);
+        }
+        setError(undefined);
+      })
+      .catch((err) => {
+        if (err.name !== 'AbortError') {
+          setError(err);
+          setUpdating(false);
+        }
+      });
+  };
 
   // Don't poll if an end time was set (because the latest data is not displayed) or if the graph is
   // hidden. Otherwise use a polling interval relative to the graph's timespan.
@@ -746,6 +755,7 @@ export const QueryBrowser = withFallback(
       tickInterval: pollInterval ?? UI.getIn(['queryBrowser', 'pollInterval']),
     }),
     {
+      deleteAllSeries: UIActions.queryBrowserDeleteAllSeries,
       patchQuery: UIActions.queryBrowserPatchQuery,
     },
   )(QueryBrowser_),
@@ -773,14 +783,8 @@ export type FormatLegendLabel = (labels: PrometheusLabels, i: number) => string;
 
 export type PatchQuery = (index: number, patch: QueryObj) => any;
 
-type QueryBrowserError = {
-  json?: {
-    error?: string;
-  };
-} & APIError;
-
 type ErrorProps = {
-  error: QueryBrowserError;
+  error: PrometheusAPIError;
   title?: string;
 };
 
@@ -804,6 +808,7 @@ type ZoomableGraphProps = GraphProps & { onZoom: (from: number, to: number) => v
 export type QueryBrowserProps = {
   defaultSamples?: number;
   defaultTimespan?: number;
+  deleteAllSeries: () => never;
   disabledSeries?: PrometheusLabels[][];
   filterLabels?: PrometheusLabels;
   formatLegendLabel?: FormatLegendLabel;

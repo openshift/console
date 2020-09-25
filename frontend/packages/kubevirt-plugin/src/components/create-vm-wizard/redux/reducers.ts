@@ -172,6 +172,8 @@ export default (state, action: WizardInternalAction) => {
       return setTabKeys(state, VMWizardTab.RESULT, action);
     case InternalActionType.Update:
       return mergeDeepInSpecial(state, [dialogID], fromJS(payload.value));
+    case InternalActionType.UpdateCommonDataValue:
+      return state.setIn([dialogID, 'commonData', 'data', ...payload.path], payload.value);
     case InternalActionType.UpdateCommonData:
       return setObjectValues(
         setObjectValues(state, [dialogID, 'commonData', 'data'], payload.value.data),

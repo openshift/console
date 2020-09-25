@@ -16,7 +16,7 @@ import './review-tab.scss';
 const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) => {
   const {
     iVMSettings,
-    iUserTemplates,
+    iUserTemplate,
     iCommonTemplates,
     openshiftFlag,
     relevantOptions,
@@ -26,7 +26,7 @@ const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) =>
 
   const flavorValue = getFlavorValue({
     iVMSettings,
-    iUserTemplates,
+    iUserTemplate,
     iCommonTemplates,
     relevantOptions,
   });
@@ -34,7 +34,7 @@ const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) =>
   const osName =
     getOS({
       osID: getFieldValue(iVMSettings, VMSettingsField.OPERATING_SYSTEM),
-      iUserTemplates,
+      iUserTemplate,
       openshiftFlag,
       iCommonTemplates,
     })?.osName || getField(VMSettingsField.OPERATING_SYSTEM, iVMSettings)?.get('display');
@@ -71,7 +71,7 @@ type GeneralReviewConnectedProps = {
   iVMSettings: any;
   openshiftFlag: boolean;
   iCommonTemplates: any;
-  iUserTemplates: any;
+  iUserTemplate: any;
   relevantOptions: any;
   isImport: boolean;
   className: string;
@@ -81,7 +81,7 @@ const stateToProps = (state, { wizardReduxID }) => ({
   iVMSettings: iGetVmSettings(state, wizardReduxID),
   openshiftFlag: iGetCommonData(state, wizardReduxID, VMWizardProps.openshiftFlag),
   iCommonTemplates: iGetLoadedCommonData(state, wizardReduxID, VMWizardProps.commonTemplates),
-  iUserTemplates: iGetLoadedCommonData(state, wizardReduxID, VMWizardProps.userTemplates),
+  iUserTemplate: iGetLoadedCommonData(state, wizardReduxID, VMWizardProps.userTemplate),
   relevantOptions: iGetRelevantTemplateSelectors(state, wizardReduxID),
   isImport: iGetCommonData(state, wizardReduxID, VMWizardProps.isProviderImport),
 });

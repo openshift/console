@@ -27,4 +27,19 @@ export BRIDGE_BASE_ADDRESS
 oc apply -f ./frontend/integration-tests/data/htpasswd-secret.yaml
 oc patch oauths cluster --patch "$(cat ./frontend/integration-tests/data/patch-htpasswd.yaml)" --type=merge
 
-CHROME_VERSION=$(google-chrome --version) ./test-gui.sh "${1:-e2e}"
+# "fake" dbus address to prevent errors
+# https://github.com/SeleniumHQ/docker-selenium/issues/87
+DBUS_SESSION_BUS_ADDRESS=/dev/null
+export DBUS_SESSION_BUS_ADDRESS
+
+SCENARIO="${1:-e2e}"
+
+if [ "$SCENARIO" != "login" ]; then
+  CHROME_VERSION=$(google-chrome --version) ./test-gui.sh "$SCENARIO"
+fi
+
+if [ "$SCENARIO" == "e2e" ] || [ "$SCENARIO" == "release" ]; then
+  ./test-cypress.sh
+elif [ "$SCENARIO" == "login" ]; then
+  ./test-cypress.sh 'tests/app/auth-multiuser-login.spec.ts'
+fi

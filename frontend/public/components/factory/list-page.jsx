@@ -59,7 +59,7 @@ export const TextFilter = (props) => {
 TextFilter.displayName = 'TextFilter';
 
 // TODO (jon) make this into "withListPageFilters" HOC
-/** @augments {React.PureComponent<{ListComponent: React.ComponentType<any>, kinds: string[], filters?:any, flatten?: function, data?: any[], rowFilters?: any[], hideToolbar?: boolean, hideLabelFilter?: boolean }>} */
+/** @augments {React.PureComponent<{ListComponent: React.ComponentType<any>, kinds: string[], filters?:any, flatten?: function, data?: any[], rowFilters?: any[], hideNameLabelFilters?: boolean, hideLabelFilter?: boolean, columnLayout?: ColumnLayout }>} */
 export class ListPageWrapper_ extends React.PureComponent {
   render() {
     const {
@@ -68,8 +68,9 @@ export class ListPageWrapper_ extends React.PureComponent {
       reduxIDs,
       rowFilters,
       textFilter,
-      hideToolbar,
+      hideNameLabelFilters,
       hideLabelFilter,
+      columnLayout,
     } = this.props;
     const data = flatten ? flatten(this.props.resources) : [];
     const Filter = (
@@ -78,8 +79,9 @@ export class ListPageWrapper_ extends React.PureComponent {
         data={data}
         reduxIDs={reduxIDs}
         textFilter={textFilter}
-        hideToolbar={hideToolbar}
+        hideNameLabelFilters={hideNameLabelFilters}
         hideLabelFilter={hideLabelFilter}
+        columnLayout={columnLayout}
         {...this.props}
       />
     );
@@ -105,7 +107,7 @@ ListPageWrapper_.propTypes = {
   rowFilters: PropTypes.array,
   staticFilters: PropTypes.array,
   customData: PropTypes.any,
-  hideToolbar: PropTypes.bool,
+  hideNameLabelFilters: PropTypes.bool,
   hideLabelFilter: PropTypes.bool,
 };
 
@@ -200,7 +202,7 @@ export const FireMan_ = connect(null, { filterList })(
         if (createProps.to) {
           createLink = (
             <Link className="co-m-primary-action" {...createProps}>
-              <Button variant="primary" id="yaml-create">
+              <Button variant="primary" id="yaml-create" data-test="yaml-create">
                 {createButtonText}
               </Button>
             </Link>
@@ -222,7 +224,7 @@ export const FireMan_ = connect(null, { filterList })(
         } else {
           createLink = (
             <div className="co-m-primary-action">
-              <Button variant="primary" id="yaml-create" {...createProps}>
+              <Button variant="primary" id="yaml-create" data-test="yaml-create" {...createProps}>
                 {createButtonText}
               </Button>
             </div>
@@ -304,7 +306,7 @@ FireMan_.propTypes = {
   title: PropTypes.string,
 };
 
-/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean, badge?: React.ReactNode, createHandler?: any, hideToolbar?: boolean, hideLabelFilter?: boolean, customData?: any} >} */
+/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean, badge?: React.ReactNode, createHandler?: any, hideNameLabelFilters?: boolean, hideLabelFilter?: boolean, columnLayout?: ColumnLayout, customData?: any, hideColumnManagement?: boolean } >} */
 export const ListPage = withFallback((props) => {
   const {
     autoFocus,
@@ -329,8 +331,10 @@ export const ListPage = withFallback((props) => {
     textFilter,
     match,
     badge,
-    hideToolbar,
     hideLabelFilter,
+    hideNameLabelFilters,
+    hideColumnManagement,
+    columnLayout,
   } = props;
   let { createProps } = props;
   const ko = kindObj(kind);
@@ -395,15 +399,17 @@ export const ListPage = withFallback((props) => {
       textFilter={textFilter}
       title={title}
       badge={badge}
-      hideToolbar={hideToolbar}
       hideLabelFilter={hideLabelFilter}
+      hideNameLabelFilters={hideNameLabelFilters}
+      hideColumnManagement={hideColumnManagement}
+      columnLayout={columnLayout}
     />
   );
 }, ErrorBoundaryFallback);
 
 ListPage.displayName = 'ListPage';
 
-/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, createAccessReview?: Object, flatten?: Function, title?: string, label?: string, hideTextFilter?: boolean, showTitle?: boolean, helpText?: any, filterLabel?: string, textFilter?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string, customData?: any, badge?: React.ReactNode, hideToolbar?: boolean, hideLabelFilter?: boolean >} */
+/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, createAccessReview?: Object, flatten?: Function, title?: string, label?: string, hideTextFilter?: boolean, showTitle?: boolean, helpText?: any, filterLabel?: string, textFilter?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string, customData?: any, badge?: React.ReactNode, hideNameLabelFilters?: boolean, hideLabelFilter?: boolean, columnLayout?: ColumnLayout, hideColumnManagement?: boolean >} */
 export const MultiListPage = (props) => {
   const {
     autoFocus,
@@ -425,8 +431,10 @@ export const MultiListPage = (props) => {
     title,
     customData,
     badge,
-    hideToolbar,
     hideLabelFilter,
+    hideNameLabelFilters,
+    hideColumnManagement,
+    columnLayout,
   } = props;
 
   const resources = _.map(props.resources, (r) => ({
@@ -461,8 +469,10 @@ export const MultiListPage = (props) => {
           rowFilters={rowFilters}
           staticFilters={staticFilters}
           customData={customData}
-          hideToolbar={hideToolbar}
           hideLabelFilter={hideLabelFilter}
+          hideNameLabelFilters={hideNameLabelFilters}
+          hideColumnManagement={hideColumnManagement}
+          columnLayout={columnLayout}
         />
       </Firehose>
     </FireMan_>

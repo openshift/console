@@ -31,6 +31,10 @@ export const getAddPageUrl = (
       pageUrl = `/import/ns/${ns}`;
       params.append('importType', 'docker');
       break;
+    case ImportOptions.DEVFILE:
+      pageUrl = `/import/ns/${ns}`;
+      params.append('importType', 'devfile');
+      break;
     case ImportOptions.DATABASE:
       pageUrl = `/catalog/ns/${ns}`;
       params.append('category', 'databases');
@@ -72,6 +76,8 @@ export type KebabAction = (
   connectorSourceObj?: K8sResourceKind,
   accessData?: string[],
 ) => KebabOption;
+
+export type MenuOptions = (KebabAction | KebabOption)[];
 
 export const createKebabAction: KebabFactory = (label, icon, importType, checkAccess) => (
   obj: K8sResourceKind,

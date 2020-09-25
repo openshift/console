@@ -13,7 +13,7 @@ const { editYaml, events } = navFactory;
 
 const Details: React.FC<DetailsProps> = ({ obj }) => (
   <div className="co-m-pane__body">
-    <SectionHeading text="Volume Snapshot Details" />
+    <SectionHeading text="Volume Snapshot Class Details" />
     <div className="row">
       <div className="col-md-6 col-xs-12">
         <ResourceSummary resource={obj}>

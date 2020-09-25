@@ -3,8 +3,6 @@ import * as _ from 'lodash-es';
 import { List as ImmutableList } from 'immutable';
 import {
   ActionGroup,
-  Alert,
-  AlertActionCloseButton,
   Button,
   EmptyState,
   EmptyStateBody,
@@ -57,6 +55,7 @@ import {
 import { setAllQueryArguments } from '../utils/router';
 import IntervalDropdown from './poll-interval-dropdown';
 import { colors, Error, QueryObj, QueryBrowser } from './query-browser';
+import { PrometheusAPIError } from './types';
 
 const operators = [
   'and',
@@ -224,34 +223,25 @@ export const ToggleGraph = connect(graphStateToProps, { toggle: UIActions.monito
   ToggleGraph_,
 );
 
-const MetricsDropdown_: React.FC<MetricsDropdownProps> = ({
-  insertText,
-  namespace,
-  setMetrics,
-}) => {
+const MetricsDropdown_: React.FC<MetricsDropdownProps> = ({ insertText, setMetrics }) => {
   const [items, setItems] = React.useState<MetricsDropdownItems>();
-  const [isError, setIsError] = React.useState(false);
+  const [error, setError] = React.useState<PrometheusAPIError>();
 
   const safeFetch = React.useCallback(useSafeFetch(), []);
 
   React.useEffect(() => {
-    const url = namespace
-      ? getPrometheusURL({
-          endpoint: PrometheusEndpoint.QUERY,
-          namespace,
-          query: `count({namespace="${namespace}"}) by (__name__)`,
-        })
-      : `${PROMETHEUS_BASE_PATH}/${PrometheusEndpoint.LABEL}/__name__/values`;
-    safeFetch(url)
+    safeFetch(`${PROMETHEUS_BASE_PATH}/${PrometheusEndpoint.LABEL}/__name__/values`)
       .then((response) => {
-        const metrics = namespace
-          ? _.map(_.get(response, 'data.result'), 'metric.__name__').sort()
-          : _.get(response, 'data');
+        const metrics = response?.data;
         setItems(_.zipObject(metrics, metrics));
         setMetrics(metrics);
       })
-      .catch(() => setIsError(true));
-  }, [namespace, safeFetch, setMetrics]);
+      .catch((err) => {
+        if (err.name !== 'AbortError') {
+          setError(err);
+        }
+      });
+  }, [safeFetch, setMetrics]);
 
   const onChange = (metric: string) => {
     // Replace the currently selected text with the metric
@@ -267,10 +257,12 @@ const MetricsDropdown_: React.FC<MetricsDropdownProps> = ({
   };
 
   let title: React.ReactNode = 'Insert Metric at Cursor';
-  if (isError) {
+  if (error !== undefined) {
+    const message =
+      error?.response?.status === 403 ? 'Access restricted.' : 'Failed to load metrics list.';
     title = (
       <span>
-        <RedExclamationCircleIcon /> Failed to load metrics list.
+        <RedExclamationCircleIcon /> {message}
       </span>
     );
   } else if (items === undefined) {
@@ -286,7 +278,7 @@ const MetricsDropdown_: React.FC<MetricsDropdownProps> = ({
   return (
     <Dropdown
       autocompleteFilter={fuzzyCaseInsensitive}
-      disabled={isError}
+      disabled={error !== undefined}
       id="metrics-dropdown"
       items={items || {}}
       menuClassName="query-browser__metrics-dropdown-menu query-browser__metrics-dropdown-menu--insert"
@@ -295,7 +287,7 @@ const MetricsDropdown_: React.FC<MetricsDropdownProps> = ({
     />
   );
 };
-const MetricsDropdown: React.ComponentType<{ namespace?: string }> = connect(null, {
+const MetricsDropdown = connect(null, {
   insertText: UIActions.queryBrowserInsertText,
   setMetrics: UIActions.queryBrowserSetMetrics,
 })(MetricsDropdown_);
@@ -345,7 +337,7 @@ const SeriesButton_: React.FC<SeriesButtonProps> = ({
   toggleSeries,
 }) => {
   if (isSeriesEmpty) {
-    return null;
+    return <div className="query-browser__series-btn-wrap"></div>;
   }
   const title = `${isDisabled ? 'Show' : 'Hide'} series`;
 
@@ -640,7 +632,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({
   series,
 }) => {
   const [data, setData] = React.useState<PrometheusData>();
-  const [error, setError] = React.useState();
+  const [error, setError] = React.useState<PrometheusAPIError>();
   const [page, setPage] = React.useState(1);
   const [perPage, setPerPage] = React.useState(50);
   const [sortBy, setSortBy] = React.useState<ISortBy>();
@@ -731,7 +723,10 @@ const QueryTable_: React.FC<QueryTableProps> = ({
 
     columns = [
       '',
-      ...allLabelKeys.map((k) => ({ title: k === '__name__' ? 'Name' : k, ...cellProps })),
+      ...allLabelKeys.map((k) => ({
+        title: <span>{k === '__name__' ? 'Name' : k}</span>,
+        ...cellProps,
+      })),
       { title: 'Value', ...cellProps },
     ];
 
@@ -807,30 +802,11 @@ const QueryTable_: React.FC<QueryTableProps> = ({
 };
 export const QueryTable = connect(queryTableStateToProps, queryDispatchToProps)(QueryTable_);
 
-const NamespaceAlert_: React.FC<{ dismiss: () => undefined; isDismissed: boolean }> = ({
-  dismiss,
-  isDismissed,
-}) =>
-  isDismissed ? null : (
-    <Alert
-      actionClose={<AlertActionCloseButton onClose={dismiss} />}
-      isInline
-      className="co-alert"
-      title="Queries entered here are limited to the data available in the currently selected project."
-      variant="info"
-    />
-  );
-const NamespaceAlert: React.ComponentType<{}> = connect(
-  ({ UI }: RootState) => ({ isDismissed: !!UI.getIn(['queryBrowser', 'dismissNamespaceAlert']) }),
-  { dismiss: UIActions.queryBrowserDismissNamespaceAlert },
-)(NamespaceAlert_);
-
 const Query_: React.FC<QueryProps> = ({
   id,
   index,
   isExpanded,
   isEnabled,
-  namespace,
   patchQuery,
   toggleIsEnabled,
 }) => {
@@ -847,7 +823,7 @@ const Query_: React.FC<QueryProps> = ({
     >
       <div className="query-browser__query-controls">
         <ExpandButton isExpanded={isExpanded} onClick={toggleIsExpanded} />
-        <QueryInput index={index} namespace={namespace} />
+        <QueryInput index={index} />
         <div title={switchLabel}>
           <Switch
             aria-label={switchLabel}
@@ -861,7 +837,7 @@ const Query_: React.FC<QueryProps> = ({
           <QueryKebab index={index} />
         </div>
       </div>
-      <QueryTable index={index} namespace={namespace} />
+      <QueryTable index={index} />
     </div>
   );
 };
@@ -874,11 +850,7 @@ const Query = connect(
   queryDispatchToProps,
 )(Query_);
 
-const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({
-  namespace,
-  patchQuery,
-  queriesList,
-}) => {
+const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({ patchQuery, queriesList }) => {
   const queries = queriesList.toJS();
 
   // Initialize queries from URL parameters
@@ -913,12 +885,7 @@ const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({
   const insertExampleQuery = () => {
     const focusedIndex = focusedQuery?.index ?? 0;
     const index = queries[focusedIndex] ? focusedIndex : 0;
-
-    // Pick a suitable example query based on whether we are limiting results to a single namespace
-    const text = namespace
-      ? 'sum(rate(container_cpu_usage_seconds_total{image!="", container!="POD"}[5m])) by (pod)'
-      : 'sort_desc(sum(sum_over_time(ALERTS{alertstate="firing"}[24h])) by (alertname))';
-
+    const text = 'sort_desc(sum(sum_over_time(ALERTS{alertstate="firing"}[24h])) by (alertname))';
     patchQuery(index, { isEnabled: true, query: text, text });
   };
 
@@ -941,7 +908,6 @@ const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({
     <QueryBrowser
       defaultTimespan={30 * 60 * 1000}
       disabledSeries={disabledSeries}
-      namespace={namespace}
       queries={queryStrings}
     />
   );
@@ -972,10 +938,10 @@ const RunQueriesButton = connect(null, { runQueries: UIActions.queryBrowserRunQu
   RunQueriesButton_,
 );
 
-const QueriesList_ = ({ count, namespace }) => (
+const QueriesList_ = ({ count }) => (
   <>
     {_.range(count).map((i) => (
-      <Query index={i} key={i} namespace={namespace} />
+      <Query index={i} key={i} />
     ))}
   </>
 );
@@ -992,7 +958,7 @@ const PollIntervalDropdown = connect(
   },
 )(IntervalDropdown);
 
-const QueryBrowserPage_: React.FC<QueryBrowserPageProps> = ({ deleteAll, namespace }) => {
+const QueryBrowserPage_: React.FC<QueryBrowserPageProps> = ({ deleteAll }) => {
   // Clear queries on unmount
   React.useEffect(() => deleteAll, [deleteAll]);
 
@@ -1014,7 +980,6 @@ const QueryBrowserPage_: React.FC<QueryBrowserPageProps> = ({ deleteAll, namespa
         </h1>
       </div>
       <div className="co-m-pane__body">
-        {namespace && <NamespaceAlert />}
         <div className="row">
           <div className="col-xs-12">
             <ToggleGraph />
@@ -1022,10 +987,10 @@ const QueryBrowserPage_: React.FC<QueryBrowserPageProps> = ({ deleteAll, namespa
         </div>
         <div className="row">
           <div className="col-xs-12">
-            <QueryBrowserWrapper namespace={namespace} />
+            <QueryBrowserWrapper />
             <div className="query-browser__controls">
               <div className="query-browser__controls--left">
-                <MetricsDropdown namespace={namespace} />
+                <MetricsDropdown />
               </div>
               <div className="query-browser__controls--right">
                 <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
@@ -1034,14 +999,14 @@ const QueryBrowserPage_: React.FC<QueryBrowserPageProps> = ({ deleteAll, namespa
                 </ActionGroup>
               </div>
             </div>
-            <QueriesList namespace={namespace} />
+            <QueriesList />
           </div>
         </div>
       </div>
     </>
   );
 };
-export const QueryBrowserPage: React.ComponentType<{ namespace?: string }> = withFallback(
+export const QueryBrowserPage = withFallback(
   connect(null, { deleteAll: UIActions.queryBrowserDeleteAllQueries })(QueryBrowserPage_),
 );
 
@@ -1058,17 +1023,14 @@ type MetricsDropdownItems = {
 
 type MetricsDropdownProps = {
   insertText: (index: number, newText: string, replaceFrom: number, replaceTo: number) => never;
-  namespace?: string;
   setMetrics: (metrics: string[]) => never;
 };
 
 type QueryBrowserPageProps = {
   deleteAll: () => never;
-  namespace?: string;
 };
 
 type QueryBrowserWrapperProps = {
-  namespace?: string;
   patchQuery: (index: number, patch: QueryObj) => any;
   queriesList: ImmutableList<QueryObj>;
 };
@@ -1095,7 +1057,6 @@ type QueryProps = {
   index: number;
   isEnabled: boolean;
   isExpanded: boolean;
-  namespace?: string;
   patchQuery: (patch: QueryObj) => void;
   toggleIsEnabled: () => never;
 };

@@ -68,6 +68,7 @@ const ClouldShellMastheadButton: React.FC<Props> = ({ flags, onClick, open }) =>
           aria-label="Command line terminal"
           onClick={toggleTerminal}
           className={open ? 'pf-m-selected' : undefined}
+          data-tour-id="tour-cloud-shell-button"
         >
           <TerminalIcon className="co-masthead-icon" />
         </Button>

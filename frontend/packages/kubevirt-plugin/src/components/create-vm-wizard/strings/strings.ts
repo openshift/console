@@ -2,7 +2,7 @@ import { VMWizardTab } from '../types';
 
 export const CREATE_VM = 'Create Virtual Machine';
 export const CREATE_VM_TEMPLATE = `${CREATE_VM} Template`;
-export const IMPORT = `Import`;
+export const IMPORT = 'Import';
 export const IMPORT_VM = 'Import Virtual Machine';
 export const REVIEW_AND_CONFIRM = 'Review and confirm';
 export const NO_TEMPLATE = 'None';
@@ -21,7 +21,16 @@ export const TabTitleResolver = {
   [VMWizardTab.NETWORKING]: 'Networking',
   [VMWizardTab.STORAGE]: 'Storage',
   [VMWizardTab.ADVANCED_CLOUD_INIT]: 'Cloud-init',
-  [VMWizardTab.ADVANCED_VIRTUAL_HARDWARE]: 'Virtual Hardware',
   [VMWizardTab.REVIEW]: 'Review',
   [VMWizardTab.RESULT]: 'Result',
 };
+
+export const BASE_IMAGE_AND_PVC_SHORT = '(Source available)';
+export const BASE_IMAGE_AND_PVC_UPLOADING_SHORT = '(Source uploading)';
+export const NO_BASE_IMAGE_SHORT = '';
+export const NO_BASE_IMAGE_AND_NO_PVC_SHORT = '';
+export const BASE_IMAGE_AND_PVC_MESSAGE = '';
+export const BASE_IMAGE_UPLOADING_MESSAGE =
+  'The upload process for this Operating system must complete before it can be cloned';
+export const NO_BASE_IMAGE_AND_NO_PVC_MESSAGE =
+  'The Operating System Template is missing disk image definitions, a custom boot source must be defined manually';

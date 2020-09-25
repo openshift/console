@@ -53,6 +53,10 @@ interface ResourceDropdownProps {
     allSelectorKey?: string;
     allSelectorTitle?: string;
   };
+  noneSelectorItem?: {
+    noneSelectorKey?: string;
+    noneSelectorTitle?: string;
+  };
   actionItems?: {
     actionTitle: string;
     actionKey: string;
@@ -147,6 +151,7 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
       dataSelector,
       transformLabel,
       allSelectorItem,
+      noneSelectorItem,
       showBadge = false,
       appendItems,
     }: ResourceDropdownProps,
@@ -185,6 +190,9 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
 
     if (allSelectorItem && !_.isEmpty(unsortedList)) {
       sortedList[allSelectorItem.allSelectorKey] = allSelectorItem.allSelectorTitle;
+    }
+    if (noneSelectorItem && !_.isEmpty(unsortedList)) {
+      sortedList[noneSelectorItem.noneSelectorKey] = noneSelectorItem.noneSelectorTitle;
     }
 
     _.keys(unsortedList)

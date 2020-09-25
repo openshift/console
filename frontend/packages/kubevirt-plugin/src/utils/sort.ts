@@ -48,7 +48,7 @@ export const ignoreCaseSort = <T>(
   return array.sort((a, b) => resolve(a).localeCompare(resolve(b)));
 };
 
-export const splitVersion = (osID: string): number[] =>
+const splitVersion = (osID: string): number[] =>
   (osID || '')
     .split(/\D/)
     .filter((x) => x)
@@ -72,13 +72,21 @@ export const splitVersion = (osID: string): number[] =>
  * return 0 when equal.
  *
  */
-export const compareVersions = (version1: number[], version2: number[]): number => {
+export const compareVersions = (version1: string, version2: string): number => {
   if (!version1 && !version2) {
     return 0;
   }
 
-  const finalVersion1 = version1 || [];
-  const finalVersion2 = version2 || [];
+  // 'devel' version if exist is always the highst version.
+  if (version1 === 'devel') {
+    return 1;
+  }
+  if (version2 === 'devel') {
+    return -1;
+  }
+
+  const finalVersion1 = splitVersion(version1) || [];
+  const finalVersion2 = splitVersion(version2) || [];
 
   const zipped = _.zip(finalVersion1, finalVersion2);
   let idx = 0;
@@ -111,7 +119,7 @@ const descSortOSes = (os1: OperatingSystemRecord, os2: OperatingSystemRecord): n
     return nameCMP * -1;
   }
 
-  return compareVersions(splitVersion(os1.id), splitVersion(os2.id)) * -1;
+  return compareVersions(os1.id, os2.id) * -1;
 };
 
 export const removeOSDups = (osArr: OperatingSystemRecord[]): OperatingSystemRecord[] =>

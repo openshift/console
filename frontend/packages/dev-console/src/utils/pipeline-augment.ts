@@ -176,6 +176,7 @@ export interface PipelineResourceTaskParam extends PipelineParam {
 export interface PipelineResourceTaskResource {
   name: string;
   type: string;
+  optional?: boolean;
 }
 export interface PipelineResourceTask extends K8sResourceKind {
   spec: {
@@ -219,15 +220,35 @@ export interface PipelineRunParam extends Param {
   resource?: object;
 }
 
+export type VolumeTypeSecret = {
+  secretName: string;
+  items?: {
+    key: string;
+    path: string;
+  }[];
+};
+
+export type VolumeTypeConfigMaps = {
+  name: string;
+  items?: {
+    key: string;
+    path: string;
+  }[];
+};
+
+export type VolumeTypePVC = {
+  claimName: string;
+};
+
 export interface PipelineWorkspace extends Param {
   type: string;
   data?: {
-    [key: string]: string;
+    [volumeType: string]: VolumeTypeSecret | VolumeTypeConfigMaps | VolumeTypePVC | {};
   };
 }
 
 export interface PipelineRunWorkspace extends Param {
-  [key: string]: string;
+  [volumeType: string]: VolumeTypeSecret | VolumeTypeConfigMaps | VolumeTypePVC | {};
 }
 
 interface FirehoseResource {

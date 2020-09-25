@@ -71,4 +71,38 @@ export class DiskWrapper extends ObjectWithTypePropertyWrapper<
         };
     }
   }
+
+  isDiskEqual = (
+    otherDisk: V1Disk,
+    omitRuntimeData?: boolean,
+    omitBootOrder?: boolean,
+  ): boolean => {
+    if (!otherDisk) {
+      return false;
+    }
+
+    const currDisk = omitBootOrder ? _.omit(this.data, 'bootOrder') : this.data;
+    const othrDisk = omitBootOrder ? _.omit(otherDisk, 'bootOrder') : otherDisk;
+
+    if (!omitRuntimeData) {
+      return _.isEqual(currDisk, othrDisk);
+    }
+
+    const diskWrapper = new DiskWrapper(otherDisk);
+    const thisDiskType = this.getType();
+
+    if (diskWrapper.getType() !== thisDiskType) {
+      return false;
+    }
+
+    switch (thisDiskType) {
+      case DiskType.CDROM:
+        return _.isEqual(
+          _.omit(currDisk, 'cdrom.readonly', 'cdrom.tray'),
+          _.omit(othrDisk, 'cdrom.readonly', 'cdrom.tray'),
+        );
+      default:
+        return _.isEqual(currDisk, othrDisk);
+    }
+  };
 }

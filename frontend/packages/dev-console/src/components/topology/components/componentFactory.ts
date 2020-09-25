@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {
   GraphElement,
+  Edge,
   ModelKind,
   withPanZoom,
   withDragNode,
@@ -8,12 +9,21 @@ import {
   withSelection,
   withDndDrop,
   withCreateConnector,
-  withRemoveConnector,
+  DragObjectWithType,
+  isNode,
+  Node,
 } from '@patternfly/react-topology';
+import { kebabOptionsToMenu } from '@console/internal/components/utils';
+import { edgeActions } from '../actions/edgeActions';
 import { Application } from './groups';
 import { WorkloadNode } from './nodes';
 import GraphComponent from './GraphComponent';
-import { workloadContextMenu, groupContextMenu, graphContextMenu } from './nodeContextMenu';
+import {
+  workloadContextMenu,
+  groupContextMenu,
+  graphContextMenu,
+  createMenuItems,
+} from './nodeContextMenu';
 import {
   NodeComponentProps,
   graphDropTargetSpec,
@@ -21,7 +31,6 @@ import {
   nodeDropTargetSpec,
   applicationGroupDropTargetSpec,
   edgeDragSourceSpec,
-  removeConnectorCallback,
   MOVE_CONNECTOR_DROP_TYPE,
   withContextMenu,
   createConnectorCallback,
@@ -38,6 +47,16 @@ import { withEditReviewAccess } from './withEditReviewAccess';
 import { AggregateEdge, ConnectsTo, CreateConnector, TrafficConnector } from './edges';
 
 import './ContextMenu.scss';
+
+const connectToActions = (edge: Edge) => {
+  const nodes = edge
+    .getController()
+    .getElements()
+    .filter((e) => isNode(e) && !e.isGroup()) as Node[];
+
+  const actions = edgeActions(edge, nodes);
+  return createMenuItems(kebabOptionsToMenu(actions));
+};
 
 export const componentFactory = (
   kind,
@@ -69,8 +88,10 @@ export const componentFactory = (
         ),
       );
     case TYPE_CONNECTS_TO:
-      return withTargetDrag(edgeDragSourceSpec(MOVE_CONNECTOR_DROP_TYPE, createConnection))(
-        withRemoveConnector(removeConnectorCallback)(ConnectsTo),
+      return withEditReviewAccess('update')(
+        withTargetDrag<DragObjectWithType>(
+          edgeDragSourceSpec(MOVE_CONNECTOR_DROP_TYPE, createConnection),
+        )(withContextMenu(connectToActions)(ConnectsTo)),
       );
     case TYPE_AGGREGATE_EDGE:
       return AggregateEdge;

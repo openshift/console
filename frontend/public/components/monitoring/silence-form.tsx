@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { coFetchJSON } from '../../co-fetch';
-import { silenceState, SilenceStates } from '../../reducers/monitoring';
+import { silenceState } from '../../reducers/monitoring';
 import { RootState } from '../../redux';
 import { refreshNotificationPollers } from '../notification-drawer';
 import { ButtonBar } from '../utils/button-bar';
@@ -17,6 +17,7 @@ import { SectionHeading } from '../utils/headings';
 import { ExternalLink, getURLSearchParams } from '../utils/link';
 import { history } from '../utils/router';
 import { StatusBox } from '../utils/status-box';
+import { SilenceStates } from './types';
 import { silenceParamToProps, SilenceResource } from './utils';
 
 const pad = (i: number): string => (i < 10 ? `0${i}` : String(i));
@@ -185,9 +186,10 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
               <div className="form-group col-sm-4 col-md-5">
                 <label>Silence alert from...</label>
                 {isStartNow ? (
-                  <DatetimeTextInput isDisabled value="Now" />
+                  <DatetimeTextInput isDisabled data-test="from" value="Now" />
                 ) : (
                   <DatetimeTextInput
+                    data-test="from"
                     isRequired
                     onChange={(v: string) => setStartsAt(v)}
                     value={startsAt}
@@ -207,12 +209,14 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                 <label>Until...</label>
                 {duration === durationOff ? (
                   <DatetimeTextInput
+                    data-test="until"
                     isRequired
                     onChange={(v: string) => setEndsAt(v)}
                     value={endsAt}
                   />
                 ) : (
                   <DatetimeTextInput
+                    data-test="until"
                     isDisabled
                     value={isStartNow ? `${duration} from now` : getEndsAtValue()}
                   />
@@ -222,6 +226,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
             <div className="form-group">
               <label>
                 <input
+                  data-test="start-immediately"
                   checked={isStartNow}
                   onChange={(e) => setIsStartNow(e.currentTarget.checked)}
                   type="checkbox"
@@ -297,7 +302,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                 variant="link"
               >
                 <PlusCircleIcon className="co-icon-space-r" />
-                Add
+                Add Label
               </Button>
             </div>
           </div>
@@ -318,6 +323,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                 aria-label="Comment"
                 isRequired
                 onChange={(v: string) => setComment(v)}
+                data-test="silence-comment"
                 value={comment}
               />
             </div>

@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { FormSelect, FormSelectOption } from '@patternfly/react-core';
 import {
-  concatImmutableLists,
   iGetLoadedData,
   immutableListToShallowJS,
+  iGetIsLoaded,
+  iGetLoadError,
+  toShallowJS,
 } from '../../../../utils/immutable';
 import { FormFieldRow } from '../../form/form-field-row';
 import { FormField, FormFieldType } from '../../form/form-field';
@@ -17,34 +19,44 @@ import { iGetFieldValue } from '../../selectors/immutable/field';
 
 export const WorkloadProfile: React.FC<WorkloadProps> = React.memo(
   ({
-    userTemplates,
+    iUserTemplate,
     commonTemplates,
     workloadProfileField,
-    userTemplate,
     operatingSystem,
     flavor,
+    cnvBaseImages,
     onChange,
   }) => {
-    const vanillaTemplates = immutableListToShallowJS(
-      concatImmutableLists(iGetLoadedData(commonTemplates), iGetLoadedData(userTemplates)),
-    );
+    const isUserTemplateValid = iGetIsLoaded(iUserTemplate) && !iGetLoadError(iUserTemplate);
+
+    const templates = iUserTemplate
+      ? isUserTemplateValid
+        ? [toShallowJS(iGetLoadedData(iUserTemplate))]
+        : []
+      : immutableListToShallowJS(iGetLoadedData(commonTemplates));
+
     const workloadProfiles = ignoreCaseSort(
-      getWorkloadProfiles(vanillaTemplates, {
-        userTemplate,
+      getWorkloadProfiles(templates, {
         flavor,
         os: operatingSystem,
       }),
     );
+
+    const loadingResources = {
+      commonTemplates,
+      cnvBaseImages,
+    };
+
+    if (iUserTemplate) {
+      Object.assign(loadingResources, { iUserTemplate });
+    }
 
     return (
       <>
         <FormFieldRow
           field={workloadProfileField}
           fieldType={FormFieldType.SELECT}
-          loadingResources={{
-            userTemplates,
-            commonTemplates,
-          }}
+          loadingResources={loadingResources}
         >
           <FormField>
             <FormSelect onChange={nullOnEmptyChange(onChange, VMSettingsField.WORKLOAD_PROFILE)}>
@@ -70,11 +82,11 @@ export const WorkloadProfile: React.FC<WorkloadProps> = React.memo(
 );
 
 type WorkloadProps = {
-  userTemplates: any;
+  iUserTemplate: any;
   commonTemplates: any;
   workloadProfileField: any;
-  userTemplate: string;
   flavor: string;
   operatingSystem: string;
+  cnvBaseImages: any;
   onChange: (key: string, value: string) => void;
 };

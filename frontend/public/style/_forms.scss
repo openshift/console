@@ -24,6 +24,16 @@
   }
 }
 
+.co-form-heading__popover {
+  display: inline;
+}
+
+.co-form-heading__popover-button {
+  color: inherit !important;
+  font-family: var(--pf-global--FontFamily--heading--sans-serif);
+  @include co-popover-button();
+}
+
 .co-form-section__label {
   font-size: 14px;
   margin-bottom: ($grid-gutter-width / 2);

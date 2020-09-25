@@ -5,7 +5,7 @@
   left: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  position: fixed;
+  position: absolute;
   right: 0;
   top: 0;
   z-index: $zindex-modal;
@@ -105,6 +105,10 @@
 .modal-header {
   background-color:var(--pf-global--BackgroundColor--100);
   padding: var(--pf-global--spacer--xl) var(--pf-global--spacer--xl) var(--pf-global--spacer--lg);
+}
+
+.modal__inline-resource-link {
+  margin: 0;
 }
 
 .toleration-modal__field, .taint-modal__field  {

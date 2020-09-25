@@ -9,11 +9,12 @@ const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
   children,
   notificationEntries,
   className,
+  onClose,
 }) => {
   // Added check for `isExpanded` due to flaw in patternfly drawer. Remove the check on patternfly version upgrade
   const panelContent = isExpanded && (
     <DrawerPanelContent className={className}>
-      <NotificationDrawerHeading>{notificationEntries}</NotificationDrawerHeading>
+      <NotificationDrawerHeading onClose={onClose}>{notificationEntries}</NotificationDrawerHeading>
       <DrawerPanelBody hasNoPadding />
     </DrawerPanelContent>
   );
@@ -33,6 +34,8 @@ export type NotificationDrawerProps = {
   count?: number;
   children: React.ReactNode;
   className: string;
+  /** A callback for when the close button is clicked */
+  onClose: () => void;
 };
 
 export default NotificationDrawer;

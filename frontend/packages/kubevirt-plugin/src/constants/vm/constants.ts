@@ -21,10 +21,11 @@ export const TEMPLATE_TYPE_BASE = 'base';
 export const TEMPLATE_WORKLOAD_LABEL = 'workload.template.kubevirt.io';
 export const TEMPLATE_VM_NAME_LABEL = 'vm.kubevirt.io/name';
 export const TEMPLATE_OS_NAME_ANNOTATION = 'name.os.template.kubevirt.io';
-export const TEMPLATE_DATAVOLUME_ANNOTATION = 'datavolume.template.kubevirt.io';
+export const TEMPLATE_DATAVOLUME_NAME_PARAMETER = 'SRC_PVC_NAME';
+export const TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER = 'SRC_PVC_NAMESPACE';
 export const TEMPLATE_VM_DOMAIN_LABEL = 'kubevirt.io/domain';
 export const TEMPLATE_VM_SIZE_LABEL = 'kubevirt.io/size';
-export const TEMPLATE_VM_GOLDEN_OS_NAMESPACE = 'openshift-cnv-base-images';
+export const TEMPLATE_VM_GOLDEN_OS_NAMESPACE = 'openshift-kubevirt-base-images';
 export const TEMPLATE_VM_COMMON_NAMESPACE = 'openshift';
 
 export const LABEL_USED_TEMPLATE_NAME = 'vm.kubevirt.io/template';
@@ -35,7 +36,7 @@ export const DEFAULT_RDP_PORT = 3389;
 export const VM_DETAIL_DETAILS_HREF = 'details';
 export const VM_DETAIL_DISKS_HREF = 'disks';
 export const VM_DETAIL_NETWORKS_HREF = 'nics';
-export const VM_DETAIL_CONSOLES_HREF = 'consoles';
+export const VM_DETAIL_CONSOLES_HREF = 'console';
 export const VM_DETAIL_ENVIRONMENT = 'environment';
 export const VM_DETAIL_SNAPSHOTS = 'snapshots';
 
@@ -51,3 +52,15 @@ export enum DeviceType {
 export const VM_DETAIL_EVENTS_HREF = 'events';
 
 export const DUMMY_VM_NAME = 'vm';
+
+export const WINTOOLS_CONTAINER_NAMES = {
+  openshift: 'registry.redhat.io/container-native-virtualization/virtio-win',
+  ocp: 'registry.redhat.io/container-native-virtualization/virtio-win',
+  online: 'registry.redhat.io/container-native-virtualization/virtio-win',
+  dedicated: 'registry.redhat.io/container-native-virtualization/virtio-win',
+  azure: 'registry.redhat.io/container-native-virtualization/virtio-win',
+  okd: 'kubevirt/virtio-container-disk',
+};
+
+export const PENDING_RESTART_LABEL = '(pending restart)';
+export const PVC_UPLOAD_URL = `/k8s/ns/${TEMPLATE_VM_GOLDEN_OS_NAMESPACE}/persistentvolumeclaims/~new/upload-form`;

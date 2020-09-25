@@ -1,0 +1,17 @@
+.co-restore-pvc-modal__details {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.co-restore-pvc-modal__details-section {
+  margin-top: var(--pf-global--spacer--xl);
+}
+
+.co-restore-pvc-modal__pvc-details {
+  margin-bottom: var(--pf-global--spacer--md);
+}
+
+.co-restore-pvc-modal__input {
+  margin: var(--pf-global--spacer--md) 0;
+}

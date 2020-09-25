@@ -20,11 +20,12 @@ const ChannelSelector: React.FC<ChannelSelectorProps> = ({
 }) => {
   const [selected] = useField('type');
 
-  const filteredChannels = _.chain(channels)
-    .filter((ch) => EventingChannelModel.kind !== getChannelKind(ch))
-    .partition((ref) => getChannelKind(ref) === defaultConfiguredChannel)
-    .flatten()
-    .value();
+  const eventingChannels = channels.filter(
+    (ch) => EventingChannelModel.kind !== getChannelKind(ch),
+  );
+  const filteredChannels = _.flatten(
+    _.partition(eventingChannels, (ref) => getChannelKind(ref) === defaultConfiguredChannel),
+  );
 
   const channelData = filteredChannels.reduce((acc, channel) => {
     const channelName = getChannelKind(channel);

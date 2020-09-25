@@ -4,6 +4,7 @@ import {
   OsImageIcon,
   CatalogIcon,
   CubeIcon,
+  LayerGroupIcon,
   DatabaseIcon,
 } from '@patternfly/react-icons';
 import { ImportOptions } from '../components/import/import-types';
@@ -39,6 +40,13 @@ export const fromDockerfile = createKebabAction(
   allImportResourceAccess,
 );
 
+export const fromDevfile = createKebabAction(
+  'From Devfile',
+  <LayerGroupIcon />,
+  ImportOptions.DEVFILE,
+  allImportResourceAccess,
+);
+
 export const fromDatabaseCatalog = createKebabAction(
   'Database',
   <DatabaseIcon />,
@@ -50,6 +58,7 @@ export const addResourceMenu: KebabAction[] = [
   containerImage,
   fromCatalog,
   fromDockerfile,
+  fromDevfile,
   fromDatabaseCatalog,
 ];
 
@@ -57,4 +66,5 @@ export const addResourceMenuWithoutCatalog: KebabAction[] = [
   fromGit,
   containerImage,
   fromDockerfile,
+  fromDevfile,
 ];

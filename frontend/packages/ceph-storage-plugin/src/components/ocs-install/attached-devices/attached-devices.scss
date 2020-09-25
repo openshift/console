@@ -21,7 +21,7 @@
 }
 
 .ceph-ocs-install__create-sc-form {
-  width: 70%;
+  width: 80%;
 }
 
 .ceph-ocs-install__form-wrapper {
@@ -56,4 +56,26 @@
   border-right: var(--pf-global--BorderWidth--sm) solid var(--pf-global--Color--light-300);
   height: var(--pf-global--LineHeight--sm);
   margin: 0 var(--pf-global--spacer--sm);
+}
+
+.ceph-ocs-install__disk-list-btn {
+  padding-top: 0;
+  padding-left: 0;
+}
+
+.ceph-ocs-install__node-list-btn {
+  padding-top: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.ceph-ocs-install__filtered-modal {
+  max-height: 75%;
+  width: 50%;
+}
+
+// inner class of modal for modifying margin
+.pf-c-modal-box__body {
+  margin-top: var(--pf-global--spacer--md);
+  margin-bottom: var(--pf-global--spacer--md);
 }

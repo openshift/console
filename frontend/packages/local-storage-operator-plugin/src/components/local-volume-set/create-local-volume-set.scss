@@ -38,7 +38,17 @@
   max-width: 100px;
 }
 
-// required to hide the space between radio button and node list
-.co-m-nav-title {
-  margin-top: 0;
+// Restrict node-list widths
+.lso-create-lvs__node-list {
+  @media (min-width: 769px) {
+    max-width: 100%;
+  }
+
+  @media (min-width: 992px) {
+    min-width: 650px;
+  }
+
+  @media (min-width: 1200px) {
+    max-width: 70%;
+  }
 }

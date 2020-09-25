@@ -3,7 +3,9 @@ import * as _ from 'lodash-es';
 
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
-import { K8sResourceKind, LabelSelector, Selector } from '../../../module/k8s';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { ConsoleLinkModel } from '@console/internal/models';
+import { K8sResourceKind, LabelSelector, referenceForModel, Selector } from '../../../module/k8s';
 import { DetailsCard } from './details-card';
 import { StatusCard } from './status-card';
 import { UtilizationCard } from './utilization-card';
@@ -11,17 +13,11 @@ import { InventoryCard } from './inventory-card';
 import { ActivityCard } from './activity-card';
 import { ProjectDashboardContext } from './project-dashboard-context';
 import { LauncherCard } from './launcher-card';
-import { connect } from 'react-redux';
-import { RootState } from '../../../redux';
 import { ResourceQuotaCard } from './resource-quota-card';
 
 const mainCards = [{ Card: StatusCard }, { Card: UtilizationCard }, { Card: ResourceQuotaCard }];
 const leftCards = [{ Card: DetailsCard }, { Card: InventoryCard }];
 const rightCards = [{ Card: ActivityCard }];
-
-const mapStateToProps = ({ UI }: RootState): ProjectDashboardReduxProps => ({
-  consoleLinks: UI.get('consoleLinks'),
-});
 
 export const getNamespaceDashboardConsoleLinks = (
   ns: K8sResourceKind,
@@ -49,10 +45,12 @@ export const getNamespaceDashboardConsoleLinks = (
   });
 };
 
-const ProjectDashboard_: React.FC<ProjectDashboardReduxProps & ProjectDashboardProps> = ({
-  obj,
-  consoleLinks,
-}) => {
+export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({ obj }) => {
+  const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
+    isList: true,
+    kind: referenceForModel(ConsoleLinkModel),
+    optional: true,
+  });
   const namespaceLinks = getNamespaceDashboardConsoleLinks(obj, consoleLinks);
   const context = {
     obj,
@@ -73,14 +71,6 @@ const ProjectDashboard_: React.FC<ProjectDashboardReduxProps & ProjectDashboardP
       </Dashboard>
     </ProjectDashboardContext.Provider>
   );
-};
-
-export const ProjectDashboard = connect<ProjectDashboardReduxProps, {}, ProjectDashboardProps>(
-  mapStateToProps,
-)(ProjectDashboard_);
-
-type ProjectDashboardReduxProps = {
-  consoleLinks: K8sResourceKind[];
 };
 
 type ProjectDashboardProps = {

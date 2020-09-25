@@ -42,11 +42,11 @@ export const getMultilineUtilizationQueries = (props: {
   [VMQueries.NETWORK_USAGE]: [
     {
       query: queries[VMQueries.NETWORK_IN_USAGE](props),
-      desc: 'In',
+      desc: 'in',
     },
     {
       query: queries[VMQueries.NETWORK_OUT_USAGE](props),
-      desc: 'Out',
+      desc: 'out',
     },
   ],
 });

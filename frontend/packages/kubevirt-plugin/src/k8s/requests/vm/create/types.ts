@@ -14,7 +14,7 @@ export type CreateVMParams = {
   vmSettings: VMSettings;
   networks: VMWizardNetwork[];
   storages: VMWizardStorage[];
-  iUserTemplates: ImmutableMap<string, ITemplate>;
+  iUserTemplate: ITemplate;
   iCommonTemplates: ImmutableMap<string, ITemplate>;
   namespace: string;
   openshiftFlag: boolean;

@@ -6,7 +6,14 @@ import * as classNames from 'classnames';
 import { useDispatch, connect } from 'react-redux';
 import { sortable } from '@patternfly/react-table';
 import { ChartDonut } from '@patternfly/react-charts';
-import { Status, FLAGS, calculateRadius, getNamespace, getName } from '@console/shared';
+import {
+  Status,
+  FLAGS,
+  calculateRadius,
+  getNamespace,
+  getName,
+  getRequestedPVCSize,
+} from '@console/shared';
 import { useExtensions, isPVCCreateProp, isPVCAlert, isPVCStatus } from '@console/plugin-sdk';
 import { connectToFlags } from '../reducers/features';
 import { Conditions } from './conditions';
@@ -22,20 +29,32 @@ import {
   humanizeBinaryBytes,
   convertToBaseValue,
   AsyncComponent,
+  asAccessReview,
 } from './utils';
 import { ResourceEventStream } from './events';
 import { PersistentVolumeClaimModel } from '../models';
 import { setPVCMetrics } from '../actions/ui';
 import { PrometheusEndpoint } from './graphs/helpers';
 import { usePrometheusPoll } from './graphs/prometheus-poll-hook';
+import deletePVCModal from './modals/delete-pvc-modal';
 
-const { common, ExpandPVC, PVCSnapshot, ClonePVC } = Kebab.factory;
+const { ModifyLabels, ModifyAnnotations, Edit, ExpandPVC, PVCSnapshot, ClonePVC } = Kebab.factory;
 const menuActions = [
   ...Kebab.getExtensionsActionsForKind(PersistentVolumeClaimModel),
   ExpandPVC,
   PVCSnapshot,
   ClonePVC,
-  ...common,
+  ModifyLabels,
+  ModifyAnnotations,
+  Edit,
+  (kind, obj) => ({
+    label: `Delete ${kind.label}`,
+    callback: () =>
+      deletePVCModal({
+        pvc: obj,
+      }),
+    accessReview: asAccessReview(kind, obj, 'delete'),
+  }),
 ];
 
 export const PVCStatus = ({ pvc }) => {
@@ -88,6 +107,7 @@ const PVCTableHeader = () => {
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
+      id: 'namespace',
     },
     {
       title: 'Status',
@@ -143,7 +163,10 @@ const PVCTableRow = connect(mapStateToProps)(({ obj, index, key, style, metrics 
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={name} namespace={namespace} title={name} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      <TableData
+        className={classNames(tableColumnClasses[1], 'co-break-word')}
+        columnID="namespace"
+      >
         <ResourceLink kind="Namespace" name={namespace} title={namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
@@ -189,6 +212,7 @@ const Details_ = ({ flags, obj: pvc }) => {
   const storageClassName = pvc?.spec?.storageClassName;
   const volumeName = pvc?.spec?.volumeName;
   const storage = pvc?.status?.capacity?.storage;
+  const requestedStorage = getRequestedPVCSize(pvc);
   const accessModes = pvc?.status?.accessModes;
   const volumeMode = pvc?.spec?.volumeMode;
   const conditions = pvc?.status?.conditions;
@@ -200,6 +224,7 @@ const Details_ = ({ flags, obj: pvc }) => {
   });
 
   const totalCapacityMetric = convertToBaseValue(storage);
+  const totalRequestMetric = convertToBaseValue(requestedStorage);
   const usedMetrics = response?.data?.result?.[0]?.value?.[1];
   const availableMetrics = usedMetrics ? totalCapacityMetric - usedMetrics : null;
   const totalCapacity = humanizeBinaryBytes(totalCapacityMetric);
@@ -247,7 +272,7 @@ const Details_ = ({ flags, obj: pvc }) => {
           </div>
         )}
         <div className="row">
-          <div className="col-md-4 col-xl-5">
+          <div className="col-sm-6">
             <ResourceSummary resource={pvc}>
               <dt>Label Selector</dt>
               <dd data-test-id="pvc-name">
@@ -255,11 +280,15 @@ const Details_ = ({ flags, obj: pvc }) => {
               </dd>
             </ResourceSummary>
           </div>
-          <div className="col-md-4 col-xl-5">
+          <div className="col-sm-6">
             <dl>
               <dt>Status</dt>
               <dd data-test-id="pvc-status">
                 <PVCStatus pvc={pvc} />
+              </dd>
+              <dt>Requested Capacity</dt>
+              <dd data-test="pvc-requested-capacity">
+                {humanizeBinaryBytes(totalRequestMetric).string}
               </dd>
               {storage && (
                 <>
@@ -372,7 +401,7 @@ export const PersistentVolumeClaimsPage = (props) => {
       ? { to: initPath.concat('~new/form') }
       : {
           items: Object.assign(
-            { 0: 'New with Form' },
+            { 0: 'With Form' },
             ...createItems.map(({ key, label }) => ({ [key]: label })),
           ),
           createLink: (wizardName) => {

@@ -2,6 +2,7 @@ import { $, $$, element, by, browser, ExpectedConditions as until, Key } from 'p
 import { PAGE_LOAD_TIMEOUT_SECS } from '../tests/utils/constants/common';
 
 export const consoleTypeSelectorId = '#console-type-selector';
+export const openInNewWindow = element(by.buttonText('Open Console in new Window'));
 export const consoleTypeSelector = $(consoleTypeSelectorId);
 export const rdpServiceNotConfiguredElem = $('.kubevirt-vm-consoles__rdp'); // this class is used just for this informative elemenet
 export const networkSelectorId = '#network-dropdown';

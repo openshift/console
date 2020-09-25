@@ -62,8 +62,8 @@ const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameF
       autoFocus={false}
       mock={mock}
       badge={getBadgeFromType(kindObj.badge)}
-      hideNameFilter
-      hideLabelFilter
+      hideNameLabelFilters
+      hideColumnManagement
     />
   );
 });

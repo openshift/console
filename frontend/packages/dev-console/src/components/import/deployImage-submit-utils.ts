@@ -7,7 +7,13 @@ import {
   RouteModel,
   RoleBindingModel,
 } from '@console/internal/models';
-import { k8sCreate, K8sResourceKind, K8sVerb, k8sUpdate } from '@console/internal/module/k8s';
+import {
+  K8sResourceKind,
+  K8sVerb,
+  k8sCreate,
+  k8sUpdate,
+  k8sWaitForUpdate,
+} from '@console/internal/module/k8s';
 import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
 import { getKnativeServiceDepResource } from '@console/knative-plugin/src/utils/create-knative-utils';
 import { getRandomChars } from '@console/shared/src/utils';
@@ -24,6 +30,9 @@ import { RegistryType, getRuntime } from '../../utils/imagestream-utils';
 import { AppResources } from '../edit-application/edit-application-types';
 import { DeployImageFormData, Resources } from './import-types';
 
+const WAIT_FOR_IMAGESTREAM_UPDATE_TIMEOUT = 5000;
+const WAIT_FOR_IMAGESTREAM_GENERATION = 2;
+
 export const createSystemImagePullerRoleBinding = (
   formData: DeployImageFormData,
   dryRun: boolean,
@@ -33,14 +42,14 @@ export const createSystemImagePullerRoleBinding = (
     kind: RoleBindingModel.kind,
     apiVersion: `${RoleBindingModel.apiGroup}/${RoleBindingModel.apiVersion}`,
     metadata: {
-      name: 'system:image-puller',
-      namespace: imageStream.namespace,
+      name: `system:image-puller-${imageStream.namespace}`,
+      namespace: formData.project.name,
     },
     subjects: [
       {
         kind: 'ServiceAccount',
         name: 'default',
-        namespace: formData.project.name,
+        namespace: imageStream.namespace,
       },
     ],
     roleRef: {
@@ -52,7 +61,7 @@ export const createSystemImagePullerRoleBinding = (
   return k8sCreate(RoleBindingModel, roleBinding, dryRun ? dryRunOpt : {});
 };
 
-export const createOrUpdateImageStream = (
+export const createOrUpdateImageStream = async (
   formData: DeployImageFormData,
   dryRun: boolean,
   originalImageStream?: K8sResourceKind,
@@ -61,13 +70,13 @@ export const createOrUpdateImageStream = (
 ): Promise<K8sResourceKind> => {
   const {
     project: { name: namespace },
-    application: { name: application },
+    application: { name: applicationName },
     name,
     allowInsecureRegistry,
     isi: { name: isiName, tag },
     labels: userLabels,
   } = formData;
-  const defaultLabels = getAppLabels(name, application);
+  const defaultLabels = getAppLabels({ name, applicationName });
   const newImageStream = {
     apiVersion: 'image.openshift.io/v1',
     kind: 'ImageStream',
@@ -93,23 +102,44 @@ export const createOrUpdateImageStream = (
       ],
     },
   };
-  const imageStream = mergeData(originalImageStream, newImageStream);
 
-  return verb === 'update'
-    ? k8sUpdate(ImageStreamModel, imageStream)
-    : k8sCreate(ImageStreamModel, newImageStream, dryRun ? dryRunOpt : {});
+  if (verb === 'update') {
+    const mergedImageStream = mergeData(originalImageStream, newImageStream);
+    return k8sUpdate(ImageStreamModel, mergedImageStream);
+  }
+  const createdImageStream = await k8sCreate(
+    ImageStreamModel,
+    newImageStream,
+    dryRun ? dryRunOpt : {},
+  );
+  if (dryRun) {
+    return createdImageStream;
+  }
+  return k8sWaitForUpdate(
+    ImageStreamModel,
+    createdImageStream,
+    (imageStream) => imageStream.metadata.generation >= WAIT_FOR_IMAGESTREAM_GENERATION,
+    WAIT_FOR_IMAGESTREAM_UPDATE_TIMEOUT,
+  ).catch(() => createdImageStream);
 };
 
 const getMetadata = (formData: DeployImageFormData) => {
   const {
-    application: { name: application },
+    application: { name: applicationName },
     name,
     isi: { image },
     labels: userLabels,
-    imageStream: { tag: imgTag, namespace: imgNamespace },
+    imageStream: { image: imageStreamName, tag: selectedTag, namespace },
+    runtimeIcon,
   } = formData;
-  const imgStreamName = getRuntime(image.metadata?.labels);
-  const defaultLabels = getAppLabels(name, application, imgStreamName, imgTag, imgNamespace);
+  const defaultLabels = getAppLabels({
+    name,
+    applicationName,
+    imageStreamName,
+    runtimeIcon,
+    selectedTag,
+    namespace,
+  });
   const labels = { ...defaultLabels, ...userLabels };
   const podLabels = getPodLabels(name);
 

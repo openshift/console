@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 import * as Immutable from 'immutable';
 import { JSONSchema6 } from 'json-schema';
 import { UiSchema } from 'react-jsonschema-form';
+import { getSchemaType } from 'react-jsonschema-form/lib/utils';
 import { modelFor } from '@console/internal/module/k8s';
 import { getJSONSchemaOrder } from '@console/shared/src/components/dynamic-form/utils';
 import { SpecCapability, Descriptor } from '../descriptors/types';
@@ -11,23 +12,30 @@ import {
   REGEXP_K8S_RESOURCE_SUFFIX,
   REGEXP_FIELD_DEPENDENCY_PATH_VALUE,
   REGEXP_SELECT_OPTION,
+  OBJECT_COMPATIBLE_CAPABILITIES,
+  ARRAY_COMPATIBLE_CAPABILITIES,
+  PRIMITIVE_COMPATIBLE_CAPABILITIES,
+  DEPRECATED_CAPABILITIES,
 } from '../descriptors/const';
+import { getSchemaAtPath } from '@console/shared';
+import { JSONSchemaType } from '@console/shared/src/components/dynamic-form';
+
+const getCompatibleCapabilities = (jsonSchemaType: JSONSchemaType) => {
+  switch (jsonSchemaType) {
+    case JSONSchemaType.object:
+      return OBJECT_COMPATIBLE_CAPABILITIES;
+    case JSONSchemaType.array:
+      return ARRAY_COMPATIBLE_CAPABILITIES;
+    default:
+      return PRIMITIVE_COMPATIBLE_CAPABILITIES;
+  }
+};
 
 // Transform a path string from a descriptor to a JSON schema path array
 export const descriptorPathToUISchemaPath = (path: string): string[] =>
   (_.toPath(path) ?? []).map((subPath) => {
     return /^\d+$/.test(subPath) ? 'items' : subPath;
   });
-
-// Determine if a given path is defined on a JSONSchema
-export const jsonSchemaHas = (jsonSchema: JSONSchema6, schemaPath: string[]): boolean => {
-  const [next, ...rest] = schemaPath;
-  const nextSchema = jsonSchema?.[next] ?? jsonSchema?.properties?.[next];
-  if (rest.length && !!nextSchema) {
-    return jsonSchemaHas(nextSchema, rest);
-  }
-  return !!nextSchema;
-};
 
 // Applies a hidden widget and label configuration to every property of the given schema.
 // This is useful for whitelisting only a few schema properties when all properties are not known.
@@ -56,11 +64,19 @@ const k8sResourceCapabilityToUISchema = (capability: SpecCapability): UiSchema =
 };
 
 const fieldDependencyCapabilityToUISchema = (capability: SpecCapability): UiSchema => {
-  const [, path, value] = capability.match(REGEXP_FIELD_DEPENDENCY_PATH_VALUE) ?? [];
-  if (!!path && !!value) {
-    return { 'ui:dependency': { path: descriptorPathToUISchemaPath(path), value } };
-  }
-  return {};
+  const [, path, controlFieldValue] = capability.match(REGEXP_FIELD_DEPENDENCY_PATH_VALUE) ?? [];
+  const controlFieldPath = descriptorPathToUISchemaPath(path);
+  const controlFieldName = _.last(controlFieldPath);
+  return {
+    ...(path &&
+      controlFieldValue && {
+        'ui:dependency': {
+          controlFieldPath,
+          controlFieldValue,
+          controlFieldName,
+        },
+      }),
+  };
 };
 
 const selectCapabilitiesToUISchema = (capabilities: SpecCapability[]): UiSchema => {
@@ -95,13 +111,6 @@ export const capabilitiesToUISchema = (capabilities: SpecCapability[] = []) => {
     return k8sResourceCapabilityToUISchema(k8sResourceCapability);
   }
 
-  const fieldDependencyCapability = _.find(capabilities, (capability) =>
-    capability.startsWith(SpecCapability.fieldDependency),
-  );
-  if (fieldDependencyCapability) {
-    return fieldDependencyCapabilityToUISchema(fieldDependencyCapability);
-  }
-
   const hasSelectOptions = _.some(capabilities, (capability) =>
     capability.startsWith(SpecCapability.select),
   );
@@ -131,6 +140,53 @@ export const capabilitiesToUISchema = (capabilities: SpecCapability[] = []) => {
   };
 };
 
+const getValidCapabilities = (descriptor: Descriptor<SpecCapability>, jsonSchema: JSONSchema6) => {
+  const schemaType = getSchemaType(jsonSchema ?? {}) as JSONSchemaType;
+  const compatibleCapabilities = getCompatibleCapabilities(schemaType);
+  const [valid, invalid, deprecated] = _.reduce(
+    descriptor?.['x-descriptors'] ?? [],
+    ([validAccumulator, invalidAccumulator, deprecatedAccumulator], capability) => {
+      const isDeprecated = DEPRECATED_CAPABILITIES.some((deprecatedCapability) =>
+        capability.startsWith(deprecatedCapability),
+      );
+      const isValid = compatibleCapabilities.some((compatibleCapability) =>
+        capability.startsWith(compatibleCapability),
+      );
+      if (isDeprecated) {
+        return [
+          validAccumulator,
+          invalidAccumulator,
+          [...(deprecatedAccumulator ?? []), capability],
+        ];
+      }
+      return isValid
+        ? [[...(validAccumulator ?? []), capability], invalidAccumulator, deprecatedAccumulator]
+        : [validAccumulator, [...(invalidAccumulator ?? []), capability], deprecatedAccumulator];
+    },
+    [[], [], []],
+  );
+
+  if (invalid?.length) {
+    invalid.forEach((i) => {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[Operand Form] x-descriptor "${i}" is not compatible with schema property at ${descriptor.path} and will have no effect on the corresponding form field.`,
+      );
+    });
+  }
+
+  if (deprecated?.length) {
+    deprecated.forEach((i) => {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[Operand Form] x-descriptor "${i}" is deprecated and will have no effect on the form field corresponding to ${descriptor.path}`,
+      );
+    });
+  }
+
+  return valid ?? [];
+};
+
 // Map a set of spec descriptors to a ui schema
 export const descriptorsToUISchema = (
   descriptors: Descriptor<SpecCapability>[],
@@ -138,19 +194,21 @@ export const descriptorsToUISchema = (
 ) => {
   const uiSchemaFromDescriptors = _.reduce(
     descriptors,
-    (
-      uiSchemaAccumulator,
-      { path, description, displayName, 'x-descriptors': capabilities = [] },
-    ) => {
-      const uiSchemaPath = descriptorPathToUISchemaPath(path);
-      if (!jsonSchemaHas(jsonSchema, uiSchemaPath)) {
+    (uiSchemaAccumulator, descriptor, index) => {
+      const schemaForDescriptor = getSchemaAtPath(jsonSchema, descriptor.path);
+      if (!schemaForDescriptor) {
         // eslint-disable-next-line no-console
-        console.warn('SpecDescriptor path references a non-existent schema property:', path);
+        console.warn(
+          '[OperandForm] SpecDescriptor path references a non-existent schema property:',
+          descriptor.path,
+        );
         return uiSchemaAccumulator;
       }
-      const isAdvanced = _.includes(capabilities, SpecCapability.advanced);
-      const capabilitiesUISchema = capabilitiesToUISchema(
-        _.without(capabilities, SpecCapability.advanced),
+      const capabilities = getValidCapabilities(descriptor, schemaForDescriptor);
+      const uiSchemaPath = descriptorPathToUISchemaPath(descriptor.path);
+      const isAdvanced = capabilities.includes(SpecCapability.advanced);
+      const dependency = capabilities.find((capability) =>
+        capability.startsWith(SpecCapability.fieldDependency),
       );
       return uiSchemaAccumulator.withMutations((mutable) => {
         if (isAdvanced) {
@@ -163,9 +221,11 @@ export const descriptorsToUISchema = (
         mutable.setIn(
           uiSchemaPath,
           Immutable.Map({
-            ...(description && { 'ui:description': description }),
-            ...(displayName && { 'ui:title': displayName }),
-            ...capabilitiesUISchema,
+            ...(descriptor.description && { 'ui:description': descriptor.description }),
+            ...(descriptor.displayName && { 'ui:title': descriptor.displayName }),
+            ...(dependency && fieldDependencyCapabilityToUISchema(dependency)),
+            ...capabilitiesToUISchema(capabilities),
+            'ui:sortOrder': index + 1,
           }),
         );
       });

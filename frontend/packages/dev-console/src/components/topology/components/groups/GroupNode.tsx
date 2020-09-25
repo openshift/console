@@ -8,8 +8,8 @@ import {
 import { Node, useSize, useHover } from '@patternfly/react-topology';
 import { RESOURCE_NAME_TRUNCATE_LENGTH } from '../../../../const';
 import SvgCircledIcon from '../../../svg/SvgCircledIcon';
-import { TopologyDataObject } from '../../topology-types';
 import { SvgResourceIcon } from '../../../svg/SvgResourceIcon';
+import { OdcNodeModel } from '../../topology-types';
 import { ResourceKindsInfo } from './ResourceKindsInfo';
 
 import './GroupNode.scss';
@@ -26,25 +26,21 @@ type GroupNodeProps = {
   element: Node;
   kind?: string;
   emptyValue?: React.ReactNode;
-  groupResources?: TopologyDataObject;
+  groupResources?: OdcNodeModel[];
   children?: React.ReactNode;
   typeIconClass?: string;
 };
 
-const GroupNode: React.FC<GroupNodeProps> = ({
-  element,
-  groupResources,
-  children,
-  kind,
-  emptyValue,
-  typeIconClass,
-}) => {
+const ForwardRefGroupNode: React.FC<GroupNodeProps> = (
+  { element, groupResources, children, kind, emptyValue, typeIconClass },
+  groupRef,
+) => {
   const [textHover, textHoverRef] = useHover();
   const [iconSize, iconRef] = useSize([kind]);
   const iconWidth = iconSize ? iconSize.width : 0;
   const iconHeight = iconSize ? iconSize.height : 0;
   const title = element.getLabel();
-  const { width, height } = element.getDimensions();
+
   return (
     <>
       {typeIconClass && (
@@ -57,41 +53,44 @@ const GroupNode: React.FC<GroupNodeProps> = ({
           iconClass={typeIconClass}
         />
       )}
-      <SvgResourceIcon ref={iconRef} x={LEFT_MARGIN} y={TOP_MARGIN - 2} kind={kind} leftJustified />
-      {title && (
-        <Tooltip
-          content={title}
-          position={TooltipPosition.top}
-          trigger="manual"
-          isVisible={textHover && shouldTruncate(title)}
-        >
-          <text
-            ref={textHoverRef}
-            className="odc-group-node__title"
-            x={LEFT_MARGIN + iconWidth + TEXT_MARGIN}
-            y={TOP_MARGIN + iconHeight}
-            textAnchor="start"
-            dy="-0.25em"
+      <g ref={groupRef}>
+        <SvgResourceIcon
+          ref={iconRef}
+          x={LEFT_MARGIN}
+          y={TOP_MARGIN - 2}
+          kind={kind}
+          leftJustified
+        />
+        {title && (
+          <Tooltip
+            content={title}
+            position={TooltipPosition.top}
+            trigger="manual"
+            isVisible={textHover && shouldTruncate(title)}
           >
-            {truncateMiddle(title, truncateOptions)}
-          </text>
-        </Tooltip>
-      )}
-      {(children || groupResources || emptyValue) && (
-        <g transform={`translate(${LEFT_MARGIN}, ${TOP_MARGIN + iconHeight})`}>
-          {(groupResources || emptyValue) && (
-            <ResourceKindsInfo
-              groupResources={groupResources}
-              emptyValue={emptyValue}
-              width={width - LEFT_MARGIN}
-              height={height - TOP_MARGIN - iconHeight}
-            />
-          )}
-          {children}
-        </g>
-      )}
+            <text
+              ref={textHoverRef}
+              className="odc-group-node__title"
+              x={LEFT_MARGIN + iconWidth + TEXT_MARGIN}
+              y={TOP_MARGIN + iconHeight}
+              textAnchor="start"
+              dy="-0.25em"
+            >
+              {truncateMiddle(title, truncateOptions)}
+            </text>
+          </Tooltip>
+        )}
+        {(children || groupResources || emptyValue) && (
+          <g transform={`translate(${LEFT_MARGIN}, ${TOP_MARGIN + iconHeight})`}>
+            {(groupResources || emptyValue) && (
+              <ResourceKindsInfo groupResources={groupResources} emptyValue={emptyValue} />
+            )}
+            {children}
+          </g>
+        )}
+      </g>
     </>
   );
 };
-
+const GroupNode = React.forwardRef(ForwardRefGroupNode);
 export { GroupNode };

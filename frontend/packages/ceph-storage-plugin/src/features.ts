@@ -1,22 +1,25 @@
 import * as _ from 'lodash';
 import { Dispatch } from 'react-redux';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, k8sList, StorageClassResourceKind } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel, SubscriptionModel } from '@console/operator-lifecycle-manager';
 import { setFlag } from '@console/internal/actions/features';
 import { FeatureDetector } from '@console/plugin-sdk';
 import { getAnnotations } from '@console/shared/src/selectors/common';
 import { fetchK8s } from '@console/internal/graphql/client';
+import { StorageClassModel } from '@console/internal/models';
 import { OCSServiceModel } from './models';
 import {
-  OCS_EXTERNAL_CR_NAME,
   CEPH_STORAGE_NAMESPACE,
   OCS_SUPPORT_ANNOTATION,
   ATTACHED_DEVICES_ANNOTATION,
-  OCS_INTERNAL_CR_NAME,
+  RGW_PROVISIONER,
+  SECOND,
 } from './constants';
+import { OCSStorageClusterKind } from './types';
 
 export const OCS_INDEPENDENT_FLAG = 'OCS_INDEPENDENT';
 export const OCS_CONVERGED_FLAG = 'OCS_CONVERGED';
+/* INFO: Flag OCS_ATTACHED_DEVICES_FLAG used in local-storage-plugin without import */
 export const OCS_ATTACHED_DEVICES_FLAG = 'OCS_ATTACHED_DEVICES';
 // Used to activate NooBaa dashboard
 export const OCS_FLAG = 'OCS';
@@ -25,10 +28,13 @@ export const CEPH_FLAG = 'CEPH';
 
 export const LSO_FLAG = 'LSO';
 
+export const RGW_FLAG = 'RGW';
+
 /* Key and Value should be same value received in CSV  */
 export const OCS_SUPPORT_FLAGS = {
-  SNAPSHOT: 'SNAPSHOT',
   EXTERNAL: 'EXTERNAL',
+  MINIMAL_DEPLOYMENT: 'MINIMAL_DEPLOYMENT',
+  ENCRPYTION: 'ENCRYPTION',
 };
 
 const handleError = (res: any, flags: string[], dispatch: Dispatch, cb: FeatureDetector) => {
@@ -43,35 +49,50 @@ const handleError = (res: any, flags: string[], dispatch: Dispatch, cb: FeatureD
   }
 };
 
+export const detectRGW: FeatureDetector = async (dispatch) => {
+  let id = null;
+  const logicHandler = () =>
+    k8sList(StorageClassModel)
+      .then((data: StorageClassResourceKind[]) => {
+        const isRGWPresent = data.some((sc) => sc.provisioner === RGW_PROVISIONER);
+        if (isRGWPresent) {
+          dispatch(setFlag(RGW_FLAG, true));
+          clearInterval(id);
+        } else {
+          dispatch(setFlag(RGW_FLAG, false));
+        }
+      })
+      .catch(() => {
+        clearInterval(id);
+      });
+  id = setInterval(logicHandler, 10 * SECOND);
+};
+
 export const detectOCS: FeatureDetector = async (dispatch) => {
   try {
-    const storageCluster = await fetchK8s(
-      OCSServiceModel,
-      OCS_INTERNAL_CR_NAME,
-      CEPH_STORAGE_NAMESPACE,
+    const storageClusters = await k8sList(OCSServiceModel, { ns: CEPH_STORAGE_NAMESPACE });
+    const storageCluster = storageClusters.find(
+      (sc: OCSStorageClusterKind) => sc.status.phase !== 'Ignored',
     );
+    const isInternal = _.isEmpty(storageCluster.spec.externalStorage);
     const isAttachedDevicesCluster =
       getAnnotations(storageCluster)?.[ATTACHED_DEVICES_ANNOTATION] === 'true';
     dispatch(setFlag(OCS_FLAG, true));
     dispatch(setFlag(OCS_ATTACHED_DEVICES_FLAG, isAttachedDevicesCluster));
-    dispatch(setFlag(OCS_CONVERGED_FLAG, true));
-    dispatch(setFlag(OCS_INDEPENDENT_FLAG, false));
+    dispatch(setFlag(OCS_CONVERGED_FLAG, isInternal));
+    dispatch(setFlag(OCS_INDEPENDENT_FLAG, !isInternal));
   } catch (e) {
-    if (e?.response?.status !== 404) handleError(e, [OCS_CONVERGED_FLAG], dispatch, detectOCS);
+    if (e?.response?.status !== 404)
+      handleError(
+        e,
+        [OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG, OCS_ATTACHED_DEVICES_FLAG],
+        dispatch,
+        detectOCS,
+      );
     else {
       dispatch(setFlag(OCS_CONVERGED_FLAG, false));
+      dispatch(setFlag(OCS_INDEPENDENT_FLAG, false));
       dispatch(setFlag(OCS_ATTACHED_DEVICES_FLAG, false));
-    }
-    try {
-      await fetchK8s(OCSServiceModel, OCS_EXTERNAL_CR_NAME, CEPH_STORAGE_NAMESPACE);
-      dispatch(setFlag(OCS_FLAG, true));
-      dispatch(setFlag(OCS_INDEPENDENT_FLAG, true));
-      dispatch(setFlag(OCS_CONVERGED_FLAG, false));
-      dispatch(setFlag(OCS_ATTACHED_DEVICES_FLAG, false));
-    } catch (err) {
-      err?.response?.status !== 404
-        ? handleError(err, [OCS_INDEPENDENT_FLAG], dispatch, detectOCS)
-        : dispatch(setFlag(OCS_INDEPENDENT_FLAG, false));
     }
   }
 };

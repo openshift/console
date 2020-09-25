@@ -12,7 +12,7 @@ import YAMLEditor from '@console/shared/src/components/editor/YAMLEditor';
 import { isYAMLTemplate, withExtensions } from '@console/plugin-sdk';
 
 import { connectToFlags } from '../reducers/features';
-import { errorModal } from './modals';
+import { errorModal, managedResourceSaveModal } from './modals';
 import { Firehose, checkAccess, history, Loading, resourceObjPath } from './utils';
 import {
   referenceForModel,
@@ -25,7 +25,9 @@ import { ConsoleYAMLSampleModel } from '../models';
 import { getResourceSidebarSamples } from './sidebars/resource-sidebar-samples';
 import { ResourceSidebar } from './sidebars/resource-sidebar';
 import { getYAMLTemplates } from '../models/yaml-templates';
-
+import { findOwner } from '../module/k8s/managed-by';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
+import { k8sList } from '../module/k8s/resource';
 import { definitionFor } from '../module/k8s/swagger';
 
 const generateObjToLoad = (templateExtensions, kind, id, yaml, namespace = 'default') => {
@@ -61,6 +63,7 @@ export const EditYAML_ = connect(stateToProps)(
           sampleObj: props.sampleObj,
           fileUpload: props.fileUpload,
           showSidebar: !!props.create,
+          owner: null,
         };
         this.monacoRef = React.createRef();
         // k8s uses strings for resource versions
@@ -68,6 +71,8 @@ export const EditYAML_ = connect(stateToProps)(
         // Default cancel action is browser back navigation
         this.onCancel = 'onCancel' in props ? props.onCancel : history.goBack;
         this.downloadSampleYaml_ = this.downloadSampleYaml_.bind(this);
+        this.updateYAML = this.updateYAML.bind(this);
+        this.loadCSVs = this.loadCSVs.bind(this);
 
         if (this.props.error) {
           this.handleError(this.props.error);
@@ -86,8 +91,26 @@ export const EditYAML_ = connect(stateToProps)(
         this.setState({ error, success: null });
       }
 
+      loadCSVs() {
+        const { obj, create } = this.props;
+        const namespace = obj?.metadata?.namespace;
+        if (create || !namespace || !obj?.metadata?.ownerReferences?.length) {
+          return;
+        }
+        k8sList(ClusterServiceVersionModel, { ns: namespace })
+          .then((csvList) => {
+            const owner = findOwner(obj, csvList);
+            this.setState({ owner });
+          })
+          .catch((e) => {
+            // eslint-disable-next-line no-console
+            console.error('Could not fetch CSVs', e);
+          });
+      }
+
       componentDidMount() {
         this.loadYaml();
+        this.loadCSVs();
       }
 
       UNSAFE_componentWillReceiveProps(nextProps) {
@@ -99,9 +122,6 @@ export const EditYAML_ = connect(stateToProps)(
         this.setState({ stale });
         if (nextProps.error) {
           this.handleError(nextProps.error);
-        } else if (this.state.error) {
-          //clear stale error state
-          this.setState({ error: '' });
         }
         if (nextProps.sampleObj) {
           this.loadYaml(!_.isEqual(this.state.sampleObj, nextProps.sampleObj), nextProps.sampleObj);
@@ -179,7 +199,8 @@ export const EditYAML_ = connect(stateToProps)(
         const yaml = this.convertObjToYAMLString(obj);
 
         this.displayedVersion = _.get(obj, 'metadata.resourceVersion');
-        this.setState({ yaml, initialized: true, stale: false });
+        this.getEditor().setValue(yaml);
+        this.setState({ initialized: true, stale: false });
       }
 
       addToYAML(id, obj) {
@@ -220,15 +241,46 @@ export const EditYAML_ = connect(stateToProps)(
         this.monacoRef.current.editor.focus();
 
         this.displayedVersion = _.get(obj, 'metadata.resourceVersion');
-        this.setState({ yaml: this.monacoRef.current.editor.getValue() });
       }
 
       getEditor() {
         return this.monacoRef.current.editor;
       }
 
+      updateYAML(obj, model, newNamespace, newName) {
+        this.setState({ success: null, error: null }, () => {
+          let action = k8sUpdate;
+          let redirect = false;
+          if (this.props.create) {
+            action = k8sCreate;
+            delete obj.metadata.resourceVersion;
+            redirect = true;
+          }
+          action(model, obj, newNamespace, newName)
+            .then((o) => {
+              if (redirect) {
+                let url = this.props.redirectURL;
+                if (!url) {
+                  const path = _.isFunction(this.props.resourceObjPath)
+                    ? this.props.resourceObjPath
+                    : resourceObjPath;
+                  url = path(o, referenceFor(o));
+                }
+                history.push(url);
+                // TODO: (ggreer). show message on new page. maybe delete old obj?
+                return;
+              }
+              const success = `${newName} has been updated to version ${o.metadata.resourceVersion}`;
+              this.setState({ success, error: null });
+              this.loadYaml(true, o);
+            })
+            .catch((e) => this.handleError(e.message));
+        });
+      }
+
       save() {
         const { onSave } = this.props;
+        const { owner } = this.state;
         let obj;
 
         if (onSave) {
@@ -264,6 +316,10 @@ export const EditYAML_ = connect(stateToProps)(
         if (!obj.metadata) {
           this.handleError('No "metadata" field found in YAML.');
           return;
+        }
+
+        if (obj.metadata.namespace && !model.namespaced) {
+          delete obj.metadata.namespace;
         }
 
         // If this is a namespaced resource, default to the active namespace when none is specified in the YAML.
@@ -307,36 +363,19 @@ export const EditYAML_ = connect(stateToProps)(
             );
             return;
           }
+
+          if (owner) {
+            managedResourceSaveModal({
+              kind: obj.kind,
+              resource: obj,
+              onSubmit: () => this.updateYAML(obj, model, newNamespace, newName),
+              owner,
+            });
+            return;
+          }
         }
 
-        this.setState({ success: null, error: null }, () => {
-          let action = k8sUpdate;
-          let redirect = false;
-          if (this.props.create) {
-            action = k8sCreate;
-            delete obj.metadata.resourceVersion;
-            redirect = true;
-          }
-          action(model, obj, newNamespace, newName)
-            .then((o) => {
-              if (redirect) {
-                let url = this.props.redirectURL;
-                if (!url) {
-                  const path = _.isFunction(this.props.resourceObjPath)
-                    ? this.props.resourceObjPath
-                    : resourceObjPath;
-                  url = path(o, referenceFor(o));
-                }
-                history.push(url);
-                // TODO: (ggreer). show message on new page. maybe delete old obj?
-                return;
-              }
-              const success = `${newName} has been updated to version ${o.metadata.resourceVersion}`;
-              this.setState({ success, error: null });
-              this.loadYaml(true, o);
-            })
-            .catch((e) => this.handleError(e.message));
-        });
+        this.updateYAML(obj, model, newNamespace, newName);
       }
 
       download(data = this.getEditor().getValue()) {
@@ -427,7 +466,7 @@ export const EditYAML_ = connect(stateToProps)(
           'co-file-dropzone--drop-over': isOver,
         });
 
-        const { error, success, stale, yaml, showSidebar } = this.state;
+        const { error, success, stale, showSidebar } = this.state;
         const {
           obj,
           download = true,
@@ -484,14 +523,11 @@ export const EditYAML_ = connect(stateToProps)(
                   >
                     <YAMLEditor
                       ref={this.monacoRef}
-                      value={yaml}
                       options={options}
                       showShortcuts={!genericYAML}
                       minHeight="100px"
                       toolbarLinks={sidebarLink ? [sidebarLink] : []}
-                      onChange={(newValue) =>
-                        this.setState({ yaml: newValue }, () => onChange(newValue))
-                      }
+                      onChange={onChange}
                       onSave={() => this.save()}
                     />
                     <div className="yaml-editor__buttons" ref={(r) => (this.buttons = r)}>
@@ -525,6 +561,7 @@ export const EditYAML_ = connect(stateToProps)(
                             type="submit"
                             variant="primary"
                             id="save-changes"
+                            data-test="save-changes"
                             onClick={() => this.save()}
                           >
                             Create
@@ -535,6 +572,7 @@ export const EditYAML_ = connect(stateToProps)(
                             type="submit"
                             variant="primary"
                             id="save-changes"
+                            data-test="save-changes"
                             onClick={() => this.save()}
                           >
                             Save
@@ -545,12 +583,18 @@ export const EditYAML_ = connect(stateToProps)(
                             type="submit"
                             variant="secondary"
                             id="reload-object"
+                            data-test="reload-object"
                             onClick={() => this.reload()}
                           >
                             Reload
                           </Button>
                         )}
-                        <Button variant="secondary" id="cancel" onClick={() => this.onCancel()}>
+                        <Button
+                          variant="secondary"
+                          id="cancel"
+                          data-test="cancel"
+                          onClick={() => this.onCancel()}
+                        >
                           Cancel
                         </Button>
                         {download && (

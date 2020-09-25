@@ -1,7 +1,6 @@
 import * as React from 'react';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
-import { NodeKind, K8sResourceKind } from '@console/internal/module/k8s';
 import UtilizationCard from '@console/app/src/components/nodes/node-dashboard/UtilizationCard';
 import ActivityCard from '@console/app/src/components/nodes/node-dashboard/ActivityCard';
 import {
@@ -19,18 +18,20 @@ import { LimitRequested } from '@console/shared/src/components/dashboard/utiliza
 import InventoryCard from './InventoryCard';
 import DetailsCard from './DetailsCard';
 import StatusCard from './StatusCard';
-import { BareMetalHostKind } from '../../../types';
+import { BareMetalNodeDetailsPageProps } from '../../types';
 import { getHostMachineName, getNodeMaintenanceNodeName } from '../../../selectors';
+import { getNodeServerCSR } from '../../../selectors/csr';
 import { BareMetalNodeDashboardContext } from './BareMetalNodeDashboardContext';
 
 const leftCards = [{ Card: DetailsCard }, { Card: InventoryCard }];
 const mainCards = [{ Card: StatusCard }, { Card: UtilizationCard }];
 const rightCards = [{ Card: ActivityCard }];
 
-const BareMetalNodeDashboard: React.FC<BareMetalNodeDashboardProps> = ({
+const BareMetalNodeDashboard: React.FC<BareMetalNodeDetailsPageProps> = ({
   obj,
   hosts,
   nodeMaintenances,
+  csrs,
 }) => {
   const [state, dispatch] = React.useReducer(reducer, initialState(obj));
 
@@ -42,6 +43,7 @@ const BareMetalNodeDashboard: React.FC<BareMetalNodeDashboardProps> = ({
   const host = hostsByMachineName[getNodeMachineName(obj)];
   const maintenancesByNodeName = createBasicLookup(nodeMaintenances, getNodeMaintenanceNodeName);
   const nodeMaintenance = maintenancesByNodeName[getName(obj)];
+  const csr = getNodeServerCSR(csrs, obj);
 
   const setCPULimit = React.useCallback(
     (payload: LimitRequested) => dispatch({ type: ActionType.CPU_LIMIT, payload }),
@@ -68,6 +70,7 @@ const BareMetalNodeDashboard: React.FC<BareMetalNodeDashboardProps> = ({
   const bmnContext = {
     host,
     nodeMaintenance,
+    csr,
   };
 
   return (
@@ -82,9 +85,3 @@ const BareMetalNodeDashboard: React.FC<BareMetalNodeDashboardProps> = ({
 };
 
 export default BareMetalNodeDashboard;
-
-type BareMetalNodeDashboardProps = {
-  obj: NodeKind;
-  hosts: BareMetalHostKind[];
-  nodeMaintenances: K8sResourceKind[];
-};

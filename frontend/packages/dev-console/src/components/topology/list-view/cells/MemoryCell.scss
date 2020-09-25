@@ -1,0 +1,50 @@
+@import '../../../../../../../public/style/vars';
+@import '../../../../../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/variables.scss';
+
+.odc-topology-list-view__metrics-cell {
+  &__metric-tooltip {
+    display: flex;
+    min-width: 225px;
+  }
+  &__tooltip-title {
+    margin-bottom: 5px;
+  }
+  &__tooltip-name {
+    flex: 2;
+    overflow: hidden;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  &__metric-tooltip-value {
+    flex: 1;
+    text-align: right;
+  }
+  &__metric-value {
+    font-size: 18px;
+  }
+  &__metric-unit {
+    color: $color-text-muted;
+    font-size: ($font-size-base - 1);
+    margin-left: 1px;
+  }
+  &__detail--memory {
+    min-width: 0; // To enable text-overflow: ellipsis within a css-grid area
+    @media (min-width: $screen-md-min) {
+      grid-area: memory;
+    }
+  }
+  &__detail--cpu {
+    min-width: 0; // To enable text-overflow: ellipsis within a css-grid area
+    @media (min-width: $screen-md-min) {
+      grid-area: cpu;
+    }
+  }
+}
+
+@media (min-width: $screen-md-min) {
+  .odc-topology-list-view__metrics-cell__detail--cpu,
+  .odc-topology-list-view__metrics-cell__detail--memory {
+    text-align: right;
+  }
+}

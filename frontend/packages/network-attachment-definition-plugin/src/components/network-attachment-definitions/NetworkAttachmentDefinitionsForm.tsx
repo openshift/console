@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash';
 import { Form, FormControl, FormGroup, HelpBlock } from 'patternfly-react';
-import { ActionGroup, Button } from '@patternfly/react-core';
+import { ActionGroup, Alert, Button } from '@patternfly/react-core';
 import { referenceForModel, k8sCreate } from '@console/internal/module/k8s';
 import {
   ButtonBar,
@@ -44,12 +44,11 @@ const buildConfig = (name, networkType, typeParamsData): NetworkAttachmentDefini
     // cnv-bridge should not define type on root
     delete config.type;
 
-    const vlan = _.get(typeParamsData, 'vlanTagNum.value', '');
     config.plugins = [
       {
         type: 'cnv-bridge',
         bridge: _.get(typeParamsData, 'bridge.value', ''),
-        vlan: _.isEmpty(vlan) ? undefined : vlan,
+        vlan: parseInt(typeParamsData?.vlanTagNum?.value, 10) || undefined,
         ipam,
       },
       { type: 'cnv-tuning' },
@@ -250,6 +249,18 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
           <label className="control-label co-required" htmlFor="network-type">
             Network Type
           </label>
+          {_.isEmpty(networkTypeDropdownItems) && (
+            <Alert
+              className="co-alert"
+              isInline
+              variant="warning"
+              title={'Missing installed operators'}
+            >
+              <strong>OpenShift Virtualization Operator</strong> or{' '}
+              <strong>SR-IOV Network Operator </strong>
+              needs to be installed on the cluster, in order to pick the Network Type.
+            </Alert>
+          )}
           <Dropdown
             id="network-type"
             title="Network Type"

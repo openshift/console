@@ -18,7 +18,7 @@ const bestUnit = (dataPoints: DataPoint[][], type) => {
   return _.get(type, ['units', bestLevel]);
 };
 
-// Array based procssor
+// Array based processor
 export const processFrame = (dataPoints: DataPoint[][], typeName: string): ProcessFrameResult => {
   const type = getType(typeName);
   let unit = null;

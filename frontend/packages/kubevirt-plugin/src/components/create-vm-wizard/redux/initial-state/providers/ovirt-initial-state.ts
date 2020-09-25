@@ -9,6 +9,7 @@ export const getOvirtInitialState = (): OvirtSettings => {
     [OvirtProviderField.OVIRT_ENGINE_SECRET_NAME]: {},
     [OvirtProviderField.API_URL]: {
       isHidden: hiddenByOvirtEngine,
+      value: 'https://',
     },
     [OvirtProviderField.CERTIFICATE]: {
       isHidden: hiddenByOvirtEngine,

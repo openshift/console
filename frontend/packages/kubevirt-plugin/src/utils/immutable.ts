@@ -48,5 +48,7 @@ export const ihasIn = (obj, path: string[]) => obj && obj.hasIn(path);
 
 export const iGetIsLoaded = (result): boolean => iGet(result, 'loaded', false);
 
+export const iGetLoadError = (result): boolean => iGet(result, 'loadError', '');
+
 export const iGetLoadedData = (result, defaultValue = undefined) =>
   iGetIsLoaded(result) && !iGet(result, 'loadError') ? iGet(result, 'data') : defaultValue;

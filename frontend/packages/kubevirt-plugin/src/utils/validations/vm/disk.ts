@@ -61,6 +61,8 @@ export const validateDisk = (
     templateValidations: TemplateValidations;
   },
 ): UIStorageValidation => {
+  let hasAllRequiredFilled = disk && disk.getName() && disk.getType() && volume && volume.getName();
+
   const validations = {
     name: validateDiskName(disk && disk.getName(), usedDiskNames),
     size: null,
@@ -68,8 +70,8 @@ export const validateDisk = (
     container: null,
     diskInterface: null,
     pvc: null,
+    type: null,
   };
-  let hasAllRequiredFilled = disk && disk.getName() && volume && volume.getName();
 
   const addRequired = (addon) => {
     if (hasAllRequiredFilled) {
@@ -84,7 +86,6 @@ export const validateDisk = (
   );
 
   const tValidations = templateValidations || new TemplateValidations();
-  const diskType = disk.getType();
 
   if (source.requiresVolumeType()) {
     addRequired(volume && volume.hasType());
@@ -138,7 +139,7 @@ export const validateDisk = (
     validations.pvc = validatePVCName(pvcName, usedPVCNames);
   }
 
-  if (diskType !== DiskType.FLOPPY) {
+  if (disk.getType() !== DiskType.FLOPPY) {
     addRequired(disk.getDiskBus());
     validations.diskInterface = tValidations
       .validateBus(disk.getType(), disk.getDiskBus())

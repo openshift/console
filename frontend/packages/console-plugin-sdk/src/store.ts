@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { Extension, ExtensionWithMetadata, ActivePlugin } from './typings';
+import { Extension, LoadedExtension, ActivePlugin } from './typings';
 import { ExtensionRegistry } from './registry';
 
 export const sanitizeExtension = (e: Extension): Extension => {
@@ -9,9 +9,15 @@ export const sanitizeExtension = (e: Extension): Extension => {
   return e;
 };
 
-export const augmentExtension = (e: Extension, p: ActivePlugin): ExtensionWithMetadata => {
-  return Object.assign(e, { plugin: p.name });
-};
+export const augmentExtension = (
+  e: Extension,
+  pluginName: string,
+  index: number,
+): LoadedExtension<typeof e> =>
+  Object.assign(e, {
+    pluginName,
+    uid: `${pluginName}[${index}]`,
+  });
 
 export const isExtensionInUse = (e: Extension, flags: FlagsObject): boolean =>
   e.flags.required.every((f) => flags[f] === true) &&
@@ -31,14 +37,16 @@ export const getGatingFlagNames = (extensions: Extension[]): string[] =>
  * _For now, the runtime list of extensions is assumed to be immutable._
  */
 export class PluginStore {
-  private readonly extensions: ExtensionWithMetadata[];
+  private readonly extensions: Extension[];
 
   public readonly registry: ExtensionRegistry; // TODO(vojtech): legacy, remove
 
   public constructor(plugins: ActivePlugin[]) {
     this.extensions = _.flatMap(
       plugins.map((p) =>
-        p.extensions.map((e) => Object.freeze(augmentExtension(sanitizeExtension({ ...e }), p))),
+        p.extensions.map((e, index) =>
+          Object.freeze(augmentExtension(sanitizeExtension({ ...e }), p.name, index)),
+        ),
       ),
     );
     this.registry = new ExtensionRegistry(plugins);

@@ -17,10 +17,17 @@ import { getDiscoveryRequestData } from '@console/local-storage-operator-plugin/
 import {
   LOCAL_STORAGE_NAMESPACE,
   DISCOVERY_CR_NAME,
+  HOSTNAME_LABEL_KEY,
+  LABEL_OPERATOR,
+  AUTO_DISCOVER_ERR_MSG,
 } from '@console/local-storage-operator-plugin/src/constants';
-import { getNodes } from '@console/local-storage-operator-plugin/src/utils';
 import {
-  DiskMechanicalProperty,
+  getNodes,
+  getLabelIndex,
+  getHostNames,
+} from '@console/local-storage-operator-plugin/src/utils';
+import {
+  DiskMechanicalProperties,
   DiskType,
 } from '@console/local-storage-operator-plugin/src/components/local-volume-set/types';
 import { initialState, reducer, State, Action, Discoveries, OnNextClick } from './state';
@@ -46,20 +53,34 @@ const makeAutoDiscoveryCall = (
 
   fetchK8s(LocalVolumeDiscovery, DISCOVERY_CR_NAME, LOCAL_STORAGE_NAMESPACE)
     .then((discoveryRes: K8sResourceKind) => {
-      const nodes = new Set(
-        discoveryRes?.spec?.nodeSelector?.nodeSelectorTerms?.[0]?.matchExpressions?.[0]?.values,
-      );
-      selectedNodes.forEach((name) => nodes.add(name));
-      const patch = [
-        {
-          op: 'replace',
-          path: `/spec/nodeSelector/nodeSelectorTerms/0/matchExpressions/0/values`,
-          value: Array.from(nodes),
-        },
-      ];
-      return k8sPatch(LocalVolumeDiscovery, discoveryRes, patch);
+      const nodeSelectorTerms = discoveryRes?.spec?.nodeSelector?.nodeSelectorTerms;
+      const [selectorIndex, expIndex] = nodeSelectorTerms
+        ? getLabelIndex(nodeSelectorTerms, HOSTNAME_LABEL_KEY, LABEL_OPERATOR)
+        : [-1, -1];
+      if (selectorIndex !== -1 && expIndex !== -1) {
+        const nodes = new Set(
+          discoveryRes?.spec?.nodeSelector?.nodeSelectorTerms?.[selectorIndex]?.matchExpressions?.[
+            expIndex
+          ]?.values,
+        );
+        const hostNames = getHostNames(selectedNodes, state.hostNamesMapForADV);
+        hostNames.forEach((name) => nodes.add(name));
+        const patch = [
+          {
+            op: 'replace',
+            path: `/spec/nodeSelector/nodeSelectorTerms/${selectorIndex}/matchExpressions/${expIndex}/values`,
+            value: Array.from(nodes),
+          },
+        ];
+        return k8sPatch(LocalVolumeDiscovery, discoveryRes, patch);
+      }
+      throw new Error(AUTO_DISCOVER_ERR_MSG);
     })
-    .catch(() => {
+    .catch((err) => {
+      // handle AUTO_DISCOVER_ERR_MSG and throw to next catch block to show the message
+      if (err.message === AUTO_DISCOVER_ERR_MSG) {
+        throw err;
+      }
       const requestData = getDiscoveryRequestData(state);
       return k8sCreate(LocalVolumeDiscovery, requestData);
     })
@@ -97,7 +118,7 @@ const CreateSC: React.FC<CreateSCProps> = ({ match }) => {
             // filter out non supported disks
             if (
               discovery?.status?.state === AVAILABLE &&
-              discovery.property === DiskMechanicalProperty.SSD &&
+              discovery.property === DiskMechanicalProperties.SSD &&
               discovery.type === DiskType.RawDisk
             ) {
               discovery.node = name;
@@ -122,6 +143,11 @@ const CreateSC: React.FC<CreateSCProps> = ({ match }) => {
     state.showNodesListOnADV,
     state.allNodeNamesOnADV,
   ]);
+
+  React.useEffect(() => {
+    // this is required to set the hostnames for LVS too
+    dispatch({ type: 'setHostNamesMapForLVS', value: state.hostNamesMapForADV });
+  }, [state.hostNamesMapForADV]);
 
   const steps = [
     {
@@ -150,7 +176,7 @@ const CreateSC: React.FC<CreateSCProps> = ({ match }) => {
         );
       case CreateStepsSC.STORAGECLASS:
         if (!state.volumeSetName.trim().length) return true;
-        if (state.showNodesListOnLVS) return state.nodeNames.length < minSelectedNode;
+        if (state.filteredNodes.length < minSelectedNode) return true;
         return !state.volumeSetName.trim().length;
 
       default:

@@ -13,6 +13,7 @@ export const mockDeployImageFormData: DeployImageFormData = {
     selectedKey: 'mock-app',
   },
   name: 'test-app',
+  runtimeIcon: null,
   searchTerm: 'test-app',
   registry: 'external',
   allowInsecureRegistry: false,
@@ -87,6 +88,7 @@ export const mockDeployImageFormData: DeployImageFormData = {
   route: {
     create: true,
     targetPort: '',
+    defaultUnknownPort: 8080,
     path: '',
     hostname: '',
     secure: false,

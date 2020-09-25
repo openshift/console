@@ -19,6 +19,7 @@ describe('Test Object Bucket Claim resource', () => {
   let obcHandler;
 
   beforeAll(async () => {
+    await browser.sleep(2000);
     obcHandler = new CreateOBCHandler(OBC_NAME, testName, OBC_STORAGE_CLASS, '');
     await obcHandler.createBucketClaim();
     // Set namespace here and keep the deployment JSON NS agnostic

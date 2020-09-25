@@ -14,7 +14,7 @@ import {
 } from './components/const';
 import { HelmReleaseResourcesMap } from '../../helm/helm-types';
 import { fetchHelmReleases } from '../../helm/helm-utils';
-import { getHelmReleaseKey, WORKLOAD_TYPES } from '../topology-utils';
+import { WORKLOAD_TYPES } from '../topology-utils';
 import {
   addToTopologyDataModel,
   createTopologyNodeData,
@@ -24,6 +24,8 @@ import {
   mergeGroups,
   WorkloadModelProps,
 } from '../data-transforms/transform-utils';
+
+const getHelmReleaseKey = (resource) => `${resource.kind}---${resource.metadata.name}`;
 
 export const isHelmReleaseNode = (
   obj: K8sResourceKind,
@@ -74,8 +76,8 @@ export const getTopologyHelmReleaseGroupItem = (
   const helmGroup: OdcNodeModel = {
     id: secret ? secret.metadata.uid : `${TYPE_HELM_RELEASE}:${releaseName}`,
     type: TYPE_HELM_RELEASE,
+    resourceKind: 'HelmRelease',
     group: true,
-    resource: secret,
     label: releaseName,
     children: [uid],
     width: HELM_GROUP_WIDTH,
@@ -124,16 +126,18 @@ export const getHelmGraphModelFromMap = (
         edges: [],
       };
       resources[key].data.forEach((resource) => {
-        const item = createOverviewItemForType(key, resource, resources);
-        const uid = resource?.metadata?.uid;
         if (isHelmReleaseNode(resource, helmResourcesMap)) {
+          const item = createOverviewItemForType(key, resource, resources);
+          const uid = resource?.metadata?.uid;
+          const helmResourcesData = helmResourcesMap[getHelmReleaseKey(resource)];
+          const deploymentsLabels = resource?.metadata?.labels ?? {};
+          const nodeIcon =
+            getImageForIconClass(`icon-${deploymentsLabels['app.openshift.io/runtime']}`) ||
+            getImageForIconClass(`icon-${deploymentsLabels['app.kubernetes.io/name']}`) ||
+            helmResourcesData?.chartIcon ||
+            getImageForIconClass(`icon-helm`);
           helmResources[key].push(uid);
-          const data = createTopologyNodeData(
-            resource,
-            item,
-            TYPE_HELM_WORKLOAD,
-            getImageForIconClass(`icon-openshift`),
-          );
+          const data = createTopologyNodeData(resource, item, TYPE_HELM_WORKLOAD, nodeIcon);
           typedDataModel.nodes.push(
             getTopologyNodeItem(resource, TYPE_HELM_WORKLOAD, data, WorkloadModelProps),
           );
@@ -148,7 +152,7 @@ export const getHelmGraphModelFromMap = (
   helmDataModel.nodes.forEach((node) => {
     if (node.type === TYPE_HELM_RELEASE) {
       node.data.groupResources =
-        node.children?.map((id) => helmDataModel.nodes.find((n) => id === n.id)?.data) ?? [];
+        node.children?.map((id) => helmDataModel.nodes.find((n) => id === n.id)) ?? [];
     }
   });
 
@@ -186,15 +190,24 @@ const getHelmReleaseMap = (namespace: string) => {
 export const getHelmTopologyDataModel = () => {
   let secretCount = -1;
   let mapNamespace = '';
-  let helmResourcesMap = null;
+  let helmResourcesMap = {};
 
   return (namespace: string, resources: TopologyDataResources): Promise<Model> => {
-    const count = resources?.secrets?.data?.length ?? 0;
+    const helmSecrets =
+      resources?.secrets?.data?.filter((s) => s.metadata?.labels?.owner === 'helm') ?? [];
+    const helmReleaseCount = Object.keys(helmResourcesMap).reduce((acc, key) => {
+      if (!acc.includes(helmResourcesMap[key].releaseName)) {
+        acc.push(helmResourcesMap[key].releaseName);
+      }
+      return acc;
+    }, []).length;
+    const count = helmSecrets.length;
     let retrieveNewReleaseMap = false;
     if (
       namespace !== mapNamespace ||
       (resources.secrets?.loaded && count !== secretCount) ||
-      resources.secrets?.loadError
+      resources.secrets?.loadError ||
+      secretCount !== helmReleaseCount
     ) {
       secretCount = count;
       mapNamespace = namespace;

@@ -15,7 +15,7 @@ namespace ExtensionProperties {
     /** Nav group to which this item belongs to. Add items to a grouping with a separator above */
     group?: string;
     /** Props to pass to the corresponding `NavLink` component. */
-    componentProps: Pick<NavLinkProps, 'name' | 'startsWith' | 'testID'>;
+    componentProps: Pick<NavLinkProps, 'name' | 'startsWith' | 'testID' | 'data-tour-id'>;
     /** Nav item before which this item should be placed. */
     mergeBefore?: string;
   }

@@ -6,8 +6,7 @@ import {
   modelFor,
   k8sUpdate,
   PodKind,
-  referenceForModel,
-  k8sCreate,
+  kindForReference,
 } from '@console/internal/module/k8s';
 import {
   getResourcePausedAlert,
@@ -17,7 +16,6 @@ import {
   getReplicaSetsForResource,
   getRoutesForServices,
   getServicesForResource,
-  getRandomChars,
 } from '@console/shared';
 import { Edge, EdgeModel, Model, Node, NodeModel, NodeShape } from '@patternfly/react-topology';
 import {
@@ -34,15 +32,11 @@ import {
   NODE_HEIGHT,
   NODE_PADDING,
   WorkloadModelProps,
-  GraphData,
   getResource,
 } from '@console/dev-console/src/components/topology';
-import { addResourceMenuWithoutCatalog } from '@console/dev-console/src/actions/add-resources';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { DeploymentModel, PodModel } from '@console/internal/models';
 import { RootState } from '@console/internal/redux';
-import { errorModal } from '@console/internal/components/modals';
-import { KebabAction } from '@console/dev-console/src/utils/add-resources-menu-utils';
 import { FLAG_KNATIVE_EVENTING, CAMEL_SOURCE_INTEGRATION } from '../const';
 import { KnativeItem } from '../utils/get-knative-resources';
 import {
@@ -53,35 +47,16 @@ import {
 import {
   getDynamicEventSourcesModelRefs,
   getDynamicChannelModelRefs,
-  isEventingChannelResourceKind,
 } from '../utils/fetch-dynamic-eventsources-utils';
+import { EventingBrokerModel, EventSourceCamelModel, EventingTriggerModel } from '../models';
 import {
-  EventingBrokerModel,
-  ServiceModel,
-  EventingTriggerModel,
-  EventingSubscriptionModel,
-  EventSourceCamelModel,
-} from '../models';
-import { addEventSource } from '../actions/add-event-source';
-import { addTrigger, addSubscription } from '../actions/add-pubsub-actions';
-
-export enum NodeType {
-  EventSource = 'event-source',
-  KnService = 'knative-service',
-  Revision = 'knative-revision',
-  PubSub = 'event-pubsub',
-  SinkUri = 'sink-uri',
-}
-
-export enum EdgeType {
-  Traffic = 'revision-traffic',
-  EventSource = 'event-source-link',
-  EventPubSubLink = 'event-pubsub-link',
-}
-
-type RevK8sResourceKind = K8sResourceKind & {
-  resources?: { [key: string]: any };
-};
+  NodeType,
+  Subscriber,
+  RevK8sResourceKind,
+  EdgeType,
+  PubsubNodes,
+  KnativeUtil,
+} from './topology-types';
 
 export const getKnNodeModelProps = (type: string) => {
   switch (type) {
@@ -183,6 +158,277 @@ export const filterRevisionsByActiveApplication = (
   });
   return filteredRevisions;
 };
+export const isInternalResource = (resource: K8sResourceKind): boolean => {
+  if (resource.kind !== EventingBrokerModel.kind && resource.metadata?.ownerReferences) {
+    return true;
+  }
+  return false;
+};
+
+const isSubscriber = (resource: K8sResourceKind, relatedResource: K8sResourceKind): boolean => {
+  const subscriberRef = relatedResource?.spec?.subscriber?.ref;
+  return (
+    subscriberRef &&
+    referenceFor(resource) === referenceFor(subscriberRef) &&
+    resource.metadata.name === subscriberRef.name
+  );
+};
+
+const isPublisher = (
+  relatedResource: K8sResourceKind,
+  relationshipResource: K8sResourceKind,
+  mainResource: K8sResourceKind,
+): boolean => {
+  const { name, kind, apiVersion } = relationshipResource.spec?.subscriber?.ref || {};
+  if (
+    mainResource.metadata.name !== name ||
+    mainResource.kind !== kind ||
+    mainResource.apiVersion !== apiVersion
+  ) {
+    return false;
+  }
+  if (relationshipResource.kind === EventingTriggerModel.kind) {
+    return relationshipResource.spec?.broker === relatedResource.metadata.name;
+  }
+  const channel = relationshipResource.spec?.channel;
+  return channel && channel.name === relatedResource.metadata.name;
+};
+
+export const getTriggerFilters = (resource: K8sResourceKind) => {
+  const data = {
+    filters: [],
+  };
+  const attributes = resource?.spec?.filter?.attributes;
+  if (attributes && !_.isEmpty(attributes)) {
+    for (const [key, value] of Object.entries(attributes)) {
+      data.filters.push({ key, value });
+    }
+  }
+  return data;
+};
+
+export const getKnativeDynamicResources = (
+  resources: TopologyDataResources,
+  dynamicProps: string[],
+): K8sResourceKind[] => {
+  return dynamicProps.reduce((acc, currProp) => {
+    const currPropResource = resources[currProp]?.data ?? [];
+    return [...acc, ...currPropResource];
+  }, []);
+};
+
+export const getSubscribedEventsources = (
+  pubSubResource: K8sResourceKind,
+  resources: TopologyDataResources,
+) => {
+  const eventSourceProps = getDynamicEventSourcesModelRefs();
+  return _.reduce(
+    getKnativeDynamicResources(resources, eventSourceProps),
+    (acc, evSrc) => {
+      const sinkRes = evSrc?.spec?.sink?.ref || {};
+      if (pubSubResource.kind === sinkRes.kind && pubSubResource.metadata.name === sinkRes.name) {
+        acc.push(evSrc);
+      }
+      return acc;
+    },
+    [],
+  );
+};
+
+/**
+ * Get the subscribers for broker, channels and knative service
+ * @param resource
+ * @param resources
+ */
+export const getPubSubSubscribers = (
+  resource: K8sResourceKind,
+  resources: TopologyDataResources,
+): Subscriber[] | [] => {
+  const channelResourceProps = getDynamicChannelModelRefs();
+
+  const relationShipMap = {
+    Broker: [
+      {
+        relatedResource: 'ksservices',
+        relationshipResource: 'triggers',
+        isRelatedResource: isSubscriber,
+      },
+    ],
+    Service: [
+      {
+        relatedResource: 'brokers',
+        relationshipResource: 'triggers',
+        isRelatedResource: isPublisher,
+      },
+    ],
+  };
+  _.forEach(channelResourceProps, (channel) => {
+    relationShipMap.Service.push({
+      relatedResource: channel,
+      relationshipResource: 'eventingsubscription',
+      isRelatedResource: isPublisher,
+    });
+    relationShipMap[channel] = [
+      {
+        relatedResource: 'ksservices',
+        relationshipResource: 'eventingsubscription',
+        isRelatedResource: isSubscriber,
+      },
+    ];
+  });
+
+  let subscribers = [];
+  if (relationShipMap[resource.kind] || relationShipMap[referenceFor(resource)]) {
+    const depicters = relationShipMap[resource.kind] || relationShipMap[referenceFor(resource)];
+    _.forEach(depicters, (depicter) => {
+      const { relatedResource, relationshipResource, isRelatedResource } = depicter;
+      if (resources[relatedResource] && resources[relatedResource].data.length > 0) {
+        subscribers = subscribers.concat(
+          _.reduce(
+            resources[relatedResource].data,
+            (acc, relRes) => {
+              if (isInternalResource(relRes) || !isRelatedResource) {
+                return acc;
+              }
+              const relationshipResources = (resources[relationshipResource].data || []).filter(
+                (relationshipRes) => {
+                  return isRelatedResource(relRes, relationshipRes, resource);
+                },
+              );
+              const relationShipData = relationshipResources.map((res) => {
+                return {
+                  kind: referenceFor(res),
+                  name: res.metadata.name,
+                  namespace: res.metadata.namespace,
+                  ...getTriggerFilters(res),
+                };
+              });
+              if (relationShipData.length > 0) {
+                const obj = {
+                  kind: referenceFor(relRes),
+                  name: relRes.metadata.name,
+                  namespace: relRes.metadata.namespace,
+                  data: relationShipData,
+                };
+                acc.push(obj);
+              }
+              return acc;
+            },
+            [],
+          ),
+        );
+      }
+    });
+  }
+  return subscribers;
+};
+/**
+ * partition and return the array of channels and brokers
+ * @param subscribers
+ */
+export const getSubscriberByType = (
+  subscribers: Subscriber[] = [],
+): [Subscriber[], Subscriber[]] => {
+  if (subscribers.length === 0) {
+    return [[], []];
+  }
+  const channelResourceProps = getDynamicChannelModelRefs();
+  return _.partition(subscribers, (sub) => channelResourceProps.includes(sub.kind));
+};
+/**
+ * return the dyanmic channel reference
+ * @param name
+ * @param kind
+ */
+const getChannelRef = (kind: string): string => {
+  const channelResourceProps = getDynamicChannelModelRefs();
+  return _.find(channelResourceProps, (channel) => {
+    return kind === kindForReference(channel);
+  });
+};
+
+/**
+ * Get the knative service subscriptions
+ * @param ksvc Knative Service
+ * @param resources
+ */
+export const getSubscribedPubSubNodes = (
+  ksvc: K8sResourceKind,
+  resources: TopologyDataResources,
+) => {
+  const pubsubConnectors = ['triggers', 'eventingsubscription'];
+  const pubsubNodes: PubsubNodes = { channels: [], brokers: [] };
+  pubsubConnectors.forEach((connector: string) => {
+    if (resources[connector] && resources[connector].data.length > 0) {
+      const pubsubConnectorResources = resources[connector].data;
+      _.map(pubsubConnectorResources, (connectorRes) => {
+        if (!isInternalResource(connectorRes)) {
+          const subscriber = connectorRes.spec?.subscriber?.ref;
+          if (subscriber) {
+            const subscribedService =
+              ksvc.kind === subscriber.kind && ksvc.metadata.name === subscriber.name;
+            if (subscribedService && connectorRes.kind === EventingTriggerModel.kind) {
+              const broker = connectorRes.spec?.broker;
+              if (!pubsubNodes.brokers.includes(broker)) {
+                pubsubNodes.brokers.push(broker);
+              }
+            } else if (subscribedService) {
+              const channel = connectorRes.spec?.channel;
+              const { apiVersion, name, kind } = channel || {};
+
+              const channelAdded = _.find(pubsubNodes.channels, {
+                apiVersion,
+                name,
+                kind,
+              });
+              if (channel && !channelAdded) {
+                pubsubNodes.channels.push(channel);
+              }
+            }
+          }
+        }
+      });
+    }
+  });
+  const eventSources = [];
+  const pushEventSource = (evsrc: K8sResourceKind) => {
+    const evsrcFound = _.find(eventSources, {
+      kind: evsrc.kind,
+      metadata: { name: evsrc.metadata.name },
+    });
+    if (!evsrcFound) {
+      eventSources.push(evsrc);
+    }
+  };
+  pubsubNodes.brokers.forEach((broker) => {
+    const eventBroker = _.find(resources.brokers.data, {
+      metadata: { name: broker },
+    });
+    const evsrcs = eventBroker ? getSubscribedEventsources(eventBroker, resources) : [];
+    evsrcs.forEach((evsrc) => {
+      pushEventSource(evsrc);
+    });
+  });
+  pubsubNodes.channels.forEach((channel) => {
+    const channelKind = getChannelRef(channel.kind);
+    const channelResources = resources[channelKind];
+    if (channelResources) {
+      const eventingChannel = _.find(channelResources.data, {
+        metadata: { name: channel.name },
+        kind: channel.kind,
+      });
+      const evsrcs = eventingChannel ? getSubscribedEventsources(eventingChannel, resources) : [];
+      evsrcs.forEach((evsrc) => {
+        pushEventSource(evsrc);
+      });
+    }
+  });
+
+  getSubscribedEventsources(ksvc, resources).forEach((evsrc) => {
+    pushEventSource(evsrc);
+  });
+  return eventSources;
+};
 
 /**
  * Forms data with respective revisions, configurations, routes based on kntaive service
@@ -226,11 +472,15 @@ export const getKnativeServiceData = (
     ? getOwnedResources(resource, resources.ksroutes.data)
     : undefined;
   const buildConfigs = getBuildConfigsForResource(resource, resources);
+  const eventSources = getSubscribedPubSubNodes(resource, resources);
+  const subscribers = getPubSubSubscribers(resource, resources);
   const overviewItem = {
     configurations,
     revisions: revisionsDeploymentData.revisionsDep,
     ksroutes,
     buildConfigs,
+    eventSources,
+    subscribers,
     pods: revisionsDeploymentData.allPods,
   };
   if (utils) {
@@ -241,7 +491,6 @@ export const getKnativeServiceData = (
   return overviewItem;
 };
 
-export type KnativeUtil = (dc: K8sResourceKind, props) => KnativeItem | undefined;
 /**
  * Rollup data for deployments for revisions/ event sources
  */
@@ -307,16 +556,6 @@ const createKnativeDeploymentItems = (
   };
 };
 
-export const getKnativeDynamicResources = (
-  resources: TopologyDataResources,
-  dynamicProps: string[],
-): K8sResourceKind[] => {
-  return dynamicProps.reduce((acc, currProp) => {
-    const currPropResource = resources[currProp]?.data ?? [];
-    return [...acc, ...currPropResource];
-  }, []);
-};
-
 export const createPubSubDataItems = (
   resource: K8sResourceKind,
   resources: TopologyDataResources,
@@ -329,18 +568,7 @@ export const createPubSubDataItems = (
   const subscriptionData = resources?.eventingsubscription?.data ?? [];
   const triggerList = resources?.triggers?.data ?? [];
   let triggersData = {};
-  const eventSourceProps = getDynamicEventSourcesModelRefs();
-  const eventSources = _.reduce(
-    getKnativeDynamicResources(resources, eventSourceProps),
-    (acc, evSrc) => {
-      const sinkRes = _.get(evSrc, 'spec.sink.ref', {});
-      if (resKind === sinkRes.kind && name === sinkRes.name) {
-        acc.push(evSrc);
-      }
-      return acc;
-    },
-    [],
-  );
+  const eventSources = getSubscribedEventsources(resource, resources);
   const channelSubsData = _.reduce(
     subscriptionData,
     (acc, subs) => {
@@ -372,10 +600,15 @@ export const createPubSubDataItems = (
           metadata: { name: trigger?.spec?.subscriber?.ref?.name },
           kind: trigger?.spec?.subscriber?.ref?.kind,
         });
+        const knServiceAdded =
+          tData.ksservices.filter((ksvc) => ksvc.metadata.name === knService.metadata.name).length >
+          0;
         if (name === brokerName) {
           tData.triggers = [...tData.triggers, trigger];
-          tData.ksservices = knService ? [...tData.ksservices, knService] : tData.ksservices;
+          tData.ksservices =
+            knService && !knServiceAdded ? [...tData.ksservices, knService] : tData.ksservices;
         }
+
         return tData;
       },
       { ksservices: [], triggers: [], pods: [], deployments: [] },
@@ -397,6 +630,7 @@ export const createPubSubDataItems = (
     eventSources,
     ...channelSubsData,
     ...triggersData,
+    subscribers: getPubSubSubscribers(resource, resources),
   };
 };
 
@@ -456,6 +690,7 @@ export const getSinkUriTopologyNodeItems = (
     id,
     type,
     resource: data.resource,
+    resourceKind: 'Uri',
     data,
     ...(nodeProps || {}),
   });
@@ -558,7 +793,10 @@ export const getTriggerTopologyEdgeItems = (broker: K8sResourceKind, resources):
           data: {
             resources: {
               obj: trigger,
-              connections: [broker, knativeService],
+              eventSources: getSubscribedEventsources(broker, resources),
+              brokers: [broker],
+              ksservices: [knativeService],
+              filters: getTriggerFilters(trigger).filters,
             },
           },
         });
@@ -595,7 +833,9 @@ export const getSubscriptionTopologyEdgeItems = (
               data: {
                 resources: {
                   obj: subRes,
-                  connections: [resource, res],
+                  eventSources: getSubscribedEventsources(resource, resources),
+                  channels: [resource],
+                  ksservices: [res],
                 },
               },
             });
@@ -695,12 +935,7 @@ export const createTopologyPubSubNodeData = (
     },
   };
 };
-export const isInternalResource = (resource: K8sResourceKind): boolean => {
-  if (resource.kind !== EventingBrokerModel.kind && resource.metadata?.ownerReferences) {
-    return true;
-  }
-  return false;
-};
+
 export const transformKnNodeData = (
   knResourcesData: K8sResourceKind[],
   type: string,
@@ -735,6 +970,7 @@ export const transformKnNodeData = (
               },
               spec: { sinkUri },
               type: { nodeType: NodeType.SinkUri },
+              kind: 'Uri',
             };
             const sinkData: TopologyDataObject = {
               id: sinkTargetUid,
@@ -890,66 +1126,6 @@ export const createEventingPubSubSink = (subObj: K8sResourceKind, target: K8sRes
   return k8sUpdate(modelFor(referenceFor(subscriptionObj)), updatePayload);
 };
 
-export const createEventingTrigger = (broker: K8sResourceKind, service: K8sResourceKind) => {
-  const trigger = {
-    apiVersion: `${EventingTriggerModel.apiGroup}/${EventingTriggerModel.apiVersion}`,
-    kind: EventingTriggerModel.kind,
-    metadata: {
-      name: `${broker.metadata.name}-trigger-${getRandomChars()}`,
-      namespace: broker.metadata.namespace,
-    },
-    spec: {
-      broker: broker.metadata.name,
-      subscriber: {
-        ref: {
-          apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
-          kind: ServiceModel.kind,
-          name: service.metadata.name,
-        },
-      },
-    },
-  };
-  return k8sCreate(EventingTriggerModel, trigger).catch((error) => {
-    errorModal({
-      title: 'Error creating trigger',
-      error: error.message,
-      showIcon: true,
-    });
-  });
-};
-
-export const createEventingSubscription = (channel: K8sResourceKind, service: K8sResourceKind) => {
-  const trigger = {
-    apiVersion: `${EventingSubscriptionModel.apiGroup}/${EventingSubscriptionModel.apiVersion}`,
-    kind: EventingSubscriptionModel.kind,
-    metadata: {
-      name: `${channel.metadata.name}-subscription-${getRandomChars()}`,
-      namespace: channel.metadata.namespace,
-    },
-    spec: {
-      channel: {
-        apiVersion: channel.apiVersion,
-        kind: channel.kind,
-        name: channel.metadata.name,
-      },
-      subscriber: {
-        ref: {
-          apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
-          kind: ServiceModel.kind,
-          name: service.metadata.name,
-        },
-      },
-    },
-  };
-  return k8sCreate(EventingSubscriptionModel, trigger).catch((error) => {
-    errorModal({
-      title: 'Error creating subscription',
-      error: error.message,
-      showIcon: true,
-    });
-  });
-};
-
 export const createSinkPubSubConnection = (
   connector: Edge,
   targetNode: Node,
@@ -961,41 +1137,4 @@ export const createSinkPubSubConnection = (
   }
   const targetObj = getTopologyResourceObject(target);
   return createEventingPubSubSink(resources.obj, targetObj);
-};
-
-export const getKnativeContextMenuAction = (
-  graphData: GraphData,
-  menu: KebabAction[],
-  connectorSource?: Node,
-): KebabAction[] => {
-  if (isEventingChannelResourceKind(connectorSource?.getData().data.kind)) {
-    return [addSubscription];
-  }
-  switch (connectorSource?.getData().data.kind) {
-    case referenceForModel(ServiceModel):
-      return graphData.eventSourceEnabled
-        ? [...addResourceMenuWithoutCatalog, addEventSource]
-        : menu;
-    case referenceForModel(EventingBrokerModel):
-      return [addTrigger];
-    default:
-      return menu;
-  }
-};
-const createTrigger = (source: Node, target: Node) => {
-  return createEventingTrigger(getResource(source), getResource(target)).then(() => null);
-};
-
-const createSubscription = (source: Node, target: Node) => {
-  return createEventingSubscription(getResource(source), getResource(target)).then(() => null);
-};
-
-export const getCreateConnector = (createHints: string[]) => {
-  if (createHints.includes('createTrigger')) {
-    return createTrigger;
-  }
-  if (createHints.includes('createSubscription')) {
-    return createSubscription;
-  }
-  return null;
 };

@@ -17,12 +17,13 @@ interface TrafficSplittingDeleteModalProps {
   revisionItems: RevisionItems;
   deleteRevision: K8sResourceKind;
   showTraffic: boolean;
+  cancel?: () => void;
 }
 
 type Props = FormikProps<FormikValues> & TrafficSplittingDeleteModalProps;
 
 const DeleteRevisionModal: React.FC<Props> = (props) => {
-  const { deleteRevision, handleSubmit, handleReset, isSubmitting, status, showTraffic } = props;
+  const { deleteRevision, handleSubmit, isSubmitting, status, showTraffic, cancel } = props;
   const serviceName = deleteRevision.metadata.labels[KNATIVE_SERVING_LABEL];
 
   return (
@@ -52,7 +53,7 @@ const DeleteRevisionModal: React.FC<Props> = (props) => {
       <ModalSubmitFooter
         inProgress={isSubmitting}
         submitText="Delete"
-        cancel={handleReset}
+        cancel={cancel}
         errorMessage={status.error}
         submitDanger
       />

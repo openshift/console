@@ -114,6 +114,11 @@ export const createAlertRoutingModal = (props) =>
     m.createAlertRoutingModal(props),
   );
 
+export const createColumnManagementModal = (props) =>
+  import('./column-management-modal' /* webpackChunkName: "column-management-modal" */).then((m) =>
+    m.createColumnManagementModal(props),
+  );
+
 export const addUsersModal = (props) =>
   import('./add-users-modal' /* webpackChunkName: "add-users-modal" */).then((m) =>
     m.addUsersModal(props),
@@ -123,3 +128,13 @@ export const removeUserModal = (props) =>
   import('./remove-user-modal' /* webpackChunkName: "remove-user-modal" */).then((m) =>
     m.removeUserModal(props),
   );
+
+export const restorePVCModal = (props) =>
+  import(
+    '@console/app/src/components/modals/restore-pvc/restore-pvc-modal' /* webpackChunkName: "restore-pvc-modal" */
+  ).then((m) => m.default(props));
+
+export const managedResourceSaveModal = (props) =>
+  import(
+    './managed-resource-save-modal' /* webpackChunkName: "managed-resource-save-modal" */
+  ).then((m) => m.managedResourceSaveModal(props));

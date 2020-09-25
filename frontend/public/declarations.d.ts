@@ -35,6 +35,7 @@ declare interface Window {
     grafanaPublicURL: string;
     prometheusPublicURL: string;
     thanosPublicURL: string;
+    inactivityTimeout: number;
     statuspageID: string;
     GOARCH: string;
     GOOS: string;
@@ -44,6 +45,7 @@ declare interface Window {
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: Function;
   store?: {}; // Redux store
   pluginStore?: {}; // Console plugin store
+  Cypress?: {};
 }
 
 // From https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html

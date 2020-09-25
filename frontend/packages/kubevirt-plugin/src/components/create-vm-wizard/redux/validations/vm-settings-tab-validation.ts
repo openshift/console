@@ -10,21 +10,17 @@ import { hasVmSettingsChanged, iGetVmSettings } from '../../selectors/immutable/
 import { iGetFieldKey, iGetFieldValue } from '../../selectors/immutable/field';
 import { InternalActionType, UpdateOptions, ValidationConfig, Validator } from '../types';
 import { vmWizardInternalActions } from '../internal-actions';
-import {
-  validateUserTemplateProvisionSource,
-  validateVmLikeEntityName,
-} from '../../../../utils/validations/vm';
+import { validateVmLikeEntityName } from '../../../../utils/validations/vm';
 import {
   VIRTUAL_MACHINE_EXISTS,
   VIRTUAL_MACHINE_TEMPLATE_EXISTS,
 } from '../../../../utils/validations/strings';
 import { getFieldTitle } from '../../utils/renderable-field-utils';
-import { concatImmutableLists, iGet } from '../../../../utils/immutable';
+import { iGet } from '../../../../utils/immutable';
 import {
   checkTabValidityChanged,
   iGetCommonData,
   iGetLoadedCommonData,
-  iGetName,
   immutableListToShallowMetadataJS,
 } from '../../selectors/immutable/selectors';
 import { validatePositiveInteger } from '../../../../utils/validations/common';
@@ -41,10 +37,7 @@ const validateVm: Validator = (field, options) => {
   const isCreateTemplate = iGetCommonData(state, id, VMWizardProps.isCreateTemplate);
 
   const entities = isCreateTemplate
-    ? concatImmutableLists(
-        iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates),
-        iGetLoadedCommonData(state, id, VMWizardProps.userTemplates),
-      )
+    ? iGetLoadedCommonData(state, id, VMWizardProps.userTemplates)
     : iGetLoadedCommonData(state, id, VMWizardProps.virtualMachines);
 
   return validateVmLikeEntityName(
@@ -58,35 +51,6 @@ const validateVm: Validator = (field, options) => {
       subject: getFieldTitle(iGetFieldKey(field)),
     },
   );
-};
-
-const validateUserTemplate: Validator = (field, options) => {
-  const { getState, id } = options;
-  const state = getState();
-
-  const userTemplateName = iGetFieldValue(field);
-  if (!userTemplateName) {
-    return validateEmptyValue(userTemplateName, {
-      subject: getFieldTitle(iGetFieldKey(field)),
-    });
-  }
-
-  const userTemplatesList = iGetLoadedCommonData(state, id, VMWizardProps.userTemplates);
-  if (!userTemplatesList) {
-    return null;
-  }
-
-  const userTemplate = userTemplatesList.find(
-    (template) => iGetName(template) === userTemplateName,
-  );
-  if (!userTemplate) {
-    return asValidationObject(
-      "Can't verify template, template is missing",
-      ValidationErrorType.Error,
-    );
-  }
-
-  return validateUserTemplateProvisionSource(userTemplate && userTemplate.toJSON());
 };
 
 export const validateOperatingSystem: Validator = (field) => {
@@ -154,19 +118,10 @@ const validationConfig: ValidationConfig = {
         VMWizardProps.isCreateTemplate,
       );
       return isCreateTemplate
-        ? [
-            VMWizardProps.activeNamespace,
-            VMWizardProps.userTemplates,
-            VMWizardProps.commonTemplates,
-          ]
+        ? [VMWizardProps.activeNamespace, VMWizardProps.userTemplates]
         : [VMWizardProps.activeNamespace, VMWizardProps.virtualMachines];
     },
     validator: validateVm,
-  },
-  [VMSettingsField.USER_TEMPLATE]: {
-    detectValueChanges: [VMSettingsField.USER_TEMPLATE],
-    detectCommonDataChanges: [VMWizardProps.userTemplates],
-    validator: validateUserTemplate,
   },
   [VMSettingsField.OPERATING_SYSTEM]: {
     detectValueChanges: [VMSettingsField.OPERATING_SYSTEM],
@@ -182,7 +137,7 @@ const validationConfig: ValidationConfig = {
       VMSettingsField.OPERATING_SYSTEM,
       VMSettingsField.WORKLOAD_PROFILE,
     ],
-    detectCommonDataChanges: [VMWizardProps.userTemplates, VMWizardProps.commonTemplates],
+    detectCommonDataChanges: [VMWizardProps.userTemplate, VMWizardProps.commonTemplates],
     validator: memoryValidation,
   },
 };

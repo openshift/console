@@ -122,6 +122,7 @@ const CreateNamespaceModal = connect(
               <div className="modal-body__field">
                 <input
                   id="input-name"
+                  data-test="input-name"
                   name="name"
                   type="text"
                   className="pf-c-form-control"

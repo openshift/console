@@ -25,7 +25,7 @@ export const getFieldValue = (vmSettings, key: VMSettingsField) =>
 
 export const getFlavorValue = ({
   iVMSettings,
-  iUserTemplates,
+  iUserTemplate,
   iCommonTemplates,
   relevantOptions,
 }: GetFlavorValueParams) => {
@@ -42,7 +42,7 @@ export const getFlavorValue = ({
     memory = getFieldValue(iVMSettings, VMSettingsField.MEMORY);
   } else {
     const template = toShallowJS(
-      iGetRelevantTemplate(iUserTemplates, iCommonTemplates, relevantOptions),
+      iUserTemplate || iGetRelevantTemplate(iCommonTemplates, relevantOptions),
     );
     const vm = new VMTemplateWrapper(template, true).getVM();
     cpu = vm.getCPU();
@@ -54,7 +54,7 @@ export const getFlavorValue = ({
 
 type GetFlavorValueParams = {
   iVMSettings: any;
-  iUserTemplates: ImmutableMap<string, ITemplate>;
+  iUserTemplate: ITemplate;
   iCommonTemplates: ImmutableMap<string, ITemplate>;
   relevantOptions: any;
 };

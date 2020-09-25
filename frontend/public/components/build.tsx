@@ -99,6 +99,7 @@ const menuActions = [
 
 export enum BuildStrategyType {
   Docker = 'Docker',
+  Devfile = 'Devfile',
   Custom = 'Custom',
   JenkinsPipeline = 'JenkinsPipeline',
   Source = 'Source',
@@ -244,6 +245,8 @@ export const getStrategyType = (strategy: BuildStrategyType) => {
   switch (strategy) {
     case BuildStrategyType.Docker:
       return 'dockerStrategy';
+    case BuildStrategyType.Devfile:
+      return 'devfileStrategy';
     case BuildStrategyType.Custom:
       return 'customStrategy';
     case BuildStrategyType.JenkinsPipeline:
@@ -324,6 +327,7 @@ const BuildsTableHeader = () => {
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
+      id: 'namespace',
     },
     {
       title: 'Status',
@@ -356,7 +360,10 @@ const BuildsTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }
           title={obj.metadata.name}
         />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      <TableData
+        className={classNames(tableColumnClasses[1], 'co-break-word')}
+        columnID="namespace"
+      >
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>

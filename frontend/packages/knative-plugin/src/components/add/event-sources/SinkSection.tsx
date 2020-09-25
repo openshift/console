@@ -12,7 +12,7 @@ import {
   knativeEventingResourcesBroker,
 } from '../../../utils/get-knative-resources';
 import { getDynamicChannelResourceList } from '../../../utils/fetch-dynamic-eventsources-utils';
-import { sourceSinkType } from '../import-types';
+import { sourceSinkType, SinkType } from '../import-types';
 
 interface SinkSectionProps {
   namespace: string;
@@ -24,7 +24,12 @@ interface SinkResourcesProps {
 }
 
 const SinkUri: React.FC = () => (
-  <>
+  <FormGroup
+    fieldId={getFieldId('sink-name', 'uri')}
+    helperText={`A Universal Resource Indicator where events are going to be delivered. Ex.
+    "http://cluster.example.com/svc"`}
+    isRequired
+  >
     <InputField
       type={TextInputTypes.text}
       name="sink.uri"
@@ -32,16 +37,12 @@ const SinkUri: React.FC = () => (
       data-test-id="sink-section-uri"
       required
     />
-    <div className="help-block">
-      A Universal Resource Indicator where events are going to be delivered. Ex.
-      &quot;http://cluster.example.com/svc&quot;
-    </div>
-  </>
+  </FormGroup>
 );
 
 const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) => {
   const [resourceAlert, setResourceAlert] = React.useState(false);
-  const { setFieldValue, setFieldTouched, validateForm, initialValues } = useFormikContext<
+  const { setFieldValue, setFieldTouched, validateForm, initialValues, touched } = useFormikContext<
     FormikValues
   >();
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
@@ -69,8 +70,17 @@ const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) 
     ...knativeEventingResourcesBroker(namespace),
   ];
 
-  const handleOnLoad = (resourceList: { [key: string]: string }) =>
-    _.isEmpty(resourceList) ? setResourceAlert(true) : setResourceAlert(false);
+  const handleOnLoad = (resourceList: { [key: string]: string }) => {
+    if (_.isEmpty(resourceList)) {
+      setResourceAlert(true);
+      if (!touched.sinkType) {
+        setFieldValue('sinkType', SinkType.Uri);
+        setFieldTouched('sinkType', true);
+      }
+    } else {
+      setResourceAlert(false);
+    }
+  };
 
   // filter out channels backing brokers
   const resourceFilter = (resource: K8sResourceKind) => {

@@ -5,7 +5,7 @@ import { PersistentVolumeModel, StorageClassModel, NodeModel } from '@console/in
 import { WatchK8sResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SubscriptionModel } from '@console/operator-lifecycle-manager';
 import { LocalVolumeDiscoveryResult } from '@console/local-storage-operator-plugin/src/models';
-import { LSO_NAMESPACE } from '@console/local-storage-operator-plugin/src/constants';
+import { LOCAL_STORAGE_NAMESPACE } from '@console/local-storage-operator-plugin/src/constants';
 import { CephClusterModel, CephBlockPoolModel } from '../models';
 import { CEPH_STORAGE_NAMESPACE } from '.';
 import { CAPACITY_USAGE_QUERIES, StorageDashboardQuery } from './queries';
@@ -31,7 +31,7 @@ export const scResource: WatchK8sResource = {
 
 export const LSOSubscriptionResource: WatchK8sResource = {
   kind: referenceForModel(SubscriptionModel),
-  namespace: LSO_NAMESPACE,
+  namespace: LOCAL_STORAGE_NAMESPACE,
   isList: false,
   name: 'local-storage-operator',
 };

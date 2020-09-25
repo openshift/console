@@ -53,7 +53,7 @@ export const getEventSourcesDepResource = (formData: EventSourceFormData): K8sRe
     sink,
   } = formData;
 
-  const defaultLabel = getAppLabels(name, applicationName);
+  const defaultLabel = getAppLabels({ name, applicationName });
   const eventSrcData = data[type.toLowerCase()];
   const { name: sinkName, kind: sinkKind, apiVersion: sinkApiVersion, uri: sinkUri } = sink;
   const eventSourceResource: K8sResourceKind = {
@@ -157,7 +157,7 @@ export const getEventSourceData = (source: string) => {
       schedule: '',
     },
     pingsource: {
-      data: '',
+      jsonData: '',
       schedule: '',
     },
     sinkbinding: {
@@ -223,7 +223,7 @@ export const getEventSourceConnectorList = (
   _.reduce(
     csvData,
     (acm, cv) => {
-      const parseCSVData = parseALMExamples(cv);
+      const parseCSVData = parseALMExamples(cv, false);
       _.forEach(parseCSVData, (res) => {
         if (
           _.findIndex(acm, res) === -1 &&

@@ -10,7 +10,7 @@ import {
 import { RevisionModel, EventingSubscriptionModel } from '../../../models';
 import { KnativeResourceOverviewPage } from '../KnativeResourceOverviewPage';
 import SinkUriResourcesTab from '../SinkUriResourcesTab';
-import { NodeType } from '../../../topology/knative-topology-utils';
+import { NodeType } from '../../../topology/topology-types';
 
 describe('KnativeResourceOverviewPage', () => {
   let item: OverviewItem;

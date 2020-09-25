@@ -22,4 +22,5 @@ export const humanizeLatency: Humanize = (value) => {
   return humanizedTime;
 };
 
-export const getLatestValue = (stats: DataPoint[]) => Number(_.get(stats[stats.length - 1], 'y'));
+export const getLatestValue = (stats: DataPoint[] = []) =>
+  Number(_.get(stats[stats.length - 1], 'y'));

@@ -5,8 +5,9 @@ import {
   withDragNode,
   withSelection,
   withCreateConnector,
-  withRemoveConnector,
 } from '@patternfly/react-topology';
+import { Kebab, kebabOptionsToMenu } from '@console/internal/components/utils';
+import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import {
   noRegroupWorkloadContextMenu,
   nodeDragSourceSpec,
@@ -15,13 +16,25 @@ import {
   withEditReviewAccess,
   createConnectorCallback,
   CreateConnector,
+  createMenuItems,
   TYPE_SERVICE_BINDING,
   ServiceBinding,
 } from '../../components';
-import { removeServiceBindingCallback } from '../actions/serviceBindings';
 import { TYPE_OPERATOR_BACKED_SERVICE, TYPE_OPERATOR_WORKLOAD } from './const';
 import OperatorBackedService from './OperatorBackedService';
 import { OperatorWorkloadNode } from './OperatorWorkloadNode';
+import { OdcBaseEdge } from '../../elements';
+
+const serviceBindingActions = (edge: OdcBaseEdge) => {
+  const sbr = edge.getResource();
+  const { common } = Kebab.factory;
+  const menuActions = [
+    ...Kebab.getExtensionsActionsForKind(modelFor(referenceFor(sbr))),
+    ...common,
+  ];
+  const actions = menuActions.map((a) => a(modelFor(referenceFor(sbr)), sbr));
+  return createMenuItems(kebabOptionsToMenu(actions));
+};
 
 export const getOperatorsComponentFactory = (): ComponentFactory => {
   return (kind, type): React.ComponentType<{ element: GraphElement }> | undefined => {
@@ -42,7 +55,7 @@ export const getOperatorsComponentFactory = (): ComponentFactory => {
           ),
         );
       case TYPE_SERVICE_BINDING:
-        return withRemoveConnector(removeServiceBindingCallback)(ServiceBinding);
+        return withContextMenu(serviceBindingActions)(ServiceBinding);
       default:
         return undefined;
     }

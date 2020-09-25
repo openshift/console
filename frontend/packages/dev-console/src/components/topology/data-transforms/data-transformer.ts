@@ -2,6 +2,7 @@ import { EdgeModel, Model } from '@patternfly/react-topology';
 import { createOverviewItemForType } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
+import { Alerts } from '@console/internal/components/monitoring/types';
 import { getPipelinesAndPipelineRunsForResource } from '../../../utils/pipeline-plugin-utils';
 import {
   TopologyDataResources,
@@ -57,7 +58,9 @@ export const getTrafficConnectors = (
   }, []);
 };
 
-const getBaseTopologyDataModel = (resources: TopologyDataResources): Model => {
+const getBaseTopologyDataModel = (
+  resources: { [x: string]: Alerts } | TopologyDataResources,
+): Model => {
   const baseDataModel: Model = {
     nodes: [],
     edges: [],
@@ -93,6 +96,39 @@ const getBaseTopologyDataModel = (resources: TopologyDataResources): Model => {
   return baseDataModel;
 };
 
+const updateAppGroupChildren = (model: Model) => {
+  model.nodes.forEach((n) => {
+    if (n.type === TYPE_APPLICATION_GROUP) {
+      // Filter out any children removed by depicters
+      n.children = n.children.filter((id) => model.nodes.find((child) => child.id === id));
+      n.data.groupResources = n.children?.map((id) => model.nodes.find((c) => id === c.id)) ?? [];
+    }
+  });
+
+  // Remove any empty groups
+  model.nodes = model.nodes.filter(
+    (n) => n.type !== TYPE_APPLICATION_GROUP || n.children.length > 0,
+  );
+};
+
+const createVisualConnectors = (model: Model, workloadResources: K8sResourceKind[]) => {
+  // Create all visual connectors
+  workloadResources.forEach((dc) => {
+    model.edges.push(...getTopologyEdgeItems(dc, workloadResources));
+  });
+};
+
+const createTrafficConnectors = (
+  model: Model,
+  workloadResources: K8sResourceKind[],
+  trafficData?: TrafficData,
+) => {
+  // Create traffic connectors
+  if (trafficData) {
+    model.edges.push(...getTrafficConnectors(trafficData, workloadResources));
+  }
+};
+
 export const baseDataModelGetter = (
   model: Model,
   namespace: string,
@@ -100,28 +136,15 @@ export const baseDataModelGetter = (
   workloadResources: K8sResourceKind[],
   dataModelDepicters?: TopologyDataModelDepicted[],
   trafficData?: TrafficData,
+  monitoringAlerts?: Alerts,
 ): Model => {
-  const baseModel = getBaseTopologyDataModel(resources);
+  const res = { ...resources, monitoringAlerts };
+  const baseModel = getBaseTopologyDataModel(res);
   addToTopologyDataModel(baseModel, model, dataModelDepicters);
 
-  model.nodes.forEach((n) => {
-    if (n.type === TYPE_APPLICATION_GROUP) {
-      // Filter out any children removed by depicters
-      n.children = n.children.filter((id) => model.nodes.find((child) => child.id === id));
-      n.data.groupResources =
-        n.children?.map((id) => model.nodes.find((c) => id === c.id)?.data) ?? [];
-    }
-  });
-
-  // Create all visual connectors
-  workloadResources.forEach((dc) => {
-    model.edges.push(...getTopologyEdgeItems(dc, workloadResources));
-  });
-
-  // Create traffic connectors
-  if (trafficData) {
-    model.edges.push(...getTrafficConnectors(trafficData, workloadResources));
-  }
+  updateAppGroupChildren(model);
+  createVisualConnectors(model, workloadResources);
+  createTrafficConnectors(model, workloadResources, trafficData);
 
   return model;
 };

@@ -18,7 +18,7 @@ import {
 } from '../../module/k8s';
 import {
   alertDescription,
-  alertingRuleIsActive,
+  alertingRuleHasAlertState,
   alertingRuleSource,
   alertSource,
   alertState,
@@ -48,10 +48,10 @@ export const tableFilters: TableFilterMap = {
   },
 
   alerts: (values, alert: Alert) => {
-    const labels = getLabelsAsString(alert, 'labels');
     if (!values.all) {
       return true;
     }
+    const labels = getLabelsAsString(alert, 'labels');
     return !!values.all.every((v) => labels.includes(v));
   },
 
@@ -64,8 +64,8 @@ export const tableFilters: TableFilterMap = {
   'alert-state': (filter, alert: Alert) =>
     filter.selected.has(alertState(alert)) || _.isEmpty(filter.selected),
 
-  'alerting-rule-active': (filter, rule: Rule) =>
-    filter.selected.has(alertingRuleIsActive(rule)) || _.isEmpty(filter.selected),
+  'alerting-rule-has-alert-state': (filter, rule: Rule) =>
+    alertingRuleHasAlertState(rule, filter.selected) || _.isEmpty(filter.selected),
 
   'alerting-rule-name': (filter, rule: Rule) => fuzzyCaseInsensitive(filter, rule.name),
 
@@ -120,10 +120,10 @@ export const tableFilters: TableFilterMap = {
   },
 
   labels: (values, obj) => {
-    const labels = getLabelsAsString(obj);
     if (!values.all) {
       return true;
     }
+    const labels = getLabelsAsString(obj);
     return !!values.all.every((v) => labels.includes(v));
   },
 

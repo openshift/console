@@ -3,7 +3,7 @@ import { createResource, deleteResource } from '@console/shared/src/test-utils/u
 import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/constants/common';
 import { getVMIManifest } from './mocks/mocks';
 import { resourceRows } from '@console/internal-integration-tests/views/crud.view';
-import { vmDetailCdEditButton, vmDetailBootOrderEditButton } from '../views/virtualMachine.view';
+import { vmDetailBootOrderEditButton } from '../views/virtualMachine.view';
 import { VirtualMachineInstance } from './models/virtualMachineInstance';
 import * as kubevirtDetailView from '../views/kubevirtUIResource.view';
 import { VM_STATUS, TAB } from './utils/constants/vm';
@@ -27,15 +27,6 @@ describe('KubeVirt VMI detail - editing', () => {
     vmi = await waitForVM(testVM, VM_STATUS.Running);
     await vmi.navigateToOverview();
   });
-
-  it(
-    'ID(CNV-4039) should not have cdrom edit buttons',
-    async () => {
-      await vmi.navigateToDetail();
-      expect(vmDetailCdEditButton(vmi.namespace, vmi.name).isPresent()).toBe(false);
-    },
-    VM_CREATE_AND_EDIT_TIMEOUT_SECS,
-  );
 
   it(
     'ID(CNV-4040) should not have boot order edit buttons',

@@ -27,7 +27,7 @@ const DeleteCatalogSourceModal: React.FC<DeleteCatalogSourceModalProps> = ({
   const submit = React.useCallback(
     (event: React.FormEvent<EventTarget>) => {
       event.preventDefault();
-      return handlePromise(k8sKill(kind, resource)).then(close);
+      return handlePromise(k8sKill(kind, resource), close);
     },
     [close, handlePromise, kind, resource],
   );

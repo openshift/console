@@ -23,8 +23,8 @@ import {
   DragEvent,
   DragOperationWithType,
 } from '@patternfly/react-topology';
+import { isWorkloadRegroupable } from '../../../utils/application-utils';
 import { createConnection } from './createConnection';
-import { removeConnection } from './removeConnection';
 import { moveNodeToGroup } from './moveNodeToGroup';
 import { graphContextMenu, groupContextMenu } from './nodeContextMenu';
 
@@ -114,7 +114,7 @@ const nodeDragSourceSpec = (
 > => ({
   item: { type: NODE_DRAG_TYPE },
   operation: (monitor, props) => {
-    return (canEdit || props.canEdit) && allowRegroup
+    return (canEdit || props.canEdit) && allowRegroup && isWorkloadRegroupable(props.element)
       ? {
           [Modifiers.SHIFT]: { type: REGROUP_OPERATION, edit: true },
         }
@@ -124,7 +124,8 @@ const nodeDragSourceSpec = (
   begin: (monitor, props): DragNodeObject => {
     return {
       element: props.element,
-      allowRegroup: (canEdit || props.canEdit) && allowRegroup,
+      allowRegroup:
+        (canEdit || props.canEdit) && allowRegroup && isWorkloadRegroupable(props.element),
     };
   },
   end: async (dropResult, monitor, props) => {
@@ -345,13 +346,6 @@ const createConnectorCallback = () => (
   return Promise.resolve(createVisualConnector(source, target));
 };
 
-const removeConnectorCallback = (edge: Edge): void => {
-  removeConnection(edge).catch((error) => {
-    errorModal({ title: 'Error removing connection', error: error.message });
-  });
-  return null;
-};
-
 export {
   GraphComponentProps,
   NodeComponentProps,
@@ -366,11 +360,12 @@ export {
   edgeDragSourceSpec,
   noDropTargetSpec,
   createConnectorCallback,
-  removeConnectorCallback,
   REGROUP_OPERATION,
   MOVE_CONNECTOR_DROP_TYPE,
   NODE_DRAG_TYPE,
   EDGE_DRAG_TYPE,
   withNoDrop,
   withContextMenu,
+  canDropEdgeOnNode,
+  highlightNode,
 };

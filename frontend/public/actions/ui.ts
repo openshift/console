@@ -10,15 +10,18 @@ import {
   ALL_NAMESPACES_KEY,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
   LAST_PERSPECTIVE_LOCAL_STORAGE_KEY,
+  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants';
 import { K8sResourceKind, PodKind, NodeKind } from '../module/k8s';
 import { allModels } from '../module/k8s/k8s-models';
 import { detectFeatures, clearSSARFlags } from './features';
 import { OverviewSpecialGroup } from '../components/overview/constants';
-import { setClusterID, setCreateProjectMessage, setUser, setConsoleLinks } from './common';
+import { setClusterID, setCreateProjectMessage, setUser } from './common';
 import { Rule } from '../components/monitoring/types';
+import { subsClient } from '../graphql/client';
 
 export enum ActionType {
+  SetTableColumns = 'setTableColumns',
   DismissOverviewDetails = 'dismissOverviewDetails',
   SelectOverviewDetailsTab = 'selectOverviewDetailsTab',
   SelectOverviewItem = 'selectOverviewItem',
@@ -37,9 +40,9 @@ export enum ActionType {
   SetMonitoringData = 'setMonitoringData',
   ToggleMonitoringGraphs = 'monitoringToggleGraphs',
   NotificationDrawerToggleExpanded = 'notificationDrawerExpanded',
-  NotificationDrawerToggleRead = 'notificationDrawerRead',
   QueryBrowserAddQuery = 'queryBrowserAddQuery',
   QueryBrowserDeleteAllQueries = 'queryBrowserDeleteAllQueries',
+  QueryBrowserDeleteAllSeries = 'queryBrowserDeleteAllSeries',
   QueryBrowserDeleteQuery = 'queryBrowserDeleteQuery',
   QueryBrowserDismissNamespaceAlert = 'queryBrowserDismissNamespaceAlert',
   QueryBrowserInsertText = 'queryBrowserInsertText',
@@ -61,7 +64,6 @@ export enum ActionType {
   UpdateOverviewLabels = 'updateOverviewLabels',
   UpdateOverviewFilterValue = 'updateOverviewFilterValue',
   UpdateTimestamps = 'updateTimestamps',
-  SetConsoleLinks = 'setConsoleLinks',
   SetPodMetrics = 'setPodMetrics',
   SetNamespaceMetrics = 'setNamespaceMetrics',
   SetNodeMetrics = 'setNodeMetrics',
@@ -257,12 +259,14 @@ export const startImpersonate = (kind: string, name: string) => async (dispatch,
   }
 
   dispatch(beginImpersonate(kind, name, subprotocols));
+  subsClient.close(false, true);
   dispatch(clearSSARFlags());
   dispatch(detectFeatures());
   history.push(window.SERVER_FLAGS.basePath);
 };
 export const stopImpersonate = () => (dispatch) => {
   dispatch(endImpersonate());
+  subsClient.close(false, true);
   dispatch(clearSSARFlags());
   dispatch(detectFeatures());
   history.push(window.SERVER_FLAGS.basePath);
@@ -281,6 +285,19 @@ export const sortList = (
   history.replace(`${url.pathname}?${sp.toString()}${url.hash}`);
 
   return action(ActionType.SortList, { listId, field, func, orderBy });
+};
+export const setTableColumns = (id: string, selectedColumns: Set<string>) => {
+  let currentColumns = {};
+  try {
+    currentColumns = JSON.parse(localStorage.getItem(COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY)) || {};
+  } catch (e) {
+    // Error parsing stored columns. Flag an error and add the selected columns to an empty object
+    /* eslint-disable-next-line no-console */
+    console.error('Error parsing column filters from local storage', e);
+  }
+  currentColumns[id] = [...selectedColumns];
+  localStorage.setItem(COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY, JSON.stringify(currentColumns));
+  return action(ActionType.SetTableColumns, { id, selectedColumns });
 };
 export const selectOverviewItem = (uid: string) => action(ActionType.SelectOverviewItem, { uid });
 export const selectOverviewDetailsTab = (tab: string) =>
@@ -344,9 +361,9 @@ export const monitoringSetRules = (
 export const monitoringToggleGraphs = () => action(ActionType.ToggleMonitoringGraphs);
 export const notificationDrawerToggleExpanded = () =>
   action(ActionType.NotificationDrawerToggleExpanded);
-export const notificationDrawerToggleRead = () => action(ActionType.NotificationDrawerToggleRead);
 export const queryBrowserAddQuery = () => action(ActionType.QueryBrowserAddQuery);
 export const queryBrowserDeleteAllQueries = () => action(ActionType.QueryBrowserDeleteAllQueries);
+export const queryBrowserDeleteAllSeries = () => action(ActionType.QueryBrowserDeleteAllSeries);
 export const queryBrowserDismissNamespaceAlert = () =>
   action(ActionType.QueryBrowserDismissNamespaceAlert);
 export const queryBrowserDeleteQuery = (index: number) =>
@@ -386,6 +403,7 @@ export const setPVCMetrics = (pvcMetrics: PVCMetrics) =>
 
 // TODO(alecmerdler): Implement all actions using `typesafe-actions` and add them to this export
 const uiActions = {
+  setTableColumns,
   setCurrentLocation,
   setActiveApplication,
   setActiveNamespace,
@@ -418,6 +436,7 @@ const uiActions = {
   monitoringToggleGraphs,
   queryBrowserAddQuery,
   queryBrowserDeleteAllQueries,
+  queryBrowserDeleteAllSeries,
   queryBrowserDeleteQuery,
   queryBrowserDismissNamespaceAlert,
   queryBrowserInsertText,
@@ -428,13 +447,11 @@ const uiActions = {
   queryBrowserSetPollInterval,
   queryBrowserToggleIsEnabled,
   queryBrowserToggleSeries,
-  setConsoleLinks,
   setPodMetrics,
   setNamespaceMetrics,
   setNodeMetrics,
   setPVCMetrics,
   notificationDrawerToggleExpanded,
-  notificationDrawerToggleRead,
   setPinnedResources,
 };
 

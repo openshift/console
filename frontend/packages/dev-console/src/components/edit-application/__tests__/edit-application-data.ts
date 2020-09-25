@@ -369,7 +369,7 @@ export const gitImportInitialValues: GitImportFormData = {
     disable: true,
     create: true,
     targetPort: '8080-tcp',
-    unknownTargetPort: '',
+    unknownTargetPort: '8080',
     defaultUnknownPort: 8080,
     path: '',
     hostname: 'nationalparks-py-div.apps.rorai-cluster34.devcluster.openshift.com',
@@ -443,13 +443,14 @@ export const gitImportInitialValues: GitImportFormData = {
 export const externalImageValues: DeployImageFormData = {
   formType: 'edit',
   name: 'nationalparks-py',
-  application: { name: '', selectedKey: '#UNASSIGNED_KEY#' },
+  application: { name: '', selectedKey: UNASSIGNED_KEY },
   project: { name: 'div' },
+  runtimeIcon: 'python',
   route: {
     disable: true,
     create: true,
     targetPort: '8080-tcp',
-    unknownTargetPort: '',
+    unknownTargetPort: '8080',
     defaultUnknownPort: 8080,
     path: '',
     hostname: 'nationalparks-py-div.apps.rorai-cluster34.devcluster.openshift.com',
@@ -519,13 +520,14 @@ export const externalImageValues: DeployImageFormData = {
 export const internalImageValues: DeployImageFormData = {
   formType: 'edit',
   name: 'nationalparks-py',
-  application: { name: '', selectedKey: '#UNASSIGNED_KEY#' },
+  application: { name: '', selectedKey: UNASSIGNED_KEY },
   project: { name: 'div' },
+  runtimeIcon: 'python',
   route: {
     disable: true,
     create: true,
     targetPort: '8080-tcp',
-    unknownTargetPort: '',
+    unknownTargetPort: '8080',
     defaultUnknownPort: 8080,
     path: '',
     hostname: 'nationalparks-py-div.apps.rorai-cluster34.devcluster.openshift.com',
@@ -616,7 +618,7 @@ export const knAppResources: AppResources = {
 };
 
 export const knExternalImageValues: DeployImageFormData = {
-  application: { name: '', selectedKey: '#UNASSIGNED_KEY#' },
+  application: { name: '', selectedKey: UNASSIGNED_KEY },
   build: { env: [], strategy: '', triggers: {} },
   deployment: { env: [], replicas: 1, triggers: { image: false } },
   formType: 'edit',
@@ -646,6 +648,7 @@ export const knExternalImageValues: DeployImageFormData = {
   name: 'nationalparks-py',
   pipeline: { enabled: false },
   project: { name: 'div' },
+  runtimeIcon: null,
   registry: 'external',
   resources: Resources.KnativeService,
   route: {

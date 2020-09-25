@@ -1,8 +1,8 @@
-import { $, $$, browser, ExpectedConditions as until, by } from 'protractor';
+import { $, $$, browser, ExpectedConditions as until } from 'protractor';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as sideNavView from '@console/internal-integration-tests/views/sidenav.view';
 import { click } from '@console/shared/src/test-utils/utils';
-import { PVC_STATUS } from '../utils/consts';
+import { PVC_STATUS, SECOND } from '../utils/consts';
 import { PvcType } from '../utils/helpers';
 
 export const selectItemFromDropdown = async (item, dropdownElement) => {
@@ -19,8 +19,8 @@ export const inputPVCSize = $('[name=requestSizeValue]');
 export const sizeUnitsDropdown = $('[data-test-id=dropdown-button]');
 
 // expand pvc
-export const expandButton = $(by.buttonText('Expand'));
-export const capacityUnitDropdown = $('[data-test-id="dropdown-button"]');
+export const expandButton = $('#confirm-action');
+export const capacityUnitDropdown = $('.modal-body [data-test-id="dropdown-button"]');
 export const expandSizeOption = (size: string) => $(`[data-test-dropdown-menu="${size}"]`);
 
 // pvc details
@@ -81,4 +81,5 @@ export const deletePersistentVolumeClaim = async (name: string, namespace: strin
   await crudView.filterForName(name);
   await crudView.isLoaded();
   await crudView.deleteRow('PersistentVolumeClaim')(name);
+  await browser.sleep(2 * SECOND);
 };

@@ -169,4 +169,30 @@ describe('Gitlab Service', () => {
       nockDone();
     });
   });
+
+  it('should detect Devfile', () => {
+    const gitSource = { url: 'https://gitlab.com/rescott/che.git' };
+
+    const gitService = new GitlabService(gitSource);
+
+    return nockBack('devfile.json').then(async ({ nockDone, context }) => {
+      const isDevfilePresent = await gitService.isDevfilePresent();
+      expect(isDevfilePresent).toBe(true);
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
+
+  it('should not detect Devfile', () => {
+    const gitSource: GitSource = { url: 'https://gitlab.com/jpratik999/devconsole-git.git' };
+
+    const gitService = new GitlabService(gitSource);
+
+    return nockBack('no-devfile.json').then(async ({ nockDone, context }) => {
+      const isDevfilePresent = await gitService.isDevfilePresent();
+      expect(isDevfilePresent).toBe(false);
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
 });

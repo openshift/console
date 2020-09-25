@@ -7,21 +7,8 @@ export const getKind = (value) => _.get(value, 'kind') as K8sResourceKind['kind'
 export const getGeneratedName = (value) =>
   _.get(value, 'metadata.generateName') as K8sResourceKind['metadata']['generateName'];
 
-export const getLabels = (entity: K8sResourceKind, defaultValue?: any) =>
-  _.get(entity, 'metadata.labels', defaultValue) as K8sResourceKind['metadata']['labels'];
-export const getAnnotations = (vm: VMGenericLikeEntityKind, defaultValue?: any) =>
-  _.get(vm, 'metadata.annotations', defaultValue);
-export const getAnnotation = (
-  vm: VMGenericLikeEntityKind,
-  annotationName: string,
-  defaultValue?: any,
-) => _.get(vm, ['metadata', 'annotations', annotationName], defaultValue);
-
 export const getDescription = (vm: VMGenericLikeEntityKind) =>
   _.get(vm, 'metadata.annotations.description');
-
-export const getLabelValue = (entity: K8sResourceKind, label: string): string =>
-  _.get(entity, ['metadata', 'labels', label]);
 
 export const getStorageSize = (value): string => _.get(value, 'requests.storage');
 
@@ -29,6 +16,29 @@ export const getValueByPrefix = (obj = {}, keyPrefix: string): string => {
   const objectKey = Object.keys(obj).find((key) => key.startsWith(keyPrefix));
   return objectKey ? obj[objectKey] : null;
 };
+
+// Labels
+export const getLabels = (entity: K8sResourceKind, defaultValue?: { [key: string]: string }) =>
+  _.get(entity, 'metadata.labels', defaultValue) as K8sResourceKind['metadata']['labels'];
+
+export const getLabelValue = (entity: K8sResourceKind, label: string): string =>
+  _.get(entity, ['metadata', 'labels', label]);
+
+// Annotations
+export const getAnnotations = (
+  vm: VMGenericLikeEntityKind,
+  defaultValue?: { [key: string]: string },
+): { [key: string]: string } => _.get(vm, 'metadata.annotations', defaultValue);
+
+export const getAnnotation = (
+  entity: K8sResourceKind,
+  annotationName: string,
+  defaultValue?: string,
+): string => _.get(entity, ['metadata', 'annotations', annotationName], defaultValue);
+
+export const getParameterValue = (obj, name: string, defaultValue = null): string =>
+  _.get(obj, ['parameters'], []).find((parameter) => parameter.name === name)?.value ||
+  defaultValue;
 
 export const getAnnotationKeySuffix = (
   entity: K8sResourceKind,

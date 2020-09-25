@@ -8,6 +8,7 @@ export type UIStorageValidation = {
     container?: ValidationObject;
     diskInterface?: ValidationObject;
     pvc?: ValidationObject;
+    type?: ValidationObject;
   };
   isValid: boolean;
   hasAllRequiredFilled: boolean;

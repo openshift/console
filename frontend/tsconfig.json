@@ -1,17 +1,17 @@
 {
   "compilerOptions": {
+    "skipLibCheck": true,
     "baseUrl": ".",
     "module": "esnext",
     "moduleResolution": "node",
     "outDir": "./public/dist/build/",
     "target": "es2016",
-    "skipLibCheck": true,
     "jsx": "react",
     "allowJs": true,
     "experimentalDecorators": true,
     "sourceMap": true,
     "noUnusedLocals": true,
-    "types": ["jest"],
+    "types": ["jest", "cypress", "cypress-axe"],
     "paths": {
       "protractor": ["integration-tests/protractor.d.ts"]
     },

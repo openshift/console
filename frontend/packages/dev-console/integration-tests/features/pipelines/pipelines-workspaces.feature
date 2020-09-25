@@ -1,13 +1,12 @@
 Feature: Workspaces
-    As a user I want to add or remove secrets details to pipeline
+    As a user, I want to add or remove secrets details to pipeline
 
 Background:
-    Given user logged into the openshift application
-    And openshift cluster is installed with pipeline operator
-    And user is at the project namespace "AUT_MB_Demo" in dev perspecitve
+    Given user has installed OpenShift Pipelines operator
+    And user has selected namespace "aut-pipeline-workspaces"
 
 
-@regression, @smoke
+@regression, @smoke, @manual
 Scenario: Create the pipeline with workspace : P-012-TC01
 
 

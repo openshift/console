@@ -12,13 +12,3 @@ export const getIsKubevirtResource = () =>
   import('./isKubevirtResource' /* webpackChunkName: "kubevirt-topology-components" */).then(
     (m) => m.isKubevirtResource,
   );
-
-export const getTopologyFilters = () =>
-  import('./kubevirtFilters' /* webpackChunkName: "kubevirt-topology-components" */).then(
-    (m) => m.getTopologyFilters,
-  );
-
-export const applyDisplayOptions = () =>
-  import('./kubevirtFilters' /* webpackChunkName: "kubevirt-topology-components" */).then((m) =>
-    m.applyDisplayOptions(),
-  );

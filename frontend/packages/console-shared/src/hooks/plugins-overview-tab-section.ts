@@ -10,7 +10,7 @@ export const getResourceTabSectionComp = (t: OverviewTabSection): React.FC<Async
 export const usePluginsOverviewTabSection = (
   item: OverviewItem,
 ): { Component: React.FC<AsyncComponentProps>; key: string }[] => {
-  const tabSections = useExtensions(isOverviewTabSection);
+  const tabSections = useExtensions<OverviewTabSection>(isOverviewTabSection);
   return React.useMemo(
     () =>
       tabSections

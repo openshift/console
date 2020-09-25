@@ -1,17 +1,17 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
+import { Tooltip } from '@patternfly/react-core';
 import {
   observer,
   Node,
   WithSelectionProps,
   WithDndDropProps,
-  WithContextMenuProps,
   useAnchor,
-  RectAnchor,
   useCombineRefs,
   useHover,
   useDragNode,
   createSvgIdUrl,
+  useSize,
 } from '@patternfly/react-topology';
 import { useSearchFilter } from '../../filters/useSearchFilter';
 import { nodeDragSourceSpec } from '../../components/componentUtils';
@@ -22,27 +22,27 @@ import {
   NODE_SHADOW_FILTER_ID_HOVER,
 } from '../../components/NodeShadows';
 import { GroupNode } from '../../components/groups/GroupNode';
+import { GroupNodeAnchor } from '../../components/groups/GroupNodeAnchor';
 
 export type OperatorBackedServiceNodeProps = {
   element: Node;
-  editAccess: boolean;
+  droppable?: boolean;
+  canDrop?: boolean;
+  dropTarget?: boolean;
 } & WithSelectionProps &
-  WithContextMenuProps &
   WithDndDropProps;
 
 const OperatorBackedServiceNode: React.FC<OperatorBackedServiceNodeProps> = ({
   element,
-  editAccess,
   selected,
   onSelect,
-  onContextMenu,
-  contextMenuOpen,
   dndDropRef,
+  canDrop,
+  dropTarget,
 }) => {
-  useAnchor(React.useCallback((node: Node) => new RectAnchor(node, 1.5), []));
   const [hover, hoverRef] = useHover();
   const [{ dragging }, dragNodeRef] = useDragNode(
-    nodeDragSourceSpec(TYPE_OPERATOR_BACKED_SERVICE, true, editAccess),
+    nodeDragSourceSpec(TYPE_OPERATOR_BACKED_SERVICE, false),
     {
       element,
     },
@@ -50,41 +50,58 @@ const OperatorBackedServiceNode: React.FC<OperatorBackedServiceNodeProps> = ({
   const refs = useCombineRefs<SVGRectElement>(hoverRef, dragNodeRef, dndDropRef);
   const [filtered] = useSearchFilter(element.getLabel());
   const kind = 'Operator';
-  const { width, height } = element.getDimensions();
+  const { groupResources } = element.getData();
+  const [groupSize, groupRef] = useSize([groupResources]);
+  const width = groupSize ? groupSize.width : 0;
+  const height = groupSize ? groupSize.height : 0;
+  useAnchor(
+    React.useCallback((node: Node) => new GroupNodeAnchor(node, width, height, 1.5), [
+      width,
+      height,
+    ]),
+  );
 
   return (
-    <g
-      ref={refs}
-      onClick={onSelect}
-      onContextMenu={editAccess ? onContextMenu : null}
-      className={classNames('odc-operator-backed-service', {
-        'is-dragging': dragging,
-        'is-selected': selected,
-        'is-filtered': filtered,
-      })}
+    <Tooltip
+      content="Create a binding connector"
+      trigger="manual"
+      isVisible={dropTarget && canDrop}
+      animationDuration={0}
+      position="top"
     >
-      <NodeShadows />
-      <rect
-        className="odc-operator-backed-service__bg"
-        filter={createSvgIdUrl(
-          hover || contextMenuOpen || dragging
-            ? NODE_SHADOW_FILTER_ID_HOVER
-            : NODE_SHADOW_FILTER_ID,
-        )}
-        x={0}
-        y={0}
-        width={width}
-        height={height}
-        rx="5"
-        ry="5"
-      />
-      <GroupNode
-        kind={kind}
-        element={element}
-        groupResources={element.getData().groupResources}
-        typeIconClass={element.getData().data.builderImage}
-      />
-    </g>
+      <g
+        ref={refs}
+        onClick={onSelect}
+        className={classNames('odc-operator-backed-service', {
+          'is-dragging': dragging,
+          'is-highlight': canDrop,
+          'is-selected': selected,
+          'is-filtered': filtered,
+          'is-dropTarget': canDrop && dropTarget,
+        })}
+      >
+        <NodeShadows />
+        <rect
+          className="odc-operator-backed-service__bg"
+          filter={createSvgIdUrl(
+            hover || dragging ? NODE_SHADOW_FILTER_ID_HOVER : NODE_SHADOW_FILTER_ID,
+          )}
+          x={0}
+          y={0}
+          width={width}
+          height={height}
+          rx="5"
+          ry="5"
+        />
+        <GroupNode
+          ref={groupRef}
+          kind={kind}
+          element={element}
+          groupResources={groupResources}
+          typeIconClass={element.getData().data.builderImage}
+        />
+      </g>
+    </Tooltip>
   );
 };
 

@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import {
   useAnchor,
-  RectAnchor,
   useHover,
   Node,
   createSvgIdUrl,
@@ -12,6 +11,7 @@ import {
   WithContextMenuProps,
   observer,
   useCombineRefs,
+  useSize,
 } from '@patternfly/react-topology';
 import {
   NodeShadows,
@@ -20,6 +20,7 @@ import {
 } from '../../components/NodeShadows';
 import { useSearchFilter } from '../../filters/useSearchFilter';
 import { GroupNode } from '../../components/groups/GroupNode';
+import { GroupNodeAnchor } from '../../components/groups/GroupNodeAnchor';
 import { nodeDragSourceSpec } from '../../components/componentUtils';
 import { TYPE_HELM_RELEASE } from './const';
 
@@ -39,14 +40,22 @@ const HelmReleaseNode: React.FC<HelmReleaseNodeProps> = ({
   contextMenuOpen,
   dndDropRef,
 }) => {
-  useAnchor(React.useCallback((node: Node) => new RectAnchor(node, 1.5), []));
   const [hover, hoverRef] = useHover();
   const [{ dragging }, dragNodeRef] = useDragNode(nodeDragSourceSpec(TYPE_HELM_RELEASE, false), {
     element,
   });
   const refs = useCombineRefs<SVGRectElement>(dragNodeRef, dndDropRef, hoverRef);
   const [filtered] = useSearchFilter(element.getLabel());
-  const { width, height } = element.getDimensions();
+  const { groupResources } = element.getData();
+  const [groupSize, groupRef] = useSize([groupResources]);
+  const width = groupSize ? groupSize.width : 0;
+  const height = groupSize ? groupSize.height : 0;
+  useAnchor(
+    React.useCallback((node: Node) => new GroupNodeAnchor(node, width, height, 1.5), [
+      width,
+      height,
+    ]),
+  );
 
   return (
     <g
@@ -75,10 +84,11 @@ const HelmReleaseNode: React.FC<HelmReleaseNodeProps> = ({
         ry="5"
       />
       <GroupNode
+        ref={groupRef}
         kind="HelmRelease"
         element={element}
-        typeIconClass="icon-helm"
-        groupResources={element.getData().groupResources}
+        typeIconClass={element.getData().data.chartIcon || 'icon-helm'}
+        groupResources={groupResources}
       />
     </g>
   );

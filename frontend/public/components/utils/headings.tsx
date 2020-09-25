@@ -3,7 +3,12 @@ import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 import { Breadcrumb, BreadcrumbItem, Button, SplitItem, Split } from '@patternfly/react-core';
-import { Status, HealthChecksAlert } from '@console/shared';
+import {
+  OverviewItem,
+  Status,
+  HealthChecksAlert,
+  YellowExclamationTriangleIcon,
+} from '@console/shared';
 import {
   ActionsMenu,
   FirehoseResult,
@@ -20,7 +25,13 @@ import {
   K8sResourceKindReference,
   referenceForModel,
 } from '../../module/k8s';
-import { ResourceItemDeleting } from '../overview/project-overview';
+import { ManagedByOperatorLink } from './managed-by';
+
+export const ResourceItemDeleting = () => (
+  <span className="co-resource-item__deleting">
+    <YellowExclamationTriangleIcon /> Deleting
+  </span>
+);
 
 export const BreadCrumbs: React.SFC<BreadCrumbsProps> = ({ breadcrumbs }) => (
   <Breadcrumb>
@@ -129,6 +140,9 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
               {kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg" />}{' '}
               <span data-test-id="resource-title" className="co-resource-item__resource-name">
                 {resourceTitle}
+                {data?.metadata?.namespace && data?.metadata?.ownerReferences?.length && (
+                  <ManagedByOperatorLink obj={data} />
+                )}
               </span>
               {resourceStatus && (
                 <ResourceStatus additionalClassNames="hidden-xs">
@@ -195,8 +209,9 @@ export const SidebarSectionHeading: React.SFC<SidebarSectionHeadingProps> = ({
 export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = ({
   kindObj,
   actions,
-  resource,
+  resources,
 }) => {
+  const { obj: resource, ...otherResources } = resources;
   const isDeleting = !!resource.metadata.deletionTimestamp;
   return (
     <div className="overview__sidebar-pane-head resource-overview__heading">
@@ -220,7 +235,7 @@ export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = 
         </div>
         {!isDeleting && (
           <div className="co-actions">
-            <ActionsMenu actions={actions.map((a) => a(kindObj, resource))} />
+            <ActionsMenu actions={actions.map((a) => a(kindObj, resource, otherResources))} />
           </div>
         )}
       </h1>
@@ -267,7 +282,7 @@ export type PageHeadingProps = {
 export type ResourceOverviewHeadingProps = {
   actions: KebabAction[];
   kindObj: K8sKind;
-  resource: K8sResourceKind;
+  resources?: OverviewItem;
 };
 
 export type SectionHeadingProps = {

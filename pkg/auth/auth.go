@@ -23,6 +23,8 @@ import (
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+
+	oscrypto "github.com/openshift/library-go/pkg/crypto"
 )
 
 const (
@@ -151,9 +153,9 @@ func newHTTPClient(issuerCA string, includeSystemRoots bool) (*http.Client, erro
 	httpClient := &http.Client{
 		Transport: &http.Transport{
 			Proxy: http.ProxyFromEnvironment,
-			TLSClientConfig: &tls.Config{
+			TLSClientConfig: oscrypto.SecureTLSConfig(&tls.Config{
 				RootCAs: certPool,
-			},
+			}),
 		},
 		Timeout: time.Second * 5,
 	}
@@ -509,10 +511,10 @@ func NewDexClient(hostAndPort string, caCrt, clientCrt, clientKey string) (api.D
 		}
 	}
 
-	clientTLSConfig := &tls.Config{
+	clientTLSConfig := oscrypto.SecureTLSConfig(&tls.Config{
 		RootCAs:      certPool,
 		Certificates: []tls.Certificate{clientCert},
-	}
+	})
 	creds := credentials.NewTLS(clientTLSConfig)
 
 	conn, err := grpc.Dial(hostAndPort, grpc.WithTransportCredentials(creds))

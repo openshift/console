@@ -57,7 +57,7 @@ Object {
     "host": "",
     "path": "",
     "port": Object {
-      "targetPort": "8081-tcp",
+      "targetPort": "8080-tcp",
     },
     "to": Object {
       "kind": "Service",
@@ -117,7 +117,14 @@ Object {
     "namespace": "mock-project",
   },
   "spec": Object {
-    "ports": Array [],
+    "ports": Array [
+      Object {
+        "name": "8080-tcp",
+        "port": 8080,
+        "protocol": "TCP",
+        "targetPort": 8080,
+      },
+    ],
     "selector": Object {
       "app": "test-app",
       "deploymentconfig": "test-app",

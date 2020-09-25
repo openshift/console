@@ -8,7 +8,7 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
-import { FirehoseResource, resourcePathFromModel } from '@console/internal/components/utils';
+import { FirehoseResource } from '@console/internal/components/utils';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import InventoryItem, {
@@ -23,7 +23,6 @@ import './buckets-card.scss';
 enum BucketsCardQueries {
   BUCKETS_COUNT = 'NooBaa_num_buckets',
   BUCKET_OBJECTS_COUNT = 'NooBaa_num_objects',
-  BUCKET_CLAIMS_OBJECTS_COUNT = 'NooBaa_num_objects_buckets_claims',
   UNHEALTHY_BUCKETS = 'NooBaa_num_unhealthy_buckets',
 }
 
@@ -75,14 +74,6 @@ const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
     BucketsCardQueries.BUCKET_OBJECTS_COUNT,
     'loadError',
   ]);
-  const obcObjectsCount = prometheusResults.getIn([
-    BucketsCardQueries.BUCKET_CLAIMS_OBJECTS_COUNT,
-    'data',
-  ]) as PrometheusResponse;
-  const obcObjectsCountError = prometheusResults.getIn([
-    BucketsCardQueries.BUCKET_CLAIMS_OBJECTS_COUNT,
-    'loadError',
-  ]);
   const unhealthyNoobaaBuckets = prometheusResults.getIn([
     BucketsCardQueries.UNHEALTHY_BUCKETS,
     'data',
@@ -101,9 +92,6 @@ const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
   const obLoadError = resources?.ob?.loadError;
 
   const unhealthyNoobaaBucketsCount = Number(getGaugeValue(unhealthyNoobaaBuckets));
-
-  const obcLink = resourcePathFromModel(NooBaaObjectBucketClaimModel);
-  const obLink = resourcePathFromModel(NooBaaObjectBucketModel);
 
   return (
     <DashboardCard>
@@ -141,17 +129,6 @@ const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
           error={!!obLoadError}
           kind={NooBaaObjectBucketModel}
           resources={obData}
-          TitleComponent={React.useCallback(
-            (props) => (
-              <BucketsTitle
-                objects={obcObjectsCount}
-                link={obLink}
-                error={!!obcObjectsCountError}
-                {...props}
-              />
-            ),
-            [obLink, obcObjectsCount, obcObjectsCountError],
-          )}
           mapper={getObStatusGroups}
         />
         <ResourceInventoryItem
@@ -159,17 +136,6 @@ const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
           error={!!obcLoadError}
           kind={NooBaaObjectBucketClaimModel}
           resources={obcData}
-          TitleComponent={React.useCallback(
-            (props) => (
-              <BucketsTitle
-                objects={obcObjectsCount}
-                link={obcLink}
-                error={!!obcObjectsCountError}
-                {...props}
-              />
-            ),
-            [obcLink, obcObjectsCount, obcObjectsCountError],
-          )}
           mapper={getObcStatusGroups}
         />
       </DashboardCardBody>

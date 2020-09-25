@@ -11,7 +11,7 @@ import {
   deleteResources,
   deleteResource,
 } from '@console/shared/src/test-utils/utils';
-import { VM_BOOTUP_TIMEOUT_SECS, NOT_AVAILABLE } from './utils/constants/common';
+import { VM_BOOTUP_TIMEOUT_SECS } from './utils/constants/common';
 import { multusNAD, getTestDataVolume, flavorConfigs, provisionSources } from './mocks/mocks';
 import { VirtualMachine } from './models/virtualMachine';
 import { ProvisionSource, OperatingSystem, Workload } from './utils/constants/wizard';
@@ -84,7 +84,6 @@ describe('Create VM from Template using wizard', () => {
         profile: vmtData.workload,
         bootOrder: ['rootdisk (Disk)'],
         flavor: `${vmtData.flavor.flavor}: 1 vCPU, 1 GiB Memory`,
-        cdrom: NOT_AVAILABLE,
       };
 
       const found = {
@@ -94,7 +93,6 @@ describe('Create VM from Template using wizard', () => {
         profile: await detailView.vmDetailWorkloadProfile(testName, vmt.name).getText(),
         bootOrder: await detailView.vmDetailBootOrder(testName, vmt.name).getText(),
         flavor: await detailView.vmDetailFlavor(testName, vmt.name).getText(),
-        cdrom: await detailView.vmDetailCd(testName, vmt.name).getText(),
       };
 
       const equal = isEqual(found, expectation);

@@ -1,10 +1,15 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { Alert } from '@patternfly/react-core';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { PromiseComponent, history, resourceListPathFromModel } from '../utils';
-import { k8sKill } from '../../module/k8s/';
+import { k8sKill, referenceForOwnerRef } from '../../module/k8s/';
 import { YellowExclamationTriangleIcon } from '@console/shared';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
+import { findOwner } from '../../module/k8s/managed-by';
+import { k8sList } from '../../module/k8s/resource';
+import { ResourceLink } from '../utils/resource-link';
 
 //Modal for resource deletion and allows cascading deletes if propagationPolicy is provided for the enum
 class DeleteModal extends PromiseComponent {
@@ -14,6 +19,7 @@ class DeleteModal extends PromiseComponent {
     this._cancel = this.props.cancel.bind(this);
     this.state = Object.assign(this.state, {
       isChecked: true,
+      owner: null,
     });
   }
 
@@ -45,8 +51,26 @@ class DeleteModal extends PromiseComponent {
     this.checked = !this.checked;
   }
 
+  componentDidMount() {
+    const { resource } = this.props;
+    const namespace = resource?.metadata?.namespace;
+    if (!namespace || !resource?.metadata?.ownerReferences?.length) {
+      return;
+    }
+    k8sList(ClusterServiceVersionModel, { ns: namespace })
+      .then((data) => {
+        const owner = findOwner(this.props.resource, data);
+        this.setState({ owner });
+      })
+      .catch((e) => {
+        // eslint-disable-next-line no-console
+        console.error('Could not fetch CSVs', e);
+      });
+  }
+
   render() {
     const { kind, resource, message } = this.props;
+    const { owner } = this.state;
     return (
       <form onSubmit={this._submit} name="form" className="modal-content ">
         <ModalTitle>
@@ -75,6 +99,25 @@ class DeleteModal extends PromiseComponent {
                   Delete dependent objects of this resource
                 </label>
               </div>
+            )}
+            {owner && (
+              <Alert
+                className="co-alert co-alert--margin-top"
+                isInline
+                variant="warning"
+                title="Managed resource"
+              >
+                This resource is managed by{' '}
+                <ResourceLink
+                  className="modal__inline-resource-link"
+                  inline
+                  kind={referenceForOwnerRef(owner)}
+                  name={owner.name}
+                  namespace={resource.metadata.namespace}
+                />{' '}
+                and any modifications may be overwritten. Edit the managing resource to preserve
+                changes.
+              </Alert>
             )}
           </div>
         </ModalBody>

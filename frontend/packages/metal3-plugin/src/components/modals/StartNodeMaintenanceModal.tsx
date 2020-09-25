@@ -33,7 +33,7 @@ const StartNodeMaintenanceModal = withHandlePromise<StartNodeMaintenanceModalPro
   const submit = (event) => {
     event.preventDefault();
     const promise = startNodeMaintenance(nodeName, reason);
-    return handlePromise(promise).then(close);
+    return handlePromise(promise, close);
   };
 
   const [cephClusters, loaded] = useK8sWatchResource<K8sResourceKind[]>(cephClusterResource);

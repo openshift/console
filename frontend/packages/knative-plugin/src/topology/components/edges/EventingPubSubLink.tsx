@@ -7,6 +7,7 @@ import {
   observer,
   WithSourceDragProps,
   WithTargetDragProps,
+  WithContextMenuProps,
 } from '@patternfly/react-topology';
 import { getTopologyResourceObject, BaseEdge } from '@console/dev-console/src/components/topology';
 import { EventingBrokerModel } from '@console/knative-plugin/src/models';
@@ -18,7 +19,8 @@ type EventingPubSubLinkProps = {
   element: Edge;
   dragging: boolean;
 } & WithSourceDragProps &
-  WithTargetDragProps;
+  WithTargetDragProps &
+  WithContextMenuProps;
 
 const EventingPubSubLink: React.FC<EventingPubSubLinkProps> = ({
   element,
@@ -26,18 +28,18 @@ const EventingPubSubLink: React.FC<EventingPubSubLinkProps> = ({
   children,
   ...others
 }) => {
-  const resourceObj = getTopologyResourceObject(element.getSource().getData());
+  const resourceSourceObj = getTopologyResourceObject(element.getSource().getData());
   const edgeObj = getTopologyResourceObject(element.getData());
   const edgeHasFilter =
-    resourceObj.kind === EventingBrokerModel.kind &&
+    resourceSourceObj.kind === EventingBrokerModel.kind &&
     Object.keys(edgeObj?.spec?.filter?.attributes ?? {}).length > 0;
-  const resourceModel = modelFor(referenceFor(resourceObj));
+  const resourceModel = modelFor(referenceFor(edgeObj));
   const editAccess = useAccessReview({
     group: resourceModel.apiGroup,
     verb: 'update',
     resource: resourceModel.plural,
-    name: resourceObj.metadata.name,
-    namespace: resourceObj.metadata.namespace,
+    name: edgeObj.metadata.name,
+    namespace: edgeObj.metadata.namespace,
   });
   const markerPoint = element.getEndPoint();
   const edgeClasses = classNames('odc-eventing-pubsub-link', { 'odc-m-editable': editAccess });

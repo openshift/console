@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { navFactory } from '@console/internal/components/utils';
 import { DetailsPage } from '@console/internal/components/factory';
-import { PodModel, TemplateModel } from '@console/internal/models';
+import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
 import { VMDisksAndFileSystemsPage } from '../vm-disks/vm-disks';
-import { VMNics } from '../vm-nics';
 import {
   DataVolumeModel,
   VirtualMachineImportModel,
@@ -27,6 +26,8 @@ import { VMDashboard } from './vm-dashboard';
 import { TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_VM, VM_DETAIL_ENVIRONMENT } from '../../constants/vm';
 import { VMEnvironmentFirehose } from './vm-environment/vm-environment-page';
 import { VMSnapshotsPage } from '../vm-snapshots/vm-snapshots';
+import { VMNics } from '../vm-nics';
+import { PendingChangesWarningFirehose } from './pending-changes-warning';
 
 export const breadcrumbsForVMPage = (match: any) => () => [
   {
@@ -121,6 +122,12 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
       optional: true,
     },
     {
+      kind: PersistentVolumeClaimModel.kind,
+      isList: true,
+      namespace,
+      prop: 'pvcs',
+    },
+    {
       kind: DataVolumeModel.kind,
       isList: true,
       namespace,
@@ -140,7 +147,9 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
       resources={resources}
       breadcrumbsFor={breadcrumbsForVMPage(props.match)}
       customData={{ kindObj: VirtualMachineModel }}
-    />
+    >
+      <PendingChangesWarningFirehose name={name} namespace={namespace} />
+    </DetailsPage>
   );
 };
 

@@ -43,6 +43,7 @@ export enum InternalActionType {
   Dispose = 'KubevirtVMWizardDispose',
   Update = 'KubevirtVMWizardUpdate',
   UpdateCommonData = 'KubevirtVMWizardUpdateCommonData',
+  UpdateCommonDataValue = 'KubevirtVMWizardUpdateCommonDataValue',
   SetExtraWSQueries = 'KubevirtVMWizardSetExtraWSQueries',
   SetGoToStep = 'KubevirtVMWizardSetGoToStep',
   SetTabValidity = 'KubevirtVMWizardSetTabValidity',

@@ -11,17 +11,18 @@ import {
   KNATIVE_EVENT_MESSAGE_APIGROUP,
   KNATIVE_EVENTING_APIGROUP,
 } from '../../const';
-import { RevisionModel, EventingSubscriptionModel } from '../../models';
+import { RevisionModel } from '../../models';
 import { getRevisionActions } from '../../actions/getRevisionActions';
 import { editSinkUri } from '../../actions/edit-sink-uri';
 import {
   isDynamicEventResourceKind,
   isEventingChannelResourceKind,
+  isEventingPubSubLinkKind,
 } from '../../utils/fetch-dynamic-eventsources-utils';
 import OverviewDetailsKnativeResourcesTab from './OverviewDetailsKnativeResourcesTab';
 import KnativeOverview from './KnativeOverview';
 import SinkUriResourcesTab from './SinkUriResourcesTab';
-import { NodeType } from '../../topology/knative-topology-utils';
+import { NodeType } from '../../topology/topology-types';
 
 interface StateProps {
   kindsInFlight?: boolean;
@@ -62,10 +63,14 @@ export const KnativeResourceOverviewPage: React.ComponentType<KnativeResourceOve
       model.apiVersion === apiInfo.version,
   );
 
+  if (!resourceModel) {
+    return null;
+  }
+
   const actions = [];
   if (resourceModel.kind === RevisionModel.kind) {
     actions.push(...getRevisionActions());
-  } else if (resourceModel.kind === EventingSubscriptionModel.kind) {
+  } else if (isEventingPubSubLinkKind(resourceModel.kind)) {
     actions.push(...Kebab.getExtensionsActionsForKind(resourceModel), ...Kebab.factory.common);
   } else {
     actions.push(

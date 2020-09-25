@@ -1,4 +1,5 @@
 import { diskTypeDropdownItems, diskModeDropdownItems } from '../../constants';
+import { HostNamesMap } from '../auto-detect-volume/types';
 
 export const initialState = {
   volumeSetName: '',
@@ -10,9 +11,10 @@ export const initialState = {
   nodeNames: [],
   minDiskSize: '0',
   maxDiskSize: '',
-  diskSizeUnit: 'TiB',
+  diskSizeUnit: 'Ti',
   isValidMaxSize: true,
   nodeNamesForLVS: [],
+  hostNamesMapForLVS: {},
 };
 
 export type State = {
@@ -28,6 +30,7 @@ export type State = {
   diskSizeUnit: string;
   isValidMaxSize: boolean;
   nodeNamesForLVS: string[];
+  hostNamesMapForLVS: HostNamesMap;
 };
 
 export type Action =
@@ -42,7 +45,8 @@ export type Action =
   | { type: 'setMaxDiskSize'; value: string }
   | { type: 'setDiskSizeUnit'; value: string }
   | { type: 'setIsValidMaxSize'; value: boolean }
-  | { type: 'setNodeNamesForLVS'; value: string[] };
+  | { type: 'setNodeNamesForLVS'; value: string[] }
+  | { type: 'setHostNamesMapForLVS'; value: HostNamesMap };
 
 export const reducer = (state: State, action: Action) => {
   switch (action.type) {
@@ -70,6 +74,8 @@ export const reducer = (state: State, action: Action) => {
       return Object.assign({}, state, { isValidMaxSize: action.value });
     case 'setNodeNamesForLVS':
       return Object.assign({}, state, { nodeNamesForLVS: action.value });
+    case 'setHostNamesMapForLVS':
+      return Object.assign({}, state, { hostNamesMapForLVS: action.value });
     default:
       return initialState;
   }

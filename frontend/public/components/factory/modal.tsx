@@ -49,6 +49,7 @@ export const createModalLauncher: CreateModalLauncher = (Component) => (props) =
             className={classNames('modal-dialog', props.modalClassName)}
             overlayClassName="co-overlay"
             shouldCloseOnOverlayClick={!props.blocking}
+            parentSelector={() => document.getElementById('modal-container')}
           >
             <Component
               {...(_.omit(props, 'blocking', 'modalClassName') as any)}
@@ -118,15 +119,27 @@ export const ModalSubmitFooter: React.SFC<ModalSubmitFooterProps> = ({
   cancelText,
   submitDisabled,
   submitDanger,
+  resetText = 'Reset',
+  reset,
 }) => {
   const onCancelClick = (e) => {
     e.stopPropagation();
     cancel(e);
   };
 
+  const onResetClick = (e) => {
+    e.stopPropagation();
+    reset(e);
+  };
+
   return (
     <ModalFooter inProgress={inProgress} errorMessage={errorMessage} message={message}>
       <ActionGroup className="pf-c-form pf-c-form__actions--right pf-c-form__group--no-top-margin">
+        {reset && (
+          <Button variant="link" isInline onClick={onResetClick} id="reset-action">
+            {resetText}
+          </Button>
+        )}
         <Button
           type="button"
           variant="secondary"
@@ -136,11 +149,23 @@ export const ModalSubmitFooter: React.SFC<ModalSubmitFooterProps> = ({
           {cancelText || 'Cancel'}
         </Button>
         {submitDanger ? (
-          <Button type="submit" variant="danger" isDisabled={submitDisabled} id="confirm-action">
+          <Button
+            type="submit"
+            variant="danger"
+            isDisabled={submitDisabled}
+            data-test="confirm-action"
+            id="confirm-action"
+          >
             {submitText}
           </Button>
         ) : (
-          <Button type="submit" variant="primary" isDisabled={submitDisabled} id="confirm-action">
+          <Button
+            type="submit"
+            variant="primary"
+            isDisabled={submitDisabled}
+            data-test="confirm-action"
+            id="confirm-action"
+          >
             {submitText}
           </Button>
         )}
@@ -184,6 +209,8 @@ export type ModalSubmitFooterProps = {
   inProgress: boolean;
   cancel: (e: React.SyntheticEvent<any, Event>) => void;
   cancelText?: React.ReactNode;
+  resetText?: React.ReactNode;
+  reset?: (e: React.SyntheticEvent<any, Event>) => void;
   submitText: React.ReactNode;
   submitDisabled?: boolean;
   submitDanger?: boolean;

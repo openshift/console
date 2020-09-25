@@ -6,7 +6,7 @@ const titleResolver = {
 };
 
 const endpointTitleResolver = {
-  [VMImportProvider.OVIRT]: 'RHV API',
+  [VMImportProvider.OVIRT]: 'the RHV API',
   [VMImportProvider.VMWARE]: 'vCenter',
 };
 

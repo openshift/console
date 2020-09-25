@@ -3,24 +3,26 @@ import { Helmet } from 'react-helmet';
 import { matchPath, match as RMatch, Link, Redirect } from 'react-router-dom';
 import { Tooltip, Popover, Button } from '@patternfly/react-core';
 import { ListIcon, TopologyIcon, QuestionCircleIcon } from '@patternfly/react-icons';
+import { observer } from '@patternfly/react-topology';
+import { useQueryParams } from '@console/shared/src';
 import {
   StatusBox,
   Firehose,
   HintBlock,
-  AsyncComponent,
   removeQueryArgument,
 } from '@console/internal/components/utils';
-
 import EmptyState from '../EmptyState';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import ProjectsExistWrapper from '../ProjectsExistWrapper';
-import ProjectListPage from '../projects/ProjectListPage';
+import CreateProjectListPage from '../projects/CreateProjectListPage';
 import ConnectedTopologyDataController from './TopologyDataController';
 import { RenderProps } from './TopologyDataRenderer';
-import Topology from './Topology';
 import TopologyShortcuts from './TopologyShortcuts';
+import { ConnectedTopologyView } from './TopologyView';
 import { LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY } from './components/const';
 import { TOPOLOGY_SEARCH_FILTER_KEY } from './filters';
+import DataModelProvider from './data-transforms/DataModelProvider';
+import ModelContext, { ExtensibleModel } from './data-transforms/ModelContext';
 
 import './TopologyPage.scss';
 
@@ -52,24 +54,39 @@ const EmptyMsg = () => (
   />
 );
 
-export function renderTopology({ loaded, loadError, model, namespace }: RenderProps) {
+export function renderTopology({
+  loaded,
+  loadError,
+  model,
+  namespace,
+  showGraphView,
+}: RenderProps) {
+  const skeletonOverview = (
+    <div className="skeleton-overview">
+      <div className="skeleton-overview--head" />
+      <div className="skeleton-overview--tile" />
+      <div className="skeleton-overview--tile" />
+      <div className="skeleton-overview--tile" />
+    </div>
+  );
   return (
     <StatusBox
+      skeleton={showGraphView ? undefined : skeletonOverview}
       data={model ? model.nodes : null}
       label="Topology"
       loaded={loaded}
       loadError={loadError}
       EmptyMsg={EmptyMsg}
     >
-      <div className="odc-topology">
-        <Topology model={model} namespace={namespace} />
-      </div>
+      <ConnectedTopologyView showGraphView={showGraphView} model={model} namespace={namespace} />
     </StatusBox>
   );
 }
 
-export const TopologyPage: React.FC<TopologyPageProps> = ({ match }) => {
+export const TopologyPageContext: React.FC<TopologyPageProps> = observer(({ match }) => {
+  const queryParams = useQueryParams();
   const namespace = match.params.name;
+  const dataModelContext = React.useContext<ExtensibleModel>(ModelContext);
   const showListView = !!matchPath(match.path, {
     path: '*/list',
     exact: true,
@@ -95,7 +112,7 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({ match }) => {
       <Redirect
         to={`/topology/${namespace ? `ns/${namespace}` : 'all-namespaces'}/${
           getTopologyActiveView() === 'list' ? 'list' : 'graph'
-        }`}
+        }${queryParams ? `?${queryParams.toString()}` : ''}`}
       />
     );
   }
@@ -107,69 +124,68 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({ match }) => {
       </Helmet>
       <NamespacedPage
         variant={showListView ? NamespacedPageVariants.light : NamespacedPageVariants.default}
-        hideApplications={showListView}
         onNamespaceChange={handleNamespaceChange}
         toolbar={
-          <>
-            {!showListView && namespace && (
-              <Popover
-                aria-label="Shortcuts"
-                bodyContent={TopologyShortcuts}
-                position="left"
-                maxWidth="100vw"
-              >
-                <Button
-                  type="button"
-                  variant="link"
-                  className="odc-topology__shortcuts-button"
-                  icon={<QuestionCircleIcon />}
-                  data-test-id="topology-view-shortcuts"
+          namespace && !dataModelContext.isEmptyModel ? (
+            <>
+              {!showListView && namespace && (
+                <Popover
+                  aria-label="Shortcuts"
+                  bodyContent={TopologyShortcuts}
+                  position="left"
+                  maxWidth="100vw"
                 >
-                  View shortcuts
-                </Button>
-              </Popover>
-            )}
-            <Tooltip position="left" content={showListView ? 'Topology View' : 'List View'}>
-              <Link
-                className="pf-c-button pf-m-plain"
-                to={`/topology/${namespace ? `ns/${namespace}` : 'all-namespaces'}${
-                  showListView ? '/graph' : '/list'
-                }`}
-              >
-                {showListView ? <TopologyIcon size="md" /> : <ListIcon size="md" />}
-              </Link>
-            </Tooltip>
-          </>
+                  <Button
+                    type="button"
+                    variant="link"
+                    className="odc-topology__shortcuts-button"
+                    icon={<QuestionCircleIcon />}
+                    data-test-id="topology-view-shortcuts"
+                  >
+                    View shortcuts
+                  </Button>
+                </Popover>
+              )}
+              <Tooltip position="left" content={showListView ? 'Topology View' : 'List View'}>
+                <Link
+                  className="pf-c-button pf-m-plain odc-topology__view-switcher"
+                  to={`/topology/${namespace ? `ns/${namespace}` : 'all-namespaces'}${
+                    showListView ? '/graph' : '/list'
+                  }${queryParams ? `?${queryParams.toString()}` : ''}`}
+                >
+                  {showListView ? <TopologyIcon size="md" /> : <ListIcon size="md" />}
+                </Link>
+              </Tooltip>
+            </>
+          ) : null
         }
       >
         <Firehose resources={[{ kind: 'Project', prop: 'projects', isList: true }]}>
           <ProjectsExistWrapper title="Topology">
             {namespace ? (
-              showListView ? (
-                <AsyncComponent
-                  mock={false}
-                  match={match}
-                  title=""
-                  EmptyMsg={EmptyMsg}
-                  emptyBodyClass="odc-namespaced-page__content"
-                  loader={() =>
-                    import(
-                      '@console/internal/components/overview' /* webpackChunkName: "topology-overview" */
-                    ).then((m) => m.Overview)
-                  }
-                />
-              ) : (
-                <ConnectedTopologyDataController namespace={namespace} render={renderTopology} />
-              )
+              <ConnectedTopologyDataController
+                showGraphView={showGraphView}
+                render={renderTopology}
+                namespace={namespace}
+              />
             ) : (
-              <ProjectListPage title="Topology">
+              <CreateProjectListPage title="Topology">
                 Select a project to view the topology
-              </ProjectListPage>
+              </CreateProjectListPage>
             )}
           </ProjectsExistWrapper>
         </Firehose>
       </NamespacedPage>
     </>
+  );
+});
+
+export const TopologyPage: React.FC<TopologyPageProps> = ({ match }) => {
+  const namespace = match.params.name;
+  return (
+    <DataModelProvider namespace={namespace}>
+      <TopologyPageContext match={match} />
+    </DataModelProvider>
   );
 };
 

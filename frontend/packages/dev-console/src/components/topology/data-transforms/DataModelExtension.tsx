@@ -48,27 +48,24 @@ export const DataModelExtension: React.FC<DataModelExtensionProps> = ({ dataMode
           extensionContext.current.dataModelDepicter = () => false;
           dataModelContext.updateExtension(id, extensionContext.current);
         });
+
+      const reconcilerPromise = dataModelFactory.properties.getDataModelReconciler;
+      if (reconcilerPromise) {
+        reconcilerPromise()
+          .then((reconciler) => {
+            extensionContext.current.dataModelReconciler = reconciler;
+            dataModelContext.updateExtension(id, extensionContext.current);
+          })
+          .catch(() => {
+            extensionContext.current.dataModelReconciler = () => {};
+            dataModelContext.updateExtension(id, extensionContext.current);
+          });
+      } else {
+        extensionContext.current.dataModelReconciler = () => {};
+        dataModelContext.updateExtension(id, extensionContext.current);
+      }
     }
   }, [dataModelContext, dataModelFactory.properties, id, priority, resources, workloadKeys]);
-
-  // React.useEffect(() => {
-  //   console.log(`updated extensions: ${dataModelContext.extensionsLoaded}`);
-  //   console.dir(extensions);
-  //   if (dataModelContext.extensionsLoaded) {
-  //     console.log(`======= LOADING DATA: ${id}   ===========`);
-  //     extensionContext.current
-  //       .dataModelGetter(namespace, dataResources, dataModelContext.getWorkloadResources(resources))
-  //       .then((model) => {
-  //         console.log(`==== Model For: ${id}`);
-  //         console.dir(model);
-  //         dataModelContext.addDataModel(model);
-  //         extensionContext.current.modelLoaded = true;
-  //       })
-  //       .catch(() => {
-  //         extensionContext.current.modelLoaded = true;
-  //       });
-  //   }
-  // }, [dataResources, namespace, extensions, id, dataModelContext]);
 
   return null;
 };

@@ -37,7 +37,7 @@ export const hasVMWareSettingsChanged = (
   state,
   id: string,
   ...keys: VMWareProviderField[]
-) => keys.find((key) => iGetVMWareField(prevState, id, key) !== iGetVMWareField(state, id, key));
+) => !!keys.find((key) => iGetVMWareField(prevState, id, key) !== iGetVMWareField(state, id, key));
 
 export const hasVMWareSettingsValueChanged = (
   prevState,

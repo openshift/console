@@ -5,7 +5,7 @@ import { match } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { sortable } from '@patternfly/react-table';
 import { JSONSchema6 } from 'json-schema';
-import { Status, SuccessStatus } from '@console/shared';
+import { Status, SuccessStatus, getBadgeFromType } from '@console/shared';
 import { Conditions } from '@console/internal/components/conditions';
 import { ErrorPage404 } from '@console/internal/components/error';
 import {
@@ -440,6 +440,7 @@ export const ProvidedAPIPage = connectToModel((props: ProvidedAPIPageProps) => {
       canCreate={_.get(kindObj, 'verbs', [] as string[]).some((v) => v === 'create')}
       createProps={{ to }}
       namespace={kindObj.namespaced ? namespace : null}
+      badge={getBadgeFromType(kindObj.badge)}
     />
   );
 });
@@ -471,16 +472,17 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
   const { kind, status } = obj;
   const [errorMessage, setErrorMessage] = React.useState(null);
   const handleError = (err: Error) => setErrorMessage(err.message);
-  const schema = crd?.spec?.validation?.openAPIV3Schema ?? (definitionFor(kindObj) as JSONSchema6);
-  const specSchema = schema?.properties?.spec as JSONSchema6;
-  const statusSchema = schema?.properties?.status as JSONSchema6;
 
   // Find the matching CRD spec for the kind of this resource in the CSV.
-  const { displayName, specDescriptors, statusDescriptors } =
+  const { displayName, specDescriptors, statusDescriptors, version } =
     [
       ...(csv?.spec?.customresourcedefinitions?.owned ?? []),
       ...(csv?.spec?.customresourcedefinitions?.required ?? []),
     ].find((def) => def.name === crd?.metadata?.name) ?? {};
+
+  const schema =
+    crd?.spec?.versions?.find((v) => v.name === version)?.schema?.openAPIV3Schema ??
+    (definitionFor(kindObj) as JSONSchema6);
 
   const { podStatuses, mainStatusDescriptor, otherStatusDescriptors } = (
     statusDescriptors ?? []
@@ -518,7 +520,7 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
         <PodStatuses
           kindObj={kindObj}
           obj={obj}
-          schema={statusSchema}
+          schema={schema}
           podStatusDescriptors={podStatuses}
         />
         <div className="co-operand-details__section co-operand-details__section--info">
@@ -532,7 +534,7 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
                   descriptor={mainStatusDescriptor}
                   model={kindObj}
                   obj={obj}
-                  schema={statusSchema}
+                  schema={schema}
                   type={DescriptorType.status}
                 />
               </div>
@@ -543,7 +545,7 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
                 itemClassName="col-sm-6"
                 model={kindObj}
                 obj={obj}
-                schema={statusSchema}
+                schema={schema}
                 type={DescriptorType.status}
               />
             )}
@@ -560,7 +562,7 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
                 model={kindObj}
                 obj={obj}
                 onError={handleError}
-                schema={specSchema}
+                schema={schema}
                 type={DescriptorType.spec}
               />
             </div>

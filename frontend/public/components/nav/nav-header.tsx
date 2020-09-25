@@ -89,7 +89,7 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
   );
 
   return (
-    <div className="oc-nav-header">
+    <div className="oc-nav-header" data-tour-id="tour-perspective-dropdown">
       <Dropdown
         isOpen={isPerspectiveDropdownOpen}
         toggle={renderToggle(icon, name)}

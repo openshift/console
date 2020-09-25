@@ -1,11 +1,39 @@
-import { AlertSeverity, AlertStates, RuleStates, SilenceStates } from '../../reducers/monitoring';
+import { APIError } from '@console/shared';
+
 import { RowFunction } from '../factory';
 import { RowFilter } from '../filter-toolbar';
 import { PrometheusLabels } from '../graphs';
 
+export const enum AlertSeverity {
+  Critical = 'critical',
+  Info = 'info',
+  None = 'none',
+  Warning = 'warning',
+}
+
 export const enum AlertSource {
   Platform = 'platform',
   User = 'user',
+}
+
+export const enum AlertStates {
+  Firing = 'firing',
+  NotFiring = 'not-firing',
+  Pending = 'pending',
+  Silenced = 'silenced',
+}
+
+export const enum RuleStates {
+  Firing = 'firing',
+  Inactive = 'inactive',
+  Pending = 'pending',
+  Silenced = 'silenced',
+}
+
+export const enum SilenceStates {
+  Active = 'active',
+  Expired = 'expired',
+  Pending = 'pending',
 }
 
 export type MonitoringResource = {
@@ -86,6 +114,15 @@ type Group = {
   file: string;
   name: string;
 };
+
+export type PrometheusAPIError = {
+  response?: {
+    status: number;
+  };
+  json?: {
+    error?: string;
+  };
+} & APIError;
 
 export type PrometheusRulesResponse = {
   data: {

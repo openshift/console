@@ -1,16 +1,25 @@
 import { testHook } from '../../../../test/test-utils';
 import { useSearchFilter } from '../useSearchFilter';
-import { getTopologySearchQuery } from '../filter-utils';
 
 jest.mock('../filter-utils', () => ({
   getTopologySearchQuery: jest.fn(),
 }));
 
+let mockCurrentSearchQuery = '';
+
+jest.mock('@console/shared', () => {
+  const ActualShared = require.requireActual('@console/shared');
+  return {
+    ...ActualShared,
+    useQueryParams: () => new Map().set('searchQuery', mockCurrentSearchQuery),
+  };
+});
+
 const testUseSearchFilter = (
   text: string | null | undefined,
   searchQuery: string | undefined,
 ): ReturnType<typeof useSearchFilter> => {
-  (getTopologySearchQuery as jest.Mock).mockImplementation(() => searchQuery);
+  mockCurrentSearchQuery = searchQuery;
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   return useSearchFilter(text);

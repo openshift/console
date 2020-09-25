@@ -2,7 +2,9 @@ package server
 
 import (
 	"context"
+	"crypto/sha256"
 	"crypto/tls"
+	"encoding/base64"
 	"fmt"
 	"html/template"
 	"io"
@@ -11,6 +13,7 @@ import (
 	"net/url"
 	"os"
 	"path"
+	"strings"
 
 	"github.com/coreos/dex/api"
 	"github.com/coreos/pkg/capnslog"
@@ -48,6 +51,9 @@ const (
 	meteringProxyEndpoint          = "/api/metering"
 	customLogoEndpoint             = "/custom-logo"
 	helmChartRepoProxyEndpoint     = "/api/helm/charts/"
+	gitopsEndpoint                 = "/api/gitops/"
+
+	sha256Prefix = "sha256~"
 )
 
 var (
@@ -81,6 +87,7 @@ type jsGlobals struct {
 	PrometheusPublicURL      string `json:"prometheusPublicURL"`
 	ThanosPublicURL          string `json:"thanosPublicURL"`
 	LoadTestFactor           int    `json:"loadTestFactor"`
+	InactivityTimeout        int    `json:"inactivityTimeout"`
 	GOARCH                   string `json:"GOARCH"`
 	GOOS                     string `json:"GOOS"`
 	GraphQLBaseURL           string `json:"graphqlBaseURL"`
@@ -103,6 +110,7 @@ type Server struct {
 	StatuspageID         string
 	LoadTestFactor       int
 	DexClient            api.DexClient
+	InactivityTimeout    int
 	// A client with the correct TLS setup for communicating with the API server.
 	K8sClient                        *http.Client
 	ThanosProxyConfig                *proxy.Config
@@ -111,11 +119,11 @@ type Server struct {
 	AlertManagerProxyConfig          *proxy.Config
 	MeteringProxyConfig              *proxy.Config
 	TerminalProxyTLSConfig           *tls.Config
+	GitOpsProxyConfig                *proxy.Config
 	// A lister for resource listing of a particular kind
 	MonitoringDashboardConfigMapLister ResourceLister
 	KnativeEventSourceCRDLister        ResourceLister
 	KnativeChannelCRDLister            ResourceLister
-	HelmChartRepoProxyConfig           *proxy.Config
 	GOARCH                             string
 	GOOS                               string
 	// Monitoring and Logging related URLs
@@ -139,6 +147,10 @@ func (s *Server) alertManagerProxyEnabled() bool {
 
 func (s *Server) meteringProxyEnabled() bool {
 	return s.MeteringProxyConfig != nil
+}
+
+func (s *Server) gitopsProxyEnabled() bool {
+	return s.GitOpsProxyConfig != nil
 }
 
 func (s *Server) HTTPHandler() http.Handler {
@@ -253,12 +265,12 @@ func (s *Server) HTTPHandler() http.Handler {
 	k8sResolver := resolver.K8sResolver{K8sProxy: k8sProxy}
 	rootResolver := resolver.RootResolver{K8sResolver: &k8sResolver}
 	schema := graphql.MustParseSchema(string(graphQLSchema), &rootResolver, opts...)
-	graphQLHandler := graphqlws.NewHandlerFunc(schema, &relay.Handler{Schema: schema})
+	handler := graphqlws.NewHandler()
+	handler.InitPayload = resolver.InitPayload
+	graphQLHandler := handler.NewHandlerFunc(schema, &relay.Handler{Schema: schema})
 	handle("/api/graphql", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(context.Background(), resolver.HeadersKey, map[string]string{
-			"Authorization":     fmt.Sprintf("Bearer %s", user.Token),
-			"Impersonate-User":  r.Header.Get("Impersonate-User"),
-			"Impersonate-Group": r.Header.Get("Impersonate-Group"),
+			"Authorization": fmt.Sprintf("Bearer %s", user.Token),
 		})
 		graphQLHandler(w, r.WithContext(ctx))
 	}))
@@ -375,6 +387,7 @@ func (s *Server) HTTPHandler() http.Handler {
 	handle("/api/helm/releases", authHandlerWithUser(helmHandlers.HandleHelmList))
 	handle("/api/helm/chart", authHandlerWithUser(helmHandlers.HandleChartGet))
 	handle("/api/helm/release/history", authHandlerWithUser(helmHandlers.HandleGetReleaseHistory))
+	handle("/api/helm/charts/index.yaml", authHandlerWithUser(helmHandlers.HandleIndexFile))
 
 	handle("/api/helm/release", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
@@ -394,12 +407,17 @@ func (s *Server) HTTPHandler() http.Handler {
 		}
 	}))
 
-	helmChartRepoProxy := proxy.NewProxy(s.HelmChartRepoProxyConfig)
-
-	// Only proxy requests to chart repo index file
-	handle(helmChartRepoProxyEndpoint+"index.yaml", http.StripPrefix(
-		proxy.SingleJoiningSlash(s.BaseURL.Path, helmChartRepoProxyEndpoint),
-		http.HandlerFunc(helmChartRepoProxy.ServeHTTP)))
+	// GitOps proxy endpoints
+	if s.gitopsProxyEnabled() {
+		gitopsProxy := proxy.NewProxy(s.GitOpsProxyConfig)
+		handle(gitopsEndpoint, http.StripPrefix(
+			proxy.SingleJoiningSlash(s.BaseURL.Path, gitopsEndpoint),
+			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+				gitopsProxy.ServeHTTP(w, r)
+			})),
+		)
+	}
 
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
@@ -433,6 +451,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		Branding:              s.Branding,
 		CustomProductName:     s.CustomProductName,
 		StatuspageID:          s.StatuspageID,
+		InactivityTimeout:     s.InactivityTimeout,
 		DocumentationBaseURL:  s.DocumentationBaseURL.String(),
 		AlertManagerPublicURL: s.AlertManagerPublicURL.String(),
 		GrafanaPublicURL:      s.GrafanaPublicURL.String(),
@@ -503,8 +522,13 @@ func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWr
 		return
 	}
 
+	tokenName := user.Token
+	if strings.HasPrefix(tokenName, sha256Prefix) {
+		tokenName = tokenToObjectName(tokenName)
+	}
+
 	// Delete the OpenShift OAuthAccessToken.
-	path := "/apis/oauth.openshift.io/v1/oauthaccesstokens/" + user.Token
+	path := "/apis/oauth.openshift.io/v1/oauthaccesstokens/" + tokenName
 	url := proxy.SingleJoiningSlash(s.K8sProxyConfig.Endpoint.String(), path)
 	req, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
@@ -522,4 +546,12 @@ func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWr
 	w.WriteHeader(resp.StatusCode)
 	io.Copy(w, resp.Body)
 	resp.Body.Close()
+}
+
+// tokenToObjectName returns the oauthaccesstokens object name for the given raw token,
+// i.e. the sha256 hash prefixed with "sha256~".
+func tokenToObjectName(token string) string {
+	name := strings.TrimPrefix(token, sha256Prefix)
+	h := sha256.Sum256([]byte(name))
+	return sha256Prefix + base64.RawURLEncoding.EncodeToString(h[0:])
 }

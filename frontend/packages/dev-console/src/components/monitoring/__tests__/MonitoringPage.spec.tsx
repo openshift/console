@@ -2,7 +2,7 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as utils from '@console/internal/components/utils';
 import { PageContents } from '../MonitoringPage';
-import ProjectListPage from '../../projects/ProjectListPage';
+import CreateProjectListPage from '../../projects/CreateProjectListPage';
 
 describe('Monitoring Page ', () => {
   let monPageProps: React.ComponentProps<typeof PageContents>;
@@ -17,8 +17,8 @@ describe('Monitoring Page ', () => {
       },
     };
     const component = shallow(<PageContents {...monPageProps} />);
-    expect(component.find(ProjectListPage).exists()).toBe(true);
-    expect(component.find(ProjectListPage).prop('title')).toBe('Monitoring');
+    expect(component.find(CreateProjectListPage).exists()).toBe(true);
+    expect(component.find(CreateProjectListPage).prop('title')).toBe('Monitoring');
   });
 
   it('should render all Tabs of Monitoring page for selected project', () => {

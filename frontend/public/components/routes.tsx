@@ -163,6 +163,7 @@ const RouteTableHeader = () => {
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
+      id: 'namespace',
     },
     {
       title: 'Status',
@@ -199,7 +200,10 @@ const RouteTableRow: RowFunction<RouteKind> = ({ obj: route, index, key, style }
           title={route.metadata.uid}
         />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      <TableData
+        className={classNames(tableColumnClasses[1], 'co-break-word')}
+        columnID="namespace"
+      >
         <ResourceLink
           kind="Namespace"
           name={route.metadata.namespace}
@@ -386,7 +390,7 @@ const RouteIngressStatus: React.FC<RouteIngressStatusProps> = ({ route }) => (
             obj={route}
             path="status.ingress.routerCanonicalHostname"
           >
-            {ingress.routerCanonicalHostname || '-'}
+            <div>{ingress.routerCanonicalHostname || '-'}</div>
             {showCustomRouteHelp(ingress, route.metadata.annotations) && (
               <CustomRouteHelp
                 host={ingress.host}
@@ -444,16 +448,14 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
                   obj={route}
                   path="status.ingress.routerCanonicalHostname"
                 >
-                  {primaryIngressStatus.routerCanonicalHostname || '-'}
+                  <div>{primaryIngressStatus.routerCanonicalHostname || '-'}</div>
+                  {showCustomRouteHelp(primaryIngressStatus, route.metadata.annotations) && (
+                    <CustomRouteHelp
+                      host={primaryIngressStatus.host}
+                      routerCanonicalHostname={primaryIngressStatus.routerCanonicalHostname}
+                    />
+                  )}
                 </DetailsItem>
-              )}
-              {showCustomRouteHelp(primaryIngressStatus, route.metadata.annotations) && (
-                <dd>
-                  <CustomRouteHelp
-                    host={primaryIngressStatus.host}
-                    routerCanonicalHostname={primaryIngressStatus.routerCanonicalHostname}
-                  />
-                </dd>
               )}
             </dl>
           </div>

@@ -10,7 +10,7 @@ import { withStartGuide } from '@console/internal/components/start-guide';
 import NamespacedPage, { NamespacedPageVariants } from '../../NamespacedPage';
 import ProjectAccessPage from '../../project-access/ProjectAccessPage';
 import { Helmet } from 'react-helmet';
-import ProjectListPage from '../ProjectListPage';
+import CreateProjectListPage from '../CreateProjectListPage';
 
 export const PROJECT_DETAILS_ALL_NS_PAGE_URI = '/project-details/all-namespaces';
 
@@ -81,7 +81,9 @@ export const PageContents: React.FC<MonitoringPageProps> = ({
       pages={pages}
     />
   ) : (
-    <ProjectListPage title="Project Details">Select a project to view its details</ProjectListPage>
+    <CreateProjectListPage title="Project Details">
+      Select a project to view its details
+    </CreateProjectListPage>
   );
 };
 

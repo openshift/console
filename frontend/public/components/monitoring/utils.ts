@@ -80,8 +80,9 @@ export const rulesToProps = (state: RootState, perspective?: string) => {
 export const silencesToProps = ({ UI }) => UI.getIn(['monitoring', 'silences']) || {};
 
 export const silenceParamToProps = (state: RootState, { match }) => {
+  const namespace = match.params?.ns;
   const { data: silences, loaded, loadError }: Silences = silencesToProps(state);
   const { loaded: alertsLoaded }: Alerts = alertsToProps(state);
   const silence = _.find(silences, { id: _.get(match, 'params.id') });
-  return { alertsLoaded, loaded, loadError, silence, silences };
+  return { alertsLoaded, loaded, loadError, namespace, silence, silences };
 };

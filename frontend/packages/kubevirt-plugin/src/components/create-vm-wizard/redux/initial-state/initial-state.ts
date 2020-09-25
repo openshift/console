@@ -7,7 +7,6 @@ import { getResultInitialState } from './result-tab-initial-state';
 import { getReviewInitialState } from './review-tab-initial-state';
 import { getCloudInitInitialState } from './cloud-init-tab-initial-state';
 import { InitialStepStateGetter } from './types';
-import { getVirtualHardwareInitialState } from './virtual-hardware-tab-initial-state';
 import { getImportProvidersInitialState } from './import-provider-tab-initial-state';
 
 const tabStateChecks = [
@@ -46,7 +45,6 @@ const initialStateGetterResolver: { [key in VMWizardTab]: InitialStepStateGetter
   [VMWizardTab.NETWORKING]: getNetworksInitialState,
   [VMWizardTab.STORAGE]: getStorageInitialState,
   [VMWizardTab.ADVANCED_CLOUD_INIT]: getCloudInitInitialState,
-  [VMWizardTab.ADVANCED_VIRTUAL_HARDWARE]: getVirtualHardwareInitialState,
   [VMWizardTab.REVIEW]: getReviewInitialState,
   [VMWizardTab.RESULT]: getResultInitialState,
 };

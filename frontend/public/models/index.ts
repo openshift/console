@@ -123,7 +123,7 @@ export const ReplicationControllerModel: K8sKind = {
 export const HorizontalPodAutoscalerModel: K8sKind = {
   label: 'Horizontal Pod Autoscaler',
   plural: 'horizontalpodautoscalers',
-  apiVersion: 'v2beta1',
+  apiVersion: 'v2beta2',
   apiGroup: 'autoscaling',
   abbr: 'HPA',
   namespaced: true,
@@ -292,6 +292,17 @@ export const NodeModel: K8sKind = {
   kind: 'Node',
   id: 'node',
   labelPlural: 'Nodes',
+};
+
+export const CertificateSigningRequestModel: K8sKind = {
+  apiVersion: 'v1beta1',
+  apiGroup: 'certificates.k8s.io',
+  label: 'Certificate Signing Request',
+  plural: 'certificatesigningrequests',
+  abbr: 'CSR',
+  kind: 'CertificateSigningRequest',
+  id: 'certificateigningrequests',
+  labelPlural: 'Certificate Signing Requests',
 };
 
 export const EventModel: K8sKind = {
@@ -559,7 +570,7 @@ export const NetworkPolicyModel: K8sKind = {
 export const CustomResourceDefinitionModel: K8sKind = {
   label: 'Custom Resource Definition',
   apiGroup: 'apiextensions.k8s.io',
-  apiVersion: 'v1beta1',
+  apiVersion: 'v1',
   abbr: 'CRD',
   namespaced: false,
   plural: 'customresourcedefinitions',

@@ -16,13 +16,11 @@ export const DashboardCardButtonLink: React.FC<DashboardCardButtonLinkProps> = R
   ),
 );
 
-const DashboardCardLink: React.FC<DashboardCardLinkProps> = React.memo(
-  ({ children, to, className }) => (
-    <Link to={to} className="co-dashboard-card__link">
-      <DashboardCardButtonLink className={className}>{children}</DashboardCardButtonLink>
-    </Link>
-  ),
-);
+const DashboardCardLink: React.FC<DashboardCardLinkProps> = React.memo(({ children, to }) => (
+  <Link to={to} className="co-dashboard-card__link">
+    {children}
+  </Link>
+));
 
 export const DashboardCardPopupLink: React.FC<DashboardCardPopupLinkProps> = React.memo(
   ({

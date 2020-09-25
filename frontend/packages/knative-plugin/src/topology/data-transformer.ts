@@ -6,8 +6,6 @@ import {
 } from '@console/dev-console/src/components/topology';
 import {
   getRevisionsData,
-  KnativeUtil,
-  NodeType,
   transformKnNodeData,
   getKnativeDynamicResources,
 } from './knative-topology-utils';
@@ -21,6 +19,7 @@ import {
   getDynamicEventSourcesModelRefs,
   getDynamicChannelModelRefs,
 } from '../utils/fetch-dynamic-eventsources-utils';
+import { KnativeUtil, NodeType } from './topology-types';
 
 const addKnativeTopologyData = (
   graphModel: Model,
@@ -74,8 +73,7 @@ export const getKnativeTopologyDataModel = (
   knativeTopologyGraphModel.nodes.forEach((n) => {
     if (n.type === NodeType.KnService) {
       n.data.groupResources =
-        n.children?.map((id) => knativeTopologyGraphModel.nodes.find((c) => id === c.id)?.data) ??
-        [];
+        n.children?.map((id) => knativeTopologyGraphModel.nodes.find((c) => id === c.id)) ?? [];
     }
     if (n.type === NodeType.Revision) {
       n.data = revisionData[n.id];

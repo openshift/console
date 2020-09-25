@@ -14,8 +14,8 @@ export const CephClusterModel: K8sKind = {
 };
 
 export const OCSServiceModel: K8sKind = {
-  label: 'OCS Cluster Service',
-  labelPlural: 'OCS Cluster Services',
+  label: 'Storage Cluster',
+  labelPlural: 'Storage Clusters',
   apiVersion: 'v1',
   apiGroup: 'ocs.openshift.io',
   plural: 'storageclusters',
@@ -49,5 +49,18 @@ export const CephBlockPoolModel: K8sKind = {
   namespaced: true,
   kind: 'CephBlockPool',
   id: 'cephblockpools',
+  crd: true,
+};
+
+export const CephObjectStoreModel: K8sKind = {
+  label: 'Ceph Object Store',
+  labelPlural: 'Ceph Object Stores',
+  apiVersion: 'v1',
+  apiGroup: 'ceph.rook.io',
+  plural: 'cephobjectstores',
+  abbr: 'COS',
+  namespaced: true,
+  kind: 'CephObjectStore',
+  id: 'cephobjectstores',
   crd: true,
 };

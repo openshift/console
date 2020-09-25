@@ -92,12 +92,13 @@ const ClusterAlerts = withDashboardResources(
 
     const items: React.ReactNode[] = [];
 
-    const clusterVersionIsEditable = useAccessReview({
-      group: ClusterVersionModel.apiGroup,
-      resource: ClusterVersionModel.plural,
-      verb: 'patch',
-      name: 'version',
-    });
+    const clusterVersionIsEditable =
+      useAccessReview({
+        group: ClusterVersionModel.apiGroup,
+        resource: ClusterVersionModel.plural,
+        verb: 'patch',
+        name: 'version',
+      }) && window.SERVER_FLAGS.branding !== 'dedicated';
 
     if (hasCVResource && cvLoaded && hasAvailableUpdates(cv) && clusterVersionIsEditable) {
       items.push(

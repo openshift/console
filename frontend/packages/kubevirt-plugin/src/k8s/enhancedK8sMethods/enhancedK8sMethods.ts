@@ -55,7 +55,7 @@ export class EnhancedK8sMethods {
       this.appendHistory(new HistoryItem(HistoryType.GET, result), enhancedOpts);
       return result;
     } catch (error) {
-      throw new K8sGetError(error.message, { name, namespace });
+      throw new K8sGetError(error.message, error, { name, namespace });
     }
   };
 
@@ -75,7 +75,7 @@ export class EnhancedK8sMethods {
       this.appendHistory(new HistoryItem(HistoryType.CREATE, result), enhancedOpts);
       return result;
     } catch (error) {
-      throw new K8sCreateError(error.message, data);
+      throw new K8sCreateError(error.message, error, data);
     }
   };
 
@@ -100,7 +100,7 @@ export class EnhancedK8sMethods {
       this.appendHistory(new HistoryItem(HistoryType.PATCH, result), enhancedOpts);
       return result;
     } catch (error) {
-      throw new K8sPatchError(error.message, resource, patches);
+      throw new K8sPatchError(error.message, error, resource, patches);
     }
   };
 
@@ -117,7 +117,7 @@ export class EnhancedK8sMethods {
       this.appendHistory(new HistoryItem(HistoryType.DELETE, resource), enhancedOpts);
       return result;
     } catch (error) {
-      throw new K8sKillError(error.message, error.json, resource);
+      throw new K8sKillError(error.message, error, resource);
     }
   };
 

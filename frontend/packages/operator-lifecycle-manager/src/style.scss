@@ -256,33 +256,49 @@ $co-affinity-row-margin: 15px;
   margin-bottom: 20px !important;
 }
 
+.olm-descriptors__group {
+  display: flex;
+  justify-content: start;
+  & > div {
+    margin-right: var(--pf-global--spacer--sm);
+    flex-grow: 1;
+  }
+}
+
+#operator-install-page {
+  margin: 0 ($grid-gutter-width / 2);
+  @media (min-width: $screen-sm-min) {
+    margin: $grid-gutter-width;
+    max-width: 600px;
+    min-width: 375px;
+    width: 100%;
+  }
+}
+
 #operator-install-page .pf-c-card {
-  margin-bottom: 5px;
-  max-width: 600px;
-  // margin-top: auto;
+  margin: 10px auto;
 }
 
 #operator-install-page .pf-c-alert {
-  margin-bottom: 5px;
-}
-
-#operator-install-page .pf-c-button.co-clusterserviceversion__button {
-  margin-left: 10px;
-}
-
-.co-clusterserviceversion-install__heading {
-  font-weight: bold;
-  padding-bottom: 10px;
-}
-
-.co-clusterserviceversion__box {
-  border: 1px solid black;
-  padding: 15px;
-  margin-top: 10px;
   margin-bottom: 10px;
 }
 
+.co-clusterserviceversion-install__heading {
+  margin-top: 0;
+}
+
+.co-clusterserviceversion__box {
+  border: 1px solid var(--pf-global--BorderColor--300);
+  margin: var(--pf-global--spacer--md) 0;
+  padding: var(--pf-global--spacer--md) var(--pf-global--spacer--md) var(--pf-global--spacer--xs);
+}
+
+.co-operator-install-page__indicator {
+  text-align: center;
+}
+
 .co-operator-install-page__pkg-indicator {
+  align-items: center;
   display: flex;
   justify-content: space-between;
 }

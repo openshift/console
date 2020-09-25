@@ -18,6 +18,8 @@ import {
   MockKnativeResources,
 } from '@console/knative-plugin/src/topology/__tests__/topology-knative-test-data';
 import { DaemonSetModel, StatefulSetModel } from '@console/internal/models';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { Alert } from '@console/internal/components/monitoring/types';
 import {
   createDeploymentConfigItems,
   createOverviewItemsForType,
@@ -25,7 +27,9 @@ import {
   createWorkloadItems,
   getPodsForDeploymentConfigs,
   getPodsForDeployments,
+  getWorkloadMonitoringAlerts,
 } from '../resource-utils';
+import { mockAlerts } from '../__mocks__/alerts-and-rules-data';
 
 declare global {
   namespace jest {
@@ -259,5 +263,26 @@ describe('TransformResourceData', () => {
     expect(transformedData[0][Keys.BC]).toHaveLength(1);
     expect(transformedData[0][Keys.JOBS]).toHaveLength(2);
     expect(transformedData[0][Keys.PODS]).toHaveLength(2);
+  });
+
+  it('should return all the alerts related to a workload', () => {
+    const deploymentResource: K8sResourceKind = {
+      apiVersion: 'apps/v1',
+      kind: 'Deployment',
+      metadata: {
+        name: 'prometheus-example-app',
+        uid: '6876876',
+        namespace: 'ns1',
+        labels: {
+          app: 'prometheus-example-app',
+        },
+      },
+      spec: {
+        replicas: '1',
+      },
+    };
+    const alerts: Alert[] = getWorkloadMonitoringAlerts(deploymentResource, mockAlerts);
+    const expectedAlerts: Alert[] = _.pullAt(mockAlerts.data, [0, 1]);
+    expect(alerts).toEqual(expectedAlerts);
   });
 });

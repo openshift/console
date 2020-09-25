@@ -15,7 +15,14 @@ import {
   Popover,
   CardTitle,
 } from '@patternfly/react-core';
-import { ALL_NAMESPACES_KEY, Status, WarningStatus, getNamespace, getUID } from '@console/shared';
+import {
+  ALL_NAMESPACES_KEY,
+  Status,
+  WarningStatus,
+  getNamespace,
+  getUID,
+  StatusIconAndText,
+} from '@console/shared';
 import {
   DetailsPage,
   Table,
@@ -29,11 +36,13 @@ import {
   modelFor,
   referenceForModel,
   referenceFor,
+  groupVersionFor,
   GroupVersionKind,
   K8sKind,
   k8sKill,
   k8sPatch,
   k8sGet,
+  K8sResourceCommon,
 } from '@console/internal/module/k8s';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { Conditions } from '@console/internal/components/conditions';
@@ -46,6 +55,7 @@ import {
   Timestamp,
   SectionHeading,
   ResourceSummary,
+  ResourceStatus,
   ScrollToTopOnMount,
   AsyncComponent,
   ExternalLink,
@@ -58,6 +68,7 @@ import {
   resourceObjPath,
   KebabAction,
 } from '@console/internal/components/utils';
+import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { RootState } from '@console/internal/redux';
 import {
@@ -78,7 +89,7 @@ import {
   PackageManifestKind,
   SubscriptionKind,
 } from '../types';
-import { operatorTypeAnnotation, nonStandardAnnotationValue } from '../const';
+import { operatorTypeAnnotation, nonStandaloneAnnotationValue } from '../const';
 import { subscriptionForCSV, getSubscriptionStatus } from '../status/csv-status';
 import { getInternalObjects, isInternalObject } from '../utils';
 import { ProvidedAPIsPage, ProvidedAPIPage } from './operand';
@@ -90,8 +101,10 @@ import {
   upgradeRequiresApproval,
   UpgradeApprovalLink,
 } from './subscription';
+import { RedExclamationCircleIcon } from '@console/shared/src/components/status/icons';
 import { ClusterServiceVersionLogo, referenceForProvidedAPI, providedAPIsFor } from './index';
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
+import { CreateInitializationResourceButton } from './operator-install-page';
 
 const clusterServiceVersionStateToProps = (state: RootState): ClusterServiceVersionStateProps => {
   return {
@@ -520,13 +533,14 @@ export const NamespacedClusterServiceVersionList: React.SFC<ClusterServiceVersio
 
   const isCopiedCSV = (source: ClusterServiceVersionKind, kind: string) => {
     return (
-      referenceForModel(ClusterServiceVersionModel) === kind && source.status?.reason === 'Copied'
+      referenceForModel(ClusterServiceVersionModel) === kind &&
+      (source.status?.reason === 'Copied' || source.metadata?.labels?.['olm.copiedFrom'])
     );
   };
 
-  const isStandardCSV = (operator: ClusterServiceVersionKind) => {
+  const isStandaloneCSV = (operator: ClusterServiceVersionKind) => {
     return (
-      operator.metadata.annotations?.[operatorTypeAnnotation] !== nonStandardAnnotationValue ||
+      operator.metadata.annotations?.[operatorTypeAnnotation] !== nonStandaloneAnnotationValue ||
       operator.status?.phase === ClusterServiceVersionPhase.CSVPhaseFailed
     );
   };
@@ -542,9 +556,9 @@ export const NamespacedClusterServiceVersionList: React.SFC<ClusterServiceVersio
       }
       const csv = source as ClusterServiceVersionKind;
       if (allNamespaceActive) {
-        return !isCopiedCSV(csv, kind) && isStandardCSV(csv);
+        return !isCopiedCSV(csv, kind) && isStandaloneCSV(csv);
       }
-      return isStandardCSV(csv);
+      return isStandaloneCSV(csv);
     });
   };
 
@@ -610,7 +624,7 @@ export const ClusterServiceVersionList = connect(clusterServiceVersionStateToPro
 export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProps> = (props) => {
   const title = 'Installed Operators';
   const helpText = (
-    <p className="co-help-text">
+    <>
       Installed Operators are represented by Cluster Service Versions within this namespace. For
       more information, see the{' '}
       <ExternalLink
@@ -620,7 +634,7 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
       . Or create an Operator and Cluster Service Version using the{' '}
       <ExternalLink href="https://github.com/operator-framework/operator-sdk" text="Operator SDK" />
       .
-    </p>
+    </>
   );
 
   const flatten = ({ clusterServiceVersions, subscriptions }) =>
@@ -694,20 +708,28 @@ export const MarkdownView = (props: {
 };
 
 export const CRDCard: React.SFC<CRDCardProps> = (props) => {
-  const { csv, crd, canCreate } = props;
+  const { csv, crd, canCreate, required = false } = props;
   const reference = referenceForProvidedAPI(crd);
   const model = modelFor(reference);
   const createRoute = () =>
     `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${reference}/~new`;
+
   return (
     <Card>
       <CardTitle>
-        <ResourceLink
-          kind={referenceForProvidedAPI(crd)}
-          title={crd.name}
-          linkTo={false}
-          displayName={crd.displayName || crd.kind}
-        />
+        <span className="co-resource-item">
+          <ResourceLink
+            kind={referenceForProvidedAPI(crd)}
+            title={crd.name}
+            linkTo={false}
+            displayName={crd.displayName || crd.kind}
+          />
+          {required && (
+            <ResourceStatus badgeAlt>
+              <StatusIconAndText icon={<RedExclamationCircleIcon />} title="Required" />
+            </ResourceStatus>
+          )}
+        </span>
       </CardTitle>
       <CardBody>
         <MarkdownView content={crd.description} truncateContent />
@@ -761,6 +783,53 @@ export const CRDCardRow = connect(crdCardRowStateToProps)((props: CRDCardRowProp
   );
 });
 
+const InitializationResourceAlert: React.SFC<InitializationResourceAlertProps> = (props) => {
+  const { initializationResource, csv } = props;
+
+  const initializationResourceKind = initializationResource?.kind;
+  const { group: initializationResourceGroup } = groupVersionFor(
+    initializationResource?.apiVersion,
+  );
+  const model = modelFor(referenceFor(initializationResource));
+
+  // Check if the CR is already present - only checks for the specific name/ns in the initialization-resource
+  const [customResource, customResourceLoaded] = useK8sGet<K8sResourceCommon>(
+    model,
+    initializationResource?.metadata.name,
+    model?.namespaced ? initializationResource?.metadata.namespace || csv.metadata.namespace : null,
+  );
+  const canCreateCustomResource = useAccessReview({
+    group: initializationResourceGroup,
+    resource: model?.plural,
+    namespace: model?.namespaced
+      ? initializationResource?.metadata.namespace || csv.metadata.namespace
+      : null,
+    verb: 'create',
+  });
+
+  if (!customResource && customResourceLoaded && canCreateCustomResource) {
+    return (
+      <Alert
+        isInline
+        className="co-alert"
+        variant="warning"
+        title={`${initializationResourceKind} Required`}
+      >
+        <p>Create a {initializationResourceKind} instance to use this operator.</p>
+        <CreateInitializationResourceButton
+          obj={props.csv}
+          targetNamespace={
+            model?.namespaced
+              ? initializationResource?.metadata.namespace || csv.metadata?.namespace
+              : null
+          }
+        />
+      </Alert>
+    );
+  }
+  return null;
+};
+
 export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetailsProps> = (
   props,
 ) => {
@@ -768,7 +837,18 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
   const {
     'marketplace.openshift.io/support-workflow': marketplaceSupportWorkflow,
     'olm.targetNamespaces': olmTargetNamespaces = '',
+    'operatorframework.io/initialization-resource': initializationResourceJSON,
   } = metadata.annotations || {};
+
+  let initializationResource = null;
+  if (initializationResourceJSON) {
+    try {
+      initializationResource = JSON.parse(initializationResourceJSON);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error.message);
+    }
+  }
 
   return (
     <>
@@ -784,6 +864,12 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
                   className="co-alert"
                   variant="danger"
                   title={`${status.phase}: ${status.message}`}
+                />
+              )}
+              {initializationResource && (
+                <InitializationResourceAlert
+                  initializationResource={initializationResource}
+                  csv={props.obj}
                 />
               )}
               <SectionHeading text="Provided APIs" />
@@ -1085,6 +1171,7 @@ export type CRDCardProps = {
   crd: CRDDescription | APIServiceDefinition;
   csv: ClusterServiceVersionKind;
   canCreate: boolean;
+  required?: boolean;
 };
 
 export type CRDCardRowProps = {
@@ -1147,6 +1234,11 @@ export type CSVSubscriptionProps = {
 
 type ClusterServiceVersionStateProps = {
   activeNamespace?: string;
+};
+
+type InitializationResourceAlertProps = {
+  csv: ClusterServiceVersionKind;
+  initializationResource: K8sResourceCommon;
 };
 
 type Header = {

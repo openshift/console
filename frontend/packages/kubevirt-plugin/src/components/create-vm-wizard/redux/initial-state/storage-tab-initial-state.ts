@@ -1,5 +1,11 @@
 import { ConfigMapKind } from '@console/internal/module/k8s';
-import { CommonData, VMWizardStorage, VMWizardStorageType, VMWizardProps } from '../../types';
+import {
+  CommonData,
+  VMWizardStorage,
+  VMWizardStorageType,
+  VMSettingsField,
+  VMWizardProps,
+} from '../../types';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import {
   DataVolumeSourceType,
@@ -10,18 +16,32 @@ import {
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
-import { BinaryUnit } from '../../../form/size-unit-utils';
-import { WINTOOLS_CONTAINER_NAMES } from '../../../modals/cdrom-vm-modal/constants';
+import { WINTOOLS_CONTAINER_NAMES } from '../../../../constants';
+import { BinaryUnit, stringValueUnitSplit } from '../../../form/size-unit-utils';
 import { InitialStepStateGetter } from './types';
 import {
   getDefaultSCAccessModes,
   getDefaultSCVolumeMode,
 } from '../../../../selectors/config-map/sc-defaults';
-import { toShallowJS } from '../../../../utils/immutable';
+import { toShallowJS, iGetIn } from '../../../../utils/immutable';
 import { generateDataVolumeName } from '../../../../utils';
-import { DUMMY_VM_NAME } from '../../../../constants/vm';
-import { iGetProvisionSource } from '../../selectors/immutable/vm-settings';
-import { iGetLoadedCommonData } from '../../selectors/immutable/selectors';
+import {
+  DUMMY_VM_NAME,
+  TEMPLATE_DATAVOLUME_NAME_PARAMETER,
+  TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER,
+} from '../../../../constants/vm';
+import {
+  iGetVmSettingValue,
+  iGetProvisionSource,
+  iGetRelevantTemplateSelectors,
+} from '../../selectors/immutable/vm-settings';
+import {
+  iGetLoadedCommonData,
+  iGetName,
+  iGetCommonData,
+} from '../../selectors/immutable/selectors';
+import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
+import { iGetPrameterValue } from '../../../../selectors/immutable/common';
 
 const ROOT_DISK_NAME = 'rootdisk';
 const WINTOOLS_DISK_NAME = 'windows-guest-tools';
@@ -62,6 +82,46 @@ export const windowsToolsStorage: VMWizardStorage = {
   }).asResource(),
 };
 
+export const getBaseImageStorage = (
+  storageClassConfigMap: ConfigMapKind,
+  pvcName,
+  pvcNamespace,
+  pvcSize = '10Gi',
+) => {
+  const dataVolumeName = generateDataVolumeName(DUMMY_VM_NAME, ROOT_DISK_NAME);
+  const [size, unit] = stringValueUnitSplit(pvcSize);
+
+  return {
+    type: VMWizardStorageType.PROVISION_SOURCE_DISK,
+    disk: DiskWrapper.initializeFromSimpleData({
+      name: ROOT_DISK_NAME,
+      type: DiskType.DISK,
+      bus: DiskBus.VIRTIO,
+      bootOrder: 1,
+    }).asResource(),
+    volume: VolumeWrapper.initializeFromSimpleData({
+      name: ROOT_DISK_NAME,
+      type: VolumeType.DATA_VOLUME,
+      typeData: { name: dataVolumeName },
+    }).asResource(),
+    dataVolume: new DataVolumeWrapper()
+      .init({
+        name: dataVolumeName,
+        size,
+        unit,
+      })
+      .setType(DataVolumeSourceType.PVC, { name: pvcName, namespace: pvcNamespace })
+      .setVolumeMode(getDefaultSCVolumeMode(storageClassConfigMap))
+      .setAccessModes(getDefaultSCAccessModes(storageClassConfigMap))
+      .asResource(),
+    editConfig: {
+      isFieldEditableOverride: {
+        source: false,
+      },
+    },
+  };
+};
+
 const getUrlStorage = (storageClassConfigMap: ConfigMapKind) => {
   const dataVolumeName = generateDataVolumeName(DUMMY_VM_NAME, ROOT_DISK_NAME);
 
@@ -96,8 +156,16 @@ const getUrlStorage = (storageClassConfigMap: ConfigMapKind) => {
   };
 };
 
+// Create a new storage source for URL, Container and BaseImage Disk sources
+// Depends on OPERATING_SYSTEM CLONE_COMMON_BASE_DISK_IMAGE PROVISION_SOURCE_TYPE FLAVOR USER_TEMPLATE and WORKLOAD_PROFILE
 export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardStorage => {
   const provisionSource = iGetProvisionSource(state, id);
+  const cloneCommonBaseDiskImage = iGetVmSettingValue(
+    state,
+    id,
+    VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE,
+  );
+  const iUserTemplate = iGetCommonData(state, id, VMWizardProps.userTemplate);
 
   if (provisionSource === ProvisionSource.URL) {
     const iStorageClassConfigMap = iGetLoadedCommonData(
@@ -110,6 +178,30 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
   }
   if (provisionSource === ProvisionSource.CONTAINER) {
     return containerStorage;
+  }
+  if (provisionSource === ProvisionSource.DISK && !iUserTemplate && cloneCommonBaseDiskImage) {
+    const iStorageClassConfigMap = iGetLoadedCommonData(
+      state,
+      id,
+      VMWizardProps.storageClassConfigMap,
+    );
+
+    const relevantOptions = iGetRelevantTemplateSelectors(state, id);
+    if (!relevantOptions.os) {
+      return null;
+    }
+
+    const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
+    const iTemplate = iCommonTemplates && iGetRelevantTemplate(iCommonTemplates, relevantOptions);
+    const pvcName = iGetPrameterValue(iTemplate, TEMPLATE_DATAVOLUME_NAME_PARAMETER);
+    const pvcNamespace = iGetPrameterValue(iTemplate, TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER);
+
+    const iBaseImage = iGetLoadedCommonData(state, id, VMWizardProps.openshiftCNVBaseImages)
+      .valueSeq()
+      .find((iPVC) => iGetName(iPVC) === pvcName);
+    const pvcSize = iGetIn(iBaseImage, ['spec', `resources`, `requests`, `storage`]);
+
+    return getBaseImageStorage(toShallowJS(iStorageClassConfigMap), pvcName, pvcNamespace, pvcSize);
   }
   return null;
 };

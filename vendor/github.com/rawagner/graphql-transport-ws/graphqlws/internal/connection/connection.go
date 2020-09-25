@@ -61,6 +61,8 @@ type connection struct {
 	ws           wsConnection
 }
 
+type InitPayload = func(ctx context.Context, payload json.RawMessage) context.Context
+
 // ReadLimit limits the maximum size of incoming messages
 func ReadLimit(limit int64) func(conn *connection) {
 	return func(conn *connection) {
@@ -77,7 +79,7 @@ func WriteTimeout(d time.Duration) func(conn *connection) {
 
 // Connect implements the apollographql subscriptions-transport-ws protocol@v0.9.4
 // https://github.com/apollographql/subscriptions-transport-ws/blob/v0.9.4/PROTOCOL.md
-func Connect(rContext context.Context, ws wsConnection, service GraphQLService, options ...func(conn *connection)) func() {
+func Connect(ctx context.Context, ws wsConnection, service GraphQLService, initPayload InitPayload, options ...func(conn *connection)) func() {
 	conn := &connection{
 		service: service,
 		ws:      ws,
@@ -92,9 +94,9 @@ func Connect(rContext context.Context, ws wsConnection, service GraphQLService, 
 		opt(conn)
 	}
 
-	ctx, cancel := context.WithCancel(rContext)
+	ctx, cancel := context.WithCancel(ctx)
 	conn.cancel = cancel
-	conn.readLoop(ctx, conn.writeLoop(ctx))
+	conn.readLoop(ctx, conn.writeLoop(ctx), initPayload)
 
 	return cancel
 }
@@ -146,7 +148,7 @@ func (conn *connection) close() {
 	conn.ws.Close()
 }
 
-func (conn *connection) readLoop(ctx context.Context, send sendFunc) {
+func (conn *connection) readLoop(ctx context.Context, send sendFunc, initPayload InitPayload) {
 	defer conn.close()
 
 	opDone := map[string]func(){}
@@ -165,6 +167,7 @@ func (conn *connection) readLoop(ctx context.Context, send sendFunc) {
 				send("", typeConnectionError, ep)
 				continue
 			}
+			ctx = initPayload(ctx, msg.Payload)
 			send("", typeConnectionAck, nil)
 
 		case typeStart:

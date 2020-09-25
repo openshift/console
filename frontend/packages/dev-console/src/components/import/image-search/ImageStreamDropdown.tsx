@@ -80,7 +80,7 @@ const ImageStreamDropdown: React.FC = () => {
   return (
     <ResourceDropdownField
       name="imageStream.image"
-      label="ImageStreams"
+      label="Image Stream"
       resources={getImageStreamResource(imageStream.namespace)}
       dataSelector={['metadata', 'name']}
       key={imageStream.namespace}

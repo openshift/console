@@ -9,12 +9,13 @@ type PipelineParametersProps = {
 };
 
 const PipelineParameters: React.FC<PipelineParametersProps> = (props) => {
-  const { fieldName, isReadOnly = false } = props;
+  const { addLabel = 'Add Pipeline Parameter', fieldName, isReadOnly = false } = props;
   const emptyMessage = 'No parameters are associated with this pipeline.';
 
   return (
     <MultiColumnField
       name={fieldName}
+      addLabel={addLabel}
       headers={['Name', 'Description', 'Default Value']}
       emptyValues={{ name: '', description: '', default: '' }}
       emptyMessage={emptyMessage}

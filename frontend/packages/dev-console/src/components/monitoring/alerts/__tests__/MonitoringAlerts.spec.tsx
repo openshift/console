@@ -16,11 +16,7 @@ describe('MonitoringAlerts', () => {
       path: '',
       url: '',
     },
-    rules: {
-      data: [],
-      loaded: true,
-      loadError: '',
-    },
+    rules: [],
     filters: Map({}),
     listSorts: Map({}),
   };

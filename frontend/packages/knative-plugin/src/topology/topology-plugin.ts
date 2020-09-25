@@ -35,7 +35,13 @@ import {
 import {
   getDynamicEventSourcesWatchers,
   getDynamicEventingChannelWatchers,
+  fetchEventSourcesCrd,
+  fetchChannelsCrd,
 } from '../utils/fetch-dynamic-eventsources-utils';
+
+// Added it to perform discovery of Dynamic event sources on cluster on app load as kebab option needed models upfront
+fetchEventSourcesCrd();
+fetchChannelsCrd();
 
 export const getKnativeResources = (namespace: string) => {
   return {

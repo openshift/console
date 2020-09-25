@@ -25,6 +25,7 @@ import {
   YAMLTemplate,
   OverviewTabSection,
   ReduxReducer,
+  GuidedTour,
 } from '@console/plugin-sdk';
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
 import { FLAGS } from '@console/shared/src/constants';
@@ -59,6 +60,7 @@ import { AddAction } from './extensions/add-actions';
 import * as yamlIcon from './images/yaml.svg';
 import * as importGitIcon from './images/from-git.svg';
 import * as dockerfileIcon from './images/dockerfile.svg';
+import * as devfileIcon from './images/devfile.svg';
 import * as pipelineIcon from './images/pipeline.svg';
 import { operatorResources } from './components/topology/operators/operator-resources';
 import {
@@ -70,17 +72,20 @@ import {
   operatorsTopologyPlugin,
 } from './components/topology/operators/operatorsTopologyPlugin';
 import { usePerspectiveDetection } from './utils/usePerspectiveDetection';
+import { getGuidedTour } from './components/guided-tour';
 
 const {
   ClusterTaskModel,
   PipelineModel,
   PipelineResourceModel,
   PipelineRunModel,
+  ConditionModel,
   TaskModel,
   TaskRunModel,
   EventListenerModel,
   TriggerTemplateModel,
   TriggerBindingModel,
+  ClusterTriggerBindingModel,
 } = models;
 
 type ConsumedExtensions =
@@ -101,6 +106,7 @@ type ConsumedExtensions =
   | YAMLTemplate
   | OverviewTabSection
   | AddAction
+  | GuidedTour
   | HelmTopologyConsumedExtensions
   | OperatorsTopologyConsumedExtensions;
 
@@ -165,24 +171,10 @@ const plugin: Plugin<ConsumedExtensions> = [
       perspective: 'dev',
       group: 'top',
       componentProps: {
-        name: 'GitOps',
-        href: '/gitops',
-        testID: 'gitops-header',
-      },
-    },
-    flags: {
-      required: [FLAG_OPENSHIFT_GITOPS],
-    },
-  },
-  {
-    type: 'NavItem/Href',
-    properties: {
-      perspective: 'dev',
-      group: 'top',
-      componentProps: {
         name: 'Monitoring',
         href: '/dev-monitoring',
         testID: 'monitoring-header',
+        'data-tour-id': 'tour-monitoring-nav',
       },
     },
     flags: {
@@ -198,6 +190,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         name: 'Search',
         href: '/search',
         testID: 'search-header',
+        'data-tour-id': 'tour-search-nav',
       },
     },
   },
@@ -229,6 +222,21 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [FLAG_OPENSHIFT_PIPELINE],
+    },
+  },
+  {
+    type: 'NavItem/Href',
+    properties: {
+      perspective: 'dev',
+      group: 'resources',
+      componentProps: {
+        name: 'Application Stages',
+        href: '/applicationstages',
+        testID: 'application-stages-header',
+      },
+    },
+    flags: {
+      required: [FLAG_OPENSHIFT_GITOPS],
     },
   },
   {
@@ -369,6 +377,30 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Resource/Details',
     properties: {
+      model: PipelineResourceModel,
+      loader: async () =>
+        (
+          await import(
+            './components/pipelines/detail-page-tabs/PipelineResourceDetailsPage' /* webpackChunkName: "pipelineresource-details" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: ConditionModel,
+      loader: async () =>
+        (
+          await import(
+            './components/pipelines/detail-page-tabs/PipelineConditionDetailsPage' /* webpackChunkName: "pipelinecondition-details" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
       model: TaskRunModel,
       loader: async () =>
         (
@@ -376,6 +408,27 @@ const plugin: Plugin<ConsumedExtensions> = [
             './components/taskruns/TaskRunDetailsPage' /* webpackChunkName: "taskrun-details" */
           )
         ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: ClusterTaskModel,
+      loader: async () =>
+        (
+          await import(
+            './components/cluster-tasks/ClusterTaskDetailsPage' /* webpackChunkName: "clustertask-details" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: TaskModel,
+      loader: async () =>
+        (await import('./components/tasks/TaskDetailsPage' /* webpackChunkName: "task-details" */))
+          .default,
     },
   },
   {
@@ -410,6 +463,18 @@ const plugin: Plugin<ConsumedExtensions> = [
         (
           await import(
             './components/pipelines/TriggerBindingPage' /* webpackChunkName: "trigger-binding-details" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: ClusterTriggerBindingModel,
+      loader: async () =>
+        (
+          await import(
+            './components/pipelines/ClusterTriggerBindingPage' /* webpackChunkName: "cluster-trigger-binding-details" */
           )
         ).default,
     },
@@ -505,7 +570,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: '/gitops',
+      path: '/applicationstages',
       loader: async () =>
         (
           await import(
@@ -518,7 +583,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: '/gitops/application/:appName',
+      path: '/applicationstages/:appName',
       loader: async () =>
         (
           await import(
@@ -627,7 +692,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: async () =>
         (
           await import(
-            './components/tasks-lists/TasksListsPage' /* webpackChunkName: "admin-tasks`" */
+            './components/tasks/list-page/TasksListsPage' /* webpackChunkName: "admin-tasks`" */
           )
         ).default,
     },
@@ -878,6 +943,16 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/workload-hpa/ns/:ns/:resourceRef/:name'],
+      loader: async () =>
+        (await import('./components/hpa/HPAPage' /* webpackChunkName: "hpa-on-workload`" */))
+          .default,
+    },
+  },
+  {
     type: 'ReduxReducer',
     properties: {
       namespace: 'devconsole',
@@ -1017,6 +1092,28 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'AddAction',
     properties: {
+      id: 'import-from-devfile',
+      url: '/import?importType=devfile',
+      label: 'From Devfile',
+      description: 'Import your devfile from your git repository to be built and deployed',
+      icon: devfileIcon,
+      accessReview: [
+        BuildConfigModel,
+        ImageStreamModel,
+        DeploymentConfigModel,
+        SecretModel,
+        RouteModel,
+        ServiceModel,
+      ].map((model) => ({
+        group: model.apiGroup || '',
+        resource: model.plural,
+        verb: 'create',
+      })),
+    },
+  },
+  {
+    type: 'AddAction',
+    properties: {
       id: 'import-yaml',
       url: '/k8s/ns/:namespace/import',
       label: 'YAML',
@@ -1091,6 +1188,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [ALLOW_SERVICE_BINDING],
+    },
+  },
+  {
+    type: 'GuidedTour',
+    properties: {
+      perspective: 'dev',
+      tour: getGuidedTour(),
     },
   },
   ...helmTopologyPlugin,

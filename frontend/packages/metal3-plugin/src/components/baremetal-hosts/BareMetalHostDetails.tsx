@@ -24,6 +24,7 @@ import {
   DetailPropertyList,
   DetailPropertyListItem,
   SecondaryStatus,
+  DASH,
 } from '@console/shared';
 import { getHostStatus } from '../../status/host-status';
 import {
@@ -73,8 +74,10 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
   const nodeName = getMachineNodeName(machine);
   const node = getMachineNode(machine, nodes);
   const role = getMachineRole(machine);
-  const RAMGB = humanizeDecimalBytes(getHostRAMMiB(host) * 2 ** 20).string;
-  const totalStorageCapacity = humanizeDecimalBytes(getHostTotalStorageCapacity(host)).string;
+  const hostRAM = getHostRAMMiB(host);
+  const RAMGB = hostRAM ? humanizeDecimalBytes(hostRAM * 2 ** 20).string : DASH;
+  const hostStorage = getHostTotalStorageCapacity(host);
+  const totalStorageCapacity = hostStorage ? humanizeDecimalBytes(hostStorage).string : DASH;
   const description = getHostDescription(host);
   const powerStatus = getHostPowerStatus(host);
   const provisioningState = getHostProvisioningState(host);
@@ -103,7 +106,7 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
             <dd>
               <DetailPropertyList>
                 <DetailPropertyListItem title="Management">
-                  {getHostBMCAddress(host)}
+                  {getHostBMCAddress(host) || DASH}
                 </DetailPropertyListItem>
                 <DetailPropertyListItem title="NICs">{ips}</DetailPropertyListItem>
                 <DetailPropertyListItem title="Boot Interface MAC">
@@ -185,9 +188,15 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
                 <dt>Bios</dt>
                 <dd>
                   <DetailPropertyList>
-                    <DetailPropertyListItem title="Version">{bios.version}</DetailPropertyListItem>
-                    <DetailPropertyListItem title="Vendor">{bios.vendor}</DetailPropertyListItem>
-                    <DetailPropertyListItem title="Date">{bios.date}</DetailPropertyListItem>
+                    <DetailPropertyListItem title="Version">
+                      {bios.version || DASH}
+                    </DetailPropertyListItem>
+                    <DetailPropertyListItem title="Vendor">
+                      {bios.vendor || DASH}
+                    </DetailPropertyListItem>
+                    <DetailPropertyListItem title="Date">
+                      {bios.date || DASH}
+                    </DetailPropertyListItem>
                   </DetailPropertyList>
                 </dd>
               </>
@@ -204,7 +213,7 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
                 <dd>
                   <DetailPropertyList>
                     <DetailPropertyListItem title="CPU">
-                      {CPUCount}x {CPUModel}
+                      {CPUCount ? `${CPUCount}x ${CPUModel}` : DASH}
                     </DetailPropertyListItem>
                     <DetailPropertyListItem title="RAM">{RAMGB}</DetailPropertyListItem>
                     <DetailPropertyListItem title="Storage">

@@ -1,4 +1,5 @@
-import { getRandomChars } from '@console/shared/src/utils';
+import * as _ from 'lodash';
+import { getRandomChars } from '@console/shared';
 import {
   PipelineResourceTask,
   PipelineTask,
@@ -25,7 +26,7 @@ import {
   UpdateTaskParamData,
   UpdateTaskResourceData,
 } from './types';
-import { convertResourceToTask, taskParamIsRequired } from './utils';
+import { convertResourceToTask, taskParamIsRequired, hasEmptyString } from './utils';
 
 const mapReplaceRelatedInOthers = <TaskType extends PipelineBuilderTaskBase>(
   taskName: string,
@@ -120,7 +121,7 @@ const getErrors = (task: PipelineTask, resource: PipelineResourceTask): TaskErro
   const requiredParamNames = resourceParams.filter(taskParamIsRequired).map((param) => param.name);
   const hasNonDefaultParams = task.params
     ?.filter(({ name }) => requiredParamNames.includes(name))
-    ?.map(({ value }) => !value)
+    ?.map(({ value }) => !value || (_.isArray(value) && hasEmptyString(value)))
     .reduce((acc, missingDefault) => missingDefault || acc, false);
 
   const needsName = !task.name;
@@ -128,11 +129,11 @@ const getErrors = (task: PipelineTask, resource: PipelineResourceTask): TaskErro
   const resources = getTaskResources(resource);
 
   const taskInputResources = task.resources?.inputs?.length || 0;
-  const requiredInputResources = resources.inputs?.length || 0;
+  const requiredInputResources = (resources.inputs || []).filter((r) => !r?.optional).length;
   const missingInputResources = requiredInputResources - taskInputResources > 0;
 
   const taskOutputResources = task.resources?.outputs?.length || 0;
-  const requiredOutputResources = resources.outputs?.length || 0;
+  const requiredOutputResources = (resources.outputs || []).filter((r) => !r?.optional).length;
   const missingOutputResources = requiredOutputResources - taskOutputResources > 0;
 
   const errorListing: TaskErrorType[] = [];
@@ -201,14 +202,16 @@ const addListNode: UpdateOperationAction<UpdateOperationAddData> = (tasks, listT
   }
 };
 
+const getTaskNames = (tasks: PipelineTask[]) => tasks.map((t) => t.name);
+
 const convertListToTask: UpdateOperationAction<UpdateOperationConvertToTaskData> = (
   tasks,
   listTasks,
   data,
 ) => {
   const { name, resource, runAfter } = data;
-
-  const newPipelineTask: PipelineTask = convertResourceToTask(resource, runAfter);
+  const usedNames = getTaskNames(tasks);
+  const newPipelineTask: PipelineTask = convertResourceToTask(usedNames, resource, runAfter);
 
   return {
     tasks: [
@@ -303,26 +306,37 @@ const applyResourceUpdate = (
   };
 };
 
-const applyParamsUpdate = (
+export const applyParamsUpdate = (
   pipelineTask: PipelineTask,
   params: UpdateTaskParamData,
 ): PipelineTask => {
   const { newValue, taskParamName } = params;
 
-  return {
-    ...pipelineTask,
-    params: pipelineTask.params.map(
+  let foundParam = false;
+  const changedParams =
+    pipelineTask.params?.map(
       (param): PipelineTaskParam => {
         if (param.name !== taskParamName) {
           return param;
         }
-
+        foundParam = true;
         return {
           ...param,
           value: newValue,
         };
       },
-    ),
+    ) || [];
+
+  if (!foundParam) {
+    changedParams.push({
+      name: taskParamName,
+      value: newValue,
+    });
+  }
+
+  return {
+    ...pipelineTask,
+    params: changedParams,
   };
 };
 
@@ -384,8 +398,8 @@ const fixInvalidListTask: UpdateOperationAction<UpdateOperationFixInvalidTaskLis
   data,
 ) => {
   const { existingName, resource, runAfter } = data;
-
-  const newPipelineTask: PipelineTask = convertResourceToTask(resource, runAfter);
+  const usedNames = getTaskNames(tasks);
+  const newPipelineTask: PipelineTask = convertResourceToTask(usedNames, resource, runAfter);
 
   return {
     tasks: [

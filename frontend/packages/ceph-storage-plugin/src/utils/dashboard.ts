@@ -11,3 +11,5 @@ export const getResiliencyProgress = (results: PrometheusResponse): number => {
   const progress: string = _.get(results, 'data.result[0].value[1]');
   return parseFloat(progress);
 };
+
+export const getGaugeValue = (data: PrometheusResponse) => _.get(data, 'data.result[0].value[1]');

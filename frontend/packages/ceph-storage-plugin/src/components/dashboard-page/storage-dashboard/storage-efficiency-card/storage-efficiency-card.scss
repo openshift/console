@@ -1,0 +1,18 @@
+.ceph-storage-efficiency-card__item-status {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  margin-right: 0.5em;
+}
+
+.ceph-storage-efficiency-card__item-text {
+  margin-left: 0.25em;
+}
+
+.ceph-storage-efficiency-card__item-title {
+  margin-right: 0.5em;
+}
+
+.ceph-storage-efficiency-card__item-body--loading {
+  width: 9rem;
+}

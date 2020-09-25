@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { k8sPatch, K8sResourceKind, K8sKind } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { NameValueEditorPair, withHandlePromise } from '../utils';
+import { NameValueEditorPair, withHandlePromise, HandlePromiseProps } from '../utils';
 import { AsyncComponent } from '../utils/async';
 
 /**
@@ -40,7 +40,7 @@ export const TagsModal = withHandlePromise((props: TagsModalProps) => {
     const op = props.tags ? 'replace' : 'add';
     const patch = [{ path: props.path, op, value: _.fromPairs(usedTags) }];
     const promise = k8sPatch(props.kind, props.resource, patch);
-    props.handlePromise(promise).then(props.close);
+    props.handlePromise(promise, props.close);
   };
 
   return (
@@ -78,12 +78,11 @@ type TagsModalProps = {
   title: string;
   kind: K8sKind;
   resource: K8sResourceKind;
-  handlePromise: <T>(promise: Promise<T>) => Promise<T>;
   inProgress: boolean;
   errorMessage: string;
   cancel?: () => void;
   close?: () => void;
-};
+} & HandlePromiseProps;
 
 type AnnotationsModalProps = Omit<TagsModalProps, 'path' | 'tags' | 'title'>;
 

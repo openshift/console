@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { match } from 'react-router';
-import { ActionGroup, Alert, Button, Checkbox, Tooltip } from '@patternfly/react-core';
+import { ActionGroup, Alert, Button, Checkbox, Popover } from '@patternfly/react-core';
 import {
   Dropdown,
   ExternalLink,
@@ -24,6 +24,7 @@ import {
   k8sGet,
   k8sListPartialMetadata,
   kindForReference,
+  referenceFor,
   referenceForModel,
 } from '@console/internal/module/k8s';
 import { RadioGroup, RadioInput } from '@console/internal/components/radio';
@@ -97,6 +98,26 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     currentCSVDesc.annotations?.['operatorframework.io/suggested-namespace'];
   const operatorRequestsMonitoring =
     currentCSVDesc.annotations?.['operatorframework.io/cluster-monitoring'] === 'true';
+  const initializationResourceJSON =
+    currentCSVDesc.annotations?.['operatorframework.io/initialization-resource'];
+
+  let initializationResourceReference = null;
+  if (initializationResourceJSON) {
+    let initializationResource = null;
+    try {
+      initializationResource = JSON.parse(initializationResourceJSON);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(
+        err.message || 'Operator Hub Subscribe: Could not get initialization resource.',
+      );
+    }
+
+    initializationResourceReference = initializationResource
+      ? referenceFor(initializationResource)
+      : null;
+  }
+
   const internalObjects = getInternalObjects(currentCSVDesc, 'annotations');
 
   const globalNS =
@@ -558,21 +579,30 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           <div className="col-xs-6">
             <>
               <div className="form-group">
-                <Tooltip content="The channel to track and receive the updates from.">
-                  <h5 className="co-required">Update Channel</h5>
-                </Tooltip>
-                <RadioGroup
-                  currentValue={selectedUpdateChannel}
-                  items={channels.map((ch) => ({ value: ch.name, title: ch.name }))}
-                  onChange={(e) => {
-                    setUpdateChannel(e.currentTarget.value);
-                    setInstallMode(null);
-                  }}
-                />
+                <fieldset>
+                  <Popover
+                    headerContent={<div>Update Channel</div>}
+                    bodyContent={<div>The channel to track and receive the updates from.</div>}
+                  >
+                    <h5 className="co-required co-form-heading__popover">
+                      <Button variant="plain" className="co-form-heading__popover-button">
+                        Update Channel
+                      </Button>
+                    </h5>
+                  </Popover>
+                  <RadioGroup
+                    currentValue={selectedUpdateChannel}
+                    items={channels.map((ch) => ({ value: ch.name, title: ch.name }))}
+                    onChange={(e) => {
+                      setUpdateChannel(e.currentTarget.value);
+                      setInstallMode(null);
+                    }}
+                  />
+                </fieldset>
               </div>
               <div className="form-group">
-                <h5 className="co-required">Installation Mode</h5>
-                <div>
+                <fieldset>
+                  <h5 className="co-required">Installation Mode</h5>
                   <RadioInput
                     onChange={(e) => {
                       setInstallMode(e.target.value);
@@ -591,8 +621,6 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                       </p>
                     </div>
                   </RadioInput>
-                </div>
-                <div>
                   <RadioInput
                     onChange={(e) => {
                       setInstallMode(e.target.value);
@@ -612,7 +640,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                       </p>
                     </div>
                   </RadioInput>
-                </div>
+                </fieldset>
               </div>
               <div className="form-group">
                 <h5 className="co-required">Installed Namespace</h5>
@@ -622,17 +650,28 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                   singleNamespaceInstallMode}
               </div>
               <div className="form-group">
-                <Tooltip content="The strategy to determine either manual or automatic updates.">
-                  <h5 className="co-required">Approval Strategy</h5>
-                </Tooltip>
-                <RadioGroup
-                  currentValue={selectedApproval}
-                  items={[
-                    { value: InstallPlanApproval.Automatic, title: 'Automatic' },
-                    { value: InstallPlanApproval.Manual, title: 'Manual' },
-                  ]}
-                  onChange={(e) => setApproval(e.currentTarget.value)}
-                />
+                <fieldset>
+                  <Popover
+                    headerContent={<div>Approval Strategy</div>}
+                    bodyContent={
+                      <div>The strategy to determine either manual or automatic updates.</div>
+                    }
+                  >
+                    <h5 className="co-required co-form-heading__popover">
+                      <Button variant="plain" className="co-form-heading__popover-button">
+                        Approval Strategy
+                      </Button>
+                    </h5>
+                  </Popover>
+                  <RadioGroup
+                    currentValue={selectedApproval}
+                    items={[
+                      { value: InstallPlanApproval.Automatic, title: 'Automatic' },
+                      { value: InstallPlanApproval.Manual, title: 'Manual' },
+                    ]}
+                    onChange={(e) => setApproval(e.currentTarget.value)}
+                  />
+                </fieldset>
               </div>
             </>
             <div className="co-form-section__separator" />
@@ -648,7 +687,9 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           </div>
           <div className="col-xs-6">
             <ClusterServiceVersionLogo
-              displayName={_.get(channels, '[0].currentCSVDesc.displayName')}
+              displayName={
+                currentCSVDesc?.displayName || channels?.[0]?.currentCSVDesc?.displayName
+              }
               icon={iconFor(props.packageManifest.data[0])}
               provider={provider}
             />
@@ -665,6 +706,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                     canCreate={false}
                     crd={api}
                     csv={null}
+                    required={referenceForProvidedAPI(api) === initializationResourceReference}
                   />
                 ))
               )}

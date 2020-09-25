@@ -66,11 +66,8 @@ const volumeTypeSchema = yup
         secretName: yup.string().required('Required'),
         items: yup.array().of(
           yup.object().shape({
-            key: yup.string(),
-            path: yup.string().when('key', {
-              is: (key) => !!key,
-              then: yup.string().required('Required'),
-            }),
+            key: yup.string().required('Required'),
+            path: yup.string().required('Required'),
           }),
         ),
       }),
@@ -83,11 +80,8 @@ const volumeTypeSchema = yup
         name: yup.string().required('Required'),
         items: yup.array().of(
           yup.object().shape({
-            key: yup.string(),
-            path: yup.string().when('key', {
-              is: (key) => !!key,
-              then: yup.string().required('Required'),
-            }),
+            key: yup.string().required('Required'),
+            path: yup.string().required('Required'),
           }),
         ),
       }),

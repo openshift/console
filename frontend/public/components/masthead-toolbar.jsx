@@ -27,12 +27,14 @@ import CloudShellMastheadButton from '@console/app/src/components/cloud-shell/Cl
 import * as UIActions from '../actions/ui';
 import { connectToFlags, flagPending, featureReducerName } from '../reducers/features';
 import { authSvc } from '../module/auth';
-import { getOCMLink } from '../module/k8s';
+import { getOCMLink, referenceForModel } from '../module/k8s';
 import { Firehose } from './utils';
 import { openshiftHelpBase } from './utils/documentation';
 import { AboutModal } from './about-modal';
 import { clusterVersionReference, getReportBugLink } from '../module/k8s/cluster-settings';
 import * as redhatLogoImg from '../imgs/logos/redhat.svg';
+import { GuidedTourMastheadTrigger } from '@console/app/src/components/tour';
+import { ConsoleLinkModel } from '../models';
 
 const SystemStatusButton = ({ statuspageData, className }) =>
   !_.isEmpty(_.get(statuspageData, 'incidents')) ? (
@@ -80,22 +82,50 @@ class MastheadToolbarContents_ extends React.Component {
     this._onHelpDropdownToggle = this._onHelpDropdownToggle.bind(this);
     this._onAboutModal = this._onAboutModal.bind(this);
     this._closeAboutModal = this._closeAboutModal.bind(this);
+    this._resetInactivityTimeout = this._resetInactivityTimeout.bind(this);
+    this.userInactivityTimeout = null;
   }
 
   componentDidMount() {
     if (window.SERVER_FLAGS.statuspageID) {
       this._getStatuspageData(window.SERVER_FLAGS.statuspageID);
     }
+    // Ignore inactivity-timeout if set to less then 300 seconds
+    const inactivityTimeoutEnabled = window.SERVER_FLAGS.inactivityTimeout >= 300;
+    if (inactivityTimeoutEnabled) {
+      window.addEventListener('click', _.throttle(this._resetInactivityTimeout, 500));
+      window.addEventListener('keydown', _.throttle(this._resetInactivityTimeout, 500));
+      this._resetInactivityTimeout();
+    }
     this._updateUser();
   }
 
   componentDidUpdate(prevProps) {
+    const { flags, user } = this.props;
     if (
-      this.props.flags[FLAGS.OPENSHIFT] !== prevProps.flags[FLAGS.OPENSHIFT] ||
-      !_.isEqual(this.props.user, prevProps.user)
+      flags[FLAGS.OPENSHIFT] !== prevProps.flags[FLAGS.OPENSHIFT] ||
+      !_.isEqual(user, prevProps.user)
     ) {
       this._updateUser();
     }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('click', this._resetInactivityTimeout);
+    window.removeEventListener('keydown', this._resetInactivityTimeout);
+    clearTimeout(this.userInactivityTimeout);
+  }
+
+  _resetInactivityTimeout() {
+    const { flags, user } = this.props;
+    clearTimeout(this.userInactivityTimeout);
+    this.userInactivityTimeout = setTimeout(() => {
+      if (flags[FLAGS.OPENSHIFT]) {
+        authSvc.logoutOpenShift(user?.metadata?.name === 'kube:admin');
+      } else {
+        authSvc.logout();
+      }
+    }, window.SERVER_FLAGS.inactivityTimeout * 1000);
   }
 
   _getStatuspageData(statuspageID) {
@@ -212,7 +242,7 @@ class MastheadToolbarContents_ extends React.Component {
 
   _launchActions = () => {
     const { clusterID, consoleLinks } = this.props;
-    const launcherItems = this._getAdditionalLinks(consoleLinks, 'ApplicationMenu');
+    const launcherItems = this._getAdditionalLinks(consoleLinks?.data, 'ApplicationMenu');
 
     const sections = [];
     if (
@@ -268,7 +298,7 @@ class MastheadToolbarContents_ extends React.Component {
       isSection: true,
       actions: [
         {
-          component: <Link to="/quickstart">Guided Tours</Link>,
+          component: <Link to="/quickstart">Quick Starts</Link>,
         },
         {
           label: 'Documentation',
@@ -282,6 +312,9 @@ class MastheadToolbarContents_ extends React.Component {
               },
             ]
           : []),
+        {
+          component: <GuidedTourMastheadTrigger />,
+        },
         ...(reportBugLink
           ? [
               {
@@ -379,10 +412,10 @@ class MastheadToolbarContents_ extends React.Component {
     const { flags, consoleLinks } = this.props;
     const { isUserDropdownOpen, isKebabDropdownOpen, username } = this.state;
     const additionalUserActions = this._getAdditionalActions(
-      this._getAdditionalLinks(consoleLinks, 'UserMenu'),
+      this._getAdditionalLinks(consoleLinks?.data, 'UserMenu'),
     );
     const helpActions = this._helpActions(
-      this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'HelpMenu')),
+      this._getAdditionalActions(this._getAdditionalLinks(consoleLinks?.data, 'HelpMenu')),
     );
     const launchActions = this._launchActions();
 
@@ -465,7 +498,11 @@ class MastheadToolbarContents_ extends React.Component {
     }
 
     if (_.isEmpty(actions)) {
-      return <div className="co-username">{username}</div>;
+      return (
+        <div data-test="username" className="co-username">
+          {username}
+        </div>
+      );
     }
 
     const userToggle = (
@@ -498,7 +535,7 @@ class MastheadToolbarContents_ extends React.Component {
       showAboutModal,
       statuspageData,
     } = this.state;
-    const { consoleLinks, drawerToggle, notificationsRead, canAccessNS } = this.props;
+    const { consoleLinks, drawerToggle, canAccessNS, notificationAlerts } = this.props;
     const launchActions = this._launchActions();
     const alertAccess = canAccessNS && !!window.SERVER_FLAGS.prometheusBaseURL;
     return (
@@ -528,9 +565,10 @@ class MastheadToolbarContents_ extends React.Component {
                 <NotificationBadge
                   aria-label="Notification Drawer"
                   onClick={drawerToggle}
-                  isRead={notificationsRead}
+                  isRead
+                  count={notificationAlerts?.data?.length || 0}
                 >
-                  <BellIcon />
+                  <BellIcon alt="" />
                 </NotificationBadge>
               </PageHeaderToolsItem>
             )}
@@ -541,7 +579,7 @@ class MastheadToolbarContents_ extends React.Component {
                   className="pf-c-button pf-m-plain"
                   aria-label="Import YAML"
                 >
-                  <PlusCircleIcon className="co-masthead-icon" />
+                  <PlusCircleIcon className="co-masthead-icon" alt="" />
                 </Link>
               </Tooltip>
             </PageHeaderToolsItem>
@@ -551,28 +589,32 @@ class MastheadToolbarContents_ extends React.Component {
                 aria-label="Help menu"
                 className="co-app-launcher"
                 data-test="help-dropdown-toggle"
+                data-tour-id="tour-help-button"
                 onSelect={this._onHelpDropdownSelect}
                 onToggle={this._onHelpDropdownToggle}
                 isOpen={isHelpDropdownOpen}
                 items={this._renderApplicationItems(
                   this._helpActions(
-                    this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'HelpMenu')),
+                    this._getAdditionalActions(
+                      this._getAdditionalLinks(consoleLinks?.data, 'HelpMenu'),
+                    ),
                   ),
                 )}
                 position="right"
-                toggleIcon={<QuestionCircleIcon />}
+                toggleIcon={<QuestionCircleIcon alt="" />}
                 isGrouped
               />
             </PageHeaderToolsItem>
           </PageHeaderToolsGroup>
           <PageHeaderToolsGroup>
             {/* mobile -- (notification drawer button) */
-            alertAccess && !notificationsRead && (
+            alertAccess && notificationAlerts?.data?.length > 0 && (
               <PageHeaderToolsItem className="visible-xs-block">
                 <NotificationBadge
                   aria-label="Notification Drawer"
                   onClick={drawerToggle}
-                  isRead={notificationsRead}
+                  isRead
+                  count={notificationAlerts?.data?.length}
                 >
                   <BellIcon />
                 </NotificationBadge>
@@ -600,8 +642,7 @@ const mastheadToolbarStateToProps = (state) => ({
   activeNamespace: state.UI.get('activeNamespace'),
   clusterID: state.UI.get('clusterID'),
   user: state.UI.get('user'),
-  consoleLinks: state.UI.get('consoleLinks'),
-  notificationsRead: !!state.UI.getIn(['notifications', 'isRead']),
+  notificationAlerts: state.UI.getIn(['monitoring', 'notificationAlerts']),
   canAccessNS: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
 });
 
@@ -615,17 +656,27 @@ const MastheadToolbarContents = connect(mastheadToolbarStateToProps, {
   )(MastheadToolbarContents_),
 );
 
-export const MastheadToolbar = connectToFlags(FLAGS.CLUSTER_VERSION)(({ flags }) => {
-  const resources = flags[FLAGS.CLUSTER_VERSION]
-    ? [
-        {
-          kind: clusterVersionReference,
-          name: 'version',
-          isList: false,
-          prop: 'cv',
-        },
-      ]
-    : [];
+export const MastheadToolbar = connectToFlags(
+  FLAGS.CLUSTER_VERSION,
+  FLAGS.CONSOLE_LINK,
+)(({ flags }) => {
+  const resources = [];
+  if (flags[FLAGS.CLUSTER_VERSION]) {
+    resources.push({
+      kind: clusterVersionReference,
+      name: 'version',
+      isList: false,
+      prop: 'cv',
+    });
+  }
+  if (flags[FLAGS.CONSOLE_LINK]) {
+    resources.push({
+      kind: referenceForModel(ConsoleLinkModel),
+      isList: true,
+      prop: 'consoleLinks',
+    });
+  }
+
   return (
     <Firehose resources={resources}>
       <MastheadToolbarContents />

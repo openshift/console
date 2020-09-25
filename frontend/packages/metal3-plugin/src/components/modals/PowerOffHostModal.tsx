@@ -152,7 +152,7 @@ const PowerOffHostModal = withHandlePromise(
     const submit = (event) => {
       event.preventDefault();
       const promise = powerOffHost(host);
-      return handlePromise(promise).then(close);
+      return handlePromise(promise, close);
     };
 
     const isUnderMaintenance = status.status === NODE_STATUS_UNDER_MAINTENANCE;

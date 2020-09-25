@@ -152,9 +152,11 @@ $co-channel-height: 60px;
   height: 35px;
   justify-content: flex-end;
   line-height: 1;
+  padding: 0 5px;
   position: absolute;
   text-align: center;
   top: -20px;
+  word-break: break-word;
 
   &--current {
     font-weight: var(--pf-global--FontWeight--bold);

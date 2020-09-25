@@ -19,12 +19,12 @@ import (
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/bridge"
-	"github.com/openshift/console/pkg/crypto"
 	"github.com/openshift/console/pkg/helm/chartproxy"
 	"github.com/openshift/console/pkg/knative"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/server"
 	"github.com/openshift/console/pkg/serverconfig"
+	oscrypto "github.com/openshift/library-go/pkg/crypto"
 )
 
 var (
@@ -53,6 +53,12 @@ const (
 
 	// Well-known location of metering service for OpenShift. This is only accessible in-cluster.
 	openshiftMeteringHost = "reporting-operator.openshift-metering.svc:8080"
+
+	// Well-known location of the GitOps service. This is only accessible in-cluster
+	openshiftGitOpsHost = "cluster.openshift-pipelines-app-delivery.svc:8080"
+
+	// Well-known location of the GitOps service. This is only accessible in-cluster
+	openshiftDevfileParserHost = "cluster.openshift-pipelines-app-delivery.svc:8080"
 )
 
 func main() {
@@ -77,6 +83,8 @@ func main() {
 	fUserAuthOIDCClientSecretFile := fs.String("user-auth-oidc-client-secret-file", "", "File containing the OIDC OAuth2 Client Secret.")
 	fUserAuthLogoutRedirect := fs.String("user-auth-logout-redirect", "", "Optional redirect URL on logout needed for some single sign-on identity providers.")
 
+	fInactivityTimeout := fs.Int("inactivity-timeout", 0, "Number of seconds, after which user will be logged out if inactive. Ignored if less than 300 seconds (5 minutes).")
+
 	fK8sMode := fs.String("k8s-mode", "in-cluster", "in-cluster | off-cluster")
 	fK8sModeOffClusterEndpoint := fs.String("k8s-mode-off-cluster-endpoint", "", "URL of the Kubernetes API server.")
 	fK8sModeOffClusterSkipVerifyTLS := fs.Bool("k8s-mode-off-cluster-skip-verify-tls", false, "DEV ONLY. When true, skip verification of certs presented by k8s API server.")
@@ -86,6 +94,8 @@ func main() {
 
 	fK8sAuth := fs.String("k8s-auth", "service-account", "service-account | bearer-token | oidc | openshift")
 	fK8sAuthBearerToken := fs.String("k8s-auth-bearer-token", "", "Authorization token to send with proxied Kubernetes API requests.")
+
+	fK8sModeOffClusterGitOps := fs.String("k8s-mode-off-cluster-gitops", "", "DEV ONLY. URL of the GitOps backend service")
 
 	fRedirectPort := fs.Int("redirect-port", 0, "Port number under which the console should listen for custom hostname redirect.")
 	fLogLevel := fs.String("log-level", "", "level of logging information by package (pkg=level).")
@@ -204,6 +214,16 @@ func main() {
 		}
 	}
 
+	if *fInactivityTimeout < 300 {
+		log.Warning("Flag inactivity-timeout is set to less then 300 seconds and will be ignored!")
+	} else {
+		if *fK8sAuth != "oidc" && *fK8sAuth != "openshift" {
+			fmt.Fprintln(os.Stderr, "In order activate the user inactivity timout, flag --user-auth must be one of: oidc, openshift")
+			os.Exit(1)
+		}
+		log.Infof("Setting user inactivity timout to %d seconds", *fInactivityTimeout)
+	}
+
 	srv := &server.Server{
 		PublicDir:             *fPublicDir,
 		BaseURL:               baseURL,
@@ -218,6 +238,7 @@ func main() {
 		PrometheusPublicURL:   prometheusPublicURL,
 		ThanosPublicURL:       thanosPublicURL,
 		LoadTestFactor:        *fLoadTestFactor,
+		InactivityTimeout:     *fInactivityTimeout,
 	}
 
 	// if !in-cluster (dev) we should not pass these values to the frontend
@@ -286,10 +307,9 @@ func main() {
 		if !rootCAs.AppendCertsFromPEM(k8sCertPEM) {
 			log.Fatalf("No CA found for the API server")
 		}
-		tlsConfig := &tls.Config{
-			RootCAs:      rootCAs,
-			CipherSuites: crypto.DefaultCiphers(),
-		}
+		tlsConfig := oscrypto.SecureTLSConfig(&tls.Config{
+			RootCAs: rootCAs,
+		})
 
 		bearerToken, err := ioutil.ReadFile(k8sInClusterBearerToken)
 		if err != nil {
@@ -314,10 +334,9 @@ func main() {
 			if !serviceProxyRootCAs.AppendCertsFromPEM(serviceCertPEM) {
 				log.Fatalf("no CA found for Kubernetes services")
 			}
-			serviceProxyTLSConfig := &tls.Config{
-				RootCAs:      serviceProxyRootCAs,
-				CipherSuites: crypto.DefaultCiphers(),
-			}
+			serviceProxyTLSConfig := oscrypto.SecureTLSConfig(&tls.Config{
+				RootCAs: serviceProxyRootCAs,
+			})
 			srv.ThanosProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
@@ -344,14 +363,19 @@ func main() {
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftMeteringHost, Path: "/api"},
 			}
 			srv.TerminalProxyTLSConfig = serviceProxyTLSConfig
+
+			srv.GitOpsProxyConfig = &proxy.Config{
+				TLSClientConfig: serviceProxyTLSConfig,
+				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				Endpoint:        &url.URL{Scheme: "https", Host: openshiftGitOpsHost},
+			}
 		}
 
 	case "off-cluster":
 		k8sEndpoint = bridge.ValidateFlagIsURL("k8s-mode-off-cluster-endpoint", *fK8sModeOffClusterEndpoint)
-		serviceProxyTLSConfig := &tls.Config{
+		serviceProxyTLSConfig := oscrypto.SecureTLSConfig(&tls.Config{
 			InsecureSkipVerify: *fK8sModeOffClusterSkipVerifyTLS,
-			CipherSuites:       crypto.DefaultCiphers(),
-		}
+		})
 		srv.K8sProxyConfig = &proxy.Config{
 			TLSClientConfig: serviceProxyTLSConfig,
 			HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
@@ -399,6 +423,15 @@ func main() {
 		}
 
 		srv.TerminalProxyTLSConfig = serviceProxyTLSConfig
+
+		if *fK8sModeOffClusterGitOps != "" {
+			offClusterGitOpsURL := bridge.ValidateFlagIsURL("k8s-mode-off-cluster-gitops", *fK8sModeOffClusterGitOps)
+			srv.GitOpsProxyConfig = &proxy.Config{
+				TLSClientConfig: serviceProxyTLSConfig,
+				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				Endpoint:        offClusterGitOpsURL,
+			}
+		}
 
 	default:
 		bridge.FlagFatalf("k8s-mode", "must be one of: in-cluster, off-cluster")
@@ -510,7 +543,7 @@ func main() {
 	case "disabled":
 		log.Warningf("running with AUTHENTICATION DISABLED!")
 	default:
-		bridge.FlagFatalf("user-auth", "must be one of: oidc, disabled")
+		bridge.FlagFatalf("user-auth", "must be one of: oidc, openshift, disabled")
 	}
 
 	var resourceListerToken string
@@ -598,16 +631,14 @@ func main() {
 		bridge.FlagFatalf("listen", "scheme must be one of: http, https")
 	}
 
-	helmConfig.Configure(srv)
+	helmConfig.Configure()
 
 	httpsrv := &http.Server{
 		Addr:    listenURL.Host,
 		Handler: srv.HTTPHandler(),
 		// Disable HTTP/2, which breaks WebSockets.
 		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler)),
-		TLSConfig: &tls.Config{
-			CipherSuites: crypto.DefaultCiphers(),
-		},
+		TLSConfig:    oscrypto.SecureTLSConfig(&tls.Config{}),
 	}
 
 	if *fRedirectPort != 0 {

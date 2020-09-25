@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import * as classNames from 'classnames';
 import {
   DeploymentConfigModel,
   DeploymentModel,
@@ -16,6 +17,7 @@ import {
   K8sResourceKind,
   K8sKind,
   SelfSubjectAccessReviewKind,
+  HorizontalPodAutoscalerKind,
 } from '@console/internal/module/k8s';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { PodRCData, PodRingResources, PodRingData, ExtPodKind } from '../types';
@@ -97,11 +99,13 @@ const getTitleAndSubtitle = (
 ) => {
   let titlePhrase;
   let subTitlePhrase = '';
+  let longTitle = false;
   let longSubtitle = false;
 
   // handles the initial state when the first pod is coming up and the state for no pods(scaled to zero)
   if (!currentPodCount) {
     titlePhrase = isPending ? '0' : `Scaled to 0`;
+    longTitle = !isPending;
     if (desiredPodCount) {
       subTitlePhrase = `scaling to ${desiredPodCount}`;
       longSubtitle = true;
@@ -119,17 +123,25 @@ const getTitleAndSubtitle = (
     }
   }
 
-  return { title: titlePhrase, subTitle: subTitlePhrase, longSubtitle };
+  return { title: titlePhrase, longTitle, subTitle: subTitlePhrase, longSubtitle };
 };
 
-const getTitleComponent = (longSubtitle: boolean = false, reversed: boolean = false) =>
-  React.createElement(ChartLabel, {
+const getTitleComponent = (
+  longTitle: boolean = false,
+  longSubtitle: boolean = false,
+  reversed: boolean = false,
+) => {
+  const labelClasses = classNames('pf-chart-donut-title', {
+    'pod-ring__center-text--reversed': reversed,
+    'pod-ring__center-text': !reversed,
+    'pod-ring__long-text': longTitle,
+  });
+  return React.createElement(ChartLabel, {
     dy: longSubtitle ? -5 : 0,
     style: { lineHeight: '11px' },
-    className: `pf-chart-donut-title ${
-      reversed ? 'pod-ring__center-text--reversed' : 'pod-ring__center-text'
-    }`,
+    className: labelClasses,
   });
+};
 
 export const podRingLabel = (
   obj: K8sResourceKind,
@@ -153,7 +165,7 @@ export const podRingLabel = (
       return {
         title: titleData.title,
         subTitle: titleData.subTitle,
-        titleComponent: getTitleComponent(titleData.longSubtitle),
+        titleComponent: getTitleComponent(titleData.longTitle, titleData.longSubtitle),
       };
     case RevisionModel.kind:
       currentPodCount = (obj.status?.readyReplicas || 0) + failedPodCount;
@@ -165,7 +177,7 @@ export const podRingLabel = (
         return {
           title,
           subTitle,
-          titleComponent: getTitleComponent(false, true),
+          titleComponent: getTitleComponent(false, false, true),
         };
       }
       if (isPending) {
@@ -201,9 +213,26 @@ export const podRingLabel = (
       return {
         title: titleData.title,
         subTitle: titleData.subTitle,
-        titleComponent: getTitleComponent(titleData.longSubtitle),
+        titleComponent: getTitleComponent(titleData.longTitle, titleData.longSubtitle),
       };
   }
+};
+
+export const hpaPodRingLabel = (
+  obj: K8sResourceKind,
+  hpa: HorizontalPodAutoscalerKind,
+  pods: ExtPodKind[],
+): PodRingLabelType => {
+  const desiredPodCount = obj.spec?.replicas;
+  const desiredPods = hpa.status?.desiredReplicas || desiredPodCount;
+  const currentPods = hpa.status?.currentReplicas;
+  const scaling =
+    (!currentPods && !!desiredPods) || !pods.every((p) => p.status?.phase === 'Running');
+  return {
+    title: scaling ? 'Autoscaling' : 'Autoscaled',
+    subTitle: `to ${desiredPods}`,
+    titleComponent: getTitleComponent(false, false, true),
+  };
 };
 
 export const usePodScalingAccessStatus = (

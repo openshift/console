@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
-import { Map as ImmutableMap, OrderedMap, Set as ImmutableSet } from 'immutable';
+import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
 import * as classNames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
 
@@ -53,7 +53,7 @@ const DropdownItem: React.SFC<DropdownItemProps> = ({ model, showGroup, checked 
 );
 
 const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
-  const { selected, onChange, allModels, showAll, className, groupToVersionMap } = props;
+  const { selected, onChange, allModels, className, groupToVersionMap } = props;
   const resources = allModels
     .filter(({ apiGroup, apiVersion, kind, verbs }) => {
       // Remove blacklisted items.
@@ -89,31 +89,16 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
     return _.includes(selected, kind);
   };
   // Create dropdown items for each resource.
-  const items = resources.map((model) => (
-    <DropdownItem
-      key={referenceForModel(model)}
-      model={model}
-      showGroup={isDup(model.kind)}
-      checked={isKindSelected(referenceForModel(model))}
-    />
-  )) as OrderedMap<string, JSX.Element>;
-  // Add an "All" item to the top if `showAll`.
-  const allItems = (showAll
-    ? OrderedMap({
-        All: (
-          <>
-            <span className="co-resource-item">
-              <Checkbox id="all-resources" isChecked={isKindSelected('All')} />
-              <span className="co-resource-icon--fixed-width">
-                <ResourceIcon kind="All" />
-              </span>
-              <span className="co-resource-item__resource-name">All Resources</span>
-            </span>
-          </>
-        ),
-      }).concat(items)
-    : items
-  ).toJS() as { [s: string]: JSX.Element };
+  const items = resources
+    .map((model) => (
+      <DropdownItem
+        key={referenceForModel(model)}
+        model={model}
+        showGroup={isDup(model.kind)}
+        checked={isKindSelected(referenceForModel(model))}
+      />
+    ))
+    .toJS();
 
   const autocompleteFilter = (text, item) => {
     const { model } = item.props;
@@ -125,20 +110,17 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
   };
 
   const handleSelected = (value: string) => {
-    value === 'All' ? onChange('All') : onChange(referenceForModel(modelFor(value)));
+    onChange(referenceForModel(modelFor(value)));
   };
 
   return (
     <Dropdown
       menuClassName="dropdown-menu--text-wrap"
       className={classNames('co-type-selector', className)}
-      items={allItems}
+      items={items}
       title={
         <div key="title-resource">
-          Resources{' '}
-          <Badge isRead>
-            {selected.length === 1 && selected[0] === 'All' ? 'All' : selected.length}
-          </Badge>
+          Resources <Badge isRead>{selected.length}</Badge>
         </div>
       }
       onChange={handleSelected}
@@ -162,7 +144,6 @@ export type ResourceListDropdownProps = ResourceListDropdownStateToProps & {
   onChange: (value: string) => void;
   className?: string;
   id?: string;
-  showAll?: boolean;
 };
 
 type DropdownItemProps = {

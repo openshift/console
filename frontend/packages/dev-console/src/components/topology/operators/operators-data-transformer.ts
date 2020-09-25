@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { EdgeModel, Model } from '@patternfly/react-topology';
 import {
   K8sResourceKind,
   LabelSelector,
@@ -6,32 +7,11 @@ import {
   referenceFor,
 } from '@console/internal/module/k8s';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src';
-import {
-  createOverviewItemForType,
-  getDefaultOperatorIcon,
-  getImageForCSVIcon,
-  getOperatorBackedServiceKindMap,
-} from '@console/shared';
-import { EdgeModel, Model, NodeShape } from '@patternfly/react-topology';
-import { TopologyDataResources } from '../topology-types';
-import {
-  OPERATOR_GROUP_WIDTH,
-  OPERATOR_GROUP_HEIGHT,
-  OPERATOR_GROUP_PADDING,
-  TYPE_OPERATOR_BACKED_SERVICE,
-  TYPE_OPERATOR_WORKLOAD,
-} from './components/const';
-import {
-  addToTopologyDataModel,
-  createTopologyNodeData,
-  getTopologyGroupItems,
-  getTopologyNodeItem,
-  mergeGroup,
-  WorkloadModelProps,
-} from '../data-transforms/transform-utils';
+import { getOperatorBackedServiceKindMap } from '@console/shared';
+import { isOperatorBackedKnResource } from '@console/knative-plugin/src/topology/knative-topology-utils';
 import { WORKLOAD_TYPES } from '../topology-utils';
 import { TYPE_SERVICE_BINDING } from '../components';
-import { isOperatorBackedKnResource } from '@console/knative-plugin/src/topology/knative-topology-utils';
+import { TopologyDataResources } from '../topology-types';
 
 export const edgesFromServiceBinding = (
   source: K8sResourceKind,
@@ -64,24 +44,25 @@ export const edgesFromServiceBinding = (
 
 export const getServiceBindingEdges = (
   dc: K8sResourceKind,
-  resources: K8sResourceKind[],
+  obsGroups: K8sResourceKind[],
   sbrs: K8sResourceKind[],
+  installedOperators: K8sResourceKind[],
 ): EdgeModel[] => {
   const edges = [];
+  if (!sbrs?.length || !installedOperators?.length) {
+    return edges;
+  }
 
   _.forEach(edgesFromServiceBinding(dc, sbrs), (sbr) => {
     // look for multiple backing services first in `backingServiceSelectors`
     // followed by a fallback to the single reference in `backingServiceSelector`
     _.forEach(sbr.spec.backingServiceSelectors || [sbr.spec.backingServiceSelector], (bss) => {
       if (bss) {
-        // handles multiple edges
-        const targetResource = resources.find(
-          (deployment) =>
-            deployment?.metadata?.ownerReferences?.[0]?.kind === bss.kind &&
-            deployment?.metadata?.ownerReferences?.[0]?.name === bss.resourceRef,
+        const targetGroup = obsGroups.find(
+          (group) => group.kind === bss.kind && group.metadata.name === bss.resourceRef,
         );
-        const target = targetResource?.metadata?.uid;
-        const source = dc?.metadata?.uid;
+        const target = targetGroup?.metadata.uid;
+        const source = dc.metadata.uid;
         if (source && target) {
           edges.push({
             id: `${source}_${target}`,
@@ -97,17 +78,6 @@ export const getServiceBindingEdges = (
   });
 
   return edges;
-};
-
-const OBSModelProps = {
-  width: OPERATOR_GROUP_WIDTH,
-  height: OPERATOR_GROUP_HEIGHT,
-  visible: true,
-  group: true,
-  shape: NodeShape.rect,
-  style: {
-    padding: OPERATOR_GROUP_PADDING,
-  },
 };
 
 const isOperatorBackedService = (
@@ -131,6 +101,58 @@ const isOperatorBackedService = (
     (!_.isEmpty(operatorResource) || kind in operatorBackedServiceKindMap)
   );
 };
+
+export const getOperatorGroupResource = (
+  resource: K8sResourceKind,
+  resources?: TopologyDataResources,
+): K8sResourceKind => {
+  const installedOperators = resources?.clusterServiceVersions?.data as ClusterServiceVersionKind[];
+  const operatorBackedServiceKindMap = getOperatorBackedServiceKindMap(installedOperators);
+
+  if (isOperatorBackedService(resource, installedOperators, resources)) {
+    const ownerReference = resource?.metadata?.ownerReferences?.[0];
+    const ownerUid = ownerReference?.uid;
+    const nodeResourceKind = ownerReference?.kind;
+    const operatorBackedServiceKind = operatorBackedServiceKindMap?.[nodeResourceKind];
+    const appGroup = resource?.metadata?.labels?.['app.kubernetes.io/part-of'];
+    const operator: K8sResourceKind =
+      (installedOperators.find((op) => op.metadata.uid === ownerUid) as K8sResourceKind) ||
+      operatorBackedServiceKind;
+
+    const operatorName =
+      ownerReference?.name ?? appGroup
+        ? `${appGroup}:${operator.metadata.name}`
+        : operator.metadata.name;
+
+    const groupUid = ownerReference?.uid ?? `${operatorName}:${operator.metadata.uid}`;
+    return _.merge({}, operator, {
+      apiVersion: ownerReference?.apiVersion ?? '',
+      kind: ownerReference?.kind ?? 'Operator',
+      metadata: {
+        name: ownerReference?.name ?? operator.metadata.name,
+        uid: groupUid,
+      },
+    });
+  }
+  return null;
+};
+
+export const getOperatorGroupResources = (resources: TopologyDataResources) => {
+  const obsGroups = [];
+  WORKLOAD_TYPES.forEach((key) => {
+    if (resources[key]?.data && resources[key].data.length) {
+      resources[key].data.forEach((resource) => {
+        const group = getOperatorGroupResource(resource, resources);
+        if (!group) {
+          return;
+        }
+        obsGroups.push(group);
+      });
+    }
+  });
+  return obsGroups;
+};
+
 export const getOperatorTopologyDataModel = (
   namespace: string,
   resources: TopologyDataResources,
@@ -140,109 +162,17 @@ export const getOperatorTopologyDataModel = (
     nodes: [],
     edges: [],
   };
-  const installedOperators = resources?.clusterServiceVersions?.data as ClusterServiceVersionKind[];
-  const operatorBackedServiceKindMap = getOperatorBackedServiceKindMap(installedOperators);
-  const operatorMap = {};
-  const obsGroups = {};
+  const obsGroups = getOperatorGroupResources(resources);
   const serviceBindingRequests = resources?.serviceBindingRequests?.data;
+  const installedOperators = resources?.clusterServiceVersions?.data as ClusterServiceVersionKind[];
 
-  WORKLOAD_TYPES.forEach((key) => {
-    if (resources[key]?.data && resources[key].data.length) {
-      const typedDataModel: Model = { nodes: [], edges: [] };
-
-      resources[key].data.forEach((resource) => {
-        const item = createOverviewItemForType(key, resource, resources);
-        if (item && isOperatorBackedService(resource, installedOperators, resources)) {
-          const ownerReference = resource?.metadata?.ownerReferences?.[0];
-          const ownerUid = ownerReference?.uid;
-          const nodeResourceKind = ownerReference?.kind;
-          const operatorBackedServiceKind = operatorBackedServiceKindMap?.[nodeResourceKind];
-          const appGroup = resource?.metadata?.labels?.['app.kubernetes.io/part-of'];
-          let operator: K8sResourceKind = installedOperators.find(
-            (op) => op.metadata.uid === ownerUid,
-          ) as K8sResourceKind;
-
-          if (!operator) {
-            operator = operatorBackedServiceKind;
-          }
-
-          const csvIcon = operatorBackedServiceKind?.spec?.icon?.[0] || operator?.spec?.icon?.[0];
-
-          const operatorName = appGroup
-            ? `${appGroup}:${operator.metadata.name}`
-            : operator.metadata.name;
-          const data = createTopologyNodeData(
-            resource,
-            item,
-            TYPE_OPERATOR_WORKLOAD,
-            getImageForCSVIcon(csvIcon) || getDefaultOperatorIcon(),
-            true,
-          );
-          typedDataModel.nodes.push(
-            getTopologyNodeItem(resource, TYPE_OPERATOR_WORKLOAD, data, WorkloadModelProps),
-          );
-
-          operatorMap[operatorName] = _.merge({}, operator, {
-            metadata: {
-              uid: `${operatorName}:${operator.metadata.uid}`,
-            },
-          });
-          if (!(operatorName in obsGroups)) {
-            obsGroups[operatorName] = [];
-          }
-          obsGroups[operatorName].push(resource.metadata.uid);
-
-          if (appGroup) {
-            const newGroup = getTopologyGroupItems(
-              _.merge({}, resource, {
-                metadata: {
-                  uid: `${operatorName}:${operator.metadata.uid}`,
-                },
-              }),
-            );
-            mergeGroup(newGroup, typedDataModel.nodes);
-          }
-        }
-      });
-      addToTopologyDataModel(typedDataModel, operatorsDataModel);
-    }
-  });
-
-  workloads.forEach((dc) => {
-    operatorsDataModel.edges.push(...getServiceBindingEdges(dc, workloads, serviceBindingRequests));
-  });
-
-  _.forIn(obsGroups, (children: string[], grp: string) => {
-    const groupDataModel: Model = { nodes: [], edges: [] };
-    const data = {
-      id: operatorMap[grp].metadata.uid,
-      name: operatorMap[grp].metadata.name,
-      type: TYPE_OPERATOR_BACKED_SERVICE,
-      resources: {
-        obj: operatorMap[grp],
-        buildConfigs: [],
-        routes: [],
-        services: [],
-        isOperatorBackedService: true,
-      },
-      groupResources: children.map((id) => operatorsDataModel.nodes.find((n) => id === n.id)?.data),
-      data: {
-        builderImage:
-          getImageForCSVIcon(operatorMap?.[grp]?.spec?.icon?.[0]) || getDefaultOperatorIcon(),
-      },
-    };
-    groupDataModel.nodes.push(
-      getTopologyNodeItem(
-        operatorMap[grp],
-        TYPE_OPERATOR_BACKED_SERVICE,
-        data,
-        OBSModelProps,
-        children,
-      ),
-    );
-
-    addToTopologyDataModel(groupDataModel, operatorsDataModel);
-  });
+  if (serviceBindingRequests?.length && installedOperators?.length) {
+    workloads.forEach((dc) => {
+      operatorsDataModel.edges.push(
+        ...getServiceBindingEdges(dc, obsGroups, serviceBindingRequests, installedOperators),
+      );
+    });
+  }
 
   return Promise.resolve(operatorsDataModel);
 };

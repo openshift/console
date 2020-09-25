@@ -1,5 +1,5 @@
 import { ValidatedOptions, TextInputTypes, gridItemSpanValueShape } from '@patternfly/react-core';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 
 export interface FieldProps {
   name: string;
@@ -86,6 +86,7 @@ export interface MultiColumnFieldProps extends FieldProps {
 export interface YAMLEditorFieldProps extends FieldProps {
   onChange?: (value: string) => void;
   onSave?: () => void;
+  schemaModel?: K8sKind;
 }
 
 export interface NameValuePair {

@@ -12,6 +12,11 @@
   margin-bottom: var(--pf-global--spacer--3xl);
 }
 
+.ceph-storage-encryption__switch {
+  --pf-c-switch__input--focus__toggle--OutlineWidth: 0 !important; // To disable the switch focus border
+  margin-top: 0.5rem;
+}
+
 .ceph-ocs-install__ocs-service-capacity--dropdown {
   width: 15rem;
 }
@@ -32,4 +37,28 @@
 
 .ceph-ocs-install__pane--margin {
   margin-bottom: 0;
+}
+
+.ceph-ocs-install__minimal-msg {
+  margin-bottom: var(--pf-global--spacer--sm);
+}
+
+.ceph-minimal-deployment-alert__header {
+  display: flex;
+  justify-content: space-between;
+}
+
+// Restrict node-list widths
+.ceph-ocs-install__node-list {
+  @media (min-width: 769px) {
+    max-width: 100%;
+  }
+
+  @media (min-width: 992px) {
+    min-width: 650px;
+  }
+
+  @media (min-width: 1200px) {
+    max-width: 70%;
+  }
 }

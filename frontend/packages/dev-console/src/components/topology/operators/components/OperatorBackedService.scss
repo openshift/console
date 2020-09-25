@@ -28,12 +28,23 @@
     stroke-width: $group-node-selected-stroke-width;
     stroke-dasharray: $group-node-stroke-dasharray;
   }
+
+  &.is-highlight &__bg {
+    fill: $pf-color-black-150;
+    stroke: $interactive-stroke-color;
+  }
+
+  &.is-dropTarget &__bg {
+    fill: $interactive-fill-color;
+    stroke: $interactive-stroke-color;
+  }
 }
 
 .odc-m-drag-active,
 .odc-m-filter-active {
   .odc-operator-backed-service {
     opacity: $de-emphasize-opacity;
+    &.is-highlight,
     &.is-dragging {
       opacity: 1;
     }

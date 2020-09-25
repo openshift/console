@@ -3,11 +3,12 @@ import * as path from 'path';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as sideNavView from '@console/internal-integration-tests/views/sidenav.view';
 import { click, getOperatorHubCardIndex } from '@console/shared/src/test-utils/utils';
-import { OCS_OP, SECOND, OCS_OPERATOR_NAME } from '../utils/consts';
+import { OCS_OP, SECOND, OCS_OPERATOR_NAME, SUCCESS, READY_FOR_USE } from '../utils/consts';
 import { waitFor, refreshIfNotVisible, waitUntil } from '../utils/helpers';
 
 enum Version {
   OCP_44 = 'OCP_4.4',
+  OCP_45 = 'OCP_4.5',
   LATEST = 'LATEST',
 }
 
@@ -19,6 +20,7 @@ export enum Platform {
 export enum Mode {
   CONVERGED = 'CONVERGED',
   EXTERNAL = 'EXTERNAL',
+  ATTACHED_DEVICES = 'ATTACHED_DEVICES',
 }
 
 /**
@@ -44,6 +46,7 @@ const DEFAULTS = {
   createLink: $('.pf-c-card__footer a'),
   searchInputOperatorHub: $('input[placeholder="Filter by keyword..."]'),
   searchInputOperators: $('[data-test-id="list-page-search-input"]'),
+  ocsOperatorInstallHeading: $('.co-clusterserviceversion-install__heading'),
 
   // Subscription Page
   dropdownForNamespace: $('#dropdown-selectbox'),
@@ -88,7 +91,27 @@ const DEFAULTS = {
   nodeLocations: $$('tbody [data-key="3"'),
 
   // Select Installation Mode
-  independentModeButton: $('input[name="independent-mode"]'),
+  independentModeButton: $('input[value="External"]'),
+
+  // Select Attached Devices Mode
+  attachedDevicesMode: $('input[value="Internal - Attached Devices"]'),
+
+  // attached devices
+  LSOAlert: $('.pf-c-alert__title'),
+  LSOWizard: $('.ceph-create-sc-wizard'),
+  scDropdown: $('#ceph-sc-dropdown'),
+  selectSC: (sc: string) => $(`#${sc}-link`),
+  createNewSCBtn: $('.ceph-ocs-install__create-new-sc-btn'),
+  currentStep: $('.ceph-create-sc-wizard .pf-m-current'),
+  volumeSetName: $('#create-lvs-volume-set-name'),
+  confirmModal: $('.pf-c-modal-box__title'),
+  localVolumeSetView: $('.ceph-ocs-install__form-wrapper'),
+  createStorageClusterView: $('.co-m-pane__form'),
+  confirmBtn: $('.pf-c-modal-box__footer .pf-m-primary'),
+  nodeList: $('.ceph-node-list__max-height'),
+  errorAlert: $('.pf-m-danger'),
+  nodesCntOnLVS: $('.ceph-ocs-install__stats div:first-child'),
+  nodeNamesForAD: $$('tbody [data-key="0"]'),
 
   fileUploadButton: $('#inputButton'),
 };
@@ -100,10 +123,16 @@ const OCP_44 = {
   searchInputOperators: $('input[placeholder="Filter by name..."]'),
 };
 
+const OCP_45 = {
+  independentModeButton: $('input[name="independent-mode"]'),
+};
+
 export const currentSelectors = (() => {
   switch (VERSION) {
     case Version.OCP_44:
       return Object.assign(DEFAULTS, OCP_44);
+    case Version.OCP_45:
+      return Object.assign(DEFAULTS, OCP_45);
     default:
       return DEFAULTS;
   }
@@ -164,18 +193,51 @@ export class InstallCluster {
     await browser.sleep(2 * SECOND);
     await click(currentSelectors.primaryButton);
     await browser.refresh();
-    await browser.wait(until.and(crudView.untilNoLoadersPresent), 100000);
+    await browser.wait(until.and(crudView.untilNoLoadersPresent), 100 * SECOND);
     await click(currentSelectors.primaryButton);
-    await browser.wait(until.visibilityOf(currentSelectors.searchInputOperators));
-    await currentSelectors.searchInputOperators.sendKeys(OCS_OPERATOR_NAME);
-    // Sometimes operator changes few times its status so we will wait for
-    // for 5 Succeeded status in row to be sure we have operator is
-    // installed properly.
-    await waitFor(currentSelectors.ocsOperatorStatus, 'Succeeded', 5);
+  }
+
+  async checkOCSOperatorInstallation() {
+    if (VERSION === 'LATEST') {
+      await this.checkOCSOperatorInstallationCommon();
+    } else {
+      await browser.wait(until.visibilityOf(currentSelectors.searchInputOperators));
+      await currentSelectors.searchInputOperators.sendKeys(OCS_OPERATOR_NAME);
+      // Sometimes operator changes few times its status so we will wait for
+      // for 5 Succeeded status in row to be sure we have operator is
+      // installed properly.
+      await waitFor(currentSelectors.ocsOperatorStatus, SUCCESS, 5);
+      const text = await currentSelectors.ocsOperatorStatus.getText();
+      // Operator is installed successfully
+      expect(text.includes(SUCCESS)).toBe(true);
+    }
+  }
+
+  async checkOCSOperatorInstallationCommon() {
+    await browser.wait(until.and(crudView.untilNoLoadersPresent));
+    await browser.wait(until.presenceOf(currentSelectors.ocsOperatorInstallHeading));
+    await waitFor(currentSelectors.ocsOperatorInstallHeading, READY_FOR_USE);
+    const text = await currentSelectors.ocsOperatorInstallHeading.getText();
+    // Operator is installed successfully
+    expect(text.includes(READY_FOR_USE)).toBe(true);
+    await click(currentSelectors.primaryButton);
+  }
+
+  async subscribeToLSOOperator() {
+    await click(currentSelectors.primaryButton);
+    await browser.wait(until.and(crudView.untilNoLoadersPresent));
+    await click(currentSelectors.primaryButton);
+    browser.sleep(5 * SECOND);
+    await browser.refresh();
+    await browser.wait(until.and(crudView.untilNoLoadersPresent), 100 * SECOND);
+    await click(currentSelectors.primaryButton);
+    await this.checkOCSOperatorInstallationCommon();
   }
 
   async storageClusterCreationCommon() {
-    await click(currentSelectors.ocsOperator);
+    if (VERSION !== 'LATEST') {
+      await click(currentSelectors.ocsOperator);
+    }
     // In fresh clusters APIs are not shown (Last seen in OCP 4.3)
     try {
       await browser.wait(until.visibilityOf(currentSelectors.createLink), 10 * SECOND);
@@ -195,6 +257,19 @@ export class InstallCluster {
     await click(currentSelectors.primaryButton);
     await browser.wait(until.and(crudView.untilNoLoadersPresent));
     return { selectedNodes, workersAZ };
+  }
+
+  async selectOCSOperator() {
+    await browser.wait(
+      until.visibilityOf($('.co-clusterserviceversion-logo__name__clusterserviceversion')),
+    );
+    await click(currentSelectors.ocsOperator);
+  }
+
+  async createAttachedStorageCluster() {
+    await this.storageClusterCreationCommon();
+    await click(currentSelectors.attachedDevicesMode);
+    await browser.wait(until.and(crudView.untilNoLoadersPresent));
   }
 
   async createExternalStorageCluster() {

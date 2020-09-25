@@ -10,7 +10,7 @@ import {
 } from '@console/internal/module/k8s';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { withStartGuide } from '@console/internal/components/start-guide';
-import ProjectListPage from './projects/ProjectListPage';
+import CreateProjectListPage from './projects/CreateProjectListPage';
 import { getBadgeFromType } from '@console/shared/src';
 
 export interface ProjectSelectPageProps {
@@ -40,9 +40,9 @@ const ProjectSelectPage: React.FC<ProjectSelectPageProps> = (props) => {
       <Helmet>
         <title>{kindObj.labelPlural}</title>
       </Helmet>
-      <ProjectListPage title={kindObj.labelPlural} badge={getBadgeFromType(kindObj.badge)}>
+      <CreateProjectListPage title={kindObj.labelPlural} badge={getBadgeFromType(kindObj.badge)}>
         Select a project to view the list of {kindObj.labelPlural}
-      </ProjectListPage>
+      </CreateProjectListPage>
     </>
   );
 };

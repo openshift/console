@@ -156,9 +156,9 @@ describe('Using OLM descriptor components', () => {
     expect(fieldGroup.label.getText()).toEqual('Field Group');
     await fieldGroup.toggleButton.click();
     await browser.wait(until.and(until.presenceOf(item1.element), until.presenceOf(item2.element)));
-    expect(item1.label.getText()).toEqual('itemOne');
+    expect(item1.label.getText()).toEqual('Item One');
     expect(item1.input.getAttribute('value')).toEqual(testCR.spec.fieldGroup.itemOne);
-    expect(item2.label.getText()).toEqual('itemTwo');
+    expect(item2.label.getText()).toEqual('Item Two');
     expect(item2.input.getAttribute('value')).toEqual(testCR.spec.fieldGroup.itemTwo.toString());
   });
 

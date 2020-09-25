@@ -3,7 +3,7 @@ import * as classNames from 'classnames';
 import {
   WithSourceDragProps,
   WithTargetDragProps,
-  WithRemoveConnectorProps,
+  WithContextMenuProps,
   Edge,
   observer,
   EdgeConnectorArrow,
@@ -19,8 +19,7 @@ type ConnectsToProps = {
   dragging?: boolean;
 } & WithSourceDragProps &
   WithTargetDragProps &
-  WithRemoveConnectorProps;
-
+  WithContextMenuProps;
 const ObservedConnectsTo: React.FC<ConnectsToProps> = ({
   element,
   targetDragRef,

@@ -11,9 +11,17 @@ import (
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/release"
+	"helm.sh/helm/v3/pkg/repo"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/dynamic"
+	"k8s.io/client-go/dynamic/fake"
+	corev1 "k8s.io/client-go/kubernetes/typed/core/v1"
+	"k8s.io/client-go/rest"
+	"sigs.k8s.io/yaml"
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/helm/actions"
+	"github.com/openshift/console/pkg/helm/chartproxy"
 )
 
 var fakeReleaseList = []*release.Release{
@@ -122,8 +130,40 @@ func fakeRollbackRelease(name string, t *testing.T, rel *release.Release, err er
 	}
 }
 
+func fakeHelmGetChartRepos(indexFile *repo.IndexFile, err error) func(c dynamic.Interface, coreClient corev1.CoreV1Interface, caCert []byte) (*repo.IndexFile, error) {
+	return func(c dynamic.Interface, coreClient corev1.CoreV1Interface, caCerts []byte) (*repo.IndexFile, error) {
+		return indexFile, err
+	}
+}
+
+func fakeDynamicClient(err error) func(conf *rest.Config) (dynamic.Interface, error) {
+	return func(conf *rest.Config) (dynamic.Interface, error) {
+		return fake.NewSimpleDynamicClient(runtime.NewScheme()), err
+	}
+}
+
+type fakeProxy struct {
+	repo *repo.IndexFile
+	chartproxy.Proxy
+	error
+}
+
+func (p fakeProxy) IndexFile() (*repo.IndexFile, error) {
+	return p.repo, p.error
+}
+
+type FakeConfig struct {
+	action.RESTClientGetter
+}
+
+func (f FakeConfig) ToRESTConfig() (config *rest.Config, err error) {
+	return &rest.Config{}, nil
+}
+
 func getFakeActionConfigurations(string, string, string, *http.RoundTripper) *action.Configuration {
-	return &action.Configuration{}
+	return &action.Configuration{
+		RESTClientGetter: FakeConfig{},
+	}
 }
 
 func TestHelmHandlers_HandleHelmList(t *testing.T) {
@@ -628,6 +668,92 @@ func TestHelmHandlers_HandleHelmUpgradeRelease(t *testing.T) {
 			}
 			if response.Body.String() != tt.expectedResponse {
 				t.Errorf("response body not matching expected is %s and received is %s", tt.expectedResponse, response.Body.String())
+			}
+		})
+	}
+}
+
+func TestHelmHandlers_Index(t *testing.T) {
+	tests := []struct {
+		name             string
+		indexFile        *repo.IndexFile
+		httpStatusCode   int
+		proxyNewError    error
+		indexFileError   error
+		expectedResponse string
+	}{
+		{
+			name:           "valid repo index file should return correct response",
+			httpStatusCode: http.StatusOK,
+			indexFile: &repo.IndexFile{
+				APIVersion: "v1",
+				Entries: map[string]repo.ChartVersions{
+					"redhat-chart": {
+						{
+							Metadata: &chart.Metadata{
+								Name:       "redhat-chart",
+								Version:    "v1.0.0",
+								APIVersion: "v1",
+							},
+							URLs: []string{"https://redhat-chart.url.com"},
+						},
+					},
+				},
+			},
+		},
+		{
+			name:             "error case should return correct http header",
+			httpStatusCode:   http.StatusInternalServerError,
+			proxyNewError:    errors.New("Fake error"),
+			expectedResponse: `{"error":"Failed to get k8s config: Fake error"}`,
+		},
+		{
+			name:             "Report error while retrieving the merged index",
+			httpStatusCode:   http.StatusInternalServerError,
+			indexFileError:   errors.New("Fake error"),
+			expectedResponse: `{"error":"Failed to get index file: Fake error"}`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var request *http.Request
+
+			request = httptest.NewRequest(http.MethodGet, "/api/helm/charts/index.yaml", strings.NewReader(""))
+			response := httptest.NewRecorder()
+
+			user := &auth.User{
+				Token: "foo",
+			}
+			handler := helmHandlers{
+				newProxy: func(token string) (proxy chartproxy.Proxy, err error) {
+					if token != user.Token {
+						t.Errorf("Expected token %s but got %s", user.Token, token)
+					}
+					return &fakeProxy{repo: tt.indexFile, error: tt.indexFileError}, tt.proxyNewError
+				},
+			}
+
+			handler.HandleIndexFile(user, response, request)
+
+			if tt.expectedResponse == "" && tt.indexFile != nil {
+				expectedResponse, err := yaml.Marshal(tt.indexFile)
+				tt.expectedResponse = string(expectedResponse)
+				if err != nil {
+					t.Error(err)
+				}
+			}
+
+			if tt.expectedResponse != response.Body.String() {
+				t.Errorf("Expected response isn't matching expected \n %s received \n %s", tt.expectedResponse, response.Body.String())
+			}
+
+			if response.Code != tt.httpStatusCode {
+				t.Errorf("Response status code isn't matching expected %d received %d", tt.httpStatusCode, response.Code)
+			}
+
+			if tt.expectedResponse != "" && tt.expectedResponse != response.Body.String() {
+				t.Errorf("Response not matching expected is %s and received %s", tt.expectedResponse, response.Body.String())
 			}
 		})
 	}

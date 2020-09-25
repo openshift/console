@@ -42,17 +42,27 @@ const ClusterInventoryItem = withDashboardResources<ClusterInventoryItemProps>(
   React.memo(
     ({
       model,
-      mapper,
+      mapperLoader,
       useAbbr,
       additionalResources,
       expandedComponent,
     }: ClusterInventoryItemProps) => {
       const mainResource = React.useMemo(() => getFirehoseResource(model), [model]);
       const otherResources = React.useMemo(() => additionalResources || {}, [additionalResources]);
+      const [mapper, setMapper] = React.useState<StatusGroupMapper>();
       const [resourceData, resourceLoaded, resourceLoadError] = useK8sWatchResource<
         K8sResourceCommon[]
       >(mainResource);
       const resources = useK8sWatchResources(otherResources);
+      React.useEffect(() => {
+        mapperLoader &&
+          mapperLoader()
+            .then((res) => setMapper(() => res))
+            .catch(() => {
+              // eslint-disable-next-line no-console
+              console.error('Mapper does not exist in module');
+            });
+      }, [mapperLoader]);
 
       const additionalResourcesData = {};
       let additionalResourcesLoaded = true;
@@ -120,7 +130,7 @@ export const InventoryCard = () => {
           <ClusterInventoryItem
             key={item.properties.model.kind}
             model={item.properties.model}
-            mapper={item.properties.mapper}
+            mapperLoader={item.properties.mapper}
             additionalResources={item.properties.additionalResources}
             useAbbr={item.properties.useAbbr}
             expandedComponent={item.properties.expandedComponent}
@@ -133,7 +143,7 @@ export const InventoryCard = () => {
 
 type ClusterInventoryItemProps = DashboardItemProps & {
   model: K8sKind;
-  mapper?: StatusGroupMapper;
+  mapperLoader?: () => Promise<StatusGroupMapper>;
   useAbbr?: boolean;
   additionalResources?: WatchK8sResources<any>;
   expandedComponent?: LazyLoader;

@@ -3,11 +3,11 @@ import * as _ from 'lodash';
 import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Nav, NavItem, NavList } from '@patternfly/react-core';
-import { StatusIcon } from '@console/shared';
 import { Firehose, resourcePathFromModel } from '@console/internal/components/utils';
 import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
 import { PipelineRun } from '../../../utils/pipeline-augment';
 import { PipelineRunModel } from '../../../models';
+import { ColoredStatusIcon } from '../../pipelines/detail-page-tabs/pipeline-details/StatusIcon';
 import LogsWrapperComponent from '../logs/LogsWrapperComponent';
 import { getDownloadAllLogsCallback } from '../logs/logs-utils';
 import './PipelineRunLogs.scss';
@@ -52,13 +52,13 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
   getSortedTaskRun = (taskRunFromYaml) => {
     const taskRuns = Object.keys(taskRunFromYaml).sort((a, b) => {
       if (_.get(taskRunFromYaml, [a, 'status', 'completionTime'], false)) {
-        return taskRunFromYaml[b].status.completionTime &&
+        return taskRunFromYaml[b].status?.completionTime &&
           new Date(taskRunFromYaml[a].status.completionTime) >
             new Date(taskRunFromYaml[b].status.completionTime)
           ? 1
           : -1;
       }
-      return taskRunFromYaml[b].status.completionTime ||
+      return taskRunFromYaml[b].status?.completionTime ||
         new Date(taskRunFromYaml[a].status?.startTime) >
           new Date(taskRunFromYaml[b].status?.startTime)
         ? 1
@@ -90,15 +90,17 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
             obj.metadata?.name,
           )
         : undefined;
-    const resources = taskCount > 0 && [
-      {
-        name: _.get(taskRunFromYaml[activeItem], ['status', 'podName'], ''),
-        kind: 'Pod',
-        namespace: obj.metadata.namespace,
-        prop: `obj`,
-        isList: false,
-      },
-    ];
+    const podName = taskRunFromYaml[activeItem]?.status?.podName;
+    const resources = taskCount > 0 &&
+      podName && [
+        {
+          name: podName,
+          kind: 'Pod',
+          namespace: obj.metadata.namespace,
+          prop: `obj`,
+          isList: false,
+        },
+      ];
     const path = `${resourcePathFromModel(
       PipelineRunModel,
       obj.metadata.name,
@@ -119,7 +121,7 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
                       className="odc-pipeline-run-logs__navitem"
                     >
                       <Link to={path + _.get(taskRunFromYaml, [task, `pipelineTaskName`], '-')}>
-                        <StatusIcon
+                        <ColoredStatusIcon
                           status={pipelineRunFilterReducer(
                             _.get(obj, ['status', 'taskRuns', task]),
                           )}
@@ -138,7 +140,7 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
           )}
         </div>
         <div className="odc-pipeline-run-logs__container">
-          {activeItem ? (
+          {activeItem && resources ? (
             <Firehose key={activeItem} resources={resources}>
               <LogsWrapperComponent
                 taskName={_.get(taskRunFromYaml, [activeItem, 'pipelineTaskName'], '-')}

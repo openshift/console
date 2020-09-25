@@ -72,6 +72,7 @@ describe('Test VM actions', () => {
       async () => {
         pauseVM(vmName, testName);
         await vm.listViewAction(VM_ACTION.Unpause);
+        await vm.waitForStatus(VM_STATUS.Running);
       },
       VM_ACTIONS_TIMEOUT_SECS,
     );
@@ -118,7 +119,9 @@ describe('Test VM actions', () => {
       'ID(CNV-1794) Unpauses VM',
       async () => {
         pauseVM(vmName, testName);
+        await vm.waitForStatus(VM_STATUS.Paused);
         await vm.detailViewAction(VM_ACTION.Unpause);
+        await vm.waitForStatus(VM_STATUS.Running);
       },
       VM_ACTIONS_TIMEOUT_SECS,
     );

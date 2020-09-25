@@ -23,6 +23,7 @@ export const ALL_NAMESPACES_KEY = '#ALL_NS#';
 
 // Use a key for the "all" applications option that would be an invalid application name to avoid a potential clash
 export const ALL_APPLICATIONS_KEY = '#ALL_APPS#';
+export const UNASSIGNED_APPLICATIONS_KEY = '#UNASSIGNED_APP#';
 
 // Prefix our localStorage items to avoid conflicts if another app ever runs on the same domain.
 export const STORAGE_PREFIX = 'bridge';
@@ -36,6 +37,7 @@ export const API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/api-
 export const COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/community-providers-warning`;
 export const DEV_CATALOG_FILTER_KEY = `${STORAGE_PREFIX}/dev-catalog-filters`;
 export const PINNED_RESOURCES_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/pinned-resources`;
+export const COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/table-columns`;
 
 // Bootstrap user for OpenShift 4.0 clusters
 export const KUBE_ADMIN_USERNAME = 'kube:admin';
@@ -69,6 +71,7 @@ export enum FLAGS {
   MACHINE_CONFIG = 'MACHINE_CONFIG',
   MACHINE_AUTOSCALER = 'MACHINE_AUTOSCALER',
   MACHINE_HEALTH_CHECK = 'MACHINE_HEALTH_CHECK',
+  CONSOLE_LINK = 'CONSOLE_LINK',
   CONSOLE_CLI_DOWNLOAD = 'CONSOLE_CLI_DOWNLOAD',
   CONSOLE_NOTIFICATION = 'CONSOLE_NOTIFICATION',
   CONSOLE_EXTERNAL_LOG_LINK = 'CONSOLE_EXTERNAL_LOG_LINK',

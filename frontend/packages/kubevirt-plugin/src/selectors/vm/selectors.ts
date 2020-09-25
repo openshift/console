@@ -2,13 +2,12 @@ import * as _ from 'lodash';
 import { getName } from '@console/shared/src/selectors/common';
 import { createBasicLookup } from '@console/shared/src/utils/utils';
 import {
-  TEMPLATE_DATAVOLUME_ANNOTATION,
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_OS_LABEL,
   TEMPLATE_OS_NAME_ANNOTATION,
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../constants/vm';
-import { CPURaw, V1Network, V1NetworkInterface, VMIKind, VMKind } from '../../types';
+import { CPURaw, V1Network, V1NetworkInterface, VMKind } from '../../types';
 import { findKeySuffixValue, getSimpleName, getValueByPrefix } from '../utils';
 import { getAnnotations, getLabels } from '../selectors';
 import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
@@ -19,10 +18,8 @@ import {
   getVolumeContainerImage,
   getVolumePersistentVolumeClaimName,
 } from './volume';
-import { getVMIDisks } from '../vmi/basic';
-import { VirtualMachineModel } from '../../models';
 import { V1Volume } from '../../types/vm/disk/V1Volume';
-import { VMGenericLikeEntityKind, VMILikeEntityKind } from '../../types/vmLike';
+import { VMGenericLikeEntityKind } from '../../types/vmLike';
 import { RunStrategy, StateChangeRequest } from '../../constants/vm/vm';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 
@@ -55,9 +52,9 @@ export const getVolumes = (vm: VMKind, defaultValue: V1Volume[] = []): V1Volume[
 export const getDataVolumeTemplates = (vm: VMKind, defaultValue = []) =>
   _.get(vm, 'spec.dataVolumeTemplates') == null ? defaultValue : vm.spec.dataVolumeTemplates;
 
-export const getBootableDisks = (vm: VMKind, defaultValue: V1Disk[] = []): V1Disk[] => {
-  const volumeLookup = createBasicLookup(getVolumes(vm), getSimpleName);
-  return getDisks(vm, defaultValue).filter((disk) => {
+export const getBootableDisks = (vm: VMKind, disks?: V1Disk[], volumes?: V1Volume[]): V1Disk[] => {
+  const volumeLookup = createBasicLookup(volumes || getVolumes(vm), getSimpleName);
+  return (disks || getDisks(vm)).filter((disk) => {
     const volWrapper = new VolumeWrapper(volumeLookup[disk.name]);
     return !volWrapper.isEmpty() && volWrapper.getType() && !volWrapper.getType().isEnvType();
   });
@@ -146,11 +143,6 @@ export const getCloudInitVolume = (vm: VMKind) => {
 export const hasAutoAttachPodInterface = (vm: VMKind, defaultValue = false) =>
   _.get(vm, 'spec.template.spec.domain.devices.autoattachPodInterface', defaultValue);
 
-export const getCDRoms = (vm: VMILikeEntityKind) =>
-  vm.kind === VirtualMachineModel.kind
-    ? getDisks(vm as VMKind).filter((device) => !!device.cdrom)
-    : getVMIDisks(vm as VMIKind).filter((device) => !!device.cdrom);
-
 export const getContainerImageByDisk = (vm: VMKind, name: string) =>
   getVolumeContainerImage(getVolumes(vm).find((vol) => name === vol.name));
 
@@ -189,15 +181,3 @@ export const getIsGraphicsConsoleAttached = (vm: VMKind) =>
 
 export const getIsSerialConsoleAttached = (vm: VMKind) =>
   vm?.spec?.template?.spec?.domain?.devices?.autoattachSerialConsole;
-
-export const getOperatingSystemDataVolumeAnnotation = (
-  vmLike: VMGenericLikeEntityKind,
-  osId?: string,
-) =>
-  getValueByPrefix(
-    getAnnotations(vmLike),
-    `${TEMPLATE_DATAVOLUME_ANNOTATION}/${osId || getOperatingSystem(vmLike)}`,
-  );
-
-export const getOperatingSystemDataVolumeNamespaceAnnotation = (vmLike: VMGenericLikeEntityKind) =>
-  getValueByPrefix(getAnnotations(vmLike), `${TEMPLATE_DATAVOLUME_ANNOTATION}/namespace`);

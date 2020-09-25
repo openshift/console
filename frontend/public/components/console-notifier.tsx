@@ -16,7 +16,10 @@ const ConsoleNotifier_: React.FC<ConsoleNotifierProps> = ({ obj, location }) => 
     <>
       {_.map(_.get(obj, 'data'), (notification) =>
         notification.spec.location === location ||
-        notification.spec.location === 'BannerTopBottom' ? (
+        notification.spec.location === 'BannerTopBottom' ||
+        // notification.spec.location is optional
+        // render the notification BannerTop if location is not specified
+        (!notification.spec.location && location === 'BannerTop') ? (
           <div
             key={notification.metadata.uid}
             className="co-global-notification"

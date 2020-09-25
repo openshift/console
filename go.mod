@@ -9,8 +9,9 @@ require (
 	github.com/gorilla/websocket v1.4.0
 	github.com/graph-gophers/graphql-go v0.0.0-20200309224638-dae41bde9ef9
 	github.com/openshift/api v0.0.0-20200326142103-b6c626c7d56e
+	github.com/openshift/library-go v0.0.0-20200402123743-4015ba624cae
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
-	github.com/rawagner/graphql-transport-ws v0.0.0-20200506141829-b08019af7525
+	github.com/rawagner/graphql-transport-ws v0.0.0-20200817140314-dcfbf0388067
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	golang.org/x/text v0.3.3 // indirect
 	google.golang.org/grpc v1.27.0
@@ -24,6 +25,7 @@ require (
 	k8s.io/client-go v0.18.0
 	k8s.io/klog v1.0.0
 	rsc.io/letsencrypt v0.0.3 // indirect
+	sigs.k8s.io/yaml v1.2.0
 )
 
 replace (

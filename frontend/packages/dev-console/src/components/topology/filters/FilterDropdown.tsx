@@ -1,12 +1,20 @@
 import * as React from 'react';
-import { Select, SelectGroup, SelectOption, SelectVariant, Switch } from '@patternfly/react-core';
+import {
+  Radio,
+  Select,
+  SelectGroup,
+  SelectOption,
+  SelectVariant,
+  Switch,
+} from '@patternfly/react-core';
 import { TopologyDisplayFilterType, DisplayFilters } from '../topology-types';
-import { EXPAND_GROUPS_FILTER_ID } from './const';
+import { EXPAND_GROUPS_FILTER_ID, SHOW_GROUPS_FILTER_ID } from './const';
 
 import './FilterDropdown.scss';
 
 type FilterDropdownProps = {
   filters: DisplayFilters;
+  showGraphView: boolean;
   supportedFilters: string[];
   onChange: (filter: DisplayFilters) => void;
   opened?: boolean; // Use only for testing
@@ -14,17 +22,31 @@ type FilterDropdownProps = {
 
 const FilterDropdown: React.FC<FilterDropdownProps> = ({
   filters,
+  showGraphView,
   supportedFilters,
   onChange,
   opened = false,
 }) => {
   const [isOpen, setIsOpen] = React.useState(opened);
+  const showGroups = filters?.find((f) => f.id === SHOW_GROUPS_FILTER_ID)?.value ?? true;
   const groupsExpanded = filters?.find((f) => f.id === EXPAND_GROUPS_FILTER_ID)?.value ?? true;
 
   const onToggle = (open: boolean): void => setIsOpen(open);
   const onSelect = (e: React.MouseEvent, key: string) => {
     const index = filters.findIndex((f) => f.id === key);
     const filter = { ...filters[index], value: (e.target as HTMLInputElement).checked };
+    onChange([...filters.slice(0, index), filter, ...filters.slice(index + 1)]);
+  };
+
+  const onShowGroupsChange = (value: boolean) => {
+    const index = filters?.findIndex((f) => f.id === SHOW_GROUPS_FILTER_ID) ?? -1;
+    if (index === -1) {
+      return;
+    }
+    const filter = {
+      ...filters[index],
+      value,
+    };
     onChange([...filters.slice(0, index), filter, ...filters.slice(index + 1)]);
   };
 
@@ -55,7 +77,28 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
 
   const selectContent = (
     <div className="odc-topology-filter-dropdown">
-      {expandFilters.length && (
+      <div className="odc-topology-filter-dropdown__group">
+        <span className="pf-c-select__menu-group-title">Mode</span>
+        <div className="odc-topology-filter-dropdown__radio-group">
+          <Radio
+            className="odc-topology-filter-dropdown__radio"
+            id="showGroups"
+            isChecked={showGroups}
+            label="Connectivity"
+            name="Connectivity"
+            onChange={() => onShowGroupsChange(true)}
+          />
+          <Radio
+            className="odc-topology-filter-dropdown__radio"
+            id="hideGroups"
+            isChecked={!showGroups}
+            label="Consumption"
+            name="Consumption"
+            onChange={() => onShowGroupsChange(false)}
+          />
+        </div>
+      </div>
+      {expandFilters.length ? (
         <div className="odc-topology-filter-dropdown__group">
           <span className="odc-topology-filter-dropdown__expand-groups-switcher">
             <span className="pf-c-select__menu-group-title">Expand</span>
@@ -63,6 +106,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
               aria-label="Collapse Groups"
               isChecked={groupsExpanded}
               onChange={onGroupsExpandedChange}
+              isDisabled={!showGroups}
             />
           </span>
           <SelectGroup className="odc-topology-filter-dropdown__expand-groups-label">
@@ -70,7 +114,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
               <SelectOption
                 key={filter.id}
                 value={filter.id}
-                isDisabled={!groupsExpanded}
+                isDisabled={!groupsExpanded || !showGroups}
                 isChecked={filter.value}
               >
                 {filter.label}
@@ -78,8 +122,8 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
             ))}
           </SelectGroup>
         </div>
-      )}
-      {showFilters.length && (
+      ) : null}
+      {showGraphView && showFilters.length ? (
         <div className="odc-topology-filter-dropdown__group">
           <SelectGroup label="Show">
             {showFilters.map((filter) => (
@@ -89,7 +133,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
             ))}
           </SelectGroup>
         </div>
-      )}
+      ) : null}
     </div>
   );
 

@@ -127,7 +127,7 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
             {timeZone}
           </DetailItem>
           <DetailItem
-            title="Logged In Users"
+            title="Active Users"
             error={numLoggedInUsers == null}
             isLoading={!vmiLike}
             errorMessage={guestAgentFieldNotAvailMsg}

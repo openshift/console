@@ -1,38 +1,20 @@
 import * as _ from 'lodash-es';
 
-import { Alert, AlertSource, Rule, Silence } from '../components/monitoring/types';
-
-export const enum AlertSeverity {
-  Critical = 'critical',
-  Info = 'info',
-  None = 'none',
-  Warning = 'warning',
-}
-
-export const enum AlertStates {
-  Firing = 'firing',
-  Pending = 'pending',
-  Silenced = 'silenced',
-}
-
-export const enum RuleStates {
-  Firing = 'firing',
-  Inactive = 'inactive',
-  Pending = 'pending',
-  Silenced = 'silenced',
-}
-
-export const enum SilenceStates {
-  Active = 'active',
-  Expired = 'expired',
-  Pending = 'pending',
-}
+import {
+  Alert,
+  AlertSeverity,
+  AlertSource,
+  AlertStates,
+  Rule,
+  Silence,
+  SilenceStates,
+} from '../components/monitoring/types';
 
 export const alertState = (a: Alert): AlertStates => a?.state;
 export const silenceState = (s: Silence): SilenceStates => s?.status?.state;
 
-export const alertingRuleIsActive = (rule: Rule): string =>
-  rule.state === 'inactive' ? 'false' : 'true';
+export const alertingRuleHasAlertState = (rule: Rule, state: AlertStates) =>
+  state === AlertStates.NotFiring ? rule.alerts.length === 0 : _.some(rule.alerts, { state });
 
 export const alertingRuleSource = (rule: Rule): AlertSource =>
   rule.labels?.prometheus === 'openshift-monitoring/k8s' ? AlertSource.Platform : AlertSource.User;

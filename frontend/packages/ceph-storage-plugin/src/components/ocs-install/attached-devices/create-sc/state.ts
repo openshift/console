@@ -1,3 +1,4 @@
+import { HostNamesMap } from '@console/local-storage-operator-plugin/src/components/auto-detect-volume/types';
 import { diskTypeDropdownItems, diskModeDropdownItems } from '../../../../constants';
 
 export const initialState: State = {
@@ -5,6 +6,7 @@ export const initialState: State = {
   showNodesListOnADV: false,
   nodeNamesForLVS: [], // nodes selected on discovery step, used in LVS step
   allNodeNamesOnADV: [], // all nodes present in the env
+  hostNamesMapForADV: {},
 
   // states for step 2
   volumeSetName: '',
@@ -16,16 +18,20 @@ export const initialState: State = {
   nodeNames: [], // nodes selected on the LVS step
   minDiskSize: '0',
   maxDiskSize: '',
-  diskSizeUnit: 'TiB',
+  diskSizeUnit: 'Ti',
   isValidMaxSize: true,
+  hostNamesMapForLVS: {},
   // states for chart
   nodesDiscoveries: [],
   filteredDiscoveries: [],
+  filteredNodes: [],
   chartSelectedData: '',
   chartTotalData: '',
   chartDataUnit: '',
   showConfirmModal: false,
   finalStep: false,
+  showDiskList: false,
+  showNodeList: false,
 
   // common states
   isLoading: false,
@@ -34,7 +40,7 @@ export const initialState: State = {
 };
 
 export type Discoveries = {
-  size: string;
+  size: number;
   path: string;
   fstype: string;
   vendor: string;
@@ -74,7 +80,12 @@ export type State = {
   showConfirmModal: boolean;
   onNextClick: () => void;
   filteredDiscoveries: Discoveries[];
+  filteredNodes: string[];
   finalStep: boolean;
+  showDiskList: boolean;
+  hostNamesMapForADV: HostNamesMap;
+  hostNamesMapForLVS: HostNamesMap;
+  showNodeList: boolean;
 };
 
 export type Action =
@@ -102,7 +113,12 @@ export type Action =
   | { type: 'setShowConfirmModal'; value: boolean }
   | { type: 'setOnNextClick'; value: OnNextClick }
   | { type: 'setFilteredDiscoveries'; value: Discoveries[] }
-  | { type: 'setFinalStep'; value: boolean };
+  | { type: 'setFinalStep'; value: boolean }
+  | { type: 'setShowDiskList'; value: boolean }
+  | { type: 'setHostNamesMapForADV'; value: HostNamesMap }
+  | { type: 'setHostNamesMapForLVS'; value: HostNamesMap }
+  | { type: 'setShowNodeList'; value: boolean }
+  | { type: 'setFilteredNodes'; value: string[] };
 
 export const reducer = (state: State, action: Action) => {
   switch (action.type) {
@@ -154,6 +170,16 @@ export const reducer = (state: State, action: Action) => {
       return Object.assign({}, state, { filteredDiscoveries: action.value });
     case 'setFinalStep':
       return Object.assign({}, state, { finalStep: action.value });
+    case 'setShowDiskList':
+      return Object.assign({}, state, { showDiskList: action.value });
+    case 'setHostNamesMapForADV':
+      return Object.assign({}, state, { hostNamesMapForADV: action.value });
+    case 'setHostNamesMapForLVS':
+      return Object.assign({}, state, { hostNamesMapForLVS: action.value });
+    case 'setShowNodeList':
+      return Object.assign({}, state, { showNodeList: action.value });
+    case 'setFilteredNodes':
+      return Object.assign({}, state, { filteredNodes: action.value });
     default:
       return initialState;
   }

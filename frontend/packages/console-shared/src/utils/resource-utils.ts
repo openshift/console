@@ -9,7 +9,6 @@ import {
   PodTemplate,
   RouteKind,
   apiVersionForModel,
-  referenceForModel,
   K8sKind,
   ObjectMetadata,
   JobKind,
@@ -26,11 +25,9 @@ import {
   CronJobModel,
 } from '@console/internal/models';
 import { getBuildNumber } from '@console/internal/module/k8s/builds';
-import { FirehoseResource } from '@console/internal/components/utils';
-import {
-  ClusterServiceVersionModel,
-  ClusterServiceVersionKind,
-} from '@console/operator-lifecycle-manager';
+import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
+import { Alert, Alerts } from '@console/internal/components/monitoring/types';
+import { alertMessageResources } from '@console/internal/components/monitoring/alerting';
 import {
   BuildConfigOverviewItem,
   OverviewItemAlerts,
@@ -52,124 +49,7 @@ import {
 } from '../constants';
 import { resourceStatus, podStatus } from './ResourceStatus';
 import { isKnativeServing, isIdled } from './pod-utils';
-
-export const getResourceList = (namespace: string, resList?: any): FirehoseResource[] => {
-  let resources: FirehoseResource[] = [
-    {
-      isList: true,
-      kind: 'DeploymentConfig',
-      namespace,
-      prop: 'deploymentConfigs',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: 'Deployment',
-      namespace,
-      prop: 'deployments',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: 'DaemonSet',
-      namespace,
-      prop: 'daemonSets',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: 'Pod',
-      namespace,
-      prop: 'pods',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: 'Job',
-      namespace,
-      prop: 'jobs',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: 'CronJob',
-      namespace,
-      prop: 'cronJobs',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: 'ReplicationController',
-      namespace,
-      prop: 'replicationControllers',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: 'Route',
-      namespace,
-      prop: 'routes',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: 'Service',
-      namespace,
-      prop: 'services',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: 'ReplicaSet',
-      namespace,
-      prop: 'replicaSets',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: 'BuildConfig',
-      namespace,
-      prop: 'buildConfigs',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: 'Build',
-      namespace,
-      prop: 'builds',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: 'StatefulSet',
-      namespace,
-      prop: 'statefulSets',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: 'Secret',
-      namespace,
-      prop: 'secrets',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: referenceForModel(ClusterServiceVersionModel),
-      namespace,
-      prop: 'clusterServiceVersions',
-      optional: true,
-    },
-  ];
-
-  if (resList) {
-    resList.forEach((resource) => {
-      resources = [...resources, ...resource.properties.resources(namespace)];
-    });
-  }
-
-  return resources;
-};
+import { doesHpaMatch } from '@console/dev-console/src/components/hpa/hpa-utils';
 
 export const getResourcePausedAlert = (resource: K8sResourceKind): OverviewItemAlerts => {
   if (!resource.spec.paused) {
@@ -762,6 +642,24 @@ const isKindMonitorable = (model: K8sKind): boolean => {
   }
 };
 
+export const getWorkloadMonitoringAlerts = (
+  resource: K8sResourceKind,
+  monitoringAlerts: Alerts,
+): Alert[] => {
+  const alerts = _.reduce(
+    monitoringAlerts?.data,
+    (acc, alert) => {
+      const labelValues = _.map(alertMessageResources, (model, label) => alert?.labels?.[label]);
+      if (_.find(labelValues, (val) => val === resource?.metadata?.name)) {
+        acc.push(alert);
+      }
+      return acc;
+    },
+    [],
+  );
+  return alerts;
+};
+
 export const getOverviewItemsForResource = (
   obj: K8sResourceKind,
   resources: any,
@@ -774,6 +672,9 @@ export const getOverviewItemsForResource = (
   additionalAlerts?: OverviewItemAlerts,
   customBuildConfigs?: BuildConfigOverviewItem[],
 ) => {
+  const monitoringAlerts = isMonitorable
+    ? getWorkloadMonitoringAlerts(obj, resources?.monitoringAlerts)
+    : undefined;
   const buildConfigs = customBuildConfigs || getBuildConfigsForResource(obj, resources);
   const services = getServicesForResource(obj, resources);
   const routes = getRoutesForServices(services, resources);
@@ -795,6 +696,7 @@ export const getOverviewItemsForResource = (
     current,
     previous,
     isRollingOut,
+    monitoringAlerts,
   };
 
   if (utils) {
@@ -827,10 +729,16 @@ export const createDeploymentConfigItem = (
   };
   const status = resourceStatus(deploymentConfig, current, isRollingOut);
   const pods = [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])];
+  const monitoringAlerts = getWorkloadMonitoringAlerts(
+    deploymentConfig,
+    resources?.monitoringAlerts,
+  );
+  const hpas = resources?.hpas?.data?.filter(doesHpaMatch(deploymentConfig));
   const overviewItems = {
     alerts,
     buildConfigs,
     current,
+    hpas,
     isRollingOut,
     obj: deploymentConfig,
     previous,
@@ -839,6 +747,7 @@ export const createDeploymentConfigItem = (
     services,
     status,
     isMonitorable: true,
+    monitoringAlerts,
   };
 
   if (utils) {
@@ -877,11 +786,14 @@ export const createDeploymentItem = (
   };
   const status = resourceStatus(deployment, current, isRollingOut);
   const pods = [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])];
+  const monitoringAlerts = getWorkloadMonitoringAlerts(deployment, resources?.monitoringAlerts);
+  const hpas = resources?.hpas?.data?.filter(doesHpaMatch(deployment));
   const overviewItem = {
     obj: deployment,
     alerts,
     buildConfigs,
     current,
+    hpas,
     isRollingOut,
     previous,
     pods,
@@ -889,6 +801,7 @@ export const createDeploymentItem = (
     services,
     status,
     isMonitorable: true,
+    monitoringAlerts,
   };
   if (utils) {
     return utils.reduce((acc, util) => {
@@ -925,6 +838,10 @@ export const createCronJobItem = (
     ...getBuildAlerts(buildConfigs),
   };
   const status = resourceStatus(cronJob);
+  const isMonitorable = isKindMonitorable(CronJobModel);
+  const monitoringAlerts = isMonitorable
+    ? getWorkloadMonitoringAlerts(cronJob, resources?.monitoringAlerts)
+    : undefined;
   const overviewItem = {
     alerts,
     obj: cronJob,
@@ -934,7 +851,8 @@ export const createCronJobItem = (
     status,
     routes: [],
     services: [],
-    isMonitorable: isKindMonitorable(CronJobModel),
+    isMonitorable,
+    monitoringAlerts,
   };
 
   if (utils) {
@@ -956,9 +874,10 @@ export const createCronJobItems = (
   return cronJobs.map((d) => createCronJobItem(d, resources, utils));
 };
 
-export const getStandaloneJobs = (jobs: JobKind[]) => {
-  return jobs.filter((job) => !job.metadata?.ownerReferences?.length);
-};
+const isStandaloneJob = (job: K8sResourceKind) =>
+  !_.find(job.metadata?.ownerReferences, (owner) => owner.kind === CronJobModel.kind);
+
+export const getStandaloneJobs = (jobs: JobKind[]) => jobs.filter((job) => isStandaloneJob(job));
 
 export const createWorkloadItems = (
   model: K8sKind,
@@ -980,11 +899,15 @@ export const createPodItem = (pod: PodKind, resources: any): OverviewItem => {
   if (!_.isEmpty(owners) || phase === 'Succeeded' || phase === 'Failed') {
     return null;
   }
-
   const alerts = getPodAlerts(pod);
   const services = getServicesForResource(pod, resources);
   const routes = getRoutesForServices(services, resources);
   const status = podStatus(pod as PodKind);
+  const isMonitorable = isKindMonitorable(PodModel);
+  const monitoringAlerts: Alert[] = isMonitorable
+    ? getWorkloadMonitoringAlerts(pod, resources?.monitoringAlerts)
+    : undefined;
+
   return {
     alerts,
     obj: pod,
@@ -993,7 +916,8 @@ export const createPodItem = (pod: PodKind, resources: any): OverviewItem => {
     services,
     status,
     pods: [pod],
-    isMonitorable: isKindMonitorable(PodModel),
+    isMonitorable,
+    monitoringAlerts,
   };
 };
 
@@ -1064,9 +988,9 @@ export const createOverviewItemForType = (
         utils,
       );
     case 'jobs':
-      return resource.metadata?.ownerReferences?.length
-        ? null
-        : getOverviewItemsForResource(resource, resources, isKindMonitorable(JobModel), utils);
+      return isStandaloneJob(resource)
+        ? getOverviewItemsForResource(resource, resources, isKindMonitorable(JobModel), utils)
+        : null;
     case 'pods':
       return createPodItem(resource as PodKind, resources);
     default:

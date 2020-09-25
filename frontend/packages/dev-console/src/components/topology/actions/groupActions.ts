@@ -3,12 +3,13 @@ import { KebabOption } from '@console/internal/components/utils/kebab';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { Model, Node } from '@patternfly/react-topology';
 import { asAccessReview } from '@console/internal/components/utils';
-import { getKnativeContextMenuAction } from '@console/knative-plugin/src/topology/knative-topology-utils';
+import { getKnativeContextMenuAction } from '@console/knative-plugin/src/topology/create-connector-utils';
 import { addResourceMenuWithoutCatalog } from '../../../actions/add-resources';
 import { TopologyApplicationObject, GraphData, OdcNodeModel } from '../topology-types';
 import { getResource, getTopologyResourceObject } from '../topology-utils';
 import { deleteResourceModal } from '../../modals';
 import { cleanUpWorkload } from '../../../utils/application-utils';
+import { MenuOptions } from '../../../utils/add-resources-menu-utils';
 
 export const getGroupComponents = (groupId: string, model: Model): TopologyApplicationObject => {
   return _.values(model.nodes).reduce(
@@ -26,7 +27,7 @@ export const getGroupComponents = (groupId: string, model: Model): TopologyAppli
 const deleteGroup = (application: TopologyApplicationObject) => {
   // accessReview needs a resource but group is not a k8s resource,
   // so currently picking the first resource to do the rbac checks (might change in future)
-  const primaryResource = _.get(application.resources[0], ['resources', 'obj']);
+  const primaryResource = application.resources[0].resource;
   const resourceModel = modelFor(primaryResource.kind)
     ? modelFor(primaryResource.kind)
     : modelFor(referenceFor(primaryResource));
@@ -39,9 +40,8 @@ const deleteGroup = (application: TopologyApplicationObject) => {
         resourceName: application.name,
         resourceType: 'Application',
         onSubmit: () => {
-          application.resources.forEach((workload) => {
-            const resource = _.get(workload, ['resources', 'obj']);
-            reqs.push(cleanUpWorkload(resource, workload));
+          application.resources.forEach((resource) => {
+            reqs.push(cleanUpWorkload(resource));
           });
           return Promise.all(reqs);
         },
@@ -56,20 +56,25 @@ const addResourcesMenu = (
   application: TopologyApplicationObject,
   connectorSource?: Node,
 ) => {
-  const primaryResource = application.resources[0]?.resources?.obj;
+  const primaryResource = application.resources[0].resource;
   const connectorSourceObj = getResource(connectorSource) || {};
-  let resourceMenu = addResourceMenuWithoutCatalog;
+  let resourceMenu: MenuOptions = addResourceMenuWithoutCatalog;
   resourceMenu = getKnativeContextMenuAction(graphData, resourceMenu, connectorSource);
   return _.reduce(
     resourceMenu,
     (menuItems, menuItem) => {
-      const item = menuItem(
-        primaryResource,
-        application.resources[0]?.resources?.obj.metadata.namespace,
-        true,
-        connectorSourceObj,
-        graphData.createResourceAccess,
-      );
+      let item;
+      if (_.isFunction(menuItem)) {
+        item = menuItem(
+          primaryResource,
+          primaryResource.metadata.namespace,
+          true,
+          connectorSourceObj,
+          graphData.createResourceAccess,
+        );
+      } else if (_.isObject(menuItem)) {
+        item = menuItem;
+      }
       if (item) {
         menuItems.push(item);
       }

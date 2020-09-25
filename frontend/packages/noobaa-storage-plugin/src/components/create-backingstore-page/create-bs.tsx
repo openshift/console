@@ -28,12 +28,13 @@ import {
   K8sResourceKind,
 } from '@console/internal/module/k8s';
 import { ModalComponentProps } from '@console/internal/components/factory';
-import { ResourceDropdown, getAPIVersion, getName } from '@console/shared';
+import { ResourceDropdown, getAPIVersion, getName, isObjectSC } from '@console/shared';
 import { SecretModel } from '@console/internal/models';
 import { DashboardCardPopupLink } from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
 import { history } from '@console/internal/components/utils/router';
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
+import { StorageClass } from '@console/internal/components/storage-class-form';
 import { NooBaaBackingStoreModel } from '../../models';
 import './create-bs.scss';
 import {
@@ -224,6 +225,8 @@ const PVCType: React.FC<PVCTypeProps> = ({ state, dispatch }) => {
     }
   };
 
+  const onlyPvcSCs = React.useCallback((sc: StorageClass) => !isObjectSC(sc), []);
+
   return (
     <>
       <FormGroup
@@ -263,6 +266,7 @@ const PVCType: React.FC<PVCTypeProps> = ({ state, dispatch }) => {
           onChange={(sc) => dispatch({ type: 'setStorageClass', value: getName(sc) })}
           defaultClass="ocs-storagecluster-ceph-rbd"
           id="sc-dropdown"
+          filter={onlyPvcSCs}
           required
         />
       </FormGroup>
@@ -586,7 +590,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
     }
 
     promises.push(k8sCreate(NooBaaBackingStoreModel, bsPayload));
-    return handlePromise(Promise.all(promises)).then((resource) => {
+    return handlePromise(Promise.all(promises), (resource) => {
       const lastIndex = resource.length - 1;
       if (isPage)
         history.push(

@@ -19,7 +19,7 @@ describe('Interacting with OperatorHub', () => {
     spec: {
       sourceType: 'grpc',
       image:
-        'quay.io/operator-framework/upstream-community-operators@sha256:5ae28f6de8affdb2a2119565ea950a2a777280b159f03b6ddddf104740571e25',
+        'quay.io/operator-framework/upstream-community-operators@sha256:10121664b6ab87b0bd36b0f0011bf0f9b0dd55b41080878058f3c1052e869ed5',
       displayName: 'Console E2E Operators',
       publisher: 'Red Hat, Inc',
     },
@@ -31,6 +31,7 @@ describe('Interacting with OperatorHub', () => {
       (function checkForPackages() {
         const output = execSync(
           `kubectl get packagemanifests -n ${testName} --selector=catalog=console-e2e -o json`,
+          { maxBuffer: 500 * 1024 * 1024 },
         );
         if (
           JSON.parse(output.toString('utf-8')).items.find(

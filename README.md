@@ -19,7 +19,7 @@ The console is a more friendly `kubectl` in the form of a single page webapp.  I
 1. [node.js](https://nodejs.org/) >= 10 & [yarn](https://yarnpkg.com/en/docs/install) >= 1.3.2
 2. [go](https://golang.org/) >= 1.13+
 3. [oc](https://mirror.openshift.com/pub/openshift-v4/clients/oc/4.4/) or [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) and an OpenShift or Kubernetes cluster
-4. `jq` (for `contrib/environment.sh`)
+4. [jq](https://stedolan.github.io/jq/download/) (for `contrib/environment.sh`)
 5. Google Chrome/Chromium or Firefox for integration tests
 
 ### Build everything:
@@ -144,6 +144,7 @@ All frontend code lives in the `frontend/` directory.  The frontend uses node, y
 
 To install the build tools and dependencies:
 ```
+cd frontend
 yarn install
 ```
 You must run this command once, and every time the dependencies change. `node_modules` are not committed to git.
@@ -155,7 +156,7 @@ If you would like to disable hot reloading, set the environment variable `HOT_RE
 ```
 yarn run dev
 ```
-If changes aren't detected, you might need to increase `fs.inotify.max_user_watches`. See <https://webpack.js.org/configuration/watch/#not-enough-watchers>.
+If changes aren't detected, you might need to increase `fs.inotify.max_user_watches`. See <https://webpack.js.org/configuration/watch/#not-enough-watchers>. If you need to increase your watchers, it's common to see multiple errors beginning with `Error from chokidar`.
 
 ### Unit Tests
 
@@ -184,6 +185,24 @@ Run frontend tests:
 6. Will break on any `debugger;` statements
 
 ### Integration Tests
+
+#### Cypress
+
+Cypress integration tests are run via [Cypress.io](https://www.cypress.io/).
+
+Launch Cypress test runner:
+```
+cd frontend
+oc login ...
+yarn run test-cypress
+```
+
+This will launch the Cypress test runner where you can run one or all cypress tests.
+By default, it will look for Chrome in the system and use it, but if you want to use Firefox instead, set `BRIDGE_E2E_BROWSER_NAME` environment variable in your shell with the value `firefox`.
+
+[**_More information on Console's Cypress usage_**](frontend/packages/integration-tests-cypress/README.md)
+
+#### Protractor
 
 Integration tests are run in a headless browser driven by [protractor](http://www.protractortest.org/#/).
 Requirements include Chrome or Firefox, a working cluster, kubectl, and bridge itself (see building above).
@@ -220,7 +239,6 @@ For macOS, you can use:
 ```
 yarn run webdriver-update-macos
 ```
-
 #### How the Integration Tests Run in CI
 
 The end-to-end tests run against pull requests using [ci-operator](https://github.com/openshift/ci-operator/).
@@ -245,7 +263,7 @@ If you don't want to run the entire e2e tests, you can use a different suite fro
 $ ./test-gui.sh <suite>
 ```
 
-#### Hacking Integration Tests
+##### Hacking Protractor Tests
 
 To see what the tests are actually doing, it is posible to run in none `headless` mode by setting the `NO_HEADLESS` environment variable:
 
@@ -265,7 +283,7 @@ To avoid skipping remaining portion of tests upon encountering the first failure
 $ NO_FAILFAST=true ./test-gui.sh <suite>
 ```
 
-##### Debugging Integration Tests
+##### Debugging Protractor Tests
 
 1. `cd frontend; yarn run build`
 2. Add `debugger;` statements to any e2e test
@@ -274,6 +292,30 @@ $ NO_FAILFAST=true ./test-gui.sh <suite>
 5. Launches chrome-dev tools, click Resume button to continue
 6. Will break on any `debugger;` statements
 7. Pauses browser when not using `--headless` argument!
+
+#### How the Integration Tests Run in CI
+
+The end-to-end tests run against pull requests using [ci-operator](https://github.com/openshift/ci-operator/).
+The tests are defined in [this manifest](https://github.com/openshift/release/blob/master/ci-operator/jobs/openshift/console/openshift-console-master-presubmits.yaml)
+in the [openshift/release](https://github.com/openshift/release) repo and were generated with [ci-operator-prowgen](https://github.com/openshift/ci-operator-prowgen).
+
+CI runs the [test-prow-e2e.sh](test-prow-e2e.sh) script, which runs the cypress tests and the protractor `e2e` test suite defined in [protractor.conf.ts](frontend/integration-tests/protractor.conf.ts).
+
+You can simulate an e2e run against an existing 4.0 cluster with the following commands (replace `/path/to/install-dir` with your OpenShift 4.0 install directory):
+
+```
+$ oc apply -f ./frontend/integration-tests/data/htpasswd-secret.yaml
+$ oc patch oauths cluster --patch "$(cat ./frontend/integration-tests/data/patch-htpasswd.yaml)" --type=merge
+$ export BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jsonpath='{.status.consoleURL}')"
+$ export BRIDGE_KUBEADMIN_PASSWORD=$(cat "/path/to/install-dir/auth/kubeadmin-password")
+$ ./test-gui.sh e2e
+```
+
+If you don't want to run the entire e2e tests, you can use a different suite from [protractor.conf.ts](frontend/integration-tests/protractor.conf.ts). For instance,
+
+```
+$ ./test-gui.sh <suite>
+```
 
 ### Deploying a Custom Image to an OpenShift Cluster
 

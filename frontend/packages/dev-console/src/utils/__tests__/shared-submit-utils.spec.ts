@@ -58,7 +58,7 @@ describe('Shared submit utils', () => {
 
     it('should match the previous snapshot with git import data', () => {
       const mockData: GitImportFormData = _.cloneDeep(mockFormData);
-      mockData.route.targetPort = '8081-tcp';
+      mockData.route.targetPort = '8080-tcp';
       const routeObj = createRoute(mockData);
       expect(routeObj).toMatchSnapshot();
     });

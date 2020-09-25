@@ -122,6 +122,11 @@ export type VolumeMount = {
   subPathExpr?: string;
 };
 
+export type VolumeDevice = {
+  devicePath: string;
+  name: string;
+};
+
 type ProbePort = string | number;
 
 export type ExecProbe = {
@@ -247,6 +252,7 @@ export type PodAffinity = {
 export type ContainerSpec = {
   name: string;
   volumeMounts?: VolumeMount[];
+  volumeDevices?: VolumeDevice[];
   env?: EnvVar[];
   livenessProbe?: ContainerProbe;
   readinessProbe?: ContainerProbe;
@@ -364,6 +370,91 @@ export type DeploymentKind = {
   };
 } & K8sResourceCommon;
 
+type CurrentObject = {
+  averageUtilization?: number;
+  averageValue?: string;
+  value?: string;
+};
+
+type MetricObject = {
+  name: string;
+  selector?: Selector;
+};
+
+type TargetObjcet = {
+  averageUtilization?: number;
+  type: string;
+  averageValue?: string;
+  value?: string;
+};
+
+type DescribedObject = {
+  apiVersion?: string;
+  kind: string;
+  name: string;
+};
+export type HPAMetric = {
+  type: 'Object' | 'Pods' | 'Resource' | 'External';
+  resource?: {
+    name: string;
+    target: TargetObjcet;
+  };
+  external?: {
+    metric: MetricObject;
+    target: TargetObjcet;
+  };
+  object?: {
+    describedObjec: DescribedObject;
+    metric: MetricObject;
+    target: TargetObjcet;
+  };
+  pods?: {
+    metric: MetricObject;
+    target: TargetObjcet;
+  };
+};
+
+type HPACurrentMetrics = {
+  type: 'Object' | 'Pods' | 'Resource' | 'External';
+  external?: {
+    current: CurrentObject;
+    metric: MetricObject;
+  };
+  object?: {
+    current: CurrentObject;
+    describedObject: DescribedObject;
+    metric: MetricObject;
+  };
+  pods?: {
+    current: CurrentObject;
+    metric: MetricObject;
+  };
+  resource?: {
+    name: string;
+    current: CurrentObject;
+  };
+};
+
+export type HorizontalPodAutoscalerKind = K8sResourceCommon & {
+  spec: {
+    scaleTargetRef: {
+      apiVersion: string;
+      kind: string;
+      name: string;
+    };
+    minReplicas?: number;
+    maxReplicas: number;
+    metrics?: HPAMetric[];
+  };
+  status?: {
+    currentReplicas: number;
+    desiredReplicas: number;
+    currentMetrics?: HPACurrentMetrics[];
+    conditions: NodeCondition[];
+    lastScaleTime?: string;
+  };
+};
+
 export type StorageClassResourceKind = {
   provisioner: string;
   reclaimPolicy: string;
@@ -454,12 +545,16 @@ export type CRDVersion = {
   name: string;
   served: boolean;
   storage: boolean;
+  schema: {
+    // NOTE: Actually a subset of JSONSchema, but using this type for convenience
+    openAPIV3Schema: JSONSchema6;
+  };
 };
 
 export type CustomResourceDefinitionKind = {
   spec: {
-    version: string;
     group: string;
+    versions: CRDVersion[];
     names: {
       kind: string;
       singular: string;
@@ -467,12 +562,7 @@ export type CustomResourceDefinitionKind = {
       listKind: string;
       shortNames?: string[];
     };
-    scope?: 'Namespaced';
-    validation?: {
-      // NOTE: Actually a subset of JSONSchema, but using this type for convenience
-      openAPIV3Schema: JSONSchema6;
-    };
-    versions?: CRDVersion[];
+    scope: 'Cluster' | 'Namespaced';
   };
   status?: {
     conditions?: K8sResourceCondition[];
@@ -655,9 +745,11 @@ export type MachineConfigKind = {
 } & K8sResourceCommon;
 
 export enum MachineConfigPoolConditionType {
+  Degraded = 'Degraded',
+  NodeDegraded = 'NodeDegraded',
+  RenderDegraded = 'RenderDegraded',
   Updated = 'Updated',
   Updating = 'Updating',
-  Degraded = 'Degraded',
 }
 
 export type MachineConfigPoolCondition = {
@@ -679,9 +771,9 @@ export type MachineConfigPoolStatus = {
 
 export type MachineConfigPoolSpec = {
   machineConfigSelector?: Selector;
+  maxUnavailable?: number | string;
   nodeSelector?: Selector;
   paused: boolean;
-  maxUnavailable: number | string;
 };
 
 export type MachineConfigPoolKind = {
@@ -690,6 +782,7 @@ export type MachineConfigPoolKind = {
 } & K8sResourceKind;
 
 export type ClusterUpdate = {
+  force: boolean;
   image: string;
   version: string;
 };
@@ -700,6 +793,7 @@ export type UpdateHistory = {
   completionTime: string;
   version: string;
   image: string;
+  verified: boolean;
 };
 
 export enum ClusterVersionConditionType {
@@ -719,13 +813,15 @@ type ClusterVersionStatus = {
   conditions: ClusterVersionCondition[];
   desired: ClusterUpdate;
   history: UpdateHistory[];
+  observedGeneration: number;
+  versionHash: string;
 };
 
 type ClusterVersionSpec = {
   channel: string;
   clusterID: string;
-  desiredUpdate: ClusterUpdate;
-  upstream: string;
+  desiredUpdate?: ClusterUpdate;
+  upstream?: string;
 };
 
 export type ClusterVersionKind = {
@@ -920,9 +1016,9 @@ export type GroupVersionKind = string;
 export type K8sResourceKindReference = GroupVersionKind | string;
 
 export type SecretKind = {
-  data: { [key: string]: string };
+  data?: { [key: string]: string };
   stringData?: { [key: string]: string };
-  type: string;
+  type?: string;
 } & K8sResourceCommon;
 
 export type ServiceAccountKind = {
@@ -1017,16 +1113,23 @@ export type VolumeSnapshotClassKind = K8sResourceCommon & {
 
 export type PersistentVolumeClaimKind = K8sResourceCommon & {
   spec: {
-    accessModes: string;
+    accessModes: string[];
     resources: {
       requests: {
         storage: string;
       };
     };
     storageClassName: string;
-    volumeMode: string;
+    volumeMode?: string;
+    /* Parameters in a cloned PVC */
+    dataSource?: {
+      name: string;
+      kind: string;
+      apiGroup: string;
+    };
+    /**/
   };
-  status: {
+  status?: {
     phase: string;
   };
 };

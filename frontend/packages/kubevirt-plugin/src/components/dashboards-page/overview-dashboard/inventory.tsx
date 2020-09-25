@@ -3,7 +3,7 @@ import * as React from 'react';
 import { OffIcon } from '@patternfly/react-icons';
 import { getNamespace } from '@console/shared/src/selectors/common';
 import { createBasicLookup } from '@console/shared/src/utils/utils';
-import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
 import { StatusGroupMapper } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { InventoryStatusGroup } from '@console/shared/src/components/dashboard/inventory-card/status-group';
 import { getVMStatus } from '../../../statuses/vm/vm-status';
@@ -25,11 +25,13 @@ export const getVMStatusGroups: StatusGroupMapper = (
     vmis,
     pods,
     migrations,
+    pvcs,
     dataVolumes,
     vmImports,
   }: {
     vmis?: VMIKind[];
     pods?: PodKind[];
+    pvcs?: PersistentVolumeClaimKind[];
     dataVolumes?: V1alpha1DataVolume[];
     migrations?: K8sResourceKind[];
     vmImports?: VMImportKind[];
@@ -48,6 +50,7 @@ export const getVMStatusGroups: StatusGroupMapper = (
         VMStatusSimpleLabel.Migrating,
         VMStatusSimpleLabel.Stopping,
         StatusSimpleLabel.Pending,
+        VMStatusSimpleLabel.Deleting,
       ],
       count: 0,
       filterType: 'vm-status',
@@ -113,6 +116,7 @@ export const getVMStatusGroups: StatusGroupMapper = (
         vmi,
         pods,
         migrations,
+        pvcs,
         dataVolumes,
         vmImports,
       }).status.getSimpleLabel();

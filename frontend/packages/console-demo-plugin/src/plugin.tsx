@@ -27,12 +27,12 @@ import {
 import { PodModel, RouteModel, NodeModel } from '@console/internal/models';
 import { FLAGS } from '@console/shared';
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
-import { OverviewQuery } from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/queries';
+import { OverviewQuery } from '@console/shared/src/promql/cluster-dashboard';
 import { FooBarModel } from './models';
 import { yamlTemplates } from './yaml-templates';
 import TestIcon from './components/test-icon';
 import { getFooHealthState, getBarHealthState } from './components/dashboards/health';
-import { getRouteStatusGroups, DemoGroupIcon } from './components/dashboards/inventory';
+import { DemoGroupIcon } from './components/dashboards/inventory';
 
 type ConsumedExtensions =
   | ModelDefinition
@@ -234,7 +234,10 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Overview/Inventory/Item',
     properties: {
       model: RouteModel,
-      mapper: getRouteStatusGroups,
+      mapper: () =>
+        import('./components/dashboards/inventory' /* webpackChunkName: "demo" */).then(
+          (m) => m.getRouteStatusGroups,
+        ),
       expandedComponent: () =>
         import(
           './components/dashboards/inventory' /* webpackChunkName: "demo-inventory-item" */

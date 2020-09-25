@@ -6,6 +6,7 @@ export type OvirtNIC = {
   interface: string;
   vnicid: string;
   vnicnetname: string;
+  sriov: boolean;
 };
 
 export type OvirtDisk = {
@@ -14,6 +15,7 @@ export type OvirtDisk = {
   interface: string;
   name: string;
   size: number;
+  mode: string;
   sdname: string;
   sdid: string;
 };

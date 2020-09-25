@@ -71,7 +71,8 @@ class EditApplicationModal extends PromiseComponent<
 > {
   private handleSubmit = (values, actions) => {
     const { resourceKind, resource } = this.props;
-    const application = _.get(values, 'application.name');
+    const applicationKey = values.application.selectedKey;
+    const application = applicationKey === UNASSIGNED_KEY ? undefined : values.application.name;
 
     this.handlePromise(updateResourceApplication(resourceKind, resource, application))
       .then(() => {

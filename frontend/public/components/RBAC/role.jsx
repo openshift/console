@@ -32,9 +32,10 @@ const menuActions = [
   // }),
   (kind, role) => ({
     label: 'Add Role Binding',
-    href: `/k8s/cluster/rolebindings/~new?rolekind=${roleKind(role)}&rolename=${
-      role.metadata.name
-    }`,
+    href: `/k8s/${
+      role.metadata.namespace ? `ns/${role.metadata.namespace}` : 'cluster'
+    }/rolebindings/~new?rolekind=${roleKind(role)}&rolename=${role.metadata.name}${role.metadata
+      .namespace && `&namespace=${role.metadata.namespace}`}`,
   }),
   Kebab.factory.Edit,
   Kebab.factory.Delete,
@@ -137,7 +138,7 @@ class Details extends React.Component {
         </div>
         <div className="co-m-pane__body">
           <SectionHeading text="Rules" />
-          <div className="co-m-pane__filter-bar co-m-pane__filter-bar--alt">
+          <div className="co-m-pane__filter-row">
             {/* This page is temporarily disabled until we update the safe resources list.
           <div className="co-m-pane__filter-bar-group">
             <Link to={addHref(name, namespace)} className="co-m-primary-action">
@@ -145,9 +146,8 @@ class Details extends React.Component {
             </Link>
           </div>
           */}
-            <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-              <TextFilter label="Rules by action or resource" onChange={this.changeFilter} />
-            </div>
+
+            <TextFilter label="Rules by action or resource" onChange={this.changeFilter} />
           </div>
           <RulesList rules={rules} name={name} namespace={namespace} />
         </div>
@@ -230,7 +230,7 @@ export const BindingsForRolePage = (props) => {
       createProps={{
         to: `/k8s/${
           ns ? `ns/${ns}` : 'cluster'
-        }/rolebindings/~new?rolekind=${kind}&rolename=${name}`,
+        }/rolebindings/~new?rolekind=${kind}&rolename=${name}${ns && `&namespace=${ns}`}`,
       }}
       ListComponent={BindingsListComponent}
       staticFilters={[{ 'role-binding-roleRef-name': name }, { 'role-binding-roleRef-kind': kind }]}

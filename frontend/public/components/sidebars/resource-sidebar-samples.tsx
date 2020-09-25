@@ -69,6 +69,13 @@ const defaultSamples = ImmutableMap<GroupVersionKind, Sample[]>()
         targetResource: getTargetResource(BuildConfigModel),
       },
       {
+        title: 'Build from Devfile',
+        description:
+          'A Devfile build performs an image build using a devfile in the source repository or specified in build configuration.',
+        id: 'devfile-build',
+        targetResource: getTargetResource(BuildConfigModel),
+      },
+      {
         title: 'Source-to-Image (S2I) build',
         description:
           'S2I is a tool for building reproducible container images. It produces ready-to-run images by injecting the application source into a container image and assembling a new image.',
