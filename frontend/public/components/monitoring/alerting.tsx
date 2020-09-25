@@ -91,6 +91,7 @@ import { ResourceStatus } from '../utils/resource-status';
 import { history } from '../utils/router';
 import { LoadingInline, StatusBox } from '../utils/status-box';
 import { Timestamp } from '../utils/timestamp';
+import { getPrometheusURL, PrometheusEndpoint } from '../graphs/helpers';
 
 const ruleURL = (rule: Rule) => `${RuleResource.plural}/${_.get(rule, 'id')}`;
 
@@ -1559,8 +1560,9 @@ const PollerPages = () => {
       const alertsKey = 'alerts';
       const rulesKey = 'rules';
       store.dispatch(UIActions.monitoringLoading(alertsKey));
+      const url = getPrometheusURL({ endpoint: PrometheusEndpoint.RULES });
       const poller = (): void => {
-        coFetchJSON(`${prometheusBaseURL}/api/v1/rules`)
+        coFetchJSON(url)
           .then(({ data }) => {
             const { alerts, rules } = getAlertsAndRules(data);
             store.dispatch(UIActions.monitoringLoaded(alertsKey, alerts));

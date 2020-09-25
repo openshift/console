@@ -10,9 +10,7 @@ import { Table, TableHeader, TableBody, SortByDirection } from '@patternfly/reac
 import { FilterToolbar } from '@console/internal/components/filter-toolbar';
 import { getAlertsAndRules } from '@console/internal/components/monitoring/utils';
 import { monitoringSetRules, monitoringLoaded, sortList } from '@console/internal/actions/ui';
-import { useURLPoll } from '@console/internal/components/utils/url-poll-hook';
-import { PrometheusRulesResponse, Rule } from '@console/internal/components/monitoring/types';
-import { PROMETHEUS_TENANCY_BASE_PATH } from '@console/internal/components/graphs';
+import { Rule } from '@console/internal/components/monitoring/types';
 import { RootState } from '@console/internal/redux';
 import { getURLSearchParams } from '@console/internal/components/utils';
 import { getFilteredRows } from '@console/internal/components/factory';
@@ -24,6 +22,7 @@ import {
   applyListSort,
 } from './monitoring-alerts-utils';
 import './MonitoringAlerts.scss';
+import { usePrometheusRulesPoll } from '@console/internal/components/graphs/prometheus-rules-hook';
 
 type MonitoringAlertsProps = {
   match: RMatch<{
@@ -39,7 +38,6 @@ type StateProps = {
 
 type props = MonitoringAlertsProps & StateProps;
 
-const POLL_DELAY = 15 * 1000;
 const reduxID = 'devMonitoringAlerts';
 const textFilter = 'resource-list-text';
 
@@ -55,11 +53,7 @@ export const MonitoringAlerts: React.FC<props> = ({ match, rules, filters, listS
   const { sortBy: listSortBy, orderBy: listOrderBy } = getURLSearchParams();
   const columnIndex = _.findIndex(monitoringAlertColumn, { title: listSortBy });
   const sortOrder = listOrderBy || SortByDirection.asc;
-  const [response, loadError, loading] = useURLPoll<PrometheusRulesResponse>(
-    `${PROMETHEUS_TENANCY_BASE_PATH}/api/v1/rules?namespace=${namespace}`,
-    POLL_DELAY,
-    namespace,
-  );
+  const [response, loadError, loading] = usePrometheusRulesPoll({ namespace });
   const thanosAlertsAndRules = React.useMemo(
     () => (!loading && !loadError ? getAlertsAndRules(response?.data) : { rules: [], alerts: [] }),
     [response, loadError, loading],
