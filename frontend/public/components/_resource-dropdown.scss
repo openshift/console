@@ -47,9 +47,6 @@
     padding-right: var(--pf-global--spacer--xs);
     margin-right: var(--pf-global--spacer--sm);
     text-align: left;
-    &:focus {
-      outline: none;
-    }
   }
   .co-search-group__pin-toggle__icon {
     margin-right: var(--pf-global--spacer--xs);
