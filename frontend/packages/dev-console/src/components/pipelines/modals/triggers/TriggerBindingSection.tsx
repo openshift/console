@@ -33,7 +33,7 @@ const TriggerBindingSection: React.FC = () => {
     <div className="odc-trigger-binding-section">
       <FormSection title="Webhook" fullWidth>
         <TriggerBindingSelector
-          description="Select your git provider type to be associated with the Trigger"
+          description="Select your Git provider type to be associated with the Trigger"
           label="Git Provider Type"
           onChange={updateTriggerBindingVariables}
         />

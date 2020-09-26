@@ -11,7 +11,7 @@ Background:
 Scenario: knative resource type in git import add flow : Kn-01-TC03
    Given user is at Add page
    When user clicks on From git card
-   Then user will be redirected to page with header name "Import from git"
+   Then user will be redirected to page with header name "Import from Git"
    And Knative Service option is displayed under Resources section
 
 
@@ -52,7 +52,7 @@ Scenario Outline: Create knative work load from From Git card on Add page : Kn-0
 
 Examples:
 | form_name | header_name     | git_url                                 | workload_name |
-| Git       | Import from git | https://github.com/sclorg/nodejs-ex.git | nodejs-ex-git |
+| Git       | Import from Git | https://github.com/sclorg/nodejs-ex.git | nodejs-ex-git |
 
 
 @regression

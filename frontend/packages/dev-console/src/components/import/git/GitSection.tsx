@@ -210,7 +210,7 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, builderImages }) =>
           />
           {!gitTypeTouched && values.git.type === GitTypes.unsure && (
             <Alert isInline variant="info" title="Defaulting Git Type to Other">
-              We failed to detect the git type.
+              We failed to detect the Git type.
             </Alert>
           )}
         </>

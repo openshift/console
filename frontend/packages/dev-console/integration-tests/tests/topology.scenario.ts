@@ -42,8 +42,8 @@ describe('Topology', () => {
 
   const createApp = async function(newProject: boolean, newApplication: string, newApp: string) {
     await navigateImportFromGit();
-    await browser.wait(until.textToBePresentInElement(importFromGitHeader, 'Import from git'));
-    expect(importFromGitHeader.getText()).toContain('Import from git');
+    await browser.wait(until.textToBePresentInElement(importFromGitHeader, 'Import from Git'));
+    expect(importFromGitHeader.getText()).toContain('Import from Git');
     await enterGitRepoUrl('https://github.com/sclorg/nodejs-ex.git');
 
     await appName.click();

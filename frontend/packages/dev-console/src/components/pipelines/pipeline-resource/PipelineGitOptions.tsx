@@ -10,7 +10,7 @@ const PipelineGitOptions: React.FC<PipelineGitOptionsProps> = ({ prefixName }) =
       type={TextInputTypes.text}
       name={`${prefixName}.params.url`}
       label="URL"
-      helpText="Please provide git URL."
+      helpText="Please provide Git URL."
       required
     />
     <InputField
