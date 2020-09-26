@@ -19,13 +19,18 @@ func TestProxy_IndexFile(t *testing.T) {
 	}{
 		{
 			name:       "returned index file for configured helm repo",
-			indexFiles: []string{"testdata/azureRepoIndex.yaml"},
-			mergedFile: "testdata/azureRepoIndex.yaml",
+			indexFiles: []string{"testdata/sampleRepoIndex.yaml"},
+			mergedFile: "testdata/mergedSampleRepoIndex2.yaml",
 		},
 		{
 			name:       "returned merged index file for configured helm repos",
 			indexFiles: []string{"testdata/azureRepoIndex.yaml", "testdata/sampleRepoIndex.yaml"},
 			mergedFile: "testdata/mergedRepoIndex.yaml",
+		},
+		{
+			name:       "returned merged index contains all entries from source repos - helm names are appended with repo names to avoid duplicate removal",
+			indexFiles: []string{"testdata/sampleRepoIndex2.yaml", "testdata/sampleRepoIndex2.yaml"},
+			mergedFile: "testdata/mergedRepoIndexWithDuplicates.yaml",
 		},
 		{
 			name:       "return empty index file when no repositories declared in cluster",
@@ -64,7 +69,7 @@ func TestProxy_IndexFile(t *testing.T) {
 				if err != nil {
 					t.Error(err)
 				}
-				if reflect.DeepEqual(indexFile, expectedIndexFile) {
+				if !reflect.DeepEqual(indexFile.Entries, expectedIndexFile.Entries) {
 					t.Errorf("Expected index content \n%v but got \n%v", expectedIndexFile, indexFile)
 				}
 			} else {

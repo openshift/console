@@ -175,16 +175,6 @@ func (b helmRepoGetter) unmarshallConfig(repo unstructured.Unstructured) (*helmR
 	return h, nil
 }
 
-func mergeIndexFiles(files ...*repo.IndexFile) *repo.IndexFile {
-	indexFile := repo.NewIndexFile()
-	for _, file := range files {
-		for key, entry := range file.Entries {
-			indexFile.Entries[key] = entry
-		}
-	}
-	return indexFile
-}
-
 func (b *helmRepoGetter) List() ([]*helmRepo, error) {
 	var helmRepos []*helmRepo
 	repos, err := b.Client.Resource(helmChartRepositoryGVK).List(context.TODO(), v1.ListOptions{})
