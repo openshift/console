@@ -36,6 +36,7 @@ import {
 } from './import-types';
 import { createPipelineForImportFlow } from './pipeline/pipeline-template-utils';
 import { Perspective } from '@console/plugin-sdk';
+import { makePortName } from './imagestream-utils';
 
 export const generateSecret = () => {
   // http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
@@ -178,7 +179,7 @@ export const createOrUpdateDevfileResources = async (
   let webhookSecret = generateSecret(); 
 
     const devfileData = {
-      name: name,
+      name: name,	
       namespace: namespace,
       project: { name: namespace },
       application: { name: applicationName },
@@ -214,10 +215,8 @@ export const createOrUpdateDevfileResources = async (
       podLabels: podLabels,
     };
 
-    
-    // let devfileResourceObjects =  devfileCreate(null, devfileData, dryRun ? dryRunOpt : {});
-    let x = await devfileCreate(null, devfileData, dryRun ? dryRunOpt : {});
-    let devfileResourceObjects = JSON.parse(x.devfileResources)
+    let devfileResourceObjectsString = await devfileCreate(null, devfileData, dryRun ? dryRunOpt : {});
+    let devfileResourceObjects = JSON.parse(devfileResourceObjectsString.devfileResources)
 
 
     requests.push(
