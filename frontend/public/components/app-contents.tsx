@@ -179,9 +179,17 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective, flags }) 
             // <LazyRoute path="/k8s/ns/:ns/roles/:name/:rule/edit" exact loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.EditRulePage)} />
           }
 
-
+          {/* <LazyRoute
+            path="/k8s/ns/:ns/secrets/~new/:type"
+            exact
+            kind="Secret"
+            loader={() =>
+              import('./secrets/create-secret' ).then(
+                (m) => m.CreateSecret,
+              )
+            }
+          /> */} // 기존에 있는 Secret 생성페이지 라우트 (공통 폼에디터 라우트 임의로 secrete파일로 해놨는데 다른 샘플 생기면 수정 필요)
           <LazyRoute path="/k8s/ns/:ns/routes/~new/form" exact kind="Route" loader={() => import('./routes/create-route' /* webpackChunkName: "create-route" */).then(m => m.CreateRoute)} />
-
           <LazyRoute path="/k8s/cluster/rolebindings/~new" exact loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.CreateRoleBinding)} kind="RoleBinding" />
           <LazyRoute path="/k8s/ns/:ns/rolebindings/~new" exact loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.CreateRoleBinding)} kind="RoleBinding" />
           <LazyRoute path="/k8s/ns/:ns/persistentvolumeclaims/~new/form" exact kind="PersistentVolumeClaim" loader={() => import('./storage/create-pvc' /* webpackChunkName: "create-pvc" */).then(m => m.CreatePVC)} />
