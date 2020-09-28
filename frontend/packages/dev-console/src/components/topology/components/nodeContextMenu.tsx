@@ -25,7 +25,7 @@ const onKebabOptionClick = (option: KebabOption) => {
 };
 
 export const createMenuItems = (actions: KebabMenuOption[]) =>
-  actions.map((option, index) =>
+  actions.map((option: KebabMenuOption, index) =>
     isKebabSubMenu(option) ? (
       <ContextSubMenuItem label={option.label} key={option.label}>
         {createMenuItems(option.children)}

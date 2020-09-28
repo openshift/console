@@ -13,6 +13,7 @@ export interface FormFooterProps {
   showAlert?: boolean;
   infoTitle?: string;
   infoMessage?: string;
+  hideSubmit?: boolean;
 }
 
 export interface ActionGroupWithIconsProps {
