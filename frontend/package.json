@@ -27,7 +27,10 @@
     "test-gui": "yarn run test-suite --suite all",
     "test-suite": "ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/protractor integration-tests/protractor.conf.ts",
     "test-cypress": "cd packages/integration-tests-cypress && cypress open --env openshift=true",
-    "test-cypress-headless": "cd packages/integration-tests-cypress && node --max-old-space-size=4096 ../../node_modules/.bin/cypress run --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:=chrome} --headless",
+    "test-cypress-olm": "cd packages/operator-lifecycle-manager/integration-tests-cypress && ../../../node_modules/.bin/cypress open --config-file cypress-olm.json --env openshift=true",
+    "test-cypress-console-headless": "cd packages/integration-tests-cypress && node --max-old-space-size=4096 ../../node_modules/.bin/cypress run --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:=chrome} --headless",
+    "test-cypress-olm-headless": "cd packages/operator-lifecycle-manager/integration-tests-cypress && node --max-old-space-size=4096 ../../../node_modules/.bin/cypress run --config-file cypress-olm.json --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:=chrome} --headless",
+    "test-cypress-headless": "yarn test-cypress-console-headless && yarn test-cypress-olm-headless",
     "cypress-merge": "mochawesome-merge ./gui_test_screenshots/cypress_report*.json > ./gui_test_screenshots/cypress.json",
     "cypress-generate": "marge -o ./gui_test_screenshots/ -f cypress-report -t 'OpenShift Console Cypress Test Results' -p 'OpenShift Cypress Test Results' --showPassed false --assetsDir ./gui_test_screenshots/cypress/assets ./gui_test_screenshots/cypress.json",
     "cypress-a11y-report": "echo '\nA11y Test Results:' && mv packages/integration-tests-cypress/cypress-a11y-report.json ./gui_test_screenshots/ && node -e \"console.table(JSON.parse(require('fs').readFileSync(process.argv[1])));\" ./gui_test_screenshots/cypress-a11y-report.json",
@@ -66,7 +69,7 @@
     ],
     "testPathIgnorePatterns": [
       "<rootDir>/node_modules/",
-      "<rootDir>/packages/integration-tests-cypress"
+      "<rootDir>/.*/integration-tests-cypress"
     ],
     "testRegex": ".*\\.spec\\.(ts|tsx|js|jsx)$",
     "testURL": "http://localhost",

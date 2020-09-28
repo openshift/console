@@ -15,7 +15,7 @@ export const RadioInput: React.SFC<RadioInputProps> = (props) => {
       <label
         className={classNames({ 'radio-inline': props.inline, 'co-disabled': props.disabled })}
       >
-        <input type="radio" {...inputProps} />
+        <input type="radio" {...inputProps} data-test={`${props.title}-radio-input`} />
         {props.title} {props.subTitle && <span className="co-no-bold">{props.subTitle}</span>}
       </label>
       {props.desc && <p className="co-m-radio-desc text-muted">{props.desc}</p>}
