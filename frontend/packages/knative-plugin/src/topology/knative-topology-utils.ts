@@ -583,6 +583,11 @@ export const createPubSubDataItems = (
     metadata: { name },
     spec,
   } = resource;
+  const channelProps = getDynamicChannelModelRefs();
+  const depChannelResources = getOwnedResources(
+    resource,
+    getKnativeDynamicResources(resources, channelProps),
+  );
   const subscriptionData = resources?.eventingsubscription?.data ?? [];
   const triggerList = resources?.triggers?.data ?? [];
   let triggersData = {};
@@ -645,6 +650,7 @@ export const createPubSubDataItems = (
     buildConfigs: [],
     routes: [],
     services: [],
+    ...(depChannelResources && { channels: depChannelResources }),
     eventSources,
     ...channelSubsData,
     ...triggersData,
