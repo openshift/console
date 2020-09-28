@@ -67,6 +67,7 @@ const ConnectedTopologyListView: React.FC<TopologyListViewProps &
   }) => {
     const queryParams = useQueryParams();
     const selectedId = queryParams.get('selectId');
+    const [visualizationReady, setVisualizationReady] = React.useState<boolean>(false);
 
     const createVisualization = () => {
       const newVisualization = new Visualization();
@@ -93,6 +94,7 @@ const ConnectedTopologyListView: React.FC<TopologyListViewProps &
           onSelect(selectedItem);
         }
       }
+      setVisualizationReady(true);
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [model, onSelect, visualization]);
 
@@ -103,14 +105,14 @@ const ConnectedTopologyListView: React.FC<TopologyListViewProps &
       (n) => n.getType() !== TYPE_APPLICATION_GROUP && isGraph(n.getParent()) && n.isVisible(),
     );
 
-    React.useEffect(() => {
-      if (selectedId) {
+    React.useLayoutEffect(() => {
+      if (visualizationReady && selectedId) {
         const element = document.getElementById(selectedId);
         if (element) {
           element.scrollIntoView({ block: 'nearest' });
         }
       }
-    }, [selectedId]);
+    }, [selectedId, visualizationReady]);
 
     React.useEffect(() => {
       const getFlattenedItems = (): Node[] => {
@@ -257,7 +259,7 @@ const ConnectedTopologyListView: React.FC<TopologyListViewProps &
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [namespace, updateMetrics, updateMonitoringAlerts]);
 
-    if (!applicationGroups || !unassignedItems) {
+    if (!visualizationReady) {
       return null;
     }
 
