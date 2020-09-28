@@ -55,7 +55,7 @@ export const prepareStorageClassForm = async (provisioner: string) => {
   await goToStorageClassView();
   await click(crudView.createYAMLButton);
   await browser.wait(
-    until.textToBePresentInElement($('.co-m-pane__heading'), 'Create Storage Class'),
+    until.textToBePresentInElement($('.co-m-pane__heading'), 'Create StorageClass'),
   );
   await browser.wait(until.and(crudView.untilNoLoadersPresent));
   await selectItemFromDropdown(provisioner);

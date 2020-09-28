@@ -5,6 +5,7 @@ import * as classNames from 'classnames';
 // @ts-ignore
 import { useDispatch, connect } from 'react-redux';
 import { sortable } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
 import { ChartDonut } from '@patternfly/react-charts';
 import {
   Status,
@@ -94,59 +95,6 @@ const tableColumnClasses = [
   classNames('pf-m-hidden', 'pf-m-visible-on-2xl'), // storage class
   Kebab.columnClass,
 ];
-
-const PVCTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Namespace',
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-      id: 'namespace',
-    },
-    {
-      title: 'Status',
-      sortField: 'status.phase',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Persistent Volume',
-      sortField: 'spec.volumeName',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: 'Capacity',
-      sortFunc: 'pvcStorage',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: 'Used',
-      sortFunc: 'pvcUsed',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[5] },
-    },
-    {
-      title: 'Storage Class',
-      sortField: 'spec.storageClassName',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[6] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[7] },
-    },
-  ];
-};
-PVCTableHeader.displayName = 'PVCTableHeader';
 
 const kind = 'PersistentVolumeClaim';
 
@@ -248,12 +196,12 @@ const Details_ = ({ flags, obj: pvc }) => {
   const alertComponents = pvcAlertExtensions.map(({ properties: { loader } }, i) => (
     <AsyncComponent key={`ext-${i}`} loader={loader} pvc={pvc} />
   ));
-
+  const { t } = useTranslation();
   return (
     <>
       <div className="co-m-pane__body">
         {alertComponents}
-        <SectionHeading text="Persistent Volume Claim Details" />
+        <SectionHeading text={t('public~PersistentVolumeClaim details')} />
         {totalCapacityMetric && !loading && (
           <div className="co-pvc-donut">
             <ChartDonut
@@ -275,7 +223,7 @@ const Details_ = ({ flags, obj: pvc }) => {
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={pvc}>
-              <dt>Label Selector</dt>
+              <dt>{t('public~Label selector')}</dt>
               <dd data-test-id="pvc-name">
                 <Selector selector={labelSelector} kind="PersistentVolume" />
               </dd>
@@ -283,35 +231,35 @@ const Details_ = ({ flags, obj: pvc }) => {
           </div>
           <div className="col-sm-6">
             <dl>
-              <dt>Status</dt>
+              <dt>{t('public~Status')}</dt>
               <dd data-test-id="pvc-status">
                 <PVCStatus pvc={pvc} />
               </dd>
-              <dt>Requested Capacity</dt>
+              <dt>{t('public~Requested capacity')}</dt>
               <dd data-test="pvc-requested-capacity">
                 {humanizeBinaryBytes(totalRequestMetric).string}
               </dd>
               {storage && (
                 <>
-                  <dt>Capacity</dt>
+                  <dt>{t('public~Capacity')}</dt>
                   <dd data-test-id="pvc-capacity">{totalCapacity.string}</dd>
                 </>
               )}
               {usedMetrics && _.isEmpty(loadError) && !loading && (
                 <>
-                  <dt>Used</dt>
+                  <dt>{t('public~Used')}</dt>
                   <dd>{humanizeBinaryBytes(usedMetrics).string}</dd>
                 </>
               )}
               {!_.isEmpty(accessModes) && (
                 <>
-                  <dt>Access Modes</dt>
+                  <dt>{t('public~Access modes')}</dt>
                   <dd data-test-id="pvc-access-mode">{accessModes.join(', ')}</dd>
                 </>
               )}
-              <dt>Volume Mode</dt>
+              <dt>{t('public~Volume mode')}</dt>
               <dd data-test-id="pvc-volume-mode">{volumeMode || 'Filesystem'}</dd>
-              <dt>Storage Class</dt>
+              <dt>{t('public~StorageClasses')}</dt>
               <dd data-test-id="pvc-storageclass">
                 {storageClassName ? (
                   <ResourceLink kind="StorageClass" name={storageClassName} />
@@ -321,7 +269,7 @@ const Details_ = ({ flags, obj: pvc }) => {
               </dd>
               {volumeName && canListPV && (
                 <>
-                  <dt>Persistent Volume</dt>
+                  <dt>{t('public~PersistentVolumes')}</dt>
                   <dd data-test-id="persistent-volume">
                     <ResourceLink kind="PersistentVolume" name={volumeName} />
                   </dd>
@@ -332,7 +280,7 @@ const Details_ = ({ flags, obj: pvc }) => {
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="Conditions" />
+        <SectionHeading text={t('public~Conditions')} />
         <Conditions conditions={conditions} />
       </div>
     </>
@@ -342,24 +290,65 @@ const Details_ = ({ flags, obj: pvc }) => {
 const Details = connectToFlags(FLAGS.CAN_LIST_PV)(Details_);
 
 const allPhases = ['Pending', 'Bound', 'Lost'];
-const filters = [
-  {
-    filterGroupName: 'Status',
-    type: 'pvc-status',
-    reducer: (pvc) => pvc.status.phase,
-    items: _.map(allPhases, (phase) => ({
-      id: phase,
-      title: phase,
-    })),
-  },
-];
 
 export const PersistentVolumeClaimsList = (props) => {
   const Row = React.useCallback((rowProps) => <PVCTableRow {...rowProps} />, []);
+  const { t } = useTranslation();
+  const PVCTableHeader = () => {
+    return [
+      {
+        title: t('public~Name'),
+        sortField: 'metadata.name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[0] },
+      },
+      {
+        title: t('public~Namespace'),
+        sortField: 'metadata.namespace',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[1] },
+        id: 'namespace',
+      },
+      {
+        title: t('public~Status'),
+        sortField: 'status.phase',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[2] },
+      },
+      {
+        title: t('public~PersistentVolumes'),
+        sortField: 'spec.volumeName',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[3] },
+      },
+      {
+        title: t('public~Capacity'),
+        sortFunc: 'pvcStorage',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[4] },
+      },
+      {
+        title: t('public~Used'),
+        sortFunc: 'pvcUsed',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[5] },
+      },
+      {
+        sortField: 'spec.storageClassName',
+        title: t('public~StorageClass'),
+        transforms: [sortable],
+        props: { className: tableColumnClasses[6] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[7] },
+      },
+    ];
+  };
   return (
     <Table
       {...props}
-      aria-label="Persistent Volume Claims"
+      aria-label={t('public~PersistentVolumeClaims')}
       Header={PVCTableHeader}
       Row={Row}
       virtualize
@@ -368,6 +357,7 @@ export const PersistentVolumeClaimsList = (props) => {
 };
 
 export const PersistentVolumeClaimsPage = (props) => {
+  const { t } = useTranslation();
   const createPropExtensions = useExtensions(isPVCCreateProp);
   const { namespace = undefined } = props;
   const query = getQuery();
@@ -413,6 +403,18 @@ export const PersistentVolumeClaimsPage = (props) => {
             return initPath.concat(item.path);
           },
         };
+
+  const filters = [
+    {
+      filterGroupName: t('public~Status'),
+      type: 'pvc-status',
+      reducer: (pvc) => pvc.status.phase,
+      items: _.map(allPhases, (phase) => ({
+        id: phase,
+        title: phase,
+      })),
+    },
+  ];
 
   return (
     <ListPage

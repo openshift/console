@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
 import * as classNames from 'classnames';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import {
@@ -38,120 +39,125 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const StorageClassTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Provisioner',
-      sortField: 'provisioner',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: (
-        <>
-          Reclaim <span className="hidden-sm">Policy</span>
-        </>
-      ),
-      sortField: 'reclaimPolicy',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[3] },
-    },
-  ];
-};
-StorageClassTableHeader.displayName = 'StorageClassTableHeader';
-
-const StorageClassTableRow: RowFunction<StorageClassResourceKind> = ({
-  obj,
-  index,
-  key,
-  style,
-}) => {
+const StorageClassDetails: React.FC<StorageClassDetailsProps> = ({ obj }) => {
+  const { t } = useTranslation();
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
-        <ResourceLink kind={StorageClassReference} name={obj.metadata.name}>
-          {isDefaultClass(obj) && (
-            <span className="small text-muted co-resource-item__help-text">&ndash; Default</span>
-          )}
-        </ResourceLink>
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
-        {obj.provisioner}
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>{obj.reclaimPolicy || '-'}</TableData>
-      <TableData className={tableColumnClasses[3]}>
-        <ResourceKebab actions={menuActions} kind={StorageClassReference} resource={obj} />
-      </TableData>
-    </TableRow>
+    <>
+      <div className="co-m-pane__body">
+        <SectionHeading text={t('public~StorageClass details')} />
+        <div className="row">
+          <div className="col-sm-6">
+            <ResourceSummary resource={obj}>
+              <DetailsItem label={t('public~Provisioner')} obj={obj} path="provisioner" />
+            </ResourceSummary>
+          </div>
+          <div className="col-sm-6">
+            <dl className="co-m-pane__details">
+              <DetailsItem label={t('public~Reclaim policy')} obj={obj} path="reclaimPolicy" />
+              <dt>{t('public~Default class')}</dt>
+              <dd>{isDefaultClass(obj) ? t('public~True') : t('public~False')}</dd>
+              <DetailsItem
+                label={t('public~Volume binding mode')}
+                obj={obj}
+                path="volumeBindingMode"
+              />
+            </dl>
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 
-const StorageClassDetails: React.SFC<StorageClassDetailsProps> = ({ obj }) => (
-  <>
-    <div className="co-m-pane__body">
-      <SectionHeading text="StorageClass Details" />
-      <div className="row">
-        <div className="col-sm-6">
-          <ResourceSummary resource={obj}>
-            <DetailsItem label="Provisioner" obj={obj} path="provisioner" />
-          </ResourceSummary>
-        </div>
-        <div className="col-sm-6">
-          <dl className="co-m-pane__details">
-            <DetailsItem label="Reclaim Policy" obj={obj} path="reclaimPolicy" />
-            <dt>Default Class</dt>
-            <dd>{isDefaultClass(obj).toString()}</dd>
-            <DetailsItem label="Volume Binding Mode" obj={obj} path="volumeBindingMode" />
-          </dl>
-        </div>
-      </div>
-    </div>
-  </>
-);
-
-export const StorageClassList: React.SFC = (props) => (
-  <Table
-    {...props}
-    aria-label="Storage Classes"
-    Header={StorageClassTableHeader}
-    Row={StorageClassTableRow}
-    virtualize
-  />
-);
+export const StorageClassList: React.FC = (props) => {
+  const { t } = useTranslation();
+  const StorageClassTableHeader = () => {
+    return [
+      {
+        title: t('public~Name'),
+        sortField: 'metadata.name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[0] },
+      },
+      {
+        title: t('public~Provisioner'),
+        sortField: 'provisioner',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[1] },
+      },
+      {
+        title: t('public~Reclaim policy'),
+        sortField: 'reclaimPolicy',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[2] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[3] },
+      },
+    ];
+  };
+  const StorageClassTableRow: RowFunction<StorageClassResourceKind> = ({
+    obj,
+    index,
+    key,
+    style,
+  }) => {
+    return (
+      <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+        <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
+          <ResourceLink kind={StorageClassReference} name={obj.metadata.name}>
+            {isDefaultClass(obj) && (
+              <span className="small text-muted co-resource-item__help-text">
+                &ndash; {t('public~Default')}
+              </span>
+            )}
+          </ResourceLink>
+        </TableData>
+        <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+          {obj.provisioner}
+        </TableData>
+        <TableData className={tableColumnClasses[2]}>{obj.reclaimPolicy || '-'}</TableData>
+        <TableData className={tableColumnClasses[3]}>
+          <ResourceKebab actions={menuActions} kind={StorageClassReference} resource={obj} />
+        </TableData>
+      </TableRow>
+    );
+  };
+  return (
+    <Table
+      {...props}
+      aria-label={t('public~StorageClasses')}
+      Header={StorageClassTableHeader}
+      Row={StorageClassTableRow}
+      virtualize
+    />
+  );
+};
 StorageClassList.displayName = 'StorageClassList';
 
-export const StorageClassPage: React.SFC<StorageClassPageProps> = (props) => {
+export const StorageClassPage: React.FC<StorageClassPageProps> = (props) => {
   const createProps = {
     to: '/k8s/cluster/storageclasses/~new/form',
   };
-
+  const { t } = useTranslation();
   return (
     <ListPage
       {..._.omit(props, 'mock')}
-      title="Storage Classes"
+      title={t('public~StorageClasses')}
       kind={StorageClassReference}
       ListComponent={StorageClassList}
       canCreate={true}
       filterLabel={props.filterLabel}
       createProps={createProps}
-      createButtonText="Create Storage Class"
+      createButtonText={t('public~Create StorageClass')}
     />
   );
 };
 
 const pages = [navFactory.details(detailsPage(StorageClassDetails)), navFactory.editYaml()];
 
-export const StorageClassDetailsPage: React.SFC<StorageClassDetailsPageProps> = (props) => {
+export const StorageClassDetailsPage: React.FC<StorageClassDetailsPageProps> = (props) => {
   return (
     <DetailsPage {...props} kind={StorageClassReference} menuActions={menuActions} pages={pages} />
   );

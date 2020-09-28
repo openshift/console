@@ -263,7 +263,7 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
                 </GridItem>
                 <GridItem span={6}>
                   <div className="co-restore-pvc-modal__pvc-details">
-                    <strong>{NamespaceModel.label}</strong>
+                    <strong>{t('console-app~Namespace')}</strong>
                     <div>
                       <ResourceIcon kind={NamespaceModel.kind} />
                       <span>{namespace}</span>

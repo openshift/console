@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Alert, Stack, StackItem } from '@patternfly/react-core';
+import { Trans, useTranslation } from 'react-i18next';
 import { AsyncComponent, HandlePromiseProps, withHandlePromise } from '../utils';
 import { getName, YellowExclamationTriangleIcon } from '@console/shared';
 import {
@@ -17,6 +18,7 @@ const DeletePVCModal = withHandlePromise<DeletePVCModalProps>((props) => {
   const { pvc, inProgress, errorMessage, handlePromise, close, cancel } = props;
   const pvcDeleteExtensions = useExtensions<PVCDelete>(isPVCDelete);
   const pvcName = getName(pvc);
+  const { t } = useTranslation();
 
   const submit = (e) => {
     e.preventDefault();
@@ -42,21 +44,24 @@ const DeletePVCModal = withHandlePromise<DeletePVCModalProps>((props) => {
   return (
     <form onSubmit={submit} className="modal-content">
       <ModalTitle>
-        <YellowExclamationTriangleIcon className="co-icon-space-r" /> Delete Persistent Volume Claim
+        <YellowExclamationTriangleIcon className="co-icon-space-r" />{' '}
+        {t('public~Delete PersistentVolumeClaim')}
       </ModalTitle>
       <ModalBody>
         <Stack hasGutter>
           {alertComponents}
           <StackItem>
-            Are you sure you want to delete <strong className="co-break-word">{pvcName}</strong>{' '}
-            Persistent Volume Claim?
+            <Trans t={t} ns="public">
+              Are you sure you want to delete{' '}
+              <strong className="co-break-word">{{ pvcName }}</strong> PersistentVolumeClaim?
+            </Trans>
           </StackItem>
         </Stack>
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={errorMessage}
         inProgress={inProgress}
-        submitText="Delete"
+        submitText={t('public~Delete')}
         submitDanger
         cancel={cancel}
       />

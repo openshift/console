@@ -51,7 +51,7 @@ export const createNewPersistentVolumeClaim = async (
   await selectItemFromDropdown(pvc.namespace, namespaceDropdown);
   await click(crudView.createYAMLButton);
   await browser.wait(
-    until.textToBePresentInElement($('.co-m-pane__heading'), 'Create Persistent Volume Claim'),
+    until.textToBePresentInElement($('.co-m-pane__heading'), 'Create PersistentVolumeClaim'),
   );
   await browser.wait(until.and(crudView.untilNoLoadersPresent));
   // Selects default sc if not provided
