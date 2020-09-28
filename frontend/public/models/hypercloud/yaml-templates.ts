@@ -1,7 +1,8 @@
 import { Map as ImmutableMap } from 'immutable';
 
-import { GroupVersionKind, referenceForModel } from '../../module/k8s';
-import * as k8sModels from '..';
+import { GroupVersionKind } from '../../module/k8s';
+// import { referenceForModel } from '../../module/k8s'
+// import * as k8sModels from '..';
 
 export const hyperCloudTemplates = ImmutableMap<GroupVersionKind, ImmutableMap<string, string>>()
 // HyperCloud yaml templates example
