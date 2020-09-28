@@ -29,7 +29,7 @@ import { ServiceModel as KnativeServiceModel } from '@console/knative-plugin/src
 import { isDynamicEventResourceKind } from '@console/knative-plugin/src/utils/fetch-dynamic-eventsources-utils';
 import { checkAccess } from '@console/internal/components/utils';
 import { getOperatorBackedServiceKindMap } from '@console/shared';
-import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '../const';
+import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY, UNASSIGNED_LABEL } from '../const';
 import {
   TopologyDataObject,
   ConnectsToData,
@@ -48,7 +48,7 @@ export const sanitizeApplicationValue = (
 ): string => {
   switch (applicationType) {
     case UNASSIGNED_KEY:
-      return 'unassigned';
+      return UNASSIGNED_LABEL;
     case CREATE_APPLICATION_KEY:
       return '';
     default:

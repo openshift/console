@@ -2,7 +2,7 @@ Feature: Knative Eventing Channel Support
     User should be able to experience the Knative Eventing Channel and associated features
 
 
-Background: 
+Background:
     Given user has installed the OpenShift Serverless Operator
     And user has created knative serving
     And user has create knative eventing
@@ -30,7 +30,7 @@ Scenario: Create InMemoryChannel
 @regression
 Scenario: Sink event source to Channel
     Given user is at Developer Perspective
-    When user creates the channel 
+    When user creates the channel
     And user goes to +Add page
     And user clicks on the Event Source card
     And user selects Ping Source card
@@ -84,13 +84,13 @@ Scenario: Edit Application Groupings action on Channel
 
 
 @regression
-Scenario: Edit Application Groupings to unassigned action on Channel
+Scenario: Edit Application Groupings to no application group action on Channel
     Given user is at Developer Perspective
     And user is having a Channel inside an applicaiton group on the Topology page
     When user right clicks on the Channel to open the context menu
     And user clicks on the Edit Application Groupings
     And user will click on the Application dropdown on the modal
-    And user selects the unassigned item
+    And user selects the no application group item
     And user clicks on Save button
     Then user will see that Channel is without an application group
 

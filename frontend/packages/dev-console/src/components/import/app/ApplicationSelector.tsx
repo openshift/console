@@ -3,7 +3,12 @@ import * as _ from 'lodash';
 import { useFormikContext, FormikValues, useField } from 'formik';
 import { FormGroup, TextInputTypes } from '@patternfly/react-core';
 import { InputField, getFieldId, useFormikValidationFix } from '@console/shared';
-import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '../../../const';
+import {
+  CREATE_APPLICATION_KEY,
+  CREATE_APPLICATION_LABEL,
+  UNASSIGNED_KEY,
+  UNASSIGNED_LABEL,
+} from '../../../const';
 import { sanitizeApplicationValue } from '../../../utils/application-utils';
 import ApplicationDropdown from '../../dropdown/ApplicationDropdown';
 
@@ -45,11 +50,11 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
 
   const actionItems = [
     {
-      actionTitle: 'Create Application',
+      actionTitle: CREATE_APPLICATION_LABEL,
       actionKey: CREATE_APPLICATION_KEY,
     },
     {
-      actionTitle: 'unassigned',
+      actionTitle: UNASSIGNED_LABEL,
       actionKey: UNASSIGNED_KEY,
     },
   ];
@@ -62,7 +67,7 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
           label="Application"
           helperTextInvalid={errorMessage}
           validated={isValid ? 'default' : 'error'}
-          helperText="Select an application for your grouping or unassigned to not use an application grouping."
+          helperText={`Select an application for your grouping or ${UNASSIGNED_LABEL} to not use an application grouping.`}
         >
           <ApplicationDropdown
             dropDownClassName="dropdown--full-width"

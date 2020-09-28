@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as classNames from 'classnames';
 import {
   DataListCell,
   DataListContent,
@@ -7,11 +8,11 @@ import {
   DataListItemRow,
 } from '@patternfly/react-core';
 import { Node, observer } from '@patternfly/react-topology';
+import { ResourceIcon } from '@console/internal/components/utils';
 import { getChildKinds } from './list-view-utils';
 import { TopologyListViewKindGroup } from './TopologyListViewKindGroup';
 import { GroupResourcesCell } from './cells/GroupResourcesCell';
-import { useSearchFilter } from '../filters';
-import * as classNames from 'classnames';
+import { showKind, useDisplayFilters, useSearchFilter } from '../filters';
 
 interface TopologyListViewAppGroupProps {
   appGroup: Node;
@@ -25,13 +26,22 @@ const ObservedTopologyListViewAppGroup: React.FC<TopologyListViewAppGroupProps> 
   onSelect,
 }) => {
   const [filtered] = useSearchFilter(appGroup.getLabel());
+  const displayFilters = useDisplayFilters();
   const id = appGroup.getId();
   const visible = appGroup.isVisible();
   const label = appGroup.getLabel();
   const collapsed = appGroup.isCollapsed();
   const children = appGroup.getChildren();
+  const { groupResources } = appGroup.getData();
 
-  if (!visible || !children?.length) {
+  if (
+    !visible ||
+    (!collapsed && !children?.length) ||
+    (collapsed &&
+      !groupResources.find((res) =>
+        showKind(res.resourceKind || res.resource?.kind, displayFilters),
+      ))
+  ) {
     return null;
   }
 
@@ -39,8 +49,16 @@ const ObservedTopologyListViewAppGroup: React.FC<TopologyListViewAppGroupProps> 
 
   const cells = [];
   cells.push(
-    <DataListCell key={id} className="odc-topology-list-view__application-label" id={`${id}_label`}>
-      {label}
+    <DataListCell
+      key={id}
+      className="odc-topology-list-view__application-label-cell"
+      id={`${id}_label`}
+    >
+      <ResourceIcon
+        className="odc-topology-list-view__resource-icon co-m-resource-icon--lg"
+        kind="Application"
+      />
+      <span className="odc-topology-list-view__application-label">{label}</span>
     </DataListCell>,
   );
   if (collapsed) {
