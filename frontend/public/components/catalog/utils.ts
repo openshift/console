@@ -67,3 +67,10 @@ export const getIconProps = (item: Item) => {
   }
   return { iconImg: catalogImg, iconClass: null };
 };
+
+export const toTitleCase = (title: string): string => {
+  return title
+    .split('-')
+    .map((w) => (w ? w[0].toUpperCase() + w.substr(1) : ''))
+    .join(' ');
+};

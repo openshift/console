@@ -43,6 +43,7 @@ import {
 import { ClusterServiceClassModel, TemplateModel } from '../../models';
 import { coFetch, coFetchJSON } from '../../co-fetch';
 import { Item } from './types';
+import { toTitleCase } from './utils';
 
 export const CatalogListPage = withExtensions<CatalogListPageExtensionProps>({
   devCatalogExtensions: isDevCatalogModel,
@@ -216,13 +217,14 @@ export const CatalogListPage = withExtensions<CatalogListPageExtensionProps>({
 
       return _.reduce(
         chartEntries,
-        (normalizedCharts, charts) => {
+        (normalizedCharts, charts, key) => {
+          const chartRepoName = toTitleCase(key.split('--').pop());
           charts.forEach((chart: HelmChart) => {
             const tags = chart.keywords;
             const chartName = chart.name;
             const chartVersion = chart.version;
             const appVersion = chart.appVersion;
-            const tileName = `${_.startCase(chartName)} v${chart.version}`;
+            const tileName = `${toTitleCase(chartName)} v${chart.version}`;
             const tileImgUrl = chart.icon || getImageForIconClass('icon-helm');
             const chartURL = _.get(chart, 'urls.0');
             const encodedChartURL = encodeURIComponent(chartURL);
@@ -269,6 +271,7 @@ export const CatalogListPage = withExtensions<CatalogListPageExtensionProps>({
             );
 
             const obj = {
+              chartRepoName,
               ...chart,
               ...{ metadata: { uid: chart.digest, creationTimestamp: chart.created } },
             };
@@ -276,6 +279,7 @@ export const CatalogListPage = withExtensions<CatalogListPageExtensionProps>({
               obj,
               kind: 'HelmChart',
               tileName,
+              tileProvider: chartRepoName,
               tileIconClass: null,
               tileImgUrl,
               tileDescription: chart.description,
@@ -289,7 +293,9 @@ export const CatalogListPage = withExtensions<CatalogListPageExtensionProps>({
             // group Helm chart with same name and different version together
             const existingChartIndex = normalizedCharts.findIndex((hlc) => {
               const currentChart = hlc.obj as HelmChart;
-              return currentChart?.name === chartName;
+              return (
+                currentChart?.name === chartName && currentChart?.chartRepoName === chartRepoName
+              );
             });
             if (existingChartIndex > -1) {
               const existingChart = normalizedCharts[existingChartIndex].obj as HelmChart;
@@ -562,6 +568,7 @@ export type HelmChart = {
   urls: string[];
   version: string;
   kubeVersion?: string;
+  chartRepoName?: string;
 };
 
 CatalogPage.displayName = 'CatalogPage';
