@@ -10,7 +10,11 @@ const GuidedTourMastheadTrigger: React.FC<GuidedTourMastheadTriggerProps> = ({ c
   const { tourDispatch, tour } = React.useContext(TourContext);
   if (!tour) return null;
   return (
-    <button className={className} type="button" onClick={() => tourDispatch(TourActions.start)}>
+    <button
+      className={className}
+      type="button"
+      onClick={() => tourDispatch({ type: TourActions.start })}
+    >
       Guided Tour
     </button>
   );

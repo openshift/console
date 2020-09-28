@@ -1,4 +1,12 @@
-import { createContext, useReducer, Reducer, Dispatch, ReducerAction } from 'react';
+import {
+  createContext,
+  useReducer,
+  useState,
+  Reducer,
+  Dispatch,
+  ReducerAction,
+  useEffect,
+} from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
@@ -16,9 +24,16 @@ import {
 } from './utils';
 import { TourDataType, Step } from './type';
 
-export const tourReducer = (state: TourState, action: TourActions) => {
+type TourStateAction = { type: TourActions; payload?: { completed?: boolean } };
+export const tourReducer = (state: TourState, action: TourStateAction) => {
   const { stepNumber } = state;
-  switch (action) {
+  switch (action.type) {
+    case TourActions.initialize:
+      return {
+        completedTour: action.payload.completed,
+        stepNumber: 0,
+        startTour: !action.payload.completed,
+      };
     case TourActions.start:
       return { startTour: true, completedTour: false, stepNumber: 0 };
     case TourActions.next:
@@ -39,7 +54,7 @@ export const tourReducer = (state: TourState, action: TourActions) => {
   }
 };
 
-type TourReducer = Reducer<TourState, TourActions>;
+type TourReducer = Reducer<TourState, TourStateAction>;
 
 type TourContextType = {
   tourState?: TourState;
@@ -71,17 +86,18 @@ export const useTourValuesForContext = (): TourContextType => {
   // because importing getActivePerspective in this file throws error
   // Uncaught ReferenceError: Cannot access 'allModels' before initialization and this hook is used in plugin extension for ContextProvider
   const activePerspective = useSelector(({ UI }: RootState): string => UI.get('activePerspective'));
+  const [perspective, setPerspective] = useState<string>(activePerspective);
   const tourExtension = useExtensions<GuidedTour>(isGuidedTour);
-  const tour = tourExtension.find(({ properties }) => properties.perspective === activePerspective);
+  const tour = tourExtension.find(({ properties }) => properties.perspective === perspective);
   const selectorSteps = tour?.properties?.tour?.steps ?? [];
   const flags = useSelector(
     (state: RootState) => getRequiredFlagsByTour(state, selectorSteps),
     isEqual,
   );
-  const { completed } = getTourLocalStorageForPerspective(activePerspective);
+  const { completed } = getTourLocalStorageForPerspective(perspective);
   const onComplete = () => {
     if (completed === false) {
-      setTourCompletionLocalStorageDataForPerspective(activePerspective, true);
+      setTourCompletionLocalStorageDataForPerspective(perspective, true);
     }
   };
   const [tourState, tourDispatch] = useReducer<TourReducer>(tourReducer, {
@@ -89,6 +105,13 @@ export const useTourValuesForContext = (): TourContextType => {
     stepNumber: 0,
     startTour: !completed,
   });
+
+  useEffect(() => {
+    const { completed: initCompleted } = getTourLocalStorageForPerspective(activePerspective);
+    tourDispatch({ type: TourActions.initialize, payload: { completed: initCompleted } });
+    setPerspective(activePerspective);
+  }, [activePerspective]);
+
   if (!tour) return { tour: null };
   const {
     properties: {
