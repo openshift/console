@@ -2,8 +2,10 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { SidebarSectionHeading } from '@console/internal/components/utils';
-import { getKnativeRoutesLinks } from '../../utils/resource-overview-utils';
+import { getKnativeRoutesLinks, groupTrafficByRevision } from '../../utils/resource-overview-utils';
 import RoutesOverviewListItem from './RoutesOverviewListItem';
+import { RoutesOverviewListItem as routeLinkProps } from '../../types';
+import { ServiceModel } from '../../models';
 import KSRoutes from './KSRoutes';
 
 export type RoutesOverviewListProps = {
@@ -19,11 +21,25 @@ const RoutesOverviewList: React.FC<RoutesOverviewListProps> = ({ ksroutes, resou
     ) : (
       <ul className="list-group">
         {_.map(ksroutes, (route) => {
-          const routeLinks = getKnativeRoutesLinks(route, resource);
-          if (routeLinks.length === 1) {
-            return <RoutesOverviewListItem key={route.metadata.uid} routeLink={routeLinks[0]} />;
+          const routeLinks: routeLinkProps[] = getKnativeRoutesLinks(route, resource);
+          if (resource.kind === ServiceModel.kind) {
+            return <KSRoutes key={route.metadata.uid} route={route} />;
           }
-          return <KSRoutes key={route.metadata.uid} route={route} routeLinks={routeLinks} />;
+          if (routeLinks.length > 0) {
+            const { urls: uniqueRoutes, percent: totalPercentage } = groupTrafficByRevision(
+              route,
+              resource,
+            );
+            return (
+              <RoutesOverviewListItem
+                key={route.metadata.uid}
+                uniqueRoutes={uniqueRoutes}
+                totalPercent={totalPercentage}
+                routeLink={routeLinks[0]}
+              />
+            );
+          }
+          return null;
         })}
       </ul>
     )}

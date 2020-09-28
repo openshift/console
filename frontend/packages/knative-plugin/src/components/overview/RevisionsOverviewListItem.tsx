@@ -6,6 +6,8 @@ import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s
 import { ResourceLink } from '@console/internal/components/utils';
 import { Traffic } from '../../types';
 import { RevisionModel } from '../../models';
+import RoutesUrlLink from './RoutesUrlLink';
+
 import './RevisionsOverviewListItem.scss';
 
 export type RevisionsOverviewListItemProps = {
@@ -23,27 +25,38 @@ const RevisionsOverviewListItem: React.FC<RevisionsOverviewListItemProps> = ({
   const {
     status: { traffic },
   } = service;
-  const getTraffic = (revName: string) => {
+  const getTrafficByRevision = (revName: string) => {
     if (!traffic || !traffic.length) {
-      return null;
+      return {};
     }
     const trafficPercent = traffic
       .filter((t: Traffic) => t.revisionName === revName)
-      .map((tr: Traffic) => tr.percent)
-      .reduce((a: number, b: number) => a + b, 0);
-
-    return trafficPercent ? `${trafficPercent}%` : null;
+      .reduce(
+        (acc, tr: Traffic) => {
+          acc.percent += tr.percent ? tr.percent : 0;
+          if (tr.url) {
+            acc.urls.push(tr.url);
+          }
+          return acc;
+        },
+        { urls: [], percent: 0 },
+      );
+    return {
+      ...trafficPercent,
+      percent: trafficPercent.percent ? `${trafficPercent.percent}%` : null,
+    };
   };
   const deploymentData = _.get(revision, 'resources.current.obj.metadata.ownerReferences[0]', {});
   const current = _.get(revision, 'resources.current', null);
   const availableReplicas = _.get(revision, 'resources.current.obj.status.availableReplicas', '0');
+  const { urls = [], percent: trafficPercent } = getTrafficByRevision(name);
   return (
     <li className="list-group-item">
       <div className="row">
         <div className="col-sm-8 col-xs-9">
           <ResourceLink kind={referenceForModel(RevisionModel)} name={name} namespace={namespace} />
         </div>
-        <span className="col-sm-4 col-xs-3 text-right">{getTraffic(name)}</span>
+        <span className="col-sm-4 col-xs-3 text-right">{trafficPercent}</span>
       </div>
       {deploymentData.name && (
         <div className="odc-revision-deployment-list">
@@ -70,6 +83,13 @@ const RevisionsOverviewListItem: React.FC<RevisionsOverviewListItemProps> = ({
               </div>
             </div>
           </div>
+          {urls.length > 0 && (
+            <div className="row">
+              <div className="col-sm-12">
+                <RoutesUrlLink urls={urls} />
+              </div>
+            </div>
+          )}
         </div>
       )}
     </li>
