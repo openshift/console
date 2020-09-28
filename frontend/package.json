@@ -77,13 +77,13 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.9.0",
     "@patternfly/patternfly": "2.71.5",
+    "@patternfly/react-catalog-view-extension": "1.4.58",
     "@patternfly/react-charts": "5.3.19",
     "@patternfly/react-core": "3.153.13",
     "@patternfly/react-table": "2.28.39",
     "@patternfly/react-tokens": "2.8.13",
     "@patternfly/react-topology": "2.14.58",
     "@patternfly/react-virtualized-extension": "1.4.59",
-    "@patternfly/react-catalog-view-extension": "1.4.58",
     "abort-controller": "3.0.0",
     "classnames": "2.x",
     "core-js": "2.x",
@@ -212,5 +212,6 @@
   },
   "resolutions": {
     "jquery": "3.5.1"
-  }
+  },
+  "version": "0.0.0"
 }
