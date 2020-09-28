@@ -1,20 +1,22 @@
 import { Map as ImmutableMap } from 'immutable';
-import {
-    LimitRangeModel
-} from '../../../models';
+// import {
+//     LimitRangeModel
+// } from '../../../models';
 
 import {
-    apiVersionForModel,
     GroupVersionKind,
-    K8sKind,
-    referenceForModel,
 } from '../../../module/k8s';
 
+// import {
+// apiVersionForModel,
+//     K8sKind,
+//     referenceForModel
+// } from '../../../module/k8s';
 
-const getTargetResource = (model: K8sKind) => ({
-    apiVersion: apiVersionForModel(model),
-    kind: model.kind,
-});
+// const getTargetResource = (model: K8sKind) => ({
+//     apiVersion: apiVersionForModel(model),
+//     kind: model.kind,
+// });
 
 
 export const hyperCloudSamples = ImmutableMap<GroupVersionKind, Sample[]>()
