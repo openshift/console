@@ -4,6 +4,7 @@ import { GroupVersionKind, referenceForModel } from '../module/k8s';
 import * as k8sModels from '../models';
 import * as plugins from '../plugins';
 
+import { hyperCloudTemplates } from '../models/hypercloud/yaml-templates';
 /**
  * Sample YAML manifests for some of the statically-defined Kubernetes models.
  */
@@ -1207,4 +1208,4 @@ const pluginTemplates = ImmutableMap<
   });
 });
 
-export const yamlTemplates = baseTemplates.merge(pluginTemplates);
+export const yamlTemplates = baseTemplates.merge(pluginTemplates).merge(hyperCloudTemplates);
