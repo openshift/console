@@ -61,18 +61,21 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, builderImages }) =>
           !values.application.name &&
           values.application.selectedKey !== UNASSIGNED_KEY &&
           setFieldValue('application.name', `${gitRepoName}-app`);
-        setFieldValue('image.isRecommending', true);
-        const buildTools: BuildType[] = await gitService.detectBuildTypes();
-        setFieldValue('image.isRecommending', false);
-        const buildTool = buildTools.find(
-          ({ buildType: recommended }) => recommended && builderImages.hasOwnProperty(recommended),
-        );
-        if (buildTool && buildTool.buildType) {
-          setFieldValue('image.couldNotRecommend', false);
-          setFieldValue('image.recommended', buildTool.buildType);
-        } else {
-          setFieldValue('image.couldNotRecommend', true);
-          setFieldValue('image.recommended', '');
+        if (builderImages) {
+          setFieldValue('image.isRecommending', true);
+          const buildTools: BuildType[] = await gitService.detectBuildTypes();
+          setFieldValue('image.isRecommending', false);
+          const buildTool = buildTools.find(
+            ({ buildType: recommended }) =>
+              recommended && builderImages.hasOwnProperty(recommended),
+          );
+          if (buildTool && buildTool.buildType) {
+            setFieldValue('image.couldNotRecommend', false);
+            setFieldValue('image.recommended', buildTool.buildType);
+          } else {
+            setFieldValue('image.couldNotRecommend', true);
+            setFieldValue('image.recommended', '');
+          }
         }
       } else {
         setFieldValue('image.recommended', '');
