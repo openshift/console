@@ -8,12 +8,14 @@ interface GitOpsDetailsPageHeadingProps {
   url: string;
   appName: string;
   manifestURL: string;
+  badge?: React.ReactNode;
 }
 
 const GitOpsDetailsPageHeading: React.FC<GitOpsDetailsPageHeadingProps> = ({
   url,
   appName,
   manifestURL,
+  badge,
 }) => {
   const breadcrumbs = [
     {
@@ -27,13 +29,14 @@ const GitOpsDetailsPageHeading: React.FC<GitOpsDetailsPageHeadingProps> = ({
   ];
 
   return (
-    <div className="co-m-nav-title co-m-nav-title--breadcrumbs">
+    <div className="odc-gitops-details-page-heading co-m-nav-title co-m-nav-title--breadcrumbs">
       <BreadCrumbs breadcrumbs={breadcrumbs} />
-      <h1>
+      <h1 className="co-m-pane__heading">
         <div className="co-m-pane__name co-resource-item">
           <ResourceIcon kind="application" className="co-m-resource-icon--lg" />
           <span className="co-resource-item__resource-name">{appName}</span>
         </div>
+        {badge && <span className="co-m-pane__heading-badge">{badge}</span>}
       </h1>
       <Split className="odc-gitops-details-page-heading__repo" hasGutter>
         <SplitItem>Manifest File Repo:</SplitItem>
