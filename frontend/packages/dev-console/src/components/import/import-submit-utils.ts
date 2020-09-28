@@ -122,38 +122,38 @@ export const createOrUpdateDevfileResources = async (
   const defaultAnnotations = { ...getGitAnnotations(repository, ref), ...getCommonAnnotations(), isFromDevfile };
   
 
-  const isDeployImageFormData = (
-    formData: DeployImageFormData | GitImportFormData,
-  ): formData is DeployImageFormData => {
-    return 'isi' in (formData as DeployImageFormData);
-  };
+  // const isDeployImageFormData = (
+  //   formData: DeployImageFormData | GitImportFormData,
+  // ): formData is DeployImageFormData => {
+  //   return 'isi' in (formData as DeployImageFormData);
+  // };
 
-  const makePortName = (port: ContainerPort): string =>
-  `${port.containerPort}-${port.protocol}`.toLowerCase();
+  // const makePortName = (port: ContainerPort): string =>
+  // `${port.containerPort}-${port.protocol}`.toLowerCase();
 
-  let ports = imagePorts;
-  if (isDeployImageFormData(formData)) {
-    const {
-      isi: { ports: isiPorts },
-    } = formData;
-    ports = isiPorts;
-  }
+  // let ports = imagePorts;
+  // if (isDeployImageFormData(formData)) {
+  //   const {
+  //     isi: { ports: isiPorts },
+  //   } = formData;
+  //   ports = isiPorts;
+  // }
 
-  let targetPort;
-  if (_.get(formData, 'build.strategy') === 'Docker') {
-    const port = _.get(formData, 'docker.containerPort');
-    targetPort = makePortName({
-      containerPort: _.toInteger(port),
-      protocol: 'TCP',
-    });
-  } else if (_.isEmpty(ports)) {
-    targetPort = makePortName({
-      containerPort: _.toInteger(unknownTargetPort) || defaultUnknownPort,
-      protocol: 'TCP',
-    });
-  } else {
-    targetPort = routeTargetPort || makePortName(_.head(ports));
-  }
+  // let targetPort;
+  // if (_.get(formData, 'build.strategy') === 'Docker') {
+  //   const port = _.get(formData, 'docker.containerPort');
+  //   targetPort = makePortName({
+  //     containerPort: _.toInteger(port),
+  //     protocol: 'TCP',
+  //   });
+  // } else if (_.isEmpty(ports)) {
+  //   targetPort = makePortName({
+  //     containerPort: _.toInteger(unknownTargetPort) || defaultUnknownPort,
+  //     protocol: 'TCP',
+  //   });
+  // } else {
+  //   targetPort = routeTargetPort || makePortName(_.head(ports));
+  // }
 
   const webhookTriggerData = {
     type: GitReadableTypes[gitType],
@@ -215,8 +215,7 @@ export const createOrUpdateDevfileResources = async (
       podLabels: podLabels,
     };
 
-    let devfileResourceObjectsString = await devfileCreate(null, devfileData, dryRun ? dryRunOpt : {});
-    let devfileResourceObjects = JSON.parse(devfileResourceObjectsString.devfileResources)
+    let devfileResourceObjects = await devfileCreate(null, devfileData, dryRun ? dryRunOpt : {});
 
 
     requests.push(

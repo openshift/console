@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	dockerfilePath = "random-dockerfileLocation"
+	dockerfilePath = "Dockerfile"
 )
 
 var (
