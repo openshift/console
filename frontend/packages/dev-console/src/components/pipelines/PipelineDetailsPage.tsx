@@ -6,7 +6,7 @@ import { ErrorPage404 } from '@console/internal/components/error';
 import { getPipelineKebabActions } from '../../utils/pipeline-actions';
 import { getLatestRun, PipelineRun } from '../../utils/pipeline-augment';
 import { PipelineRunModel, PipelineModel } from '../../models';
-import { useMenuActionsWithUserLabel } from '../pipelineruns/triggered-by';
+import { useMenuActionsWithUserAnnotation } from '../pipelineruns/triggered-by';
 import {
   PipelineDetails,
   PipelineForm,
@@ -43,7 +43,7 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
       .catch((error) => setErrorCode(error.response.status));
   }, [name, namespace]);
 
-  const augmentedMenuActions: KebabAction[] = useMenuActionsWithUserLabel(
+  const augmentedMenuActions: KebabAction[] = useMenuActionsWithUserAnnotation(
     getPipelineKebabActions(latestPipelineRun, templateNames.length > 0),
   );
 

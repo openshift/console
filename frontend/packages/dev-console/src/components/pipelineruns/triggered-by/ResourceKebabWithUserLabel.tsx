@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { KebabAction, ResourceKebab } from '@console/internal/components/utils';
-import { useMenuActionsWithUserLabel } from './hooks';
+import { useMenuActionsWithUserAnnotation } from './hooks';
 
 const ResourceKebabWithUserLabel: React.FC<React.ComponentProps<typeof ResourceKebab>> = ({
   actions,
   ...otherProps
 }) => {
-  const augmentedMenuActions: KebabAction[] = useMenuActionsWithUserLabel(actions);
+  const augmentedMenuActions: KebabAction[] = useMenuActionsWithUserAnnotation(actions);
 
   return <ResourceKebab {...otherProps} actions={augmentedMenuActions} />;
 };

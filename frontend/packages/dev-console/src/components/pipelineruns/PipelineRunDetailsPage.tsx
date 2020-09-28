@@ -5,10 +5,12 @@ import { pipelineRunStatus } from '../../utils/pipeline-filter-reducer';
 import { getPipelineRunKebabActions } from '../../utils/pipeline-actions';
 import { PipelineRunDetails } from './detail-page-tabs/PipelineRunDetails';
 import { PipelineRunLogsWithActiveTask } from './detail-page-tabs/PipelineRunLogs';
-import { useMenuActionsWithUserLabel } from './triggered-by';
+import { useMenuActionsWithUserAnnotation } from './triggered-by';
 
 const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
-  const menuActions: KebabAction[] = useMenuActionsWithUserLabel(getPipelineRunKebabActions(true));
+  const menuActions: KebabAction[] = useMenuActionsWithUserAnnotation(
+    getPipelineRunKebabActions(true),
+  );
 
   return (
     <DetailsPage

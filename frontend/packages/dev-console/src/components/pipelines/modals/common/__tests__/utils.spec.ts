@@ -124,7 +124,7 @@ describe('PipelineAction testing getPipelineRunFromForm', () => {
       anotherlabel: 'another-label-value',
     };
 
-    const runData = getPipelineRunFromForm(actionPipelines[0], formValues, labels, {
+    const runData = getPipelineRunFromForm(actionPipelines[0], formValues, labels, null, {
       generateName: true,
     });
     expect(runData).toEqual({

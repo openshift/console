@@ -6,34 +6,33 @@ import { useSelector } from 'react-redux';
 import { KebabAction } from '@console/internal/components/utils';
 import { K8sResourceCommon } from '@console/internal/module/k8s';
 import { PipelineRun } from '../../../utils/pipeline-augment';
-import { StartedByLabel } from '../../pipelines/const';
+import { StartedByAnnotation } from '../../pipelines/const';
 
-type LabelMap = { [labelKey: string]: string };
+type AnnotationMap = { [annotationKey: string]: string };
 
-const mergeLabelsWithResource = (labels: LabelMap, resource: K8sResourceCommon) => {
-  return merge({}, resource, { metadata: { labels } });
+const mergeAnnotationsWithResource = (annotations: AnnotationMap, resource: K8sResourceCommon) => {
+  return merge({}, resource, { metadata: { annotations } });
 };
 
-export const useUserLabelForManualStart = (): LabelMap => {
+export const useUserAnnotationForManualStart = (): AnnotationMap => {
   const user = useSelector((state) => state.UI.get('user'));
 
   return {
-    // kube:admin is an invalid k8s label value
-    [StartedByLabel.user]: user.metadata.name.replace(/:/, ''),
+    [StartedByAnnotation.user]: user.metadata.name,
   };
 };
 
-export const usePipelineRunWithUserLabel = (plr: PipelineRun): PipelineRun => {
-  const labels = useUserLabelForManualStart();
+export const usePipelineRunWithUserAnnotation = (plr: PipelineRun): PipelineRun => {
+  const annotations = useUserAnnotationForManualStart();
 
-  return plr && mergeLabelsWithResource(labels, plr);
+  return plr && mergeAnnotationsWithResource(annotations, plr);
 };
 
-export const useMenuActionsWithUserLabel = (menuActions: KebabAction[]): KebabAction[] => {
-  const labels = useUserLabelForManualStart();
+export const useMenuActionsWithUserAnnotation = (menuActions: KebabAction[]): KebabAction[] => {
+  const annotations = useUserAnnotationForManualStart();
 
   return menuActions.map((kebabAction) => {
     return (kind, resource, ...rest) =>
-      kebabAction(kind, mergeLabelsWithResource(labels, resource), ...rest);
+      kebabAction(kind, mergeAnnotationsWithResource(annotations, resource), ...rest);
   });
 };
