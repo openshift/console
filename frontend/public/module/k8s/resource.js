@@ -85,7 +85,7 @@ export const devfileCreate =  async (kind, data, opts = {}) =>  {
   data.metadata = data.metadata || {};
   data.metadata.namespace = data.metadata.namespace || "default";
 
-  let isMock = false; 
+  let isMock = true; 
   if(!isMock) {
   data.annotations['isFromDevfile'] = "true"
   }
@@ -242,7 +242,8 @@ export const devfileCreate =  async (kind, data, opts = {}) =>  {
              // at endpoints, not services, when resolving ports, so port numbers
              // will not resolve correctly if the service port and container port
              // numbers don't match.
-             targetPort: `${data.routeSpec.targetPort.containerPort}-${data.routeSpec.targetPort.protocol}`.toLowerCase(),
+             targetPort: `${data.routeSpec.targetPort[0].containerPort}-${data.routeSpec.targetPort[0].protocol}`.toLowerCase(),
+            //  targetPort: "8080-tcp",
            },
            wildcardPolicy: 'None',
          },
