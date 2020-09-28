@@ -73,7 +73,8 @@ func (p *proxy) IndexFile() (*repo.IndexFile, error) {
 	for _, helmRepo := range helmRepos {
 		idxFile, err := helmRepo.IndexFile()
 		if err != nil {
-			return nil, err
+			plog.Errorf("Error retrieving index file for %v: %v", helmRepo, err)
+			continue
 		}
 		indexFiles = append(indexFiles, idxFile)
 	}
