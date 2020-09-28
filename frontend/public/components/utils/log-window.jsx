@@ -29,7 +29,7 @@ export class LogWindow extends React.PureComponent {
   static getDerivedStateFromProps(nextProps) {
     if (nextProps.status !== STREAM_PAUSED) {
       return {
-        content: nextProps.lines.join(''),
+        content: nextProps.lines.join('\n'),
       };
     }
     return null;
@@ -129,7 +129,7 @@ export class LogWindow extends React.PureComponent {
         <div className="log-window__body">
           <div className="log-window__scroll-pane" ref={this._setScrollPane}>
             <div className="log-window__contents" ref={this._setLogContents} style={{ height }}>
-              <div className="log-window__contents__text">{content}</div>
+              <div className="log-window__lines">{content}</div>
             </div>
           </div>
         </div>
