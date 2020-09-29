@@ -28,6 +28,9 @@ require (
 )
 
 replace (
+	// ww/goautoneg repo does not exist on butbucket anymore, hence we
+	// need to use a mirror. It can be removed when we update to newer libary-go
+	bitbucket.org/ww/goautoneg => github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822
 	github.com/Azure/go-autorest/autorest => github.com/Azure/go-autorest/autorest v0.9.0
 	github.com/docker/docker => github.com/moby/moby v0.7.3-0.20190826074503-38ab9da00309
 )
