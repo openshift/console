@@ -282,6 +282,12 @@ github.com/opencontainers/image-spec/specs-go/v1
 # github.com/opencontainers/runc v0.1.1
 github.com/opencontainers/runc/libcontainer/system
 github.com/opencontainers/runc/libcontainer/user
+# github.com/openshift/api v0.0.0-20200326160804-ecb9283fe820
+github.com/openshift/api/build/v1
+github.com/openshift/api/image/docker10
+github.com/openshift/api/image/dockerpre012
+github.com/openshift/api/image/v1
+github.com/openshift/api/route/v1
 # github.com/openshift/library-go v0.0.0-20200402123743-4015ba624cae
 github.com/openshift/library-go/pkg/crypto
 # github.com/opentracing/opentracing-go v1.1.0
