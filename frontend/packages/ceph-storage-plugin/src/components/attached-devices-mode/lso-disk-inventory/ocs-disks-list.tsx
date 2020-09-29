@@ -168,7 +168,7 @@ const diskRow: RowFunction<DiskMetadata, OCSMetadata> = ({
       <TableData className={tableColumnClasses[5]}>{obj.fstype || '-'}</TableData>
       <OCSKebabOptions
         diskName={diskName}
-        alertsMap={ocsState.metricsMap}
+        alertsMap={ocsState.alertsMap}
         replacementMap={ocsState.replacementMap}
         isRebalancing={ocsState.isRebalancing}
         dispatch={dispatch}

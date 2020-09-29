@@ -55,7 +55,12 @@ const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
       message={getAlertDescription(alert) || getAlertMessage(alert)}
     >
       {action ? (
-        <Link to={_.isFunction(action.path) ? action.path(alert) : action.path}>{action.text}</Link>
+        <Link
+          data-test-id={action.dataTestID}
+          to={_.isFunction(action.path) ? action.path(alert) : action.path}
+        >
+          {action.text}
+        </Link>
       ) : (
         <Link to={alertURL(alert, alert.rule.id)}>View details</Link>
       )}

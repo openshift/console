@@ -12,6 +12,7 @@ import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager'
 import { NodeModel } from '@console/internal/models';
 import { getAlertActionPath } from './utils/alert-actions-path';
 import * as models from './models';
+import { DISK_NOT_RESPONDING_ALERT, DISK_UNAVAILABLE_ALERT } from './constants/disks-list';
 
 type ConsumedExtensions =
   | AlertAction
@@ -83,9 +84,10 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'AlertAction',
     properties: {
-      alert: 'CephOSDDiskNotResponding',
+      alert: DISK_NOT_RESPONDING_ALERT,
       text: 'Troubleshoot',
       path: getAlertActionPath,
+      dataTestID: DISK_NOT_RESPONDING_ALERT,
     },
     flags: {
       required: [LSO_DEVICE_DISCOVERY],
@@ -94,9 +96,10 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'AlertAction',
     properties: {
-      alert: 'CephOSDDiskUnavailable',
+      alert: DISK_UNAVAILABLE_ALERT,
       text: 'Troubleshoot',
       path: getAlertActionPath,
+      dataTestID: DISK_UNAVAILABLE_ALERT,
     },
     flags: {
       required: [LSO_DEVICE_DISCOVERY],

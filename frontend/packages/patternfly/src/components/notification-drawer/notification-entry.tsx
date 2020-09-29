@@ -35,9 +35,15 @@ const NotificationIcon: React.FC<NotificationIconTypes> = ({ type }) => {
   }
 };
 
-const NotificationAction: React.FC<NotificationActionProps> = ({ onClick, text, path }) => (
+const NotificationAction: React.FC<NotificationActionProps> = ({
+  onClick,
+  text,
+  path,
+  dataTestID,
+}) => (
   <div className="pf-c-notification-drawer__header-action">
     <Link
+      data-test-id={dataTestID}
       to={path}
       onClick={(e) => {
         e.stopPropagation();
@@ -52,6 +58,7 @@ const NotificationAction: React.FC<NotificationActionProps> = ({ onClick, text, 
 const NotificationEntry: React.FC<NotificationEntryProps> = ({
   actionText,
   actionPath,
+  actionTestID,
   title,
   description,
   isRead = false,
@@ -86,6 +93,7 @@ const NotificationEntry: React.FC<NotificationEntryProps> = ({
         <NotificationAction
           text={actionText}
           path={actionPath}
+          dataTestID={actionTestID}
           onClick={toggleNotificationDrawer}
         />
       )}
@@ -100,6 +108,7 @@ const NotificationEntry: React.FC<NotificationEntryProps> = ({
 export type NotificationEntryProps = {
   actionText?: string;
   actionPath?: string;
+  actionTestID?: string;
   description: React.ReactNode;
   isRead?: boolean;
   targetPath?: string;
@@ -117,6 +126,7 @@ type NotificationActionProps = {
   onClick: (event: React.MouseEvent<HTMLElement>) => void;
   text: string;
   path: string;
+  dataTestID?: string;
 };
 
 export default NotificationEntry;

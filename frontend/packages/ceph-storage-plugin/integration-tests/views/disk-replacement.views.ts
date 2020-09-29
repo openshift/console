@@ -1,10 +1,16 @@
 import { $, $$ } from 'protractor';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
+import { DISK_NOT_RESPONDING_ALERT } from '@console/local-storage-operator-plugin/src/constants/disks-list';
 import { Status } from '../../src/components/attached-devices-mode/lso-disk-inventory/state-reducer';
 
 export const page = {
   isLoaded,
   diskTab: $('a[data-test-id="horizontal-link-Disks"]'),
+  notificationDrawer: $('.pf-c-page__header-tools-item > button'),
+};
+
+export const alert = {
+  actions: $$(`[data-test-id="${DISK_NOT_RESPONDING_ALERT}"]`),
 };
 
 export const list = {

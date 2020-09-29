@@ -9,8 +9,8 @@ import { LocalVolumeDiscoveryResultKind } from '@console/local-storage-operator-
 import { LOCAL_STORAGE_NAMESPACE } from '@console/local-storage-operator-plugin/src/constants';
 import { Status } from '../../../src/components/attached-devices-mode/lso-disk-inventory/state-reducer';
 import { execCommand } from '../../utils/helpers';
-import { list, cells, page, modal } from '../../views/disk-replacement.views';
-import { NS } from '../../utils/consts';
+import { list, cells, page, modal, alert } from '../../views/disk-replacement.views';
+import { NS, MINUTE } from '../../utils/consts';
 
 let lvdr: LocalVolumeDiscoveryResultKind;
 
@@ -55,7 +55,24 @@ xdescribe('Test disk replacement flow in non failure scenarios', () => {
   });
 });
 
-describe('Test disk replacement flow in failure scenarios', () => {
+describe('Test Alerts actions are displayed and working', () => {
+  beforeAll(async () => {
+    // execCommand(`kubectl scale deployment rook-ceph-osd-0 --replicas=0 -n ${NS}`);
+    // browser.sleep(2 * MINUTE);
+    await browser.get(`${appHost}/`);
+    await page.isLoaded();
+  });
+  it('Alert action is displayed and working', async () => {
+    click(page.notificationDrawer.first());
+    const { actions } = alert;
+    console.log('actions.count()', actions.count());
+    expect(actions.length).toBe(2);
+    expect(actions.get(0).getText()).toBe('Troubleshoot');
+    expect(actions.get(1).getText()).toBe('Troubleshoot');
+  });
+});
+
+xdescribe('Test disk replacement flow in failure scenarios', () => {
   beforeAll(async () => {
     execCommand(`kubectl scale deployment rook-ceph-osd-0 --replicas=0 -n ${NS}`);
     const lvdrJson = execCommand(

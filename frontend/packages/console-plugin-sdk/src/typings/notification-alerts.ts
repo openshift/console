@@ -9,6 +9,8 @@ namespace ExtensionProperties {
     text: string;
     /* Action href link */
     path: (alert: Alert) => string;
+    /* A unique id for the alert  */
+    dataTestID?: string;
   }
 }
 

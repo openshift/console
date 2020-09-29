@@ -86,6 +86,7 @@ export const getAlertActions = (actionsExtensions: AlertAction[]) => {
     alertActions.set(properties.alert, {
       text: properties.text,
       path: properties.path,
+      dataTestID: properties.dataTestID,
     }),
   );
   return alertActions;
@@ -119,6 +120,7 @@ const getAlertNotificationEntries = (
               targetPath={alertURL(alert, alert.rule.id)}
               actionText={action?.text}
               actionPath={alertActionPath}
+              actionTestID={action?.dataTestID}
             />
           );
         })
