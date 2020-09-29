@@ -277,6 +277,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
             <FormPFSelect
               menuAppendTo={() => document.body}
               id={asId('model')}
+              toggleId={asId('select-model')}
               placeholderText="--- Select Model ---"
               isDisabled={isDisabled('model') || interfaceType === NetworkInterfaceType.SRIOV}
               selections={asFormSelectValue(model?.getValue())}
@@ -323,6 +324,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
               placeholderText="--- Select Type ---"
               selections={asFormSelectValue(interfaceType?.getValue())}
               isDisabled={isDisabled('type')}
+              toggleId={asId('select-type')}
             >
               {(resultNetwork.getType()
                 ? resultNetwork.getType().getAllowedInterfaceTypes()
