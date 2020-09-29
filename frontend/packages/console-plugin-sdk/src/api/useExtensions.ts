@@ -48,7 +48,7 @@ export const useExtensions = <E extends Extension>(
 
   const isMountedRef = React.useRef(true);
   const unsubscribeRef = React.useRef<VoidFunction>(null);
-  const extensionsInUseRef = React.useRef<E[]>([]);
+  const extensionsInUseRef = React.useRef<LoadedExtension<E>[]>([]);
   const latestTypeGuardsRef = React.useRef<ExtensionTypeGuard<E>[]>(typeGuards);
 
   const trySubscribe = React.useCallback(() => {
@@ -82,5 +82,5 @@ export const useExtensions = <E extends Extension>(
     [tryUnsubscribe],
   );
 
-  return extensionsInUseRef.current as LoadedExtension<E>[];
+  return extensionsInUseRef.current;
 };

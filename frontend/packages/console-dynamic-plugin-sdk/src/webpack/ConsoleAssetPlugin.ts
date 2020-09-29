@@ -1,5 +1,7 @@
 import * as webpack from 'webpack';
 import * as path from 'path';
+import * as fs from 'fs';
+import * as jsonc from 'comment-json';
 import { ConsolePackageJSON } from '../schema/plugin-package';
 import { ConsoleExtensionsJSON } from '../schema/console-extensions';
 import { ConsolePluginManifestJSON } from '../schema/plugin-manifest';
@@ -33,8 +35,11 @@ export class ConsoleAssetPlugin {
   private readonly manifest: ConsolePluginManifestJSON;
 
   constructor(private readonly pkg: ConsolePackageJSON) {
-    // eslint-disable-next-line
-    const ext = require(path.resolve(process.cwd(), extensionsFile)) as ConsoleExtensionsJSON;
+    const ext = jsonc.parse(
+      fs.readFileSync(path.resolve(process.cwd(), extensionsFile), 'utf-8'),
+      null,
+      true,
+    ) as ConsoleExtensionsJSON;
     validateExtensionsFile(ext).report();
 
     this.manifest = {

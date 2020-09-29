@@ -48,6 +48,9 @@
     "**/.cache-loader": true,
     "**/public/dist": true
   },
+  "files.associations": {
+    "**/console-extensions.json": "jsonc"
+  },
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   }

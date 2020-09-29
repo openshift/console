@@ -1,3 +1,10 @@
+/**
+ * This file declares all extensions contributed by the plugin.
+ *
+ * The '$schema' property is optional but recommended, allowing code editors to validate
+ * the content as well as provide additional features such as code completion and property
+ * description.
+ */
 {
   "$schema": "../packages/console-dynamic-plugin-sdk/dist/schema/console-extensions.json",
   "data": [
