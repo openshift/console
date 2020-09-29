@@ -4,6 +4,7 @@ import { PageHeading, LoadingBox } from '@console/internal/components/utils';
 import { ProjectModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { DevPreviewBadge } from '@console/shared';
 import GitOpsList from './list/GitOpsList';
 import { fetchAllAppGroups, getManifestURLs, getPipelinesBaseURI } from './utils/gitops-utils';
 import useDefaultSecret from './utils/useDefaultSecret';
@@ -42,7 +43,7 @@ const GitOpsListPage: React.FC = () => {
       <Helmet>
         <title>Application Stages</title>
       </Helmet>
-      <PageHeading title="Application Stages" />
+      <PageHeading title="Application Stages" badge={<DevPreviewBadge />} />
       {!appGroups && !emptyStateMsg ? (
         <LoadingBox />
       ) : (
