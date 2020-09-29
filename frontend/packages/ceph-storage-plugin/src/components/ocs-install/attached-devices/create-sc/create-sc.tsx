@@ -119,7 +119,7 @@ const CreateSC: React.FC<CreateSCProps> = ({ match }) => {
             if (
               discovery?.status?.state === AVAILABLE &&
               discovery.property === DiskMechanicalProperties.SSD &&
-              discovery.type === DiskType.RawDisk
+              (discovery.type === DiskType.RawDisk || discovery.type === DiskType.Partition)
             ) {
               discovery.node = name;
               return true;
