@@ -2,9 +2,9 @@ import * as React from 'react';
 import { useFormikContext, FormikValues, useField } from 'formik';
 import { SecretModel, ConfigMapModel } from '@console/internal/models';
 import { DropdownField } from '@console/shared';
-import { PipelineWorkspace } from '../../../../utils/pipeline-augment';
 import FormSection from '../../../import/section/FormSection';
 import { VolumeTypes } from '../../const';
+import { PipelineRunWorkspaceFormEntry } from '../start-pipeline/types';
 import PVCDropdown from './PVCDropdown';
 import MultipleResourceKeySelector from './MultipleResourceKeySelector';
 
@@ -44,7 +44,7 @@ const getVolumeTypeFields = (volumeType: VolumeTypes, index: number) => {
 
 const PipelineWorkspacesSection: React.FC = () => {
   const { setFieldValue } = useFormikContext<FormikValues>();
-  const [{ value: workspaces }] = useField<PipelineWorkspace[]>('workspaces');
+  const [{ value: workspaces }] = useField<PipelineRunWorkspaceFormEntry[]>('workspaces');
   return (
     workspaces.length > 0 && (
       <FormSection title="Workspaces" fullWidth>

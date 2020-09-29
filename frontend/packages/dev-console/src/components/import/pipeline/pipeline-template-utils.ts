@@ -34,7 +34,7 @@ export const createPipelineForImportFlow = async (formData: GitImportFormData) =
   template.metadata = {
     name: `${name}`,
     namespace,
-    labels: { ...template.metadata.labels, 'app.kubernetes.io/instance': name },
+    labels: { ...template.metadata?.labels, 'app.kubernetes.io/instance': name },
   };
 
   template.spec.params = template.spec.params?.map((param) => {
@@ -45,6 +45,8 @@ export const createPipelineForImportFlow = async (formData: GitImportFormData) =
         return { ...param, default: git.url };
       case 'GIT_REVISION':
         return { ...param, default: git.ref || 'master' };
+      case 'PATH_CONTEXT':
+        return { ...param, default: git.dir.replace(/^\//, '') || param.default };
       case 'IMAGE_NAME':
         return { ...param, default: getImageUrl(name, namespace) };
       default:
