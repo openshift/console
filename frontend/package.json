@@ -95,7 +95,7 @@
     "@patternfly/react-catalog-view-extension": "4.8.3",
     "@patternfly/react-charts": "6.9.2",
     "@patternfly/react-core": "4.57.3",
-    "@patternfly/react-table": "4.15.3",
+    "@patternfly/react-table": "4.17.10",
     "@patternfly/react-tokens": "4.9.2",
     "@patternfly/react-topology": "4.5.15",
     "@patternfly/react-virtualized-extension": "4.5.49",
