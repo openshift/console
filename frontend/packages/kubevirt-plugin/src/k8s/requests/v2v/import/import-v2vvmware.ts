@@ -69,6 +69,11 @@ const createConversionPodSecret = async ({
     .filter((storage) => storage.type === VMWizardStorageType.V2V_VMWARE_IMPORT)
     .map(({ importData }) => importData.fileName);
 
+  const hostPath = (vm?.detail?.hostPath || '')
+    .split('/')
+    .map(encodeURIComponent)
+    .join('/');
+
   const secretWrapper = new SecretWrappper()
     .init({ namespace, generateName: CONVERSION_GENERATE_NAME })
     .setJSONValue('conversion.json', {
@@ -78,7 +83,7 @@ const createConversionPodSecret = async ({
       transport_method: 'vddk',
 
       vmware_fingerprint: thumbprint,
-      vmware_uri: `vpx://${username}@${hostname}${vm?.detail?.hostPath}?no_verify=1`,
+      vmware_uri: `vpx://${username}@${hostname}${hostPath}?no_verify=1`,
       vmware_password: password,
 
       source_disks: sourceDisks,
