@@ -7,15 +7,20 @@
   }
 
   &__hint-container {
-    align-items: center;
-    background: var(--pf-global--Color--light-100);
-    border: 1px solid var(--pf-global--BorderColor--light-100);
-    border-radius: 8px;
+    justify-content: center;
     display: flex;
-    padding: var(--pf-global--spacer--xs) var(--pf-global--spacer--sm);
     pointer-events: none;
     position: absolute;
     top: var(--pf-global--spacer--sm);
+    left: 0;
+    right: 0;
+  }
+  &__hint-background{
+    background: var(--pf-global--Color--light-100);
+    border: 1px solid var(--pf-global--BorderColor--light-100);
+    border-radius: 8px;
+    padding: var(--pf-global--spacer--xs) var(--pf-global--spacer--sm);
+    pointer-events: none;
   }
 
   &__view-switcher.pf-m-plain {
