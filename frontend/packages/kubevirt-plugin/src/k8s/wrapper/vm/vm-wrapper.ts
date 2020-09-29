@@ -5,6 +5,7 @@ import { compareOwnerReference } from '@console/shared/src/utils/owner-reference
 import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
 import { CPURaw, V1NetworkInterface, VMKind } from '../../../types/vm';
 import {
+  getCloudInitVolume,
   getDataVolumeTemplates,
   getDisks,
   getInterfaces,
@@ -98,6 +99,8 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
       ),
     );
   };
+
+  getCloudInitVolume = () => getCloudInitVolume(this.data);
 
   addTemplateLabel = (key: string, value: string) => {
     if (key) {
@@ -199,6 +202,16 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     }
 
     this.ensureStorageConsistency();
+    return this;
+  };
+
+  updateVolume = (volume: V1Volume) => {
+    this.data.spec.template.spec.volumes = this.getVolumes().map((vol) => {
+      if (volume.name === vol.name) {
+        return volume;
+      }
+      return vol;
+    });
     return this;
   };
 

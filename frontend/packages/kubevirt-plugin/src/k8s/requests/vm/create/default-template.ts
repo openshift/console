@@ -20,6 +20,11 @@ import { DiskWrapper } from '../../../wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../wrapper/vm/volume-wrapper';
 import { NetworkInterfaceWrapper } from '../../../wrapper/vm/network-interface-wrapper';
 import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants/vm-templates/constants';
+import {
+  CloudInitDataHelper,
+  CloudInitDataFormKeys,
+  generateCloudInitPassword,
+} from '../../../wrapper/vm/cloud-init-data-helper';
 
 export const resolveDefaultVMTemplate = (params: DefaultVMLikeEntityParams): TemplateKind => {
   const { commonTemplate, name, namespace, containerImage, baseOSName } = params;
@@ -54,6 +59,17 @@ export const resolveDefaultVMTemplate = (params: DefaultVMLikeEntityParams): Tem
         .setType(VolumeType.CONTAINER_DISK, { image: containerImage })
         .asResource(),
     });
+
+  const cloudInitVolume = vm.getCloudInitVolume();
+  const cloudInitHelper = new CloudInitDataHelper(cloudInitVolume?.cloudInitNoCloud);
+  if (!cloudInitHelper.isEmpty() && cloudInitHelper.hasKey(CloudInitDataFormKeys.PASSWORD)) {
+    cloudInitHelper.set(CloudInitDataFormKeys.PASSWORD, generateCloudInitPassword());
+    vm.updateVolume(
+      new VolumeWrapper(cloudInitVolume)
+        .setTypeData(cloudInitHelper.asCloudInitNoCloudSource())
+        .asResource(),
+    );
+  }
 
   const finalTemplate = new VMTemplateWrapper().init({
     name,
