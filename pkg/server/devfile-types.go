@@ -37,11 +37,13 @@ type formData struct {
 }
 
 type devfileResources struct {
-	ImageStream    imagev1.ImageStream `json:"imageStream"`
-	BuildResource  buildv1.BuildConfig `json:"buildResource"`
-	DeployResource appsv1.Deployment   `json:"deployResource"`
-	Service        corev1.Service      `json:"service"`
-	Route          routev1.Route       `json:"route"`
+	ImageStream imagev1.ImageStream `json:"imageStream"`
+	// This can be enhanced to include BuildResource Type that includes all possible types of build objects(eg buildConfig, build pod etc)
+	BuildResource buildv1.BuildConfig `json:"buildResource"`
+	// This can be enhanced to include Deploy Resource Type that includes all possible types of deployment objects(eg deployment, deploymentConfig, helm chart etc)
+	DeployResource appsv1.Deployment `json:"deployResource"`
+	Service        corev1.Service    `json:"service"`
+	Route          routev1.Route     `json:"route"`
 }
 
 type project struct {

@@ -27,9 +27,10 @@ var (
 func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewDecoder(r.Body).Decode(&data)
 
+	// Get devfile contents and parse them using a library call in the future
 	// devfileContentBytes := []byte(data.Devfile.DevfileContent)
 
-	devfileResources := devfileResources{
+	devfileResources := devfileResources{ // Replace calls with call to library functions, these can also be made arrays if expecting multiple objects
 		ImageStream:    getImageStream(),
 		BuildResource:  getBuildResource(),
 		DeployResource: getDeployResource(),
@@ -41,11 +42,7 @@ func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 	}
 
-	// devfileResourcesJSONString := string(devfileResourcesJSON)
-	// fmt.Printf(devfileResourcesJSONString)
-
 	w.Header().Set("Content-Type", "application/json")
-	// w.Write(devfileResourcesJSON)
 	serverutils.SendResponse(w, http.StatusOK, struct {
 		DevfileResources string `json:"devfileResources"`
 	}{
