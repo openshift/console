@@ -690,7 +690,7 @@ export const getSinkUriTopologyNodeItems = (
     id,
     type,
     resource: data.resource,
-    resourceKind: 'Uri',
+    resourceKind: 'URI',
     data,
     ...(nodeProps || {}),
   });
@@ -970,7 +970,7 @@ export const transformKnNodeData = (
               },
               spec: { sinkUri },
               type: { nodeType: NodeType.SinkUri },
-              kind: 'Uri',
+              kind: 'URI',
             };
             const sinkData: TopologyDataObject = {
               id: sinkTargetUid,
