@@ -107,7 +107,7 @@ func getDeployResource() appsv1.Deployment {
 			Replicas: data.Deployment.Replicas,
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
-					Labels: addmap(data.DefaultLabels, data.UserLabls),
+					Labels: addmap(data.UserLabls, data.PodLabels),
 				},
 				Spec: corev1.PodSpec{
 					Containers: []corev1.Container{

@@ -85,7 +85,7 @@ export const devfileCreate =  async (kind, data, opts = {}) =>  {
   data.metadata = data.metadata || {};
   data.metadata.namespace = data.metadata.namespace || "default";
 
-  let isMock = true; 
+  let isMock = false; 
   if(!isMock) {
   data.annotations['isFromDevfile'] = "true"
   }
