@@ -79,8 +79,14 @@ export const getTemplateOperatingSystems = (templates: TemplateKind[]) => {
   const sortedTemplates = [...templates].sort((a, b) => {
     const aVersion = getLabel(a, TEMPLATE_VERSION_LABEL);
     const bVersion = getLabel(b, TEMPLATE_VERSION_LABEL);
+    const compVersions = -1 * compareVersions(aVersion, bVersion);
 
-    return -1 * compareVersions(aVersion, bVersion);
+    // BZ-1881458: If two templates has the same os/flavor/workload and version prefer the one that have TEMPLATE_DATAVOLUME_NAME_PARAMETER
+    if (compVersions === 0) {
+      return !getParameterValue(a, TEMPLATE_DATAVOLUME_NAME_PARAMETER) ? 1 : -1;
+    }
+
+    return compVersions;
   });
 
   return removeOSDups(
