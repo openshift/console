@@ -128,6 +128,7 @@ const MetricsQueryInput: React.FC = () => {
             selectedKey={selectedKey}
             actionItems={defaultActionItem}
             dropDownClassName="odc-metrics-query-input dropdown--full-width"
+            data-test="odc-monitoring-metrics-query-filter"
             menuClassName="odc-metrics-query-input__menu dropdown-menu--text-wrap"
             onChange={onChange}
             title={title}
