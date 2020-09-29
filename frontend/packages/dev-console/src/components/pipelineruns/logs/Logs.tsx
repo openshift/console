@@ -33,9 +33,14 @@ const Logs: React.FC<LogsProps> = ({
   const onCompleteRef = React.useRef<(name) => void>();
   onCompleteRef.current = onComplete;
   const appendMessage = React.useRef<(blockContent) => void>();
+  const prevFetchNewline = React.useRef(true);
   appendMessage.current = React.useCallback(
-    (blockContent) => {
+    (blockContent: string) => {
       const contentLines = blockContent.split('\n').filter((line) => !!line);
+      if (!prevFetchNewline.current && contentRef.current.lastChild) {
+        contentRef.current.lastChild.textContent += contentLines.shift();
+      }
+      prevFetchNewline.current = blockContent.endsWith('\n');
       if (contentRef.current && contentLines.length >= 0) {
         const elements = contentLines.map((content) => {
           const customElement = document.createElement('div');
