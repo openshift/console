@@ -53,6 +53,7 @@ import {
   PROMETHEUS_BASE_PATH,
   PROMETHEUS_TENANCY_BASE_PATH,
   requirePrometheus,
+  PrometheusResult,
 } from './graphs';
 import { VolumesTable } from './volumes-table';
 import { PodModel } from '../models';
@@ -466,6 +467,10 @@ export const PodContainerTable: React.FC<PodContainerTableProps> = ({
   </>
 );
 
+const getNetworkName = (result: PrometheusResult) =>
+  // eslint-disable-next-line camelcase
+  result?.metric?.network_name || 'unnamed interface';
+
 const PodGraphs = requirePrometheus(({ pod }) => (
   <>
     <div className="row">
@@ -507,7 +512,7 @@ const PodGraphs = requirePrometheus(({ pod }) => (
           humanize={humanizeDecimalBytesPerSec}
           namespace={pod.metadata.namespace}
           query={`(sum(irate(container_network_receive_bytes_total{pod='${pod.metadata.name}', namespace='${pod.metadata.namespace}'}[5m])) by (pod, namespace, interface)) + on(namespace,pod,interface) group_left(network_name) ( pod_network_name_info )`}
-          metric="network_name"
+          description={getNetworkName}
         />
       </div>
       <div className="col-md-12 col-lg-4">
@@ -516,7 +521,7 @@ const PodGraphs = requirePrometheus(({ pod }) => (
           humanize={humanizeDecimalBytesPerSec}
           namespace={pod.metadata.namespace}
           query={`(sum(irate(container_network_transmit_bytes_total{pod='${pod.metadata.name}', namespace='${pod.metadata.namespace}'}[5m])) by (pod, namespace, interface)) + on(namespace,pod,interface) group_left(network_name) ( pod_network_name_info )`}
-          metric="network_name"
+          description={getNetworkName}
         />
       </div>
     </div>
