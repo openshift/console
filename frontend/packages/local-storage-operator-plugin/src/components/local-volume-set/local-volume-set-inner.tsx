@@ -184,7 +184,7 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
             <Dropdown
               id="create-lvs-disk-size-unit-dropdown"
               items={diskSizeUnitOptions}
-              title={state.diskSizeUnit}
+              title={diskSizeUnitOptions[state.diskSizeUnit]}
               selectedKey={state.diskSizeUnit}
               onChange={(unit: string) => {
                 dispatch({ type: 'setDiskSizeUnit', value: unit });

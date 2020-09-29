@@ -9,7 +9,6 @@ import { ListPage } from '@console/internal/components/factory';
 import { getNodes } from '@console/local-storage-operator-plugin/src/utils';
 import { DiskListModal } from './disk-list';
 import { State, Action, Discoveries } from '../state';
-import { dropdownUnits } from '../../../../../constants';
 import { getTotalDeviceCapacity } from '../../../../../utils/install';
 import AttachedDevicesNodeTable from '../../sc-node-list';
 import '../../attached-devices.scss';
@@ -29,10 +28,10 @@ export const DiscoveryDonutChart: React.FC<DiscoveryDonutChartProps> = ({ state,
   React.useEffect(() => {
     const filterDisks = () => {
       const minSize = state.minDiskSize
-        ? Number(convertToBaseValue(`${state.minDiskSize} ${dropdownUnits[state.diskSizeUnit]}`))
+        ? Number(convertToBaseValue(`${state.minDiskSize} ${state.diskSizeUnit}`))
         : 0;
       const maxSize = state.maxDiskSize
-        ? Number(convertToBaseValue(`${state.maxDiskSize} ${dropdownUnits[state.diskSizeUnit]}`))
+        ? Number(convertToBaseValue(`${state.maxDiskSize} ${state.diskSizeUnit}`))
         : '';
       const filteredDiscoveries: Discoveries[] = state.nodesDiscoveries.filter((disk) => {
         if (nodes.includes(disk.node)) {
