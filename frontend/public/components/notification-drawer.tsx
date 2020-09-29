@@ -192,7 +192,12 @@ export const refreshNotificationPollers = () => {
 const getAlerts = (alertsResults: PrometheusRulesResponse): Alert[] =>
   alertsResults
     ? getAlertsAndRules(alertsResults.data)
-        .alerts.filter((a) => a.state === 'firing' && getAlertName(a) !== 'Watchdog')
+        .alerts.filter(
+          (a) =>
+            a.state === 'firing' &&
+            getAlertName(a) !== 'Watchdog' &&
+            getAlertName(a) !== 'UpdateAvailable',
+        )
         .sort((a, b) => +new Date(getAlertTime(b)) - +new Date(getAlertTime(a)))
     : [];
 
