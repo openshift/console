@@ -39,6 +39,7 @@ import NodeRoles from './NodeRoles';
 import { menuActions } from './menu-actions';
 import NodeStatus from './NodeStatus';
 import { RootState } from '@console/internal/redux';
+import MarkAsSchedulablePopover from './popovers/MarkAsSchedulablePopover';
 
 const nodeColumnInfo = Object.freeze({
   name: {
@@ -269,7 +270,11 @@ const NodesTableRow = connect<NodesRowMapFromStateProps, null, NodesTableRowProp
           columns={columns}
           columnID={nodeColumnInfo.status.id}
         >
-          <NodeStatus node={node} showPopovers />
+          {!node.spec.unschedulable ? (
+            <NodeStatus node={node} showPopovers />
+          ) : (
+            <MarkAsSchedulablePopover node={node} />
+          )}
         </TableData>
         <TableData
           className={nodeColumnInfo.role.classes}

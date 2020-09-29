@@ -1,7 +1,12 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
-import { Status, SecondaryStatus, getNodeSecondaryStatus } from '@console/shared';
+import {
+  getNodeSecondaryStatus,
+  NodeUnschedulableStatus,
+  Status,
+  SecondaryStatus,
+} from '@console/shared';
 import { NodeKind } from '@console/internal/module/k8s';
 import { humanizeBinaryBytes, humanizeNumber } from '@console/internal/components/utils';
 import { nodeStatus } from '../../status/node';
@@ -32,7 +37,11 @@ const NodeStatus: React.FC<NodeStatusProps> = ({ node, showPopovers = false, cla
   const status = showPopovers ? getDegradedStates(node) : [];
   return (
     <>
-      <Status status={nodeStatus(node)} className={className} />
+      {!node.spec.unschedulable ? (
+        <Status status={nodeStatus(node)} className={className} />
+      ) : (
+        <NodeUnschedulableStatus status={nodeStatus(node)} className={className} />
+      )}
       <SecondaryStatus status={getNodeSecondaryStatus(node)} />
       {status.length > 0 &&
         status.map((item) => (
