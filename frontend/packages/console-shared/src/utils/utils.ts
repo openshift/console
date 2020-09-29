@@ -63,3 +63,11 @@ const recursiveGetSchemaAtPath = (
 export const getSchemaAtPath = (schema: JSONSchema6, path: string): JSONSchema6 => {
   return recursiveGetSchemaAtPath(schema, toPath(path));
 };
+
+// Converts a string to title case `some-title` -> `Some Title`
+export const toTitleCase = (title: string): string => {
+  return title
+    .split('-')
+    .map((w) => (w ? w[0].toUpperCase() + w.substr(1) : ''))
+    .join(' ');
+};

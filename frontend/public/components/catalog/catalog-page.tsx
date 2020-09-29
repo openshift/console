@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { safeLoad } from 'js-yaml';
 import { PropertyItem } from '@patternfly/react-catalog-view-extension';
-import { ANNOTATIONS, FLAGS, APIError } from '@console/shared';
+import { ANNOTATIONS, FLAGS, APIError, toTitleCase } from '@console/shared';
 import {
   withExtensions,
   isDevCatalogModel,
@@ -43,7 +43,6 @@ import {
 import { ClusterServiceClassModel, TemplateModel } from '../../models';
 import { coFetch, coFetchJSON } from '../../co-fetch';
 import { Item } from './types';
-import { toTitleCase } from './utils';
 
 export const CatalogListPage = withExtensions<CatalogListPageExtensionProps>({
   devCatalogExtensions: isDevCatalogModel,
@@ -218,13 +217,14 @@ export const CatalogListPage = withExtensions<CatalogListPageExtensionProps>({
       return _.reduce(
         chartEntries,
         (normalizedCharts, charts, key) => {
-          const chartRepoName = toTitleCase(key.split('--').pop());
+          const chartRepoName = key.split('--').pop();
           charts.forEach((chart: HelmChart) => {
             const tags = chart.keywords;
             const chartName = chart.name;
             const chartVersion = chart.version;
             const appVersion = chart.appVersion;
             const tileName = `${toTitleCase(chartName)} v${chart.version}`;
+            const tileProvider = toTitleCase(chartRepoName);
             const tileImgUrl = chart.icon || getImageForIconClass('icon-helm');
             const chartURL = _.get(chart, 'urls.0');
             const encodedChartURL = encodeURIComponent(chartURL);
@@ -279,7 +279,7 @@ export const CatalogListPage = withExtensions<CatalogListPageExtensionProps>({
               obj,
               kind: 'HelmChart',
               tileName,
-              tileProvider: chartRepoName,
+              tileProvider,
               tileIconClass: null,
               tileImgUrl,
               tileDescription: chart.description,
@@ -287,7 +287,7 @@ export const CatalogListPage = withExtensions<CatalogListPageExtensionProps>({
               createLabel: 'Install Helm Chart',
               markdownDescription,
               customProperties,
-              href: `/catalog/helm-install?chartName=${chartName}&chartURL=${encodedChartURL}&preselected-ns=${currentNamespace}`,
+              href: `/catalog/helm-install?chartName=${chartName}&chartRepoName=${chartRepoName}&chartURL=${encodedChartURL}&preselected-ns=${currentNamespace}`,
             };
 
             // group Helm chart with same name and different version together
