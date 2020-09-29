@@ -361,6 +361,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               isDisabled={isDisabled('source', !source.canBeChangedToThisSource(type))}
               selections={asFormSelectValue(source.toString())}
               onSelect={onSourceChanged}
+              toggleId={asId('select-source')}
             >
               {StorageUISource.getAll()
                 .filter(
@@ -506,6 +507,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                 (e, diskBus) => setBus(DiskBus.fromString(diskBus.toString())),
                 [setBus],
               )}
+              toggleId={asId('select-interface')}
             >
               {[...validAllowedBuses].map((b) => (
                 <SelectOption
