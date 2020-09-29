@@ -321,3 +321,28 @@ _Returns all chart details for the given chart URL_
 
   * **Code:** 400 BAD REQUEST <br />
     **Content:** `{ error : "error message" }`
+
+**Retrieve Helm Repository Index**
+----
+
+_Returns repository index file containing all entries from all configured repositories_
+
+* **URL**
+
+    `/api/helm/charts/index.yaml`
+
+* **Method:**
+
+  `GET`
+
+* **Success Response:**
+
+  * **Code:** 200 <br />
+  * JSON representation of [Index file](https://github.com/helm/helm/blob/master/pkg/repo/index.go#L79)
+  * Each entry key is appended with [source repo name](https://github.com/openshift/api/blob/master/helm/v1beta1/types_helm.go#L16).
+    Double dash (`--`) serves as the separate between the chart and repo name (e.g. `foo-chart--my-repo`)
+
+* **Error Response:**
+
+  * **Code:** 400 BAD REQUEST <br />
+    **Content:** `{ error : "error message" }`

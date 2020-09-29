@@ -69,14 +69,16 @@ func (p *proxy) IndexFile() (*repo.IndexFile, error) {
 		return nil, err
 	}
 
-	var indexFiles []*repo.IndexFile
+	indexFile := repo.NewIndexFile()
 	for _, helmRepo := range helmRepos {
 		idxFile, err := helmRepo.IndexFile()
 		if err != nil {
 			plog.Errorf("Error retrieving index file for %v: %v", helmRepo, err)
 			continue
 		}
-		indexFiles = append(indexFiles, idxFile)
+		for key, entry := range idxFile.Entries {
+			indexFile.Entries[key+"--"+helmRepo.Name] = entry
+		}
 	}
-	return mergeIndexFiles(indexFiles...), nil
+	return indexFile, nil
 }
