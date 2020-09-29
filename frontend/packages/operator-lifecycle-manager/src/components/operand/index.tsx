@@ -223,8 +223,7 @@ export const OperandStatus: React.FunctionComponent<OperandStatusProps> = ({ ope
   const { type, value } = status;
   return (
     <span className="co-icon-and-text">
-      {type}:&nbsp;
-      {value === 'Running' ? <SuccessStatus title={value} /> : <Status status={value} />}
+      {type}: {value === 'Running' ? <SuccessStatus title={value} /> : <Status status={value} />}
     </span>
   );
 };
