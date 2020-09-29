@@ -1,4 +1,44 @@
-# This file consists of guide lines to create automation scripts
+# Getting Started
+
+## Directory Structure
+
+Folder structure of cypress cucumber framework
+
+```
+frontend/packages/dev-console/integration-tests/
+├── support              <--- cypress cucumber support configurations
+|   ├── commands         <--- add commands to Cypress 'cy.' global, other support configurations
+|   |   └── index.ts
+|   |   └── app.ts       <--- hooks are added in this file
+|   ├── constants        <--- enums required for dev-console scripts
+│   |   └── add.ts
+|   |   └── global.ts
+|   ├── pages            <--- helper objects and page functions
+│   |   ├── add-flow     <--- Add flow related helper objects and page functions
+|   |   |   └──add-page.ts
+|   |   └── app.ts       <--- Re-usable helper objects and page functions
+|   ├── step-definitions <--- cucumber step implementations
+│   |   ├── common       <--- Re-usable dev-console step definitions
+|   |       └──common.ts
+|   |       └──project-creation.ts
+├── features
+|   ├──  addFlow         <--- Add flow gherkin scenarios
+|   |    └──create-from-git.feature
+|   ├──  topology        <--- Topology gherkin scenarios
+|   |    └──chart-area-visual.feature
+|   ├──  pipelines       <--- Pipelines gherkin scenarios
+|   |    └──create-from-builder-page.feature
+|   ├──  knative         <--- Knative gherkin scenarios
+|   |    └──create-event-sources.feature
+|   ├──  helm            <--- Helm gherkin scenarios
+|   |    └──helm-navigation.feature
+|   ├──  BestPractices.md <--- Gherkin script standards
+├── fixtures             <--- Test data required for scripts
+├── cypress.json         <--- cypress configuration file
+
+```
+
+## This file consists of guide lines to create automation scripts
 
 ## Scenario files
 
@@ -8,14 +48,15 @@
 ## View files
 
 1. Page objects should be id, css selectors, buttontext etc.. [No XPath]- Already following
-    * Each section should have one object as shown below (It helps to reduce the import list in scenarios)
 
-      export const deleteDeployPopupObj = {
-          form: element(by.css('form.modal-content')),
-          checkbox: element(by.css('input[type="checkbox"]')),
-          cancel: element(by.css('[data-test-id="modal-cancel-action"]')),
-          delete: element(by.css('#confirm-action'))
-      }
+   - Each section should have one object as shown below (It helps to reduce the import list in scenarios)
+
+     export const deleteDeployPopupObj = {
+     form: element(by.css('form.modal-content')),
+     checkbox: element(by.css('input[type="checkbox"]')),
+     cancel: element(by.css('[data-test-id="modal-cancel-action"]')),
+     delete: element(by.css('#confirm-action'))
+     }
 
 2. Use arrow functions which helps to reduce the lines of code and it has other benefits as well
 3. Logics should be implemented within these files

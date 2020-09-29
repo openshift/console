@@ -6,4 +6,6 @@ export const modal = {
   submitShouldBeDisabled: () => cy.get(submitButton).should('be', 'disabled'),
   submitShouldBeEnabled: () => cy.get(submitButton).should('not.be', 'disabled'),
   submit: () => cy.get(submitButton).click(),
+  modalTitleShouldContain: (modalTitle: string) =>
+    cy.byLegacyTestID('modal-title').should('contain.text', modalTitle),
 };

@@ -221,6 +221,8 @@ Examples:
 
 [**_More information on Console's Cypress usage_**](frontend/packages/integration-tests-cypress/README.md)
 
+[**_More information on DevConsole's Cypress usage_**](frontend/packages/dev-console/integration-tests/README.md)
+
 #### Protractor
 
 Integration tests are run in a headless browser driven by [protractor](http://www.protractortest.org/#/).
