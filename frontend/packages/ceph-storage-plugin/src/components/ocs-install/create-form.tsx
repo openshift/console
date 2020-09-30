@@ -111,7 +111,7 @@ export const CreateInternalCluster = withHandlePromise<
   const isMinimal = shouldDeployAsMinimal(nodes);
   const [showMessage, setShowMessage] = React.useState(false);
   const isMinimalSupported = useFlag(OCS_SUPPORT_FLAGS.MINIMAL_DEPLOYMENT);
-  const isEncryptionSupported = useFlag(OCS_SUPPORT_FLAGS.ENCRPYTION);
+  const isEncryptionSupported = useFlag(OCS_SUPPORT_FLAGS.ENCRYPTION);
 
   const timeoutID = React.useRef(null);
 
