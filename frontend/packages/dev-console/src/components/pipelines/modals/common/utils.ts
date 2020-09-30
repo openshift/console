@@ -8,6 +8,7 @@ import {
   PipelineRunInlineResourceParam,
   PipelineRunReferenceResource,
   PipelineRunResource,
+  PipelineWorkspace,
 } from '../../../../utils/pipeline-augment';
 import { PipelineRunModel } from '../../../../models';
 import { getPipelineRunParams, getPipelineRunWorkspaces } from '../../../../utils/pipeline-utils';
@@ -117,6 +118,11 @@ export const convertPipelineToModalData = (
         ...initialResourceFormValues[resource.type],
         type: resource.type,
       },
+    })),
+    workspaces: (pipeline.spec.workspaces || []).map((workspace: PipelineWorkspace) => ({
+      ...workspace,
+      type: 'EmptyDirectory',
+      data: { emptyDir: {} },
     })),
   };
 };
