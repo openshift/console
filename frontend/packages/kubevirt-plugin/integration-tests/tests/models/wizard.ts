@@ -4,7 +4,7 @@ import { createItemButton, isLoaded } from '@console/internal-integration-tests/
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
 import { click, fillInput, asyncForEach } from '@console/shared/src/test-utils/utils';
 import { K8sKind } from '@console/internal/module/k8s';
-import { selectOptionByText, enabledAsBoolean } from '../utils/utils';
+import { selectOptionByText, enabledAsBoolean, selectItemFromDropdown } from '../utils/utils';
 import {
   CloudInitConfig,
   Disk,
@@ -22,7 +22,7 @@ import {
 import * as view from '../../views/wizard.view';
 import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
 import { DiskDialog } from '../dialogs/diskDialog';
-import { Flavor, ProvisionSource } from '../utils/constants/wizard';
+import { Flavor, ProvisionSourceItem } from '../utils/constants/wizard';
 import { resourceHorizontalTab } from '../../views/uiResource.view';
 import { virtualizationTitle } from '../../views/vms.list.view';
 import { VMBuilderData } from '../types/vm';
@@ -75,16 +75,12 @@ export class Wizard {
     await fillInput(view.descriptionInput, description);
   }
 
-  async selectTemplate(template: string) {
-    await selectOptionByText(view.templateSelect, template);
-  }
-
   async selectOperatingSystem(operatingSystem: string) {
-    await selectOptionByText(view.operatingSystemSelect, operatingSystem);
+    await selectItemFromDropdown(view.operatingSystemSelect, view.dropDownItem(operatingSystem));
   }
 
   async selectFlavor(flavor: FlavorConfig) {
-    await selectOptionByText(view.flavorSelect, flavor.flavor);
+    await selectItemFromDropdown(view.flavorSelect, view.dropDownItem(flavor.flavor));
     if (flavor.flavor === Flavor.CUSTOM && (!flavor.memory || !flavor.cpu)) {
       throw Error('Custom Flavor requires memory and cpu values.');
     }
@@ -97,13 +93,21 @@ export class Wizard {
   }
 
   async selectWorkloadProfile(workloadProfile: string) {
-    await selectOptionByText(view.workloadProfileSelect, workloadProfile);
+    await selectItemFromDropdown(view.workloadProfileSelect, view.dropDownItem(workloadProfile));
   }
 
   async selectProvisionSource(provisionOptions) {
-    await selectOptionByText(view.provisionSourceSelect, provisionOptions.method);
+    await selectItemFromDropdown(
+      view.provisionSourceSelect,
+      view.provisionSourceDropDownItem(provisionOptions.method),
+    );
     if (Object.prototype.hasOwnProperty.call(provisionOptions, 'source')) {
-      await fillInput(view.provisionSourceInputs[provisionOptions.method], provisionOptions.source);
+      if (provisionOptions.method === ProvisionSourceItem.URL) {
+        await fillInput(view.provisionSourceInputs.URL, provisionOptions.source);
+      }
+      if (provisionOptions.method === ProvisionSourceItem.CONTAINER) {
+        await fillInput(view.provisionSourceInputs.Container, provisionOptions.source);
+      }
     }
   }
 
@@ -199,7 +203,7 @@ export class Wizard {
   }
 
   async processGeneralStep(data: VMBuilderData) {
-    const { name, description, template, provisionSource, os, flavor, workload } = data;
+    const { name, description, provisionSource, os, flavor, workload } = data;
     if (name) {
       await this.fillName(name);
     } else {
@@ -211,8 +215,6 @@ export class Wizard {
     if ((await browser.getCurrentUrl()).match(/\?template=.+$/)) {
       // We are creating a VM from template via its action button
       // ProvisionSource, OS and workload are prefilled and disabled - ignoring them
-    } else if (template) {
-      await this.selectTemplate(template);
     } else {
       if (provisionSource) {
         await this.selectProvisionSource(provisionSource);
@@ -239,11 +241,11 @@ export class Wizard {
   }
 
   async processNetworkStep(data: VMBuilderData) {
-    const { networks, provisionSource, template } = data;
+    const { networks, provisionSource } = data;
     for (const resource of networks) {
       await this.addNIC(resource);
     }
-    if (provisionSource?.method === ProvisionSource.PXE && template === undefined) {
+    if (provisionSource?.method === ProvisionSourceItem.PXE) {
       // Select the last NIC as the source for booting
       await this.selectBootableNIC(networks[networks.length - 1].name);
     }
@@ -258,7 +260,7 @@ export class Wizard {
       } else {
         await this.addDisk(disk);
       }
-      if (provisionSource?.method === ProvisionSource.DISK && disk.bootable) {
+      if (provisionSource?.method === ProvisionSourceItem.DISK && disk.bootable) {
         await this.selectBootableDisk(disk.name);
       }
     }
@@ -266,12 +268,8 @@ export class Wizard {
   }
 
   async processAdvanceStep(data: VMBuilderData) {
-    const { cloudInit, template } = data;
+    const { cloudInit } = data;
     if (cloudInit) {
-      if (template !== undefined) {
-        // TODO: wizard.useCloudInit needs to check state of checkboxes before clicking them to ensure desired state is achieved with specified template
-        throw new Error('Using cloud init with template not yet implemented.');
-      }
       await this.configureCloudInit(cloudInit);
     }
     await this.next();

@@ -84,3 +84,7 @@ export const tableRowAttribute = async (name: string, columnIndex: number): Prom
     .get(columnIndex)
     .getText();
 };
+export const dropDownItem = (text) =>
+  element(by.cssContainingText('.pf-c-select__menu-item', text));
+export const provisionSourceDropDownItem = (text) =>
+  element(by.cssContainingText('.pf-c-select__menu-item-main', text));

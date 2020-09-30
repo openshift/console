@@ -9,16 +9,15 @@ import { multusNAD, hddDisk, multusNetworkInterface, provisionSources } from './
 import { VMTemplateBuilder } from './models/vmtemplateBuilder';
 import { getBasicVMTBuilder, getBasicVMBuilder } from './mocks/vmBuilderPresets';
 import { VMBuilder } from './models/vmBuilder';
+import { Wizard } from './models/wizard';
 
 describe('Test adding/removing discs/nics to/from a VM template', () => {
   const vmt = new VMTemplateBuilder(getBasicVMTBuilder())
     .setProvisionSource(provisionSources.Container)
     .build();
 
-  const vm = new VMBuilder(getBasicVMBuilder())
-    .setTemplate(vmt.name)
-    .setName('from-template')
-    .build();
+  const wizard = new Wizard();
+  const vm = new VMBuilder(getBasicVMBuilder()).setName('from-template').build();
 
   beforeAll(async () => {
     createResource(multusNAD);
@@ -33,7 +32,8 @@ describe('Test adding/removing discs/nics to/from a VM template', () => {
     beforeAll(async () => {
       await vmt.addDisk(hddDisk);
       await vmt.addNIC(multusNetworkInterface);
-      await vm.create();
+      await vmt.createVMFromRowLink();
+      await wizard.processWizard(vm.getData());
     }, TEMPLATE_ACTIONS_TIMEOUT_SECS);
 
     afterAll(() => {

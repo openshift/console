@@ -55,11 +55,6 @@ export abstract class BaseVMBuilder<T extends BaseVMBuilderData> {
     return this;
   }
 
-  public setTemplate(template: string) {
-    this.data.template = template;
-    return this;
-  }
-
   public setFlavor(flavor: FlavorConfig) {
     this.data.flavor = flavor;
     return this;

@@ -135,6 +135,7 @@ export class KubevirtUIResource<T extends BaseVMBuilderData> extends UIResource 
       const cols = line.split(/\t/);
       return {
         name: cols[diskTabCol.name],
+        source: cols[diskTabCol.source],
         size: cols[diskTabCol.size].slice(0, -4),
         drive: cols[diskTabCol.drive],
         interface: cols[diskTabCol.interface],

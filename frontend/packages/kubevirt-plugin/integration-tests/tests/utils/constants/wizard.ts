@@ -3,7 +3,13 @@ export enum ProvisionSource {
   CONTAINER = 'Container',
   PXE = 'PXE',
   DISK = 'Disk',
-  CLONED_DISK = 'ClonedDisk',
+}
+
+export enum ProvisionSourceItem {
+  URL = 'URL (adds disk)',
+  CONTAINER = 'Container',
+  PXE = 'PXE (network boot - adds network interface)',
+  DISK = 'Existing PVC (adds disk)',
 }
 
 export enum OperatingSystem {

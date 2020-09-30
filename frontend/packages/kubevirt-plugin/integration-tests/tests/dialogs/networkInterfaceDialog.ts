@@ -1,6 +1,6 @@
 import { click, fillInput } from '@console/shared/src/test-utils/utils';
 import * as view from '../../views/dialogs/networkInterface.view';
-import { selectOptionByText, getSelectOptions } from '../utils/utils';
+import { selectOptionByText, getSelectOptions, selectItemFromDropdown } from '../utils/utils';
 import { Network } from '../types/types';
 import { modalSubmitButton, saveButton } from '../../views/kubevirtUIResource.view';
 import { waitForNoLoaders } from '../../views/wizard.view';
@@ -11,7 +11,7 @@ export class NetworkInterfaceDialog {
   }
 
   async selectModel(model: string) {
-    await selectOptionByText(view.nicModel, model);
+    await selectItemFromDropdown(view.nicModel, view.nicDropDownItem(model));
   }
 
   async selectNetwork(network: string) {
@@ -19,7 +19,7 @@ export class NetworkInterfaceDialog {
   }
 
   async selectType(type: string) {
-    await selectOptionByText(view.nicType, type);
+    await selectItemFromDropdown(view.nicType, view.nicDropDownItem(type));
   }
 
   async fillMAC(mac: string) {

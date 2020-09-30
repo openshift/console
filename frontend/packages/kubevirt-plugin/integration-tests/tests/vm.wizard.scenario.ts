@@ -26,7 +26,12 @@ import {
   kubevirtStorage,
   getDiskToCloneFrom,
 } from './mocks/mocks';
-import { ProvisionSource, Workload, OperatingSystem } from './utils/constants/wizard';
+import {
+  ProvisionSource,
+  Workload,
+  OperatingSystem,
+  ProvisionSourceItem,
+} from './utils/constants/wizard';
 import { vmPresets, getBasicVMBuilder } from './mocks/vmBuilderPresets';
 import { VMBuilder } from './models/vmBuilder';
 import {
@@ -65,7 +70,7 @@ describe('Kubevirt create VM using wizard', () => {
   for (const [id, vm] of Object.entries(VMTestCaseIDs)) {
     const { method } = vm.getData().provisionSource;
     const specTimeout =
-      method === ProvisionSource.DISK ? CLONE_VM_TIMEOUT_SECS : VM_BOOTUP_TIMEOUT_SECS;
+      method === ProvisionSourceItem.DISK ? CLONE_VM_TIMEOUT_SECS : VM_BOOTUP_TIMEOUT_SECS;
     it(
       `${id} Create VM using ${method}.`,
       async () => {

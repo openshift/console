@@ -23,7 +23,6 @@ export type BaseVMBuilderData = {
   name?: string;
   description?: string;
   namespace?: string;
-  template?: string;
   flavor?: FlavorConfig;
   workload?: Workload;
   os?: OperatingSystem;
@@ -36,14 +35,12 @@ export type BaseVMBuilderData = {
 export type VMBuilderData = BaseVMBuilderData & {
   waitForDiskImport?: boolean;
   startOnCreation?: boolean;
-  template?: string;
 };
 
 export type KubevirtResourceConfig = {
   name: string;
   description?: string;
   flavorConfig: FlavorConfig;
-  template?: string;
   provisionSource?: ProvisionSource;
   operatingSystem?: string;
   workloadProfile?: string;

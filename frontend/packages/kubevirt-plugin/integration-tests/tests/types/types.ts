@@ -66,7 +66,6 @@ export type KubevirtResourceConfig = {
   name: string;
   description?: string;
   flavorConfig: FlavorConfig;
-  template?: string;
   provisionSource?: ProvisionSource;
   operatingSystem?: string;
   workloadProfile?: string;

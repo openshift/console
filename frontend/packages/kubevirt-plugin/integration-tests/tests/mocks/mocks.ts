@@ -15,7 +15,7 @@ import {
   resolveStorageDataAttribute,
   deepFreeze,
 } from '../utils/utils';
-import { Flavor, ProvisionSource } from '../utils/constants/wizard';
+import { Flavor, ProvisionSource, ProvisionSourceItem } from '../utils/constants/wizard';
 import {
   NIC_MODEL,
   NIC_TYPE,
@@ -26,15 +26,15 @@ import {
 
 export const provisionSources = {
   [ProvisionSource.URL]: {
-    method: ProvisionSource.URL,
+    method: ProvisionSourceItem.URL,
     source: 'https://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img',
   },
   [ProvisionSource.CONTAINER]: {
-    method: ProvisionSource.CONTAINER,
+    method: ProvisionSourceItem.CONTAINER,
     source: 'kubevirt/fedora-cloud-registry-disk-demo:latest',
   },
-  [ProvisionSource.PXE]: { method: ProvisionSource.PXE },
-  [ProvisionSource.DISK]: { method: ProvisionSource.DISK },
+  [ProvisionSource.PXE]: { method: ProvisionSourceItem.PXE },
+  [ProvisionSource.DISK]: { method: ProvisionSourceItem.DISK },
 };
 deepFreeze(provisionSources);
 
@@ -63,7 +63,7 @@ deepFreeze(multusNAD);
 
 export const dataVolumeManifest = ({ name, namespace, sourceURL, accessMode, volumeMode }) => {
   return {
-    apiVersion: 'cdi.kubevirt.io/v1alpha1',
+    apiVersion: 'cdi.kubevirt.io/v1beta1',
     kind: 'DataVolume',
     metadata: {
       name,
@@ -72,7 +72,6 @@ export const dataVolumeManifest = ({ name, namespace, sourceURL, accessMode, vol
     spec: {
       pvc: {
         accessModes: [accessMode],
-        dataSource: {},
         resources: {
           requests: {
             storage: '1Gi',
@@ -271,7 +270,7 @@ function getMetadata(
     },
   };
   const dataVolumeTemplate = {
-    apiVersion: 'cdi.kubevirt.io/v1alpha1',
+    apiVersion: 'cdi.kubevirt.io/v1beta1',
     metadata: {
       name: `${metadata.name}-rootdisk`,
     },
