@@ -8,7 +8,7 @@ Background:
 
 
 @regression, @smoke
-Scenario: Add Secrets : P-011-TC01
+Scenario: Add Secrets : P-11-TC01
    Given user has created pipeline "pipe-task-with-resource" with git resources
    When user selects "Start" option from kebab menu for pipeline "pipe-task-with-resource"
    And user clicks on Show Credentials link present in Start Pipeline modal
@@ -23,7 +23,7 @@ Scenario Outline: Add secret to pipeline with authentication type as Basic Authe
    And user is at Start Pipeline modal
    When user enters URL, Revision as "<git_private_repo_url>" and "master"
    And user enters Secret Name as "<secret_name>"
-   And user selects the "Git Server" option from Access to drop down
+   And user selects the "Git Server" option from accessTo drop down
    And user enters the server url as "https://github.com"
    And user selects the Authentication type as "Basic Authentication"
    And user enters the Username, Password as "<username>", "<password>"
@@ -36,12 +36,12 @@ Examples:
 
 
 @regression
-Scenario Outline: Add secret to pipeline with authentication type as SSH Key : P-011-TC04   
+Scenario Outline: Add secret to pipeline with authentication type as SSH Key : P-11-TC04   
    Given user has created pipeline "pipe-task-with-resource-1" with git resources
    And user is at Start Pipeline modal
    When user enters URL, Revision as "<git_private_repo_url>" and "master"
    And user enters Secret Name as "<secret_name>"
-   And user selects the "Git Server" option from Access to drop down
+   And user selects the "Git Server" option from accessTo drop down
    And user enters the server url as "https://github.com"
    And user selects the Authentication type as "SSH Key"
    And user enters the SSH KEY as "<ssh_key>"
@@ -54,12 +54,12 @@ Examples:
 
 
 @regression
-Scenario Outline: Add secret to pipeline with authentication type as Image Registry Credentials : P-011-TC03
+Scenario Outline: Add secret to pipeline with authentication type as Image Registry Credentials : P-11-TC03
    Given user has created pipeline "pipe-task-with-resource-2" with git resources
    And user is at Start Pipeline modal
    When user enters URL, Revision as "<git_private_repo_url>" and "master"
    And user enters Secret Name as "<secret_name>"
-   And user selects the "Git Server" option from Access to drop down
+   And user selects the "Git Server" option from accessTo drop down
    And user enters the server url as "https://github.com"
    And user selects the Authentication type as "Image Registry Credentials"
    And user enters the Username, Password, email as "<username>", "<password>", "<email>"
