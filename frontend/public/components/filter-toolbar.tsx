@@ -91,7 +91,8 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     hideLabelFilter,
     hideNameLabelFilters,
     columnLayout,
-    filterPlaceholder,
+    nameFilterPlaceholder,
+    labelFilterPlaceholder,
     location,
     textFilter = filterTypeMap[FilterType.NAME],
     labelFilter = filterTypeMap[FilterType.LABEL],
@@ -100,8 +101,9 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   const [inputText, setInputText] = React.useState('');
   const [filterType, setFilterType] = React.useState(FilterType.NAME);
   const [isOpen, setOpen] = React.useState(false);
-  const placeholder =
-    filterPlaceholder || (FilterType.NAME === filterType ? 'Search by name...' : 'app=frontend');
+  const [placeholder, setPlaceholder] = React.useState(
+    nameFilterPlaceholder || 'Search by name...',
+  );
 
   // (rowFilters) => {'rowFilterTypeA': ['staA', 'staB'], 'rowFilterTypeB': ['stbA'] }
   const filters: Filter = rowFilters.reduce((acc, curr) => {
@@ -258,6 +260,16 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
 
   const switchFilter = (type: FilterType) => {
     setFilterType(FilterType[type]);
+    switch (FilterType[type]) {
+      case 'Name':
+        setPlaceholder(nameFilterPlaceholder || 'Search by name...');
+        break;
+      case 'Label':
+        setPlaceholder(labelFilterPlaceholder || 'Search by label...');
+        break;
+      default:
+        setPlaceholder('app=frontend');
+    }
     setInputText(nameFilter && FilterType[type] === FilterType.NAME ? nameFilter : '');
   };
 
@@ -377,7 +389,8 @@ type FilterToolbarProps = {
   kinds?: any;
   labelPath?: string;
   columnLayout?: ColumnLayout;
-  filterPlaceholder?: string;
+  nameFilterPlaceholder?: string;
+  labelFilterPlaceholder?: string;
 };
 
 export type RowFilter<R = any> = {

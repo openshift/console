@@ -182,7 +182,8 @@ export const CreateInternalCluster = withHandlePromise<
           customData={{
             onRowSelected: setNodes,
           }}
-          filterPlaceholder="Search by node name..."
+          nameFilterPlaceholder="Search by node name..."
+          labelFilterPlaceholder="Search by node label..."
         >
           <>
             <span>Select at least 3 nodes, preferably in 3 different zones.</span>
