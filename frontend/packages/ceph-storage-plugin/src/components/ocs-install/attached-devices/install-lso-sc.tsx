@@ -98,7 +98,7 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
   );
   const [pvData, pvLoaded, pvLoadError] = useK8sWatchResource<K8sResourceKind[]>(pvResource);
   const isMinimalSupported = useFlag(OCS_SUPPORT_FLAGS.MINIMAL_DEPLOYMENT);
-  const isEncryptionSupported = useFlag(OCS_SUPPORT_FLAGS.ENCRPYTION);
+  const isEncryptionSupported = useFlag(OCS_SUPPORT_FLAGS.ENCRYPTION);
 
   const isMinimal = nodes.length > minSelectedNode ? shouldDeployAsMinimal(nodes) : false;
 
