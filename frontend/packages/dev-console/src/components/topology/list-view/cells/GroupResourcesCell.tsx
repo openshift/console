@@ -5,6 +5,7 @@ import { getImageForIconClass } from '@console/internal/components/catalog/catal
 import { ResourceIcon } from '@console/internal/components/utils';
 import { isValidUrl } from '@console/shared';
 import { labelForNodeKind } from '../list-view-utils';
+import { showKind, useDisplayFilters } from '../../filters';
 
 interface TopologyListViewGroupResourcesCellProps {
   group: Node;
@@ -13,8 +14,13 @@ interface TopologyListViewGroupResourcesCellProps {
 const ObservedTopologyListViewGroupResourcesCell: React.FC<TopologyListViewGroupResourcesCellProps> = ({
   group,
 }) => {
+  const displayFilters = useDisplayFilters();
   const { groupResources } = group.getData();
-  const childKindsMap = groupResources.reduce((acc, child) => {
+  const shownResources = groupResources.filter((res) =>
+    showKind(res.resourceKind || res.resource?.kind, displayFilters),
+  );
+
+  const childKindsMap = shownResources.reduce((acc, child) => {
     const kind = child.resourceKind || child.resource?.kind;
     if (!acc[kind]) {
       acc[kind] = 0;

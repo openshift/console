@@ -61,6 +61,13 @@
       margin-left: var(--pf-global--spacer--sm);
     }
   }
+  &__application-label-cell {
+    display: inline;
+    vertical-align: middle;
+    .odc-topology-list-view__resource-icon__container {
+      margin-top: 8px;
+    }
+  }
   &__label-cell {
     display: inline-flex;
     align-items: start;
@@ -109,6 +116,10 @@
     }
   }
   &__application-label {
+    font-size: var(--pf-global--FontSize--2xl);
+    margin-left: var(--pf-global--spacer--sm);
+  }
+  &__unassigned-label {
     font-size: var(--pf-global--FontSize--2xl);
   }
   &__kind-row, &__item-row {

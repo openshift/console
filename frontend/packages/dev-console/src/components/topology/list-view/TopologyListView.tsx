@@ -269,7 +269,9 @@ const ConnectedTopologyListView: React.FC<TopologyListViewProps &
           aria-label="Topology List View"
           className="odc-topology-list-view__data-list"
           selectedDataListItemId={selectedId}
-          onSelectDataListItem={(id) => onSelect(visualization.getElementById(id))}
+          onSelectDataListItem={(id) =>
+            onSelect(selectedId === id ? undefined : visualization.getElementById(id))
+          }
         >
           {applicationGroups.map((g) => (
             <TopologyListViewAppGroup
@@ -282,6 +284,7 @@ const ConnectedTopologyListView: React.FC<TopologyListViewProps &
           {unassignedItems.length > 0 ? (
             <TopologyListViewUnassignedGroup
               key="unassigned"
+              showCategory={applicationGroups.length > 0}
               items={unassignedItems}
               selectedIds={[selectedId]}
               onSelect={(ids) => onSelect(ids ? visualization.getElementById(ids[0]) : undefined)}

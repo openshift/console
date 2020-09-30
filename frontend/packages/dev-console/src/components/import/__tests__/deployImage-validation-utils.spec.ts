@@ -42,14 +42,14 @@ describe('Deploy Image ValidationUtils', () => {
       });
     });
 
-    it('should not throw an error when unassigned application is chosen', async () => {
+    it('should not throw an error when no application group is chosen', async () => {
       const mockData = cloneDeep(mockDeployImageFormData);
       mockData.application.selectedKey = UNASSIGNED_KEY;
       mockData.application.name = '';
       await deployValidationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(true));
     });
 
-    it('should not throw an error when allowing either create or unassigned application', async () => {
+    it('should not throw an error when allowing either create or no application group set', async () => {
       const mockData = cloneDeep(mockDeployImageFormData);
       mockData.application.selectedKey = '';
       mockData.application.name = '';
