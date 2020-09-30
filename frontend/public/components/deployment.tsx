@@ -127,7 +127,12 @@ const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({ obj: deployment }
           namespace={deployment.metadata.namespace}
           kind={deployment.kind}
           render={(d) => {
-            return d.loaded ? (
+            if (!d.loaded) {
+              return <LoadingInline />;
+            } else if (!d.data[deployment.metadata.uid]) {
+              return null;
+            }
+            return (
               <PodRingSet
                 key={deployment.metadata.uid}
                 podData={d.data[deployment.metadata.uid]}
@@ -135,8 +140,6 @@ const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({ obj: deployment }
                 resourceKind={DeploymentModel}
                 path="/spec/replicas"
               />
-            ) : (
-              <LoadingInline />
             );
           }}
         />

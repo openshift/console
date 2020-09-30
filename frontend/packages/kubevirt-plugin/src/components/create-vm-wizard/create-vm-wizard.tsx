@@ -9,22 +9,27 @@ import {
   featureReducerName,
   FlagsObject,
 } from '@console/internal/reducers/features';
-import { TemplateModel, PersistentVolumeClaimModel } from '@console/internal/models';
+import { TemplateModel } from '@console/internal/models';
 import { Firehose, history } from '@console/internal/components/utils';
+import { usePrevious } from '@console/shared/src/hooks/previous';
+import { PersistentVolumeClaimKind, referenceForModel } from '@console/internal/module/k8s';
+import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
 import { Location } from 'history';
 import { match as RouterMatch } from 'react-router';
 import { withReduxID } from '../../utils/redux/common';
 import { DataVolumeModel, VirtualMachineModel } from '../../models';
+import { ITemplate } from '../../types/template';
 import {
   TEMPLATE_TYPE_BASE,
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_TYPE_VM,
   VMWizardMode,
   VMWizardView,
-  TEMPLATE_VM_GOLDEN_OS_NAMESPACE,
 } from '../../constants/vm';
 import { getResource } from '../../utils';
 import { IDReferences, makeIDReferences } from '../../utils/redux/id-reference';
+import { usePVCBaseImages } from '../../hooks/use-pvc-base-images';
+import { iGetLoadedData, immutableListToShallowJS } from '../../utils/immutable';
 import {
   ChangedCommonData,
   ChangedCommonDataProp,
@@ -58,7 +63,6 @@ import { CloudInitTab } from './tabs/cloud-init-tab/cloud-init-tab';
 import { useStorageClassConfigMapWrapped } from '../../hooks/storage-class-config-map';
 import { ValidTabGuard } from './tabs/valid-tab-guard';
 import { FirehoseResourceEnhanced } from '../../types/custom';
-import { ITemplate } from '../../types/template';
 
 import './create-vm-wizard.scss';
 
@@ -78,62 +82,96 @@ type CreateVMWizardComponentProps = {
   onResultsChanged: (results, isValid: boolean, isLocked: boolean, isPending: boolean) => void;
 } & { [k in ChangedCommonDataProp]: any };
 
-class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentProps> {
-  private isClosed = false;
+const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) => {
+  const closed = React.useRef(false);
 
-  constructor(props) {
-    super(props);
-    if (!(props[VMWizardProps.isProviderImport] && props[VMWizardProps.isCreateTemplate])) {
-      props.onInitialize();
-    } else {
-      console.error('It is not possible to make an import VM template'); // eslint-disable-line no-console
-      this.isClosed = true;
-    }
-  }
+  const onClose = React.useCallback(
+    (disposeOnly?: boolean) => {
+      if (closed.current) {
+        return;
+      }
+      closed.current = true;
+      props.onClose(disposeOnly);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+  React.useEffect(() => {
+    props.onInitialize();
 
-  componentDidUpdate(prevProps) {
-    if (this.isClosed) {
+    return () => {
+      onClose(true);
+    };
+    // constuctor/desctructor logic - should run only once
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const commonTemplates = React.useMemo(
+    () => immutableListToShallowJS(iGetLoadedData(props.commonTemplates)),
+    [props.commonTemplates],
+  );
+  const [dataVolumePVCs, dataVolumePVCsLoaded, dataVolumePVCsLoadError] = usePVCBaseImages(
+    commonTemplates,
+  );
+
+  // Store previuse props
+  const prevProps = usePrevious<CreateVMWizardComponentProps>(props);
+  const prevDataVolumePVCData = usePrevious<[PersistentVolumeClaimKind[], boolean, string]>([
+    dataVolumePVCs,
+    dataVolumePVCsLoaded,
+    dataVolumePVCsLoadError,
+  ]);
+
+  // componentDidUpdate
+  React.useEffect(() => {
+    if (closed.current || !prevProps) {
       return;
     }
+
     const changedProps = [...DetectCommonDataChanges].reduce((changedPropsAcc, propName) => {
-      if (prevProps[propName] !== this.props[propName]) {
+      if (prevProps[propName] !== props[propName]) {
         changedPropsAcc.add(propName);
       }
       return changedPropsAcc;
     }, new Set()) as ChangedCommonData;
+    const referencesChanged = !_.isEqual(prevProps.dataIDReferences, props.dataIDReferences);
+    const dataVolumePVCsChanged = !_.isEqual(prevDataVolumePVCData, [
+      dataVolumePVCs,
+      dataVolumePVCsLoaded,
+      dataVolumePVCsLoadError,
+    ]);
 
-    const referencesChanged = !_.isEqual(prevProps.dataIDReferences, this.props.dataIDReferences);
-
-    if (changedProps.size > 0 || referencesChanged) {
+    if (changedProps.size > 0 || referencesChanged || dataVolumePVCsChanged) {
       let commonDataUpdate: CommonData = referencesChanged
-        ? { dataIDReferences: this.props.dataIDReferences }
+        ? { dataIDReferences: props.dataIDReferences }
         : undefined;
       if (changedProps.has(VMWizardProps.storageClassConfigMap)) {
         commonDataUpdate = {
           ...commonDataUpdate,
           data: {
-            [VMWizardProps.storageClassConfigMap]: this.props[VMWizardProps.storageClassConfigMap],
+            [VMWizardProps.storageClassConfigMap]: props[VMWizardProps.storageClassConfigMap],
           },
         };
       }
-      this.props.onCommonDataChanged(commonDataUpdate, changedProps);
+      if (dataVolumePVCsChanged) {
+        commonDataUpdate = {
+          ...commonDataUpdate,
+          data: {
+            ...commonDataUpdate?.data,
+            [VMWizardProps.openshiftCNVBaseImages]: {
+              data: dataVolumePVCs,
+              loaded: dataVolumePVCsLoaded,
+              loadError: dataVolumePVCsLoadError,
+            },
+          },
+        };
+      }
+      props.onCommonDataChanged(commonDataUpdate, changedProps);
     }
-  }
+  });
 
-  componentWillUnmount() {
-    this.onClose(true);
-  }
-
-  onClose = (disposeOnly?: boolean) => {
-    if (this.isClosed) {
-      return;
-    }
-    this.isClosed = true;
-    this.props.onClose(disposeOnly);
-  };
-
-  getWizardTitle() {
-    const { isCreateTemplate, isProviderImport, iUserTemplate } = this.props;
+  const getWizardTitle = () => {
+    const { isCreateTemplate, isProviderImport, iUserTemplate } = props;
     if (isCreateTemplate) {
       return CREATE_VM_TEMPLATE;
     }
@@ -141,154 +179,152 @@ class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentPro
       return IMPORT_VM;
     }
     return iUserTemplate ? `${CREATE_VM} from ${iGetName(iUserTemplate)}` : CREATE_VM;
+  };
+
+  const goBackToEditingSteps = () =>
+    props.onResultsChanged(getResultInitialState({}).value, null, false, false);
+
+  const { reduxID, tabsMetadata } = props;
+
+  if (closed.current || _.isEmpty(tabsMetadata)) {
+    // closed or not initialized
+    return null;
   }
 
-  goBackToEditingSteps = () =>
-    this.props.onResultsChanged(getResultInitialState({}).value, null, false, false);
+  const steps = [
+    {
+      id: VMWizardTab.IMPORT_PROVIDERS,
+      name: TabTitleResolver[VMWizardTab.IMPORT_PROVIDERS],
+      canJumpTo: tabsMetadata[VMWizardTab.IMPORT_PROVIDERS]?.canJumpTo,
+      component: (
+        <>
+          <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
+          <ValidTabGuard
+            wizardReduxID={reduxID}
+            tabID={VMWizardTab.IMPORT_PROVIDERS}
+            key="wizard-errors"
+          >
+            <WizardErrors wizardReduxID={reduxID} />
+          </ValidTabGuard>
+          <ImportProvidersTab wizardReduxID={reduxID} key={VMWizardTab.IMPORT_PROVIDERS} />
+        </>
+      ),
+    },
+    {
+      id: VMWizardTab.VM_SETTINGS,
+      name: TabTitleResolver[VMWizardTab.VM_SETTINGS],
+      canJumpTo: tabsMetadata[VMWizardTab.VM_SETTINGS]?.canJumpTo,
+      component: (
+        <>
+          <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
+          <WizardErrors wizardReduxID={reduxID} key="wizard-errors" />
+          <VMSettingsTab wizardReduxID={reduxID} key={VMWizardTab.VM_SETTINGS} />
+        </>
+      ),
+    },
+    {
+      id: VMWizardTab.NETWORKING,
+      name: TabTitleResolver[VMWizardTab.NETWORKING],
+      canJumpTo: tabsMetadata[VMWizardTab.NETWORKING]?.canJumpTo,
+      component: (
+        <>
+          <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
+          <WizardErrors wizardReduxID={reduxID} key="wizard-errors" />
+          <NetworkingTab wizardReduxID={reduxID} key={VMWizardTab.NETWORKING} />
+        </>
+      ),
+    },
+    {
+      id: VMWizardTab.STORAGE,
+      name: TabTitleResolver[VMWizardTab.STORAGE],
+      canJumpTo: tabsMetadata[VMWizardTab.STORAGE]?.canJumpTo,
+      component: (
+        <>
+          <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
+          <WizardErrors wizardReduxID={reduxID} key="wizard-errors" />
+          <StorageTab wizardReduxID={reduxID} key={VMWizardTab.STORAGE} />
+        </>
+      ),
+    },
+    {
+      id: VMWizardTab.ADVANCED_CLOUD_INIT,
+      name: 'Advanced',
+      canJumpTo: tabsMetadata[VMWizardTab.ADVANCED_CLOUD_INIT]?.canJumpTo,
+      component: (
+        <>
+          <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
+          <WizardErrors wizardReduxID={reduxID} key="wizard-errors" />
+          <CloudInitTab wizardReduxID={reduxID} key={VMWizardTab.ADVANCED_CLOUD_INIT} />
+        </>
+      ),
+    },
+    {
+      id: VMWizardTab.REVIEW,
+      name: TabTitleResolver[VMWizardTab.REVIEW],
+      canJumpTo: tabsMetadata[VMWizardTab.REVIEW]?.canJumpTo,
+      component: (
+        <>
+          <WizardErrors wizardReduxID={reduxID} key="wizard-errors" />
+          <ReviewTab wizardReduxID={reduxID} key={VMWizardTab.REVIEW} />
+        </>
+      ),
+    },
+    {
+      id: VMWizardTab.RESULT,
+      name: TabTitleResolver[VMWizardTab.RESULT],
+      canJumpTo: tabsMetadata[VMWizardTab.RESULT]?.canJumpTo,
+      isFinishedStep:
+        tabsMetadata[VMWizardTab.RESULT].isPending || tabsMetadata[VMWizardTab.RESULT].isValid,
+      component: <ResultTab wizardReduxID={reduxID} key={VMWizardTab.RESULT} />,
+    },
+  ];
 
-  render() {
-    const { reduxID, tabsMetadata } = this.props;
+  const calculateStepsVisibility = (initialSteps: WizardStep[]): WizardStep[] =>
+    initialSteps
+      .map((step) => {
+        if (step.steps) {
+          const newInnerSteps = calculateStepsVisibility(step.steps);
+          return newInnerSteps.length > 0 ? { ...step, steps: newInnerSteps } : null;
+        }
+        return tabsMetadata[step.id as VMWizardTab]?.isHidden ? null : step;
+      })
+      .filter((step) => step);
 
-    if (this.isClosed || _.isEmpty(tabsMetadata)) {
-      // closed or not initialized
-      return null;
-    }
-
-    const steps = [
-      {
-        id: VMWizardTab.IMPORT_PROVIDERS,
-        name: TabTitleResolver[VMWizardTab.IMPORT_PROVIDERS],
-        canJumpTo: tabsMetadata[VMWizardTab.IMPORT_PROVIDERS]?.canJumpTo,
-        component: (
-          <>
-            <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
-            <ValidTabGuard
-              wizardReduxID={reduxID}
-              tabID={VMWizardTab.IMPORT_PROVIDERS}
-              key="wizard-errors"
-            >
-              <WizardErrors wizardReduxID={reduxID} />
-            </ValidTabGuard>
-            <ImportProvidersTab wizardReduxID={reduxID} key={VMWizardTab.IMPORT_PROVIDERS} />
-          </>
-        ),
-      },
-      {
-        id: VMWizardTab.VM_SETTINGS,
-        name: TabTitleResolver[VMWizardTab.VM_SETTINGS],
-        canJumpTo: tabsMetadata[VMWizardTab.VM_SETTINGS]?.canJumpTo,
-        component: (
-          <>
-            <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
-            <WizardErrors wizardReduxID={reduxID} key="wizard-errors" />
-            <VMSettingsTab wizardReduxID={reduxID} key={VMWizardTab.VM_SETTINGS} />
-          </>
-        ),
-      },
-      {
-        id: VMWizardTab.NETWORKING,
-        name: TabTitleResolver[VMWizardTab.NETWORKING],
-        canJumpTo: tabsMetadata[VMWizardTab.NETWORKING]?.canJumpTo,
-        component: (
-          <>
-            <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
-            <WizardErrors wizardReduxID={reduxID} key="wizard-errors" />
-            <NetworkingTab wizardReduxID={reduxID} key={VMWizardTab.NETWORKING} />
-          </>
-        ),
-      },
-      {
-        id: VMWizardTab.STORAGE,
-        name: TabTitleResolver[VMWizardTab.STORAGE],
-        canJumpTo: tabsMetadata[VMWizardTab.STORAGE]?.canJumpTo,
-        component: (
-          <>
-            <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
-            <WizardErrors wizardReduxID={reduxID} key="wizard-errors" />
-            <StorageTab wizardReduxID={reduxID} key={VMWizardTab.STORAGE} />
-          </>
-        ),
-      },
-      {
-        id: VMWizardTab.ADVANCED_CLOUD_INIT,
-        name: 'Advanced',
-        canJumpTo: tabsMetadata[VMWizardTab.ADVANCED_CLOUD_INIT]?.canJumpTo,
-        component: (
-          <>
-            <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
-            <WizardErrors wizardReduxID={reduxID} key="wizard-errors" />
-            <CloudInitTab wizardReduxID={reduxID} key={VMWizardTab.ADVANCED_CLOUD_INIT} />
-          </>
-        ),
-      },
-      {
-        id: VMWizardTab.REVIEW,
-        name: TabTitleResolver[VMWizardTab.REVIEW],
-        canJumpTo: tabsMetadata[VMWizardTab.REVIEW]?.canJumpTo,
-        component: (
-          <>
-            <WizardErrors wizardReduxID={reduxID} key="wizard-errors" />
-            <ReviewTab wizardReduxID={reduxID} key={VMWizardTab.REVIEW} />
-          </>
-        ),
-      },
-      {
-        id: VMWizardTab.RESULT,
-        name: TabTitleResolver[VMWizardTab.RESULT],
-        canJumpTo: tabsMetadata[VMWizardTab.RESULT]?.canJumpTo,
-        isFinishedStep:
-          tabsMetadata[VMWizardTab.RESULT].isPending || tabsMetadata[VMWizardTab.RESULT].isValid,
-        component: <ResultTab wizardReduxID={reduxID} key={VMWizardTab.RESULT} />,
-      },
-    ];
-
-    const calculateStepsVisibility = (initialSteps: WizardStep[]): WizardStep[] =>
-      initialSteps
-        .map((step) => {
-          if (step.steps) {
-            const newInnerSteps = calculateStepsVisibility(step.steps);
-            return newInnerSteps.length > 0 ? { ...step, steps: newInnerSteps } : null;
+  return (
+    <div className="kubevirt-create-vm-modal__container">
+      {!tabsMetadata[VMWizardTab.RESULT].isValid && (
+        <div className="yaml-editor__header" key="header">
+          <h1 className="yaml-editor__header-text">{getWizardTitle()}</h1>
+        </div>
+      )}
+      <Wizard
+        key="wizard"
+        className="kubevirt-create-vm-modal__wizard-content"
+        onClose={onClose}
+        onNext={({ id }, { prevId }) => {
+          if (id === VMWizardTab.RESULT && prevId !== VMWizardTab.RESULT) {
+            props.createVM();
           }
-          return tabsMetadata[step.id as VMWizardTab]?.isHidden ? null : step;
-        })
-        .filter((step) => step);
-
-    return (
-      <div className="kubevirt-create-vm-modal__container">
-        {!tabsMetadata[VMWizardTab.RESULT].isValid && (
-          <div className="yaml-editor__header" key="header">
-            <h1 className="yaml-editor__header-text">{this.getWizardTitle()}</h1>
-          </div>
-        )}
-        <Wizard
-          key="wizard"
-          className="kubevirt-create-vm-modal__wizard-content"
-          onClose={this.onClose}
-          onNext={({ id }, { prevId }) => {
-            if (id === VMWizardTab.RESULT && prevId !== VMWizardTab.RESULT) {
-              this.props.createVM();
-            }
-            if (prevId === VMWizardTab.RESULT && id !== VMWizardTab.RESULT) {
-              this.goBackToEditingSteps();
-            }
-          }}
-          onBack={({ id }, { prevId }) => {
-            if (prevId === VMWizardTab.RESULT && id !== VMWizardTab.RESULT) {
-              this.goBackToEditingSteps();
-            }
-          }}
-          onGoToStep={({ id }, { prevId }) => {
-            if (prevId === VMWizardTab.RESULT && id !== VMWizardTab.RESULT) {
-              this.goBackToEditingSteps();
-            }
-          }}
-          steps={calculateStepsVisibility(steps)}
-          footer={<CreateVMWizardFooter wizardReduxID={reduxID} key="footer" />}
-        />
-      </div>
-    );
-  }
-}
+          if (prevId === VMWizardTab.RESULT && id !== VMWizardTab.RESULT) {
+            goBackToEditingSteps();
+          }
+        }}
+        onBack={({ id }, { prevId }) => {
+          if (prevId === VMWizardTab.RESULT && id !== VMWizardTab.RESULT) {
+            goBackToEditingSteps();
+          }
+        }}
+        onGoToStep={({ id }, { prevId }) => {
+          if (prevId === VMWizardTab.RESULT && id !== VMWizardTab.RESULT) {
+            goBackToEditingSteps();
+          }
+        }}
+        steps={calculateStepsVisibility(steps)}
+        footer={<CreateVMWizardFooter wizardReduxID={reduxID} key="footer" />}
+      />
+    </div>
+  );
+};
 
 const wizardStateToProps = (state, { reduxID }) => ({
   isLastTabErrorFatal: isLastStepErrorFatal(state, reduxID),
@@ -379,16 +415,25 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
       }),
     ];
 
+    if (userMode !== VMWizardMode.IMPORT) {
+      resources.push({
+        kind: referenceForModel(NetworkAttachmentDefinitionModel),
+        model: NetworkAttachmentDefinitionModel,
+        isList: true,
+        namespace: activeNamespace,
+        prop: VMWizardProps.nads,
+        errorBehaviour: {
+          ignore404: true,
+        },
+      });
+    }
+
     if (flags[FLAGS.OPENSHIFT]) {
       resources.push(
         getResource(TemplateModel, {
           namespace: 'openshift',
           prop: VMWizardProps.commonTemplates,
           matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_BASE },
-        }),
-        getResource(PersistentVolumeClaimModel, {
-          namespace: TEMPLATE_VM_GOLDEN_OS_NAMESPACE,
-          prop: VMWizardProps.openshiftCNVBaseImages,
         }),
       );
 

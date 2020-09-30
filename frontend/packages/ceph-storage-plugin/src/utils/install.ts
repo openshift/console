@@ -57,7 +57,7 @@ export const getAssociatedNodes = (pvs: K8sResourceKind[]): string[] => {
   return Array.from(nodes);
 };
 
-export const shouldDeployInternalAsMinimal = (nodes: NodeKind[]) => {
+export const shouldDeployAsMinimal = (nodes: NodeKind[]) => {
   const { totalCPU, totalMemory } = nodes.reduce(
     (acc, curr) => {
       const cpus = humanizeCpuCores(getNodeCPUCapacity(curr)).value;
@@ -72,16 +72,5 @@ export const shouldDeployInternalAsMinimal = (nodes: NodeKind[]) => {
       totalMemory: 0,
     },
   );
-  return totalCPU < 30 || totalMemory < 60;
+  return totalCPU < 42 || totalMemory < 96;
 };
-
-export const shouldDeployAttachedAsMinimal = (nodes: NodeKind[]) =>
-  nodes.reduce((acc, curr) => {
-    const cpus = humanizeCpuCores(getNodeCPUCapacity(curr)).value;
-    const memoryRaw = getNodeAllocatableMemory(curr);
-    const memory = humanizeBinaryBytes(convertToBaseValue(memoryRaw)).value;
-    if (memory < 60 || cpus < 10) {
-      return [...acc, curr];
-    }
-    return acc;
-  }, []).length > 0;

@@ -1,6 +1,12 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { EmptyState, EmptyStateIcon, EmptyStateVariant } from '@patternfly/react-core';
+import {
+  EmptyState,
+  EmptyStateIcon,
+  EmptyStateSecondaryActions,
+  EmptyStateVariant,
+  Title,
+} from '@patternfly/react-core';
 import { SortByDirection } from '@patternfly/react-table';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { SecretModel } from '@console/internal/models';
@@ -95,9 +101,13 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = ({ namespace }) => {
     const installURL = { pathname: `/catalog/ns/${namespace}`, search: '?kind=%5B"HelmChart"%5D' };
     return (
       <EmptyState variant={EmptyStateVariant.full}>
-        <p className="odc-helm-release__empty-list__title">No Helm Releases found</p>
         <EmptyStateIcon variant="container" component={helmImage} />
-        <Link to={installURL}>Install a Helm Chart from the developer catalog</Link>
+        <Title headingLevel="h3" size="lg">
+          No Helm Releases found
+        </Title>
+        <EmptyStateSecondaryActions>
+          <Link to={installURL}>Install a Helm Chart from the developer catalog</Link>
+        </EmptyStateSecondaryActions>
       </EmptyState>
     );
   };

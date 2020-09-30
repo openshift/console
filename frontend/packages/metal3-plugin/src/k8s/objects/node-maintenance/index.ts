@@ -1,17 +1,18 @@
-import { apiVersionForModel } from '@console/internal/module/k8s';
-import { NodeMaintenanceModel } from '../../../models';
+import { apiVersionForModel, K8sKind } from '@console/internal/module/k8s';
 
 export const buildNodeMaintenance = ({
   generateName,
   nodeName,
   reason,
+  model,
 }: {
   nodeName: string;
+  model: K8sKind;
   generateName?: string;
   reason?: string;
 }) => ({
-  apiVersion: apiVersionForModel(NodeMaintenanceModel),
-  kind: NodeMaintenanceModel.kind,
+  apiVersion: apiVersionForModel(model),
+  kind: model.kind,
   metadata: {
     generateName: `${generateName || nodeName}-`,
   },

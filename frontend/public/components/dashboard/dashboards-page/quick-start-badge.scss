@@ -1,0 +1,6 @@
+.co-quick-start-badge {
+  // need to override this explicitly because bootstrap __scaffolding.scss overrides a:hover
+  > a.pf-c-label__content:hover {
+    color: var(--pf-c-label__content--Color);
+  }
+}

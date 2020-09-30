@@ -18,13 +18,7 @@ export const OCSAlert = () => (
   />
 );
 
-type MinimalDeploymentAlertProps = {
-  isInternalMode?: boolean;
-};
-
-export const MinimalDeploymentAlert: React.FC<MinimalDeploymentAlertProps> = ({
-  isInternalMode,
-}) => (
+export const MinimalDeploymentAlert = () => (
   <Alert
     className="co-alert"
     variant="warning"
@@ -36,9 +30,9 @@ export const MinimalDeploymentAlert: React.FC<MinimalDeploymentAlertProps> = ({
     }
     isInline
   >
-    {isInternalMode
-      ? 'The selected nodes do not match the OCS storage cluster recommended requirements of an aggregated 30 CPUs and 72 GiB of RAM. If the selection won’t be modified, a minimal cluster will be deployed and may face some performance issues.'
-      : 'The selected nodes do not match the OCS storage cluster recommended requirements of at least 10 CPU and 64 GiB of RAM per node. If the selection won’t be modified, a minimal cluster will be deployed and may face some performance issues.'}
+    The selected nodes do not match the OCS storage cluster recommended requirements of an
+    aggregated 42 CPUs and 102 GiB of RAM. If the selection won’t be modified, a minimal cluster
+    will be deployed.
   </Alert>
 );
 
@@ -46,15 +40,19 @@ export const SelectNodesSection: React.FC<SelectNodesSectionProps> = ({
   table,
   customData,
   children,
+  nameFilterPlaceholder,
+  labelFilterPlaceholder,
 }) => (
   <>
     <FormGroup fieldId="select-nodes">
       <p>
-        {children}
-        The selected nodes will be labeled with{' '}
-        <code>cluster.ocs.openshift.io/openshift-storage=&quot;&quot;</code> to create the OCS
-        cluster and 3 of the selected nodes will be used for initial deployment. The other selected
-        nodes will be used by OpenShift as scheduling targets for OCS scaling.
+        {children} It is recommended to start with at least 14 CPUs and 34 GiB per node.
+        <div>
+          The selected nodes will be labeled with{' '}
+          <code>cluster.ocs.openshift.io/openshift-storage=&quot;&quot;</code> (unless they are
+          already labeled). 3 of the selected nodes will be used for initial deployment. The
+          remaining nodes will be used by OpenShift as scheduling targets for OCS scaling.
+        </div>
       </p>
 
       <ListPage
@@ -62,6 +60,8 @@ export const SelectNodesSection: React.FC<SelectNodesSectionProps> = ({
         showTitle={false}
         ListComponent={table}
         customData={customData}
+        nameFilterPlaceholder={nameFilterPlaceholder}
+        labelFilterPlaceholder={labelFilterPlaceholder}
       />
     </FormGroup>
   </>
@@ -126,6 +126,8 @@ type SelectNodesSectionProps = {
   table: React.ComponentType<any>;
   customData?: any;
   children?: React.ReactChild;
+  nameFilterPlaceholder?: string;
+  labelFilterPlaceholder?: string;
 };
 
 type StorageClassSectionProps = {

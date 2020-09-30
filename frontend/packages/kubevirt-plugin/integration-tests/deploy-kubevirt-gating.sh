@@ -17,8 +17,33 @@ oc create -f https://github.com/kubevirt/containerized-data-importer/releases/do
 
 # Deploy Common Templates
 oc project openshift
-oc create -f https://raw.githubusercontent.com/MarSik/kubevirt-ssp-operator/master/roles/KubevirtCommonTemplatesBundle/files/common-templates-v0.11.0.yaml
+oc create -f https://raw.githubusercontent.com/MarSik/kubevirt-ssp-operator/master/roles/KubevirtCommonTemplatesBundle/files/common-templates-v0.12.1.yaml
 oc project default
 
 # Wait for kubevirt to be available
 oc wait -n kubevirt kv kubevirt --for condition=Available --timeout 15m
+
+# Create storage-class permissions
+oc create -f - <<EOF
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kubevirt-storage-class-defaults
+  namespace: openshift-cnv
+data:
+  accessMode: ReadWriteOnce
+  volumeMode: Filesystem
+EOF
+
+# Enable live-migration feature-gate
+oc create -f - <<EOF
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kubevirt-config
+  namespace: kubevirt
+  labels:
+  kubevirt.io: ""
+data:
+  feature-gates: "LiveMigration"
+EOF

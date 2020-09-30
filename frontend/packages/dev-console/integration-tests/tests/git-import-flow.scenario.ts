@@ -68,10 +68,10 @@ describe('git import flow', () => {
     expect(sideHeader.getText()).toContain('Developer');
     await navigateImportFromGit();
     await browser.wait(
-      until.textToBePresentInElement(importFromGitHeader, 'Import from git'),
+      until.textToBePresentInElement(importFromGitHeader, 'Import from Git'),
       WAIT,
     );
-    expect(importFromGitHeader.getText()).toContain('Import from git');
+    expect(importFromGitHeader.getText()).toContain('Import from Git');
     await enterGitRepoUrl(testData.gitRepoUrl);
     expect(appName.getAttribute('value')).toContain('nodejs-ex-git');
     await addApplicationInGeneral(newApplication, newApp);
@@ -117,8 +117,8 @@ describe('git import flow with advanced options', () => {
     await switchPerspective(Perspective.Developer);
     expect(sideHeader.getText()).toContain('Developer');
     await navigateImportFromGit();
-    await browser.wait(until.textToBePresentInElement(importFromGitHeader, 'Import from git'));
-    expect(importFromGitHeader.getText()).toContain('Import from git');
+    await browser.wait(until.textToBePresentInElement(importFromGitHeader, 'Import from Git'));
+    expect(importFromGitHeader.getText()).toContain('Import from Git');
     await enterGitRepoUrl(testData.gitRepoUrl);
 
     await click(appName);
@@ -249,8 +249,8 @@ xdescribe('git import flow with pipeline creation', () => {
     await switchPerspective(Perspective.Developer);
     expect(sideHeader.getText()).toContain('Developer');
     await navigateImportFromGit();
-    await browser.wait(until.textToBePresentInElement(importFromGitHeader, 'Import from git'));
-    expect(importFromGitHeader.getText()).toContain('Import from git');
+    await browser.wait(until.textToBePresentInElement(importFromGitHeader, 'Import from Git'));
+    expect(importFromGitHeader.getText()).toContain('Import from Git');
     await enterGitRepoUrl('https://github.com/sclorg/nodejs-ex.git');
 
     await click(appName);

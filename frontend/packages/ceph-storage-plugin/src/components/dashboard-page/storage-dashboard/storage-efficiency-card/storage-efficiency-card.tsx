@@ -15,9 +15,9 @@ import {
 } from '../../../../constants/queries';
 import { EfficiencyItemBody } from './storage-efficiency-card-item';
 import { getGaugeValue } from '../../../../utils';
+import { humanizeBinaryBytes } from '@console/internal/components/utils';
 
 import './storage-efficiency-card.scss';
-import { humanizeBinaryBytes } from '@console/internal/components/utils';
 
 const StorageEfficiencyCard: React.FC<DashboardItemProps> = ({
   watchPrometheus,
@@ -69,8 +69,9 @@ const StorageEfficiencyCard: React.FC<DashboardItemProps> = ({
   };
 
   const compressionRatioProps = {
+    stats: Number(ratio),
     isLoading: !poolCapacityRatioResult && !poolCapacityRatioResultError,
-    error: !!poolCapacityRatioResultError || !ratio || Number(ratio) === 0,
+    error: !!poolCapacityRatioResultError || !ratio,
     title: 'Compression ratio',
     infoText:
       'The ratio of the data physical stored (after compression), compared to the size of the data received from the client.',
@@ -78,8 +79,9 @@ const StorageEfficiencyCard: React.FC<DashboardItemProps> = ({
   };
 
   const savingsProps = {
+    stats: Number(saved),
     isLoading: !poolSavedResult && !poolSavedResultError,
-    error: !!poolSavedResultError || !saved || Number(saved) === 0,
+    error: !!poolSavedResultError || !saved,
     title: 'Savings',
     infoText: 'The amount of physical storage saved after applying compression.',
     getStats: savingStats,

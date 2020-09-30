@@ -6,7 +6,6 @@ import {
   VMWareProviderField,
   OvirtProviderField,
 } from '../types';
-import { ProvisionSource } from '../../../constants/vm/provision-source';
 
 export const titleResolver: RenderableFieldResolver = {
   [OvirtProviderField.OVIRT_ENGINE_SECRET_NAME]: 'RHV Instance',
@@ -35,7 +34,7 @@ export const titleResolver: RenderableFieldResolver = {
   [VMSettingsField.MEMORY]: 'Memory',
   [VMSettingsField.CPU]: 'CPUs',
   [VMSettingsField.WORKLOAD_PROFILE]: 'Workload Profile',
-  [VMSettingsField.PROVISION_SOURCE_TYPE]: 'Source',
+  [VMSettingsField.PROVISION_SOURCE_TYPE]: 'Boot Source',
   [VMSettingsField.CONTAINER_IMAGE]: 'Container Image',
   [VMSettingsField.IMAGE_URL]: 'URL',
   [VMSettingsField.START_VM]: 'Start virtual machine on creation',
@@ -52,13 +51,6 @@ export const placeholderResolver = {
   [VMSettingsField.FLAVOR]: '--- Select Flavor ---',
   [VMSettingsField.WORKLOAD_PROFILE]: '--- Select Workload Profile ---',
   [VMSettingsField.PROVISION_SOURCE_TYPE]: '--- Select Source ---',
-};
-
-const provisionSourceHelpResolver = {
-  [ProvisionSource.URL.getValue()]: 'An external URL to the .iso, .img, .qcow2 or .raw that the virtual machine should be created from.',
-  [ProvisionSource.PXE.getValue()]: 'Discover provisionable virtual machines over the network.',
-  [ProvisionSource.CONTAINER.getValue()]: 'Ephemeral virtual machine disk image which will be pulled from container registry.',
-  [ProvisionSource.DISK.getValue()]: 'Select an existing PVC in Storage tab',
 };
 
 const providerHelpResolver = {
@@ -89,6 +81,6 @@ export const helpResolver = {
     'The number of virtual CPU cores that will be dedicated to the virtual machine.',
   [VMSettingsField.WORKLOAD_PROFILE]: () =>
     'The category of workload that this virtual machine will be used for.',
-  [VMSettingsField.PROVISION_SOURCE_TYPE]: (sourceType: string) =>
-    provisionSourceHelpResolver[sourceType],
+  [VMSettingsField.PROVISION_SOURCE_TYPE]: () =>
+    'Select a method of adding an operating system image source',
 };

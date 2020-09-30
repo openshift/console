@@ -39,12 +39,13 @@ describe('Monitoring: Alerts', () => {
   });
 
   it('displays and filters the Alerts list page, links to detail pages', () => {
-    cy.log('use vert. nav. menu to goto Monitoring -> Alerting');
+    cy.log('use sidebar nav to goto Monitoring -> Alerting');
     nav.sidenav.clickNavLink(['Monitoring', 'Alerting']);
     // TODO, switch to 'listPage.titleShouldHaveText('Alerting');', when we switch to new test id
     cy.byLegacyTestID('resource-title').should('have.text', 'Alerting');
     listPage.projectDropdownShouldNotExist();
     listPage.rows.shouldBeLoaded();
+    cy.testA11y('Monitor Alerting list page');
 
     cy.log('filter Alerts');
     listPage.filter.byName('Watchdog');
@@ -53,12 +54,14 @@ describe('Monitoring: Alerts', () => {
     cy.log('drills down to Alert details page');
     listPage.rows.shouldExist('Watchdog').click();
     shouldBeWatchdogAlertDetailsPage();
+    cy.testA11y('Alerting details page');
 
     cy.log('drill down to the Alerting Rule details page');
     cy.byTestID('alert-rules-detail-resource-link')
       .contains('Watchdog')
       .click();
     shouldBeWatchdogAlertRulesPage();
+    cy.testA11y('Alerting Rule details page');
 
     cy.log('drill back up to the Alert details page');
     // Active Alerts list should contain a link back to the Alert details page
@@ -88,7 +91,7 @@ describe('Monitoring: Alerts', () => {
     // Change duration
     cy.byLegacyTestID('dropdown-button')
       .click()
-      .get(`[data-test-dropdown-menu="1h"]`)
+      .get('[data-test-dropdown-menu="1h"]')
       .click();
     cy.byTestID('until').should('have.value', '1h from now');
     // Change to not start now
@@ -96,11 +99,11 @@ describe('Monitoring: Alerts', () => {
     cy.byTestID('start-immediately').should('not.be.checked');
     // Allow for some difference in times
     cy.byTestID('from').should('not.have.value', 'Now');
-    return cy.byTestID('from').then(($fromElement) => {
+    cy.byTestID('from').then(($fromElement) => {
       const fromText = $fromElement[0].getAttribute('value');
       expect(Date.parse(fromText) - Date.now()).toBeLessThan(10000);
       // eslint-disable-next-line promise/no-nesting
-      return cy.byTestID('until').then(($untilElement) => {
+      cy.byTestID('until').then(($untilElement) => {
         expect(Date.parse($untilElement[0].getAttribute('value')) - Date.parse(fromText)).toEqual(
           60 * 60 * 1000,
         );
@@ -116,15 +119,16 @@ describe('Monitoring: Alerts', () => {
     // Change duration back again
     cy.byLegacyTestID('dropdown-button')
       .click()
-      .get(`[data-test-dropdown-menu="2h"]`)
+      .get('[data-test-dropdown-menu="2h"]')
       .click();
     cy.byTestID('until').should('have.value', '2h from now');
     // add comment and submit
     cy.byTestID('silence-comment').type('test comment');
+    cy.testA11y('Silence Alert form');
     cy.get(submitButton).click();
     cy.get(errorMessage).should('not.exist');
     shouldBeWatchdogSilencePage();
-
+    cy.testA11y('Silence details page');
     cy.log('shows the silenced Alert in the Silenced Alerts list');
     // Click the link to navigate back to the Alert details link
     cy.byTestID('firing-alerts')
@@ -144,6 +148,7 @@ describe('Monitoring: Alerts', () => {
     cy.log('expires the Silence');
     detailsPage.clickPageActionFromDropdown('Expire Silence');
     modal.shouldBeOpened();
+    cy.testA11y('Expire Silence modal');
     modal.submit();
     modal.shouldBeClosed();
     cy.get(errorMessage).should('not.exist');

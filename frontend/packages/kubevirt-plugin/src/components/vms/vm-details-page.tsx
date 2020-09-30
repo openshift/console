@@ -16,7 +16,6 @@ import {
   VM_DETAIL_DISKS_HREF,
   VM_DETAIL_NETWORKS_HREF,
   VM_DETAIL_CONSOLES_HREF,
-  VM_DETAIL_SNAPSHOTS,
 } from '../../constants';
 import { VMEvents } from './vm-events';
 import { VMConsoleFirehose } from './vm-console';
@@ -25,7 +24,6 @@ import { vmMenuActionsCreator } from './menu-actions';
 import { VMDashboard } from './vm-dashboard';
 import { TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_VM, VM_DETAIL_ENVIRONMENT } from '../../constants/vm';
 import { VMEnvironmentFirehose } from './vm-environment/vm-environment-page';
-import { VMSnapshotsPage } from '../vm-snapshots/vm-snapshots';
 import { VMNics } from '../vm-nics';
 import { PendingChangesWarningFirehose } from './pending-changes-warning';
 
@@ -80,11 +78,13 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
     component: VMEnvironmentFirehose,
   };
 
+  /* Disabled for 4.6 (BZ 1881125)
   const snapshotsPage = {
     href: VM_DETAIL_SNAPSHOTS,
     name: 'Snapshots',
     component: VMSnapshotsPage,
   };
+  */
 
   const pages = [
     dashboardPage,
@@ -95,7 +95,6 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
     consolePage,
     nicsPage,
     disksPage,
-    snapshotsPage,
   ];
 
   const resources = [

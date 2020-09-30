@@ -5,6 +5,8 @@ Feature: Monitoring tab on the Sidebar and Health Checks
 Background: 
     Given user is at Developer perspective
     And user has a workload with name "national-parks-test"
+    And user has helm release named "node-js-ex"
+    And user has knative-service named "knative-demo"
 
 
 @smoke, @regression
@@ -14,6 +16,22 @@ Scenario: Monitoring tab on the Sidebar for Deployments: MH-03-TC02
     And user clicks on Monitoring tab
     And user clicks on View Monitoring dashborad link
     Then user will be taken to Dashboard tab on the Monitoring page
+
+
+@regression
+Scenario: Monitoring tab on the Sidebar for Helm Release: MH-03-TC02
+    Given user is at Topology page
+    When user clicks on the workload "node-js-ex" to open the sidebar
+    And user clicks on Monitoring tab
+    And user clicks on View Monitoring dashboard link
+    Then user will be taken to Dashboard tab on the Monitoring page
+
+
+@regression
+Scenario: Monitoring tab on the Sidebar for Knative Service: MH-03-TC02
+    Given user is at Topology page
+    When user clicks on the knative service "knative-demo" to open the sidebar
+    Then user wont see Monitoring tab
 
 
 @smoke, @regression
@@ -131,3 +149,12 @@ Scenario: Edit Health Checks option from Actions dropdown on Sidebar for Deploym
     And user clicks on Save button
     Then user will be redirected to Topology page
     And user will see Readiness Probe removed on the Add Health Checks page
+
+
+@smoke, @regression
+Scenario: Edit Health Checks option for Helm Chart through Context Menu: MH-06-TC04
+    Given user is at Topology page
+    When user right clicks on the "node-js-ex" to open the Context Menu
+    And user clicks on Edit Health Checks
+    Then user sees Readiness Probe already added
+    And user sees Liveness Probe already added

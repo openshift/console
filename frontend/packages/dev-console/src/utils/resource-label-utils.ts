@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { TRIGGERS_ANNOTATION } from '@console/shared';
+import { UNASSIGNED_LABEL } from '../const';
 
 export const getAppLabels = ({
   name,
@@ -30,7 +31,11 @@ export const getAppLabels = ({
   if (runtimeIcon) {
     labels['app.openshift.io/runtime'] = runtimeIcon;
   }
-  if (applicationName && applicationName !== 'unassigned' && applicationName.trim().length > 0) {
+  if (
+    applicationName &&
+    applicationName !== UNASSIGNED_LABEL &&
+    applicationName.trim().length > 0
+  ) {
     labels['app.kubernetes.io/part-of'] = applicationName;
   }
   if (selectedTag) {

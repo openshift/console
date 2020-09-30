@@ -18,6 +18,7 @@ const FormFooter: React.FC<FormFooterProps> = ({
   errorMessage,
   successMessage,
   disableSubmit,
+  hideSubmit = false,
   showAlert,
   sticky,
 }) => (
@@ -35,15 +36,17 @@ const FormFooter: React.FC<FormFooterProps> = ({
       </Alert>
     )}
     <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
-      <Button
-        type={handleSubmit ? 'button' : 'submit'}
-        {...(handleSubmit && { onClick: handleSubmit })}
-        variant={ButtonVariant.primary}
-        isDisabled={disableSubmit}
-        data-test-id="submit-button"
-      >
-        {submitLabel}
-      </Button>
+      {!hideSubmit && (
+        <Button
+          type={handleSubmit ? 'button' : 'submit'}
+          {...(handleSubmit && { onClick: handleSubmit })}
+          variant={ButtonVariant.primary}
+          isDisabled={disableSubmit}
+          data-test-id="submit-button"
+        >
+          {submitLabel}
+        </Button>
+      )}
       {handleReset && (
         <Button
           type="button"

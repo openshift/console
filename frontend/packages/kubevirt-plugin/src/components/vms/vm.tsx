@@ -18,6 +18,7 @@ import {
   PodModel,
   NodeModel,
   PersistentVolumeClaimModel,
+  ConfigMapModel,
 } from '@console/internal/models';
 import {
   Table,
@@ -32,8 +33,15 @@ import {
   KebabOption,
   ResourceLink,
   Timestamp,
+  checkAccess,
 } from '@console/internal/components/utils';
-import { K8sKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
+import {
+  K8sKind,
+  PersistentVolumeClaimKind,
+  PodKind,
+  SelfSubjectAccessReviewKind,
+} from '@console/internal/module/k8s';
+import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { VMStatus } from '../vm-status/vm-status';
 import {
   DataVolumeModel,
@@ -59,6 +67,10 @@ import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper'
 import { getVMImportStatusAsVMStatus } from '../../statuses/vm-import/vm-import-status';
 import { V2VVMImportStatus } from '../../constants/v2v-import/ovirt/v2v-vm-import-status';
 import { hasPendingChanges } from '../../utils/pending-changes';
+import {
+  VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAME,
+  VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAMESPACES,
+} from '../../constants/v2v';
 
 import './vm.scss';
 
@@ -184,12 +196,21 @@ const VMList: React.FC<React.ComponentProps<typeof Table> & VMListProps> = (prop
 VMList.displayName = 'VMList';
 
 const wizardImportName = 'wizardImport';
-const getCreateProps = ({ namespace }: { namespace: string }) => {
+const getCreateProps = ({
+  namespace,
+  importAllowed,
+}: {
+  namespace: string;
+  importAllowed: boolean;
+}) => {
   const items: any = {
     [VMWizardName.WIZARD]: VMWizardActionLabels.WIZARD,
     [VMWizardName.YAML]: VMWizardActionLabels.YAML,
-    [wizardImportName]: VMWizardActionLabels.IMPORT,
   };
+
+  if (importAllowed) {
+    items[wizardImportName] = VMWizardActionLabels.IMPORT;
+  }
 
   return {
     items,
@@ -247,6 +268,30 @@ const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
       optional: true,
     },
   ];
+
+  const [importAllowed, setImportAllowed] = useSafetyFirst(false);
+
+  React.useEffect(() => {
+    VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAMESPACES.forEach((configMapNamespace) => {
+      checkAccess({
+        group: ConfigMapModel.apiGroup,
+        verb: 'get',
+        resource: ConfigMapModel.plural,
+        name: VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAME,
+        namespace: configMapNamespace,
+      })
+        .then((result: SelfSubjectAccessReviewKind) => {
+          if (result?.status?.allowed) {
+            setImportAllowed(true);
+          }
+        })
+        // Default to enabling the action if the access review fails so that we
+        // don't incorrectly block users from actions they can perform. The server
+        // still enforces access control.
+        .catch(() => setImportAllowed(true));
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const flatten = ({
     vms,
@@ -372,7 +417,7 @@ const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
       showTitle={showTitle}
       rowFilters={[vmStatusFilter]}
       ListComponent={VMList}
-      createProps={getCreateProps({ namespace })}
+      createProps={getCreateProps({ namespace, importAllowed })}
       resources={resources}
       flatten={flatten}
       label={VirtualMachineModel.labelPlural}

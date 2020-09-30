@@ -4,13 +4,14 @@ Feature: Monitoring Page
 
 Background: 
     Given user is at Developer perspective
+    And user is on "aut-monitoring" project
     And user has a workload with name "national-parks-test"
 
 
 @smoke, @regression
 Scenario: Monitoring Page: MH-03-TC02
     Given user is at Topology page
-    When user opens Monitoring navigation item
+    When user navigates to Monitoring page
     Then user will see Dashboard, Metrics, Alerts, Events tabs
 
 

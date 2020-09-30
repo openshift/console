@@ -12,6 +12,7 @@ import {
 import { parseURL } from '../url';
 import { END_WHITESPACE_ERROR, START_WHITESPACE_ERROR, URL_INVALID_ERROR } from './strings';
 import { DiskBus } from '../../constants/vm/storage/disk-bus';
+import { UIValidationType, UIValidation } from '../../types/ui/ui';
 
 export const isValidationError = (validationObject: ValidationObject) =>
   !!validationObject && validationObject.type === ValidationErrorType.Error;
@@ -95,3 +96,8 @@ export const validateBus = (value: DiskBus, allowedBuses: Set<DiskBus>): Validat
   }
   return null;
 };
+
+export const getValidationByType = (
+  validationList: UIValidation[],
+  type: UIValidationType,
+): UIValidation => validationList?.find((val) => val.type === type);

@@ -34,7 +34,7 @@ export const RGW_FLAG = 'RGW';
 export const OCS_SUPPORT_FLAGS = {
   EXTERNAL: 'EXTERNAL',
   MINIMAL_DEPLOYMENT: 'MINIMAL_DEPLOYMENT',
-  ENCRPYTION: 'ENCRYPTION',
+  ENCRYPTION: 'ENCRYPTION',
 };
 
 const handleError = (res: any, flags: string[], dispatch: Dispatch, cb: FeatureDetector) => {

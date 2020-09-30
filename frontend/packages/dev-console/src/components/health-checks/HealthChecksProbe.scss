@@ -7,4 +7,8 @@
     color: var(--pf-global--palette--green-500);
     font-weight: var(--pf-global--FontWeight--bold);
   }
+
+  &__successButton {
+    padding: 0;
+  }
 }

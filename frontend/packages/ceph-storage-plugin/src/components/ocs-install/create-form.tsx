@@ -41,7 +41,7 @@ import {
   EncryptSection,
   MinimalDeploymentAlert,
 } from '../../utils/common-ocs-install-el';
-import { filterSCWithoutNoProv, shouldDeployInternalAsMinimal } from '../../utils/install';
+import { filterSCWithoutNoProv, shouldDeployAsMinimal } from '../../utils/install';
 import { OCS_INTERNAL_CR_NAME } from '../../constants';
 import './ocs-install.scss';
 import { useFlag } from '@console/shared/src/hooks/flag';
@@ -108,10 +108,10 @@ export const CreateInternalCluster = withHandlePromise<
   const dispatch = useDispatch();
   const [nodes, setNodes] = React.useState<NodeKind[]>([]);
   const [isEncrypted, setEncrypted] = React.useState(false);
-  const isMinimal = shouldDeployInternalAsMinimal(nodes);
+  const isMinimal = shouldDeployAsMinimal(nodes);
   const [showMessage, setShowMessage] = React.useState(false);
   const isMinimalSupported = useFlag(OCS_SUPPORT_FLAGS.MINIMAL_DEPLOYMENT);
-  const isEncryptionSupported = useFlag(OCS_SUPPORT_FLAGS.ENCRPYTION);
+  const isEncryptionSupported = useFlag(OCS_SUPPORT_FLAGS.ENCRYPTION);
 
   const timeoutID = React.useRef(null);
 
@@ -182,25 +182,14 @@ export const CreateInternalCluster = withHandlePromise<
           customData={{
             onRowSelected: setNodes,
           }}
+          nameFilterPlaceholder="Search by node name..."
+          labelFilterPlaceholder="Search by node label..."
         >
           <>
-            <div>
-              Select at least 3 nodes in different zones you wish to use with a recommended
-              requirement of 14 CPUs and 34GiB RAM per node.
-            </div>
-            {isMinimalSupported && (
-              <div className="text-muted ceph-ocs-install__minimal-msg">
-                A minimal deployment is also available if needed with the requirements of 8 CPUs and
-                32 GiB RAM.
-              </div>
-            )}
+            <span>Select at least 3 nodes, preferably in 3 different zones.</span>
           </>
         </SelectNodesSection>
-        <>
-          {isMinimalSupported && isMinimal && showMessage && (
-            <MinimalDeploymentAlert isInternalMode />
-          )}
-        </>
+        <>{isMinimalSupported && isMinimal && showMessage && <MinimalDeploymentAlert />}</>
         <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
           <ActionGroup className="pf-c-form">
             <Button

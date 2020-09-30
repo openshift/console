@@ -19,7 +19,6 @@ import (
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/bridge"
-	"github.com/openshift/console/pkg/helm/chartproxy"
 	"github.com/openshift/console/pkg/knative"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/server"
@@ -50,6 +49,9 @@ const (
 
 	// Well-known location of Alert Manager service for OpenShift. This is only accessible in-cluster.
 	openshiftAlertManagerHost = "alertmanager-main.openshift-monitoring.svc:9094"
+
+	// Well-known location of the tenant aware Alert Manager service for OpenShift. This is only accessible in-cluster.
+	openshiftAlertManagerTenancyHost = "alertmanager-main.openshift-monitoring.svc:9092"
 
 	// Well-known location of metering service for OpenShift. This is only accessible in-cluster.
 	openshiftMeteringHost = "reporting-operator.openshift-metering.svc:8080"
@@ -125,8 +127,6 @@ func main() {
 	fThanosPublicURL := fs.String("thanos-public-url", "", "Public URL of the cluster's Thanos server.")
 
 	fLoadTestFactor := fs.Int("load-test-factor", 0, "DEV ONLY. The factor used to multiply k8s API list responses for load testing purposes.")
-
-	helmConfig := chartproxy.RegisterFlags(fs)
 
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -357,6 +357,11 @@ func main() {
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftAlertManagerHost, Path: "/api"},
 			}
+			srv.AlertManagerTenancyProxyConfig = &proxy.Config{
+				TLSClientConfig: serviceProxyTLSConfig,
+				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				Endpoint:        &url.URL{Scheme: "https", Host: openshiftAlertManagerTenancyHost, Path: "/api"},
+			}
 			srv.MeteringProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
@@ -406,6 +411,11 @@ func main() {
 			offClusterAlertManagerURL := bridge.ValidateFlagIsURL("k8s-mode-off-cluster-alertmanager", *fK8sModeOffClusterAlertmanager)
 			offClusterAlertManagerURL.Path = "/api"
 			srv.AlertManagerProxyConfig = &proxy.Config{
+				TLSClientConfig: serviceProxyTLSConfig,
+				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				Endpoint:        offClusterAlertManagerURL,
+			}
+			srv.AlertManagerTenancyProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 				Endpoint:        offClusterAlertManagerURL,
@@ -630,8 +640,6 @@ func main() {
 	default:
 		bridge.FlagFatalf("listen", "scheme must be one of: http, https")
 	}
-
-	helmConfig.Configure()
 
 	httpsrv := &http.Server{
 		Addr:    listenURL.Host,

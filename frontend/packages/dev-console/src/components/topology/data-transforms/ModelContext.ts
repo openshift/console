@@ -30,7 +30,7 @@ export class ExtensibleModel {
 
   private namespaceP: string;
 
-  @observable
+  @observable.ref
   private modelP: Model = { nodes: [], edges: [] };
 
   public dataResources: TopologyDataResources = {};
@@ -171,31 +171,40 @@ export class ExtensibleModel {
     const getters = this.dataModelGetters;
     const depicters = this.dataModelDepicters;
     const workloadResources = this.getWorkloadResources(resources);
-    const promises = getters?.length ? getters : [Promise.resolve];
+    const promises = getters?.length
+      ? getters.map((getter) => getter(this.namespace, resources, workloadResources))
+      : [Promise.resolve(null)];
 
     const topologyModel: Model = {
       nodes: [],
       edges: [],
     };
 
-    const addToModel = async (promise: any): Promise<Model> => {
-      const model = await promise(this.namespace, resources, workloadResources);
-      addToTopologyDataModel(model, topologyModel, depicters);
-      return topologyModel;
-    };
-
-    for (const i in promises) {
-      if (promises[i]) {
-        // eslint-disable-next-line no-await-in-loop
-        await addToModel(promises[i]);
-      }
-    }
+    await Promise.all(promises).then((models) => {
+      models.forEach((model) => {
+        if (model) {
+          try {
+            addToTopologyDataModel(model, topologyModel, depicters);
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error('Unable to add some resources to topology', e);
+          }
+        }
+      });
+    });
 
     return Promise.resolve(topologyModel);
   };
 
   public reconcileModel = (model: Model, resources: TopologyDataResources): void => {
-    this.dataModelReconcilers.forEach((reconciler) => reconciler(model, resources));
+    this.dataModelReconcilers.forEach((reconciler) => {
+      try {
+        reconciler(model, resources);
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error('Unable to reconcile some resources in topology', e);
+      }
+    });
   };
 }
 

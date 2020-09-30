@@ -287,7 +287,7 @@ const CloudInitTabComponent: React.FC<ResultTabComponentProps> = ({
   };
 
   return (
-    <div className={isForm && 'co-m-pane__body co-m-pane__form kubevirt-create-vm-modal__form'}>
+    <div className={isForm ? 'co-m-pane__body co-m-pane__form kubevirt-create-vm-modal__form' : ''}>
       {!isDisabled && !isEditable && (
         <Errors
           endMargin

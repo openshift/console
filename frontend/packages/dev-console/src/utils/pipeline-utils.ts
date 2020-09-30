@@ -26,7 +26,6 @@ import {
   PipelineParam,
   PipelineRunParam,
   PipelineTaskRef,
-  PipelineWorkspace,
   PipelineRunWorkspace,
   TaskRunKind,
 } from './pipeline-augment';
@@ -44,6 +43,7 @@ import {
   TaskModel,
   EventListenerModel,
 } from '../models';
+import { PipelineRunWorkspaceFormEntry } from '../components/pipelines/modals/start-pipeline/types';
 
 interface Resources {
   inputs?: Resource[];
@@ -64,7 +64,7 @@ export interface PipelineVisualizationTaskItem {
   resources?: Resources;
   params?: object;
   runAfter?: string[];
-  taskRef: PipelineTaskRef;
+  taskRef?: PipelineTaskRef;
 }
 
 export const TaskStatusClassNameMap = {
@@ -181,7 +181,10 @@ const appendPipelineRunStatus = (pipeline, pipelineRun) => {
     return mTask;
   });
 };
-
+export const hasInlineTaskSpec = (pipeline: K8sResourceKind) => {
+  const tasks = pipeline?.spec.tasks ?? [];
+  return tasks.some((task) => !!(task.taskSpec && !task.taskRef));
+};
 export const getPipelineTasks = (
   pipeline: K8sResourceKind,
   pipelineRun: K8sResourceKind = {
@@ -192,7 +195,7 @@ export const getPipelineTasks = (
 ): PipelineVisualizationTaskItem[][] => {
   // Each unit in 'out' array is termed as stage | out = [stage1 = [task1], stage2 = [task2,task3], stage3 = [task4]]
   const out = [];
-  if (!pipeline.spec || !pipeline.spec.tasks) {
+  if (!pipeline.spec?.tasks || _.isEmpty(pipeline.spec.tasks)) {
     return out;
   }
   const taskList = appendPipelineRunStatus(pipeline, pipelineRun);
@@ -336,7 +339,7 @@ export const getPipelineRunParams = (pipelineParams: PipelineParam[]): PipelineR
 };
 
 export const getPipelineRunWorkspaces = (
-  pipelineWorkspaces: PipelineWorkspace[],
+  pipelineWorkspaces: PipelineRunWorkspaceFormEntry[],
 ): PipelineRunWorkspace[] => {
   return (
     pipelineWorkspaces &&

@@ -16,23 +16,28 @@ import {
   Button,
 } from '@patternfly/react-core';
 import { ArrowRightIcon } from '@patternfly/react-icons';
-import { getQuickStarts } from '@console/app/src/components/quick-starts/utils/quick-start-utils';
+import { QuickStart } from '@console/app/src/components/quick-starts/utils/quick-start-types';
 import * as QuickStartActions from '@console/app/src/redux/actions/quick-start-actions';
 
 import './QuickStartTile.scss';
 
 export const HIDE_QUICK_START_ADD_TILE_STORAGE_KEY = 'bridge/hide-quick-start-add-tile';
 
+type QuickStartTileProps = {
+  quickStarts: QuickStart[];
+};
+
 type DispatchProps = {
   setActiveQuickStart?: (quickStartID: string, totalTasks: number) => void;
 };
 
-const QuickStartTile: React.FC<DispatchProps> = ({ setActiveQuickStart }) => {
+type Props = QuickStartTileProps & DispatchProps;
+
+const QuickStartTile: React.FC<Props> = ({ setActiveQuickStart, quickStarts }) => {
   const isQuickStartTileHidden =
     localStorage.getItem(HIDE_QUICK_START_ADD_TILE_STORAGE_KEY) === 'true';
   const [showTile, setShowTile] = React.useState<boolean>(!isQuickStartTileHidden);
   const [isOpen, setOpen] = React.useState<boolean>(false);
-  const tours = getQuickStarts();
 
   const onRemove = () => {
     localStorage.setItem(HIDE_QUICK_START_ADD_TILE_STORAGE_KEY, 'true');
@@ -52,9 +57,9 @@ const QuickStartTile: React.FC<DispatchProps> = ({ setActiveQuickStart }) => {
       Remove quick starts
     </DropdownItem>,
   ];
-  const slicedTours = tours.length > 3 ? tours.slice(0, 3) : tours;
+  const slicedQuickStarts = quickStarts.length > 3 ? quickStarts.slice(0, 3) : quickStarts;
 
-  return slicedTours.length > 0 && showTile ? (
+  return slicedQuickStarts.length > 0 && showTile ? (
     <GalleryItem>
       <Card className="odc-quick-start-tile__card">
         <CardHeader>
@@ -74,7 +79,7 @@ const QuickStartTile: React.FC<DispatchProps> = ({ setActiveQuickStart }) => {
           </CardActions>
         </CardHeader>
         <CardBody>
-          {slicedTours.map((tour) => {
+          {slicedQuickStarts.map((tour) => {
             const {
               metadata: { name },
               spec: { displayName, tasks },
@@ -110,4 +115,7 @@ const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
 
 export const InternalQuickStartTile = QuickStartTile; // for testing
 
-export default connect<{}, DispatchProps>(null, mapDispatchToProps)(QuickStartTile);
+export default connect<{}, DispatchProps, QuickStartTileProps>(
+  null,
+  mapDispatchToProps,
+)(QuickStartTile);

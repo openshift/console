@@ -3,3 +3,4 @@ export * from './providers';
 export * from './common';
 export * from './capacity-breakdown';
 export * from './status';
+export * from './resources';

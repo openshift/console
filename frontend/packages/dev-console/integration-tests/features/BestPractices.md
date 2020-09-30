@@ -74,4 +74,4 @@ BDD scenarios should follow below rules
 
 ## Reusable steps
 
-    Given user is at the Import from git form
+    Given user is at the Import from Git form

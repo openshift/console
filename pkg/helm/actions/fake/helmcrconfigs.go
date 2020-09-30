@@ -52,3 +52,14 @@ func K8sDynamicClient(indexFiles ...string) dynamic.Interface {
 
 	return fake.NewSimpleDynamicClient(scheme, objs...)
 }
+
+func K8sDynamicClientFromCRs(crs ...*unstructured.Unstructured) dynamic.Interface {
+	scheme := runtime.NewScheme()
+	var objs []runtime.Object
+
+	for _, cr := range crs {
+		objs = append(objs, cr)
+	}
+
+	return fake.NewSimpleDynamicClient(scheme, objs...)
+}

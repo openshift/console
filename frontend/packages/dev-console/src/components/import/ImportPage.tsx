@@ -15,7 +15,7 @@ export type ImportPageProps = RouteComponentProps<{ ns?: string }>;
 const ImportFlows: { [name: string]: ImportData } = {
   git: {
     type: ImportTypes.git,
-    title: 'Import from git',
+    title: 'Import from Git',
     buildStrategy: 'Source',
     loader: () =>
       import('./GitImportForm' /* webpackChunkName: "git-import-form" */).then((m) => m.default),

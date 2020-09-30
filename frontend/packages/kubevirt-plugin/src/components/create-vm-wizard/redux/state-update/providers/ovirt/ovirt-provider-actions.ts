@@ -92,7 +92,7 @@ export const createConnectionObjects = async (
 
   if (prevNamespace && prevOvirtProviderName) {
     const deleteParams = { name: prevOvirtProviderName, namespace: prevNamespace };
-    consoleInfo('destroying stale OvirtPovider object ', deleteParams);
+    consoleInfo('destroying stale OvirtProvider object ', deleteParams);
     deleteOvirtProviderObject(deleteParams);
     dispatch(
       vmWizardInternalActions[InternalActionType.UpdateImportProvider](id, VMImportProvider.OVIRT, {

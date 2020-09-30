@@ -6,6 +6,7 @@ import { history, useAccessReview } from '@console/internal/components/utils';
 import { useExtensions } from '@console/plugin-sdk';
 import { RootState } from '@console/internal/redux';
 import { ALL_NAMESPACES_KEY, PageLayout } from '@console/shared';
+import QuickStartsLoader from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
 import { isAddAction, AddAction } from '../extensions/add-actions';
 import QuickStartTile from './QuickStartTile';
 
@@ -75,7 +76,9 @@ const ODCEmptyState: React.FC<Props> = ({
   return (
     <PageLayout title={title} hint={hintBlock} isDark>
       <Gallery className="co-catalog-tile-view" hasGutter>
-        <QuickStartTile />
+        <QuickStartsLoader>
+          {(quickStarts) => <QuickStartTile quickStarts={quickStarts} />}
+        </QuickStartsLoader>
         {addActionExtensions.map((action) => (
           <Item key={action.properties.id} namespace={activeNamespace} action={action} />
         ))}

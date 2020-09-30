@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import { Link } from 'react-router-dom';
 import { match } from 'react-router';
 
 import { Grid, GridItem, ActionGroup, Button, Alert } from '@patternfly/react-core';
@@ -142,7 +143,15 @@ const PVCSummary: React.FC<PVCSummaryProps> = ({ persistentVolumeClaim }) => {
 };
 
 const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
-  const { resourceName, namespace, kindObj, handlePromise, inProgress, errorMessage } = props;
+  const {
+    resourceName,
+    plural,
+    namespace,
+    kindObj,
+    handlePromise,
+    inProgress,
+    errorMessage,
+  } = props;
 
   const [pvcName, setPVCName] = React.useState(resourceName);
   const [pvcObj, setPVCObj] = React.useState<PersistentVolumeClaimKind>(null);
@@ -200,85 +209,93 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
     });
   };
 
+  const isBound = (pvc: PersistentVolumeClaimKind) => pvc?.status?.phase === 'Bound';
+
   return (
-    <div className="co-m-pane__body co-volume-snapshot__body">
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
-      <form className="co-m-pane__body-group co-m-pane__form" onSubmit={create}>
-        <h1 className="co-m-pane__heading">{title}</h1>
-        {kindObj.kind === PersistentVolumeClaimModel.kind && (
-          <p>
-            Creating snapshot for claim <strong>{resourceName}</strong>
-          </p>
-        )}
-        {pvcName && pvcObj && pvcObj?.status?.phase !== 'Bound' && (
-          <Alert
-            className="co-alert co-volume-snapshot__alert-body"
-            variant="warning"
-            title="Snapshot creation for unbound claim is not recommended."
-            isInline
-          />
-        )}
-        {kindObj.kind === VolumeSnapshotModel.kind && (
-          /* eslint-disable jsx-a11y/label-has-associated-control */
-          <>
-            <label className="control-label co-required" html-for="claimName">
-              {PersistentVolumeModel.label}
-            </label>
-            <PVCDropdown
-              dataTest="pvc-dropdown"
-              namespace={namespace}
-              onChange={handlePVCName}
-              selectedKey={pvcName}
-              desc={`Persistent Volume Claim in ${namespace} namespace`}
-            />
-          </>
-        )}
-        <div className="form-group co-volume-snapshot__form">
-          <label className="control-label co-required" htmlFor="snapshot-name">
-            Name
-          </label>
-          <input
-            className="pf-c-form-control"
-            type="text"
-            onChange={handleSnapshotName}
-            name="snapshotName"
-            id="snapshot-name"
-            value={snapshotName}
-            required
-          />
-        </div>
-        {pvcObj && (
+    <div className="co-volume-snapshot__body">
+      <div className="co-m-pane__body co-m-pane__form">
+        <Helmet>
+          <title>{title}</title>
+        </Helmet>
+        <h1 className="co-m-pane__heading co-m-pane__heading--baseline">
+          <div className="co-m-pane__name">{title}</div>
+          <div className="co-m-pane__heading-link">
+            <Link
+              to={`/k8s/ns/${namespace || 'default'}/${plural}/~new`}
+              id="yaml-link"
+              data-test="yaml-link"
+              replace
+            >
+              Edit YAML
+            </Link>
+          </div>
+        </h1>
+        <form className="co-m-pane__body-group" onSubmit={create}>
+          {kindObj.kind === PersistentVolumeClaimModel.kind && (
+            <p>
+              Creating snapshot for claim <strong>{resourceName}</strong>
+            </p>
+          )}
+          {kindObj.kind === VolumeSnapshotModel.kind && (
+            /* eslint-disable jsx-a11y/label-has-associated-control */
+            <>
+              <label className="control-label co-required" html-for="claimName">
+                {PersistentVolumeModel.label}
+              </label>
+              <PVCDropdown
+                dataTest="pvc-dropdown"
+                namespace={namespace}
+                onChange={handlePVCName}
+                selectedKey={pvcName}
+                dataFilter={isBound}
+                desc={`Persistent Volume Claim in ${namespace} namespace`}
+              />
+            </>
+          )}
           <div className="form-group co-volume-snapshot__form">
-            <label className="control-label co-required" htmlFor="snapshot-class">
-              Volume Snapshot Class
+            <label className="control-label co-required" htmlFor="snapshot-name">
+              Name
             </label>
-            <SnapshotClassDropdown
-              dataTest="snapshot-dropdown"
-              onChange={setSnapshotClassName}
-              selectedKey={snapshotClassName}
-              pvcSC={pvcObj?.spec?.storageClassName}
+            <input
+              className="pf-c-form-control"
+              type="text"
+              onChange={handleSnapshotName}
+              name="snapshotName"
+              id="snapshot-name"
+              value={snapshotName}
+              required
             />
           </div>
-        )}
-
-        <ButtonBar errorMessage={errorMessage || loadError} inProgress={inProgress}>
-          <ActionGroup className="pf-c-form">
-            <Button
-              type="submit"
-              variant="primary"
-              id="save-changes"
-              isDisabled={!snapshotClassName || !snapshotName || !pvcName}
-            >
-              Create
-            </Button>
-            <Button type="button" variant="secondary" onClick={history.goBack}>
-              Cancel
-            </Button>
-          </ActionGroup>
-        </ButtonBar>
-      </form>
+          {pvcObj && (
+            <div className="form-group co-volume-snapshot__form">
+              <label className="control-label co-required" htmlFor="snapshot-class">
+                Snapshot Class
+              </label>
+              <SnapshotClassDropdown
+                onChange={setSnapshotClassName}
+                dataTest="snapshot-dropdown"
+                selectedKey={snapshotClassName}
+                pvcSC={pvcObj?.spec?.storageClassName}
+              />
+            </div>
+          )}
+          <ButtonBar errorMessage={errorMessage || loadError} inProgress={inProgress}>
+            <ActionGroup className="pf-c-form">
+              <Button
+                type="submit"
+                variant="primary"
+                id="save-changes"
+                isDisabled={!snapshotClassName || !snapshotName || !pvcName}
+              >
+                Create
+              </Button>
+              <Button type="button" variant="secondary" onClick={history.goBack}>
+                Cancel
+              </Button>
+            </ActionGroup>
+          </ButtonBar>
+        </form>
+      </div>
       <div className="co-volume-snapshot__info">
         <Grid hasGutter>
           <GridItem span={1} />
@@ -302,7 +319,14 @@ const VolumeSnapshotComponent: React.FC<VolumeSnapshotComponentProps> = (props) 
   if (!kindObj && kindsInFlight) {
     return <LoadingBox />;
   }
-  return <CreateSnapshotForm namespace={params.ns} resourceName={params.name} kindObj={kindObj} />;
+  return (
+    <CreateSnapshotForm
+      plural={params.plural}
+      namespace={params.ns}
+      resourceName={params.name}
+      kindObj={kindObj}
+    />
+  );
 };
 
 export const VolumeSnapshot = connectToPlural(VolumeSnapshotComponent);
@@ -319,6 +343,7 @@ type SnapshotResourceProps = HandlePromiseProps & {
   namespace: string;
   resourceName: string;
   kindObj: K8sKind;
+  plural: string;
 };
 
 type PVCSummaryProps = {

@@ -46,7 +46,7 @@ export const EditHealthChecks = (model: K8sKind, obj: K8sResourceKind): KebabOpt
       resource: model.plural,
       name: obj.metadata.name,
       namespace: obj.metadata.namespace,
-      verb: 'update',
+      verb: 'get',
     },
   };
 };

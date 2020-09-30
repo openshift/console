@@ -1,5 +1,5 @@
 export const VIRT_LAUNCHER_POD_PREFIX = 'virt-launcher-';
-export const READABLE_VIRTIO = 'VirtIO';
+export const READABLE_VIRTIO = 'virtio';
 export const ANNOTATION_FIRST_BOOT = 'kubevirt.ui/firstBoot';
 export const ANNOTATION_DESCRIPTION = 'description';
 export const ANNOTATION_PXE_INTERFACE = 'kubevirt.ui/pxeInterface';
@@ -25,7 +25,6 @@ export const TEMPLATE_DATAVOLUME_NAME_PARAMETER = 'SRC_PVC_NAME';
 export const TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER = 'SRC_PVC_NAMESPACE';
 export const TEMPLATE_VM_DOMAIN_LABEL = 'kubevirt.io/domain';
 export const TEMPLATE_VM_SIZE_LABEL = 'kubevirt.io/size';
-export const TEMPLATE_VM_GOLDEN_OS_NAMESPACE = 'openshift-kubevirt-base-images';
 export const TEMPLATE_VM_COMMON_NAMESPACE = 'openshift';
 
 export const LABEL_USED_TEMPLATE_NAME = 'vm.kubevirt.io/template';
@@ -63,4 +62,5 @@ export const WINTOOLS_CONTAINER_NAMES = {
 };
 
 export const PENDING_RESTART_LABEL = '(pending restart)';
-export const PVC_UPLOAD_URL = `/k8s/ns/${TEMPLATE_VM_GOLDEN_OS_NAMESPACE}/persistentvolumeclaims/~new/upload-form`;
+export const getPVCUploadURL = (pvcNamespace: string): string =>
+  `/k8s/ns/${pvcNamespace}/persistentvolumeclaims/~new/upload-form`;

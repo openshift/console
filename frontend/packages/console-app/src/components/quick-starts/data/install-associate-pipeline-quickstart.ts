@@ -1,6 +1,8 @@
+import { FLAG_OPENSHIFT_PIPELINE } from '@console/dev-console/src/const';
+import { QuickStart } from '../utils/quick-start-types';
 import { pipelineIcon } from './tour-icons';
 
-export const installAssociatePipelineQuickStart = {
+export const installAssociatePipelineQuickStart: QuickStart = {
   apiVersion: 'console.openshift.io/v1',
   kind: 'QuickStarts',
   metadata: {
@@ -80,5 +82,8 @@ Is the status Succeeded?`,
     ],
     conclusion: `You just created an application and associated a pipeline with it, and successfully started the pipeline.`,
     nextQuickStart: ``,
+    flags: {
+      required: [FLAG_OPENSHIFT_PIPELINE],
+    },
   },
 };

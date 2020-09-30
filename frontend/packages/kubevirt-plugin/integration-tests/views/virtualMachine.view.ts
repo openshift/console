@@ -48,8 +48,6 @@ export const vmDetailBootOrder = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'boot-order')).$$('li');
 export const vmDetailBootOrderEditButton = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'boot-order-edit'));
-export const vmDetailStatusEditButton = (namespace, vmName) =>
-  $(vmDetailItemId(namespace, vmName, 'status-edit'));
 export const vmDetailLabelValue = async (labelKey) => {
   const filteredLabel = $$('.co-m-label').filter((elem) =>
     elem
@@ -61,6 +59,9 @@ export const vmDetailLabelValue = async (labelKey) => {
   const value = await valueElem.getText();
   return value;
 };
+
+export const vmDetailstatusButton = (namespace, name) =>
+  $(`${vmDetailItemId(namespace, name, 'vm-statuses')} > .pf-c-button.pf-m-link.pf-m-inline`);
 
 export const vmDetailService = (serviceName) => $(`[data-test-id="${serviceName}"]`);
 

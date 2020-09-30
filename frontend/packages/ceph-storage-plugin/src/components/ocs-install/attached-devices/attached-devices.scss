@@ -71,7 +71,20 @@
 
 .ceph-ocs-install__filtered-modal {
   max-height: 75%;
-  width: 50%;
+  width: 55%;
+
+  .ceph-ocs-install__node-list {
+    max-width: 100%;
+  }
+
+  .co-m-nav-title {
+    margin-top: 0;
+  }
+
+  .co-m-pane__body {
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
 
 // inner class of modal for modifying margin

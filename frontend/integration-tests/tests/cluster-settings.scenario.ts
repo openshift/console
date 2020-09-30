@@ -95,7 +95,7 @@ describe('Cluster Settings', () => {
     expect(crudView.actionForLabel('Explore Console API').isDisplayed()).toBe(true);
     await crudView.actionForLabel('Explore Console API').click();
 
-    expect(clusterSettingsView.globalConfigDetailsTitle.isDisplayed()).toBe(true);
+    await clusterSettingsView.globalConfigDetailsTitleIsLoaded();
     expect(clusterSettingsView.globalConfigDetailsTitle.getText()).toBe('Console');
   });
 });

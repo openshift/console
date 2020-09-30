@@ -1,7 +1,17 @@
+import {
+  VolumeTypeConfigMaps,
+  VolumeTypePVC,
+  VolumeTypeSecret,
+} from 'packages/dev-console/src/utils/pipeline-augment';
 import { CommonPipelineModalFormikValues } from '../common/types';
-import { PipelineWorkspace } from '../../../../utils/pipeline-augment';
+
+export type PipelineRunWorkspaceFormEntry = {
+  name: string;
+  type: string;
+  [volumeType: string]: VolumeTypeSecret | VolumeTypeConfigMaps | VolumeTypePVC | {};
+};
 
 export type StartPipelineFormValues = CommonPipelineModalFormikValues & {
-  workspaces: PipelineWorkspace[];
+  workspaces: PipelineRunWorkspaceFormEntry[];
   secretOpen: boolean;
 };

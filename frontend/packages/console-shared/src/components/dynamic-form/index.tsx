@@ -56,7 +56,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
         className="co-alert co-break-word"
         variant="info"
         title={
-          'Note: Some fields may not be represented in this form. Please select "YAML View" for full control of object creation.'
+          'Note: Some fields may not be represented in this form view. Please select "YAML view" for full control.'
         }
       />
       <Accordion asDefinitionList={false} className="co-dynamic-form__accordion">

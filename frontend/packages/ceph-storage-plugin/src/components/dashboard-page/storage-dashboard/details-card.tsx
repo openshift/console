@@ -76,7 +76,7 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
       <DashboardCardBody>
         <DetailsBody>
           <DetailItem key="service_name" title="Service Name" isLoading={false} error={false}>
-            OpenShift Container Storage (OCS)
+            OpenShift Container Storage
           </DetailItem>
           <DetailItem
             key="cluster_name"

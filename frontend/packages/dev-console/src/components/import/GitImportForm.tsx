@@ -40,7 +40,7 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
       isSubmitting={isSubmitting}
       submitLabel="Create"
       sticky
-      disableSubmit={!dirty || !_.isEmpty(errors)}
+      disableSubmit={!dirty || !_.isEmpty(errors) || isSubmitting}
       resetLabel="Cancel"
     />
   </Form>

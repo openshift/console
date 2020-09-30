@@ -30,7 +30,16 @@ import {
   VolumeSnapshotClassModel,
   VolumeSnapshotContentModel,
 } from '@console/internal/models';
-import { Status, getBadgeFromType, BadgeType, getName, getNamespace } from '@console/shared';
+import {
+  Status,
+  getBadgeFromType,
+  BadgeType,
+  getName,
+  getNamespace,
+  snapshotSource,
+  FLAGS,
+} from '@console/shared';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { snapshotStatusFilters, volumeSnapshotStatus } from '../../status';
 
 const { common, RestorePVC } = Kebab.factory;
@@ -76,8 +85,8 @@ const Header = (disableItems = {}) => () =>
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'PVC',
-      sortField: 'spec.source.persistentVolumeClaimName',
+      title: 'Source',
+      sortFunc: 'volumeSnapshotSource',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
     },
@@ -110,8 +119,12 @@ const Row: RowFunction<VolumeSnapshotKind> = ({ key, obj, style, index, customDa
   const size = obj?.status?.restoreSize;
   const sizeBase = convertToBaseValue(size);
   const sizeMetrics = size ? humanizeBinaryBytes(sizeBase).string : '-';
-  const pvcName = obj?.spec?.source?.persistentVolumeClaimName;
+  const sourceModel = obj?.spec?.source?.persistentVolumeClaimName
+    ? PersistentVolumeClaimModel
+    : VolumeSnapshotContentModel;
+  const sourceName = snapshotSource(obj);
   const snapshotContent = obj?.status?.boundVolumeSnapshotContentName;
+  const snapshotClass = obj?.spec?.volumeSnapshotClassName;
   return (
     <TableRow id={obj?.metadata?.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -131,27 +144,30 @@ const Row: RowFunction<VolumeSnapshotKind> = ({ key, obj, style, index, customDa
       {!customData?.disableItems?.PVC && (
         <TableData className={tableColumnClasses[4]}>
           <ResourceLink
-            kind={PersistentVolumeClaimModel.kind}
-            name={pvcName}
+            kind={referenceForModel(sourceModel)}
+            name={sourceName}
             namespace={namespace}
           />
         </TableData>
       )}
-      <TableData className={tableColumnClasses[5]}>
-        {snapshotContent ? (
-          <ResourceLink
-            kind={referenceForModel(VolumeSnapshotContentModel)}
-            name={snapshotContent}
-          />
+      {!customData?.disableItems?.['Snapshot Content'] && (
+        <TableData className={tableColumnClasses[5]}>
+          {snapshotContent ? (
+            <ResourceLink
+              kind={referenceForModel(VolumeSnapshotContentModel)}
+              name={snapshotContent}
+            />
+          ) : (
+            '-'
+          )}
+        </TableData>
+      )}
+      <TableData className={tableColumnClasses[6]}>
+        {snapshotClass ? (
+          <ResourceLink kind={referenceForModel(VolumeSnapshotClassModel)} name={snapshotClass} />
         ) : (
           '-'
         )}
-      </TableData>
-      <TableData className={tableColumnClasses[6]}>
-        <ResourceLink
-          kind={referenceForModel(VolumeSnapshotClassModel)}
-          name={obj?.spec?.volumeSnapshotClassName}
-        />
       </TableData>
       <TableData className={tableColumnClasses[7]}>
         <Timestamp timestamp={creationTimestamp} />
@@ -167,11 +183,18 @@ const Row: RowFunction<VolumeSnapshotKind> = ({ key, obj, style, index, customDa
   );
 };
 
-const VolumeSnapshotTable: React.FC = (props) => (
-  <Table {...props} aria-label="Volume Snapshot Table" Header={Header()} Row={Row} virtualize />
+const VolumeSnapshotTable: React.FC<VolumeSnapshotTableProps> = (props) => (
+  <Table
+    {...props}
+    aria-label="Volume Snapshot Table"
+    Header={Header(props.customData.disableItems)}
+    Row={Row}
+    virtualize
+  />
 );
 
 const VolumeSnapshotPage: React.FC<VolumeSnapshotPageProps> = (props) => {
+  const canListVSC = useFlag(FLAGS.CAN_LIST_VSC);
   const namespace = props.namespace || props.match?.params?.ns || 'all-namespaces';
   const createProps = {
     to: `/k8s/${namespace === 'all-namespaces' ? namespace : `ns/${namespace}`}/${
@@ -187,6 +210,7 @@ const VolumeSnapshotPage: React.FC<VolumeSnapshotPageProps> = (props) => {
       canCreate
       createProps={createProps}
       badge={getBadgeFromType(BadgeType.TECH)}
+      customData={{ disableItems: { 'Snapshot Content': !canListVSC } }}
     />
   );
 };
@@ -213,13 +237,17 @@ const FilteredSnapshotTable: React.FC<FilteredSnapshotTable> = (props) => {
 };
 
 export const VolumeSnapshotPVCPage: React.FC<VolumeSnapshotPVCPage> = (props) => {
+  const canListVSC = useFlag(FLAGS.CAN_LIST_VSC);
   return (
     <ListPage
       {...props}
       kind={referenceForModel(VolumeSnapshotModel)}
       ListComponent={FilteredSnapshotTable}
       rowFilters={snapshotStatusFilters}
-      customData={{ pvc: props.obj, disableItems: { PVC: true } }}
+      customData={{
+        pvc: props.obj,
+        disableItems: { Source: true, 'Snapshot Content': !canListVSC },
+      }}
     />
   );
 };
@@ -240,6 +268,10 @@ type FilteredSnapshotTable = {
 
 type VolumeSnapshotPVCPage = {
   obj: PersistentVolumeClaimKind;
+};
+
+type VolumeSnapshotTableProps = {
+  customData: { [key: string]: any };
 };
 
 export default VolumeSnapshotPage;

@@ -346,6 +346,7 @@ export const getDefaultEventingData = (typeEventSource: string): EventSourceForm
       apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
       name: 'event-display',
       kind: ServiceModel.kind,
+      key: `${ServiceModel.kind}-event-display`,
     },
     limits: {
       cpu: {

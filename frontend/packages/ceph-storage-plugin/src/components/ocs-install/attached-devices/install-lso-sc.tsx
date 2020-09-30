@@ -51,7 +51,7 @@ import {
 import {
   filterSCWithNoProv,
   getAssociatedNodes,
-  shouldDeployAttachedAsMinimal,
+  shouldDeployAsMinimal,
 } from '../../../utils/install';
 import { getSCAvailablePVs } from '../../../selectors';
 import '../ocs-install.scss';
@@ -98,9 +98,9 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
   );
   const [pvData, pvLoaded, pvLoadError] = useK8sWatchResource<K8sResourceKind[]>(pvResource);
   const isMinimalSupported = useFlag(OCS_SUPPORT_FLAGS.MINIMAL_DEPLOYMENT);
-  const isEncryptionSupported = useFlag(OCS_SUPPORT_FLAGS.ENCRPYTION);
+  const isEncryptionSupported = useFlag(OCS_SUPPORT_FLAGS.ENCRYPTION);
 
-  const isMinimal = shouldDeployAttachedAsMinimal(nodes);
+  const isMinimal = nodes.length > minSelectedNode ? shouldDeployAsMinimal(nodes) : false;
 
   React.useEffect(() => {
     // this is needed to ensure that the useEffect should be called only when setHasNoProvSC is defined
@@ -137,8 +137,12 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
   React.useEffect(() => {
     if ((pvLoadError || pvData.length === 0) && pvLoaded) {
       setFilteredNodes([]);
+    } else if (pvLoaded) {
+      const pvs = getSCAvailablePVs(pvData, getName(storageClass));
+      const scNodes = getAssociatedNodes(pvs);
+      setFilteredNodes(scNodes);
     }
-  }, [pvData, pvLoaded, pvLoadError]);
+  }, [pvData, pvLoaded, pvLoadError, storageClass]);
 
   const submit = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -187,7 +191,9 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
             <SelectNodesSection
               table={AttachedDevicesNodeTable}
               customData={{ filteredNodes, nodes, setNodes }}
-            />
+            >
+              <span>Selected nodes are based on the selected storage class.</span>
+            </SelectNodesSection>
           </>
         )}
         {storageClass && filteredNodes?.length < minSelectedNode && (

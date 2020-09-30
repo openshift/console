@@ -6,16 +6,15 @@ import { FirehoseResource, FirehoseResult } from '@console/internal/components/u
 import { MachineModel, NodeModel, CertificateSigningRequestModel } from '@console/internal/models';
 import { createLookup, getName, getMachineNodeName } from '@console/shared';
 import { MultiListPage } from '@console/internal/components/factory';
-import { useFlag } from '@console/shared/src/hooks/flag';
 import { getNodeMaintenanceNodeName, getHostMachineName } from '../../selectors';
 import { getNodeServerCSR, getNodeClientCSRs } from '../../selectors/csr';
 import { BareMetalNodeListBundle, BareMetalNodeBundle } from '../types';
-import { NodeMaintenanceModel, BareMetalHostModel } from '../../models';
+import { BareMetalHostModel } from '../../models';
 import { bareMetalNodeStatus } from '../../status/baremetal-node-status';
 import BareMetalNodesTable from './BareMetalNodesTable';
 import { bareMetalNodeStatusFilter } from './table-filters';
-import { NODE_MAINTENANCE_FLAG } from '../../features';
 import { BareMetalHostKind, CertificateSigningRequestKind } from '../../types';
+import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 
 const flattenResources = (resources: {
   hosts: FirehoseResult<BareMetalHostKind[]>;
@@ -54,7 +53,7 @@ const flattenResources = (resources: {
 };
 
 const BareMetalNodesPage: React.FC = (props) => {
-  const hasNodeMaintenanceCapability = useFlag(NODE_MAINTENANCE_FLAG);
+  const [hasNodeMaintenanceCapability, model] = useMaintenanceCapability();
   const resources: FirehoseResource[] = [
     {
       kind: referenceForModel(BareMetalHostModel),
@@ -80,7 +79,7 @@ const BareMetalNodesPage: React.FC = (props) => {
 
   if (hasNodeMaintenanceCapability) {
     resources.push({
-      kind: referenceForModel(NodeMaintenanceModel),
+      kind: referenceForModel(model),
       namespaced: false,
       prop: 'nodeMaintenances',
       optional: true,

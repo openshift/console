@@ -1,5 +1,6 @@
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
+import { ClampedText } from '@console/shared';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { ExternalLink } from '@console/internal/components/utils';
 import { knativeServiceObj } from '../../../topology/__tests__/topology-knative-test-data';
@@ -66,6 +67,13 @@ describe('ServiceRow', () => {
     expect(conditionsColData.props().children).toEqual('-');
   });
 
+  it('should show appropriate ready status and reason for ready state', () => {
+    const readyColData = wrapper.find(TableData).at(6);
+    const reasonColData = wrapper.find(TableData).at(7);
+    expect(readyColData.props().children).toEqual('True');
+    expect(reasonColData.props().children).toEqual('-');
+  });
+
   it('should show appropriate ready status and reason for not ready state', () => {
     svcData.obj.status = {
       ...svcData.obj.status,
@@ -85,6 +93,12 @@ describe('ServiceRow', () => {
     const readyColData = wrapper.find(TableData).at(6);
     const reasonColData = wrapper.find(TableData).at(7);
     expect(readyColData.props().children).toEqual('False');
-    expect(reasonColData.props().children).toEqual('Something went wrong.');
+    expect(
+      reasonColData
+        .dive()
+        .find(ClampedText)
+        .at(0)
+        .props().children,
+    ).toEqual('Something went wrong.');
   });
 });

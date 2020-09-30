@@ -10,28 +10,52 @@ import {
   ComponentFactory,
   Visualization,
   VisualizationSurface,
+  GraphElement,
   isNode,
   BaseEdge,
   VisualizationProvider,
+  Model,
+  BOTTOM_LAYER,
+  GROUPS_LAYER,
+  DEFAULT_LAYER,
+  TOP_LAYER,
+  SelectionEventListener,
+  SELECTION_EVENT,
 } from '@patternfly/react-topology';
-import { isTopologyComponentFactory, TopologyComponentFactory } from '../../extensions/topology';
+import { useQueryParams } from '@console/shared';
 import { useExtensions } from '@console/plugin-sdk';
+import { isTopologyComponentFactory, TopologyComponentFactory } from '../../extensions/topology';
 import { SHOW_GROUPING_HINT_EVENT, ShowGroupingHintEventListener } from './topology-types';
-import { COLA_LAYOUT, COLA_FORCE_LAYOUT } from './layouts/layoutFactory';
+import { COLA_LAYOUT, COLA_FORCE_LAYOUT, layoutFactory } from './layouts/layoutFactory';
 import { componentFactory } from './components';
+import { odcElementFactory } from './elements';
+
+import './Topology.scss';
+
+const TOPOLOGY_GRAPH_ID = 'odc-topology-graph';
+const graphModel: Model = {
+  graph: {
+    id: TOPOLOGY_GRAPH_ID,
+    type: 'graph',
+    layout: COLA_LAYOUT,
+    layers: [BOTTOM_LAYER, GROUPS_LAYER, 'groups2', DEFAULT_LAYER, TOP_LAYER],
+  },
+};
 
 interface TopologyProps {
-  visualization: Visualization;
+  model: Model;
   application: string;
   namespace: string;
-  selectedIds: string[];
+  onSelect: (entity?: GraphElement) => void;
+  setVisualization: (vis: Visualization) => void;
 }
 
-const Topology: React.FC<TopologyProps> = ({ visualization, application, selectedIds }) => {
+const Topology: React.FC<TopologyProps> = ({ model, application, onSelect, setVisualization }) => {
   const applicationRef = React.useRef<string>(null);
-  const [layout, setLayout] = React.useState<string>(COLA_LAYOUT);
   const [visualizationReady, setVisualizationReady] = React.useState<boolean>(false);
   const [dragHint, setDragHint] = React.useState<string>('');
+  const queryParams = useQueryParams();
+  const selectedId = queryParams.get('selectId');
   const [componentFactories, setComponentFactories] = React.useState<ComponentFactory[]>([]);
   const componentFactoryExtensions = useExtensions<TopologyComponentFactory>(
     isTopologyComponentFactory,
@@ -40,6 +64,38 @@ const Topology: React.FC<TopologyProps> = ({ visualization, application, selecte
     () => componentFactoryExtensions.map((factory) => factory.properties.getFactory()),
     [componentFactoryExtensions],
   );
+  const createVisualization = () => {
+    const newVisualization = new Visualization();
+    newVisualization.registerElementFactory(odcElementFactory);
+    newVisualization.registerLayoutFactory(layoutFactory);
+    newVisualization.fromModel(graphModel);
+    newVisualization.addEventListener<SelectionEventListener>(SELECTION_EVENT, (ids: string[]) => {
+      const selectedEntity = ids[0] ? newVisualization.getElementById(ids[0]) : null;
+      onSelect(selectedEntity);
+    });
+    setVisualization(newVisualization);
+    return newVisualization;
+  };
+
+  const visualizationRef = React.useRef<Visualization>();
+  if (!visualizationRef.current) {
+    visualizationRef.current = createVisualization();
+  }
+  const visualization = visualizationRef.current;
+
+  React.useEffect(() => {
+    if (model && visualizationReady) {
+      visualization.fromModel(model);
+      const selectedItem = selectedId ? visualization.getElementById(selectedId) : null;
+      if (!selectedItem || !selectedItem.isVisible()) {
+        onSelect();
+      } else {
+        onSelect(selectedItem);
+      }
+    }
+    // Do not update on selectedId change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [model, visualization, visualizationReady]);
 
   React.useEffect(() => {
     Promise.all(componentFactoriesPromises)
@@ -85,8 +141,8 @@ const Topology: React.FC<TopologyProps> = ({ visualization, application, selecte
   React.useEffect(() => {
     let resizeTimeout = null;
     if (visualization) {
-      if (selectedIds.length > 0) {
-        const selectedEntity = visualization.getElementById(selectedIds[0]);
+      if (selectedId) {
+        const selectedEntity = visualization.getElementById(selectedId);
         if (selectedEntity) {
           const visibleEntity = isNode(selectedEntity)
             ? selectedEntity
@@ -108,21 +164,14 @@ const Topology: React.FC<TopologyProps> = ({ visualization, application, selecte
         clearTimeout(resizeTimeout);
       }
     };
-  }, [selectedIds, visualization]);
-
-  React.useEffect(() => {
-    action(() => {
-      if (visualizationReady) {
-        visualization.getGraph().setLayout(layout);
-      }
-    })();
-  }, [layout, visualization, visualizationReady]);
+  }, [selectedId, visualization]);
 
   if (!visualizationReady) {
     return null;
   }
 
   const renderControlBar = () => {
+    const layout = visualization.getGraph()?.getLayout() ?? 'COLA_LAYOUT';
     return (
       <TopologyControlBar
         controlButtons={[
@@ -153,7 +202,10 @@ const Topology: React.FC<TopologyProps> = ({ visualization, application, selecte
                   'pf-m-active': layout === COLA_LAYOUT,
                 })}
                 variant="tertiary"
-                onClick={() => setLayout(COLA_LAYOUT)}
+                onClick={() => {
+                  visualization.getGraph().setLayout(COLA_LAYOUT);
+                  visualization.getGraph().layout();
+                }}
               >
                 <TopologyIcon className="odc-topology__layout-button__icon" aria-label="Layout" />1
               </Button>
@@ -166,7 +218,10 @@ const Topology: React.FC<TopologyProps> = ({ visualization, application, selecte
                   'pf-m-active': layout === COLA_FORCE_LAYOUT,
                 })}
                 variant="tertiary"
-                onClick={() => setLayout(COLA_FORCE_LAYOUT)}
+                onClick={() => {
+                  visualization.getGraph().setLayout(COLA_FORCE_LAYOUT);
+                  visualization.getGraph().layout();
+                }}
               >
                 <TopologyIcon className="odc-topology__layout-button__icon" aria-label="Layout" />2
               </Button>
@@ -182,11 +237,13 @@ const Topology: React.FC<TopologyProps> = ({ visualization, application, selecte
   }
 
   return (
-    <VisualizationProvider controller={visualization}>
-      <VisualizationSurface state={{ selectedIds }} />
-      {dragHint && <div className="odc-topology__hint-container">{dragHint}</div>}
-      <span className="pf-topology-control-bar">{renderControlBar()}</span>
-    </VisualizationProvider>
+    <div className="odc-topology-graph-view">
+      <VisualizationProvider controller={visualization}>
+        <VisualizationSurface state={{ selectedIds: [selectedId] }} />
+        {dragHint && <div className="odc-topology__hint-container">{dragHint}</div>}
+        <span className="pf-topology-control-bar">{renderControlBar()}</span>
+      </VisualizationProvider>
+    </div>
   );
 };
 

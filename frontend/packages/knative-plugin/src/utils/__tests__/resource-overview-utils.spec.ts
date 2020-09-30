@@ -1,5 +1,5 @@
 import { MockKnativeResources } from '../../topology/__tests__/topology-knative-test-data';
-import { getKnativeRoutesLinks } from '../resource-overview-utils';
+import { getKnativeRoutesLinks, groupTrafficByRevision } from '../resource-overview-utils';
 
 describe('resource overview utils', () => {
   const multipleRevisionsData = {
@@ -54,5 +54,50 @@ describe('resource overview utils', () => {
       MockKnativeResources.services.data[0],
     );
     expect(routeLinks).toHaveLength(0);
+  });
+
+  it('should not return unique urls for revisions without tag', () => {
+    const { urls } = groupTrafficByRevision(multipleRevisionsData, {
+      ...MockKnativeResources.revisions.data[0],
+      metadata: { name: 'test' },
+    });
+    expect(urls).toHaveLength(0);
+  });
+
+  it('should return total percentage when grouping', () => {
+    const { percent: totalPercentage } = groupTrafficByRevision(multipleRevisionsData, {
+      ...MockKnativeResources.revisions.data[0],
+      metadata: { name: 'test' },
+    });
+    expect(totalPercentage).toEqual('25%');
+  });
+
+  it('should club the percentage and have unique urls for the same revision name', () => {
+    const multipleTrafficSplitRevision = {
+      ...multipleRevisionsData,
+      status: {
+        ...multipleRevisionsData.status,
+        traffic: [
+          {
+            ...MockKnativeResources.ksroutes.data[0].status.traffic[0],
+            percent: 25,
+            tag: 'tag-two',
+            url: 'http://tag-two.testing.apps.bpetersen-june-23.devcluster.openshift.com',
+          },
+          {
+            ...MockKnativeResources.ksroutes.data[0].status.traffic[0],
+            percent: 75,
+            tag: 'tag-two',
+            url: 'http://tag-three.testing.apps.bpetersen-june-23.devcluster.openshift.com',
+          },
+        ],
+      },
+    };
+    const { urls, percent: totalPercentage } = groupTrafficByRevision(
+      multipleTrafficSplitRevision,
+      MockKnativeResources.revisions.data[0],
+    );
+    expect(urls).toHaveLength(2);
+    expect(totalPercentage).toEqual('100%');
   });
 });

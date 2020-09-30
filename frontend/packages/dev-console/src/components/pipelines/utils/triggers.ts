@@ -168,7 +168,9 @@ export const getEventListenerTriggerBindingNames = (
 ): ResourceModelLink[] =>
   bindings?.map((binding) => ({
     model: getResourceModelFromBindingKind(binding.kind),
-    name: binding.name,
+    // Ref is used since Tekton Triggers 0.5 (OpenShift Pipeline Operator 1.1)
+    // We keep the fallback to name here to support also OpenShift Pipeline Operator 1.0.
+    name: binding.ref || binding.name,
   }));
 
 export const getTriggerTemplatePipelineName = (triggerTemplate: TriggerTemplateKind): string => {

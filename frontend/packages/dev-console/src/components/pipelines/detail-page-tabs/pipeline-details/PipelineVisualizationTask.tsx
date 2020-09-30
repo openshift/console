@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { Tooltip } from '@patternfly/react-core';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { Firehose, resourcePathFromModel } from '@console/internal/components/utils';
-import { runStatus } from '../../../../utils/pipeline-augment';
+import { runStatus, PipelineTaskSpec, PipelineTaskRef } from '../../../../utils/pipeline-augment';
 import { PipelineRunModel, TaskModel, ClusterTaskModel } from '../../../../models';
 import { ColoredStatusIcon } from './StatusIcon';
 import { PipelineVisualizationStepList } from './PipelineVisualizationStepList';
@@ -33,10 +33,8 @@ interface PipelineVisualizationTaskProp {
   namespace: string;
   task: {
     name?: string;
-    taskRef: {
-      name: string;
-      kind?: string;
-    };
+    taskSpec?: PipelineTaskSpec;
+    taskRef?: PipelineTaskRef;
     status?: TaskStatus;
   };
   taskRun?: string;

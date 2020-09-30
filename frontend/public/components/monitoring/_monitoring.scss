@@ -19,6 +19,12 @@ $tooltip-background-color: #151515;
 
 .graph-empty-state {
   min-height: 310px;
+  &__loaded {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
 }
 
 .graph-wrapper__horizontal-bar {
@@ -194,7 +200,9 @@ $screen-phone-landscape-min-width: 567px;
 
 $monitoring-line-height: 18px;
 
-.monitoring-description, .monitoring-label-list, .monitoring-timestamp {
+.monitoring-description,
+.monitoring-label-list,
+.monitoring-timestamp {
   line-height: $monitoring-line-height;
   margin-top: 4px;
 }
@@ -239,7 +247,7 @@ $monitoring-line-height: 18px;
     align-items: baseline;
     display: flex;
     justify-content: space-between;
-    @media(min-width: $grid-float-breakpoint) {
+    @media (min-width: $grid-float-breakpoint) {
       padding-top: 26px;
     }
   }

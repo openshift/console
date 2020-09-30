@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 
 import { Form, FormGroup, Grid, GridItem, TextInput } from '@patternfly/react-core';
 import {
@@ -10,6 +11,7 @@ import {
   RequestSizeInput,
   Timestamp,
   resourcePathFromModel,
+  convertToBaseValue,
 } from '@console/internal/components/utils';
 import {
   k8sCreate,
@@ -31,9 +33,12 @@ import {
   VolumeSnapshotModel,
   VolumeSnapshotClassModel,
 } from '@console/internal/models';
-import { getName, getNamespace, Status } from '@console/shared';
+import { getName, getNamespace, Status, isCephProvisioner } from '@console/shared';
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
-import { dropdownUnits } from '@console/internal/components/storage/shared';
+import {
+  dropdownUnits,
+  cephRBDProvisionerSuffix,
+} from '@console/internal/components/storage/shared';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 
 import './restore-pvc-modal.scss';
@@ -48,8 +53,9 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
       ? `${defaultSize[0]} ${dropdownUnits[defaultSize[1]]}`
       : '';
     const [requestedSize, setRequestedSize] = React.useState(defaultSize?.[0] ?? '');
-    const [requestedUnit, setRequestedUnit] = React.useState(defaultSize?.[1] ?? 'Gi');
+    const [requestedUnit, setRequestedUnit] = React.useState(defaultSize?.[1] ?? 'Ti');
     const [pvcSC, setPVCStorageClass] = React.useState('');
+    const [validSize, setValidSize] = React.useState(true);
     const namespace = getNamespace(resource);
     const snapshotName = getName(resource);
 
@@ -74,6 +80,10 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
     const requestedSizeInputChange = ({ value, unit }) => {
       setRequestedSize(value);
       setRequestedUnit(unit);
+      const restoreSizeInBytes = convertToBaseValue(value + unit);
+      const snapshotSizeInBytes = convertToBaseValue(resource?.status?.restoreSize);
+      const isValid = restoreSizeInBytes >= snapshotSizeInBytes;
+      setValidSize(isValid);
     };
 
     const handleStorageClass = (updatedStorageClass) =>
@@ -108,6 +118,18 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
         },
       };
 
+      if (pvcResource) {
+        // should set block only for RBD + RWX
+        if (
+          _.endsWith(snapshotClassResource?.driver, cephRBDProvisionerSuffix) &&
+          accessModes.includes('ReadWriteMany')
+        ) {
+          restorePVCTemplate.spec.volumeMode = 'Block';
+        } else {
+          restorePVCTemplate.spec.volumeMode = pvcResource?.spec?.volumeMode;
+        }
+      }
+
       // eslint-disable-next-line promise/catch-or-return
       handlePromise(
         k8sCreate(PersistentVolumeClaimModel, restorePVCTemplate, namespace),
@@ -119,7 +141,6 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
         },
       );
     };
-
     return (
       <div className="modal-content modal-content--no-inner-scroll">
         <ModalTitle>Restore as new PVC</ModalTitle>
@@ -165,16 +186,26 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
               label="Size"
               isRequired
               fieldId="pvc-size"
-              className="co-restore-pvc-modal__input"
+              className="co-restore-pvc-modal__input co-restore-pvc-modal__ocs-size"
+              helperTextInvalid="Size should be equal or greater than the restore size of snapshot"
+              validated={validSize ? 'default' : 'error'}
             >
-              <RequestSizeInput
-                name="requestSize"
-                onChange={requestedSizeInputChange}
-                defaultRequestSizeUnit={requestedUnit}
-                defaultRequestSizeValue={requestedSize}
-                dropdownUnits={dropdownUnits}
-                required
-              />
+              {snapshotClassResourceLoaded ? (
+                <RequestSizeInput
+                  name="requestSize"
+                  onChange={requestedSizeInputChange}
+                  defaultRequestSizeUnit={requestedUnit}
+                  defaultRequestSizeValue={requestedSize}
+                  dropdownUnits={dropdownUnits}
+                  isInputDisabled={
+                    snapshotClassResourceLoadError ||
+                    isCephProvisioner(snapshotClassResource?.driver)
+                  }
+                  required
+                />
+              ) : (
+                <div className="skeleton-text" />
+              )}
             </FormGroup>
             <div className="co-restore-pvc-modal__details-section">
               <p className="text-muted">{VolumeSnapshotModel.label} details</p>
@@ -212,6 +243,7 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
             </div>
           </ModalBody>
           <ModalSubmitFooter
+            submitDisabled={!pvcSC || !validSize}
             inProgress={inProgress}
             errorMessage={errorMessage}
             submitText="Restore"

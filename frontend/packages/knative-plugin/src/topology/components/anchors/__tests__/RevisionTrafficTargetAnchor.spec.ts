@@ -28,7 +28,7 @@ describe('RevisionTrafficTargetAnchor', () => {
   it('should return the outer edge as anchor location', () => {
     const anchor = new RevisionTrafficTargetAnchor(createMockNode(new Rect(10, 20, 130, 140)), 0);
     const loc = anchor.getLocation(new Point(50, 60));
-    expect(loc.x).toBeCloseTo(31.59);
-    expect(loc.y).toBeCloseTo(37.9);
+    expect(loc.x).toBeCloseTo(127);
+    expect(loc.y).toBeCloseTo(33);
   });
 });

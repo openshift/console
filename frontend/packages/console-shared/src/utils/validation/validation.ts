@@ -5,8 +5,9 @@ import {
   DNS1123_END_ERROR,
   DNS1123_START_END_ERROR,
   DNS1123_START_ERROR,
-  DNS1123_TOO_LONG_ERROR,
   EMPTY_ERROR,
+  getStringTooLongErrorMsg,
+  getStringTooShortErrorMsg,
 } from './strings';
 
 const alphanumericRegex = '[a-zA-Z0-9]';
@@ -44,8 +45,14 @@ export const validateEmptyValue = (
 // DNS-1123 subdomain
 export const validateDNS1123SubdomainValue = (
   value: string,
-  { subject } = { subject: 'Name' },
+  { subject, min, max }: { subject: string; min?: number; max?: number } = {
+    subject: 'Name',
+    min: undefined,
+    max: DNS1123_MAX_LENGTH,
+  },
 ): ValidationObject => {
+  const maxLength = max || DNS1123_MAX_LENGTH;
+
   const emptyError = validateEmptyValue(value, { subject });
   if (emptyError) {
     return emptyError;
@@ -54,8 +61,10 @@ export const validateDNS1123SubdomainValue = (
   const forbiddenCharacters = new Set<string>();
   const validationSentences = [];
 
-  if (value.length > DNS1123_MAX_LENGTH) {
-    validationSentences.push(DNS1123_TOO_LONG_ERROR);
+  if (min && value.length < min) {
+    validationSentences.push(getStringTooShortErrorMsg(min));
+  } else if (value.length > maxLength) {
+    validationSentences.push(getStringTooLongErrorMsg(maxLength));
   }
 
   const startsWithAlphaNumeric = value.charAt(0).match(alphanumericRegex);

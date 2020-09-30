@@ -1028,7 +1028,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       id: 'import-from-git',
       url: '/import',
       label: 'From Git',
-      description: 'Import code from your git repository to be built and deployed',
+      description: 'Import code from your Git repository to be built and deployed',
       icon: importGitIcon,
       accessReview: [
         BuildConfigModel,
@@ -1073,7 +1073,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       id: 'import-from-dockerfile',
       url: '/import?importType=docker',
       label: 'From Dockerfile',
-      description: 'Import your Dockerfile from your git repo to be built and deployed',
+      description: 'Import your Dockerfile from your Git repository to be built and deployed',
       icon: dockerfileIcon,
       accessReview: [
         BuildConfigModel,

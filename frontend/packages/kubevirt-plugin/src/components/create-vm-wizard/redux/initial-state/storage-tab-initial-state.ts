@@ -86,7 +86,7 @@ export const getBaseImageStorage = (
   storageClassConfigMap: ConfigMapKind,
   pvcName,
   pvcNamespace,
-  pvcSize = '10Gi',
+  pvcSize = '15Gi',
 ) => {
   const dataVolumeName = generateDataVolumeName(DUMMY_VM_NAME, ROOT_DISK_NAME);
   const [size, unit] = stringValueUnitSplit(pvcSize);
@@ -141,7 +141,7 @@ const getUrlStorage = (storageClassConfigMap: ConfigMapKind) => {
     dataVolume: new DataVolumeWrapper()
       .init({
         name: dataVolumeName,
-        size: 10,
+        size: 15,
         unit: BinaryUnit.Gi,
       })
       .setType(DataVolumeSourceType.HTTP, { url: '' })

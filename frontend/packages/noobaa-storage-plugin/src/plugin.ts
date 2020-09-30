@@ -144,7 +144,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.LEFT,
       loader: () =>
         import(
-          './components/object-data-reduction-card/object-data-reduction-card' /* webpackChunkName: "object-service-data-reduction-card" */
+          './components/storage-efficiency-card/storage-efficiency-card' /* webpackChunkName: "object-service-storage-efficiency-card" */
         ).then((m) => m.default),
     },
     flags: {

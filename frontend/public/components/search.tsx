@@ -7,6 +7,8 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionToggle,
+  Button,
+  ButtonVariant,
   Toolbar,
   ToolbarChip,
   ToolbarContent,
@@ -269,8 +271,9 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
                 >
                   {getToggleText(resource)}
                   {props.perspective !== 'admin' && (
-                    <a
-                      className="pf-c-button pf-m-link co-search-group__pin-toggle"
+                    <Button
+                      className="co-search-group__pin-toggle"
+                      variant={ButtonVariant.link}
                       onClick={(e) => pinToggle(e, resource)}
                     >
                       {pinnedResources.includes(resource) ? (
@@ -284,7 +287,7 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
                           Add to navigation
                         </>
                       )}
-                    </a>
+                    </Button>
                   )}
                 </AccordionToggle>
                 <AccordionContent isHidden={isCollapsed}>

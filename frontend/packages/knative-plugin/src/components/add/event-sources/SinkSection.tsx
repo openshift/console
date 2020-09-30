@@ -6,7 +6,7 @@ import { FormGroup, TextInputTypes, Alert } from '@patternfly/react-core';
 import { InputField, getFieldId, ResourceDropdownField, RadioGroupField } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { EventingBrokerModel } from '../../../models';
+import { EventingBrokerModel, EventingChannelModel } from '../../../models';
 import {
   knativeServingResourcesServices,
   knativeEventingResourcesBroker,
@@ -50,9 +50,10 @@ const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) 
   const onChange = React.useCallback(
     (selectedValue, valueObj) => {
       const modelData = valueObj?.props?.model;
-      if (selectedValue && modelData) {
+      const name = valueObj?.props?.name;
+      if (name && modelData) {
         const { apiGroup, apiVersion, kind } = modelData;
-        setFieldValue('sink.name', selectedValue);
+        setFieldValue('sink.name', name);
         setFieldTouched('sink.name', true);
         setFieldValue('sink.apiVersion', `${apiGroup}/${apiVersion}`);
         setFieldTouched('sink.apiVersion', true);
@@ -87,7 +88,10 @@ const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) 
     const {
       metadata: { ownerReferences },
     } = resource;
-    return !ownerReferences?.length || ownerReferences[0].kind !== EventingBrokerModel.kind;
+    return (
+      !ownerReferences?.length ||
+      ![EventingChannelModel.kind, EventingBrokerModel.kind].includes(ownerReferences[0].kind)
+    );
   };
   return (
     <FormGroup
@@ -105,7 +109,7 @@ const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) 
         </>
       )}
       <ResourceDropdownField
-        name="sink.name"
+        name="sink.key"
         resources={resourcesData}
         dataSelector={['metadata', 'name']}
         fullWidth
@@ -115,6 +119,10 @@ const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) 
         onChange={onChange}
         autocompleteFilter={autocompleteFilter}
         autoSelect
+        customResourceKey={(key: string, resource: K8sResourceKind) => {
+          const { kind } = resource;
+          return key ? `${kind}-${key}` : undefined;
+        }}
         resourceFilter={resourceFilter}
         onLoad={handleOnLoad}
       />

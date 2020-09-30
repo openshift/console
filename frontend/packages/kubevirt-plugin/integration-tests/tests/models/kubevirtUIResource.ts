@@ -13,10 +13,10 @@ import {
   vmDetailFlavorEditButton,
   vmDetailBootOrderEditButton,
   vmDetailDedicatedResourcesEditButton,
-  vmDetailStatusEditButton,
   vmDetailNodeSelectorEditButton,
   vmDetailTolerationsEditButton,
   vmDetailAffinityEditButton,
+  vmDetailstatusButton,
 } from '../../views/virtualMachine.view';
 import {
   activeTab,
@@ -215,7 +215,7 @@ export class KubevirtUIResource<T extends BaseVMBuilderData> extends UIResource 
   }
 
   async modalEditStatus() {
-    await click(vmDetailStatusEditButton(this.namespace, this.name));
+    await click(vmDetailstatusButton(this.namespace, this.name));
     await browser.wait(until.presenceOf(editStatusView.unpauseVMDialog));
     await isLoaded();
   }

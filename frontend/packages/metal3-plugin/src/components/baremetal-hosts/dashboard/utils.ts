@@ -19,7 +19,7 @@ const BMH_STATUS_GROUP_MAPPER = {
 
 export const getBMHStatusGroups: StatusGroupMapper = (
   hosts: BareMetalHostKind[],
-  { machines, nodes, maintenances },
+  { machines, nodes, maintenances, oldMaintenances },
 ) => {
   const groups = {
     [InventoryStatusGroup.NOT_MAPPED]: {
@@ -50,6 +50,7 @@ export const getBMHStatusGroups: StatusGroupMapper = (
   };
 
   const maintenancesByNodeName = createBasicLookup(maintenances, getNodeMaintenanceNodeName);
+  const oldMaintenancesByNodeName = createBasicLookup(oldMaintenances, getNodeMaintenanceNodeName);
   const nodesByMachineName = createBasicLookup(nodes, getNodeMachineName);
 
   hosts.forEach((host) => {
@@ -57,7 +58,8 @@ export const getBMHStatusGroups: StatusGroupMapper = (
     // on machines
     const machine = getHostMachine(host, machines as MachineKind[]);
     const node = nodesByMachineName[getName(machine)] as NodeKind;
-    const nodeMaintenance = maintenancesByNodeName[getName(node)];
+    const nodeMaintenance =
+      maintenancesByNodeName[getName(node)] || oldMaintenancesByNodeName[getName(node)];
     const bareMetalHostStatus = getHostStatus({ host, nodeMaintenance });
 
     const status = getHostFilterStatus({

@@ -1,9 +1,8 @@
 import { PrometheusHealthHandler, SubsystemHealth } from '@console/plugin-sdk';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { MODES } from '@console/ceph-storage-plugin/src/constants';
 import { getGaugeValue } from '../../utils';
-import { Phase, Health } from '../../constants';
+import { Phase } from '../../constants';
 
 const nooBaaStatus = {
   '0': { state: HealthState.OK },
@@ -47,25 +46,19 @@ export const getNooBaaState: PrometheusHealthHandler = (responses, noobaa) => {
   );
 };
 
-export const getRGWHealthState = (cr: K8sResourceKind, mode: MODES): SubsystemHealth => {
-  const health = mode !== MODES.EXTERNAL ? cr?.status?.phase : cr?.status?.bucketStatus?.health;
+export const getRGWHealthState = (cr: K8sResourceKind): SubsystemHealth => {
+  const health = cr?.status?.phase;
   if (!health) {
     return { state: HealthState.NOT_AVAILABLE };
   }
-  if (mode !== MODES.EXTERNAL) {
-    if (health === Phase.READY) {
+  switch (health) {
+    case Phase.CONNECTED:
       return { state: HealthState.OK };
-    }
-    if (health === Phase.FAILURE) {
+    case Phase.PROGRESSING:
+      return { state: HealthState.PROGRESS };
+    case Phase.FAILURE:
       return { state: HealthState.ERROR };
-    }
-  } else {
-    if (health === Health.HEALTHY) {
-      return { state: HealthState.OK };
-    }
-    if (health === Health.FAILURE) {
-      return { state: HealthState.ERROR };
-    }
+    default:
+      return { state: HealthState.UNKNOWN };
   }
-  return { state: HealthState.UNKNOWN };
 };

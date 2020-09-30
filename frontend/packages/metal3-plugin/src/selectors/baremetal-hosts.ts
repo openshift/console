@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { getName, getAnnotations } from '@console/shared/src/selectors/common';
+import { getName } from '@console/shared/src/selectors/common';
 import { MachineKind } from '@console/internal/module/k8s';
 import {
   BareMetalHostDisk,
@@ -47,18 +47,24 @@ export const getHostDescription = (host: BareMetalHostKind): string =>
   _.get(host, 'spec.description', '');
 export const isHostPoweredOn = (host: BareMetalHostKind): boolean =>
   _.get(host, 'status.poweredOn', false);
-export const isHostScheduledForRestart = (host: BareMetalHostKind) =>
-  !!Object.getOwnPropertyNames(getAnnotations(host, {})).find(
-    (annotation) =>
-      annotation === ANNOTATION_HOST_RESTART ||
-      annotation.startsWith(`${ANNOTATION_HOST_RESTART}/`),
+export const hasRebootAnnotation = (host: BareMetalHostKind): string =>
+  Object.keys(host?.metadata?.annotations || {}).find(
+    (annotation) => annotation === ANNOTATION_HOST_RESTART,
   );
+export const getPoweroffAnnotation = (host: BareMetalHostKind): string =>
+  Object.keys(host?.metadata?.annotations || {}).find((annotation) =>
+    annotation.startsWith(`${ANNOTATION_HOST_RESTART}/`),
+  );
+export const isHostScheduledForRestart = (host: BareMetalHostKind) =>
+  !!hasRebootAnnotation(host) && isHostPoweredOn(host);
+
 export const getHostPowerStatus = (host: BareMetalHostKind): string => {
   const isOnline = isHostOnline(host);
   const isPoweredOn = isHostPoweredOn(host);
-  if (isOnline && isPoweredOn) return HOST_POWER_STATUS_POWERED_ON;
-  if (!isOnline && isPoweredOn) return HOST_POWER_STATUS_POWERING_OFF;
-  if (isOnline && !isPoweredOn) return HOST_POWER_STATUS_POWERING_ON;
+  const poweroffAnnotation = getPoweroffAnnotation(host);
+  if (isOnline && isPoweredOn && !poweroffAnnotation) return HOST_POWER_STATUS_POWERED_ON;
+  if ((!isOnline || poweroffAnnotation) && isPoweredOn) return HOST_POWER_STATUS_POWERING_OFF;
+  if (isOnline && !isPoweredOn && !poweroffAnnotation) return HOST_POWER_STATUS_POWERING_ON;
   return HOST_POWER_STATUS_POWERED_OFF;
 };
 export const getHostVendorInfo = (host: BareMetalHostKind): BareMetalHostSystemVendor =>

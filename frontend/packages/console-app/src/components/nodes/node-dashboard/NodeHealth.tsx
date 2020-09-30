@@ -37,6 +37,7 @@ import './node-health.scss';
 export const HealthChecksPopup: React.FC<HealthChecksPopupProps> = ({
   conditions = [],
   machineHealthChecks,
+  disabledAlert,
 }) => {
   let conditionFailing: boolean = false;
   let reboot: boolean = false;
@@ -113,6 +114,11 @@ export const HealthChecksPopup: React.FC<HealthChecksPopupProps> = ({
           className="co-node-health__popup-alert"
         >
           {`Only one ${MachineHealthCheckModel.label} resource should match this node.`}
+        </Alert>
+      )}
+      {disabledAlert && (
+        <Alert isInline title={disabledAlert.title} className="co-node-health__popup-alert">
+          {disabledAlert.message}
         </Alert>
       )}
     </>
@@ -194,7 +200,14 @@ export const getMachineHealth = (
   };
 };
 
-export const HealthChecksItem: React.FC = () => {
+type HealthChecksItemProps = {
+  disabledAlert?: {
+    title: string;
+    message: React.ReactNode;
+  };
+};
+
+export const HealthChecksItem: React.FC<HealthChecksItemProps> = ({ disabledAlert }) => {
   const { obj, setHealthCheck } = React.useContext(NodeDashboardContext);
   const { name, namespace } = getNodeMachineNameAndNamespace(obj);
   const machineResource = React.useMemo(
@@ -207,7 +220,9 @@ export const HealthChecksItem: React.FC = () => {
   );
   const machine = useK8sWatchResource<MachineKind>(machineResource);
   const healthChecks = useK8sWatchResource<MachineHealthCheckKind[]>(machineHealthChecksResource);
-  const healthState = getMachineHealth(obj, machine, healthChecks);
+  const healthState = disabledAlert
+    ? { state: HealthState.NOT_AVAILABLE }
+    : getMachineHealth(obj, machine, healthChecks);
 
   let failingHealthCheck = false;
   let reboot = false;
@@ -233,6 +248,7 @@ export const HealthChecksItem: React.FC = () => {
       <HealthChecksPopup
         conditions={healthState.conditions}
         machineHealthChecks={healthState.matchingHC}
+        disabledAlert={disabledAlert}
       />
     </HealthItem>
   );
@@ -271,4 +287,8 @@ type MachineHealth = {
 type HealthChecksPopupProps = {
   conditions: MachineHealthConditionWithStatus[];
   machineHealthChecks: MachineHealthCheckKind[];
+  disabledAlert?: {
+    title: string;
+    message: React.ReactNode;
+  };
 };

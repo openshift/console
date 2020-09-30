@@ -21,6 +21,7 @@ describe('Event Source ValidationUtils', () => {
         apiVersion: '',
         name: '',
         kind: '',
+        key: '',
       };
       await eventSourceValidationSchema
         .resolve({ value: mockData })
@@ -50,6 +51,7 @@ describe('Event Source ValidationUtils', () => {
         apiVersion: '',
         name: '',
         kind: '',
+        key: '',
       };
       mockData.data.apiserversource.resources[0] = { apiVersion: '', kind: '' };
       await eventSourceValidationSchema

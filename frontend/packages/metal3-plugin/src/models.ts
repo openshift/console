@@ -25,3 +25,29 @@ export const NodeMaintenanceModel: K8sKind = {
   id: 'nodemaintenance',
   crd: true,
 };
+
+export const ProvisioningModel: K8sKind = {
+  label: 'Provisioning',
+  labelPlural: 'Provisionings',
+  apiVersion: 'v1alpha1',
+  apiGroup: 'metal3.io',
+  plural: 'provisionings',
+  abbr: 'P',
+  namespaced: false,
+  kind: 'Provisioning',
+  id: 'provisioning',
+  crd: true,
+};
+
+export const NodeMaintenanceOldModel: K8sKind = {
+  label: 'Node Maintenance',
+  labelPlural: 'Node Maintenances',
+  apiVersion: 'v1alpha1',
+  apiGroup: 'kubevirt.io',
+  plural: 'nodemaintenances',
+  abbr: 'NM',
+  namespaced: false,
+  kind: 'NodeMaintenance',
+  id: 'nodemaintenance',
+  crd: true,
+};

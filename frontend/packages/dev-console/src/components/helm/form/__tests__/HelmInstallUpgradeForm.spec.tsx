@@ -1,12 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { shallow } from 'enzyme';
-import { InputField, SyncedEditorField, FormHeader } from '@console/shared';
+import { InputField, SyncedEditorField, FormHeader, FormFooter } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import HelmInstallUpgradeForm from '../HelmInstallUpgradeForm';
 import { HelmActionType } from '../../helm-types';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
+import { Alert } from '@patternfly/react-core';
 
 const formValues = {
   releaseName: 'helm-release',
@@ -46,6 +47,7 @@ const componentProps = {
   helmActionConfig: helmConfig,
   onVersionChange: jest.fn(),
   chartMetaDescription: <p>Some chart meta</p>,
+  chartError: null,
 };
 
 const props: React.ComponentProps<typeof HelmInstallUpgradeForm> = {
@@ -122,5 +124,27 @@ describe('HelmInstallUpgradeForm', () => {
     const wrapper = shallow(<HelmInstallUpgradeForm {...newProps} />);
     expect(wrapper.find(InputField).props().label).toBe('Release Name');
     expect(wrapper.find(InputField).props().isDisabled).toBe(true);
+  });
+
+  it('should show error alert when chart is not reachable', () => {
+    const newProps = _.cloneDeep(props);
+    newProps.chartError = new Error('Chart not reachable');
+    const wrapper = shallow(<HelmInstallUpgradeForm {...newProps} />);
+    expect(wrapper.find(Alert).exists()).toBe(true);
+  });
+
+  it('should disable Release Name field and Install button if chart is not reachable', () => {
+    const newProps = _.cloneDeep(props);
+    newProps.chartError = new Error('Chart not reachable');
+    const wrapper = shallow(<HelmInstallUpgradeForm {...newProps} />);
+    expect(wrapper.find(InputField).props().isDisabled).toBe(true);
+    expect(wrapper.find(FormFooter).props().disableSubmit).toBe(true);
+  });
+
+  it('should not show form editor if chart is not reachable', () => {
+    const newProps = _.cloneDeep(props);
+    newProps.chartError = new Error('Chart not reachable');
+    const wrapper = shallow(<HelmInstallUpgradeForm {...newProps} />);
+    expect(wrapper.find(SyncedEditorField).exists()).toBe(false);
   });
 });

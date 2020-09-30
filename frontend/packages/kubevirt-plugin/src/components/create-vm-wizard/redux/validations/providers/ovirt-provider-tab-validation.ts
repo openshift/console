@@ -23,20 +23,20 @@ const validationConfig: ValidationConfig<OvirtProviderField> = {
 
       if (invalidStart && invalidEnding) {
         return asValidationObject(
-          `URL should start with "https://" and end with "/ovirt-engine/api"`,
-          ValidationErrorType.Info,
+          `URL has to start with "https://" and end with "/ovirt-engine/api"`,
+          ValidationErrorType.Error,
         );
       }
 
       if (invalidEnding) {
         return asValidationObject(
-          `URL should end with "/ovirt-engine/api"`,
-          ValidationErrorType.Info,
+          `URL has to end with "/ovirt-engine/api"`,
+          ValidationErrorType.Error,
         );
       }
 
       if (invalidStart) {
-        return asValidationObject(`URL should start with "https://"`, ValidationErrorType.Info);
+        return asValidationObject(`URL has to start with "https://"`, ValidationErrorType.Error);
       }
 
       return null;

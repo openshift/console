@@ -5,11 +5,13 @@ import TopologyGroupResourceItem from './TopologyGroupResourceItem';
 type TopologyGroupResourceListProps = {
   resources: K8sResourceKind[];
   releaseNamespace: string;
+  linkForResource?: (obj: K8sResourceKind) => React.ReactElement;
 };
 
 const TopologyGroupResourceList: React.FC<TopologyGroupResourceListProps> = ({
   resources,
   releaseNamespace,
+  linkForResource,
 }) => {
   return (
     <ul className="list-group">
@@ -20,6 +22,7 @@ const TopologyGroupResourceList: React.FC<TopologyGroupResourceListProps> = ({
             key={resource.metadata.name}
             item={resource}
             releaseNamespace={releaseNamespace}
+            linkForResource={linkForResource}
           />
         ))}
     </ul>

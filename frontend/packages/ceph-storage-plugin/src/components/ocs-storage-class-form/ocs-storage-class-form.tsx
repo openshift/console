@@ -12,10 +12,9 @@ import { CaretDownIcon } from '@patternfly/react-icons';
 import { LoadingInline } from '@console/internal/components/utils/status-box';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ProvisionerProps } from '@console/plugin-sdk';
-import { StorageClassResourceKind } from '@console/internal/module/k8s';
 
-import { CEPH_INTERNAL_CR_NAME, OCS_PROVISIONER, CEPH_EXTERNAL_CR_NAME } from '../../constants';
-import { cephBlockPoolResource, cephClusterResource, scResource } from '../../constants/resources';
+import { CEPH_INTERNAL_CR_NAME, CEPH_EXTERNAL_CR_NAME, CLUSTER_STATUS } from '../../constants';
+import { cephBlockPoolResource, cephClusterResource } from '../../constants/resources';
 import { CephClusterKind, StoragePoolKind } from '../../types';
 import { storagePoolModal } from '../modals/storage-pool-modal/storage-pool-modal';
 import { POOL_STATE } from '../../constants/storage-pool-const';
@@ -31,29 +30,8 @@ export const PoolResourceComponent: React.FC<ProvisionerProps> = ({ onParamChang
     cephClusterResource,
   );
 
-  const [scObjList, scloaded, scloadError] = useK8sWatchResource<StorageClassResourceKind[]>(
-    scResource,
-  );
-
   const [isOpen, setOpen] = React.useState(false);
   const [poolName, setPoolName] = React.useState('');
-  const [usedPool, setUsedPool] = React.useState<string[]>(null);
-
-  React.useEffect(() => {
-    if (scloaded && !scloadError) {
-      const usedPoolArray = _.reduce(
-        scObjList,
-        (res, value) => {
-          if (value.provisioner === OCS_PROVISIONER.BLOCK) {
-            res.push(value?.['parameters']?.pool);
-          }
-          return res;
-        },
-        [],
-      );
-      setUsedPool(usedPoolArray);
-    }
-  }, [scObjList, scloadError, scloaded]);
 
   const handleDropdownChange = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const name = e.currentTarget.id;
@@ -75,8 +53,8 @@ export const PoolResourceComponent: React.FC<ProvisionerProps> = ({ onParamChang
     poolData,
     (res, pool: StoragePoolKind) => {
       if (
-        usedPool.indexOf(pool?.metadata.name) === -1 &&
-        pool?.status?.phase === POOL_STATE.READY
+        pool?.status?.phase === POOL_STATE.READY &&
+        cephClusterObj[0]?.status?.phase === CLUSTER_STATUS.READY
       ) {
         res.push(
           <DropdownItem
@@ -125,7 +103,7 @@ export const PoolResourceComponent: React.FC<ProvisionerProps> = ({ onParamChang
               className="dropdown dropdown--full-width"
               toggle={
                 <DropdownToggle
-                  id="toggle-id"
+                  id="pool-dropdown-id"
                   onToggle={() => setOpen(!isOpen)}
                   toggleIndicator={CaretDownIcon}
                 >

@@ -8,6 +8,8 @@ import {
 import { ITemplate } from '../../../types/template';
 import { iGetCreationTimestamp, iGetLabels } from '../common';
 import { compareVersions } from '../../../utils/sort';
+import { iGet, iGetIn } from '../../../utils/immutable';
+import { VirtualMachineModel } from '../../../models';
 
 type FindTemplateOptions = {
   workload?: string;
@@ -87,3 +89,13 @@ export const iGetRelevantTemplates = (
 export const iGetRelevantTemplate = (
   ...args: Parameters<typeof iGetRelevantTemplates>
 ): ITemplate => iGetRelevantTemplates(...args).first();
+
+export const iSelectVM = (tmp: ITemplate) =>
+  iGetIn(tmp, ['objects'])?.find((obj) => iGet(obj, 'kind') === VirtualMachineModel.kind);
+
+export const iGetCommonTemplateCloudInit = (tmp: ITemplate) => {
+  const iCloudInitStorage = iGetIn(iSelectVM(tmp), ['spec', 'template', 'spec', 'volumes'])?.find(
+    (storage) => !!iGet(storage, 'cloudInitNoCloud'),
+  );
+  return iGet(iCloudInitStorage, 'cloudInitNoCloud');
+};

@@ -375,7 +375,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
   return (
     <div className="co-m-pane__body co-m-pane__form">
       <Helmet>
-        <title>{titleVerb} Receiver</title>
+        <title>{`${titleVerb} Receiver`}</title>
       </Helmet>
       <form className="co-m-pane__body-group" onSubmit={save}>
         <h1 className="co-m-pane__heading">

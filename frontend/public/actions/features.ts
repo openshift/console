@@ -2,7 +2,7 @@ import { Dispatch } from 'react-redux';
 import * as _ from 'lodash-es';
 import { ActionType as Action, action } from 'typesafe-actions';
 import { FLAGS } from '@console/shared/src/constants/common';
-import { GroupModel, UserModel } from '../models';
+import { GroupModel, UserModel, VolumeSnapshotContentModel } from '../models';
 import { ClusterVersionKind } from '../module/k8s';
 import { receivedResources } from './k8s';
 import { pluginStore } from '../plugins';
@@ -135,6 +135,15 @@ const ssarChecks = [
       group: 'metering.openshift.io',
       resource: 'reports',
       namespace: 'openshift-metering',
+      verb: 'list',
+    },
+  },
+  // TODO: Move into Core Plugin
+  {
+    flag: FLAGS.CAN_LIST_VSC,
+    resourceAttributes: {
+      group: VolumeSnapshotContentModel.apiGroup,
+      resource: VolumeSnapshotContentModel.plural,
       verb: 'list',
     },
   },

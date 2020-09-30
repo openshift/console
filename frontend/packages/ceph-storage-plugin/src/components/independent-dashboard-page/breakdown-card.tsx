@@ -76,7 +76,7 @@ export const BreakdownCard: React.FC<DashboardItemProps> = ({
           </Select>
         </div>
       </DashboardCardHeader>
-      <DashboardCardBody classname="ceph-capacity-breakdown-card__body">
+      <DashboardCardBody className="ceph-capacity-breakdown-card__body">
         <BreakdownCardBody
           isLoading={queriesDataLoaded}
           hasLoadError={queriesLoadError}

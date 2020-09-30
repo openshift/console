@@ -9,7 +9,7 @@ INSTALLER_DIR=${INSTALLER_DIR:=${ARTIFACT_DIR}/installer}
 function copyArtifacts {
   if [ -d "$ARTIFACT_DIR" ] && [ -d "$SCREENSHOTS_DIR" ]; then
     echo "Copying artifacts from $(pwd)..."
-    cp -rv "$SCREENSHOTS_DIR" "${ARTIFACT_DIR}/gui_test_screenshots"
+    cp -r "$SCREENSHOTS_DIR" "${ARTIFACT_DIR}/gui_test_screenshots"
   fi
 }
 

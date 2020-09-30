@@ -31,6 +31,7 @@ $no-wrap-breakpoint: 915px;
   }
   &__resource-toolbar {
     padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--xl);
+    margin-right: 0;
   }
   &__workload-filter {
     li[role='presentation'] {

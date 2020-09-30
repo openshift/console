@@ -5,6 +5,7 @@ import {
   Form,
   FormSelect,
   FormSelectOption,
+  SelectOption,
   TextInput,
 } from '@patternfly/react-core';
 import {
@@ -39,6 +40,11 @@ import { isFieldDisabled } from '../../../utils/ui/edit-config';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PendingChangesAlert } from '../../Alerts/PendingChangesAlert';
 import { MODAL_RESTART_IS_REQUIRED } from '../../../strings/vm/status';
+import { FormPFSelect } from '../../form/form-pf-select';
+import {
+  SELECT_PXE_NAD_ERROR_INFO,
+  SELECT_PXE_NAD_MISSING_INFO,
+} from '../../create-vm-wizard/strings/networking';
 
 const getNetworkChoices = (
   nads: K8sResourceKind[],
@@ -94,15 +100,22 @@ export const Network: React.FC<NetworkProps> = ({
     allowPodNetwork,
     allowedMultusNetworkTypes,
   ).filter((n) => n.getType().isSupported());
+  const validationMessage = nadsLoadError
+    ? SELECT_PXE_NAD_ERROR_INFO
+    : networkChoices.length === 0
+    ? SELECT_PXE_NAD_MISSING_INFO
+    : null;
+  const validationType =
+    nadsLoadError || networkChoices.length === 0 ? ValidationErrorType.Error : null;
 
   return (
     <FormRow
       title="Network"
       fieldId={id}
       isRequired
-      isLoading={nadsLoading}
-      validationMessage={nadsLoadError}
-      validationType={nadsLoadError && ValidationErrorType.Error}
+      isLoading={nadsLoading && !nadsLoadError}
+      validationMessage={validationMessage}
+      validationType={validationType}
     >
       <FormSelect
         onChange={(net, event) => {
@@ -114,15 +127,11 @@ export const Network: React.FC<NetworkProps> = ({
         }}
         value={asFormSelectValue(network?.getReadableName())}
         id={id}
-        isDisabled={isDisabled || nadsLoading || nadsLoadError}
+        isDisabled={isDisabled || nadsLoading || nadsLoadError || networkChoices.length === 0}
       >
         <FormSelectPlaceholderOption
           isDisabled={!acceptEmptyValues}
-          placeholder={
-            networkChoices.length === 0
-              ? '--- No Network Attachment Definitions available ---'
-              : '--- Select Network Attachment Definition ---'
-          }
+          placeholder={'--- Select Network Attachment Definition ---'}
         />
         {ignoreCaseSort(networkChoices, undefined, (n) => n.getReadableName()).map(
           (networkWrapper: NetworkWrapper) => {
@@ -265,27 +274,29 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
             />
           </FormRow>
           <FormRow title="Model" fieldId={asId('model')} isRequired>
-            <FormSelect
-              onChange={(networkInterfaceModel) =>
-                setModel(NetworkInterfaceModel.fromString(networkInterfaceModel))
-              }
-              value={asFormSelectValue(model)}
+            <FormPFSelect
+              menuAppendTo={() => document.body}
               id={asId('model')}
+              toggleId={asId('select-model')}
+              placeholderText="--- Select Model ---"
               isDisabled={isDisabled('model') || interfaceType === NetworkInterfaceType.SRIOV}
+              selections={asFormSelectValue(model?.getValue())}
+              onSelect={(e, v) => setModel(NetworkInterfaceModel.fromString(v.toString()))}
             >
-              <FormSelectPlaceholderOption isDisabled placeholder="--- Select Model ---" />
               {NetworkInterfaceModel.getAll()
                 .filter((ifaceModel) => ifaceModel.isSupported() || ifaceModel === model)
                 .map((ifaceModel) => {
                   return (
-                    <FormSelectOption
+                    <SelectOption
                       key={ifaceModel.getValue()}
                       value={ifaceModel.getValue()}
-                      label={ifaceModel.toString()}
-                    />
+                      description={ifaceModel.getDescription()}
+                    >
+                      {ifaceModel.toString()}
+                    </SelectOption>
                   );
                 })}
-            </FormSelect>
+            </FormPFSelect>
           </FormRow>
           <Network
             id={asId('network')}
@@ -306,24 +317,28 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
             acceptEmptyValues={editConfig?.acceptEmptyValuesOverride?.network}
           />
           <FormRow title="Type" fieldId={asId('type')} isRequired>
-            <FormSelect
-              onChange={onNetworkInterfaceChange}
-              value={asFormSelectValue(interfaceType)}
+            <FormPFSelect
+              menuAppendTo={() => document.body}
+              onSelect={(e, v) => onNetworkInterfaceChange(v.toString())}
               id={asId('type')}
+              placeholderText="--- Select Type ---"
+              selections={asFormSelectValue(interfaceType?.getValue())}
               isDisabled={isDisabled('type')}
+              toggleId={asId('select-type')}
             >
-              <FormSelectPlaceholderOption isDisabled placeholder="--- Select Type ---" />
               {(resultNetwork.getType()
                 ? resultNetwork.getType().getAllowedInterfaceTypes()
                 : NetworkType.getSupportedAllowedInterfaceTypes()
               ).map((iType) => (
-                <FormSelectOption
+                <SelectOption
                   key={iType.getValue()}
                   value={iType.getValue()}
-                  label={iType.toString()}
-                />
+                  description={iType.getDescription()}
+                >
+                  {iType.toString()}
+                </SelectOption>
               ))}
-            </FormSelect>
+            </FormPFSelect>
           </FormRow>
           <FormRow
             title="MAC Address"

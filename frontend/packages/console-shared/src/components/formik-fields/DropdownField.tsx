@@ -33,8 +33,9 @@ const DropdownField: React.FC<DropdownFieldProps> = ({ label, helpText, required
         aria-describedby={`${fieldId}-helper`}
         onChange={(value: string) => {
           props.onChange && props.onChange(value);
-          setFieldValue(props.name, value);
-          setFieldTouched(props.name, true);
+          // Validation is automatically done by the useFormikValidationFix above
+          setFieldValue(props.name, value, false);
+          setFieldTouched(props.name, true, false);
         }}
       />
     </FormGroup>

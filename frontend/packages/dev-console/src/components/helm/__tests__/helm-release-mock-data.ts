@@ -1,5 +1,5 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { HelmRelease, HelmChartMetaData } from '../helm-types';
+import { HelmRelease, HelmChartMetaData, HelmChartEntries } from '../helm-types';
 
 /* eslint-disable @typescript-eslint/camelcase */
 export const mockHelmReleases: HelmRelease[] = [
@@ -126,7 +126,7 @@ export const mockHelmReleases: HelmRelease[] = [
   },
 ];
 
-export const mockHelmChartData: HelmChartMetaData[] = [
+export const mockIBMHelmChartData: HelmChartMetaData[] = [
   {
     appVersion: '3.12',
     apiVersion: 'v1',
@@ -136,6 +136,7 @@ export const mockHelmChartData: HelmChartMetaData[] = [
       'https://raw.githubusercontent.com/IBM/charts/master/repo/community/hazelcast-enterprise-1.0.3.tgz',
     ],
     version: '1.0.3',
+    repoName: 'ibm-helm-repo',
   },
   {
     apiVersion: 'v1',
@@ -145,6 +146,7 @@ export const mockHelmChartData: HelmChartMetaData[] = [
       'https://raw.githubusercontent.com/IBM/charts/master/repo/community/hazelcast-enterprise-1.0.2.tgz',
     ],
     version: '1.0.2',
+    repoName: 'ibm-helm-repo',
   },
   {
     appVersion: '3.10.5',
@@ -155,8 +157,43 @@ export const mockHelmChartData: HelmChartMetaData[] = [
       'https://raw.githubusercontent.com/IBM/charts/master/repo/community/hazelcast-enterprise-1.0.1.tgz',
     ],
     version: '1.0.1',
+    repoName: 'ibm-helm-repo',
   },
 ];
+
+export const mockRedhatHelmChartData: HelmChartMetaData[] = [
+  {
+    apiVersion: 'v1',
+    description: 'abc',
+    name: 'hazelcast-enterprise',
+    urls: [
+      'https://raw.githubusercontent.com/redhat-helm-charts/master/repo/stable/hazelcast-enterprise-1.0.2.tgz',
+    ],
+    version: '1.0.2',
+    repoName: 'redhat-helm-repo',
+  },
+  {
+    appVersion: '3.10.5',
+    apiVersion: 'v1',
+    description: 'efg',
+    name: 'hazelcast-enterprise',
+    urls: [
+      'https://raw.githubusercontent.com/redhat-helm-charts/master/repo/stable/hazelcast-enterprise-1.0.1.tgz',
+    ],
+    version: '1.0.1',
+    repoName: 'redhat-helm-repo',
+  },
+];
+
+export const mockHelmChartData: HelmChartMetaData[] = [
+  ...mockIBMHelmChartData,
+  ...mockRedhatHelmChartData,
+];
+
+export const mockChartEntries: HelmChartEntries = {
+  'hazelcast-enterprise--ibm-helm-repo': mockIBMHelmChartData,
+  'hazelcast-enterprise--redhat-helm-repo': mockRedhatHelmChartData,
+};
 
 export const mockReleaseResources: {
   [key: string]: { data: K8sResourceKind };

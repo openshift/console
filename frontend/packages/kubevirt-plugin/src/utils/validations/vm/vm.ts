@@ -1,23 +1,35 @@
 import { TemplateKind } from '@console/internal/module/k8s';
 import {
   asValidationObject,
+  validateDNS1123SubdomainValue,
   ValidationErrorType,
   ValidationObject,
-  validateDNS1123SubdomainValue,
 } from '@console/shared';
 import { ProvisionSource } from '../../../constants/vm/provision-source';
-import { validateEntityAlreadyExists } from '../common';
+import { getValidationByType, validateEntityAlreadyExists } from '../common';
+import { UIValidation, UIValidationType } from '../../../types/ui/ui';
 
 export const validateVmLikeEntityName = (
   value: string,
   namespace: string,
   vmLikeEntities,
-  { existsErrorMessage, subject }: { existsErrorMessage: string; subject: string } = {
+  {
+    existsErrorMessage,
+    subject,
+    validations,
+  }: { existsErrorMessage: string; subject: string; validations?: UIValidation[] } = {
     existsErrorMessage: undefined,
     subject: undefined,
+    validations: undefined,
   },
 ): ValidationObject => {
-  const dnsValidation = validateDNS1123SubdomainValue(value, { subject });
+  const lenValidation = getValidationByType(validations, UIValidationType.LENGTH);
+  const dnsValidation = validateDNS1123SubdomainValue(value, {
+    subject,
+    min: lenValidation?.settings?.min,
+    max: lenValidation?.settings?.max,
+  });
+
   return dnsValidation && dnsValidation.type === ValidationErrorType.Error
     ? dnsValidation
     : validateEntityAlreadyExists(value, namespace, vmLikeEntities, {

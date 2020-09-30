@@ -42,6 +42,7 @@ export const migratePipelineRun = (pipelineRun: PipelineRun): PipelineRun => {
 export const getPipelineRunData = (
   pipeline: Pipeline = null,
   latestRun?: PipelineRun,
+  options?: { generateName: boolean },
 ): PipelineRun => {
   if (!pipeline && !latestRun) {
     // eslint-disable-next-line no-console
@@ -57,12 +58,27 @@ export const getPipelineRunData = (
   const latestRunParams = latestRun?.spec.params;
   const pipelineParams = pipeline?.spec.params;
   const params = latestRunParams || getPipelineRunParams(pipelineParams);
+  // TODO: We should craft a better method to allow us to provide configurable annotations and labels instead of
+  // blinding merging existing content from potential real Pipeline and PipelineRun resources
+  const annotations = _.merge(
+    {},
+    pipeline?.metadata?.annotations,
+    latestRun?.metadata?.annotations,
+  );
+  delete annotations['kubectl.kubernetes.io/last-applied-configuration'];
 
   const newPipelineRun = {
     apiVersion: pipeline ? pipeline.apiVersion : latestRun.apiVersion,
     kind: PipelineRunModel.kind,
     metadata: {
-      name: `${pipelineName}-${getRandomChars(6)}`,
+      ...(options?.generateName
+        ? {
+            generateName: `${pipelineName}-`,
+          }
+        : {
+            name: `${pipelineName}-${getRandomChars()}`,
+          }),
+      annotations,
       namespace: pipeline ? pipeline.metadata.namespace : latestRun.metadata.namespace,
       labels: _.merge({}, pipeline?.metadata?.labels, latestRun?.metadata?.labels, {
         'tekton.dev/pipeline': pipelineName,
@@ -137,11 +153,14 @@ export const getPipelineRunFromForm = (
   pipeline: Pipeline,
   formValues: CommonPipelineModalFormikValues,
   labels?: { [key: string]: string },
+  annotations?: { [key: string]: string },
+  options?: { generateName: boolean },
 ) => {
   const { parameters, resources, workspaces } = formValues;
 
   const pipelineRunData: PipelineRun = {
     metadata: {
+      annotations,
       labels,
     },
     spec: {
@@ -153,5 +172,5 @@ export const getPipelineRunFromForm = (
       workspaces: getPipelineRunWorkspaces(workspaces),
     },
   };
-  return getPipelineRunData(pipeline, pipelineRunData);
+  return getPipelineRunData(pipeline, pipelineRunData, options);
 };

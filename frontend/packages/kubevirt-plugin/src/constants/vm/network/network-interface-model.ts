@@ -1,22 +1,68 @@
 /* eslint-disable lines-between-class-members */
 import { ObjectEnum } from '../../object-enum';
 import { READABLE_VIRTIO } from '../constants';
+import { NIC_MODEL_E1000E_DESC, DISK_TYPE_VIRTIO_DESC } from '../../../utils/strings';
+import { SelectDropdownObjectEnum, SelectDropdownData } from '../../select-dropdown-object-enum';
 
-export class NetworkInterfaceModel extends ObjectEnum<string> {
-  static readonly VIRTIO = new NetworkInterfaceModel('virtio');
-  static readonly E1000 = new NetworkInterfaceModel('e1000', { isSupported: false });
-  static readonly E1000E = new NetworkInterfaceModel('e1000e');
-  static readonly NE2kPCI = new NetworkInterfaceModel('ne2kPCI', { isSupported: false });
-  static readonly PCNET = new NetworkInterfaceModel('pcnet', { isSupported: false });
-  static readonly RTL8139 = new NetworkInterfaceModel('rtl8139', { isSupported: false });
+export class NetworkInterfaceModel extends SelectDropdownObjectEnum<string> {
+  static readonly VIRTIO = new NetworkInterfaceModel(
+    'virtio',
+    { isSupported: true },
+    {
+      label: READABLE_VIRTIO,
+      description: DISK_TYPE_VIRTIO_DESC,
+      order: 1,
+    },
+  );
+  static readonly E1000 = new NetworkInterfaceModel(
+    'e1000',
+    { isSupported: false },
+    {
+      label: 'E1000',
+      order: 2,
+    },
+  );
+  static readonly E1000E = new NetworkInterfaceModel(
+    'e1000e',
+    { isSupported: true },
+    {
+      label: 'e1000e',
+      order: 3,
+      description: NIC_MODEL_E1000E_DESC,
+    },
+  );
+  static readonly NE2kPCI = new NetworkInterfaceModel(
+    'ne2kPCI',
+    { isSupported: false },
+    {
+      order: 4,
+    },
+  );
+  static readonly PCNET = new NetworkInterfaceModel(
+    'pcnet',
+    { isSupported: false },
+    {
+      label: 'PCnet',
+      order: 5,
+    },
+  );
+  static readonly RTL8139 = new NetworkInterfaceModel(
+    'rtl8139',
+    { isSupported: false },
+    {
+      label: 'RTL8139',
+      order: 6,
+    },
+  );
 
   private readonly supported: boolean;
 
   protected constructor(
     value: string,
     { isSupported = true }: NetworkInterfaceModelConstructorOpts = {},
+    selectData: SelectDropdownData = {},
   ) {
-    super(value);
+    super(value, selectData);
     this.supported = isSupported;
   }
 
@@ -38,13 +84,6 @@ export class NetworkInterfaceModel extends ObjectEnum<string> {
     NetworkInterfaceModel.stringMapper[model];
 
   isSupported = () => this.supported;
-
-  toString() {
-    if (this === NetworkInterfaceModel.VIRTIO) {
-      return READABLE_VIRTIO;
-    }
-    return this.value;
-  }
 }
 
 type NetworkInterfaceModelConstructorOpts = {

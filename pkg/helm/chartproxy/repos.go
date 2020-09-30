@@ -6,6 +6,7 @@ import (
 	"crypto/x509"
 	"errors"
 	"fmt"
+	"github.com/coreos/pkg/capnslog"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -28,6 +29,7 @@ var (
 		Version:  "v1beta1",
 		Resource: "helmchartrepositories",
 	}
+	plog = capnslog.NewPackageLogger("github.com/openshift/console", "helm/chartproxy")
 )
 
 const (
@@ -74,6 +76,9 @@ func (hr helmRepo) IndexFile() (*repo.IndexFile, error) {
 	resp, err := httpClient.Get(indexURL)
 	if err != nil {
 		return nil, err
+	}
+	if resp.StatusCode != 200 {
+		return nil, errors.New(fmt.Sprintf("Response for %v returned %v with status code %v", indexURL, resp, resp.StatusCode))
 	}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -126,7 +131,7 @@ func (b helmRepoGetter) unmarshallConfig(repo unstructured.Unstructured) (*helmR
 	if caReference != "" {
 		configMap, err := b.CoreClient.ConfigMaps(configNamespace).Get(context.TODO(), caReference, v1.GetOptions{})
 		if err != nil {
-			return nil, errors.New(fmt.Sprintf("Failed to GET configmap %s", caReference))
+			return nil, errors.New(fmt.Sprintf("Failed to GET configmap %s, reason %v", caReference, err))
 		}
 		caBundleKey := "ca-bundle.crt"
 		caCert, found := configMap.Data[caBundleKey]
@@ -152,7 +157,7 @@ func (b helmRepoGetter) unmarshallConfig(repo unstructured.Unstructured) (*helmR
 	if tlsReference != "" {
 		secret, err := b.CoreClient.Secrets(configNamespace).Get(context.TODO(), tlsReference, v1.GetOptions{})
 		if err != nil {
-			return nil, errors.New(fmt.Sprintf("Failed to GET secret %s", tlsReference))
+			return nil, errors.New(fmt.Sprintf("Failed to GET secret %s reason %v", tlsReference, err))
 		}
 		tlsCertSecretKey := "tls.crt"
 		tlsCert, ok := secret.Data[tlsCertSecretKey]
@@ -175,28 +180,18 @@ func (b helmRepoGetter) unmarshallConfig(repo unstructured.Unstructured) (*helmR
 	return h, nil
 }
 
-func mergeIndexFiles(files ...*repo.IndexFile) *repo.IndexFile {
-	indexFile := repo.NewIndexFile()
-	for _, file := range files {
-		for key, entry := range file.Entries {
-			indexFile.Entries[key] = entry
-		}
-	}
-	return indexFile
-}
-
 func (b *helmRepoGetter) List() ([]*helmRepo, error) {
 	var helmRepos []*helmRepo
 	repos, err := b.Client.Resource(helmChartRepositoryGVK).List(context.TODO(), v1.ListOptions{})
-	if err != nil || len(repos.Items) == 0 {
-		// In case no HelmRepoCRs configured or error reading them, use default redhat helm chart repo
-		helmRepos = append(helmRepos, &DefaultRepo)
+	if err != nil {
+		plog.Errorf("Error listing helm chart repositories: %v \nempty repository list will be used", err)
 		return helmRepos, nil
 	}
 	for _, item := range repos.Items {
 		helmConfig, err := b.unmarshallConfig(item)
 		if err != nil {
-			return nil, err
+			plog.Errorf("Error unmarshalling repo %v: %v", item, err)
+			continue
 		}
 		helmRepos = append(helmRepos, helmConfig)
 	}

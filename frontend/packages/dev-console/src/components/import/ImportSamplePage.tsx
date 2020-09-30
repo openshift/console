@@ -167,13 +167,11 @@ const ImportSamplePage: React.FC<ImportSamplePageProps> = ({ match }) => {
       true,
     ).then(() => createOrUpdateResources(values, imageStream as K8sResourceKind));
 
-    resourceActions
+    return resourceActions
       .then(() => {
-        actions.setSubmitting(false);
         history.push(`/topology/ns/${namespace}`);
       })
       .catch((err) => {
-        actions.setSubmitting(false);
         actions.setStatus({ submitError: err.message });
       });
   };

@@ -12,8 +12,15 @@ import { VMILikeEntityKind } from '../../types/vmLike';
 
 type EventFilterFunction = (src: EventInvolvedObject) => boolean;
 
-const vmEventFilter = (vm: VMILikeEntityKind): EventFilterFunction => ({ kind, namespace, name }) =>
-  kind === VirtualMachineModel.kind && name === getName(vm) && namespace === getNamespace(vm);
+const vmEventFilter = (vm: VMILikeEntityKind): EventFilterFunction => ({
+  kind,
+  namespace,
+  name,
+}) => {
+  return (
+    kind === VirtualMachineModel.kind && name === getName(vm) && namespace === getNamespace(vm)
+  );
+};
 
 const vmiEventFilter = (vm: VMILikeEntityKind): EventFilterFunction => ({
   kind,
@@ -36,7 +43,7 @@ const cdiImporterPodEventFilter = (vm: VMILikeEntityKind): EventFilterFunction =
   namespace,
   name,
 }) => {
-  // importer pod example importer-<diskName>-<vmname>-<generatedId>
+  // importer pod example importer-<vmName>-<diskName>-<generatedId>
   // note: diskName and vmname may contain '-' which means pod name should have at least 4 parts
   if (
     kind === PodModel.kind &&
@@ -45,11 +52,10 @@ const cdiImporterPodEventFilter = (vm: VMILikeEntityKind): EventFilterFunction =
     name.split('-').length > 3
   ) {
     const importerDashIndex = name.indexOf('-');
-    const diskDashIndex = name.indexOf('-', importerDashIndex + 1);
     const lastDashIndex = name.lastIndexOf('-');
-    // try to remove importer- and some part of <diskname>
-    const diskAndVmName = name.slice(diskDashIndex + 1, lastDashIndex);
-    return diskAndVmName.endsWith(getName(vm));
+    // remove importer- and -<generatedId>
+    const vmAndDiskName = name.slice(importerDashIndex + 1, lastDashIndex);
+    return vmAndDiskName.startsWith(getName(vm));
   }
   return false;
 };

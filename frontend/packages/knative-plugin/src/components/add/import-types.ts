@@ -44,6 +44,7 @@ export interface SinkResourceData {
   apiVersion: string;
   name: string;
   kind: string;
+  key: string;
   uri?: string;
 }
 
@@ -81,6 +82,8 @@ export enum SinkType {
   Resource = 'resource',
   Uri = 'uri',
 }
+
+export const EVENT_SOURCES_APP = 'event-sources-app';
 
 export const sourceSinkType = {
   Resource: {

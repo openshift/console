@@ -9,6 +9,7 @@
     "no-console": "off",
     "no-namespace": "off",
     "no-redeclare": "off",
-    "promise/catch-or-return": "off"
+    "promise/catch-or-return": "off",
+    "promise/no-nesting": "off"
   }
 }

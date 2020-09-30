@@ -19,7 +19,8 @@ import { iGetCommonData } from '../../selectors/immutable/selectors';
 import { getStepsMetadata } from '../../selectors/immutable/wizard-selectors';
 import { iGetProvisionSourceStorage } from '../../selectors/immutable/storage';
 import { WorkloadProfile } from './workload-profile';
-import { OSFlavor } from './os-flavor';
+import { OS } from './os';
+import { Flavor } from './flavor';
 import { MemoryCPU } from './memory-cpu';
 import { ContainerSource } from './container-source';
 import { ProvisionSourceComponent } from './provision-source';
@@ -71,11 +72,11 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
           />
         </FormField>
       </FormFieldMemoRow>
-      <OSFlavor
+      <OS
         iUserTemplate={iUserTemplate}
         commonTemplates={commonTemplates}
         operatinSystemField={getField(VMSettingsField.OPERATING_SYSTEM)}
-        flavorField={getField(VMSettingsField.FLAVOR)}
+        flavor={getFieldValue(VMSettingsField.FLAVOR)}
         cloneBaseDiskImageField={getField(VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE)}
         mountWindowsGuestToolsField={getField(VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS)}
         workloadProfile={getFieldValue(VMSettingsField.WORKLOAD_PROFILE)}
@@ -85,20 +86,6 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
         goToStorageStep={
           steps[VMWizardTab.STORAGE]?.canJumpTo ? () => goToStep(VMWizardTab.STORAGE) : null
         }
-      />
-      <MemoryCPU
-        memoryField={getField(VMSettingsField.MEMORY)}
-        cpuField={getField(VMSettingsField.CPU)}
-        onChange={onFieldChange}
-      />
-      <WorkloadProfile
-        iUserTemplate={iUserTemplate}
-        commonTemplates={commonTemplates}
-        workloadProfileField={getField(VMSettingsField.WORKLOAD_PROFILE)}
-        operatingSystem={getFieldValue(VMSettingsField.OPERATING_SYSTEM)}
-        flavor={getFieldValue(VMSettingsField.FLAVOR)}
-        cnvBaseImages={cnvBaseImages}
-        onChange={onFieldChange}
       />
       <ProvisionSourceComponent
         provisionSourceField={getField(VMSettingsField.PROVISION_SOURCE_TYPE)}
@@ -115,6 +102,28 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
         field={getField(VMSettingsField.IMAGE_URL)}
         onProvisionSourceStorageChange={updateStorage}
         provisionSourceStorage={provisionSourceStorage}
+      />
+      <Flavor
+        iUserTemplate={iUserTemplate}
+        commonTemplates={commonTemplates}
+        os={getFieldValue(VMSettingsField.OPERATING_SYSTEM)}
+        flavorField={getField(VMSettingsField.FLAVOR)}
+        workloadProfile={getFieldValue(VMSettingsField.WORKLOAD_PROFILE)}
+        onChange={onFieldChange}
+        openshiftFlag={openshiftFlag}
+      />
+      <MemoryCPU
+        memoryField={getField(VMSettingsField.MEMORY)}
+        cpuField={getField(VMSettingsField.CPU)}
+        onChange={onFieldChange}
+      />
+      <WorkloadProfile
+        iUserTemplate={iUserTemplate}
+        commonTemplates={commonTemplates}
+        workloadProfileField={getField(VMSettingsField.WORKLOAD_PROFILE)}
+        operatingSystem={getFieldValue(VMSettingsField.OPERATING_SYSTEM)}
+        flavor={getFieldValue(VMSettingsField.FLAVOR)}
+        onChange={onFieldChange}
       />
     </Form>
   );

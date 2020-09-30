@@ -1,20 +1,23 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import { LoadingBox } from '@console/internal/components/utils';
 import { PageLayout } from '@console/shared';
-import { getQuickStarts } from './utils/quick-start-utils';
 import QuickStartCatalog from './catalog/QuickStartCatalog';
+import QuickStartsLoader from './loader/QuickStartsLoader';
 
-const QuickStartCatalogPage: React.FC = () => {
-  return (
-    <>
-      <Helmet>
-        <title>Quick Starts</title>
-      </Helmet>
-      <PageLayout title="Quick Starts" isDark>
-        <QuickStartCatalog quickStarts={getQuickStarts()} />
-      </PageLayout>
-    </>
-  );
-};
+const QuickStartCatalogPage: React.FC = () => (
+  <>
+    <Helmet>
+      <title>Quick Starts</title>
+    </Helmet>
+    <PageLayout title="Quick Starts" isDark>
+      <QuickStartsLoader>
+        {(quickStarts, loaded) =>
+          loaded ? <QuickStartCatalog quickStarts={quickStarts} /> : <LoadingBox />
+        }
+      </QuickStartsLoader>
+    </PageLayout>
+  </>
+);
 
 export default QuickStartCatalogPage;

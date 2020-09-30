@@ -8,9 +8,10 @@ import {
   isNode,
   Visualization,
   GraphElement,
+  Model,
 } from '@patternfly/react-topology';
 import { DataList } from '@patternfly/react-core';
-import { METRICS_POLL_INTERVAL } from '@console/shared';
+import { METRICS_POLL_INTERVAL, useQueryParams } from '@console/shared';
 import { PROMETHEUS_TENANCY_BASE_PATH } from '@console/internal/components/graphs';
 import {
   fetchOverviewMetrics,
@@ -21,12 +22,20 @@ import {
 import { Alert } from '@console/internal/components/monitoring/types';
 import * as UIActions from '@console/internal/actions/ui';
 import { TYPE_APPLICATION_GROUP } from '../components';
+import { odcElementFactory } from '../elements';
 import { TopologyListViewAppGroup } from './TopologyListViewAppGroup';
 import { getChildKinds, sortGroupChildren } from './list-view-utils';
 import { TopologyListViewUnassignedGroup } from './TopologyListViewUnassignedGroup';
 
 import './TopologyListView.scss';
 
+const TOPOLOGY_LIST_ID = 'odc-topology-list';
+const listModel: Model = {
+  graph: {
+    id: TOPOLOGY_LIST_ID,
+    type: 'graph',
+  },
+};
 interface TopologyListViewPropsFromState {
   metrics: OverviewMetrics;
 }
@@ -37,26 +46,57 @@ interface TopologyListViewPropsFromDispatch {
 }
 
 interface TopologyListViewProps {
-  visualization: Visualization;
+  model: Model;
   application: string;
   namespace: string;
-  selectedIds: string[];
-  onSelect: (ids: string[]) => void;
+  onSelect: (entity?: GraphElement) => void;
+  setVisualization: (vis: Visualization) => void;
 }
 
 const ConnectedTopologyListView: React.FC<TopologyListViewProps &
   TopologyListViewPropsFromDispatch &
   TopologyListViewPropsFromState> = observer(
   ({
-    visualization,
-    selectedIds,
+    model,
     onSelect,
+    setVisualization,
     namespace,
     metrics,
     updateMetrics,
     updateMonitoringAlerts,
   }) => {
-    const selectedId = selectedIds[0];
+    const queryParams = useQueryParams();
+    const selectedId = queryParams.get('selectId');
+    const [visualizationReady, setVisualizationReady] = React.useState<boolean>(false);
+
+    const createVisualization = () => {
+      const newVisualization = new Visualization();
+      newVisualization.registerElementFactory(odcElementFactory);
+      newVisualization.fromModel(listModel);
+      setVisualization(newVisualization);
+      return newVisualization;
+    };
+
+    const visualizationRef = React.useRef<Visualization>();
+    if (!visualizationRef.current) {
+      visualizationRef.current = createVisualization();
+    }
+
+    const visualization = visualizationRef.current;
+
+    React.useEffect(() => {
+      if (model) {
+        visualization.fromModel(model);
+        const selectedItem = selectedId ? visualization.getElementById(selectedId) : null;
+        if (!selectedItem || !selectedItem.isVisible()) {
+          onSelect();
+        } else {
+          onSelect(selectedItem);
+        }
+      }
+      setVisualizationReady(true);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [model, onSelect, visualization]);
 
     const nodes = visualization.getElements().filter((e) => isNode(e)) as Node[];
     const applicationGroups = nodes.filter((n) => n.getType() === TYPE_APPLICATION_GROUP);
@@ -65,14 +105,14 @@ const ConnectedTopologyListView: React.FC<TopologyListViewProps &
       (n) => n.getType() !== TYPE_APPLICATION_GROUP && isGraph(n.getParent()) && n.isVisible(),
     );
 
-    React.useEffect(() => {
-      if (selectedId) {
+    React.useLayoutEffect(() => {
+      if (visualizationReady && selectedId) {
         const element = document.getElementById(selectedId);
         if (element) {
           element.scrollIntoView({ block: 'nearest' });
         }
       }
-    }, [selectedId]);
+    }, [selectedId, visualizationReady]);
 
     React.useEffect(() => {
       const getFlattenedItems = (): Node[] => {
@@ -112,7 +152,7 @@ const ConnectedTopologyListView: React.FC<TopologyListViewProps &
         const flattenedItems = getFlattenedItems();
         const index = flattenedItems.findIndex((item) => selectedId === item.getId());
         if (index > 0) {
-          onSelect([flattenedItems[index - 1].getId()]);
+          onSelect(flattenedItems[index - 1]);
         }
       };
 
@@ -120,7 +160,7 @@ const ConnectedTopologyListView: React.FC<TopologyListViewProps &
         const flattenedItems = getFlattenedItems();
         const index = flattenedItems.findIndex((item) => selectedId === item.getId());
         if (index < flattenedItems.length - 1) {
-          onSelect([flattenedItems[index + 1].getId()]);
+          onSelect(flattenedItems[index + 1]);
         }
       };
 
@@ -139,7 +179,7 @@ const ConnectedTopologyListView: React.FC<TopologyListViewProps &
         switch (e.key) {
           case 'Escape':
             stopEvent(e);
-            onSelect([]);
+            onSelect();
             break;
           case 'k':
           case 'ArrowUp':
@@ -219,7 +259,7 @@ const ConnectedTopologyListView: React.FC<TopologyListViewProps &
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [namespace, updateMetrics, updateMonitoringAlerts]);
 
-    if (!applicationGroups || !unassignedItems) {
+    if (!visualizationReady) {
       return null;
     }
 
@@ -228,23 +268,26 @@ const ConnectedTopologyListView: React.FC<TopologyListViewProps &
         <DataList
           aria-label="Topology List View"
           className="odc-topology-list-view__data-list"
-          selectedDataListItemId={selectedIds[0]}
-          onSelectDataListItem={(id) => onSelect(selectedIds[0] === id ? [] : [id])}
+          selectedDataListItemId={selectedId}
+          onSelectDataListItem={(id) =>
+            onSelect(selectedId === id ? undefined : visualization.getElementById(id))
+          }
         >
           {applicationGroups.map((g) => (
             <TopologyListViewAppGroup
               key={g.getId()}
               appGroup={g}
-              selectedIds={selectedIds}
-              onSelect={onSelect}
+              selectedIds={[selectedId]}
+              onSelect={(ids) => onSelect(ids ? visualization.getElementById(ids[0]) : undefined)}
             />
           ))}
           {unassignedItems.length > 0 ? (
             <TopologyListViewUnassignedGroup
               key="unassigned"
+              showCategory={applicationGroups.length > 0}
               items={unassignedItems}
-              selectedIds={selectedIds}
-              onSelect={onSelect}
+              selectedIds={[selectedId]}
+              onSelect={(ids) => onSelect(ids ? visualization.getElementById(ids[0]) : undefined)}
             />
           ) : null}
         </DataList>
