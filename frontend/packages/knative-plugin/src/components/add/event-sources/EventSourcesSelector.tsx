@@ -3,11 +3,10 @@ import * as _ from 'lodash';
 import { useFormikContext, FormikValues } from 'formik';
 import { ItemSelectorField } from '@console/shared';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { NormalizedEventSources } from '../import-types';
+import { NormalizedEventSources, EVENT_SOURCES_APP } from '../import-types';
 import { KNATIVE_EVENT_SOURCE_APIGROUP } from '../../../const';
 import { getEventSourceModels } from '../../../utils/fetch-dynamic-eventsources-utils';
 import { isKnownEventSource, getEventSourceData } from '../../../utils/create-eventsources-utils';
-import { CREATE_APPLICATION_KEY } from '@console/dev-console/src/const';
 
 interface EventSourcesSelectorProps {
   eventSourceList: NormalizedEventSources;
@@ -17,7 +16,7 @@ const EventSourcesSelector: React.FC<EventSourcesSelectorProps> = ({ eventSource
   const eventSourceItems = Object.keys(eventSourceList).length;
   const {
     values: {
-      application: { selectedKey },
+      application: { name: applicationName, selectedKey },
       type,
     },
     setFieldValue,
@@ -26,6 +25,18 @@ const EventSourcesSelector: React.FC<EventSourcesSelectorProps> = ({ eventSource
     setErrors,
     setStatus,
   } = useFormikContext<FormikValues>();
+
+  const [recommended, setRecommended] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!applicationName && !selectedKey && !recommended) {
+      setFieldValue('application.name', EVENT_SOURCES_APP);
+      setFieldTouched('application.name', true);
+      setRecommended(true);
+      validateForm();
+    }
+  }, [selectedKey, applicationName, validateForm, recommended, setFieldValue, setFieldTouched]);
+
   const handleItemChange = React.useCallback(
     (item: string) => {
       if (item !== type) {
@@ -45,25 +56,12 @@ const EventSourcesSelector: React.FC<EventSourcesSelectorProps> = ({ eventSource
         const name = _.kebabCase(item);
         setFieldValue('name', name);
         setFieldTouched('name', true);
-        if (!selectedKey || selectedKey === CREATE_APPLICATION_KEY) {
-          setFieldValue('application.name', `${name}-app`);
-          setFieldTouched('application.name', true);
-        }
         setFieldValue('apiVersion', selApiVersion);
         setFieldTouched('apiVersion', true);
         validateForm();
       }
     },
-    [
-      setErrors,
-      setStatus,
-      setFieldValue,
-      setFieldTouched,
-      selectedKey,
-      validateForm,
-      eventSourceList,
-      type,
-    ],
+    [type, setErrors, setStatus, setFieldValue, eventSourceList, setFieldTouched, validateForm],
   );
 
   return (

@@ -16,7 +16,12 @@ import { sanitizeApplicationValue } from '@console/dev-console/src/utils/applica
 import { eventSourceValidationSchema } from './eventSource-validation-utils';
 import EventSourceForm from './EventSourceForm';
 import { getEventSourceResource } from '../../utils/create-eventsources-utils';
-import { EventSourceFormData, EventSourceListData, SinkType } from './import-types';
+import {
+  EventSourceFormData,
+  EventSourceListData,
+  SinkType,
+  EVENT_SOURCES_APP,
+} from './import-types';
 
 interface EventSourceProps {
   namespace: string;
@@ -49,7 +54,7 @@ export const EventSource: React.FC<Props> = ({
     },
     application: {
       initial: sanitizeApplicationValue(activeApplication),
-      name: sanitizeApplicationValue(activeApplication),
+      name: sanitizeApplicationValue(activeApplication) || EVENT_SOURCES_APP,
       selectedKey: activeApplication,
     },
     name: '',

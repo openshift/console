@@ -82,6 +82,8 @@ export enum SinkType {
   Uri = 'uri',
 }
 
+export const EVENT_SOURCES_APP = 'event-sources-app';
+
 export const sourceSinkType = {
   Resource: {
     value: SinkType.Resource,
