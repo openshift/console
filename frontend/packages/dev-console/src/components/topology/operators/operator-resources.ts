@@ -1,14 +1,14 @@
 import { FirehoseResource } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { ServiceBindingRequestModel } from '../../../models';
+import { ServiceBindingModel } from '../../../models';
 
 export const operatorResources = (namespace: string): FirehoseResource[] => {
   const serviceBindings = [
     {
       isList: true,
-      kind: referenceForModel(ServiceBindingRequestModel),
+      kind: referenceForModel(ServiceBindingModel),
       namespace,
-      prop: 'serviceBindingRequests',
+      prop: 'serviceBindings',
       optional: true,
     },
   ];
