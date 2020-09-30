@@ -15,7 +15,7 @@ import {
   ChannelListProps,
   AddChannelFormData,
 } from '../components/add/import-types';
-import { EventingChannelModel, EventingIMCModel, EventingKafkaChannelModel } from '../models';
+import { EventingIMCModel, EventingKafkaChannelModel } from '../models';
 import {
   getCommonAnnotations,
   getAppLabels,
@@ -110,7 +110,6 @@ export const getCreateChannelData = (formData: AddChannelFormData): K8sResourceK
 
 export const getCreateChannelResource = (formData: AddChannelFormData) => {
   switch (getChannelKind(formData.type)) {
-    case EventingChannelModel.kind:
     case EventingIMCModel.kind:
     case EventingKafkaChannelModel.kind:
       return getCreateChannelData(formData);

@@ -6,7 +6,6 @@ import {
   EventSourceKafkaModel,
   EventSourcePingModel,
   EventSourceSinkBindingModel,
-  EventingChannelModel,
   EventingIMCModel,
   EventingKafkaChannelModel,
 } from '../../models';
@@ -20,7 +19,6 @@ export const EventSources = {
   SinkBinding: EventSourceSinkBindingModel.kind,
 };
 export const defaultChannels = {
-  Channel: EventingChannelModel,
   InMemoryChannel: EventingIMCModel,
   KafkaChannel: EventingKafkaChannelModel,
 };

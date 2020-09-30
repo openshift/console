@@ -54,9 +54,9 @@ const ChannelForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
         const sourceData = getChannelData(kind.toLowerCase());
         setFieldValue(nameData, sourceData);
         setFieldTouched(nameData, true);
+        setFieldValue('yamlData', '');
+        setFieldTouched('yamlData', true);
       }
-      setFieldValue('yamlData', '');
-      setFieldTouched('yamlData', true);
 
       setFieldValue('type', item);
       setFieldTouched('type', true);
@@ -80,7 +80,6 @@ const ChannelForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
               channels={channels.channelList}
               onChange={onTypeChange}
               defaultConfiguredChannel={defaultConfiguredChannel}
-              defaultConfiguredChannelLoaded={defaultConfiguredChannelLoaded}
             />
             {channelHasFormView && <FormViewSection namespace={namespace} kind={channelKind} />}
             {!channelHasFormView && <ChannelYamlEditor />}
