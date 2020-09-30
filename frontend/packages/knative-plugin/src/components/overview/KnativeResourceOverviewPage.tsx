@@ -55,13 +55,15 @@ export const KnativeResourceOverviewPage: React.ComponentType<KnativeResourceOve
   if (kindsInFlight) {
     return !knativeModels ? null : <LoadingBox />;
   }
-  const apiInfo = groupVersionFor(item.obj.apiVersion);
-  const resourceModel = knativeModels.find(
-    (model) =>
-      model.kind === item.obj.kind &&
-      model.apiGroup === apiInfo.group &&
-      model.apiVersion === apiInfo.version,
-  );
+  const apiInfo = item?.obj && groupVersionFor(item.obj.apiVersion);
+  const resourceModel =
+    apiInfo &&
+    knativeModels.find(
+      (model) =>
+        model.kind === item?.obj?.kind &&
+        model.apiGroup === apiInfo.group &&
+        model.apiVersion === apiInfo.version,
+    );
 
   if (!resourceModel) {
     return null;
