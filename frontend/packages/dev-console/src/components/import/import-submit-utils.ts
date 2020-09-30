@@ -71,7 +71,6 @@ export const createOrUpdateDevfileResources = async (
   originalDeployment?: K8sResourceKind,
   originalDeploymentConfig?: K8sResourceKind,
   imageStreamData?: K8sResourceKind,
-  // originalRoute?: K8sResourceKind,
 ): Promise<K8sResourceKind[]> => {
   const {
     name,
@@ -108,7 +107,6 @@ export const createOrUpdateDevfileResources = async (
     pipeline,
     resources,
     healthChecks,
-    // route: { hostname, secure, path, tls, targetPort: routeTargetPort },
   } = formData;
 
   const requests: Promise<K8sResourceKind>[] = [];
@@ -117,43 +115,8 @@ export const createOrUpdateDevfileResources = async (
   const imageStreamFilterData = _.orderBy(imageStreamList, ['metadata.resourceVersion'], ['desc']);
   const originalImageStream = (imageStreamFilterData.length && imageStreamFilterData[0]) || {};
   const imageStreamName = imageStream && imageStream.metadata.name;
-
   const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag });
   const defaultAnnotations = { ...getGitAnnotations(repository, ref), ...getCommonAnnotations(), isFromDevfile };
-  
-
-  // const isDeployImageFormData = (
-  //   formData: DeployImageFormData | GitImportFormData,
-  // ): formData is DeployImageFormData => {
-  //   return 'isi' in (formData as DeployImageFormData);
-  // };
-
-  // const makePortName = (port: ContainerPort): string =>
-  // `${port.containerPort}-${port.protocol}`.toLowerCase();
-
-  // let ports = imagePorts;
-  // if (isDeployImageFormData(formData)) {
-  //   const {
-  //     isi: { ports: isiPorts },
-  //   } = formData;
-  //   ports = isiPorts;
-  // }
-
-  // let targetPort;
-  // if (_.get(formData, 'build.strategy') === 'Docker') {
-  //   const port = _.get(formData, 'docker.containerPort');
-  //   targetPort = makePortName({
-  //     containerPort: _.toInteger(port),
-  //     protocol: 'TCP',
-  //   });
-  // } else if (_.isEmpty(ports)) {
-  //   targetPort = makePortName({
-  //     containerPort: _.toInteger(unknownTargetPort) || defaultUnknownPort,
-  //     protocol: 'TCP',
-  //   });
-  // } else {
-  //   targetPort = routeTargetPort || makePortName(_.head(ports));
-  // }
 
   const webhookTriggerData = {
     type: GitReadableTypes[gitType],
@@ -290,6 +253,7 @@ export const createOrUpdateDevfileBuildResource = (
   const buildResource = mergeData(originalBuildConfig, devfileBuildResource);
 
   return verb === 'update'
+  // Need a switch case here to choose proper model kind for building resource on cluster, will require defining models for all expected kinds of build objects
     ? k8sUpdate(BuildConfigModel, buildResource)
     : k8sCreate(BuildConfigModel, buildResource, dryRun ? dryRunOpt : {});
 };
@@ -303,6 +267,7 @@ export const createOrUpdateDevfileDeployResource = (
   const deployment = mergeData(originalDeployment, devfileDeployResource);
 
   return verb === 'update'
+  // Need a switch case here to choose proper model kind for building resource on cluster, will require defining models for all expected kinds of build objects
     ? k8sUpdate(DeploymentModel, deployment)
     : k8sCreate(DeploymentModel, deployment, dryRun ? dryRunOpt : {});
 };
