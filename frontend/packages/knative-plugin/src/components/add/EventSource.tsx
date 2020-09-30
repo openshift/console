@@ -40,6 +40,7 @@ export const EventSource: React.FC<Props> = ({
   const [sinkGroupVersionKind = '', sinkName = ''] = contextSource?.split('/') ?? [];
   const [sinkGroup = '', sinkVersion = '', sinkKind = ''] =
     getGroupVersionKind(sinkGroupVersionKind) ?? [];
+  const sinkKey = sinkName && sinkKind ? `${sinkKind}-${sinkName}` : '';
   const sinkApiVersion = sinkGroup ? `${sinkGroup}/${sinkVersion}` : '';
   const initialValues: EventSourceFormData = {
     project: {
@@ -59,6 +60,7 @@ export const EventSource: React.FC<Props> = ({
       apiVersion: sinkApiVersion,
       kind: sinkKind,
       name: sinkName,
+      key: sinkKey,
       uri: '',
     },
     limits: {
