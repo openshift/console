@@ -4,7 +4,7 @@ import { Alert, Button } from '@patternfly/react-core';
 import {
   withHandlePromise,
   HandlePromiseProps,
-  LoadingInline,
+  LoadingBox,
 } from '@console/internal/components/utils';
 import {
   createModalLauncher,
@@ -20,20 +20,42 @@ import {
   NODE_STATUS_UNDER_MAINTENANCE,
   HOST_STATUS_READY,
   HOST_STATUS_AVAILABLE,
+  NODE_STATUS_STARTING_MAINTENANCE,
+  NODE_STATUS_STOPPING_MAINTENANCE,
 } from '../../constants';
 import { BareMetalHostKind } from '../../types';
 import { startNodeMaintenanceModal } from './StartNodeMaintenanceModal';
 import { StatusProps } from '../types';
-import { StatusValidations, getStaticPods } from './PowerOffStatusValidations';
+import { StatusValidations, getStaticPods, getDaemonSetsOfPods } from './PowerOffStatusValidations';
 import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 
-type SafePowerOffDialogProps = { isUnderMaintenance: boolean };
+const getPowerOffMessage = (pods: PodKind[]) => {
+  const staticPods = getStaticPods(pods);
+  const daemonSets = getDaemonSetsOfPods(pods);
+  if (!staticPods.length && !daemonSets.length) {
+    return 'all workloads have already been moved.';
+  }
+  let desc = 'all workloads have already been moved, but ';
+  if (staticPods.length) {
+    desc += `${staticPods.length} static pods`;
+  }
+  if (daemonSets.length) {
+    if (staticPods.length) {
+      desc += ` and `;
+    }
+    desc += `${daemonSets.length} daemon sets`;
+  }
+  desc += ' have been skipped.';
+  return desc;
+};
 
-const SafePowerOffDialog: React.FC<SafePowerOffDialogProps> = ({ isUnderMaintenance }) => (
+type SafePowerOffDialogProps = { isUnderMaintenance: boolean; pods?: PodKind[] };
+
+const SafePowerOffDialog: React.FC<SafePowerOffDialogProps> = ({ isUnderMaintenance, pods }) => (
   <p>
     Host is ready to be gracefully powered off.{' '}
     {isUnderMaintenance && (
-      <>The host is currently under maintenance and all workloads have already been moved.</>
+      <p>The host is currently under maintenance and {getPowerOffMessage(pods)}</p>
     )}
   </p>
 );
@@ -44,7 +66,7 @@ type ForcePowerOffDialogProps = {
   nodeName: string;
   setForceOff: React.Dispatch<React.SetStateAction<boolean>>;
   status: StatusProps;
-  nodePods?: PodKind[];
+  pods?: PodKind[];
   loadError?: any;
   cancel?: () => void;
 };
@@ -55,26 +77,34 @@ const ForcePowerOffDialog: React.FC<ForcePowerOffDialogProps> = ({
   nodeName,
   setForceOff,
   status,
-  nodePods,
+  pods,
   loadError,
   cancel,
 }) => {
-  const mainText = nodeName ? (
-    <p>
-      To power off gracefully,{' '}
-      <Button
-        variant="link"
-        onClick={() => startNodeMaintenanceModal({ nodeName })}
-        isDisabled={!canStartMaintenance}
-        isInline
-      >
-        start maintenance
-      </Button>{' '}
-      on this host to move all managed workloads to other nodes in the cluster.
-    </p>
-  ) : (
-    <p>The host will be powered off gracefully.</p>
-  );
+  const hasMaintenance = [
+    NODE_STATUS_STARTING_MAINTENANCE,
+    NODE_STATUS_UNDER_MAINTENANCE,
+    NODE_STATUS_STOPPING_MAINTENANCE,
+  ].includes(status.status);
+  let mainText: React.ReactNode;
+  if (!nodeName) {
+    mainText = <p>The host will be powered off gracefully.</p>;
+  } else if (!hasMaintenance) {
+    mainText = (
+      <p>
+        To power off gracefully,{' '}
+        <Button
+          variant="link"
+          onClick={() => startNodeMaintenanceModal({ nodeName })}
+          isDisabled={!canStartMaintenance}
+          isInline
+        >
+          start maintenance
+        </Button>{' '}
+        on this host to move all managed workloads to other nodes in the cluster.
+      </p>
+    );
+  }
 
   const helpText = nodeName
     ? 'Workloads will not be moved before the host powers off.'
@@ -85,7 +115,7 @@ const ForcePowerOffDialog: React.FC<ForcePowerOffDialogProps> = ({
       {mainText}
       <StatusValidations
         status={status.status}
-        nodePods={nodePods}
+        nodePods={pods}
         loadError={loadError}
         onLinkClicked={cancel}
       />
@@ -107,9 +137,9 @@ const ForcePowerOffDialog: React.FC<ForcePowerOffDialogProps> = ({
   );
 };
 
-const isPowerOffSafe = (status: string, nodePods?: PodKind[]) => {
+const isPowerOffSafe = (status: string) => {
   const safeStates = [NODE_STATUS_UNDER_MAINTENANCE, HOST_STATUS_READY, HOST_STATUS_AVAILABLE];
-  return safeStates.includes(status) && !getStaticPods(nodePods).length;
+  return safeStates.includes(status);
 };
 
 export type PowerOffHostModalProps = {
@@ -129,18 +159,7 @@ const PowerOffHostModal = withHandlePromise<PowerOffHostModalProps & HandlePromi
       fieldSelector: `spec.nodeName=${nodeName}`,
     });
     const [hasNodeMaintenanceCapability] = useMaintenanceCapability();
-    const [canPowerOffSafely, setCanPowerOffSafely] = React.useState<boolean>();
     const [forceOff, setForceOff] = React.useState(false);
-
-    React.useEffect(() => {
-      if (loaded) {
-        setCanPowerOffSafely(isPowerOffSafe(status.status, pods));
-      }
-    }, [status, pods, loaded]);
-
-    React.useEffect(() => {
-      !canPowerOffSafely && setForceOff(false);
-    }, [canPowerOffSafely]);
 
     const submit = (event) => {
       event.preventDefault();
@@ -148,15 +167,17 @@ const PowerOffHostModal = withHandlePromise<PowerOffHostModalProps & HandlePromi
       return handlePromise(promise, close);
     };
 
+    const canPowerOffSafely = !loadError && isPowerOffSafe(status.status);
+
     const isUnderMaintenance = status.status === NODE_STATUS_UNDER_MAINTENANCE;
     return (
       <form onSubmit={submit} name="form" className="modal-content">
         <ModalTitle>Power Off Host</ModalTitle>
         <ModalBody>
-          {canPowerOffSafely === undefined ? (
-            <LoadingInline />
+          {!loaded ? (
+            <LoadingBox />
           ) : canPowerOffSafely ? (
-            <SafePowerOffDialog isUnderMaintenance={isUnderMaintenance} />
+            <SafePowerOffDialog isUnderMaintenance={isUnderMaintenance} pods={pods} />
           ) : (
             <ForcePowerOffDialog
               forceOff={forceOff}
@@ -164,7 +185,7 @@ const PowerOffHostModal = withHandlePromise<PowerOffHostModalProps & HandlePromi
               canStartMaintenance={!isUnderMaintenance && nodeName && hasNodeMaintenanceCapability}
               nodeName={nodeName}
               status={status}
-              nodePods={pods}
+              pods={pods}
               loadError={loadError}
               cancel={cancel}
             />
