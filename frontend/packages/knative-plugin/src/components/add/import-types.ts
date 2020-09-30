@@ -44,6 +44,7 @@ export interface SinkResourceData {
   apiVersion: string;
   name: string;
   kind: string;
+  key: string;
   uri?: string;
 }
 
