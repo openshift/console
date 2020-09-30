@@ -1,6 +1,9 @@
 import * as React from 'react';
-
-import { Status, PodRingController } from '@console/shared';
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
+import { useSelector } from 'react-redux';
+import { RootState } from '@console/internal/redux';
+import { Status, PodRingController, useCsvWatchResource } from '@console/shared';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
 import {
@@ -9,6 +12,7 @@ import {
   EditHorizontalPodAutoScaler,
   hideActionForHPAs,
 } from '@console/app/src/actions/modify-hpa';
+import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { DeploymentModel } from '../models';
 import { DeploymentKind, K8sKind, K8sResourceKindReference } from '../module/k8s';
 import { configureUpdateStrategyModal, errorModal } from './modals';
@@ -220,25 +224,31 @@ const ReplicaSetsTab: React.FC<ReplicaSetsTabProps> = ({ obj }) => {
 };
 
 const { details, editYaml, pods, envEditor, events } = navFactory;
-export const DeploymentsDetailsPage: React.FC<DeploymentsDetailsPageProps> = (props) => (
-  <DetailsPage
-    {...props}
-    kind={deploymentsReference}
-    menuActions={menuActions}
-    pages={[
-      details(DeploymentDetails),
-      editYaml(),
-      {
-        href: 'replicasets',
-        name: 'Replica Sets',
-        component: ReplicaSetsTab,
-      },
-      pods(),
-      envEditor(environmentComponent),
-      events(ResourceEventStream),
-    ]}
-  />
-);
+export const DeploymentsDetailsPage: React.FC<DeploymentsDetailsPageProps> = (props) => {
+  const ns = useSelector((state: RootState) => getActiveNamespace(state));
+
+  const { csvData } = useCsvWatchResource(ns);
+  return (
+    <DetailsPage
+      {...props}
+      kind={deploymentsReference}
+      menuActions={menuActions}
+      pages={[
+        details(DeploymentDetails),
+        editYaml(),
+        {
+          href: 'replicasets',
+          name: 'Replica Sets',
+          component: ReplicaSetsTab,
+        },
+        pods(),
+        envEditor(environmentComponent),
+        events(ResourceEventStream),
+      ]}
+      customData={{ csvs: csvData }}
+    />
+  );
+};
 DeploymentsDetailsPage.displayName = 'DeploymentsDetailsPage';
 
 type DeploymentDetailsListProps = {
@@ -251,7 +261,7 @@ type DeploymentDetailsProps = {
 
 const kind = 'Deployment';
 
-const DeploymentTableRow: RowFunction<DeploymentKind> = ({ obj, index, key, style }) => {
+const DeploymentTableRow: RowFunction<DeploymentKind> = ({ obj, index, key, style, ...props }) => {
   return (
     <WorkloadTableRow
       obj={obj}
@@ -260,6 +270,7 @@ const DeploymentTableRow: RowFunction<DeploymentKind> = ({ obj, index, key, styl
       style={style}
       menuActions={menuActions}
       kind={kind}
+      {...props}
     />
   );
 };
@@ -280,14 +291,18 @@ export const DeploymentsList: React.FC = (props) => (
 );
 DeploymentsList.displayName = 'DeploymentsList';
 
-export const DeploymentsPage: React.FC<DeploymentsPageProps> = (props) => (
-  <ListPage
-    kind={deploymentsReference}
-    canCreate={true}
-    ListComponent={DeploymentsList}
-    {...props}
-  />
-);
+export const DeploymentsPage: React.FC<DeploymentsPageProps> = (props) => {
+  const { csvData } = useCsvWatchResource(props.namespace);
+  return (
+    <ListPage
+      kind={deploymentsReference}
+      canCreate={true}
+      ListComponent={DeploymentsList}
+      customData={{ csvs: csvData }}
+      {...props}
+    />
+  );
+};
 DeploymentsPage.displayName = 'DeploymentsPage';
 
 type ReplicaSetsTabProps = {

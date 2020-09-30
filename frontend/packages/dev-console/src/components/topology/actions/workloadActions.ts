@@ -9,6 +9,7 @@ import { menuActions as cronJobActions } from '@console/internal/components/cron
 import { menuActions as jobActions } from '@console/internal/components/job';
 import { menuActions as podActions } from '@console/internal/components/pod';
 import { ModifyApplication } from '../../../actions/modify-application';
+import { TopologyDataResources } from '../topology-types';
 
 const defaultMenuForKind = (kind: string) => {
   const menuActions: KebabAction[] = [];
@@ -22,6 +23,8 @@ const defaultMenuForKind = (kind: string) => {
 export const workloadActions = (
   contextMenuResource: K8sResourceKind,
   allowRegroup: boolean = true,
+  resources?: TopologyDataResources,
+  isOperatorBacked?: boolean,
 ): KebabOption[] => {
   if (!contextMenuResource) {
     return null;
@@ -60,6 +63,8 @@ export const workloadActions = (
   }
 
   return _.map(menuActions, (a) =>
-    a(modelFor(referenceFor(contextMenuResource)), contextMenuResource),
+    a(modelFor(referenceFor(contextMenuResource)), contextMenuResource, resources, {
+      isOperatorBacked,
+    }),
   );
 };
