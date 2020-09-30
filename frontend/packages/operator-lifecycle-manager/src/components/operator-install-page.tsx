@@ -252,6 +252,7 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = (props) => {
     loading = false;
   } else if (subscription) {
     // There is no ClusterServiceVersion for the package, so look at Subscriptions/InstallPlans
+    loading = false;
     status = subscription?.status?.state || null;
     const installPlanName = subscription?.status?.installplan?.name || '';
     const installPlan: InstallPlanKind = resources?.installPlan?.data?.find(
@@ -259,7 +260,6 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = (props) => {
     );
     if (installPlan) {
       installObj = installPlan;
-      loading = false;
     }
   }
 
