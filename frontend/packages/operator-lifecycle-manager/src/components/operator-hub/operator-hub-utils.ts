@@ -1,19 +1,11 @@
-import * as _ from 'lodash';
-
 export const operatorProviderTypeMap = {
-  redhat: 'Red Hat',
-  marketplace: 'Marketplace',
-  certified: 'Certified',
-  community: 'Community',
+  'redhat-operators': 'Red Hat',
+  'redhat-marketplace': 'Marketplace',
+  'certified-operators': 'Certified',
+  'community-operators': 'Community',
 };
 
-const getCustomOperatorProviderType = (packageManifest) =>
-  packageManifest.status.catalogSourceDisplayName || packageManifest.status.catalogSource;
 export const getOperatorProviderType = (packageManifest) => {
-  const srcProvider = _.get(packageManifest, 'metadata.labels.opsrc-provider');
-  return _.get(
-    operatorProviderTypeMap,
-    srcProvider,
-    getCustomOperatorProviderType(packageManifest),
-  );
+  const { catalogSource, catalogSourceDisplayName } = packageManifest.status;
+  return operatorProviderTypeMap?.[catalogSource] || catalogSourceDisplayName || catalogSource;
 };
