@@ -60,7 +60,7 @@ export const getLogSnippet = (pipelineRun: PipelineRun): PipelineRunErrorDetails
   }
 
   const containerName = failedTaskRun.status.steps?.find(
-    (step: PLRTaskRunStep) => step.terminated.exitCode !== 0,
+    (step: PLRTaskRunStep) => step.terminated?.exitCode !== 0,
   )?.container;
 
   if (!failedTaskRun.status.podName || !containerName) {

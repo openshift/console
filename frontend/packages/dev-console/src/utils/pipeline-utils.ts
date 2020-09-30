@@ -18,6 +18,7 @@ import {
 import { ServiceAccountModel } from '@console/internal/models';
 import { errorModal } from '@console/internal/components/modals/error-modal';
 import { PIPELINE_SERVICE_ACCOUNT, SecretAnnotationId } from '../components/pipelines/const';
+import { PipelineModalFormWorkspace } from '../components/pipelines/modals/common/types';
 import {
   getLatestRun,
   Pipeline,
@@ -43,7 +44,6 @@ import {
   TaskModel,
   EventListenerModel,
 } from '../models';
-import { PipelineRunWorkspaceFormEntry } from '../components/pipelines/modals/start-pipeline/types';
 
 interface Resources {
   inputs?: Resource[];
@@ -339,7 +339,7 @@ export const getPipelineRunParams = (pipelineParams: PipelineParam[]): PipelineR
 };
 
 export const getPipelineRunWorkspaces = (
-  pipelineWorkspaces: PipelineRunWorkspaceFormEntry[],
+  pipelineWorkspaces: PipelineModalFormWorkspace[],
 ): PipelineRunWorkspace[] => {
   return (
     pipelineWorkspaces &&

@@ -5,7 +5,7 @@ import {
   ModalComponentProps,
 } from '@console/internal/components/factory/modal';
 import { errorModal } from '@console/internal/components/modals';
-import { Pipeline, PipelineRun, PipelineWorkspace } from '../../../../utils/pipeline-augment';
+import { Pipeline, PipelineRun } from '../../../../utils/pipeline-augment';
 import { useUserAnnotationForManualStart } from '../../../pipelineruns/triggered-by';
 import ModalStructure from '../common/ModalStructure';
 import { convertPipelineToModalData } from '../common/utils';
@@ -27,11 +27,6 @@ const StartPipelineModal: React.FC<StartPipelineModalProps & ModalComponentProps
 
   const initialValues: StartPipelineFormValues = {
     ...convertPipelineToModalData(pipeline),
-    workspaces: (pipeline.spec.workspaces || []).map((workspace: PipelineWorkspace) => ({
-      ...workspace,
-      type: 'EmptyDirectory',
-      data: { emptyDir: {} },
-    })),
     secretOpen: false,
   };
 
