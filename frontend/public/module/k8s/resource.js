@@ -85,16 +85,14 @@ export const devfileCreate =  async (kind, data, opts = {}) =>  {
   data.metadata = data.metadata || {};
   data.metadata.namespace = data.metadata.namespace || "default";
 
-  data.annotations['isFromDevfile'] = "true"
+  data.annotations['isFromDevfile'] = "true";
 
   let buildStrategyData = {
     dockerStrategy: { env:data.build.buildEnv, dockerfilePath: "Dockerfile" }
   };
-
-  let devfileResources; 
   
   let devfileResourceObjectsString = await coFetchJSON.post("/api/devfile/",data,);
-  devfileResources = JSON.parse(devfileResourceObjectsString.devfileResources)
+  let devfileResources = JSON.parse(devfileResourceObjectsString.devfileResources);
   
   return devfileResources;
 };
