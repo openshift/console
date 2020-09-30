@@ -130,8 +130,7 @@ export const getHelmActionConfig = (
         subTitle: {
           form:
             'The Helm chart can be installed by completing the form. Default values may be provided by the Helm chart authors.',
-          yaml:
-            'The Helm chart can be installed by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.',
+          yaml: 'The Helm chart can be installed by manually entering YAML or JSON definitions.',
         },
         helmReleaseApi: `/api/helm/chart?url=${chartURL}`,
         fetch: coFetchJSON.post,
