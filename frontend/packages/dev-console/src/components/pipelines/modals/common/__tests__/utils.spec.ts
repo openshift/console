@@ -96,6 +96,7 @@ describe('PipelineAction testing getPipelineRunFromForm', () => {
       namespace: 'corazon',
       parameters: [],
       resources: [],
+      workspaces: [],
     };
     const labels: { [key: string]: string } = {
       anotherlabel: 'another-label-value',
@@ -119,6 +120,7 @@ describe('PipelineAction testing getPipelineRunFromForm', () => {
       namespace: 'corazon',
       parameters: [],
       resources: [],
+      workspaces: [],
     };
     const labels: { [key: string]: string } = {
       anotherlabel: 'another-label-value',
@@ -141,7 +143,7 @@ describe('PipelineAction testing getPipelineRunFromForm', () => {
         params: [],
         resources: [],
         status: null,
-        workspaces: undefined,
+        workspaces: [],
       },
     });
   });
@@ -157,6 +159,7 @@ describe('PipelineAction testing getPipelineRunFromForm', () => {
         },
       ],
       resources: [],
+      workspaces: [],
     };
     const labels: { [key: string]: string } = {
       anotherlabel: 'another-label-value',
@@ -181,7 +184,7 @@ describe('PipelineAction testing getPipelineRunFromForm', () => {
         ],
         resources: [],
         status: null,
-        workspaces: undefined,
+        workspaces: [],
       },
     });
   });
@@ -201,6 +204,7 @@ describe('PipelineAction testing getPipelineRunFromForm', () => {
           },
         },
       ],
+      workspaces: [],
     };
     const labels: { [key: string]: string } = {
       anotherlabel: 'another-label-value',
@@ -227,7 +231,7 @@ describe('PipelineAction testing getPipelineRunFromForm', () => {
           },
         ],
         status: null,
-        workspaces: undefined,
+        workspaces: [],
       },
     });
   });

@@ -4,9 +4,9 @@ import { SecretModel, ConfigMapModel } from '@console/internal/models';
 import { DropdownField } from '@console/shared';
 import FormSection from '../../../import/section/FormSection';
 import { VolumeTypes } from '../../const';
-import { PipelineRunWorkspaceFormEntry } from '../start-pipeline/types';
 import PVCDropdown from './PVCDropdown';
 import MultipleResourceKeySelector from './MultipleResourceKeySelector';
+import { PipelineModalFormWorkspace } from './types';
 
 const getVolumeTypeFields = (volumeType: VolumeTypes, index: number) => {
   switch (VolumeTypes[volumeType]) {
@@ -44,7 +44,7 @@ const getVolumeTypeFields = (volumeType: VolumeTypes, index: number) => {
 
 const PipelineWorkspacesSection: React.FC = () => {
   const { setFieldValue } = useFormikContext<FormikValues>();
-  const [{ value: workspaces }] = useField<PipelineRunWorkspaceFormEntry[]>('workspaces');
+  const [{ value: workspaces }] = useField<PipelineModalFormWorkspace[]>('workspaces');
   return (
     workspaces.length > 0 && (
       <FormSection title="Workspaces" fullWidth>
