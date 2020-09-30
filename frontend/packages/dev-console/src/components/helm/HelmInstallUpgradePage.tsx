@@ -35,6 +35,7 @@ export type HelmInstallUpgradeFormData = {
   releaseName: string;
   chartURL?: string;
   chartName: string;
+  chartRepoName: string;
   chartVersion: string;
   chartReadme: string;
   appVersion: string;
@@ -54,6 +55,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
   const initialChartURL = decodeURIComponent(searchParams.get('chartURL'));
   const initialReleaseName = match.params.releaseName || '';
   const helmChartName = searchParams.get('chartName');
+  const helmChartRepoName = searchParams.get('chartRepoName');
   const helmActionOrigin = searchParams.get('actionOrigin') as HelmActionOrigins;
 
   const [chartData, setChartData] = React.useState<HelmChart>(null);
@@ -124,6 +126,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
     releaseName: initialReleaseName || helmChartName || '',
     chartURL: initialChartURL,
     chartName,
+    chartRepoName: helmChartRepoName || '',
     appVersion,
     chartVersion,
     chartReadme,

@@ -3,6 +3,8 @@ import * as _ from 'lodash';
 import { safeDump } from 'js-yaml';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { RowFilter } from '@console/internal/components/filter-toolbar';
+import { toTitleCase } from '@console/shared';
 import {
   HelmRelease,
   HelmChart,
@@ -11,8 +13,8 @@ import {
   HelmActionType,
   HelmActionConfigType,
   HelmActionOrigins,
+  HelmChartEntries,
 } from './helm-types';
-import { RowFilter } from '@console/internal/components/filter-toolbar';
 
 export const HelmReleaseStatusLabels = {
   [HelmReleaseStatus.Deployed]: 'Deployed',
@@ -77,20 +79,71 @@ export const fetchHelmReleases = (
   return coFetchJSON(fetchString);
 };
 
-export const getChartURL = (helmChartData: HelmChartMetaData[], chartVersion: string): string => {
-  const chartData: HelmChartMetaData = _.find(helmChartData, (obj) => obj.version === chartVersion);
+export const getChartURL = (
+  helmChartData: HelmChartMetaData[],
+  chartVersion: string,
+  chartRepoName: string,
+): string => {
+  const chartData: HelmChartMetaData = _.find(
+    helmChartData,
+    (obj) => obj.version === chartVersion && obj.repoName === chartRepoName,
+  );
   return chartData?.urls[0];
 };
 
-export const concatVersions = (chartVersion: string, appVersion: string): string => {
-  return appVersion ? `${chartVersion} / App Version ${appVersion}` : chartVersion;
+export const getChartEntriesByName = (
+  chartEntries: HelmChartEntries,
+  chartName: string,
+  chartRepoName?: string,
+): HelmChartMetaData[] => {
+  if (chartName && chartRepoName) {
+    return (
+      chartEntries?.[`${chartName}--${chartRepoName}`]?.map((e) => ({
+        ...e,
+        repoName: chartRepoName,
+      })) ?? []
+    );
+  }
+  const entries = _.reduce(
+    chartEntries,
+    (acc, charts, key) => {
+      const repoName = key.split('--').pop();
+      charts.forEach((chart: HelmChartMetaData) => {
+        if (chart.name === chartName) {
+          acc.push({ ...chart, repoName });
+        }
+      });
+      return acc;
+    },
+    [],
+  );
+  return entries;
+};
+
+export const concatVersions = (
+  chartVersion: string,
+  appVersion: string,
+  chartRepoName?: string,
+): string => {
+  let title = chartVersion.split('--')[0];
+  if (appVersion) {
+    title += ` / App Version ${appVersion}`;
+  }
+  if (chartRepoName) {
+    title += ` (Provided by ${toTitleCase(chartRepoName)})`;
+  }
+  return title;
 };
 
 export const getChartVersions = (chartEntries: HelmChartMetaData[]) => {
   const chartVersions = _.reduce(
     chartEntries,
     (obj, chart) => {
-      obj[chart.version] = concatVersions(chart.version, chart.appVersion);
+      obj[`${chart.version}--${chart.repoName}`] = concatVersions(
+        chart.version,
+        chart.appVersion,
+        chart.repoName,
+      );
       return obj;
     },
     {},

@@ -7,6 +7,7 @@ import {
   getChartVersions,
   flattenReleaseResources,
   getChartReadme,
+  getChartEntriesByName,
 } from '../helm-utils';
 import { HelmReleaseStatus } from '../helm-types';
 import {
@@ -14,6 +15,8 @@ import {
   mockHelmChartData,
   mockReleaseResources,
   flattenedMockReleaseResources,
+  mockChartEntries,
+  mockRedhatHelmChartData,
 } from './helm-release-mock-data';
 
 describe('Helm Releases Utils', () => {
@@ -47,21 +50,54 @@ describe('Helm Releases Utils', () => {
     expect(filteredReleases[0].name).toBe('ghost-test');
   });
 
-  it('should return the helm chart url', () => {
+  it('should return the helm chart url from ibm repo', () => {
     const chartVersion = '1.0.2';
-    const chartURL = getChartURL(mockHelmChartData, chartVersion);
+    const chartRepoName = 'ibm-helm-repo';
+    const chartURL = getChartURL(mockHelmChartData, chartVersion, chartRepoName);
     expect(chartURL).toBe(
       'https://raw.githubusercontent.com/IBM/charts/master/repo/community/hazelcast-enterprise-1.0.2.tgz',
+    );
+  });
+
+  it('should return the helm chart url from redhat repo', () => {
+    const chartVersion = '1.0.1';
+    const chartRepoName = 'redhat-helm-repo';
+    const chartURL = getChartURL(mockHelmChartData, chartVersion, chartRepoName);
+    expect(chartURL).toBe(
+      'https://raw.githubusercontent.com/redhat-helm-charts/master/repo/stable/hazelcast-enterprise-1.0.1.tgz',
     );
   });
 
   it('should return the chart versions, concatenated with the App Version, available for the helm chart', () => {
     const chartVersions = getChartVersions(mockHelmChartData);
     expect(chartVersions).toEqual({
-      '1.0.1': '1.0.1 / App Version 3.10.5',
-      '1.0.2': '1.0.2',
-      '1.0.3': '1.0.3 / App Version 3.12',
+      '1.0.1--ibm-helm-repo': '1.0.1 / App Version 3.10.5 (Provided by Ibm Helm Repo)',
+      '1.0.2--ibm-helm-repo': '1.0.2 (Provided by Ibm Helm Repo)',
+      '1.0.3--ibm-helm-repo': '1.0.3 / App Version 3.12 (Provided by Ibm Helm Repo)',
+      '1.0.1--redhat-helm-repo': '1.0.1 / App Version 3.10.5 (Provided by Redhat Helm Repo)',
+      '1.0.2--redhat-helm-repo': '1.0.2 (Provided by Redhat Helm Repo)',
     });
+  });
+
+  it('should return chart entries by name from specific repo if repo name provided', () => {
+    const chartEntries = getChartEntriesByName(
+      mockChartEntries,
+      'hazelcast-enterprise',
+      'redhat-helm-repo',
+    );
+    expect(chartEntries).toEqual(mockRedhatHelmChartData);
+  });
+
+  it('should return chart entries by name from all repos if repo name not provided', () => {
+    const chartEntries = getChartEntriesByName(mockChartEntries, 'hazelcast-enterprise');
+    expect(chartEntries).toEqual(mockHelmChartData);
+  });
+
+  it('should return empty array if wrong chart name or repo name provided', () => {
+    expect(
+      getChartEntriesByName(mockChartEntries, 'hazelcast-enterprise', 'stable-helm-repo'),
+    ).toEqual([]);
+    expect(getChartEntriesByName(mockChartEntries, 'hazelcast-enterprise-prod')).toEqual([]);
   });
 
   it('should omit resources with no data and flatten them', () => {
