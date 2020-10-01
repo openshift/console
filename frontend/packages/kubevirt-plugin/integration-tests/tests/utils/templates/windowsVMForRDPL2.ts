@@ -4,7 +4,7 @@ import {
   commonTemplateVersion,
 } from '../constants/common';
 
-export const getWindowsVM = ({ name, networkName, vmIP }) => `
+export const getFakeWindowsVM = ({ name, networkName, vmIP }) => `
 apiVersion: kubevirt.io/v1alpha3
 kind: VirtualMachine
 metadata:

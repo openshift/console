@@ -76,7 +76,6 @@ describe('Kubevirt VM dashboard tab', () => {
     expect(dashboardView.vmDetailsIPAddress.getText()).not.toEqual(NOT_AVAILABLE);
     expect(dashboardView.vmDetailsOS.getText()).toContain('Fedora');
     expect(dashboardView.vmDetailsTZ.getText()).toContain('UTC');
-    expect(dashboardView.vmDetailsLoggedUser.getText()).toEqual('No users logged in');
 
     await click(dashboardView.vmDetailsViewAll);
     const currentUrl = await browser.getCurrentUrl();
@@ -89,10 +88,7 @@ describe('Kubevirt VM dashboard tab', () => {
 
     expect(dashboardView.vmDetailsNode.getText()).toEqual(NOT_AVAILABLE);
     expect(dashboardView.vmDetailsIPAddress.getText()).toEqual(NOT_AVAILABLE);
-    expect(dashboardView.vmDetailsHostname.getText()).toEqual('VM not running');
     expect(dashboardView.vmDetailsOS.getText()).toEqual('Red Hat Enterprise Linux 7.0 or higher');
-    expect(dashboardView.vmDetailsTZ.getText()).toEqual('VM not running');
-    expect(dashboardView.vmDetailsLoggedUser.getText()).toEqual('VM not running');
   });
 
   it(
