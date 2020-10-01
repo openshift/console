@@ -1,10 +1,5 @@
 import * as React from 'react';
-import {
-  HandlePromiseProps,
-  withHandlePromise,
-  history,
-  resourcePath,
-} from '@console/internal/components/utils';
+import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { getName, getNamespace, getRandomChars } from '@console/shared';
 import {
   createModalLauncher,
@@ -38,7 +33,6 @@ const SnapshotRestoreModal = withHandlePromise((props: SnapshotRestoreModalProps
       k8sCreate(snapshotRestoreWrapper.getModel(), snapshotRestoreWrapper.asResource()),
       () => {
         close();
-        history.push(resourcePath(snapshotRestoreWrapper.getModel().kind, restoreName, namespace));
       },
     );
   };

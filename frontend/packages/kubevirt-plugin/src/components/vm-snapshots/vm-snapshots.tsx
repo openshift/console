@@ -17,9 +17,10 @@ import { VMLikeEntityTabProps } from '../vms/types';
 import { snapshotsTableColumnClasses } from './utils';
 import { ADD_SNAPSHOT } from '../../utils/strings';
 import { VirtualMachineSnapshotModel } from '../../models';
-import { SnapshotRow } from './snapshot-row';
+import { VMSnapshotRow } from './vm-snapshot-row';
 import SnapshotModal from '../modals/snapshot-modal/snapshot-modal';
 import { asVM, isVMRunningOrExpectedRunning } from '../../selectors/vm';
+import { useMappedVMRestores } from './use-mapped-vm-restores';
 
 export type VMSnapshotsTableProps = {
   data?: any[];
@@ -65,6 +66,14 @@ export const VMSnapshotsTable: React.FC<VMSnapshotsTableProps> = ({
             transforms: [sortable],
           },
           {
+            title: 'Last restored',
+            sortFunc: 'snapshotLastRestore',
+            transforms: [sortable],
+          },
+          {
+            title: '',
+          },
+          {
             title: '',
           },
         ],
@@ -81,17 +90,18 @@ export const VMSnapshotsPage: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEnt
   const vmName = getName(vmLikeEntity);
   const namespace = getNamespace(vmLikeEntity);
 
-  const resource: WatchK8sResource = React.useMemo(
-    () => ({
-      isList: true,
-      kind: VirtualMachineSnapshotModel.kind,
-      namespaced: true,
-      namespace,
-    }),
-    [namespace],
-  );
+  const snapshotResource: WatchK8sResource = {
+    isList: true,
+    kind: VirtualMachineSnapshotModel.kind,
+    namespaced: true,
+    namespace,
+  };
 
-  const [snapshots, snapshotsLoaded, snapshotsError] = useK8sWatchResource<VMSnapshot[]>(resource);
+  const [snapshots, snapshotsLoaded, snapshotsError] = useK8sWatchResource<VMSnapshot[]>(
+    snapshotResource,
+  );
+  const [mappedRelevantRestores, restoresLoaded, restoresError] = useMappedVMRestores(namespace);
+
   const [isLocked, setIsLocked] = useSafetyFirst(false);
   const withProgress = wrapWithProgress(setIsLocked);
   const filteredSnapshots = snapshots.filter((snap) => getVmSnapshotVmName(snap) === vmName);
@@ -122,15 +132,16 @@ export const VMSnapshotsPage: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEnt
       )}
       <div className="co-m-pane__body">
         <VMSnapshotsTable
-          loaded={snapshotsLoaded}
-          loadError={snapshotsError}
+          loaded={snapshotsLoaded && restoresLoaded}
+          loadError={snapshotsError || restoresError}
           data={filteredSnapshots}
           customData={{
             vmLikeEntity,
             withProgress,
+            restores: mappedRelevantRestores,
             isDisabled,
           }}
-          row={SnapshotRow}
+          row={VMSnapshotRow}
           columnClasses={snapshotsTableColumnClasses}
         />
       </div>
