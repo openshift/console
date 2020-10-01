@@ -15,7 +15,7 @@ import { humanizeNumber, useRefWidth } from '../utils';
 import { PrometheusEndpoint } from './helpers';
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { usePrometheusPoll } from './prometheus-poll-hook';
-import { DataPoint, CursorVoronoiContainer } from './';
+import { DataPoint, CursorVoronoiContainer, PrometheusResult } from './';
 import { getRangeVectorStats } from './utils';
 import { GraphEmpty } from './graph-empty';
 import { ChartLegendTooltip } from './tooltip';
@@ -149,7 +149,7 @@ export const Stack: React.FC<StackProps> = ({
   samples = DEFAULT_SAMPLES,
   timeout,
   timespan = DEFAULT_TIMESPAN,
-  metric,
+  description,
   ...rest
 }) => {
   const [utilization, , loading] = usePrometheusPoll({
@@ -160,7 +160,7 @@ export const Stack: React.FC<StackProps> = ({
     timeout,
     timespan,
   });
-  const data = getRangeVectorStats(utilization, null, null, metric);
+  const data = getRangeVectorStats(utilization, description, null);
   const ChartComponent = data?.length === 1 ? AreaChart : StackChart;
   return <ChartComponent data={data} loading={loading} query={query} {...rest} />;
 };
@@ -172,5 +172,5 @@ type StackProps = AreaChartProps & {
   timeout?: string;
   timespan?: number;
   byteDataType?: ByteDataTypes;
-  metric?: string;
+  description: (result: PrometheusResult, index: number) => string;
 };

@@ -1,19 +1,19 @@
 import * as _ from 'lodash-es';
 import { chart_color_orange_300 as requestedColor } from '@patternfly/react-tokens';
 
-import { PrometheusResponse, DataPoint } from '.';
+import { PrometheusResponse, DataPoint, PrometheusResult } from '.';
 import { Humanize } from '../utils';
 
-export const getRangeVectorStats: GetRangeStats = (response, description, symbol, metric) => {
+export const getRangeVectorStats: GetRangeStats = (response, description, symbol) => {
   const results = response?.data?.result;
-  return results?.map((r) => {
+  return results?.map((r, index) => {
     return r?.values?.map((value) => {
       const x = new Date(value[0] * 1000);
       x.setSeconds(0, 0);
       return {
         x,
         y: parseFloat(value[1]),
-        description: description || r.metric[metric],
+        description: _.isFunction(description) ? description(r, index) : description,
         symbol,
       };
     });
@@ -71,9 +71,8 @@ export const mapLimitsRequests = (
 
 export type GetRangeStats = (
   response: PrometheusResponse,
-  description?: string,
+  description?: string | ((result: PrometheusResult, index: number) => string),
   symbol?: { fill?: string; type?: string },
-  metric?: string,
 ) => DataPoint<Date>[][];
 
 export type GetInstantStats = (
