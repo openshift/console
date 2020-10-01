@@ -14,6 +14,7 @@ import {
   WithDragNodeProps,
   AnchorEnd,
   WithCreateConnectorProps,
+  RectAnchor,
 } from '@patternfly/react-topology';
 import SvgBoxedText from '@console/dev-console/src/components/svg/SvgBoxedText';
 import {
@@ -26,6 +27,7 @@ import {
   getFilterById,
   SHOW_LABELS_FILTER_ID,
   getTopologyResourceObject,
+  TYPE_AGGREGATE_EDGE,
 } from '@console/dev-console/src/components/topology';
 import PubSubSourceAnchor from '../anchors/PubSubSourceAnchor';
 import PubSubTargetAnchor from '../anchors/PubSubTargetAnchor';
@@ -69,6 +71,8 @@ const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
 }) => {
   useAnchor(PubSubSourceAnchor, AnchorEnd.source);
   useAnchor(PubSubTargetAnchor, AnchorEnd.target);
+  useAnchor(RectAnchor, AnchorEnd.source, TYPE_AGGREGATE_EDGE);
+  useAnchor(RectAnchor, AnchorEnd.target, TYPE_AGGREGATE_EDGE);
   const [hover, hoverRef] = useHover();
 
   const groupRefs = useCombineRefs(dragNodeRef, dndDropRef, hoverRef);
