@@ -193,7 +193,9 @@ export const getPodData = (
 
   // Deploy - Rolling - Recreate
   if (
-    (strategy === DEPLOYMENT_STRATEGY.recreate || strategy === DEPLOYMENT_STRATEGY.rolling) &&
+    (strategy === DEPLOYMENT_STRATEGY.recreate ||
+      strategy === DEPLOYMENT_STRATEGY.rolling ||
+      strategy === DEPLOYMENT_STRATEGY.rollingUpdate) &&
     isRollingOut
   ) {
     return {

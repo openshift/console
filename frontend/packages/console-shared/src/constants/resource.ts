@@ -30,6 +30,7 @@ export const TRIGGERS_ANNOTATION = 'image.openshift.io/triggers';
 export enum DEPLOYMENT_STRATEGY {
   rolling = 'Rolling',
   recreate = 'Recreate',
+  rollingUpdate = 'RollingUpdate',
 }
 
 export enum DEPLOYMENT_PHASE {
