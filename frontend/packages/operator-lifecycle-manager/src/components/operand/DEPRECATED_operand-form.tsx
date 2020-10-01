@@ -779,9 +779,9 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
           <dt>Limits</dt>
           <dd>
             <ResourceRequirements
-              cpu={currentValue.getIn(_.toPath(cpuLimitsPath))}
-              memory={currentValue.getIn(_.toPath(memoryLimitsPath))}
-              storage={currentValue.getIn(_.toPath(storageLimitsPath))}
+              cpu={currentValue.getIn?.(_.toPath(cpuLimitsPath))}
+              memory={currentValue.getIn?.(_.toPath(memoryLimitsPath))}
+              storage={currentValue.getIn?.(_.toPath(storageLimitsPath))}
               onChangeCPU={(value) => handleFormDataUpdate(`${path}.${cpuLimitsPath}`, value)}
               onChangeMemory={(value) => handleFormDataUpdate(`${path}.${memoryLimitsPath}`, value)}
               onChangeStorage={(value) =>
@@ -793,9 +793,9 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
           <dt>Requests</dt>
           <dd>
             <ResourceRequirements
-              cpu={currentValue.getIn(_.toPath(cpuRequestsPath))}
-              memory={currentValue.getIn(_.toPath(memoryRequestsPath))}
-              storage={currentValue.getIn(_.toPath(storageRequestsPath))}
+              cpu={currentValue.getIn?.(_.toPath(cpuRequestsPath))}
+              memory={currentValue.getIn?.(_.toPath(memoryRequestsPath))}
+              storage={currentValue.getIn?.(_.toPath(storageRequestsPath))}
               onChangeCPU={(value) => handleFormDataUpdate(`${path}.${cpuRequestsPath}`, value)}
               onChangeMemory={(value) =>
                 handleFormDataUpdate(`${path}.${memoryRequestsPath}`, value)
