@@ -41,7 +41,7 @@ const EventItem: React.FC<EventItemProps> = React.memo(({ event, isExpanded, onT
             <div className="co-recent-item__title-message">
               {isWarning && (
                 <YellowExclamationTriangleIcon
-                  alt="Warning"
+                  aria-label="Warning"
                   title="Warning"
                   className="co-dashboard-icon co-recent-item__icon--warning"
                 />

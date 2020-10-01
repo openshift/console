@@ -19,7 +19,7 @@ import { global_warning_color_100 as warningColor } from '@patternfly/react-toke
 
 export const GreenCheckCircleIcon: React.FC<ColoredIconProps> = ({
   className,
-  alt,
+  ariaLabel,
   title,
   size,
 }) => (
@@ -27,14 +27,14 @@ export const GreenCheckCircleIcon: React.FC<ColoredIconProps> = ({
     size={size}
     color={okColor.value}
     className={className}
-    alt={alt}
+    aria-label={ariaLabel}
     title={title}
   />
 );
 
 export const RedExclamationCircleIcon: React.FC<ColoredIconProps> = ({
   className,
-  alt,
+  ariaLabel,
   title,
   size,
 }) => (
@@ -42,14 +42,14 @@ export const RedExclamationCircleIcon: React.FC<ColoredIconProps> = ({
     size={size}
     color={dangerColor.value}
     className={className}
-    alt={alt}
+    aria-label={ariaLabel}
     title={title}
   />
 );
 
 export const YellowExclamationTriangleIcon: React.FC<ColoredIconProps> = ({
   className,
-  alt,
+  ariaLabel,
   title,
   size,
 }) => (
@@ -57,47 +57,80 @@ export const YellowExclamationTriangleIcon: React.FC<ColoredIconProps> = ({
     size={size}
     color={warningColor.value}
     className={className}
-    alt={alt}
+    aria-label={ariaLabel}
     title={title}
   />
 );
 
-export const BlueInfoCircleIcon: React.FC<ColoredIconProps> = ({ className, alt, title }) => (
-  <InfoCircleIcon color={blueInfoColor.value} className={className} alt={alt} title={title} />
+export const BlueInfoCircleIcon: React.FC<ColoredIconProps> = ({ className, ariaLabel, title }) => (
+  <InfoCircleIcon
+    color={blueInfoColor.value}
+    className={className}
+    aria-label={ariaLabel}
+    title={title}
+  />
 );
 
-export const GrayUnknownIcon: React.FC<ColoredIconProps> = ({ className, alt, title }) => (
-  <UnknownIcon color={disabledColor.value} className={className} alt={alt} title={title} />
+export const GrayUnknownIcon: React.FC<ColoredIconProps> = ({ className, ariaLabel, title }) => (
+  <UnknownIcon
+    color={disabledColor.value}
+    className={className}
+    aria-label={ariaLabel}
+    title={title}
+  />
 );
 
-export const BlueSyncIcon: React.FC<ColoredIconProps> = ({ className, alt, title }) => (
-  <SyncAltIcon color={blueInfoColor.value} className={className} alt={alt} title={title} />
+export const BlueSyncIcon: React.FC<ColoredIconProps> = ({ className, ariaLabel, title }) => (
+  <SyncAltIcon
+    color={blueInfoColor.value}
+    className={className}
+    aria-label={ariaLabel}
+    title={title}
+  />
 );
 
-export const RedResourcesFullIcon: React.FC<ColoredIconProps> = ({ className, alt, title }) => (
-  <ResourcesFullIcon color={dangerColor.value} className={className} alt={alt} title={title} />
+export const RedResourcesFullIcon: React.FC<ColoredIconProps> = ({
+  className,
+  ariaLabel,
+  title,
+}) => (
+  <ResourcesFullIcon
+    color={dangerColor.value}
+    className={className}
+    aria-label={ariaLabel}
+    title={title}
+  />
 );
 
 export const YellowResourcesAlmostFullIcon: React.FC<ColoredIconProps> = ({
   className,
-  alt,
+  ariaLabel,
   title,
 }) => (
   <ResourcesAlmostFullIcon
     color={warningColor.value}
     className={className}
-    alt={alt}
+    aria-label={ariaLabel}
     title={title}
   />
 );
 
-export const BlueArrowCircleUpIcon: React.FC<ColoredIconProps> = ({ className, alt, title }) => (
-  <ArrowCircleUpIcon color={blueDefaultColor.value} className={className} alt={alt} title={title} />
+export const BlueArrowCircleUpIcon: React.FC<ColoredIconProps> = ({
+  className,
+  ariaLabel,
+  title,
+}) => (
+  <ArrowCircleUpIcon
+    color={blueDefaultColor.value}
+    className={className}
+    aria-label={ariaLabel}
+    title={title}
+  />
 );
 
 export type ColoredIconProps = {
   className?: string;
-  alt?: string;
+  ariaLabel?: string;
   title?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl';
 };
