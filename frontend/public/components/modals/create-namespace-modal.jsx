@@ -87,14 +87,20 @@ const CreateNamespaceModal = connect(
         });
       }
 
-      this.handlePromise(promise).then((obj) => {
-        close();
-        if (onSubmit) {
-          onSubmit(obj);
-        } else {
-          history.push(resourceObjPath(obj, referenceFor(obj)));
-        }
-      });
+      this.handlePromise(promise)
+        .then((obj) => {
+          close();
+          if (onSubmit) {
+            onSubmit(obj);
+          } else {
+            history.push(resourceObjPath(obj, referenceFor(obj)));
+          }
+        })
+        .catch((err) => {
+          const label = createProject ? 'project' : 'namespace';
+          // eslint-disable-next-line no-console
+          console.error(`Failed to create ${label}:`, err);
+        });
     }
 
     onLabels(labels) {
