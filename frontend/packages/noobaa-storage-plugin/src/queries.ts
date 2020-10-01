@@ -176,8 +176,10 @@ export const DATA_CONSUMPTION_QUERIES = {
   },
   [ServiceType.RGW]: {
     [Metrics.LATENCY]: {
-      latencyGet: 'avg(rate(ceph_rgw_get_initial_lat_sum[1m]))',
-      latencyPut: 'avg(rate(ceph_rgw_put_initial_lat_sum[1m]))',
+      latencyGet:
+        'avg(rate(ceph_rgw_get_initial_lat_sum[1m])) /avg(rate(ceph_rgw_get_initial_lat_count[1m])>0)',
+      latencyPut:
+        'avg(rate(ceph_rgw_put_initial_lat_sum[1m])) /avg(rate(ceph_rgw_put_initial_lat_count[1m])>0)',
     },
     [Metrics.BANDWIDTH]: {
       bandwidthGet: 'sum(rate(ceph_rgw_get_b[1m]))',

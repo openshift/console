@@ -22,6 +22,7 @@ import { PrometheusGraph } from '@console/internal/components/graphs/prometheus-
 import { getLatestValue } from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/utilization-card/utils';
 import { DataPoint } from '@console/internal/components/graphs';
 import { Metrics, CHART_LABELS } from '../../constants';
+import { convertNaNToNull } from '../../utils';
 import './data-consumption-card.scss';
 
 type PerformanceGraphProps = {
@@ -40,8 +41,8 @@ const PerformanceGraph: React.FC<PerformanceGraphProps> = ({
   const [getDataArray, putDataArray] = dataPoints;
   const [containerRef, width] = useRefWidth();
   const humanize = metricType === Metrics.BANDWIDTH ? humanizeDecimalBytesPerSec : humanizeSeconds;
-  const getData = getDataArray?.[0];
-  const putData = putDataArray?.[0];
+  const getData = getDataArray?.[0]?.map(convertNaNToNull);
+  const putData = putDataArray?.[0]?.map(convertNaNToNull);
   const PUTLatestValue = humanize(getLatestValue(putData)).string;
   const GETLatestValue = humanize(getLatestValue(getData)).string;
 
@@ -49,10 +50,10 @@ const PerformanceGraph: React.FC<PerformanceGraphProps> = ({
 
   const emptyData = dataPoints.some(_.isEmpty);
 
-  if (loadError || emptyData) {
+  if (loadError && emptyData) {
     return <GraphEmpty />;
   }
-  if (!loading && !loadError) {
+  if (!loading && !loadError && !emptyData) {
     return (
       <>
         <div className="nb-data-consumption-card__chart-label text-secondary">
