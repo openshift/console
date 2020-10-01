@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
-import { Patch, TemplateKind } from '@console/internal/module/k8s';
-import { VMGenericLikeEntityKind, VMLikeEntityKind } from '../../../types/vmLike';
+import { K8sResourceKind, Patch, TemplateKind } from '@console/internal/module/k8s';
+import { VMLikeEntityKind } from '../../../types/vmLike';
 import { getAnnotations, getDescription } from '../../../selectors/selectors';
 import { getFlavor, getCPU, getMemory, parseCPU, DEFAULT_CPU } from '../../../selectors/vm';
 import { isTemplate, isVM } from '../../../selectors/check-type';
@@ -140,12 +140,12 @@ const getUpdateCpuMemoryPatch = (vm: VMKind, cpu: CPU, memory: string): Patch[] 
 };
 
 export const getUpdateDescriptionPatches = (
-  vmLikeEntity: VMGenericLikeEntityKind,
+  resource: K8sResourceKind,
   description: string,
 ): Patch[] => {
   const patches = [];
-  const oldDescription = getDescription(vmLikeEntity);
-  const annotations = getAnnotations(vmLikeEntity, null);
+  const oldDescription = getDescription(resource);
+  const annotations = getAnnotations(resource, null);
 
   if (description !== oldDescription) {
     if (!description && oldDescription) {

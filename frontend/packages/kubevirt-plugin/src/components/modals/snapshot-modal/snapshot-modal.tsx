@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, AlertVariant, Form, TextInput } from '@patternfly/react-core';
+import { Alert, AlertVariant, Form, TextArea, TextInput } from '@patternfly/react-core';
 import { prefixedID } from '../../../utils';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { getName, getNamespace } from '@console/shared';
@@ -24,13 +24,15 @@ const getSnapshotName = (vmName: string) => {
 const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
   const { vmLikeEntity, inProgress, errorMessage, handlePromise, close, cancel } = props;
   const vmName = getName(vmLikeEntity);
-  const [name, setName] = React.useState<string>(getSnapshotName(vmName));
+  const [name, setName] = React.useState(getSnapshotName(vmName));
+  const [description, setDescription] = React.useState('');
   const asId = prefixedID.bind(null, 'snapshot');
 
   const submit = async (e) => {
     e.preventDefault();
     const snapshotWrapper = new VMSnapshotWrapper().init({
       name,
+      description,
       namespace: getNamespace(vmLikeEntity),
       vmName,
     });
@@ -56,6 +58,13 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
               id={asId('name')}
               value={name}
               onChange={(v) => setName(v)}
+            />
+          </FormRow>
+          <FormRow title="Description" fieldId={asId('desc')}>
+            <TextArea
+              value={description}
+              onChange={(d) => setDescription(d)}
+              aria-label="description text area"
             />
           </FormRow>
         </Form>

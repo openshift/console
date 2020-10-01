@@ -9,10 +9,13 @@ export class VMSnapshotWrapper extends K8sResourceWrapper<VMSnapshot, VMSnapshot
     super(VirtualMachineSnapshotModel, snapshot, copy);
   }
 
-  init(data: K8sInitAddon & { vmName: string }) {
+  init(data: K8sInitAddon & { vmName: string; description?: string }) {
     super.init(data);
     if (data?.vmName) {
       this.setVm(data.vmName);
+    }
+    if (data?.description) {
+      this.addAnotation('description', data.description);
     }
     return this;
   }
