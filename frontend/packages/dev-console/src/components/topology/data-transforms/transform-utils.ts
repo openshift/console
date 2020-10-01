@@ -90,6 +90,7 @@ export const createTopologyNodeData = (
       kind: referenceFor(resource),
       editURL: deploymentsAnnotations['app.openshift.io/edit-url'],
       vcsURI: deploymentsAnnotations['app.openshift.io/vcs-uri'],
+      vcsRef: deploymentsAnnotations['app.openshift.io/vcs-ref'],
       builderImage: builderImageIcon || defaultIcon,
       isKnativeResource:
         type && (type === TYPE_EVENT_SOURCE || type === TYPE_KNATIVE_REVISION)

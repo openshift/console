@@ -35,8 +35,9 @@ export const getServiceBindingStatus = ({ FLAGS }: RootState): boolean =>
 export const getCheURL = (consoleLinks: K8sResourceKind[]) =>
   _.get(_.find(consoleLinks, ['metadata.name', 'che']), 'spec.href', '');
 
-export const getEditURL = (gitURL: string, cheURL: string) => {
-  return gitURL && cheURL ? `${cheURL}/f?url=${gitURL}&policies.create=peruser` : gitURL;
+export const getEditURL = (gitURL: string, gitBranch: string, cheURL: string) => {
+  const fullGitURL = gitBranch ? `${gitURL}/tree/${gitBranch}` : gitURL;
+  return gitURL && cheURL ? `${cheURL}/f?url=${fullGitURL}&policies.create=peruser` : fullGitURL;
 };
 
 export const getNamespaceDashboardKialiLink = (
