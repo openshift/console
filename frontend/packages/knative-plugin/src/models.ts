@@ -244,7 +244,7 @@ export const EventingKafkaChannelModel: K8sKind = {
   kind: 'KafkaChannel',
   label: 'Kafka Channel',
   labelPlural: 'Kafka Channels',
-  plural: 'kafkaChannels',
+  plural: 'kafkachannels',
   id: 'kafkaChannel',
   abbr: 'KC',
   namespaced: true,
