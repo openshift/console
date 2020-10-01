@@ -28,9 +28,7 @@ describe('Check health data on main OCP dashboard ', () => {
     await browser.sleep(2 * SECOND);
     expect(mainHealtYellowSvg.isPresent()).toBe(true);
     noOutChange('unset');
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 300;
-    await browser.wait(until.presenceOf(mainHealtGreenSvg));
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 120;
+    await browser.wait(until.presenceOf(mainHealtGreenSvg), 60 * SECOND);
   });
 
   xit('Check main dashboard health icon is red and cluster is NA', async () => {
