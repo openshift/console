@@ -240,7 +240,11 @@ const Topology: React.FC<TopologyProps> = ({ model, application, onSelect, setVi
     <div className="odc-topology-graph-view">
       <VisualizationProvider controller={visualization}>
         <VisualizationSurface state={{ selectedIds: [selectedId] }} />
-        {dragHint && <div className="odc-topology__hint-container">{dragHint}</div>}
+        {dragHint && (
+          <div className="odc-topology__hint-container">
+            <div className="odc-topology__hint-background">{dragHint}</div>
+          </div>
+        )}
         <span className="pf-topology-control-bar">{renderControlBar()}</span>
       </VisualizationProvider>
     </div>
