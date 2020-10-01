@@ -1,6 +1,6 @@
-import * as _ from 'lodash';
 import { PipelineRun, Pipeline } from '../../../../../utils/pipeline-augment';
-import { getPipelineRunData, migratePipelineRun } from '../utils';
+import { getPipelineRunData, getPipelineRunFromForm, migratePipelineRun } from '../utils';
+import { CommonPipelineModalFormikValues } from '../types';
 
 export const actionPipelines: Pipeline[] = [
   {
@@ -47,20 +47,188 @@ describe('PipelineAction testing getPipelineRunData', () => {
 
   it('expect pipeline run data to be returned when only Pipeline argument is passed', () => {
     const runData = getPipelineRunData(actionPipelines[0]);
-    expect(runData).not.toBeNull();
+    expect(runData).toMatchObject({
+      apiVersion: 'abhiapi/v1',
+      kind: 'PipelineRun',
+      metadata: {
+        namespace: 'corazon',
+        name: expect.stringMatching(/sansa-stark-[a-z0-9]{6}/),
+        labels: { 'tekton.dev/pipeline': 'sansa-stark' },
+      },
+      spec: {
+        pipelineRef: { name: 'sansa-stark' },
+      },
+    });
   });
 
   it('expect pipeline run data to be returned when only PipelineRun argument is passed', () => {
     const runData = getPipelineRunData(null, actionPipelineRuns[0]);
-    expect(runData).not.toBeNull();
+    expect(runData).toMatchObject({
+      apiVersion: 'abhiapi/v1',
+      kind: 'PipelineRun',
+      metadata: {
+        namespace: 'corazon',
+        name: expect.stringMatching(/sansa-stark-[a-z0-9]{6}/),
+        labels: { 'tekton.dev/pipeline': 'sansa-stark' },
+      },
+      spec: { pipelineRef: { name: 'sansa-stark' } },
+    });
   });
 
-  it('expect params to not have default key in the pipeline run data', () => {
-    const runData = getPipelineRunData(actionPipelines[0]);
-    const { params } = runData.spec;
-    expect(params[0].name).toBe('APP_NAME');
-    expect(params[0].value).toBe('default-app-name');
-    expect(_.has(params[0], 'default')).toBeFalsy();
+  it('expect pipeline run data with generateName if options argument is requests this', () => {
+    const runData = getPipelineRunData(actionPipelines[0], null, { generateName: true });
+    expect(runData).toMatchObject({
+      apiVersion: 'abhiapi/v1',
+      kind: 'PipelineRun',
+      metadata: {
+        namespace: 'corazon',
+        generateName: 'sansa-stark-',
+        labels: { 'tekton.dev/pipeline': 'sansa-stark' },
+      },
+      spec: { pipelineRef: { name: 'sansa-stark' } },
+    });
+  });
+});
+
+describe('PipelineAction testing getPipelineRunFromForm', () => {
+  it('expect pipeline run data to have a name by default', () => {
+    const formValues: CommonPipelineModalFormikValues = {
+      namespace: 'corazon',
+      parameters: [],
+      resources: [],
+    };
+    const labels: { [key: string]: string } = {
+      anotherlabel: 'another-label-value',
+    };
+
+    const runData = getPipelineRunFromForm(actionPipelines[0], formValues, labels);
+    expect(runData).toMatchObject({
+      apiVersion: 'abhiapi/v1',
+      kind: 'PipelineRun',
+      metadata: {
+        namespace: 'corazon',
+        name: expect.stringMatching(/sansa-stark-[a-z0-9]{6}/),
+        labels: { 'tekton.dev/pipeline': 'sansa-stark' },
+      },
+      spec: { pipelineRef: { name: 'sansa-stark' } },
+    });
+  });
+
+  it('expect pipeline run data to have a generateName if generator option is true', () => {
+    const formValues: CommonPipelineModalFormikValues = {
+      namespace: 'corazon',
+      parameters: [],
+      resources: [],
+    };
+    const labels: { [key: string]: string } = {
+      anotherlabel: 'another-label-value',
+    };
+
+    const runData = getPipelineRunFromForm(actionPipelines[0], formValues, labels, {
+      generateName: true,
+    });
+    expect(runData).toEqual({
+      apiVersion: 'abhiapi/v1',
+      kind: 'PipelineRun',
+      metadata: {
+        namespace: 'corazon',
+        generateName: 'sansa-stark-',
+        labels: { ...labels, 'tekton.dev/pipeline': 'sansa-stark' },
+      },
+      spec: {
+        pipelineRef: { name: 'sansa-stark' },
+        params: [],
+        resources: [],
+        status: null,
+        workspaces: undefined,
+      },
+    });
+  });
+
+  it('expect pipeline run data to have a parameters if the form data contains parameters', () => {
+    const formValues: CommonPipelineModalFormikValues = {
+      namespace: 'corazon',
+      parameters: [
+        {
+          name: 'ParameterA',
+          default: 'Default value',
+          description: 'Description',
+        },
+      ],
+      resources: [],
+    };
+    const labels: { [key: string]: string } = {
+      anotherlabel: 'another-label-value',
+    };
+
+    const runData = getPipelineRunFromForm(actionPipelines[0], formValues, labels);
+    expect(runData).toMatchObject({
+      apiVersion: 'abhiapi/v1',
+      kind: 'PipelineRun',
+      metadata: {
+        namespace: 'corazon',
+        name: expect.stringMatching(/sansa-stark-[a-z0-9]{6}/),
+        labels: { ...labels, 'tekton.dev/pipeline': 'sansa-stark' },
+      },
+      spec: {
+        pipelineRef: { name: 'sansa-stark' },
+        params: [
+          {
+            name: 'ParameterA',
+            value: 'Default value',
+          },
+        ],
+        resources: [],
+        status: null,
+        workspaces: undefined,
+      },
+    });
+  });
+
+  it('expect pipeline run data to have a resources if the form data contains resources', () => {
+    const formValues: CommonPipelineModalFormikValues = {
+      namespace: 'corazon',
+      parameters: [],
+      resources: [
+        {
+          name: 'ResourceA',
+          selection: 'SelectionA',
+          data: {
+            type: 'Git',
+            params: {},
+            secrets: {},
+          },
+        },
+      ],
+    };
+    const labels: { [key: string]: string } = {
+      anotherlabel: 'another-label-value',
+    };
+
+    const runData = getPipelineRunFromForm(actionPipelines[0], formValues, labels);
+    expect(runData).toMatchObject({
+      apiVersion: 'abhiapi/v1',
+      kind: 'PipelineRun',
+      metadata: {
+        namespace: 'corazon',
+        name: expect.stringMatching(/sansa-stark-[a-z0-9]{6}/),
+        labels: { ...labels, 'tekton.dev/pipeline': 'sansa-stark' },
+      },
+      spec: {
+        pipelineRef: { name: 'sansa-stark' },
+        params: [],
+        resources: [
+          {
+            name: 'ResourceA',
+            resourceRef: {
+              name: 'SelectionA',
+            },
+          },
+        ],
+        status: null,
+        workspaces: undefined,
+      },
+    });
   });
 });
 

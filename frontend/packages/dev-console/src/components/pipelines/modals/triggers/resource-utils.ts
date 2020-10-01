@@ -2,7 +2,7 @@ import { getRandomChars } from '@console/shared';
 import { apiVersionForModel, RouteKind } from '@console/internal/module/k8s';
 import { RouteModel } from '@console/internal/models';
 import { EventListenerModel, TriggerTemplateModel } from '../../../../models';
-import { PipelineRun } from '../../../../utils/pipeline-augment';
+import { Pipeline, PipelineRun } from '../../../../utils/pipeline-augment';
 import { PIPELINE_SERVICE_ACCOUNT } from '../../const';
 import { getPipelineOperatorVersion } from '../../utils/pipeline-operator';
 import {
@@ -14,6 +14,7 @@ import {
 } from '../../resource-types';
 
 export const createTriggerTemplate = (
+  pipeline: Pipeline,
   pipelineRun: PipelineRun,
   params: TriggerTemplateKindParam[],
 ): TriggerTemplateKind => {
@@ -21,7 +22,7 @@ export const createTriggerTemplate = (
     apiVersion: apiVersionForModel(TriggerTemplateModel),
     kind: TriggerTemplateModel.kind,
     metadata: {
-      name: `trigger-template-${pipelineRun.metadata.name}`,
+      name: `trigger-template-${pipeline.metadata.name}-${getRandomChars()}`,
     },
     spec: {
       params,

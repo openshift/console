@@ -42,6 +42,7 @@ export const migratePipelineRun = (pipelineRun: PipelineRun): PipelineRun => {
 export const getPipelineRunData = (
   pipeline: Pipeline = null,
   latestRun?: PipelineRun,
+  options?: { generateName: boolean },
 ): PipelineRun => {
   if (!pipeline && !latestRun) {
     // eslint-disable-next-line no-console
@@ -62,7 +63,13 @@ export const getPipelineRunData = (
     apiVersion: pipeline ? pipeline.apiVersion : latestRun.apiVersion,
     kind: PipelineRunModel.kind,
     metadata: {
-      name: `${pipelineName}-${getRandomChars(6)}`,
+      ...(options?.generateName
+        ? {
+            generateName: `${pipelineName}-`,
+          }
+        : {
+            name: `${pipelineName}-${getRandomChars()}`,
+          }),
       namespace: pipeline ? pipeline.metadata.namespace : latestRun.metadata.namespace,
       labels: _.merge({}, pipeline?.metadata?.labels, latestRun?.metadata?.labels, {
         'tekton.dev/pipeline': pipelineName,
@@ -137,6 +144,7 @@ export const getPipelineRunFromForm = (
   pipeline: Pipeline,
   formValues: CommonPipelineModalFormikValues,
   labels?: { [key: string]: string },
+  options?: { generateName: boolean },
 ) => {
   const { parameters, resources, workspaces } = formValues;
 
@@ -153,5 +161,5 @@ export const getPipelineRunFromForm = (
       workspaces: getPipelineRunWorkspaces(workspaces),
     },
   };
-  return getPipelineRunData(pipeline, pipelineRunData);
+  return getPipelineRunData(pipeline, pipelineRunData, options);
 };
