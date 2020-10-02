@@ -28,16 +28,18 @@ const nodeQueriesByNodeName = {
   [HostQuery.MEMORY_UTILIZATION]: _.template(`node_memory_Active_bytes{instance=~'<%= node %>'}`),
   [HostQuery.MEMORY_TOTAL]: _.template(`node_memory_MemTotal_bytes{instance=~'<%= node %>'}`),
   [HostQuery.STORAGE_UTILIZATION]: _.template(
-    `instance:node_filesystem_usage:sum{instance=~'<%= node %>'}`,
+    `sum(node_filesystem_size_bytes{instance="<%= node %>",fstype!~"tmpfs|squashfs",mountpoint!~"/usr|/var"} - node_filesystem_avail_bytes{instance="<%= node %>",fstype!~"tmpfs|squashfs",mountpoint!~"/usr|/var"})`,
   ),
-  [HostQuery.STORAGE_TOTAL]: _.template(`sum(node_filesystem_size_bytes{instance=~'<%= node %>'})`),
+  [HostQuery.STORAGE_TOTAL]: _.template(
+    `sum(node_filesystem_size_bytes{instance='<%= node %>',fstype!~"tmpfs|squashfs",mountpoint!~"/usr|/var"})`,
+  ),
   [HostQuery.NETWORK_IN_UTILIZATION]: _.template(
     `instance:node_network_receive_bytes:rate:sum{instance=~'<%= node %>'}`,
   ),
   [HostQuery.NETWORK_OUT_UTILIZATION]: _.template(
     `instance:node_network_transmit_bytes:rate:sum{instance=~'<%= node %>'}`,
   ),
-  [HostQuery.NUMBER_OF_PODS]: _.template(`kubelet_running_pod_count{node='<%= node %>'}`),
+  [HostQuery.NUMBER_OF_PODS]: _.template(`kubelet_running_pods{node='<%= node %>'}`),
   [HostQuery.PODS_BY_CPU]: _.template(
     `topk(25, sort_desc(sum(rate(container_cpu_usage_seconds_total{node="<%= node %>",container_name="",pod!=""}[5m])) BY (pod, namespace)))`,
   ),
