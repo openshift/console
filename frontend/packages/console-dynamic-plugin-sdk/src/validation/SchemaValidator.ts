@@ -1,13 +1,15 @@
 import * as Ajv from 'ajv';
 import { ValidationResult } from './ValidationResult';
+import { ValidationAssertions } from './ValidationAssertions';
 
 export class SchemaValidator {
-  private readonly ajv = new Ajv({ allErrors: true });
+  readonly result: ValidationResult;
 
-  public readonly result: ValidationResult;
+  readonly assert: ValidationAssertions;
 
-  constructor(description: string) {
+  constructor(description: string, private readonly ajv = new Ajv({ allErrors: true })) {
     this.result = new ValidationResult(description);
+    this.assert = new ValidationAssertions(this.result);
   }
 
   validate(schema: object, data: any, dataVar: string = 'obj') {

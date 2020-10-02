@@ -6,6 +6,7 @@ import { ConsolePluginManifestJSON } from '../schema/plugin-manifest';
 import { resolveEncodedCodeRefs } from '../coderefs/coderef-resolver';
 import { remoteEntryFile } from '../constants';
 import { RemoteEntryModule } from '../types';
+import { resolveURL } from '../utils/url';
 
 type ConsolePluginData = {
   /** The manifest containing plugin metadata and extension declarations. */
@@ -16,7 +17,11 @@ type ConsolePluginData = {
 
 const pluginMap = new Map<string, ConsolePluginData>();
 
-const getPluginID = (m: ConsolePluginManifestJSON) => `${m.name}@${m.version}`;
+export const scriptIDPrefix = 'console-plugin';
+
+export const getPluginID = (m: ConsolePluginManifestJSON) => `${m.name}@${m.version}`;
+
+export const getScriptElementID = (m: ConsolePluginManifestJSON) => `${scriptIDPrefix}-${m.name}`;
 
 export const loadDynamicPlugin = (baseURL: string, manifest: ConsolePluginManifestJSON) => {
   const pluginID = getPluginID(manifest);
@@ -27,14 +32,16 @@ export const loadDynamicPlugin = (baseURL: string, manifest: ConsolePluginManife
   );
 
   if (existingPluginData) {
-    console.error(`Attempt to reload plugin ${getPluginID(existingPluginData.manifest)}`);
+    const existingPluginID = getPluginID(existingPluginData.manifest);
+    console.error(`Attempt to reload plugin ${existingPluginID} with ${pluginID}`);
     return;
   }
 
   pluginMap.set(pluginID, { manifest, entryCallbackFired: false });
 
   const script = document.createElement('script');
-  script.src = new URL(remoteEntryFile, baseURL).toString();
+  script.id = getScriptElementID(manifest);
+  script.src = resolveURL(baseURL, remoteEntryFile, { trailingSlashInBaseURL: true });
   script.async = true;
   script.onerror = (event) => {
     console.error(`Error while loading entry script for plugin ${pluginID}`, event);
@@ -43,36 +50,60 @@ export const loadDynamicPlugin = (baseURL: string, manifest: ConsolePluginManife
   document.head.appendChild(script);
 };
 
+export const getPluginEntryCallback = (
+  pluginStore: PluginStore,
+  overrideSharedModulesCallback: typeof overrideSharedModules,
+  resolveEncodedCodeRefsCallback: typeof resolveEncodedCodeRefs,
+) => (pluginID: string, entryModule: RemoteEntryModule) => {
+  if (!pluginMap.has(pluginID)) {
+    console.error(`Received callback for unknown plugin ${pluginID}`);
+    return;
+  }
+
+  const pluginData = pluginMap.get(pluginID);
+
+  if (pluginData.entryCallbackFired) {
+    console.error(`Received callback for already loaded plugin ${pluginID}`);
+    return;
+  }
+
+  pluginData.entryCallbackFired = true;
+
+  try {
+    overrideSharedModulesCallback(entryModule);
+  } catch (error) {
+    console.error(`Failed to override shared modules for plugin ${pluginID}`, error);
+    return;
+  }
+
+  const resolvedExtensions = resolveEncodedCodeRefsCallback(
+    pluginData.manifest.extensions,
+    entryModule,
+    pluginID,
+    () => pluginStore.setDynamicPluginEnabled(pluginID, false),
+  );
+
+  pluginStore.addDynamicPlugin(pluginID, pluginData.manifest, resolvedExtensions);
+};
+
 export const registerPluginEntryCallback = (pluginStore: PluginStore) => {
-  window.loadPluginEntry = (pluginID: string, entryModule: RemoteEntryModule) => {
-    if (!pluginMap.has(pluginID)) {
-      console.error(`Received callback for unknown plugin ${pluginID}`);
-      return;
-    }
+  window.loadPluginEntry = getPluginEntryCallback(
+    pluginStore,
+    overrideSharedModules,
+    resolveEncodedCodeRefs,
+  );
+};
 
-    const pluginData = pluginMap.get(pluginID);
+export const getStateForTestPurposes = () => ({
+  pluginMap,
+});
 
-    if (pluginData.entryCallbackFired) {
-      console.error(`Received callback for already loaded plugin ${pluginID}`);
-      return;
-    }
+export const resetStateAndEnvForTestPurposes = () => {
+  pluginMap.clear();
 
-    pluginData.entryCallbackFired = true;
+  document.querySelectorAll(`[id^="${scriptIDPrefix}"]`).forEach((element) => {
+    element.remove();
+  });
 
-    try {
-      overrideSharedModules(entryModule);
-    } catch (error) {
-      console.error(`Failed to override shared modules for plugin ${pluginID}`, error);
-      return;
-    }
-
-    const resolvedExtensions = resolveEncodedCodeRefs(
-      pluginData.manifest.extensions,
-      entryModule,
-      pluginID,
-      () => pluginStore.setDynamicPluginEnabled(pluginID, false),
-    );
-
-    pluginStore.addDynamicPlugin(pluginID, pluginData.manifest, resolvedExtensions);
-  };
+  window.loadPluginEntry = undefined;
 };
