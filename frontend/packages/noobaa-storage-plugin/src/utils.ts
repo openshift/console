@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { Alert } from '@console/internal/components/monitoring/types';
-import { PrometheusResponse } from '@console/internal/components/graphs';
+import { PrometheusResponse, DataPoint } from '@console/internal/components/graphs';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { StorageClass } from '@console/internal/components/storage-class-form';
 
@@ -40,3 +40,6 @@ export const decodeRGWPrefix = (secretData: K8sResourceKind) => {
     return '';
   }
 };
+
+export const convertNaNToNull = (value: DataPoint) =>
+  _.isNaN(value?.y) ? Object.assign(value, { y: null }) : value;
