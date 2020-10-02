@@ -5,7 +5,7 @@ import { getTemplatePackage } from './plugin-resolver.spec';
 
 describe('plugin-integration-tests', () => {
   describe('getTestSuitesForPluginPackage', () => {
-    let globMock;
+    let globMock: jest.SpyInstance<typeof glob.sync>;
 
     beforeEach(() => {
       globMock = jest.spyOn(glob, 'sync');

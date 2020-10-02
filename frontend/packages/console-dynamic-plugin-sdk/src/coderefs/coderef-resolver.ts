@@ -2,7 +2,6 @@
 
 import * as _ from 'lodash';
 import { Extension } from '@console/plugin-sdk/src/typings/base';
-import { SupportedExtension } from '../schema/console-extensions';
 import {
   RemoteEntryModule,
   EncodedCodeRef,
@@ -13,14 +12,14 @@ import {
 
 // TODO(vojtech): support code refs at any level within the properties object
 
-const codeRefSymbol = Symbol('CodeRef');
+export const codeRefSymbol = Symbol('CodeRef');
 
-const isEncodedCodeRef = (obj): obj is EncodedCodeRef =>
+export const isEncodedCodeRef = (obj): obj is EncodedCodeRef =>
   _.isPlainObject(obj) &&
   _.isEqual(Object.getOwnPropertyNames(obj), ['$codeRef']) &&
   typeof (obj as EncodedCodeRef).$codeRef === 'string';
 
-const isExecutableCodeRef = (obj): obj is CodeRef =>
+export const isExecutableCodeRef = (obj): obj is CodeRef =>
   _.isFunction(obj) &&
   _.isEqual(Object.getOwnPropertySymbols(obj), [codeRefSymbol]) &&
   obj[codeRefSymbol] === true;
@@ -48,18 +47,20 @@ export const parseEncodedCodeRefValue = (value: string): [string, string] | [] =
  *
  * _Does not throw errors by design._
  */
-const loadReferencedObject = async <TExport = any>(
+export const loadReferencedObject = async <TExport = any>(
   ref: EncodedCodeRef,
   entryModule: RemoteEntryModule,
   pluginID: string,
   errorCallback: VoidFunction,
 ): Promise<TExport> => {
-  if (process.env.NODE_ENV !== 'production') {
-    console.info(`Loading object '${ref.$codeRef}' of plugin ${pluginID}`);
-  }
-
   const [moduleName, exportName] = parseEncodedCodeRefValue(ref.$codeRef);
   let requestedModule: object;
+
+  if (!moduleName) {
+    console.error(`Malformed code reference '${ref.$codeRef}' of plugin ${pluginID}`);
+    errorCallback();
+    return null;
+  }
 
   try {
     const moduleFactory = await entryModule.get(moduleName);
@@ -85,7 +86,7 @@ const loadReferencedObject = async <TExport = any>(
  * _Does not execute `CodeRef` functions to load the referenced objects._
  */
 export const resolveEncodedCodeRefs = (
-  extensions: SupportedExtension[],
+  extensions: Extension[],
   entryModule: RemoteEntryModule,
   pluginID: string,
   errorCallback: VoidFunction,

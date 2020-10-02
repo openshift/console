@@ -63,7 +63,7 @@ describe('plugin-resolver', () => {
   });
 
   describe('readPackages', () => {
-    let readPkgMock;
+    let readPkgMock: jest.SpyInstance<typeof readPkg.sync>;
 
     beforeEach(() => {
       readPkgMock = jest.spyOn(readPkg, 'sync');

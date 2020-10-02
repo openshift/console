@@ -9,13 +9,13 @@ import { CodeRef } from '../types';
  *
  * _Does not throw errors by design._
  */
-export const executeReferencedFunction = async <T extends (...args: any) => any>(
+export const executeReferencedFunction = async <T extends (...args: any[]) => any>(
   ref: CodeRef<T>,
   ...args: Parameters<T>
 ): Promise<ReturnType<T>> => {
   try {
     const func = await ref();
-    return func(args);
+    return func(...args);
   } catch (error) {
     console.error('Failed to execute referenced function', error);
     return null;

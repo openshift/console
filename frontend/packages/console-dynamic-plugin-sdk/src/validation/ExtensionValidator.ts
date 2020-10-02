@@ -15,7 +15,7 @@ type ExtensionCodeRefData = {
 
 type ExposedPluginModules = ConsolePluginMetadata['exposedModules'];
 
-const collectCodeRefData = (extensions: SupportedExtension[]) =>
+export const collectCodeRefData = (extensions: SupportedExtension[]) =>
   extensions.reduce((acc, e, index) => {
     const refs = filterEncodedCodeRefProperties(e.properties);
     if (!_.isEmpty(refs)) {
@@ -24,7 +24,7 @@ const collectCodeRefData = (extensions: SupportedExtension[]) =>
     return acc;
   }, [] as ExtensionCodeRefData[]);
 
-const findWebpackModules = (
+export const findWebpackModules = (
   compilation: webpack.Compilation,
   exposedModules: ExposedPluginModules,
 ) => {
@@ -38,7 +38,7 @@ const findWebpackModules = (
 };
 
 export class ExtensionValidator {
-  public readonly result: ValidationResult;
+  readonly result: ValidationResult;
 
   constructor(description: string) {
     this.result = new ValidationResult(description);

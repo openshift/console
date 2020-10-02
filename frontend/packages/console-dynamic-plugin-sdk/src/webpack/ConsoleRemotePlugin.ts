@@ -1,7 +1,6 @@
 import * as webpack from 'webpack';
 import { ReplaceSource } from 'webpack-sources';
 import * as readPkg from 'read-pkg';
-import * as semver from 'semver';
 import * as _ from 'lodash';
 import { ConsoleAssetPlugin } from './ConsoleAssetPlugin';
 import { ConsolePackageJSON } from '../schema/plugin-package';
@@ -15,21 +14,21 @@ const remoteEntryCallback = 'window.loadPluginEntry';
 
 const validatePackageFile = (pkg: ConsolePackageJSON) => {
   const validator = new SchemaValidator('package.json');
-  validator.result.assertThat(!!semver.valid(pkg.version), 'version must be semver compliant');
+  validator.assert.validSemverString(pkg.version, 'pkg.version');
 
   if (pkg.consolePlugin) {
-    validator.validate(consolePkgMetadataSchema, pkg.consolePlugin, 'consolePlugin');
+    validator.validate(consolePkgMetadataSchema, pkg.consolePlugin, 'pkg.consolePlugin');
 
     if (_.isPlainObject(pkg.consolePlugin.dependencies)) {
-      Object.entries(pkg.consolePlugin.dependencies).forEach(([pluginName, versionRange]) => {
-        validator.result.assertThat(
-          !!semver.validRange(versionRange),
-          `consolePlugin.dependencies['${pluginName}'] version range is not valid`,
+      Object.entries(pkg.consolePlugin.dependencies).forEach(([depName, versionRange]) => {
+        validator.assert.validSemverRangeString(
+          versionRange,
+          `pkg.consolePlugin.dependencies['${depName}']`,
         );
       });
     }
   } else {
-    validator.result.addError('consolePlugin object is missing');
+    validator.result.addError('pkg.consolePlugin object is missing');
   }
 
   return validator.result;

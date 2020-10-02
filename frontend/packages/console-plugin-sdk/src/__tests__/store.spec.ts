@@ -1,13 +1,18 @@
 import * as _ from 'lodash';
 import * as Combinatorics from 'js-combinatorics';
 import { PodModel } from '@console/internal/models';
-import { Extension, ModelDefinition } from '../typings';
+import {
+  getPluginManifest,
+  getExecutableCodeRefMock,
+} from '@console/dynamic-plugin-sdk/src/utils/test-utils';
 import {
   sanitizeExtension,
   augmentExtension,
   isExtensionInUse,
   getGatingFlagNames,
+  PluginStore,
 } from '../store';
+import { Extension, ModelDefinition } from '../typings';
 
 describe('sanitizeExtension', () => {
   it('sanitizes the flags object for both gated and always-on extensions', () => {
@@ -214,5 +219,511 @@ describe('getGatingFlagNames', () => {
     ].map(sanitizeExtension);
 
     expect(getGatingFlagNames(extensions)).toEqual(['foo', 'bar', 'baz', 'qux', 'test']);
+  });
+});
+
+describe('PluginStore', () => {
+  let debounce: jest.SpyInstance<typeof _.debounce>;
+
+  beforeEach(() => {
+    debounce = jest.spyOn(_, 'debounce');
+    debounce.mockImplementation((func) => func);
+  });
+
+  afterEach(() => {
+    debounce.mockRestore();
+  });
+
+  describe('constructor', () => {
+    it('processes all plugins and stores their extensions in staticExtensions', () => {
+      const store = new PluginStore([
+        {
+          name: 'Test',
+          extensions: [
+            { type: 'Foo', properties: { test: true }, flags: { required: ['foo'] } },
+            { type: 'Bar', properties: { baz: 1 }, flags: { disallowed: ['bar'] } },
+          ],
+        },
+      ]);
+
+      const {
+        staticExtensions,
+        dynamicExtensions,
+        dynamicPlugins,
+      } = store.getStateForTestPurposes();
+
+      expect(staticExtensions).toEqual([
+        {
+          type: 'Foo',
+          properties: { test: true },
+          flags: { required: ['foo'], disallowed: [] },
+          pluginID: 'Test',
+          pluginName: 'Test',
+          uid: 'Test[0]',
+        },
+        {
+          type: 'Bar',
+          properties: { baz: 1 },
+          flags: { required: [], disallowed: ['bar'] },
+          pluginID: 'Test',
+          pluginName: 'Test',
+          uid: 'Test[1]',
+        },
+      ]);
+
+      staticExtensions.forEach((e) => {
+        expect(Object.isFrozen(e)).toBe(true);
+      });
+
+      expect(dynamicExtensions).toEqual([]);
+      expect(dynamicPlugins.size).toBe(0);
+
+      expect(store.getAllExtensions()).toEqual(staticExtensions);
+      expect(store.getDynamicPluginMetadata()).toEqual({});
+    });
+  });
+
+  describe('getAllExtensions', () => {
+    it('returns an aggregated list of static and dynamic extensions', () => {
+      const store = new PluginStore([
+        {
+          name: 'Test0',
+          extensions: [
+            { type: 'Foo', properties: { test: true }, flags: { required: ['foo'] } },
+            { type: 'Bar', properties: { baz: 1 }, flags: { disallowed: ['bar'] } },
+          ],
+        },
+      ]);
+
+      expect(store.getAllExtensions()).toEqual([
+        {
+          type: 'Foo',
+          properties: { test: true },
+          flags: { required: ['foo'], disallowed: [] },
+          pluginID: 'Test0',
+          pluginName: 'Test0',
+          uid: 'Test0[0]',
+        },
+        {
+          type: 'Bar',
+          properties: { baz: 1 },
+          flags: { required: [], disallowed: ['bar'] },
+          pluginID: 'Test0',
+          pluginName: 'Test0',
+          uid: 'Test0[1]',
+        },
+      ]);
+
+      const dynamicExtensions1: Extension[] = [
+        { type: 'Qux', properties: { value: 'test' }, flags: { required: ['foo', 'bar'] } },
+      ];
+
+      const dynamicExtensions2: Extension[] = [
+        { type: 'Mux', properties: {}, flags: { required: ['foo'], disallowed: ['bar'] } },
+      ];
+
+      store.addDynamicPlugin(
+        'Test1@1.2.3',
+        getPluginManifest('Test1', '1.2.3', dynamicExtensions1),
+        dynamicExtensions1,
+      );
+
+      store.addDynamicPlugin(
+        'Test2@2.3.4',
+        getPluginManifest('Test2', '2.3.4', dynamicExtensions2),
+        dynamicExtensions2,
+      );
+
+      store.setDynamicPluginEnabled('Test1@1.2.3', true);
+      store.setDynamicPluginEnabled('Test2@2.3.4', true);
+
+      expect(store.getAllExtensions()).toEqual([
+        {
+          type: 'Foo',
+          properties: { test: true },
+          flags: { required: ['foo'], disallowed: [] },
+          pluginID: 'Test0',
+          pluginName: 'Test0',
+          uid: 'Test0[0]',
+        },
+        {
+          type: 'Bar',
+          properties: { baz: 1 },
+          flags: { required: [], disallowed: ['bar'] },
+          pluginID: 'Test0',
+          pluginName: 'Test0',
+          uid: 'Test0[1]',
+        },
+        {
+          type: 'Qux',
+          properties: { value: 'test' },
+          flags: { required: ['foo', 'bar'], disallowed: [] },
+          pluginID: 'Test1@1.2.3',
+          pluginName: 'Test1',
+          uid: 'Test1@1.2.3[0]',
+        },
+        {
+          type: 'Mux',
+          properties: {},
+          flags: { required: ['foo'], disallowed: ['bar'] },
+          pluginID: 'Test2@2.3.4',
+          pluginName: 'Test2',
+          uid: 'Test2@2.3.4[0]',
+        },
+      ]);
+    });
+  });
+
+  describe('subscribe', () => {
+    it('adds the given listener to the list of registered listeners', () => {
+      const store = new PluginStore([]);
+
+      expect(store.getStateForTestPurposes().listeners).toEqual([]);
+
+      const listeners = [jest.fn(), jest.fn()];
+      listeners.forEach((l) => store.subscribe(l));
+
+      expect(store.getStateForTestPurposes().listeners).toEqual(listeners);
+    });
+
+    it('returns a function to unsubscribe the given listener', () => {
+      const store = new PluginStore([]);
+
+      const listeners = [jest.fn(), jest.fn()];
+      const unsubscribes = listeners.map((l) => store.subscribe(l));
+
+      expect(store.getStateForTestPurposes().listeners).toEqual(listeners);
+
+      unsubscribes.forEach((unsub) => {
+        unsub();
+      });
+
+      expect(store.getStateForTestPurposes().listeners).toEqual([]);
+    });
+
+    it('causes the listener to be called when dynamicExtensions changes', () => {
+      const store = new PluginStore([]);
+      const manifest = getPluginManifest('Test', '1.2.3', [{ type: 'Foo', properties: {} }]);
+
+      store.addDynamicPlugin('Test@1.2.3', manifest, [{ type: 'Foo', properties: {} }]);
+
+      const listeners = [jest.fn(), jest.fn()];
+      listeners.forEach((l) => store.subscribe(l));
+
+      expect(store.getStateForTestPurposes().dynamicExtensions.length).toBe(0);
+      listeners.forEach((l) => {
+        expect(l.mock.calls.length).toBe(0);
+      });
+
+      store.setDynamicPluginEnabled('Test@1.2.3', true);
+
+      expect(store.getStateForTestPurposes().dynamicExtensions.length).toBe(1);
+      listeners.forEach((l) => {
+        expect(l.mock.calls.length).toBe(1);
+        expect(l.mock.calls[0]).toEqual([]);
+      });
+    });
+  });
+
+  describe('addDynamicPlugin', () => {
+    it('processes the given plugin and stores its data in dynamicPlugins', () => {
+      const store = new PluginStore([]);
+
+      const manifest = getPluginManifest('Test', '1.2.3', [
+        {
+          type: 'Foo',
+          properties: { test: true },
+          flags: { required: ['foo'] },
+        },
+        {
+          type: 'Bar',
+          properties: { baz: 1, qux: { $codeRef: 'a.b' } },
+          flags: { disallowed: ['bar'] },
+        },
+      ]);
+
+      const ref = getExecutableCodeRefMock('value');
+
+      const resolvedExtensions: Extension[] = [
+        {
+          type: 'Foo',
+          properties: { test: true },
+          flags: { required: ['foo'] },
+        },
+        {
+          type: 'Bar',
+          properties: { baz: 1, qux: ref },
+          flags: { disallowed: ['bar'] },
+        },
+      ];
+
+      store.addDynamicPlugin('Test@1.2.3', manifest, resolvedExtensions);
+
+      const {
+        staticExtensions,
+        dynamicExtensions,
+        dynamicPlugins,
+      } = store.getStateForTestPurposes();
+
+      expect(staticExtensions).toEqual([]);
+      expect(dynamicExtensions).toEqual([]);
+
+      expect(dynamicPlugins.size).toBe(1);
+      expect(dynamicPlugins.has('Test@1.2.3')).toBe(true);
+      expect(dynamicPlugins.get('Test@1.2.3')).toEqual({
+        manifest,
+        processedExtensions: [
+          {
+            type: 'Foo',
+            properties: { test: true },
+            flags: { required: ['foo'], disallowed: [] },
+            pluginID: 'Test@1.2.3',
+            pluginName: 'Test',
+            uid: 'Test@1.2.3[0]',
+          },
+          {
+            type: 'Bar',
+            properties: { baz: 1, qux: ref },
+            flags: { required: [], disallowed: ['bar'] },
+            pluginID: 'Test@1.2.3',
+            pluginName: 'Test',
+            uid: 'Test@1.2.3[1]',
+          },
+        ],
+        enabled: false,
+      });
+
+      const {
+        manifest: testedManifest,
+        processedExtensions: testedProcessedExtensions,
+      } = dynamicPlugins.get('Test@1.2.3');
+
+      expect(Object.isFrozen(testedManifest)).toBe(true);
+
+      testedProcessedExtensions.forEach((e) => {
+        expect(Object.isFrozen(e)).toBe(true);
+      });
+
+      expect(store.getAllExtensions()).toEqual([]);
+      expect(store.getDynamicPluginMetadata()).toEqual({
+        'Test@1.2.3': _.omit(manifest, 'extensions'),
+      });
+    });
+
+    it('does nothing if a plugin with the same ID is already registered', () => {
+      const store = new PluginStore([]);
+      const manifest1 = getPluginManifest('Test', '1.2.3', [{ type: 'Foo', properties: {} }]);
+      const manifest2 = getPluginManifest('Test', '1.2.3', [{ type: 'Bar', properties: {} }]);
+
+      store.addDynamicPlugin('Test@1.2.3', manifest1, [{ type: 'Foo', properties: {} }]);
+      store.addDynamicPlugin('Test@1.2.3', manifest2, [{ type: 'Bar', properties: {} }]);
+
+      const { dynamicPlugins } = store.getStateForTestPurposes();
+
+      expect(dynamicPlugins.size).toBe(1);
+      expect(dynamicPlugins.has('Test@1.2.3')).toBe(true);
+      expect(dynamicPlugins.get('Test@1.2.3')).toEqual({
+        manifest: manifest1,
+        processedExtensions: [
+          {
+            type: 'Foo',
+            properties: {},
+            flags: { required: [], disallowed: [] },
+            pluginID: 'Test@1.2.3',
+            pluginName: 'Test',
+            uid: 'Test@1.2.3[0]',
+          },
+        ],
+        enabled: false,
+      });
+    });
+  });
+
+  describe('setDynamicPluginEnabled', () => {
+    it('recomputes dynamicExtensions and calls all registered listeners', () => {
+      const store = new PluginStore([]);
+      const manifest1 = getPluginManifest('Test1', '1.2.3', [{ type: 'Foo', properties: {} }]);
+      const manifest2 = getPluginManifest('Test2', '2.3.4', [{ type: 'Bar', properties: {} }]);
+
+      store.addDynamicPlugin('Test1@1.2.3', manifest1, [{ type: 'Foo', properties: {} }]);
+      store.addDynamicPlugin('Test2@2.3.4', manifest2, [{ type: 'Bar', properties: {} }]);
+
+      const listeners = [jest.fn(), jest.fn()];
+      listeners.forEach((l) => store.subscribe(l));
+
+      expect(store.isDynamicPluginEnabled('Test1@1.2.3')).toBe(false);
+      expect(store.isDynamicPluginEnabled('Test2@2.3.4')).toBe(false);
+      expect(store.getStateForTestPurposes().dynamicExtensions).toEqual([]);
+      listeners.forEach((l) => {
+        expect(l.mock.calls.length).toBe(0);
+      });
+
+      store.setDynamicPluginEnabled('Test1@1.2.3', true);
+
+      expect(store.isDynamicPluginEnabled('Test1@1.2.3')).toBe(true);
+      expect(store.isDynamicPluginEnabled('Test2@2.3.4')).toBe(false);
+      expect(store.getStateForTestPurposes().dynamicExtensions).toEqual([
+        {
+          type: 'Foo',
+          properties: {},
+          flags: { required: [], disallowed: [] },
+          pluginID: 'Test1@1.2.3',
+          pluginName: 'Test1',
+          uid: 'Test1@1.2.3[0]',
+        },
+      ]);
+      listeners.forEach((l) => {
+        expect(l.mock.calls.length).toBe(1);
+      });
+
+      store.setDynamicPluginEnabled('Test2@2.3.4', true);
+
+      expect(store.isDynamicPluginEnabled('Test1@1.2.3')).toBe(true);
+      expect(store.isDynamicPluginEnabled('Test2@2.3.4')).toBe(true);
+      expect(store.getStateForTestPurposes().dynamicExtensions).toEqual([
+        {
+          type: 'Foo',
+          properties: {},
+          flags: { required: [], disallowed: [] },
+          pluginID: 'Test1@1.2.3',
+          pluginName: 'Test1',
+          uid: 'Test1@1.2.3[0]',
+        },
+        {
+          type: 'Bar',
+          properties: {},
+          flags: { required: [], disallowed: [] },
+          pluginID: 'Test2@2.3.4',
+          pluginName: 'Test2',
+          uid: 'Test2@2.3.4[0]',
+        },
+      ]);
+      listeners.forEach((l) => {
+        expect(l.mock.calls.length).toBe(2);
+      });
+
+      store.setDynamicPluginEnabled('Test1@1.2.3', false);
+
+      expect(store.isDynamicPluginEnabled('Test1@1.2.3')).toBe(false);
+      expect(store.isDynamicPluginEnabled('Test2@2.3.4')).toBe(true);
+      expect(store.getStateForTestPurposes().dynamicExtensions).toEqual([
+        {
+          type: 'Bar',
+          properties: {},
+          flags: { required: [], disallowed: [] },
+          pluginID: 'Test2@2.3.4',
+          pluginName: 'Test2',
+          uid: 'Test2@2.3.4[0]',
+        },
+      ]);
+      listeners.forEach((l) => {
+        expect(l.mock.calls.length).toBe(3);
+      });
+    });
+
+    it('does nothing if the plugin is already enabled or disabled', () => {
+      const store = new PluginStore([]);
+      const manifest = getPluginManifest('Test', '1.2.3', [{ type: 'Foo', properties: {} }]);
+
+      store.addDynamicPlugin('Test@1.2.3', manifest, [{ type: 'Foo', properties: {} }]);
+
+      const listeners = [jest.fn(), jest.fn()];
+      listeners.forEach((l) => store.subscribe(l));
+
+      expect(store.isDynamicPluginEnabled('Test@1.2.3')).toBe(false);
+      expect(store.getStateForTestPurposes().dynamicExtensions.length).toBe(0);
+      listeners.forEach((l) => {
+        expect(l.mock.calls.length).toBe(0);
+      });
+
+      store.setDynamicPluginEnabled('Test@1.2.3', false);
+
+      expect(store.isDynamicPluginEnabled('Test@1.2.3')).toBe(false);
+      expect(store.getStateForTestPurposes().dynamicExtensions.length).toBe(0);
+      listeners.forEach((l) => {
+        expect(l.mock.calls.length).toBe(0);
+      });
+
+      store.setDynamicPluginEnabled('Test@1.2.3', true);
+
+      expect(store.isDynamicPluginEnabled('Test@1.2.3')).toBe(true);
+      expect(store.getStateForTestPurposes().dynamicExtensions.length).toBe(1);
+      listeners.forEach((l) => {
+        expect(l.mock.calls.length).toBe(1);
+      });
+
+      store.setDynamicPluginEnabled('Test@1.2.3', true);
+
+      expect(store.isDynamicPluginEnabled('Test@1.2.3')).toBe(true);
+      expect(store.getStateForTestPurposes().dynamicExtensions.length).toBe(1);
+      listeners.forEach((l) => {
+        expect(l.mock.calls.length).toBe(1);
+      });
+    });
+
+    it('does nothing if the plugin ID is not registered', () => {
+      const store = new PluginStore([]);
+      const manifest = getPluginManifest('Test', '1.2.3', [{ type: 'Foo', properties: {} }]);
+
+      store.addDynamicPlugin('Test@1.2.3', manifest, [{ type: 'Foo', properties: {} }]);
+
+      const listeners = [jest.fn(), jest.fn()];
+      listeners.forEach((l) => store.subscribe(l));
+
+      store.setDynamicPluginEnabled('Test1@1.2.3', true);
+
+      expect(store.isDynamicPluginEnabled('Test@1.2.3')).toBe(false);
+      expect(store.getStateForTestPurposes().dynamicExtensions.length).toBe(0);
+      listeners.forEach((l) => {
+        expect(l.mock.calls.length).toBe(0);
+      });
+    });
+  });
+
+  describe('isDynamicPluginEnabled', () => {
+    it('returns the enabled status for the given plugin', () => {
+      const store = new PluginStore([]);
+      const manifest = getPluginManifest('Test', '1.2.3', [{ type: 'Foo', properties: {} }]);
+
+      store.addDynamicPlugin('Test@1.2.3', manifest, [{ type: 'Foo', properties: {} }]);
+
+      expect(store.isDynamicPluginEnabled('Test@1.2.3')).toBe(false);
+
+      store.setDynamicPluginEnabled('Test@1.2.3', true);
+
+      expect(store.isDynamicPluginEnabled('Test@1.2.3')).toBe(true);
+    });
+
+    it('returns false if the plugin ID is not registered', () => {
+      const store = new PluginStore([]);
+      const manifest = getPluginManifest('Test', '1.2.3', [{ type: 'Foo', properties: {} }]);
+
+      store.addDynamicPlugin('Test@1.2.3', manifest, [{ type: 'Foo', properties: {} }]);
+
+      expect(store.isDynamicPluginEnabled('Test1@1.2.3')).toBe(false);
+    });
+  });
+
+  describe('getDynamicPluginMetadata', () => {
+    it('returns metadata for all registered dynamic plugins', () => {
+      const store = new PluginStore([]);
+      const manifest1 = getPluginManifest('Test1', '1.2.3', [{ type: 'Foo', properties: {} }]);
+      const manifest2 = getPluginManifest('Test2', '2.3.4', [{ type: 'Bar', properties: {} }]);
+
+      expect(store.getDynamicPluginMetadata()).toEqual({});
+
+      store.addDynamicPlugin('Test1@1.2.3', manifest1, [{ type: 'Foo', properties: {} }]);
+
+      expect(store.getDynamicPluginMetadata()).toEqual({
+        'Test1@1.2.3': _.omit(manifest1, 'extensions'),
+      });
+
+      store.addDynamicPlugin('Test2@2.3.4', manifest2, [{ type: 'Bar', properties: {} }]);
+
+      expect(store.getDynamicPluginMetadata()).toEqual({
+        'Test1@1.2.3': _.omit(manifest1, 'extensions'),
+        'Test2@2.3.4': _.omit(manifest2, 'extensions'),
+      });
+    });
   });
 });
