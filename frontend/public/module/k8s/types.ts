@@ -122,6 +122,11 @@ export type VolumeMount = {
   subPathExpr?: string;
 };
 
+export type VolumeDevice = {
+  devicePath: string;
+  name: string;
+};
+
 type ProbePort = string | number;
 
 export type ExecProbe = {
@@ -247,6 +252,7 @@ export type PodAffinity = {
 export type ContainerSpec = {
   name: string;
   volumeMounts?: VolumeMount[];
+  volumeDevices?: VolumeDevice[];
   env?: EnvVar[];
   livenessProbe?: ContainerProbe;
   readinessProbe?: ContainerProbe;
@@ -966,5 +972,21 @@ export type MachineHealthCheckKind = K8sResourceCommon & {
   spec: {
     selector: Selector;
     unhealthyConditions: MachineHealthCondition[];
+  };
+};
+
+export type PersistentVolumeClaimKind = K8sResourceCommon & {
+  spec: {
+    accessModes: string;
+    resources: {
+      requests: {
+        storage: string;
+      };
+    };
+    storageClassName: string;
+    volumeMode: string;
+  };
+  status: {
+    phase: string;
   };
 };
