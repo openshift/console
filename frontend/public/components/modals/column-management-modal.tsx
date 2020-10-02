@@ -107,7 +107,9 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps> = ({
             isInline
             title={`You can select up to ${MAX_VIEW_COLS} columns`}
             variant="info"
-          />
+          >
+            The namespace column is only shown when in 'All Projects'
+          </Alert>
         </div>
         <div className="row co-m-form-row">
           <div className="col-sm-12">
