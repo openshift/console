@@ -4,12 +4,13 @@ import {
   getSelectedOptionText,
   getSelectOptions,
   selectItemFromDropdown,
+  checkForError,
 } from '../utils/utils';
 import * as view from '../../views/dialogs/diskDialog.view';
 import { modalSubmitButton, saveButton } from '../../views/kubevirtUIResource.view';
 import { Disk, DiskSourceConfig } from '../types/types';
 import { diskAccessMode, DISK_SOURCE } from '../utils/constants/vm';
-import { waitForNoLoaders, modalCancelButton } from '../../views/wizard.view';
+import { waitForNoLoaders, modalCancelButton, errorHelper } from '../../views/wizard.view';
 import { browser, ExpectedConditions as until, $ } from 'protractor';
 
 export class DiskDialog {
@@ -39,6 +40,7 @@ export class DiskDialog {
 
   async fillName(name: string) {
     await fillInput(view.diskName, name);
+    return checkForError(errorHelper);
   }
 
   async fillSize(size: string) {

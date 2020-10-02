@@ -254,3 +254,13 @@ export function taintNode(node: string, labels: MatchLabels, effect: string, add
     }
   }
 }
+
+export async function checkForError(ErrorElement) {
+  try {
+    await browser.wait(until.presenceOf(ErrorElement), 100);
+  } catch (e) {
+    // footerError wasn't displayed, everything is OK
+    return null;
+  }
+  return Error(await ErrorElement.getText());
+}

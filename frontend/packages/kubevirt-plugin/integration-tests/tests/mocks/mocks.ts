@@ -457,3 +457,13 @@ export const datavolumeClonerClusterRole = {
   ],
 };
 deepFreeze(datavolumeClonerClusterRole);
+
+export const v2vUIDeployment = {
+  apiVersion: 'apps/v1',
+  kind: 'Deployment',
+  metadata: {
+    name: `v2v-vmware`,
+    namespace: testName,
+  },
+};
+deepFreeze(v2vUIDeployment);

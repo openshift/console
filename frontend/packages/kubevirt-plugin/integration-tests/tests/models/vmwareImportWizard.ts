@@ -1,10 +1,11 @@
 /* eslint-disable no-await-in-loop */
 import { browser, ExpectedConditions as until } from 'protractor';
-import { click, fillInput } from '@console/shared/src/test-utils/utils';
+import { asyncForEach, click, fillInput } from '@console/shared/src/test-utils/utils';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import { selectOptionByText, setCheckboxState } from '../utils/utils';
 import {
   IMPORT_WIZARD_CONN_TO_NEW_INSTANCE,
+  IMPORT_WIZARD_CONN_NAME_PREFIX,
   WIZARD_CREATE_SUCCESS,
   PAGE_LOAD_TIMEOUT_SECS,
 } from '../utils/constants/common';
@@ -14,6 +15,7 @@ import { VirtualMachine } from './virtualMachine';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import * as wizardView from '../../views/wizard.view';
 import { ImportWizard } from './importWizard';
+import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 
 export class VmwareImportWizard extends ImportWizard {
   async fillHostname(hostname: string) {
@@ -40,11 +42,14 @@ export class VmwareImportWizard extends ImportWizard {
   }
 
   async configureInstance(instanceConfig: InstanceConfig) {
-    await selectOptionByText(view.vcenterInstanceSelect, instanceConfig.instance);
     if (instanceConfig.instance === IMPORT_WIZARD_CONN_TO_NEW_INSTANCE) {
+      await selectOptionByText(view.vcenterInstanceSelect, instanceConfig.instance);
       await this.configureProvider(instanceConfig);
+      await this.connectToInstance();
+    } else if (instanceConfig.instance.includes(IMPORT_WIZARD_CONN_NAME_PREFIX)) {
+      await this.selectInstanceByPrefixName(view.vcenterInstanceSelect);
     } else {
-      throw Error('Saved provider instances are not implemented');
+      throw Error('Mo VMWare instance was found');
     }
   }
 
@@ -63,34 +68,40 @@ export class VmwareImportWizard extends ImportWizard {
     );
   }
 
-  async import(config: VMImportConfig) {
-    const {
-      provider,
-      instanceConfig,
-      name,
-      sourceVMName,
-      description,
-      operatingSystem,
-      flavorConfig,
-      workloadProfile,
-      storageResources,
-      networkResources,
-      cloudInit,
-    } = config;
-    await this.openWizard(VirtualMachineModel);
+  async navigateToDetail() {
+    await click(view.seeDetailPageButton);
+    await isLoaded();
+  }
 
-    // General section
+  async updateImportedNICs() {
+    const importedNICs = await this.getImportedNics();
+    await asyncForEach(importedNICs, async (nic) => {
+      return this.updateNic(nic);
+    });
+  }
+
+  async importVmConnectProviderStep(config) {
+    const { provider, instanceConfig, sourceVMName } = config;
+    // Establishing connection:
     await this.selectProvider(provider);
     await this.waitForSpinner();
     await this.configureInstance(instanceConfig);
 
-    await this.connectToInstance();
     await this.waitForSpinner();
 
     await this.selectSourceVirtualMachine(sourceVMName);
     await this.waitForSpinner();
     await click(view.nextButton);
+  }
 
+  async importVmConfigStep(config: VMImportConfig) {
+    const { name, description, operatingSystem, flavorConfig, workloadProfile } = config;
+    if (name) {
+      await this.fillName(name);
+    }
+    if (description) {
+      await this.fillDescription(description);
+    }
     if (operatingSystem) {
       await this.selectOperatingSystem(operatingSystem as string);
     }
@@ -100,42 +111,22 @@ export class VmwareImportWizard extends ImportWizard {
     if (workloadProfile) {
       await this.selectWorkloadProfile(workloadProfile);
     }
-    if (name) {
-      await this.fillName(name);
-    }
-    if (description) {
-      await this.fillDescription(description);
-    }
     await click(view.nextButton);
+  }
 
-    // Networking
-    // First update imported network interfaces to comply with k8s
-    await this.updateImportedNICs();
-    // Adding networks if any
-    if (networkResources) {
-      await this.addVmNetworks(networkResources);
-    }
-    await click(view.nextButton);
-    // Storage
-    // First update disks that come from the source VM
-    await this.updateImportedDisks();
-    // Adding disks if any
-    if (storageResources) {
-      await this.addVmStorage(storageResources);
-    }
-    await click(view.nextButton);
+  async import(config: VMImportConfig) {
+    const { name } = config;
+    await this.openWizard(VirtualMachineModel);
 
-    // Advanced - Cloud Init
-    if (cloudInit) {
-      await this.configureCloudInit(cloudInit);
-    }
-    await this.next();
+    await this.importVmConnectProviderStep(config);
+    await this.importVmConfigStep(config);
+    await this.importNetworkStep(config);
+    await this.importDiskStep(config);
 
-    // Advanced - Virtual HW
-    await this.next();
+    await this.processAdvanceStep(config);
 
     // Review
-    await this.validateReviewTab(config);
+    await this.processReviewStep(config);
 
     // Import
     await this.confirmAndCreate();

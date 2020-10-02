@@ -1,6 +1,10 @@
 import { execSync } from 'child_process';
 
-export const { STORAGE_CLASS = 'standard', KUBEVIRT_PROJECT_NAME = 'openshift-cnv' } = process.env;
+export const {
+  STORAGE_CLASS = 'standard',
+  KUBEVIRT_PROJECT_NAME = 'openshift-cnv',
+  VOLUME_MODE,
+} = process.env;
 
 const rhelTinyCommonTemplateName = execSync(
   "kubectl get template -n openshift | grep rhel7-desktop-tiny | awk '{print $1}'",
@@ -44,13 +48,14 @@ export const VIRTUALIZATION_TITLE = 'Virtualization';
 export const IMPORT_WIZARD_CONN_TO_NEW_INSTANCE = 'Connect to New Instance';
 export const NOT_RECOMMENDED_BUS_TYPE_WARN = 'Not recommended bus type';
 // Some times we need to use existing VMWare instance, which name always starts from 'administrator'
-export const IMPORT_WIZARD_CONN_NAME_PREFIX = 'administrator';
+export const IMPORT_WIZARD_CONN_NAME_PREFIX = 'admin';
 export const RHV_PROVIDER = 'Red Hat Virtualization (RHV)';
 export const VMWARE_PROVIDER = 'VMware';
 
 // Web-UI Exceptions
 export const RHV_WIZARD_CREATE_SUCCESS = 'Started import of virtual machine';
-export const WIZARD_CREATE_SUCCESS = 'Successfully created virtual machine';
+export const WIZARD_CREATE_SUCCESS = 'Started import of virtual machine';
+// export const WIZARD_CREATE_SUCCESS = 'Successfully created virtual machine';
 
 // Framework Exception
 export const UNEXPECTED_ACTION_ERROR = 'Received unexpected action.';

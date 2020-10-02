@@ -5,8 +5,14 @@ import { click, asyncForEach } from '@console/shared/src/test-utils/utils';
 import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
 import { DiskDialog } from '../dialogs/diskDialog';
 import { tableRows, saveButton } from '../../views/kubevirtUIResource.view';
-import { selectOptionByText } from '../utils/utils';
-import { STORAGE_CLASS, VIRTUALIZATION_TITLE } from '../utils/constants/common';
+import { checkForError, getSelectOptions, selectOptionByText } from '../utils/utils';
+import {
+  IMPORT_WIZARD_CONN_NAME_PREFIX,
+  KEBAP_ACTION,
+  STORAGE_CLASS,
+  VIRTUALIZATION_TITLE,
+  VOLUME_MODE,
+} from '../utils/constants/common';
 import * as view from '../../views/importWizard.view';
 import { waitForNoLoaders, clickKebabAction } from '../../views/wizard.view';
 import { Wizard } from './wizard';
@@ -16,6 +22,7 @@ import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.
 import { resourceHorizontalTab } from '../../views/uiResource.view';
 import { VirtualMachineTemplateModel, Network, Disk } from '../types/types';
 import { networkTabCol } from '../utils/constants/vm';
+import * as rhvView from '../../views/rhvImportWizard.view';
 
 export class ImportWizard extends Wizard {
   async openWizard(model: K8sKind) {
@@ -40,66 +47,134 @@ export class ImportWizard extends Wizard {
   }
 
   async confirmAndCreate() {
-    await click(view.importButon);
+    await click(view.importButton);
+  }
+
+  async selectInstanceByPrefixName(selector: any) {
+    const instanceFullName = (await getSelectOptions(selector)).find((option) =>
+      option.startsWith(IMPORT_WIZARD_CONN_NAME_PREFIX),
+    );
+    await selectOptionByText(selector, instanceFullName);
+    await this.waitForSpinner();
   }
 
   /**
    * Edits attributes of a NICs that are being imported from source VM.
    */
-  async updateImportedNICs() {
+  async updateNic(nic: Network) {
+    const nicDialog = new NetworkInterfaceDialog();
+    await clickKebabAction(nic.name, KEBAP_ACTION.Edit);
+    await waitForNoLoaders();
+    const networks = await nicDialog.getNetworks();
+    if (networks.length > 0) {
+      await nicDialog.selectNetwork(networks[networks.length - 1]);
+      const err = await checkForError(view.errorHelper);
+      if (err) {
+        return err;
+      }
+    } else {
+      throw Error('No available networks to assign imported NICs');
+    }
+    await click(view.confirmActionButton);
+    await waitForNoLoaders();
+    return null;
+  }
+
+  async getImportedNics() {
     const rows = await tableRows();
-    let importedNICs = rows.map((line) => {
-      const cols = line.split(/\t/);
+    return rows.map((line) => {
+      const cols = line.split(/\n/);
       return {
         name: cols[networkTabCol.name],
       };
     });
+  }
+
+  async updateImportedNICs() {
+    const importedNICs = await this.getImportedNics();
     // TODO: This is horrible, but unfortunately no better way to dynamically extract only device names
     // without using ElementArrayFinder, which on the other hand may cause NoStaleElement Exceptions
-    importedNICs = importedNICs.filter((_, i) => i % 3 === 0);
-
-    const NICDialog = new NetworkInterfaceDialog();
-    await asyncForEach(importedNICs, async (NIC) => {
-      await clickKebabAction(NIC.name, 'Edit');
-      await waitForNoLoaders();
-      const networks = await NICDialog.getNetworks();
-      if (networks.length > 0) {
-        await NICDialog.selectNetwork(networks[networks.length - 1]);
-      } else {
-        throw Error('No available networks to assign imported NICs');
-      }
-      await click(view.confirmActionButton);
-      await waitForNoLoaders();
+    // importedNICs = importedNICs.filter((_, i) => i % 11 === 0);
+    await asyncForEach(importedNICs, async (nic) => {
+      return this.updateNic(nic);
     });
   }
 
   /**
    * Edits attributes of Disks that are being imported from source VM.
    */
-  async updateImportedDisks() {
+
+  async updateDisk(disk: Disk) {
+    const diskDialog = new DiskDialog();
+    await clickKebabAction(disk.name, KEBAP_ACTION.Edit);
+    await waitForNoLoaders();
+    await diskDialog.selectStorageClass(STORAGE_CLASS);
+    // Configures volume mode if customized (block or filesystem)
+    if (VOLUME_MODE) {
+      await diskDialog.openAdvancedSettingsDrawer();
+      await diskDialog.selectVolumeMode(VOLUME_MODE);
+    }
+    const err = await checkForError(view.errorHelper);
+    if (err) {
+      return err;
+    }
+    await click(saveButton);
+    await waitForNoLoaders();
+    return null;
+  }
+
+  async getImportedDisks() {
     const rows = await tableRows();
-    let importedDisks = rows.map((line) => {
-      const cols = line.split(/\t/);
+    return rows.map((line) => {
+      const cols = line.split(/\n/);
       return {
         name: cols[networkTabCol.name],
         storageClass: STORAGE_CLASS,
       };
     });
-    importedDisks = importedDisks.filter((_, i) => i % 3 === 0);
+  }
 
-    const diskDialog = new DiskDialog();
+  async updateImportedDisks() {
+    const importedDisks = await this.getImportedDisks();
     await asyncForEach(importedDisks, async (disk) => {
-      await clickKebabAction(disk.name, 'Edit');
-      await waitForNoLoaders();
-      await diskDialog.selectStorageClass(disk.storageClass);
-      await click(saveButton);
-      await waitForNoLoaders();
+      await this.updateDisk(disk);
     });
   }
 
   async navigateToDetail() {
     await click(view.seeDetailPageButton);
     await isLoaded();
+  }
+
+  async importNetworkStep(config) {
+    const { networkResources } = config;
+    // Binding networks
+    // First update imported network interfaces to comply with k8s
+    await this.updateImportedNICs();
+    // Adding networks if any
+    if (networkResources) {
+      await this.addVmNetworks(networkResources);
+    }
+    await this.next();
+  }
+
+  async importDiskStep(config) {
+    const { storageResources } = config;
+    // Binding storage disks
+    // First update disks that come from the source VM
+    await this.updateImportedDisks();
+    // Adding disks if any
+    if (storageResources) {
+      await this.addVmStorage(storageResources);
+    }
+    await this.next();
+  }
+
+  async edit(config) {
+    const { advancedEdit } = config;
+    if (advancedEdit) {
+      click(rhvView.editButton);
+    }
   }
 
   /**

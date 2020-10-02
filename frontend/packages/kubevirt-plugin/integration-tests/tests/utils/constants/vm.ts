@@ -117,3 +117,5 @@ export const diskTabCol = {
   storageClass: 5,
 };
 Object.freeze(diskTabCol);
+
+export const wrongValues = ['Capitalletter', 'dashattheend-', ''];
