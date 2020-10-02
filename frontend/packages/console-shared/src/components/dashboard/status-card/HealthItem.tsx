@@ -16,7 +16,9 @@ const HealthItem: React.FC<HealthItemProps> = React.memo(
     return (
       <div className={classNames('co-status-card__health-item', className)}>
         {state === HealthState.LOADING ? (
-          <div className="skeleton-health" />
+          <div className="skeleton-health">
+            <span className="pf-u-screen-reader">Loading {title} Status</span>
+          </div>
         ) : (
           !noIcon && <HealthItemIcon state={state} />
         )}
