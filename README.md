@@ -387,6 +387,11 @@ Update existing frontend dependencies:
 yarn upgrade <package@version>
 ```
 
+Remove and re-install all frontend dependencies:
+```
+yarn clean-install
+```
+
 To upgrade yarn itself, download a new yarn release from
 <https://github.com/yarnpkg/yarn/releases>, replace the release in
 `frontend/.yarn/releases` with the new version, and update `yarn-path` in
