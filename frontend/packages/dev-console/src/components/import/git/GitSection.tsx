@@ -95,7 +95,7 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, builderImages }) =>
   const handleGitUrlBlur = React.useCallback(() => {
     const { url } = values.git;
     const gitRepoName = detectGitRepoName(url);
-    gitRepoName && setFieldValue('name', gitRepoName);
+    values.formType !== 'edit' && gitRepoName && setFieldValue('name', gitRepoName);
     gitRepoName &&
       !values.application.name &&
       values.application.selectedKey !== UNASSIGNED_KEY &&
@@ -107,6 +107,7 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, builderImages }) =>
     values.application.name,
     values.application.selectedKey,
     values.git,
+    values.formType,
   ]);
 
   const fillSample: React.ReactEventHandler<HTMLButtonElement> = React.useCallback(() => {
