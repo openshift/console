@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { connect } from 'react-redux';
 import {
   observer,
@@ -11,18 +10,14 @@ import {
   Model,
 } from '@patternfly/react-topology';
 import { DataList } from '@patternfly/react-core';
-import { METRICS_POLL_INTERVAL, useQueryParams } from '@console/shared';
-import { PROMETHEUS_TENANCY_BASE_PATH } from '@console/internal/components/graphs';
-import {
-  fetchOverviewMetrics,
-  fetchMonitoringAlerts,
-  OverviewMetrics,
-  METRICS_FAILURE_CODES,
-} from '@console/internal/components/overview/metricUtils';
+import { useQueryParams } from '@console/shared';
+import { OverviewMetrics } from '@console/internal/components/overview/metricUtils';
 import { Alert } from '@console/internal/components/monitoring/types';
 import * as UIActions from '@console/internal/actions/ui';
 import { TYPE_APPLICATION_GROUP } from '../components';
 import { odcElementFactory } from '../elements';
+import { useOverviewMetricsUpdater } from '../hooks/useOverviewMetricsUpdater';
+import { useOverviewAlertsUpdater } from '../hooks/useOverviewAlertsUpdater';
 import { TopologyListViewAppGroup } from './TopologyListViewAppGroup';
 import { getChildKinds, sortGroupChildren } from './list-view-utils';
 import { TopologyListViewUnassignedGroup } from './TopologyListViewUnassignedGroup';
@@ -205,56 +200,12 @@ const ConnectedTopologyListView: React.FC<TopologyListViewProps &
     }, [visualization, selectedId, applicationGroups, unassignedItems, onSelect]);
 
     React.useEffect(() => {
-      let metricsInterval: any = null;
-      let alertsInterval: any = null;
-
-      const fetchMetrics = () => {
-        if (!PROMETHEUS_TENANCY_BASE_PATH) {
-          return;
-        }
-        fetchOverviewMetrics(namespace)
-          .then((updatedMetrics) => {
-            updateMetrics(updatedMetrics);
-          })
-          .catch((res) => {
-            const status = res?.response?.status;
-            // eslint-disable-next-line no-console
-            console.error('Could not fetch metrics, status:', status);
-            // Don't retry on some status codes unless a previous request succeeded.
-            if (_.includes(METRICS_FAILURE_CODES, status) && _.isEmpty(metrics)) {
-              throw new Error(`Could not fetch metrics, status: ${status}`);
-            }
-          })
-          .then(() => {
-            metricsInterval = setTimeout(fetchMetrics, METRICS_POLL_INTERVAL);
-          })
-          .catch((e) => {
-            console.error(e); // eslint-disable-line no-console
-          });
-      };
-
-      const fetchAlerts = (): void => {
-        fetchMonitoringAlerts(namespace)
-          .then((alerts) => {
-            updateMonitoringAlerts(alerts);
-          })
-          .catch((e) => {
-            console.error(e); // eslint-disable-line no-console
-          })
-          .then(() => {
-            alertsInterval = setTimeout(fetchAlerts, 15 * 1000);
-          })
-          .catch((e) => {
-            console.error(e); // eslint-disable-line no-console
-          });
-      };
-
-      fetchMetrics();
-      fetchAlerts();
+      const clearMetricsInterval = useOverviewMetricsUpdater(namespace, metrics, updateMetrics);
+      const clearAlertsInterval = useOverviewAlertsUpdater(namespace, updateMonitoringAlerts);
 
       return () => {
-        clearInterval(metricsInterval);
-        clearInterval(alertsInterval);
+        clearMetricsInterval();
+        clearAlertsInterval();
       };
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [namespace, updateMetrics, updateMonitoringAlerts]);
