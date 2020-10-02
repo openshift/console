@@ -91,6 +91,7 @@ export type PodMetrics = {
 
 export type NodeMetrics = {
   cpu: MetricValuesByName;
+  totalCPU: MetricValuesByName;
   pods: MetricValuesByName;
   usedMemory: MetricValuesByName;
   totalMemory: MetricValuesByName;
