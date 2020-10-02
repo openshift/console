@@ -71,7 +71,13 @@ export const definitionFor = _.memoize((model: K8sKind): SwaggerDefinition => {
     return null;
   }
   const key = getDefinitionKey(model, allDefinitions);
-  return _.get(allDefinitions, key);
+  // Some schemas might use $ref to reference an external schmema. In order for $ref to resolve,
+  // the referenced schema must be defined in the `definitions` property of the
+  // referencing schema.
+  return {
+    definitions: allDefinitions,
+    ...(allDefinitions?.[key] ?? {}),
+  };
 }, referenceForModel);
 
 const getRef = (definition: SwaggerDefinition): string => {
@@ -142,6 +148,7 @@ export const getResourceDescription = _.memoize((kindObj: K8sKind): string => {
 }, referenceForModel);
 
 export type SwaggerDefinition = {
+  definitions?: SwaggerDefinitions;
   description?: string;
   type?: string;
   enum?: string[];
