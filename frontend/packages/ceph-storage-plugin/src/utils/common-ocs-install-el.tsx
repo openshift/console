@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Alert, FormGroup, Switch } from '@patternfly/react-core';
+import * as cx from 'classnames';
+import { Alert, FormGroup, Switch, AlertVariant } from '@patternfly/react-core';
 import { ListPage } from '@console/internal/components/factory';
 import { NodeModel } from '@console/internal/models';
 import { FieldLevelHelp } from '@console/internal/components/utils';
@@ -8,6 +9,63 @@ import { TechPreviewBadge } from '@console/shared';
 import { OCSStorageClassDropdown } from '../components/modals/storage-class-dropdown';
 import { storageClassTooltip } from '../constants/ocs-install';
 import '../components/ocs-install/ocs-install.scss';
+import { Link } from 'react-router-dom';
+
+export type Validation = {
+  title: React.ReactNode;
+  text: string;
+  variant?: keyof typeof AlertVariant;
+  link?: string;
+  linkText?: string;
+};
+
+enum ValidationType {
+  'MINIMAL' = 'MINIMAL',
+  'STORAGECLASS' = 'STORAGECLASS',
+  'ALLREQUIREDFIELDS' = 'ALLREQUIREDFIELDS',
+}
+
+export const VALIDATIONS: { [key in ValidationType]: Validation } = {
+  [ValidationType.MINIMAL]: {
+    variant: AlertVariant.warning,
+    title: (
+      <div className="ceph-minimal-deployment-alert__header">
+        A minimal cluster deployment will be performed.
+        <TechPreviewBadge />
+      </div>
+    ),
+    text:
+      'The selected nodes do not match the OCS storage cluster requirement of an aggregated 30 CPUs and 72 GiB of RAM. If the selection cannot be modified, a minimal cluster will be deployed.',
+  },
+  [ValidationType.STORAGECLASS]: {
+    variant: AlertVariant.danger,
+    title: 'Select a storage class to continue',
+    text: `This is a required field. ${storageClassTooltip}`,
+    link: '/k8s/cluster/storageclasses/~new/form',
+    linkText: 'Create new storage class',
+  },
+  [ValidationType.ALLREQUIREDFIELDS]: {
+    variant: AlertVariant.danger,
+    title: 'All required fields are not set',
+    text:
+      'In order to create the storage cluster, you must set the storage class, select at least 3 nodes (preferably in 3 different zones) and meet the minimum and recommended requirement',
+  },
+};
+
+export const ValidationMessage: React.FC<ValidationMessageProps> = ({ className, validation }) => {
+  const { variant = AlertVariant.info, title, text, link, linkText } = validation;
+  return (
+    <Alert className={cx('co-alert', className)} variant={variant} title={title} isInline>
+      <p>{text}</p>
+      {link && linkText && <Link to={link}>{linkText}</Link>}
+    </Alert>
+  );
+};
+
+type ValidationMessageProps = {
+  className?: string;
+  validation: Validation;
+};
 
 export const OCSAlert = () => (
   <Alert
@@ -45,7 +103,7 @@ export const SelectNodesSection: React.FC<SelectNodesSectionProps> = ({
 }) => (
   <>
     <FormGroup fieldId="select-nodes">
-      <p>
+      <p id="select-nodes">
         {children} It is recommended to start with at least 14 CPUs and 34 GiB per node.
         <div>
           The selected nodes will be labeled with{' '}
@@ -54,7 +112,6 @@ export const SelectNodesSection: React.FC<SelectNodesSectionProps> = ({
           remaining nodes will be used by OpenShift as scheduling targets for OCS scaling.
         </div>
       </p>
-
       <ListPage
         kind={NodeModel.kind}
         showTitle={false}

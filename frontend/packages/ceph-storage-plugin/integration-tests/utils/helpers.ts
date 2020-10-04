@@ -164,9 +164,7 @@ export const verifyNodeOSDMapping = (
   return filteredOsds.length === 0;
 };
 
-export const hasTaints = (node) => {
-  return !_.isEmpty(node.spec?.taints);
-};
+export const hasNoTaints = (node) => _.isEmpty(node.spec?.taints);
 
 export const hasOCSTaint = (node) => {
   const taints = node?.spec?.taints || [];

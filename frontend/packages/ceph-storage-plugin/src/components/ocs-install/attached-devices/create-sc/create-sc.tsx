@@ -7,6 +7,7 @@ import {
   Button,
   Alert,
   WizardStep,
+  AlertActionCloseButton,
 } from '@patternfly/react-core';
 import { history } from '@console/internal/components/utils/router';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -35,7 +36,7 @@ import { AutoDetectVolume } from './wizard-pages/auto-detect-volume';
 import { CreateLocalVolumeSet } from './wizard-pages/create-local-volume-set';
 import { nodesDiscoveriesResource } from '../../../../constants/resources';
 import { getTotalDeviceCapacity } from '../../../../utils/install';
-import { AVAILABLE, CreateStepsSC, minSelectedNode } from '../../../../constants';
+import { AVAILABLE, CreateStepsSC, MINIMUM_NODES } from '../../../../constants';
 import { CreateOCS } from '../install-lso-sc';
 import '../attached-devices.scss';
 
@@ -100,6 +101,7 @@ const CreateSC: React.FC<CreateSCProps> = ({ match }) => {
   const [discoveriesData, discoveriesLoaded, discoveriesLoadError] = useK8sWatchResource<
     K8sResourceKind[]
   >(nodesDiscoveriesResource);
+  const [showInfoAlert, setShowInfoAlert] = React.useState(true);
 
   React.useEffect(() => {
     if (discoveriesLoaded && !discoveriesLoadError && discoveriesData.length) {
@@ -176,7 +178,7 @@ const CreateSC: React.FC<CreateSCProps> = ({ match }) => {
         );
       case CreateStepsSC.STORAGECLASS:
         if (!state.volumeSetName.trim().length) return true;
-        if (state.filteredNodes.length < minSelectedNode) return true;
+        if (state.filteredNodes.length < MINIMUM_NODES) return true;
         return !state.volumeSetName.trim().length;
 
       default:
@@ -244,8 +246,14 @@ const CreateSC: React.FC<CreateSCProps> = ({ match }) => {
 
   return (
     <>
-      {!state.finalStep && (
-        <Alert className="co-alert" variant="info" title="Missing storage class" isInline>
+      {showInfoAlert && !state.finalStep && (
+        <Alert
+          className="co-alert"
+          variant="info"
+          title="Missing storage class"
+          isInline
+          actionClose={<AlertActionCloseButton onClose={() => setShowInfoAlert(false)} />}
+        >
           The storage cluster needs to use a storage class to consume the local storage. In order to
           create one you need to discover the available disks and create a storage class using the
           filters to select the disks you wish to use.

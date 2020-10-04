@@ -21,7 +21,7 @@ import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { OCSServiceModel } from '../../../models';
 import { getOCSVersion } from '../../../selectors';
 import { CEPH_STORAGE_NAMESPACE } from '../../../constants';
-import { OCSStorageClusterKind } from '../../../types';
+import { StorageClusterKind } from '../../../types';
 
 const ocsResource: FirehoseResource = {
   kind: referenceForModel(OCSServiceModel),
@@ -61,7 +61,7 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
   const ocsLoaded = ocs?.loaded || false;
   const ocsError = ocs?.loadError;
   const ocsData = ocs?.data as K8sResourceKind[];
-  const cluster = ocsData?.find((item: OCSStorageClusterKind) => item.status.phase !== 'Ignored');
+  const cluster = ocsData?.find((item: StorageClusterKind) => item.status.phase !== 'Ignored');
   const ocsName = getName(cluster);
 
   const subscription = _.get(resources, 'subscription') as FirehoseResult;

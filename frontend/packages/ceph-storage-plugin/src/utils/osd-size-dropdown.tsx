@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Dropdown } from '@console/internal/components/utils';
+import { OCS_DEVICE_SET_REPLICA } from '../constants';
 
 export const OSD_CAPACITY_SIZES = {
   '512Gi': {
@@ -19,6 +20,14 @@ export const OSD_CAPACITY_SIZES = {
   },
 };
 
+export const TotalCapacityText: React.FC<TotalCapacityTextProps> = ({ capacity }) => (
+  <span>
+    x {OCS_DEVICE_SET_REPLICA} replicas = {OSD_CAPACITY_SIZES[capacity].size * 3} TiB
+  </span>
+);
+
+type TotalCapacityTextProps = { capacity: string };
+
 const DropdownOptionsItem: React.FC<DropdownOptionsItemProps> = ({ title, scale }) => (
   <span className="co-resource-item">
     <span className="co-resource-item__resource-name">
@@ -35,11 +44,7 @@ const DropdownOptionsItem: React.FC<DropdownOptionsItemProps> = ({ title, scale 
 
 type DropdownOptionsItemProps = { title: string; scale: string };
 
-export const OSDSizeDropdown: React.FC<OSDSizeDropdownProps> = ({
-  selectedKey,
-  onChange,
-  className,
-}) => {
+export const OSDSizeDropdown: React.FC<OSDSizeDropdownProps> = ({ selectedKey, id, onChange }) => {
   const dropdownOptionsKeys: string[] = Object.keys(OSD_CAPACITY_SIZES);
   const dropdownOptions: DropdownOptions = dropdownOptionsKeys.reduce((dropdownObject, key) => {
     dropdownObject[key] = (
@@ -52,13 +57,13 @@ export const OSDSizeDropdown: React.FC<OSDSizeDropdownProps> = ({
   }, {});
   return (
     <Dropdown
-      id="ocs-service-capacity-dropdown"
+      id={id}
       items={dropdownOptions}
       title={OSD_CAPACITY_SIZES[selectedKey].title}
       onChange={onChange}
       selectedKey={selectedKey}
+      dropDownClassName="dropdown--full-width"
       noSelection
-      buttonClassName={className}
     />
   );
 };
@@ -66,7 +71,7 @@ export const OSDSizeDropdown: React.FC<OSDSizeDropdownProps> = ({
 type DropdownOptions = { [key: string]: React.ReactNode };
 
 type OSDSizeDropdownProps = {
-  className: string;
   selectedKey: string;
+  id?: string;
   onChange: React.Dispatch<React.SetStateAction<string>>;
 };

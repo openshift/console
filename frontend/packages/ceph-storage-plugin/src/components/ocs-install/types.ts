@@ -31,6 +31,7 @@ export type NodeTableProps = {
   data: NodeKind[];
   customData?: {
     onRowSelected: (nodes: NodeKind[]) => void;
+    nodes?: Set<string>;
   };
   filters: { name: string; label: { all: string[] } };
 };

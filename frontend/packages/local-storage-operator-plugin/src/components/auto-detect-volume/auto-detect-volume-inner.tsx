@@ -7,7 +7,7 @@ import { getName } from '@console/shared';
 import { NodeModel } from '@console/internal/models';
 import { NodesSelectionList } from '../local-volume-set/nodes-selection-list';
 import { State, Action } from './state';
-import { hasTaints, createMapForHostNames } from '../../utils';
+import { hasNoTaints, createMapForHostNames } from '../../utils';
 import { nodeResource } from '../../constants/resources';
 import './auto-detect-volume.scss';
 
@@ -21,7 +21,7 @@ export const AutoDetectVolumeInner: React.FC<AutoDetectVolumeInnerProps> = ({
     if ((nodeLoadError || nodeData.length === 0) && nodeLoaded) {
       dispatch({ type: 'setAllNodeNamesOnADV', value: [] });
     } else if (nodeLoaded) {
-      const names = nodeData.filter((node) => !hasTaints(node)).map((node) => getName(node));
+      const names = nodeData.filter(hasNoTaints).map(getName);
       const hostNames = createMapForHostNames(nodeData);
       dispatch({ type: 'setAllNodeNamesOnADV', value: names });
       dispatch({ type: 'setHostNamesMapForADV', value: hostNames });

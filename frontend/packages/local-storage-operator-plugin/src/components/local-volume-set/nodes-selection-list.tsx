@@ -18,7 +18,7 @@ import {
   getNodeAllocatableMemory,
 } from '@console/shared';
 import { useSelectList } from '@console/shared/src/hooks/select-list';
-import { hasTaints } from '../../utils';
+import { hasNoTaints } from '../../utils';
 import { GetRows } from './types';
 import './node-selection-list.scss';
 
@@ -67,7 +67,7 @@ const getRows: GetRows = (
 
   const nodeList = filteredNodes?.length ? filteredNodes : data.map(getName);
   const filteredData = data.filter(
-    (node: NodeKind) => !hasTaints(node) && nodeList.includes(getName(node)),
+    (node: NodeKind) => hasNoTaints(node) && nodeList.includes(getName(node)),
   );
 
   const rows = filteredData.map((node: NodeKind) => {
@@ -113,7 +113,7 @@ const getRows: GetRows = (
 };
 
 export const NodesSelectionList: React.FC<NodesSelectionListProps> = (props) => {
-  const [visibleRows, setVisibleRows] = React.useState<Set<string>>();
+  const [visibleRows, setVisibleRows] = React.useState<Set<string>>(new Set());
 
   const {
     onSelect,
