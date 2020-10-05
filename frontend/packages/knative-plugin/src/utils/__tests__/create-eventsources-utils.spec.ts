@@ -67,21 +67,6 @@ describe('Create knative Utils', () => {
     );
   });
 
-  it('expect response to be of kind kafkaSource with resource limits', () => {
-    const defaultEventingData = getDefaultEventingData(EventSources.KafkaSource);
-    const mockData = _.cloneDeep(defaultEventingData);
-    mockData.type = 'KafkaSource';
-    mockData.limits.cpu.limit = '200';
-    mockData.limits.cpu.request = '100';
-    const knEventingResource: k8sModels.K8sResourceKind = getEventSourceResource(mockData);
-    expect(knEventingResource.kind).toBe(EventSourceKafkaModel.kind);
-    expect(knEventingResource.apiVersion).toBe(
-      `${EventSourceKafkaModel.apiGroup}/${EventSourceKafkaModel.apiVersion}`,
-    );
-    expect(knEventingResource.spec?.resources?.limits?.cpu).toBe('200m');
-    expect(knEventingResource.spec?.resources?.requests?.cpu).toBe('100m');
-  });
-
   it('should return bootstrapServers', () => {
     expect(getBootstrapServers(Kafkas)).toEqual([
       'my-cluster-kafka-bootstrap.div.svc:9092',
