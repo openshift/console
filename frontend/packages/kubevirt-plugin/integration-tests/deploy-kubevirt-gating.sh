@@ -1,5 +1,5 @@
-export KUBEVIRT_VERSION=$(curl -s https://github.com/kubevirt/kubevirt/releases/latest | grep -o "v[0-9]\.[0-9]*\.[0-9]*")
-export CDI_VERSION=$(curl -s https://github.com/kubevirt/containerized-data-importer/releases/latest | grep -o "v[0-9]\.[0-9]*\.[0-9]*")
+KUBEVIRT_VERSION=$(curl -s https://github.com/kubevirt/kubevirt/releases/latest | grep -o "v[0-9]\.[0-9]*\.[0-9]*")
+CDI_VERSION=$(curl -s https://github.com/kubevirt/containerized-data-importer/releases/latest | grep -o "v[0-9]\.[0-9]*\.[0-9]*")
 
 # Create openshift-cnv namespace for Integration Tests
 oc create namespace openshift-cnv
@@ -47,3 +47,10 @@ metadata:
 data:
   feature-gates: "LiveMigration"
 EOF
+
+# Install virtctl binary and add in to PATH
+mkdir virtctl
+wget https://github.com/kubevirt/kubevirt/releases/download/${KUBEVIRT_VERSION}/virtctl-${KUBEVIRT_VERSION}-linux-x86_64 -O virtctl/virtctl
+chmod +x virtctl/virtctl
+
+export PATH="${PATH}:$(pwd)/virtctl"
