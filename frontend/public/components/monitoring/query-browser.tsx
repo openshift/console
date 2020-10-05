@@ -150,12 +150,19 @@ const tooltipStateToProps = ({ UI }: RootState, { seriesIndex }) => {
   return props;
 };
 
+const TOOLTIP_WIDTH = 240;
+const TOOLTIP_MAX_HEIGHT = 500;
+const TOOLTIP_MIN_X = -80;
+// Offset relative to the graph width
+const TOOLTIP_MAX_X_OFFSET = 40 - TOOLTIP_WIDTH;
+
 const TooltipInner_: React.FC<TooltipInnerProps> = ({
   datumX,
   datumY,
   labels,
   query,
   seriesIndex,
+  width,
   x,
   y,
 }) => {
@@ -163,21 +170,22 @@ const TooltipInner_: React.FC<TooltipInnerProps> = ({
     return null;
   }
 
-  const width = 240;
-
-  // This is actually the max tooltip height
-  const height = 500;
+  // Constrain the tooltip so it doesn't stick out on the left or right side of the graph frame
+  const tooltipX = x - TOOLTIP_WIDTH / 2;
+  const constraintedX = _.clamp(tooltipX, TOOLTIP_MIN_X, width + TOOLTIP_MAX_X_OFFSET);
+  const arrowStyle =
+    tooltipX === constraintedX ? undefined : { marginLeft: 2 * (tooltipX - constraintedX) };
 
   return (
     <foreignObject
       className="query-browser__tooltip-svg-wrap"
-      height={height}
-      width={width}
-      x={x - width / 2}
+      height={TOOLTIP_MAX_HEIGHT}
+      width={TOOLTIP_WIDTH}
+      x={constraintedX}
       y={y}
     >
       <div className="query-browser__tooltip-wrap">
-        <div className="query-browser__tooltip-arrow" />
+        <div className="query-browser__tooltip-arrow" style={arrowStyle} />
         <div className="query-browser__tooltip">
           <div className="query-browser__tooltip-group">
             <div
@@ -210,14 +218,21 @@ const TooltipInner_: React.FC<TooltipInnerProps> = ({
 const TooltipInner = withFallback(connect(tooltipStateToProps)(TooltipInner_));
 
 // For performance, use this instead of PatternFly's ChartTooltip or Victory VictoryTooltip
-const Tooltip: React.FC<TooltipProps> = ({ active, datum, x, y }) => {
+const Tooltip: React.FC<TooltipProps> = ({ active, datum, width, x, y }) => {
   if (!active || !datum || !_.isFinite(datum.y) || !_.isFinite(x) || !_.isFinite(y)) {
     return null;
   }
 
   return (
     <VictoryPortal>
-      <TooltipInner datumX={datum.x} datumY={datum.y} seriesIndex={datum._stack - 1} x={x} y={y} />
+      <TooltipInner
+        datumX={datum.x}
+        datumY={datum.y}
+        seriesIndex={datum._stack - 1}
+        width={width}
+        x={x}
+        y={y}
+      />
     </VictoryPortal>
   );
 };
@@ -856,6 +871,7 @@ type TooltipInnerProps = {
   labels?: PrometheusLabels;
   query?: string;
   seriesIndex: number;
+  width: number;
   x: number;
   y: number;
 };
@@ -863,6 +879,7 @@ type TooltipInnerProps = {
 type TooltipProps = {
   active?: boolean;
   datum?: TooltipDatum;
+  width?: number;
   x?: number;
   y?: number;
 };
