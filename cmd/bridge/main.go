@@ -565,6 +565,7 @@ func main() {
 		Handler: srv.HTTPHandler(),
 		// Disable HTTP/2, which breaks WebSockets.
 		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler)),
+		TLSConfig:    oscrypto.SecureTLSConfig(&tls.Config{}),
 	}
 
 	log.Infof("Binding to %s...", httpsrv.Addr)
