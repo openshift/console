@@ -26,9 +26,9 @@ type OverviewDetailsResourcesTabProps = {
 };
 
 const getSidebarResources = (item: OverviewItem) => {
-  const { obj, ksroutes, revisions, configurations, pods, current } = item;
+  const { obj, ksroutes, revisions, configurations } = item;
   if (isDynamicEventResourceKind(referenceFor(obj))) {
-    return <EventSinkServicesOverviewList obj={obj} pods={pods} current={current} />;
+    return <EventSinkServicesOverviewList obj={obj} />;
   }
   if (isEventingChannelResourceKind(referenceFor(obj))) {
     return <EventPubSubResources item={item} />;
@@ -36,13 +36,7 @@ const getSidebarResources = (item: OverviewItem) => {
   switch (obj.kind) {
     case RevisionModel.kind:
       return (
-        <KnativeRevisionResources
-          ksroutes={ksroutes}
-          obj={obj}
-          configurations={configurations}
-          pods={pods}
-          current={current}
-        />
+        <KnativeRevisionResources ksroutes={ksroutes} obj={obj} configurations={configurations} />
       );
     case ServiceModel.kind:
       return <KnativeServiceResources item={item} />;

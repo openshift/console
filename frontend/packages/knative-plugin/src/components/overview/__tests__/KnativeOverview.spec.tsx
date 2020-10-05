@@ -7,6 +7,26 @@ import { revisionObj } from '../../../topology/__tests__/topology-knative-test-d
 import { RevisionModel } from '../../../models';
 import KnativeOverview from '../KnativeOverview';
 
+jest.mock('@console/shared', () => {
+  const ActualShared = require.requireActual('@console/shared');
+  return {
+    ...ActualShared,
+    usePodsWatcher: () => {
+      return {
+        loaded: true,
+        loadError: '',
+        podData: {
+          obj: null,
+          current: null,
+          previous: null,
+          pods: [],
+          isRollingOut: false,
+        },
+      };
+    },
+  };
+});
+
 describe('KnativeOverview', () => {
   let item: OverviewItem;
   beforeEach(() => {

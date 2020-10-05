@@ -46,7 +46,6 @@ import {
   DEPLOYMENT_PHASE,
   AllPodStatus,
 } from '../constants';
-import { resourceStatus, podStatus } from './ResourceStatus';
 import { isKnativeServing, isIdled } from './pod-utils';
 import { doesHpaMatch } from '@console/dev-console/src/components/hpa/hpa-utils';
 
@@ -676,7 +675,7 @@ export const getOverviewItemsForResource = (
   customPods?: PodKind[],
   additionalAlerts?: OverviewItemAlerts,
   customBuildConfigs?: BuildConfigOverviewItem[],
-) => {
+): OverviewItem => {
   const monitoringAlerts = isMonitorable
     ? getWorkloadMonitoringAlerts(obj, resources?.monitoringAlerts)
     : undefined;
@@ -688,19 +687,13 @@ export const getOverviewItemsForResource = (
     ...(additionalAlerts ?? combinePodAlerts(pods)),
     ...getBuildAlerts(buildConfigs),
   };
-  const status = resourceStatus(obj, current, isRollingOut);
-  const overviewItems = {
+  const overviewItems: OverviewItem = {
     alerts,
     buildConfigs,
     obj,
-    pods,
     routes,
     services,
-    status,
     isMonitorable,
-    current,
-    previous,
-    isRollingOut,
     monitoringAlerts,
   };
 
@@ -717,12 +710,7 @@ export const createDeploymentConfigItem = (
   resources: any,
   utils?: ResourceUtil[],
 ): OverviewItem => {
-  const { mostRecentRC, visibleReplicationControllers } = getReplicationControllersForResource(
-    deploymentConfig,
-    resources,
-  );
-  const [current, previous] = visibleReplicationControllers;
-  const isRollingOut = getRolloutStatus(deploymentConfig, current, previous);
+  const { mostRecentRC } = getReplicationControllersForResource(deploymentConfig, resources);
   const buildConfigs = getBuildConfigsForResource(deploymentConfig, resources);
   const services = getServicesForResource(deploymentConfig, resources);
   const routes = getRoutesForServices(services, resources);
@@ -732,25 +720,18 @@ export const createDeploymentConfigItem = (
     ...getBuildAlerts(buildConfigs),
     ...rolloutAlerts,
   };
-  const status = resourceStatus(deploymentConfig, current, isRollingOut);
-  const pods = [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])];
   const monitoringAlerts = getWorkloadMonitoringAlerts(
     deploymentConfig,
     resources?.monitoringAlerts,
   );
   const hpas = resources?.hpas?.data?.filter(doesHpaMatch(deploymentConfig));
-  const overviewItems = {
+  const overviewItems: OverviewItem = {
     alerts,
     buildConfigs,
-    current,
     hpas,
-    isRollingOut,
     obj: deploymentConfig,
-    previous,
-    pods,
     routes,
     services,
-    status,
     isMonitorable: true,
     monitoringAlerts,
   };
@@ -779,9 +760,6 @@ export const createDeploymentItem = (
   resources: any,
   utils?: ResourceUtil[],
 ): OverviewItem => {
-  const replicaSets = getReplicaSetsForResource(deployment, resources);
-  const [current, previous] = replicaSets;
-  const isRollingOut = !!current && !!previous;
   const buildConfigs = getBuildConfigsForResource(deployment, resources);
   const services = getServicesForResource(deployment, resources);
   const routes = getRoutesForServices(services, resources);
@@ -789,22 +767,15 @@ export const createDeploymentItem = (
     ...getResourcePausedAlert(deployment),
     ...getBuildAlerts(buildConfigs),
   };
-  const status = resourceStatus(deployment, current, isRollingOut);
-  const pods = [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])];
   const monitoringAlerts = getWorkloadMonitoringAlerts(deployment, resources?.monitoringAlerts);
   const hpas = resources?.hpas?.data?.filter(doesHpaMatch(deployment));
-  const overviewItem = {
+  const overviewItem: OverviewItem = {
     obj: deployment,
     alerts,
     buildConfigs,
-    current,
     hpas,
-    isRollingOut,
-    previous,
-    pods,
     routes,
     services,
-    status,
     isMonitorable: true,
     monitoringAlerts,
   };
@@ -842,18 +813,15 @@ export const createCronJobItem = (
     ...combinePodAlerts(pods),
     ...getBuildAlerts(buildConfigs),
   };
-  const status = resourceStatus(cronJob);
   const isMonitorable = isKindMonitorable(CronJobModel);
   const monitoringAlerts = isMonitorable
     ? getWorkloadMonitoringAlerts(cronJob, resources?.monitoringAlerts)
     : undefined;
-  const overviewItem = {
+  const overviewItem: OverviewItem = {
     alerts,
     obj: cronJob,
     buildConfigs,
-    pods,
     jobs,
-    status,
     routes: [],
     services: [],
     isMonitorable,
@@ -907,7 +875,6 @@ export const createPodItem = (pod: PodKind, resources: any): OverviewItem => {
   const alerts = getPodAlerts(pod);
   const services = getServicesForResource(pod, resources);
   const routes = getRoutesForServices(services, resources);
-  const status = podStatus(pod as PodKind);
   const isMonitorable = isKindMonitorable(PodModel);
   const monitoringAlerts: Alert[] = isMonitorable
     ? getWorkloadMonitoringAlerts(pod, resources?.monitoringAlerts)
@@ -919,8 +886,6 @@ export const createPodItem = (pod: PodKind, resources: any): OverviewItem => {
     buildConfigs: null,
     routes,
     services,
-    status,
-    pods: [pod],
     isMonitorable,
     monitoringAlerts,
   };
@@ -1003,87 +968,169 @@ export const createOverviewItemForType = (
   }
 };
 
+export const getPodsForDeploymentConfig = (
+  deploymentConfig: K8sResourceKind,
+  resources: any,
+): PodRCData => {
+  const obj: K8sResourceKind = {
+    ...deploymentConfig,
+    apiVersion: apiVersionForModel(DeploymentConfigModel),
+    kind: DeploymentConfigModel.kind,
+  };
+  const { visibleReplicationControllers } = getReplicationControllersForResource(obj, resources);
+  const [current, previous] = visibleReplicationControllers;
+  const isRollingOut = getRolloutStatus(obj, current, previous);
+  return {
+    obj,
+    current,
+    previous,
+    pods: [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])],
+    isRollingOut,
+  };
+};
+
 export const getPodsForDeploymentConfigs = (
   deploymentConfigs: K8sResourceKind[],
   resources: any,
-): PodRCData[] => {
-  return _.map(deploymentConfigs, (dc) => {
-    const obj: K8sResourceKind = {
-      ...dc,
-      apiVersion: apiVersionForModel(DeploymentConfigModel),
-      kind: DeploymentConfigModel.kind,
-    };
-    const { visibleReplicationControllers } = getReplicationControllersForResource(obj, resources);
-    const [current, previous] = visibleReplicationControllers;
-    const isRollingOut = getRolloutStatus(obj, current, previous);
-    return {
-      obj,
-      current,
-      previous,
-      pods: [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])],
-      isRollingOut,
-    };
-  });
+): PodRCData[] => _.map(deploymentConfigs, (dc) => getPodsForDeploymentConfig(dc, resources));
+
+export const getPodsForDeployment = (deployment: K8sResourceKind, resources: any): PodRCData => {
+  const obj: K8sResourceKind = {
+    ...deployment,
+    apiVersion: apiVersionForModel(DeploymentModel),
+    kind: DeploymentModel.kind,
+  };
+  const replicaSets = getReplicaSetsForResource(obj, resources);
+  const [current, previous] = replicaSets;
+  const isRollingOut = !!current && !!previous;
+
+  return {
+    obj,
+    current,
+    previous,
+    isRollingOut,
+    pods: [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])],
+  };
 };
 
 export const getPodsForDeployments = (
   deployments: K8sResourceKind[],
   resources: any,
-): PodRCData[] => {
-  return _.map(deployments, (d) => {
-    const obj: K8sResourceKind = {
-      ...d,
-      apiVersion: apiVersionForModel(DeploymentModel),
-      kind: DeploymentModel.kind,
-    };
-    const replicaSets = getReplicaSetsForResource(obj, resources);
-    const [current, previous] = replicaSets;
-    const isRollingOut = !!current && !!previous;
+): PodRCData[] => _.map(deployments, (d) => getPodsForDeployment(d, resources));
 
-    return {
-      obj,
-      current,
-      previous,
-      isRollingOut,
-      pods: [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])],
-    };
-  });
+export const getPodsForStatefulSet = (ss: K8sResourceKind, resources: any): PodRCData => {
+  const obj: K8sResourceKind = {
+    ...ss,
+    apiVersion: apiVersionForModel(StatefulSetModel),
+    kind: StatefulSetModel.kind,
+  };
+  const statefulSets = getStatefulSetsResource(obj, resources);
+  const [current, previous] = statefulSets;
+  const isRollingOut = !!current && !!previous;
+
+  return {
+    obj,
+    current,
+    previous,
+    isRollingOut,
+    pods: [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])],
+  };
 };
 
-export const getPodsForStatefulSets = (ss: K8sResourceKind[], resources: any): PodRCData[] => {
-  return _.map(ss, (s) => {
-    const obj: K8sResourceKind = {
-      ...s,
-      apiVersion: apiVersionForModel(StatefulSetModel),
-      kind: StatefulSetModel.kind,
-    };
-    const statefulSets = getStatefulSetsResource(obj, resources);
-    const [current, previous] = statefulSets;
-    const isRollingOut = !!current && !!previous;
+export const getPodsForStatefulSets = (ss: K8sResourceKind[], resources: any): PodRCData[] =>
+  _.map(ss, (s) => getPodsForStatefulSet(s, resources));
 
-    return {
-      obj,
-      current,
-      previous,
-      isRollingOut,
-      pods: [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])],
-    };
-  });
+export const getPodsForDaemonSet = (ds: K8sResourceKind, resources: any): PodRCData => {
+  const obj: K8sResourceKind = {
+    ...ds,
+    apiVersion: apiVersionForModel(StatefulSetModel),
+    kind: StatefulSetModel.kind,
+  };
+  return {
+    obj,
+    current: undefined,
+    previous: undefined,
+    isRollingOut: undefined,
+    pods: getPodsForResource(ds, resources),
+  };
 };
 
-export const getPodsForDaemonSets = (ds: K8sResourceKind[], resources: any): PodRCData[] => {
-  return _.map(ds, (d) => {
-    const obj: K8sResourceKind = {
-      ...d,
-      apiVersion: apiVersionForModel(StatefulSetModel),
-      kind: StatefulSetModel.kind,
-    };
-    return {
-      obj,
-      current: undefined,
-      previous: undefined,
-      isRollingOut: undefined,
-      pods: getPodsForResource(d, resources),
-    };
-  });
+export const getPodsForDaemonSets = (ds: K8sResourceKind[], resources: any): PodRCData[] =>
+  _.map(ds, (d) => getPodsForDaemonSet(d, resources));
+
+export const getPodsDataForResource = (
+  resource: K8sResourceKind,
+  kind: string,
+  resources: any,
+): PodRCData => {
+  switch (kind) {
+    case 'DeploymentConfig':
+      return getPodsForDeploymentConfig(resource, resources);
+    case 'Deployment':
+      return getPodsForDeployment(resource, resources);
+    case 'StatefulSet':
+      return getPodsForStatefulSet(resource, resources);
+    case 'DaemonSet':
+      return getPodsForDaemonSet(resource, resources);
+    default:
+      return {
+        obj: resource,
+        current: undefined,
+        previous: undefined,
+        isRollingOut: undefined,
+        pods: getPodsForResource(resource, resources),
+      };
+  }
+};
+
+export const getResourcesToWatchForPods = (kind: string, namespace: string) => {
+  switch (kind) {
+    case 'DeploymentConfig':
+      return {
+        pods: {
+          isList: true,
+          kind: 'Pod',
+          namespace,
+        },
+        replicationControllers: {
+          isList: true,
+          kind: 'ReplicationController',
+          namespace,
+        },
+      };
+    case 'Deployment':
+      return {
+        pods: {
+          isList: true,
+          kind: 'Pod',
+          namespace,
+        },
+        replicaSets: {
+          isList: true,
+          kind: 'ReplicaSet',
+          namespace,
+        },
+      };
+    case 'StatefulSet':
+      return {
+        pods: {
+          isList: true,
+          kind: 'Pod',
+          namespace,
+        },
+        statefulSets: {
+          isList: true,
+          kind: 'StatefulSet',
+          namespace,
+        },
+      };
+    default:
+      return {
+        pods: {
+          isList: true,
+          kind: 'Pod',
+          namespace,
+        },
+      };
+  }
 };

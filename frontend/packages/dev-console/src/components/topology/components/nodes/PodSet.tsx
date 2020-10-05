@@ -6,14 +6,14 @@ import {
   getPodData,
   podDataInProgress,
   usePodRingLabel,
+  PodRCData,
 } from '@console/shared';
 import { RevisionModel } from '@console/knative-plugin/src/models';
-import { DonutStatusData } from '../../topology-types';
 import { useRelatedHPA } from '../../../hpa/hooks';
 
 interface PodSetProps {
   size: number;
-  data: DonutStatusData;
+  data: PodRCData;
   showPodCount?: boolean;
   x?: number;
   y?: number;
@@ -36,11 +36,11 @@ const calculateInnerPodStatusRadius = (
   return { innerPodStatusOuterRadius, innerPodStatusInnerRadius };
 };
 
-export const podSetInnerRadius = (size: number, data: DonutStatusData) => {
+export const podSetInnerRadius = (size: number, data: PodRCData) => {
   const { podStatusInnerRadius, podStatusStrokeWidth } = calculateRadius(size);
   let radius = podStatusInnerRadius;
 
-  if (podDataInProgress(data.dc, data.current, data.isRollingOut)) {
+  if (podDataInProgress(data.obj, data.current, data.isRollingOut)) {
     const { innerPodStatusInnerRadius } = calculateInnerPodStatusRadius(
       radius,
       podStatusStrokeWidth,
@@ -62,24 +62,18 @@ const PodSet: React.FC<PodSetProps> = ({ size, data, x = 0, y = 0, showPodCount 
     podStatusInnerRadius,
     podStatusStrokeWidth,
   );
-  const { inProgressDeploymentData, completedDeploymentData } = getPodData(
-    data.dc,
-    data.pods,
-    data.current,
-    data.previous,
-    data.isRollingOut,
-  );
+  const { inProgressDeploymentData, completedDeploymentData } = getPodData(data);
 
   const [hpa] = useRelatedHPA(
-    data.dc.apiVersion,
-    data.dc.kind,
-    data.dc.metadata.name,
-    data.dc.metadata.namespace,
+    data.obj.apiVersion,
+    data.obj.kind,
+    data.obj.metadata.name,
+    data.obj.metadata.namespace,
   );
   const hpaControlledScaling = !!hpa;
 
-  const obj = data.current?.obj || data.dc;
-  const ownerKind = RevisionModel.kind === data.dc?.kind ? data.dc.kind : obj.kind;
+  const obj = data.current?.obj || data.obj;
+  const ownerKind = RevisionModel.kind === data.obj?.kind ? data.obj.kind : obj.kind;
   const { title, subTitle, titleComponent } = usePodRingLabel(
     obj,
     ownerKind,

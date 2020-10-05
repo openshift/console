@@ -1,31 +1,25 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { usePodsWatcher } from '@console/shared';
 import {
   K8sResourceKind,
   referenceForGroupVersionKind,
   groupVersionFor,
-  PodKind,
 } from '@console/internal/module/k8s';
 import {
   ResourceLink,
   ExternalLink,
   SidebarSectionHeading,
+  StatusBox,
 } from '@console/internal/components/utils';
-import { PodControllerOverviewItem } from '@console/shared';
 import { PodModel } from '@console/internal/models';
 import { PodsOverview } from '@console/internal/components/overview/pods-overview';
 
 export type EventSinkServicesOverviewListProps = {
   obj: K8sResourceKind;
-  pods?: PodKind[];
-  current?: PodControllerOverviewItem;
 };
 
-const EventSinkServicesOverviewList: React.FC<EventSinkServicesOverviewListProps> = ({
-  obj,
-  pods,
-  current,
-}) => {
+const EventSinkServicesOverviewList: React.FC<EventSinkServicesOverviewListProps> = ({ obj }) => {
   const {
     kind,
     apiVersion,
@@ -36,15 +30,20 @@ const EventSinkServicesOverviewList: React.FC<EventSinkServicesOverviewListProps
   const { name: sinkName, kind: sinkKind, apiVersion: sinkApiversion } =
     spec?.sink?.ref || spec?.sink || {};
   const sinkUri = status?.sinkUri;
-  const deploymentData = current?.obj?.metadata?.ownerReferences?.[0];
   const apiGroup = apiVersion.split('/')[0];
   const linkUrl = `/search/ns/${namespace}?kind=${PodModel.kind}&q=${encodeURIComponent(
     `${apiGroup}/${_.lowerFirst(kind)}=${name}`,
   )}`;
   const { group, version } = (sinkApiversion && groupVersionFor(sinkApiversion)) || {};
   const isSinkReference = !!(sinkKind && sinkName && group && version);
+  const { podData, loaded, loadError } = usePodsWatcher(obj, obj.kind, namespace);
+  const deploymentData = React.useMemo(
+    () => podData?.current?.obj?.metadata?.ownerReferences?.[0],
+    [podData],
+  );
+
   return (
-    <>
+    <StatusBox loaded={loaded} data={podData} loadError={loadError}>
       <SidebarSectionHeading text="Sink" />
       {isSinkReference || sinkUri ? (
         <ul className="list-group">
@@ -71,7 +70,7 @@ const EventSinkServicesOverviewList: React.FC<EventSinkServicesOverviewListProps
       ) : (
         <span className="text-muted">No sink found for this resource.</span>
       )}
-      {pods?.length > 0 && <PodsOverview pods={pods} obj={obj} allPodsLink={linkUrl} />}
+      {podData?.pods?.length > 0 && <PodsOverview obj={obj} allPodsLink={linkUrl} />}
       {deploymentData?.name && (
         <>
           <SidebarSectionHeading text="Deployment" />
@@ -86,7 +85,7 @@ const EventSinkServicesOverviewList: React.FC<EventSinkServicesOverviewListProps
           </ul>
         </>
       )}
-    </>
+    </StatusBox>
   );
 };
 

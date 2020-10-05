@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ResourceSummary, NodeLink, ResourceLink } from '@console/internal/components/utils';
 import { K8sKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
-import { getName, getNamespace, getNodeName } from '@console/shared';
+import { getName, getNamespace, getNodeName, usePodsWatcher } from '@console/shared';
 import { PodModel } from '@console/internal/models';
 import { Selector } from '@console/internal/components/utils/selector';
 import { VMKind, VMIKind } from '../../types';
@@ -140,7 +140,6 @@ export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({
 export const VMDetailsList: React.FC<VMResourceListProps> = ({
   vm,
   vmi,
-  pods,
   vmStatusBundle,
   canUpdateVM,
   kindObj,
@@ -160,8 +159,15 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   );
 
   const canEditWhileVMRunning = vmiLike && canUpdateVM && kindObj !== VirtualMachineInstanceModel;
+  const { podData, loaded, loadError } = usePodsWatcher(vm);
 
-  const launcherPod = findVMIPod(vmi, pods);
+  const launcherPod = React.useMemo(() => {
+    if (loaded && !loadError) {
+      return findVMIPod(vmi, podData.pods as PodKind[]);
+    }
+    return null;
+  }, [loadError, loaded, podData.pods, vmi]);
+
   const id = getBasicID(vmiLike);
   const devices = vmiLikeWrapper?.getLabeledDevices() || [];
   const nodeName = getVMINodeName(vmi) || getNodeName(launcherPod);

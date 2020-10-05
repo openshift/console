@@ -1,35 +1,34 @@
 import * as React from 'react';
-
+import { OverviewItem, usePodsWatcher } from '@console/shared';
+import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import { StatefulSetModel } from '../../models';
 import { menuActions } from '../stateful-set';
-import { KebabAction, ResourceSummary } from '../utils';
-import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
+import { KebabAction, ResourceSummary, StatusBox } from '../utils';
 
 import { OverviewDetailsResourcesTab } from './resource-overview-page';
 import { ResourceOverviewDetails } from './resource-overview-details';
-import { OverviewItem } from '@console/shared';
 
-const StatefulSetOverviewDetails: React.SFC<StatefulSetOverviewDetailsProps> = ({
-  item: { obj: ss, pods: pods, current, previous, isRollingOut },
-}) => (
-  <div className="overview__sidebar-pane-body resource-overview__body">
-    <div className="resource-overview__pod-counts">
-      <PodRingSet
-        key={ss.metadata.uid}
-        podData={{
-          pods,
-          current,
-          previous,
-          isRollingOut,
-        }}
-        obj={ss}
-        resourceKind={StatefulSetModel}
-        path="/spec/replicas"
-      />
+const StatefulSetOverviewDetails: React.SFC<StatefulSetOverviewDetailsProps> = ({ item }) => {
+  const { obj: ss } = item;
+  const { podData, loaded, loadError } = usePodsWatcher(ss, 'StatefulSet', ss.metadata.namespace);
+
+  return (
+    <div className="overview__sidebar-pane-body resource-overview__body">
+      <div className="resource-overview__pod-counts">
+        <StatusBox loaded={loaded} data={podData} loadError={loadError}>
+          <PodRingSet
+            key={ss.metadata.uid}
+            podData={podData}
+            obj={ss}
+            resourceKind={StatefulSetModel}
+            path="/spec/replicas"
+          />
+        </StatusBox>
+      </div>
+      <ResourceSummary resource={ss} showPodSelector showNodeSelector showTolerations />
     </div>
-    <ResourceSummary resource={ss} showPodSelector showNodeSelector showTolerations />
-  </div>
-);
+  );
+};
 
 const tabs = [
   {

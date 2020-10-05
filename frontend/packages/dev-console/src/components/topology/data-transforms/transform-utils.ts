@@ -60,15 +60,7 @@ export const createTopologyNodeData = (
   defaultIcon: string,
   operatorBackedService: boolean = false,
 ): TopologyDataObject => {
-  const {
-    current,
-    previous,
-    isRollingOut,
-    buildConfigs,
-    pipelines = [],
-    pipelineRuns = [],
-    monitoringAlerts = [],
-  } = overviewItem;
+  const { buildConfigs, pipelines = [], pipelineRuns = [], monitoringAlerts = [] } = overviewItem;
   const dcUID = _.get(resource, 'metadata.uid');
   const deploymentsLabels = _.get(resource, 'metadata.labels', {});
   const deploymentsAnnotations = _.get(resource, 'metadata.annotations', {});
@@ -82,7 +74,6 @@ export const createTopologyNodeData = (
     type,
     resource,
     resources: { ...overviewItem, isOperatorBackedService: operatorBackedService },
-    pods: overviewItem.pods,
     data: {
       monitoringAlerts,
       url: getRoutesURL(resource, overviewItem),
@@ -99,13 +90,6 @@ export const createTopologyNodeData = (
       connectedPipeline: {
         pipeline: pipelines[0],
         pipelineRuns,
-      },
-      donutStatus: {
-        pods: overviewItem.pods,
-        current,
-        previous,
-        isRollingOut,
-        dc: resource,
       },
     },
   };

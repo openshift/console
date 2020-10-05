@@ -11,11 +11,11 @@ type TopologyVmResourcePanelProps = {
 export const TopologyVmResourcesPanel: React.FC<TopologyVmResourcePanelProps> = observer(
   ({ vmNode }: TopologyVmResourcePanelProps) => {
     const vmData = vmNode.getData();
-    const { obj: vm, pods, services, routes } = vmData?.resources;
+    const { obj: vm, services, routes } = vmData?.resources;
 
     return (
       <div className="overview__sidebar-pane-body">
-        <PodsOverview pods={pods} obj={vm} />
+        <PodsOverview obj={vm} />
         <NetworkingOverview services={services} routes={routes} />
       </div>
     );

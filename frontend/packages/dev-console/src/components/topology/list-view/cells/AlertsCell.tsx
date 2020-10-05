@@ -2,7 +2,8 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Node } from '@patternfly/react-topology';
 import { DataListCell, Tooltip } from '@patternfly/react-core';
-import { Status as TooltipStatus } from '@console/shared';
+import { Status as TooltipStatus, usePodsWatcher } from '@console/shared';
+import { getResource } from '../../topology-utils';
 import { isMobile } from '../list-view-utils';
 
 import './AlertsCell.scss';
@@ -45,17 +46,18 @@ const AlertTooltip = ({ alerts, severity }) => {
 
 export const AlertsCell: React.FC<AlertsProps> = ({ item }) => {
   const { resources } = item.getData();
-  const currentAlerts = resources?.current?.alerts ?? {};
-  const previousAlerts = resources?.previous?.alerts ?? {};
-  const itemAlerts = resources?.alerts;
-  const alerts = {
-    ...itemAlerts,
-    ...currentAlerts,
-    ...previousAlerts,
-  };
-  if (alerts?.length) {
-    return null;
-  }
+  const resource = getResource(item);
+  const { podData } = usePodsWatcher(resource);
+
+  const alerts = React.useMemo(() => {
+    const currentAlerts = podData?.current?.alerts ?? {};
+    const previousAlerts = podData?.previous?.alerts ?? {};
+    return {
+      ...resources?.alerts,
+      ...currentAlerts,
+      ...previousAlerts,
+    };
+  }, [podData, resources]);
 
   const {
     error,

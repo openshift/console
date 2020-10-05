@@ -3,7 +3,6 @@ import { shallow } from 'enzyme';
 import { PodsOverview } from '@console/internal/components/overview/pods-overview';
 import {
   sampleKnativeConfigurations,
-  sampleKnativePods,
   sampleKnativeRoutes,
   revisionObj,
 } from '../../../topology/__tests__/topology-knative-test-data';
@@ -12,6 +11,26 @@ import ConfigurationsOverviewList from '../ConfigurationsOverviewList';
 import KSRoutesOverviewList from '../RoutesOverviewList';
 import DeploymentOverviewList from '../DeploymentOverviewList';
 
+jest.mock('@console/shared', () => {
+  const ActualShared = require.requireActual('@console/shared');
+  return {
+    ...ActualShared,
+    usePodsWatcher: () => {
+      return {
+        loaded: true,
+        loadError: '',
+        podData: {
+          obj: null,
+          current: null,
+          previous: null,
+          pods: [],
+          isRollingOut: false,
+        },
+      };
+    },
+  };
+});
+
 describe('KnativeRevisionResources', () => {
   it('should render KnativeRevisionResources', () => {
     const wrapper = shallow(
@@ -19,7 +38,6 @@ describe('KnativeRevisionResources', () => {
         ksroutes={sampleKnativeRoutes.data}
         obj={revisionObj}
         configurations={sampleKnativeConfigurations.data}
-        pods={sampleKnativePods.data}
       />,
     );
     expect(wrapper.find(PodsOverview)).toHaveLength(1);

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as _ from 'lodash';
-import { referenceForModel, PodKind } from '@console/internal/module/k8s';
-import { PodControllerOverviewItem } from '@console/shared';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { usePodsWatcher } from '@console/shared';
 import { PodsOverview } from '@console/internal/components/overview/pods-overview';
 import {
   ResourceLink,
@@ -18,54 +18,109 @@ import {
 } from '../../../models';
 import EventSinkServicesOverviewList from '../EventSinkServicesOverviewList';
 
-describe('EventSinkServicesOverviewList', () => {
-  const current: PodControllerOverviewItem = {
-    obj: {
-      metadata: {
-        name: 'apiserversource-es-1-3f120723-370a-4a08-9eb6-791a7bc90621-5898f657c4',
-        uid: '724ec872-ec82-4362-a933-d7a6e54ccfd8',
-        namespace: 'testproject1',
-        ownerReferences: [
-          {
-            apiVersion: 'apps/v1',
-            kind: 'Deployment',
-            name: 'apiserversource-es-1-3f120723-370a-4a08-9eb6-791a7bc90621',
-            uid: 'efe9d39b-e16c-4f05-a82f-0ae1a80e20de',
-          },
-        ],
-      },
+const current = {
+  obj: {
+    metadata: {
+      name: 'apiserversource-es-1-3f120723-370a-4a08-9eb6-791a7bc90621-5898f657c4',
+      uid: '724ec872-ec82-4362-a933-d7a6e54ccfd8',
+      namespace: 'testproject1',
+      ownerReferences: [
+        {
+          apiVersion: 'apps/v1',
+          kind: 'Deployment',
+          name: 'apiserversource-es-1-3f120723-370a-4a08-9eb6-791a7bc90621',
+          uid: 'efe9d39b-e16c-4f05-a82f-0ae1a80e20de',
+        },
+      ],
     },
-    revision: 1,
-    alerts: {},
-    pods: [
-      {
-        metadata: {
-          name: 'apiserversource-es-1-3f120723-370a-4a08-9eb6-791a7bc90621-58wpf6b',
-          uid: 'b893336d-fe16-4fb5-ba29-cb2353ca0301',
-          namespace: 'testproject1',
-        },
-        status: {
-          phase: 'Running',
-        },
-      },
-    ],
-  };
-
-  const pods: PodKind[] = [
+  },
+  revision: 1,
+  alerts: {},
+  pods: [
     {
       metadata: {
         name: 'apiserversource-es-1-3f120723-370a-4a08-9eb6-791a7bc90621-58wpf6b',
         uid: 'b893336d-fe16-4fb5-ba29-cb2353ca0301',
         namespace: 'testproject1',
       },
-      spec: {
-        containers: [],
+      status: {
+        phase: 'Running',
+      },
+    },
+  ],
+};
+
+const fullPodData = {
+  obj: {
+    metadata: {
+      name: 'apiserversource-es-1-3f120723-370a-4a08-9eb6-791a7bc90621-5898f657c4',
+      uid: '724ec872-ec82-4362-a933-d7a6e54ccfd8',
+      namespace: 'testproject1',
+      ownerReferences: [
+        {
+          apiVersion: 'apps/v1',
+          kind: 'Deployment',
+          name: 'apiserversource-es-1-3f120723-370a-4a08-9eb6-791a7bc90621',
+          uid: 'efe9d39b-e16c-4f05-a82f-0ae1a80e20de',
+        },
+      ],
+    },
+  },
+  current,
+  previous: null,
+  pods: [
+    {
+      metadata: {
+        name: 'apiserversource-es-1-3f120723-370a-4a08-9eb6-791a7bc90621-58wpf6b',
+        uid: 'b893336d-fe16-4fb5-ba29-cb2353ca0301',
+        namespace: 'testproject1',
       },
       status: {
         phase: 'Running',
       },
     },
-  ];
+  ],
+  isRollingOut: false,
+};
+
+const noPodData = {
+  obj: {
+    metadata: {
+      name: 'apiserversource-es-1-3f120723-370a-4a08-9eb6-791a7bc90621-5898f657c4',
+      uid: '724ec872-ec82-4362-a933-d7a6e54ccfd8',
+      namespace: 'testproject1',
+      ownerReferences: [
+        {
+          apiVersion: 'apps/v1',
+          kind: 'Deployment',
+          name: 'apiserversource-es-1-3f120723-370a-4a08-9eb6-791a7bc90621',
+          uid: 'efe9d39b-e16c-4f05-a82f-0ae1a80e20de',
+        },
+      ],
+    },
+  },
+  current: null,
+  previous: null,
+  pods: [],
+  isRollingOut: false,
+};
+
+jest.mock('@console/shared', () => {
+  const ActualShared = require.requireActual('@console/shared');
+  return {
+    ...ActualShared,
+    usePodsWatcher: jest.fn(),
+  };
+});
+
+describe('EventSinkServicesOverviewList', () => {
+  let podData;
+  beforeEach(() => {
+    podData = fullPodData;
+    (usePodsWatcher as jest.Mock).mockImplementation(() => {
+      return { loaded: true, loadError: '', podData };
+    });
+  });
 
   it('should show error info if no sink present or sink,kind is incorrect', () => {
     const mockData = _.omit(_.cloneDeep(getEventSourceResponse(EventSourceCamelModel).data[0]), [
@@ -77,6 +132,7 @@ describe('EventSinkServicesOverviewList', () => {
   });
 
   it('should have ResourceLink with proper kind for sink to knSvc', () => {
+    podData = noPodData;
     const wrapper = shallow(
       <EventSinkServicesOverviewList
         obj={getEventSourceResponse(EventSourceApiServerModel).data[0]}
@@ -99,6 +155,7 @@ describe('EventSinkServicesOverviewList', () => {
       ...getEventSourceResponse(EventSourceApiServerModel).data[0],
       ...{ spec: sinkData },
     };
+    podData = noPodData;
     const wrapper = shallow(<EventSinkServicesOverviewList obj={sinkChannelData} />);
     const findResourceLink = wrapper.find(ResourceLink);
     expect(findResourceLink).toHaveLength(1);
@@ -112,12 +169,13 @@ describe('EventSinkServicesOverviewList', () => {
         uri: 'http://overlayimage.testproject3.svc.cluster.local',
       },
     };
+    podData = noPodData;
     const wrapper = shallow(<EventSinkServicesOverviewList obj={mockData} />);
     expect(wrapper.find(ExternalLink)).toHaveLength(1);
     expect(wrapper.find(ResourceLink)).toHaveLength(0);
   });
 
-  it('should have ExternaLink when sinkUri is present', () => {
+  it('should have ExternalLink when sinkUri is present', () => {
     const wrapper = shallow(
       <EventSinkServicesOverviewList
         obj={getEventSourceResponse(EventSourceApiServerModel).data[0]}
@@ -139,7 +197,6 @@ describe('EventSinkServicesOverviewList', () => {
     const wrapper = shallow(
       <EventSinkServicesOverviewList
         obj={getEventSourceResponse(EventSourceApiServerModel).data[0]}
-        current={current}
       />,
     );
     const findResourceLink = wrapper.find(ResourceLink);
@@ -154,8 +211,6 @@ describe('EventSinkServicesOverviewList', () => {
     const wrapper = shallow(
       <EventSinkServicesOverviewList
         obj={getEventSourceResponse(EventSourceApiServerModel).data[0]}
-        current={current}
-        pods={pods}
       />,
     );
     expect(wrapper.find(PodsOverview)).toHaveLength(1);
@@ -165,10 +220,10 @@ describe('EventSinkServicesOverviewList', () => {
   });
 
   it('should not show pods if not present', () => {
+    podData = noPodData;
     const wrapper = shallow(
       <EventSinkServicesOverviewList
         obj={getEventSourceResponse(EventSourceApiServerModel).data[0]}
-        current={current}
       />,
     );
     expect(wrapper.find(PodsOverview)).toHaveLength(0);

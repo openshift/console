@@ -1,53 +1,52 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { getOwnedResources, PodStatus } from '@console/shared';
+import { PodStatus, usePodsWatcher } from '@console/shared';
 import { ResourceLink, resourcePath, SidebarSectionHeading } from '../utils';
-import { K8sResourceKind, referenceFor, JobKind, PodKind } from '../../module/k8s';
+import { K8sResourceKind, referenceFor, JobKind } from '../../module/k8s';
 import { ChartLabel } from '@patternfly/react-charts';
 
 const kind: string = 'Job';
 const MAX_JOBS: number = 3;
 
-const JobOverviewItem: React.FC<JobOverviewItemProps> = ({ job, pods }) => {
+const JobOverviewItem: React.FC<JobOverviewItemProps> = ({ job }) => {
   const {
     metadata: { name, namespace },
   } = job;
   const podsLink = `${resourcePath(referenceFor(job), name, namespace)}/pods`;
+  const { podData, loaded, loadError } = usePodsWatcher(job, 'Job', namespace);
 
-  const jobPods = getOwnedResources(job, pods) as PodKind[];
-  return (
+  return loaded && !loadError ? (
     <li className="list-group-item container-fluid">
       <div className="job-overview__item">
         <ResourceLink kind={kind} name={name} namespace={namespace} />
         <Link to={podsLink} className="overview__pod-donut-sm">
           <PodStatus
             standalone
-            data={jobPods}
+            data={podData.pods}
             size={25}
             innerRadius={8}
             outerRadius={12}
-            title={`${jobPods.length}`}
+            title={`${podData.pods.length}`}
             titleComponent={<ChartLabel style={{ fontSize: '10px' }} />}
             showTooltip={false}
           />
         </Link>
       </div>
     </li>
-  );
+  ) : null;
 };
 
 JobOverviewItem.displayName = 'JobOverviewItem';
 
 type JobOverviewItemProps = {
   job: JobKind;
-  pods: PodKind[];
 };
 
-const JobsOverviewList: React.SFC<JobsOverviewListProps> = ({ jobs, pods }) => (
+const JobsOverviewList: React.SFC<JobsOverviewListProps> = ({ jobs }) => (
   <ul className="list-group">
     {_.map(jobs, (job) => (
-      <JobOverviewItem key={job.metadata.uid} job={job} pods={pods} />
+      <JobOverviewItem key={job.metadata.uid} job={job} />
     ))}
   </ul>
 );
@@ -56,7 +55,6 @@ JobsOverviewList.displayName = 'JobsOverviewList';
 
 export const JobsOverview: React.SFC<JobsOverviewProps> = ({
   jobs,
-  pods,
   obj,
   allJobsLink,
   emptyText,
@@ -79,7 +77,7 @@ export const JobsOverview: React.SFC<JobsOverviewProps> = ({
       {_.isEmpty(jobs) ? (
         <span className="text-muted">{emptyMessage}</span>
       ) : (
-        <JobsOverviewList jobs={_.take(jobs, MAX_JOBS)} pods={pods} />
+        <JobsOverviewList jobs={_.take(jobs, MAX_JOBS)} />
       )}
     </>
   );
@@ -87,12 +85,10 @@ export const JobsOverview: React.SFC<JobsOverviewProps> = ({
 
 type JobsOverviewListProps = {
   jobs: JobKind[];
-  pods: PodKind[];
 };
 
 type JobsOverviewProps = {
   jobs: JobKind[];
-  pods: PodKind[];
   obj: K8sResourceKind;
   allJobsLink?: string;
   emptyText?: string;

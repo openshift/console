@@ -6,6 +6,7 @@ export * from './scroll';
 export * from './plugins-overview-tab-section';
 export * from './debounce';
 export * from './select-list';
+export * from './usePodsWatcher';
 export * from './useQueryParams';
 export * from './version';
 export * from './csv-watch-hook';

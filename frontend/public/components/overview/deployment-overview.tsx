@@ -1,34 +1,39 @@
 import * as React from 'react';
 
+import { OverviewItem, usePodsWatcher } from '@console/shared';
+import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import { DeploymentModel } from '../../models';
 import { DeploymentKind } from '../../module/k8s';
 import { DeploymentDetailsList, menuActions } from '../deployment';
-import { KebabAction, LoadingInline, ResourceSummary, WorkloadPausedAlert } from '../utils';
+import {
+  KebabAction,
+  LoadingInline,
+  ResourceSummary,
+  StatusBox,
+  WorkloadPausedAlert,
+} from '../utils';
 
 import { OverviewDetailsResourcesTab } from './resource-overview-page';
 import { ResourceOverviewDetails } from './resource-overview-details';
-import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
-import { OverviewItem } from '@console/shared';
 
 const DeploymentOverviewDetails: React.SFC<DeploymentOverviewDetailsProps> = ({
-  item: { obj: d, pods: pods, current, previous, isRollingOut },
+  item: { obj: d },
 }) => {
+  const { namespace } = d.metadata;
+  const { podData, loaded, loadError } = usePodsWatcher(d, 'Deployment', namespace);
   return (
     <div className="overview__sidebar-pane-body resource-overview__body">
       {d.spec.paused && <WorkloadPausedAlert obj={d} model={DeploymentModel} />}
       <div className="resource-overview__pod-counts">
-        <PodRingSet
-          key={d.metadata.uid}
-          podData={{
-            pods,
-            current,
-            previous,
-            isRollingOut,
-          }}
-          obj={d}
-          resourceKind={DeploymentModel}
-          path="/spec/replicas"
-        />
+        <StatusBox loaded={loaded} data={podData} loadError={loadError}>
+          <PodRingSet
+            key={d.metadata.uid}
+            podData={podData}
+            obj={d}
+            resourceKind={DeploymentModel}
+            path="/spec/replicas"
+          />
+        </StatusBox>
       </div>
       <div className="resource-overview__summary">
         <ResourceSummary resource={d} showPodSelector showNodeSelector showTolerations>

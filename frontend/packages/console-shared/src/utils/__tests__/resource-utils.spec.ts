@@ -73,25 +73,20 @@ expect.extend({
 enum Keys {
   ALERTS = 'alerts',
   BC = 'buildConfigs',
-  CURRENT = 'current',
-  ROLLINGOUT = 'isRollingOut',
   OBJ = 'obj',
-  PODS = 'pods',
   JOBS = 'jobs',
-  PREVIOUS = 'previous',
   ROUTES = 'routes',
-  STATUS = 'status',
   SERVICE = 'services',
   REVISIONS = 'revisions',
   KNATIVECONFIGS = 'configurations',
   KSROUTES = 'ksroutes',
 }
 
-const podKeys = [Keys.ALERTS, Keys.OBJ, Keys.ROUTES, Keys.SERVICE, Keys.STATUS];
-const dsAndSSKeys = [...podKeys, Keys.BC, Keys.PODS];
-const dcKeys = [...dsAndSSKeys, Keys.CURRENT, Keys.ROLLINGOUT, Keys.PREVIOUS];
+const podKeys = [Keys.ALERTS, Keys.OBJ, Keys.ROUTES, Keys.SERVICE];
+const dsAndSSKeys = [...podKeys, Keys.BC];
+const dcKeys = [...dsAndSSKeys];
 const knativeKeys = [...dcKeys, Keys.REVISIONS, Keys.KNATIVECONFIGS, Keys.KSROUTES];
-const podRCKeys = [Keys.OBJ, Keys.CURRENT, Keys.PREVIOUS, Keys.PODS, Keys.ROLLINGOUT];
+const podRCKeys = [Keys.OBJ];
 
 describe('TransformResourceData', () => {
   it('should create Deployment config Items for a provided dc', () => {
@@ -156,7 +151,7 @@ describe('TransformResourceData', () => {
     expect(transformedData[0]).toHaveProperties(dsAndSSKeys);
   });
 
-  it('should not have rc current or previous prop for created StatefulSets Items for a provided ss', () => {
+  it('should not have build configs prop for created StatefulSets Items for a provided ss', () => {
     const transformedData = createWorkloadItems(
       StatefulSetModel,
       sampleStatefulSets.data,
@@ -164,9 +159,6 @@ describe('TransformResourceData', () => {
       knativeOverviewResourceUtils,
     );
     expect(transformedData).toHaveLength(1);
-    expect(transformedData[0][Keys.CURRENT]).toBeUndefined();
-    expect(transformedData[0][Keys.PREVIOUS]).toBeUndefined();
-    expect(transformedData[0][Keys.ROLLINGOUT]).toBeUndefined();
     expect(transformedData[0][Keys.BC]).toHaveLength(0);
   });
 
@@ -181,7 +173,7 @@ describe('TransformResourceData', () => {
     expect(transformedData[0]).toHaveProperties(dsAndSSKeys);
   });
 
-  it('should not have rc current or previous prop for created DaemonSets Items for a provided ds', () => {
+  it('should not have build configs for created DaemonSets Items for a provided ds', () => {
     const transformedData = createWorkloadItems(
       DaemonSetModel,
       sampleDaemonSets.data,
@@ -189,9 +181,6 @@ describe('TransformResourceData', () => {
       knativeOverviewResourceUtils,
     );
     expect(transformedData).toHaveLength(1);
-    expect(transformedData[0][Keys.CURRENT]).toBeUndefined();
-    expect(transformedData[0][Keys.PREVIOUS]).toBeUndefined();
-    expect(transformedData[0][Keys.ROLLINGOUT]).toBeUndefined();
     expect(transformedData[0][Keys.BC]).toHaveLength(0);
   });
 
@@ -221,28 +210,21 @@ describe('TransformResourceData', () => {
   it('should return pods and not replication controllers for a given resource', () => {
     const transformedData = createOverviewItemsForType('pods', MockResources);
     transformedData.forEach((element) => {
-      expect(element).not.toHaveProperties([...podKeys, 'current', 'previous']);
+      expect(element).toHaveProperties(podKeys);
     });
   });
 
   it('should create standalone Job Items', () => {
     const transformedData = createOverviewItemsForType('jobs', MockResources);
     expect(transformedData).toHaveLength(1);
-    expect(transformedData[0][Keys.CURRENT]).toBeUndefined();
-    expect(transformedData[0][Keys.PREVIOUS]).toBeUndefined();
-    expect(transformedData[0][Keys.ROLLINGOUT]).toBeUndefined();
     expect(transformedData[0][Keys.BC]).toHaveLength(0);
   });
 
   it('should create CronJob Items', () => {
     const transformedData = createOverviewItemsForType('cronJobs', MockResources);
     expect(transformedData).toHaveLength(1);
-    expect(transformedData[0][Keys.CURRENT]).toBeUndefined();
-    expect(transformedData[0][Keys.PREVIOUS]).toBeUndefined();
-    expect(transformedData[0][Keys.ROLLINGOUT]).toBeUndefined();
     expect(transformedData[0][Keys.BC]).toHaveLength(1);
     expect(transformedData[0][Keys.JOBS]).toHaveLength(2);
-    expect(transformedData[0][Keys.PODS]).toHaveLength(2);
   });
 
   it('should return all the alerts related to a workload', () => {

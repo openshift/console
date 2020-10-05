@@ -7,7 +7,7 @@ import {
 } from '@console/internal/module/k8s';
 import { checkAccess } from '@console/internal/components/utils/rbac';
 import { podColor, AllPodStatus, DEPLOYMENT_STRATEGY, DEPLOYMENT_PHASE } from '../constants';
-import { ExtPodKind } from '../types/pod';
+import { ExtPodKind, PodRCData } from '../types/pod';
 import { PodControllerOverviewItem, DeploymentStrategy } from '../types';
 
 export const podStatus = Object.keys(podColor);
@@ -173,18 +173,14 @@ export const podDataInProgress = (
 };
 
 export const getPodData = (
-  dc: K8sResourceKind,
-  pods: ExtPodKind[],
-  current: PodControllerOverviewItem,
-  previous: PodControllerOverviewItem,
-  isRollingOut: boolean,
+  podRCData: PodRCData,
 ): { inProgressDeploymentData: ExtPodKind[] | null; completedDeploymentData: ExtPodKind[] } => {
-  const strategy: DeploymentStrategy = _.get(dc, ['spec', 'strategy', 'type'], null);
-  const currentDeploymentphase = current && current.phase;
-  const currentPods = current && current.pods;
-  const previousPods = previous && previous.pods;
+  const strategy: DeploymentStrategy = _.get(podRCData.obj, ['spec', 'strategy', 'type'], null);
+  const currentDeploymentphase = podRCData.current && podRCData.current.phase;
+  const currentPods = podRCData.current && podRCData.current.pods;
+  const previousPods = podRCData.previous && podRCData.previous.pods;
   // DaemonSets and StatefulSets
-  if (!strategy) return { inProgressDeploymentData: null, completedDeploymentData: pods };
+  if (!strategy) return { inProgressDeploymentData: null, completedDeploymentData: podRCData.pods };
 
   // Scaling no. of pods
   if (currentDeploymentphase === DEPLOYMENT_PHASE.complete) {
@@ -196,7 +192,7 @@ export const getPodData = (
     (strategy === DEPLOYMENT_STRATEGY.recreate ||
       strategy === DEPLOYMENT_STRATEGY.rolling ||
       strategy === DEPLOYMENT_STRATEGY.rollingUpdate) &&
-    isRollingOut
+    podRCData.isRollingOut
   ) {
     return {
       inProgressDeploymentData: currentPods,
@@ -204,8 +200,11 @@ export const getPodData = (
     };
   }
   // if build is not finished show `Scaling Up` on pod phase
-  if (!current && !previous) {
-    return { inProgressDeploymentData: null, completedDeploymentData: [getScalingUp(dc)] };
+  if (!podRCData.current && !podRCData.previous) {
+    return {
+      inProgressDeploymentData: null,
+      completedDeploymentData: [getScalingUp(podRCData.obj)],
+    };
   }
-  return { inProgressDeploymentData: null, completedDeploymentData: pods };
+  return { inProgressDeploymentData: null, completedDeploymentData: podRCData.pods };
 };

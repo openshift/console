@@ -16,13 +16,7 @@ interface PodRingSetProps {
 }
 
 const PodRingSet: React.FC<PodRingSetProps> = ({ podData, resourceKind, obj, path }) => {
-  const { inProgressDeploymentData, completedDeploymentData } = getPodData(
-    obj,
-    podData.pods,
-    podData.current,
-    podData.previous,
-    podData.isRollingOut,
-  );
+  const { inProgressDeploymentData, completedDeploymentData } = getPodData({ ...podData, obj });
   const current = podData.current && podData.current.obj;
   const previous = podData.previous && podData.previous.obj;
   const progressRC = inProgressDeploymentData && current;

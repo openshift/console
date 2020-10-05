@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { calculateRadius } from '@console/shared';
 import {
   Node,
   observer,
@@ -11,6 +10,7 @@ import {
 } from '@patternfly/react-topology';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { calculateRadius, usePodsWatcher, PodRCData } from '@console/shared';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleLinkModel } from '@console/internal/models';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
@@ -19,9 +19,10 @@ import { Decorator } from './Decorator';
 import PodSet, { podSetInnerRadius } from './PodSet';
 import BuildDecorator from './build-decorators/BuildDecorator';
 import { BaseNode } from './BaseNode';
-import { getCheURL, getEditURL } from '../../topology-utils';
+import { getCheURL, getEditURL, getTopologyResourceObject } from '../../topology-utils';
 import { useDisplayFilters, getFilterById, SHOW_POD_COUNT_FILTER_ID } from '../../filters';
 import MonitoringAlertsDecorator from './MonitoringAlertsDecorator';
+
 import './WorkloadNode.scss';
 
 export type WorkloadNodeProps = {
@@ -57,7 +58,7 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
   const workloadData = element.getData().data;
   const filters = useDisplayFilters();
   const size = Math.min(width, height);
-  const { donutStatus, editURL, vcsURI, vcsRef } = workloadData;
+  const { editURL, vcsURI, vcsRef } = workloadData;
   const { radius, decoratorRadius } = calculateRadius(size);
   const cheEnabled = !!cheURL;
   const cx = width / 2;
@@ -67,6 +68,18 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
   const tipContent = dropTooltip || `Create a visual connector`;
   const showPodCountFilter = getFilterById(SHOW_POD_COUNT_FILTER_ID, filters);
   const showPodCount = showPodCountFilter?.value ?? false;
+  const resource = getTopologyResourceObject(element.getData());
+  const { podData, loadError, loaded } = usePodsWatcher(
+    resource,
+    resource.kind,
+    resource.metadata.namespace,
+  );
+  const donutStatus: PodRCData = React.useMemo(() => {
+    if (!loadError && loaded) {
+      return podData;
+    }
+    return null;
+  }, [loadError, loaded, podData]);
 
   return (
     <g>
@@ -79,7 +92,7 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
         <BaseNode
           className="odc-workload-node"
           outerRadius={radius}
-          innerRadius={podSetInnerRadius(size, donutStatus)}
+          innerRadius={donutStatus ? podSetInnerRadius(size, donutStatus) : 0}
           icon={!showPodCount ? workloadData.builderImage : undefined}
           kind={workloadData.kind}
           element={element}
@@ -135,7 +148,9 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
             />,
           ]}
         >
-          <PodSet size={size} x={cx} y={cy} data={donutStatus} showPodCount={showPodCount} />
+          {donutStatus ? (
+            <PodSet size={size} x={cx} y={cy} data={donutStatus} showPodCount={showPodCount} />
+          ) : null}
         </BaseNode>
       </Tooltip>
     </g>

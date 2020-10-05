@@ -3,7 +3,6 @@ import { shallow } from 'enzyme';
 import { useExtensions } from '@console/plugin-sdk';
 import { PodsOverview } from '@console/internal/components/overview/pods-overview';
 import {
-  sampleKnativePods,
   sampleKnativeRoutes,
   sampleKnativeRevisions,
   knativeServiceObj,
@@ -28,7 +27,6 @@ describe('KnativeServiceResources', () => {
       revisions: sampleKnativeRevisions.data,
       ksroutes: sampleKnativeRoutes.data,
       obj: knativeServiceObj,
-      pods: sampleKnativePods.data,
       buildConfigs: [],
     } as OverviewItem;
     const wrapper = shallow(<KnativeServiceResources item={item} />);
@@ -43,7 +41,6 @@ describe('KnativeServiceResources', () => {
       revisions: sampleKnativeRevisions.data,
       ksroutes: sampleKnativeRoutes.data,
       obj: knativeServiceObj,
-      pods: sampleKnativePods.data,
       buildConfigs: [{}],
     } as OverviewItem;
     const wrapper = shallow(<KnativeServiceResources item={item} />);
