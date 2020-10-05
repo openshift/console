@@ -38,8 +38,10 @@ const timestampFor = (mdate: Date, now: Date, omitSuffix: boolean) => {
 
   let a = 'am';
   let hours = mdate.getHours();
-  if (hours > 12) {
-    hours -= 12;
+  if (hours >= 12) {
+    if (hours > 12) {
+      hours -= 12;
+    }
     a = 'pm';
   }
 
