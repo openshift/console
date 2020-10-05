@@ -55,8 +55,8 @@
       "^react-dnd-html5-backend$": "react-dnd-html5-backend/dist/cjs"
     },
     "transform": {
-      ".(ts|tsx|js|jsx)": "./node_modules/ts-jest/preprocessor.js",
-      ".(gql|graphql)$": "jest-transform-graphql"
+      "^.+\\.(ts|tsx|js|jsx)$": "./node_modules/ts-jest/preprocessor.js",
+      "^.+\\.(gql|graphql)$": "jest-transform-graphql"
     },
     "transformIgnorePatterns": [
       "<rootDir>/node_modules/(?!(lodash-es|@console|@novnc|@spice-project|@popperjs)/.*)"
