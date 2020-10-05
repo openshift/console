@@ -1,4 +1,3 @@
-import { LimitsData } from '@console/dev-console/src/components/import/import-types';
 import {
   EventSourceApiServerModel,
   EventSourceContainerModel,
@@ -54,7 +53,6 @@ export interface EventSourceFormData {
   type: string;
   sinkType: string;
   sink: SinkResourceData;
-  limits: LimitsData;
   data?: EventSourceData;
   yamlData?: string;
 }
