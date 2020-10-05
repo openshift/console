@@ -504,6 +504,18 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Page/Resource/List',
+    properties: {
+      model: TaskRunModel,
+      loader: async () =>
+        (
+          await import(
+            './components/taskruns/list-page/TaskRunsListPage' /* webpackChunkName: "taskrun-resource-list" */
+          )
+        ).default,
+    },
+  },
+  {
     type: 'Perspective',
     properties: {
       id: 'dev',
