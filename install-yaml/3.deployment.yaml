@@ -24,23 +24,10 @@ spec:
         - /opt/bridge/bin/bridge
         - --public-dir=/opt/bridge/static
         - --listen=https://0.0.0.0:6443
-        - --tls-cert-file=/var/https-cert/tls.crt
-        - --tls-key-file=/var/https-cert/tls.key
-        - --hypercloud-endpoint=http://hypercloud4-operator-service.hypercloud4-system.svc:28677
-        - --prometheus-endpoint=http://prometheus-k8s.monitoring.svc:9090/api
-        - --grafana-endpoint=http://grafana.monitoring.svc:3000/
-        - --kiali-endpoint=http://kiali.istio-system.svc:20001/api/kiali
-        - --jaeger-endpoint=http://tracing.istio-system.svc:80/api/jaeger
-        - --approval-endpoint=http://approval-proxy-server.approval-system.svc:80/approve
-        - --kubeflow-endpoint=http://istio-ingressgateway.istio-system.svc:80/
-        - --vnc-endpoint=http://virtvnc.kubevirt.svc:8001/
-        - --hyperauth-endpoint=https://hyperauth.hyperauth.svc:8080/
-        - --webhook-endpoint=https://hypercloud4-webhook-svc.hypercloud4-system.svc/api/webhook/
-        - --keycloak-realm=@@REALM@@
-        - --keycloak-auth-url=https://@@KEYCLOAK@@/auth
-        - --keycloak-client-id=@@CLIENTID@@        
-        - --hdc-mode=@@HDC_FLAG@@
-        - --tmaxcloud-portal=@@PORTAL@@
+        - --base-address=https://0.0.0.0:6443
+        - --tls-cert-file=/var/https-cert/cert
+        - --tls-key-file=/var/https-cert/key
+        - --user-auth=disabled 
         image: tmaxcloudck/hypercloud-console:@@VER@@
         imagePullPolicy: IfNotPresent
         volumeMounts:
