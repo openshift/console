@@ -1,0 +1,23 @@
+{
+  "Vulnerability": "Vulnerability",
+  "Severity": "Severity",
+  "Package": "Package",
+  "Current Version": "Current Version",
+  "Fixed in Version": "Fixed in Version",
+  "Quay Security Scanner has detected {{total, number}} vulnerabilities.": "Quay Security Scanner has detected {{total, number}} vulnerabilities.",
+  "Patches are available for {{fixableCount, number}} vulnerabilities.": "Patches are available for {{fixableCount, number}} vulnerabilities.",
+  "{{title}} vulnerabilities": "{{title}} vulnerabilities",
+  "Affected Pods": "Affected Pods",
+  "Image Name": "Image Name",
+  "Namespace": "Namespace",
+  "Highest Severity": "Highest Severity",
+  "Fixable": "Fixable",
+  "Total": "Total",
+  "Manifest": "Manifest",
+  "No Image Vulnerabilities found": "No Image Vulnerabilities found",
+  "Image Manifest Vulnerabilities": "Image Manifest Vulnerabilities",
+  "Container": "Container",
+  "Image": "Image",
+  "Security Scan": "Security Scan",
+  "No vulnerabilities found": "No vulnerabilities found"
+}

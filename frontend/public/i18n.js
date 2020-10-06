@@ -98,6 +98,7 @@ i18n
         'workload',
         'devconsole',
         'knative-plugin',
+        'container-security',
       ],
       defaultNS: 'public',
       nsSeparator: '~',
