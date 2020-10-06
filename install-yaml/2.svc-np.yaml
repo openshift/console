@@ -4,6 +4,7 @@ metadata:
   name: console
   namespace: @@NAME_NS@@
 spec:
+  externalTrafficPolicy: Local
   type: NodePort
   ports:
   - name: "https"
