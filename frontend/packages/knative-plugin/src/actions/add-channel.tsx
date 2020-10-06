@@ -10,9 +10,9 @@ const eventChannelStyles = {
   width: '1em',
   height: '1em',
 };
-const EventChannelIcon: React.FC = () => {
-  return <img style={eventChannelStyles} src={channelIcon} alt="" />;
-};
+const EventChannelIcon: React.FC = () => (
+  <img style={eventChannelStyles} src={channelIcon} alt="" />
+);
 
 export const addChannels: KebabAction = createKebabAction(
   'Channel',

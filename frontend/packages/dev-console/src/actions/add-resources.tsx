@@ -8,9 +8,9 @@ import {
   LaptopCodeIcon,
   BoltIcon,
 } from '@patternfly/react-icons';
-import { HelmChartsIcon } from '@console/shared';
 import { ImportOptions } from '../components/import/import-types';
 import { KebabAction, createKebabAction } from '../utils/add-resources-menu-utils';
+import HelmChartsIcon from '../components/helm/HelmChartsIcon';
 
 export const allImportResourceAccess = 'allImportResourceAccess';
 export const allCatalogImageResourceAccess = 'allCatalogImageResourceAccess';
