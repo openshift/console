@@ -1,8 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { Button } from '@patternfly/react-core';
+import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 import { Status, SuccessStatus, YellowExclamationTriangleIcon } from '@console/shared';
 import { DetailsItem } from '@console/internal/components/utils';
 import { Conditions } from '@console/internal/components/conditions';
+import { SecretValue } from '@console/internal/components/configmap-and-secret-data';
 import { CapabilityProps, StatusCapability } from '../types';
 import { Phase } from './phase';
 import { PodStatusChart } from './pods';
@@ -102,6 +105,37 @@ const K8sPhaseReason: React.FC<StatusCapabilityProps> = ({
   </DetailsItem>
 );
 
+const Secret: React.FC<StatusCapabilityProps> = ({ description, label, obj, fullPath, value }) => {
+  const [reveal, setReveal] = React.useState(false);
+
+  return (
+    <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+      <div className="co-toggle-reveal-value">
+        <Button
+          type="button"
+          variant="link"
+          isInline
+          className="pf-m-link--align-right co-toggle-reveal-value__btn"
+          onClick={() => setReveal(!reveal)}
+        >
+          {reveal ? (
+            <>
+              <EyeSlashIcon className="co-icon-space-r" />
+              Hide Values
+            </>
+          ) : (
+            <>
+              <EyeIcon className="co-icon-space-r" />
+              Reveal Values
+            </>
+          )}
+        </Button>
+        <SecretValue value={value} encoded={false} reveal={reveal} />
+      </div>
+    </DetailsItem>
+  );
+};
+
 const MainStatus: React.FC<StatusCapabilityProps> = ({
   description,
   fullPath,
@@ -141,6 +175,8 @@ export const StatusDescriptorDetailsItem: React.FC<StatusCapabilityProps> = (pro
       return <K8sPhase {...props} />;
     case StatusCapability.k8sPhaseReason:
       return <K8sPhaseReason {...props} />;
+    case StatusCapability.password:
+      return <Secret {...props} />;
     case StatusCapability.hidden:
       return null;
     default:
@@ -159,3 +195,4 @@ K8sPhase.displayName = 'K8sPhase';
 K8sPhaseReason.displayName = 'K8sPhaseReason';
 MainStatus.displayName = 'MainStatus';
 StatusDescriptorDetailsItem.displayName = 'StatusDescriptorDetailsItem';
+Secret.displayName = 'Secret';
