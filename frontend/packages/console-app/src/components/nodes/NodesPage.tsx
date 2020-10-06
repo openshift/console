@@ -242,6 +242,11 @@ const NodesTableRow = connect<NodesRowMapFromStateProps, null, NodesTableRowProp
         ? `${humanizeBinaryBytes(usedMem).string} / ${humanizeBinaryBytes(totalMem).string}`
         : '-';
     const cores = metrics?.cpu?.[nodeName];
+    const totalCores = metrics?.totalCPU?.[nodeName];
+    const cpu =
+      Number.isFinite(cores) && Number.isFinite(totalCores)
+        ? `${formatCores(cores)} / ${totalCores} cores`
+        : '-';
     const usedStrg = metrics?.usedStorage?.[nodeName];
     const totalStrg = metrics?.totalStorage?.[nodeName];
     const storage =
@@ -292,7 +297,7 @@ const NodesTableRow = connect<NodesRowMapFromStateProps, null, NodesTableRowProp
           columns={columns}
           columnID={nodeColumnInfo.cpu.id}
         >
-          {cores ? `${formatCores(cores)} cores` : '-'}
+          {cpu}
         </TableData>
         <TableData
           className={nodeColumnInfo.filesystem.classes}
@@ -442,6 +447,10 @@ const fetchNodeMetrics = (): Promise<NodeMetrics> => {
     {
       key: 'cpu',
       query: 'sum by(instance) (instance:node_cpu:rate:sum)',
+    },
+    {
+      key: 'totalCPU',
+      query: 'sum by(instance) (instance:node_num_cpu:sum)',
     },
     {
       key: 'pods',
