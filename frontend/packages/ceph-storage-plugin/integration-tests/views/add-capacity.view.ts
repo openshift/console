@@ -2,7 +2,7 @@ import { $, ExpectedConditions as until, browser } from 'protractor';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as sideNavView from '@console/internal-integration-tests/views/sidenav.view';
 import { click } from '@console/shared/src/test-utils/utils';
-import { CAPACITY_UNIT, CAPACITY_VALUE, OCS_OP } from '../utils/consts';
+import { CAPACITY_UNIT, OCS_OP } from '../utils/consts';
 import { currentSelectors, VERSION } from './installFlow.view';
 
 /**
@@ -33,11 +33,13 @@ export const currentACSelector = (() => {
   }
 })();
 
-export const verifyFields = async () => {
+export const verifyFields = async (size: number) => {
   await browser.wait(until.presenceOf(currentACSelector.capacityValueInput));
   await browser.wait(until.presenceOf(currentACSelector.totalRequestedcapacity));
-  expect(currentACSelector.capacityValueInput.getAttribute('value')).toBe(CAPACITY_VALUE);
-  expect(currentACSelector.totalRequestedcapacity.getText()).toEqual(`6 ${CAPACITY_UNIT}`);
+  expect(currentACSelector.capacityValueInput.getAttribute('value')).toBe(String(size));
+  expect(currentACSelector.totalRequestedcapacity.getText()).toEqual(
+    `${(size * 3).toFixed(2)} ${CAPACITY_UNIT}`,
+  );
 };
 
 export const clickKebabAction = async (uid: string, actionLabel: string) => {
