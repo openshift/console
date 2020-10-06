@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { match as Rmatch } from 'react-router-dom';
-import MultiTabListPage from '../../multi-tab-list/MultiTabListPage';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { TaskModel, ClusterTaskModel, TaskRunModel } from '../../../models';
 import { Page } from '@console/internal/components/utils';
-import { TechPreviewBadge } from '@console/shared';
+import { TechPreviewBadge, MenuActions, MultiTabListPage } from '@console/shared';
 import { DefaultPage } from '@console/internal/components/default-resource';
 import TaskRunsListPage from '../../taskruns/list-page/TaskRunsListPage';
-import { MenuActions } from '../../multi-tab-list/multi-tab-list-page-types';
+import NamespacedPage, { NamespacedPageVariants } from '../../NamespacedPage';
 
 interface TasksListsPageProps {
   match: Rmatch<any>;
@@ -57,13 +56,15 @@ const TasksListsPage: React.FC<TasksListsPageProps> = ({ match }) => {
   ];
 
   return (
-    <MultiTabListPage
-      pages={pages}
-      match={match}
-      title="Tasks"
-      badge={<TechPreviewBadge />}
-      menuActions={menuActions}
-    />
+    <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
+      <MultiTabListPage
+        pages={pages}
+        match={match}
+        title="Tasks"
+        badge={<TechPreviewBadge />}
+        menuActions={menuActions}
+      />
+    </NamespacedPage>
   );
 };
 

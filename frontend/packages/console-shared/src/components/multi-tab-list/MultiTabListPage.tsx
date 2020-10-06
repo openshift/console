@@ -9,7 +9,6 @@ import {
   Dropdown,
 } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import { MenuActions, MenuAction } from './multi-tab-list-page-types';
 
 interface MultiTabListPageProps {
@@ -44,7 +43,7 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
   };
 
   return (
-    <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
+    <>
       <PageHeading className="co-m-nav-title--row" title={title} badge={badge}>
         <Dropdown
           buttonClassName="pf-m-primary"
@@ -59,7 +58,7 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
         />
       </PageHeading>
       <HorizontalNav pages={pages} match={match} noStatusBox />
-    </NamespacedPage>
+    </>
   );
 };
 

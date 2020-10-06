@@ -19,3 +19,4 @@ export * from './layout';
 export * from './utils';
 export * from './modal';
 export * from './hpa';
+export * from './multi-tab-list';

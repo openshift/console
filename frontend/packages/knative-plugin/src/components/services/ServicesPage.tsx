@@ -11,7 +11,7 @@ export interface ServicesPageProps {
 const ServicesPage: React.FC<React.ComponentProps<typeof ListPage>> = (props) => (
   <ListPage
     {...props}
-    canCreate
+    canCreate={false}
     kind={referenceForModel(ServiceModel)}
     ListComponent={ServiceList}
   />

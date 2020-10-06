@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { match as Rmatch } from 'react-router-dom';
-import MultiTabListPage from '../multi-tab-list/MultiTabListPage';
 import { referenceForModel } from '@console/internal/module/k8s';
 import {
   PipelineModel,
@@ -9,12 +8,12 @@ import {
   PipelineRunModel,
 } from '../../models';
 import { Page } from '@console/internal/components/utils';
-import { TechPreviewBadge } from '@console/shared';
+import { TechPreviewBadge, MenuAction, MenuActions, MultiTabListPage } from '@console/shared';
 import PipelineRunsResourceList from '../pipelineruns/PipelineRunsResourceList';
 import { DefaultPage } from '@console/internal/components/default-resource';
 import PipelineResourcesListPage from '../pipeline-resources/list-page/PipelineResourcesListPage';
-import { MenuAction, MenuActions } from '../multi-tab-list/multi-tab-list-page-types';
 import PipelinesList from '../pipelines/list-page/PipelinesList';
+import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 
 interface PipelinesListPageProps {
   match: Rmatch<any>;
@@ -66,13 +65,15 @@ const PipelinesListPage: React.FC<PipelinesListPageProps> = ({ match }) => {
   ];
 
   return (
-    <MultiTabListPage
-      pages={pages}
-      match={match}
-      title="Pipelines"
-      badge={<TechPreviewBadge />}
-      menuActions={menuActions}
-    />
+    <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
+      <MultiTabListPage
+        pages={pages}
+        match={match}
+        title="Pipelines"
+        badge={<TechPreviewBadge />}
+        menuActions={menuActions}
+      />
+    </NamespacedPage>
   );
 };
 
