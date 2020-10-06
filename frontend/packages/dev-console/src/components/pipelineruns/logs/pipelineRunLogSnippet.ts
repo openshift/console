@@ -4,26 +4,11 @@ import {
   PLRTaskRunData,
   PLRTaskRunStep,
 } from '../../../utils/pipeline-augment';
+import { CombinedErrorDetails } from './log-snippet-types';
 import { pipelineRunStatus } from '../../../utils/pipeline-filter-reducer';
+import { taskRunSnippetMessage } from './log-snippet-utils';
 
-type ErrorDetails = {
-  title: string;
-};
-
-type ErrorDetailsWithLogName = ErrorDetails & {
-  containerName: string;
-  podName: string;
-};
-type ErrorDetailsWithStaticLog = ErrorDetails & {
-  staticMessage: string;
-};
-
-export type PipelineRunErrorDetails = ErrorDetailsWithLogName | ErrorDetailsWithStaticLog;
-
-const joinConditions = (conditions: Condition[]) =>
-  conditions.map((condition) => condition.message).join('\n') || 'Unknown failure condition';
-
-export const getLogSnippet = (pipelineRun: PipelineRun): PipelineRunErrorDetails => {
+export const getPLRLogSnippet = (pipelineRun: PipelineRun): CombinedErrorDetails => {
   if (!pipelineRun?.status) {
     // Lack information to pull from the Pipeline Run
     return null;
@@ -63,18 +48,5 @@ export const getLogSnippet = (pipelineRun: PipelineRun): PipelineRunErrorDetails
     (step: PLRTaskRunStep) => step.terminated?.exitCode !== 0,
   )?.container;
 
-  if (!failedTaskRun.status.podName || !containerName) {
-    // Not enough to go to the logs, print all the conditions messages together
-    return {
-      staticMessage: joinConditions(failedTaskRun.status.conditions),
-      title: `Failure on task ${failedTaskRun.pipelineTaskName} - check logs for details.`,
-    };
-  }
-
-  // We don't know enough but have enough to locate the logs
-  return {
-    containerName,
-    podName: failedTaskRun.status.podName,
-    title: `Failure on task ${failedTaskRun.pipelineTaskName} - check logs for details.`,
-  };
+  return taskRunSnippetMessage(failedTaskRun.pipelineTaskName, failedTaskRun.status, containerName);
 };

@@ -33,12 +33,6 @@ describe('TaskRunDetailsPage:', () => {
     expect(wrapper.find(DetailsPage).exists()).toBe(true);
   });
 
-  it('Should contain three tabs in the Details Page', () => {
-    const wrapper = shallow(<TaskRunDetailsPage {...taskRunDetailsPageProps} />);
-    const { pages } = wrapper.props();
-    expect(pages).toHaveLength(3);
-  });
-
   it('Should contain events page', () => {
     const wrapper = shallow(<TaskRunDetailsPage {...taskRunDetailsPageProps} />);
     const { pages } = wrapper.props();

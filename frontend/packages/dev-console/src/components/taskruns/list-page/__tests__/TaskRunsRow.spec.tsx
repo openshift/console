@@ -26,6 +26,7 @@ describe('TaskRunsRow', () => {
         status: {
           podName: 'pod-1',
           startTime: '-',
+          conditions: [],
         },
       },
       customData: {

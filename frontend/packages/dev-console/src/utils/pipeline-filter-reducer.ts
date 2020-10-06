@@ -58,3 +58,8 @@ export const pipelineResourceTypeFilter = (filters, pipelineResource): boolean =
   const type = pipelineResourceFilterReducer(pipelineResource);
   return filters.selected.has(type) || !_.includes(filters.all, type);
 };
+
+export const taskRunFilterReducer = (taskRun): string => {
+  const status = pipelineRunStatus(taskRun);
+  return status || '-';
+};
