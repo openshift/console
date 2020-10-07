@@ -277,26 +277,30 @@ export const addToTopologyDataModel = (
   graphModel: Model,
   dataModelDepicters: TopologyDataModelDepicted[] = [],
 ) => {
-  graphModel.edges.push(...newModel.edges);
-  graphModel.nodes.push(
-    ...newModel.nodes.filter(
-      (n) =>
-        !n.group &&
-        !graphModel.nodes.find((existing) => {
-          if (n.id === existing.id) {
-            return true;
-          }
-          const { resource } = n as OdcNodeModel;
-          return (
-            !resource || !!dataModelDepicters.find((depicter) => depicter(resource, graphModel))
-          );
-        }),
-    ),
-  );
-  mergeGroups(
-    newModel.nodes.filter((n) => n.group),
-    graphModel.nodes,
-  );
+  if (newModel?.edges) {
+    graphModel.edges.push(...newModel.edges);
+  }
+  if (newModel?.nodes) {
+    graphModel.nodes.push(
+      ...newModel.nodes.filter(
+        (n) =>
+          !n.group &&
+          !graphModel.nodes.find((existing) => {
+            if (n.id === existing.id) {
+              return true;
+            }
+            const { resource } = n as OdcNodeModel;
+            return (
+              !resource || !!dataModelDepicters.find((depicter) => depicter(resource, graphModel))
+            );
+          }),
+      ),
+    );
+    mergeGroups(
+      newModel.nodes.filter((n) => n.group),
+      graphModel.nodes,
+    );
+  }
 };
 
 /**

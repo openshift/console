@@ -26,9 +26,9 @@ namespace ExtensionProperties {
     /** Keys in resources containing workloads. */
     workloadKeys?: string[];
     /** Getter for the data model factory */
-    getDataModel: () => Promise<TopologyDataModelGetter>;
+    getDataModel?: () => Promise<TopologyDataModelGetter>;
     /** Getter for function to determine if a resource is depicted by this model factory */
-    isResourceDepicted: () => Promise<TopologyDataModelDepicted>;
+    isResourceDepicted?: () => Promise<TopologyDataModelDepicted>;
     /** Getter for function to reconcile data model after all extensions' models have loaded */
     getDataModelReconciler?: () => Promise<TopologyDataModelReconciler>;
   }

@@ -1,12 +1,6 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
 import { action } from 'mobx';
-import { Button, PageHeaderToolsItem, Tooltip } from '@patternfly/react-core';
-import { TopologyIcon } from '@patternfly/react-icons';
 import {
-  TopologyControlBar,
-  createTopologyControlButtons,
-  defaultControlButtonsOptions,
   ComponentFactory,
   Visualization,
   VisualizationSurface,
@@ -26,11 +20,40 @@ import { useQueryParams } from '@console/shared';
 import { useExtensions } from '@console/plugin-sdk';
 import { isTopologyComponentFactory, TopologyComponentFactory } from '../../extensions/topology';
 import { SHOW_GROUPING_HINT_EVENT, ShowGroupingHintEventListener } from './topology-types';
-import { COLA_LAYOUT, COLA_FORCE_LAYOUT, layoutFactory } from './layouts/layoutFactory';
+import { COLA_LAYOUT, layoutFactory } from './layouts/layoutFactory';
 import { componentFactory } from './components';
 import { odcElementFactory } from './elements';
+import TopologyControlBar from './TopologyControlBar';
 
 import './Topology.scss';
+
+interface TopologyGraphViewProps {
+  visualizationReady: boolean;
+  visualization: Visualization;
+  selectedId?: string;
+  dragHint?: string;
+}
+
+const TopologyGraphView: React.FC<TopologyGraphViewProps> = React.memo(
+  ({ visualizationReady, visualization, selectedId, dragHint }) => {
+    if (!visualizationReady) {
+      return null;
+    }
+    return (
+      <div className="odc-topology-graph-view">
+        <VisualizationProvider controller={visualization}>
+          <VisualizationSurface state={{ selectedIds: [selectedId] }} />
+          {dragHint && (
+            <div className="odc-topology__hint-container">
+              <div className="odc-topology__hint-background">{dragHint}</div>
+            </div>
+          )}
+          <TopologyControlBar visualization={visualization} />
+        </VisualizationProvider>
+      </div>
+    );
+  },
+);
 
 const TOPOLOGY_GRAPH_ID = 'odc-topology-graph';
 const graphModel: Model = {
@@ -166,89 +189,14 @@ const Topology: React.FC<TopologyProps> = ({ model, application, onSelect, setVi
     };
   }, [selectedId, visualization]);
 
-  if (!visualizationReady) {
-    return null;
-  }
-
-  const renderControlBar = () => {
-    const layout = visualization.getGraph()?.getLayout() ?? 'COLA_LAYOUT';
-    return (
-      <TopologyControlBar
-        controlButtons={[
-          ...createTopologyControlButtons({
-            ...defaultControlButtonsOptions,
-            zoomInCallback: action(() => {
-              visualization.getGraph().scaleBy(4 / 3);
-            }),
-            zoomOutCallback: action(() => {
-              visualization.getGraph().scaleBy(0.75);
-            }),
-            fitToScreenCallback: action(() => {
-              visualization.getGraph().fit(80);
-            }),
-            resetViewCallback: action(() => {
-              visualization.getGraph().reset();
-              visualization.getGraph().layout();
-            }),
-            legend: false,
-          }),
-        ]}
-      >
-        <div className="odc-topology__layout-group">
-          <Tooltip content="Layout 1">
-            <PageHeaderToolsItem className="odc-topology__layout-button" tabIndex={-1}>
-              <Button
-                className={classNames('pf-topology-control-bar__button', {
-                  'pf-m-active': layout === COLA_LAYOUT,
-                })}
-                variant="tertiary"
-                onClick={() => {
-                  visualization.getGraph().setLayout(COLA_LAYOUT);
-                  visualization.getGraph().layout();
-                }}
-              >
-                <TopologyIcon className="odc-topology__layout-button__icon" aria-label="Layout" />1
-              </Button>
-            </PageHeaderToolsItem>
-          </Tooltip>
-          <Tooltip content="Layout 2">
-            <PageHeaderToolsItem className="odc-topology__layout-button" tabIndex={-1}>
-              <Button
-                className={classNames('pf-topology-control-bar__button', {
-                  'pf-m-active': layout === COLA_FORCE_LAYOUT,
-                })}
-                variant="tertiary"
-                onClick={() => {
-                  visualization.getGraph().setLayout(COLA_FORCE_LAYOUT);
-                  visualization.getGraph().layout();
-                }}
-              >
-                <TopologyIcon className="odc-topology__layout-button__icon" aria-label="Layout" />2
-              </Button>
-            </PageHeaderToolsItem>
-          </Tooltip>
-        </div>
-      </TopologyControlBar>
-    );
-  };
-
-  if (!visualizationReady) {
-    return null;
-  }
-
   return (
-    <div className="odc-topology-graph-view">
-      <VisualizationProvider controller={visualization}>
-        <VisualizationSurface state={{ selectedIds: [selectedId] }} />
-        {dragHint && (
-          <div className="odc-topology__hint-container">
-            <div className="odc-topology__hint-background">{dragHint}</div>
-          </div>
-        )}
-        <span className="pf-topology-control-bar">{renderControlBar()}</span>
-      </VisualizationProvider>
-    </div>
+    <TopologyGraphView
+      visualizationReady={visualizationReady}
+      visualization={visualization}
+      dragHint={dragHint}
+      selectedId={selectedId}
+    />
   );
 };
 
-export default Topology;
+export default React.memo(Topology);
