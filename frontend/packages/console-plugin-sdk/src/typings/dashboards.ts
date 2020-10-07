@@ -378,7 +378,7 @@ export type URLHealthHandler<R> = (
 
 export type PrometheusHealthPopupProps = {
   responses: { response: PrometheusResponse; error: any }[];
-  additionalResource?: FirehoseResult<K8sResourceKind | K8sResourceKind[]>;
+  k8sResult?: FirehoseResult<K8sResourceKind | K8sResourceKind[]>;
 };
 
 export type PrometheusHealthHandler = (

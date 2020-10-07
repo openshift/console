@@ -1,0 +1,8 @@
+reviewers:
+  - bond95
+  - tisnik
+approvers:
+  - bond95
+  - tisnik
+labels:
+  - component/insights
