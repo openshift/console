@@ -648,7 +648,7 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
       ),
     ].filter(
       (obj, i, all) =>
-        isSubscription(obj) ||
+        isCSV(obj) ||
         _.isUndefined(
           all.find(({ metadata }) =>
             [_.get(obj, 'status.currentCSV'), _.get(obj, 'spec.startingCSV')].includes(
