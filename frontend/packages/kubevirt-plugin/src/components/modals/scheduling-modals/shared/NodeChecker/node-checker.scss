@@ -5,6 +5,13 @@
   .co-external-link {
     display: flex;
     justify-content: space-between;
+    min-width: 110px;
     align-items: center;
+  }
+  .kv-node-checker__preferred-status{
+    display: flex;
+    justify-content: flex-end;
+    margin-left: var(--pf-global--spacer--md);
+    padding-right: var(--pf-global--spacer--md);
   }
 }
