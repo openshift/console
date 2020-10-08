@@ -14,27 +14,30 @@ type BuildDecoratorData = {
 };
 
 export const getBuildDecoratorParts = (workloadData: WorkloadData): BuildDecoratorData => {
-  const { build, connectedPipeline } = workloadData;
+  const {
+    build,
+    connectedPipeline: { pipelineRuns, pipeline },
+  } = workloadData;
 
   let tooltipContent = null;
   let decoratorIcon = null;
   let linkRef = null;
-
   let currentPipelineStatus = null;
-  if (connectedPipeline) {
-    const { pipelineRuns, pipeline } = connectedPipeline;
-    currentPipelineStatus = constructCurrentPipeline(pipeline, pipelineRuns);
-  }
 
-  if (currentPipelineStatus) {
-    const { currentPipeline, status } = currentPipelineStatus;
-    tooltipContent = <PipelineBuildDecoratorTooltip pipeline={currentPipeline} status={status} />;
-    decoratorIcon = <Status status={status} iconOnly noTooltip />;
-    linkRef = `${resourcePathFromModel(
-      PipelineRunModel,
-      currentPipeline.latestRun.metadata.name,
-      currentPipeline.latestRun.metadata.namespace,
-    )}/logs`;
+  if (pipeline) {
+    tooltipContent = 'Pipeline not started';
+    decoratorIcon = <Status status="New" iconOnly noTooltip />;
+    currentPipelineStatus = constructCurrentPipeline(pipeline, pipelineRuns);
+    if (currentPipelineStatus) {
+      const { currentPipeline, status } = currentPipelineStatus;
+      tooltipContent = <PipelineBuildDecoratorTooltip pipeline={currentPipeline} status={status} />;
+      decoratorIcon = <Status status={status} iconOnly noTooltip />;
+      linkRef = `${resourcePathFromModel(
+        PipelineRunModel,
+        currentPipeline.latestRun.metadata.name,
+        currentPipeline.latestRun.metadata.namespace,
+      )}/logs`;
+    }
   } else if (build) {
     tooltipContent = `Build ${build.status && build.status.phase}`;
     decoratorIcon = <Status status={build.status.phase} iconOnly noTooltip />;
