@@ -33,7 +33,7 @@ import {
   GitReadableTypes,
   Resources,
 } from './import-types';
-import { createPipelineForImportFlow } from './pipeline/pipeline-template-utils';
+import { createPipelineRunForImportFlow } from './pipeline/pipeline-template-utils';
 import { Perspective } from '@console/plugin-sdk';
 
 export const generateSecret = () => {
@@ -439,6 +439,7 @@ export const createOrUpdateResources = async (
   ) {
     generatedImageStreamName = `${name}-${getRandomChars()}`;
   }
+
   requests.push(
     createOrUpdateImageStream(
       formData,
@@ -448,23 +449,25 @@ export const createOrUpdateResources = async (
       generatedImageStreamName ? 'create' : verb,
       generatedImageStreamName,
     ),
-    createOrUpdateBuildConfig(
-      formData,
-      imageStream,
-      dryRun,
-      _.get(appResources, 'buildConfig.data'),
-      verb,
-      generatedImageStreamName,
-    ),
   );
+  if (!pipeline.enabled) {
+    requests.push(
+      createOrUpdateBuildConfig(
+        formData,
+        imageStream,
+        dryRun,
+        appResources?.buildConfig?.data,
+        verb,
+        generatedImageStreamName,
+      ),
+    );
+  } else if (pipeline.template && !dryRun) {
+    requests.push(createPipelineRunForImportFlow(formData));
+  }
 
   verb === 'create' && requests.push(createWebhookSecret(formData, 'generic', dryRun));
 
   const defaultAnnotations = getGitAnnotations(repository, ref);
-
-  if (pipeline.enabled && pipeline.template && !dryRun) {
-    requests.push(createPipelineForImportFlow(formData));
-  }
 
   if (formData.resources === Resources.KnativeService) {
     // knative service doesn't have dry run capability so returning the promises.
