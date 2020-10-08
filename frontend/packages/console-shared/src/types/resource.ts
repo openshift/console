@@ -9,6 +9,7 @@ import { DEPLOYMENT_STRATEGY } from '../constants';
 import { OverviewItemAlerts, PodControllerOverviewItem } from './pod';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 import { Alert } from '@console/internal/components/monitoring/types';
+import { Pipeline } from '@console/dev-console/src/utils/pipeline-augment';
 
 export type APIError = {
   status?: string;
@@ -46,6 +47,7 @@ export type OverviewItem<T = K8sResourceKind> = {
   isOperatorBackedService?: boolean;
   isMonitorable?: boolean;
   monitoringAlerts?: Alert[];
+  pipelines?: Pipeline[];
 };
 
 export type OperatorBackedServiceKindMap = {

@@ -122,18 +122,27 @@ const BuildOverviewList: React.SFC<BuildOverviewListProps> = ({ buildConfig }) =
   );
 };
 
-export const BuildOverview: React.SFC<BuildConfigsOverviewProps> = ({ buildConfigs }) => (
-  <div className="build-overview">
-    <SidebarSectionHeading text="Builds" />
-    {_.isEmpty(buildConfigs) ? (
-      <span className="text-muted">No Build Configs found for this resource.</span>
-    ) : (
-      _.map(buildConfigs, (buildConfig) => (
-        <BuildOverviewList key={buildConfig.metadata.uid} buildConfig={buildConfig} />
-      ))
-    )}
-  </div>
-);
+export const BuildOverview: React.SFC<BuildConfigsOverviewProps> = ({ buildConfigs, obj }) => {
+  const generatedBy = obj?.metadata?.annotations?.['openshift.io/generated-by'];
+  const isCreatedUsingAddFlows = generatedBy === 'OpenShiftWebConsole';
+
+  if (isCreatedUsingAddFlows && _.isEmpty(buildConfigs)) {
+    return null;
+  }
+
+  return (
+    <div className="build-overview">
+      <SidebarSectionHeading text="Builds" />
+      {_.isEmpty(buildConfigs) ? (
+        <span className="text-muted">No Build Configs found for this resource.</span>
+      ) : (
+        _.map(buildConfigs, (buildConfig) => (
+          <BuildOverviewList key={buildConfig.metadata.uid} buildConfig={buildConfig} />
+        ))
+      )}
+    </div>
+  );
+};
 
 type BuildOverviewListItemProps = {
   build: K8sResourceKind;
@@ -145,4 +154,5 @@ type BuildOverviewListProps = {
 
 type BuildConfigsOverviewProps = {
   buildConfigs: BuildConfigOverviewItem[];
+  obj?: K8sResourceKind;
 };
