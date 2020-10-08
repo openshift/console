@@ -1,5 +1,5 @@
 /* eslint-disable lines-between-class-members */
-import { ObjectEnum } from '../../object-enum';
+import { ObjectEnum } from '@console/shared/src/constants/object-enum';
 import { DiskBus } from '../../vm/storage';
 
 export class OvirtDiskBus extends ObjectEnum<string> {

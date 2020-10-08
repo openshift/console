@@ -1,5 +1,6 @@
 /* eslint-disable lines-between-class-members */
-import { ObjectEnum, VolumeType } from '../../../constants';
+import { ObjectEnum } from '@console/shared/src/constants/object-enum';
+import { VolumeType } from '../../../constants';
 import { DataVolumeSourceType, DiskType } from '../../../constants/vm/storage';
 import { getStringEnumValues } from '../../../utils/types';
 import { BinaryUnit } from '../../form/size-unit-utils';

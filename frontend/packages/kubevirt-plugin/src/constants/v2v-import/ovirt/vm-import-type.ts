@@ -1,5 +1,5 @@
 /* eslint-disable lines-between-class-members */
-import { ObjectEnum } from '../../object-enum';
+import { ObjectEnum } from '@console/shared/src/constants/object-enum';
 
 export class VMImportType extends ObjectEnum<string> {
   static readonly OVIRT = new VMImportType('ovirt');

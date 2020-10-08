@@ -1,5 +1,5 @@
 /* eslint-disable lines-between-class-members */
-import { ObjectEnum } from '../../object-enum';
+import { ObjectEnum } from '@console/shared/src/constants/object-enum';
 
 export class AccessMode extends ObjectEnum<string> {
   static readonly READ_WRITE_ONCE = new AccessMode('ReadWriteOnce', 'Single User (RWO)');
