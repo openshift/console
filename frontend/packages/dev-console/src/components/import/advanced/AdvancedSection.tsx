@@ -45,7 +45,7 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ values, appResources 
           <HealthChecks title="Health Checks" resourceType={values.resources} />
         </ProgressiveListItem>
         {/* Hide Build for Deploy Image */}
-        {values.isi ? null : (
+        {values.isi || values.pipeline.enabled ? null : (
           <ProgressiveListItem name="Build Configuration">
             <BuildConfigSection
               namespace={values.project.name}
