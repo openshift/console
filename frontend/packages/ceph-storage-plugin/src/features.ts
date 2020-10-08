@@ -1,10 +1,13 @@
 import * as _ from 'lodash';
 import { Dispatch } from 'react-redux';
-import { K8sResourceKind, k8sList, StorageClassResourceKind } from '@console/internal/module/k8s';
-import { ClusterServiceVersionModel, SubscriptionModel } from '@console/operator-lifecycle-manager';
+import { k8sList, StorageClassResourceKind } from '@console/internal/module/k8s';
+import {
+  ClusterServiceVersionModel,
+  ClusterServiceVersionKind,
+} from '@console/operator-lifecycle-manager';
 import { setFlag } from '@console/internal/actions/features';
 import { FeatureDetector } from '@console/plugin-sdk';
-import { getAnnotations } from '@console/shared/src/selectors/common';
+import { getAnnotations, getName } from '@console/shared/src/selectors/common';
 import { fetchK8s } from '@console/internal/graphql/client';
 import { StorageClassModel } from '@console/internal/models';
 import { OCSServiceModel } from './models';
@@ -14,6 +17,7 @@ import {
   ATTACHED_DEVICES_ANNOTATION,
   RGW_PROVISIONER,
   SECOND,
+  OCS_OPERATOR,
 } from './constants';
 import { OCSStorageClusterKind } from './types';
 
@@ -99,16 +103,9 @@ export const detectOCS: FeatureDetector = async (dispatch) => {
 
 export const detectOCSSupportedFeatures: FeatureDetector = async (dispatch) => {
   try {
-    const subscription = await fetchK8s<K8sResourceKind>(
-      SubscriptionModel,
-      'ocs-subscription',
-      CEPH_STORAGE_NAMESPACE,
-    );
-    const ocsCSV = await fetchK8s(
-      ClusterServiceVersionModel,
-      subscription?.status?.currentCSV,
-      CEPH_STORAGE_NAMESPACE,
-    );
+    const csvList: any = await fetchK8s(ClusterServiceVersionModel, '', CEPH_STORAGE_NAMESPACE);
+    const csvItems = csvList.items as ClusterServiceVersionKind[];
+    const ocsCSV = csvItems.find((obj) => getName(obj).includes(OCS_OPERATOR));
 
     const support = getAnnotations(ocsCSV)[OCS_SUPPORT_ANNOTATION];
     _.keys(OCS_SUPPORT_FLAGS).forEach((feature) => {
