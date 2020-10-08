@@ -9,3 +9,4 @@ export * from './select-list';
 export * from './useQueryParams';
 export * from './version';
 export * from './csv-watch-hook';
+export * from './useTabbedTableBreadcrumb';

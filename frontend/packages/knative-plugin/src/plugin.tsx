@@ -273,7 +273,31 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: async () =>
         (
           await import(
-            './components/revisions/RevisionDetailsPage' /* webpackChunkName: "knative-revisions-details page" */
+            './components/revisions/RevisionDetailsPage' /* webpackChunkName: "revision-details-page" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.RouteModel,
+      loader: async () =>
+        (
+          await import(
+            './components/routes/RouteDetailsPage' /* webpackChunkName: "route-details-page" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.ServiceModel,
+      loader: async () =>
+        (
+          await import(
+            './components/services/ServiceDetailsPage' /* webpackChunkName: "service-details-page" */
           )
         ).default,
     },

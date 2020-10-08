@@ -1,17 +1,17 @@
 import * as React from 'react';
+import { Kebab, navFactory } from '@console/internal/components/utils';
 import { DetailsPage } from '@console/internal/components/factory';
-import { navFactory } from '@console/internal/components/utils';
-import { DetailsForKind } from '@console/internal/components/default-resource';
-import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { getRevisionActions } from '../../actions/getRevisionActions';
-import { useServingBreadcrumbsFor } from '../services/hooks';
 
-const RevisionDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
+import { DetailsForKind } from '@console/internal/components/default-resource';
+import { useServingBreadcrumbsFor } from '../services/hooks';
+import { RouteModel } from '../../models';
+
+const RouteDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
   const { kindObj, match } = props;
   const breadcrumbsFor = useServingBreadcrumbsFor(kindObj, match);
   const pages = [navFactory.details(DetailsForKind(props.kind)), navFactory.editYaml()];
-  const menuActionsCreator = (kindsObj: K8sKind, obj: K8sResourceKind) =>
-    getRevisionActions().map((action) => action(kindsObj, obj));
+  const commonActions = Kebab.factory.common.map((action) => action);
+  const menuActionsCreator = [...Kebab.getExtensionsActionsForKind(RouteModel), ...commonActions];
 
   return (
     <DetailsPage
@@ -23,4 +23,4 @@ const RevisionDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = 
   );
 };
 
-export default RevisionDetailsPage;
+export default RouteDetailsPage;
