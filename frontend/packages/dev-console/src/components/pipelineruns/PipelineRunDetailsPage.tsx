@@ -8,6 +8,7 @@ import { PipelineRunLogsWithActiveTask } from './detail-page-tabs/PipelineRunLog
 import { useMenuActionsWithUserAnnotation } from './triggered-by';
 import { usePipelinesBreadcrumbsFor } from '../pipelines/hooks';
 import TaskRuns from './detail-page-tabs/TaskRuns';
+import PipelineRunEvents from './events/PipelineRunEvents';
 
 const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const { kindObj, match } = props;
@@ -36,6 +37,7 @@ const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
           name: 'Logs',
           component: PipelineRunLogsWithActiveTask,
         },
+        navFactory.events(PipelineRunEvents),
       ]}
     />
   );

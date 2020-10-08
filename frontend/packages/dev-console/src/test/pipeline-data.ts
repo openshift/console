@@ -1,4 +1,5 @@
-import { Pipeline, PipelineRun } from '../utils/pipeline-augment';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { Pipeline, PipelineRun, TaskRunKind } from '../utils/pipeline-augment';
 
 export enum DataState {
   IN_PROGRESS = 'In Progress',
@@ -18,6 +19,7 @@ export enum PipelineExampleNames {
   SIMPLE_PIPELINE = 'simple-pipeline',
   CLUSTER_PIPELINE = 'cluster-pipeline',
   BROKEN_MOCK_APP = 'broken-mock-app',
+  WORKSPACE_PIPELINE = 'workspace-pipeline',
   INVALID_PIPELINE_MISSING_TASK = 'missing-task-pipeline',
   INVALID_PIPELINE_INVALID_TASK = 'invalid-task-pipeline',
 }
@@ -26,6 +28,8 @@ type CombinedPipelineTestData = {
   dataSource: string; // where the data was sourced from
   pipeline: Pipeline;
   pipelineRuns: { [key in DataState]?: PipelineRun };
+  taskRuns?: TaskRunKind[];
+  pods?: K8sResourceKind[];
   // esLint seems to be having issues detecting the usage above - but typescript is properly typing the value
   eslint_workaround?: PipelineRun;
 };
@@ -1376,6 +1380,302 @@ export const pipelineTestData: PipelineTestData = {
         },
       },
     },
+  },
+  [PipelineExampleNames.WORKSPACE_PIPELINE]: {
+    dataSource: 'workspace-pipeline',
+    pipeline: {
+      apiVersion: 'tekton.dev/v1beta1',
+      kind: 'Pipeline',
+      metadata: {
+        name: 'fetch-and-print-recipe',
+        uid: 'c59a2137-05ec-4909-8d2b-0baea237210b',
+      },
+      spec: {
+        tasks: [
+          {
+            name: 'fetch-the-recipe',
+            taskRef: {
+              kind: 'Task',
+              name: 'fetch-secure-data',
+            },
+            workspaces: [
+              {
+                name: 'super-secret-password',
+                workspace: 'password-vault',
+              },
+              {
+                name: 'secure-store',
+                workspace: 'recipe-store',
+              },
+              {
+                name: 'filedrop',
+                workspace: 'shared-data',
+              },
+            ],
+          },
+          {
+            name: 'print-the-recipe',
+            params: [
+              {
+                name: 'filename',
+                value: 'recipe.txt',
+              },
+            ],
+            runAfter: ['fetch-the-recipe'],
+            taskRef: {
+              kind: 'Task',
+              name: 'print-data',
+            },
+            workspaces: [
+              {
+                name: 'storage',
+                workspace: 'shared-data',
+              },
+            ],
+          },
+        ],
+        workspaces: [
+          {
+            name: 'password-vault',
+          },
+          {
+            name: 'recipe-store',
+          },
+          {
+            name: 'shared-data',
+          },
+        ],
+      },
+    },
+    pipelineRuns: {
+      [DataState.SUCCESS]: {
+        apiVersion: 'tekton.dev/v1beta1',
+        kind: 'PipelineRun',
+        metadata: {
+          name: 'fetch-and-print-recipe-sn3peo',
+          uid: '32d3051a-148d-4a35-9969-4c2152691342',
+          labels: {
+            'tekton.dev/pipeline': 'fetch-and-print-recipe',
+          },
+        },
+        spec: {
+          pipelineRef: {
+            name: 'fetch-and-print-recipe',
+          },
+          serviceAccountName: 'pipeline',
+          timeout: '1h0m0s',
+          workspaces: [
+            {
+              name: 'password-vault',
+              secret: {
+                secretName: 'secret-password',
+              },
+            },
+            {
+              configMap: {
+                items: [
+                  {
+                    key: 'brownies',
+                    path: 'recipe.txt',
+                  },
+                ],
+                name: 'sensitive-recipe-storage',
+              },
+              name: 'recipe-store',
+            },
+            {
+              name: 'shared-data',
+              persistentVolumeClaim: {
+                claimName: 'shared-task-storage',
+              },
+            },
+          ],
+        },
+        status: {
+          conditions: [
+            {
+              lastTransitionTime: '2020-10-07T07:36:01Z',
+              message: 'Tasks Completed: 2 (Failed: 0, Cancelled 0), Skipped: 0',
+              reason: 'Succeeded',
+              status: 'True',
+              type: 'Succeeded',
+            },
+          ],
+          taskRuns: {
+            'fetch-and-print-recipe-sn3peo-fetch-the-recipe-2rjgw': {
+              pipelineTaskName: 'fetch-the-recipe',
+
+              status: {
+                startTime: '2020-10-07T07:35:40Z',
+                conditions: [{ status: 'True', type: 'Succeeded' }],
+                podName: 'fetch-and-print-recipe-sn3peo-fetch-the-recipe-2rjgw-pod-tqk4l',
+              },
+            },
+            'fetch-and-print-recipe-sn3peo-print-the-recipe-cbwbj': {
+              pipelineTaskName: 'print-the-recipe',
+              status: {
+                startTime: '2020-10-07T07:36:01Z',
+                conditions: [{ status: 'True', type: 'Succeeded' }],
+                podName: 'fetch-and-print-recipe-sn3peo-print-the-recipe-cbwbj-pod-w9724',
+              },
+            },
+          },
+        },
+      },
+    },
+    taskRuns: [
+      {
+        apiVersion: 'tekton.dev/v1beta1',
+        kind: 'TaskRun',
+        metadata: {
+          name: 'fetch-and-print-recipe-sn3peo-print-the-recipe-cbwbj',
+          uid: 'a55e0e4c-99ea-4c44-9f61-de63bbd49d95',
+          namespace: 'karthik',
+          ownerReferences: [
+            {
+              apiVersion: 'tekton.dev/v1beta1',
+              blockOwnerDeletion: true,
+              controller: true,
+              kind: 'PipelineRun',
+              name: 'fetch-and-print-recipe-sn3peo',
+              uid: '32d3051a-148d-4a35-9969-4c2152691342',
+            },
+          ],
+          labels: {
+            'app.kubernetes.io/managed-by': 'tekton-pipelines',
+            'tekton.dev/pipeline': 'fetch-and-print-recipe',
+            'tekton.dev/pipelineRun': 'fetch-and-print-recipe-sn3peo',
+            'tekton.dev/pipelineTask': 'print-the-recipe',
+            'tekton.dev/task': 'print-data',
+          },
+        },
+        spec: {
+          params: [
+            {
+              name: 'filename',
+              value: 'recipe.txt',
+            },
+          ],
+          serviceAccountName: 'pipeline',
+          taskRef: {
+            kind: 'Task',
+            name: 'print-data',
+          },
+          timeout: '1h0m0s',
+          workspaces: [
+            {
+              name: 'storage',
+              persistentVolumeClaim: {
+                claimName: 'shared-task-storage',
+              },
+            },
+          ],
+        },
+        status: {
+          completionTime: '2020-10-07T07:36:01Z',
+          podName: 'fetch-and-print-recipe-sn3peo-print-the-recipe-cbwbj-pod-w9724',
+          startTime: '2020-10-07T07:35:40Z',
+        },
+      },
+      {
+        apiVersion: 'tekton.dev/v1beta1',
+        kind: 'TaskRun',
+        metadata: {
+          annotations: {
+            'kubectl.kubernetes.io/last-applied-configuration':
+              '{"apiVersion":"tekton.dev/v1beta1","kind":"Task","metadata":{"annotations":{},"name":"fetch-secure-data","namespace":"karthik"},"spec":{"steps":[{"image":"ubuntu","name":"fetch-and-write","script":"if [ \\"hunter2\\" = \\"$(cat $(workspaces.super-secret-password.path)/password)\\" ]; then\\n  cp $(workspaces.secure-store.path)/recipe.txt $(workspaces.filedrop.path)\\nelse\\n  echo \\"wrong password!\\"\\n  exit 1\\nfi\\n"}],"workspaces":[{"name":"super-secret-password"},{"name":"secure-store"},{"name":"filedrop"}]}}\n',
+            'pipeline.tekton.dev/release': 'devel',
+          },
+          selfLink:
+            '/apis/tekton.dev/v1beta1/namespaces/karthik/taskruns/fetch-and-print-recipe-sn3peo-fetch-the-recipe-2rjgw',
+          resourceVersion: '527180',
+          name: 'fetch-and-print-recipe-sn3peo-fetch-the-recipe-2rjgw',
+          uid: '8eab0635-3d63-4f5b-b1a5-48bc6f2fab60',
+          creationTimestamp: '2020-10-07T07:35:15Z',
+          generation: 1,
+          namespace: 'karthik',
+          ownerReferences: [
+            {
+              apiVersion: 'tekton.dev/v1beta1',
+              blockOwnerDeletion: true,
+              controller: true,
+              kind: 'PipelineRun',
+              name: 'fetch-and-print-recipe-sn3peo',
+              uid: '32d3051a-148d-4a35-9969-4c2152691342',
+            },
+          ],
+          labels: {
+            'app.kubernetes.io/managed-by': 'tekton-pipelines',
+            'tekton.dev/pipeline': 'fetch-and-print-recipe',
+            'tekton.dev/pipelineRun': 'fetch-and-print-recipe-sn3peo',
+            'tekton.dev/pipelineTask': 'fetch-the-recipe',
+            'tekton.dev/task': 'fetch-secure-data',
+          },
+        },
+        spec: {},
+        status: {},
+      },
+    ],
+    pods: [
+      {
+        kind: 'Pod',
+        apiVersion: 'v1',
+        metadata: {
+          name: 'fetch-and-print-recipe-sn3peo-print-the-recipe-cbwbj-pod-w9724',
+          uid: 'd114c023-19db-40b9-91f9-e7bc632e2e5c',
+          namespace: 'karthik',
+          ownerReferences: [
+            {
+              apiVersion: 'tekton.dev/v1beta1',
+              kind: 'TaskRun',
+              name: 'fetch-and-print-recipe-sn3peo-print-the-recipe-cbwbj',
+              uid: 'a55e0e4c-99ea-4c44-9f61-de63bbd49d95',
+              controller: true,
+              blockOwnerDeletion: true,
+            },
+          ],
+          labels: {
+            'app.kubernetes.io/managed-by': 'tekton-pipelines',
+            'tekton.dev/pipeline': 'fetch-and-print-recipe',
+            'tekton.dev/pipelineRun': 'fetch-and-print-recipe-sn3peo',
+            'tekton.dev/pipelineTask': 'print-the-recipe',
+            'tekton.dev/task': 'print-data',
+            'tekton.dev/taskRun': 'fetch-and-print-recipe-sn3peo-print-the-recipe-cbwbj',
+          },
+        },
+        spec: {},
+        status: {},
+      },
+      {
+        kind: 'Pod',
+        apiVersion: 'v1',
+        metadata: {
+          name: 'fetch-and-print-recipe-sn3peo-fetch-the-recipe-2rjgw-pod-tqk4l',
+          uid: 'a12cdab2-a179-48ff-9e86-9b2b67de7d4c',
+          namespace: 'karthik',
+          ownerReferences: [
+            {
+              apiVersion: 'tekton.dev/v1beta1',
+              kind: 'TaskRun',
+              name: 'fetch-and-print-recipe-sn3peo-fetch-the-recipe-2rjgw',
+              uid: '8eab0635-3d63-4f5b-b1a5-48bc6f2fab60',
+              controller: true,
+              blockOwnerDeletion: true,
+            },
+          ],
+          labels: {
+            'app.kubernetes.io/managed-by': 'tekton-pipelines',
+            'tekton.dev/pipeline': 'fetch-and-print-recipe',
+            'tekton.dev/pipelineRun': 'fetch-and-print-recipe-sn3peo',
+            'tekton.dev/pipelineTask': 'fetch-the-recipe',
+            'tekton.dev/task': 'fetch-secure-data',
+            'tekton.dev/taskRun': 'fetch-and-print-recipe-sn3peo-fetch-the-recipe-2rjgw',
+          },
+        },
+        spec: {},
+        status: {},
+      },
+    ],
   },
 };
 
