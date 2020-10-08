@@ -1,4 +1,4 @@
-import { ObjectEnum } from './object-enum';
+import { ObjectEnum } from '@console/shared/src/constants/object-enum';
 
 export type SelectDropdownData = {
   description?: string;

@@ -1,5 +1,5 @@
 /* eslint-disable lines-between-class-members */
-import { ObjectEnum } from '../../object-enum';
+import { ObjectEnum } from '@console/shared/src/constants/object-enum';
 import { READABLE_VIRTIO } from '../constants';
 import { NIC_MODEL_E1000E_DESC, DISK_TYPE_VIRTIO_DESC } from '../../../utils/strings';
 import { SelectDropdownObjectEnum, SelectDropdownData } from '../../select-dropdown-object-enum';

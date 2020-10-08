@@ -1,6 +1,6 @@
 /* eslint-disable lines-between-class-members */
 import * as _ from 'lodash';
-import { ObjectEnum } from '../../object-enum';
+import { ObjectEnum } from '@console/shared/src/constants/object-enum';
 import { DiskBus } from './disk-bus';
 
 export class DiskType extends ObjectEnum<string> {

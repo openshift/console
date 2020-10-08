@@ -1,5 +1,5 @@
 /* eslint-disable lines-between-class-members */
-import { ObjectEnum } from '../../object-enum';
+import { ObjectEnum } from '@console/shared/src/constants/object-enum';
 import { NetworkInterfaceModel } from '../../vm/network';
 
 export class OvirtNetworkInterfaceModel extends ObjectEnum<string> {

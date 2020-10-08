@@ -1,5 +1,5 @@
 /* eslint-disable lines-between-class-members */
-import { ObjectEnum } from './object-enum';
+import { ObjectEnum } from '@console/shared/src/constants/object-enum';
 
 export class StatusGroup extends ObjectEnum<string> {
   static readonly RHV = new StatusGroup('RHV', 'RHV', 'Red Hat Virtualization');

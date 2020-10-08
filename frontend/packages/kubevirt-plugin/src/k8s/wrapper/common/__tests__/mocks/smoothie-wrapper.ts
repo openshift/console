@@ -1,4 +1,4 @@
-import { ObjectEnum } from '../../../../../constants';
+import { ObjectEnum } from '@console/shared/src/constants/object-enum';
 import { ObjectWithTypePropertyWrapper } from '../../object-with-type-property-wrapper';
 
 export type Smoothie = {

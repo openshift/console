@@ -1,5 +1,5 @@
 /* eslint-disable lines-between-class-members */
-import { ObjectEnum } from '../../object-enum';
+import { ObjectEnum } from '@console/shared/src/constants/object-enum';
 import { SelectDropdownObjectEnum } from '../../select-dropdown-object-enum';
 import {
   DISK_TYPE_SATA_DESC,
