@@ -1,6 +1,10 @@
 KUBEVIRT_VERSION=$(curl -s https://github.com/kubevirt/kubevirt/releases/latest | grep -o "v[0-9]\.[0-9]*\.[0-9]*")
 CDI_VERSION=$(curl -s https://github.com/kubevirt/containerized-data-importer/releases/latest | grep -o "v[0-9]\.[0-9]*\.[0-9]*")
 
+VIRTCTL_DOWNLOAD_URL="https://github.com/kubevirt/kubevirt/releases/download/${KUBEVIRT_VERSION}/virtctl-${KUBEVIRT_VERSION}" 
+VIRTCTL_X86_64="${VIRTCTL_DOWNLOAD_URL}-linux-x86_64"
+VIRTCTL_AMD64="${VIRTCTL_DOWNLOAD_URL}-linux-amd64"
+
 # Create openshift-cnv namespace for Integration Tests
 oc create namespace openshift-cnv
 
@@ -50,7 +54,10 @@ EOF
 
 # Install virtctl binary and add in to PATH
 mkdir virtctl
-wget https://github.com/kubevirt/kubevirt/releases/download/${KUBEVIRT_VERSION}/virtctl-${KUBEVIRT_VERSION}-linux-x86_64 -O virtctl/virtctl
+
+wget ${VIRTCTL_AMD64} -O virtctl/virtctl || wget ${VIRTCTL_X86_64} -O virtctl/virtctl
+[[ ! -f "virtctl/virtctl" ]] && echo "ERROR: virtctl binary is unavailable for download" && exit 1
+
 chmod +x virtctl/virtctl
 
 export PATH="${PATH}:$(pwd)/virtctl"
