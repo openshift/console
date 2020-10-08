@@ -78,10 +78,10 @@ const QuickStartDrawer: React.FC<QuickStartDrawerProps> = ({
               size="xl"
               style={{ marginRight: 'var(--pf-global--spacer--md)' }}
             >
-              {quickStart?.spec.displayName}
-            </Title>
-            <Title headingLevel="h6" size="md" className="text-secondary">
-              {`${quickStart?.spec.duration} minutes`}
+              {quickStart?.spec.displayName}{' '}
+              <small className="co-quick-start-drawer__duration text-secondary">
+                {`${quickStart?.spec.duration} minutes`}
+              </small>
             </Title>
           </div>
           <DrawerActions>

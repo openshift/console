@@ -16,6 +16,10 @@
     margin-right: var(--pf-global--spacer--md) !important;
   }
 
+  &__subtitle {
+    display: inline-block;
+  }
+
   &__title-success {
     color: var(--pf-global--palette--green-500) !important;
   }
