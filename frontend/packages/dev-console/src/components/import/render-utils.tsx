@@ -17,12 +17,12 @@ export const routeDecoratorIcon = (
       // Not a valid url and thus not safe to use
       return null;
     case GitTypes.github:
-      return <GithubIcon style={{ fontSize: radius }} aria-label="Edit Source Code" />;
+      return <GithubIcon style={{ fontSize: radius }} title="Edit Source Code" />;
     case GitTypes.bitbucket:
-      return <BitbucketIcon style={{ fontSize: radius }} aria-label="Edit Source Code" />;
+      return <BitbucketIcon style={{ fontSize: radius }} title="Edit Source Code" />;
     case GitTypes.gitlab:
-      return <GitlabIcon style={{ fontSize: radius }} aria-label="Edit Source Code" />;
+      return <GitlabIcon style={{ fontSize: radius }} title="Edit Source Code" />;
     default:
-      return <GitAltIcon style={{ fontSize: radius }} aria-label="Edit Source Code" />;
+      return <GitAltIcon style={{ fontSize: radius }} title="Edit Source Code" />;
   }
 };

@@ -14,8 +14,8 @@ import {
   getAlertTime,
 } from './alert-utils';
 
-const CriticalIcon = () => <RedExclamationCircleIcon ariaLabel="Critical" title="Critical" />;
-const WarningIcon = () => <YellowExclamationTriangleIcon ariaLabel="Warning" title="Warning" />;
+const CriticalIcon = () => <RedExclamationCircleIcon title="Critical" />;
+const WarningIcon = () => <YellowExclamationTriangleIcon title="Warning" />;
 const getSeverityIcon = (severity: string) => {
   switch (severity) {
     case 'critical':

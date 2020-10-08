@@ -113,10 +113,7 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
                   circleRef={urlAnchorRef}
                 >
                   <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
-                    <ExternalLinkAltIcon
-                      style={{ fontSize: decoratorRadius }}
-                      aria-label="Open URL"
-                    />
+                    <ExternalLinkAltIcon style={{ fontSize: decoratorRadius }} title="Open URL" />
                   </g>
                 </Decorator>
               </Tooltip>
