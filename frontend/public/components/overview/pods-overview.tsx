@@ -128,6 +128,7 @@ export const PodsOverview: React.SFC<PodsOverviewProps> = ({
   allPodsLink,
   emptyText,
   hasBuildConfig,
+  hasPipeline,
 }) => {
   const {
     metadata: { name, namespace },
@@ -135,7 +136,9 @@ export const PodsOverview: React.SFC<PodsOverviewProps> = ({
 
   const [showWaitingPods, setShowWaitingPods] = React.useState(false);
   const showWaitingForBuildAlert =
-    hasBuildConfig && isDeploymentGeneratedByWebConsole(obj) && pods.some(isPodWithoutImageId);
+    (hasBuildConfig || hasPipeline) &&
+    isDeploymentGeneratedByWebConsole(obj) &&
+    pods.some(isPodWithoutImageId);
 
   let filteredPods = [...pods];
   if (showWaitingForBuildAlert && !showWaitingPods) {
@@ -191,4 +194,5 @@ type PodsOverviewProps = {
   allPodsLink?: string;
   emptyText?: string;
   hasBuildConfig?: boolean;
+  hasPipeline?: boolean;
 };
