@@ -55,6 +55,8 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
 
   getURL = () => this.getIn(['spec', 'source', 'http', 'url']);
 
+  getContainer = () => this.getIn(['spec', 'source', 'registry', 'url']);
+
   getSize = (): { value: number; unit: string } => {
     const parts = stringValueUnitSplit(getDataVolumeStorageSize(this.data as any) || '');
     return {
@@ -84,6 +86,12 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
   setSize = (value: string | number, unit = 'Gi') => {
     this.ensurePath('spec.pvc.resources.requests');
     (this.data.spec.pvc.resources.requests as any).storage = `${value}${unit}`;
+    return this;
+  };
+
+  setRawSize = (value: string) => {
+    this.ensurePath('spec.pvc.resources.requests');
+    (this.data.spec.pvc.resources.requests as any).storage = value;
     return this;
   };
 
@@ -140,6 +148,7 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
   protected sanitize(type: DataVolumeSourceType, { name, namespace, url }: CombinedTypeData) {
     switch (type) {
       case DataVolumeSourceType.HTTP:
+      case DataVolumeSourceType.REGISTRY:
         return { url };
       case DataVolumeSourceType.PVC:
         return { name, namespace };

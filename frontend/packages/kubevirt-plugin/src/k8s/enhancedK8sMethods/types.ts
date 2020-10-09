@@ -2,6 +2,7 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 
 export enum HistoryType {
   GET = 'GET',
+  UPDATE = 'UPDATE',
   CREATE = 'CREATE',
   PATCH = 'PATCH',
   DELETE = 'DELETE',

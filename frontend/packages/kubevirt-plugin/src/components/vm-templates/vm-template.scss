@@ -2,3 +2,41 @@
   // Give kebab from last row enough space so it will be included in WindowScroller computation
   padding-bottom: 15em;
 }
+
+.kubevirt-vm-template-logo {
+  width: 2rem;
+  padding-right: var(--pf-global--spacer--sm);
+}
+
+.kubevirt-vm-template-pin {
+  width: 2rem;
+  padding-left: var(--pf-global--spacer--sm);
+}
+
+.kubevirt-vm-template-actions {
+  text-align: right;
+  display: flex;
+}
+
+.kubevirt-vm-template-details {
+  margin: 0 var(--pf-global--spacer--sm);
+}
+
+.kubevirt-vm-template-popover {
+  display: flex;
+  justify-content: space-between;
+}
+
+.kubevirt-vm-template-popover-name {
+  margin-bottom: var(--pf-global--spacer--sm);
+}
+
+.kubevirt-vm-template-badge--custom {
+  --pf-c-badge--Color: var(--pf-global--BackgroundColor--100) !important; 
+  --pf-c-badge--BackgroundColor: var(--pf-global--warning-color--100) !important; 
+}
+
+.kubevirt-vm-template-badge--common {
+  --pf-c-badge--Color: var(--pf-global--BackgroundColor--100) !important; 
+  --pf-c-badge--BackgroundColor: var(--pf-global--info-color--100) !important; 
+}

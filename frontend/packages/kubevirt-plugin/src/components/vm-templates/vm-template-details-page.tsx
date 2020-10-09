@@ -7,10 +7,11 @@ import { K8sResourceKindReference } from '@console/internal/module/k8s';
 import { TemplateModel } from '@console/internal/models';
 import { VMDisksFirehose } from '../vm-disks';
 import { VMNics } from '../vm-nics';
-import { menuActions } from './menu-actions';
-import { VMTemplateDetailsConnected } from './vm-template-details';
+import { VMTemplateDetails } from './vm-template-details';
+import { match as routerMatch } from 'react-router';
+import { menuActionsCreator } from './menu-actions';
 
-export const breadcrumbsForVMTemplatePage = (t: TFunction, match: any) => () => [
+export const breadcrumbsForVMTemplatePage = (t: TFunction, match: VMTemplateMatch) => () => [
   {
     name: t('kubevirt-plugin~Virtualization'),
     path: `/k8s/ns/${match.params.ns || 'default'}/virtualization`,
@@ -40,12 +41,7 @@ export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (prop
     component: VMDisksFirehose,
   };
 
-  const pages = [
-    navFactory.details(VMTemplateDetailsConnected),
-    navFactory.editYaml(),
-    nicsPage,
-    disksPage,
-  ];
+  const pages = [navFactory.details(VMTemplateDetails), navFactory.editYaml(), nicsPage, disksPage];
 
   return (
     <DetailsPage
@@ -54,16 +50,18 @@ export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (prop
       kindObj={TemplateModel}
       name={props.match.params.name}
       namespace={props.match.params.ns}
-      menuActions={menuActions}
+      menuActions={menuActionsCreator()}
       pages={pages}
       breadcrumbsFor={breadcrumbsForVMTemplatePage(t, props.match)}
     />
   );
 };
 
+type VMTemplateMatch = routerMatch<{ ns?: string; name?: string }>;
+
 type VMTemplateDetailsPageProps = {
   name: string;
   namespace: string;
   kind: K8sResourceKindReference;
-  match: any;
+  match: VMTemplateMatch;
 };

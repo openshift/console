@@ -17,6 +17,7 @@ import {
   snapshotSource,
   ALL_NAMESPACES_KEY,
   getName,
+  ANNOTATIONS,
 } from '@console/shared';
 import * as UIActions from '../../actions/ui';
 import {
@@ -49,6 +50,7 @@ import {
   serviceClassDisplayName,
   MachineKind,
   VolumeSnapshotKind,
+  TemplateKind,
 } from '../../module/k8s';
 
 import {
@@ -171,6 +173,8 @@ const sorts = {
   volumeSnapshotSource: (snapshot: VolumeSnapshotKind): string => snapshotSource(snapshot),
   snapshotLastRestore: (snapshot: K8sResourceKind, { restores }) =>
     restores[getName(snapshot)]?.status?.restoreTime,
+  vmTemplateName: (template: TemplateKind) =>
+    template?.metadata?.annotations?.[ANNOTATIONS.displayName] ?? template?.metadata?.name,
 };
 
 const stateToProps = (
@@ -189,7 +193,8 @@ const stateToProps = (
     staticFilters = [{}],
     rowFilters = [],
     columnManagementID = '',
-  },
+    isPinned,
+  }: TableProps,
 ) => {
   const allFilters = staticFilters ? Object.assign({}, filters, ...staticFilters) : filters;
   const newData = getFilteredRows(allFilters, rowFilters, data);
@@ -227,6 +232,11 @@ const stateToProps = (
       const compareOpts = { numeric: true, ignorePunctuation: true };
       const aValue = getSortValue(a);
       const bValue = getSortValue(b);
+      const aPinned = isPinned?.(a);
+      const bPinned = isPinned?.(b);
+      if (aPinned !== bPinned) {
+        return aPinned ? -1 : +1;
+      }
       const result: number =
         Number.isFinite(aValue) && Number.isFinite(bValue)
           ? aValue - bValue
@@ -477,6 +487,8 @@ export type TableProps = {
   rowFilters?: any[];
   label?: string;
   columnManagementID?: string;
+  isPinned?: (val: any) => boolean;
+  staticFilters?: any[];
 };
 
 type TablePropsFromState = {};

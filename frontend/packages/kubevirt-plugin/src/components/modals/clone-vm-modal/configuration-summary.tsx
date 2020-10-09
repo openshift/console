@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { DASH, getName, getNamespace } from '@console/shared';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 import { VMKind } from '../../../types/vm';
 import {
   getCPU,
@@ -20,6 +20,7 @@ import {
 } from '../../../selectors/dv/selectors';
 import { getPvcResources, getPvcStorageClassName } from '../../../selectors/pvc/selectors';
 import { getFlavorText } from '../../../selectors/vm/flavor-text';
+import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
 
 import './_clone-vm-modal.scss';
 
@@ -30,8 +31,8 @@ const getNicsDescription = (vm: VMKind) =>
 
 const getDisksDescription = (
   vm: VMKind,
-  pvcs: K8sResourceKind[],
-  dataVolumes: K8sResourceKind[],
+  pvcs: PersistentVolumeClaimKind[],
+  dataVolumes: V1alpha1DataVolume[],
 ) => {
   const disks = getDisks(vm);
   const volumes = getVolumes(vm);
@@ -98,6 +99,6 @@ export const ConfigurationSummary: React.FC<ConfigurationSummaryProps> = ({
 type ConfigurationSummaryProps = {
   id: string;
   vm: VMKind;
-  persistentVolumeClaims: K8sResourceKind[];
-  dataVolumes: K8sResourceKind[];
+  persistentVolumeClaims: PersistentVolumeClaimKind[];
+  dataVolumes: V1alpha1DataVolume[];
 };

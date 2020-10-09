@@ -28,7 +28,7 @@ import {
 } from '../../constants/vm';
 import { getResource } from '../../utils';
 import { IDReferences, makeIDReferences } from '../../utils/redux/id-reference';
-import { usePVCBaseImages } from '../../hooks/use-pvc-base-images';
+import { useBaseImages } from '../../hooks/use-base-images';
 import { iGetLoadedData, immutableListToShallowJS } from '../../utils/immutable';
 import {
   ChangedCommonData,
@@ -72,6 +72,7 @@ type CreateVMWizardComponentProps = {
   isProviderImport: boolean;
   isCreateTemplate: boolean;
   isLastTabErrorFatal: boolean;
+  userTemplateName: string;
   dataIDReferences: IDReferences;
   reduxID: string;
   tabsMetadata: VMWizardTabsMetadata;
@@ -324,9 +325,11 @@ const wizardDispatchToProps = (dispatch, props) => ({
           isCreateTemplate: props.isCreateTemplate,
           isProviderImport: props.isProviderImport,
           isUserTemplateInitialized: false,
+          commonTemplateName: props.commonTemplateName,
           storageClassConfigMap: undefined,
           openshiftCNVBaseImages: undefined,
           isSimpleView: props.isSimpleView,
+          name: props.name,
         },
         dataIDReferences: props.dataIDReferences,
       } as CommonData),
@@ -451,7 +454,7 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
     [commonTemplates, userMode],
   );
 
-  const openshiftCNVBaseImagesListResult = usePVCBaseImages(loadedCommonTemplates);
+  const openshiftCNVBaseImagesListResult = useBaseImages(loadedCommonTemplates);
   // TODO integrate the list of watches into the redux store to prevent unnecessary copying of data
   const openshiftCNVBaseImages = React.useMemo(
     () => ({
@@ -467,6 +470,11 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
   dataIDReferences[VMWizardProps.activeNamespace] = ['UI', 'activeNamespace'];
   dataIDReferences[VMWizardProps.openshiftFlag] = [featureReducerName, FLAGS.OPENSHIFT];
 
+  const name =
+    (userMode === VMWizardMode.VM && searchParams.get('name')) ||
+    (userMode === VMWizardMode.TEMPLATE && searchParams.get('template')) ||
+    '';
+  const commonTemplateName = searchParams.get('common-template') || '';
   const isSimpleView =
     userMode === VMWizardMode.IMPORT &&
     searchParams.get('view')?.toLowerCase() !== VMWizardView.ADVANCED; // normal mode defaults to advanced
@@ -476,12 +484,14 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
       <CreateVMWizard
         isCreateTemplate={userMode === VMWizardMode.TEMPLATE}
         isProviderImport={userMode === VMWizardMode.IMPORT}
+        name={name}
+        commonTemplateName={commonTemplateName}
         isSimpleView={isSimpleView}
         dataIDReferences={dataIDReferences}
         storageClassConfigMap={storageClassConfigMap}
         openshiftCNVBaseImages={openshiftCNVBaseImages}
         reduxID={reduxID}
-        onClose={() => history.goBack()}
+        onClose={history.goBack}
       />
     </Firehose>
   );

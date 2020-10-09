@@ -33,7 +33,7 @@ const waitForUploadReady = async (dataVolume: K8sResourceKind, counter: number =
   throw new Error('Data Volume failed to initiate upload');
 };
 
-const createUploadToken = async (pvcName: string, namespace: string) => {
+const createUploadToken = async (pvcName: string, namespace: string): Promise<string> => {
   const tokenRequest = {
     apiVersion: apiVersionForModel(UploadTokenRequestModel),
     kind: UploadTokenRequestModel.kind,

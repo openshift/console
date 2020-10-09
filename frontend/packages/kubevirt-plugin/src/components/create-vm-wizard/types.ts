@@ -30,6 +30,7 @@ export enum VMWizardProps {
   reduxID = 'reduxID',
   virtualMachines = 'virtualMachines',
   commonTemplates = 'commonTemplates',
+  commonTemplateName = 'commonTemplateName',
   dataVolumes = 'dataVolumes',
   openshiftCNVBaseImages = 'openshiftCNVBaseImages',
   storageClassConfigMap = 'storageClassConfigMap',
@@ -234,6 +235,7 @@ export type CommonDataProp =
   | VMWizardProps.isCreateTemplate
   | VMWizardProps.isProviderImport
   | VMWizardProps.isUserTemplateInitialized
+  | VMWizardProps.commonTemplateName
   | ChangedCommonDataProp;
 
 export type ChangedCommonData = Set<ChangedCommonDataProp>;
@@ -268,10 +270,12 @@ export const DirectCommonDataProps = new Set<ChangedCommonDataProp>([
 
 export type CommonData = {
   data?: {
+    name?: string;
     isSimpleView?: boolean;
     isCreateTemplate?: boolean;
     isProviderImport?: boolean;
     isUserTemplateInitialized?: boolean;
+    commonTemplateName?: string;
     storageClassConfigMap?: {
       loaded: boolean;
       loadError: string;

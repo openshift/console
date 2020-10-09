@@ -120,7 +120,7 @@ export type DataUpload = {
   cancelUpload?: Canceler;
 };
 
-type CDIUploadContextProps = {
+export type CDIUploadContextProps = {
   uploads: DataUpload[];
   uploadData: ({ file, token, pvcName, namespace }: UploadDataProps) => void;
   uploadProxyURL?: string;

@@ -37,7 +37,14 @@ export const hasVMSettingsValueChanged = (
 export const iGetProvisionSource = (state, id: string): ProvisionSource =>
   ProvisionSource.fromString(iGetVmSettingValue(state, id, VMSettingsField.PROVISION_SOURCE_TYPE));
 
-export const iGetRelevantTemplateSelectors = (state, id: string) => {
+export const iGetRelevantTemplateSelectors = (
+  state,
+  id: string,
+): {
+  os: string;
+  flavor: string;
+  workload: string;
+} => {
   const os = iGetVmSettingAttribute(state, id, VMSettingsField.OPERATING_SYSTEM);
   const flavor = iGetVmSettingAttribute(state, id, VMSettingsField.FLAVOR);
   const workload = iGetVmSettingAttribute(state, id, VMSettingsField.WORKLOAD_PROFILE);
