@@ -41,7 +41,7 @@ import {
   cephRBDProvisionerSuffix,
 } from '@console/internal/components/storage/shared';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-
+import { AccessModeSelector } from '../../access-modes/access-mode';
 import './restore-pvc-modal.scss';
 
 const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
@@ -58,6 +58,8 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
     const [requestedUnit, setRequestedUnit] = React.useState(defaultSize?.[1] ?? 'Ti');
     const [pvcSC, setPVCStorageClass] = React.useState('');
     const [validSize, setValidSize] = React.useState(true);
+    const [restoreAccessMode, setRestoreAccessMode] = React.useState('');
+    const [updatedProvisioner, setUpdatedProvisioner] = React.useState('');
     const namespace = getNamespace(resource);
     const snapshotName = getName(resource);
 
@@ -88,15 +90,15 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
       setValidSize(isValid);
     };
 
-    const handleStorageClass = (updatedStorageClass) =>
+    const handleStorageClass = (updatedStorageClass: StorageClassResourceKind) => {
       setPVCStorageClass(updatedStorageClass?.metadata.name || '');
+      setUpdatedProvisioner(updatedStorageClass?.provisioner);
+    };
+
+    const handleAccessMode = (value: string) => setRestoreAccessMode(value);
 
     const submit = (event: React.FormEvent<EventTarget>) => {
       event.preventDefault();
-      const accessModes =
-        pvcResourceLoaded && !pvcResourceLoadError
-          ? pvcResource?.spec.accessModes
-          : ['ReadWriteOnce'];
       const restorePVCTemplate: PersistentVolumeClaimKind = {
         apiVersion: PersistentVolumeClaimModel.apiVersion,
         kind: PersistentVolumeClaimModel.kind,
@@ -111,7 +113,7 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
             kind: VolumeSnapshotModel.kind,
             apiGroup: VolumeSnapshotModel.apiGroup,
           },
-          accessModes,
+          accessModes: [restoreAccessMode],
           resources: {
             requests: {
               storage: `${requestedSize}${requestedUnit}`,
@@ -124,7 +126,7 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
         // should set block only for RBD + RWX
         if (
           _.endsWith(snapshotClassResource?.driver, cephRBDProvisionerSuffix) &&
-          accessModes.includes('ReadWriteMany')
+          restoreAccessMode === 'ReadWriteMany'
         ) {
           restorePVCTemplate.spec.volumeMode = 'Block';
         } else {
@@ -186,6 +188,13 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
                 />
               )}
             </FormGroup>
+            <AccessModeSelector
+              onChange={handleAccessMode}
+              formClassName="co-restore-pvc-modal__input"
+              provisioner={updatedProvisioner}
+              loaded={pvcResourceLoaded}
+              loadError={pvcResourceLoadError}
+            />
             <FormGroup
               label={t('console-app~Size')}
               isRequired
