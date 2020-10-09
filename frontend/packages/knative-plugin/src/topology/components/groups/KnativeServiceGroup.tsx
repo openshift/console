@@ -169,7 +169,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
           <Tooltip key="route" content="Open URL" position={TooltipPosition.right}>
             <Decorator x={x + width} y={y} radius={DECORATOR_RADIUS} href={data.url} external>
               <g transform="translate(-6.5, -6.5)">
-                <ExternalLinkAltIcon style={{ fontSize: DECORATOR_RADIUS }} alt="Open URL" />
+                <ExternalLinkAltIcon style={{ fontSize: DECORATOR_RADIUS }} title="Open URL" />
               </g>
             </Decorator>
           </Tooltip>

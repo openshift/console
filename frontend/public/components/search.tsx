@@ -211,7 +211,11 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
         <title>Search</title>
       </Helmet>
       <PageHeading detail={true} title="Search">
-        <Toolbar id="search-toolbar" clearAllFilters={clearAll}>
+        <Toolbar
+          id="search-toolbar"
+          clearAllFilters={clearAll}
+          collapseListedFiltersBreakpoint="xl"
+        >
           <ToolbarContent>
             <ToolbarItem>
               <ToolbarFilter
