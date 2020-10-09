@@ -565,7 +565,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
 
   const [containerRef, width] = useRefWidth();
 
-  const endTime = _.get(xDomain, '[1]');
+  const endTime = xDomain?.[1];
 
   const safeFetch = useSafeFetch();
 
