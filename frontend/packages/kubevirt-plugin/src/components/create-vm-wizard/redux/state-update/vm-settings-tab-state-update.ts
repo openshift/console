@@ -19,14 +19,17 @@ import {
 import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
 import {
   CUSTOM_FLAVOR,
-  TEMPLATE_DATAVOLUME_NAME_PARAMETER,
-  TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER,
+  TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
+  TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
 } from '../../../../constants/vm';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { prefillVmTemplateUpdater } from './prefill-vm-template-state-update';
-import { iGetPrameterValue, iGetAnnotation } from '../../../../selectors/immutable/common';
+import { iGetAnnotation, iGetPrameterValue } from '../../../../selectors/immutable/common';
 import { CDI_UPLOAD_POD_ANNOTATION, CDI_UPLOAD_RUNNING } from '../../../cdi-upload-provider/consts';
-import { commonTemplatesUpdater } from './vm-common-templates-updater';
+import {
+  commonTemplatesUpdater,
+  commonTemplateOnLoadedUpdater,
+} from './vm-common-templates-updater';
 
 const selectUserTemplateOnLoadedUpdater = (options: UpdateOptions) => {
   const { id, dispatch, getState } = options;
@@ -111,8 +114,8 @@ const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
     const relevantOptions = iGetRelevantTemplateSelectors(state, id);
     const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
     const iTemplate = iCommonTemplates && iGetRelevantTemplate(iCommonTemplates, relevantOptions);
-    const pvcName = iGetPrameterValue(iTemplate, TEMPLATE_DATAVOLUME_NAME_PARAMETER);
-    const pvcNamespace = iGetPrameterValue(iTemplate, TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER);
+    const pvcName = iGetPrameterValue(iTemplate, TEMPLATE_BASE_IMAGE_NAME_PARAMETER);
+    const pvcNamespace = iGetPrameterValue(iTemplate, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER);
 
     const iBaseImages = iGetLoadedCommonData(state, id, VMWizardProps.openshiftCNVBaseImages);
     iBaseImage =
@@ -274,6 +277,7 @@ const flavorUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => 
 
 export const updateVmSettingsState = (options: UpdateOptions) =>
   [
+    commonTemplateOnLoadedUpdater,
     selectUserTemplateOnLoadedUpdater,
     osUpdater,
     baseImageUpdater,

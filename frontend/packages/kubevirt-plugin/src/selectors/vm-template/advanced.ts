@@ -13,14 +13,20 @@ import {
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_TYPE_VM,
   TEMPLATE_WORKLOAD_LABEL,
-  TEMPLATE_DATAVOLUME_NAME_PARAMETER,
-  TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER,
+  TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
+  TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
   TEMPLATE_VERSION_LABEL,
 } from '../../constants/vm';
-import { getCloudInitVolume } from '../vm/selectors';
+import { getCloudInitVolume, getDataVolumeTemplates, getDisks, getMemory } from '../vm/selectors';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
-import { selectVM } from './basic';
 import { compareVersions, removeOSDups } from '../../utils/sort';
+import { selectVM, isCommonTemplate } from './basic';
+import {
+  convertToBaseValue,
+  pluralize,
+  humanizeBinaryBytes,
+} from '@console/internal/components/utils';
+import { isTemplateSourceError, TemplateSourceStatus } from '../../statuses/template/types';
 
 export const getTemplatesWithLabels = (templates: TemplateKind[], labels: string[]) => {
   const requiredLabels = labels.filter((label) => label);
@@ -94,8 +100,8 @@ export const getTemplateOperatingSystems = (templates: TemplateKind[]) => {
       return {
         id: osId,
         name: getAnnotation(template, nameAnnotation),
-        dataVolumeName: getParameterValue(template, TEMPLATE_DATAVOLUME_NAME_PARAMETER),
-        dataVolumeNamespace: getParameterValue(template, TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER),
+        baseImageName: getParameterValue(template, TEMPLATE_BASE_IMAGE_NAME_PARAMETER),
+        baseImageNamespace: getParameterValue(template, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER),
       };
     }),
   );
@@ -103,3 +109,30 @@ export const getTemplateOperatingSystems = (templates: TemplateKind[]) => {
 
 export const getTemplateWorkloadProfiles = (templates: TemplateKind[]) =>
   getTemplatesLabelValues(templates, TEMPLATE_WORKLOAD_LABEL);
+
+export const getTemplateSizeRequirement = (
+  template: TemplateKind,
+  templateSource: TemplateSourceStatus,
+): string => {
+  const vm = selectVM(template);
+  const dvTemplates = getDataVolumeTemplates(vm);
+  const templatesSize = dvTemplates.reduce((acc, dvt) => {
+    const size = (dvt.spec.pvc?.resources?.requests as any)?.storage;
+    if (size) {
+      return acc;
+    }
+    return acc + convertToBaseValue(size);
+  }, 0);
+  const baseImageSize =
+    isCommonTemplate(template) && !isTemplateSourceError(templateSource) && templateSource?.pvc
+      ? convertToBaseValue(templateSource.pvc.spec.resources.requests.storage)
+      : 0;
+  return `${pluralize(getDisks(vm).length, 'Disk')} | ${
+    humanizeBinaryBytes(templatesSize + baseImageSize).string
+  }`;
+};
+
+export const getTemplateMemory = (template: TemplateKind): string => {
+  const baseMemoryValue = convertToBaseValue(getMemory(selectVM(template)));
+  return humanizeBinaryBytes(baseMemoryValue).string;
+};

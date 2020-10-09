@@ -44,7 +44,7 @@ import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
-import { usePVCBaseImages } from '../../../hooks/use-pvc-base-images';
+import { useBaseImages } from '../../../hooks/use-base-images';
 import { DataVolumeModel } from '../../../models';
 import { createUploadPVC } from '../../../k8s/requests/cdi-upload/cdi-upload-requests';
 import { CDIUploadContext } from '../cdi-upload-provider';
@@ -211,11 +211,11 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   const handleGoldenCheckbox = (checked) => {
     setIsGolden(checked);
     if (checked) {
-      setNamespace(os?.dataVolumeNamespace);
+      setNamespace(os?.baseImageNamespace);
       if (pvcName && !os) {
         setPvcName('');
       } else {
-        setPvcName(os?.dataVolumeName);
+        setPvcName(os?.baseImageName);
       }
     }
     if (!checked) {
@@ -226,9 +226,9 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   const handleOs = (newOs: string) => {
     const operatingSystem = operatingSystems.find((o) => o.id === newOs);
     setOs(operatingSystem);
-    setPvcName(operatingSystem?.dataVolumeName);
-    if (operatingSystem?.dataVolumeNamespace) {
-      setNamespace(operatingSystem.dataVolumeNamespace);
+    setPvcName(operatingSystem?.baseImageName);
+    if (operatingSystem?.baseImageNamespace) {
+      setNamespace(operatingSystem.baseImageNamespace);
     }
   };
 
@@ -243,7 +243,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
 
   React.useEffect(() => {
     const goldenImagePVC = goldenPvcs?.find(
-      (pvc) => getName(pvc) === os?.dataVolumeName && getNamespace(pvc) === os?.dataVolumeNamespace,
+      (pvc) => getName(pvc) === os?.baseImageName && getNamespace(pvc) === os?.baseImageNamespace,
     );
     if (goldenImagePVC) {
       setOsImageExists(true);
@@ -307,17 +307,17 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
                 placeholder="--- Pick an Operating system ---"
                 isDisabled={!!os}
               />
-              {operatingSystems.map(({ id, name, dataVolumeName, dataVolumeNamespace }) =>
+              {operatingSystems.map(({ id, name, baseImageName, baseImageNamespace }) =>
                 goldenPvcs?.find(
                   (pvc) =>
-                    getName(pvc) === dataVolumeName && getNamespace(pvc) === dataVolumeNamespace,
+                    getName(pvc) === baseImageName && getNamespace(pvc) === baseImageNamespace,
                 ) ? (
                   <FormSelectOption
                     key={id}
                     value={id}
                     label={`${name || id} - Default data image already exists`}
                   />
-                ) : !dataVolumeName ? (
+                ) : !baseImageName ? (
                   <FormSelectOption
                     isDisabled
                     key={id}
@@ -339,8 +339,8 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
                   hideIcon
                   inline
                   kind={PersistentVolumeClaimModel.kind}
-                  name={os?.dataVolumeName}
-                  namespace={os?.dataVolumeNamespace}
+                  name={os?.baseImageName}
+                  namespace={os?.baseImageNamespace}
                 />
               </Alert>
             </div>
@@ -412,7 +412,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
             />
             <p className="help-block" id="request-size-help">
               Ensure your PVC size covers the requirements of the uncompressed image and any other
-              space requirements
+              space requirements.
             </p>
           </SplitItem>
         </Split>
@@ -463,7 +463,7 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
   const [commonTemplates, loadedTemplates, errorTemplates] = useK8sWatchResource<TemplateKind[]>(
     templatesResource,
   );
-  const [goldenPvcs, loadedPvcs, errorPvcs] = usePVCBaseImages(commonTemplates);
+  const [goldenPvcs, loadedPvcs, errorPvcs] = useBaseImages(commonTemplates);
   const { uploads, uploadData } = React.useContext(CDIUploadContext);
   const initialNamespace = props?.match?.params?.ns;
   const namespace = getNamespace(dvObj) || initialNamespace;
@@ -570,7 +570,7 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
         onSuccessClick={() =>
           history.push(resourcePath(PersistentVolumeClaimModel.kind, getName(dvObj), namespace))
         }
-        onCancelFinish={() => history.push(resourcePath(PersistentVolumeClaimModel.kind))}
+        onCancelClick={() => history.push(resourcePath(PersistentVolumeClaimModel.kind))}
       />
     </>
   );

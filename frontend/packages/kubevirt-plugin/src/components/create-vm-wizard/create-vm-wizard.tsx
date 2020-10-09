@@ -28,7 +28,7 @@ import {
 } from '../../constants/vm';
 import { getResource } from '../../utils';
 import { IDReferences, makeIDReferences } from '../../utils/redux/id-reference';
-import { usePVCBaseImages } from '../../hooks/use-pvc-base-images';
+import { useBaseImages } from '../../hooks/use-base-images';
 import { iGetLoadedData, immutableListToShallowJS } from '../../utils/immutable';
 import {
   ChangedCommonData,
@@ -71,6 +71,7 @@ type CreateVMWizardComponentProps = {
   isProviderImport: boolean;
   isCreateTemplate: boolean;
   isLastTabErrorFatal: boolean;
+  userTemplateName: string;
   dataIDReferences: IDReferences;
   reduxID: string;
   tabsMetadata: VMWizardTabsMetadata;
@@ -110,16 +111,15 @@ const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) 
     () => immutableListToShallowJS(iGetLoadedData(props.commonTemplates)),
     [props.commonTemplates],
   );
-  const [dataVolumePVCs, dataVolumePVCsLoaded, dataVolumePVCsLoadError] = usePVCBaseImages(
-    commonTemplates,
-  );
+
+  const [baseImages, baseImagesLoaded, baseImagesLoadError] = useBaseImages(commonTemplates);
 
   // Store previuse props
   const prevProps = usePrevious<CreateVMWizardComponentProps>(props);
-  const prevDataVolumePVCData = usePrevious<[PersistentVolumeClaimKind[], boolean, string]>([
-    dataVolumePVCs,
-    dataVolumePVCsLoaded,
-    dataVolumePVCsLoadError,
+  const prevBaseImages = usePrevious<[PersistentVolumeClaimKind[], boolean, string]>([
+    baseImages,
+    baseImagesLoaded,
+    baseImagesLoadError,
   ]);
 
   // componentDidUpdate
@@ -135,13 +135,13 @@ const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) 
       return changedPropsAcc;
     }, new Set()) as ChangedCommonData;
     const referencesChanged = !_.isEqual(prevProps.dataIDReferences, props.dataIDReferences);
-    const dataVolumePVCsChanged = !_.isEqual(prevDataVolumePVCData, [
-      dataVolumePVCs,
-      dataVolumePVCsLoaded,
-      dataVolumePVCsLoadError,
+    const baseImagesChanged = !_.isEqual(prevBaseImages, [
+      baseImages,
+      baseImagesLoaded,
+      baseImagesLoadError,
     ]);
 
-    if (changedProps.size > 0 || referencesChanged || dataVolumePVCsChanged) {
+    if (changedProps.size > 0 || referencesChanged || baseImagesChanged) {
       let commonDataUpdate: CommonData = referencesChanged
         ? { dataIDReferences: props.dataIDReferences }
         : undefined;
@@ -153,15 +153,15 @@ const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) 
           },
         };
       }
-      if (dataVolumePVCsChanged) {
+      if (baseImagesChanged) {
         commonDataUpdate = {
           ...commonDataUpdate,
           data: {
             ...commonDataUpdate?.data,
             [VMWizardProps.openshiftCNVBaseImages]: {
-              data: dataVolumePVCs,
-              loaded: dataVolumePVCsLoaded,
-              loadError: dataVolumePVCsLoadError,
+              data: baseImages,
+              loaded: baseImagesLoaded,
+              loadError: baseImagesLoadError,
             },
           },
         };
@@ -347,8 +347,10 @@ const wizardDispatchToProps = (dispatch, props) => ({
           isCreateTemplate: props.isCreateTemplate,
           isProviderImport: props.isProviderImport,
           isUserTemplateInitialized: false,
+          commonTemplateName: props.commonTemplateName,
           storageClassConfigMap: undefined,
           isSimpleView: props.isSimpleView,
+          name: props.name,
         },
         dataIDReferences: props.dataIDReferences,
       } as CommonData),
@@ -469,6 +471,11 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
   dataIDReferences[VMWizardProps.activeNamespace] = ['UI', 'activeNamespace'];
   dataIDReferences[VMWizardProps.openshiftFlag] = [featureReducerName, FLAGS.OPENSHIFT];
 
+  const name =
+    (userMode === VMWizardMode.VM && searchParams.get('name')) ||
+    (userMode === VMWizardMode.TEMPLATE && searchParams.get('template')) ||
+    '';
+  const commonTemplateName = searchParams.get('common-template') || '';
   const isSimpleView =
     userMode === VMWizardMode.IMPORT &&
     searchParams.get('view')?.toLowerCase() !== VMWizardView.ADVANCED; // normal mode defaults to advanced
@@ -478,11 +485,13 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
       <CreateVMWizard
         isCreateTemplate={userMode === VMWizardMode.TEMPLATE}
         isProviderImport={userMode === VMWizardMode.IMPORT}
+        name={name}
+        commonTemplateName={commonTemplateName}
         isSimpleView={isSimpleView}
         dataIDReferences={dataIDReferences}
         storageClassConfigMap={storageClassConfigMap}
         reduxID={reduxID}
-        onClose={() => history.goBack()}
+        onClose={history.goBack}
       />
     </Firehose>
   );

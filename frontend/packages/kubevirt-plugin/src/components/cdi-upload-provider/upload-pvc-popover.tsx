@@ -28,7 +28,7 @@ export const getProgressVariant = (status: UPLOAD_STATUS) => {
   }
 };
 
-export const UploadPVCPopover: React.FC<PVCUploadStatusProps> = ({ pvc }) => {
+export const UploadPVCPopover: React.FC<PVCUploadStatusProps> = ({ pvc, title = 'Uploading' }) => {
   const pvcName = getName(pvc);
   const namespace = getNamespace(pvc);
 
@@ -37,7 +37,7 @@ export const UploadPVCPopover: React.FC<PVCUploadStatusProps> = ({ pvc }) => {
   const [error, setError] = React.useState(upload?.uploadError);
 
   const onCancelClick = () => {
-    upload.cancelUpload();
+    upload && upload.cancelUpload();
     killUploadPVC(pvcName, namespace).catch(setError);
   };
 
@@ -120,10 +120,22 @@ export const UploadPVCPopover: React.FC<PVCUploadStatusProps> = ({ pvc }) => {
       </Popover>
     );
   }
-  // no context data, upload is from another session
-  return <ProgressStatus title="Uploading" />;
+  // no context data, upload is from another sessionc
+  return (
+    <ProgressStatus title={title}>
+      <Button
+        id="cdi-upload-cancel-btn"
+        className="pf-m-link--align-left"
+        variant="link"
+        onMouseUp={onCancelClick}
+      >
+        Cancel upload
+      </Button>
+    </ProgressStatus>
+  );
 };
 
 type PVCUploadStatusProps = {
   pvc: K8sResourceKind;
+  title?: string;
 };

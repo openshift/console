@@ -32,7 +32,7 @@ import {
 import {
   getDefaultSCAccessModes,
   getDefaultSCVolumeMode,
-  getGefaultStorageClass,
+  getDefaultStorageClass,
 } from '../../../selectors/config-map/sc-defaults';
 import {
   ADD,
@@ -57,7 +57,11 @@ import { PersistentVolumeClaimWrapper } from '../../../k8s/wrapper/vm/persistent
 import { BinaryUnit, stringValueUnitSplit } from '../../form/size-unit-utils';
 import { StorageUISource } from './storage-ui-source';
 import { TemplateValidations } from '../../../utils/validations/template/template-validations';
-import { ConfigMapKind } from '@console/internal/module/k8s';
+import {
+  ConfigMapKind,
+  StorageClassResourceKind,
+  PersistentVolumeClaimKind,
+} from '@console/internal/module/k8s';
 import { UIStorageEditConfig } from '../../../types/ui/storage';
 import { isFieldDisabled } from '../../../utils/ui/edit-config';
 import { PendingChangesAlert } from '../../Alerts/PendingChangesAlert';
@@ -167,7 +171,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
       let defaultStorageClass = null;
 
       if (!storageClassName) {
-        defaultStorageClass = getGefaultStorageClass(getLoadedData(storageClasses, []));
+        defaultStorageClass = getDefaultStorageClass(getLoadedData(storageClasses, []));
 
         if (defaultStorageClass) {
           setStorageClassName(getName(defaultStorageClass) || '');
@@ -655,8 +659,8 @@ export type DiskModalProps = {
     persistentVolumeClaim: PersistentVolumeClaimWrapper,
   ) => Promise<any>;
   namespaces?: FirehoseResult;
-  storageClasses?: FirehoseResult;
-  persistentVolumeClaims?: FirehoseResult;
+  storageClasses?: FirehoseResult<StorageClassResourceKind[]>;
+  persistentVolumeClaims?: FirehoseResult<PersistentVolumeClaimKind[]>;
   vmName: string;
   vmNamespace: string;
   namespace: string;

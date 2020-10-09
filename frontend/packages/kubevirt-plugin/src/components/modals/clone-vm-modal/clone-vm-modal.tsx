@@ -23,7 +23,7 @@ import {
   ModalComponentProps,
 } from '@console/internal/components/factory';
 import { ModalFooter } from '../modal/modal-footer';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 import { NamespaceModel, PersistentVolumeClaimModel, ProjectModel } from '@console/internal/models';
 import { getName, getNamespace, ValidationErrorType } from '@console/shared';
 import { VMKind } from '../../../types';
@@ -44,8 +44,9 @@ import { COULD_NOT_LOAD_DATA } from '../../../utils/strings';
 import { ConfigurationSummary } from './configuration-summary';
 
 import './_clone-vm-modal.scss';
+import { V1alpha1DataVolume } from 'packages/kubevirt-plugin/src/types/vm/disk/V1alpha1DataVolume';
 
-export const CloneVMModal = withHandlePromise((props: CloneVMModalProps) => {
+export const CloneVMModal = withHandlePromise<CloneVMModalProps>((props) => {
   const {
     vm,
     namespace,
@@ -74,8 +75,11 @@ export const CloneVMModal = withHandlePromise((props: CloneVMModalProps) => {
     : null;
   const dataVolumesError = requestsDataVolumes ? getLoadError(dataVolumes, DataVolumeModel) : null;
 
-  const persistentVolumeClaimsData = getLoadedData(persistentVolumeClaims, []);
-  const dataVolumesData = getLoadedData(dataVolumes, []);
+  const persistentVolumeClaimsData = getLoadedData<PersistentVolumeClaimKind[]>(
+    persistentVolumeClaims,
+    [],
+  );
+  const dataVolumesData = getLoadedData<V1alpha1DataVolume[]>(dataVolumes, []);
 
   const nameError = validateVmLikeEntityName(name, namespace, getLoadedData(virtualMachines, []), {
     existsErrorMessage: VIRTUAL_MACHINE_EXISTS,
@@ -229,8 +233,8 @@ export type CloneVMModalProps = CloneVMModalFirehoseProps &
     onNamespaceChanged: (namespace: string) => void;
     namespaces?: FirehoseResult<K8sResourceKind[]>;
     virtualMachines?: FirehoseResult<VMKind[]>;
-    dataVolumes?: FirehoseResult<K8sResourceKind[]>;
-    persistentVolumeClaims?: FirehoseResult<K8sResourceKind[]>;
+    dataVolumes?: FirehoseResult<V1alpha1DataVolume[]>;
+    persistentVolumeClaims?: FirehoseResult<PersistentVolumeClaimKind[]>;
     requestsDataVolumes: boolean;
     requestsPVCs: boolean;
   };

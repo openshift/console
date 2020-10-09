@@ -1,4 +1,4 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 import { createBasicLookup, getName, getNamespace } from '@console/shared';
 import { VMKind } from '../../types/vm';
 import { generateDataVolumeName, getBasicID } from '../../utils';
@@ -88,7 +88,7 @@ export class VMClone {
     return this;
   }
 
-  withClonedPVCs = (persistentVolumeClaimsToClone: K8sResourceKind[]) => {
+  withClonedPVCs = (persistentVolumeClaimsToClone: PersistentVolumeClaimKind[]) => {
     const pvcLookup = createBasicLookup(persistentVolumeClaimsToClone, getBasicID);
     const name = this.vm.getName();
 

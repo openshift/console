@@ -1,17 +1,17 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { getNamespace, createLookup, getName } from '@console/shared';
 import {
-  Firehose,
   StatusBox,
   ScrollToTopOnMount,
   SectionHeading,
   useAccessReview,
   asAccessReview,
-  FirehoseResult,
 } from '@console/internal/components/utils';
-import { TemplateKind } from '@console/internal/module/k8s';
-import { TemplateModel } from '@console/internal/models';
+import { PersistentVolumeClaimKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
+import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
+import {
+  useK8sWatchResource,
+  NoModelError,
+} from '@console/internal/components/utils/k8s-watch-hook';
 import { DataVolumeModel } from '../../models';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 import {
@@ -20,88 +20,79 @@ import {
   VMTemplateSchedulingList,
 } from './vm-template-resource';
 import { HashAnchor } from '../hash-anchor/hash-anchor';
+import { useBaseImages } from '../../hooks/use-base-images';
+import { isCommonTemplate } from '../../selectors/vm-template/basic';
+import { getTemplateSourceStatus } from '../../statuses/template/template-source-status';
 
-const VMTemplateDetailsFirehose: React.FC<VMTemplateDetailsFirehoseProps> = (props) => {
-  const { obj: template, hasDataVolumes } = props;
-  const namespace = getNamespace(template);
-
-  const resources = [
-    {
-      kind: DataVolumeModel.kind,
-      isList: true,
-      namespace,
-      prop: 'dataVolumes',
-      optional: true,
-    },
-  ];
-
-  const otherProps = { template };
+export const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = ({ obj: template }) => {
+  const [dataVolumes, dvLoaded, dvError] = useK8sWatchResource<V1alpha1DataVolume[]>({
+    kind: DataVolumeModel.kind,
+    isList: true,
+    namespace: template.metadata.namespace,
+  });
+  const [pods, podsLoaded, podsError] = useK8sWatchResource<PodKind[]>({
+    kind: PodModel.kind,
+    isList: true,
+    namespace: template.metadata.namespace,
+  });
+  const [pvcs, pvcsLoaded, pvcsError] = useK8sWatchResource<PersistentVolumeClaimKind[]>({
+    kind: PersistentVolumeClaimModel.kind,
+    isList: true,
+    namespace: template.metadata.namespace,
+  });
+  const isCommon = isCommonTemplate(template);
+  const [baseImages, imagesLoaded, error, baseImageDVs, baseImagePods] = useBaseImages(
+    isCommon ? [template] : [],
+    isCommon,
+  );
+  const sourceStatus = getTemplateSourceStatus({
+    template,
+    pvcs: [...baseImages, ...pvcs],
+    dataVolumes: [...dataVolumes, ...baseImageDVs],
+    pods: [...pods, ...baseImagePods],
+  });
+  const canUpdate = useAccessReview(asAccessReview(TemplateModel, template, 'patch'));
+  const loaded = dvLoaded && imagesLoaded && podsLoaded && pvcsLoaded;
 
   return (
     <div className="co-m-pane__body">
-      {hasDataVolumes ? (
-        <Firehose resources={resources}>
-          <VMTemplateDetails {...otherProps} />
-        </Firehose>
-      ) : (
-        <VMTemplateDetails {...otherProps} hasDataVolumes={hasDataVolumes} />
-      )}
+      <StatusBox
+        data={template}
+        loadError={
+          podsError || error || pvcsError || dvError instanceof NoModelError ? undefined : dvError
+        }
+        loaded={loaded}
+      >
+        <ScrollToTopOnMount />
+        <div className="co-m-pane__body">
+          <HashAnchor hash="details" />
+          <SectionHeading text="VM Template Details" />
+          <div className="row">
+            <div className="col-sm-6">
+              <VMTemplateResourceSummary template={template} canUpdateTemplate={canUpdate} />
+            </div>
+            <div className="col-sm-6">
+              <VMTemplateDetailsList
+                loaded
+                template={template}
+                sourceStatus={sourceStatus}
+                canUpdateTemplate={canUpdate}
+              />
+            </div>
+          </div>
+        </div>
+        <div id="scheduling" className="co-m-pane__body">
+          <HashAnchor hash="scheduling" />
+          <SectionHeading text="Scheduling and resources requirements" />
+          <div className="row">
+            <VMTemplateSchedulingList template={template} canUpdateTemplate={canUpdate} />
+          </div>
+        </div>
+      </StatusBox>
     </div>
   );
 };
 
-const stateToProps = ({ k8s }) => {
-  return {
-    hasDataVolumes: !!k8s.getIn(['RESOURCES', 'models', DataVolumeModel.kind]),
-  };
-};
-
-export const VMTemplateDetailsConnected = connect(stateToProps)(VMTemplateDetailsFirehose);
-
-const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = (props) => {
-  const { template, dataVolumes, ...restProps } = props;
-  const loaded = props.loaded || !props.hasDataVolumes;
-
-  const canUpdate = useAccessReview(asAccessReview(TemplateModel, template, 'patch'));
-
-  return (
-    <StatusBox data={template} {...restProps} loaded={loaded}>
-      <ScrollToTopOnMount />
-      <div className="co-m-pane__body">
-        <HashAnchor hash="details" />
-        <SectionHeading text="VM Template Details" />
-        <div className="row">
-          <div className="col-sm-6">
-            <VMTemplateResourceSummary template={template} canUpdateTemplate={canUpdate} />
-          </div>
-          <div className="col-sm-6">
-            <VMTemplateDetailsList
-              template={template}
-              dataVolumeLookup={createLookup(dataVolumes, getName)}
-              canUpdateTemplate={canUpdate}
-            />
-          </div>
-        </div>
-      </div>
-      <div id="scheduling" className="co-m-pane__body">
-        <HashAnchor hash="scheduling" />
-        <SectionHeading text="Scheduling and resources requirements" />
-        <div className="row">
-          <VMTemplateSchedulingList template={template} canUpdateTemplate={canUpdate} />
-        </div>
-      </div>
-    </StatusBox>
-  );
-};
-
 type VMTemplateDetailsProps = {
-  template: TemplateKind;
-  dataVolumes?: FirehoseResult<V1alpha1DataVolume[]>;
-  loaded?: boolean;
-  hasDataVolumes?: boolean;
-};
-
-type VMTemplateDetailsFirehoseProps = {
   obj: TemplateKind;
-  hasDataVolumes: boolean;
 };

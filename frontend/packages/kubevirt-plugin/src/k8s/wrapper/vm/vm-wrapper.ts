@@ -197,7 +197,7 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
 
     if (volumeWrapper.getType() === VolumeType.DATA_VOLUME) {
       this.data.spec.dataVolumeTemplates = this.getDataVolumeTemplates().filter(
-        (dataVolume) => dataVolume.name !== volumeWrapper.getDataVolumeName(),
+        (dataVolume) => dataVolume.metadata.name !== volumeWrapper.getDataVolumeName(),
       );
     }
 

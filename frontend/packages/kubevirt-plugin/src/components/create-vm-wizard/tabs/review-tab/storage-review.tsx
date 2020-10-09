@@ -10,7 +10,7 @@ import { PersistentVolumeClaimModel, StorageClassModel } from '@console/internal
 import { VMWizardProps, VMWizardStorage } from '../../types';
 import { getStorages } from '../../selectors/selectors';
 import { iGetCommonData } from '../../selectors/immutable/selectors';
-import { getGefaultStorageClass } from '../../../../selectors/config-map/sc-defaults';
+import { getDefaultStorageClass } from '../../../../selectors/config-map/sc-defaults';
 import { CombinedDisk } from '../../../../k8s/wrapper/vm/combined-disk';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import { getLoadedData } from '../../../../utils';
@@ -81,7 +81,7 @@ const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
       combinedDisk.getSource()?.requiresStorageClass() && !combinedDisk.getStorageClassName(),
   );
 
-  const defaultStorageClass = getGefaultStorageClass(getLoadedData(storageClasses, []));
+  const defaultStorageClass = getDefaultStorageClass(getLoadedData(storageClasses, []));
 
   const rows = combinedDisks.map((combinedDisk) => {
     return [

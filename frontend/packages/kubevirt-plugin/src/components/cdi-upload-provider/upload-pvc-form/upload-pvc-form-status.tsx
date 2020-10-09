@@ -28,7 +28,7 @@ export const UploadPVCFormStatus: React.FC<UploadPVCFormStatusProps> = ({
   allocateError,
   onErrorClick,
   onSuccessClick,
-  onCancelFinish,
+  onCancelClick,
 }) => {
   const [error, setError] = React.useState(allocateError || upload?.uploadError?.message);
 
@@ -37,10 +37,10 @@ export const UploadPVCFormStatus: React.FC<UploadPVCFormStatusProps> = ({
     setError(newError);
   }, [allocateError, upload]);
 
-  const onCancelClick = () => {
+  const onCancelFinish = () => {
     upload.cancelUpload();
     killUploadPVC(upload?.pvcName, upload?.namespace)
-      .then(onCancelFinish)
+      .then(onCancelClick)
       .catch((err) => setError(err?.message));
   };
 
@@ -57,7 +57,7 @@ export const UploadPVCFormStatus: React.FC<UploadPVCFormStatusProps> = ({
           isAllocating={isAllocating}
           onErrorClick={onErrorClick}
           onSuccessClick={onSuccessClick}
-          onCancelClick={onCancelClick}
+          onCancelClick={onCancelFinish}
         />
       </EmptyState>
     </Bullseye>
@@ -72,7 +72,7 @@ const DataUploadStatus: React.FC<DataUploadStatus> = ({
   onSuccessClick,
   onCancelClick,
 }) => {
-  if (error) return <ErrorStatus error={error} onErrorPrimaryClick={onErrorClick} />;
+  if (error) return <ErrorStatus error={error} onErrorClick={onErrorClick} />;
   if (isAllocating) return <AllocatingStatus />;
   if (upload?.uploadStatus === UPLOAD_STATUS.CANCELED) return <CancellingStatus />;
   return (
@@ -107,14 +107,14 @@ const CancellingStatus: React.FC = () => (
   </>
 );
 
-const ErrorStatus: React.FC<ErrorStatusProps> = ({ error, onErrorPrimaryClick }) => (
+const ErrorStatus: React.FC<ErrorStatusProps> = ({ error, onErrorClick }) => (
   <>
     <EmptyStateIcon icon={ErrorCircleOIcon} color="#cf1010" />
     <Title headingLevel="h4" size="lg">
       Error Uploading Data
     </Title>
     <EmptyStateBody>{error}</EmptyStateBody>
-    <Button id="cdi-upload-error-btn" variant="primary" onClick={onErrorPrimaryClick}>
+    <Button id="cdi-upload-error-btn" variant="primary" onClick={onErrorClick}>
       {error ? 'Back to Form' : 'View Persistent Volume Claim details'}
     </Button>
   </>
@@ -146,17 +146,19 @@ const UploadingStatus: React.FC<UploadingStatusProps> = ({
         )}
         <StackItem>
           Persistent Volume Claim has been created and your data source is now being uploaded to it.
-          Once the uploading is completed the Persisten Volume Claim will become available
+          Once the uploading is completed the Persistent Volume Claim will become available
         </StackItem>
         <StackItem>
           <Progress value={upload?.progress} variant={getProgressVariant(upload?.uploadStatus)} />
         </StackItem>
       </Stack>
     </EmptyStateBody>
-    <Button id="cdi-upload-primary-pvc" variant="primary" onClick={onSuccessClick}>
-      View Persistent Volume Claim details
-    </Button>
-    {upload?.uploadStatus === UPLOAD_STATUS.UPLOADING && (
+    {onSuccessClick && (
+      <Button id="cdi-upload-primary-pvc" variant="primary" onClick={onSuccessClick}>
+        View Persistent Volume Claim details
+      </Button>
+    )}
+    {onCancelClick && upload?.uploadStatus === UPLOAD_STATUS.UPLOADING && (
       <EmptyStateSecondaryActions>
         <Button id="cdi-upload-cancel-btn" onClick={onCancelClick} variant="link">
           Cancel Upload
@@ -166,42 +168,25 @@ const UploadingStatus: React.FC<UploadingStatusProps> = ({
   </>
 );
 
-export type UploadPVCStatusProps = {
-  upload: DataUpload;
-  isSubmitting: boolean;
-  isAllocating: boolean;
-  allocateError: React.ReactNode;
-  onErrorClick: () => void;
-  onSuccessClick: () => void;
-  onCancelFinish: () => void;
-};
-
-export type UploadPVCFormStatusProps = {
-  upload: DataUpload;
-  isSubmitting: boolean;
-  isAllocating: boolean;
-  allocateError: React.ReactNode;
-  onErrorClick: () => void;
-  onSuccessClick: () => void;
-  onCancelFinish: () => void;
-};
-
-export type DataUploadStatus = {
-  error: any;
-  upload: DataUpload;
-  isAllocating: boolean;
-  onErrorClick: () => void;
-  onSuccessClick: () => void;
-  onCancelClick: () => void;
-};
-
 type UploadingStatusProps = {
   upload: DataUpload;
-  onSuccessClick: () => void;
-  onCancelClick: () => void;
+  onSuccessClick?: () => void;
+  onCancelClick?: () => void;
+};
+
+export type UploadPVCFormStatusProps = UploadingStatusProps & {
+  isSubmitting: boolean;
+  isAllocating: boolean;
+  allocateError: React.ReactNode;
+  onErrorClick: () => void;
 };
 
 type ErrorStatusProps = {
   error: any;
-  onErrorPrimaryClick: () => void;
+  onErrorClick: () => void;
 };
+
+export type DataUploadStatus = UploadingStatusProps &
+  ErrorStatusProps & {
+    isAllocating: boolean;
+  };

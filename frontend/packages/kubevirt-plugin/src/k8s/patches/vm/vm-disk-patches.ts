@@ -78,10 +78,10 @@ export const getUpdateDiskPatches = (
   }: {
     disk: V1Disk;
     volume: V1Volume;
-    dataVolume: V1alpha1DataVolume;
-    oldDiskName: string;
-    oldVolumeName: string;
-    oldDataVolumeName: string;
+    dataVolume?: V1alpha1DataVolume;
+    oldDiskName?: string;
+    oldVolumeName?: string;
+    oldDataVolumeName?: string;
   },
 ): Patch[] =>
   getVMLikePatches(vmLikeEntity, (vm) => {

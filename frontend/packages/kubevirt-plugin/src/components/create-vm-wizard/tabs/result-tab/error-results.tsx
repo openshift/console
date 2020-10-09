@@ -36,7 +36,6 @@ const ErrorResultsComponent: React.FC<ErrorResultsProps> = ({
 };
 
 type ErrorResultsProps = {
-  wizardReduxID: string;
   isCreateTemplate: boolean;
   mainError: {
     title?: string;
@@ -46,7 +45,7 @@ type ErrorResultsProps = {
   className?: string;
 };
 
-const stateToProps = (state, { wizardReduxID }) => {
+const stateToProps = (state, { wizardReduxID }: { wizardReduxID: string }) => {
   const stepData = iGetCreateVMWizardTabs(state, wizardReduxID);
   return {
     isCreateTemplate: iGetCommonData(state, wizardReduxID, VMWizardProps.isCreateTemplate),

@@ -2,7 +2,11 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Firehose, FirehoseResult } from '@console/internal/components/utils';
 import { createModalLauncher, ModalComponentProps } from '@console/internal/components/factory';
-import { k8sPatch } from '@console/internal/module/k8s';
+import {
+  k8sPatch,
+  StorageClassResourceKind,
+  PersistentVolumeClaimKind,
+} from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared/src';
 import {
   NamespaceModel,
@@ -87,8 +91,8 @@ type DiskModalFirehoseComponentProps = ModalComponentProps & {
   isEditing?: boolean;
   namespace: string;
   onNamespaceChanged: (namespace: string) => void;
-  storageClasses?: FirehoseResult<VMLikeEntityKind[]>;
-  persistentVolumeClaims?: FirehoseResult<VMLikeEntityKind[]>;
+  storageClasses?: FirehoseResult<StorageClassResourceKind[]>;
+  persistentVolumeClaims?: FirehoseResult<PersistentVolumeClaimKind[]>;
   vmLikeEntityLoading?: FirehoseResult<VMLikeEntityKind>;
   vmLikeEntity: VMLikeEntityKind;
   templateValidations?: TemplateValidations;

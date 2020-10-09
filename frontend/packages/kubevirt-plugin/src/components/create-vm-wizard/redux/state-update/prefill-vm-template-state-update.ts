@@ -9,7 +9,11 @@ import {
   VMWizardStorage,
   VMWizardStorageType,
 } from '../../types';
-import { iGetCommonData, iGetLoadedCommonData } from '../../selectors/immutable/selectors';
+import {
+  iGetCommonData,
+  iGetLoadedCommonData,
+  iGetName,
+} from '../../selectors/immutable/selectors';
 import { immutableListToShallowJS, toShallowJS } from '../../../../utils/immutable';
 import { iGetNetworks } from '../../selectors/immutable/networks';
 import { podNetwork } from '../initial-state/networks-tab-initial-state';
@@ -60,18 +64,28 @@ import { generateDataVolumeName } from '../../../../utils';
 
 export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptions) => {
   const state = getState();
+  const commonTemplateName = iGetCommonData(state, id, VMWizardProps.commonTemplateName);
 
-  const iUserTemplate = iGetLoadedCommonData(state, id, VMWizardProps.userTemplate);
   const isProviderImport = iGetCommonData(state, id, VMWizardProps.isProviderImport);
   const activeNamespace = iGetCommonData(state, id, VMWizardProps.activeNamespace);
+
+  const iTemplate = commonTemplateName
+    ? iGetLoadedCommonData(
+        state,
+        id,
+        commonTemplateName ? VMWizardProps.commonTemplates : VMWizardProps.userTemplates,
+      ).find((template) => iGetName(template) === commonTemplateName)
+    : iGetLoadedCommonData(state, id, VMWizardProps.userTemplate);
 
   let isCloudInitForm = null;
   const vmSettingsUpdate = {
     // ensure the the form is reset when "None" template is selected
     [VMSettingsField.FLAVOR]: { value: null },
-    [VMSettingsField.OPERATING_SYSTEM]: { value: null },
+    [VMSettingsField.OPERATING_SYSTEM]: { value: null, initialized: !!iTemplate },
     [VMSettingsField.WORKLOAD_PROFILE]: { value: null },
-    [VMSettingsField.PROVISION_SOURCE_TYPE]: { value: isProviderImport ? undefined : null },
+    [VMSettingsField.PROVISION_SOURCE_TYPE]: {
+      value: isProviderImport || commonTemplateName ? undefined : null,
+    },
     [VMSettingsField.HOSTNAME]: { value: null },
     [VMSettingsField.CPU]: { value: null },
     [VMSettingsField.MEMORY]: { value: null },
@@ -99,16 +113,16 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
     networksUpdate.unshift({ ...podNetwork, id: getNextNetworkID() });
   }
 
-  if (iUserTemplate) {
-    const userTemplate = toShallowJS(iUserTemplate);
+  if (iTemplate) {
+    const template = toShallowJS(iTemplate);
 
-    const vm = selectVM(userTemplate);
+    const vm = selectVM(template);
     const dataVolumes = immutableListToShallowJS<V1alpha1DataVolume>(
       iGetLoadedCommonData(state, id, VMWizardProps.dataVolumes),
     );
 
     // update flavor
-    const [flavor] = getTemplateFlavors([userTemplate]);
+    const [flavor] = getTemplateFlavors([template]);
     vmSettingsUpdate[VMSettingsField.FLAVOR] = {
       value: toUIFlavor(flavor),
     };
@@ -121,23 +135,26 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
     }
 
     // update os
-    const [os] = getTemplateOperatingSystems([userTemplate]);
-    vmSettingsUpdate[VMSettingsField.OPERATING_SYSTEM] = { value: os && os.id };
+    const [os] = getTemplateOperatingSystems([template]);
+    vmSettingsUpdate[VMSettingsField.OPERATING_SYSTEM] = {
+      ...vmSettingsUpdate[VMSettingsField.OPERATING_SYSTEM],
+      value: os && os.id,
+    };
 
     // update workload profile
-    const [workload] = getTemplateWorkloadProfiles([userTemplate]);
+    const [workload] = getTemplateWorkloadProfiles([template]);
     vmSettingsUpdate[VMSettingsField.WORKLOAD_PROFILE] = { value: workload };
 
     // update provision source
-    const provisionSourceDetails = ProvisionSource.getProvisionSourceDetails(userTemplate, {
+    const provisionSourceDetails = ProvisionSource.getProvisionSourceDetails(template, {
       convertTemplateDataVolumesToAttachClonedDisk: true,
     });
     vmSettingsUpdate[VMSettingsField.PROVISION_SOURCE_TYPE] = {
-      value: provisionSourceDetails.type ? provisionSourceDetails.type.getValue() : null,
+      value: provisionSourceDetails?.type ? provisionSourceDetails.type.getValue() : null,
     };
 
     // update hostname
-    const hostname = getTemplateHostname(userTemplate);
+    const hostname = getTemplateHostname(template);
     vmSettingsUpdate[VMSettingsField.HOSTNAME] = { value: hostname };
 
     const networkLookup = createBasicLookup<V1Network>(getNetworks(vm), getSimpleName);
@@ -170,8 +187,25 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
 
     const standaloneDataVolumeLookup = createBasicLookup<V1alpha1DataVolume>(dataVolumes, getName);
 
-    // // prefill storage
-    const templateStorages: VMWizardStorage[] = getDisks(vm).map((disk) => {
+    let vmDisks = getDisks(vm);
+
+    if (commonTemplateName) {
+      const baseImages = immutableListToShallowJS<V1alpha1DataVolume>(
+        iGetLoadedCommonData(state, id, VMWizardProps.openshiftCNVBaseImages),
+      );
+      const hasBaseImage = baseImages.some(
+        (image) =>
+          image.metadata.name === os.baseImageName &&
+          image.metadata.namespace === os.baseImageNamespace,
+      );
+
+      if (hasBaseImage) {
+        vmDisks = vmDisks.filter((disk) => disk.name !== 'rootdisk');
+      }
+    }
+
+    // prefill storage
+    const templateStorages: VMWizardStorage[] = vmDisks.map((disk) => {
       const diskWrapper = new DiskWrapper(disk, true);
       const volumeWrapper = new VolumeWrapper(volumeLookup[diskWrapper.getName()], true);
       let dataVolume = dataVolumeTemplatesLookup[volumeWrapper.getDataVolumeName()];

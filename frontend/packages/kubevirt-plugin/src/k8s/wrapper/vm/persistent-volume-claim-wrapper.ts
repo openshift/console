@@ -14,6 +14,7 @@ import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { K8sInitAddon } from '../common/util/k8s-mixin';
 import { AccessMode, VolumeMode } from '../../../constants/vm/storage';
+import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 
 export class PersistentVolumeClaimWrapper extends K8sResourceWrapper<
   V1PersistentVolumeClaim,
@@ -56,15 +57,15 @@ export class PersistentVolumeClaimWrapper extends K8sResourceWrapper<
 
   hasSize = () => this.getSize().value > 0;
 
-  getAccessModes = () => getPvcAccessModes(this.data);
+  getAccessModes = () => getPvcAccessModes(this.data as PersistentVolumeClaimKind);
 
-  getVolumeMode = () => getPvcVolumeMode(this.data);
+  getVolumeMode = () => getPvcVolumeMode(this.data as PersistentVolumeClaimKind);
 
   getVolumeModeEnum = () => VolumeMode.fromString(this.getVolumeMode());
 
   getAccessModesEnum = () => {
     const accessModes = this.getAccessModes();
-    return accessModes ? accessModes.map((mode) => AccessMode.fromString(mode)) : accessModes;
+    return accessModes?.map((mode) => AccessMode.fromString(mode)) ?? [];
   };
 
   setSize = (value: string | number, unit = 'Gi') => {

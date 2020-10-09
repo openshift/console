@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { ResourceSummary, LabelList } from '@console/internal/components/utils';
 import { TemplateKind } from '@console/internal/module/k8s';
-import { K8sEntityMap } from '@console/shared/src';
 import { getBasicID, prefixedID } from '../../utils';
 import { vmDescriptionModal } from '../modals/vm-description-modal';
 import { BootOrderModal } from '../modals/boot-order-modal';
@@ -22,7 +21,6 @@ import { EditButton } from '../edit-button';
 import { VMDetailsItem } from '../vms/vm-resource';
 import { asVM, getDevices } from '../../selectors/vm';
 import { BootOrderSummary } from '../boot-order';
-import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 import { VMTemplateLink } from './vm-template-link';
 import { TemplateSource } from './vm-template-source';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
@@ -37,6 +35,7 @@ import {
 } from '../modals/scheduling-modals/shared/consts';
 import './_vm-template-resource.scss';
 import { getFlavorText } from '../../selectors/vm/flavor-text';
+import { TemplateSourceStatus } from '../../statuses/template/types';
 
 export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps> = ({
   template,
@@ -90,7 +89,8 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
 
 export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
   template,
-  dataVolumeLookup,
+  sourceStatus,
+  loaded,
 }) => {
   const id = getBasicID(template);
   const devices = getDevices(template);
@@ -108,7 +108,7 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
       </VMDetailsItem>
 
       <VMDetailsItem title="Provision Source" idValue={prefixedID(id, 'provisioning-source')}>
-        <TemplateSource template={template} dataVolumeLookup={dataVolumeLookup} detailed />
+        <TemplateSource loaded={loaded} template={template} sourceStatus={sourceStatus} detailed />
       </VMDetailsItem>
     </dl>
   );
@@ -217,8 +217,9 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
 
 type VMTemplateResourceListProps = {
   template: TemplateKind;
-  dataVolumeLookup: K8sEntityMap<V1alpha1DataVolume>;
+  sourceStatus: TemplateSourceStatus;
   canUpdateTemplate?: boolean;
+  loaded: boolean;
 };
 
 type VMTemplateResourceSummaryProps = {

@@ -1,4 +1,8 @@
-import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
+import {
+  k8sCreate,
+  K8sResourceKind,
+  PersistentVolumeClaimKind,
+} from '@console/internal/module/k8s';
 import { VMKind } from '../../../types/vm';
 import { VirtualMachineModel } from '../../../models';
 import { CloneTo, VMClone } from '../../helpers/vm-clone';
@@ -7,7 +11,7 @@ import { stopVM } from './actions';
 
 type CloneFrom = {
   vm: VMKind;
-  persistentVolumeClaims: K8sResourceKind[];
+  persistentVolumeClaims: PersistentVolumeClaimKind[];
   dataVolumes: K8sResourceKind[];
 };
 

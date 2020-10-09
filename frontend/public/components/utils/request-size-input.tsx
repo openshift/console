@@ -19,7 +19,7 @@ export class RequestSizeInput extends React.Component<RequestSizeInputProps> {
   };
 
   render() {
-    const { describedBy, name, inputID, testID } = this.props;
+    const { describedBy, name, inputID, testID, children } = this.props;
     const inputName = `${name}Value`;
     const dropdownName = `${name}Unit`;
     return (
@@ -52,6 +52,7 @@ export class RequestSizeInput extends React.Component<RequestSizeInputProps> {
             ariaLabel={`Number of ${this.props.dropdownUnits[this.props.defaultRequestSizeUnit]}`}
           />
         </div>
+        {children}
       </div>
     );
   }

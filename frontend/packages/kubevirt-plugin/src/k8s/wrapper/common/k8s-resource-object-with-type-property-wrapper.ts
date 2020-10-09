@@ -2,6 +2,7 @@
 import { ObjectEnum } from '@console/shared/src/constants/object-enum';
 import {
   getName,
+  getNamespace,
   hasLabel,
   getLabels,
   getOwnerReferences,
@@ -52,6 +53,7 @@ export abstract class K8sResourceObjectWithTypePropertyWrapper<
 
   getModel = () => this.model;
   getName = () => getName(this.data);
+  getNamespace = () => getNamespace(this.data);
   getCreationTimestamp = () => getCreationTimestamp(this.data);
   getLabels = (defaultValue = {}) => getLabels(this.data, defaultValue);
   hasLabel = (label: string) => hasLabel(this.data, label);

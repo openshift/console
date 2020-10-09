@@ -32,7 +32,11 @@ export const hasTruthyValue = (obj) => !!(obj && !!obj.find((value) => value));
 export const iGet = (obj, key: string, defaultValue = undefined) =>
   obj ? obj.get(key, defaultValue) : defaultValue;
 
-export const toShallowJS = (obj, defaultValue = undefined, discardEmpty: boolean = false) => {
+export const toShallowJS = <A = any>(
+  obj,
+  defaultValue = undefined,
+  discardEmpty: boolean = false,
+): A => {
   if (discardEmpty && _.isEmpty(obj)) {
     return defaultValue;
   }

@@ -27,8 +27,8 @@ import { toShallowJS, iGetIn } from '../../../../utils/immutable';
 import { generateDataVolumeName } from '../../../../utils';
 import {
   DUMMY_VM_NAME,
-  TEMPLATE_DATAVOLUME_NAME_PARAMETER,
-  TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER,
+  TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
+  TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
 } from '../../../../constants/vm';
 import {
   iGetVmSettingValue,
@@ -193,8 +193,8 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
 
     const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
     const iTemplate = iCommonTemplates && iGetRelevantTemplate(iCommonTemplates, relevantOptions);
-    const pvcName = iGetPrameterValue(iTemplate, TEMPLATE_DATAVOLUME_NAME_PARAMETER);
-    const pvcNamespace = iGetPrameterValue(iTemplate, TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER);
+    const pvcName = iGetPrameterValue(iTemplate, TEMPLATE_BASE_IMAGE_NAME_PARAMETER);
+    const pvcNamespace = iGetPrameterValue(iTemplate, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER);
 
     const iBaseImage = iGetLoadedCommonData(state, id, VMWizardProps.openshiftCNVBaseImages)
       .valueSeq()

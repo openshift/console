@@ -131,8 +131,8 @@ export const OS: React.FC<OSProps> = React.memo(
     const baseImagesLoadError = iGetLoadError(cnvBaseImages);
     const operatingSystemBaseImages = operatingSystems.map(
       (operatingSystem: OperatingSystemRecord) => {
-        const pvcName = operatingSystem?.dataVolumeName;
-        const pvcNamespace = operatingSystem?.dataVolumeNamespace;
+        const pvcName = operatingSystem?.baseImageName;
+        const pvcNamespace = operatingSystem?.baseImageNamespace;
         const baseImageFoundInCluster = loadedBaseImages?.find(
           (pvc) => iGetName(pvc) === pvcName && iGetNamespace(pvc) === pvcNamespace,
         );
@@ -276,6 +276,7 @@ type OSProps = {
   iUserTemplate: any;
   commonTemplates: any;
   flavor: string;
+  commonTemplateName: string;
   operatinSystemField: any;
   cloneBaseDiskImageField: any;
   mountWindowsGuestToolsField: any;
