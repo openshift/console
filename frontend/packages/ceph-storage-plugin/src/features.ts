@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { Dispatch } from 'react-redux';
-import { k8sList, StorageClassResourceKind } from '@console/internal/module/k8s';
+import { k8sList, StorageClassResourceKind, ListKind } from '@console/internal/module/k8s';
 import {
   ClusterServiceVersionModel,
   ClusterServiceVersionKind,
@@ -103,9 +103,12 @@ export const detectOCS: FeatureDetector = async (dispatch) => {
 
 export const detectOCSSupportedFeatures: FeatureDetector = async (dispatch) => {
   try {
-    const csvList: any = await fetchK8s(ClusterServiceVersionModel, '', CEPH_STORAGE_NAMESPACE);
-    const csvItems = csvList.items as ClusterServiceVersionKind[];
-    const ocsCSV = csvItems.find((obj) => getName(obj).includes(OCS_OPERATOR));
+    const csvList = await fetchK8s<ListKind<ClusterServiceVersionKind>>(
+      ClusterServiceVersionModel,
+      '',
+      CEPH_STORAGE_NAMESPACE,
+    );
+    const ocsCSV = csvList.items.find((obj) => _.startsWith(getName(obj), OCS_OPERATOR));
 
     const support = getAnnotations(ocsCSV)[OCS_SUPPORT_ANNOTATION];
     _.keys(OCS_SUPPORT_FLAGS).forEach((feature) => {
