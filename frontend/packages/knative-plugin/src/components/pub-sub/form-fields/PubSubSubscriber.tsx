@@ -1,12 +1,14 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import * as fuzzy from 'fuzzysearch';
+import { useTranslation } from 'react-i18next';
 import { FormGroup, Alert } from '@patternfly/react-core';
 import { ResourceDropdownField, getFieldId } from '@console/shared';
 import { useFormikContext, FormikValues } from 'formik';
 import { knativeServingResourcesServices } from '../../../utils/get-knative-resources';
 
 const PubSubSubscriber: React.FC = () => {
+  const { t } = useTranslation();
   const { values, setFieldValue, setFieldTouched, validateForm, setStatus } = useFormikContext<
     FormikValues
   >();
@@ -43,11 +45,17 @@ const PubSubSubscriber: React.FC = () => {
 
   const dropdownResources = knativeServingResourcesServices(values.metadata.namespace);
   return (
-    <FormGroup fieldId={getFieldId('pubsub', 'subscriber')} label="Subscriber" isRequired>
+    <FormGroup
+      fieldId={getFieldId('pubsub', 'subscriber')}
+      label={t('knative-plugin~Subscriber')}
+      isRequired
+    >
       {resourceAlert && (
         <>
-          <Alert variant="default" title="No Subscriber available" isInline>
-            To create a Subscriber, first create a Knative Service from the Add page.
+          <Alert variant="default" title={t('knative-plugin~No Subscriber available')} isInline>
+            {t(
+              'knative-plugin~To create a Subscriber, first create a Knative Service from the Add page.',
+            )}
           </Alert>
           &nbsp;
         </>
@@ -58,7 +66,7 @@ const PubSubSubscriber: React.FC = () => {
         dataSelector={['metadata', 'name']}
         fullWidth
         required
-        placeholder="Select Subscriber"
+        placeholder={t('knative-plugin~Select Subscriber')}
         showBadge
         autocompleteFilter={autocompleteFilter}
         onChange={onSubscriberChange}

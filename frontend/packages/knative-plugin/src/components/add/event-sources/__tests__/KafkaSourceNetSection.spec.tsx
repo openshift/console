@@ -3,6 +3,14 @@ import { shallow } from 'enzyme';
 import KafkaSourceNetSection from '../KafkaSourceNetSection';
 import SecretKeySelector from '../../SecretKeySelector';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 jest.mock('formik', () => ({
   useFormikContext: jest.fn(() => ({
     values: {

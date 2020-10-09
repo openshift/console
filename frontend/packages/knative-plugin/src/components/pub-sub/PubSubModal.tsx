@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { FormikProps, FormikValues } from 'formik';
+import { useTranslation } from 'react-i18next';
 import {
   ModalTitle,
   ModalBody,
@@ -30,20 +31,27 @@ const PubSubModal: React.FC<Props> = ({
   errors,
   values,
 }) => {
+  const { t } = useTranslation();
   const dirty = values?.metadata?.name && values?.spec?.subscriber?.ref?.name;
   return (
     <form className="modal-content modal-content--no-inner-scroll" onSubmit={handleSubmit}>
       <ModalTitle>{labelTitle}</ModalTitle>
       <ModalBody>
         <FormSection fullWidth>
-          <InputField type={TextInputTypes.text} name="metadata.name" label="Name" required />
+          <InputField
+            type={TextInputTypes.text}
+            name="metadata.name"
+            label={t('knative-plugin~Name')}
+            required
+          />
           <PubSubSubscriber />
           {filterEnabled && <PubSubFilter />}
         </FormSection>
       </ModalBody>
       <ModalSubmitFooter
         inProgress={isSubmitting}
-        submitText="Add"
+        submitText={t('knative-plugin~Add')}
+        cancelText={t('knative-plugin~Cancel')}
         submitDisabled={!dirty || !_.isEmpty(errors)}
         cancel={cancel}
         errorMessage={status.error}

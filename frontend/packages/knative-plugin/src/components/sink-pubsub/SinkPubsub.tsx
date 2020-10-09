@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Formik, FormikValues, FormikHelpers } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { K8sResourceKind, k8sUpdate, referenceFor, modelFor } from '@console/internal/module/k8s';
 import SinkPubsubModal from './SinkPubsubModal';
 import { knativeServingResourcesServices } from '../../utils/get-knative-resources';
@@ -11,6 +12,7 @@ export interface SinkPubsubProps {
 }
 
 const SinkPubsub: React.FC<SinkPubsubProps> = ({ source, cancel, close }) => {
+  const { t } = useTranslation();
   const {
     kind: sourceKind,
     metadata: { namespace, name },
@@ -42,7 +44,8 @@ const SinkPubsub: React.FC<SinkPubsubProps> = ({ source, cancel, close }) => {
         close();
       })
       .catch((err) => {
-        action.setStatus({ error: err.message || 'An error occurred. Please try again' });
+        const errMessage = err.message || t('knative-plugin~An error occurred. Please try again');
+        action.setStatus({ error: errMessage });
       });
   };
 
@@ -58,7 +61,7 @@ const SinkPubsub: React.FC<SinkPubsubProps> = ({ source, cancel, close }) => {
           {...formikProps}
           resourceName={name}
           resourceDropdown={resourcesDropdownField}
-          labelTitle={`Move ${sourceKind}`}
+          labelTitle={t('knative-plugin~Move {{sourceKind}}', { sourceKind })}
           cancel={cancel}
         />
       )}

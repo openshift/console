@@ -14,6 +14,14 @@ const props: QuickStartTaskReviewProps = {
   onTaskReview: jest.fn(),
 };
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key: string) => key }),
+  };
+});
+
 describe('QuickStartTaskReview', () => {
   it('should render alert with info variant when task status is review', () => {
     wrapper = shallow(<QuickStartTaskReview {...props} />);

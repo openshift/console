@@ -7,6 +7,14 @@ import SinkBindingSection from '../SinkBindingSection';
 
 type SinkBindingSectionProps = React.ComponentProps<typeof SinkBindingSection>;
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 jest.mock('formik', () => ({
   useField: jest.fn(() => [{}, {}]),
   useFormikContext: jest.fn(() => ({
@@ -19,6 +27,9 @@ jest.mock('formik', () => ({
   })),
   getFieldId: jest.fn(),
 }));
+
+const i18nNS = 'knative-plugin';
+
 describe('SinkBindingSection', () => {
   const title = 'Sink Binding';
   let wrapper: ShallowWrapper<SinkBindingSectionProps>;
@@ -33,8 +44,8 @@ describe('SinkBindingSection', () => {
   it('should render NameValueEditor', () => {
     const nameValueEditorField = wrapper.find(AsyncComponent);
     expect(nameValueEditorField).toHaveLength(1);
-    expect(nameValueEditorField.props().nameString).toBe('Name');
-    expect(nameValueEditorField.props().valueString).toBe('Value');
+    expect(nameValueEditorField.props().nameString).toBe(`${i18nNS}~Name`);
+    expect(nameValueEditorField.props().valueString).toBe(`${i18nNS}~Value`);
   });
 
   it('should render InputFields', () => {

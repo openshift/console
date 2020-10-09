@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@patternfly/react-core';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { SidebarSectionHeading, useAccessReview } from '@console/internal/components/utils';
@@ -17,6 +18,7 @@ export type RevisionsOverviewListProps = {
 const MAX_REVISIONS: number = 3;
 
 const RevisionsOverviewList: React.FC<RevisionsOverviewListProps> = ({ revisions, service }) => {
+  const { t } = useTranslation();
   const canSetTrafficDistribution = useAccessReview({
     group: ServiceModel.apiGroup,
     resource: ServiceModel.plural,
@@ -51,10 +53,13 @@ const RevisionsOverviewList: React.FC<RevisionsOverviewListProps> = ({ revisions
 
   return (
     <>
-      <SidebarSectionHeading text="Revisions" className="revision-overview-list">
+      <SidebarSectionHeading
+        text={t('knative-plugin~Revisions')}
+        className="revision-overview-list"
+      >
         {revisions?.length > MAX_REVISIONS && (
           <Link className="sidebar__section-view-all" to={getRevisionsLink()}>
-            {`View all (${revisions.length})`}
+            {t('knative-plugin~View all ({{revLength}})', { revLength: revisions.length })}
           </Link>
         )}
 
@@ -64,12 +69,14 @@ const RevisionsOverviewList: React.FC<RevisionsOverviewListProps> = ({ revisions
             onClick={() => setTrafficDistributionModal({ obj: service })}
             isDisabled={!(revisions && revisions.length)}
           >
-            Set Traffic Distribution
+            {t('knative-plugin~Set Traffic Distribution')}
           </Button>
         )}
       </SidebarSectionHeading>
       {_.isEmpty(revisions) ? (
-        <span className="text-muted">No Revisions found for this resource.</span>
+        <span className="text-muted">
+          {t('knative-plugin~No Revisions found for this resource.')}
+        </span>
       ) : (
         <ul className="list-group">
           {_.map(filteredRevisions(), (revision) => (

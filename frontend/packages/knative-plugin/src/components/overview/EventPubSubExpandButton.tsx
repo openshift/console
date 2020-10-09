@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@patternfly/react-core';
 import { AngleDownIcon, AngleRightIcon } from '@patternfly/react-icons';
 
@@ -13,7 +14,8 @@ const EventPubSubExpandButton: React.FC<EventPubSubExpandButtonProps> = ({
   rowSelected,
   onClick,
 }) => {
-  const title = `${rowSelected ? 'Hide' : 'Show'} filters`;
+  const { t } = useTranslation();
+  const title = rowSelected ? t('knative-plugin~Hide filters') : t('knative-plugin~Show filters');
   return (
     <Button aria-label={title} onClick={onClick} title={title} variant="plain">
       <span className="kn-event-pubsub-expand-button__link">{title}</span>

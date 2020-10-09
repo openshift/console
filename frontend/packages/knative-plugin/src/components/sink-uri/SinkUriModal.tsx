@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { FormikProps, FormikValues } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { Form, FormGroup, TextInputTypes } from '@patternfly/react-core';
 import { InputField, getFieldId } from '@console/shared';
 import {
@@ -23,23 +24,26 @@ const SinkUriModal: React.FC<Props> = ({
   values,
   initialValues,
 }) => {
+  const { t } = useTranslation();
   const fieldId = getFieldId('sink-name', 'uri');
   const dirty = values?.uri !== initialValues.uri;
   return (
     <Form onSubmit={handleSubmit}>
       <div className="modal-content modal-content--no-inner-scroll">
-        <ModalTitle>Edit URI</ModalTitle>
+        <ModalTitle>{t('knative-plugin~Edit URI')}</ModalTitle>
         <ModalBody>
           <FormSection fullWidth>
             <FormGroup
               fieldId={fieldId}
-              helperText="Editing this URI will affect all associated Event Sources."
+              helperText={t(
+                'knative-plugin~Editing this URI will affect all associated Event Sources.',
+              )}
               isRequired
             >
               <InputField
                 type={TextInputTypes.text}
                 name="uri"
-                placeholder="Enter URI"
+                placeholder={t('knative-plugin~Enter URI')}
                 data-test-id="edit-sink-uri"
                 required
               />
@@ -48,8 +52,9 @@ const SinkUriModal: React.FC<Props> = ({
         </ModalBody>
         <ModalSubmitFooter
           inProgress={isSubmitting}
-          submitText="Save"
+          submitText={t('knative-plugin~Save')}
           submitDisabled={!dirty}
+          cancelText={t('knative-plugin~Cancel')}
           cancel={cancel}
           errorMessage={status.error}
         />

@@ -18,6 +18,16 @@ import {
 } from '../../../models';
 import EventSinkServicesOverviewList from '../EventSinkServicesOverviewList';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
+const i18nNS = 'knative-plugin';
+
 describe('EventSinkServicesOverviewList', () => {
   const current: PodControllerOverviewItem = {
     obj: {
@@ -73,7 +83,7 @@ describe('EventSinkServicesOverviewList', () => {
       'status',
     ]);
     const wrapper = shallow(<EventSinkServicesOverviewList obj={mockData} />);
-    expect(wrapper.find('span').text()).toBe('No sink found for this resource.');
+    expect(wrapper.find('span').text()).toBe(`${i18nNS}~No sink found for this resource.`);
   });
 
   it('should have ResourceLink with proper kind for sink to knSvc', () => {

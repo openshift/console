@@ -12,6 +12,14 @@ import ConfigurationsOverviewList from '../ConfigurationsOverviewList';
 import KSRoutesOverviewList from '../RoutesOverviewList';
 import DeploymentOverviewList from '../DeploymentOverviewList';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 describe('KnativeRevisionResources', () => {
   it('should render KnativeRevisionResources', () => {
     const wrapper = shallow(

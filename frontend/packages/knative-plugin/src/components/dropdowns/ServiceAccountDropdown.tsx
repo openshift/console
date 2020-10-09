@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { ResourceDropdownField } from '@console/shared';
 import { ServiceAccountModel } from '@console/internal/models';
 import { RootState } from '@console/internal/redux';
@@ -18,6 +19,7 @@ const ServiceAccountDropdown: React.FC<ServiceAccountDropdownProps & StateProps>
   name,
   namespace,
 }) => {
+  const { t } = useTranslation();
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
   const resources = [
     {
@@ -31,12 +33,12 @@ const ServiceAccountDropdown: React.FC<ServiceAccountDropdownProps & StateProps>
   return (
     <ResourceDropdownField
       name={name}
-      label="Service Account Name"
+      label={t('knative-plugin~Service Account Name')}
       resources={resources}
       dataSelector={['metadata', 'name']}
-      placeholder="Select a Service Account Name"
+      placeholder={t('knative-plugin~Select a Service Account Name')}
       autocompleteFilter={autocompleteFilter}
-      helpText="The name of Service Account use to run this"
+      helpText={t('knative-plugin~The name of Service Account use to run this')}
       fullWidth
       showBadge
     />

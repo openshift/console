@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useField } from 'formik';
+import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { DropdownField, DropdownFieldProps } from '@console/shared';
 import { getChannelKind } from '../../../../utils/create-channel-utils';
@@ -17,7 +18,7 @@ const ChannelSelector: React.FC<ChannelSelectorProps> = ({
   defaultConfiguredChannel,
 }) => {
   const [selected] = useField('type');
-
+  const { t } = useTranslation();
   const filteredChannels = _.flatten(
     _.partition(channels, (ref) => getChannelKind(ref) === EventingChannelModel.kind),
   );
@@ -26,7 +27,10 @@ const ChannelSelector: React.FC<ChannelSelectorProps> = ({
     const channelName = getChannelKind(channel);
     acc[channel] =
       channelName === EventingChannelModel.kind && defaultConfiguredChannel
-        ? `Default ${channelName} (${defaultConfiguredChannel})`
+        ? t('knative-plugin~Default {{channelName}} ({{defaultConfiguredChannel}})', {
+            channelName,
+            defaultConfiguredChannel,
+          })
         : channelName;
     return acc;
   }, {});
@@ -49,9 +53,9 @@ const ChannelSelector: React.FC<ChannelSelectorProps> = ({
     <FormSection extraMargin>
       <DropdownField
         name="type"
-        label="Type"
+        label={t('knative-plugin~Type')}
         items={channelData}
-        title="Type"
+        title={t('knative-plugin~Type')}
         onChange={onChange}
         fullWidth
         required
