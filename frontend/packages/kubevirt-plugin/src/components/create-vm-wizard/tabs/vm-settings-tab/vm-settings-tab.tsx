@@ -15,7 +15,7 @@ import {
 } from '../../types';
 import { iGetVmSettings } from '../../selectors/immutable/vm-settings';
 import { ActionType } from '../../redux/types';
-import { iGetCommonData } from '../../selectors/immutable/selectors';
+import { getInitialData, iGetCommonData } from '../../selectors/immutable/selectors';
 import { getStepsMetadata } from '../../selectors/immutable/wizard-selectors';
 import { iGetProvisionSourceStorage } from '../../selectors/immutable/storage';
 import { WorkloadSelect } from './workload-profile';
@@ -32,6 +32,7 @@ import './vm-settings-tab.scss';
 export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
   iUserTemplate,
   commonTemplates,
+  commonTemplateName,
   cnvBaseImages,
   provisionSourceStorage,
   updateStorage,
@@ -62,6 +63,17 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
         </FormField>
       </FormFieldMemoRow>
       <FormFieldMemoRow
+        field={getField(VMSettingsField.TEMPLATE_PROVIDER)}
+        fieldType={FormFieldType.TEXT}
+      >
+        <FormField>
+          <TextInput onChange={onChange(VMSettingsField.TEMPLATE_PROVIDER)} />
+        </FormField>
+        <div className="pf-c-form__helper-text" aria-live="polite">
+          example: your company name
+        </div>
+      </FormFieldMemoRow>
+      <FormFieldMemoRow
         field={getField(VMSettingsField.DESCRIPTION)}
         fieldType={FormFieldType.TEXT_AREA}
       >
@@ -75,6 +87,7 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
       <OS
         iUserTemplate={iUserTemplate}
         commonTemplates={commonTemplates}
+        commonTemplateName={commonTemplateName}
         operatinSystemField={getField(VMSettingsField.OPERATING_SYSTEM)}
         flavor={getFieldValue(VMSettingsField.FLAVOR)}
         cloneBaseDiskImageField={getField(VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE)}
@@ -136,6 +149,7 @@ const stateToProps = (state, { wizardReduxID }) => ({
   vmSettings: iGetVmSettings(state, wizardReduxID),
   commonTemplates: iGetCommonData(state, wizardReduxID, VMWizardProps.commonTemplates),
   iUserTemplate: iGetCommonData(state, wizardReduxID, VMWizardProps.userTemplate),
+  commonTemplateName: getInitialData(state, wizardReduxID).commonTemplateName,
   cnvBaseImages: iGetCommonData(state, wizardReduxID, VMWizardProps.openshiftCNVBaseImages),
   openshiftFlag: iGetCommonData(state, wizardReduxID, VMWizardProps.openshiftFlag),
   provisionSourceStorage: iGetProvisionSourceStorage(state, wizardReduxID),
@@ -149,6 +163,7 @@ type VMSettingsTabComponentProps = {
   provisionSourceStorage: VMWizardStorage;
   commonTemplates: any;
   iUserTemplate: any;
+  commonTemplateName: string;
   cnvBaseImages: any;
   openshiftFlag: boolean;
   goToStep: (stepID: VMWizardTab) => void;

@@ -1,9 +1,13 @@
-import { k8sBasePath } from '@console/internal/module/k8s';
+import * as _ from 'lodash';
+import { k8sBasePath, TemplateKind } from '@console/internal/module/k8s';
+import { history } from '@console/internal/components/utils/router';
+import { getName, getNamespace } from '@console/shared';
 import { VMWizardMode, VMWizardName, VMWizardView } from '../constants/vm';
 import { VMKind } from '../types';
 import { VMTabURLEnum } from '../components/vms/types';
-import { getName, getNamespace } from '@console/shared';
-import { history } from '@console/internal/components/utils/router';
+import { isCommonTemplate } from '../selectors/vm-template/basic';
+import { VMWizardURLParams } from '../constants/url-params';
+import { VMWizardBootSourceParams, VMWizardInitialData } from '../types/url';
 
 const ELLIPSIS = '…';
 
@@ -68,31 +72,86 @@ export const getVMWizardCreateLink = ({
   mode,
   view,
   template,
+  name,
+  bootSource,
+  startVM,
 }: {
-  namespace: string;
+  namespace?: string;
   wizardName: VMWizardName;
-  mode: VMWizardMode;
+  mode?: VMWizardMode;
   view?: VMWizardView;
-  template?: string;
+  template?: TemplateKind;
+  name?: string;
+  bootSource?: VMWizardBootSourceParams;
+  startVM?: boolean;
 }) => {
+  const params = new URLSearchParams();
+  const initialData: VMWizardInitialData = {};
+
+  if (wizardName === VMWizardName.BASIC) {
+    if (namespace) {
+      params.append(VMWizardURLParams.NAMESPACE, namespace);
+    }
+    if (template && isCommonTemplate(template)) {
+      initialData.commonTemplateName = template.metadata.name;
+      params.append(VMWizardURLParams.INITIAL_DATA, JSON.stringify(initialData));
+    }
+    const paramsString = params.toString() ? `?${params}` : '';
+    return `/k8s/virtualization/~new-from-template${paramsString}`;
+  }
+
   const type = wizardName === VMWizardName.YAML ? '~new' : '~new-wizard';
 
-  const params = new URLSearchParams();
-
   if (mode && mode !== VMWizardMode.VM) {
-    params.append('mode', mode);
+    params.append(VMWizardURLParams.MODE, mode);
   }
 
   if (template) {
-    params.append('template', template);
+    if (isCommonTemplate(template)) {
+      initialData.commonTemplateName = template.metadata.name;
+    } else {
+      initialData.userTemplateName = template.metadata.name;
+      initialData.userTemplateNs = template.metadata.namespace;
+    }
+  }
+
+  if (name) {
+    initialData.name = name;
+  }
+
+  if (startVM) {
+    initialData.startVM = startVM;
+  }
+
+  if (bootSource) {
+    initialData.source = bootSource;
   }
 
   if (mode === VMWizardMode.IMPORT && view === VMWizardView.ADVANCED) {
     // only valid combination in the wizard for now
-    params.append('view', view);
+    params.append(VMWizardURLParams.VIEW, view);
+  }
+
+  if (!_.isEmpty(initialData)) {
+    params.append(VMWizardURLParams.INITIAL_DATA, JSON.stringify(initialData));
   }
 
   const paramsString = params.toString() ? `?${params}` : '';
 
   return `/k8s/ns/${namespace || 'default'}/virtualization/${type}${paramsString}`;
+};
+
+export const parseVMWizardInitialData = (searchParams: URLSearchParams): VMWizardInitialData => {
+  let initialData: VMWizardInitialData = {};
+  const initDataParams = searchParams.get(VMWizardURLParams.INITIAL_DATA);
+  if (VMWizardMode.VM && initDataParams) {
+    try {
+      initialData = JSON.parse(initDataParams);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.warn('Cannot parse source params', e);
+      initialData = {};
+    }
+  }
+  return initialData;
 };

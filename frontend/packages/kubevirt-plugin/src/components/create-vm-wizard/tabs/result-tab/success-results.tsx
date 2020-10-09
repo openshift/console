@@ -22,13 +22,14 @@ import {
 } from '../../../../utils/utils';
 import { isOvirtProvider } from '../../selectors/immutable/provider/ovirt/selectors';
 
-const SuccessResultsComponent: React.FC<SuccessResultsProps> = ({
+export const SuccessResultsComponent: React.FC<SuccessResultsProps> = ({
   isCreateTemplate,
   isOvirtImportProvider,
   isProviderImport,
   name,
   namespace,
   className,
+  onClick,
 }) => {
   const modelName = getVMLikeModelName(isCreateTemplate);
   const modelDetailPath = `${getVMLikeModelDetailPath(isCreateTemplate, namespace, name)}`;
@@ -41,14 +42,24 @@ const SuccessResultsComponent: React.FC<SuccessResultsProps> = ({
     <Button
       key="detail"
       variant={ButtonVariant.primary}
-      onClick={() => history.push(modelDetailPath)}
+      onClick={() => {
+        history.push(modelDetailPath);
+        onClick && onClick();
+      }}
     >
       See {modelName} details
     </Button>
   );
 
   const listButton = (
-    <Button key="list" variant={ButtonVariant.link} onClick={() => history.push(modelListPath)}>
+    <Button
+      key="list"
+      variant={ButtonVariant.link}
+      onClick={() => {
+        history.push(modelListPath);
+        onClick && onClick();
+      }}
+    >
       Go to list
     </Button>
   );
@@ -73,12 +84,13 @@ const SuccessResultsComponent: React.FC<SuccessResultsProps> = ({
 };
 
 type SuccessResultsProps = {
-  isCreateTemplate: boolean;
-  isOvirtImportProvider: boolean;
-  isProviderImport: boolean;
+  isCreateTemplate?: boolean;
+  isOvirtImportProvider?: boolean;
+  isProviderImport?: boolean;
   name: string;
   namespace: string;
   className?: string;
+  onClick?: VoidFunction;
 };
 
 const stateToProps = (state, { wizardReduxID }) => ({

@@ -4,6 +4,8 @@ import { HelpIcon } from '@patternfly/react-icons';
 import { LoadingInline } from '@console/internal/components/utils';
 import { ValidationErrorType } from '@console/shared';
 
+import { preventDefault } from './utils';
+
 import './form-row.scss';
 
 export const FormRow: React.FC<FormRowProps> = ({
@@ -45,7 +47,7 @@ export const FormRow: React.FC<FormRowProps> = ({
           >
             <button
               type="button"
-              onClick={(e) => e.preventDefault()}
+              onClick={preventDefault}
               className="pf-c-form__group-label-help"
               aria-label={`${fieldId} help`}
             >

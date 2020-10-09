@@ -47,7 +47,9 @@ export const validatePositiveInteger = (
   if (emptyError) {
     return emptyError;
   }
-  return isPositiveNumber(value) ? null : asValidationObject('must be positive integer');
+  return isPositiveNumber(value)
+    ? null
+    : asValidationObject(addMissingSubject('must be positive integer', subject));
 };
 
 export const validateTrim = (

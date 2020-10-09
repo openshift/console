@@ -26,9 +26,10 @@ import {
   VMWizardMode,
   VMWizardView,
 } from '../../constants/vm';
+import { VMWizardURLParams } from '../../constants/url-params';
 import { getResource } from '../../utils';
 import { IDReferences, makeIDReferences } from '../../utils/redux/id-reference';
-import { usePVCBaseImages } from '../../hooks/use-pvc-base-images';
+import { useBaseImages } from '../../hooks/use-base-images';
 import { iGetLoadedData, immutableListToShallowJS } from '../../utils/immutable';
 import {
   ChangedCommonData,
@@ -64,6 +65,8 @@ import { CloudInitTab } from './tabs/cloud-init-tab/cloud-init-tab';
 import { useStorageClassConfigMapWrapped } from '../../hooks/storage-class-config-map';
 import { ValidTabGuard } from './tabs/valid-tab-guard';
 import { FirehoseResourceEnhanced } from '../../types/custom';
+import { parseVMWizardInitialData } from '../../utils/url';
+import { VMWizardInitialData } from '../../types/url';
 
 import './create-vm-wizard.scss';
 
@@ -72,6 +75,7 @@ type CreateVMWizardComponentProps = {
   isProviderImport: boolean;
   isCreateTemplate: boolean;
   isLastTabErrorFatal: boolean;
+  initialData: VMWizardInitialData;
   dataIDReferences: IDReferences;
   reduxID: string;
   tabsMetadata: VMWizardTabsMetadata;
@@ -323,7 +327,8 @@ const wizardDispatchToProps = (dispatch, props) => ({
         data: {
           isCreateTemplate: props.isCreateTemplate,
           isProviderImport: props.isProviderImport,
-          isUserTemplateInitialized: false,
+          isTemplateInitialized: false,
+          initialData: props.initialData,
           storageClassConfigMap: undefined,
           openshiftCNVBaseImages: undefined,
           isSimpleView: props.isSimpleView,
@@ -377,8 +382,9 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
 }) => {
   const activeNamespace = match && match.params && match.params.ns;
   const searchParams = new URLSearchParams(location && location.search);
-  const userMode = searchParams.get('mode') || VMWizardMode.VM;
-  const userTemplateName = (userMode === VMWizardMode.VM && searchParams.get('template')) || '';
+  const userMode = searchParams.get(VMWizardURLParams.MODE) || VMWizardMode.VM;
+
+  const initialData = parseVMWizardInitialData(searchParams);
 
   let resources: FirehoseResourceEnhanced[] = [];
 
@@ -426,11 +432,11 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
         );
       }
 
-      if (userTemplateName) {
+      if (initialData.userTemplateName) {
         resources.push(
           getResource(TemplateModel, {
-            name: userTemplateName,
-            namespace: activeNamespace,
+            name: initialData.userTemplateName,
+            namespace: initialData.userTemplateNs,
             prop: VMWizardProps.userTemplate,
             isList: false,
             matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM },
@@ -451,7 +457,7 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
     [commonTemplates, userMode],
   );
 
-  const openshiftCNVBaseImagesListResult = usePVCBaseImages(loadedCommonTemplates);
+  const openshiftCNVBaseImagesListResult = useBaseImages(loadedCommonTemplates);
   // TODO integrate the list of watches into the redux store to prevent unnecessary copying of data
   const openshiftCNVBaseImages = React.useMemo(
     () => ({
@@ -481,7 +487,8 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
         storageClassConfigMap={storageClassConfigMap}
         openshiftCNVBaseImages={openshiftCNVBaseImages}
         reduxID={reduxID}
-        onClose={() => history.goBack()}
+        onClose={history.goBack}
+        initialData={initialData}
       />
     </Firehose>
   );

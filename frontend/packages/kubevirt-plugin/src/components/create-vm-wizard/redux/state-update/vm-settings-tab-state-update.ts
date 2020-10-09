@@ -11,6 +11,7 @@ import { InternalActionType, UpdateOptions } from '../types';
 import { asDisabled, asHidden, asRequired } from '../../utils/utils';
 import { vmWizardInternalActions } from '../internal-actions';
 import {
+  getInitialData,
   iGetCommonData,
   iGetLoadedCommonData,
   iGetName,
@@ -24,51 +25,60 @@ import {
 } from '../../../../selectors/immutable/template/combined';
 import {
   CUSTOM_FLAVOR,
-  TEMPLATE_DATAVOLUME_NAME_PARAMETER,
-  TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER,
+  TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
+  TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
 } from '../../../../constants/vm';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { prefillVmTemplateUpdater } from './prefill-vm-template-state-update';
-import { iGetPrameterValue, iGetAnnotation } from '../../../../selectors/immutable/common';
+import { iGetAnnotation, iGetPrameterValue } from '../../../../selectors/immutable/common';
 import { CDI_UPLOAD_POD_ANNOTATION, CDI_UPLOAD_RUNNING } from '../../../cdi-upload-provider/consts';
 import { commonTemplatesUpdater } from './vm-common-templates-updater';
+import { iGetIsLoaded, iGetLoadError } from '../../../../utils/immutable';
 
-const selectUserTemplateOnLoadedUpdater = (options: UpdateOptions) => {
+const selectTemplateOnLoadedUpdater = (options: UpdateOptions) => {
   const { id, dispatch, getState } = options;
   const state = getState();
 
-  if (
-    iGetCommonData(state, id, VMWizardProps.isUserTemplateInitialized) ||
-    !iGetLoadedCommonData(state, id, VMWizardProps.userTemplate)
-  ) {
+  if (iGetCommonData(state, id, VMWizardProps.isTemplateInitialized)) {
     return;
   }
 
-  dispatch(
-    vmWizardInternalActions[InternalActionType.UpdateCommonDataValue](
-      id,
-      [VMWizardProps.isUserTemplateInitialized],
-      true,
-    ),
-  );
+  const { commonTemplateName } = getInitialData(state, id);
+
+  const commonTemplateReady =
+    commonTemplateName &&
+    iGetIsLoaded(iGetCommonData(state, id, VMWizardProps.commonTemplates)) &&
+    iGetIsLoaded(iGetCommonData(state, id, VMWizardProps.openshiftCNVBaseImages)) &&
+    !iGetLoadError(iGetCommonData(state, id, VMWizardProps.openshiftCNVBaseImages));
 
   const iUserTemplate = iGetLoadedCommonData(state, id, VMWizardProps.userTemplate);
-  const isDisabled = asDisabled(iUserTemplate != null, VMWizardProps.userTemplate);
 
-  dispatch(
-    vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, {
-      [VMSettingsField.PROVISION_SOURCE_TYPE]: { isDisabled },
-      [VMSettingsField.CONTAINER_IMAGE]: { isDisabled },
-      [VMSettingsField.IMAGE_URL]: { isDisabled },
-      [VMSettingsField.OPERATING_SYSTEM]: { isDisabled },
-      [VMSettingsField.WORKLOAD_PROFILE]: { isDisabled },
-      [VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE]: {
-        isHidden: asHidden(iUserTemplate != null, VMWizardProps.userTemplate),
-      },
-    }),
-  );
+  if (commonTemplateReady || iUserTemplate) {
+    dispatch(
+      vmWizardInternalActions[InternalActionType.UpdateCommonDataValue](
+        id,
+        [VMWizardProps.isTemplateInitialized],
+        true,
+      ),
+    );
 
-  prefillVmTemplateUpdater(options);
+    const isDisabled = asDisabled(iUserTemplate != null, VMWizardProps.userTemplate);
+
+    dispatch(
+      vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, {
+        [VMSettingsField.PROVISION_SOURCE_TYPE]: { isDisabled },
+        [VMSettingsField.CONTAINER_IMAGE]: { isDisabled },
+        [VMSettingsField.IMAGE_URL]: { isDisabled },
+        [VMSettingsField.OPERATING_SYSTEM]: { isDisabled },
+        [VMSettingsField.WORKLOAD_PROFILE]: { isDisabled },
+        [VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE]: {
+          isHidden: asHidden(iUserTemplate != null, VMWizardProps.userTemplate),
+        },
+      }),
+    );
+
+    prefillVmTemplateUpdater(options);
+  }
 };
 
 const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
@@ -141,8 +151,8 @@ const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
     const relevantOptions = iGetRelevantTemplateSelectors(state, id);
     const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
     const iTemplate = iCommonTemplates && iGetRelevantTemplate(iCommonTemplates, relevantOptions);
-    const pvcName = iGetPrameterValue(iTemplate, TEMPLATE_DATAVOLUME_NAME_PARAMETER);
-    const pvcNamespace = iGetPrameterValue(iTemplate, TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER);
+    const pvcName = iGetPrameterValue(iTemplate, TEMPLATE_BASE_IMAGE_NAME_PARAMETER);
+    const pvcNamespace = iGetPrameterValue(iTemplate, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER);
 
     const iBaseImages = iGetLoadedCommonData(state, id, VMWizardProps.openshiftCNVBaseImages);
     iBaseImage =
@@ -304,7 +314,7 @@ const flavorUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => 
 
 export const updateVmSettingsState = (options: UpdateOptions) =>
   [
-    selectUserTemplateOnLoadedUpdater,
+    selectTemplateOnLoadedUpdater,
     osUpdater,
     baseImageUpdater,
     cloneCommonBaseDiskImageUpdater,

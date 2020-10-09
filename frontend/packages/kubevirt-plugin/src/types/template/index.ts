@@ -1,3 +1,4 @@
+import { TemplateKind } from '@console/internal/module/k8s';
 import { Map } from 'immutable';
 
 enum commonTemplatesValidationRules {
@@ -23,3 +24,12 @@ export type CommonTemplatesValidation = {
 
 export type ILabels = Map<string, string>;
 export type ITemplate = Map<string, any>;
+
+export type TemplateItem = {
+  metadata: {
+    name: string;
+    uid: string;
+  };
+  isCommon: boolean;
+  variants: TemplateKind[];
+};

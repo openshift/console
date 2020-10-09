@@ -13,14 +13,37 @@ import {
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_TYPE_VM,
   TEMPLATE_WORKLOAD_LABEL,
-  TEMPLATE_DATAVOLUME_NAME_PARAMETER,
-  TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER,
+  TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
+  TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
   TEMPLATE_VERSION_LABEL,
+  LABEL_CDROM_SOURCE,
+  OS_WINDOWS_PREFIX,
+  DiskBus,
+  ROOT_DISK_NAME,
+  DataVolumeSourceType,
 } from '../../constants/vm';
-import { getCloudInitVolume } from '../vm/selectors';
+import {
+  getCloudInitVolume,
+  getCPU,
+  getDataVolumeTemplates,
+  getDisks,
+  getFlavor,
+  getMemory,
+} from '../vm/selectors';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
-import { selectVM } from './basic';
 import { compareVersions, removeOSDups } from '../../utils/sort';
+import { selectVM, isCommonTemplate } from './basic';
+import {
+  convertToBaseValue,
+  pluralize,
+  humanizeBinaryBytes,
+} from '@console/internal/components/utils';
+import { isTemplateSourceError, TemplateSourceStatus } from '../../statuses/template/types';
+import { vCPUCount } from '../vm/cpu';
+import { BootSourceState } from '../../components/create-vm/forms/boot-source-form-reducer';
+import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
+import { DiskWrapper } from '../../k8s/wrapper/vm/disk-wrapper';
+import { getDataVolumeStorageSize } from '../dv/selectors';
 
 export const getTemplatesWithLabels = (templates: TemplateKind[], labels: string[]) => {
   const requiredLabels = labels.filter((label) => label);
@@ -94,8 +117,8 @@ export const getTemplateOperatingSystems = (templates: TemplateKind[]) => {
       return {
         id: osId,
         name: getAnnotation(template, nameAnnotation),
-        dataVolumeName: getParameterValue(template, TEMPLATE_DATAVOLUME_NAME_PARAMETER),
-        dataVolumeNamespace: getParameterValue(template, TEMPLATE_DATAVOLUME_NAMESPACE_PARAMETER),
+        baseImageName: getParameterValue(template, TEMPLATE_BASE_IMAGE_NAME_PARAMETER),
+        baseImageNamespace: getParameterValue(template, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER),
       };
     }),
   );
@@ -103,3 +126,73 @@ export const getTemplateOperatingSystems = (templates: TemplateKind[]) => {
 
 export const getTemplateWorkloadProfiles = (templates: TemplateKind[]) =>
   getTemplatesLabelValues(templates, TEMPLATE_WORKLOAD_LABEL);
+
+export const isWindowsTemplate = (template: TemplateKind): boolean =>
+  getTemplateOperatingSystems([template])?.some((os) => os.id.startsWith(OS_WINDOWS_PREFIX));
+
+export const getTemplateSizeRequirement = (
+  template: TemplateKind,
+  templateSource: TemplateSourceStatus,
+  customSource?: BootSourceState,
+): string => {
+  const vm = selectVM(template);
+  const dvTemplates = getDataVolumeTemplates(vm);
+  const templatesSize = dvTemplates.reduce((acc, dvt) => {
+    const size = getDataVolumeStorageSize(dvt);
+    if (size) {
+      return acc;
+    }
+    return acc + convertToBaseValue(size);
+  }, 0);
+  let sourceSize = 0;
+  let isCDRom = false;
+  if (customSource?.dataSource) {
+    sourceSize =
+      customSource.dataSource?.value === DataVolumeSourceType.PVC.getValue()
+        ? convertToBaseValue(customSource.pvcSize?.value)
+        : convertToBaseValue(`${customSource.size?.value}${customSource.size?.value.unit}`);
+    isCDRom = customSource.cdRom?.value;
+  } else if (
+    isCommonTemplate(template) &&
+    !isTemplateSourceError(templateSource) &&
+    templateSource?.pvc
+  ) {
+    sourceSize = convertToBaseValue(templateSource.pvc.spec.resources.requests.storage);
+    isCDRom =
+      (templateSource.dataVolume || templateSource.pvc)?.metadata.labels?.[LABEL_CDROM_SOURCE] ===
+      'true';
+  } else if (
+    !isCommonTemplate(template) &&
+    !isTemplateSourceError(templateSource) &&
+    templateSource.dvTemplate
+  ) {
+    sourceSize = convertToBaseValue(getDataVolumeStorageSize(templateSource.dvTemplate));
+  }
+
+  return `${pluralize(
+    getDisks(vm).length + (isCDRom ? 1 : 0) + (isWindowsTemplate(template) ? 1 : 0),
+    'Disk',
+  )} | ${
+    humanizeBinaryBytes(templatesSize + sourceSize + (isCDRom ? convertToBaseValue('20Gi') : 0))
+      .string
+  }`;
+};
+
+export const getTemplateMemory = (template: TemplateKind): string => {
+  const baseMemoryValue = convertToBaseValue(getMemory(selectVM(template)));
+  return humanizeBinaryBytes(baseMemoryValue).string;
+};
+
+export const getTemplateFlavorDesc = (template: TemplateKind): string =>
+  `${_.capitalize(getFlavor(template) || 'Custom')} ${vCPUCount(
+    getCPU(selectVM(template)),
+  )} CPU | ${getTemplateMemory(template)} Memory`;
+
+export const getDefaultDiskBus = (template: TemplateKind): DiskBus => {
+  const vmWrapper = new VMWrapper(template);
+  const rootDisk = vmWrapper.getDisks().find((d) => d.name === ROOT_DISK_NAME);
+  if (rootDisk) {
+    return DiskBus.VIRTIO;
+  }
+  return new DiskWrapper(rootDisk).getDiskBus() || DiskBus.VIRTIO;
+};

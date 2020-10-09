@@ -1,109 +1,115 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
-import { getNamespace, createLookup, getName } from '@console/shared';
+import { Alert, AlertActionLink, Stack, StackItem } from '@patternfly/react-core';
 import {
-  Firehose,
-  StatusBox,
   ScrollToTopOnMount,
   SectionHeading,
   useAccessReview,
   asAccessReview,
-  FirehoseResult,
+  history,
 } from '@console/internal/components/utils';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { TemplateModel } from '@console/internal/models';
-import { DataVolumeModel } from '../../models';
-import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
+
 import {
   VMTemplateResourceSummary,
   VMTemplateDetailsList,
   VMTemplateSchedulingList,
 } from './vm-template-resource';
 import { HashAnchor } from '../hash-anchor/hash-anchor';
+import { TemplateSourceStatus } from '../../statuses/template/types';
+import { getTemplateName, isCommonTemplate } from '../../selectors/vm-template/basic';
+import { getVMWizardCreateLink } from '../../utils/url';
+import { VMWizardMode, VMWizardName } from '../../constants';
 
-const VMTemplateDetailsFirehose: React.FC<VMTemplateDetailsFirehoseProps> = (props) => {
-  const { obj: template, hasDataVolumes } = props;
-  const namespace = getNamespace(template);
-
-  const resources = [
-    {
-      kind: DataVolumeModel.kind,
-      isList: true,
-      namespace,
-      prop: 'dataVolumes',
-      optional: true,
-    },
-  ];
-
-  const otherProps = { template };
-
-  return (
-    <div className="co-m-pane__body">
-      {hasDataVolumes ? (
-        <Firehose resources={resources}>
-          <VMTemplateDetails {...otherProps} />
-        </Firehose>
-      ) : (
-        <VMTemplateDetails {...otherProps} hasDataVolumes={hasDataVolumes} />
-      )}
-    </div>
-  );
-};
-
-const stateToProps = ({ k8s }) => {
-  return {
-    hasDataVolumes: !!k8s.getIn(['RESOURCES', 'models', DataVolumeModel.kind]),
-  };
-};
-
-export const VMTemplateDetailsConnected = connect(stateToProps)(VMTemplateDetailsFirehose);
-
-const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = (props) => {
-  const { template, dataVolumes, ...restProps } = props;
+export const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = ({
+  obj: template,
+  customData,
+}) => {
   const { t } = useTranslation();
-  const loaded = props.loaded || !props.hasDataVolumes;
-
-  const canUpdate = useAccessReview(asAccessReview(TemplateModel, template, 'patch'));
+  const canUpdate =
+    useAccessReview(asAccessReview(TemplateModel, template, 'patch')) &&
+    !isCommonTemplate(template);
 
   return (
-    <StatusBox data={template} {...restProps} loaded={loaded}>
+    <>
       <ScrollToTopOnMount />
       <div className="co-m-pane__body">
-        <HashAnchor hash="details" />
-        <SectionHeading text={t('kubevirt-plugin~VM Template Details')} />
-        <div className="row">
-          <div className="col-sm-6">
-            <VMTemplateResourceSummary template={template} canUpdateTemplate={canUpdate} />
-          </div>
-          <div className="col-sm-6">
-            <VMTemplateDetailsList
-              template={template}
-              dataVolumeLookup={createLookup(dataVolumes, getName)}
-              canUpdateTemplate={canUpdate}
-            />
-          </div>
-        </div>
+        <Stack hasGutter>
+          {isCommonTemplate(template) && (
+            <StackItem>
+              <Alert
+                variant="info"
+                isInline
+                title={t('kubevirt-plugin~Red Hat provided templates can not be edited')}
+                actionLinks={
+                  <>
+                    <AlertActionLink
+                      onClick={() =>
+                        history.push(
+                          getVMWizardCreateLink({
+                            wizardName: VMWizardName.WIZARD,
+                            mode: VMWizardMode.TEMPLATE,
+                            template,
+                          }),
+                        )
+                      }
+                    >
+                      {t('kubevirt-plugin~Create a new custom template')}
+                    </AlertActionLink>
+                  </>
+                }
+              >
+                <Stack>
+                  <StackItem>
+                    {t(
+                      'kubevirt-plugin~{{ name }} can not be edited because it is provided by the Red Hat OpenShift Virtualization Operator.',
+                      { name: getTemplateName(template) },
+                    )}
+                  </StackItem>
+                  <StackItem>
+                    {t(
+                      'kubevirt-plugin~We suggest you create a custom Template from this Red Hat template.',
+                    )}
+                  </StackItem>
+                </Stack>
+              </Alert>
+            </StackItem>
+          )}
+          <StackItem>
+            <HashAnchor hash="details" />
+            <SectionHeading text={t('kubevirt-plugin~VM Template Details')} />
+            <div className="row">
+              <div className="col-sm-6">
+                <VMTemplateResourceSummary template={template} canUpdateTemplate={canUpdate} />
+              </div>
+              <div className="col-sm-6">
+                <VMTemplateDetailsList
+                  template={template}
+                  canUpdateTemplate={canUpdate}
+                  {...customData}
+                />
+              </div>
+            </div>
+          </StackItem>
+        </Stack>
       </div>
-      <div id="scheduling" className="co-m-pane__body">
+      <div className="co-m-pane__body">
         <HashAnchor hash="scheduling" />
         <SectionHeading text={t('kubevirt-plugin~Scheduling and resources requirements')} />
         <div className="row">
           <VMTemplateSchedulingList template={template} canUpdateTemplate={canUpdate} />
         </div>
       </div>
-    </StatusBox>
+    </>
   );
 };
 
 type VMTemplateDetailsProps = {
-  template: TemplateKind;
-  dataVolumes?: FirehoseResult<V1alpha1DataVolume[]>;
-  loaded?: boolean;
-  hasDataVolumes?: boolean;
-};
-
-type VMTemplateDetailsFirehoseProps = {
   obj: TemplateKind;
-  hasDataVolumes: boolean;
+  customData: {
+    sourceStatus: TemplateSourceStatus;
+    sourceLoaded: boolean;
+    sourceLoadError: any;
+  };
 };
