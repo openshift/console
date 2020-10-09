@@ -382,12 +382,11 @@ const Graph_: React.FC<GraphProps> = ({
   deleteAll,
   filterLabels = undefined,
   formatLegendLabel,
-  patchQuery,
-  rule,
   namespace,
+  patchQuery,
+  query,
+  ruleDuration,
 }) => {
-  const { duration = 0, query = '' } = rule || {};
-
   // Set the query in Redux so that other components like the graph tooltip can access it
   React.useEffect(() => {
     patchQuery(0, { query });
@@ -396,10 +395,8 @@ const Graph_: React.FC<GraphProps> = ({
   // Clear queries on unmount
   React.useEffect(() => deleteAll, [deleteAll]);
 
-  const queries = React.useMemo(() => [query], [query]);
-
   // 3 times the rule's duration, but not less than 30 minutes
-  const timespan = Math.max(3 * duration, 30 * 60) * 1000;
+  const timespan = Math.max(3 * ruleDuration, 30 * 60) * 1000;
 
   const GraphLink = () =>
     query ? <Link to={queryBrowserURL(query, namespace)}>View in Metrics</Link> : null;
@@ -410,7 +407,8 @@ const Graph_: React.FC<GraphProps> = ({
       filterLabels={filterLabels}
       formatLegendLabel={formatLegendLabel}
       GraphLink={GraphLink}
-      queries={queries}
+      pollInterval={Math.round(timespan / 120)}
+      queries={[query]}
     />
   );
 };
@@ -599,14 +597,16 @@ const alertStateToProps = (state: RootState, { match }): AlertsDetailsPageProps 
 export const AlertsDetailsPage = withFallback(
   connect(alertStateToProps)((props: AlertsDetailsPageProps) => {
     const { alert, loaded, loadError, namespace, rule, silencesLoaded } = props;
-    const { annotations = {}, labels = {}, silencedBy = [] } = alert || {};
-    const { alertname, severity } = labels as any;
     const state = alertState(alert);
+
+    const labelsMemoKey = JSON.stringify(alert?.labels);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const labels: PrometheusLabels = React.useMemo(() => alert?.labels, [labelsMemoKey]);
 
     return (
       <>
         <Helmet>
-          <title>{`${alertname} · Details`}</title>
+          <title>{`${labels?.alertname} · Details`}</title>
         </Helmet>
         <StatusBox data={alert} label={AlertResource.label} loaded={loaded} loadError={loadError}>
           <div className="co-m-nav-title co-m-nav-title--detail co-m-nav-title--breadcrumbs">
@@ -625,8 +625,8 @@ export const AlertsDetailsPage = withFallback(
                   className="co-m-resource-icon--lg"
                   resource={AlertResource}
                 />
-                {alertname}
-                <SeverityBadge severity={severity} />
+                {labels?.alertname}
+                <SeverityBadge severity={labels?.severity} />
               </div>
               {state !== AlertStates.Silenced && (
                 <div className="co-actions" data-test-id="details-actions">
@@ -642,34 +642,39 @@ export const AlertsDetailsPage = withFallback(
             <div className="co-m-pane__body-group">
               <div className="row">
                 <div className="col-sm-12">
-                  <Graph filterLabels={labels} namespace={namespace} rule={rule} />
+                  <Graph
+                    filterLabels={labels}
+                    namespace={namespace}
+                    query={rule?.query}
+                    ruleDuration={rule?.duration}
+                  />
                 </div>
               </div>
               <div className="row">
                 <div className="col-sm-6">
                   <dl className="co-m-pane__details">
                     <dt>Name</dt>
-                    <dd>{alertname}</dd>
+                    <dd>{labels?.alertname}</dd>
                     <dt>
                       <PopoverField label="Severity" body={severityHelp} />
                     </dt>
                     <dd>
-                      <Severity severity={severity} />
+                      <Severity severity={labels?.severity} />
                     </dd>
-                    {annotations.description && (
+                    {alert?.annotations?.description && (
                       <Annotation title="Description">
                         <AlertMessage
-                          alertText={annotations.description}
+                          alertText={alert.annotations.description}
                           labels={labels}
                           template={rule?.annotations.description}
                         />
                       </Annotation>
                     )}
-                    <Annotation title="Summary">{annotations.summary}</Annotation>
-                    {annotations.message && (
+                    <Annotation title="Summary">{alert?.annotations?.summary}</Annotation>
+                    {alert?.annotations?.message && (
                       <Annotation title="Message">
                         <AlertMessage
-                          alertText={annotations.message}
+                          alertText={alert.annotations.message}
                           labels={labels}
                           template={rule?.annotations.message}
                         />
@@ -736,7 +741,7 @@ export const AlertsDetailsPage = withFallback(
               </div>
             </div>
           </div>
-          {silencesLoaded && !_.isEmpty(silencedBy) && (
+          {silencesLoaded && !_.isEmpty(alert?.silencedBy) && (
             <div className="co-m-pane__body">
               <div className="co-m-pane__body-group">
                 <SectionHeading text="Silenced By" />
@@ -744,7 +749,7 @@ export const AlertsDetailsPage = withFallback(
                   <div className="col-xs-12">
                     <Table
                       aria-label="Silenced By"
-                      data={silencedBy}
+                      data={alert?.silencedBy}
                       Header={silenceTableHeaderNoSort}
                       loaded={true}
                       Row={SilenceTableRow}
@@ -920,7 +925,12 @@ export const AlertRulesDetailsPage = withFallback(
               <SectionHeading text="Active Alerts" />
               <div className="row">
                 <div className="col-sm-12">
-                  <Graph formatLegendLabel={formatLegendLabel} namespace={namespace} rule={rule} />
+                  <Graph
+                    formatLegendLabel={formatLegendLabel}
+                    namespace={namespace}
+                    query={rule?.query}
+                    ruleDuration={rule?.duration}
+                  />
                 </div>
               </div>
               <div className="row">
@@ -928,7 +938,7 @@ export const AlertRulesDetailsPage = withFallback(
                   {_.isEmpty(alerts) ? (
                     <div className="text-center">None Found</div>
                   ) : (
-                    <ActiveAlerts alerts={alerts} ruleID={rule.id} namespace={namespace} />
+                    <ActiveAlerts alerts={alerts} ruleID={rule?.id} namespace={namespace} />
                   )}
                 </div>
               </div>
@@ -1657,7 +1667,8 @@ type GraphProps = {
   formatLegendLabel?: FormatLegendLabel;
   namespace?: string;
   patchQuery: (index: number, patch: QueryObj) => any;
-  rule: Rule;
+  query: string;
+  ruleDuration: number;
 };
 
 type MonitoringResourceIconProps = {
