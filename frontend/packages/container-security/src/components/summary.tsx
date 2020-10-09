@@ -74,7 +74,7 @@ export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = ({
                         <div>
                           <ExclamationTriangleIcon
                             color={priority.color.value}
-                            aria-label={priority.title}
+                            title={priority.title}
                           />
                           &nbsp;
                           {_.uniqBy(vulnsFor(priority.value), 'metadata.name').length}{' '}

@@ -115,11 +115,11 @@ const namespaced = (crd: CustomResourceDefinitionKind) => crd.spec.scope === 'Na
 const Established: React.FC<{ crd: CustomResourceDefinitionKind }> = ({ crd }) => {
   return crd.status && isEstablished(crd.status.conditions) ? (
     <span>
-      <GreenCheckCircleIcon aria-label="true" />
+      <GreenCheckCircleIcon title="true" />
     </span>
   ) : (
     <span>
-      <BanIcon aria-label="false" />
+      <BanIcon title="false" />
     </span>
   );
 };
