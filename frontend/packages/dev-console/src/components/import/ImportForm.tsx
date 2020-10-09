@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Formik, FormikProps } from 'formik';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { history, AsyncComponent } from '@console/internal/components/utils';
 import { getActivePerspective, getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
@@ -41,6 +42,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
   activeApplication,
   projects,
 }) => {
+  const { t } = useTranslation();
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
   const postFormCallback = usePostFormSubmitAction();
   const initialValues: GitImportFormData = {
@@ -194,7 +196,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       initialValues={initialValues}
       onSubmit={handleSubmit}
       onReset={history.goBack}
-      validationSchema={validationSchema}
+      validationSchema={validationSchema(t)}
     >
       {renderForm}
     </Formik>

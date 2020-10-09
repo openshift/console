@@ -35,6 +35,14 @@ jest.mock('@console/shared', () => {
   };
 });
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 const match = { params: { name: 'default' }, isExact: true, path: '', url: '' };
 
 describe('Topology page tests', () => {
@@ -55,6 +63,7 @@ describe('Topology page tests', () => {
     expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(true);
   });
 
+<<<<<<< HEAD
   it('should use local storage setting', () => {
     localStorage.setItem('fake-key', 'graph');
     let wrapper = shallow(
@@ -75,6 +84,24 @@ describe('Topology page tests', () => {
         hideProjects={false}
         activeViewStorageKey="fake-key"
       />,
+=======
+  it('should show the topology icon when on topology list page', () => {
+    topologyProps.match.path = '/topology/ns/topology-test/list';
+    const wrapper = shallow(<TopologyPageContext {...topologyProps} />);
+    const namespacesPageWrapper = wrapper.find(NamespacedPage).shallow();
+    expect(namespacesPageWrapper.find(Tooltip).props().content).toBe('devconsole~Topology View');
+    expect(namespacesPageWrapper.find(Link).props().to).toContain(
+      '/topology/ns/topology-test/graph',
+    );
+  });
+
+  it('should show the topology list icon when on topology page', () => {
+    const wrapper = shallow(<TopologyPageContext {...topologyProps} />);
+    const namespacesPageWrapper = wrapper.find(NamespacedPage).shallow();
+    expect(namespacesPageWrapper.find(Tooltip).props().content).toBe('devconsole~List View');
+    expect(namespacesPageWrapper.find(Link).props().to).toContain(
+      '/topology/ns/topology-test/list',
+>>>>>>> 21dcdddc3... add i18n in dev-console package
     );
     expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(true);
   });

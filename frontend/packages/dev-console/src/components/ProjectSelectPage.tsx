@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import { useTranslation } from 'react-i18next';
 import { match } from 'react-router';
 import { LoadingBox } from '@console/internal/components/utils';
 import { connectToPlural } from '@console/internal/kinds';
@@ -20,6 +21,7 @@ export interface ProjectSelectPageProps {
 const allParams = (props) => Object.assign({}, props?.match?.params, props);
 
 const ProjectSelectPage: React.FC<ProjectSelectPageProps> = (props) => {
+  const { t } = useTranslation();
   const { kindObj, kindsInFlight, plural } = allParams(props);
 
   if (!kindObj) {
@@ -27,11 +29,17 @@ const ProjectSelectPage: React.FC<ProjectSelectPageProps> = (props) => {
       return <LoadingBox />;
     }
     const missingType = isGroupVersionKind(plural)
-      ? `"${kindForReference(plural)}" in "${apiVersionForReference(plural)}"`
+      ? t('devconsole~{{kindForRefPlural}} in {{apiVersionForRefPlural}}', {
+          kindForRefPlural: kindForReference(plural),
+          apiVersionForRefPlural: apiVersionForReference(plural),
+        })
       : `"${plural}"`;
     return (
       <ErrorPage404
-        message={`The server doesn't have a resource type ${missingType}. Try refreshing the page if it was recently added.`}
+        message={t(
+          "devconsole~The server doesn't have a resource type {{missingType}}. Try refreshing the page if it was recently added.",
+          { missingType },
+        )}
       />
     );
   }
@@ -41,7 +49,9 @@ const ProjectSelectPage: React.FC<ProjectSelectPageProps> = (props) => {
         <title>{kindObj.labelPlural}</title>
       </Helmet>
       <CreateProjectListPage title={kindObj.labelPlural} badge={getBadgeFromType(kindObj.badge)}>
-        Select a project to view the list of {kindObj.labelPlural}
+        {t('devconsole~Select a project to view the list of {{projectLabelPlural}}', {
+          projectLabelPlural: kindObj.labelPlural,
+        })}
       </CreateProjectListPage>
     </>
   );

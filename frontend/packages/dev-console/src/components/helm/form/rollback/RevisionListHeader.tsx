@@ -1,4 +1,5 @@
 import { sortable } from '@patternfly/react-table';
+import i18n from '@console/internal/i18n';
 import { Kebab } from '@console/internal/components/utils';
 
 export const tableColumnClasses = {
@@ -19,43 +20,43 @@ const RevisionListHeader = () => {
       props: { className: tableColumnClasses.input },
     },
     {
-      title: 'Revision',
+      title: i18n.t('devconsole~Revision'),
       sortField: 'version',
       transforms: [sortable],
       props: { className: tableColumnClasses.revision },
     },
     {
-      title: 'Updated',
+      title: i18n.t('devconsole~Updated'),
       sortField: 'info.last_deployed',
       transforms: [sortable],
       props: { className: tableColumnClasses.updated },
     },
     {
-      title: 'Status',
+      title: i18n.t('devconsole~Status'),
       sortField: 'info.status',
       transforms: [sortable],
       props: { className: tableColumnClasses.status },
     },
     {
-      title: 'Chart Name',
+      title: i18n.t('devconsole~Chart Name'),
       sortField: 'chart.metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses.chartName },
     },
     {
-      title: 'Chart Version',
+      title: i18n.t('devconsole~Chart Version'),
       sortField: 'chart.metadata.version',
       transforms: [sortable],
       props: { className: tableColumnClasses.chartVersion },
     },
     {
-      title: 'App Version',
+      title: i18n.t('devconsole~App Version'),
       sortField: 'chart.metadata.appVersion',
       transforms: [sortable],
       props: { className: tableColumnClasses.appVersion },
     },
     {
-      title: 'Description',
+      title: i18n.t('devconsole~Description'),
       props: { className: tableColumnClasses.description },
     },
   ];

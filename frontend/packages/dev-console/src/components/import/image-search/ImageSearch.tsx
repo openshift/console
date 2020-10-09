@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { k8sCreate, ContainerPort } from '@console/internal/module/k8s';
 import { ImageStreamImportsModel } from '@console/internal/models';
 import { useFormikContext, FormikValues, FormikTouched } from 'formik';
@@ -18,6 +19,7 @@ import { UNASSIGNED_KEY, CREATE_APPLICATION_KEY } from '../../../const';
 import './ImageSearch.scss';
 
 const ImageSearch: React.FC = () => {
+  const { t } = useTranslation();
   const { values, setFieldValue, dirty, initialValues, touched } = useFormikContext<FormikValues>();
   const [newImageSecret, setNewImageSecret] = React.useState('');
   const [alertVisible, shouldHideAlert] = React.useState(true);
@@ -117,10 +119,10 @@ const ImageSearch: React.FC = () => {
 
   const getHelpText = () => {
     if (values.isSearchingForImage) {
-      return 'Validating...';
+      return `${t('devconsole~Validating')}...`;
     }
     if (!values.isSearchingForImage && validated === ValidatedOptions.success) {
-      return 'Validated';
+      return t('devconsole~Validated');
     }
     return '';
   };
@@ -166,7 +168,7 @@ const ImageSearch: React.FC = () => {
       <InputField
         type={TextInputTypes.text}
         name="searchTerm"
-        placeholder="Enter an image name"
+        placeholder={t('devconsole~Enter an image name')}
         helpText={getHelpText()}
         helpTextInvalid={helpTextInvalid}
         validated={validated}
@@ -180,7 +182,7 @@ const ImageSearch: React.FC = () => {
         required
       />
       <div className="help-block" id="image-name-help">
-        To deploy an image from a private repository, you must{' '}
+        {t('devconsole~To deploy an image from a private repository, you must')}{' '}
         <Button
           variant="link"
           isInline
@@ -192,23 +194,23 @@ const ImageSearch: React.FC = () => {
             })
           }
         >
-          create an image pull secret
+          {t('devconsole~create an image pull secret')}
         </Button>{' '}
-        with your image registry credentials.
+        {t('devconsole~with your image registry credentials.')}
       </div>
       {newImageSecret && alertVisible && (
         <Alert
           isInline
           className="co-alert"
           variant="success"
-          title={`Secret ${newImageSecret} was created.`}
+          title={t('devconsole~Secret {{newImageSecret}} was created.', newImageSecret)}
           actionClose={<AlertActionCloseButton onClose={() => shouldHideAlert(false)} />}
         />
       )}
       <div className="odc-image-search__advanced-options">
         <CheckboxField
           name="allowInsecureRegistry"
-          label="Allow images from insecure registries"
+          label={t('devconsole~Allow images from insecure registries')}
           onChange={(val: boolean) => {
             values.searchTerm && handleSearch(values.searchTerm, val);
           }}

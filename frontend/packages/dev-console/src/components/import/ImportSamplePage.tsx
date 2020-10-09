@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
+import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
 import { Formik } from 'formik';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -28,6 +29,7 @@ import ImportSampleForm from './ImportSampleForm';
 type ImportSamplePageProps = RouteComponentProps<{ ns?: string; is?: string; isNs?: string }>;
 
 const ImportSamplePage: React.FC<ImportSamplePageProps> = ({ match }) => {
+  const { t } = useTranslation();
   const { ns: namespace, is: imageStreamName, isNs: imageStreamNamespace } = match.params;
   const defaultApplicationGroup = 'sample-app';
 
@@ -179,15 +181,15 @@ const ImportSamplePage: React.FC<ImportSamplePageProps> = ({ match }) => {
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} disabled hideApplications>
       <Helmet>
-        <title>Create Sample Application</title>
+        <title>{t('devconsole~Create Sample Application')}</title>
       </Helmet>
-      <PageHeading title="Create Sample Application" />
+      <PageHeading title={t('devconsole~Create Sample Application')} />
       <div className="co-m-pane__body" style={{ marginTop: 0, paddingBottom: 0 }}>
         <Formik
           initialValues={initialValues}
           onSubmit={handleSubmit}
           onReset={history.goBack}
-          validationSchema={validationSchema}
+          validationSchema={validationSchema(t)}
         >
           {(formikProps) => <ImportSampleForm {...formikProps} builderImage={builderImage} />}
         </Formik>

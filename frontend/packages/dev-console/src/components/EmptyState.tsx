@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Gallery, GalleryItem } from '@patternfly/react-core';
 import { CatalogTile } from '@patternfly/react-catalog-view-extension';
 import { connect } from 'react-redux';
@@ -64,17 +65,17 @@ interface EmptySProps {
 
 type Props = EmptySProps & StateProps;
 
-const ODCEmptyState: React.FC<Props> = ({
-  title,
-  activeNamespace,
-  hintBlock = 'Select a way to create an application, component or service from one of the options.',
-}) => {
+const ODCEmptyState: React.FC<Props> = ({ title, activeNamespace, hintBlock }) => {
+  const { t } = useTranslation();
+  const defaultHintBlockText = t(
+    'devconsole~Select a way to create an application, component or service from one of the options.',
+  );
   const addActionExtensions = useExtensions<AddAction>(
     isAddAction,
   ).filter(({ properties: { hide } }) => (hide ? hide() : true));
 
   return (
-    <PageLayout title={title} hint={hintBlock} isDark>
+    <PageLayout title={title} hint={hintBlock || defaultHintBlockText} isDark>
       <Gallery className="co-catalog-tile-view" hasGutter>
         <QuickStartsLoader>
           {(quickStarts) => <QuickStartTile quickStarts={quickStarts} />}

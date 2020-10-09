@@ -1,5 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { Status } from '@console/shared';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { Timestamp, Kebab } from '@console/internal/components/utils';
@@ -11,12 +13,13 @@ const confirmModalRollbackHelmRelease = (
   releaseName: string,
   namespace: string,
   revision: number,
+  t: TFunction,
 ) => {
   const message = (
-    <>
-      Are you sure you want to rollback <strong>{releaseName}</strong> to{' '}
-      <strong>Revision {revision}</strong>?
-    </>
+    <Trans i18nKey="confirmModalRollbackHelmReleaseKey" ns="devconsole">
+      Are you sure you want to rollback <strong>{{ releaseName }}</strong> to{' '}
+      <strong>Revision {{ revision }}</strong>?
+    </Trans>
   );
 
   const payload = {
@@ -28,11 +31,11 @@ const confirmModalRollbackHelmRelease = (
   const executeFn = () => coFetchJSON.patch('/api/helm/release', payload);
 
   return {
-    label: `Rollback to Revision ${revision}`,
+    label: t('devconsole~Rollback to Revision {{revision}}', { revision }),
     callback: () => {
       confirmModal({
-        title: 'Rollback',
-        btnText: 'Rollback',
+        title: t('devconsole~Rollback'),
+        btnText: t('devconsole~Rollback'),
         message,
         executeFn,
       });
@@ -41,7 +44,8 @@ const confirmModalRollbackHelmRelease = (
 };
 
 const HelmReleaseHistoryRow: RowFunction = ({ obj, index, key, style }) => {
-  const menuActions = [confirmModalRollbackHelmRelease(obj.name, obj.namespace, obj.version)];
+  const { t } = useTranslation();
+  const menuActions = [confirmModalRollbackHelmRelease(obj.name, obj.namespace, obj.version, t)];
   return (
     <TableRow id={obj.revision} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses.revision}>{obj.version}</TableData>

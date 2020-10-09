@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { FormikValues, useFormikContext } from 'formik';
 import { TextInputTypes, FormGroup } from '@patternfly/react-core';
 import { InputField, CheckboxField, getFieldId, TextColumnField } from '@console/shared';
@@ -11,23 +12,31 @@ interface RequestTypeFormProps {
   probeType?: string;
 }
 
-export const renderPortField = (fieldName: string, resourceType: Resources, viewOnly: boolean) => {
-  if (resourceType === Resources.KnativeService) {
-    return (
-      <InputField
-        type={TextInputTypes.text}
-        name="knative-port"
-        label="Port"
-        placeholder="0"
-        isDisabled
-      />
-    );
-  }
-  return (
+interface RenderPortFieldProps {
+  fieldName: string;
+  resourceType: Resources;
+  viewOnly: boolean;
+}
+
+export const RenderPortField: React.FC<RenderPortFieldProps> = ({
+  fieldName,
+  resourceType,
+  viewOnly,
+}) => {
+  const { t } = useTranslation();
+  return resourceType === Resources.KnativeService ? (
+    <InputField
+      type={TextInputTypes.text}
+      name="knative-port"
+      label={t('devconsole~Port')}
+      placeholder="0"
+      isDisabled
+    />
+  ) : (
     <InputField
       type={TextInputTypes.text}
       name={fieldName}
-      label="Port"
+      label={t('devconsole~Port')}
       isDisabled={viewOnly}
       required
     />
@@ -35,6 +44,7 @@ export const renderPortField = (fieldName: string, resourceType: Resources, view
 };
 
 export const HTTPRequestTypeForm: React.FC<RequestTypeFormProps> = ({ probeType }) => {
+  const { t } = useTranslation();
   const {
     values: { healthChecks, resources },
     setFieldValue,
@@ -69,20 +79,20 @@ export const HTTPRequestTypeForm: React.FC<RequestTypeFormProps> = ({ probeType 
     <>
       <CheckboxField
         name={`healthChecks.${probeType}.data.httpGet.scheme`}
-        label="Use HTTPS"
+        label={t('devconsole~Use HTTPS')}
         value="HTTPS"
         isDisabled={viewOnly}
       />
       <FormGroup
         fieldId={getFieldId(`healthChecks.${probeType}.data.httpGet.httpHeaders`, 'name-value')}
         name={`healthChecks.${probeType}.data.httpGet.httpHeaders`}
-        label="HTTP Headers"
+        label={t('devconsole~HTTP Headers')}
       >
         <NameValueEditor
           nameValuePairs={nameValue}
-          valueString="Value"
-          nameString="Header Name"
-          addString="Add Header"
+          valueString={t('devconsole~Value')}
+          nameString={t('devconsole~Header Name')}
+          addString={t('devconsole~Add Header')}
           readOnly={viewOnly}
           allowSorting={false}
           updateParentData={handleNameValuePairs}
@@ -91,11 +101,11 @@ export const HTTPRequestTypeForm: React.FC<RequestTypeFormProps> = ({ probeType 
       <InputField
         type={TextInputTypes.text}
         name={`healthChecks.${probeType}.data.httpGet.path`}
-        label="Path"
+        label={t('devconsole~Path')}
         placeholder="/"
         isDisabled={viewOnly}
       />
-      {renderPortField(portFieldName, resources, viewOnly)}
+      <RenderPortField fieldName={portFieldName} resourceType={resources} viewOnly={viewOnly} />
     </>
   );
 };
@@ -106,10 +116,11 @@ export const TCPRequestTypeForm: React.FC<RequestTypeFormProps> = ({ probeType }
   } = useFormikContext<FormikValues>();
   const { viewOnly } = React.useContext(HealthCheckContext);
   const portFieldName = `healthChecks.${probeType}.data.tcpSocket.port`;
-  return renderPortField(portFieldName, resources, viewOnly);
+  return <RenderPortField fieldName={portFieldName} resourceType={resources} viewOnly={viewOnly} />;
 };
 
 export const CommandRequestTypeForm: React.FC<RequestTypeFormProps> = ({ probeType }) => {
+  const { t } = useTranslation();
   const {
     values: { healthChecks },
   } = useFormikContext<FormikValues>();
@@ -118,10 +129,10 @@ export const CommandRequestTypeForm: React.FC<RequestTypeFormProps> = ({ probeTy
   return (
     <TextColumnField
       name={`healthChecks.${probeType}.data.exec.command`}
-      label="Command"
-      addLabel="Add command"
-      placeholder="argument"
-      helpText="The command to run inside the container."
+      label={t('devconsole~Command')}
+      addLabel={t('devconsole~Add command')}
+      placeholder={t('devconsole~argument')}
+      helpText={t('devconsole~The command to run inside the container.')}
       required
       disableDeleteRow={commands.length === 1}
       isReadOnly={viewOnly}

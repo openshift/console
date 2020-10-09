@@ -1,5 +1,6 @@
 import * as yup from 'yup';
 import * as _ from 'lodash';
+import { TFunction } from 'i18next';
 import { GitTypes } from './import-types';
 import {
   nameValidationSchema,
@@ -18,21 +19,22 @@ import {
 } from './validation-schema';
 import { healthChecksProbesValidationSchema } from '../health-checks/health-checks-probe-validation-utils';
 
-export const validationSchema = yup.object().shape({
-  name: nameValidationSchema,
-  project: projectNameValidationSchema,
-  application: applicationNameValidationSchema,
-  image: imageValidationSchema,
-  git: gitValidationSchema,
-  docker: dockerValidationSchema,
-  deployment: deploymentValidationSchema,
-  serverless: serverlessValidationSchema,
-  route: routeValidationSchema,
-  limits: limitsValidationSchema,
-  build: buildValidationSchema,
-  resources: resourcesValidationSchema,
-  healthChecks: healthChecksProbesValidationSchema,
-});
+export const validationSchema = (t: TFunction) =>
+  yup.object().shape({
+    name: nameValidationSchema,
+    project: projectNameValidationSchema,
+    application: applicationNameValidationSchema,
+    image: imageValidationSchema(t),
+    git: gitValidationSchema(t),
+    docker: dockerValidationSchema(t),
+    deployment: deploymentValidationSchema(t),
+    serverless: serverlessValidationSchema(t),
+    route: routeValidationSchema(t),
+    limits: limitsValidationSchema(t),
+    build: buildValidationSchema,
+    resources: resourcesValidationSchema,
+    healthChecks: healthChecksProbesValidationSchema(t),
+  });
 
 const hasDomain = (url: string, domain: string): boolean => {
   return (

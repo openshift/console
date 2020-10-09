@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary, ResourceLink } from '@console/internal/components/utils';
 import { PodModel } from '@console/internal/models';
 import { Status } from '@console/shared';
@@ -14,9 +15,12 @@ export interface TaskRunDetailsProps {
 }
 
 const TaskRunDetails: React.FC<TaskRunDetailsProps> = ({ obj: taskRun }) => {
+  const { t } = useTranslation();
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text={`${TaskRunModel.label} Details`} />
+      <SectionHeading
+        text={t(`devconsole~{{taskRunLabel}} Details`, { taskRunLabel: TaskRunModel.label })}
+      />
       <div className="row">
         <div className="col-sm-6">
           <ResourceSummary resource={taskRun} />

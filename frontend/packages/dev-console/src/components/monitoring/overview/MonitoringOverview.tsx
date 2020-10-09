@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Accordion,
   AccordionItem,
@@ -33,6 +34,7 @@ type MonitoringOverviewProps = {
 };
 
 const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
+  const { t } = useTranslation();
   const { resource, pods, resourceEvents, monitoringAlerts } = props;
   const firingAlerts = getFiringAlerts(monitoringAlerts);
   const [expanded, setExpanded] = React.useState([
@@ -87,7 +89,7 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
               className="odc-monitoring-overview__alerts-toggle"
             >
               <Split>
-                <SplitItem>Alerts</SplitItem>
+                <SplitItem>{t('devconsole~Alerts')}</SplitItem>
                 <SplitItem isFilled />
                 <SplitItem>
                   <Badge>{monitoringAlerts.length}</Badge>
@@ -112,7 +114,7 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
             isExpanded={expanded.includes('metrics')}
             id="metrics"
           >
-            Metrics
+            {t('devconsole~Metrics')}
           </AccordionToggle>
           <AccordionContent id="metrics-content" isHidden={!expanded.includes('metrics')}>
             {resource.kind === DeploymentConfigModel.kind ? (
@@ -122,10 +124,10 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
                   icon={InfoCircleIcon}
                 />
                 <Title headingLevel="h2" size="md">
-                  No Metrics Found
+                  {t('devconsole~No Metrics Found')}
                 </Title>
                 <EmptyStateBody>
-                  Deployment Configuration metrics are not yet supported.
+                  {t('devconsole~Deployment Configuration metrics are not yet supported.')}
                 </EmptyStateBody>
               </EmptyState>
             ) : (
@@ -134,7 +136,7 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
                   <Link
                     to={`/dev-monitoring/ns/${resource?.metadata?.namespace}/?workloadName=${resource?.metadata?.name}&workloadType=${resource?.kind}`}
                   >
-                    View monitoring dashboard
+                    {t('devconsole~View monitoring dashboard')}
                   </Link>
                 </div>
                 <WorkloadGraphs resource={resource} />
@@ -151,7 +153,7 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
             isExpanded={expanded.includes('all-events')}
             id="all-events"
           >
-            All Events
+            {t('devconsole~All Events')}
           </AccordionToggle>
           <AccordionContent id="all-events-content" isHidden={!expanded.includes('all-events')}>
             <MonitoringOverviewEvents events={events} />

@@ -1,5 +1,6 @@
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
+import { TFunction } from 'i18next';
 import { loadAll, safeDump, DEFAULT_SAFE_SCHEMA } from 'js-yaml';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -172,6 +173,7 @@ export const getHelmActionConfig = (
   helmAction: HelmActionType,
   releaseName: string,
   namespace: string,
+  t: TFunction,
   actionOrigin?: HelmActionOrigins,
   chartURL?: string,
 ): HelmActionConfigType | undefined => {
@@ -179,11 +181,14 @@ export const getHelmActionConfig = (
     case HelmActionType.Install:
       return {
         type: HelmActionType.Install,
-        title: 'Install Helm Chart',
+        title: t('devconsole~Install Helm Chart'),
         subTitle: {
-          form:
-            'The Helm chart can be installed by completing the form. Default values may be provided by the Helm chart authors.',
-          yaml: 'The Helm chart can be installed by manually entering YAML or JSON definitions.',
+          form: t(
+            'devconsole~The Helm chart can be installed by completing the form. Default values may be provided by the Helm chart authors.',
+          ),
+          yaml: t(
+            'devconsole~The Helm chart can be installed by manually entering YAML or JSON definitions.',
+          ),
         },
         helmReleaseApi: `/api/helm/chart?url=${chartURL}`,
         fetch: coFetchJSON.post,
@@ -192,10 +197,12 @@ export const getHelmActionConfig = (
     case HelmActionType.Upgrade:
       return {
         type: HelmActionType.Upgrade,
-        title: 'Upgrade Helm Release',
+        title: t('devconsole~Upgrade Helm Release'),
         subTitle: {
-          form: 'Upgrade by selecting a new chart version or manually changing the form values.',
-          yaml: 'Upgrade by selecting a new chart version or manually changing YAML.',
+          form: t(
+            'devconsole~Upgrade by selecting a new chart version or manually changing the form values.',
+          ),
+          yaml: t('devconsole~Upgrade by selecting a new chart version or manually changing YAML.'),
         },
         helmReleaseApi: `/api/helm/release?ns=${namespace}&name=${releaseName}`,
         fetch: coFetchJSON.put,
@@ -205,7 +212,7 @@ export const getHelmActionConfig = (
     case HelmActionType.Rollback:
       return {
         type: HelmActionType.Rollback,
-        title: 'Rollback Helm Release',
+        title: t('devconsole~Rollback Helm Release'),
         subTitle: ``,
         helmReleaseApi: `/api/helm/release/history?ns=${namespace}&name=${releaseName}`,
         fetch: coFetchJSON.patch,

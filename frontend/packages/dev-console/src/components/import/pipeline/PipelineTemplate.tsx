@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { LoadingInline } from '@console/internal/components/utils';
 import { k8sList } from '@console/internal/module/k8s';
 import { useFormikContext, FormikValues } from 'formik';
@@ -11,9 +13,6 @@ import { Pipeline } from '../../../utils/pipeline-augment';
 import { NormalizedBuilderImages } from '../../../utils/imagestream-utils';
 import { ReadableResourcesNames } from '../import-types';
 
-const MISSING_DOCKERFILE_LABEL_TEXT =
-  'The pipeline template for Dockerfiles is not available at this time.';
-
 const labelType = 'pipeline.openshift.io/type';
 const labelRuntime = 'pipeline.openshift.io/runtime';
 const labelDocker = 'pipeline.openshift.io/strategy';
@@ -22,10 +21,17 @@ const getAlertText = (
   isDockerStrategy: boolean,
   builderImage: string,
   resourceType: string,
+  t: TFunction,
 ): string => {
+  const MISSING_DOCKERFILE_LABEL_TEXT = t(
+    'devconsole~The pipeline template for Dockerfiles is not available at this time.',
+  );
   if (isDockerStrategy) return MISSING_DOCKERFILE_LABEL_TEXT;
 
-  return `There are no pipeline templates available for ${builderImage} and ${resourceType} combination.`;
+  return t(
+    'devconsole~There are no pipeline templates available for {{builderImage}} and {{resourceType}} combination.',
+    { builderImage, resourceType },
+  );
 };
 
 type PipelineTemplateProps = {
@@ -33,6 +39,7 @@ type PipelineTemplateProps = {
 };
 
 const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages }) => {
+  const { t } = useTranslation();
   const [noTemplateForRuntime, setNoTemplateForRuntime] = React.useState(false);
   const [isExpanded, setIsExpanded] = React.useState(false);
   const pipelineStorageRef = React.useRef<{ [image: string]: Pipeline[] }>({});
@@ -91,22 +98,25 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages }) =>
   }, [resources, image.selected, isDockerStrategy, setFieldValue]);
 
   if (noTemplateForRuntime) {
-    const builderImageTitle = builderImages?.[image.selected]?.title || 'this builder image';
+    const builderImageTitle =
+      builderImages?.[image.selected]?.title || t('devconsole~this builder image');
     const resourceName = ReadableResourcesNames[resources];
     return (
       <Alert
         isInline
         variant="info"
-        title={getAlertText(isDockerStrategy, builderImageTitle, resourceName)}
+        title={getAlertText(isDockerStrategy, builderImageTitle, resourceName, t)}
       />
     );
   }
 
   return pipeline.template ? (
     <>
-      <CheckboxField label="Add pipeline" name="pipeline.enabled" />
+      <CheckboxField label={t('devconsole~Add pipeline')} name="pipeline.enabled" />
       <ExpandableSection
-        toggleText={`${isExpanded ? 'Hide' : 'Show'} pipeline visualization`}
+        toggleText={`${isExpanded ? t('devconsole~Hide') : t('devconsole~Show')} ${t(
+          'devconsole~pipeline visualization',
+        )}`}
         isExpanded={isExpanded}
         onToggle={() => setIsExpanded(!isExpanded)}
       >

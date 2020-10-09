@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
+import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
 import { Gallery, GalleryItem } from '@patternfly/react-core';
 import { CatalogTile } from '@patternfly/react-catalog-view-extension';
@@ -21,6 +22,7 @@ const imageStreamResource: FirehoseResource = {
 type SampleCatalogProps = RouteComponentProps<{ ns?: string }>;
 
 const SampleCatalog: React.FC<SampleCatalogProps> = ({ match }) => {
+  const { t } = useTranslation();
   const namespace = match.params.ns;
   const [imageStreams, imageStreamsloaded] = useK8sWatchResource(imageStreamResource);
 
@@ -55,21 +57,21 @@ const SampleCatalog: React.FC<SampleCatalogProps> = ({ match }) => {
   return (
     <>
       <Helmet>
-        <title>Samples</title>
+        <title>{t('devconsole~Samples')}</title>
       </Helmet>
       <NamespacedPage hideApplications>
         {namespace ? (
           <PageLayout
-            title="Samples"
-            hint="Get Started using applications by choosing a code sample."
+            title={t('devconsole~Samples')}
+            hint={t('devconsole~Get Started using applications by choosing a code sample.')}
           >
             <Gallery className="co-catalog-tile-view" hasGutter>
               {galleryItems}
             </Gallery>
           </PageLayout>
         ) : (
-          <CreateProjectListPage title="Samples">
-            Select a project to view the list of Samples.
+          <CreateProjectListPage title={t('devconsole~Samples')}>
+            {t('devconsole~Select a project to view the list of Samples.')}
           </CreateProjectListPage>
         )}
       </NamespacedPage>

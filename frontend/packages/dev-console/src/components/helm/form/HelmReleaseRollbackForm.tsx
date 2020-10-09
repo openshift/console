@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { FormikProps, FormikValues } from 'formik';
 import { Form, FormGroup } from '@patternfly/react-core';
 import { FormFooter, FormHeader } from '@console/shared';
@@ -29,12 +30,14 @@ const HelmReleaseRollbackForm: React.FC<Props> = ({
   releaseName,
   helmActionConfig,
 }) => {
+  const { t } = useTranslation();
   const { type: helmAction, title } = helmActionConfig;
 
   const formHelpText = (
     <>
-      Select the version to rollback <strong style={{ color: '#000' }}>{releaseName}</strong> to,
-      from the table below:
+      {t('devconsole~Select the version to rollback')}{' '}
+      <strong style={{ color: '#000' }}>{releaseName}</strong>{' '}
+      {t('devconsole~to, from the table below:')}
     </>
   );
 

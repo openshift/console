@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Formik, FormikHelpers } from 'formik';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { ALL_APPLICATIONS_KEY, usePostFormSubmitAction } from '@console/shared';
 import { history } from '@console/internal/components/utils';
 import { getActiveApplication } from '@console/internal/reducers/ui';
@@ -34,6 +35,7 @@ const DeployImage: React.FC<Props> = ({
   contextualSource,
 }) => {
   const postFormCallback = usePostFormSubmitAction();
+  const { t } = useTranslation();
   const initialValues: DeployImageFormData = {
     project: {
       name: namespace || '',
@@ -171,7 +173,7 @@ const DeployImage: React.FC<Props> = ({
       initialValues={initialValues}
       onSubmit={handleSubmit}
       onReset={history.goBack}
-      validationSchema={deployValidationSchema}
+      validationSchema={deployValidationSchema(t)}
     >
       {(formikProps) => <DeployImageForm {...formikProps} projects={projects} />}
     </Formik>

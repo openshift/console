@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Radio,
   Select,
@@ -27,6 +28,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
   onChange,
   opened = false,
 }) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = React.useState(opened);
   const showGroups = filters?.find((f) => f.id === SHOW_GROUPS_FILTER_ID)?.value ?? true;
   const groupsExpanded = filters?.find((f) => f.id === EXPAND_GROUPS_FILTER_ID)?.value ?? true;
@@ -78,7 +80,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
   const selectContent = (
     <div className="odc-topology-filter-dropdown">
       <div className="odc-topology-filter-dropdown__group">
-        <span className="pf-c-select__menu-group-title">Mode</span>
+        <span className="pf-c-select__menu-group-title">{t('devconsole~Mode')}</span>
         <div className="odc-topology-filter-dropdown__radio-group">
           <Radio
             className="odc-topology-filter-dropdown__radio"
@@ -101,9 +103,9 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
       {expandFilters.length ? (
         <div className="odc-topology-filter-dropdown__group">
           <span className="odc-topology-filter-dropdown__expand-groups-switcher">
-            <span className="pf-c-select__menu-group-title">Expand</span>
+            <span className="pf-c-select__menu-group-title">{t('devconsole~Expand')}</span>
             <Switch
-              aria-label="Collapse Groups"
+              aria-label={t('devconsole~Collapse Groups')}
               isChecked={groupsExpanded}
               onChange={onGroupsExpandedChange}
               isDisabled={!showGroups}
@@ -125,7 +127,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
       ) : null}
       {showGraphView && showFilters.length ? (
         <div className="odc-topology-filter-dropdown__group">
-          <SelectGroup label="Show">
+          <SelectGroup label={t('devconsole~Show')}>
             {showFilters.map((filter) => (
               <SelectOption key={filter.id} value={filter.id} isChecked={filter.value}>
                 {filter.label}
@@ -145,7 +147,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
       onToggle={onToggle}
       isOpen={isOpen}
       onSelect={onSelect}
-      placeholderText="Display Options"
+      placeholderText={t('devconsole~Display Options')}
       isGrouped
       isCheckboxSelectionBadgeHidden
     />

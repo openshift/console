@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import {
   Toolbar,
   ToolbarGroup,
@@ -63,6 +64,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
   showGraphView,
   namespace,
 }) => {
+  const { t } = useTranslation();
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
     kind: referenceForModel(ConsoleLinkModel),
@@ -102,7 +104,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
         <ToolbarGroup variant={ToolbarGroupVariant['filter-group']}>
           <ToolbarItem>
             <TextFilter
-              placeholder="Find by name..."
+              placeholder={`${t('devconsole~Find by name')}...`}
               value={searchQuery}
               autoFocus
               onChange={onTextFilterChange}
@@ -112,19 +114,19 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
           {showGraphView ? (
             <ToolbarItem>
               <Popover
-                aria-label="Find by name"
+                aria-label={t('devconsole~Find by name')}
                 position="left"
                 bodyContent={
                   <>
-                    Search results may appear outside of the visible area.{' '}
+                    {t('devconsole~Search results may appear outside of the visible area.')}{' '}
                     <Button
                       variant="link"
                       onClick={() => visualization.getGraph().fit(80)}
                       isInline
                     >
-                      Click here
+                      {t('devconsole~Click here')}
                     </Button>{' '}
-                    to fit to the screen.
+                    {t('devconsole~to fit to the screen.')}
                   </>
                 }
               >

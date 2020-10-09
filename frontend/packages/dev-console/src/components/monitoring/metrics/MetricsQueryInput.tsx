@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 // FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
@@ -27,9 +28,11 @@ import { metricsQuery, getTopMetricsQueries } from '../queries';
 import './MetricsQueryInput.scss';
 
 const ADD_NEW_QUERY = '#ADD_NEW_QUERY#';
-const CUSTOM_QUERY = 'Custom Query';
 
 const MetricsQueryInput: React.FC = () => {
+  const { t } = useTranslation();
+  const CUSTOM_QUERY = t('devconsole~Custom Query');
+  const DEFAULT_TITLE = t('devconsole~Select Query');
   const params = getURLSearchParams();
   const query = params.query0;
   const items = metricsQuery;
@@ -46,7 +49,7 @@ const MetricsQueryInput: React.FC = () => {
     state.UI.getIn(['queryBrowser', 'queries', 0]).toJS(),
   );
   const dispatch = useDispatch();
-  const [title, setTitle] = React.useState('Select Query');
+  const [title, setTitle] = React.useState(DEFAULT_TITLE);
   const [selectedKey, setSelectedKey] = React.useState('');
   const [changeKey, setChangeKey] = React.useState(false);
   const [metric, setMetric] = React.useState('');
@@ -71,7 +74,7 @@ const MetricsQueryInput: React.FC = () => {
         removeQueryArgument('query0');
       }
     }
-  }, [query, queries]);
+  }, [query, queries, CUSTOM_QUERY]);
 
   React.useEffect(() => {
     if (query) {
@@ -81,7 +84,7 @@ const MetricsQueryInput: React.FC = () => {
       setMetric(selectedQuery);
       selectedQuery ? setSelectedKey(sKey) : setTitle(CUSTOM_QUERY);
     }
-  }, [query, namespace, items]);
+  }, [query, namespace, items, CUSTOM_QUERY]);
 
   React.useEffect(() => {
     const setMetrics = (metrics: string[]) => dispatch(queryBrowserSetMetrics(metrics));
@@ -141,7 +144,7 @@ const MetricsQueryInput: React.FC = () => {
             isDisabled={isPromQlDisabled}
             onClick={() => setShowPromQl(!showPromQl)}
           >
-            {showPromQl ? 'Hide PromQL' : 'Show PromQL'}
+            {showPromQl ? t('devconsole~Hide PromQL') : t('devconsole~Show PromQL')}
           </Button>
         </div>
       </div>

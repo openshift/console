@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect, Dispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import {
   Card,
@@ -34,6 +35,7 @@ type DispatchProps = {
 type Props = QuickStartTileProps & DispatchProps;
 
 const QuickStartTile: React.FC<Props> = ({ setActiveQuickStart, quickStarts }) => {
+  const { t } = useTranslation();
   const isQuickStartTileHidden =
     localStorage.getItem(HIDE_QUICK_START_ADD_TILE_STORAGE_KEY) === 'true';
   const [showTile, setShowTile] = React.useState<boolean>(!isQuickStartTileHidden);
@@ -54,7 +56,7 @@ const QuickStartTile: React.FC<Props> = ({ setActiveQuickStart, quickStarts }) =
       key="action"
       component="button"
     >
-      Remove quick starts
+      {t('devconsole~Remove quick starts')}
     </DropdownItem>,
   ];
   const slicedQuickStarts = quickStarts.length > 3 ? quickStarts.slice(0, 3) : quickStarts;
@@ -65,7 +67,7 @@ const QuickStartTile: React.FC<Props> = ({ setActiveQuickStart, quickStarts }) =
         <CardHeader>
           <CardHeaderMain>
             <Title headingLevel="h1" size="xl">
-              Quick Starts
+              {t('devconsole~Quick Starts')}
             </Title>
           </CardHeaderMain>
           <CardActions>
@@ -100,7 +102,8 @@ const QuickStartTile: React.FC<Props> = ({ setActiveQuickStart, quickStarts }) =
         </CardBody>
         <CardFooter className="odc-quick-start-tile__footer">
           <Link to="/quickstart">
-            See all Quick Starts <ArrowRightIcon className="odc-quick-start-tile__arrow" />
+            {t('devconsole~See all Quick Starts')}{' '}
+            <ArrowRightIcon className="odc-quick-start-tile__arrow" />
           </Link>
         </CardFooter>
       </Card>

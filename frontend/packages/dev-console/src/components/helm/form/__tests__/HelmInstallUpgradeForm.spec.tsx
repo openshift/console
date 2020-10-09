@@ -30,6 +30,14 @@ const formValues = {
   editorType: EditorType.Form,
 };
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 const helmConfig = {
   type: HelmActionType.Install,
   title: 'Install Helm Chart',
@@ -122,7 +130,7 @@ describe('HelmInstallUpgradeForm', () => {
     const newProps = _.cloneDeep(props);
     newProps.helmActionConfig.type = HelmActionType.Upgrade;
     const wrapper = shallow(<HelmInstallUpgradeForm {...newProps} />);
-    expect(wrapper.find(InputField).props().label).toBe('Release Name');
+    expect(wrapper.find(InputField).props().label).toBe('devconsole~Release Name');
     expect(wrapper.find(InputField).props().isDisabled).toBe(true);
   });
 

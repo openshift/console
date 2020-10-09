@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { CheckboxField } from '@console/shared';
 
 interface RouteCheckboxProps {
@@ -6,11 +7,12 @@ interface RouteCheckboxProps {
 }
 
 const RouteCheckbox: React.FC<RouteCheckboxProps> = ({ isDisabled }) => {
+  const { t } = useTranslation();
   return (
     <CheckboxField
       name="route.create"
-      label="Create a route to the application"
-      helpText="Exposes your application at a public URL"
+      label={t('devconsole~Create a route to the application')}
+      helpText={t('devconsole~Exposes your application at a public URL')}
       isDisabled={isDisabled}
     />
   );

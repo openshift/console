@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { CheckboxField, EnvironmentField } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import FormSection from '../section/FormSection';
@@ -15,6 +16,7 @@ const DeploymentConfigSection: React.FC<DeploymentConfigSectionProps> = ({
   namespace,
   resource,
 }) => {
+  const { t } = useTranslation();
   const {
     values: { resources },
   } = useFormikContext<FormikValues>();
@@ -26,20 +28,20 @@ const DeploymentConfigSection: React.FC<DeploymentConfigSectionProps> = ({
   };
   const envs = _.get(deploymentConfigObj, 'spec.template.spec.containers[0].env', []);
   return (
-    <FormSection title="Deployment" fullWidth>
+    <FormSection title={t('devconsole~Deployment')} fullWidth>
       <CheckboxField
         name="deployment.triggers.image"
-        label="Auto deploy when new image is available"
+        label={t('devconsole~Auto deploy when new image is available')}
       />
       {resources === Resources.OpenShift && (
         <CheckboxField
           name="deployment.triggers.config"
-          label="Auto deploy when deployment configuration changes"
+          label={t('devconsole~Auto deploy when deployment configuration changes')}
         />
       )}
       <EnvironmentField
         name="deployment.env"
-        label="Environment Variables (Runtime only)"
+        label={t('devconsole~Environment Variables (Runtime only)')}
         envs={envs}
         obj={deploymentConfigObj}
         envPath={['spec', 'template', 'spec', 'containers']}

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { FormikValues } from 'formik';
+import { useTranslation } from 'react-i18next';
 import ProgressiveList from '../../progressive-list/ProgressiveList';
 import ProgressiveListItem from '../../progressive-list/ProgressiveListItem';
 import RouteSection from '../route/RouteSection';
@@ -22,54 +23,55 @@ export interface AdvancedSectionProps {
 }
 
 const AdvancedSection: React.FC<AdvancedSectionProps> = ({ values, appResources }) => {
+  const { t } = useTranslation();
   const [visibleItems, setVisibleItems] = React.useState([]);
   const handleVisibleItemChange = (item: string) => {
     setVisibleItems([...visibleItems, item]);
   };
   return (
-    <FormSection title="Advanced Options" fullWidth>
+    <FormSection title={t('devconsole~Advanced Options')} fullWidth>
       <RouteCheckbox isDisabled={values.route.disable} />
       <ProgressiveList
-        text="Click on the names to access advanced options for"
+        text={t('devconsole~Click on the names to access advanced options for')}
         visibleItems={visibleItems}
         onVisibleItemChange={handleVisibleItemChange}
       >
-        <ProgressiveListItem name="Routing">
+        <ProgressiveListItem name={t('devconsole~Routing')}>
           {values.resources === Resources.KnativeService ? (
             <ServerlessRouteSection route={values.route} />
           ) : (
             <RouteSection route={values.route} />
           )}
         </ProgressiveListItem>
-        <ProgressiveListItem name="Health Checks">
-          <HealthChecks title="Health Checks" resourceType={values.resources} />
+        <ProgressiveListItem name={t('devconsole~Health Checks')}>
+          <HealthChecks title={t('devconsole~Health Checks')} resourceType={values.resources} />
         </ProgressiveListItem>
         {/* Hide Build for Deploy Image or when a Pipeline is added */}
         {values.isi || values.pipeline.enabled ? null : (
-          <ProgressiveListItem name="Build Configuration">
+          <ProgressiveListItem name={t('devconsole~Build Configuration')}>
             <BuildConfigSection
               namespace={values.project.name}
               resource={appResources?.buildConfig?.data}
             />
           </ProgressiveListItem>
         )}
-        <ProgressiveListItem name="Deployment">
+        <ProgressiveListItem name={t('devconsole~Deployment')}>
           <DeploymentConfigSection
             namespace={values.project.name}
             resource={appResources?.editAppResource?.data}
           />
         </ProgressiveListItem>
-        <ProgressiveListItem name="Scaling">
+        <ProgressiveListItem name={t('devconsole~Scaling')}>
           {values.resources === Resources.KnativeService ? (
             <ServerlessScalingSection />
           ) : (
             <ScalingSection />
           )}
         </ProgressiveListItem>
-        <ProgressiveListItem name="Resource Limits">
+        <ProgressiveListItem name={t('devconsole~Resource Limits')}>
           <ResourceLimitSection />
         </ProgressiveListItem>
-        <ProgressiveListItem name="Labels">
+        <ProgressiveListItem name={t('devconsole~Labels')}>
           <LabelSection />
         </ProgressiveListItem>
       </ProgressiveList>

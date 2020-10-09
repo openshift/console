@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { PageBody } from '@console/shared';
+import { useTranslation } from 'react-i18next';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { LoadingBox, LoadingInline, PageComponentProps } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -13,6 +14,7 @@ import { getLimitWarning, VALID_HPA_TARGET_KINDS } from './hpa-utils';
 import { useRelatedHPA } from './hooks';
 
 const HPAPage: React.FC<PageComponentProps> = (props) => {
+  const { t } = useTranslation();
   const {
     match: {
       params: { ns, resourceRef, name },
@@ -35,7 +37,9 @@ const HPAPage: React.FC<PageComponentProps> = (props) => {
   const error = hpaError || workloadError?.message;
 
   const validSupportedType = VALID_HPA_TARGET_KINDS.includes(kind);
-  const title = `${hpa ? 'Edit' : 'Add'} ${HorizontalPodAutoscalerModel.label}`;
+  const title = `${hpa ? t('devconsole~Edit') : t('devconsole~Add')} ${
+    HorizontalPodAutoscalerModel.label
+  }`;
 
   if (!breakdown) {
     return <ErrorPage404 />;

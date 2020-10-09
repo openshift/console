@@ -1,4 +1,5 @@
 import { sortable } from '@patternfly/react-table';
+import i18n from '@console/internal/i18n';
 
 export const tableColumnClasses = {
   name: 'col-lg-4 col-md-4 col-sm-4 col-xs-6',
@@ -10,25 +11,25 @@ export const tableColumnClasses = {
 const HelmReleaseResourcesHeader = () => {
   return [
     {
-      title: 'Name',
+      title: i18n.t('devconsole~Name'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses.name },
     },
     {
-      title: 'Type',
+      title: i18n.t('devconsole~Type'),
       sortField: 'kind',
       transforms: [sortable],
       props: { className: tableColumnClasses.type },
     },
     {
-      title: 'Status',
+      title: i18n.t('devconsole~Status'),
       sortField: 'status.phase',
       transforms: [sortable],
       props: { className: tableColumnClasses.status },
     },
     {
-      title: 'Created',
+      title: i18n.t('devconsole~Created'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses.created },

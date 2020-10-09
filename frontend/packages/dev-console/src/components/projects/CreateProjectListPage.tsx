@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 // FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
@@ -20,6 +21,7 @@ const CreateProjectListPage: React.FC<CreateProjectListPageProps> = ({
   children,
   ...props
 }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const handleSubmit = (project: K8sResourceKind) => {
@@ -31,9 +33,9 @@ const CreateProjectListPage: React.FC<CreateProjectListPageProps> = ({
 
   return (
     <ProjectListPage {...props} title={title}>
-      {children} or{' '}
+      {children} {t('devconsole~or')}{' '}
       <Button isInline variant="link" onClick={openProjectModal}>
-        create a project
+        {t('devconsole~create a project')}
       </Button>
     </ProjectListPage>
   );

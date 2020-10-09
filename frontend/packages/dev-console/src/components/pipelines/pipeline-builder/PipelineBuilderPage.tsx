@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { Formik, FormikBag } from 'formik';
@@ -22,6 +23,7 @@ type PipelineBuilderPageProps = RouteComponentProps<{ ns?: string }> & {
 };
 
 const PipelineBuilderPage: React.FC<PipelineBuilderPageProps> = (props) => {
+  const { t } = useTranslation();
   const {
     existingPipeline,
     match: {
@@ -67,13 +69,13 @@ const PipelineBuilderPage: React.FC<PipelineBuilderPageProps> = (props) => {
   return (
     <div className="odc-pipeline-builder-page">
       <Helmet>
-        <title>Pipeline Builder</title>
+        <title>{t('devconsole~Pipeline Builder')}</title>
       </Helmet>
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}
         onReset={history.goBack}
-        validationSchema={validationSchema}
+        validationSchema={validationSchema(t)}
       >
         {(formikProps) => (
           <PipelineBuilderForm

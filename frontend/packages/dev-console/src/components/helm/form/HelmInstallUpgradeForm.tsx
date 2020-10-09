@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { FormikProps, FormikValues } from 'formik';
 import { TextInputTypes, Grid, GridItem, Button, Alert } from '@patternfly/react-core';
 import {
@@ -39,6 +40,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
   onVersionChange,
   chartError,
 }) => {
+  const { t } = useTranslation();
   const { chartName, chartVersion, chartReadme, formData, formSchema, editorType } = values;
   const { type: helmAction, title, subTitle } = helmActionConfig;
 
@@ -65,7 +67,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
 
   const readmeText = chartReadme && (
     <>
-      For more information on the chart, refer to this{' '}
+      {t('devconsole~For more information on the chart, refer to this')}{' '}
       <Button
         type="button"
         variant="link"
@@ -78,7 +80,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
         }
         isInline
       >
-        README
+        {t('devconsole~README')}
       </Button>
     </>
   );
@@ -95,7 +97,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
       <FormHeader title={title} helpText={formHelpText} marginBottom="lg" />
       {chartError && (
         <Alert variant="danger" isInline title="Helm chart cannot be installed">
-          The Helm chart is currently unavailable. {`${chartError}.`}
+          {t('devconsole~The Helm chart is currently unavailable. {{chartError}}', { chartError })}
         </Alert>
       )}
       <FormSection fullWidth>
@@ -104,8 +106,8 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
             <InputField
               type={TextInputTypes.text}
               name="releaseName"
-              label="Release Name"
-              helpText="A unique name for the Helm Chart release."
+              label={t('devconsole~Release Name')}
+              helpText={t('devconsole~A unique name for the Helm Chart release.')}
               required
               isDisabled={!!chartError || helmAction === HelmActionType.Upgrade}
             />
@@ -133,7 +135,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
         isSubmitting={status?.isSubmitting || isSubmitting}
         submitLabel={helmAction}
         disableSubmit={isSubmitDisabled}
-        resetLabel="Cancel"
+        resetLabel={t('devconsole~Cancel')}
         sticky
       />
     </FlexForm>

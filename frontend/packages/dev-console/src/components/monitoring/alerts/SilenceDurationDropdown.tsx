@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 // FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
@@ -36,6 +37,7 @@ const SilenceDurationDropDown: React.FC<SilenceDurationDropDownProps> = ({
   rule,
   silenceInProgress,
 }) => {
+  const { t } = useTranslation();
   const [silencing, setSilencing] = React.useState(false);
   const createdBy = useSelector((state: RootState) => state.UI.get('user')?.metadata?.name);
   const rules = useSelector((state: RootState) => state.UI.getIn(['monitoring', 'devRules']));
@@ -103,7 +105,7 @@ const SilenceDurationDropDown: React.FC<SilenceDurationDropDownProps> = ({
         className="odc-silence-duration-dropdown"
         items={durations}
         onChange={(v: string) => setDuration(v)}
-        title="Silence for"
+        title={t('devconsole~Silence for')}
       />
       {silencing && <LoadingInline />}
     </>

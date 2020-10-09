@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { safeLoad } from 'js-yaml';
 import { FormikValues, useFormikContext } from 'formik';
 import { GridItem } from '@patternfly/react-core';
@@ -32,6 +33,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
   helmAction,
   onVersionChange,
 }) => {
+  const { t } = useTranslation();
   const {
     setFieldValue,
     values: { chartRepoName, yamlData, formData, appVersion },
@@ -48,22 +50,23 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
     newVersion: string,
   ) => {
     confirmModal({
-      title: 'Change Chart Version?',
+      title: t('devconsole~Change Chart Version?'),
       message: (
         <>
           <p>
-            Are you sure you want to change the chart version from <strong>{currentVersion}</strong>{' '}
-            to <strong>{newVersion}</strong>?{' '}
+            {t('devconsole~Are you sure you want to change the chart version from')}{' '}
+            <strong>{currentVersion}</strong> {t('devconsole~to')} <strong>{newVersion}</strong>?{' '}
           </p>
           <p>
-            <InfoCircleIcon color="var(--pf-global--info-color--100)" /> All data entered for
-            version <strong>{currentVersion}</strong> will be reset.
+            <InfoCircleIcon color="var(--pf-global--info-color--100)" />{' '}
+            {t('devconsole~All data entered for version')} <strong>{currentVersion}</strong>{' '}
+            {t('devconsole~will be reset')}.
           </p>
         </>
       ),
       submitDanger: false,
-      btnText: 'Proceed',
-      cancelText: 'Cancel',
+      btnText: t('devconsole~Proceed'),
+      cancelText: t('devconsole~Cancel'),
       executeFn: () => {
         onAccept();
         return Promise.resolve();
@@ -149,12 +152,12 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
 
   const helpText =
     helmAction === HelmActionType.Install
-      ? 'Select the Chart Version.'
-      : 'Select the version to upgrade to.';
+      ? t('devconsole~Select the Chart Version.')
+      : t('devconsole~Select the version to upgrade to.');
 
   const title =
     _.isEmpty(helmChartVersions) && !chartVersion
-      ? 'No versions available'
+      ? t('devconsole~No versions available')
       : helmChartVersions[`${chartVersion}`] ||
         concatVersions(chartVersion, appVersion, chartRepoName);
 
@@ -162,7 +165,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
     <GridItem span={6}>
       <DropdownField
         name="chartVersion"
-        label="Chart Version"
+        label={t('devconsole~Chart Version')}
         items={helmChartVersions}
         helpText={helpText}
         disabled={_.isEmpty(helmChartVersions) || _.keys(helmChartVersions).length === 1}

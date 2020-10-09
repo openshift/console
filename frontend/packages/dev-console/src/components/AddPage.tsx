@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import { useTranslation } from 'react-i18next';
 import { match as RMatch } from 'react-router';
 import { Firehose } from '@console/internal/components/utils';
 import ODCEmptyState from './EmptyState';
@@ -14,21 +15,22 @@ export interface AddPageProps {
 }
 
 const AddPage: React.FC<AddPageProps> = ({ match }) => {
+  const { t } = useTranslation();
   const namespace = match.params.ns;
 
   return (
     <>
       <Helmet>
-        <title>+Add</title>
+        <title>{`+${t('devconsole~Add')}`}</title>
       </Helmet>
       <NamespacedPage>
         <Firehose resources={[{ kind: 'Project', prop: 'projects', isList: true }]}>
-          <ProjectsExistWrapper title="Add">
+          <ProjectsExistWrapper title={t('devconsole~Add')}>
             {namespace ? (
-              <ODCEmptyState title="Add" />
+              <ODCEmptyState title={t('devconsole~Add')} />
             ) : (
-              <CreateProjectListPage title="Add">
-                Select a project to start adding to it
+              <CreateProjectListPage title={t('devconsole~Add')}>
+                {t('devconsole~Select a project to start adding to it')}
               </CreateProjectListPage>
             )}
           </ProjectsExistWrapper>

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { FormikProps, FormikValues } from 'formik';
 import { Form, Stack, StackItem, TextInputTypes } from '@patternfly/react-core';
 import { InputField, FormFooter } from '@console/shared';
@@ -29,6 +30,7 @@ type PipelineBuilderFormProps = FormikProps<FormikValues> & {
 };
 
 const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
+  const { t } = useTranslation();
   const [selectedTask, setSelectedTask] = React.useState<SelectedBuilderTask>(null);
   const selectedTaskRef = React.useRef<SelectedBuilderTask>(null);
   selectedTaskRef.current = selectedTask;
@@ -105,7 +107,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
             </div>
 
             <div>
-              <h2>Tasks</h2>
+              <h2>{t('devconsole~Tasks')}</h2>
               <PipelineBuilderVisualization
                 namespace={namespace}
                 tasksInError={status?.tasks || {}}
@@ -123,26 +125,26 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
             </div>
 
             <div>
-              <h2>Parameters</h2>
+              <h2>{t('devconsole~Parameters')}</h2>
               <PipelineParameters addLabel="Add Parameters" fieldName="params" />
             </div>
 
             <div>
-              <h2>Resources</h2>
+              <h2>{t('devconsole~Resources')}</h2>
               <PipelineResources addLabel="Add Resources" fieldName="resources" />
             </div>
             <FormFooter
               handleReset={closeSidebarAndHandleReset}
               errorMessage={status?.submitError}
               isSubmitting={isSubmitting}
-              submitLabel={existingPipeline ? 'Save' : 'Create'}
+              submitLabel={existingPipeline ? t('devconsole~Save') : t('devconsole~Create')}
               disableSubmit={
                 !dirty ||
                 !_.isEmpty(errors) ||
                 !_.isEmpty(status?.tasks) ||
                 values.tasks.length === 0
               }
-              resetLabel="Cancel"
+              resetLabel={t('devconsole~Cancel')}
               sticky
             />
           </Form>

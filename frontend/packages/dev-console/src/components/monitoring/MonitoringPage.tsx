@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import { useTranslation } from 'react-i18next';
 import { match as RMatch } from 'react-router';
 import {
   HorizontalNav,
@@ -31,6 +32,7 @@ const handleNamespaceChange = (newNamespace: string): void => {
 };
 
 export const PageContents: React.FC<MonitoringPageProps> = ({ match }) => {
+  const { t } = useTranslation();
   const activeNamespace = match.params.ns;
   const prometheousRulesAccess = useAccessReview({
     group: 'monitoring.coreos.com',
@@ -41,56 +43,59 @@ export const PageContents: React.FC<MonitoringPageProps> = ({ match }) => {
   const pages = [
     {
       href: '',
-      name: 'Dashboard',
+      name: t('devconsole~Dashboard'),
       component: ConnectedMonitoringDashboard,
     },
     {
       href: 'metrics',
-      name: 'Metrics',
+      name: t('devconsole~Metrics'),
       component: ConnectedMonitoringMetrics,
     },
     ...(prometheousRulesAccess
       ? [
           {
             href: 'alerts',
-            name: 'Alerts',
+            name: t('devconsole~Alerts'),
             component: ConnectedMonitoringAlerts,
           },
         ]
       : []),
     {
       href: 'events',
-      name: 'Events',
+      name: t('devconsole~Events'),
       component: MonitoringEvents,
     },
   ];
   return activeNamespace ? (
     <>
-      <PageHeading title="Monitoring" />
+      <PageHeading title={t('devconsole~Monitoring')} />
       <HorizontalNav pages={pages} match={match} noStatusBox />
     </>
   ) : (
-    <CreateProjectListPage title="Monitoring">
-      Select a project to view monitoring metrics
+    <CreateProjectListPage title={t('devconsole~Monitoring')}>
+      {t('devconsole~Select a project to view monitoring metrics')}
     </CreateProjectListPage>
   );
 };
 
 const PageContentsWithStartGuide = withStartGuide(PageContents);
 
-export const MonitoringPage: React.FC<MonitoringPageProps> = (props) => (
-  <>
-    <Helmet>
-      <title>Monitoring</title>
-    </Helmet>
-    <NamespacedPage
-      hideApplications
-      variant={NamespacedPageVariants.light}
-      onNamespaceChange={handleNamespaceChange}
-    >
-      <PageContentsWithStartGuide {...props} />
-    </NamespacedPage>
-  </>
-);
+export const MonitoringPage: React.FC<MonitoringPageProps> = (props) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <Helmet>
+        <title>{t('devconsole~Monitoring')}</title>
+      </Helmet>
+      <NamespacedPage
+        hideApplications
+        variant={NamespacedPageVariants.light}
+        onNamespaceChange={handleNamespaceChange}
+      >
+        <PageContentsWithStartGuide {...props} />
+      </NamespacedPage>
+    </>
+  );
+};
 
 export default MonitoringPage;

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { calculateRadius } from '@console/shared';
 import {
   Node,
@@ -47,6 +48,7 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
   dropTooltip,
   ...rest
 }) => {
+  const { t } = useTranslation();
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
     kind: referenceForModel(ConsoleLinkModel),
@@ -63,8 +65,8 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
   const cx = width / 2;
   const cy = height / 2;
   const editUrl = editURL || getEditURL(vcsURI, vcsRef, cheURL);
-  const repoIcon = routeDecoratorIcon(editUrl, decoratorRadius, cheEnabled);
-  const tipContent = dropTooltip || `Create a visual connector`;
+  const repoIcon = routeDecoratorIcon(editUrl, decoratorRadius, t, cheEnabled);
+  const tipContent = dropTooltip || t('devconsole~Create a visual connector');
   const showPodCountFilter = getFilterById(SHOW_POD_COUNT_FILTER_ID, filters);
   const showPodCount = showPodCountFilter?.value ?? false;
 
@@ -88,7 +90,11 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
           {...rest}
           attachments={[
             repoIcon && (
-              <Tooltip key="edit" content="Edit Source Code" position={TooltipPosition.right}>
+              <Tooltip
+                key="edit"
+                content={t('devconsole~Edit Source Code')}
+                position={TooltipPosition.right}
+              >
                 <Decorator
                   x={cx + radius - decoratorRadius * 0.7}
                   y={cy + radius - decoratorRadius * 0.7}
@@ -103,7 +109,11 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
               </Tooltip>
             ),
             workloadData.url && (
-              <Tooltip key="route" content="Open URL" position={TooltipPosition.right}>
+              <Tooltip
+                key="route"
+                content={t('devconsole~Open URL')}
+                position={TooltipPosition.right}
+              >
                 <Decorator
                   x={cx + radius - decoratorRadius * 0.7}
                   y={cy + -radius + decoratorRadius * 0.7}
@@ -113,7 +123,10 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
                   circleRef={urlAnchorRef}
                 >
                   <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
-                    <ExternalLinkAltIcon style={{ fontSize: decoratorRadius }} title="Open URL" />
+                    <ExternalLinkAltIcon
+                      style={{ fontSize: decoratorRadius }}
+                      title={t('devconsole~Open URL')}
+                    />
                   </g>
                 </Decorator>
               </Tooltip>

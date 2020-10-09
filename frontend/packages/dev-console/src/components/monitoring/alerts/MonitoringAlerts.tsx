@@ -1,12 +1,21 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 // FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useDispatch, connect } from 'react-redux';
 import { match as RMatch } from 'react-router-dom';
-import { Table, TableHeader, TableBody, SortByDirection } from '@patternfly/react-table';
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  SortByDirection,
+  expandable,
+  sortable,
+  cellWidth,
+} from '@patternfly/react-table';
 import { FilterToolbar } from '@console/internal/components/filter-toolbar';
 import { getAlertsAndRules } from '@console/internal/components/monitoring/utils';
 import { monitoringSetRules, monitoringLoaded, sortList } from '@console/internal/actions/ui';
@@ -18,9 +27,9 @@ import { alertingRuleStateOrder } from '@console/internal/reducers/monitoring';
 import { usePrometheusRulesPoll } from '@console/internal/components/graphs/prometheus-rules-hook';
 import {
   monitoringAlertRows,
-  monitoringAlertColumn,
   alertFilters,
   applyListSort,
+  MonitoringAlertColumn,
 } from './monitoring-alerts-utils';
 
 import './MonitoringAlerts.scss';
@@ -43,10 +52,39 @@ const reduxID = 'devMonitoringAlerts';
 const textFilter = 'resource-list-text';
 
 export const MonitoringAlerts: React.FC<props> = ({ match, rules, filters, listSorts }) => {
+  const { t } = useTranslation();
   const [sortBy, setSortBy] = React.useState<{ index: number; direction: SortByDirection }>({
     index: null,
     direction: SortByDirection.asc,
   });
+  const monitoringAlertColumn: MonitoringAlertColumn[] = [
+    {
+      title: t('devconsole~Name'),
+      cellFormatters: [expandable],
+      transforms: [sortable],
+      fieldName: 'name',
+      sortFunc: 'nameOrder',
+    },
+    {
+      title: t('devconsole~Severity'),
+      transforms: [sortable, cellWidth(10)],
+      fieldName: 'severity',
+      sortFunc: 'alertSeverityOrder',
+    },
+    {
+      title: t('devconsole~Alert State'),
+      transforms: [sortable, cellWidth(15)],
+      fieldName: 'alertState',
+      sortFunc: 'alertingRuleStateOrder',
+    },
+    {
+      title: t('devconsole~Notifications'),
+      transforms: [sortable, cellWidth(20)],
+      fieldName: 'notifications',
+      sortFunc: 'alertingRuleNotificationsOrder',
+    },
+    { title: '' },
+  ];
   const [rows, setRows] = React.useState([]);
   const [collapsedRowsIds, setCollapsedRowsIds] = React.useState([]);
   const dispatch = useDispatch();
@@ -79,7 +117,7 @@ export const MonitoringAlerts: React.FC<props> = ({ match, rules, filters, listS
       orderBy || listOrderBy,
       func || monitoringAlertColumn[columnIndex]?.sortFunc,
     );
-  }, [filters, listSorts, columnIndex, rules, listOrderBy, sortOrder]);
+  }, [filters, listSorts, columnIndex, rules, listOrderBy, monitoringAlertColumn, sortOrder]);
 
   React.useEffect(() => {
     const tableRows = monitoringAlertRows(filteredRules, collapsedRowsIds, namespace);

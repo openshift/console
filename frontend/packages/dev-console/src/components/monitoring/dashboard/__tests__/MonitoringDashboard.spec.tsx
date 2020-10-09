@@ -14,6 +14,14 @@ import { monitoringDashboardQueries, topWorkloadMetricsQueries } from '../../que
 
 type MonitoringDashboardProps = React.ComponentProps<typeof MonitoringDashboard>;
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 describe('Monitoring Dashboard Tab', () => {
   const monitoringDashboardProps: MonitoringDashboardProps = {
     match: {
@@ -30,7 +38,7 @@ describe('Monitoring Dashboard Tab', () => {
 
   it('should render Monitoring Dashboard tab', () => {
     const wrapper = shallow(<MonitoringDashboard {...monitoringDashboardProps} />);
-    expect(wrapper.contains(<title>Dashboard</title>)).toBe(true);
+    expect(wrapper.contains(<title>devconsole~Dashboard</title>)).toBe(true);
   });
 
   it('should render all workload queries', () => {

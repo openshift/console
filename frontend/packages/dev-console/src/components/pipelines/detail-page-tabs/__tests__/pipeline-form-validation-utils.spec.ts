@@ -1,8 +1,11 @@
+import { TFunction } from 'i18next';
 import { cloneDeep } from 'lodash';
 import {
   parametersValidationSchema,
   resourcesValidationSchema,
 } from '../pipelineForm-validation-utils';
+
+const t = (key): TFunction => key;
 
 const mockParametersData = {
   parameters: [
@@ -64,16 +67,22 @@ const mockWorkspacesData = {
 describe('pipeline form validation utils', () => {
   it('should validate parameters validation schema', async () => {
     const mockData = cloneDeep(mockParametersData);
-    await parametersValidationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(true));
+    await parametersValidationSchema(t)
+      .isValid(mockData)
+      .then((valid) => expect(valid).toEqual(true));
   });
 
   it('should validate resources form validation schema', async () => {
     const mockData = cloneDeep(mockResourcesData);
-    await resourcesValidationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(true));
+    await resourcesValidationSchema(t)
+      .isValid(mockData)
+      .then((valid) => expect(valid).toEqual(true));
   });
 
   it('should validate workspaces form validation schema', async () => {
     const mockData = cloneDeep(mockWorkspacesData);
-    await resourcesValidationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(true));
+    await resourcesValidationSchema(t)
+      .isValid(mockData)
+      .then((valid) => expect(valid).toEqual(true));
   });
 });

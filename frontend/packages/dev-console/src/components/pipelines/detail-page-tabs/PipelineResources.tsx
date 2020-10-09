@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { TextInputTypes } from '@patternfly/react-core';
 import { MultiColumnField, InputField, DropdownField } from '@console/shared';
 import { pipelineResourceTypeSelections } from '../const';
@@ -10,13 +11,14 @@ type PipelineResourcesParam = {
 };
 
 const PipelineResources: React.FC<PipelineResourcesParam> = (props) => {
-  const { addLabel = 'Add Pipeline Resource', fieldName, isReadOnly = false } = props;
-  const emptyMessage = 'No resources are associated with this pipeline.';
+  const { t } = useTranslation();
+  const { addLabel = t('devconsole~Add Pipeline Resource'), fieldName, isReadOnly = false } = props;
+  const emptyMessage = t('devconsole~No resources are associated with this pipeline.');
   return (
     <MultiColumnField
       name={fieldName}
       addLabel={addLabel}
-      headers={['Name', 'Resource Type']}
+      headers={[t('devconsole~Name'), t('devconsole~Resource Type')]}
       emptyValues={{ name: '', type: '' }}
       emptyMessage={emptyMessage}
       isReadOnly={isReadOnly}
@@ -24,7 +26,7 @@ const PipelineResources: React.FC<PipelineResourcesParam> = (props) => {
       <InputField
         name="name"
         type={TextInputTypes.text}
-        placeholder="Name"
+        placeholder={t('devconsole~Name')}
         isReadOnly={isReadOnly}
       />
       <DropdownField

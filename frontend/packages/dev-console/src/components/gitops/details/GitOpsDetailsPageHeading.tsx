@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { BreadCrumbs, ResourceIcon } from '@console/internal/components/utils';
 import { Split, SplitItem, Label } from '@patternfly/react-core';
 import { routeDecoratorIcon } from '../../import/render-utils';
@@ -17,13 +18,14 @@ const GitOpsDetailsPageHeading: React.FC<GitOpsDetailsPageHeadingProps> = ({
   manifestURL,
   badge,
 }) => {
+  const { t } = useTranslation();
   const breadcrumbs = [
     {
-      name: 'Application Stages',
+      name: t('devconsole~Application Stages'),
       path: '/applicationstages',
     },
     {
-      name: 'Application Details',
+      name: t('devconsole~Application Details'),
       path: `${url}`,
     },
   ];
@@ -39,12 +41,12 @@ const GitOpsDetailsPageHeading: React.FC<GitOpsDetailsPageHeadingProps> = ({
         {badge && <span className="co-m-pane__heading-badge">{badge}</span>}
       </h1>
       <Split className="odc-gitops-details-page-heading__repo" hasGutter>
-        <SplitItem>Manifest File Repo:</SplitItem>
+        <SplitItem>{t('devconsole~Manifest File Repo')}:</SplitItem>
         <SplitItem isFilled>
           <Label
             style={{ fontSize: '12px' }}
             color="blue"
-            icon={routeDecoratorIcon(manifestURL, 12)}
+            icon={routeDecoratorIcon(manifestURL, 12, t)}
           >
             <a
               style={{ color: 'var(--pf-c-label__content--Color)' }}

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ModalTitle,
   ModalBody,
@@ -12,14 +13,17 @@ type HelmReadmeModalProps = {
 };
 type Props = HelmReadmeModalProps & ModalComponentProps;
 
-const HelmReadmeModal: React.FunctionComponent<Props> = ({ readme, close }) => (
-  <div className="modal-content">
-    <ModalTitle close={close}>README</ModalTitle>
-    <ModalBody>
-      <SyncMarkdownView content={readme} />
-    </ModalBody>
-  </div>
-);
+const HelmReadmeModal: React.FunctionComponent<Props> = ({ readme, close }) => {
+  const { t } = useTranslation();
+  return (
+    <div className="modal-content">
+      <ModalTitle close={close}>{t('devconsole~README')}</ModalTitle>
+      <ModalBody>
+        <SyncMarkdownView content={readme} />
+      </ModalBody>
+    </div>
+  );
+};
 
 export const helmReadmeModalLauncher = createModalLauncher<Props>(HelmReadmeModal);
 export default HelmReadmeModal;

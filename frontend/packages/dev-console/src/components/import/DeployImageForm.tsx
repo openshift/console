@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { FormikProps, FormikValues } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { FormFooter } from '@console/shared/src/components/form-utils';
 import { usePreventDataLossLock } from '@console/internal/components/utils';
 import { Form } from '@patternfly/react-core';
@@ -21,6 +22,7 @@ const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps
   dirty,
   projects,
 }) => {
+  const { t } = useTranslation();
   usePreventDataLossLock(isSubmitting);
 
   return (
@@ -37,10 +39,10 @@ const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps
         handleReset={handleReset}
         errorMessage={status && status.submitError}
         isSubmitting={isSubmitting}
-        submitLabel="Create"
+        submitLabel={t('devconsole~Create')}
         sticky
         disableSubmit={!dirty || !_.isEmpty(errors) || isSubmitting}
-        resetLabel="Cancel"
+        resetLabel={t('devconsole~Cancel')}
       />
     </Form>
   );

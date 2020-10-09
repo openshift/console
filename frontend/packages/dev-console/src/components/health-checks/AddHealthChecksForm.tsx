@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 import { Formik } from 'formik';
 import { FirehoseResult, LoadingBox, StatusBox, history } from '@console/internal/components/utils';
@@ -19,6 +20,7 @@ const AddHealthChecksForm: React.FC<AddHealthChecksFormProps> = ({
   resource,
   currentContainer,
 }) => {
+  const { t } = useTranslation();
   if (!resource.loaded && _.isEmpty(resource.loadError)) {
     return <LoadingBox />;
   }
@@ -33,7 +35,7 @@ const AddHealthChecksForm: React.FC<AddHealthChecksFormProps> = ({
   );
 
   if (_.isEmpty(container)) {
-    return <div className="text-center">Container not found</div>;
+    return <div className="text-center">{t('devconsole~Container not found')}</div>;
   }
 
   const handleSubmit = (values, actions) => {
@@ -64,7 +66,7 @@ const AddHealthChecksForm: React.FC<AddHealthChecksFormProps> = ({
     <Formik
       initialValues={initialValues}
       validationSchema={yup.object().shape({
-        healthChecks: healthChecksProbesValidationSchema,
+        healthChecks: healthChecksProbesValidationSchema(t),
       })}
       onSubmit={handleSubmit}
       onReset={history.goBack}

@@ -1,10 +1,11 @@
+import i18n from '@console/internal/i18n';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { history } from '@console/internal/components/utils';
 import { deleteResourceModal } from '../components/modals';
 
 export const deleteHelmRelease = (releaseName: string, namespace: string, redirect?: string) => {
   return {
-    label: 'Uninstall Helm Release',
+    label: i18n.t('devconsole~Uninstall Helm Release'),
     callback: () => {
       deleteResourceModal({
         blocking: true,
@@ -30,7 +31,7 @@ export const upgradeHelmRelease = (
   namespace: string,
   actionOrigin: string,
 ) => ({
-  label: 'Upgrade',
+  label: i18n.t('devconsole~Upgrade'),
   callback: () => {
     history.push(
       `/helm-releases/ns/${namespace}/${releaseName}/upgrade?actionOrigin=${actionOrigin}`,
@@ -43,7 +44,7 @@ export const rollbackHelmRelease = (
   namespace: string,
   actionOrigin: string,
 ) => ({
-  label: 'Rollback',
+  label: i18n.t('devconsole~Rollback'),
   callback: () => {
     history.push(
       `/helm-releases/ns/${namespace}/${releaseName}/rollback?actionOrigin=${actionOrigin}`,

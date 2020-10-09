@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import { useTranslation } from 'react-i18next';
 import { matchPath, match as RMatch } from 'react-router-dom';
 import { useQueryParams } from '@console/shared/src';
 import { removeQueryArgument, setQueryArgument } from '@console/internal/components/utils';
@@ -40,6 +41,7 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({
   hideProjects = false,
 }) => {
   const namespace = match.params.name;
+  const { t } = useTranslation();
   const queryParams = useQueryParams();
   let view = queryParams.get('view');
   const { projects } = useK8sWatchResources<{ [key: string]: K8sResourceKind[] }>({
@@ -89,7 +91,7 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({
   return (
     <DataModelProvider namespace={namespace}>
       <Helmet>
-        <title>Topology</title>
+        <title>{t('devconsole~Topology')}</title>
       </Helmet>
       <NamespacedPage
         variant={showGraphView ? NamespacedPageVariants.default : NamespacedPageVariants.light}
@@ -98,12 +100,12 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({
         toolbar={<TopologyPageToolbar showGraphView={showGraphView} onViewChange={onViewChange} />}
         data-test-id={showGraphView ? 'topology-graph-page' : 'topology-list-page'}
       >
-        <ProjectsExistWrapper title="Topology" projects={projects}>
+        <ProjectsExistWrapper title={t('devconsole~Topology')} projects={projects}>
           {namespace ? (
             <TopologyDataRenderer showGraphView={showGraphView} title={title} />
           ) : (
-            <CreateProjectListPage title="Topology">
-              Select a project to view the topology
+            <CreateProjectListPage title={t('devconsole~Topology')}>
+              {t('devconsole~Select a project to view the topology')}
             </CreateProjectListPage>
           )}
         </ProjectsExistWrapper>

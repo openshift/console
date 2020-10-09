@@ -17,6 +17,13 @@ jest.mock('@console/shared', () => {
     useQueryParams: () => new Map(),
   };
 });
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
 
 type Props = {
   className?: string;

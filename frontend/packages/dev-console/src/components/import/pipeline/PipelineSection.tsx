@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { connectToFlags, FlagsObject } from '@console/internal/reducers/features';
 import { Alert, Split, SplitItem } from '@patternfly/react-core';
 import { getActiveNamespace } from '@console/internal/actions/ui';
@@ -42,6 +43,7 @@ const usePipelineAccessReview = (): boolean => {
 };
 
 const PipelineSection: React.FC<PipelineSectionProps> = ({ flags, builderImages }) => {
+  const { t } = useTranslation();
   const { values } = useFormikContext<FormikValues>();
 
   const hasCreatePipelineAccess = usePipelineAccessReview();
@@ -49,7 +51,7 @@ const PipelineSection: React.FC<PipelineSectionProps> = ({ flags, builderImages 
   if (flags[FLAG_OPENSHIFT_PIPELINE] && hasCreatePipelineAccess) {
     const title = (
       <Split hasGutter>
-        <SplitItem className="odc-form-section__heading">Pipelines</SplitItem>
+        <SplitItem className="odc-form-section__heading">{t('devconsole~Pipelines')}</SplitItem>
         <SplitItem>
           <TechPreviewBadge />
         </SplitItem>
@@ -63,7 +65,9 @@ const PipelineSection: React.FC<PipelineSectionProps> = ({ flags, builderImages 
           <Alert
             isInline
             variant="info"
-            title="Select a builder image and resource to see if there is a pipeline template available for this runtime."
+            title={t(
+              'devconsole~Select a builder image and resource to see if there is a pipeline template available for this runtime.',
+            )}
           />
         )}
       </FormSection>

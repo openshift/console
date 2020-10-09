@@ -6,6 +6,14 @@ import { PipelinesPage } from '../PipelinesPage';
 import CreateProjectListPage from '../../projects/CreateProjectListPage';
 import PipelinesResourceList from '../PipelinesResourceList';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 describe('Pipeline List', () => {
   it('Should render a PipelineResourcelist', () => {
     const pipelinePageProps: React.ComponentProps<typeof PipelinesPage> = {

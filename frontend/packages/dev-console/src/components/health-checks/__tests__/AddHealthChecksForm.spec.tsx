@@ -7,6 +7,14 @@ import { Formik } from 'formik';
 
 let addHealthCheckWrapperProps: React.ComponentProps<typeof AddHealthChecksForm>;
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 describe('HealthCheckWrapper', () => {
   beforeEach(() => {
     addHealthCheckWrapperProps = {
@@ -34,7 +42,7 @@ describe('HealthCheckWrapper', () => {
   it('should show container not found error', () => {
     addHealthCheckWrapperProps.resource.loaded = true;
     const wrapper = shallow(<AddHealthChecksForm {...addHealthCheckWrapperProps} />);
-    expect(wrapper.find('div').text()).toEqual('Container not found');
+    expect(wrapper.find('div').text()).toEqual('devconsole~Container not found');
   });
 
   it('should load AddHealthCheck', () => {

@@ -6,6 +6,7 @@ import { safeDump, safeLoad } from 'js-yaml';
 import { Formik } from 'formik';
 import { Helmet } from 'react-helmet';
 import { RouteComponentProps } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { history, LoadingBox } from '@console/internal/components/utils';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { PageBody } from '@console/shared';
@@ -58,6 +59,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
   const helmChartRepoName = searchParams.get('chartRepoName');
   const helmActionOrigin = searchParams.get('actionOrigin') as HelmActionOrigins;
 
+  const { t } = useTranslation();
   const [chartData, setChartData] = React.useState<HelmChart>(null);
   const [chartName, setChartName] = React.useState<string>('');
   const [chartVersion, setChartVersion] = React.useState<string>('');
@@ -79,10 +81,11 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
         helmAction,
         initialReleaseName,
         namespace,
+        t,
         helmActionOrigin,
         initialChartURL,
       ),
-    [helmAction, helmActionOrigin, initialChartURL, initialReleaseName, namespace],
+    [helmAction, helmActionOrigin, initialChartURL, initialReleaseName, namespace, t],
   );
 
   React.useEffect(() => {
@@ -155,14 +158,18 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
       if (validFormData) {
         valuesObj = formData;
       } else {
-        actions.setStatus({ submitError: `Errors in the Form - ${ajv.errorsText()}` });
+        actions.setStatus({
+          submitError: t('devconsole~Errors in the Form - {{errorsText}}', {
+            errorsText: ajv.errorsText(),
+          }),
+        });
         return;
       }
     } else if (yamlData) {
       try {
         valuesObj = safeLoad(yamlData);
       } catch (err) {
-        actions.setStatus({ submitError: `Invalid YAML - ${err}` });
+        actions.setStatus({ submitError: t('devconsole~Invalid YAML - {{err}}', { err }) });
         return;
       }
     }
@@ -223,7 +230,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
           initialValues={initialValues}
           onSubmit={handleSubmit}
           onReset={history.goBack}
-          validationSchema={getHelmActionValidationSchema(helmAction)}
+          validationSchema={getHelmActionValidationSchema(helmAction, t)}
         >
           {(formikProps) => (
             <HelmInstallUpgradeForm

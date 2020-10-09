@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 // FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
@@ -17,6 +18,7 @@ interface CommitDetailsProps {
 const CommitDetails: React.FC<CommitDetailsProps> = ({ imageName }) => {
   const [commitData, setCommitData] = React.useState<CommitData>(null);
   const namespace = useSelector(getActiveNamespace);
+  const { t } = useTranslation();
   const importImage = imageName && {
     kind: 'ImageStreamImport',
     apiVersion: 'image.openshift.io/v1',
@@ -80,11 +82,11 @@ const CommitDetails: React.FC<CommitDetailsProps> = ({ imageName }) => {
         <>
           <Timestamp timestamp={commitData.timestamp} />
           {commitData.id}
-          {' by '}
+          {t('devconsole~ by ')}
           {commitData.author}
         </>
       ) : (
-        <span>Commit details not available</span>
+        <span>{t('devconsole~Commit details not available')}</span>
       )}
     </>
   );

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { FormikProps, FormikValues } from 'formik';
 import { Form } from '@patternfly/react-core';
 import { PageHeading } from '@console/internal/components/utils';
@@ -32,34 +33,37 @@ const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationF
   status,
   isSubmitting,
   appResources,
-}) => (
-  <>
-    <PageHeading title={createFlowType} style={{ padding: '0px' }} />
-    <Form onSubmit={handleSubmit}>
-      {createFlowType !== CreateApplicationFlow.Container && (
-        <GitSection builderImages={builderImages} />
-      )}
-      {createFlowType === CreateApplicationFlow.Git && (
-        <BuilderSection image={values.image} builderImages={builderImages} />
-      )}
-      {createFlowType === CreateApplicationFlow.Dockerfile && (
-        <DockerSection buildStrategy={values.build.strategy} />
-      )}
-      {createFlowType === CreateApplicationFlow.Container && <ImageSearchSection />}
-      {createFlowType === CreateApplicationFlow.Container && <IconSection />}
-      <AppSection project={values.project} />
-      <AdvancedSection values={values} appResources={appResources} />
-      <FormFooter
-        handleReset={handleReset}
-        errorMessage={status && status.submitError}
-        isSubmitting={isSubmitting}
-        submitLabel="Save"
-        disableSubmit={!dirty || !_.isEmpty(errors) || isSubmitting}
-        resetLabel="Cancel"
-        sticky
-      />
-    </Form>
-  </>
-);
+}) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <PageHeading title={createFlowType} style={{ padding: '0px' }} />
+      <Form onSubmit={handleSubmit}>
+        {createFlowType !== CreateApplicationFlow.Container && (
+          <GitSection builderImages={builderImages} />
+        )}
+        {createFlowType === CreateApplicationFlow.Git && (
+          <BuilderSection image={values.image} builderImages={builderImages} />
+        )}
+        {createFlowType === CreateApplicationFlow.Dockerfile && (
+          <DockerSection buildStrategy={values.build.strategy} />
+        )}
+        {createFlowType === CreateApplicationFlow.Container && <ImageSearchSection />}
+        {createFlowType === CreateApplicationFlow.Container && <IconSection />}
+        <AppSection project={values.project} />
+        <AdvancedSection values={values} appResources={appResources} />
+        <FormFooter
+          handleReset={handleReset}
+          errorMessage={status && status.submitError}
+          isSubmitting={isSubmitting}
+          submitLabel={t('devconsole~Save')}
+          disableSubmit={!dirty || !_.isEmpty(errors) || isSubmitting}
+          resetLabel={t('devconsole~Cancel')}
+          sticky
+        />
+      </Form>
+    </>
+  );
+};
 
 export default EditApplicationForm;
