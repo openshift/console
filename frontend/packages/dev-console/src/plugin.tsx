@@ -70,6 +70,7 @@ import {
   OperatorsTopologyConsumedExtensions,
   operatorsTopologyPlugin,
 } from './components/topology/operators/operatorsTopologyPlugin';
+import { pipelinesTopologyPlugin } from './components/topology/pipelines/pipelinesTopologyPlugin';
 import { usePerspectiveDetection } from './utils/usePerspectiveDetection';
 import { getGuidedTour } from './components/guided-tour';
 
@@ -1176,6 +1177,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   },
   ...helmTopologyPlugin,
   ...operatorsTopologyPlugin,
+  ...pipelinesTopologyPlugin,
 ];
 
 export default plugin;
