@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Formik } from 'formik';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { history } from '@console/internal/components/utils';
 import { getActiveApplication, getActivePerspective } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
@@ -46,6 +47,7 @@ export const EventSource: React.FC<Props> = ({
   perspective,
 }) => {
   const perpectiveExtension = useExtensions<Perspective>(isPerspective);
+  const { t } = useTranslation();
   const [sinkGroupVersionKind = '', sinkName = ''] = contextSource?.split('/') ?? [];
   const [sinkGroup = '', sinkVersion = '', sinkKind = ''] =
     getGroupVersionKind(sinkGroupVersionKind) ?? [];
@@ -84,8 +86,10 @@ export const EventSource: React.FC<Props> = ({
     }
     const errMessage =
       knEventSourceResource?.kind && knEventSourceResource?.apiVersion
-        ? `No model registered for ${referenceFor(knEventSourceResource)}`
-        : 'Invalid YAML';
+        ? t('knative-plugin~No model registered for {{referenceForKnEventSource}}', {
+            referenceForKnEventSource: referenceFor(knEventSourceResource),
+          })
+        : t('knative-plugin~Invalid YAML');
     return Promise.reject(new Error(errMessage));
   };
 
@@ -112,7 +116,7 @@ export const EventSource: React.FC<Props> = ({
       onReset={history.goBack}
       validateOnBlur={false}
       validateOnChange={false}
-      validationSchema={eventSourceValidationSchema}
+      validationSchema={eventSourceValidationSchema(t)}
     >
       {(formikProps) => (
         <EventSourceForm

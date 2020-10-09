@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { OverviewItem } from '@console/shared';
 import { referenceFor, modelFor } from '@console/internal/module/k8s';
 import {
@@ -18,6 +19,7 @@ export type SinkUriResourcesTabProps = {
 };
 
 const SinkUriResourcesTab: React.FC<SinkUriResourcesTabProps> = ({ itemData, menuAction }) => {
+  const { t } = useTranslation();
   const { obj, eventSources } = itemData;
   const sinkUri = obj?.spec?.sinkUri;
   const actions = [];
@@ -48,11 +50,11 @@ const SinkUriResourcesTab: React.FC<SinkUriResourcesTabProps> = ({ itemData, men
         )}
       >
         <li className="co-m-horizontal-nav__menu-item">
-          <button type="button">Resources</button>
+          <button type="button">{t('knative-plugin~Resources')}</button>
         </li>
       </ul>
       <div className="overview__sidebar-pane-body">
-        <SidebarSectionHeading text="Event Sources" />
+        <SidebarSectionHeading text={t('knative-plugin~Event Sources')} />
         <ul className="list-group">
           {_.map(eventSources, (resource) => {
             if (!resource) {

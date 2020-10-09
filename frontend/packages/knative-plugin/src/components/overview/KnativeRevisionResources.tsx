@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { K8sResourceKind, PodKind, podPhase } from '@console/internal/module/k8s';
 import { PodControllerOverviewItem } from '@console/shared';
 import { PodsOverview } from '@console/internal/components/overview/pods-overview';
@@ -23,6 +24,7 @@ const KnativeRevisionResources: React.FC<KnativeRevisionResourceProps> = ({
   pods,
   current,
 }) => {
+  const { t } = useTranslation();
   const {
     kind: resKind,
     metadata: { name, namespace },
@@ -33,7 +35,12 @@ const KnativeRevisionResources: React.FC<KnativeRevisionResourceProps> = ({
   )}`;
   return (
     <>
-      <PodsOverview pods={activePods} obj={obj} emptyText={AUTOSCALED} allPodsLink={linkUrl} />
+      <PodsOverview
+        pods={activePods}
+        obj={obj}
+        emptyText={t('knative-plugin~Autoscaled to 0')}
+        allPodsLink={linkUrl}
+      />
       <DeploymentOverviewList current={current} />
       <KSRoutesOverviewList ksroutes={ksroutes} resource={obj} />
       <ConfigurationsOverviewList configurations={configurations} />

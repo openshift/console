@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { calculateRadius } from '@console/shared';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, LinkIcon } from '@patternfly/react-icons';
@@ -53,6 +54,7 @@ const SinkUriNode: React.FC<SinkUriNodeProps> = ({
 }) => {
   useAnchor(React.useCallback((node: Node) => new EllipseAnchor(node, EVENT_MARKER_RADIUS), []));
   const [hover, hoverRef] = useHover();
+  const { t } = useTranslation();
   const groupRefs = useCombineRefs<SVGCircleElement>(hoverRef, dragNodeRef);
   const { width, height } = element.getDimensions();
   const sinkData = element.getData().data;
@@ -62,7 +64,7 @@ const SinkUriNode: React.FC<SinkUriNodeProps> = ({
   const cy = height / 2;
   return (
     <Tooltip
-      content="Move sink to URI"
+      content={t('knative-plugin~Move sink to URI')}
       trigger="manual"
       isVisible={dropTarget && canDrop}
       animationDuration={0}
@@ -103,7 +105,11 @@ const SinkUriNode: React.FC<SinkUriNodeProps> = ({
           </g>
         </g>
         {sinkData.sinkUri && (
-          <Tooltip key="URI" content="Open URI" position={TooltipPosition.right}>
+          <Tooltip
+            key="URI"
+            content={t('knative-plugin~Open URI')}
+            position={TooltipPosition.right}
+          >
             <Decorator
               x={cx + radius - DECORATOR_RADIUS * 0.7}
               y={cy - radius + DECORATOR_RADIUS * 0.7}

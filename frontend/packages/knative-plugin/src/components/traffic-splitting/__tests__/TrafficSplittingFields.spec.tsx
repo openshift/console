@@ -16,6 +16,14 @@ const formProps = {
   revisionItems: mockRevisionItems,
 };
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 describe('TrafficSplittingFields', () => {
   it('should disable delete row button but not add row button for one value', () => {
     const wrapper = shallow(

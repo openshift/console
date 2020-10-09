@@ -1,5 +1,6 @@
 import * as React from 'react';
 import classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { TooltipPosition, Tooltip } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import {
@@ -64,6 +65,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
   onHideCreateConnector,
   onShowCreateConnector,
 }) => {
+  const { t } = useTranslation();
   const [hover, hoverRef] = useHover();
   const [innerHover, innerHoverRef] = useHover();
   const dragSpec = React.useMemo(() => nodeDragSourceSpec(TYPE_KNATIVE_SERVICE, true, editAccess), [
@@ -156,7 +158,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
             />
             {!hasChildren && (
               <text x={x + width / 2} y={y + height / 2} dy="0.35em" textAnchor="middle">
-                No Revisions
+                {t('knative-plugin~No Revisions')}
               </text>
             )}
           </g>

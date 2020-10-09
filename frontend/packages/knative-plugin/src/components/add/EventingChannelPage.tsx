@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { RouteComponentProps } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { PageBody, getBadgeFromType } from '@console/shared';
 import { PageHeading } from '@console/internal/components/utils';
 import NamespacedPage, {
@@ -16,15 +17,20 @@ type EventingChannelPageProps = RouteComponentProps<{ ns?: string }>;
 const EventingChannelPage: React.FC<EventingChannelPageProps> = ({ match, location }) => {
   const namespace = match.params.ns;
   const channels = useChannelList(namespace);
+  const { t } = useTranslation();
   const searchParams = new URLSearchParams(location.search);
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
       <Helmet>
-        <title>Channel</title>
+        <title>{t('knative-plugin~Channel')}</title>
       </Helmet>
-      <PageHeading badge={getBadgeFromType(KnativeEventingModel.badge)} title="Channel">
-        Create a Knative Channel to create an event forwarding and persistence layer with in-memory
-        and reliable implementations
+      <PageHeading
+        badge={getBadgeFromType(KnativeEventingModel.badge)}
+        title={t('knative-plugin~Channel')}
+      >
+        {t(
+          'knative-plugin~Create a Knative Channel to create an event forwarding and persistence layer with in-memory and reliable implementations',
+        )}
       </PageHeading>
       <PageBody flexLayout>
         <AddChannel

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { referenceFor } from '@console/internal/module/k8s';
 import { SidebarSectionHeading, ResourceLink } from '@console/internal/components/utils';
@@ -17,6 +18,7 @@ const EventPubSubSubscribers: React.FC<EventPubSubSubscribersProps> = ({
   subscribers,
   title = 'Subscribers',
 }) => {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = React.useState('');
 
   return (
@@ -72,7 +74,9 @@ const EventPubSubSubscribers: React.FC<EventPubSubSubscribersProps> = ({
           ))}
         </ul>
       ) : (
-        <span className="text-muted">No Subscribers found for this resource.</span>
+        <span className="text-muted">
+          {t('knative-plugin~No Subscribers found for this resource.')}
+        </span>
       )}
     </>
   );

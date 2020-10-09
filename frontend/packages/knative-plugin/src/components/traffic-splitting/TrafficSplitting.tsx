@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Formik, FormikValues, FormikHelpers } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { K8sResourceKind, k8sUpdate } from '@console/internal/module/k8s';
 import { ServiceModel } from '../../models';
 import { getRevisionItems, constructObjForUpdate } from '../../utils/traffic-splitting-utils';
@@ -23,6 +24,7 @@ const TrafficSplitting: React.FC<TrafficSplittingProps> = ({
   cancel,
   close,
 }) => {
+  const { t } = useTranslation();
   const traffic: Traffic[] = service.spec?.traffic ?? [{ percent: 0, tag: '', revisionName: '' }];
   const latestCreatedRevName = service.status?.latestCreatedRevisionName;
   const revisionItems = getRevisionItems(revisions);
@@ -52,7 +54,8 @@ const TrafficSplitting: React.FC<TrafficSplittingProps> = ({
         close();
       })
       .catch((err) => {
-        action.setStatus({ error: err.message || 'An error occurred. Please try again' });
+        const errMessage = err.message || t('knative-plugin~An error occurred. Please try again');
+        action.setStatus({ error: errMessage });
       });
   };
 

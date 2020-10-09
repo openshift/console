@@ -5,7 +5,7 @@ import { addPubSubConnectionModal } from '../components/pub-sub/PubSubModalLaunc
 
 export const addSubscription = (model: K8sKind, source: K8sResourceKind): KebabOption => {
   return {
-    label: 'Add Subscription',
+    labelKey: 'knative-plugin~Add Subscription',
     callback: () =>
       addPubSubConnectionModal({
         source,

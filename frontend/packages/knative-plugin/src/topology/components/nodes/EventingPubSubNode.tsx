@@ -41,6 +41,7 @@ import {
   EventingSubscriptionModel,
 } from '../../../models';
 import * as eventPubSubImg from '../../../imgs/event-pub-sub.svg';
+import { useTranslation } from 'react-i18next';
 
 export type EventingPubSubNodeProps = {
   element: Node;
@@ -75,6 +76,7 @@ const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
   useAnchor(RectAnchor, AnchorEnd.target, TYPE_AGGREGATE_EDGE);
   const [hover, hoverRef] = useHover();
 
+  const { t } = useTranslation();
   const groupRefs = useCombineRefs(dragNodeRef, dndDropRef, hoverRef);
   const [filtered] = useSearchFilter(element.getLabel());
   const displayFilters = useDisplayFilters();
@@ -108,7 +110,9 @@ const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
 
   return (
     <Tooltip
-      content={`Move sink to ${resourceObj.kind}`}
+      content={t('knative-plugin~Move sink to {{resourceObjKind}}', {
+        resourceObjKind: resourceObj.kind,
+      })}
       trigger="manual"
       isVisible={dropTarget && canDrop}
       animationDuration={0}
