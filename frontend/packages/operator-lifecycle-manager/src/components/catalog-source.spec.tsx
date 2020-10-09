@@ -31,6 +31,7 @@ jest.mock('react-i18next', () => {
     useTranslation: () => ({ t: (key) => key }),
   };
 });
+const i18nNS = 'details-page';
 
 describe(CatalogSourceDetails.displayName, () => {
   let wrapper: ShallowWrapper<CatalogSourceDetailsProps>;
@@ -86,8 +87,8 @@ describe(CatalogSourceDetailsPage.displayName, () => {
       wrapper
         .find(DetailsPage)
         .props()
-        .pages.map((p) => p.name),
-    ).toEqual(['Details', 'YAML']);
+        .pages.map((p) => p.nameKey),
+    ).toEqual([`${i18nNS}~Details`, `${i18nNS}~YAML`]);
     expect(wrapper.find(DetailsPage).props().pages[0].component).toEqual(CatalogSourceDetails);
     expect(wrapper.find(DetailsPage).props().resources).toEqual([
       {

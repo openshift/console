@@ -1,6 +1,7 @@
 import { K8sKind } from '../../module/k8s';
 import { LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY } from '@console/shared/src/constants';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import i18next from 'i18next';
 
 export const getBreadcrumbPath = (match: any, customPlural?: string) => {
   const lastNamespace = localStorage.getItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY);
@@ -17,5 +18,8 @@ export const breadcrumbsForDetailsPage = (kindObj: K8sKind, match: any) => () =>
     name: `${kindObj.labelPlural}`,
     path: getBreadcrumbPath(match),
   },
-  { name: `${kindObj.label} Details`, path: `${match.url}` },
+  {
+    name: i18next.t('details-page~{{kind}} details', { kind: kindObj.label }),
+    path: `${match.url}`,
+  },
 ];

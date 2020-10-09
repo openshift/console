@@ -9,6 +9,14 @@ import { ResourceLink, history } from '@console/internal/components/utils';
 import { Conditions } from '@console/internal/components/conditions';
 import { DescriptorDetailsItem, DescriptorDetailsItemProps } from '..';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 const OBJ = {
   ...testResourceInstance,
   status: {

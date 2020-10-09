@@ -13,6 +13,7 @@ import TaskRuns from '../detail-page-tabs/TaskRuns';
 const menuActions = jest.spyOn(utils, 'useMenuActionsWithUserAnnotation');
 const breadCrumbs = jest.spyOn(hookUtils, 'usePipelinesBreadcrumbsFor');
 type PipelineRunDetailsPageProps = React.ComponentProps<typeof PipelineRunDetailsPage>;
+const i18nNS = 'details-page';
 
 describe('PipelineRunDetailsPage:', () => {
   let pipelineRunDetailsPageProps: PipelineRunDetailsPageProps;
@@ -46,7 +47,7 @@ describe('PipelineRunDetailsPage:', () => {
 
   it('Should contain events page', () => {
     const { pages } = wrapper.props();
-    const eventPage = pages.find((page) => page.name === 'Events');
+    const eventPage = pages.find((page) => page.nameKey === `${i18nNS}~Events`);
     expect(eventPage).toBeDefined();
     expect(eventPage.component).toBe(PipelineRunEvents);
   });

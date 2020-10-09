@@ -9,6 +9,7 @@ import TaskRunEvents from '../TaskRunEvents';
 
 const breadCrumbs = jest.spyOn(hookUtils, 'useTasksBreadcrumbsFor');
 type TaskRunDetailsPageProps = React.ComponentProps<typeof TaskRunDetailsPage>;
+const i18nNS = 'details-page';
 
 describe('TaskRunDetailsPage:', () => {
   let taskRunDetailsPageProps: TaskRunDetailsPageProps;
@@ -36,7 +37,7 @@ describe('TaskRunDetailsPage:', () => {
   it('Should contain events page', () => {
     const wrapper = shallow(<TaskRunDetailsPage {...taskRunDetailsPageProps} />);
     const { pages } = wrapper.props();
-    const eventPage = pages.find((page) => page.name === 'Events');
+    const eventPage = pages.find((page) => page.nameKey === `${i18nNS}~Events`);
     expect(eventPage).toBeDefined();
     expect(eventPage.component).toBe(TaskRunEvents);
   });

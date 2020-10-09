@@ -53,6 +53,8 @@ import {
   referenceForProvidedAPI,
 } from '.';
 
+const i18nNS = 'details-page';
+
 describe('SingleProjectTableHeader.displayName', () => {
   it('returns single project column header definition for cluster service version table header', () => {
     expect(Array.isArray(SingleProjectTableHeader()));
@@ -500,17 +502,22 @@ describe(ClusterServiceVersionsDetailsPage.displayName, () => {
 
   it('renders a `DetailsPage` with the correct subpages', () => {
     const detailsPage = wrapper.find(DetailsPage);
-
-    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[0].name).toEqual('Details');
+    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[0].nameKey).toEqual(
+      `${i18nNS}~Details`,
+    );
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[0].href).toEqual('');
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[0].component).toEqual(
       ClusterServiceVersionDetails,
     );
-    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[1].name).toEqual('YAML');
+    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[1].nameKey).toEqual(
+      `${i18nNS}~YAML`,
+    );
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[1].href).toEqual('yaml');
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[2].name).toEqual('Subscription');
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[2].href).toEqual('subscription');
-    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[3].name).toEqual('Events');
+    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[3].nameKey).toEqual(
+      `${i18nNS}~Events`,
+    );
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[3].href).toEqual('events');
   });
 

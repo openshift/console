@@ -5,6 +5,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Button, TextInput } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { useDocumentListener, KEYBOARD_SHORTCUTS } from '@console/shared';
@@ -275,13 +276,10 @@ export const FireMan_ = connect(null, { filterList })(
     }
   },
 );
-
 FireMan_.displayName = 'FireMan';
-
 FireMan_.defaultProps = {
   textFilter: 'name',
 };
-
 FireMan_.propTypes = {
   canCreate: PropTypes.bool,
   createAccessReview: PropTypes.object,
@@ -309,7 +307,6 @@ FireMan_.propTypes = {
   textFilter: PropTypes.string,
   title: PropTypes.string,
 };
-
 /** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean, badge?: React.ReactNode, createHandler?: any, hideNameLabelFilters?: boolean, hideLabelFilter?: boolean, columnLayout?: ColumnLayout, customData?: any, hideColumnManagement?: boolean, labelFilterPlaceholder?: string, nameFilterPlaceholder?: string } >} */
 export const ListPage = withFallback((props) => {
   const {
@@ -342,6 +339,7 @@ export const ListPage = withFallback((props) => {
     hideColumnManagement,
     columnLayout,
   } = props;
+  const { t } = useTranslation();
   let { createProps } = props;
   const ko = kindObj(kind);
   const { label, labelPlural, namespaced, plural } = ko;
@@ -388,10 +386,10 @@ export const ListPage = withFallback((props) => {
       autoFocus={autoFocus}
       canCreate={canCreate}
       createAccessReview={createAccessReview}
-      createButtonText={createButtonText || `Create ${label}`}
+      createButtonText={createButtonText || t('list-page~Create {{label}}', { label })}
       createProps={createProps}
       customData={customData}
-      filterLabel={filterLabel || 'by name'}
+      filterLabel={filterLabel || t('list-page~by name')}
       nameFilterPlaceholder={nameFilterPlaceholder}
       labelFilterPlaceholder={labelFilterPlaceholder}
       flatten={(_resources) => _.get(_resources, name || kind, {}).data}
@@ -402,7 +400,7 @@ export const ListPage = withFallback((props) => {
       namespace={usedNamespace}
       resources={resources}
       rowFilters={rowFilters}
-      selectorFilterLabel="Filter by selector (app=nginx) ..."
+      selectorFilterLabel={t('list-page~Filter by selector (app=nginx) ...')}
       showTitle={showTitle}
       textFilter={textFilter}
       title={title}
@@ -447,6 +445,7 @@ export const MultiListPage = (props) => {
     columnLayout,
   } = props;
 
+  const { t } = useTranslation();
   const resources = _.map(props.resources, (r) => ({
     ...r,
     isList: r.isList !== undefined ? r.isList : true,
@@ -459,12 +458,12 @@ export const MultiListPage = (props) => {
       autoFocus={autoFocus}
       canCreate={canCreate}
       createAccessReview={createAccessReview}
-      createButtonText={createButtonText || 'Create'}
+      createButtonText={createButtonText || t('public~Create')}
       createProps={createProps}
-      filterLabel={filterLabel || 'by name'}
+      filterLabel={filterLabel || t('list-page~by name')}
       helpText={helpText}
       resources={mock ? [] : resources}
-      selectorFilterLabel="Filter by selector (app=nginx) ..."
+      selectorFilterLabel={t('list-page~Filter by selector (app=nginx) ...')}
       textFilter={textFilter}
       title={showTitle ? title : undefined}
       badge={badge}

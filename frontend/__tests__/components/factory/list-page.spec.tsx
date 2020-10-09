@@ -9,6 +9,14 @@ import {
 } from '../../../public/components/factory/list-page';
 import { Firehose, PageHeading } from '../../../public/components/utils';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 describe(TextFilter.displayName, () => {
   let wrapper: ShallowWrapper;
   let label: string;

@@ -12,6 +12,14 @@ import { ResourceRequirementsModalLink } from './resource-requirements';
 import * as configureSize from './configure-size';
 import { DescriptorDetailsItem, DescriptorDetailsItemProps } from '..';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 const OBJ = {
   ...testResourceInstance,
   spec: {
