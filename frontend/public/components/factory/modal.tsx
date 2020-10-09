@@ -6,6 +6,7 @@ import { Router } from 'react-router-dom';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { ActionGroup, Button } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 import store from '../../redux';
 import { ButtonBar } from '../utils/button-bar';
@@ -122,6 +123,7 @@ export const ModalSubmitFooter: React.SFC<ModalSubmitFooterProps> = ({
   resetText = 'Reset',
   reset,
 }) => {
+  const { t } = useTranslation();
   const onCancelClick = (e) => {
     e.stopPropagation();
     cancel(e);
@@ -146,7 +148,7 @@ export const ModalSubmitFooter: React.SFC<ModalSubmitFooterProps> = ({
           data-test-id="modal-cancel-action"
           onClick={onCancelClick}
         >
-          {cancelText || 'Cancel'}
+          {cancelText || t('public~Cancel')}
         </Button>
         {submitDanger ? (
           <Button

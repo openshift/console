@@ -1,35 +1,32 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { k8sPatch, referenceForModel } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { PromiseComponent, ResourceIcon, SelectorInput } from '../utils';
+import { ResourceIcon, SelectorInput, withHandlePromise } from '../utils';
 
 const LABELS_PATH = '/metadata/labels';
 const TEMPLATE_SELECTOR_PATH = '/spec/template/metadata/labels';
 
-class BaseLabelsModal extends PromiseComponent {
-  constructor(props) {
-    super(props);
-    this._submit = this._submit.bind(this);
-    this._cancel = props.cancel.bind(this);
-    const labels = SelectorInput.arrayify(_.get(props.resource, props.path.split('/').slice(1)));
-    this.state = Object.assign(this.state, {
-      labels,
-    });
-    this.createPath = !labels.length;
-  }
+const BaseLabelsModal = withHandlePromise((props) => {
+  const [labels, setLabels] = React.useState(
+    SelectorInput.arrayify(_.get(props.resource, props.path.split('/').slice(1))),
+  );
+  const [errorMessage] = React.useState();
+  const createPath = !labels.length;
+  const { t } = useTranslation();
 
-  _submit(e) {
+  const submit = (e) => {
     e.preventDefault();
 
-    const { kind, path, resource, isPodSelector } = this.props;
+    const { kind, path, resource, isPodSelector } = props;
 
     const patch = [
       {
-        op: this.createPath ? 'add' : 'replace',
+        op: createPath ? 'add' : 'replace',
         path,
-        value: SelectorInput.objectify(this.state.labels),
+        value: SelectorInput.objectify(labels),
       },
     ];
 
@@ -42,52 +39,59 @@ class BaseLabelsModal extends PromiseComponent {
       patch.push({
         path: TEMPLATE_SELECTOR_PATH,
         op: 'replace',
-        value: SelectorInput.objectify(this.state.labels),
+        value: SelectorInput.objectify(labels),
       });
     }
     const promise = k8sPatch(kind, resource, patch);
-    this.handlePromise(promise).then(this.props.close);
-  }
+    props.handlePromise(promise, props.close);
+  };
 
-  render() {
-    const { kind, resource, description, message, labelClassName } = this.props;
+  const { kind, resource, descriptionKey, messageKey, labelClassName } = props;
 
-    return (
-      <form onSubmit={this._submit} name="form" className="modal-content">
-        <ModalTitle>Edit {description || 'Labels'}</ModalTitle>
-        <ModalBody>
-          <div className="row co-m-form-row">
-            <div className="col-sm-12">
-              {message ||
-                'Labels help you organize and select resources. Adding labels below will let you query for objects that have similar, overlapping or dissimilar labels.'}
-            </div>
+  return (
+    <form onSubmit={submit} name="form" className="modal-content">
+      <ModalTitle>
+        {descriptionKey
+          ? t('modal~Edit {{description}}', { description: t(descriptionKey) })
+          : t('modal~Edit labels')}
+      </ModalTitle>
+      <ModalBody>
+        <div className="row co-m-form-row">
+          <div className="col-sm-12">
+            {messageKey
+              ? t(messageKey)
+              : t(
+                  'modal~Labels help you organize and select resources. Adding labels below will let you query for objects that have similar, overlapping or dissimilar labels.',
+                )}
           </div>
-          <div className="row co-m-form-row">
-            <div className="col-sm-12">
-              <label htmlFor="tags-input" className="control-label">
-                {_.capitalize(description) || 'Labels'} for{' '}
-                <ResourceIcon kind={kind.crd ? referenceForModel(kind) : kind.kind} />{' '}
-                {resource.metadata.name}
-              </label>
-              <SelectorInput
-                onChange={(labels) => this.setState({ labels })}
-                tags={this.state.labels}
-                labelClassName={labelClassName || `co-text-${kind.id}`}
-                autoFocus
-              />
-            </div>
+        </div>
+        <div className="row co-m-form-row">
+          <div className="col-sm-12">
+            <label htmlFor="tags-input" className="control-label">
+              {descriptionKey
+                ? t('{{description}} for', { description: t(descriptionKey) })
+                : t('modal~Labels for')}{' '}
+              <ResourceIcon kind={kind.crd ? referenceForModel(kind) : kind.kind} />{' '}
+              {resource.metadata.name}
+            </label>
+            <SelectorInput
+              onChange={(l) => setLabels(l)}
+              tags={labels}
+              labelClassName={labelClassName || `co-text-${kind.id}`}
+              autoFocus
+            />
           </div>
-        </ModalBody>
-        <ModalSubmitFooter
-          errorMessage={this.state.errorMessage}
-          inProgress={this.state.inProgress}
-          submitText="Save"
-          cancel={this._cancel}
-        />
-      </form>
-    );
-  }
-}
+        </div>
+      </ModalBody>
+      <ModalSubmitFooter
+        errorMessage={errorMessage}
+        inProgress={false}
+        submitText={t('modal~Save')}
+        cancel={props.cancel}
+      />
+    </form>
+  );
+});
 
 export const labelsModal = createModalLauncher((props) => (
   <BaseLabelsModal path={LABELS_PATH} {...props} />
@@ -101,8 +105,10 @@ export const podSelectorModal = createModalLauncher((props) => (
         : '/spec/selector/matchLabels'
     }
     isPodSelector={true}
-    description="Pod Selector"
-    message={`Determines the set of pods targeted by this ${props.kind.label.toLowerCase()}.`}
+    // t('modal~Pod selector')
+    descriptionKey="modal~Pod selector"
+    // t('modal~Determines the set of pods targeted by this {{kind: props.kind.label.toLowerCase()}}.')
+    messageKey="modal~Determines the set of pods targeted by this {{kind: props.kind.label.toLowerCase()}}."
     labelClassName="co-text-pod"
     {...props}
   />
