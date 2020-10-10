@@ -71,6 +71,7 @@ const KebabItem_: React.FC<KebabItemProps & { isAllowed: boolean }> = ({
   autoFocus,
   isAllowed,
 }) => {
+  const { t } = useTranslation();
   const handleEscape = (e) => {
     if (e.keyCode === KEY_CODES.ESCAPE_KEY) {
       onEscape();
@@ -78,7 +79,6 @@ const KebabItem_: React.FC<KebabItemProps & { isAllowed: boolean }> = ({
   };
   const disabled = !isAllowed || option.isDisabled;
   const classes = classNames('pf-c-dropdown__menu-item', { 'pf-m-disabled': disabled });
-  const { t } = useTranslation();
 
   return (
     <button
@@ -86,10 +86,10 @@ const KebabItem_: React.FC<KebabItemProps & { isAllowed: boolean }> = ({
       onClick={(e) => !disabled && onClick(e, option)}
       autoFocus={autoFocus}
       onKeyDown={onEscape && handleEscape}
-      data-test-action={option.labelKey ? option.labelKey : option.label}
+      data-test-action={option.labelKey ? t(option.labelKey, option.labelKind) : option.label}
     >
       {option.icon && <span className="oc-kebab__icon">{option.icon}</span>}
-      {option.labelKey ? t(option.labelKey) : option.label}
+      {option.labelKey ? t(option.labelKey, option.labelKind) : option.label}
     </button>
   );
 };
@@ -248,7 +248,9 @@ export const KebabItems: React.FC<KebabItemsProps> = ({ options, ...props }) => 
 
 const kebabFactory: KebabFactory = {
   Delete: (kind, obj) => ({
-    label: `Delete ${kind.label}`,
+    // t('details-page~Delete {{kind}}', {kind: kind.label})
+    labelKey: 'details-page~Delete {{kind}}',
+    labelKind: { kind: kind.label },
     callback: () =>
       deleteModal({
         kind,
@@ -257,13 +259,17 @@ const kebabFactory: KebabFactory = {
     accessReview: asAccessReview(kind, obj, 'delete'),
   }),
   Edit: (kind, obj) => ({
-    label: `Edit ${kind.label}`,
+    // t('details-page~Edit {{kind}}', {kind: kind.label})
+    labelKey: 'details-page~Edit {{kind}}',
+    labelKind: { kind: kind.label },
+    dataTest: `Edit ${kind.label}`,
     href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/yaml`,
     // TODO: Fallback to "View YAML"? We might want a similar fallback for annotations, labels, etc.
     accessReview: asAccessReview(kind, obj, 'update'),
   }),
   ModifyLabels: (kind, obj) => ({
-    label: 'Edit Labels',
+    // t('details-page~Edit labels')
+    labelKey: 'details-page~Edit labels',
     callback: () =>
       labelsModal({
         kind,
@@ -273,7 +279,8 @@ const kebabFactory: KebabFactory = {
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyPodSelector: (kind, obj) => ({
-    label: 'Edit Pod Selector',
+    // t('details-page~Edit Pod selector')
+    labelKey: 'details-page~Edit Pod selector',
     callback: () =>
       podSelectorModal({
         kind,
@@ -283,7 +290,8 @@ const kebabFactory: KebabFactory = {
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyAnnotations: (kind, obj) => ({
-    label: 'Edit Annotations',
+    // t('details-page~Edit annotations')
+    labelKey: 'details-page~Edit annotations',
     callback: () =>
       annotationsModal({
         kind,
@@ -293,7 +301,8 @@ const kebabFactory: KebabFactory = {
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyCount: (kind, obj) => ({
-    label: 'Edit Pod Count',
+    // t('details-page~Edit Pod count')
+    labelKey: 'details-page~Edit Pod count',
     callback: () =>
       configureReplicaCountModal({
         resourceKind: kind,
@@ -302,7 +311,8 @@ const kebabFactory: KebabFactory = {
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyTaints: (kind, obj) => ({
-    label: 'Edit Taints',
+    // t('details-page~Edit taints')
+    labelKey: 'details-page~Edit taints',
     callback: () =>
       taintsModal({
         resourceKind: kind,
@@ -312,7 +322,8 @@ const kebabFactory: KebabFactory = {
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyTolerations: (kind, obj) => ({
-    label: 'Edit Tolerations',
+    // t('details-page~Edit tolerations')
+    labelKey: 'details-page~Edit tolerations',
     callback: () =>
       tolerationsModal({
         resourceKind: kind,
@@ -322,12 +333,14 @@ const kebabFactory: KebabFactory = {
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   AddStorage: (kind, obj) => ({
-    label: 'Add Storage',
+    // t('details-page~Add storage')
+    labelKey: 'details-page~Add storage',
     href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/attach-storage`,
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ExpandPVC: (kind, obj) => ({
-    label: 'Expand PVC',
+    // t('details-page~Expand PVC')
+    labelKey: 'details-page~Expand PVC',
     callback: () =>
       expandPVCModal({
         kind,
@@ -336,7 +349,8 @@ const kebabFactory: KebabFactory = {
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   PVCSnapshot: (kind, obj) => ({
-    label: 'Create Snapshot',
+    // t('details-page~Create snapshot')
+    labelKey: 'details-page~Create snapshot',
     isDisabled: obj?.status?.phase !== 'Bound',
     tooltip: obj?.status?.phase !== 'Bound' ? 'PVC is not Bound' : '',
     href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/${
@@ -345,7 +359,8 @@ const kebabFactory: KebabFactory = {
     accessReview: asAccessReview(kind, obj, 'create'),
   }),
   ClonePVC: (kind, obj) => ({
-    label: 'Clone PVC',
+    // t('details-page~Clone PVC')
+    labelKey: 'details-page~Clone PVC',
     isDisabled: obj?.status?.phase !== 'Bound',
     tooltip: obj?.status?.phase !== 'Bound' ? 'PVC is not Bound' : '',
     callback: () =>
@@ -356,7 +371,8 @@ const kebabFactory: KebabFactory = {
     accessReview: asAccessReview(kind, obj, 'create'),
   }),
   RestorePVC: (kind, obj: VolumeSnapshotKind) => ({
-    label: 'Restore as new PVC',
+    // t('details-page~Restore as new PVC')
+    labelKey: 'details-page~Restore as new PVC',
     isDisabled: !obj?.status?.readyToUse,
     tooltip: !obj?.status?.readyToUse ? 'Volume Snapshot is not Ready' : '',
     callback: () =>
@@ -527,6 +543,7 @@ export type KebabOption = {
   hidden?: boolean;
   label?: React.ReactNode;
   labelKey?: string;
+  labelKind?: { [key: string]: string };
   href?: string;
   callback?: () => any;
   accessReview?: AccessReviewResourceAttributes;

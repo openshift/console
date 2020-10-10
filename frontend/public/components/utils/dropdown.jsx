@@ -10,6 +10,7 @@ import { history } from './router';
 import { KebabItems } from './kebab';
 import { ResourceName } from './resource-icon';
 import { useSafetyFirst } from '../safety-first';
+import { useTranslation, withTranslation } from 'react-i18next';
 
 export class DropdownMixin extends React.PureComponent {
   constructor(props) {
@@ -118,6 +119,7 @@ class DropDownRow extends React.PureComponent {
       favoriteKey,
       autocompleteFilter,
     } = this.props;
+
     let prefix;
 
     if (!autocompleteFilter && !onBookmark && !onUnBookmark) {
@@ -398,7 +400,6 @@ export class Dropdown extends DropdownMixin {
     }
     return null;
   }
-
   render() {
     const {
       active,
@@ -424,7 +425,6 @@ export class Dropdown extends DropdownMixin {
       describedBy,
       disabled,
     } = this.props;
-
     const spacerBefore = this.props.spacerBefore || new Set();
     const headerBefore = this.props.headerBefore || {};
     const rows = [];
@@ -483,7 +483,6 @@ export class Dropdown extends DropdownMixin {
     };
 
     _.each(items, (v, k) => addItem(k, v));
-
     //render PF4 dropdown markup if this is not the autocomplete filter
     if (autocompleteFilter) {
       return (
@@ -625,9 +624,9 @@ Dropdown.propTypes = {
   disabled: PropTypes.bool,
 };
 
-class ActionsMenuDropdown extends DropdownMixin {
+class ActionsMenuDropdown_ extends DropdownMixin {
   render() {
-    const { actions, title = undefined } = this.props;
+    const { actions, title = undefined, t } = this.props;
     const onClick = (event, option) => {
       event.preventDefault();
 
@@ -652,13 +651,13 @@ class ActionsMenuDropdown extends DropdownMixin {
         <button
           type="button"
           aria-haspopup="true"
-          aria-label="Actions"
+          aria-label={t('dropdown~Actions')}
           aria-expanded={this.state.active}
           className="pf-c-dropdown__toggle"
           onClick={this.toggle}
           data-test-id="actions-menu-button"
         >
-          <span className="pf-c-dropdown__toggle-text">{title || 'Actions'}</span>
+          <span className="pf-c-dropdown__toggle-text">{title || t('dropdown~Actions')}</span>
           <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
         </button>
         {this.state.active && <KebabItems options={actions} onClick={onClick} />}
@@ -666,6 +665,8 @@ class ActionsMenuDropdown extends DropdownMixin {
     );
   }
 }
+
+const ActionsMenuDropdown = withTranslation()(ActionsMenuDropdown_);
 
 const ActionsMenu_ = ({ actions, impersonate, title = undefined }) => {
   const [isVisible, setVisible] = useSafetyFirst(false);
@@ -676,7 +677,6 @@ const ActionsMenu_ = ({ actions, impersonate, title = undefined }) => {
       setVisible(false);
       return;
     }
-
     const promises = actions.reduce((acc, action) => {
       if (action.accessReview) {
         acc.push(checkAccess(action.accessReview));
@@ -689,12 +689,10 @@ const ActionsMenu_ = ({ actions, impersonate, title = undefined }) => {
       setVisible(true);
       return;
     }
-
     Promise.all(promises)
       .then((results) => setVisible(_.some(results, 'status.allowed')))
       .catch(() => setVisible(true));
   }, [actions, impersonate, setVisible]);
-
   return isVisible ? <ActionsMenuDropdown actions={actions} title={title} /> : null;
 };
 export const ActionsMenu = connect(impersonateStateToProps)(ActionsMenu_);
@@ -716,46 +714,45 @@ const containerLabel = (container) => (
   <ResourceName name={container ? container.name : ''} kind="Container" />
 );
 
-export class ContainerDropdown extends React.PureComponent {
-  getSpacer(container) {
+export const ContainerDropdown = (props) => {
+  const { t } = useTranslation();
+
+  const getSpacer = (container) => {
     const spacerBefore = new Set();
     return container ? spacerBefore.add(container.name) : spacerBefore;
-  }
+  };
 
-  getHeaders(container, initContainer) {
+  const getHeaders = (container, initContainer) => {
     return initContainer
       ? {
-          [container.name]: 'Containers',
-          [initContainer.name]: 'Init Containers',
+          [container.name]: t('dropdown~Containers'),
+          [initContainer.name]: t('dropdown~Init containers'),
         }
       : {};
-  }
+  };
 
-  render() {
-    const { currentKey, containers, initContainers, onChange } = this.props;
-    if (_.isEmpty(containers) && _.isEmpty(initContainers)) {
-      return null;
-    }
-    const firstInitContainer = _.find(initContainers, { order: 0 });
-    const firstContainer = _.find(containers, { order: 0 });
-    const spacerBefore = this.getSpacer(firstInitContainer);
-    const headerBefore = this.getHeaders(firstContainer, firstInitContainer);
-    const dropdownItems = _.mapValues(_.merge(containers, initContainers), containerLabel);
-    const title = _.get(dropdownItems, currentKey) || containerLabel(firstContainer);
-    return (
-      <Dropdown
-        className="btn-group"
-        menuClassName="dropdown-menu--text-wrap"
-        headerBefore={headerBefore}
-        items={dropdownItems}
-        spacerBefore={spacerBefore}
-        title={title}
-        onChange={onChange}
-        selectedKey={currentKey}
-      />
-    );
+  const { currentKey, containers, initContainers, onChange } = props;
+  if (_.isEmpty(containers) && _.isEmpty(initContainers)) {
+    return null;
   }
-}
+  const firstInitContainer = _.find(initContainers, { order: 0 });
+  const firstContainer = _.find(containers, { order: 0 });
+  const spacerBefore = getSpacer(firstInitContainer);
+  const headerBefore = getHeaders(firstContainer, firstInitContainer);
+  const dropdownItems = _.mapValues(_.merge(containers, initContainers), containerLabel);
+  const title = _.get(dropdownItems, currentKey) || containerLabel(firstContainer);
+  return (
+    <Dropdown
+      className="btn-group"
+      headerBefore={headerBefore}
+      items={dropdownItems}
+      spacerBefore={spacerBefore}
+      title={title}
+      onChange={onChange}
+      selectedKey={currentKey}
+    />
+  );
+};
 
 ContainerDropdown.propTypes = {
   containers: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,

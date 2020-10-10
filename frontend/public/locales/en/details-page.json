@@ -39,5 +39,18 @@
   "Machines": "Machines",
   "Workloads": "Workloads",
   "History": "History",
+  "Delete {{kind}}": "Delete {{kind}}",
+  "Edit {{kind}}": "Edit {{kind}}",
+  "Edit labels": "Edit labels",
+  "Edit Pod selector": "Edit Pod selector",
+  "Edit annotations": "Edit annotations",
+  "Edit Pod count": "Edit Pod count",
+  "Edit taints": "Edit taints",
+  "Edit tolerations": "Edit tolerations",
+  "Add storage": "Add storage",
+  "Expand PVC": "Expand PVC",
+  "Create snapshot": "Create snapshot",
+  "Clone PVC": "Clone PVC",
+  "Restore as new PVC": "Restore as new PVC",
   "Managed by": "Managed by"
 }

@@ -58,6 +58,7 @@ i18n
         'custom-resource-definition',
         'dashboard',
         'details-page',
+        'dropdown',
         'editor',
         'email-receiver-form',
         'filter-toolbar',
