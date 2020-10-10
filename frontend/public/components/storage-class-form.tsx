@@ -956,6 +956,7 @@ export class StorageClassForm_ extends React.Component<
             <NameValueEditorComponent
               nameValuePairs={this.state.customParams}
               nameString="Parameter"
+              nameParameter="parameter"
               valueString="Value"
               addString="Add Parameter"
               updateParentData={this.updateCustomParams}

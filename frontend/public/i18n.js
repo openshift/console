@@ -60,6 +60,7 @@ i18n
         'details-page',
         'editor',
         'email-receiver-form',
+        'environment',
         'filter-toolbar',
         'github-idp-form',
         'gitlab-idp-form',

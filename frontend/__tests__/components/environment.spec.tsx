@@ -1,13 +1,15 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 
-import { EnvironmentPage } from '../../public/components/environment';
+import { EnvironmentPage, UnconnectedEnvironmentPage } from '../../public/components/environment';
 // eslint-disable-next-line import/no-duplicates
 import { FieldLevelHelp } from '../../public/components/utils';
 // eslint-disable-next-line import/no-duplicates
 import * as utils from '../../public/components/utils';
 import { DeploymentModel } from '../../public/models';
 import * as k8s from '../../public/module/k8s';
+
+const i18nNS = 'environment';
 
 describe(EnvironmentPage.name, () => {
   const configMaps = {},
@@ -20,12 +22,13 @@ describe(EnvironmentPage.name, () => {
   describe('When readOnly attribute is "true"', () => {
     beforeEach(() => {
       environmentPageRO = (
-        <EnvironmentPage.WrappedComponent
+        <UnconnectedEnvironmentPage
           obj={obj}
           model={DeploymentModel}
           rawEnvData={[{ env: [{ name: 'test', value: ':0', ID: 0 }] }]}
           envPath={[]}
           readOnly={true}
+          t={(key) => key}
         />
       );
       wrapperRO = shallow(environmentPageRO);
@@ -47,12 +50,13 @@ describe(EnvironmentPage.name, () => {
         Promise.resolve({ status: { allowed: false } }),
       );
       environmentPageRO = (
-        <EnvironmentPage.WrappedComponent
+        <UnconnectedEnvironmentPage
           obj={obj}
           model={DeploymentModel}
           rawEnvData={[{ env: [{ name: 'test', value: ':0', ID: 0 }] }]}
           envPath={[]}
           readOnly={false}
+          t={(key) => key}
         />
       );
       wrapperRO = shallow(environmentPageRO);
@@ -74,12 +78,13 @@ describe(EnvironmentPage.name, () => {
         Promise.resolve({ status: { allowed: true } }),
       );
       environmentPage = (
-        <EnvironmentPage.WrappedComponent
+        <UnconnectedEnvironmentPage
           obj={obj}
           model={DeploymentModel}
           rawEnvData={[{ env: [{ name: 'test', value: ':0', ID: 0 }] }]}
           envPath={[]}
           readOnly={false}
+          t={(key) => key}
         />
       );
       wrapper = shallow(environmentPage);
@@ -96,25 +101,26 @@ describe(EnvironmentPage.name, () => {
           .find({ type: 'submit', variant: 'primary' })
           .childAt(0)
           .text(),
-      ).toEqual('Save');
+      ).toEqual(`${i18nNS}~Save`);
       expect(
         wrapper
           .find({ type: 'button', variant: 'secondary' })
           .childAt(0)
           .text(),
-      ).toEqual('Reload');
+      ).toEqual(`${i18nNS}~Reload`);
     });
   });
 
   describe('When page has error messages or alerts', () => {
     beforeEach(() => {
       environmentPage = (
-        <EnvironmentPage.WrappedComponent
+        <UnconnectedEnvironmentPage
           obj={obj}
           model={DeploymentModel}
           rawEnvData={[{ env: [{ name: 'test', value: ':0', ID: 0 }] }]}
           envPath={[]}
           readOnly={true}
+          t={(key) => key}
         />
       );
       wrapper = shallow(environmentPage);
@@ -140,12 +146,13 @@ describe(EnvironmentPage.name, () => {
   describe('When page does not have error messages or alerts', () => {
     beforeEach(() => {
       environmentPage = (
-        <EnvironmentPage.WrappedComponent
+        <UnconnectedEnvironmentPage
           obj={obj}
           model={DeploymentModel}
           rawEnvData={[{ env: [{ name: 'test', value: ':0', ID: 0 }] }]}
           envPath={[]}
           readOnly={true}
+          t={(key) => key}
         />
       );
       wrapper = shallow(environmentPage);
