@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { CloseIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 
 import { ResourceSidebarSnippets, ResourceSidebarSamples } from './resource-sidebar-samples';
 import { ExploreType } from './explore-type-sidebar';
@@ -11,37 +12,36 @@ const sidebarScrollTop = () => {
   document.getElementsByClassName('co-p-has-sidebar__sidebar')[0].scrollTop = 0;
 };
 
-class ResourceSidebarWrapper extends React.Component {
-  render() {
-    const { label, children, showSidebar, toggleSidebar } = this.props;
+const ResourceSidebarWrapper = (props) => {
+  const { t } = useTranslation();
+  const { label, children, showSidebar, toggleSidebar } = props;
 
-    if (!showSidebar) {
-      return null;
-    }
-
-    return (
-      <div
-        className="co-p-has-sidebar__sidebar co-p-has-sidebar__sidebar--bordered hidden-sm hidden-xs"
-        data-test="resource-sidebar"
-      >
-        {/* tabIndex is necessary to restore keyboard scrolling as a result of PatternFly's <Page> having a hard-coded tabIndex.  See https://github.com/patternfly/patternfly-react/issues/4180 */}
-        <div className="co-m-pane__body co-p-has-sidebar__sidebar-body" tabIndex={-1}>
-          <Button
-            type="button"
-            className="co-p-has-sidebar__sidebar-close"
-            variant="plain"
-            aria-label="Close"
-            onClick={toggleSidebar}
-          >
-            <CloseIcon />
-          </Button>
-          <h2 className="co-p-has-sidebar__sidebar-heading text-capitalize">{label}</h2>
-          {children}
-        </div>
-      </div>
-    );
+  if (!showSidebar) {
+    return null;
   }
-}
+
+  return (
+    <div
+      className="co-p-has-sidebar__sidebar co-p-has-sidebar__sidebar--bordered hidden-sm hidden-xs"
+      data-test="resource-sidebar"
+    >
+      {/* tabIndex is necessary to restore keyboard scrolling as a result of PatternFly's <Page> having a hard-coded tabIndex.  See https://github.com/patternfly/patternfly-react/issues/4180 */}
+      <div className="co-m-pane__body co-p-has-sidebar__sidebar-body" tabIndex={-1}>
+        <Button
+          type="button"
+          className="co-p-has-sidebar__sidebar-close"
+          variant="plain"
+          aria-label={t('sidebar~Close')}
+          onClick={toggleSidebar}
+        >
+          <CloseIcon />
+        </Button>
+        <h2 className="co-p-has-sidebar__sidebar-heading text-capitalize">{label}</h2>
+        {children}
+      </div>
+    </div>
+  );
+};
 
 const ResourceSchema = ({ kindObj }) => (
   <ExploreType kindObj={kindObj} scrollTop={sidebarScrollTop} />
@@ -89,20 +89,23 @@ export const ResourceSidebar = (props) => {
   let tabs = [];
   if (showSamples) {
     tabs.push({
-      name: 'Samples',
+      // t('sidebar~Samples')
+      nameKey: 'sidebar~Samples',
       component: ResourceSamples,
     });
   }
   if (showSnippets) {
     tabs.push({
-      name: 'Snippets',
+      // t('sidebar~Snippets')
+      nameKey: 'sidebar~Snippets',
       component: ResourceSnippets,
     });
   }
   if (showSchema) {
     tabs = [
       {
-        name: 'Schema',
+        // t('sidebar~Schema')
+        nameKey: 'sidebar~Schema',
         component: ResourceSchema,
       },
       ...tabs,
