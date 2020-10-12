@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import * as _ from 'lodash-es';
 
-import { getName, getNamespace } from '@console/shared';
+import { getName, getNamespace } from '@console/shared/src/selectors/common';
 
 import store from '../../redux';
 import { impersonateStateToProps } from '../../reducers/ui';

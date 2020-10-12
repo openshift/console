@@ -29,7 +29,13 @@ export const stripNS = (href) => {
 
 export const ExternalLink = ({ href, name }) => (
   <NavItem isActive={false}>
-    <a className="pf-c-nav__link" href={href} target="_blank" rel="noopener noreferrer">
+    <a
+      className="pf-c-nav__link"
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      data-test="nav"
+    >
       {name}
       <span className="co-external-link" />
     </a>
@@ -83,6 +89,7 @@ class NavLink<P extends NavLinkProps> extends React.PureComponent<P> {
           onClick={onClick}
           title={tipText}
           data-tour-id={dataTourId}
+          data-test="nav"
         >
           {name}
           {children}

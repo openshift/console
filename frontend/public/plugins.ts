@@ -1,9 +1,8 @@
-/* eslint-disable no-undef */
-
-import { ActivePlugin, PluginStore } from '@console/plugin-sdk';
+import { PluginStore } from '@console/plugin-sdk/src/store';
+import { ActivePlugin } from '@console/plugin-sdk/src/typings';
 
 // TODO(vojtech): legacy, remove along with `registry` export
-export * from '@console/plugin-sdk';
+export * from '@console/plugin-sdk/src/typings';
 
 // The '@console/active-plugins' module is generated during a webpack build,
 // so we use dynamic require() instead of the usual static import statement.

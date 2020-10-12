@@ -2,8 +2,10 @@ import * as _ from 'lodash-es';
 import { Map as ImmutableMap, fromJS } from 'immutable';
 
 import { ActionType, K8sAction } from '../actions/k8s';
-import { getQN, referenceForModel, allModels, K8sResourceKind, K8sKind } from '../module/k8s';
-import { namespacedResources } from '../actions/ui';
+import { getQN, referenceForModel } from '../module/k8s/k8s';
+import { K8sResourceKind, K8sKind } from '../module/k8s/types';
+import { allModels } from '../module/k8s/k8s-models';
+import { getNamespacedResources } from '../actions/ui';
 
 const moreRecent = (a, b) => {
   const metaA = a.get('metadata').toJSON();
@@ -98,8 +100,8 @@ export default (state: K8sState, action: K8sAction): K8sState => {
           })
           .map((model) => {
             model.namespaced
-              ? namespacedResources.add(referenceForModel(model))
-              : namespacedResources.delete(referenceForModel(model));
+              ? getNamespacedResources().add(referenceForModel(model))
+              : getNamespacedResources().delete(referenceForModel(model));
             return model;
           })
           .reduce((prevState, newModel) => {

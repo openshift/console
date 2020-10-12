@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { ChartDonut } from '@patternfly/react-charts';
 import { Tooltip } from '@patternfly/react-core';
 import { ExtPodKind } from '../../types';
-import { calculateRadius, podStatus, getPodStatus } from '../../utils';
+import { calculateRadius, podStatus, getPodStatus } from '../../utils/pod-utils';
 import { podColor, AllPodStatus } from '../../constants';
 import './PodStatus.scss';
 
