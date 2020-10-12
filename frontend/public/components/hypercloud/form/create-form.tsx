@@ -27,19 +27,13 @@ export const WithCommonForm = (SubForm, params, modal?: boolean) => {
 
     const [inProgress] = React.useState(false); // onSubmit이나 나중에 Error관련 메서드에서 inProgress를 false로 변경해줘야함.
 
-    const onSubmit = (event) => {
-      event.preventDefault();
-      handleSubmit((data) => {
-        let inDo = _.defaultsDeep(props.fixed, data);
-        inDo = props.onSubmitCallback(inDo);
-        console.log(watch());
-        // if (false) {
-        k8sCreate(modelFor(kind), inDo)
-        history.push(resourceObjPath(inDo, referenceFor(modelFor(kind))));
-        // }
-      }
-      )
-    };
+    const onSubmit = handleSubmit((data) => {
+      let inDo = _.defaultsDeep(props.fixed, data);
+      inDo = props.onSubmitCallback(inDo);
+      console.log(watch());
+      k8sCreate(modelFor(kind), inDo)
+      history.push(resourceObjPath(inDo, referenceFor(modelFor(kind))));
+    })
 
 
     return (
@@ -54,20 +48,21 @@ export const WithCommonForm = (SubForm, params, modal?: boolean) => {
           <fieldset>
             <div className="form-group">
               <label className="control-label co-required" htmlFor="name">Name</label>
-              <input className="pf-c-form-control" id="name" name='metadata.name' ref={register} />
+              <input className="pf-c-form-control" name='metadata.name' ref={register} />
             </div>
           </fieldset>
           <SubForm isCreate={props.isCreate} register={register} control={control} Controller={Controller} />
           <ButtonBar inProgress={inProgress}>
             <ActionGroup className="pf-c-form">
               <Button
-                type="submit"
+                type="button"
                 variant="primary"
                 id="save-changes"
+                onClick={onSubmit}
               >
                 {props.saveButtonText || 'Create'}
               </Button>
-              <Button type="button" variant="secondary" id="cancel" onClick={props.onCancel}>
+              <Button type="button" variant="secondary" id="cancel" onClick={history.goBack}>
                 Cancel
               </Button>
             </ActionGroup>
