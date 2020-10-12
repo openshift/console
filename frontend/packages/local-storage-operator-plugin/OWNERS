@@ -3,11 +3,10 @@ reviewers:
   - afreen23
   - bipuladh
   - cloudbehl
-  - gnehapk
 approvers:
+  - a2batic
   - afreen23
   - bipuladh
   - cloudbehl
-  - gnehapk
 labels:
   - component/lso
