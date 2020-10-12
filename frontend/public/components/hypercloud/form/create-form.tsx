@@ -19,7 +19,7 @@ import {
   resourceObjPath
 } from '../../utils';
 
-export const WithCommonForm = (SubForm, params?: any, modal?: boolean) => {
+export const WithCommonForm = (SubForm, params, modal?: boolean) => {
   const FormComponent: React.FC<CommonFormProps_> = props => {
     const { register, control, watch, handleSubmit } = useForm();
     const kind = pluralToKind(params.plural);

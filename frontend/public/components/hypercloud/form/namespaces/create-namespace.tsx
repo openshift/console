@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { match as RMatch } from 'react-router';
 
 import { WithCommonForm } from '../create-form'
 import { SelectorInput } from '../../../utils';
@@ -80,7 +81,9 @@ export const onSubmitCallback = (data) => {
 }
 
 type CreateNamespaceProps = {
-  match: any;
+  match: RMatch<{
+    params?: string;
+  }>;
   fixed: object;
   explanation: string;
   titleVerb: string;
