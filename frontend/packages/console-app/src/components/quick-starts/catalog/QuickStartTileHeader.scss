@@ -2,8 +2,9 @@
   &__status {
     margin: var(--pf-global--spacer--sm) 0;
   }
-  &--rightmargin {
+  &--margin {
     margin-right: var(--pf-global--spacer--sm);
+    margin-bottom: var(--pf-global--spacer--sm);
   }
   & .pf-c-badge:not(:last-of-type) {
     margin-right: var(--pf-global--spacer--sm);

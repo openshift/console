@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { RootState } from '@console/internal/redux';
 import { Gallery, GalleryItem } from '@patternfly/react-core';
 import { EmptyBox, LoadingBox } from '@console/internal/components/utils';
@@ -36,10 +37,11 @@ const QuickStartCatalog: React.FC<QuickStartCatalogProps> = ({
   allQuickStartStates,
   setActiveQuickStart,
 }) => {
+  const { t } = useTranslation();
   if (!quickStarts) return <LoadingBox />;
 
   return quickStarts.length === 0 ? (
-    <EmptyBox label="Quick Starts" />
+    <EmptyBox label={t('quickstart~Quick Starts')} />
   ) : (
     <Gallery className="co-quick-start-catalog__gallery" hasGutter>
       {quickStarts.map((quickStart) => {

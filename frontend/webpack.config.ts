@@ -192,6 +192,7 @@ const config: Configuration = {
     }),
     new CopyWebpackPlugin([{ from: './public/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/console-shared/locales', to: 'locales' }]),
+    new CopyWebpackPlugin([{ from: './packages/console-app/locales', to: 'locales' }]),
     new MomentLocalesPlugin({
       localesToKeep: Object.keys(SUPPORTED_LOCALES).map((key) => (key === 'zh' ? 'zh-cn' : key)),
     }),
