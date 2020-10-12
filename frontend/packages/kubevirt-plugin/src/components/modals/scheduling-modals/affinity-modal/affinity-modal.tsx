@@ -36,6 +36,7 @@ import {
   getAffinityFromRowsData,
   defaultNewAffinity,
   columnClasses,
+  getAvailableAffinityID,
 } from './helpers';
 import { getAffinityPatch } from '../../../../k8s/patches/vm/vm-scheduling-patches';
 
@@ -95,7 +96,7 @@ export const AffinityModal = withHandlePromise<AffinityModalProps>(
     const onAffinityClickAdd = () => {
       setIsEditing(true);
       setIsCreating(true);
-      setFocusedAffinity(defaultNewAffinity);
+      setFocusedAffinity({ ...defaultNewAffinity, id: getAvailableAffinityID(affinities) });
     };
 
     const onAffinityClickEdit = (affinity: AffinityRowData) => {
