@@ -49,8 +49,8 @@ export const WithCommonForm = (SubForm, params?: any, modal?: boolean) => {
           <p className="co-m-pane__explanation">{props.explanation}</p>
           <fieldset>
             <div className="form-group">
-              <label className="control-label co-required" htmlFor="secret-name">Name</label>
-              <input className="pf-c-form-control" name='metadata.name' ref={register} />
+              <label className="control-label co-required" htmlFor="name">Name</label>
+              <input className="pf-c-form-control" id="name" name='metadata.name' ref={register} />
             </div>
           </fieldset>
           <SubForm isCreate={props.isCreate} register={register} control={control} Controller={Controller} />
