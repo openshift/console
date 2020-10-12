@@ -708,11 +708,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({
     transforms: [sortable, wrappable],
   };
 
-  // TableBody's shouldComponentUpdate seems to struggle with SeriesButton, so add a unique key to help TableBody
-  // determine when it should update
-  const buttonCell = (labels) => ({
-    title: <SeriesButton index={index} key={_.uniqueId()} labels={labels} />,
-  });
+  const buttonCell = (labels) => ({ title: <SeriesButton index={index} labels={labels} /> });
 
   let columns, rows;
   if (resultType === 'scalar') {
