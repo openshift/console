@@ -51,6 +51,7 @@ class DeleteNamespaceModal extends PromiseComponent {
             className="pf-c-form-control"
             onKeyUp={this._matchTypedNamespace}
             placeholder="Enter name"
+            aria-label={`Enter the name of the ${this.props.kind.label} to delete`}
             autoFocus={true}
           />
         </ModalBody>
