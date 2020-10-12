@@ -138,6 +138,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
 
     const chart = (
       <AreaChart
+        title={title}
         data={data}
         loading={!error && isLoading}
         query={query}
