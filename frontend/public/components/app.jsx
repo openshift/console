@@ -148,7 +148,7 @@ class App_ extends React.PureComponent {
     const content = (
       <>
         <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
-        <QuickStartDrawer>
+        <QuickStartDrawer id="app-container">
           <ConsoleNotifier location="BannerTop" />
           <Page
             header={<Masthead onNavToggle={this._onNavToggle} />}
@@ -167,11 +167,11 @@ class App_ extends React.PureComponent {
               <AppContents />
             </ConnectedNotificationDrawer>
           </Page>
-          <div id="modal-container" />
           <CloudShell />
           <GuidedTour />
           <ConsoleNotifier location="BannerBottom" />
         </QuickStartDrawer>
+        <div id="modal-container" />
       </>
     );
 
