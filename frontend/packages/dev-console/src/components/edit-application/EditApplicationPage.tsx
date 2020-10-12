@@ -8,6 +8,7 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import EditApplication from './EditApplication';
 import { EditApplicationProps } from './edit-application-types';
+import { PipelineModel } from '../../models';
 
 const INSTANCE_LABEL = 'app.kubernetes.io/instance';
 const EditApplicationComponentLoader: React.FunctionComponent<EditApplicationProps> = (
@@ -35,6 +36,13 @@ const EditApplicationPage: React.FunctionComponent<ImportPageProps> = ({ match, 
     {
       kind: 'BuildConfig',
       prop: 'buildConfig',
+      name: appName,
+      namespace,
+      optional: true,
+    },
+    {
+      kind: referenceForModel(PipelineModel),
+      prop: 'pipeline',
       name: appName,
       namespace,
       optional: true,

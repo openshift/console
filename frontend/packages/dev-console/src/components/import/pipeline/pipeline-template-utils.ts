@@ -56,6 +56,7 @@ export const createPipelineForImportFlow = async (formData: GitImportFormData) =
     project: { name: namespace },
     git,
     pipeline,
+    docker: { dockerfilePath },
   } = formData;
   const template = _.cloneDeep(pipeline.template) as Pipeline;
 
@@ -77,6 +78,8 @@ export const createPipelineForImportFlow = async (formData: GitImportFormData) =
         return { ...param, default: git.dir.replace(/^\//, '') || param.default };
       case 'IMAGE_NAME':
         return { ...param, default: getImageUrl(name, namespace) };
+      case 'DOCKERFILE':
+        return { ...param, default: dockerfilePath };
       default:
         return param;
     }
