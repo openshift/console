@@ -1,6 +1,7 @@
 import { configureCountModal } from '@console/internal/components/modals';
 import { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
 import { Descriptor } from '../types';
+import { getPatchPathFromDescriptor } from '../utils';
 
 export const configureSizeModal = ({
   kindObj,
@@ -14,7 +15,7 @@ export const configureSizeModal = ({
     defaultValue: specValue || 0,
     title: `Modify ${specDescriptor.displayName}`,
     message: specDescriptor.description,
-    path: `/spec/${specDescriptor.path}`,
+    path: `/spec/${getPatchPathFromDescriptor(specDescriptor)}`,
     buttonText: `Update ${specDescriptor.displayName}`,
   });
 };

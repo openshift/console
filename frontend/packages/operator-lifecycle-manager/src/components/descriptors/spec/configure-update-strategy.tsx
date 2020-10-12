@@ -1,6 +1,7 @@
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { updateStrategyModal } from '../../modals/update-strategy-modal';
 import { Descriptor } from '../types';
+import { getPatchPathFromDescriptor } from '../utils';
 
 export const configureUpdateStrategyModal = ({
   kindObj,
@@ -13,7 +14,7 @@ export const configureUpdateStrategyModal = ({
     resource,
     defaultValue: specValue,
     title: `Edit ${specDescriptor.displayName}`,
-    path: `/spec/${specDescriptor.path}`,
+    path: `/spec/${getPatchPathFromDescriptor(specDescriptor)}`,
   });
 };
 
