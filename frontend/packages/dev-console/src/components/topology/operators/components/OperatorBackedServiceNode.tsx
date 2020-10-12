@@ -14,8 +14,7 @@ import {
   useSize,
 } from '@patternfly/react-topology';
 import { useSearchFilter } from '../../filters/useSearchFilter';
-import { nodeDragSourceSpec } from '../../components/componentUtils';
-import { TYPE_OPERATOR_BACKED_SERVICE } from './const';
+import { noRegroupDragSourceSpec } from '../../components/componentUtils';
 import {
   NodeShadows,
   NODE_SHADOW_FILTER_ID,
@@ -41,12 +40,7 @@ const OperatorBackedServiceNode: React.FC<OperatorBackedServiceNodeProps> = ({
   dropTarget,
 }) => {
   const [hover, hoverRef] = useHover();
-  const [{ dragging }, dragNodeRef] = useDragNode(
-    nodeDragSourceSpec(TYPE_OPERATOR_BACKED_SERVICE, false),
-    {
-      element,
-    },
-  );
+  const [{ dragging }, dragNodeRef] = useDragNode(noRegroupDragSourceSpec);
   const refs = useCombineRefs<SVGRectElement>(hoverRef, dragNodeRef, dndDropRef);
   const [filtered] = useSearchFilter(element.getLabel());
   const kind = 'Operator';
