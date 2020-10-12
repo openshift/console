@@ -16,6 +16,10 @@ export const provisionerAccessModeMapping = {
   'kubernetes.io/portworx-volume': ['ReadWriteOnce', 'ReadWriteMany'],
   'kubernetes.io/scaleio': ['ReadWriteOnce', 'ReadOnlyMany'],
   'kubernetes.io/storageos': ['ReadWriteOnce'],
+  // Since 4.6 new provisioners names will be without the 'kubernetes.io/' prefix.
+  'manila.csi.openstack.org': ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
+  'ebs.csi.aws.com': ['ReadWriteOnce'],
+  'csi.ovirt.org': ['ReadWriteOnce'],
 };
 export const initialAccessModes = ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'];
 export const accessModeRadios = [
