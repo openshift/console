@@ -53,12 +53,11 @@ const KnativeServiceNode: React.FC<KnativeServiceNodeProps> = ({
   onShowCreateConnector,
 }) => {
   const [hover, hoverRef] = useHover();
-  const [{ dragging }, dragNodeRef] = useDragNode(
-    nodeDragSourceSpec(TYPE_KNATIVE_SERVICE, true, editAccess),
-    {
-      element,
-    },
-  );
+  const dragSpec = React.useMemo(() => nodeDragSourceSpec(TYPE_KNATIVE_SERVICE, true, editAccess), [
+    editAccess,
+  ]);
+  const dragProps = React.useMemo(() => ({ element }), [element]);
+  const [{ dragging }, dragNodeRef] = useDragNode(dragSpec, dragProps);
   const refs = useCombineRefs<SVGRectElement>(hoverRef, dragNodeRef);
   const [filtered] = useSearchFilter(element.getLabel());
   const allowEdgeCreation = useAllowEdgeCreation();

@@ -21,8 +21,7 @@ import {
 import { useSearchFilter } from '../../filters/useSearchFilter';
 import { GroupNode } from '../../components/groups/GroupNode';
 import { GroupNodeAnchor } from '../../components/groups/GroupNodeAnchor';
-import { nodeDragSourceSpec } from '../../components/componentUtils';
-import { TYPE_HELM_RELEASE } from './const';
+import { noRegroupDragSourceSpec } from '../../components/componentUtils';
 
 export type HelmReleaseNodeProps = {
   element: Node;
@@ -41,9 +40,7 @@ const HelmReleaseNode: React.FC<HelmReleaseNodeProps> = ({
   dndDropRef,
 }) => {
   const [hover, hoverRef] = useHover();
-  const [{ dragging }, dragNodeRef] = useDragNode(nodeDragSourceSpec(TYPE_HELM_RELEASE, false), {
-    element,
-  });
+  const [{ dragging }, dragNodeRef] = useDragNode(noRegroupDragSourceSpec);
   const refs = useCombineRefs<SVGRectElement>(dragNodeRef, dndDropRef, hoverRef);
   const [filtered] = useSearchFilter(element.getLabel());
   const { groupResources } = element.getData();
