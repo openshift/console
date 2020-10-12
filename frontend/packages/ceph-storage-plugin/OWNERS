@@ -3,14 +3,13 @@ reviewers:
   - afreen23
   - bipuladh
   - cloudbehl
-  - gnehapk
   - rawagner
   - shyRozen
 approvers:
+  - a2batic
   - afreen23
   - bipuladh
   - cloudbehl
-  - gnehapk
   - rawagner
   - shyRozen
 labels:
