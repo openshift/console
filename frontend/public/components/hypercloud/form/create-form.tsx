@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { Helmet } from 'react-helmet';
 import { useForm, Controller } from "react-hook-form"
 import { DevTool } from "@hookform/devtools";
 import { ActionGroup, Button } from '@patternfly/react-core';
@@ -22,7 +23,7 @@ export const WithCommonForm = (SubForm, params?: any, modal?: boolean) => {
   const FormComponent: React.FC<CommonFormProps_> = props => {
     const { register, control, watch, handleSubmit } = useForm();
     const kind = pluralToKind(params.plural);
-    const title = `${props.titleVerb} ${params.type} ${kind}`;
+    const title = `${props.titleVerb} ${params.type === 'form' ? '' : params.type} ${kind}`;
 
     const [inProgress] = React.useState(false); // onSubmit이나 나중에 Error관련 메서드에서 inProgress를 false로 변경해줘야함.
 
@@ -39,6 +40,9 @@ export const WithCommonForm = (SubForm, params?: any, modal?: boolean) => {
 
     return (
       <div className="co-m-pane__body" onSubmit={onSubmit}>
+        <Helmet>
+          <title>{title}</title>
+        </Helmet>
         <form
           className="co-m-pane__body-group co-create-secret-form co-m-pane__form">
           <h1 className="co-m-pane__heading">{title}</h1>
