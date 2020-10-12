@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Dispatch, connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { Flex, FlexItem, Button } from '@patternfly/react-core';
 import { RootState } from '@console/internal/redux';
 import * as QuickStartActions from '../../../redux/actions/quick-start-actions';
@@ -34,6 +35,7 @@ const QuickStartTileFooter: React.FC<Props> = ({
   setQuickStartStatus,
   resetQuickStart,
 }) => {
+  const { t } = useTranslation();
   const startQuickStart = React.useCallback(
     (e: React.SyntheticEvent) => {
       e.preventDefault();
@@ -58,28 +60,28 @@ const QuickStartTileFooter: React.FC<Props> = ({
       {status === QuickStartStatus.NOT_STARTED && (
         <FlexItem>
           <Button onClick={startQuickStart} variant="link" isInline>
-            Start the tour
+            {t('quickstart~Start the tour')}
           </Button>
         </FlexItem>
       )}
       {status === QuickStartStatus.IN_PROGRESS && activeQuickStartId !== quickStartId && (
         <FlexItem>
           <Button variant="link" isInline>
-            Resume the tour
+            {t('quickstart~Resume the tour')}
           </Button>
         </FlexItem>
       )}
       {status === QuickStartStatus.COMPLETE && (
         <FlexItem>
           <Button onClick={restartQuickStart} variant="link" isInline>
-            Start the tour
+            {t('quickstart~Start the tour')}
           </Button>
         </FlexItem>
       )}
       {status === QuickStartStatus.IN_PROGRESS && (
         <FlexItem>
           <Button onClick={restartQuickStart} variant="link" isInline>
-            Restart the tour
+            {t('quickstart~Restart the tour')}
           </Button>
         </FlexItem>
       )}

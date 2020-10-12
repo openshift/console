@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useLocation, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@patternfly/react-core';
 import { QuickStartStatus } from '../utils/quick-start-types';
 
@@ -13,12 +14,6 @@ type QuickStartFooterProps = {
   onBack: () => void;
 };
 
-enum PrimaryButtonText {
-  START = 'Start Tour',
-  NEXT = 'Next',
-  CLOSE = 'Close',
-}
-
 const QuickStartFooter: React.FC<QuickStartFooterProps> = ({
   status,
   taskNumber,
@@ -29,14 +24,27 @@ const QuickStartFooter: React.FC<QuickStartFooterProps> = ({
   const location = useLocation();
   const { pathname: currentPath } = location;
   const quickStartPath = '/quickstart';
+  const { t } = useTranslation();
 
-  const getPrimaryButtonText = React.useCallback((): PrimaryButtonText => {
+  const PrimaryButtonText = {
+    START: t('quickstart~Start Tour'),
+    NEXT: t('quickstart~Next'),
+    CLOSE: t('quickstart~Close'),
+  };
+
+  const getPrimaryButtonText = React.useCallback((): string => {
     if (taskNumber === totalTasks) return PrimaryButtonText.CLOSE;
 
     if (taskNumber > -1 && taskNumber < totalTasks) return PrimaryButtonText.NEXT;
 
     return PrimaryButtonText.START;
-  }, [taskNumber, totalTasks]);
+  }, [
+    PrimaryButtonText.CLOSE,
+    PrimaryButtonText.NEXT,
+    PrimaryButtonText.START,
+    taskNumber,
+    totalTasks,
+  ]);
 
   return (
     <div className="co-quick-start-footer">
@@ -61,12 +69,12 @@ const QuickStartFooter: React.FC<QuickStartFooterProps> = ({
           onClick={onBack}
           isInline
         >
-          Back
+          {t('quickstart~Back')}
         </Button>
       )}
       {status === QuickStartStatus.COMPLETE && currentPath !== quickStartPath && (
         <Link style={{ display: 'inline-block' }} to={quickStartPath}>
-          View all tours
+          {t('quickstart~View all tours')}
         </Link>
       )}
     </div>

@@ -35,7 +35,7 @@ i18n
       load: 'all',
       debug: process.env.NODE_ENV === 'development',
       detection: { caches: [] },
-      ns: ['public', 'masthead', 'nav', 'dashboard', 'badge'],
+      ns: ['public', 'masthead', 'nav', 'dashboard', 'badge', 'tour', 'quickstart', 'cloudshell'],
       defaultNS: 'public',
       nsSeparator: '~',
       keySeparator: false,

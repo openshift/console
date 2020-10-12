@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Base64 } from 'js-base64';
+import { useTranslation } from 'react-i18next';
 import { LoadError } from '@console/internal/components/utils';
 import { connectToFlags, WithFlagsProps } from '@console/internal/reducers/features';
 import { impersonateStateToProps } from '@console/internal/reducers/ui';
@@ -50,6 +51,7 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
   const [wsError, setWsError] = React.useState<string>();
   const ws = React.useRef<WSFactory>();
   const terminal = React.useRef<ImperativeTerminalType>();
+  const { t } = useTranslation();
 
   const tick = useActivityTick(workspaceName, namespace);
 
@@ -123,7 +125,7 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
           return;
         }
         const currentTerminal = terminal.current;
-        const error = evt.reason || 'The terminal connection has closed.';
+        const error = evt.reason || t('cloudshell~The terminal connection has closed.');
         currentTerminal && currentTerminal.onConnectionClosed(error);
         websocket.destroy();
         if (!unmounted) setWsError(error);
@@ -134,17 +136,26 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
       ws.current && ws.current.destroy();
       ws.current = websocket;
       const currentTerminal = terminal.current;
-      currentTerminal && currentTerminal.onConnectionClosed(`connecting to ${container}`);
+      currentTerminal &&
+        currentTerminal.onConnectionClosed(
+          t('cloudshell~connecting to {{container}}', { container }),
+        );
     }
 
     return () => {
       unmounted = true;
       websocket.destroy();
     };
-  }, [tick, container, flags, impersonate, namespace, podname, shcommand]);
+  }, [tick, container, flags, impersonate, namespace, podname, shcommand, t]);
 
   if (wsError) {
-    return <LoadError message={wsError} label="OpenShift command line terminal" canRetry={false} />;
+    return (
+      <LoadError
+        message={wsError}
+        label={t('cloudshell~OpenShift command line terminal')}
+        canRetry={false}
+      />
+    );
   }
 
   if (wsOpen) {

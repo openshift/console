@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Formik } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import { ProjectRequestModel } from '@console/internal/models';
 import { RootState } from '@console/internal/redux';
@@ -33,6 +34,8 @@ const CloudShellSetup: React.FunctionComponent<Props> = ({
   const initialValues: CloudShellSetupFormData = {
     namespace: activeNamespace === ALL_NAMESPACES_KEY ? undefined : activeNamespace,
   };
+  const { t } = useTranslation();
+
   const handleSubmit = async (values: CloudShellSetupFormData, actions) => {
     actions.setSubmitting(true);
     const createNamespace = values.namespace === CREATE_NAMESPACE_KEY;
@@ -59,7 +62,7 @@ const CloudShellSetup: React.FunctionComponent<Props> = ({
 
   return (
     <div className="co-m-pane__body" style={{ paddingBottom: 0 }}>
-      <h2>Initialize Terminal</h2>
+      <h2>{t('cloudshell~Initialize Terminal')}</h2>
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}

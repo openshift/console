@@ -3,6 +3,14 @@ import { shallow } from 'enzyme';
 import { FormFooter } from '@console/shared';
 import CloudShellSetupForm from '../CloudShellSetupForm';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key: string) => key }),
+  };
+});
+
 describe('CloudShellSetupForm', () => {
   it('should disable submit button', () => {
     const wrapper = shallow(
