@@ -6,12 +6,14 @@ import { InputField, TextColumnField } from '@console/shared';
 import { AsyncComponent } from '@console/internal/components/utils';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { getSuggestedName } from '@console/dev-console/src/utils/imagestream-utils';
+import { EventSources } from '../import-types';
 
+const templateSpec = `data.${EventSources.ContainerSource}.template.spec.containers[0]`;
 const containerPaths = {
-  Image: 'data.containersource.template.spec.containers[0].image',
-  Name: 'data.containersource.template.spec.containers[0].name',
-  Env: 'data.containersource.template.spec.containers[0].env',
-  Args: 'data.containersource.template.spec.containers[0].args',
+  Image: `${templateSpec}.image`,
+  Name: `${templateSpec}.name`,
+  Env: `${templateSpec}.env`,
+  Args: `${templateSpec}.args`,
 };
 
 interface ContainerSourceSectionProps {
@@ -22,7 +24,7 @@ const ContainerSourceSection: React.FC<ContainerSourceSectionProps> = ({ title }
   const { values, setFieldValue } = useFormikContext<FormikValues>();
   const {
     data: {
-      containersource: {
+      [EventSources.ContainerSource]: {
         template: {
           spec: {
             containers: [{ env: envs, args }],

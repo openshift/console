@@ -6,6 +6,7 @@ import { AsyncComponent } from '@console/internal/components/utils/async';
 import { DropdownField, getFieldId } from '@console/shared';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import ServiceAccountDropdown from '../../dropdowns/ServiceAccountDropdown';
+import { EventSources } from '../import-types';
 
 interface ApiServerSectionProps {
   title: string;
@@ -13,7 +14,7 @@ interface ApiServerSectionProps {
 
 const ApiServerSection: React.FC<ApiServerSectionProps> = ({ title }) => {
   const { values, setFieldValue } = useFormikContext<FormikValues>();
-  const initVal = values?.data?.apiserversource?.resources || [];
+  const initVal = values?.data?.[EventSources.ApiServerSource]?.resources || [];
   const initialValueResources = !_.isEmpty(initVal)
     ? initVal.map((val) => _.values(val))
     : [['', '']];
@@ -29,7 +30,7 @@ const ApiServerSection: React.FC<ApiServerSectionProps> = ({ title }) => {
         }),
       );
       setNameValue(nameValuePairs);
-      setFieldValue('data.apiserversource.resources', updatedNameValuePairs);
+      setFieldValue(`data.${EventSources.ApiServerSource}.resources`, updatedNameValuePairs);
     },
     [setFieldValue],
   );
@@ -62,14 +63,14 @@ const ApiServerSection: React.FC<ApiServerSectionProps> = ({ title }) => {
         />
       </FormGroup>
       <DropdownField
-        name="data.apiserversource.mode"
+        name={`data.${EventSources.ApiServerSource}.mode`}
         label="Mode"
         items={modeItems}
         title={modeItems.Ref}
         helpText="The mode the receive adapter controller runs under"
         fullWidth
       />
-      <ServiceAccountDropdown name="data.apiserversource.serviceAccountName" />
+      <ServiceAccountDropdown name={`data.${EventSources.ApiServerSource}.serviceAccountName`} />
     </FormSection>
   );
 };

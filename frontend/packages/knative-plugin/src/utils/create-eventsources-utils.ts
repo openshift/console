@@ -54,7 +54,7 @@ export const getEventSourcesDepResource = (formData: EventSourceFormData): K8sRe
   } = formData;
 
   const defaultLabel = getAppLabels({ name, applicationName });
-  const eventSrcData = data[type.toLowerCase()];
+  const eventSrcData = data[type];
   const { name: sinkName, kind: sinkKind, apiVersion: sinkApiVersion, uri: sinkUri } = sink;
   const eventSourceResource: K8sResourceKind = {
     apiVersion,
@@ -131,15 +131,15 @@ export const getEventSourceResource = (formData: EventSourceFormData): K8sResour
 
 export const getEventSourceData = (source: string) => {
   const eventSourceData = {
-    cronjobsource: {
+    [EventSources.CronJobSource]: {
       data: '',
       schedule: '',
     },
-    pingsource: {
+    [EventSources.PingSource]: {
       jsonData: '',
       schedule: '',
     },
-    sinkbinding: {
+    [EventSources.SinkBinding]: {
       subject: {
         apiVersion: '',
         kind: '',
@@ -148,7 +148,7 @@ export const getEventSourceData = (source: string) => {
         },
       },
     },
-    apiserversource: {
+    [EventSources.ApiServerSource]: {
       mode: 'Ref',
       serviceAccountName: '',
       resources: [
@@ -158,7 +158,7 @@ export const getEventSourceData = (source: string) => {
         },
       ],
     },
-    kafkasource: {
+    [EventSources.KafkaSource]: {
       bootstrapServers: [],
       topics: [],
       consumerGroup: '',
@@ -173,6 +173,20 @@ export const getEventSourceData = (source: string) => {
           caCert: { secretKeyRef: { name: '', key: '' } },
           cert: { secretKeyRef: { name: '', key: '' } },
           key: { secretKeyRef: { name: '', key: '' } },
+        },
+      },
+    },
+    [EventSources.ContainerSource]: {
+      template: {
+        spec: {
+          containers: [
+            {
+              image: '',
+              name: '',
+              args: [''],
+              env: [],
+            },
+          ],
         },
       },
     },

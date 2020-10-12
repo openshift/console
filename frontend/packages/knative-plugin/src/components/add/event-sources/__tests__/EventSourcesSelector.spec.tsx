@@ -5,6 +5,7 @@ import { ItemSelectorField } from '@console/shared';
 import EventSourcesSelector from '../EventSourcesSelector';
 import * as sourceUtils from '../../../../utils/create-eventsources-utils';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import { EventSources } from '../../import-types';
 
 type EventSourcesSelectorProps = React.ComponentProps<typeof EventSourcesSelector>;
 
@@ -90,7 +91,7 @@ describe('EventSourcesSelector', () => {
       .find(ItemSelectorField)
       .props()
       .onSelect('ApiServerSource');
-    expect(spyGetEventSourceData).toHaveBeenCalledWith('apiserversource');
-    expect(spyKebabCase).toHaveBeenCalledWith('ApiServerSource');
+    expect(spyGetEventSourceData).toHaveBeenCalledWith(EventSources.ApiServerSource);
+    expect(spyKebabCase).toHaveBeenCalledWith(EventSources.ApiServerSource);
   });
 });
