@@ -47,14 +47,15 @@ class DeleteModal extends PromiseComponent {
 
   render() {
     const { kind, resource, message } = this.props;
+    const resourceUpperCase = kind.label.toUpperCase();
     return (
       <Translation>
         {
           (t) =>
             <form onSubmit={this._submit} name="form" className="modal-content ">
               <ModalTitle>
-                <YellowExclamationTriangleIcon className="co-icon-space-r" /> Delete {kind.label}?
-      </ModalTitle>
+                <YellowExclamationTriangleIcon className="co-icon-space-r" />{t('DELETE_SENTENCE', { something: t(resourceUpperCase) })}?
+              </ModalTitle>
               <ModalBody className="modal-body">
                 {message}
                 <div>

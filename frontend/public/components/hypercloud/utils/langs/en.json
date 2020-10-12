@@ -1,4 +1,6 @@
 {
     "HOME": "Home",
-    "DELETE": "Delete"
+    "DELETE": "Delete",
+    "POD": "Pod",
+    "DELETE_SENTENCE": "Delete {{something}}"
 }
