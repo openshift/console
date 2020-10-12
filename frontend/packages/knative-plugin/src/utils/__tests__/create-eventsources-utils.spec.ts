@@ -17,6 +17,7 @@ import {
   sortSourcesData,
   getEventSourceConnectorList,
   getEventSourceList,
+  getEventSourceData,
 } from '../create-eventsources-utils';
 import {
   getDefaultEventingData,
@@ -147,5 +148,40 @@ describe('Create knative Utils', () => {
       })
       // eslint-disable-next-line no-console
       .catch((err) => console.warn(err.message));
+  });
+
+  it('expect getEventSourceData should return data for builtin Sources', () => {
+    expect(getEventSourceData(EventSources.PingSource).jsonData).toBeDefined();
+    expect(getEventSourceData(EventSources.PingSource).schedule).toBeDefined();
+
+    expect(getEventSourceData(EventSources.CronJobSource).data).toBeDefined();
+    expect(getEventSourceData(EventSources.CronJobSource).schedule).toBeDefined();
+
+    expect(getEventSourceData(EventSources.SinkBinding).subject).toBeDefined();
+    expect(getEventSourceData(EventSources.SinkBinding).subject.apiVersion).toBeDefined();
+    expect(getEventSourceData(EventSources.SinkBinding).subject.kind).toBeDefined();
+    expect(getEventSourceData(EventSources.SinkBinding).subject.selector).toBeDefined();
+    expect(getEventSourceData(EventSources.SinkBinding).subject.selector.matchLabels).toBeDefined();
+
+    expect(getEventSourceData(EventSources.ApiServerSource).mode).toBeDefined();
+    expect(getEventSourceData(EventSources.ApiServerSource).serviceAccountName).toBeDefined();
+    expect(getEventSourceData(EventSources.ApiServerSource).resources).toHaveLength(1);
+
+    expect(getEventSourceData(EventSources.ContainerSource).template).toBeDefined();
+    expect(getEventSourceData(EventSources.ContainerSource).template.spec).toBeDefined();
+    expect(getEventSourceData(EventSources.ContainerSource).template.spec.containers).toHaveLength(
+      1,
+    );
+
+    expect(getEventSourceData(EventSources.KafkaSource).bootstrapServers).toHaveLength(0);
+    expect(getEventSourceData(EventSources.KafkaSource).topics).toHaveLength(0);
+    expect(getEventSourceData(EventSources.KafkaSource).consumerGroup).toBeDefined();
+    expect(getEventSourceData(EventSources.KafkaSource).net).toBeDefined();
+    expect(getEventSourceData(EventSources.KafkaSource).net.sasl).toBeDefined();
+    expect(getEventSourceData(EventSources.KafkaSource).net.tls).toBeDefined();
+  });
+
+  it('expect getEventSourceData should return undefined for dynamic Sources', () => {
+    expect(getEventSourceData('gcpsource')).toBeUndefined();
   });
 });

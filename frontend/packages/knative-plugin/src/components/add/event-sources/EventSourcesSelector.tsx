@@ -43,8 +43,8 @@ const EventSourcesSelector: React.FC<EventSourcesSelectorProps> = ({ eventSource
         setErrors({});
         setStatus({});
         if (isKnownEventSource(item)) {
-          const nameData = `data.${item.toLowerCase()}`;
-          const sourceData = getEventSourceData(item.toLowerCase());
+          const nameData = `data.${item}`;
+          const sourceData = getEventSourceData(item);
           setFieldValue(nameData, sourceData);
           setFieldTouched(nameData, true);
         }

@@ -37,7 +37,7 @@ export const sourceDataSpecSchema = yup
   .when('type', {
     is: EventSources.CronJobSource,
     then: yup.object().shape({
-      cronjobsource: yup.object().shape({
+      [EventSources.CronJobSource]: yup.object().shape({
         data: yup.string().max(253, 'Cannot be longer than 253 characters.'),
         schedule: yup
           .string()
@@ -49,7 +49,7 @@ export const sourceDataSpecSchema = yup
   .when('type', {
     is: EventSources.PingSource,
     then: yup.object().shape({
-      pingsource: yup.object().shape({
+      [EventSources.PingSource]: yup.object().shape({
         data: yup.string().max(253, 'Cannot be longer than 253 characters.'),
         schedule: yup
           .string()
@@ -61,7 +61,7 @@ export const sourceDataSpecSchema = yup
   .when('type', {
     is: EventSources.SinkBinding,
     then: yup.object().shape({
-      sinkbinding: yup.object().shape({
+      [EventSources.SinkBinding]: yup.object().shape({
         subject: yup.object().shape({
           selector: yup.object().shape({
             matchLabels: yup.object(),
@@ -81,7 +81,7 @@ export const sourceDataSpecSchema = yup
   .when('type', {
     is: EventSources.ApiServerSource,
     then: yup.object().shape({
-      apiserversource: yup.object().shape({
+      [EventSources.ApiServerSource]: yup.object().shape({
         resources: yup
           .array()
           .of(
@@ -97,7 +97,7 @@ export const sourceDataSpecSchema = yup
   .when('type', {
     is: EventSources.KafkaSource,
     then: yup.object().shape({
-      kafkasource: yup.object().shape({
+      [EventSources.KafkaSource]: yup.object().shape({
         bootstrapServers: yup
           .array()
           .of(yup.string())
@@ -166,7 +166,7 @@ export const sourceDataSpecSchema = yup
   .when('type', {
     is: EventSources.ContainerSource,
     then: yup.object().shape({
-      containersource: yup.object().shape({
+      [EventSources.ContainerSource]: yup.object().shape({
         template: yup.object({
           spec: yup.object({
             containers: yup.array().of(

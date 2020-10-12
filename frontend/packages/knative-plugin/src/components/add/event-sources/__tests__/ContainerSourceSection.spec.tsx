@@ -16,7 +16,7 @@ jest.mock('formik', () => ({
     values: {
       type: 'ContainerSource',
       data: {
-        containersource: {
+        ContainerSource: {
           template: {
             spec: {
               containers: [
