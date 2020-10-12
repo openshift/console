@@ -27,15 +27,19 @@ export const WithCommonForm = (SubForm, params, modal?: boolean) => {
 
     const [inProgress] = React.useState(false); // onSubmit이나 나중에 Error관련 메서드에서 inProgress를 false로 변경해줘야함.
 
-    const onSubmit = handleSubmit((data) => {
-      let inDo = _.defaultsDeep(props.fixed, data);
-      inDo = props.onSubmitCallback(inDo);
-      console.log(watch());
-      // if (false) {
-      k8sCreate(modelFor(kind), inDo)
-      history.push(resourceObjPath(inDo, referenceFor(modelFor(kind))));
-      // }
-    });
+    const onSubmit = (event) => {
+      event.preventDefault();
+      handleSubmit((data) => {
+        let inDo = _.defaultsDeep(props.fixed, data);
+        inDo = props.onSubmitCallback(inDo);
+        console.log(watch());
+        // if (false) {
+        k8sCreate(modelFor(kind), inDo)
+        history.push(resourceObjPath(inDo, referenceFor(modelFor(kind))));
+        // }
+      }
+      )
+    };
 
 
     return (
