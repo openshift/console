@@ -21,23 +21,22 @@ import {
 
 export const WithCommonForm = (SubForm, params, modal?: boolean) => {
   const FormComponent: React.FC<CommonFormProps_> = props => {
-    const { register, control, watch, handleSubmit } = useForm();
+    const { register, control, handleSubmit } = useForm();
     const kind = pluralToKind(params.plural);
     const title = `${props.titleVerb} ${params.type === 'form' ? '' : params.type} ${kind}`;
 
     const [inProgress] = React.useState(false); // onSubmit이나 나중에 Error관련 메서드에서 inProgress를 false로 변경해줘야함.
 
-    const onSubmit = handleSubmit((data) => {
+    const onClick = handleSubmit((data) => {
       let inDo = _.defaultsDeep(props.fixed, data);
       inDo = props.onSubmitCallback(inDo);
-      console.log(watch());
       k8sCreate(modelFor(kind), inDo)
       history.push(resourceObjPath(inDo, referenceFor(modelFor(kind))));
     })
 
 
     return (
-      <div className="co-m-pane__body" onSubmit={onSubmit}>
+      <div className="co-m-pane__body">
         <Helmet>
           <title>{title}</title>
         </Helmet>
@@ -58,7 +57,7 @@ export const WithCommonForm = (SubForm, params, modal?: boolean) => {
                 type="button"
                 variant="primary"
                 id="save-changes"
-                onClick={onSubmit}
+                onClick={onClick}
               >
                 {props.saveButtonText || 'Create'}
               </Button>
@@ -83,17 +82,4 @@ type CommonFormProps_ = {
   onSubmitCallback: Function;
   saveButtonText?: string;
   explanation?: string;
-  onCancel?: () => void;
-  onSave?: (name: string) => void;
 };
-
-// type DefaultInputForm_ = {
-//   apiVersiont: string;
-//   kind: string;
-//   type?: string;
-//   metadata: {
-//     name: '',
-//     [propName: string]: any;
-//   }
-//   [propName: string]: any;
-// }
