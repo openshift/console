@@ -96,7 +96,12 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     location,
     textFilter = filterTypeMap[FilterType.NAME],
     labelFilter = filterTypeMap[FilterType.LABEL],
+    reduxIDs = [],
   } = props;
+
+  const filterID = reduxIDs.join('~');
+  const uniqTextFilter = `${filterID}-${textFilter}`;
+  const uniqlabelFilter = `${filterID}-${labelFilter}`;
 
   const [inputText, setInputText] = React.useState('');
   const [filterType, setFilterType] = React.useState(FilterType.NAME);
@@ -134,8 +139,8 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   const { name: nameFilter, labels: labelFilters, rowFiltersFromURL: selectedRowFilters } = (() => {
     const rowFiltersFromURL: string[] = [];
     const params = new URLSearchParams(location.search);
-    const q = params.get(labelFilter);
-    const name = params.get(textFilter);
+    const q = params.get(uniqlabelFilter);
+    const name = params.get(uniqTextFilter);
     _.map(filterKeys, (f) => {
       const vals = params.get(f);
       if (vals) {
@@ -156,9 +161,9 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
 
   const updateLabelFilter = (filterValues: string[]) => {
     if (filterValues.length > 0) {
-      setQueryArgument(labelFilter, filterValues.join(','));
+      setQueryArgument(uniqlabelFilter, filterValues.join(','));
     } else {
-      removeQueryArgument(labelFilter);
+      removeQueryArgument(uniqlabelFilter);
     }
     setInputText('');
     applyFilter(filterValues, FilterType.LABEL);
@@ -166,9 +171,9 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
 
   const updateNameFilter = (filterValue: string) => {
     if (!_.isEmpty(filterValue)) {
-      setQueryArgument(textFilter, filterValue);
+      setQueryArgument(uniqTextFilter, filterValue);
     } else {
-      removeQueryArgument(textFilter);
+      removeQueryArgument(uniqTextFilter);
     }
     setInputText(filterValue);
     applyFilter(filterValue, FilterType.NAME);

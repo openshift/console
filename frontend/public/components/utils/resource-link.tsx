@@ -78,7 +78,7 @@ export const ResourceLink = connectToModel(
     name,
     namespace,
     hideIcon,
-    title,
+    title = name,
     children,
   }) => {
     if (!kind) {
