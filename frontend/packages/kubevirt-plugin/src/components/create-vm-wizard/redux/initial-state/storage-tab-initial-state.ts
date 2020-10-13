@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { ConfigMapKind } from '@console/internal/module/k8s';
 import {
   CommonData,
@@ -167,7 +168,7 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
   );
   const iUserTemplate = iGetCommonData(state, id, VMWizardProps.userTemplate);
 
-  if (provisionSource === ProvisionSource.URL) {
+  if (_.isEqual(provisionSource, ProvisionSource.URL)) {
     const iStorageClassConfigMap = iGetLoadedCommonData(
       state,
       id,
@@ -176,10 +177,14 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
 
     return getUrlStorage(toShallowJS(iStorageClassConfigMap, undefined, true));
   }
-  if (provisionSource === ProvisionSource.CONTAINER) {
+  if (_.isEqual(provisionSource, ProvisionSource.CONTAINER)) {
     return containerStorage;
   }
-  if (provisionSource === ProvisionSource.DISK && !iUserTemplate && cloneCommonBaseDiskImage) {
+  if (
+    _.isEqual(provisionSource, ProvisionSource.DISK) &&
+    !iUserTemplate &&
+    cloneCommonBaseDiskImage
+  ) {
     const iStorageClassConfigMap = iGetLoadedCommonData(
       state,
       id,

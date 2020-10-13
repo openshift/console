@@ -2,6 +2,7 @@ import { $, $$, element, by, browser } from 'protractor';
 import { waitForNone } from '@console/internal-integration-tests/protractor.conf';
 import { actionForLabel } from '@console/internal-integration-tests/views/crud.view';
 import { click } from '@console/shared/src/test-utils/utils';
+import { ProvisionSource } from '../tests/utils/constants/enums/provisionSource';
 
 // Wizard Common
 export const createWithWizardButton = $('#wizard-link');
@@ -19,11 +20,10 @@ export const footerErrorDescroption = footerError.$('.pf-c-alert__description');
 // Basic Settings tab
 export const templateSelect = $('#template-dropdown');
 export const provisionSourceSelect = $('#image-source-type-dropdown');
-const provisionSourceURL = $('#provision-source-url');
-const provisionSourceContainerImage = $('#provision-source-container');
+export const goldenImageCloneCheckbox = $('#clone-common-base-image-checkbox');
 export const provisionSourceInputs = {
-  URL: provisionSourceURL,
-  Container: provisionSourceContainerImage,
+  [ProvisionSource.URL.getValue()]: $('#provision-source-url'),
+  [ProvisionSource.CONTAINER.getValue()]: $('#provision-source-container'),
 };
 export const operatingSystemSelect = $('#operating-system-dropdown');
 export const flavorSelect = $('#flavor-dropdown');
@@ -84,3 +84,7 @@ export const tableRowAttribute = async (name: string, columnIndex: number): Prom
     .get(columnIndex)
     .getText();
 };
+export const dropDownItem = (text) =>
+  element(by.cssContainingText('.pf-c-select__menu-item', text));
+export const dropDownItemTitle = (text) =>
+  element(by.cssContainingText('.pf-c-select__menu-item-main', text));

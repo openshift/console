@@ -90,6 +90,11 @@ export async function selectOptionByOptionValue(selector: any, option: string) {
   await click(selector.all(by.css(`option[value="${option}"]`)).first());
 }
 
+export async function selectItemFromDropdown(dropDownSelector: any, item: any) {
+  await click(dropDownSelector);
+  await click(item);
+}
+
 export async function getSelectOptions(selector: any): Promise<string[]> {
   const options = [];
   await selector.$$('option').each((elem) => {

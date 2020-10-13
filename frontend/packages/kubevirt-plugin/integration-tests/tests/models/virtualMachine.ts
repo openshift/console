@@ -159,8 +159,15 @@ export class VirtualMachine extends BaseVirtualMachine {
 
   async create() {
     const wizard = new Wizard();
-    await this.navigateToListView();
-    await wizard.openWizard(VirtualMachineModel);
+    const { template } = this.getData();
+
+    if (template) {
+      await wizard.openVMFromTemplateWizard(template, this.namespace);
+    } else {
+      await this.navigateToListView();
+      await wizard.openWizard(VirtualMachineModel);
+    }
+
     await wizard.processWizard(this.data);
 
     await this.navigateToDetail();

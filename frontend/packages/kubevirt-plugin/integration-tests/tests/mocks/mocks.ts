@@ -15,7 +15,7 @@ import {
   resolveStorageDataAttribute,
   deepFreeze,
 } from '../utils/utils';
-import { Flavor, ProvisionSource } from '../utils/constants/wizard';
+import { Flavor } from '../utils/constants/wizard';
 import {
   NIC_MODEL,
   NIC_TYPE,
@@ -23,20 +23,7 @@ import {
   DISK_SOURCE,
   DISK_DRIVE,
 } from '../utils/constants/vm';
-
-export const provisionSources = {
-  [ProvisionSource.URL]: {
-    method: ProvisionSource.URL,
-    source: 'https://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img',
-  },
-  [ProvisionSource.CONTAINER]: {
-    method: ProvisionSource.CONTAINER,
-    source: 'kubevirt/fedora-cloud-registry-disk-demo:latest',
-  },
-  [ProvisionSource.PXE]: { method: ProvisionSource.PXE },
-  [ProvisionSource.DISK]: { method: ProvisionSource.DISK },
-};
-deepFreeze(provisionSources);
+import { ProvisionSource } from '../utils/constants/enums/provisionSource';
 
 export const flavorConfigs = {
   [Flavor.TINY]: { flavor: Flavor.TINY },
@@ -63,7 +50,7 @@ deepFreeze(multusNAD);
 
 export const dataVolumeManifest = ({ name, namespace, sourceURL, accessMode, volumeMode }) => {
   return {
-    apiVersion: 'cdi.kubevirt.io/v1alpha1',
+    apiVersion: 'cdi.kubevirt.io/v1beta1',
     kind: 'DataVolume',
     metadata: {
       name,
@@ -72,7 +59,6 @@ export const dataVolumeManifest = ({ name, namespace, sourceURL, accessMode, vol
     spec: {
       pvc: {
         accessModes: [accessMode],
-        dataSource: {},
         resources: {
           requests: {
             storage: '1Gi',
@@ -100,7 +86,7 @@ export const getTestDataVolume = () =>
   dataVolumeManifest({
     name: `testdv-${testName}`,
     namespace: testName,
-    sourceURL: provisionSources.URL.source,
+    sourceURL: ProvisionSource.URL.getSource(),
     accessMode: resolveStorageDataAttribute(kubevirtStorage, 'accessMode'),
     volumeMode: resolveStorageDataAttribute(kubevirtStorage, 'volumeMode'),
   });
@@ -239,13 +225,13 @@ export const getServiceAccount = (namespace: string, name: string): ServiceAccou
 };
 
 function getMetadata(
-  provisionSource: 'URL' | 'PXE' | 'Container',
+  provisionSource: ProvisionSource,
   namespace: string,
   name?: string,
   cloudinit?: string,
   finalizers?: [string],
 ) {
-  const vmName = name || `${provisionSource.toLowerCase()}-${namespace.slice(-5)}`;
+  const vmName = name || `${provisionSource.getValue().toLowerCase()}-${namespace.slice(-5)}`;
   const metadata = {
     name: vmName,
     annotations: {
@@ -267,11 +253,11 @@ function getMetadata(
   };
   const urlSource = {
     http: {
-      url: provisionSources.URL.source,
+      url: ProvisionSource.URL.getSource(),
     },
   };
   const dataVolumeTemplate = {
-    apiVersion: 'cdi.kubevirt.io/v1alpha1',
+    apiVersion: 'cdi.kubevirt.io/v1beta1',
     metadata: {
       name: `${metadata.name}-rootdisk`,
     },
@@ -297,7 +283,7 @@ function getMetadata(
   };
   const containerDisk = {
     containerDisk: {
-      image: provisionSources.Container.source,
+      image: ProvisionSource.CONTAINER.getSource(),
     },
     name: 'rootdisk',
   };
@@ -334,17 +320,17 @@ function getMetadata(
   }
 
   switch (provisionSource) {
-    case 'URL':
+    case ProvisionSource.URL:
       dataVolumeTemplate.spec.source = urlSource;
       dataVolumeTemplates.push(dataVolumeTemplate);
       volumes.push(dataVolume);
       break;
-    case 'PXE':
+    case ProvisionSource.PXE:
       dataVolumeTemplate.spec.source = { blank: {} };
       dataVolumeTemplates.push(dataVolumeTemplate);
       volumes.push(dataVolume);
       break;
-    case 'Container':
+    case ProvisionSource.CONTAINER:
       volumes.push(containerDisk);
       break;
     default:
@@ -402,7 +388,7 @@ function getMetadata(
 }
 
 export function getVMIManifest(
-  provisionSource: 'URL' | 'PXE' | 'Container',
+  provisionSource: ProvisionSource,
   namespace: string,
   name?: string,
   cloudinit?: string,
@@ -420,7 +406,7 @@ export function getVMIManifest(
 }
 
 export function getVMManifest(
-  provisionSource: 'URL' | 'PXE' | 'Container',
+  provisionSource: ProvisionSource,
   namespace: string,
   name?: string,
   cloudinit?: string,

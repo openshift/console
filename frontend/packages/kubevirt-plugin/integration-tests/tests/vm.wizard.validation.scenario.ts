@@ -18,8 +18,8 @@ import { getRandStr } from './utils/utils';
 import { diskInterfaceHelper } from '../views/dialogs/diskDialog.view';
 import { DiskDialog } from './dialogs/diskDialog';
 import { saveButton } from '../views/kubevirtUIResource.view';
-import { provisionSources } from './mocks/mocks';
 import { vmNameHelper } from '../views/importWizard.view';
+import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 describe('Wizard validation', () => {
   const wizard = new Wizard();
@@ -65,7 +65,7 @@ describe('Wizard validation', () => {
 
   it('ID(CNV-3698) Disk Dialog displays warning when interface not recommended', async () => {
     const WINDOWS_NOT_RECOMMENDED_INTERFACE = 'sata';
-    await wizard.selectProvisionSource(provisionSources.Container);
+    await wizard.selectProvisionSource(ProvisionSource.CONTAINER);
     await wizard.selectOperatingSystem(OperatingSystem.WINDOWS_10);
     await wizard.selectFlavor(customFlavorSufficientMemory);
     await wizard.selectWorkloadProfile(Workload.DESKTOP);
@@ -94,7 +94,7 @@ describe('Wizard validation', () => {
 
   it('ID(CNV-4551) Import Wizard shows warning when using incorrect VM name', async () => {
     const WRONG_VM_NAME = 'VMNAME';
-    await wizard.selectProvisionSource(provisionSources.Container);
+    await wizard.selectProvisionSource(ProvisionSource.CONTAINER);
     await wizard.selectOperatingSystem(OperatingSystem.WINDOWS_10);
     await wizard.selectFlavor(customFlavorSufficientMemory);
     await wizard.selectWorkloadProfile(Workload.DESKTOP);

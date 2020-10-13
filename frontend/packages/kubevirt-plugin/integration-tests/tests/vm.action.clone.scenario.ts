@@ -36,7 +36,6 @@ import {
   cloudInitCustomScriptConfig,
   rootDisk,
   datavolumeClonerClusterRole,
-  provisionSources,
 } from './mocks/mocks';
 import { getBasicVMBuilder } from './mocks/vmBuilderPresets';
 import { VirtualMachine } from './models/virtualMachine';
@@ -44,6 +43,7 @@ import { CloneVirtualMachineDialog } from './dialogs/cloneVirtualMachineDialog';
 import { VM_ACTION, VM_STATUS, TAB } from './utils/constants/vm';
 import { VMBuilder } from './models/vmBuilder';
 import { Disk } from './types/types';
+import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 describe('Test clone VM.', () => {
   const leakedResources = new Set<string>();
@@ -60,10 +60,10 @@ describe('Test clone VM.', () => {
   });
 
   describe('Test Clone VM dialog validation', () => {
-    const testContainerVM = getVMManifest('Container', testName);
+    const testContainerVM = getVMManifest(ProvisionSource.CONTAINER, testName);
     const vm = new VirtualMachine(testContainerVM.metadata);
     const testNameValidationVM = getVMManifest(
-      'Container',
+      ProvisionSource.CONTAINER,
       testCloningNamespace,
       testContainerVM.metadata.name,
     );
@@ -132,7 +132,7 @@ describe('Test clone VM.', () => {
   });
 
   describe('Test cloning settings.', () => {
-    const testVM = getVMManifest('URL', testName, `cloningvm-${getRandStr(5)}`);
+    const testVM = getVMManifest(ProvisionSource.URL, testName, `cloningvm-${getRandStr(5)}`);
     const vm = new VirtualMachine(testVM.metadata);
     const clonedVM = new VirtualMachine({
       name: `${vm.name}-clone`,
@@ -239,7 +239,7 @@ describe('Test clone VM.', () => {
 
     beforeAll(async () => {
       vm = new VMBuilder(getBasicVMBuilder())
-        .setProvisionSource(provisionSources.URL)
+        .setProvisionSource(ProvisionSource.URL)
         .setDisks([rootDisk])
         .setCloudInit(cloudInitCustomScriptConfig)
         .setWaitForImport(true)

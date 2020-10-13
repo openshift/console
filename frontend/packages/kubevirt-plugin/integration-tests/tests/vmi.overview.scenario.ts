@@ -11,12 +11,13 @@ import { NodePortService } from './types/types';
 import { vmiDetailFlavor } from '../views/virtualMachineInstance.view';
 import { VM_STATUS, TAB } from './utils/constants/vm';
 import { OperatingSystem, Workload } from './utils/constants/wizard';
+import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 describe('Test VMI Details', () => {
   const vmiName = `vmi-${testName}`;
   const cloudInit = `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}`;
   const serviceCommon = { name: vmiName, kind: 'vmi', type: 'NodePort', namespace: testName };
-  const testVMI = getVMIManifest('Container', testName, vmiName, cloudInit);
+  const testVMI = getVMIManifest(ProvisionSource.CONTAINER, testName, vmiName, cloudInit);
   const vmi = new VirtualMachineInstance(testVMI.metadata);
   const nodePortServices = new Set<NodePortService>();
   nodePortServices.add({

@@ -10,7 +10,6 @@ import {
 import {
   VM_BOOTUP_TIMEOUT_SECS,
   CLONE_VM_TIMEOUT_SECS,
-  COMMON_TEMPLATES_REVISION,
   commonTemplateVersion,
   STORAGE_CLASS,
   CLONED_VM_BOOTUP_TIMEOUT_SECS,
@@ -20,13 +19,12 @@ import {
   cdGuestTools,
   flavorConfigs,
   hddDisk,
-  provisionSources,
   rootDisk,
   getTestDataVolume,
   kubevirtStorage,
   getDiskToCloneFrom,
 } from './mocks/mocks';
-import { ProvisionSource, Workload, OperatingSystem } from './utils/constants/wizard';
+import { Workload, OperatingSystem } from './utils/constants/wizard';
 import { vmPresets, getBasicVMBuilder } from './mocks/vmBuilderPresets';
 import { VMBuilder } from './models/vmBuilder';
 import {
@@ -36,6 +34,7 @@ import {
   selectNonDefaultVolumeMode,
 } from './utils/utils';
 import { DISK_DRIVE, DISK_INTERFACE, VM_STATUS } from './utils/constants/vm';
+import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 describe('Kubevirt create VM using wizard', () => {
   const leakedResources = new Set<string>();
@@ -44,10 +43,10 @@ describe('Kubevirt create VM using wizard', () => {
   const defaultVolumeMode = resolveStorageDataAttribute(kubevirtStorage, 'volumeMode');
 
   const VMTestCaseIDs = {
-    'ID(CNV-870)': vmPresets[ProvisionSource.CONTAINER],
-    'ID(CNV-2446)': vmPresets[ProvisionSource.DISK],
-    'ID(CNV-869)': vmPresets[ProvisionSource.URL],
-    'ID(CNV-771)': vmPresets[ProvisionSource.PXE],
+    'ID(CNV-870)': vmPresets[ProvisionSource.CONTAINER.getValue()],
+    'ID(CNV-2446)': vmPresets[ProvisionSource.DISK.getValue()],
+    'ID(CNV-869)': vmPresets[ProvisionSource.URL.getValue()],
+    'ID(CNV-771)': vmPresets[ProvisionSource.PXE.getValue()],
   };
 
   beforeAll(async () => {
@@ -63,11 +62,12 @@ describe('Kubevirt create VM using wizard', () => {
   });
 
   for (const [id, vm] of Object.entries(VMTestCaseIDs)) {
-    const { method } = vm.getData().provisionSource;
-    const specTimeout =
-      method === ProvisionSource.DISK ? CLONE_VM_TIMEOUT_SECS : VM_BOOTUP_TIMEOUT_SECS;
+    const { provisionSource } = vm.getData();
+    const specTimeout = _.isEqual(provisionSource, ProvisionSource.DISK)
+      ? CLONE_VM_TIMEOUT_SECS
+      : VM_BOOTUP_TIMEOUT_SECS;
     it(
-      `${id} Create VM using ${method}.`,
+      `${id} Create VM using ${provisionSource}.`,
       async () => {
         await withResource(leakedResources, vm.asResource(), async () => {
           await vm.create();
@@ -80,7 +80,7 @@ describe('Kubevirt create VM using wizard', () => {
 
   it('ID(CNV-3657) Creates VM with CD ROM added in Wizard', async () => {
     const vm = new VMBuilder(getBasicVMBuilder())
-      .setProvisionSource(provisionSources.Container)
+      .setProvisionSource(ProvisionSource.CONTAINER)
       .setDisks([cdGuestTools])
       .build();
 
@@ -95,7 +95,7 @@ describe('Kubevirt create VM using wizard', () => {
     async () => {
       const builder = new VMBuilder()
         .setNamespace(testName)
-        .setProvisionSource(provisionSources.Container)
+        .setProvisionSource(ProvisionSource.CONTAINER)
         .setOS(OperatingSystem.WINDOWS_10)
         .setFlavor(flavorConfigs.Medium)
         .setWorkload(Workload.DESKTOP)
@@ -123,7 +123,6 @@ describe('Kubevirt create VM using wizard', () => {
             .workload.toLowerCase()}-${vm
             .getData()
             .flavor.flavor.toLowerCase()}-${commonTemplateVersion()}`,
-          'vm.kubevirt.io/template.revision': COMMON_TEMPLATES_REVISION,
         };
         expect(_.pick(annotations, Object.keys(requiredAnnotations))).toEqual(requiredAnnotations);
         expect(_.pick(labels, Object.keys(requiredLabels))).toEqual(requiredLabels);
@@ -139,7 +138,7 @@ describe('Kubevirt create VM using wizard', () => {
       expect(defaultVolumeMode).toBeDefined();
 
       const vm = new VMBuilder(getBasicVMBuilder())
-        .setProvisionSource(provisionSources.URL)
+        .setProvisionSource(ProvisionSource.URL)
         .setDisks([rootDisk])
         .build();
       await withResource(leakedResources, vm.asResource(), async () => {
@@ -173,7 +172,7 @@ describe('Kubevirt create VM using wizard', () => {
 
       // Do not attempt to start or wait for disks to import as it's likely the created PVC won't bind
       const vm = new VMBuilder(getBasicVMBuilder())
-        .setProvisionSource(provisionSources.URL)
+        .setProvisionSource(ProvisionSource.URL)
         .setDisks([customAccessVolumeRootDisk])
         .build();
       await withResource(leakedResources, vm.asResource(), async () => {
@@ -190,13 +189,13 @@ describe('Kubevirt create VM using wizard', () => {
     'ID(CNV-2447) Multiple VMs created using "Cloned Disk" method from single source',
     async () => {
       const vm1 = new VMBuilder(getBasicVMBuilder())
-        .setProvisionSource(provisionSources.Disk)
+        .setProvisionSource(ProvisionSource.DISK)
         .setDisks([getDiskToCloneFrom()])
         .generateNameForPrefix('vm1')
         .build();
 
       const vm2 = new VMBuilder(getBasicVMBuilder())
-        .setProvisionSource(provisionSources.Disk)
+        .setProvisionSource(ProvisionSource.DISK)
         .setDisks([getDiskToCloneFrom()])
         .setStartOnCreation(true)
         .setWaitForImport(true)

@@ -1,10 +1,11 @@
-import { FlavorConfig, ProvisionSource, Network, Disk, CloudInitConfig } from './types';
+import { FlavorConfig, Network, Disk, CloudInitConfig } from './types';
 import { V1Disk } from '../../../src/types/vm/disk/V1Disk';
 import { V1Volume } from '../../../src/types/vm/disk/V1Volume';
 import { V1alpha1DataVolume } from '../../../src/types/vm/disk/V1alpha1DataVolume';
 import { V1PersistentVolumeClaim } from '../../../src/types/vm/disk/V1PersistentVolumeClaim';
 import { V1Network, V1NetworkInterface } from '../../../src/types/vm/index';
 import { OperatingSystem, Workload } from '../utils/constants/wizard';
+import { ProvisionSource } from '../utils/constants/enums/provisionSource';
 
 // The following types TestNetwork and TestDisk are currently not user
 export type TestNetwork = {

@@ -1,11 +1,10 @@
 import { deepFreeze } from '../utils/utils';
 import { VMBuilder } from '../models/vmBuilder';
 import * as Combinatorics from 'js-combinatorics';
-import { Flavor, Workload, OperatingSystem, ProvisionSource } from '../utils/constants/wizard';
+import { Flavor, Workload, OperatingSystem } from '../utils/constants/wizard';
 import { VMBuilderDataGenerationConfig, VMBuilderData } from '../types/vm';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
-  provisionSources,
   rootDisk,
   multusNetworkInterface,
   containerRootDisk,
@@ -15,6 +14,7 @@ import {
 import { VirtualMachine } from '../models/virtualMachine';
 import { VMTemplateBuilder } from '../models/vmtemplateBuilder';
 import { VirtualMachineTemplate } from '../models/virtualMachineTemplate';
+import { ProvisionSource } from '../utils/constants/enums/provisionSource';
 
 /**
  * Generates dictionary of VMBuilders based on baseBuilder, attributes and their values
@@ -22,7 +22,7 @@ import { VirtualMachineTemplate } from '../models/virtualMachineTemplate';
  * Example:
  * ```typescript
  * const baseVMBuilder = new VMBuilder()
- *  .setProvisionSource(provisionSources[ProvisionSource.CONTAINER])
+ *  .setProvisionSource(ProvisionSource.CONTAINER)
  *  .setDisks([containerRootDisk])
  *  .setWorkload(Workload.DESKTOP)
  *  .setOS(OperatingSystem.RHEL7);
@@ -76,7 +76,7 @@ const generateBuilders = (
 export const computedVMBuilders = deepFreeze(
   generateBuilders(
     new VMBuilder()
-      .setProvisionSource(provisionSources[ProvisionSource.CONTAINER])
+      .setProvisionSource(ProvisionSource.CONTAINER)
       .setDescription('Generated VM')
       .setDisks([containerRootDisk]),
     {
@@ -105,26 +105,26 @@ export const getBasicVMTBuilder = () =>
     .setWorkload(Workload.DESKTOP);
 
 export const vmPresets: { [k: string]: VirtualMachine } = {
-  [ProvisionSource.CONTAINER]: new VMBuilder(getBasicVMBuilder())
-    .setProvisionSource(provisionSources.Container)
+  [ProvisionSource.CONTAINER.getValue()]: new VMBuilder(getBasicVMBuilder())
+    .setProvisionSource(ProvisionSource.CONTAINER)
     .setDisks([containerRootDisk])
     .setNetworks([multusNetworkInterface])
     .setStartOnCreation(true)
     .build(),
-  [ProvisionSource.URL]: new VMBuilder(getBasicVMBuilder())
-    .setProvisionSource(provisionSources.URL)
+  [ProvisionSource.URL.getValue()]: new VMBuilder(getBasicVMBuilder())
+    .setProvisionSource(ProvisionSource.URL)
     .setDisks([rootDisk])
     .setNetworks([multusNetworkInterface])
     .setStartOnCreation(true)
     .build(),
-  [ProvisionSource.PXE]: new VMBuilder(getBasicVMBuilder())
-    .setProvisionSource(provisionSources.PXE)
+  [ProvisionSource.PXE.getValue()]: new VMBuilder(getBasicVMBuilder())
+    .setProvisionSource(ProvisionSource.PXE)
     .setDisks([rootDisk])
     .setNetworks([multusNetworkInterface])
     .setStartOnCreation(true)
     .build(),
-  [ProvisionSource.DISK]: new VMBuilder(getBasicVMBuilder())
-    .setProvisionSource(provisionSources.Disk)
+  [ProvisionSource.DISK.getValue()]: new VMBuilder(getBasicVMBuilder())
+    .setProvisionSource(ProvisionSource.DISK)
     .setNetworks([multusNetworkInterface])
     .setDisks([getDiskToCloneFrom()])
     .setStartOnCreation(true)
@@ -132,23 +132,23 @@ export const vmPresets: { [k: string]: VirtualMachine } = {
 };
 
 export const VMTemplatePresets: { [k: string]: VirtualMachineTemplate } = {
-  [ProvisionSource.CONTAINER]: new VMTemplateBuilder(getBasicVMTBuilder())
-    .setProvisionSource(provisionSources.Container)
+  [ProvisionSource.CONTAINER.getValue()]: new VMTemplateBuilder(getBasicVMTBuilder())
+    .setProvisionSource(ProvisionSource.CONTAINER)
     .setDisks([containerRootDisk])
     .setNetworks([multusNetworkInterface])
     .build(),
-  [ProvisionSource.URL]: new VMTemplateBuilder(getBasicVMTBuilder())
-    .setProvisionSource(provisionSources.URL)
+  [ProvisionSource.URL.getValue()]: new VMTemplateBuilder(getBasicVMTBuilder())
+    .setProvisionSource(ProvisionSource.URL)
     .setDisks([rootDisk])
     .setNetworks([multusNetworkInterface])
     .build(),
-  [ProvisionSource.PXE]: new VMTemplateBuilder(getBasicVMTBuilder())
-    .setProvisionSource(provisionSources.PXE)
+  [ProvisionSource.PXE.getValue()]: new VMTemplateBuilder(getBasicVMTBuilder())
+    .setProvisionSource(ProvisionSource.PXE)
     .setDisks([rootDisk])
     .setNetworks([multusNetworkInterface])
     .build(),
-  [ProvisionSource.DISK]: new VMTemplateBuilder(getBasicVMTBuilder())
-    .setProvisionSource(provisionSources.Disk)
+  [ProvisionSource.DISK.getValue()]: new VMTemplateBuilder(getBasicVMTBuilder())
+    .setProvisionSource(ProvisionSource.DISK)
     .setDisks([getDiskToCloneFrom()])
     .setNetworks([multusNetworkInterface])
     .build(),

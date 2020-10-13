@@ -18,6 +18,7 @@ import {
 } from './utils/constants/common';
 import { VM_ACTION, VM_STATUS } from './utils/constants/vm';
 import { VirtualMachine } from './models/virtualMachine';
+import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 describe('Test VM Migration', () => {
   let testVm;
@@ -28,7 +29,7 @@ describe('Test VM Migration', () => {
   const VM_BOOT_AND_MIGRATE_TIMEOUT = VM_BOOTUP_TIMEOUT_SECS + VM_MIGRATION_TIMEOUT_SECS;
 
   beforeEach(async () => {
-    testVm = getVMManifest('URL', testName, `migrationvm-${getRandStr(4)}`);
+    testVm = getVMManifest(ProvisionSource.URL, testName, `migrationvm-${getRandStr(4)}`);
     vm = new VirtualMachine(testVm.metadata);
     createResource(testVm);
     await vm.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);

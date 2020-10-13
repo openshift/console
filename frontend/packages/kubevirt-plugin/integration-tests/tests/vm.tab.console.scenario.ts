@@ -27,8 +27,8 @@ import {
 } from './utils/constants/common';
 import { VM_ACTION } from './utils/constants/vm';
 import { VirtualMachine } from './models/virtualMachine';
-import { ProvisionSource } from './utils/constants/wizard';
 import { getVMManifest } from './mocks/mocks';
+import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 describe('KubeVirt VM console - VNC/Serial', () => {
   const vmResource = getVMManifest(ProvisionSource.URL, testName, 'cirros-vm');

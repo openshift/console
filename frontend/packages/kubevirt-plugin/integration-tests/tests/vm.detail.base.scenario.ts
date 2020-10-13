@@ -10,12 +10,13 @@ import { VM_BOOTUP_TIMEOUT_SECS, NOT_AVAILABLE } from './utils/constants/common'
 import { VM_STATUS } from './utils/constants/vm';
 import { NodePortService } from './types/types';
 import { OperatingSystem, Workload } from './utils/constants/wizard';
+import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 describe('Kubevirt VM details tab', () => {
   const vmName = `vm-${testName}`;
   const cloudInit = `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}`;
   const serviceCommon = { name: vmName, kind: 'vm', type: 'NodePort', namespace: testName };
-  const testVM = getVMManifest('Container', testName, vmName, cloudInit);
+  const testVM = getVMManifest(ProvisionSource.CONTAINER, testName, vmName, cloudInit);
   const vm = new VirtualMachine(testVM.metadata);
   const nodePortServices = new Set<NodePortService>();
   nodePortServices.add({
