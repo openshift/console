@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import * as _ from 'lodash-es';
 import * as semver from 'semver';
 import * as classNames from 'classnames';
@@ -94,6 +95,7 @@ const ImageStreamTagsRow: React.SFC<ImageStreamTagsRowProps> = ({
     'annotations',
     'openshift.io/image.dockerRepositoryCheck',
   ]);
+  const { t } = useTranslation();
   return (
     <div className="row">
       <div className="col-md-2 col-sm-4 col-xs-4 co-break-word">
@@ -115,23 +117,27 @@ const ImageStreamTagsRow: React.SFC<ImageStreamTagsRowProps> = ({
           />
         )}
         {from && !referencesTag && <>{from.name}</>}
-        {!from && <span className="text-muted">pushed image</span>}
+        {!from && <span className="text-muted">{t('image-stream~pushed image')}</span>}
       </span>
       <span className="col-md-4 col-sm-4 hidden-xs co-break-all">
         {!imageStreamStatus && dockerRepositoryCheck && (
           <>
             <YellowExclamationTriangleIcon />
-            &nbsp;Unable to resolve
+            &nbsp;{t('image-stream~Unable to resolve')}
           </>
         )}
-        {!imageStreamStatus && !dockerRepositoryCheck && !from && <>Not synced yet</>}
+        {!imageStreamStatus && !dockerRepositoryCheck && !from && (
+          <>{t('image-stream~Not synced yet')}</>
+        )}
         {/* We have no idea why in this case  */}
-        {!imageStreamStatus && !dockerRepositoryCheck && from && <>Unresolved</>}
+        {!imageStreamStatus && !dockerRepositoryCheck && from && (
+          <>{t('image-stream~Unresolved')}</>
+        )}
         {imageStreamStatus && image && <>{image}</>}
         {imageStreamStatus && !image && (
           <>
             <YellowExclamationTriangleIcon />
-            &nbsp;There is no image associated with this tag
+            &nbsp;{t('image-stream~There is no image associated with this tag')}
           </>
         )}
       </span>
@@ -148,6 +154,7 @@ export const ExampleDockerCommandPopover: React.FC<ImageStreamManipulationHelpPr
   tag,
 }) => {
   const publicImageRepository = _.get(imageStream, 'status.publicDockerImageRepository');
+  const { t } = useTranslation();
   if (!publicImageRepository) {
     return null;
   }
@@ -157,59 +164,68 @@ export const ExampleDockerCommandPopover: React.FC<ImageStreamManipulationHelpPr
 
   return (
     <Popover
-      headerContent={<>Image registry commands</>}
+      headerContent={<>{t('image-stream~Image registry commands')}</>}
       className="co-example-docker-command__popover"
       minWidth="600px"
       bodyContent={
         <div>
           <p>
-            Create a new Image Stream Tag by pushing an image to this Image Stream with the desired
-            tag.
+            {t(
+              'image-stream~Create a new Image Stream Tag by pushing an image to this Image Stream with the desired tag.',
+            )}
           </p>
           <br />
-          <p>Authenticate to the internal registry</p>
+          <p>{t('image-stream~Authenticate to the internal registry')}</p>
           <CopyToClipboard value={loginCommand} />
           <br />
-          <p>Push an image to this Image Stream</p>
+          <p>{t('image-stream~Push an image to this Image Stream')}</p>
           <CopyToClipboard value={pushCommand} />
           <br />
-          <p>Pull an image from this Image Stream</p>
+          <p>{t('image-stream~Pull an image from this Image Stream')}</p>
           <CopyToClipboard value={pullCommand} />
           <br />
           <p>
-            Red Hat Enterprise Linux users may use the equivalent <strong>podman</strong> commands.{' '}
-            <ExternalLink href="https://podman.io/" text="Learn more." />
+            <Trans i18nKey="image-stream~use the equivalent podman commands">
+              Red Hat Enterprise Linux users may use the equivalent <strong>podman</strong>{' '}
+              commands.{' '}
+            </Trans>
+            <ExternalLink href="https://podman.io/" text={t('image-stream~Learn more.')} />
           </p>
         </div>
       }
     >
       <Button className="hidden-sm hidden-xs" type="button" variant="link">
         <QuestionCircleIcon className="co-icon-space-r" />
-        Do you need to work with this Image Stream outside of the web console?
+        {t('image-stream~Do you need to work with this Image Stream outside of the web console?')}
       </Button>
     </Popover>
   );
 };
 
-const getImportErrors = (imageStream: K8sResourceKind): string[] => {
-  return _.transform(imageStream.status.tags, (acc, tag: any) => {
-    const importErrorCondition = _.find(
-      tag.conditions,
-      (condition) => condition.type === 'ImportSuccess' && condition.status === 'False',
-    );
-    importErrorCondition &&
-      acc.push(
-        `Unable to sync image for tag ${imageStream.metadata.name}:${tag.tag}. ${importErrorCondition.message}`,
-      );
-  });
-};
-
 export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({ obj: imageStream }) => {
+  const { t } = useTranslation();
+
+  const getImportErrors = (): string[] => {
+    return _.transform(imageStream.status.tags, (acc, tag: any) => {
+      const importErrorCondition = _.find(
+        tag.conditions,
+        (condition) => condition.type === 'ImportSuccess' && condition.status === 'False',
+      );
+      importErrorCondition &&
+        acc.push(
+          t('image-stream~Unable to sync image for tag {{tag}}. {{message}}', {
+            tag: `${imageStream.metadata.name}:${tag.tag}`,
+            message: importErrorCondition.message,
+          }),
+        );
+    });
+  };
+
   const imageRepository = _.get(imageStream, 'status.dockerImageRepository');
   const publicImageRepository = _.get(imageStream, 'status.publicDockerImageRepository');
   const imageCount = _.get(imageStream, 'status.tags.length');
   const specTagByName = _.keyBy(imageStream.spec.tags, 'name');
-  const importErrors = getImportErrors(imageStream);
+  const importErrors = getImportErrors();
 
   return (
     <div>
@@ -222,13 +238,13 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({ obj: 
             ))}
           />
         )}
-        <SectionHeading text="Image Stream Details" />
+        <SectionHeading text={t('image-stream~Image Stream details')} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={imageStream}>
-              {imageRepository && <dt>Image Repository</dt>}
+              {imageRepository && <dt>{t('image-stream~Image repository')}</dt>}
               {imageRepository && <dd>{imageRepository}</dd>}
-              {publicImageRepository && <dt>Public Image Repository</dt>}
+              {publicImageRepository && <dt>{t('image-stream~Public image repository')}</dt>}
               {publicImageRepository && <dd>{publicImageRepository}</dd>}
               <dt>Image Count</dt>
               <dd>{imageCount ? imageCount : 0}</dd>
@@ -238,17 +254,17 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({ obj: 
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="Tags" />
+        <SectionHeading text={t('image-stream~Tags')} />
         {_.isEmpty(imageStream.status.tags) ? (
-          <span className="text-muted">No tags</span>
+          <span className="text-muted">{t('image-stream~No tags')}</span>
         ) : (
           <div className="row">
             <div className="co-m-table-grid co-m-table-grid--bordered">
               <div className="row co-m-table-grid__head">
-                <div className="col-md-2 col-sm-4 col-xs-4">Name</div>
-                <div className="col-md-3 col-sm-4 col-xs-8">From</div>
-                <div className="col-md-4 col-sm-4 hidden-xs">Identifier</div>
-                <div className="col-md-3 hidden-sm hidden-xs">Last Updated</div>
+                <div className="col-md-2 col-sm-4 col-xs-4">{t('image-stream~Name')}</div>
+                <div className="col-md-3 col-sm-4 col-xs-8">{t('image-stream~From')}</div>
+                <div className="col-md-4 col-sm-4 hidden-xs">{t('image-stream~Identifier')}</div>
+                <div className="col-md-3 hidden-sm hidden-xs">{t('image-stream~Last updated')}</div>
               </div>
               <div className="co-m-table-grid__body">
                 {_.map(imageStream.status.tags, (statusTag) => (
@@ -298,41 +314,6 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const ImageStreamsTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Namespace',
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-      id: 'namespace',
-    },
-    {
-      title: 'Labels',
-      sortField: 'metadata.labels',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Created',
-      sortField: 'metadata.creationTimestamp',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[4] },
-    },
-  ];
-};
-ImageStreamsTableHeader.displayName = 'ImageStreamsTableHeader';
-
 const ImageStreamsTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
@@ -363,28 +344,71 @@ const ImageStreamsTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, s
   );
 };
 
-export const ImageStreamsList: React.SFC = (props) => (
-  <Table
-    {...props}
-    aria-label="Image Streams"
-    Header={ImageStreamsTableHeader}
-    Row={ImageStreamsTableRow}
-    virtualize
-  />
-);
+export const ImageStreamsList: React.SFC = (props) => {
+  const { t } = useTranslation();
+  const ImageStreamsTableHeader = () => {
+    return [
+      {
+        title: t('image-stream~Name'),
+        sortField: 'metadata.name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[0] },
+      },
+      {
+        title: t('image-stream~Namespace'),
+        sortField: 'metadata.namespace',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[1] },
+        id: 'namespace',
+      },
+      {
+        title: t('image-stream~Labels'),
+        sortField: 'metadata.labels',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[2] },
+      },
+      {
+        title: t('image-stream~Created'),
+        sortField: 'metadata.creationTimestamp',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[3] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[4] },
+      },
+    ];
+  };
+  ImageStreamsTableHeader.displayName = 'ImageStreamsTableHeader';
+
+  return (
+    <Table
+      {...props}
+      aria-label={t('image-stream~Image Streams')}
+      Header={ImageStreamsTableHeader}
+      Row={ImageStreamsTableRow}
+      virtualize
+    />
+  );
+};
+
 ImageStreamsList.displayName = 'ImageStreamsList';
 
 export const buildPhase = (build) => build.status.phase;
 
-export const ImageStreamsPage: React.SFC<ImageStreamsPageProps> = (props) => (
-  <ListPage
-    {...props}
-    title="Image Streams"
-    kind={ImageStreamsReference}
-    ListComponent={ImageStreamsList}
-    canCreate={true}
-  />
-);
+export const ImageStreamsPage: React.SFC<ImageStreamsPageProps> = (props) => {
+  const { t } = useTranslation();
+  return (
+    <ListPage
+      {...props}
+      title={t('image-stream~Image Streams')}
+      kind={ImageStreamsReference}
+      ListComponent={ImageStreamsList}
+      canCreate={true}
+    />
+  );
+};
+
 ImageStreamsPage.displayName = 'ImageStreamsListPage';
 
 type ImageStreamTagsRowProps = {

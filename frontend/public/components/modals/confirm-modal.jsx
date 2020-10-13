@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Translation } from 'react-i18next';
 import * as PropTypes from 'prop-types';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
@@ -22,30 +23,50 @@ class ConfirmModal extends PromiseComponent {
   }
 
   render() {
+    const {
+      title,
+      titleKey,
+      message,
+      messageKey,
+      btnText,
+      btnTextKey,
+      cancelText,
+      cancelTextKey,
+      submitDanger,
+    } = this.props;
+
     return (
-      <form onSubmit={this._submit} name="form" className="modal-content">
-        <ModalTitle>{this.props.title}</ModalTitle>
-        <ModalBody>{this.props.message}</ModalBody>
-        <ModalSubmitFooter
-          errorMessage={this.state.errorMessage}
-          inProgress={this.state.inProgress}
-          submitText={this.props.btnText || 'Confirm'}
-          cancel={this._cancel}
-          cancelText={this.props.cancelText || 'Cancel'}
-          submitDanger={this.props.submitDanger}
-        />
-      </form>
+      <Translation>
+        {(t) => (
+          <form onSubmit={this._submit} name="form" className="modal-content">
+            <ModalTitle>{titleKey ? t(titleKey) : title}</ModalTitle>
+            <ModalBody>{messageKey ? t(messageKey) : message}</ModalBody>
+            <ModalSubmitFooter
+              errorMessage={this.state.errorMessage}
+              inProgress={this.state.inProgress}
+              submitText={btnTextKey ? t(btnTextKey) : btnText || t('Confirm')}
+              cancel={this._cancel}
+              cancelText={cancelTextKey ? t(cancelTextKey) : cancelText || t('Cancel')}
+              submitDanger={submitDanger}
+            />
+          </form>
+        )}
+      </Translation>
     );
   }
 }
 ConfirmModal.propTypes = {
   btnText: PropTypes.node,
+  btnTextKey: PropTypes.string,
   cancel: PropTypes.func.isRequired,
   cancelText: PropTypes.node,
+  cancelTextKey: PropTypes.string,
   close: PropTypes.func.isRequired,
   executeFn: PropTypes.func.isRequired,
   message: PropTypes.node,
-  title: PropTypes.node.isRequired,
+  messageKey: PropTypes.string,
+  title: PropTypes.node,
+  titleKey: PropTypes.string,
   submitDanger: PropTypes.bool,
 };
 
