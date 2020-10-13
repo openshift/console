@@ -304,7 +304,7 @@ export const menuActionOpenConsole = (kindObj: K8sKind, vmi: VMIKind): KebabOpti
 });
 
 export const vmMenuActions = [
-  menuActionStart,
+  // menuActionStart,
   menuActionStop,
   menuActionRestart,
   menuActionUnpause,
