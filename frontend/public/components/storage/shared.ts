@@ -36,6 +36,16 @@ export const accessModeRadios = [
     title: 'Read Only (ROX)',
   },
 ];
+export const volumeModeRadios = [
+  {
+    value: 'Filesystem',
+    title: 'Filesystem',
+  },
+  {
+    value: 'Block',
+    title: 'Block',
+  },
+];
 export const dropdownUnits = {
   Mi: 'MiB',
   Gi: 'GiB',

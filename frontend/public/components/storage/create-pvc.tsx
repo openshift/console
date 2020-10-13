@@ -16,6 +16,7 @@ import {
   provisionerAccessModeMapping,
   initialAccessModes,
   accessModeRadios,
+  volumeModeRadios,
   dropdownUnits,
   getAccessModeForProvisioner,
 } from './shared';
@@ -35,6 +36,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
   const [storageClass, setStorageClass] = React.useState('');
   const [pvcName, setPvcName] = React.useState('');
   const [accessMode, setAccessMode] = React.useState('ReadWriteOnce');
+  const [volumeMode, setVolumeMode] = React.useState('Filesystem');
   const [requestSizeValue, setRequestSizeValue] = React.useState('');
   const [requestSizeUnit, setRequestSizeUnit] = React.useState('Gi');
   const [useSelector, setUseSelector] = React.useState(false);
@@ -68,6 +70,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
         },
         spec: {
           accessModes: [accessMode],
+          volumeMode,
           resources: {
             requests: {
               storage: `${requestSizeValue}${requestSizeUnit}`,
@@ -108,6 +111,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
     requestSizeUnit,
     useSelector,
     storageProvisioner,
+    volumeMode,
   ]);
 
   const handleNameValuePairs = ({ nameValuePairs: updatedNameValuePairs }) => {
@@ -148,6 +152,10 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
 
   const handleAccessMode: React.ReactEventHandler<HTMLInputElement> = (event) => {
     setAccessMode(event.currentTarget.value);
+  };
+
+  const handleVolumeMode: React.ReactEventHandler<HTMLInputElement> = (event) => {
+    setVolumeMode(event.currentTarget.value);
   };
 
   const onlyPvcSCs = React.useCallback((sc: StorageClass) => !isObjectSC(sc), []);
@@ -249,6 +257,21 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
         <p className="help-block" id="label-selector-help">
           Use label selectors to define how storage is created
         </p>
+      </div>
+      <label className="control-label" htmlFor="volume-mode">
+        Volume Mode
+      </label>
+      <div className="form-group">
+        {volumeModeRadios.map((radio) => (
+          <RadioInput
+            {...radio}
+            key={radio.value}
+            onChange={handleVolumeMode}
+            inline
+            checked={radio.value === volumeMode}
+            name="volumeMode"
+          />
+        ))}
       </div>
     </div>
   );
