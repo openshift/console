@@ -55,4 +55,4 @@ Scenario: Uninstall Helm Release through Context Menu: HR-08-TC04
     And user clicks on the "Uninstall Helm Release" action
     And user enters the release name
     And user clicks on the Uninstall button
-    Then user will be redirected to Topology page with no workloads named "nodejs-ex-k"
+    Then user will be redirected to Topology page with no workloads
