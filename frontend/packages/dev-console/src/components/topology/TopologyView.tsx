@@ -73,6 +73,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
   const [visualization, setVisualization] = React.useState<Visualization>();
   const displayFilters = useDisplayFilters();
   const filters = useDeepCompareMemoize(displayFilters);
+  const applicationRef = React.useRef<string>(null);
   const createResourceAccess: string[] = useAddToProjectAccess(namespace);
   const appliedFilters = useAppliedDisplayFilters();
   const [displayFilterers, setDisplayFilterers] = React.useState<TopologyApplyDisplayOptions[]>(
@@ -184,6 +185,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
         onSupportedFiltersChange,
         onSupportedKindsChange,
       );
+      applicationRef.current = application;
       setFilteredModel(newModel);
     }
   }, [
@@ -220,7 +222,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
         <Topology
           model={filteredModel}
           namespace={namespace}
-          application={application}
+          application={applicationRef.current}
           onSelect={onSelect}
           setVisualization={onVisualizationChange}
         />
@@ -232,7 +234,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
           setVisualization={onVisualizationChange}
         />
       ),
-    [application, filteredModel, namespace, onSelect, onVisualizationChange, showGraphView],
+    [filteredModel, namespace, onSelect, onVisualizationChange, showGraphView],
   );
 
   const topologyFilterBar = React.useMemo(
