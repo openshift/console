@@ -1,5 +1,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
+import { TFunction } from 'i18next';
+import { withTranslation } from 'react-i18next';
 import * as fuzzy from 'fuzzysearch';
 import {
   Dropdown,
@@ -77,6 +79,7 @@ interface ResourceDropdownProps {
   autocompleteFilter?: (strText: string, item: object) => boolean;
   customResourceKey?: (key: string, resource: K8sResourceKind) => string;
   appendItems?: ResourceDropdownItems;
+  t: TFunction;
 }
 
 class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
@@ -118,7 +121,11 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
 
     if (loadError) {
       this.setState({
-        title: <span className="cos-error-title">Error Loading - {placeholder}</span>,
+        title: (
+          <span className="cos-error-title">
+            {this.props.t('console-shared~Error Loading - {{placeholder}}', { placeholder })}
+          </span>
+        ),
       });
     }
 
@@ -287,4 +294,4 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
   }
 }
 
-export default ResourceDropdown;
+export default withTranslation()(ResourceDropdown);

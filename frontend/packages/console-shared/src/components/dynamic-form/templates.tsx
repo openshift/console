@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ArrayFieldTemplateProps,
   FieldTemplateProps,
@@ -43,12 +44,17 @@ export const AtomicFieldTemplate: React.FC<FieldTemplateProps> = ({
 
 const AdvancedProperties: React.FC<Pick<ObjectFieldTemplateProps, 'properties'>> = ({
   properties,
-}) => (
-  <ExpandCollapse textCollapsed="Advanced Configuration" textExpanded="Advanced Configuration">
-    {_.map(properties, (property) => property.content)}
-  </ExpandCollapse>
-);
-
+}) => {
+  const { t } = useTranslation();
+  return (
+    <ExpandCollapse
+      textCollapsed={t('console-shared~Advanced Configuration')}
+      textExpanded={t('console-shared~Advanced Configuration')}
+    >
+      {_.map(properties, (property) => property.content)}
+    </ExpandCollapse>
+  );
+};
 export const FieldTemplate: React.FC<FieldTemplateProps> = (props) => {
   const { hidden, schema = {}, children, uiSchema = {}, formContext = {} } = props;
   const type = getSchemaType(schema);
@@ -111,6 +117,7 @@ export const ArrayFieldTemplate: React.FC<ArrayFieldTemplateProps> = ({
   title,
   uiSchema,
 }) => {
+  const { t } = useTranslation();
   const [, label] = useSchemaLabel(schema, uiSchema, title ?? 'Items');
   const singularLabel = label.replace(/s$/, '');
   return (
@@ -134,7 +141,7 @@ export const ArrayFieldTemplate: React.FC<ArrayFieldTemplateProps> = ({
                   variant="link"
                 >
                   <MinusCircleIcon className="co-icon-space-r" />
-                  Remove {singularLabel}
+                  {t('console-shared~Remove {{singularLabel}}', { singularLabel })}
                 </Button>
               </div>
             )}
@@ -145,25 +152,28 @@ export const ArrayFieldTemplate: React.FC<ArrayFieldTemplateProps> = ({
       <div className="row">
         <Button id={`${idSchema.$id}_add-btn`} type="button" onClick={onAddClick} variant="link">
           <PlusCircleIcon className="co-icon-space-r" />
-          Add {singularLabel}
+          {t('console-shared~Add {{singularLabel}}', { singularLabel })}
         </Button>
       </div>
     </FieldSet>
   );
 };
 
-export const ErrorTemplate: React.FC<{ errors: string[] }> = ({ errors }) => (
-  <Alert
-    isInline
-    className="co-alert co-break-word co-alert--scrollable"
-    variant="danger"
-    title="Error"
-  >
-    Fix the above errors:
-    <ul>
-      {_.map(errors, (error) => (
-        <li key={error}>{error}</li>
-      ))}
-    </ul>
-  </Alert>
-);
+export const ErrorTemplate: React.FC<{ errors: string[] }> = ({ errors }) => {
+  const { t } = useTranslation();
+  return (
+    <Alert
+      isInline
+      className="co-alert co-break-word co-alert--scrollable"
+      variant="danger"
+      title={t('console-shared~Error')}
+    >
+      {t('console-shared~Fix the above errors:')}
+      <ul>
+        {_.map(errors, (error) => (
+          <li key={error}>{error}</li>
+        ))}
+      </ul>
+    </Alert>
+  );
+};

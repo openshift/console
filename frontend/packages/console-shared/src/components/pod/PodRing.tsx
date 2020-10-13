@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { Button, Split, SplitItem, Bullseye } from '@patternfly/react-core';
 import { K8sResourceKind, k8sPatch, K8sKind } from '@console/internal/module/k8s';
@@ -29,6 +30,7 @@ const PodRing: React.FC<PodRingProps> = ({
   enableScaling = true,
 }) => {
   const [clickCount, setClickCount] = React.useState(obj.spec.replicas);
+  const { t } = useTranslation();
   const isAccessScalingAllowed = usePodScalingAccessStatus(
     obj,
     resourceKind,
@@ -85,6 +87,7 @@ const PodRing: React.FC<PodRingProps> = ({
     kind,
     pods,
     hpaControlledScaling,
+    t,
     hpa,
   );
 
@@ -108,8 +111,8 @@ const PodRing: React.FC<PodRingProps> = ({
               <Button
                 type="button"
                 variant="plain"
-                aria-label="Increase the pod count"
-                title="Increase the pod count"
+                aria-label={t('console-shared~Increase the pod count')}
+                title={t('console-shared~Increase the pod count')}
                 onClick={() => handleClick(1)}
                 isBlock
               >
@@ -118,8 +121,8 @@ const PodRing: React.FC<PodRingProps> = ({
               <Button
                 type="button"
                 variant="plain"
-                aria-label="Decrease the pod count"
-                title="Decrease the pod count"
+                aria-label={t('console-shared~Decrease the pod count')}
+                title={t('console-shared~Decrease the pod count')}
                 onClick={() => handleClick(-1)}
                 isBlock
                 isDisabled={clickCount <= 0}

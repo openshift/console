@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   PodStatus,
   calculateRadius,
@@ -53,6 +54,7 @@ export const podSetInnerRadius = (size: number, data: DonutStatusData) => {
 };
 
 const PodSet: React.FC<PodSetProps> = ({ size, data, x = 0, y = 0, showPodCount }) => {
+  const { t } = useTranslation();
   const { podStatusOuterRadius, podStatusInnerRadius, podStatusStrokeWidth } = calculateRadius(
     size,
   );
@@ -83,6 +85,7 @@ const PodSet: React.FC<PodSetProps> = ({ size, data, x = 0, y = 0, showPodCount 
     ownerKind,
     data?.pods,
     hpaControlledScaling,
+    t,
     hpa,
   );
   return (
