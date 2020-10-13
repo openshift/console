@@ -23,6 +23,8 @@ import {
   resourcePathFromModel,
 } from './utils';
 
+import { useTranslation } from 'react-i18next';
+
 const tableColumnClasses = [
   classNames('col-sm-4', 'col-xs-6'),
   classNames('col-sm-4', 'col-xs-6'),
@@ -30,40 +32,13 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const UserTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Full Name',
-      sortField: 'fullName',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: 'Identities',
-      sortField: 'identities[0]',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[3] },
-    },
-  ];
-};
-UserTableHeader.displayName = 'UserTableHeader';
-
 const UserKebab_: React.FC<UserKebabProps & UserKebabDispatchProps> = ({
   user,
   startImpersonate,
 }) => {
+  const { t } = useTranslation();
   const impersonateAction: KebabAction = (kind: K8sKind, obj: UserKind) => ({
-    label: `Impersonate User "${obj.metadata.name}"`,
+    label: t('user~Impersonate User {{name}}', obj.metadata),
     callback: () => startImpersonate('User', obj.metadata.name),
   });
   return (
@@ -98,42 +73,90 @@ const UserTableRow: RowFunction<UserKind> = ({ obj, index, key, style }) => {
   );
 };
 
-const EmptyMsg = () => <MsgBox title="No Users Found" />;
+const EmptyMsg = () => {
+  const { t } = useTranslation();
+  return <MsgBox title={t('user~No Users found')} />;
+};
 const oAuthResourcePath = resourcePathFromModel(OAuthModel, 'cluster');
-const noDataDetail = (
-  <>
-    <p>Add identity providers (IDPs) to the OAuth configuration to allow others to log&nbsp;in.</p>
-    <p>
-      <Link to={oAuthResourcePath}>
-        <Button variant="primary">Add IDP</Button>
-      </Link>
-    </p>
-  </>
-);
-const NoDataEmptyMsg = () => <MsgBox title="No Users Found" detail={noDataDetail} />;
 
-export const UserList: React.FC = (props) => (
-  <Table
-    {...props}
-    aria-label="Users"
-    Header={UserTableHeader}
-    Row={UserTableRow}
-    EmptyMsg={EmptyMsg}
-    NoDataEmptyMsg={NoDataEmptyMsg}
-    virtualize
-  />
-);
+const NoDataEmptyMsg = () => {
+  const { t } = useTranslation();
+  return (
+    <MsgBox
+      title={t('user~No Users found')}
+      detail={
+        <>
+          <p>
+            {t(
+              'user~Add identity providers (IDPs) to the OAuth configuration to allow others to log in.',
+            )}
+          </p>
+          <p>
+            <Link to={oAuthResourcePath}>
+              <Button variant="primary">{t('user~Add IDP')}</Button>
+            </Link>
+          </p>
+        </>
+      }
+    />
+  );
+};
 
-export const UserPage: React.FC<UserPageProps> = (props) => (
-  <ListPage
-    {...props}
-    title="Users"
-    helpText={<>Users are automatically added the first time they log&nbsp;in.</>}
-    kind={referenceForModel(UserModel)}
-    ListComponent={UserList}
-    canCreate={false}
-  />
-);
+export const UserList: React.FC = (props) => {
+  const { t } = useTranslation();
+  const UserTableHeader = () => {
+    return [
+      {
+        title: t('user~Name'),
+        sortField: 'metadata.name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[0] },
+      },
+      {
+        title: t('user~Full name'),
+        sortField: 'fullName',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[1] },
+      },
+      {
+        title: t('user~Identities'),
+        sortField: 'identities[0]',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[2] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[3] },
+      },
+    ];
+  };
+  UserTableHeader.displayName = 'UserTableHeader';
+  return (
+    <Table
+      {...props}
+      aria-label={t('user~Users')}
+      Header={UserTableHeader}
+      Row={UserTableRow}
+      EmptyMsg={EmptyMsg}
+      NoDataEmptyMsg={NoDataEmptyMsg}
+      virtualize
+    />
+  );
+};
+
+export const UserPage: React.FC<UserPageProps> = (props) => {
+  const { t } = useTranslation();
+  return (
+    <ListPage
+      {...props}
+      title={t('user~Users')}
+      helpText={<>{t('user~Users are automatically added the first time they log in.')}</>}
+      kind={referenceForModel(UserModel)}
+      ListComponent={UserList}
+      canCreate={false}
+    />
+  );
+};
 
 const RoleBindingsTab: React.FC<RoleBindingsTabProps> = ({ obj }) => (
   <RoleBindingsPage
@@ -145,13 +168,14 @@ const RoleBindingsTab: React.FC<RoleBindingsTabProps> = ({ obj }) => (
 );
 
 const UserDetails: React.FC<UserDetailsProps> = ({ obj }) => {
+  const { t } = useTranslation();
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text="User Details" />
+      <SectionHeading text={t('user~User details')} />
       <ResourceSummary resource={obj}>
-        <dt>Full Name</dt>
+        <dt>{t('user~Full name')}</dt>
         <dd>{obj.fullName || '-'}</dd>
-        <dt>Identities</dt>
+        <dt>{t('user~Identities')}</dt>
         <dd>
           {_.map(obj.identities, (identity: string) => (
             <div key={identity}>{identity}</div>
@@ -174,8 +198,9 @@ const UserDetailsPage_: React.FC<UserDetailsPageProps & UserKebabDispatchProps> 
   startImpersonate,
   ...props
 }) => {
+  const { t } = useTranslation();
   const impersonateAction: KebabAction = (kind: K8sKind, obj: UserKind) => ({
-    label: `Impersonate User "${obj.metadata.name}"`,
+    label: t('user~Impersonate User {{name}}', obj.metadata),
     callback: () => startImpersonate('User', obj.metadata.name),
   });
   return (

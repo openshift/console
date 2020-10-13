@@ -11,6 +11,7 @@ import {
   createModalLauncher,
 } from '../factory/modal';
 import { ListInput, HandlePromiseProps, withHandlePromise } from '../utils';
+import { useTranslation } from 'react-i18next';
 
 export const AddUsersModal = withHandlePromise((props: AddUsersModalProps) => {
   const [values, setValues] = React.useState(['']);
@@ -23,18 +24,24 @@ export const AddUsersModal = withHandlePromise((props: AddUsersModalProps) => {
       : [{ op: 'add', path: '/users', value: values }];
     return props.handlePromise(k8sPatch(GroupModel, props.group, patch), props.close);
   };
+  const { t } = useTranslation();
 
   return (
     <form onSubmit={submit} name="form" className="modal-content ">
-      <ModalTitle>Add Users</ModalTitle>
+      <ModalTitle>{t('add-users-modal~Add users')}</ModalTitle>
       <ModalBody>
-        <p>Add new users to group {props.group.metadata.name}.</p>
-        <ListInput label="Users" required initialValues={values} onChange={setValues} />
+        <p>{t('add-users-modal~Add new Users to Group {name}.', props.group.metadata)}</p>
+        <ListInput
+          label={t('add-users-modal~Users')}
+          required
+          initialValues={values}
+          onChange={setValues}
+        />
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={props.errorMessage}
         inProgress={props.inProgress}
-        submitText="Save"
+        submitText={t('add-users-modal~Save')}
         cancel={props.cancel}
       />
     </form>

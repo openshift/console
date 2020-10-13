@@ -1,0 +1,12 @@
+{
+  "Impersonate User {{name}}": "Impersonate User {{name}}",
+  "No Users found": "No Users found",
+  "Add identity providers (IDPs) to the OAuth configuration to allow others to log in.": "Add identity providers (IDPs) to the OAuth configuration to allow others to log in.",
+  "Add IDP": "Add IDP",
+  "Name": "Name",
+  "Full name": "Full name",
+  "Identities": "Identities",
+  "Users": "Users",
+  "Users are automatically added the first time they log in.": "Users are automatically added the first time they log in.",
+  "User details": "User details"
+}
