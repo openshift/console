@@ -8,10 +8,10 @@ Background:
 
 
 @regression, @smoke
-Scenario: Open Context Menu and check the actions available for Helm Release: HR-08-TC01
-    Given user is at the Topolgy page
-    When user right clicks on the Helm Release "nodejs-ex-k" to open the context menu
-    Then user will see the actions on context menu
+Scenario: Context menu options of helm release: HR-07-TC01
+    Given helm release "nodejs-ex-k" is present in topology page
+    When user right clicks on the helm release "nodejs-ex-k"
+    Then user is able to see the context menu with actions Upgrade, Rollback and Uninstall Helm Release
 
 
 @regression, @smoke
