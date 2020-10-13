@@ -33,7 +33,7 @@
     "cypress-a11y-report": "echo '\nA11y Test Results:' && mv packages/integration-tests-cypress/cypress-a11y-report.json ./gui_test_screenshots/ && node -e \"console.table(JSON.parse(require('fs').readFileSync(process.argv[1])));\" ./gui_test_screenshots/cypress-a11y-report.json",
     "cypress-postreport": "yarn run cypress-merge && yarn run cypress-generate && yarn run cypress-a11y-report",
     "debug-test-suite": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' node -r ts-node/register --inspect-brk ./node_modules/.bin/protractor integration-tests/protractor.conf.ts",
-    "analyze": "NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=production --profile --json | sed '0,/^{/s/^[^{].*//g' > public/dist/stats.json && ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack-bundle-analyzer --mode static -r public/dist/report.html public/dist/stats.json",
+    "analyze": "NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=production --profile --json | awk '{if(NR>2)print}' > public/dist/stats.json && ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack-bundle-analyzer --mode static -r public/dist/report.html public/dist/stats.json",
     "prettier-all": "prettier --write '**/*.{js,jsx,ts,tsx,json}'",
     "gql-generate": "graphql-codegen"
   },

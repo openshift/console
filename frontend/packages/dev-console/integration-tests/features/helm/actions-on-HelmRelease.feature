@@ -9,7 +9,7 @@ Background:
 
 @regression, @smoke
 Scenario: Context menu options of helm release: HR-07-TC01
-    Given helm release "nodejs-ex-k" is present in topology page
+    Given user is on topology page
     When user right clicks on the helm release "nodejs-ex-k"
     Then user is able to see the context menu with actions Upgrade, Rollback and Uninstall Helm Release
 
