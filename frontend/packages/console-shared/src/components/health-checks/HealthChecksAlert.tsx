@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
@@ -39,6 +40,7 @@ const HealthChecksAlert: React.FC<HealthChecksAlertProps> = ({ resource }) => {
     metadata: { name, namespace, uid },
   } = resource;
   const [hideHealthCheckAlertFor, setHideHealthCheckAlertFor] = React.useState([]);
+  const { t } = useTranslation();
   const kindForCRDResource = referenceFor(resource);
   const resourceModel = modelFor(kindForCRDResource);
   const resourceKind = resourceModel.crd ? kindForCRDResource : kind;
@@ -77,21 +79,28 @@ const HealthChecksAlert: React.FC<HealthChecksAlertProps> = ({ resource }) => {
 
   const addHealthChecksLink = `/k8s/ns/${namespace}/${resourceKind}/${name}/containers/${containersName[0]}/health-checks`;
 
+  const alertMessage =
+    _.size(containersName) > 1
+      ? t(
+          'console-shared~Not all containers have health checks to ensure your application is running correctly.',
+        )
+      : t(
+          'console-shared~Container {{containersName}} does not have health checks to ensure your application is running correctly.',
+          { containersName: _.map(containersName) },
+        );
+
   return (
     <>
       {showAlert ? (
         <div className="ocs-health-checks-alert">
           <Alert
             variant="default"
-            title="Health Checks"
+            title={t('console-shared~Health Checks')}
             actionClose={<AlertActionCloseButton onClose={handleAlertAction} />}
             isInline
           >
-            {_.size(containersName) > 1
-              ? 'Not all containers'
-              : `Container ${_.map(containersName)} does not`}{' '}
-            have health checks to ensure your application is running correctly.{' '}
-            <Link to={addHealthChecksLink}>Add Health Checks</Link>
+            {alertMessage}{' '}
+            <Link to={addHealthChecksLink}>{t('console-shared~Add Health Checks')}</Link>
           </Alert>
         </div>
       ) : null}

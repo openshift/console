@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { isEmpty } from 'lodash';
 import { FormikValues, useField, useFormikContext } from 'formik';
 import { Button } from '@patternfly/react-core';
@@ -12,6 +13,7 @@ import './YAMLEditorField.scss';
 const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({ name, onSave, schemaModel }) => {
   const [field] = useField(name);
   const { setFieldValue } = useFormikContext<FormikValues>();
+  const { t } = useTranslation();
 
   const [sidebarOpen, setSidebarOpen] = React.useState<boolean>(true);
   const definition = schemaModel ? definitionFor(schemaModel) : { properties: [] };
@@ -32,7 +34,7 @@ const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({ name, onSave, schemaM
             showSchema && [
               <Button isInline variant="link" onClick={() => setSidebarOpen(true)}>
                 <InfoCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />
-                View sidebar
+                {t('console-shared~View sidebar')}
               </Button>,
             ]
           }

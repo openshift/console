@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { useFormikContext, FormikValues } from 'formik';
 import { NameValueEditor } from '@console/internal/components/utils/name-value-editor';
@@ -22,6 +23,7 @@ const EnvironmentField: React.FC<EnvironmentFieldProps> = ({
     },
   } = props;
   const { setFieldValue } = useFormikContext<FormikValues>();
+  const { t } = useTranslation();
   const fieldId = getFieldId(props.name, 'env-input');
   const environmentVariables = !_.isEmpty(envs) ? envs.map((env) => _.values(env)) : [['', '']];
   const [nameValue, setNameValue] = React.useState(environmentVariables);
@@ -62,9 +64,9 @@ const EnvironmentField: React.FC<EnvironmentFieldProps> = ({
     <FormGroup fieldId={fieldId} label={label} helperText={helpText} isRequired={required}>
       <NameValueEditor
         nameValuePairs={nameValue}
-        valueString="Value"
-        nameString="Name"
-        addString="Add Value"
+        valueString={t('console-shared~Value')}
+        nameString={t('console-shared~Name')}
+        addString={t('console-shared~Add Value')}
         readOnly={false}
         allowSorting={false}
         updateParentData={handleNameValuePairs}

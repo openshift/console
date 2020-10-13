@@ -12,6 +12,14 @@ import AppSection from '../app/AppSection';
 import AdvancedSection from '../advanced/AdvancedSection';
 import ResourceSection from '../section/ResourceSection';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 describe('DeployImage Page Test', () => {
   type DeployImagePageProps = React.ComponentProps<typeof DeployImagePage>;
   let deployImagePageProps: DeployImagePageProps;

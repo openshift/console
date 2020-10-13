@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import Form, { FormProps } from 'react-jsonschema-form';
 import { Accordion, ActionGroup, Button, Alert } from '@patternfly/react-core';
 import { history } from '@console/internal/components/utils';
@@ -36,6 +37,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
   noActions,
   ...restProps
 }) => {
+  const { t } = useTranslation();
   const schemaErrors = getSchemaErrors(schema);
   // IF the top level schema is unsupported, don't render a form at all.
   if (schemaErrors.length) {
@@ -46,7 +48,9 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
         isInline
         className="co-alert co-break-word"
         variant="info"
-        title={'A form is not available for this resource. Please use the YAML View.'}
+        title={t(
+          'console-shared~A form is not available for this resource. Please use the YAML View.',
+        )}
       />
     );
   }
@@ -56,9 +60,9 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
         isInline
         className="co-alert co-break-word"
         variant="info"
-        title={
-          'Note: Some fields may not be represented in this form view. Please select "YAML view" for full control.'
-        }
+        title={t(
+          'console-shared~Note: Some fields may not be represented in this form view. Please select "YAML view" for full control.',
+        )}
       />
       <Accordion asDefinitionList={false} className="co-dynamic-form__accordion">
         <Form
@@ -86,10 +90,10 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
             <div style={{ paddingBottom: '30px' }}>
               <ActionGroup className="pf-c-form">
                 <Button type="submit" variant="primary">
-                  Create
+                  {t('console-shared~Create')}
                 </Button>
                 <Button onClick={onCancel || history.goBack} variant="secondary">
-                  Cancel
+                  {t('console-shared~Cancel')}
                 </Button>
               </ActionGroup>
             </div>
