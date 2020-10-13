@@ -317,6 +317,130 @@ export const appResources: AppResources = {
       },
     },
   },
+  pipeline: {
+    loaded: true,
+    loadError: '',
+    data: {
+      apiVersion: 'tekton.dev/v1beta1',
+      kind: 'Pipeline',
+      metadata: {
+        selfLink: '/apis/tekton.dev/v1beta1/namespaces/div/pipelines/nationalparks-py',
+        resourceVersion: '406718',
+        name: 'nationalparks-py',
+        uid: '131662ce-62a8-4e4c-8520-a85bc35a31b3',
+        creationTimestamp: '2020-10-13T12:56:49Z',
+        generation: 1,
+        namespace: 'div',
+        labels: {
+          'app.kubernetes.io/instance': 'nationalparks-py',
+          'pipeline.openshift.io/runtime': 'python',
+          'pipeline.openshift.io/type': 'kubernetes',
+        },
+      },
+      spec: {
+        params: [
+          {
+            default: 'nationalparks-py',
+            name: 'APP_NAME',
+            type: 'string',
+          },
+          {
+            default: 'https://github.com/divyanshiGupta/nationalparks-py',
+            name: 'GIT_REPO',
+            type: 'string',
+          },
+          {
+            default: 'master',
+            name: 'GIT_REVISION',
+            type: 'string',
+          },
+          {
+            default: 'image-registry.openshift-image-registry.svc:5000/div/nationalparks-py',
+            name: 'IMAGE_NAME',
+            type: 'string',
+          },
+        ],
+        tasks: [
+          {
+            name: 'fetch-repository',
+            params: [
+              {
+                name: 'url',
+                value: '$(params.GIT_REPO)',
+              },
+              {
+                name: 'revision',
+                value: '$(params.GIT_REVISION)',
+              },
+              {
+                name: 'subdirectory',
+                value: '',
+              },
+              {
+                name: 'deleteExisting',
+                value: 'true',
+              },
+            ],
+            taskRef: {
+              kind: 'ClusterTask',
+              name: 'git-clone',
+            },
+            workspaces: [
+              {
+                name: 'output',
+              },
+            ],
+          },
+          {
+            name: 'build',
+            params: [
+              {
+                name: 'IMAGE',
+                value: '$(params.IMAGE_NAME)',
+              },
+              {
+                name: 'TLSVERIFY',
+                value: 'false',
+              },
+            ],
+            runAfter: ['fetch-repository'],
+            taskRef: {
+              kind: 'ClusterTask',
+              name: 's2i-python-3',
+            },
+            workspaces: [
+              {
+                name: 'source',
+              },
+            ],
+          },
+          {
+            name: 'deploy',
+            params: [
+              {
+                name: 'SCRIPT',
+                value: 'kubectl $@',
+              },
+              {
+                name: 'ARGS',
+                value: ['rollout', 'status', 'deploy/$(params.APP_NAME)'],
+              },
+            ],
+            runAfter: ['build'],
+            taskRef: {
+              kind: 'ClusterTask',
+              name: 'openshift-client',
+            },
+          },
+        ],
+        workspaces: [
+          {
+            name: 'workspace',
+          },
+        ],
+      },
+    },
+  },
   imageStream: {
     loaded: true,
     loadError: '',

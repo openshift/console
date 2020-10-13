@@ -13,7 +13,7 @@ import { Resources } from '../import-types';
 import * as submitUtils from '../import-submit-utils';
 import * as pipelineUtils from '../pipeline/pipeline-template-utils';
 import { defaultData, nodeJsBuilderImage as buildImage } from './import-submit-utils-data';
-import { PipelineModel } from '../../../models';
+import { PipelineModel, PipelineRunModel } from '../../../models';
 
 const { createOrUpdateDeployment, createOrUpdateResources } = submitUtils;
 
@@ -162,7 +162,30 @@ describe('Import Submit Utils', () => {
       const mockData = _.cloneDeep(defaultData);
       mockData.pipeline.enabled = true;
 
-      const createPipelineResourceSpy = jest.spyOn(pipelineUtils, 'createPipelineForImportFlow');
+      const createPipelineResourceSpy = jest
+        .spyOn(pipelineUtils, 'createPipelineForImportFlow')
+        .mockImplementation((formData) => {
+          const {
+            name,
+            project: { name: namespace },
+          } = formData;
+          return {
+            metadata: {
+              name,
+              namespace,
+              labels: { 'app.kubernetes.io/instance': name },
+            },
+            spec: {
+              params: [],
+              resources: [],
+              tasks: [],
+            },
+          };
+        });
+      const createPipelineRunResourceSpy = jest.spyOn(
+        pipelineUtils,
+        'createPipelineRunForImportFlow',
+      );
 
       const returnValue = await createOrUpdateResources(
         mockData,
@@ -172,8 +195,9 @@ describe('Import Submit Utils', () => {
         'create',
       );
       expect(createPipelineResourceSpy).toHaveBeenCalledWith(mockData);
+      expect(createPipelineRunResourceSpy).toHaveBeenCalledTimes(1);
       const models = returnValue.map((data) => _.get(data, 'model.kind'));
-      expect(models.includes(PipelineModel.kind)).toEqual(true);
+      expect(models.includes(PipelineRunModel.kind)).toEqual(true);
       done();
     });
 
@@ -192,8 +216,8 @@ describe('Import Submit Utils', () => {
       );
 
       expect(createPipelineResourceSpy).toHaveBeenCalledWith(mockData);
-      const pipelineResource = returnValue[6].data;
-      expect(pipelineResource.metadata.name).toEqual(mockData.name);
+      const pipelineRunResource = returnValue[1].data;
+      expect(pipelineRunResource.metadata.name.includes(mockData.name)).toEqual(true);
       done();
     });
 

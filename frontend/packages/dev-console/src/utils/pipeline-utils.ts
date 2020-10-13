@@ -308,8 +308,10 @@ export const constructCurrentPipeline = (
   const latestRun = getLatestRun({ data: pipelineRuns }, 'creationTimestamp');
 
   if (!latestRun) {
-    // Without the latestRun we will not have progress to show
-    return null;
+    return {
+      currentPipeline: pipeline,
+      status: runStatus.PipelineNotStarted,
+    };
   }
 
   const currentPipeline: Pipeline = {
