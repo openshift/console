@@ -190,7 +190,7 @@ export const BuildConfigsList: React.SFC = (props) => {
     ];
   };
   BuildConfigsTableHeader.displayName = 'BuildConfigsTableHeader';
-
+  
   return (
     <Table
       {...props}

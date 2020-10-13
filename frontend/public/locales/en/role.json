@@ -1,0 +1,22 @@
+{
+  "Add role binding": "Add role binding",
+  "Role name": "Role name",
+  "Namespace": "Namespace",
+  "Created at": "Created at",
+  "Rules": "Rules",
+  "Rules by action or resource": "Rules by action or resource",
+  "Name": "Name",
+  "Subject kind": "Subject kind",
+  "Subject name": "Subject name",
+  "Create binding": "Create binding",
+  "by role or subject": "by role or subject",
+  "Role Bindings": "Role Bindings",
+  "No roles found": "No roles found",
+  "Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a Role Binding.": "Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a Role Binding.",
+  "Roles": "Roles",
+  "Create role": "Create role",
+  "Role": "Role",
+  "Cluster-wide roles": "Cluster-wide roles",
+  "Namespace roles": "Namespace roles",
+  "System roles": "System roles"
+}

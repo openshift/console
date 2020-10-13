@@ -12,6 +12,7 @@ import {
   createModalLauncher,
 } from '../factory/modal';
 import { HandlePromiseProps, withHandlePromise } from '../utils';
+import { useTranslation } from 'react-i18next';
 
 export const RemoveUserModal = withHandlePromise((props: RemoveUserModalProps) => {
   const submit: React.FormEventHandler<HTMLFormElement> = (e) => {
@@ -21,18 +22,23 @@ export const RemoveUserModal = withHandlePromise((props: RemoveUserModalProps) =
     return props.handlePromise(k8sPatch(GroupModel, props.group, patch), props.close);
   };
 
+  const { t } = useTranslation();
   return (
     <form onSubmit={submit} name="form" className="modal-content ">
       <ModalTitle>
-        <YellowExclamationTriangleIcon className="co-icon-space-r" /> Remove User from Group?
+        <YellowExclamationTriangleIcon className="co-icon-space-r" />
+        {t('usermanagement-group~Remove User from Group?')}
       </ModalTitle>
       <ModalBody>
-        Remove user {props.user} from group {props.group.metadata.name}?
+        {t('usermanagement-group~Remove user {user} from group {name}?', {
+          user: props.user,
+          name: props.group.metadata.name,
+        })}
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={props.errorMessage}
         inProgress={props.inProgress}
-        submitText="Remove"
+        submitText={t('usermanagement-group~Remove')}
         cancel={props.cancel}
         submitDanger
       />
