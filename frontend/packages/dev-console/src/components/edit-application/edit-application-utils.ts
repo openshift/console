@@ -150,10 +150,10 @@ export const getBuildData = (buildConfig: K8sResourceKind, pipeline: Pipeline, g
     },
     strategy:
       buildStrategyType ||
-      pipeline?.metadata?.labels?.['pipeline.openshift.io/strategy'] ===
-        _.toLower(BuildStrategyType.Docker)
+      (pipeline?.metadata?.labels?.['pipeline.openshift.io/strategy'] ===
+      _.toLower(BuildStrategyType.Docker)
         ? BuildStrategyType.Docker
-        : BuildStrategyType.Source,
+        : BuildStrategyType.Source),
   };
   return buildData;
 };
@@ -320,9 +320,7 @@ export const getGitAndDockerfileInitialValues = (
     return {};
   }
 
-  const currentImage =
-    _.split(buildConfig?.spec?.strategy?.sourceStrategy?.from?.name ?? '', ':') ||
-    pipeline?.metadata.labels?.['pipeline.openshift.io/runtime'];
+  const currentImage = _.split(buildConfig?.spec?.strategy?.sourceStrategy?.from?.name ?? '', ':');
   const git = !_.isEmpty(buildConfig)
     ? getGitDataFromBuildConfig(buildConfig)
     : getGitDataFromPipeline(pipeline);
@@ -336,7 +334,8 @@ export const getGitAndDockerfileInitialValues = (
       containerPort: parseInt(_.split(_.get(route, 'spec.port.targetPort'), '-')[0], 10),
     },
     image: {
-      selected: currentImage[0] || '',
+      selected:
+        currentImage[0] || (pipeline?.metadata?.labels?.['pipeline.openshift.io/runtime'] ?? ''),
       recommended: '',
       tag: currentImage[1] || '',
       tagObj: {},

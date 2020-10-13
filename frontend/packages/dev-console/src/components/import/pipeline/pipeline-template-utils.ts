@@ -1,12 +1,12 @@
 import * as _ from 'lodash';
 import { k8sCreate } from '@console/internal/module/k8s';
-import { Pipeline } from 'packages/dev-console/src/utils/pipeline-augment';
+import { Pipeline, PipelineRun } from 'packages/dev-console/src/utils/pipeline-augment';
 import { PipelineModel } from '../../../models';
-import { GitData, GitImportFormData } from '../import-types';
+import { GitImportFormData } from '../import-types';
 import { createPipelineResource } from '../../pipelines/pipeline-resource/pipelineResource-utils';
 import { convertPipelineToModalData } from '../../pipelines/modals/common/utils';
 import { submitStartPipeline } from '../../pipelines/modals/start-pipeline/submit-utils';
-import { PipelineResourceType } from '../../pipelines/const';
+import { StartPipelineFormValues } from '../../pipelines/modals/start-pipeline/types';
 
 const getImageUrl = (name: string, namespace: string) => {
   return `image-registry.openshift-image-registry.svc:5000/${namespace}/${name}`;
@@ -23,31 +23,6 @@ export const createImageResource = (name: string, namespace: string) => {
   };
 
   return createPipelineResource(params, 'image', namespace);
-};
-
-const getResourceParams = (
-  restype: string,
-  resName: string,
-  name: string,
-  namespace: string,
-  git: GitData,
-) => {
-  let resParams = {};
-  if (restype === PipelineResourceType.git && resName === 'app-source') {
-    resParams = {
-      params: {
-        url: git.url,
-        revision: git.ref || 'master',
-      },
-    };
-  } else if (restype === PipelineResourceType.image && resName === 'app-image') {
-    resParams = {
-      params: {
-        url: getImageUrl(name, namespace),
-      },
-    };
-  }
-  return resParams;
 };
 
 export const createPipelineForImportFlow = async (formData: GitImportFormData) => {
@@ -88,26 +63,13 @@ export const createPipelineForImportFlow = async (formData: GitImportFormData) =
   return k8sCreate(PipelineModel, template, { ns: namespace });
 };
 
-export const createPipelineRunForImportFlow = async (formData: GitImportFormData) => {
-  const {
-    name,
-    project: { name: namespace },
-    git,
-  } = formData;
-  const pipeline = await createPipelineForImportFlow(formData);
-  if (pipeline) {
-    const pipelineInitialValues = {
-      ...convertPipelineToModalData(pipeline, true),
-      secretOpen: false,
-    };
-    pipelineInitialValues.resources = (pipelineInitialValues.resources || []).map((r) => ({
-      ...r,
-      data: {
-        ...r.data,
-        ...getResourceParams(r.data.type, r.name, name, namespace, git),
-      },
-    }));
-    return submitStartPipeline(pipelineInitialValues, pipeline);
-  }
-  return undefined;
+export const createPipelineRunForImportFlow = async (
+  formData: GitImportFormData,
+  pipeline: Pipeline,
+): Promise<PipelineRun> => {
+  const pipelineInitialValues: StartPipelineFormValues = {
+    ...convertPipelineToModalData(pipeline),
+    secretOpen: false,
+  };
+  return submitStartPipeline(pipelineInitialValues, pipeline);
 };

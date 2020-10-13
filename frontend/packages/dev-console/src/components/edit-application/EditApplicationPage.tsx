@@ -42,7 +42,7 @@ const EditApplicationPage: React.FunctionComponent<ImportPageProps> = ({ match, 
     },
     {
       kind: referenceForModel(PipelineModel),
-      prop: 'pipeline',
+      prop: PipelineModel.id,
       name: appName,
       namespace,
       optional: true,

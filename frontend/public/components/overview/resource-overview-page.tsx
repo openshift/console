@@ -17,21 +17,14 @@ const { common } = Kebab.factory;
 export const OverviewDetailsResourcesTab: React.SFC<OverviewDetailsResourcesTabProps> = ({
   item,
 }) => {
-  const { buildConfigs, hpas, routes, services, pods, obj, pipelines } = item;
+  const { buildConfigs, hpas, routes, services, pods, obj } = item;
   const hasBuildConfig = buildConfigs?.length > 0;
-  const hasPipeline = pipelines?.length > 0;
   const pluginComponents = usePluginsOverviewTabSection(item);
-
   return (
     <div className="overview__sidebar-pane-body">
       <ManagedByOperatorLink obj={item.obj} />
-      <PodsOverview
-        pods={pods}
-        obj={obj}
-        hasBuildConfig={hasBuildConfig}
-        hasPipeline={hasPipeline}
-      />
-      <BuildOverview buildConfigs={buildConfigs} obj={obj} />
+      <PodsOverview pods={pods} obj={obj} hasBuildConfig={hasBuildConfig} />
+      <BuildOverview buildConfigs={buildConfigs} />
       <HPAOverview hpas={hpas} />
       {pluginComponents.map(({ Component, key }) => (
         <Component key={key} item={item} />

@@ -7,6 +7,7 @@ import {
   BanIcon,
   ExclamationTriangleIcon,
   UnknownIcon,
+  OutlinedHourglassIcon,
 } from '@patternfly/react-icons';
 import { DASH } from '../../constants';
 import { YellowExclamationTriangleIcon } from './icons';
@@ -92,6 +93,9 @@ export const Status: React.FC<StatusProps> = ({
 
     case 'Unknown':
       return <StatusIconAndText {...statusProps} icon={<UnknownIcon />} />;
+
+    case 'PipelineNotStarted':
+      return <StatusIconAndText {...statusProps} icon={<OutlinedHourglassIcon />} />;
 
     default:
       return <>{status || DASH}</>;

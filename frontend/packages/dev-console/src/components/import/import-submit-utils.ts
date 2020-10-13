@@ -33,7 +33,10 @@ import {
   GitReadableTypes,
   Resources,
 } from './import-types';
-import { createPipelineRunForImportFlow } from './pipeline/pipeline-template-utils';
+import {
+  createPipelineForImportFlow,
+  createPipelineRunForImportFlow,
+} from './pipeline/pipeline-template-utils';
 import { Perspective } from '@console/plugin-sdk';
 
 export const generateSecret = () => {
@@ -462,7 +465,8 @@ export const createOrUpdateResources = async (
       ),
     );
   } else if (pipeline.template && !dryRun) {
-    requests.push(createPipelineRunForImportFlow(formData));
+    const newPipeline = await createPipelineForImportFlow(formData);
+    requests.push(createPipelineRunForImportFlow(formData, newPipeline));
   }
 
   verb === 'create' && requests.push(createWebhookSecret(formData, 'generic', dryRun));
