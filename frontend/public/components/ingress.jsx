@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
@@ -36,11 +37,12 @@ const getHosts = (ingress) => {
   return <div className="text-muted">No hosts</div>;
 };
 
-const getTLSCert = (ingress) => {
+const TLSCert = (ingress) => {
+  const { t } = useTranslation();
   if (!_.has(ingress.spec, 'tls')) {
     return (
       <div>
-        <span>Not configured</span>
+        <span>{t('ingress~Not configured')}</span>
       </div>
     );
   }
@@ -64,41 +66,6 @@ const tableColumnClasses = [
 ];
 
 const kind = 'Ingress';
-
-const IngressTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Namespace',
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-      id: 'namespace',
-    },
-    {
-      title: 'Labels',
-      sortField: 'metadata.labels',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Hosts',
-      sortFunc: 'ingressValidHosts',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[4] },
-    },
-  ];
-};
-IngressTableHeader.displayName = 'IngressTableHeader';
 
 const IngressTableRow = ({ obj: ingress, index, key, style }) => {
   return (
@@ -132,14 +99,17 @@ const IngressTableRow = ({ obj: ingress, index, key, style }) => {
   );
 };
 
-const RulesHeader = () => (
-  <div className="row co-m-table-grid__head">
-    <div className="col-xs-3">Host</div>
-    <div className="col-xs-3">Path</div>
-    <div className="col-xs-3">Service</div>
-    <div className="col-xs-2">Service Port</div>
-  </div>
-);
+const RulesHeader = () => {
+  const { t } = useTranslation();
+  return (
+    <div className="row co-m-table-grid__head">
+      <div className="col-xs-3">{t('ingress~Host')}</div>
+      <div className="col-xs-3">{t('ingress~Path')}</div>
+      <div className="col-xs-3">{t('ingress~Service')}</div>
+      <div className="col-xs-2">{t('ingress~Service port')}</div>
+    </div>
+  );
+};
 
 const RulesRow = ({ rule, namespace }) => {
   return (
@@ -199,30 +169,34 @@ const RulesRows = (props) => {
   return <EmptyBox label="Rules" />;
 };
 
-const Details = ({ obj: ingress }) => (
-  <>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Ingress Details" />
-      <ResourceSummary resource={ingress}>
-        <dt>TLS Certificate</dt>
-        <dd>{getTLSCert(ingress)}</dd>
-      </ResourceSummary>
-    </div>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Ingress Rules" />
-      <p className="co-m-pane__explanation">
-        These rules are handled by a routing layer (Ingress Controller) which is updated as the
-        rules are modified. The Ingress controller implementation defines how headers and other
-        metadata are forwarded or manipulated.
-      </p>
-      <div className="co-m-table-grid co-m-table-grid--bordered">
-        <RulesHeader />
-        <RulesRows spec={ingress.spec} namespace={ingress.metadata.namespace} />
+const Details = ({ obj: ingress }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <div className="co-m-pane__body">
+        <SectionHeading text={t('ingress~Ingress details')} />
+        <ResourceSummary resource={ingress}>
+          <dt>{t('ingress~TLS certificate')}</dt>
+          <dd>
+            <TLSCert ingress={ingress} />
+          </dd>
+        </ResourceSummary>
       </div>
-    </div>
-  </>
-);
-
+      <div className="co-m-pane__body">
+        <SectionHeading text={t('ingress~Ingress rules')} />
+        <p className="co-m-pane__explanation">
+          {t(
+            'ingress~These rules are handled by a routing layer (Ingress Controller) which is updated as the rules are modified. The Ingress controller implementation defines how headers and other metadata are forwarded or manipulated',
+          )}
+        </p>
+        <div className="co-m-table-grid co-m-table-grid--bordered">
+          <RulesHeader />
+          <RulesRows spec={ingress.spec} namespace={ingress.metadata.namespace} />
+        </div>
+      </div>
+    </>
+  );
+};
 const IngressesDetailsPage = (props) => (
   <DetailsPage
     {...props}
@@ -230,16 +204,51 @@ const IngressesDetailsPage = (props) => (
     pages={[navFactory.details(detailsPage(Details)), navFactory.editYaml()]}
   />
 );
-const IngressesList = (props) => (
-  <Table
-    {...props}
-    aria-label="Ingresses"
-    Header={IngressTableHeader}
-    Row={IngressTableRow}
-    virtualize
-  />
-);
-
+const IngressesList = (props) => {
+  const { t } = useTranslation();
+  const IngressTableHeader = () => {
+    return [
+      {
+        title: t('ingress~Name'),
+        sortField: 'metadata.name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[0] },
+      },
+      {
+        title: t('ingress~Namespace'),
+        sortField: 'metadata.namespace',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[1] },
+        id: 'namespace',
+      },
+      {
+        title: t('ingress~Labels'),
+        sortField: 'metadata.labels',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[2] },
+      },
+      {
+        title: t('ingress~Hosts'),
+        sortFunc: 'ingressValidHosts',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[3] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[4] },
+      },
+    ];
+  };
+  return (
+    <Table
+      {...props}
+      aria-label={t('ingress~Ingresses')}
+      Header={IngressTableHeader}
+      Row={IngressTableRow}
+      virtualize
+    />
+  );
+};
 const IngressesPage = (props) => (
   <ListPage ListComponent={IngressesList} canCreate={true} {...props} />
 );

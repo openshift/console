@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 
@@ -48,47 +49,6 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const ServiceTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Namespace',
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-      id: 'namespace',
-    },
-    {
-      title: 'Labels',
-      sortField: 'metadata.labels',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Pod Selector',
-      sortField: 'spec.selector',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: 'Location',
-      sortField: 'spec.clusterIP',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[5] },
-    },
-  ];
-};
-ServiceTableHeader.displayName = 'ServiceTableHeader';
-
 const ServiceTableRow = ({ obj: s, index, key, style }) => {
   return (
     <TableRow id={s.metadata.uid} index={index} trKey={key} style={style}>
@@ -123,6 +83,7 @@ const ServiceTableRow = ({ obj: s, index, key, style }) => {
 };
 
 const ServiceAddress = ({ s }) => {
+  const { t } = useTranslation();
   const ServiceIPsRow = (name, desc, ips, note = null) => (
     <div className="co-ip-row">
       <div className="row">
@@ -142,42 +103,44 @@ const ServiceAddress = ({ s }) => {
     switch (type) {
       case 'NodePort':
         return ServiceIPsRow(
-          'Node Port',
-          'Accessible outside the cluster',
+          t('network-service~Node port'),
+          t('network-service~Accessible outside the cluster'),
           _.map(s.spec.ports, 'nodePort'),
-          '(all nodes): ',
+          t('network-service~(all nodes): '),
         );
       case 'LoadBalancer':
         return ServiceIPsRow(
-          'External Load Balancer',
-          'Ingress point(s) of load balancer',
+          t('network-service~External load balancer'),
+          t('network-service~Ingress points of load balancer'),
           _.map(s.status.loadBalancer.ingress, (i) => i.hostname || i.ip || '-'),
         );
       case 'ExternalName':
         return ServiceIPsRow(
-          'External Service Name',
-          'Location of the resource that backs the service',
+          t('network-service~External service name'),
+          t('network-service~Location of the resource that backs the service'),
           [s.spec.externalName],
         );
       default:
-        return ServiceIPsRow('Cluster IP', 'Accessible within the cluster only', [
-          s.spec.clusterIP,
-        ]);
+        return ServiceIPsRow(
+          t('network-service~Cluster IP'),
+          t('network-service~Accessible within the cluster only'),
+          [s.spec.clusterIP],
+        );
     }
   };
 
   return (
     <div>
       <div className="row co-ip-header">
-        <div className="col-xs-6">Type</div>
-        <div className="col-xs-6">Location</div>
+        <div className="col-xs-6">{t('network-service~Type')}</div>
+        <div className="col-xs-6">{t('network-service~Location')}</div>
       </div>
       <div className="rows">
         {ServiceType(s.spec.type)}
         {s.spec.externalIPs &&
           ServiceIPsRow(
-            'External IP',
-            'IP Address(es) accepting traffic for service',
+            t('network-service~External IP'),
+            t('network-service~IP Addresses accepting traffic for service'),
             s.spec.externalIPs,
           )}
       </div>
@@ -185,78 +148,94 @@ const ServiceAddress = ({ s }) => {
   );
 };
 
-const ServicePortMapping = ({ ports }) => (
-  <div>
-    <div className="row co-ip-header">
-      <div className="col-xs-3">Name</div>
-      <div className="col-xs-3">Port</div>
-      <div className="col-xs-3">Protocol</div>
-      <div className="col-xs-3">Pod Port or Name</div>
-    </div>
-    <div className="rows">
-      {ports.map((portObj, i) => {
-        return (
-          <div className="co-ip-row" key={i}>
-            <div className="row">
-              <div className="col-xs-3 co-text-service">
-                <p>{portObj.name || '-'}</p>
-                {portObj.nodePort && <p className="co-text-node">Node Port</p>}
-              </div>
-              <div className="col-xs-3 co-text-service">
-                <p>
-                  <ResourceIcon kind="Service" />
-                  <span>{portObj.port}</span>
-                </p>
-                {portObj.nodePort && (
-                  <p className="co-text-node">
-                    <ResourceIcon kind="Node" />
-                    <span>{portObj.nodePort}</span>
+const ServicePortMapping = ({ ports }) => {
+  const { t } = useTranslation();
+  return (
+    <div>
+      <div className="row co-ip-header">
+        <div className="col-xs-3">{t('network-service~Name')}</div>
+        <div className="col-xs-3">{t('network-service~Port')}</div>
+        <div className="col-xs-3">{t('network-service~Protocol')}</div>
+        <div className="col-xs-3">{t('network-service~Pod port or name')}</div>
+      </div>
+      <div className="rows">
+        {ports.map((portObj, i) => {
+          return (
+            <div className="co-ip-row" key={i}>
+              <div className="row">
+                <div className="col-xs-3 co-text-service">
+                  <p>{portObj.name || '-'}</p>
+                  {portObj.nodePort && (
+                    <p className="co-text-node">{t('network-service~Node port')}</p>
+                  )}
+                </div>
+                <div className="col-xs-3 co-text-service">
+                  <p>
+                    <ResourceIcon kind="Service" />
+                    <span>{portObj.port}</span>
                   </p>
-                )}
-              </div>
-              <div className="col-xs-3">
-                <p>{portObj.protocol}</p>
-              </div>
-              <div className="col-xs-3 co-text-pod">
-                <p>
-                  <ResourceIcon kind="Pod" />
-                  <span>{portObj.targetPort}</span>
-                </p>
+                  {portObj.nodePort && (
+                    <p className="co-text-node">
+                      <ResourceIcon kind="Node" />
+                      <span>{portObj.nodePort}</span>
+                    </p>
+                  )}
+                </div>
+                <div className="col-xs-3">
+                  <p>{portObj.protocol}</p>
+                </div>
+                <div className="col-xs-3 co-text-pod">
+                  <p>
+                    <ResourceIcon kind="Pod" />
+                    <span>{portObj.targetPort}</span>
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
-const Details = ({ obj: s }) => (
-  <div className="co-m-pane__body">
-    <div className="row">
-      <div className="col-sm-6">
-        <SectionHeading text="Service Details" />
-        <ResourceSummary resource={s} showPodSelector>
-          <DetailsItem label="Session Affinity" obj={s} path="spec.sessionAffinity" />
-        </ResourceSummary>
-      </div>
-      <div className="col-sm-6">
-        <SectionHeading text="Service Routing" />
-        <dl>
-          <dt>Service Address</dt>
-          <dd className="service-ips">
-            <ServiceAddress s={s} />
-          </dd>
-          <DetailsItem label="Service Port Mapping" obj={s} path="spec.ports">
-            <div className="service-ips">
-              {s.spec.ports ? <ServicePortMapping ports={s.spec.ports} /> : '-'}
-            </div>
-          </DetailsItem>
-        </dl>
+const Details = ({ obj: s }) => {
+  const { t } = useTranslation();
+  return (
+    <div className="co-m-pane__body">
+      <div className="row">
+        <div className="col-sm-6">
+          <SectionHeading text={t('network-service~Service details')} />
+          <ResourceSummary resource={s} showPodSelector>
+            <DetailsItem
+              label={t('network-service~Session affinity')}
+              obj={s}
+              path="spec.sessionAffinity"
+            />
+          </ResourceSummary>
+        </div>
+        <div className="col-sm-6">
+          <SectionHeading text={t('network-service~Service routing')} />
+          <dl>
+            <dt>{t('network-service~Service address')}</dt>
+            <dd className="service-ips">
+              <ServiceAddress s={s} />
+            </dd>
+            <DetailsItem
+              label={t('network-service~Service port mapping')}
+              obj={s}
+              path="spec.ports"
+            >
+              <div className="service-ips">
+                {s.spec.ports ? <ServicePortMapping ports={s.spec.ports} /> : '-'}
+              </div>
+            </DetailsItem>
+          </dl>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const { details, pods, editYaml } = navFactory;
 const ServicesDetailsPage = (props) => (
@@ -267,15 +246,58 @@ const ServicesDetailsPage = (props) => (
   />
 );
 
-const ServicesList = (props) => (
-  <Table
-    {...props}
-    aria-label="Services"
-    Header={ServiceTableHeader}
-    Row={ServiceTableRow}
-    virtualize
-  />
-);
+const ServicesList = (props) => {
+  const { t } = useTranslation();
+  const ServiceTableHeader = () => {
+    return [
+      {
+        title: t('network-service~Name'),
+        sortField: 'metadata.name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[0] },
+      },
+      {
+        title: t('network-service~Namespace'),
+        sortField: 'metadata.namespace',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[1] },
+        id: 'namespace',
+      },
+      {
+        title: t('network-service~Labels'),
+        sortField: 'metadata.labels',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[2] },
+      },
+      {
+        title: t('network-service~Pod selector'),
+        sortField: 'spec.selector',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[3] },
+      },
+      {
+        title: t('network-service~Location'),
+        sortField: 'spec.clusterIP',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[4] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[5] },
+      },
+    ];
+  };
+  return (
+    <Table
+      {...props}
+      aria-label={t('network-service~Services')}
+      Header={ServiceTableHeader}
+      Row={ServiceTableRow}
+      virtualize
+    />
+  );
+};
+
 const ServicesPage = (props) => (
   <ListPage canCreate={true} ListComponent={ServicesList} {...props} />
 );

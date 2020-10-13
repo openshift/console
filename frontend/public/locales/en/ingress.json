@@ -1,0 +1,16 @@
+{
+  "Not configured": "Not configured",
+  "Host": "Host",
+  "Path": "Path",
+  "Service": "Service",
+  "Service port": "Service port",
+  "Ingress details": "Ingress details",
+  "TLS certificate": "TLS certificate",
+  "Ingress rules": "Ingress rules",
+  "These rules are handled by a routing layer (Ingress Controller) which is updated as the rules are modified. The Ingress controller implementation defines how headers and other metadata are forwarded or manipulated": "These rules are handled by a routing layer (Ingress Controller) which is updated as the rules are modified. The Ingress controller implementation defines how headers and other metadata are forwarded or manipulated",
+  "Name": "Name",
+  "Namespace": "Namespace",
+  "Labels": "Labels",
+  "Hosts": "Hosts",
+  "Ingresses": "Ingresses"
+}
