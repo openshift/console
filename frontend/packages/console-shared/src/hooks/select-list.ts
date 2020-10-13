@@ -6,12 +6,19 @@ export const useSelectList = <R extends K8sResourceCommon>(
   data: R[],
   visibleRows: Set<string>,
   onRowSelected: (rows: R[]) => void,
+  preSelected: string[],
 ): {
   onSelect: OnSelect;
   selectedRows: Set<string>;
   updateSelectedRows: (rows: R[]) => void;
 } => {
   const [selectedRows, setSelectedRows] = React.useState<Set<string>>(new Set());
+
+  React.useEffect(() => {
+    if (preSelected?.length > 0 && selectedRows.size === 0) {
+      setSelectedRows(new Set(preSelected));
+    }
+  }, [preSelected, selectedRows.size]);
 
   const onSelect = React.useCallback(
     (_event, isSelected, rowIndex, rowData) => {
