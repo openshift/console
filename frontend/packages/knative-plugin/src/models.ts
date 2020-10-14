@@ -198,7 +198,7 @@ export const EventSourceSinkBindingModel: K8sKind = {
 
 export const EventingSubscriptionModel: K8sKind = {
   apiGroup: KNATIVE_EVENT_MESSAGE_APIGROUP,
-  apiVersion: 'v1beta1',
+  apiVersion: 'v1',
   kind: 'Subscription',
   label: 'Subscription',
   labelPlural: 'Subscriptions',
@@ -268,7 +268,7 @@ export const EventingBrokerModel: K8sKind = {
 
 export const EventingTriggerModel: K8sKind = {
   apiGroup: KNATIVE_EVENTING_APIGROUP,
-  apiVersion: 'v1beta1',
+  apiVersion: 'v1',
   kind: 'Trigger',
   label: 'Trigger',
   labelPlural: 'Triggers',
