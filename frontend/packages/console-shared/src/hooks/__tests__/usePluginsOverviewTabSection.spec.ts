@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { useExtensions, OverviewTabSection, LazyLoader } from '@console/plugin-sdk';
+import { KnativeServiceOverviewItem } from '@console/knative-plugin/src/topology/topology-types';
 import {
   knativeServiceObj,
   sampleKnativeRevisions,
@@ -13,12 +14,14 @@ jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({
   useExtensions: jest.fn(),
 }));
 describe('usePluginsOverviewTabSection', () => {
-  let item: OverviewItem;
+  let item: KnativeServiceOverviewItem;
   beforeEach(() => {
     item = {
       revisions: sampleKnativeRevisions.data,
       obj: knativeServiceObj,
       buildConfigs: [],
+      routes: [],
+      services: [],
     } as OverviewItem;
   });
 

@@ -1058,6 +1058,28 @@ export const getPodsForDaemonSet = (ds: K8sResourceKind, resources: any): PodRCD
 export const getPodsForDaemonSets = (ds: K8sResourceKind[], resources: any): PodRCData[] =>
   _.map(ds, (d) => getPodsForDaemonSet(d, resources));
 
+export const getPodsForCronJob = (cronJob: K8sResourceKind, resources: any): PodRCData => {
+  const obj: K8sResourceKind = {
+    ...cronJob,
+    apiVersion: apiVersionForModel(CronJobModel),
+    kind: CronJobModel.kind,
+  };
+  const jobs = getJobsForCronJob(cronJob, resources);
+  return {
+    obj,
+    current: undefined,
+    previous: undefined,
+    isRollingOut: undefined,
+    pods: jobs?.reduce((acc, job) => {
+      acc.push(...getPodsForResource(job, resources));
+      return acc;
+    }, []),
+  };
+};
+
+export const getPodsForCronJobs = (cronJobs: K8sResourceKind[], resources: any): PodRCData[] =>
+  _.map(cronJobs, (cronJob) => getPodsForCronJob(cronJob, resources));
+
 export const getPodsDataForResource = (
   resource: K8sResourceKind,
   kind: string,
@@ -1072,6 +1094,16 @@ export const getPodsDataForResource = (
       return getPodsForStatefulSet(resource, resources);
     case 'DaemonSet':
       return getPodsForDaemonSet(resource, resources);
+    case 'CronJob':
+      return getPodsForCronJob(resource, resources);
+    case 'Pod':
+      return {
+        obj: resource,
+        current: undefined,
+        previous: undefined,
+        isRollingOut: undefined,
+        pods: [resource as PodKind],
+      };
     default:
       return {
         obj: resource,
@@ -1121,6 +1153,19 @@ export const getResourcesToWatchForPods = (kind: string, namespace: string) => {
         statefulSets: {
           isList: true,
           kind: 'StatefulSet',
+          namespace,
+        },
+      };
+    case 'CronJob':
+      return {
+        pods: {
+          isList: true,
+          kind: 'Pod',
+          namespace,
+        },
+        jobs: {
+          isList: true,
+          kind: 'Job',
           namespace,
         },
       };

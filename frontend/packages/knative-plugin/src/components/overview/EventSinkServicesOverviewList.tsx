@@ -10,7 +10,6 @@ import {
   ResourceLink,
   ExternalLink,
   SidebarSectionHeading,
-  StatusBox,
 } from '@console/internal/components/utils';
 import { PodModel } from '@console/internal/models';
 import { PodsOverview } from '@console/internal/components/overview/pods-overview';
@@ -36,14 +35,14 @@ const EventSinkServicesOverviewList: React.FC<EventSinkServicesOverviewListProps
   )}`;
   const { group, version } = (sinkApiversion && groupVersionFor(sinkApiversion)) || {};
   const isSinkReference = !!(sinkKind && sinkName && group && version);
-  const { podData, loaded, loadError } = usePodsWatcher(obj, obj.kind, namespace);
+  const { podData } = usePodsWatcher(obj, obj.kind, namespace);
   const deploymentData = React.useMemo(
     () => podData?.current?.obj?.metadata?.ownerReferences?.[0],
     [podData],
   );
 
   return (
-    <StatusBox loaded={loaded} data={podData} loadError={loadError}>
+    <>
       <SidebarSectionHeading text="Sink" />
       {isSinkReference || sinkUri ? (
         <ul className="list-group">
@@ -85,7 +84,7 @@ const EventSinkServicesOverviewList: React.FC<EventSinkServicesOverviewListProps
           </ul>
         </>
       )}
-    </StatusBox>
+    </>
   );
 };
 

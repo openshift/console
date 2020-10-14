@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { K8sResourceKind, podPhase } from '@console/internal/module/k8s';
-import { usePodsWatcher } from '@console/shared';
-import { StatusBox } from '@console/internal/components/utils';
-import { PodsOverview } from '@console/internal/components/overview/pods-overview';
+import { K8sResourceKind, PodKind, podPhase } from '@console/internal/module/k8s';
+import { PodsOverviewContent } from '@console/internal/components/overview/pods-overview';
+import { usePodsForRevisions } from '../../utils/usePodsForRevisions';
 import ConfigurationsOverviewList from './ConfigurationsOverviewList';
 import KSRoutesOverviewList from './RoutesOverviewList';
 import DeploymentOverviewList from './DeploymentOverviewList';
@@ -26,19 +25,36 @@ const KnativeRevisionResources: React.FC<KnativeRevisionResourceProps> = ({
   const linkUrl = `/search/ns/${namespace}?kind=Pod&q=${encodeURIComponent(
     `serving.knative.dev/${resKind.toLowerCase()}=${name}`,
   )}`;
-  const { podData, loaded, loadError } = usePodsWatcher(obj, obj.kind, namespace);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const revisions = React.useMemo(() => [obj], [obj.metadata.uid]);
+  const [revisionPods, setRevisionPods] = React.useState<PodKind[]>([]);
+  const { loaded, loadError, pods } = usePodsForRevisions(revisions, obj.metadata.namespace);
+  React.useEffect(() => {
+    if (loaded) {
+      const revisionsPods = [];
+      pods.forEach((pod) => {
+        if (pod.pods) {
+          revisionsPods.push(...pod.pods.filter((p) => podPhase(p as PodKind) !== AUTOSCALED));
+        }
+      });
+      setRevisionPods(revisionsPods);
+    }
+  }, [loaded, pods]);
+
   return (
-    <StatusBox loaded={loaded} data={podData} loadError={loadError}>
-      <PodsOverview
+    <>
+      <PodsOverviewContent
         obj={obj}
+        pods={revisionPods}
+        loaded={loaded}
+        loadError={loadError}
         emptyText={AUTOSCALED}
         allPodsLink={linkUrl}
-        podsFilter={(pod) => podPhase(pod) !== AUTOSCALED}
       />
-      <DeploymentOverviewList current={podData?.current} />
+      <DeploymentOverviewList current={pods?.[0]} />
       <KSRoutesOverviewList ksroutes={ksroutes} resource={obj} />
       <ConfigurationsOverviewList configurations={configurations} />
-    </StatusBox>
+    </>
   );
 };
 

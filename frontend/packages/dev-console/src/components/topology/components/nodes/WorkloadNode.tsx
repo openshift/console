@@ -40,34 +40,110 @@ export type WorkloadNodeProps = {
   WithContextMenuProps &
   WithCreateConnectorProps;
 
-const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
-  element,
-  urlAnchorRef,
-  canDrop,
-  dropTarget,
-  dropTooltip,
-  ...rest
-}) => {
-  const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
-    isList: true,
-    kind: referenceForModel(ConsoleLinkModel),
-    optional: true,
-  });
-  const cheURL = getCheURL(consoleLinks);
-  const { width, height } = element.getDimensions();
-  const workloadData = element.getData().data;
-  const filters = useDisplayFilters();
-  const size = Math.min(width, height);
-  const { editURL, vcsURI, vcsRef } = workloadData;
-  const { radius, decoratorRadius } = calculateRadius(size);
-  const cheEnabled = !!cheURL;
-  const cx = width / 2;
-  const cy = height / 2;
-  const editUrl = editURL || getEditURL(vcsURI, vcsRef, cheURL);
-  const repoIcon = routeDecoratorIcon(editUrl, decoratorRadius, cheEnabled);
-  const tipContent = dropTooltip || `Create a visual connector`;
-  const showPodCountFilter = getFilterById(SHOW_POD_COUNT_FILTER_ID, filters);
-  const showPodCount = showPodCountFilter?.value ?? false;
+type WorkloadPodsNodeProps = WorkloadNodeProps & {
+  donutStatus: PodRCData;
+};
+
+const WorkloadPodsNode: React.FC<WorkloadPodsNodeProps> = observer(
+  ({ donutStatus, element, urlAnchorRef, canDrop, dropTarget, dropTooltip, ...rest }) => {
+    const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
+      isList: true,
+      kind: referenceForModel(ConsoleLinkModel),
+      optional: true,
+    });
+    const cheURL = getCheURL(consoleLinks);
+    const { width, height } = element.getDimensions();
+    const workloadData = element.getData().data;
+    const filters = useDisplayFilters();
+    const size = Math.min(width, height);
+    const { editURL, vcsURI, vcsRef } = workloadData;
+    const { radius, decoratorRadius } = calculateRadius(size);
+    const cheEnabled = !!cheURL;
+    const cx = width / 2;
+    const cy = height / 2;
+    const editUrl = editURL || getEditURL(vcsURI, vcsRef, cheURL);
+    const repoIcon = routeDecoratorIcon(editUrl, decoratorRadius, cheEnabled);
+    const tipContent = dropTooltip || `Create a visual connector`;
+    const showPodCountFilter = getFilterById(SHOW_POD_COUNT_FILTER_ID, filters);
+    const showPodCount = showPodCountFilter?.value ?? false;
+    return (
+      <g>
+        <Tooltip
+          content={tipContent}
+          trigger="manual"
+          isVisible={dropTarget && canDrop}
+          animationDuration={0}
+        >
+          <BaseNode
+            className="odc-workload-node"
+            outerRadius={radius}
+            innerRadius={donutStatus ? podSetInnerRadius(size, donutStatus) : 0}
+            icon={!showPodCount ? workloadData.builderImage : undefined}
+            kind={workloadData.kind}
+            element={element}
+            dropTarget={dropTarget}
+            canDrop={canDrop}
+            {...rest}
+            attachments={[
+              repoIcon && (
+                <Tooltip key="edit" content="Edit Source Code" position={TooltipPosition.right}>
+                  <Decorator
+                    x={cx + radius - decoratorRadius * 0.7}
+                    y={cy + radius - decoratorRadius * 0.7}
+                    radius={decoratorRadius}
+                    href={editUrl}
+                    external
+                  >
+                    <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
+                      {repoIcon}
+                    </g>
+                  </Decorator>
+                </Tooltip>
+              ),
+              workloadData.url && (
+                <Tooltip key="route" content="Open URL" position={TooltipPosition.right}>
+                  <Decorator
+                    x={cx + radius - decoratorRadius * 0.7}
+                    y={cy + -radius + decoratorRadius * 0.7}
+                    radius={decoratorRadius}
+                    href={workloadData.url}
+                    external
+                    circleRef={urlAnchorRef}
+                  >
+                    <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
+                      <ExternalLinkAltIcon style={{ fontSize: decoratorRadius }} title="Open URL" />
+                    </g>
+                  </Decorator>
+                </Tooltip>
+              ),
+              <BuildDecorator
+                key="build"
+                workloadData={workloadData}
+                x={cx - radius + decoratorRadius * 0.7}
+                y={cy + radius - decoratorRadius * 0.7}
+                radius={decoratorRadius}
+              />,
+              <MonitoringAlertsDecorator
+                key="monitoringAlert"
+                monitoringAlerts={workloadData.monitoringAlerts}
+                workload={element}
+                x={cx - radius + decoratorRadius * 0.7}
+                y={cy - radius + decoratorRadius * 0.7}
+                radius={decoratorRadius}
+              />,
+            ]}
+          >
+            {donutStatus ? (
+              <PodSet size={size} x={cx} y={cy} data={donutStatus} showPodCount={showPodCount} />
+            ) : null}
+          </BaseNode>
+        </Tooltip>
+      </g>
+    );
+  },
+);
+
+const WorkloadNode: React.FC<WorkloadNodeProps> = observer(({ element, ...rest }) => {
   const resource = getTopologyResourceObject(element.getData());
   const { podData, loadError, loaded } = usePodsWatcher(
     resource,
@@ -81,81 +157,7 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
     return null;
   }, [loadError, loaded, podData]);
 
-  return (
-    <g>
-      <Tooltip
-        content={tipContent}
-        trigger="manual"
-        isVisible={dropTarget && canDrop}
-        animationDuration={0}
-      >
-        <BaseNode
-          className="odc-workload-node"
-          outerRadius={radius}
-          innerRadius={donutStatus ? podSetInnerRadius(size, donutStatus) : 0}
-          icon={!showPodCount ? workloadData.builderImage : undefined}
-          kind={workloadData.kind}
-          element={element}
-          dropTarget={dropTarget}
-          canDrop={canDrop}
-          {...rest}
-          attachments={[
-            repoIcon && (
-              <Tooltip key="edit" content="Edit Source Code" position={TooltipPosition.right}>
-                <Decorator
-                  x={cx + radius - decoratorRadius * 0.7}
-                  y={cy + radius - decoratorRadius * 0.7}
-                  radius={decoratorRadius}
-                  href={editUrl}
-                  external
-                >
-                  <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
-                    {repoIcon}
-                  </g>
-                </Decorator>
-              </Tooltip>
-            ),
-            workloadData.url && (
-              <Tooltip key="route" content="Open URL" position={TooltipPosition.right}>
-                <Decorator
-                  x={cx + radius - decoratorRadius * 0.7}
-                  y={cy + -radius + decoratorRadius * 0.7}
-                  radius={decoratorRadius}
-                  href={workloadData.url}
-                  external
-                  circleRef={urlAnchorRef}
-                >
-                  <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
-                    <ExternalLinkAltIcon style={{ fontSize: decoratorRadius }} title="Open URL" />
-                  </g>
-                </Decorator>
-              </Tooltip>
-            ),
-            <BuildDecorator
-              key="build"
-              workloadData={workloadData}
-              x={cx - radius + decoratorRadius * 0.7}
-              y={cy + radius - decoratorRadius * 0.7}
-              radius={decoratorRadius}
-            />,
-            <MonitoringAlertsDecorator
-              key="monitoringAlert"
-              monitoringAlerts={workloadData.monitoringAlerts}
-              workload={element}
-              x={cx - radius + decoratorRadius * 0.7}
-              y={cy - radius + decoratorRadius * 0.7}
-              radius={decoratorRadius}
-            />,
-          ]}
-        >
-          {donutStatus ? (
-            <PodSet size={size} x={cx} y={cy} data={donutStatus} showPodCount={showPodCount} />
-          ) : null}
-        </BaseNode>
-      </Tooltip>
-    </g>
-  );
-};
+  return <WorkloadPodsNode element={element} donutStatus={donutStatus} {...rest} />;
+});
 
-const WorkloadNode = observer(ObservedWorkloadNode);
-export { WorkloadNode };
+export { WorkloadNode, WorkloadPodsNode };

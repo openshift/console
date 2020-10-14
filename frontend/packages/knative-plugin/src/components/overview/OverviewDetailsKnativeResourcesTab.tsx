@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { OverviewItem } from '@console/shared';
 import OperatorBackedOwnerReferences from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
 import {
@@ -20,12 +19,13 @@ import {
   isEventingChannelResourceKind,
 } from '../../utils/fetch-dynamic-eventsources-utils';
 import EventPubSubResources from './EventPubSubResources';
+import { KnativeServiceOverviewItem } from '../../topology/topology-types';
 
 type OverviewDetailsResourcesTabProps = {
-  item: OverviewItem;
+  item: KnativeServiceOverviewItem;
 };
 
-const getSidebarResources = (item: OverviewItem) => {
+const getSidebarResources = (item: KnativeServiceOverviewItem) => {
   const { obj, ksroutes, revisions, configurations } = item;
   if (isDynamicEventResourceKind(referenceFor(obj))) {
     return <EventSinkServicesOverviewList obj={obj} />;
