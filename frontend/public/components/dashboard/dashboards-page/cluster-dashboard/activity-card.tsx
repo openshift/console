@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
@@ -171,20 +172,23 @@ const OngoingActivity = connect(mapStateToProps)(
   ),
 );
 
-export const ActivityCard: React.FC<{}> = React.memo(() => (
-  <DashboardCard gradient data-test-id="activity-card">
-    <DashboardCardHeader>
-      <DashboardCardTitle>Activity</DashboardCardTitle>
-      <DashboardCardLink to={viewEvents}>View events</DashboardCardLink>
-    </DashboardCardHeader>
-    <DashboardCardBody>
-      <ActivityBody className="co-overview-dashboard__activity-body">
-        <OngoingActivity />
-        <RecentEvent />
-      </ActivityBody>
-    </DashboardCardBody>
-  </DashboardCard>
-));
+export const ActivityCard: React.FC<{}> = React.memo(() => {
+  const { t } = useTranslation();
+  return (
+    <DashboardCard gradient data-test-id="activity-card">
+      <DashboardCardHeader>
+        <DashboardCardTitle>{t('dashboard~Activity')}</DashboardCardTitle>
+        <DashboardCardLink to={viewEvents}>{t('dashboard~View events')}</DashboardCardLink>
+      </DashboardCardHeader>
+      <DashboardCardBody>
+        <ActivityBody className="co-overview-dashboard__activity-body">
+          <OngoingActivity />
+          <RecentEvent />
+        </ActivityBody>
+      </DashboardCardBody>
+    </DashboardCard>
+  );
+});
 
 type OngoingActivityProps = {
   models: ImmutableMap<string, K8sKind>;

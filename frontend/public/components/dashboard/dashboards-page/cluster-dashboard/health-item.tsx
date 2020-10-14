@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Map as ImmutableMap } from 'immutable';
+import { useTranslation } from 'react-i18next';
 import {
   DashboardsOverviewHealthOperator,
   DashboardsOverviewHealthURLSubsystem,
@@ -24,6 +25,7 @@ export const OperatorsPopup: React.FC<OperatorsPopupProps> = ({
   resources,
   operatorExtensions,
 }) => {
+  const { t } = useTranslation();
   const sections = operatorExtensions
     .map((o, index) => {
       const operatorResources = o.properties.resources.reduce((acc, r) => {
@@ -44,7 +46,9 @@ export const OperatorsPopup: React.FC<OperatorsPopupProps> = ({
     .reverse();
   return (
     <>
-      Operators create, configure, and manage applications by extending the Kubernetes API.
+      {t(
+        'dashboard~Operators create, configure, and manage applications by extending the Kubernetes API.',
+      )}
       {sections}
     </>
   );
@@ -52,6 +56,7 @@ export const OperatorsPopup: React.FC<OperatorsPopupProps> = ({
 
 export const OperatorHealthItem = withDashboardResources<OperatorHealthItemProps>(
   ({ resources, watchK8sResource, stopWatchK8sResource, operatorExtensions }) => {
+    const { t } = useTranslation();
     React.useEffect(() => {
       operatorExtensions.forEach((o, index) =>
         o.properties.resources.forEach((r) => watchK8sResource(uniqueResource(r, index))),
@@ -88,10 +93,10 @@ export const OperatorHealthItem = withDashboardResources<OperatorHealthItemProps
 
     return (
       <HealthItem
-        title="Operators"
+        title={t('dashboard~Operators')}
         state={operatorsHealth.health}
         details={operatorsHealth.detailMessage}
-        popupTitle="Operator status"
+        popupTitle={t('dashboard~Operator status')}
       >
         <OperatorsPopup resources={resources} operatorExtensions={operatorExtensions} />
       </HealthItem>

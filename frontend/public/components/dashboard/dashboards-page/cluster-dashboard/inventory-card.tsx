@@ -7,6 +7,8 @@ import {
   ResourceInventoryItem,
   StatusGroupMapper,
 } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
+import { useTranslation } from 'react-i18next';
+
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { K8sKind, referenceForModel, K8sResourceCommon } from '../../../../module/k8s';
 import { AsyncComponent } from '../../../utils';
@@ -120,10 +122,12 @@ export const InventoryCard = () => {
     replacementExtensions,
   ]);
 
+  const { t } = useTranslation();
+
   return (
     <DashboardCard data-test-id="inventory-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>Cluster Inventory</DashboardCardTitle>
+        <DashboardCardTitle>{t('dashboard~Cluster Inventory')}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
         {mergedItems.map((item) => (
