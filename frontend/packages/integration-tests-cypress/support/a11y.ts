@@ -50,7 +50,7 @@ Cypress.Commands.add('testA11y', (target: string) => {
       includedImpacts: ['serious', 'critical'],
     },
     (violations) => cy.logA11yViolations(violations, target),
-    true,
+    false,
   );
 });
 

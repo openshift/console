@@ -22,7 +22,7 @@ export const createModal: CreateModal = (getModalContainer) => {
       ReactDOM.unmountComponentAtNode(modalContainer);
       resolve();
     };
-    Modal.setAppElement(modalContainer);
+    Modal.setAppElement(document.getElementById('app-container'));
     ReactDOM.render(getModalContainer(closeModal), modalContainer);
   });
   return { result };
