@@ -202,7 +202,8 @@ export const NamespacesPage = (props) => {
   const createProps = {
     items: createItems,
     createLink: (type) =>
-      `/k8s/ns/${props.namespace || 'default'}/namespaces/~new/${type !== 'yaml' ? type : ''}`,
+      // `/k8s/ns/${props.namespace || 'default'}/namespaces/~new/${type !== 'yaml' ? type : ''}`,
+      `/k8s/namespaces/~new/${type !== 'yaml' ? type : ''}`,
   };
   return <ListPage
     {...props}
