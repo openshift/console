@@ -5,7 +5,8 @@ export enum UPLOAD_STATUS {
   ERROR = 'ERROR',
   CANCELED = 'CANCELED',
 }
-
+export const CDI_UPLOAD_URL_BUILDER = (uploadProxyURL) =>
+  `https://${uploadProxyURL}/v1beta1/upload-form-async`;
 export const CDI_UPLOAD_POD_ANNOTATION = 'cdi.kubevirt.io/storage.pod.phase';
 export const CDI_UPLOAD_POD_NAME_ANNOTATION = 'cdi.kubevirt.io/storage.uploadPodName';
 export const CDI_PHASE_PVC_ANNOTATION = 'cdi.kubevirt.io/storage.pod.phase';
