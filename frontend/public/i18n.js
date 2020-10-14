@@ -51,6 +51,7 @@ i18n
         'cluster-settings',
         'cluster-update-modal',
         'cluster-version',
+        'console-app',
         'create-catalog-source',
         'custom-resource-definition',
         'dashboard',

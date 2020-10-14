@@ -1,6 +1,7 @@
 import './_clone-pvc-modal.scss';
 
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Form, FormGroup, TextInput } from '@patternfly/react-core';
 import {
@@ -43,6 +44,7 @@ import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { isCephProvisioner } from '@console/shared';
 
 const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
+  const { t } = useTranslation();
   const { close, cancel, resource, handlePromise, errorMessage, inProgress } = props;
   const { name: pvcName, namespace } = resource?.metadata;
   const defaultSize: string[] = validate.split(getRequestedPVCSize(resource));
@@ -119,23 +121,25 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
   return (
     <Form onSubmit={submit}>
       <div className="modal-content modal-content--no-inner-scroll">
-        <ModalTitle>Clone</ModalTitle>
+        <ModalTitle>{t('console-app~Clone')}</ModalTitle>
         <ModalBody>
-          <FormGroup label="Name" isRequired fieldId="clone-pvc-modal__name">
+          <FormGroup label={t('console-app~Name')} isRequired fieldId="clone-pvc-modal__name">
             <TextInput
               type="text"
               className="co-clone-pvc-modal__name--margin"
               value={clonePVCName}
               onChange={setClonePVCName}
-              aria-label="Clone Pvc"
+              aria-label={t('console-app~Clone PVC')}
             />
           </FormGroup>
           <FormGroup
-            label="Size"
+            label={t('console-app~Size')}
             isRequired
             fieldId="clone-pvc-modal__size"
             className="co-clone-pvc-modal__ocs-size"
-            helperTextInvalid="Size should be equal or greater than the requested size of PVC"
+            helperTextInvalid={t(
+              'console-app~Size should be equal or greater than the requested size of PVC',
+            )}
             validated={validSize ? 'default' : 'error'}
           >
             {scResourceLoaded ? (
@@ -154,18 +158,20 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
             )}
           </FormGroup>
           <div className="co-clone-pvc-modal__details">
-            <p className="text-muted">PVC Details</p>
+            <p className="text-muted">{t('console-app~PVC details')}</p>
             <div className="co-clone-pvc-modal__details-section">
               <div>
                 <div>
-                  <p className="co-clone-pvc-modal__pvc-details">Namespace</p>
+                  <p className="co-clone-pvc-modal__pvc-details">{t('console-app~Namespace')}</p>
                   <p>
                     <ResourceIcon kind={NamespaceModel.kind} />
                     {resource.metadata.namespace}
                   </p>
                 </div>
                 <div>
-                  <p className="co-clone-pvc-modal__pvc-details">Storage Class</p>
+                  <p className="co-clone-pvc-modal__pvc-details">
+                    {t('console-app~Storage Class')}
+                  </p>
                   <p>
                     <ResourceIcon kind={StorageClassModel.kind} />
                     {resource.spec?.storageClassName || '-'}
@@ -174,11 +180,15 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
               </div>
               <div>
                 <div>
-                  <p className="co-clone-pvc-modal__pvc-details">Requested Capacity</p>
+                  <p className="co-clone-pvc-modal__pvc-details">
+                    {t('console-app~Requested capacity')}
+                  </p>
                   <p>{pvcRequestedSize}</p>
                 </div>
                 <div>
-                  <p className="co-clone-pvc-modal__pvc-details">Used Capacity</p>
+                  <p className="co-clone-pvc-modal__pvc-details">
+                    {t('console-app~Used capacity')}
+                  </p>
                   <div>
                     {!loading && !error && pvcUsedCapacity}
                     {loading && <LoadingInline />}
@@ -188,11 +198,11 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
               </div>
               <div>
                 <div>
-                  <p className="co-clone-pvc-modal__pvc-details">Access Mode</p>
+                  <p className="co-clone-pvc-modal__pvc-details">{t('console-app~Access mode')}</p>
                   <p>{accessMode.title || '-'}</p>
                 </div>
                 <div>
-                  <p className="co-clone-pvc-modal__pvc-details">Volume Mode</p>
+                  <p className="co-clone-pvc-modal__pvc-details">{t('console-app~Volume mode')}</p>
                   <p>{resource.spec.volumeMode}</p>
                 </div>
               </div>
@@ -203,7 +213,7 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
           inProgress={inProgress}
           submitDisabled={!validSize}
           errorMessage={errorMessage}
-          submitText="Clone"
+          submitText={t('console-app~Clone')}
           cancel={cancel}
         />
       </div>

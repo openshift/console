@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { Form, FormGroup, Grid, GridItem, TextInput } from '@patternfly/react-core';
 import {
@@ -45,6 +46,7 @@ import './restore-pvc-modal.scss';
 
 const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
   ({ close, cancel, resource, errorMessage, inProgress, handlePromise }) => {
+    const { t } = useTranslation();
     const [restorePVCName, setPVCName] = React.useState(`${getName(resource) || 'pvc'}-restore`);
     const defaultSize: string[] = resource?.status?.restoreSize
       ? validate.split(resource?.status?.restoreSize)
@@ -143,15 +145,17 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
     };
     return (
       <div className="modal-content modal-content--no-inner-scroll">
-        <ModalTitle>Restore as new PVC</ModalTitle>
+        <ModalTitle>{t('console-app~Restore as new PVC')}</ModalTitle>
         <Form onSubmit={submit} name="form">
           <ModalBody>
             <p>
-              When restore action for snapshot <strong>{snapshotName}</strong> is finished a new
-              crash-consistent PVC copy will be created.
+              <Trans t={t} ns="console-app">
+                When restore action for snapshot <strong>{{ snapshotName }}</strong> is finished a
+                new crash-consistent PVC copy will be created.
+              </Trans>
             </p>
             <FormGroup
-              label="Name"
+              label={t('console-app~Name')}
               isRequired
               fieldId="pvc-name"
               className="co-restore-pvc-modal__input"
@@ -183,11 +187,13 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
               )}
             </FormGroup>
             <FormGroup
-              label="Size"
+              label={t('console-app~Size')}
               isRequired
               fieldId="pvc-size"
               className="co-restore-pvc-modal__input co-restore-pvc-modal__ocs-size"
-              helperTextInvalid="Size should be equal or greater than the restore size of snapshot"
+              helperTextInvalid={t(
+                'console-app~Size should be equal or greater than the restore size of snapshot',
+              )}
               validated={validSize ? 'default' : 'error'}
             >
               {snapshotClassResourceLoaded ? (
@@ -208,21 +214,25 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
               )}
             </FormGroup>
             <div className="co-restore-pvc-modal__details-section">
-              <p className="text-muted">{VolumeSnapshotModel.label} details</p>
+              <p className="text-muted">
+                {t('console-app~{{resourceKind}} details', {
+                  resourceKind: VolumeSnapshotModel.label,
+                })}
+              </p>
               <Grid hasGutter>
                 <GridItem span={6}>
                   <div className="co-restore-pvc-modal__pvc-details">
-                    <strong>Created At</strong>
+                    <strong>{t('console-app~Created at')}</strong>
                     <span>
                       <Timestamp timestamp={resource?.metadata?.creationTimestamp} />
                     </span>
                   </div>
                   <div className="co-restore-pvc-modal__pvc-details">
-                    <strong>Status</strong>
+                    <strong>{t('console-app~Status')}</strong>
                     <Status status={resource?.status?.readyToUse ? 'Ready' : 'Not Ready'} />
                   </div>
                   <div className="co-restore-pvc-modal__pvc-details">
-                    <strong>Size</strong>
+                    <strong>{t('console-app~Size')}</strong>
                     <p>{pvcRequestedSize}</p>
                   </div>
                 </GridItem>
@@ -235,7 +245,7 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
                     </div>
                   </div>
                   <div className="co-restore-pvc-modal__pvc-details">
-                    <strong>API Version</strong>
+                    <strong>{t('console-app~API version')}</strong>
                     <p>{resource?.apiVersion}</p>
                   </div>
                 </GridItem>
@@ -246,7 +256,7 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
             submitDisabled={!pvcSC || !validSize}
             inProgress={inProgress}
             errorMessage={errorMessage}
-            submitText="Restore"
+            submitText={t('console-app~Restore')}
             cancel={cancel}
           />
         </Form>
