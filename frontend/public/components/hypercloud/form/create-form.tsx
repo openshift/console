@@ -21,29 +21,22 @@ import {
 
 export const WithCommonForm = (SubForm, params, modal?: boolean) => {
   const FormComponent: React.FC<CommonFormProps_> = props => {
-    const { register, control, watch, handleSubmit } = useForm();
+    const { register, control, handleSubmit } = useForm();
     const kind = pluralToKind(params.plural);
     const title = `${props.titleVerb} ${params.type === 'form' ? '' : params.type} ${kind}`;
 
     const [inProgress] = React.useState(false); // onSubmit이나 나중에 Error관련 메서드에서 inProgress를 false로 변경해줘야함.
 
-    const onSubmit = (event) => {
-      event.preventDefault();
-      handleSubmit((data) => {
-        let inDo = _.defaultsDeep(props.fixed, data);
-        inDo = props.onSubmitCallback(inDo);
-        console.log(watch());
-        // if (false) {
-        k8sCreate(modelFor(kind), inDo)
-        history.push(resourceObjPath(inDo, referenceFor(modelFor(kind))));
-        // }
-      }
-      )
-    };
+    const onClick = handleSubmit((data) => {
+      let inDo = _.defaultsDeep(props.fixed, data);
+      inDo = props.onSubmitCallback(inDo);
+      k8sCreate(modelFor(kind), inDo)
+      history.push(resourceObjPath(inDo, referenceFor(modelFor(kind))));
+    })
 
 
     return (
-      <div className="co-m-pane__body" onSubmit={onSubmit}>
+      <div className="co-m-pane__body">
         <Helmet>
           <title>{title}</title>
         </Helmet>
@@ -54,20 +47,21 @@ export const WithCommonForm = (SubForm, params, modal?: boolean) => {
           <fieldset>
             <div className="form-group">
               <label className="control-label co-required" htmlFor="name">Name</label>
-              <input className="pf-c-form-control" id="name" name='metadata.name' ref={register} />
+              <input className="pf-c-form-control" name='metadata.name' ref={register} />
             </div>
           </fieldset>
           <SubForm isCreate={props.isCreate} register={register} control={control} Controller={Controller} />
           <ButtonBar inProgress={inProgress}>
             <ActionGroup className="pf-c-form">
               <Button
-                type="submit"
+                type="button"
                 variant="primary"
                 id="save-changes"
+                onClick={onClick}
               >
                 {props.saveButtonText || 'Create'}
               </Button>
-              <Button type="button" variant="secondary" id="cancel" onClick={props.onCancel}>
+              <Button type="button" variant="secondary" id="cancel" onClick={history.goBack}>
                 Cancel
               </Button>
             </ActionGroup>
@@ -88,17 +82,4 @@ type CommonFormProps_ = {
   onSubmitCallback: Function;
   saveButtonText?: string;
   explanation?: string;
-  onCancel?: () => void;
-  onSave?: (name: string) => void;
 };
-
-// type DefaultInputForm_ = {
-//   apiVersiont: string;
-//   kind: string;
-//   type?: string;
-//   metadata: {
-//     name: '',
-//     [propName: string]: any;
-//   }
-//   [propName: string]: any;
-// }

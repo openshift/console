@@ -88,8 +88,6 @@ type CreateNamespaceProps = {
   explanation: string;
   titleVerb: string;
   saveButtonText?: string;
-  onCancel?: () => void;
-  onSave?: () => void;
   isCreate: boolean;
 }
 
