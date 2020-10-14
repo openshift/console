@@ -5,7 +5,7 @@ import {
   useK8sWatchResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { UPLOAD_STATUS } from './consts';
+import { CDI_UPLOAD_URL_BUILDER, UPLOAD_STATUS } from './consts';
 import { CDIConfigModel } from '../../models';
 import { getUploadProxyURL } from '../../selectors/cdi';
 
@@ -65,7 +65,7 @@ export const useCDIUploadHook = (): CDIUploadContextProps => {
 
       axios({
         method: 'POST',
-        url: `https://${uploadProxyURL}/v1beta1/upload-form-async`,
+        url: CDI_UPLOAD_URL_BUILDER(uploadProxyURL),
         data: form,
         cancelToken: cancelSource.token,
         headers: {
@@ -89,23 +89,6 @@ export const useCDIUploadHook = (): CDIUploadContextProps => {
               ...newUpload,
               uploadStatus: UPLOAD_STATUS.CANCELED,
             });
-          } else if (typeof err.response === 'undefined') {
-            updateUpload({
-              ...newUpload,
-              uploadStatus: UPLOAD_STATUS.ERROR,
-              uploadError: {
-                message: (
-                  <>
-                    It seems that your browser does not trust the certificate of the upload proxy.
-                    Please{' '}
-                    <a href={`https://${uploadProxyURL}`} rel="noopener noreferrer" target="_blank">
-                      approve this certificate
-                    </a>{' '}
-                    and try again
-                  </>
-                ),
-              },
-            });
           } else {
             updateUpload({ ...newUpload, uploadStatus: UPLOAD_STATUS.ERROR, uploadError: err });
           }
@@ -123,6 +106,7 @@ export const useCDIUploadHook = (): CDIUploadContextProps => {
   return {
     uploads,
     uploadData,
+    uploadProxyURL,
   };
 };
 
@@ -139,6 +123,7 @@ export type DataUpload = {
 type CDIUploadContextProps = {
   uploads: DataUpload[];
   uploadData: ({ file, token, pvcName, namespace }: UploadDataProps) => void;
+  uploadProxyURL?: string;
 };
 
 type UploadDataProps = {
