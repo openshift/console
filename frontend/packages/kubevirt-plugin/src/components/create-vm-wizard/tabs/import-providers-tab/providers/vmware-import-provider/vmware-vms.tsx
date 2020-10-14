@@ -36,7 +36,9 @@ const VMWareVMsConnected: React.FC<VMWareVMsConnectedProps> = React.memo(
               isDisabled={!!iGet(vmField, 'value')}
             />
             {vmNames &&
-              vmNames.map((name) => <FormSelectOption key={name} value={name} label={name} />)}
+              vmNames.map((name) => (
+                <FormSelectOption key={name} value={name} label={decodeURIComponent(name)} />
+              ))}
           </FormSelect>
         </FormField>
       </FormFieldRow>
