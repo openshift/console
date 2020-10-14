@@ -1,9 +1,10 @@
 import * as _ from 'lodash';
 import { List as ImmutableList } from 'immutable';
 import { Extension, PluginStore } from '@console/plugin-sdk';
-import { resolvePluginPackages, loadActivePlugins } from '@console/plugin-sdk/src/codegen';
+import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
+import { loadActivePluginsForTestPurposes } from '@console/plugin-sdk/src/codegen/active-plugins';
 
-const testedPlugins = loadActivePlugins(resolvePluginPackages());
+const testedPlugins = loadActivePluginsForTestPurposes(resolvePluginPackages());
 const testedPluginStore = new PluginStore(testedPlugins);
 
 export const testedExtensions = ImmutableList<Extension>(testedPluginStore.getAllExtensions());

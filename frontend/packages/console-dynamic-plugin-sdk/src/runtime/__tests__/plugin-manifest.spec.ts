@@ -4,12 +4,16 @@ import { SchemaValidator } from '../../validation/SchemaValidator';
 import { getPluginManifest } from '../../utils/test-utils';
 
 const coFetch = jest.spyOn(coFetchModule, 'coFetch');
-const validatePluginManifest = jest.spyOn(pluginManifestModule, 'validatePluginManifest');
+
+const validatePluginManifestSchema = jest.spyOn(
+  pluginManifestModule,
+  'validatePluginManifestSchema',
+);
 
 const { fetchPluginManifest } = pluginManifestModule;
 
 beforeEach(() => {
-  [coFetch, validatePluginManifest].forEach((mock) => mock.mockReset());
+  [coFetch, validatePluginManifestSchema].forEach((mock) => mock.mockReset());
 });
 
 describe('fetchPluginManifest', () => {
@@ -21,13 +25,13 @@ describe('fetchPluginManifest', () => {
     const validatorResultReport = jest.spyOn(validator.result, 'report');
 
     coFetch.mockImplementation(() => Promise.resolve({ json: () => Promise.resolve(manifest) }));
-    validatePluginManifest.mockImplementation(() => Promise.resolve(validator.result));
+    validatePluginManifestSchema.mockImplementation(() => Promise.resolve(validator.result));
 
     const result = await fetchPluginManifest('http://example.com/test');
 
     expect(result).toBe(manifest);
     expect(coFetch).toHaveBeenCalledWith(manifestURL, { method: 'GET' });
-    expect(validatePluginManifest).toHaveBeenCalledWith(manifest, manifestURL);
+    expect(validatePluginManifestSchema).toHaveBeenCalledWith(manifest, manifestURL);
     expect(validatorResultReport).toHaveBeenCalledWith();
   });
 
@@ -39,7 +43,7 @@ describe('fetchPluginManifest', () => {
       await fetchPluginManifest('http://example.com/test');
     } catch (e) {
       expect(coFetch).toHaveBeenCalled();
-      expect(validatePluginManifest).not.toHaveBeenCalled();
+      expect(validatePluginManifestSchema).not.toHaveBeenCalled();
     }
   });
 
@@ -53,14 +57,14 @@ describe('fetchPluginManifest', () => {
     });
 
     coFetch.mockImplementation(() => Promise.resolve({ json: () => Promise.resolve(manifest) }));
-    validatePluginManifest.mockImplementation(() => Promise.resolve(validator.result));
+    validatePluginManifestSchema.mockImplementation(() => Promise.resolve(validator.result));
 
     expect.assertions(2);
     try {
       await fetchPluginManifest('http://example.com/test');
     } catch (e) {
       expect(coFetch).toHaveBeenCalled();
-      expect(validatePluginManifest).toHaveBeenCalled();
+      expect(validatePluginManifestSchema).toHaveBeenCalled();
     }
   });
 });

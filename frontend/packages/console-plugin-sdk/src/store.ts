@@ -40,11 +40,11 @@ export const getGatingFlagNames = (extensions: Extension[]): string[] =>
  * In development, this object is exposed as `window.pluginStore` for easier debugging.
  */
 export class PluginStore {
-  // Extensions contributed by static plugins
-  private readonly staticExtensions: LoadedExtension[];
+  // Extensions contributed by static plugins (part of Console application itself)
+  private readonly staticPluginExtensions: LoadedExtension[];
 
-  // Extensions contributed by dynamic plugins
-  private dynamicExtensions: LoadedExtension[] = [];
+  // Extensions contributed by dynamic plugins (loaded from remote hosts at runtime)
+  private dynamicPluginExtensions: LoadedExtension[] = [];
 
   // TODO(vojtech): legacy, remove
   public readonly registry: ExtensionRegistry;
@@ -54,7 +54,7 @@ export class PluginStore {
   private readonly listeners: VoidFunction[] = [];
 
   public constructor(plugins: ActivePlugin[]) {
-    this.staticExtensions = _.flatMap(
+    this.staticPluginExtensions = _.flatMap(
       plugins.map((p) =>
         p.extensions.map((e, index) =>
           Object.freeze(augmentExtension(sanitizeExtension({ ...e }), p.name, p.name, index)),
@@ -66,11 +66,11 @@ export class PluginStore {
   }
 
   public getAllExtensions() {
-    return [...this.staticExtensions, ...this.dynamicExtensions];
+    return [...this.staticPluginExtensions, ...this.dynamicPluginExtensions];
   }
 
   private updateDynamicExtensions() {
-    this.dynamicExtensions = Array.from(this.dynamicPlugins.values()).reduce(
+    this.dynamicPluginExtensions = Array.from(this.dynamicPlugins.values()).reduce(
       (acc, plugin) => (plugin.enabled ? [...acc, ...plugin.processedExtensions] : acc),
       [],
     );
@@ -143,8 +143,8 @@ export class PluginStore {
 
   public getStateForTestPurposes() {
     return {
-      staticExtensions: this.staticExtensions,
-      dynamicExtensions: this.dynamicExtensions,
+      staticPluginExtensions: this.staticPluginExtensions,
+      dynamicPluginExtensions: this.dynamicPluginExtensions,
       dynamicPlugins: this.dynamicPlugins,
       listeners: this.listeners,
     };

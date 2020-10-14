@@ -1,8 +1,9 @@
+/* eslint-disable no-empty-function */
+
 import * as semver from 'semver';
 import { ValidationResult } from './ValidationResult';
 
 export class ValidationAssertions {
-  // eslint-disable-next-line no-empty-function
   constructor(private readonly result: ValidationResult) {}
 
   nonEmptyString(obj: any, objPath: string) {

@@ -81,11 +81,11 @@ Declares all extensions contributed by the plugin. The `$schema` property is opt
 
 Depending on extension `type`, the `properties` object may contain code references, encoded as object
 literals `{ $codeRef: string }`. When loading dynamic plugins, encoded code references are transformed
-into functions `CodeRef<T> = () => Promise<T>` which load the referenced objects.
+into functions `CodeRef<T> = () => Promise<T>` used to load the referenced objects.
 
-The `$codeRef` value should be formatted as `moduleName.exportName` (referring to a named export) or
-`moduleName` (referring to the `default` export). Only the plugin's exposed modules (i.e. the keys of
-`consolePlugin.exposedModules` object in `package.json` file) may be used as the `moduleName` value.
+The `$codeRef` value should be formatted as either `moduleName.exportName` (referring to a named export)
+or `moduleName` (referring to the `default` export). Only the plugin's exposed modules (i.e. the keys of
+`consolePlugin.exposedModules` object in `package.json` file) may be used in code references.
 
 ## Webpack config
 

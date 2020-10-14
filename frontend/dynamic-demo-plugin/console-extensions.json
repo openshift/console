@@ -4,6 +4,11 @@
  * The '$schema' property is optional but recommended, allowing code editors to validate
  * the content as well as provide additional features such as code completion and property
  * description.
+ *
+ * Depending on extension 'type', the 'properties' object may contain code references, encoded
+ * as object literals { $codeRef: string }. The '$codeRef' value should be formatted as either
+ * 'moduleName.exportName' (referring to a named export) or 'moduleName' (referring to the
+ * 'default' export). Only the plugin's exposed modules may be used in code references.
  */
 {
   "$schema": "../packages/console-dynamic-plugin-sdk/dist/schema/console-extensions.json",
