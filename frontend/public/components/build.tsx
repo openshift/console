@@ -5,7 +5,7 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { Alert } from '@patternfly/react-core';
 
-import { Status } from '@console/shared';
+import { ONE_HOUR, ONE_MINUTE, Status } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import {
   K8sResourceKindReference,
@@ -42,6 +42,7 @@ import { BuildLogs } from './build-logs';
 import { ResourceEventStream } from './events';
 import { Area, requirePrometheus } from './graphs';
 import { BuildModel } from '../models';
+import { twentyFourHourTime } from './utils/datetime';
 
 const BuildsReference: K8sResourceKindReference = 'Build';
 
@@ -127,40 +128,56 @@ export const BuildNumberLink = ({ build }) => {
 };
 
 const BuildGraphs = requirePrometheus(({ build }) => {
-  const podName = _.get(build, ['metadata', 'annotations', 'openshift.io/build.pod-name']);
+  const podName = build.metadata.annotations?.['openshift.io/build.pod-name'];
   if (!podName) {
     return null;
   }
-
+  const endTime = build.status.completionTimestamp
+    ? new Date(build.status.completionTimestamp).getTime()
+    : Date.now();
+  const runTime = build.status.startTimestamp
+    ? endTime - new Date(build.status.startTimestamp).getTime()
+    : ONE_HOUR;
+  const timespan = Math.max(runTime, ONE_MINUTE); // Minimum timespan of one minute
   const namespace = build.metadata.namespace;
-
+  const domain = React.useMemo(() => ({ x: [endTime - timespan, endTime] }), [endTime, timespan]);
+  const areaProps = React.useMemo(
+    () => ({
+      namespace,
+      endTime,
+      timespan,
+      formatDate: (d) => twentyFourHourTime(d, timespan < 5 * ONE_MINUTE),
+      domain, // force domain to match queried timespan
+    }),
+    [domain, endTime, namespace, timespan],
+  );
   return (
     <>
       <div className="row">
         <div className="col-md-12 col-lg-4">
           <Area
-            title="Memory Usage"
-            humanize={humanizeBinaryBytes}
             byteDataType={ByteDataTypes.BinaryBytes}
-            namespace={namespace}
+            humanize={humanizeBinaryBytes}
             query={`sum(container_memory_working_set_bytes{pod='${podName}',namespace='${namespace}',container=''}) BY (pod, namespace)`}
+            title="Memory Usage"
+            {...areaProps}
           />
         </div>
         <div className="col-md-12 col-lg-4">
           <Area
-            title="CPU Usage"
             humanize={humanizeCpuCores}
-            namespace={namespace}
             query={`pod:container_cpu_usage:sum{pod='${podName}',container='',namespace='${namespace}'}`}
+            title="CPU Usage"
+            {...areaProps}
           />
         </div>
         <div className="col-md-12 col-lg-4">
           <Area
-            title="Filesystem"
-            humanize={humanizeBinaryBytes}
             byteDataType={ByteDataTypes.BinaryBytes}
-            namespace={namespace}
+            humanize={humanizeBinaryBytes}
             query={`pod:container_fs_usage_bytes:sum{pod='${podName}',container='',namespace='${namespace}'}`}
+            title="Filesystem"
+            {...areaProps}
           />
         </div>
       </div>

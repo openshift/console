@@ -1,19 +1,16 @@
 import { useURLPoll } from '../utils/url-poll-hook';
 import { getPrometheusURL, PrometheusEndpoint } from './helpers';
-import { PrometheusResponse } from '.';
-
-const DEFAULT_SAMPLES = 60;
-const DEFAULT_TIMESPAN = 60 * 60 * 1000; // 1 hour
+import { DEFAULT_PROMETHEUS_SAMPLES, DEFAULT_PROMETHEUS_TIMESPAN, PrometheusResponse } from '.';
 
 export const usePrometheusPoll = ({
   delay,
   endpoint,
-  endTime = undefined,
+  endTime,
   namespace,
   query,
-  samples = DEFAULT_SAMPLES,
+  samples = DEFAULT_PROMETHEUS_SAMPLES,
   timeout,
-  timespan = DEFAULT_TIMESPAN,
+  timespan = DEFAULT_PROMETHEUS_TIMESPAN,
 }: PrometheusPollProps) => {
   const url = getPrometheusURL({ endpoint, endTime, namespace, query, samples, timeout, timespan });
 
