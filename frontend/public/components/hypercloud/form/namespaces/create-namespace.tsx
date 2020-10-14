@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { match as RMatch } from 'react-router';
-
+import { useFormContext, Controller } from "react-hook-form"
 import { WithCommonForm } from '../create-form'
 import { SelectorInput } from '../../../utils';
 
@@ -23,8 +23,7 @@ const namespaceFormFactory = (params) => {
 };
 
 const CreateNamespaceComponent: React.FC<NamespaceFormProps> = (props) => {
-  const { Controller, control } = props
-
+  const { control } = useFormContext();
   return (
     <div className="form-group">
       <label htmlFor="tags-input" className="control-label">
@@ -57,10 +56,8 @@ const CreateNamespaceComponent: React.FC<NamespaceFormProps> = (props) => {
   )
 }
 
-
 export const CreateNamespace: React.FC<CreateNamespaceProps> = (props) => {
   const formComponent = namespaceFormFactory(props.match.params);
-  // const { ns, type } = props.match.params;
   const NamespaceFormComponent = formComponent;
   return (
     <NamespaceFormComponent
@@ -92,8 +89,6 @@ type CreateNamespaceProps = {
 }
 
 type NamespaceFormProps = {
-  Controller: any;
-  control: any;
   onChange: Function;
   stringData: {
     [key: string]: string
