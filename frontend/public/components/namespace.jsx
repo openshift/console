@@ -127,7 +127,12 @@ const fetchNamespaceMetrics = () => {
       }, {});
     });
   });
-  return Promise.all(promises).then((data) => _.assign({}, ...data));
+  return (
+    Promise.all(promises)
+      .then((data) => _.assign({}, ...data))
+      // eslint-disable-next-line no-console
+      .catch(console.error)
+  );
 };
 
 const namespaceColumnInfo = Object.freeze({
