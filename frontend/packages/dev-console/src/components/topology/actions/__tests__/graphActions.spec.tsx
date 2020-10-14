@@ -16,7 +16,7 @@ describe('graphActions: ', () => {
       createResourceAccess: [allCatalogImageResourceAccess, allImportResourceAccess],
     };
     const actions = graphActions(graphData);
-    expect(actions).toHaveLength(5);
+    expect(actions).toHaveLength(8);
   });
 
   it('should return the correct menu items when all only import resources are allowed', () => {
@@ -26,7 +26,7 @@ describe('graphActions: ', () => {
       createResourceAccess: [allImportResourceAccess],
     };
     const actions = graphActions(graphData);
-    expect(actions).toHaveLength(4);
+    expect(actions).toHaveLength(7);
   });
 
   it('should return the correct menu items when minimal resources are allowed', () => {
@@ -36,7 +36,7 @@ describe('graphActions: ', () => {
       createResourceAccess: [],
     };
     const actions = graphActions(graphData);
-    expect(actions).toHaveLength(2);
+    expect(actions).toHaveLength(5);
   });
 
   it('should return the correct menu items when connector source is passed and event source is disabled', () => {
@@ -64,5 +64,25 @@ describe('graphActions: ', () => {
     const actions = graphActions(graphData, connectorSource);
     expect(actions).toHaveLength(4);
     expect(actions.filter((action) => action.label === 'Event Source')).toHaveLength(1);
+  });
+
+  it('should return the correct number of items when all permission are allowed and eventSource is enabled', () => {
+    const graphData: GraphData = {
+      eventSourceEnabled: true,
+      namespace: 'namespace',
+      createResourceAccess: [allCatalogImageResourceAccess, allImportResourceAccess],
+    };
+    const actions = graphActions(graphData);
+    expect(actions).toHaveLength(10);
+  });
+
+  it('should return the correct number of items when all permission are not allowed and eventSource is enabled', () => {
+    const graphData: GraphData = {
+      eventSourceEnabled: true,
+      namespace: 'namespace',
+      createResourceAccess: [],
+    };
+    const actions = graphActions(graphData);
+    expect(actions).toHaveLength(7);
   });
 });

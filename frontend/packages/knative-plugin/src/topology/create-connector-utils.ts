@@ -1,10 +1,14 @@
 import { Node } from '@patternfly/react-topology';
 import { MenuOptions } from '@console/dev-console/src/utils/add-resources-menu-utils';
-import { addResourceMenuWithoutCatalog } from '@console/dev-console/src/actions/add-resources';
+import {
+  addResourceMenuWithoutCatalog,
+  addResourceMenu,
+} from '@console/dev-console/src/actions/add-resources';
 import { GraphData, getResource } from '@console/dev-console/src/components/topology';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { addEventSource } from '../actions/add-event-source';
 import { addTrigger } from '../actions/add-trigger';
+import { addChannels } from '../actions/add-channel';
 import { addSubscription } from '../actions/add-subscription';
 import { addPubSubConnectionModal } from '../components/pub-sub/PubSubModalLauncher';
 import { isEventingChannelResourceKind } from '../utils/fetch-dynamic-eventsources-utils';
@@ -21,6 +25,9 @@ export const getKnativeContextMenuAction = (
   connectorSource?: Node,
 ): MenuOptions => {
   if (!connectorSource) {
+    if (graphData.eventSourceEnabled) {
+      return [...addResourceMenu, addEventSource, addChannels];
+    }
     return menu;
   }
   const sourceKind = connectorSource?.getData().data.kind;

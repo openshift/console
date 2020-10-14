@@ -5,9 +5,12 @@ import {
   CatalogIcon,
   CubeIcon,
   DatabaseIcon,
+  LaptopCodeIcon,
+  BoltIcon,
 } from '@patternfly/react-icons';
 import { ImportOptions } from '../components/import/import-types';
 import { KebabAction, createKebabAction } from '../utils/add-resources-menu-utils';
+import HelmChartsIcon from '../components/helm/HelmChartsIcon';
 
 export const allImportResourceAccess = 'allImportResourceAccess';
 export const allCatalogImageResourceAccess = 'allCatalogImageResourceAccess';
@@ -45,12 +48,29 @@ export const fromDatabaseCatalog = createKebabAction(
   ImportOptions.DATABASE,
 );
 
+export const fromSamples = createKebabAction('Samples', <LaptopCodeIcon />, ImportOptions.SAMPLES);
+
+export const fromOperatorBacked = createKebabAction(
+  'Operator Backed',
+  <BoltIcon />,
+  ImportOptions.OPERATORBACKED,
+);
+
+export const fromHelmCharts = createKebabAction(
+  'Helm Charts',
+  <HelmChartsIcon style={{ height: '1em', width: '1em' }} />,
+  ImportOptions.HELMCHARTS,
+);
+
 export const addResourceMenu: KebabAction[] = [
+  fromSamples,
   fromGit,
   containerImage,
-  fromCatalog,
   fromDockerfile,
+  fromCatalog,
   fromDatabaseCatalog,
+  fromOperatorBacked,
+  fromHelmCharts,
 ];
 
 export const addResourceMenuWithoutCatalog: KebabAction[] = [
