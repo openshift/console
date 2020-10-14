@@ -236,15 +236,17 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
               isDisabled={isDisabled('model')}
             >
               <FormSelectPlaceholderOption isDisabled placeholder="--- Select Model ---" />
-              {NetworkInterfaceModel.getAll().map((ifaceModel) => {
-                return (
-                  <FormSelectOption
-                    key={ifaceModel.getValue()}
-                    value={ifaceModel.getValue()}
-                    label={ifaceModel.toString()}
-                  />
-                );
-              })}
+              {NetworkInterfaceModel.getAll()
+                .filter((ifaceModel) => ifaceModel.isSupported() || ifaceModel === model)
+                .map((ifaceModel) => {
+                  return (
+                    <FormSelectOption
+                      key={ifaceModel.getValue()}
+                      value={ifaceModel.getValue()}
+                      label={ifaceModel.toString()}
+                    />
+                  );
+                })}
             </FormSelect>
           </FormRow>
           <Network

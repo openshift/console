@@ -3,10 +3,10 @@ import { ObjectEnum } from '../../object-enum';
 import { NetworkInterfaceModel } from '../../vm/network';
 
 export class OvirtNetworkInterfaceModel extends ObjectEnum<string> {
-  static readonly E1000 = new OvirtNetworkInterfaceModel('e1000', NetworkInterfaceModel.E1000);
+  static readonly E1000 = new OvirtNetworkInterfaceModel('e1000', NetworkInterfaceModel.E1000E);
   static readonly PCI_PASSTHROUGH = new OvirtNetworkInterfaceModel(
     'pci_passthrough',
-    NetworkInterfaceModel.E1000,
+    NetworkInterfaceModel.E1000E,
   );
   static readonly RTL8139 = new OvirtNetworkInterfaceModel(
     'rtl8139',
