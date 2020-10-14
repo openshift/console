@@ -147,6 +147,16 @@ const networkOutQueriesPopup = [
   },
 ];
 
+// TODO (jon) Fix PrometheusMultilineUtilization so that x-values returned from multiple prometheus
+// queries are "synced" on the x-axis (same number of points with the same x-values). In order to do
+// so, we have to make sure that the same end time, samples, and duration are used across all
+// queries. This is a temporary work around. See https://issues.redhat.com/browse/CONSOLE-2424
+const trimSecondsXMutator = (x) => {
+  const d = new Date(x * 1000);
+  d.setSeconds(0, 0);
+  return d;
+};
+
 export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtilizationItemProps>(
   ({
     watchPrometheus,
@@ -307,7 +317,7 @@ export const PrometheusMultilineUtilizationItem = withDashboardResources<
           isLoading = true;
           return false;
         }
-        stats.push(getRangeVectorStats(response, query.desc)?.[0] || []);
+        stats.push(getRangeVectorStats(response, query.desc, null, trimSecondsXMutator)?.[0] || []);
       });
     }
 

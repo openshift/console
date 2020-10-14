@@ -4,18 +4,25 @@ import { chart_color_orange_300 as requestedColor } from '@patternfly/react-toke
 import { PrometheusResponse, DataPoint, PrometheusResult } from '.';
 import { Humanize } from '../utils';
 
-export const getRangeVectorStats: GetRangeStats = (response, description, symbol) => {
+export const defaultXMutator: XMutator = (x) => new Date(x * 1000);
+export const defaultYMutator: YMutator = (y) => parseFloat(y);
+
+export const getRangeVectorStats: GetRangeStats = (
+  response,
+  description,
+  symbol,
+  xMutator,
+  yMutator,
+) => {
   const results = response?.data?.result;
   return results?.map((r, index) => {
-    return r?.values?.map((value) => {
-      const x = new Date(value[0] * 1000);
-      x.setSeconds(0, 0);
+    return r?.values?.map(([x, y]) => {
       return {
-        x,
-        y: parseFloat(value[1]),
+        x: xMutator?.(x) ?? defaultXMutator(x),
+        y: yMutator?.(y) ?? defaultYMutator(y),
         description: _.isFunction(description) ? description(r, index) : description,
         symbol,
-      };
+      } as DataPoint<Date>;
     });
   });
 };
@@ -37,12 +44,13 @@ export const mapLimitsRequests = (
   utilization: PrometheusResponse,
   limit: PrometheusResponse,
   requested: PrometheusResponse,
+  xMutator?: XMutator,
 ): { data: DataPoint[][]; chartStyle: object[] } => {
-  const utilizationData = getRangeVectorStats(utilization, 'usage');
+  const utilizationData = getRangeVectorStats(utilization, 'usage', null, xMutator);
   const data = utilizationData ? [...utilizationData] : [];
   const chartStyle = [null];
   if (limit) {
-    const limitData = getRangeVectorStats(limit, 'total limit', { type: 'dash' });
+    const limitData = getRangeVectorStats(limit, 'total limit', { type: 'dash' }, xMutator);
     data.push(...limitData);
     if (limitData.length) {
       chartStyle.push({
@@ -51,10 +59,15 @@ export const mapLimitsRequests = (
     }
   }
   if (requested) {
-    const reqData = getRangeVectorStats(requested, 'total requested', {
-      type: 'dash',
-      fill: requestedColor.value,
-    });
+    const reqData = getRangeVectorStats(
+      requested,
+      'total requested',
+      {
+        type: 'dash',
+        fill: requestedColor.value,
+      },
+      xMutator,
+    );
     data.push(...reqData);
     if (reqData.length) {
       chartStyle.push({
@@ -63,16 +76,18 @@ export const mapLimitsRequests = (
     }
   }
 
-  return {
-    data,
-    chartStyle,
-  };
+  return { data, chartStyle };
 };
+
+type XMutator = (x: any) => Date;
+type YMutator = (y: any) => number;
 
 export type GetRangeStats = (
   response: PrometheusResponse,
   description?: string | ((result: PrometheusResult, index: number) => string),
   symbol?: { fill?: string; type?: string },
+  xMutator?: XMutator,
+  yMutator?: YMutator,
 ) => DataPoint<Date>[][];
 
 export type GetInstantStats = (

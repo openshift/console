@@ -120,7 +120,7 @@ export const StackChart: React.FC<AreaChartProps> = ({
             padding={padding}
             theme={theme}
           >
-            {xAxis && <ChartAxis tickCount={tickCount} tickFormat={formatDate} />}
+            {xAxis && <ChartAxis tickCount={tickCount} tickFormat={(tick) => formatDate(tick)} />}
             {yAxis && <ChartAxis dependentAxis tickCount={tickCount} tickFormat={tickFormat} />}
             <ChartStack height={height} width={width}>
               {processedData.map((datum, index) => (
@@ -160,7 +160,7 @@ export const Stack: React.FC<StackProps> = ({
     timeout,
     timespan,
   });
-  const data = getRangeVectorStats(utilization, description, null);
+  const data = getRangeVectorStats(utilization, description);
   const ChartComponent = data?.length === 1 ? AreaChart : StackChart;
   return <ChartComponent data={data} loading={loading} query={query} {...rest} />;
 };

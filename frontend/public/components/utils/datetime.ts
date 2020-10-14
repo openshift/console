@@ -83,15 +83,9 @@ export const parsePrometheusDuration = (duration: string): number => {
 
 const zeroPad = (number: number) => (number < 10 ? `0${number}` : number);
 
-export const twentyFourHourTime = (date: Date): string => {
-  const hours = zeroPad(date.getHours());
-  const minutes = zeroPad(date.getMinutes());
-  return `${hours}:${minutes}`;
-};
-
-export const twentyFourHourTimeWithSeconds = (date: Date): string => {
-  const hours = zeroPad(date.getHours());
-  const minutes = zeroPad(date.getMinutes());
-  const seconds = zeroPad(date.getSeconds());
-  return `${hours}:${minutes}:${seconds}`;
+export const twentyFourHourTime = (date: Date, showSeconds?: boolean): string => {
+  const hours = zeroPad(date.getHours() ?? 0);
+  const minutes = `:${zeroPad(date.getMinutes() ?? 0)}`;
+  const seconds = showSeconds ? `:${zeroPad(date.getSeconds() ?? 0)}` : '';
+  return `${hours}${minutes}${seconds}`;
 };
