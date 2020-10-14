@@ -15,15 +15,15 @@ import {
 export const WithCommonForm = (SubForm, params, modal?: boolean) => {
   const FormComponent: React.FC<CommonFormProps_> = props => {
     const methods = useForm();
+
     const kind = pluralToKind(params.plural);
     const title = `${props.titleVerb} ${params.type === 'form' ? '' : params.type} ${kind}`;
 
     const [inProgress] = React.useState(false); // onSubmit이나 나중에 Error관련 메서드에서 inProgress를 false로 변경해줘야함.
 
-    const onClick = methods.handleSubmit((data) => {
+    const onClick = handleSubmit((data) => {
       let inDo = _.defaultsDeep(props.fixed, data);
       inDo = props.onSubmitCallback(inDo);
-      console.log(methods.watch());
       k8sCreate(modelFor(kind), inDo)
       history.push(resourceObjPath(inDo, referenceFor(modelFor(kind))));
     })
