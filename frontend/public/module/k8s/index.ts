@@ -12,3 +12,4 @@ export * from './template';
 export * from './swagger';
 export * from './event';
 export * from './types';
+export * from '../hypercloud/k8s/types';

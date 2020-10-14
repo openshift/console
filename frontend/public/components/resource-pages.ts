@@ -62,6 +62,7 @@ import {
 } from '../models';
 
 import * as plugins from '../plugins';
+import { hyperCloudDetailsPages, hyperCloudListPages } from './hypercloud/resource-pages';
 
 const addResourcePage = (
   map: ImmutableMap<ResourceMapKey, ResourceMapValue>,
@@ -320,9 +321,9 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   );
 
 export const resourceDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
-  .merge(baseDetailsPages)
-  .withMutations((map) => {
-    plugins.registry.getResourceDetailsPages().forEach((page) => {
+  .merge(baseDetailsPages, hyperCloudDetailsPages)
+  .withMutations(map => {
+    plugins.registry.getResourceDetailsPages().forEach(page => {
       addResourcePage(map, page);
     });
   });
@@ -538,9 +539,9 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   );
 
 export const resourceListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
-  .merge(baseListPages)
-  .withMutations((map) => {
-    plugins.registry.getResourceListPages().forEach((page) => {
+  .merge(baseListPages, hyperCloudListPages)
+  .withMutations(map => {
+    plugins.registry.getResourceListPages().forEach(page => {
       addResourcePage(map, page);
     });
   });
