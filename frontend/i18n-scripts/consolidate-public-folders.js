@@ -12,6 +12,8 @@ const publicFileNames = {};
 function processFile(fileName) {
   const language = path.basename(path.dirname(fileName));
   if (publicFileNames[language].includes(path.basename(fileName))) {
+    // eslint-disable-next-line no-console
+    console.log(`Merging ${fileName} with matching public namespace.`);
     const file = require(fileName);
     /* eslint-disable no-undef, no-console */
     const publicFile = path.join(
@@ -21,39 +23,24 @@ function processFile(fileName) {
     /* eslint-enable */
     const keys = Object.keys(file);
 
-    fs.readFile(publicFile, function(e, data) {
-      if (e) {
-        // eslint-disable-next-line no-console
-        return console.error(e);
-      }
+    const data = fs.readFileSync(publicFile);
 
-      const json = JSON.parse(data);
-      let hasConflict = false;
+    const json = JSON.parse(data);
 
-      for (let i = 0; i < keys.length; i++) {
-        if (!json.hasOwnProperty(keys[i])) {
-          json[keys[i]] = file[keys[i]];
-        } else {
-          hasConflict = true;
-          // eslint-disable-next-line no-console
-          console.log(`Conflict: Key "${keys[i]}" in ${publicFile} already exists.`);
-        }
-      }
-
-      fs.writeFile(publicFile, JSON.stringify(json, null, 2), function(err) {
-        if (err) {
-          // eslint-disable-next-line no-console
-          return console.error(err);
-        }
-      });
-
-      if (hasConflict) {
-        // eslint-disable-next-line no-console
-        console.log('Please edit conflicting keys and run yarn i18n again');
+    for (let i = 0; i < keys.length; i++) {
+      if (!json.hasOwnProperty(keys[i])) {
+        json[keys[i]] = file[keys[i]];
       } else {
-        common.deleteFile(fileName);
+        // eslint-disable-next-line no-console
+        console.log(
+          `Conflict: Key "${keys[i]}" in ${publicFile} already exists. Skipping merge for "${keys[i]}."`,
+        );
       }
-    });
+    }
+
+    fs.writeFileSync(publicFile, JSON.stringify(json, null, 2));
+
+    common.deleteFile(fileName);
   }
 }
 
