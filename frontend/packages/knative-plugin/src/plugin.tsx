@@ -113,8 +113,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       perspective: 'admin',
       section: 'Serverless',
       componentProps: {
-        name: 'Serving',
-        href: '/serving',
+        name: 'Eventing',
+        href: '/eventing',
       },
     },
     flags: {
@@ -289,6 +289,30 @@ const plugin: Plugin<ConsumedExtensions> = [
         (
           await import(
             './components/overview/serving-list/ServingListsPage' /* webpackChunkName: "serving-list-page" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/eventing'],
+      component: NamespaceRedirect,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: false,
+      path: ['/eventing/all-namespaces', '/eventing/ns/:ns'],
+      loader: async () =>
+        (
+          await import(
+            './components/eventing/EventingListPage' /* webpackChunkName: "eventing-list-page" */
           )
         ).default,
     },
