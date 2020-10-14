@@ -140,6 +140,8 @@ const AdminNav = () => (
       <ResourceNSLink resource="limitranges" name="Limit Ranges" />
       <HrefLink href={formatNamespacedRouteForResource(referenceForModel(ChargebackReportModel), 'openshift-metering')} name="Chargeback" required={[FLAGS.CHARGEBACK, FLAGS.CAN_LIST_CHARGEBACK_REPORTS]} startsWith={meteringStartsWith} />
       <ResourceClusterLink resource="customresourcedefinitions" name="Custom Resource Definitions" required={FLAGS.CAN_LIST_CRD} />
+      {/* 메뉴 추가 테스트 */}
+      {/* <ResourceNSLink resource="approvals" name="Approvals" /> */}
     </NavSection>
   </>
 );
