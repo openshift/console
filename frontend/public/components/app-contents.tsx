@@ -198,6 +198,7 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective, flags }) 
           <LazyRoute path={'/k8s/cluster/storageclasses/~new/form'} exact loader={() => import('./storage-class-form' /* webpackChunkName: "storage-class-form" */).then(m => m.StorageClassForm)} />
           <LazyRoute path="/k8s/cluster/:plural/~new" exact loader={() => import('./create-yaml' /* webpackChunkName: "create-yaml" */).then(m => m.CreateYAML)} />
           <LazyRoute path="/k8s/ns/:ns/:plural/~new" exact loader={() => import('./create-yaml' /* webpackChunkName: "create-yaml" */).then(m => NamespaceFromURL(m.CreateYAML))} />
+          <LazyRoute path="/k8s/ns/:ns/secrets/~new/:type" exact kind="Secret" loader={() => import('./secrets/create-secret' /* webpackChunkName: "create-secret" */).then((m) => m.CreateSecret,)} />
           <LazyRoute
             path="/k8s/ns/:ns/:plural/~new/:type"
             exact
