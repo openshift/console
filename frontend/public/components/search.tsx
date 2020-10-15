@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect, Dispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import {
   Accordion,
   AccordionContent,
@@ -86,7 +87,7 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
   const [labelFilterInput, setLabelFilterInput] = React.useState('');
   const [typeaheadNameFilter, setTypeaheadNameFilter] = React.useState('');
   const { namespace, noProjectsAvailable, pinnedResources } = props;
-
+  const { t } = useTranslation();
   // Set state variables from the URL
   React.useEffect(() => {
     let kind: string, q: string, name: string;
@@ -208,9 +209,9 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
   return (
     <>
       <Helmet>
-        <title>Search</title>
+        <title>{t('search~Search')}</title>
       </Helmet>
-      <PageHeading detail={true} title="Search">
+      <PageHeading detail={true} title={t('search~Search')}>
         <Toolbar
           id="search-toolbar"
           clearAllFilters={clearAll}
@@ -230,7 +231,7 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
                   ),
                 }))}
                 deleteChip={updateNewItems}
-                categoryName="Resource"
+                categoryName={t('search~Resource')}
               >
                 <ResourceListDropdown
                   selected={[...selectedItems]}
@@ -243,12 +244,12 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
                 deleteChipGroup={clearLabelFilter}
                 chips={[...labelFilter]}
                 deleteChip={removeLabelFilter}
-                categoryName="Label"
+                categoryName={t('search~Label')}
               >
                 <ToolbarFilter
                   chips={typeaheadNameFilter.length > 0 ? [typeaheadNameFilter] : []}
                   deleteChip={clearNameFilter}
-                  categoryName="Name"
+                  categoryName={t('search~Name')}
                 >
                   <SearchFilterDropdown
                     onChange={updateSearchFilter}
@@ -283,12 +284,12 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
                       {pinnedResources.includes(resource) ? (
                         <>
                           <MinusCircleIcon className="co-search-group__pin-toggle__icon" />
-                          Remove from navigation
+                          {t('search~Remove from navigation')}
                         </>
                       ) : (
                         <>
                           <PlusCircleIcon className="co-search-group__pin-toggle__icon" />
-                          Add to navigation
+                          {t('search~Add to navigation')}
                         </>
                       )}
                     </Button>
@@ -312,8 +313,8 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
         </Accordion>
         {selectedItems.size === 0 && (
           <MsgBox
-            title="No resources selected"
-            detail={<p>Select one or more resources from the dropdown.</p>}
+            title={t('search~No resources selected')}
+            detail={<p>{t('search~Select one or more resources from the dropdown.')}</p>}
           />
         )}
       </div>
