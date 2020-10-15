@@ -85,6 +85,18 @@ export type EventBrokerKind = {
   };
 } & K8sResourceKind;
 
+export enum TriggerConditionTypes {
+  Ready = 'Ready',
+  BrokerReady = 'BrokerReady',
+  DependencyReady = 'DependencyReady',
+  SubscriptionReady = 'SubscriptionReady',
+  SubscriberResolved = 'SubscriberResolved',
+}
+
+export type TriggerCondition = {
+  type: keyof typeof TriggerConditionTypes;
+} & K8sResourceCondition;
+
 export type EventTriggerKind = {
   metadata?: {
     generation?: number;
@@ -103,5 +115,8 @@ export type EventTriggerKind = {
         name: string;
       };
     };
+  };
+  status?: {
+    conditions?: TriggerCondition[];
   };
 } & K8sResourceKind;
