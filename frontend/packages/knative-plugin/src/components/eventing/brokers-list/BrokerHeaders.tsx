@@ -1,7 +1,7 @@
 import { sortable } from '@patternfly/react-table';
 import { Kebab } from '@console/internal/components/utils';
 
-const EventSourceHeaders = () => {
+const BrokerHeaders = () => {
   return [
     {
       title: 'Name',
@@ -14,7 +14,7 @@ const EventSourceHeaders = () => {
       transforms: [sortable],
     },
     {
-      title: 'Type',
+      title: 'Triggers',
       sortField: 'kind',
       transforms: [sortable],
     },
@@ -30,4 +30,4 @@ const EventSourceHeaders = () => {
   ];
 };
 
-export default EventSourceHeaders;
+export default BrokerHeaders;

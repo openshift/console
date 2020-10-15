@@ -5,6 +5,7 @@ import { NamespaceBar } from '@console/internal/components/namespace';
 import { MenuActions, MultiTabListPage } from '@console/shared';
 import EventSourceListPage from './eventsource-list/EventSourceListPage';
 import { ServiceModel } from '../../models';
+import BrokerListPage from './brokers-list/BrokerListPage';
 
 interface EventingListPageProps {
   match: Rmatch<{ ns: string }>;
@@ -23,6 +24,16 @@ const EventingListPage: React.FC<EventingListPageProps> = ({ match }) => {
       href: '',
       name: 'Event Sources',
       component: EventSourceListPage,
+      pageData: {
+        canCreate,
+        namespace,
+        showTitle,
+      },
+    },
+    {
+      href: 'brokers',
+      name: 'Brokers',
+      component: BrokerListPage,
       pageData: {
         canCreate,
         namespace,
