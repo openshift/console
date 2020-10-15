@@ -43,6 +43,7 @@ export const fetchEventSourcesCrd = async () => {
             names: { kind, plural, singular },
           },
         } = crd;
+        const label = kind.replace(/([A-Z])/g, ' $1').trim();
         const crdLatestVersion = getLatestVersionForCRD(crd);
         if (crdLatestVersion) {
           const sourceModel = {
@@ -51,8 +52,8 @@ export const fetchEventSourcesCrd = async () => {
             kind,
             plural,
             id: singular,
-            label: singular,
-            labelPlural: plural,
+            label,
+            labelPlural: `${label}s`,
             abbr: kindToAbbr(kind),
             namespaced: true,
             crd: true,
@@ -163,14 +164,15 @@ export const fetchChannelsCrd = async () => {
           },
         } = crd;
         const crdLatestVersion = getLatestVersionForCRD(crd);
+        const label = kind.replace(/([A-Z])/g, ' $1').trim();
         const sourceModel = {
           apiGroup: group,
           apiVersion: crdLatestVersion,
           kind,
           plural,
           id: singular,
-          label: singular,
-          labelPlural: plural,
+          label,
+          labelPlural: `${label}s`,
           abbr: kindToAbbr(kind),
           namespaced: true,
           crd: true,

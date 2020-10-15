@@ -2,12 +2,14 @@ import * as React from 'react';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { Kebab, ResourceKebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { K8sResourceCommon, referenceFor } from '@console/internal/module/k8s';
-import { getDynamicEventSourceModel } from '../../../utils/fetch-dynamic-eventsources-utils';
+import { EventingBrokerModel } from '../../../models';
 
-const EventSourceRow: RowFunction<K8sResourceCommon> = ({ obj, index, key, style }) => {
+const BrokerRow: RowFunction<K8sResourceCommon> = ({ obj, index, key, style }) => {
   const objReference = referenceFor(obj);
-  const kind = getDynamicEventSourceModel(objReference);
-  const menuActions = [...Kebab.getExtensionsActionsForKind(kind), ...Kebab.factory.common];
+  const menuActions = [
+    ...Kebab.getExtensionsActionsForKind(EventingBrokerModel),
+    ...Kebab.factory.common,
+  ];
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData>
@@ -21,7 +23,7 @@ const EventSourceRow: RowFunction<K8sResourceCommon> = ({ obj, index, key, style
       <TableData className="co-break-word">
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
-      <TableData>{kind.label}</TableData>
+      <TableData>{EventingBrokerModel.label}</TableData>
       <TableData>
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
@@ -32,4 +34,4 @@ const EventSourceRow: RowFunction<K8sResourceCommon> = ({ obj, index, key, style
   );
 };
 
-export default EventSourceRow;
+export default BrokerRow;
