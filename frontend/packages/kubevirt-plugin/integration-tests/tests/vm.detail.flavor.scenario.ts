@@ -12,12 +12,12 @@ import { selectOptionByText, getSelectedOptionText } from './utils/utils';
 import { getCPU, getMemory } from '../../src/selectors/vm/selectors';
 import { VMBuilder } from './models/vmBuilder';
 import { getBasicVMBuilder } from './mocks/vmBuilderPresets';
-import { provisionSources } from './mocks/mocks';
+import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 describe('KubeVirt VM detail - edit flavor', () => {
   const leakedResources = new Set<string>();
   const vm = new VMBuilder(getBasicVMBuilder())
-    .setProvisionSource(provisionSources.Container)
+    .setProvisionSource(ProvisionSource.CONTAINER)
     .build();
 
   afterEach(() => {

@@ -4,7 +4,12 @@ import { createItemButton, isLoaded } from '@console/internal-integration-tests/
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
 import { click, fillInput, asyncForEach } from '@console/shared/src/test-utils/utils';
 import { K8sKind } from '@console/internal/module/k8s';
-import { selectOptionByText, enabledAsBoolean } from '../utils/utils';
+import {
+  selectOptionByText,
+  enabledAsBoolean,
+  selectItemFromDropdown,
+  getResourceUID,
+} from '../utils/utils';
 import {
   CloudInitConfig,
   Disk,
@@ -22,10 +27,13 @@ import {
 import * as view from '../../views/wizard.view';
 import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
 import { DiskDialog } from '../dialogs/diskDialog';
-import { Flavor, ProvisionSource } from '../utils/constants/wizard';
+import { Flavor } from '../utils/constants/wizard';
 import { resourceHorizontalTab } from '../../views/uiResource.view';
 import { virtualizationTitle } from '../../views/vms.list.view';
 import { VMBuilderData } from '../types/vm';
+import { ProvisionSource } from '../utils/constants/enums/provisionSource';
+import { TemplateModel } from '@console/internal/models';
+import { templateCreateVMLink } from '../../views/template.view';
 
 export class Wizard {
   async openWizard(model: K8sKind) {
@@ -40,9 +48,17 @@ export class Wizard {
       await click(resourceHorizontalTab(VirtualMachineTemplateModel));
       await isLoaded();
     }
+
     await click(createItemButton);
     await click(view.createWithWizardButton);
     await view.waitForNoLoaders();
+  }
+
+  async openVMFromTemplateWizard(templateName: string, namespace: string) {
+    await click(resourceHorizontalTab(VirtualMachineTemplateModel));
+    await isLoaded();
+    const uid = getResourceUID(TemplateModel.kind, templateName, namespace);
+    await click(templateCreateVMLink(uid));
   }
 
   async closeWizard() {
@@ -75,16 +91,12 @@ export class Wizard {
     await fillInput(view.descriptionInput, description);
   }
 
-  async selectTemplate(template: string) {
-    await selectOptionByText(view.templateSelect, template);
-  }
-
   async selectOperatingSystem(operatingSystem: string) {
-    await selectOptionByText(view.operatingSystemSelect, operatingSystem);
+    await selectItemFromDropdown(view.operatingSystemSelect, view.dropDownItem(operatingSystem));
   }
 
   async selectFlavor(flavor: FlavorConfig) {
-    await selectOptionByText(view.flavorSelect, flavor.flavor);
+    await selectItemFromDropdown(view.flavorSelect, view.dropDownItem(flavor.flavor));
     if (flavor.flavor === Flavor.CUSTOM && (!flavor.memory || !flavor.cpu)) {
       throw Error('Custom Flavor requires memory and cpu values.');
     }
@@ -97,13 +109,33 @@ export class Wizard {
   }
 
   async selectWorkloadProfile(workloadProfile: string) {
-    await selectOptionByText(view.workloadProfileSelect, workloadProfile);
+    await selectItemFromDropdown(view.workloadProfileSelect, view.dropDownItem(workloadProfile));
   }
 
-  async selectProvisionSource(provisionOptions) {
-    await selectOptionByText(view.provisionSourceSelect, provisionOptions.method);
-    if (Object.prototype.hasOwnProperty.call(provisionOptions, 'source')) {
-      await fillInput(view.provisionSourceInputs[provisionOptions.method], provisionOptions.source);
+  async disableGoldenImageCloneCheckbox() {
+    try {
+      await browser.wait(until.presenceOf(view.goldenImageCloneCheckbox), 1000);
+      if (
+        (await view.goldenImageCloneCheckbox.isPresent()) &&
+        (await view.goldenImageCloneCheckbox.isSelected())
+      ) {
+        await click(view.goldenImageCloneCheckbox);
+      }
+    } catch {
+      // nothing
+    }
+  }
+
+  async selectProvisionSource(provisionSource: ProvisionSource) {
+    await selectItemFromDropdown(
+      view.provisionSourceSelect,
+      view.dropDownItemTitle(provisionSource.getDescription()),
+    );
+    if (provisionSource.getSource()) {
+      await fillInput(
+        view.provisionSourceInputs[provisionSource.getValue()],
+        provisionSource.getSource(),
+      );
     }
   }
 
@@ -199,7 +231,7 @@ export class Wizard {
   }
 
   async processGeneralStep(data: VMBuilderData) {
-    const { name, description, template, provisionSource, os, flavor, workload } = data;
+    const { name, description, provisionSource, os, flavor, workload } = data;
     if (name) {
       await this.fillName(name);
     } else {
@@ -211,18 +243,18 @@ export class Wizard {
     if ((await browser.getCurrentUrl()).match(/\?template=.+$/)) {
       // We are creating a VM from template via its action button
       // ProvisionSource, OS and workload are prefilled and disabled - ignoring them
-    } else if (template) {
-      await this.selectTemplate(template);
     } else {
-      if (provisionSource) {
-        await this.selectProvisionSource(provisionSource);
-      } else {
-        throw Error('VM Provision source not defined');
-      }
       if (os) {
         await this.selectOperatingSystem(os);
       } else {
         throw Error('VM OS not defined');
+      }
+
+      if (provisionSource) {
+        await this.disableGoldenImageCloneCheckbox();
+        await this.selectProvisionSource(provisionSource);
+      } else {
+        throw Error('VM Provision source not defined');
       }
       if (workload) {
         await this.selectWorkloadProfile(workload);
@@ -230,6 +262,7 @@ export class Wizard {
         throw Error('VM Workload not defined');
       }
     }
+
     if (flavor) {
       await this.selectFlavor(flavor);
     } else {
@@ -243,7 +276,7 @@ export class Wizard {
     for (const resource of networks) {
       await this.addNIC(resource);
     }
-    if (provisionSource?.method === ProvisionSource.PXE && template === undefined) {
+    if (provisionSource === ProvisionSource.PXE && template === undefined) {
       // Select the last NIC as the source for booting
       await this.selectBootableNIC(networks[networks.length - 1].name);
     }
@@ -258,7 +291,8 @@ export class Wizard {
       } else {
         await this.addDisk(disk);
       }
-      if (provisionSource?.method === ProvisionSource.DISK && disk.bootable) {
+
+      if (provisionSource === ProvisionSource.DISK && disk.bootable) {
         await this.selectBootableDisk(disk.name);
       }
     }

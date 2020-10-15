@@ -9,9 +9,10 @@ import { VirtualMachine } from './models/virtualMachine';
 import { getVMManifest } from './mocks/mocks';
 import { getNodes, getRandStr, labelNode, taintNode } from './utils/utils';
 import { MatchLabels } from '@console/internal/module/k8s';
+import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 describe('KubeVirt VM scheduling', () => {
-  const testVM = getVMManifest('Container', testName, `vm-${getRandStr(5)}`);
+  const testVM = getVMManifest(ProvisionSource.CONTAINER, testName, `vm-${getRandStr(5)}`);
   const vm: VirtualMachine = new VirtualMachine(testVM.metadata);
   const labels: MatchLabels = {
     key1: 'value1',

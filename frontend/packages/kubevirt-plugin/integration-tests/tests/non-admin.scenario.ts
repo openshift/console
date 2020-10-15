@@ -15,7 +15,8 @@ import { PAGE_LOAD_TIMEOUT_SECS, VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils
 import { VM_STATUS, VM_ACTION } from './utils/constants/vm';
 import { VMBuilder } from './models/vmBuilder';
 import { getBasicVMBuilder } from './mocks/vmBuilderPresets';
-import { provisionSources, rootDisk } from './mocks/mocks';
+import { rootDisk } from './mocks/mocks';
+import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 const testNonAdminNamespace = `${testName}-non-admin`;
 const KUBEADMIN_IDP = 'kube:admin';
@@ -31,7 +32,7 @@ describe('Kubevirt non-admin Flow', () => {
   const leakedResources = new Set<string>();
   const vm = new VMBuilder(getBasicVMBuilder())
     .setNamespace(testNonAdminNamespace)
-    .setProvisionSource(provisionSources.URL)
+    .setProvisionSource(ProvisionSource.URL)
     .setDisks([rootDisk])
     .build();
 

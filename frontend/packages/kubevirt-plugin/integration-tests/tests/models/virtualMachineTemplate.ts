@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
-import { cloneDeep } from 'lodash';
 import { click } from '@console/shared/src/test-utils/utils';
+import { cloneDeepWithEnum } from '@console/shared/src/constants/object-enum';
 import { detailViewAction, listViewAction } from '@console/shared/src/test-utils/actions.view';
 import { VirtualMachineTemplateModel } from '../types/types';
 import { getResourceUID } from '../utils/utils';
@@ -18,7 +18,7 @@ export class VirtualMachineTemplate extends KubevirtUIResource<VMTemplateBuilder
   }
 
   public getData(): VMTemplateBuilderData {
-    return cloneDeep(this.data);
+    return cloneDeepWithEnum(this.data);
   }
 
   async action(action: VMT_ACTION) {

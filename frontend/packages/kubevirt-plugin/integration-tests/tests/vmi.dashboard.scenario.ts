@@ -14,6 +14,7 @@ import { getVMIManifest } from './mocks/mocks';
 import { NOT_AVAILABLE } from './utils/constants/common';
 import { VirtualMachineInstance } from './models/virtualMachineInstance';
 import { VM_STATUS } from './utils/constants/vm';
+import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 const waitForVM = async (manifest: any, status: VM_STATUS) => {
   const vm = new VirtualMachineInstance(manifest.metadata);
@@ -23,7 +24,7 @@ const waitForVM = async (manifest: any, status: VM_STATUS) => {
 };
 
 describe('Test VMI dashboard', () => {
-  const testVM = getVMIManifest('Container', testName);
+  const testVM = getVMIManifest(ProvisionSource.CONTAINER, testName);
   let vmi: VirtualMachineInstance;
 
   afterAll(() => {

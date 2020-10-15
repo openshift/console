@@ -2,11 +2,7 @@ import { DISK_SOURCE, DISK_DRIVE, VM_STATUS } from '../utils/constants/vm';
 import { Flavor, OperatingSystem, Workload } from '../utils/constants/wizard';
 import { K8sKind } from '@console/internal/module/k8s';
 import { POD_STATUS } from '../utils/constants/pod';
-
-export type ProvisionSource = {
-  method: string;
-  source?: string;
-};
+import { ProvisionSource } from '../utils/constants/enums/provisionSource';
 
 export type Network = {
   name: string;

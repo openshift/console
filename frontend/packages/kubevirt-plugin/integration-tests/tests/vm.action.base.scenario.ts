@@ -23,10 +23,11 @@ import {
 import { VirtualMachine } from './models/virtualMachine';
 import { unpauseButton } from '../views/dialogs/editStatusView';
 import { VM_STATUS, VM_ACTION } from './utils/constants/vm';
+import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 describe('Test VM actions', () => {
   const leakedResources = new Set<string>();
-  const testVM = getVMManifest('Container', testName);
+  const testVM = getVMManifest(ProvisionSource.CONTAINER, testName);
 
   afterAll(async () => {
     removeLeakedResources(leakedResources);

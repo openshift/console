@@ -13,6 +13,7 @@ import { VM_DELETE_TIMEOUT_SECS, VM_IMPORT_TIMEOUT_SECS } from './utils/constant
 import { VirtualMachineInstance } from './models/virtualMachineInstance';
 import { VM_STATUS, VMI_ACTION } from './utils/constants/vm';
 import { BaseVirtualMachine } from './models/baseVirtualMachine';
+import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 const waitForVM = async (manifest: any, status: VM_STATUS, resourcesSet: Set<string>) => {
   const vmi = new VirtualMachineInstance(manifest.metadata);
@@ -39,7 +40,7 @@ describe('Test VMI actions', () => {
     let testVMI: any;
 
     beforeAll(async () => {
-      testVMI = getVMIManifest('Container', testName, `vm-list-actions-${testName}`);
+      testVMI = getVMIManifest(ProvisionSource.CONTAINER, testName, `vm-list-actions-${testName}`);
       vmi = await waitForVM(testVMI, VM_STATUS.Running, leakedResources);
     }, VM_IMPORT_TIMEOUT_SECS);
 
@@ -57,7 +58,11 @@ describe('Test VMI actions', () => {
     let testVMI: any;
 
     beforeAll(async () => {
-      testVMI = getVMIManifest('Container', testName, `vm-detail-actions-${testName}`);
+      testVMI = getVMIManifest(
+        ProvisionSource.CONTAINER,
+        testName,
+        `vm-detail-actions-${testName}`,
+      );
       vmi = await waitForVM(testVMI, VM_STATUS.Running, leakedResources);
     }, VM_IMPORT_TIMEOUT_SECS);
 

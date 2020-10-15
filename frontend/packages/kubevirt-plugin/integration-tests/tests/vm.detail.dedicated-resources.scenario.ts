@@ -9,9 +9,14 @@ import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/constants/common';
 import { VirtualMachine } from './models/virtualMachine';
 import { getVMManifest } from './mocks/mocks';
 import { getRandStr } from './utils/utils';
+import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 describe('KubeVirt VM detail - edit Dedicated Resources', () => {
-  const testVM = getVMManifest('Container', testName, `dedicatedresourcevm-${getRandStr(5)}`);
+  const testVM = getVMManifest(
+    ProvisionSource.CONTAINER,
+    testName,
+    `dedicatedresourcevm-${getRandStr(5)}`,
+  );
   const vm = new VirtualMachine(testVM.metadata);
   const isDedicatedCPU = () => expect(isDedicatedCPUPlacement(vm.getResource()));
 

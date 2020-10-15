@@ -1,5 +1,10 @@
 import { click, fillInput } from '@console/shared/src/test-utils/utils';
-import { selectOptionByText, getSelectedOptionText, getSelectOptions } from '../utils/utils';
+import {
+  selectOptionByText,
+  getSelectedOptionText,
+  getSelectOptions,
+  selectItemFromDropdown,
+} from '../utils/utils';
 import * as view from '../../views/dialogs/diskDialog.view';
 import { modalSubmitButton, saveButton } from '../../views/kubevirtUIResource.view';
 import { Disk, DiskSourceConfig } from '../types/types';
@@ -43,7 +48,7 @@ export class DiskDialog {
   }
 
   async selectInterface(diskInterface: string) {
-    await selectOptionByText(view.diskInterface, diskInterface);
+    await selectItemFromDropdown(view.diskInterface, view.diskDropDownItem(diskInterface));
   }
 
   async selectStorageClass(storageClass: string) {
@@ -97,7 +102,12 @@ export class DiskDialog {
 
   async create(disk: Disk) {
     await waitForNoLoaders();
-    await selectOptionByText(view.diskSource, disk.source || DISK_SOURCE.Blank);
+
+    await selectItemFromDropdown(
+      view.diskSource,
+      view.diskDropDownItem(disk.source || DISK_SOURCE.Blank),
+    );
+
     if (this.sourceMethods[disk.source] !== undefined) {
       await this.sourceMethods[disk.source](disk.sourceConfig);
     }
