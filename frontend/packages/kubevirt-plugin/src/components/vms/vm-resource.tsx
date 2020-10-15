@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ResourceSummary, NodeLink, ResourceLink } from '@console/internal/components/utils';
 import { K8sKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
-import { getName, getNamespace, getNodeName, usePodsWatcher } from '@console/shared';
+import { getName, getNamespace, getNodeName } from '@console/shared';
 import { PodModel } from '@console/internal/models';
 import { Selector } from '@console/internal/components/utils/selector';
 import { VMKind, VMIKind } from '../../types';
@@ -46,6 +46,7 @@ import { isFlavorChanged, isBootOrderChanged } from '../../selectors/vm-like/nex
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 import { VMIWrapper } from '../../k8s/wrapper/vm/vmi-wrapper';
 import { isVMRunningOrExpectedRunning } from '../../selectors/vm/selectors';
+import { usePodsForVm } from '../../utils/usePodsForVm';
 
 export const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
   title,
@@ -159,14 +160,14 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   );
 
   const canEditWhileVMRunning = vmiLike && canUpdateVM && kindObj !== VirtualMachineInstanceModel;
-  const { podData, loaded, loadError } = usePodsWatcher(vm);
+  const { podData, loaded, loadError } = usePodsForVm(vm);
 
   const launcherPod = React.useMemo(() => {
     if (loaded && !loadError) {
       return findVMIPod(vmi, podData.pods as PodKind[]);
     }
     return null;
-  }, [loadError, loaded, podData.pods, vmi]);
+  }, [loadError, loaded, podData, vmi]);
 
   const id = getBasicID(vmiLike);
   const devices = vmiLikeWrapper?.getLabeledDevices() || [];

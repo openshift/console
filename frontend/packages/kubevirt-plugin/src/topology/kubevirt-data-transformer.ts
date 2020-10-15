@@ -9,7 +9,6 @@ import {
   OverviewItem,
   getRoutesForServices,
   getBuildConfigsForResource,
-  getReplicationControllersForResource,
   getServicesForResource,
 } from '@console/shared';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
@@ -26,7 +25,6 @@ import {
 import { VMIKind, VMKind } from '../types';
 import { VirtualMachineModel } from '../models';
 import { TYPE_VIRTUAL_MACHINE } from './components/const';
-import { findVMIPod } from '../selectors/pod/selectors';
 import { getVMStatus } from '../statuses/vm/vm-status';
 import { V1alpha1DataVolume } from '../types/vm/disk/V1alpha1DataVolume';
 import { VMImportKind } from '../types/vm-import/ovirt/vm-import';
@@ -49,23 +47,13 @@ export const createVMOverviewItem = (vm: K8sResourceKind, resources: any): Overv
   if (!vm.kind) {
     vm.kind = VirtualMachineModel.kind;
   }
-  const { name } = vm.metadata;
-  const vmis = resources.virtualmachineinstances.data;
-  const vmi = vmis.find((instance) => instance.metadata.name === name) as VMIKind;
-  const { visibleReplicationControllers } = getReplicationControllersForResource(vm, resources);
-  const [current, previous] = visibleReplicationControllers;
   const buildConfigs = getBuildConfigsForResource(vm, resources);
   const services = getServicesForResource(vm, resources);
   const routes = getRoutesForServices(services, resources);
-  const laucherPod = findVMIPod(vmi, resources.pods.data);
-  const pods = laucherPod ? [laucherPod] : [];
 
-  const overviewItems = {
+  const overviewItems: OverviewItem = {
     buildConfigs,
-    current,
     obj: vm,
-    previous,
-    pods,
     routes,
     services,
     isMonitorable: false,
