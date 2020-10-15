@@ -431,7 +431,7 @@ export const UtilizationCard = () => {
   return (
     <DashboardCard data-test-id="utilization-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>{t('dashboard~Cluster Utilization')}</DashboardCardTitle>
+        <DashboardCardTitle>{t('dashboard~Cluster utilization')}</DashboardCardTitle>
         <Dropdown items={Duration} onChange={setDuration} selectedKey={duration} title={duration} />
       </DashboardCardHeader>
       <UtilizationBody timestamps={timestamps}>

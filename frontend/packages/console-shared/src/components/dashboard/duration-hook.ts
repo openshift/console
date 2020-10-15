@@ -2,9 +2,9 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
 export enum Duration {
-  ONE_HR = '1 Hour',
-  SIX_HR = '6 Hours',
-  TWENTY_FOUR_HR = '24 Hours',
+  ONE_HR = '1 hour',
+  SIX_HR = '6 hours',
+  TWENTY_FOUR_HR = '24 hours',
 }
 
 export const TranslatedDuration: React.FC<TranslatedDurationProps> = ({ duration }) => {

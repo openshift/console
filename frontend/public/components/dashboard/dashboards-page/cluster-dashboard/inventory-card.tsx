@@ -127,7 +127,7 @@ export const InventoryCard = () => {
   return (
     <DashboardCard data-test-id="inventory-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>{t('dashboard~Cluster Inventory')}</DashboardCardTitle>
+        <DashboardCardTitle>{t('dashboard~Cluster inventory')}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
         {mergedItems.map((item) => (
