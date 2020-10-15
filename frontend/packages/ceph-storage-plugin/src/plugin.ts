@@ -270,23 +270,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       disallowed: [OCS_INDEPENDENT_FLAG],
     },
   },
-  // Download External Cluster Metadata
-  {
-    type: 'ClusterServiceVersion/Action',
-    properties: {
-      kind: 'StorageCluster',
-      label: 'Download Cluster Metadata',
-      apiGroup: models.OCSServiceModel.apiGroup,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      callback: (_kind, _obj) => () =>
-        import(
-          './components/converged-credentials/credentials' /* webpackChunkName: "ceph-storage-export-credentials" */
-        ).then((m) => m.default({})),
-    },
-    flags: {
-      disallowed: [OCS_INDEPENDENT_FLAG],
-    },
-  },
   {
     type: 'Dashboards/Tab',
     properties: {
