@@ -1,0 +1,41 @@
+import * as React from 'react';
+import { Node } from '@patternfly/react-topology';
+import {
+  TYPE_KNATIVE_SERVICE,
+  TYPE_SINK_URI,
+  TYPE_EVENT_SOURCE,
+  TYPE_EVENT_SOURCE_LINK,
+  TYPE_EVENT_PUB_SUB,
+  TYPE_EVENT_PUB_SUB_LINK,
+  TYPE_KNATIVE_REVISION,
+} from '../const';
+import { KnativeServiceListViewNode } from './KnativeServiceListViewNode';
+import { SinkUriListViewNode } from './SinkUriListViewNode';
+import { NoStatusListViewNode } from './NoStatusListViewNode';
+import { KnativeRevisionListViewNode } from './KnativeRevisionListViewNode';
+
+export const knativeListViewNodeComponentFactory = (
+  type,
+):
+  | React.ComponentType<{
+      item: Node;
+      selectedIds: string[];
+      onSelect: (ids: string[]) => void;
+    }>
+  | undefined => {
+  switch (type) {
+    case TYPE_KNATIVE_SERVICE:
+      return KnativeServiceListViewNode;
+    case TYPE_KNATIVE_REVISION:
+      return KnativeRevisionListViewNode;
+    case TYPE_SINK_URI:
+      return SinkUriListViewNode;
+    case TYPE_EVENT_PUB_SUB_LINK:
+    case TYPE_EVENT_SOURCE:
+    case TYPE_EVENT_SOURCE_LINK:
+    case TYPE_EVENT_PUB_SUB:
+      return NoStatusListViewNode;
+    default:
+      return null;
+  }
+};

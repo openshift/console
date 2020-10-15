@@ -7,18 +7,13 @@ import {
 } from '@console/dev-console/src/components/topology';
 import { DataListCell } from '@patternfly/react-core';
 
-interface KnativeServiceListViewNodeProps {
+interface SinkUriListViewNodeProps {
   item: OdcBaseNode;
   selectedIds: string[];
   onSelect: (ids: string[]) => void;
 }
 
-const ObservedSinkUriListViewNode: React.FC<KnativeServiceListViewNodeProps> = ({
-  item,
-  selectedIds,
-  onSelect,
-  children,
-}) => {
+const ObservedSinkUriListViewNode: React.FC<SinkUriListViewNodeProps> = ({ item, ...rest }) => {
   const sinkUri = item.getResource()?.spec?.sinkUri;
 
   const labelCell = (
@@ -28,16 +23,7 @@ const ObservedSinkUriListViewNode: React.FC<KnativeServiceListViewNodeProps> = (
     </DataListCell>
   );
 
-  return (
-    <TopologyListViewNode
-      item={item}
-      selectedIds={selectedIds}
-      onSelect={onSelect}
-      labelCell={labelCell}
-    >
-      {children}
-    </TopologyListViewNode>
-  );
+  return <TopologyListViewNode item={item} labelCell={labelCell} noPods {...rest} />;
 };
 
 const SinkUriListViewNode = observer(ObservedSinkUriListViewNode);

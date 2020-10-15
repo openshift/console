@@ -2,9 +2,9 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Node } from '@patternfly/react-topology';
 import { DataListCell, Tooltip } from '@patternfly/react-core';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { formatBytesAsMiB, formatCores, truncateMiddle } from '@console/internal/components/utils';
-import { useOverviewMetrics } from '../../../../utils/useOverviewMetrics';
+import { formatBytesAsMiB, truncateMiddle } from '@console/internal/components/utils';
+import { getTopologyResourceObject } from '../../topology-utils';
+import { useMetricStats } from '../useMetricStats';
 import { isMobile } from '../list-view-utils';
 
 import './MemoryCell.scss';
@@ -65,52 +65,38 @@ const MemoryTooltip: React.FC<MetricsTooltipProps> = ({ metricLabel, byPod, chil
     </Tooltip>
   );
 };
+interface MemoryCellComponentProps {
+  totalBytes: number;
+  memoryByPod: any;
+}
+
+export const MemoryCellComponent: React.FC<MemoryCellComponentProps> = React.memo(
+  ({ totalBytes, memoryByPod }) => (
+    <div className="odc-topology-list-view__metrics-cell__detail--memory">
+      <MemoryTooltip metricLabel="Memory" byPod={memoryByPod}>
+        <span>
+          <span className="odc-topology-list-view__metrics-cell__metric-value">
+            {formatBytesAsMiB(totalBytes)}
+          </span>
+          &nbsp;
+          <span className="odc-topology-list-view__metrics-cell__metric-unit">MiB</span>
+        </span>
+      </MemoryTooltip>
+    </div>
+  ),
+);
 
 export const MemoryCell: React.FC<MemoryCellProps> = ({ item }) => {
-  const { resources } = item.getData();
-  const metrics = useOverviewMetrics();
-  const getPods = () => {
-    if (resources.obj.kind === 'Pod') {
-      return [resources.obj];
-    }
-    return resources.current ? resources.current.pods : resources.pods;
-  };
-
-  let totalBytes = 0;
-  let totalCores = 0;
-  const memoryByPod = [];
-  const cpuByPod = [];
-  _.each(getPods(), ({ metadata: { name } }: K8sResourceKind) => {
-    const bytes = _.get(metrics, ['memory', name]);
-    if (_.isFinite(bytes)) {
-      totalBytes += bytes;
-      const formattedValue = `${formatBytesAsMiB(bytes)} MiB`;
-      memoryByPod.push({ name, value: bytes, formattedValue });
-    }
-
-    const cores = _.get(metrics, ['cpu', name]);
-    if (_.isFinite(cores)) {
-      totalCores += cores;
-      cpuByPod[name] = `${formatCores(cores)} cores`;
-      const formattedValue = `${formatCores(cores)} cores`;
-      cpuByPod.push({ name, value: cores, formattedValue });
-    }
-  });
+  const resource = getTopologyResourceObject(item.getData());
+  const memoryStats = useMetricStats(resource);
 
   return (
     <DataListCell id={`${item.getId()}_memory`}>
-      {_.isEmpty(metrics) || !totalBytes || !totalCores ? null : (
-        <div className="odc-topology-list-view__metrics-cell__detail--memory">
-          <MemoryTooltip metricLabel="Memory" byPod={memoryByPod}>
-            <span>
-              <span className="odc-topology-list-view__metrics-cell__metric-value">
-                {formatBytesAsMiB(totalBytes)}
-              </span>
-              &nbsp;
-              <span className="odc-topology-list-view__metrics-cell__metric-unit">MiB</span>
-            </span>
-          </MemoryTooltip>
-        </div>
+      {!memoryStats || !memoryStats.totalBytes || !memoryStats.totalCores ? null : (
+        <MemoryCellComponent
+          totalBytes={memoryStats.totalBytes}
+          memoryByPod={memoryStats.memoryByPod}
+        />
       )}
     </DataListCell>
   );
