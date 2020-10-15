@@ -76,4 +76,8 @@ type CommonFormProps_ = {
   onSubmitCallback: Function;
   saveButtonText?: string;
   explanation?: string;
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> feature/i18n

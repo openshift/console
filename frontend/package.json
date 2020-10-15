@@ -116,6 +116,7 @@
     "react-dom": "^16.9.0",
     "react-draggable": "4.x",
     "react-helmet": "^5.2.1",
+    "react-i18next": "^11.7.3",
     "react-hook-form": "^6.9.0",
     "react-jsonschema-form": "1.7.0",
     "react-linkify": "^0.2.2",
