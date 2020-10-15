@@ -191,6 +191,27 @@ export const fetchChannelsCrd = async () => {
   return eventSourceData.eventSourceChannels;
 };
 
+export const useChannelModels = () => {
+  const [modelsData, setModelsData] = useSafetyFirst({ loaded: false, eventSourceChannels: [] });
+  useEffect(() => {
+    if (eventSourceData.eventSourceChannels.length === 0) {
+      fetchChannelsCrd()
+        .then((data) => {
+          setModelsData({ loaded: true, eventSourceChannels: data });
+        })
+        .catch((err) => {
+          setModelsData({ loaded: true, eventSourceChannels: eventSourceData.eventSourceChannels });
+          // eslint-disable-next-line no-console
+          console.warn('Error fetching CRDs for dynamic event sources', err);
+        });
+    } else {
+      setModelsData({ loaded: true, eventSourceChannels: eventSourceData.eventSourceChannels });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return modelsData;
+};
+
 export const getDynamicChannelResourceList = (namespace: string, limit?: number) => {
   return eventSourceData.eventSourceChannels.map((model) => {
     return {
@@ -248,6 +269,11 @@ export const useChannelResourcesList = (): EventChannelData => {
 
 export const getDynamicChannelModelRefs = (): string[] => {
   return eventSourceData.eventSourceChannels.map((model: K8sKind) => referenceForModel(model));
+};
+export const getDynamicChannelModel = (resourceRef: string): K8sKind => {
+  return eventSourceData.eventSourceChannels.find(
+    (model: K8sKind) => referenceForModel(model) === resourceRef,
+  );
 };
 
 export const isEventingChannelResourceKind = (resourceRef: string): boolean => {

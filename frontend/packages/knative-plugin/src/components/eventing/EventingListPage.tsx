@@ -4,8 +4,8 @@ import { Page } from '@console/internal/components/utils';
 import { NamespaceBar } from '@console/internal/components/namespace';
 import { MenuActions, MultiTabListPage } from '@console/shared';
 import EventSourceListPage from './eventsource-list/EventSourceListPage';
-import { ServiceModel } from '../../models';
 import BrokerListPage from './brokers-list/BrokerListPage';
+import ChannelListPage from './channels-list/ChannelListPage';
 
 interface EventingListPageProps {
   match: Rmatch<{ ns: string }>;
@@ -17,7 +17,8 @@ const EventingListPage: React.FC<EventingListPageProps> = ({ match }) => {
   } = match;
   const [showTitle, canCreate] = [false, false];
   const menuActions: MenuActions = {
-    service: { model: ServiceModel },
+    eventSource: { label: 'Event Source', onSelection: () => `/event-source/ns/${namespace}` },
+    channels: { label: 'Channel', onSelection: () => `/channel/ns/${namespace}` },
   };
   const pages: Page[] = [
     {
@@ -34,6 +35,16 @@ const EventingListPage: React.FC<EventingListPageProps> = ({ match }) => {
       href: 'brokers',
       name: 'Brokers',
       component: BrokerListPage,
+      pageData: {
+        canCreate,
+        namespace,
+        showTitle,
+      },
+    },
+    {
+      href: 'channels',
+      name: 'Channels',
+      component: ChannelListPage,
       pageData: {
         canCreate,
         namespace,

@@ -31,9 +31,12 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
   } = match;
   const onSelectCreateAction = (actionName: string): void => {
     const selectedMenuItem: MenuAction = menuActions[actionName];
-    const namespace = selectedMenuItem.model.namespaced ? ns || 'default' : ns;
-    const modelRef = referenceForModel(selectedMenuItem.model);
-    let url = namespace ? `/k8s/ns/${namespace}/${modelRef}/~new` : `/k8s/cluster/${modelRef}/~new`;
+    let url: string;
+    if (selectedMenuItem.model) {
+      const namespace = selectedMenuItem.model.namespaced ? ns || 'default' : ns;
+      const modelRef = referenceForModel(selectedMenuItem.model);
+      url = namespace ? `/k8s/ns/${namespace}/${modelRef}/~new` : `/k8s/cluster/${modelRef}/~new`;
+    }
     if (selectedMenuItem.onSelection) {
       url = selectedMenuItem.onSelection(actionName, selectedMenuItem, url);
     }
