@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import { cloneDeepCustom } from '@console/shared/src/constants/object-enum';
 import { OperatingSystem, Workload, OSIDLookup } from '../utils/constants/wizard';
 import { FlavorConfig, Disk, Network, CloudInitConfig } from '../types/types';
 import { BaseVMBuilderData } from '../types/vm';
@@ -142,6 +142,6 @@ export abstract class BaseVMBuilder<T extends BaseVMBuilderData> {
   }
 
   public getData(): T {
-    return _.cloneDeep(this.data);
+    return cloneDeepCustom(this.data);
   }
 }

@@ -32,3 +32,12 @@ export abstract class ObjectEnum<T> {
     return _.toString(this.value);
   }
 }
+
+export const cloneDeepCustom = (object) => {
+  return _.cloneDeepWith(object, (value) => {
+    if (value instanceof ObjectEnum) {
+      return value;
+    }
+    return undefined;
+  });
+};

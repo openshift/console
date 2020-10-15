@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop, no-console */
-import { cloneDeep } from 'lodash';
 import { browser, ExpectedConditions as until } from 'protractor';
+import { cloneDeepCustom } from '@console/shared/src/constants/object-enum';
 import {
   waitForStringNotInElement,
   click,
@@ -34,7 +34,7 @@ export class VirtualMachine extends BaseVirtualMachine {
   }
 
   getData(): VMBuilderData {
-    return cloneDeep(this.data);
+    return cloneDeepCustom(this.data);
   }
 
   /**

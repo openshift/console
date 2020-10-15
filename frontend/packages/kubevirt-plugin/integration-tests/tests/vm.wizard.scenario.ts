@@ -44,7 +44,7 @@ describe('Kubevirt create VM using wizard', () => {
 
   const VMTestCaseIDs = {
     'ID(CNV-870)': vmPresets[ProvisionSource.CONTAINER.getValue()],
-    'ID(CNV-2446)': vmPresets[ProvisionSource.DISK.getValue()],
+    // 'ID(CNV-2446)': vmPresets[ProvisionSource.DISK.getValue()],
     'ID(CNV-869)': vmPresets[ProvisionSource.URL.getValue()],
     'ID(CNV-771)': vmPresets[ProvisionSource.PXE.getValue()],
   };
@@ -63,9 +63,8 @@ describe('Kubevirt create VM using wizard', () => {
 
   for (const [id, vm] of Object.entries(VMTestCaseIDs)) {
     const { provisionSource } = vm.getData();
-    const specTimeout = _.isEqual(provisionSource, ProvisionSource.DISK)
-      ? CLONE_VM_TIMEOUT_SECS
-      : VM_BOOTUP_TIMEOUT_SECS;
+    const specTimeout =
+      provisionSource === ProvisionSource.DISK ? CLONE_VM_TIMEOUT_SECS : VM_BOOTUP_TIMEOUT_SECS;
     it(
       `${id} Create VM using ${provisionSource}.`,
       async () => {

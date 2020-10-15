@@ -1,5 +1,4 @@
 /* eslint-disable no-await-in-loop */
-import * as _ from 'lodash';
 import { browser, ExpectedConditions as until } from 'protractor';
 import { createItemButton, isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
@@ -252,10 +251,12 @@ export class Wizard {
         throw Error('VM OS not defined');
       }
 
-      if (provisionSource && !_.isEqual(provisionSource, ProvisionSource.DISK)) {
-        await this.disableGoldenImageCloneCheckbox();
-        await this.selectProvisionSource(provisionSource);
-      } else if (!_.isEqual(provisionSource, ProvisionSource.DISK)) {
+      if (provisionSource) {
+        if (provisionSource === ProvisionSource.DISK) {
+          await this.disableGoldenImageCloneCheckbox();
+          await this.selectProvisionSource(provisionSource);
+        }
+      } else {
         throw Error('VM Provision source not defined');
       }
       if (workload) {
@@ -278,7 +279,7 @@ export class Wizard {
     for (const resource of networks) {
       await this.addNIC(resource);
     }
-    if (_.isEqual(provisionSource, ProvisionSource.PXE) && template === undefined) {
+    if (provisionSource === ProvisionSource.PXE && template === undefined) {
       // Select the last NIC as the source for booting
       await this.selectBootableNIC(networks[networks.length - 1].name);
     }
@@ -294,7 +295,7 @@ export class Wizard {
         await this.addDisk(disk);
       }
 
-      if (provisionSource?.getValue() === ProvisionSource.DISK.getValue() && disk.bootable) {
+      if (provisionSource === ProvisionSource.DISK && disk.bootable) {
         await this.selectBootableDisk(disk.name);
       }
     }
