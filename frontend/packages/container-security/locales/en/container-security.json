@@ -19,5 +19,15 @@
   "Container": "Container",
   "Image": "Image",
   "Security Scan": "Security Scan",
-  "No vulnerabilities found": "No vulnerabilities found"
+  "No vulnerabilities found": "No vulnerabilities found",
+  "{{fixableCount, number}} of {{totalCount, number}} fixable": "{{fixableCount, number}} of {{totalCount, number}} fixable",
+  "This project's container images from Quay are analyzed to identify vulnerabilities. Images from other registries are not scanned.": "This project's container images from Quay are analyzed to identify vulnerabilities. Images from other registries are not scanned.",
+  "Container images from Quay are analyzed to identify vulnerabilities. Images from other registries are not scanned.": "Container images from Quay are analyzed to identify vulnerabilities. Images from other registries are not scanned.",
+  "Vulnerable Container Images": "Vulnerable Container Images",
+  "View all": "View all",
+  "{{vulnImageCount, number}} total": "{{vulnImageCount, number}} total",
+  "Fixable Container Images": "Fixable Container Images",
+  "Impact": "Impact",
+  "Vulnerabilities": "Vulnerabilities",
+  "No vulnerabilities detected.": "No vulnerabilities detected."
 }

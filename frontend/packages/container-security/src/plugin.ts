@@ -13,11 +13,11 @@ import {
   HorizontalNavTab,
 } from '@console/plugin-sdk';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
+import { NamespaceModel, PodModel, ProjectModel } from '@console/internal/models';
 import { ImageManifestVulnModel } from './models';
 import { ContainerSecurityFlag } from './const';
 import { securityHealthHandler } from './components/summary';
 import { WatchImageVuln } from './types';
-import { NamespaceModel, PodModel, ProjectModel } from '@console/internal/models';
 
 type ConsumedExtensions =
   | ModelDefinition
