@@ -22,7 +22,7 @@ import CloudShell from '@console/app/src/components/cloud-shell/CloudShell';
 import CloudShellTab from '@console/app/src/components/cloud-shell/CloudShellTab';
 import '../vendor.scss';
 import '../style.scss';
-
+import './hypercloud/utils/langs/i18n';
 //PF4 Imports
 import { Page } from '@patternfly/react-core';
 
@@ -86,7 +86,7 @@ class App extends React.PureComponent {
       window.dispatchEvent(new Event('sidebar_toggle'));
     }, 100);
 
-    this.setState((prevState) => {
+    this.setState(prevState => {
       return {
         isNavOpen: !prevState.isNavOpen,
       };
@@ -130,20 +130,8 @@ class App extends React.PureComponent {
       <>
         <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
         <ConsoleNotifier location="BannerTop" />
-        <Page
-          header={<Masthead onNavToggle={this._onNavToggle} />}
-          sidebar={
-            <Navigation
-              isNavOpen={isNavOpen}
-              onNavSelect={this._onNavSelect}
-              onPerspectiveSelected={this._onNavSelect}
-            />
-          }
-        >
-          <ConnectedNotificationDrawer
-            isDesktop={isDrawerInline}
-            onDrawerChange={this._onNotificationDrawerToggle}
-          >
+        <Page header={<Masthead onNavToggle={this._onNavToggle} />} sidebar={<Navigation isNavOpen={isNavOpen} onNavSelect={this._onNavSelect} onPerspectiveSelected={this._onNavSelect} />}>
+          <ConnectedNotificationDrawer isDesktop={isDrawerInline} onDrawerChange={this._onNotificationDrawerToggle}>
             <AppContents />
           </ConnectedNotificationDrawer>
         </Page>
@@ -158,7 +146,7 @@ const startDiscovery = () => store.dispatch(watchAPIServices());
 
 // Load cached API resources from localStorage to speed up page load.
 getCachedResources()
-  .then((resources) => {
+  .then(resources => {
     if (resources) {
       store.dispatch(receivedResources(resources));
     }
@@ -177,7 +165,7 @@ fetchSwagger();
 
 // Used by GUI tests to check for unhandled exceptions
 window.windowError = false;
-window.onerror = window.onunhandledrejection = (e) => {
+window.onerror = window.onunhandledrejection = e => {
   // eslint-disable-next-line no-console
   console.error('Uncaught error', e);
   window.windowError = e || true;
@@ -188,14 +176,7 @@ if ('serviceWorker' in navigator) {
     // eslint-disable-next-line import/no-unresolved
     import('file-loader?name=load-test.sw.js!../load-test.sw.js')
       .then(() => navigator.serviceWorker.register('/load-test.sw.js'))
-      .then(
-        () =>
-          new Promise((r) =>
-            navigator.serviceWorker.controller
-              ? r()
-              : navigator.serviceWorker.addEventListener('controllerchange', () => r()),
-          ),
-      )
+      .then(() => new Promise(r => (navigator.serviceWorker.controller ? r() : navigator.serviceWorker.addEventListener('controllerchange', () => r()))))
       .then(() =>
         navigator.serviceWorker.controller.postMessage({
           topic: 'setFactor',
@@ -205,9 +186,9 @@ if ('serviceWorker' in navigator) {
   } else {
     navigator.serviceWorker
       .getRegistrations()
-      .then((registrations) => registrations.forEach((reg) => reg.unregister()))
+      .then(registrations => registrations.forEach(reg => reg.unregister()))
       // eslint-disable-next-line no-console
-      .catch((e) => console.warn('Error unregistering service workers', e));
+      .catch(e => console.warn('Error unregistering service workers', e));
   }
 }
 
