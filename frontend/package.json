@@ -12,7 +12,7 @@
     "clean": "rm -rf ./public/dist",
     "dev": "yarn clean && NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack-dev-server",
     "dev-once": "yarn clean && NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=development",
-    "build": "yarn clean && NODE_ENV=development NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=development",
+    "build": "yarn clean && NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=production",
     "check-cycles": "CHECK_CYCLES=true yarn dev-once",
     "coverage": "jest --coverage .",
     "eslint": "eslint --ext .js,.jsx,.ts,.tsx,.json --color",
@@ -76,7 +76,6 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.9.0",
-    "@hookform/devtools": "^2.2.1",
     "@patternfly/patternfly": "2.71.5",
     "@patternfly/react-catalog-view-extension": "1.4.58",
     "@patternfly/react-charts": "5.3.19",
@@ -94,6 +93,7 @@
     "formik": "2.0.3",
     "fuzzysearch": "1.0.x",
     "history": "4.x",
+    "i18next": "^19.8.2",
     "immutable": "3.x",
     "js-base64": "^2.5.1",
     "js-yaml": "^3.13.1",
@@ -116,7 +116,7 @@
     "react-dom": "^16.9.0",
     "react-draggable": "4.x",
     "react-helmet": "^5.2.1",
-    "react-hook-form": "^6.9.0",
+    "react-i18next": "^11.7.3",
     "react-jsonschema-form": "1.7.0",
     "react-linkify": "^0.2.2",
     "react-measure": "^2.2.6",
@@ -215,6 +215,5 @@
   },
   "resolutions": {
     "jquery": "3.5.1"
-  },
-  "version": "0.0.0"
+  }
 }
