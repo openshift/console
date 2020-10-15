@@ -1,8 +1,12 @@
 import * as React from 'react';
 import { MultiListPage } from '@console/internal/components/factory';
 import EventSourceList from './EventSourceList';
-import { useEventSourceModels } from '../../../utils/fetch-dynamic-eventsources-utils';
-import { referenceForModel } from '@console/internal/module/k8s';
+import {
+  getDynamicEventSourceModel,
+  useEventSourceModels,
+} from '../../../utils/fetch-dynamic-eventsources-utils';
+import { K8sResourceKind, referenceFor, referenceForModel } from '@console/internal/module/k8s';
+import { RowFilter } from '@console/internal/components/filter-toolbar';
 
 const EventSourceListPage: React.FC<React.ComponentProps<typeof MultiListPage>> = (props) => {
   const { loaded: modelsLoaded, eventSourceModels } = useEventSourceModels();
@@ -27,9 +31,34 @@ const EventSourceListPage: React.FC<React.ComponentProps<typeof MultiListPage>> 
         : [],
     [eventSourceModels, modelsLoaded],
   );
+  const getModelId = React.useCallback((obj: K8sResourceKind) => {
+    const reference = referenceFor(obj);
+    const model = getDynamicEventSourceModel(reference);
+    return model.id;
+  }, []);
+
+  const rowFilterReducer = React.useCallback(
+    ({ selected }: { selected: Set<string>; all: string[] }, obj: K8sResourceKind) =>
+      selected.size === 0 || selected.has(getModelId(obj)),
+    [getModelId],
+  );
+
+  const eventSourceRowFilters: RowFilter[] = React.useMemo(
+    () => [
+      {
+        filterGroupName: 'Type',
+        type: 'event-source-type',
+        items: eventSourceModels.map(({ id, label }) => ({ id, title: label })),
+        reducer: getModelId,
+        filter: rowFilterReducer,
+      },
+    ],
+    [eventSourceModels, getModelId, rowFilterReducer],
+  );
   return (
     <MultiListPage
       {...props}
+      rowFilters={eventSourceRowFilters}
       flatten={flatten}
       resources={resources}
       ListComponent={EventSourceList}
