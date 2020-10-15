@@ -902,6 +902,13 @@
   dependencies:
     regenerator-runtime "^0.13.2"
 
+"@babel/runtime@^7.10.1", "@babel/runtime@^7.3.1":
+  version "7.12.0"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.12.0.tgz#98bd7666186969c04be893d747cf4a6c6c8fa6b0"
+  integrity sha512-lS4QLXQ2Vbw2ubfQjeQcn+BZgZ5+ROHW9f+DWjEp5Y+NHYmkRGKqHSJ1tuhbUauKu2nhZNTBIvsIQ8dXfY5Gjw==
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
 "@babel/runtime@^7.3.4", "@babel/runtime@^7.5.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.3":
   version "7.6.3"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.6.3.tgz#935122c74c73d2240cafd32ddb5fc2a6cd35cf1f"
@@ -8386,6 +8393,13 @@ html-minifier@^4.0.0:
     relateurl "^0.2.7"
     uglify-js "^3.5.1"
 
+html-parse-stringify2@2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/html-parse-stringify2/-/html-parse-stringify2-2.0.1.tgz#dc5670b7292ca158b7bc916c9a6735ac8872834a"
+  integrity sha1-3FZwtyksoVi3vJFsmmc1rIhyg0o=
+  dependencies:
+    void-elements "^2.0.1"
+
 html-tokenize@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/html-tokenize/-/html-tokenize-2.0.0.tgz#8b3a9a5deb475cae6a6f9671600d2c20ab298251"
@@ -8550,6 +8564,13 @@ humps@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/humps/-/humps-2.0.1.tgz#dd02ea6081bd0568dc5d073184463957ba9ef9aa"
   integrity sha1-3QLqYIG9BWjcXQcxhEY5V7qe+ao=
+
+i18next@^19.8.2:
+  version "19.8.2"
+  resolved "https://registry.yarnpkg.com/i18next/-/i18next-19.8.2.tgz#8a20ee098c4702f14aae6dee3ecc39245a6a161e"
+  integrity sha512-YWqkUpwnmeZxbNxhQ4BENC27BlXnq4kD6NlqMUwX7T6ZN3alNnBXsWrh/8mJ37BL5cKMZaqA0k/YUo4o6rLfpA==
+  dependencies:
+    "@babel/runtime" "^7.10.1"
 
 iconv-lite@0.4, iconv-lite@0.4.24, iconv-lite@^0.4.24, iconv-lite@~0.4.13:
   version "0.4.24"
@@ -13157,6 +13178,14 @@ react-hotkeys@2.0.0-pre4:
   dependencies:
     prop-types "^15.6.1"
 
+react-i18next@^11.7.3:
+  version "11.7.3"
+  resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-11.7.3.tgz#256461c46baf5b3208c3c6860ca4e569fc7ed053"
+  integrity sha512-7sYZqVZgdaS9Z0ZH6nuJFErCD0zz5wK3jR4/xCrWjZcxHHF3GRu7BXdicbSPprZV4ZYz7LJzxxMHO7dg5Qb70A==
+  dependencies:
+    "@babel/runtime" "^7.3.1"
+    html-parse-stringify2 "2.0.1"
+
 react-inspector@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/react-inspector/-/react-inspector-3.0.2.tgz#c530a06101f562475537e47df428e1d7aff16ed8"
@@ -16397,6 +16426,11 @@ vm-browserify@^1.0.1:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/vm-browserify/-/vm-browserify-1.1.0.tgz#bd76d6a23323e2ca8ffa12028dc04559c75f9019"
   integrity sha512-iq+S7vZJE60yejDYM0ek6zg308+UZsdtPExWP9VZoCFCz1zkJoXFnAX7aZfd/ZwrkidzdUZL0C/ryW+JwAiIGw==
+
+void-elements@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/void-elements/-/void-elements-2.0.1.tgz#c066afb582bb1cb4128d60ea92392e94d5e9dbec"
+  integrity sha1-wGavtYK7HLQSjWDqkjkulNXp2+w=
 
 vscode-base-languageclient@4.4.0:
   version "4.4.0"
