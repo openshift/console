@@ -194,14 +194,24 @@ export const NamespacesList = (props) => (
   />
 );
 
-export const NamespacesPage = (props) => (
-  <ListPage
+export const NamespacesPage = (props) => {
+  const createItems = {
+    form: 'From FORM',
+    yaml: 'From YAML',
+  };
+  const createProps = {
+    items: createItems,
+    createLink: (type) =>
+      `/k8s/ns/${props.namespace || 'default'}/namespaces/~new/${type !== 'yaml' ? type : ''}`,
+  };
+  return <ListPage
     {...props}
     ListComponent={NamespacesList}
     canCreate={true}
-    createHandler={() => createNamespaceModal({ blocking: true })}
+    createProps={createProps}
+  // createHandler={() => createNamespaceModal({ blocking: true })}
   />
-);
+};
 
 export const projectMenuActions = [Kebab.factory.Edit, deleteModal];
 
@@ -244,19 +254,19 @@ const projectTableHeader = ({ showMetrics, showActions }) => {
     },
     ...(showMetrics
       ? [
-          {
-            title: 'Memory',
-            sortFunc: 'namespaceMemory',
-            transforms: [sortable],
-            props: { className: projectColumnClasses[4] },
-          },
-          {
-            title: 'CPU',
-            sortFunc: 'namespaceCPU',
-            transforms: [sortable],
-            props: { className: projectColumnClasses[5] },
-          },
-        ]
+        {
+          title: 'Memory',
+          sortFunc: 'namespaceMemory',
+          transforms: [sortable],
+          props: { className: projectColumnClasses[4] },
+        },
+        {
+          title: 'CPU',
+          sortFunc: 'namespaceCPU',
+          transforms: [sortable],
+          props: { className: projectColumnClasses[5] },
+        },
+      ]
       : []),
     {
       title: 'Created',
@@ -310,14 +320,14 @@ const ProjectTableRow = connect(projectRowStateToProps)(
           {customData && ProjectLinkComponent ? (
             <ProjectLinkComponent project={project} />
           ) : (
-            <span className="co-resource-item">
-              <ResourceLink
-                kind="Project"
-                name={project.metadata.name}
-                title={project.metadata.uid}
-              />
-            </span>
-          )}
+              <span className="co-resource-item">
+                <ResourceLink
+                  kind="Project"
+                  name={project.metadata.name}
+                  title={project.metadata.uid}
+                />
+              </span>
+            )}
         </TableData>
         <TableData className={projectColumnClasses[1]}>
           <span className="co-break-word co-line-clamp">
@@ -659,11 +669,11 @@ class NamespaceBarDropdowns_ extends React.Component {
     }
     const defaultActionItem = canCreateProject
       ? [
-          {
-            actionTitle: `Create ${model.label}`,
-            actionKey: CREATE_NEW_RESOURCE,
-          },
-        ]
+        {
+          actionTitle: `Create ${model.label}`,
+          actionKey: CREATE_NEW_RESOURCE,
+        },
+      ]
       : [];
 
     const onChange = (newNamespace) => {
