@@ -104,6 +104,7 @@ export const withCommonForm = (SubForm, params?: any, modal?: boolean) =>
       );
     }
 
+
     renderBody = () => {
       return (
         <>
@@ -125,6 +126,28 @@ export const withCommonForm = (SubForm, params?: any, modal?: boolean) =>
                 <p className="help-block" id="secret-name-help">
                   Unique name.
                 </p>
+
+    const onClick = methods.handleSubmit((data) => {
+      let inDo = _.defaultsDeep(props.fixed, data);
+      inDo = props.onSubmitCallback(inDo);
+      k8sCreate(modelFor(kind), inDo)
+      history.push(resourceObjPath(inDo, referenceFor(modelFor(kind))));
+    })
+    return (
+      <FormProvider {...methods} >
+        <div className="co-m-pane__body">
+          <Helmet>
+            <title>{title}</title>
+          </Helmet>
+          <form
+            className="co-m-pane__body-group co-create-secret-form co-m-pane__form">
+            <h1 className="co-m-pane__heading">{title}</h1>
+            <p className="co-m-pane__explanation">{props.explanation}</p>
+            <fieldset>
+              <div className="form-group">
+                <label className="control-label co-required" htmlFor="name">Name</label>
+                <input className="pf-c-form-control" id='name' name='metadata.name' ref={methods.register} />
+
               </div>
             </div>
           </fieldset>
