@@ -50,7 +50,6 @@ import {
   serviceClassDisplayName,
   MachineKind,
   VolumeSnapshotKind,
-  TemplateKind,
 } from '../../module/k8s';
 
 import {
@@ -173,8 +172,9 @@ const sorts = {
   volumeSnapshotSource: (snapshot: VolumeSnapshotKind): string => snapshotSource(snapshot),
   snapshotLastRestore: (snapshot: K8sResourceKind, { restores }) =>
     restores[getName(snapshot)]?.status?.restoreTime,
-  vmTemplateName: (template: TemplateKind) =>
-    template?.metadata?.annotations?.[ANNOTATIONS.displayName] ?? template?.metadata?.name,
+  vmTemplateName: (template) =>
+    template?.variants?.[0]?.metadata?.annotations?.[ANNOTATIONS.displayName] ??
+    template?.metadata?.name,
 };
 
 const stateToProps = (

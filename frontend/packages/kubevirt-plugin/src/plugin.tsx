@@ -155,6 +155,20 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
+      exact: true,
+      path: ['/k8s/virtualization/~new-from-template'],
+      loader: () =>
+        import(
+          './components/create-vm/create-vm' /* webpackChunkName: "kubevirt-create-vm" */
+        ).then((m) => m.CreateVM),
+    },
+    flags: {
+      required: [FLAG_KUBEVIRT],
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
       path: '/k8s/ns/:ns/virtualmachines/:name',
       loader: () =>
         import('./components/vms/vm-details-page' /* webpackChunkName: "kubevirt" */).then(

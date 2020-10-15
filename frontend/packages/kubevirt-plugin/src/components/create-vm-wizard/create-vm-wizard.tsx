@@ -39,6 +39,8 @@ import {
   VMWizardTab,
   VMWizardTabsMetadata,
   DirectCommonDataProps,
+  URLParams,
+  BootSourceParams,
 } from './types';
 import { CREATE_VM, CREATE_VM_TEMPLATE, IMPORT_VM, TabTitleResolver } from './strings/strings';
 import { vmWizardActions } from './redux/actions';
@@ -324,12 +326,11 @@ const wizardDispatchToProps = (dispatch, props) => ({
         data: {
           isCreateTemplate: props.isCreateTemplate,
           isProviderImport: props.isProviderImport,
-          isUserTemplateInitialized: false,
-          commonTemplateName: props.commonTemplateName,
+          isTemplateInitialized: false,
+          initialData: props.initialData,
           storageClassConfigMap: undefined,
           openshiftCNVBaseImages: undefined,
           isSimpleView: props.isSimpleView,
-          name: props.name,
         },
         dataIDReferences: props.dataIDReferences,
       } as CommonData),
@@ -380,8 +381,11 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
 }) => {
   const activeNamespace = match && match.params && match.params.ns;
   const searchParams = new URLSearchParams(location && location.search);
-  const userMode = searchParams.get('mode') || VMWizardMode.VM;
-  const userTemplateName = (userMode === VMWizardMode.VM && searchParams.get('template')) || '';
+  const userMode = searchParams.get(URLParams.MODE) || VMWizardMode.VM;
+  const userTemplateName =
+    (userMode === VMWizardMode.VM && searchParams.get(URLParams.USER_TEMPLATE)) || '';
+  const userTemplateNs =
+    (userMode === VMWizardMode.VM && searchParams.get(URLParams.USER_TEMPLATE_NS)) || '';
 
   let resources: FirehoseResourceEnhanced[] = [];
 
@@ -433,7 +437,7 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
         resources.push(
           getResource(TemplateModel, {
             name: userTemplateName,
-            namespace: activeNamespace,
+            namespace: userTemplateNs,
             prop: VMWizardProps.userTemplate,
             isList: false,
             matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM },
@@ -470,11 +474,21 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
   dataIDReferences[VMWizardProps.activeNamespace] = ['UI', 'activeNamespace'];
   dataIDReferences[VMWizardProps.openshiftFlag] = [featureReducerName, FLAGS.OPENSHIFT];
 
-  const name =
-    (userMode === VMWizardMode.VM && searchParams.get('name')) ||
-    (userMode === VMWizardMode.TEMPLATE && searchParams.get('template')) ||
-    '';
-  const commonTemplateName = searchParams.get('common-template') || '';
+  const initialData = {
+    startVM: searchParams.get(URLParams.START_VM) === 'true' || false,
+    commonTemplateName: searchParams.get(URLParams.COMMON_TEMPLATE_NAME) || '',
+    name: (userMode === VMWizardMode.VM && searchParams.get(URLParams.NAME)) || '',
+    source: undefined,
+  };
+
+  let source: BootSourceParams;
+  try {
+    source = JSON.parse(searchParams.get(URLParams.SOURCE));
+    initialData.source = source;
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.warn('Cannot parse source params', e);
+  }
   const isSimpleView =
     userMode === VMWizardMode.IMPORT &&
     searchParams.get('view')?.toLowerCase() !== VMWizardView.ADVANCED; // normal mode defaults to advanced
@@ -484,14 +498,13 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
       <CreateVMWizard
         isCreateTemplate={userMode === VMWizardMode.TEMPLATE}
         isProviderImport={userMode === VMWizardMode.IMPORT}
-        name={name}
-        commonTemplateName={commonTemplateName}
         isSimpleView={isSimpleView}
         dataIDReferences={dataIDReferences}
         storageClassConfigMap={storageClassConfigMap}
         openshiftCNVBaseImages={openshiftCNVBaseImages}
         reduxID={reduxID}
         onClose={history.goBack}
+        initialData={initialData}
       />
     </Firehose>
   );

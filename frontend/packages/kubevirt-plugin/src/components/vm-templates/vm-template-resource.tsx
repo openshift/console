@@ -90,7 +90,8 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
 export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
   template,
   sourceStatus,
-  loaded,
+  sourceLoaded,
+  sourceLoadError,
 }) => {
   const id = getBasicID(template);
   const devices = getDevices(template);
@@ -108,7 +109,13 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
       </VMDetailsItem>
 
       <VMDetailsItem title="Provision Source" idValue={prefixedID(id, 'provisioning-source')}>
-        <TemplateSource loaded={loaded} template={template} sourceStatus={sourceStatus} detailed />
+        <TemplateSource
+          loadError={sourceLoadError}
+          loaded={sourceLoaded}
+          template={template}
+          sourceStatus={sourceStatus}
+          detailed
+        />
       </VMDetailsItem>
     </dl>
   );
@@ -219,7 +226,8 @@ type VMTemplateResourceListProps = {
   template: TemplateKind;
   sourceStatus: TemplateSourceStatus;
   canUpdateTemplate?: boolean;
-  loaded: boolean;
+  sourceLoaded: boolean;
+  sourceLoadError: any;
 };
 
 type VMTemplateResourceSummaryProps = {

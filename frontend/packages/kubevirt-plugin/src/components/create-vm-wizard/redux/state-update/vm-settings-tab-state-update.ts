@@ -6,7 +6,7 @@ import {
   iGetRelevantTemplateSelectors,
   iGetVmSettingValue,
 } from '../../selectors/immutable/vm-settings';
-import { VMSettingsField, VMWizardProps } from '../../types';
+import { InitialData, VMSettingsField, VMWizardProps } from '../../types';
 import { InternalActionType, UpdateOptions } from '../types';
 import { asDisabled, asHidden, asRequired } from '../../utils/utils';
 import { vmWizardInternalActions } from '../internal-actions';
@@ -31,47 +31,55 @@ import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { prefillVmTemplateUpdater } from './prefill-vm-template-state-update';
 import { iGetAnnotation, iGetPrameterValue } from '../../../../selectors/immutable/common';
 import { CDI_UPLOAD_POD_ANNOTATION, CDI_UPLOAD_RUNNING } from '../../../cdi-upload-provider/consts';
-import {
-  commonTemplatesUpdater,
-  commonTemplateOnLoadedUpdater,
-} from './vm-common-templates-updater';
+import { commonTemplatesUpdater } from './vm-common-templates-updater';
+import { iGetIsLoaded, iGetLoadError, toShallowJS } from '../../../../utils/immutable';
 
-const selectUserTemplateOnLoadedUpdater = (options: UpdateOptions) => {
+const selectTemplateOnLoadedUpdater = (options: UpdateOptions) => {
   const { id, dispatch, getState } = options;
   const state = getState();
 
-  if (
-    iGetCommonData(state, id, VMWizardProps.isUserTemplateInitialized) ||
-    !iGetLoadedCommonData(state, id, VMWizardProps.userTemplate)
-  ) {
+  if (iGetCommonData(state, id, VMWizardProps.isTemplateInitialized)) {
     return;
   }
 
-  dispatch(
-    vmWizardInternalActions[InternalActionType.UpdateCommonDataValue](
-      id,
-      [VMWizardProps.isUserTemplateInitialized],
-      true,
-    ),
+  const { commonTemplateName } = toShallowJS<InitialData>(
+    iGetCommonData(state, id, VMWizardProps.initialData),
   );
+
+  const commonTemplateReady =
+    commonTemplateName &&
+    iGetIsLoaded(iGetCommonData(state, id, VMWizardProps.commonTemplates)) &&
+    iGetIsLoaded(iGetCommonData(state, id, VMWizardProps.openshiftCNVBaseImages)) &&
+    !iGetLoadError(iGetCommonData(state, id, VMWizardProps.openshiftCNVBaseImages));
 
   const iUserTemplate = iGetLoadedCommonData(state, id, VMWizardProps.userTemplate);
-  const isDisabled = asDisabled(iUserTemplate != null, VMWizardProps.userTemplate);
 
-  dispatch(
-    vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, {
-      [VMSettingsField.PROVISION_SOURCE_TYPE]: { isDisabled },
-      [VMSettingsField.CONTAINER_IMAGE]: { isDisabled },
-      [VMSettingsField.IMAGE_URL]: { isDisabled },
-      [VMSettingsField.OPERATING_SYSTEM]: { isDisabled },
-      [VMSettingsField.WORKLOAD_PROFILE]: { isDisabled },
-      [VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE]: {
-        isHidden: asHidden(iUserTemplate != null, VMWizardProps.userTemplate),
-      },
-    }),
-  );
+  if (commonTemplateReady || iUserTemplate) {
+    dispatch(
+      vmWizardInternalActions[InternalActionType.UpdateCommonDataValue](
+        id,
+        [VMWizardProps.isTemplateInitialized],
+        true,
+      ),
+    );
 
-  prefillVmTemplateUpdater(options);
+    const isDisabled = asDisabled(iUserTemplate != null, VMWizardProps.userTemplate);
+
+    dispatch(
+      vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, {
+        [VMSettingsField.PROVISION_SOURCE_TYPE]: { isDisabled },
+        [VMSettingsField.CONTAINER_IMAGE]: { isDisabled },
+        [VMSettingsField.IMAGE_URL]: { isDisabled },
+        [VMSettingsField.OPERATING_SYSTEM]: { isDisabled },
+        [VMSettingsField.WORKLOAD_PROFILE]: { isDisabled },
+        [VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE]: {
+          isHidden: asHidden(iUserTemplate != null, VMWizardProps.userTemplate),
+        },
+      }),
+    );
+
+    prefillVmTemplateUpdater(options);
+  }
 };
 
 const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
@@ -307,8 +315,7 @@ const flavorUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => 
 
 export const updateVmSettingsState = (options: UpdateOptions) =>
   [
-    commonTemplateOnLoadedUpdater,
-    selectUserTemplateOnLoadedUpdater,
+    selectTemplateOnLoadedUpdater,
     osUpdater,
     baseImageUpdater,
     cloneCommonBaseDiskImageUpdater,

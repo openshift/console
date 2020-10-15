@@ -8,6 +8,15 @@ import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 import { V1PersistentVolumeClaim } from '../../types/vm/disk/V1PersistentVolumeClaim';
 import { UIStorageEditConfig, UIStorageValidation } from '../../types/ui/storage';
 
+export type BootSourceParams = {
+  cdRom: boolean;
+  size: string;
+  url?: string;
+  pvcName?: string;
+  pvcNamespace?: string;
+  container?: string;
+};
+
 export enum VMWizardTab {
   IMPORT_PROVIDERS = 'IMPORT_PROVIDERS',
   VM_SETTINGS = 'VM_SETTINGS',
@@ -22,7 +31,7 @@ export enum VMWizardProps {
   isSimpleView = 'isSimpleView',
   isCreateTemplate = 'isCreateTemplate',
   isProviderImport = 'isProviderImport',
-  isUserTemplateInitialized = 'isUserTemplateInitialized',
+  isTemplateInitialized = 'isTemplateInitialized',
   userTemplates = 'userTemplates',
   userTemplate = 'userTemplate',
   activeNamespace = 'activeNamespace',
@@ -35,6 +44,7 @@ export enum VMWizardProps {
   openshiftCNVBaseImages = 'openshiftCNVBaseImages',
   storageClassConfigMap = 'storageClassConfigMap',
   nads = 'nads',
+  initialData = 'initialData',
 }
 
 // order important
@@ -73,6 +83,7 @@ export enum VMSettingsField {
   CONTAINER_IMAGE = 'CONTAINER_IMAGE',
   IMAGE_URL = 'IMAGE_URL',
   START_VM = 'START_VM',
+  TEMPLATE_PROVIDER = 'TEMPLATE_PROVIDER',
 }
 
 export enum ImportProvidersField {
@@ -234,8 +245,8 @@ export type CommonDataProp =
   | VMWizardProps.isSimpleView
   | VMWizardProps.isCreateTemplate
   | VMWizardProps.isProviderImport
-  | VMWizardProps.isUserTemplateInitialized
-  | VMWizardProps.commonTemplateName
+  | VMWizardProps.isTemplateInitialized
+  | VMWizardProps.initialData
   | ChangedCommonDataProp;
 
 export type ChangedCommonData = Set<ChangedCommonDataProp>;
@@ -268,14 +279,31 @@ export const DirectCommonDataProps = new Set<ChangedCommonDataProp>([
   VMWizardProps.openshiftCNVBaseImages,
 ]);
 
+export enum URLParams {
+  NAMESPACE = 'namespace',
+  MODE = 'mode',
+  USER_TEMPLATE = 'template',
+  USER_TEMPLATE_NS = 'template-ns',
+  NAME = 'name',
+  START_VM = 'startVM',
+  SOURCE = 'source',
+  COMMON_TEMPLATE_NAME = 'common-template',
+  VIEW = 'view',
+}
+
+export type InitialData = {
+  name?: string;
+  startVM?: boolean;
+  source?: BootSourceParams;
+  commonTemplateName?: string;
+};
+
 export type CommonData = {
   data?: {
-    name?: string;
     isSimpleView?: boolean;
     isCreateTemplate?: boolean;
     isProviderImport?: boolean;
-    isUserTemplateInitialized?: boolean;
-    commonTemplateName?: string;
+    isTemplateInitialized?: boolean;
     storageClassConfigMap?: {
       loaded: boolean;
       loadError: string;
@@ -286,6 +314,7 @@ export type CommonData = {
       loadError: string;
       data: PersistentVolumeClaimKind[];
     };
+    initialData: InitialData;
   };
   dataIDReferences?: IDReferences;
 };
@@ -317,6 +346,7 @@ export enum VMWizardStorageType {
   TEMPLATE_CLOUD_INIT = 'TEMPLATE_CLOUD_INIT',
   PROVISION_SOURCE_TEMPLATE_DISK = 'PROVISION_SOURCE_TEMPLATE_DISK',
   PROVISION_SOURCE_DISK = 'PROVISION_SOURCE_DISK',
+  PROVISION_SOURCE_ADDITIONAL_DISK = 'PROVISION_SOURCE_ADDITIONAL_DISK',
   UI_INPUT = 'UI_INPUT',
   V2V_VMWARE_IMPORT = 'V2V_VMWARE_IMPORT',
   V2V_OVIRT_IMPORT = 'V2V_OVIRT_IMPORT',

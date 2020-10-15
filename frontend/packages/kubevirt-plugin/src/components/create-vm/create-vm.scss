@@ -1,0 +1,12 @@
+.kv-create-vm__footer {
+  position: fixed;
+  z-index: 1000;
+  width: 100%;
+  background: rgba(255,255,255,0.8);
+  bottom: 0;
+  display: block;
+}
+
+.kv-create-vm__error {
+  margin: var(--pf-c-wizard__footer--PaddingTop) var(--pf-c-wizard__footer--PaddingRight) 0 var(--pf-c-wizard__footer--PaddingLeft);
+}

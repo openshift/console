@@ -54,7 +54,7 @@ type ModalFooterProps = {
   warningMessage?: string;
   isSimpleError?: boolean;
   onSubmit: (e) => void;
-  onCancel: (e) => void;
+  onCancel?: (e) => void;
   onSaveAndRestart?: (e) => void;
   isDisabled?: boolean;
   inProgress?: boolean;
@@ -101,14 +101,16 @@ export const ModalFooter: React.FC<ModalFooterProps> = ({
       {infoTitle && <ModalInfoMessage title={infoTitle}>{infoMessage}</ModalInfoMessage>}
 
       <ActionGroup className="pf-c-form pf-c-form__actions--right pf-c-form__group--no-top-margin">
-        <Button
-          type="button"
-          variant={ButtonVariant.secondary}
-          data-test-id="modal-cancel-action"
-          onClick={onCancel}
-        >
-          {cancelButtonText}
-        </Button>
+        {onCancel && (
+          <Button
+            type="button"
+            variant={ButtonVariant.secondary}
+            data-test-id="modal-cancel-action"
+            onClick={onCancel}
+          >
+            {cancelButtonText}
+          </Button>
+        )}
         {isSaveAndRestart && (
           <Button
             type="button"

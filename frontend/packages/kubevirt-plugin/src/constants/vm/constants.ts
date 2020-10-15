@@ -1,9 +1,12 @@
 export const VIRT_LAUNCHER_POD_PREFIX = 'virt-launcher-';
 export const READABLE_VIRTIO = 'virtio';
 export const ANNOTATION_FIRST_BOOT = 'kubevirt.ui/firstBoot';
+export const ANNOTATION_USER_PROVIDER = 'kubevirt.ui/provider';
 export const ANNOTATION_DESCRIPTION = 'description';
 export const ANNOTATION_PXE_INTERFACE = 'kubevirt.ui/pxeInterface';
 export const ANNOTATION_VALIDATIONS = 'validations';
+export const ANNOTATION_ICON = 'iconClass';
+export const LABEL_CDROM_SOURCE = 'kubevirt.ui/cdrom';
 export const CUSTOM_FLAVOR = 'Custom';
 
 export const APP = 'app';
@@ -65,3 +68,10 @@ export const WINTOOLS_CONTAINER_NAMES = {
 export const PENDING_RESTART_LABEL = '(pending restart)';
 export const getPVCUploadURL = (pvcNamespace: string): string =>
   `/k8s/ns/${pvcNamespace}/persistentvolumeclaims/~new/upload-form`;
+
+export const ROOT_DISK_NAME = 'rootdisk';
+export const ROOT_DISK_INSTALL_NAME = 'rootdisk-install';
+
+export const TEMPLATE_PIN = 'kubevirt.templates.pins';
+export const TEMPLATE_PIN_PROMOTED = 'kubevirt.templates.pins.promoted';
+export const TEMPLATE_WARN_SUPPORT = 'kubevirt.templates.warnSupport';

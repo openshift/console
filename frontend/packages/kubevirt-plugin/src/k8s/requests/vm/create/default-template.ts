@@ -99,6 +99,7 @@ export const resolveDefaultVMTemplate = (params: DefaultVMLikeEntityParams): Tem
       [VMSettingsField.DESCRIPTION]: 'VM template example',
       [VMSettingsField.FLAVOR]: getFlavor(commonTemplate),
       [VMSettingsField.WORKLOAD_PROFILE]: getWorkloadProfile(commonTemplate),
+      [VMSettingsField.TEMPLATE_PROVIDER]: null,
       osID,
       osName,
     },

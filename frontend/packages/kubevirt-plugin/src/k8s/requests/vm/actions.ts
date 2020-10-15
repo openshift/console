@@ -1,7 +1,7 @@
 import { apiVersionForModel, k8sKill, k8sPatch, resourceURL } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared/src';
 import { coFetch } from '@console/internal/co-fetch';
-import { getPxeBootPatch } from '../../patches/vm/vm-boot-patches';
+import { getBootPatch } from '../../patches/vm/vm-boot-patches';
 import { VirtualMachineModel } from '../../../models';
 import { VMKind } from '../../../types/vm';
 import { freeOwnedResources } from '../free-owned-resources';
@@ -33,18 +33,19 @@ const VMActionRequest = async (vm: VMKind, action: VMActionType) => {
   return text;
 };
 
-export const VMActionWithPXERequest = async (vm: VMKind, action: VMActionType) => {
-  // handle PXE boot (kubevirt.ui/firstBoot annotation)
-  const pxePatch = getPxeBootPatch(vm);
-  if (pxePatch.length > 0) {
-    await k8sPatch(VirtualMachineModel, vm, pxePatch);
+export const VMActionWithBootOrderRequest = async (vm: VMKind, action: VMActionType) => {
+  // handle PXE/CDRom boot (kubevirt.ui/firstBoot annotation)
+  const bootPatch = getBootPatch(vm);
+  if (bootPatch.length > 0) {
+    await k8sPatch(VirtualMachineModel, vm, bootPatch);
   }
   return VMActionRequest(vm, action);
 };
 
-export const startVM = async (vm: VMKind) => VMActionWithPXERequest(vm, VMActionType.Start);
+export const startVM = async (vm: VMKind) => VMActionWithBootOrderRequest(vm, VMActionType.Start);
 export const stopVM = async (vm: VMKind) => VMActionRequest(vm, VMActionType.Stop);
-export const restartVM = async (vm: VMKind) => VMActionWithPXERequest(vm, VMActionType.Restart);
+export const restartVM = async (vm: VMKind) =>
+  VMActionWithBootOrderRequest(vm, VMActionType.Restart);
 
 export const deleteVM = async (
   vm: VMKind,

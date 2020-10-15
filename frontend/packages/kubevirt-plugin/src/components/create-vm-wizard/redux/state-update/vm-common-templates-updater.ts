@@ -1,7 +1,6 @@
 import {
   hasVMSettingsValueChanged,
   iGetRelevantTemplateSelectors,
-  iGetVmSettingAttribute,
 } from '../../selectors/immutable/vm-settings';
 import { CloudInitField, VMSettingsField, VMWizardProps, VMWizardStorageType } from '../../types';
 import { InternalActionType, UpdateOptions } from '../types';
@@ -17,17 +16,10 @@ import {
   CloudInitDataHelper,
   generateCloudInitPassword,
 } from '../../../../k8s/wrapper/vm/cloud-init-data-helper';
-import {
-  iGet,
-  iGetIn,
-  iGetIsLoaded,
-  iGetLoadError,
-  toShallowJS,
-} from '../../../../utils/immutable';
+import { iGet, iGetIn, toShallowJS } from '../../../../utils/immutable';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import { iGetStorages } from '../../selectors/immutable/storage';
-import { prefillVmTemplateUpdater } from './prefill-vm-template-state-update';
 
 export const commonTemplatesUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
@@ -103,19 +95,5 @@ export const commonTemplatesUpdater = ({ id, prevState, dispatch, getState }: Up
     dispatch(
       vmWizardInternalActions[InternalActionType.RemoveStorage](id, iGet(iCloudInitStorage, 'id')),
     );
-  }
-};
-
-export const commonTemplateOnLoadedUpdater = (options: UpdateOptions) => {
-  const { id, getState } = options;
-  const state = getState();
-  if (
-    iGetCommonData(state, id, VMWizardProps.commonTemplateName) &&
-    !iGetVmSettingAttribute(state, id, VMSettingsField.OPERATING_SYSTEM, 'initialized') &&
-    iGetIsLoaded(iGetCommonData(state, id, VMWizardProps.commonTemplates)) &&
-    iGetIsLoaded(iGetCommonData(state, id, VMWizardProps.openshiftCNVBaseImages)) &&
-    !iGetLoadError(iGetCommonData(state, id, VMWizardProps.openshiftCNVBaseImages))
-  ) {
-    prefillVmTemplateUpdater(options);
   }
 };

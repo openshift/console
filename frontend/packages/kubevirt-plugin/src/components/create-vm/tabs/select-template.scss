@@ -1,0 +1,39 @@
+.kv-select-template {
+  background-color: var(--pf-global--palette--black-150);
+  padding-bottom: 5rem;
+}
+
+.kv-select-template__toolbar {
+  --pf-c-toolbar--BackgroundColor: var(--pf-global--palette--black-150);
+  padding-bottom: 0;
+}
+
+.kv-select-template__title {
+  padding: var(--pf-global--spacer--lg) var(--pf-global--spacer--lg) 0;
+}
+
+.kv-select-template__project {
+  .pf-c-select__menu {
+    overflow-x: auto;
+    max-height: 60vh;
+  }
+}
+
+.kv-select-template__tile {
+  width: 300px;
+  height: 100%;
+
+  .catalog-tile-pf-badge-container {
+    align-items: baseline;
+  }
+
+  .catalog-tile-pf-icon {
+    display: grid;
+  }
+}
+
+.kv-select-template__filter {
+  .pf-c-check__description {
+    white-space: nowrap;
+  }
+}

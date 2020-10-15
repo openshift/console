@@ -1,11 +1,12 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import * as _ from 'lodash';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
+import { match } from 'react-router';
 import { sortable } from '@patternfly/react-table';
-import { ThumbtackIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon } from '@patternfly/react-icons';
+import { global_palette_blue_300 as blueInfoColor } from '@patternfly/react-tokens/dist/js/global_palette_blue_300';
 import {
   ListPage,
   Table,
@@ -15,7 +16,12 @@ import {
   RowFunction,
 } from '@console/internal/components/factory';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
-import { Kebab, ResourceLink, FirehoseResult, history } from '@console/internal/components/utils';
+import {
+  Kebab,
+  ResourceLink,
+  FirehoseResult,
+  ExternalLink,
+} from '@console/internal/components/utils';
 import {
   TemplateModel,
   NamespaceModel,
@@ -23,44 +29,66 @@ import {
   PodModel,
 } from '@console/internal/models';
 import { TemplateKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
-import { dimensifyHeader, dimensifyRow, ALL_NAMESPACES_KEY, getLabel } from '@console/shared';
-import { match } from 'react-router';
-import { VM_TEMPLATE_LABEL_PLURAL } from '../../constants/vm-templates';
-import { getLoadedData } from '../../utils';
 import {
-  VMWizardName,
-  VMWizardMode,
-  VMWizardActionLabels,
-  TEMPLATE_TYPE_LABEL,
-  TEMPLATE_TYPE_BASE,
-  TEMPLATE_TYPE_VM,
-} from '../../constants/vm';
+  dimensifyHeader,
+  dimensifyRow,
+  ALL_NAMESPACES_KEY,
+  SuccessStatus,
+  ErrorStatus,
+} from '@console/shared';
+import {
+  Button,
+  Popover,
+  PopoverPosition,
+  TextContent,
+  Text,
+  Stack,
+  StackItem,
+} from '@patternfly/react-core';
+import { getActiveNamespace } from '@console/internal/actions/ui';
+import GenericStatus from '@console/shared/src/components/status/GenericStatus';
+
+import {
+  BOOT_SOURCE_COMMUNITY,
+  BOOT_SOURCE_USER,
+  SUPPORT_URL,
+  VM_TEMPLATE_LABEL_PLURAL,
+} from '../../constants/vm-templates';
+import { getLoadedData } from '../../utils';
+import { TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_BASE, TEMPLATE_TYPE_VM } from '../../constants/vm';
 import { DataVolumeModel } from '../../models';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
-import { getVMWizardCreateLink } from '../../utils/url';
 import { menuActionsCreator } from './menu-actions';
 import { TemplateSource } from './vm-template-source';
-
-import './vm-template.scss';
-import { Button, Badge, Popover, PopoverPosition, TextContent, Text } from '@patternfly/react-core';
-import { getActiveNamespace } from '@console/internal/actions/ui';
-import { getTemplateOSIcon } from './os-icons';
+import { getTemplateOSIcon, PinnedIcon } from './os-icons';
 import {
   getTemplateSizeRequirement,
   getTemplateMemory,
 } from '../../selectors/vm-template/advanced';
 import { useBaseImages } from '../../hooks/use-base-images';
 import { getWorkloadProfile, getCPU, vCPUCount } from '../../selectors/vm';
-import { selectVM, getTemplateName, isCommonTemplate } from '../../selectors/vm-template/basic';
-import { createVMModal } from '../modals/create-vm/create-vm';
+import {
+  selectVM,
+  getTemplateName,
+  getTemplateProvider,
+  getTemplateProviderType,
+  templateProviders,
+} from '../../selectors/vm-template/basic';
 import { Link } from 'react-router-dom';
-import { useLocalStorage } from '../../hooks/use-local-storage';
 import { getTemplateSourceStatus } from '../../statuses/template/template-source-status';
-import { isTemplateSourceError, TemplateSourceStatus } from '../../statuses/template/types';
+import { TemplateSourceStatus } from '../../statuses/template/types';
+import { createVMAction, filterTemplates } from './utils';
+import { TemplateItem } from '../../types/template';
+import { VMTemplateLabel } from './label';
+import { usePinnedTemplates } from '../../hooks/use-pinned-templates';
+import { useSupportModal } from '../../hooks/use-support-modal';
+import { CDI_APP_LABEL } from '../../constants';
+
+import './vm-template.scss';
 
 const tableColumnClasses = (showNamespace: boolean) => [
-  'pf-u-w-25', // name
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // badge
+  'pf-u-w-33', // name
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // provider
   classNames('pf-m-hidden', { 'pf-m-visible-on-lg': showNamespace }), // namespace
   '', // boot source
   classNames('pf-u-w-25', 'kubevirt-vm-template-actions'), // actions
@@ -76,7 +104,7 @@ const VMTemplateTableHeader = (showNamespace: boolean) =>
         transforms: [sortable],
       },
       {
-        title: 'Template type',
+        title: 'Provider',
       },
       {
         title: 'Namespace',
@@ -85,6 +113,37 @@ const VMTemplateTableHeader = (showNamespace: boolean) =>
       },
       {
         title: 'Boot source',
+        header: {
+          info: {
+            popover: (
+              <Stack hasGutter>
+                <StackItem>
+                  <SuccessStatus title={BOOT_SOURCE_COMMUNITY} />
+                  The image has been added to the cluster via the operator.
+                </StackItem>
+                <StackItem>
+                  <SuccessStatus title={BOOT_SOURCE_USER} />
+                  The image has been added to the cluster by a user.
+                </StackItem>
+                <StackItem>
+                  <GenericStatus
+                    Icon={(props) => <PlusCircleIcon {...props} color={blueInfoColor.value} />}
+                    title="Add source"
+                  />
+                  Provide a source for the template across the cluster.
+                </StackItem>
+                <StackItem>
+                  <ErrorStatus title="Boot source error" />
+                  Error with the provided boot source.
+                </StackItem>
+              </Stack>
+            ),
+            ariaLabel: 'More information on boot sources',
+            popoverProps: {
+              headerContent: 'Boot source',
+            },
+          },
+        },
       },
       {
         title: '',
@@ -140,39 +199,29 @@ const VMTemplateDetailsBody: React.FC<VMTemplateDetailsBodyProps> = ({
   );
 };
 
-type VMTemplateBadgeProps = {
-  template: TemplateKind;
-};
-
-const VMTemplateBadge: React.FC<VMTemplateBadgeProps> = ({ template }) => {
-  const isCommon = isCommonTemplate(template);
-  return (
-    <Badge className={`kubevirt-vm-template-badge--${isCommon ? 'common' : 'custom'}`}>
-      {isCommon ? 'Provided' : 'Custom'}
-    </Badge>
-  );
-};
-
 type VMTemplateTableRowProps = {
   dataVolumes: V1alpha1DataVolume[];
   pvcs: PersistentVolumeClaimKind[];
   pods: PodKind[];
   namespace: string;
   loaded: boolean;
-  pinnedTemplates: string[];
-  togglePin: (template: TemplateKind) => void;
+  isPinned: (template: TemplateItem) => boolean;
+  togglePin: (template: TemplateItem) => void;
+  sourceLoadError: any;
 };
 
-const VMTemplateTableRow: RowFunction<TemplateKind, VMTemplateTableRowProps> = ({
-  obj: template,
-  customData: { dataVolumes, pvcs, pods, namespace, loaded, togglePin, pinnedTemplates },
+const VMTemplateTableRow: RowFunction<TemplateItem, VMTemplateTableRowProps> = ({
+  obj,
+  customData: { dataVolumes, pvcs, pods, namespace, loaded, togglePin, isPinned, sourceLoadError },
   index,
   key,
   style,
 }) => {
+  const [template] = obj.variants;
   const dimensify = dimensifyRow(tableColumnClasses(!namespace));
   const sourceStatus = getTemplateSourceStatus({ template, pvcs, dataVolumes, pods });
-  const isPinned = pinnedTemplates.includes(template.metadata.uid);
+  const pinned = isPinned(obj);
+  const withSupportModal = useSupportModal();
 
   return (
     <TableRow id={template.metadata.uid} index={index} trKey={key} style={style}>
@@ -186,11 +235,10 @@ const VMTemplateTableRow: RowFunction<TemplateKind, VMTemplateTableRowProps> = (
         >
           {getTemplateName(template)}
         </Link>
-        {isPinned && <ThumbtackIcon className="kubevirt-vm-template-pin" />}
+        <VMTemplateLabel template={template} />
+        {pinned && <PinnedIcon />}
       </TableData>
-      <TableData className={dimensify()}>
-        <VMTemplateBadge template={template} />
-      </TableData>
+      <TableData className={dimensify()}>{getTemplateProvider(template)}</TableData>
       <TableData className={dimensify()}>
         <ResourceLink
           kind={NamespaceModel.kind}
@@ -199,7 +247,13 @@ const VMTemplateTableRow: RowFunction<TemplateKind, VMTemplateTableRowProps> = (
         />
       </TableData>
       <TableData className={dimensify()}>
-        <TemplateSource loaded={loaded} template={template} sourceStatus={sourceStatus} />
+        <TemplateSource
+          loadError={sourceLoadError}
+          loaded={loaded}
+          template={template}
+          sourceStatus={sourceStatus}
+          detailed
+        />
       </TableData>
       <TableData className={dimensify()}>
         <Popover
@@ -212,21 +266,7 @@ const VMTemplateTableRow: RowFunction<TemplateKind, VMTemplateTableRowProps> = (
           </Button>
         </Popover>
         <Button
-          onClick={() => {
-            !isTemplateSourceError(sourceStatus) && sourceStatus?.isReady
-              ? createVMModal({
-                  template,
-                  sourceStatus,
-                })
-              : history.push(
-                  getVMWizardCreateLink({
-                    namespace,
-                    wizardName: VMWizardName.WIZARD,
-                    mode: VMWizardMode.VM,
-                    template,
-                  }),
-                );
-          }}
+          onClick={() => withSupportModal(obj, () => createVMAction(obj, sourceStatus))}
           variant="secondary"
         >
           Create Virtual Machine
@@ -234,9 +274,14 @@ const VMTemplateTableRow: RowFunction<TemplateKind, VMTemplateTableRowProps> = (
       </TableData>
       <TableData className={dimensify(true)}>
         <Kebab
-          options={menuActionsCreator(namespace)(TemplateModel, template, null, {
+          options={menuActionsCreator(TemplateModel, obj, null, {
             togglePin,
-            isPinned,
+            pinned,
+            namespace,
+            withSupportModal,
+            sourceStatus,
+            sourceLoaded: true,
+            sourceLoadError,
           })}
           key={`kebab-for-${template.metadata.uid}`}
           id={`kebab-for-${template.metadata.uid}`}
@@ -256,26 +301,18 @@ type VirtualMachineTemplatesProps = React.ComponentProps<typeof Table> & {
   };
 };
 
+export const VMTemplateSupport: React.FC = () => (
+  <>
+    Red Hat supported templates are labeled below.{' '}
+    <ExternalLink href={SUPPORT_URL} text="Learn more about template support" />
+  </>
+);
+
 const VirtualMachineTemplates: React.FC<VirtualMachineTemplatesProps> = (props) => {
-  const [pins, setPins] = useLocalStorage('kubevirt.templates.pins');
-  const pinnedTemplates = React.useMemo(() => pins?.split(',') ?? [], [pins]);
-  const togglePin = React.useCallback(
-    (template: TemplateKind) => {
-      const { uid } = template.metadata;
-      const index = pinnedTemplates.indexOf(uid);
-      const newPins = [...pinnedTemplates];
-      if (index !== -1) {
-        newPins.splice(index, 1);
-      } else {
-        newPins.push(uid);
-      }
-      setPins(newPins.join(','));
-    },
-    [pinnedTemplates, setPins],
-  );
+  const [isPinned, togglePin] = usePinnedTemplates();
   const activeNamespace = useSelector(getActiveNamespace);
   const namespace = activeNamespace === ALL_NAMESPACES_KEY ? undefined : activeNamespace;
-  const [baseImages, imagesLoaded, , baseImageDVs, baseImagePods] = useBaseImages(
+  const [baseImages, imagesLoaded, error, baseImageDVs, baseImagePods] = useBaseImages(
     props.resources.vmCommonTemplates?.data ?? [],
     !!namespace,
   );
@@ -292,55 +329,43 @@ const VirtualMachineTemplates: React.FC<VirtualMachineTemplatesProps> = (props) 
     baseImagePods,
   ]);
   return (
-    <div className="kubevirt-vm-template-list">
-      <Table
-        {...props}
-        aria-label={VM_TEMPLATE_LABEL_PLURAL}
-        Header={() => VMTemplateTableHeader(!namespace)}
-        Row={VMTemplateTableRow}
-        virtualize
-        customData={{
-          dataVolumes,
-          pvcs,
-          pods,
-          loaded: imagesLoaded,
-          namespace,
-          togglePin,
-          pinnedTemplates,
-        }}
-        isPinned={(template) => pinnedTemplates.includes(template?.metadata?.uid)}
-      />
-    </div>
+    <Stack hasGutter className="kubevirt-vm-template-list">
+      <StackItem className="kv-vm-template__support">
+        <VMTemplateSupport />
+      </StackItem>
+      <StackItem>
+        <Table
+          {...props}
+          aria-label={VM_TEMPLATE_LABEL_PLURAL}
+          Header={() => VMTemplateTableHeader(!namespace)}
+          Row={(rowProps) => <VMTemplateTableRow {...rowProps} />}
+          virtualize
+          customData={{
+            dataVolumes,
+            pvcs,
+            pods,
+            loaded: imagesLoaded,
+            namespace,
+            togglePin,
+            isPinned,
+            sourceLoadError: error,
+          }}
+          isPinned={isPinned}
+          defaultSortFunc="vmTemplateName"
+        />
+      </StackItem>
+    </Stack>
   );
 };
 
-const getCreateProps = ({ namespace }: { namespace: string }) => {
-  const items: any = {
-    [VMWizardName.WIZARD]: VMWizardActionLabels.WIZARD,
-    [VMWizardName.YAML]: VMWizardActionLabels.YAML,
-  };
-
-  return {
-    items,
-    createLink: (itemName) =>
-      getVMWizardCreateLink({ namespace, wizardName: itemName, mode: VMWizardMode.TEMPLATE }),
-  };
-};
-
-const templateTypeFilterReducer = (template: TemplateKind): string =>
-  template.metadata.labels?.[TEMPLATE_TYPE_LABEL] === TEMPLATE_TYPE_BASE ? 'vendor' : 'custom';
-
 const filters: RowFilter[] = [
   {
-    filterGroupName: 'Type',
-    type: 'template-type',
-    reducer: templateTypeFilterReducer,
-    items: [
-      { id: 'vendor', title: 'Red Hat template' },
-      { id: 'custom', title: 'Custom template' },
-    ],
-    filter: (types, template: TemplateKind) => {
-      const type = templateTypeFilterReducer(template);
+    filterGroupName: 'Provider',
+    type: 'template-provider',
+    reducer: getTemplateProviderType,
+    items: templateProviders,
+    filter: (types, template: TemplateItem) => {
+      const type = getTemplateProviderType(template);
       return types.selected.size === 0 || types.selected.has(type);
     },
   },
@@ -349,13 +374,7 @@ const filters: RowFilter[] = [
 const flatten = ({ vmTemplates, vmCommonTemplates }) => {
   const user = getLoadedData<TemplateKind[]>(vmTemplates, []);
   const common = getLoadedData<TemplateKind[]>(vmCommonTemplates, []);
-  const commonByName = _.groupBy(common, getTemplateName);
-  const commonTemplates = Object.keys(commonByName).map((key) => {
-    const templates = commonByName[key];
-    // TODO recommended label
-    return templates.find((t) => getLabel(t, 'kubevirt.io/recommended')) || templates[0];
-  });
-  return [...user, ...commonTemplates];
+  return filterTemplates(user, common);
 };
 
 const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
@@ -398,6 +417,9 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
       kind: PodModel.kind,
       isList: true,
       namespace,
+      selector: {
+        matchLabels: { app: CDI_APP_LABEL },
+      },
       prop: 'pods',
     },
   ];
@@ -410,13 +432,9 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
       {...modifiedProps}
       createAccessReview={createAccessReview}
       createButtonText="Create"
-      canCreate
       title={VM_TEMPLATE_LABEL_PLURAL}
       showTitle={showTitle}
       ListComponent={VirtualMachineTemplates}
-      createProps={getCreateProps({
-        namespace,
-      })}
       resources={resources}
       flatten={flatten}
       label={VM_TEMPLATE_LABEL_PLURAL}

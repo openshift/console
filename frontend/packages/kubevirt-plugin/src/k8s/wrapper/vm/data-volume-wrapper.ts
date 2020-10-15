@@ -38,8 +38,8 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
   ) {
     super.init(data);
     const { size, unit, storageClassName } = data;
-    if (size != null && unit) {
-      this.setSize(size, unit);
+    if (size != null) {
+      this.setSize(size, unit || '');
     }
     if (storageClassName !== undefined) {
       this.setStorageClassName(storageClassName);

@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { Form, TextArea, TextInput } from '@patternfly/react-core';
 import { connect } from 'react-redux';
-import { iGet, iGetIn } from '../../../../utils/immutable';
+import { iGet, iGetIn, toShallowJS } from '../../../../utils/immutable';
 import { FormFieldMemoRow } from '../../form/form-field-row';
 import { FormField, FormFieldType } from '../../form/form-field';
 import { vmWizardActions } from '../../redux/actions';
 import {
+  InitialData,
   VMSettingsField,
   VMSettingsRenderableField,
   VMWizardProps,
@@ -61,6 +62,17 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
         <FormField>
           <TextInput onChange={onChange(VMSettingsField.NAME)} />
         </FormField>
+      </FormFieldMemoRow>
+      <FormFieldMemoRow
+        field={getField(VMSettingsField.TEMPLATE_PROVIDER)}
+        fieldType={FormFieldType.TEXT}
+      >
+        <FormField>
+          <TextInput onChange={onChange(VMSettingsField.TEMPLATE_PROVIDER)} />
+        </FormField>
+        <div className="pf-c-form__helper-text" aria-live="polite">
+          example: your company name
+        </div>
       </FormFieldMemoRow>
       <FormFieldMemoRow
         field={getField(VMSettingsField.DESCRIPTION)}
@@ -138,7 +150,9 @@ const stateToProps = (state, { wizardReduxID }) => ({
   vmSettings: iGetVmSettings(state, wizardReduxID),
   commonTemplates: iGetCommonData(state, wizardReduxID, VMWizardProps.commonTemplates),
   iUserTemplate: iGetCommonData(state, wizardReduxID, VMWizardProps.userTemplate),
-  commonTemplateName: iGetCommonData(state, wizardReduxID, VMWizardProps.commonTemplateName),
+  commonTemplateName: toShallowJS<InitialData>(
+    iGetCommonData(state, wizardReduxID, VMWizardProps.initialData),
+  ).commonTemplateName,
   cnvBaseImages: iGetCommonData(state, wizardReduxID, VMWizardProps.openshiftCNVBaseImages),
   openshiftFlag: iGetCommonData(state, wizardReduxID, VMWizardProps.openshiftFlag),
   provisionSourceStorage: iGetProvisionSourceStorage(state, wizardReduxID),

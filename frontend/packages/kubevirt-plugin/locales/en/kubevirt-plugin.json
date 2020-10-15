@@ -36,5 +36,9 @@
   "{{count}} user": "{{count}} user",
   "{{count}} user_plural": "{{count}} users",
   "VM not running": "VM not running",
-  "Guest agent required": "Guest agent required"
+  "Guest agent required": "Guest agent required",
+  "Red Hat provided templates can not be edited": "Red Hat provided templates can not be edited",
+  "Create a new custom template": "Create a new custom template",
+  "{{ name }} can not be edited because it is provided by the Red Hat OpenShift Virtualization Operator.": "{{ name }} can not be edited because it is provided by the Red Hat OpenShift Virtualization Operator.",
+  "We suggest you create a custom Template from this Red Hat template.": "We suggest you create a custom Template from this Red Hat template."
 }

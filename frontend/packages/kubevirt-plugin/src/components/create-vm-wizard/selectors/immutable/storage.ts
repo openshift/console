@@ -13,6 +13,11 @@ export const iGetProvisionSourceStorage = (state, id: string) =>
     ].includes(iGet(storage, 'type')),
   );
 
+export const iGetProvisionSourceAdditionalStorage = (state, id: string) =>
+  iGetStorages(state, id).find(
+    (storage) => iGet(storage, 'type') === VMWizardStorageType.PROVISION_SOURCE_ADDITIONAL_DISK,
+  );
+
 export const iGetCloudInitNoCloudStorage = (state, id: string) =>
   iGetStorages(state, id).find((storage) => iGetIn(storage, ['volume', 'cloudInitNoCloud']));
 

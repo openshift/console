@@ -8,11 +8,6 @@
   padding-right: var(--pf-global--spacer--sm);
 }
 
-.kubevirt-vm-template-pin {
-  width: 2rem;
-  padding-left: var(--pf-global--spacer--sm);
-}
-
 .kubevirt-vm-template-actions {
   text-align: right;
   display: flex;
@@ -31,12 +26,6 @@
   margin-bottom: var(--pf-global--spacer--sm);
 }
 
-.kubevirt-vm-template-badge--custom {
-  --pf-c-badge--Color: var(--pf-global--BackgroundColor--100) !important; 
-  --pf-c-badge--BackgroundColor: var(--pf-global--warning-color--100) !important; 
-}
-
-.kubevirt-vm-template-badge--common {
-  --pf-c-badge--Color: var(--pf-global--BackgroundColor--100) !important; 
-  --pf-c-badge--BackgroundColor: var(--pf-global--info-color--100) !important; 
+.kv-vm-template__support {
+  font-size: var(--pf-global--FontSize--sm);
 }

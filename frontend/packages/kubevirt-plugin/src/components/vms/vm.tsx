@@ -2,7 +2,10 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import * as classNames from 'classnames';
 import { match } from 'react-router';
+import { Link, useLocation } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
+import { Button, EmptyState, EmptyStateBody, EmptyStateIcon, Title } from '@patternfly/react-core';
+import { VirtualMachineIcon } from '@patternfly/react-icons';
 import {
   createLookup,
   dimensifyHeader,
@@ -18,7 +21,6 @@ import {
   PodModel,
   NodeModel,
   PersistentVolumeClaimModel,
-  ConfigMapModel,
 } from '@console/internal/models';
 import {
   Table,
@@ -29,19 +31,13 @@ import {
 } from '@console/internal/components/factory';
 import {
   FirehoseResult,
+  history,
   Kebab,
   KebabOption,
   ResourceLink,
   Timestamp,
-  checkAccess,
 } from '@console/internal/components/utils';
-import {
-  K8sKind,
-  PersistentVolumeClaimKind,
-  PodKind,
-  SelfSubjectAccessReviewKind,
-} from '@console/internal/module/k8s';
-import { useSafetyFirst } from '@console/internal/components/safety-first';
+import { K8sKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
 import { VMStatus } from '../vm-status/vm-status';
 import {
   DataVolumeModel,
@@ -58,8 +54,6 @@ import { isVMImport, isVM, isVMI } from '../../selectors/check-type';
 import { vmStatusFilter } from './table-filters';
 import { vmiMenuActions, vmImportMenuActions, vmMenuActions } from './menu-actions';
 import { VMILikeEntityKind } from '../../types/vmLike';
-import { getVMWizardCreateLink } from '../../utils/url';
-import { VMWizardActionLabels, VMWizardMode, VMWizardName } from '../../constants/vm';
 import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
 import { VMStatusBundle } from '../../statuses/vm/types';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
@@ -67,10 +61,9 @@ import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper'
 import { getVMImportStatusAsVMStatus } from '../../statuses/vm-import/vm-import-status';
 import { V2VVMImportStatus } from '../../constants/v2v-import/ovirt/v2v-vm-import-status';
 import { hasPendingChanges } from '../../utils/pending-changes';
-import {
-  VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAME,
-  VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAMESPACES,
-} from '../../constants/v2v';
+import { getVMWizardCreateLink } from '../../utils/url';
+import { VMWizardMode, VMWizardName } from '../../constants';
+import { useNamespace } from '../../hooks/use-namespace';
 
 import './vm.scss';
 
@@ -181,10 +174,43 @@ const VMRow: RowFunction<VMRowObjType> = ({ obj, index, key, style }) => {
   );
 };
 
+const VMListEmpty: React.FC = () => {
+  const location = useLocation();
+  const namespace = useNamespace();
+  return (
+    <EmptyState>
+      <EmptyStateIcon icon={VirtualMachineIcon} />
+      <Title headingLevel="h4" size="lg">
+        No virtual machines found
+      </Title>
+      <EmptyStateBody>
+        See the <Link to={`${location.pathname}/templates`}>templates tab</Link> to quickly create a
+        virtual machine from the available templates.
+      </EmptyStateBody>
+      <Button
+        data-test-id="create-vm-empty"
+        variant="primary"
+        onClick={() =>
+          history.push(
+            getVMWizardCreateLink({
+              namespace,
+              wizardName: VMWizardName.BASIC,
+              mode: VMWizardMode.VM,
+            }),
+          )
+        }
+      >
+        Create virtual machine
+      </Button>
+    </EmptyState>
+  );
+};
+
 const VMList: React.FC<React.ComponentProps<typeof Table> & VMListProps> = (props) => (
   <div className="kv-vm-list">
     <Table
       {...props}
+      EmptyMsg={VMListEmpty}
       aria-label={VirtualMachineModel.labelPlural}
       Header={VMHeader}
       Row={VMRow}
@@ -194,34 +220,6 @@ const VMList: React.FC<React.ComponentProps<typeof Table> & VMListProps> = (prop
 );
 
 VMList.displayName = 'VMList';
-
-const wizardImportName = 'wizardImport';
-const getCreateProps = ({
-  namespace,
-  importAllowed,
-}: {
-  namespace: string;
-  importAllowed: boolean;
-}) => {
-  const items: any = {
-    [VMWizardName.WIZARD]: VMWizardActionLabels.WIZARD,
-    [VMWizardName.YAML]: VMWizardActionLabels.YAML,
-  };
-
-  if (importAllowed) {
-    items[wizardImportName] = VMWizardActionLabels.IMPORT;
-  }
-
-  return {
-    items,
-    createLink: (wizardName) =>
-      getVMWizardCreateLink({
-        namespace,
-        wizardName: wizardName === wizardImportName ? VMWizardName.WIZARD : wizardName,
-        mode: wizardName === wizardImportName ? VMWizardMode.IMPORT : VMWizardMode.VM,
-      }),
-  };
-};
 
 const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
   const { skipAccessReview, noProjectsAvailable, showTitle } = props.customData;
@@ -268,30 +266,6 @@ const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
       optional: true,
     },
   ];
-
-  const [importAllowed, setImportAllowed] = useSafetyFirst(false);
-
-  React.useEffect(() => {
-    VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAMESPACES.forEach((configMapNamespace) => {
-      checkAccess({
-        group: ConfigMapModel.apiGroup,
-        verb: 'get',
-        resource: ConfigMapModel.plural,
-        name: VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAME,
-        namespace: configMapNamespace,
-      })
-        .then((result: SelfSubjectAccessReviewKind) => {
-          if (result?.status?.allowed) {
-            setImportAllowed(true);
-          }
-        })
-        // Default to enabling the action if the access review fails so that we
-        // don't incorrectly block users from actions they can perform. The server
-        // still enforces access control.
-        .catch(() => setImportAllowed(true));
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const flatten = ({
     vms,
@@ -412,12 +386,10 @@ const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
       {...modifiedProps}
       createAccessReview={createAccessReview}
       createButtonText="Create Virtual Machine"
-      canCreate
       title={VirtualMachineModel.labelPlural}
       showTitle={showTitle}
       rowFilters={[vmStatusFilter]}
       ListComponent={VMList}
-      createProps={getCreateProps({ namespace, importAllowed })}
       resources={resources}
       flatten={flatten}
       label={VirtualMachineModel.labelPlural}

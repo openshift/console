@@ -113,7 +113,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
 }) => {
   const operatingSystems = getTemplateOperatingSystems(commonTemplates);
   const operatingSystemHaveDV = operatingSystems.find(
-    (os) => os?.dataVolumeName && os?.dataVolumeNamespace,
+    (os) => os?.baseImageName && os?.baseImageNamespace,
   );
   const [accessModeHelp, setAccessModeHelp] = React.useState('Permissions to the mounted drive.');
   const [allowedAccessModes, setAllowedAccessModes] = React.useState(initialAccessModes);
