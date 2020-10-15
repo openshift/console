@@ -105,3 +105,14 @@ Scenario: Uninstall the Pipeline Operator from Operator Hub page : P-013-TC01, P
 
 Scenario: Uninstall the knative serverless operator from Operator Hub page 
    Given user is at OpenShift Serverless Operator subscription page
+
+
+@regression, @smoke
+Scenario: Install Web Terminal operator from Operator Hub page
+   Given user is at Operator Hub page with the header name "OperatorHub" 
+   When user searches for "Web Terminal"
+   And user clicks on the Web Terminal Operator card
+   And user clicks install button present on the right side bar
+   And user installs the Web Terminal operator with default values
+   Then user will see a modal with title "Web Terminal"
+   And user will see a View Operator button
