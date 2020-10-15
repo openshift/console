@@ -24,6 +24,8 @@ import {
   FLAG_KNATIVE_SERVING_ROUTE,
   FLAG_KNATIVE_SERVING_SERVICE,
   FLAG_KNATIVE_EVENTING,
+  FLAG_KNATIVE_EVENTING_CHANNEL,
+  FLAG_KNATIVE_EVENTING_BROKER,
 } from './const';
 import { getKebabActionsForKind } from './utils/kebab-actions';
 import { TopologyConsumedExtensions, topologyPlugin } from './topology/topology-plugin';
@@ -95,6 +97,20 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: models.EventingBrokerModel,
+      flag: FLAG_KNATIVE_EVENTING_BROKER,
+    },
+  },
+  {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: models.EventingChannelModel,
+      flag: FLAG_KNATIVE_EVENTING_CHANNEL,
+    },
+  },
+  {
     type: 'GlobalConfig',
     properties: {
       kind: 'KnativeServing',
@@ -113,8 +129,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       perspective: 'admin',
       section: 'Serverless',
       componentProps: {
-        name: 'Eventing',
-        href: '/eventing',
+        name: 'Serving',
+        href: '/serving',
       },
     },
     flags: {
@@ -122,6 +138,24 @@ const plugin: Plugin<ConsumedExtensions> = [
         FLAG_KNATIVE_SERVING_SERVICE,
         FLAG_KNATIVE_SERVING_REVISION,
         FLAG_KNATIVE_SERVING_ROUTE,
+      ],
+    },
+  },
+  {
+    type: 'NavItem/Href',
+    properties: {
+      perspective: 'admin',
+      section: 'Serverless',
+      componentProps: {
+        name: 'Eventing',
+        href: '/eventing',
+      },
+    },
+    flags: {
+      required: [
+        FLAG_KNATIVE_EVENTING,
+        FLAG_KNATIVE_EVENTING_BROKER,
+        FLAG_KNATIVE_EVENTING_CHANNEL,
       ],
     },
   },

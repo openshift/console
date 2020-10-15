@@ -15,8 +15,6 @@ const BrokerHeaders = () => {
     },
     {
       title: 'Triggers',
-      sortField: 'kind',
-      transforms: [sortable],
     },
     {
       title: 'Created',

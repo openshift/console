@@ -14,3 +14,5 @@ export const STRIMZI_KAFKA_APIGROUP = 'kafka.strimzi.io';
 export const EVENT_SOURCE_LABEL = 'console.openshift.io/event-source';
 export const EVENT_SOURCE_ICON = 'console.openshift.io/icon';
 export const CAMEL_SOURCE_INTEGRATION = 'camel.apache.org/integration';
+export const FLAG_KNATIVE_EVENTING_BROKER = 'FLAG_KNATIVE_EVENTING_BROKER';
+export const FLAG_KNATIVE_EVENTING_CHANNEL = 'FLAG_KNATIVE_EVENTING_CHANNEL';

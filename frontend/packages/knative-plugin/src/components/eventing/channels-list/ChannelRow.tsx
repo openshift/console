@@ -4,6 +4,7 @@ import { Kebab, ResourceKebab, ResourceLink, Timestamp } from '@console/internal
 import { referenceFor } from '@console/internal/module/k8s';
 import { getDynamicChannelModel } from '../../../utils/fetch-dynamic-eventsources-utils';
 import { EventChannelKind } from '../../../types';
+import ChannelSubscriptions from '../ChannelSubscriptions';
 
 const ChannelRow: RowFunction<EventChannelKind> = ({ obj, index, key, style }) => {
   const objReference = referenceFor(obj);
@@ -23,7 +24,9 @@ const ChannelRow: RowFunction<EventChannelKind> = ({ obj, index, key, style }) =
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData>{kind.label}</TableData>
-      <TableData>{kind.label}</TableData>
+      <TableData>
+        <ChannelSubscriptions channel={obj} />
+      </TableData>
       <TableData>
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>

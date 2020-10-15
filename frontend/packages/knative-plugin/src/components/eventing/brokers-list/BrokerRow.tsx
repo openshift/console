@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { Kebab, ResourceKebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
-import { K8sResourceCommon, referenceFor } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
 import { EventingBrokerModel } from '../../../models';
+import { EventBrokerKind } from '../../../types';
+import BrokerTriggers from '../BrokerTriggers';
 
-const BrokerRow: RowFunction<K8sResourceCommon> = ({ obj, index, key, style }) => {
+const BrokerRow: RowFunction<EventBrokerKind> = ({ obj, index, key, style }) => {
   const objReference = referenceFor(obj);
   const menuActions = [
     ...Kebab.getExtensionsActionsForKind(EventingBrokerModel),
@@ -23,7 +25,9 @@ const BrokerRow: RowFunction<K8sResourceCommon> = ({ obj, index, key, style }) =
       <TableData className="co-break-word">
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
-      <TableData>{EventingBrokerModel.label}</TableData>
+      <TableData>
+        <BrokerTriggers broker={obj} />
+      </TableData>
       <TableData>
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
