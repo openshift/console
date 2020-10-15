@@ -1,7 +1,6 @@
 export const pluralToKind = (plural) => {
   const convertKind = {
-    secrets: 'Secret',
-    namespaces: 'Namespace'
+    secrets: 'Secret'
   };
   return convertKind[plural];
 }

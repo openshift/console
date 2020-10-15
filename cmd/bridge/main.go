@@ -37,7 +37,7 @@ const (
 
 	// Well-known location of the cluster monitoring (not user workload monitoring) Prometheus service for OpenShift.
 	// This is only accessible in-cluster. This is used for non-tenant global (alerting) rules requests.
-	openshiftPrometheusHost = "prometheus-k8s.monitoring.svc:9090"
+	openshiftPrometheusHost = "prometheus-k8s.openshift-monitoring.svc:9091"
 
 	// Well-known location of the tenant aware Thanos service for OpenShift. This is only accessible in-cluster.
 	// Thanos proxies requests to both cluster monitoring and user workload monitoring prometheus instances.
@@ -49,7 +49,7 @@ const (
 	openshiftThanosHost = "thanos-querier.openshift-monitoring.svc:9091"
 
 	// Well-known location of Alert Manager service for OpenShift. This is only accessible in-cluster.
-	openshiftAlertManagerHost = "alertmanager-main.monitoring.svc:9093"
+	openshiftAlertManagerHost = "alertmanager-main.openshift-monitoring.svc:9094"
 
 	// Well-known location of metering service for OpenShift. This is only accessible in-cluster.
 	openshiftMeteringHost = "reporting-operator.openshift-metering.svc:8080"
