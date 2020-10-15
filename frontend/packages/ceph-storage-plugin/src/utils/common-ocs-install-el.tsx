@@ -30,9 +30,8 @@ export const MinimalDeploymentAlert = () => (
     }
     isInline
   >
-    The selected nodes do not match the OCS storage cluster recommended requirements of an
-    aggregated 42 CPUs and 102 GiB of RAM. If the selection cannot be modified, a minimal cluster
-    will be deployed.
+    The selected nodes do not match the OCS storage cluster requirement of an aggregated 30 CPUs and
+    72 GiB of RAM. If the selection cannot be modified, a minimal cluster will be deployed.
   </Alert>
 );
 
