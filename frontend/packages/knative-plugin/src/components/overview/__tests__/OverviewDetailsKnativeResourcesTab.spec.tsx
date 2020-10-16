@@ -33,8 +33,6 @@ describe('OverviewDetailsKnativeResourcesTab', () => {
         revisions: MockKnativeResources.revisions.data,
         ksservices: MockKnativeResources.ksservices.data,
         ksroutes: MockKnativeResources.ksroutes.data,
-        routes: [],
-        services: [],
         isOperatorBackedService: false,
       },
     };

@@ -25,10 +25,10 @@ const PodOverviewDetails: React.SFC<PodOverviewDetailsProps> = ({ item: { obj: p
   );
 };
 
-const PodResourcesTab: React.SFC<PodResourcesTabProps> = ({ item: { obj, routes, services } }) => (
+const PodResourcesTab: React.SFC<PodResourcesTabProps> = ({ item: { obj } }) => (
   <div className="overview__sidebar-pane-body">
     <PodsOverview obj={obj} />
-    <NetworkingOverview services={services} routes={routes} />
+    <NetworkingOverview obj={obj} />
   </div>
 );
 

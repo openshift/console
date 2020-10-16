@@ -572,21 +572,19 @@ export const getPodTemplate = (resource: K8sResourceKind): PodTemplate => {
   }
 };
 
-export const getRoutesForServices = (services: K8sResourceKind[], resources: any): RouteKind[] => {
-  const { routes } = resources;
-  return _.filter(routes.data, (route) => {
-    const name = _.get(route, 'spec.to.name');
-    return _.some(services, { metadata: { name } });
-  });
+export const getRoutesForServices = (services: string[], routes: RouteKind[]): RouteKind[] => {
+  if (!services?.length || !routes?.length) {
+    return [];
+  }
+  return routes.filter((route) => services.includes(route.spec?.to?.name));
 };
 
 export const getServicesForResource = (
   resource: K8sResourceKind,
-  resources: any,
+  services: K8sResourceKind[],
 ): K8sResourceKind[] => {
-  const { services } = resources;
   const template: PodTemplate = getPodTemplate(resource);
-  return _.filter(services.data, (service: K8sResourceKind) => {
+  return _.filter(services, (service: K8sResourceKind) => {
     const selector = new LabelSelector(_.get(service, 'spec.selector', {}));
     return selector.matches(template);
   });
@@ -634,15 +632,11 @@ export const getOverviewItemsForResource = (
   const monitoringAlerts = isMonitorable
     ? getWorkloadMonitoringAlerts(obj, resources?.monitoringAlerts)
     : undefined;
-  const services = getServicesForResource(obj, resources);
-  const routes = getRoutesForServices(services, resources);
   const pods = getPodsForResource(obj, resources);
   const status = resourceStatus(obj, current, isRollingOut);
   const overviewItem: OverviewItem = {
     obj,
     pods,
-    routes,
-    services,
     status,
     isMonitorable,
     current,
@@ -670,8 +664,6 @@ export const createDeploymentConfigItem = (
   );
   const [current, previous] = visibleReplicationControllers;
   const isRollingOut = getRolloutStatus(deploymentConfig, current, previous);
-  const services = getServicesForResource(deploymentConfig, resources);
-  const routes = getRoutesForServices(services, resources);
   const status = resourceStatus(deploymentConfig, current, isRollingOut);
   const pods = [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])];
   const monitoringAlerts = getWorkloadMonitoringAlerts(
@@ -686,8 +678,6 @@ export const createDeploymentConfigItem = (
     obj: deploymentConfig,
     previous,
     pods,
-    routes,
-    services,
     status,
     isMonitorable: true,
     monitoringAlerts,
@@ -720,8 +710,6 @@ export const createDeploymentItem = (
   const replicaSets = getReplicaSetsForResource(deployment, resources);
   const [current, previous] = replicaSets;
   const isRollingOut = !!current && !!previous;
-  const services = getServicesForResource(deployment, resources);
-  const routes = getRoutesForServices(services, resources);
   const status = resourceStatus(deployment, current, isRollingOut);
   const pods = [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])];
   const monitoringAlerts = getWorkloadMonitoringAlerts(deployment, resources?.monitoringAlerts);
@@ -733,8 +721,6 @@ export const createDeploymentItem = (
     isRollingOut,
     previous,
     pods,
-    routes,
-    services,
     status,
     isMonitorable: true,
     monitoringAlerts,
@@ -778,8 +764,6 @@ export const createCronJobItem = (
     pods,
     jobs,
     status,
-    routes: [],
-    services: [],
     isMonitorable,
     monitoringAlerts,
   };
@@ -828,8 +812,6 @@ export const createPodItem = (pod: PodKind, resources: any): OverviewItem => {
   if (!_.isEmpty(owners) || phase === 'Succeeded' || phase === 'Failed') {
     return null;
   }
-  const services = getServicesForResource(pod, resources);
-  const routes = getRoutesForServices(services, resources);
   const status = podStatus(pod as PodKind);
   const isMonitorable = isKindMonitorable(PodModel);
   const monitoringAlerts: Alert[] = isMonitorable
@@ -838,8 +820,6 @@ export const createPodItem = (pod: PodKind, resources: any): OverviewItem => {
 
   return {
     obj: pod,
-    routes,
-    services,
     status,
     pods: [pod],
     isMonitorable,

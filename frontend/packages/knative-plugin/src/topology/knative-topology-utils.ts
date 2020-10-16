@@ -12,8 +12,6 @@ import {
   getOwnedResources,
   getBuildConfigsForResource,
   getReplicaSetsForResource,
-  getRoutesForServices,
-  getServicesForResource,
 } from '@console/shared';
 import { Edge, EdgeModel, Model, Node, NodeModel, NodeShape } from '@patternfly/react-topology';
 import {
@@ -528,16 +526,12 @@ const createKnativeDeploymentItems = (
     const replicaSets = getReplicaSetsForResource(depObj, resources);
     const [current, previous] = replicaSets;
     const isRollingOut = !!current && !!previous;
-    const services = getServicesForResource(depObj, resources);
-    const routes = getRoutesForServices(services, resources);
     const overviewItem = {
       obj: resource,
       current,
       isRollingOut,
       previous,
       pods: [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])],
-      routes,
-      services,
       associatedDeployment: depObj,
     };
 
@@ -552,8 +546,6 @@ const createKnativeDeploymentItems = (
   const knResources = getKnativeServiceData(resource, resources, utils);
   return {
     obj: resource,
-    routes: [],
-    services: [],
     ...knResources,
   };
 };
@@ -631,8 +623,6 @@ export const createPubSubDataItems = (
 
   return {
     obj: resource,
-    routes: [],
-    services: [],
     ...(depChannelResources && { channels: depChannelResources }),
     eventSources,
     ...channelSubsData,

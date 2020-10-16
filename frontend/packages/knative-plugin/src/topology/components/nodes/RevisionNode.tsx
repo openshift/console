@@ -1,11 +1,19 @@
 import * as React from 'react';
 import { useAnchor, AnchorEnd, Node, observer } from '@patternfly/react-topology';
-import { WorkloadNode } from '@console/dev-console/src/components/topology';
+import {
+  getTopologyResourceObject,
+  useRoutesURL,
+  WorkloadNode,
+} from '@console/dev-console/src/components/topology';
 import RevisionTrafficTargetAnchor from '../anchors/RevisionTrafficTargetAnchor';
 
 const DECORATOR_RADIUS = 13;
 const RevisionNode: React.FC<React.ComponentProps<typeof WorkloadNode>> = (props) => {
-  const hasDataUrl = !!props.element.getData().data.url;
+  const { element } = props;
+  const resource = getTopologyResourceObject(element.getData());
+  const url = useRoutesURL(resource);
+  const hasDataUrl = !!url;
+
   useAnchor(
     React.useCallback(
       (node: Node) => new RevisionTrafficTargetAnchor(node, hasDataUrl ? DECORATOR_RADIUS : 0),

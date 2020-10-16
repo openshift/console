@@ -3,7 +3,6 @@ import {
   JobKind,
   K8sResourceKind,
   PodKind,
-  RouteKind,
 } from '@console/internal/module/k8s';
 import { DEPLOYMENT_STRATEGY } from '../constants';
 import { PodControllerOverviewItem } from './pod';
@@ -32,8 +31,6 @@ export type OverviewItem<T = K8sResourceKind> = {
   hpas?: HorizontalPodAutoscalerKind[];
   pods?: PodKind[];
   previous?: PodControllerOverviewItem;
-  routes: RouteKind[];
-  services: K8sResourceKind[];
   jobs?: JobKind[];
   status?: React.ReactNode;
   ksroutes?: K8sResourceKind[];

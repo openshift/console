@@ -4,10 +4,10 @@ import {
   K8sResourceKindReference,
   modelFor,
   referenceFor,
+  RouteKind,
 } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
 import { getRouteWebURL } from '@console/internal/components/routes';
-import { OverviewItem } from '@console/shared';
 import { Node, Edge, GraphElement } from '@patternfly/react-topology';
 import { updateResourceApplication, removeResourceConnection } from '../../utils/application-utils';
 import { createResourceConnection } from '../../utils/connector-utils';
@@ -63,27 +63,13 @@ export const filterBasedOnActiveApplication = (
 };
 
 /**
- * get the route data
- */
-const getRouteData = (resource: K8sResourceKind, ksroutes: K8sResourceKind[]): string => {
-  if (ksroutes && ksroutes.length > 0 && !_.isEmpty(ksroutes[0].status)) {
-    const trafficData: { [x: string]: any } = _.find(ksroutes[0].status.traffic, {
-      revisionName: resource.metadata.name,
-    });
-    return trafficData?.url;
-  }
-  return null;
-};
-
-/**
  * get routes url
  */
-export const getRoutesURL = (resource: K8sResourceKind, overviewItem: OverviewItem): string => {
-  const { routes, ksroutes } = overviewItem;
+export const getRoutesURL = (resource: K8sResourceKind, routes: RouteKind[]): string => {
   if (routes.length > 0 && !_.isEmpty(routes[0].spec)) {
     return getRouteWebURL(routes[0]);
   }
-  return getRouteData(resource, ksroutes);
+  return null;
 };
 
 export const getTopologyResourceObject = (topologyObject: TopologyDataObject): K8sResourceKind => {

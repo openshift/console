@@ -17,8 +17,6 @@ describe('KnativeResourceOverviewPage', () => {
   beforeEach(() => {
     item = {
       obj: revisionObj,
-      routes: [],
-      services: [],
     };
   });
 

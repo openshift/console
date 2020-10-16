@@ -23,8 +23,6 @@ describe('Monitoring Tab', () => {
           },
         },
       },
-      routes: [],
-      services: [],
     },
   };
 

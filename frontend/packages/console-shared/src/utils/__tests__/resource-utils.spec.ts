@@ -75,15 +75,13 @@ enum Keys {
   PODS = 'pods',
   JOBS = 'jobs',
   PREVIOUS = 'previous',
-  ROUTES = 'routes',
   STATUS = 'status',
-  SERVICE = 'services',
   REVISIONS = 'revisions',
   KNATIVECONFIGS = 'configurations',
   KSROUTES = 'ksroutes',
 }
 
-const podKeys = [Keys.OBJ, Keys.ROUTES, Keys.SERVICE, Keys.STATUS];
+const podKeys = [Keys.OBJ, Keys.STATUS];
 const dsAndSSKeys = [...podKeys, Keys.PODS];
 const dcKeys = [...dsAndSSKeys, Keys.CURRENT, Keys.ROLLINGOUT, Keys.PREVIOUS];
 const knativeKeys = [...dcKeys, Keys.REVISIONS, Keys.KNATIVECONFIGS, Keys.KSROUTES];

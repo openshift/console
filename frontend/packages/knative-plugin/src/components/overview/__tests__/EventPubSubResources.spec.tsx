@@ -48,8 +48,6 @@ describe('EventPubSubResources', () => {
     item: {
       obj: EventSubscriptionObj,
       eventSources: [],
-      routes: [],
-      services: [],
       subscribers: sampleSubscribers,
     },
   };

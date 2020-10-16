@@ -104,7 +104,6 @@ export interface ConnectedWorkloadPipeline {
 }
 
 export interface WorkloadData {
-  url?: string;
   editURL?: string;
   vcsURI?: string;
   vcsRef?: string;
