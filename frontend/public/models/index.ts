@@ -1,4 +1,5 @@
 import { K8sKind } from '../module/k8s';
+export * from './hypercloud/index';
 
 export const PrometheusModel: K8sKind = {
   kind: 'Prometheus',
