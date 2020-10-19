@@ -136,6 +136,11 @@ See [STYLEGUIDE](STYLEGUIDE.md) for file format and coding style guide.
 
 go 1.13+, nodejs/yarn, kubectl
 
+### Backend Development
+The backend is written in go, but its not always clear for developers on how to do integrated debugging with the IDE using the go deleve debugger.
+#### Backend Integrated debugging Guide
+A guide and set shell scripts for integrated IDE debugging of the go backend using VSCode is outlined [here](https://github.com/mitchharpur/openshift-console-debugging).
+
 ### Frontend Development
 
 All frontend code lives in the `frontend/` directory.  The frontend uses node, yarn, and webpack to compile dependencies into self contained bundles which are loaded dynamically at run time in the browser.  These bundles are not committed to git. Tasks are defined in `package.json` in the `scripts` section and are aliased to `yarn run <cmd>` (in the frontend directory).
