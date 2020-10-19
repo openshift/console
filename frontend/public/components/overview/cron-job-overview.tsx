@@ -4,6 +4,7 @@ import {
   OverviewItem,
   usePluginsOverviewTabSection,
   useBuildConfigsWatcher,
+  useJobsForCronJobWatcher,
 } from '@console/shared';
 import { CronJobModel } from '../../models';
 import { CronJobKind } from '../../module/k8s';
@@ -41,9 +42,10 @@ const CronJobOverviewDetails: React.SFC<CronJobOverviewDetailsProps> = ({
 );
 
 const CronJobResourcesTab: React.SFC<CronJobResourcesTabProps> = ({ item }) => {
-  const { pods, jobs, obj } = item;
+  const { pods, obj } = item;
   const pluginComponents = usePluginsOverviewTabSection(item);
   const { buildConfigs } = useBuildConfigsWatcher(obj);
+  const { jobs } = useJobsForCronJobWatcher(obj);
   return (
     <div className="overview__sidebar-pane-body">
       <PodsOverviewMultiple obj={obj} podResources={jobs} />

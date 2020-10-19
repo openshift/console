@@ -7,6 +7,7 @@ export * from './plugins-overview-tab-section';
 export * from './debounce';
 export * from './select-list';
 export * from './useBuildConfigsWatcher';
+export * from './useJobsForCronJobWatcher';
 export * from './usePodsWatcher';
 export * from './useRoutesWatcher';
 export * from './useServicesWatcher';
