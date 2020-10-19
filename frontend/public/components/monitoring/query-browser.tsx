@@ -449,6 +449,13 @@ const ZoomableGraph: React.FC<ZoomableGraphProps> = ({
   const [x1, setX1] = React.useState(0);
   const [x2, setX2] = React.useState(0);
 
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      setIsZooming(false);
+    }
+  };
+
   const onMouseDown = (e: React.MouseEvent) => {
     setIsZooming(true);
     const x = e.clientX - e.currentTarget.getBoundingClientRect().left;
@@ -486,7 +493,10 @@ const ZoomableGraph: React.FC<ZoomableGraphProps> = ({
     onZoom(from, to);
   };
 
-  const handlers = isZooming ? { onMouseMove, onMouseUp } : { onMouseDown };
+  // tabIndex is required to enable the onKeyDown handler
+  const handlers = isZooming
+    ? { onKeyDown, onMouseMove, onMouseUp, tabIndex: -1 }
+    : { onMouseDown };
 
   return (
     <div className="query-browser__zoom" {...handlers}>

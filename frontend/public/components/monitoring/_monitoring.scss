@@ -497,6 +497,9 @@ $monitoring-line-height: 18px;
 .query-browser__zoom {
   cursor: ew-resize;
   position: relative;
+  &:focus {
+    outline: none;
+  }
 }
 
 .query-browser__zoom-overlay {
