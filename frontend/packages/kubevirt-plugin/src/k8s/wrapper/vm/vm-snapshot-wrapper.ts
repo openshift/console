@@ -3,7 +3,6 @@ import { VMSnapshot } from '../../../types';
 import { VirtualMachineModel, VirtualMachineSnapshotModel } from '../../../models';
 import { K8sInitAddon } from '../common/util/k8s-mixin';
 import { getVmSnapshotVmName } from '../../../selectors/snapshot/snapshot';
-import { apiVersionForModel } from '@console/internal/module/k8s';
 
 export class VMSnapshotWrapper extends K8sResourceWrapper<VMSnapshot, VMSnapshotWrapper> {
   constructor(snapshot?: VMSnapshot | VMSnapshotWrapper | any, copy = false) {
@@ -21,7 +20,7 @@ export class VMSnapshotWrapper extends K8sResourceWrapper<VMSnapshot, VMSnapshot
   setVm = (vmName: string) => {
     this.ensurePath('spec');
     this.data.spec.source = {
-      apiGroup: apiVersionForModel(VirtualMachineModel),
+      apiGroup: VirtualMachineModel.apiGroup,
       kind: VirtualMachineModel.kind,
       name: vmName,
     };

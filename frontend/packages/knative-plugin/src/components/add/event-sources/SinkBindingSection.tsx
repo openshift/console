@@ -5,6 +5,7 @@ import { TextInputTypes, FormGroup } from '@patternfly/react-core';
 import { InputField, getFieldId } from '@console/shared';
 import { AsyncComponent } from '@console/internal/components/utils/async';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import { EventSources } from '../import-types';
 
 interface SinkBindingSectionProps {
   title: string;
@@ -12,7 +13,7 @@ interface SinkBindingSectionProps {
 
 const SinkBindingSection: React.FC<SinkBindingSectionProps> = ({ title }) => {
   const { values, setFieldValue } = useFormikContext<FormikValues>();
-  const initVal = values?.data?.sinkbinding?.subject?.selector?.matchLabels || {};
+  const initVal = values?.data?.[EventSources.SinkBinding]?.subject?.selector?.matchLabels || {};
   const initialValueResources = !_.isEmpty(initVal)
     ? _.map(initVal, (key, val) => [val, key])
     : [['', '']];
@@ -28,7 +29,10 @@ const SinkBindingSection: React.FC<SinkBindingSectionProps> = ({ title }) => {
         return updatedNameValuePairs;
       });
       setNameValue(nameValuePairs);
-      setFieldValue('data.sinkbinding.subject.selector.matchLabels', updatedNameValuePairs);
+      setFieldValue(
+        `data.${EventSources.SinkBinding}.subject.selector.matchLabels`,
+        updatedNameValuePairs,
+      );
     },
     [setFieldValue],
   );
@@ -39,14 +43,14 @@ const SinkBindingSection: React.FC<SinkBindingSectionProps> = ({ title }) => {
       <InputField
         data-test-id="sinkbinding-apiversion-field"
         type={TextInputTypes.text}
-        name="data.sinkbinding.subject.apiVersion"
+        name={`data.${EventSources.SinkBinding}.subject.apiVersion`}
         label="apiVersion"
         required
       />
       <InputField
         data-test-id="sinkbinding-kind-field"
         type={TextInputTypes.text}
-        name="data.sinkbinding.subject.kind"
+        name={`data.${EventSources.SinkBinding}.subject.kind`}
         label="Kind"
         required
       />

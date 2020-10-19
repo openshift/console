@@ -105,7 +105,7 @@ export const useEventSourceModels = (): EventSourcetData => {
 
 export const getEventSourceModels = (): K8sKind[] => eventSourceData.eventSourceModels;
 
-export const getDynamicEventSourcesResourceList = (namespace: string) => {
+export const getDynamicEventSourcesResourceList = (namespace: string, limit?: number) => {
   return eventSourceData.eventSourceModels.map((model) => {
     return {
       isList: true,
@@ -113,6 +113,7 @@ export const getDynamicEventSourcesResourceList = (namespace: string) => {
       namespace,
       prop: referenceForModel(model),
       optional: true,
+      ...(limit && { limit }),
     };
   });
 };
@@ -188,7 +189,7 @@ export const fetchChannelsCrd = async () => {
   return eventSourceData.eventSourceChannels;
 };
 
-export const getDynamicChannelResourceList = (namespace: string) => {
+export const getDynamicChannelResourceList = (namespace: string, limit?: number) => {
   return eventSourceData.eventSourceChannels.map((model) => {
     return {
       isList: true,
@@ -196,6 +197,7 @@ export const getDynamicChannelResourceList = (namespace: string) => {
       namespace,
       prop: referenceForModel(model),
       optional: true,
+      ...(limit && { limit }),
     };
   });
 };

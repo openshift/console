@@ -9,4 +9,7 @@ export const masthead = {
         .byTestID(Cypress.env('BRIDGE_KUBEADMIN_PASSWORD') ? 'user-dropdown' : 'username')
         .should('have.text', text),
   },
+  clickMastheadLink: (path: string) => {
+    return cy.byTestID(path).click();
+  },
 };

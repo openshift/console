@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { safeLoad } from 'js-yaml';
 import { PropertyItem } from '@patternfly/react-catalog-view-extension';
-import { ANNOTATIONS, FLAGS, APIError } from '@console/shared';
+import { ANNOTATIONS, FLAGS, APIError, toTitleCase } from '@console/shared';
 import {
   withExtensions,
   isDevCatalogModel,
@@ -216,13 +216,15 @@ export const CatalogListPage = withExtensions<CatalogListPageExtensionProps>({
 
       return _.reduce(
         chartEntries,
-        (normalizedCharts, charts) => {
+        (normalizedCharts, charts, key) => {
+          const chartRepoName = key.split('--').pop();
           charts.forEach((chart: HelmChart) => {
             const tags = chart.keywords;
             const chartName = chart.name;
             const chartVersion = chart.version;
             const appVersion = chart.appVersion;
-            const tileName = `${_.startCase(chartName)} v${chart.version}`;
+            const tileName = `${toTitleCase(chartName)} v${chart.version}`;
+            const tileProvider = toTitleCase(chartRepoName);
             const tileImgUrl = chart.icon || getImageForIconClass('icon-helm');
             const chartURL = _.get(chart, 'urls.0');
             const encodedChartURL = encodeURIComponent(chartURL);
@@ -269,6 +271,7 @@ export const CatalogListPage = withExtensions<CatalogListPageExtensionProps>({
             );
 
             const obj = {
+              chartRepoName,
               ...chart,
               ...{ metadata: { uid: chart.digest, creationTimestamp: chart.created } },
             };
@@ -276,6 +279,7 @@ export const CatalogListPage = withExtensions<CatalogListPageExtensionProps>({
               obj,
               kind: 'HelmChart',
               tileName,
+              tileProvider,
               tileIconClass: null,
               tileImgUrl,
               tileDescription: chart.description,
@@ -283,13 +287,15 @@ export const CatalogListPage = withExtensions<CatalogListPageExtensionProps>({
               createLabel: 'Install Helm Chart',
               markdownDescription,
               customProperties,
-              href: `/catalog/helm-install?chartName=${chartName}&chartURL=${encodedChartURL}&preselected-ns=${currentNamespace}`,
+              href: `/catalog/helm-install?chartName=${chartName}&chartRepoName=${chartRepoName}&chartURL=${encodedChartURL}&preselected-ns=${currentNamespace}`,
             };
 
             // group Helm chart with same name and different version together
             const existingChartIndex = normalizedCharts.findIndex((hlc) => {
               const currentChart = hlc.obj as HelmChart;
-              return currentChart?.name === chartName;
+              return (
+                currentChart?.name === chartName && currentChart?.chartRepoName === chartRepoName
+              );
             });
             if (existingChartIndex > -1) {
               const existingChart = normalizedCharts[existingChartIndex].obj as HelmChart;
@@ -562,6 +568,7 @@ export type HelmChart = {
   urls: string[];
   version: string;
   kubeVersion?: string;
+  chartRepoName?: string;
 };
 
 CatalogPage.displayName = 'CatalogPage';

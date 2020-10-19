@@ -1,5 +1,5 @@
 /* eslint-disable lines-between-class-members,no-underscore-dangle */
-import { ObjectEnum } from '../object-enum';
+import { ObjectEnum } from '@console/shared/src/constants/object-enum';
 import { V2VVMImportStatus } from '../v2v-import/ovirt/v2v-vm-import-status';
 import { StatusEnum, StatusMetadata } from '../status-enum';
 import { getStringEnumValues } from '../../utils/types';

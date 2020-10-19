@@ -15,16 +15,16 @@ const KUBEADMIN_IDP = 'kube:admin';
 
 // any command added below, must be added to global Cypress interface above
 
-// This will add to 'login(provider, username, password)' to cy
+// This will add 'cy.login(...)'
 // ex: cy.login('test', 'test', 'test')
 Cypress.Commands.add('login', (provider: string, username: string, password: string) => {
   // if local, no need to login
   if (!Cypress.env('BRIDGE_KUBEADMIN_PASSWORD')) {
-    cy.task('log', 'No BRIDGE_KUBEADMIN_PASSWORD set, skipping login');
+    cy.task('log', '  skipping login, no BRIDGE_KUBEADMIN_PASSWORD set');
     return;
   }
   const idp = provider || KUBEADMIN_IDP;
-  cy.task('log', `  Logging into IDP ${idp}, using baseUrl ${Cypress.config('baseUrl')}`);
+  cy.task('log', `  Logging in as ${username || KUBEADMIN_USERNAME}`);
   cy.visit(''); // visits baseUrl which is set in plugins/index.js
   cy.byLegacyTestID('login').should('be.visible');
   cy.contains(idp)
@@ -38,13 +38,11 @@ Cypress.Commands.add('login', (provider: string, username: string, password: str
 
 Cypress.Commands.add('logout', () => {
   if (!Cypress.env('BRIDGE_KUBEADMIN_PASSWORD')) {
-    cy.task('log', 'No BRIDGE_KUBEADMIN_PASSWORD set, skipping logout');
+    cy.task('log', '  skipping logout');
     return;
   }
   cy.task('log', '  Logging out');
-  cy.byTestID('user-dropdown')
-    .click()
-    .contains('Log out')
-    .click();
+  cy.byTestID('user-dropdown').click();
+  cy.byTestID('log-out').click();
   cy.byLegacyTestID('login').should('be.visible');
 });

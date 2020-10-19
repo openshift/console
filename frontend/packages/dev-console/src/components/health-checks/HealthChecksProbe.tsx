@@ -6,6 +6,7 @@ import { Button, ButtonVariant, Tooltip } from '@patternfly/react-core';
 import ProbeForm from './ProbeForm';
 import { getHealthChecksProbeConfig, healthChecksDefaultValues } from './health-checks-probe-utils';
 import { HealthCheckProbeData } from './health-checks-types';
+import { HealthCheckContext } from './health-checks-utils';
 import './HealthChecksProbe.scss';
 
 interface HealthCheckProbeProps {
@@ -17,8 +18,9 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
     values: { healthChecks },
     setFieldValue,
   } = useFormikContext<FormikValues>();
+  const { viewOnly } = React.useContext(HealthCheckContext);
   const [temporaryProbeData, setTemporaryProbeData] = React.useState<HealthCheckProbeData>();
-  const onEditProbe = () => {
+  const showProbe = () => {
     setFieldValue(`healthChecks.${probeType}.showForm`, true);
     setTemporaryProbeData(healthChecks?.[probeType].data);
   };
@@ -59,22 +61,33 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
     if (healthChecks?.[probeType]?.enabled) {
       return (
         <>
-          <span className="odc-heath-check-probe__successText">
-            <GreenCheckCircleIcon /> {`${getHealthChecksProbeConfig(probeType).formTitle} Added`}
-          </span>
-          <Tooltip content="Remove" position="right">
-            <Button
-              className="pf-m-plain--align-left"
-              variant={ButtonVariant.plain}
-              onClick={handleDeleteProbe}
-            >
-              <MinusCircleIcon />
-            </Button>
-          </Tooltip>
+          <Button
+            className="odc-heath-check-probe__successButton"
+            variant={ButtonVariant.plain}
+            isInline
+            onClick={showProbe}
+          >
+            <span className="odc-heath-check-probe__successText">
+              <GreenCheckCircleIcon /> {`${getHealthChecksProbeConfig(probeType).formTitle} Added`}
+            </span>
+          </Button>
+          {!viewOnly && (
+            <Tooltip content="Remove" position="right">
+              <Button
+                className="pf-m-plain--align-left"
+                variant={ButtonVariant.plain}
+                onClick={handleDeleteProbe}
+              >
+                <MinusCircleIcon />
+              </Button>
+            </Tooltip>
+          )}
         </>
       );
     }
-    return (
+    return viewOnly ? (
+      `No ${getHealthChecksProbeConfig(probeType).formTitle}`
+    ) : (
       <Button
         className="pf-m-link--align-left"
         variant={ButtonVariant.link}
@@ -94,10 +107,10 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
           <Button
             className="pf-m-link--align-left"
             variant={ButtonVariant.link}
-            onClick={onEditProbe}
+            onClick={showProbe}
           >
             &nbsp;&nbsp;
-            {'Edit Probe'}
+            {`${viewOnly ? 'View' : 'Edit'} Probe`}
           </Button>
         )}
       </div>

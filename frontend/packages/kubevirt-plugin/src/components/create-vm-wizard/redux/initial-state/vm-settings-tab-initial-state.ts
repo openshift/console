@@ -21,6 +21,7 @@ export const getInitialVmSettings = (data: CommonData): VMSettings => {
   const fields = {
     [VMSettingsField.NAME]: {
       isRequired: asRequired(true),
+      validations: [],
     },
     [VMSettingsField.HOSTNAME]: {},
     [VMSettingsField.DESCRIPTION]: {},

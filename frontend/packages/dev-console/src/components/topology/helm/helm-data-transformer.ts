@@ -164,7 +164,8 @@ const getHelmReleaseMap = (namespace: string) => {
     .then((releases) =>
       releases.reduce((acc, release) => {
         try {
-          const manifestResources: K8sResourceKind[] = safeLoadAll(release.manifest);
+          let manifestResources: K8sResourceKind[] = safeLoadAll(release.manifest);
+          manifestResources = manifestResources.filter((obj) => obj);
           manifestResources.forEach((resource) => {
             const resourceKindName = getHelmReleaseKey(resource);
             if (!acc.hasOwnProperty(resourceKindName)) {

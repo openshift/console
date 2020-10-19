@@ -25,6 +25,7 @@ import {
   asVM,
   getIsGraphicsConsoleAttached,
   getIsSerialConsoleAttached,
+  getCloudInitVolume,
 } from '../../selectors/vm';
 import { isVM, isVMI } from '../../selectors/check-type';
 import { VMIKind, VMKind } from '../../types/vm';
@@ -34,6 +35,9 @@ import { VMTabProps } from './types';
 import { VMStatusBundle } from '../../statuses/vm/types';
 import { VMStatus } from '../../constants/vm/vm-status';
 import { ConsoleType } from '../../constants/vm/console-type';
+import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
+import { CloudInitDataHelper } from '../../k8s/wrapper/vm/cloud-init-data-helper';
+import { CLOUD_INIT_MISSING_USERNAME } from '../../utils/strings';
 
 const VMIsDown: React.FC = () => (
   <div className="co-m-pane__body">
@@ -72,8 +76,15 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
   showOpenInNewWindow = true,
 }) => {
   const [showAlert, setShowAlert] = React.useState(true);
+  const [showPassword, setShowPassword] = React.useState(false);
   const showVNCOption = getIsGraphicsConsoleAttached(vm) !== false;
   const showSerialOption = getIsSerialConsoleAttached(vm) !== false;
+  const cloudInitVolume = getCloudInitVolume(vm);
+  const data = new VolumeWrapper(cloudInitVolume).getCloudInitNoCloud();
+  const cloudInitHelper = new CloudInitDataHelper(data);
+  const cloudInitUserData = cloudInitHelper.getUserData();
+  const cloudInitUsername = cloudInitUserData?.match(/(?<=user:\s+).*/);
+  const cloudInitPassword = cloudInitUserData?.match(/(?<=password:\s+).*/);
 
   if (!isVMIRunning(vmi)) {
     if (vmStatusBundle?.status?.isImporting() || vmStatusBundle?.status?.isMigrating()) {
@@ -134,6 +145,32 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
           >
             Open Console in new Window
           </Button>
+        </StackItem>
+      )}
+      {cloudInitPassword && (
+        <StackItem>
+          <Alert variant="info" isInline title="Guest login credentials">
+            The following credentials for this operating system were created via{' '}
+            <strong>Cloud-init</strong>. If unsuccessful cloud-init could be improperly configured.
+            Please contact the image provider for more information.
+            <p>
+              <strong>User name: </strong> {cloudInitUsername || CLOUD_INIT_MISSING_USERNAME}
+              {'  '}
+              <strong>Password: </strong>{' '}
+              {showPassword ? (
+                <>
+                  {cloudInitPassword}{' '}
+                  <Button isSmall isInline variant="link" onClick={() => setShowPassword(false)}>
+                    Hide password
+                  </Button>
+                </>
+              ) : (
+                <Button isSmall isInline variant="link" onClick={() => setShowPassword(true)}>
+                  Show password
+                </Button>
+              )}
+            </p>
+          </Alert>
         </StackItem>
       )}
       {typeNotSupported && showAlert && (

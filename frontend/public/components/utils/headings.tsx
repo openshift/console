@@ -2,13 +2,19 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
+import { useSelector } from 'react-redux';
 import { Breadcrumb, BreadcrumbItem, Button, SplitItem, Split } from '@patternfly/react-core';
+import { RootState } from '@console/internal/redux';
 import {
   OverviewItem,
   Status,
   HealthChecksAlert,
   YellowExclamationTriangleIcon,
+  useCsvWatchResource,
 } from '@console/shared';
+import { getActiveNamespace } from '@console/internal/reducers/ui';
 import {
   ActionsMenu,
   FirehoseResult,
@@ -212,6 +218,8 @@ export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = 
   resources,
 }) => {
   const { obj: resource, ...otherResources } = resources;
+  const ns = useSelector((state: RootState) => getActiveNamespace(state));
+  const { csvData } = useCsvWatchResource(ns);
   const isDeleting = !!resource.metadata.deletionTimestamp;
   return (
     <div className="overview__sidebar-pane-head resource-overview__heading">
@@ -235,7 +243,9 @@ export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = 
         </div>
         {!isDeleting && (
           <div className="co-actions">
-            <ActionsMenu actions={actions.map((a) => a(kindObj, resource, otherResources))} />
+            <ActionsMenu
+              actions={actions.map((a) => a(kindObj, resource, otherResources, { csvs: csvData }))}
+            />
           </div>
         )}
       </h1>

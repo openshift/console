@@ -1,0 +1,71 @@
+.ocs-install-info-alert {
+  margin: 15px 30px;
+}
+
+.ocs-install-wizard {
+  border-top: 1px solid #ccc;
+
+  &__card {
+    max-width: 27rem;
+    max-height: 12rem;
+  }
+
+  &__card-body {
+    overflow-y: scroll;
+    overflow-x: auto;
+    scrollbar-color: var(--pf-global--BackgroundColor--light-300) var(--pf-global--palette--white);
+  }
+
+  &__dd {
+    margin-left: var(--pf-global--spacer--md);
+  }
+
+  &__h3 {
+    --pf-c-content--h3--FontWeight: 200;
+  }
+
+  &__icon {
+    margin-right: var(--pf-global--spacer--xs);
+  }
+
+  &__review-list-item-alert {
+    max-width: 40rem;
+    margin-top: var(--pf-global--spacer--xs);
+  }
+
+  &__review-alert {
+    max-width: 60rem;
+    margin-top: var(--pf-global--spacer--lg);
+  }
+
+  &__select-nodes {
+    .co-m-pane__body {
+      /* Removes padding from the list page to align the table with rest of the form fields*/
+      padding: 0px;
+    }
+
+    .pf-c-table {
+      border: 1px solid #ccc;
+
+      .pf-c-table__check {
+        /* This overrides the default overrides of checkboxes for ocs based tables */
+        width: 4.6% !important;
+
+        @media screen and (max-width: 1620px) {
+          width: 7% !important;
+        }
+        @media screen and (max-width: 1200px) {
+          width: 10% !important;
+        }
+      }
+    }
+  }
+
+  &__storage-class-label {
+    display: none;
+  }
+
+  &__text-content {
+    margin-bottom: var(--pf-global--spacer--md);
+  }
+}

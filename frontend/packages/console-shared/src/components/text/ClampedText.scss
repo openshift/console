@@ -1,0 +1,6 @@
+.ocs-clamped-text {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--ocs-clamped-text--line-clamp);
+}

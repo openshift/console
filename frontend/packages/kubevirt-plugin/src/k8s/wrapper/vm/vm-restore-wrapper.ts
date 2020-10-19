@@ -3,7 +3,6 @@ import { VMRestore } from '../../../types';
 import { VirtualMachineModel, VirtualMachineRestoreModel } from '../../../models';
 import { K8sInitAddon } from '../common/util/k8s-mixin';
 import { getVmRestoreVmName } from '../../../selectors/snapshot/snapshot';
-import { apiVersionForModel } from '@console/internal/module/k8s';
 
 export class VMRestoreWrapper extends K8sResourceWrapper<VMRestore, VMRestoreWrapper> {
   constructor(snapshot?: VMRestore | VMRestoreWrapper | any, copy = false) {
@@ -37,7 +36,7 @@ export class VMRestoreWrapper extends K8sResourceWrapper<VMRestore, VMRestoreWra
   setVm = (vmName: string) => {
     this.ensurePath('spec');
     this.data.spec.target = {
-      apiGroup: apiVersionForModel(VirtualMachineModel),
+      apiGroup: VirtualMachineModel.apiGroup,
       kind: VirtualMachineModel.kind,
       name: vmName,
     };

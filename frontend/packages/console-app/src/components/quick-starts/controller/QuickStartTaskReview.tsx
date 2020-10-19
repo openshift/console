@@ -30,7 +30,7 @@ const QuickStartTaskReview: React.FC<QuickStartTaskReviewProps> = ({
 }) => {
   const { instructions, taskHelp } = review;
 
-  const alertClassNames = cx({
+  const alertClassNames = cx('co-quick-start-task-review', {
     'co-quick-start-task-review--success': taskStatus === QuickStartTaskStatus.SUCCESS,
     'co-quick-start-task-review--failed': taskStatus === QuickStartTaskStatus.FAILED,
   });

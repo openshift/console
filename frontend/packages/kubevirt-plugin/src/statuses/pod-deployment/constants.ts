@@ -1,4 +1,4 @@
-import { ObjectEnum } from '../../constants';
+import { ObjectEnum } from '@console/shared/src/constants/object-enum';
 import { DeploymentStatus } from '../deployment';
 
 export class PodDeploymentStatus extends ObjectEnum<string> {

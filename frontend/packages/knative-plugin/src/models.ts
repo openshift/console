@@ -170,7 +170,7 @@ export const EventSourceCamelModel: K8sKind = {
 
 export const EventSourceKafkaModel: K8sKind = {
   apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP,
-  apiVersion: 'v1alpha1',
+  apiVersion: 'v1beta1',
   kind: 'KafkaSource',
   label: 'KafkaSource',
   labelPlural: 'KafkaSources',
@@ -244,7 +244,7 @@ export const EventingKafkaChannelModel: K8sKind = {
   kind: 'KafkaChannel',
   label: 'Kafka Channel',
   labelPlural: 'Kafka Channels',
-  plural: 'kafkaChannels',
+  plural: 'kafkachannels',
   id: 'kafkaChannel',
   abbr: 'KC',
   namespaced: true,

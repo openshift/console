@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { NavItemSeparator } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 import { FLAGS } from '@console/shared';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
@@ -9,12 +10,8 @@ import { LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY } from '@console/shared/src/const
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 
 import {
-  BuildConfigModel,
-  BuildModel,
   ChargebackReportModel,
-  DeploymentConfigModel,
   GroupModel,
-  ImageStreamModel,
   MachineAutoscalerModel,
   MachineConfigModel,
   MachineConfigPoolModel,
@@ -65,14 +62,15 @@ const monitoringNavSectionStateToProps = (state) => ({
 });
 
 const MonitoringNavSection_ = ({ canAccess }) => {
+  const { t } = useTranslation();
   const canAccessPrometheus = canAccess && !!window.SERVER_FLAGS.prometheusBaseURL;
   const showSilences = canAccess && !!window.SERVER_FLAGS.alertManagerBaseURL;
   return canAccessPrometheus || showSilences ? (
-    <NavSection title="Monitoring">
+    <NavSection title={t('nav~Monitoring')}>
       {canAccessPrometheus && (
         <HrefLink
           href="/monitoring/alerts"
-          name="Alerting"
+          name={t('nav~Alerting')}
           namespaced={true}
           startsWith={monitoringAlertsStartsWith}
         />
@@ -80,14 +78,12 @@ const MonitoringNavSection_ = ({ canAccess }) => {
       {canAccessPrometheus && (
         <HrefLink
           href="/monitoring/query-browser?query0="
-          name="Metrics"
+          name={t('nav~Metrics')}
           namespaced={true}
           startsWith={['monitoring/query-browser']}
         />
       )}
-      {canAccessPrometheus && (
-        <HrefLink href="/monitoring/dashboards" name="Dashboards" namespaced={true} />
-      )}
+      {canAccessPrometheus && <HrefLink href="/monitoring/dashboards" name={t('nav~Dashboards')} namespaced={true} />}
     </NavSection>
   ) : null;
 };
@@ -99,101 +95,110 @@ const AdminNav = () => {
   // Switch to that namespace so the list isn't empty.
   // If "all projects" was last selected, however, use "all projects" instead.
   const machineNS = lastNamespace === ALL_NAMESPACES_KEY ? lastNamespace : 'openshift-machine-api';
+  const { t } = useTranslation();
   return (
     <>
-      <NavSection title="Home">
+      <NavSection title={t('nav~Home')}>
         <HrefLink
           href="/dashboards"
           activePath="/dashboards/"
-          name="Overview"
+          name={t('nav~Overview')}
           namespaced={false}
           required={[FLAGS.CAN_GET_NS, FLAGS.OPENSHIFT]}
         />
-        <ResourceClusterLink resource="projects" name="Projects" required={FLAGS.OPENSHIFT} />
-        <HrefLink href="/search" name="Search" namespaced={true} startsWith={searchStartsWith} />
-        <HrefLink
-          href="/api-explorer"
-          name="Explore"
-          namespaced={false}
-          startsWith={apiExplorerStartsWith}
-        />
-        <ResourceNSLink resource="events" name="Events" />
-      </NavSection>
-
-      <NavSection title="Operators" />
-
-      <NavSection title="Workloads">
-        <ResourceNSLink resource="pods" name="Pods" />
-        <ResourceNSLink resource="deployments" name="Deployments" />
-        <ResourceNSLink
-          resource="deploymentconfigs"
-          name={DeploymentConfigModel.labelPlural}
+        <ResourceClusterLink
+          resource="projects"
+          name={t('nav~Projects')}
           required={FLAGS.OPENSHIFT}
         />
-        <ResourceNSLink resource="statefulsets" name="Stateful Sets" />
-        <ResourceNSLink resource="secrets" name="Secrets" />
-        <ResourceNSLink resource="configmaps" name="Config Maps" />
-        <Separator name="WorkloadsSeparator" />
-        <ResourceNSLink resource="cronjobs" name="Cron Jobs" />
-        <ResourceNSLink resource="jobs" name="Jobs" />
-        <ResourceNSLink resource="daemonsets" name="Daemon Sets" />
-        <ResourceNSLink resource="replicasets" name="Replica Sets" />
-        <ResourceNSLink resource="replicationcontrollers" name="Replication Controllers" />
-        <ResourceNSLink resource="horizontalpodautoscalers" name="Horizontal Pod Autoscalers" />
+        <HrefLink href="/search" name={t('nav~Search')} namespaced={true} startsWith={searchStartsWith} />
+        <HrefLink href="/api-explorer" name={t('nav~Explore')} namespaced={false} startsWith={apiExplorerStartsWith} />
+        <ResourceNSLink resource="events" name={t('nav~Events')} />
+      </NavSection>
+
+      <NavSection title={t('nav~Operators')} />
+
+      <NavSection title={t('nav~Workloads')}>
+        <ResourceNSLink resource="pods" name={t('nav~Pods')} />
+        <ResourceNSLink resource="deployments" name={t('nav~Deployments')} />
+        <ResourceNSLink
+          resource="deploymentconfigs"
+          name={t('nav~Deployment Configs')}
+          required={FLAGS.OPENSHIFT}
+        />
+        <ResourceNSLink resource="statefulsets" name={t('nav~Stateful Sets')} />
+        <ResourceNSLink resource="secrets" name={t('nav~Secrets')} />
+        <ResourceNSLink resource="configmaps" name={t('nav~Config Maps')} />
+        <Separator name={t('nav~WorkloadsSeparator')} />
+        <ResourceNSLink resource="cronjobs" name={t('nav~Cron Jobs')} />
+        <ResourceNSLink resource="jobs" name={t('nav~Jobs')} />
+        <ResourceNSLink resource="daemonsets" name={t('nav~Daemon Sets')} />
+        <ResourceNSLink resource="replicasets" name={t('nav~Replica Sets')} />
+        <ResourceNSLink resource="replicationcontrollers" name={t('nav~Replication Controllers')} />
+        <ResourceNSLink
+          resource="horizontalpodautoscalers"
+          name={t('nav~Horizontal Pod Autoscalers')}
+        />
       </NavSection>
 
       {/* Temporary addition of Knative Serverless section until extensibility allows for section ordering
-        and admin-nav gets contributed through extensions. */}
-      <NavSection title="Serverless" />
+          and admin-nav gets contributed through extensions. */}
+      <NavSection title={t('nav~Serverless')} />
 
-      <NavSection title="Networking">
-        <ResourceNSLink resource="services" name="Services" />
-        <ResourceNSLink resource="routes" name="Routes" required={FLAGS.OPENSHIFT} />
-        <ResourceNSLink resource="ingresses" name="Ingresses" />
-        <ResourceNSLink resource="networkpolicies" name="Network Policies" />
+      <NavSection title={t('nav~Networking')}>
+        <ResourceNSLink resource="services" name={t('nav~Services')} />
+        <ResourceNSLink resource="routes" name={t('nav~Routes')} required={FLAGS.OPENSHIFT} />
+        <ResourceNSLink resource="ingresses" name={t('nav~Ingresses')} />
+        <ResourceNSLink resource="networkpolicies" name={t('nav~Network Policies')} />
       </NavSection>
 
-      <NavSection title="Storage">
+      <NavSection title={t('nav~Storage')}>
         <ResourceClusterLink
           resource="persistentvolumes"
-          name="Persistent Volumes"
+          name={t('nav~Persistent Volumes')}
           required={FLAGS.CAN_LIST_PV}
         />
-        <ResourceNSLink resource="persistentvolumeclaims" name="Persistent Volume Claims" />
-        <ResourceClusterLink resource="storageclasses" name="Storage Classes" />
-        <ResourceNSLink resource={referenceForModel(VolumeSnapshotModel)} name="Volume Snapshots" />
+        <ResourceNSLink
+          resource="persistentvolumeclaims"
+          name={t('nav~Persistent Volume Claims')}
+        />
+        <ResourceClusterLink resource="storageclasses" name={t('nav~Storage Classes')} />
+        <ResourceNSLink
+          resource={referenceForModel(VolumeSnapshotModel)}
+          name={t('nav~Volume Snapshots')}
+        />
         <ResourceClusterLink
           resource={referenceForModel(VolumeSnapshotClassModel)}
-          name="Volume Snapshot Classes"
+          name={t('nav~Volume Snapshot Classes')}
         />
       </NavSection>
 
-      <NavSection title="Builds" required={FLAGS.OPENSHIFT}>
-        <ResourceNSLink resource="buildconfigs" name={BuildConfigModel.labelPlural} />
-        <ResourceNSLink resource="builds" name={BuildModel.labelPlural} />
+      <NavSection title={t('nav~Builds')} required={FLAGS.OPENSHIFT}>
+        <ResourceNSLink resource="buildconfigs" name={t('nav~Build Configs')} />
+        <ResourceNSLink resource="builds" name={t('nav~Builds')} />
         <ResourceNSLink
           resource="imagestreams"
-          name={ImageStreamModel.labelPlural}
+          name={t('nav~Image Streams')}
           startsWith={imagestreamsStartsWith}
         />
       </NavSection>
 
       {/* Temporary addition of Tekton Pipelines section until extensibility allows for section ordering
-        and admin-nav gets contributed through extensions. */}
-      <NavSection title="Pipelines" />
+          and admin-nav gets contributed through extensions. */}
+      <NavSection title={t('nav~Pipelines')} />
 
-      <NavSection title="Service Catalog" required={FLAGS.SERVICE_CATALOG}>
+      <NavSection title={t('nav~Service Catalog')} required={FLAGS.SERVICE_CATALOG}>
         <HrefLink
           href="/provisionedservices"
-          name="Provisioned Services"
+          name={t('nav~Provisioned Services')} 
           namespaced={true}
           activePath="/provisionedservices/"
           startsWith={provisionedServicesStartsWith}
         />
         <HrefLink
           href="/brokermanagement"
-          name="Broker Management"
-          namespaced={false}
+          name={t('nav~Broker Management')}
+          namespaced={false}  
           activePath="/brokermanagement/"
           startsWith={brokerManagementStartsWith}
         />
@@ -201,17 +206,17 @@ const AdminNav = () => {
 
       <MonitoringNavSection />
 
-      <NavSection title="Compute" required={FLAGS.CAN_LIST_NODE}>
-        <ResourceClusterLink resource="nodes" name="Nodes" />
+      <NavSection title={t('nav~Compute')} required={FLAGS.CAN_LIST_NODE}>
+        <ResourceClusterLink resource="nodes" name={t('nav~Nodes')} />
         <HrefLink
           href={formatNamespacedRouteForResource(referenceForModel(MachineModel), machineNS)}
-          name="Machines"
+          name={t('nav~Machines')}
           namespaced={false}
           required={FLAGS.CLUSTER_API}
         />
         <HrefLink
           href={formatNamespacedRouteForResource(referenceForModel(MachineSetModel), machineNS)}
-          name="Machine Sets"
+          name={t('nav~Machine Sets')}
           namespaced={false}
           required={FLAGS.CLUSTER_API}
         />
@@ -220,7 +225,7 @@ const AdminNav = () => {
             referenceForModel(MachineAutoscalerModel),
             machineNS,
           )}
-          name="Machine Autoscalers"
+          name={t('nav~Machine Autoscalers')}
           namespaced={false}
           required={FLAGS.MACHINE_AUTOSCALER}
         />
@@ -229,72 +234,76 @@ const AdminNav = () => {
             referenceForModel(MachineHealthCheckModel),
             machineNS,
           )}
-          name="Machine Health Checks"
+          name={t('nav~Machine Health Checks')}
           namespaced={false}
           required={FLAGS.MACHINE_HEALTH_CHECK}
         />
-        <Separator required={FLAGS.MACHINE_CONFIG} name="ComputeSeparator" />
+        <Separator required={FLAGS.MACHINE_CONFIG} name={t('nav~ComputeSeparator')} />
         <ResourceClusterLink
           resource={referenceForModel(MachineConfigModel)}
-          name="Machine Configs"
+          name={t('nav~Machine Configs')}
           required={FLAGS.MACHINE_CONFIG}
         />
         <ResourceClusterLink
           resource={referenceForModel(MachineConfigPoolModel)}
-          name="Machine Config Pools"
+          name={t('nav~Machine Config Pools')}
           required={FLAGS.MACHINE_CONFIG}
         />
       </NavSection>
 
-      <NavSection title="User Management">
+      <NavSection title={t('nav~User Management')}>
         <ResourceClusterLink
           resource={referenceForModel(UserModel)}
-          name="Users"
+          name={t('nav~Users')}
           required={[FLAGS.OPENSHIFT, FLAGS.CAN_LIST_USERS]}
         />
         <ResourceClusterLink
           resource={referenceForModel(GroupModel)}
-          name="Groups"
+          name={t('nav~Groups')}
           required={[FLAGS.OPENSHIFT, FLAGS.CAN_LIST_GROUPS]}
         />
-        <ResourceNSLink resource="serviceaccounts" name="Service Accounts" />
-        <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} />
+        <ResourceNSLink resource="serviceaccounts" name={t('nav~Service Accounts')} />
+        <ResourceNSLink resource="roles" name={t('nav~Roles')} startsWith={rolesStartsWith} />
         <ResourceNSLink
           resource="rolebindings"
-          name="Role Bindings"
+          name={t('nav~Role Bindings')}
           startsWith={rolebindingsStartsWith}
         />
       </NavSection>
 
-      <NavSection title="Administration">
+      <NavSection title={t('nav~Administration')}>
         <HrefLink
           href="/settings/cluster"
           activePath="/settings/cluster/"
-          name="Cluster Settings"
+          name={t('nav~Cluster Settings')}
           namespaced={false}
           required={FLAGS.CLUSTER_VERSION}
           startsWith={clusterSettingsStartsWith}
         />
-        <ResourceClusterLink resource="namespaces" name="Namespaces" required={FLAGS.CAN_LIST_NS} />
+        <ResourceClusterLink
+          resource="namespaces"
+          name={t('nav~Namespaces')}
+          required={FLAGS.CAN_LIST_NS}
+        />
         <ResourceNSLink
           resource="resourcequotas"
-          name="Resource Quotas"
+          name={t('nav~Resource Quotas')}
           startsWith={quotaStartsWith}
         />
-        <ResourceNSLink resource="limitranges" name="Limit Ranges" />
+        <ResourceNSLink resource="limitranges" name={t('nav~Limit Ranges')} />
         <HrefLink
           href={formatNamespacedRouteForResource(
             referenceForModel(ChargebackReportModel),
             'openshift-metering',
           )}
-          name="Chargeback"
+          name={t('nav~Chargeback')}
           namespaced={false}
           required={[FLAGS.CHARGEBACK, FLAGS.CAN_LIST_CHARGEBACK_REPORTS]}
           startsWith={meteringStartsWith}
         />
         <ResourceClusterLink
           resource="customresourcedefinitions"
-          name="Custom Resource Definitions"
+          name={t('nav~Custom Resource Definitions')}
           required={FLAGS.CAN_LIST_CRD}
         />
       </NavSection>

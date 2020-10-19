@@ -1,0 +1,19 @@
+apiVersion: tekton.dev/v1beta1 
+kind: Pipeline 
+metadata:
+  name: test-workspace-pipeline
+spec:
+  params:
+    - name: first-param
+      description: this is the first param for Pipeline
+  workspaces:
+    - name: shared-workspace
+      description: this is a shared workspace
+  tasks:
+    - name: first-task
+      taskRef:
+        name: test-workspace-task
+        kind: Task
+      workspaces:
+        - name: messages
+          workspace: shared-workspace

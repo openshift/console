@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as cx from 'classnames';
 import * as _ from 'lodash';
+import { ClampedText } from '@console/shared';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { ResourceLink, ResourceKebab, Timestamp } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -51,7 +52,10 @@ const RevisionRow: RowFunction<RevisionKind> = ({ obj, index, key, style }) => {
         {(readyCondition && readyCondition.status) || '-'}
       </TableData>
       <TableData className={tableColumnClasses[6]}>
-        {(readyCondition && readyCondition.message) || '-'}
+        {(readyCondition?.message && (
+          <ClampedText lineClamp={5}>{readyCondition?.message}</ClampedText>
+        )) ||
+          '-'}
       </TableData>
       <TableData className={tableColumnClasses[7]}>
         <ResourceKebab actions={getRevisionActions()} kind={revisionReference} resource={obj} />

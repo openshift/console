@@ -40,6 +40,7 @@ export const cephBlockPoolResource: WatchK8sResource = {
   kind: referenceForModel(CephBlockPoolModel),
   namespaced: true,
   isList: true,
+  namespace: CEPH_STORAGE_NAMESPACE,
 };
 
 export const cephCapacityResource = {

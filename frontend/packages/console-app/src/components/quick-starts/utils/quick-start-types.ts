@@ -1,3 +1,5 @@
+import { AccessReviewResourceAttributes } from '@console/internal/module/k8s';
+
 export type QuickStart = {
   apiVersion: string;
   kind: string;
@@ -18,6 +20,11 @@ export type QuickStartSpec = {
   tasks?: QuickStartTask[];
   conclusion?: string;
   nextQuickStart?: string;
+  accessReviewResources?: AccessReviewResourceAttributes[];
+  flags?: {
+    required?: string[];
+    disallowed?: string[];
+  };
 };
 
 export type QuickStartTask = {

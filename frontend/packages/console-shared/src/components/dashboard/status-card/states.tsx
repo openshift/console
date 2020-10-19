@@ -23,36 +23,36 @@ export const healthStateMapping: { [key in HealthState]: HealthStateMappingValue
   [HealthState.OK]: {
     priority: 0,
     health: HealthState.OK,
-    icon: <GreenCheckCircleIcon alt="Healthy" title="Healthy" />,
+    icon: <GreenCheckCircleIcon title="Healthy" />,
   },
   [HealthState.UNKNOWN]: {
     priority: 1,
     health: HealthState.UNKNOWN,
-    icon: <GrayUnknownIcon alt="Unknown" title="Unknown" />,
+    icon: <GrayUnknownIcon title="Unknown" />,
     message: 'Unknown',
   },
   [HealthState.PROGRESS]: {
     priority: 2,
     health: HealthState.PROGRESS,
-    icon: <InProgressIcon alt="In progress" title="In progress" />,
+    icon: <InProgressIcon title="In progress" />,
     message: 'Pending',
   },
   [HealthState.UPDATING]: {
     priority: 3,
     health: HealthState.UPDATING,
-    icon: <BlueSyncIcon alt="Updating" title="Updating" />,
+    icon: <BlueSyncIcon title="Updating" />,
     message: 'Updating',
   },
   [HealthState.WARNING]: {
     priority: 4,
     health: HealthState.WARNING,
-    icon: <YellowExclamationTriangleIcon alt="Warning" title="Warning" />,
+    icon: <YellowExclamationTriangleIcon title="Warning" />,
     message: 'Degraded',
   },
   [HealthState.ERROR]: {
     priority: 5,
     health: HealthState.ERROR,
-    icon: <RedExclamationCircleIcon alt="Error" title="Error" />,
+    icon: <RedExclamationCircleIcon title="Error" />,
     message: 'Degraded',
   },
   [HealthState.LOADING]: {
@@ -64,7 +64,7 @@ export const healthStateMapping: { [key in HealthState]: HealthStateMappingValue
   [HealthState.NOT_AVAILABLE]: {
     priority: 7,
     health: HealthState.NOT_AVAILABLE,
-    icon: <GrayUnknownIcon alt="Not available" title="Not available" />,
+    icon: <GrayUnknownIcon title="Not available" />,
     message: 'Not available',
   },
 };

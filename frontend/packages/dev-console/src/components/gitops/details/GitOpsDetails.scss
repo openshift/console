@@ -5,7 +5,8 @@
   display: flex;
   &__env-section {
     margin-right: 35px;
-    min-width: 280px;
+    min-width: 285px;
+    max-width: 285px;
     &__header {
       display: flex;
       flex-direction: column;

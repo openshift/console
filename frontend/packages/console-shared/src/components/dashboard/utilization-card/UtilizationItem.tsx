@@ -13,6 +13,7 @@ import {
   RedExclamationCircleIcon,
   ColoredIconProps,
 } from '../../status';
+import { useTranslation } from 'react-i18next';
 
 export enum LIMIT_STATE {
   ERROR = 'ERROR',
@@ -51,6 +52,7 @@ export const MultilineUtilizationItem: React.FC<MultilineUtilizationItemProps> =
     TopConsumerPopovers,
     byteDataType,
   }) => {
+    const { t } = useTranslation();
     const current = data.map((datum, index) =>
       getCurrentData(humanizeValue, queries[index].desc, datum, dataUnits && dataUnits[index]),
     );
@@ -83,7 +85,7 @@ export const MultilineUtilizationItem: React.FC<MultilineUtilizationItemProps> =
           <div className="co-utilization-card__item-section-multiline">
             <h4 className="pf-c-title pf-m-md">{title}</h4>
             {error || (!isLoading && !(data.length && data.every((datum) => datum.length))) ? (
-              <div className="text-secondary">Not available</div>
+              <div className="text-secondary">{t('public~Not available')}</div>
             ) : (
               <div className="co-utilization-card__item-description">{currentValue}</div>
             )}
@@ -111,6 +113,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
     setLimitReqState,
     setTimestamps,
   }) => {
+    const { t } = useTranslation();
     const { data, chartStyle } = mapLimitsRequests(utilization, limit, requested);
     const [utilizationData, limitData, requestedData] = data;
     setTimestamps &&
@@ -135,6 +138,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
 
     const chart = (
       <AreaChart
+        title={title}
         data={data}
         loading={!error && isLoading}
         query={query}
@@ -189,7 +193,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
           <div className="co-utilization-card__item-section">
             <h4 className="pf-c-title pf-m-md">{title}</h4>
             {error || (!isLoading && !utilizationData?.length) ? (
-              <div className="text-secondary">Not available</div>
+              <div className="text-secondary">{t('public~Not available')}</div>
             ) : (
               <div>
                 {LimitIcon && <LimitIcon className="co-utilization-card__item-icon" />}
@@ -212,12 +216,33 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
           </div>
           {!error && (humanAvailable || humanMax) && (
             <div className="co-utilization-card__item-section">
-              <span className="co-utilization-card__item-text">
-                {humanAvailable && <span>{humanAvailable} available</span>}
-              </span>
-              <span className="co-utilization-card__item-text">
-                {humanLimit && <span>{humanLimit} total limit</span>}
-                {!humanLimit && humanMax && <span>of {humanMax}</span>}
+              <span
+                className="co-utilization-card__item-text"
+                data-test="utilization-card-item-text"
+              >
+                {humanLimit && (
+                  <span>
+                    {t('dashboard~{{humanAvailable}} available of {{humanLimit}} total limit', {
+                      humanAvailable,
+                      humanLimit,
+                    })}
+                  </span>
+                )}
+                {!humanLimit && humanMax && (
+                  <span>
+                    {t('dashboard~{{humanAvailable}} available of {{humanMax}}', {
+                      humanAvailable,
+                      humanMax,
+                    })}
+                  </span>
+                )}
+                {!humanLimit && !humanMax && (
+                  <span>
+                    {t('dashboard~{{humanAvailable}} available', {
+                      humanAvailable,
+                    })}
+                  </span>
+                )}
               </span>
             </div>
           )}

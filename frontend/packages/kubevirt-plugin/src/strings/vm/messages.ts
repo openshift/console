@@ -3,6 +3,8 @@ export const PAUSED_VM_MODAL_MESSAGE =
 export const VIRTUAL_MACHINE_IS_NOT_RUNNING = 'Virtual Machine is not running';
 export const NO_GUEST_AGENT_MESSAGE =
   'A guest agent was not found for this VM. Either the guest agent was not installed or the VM has not finished booting. When a guest agent is not installed, some management features are unavailable and the metrics might be inaccurate.';
+export const GUEST_AGENT_VERSION_NOT_SUPPOETED_MESSAGE =
+  'This VM has an unsupported version of the guest agent. When an unsupported version of a guest agent is installed, some management features are unavailable and the metrics might be inaccurate. Check with your system adminstartor for supported guest agent versions.';
 export const GUEST_AGENT_REQUIRED_MESSAGE = 'Guest agent required';
 export const NOT_AVAILABLE_MESSAGE = 'Not available';
 export const VM_NOT_RUNNING_MESSAGE = 'VM not running';

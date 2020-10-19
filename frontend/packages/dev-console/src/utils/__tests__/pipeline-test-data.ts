@@ -1,7 +1,7 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { pipelineTestData, PipelineExampleNames, DataState } from '../../test/pipeline-data';
+import { Pipeline } from '../pipeline-augment';
 
-export const mockPipelinesJSON: K8sResourceKind[] = [
+export const mockPipelinesJSON: Pipeline[] = [
   {
     apiVersion: 'tekton.dev/v1alpha1',
     kind: 'Pipeline',
@@ -12,7 +12,7 @@ export const mockPipelinesJSON: K8sResourceKind[] = [
       params: [
         {
           name: 'APP_NAME',
-          type: 'string',
+          description: 'Application name',
           default: 'default-app-name',
         },
       ],
@@ -232,6 +232,29 @@ export const mockPipelinesJSON: K8sResourceKind[] = [
             name: 'openshift-cli-deploy-mapit',
           },
           runAfter: ['build-image-1', 'build-image-2'],
+        },
+      ],
+    },
+  },
+  {
+    apiVersion: 'tekton.dev/v1beta1',
+    kind: 'Pipeline',
+    metadata: {
+      name: 'devconsole',
+    },
+    spec: {
+      tasks: [
+        {
+          name: 'use-secret',
+          taskSpec: {
+            steps: [
+              {
+                name: 'greet',
+                image: 'registry.access.redhat.com/ubi8/ubi',
+                script: ['echo "Hello world!"\n'],
+              },
+            ],
+          },
         },
       ],
     },

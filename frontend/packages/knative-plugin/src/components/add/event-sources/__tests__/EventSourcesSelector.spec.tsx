@@ -5,6 +5,7 @@ import { ItemSelectorField } from '@console/shared';
 import EventSourcesSelector from '../EventSourcesSelector';
 import * as sourceUtils from '../../../../utils/create-eventsources-utils';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import { EventSources } from '../../import-types';
 
 type EventSourcesSelectorProps = React.ComponentProps<typeof EventSourcesSelector>;
 
@@ -72,6 +73,17 @@ describe('EventSourcesSelector', () => {
     expect(wrapper.find(ItemSelectorField).props().loadingItems).toBe(false);
   });
 
+  it('should not call getEventSourceData onSelect if selected type is same', () => {
+    const spyGetEventSourceData = jest.spyOn(sourceUtils, 'getEventSourceData');
+    const spyKebabCase = jest.spyOn(lodash, 'kebabCase');
+    wrapper
+      .find(ItemSelectorField)
+      .props()
+      .onSelect('SinkBinding');
+    expect(spyGetEventSourceData).toHaveBeenCalledTimes(0);
+    expect(spyKebabCase).toHaveBeenCalledTimes(0);
+  });
+
   it('should call getEventSourceData onSelect', () => {
     const spyGetEventSourceData = jest.spyOn(sourceUtils, 'getEventSourceData');
     const spyKebabCase = jest.spyOn(lodash, 'kebabCase');
@@ -79,7 +91,7 @@ describe('EventSourcesSelector', () => {
       .find(ItemSelectorField)
       .props()
       .onSelect('ApiServerSource');
-    expect(spyGetEventSourceData).toHaveBeenCalledWith('apiserversource');
-    expect(spyKebabCase).toHaveBeenCalledWith('ApiServerSource');
+    expect(spyGetEventSourceData).toHaveBeenCalledWith(EventSources.ApiServerSource);
+    expect(spyKebabCase).toHaveBeenCalledWith(EventSources.ApiServerSource);
   });
 });

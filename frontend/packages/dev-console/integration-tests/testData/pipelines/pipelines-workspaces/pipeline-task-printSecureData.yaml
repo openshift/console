@@ -1,0 +1,15 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: print-data
+spec:
+  workspaces:
+    - name: storage
+      readOnly: true
+  inputs:
+    params:
+      - name: filename
+  steps:
+    - name: print-secrets
+      image: ubuntu
+      script: cat $(workspaces.storage.path)/$(inputs.params.filename)

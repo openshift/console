@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import {
   ImportProvidersField,
   OvirtProviderField,
@@ -40,7 +41,6 @@ import {
   V2V_PROVIDER_STATUS_ALL_OK,
   V2VProviderStatus,
 } from '../../../../../../statuses/v2v';
-import * as _ from 'lodash';
 import { correctVMImportProviderSecretLabels } from '../../../../../../k8s/requests/v2v/correct-vm-import-provider-secret-labels';
 import { getLoadedVm } from '../../../../selectors/provider/selectors';
 import { cleanupOvirtProvider } from './ovirt-cleanup';
@@ -48,9 +48,10 @@ import { iGetCreateVMWizardTabs } from '../../../../selectors/immutable/common';
 import { prefillUpdateCreator } from './ovirt-prefill-vm';
 import { iGetNetworks } from '../../../../selectors/immutable/networks';
 import { NetworkWrapper } from '../../../../../../k8s/wrapper/vm/network-wrapper';
+import { UIValidationType } from '../../../../../../types/ui/ui';
 
 const startControllerAndCleanup = (options: UpdateOptions) => {
-  const { id, prevState, getState } = options;
+  const { id, dispatch, prevState, getState } = options;
   const state = getState();
   if (!hasImportProvidersChanged(prevState, state, id, ImportProvidersField.PROVIDER)) {
     return;
@@ -59,6 +60,24 @@ const startControllerAndCleanup = (options: UpdateOptions) => {
   const namespace = iGetCommonData(state, id, VMWizardProps.activeNamespace);
 
   cleanupOvirtProvider(options); // call should be idempotent and called on every provider change
+
+  dispatch(
+    vmWizardInternalActions[InternalActionType.SetInVmSettings](
+      id,
+      [VMSettingsField.NAME, 'validations'],
+      isOvirtProvider(state, id)
+        ? [
+            {
+              type: UIValidationType.LENGTH,
+              settings: {
+                min: 1,
+                max: 63,
+              },
+            },
+          ]
+        : [],
+    ),
+  );
 
   if (isOvirtProvider(state, id) && namespace) {
     startVMImportOperatorWithCleanup(options);

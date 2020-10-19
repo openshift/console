@@ -1,5 +1,9 @@
 import * as React from 'react';
+import { useExtensions } from '@console/plugin-sdk/src';
 import ModelContext, { ExtensibleModel } from './ModelContext';
+import { isTopologyDataModelFactory, TopologyDataModelFactory } from '../../../extensions/topology';
+import { DataModelExtension } from './DataModelExtension';
+import { TopologyDataRetriever } from '../TopologyDataRetriever';
 
 interface DataModelProviderProps {
   namespace: string;
@@ -13,7 +17,17 @@ const DataModelProvider: React.FC<DataModelProviderProps> = ({ namespace, childr
     setModel(new ExtensibleModel(namespace));
   }, [namespace]);
 
-  return <ModelContext.Provider value={model}>{children}</ModelContext.Provider>;
+  const modelFactories = useExtensions<TopologyDataModelFactory>(isTopologyDataModelFactory);
+
+  return (
+    <ModelContext.Provider value={model}>
+      {modelFactories.map((factory) => (
+        <DataModelExtension key={factory.properties.id} dataModelFactory={factory} />
+      ))}
+      <TopologyDataRetriever />
+      {children}
+    </ModelContext.Provider>
+  );
 };
 
 export default DataModelProvider;

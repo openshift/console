@@ -54,7 +54,7 @@ export const getEventSourcesDepResource = (formData: EventSourceFormData): K8sRe
   } = formData;
 
   const defaultLabel = getAppLabels({ name, applicationName });
-  const eventSrcData = data[type.toLowerCase()];
+  const eventSrcData = data[type];
   const { name: sinkName, kind: sinkKind, apiVersion: sinkApiVersion, uri: sinkUri } = sink;
   const eventSourceResource: K8sResourceKind = {
     apiVersion,
@@ -91,9 +91,6 @@ export const getEventSourcesDepResource = (formData: EventSourceFormData): K8sRe
 };
 
 export const getKafkaSourceResource = (formData: EventSourceFormData): K8sResourceKind => {
-  const {
-    limits: { cpu, memory },
-  } = formData;
   const baseResource = getEventSourcesDepResource(formData);
   const { net } = baseResource.spec;
   baseResource.spec.net = {
@@ -101,25 +98,7 @@ export const getKafkaSourceResource = (formData: EventSourceFormData): K8sResour
     ...(!net.sasl?.enable && { sasl: { user: {}, password: {} } }),
     ...(!net.tls?.enable && { tls: { caCert: {}, cert: {}, key: {} } }),
   };
-  const kafkaSource = {
-    spec: {
-      resources: {
-        ...((cpu.limit || memory.limit) && {
-          limits: {
-            ...(cpu.limit && { cpu: `${cpu.limit}${cpu.limitUnit}` }),
-            ...(memory.limit && { memory: `${memory.limit}${memory.limitUnit}` }),
-          },
-        }),
-        ...((cpu.request || memory.request) && {
-          requests: {
-            ...(cpu.request && { cpu: `${cpu.request}${cpu.requestUnit}` }),
-            ...(memory.request && { memory: `${memory.request}${memory.requestUnit}` }),
-          },
-        }),
-      },
-    },
-  };
-  return _.merge({}, baseResource, kafkaSource);
+  return baseResource;
 };
 
 export const loadYamlData = (formData: EventSourceFormData) => {
@@ -152,15 +131,15 @@ export const getEventSourceResource = (formData: EventSourceFormData): K8sResour
 
 export const getEventSourceData = (source: string) => {
   const eventSourceData = {
-    cronjobsource: {
+    [EventSources.CronJobSource]: {
       data: '',
       schedule: '',
     },
-    pingsource: {
+    [EventSources.PingSource]: {
       jsonData: '',
       schedule: '',
     },
-    sinkbinding: {
+    [EventSources.SinkBinding]: {
       subject: {
         apiVersion: '',
         kind: '',
@@ -169,7 +148,7 @@ export const getEventSourceData = (source: string) => {
         },
       },
     },
-    apiserversource: {
+    [EventSources.ApiServerSource]: {
       mode: 'Ref',
       serviceAccountName: '',
       resources: [
@@ -179,7 +158,7 @@ export const getEventSourceData = (source: string) => {
         },
       ],
     },
-    kafkasource: {
+    [EventSources.KafkaSource]: {
       bootstrapServers: [],
       topics: [],
       consumerGroup: '',
@@ -196,9 +175,8 @@ export const getEventSourceData = (source: string) => {
           key: { secretKeyRef: { name: '', key: '' } },
         },
       },
-      serviceAccountName: '',
     },
-    containersource: {
+    [EventSources.ContainerSource]: {
       template: {
         spec: {
           containers: [

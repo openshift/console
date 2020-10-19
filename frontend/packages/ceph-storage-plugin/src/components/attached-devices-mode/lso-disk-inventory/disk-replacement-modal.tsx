@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
+import { Alert } from '@patternfly/react-core';
 import {
   ModalTitle,
   ModalBody,
@@ -15,7 +17,7 @@ import {
   SecretKind,
 } from '@console/internal/module/k8s';
 import { TemplateModel, TemplateInstanceModel, SecretModel } from '@console/internal/models';
-import { CEPH_STORAGE_NAMESPACE, OSD_REMOVAL_TEMPLATE } from '../../../constants';
+import { CEPH_STORAGE_NAMESPACE, OSD_REMOVAL_TEMPLATE, DASHBOARD_LINK } from '../../../constants';
 import { OCSDiskList, OCSColumnStateAction, ActionType, Status } from './state-reducer';
 
 const createTemplateSecret = async (template: TemplateKind, osdId: string) => {
@@ -80,11 +82,9 @@ const DiskReplacementAction = (props: DiskReplacementActionProps) => {
     event.preventDefault();
     setProgress(true);
     try {
-      const { status, osd } = alertsMap[diskName];
+      const { osd } = alertsMap[diskName];
       const replacementStatus = replacementMap[diskName]?.status;
-      if (isRebalancing && status !== Status.Offline)
-        throw new Error('replacement disallowed: rebalancing is in progress');
-      else if (
+      if (
         replacementStatus === Status.PreparingToReplace ||
         replacementStatus === Status.ReplacementReady
       )
@@ -109,6 +109,18 @@ const DiskReplacementAction = (props: DiskReplacementActionProps) => {
       <ModalTitle>Disk Replacement</ModalTitle>
       <ModalBody>
         <p>This action will start preparing the disk for replacement.</p>
+        {isRebalancing && alertsMap[diskName].status !== Status.Offline && (
+          <Alert
+            variant="info"
+            className="co-alert"
+            title="Data rebalancing is in progress"
+            isInline
+          >
+            <Link onClick={close} to={DASHBOARD_LINK}>
+              See data resiliency status
+            </Link>
+          </Alert>
+        )}
         <p>
           Are you sure you want to replace <strong>{diskName}</strong> ?
         </p>

@@ -7,7 +7,7 @@ import { VMKind, VMIKind } from '../../types';
 import { VIRT_LAUNCHER_POD_PREFIX } from '../../constants';
 import { buildOwnerReferenceForModel } from '../../utils';
 import { VirtualMachineInstanceModel } from '../../models';
-import { getPvcImportPodName } from '../pvc/selectors';
+import { getPvcImportPodName, getPvcUploadPodName } from '../pvc/selectors';
 import { getDataVolumeTemplates } from '../vm';
 
 export const getHostName = (pod: PodKind) =>
@@ -104,7 +104,7 @@ export const getPVCNametoImporterPodsMapForVM = (
   const podLookup = createBasicLookup(pods, getName);
 
   return (vmPVCs || []).reduce((podsMap, pvc) => {
-    const pod = podLookup[getPvcImportPodName(pvc)];
+    const pod = podLookup[getPvcImportPodName(pvc) || getPvcUploadPodName(pvc)];
     if (pod) {
       podsMap[getName(pvc)] = pod;
     }

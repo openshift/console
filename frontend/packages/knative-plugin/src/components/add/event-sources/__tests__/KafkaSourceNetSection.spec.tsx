@@ -7,7 +7,7 @@ jest.mock('formik', () => ({
   useFormikContext: jest.fn(() => ({
     values: {
       data: {
-        kafkasource: {
+        KafkaSource: {
           net: {
             sasl: {
               enable: true,

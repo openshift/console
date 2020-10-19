@@ -4,11 +4,11 @@ import FormSection from '@console/dev-console/src/components/import/section/Form
 import { InputField, SelectInputField, SelectInputOption } from '@console/shared';
 import { TextInputTypes } from '@patternfly/react-core';
 import KafkaSourceNetSection from './KafkaSourceNetSection';
-import ServiceAccountDropdown from '../../dropdowns/ServiceAccountDropdown';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { getBootstrapServers } from '../../../utils/create-eventsources-utils';
 import { strimziResourcesWatcher } from '../../../utils/get-knative-resources';
+import { EventSources } from '../import-types';
 
 interface KafkaSourceSectionProps {
   title: string;
@@ -74,7 +74,7 @@ const KafkaSourceSection: React.FC<KafkaSourceSectionProps> = ({ title }) => {
     <FormSection title={title} extraMargin>
       <SelectInputField
         data-test-id="kafkasource-bootstrapservers-field"
-        name="data.kafkasource.bootstrapServers"
+        name={`data.${EventSources.KafkaSource}.bootstrapServers`}
         label="Bootstrap Servers"
         options={bootstrapServers}
         placeholderText={bsPlaceholder}
@@ -85,7 +85,7 @@ const KafkaSourceSection: React.FC<KafkaSourceSectionProps> = ({ title }) => {
       />
       <SelectInputField
         data-test-id="kafkasource-topics-field"
-        name="data.kafkasource.topics"
+        name={`data.${EventSources.KafkaSource}.topics`}
         label="Topics"
         options={kafkaTopics}
         placeholderText={ktPlaceholder}
@@ -97,13 +97,12 @@ const KafkaSourceSection: React.FC<KafkaSourceSectionProps> = ({ title }) => {
       <InputField
         data-test-id="kafkasource-consumergroup-field"
         type={TextInputTypes.text}
-        name="data.kafkasource.consumerGroup"
+        name={`data.${EventSources.KafkaSource}.consumerGroup`}
         label="Consumer Group"
         helpText="A group that tracks maximum offset consumed"
         required
       />
       <KafkaSourceNetSection />
-      <ServiceAccountDropdown name="data.kafkasource.serviceAccountName" />
     </FormSection>
   );
 };

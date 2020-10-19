@@ -1,11 +1,22 @@
 /* eslint-disable lines-between-class-members */
-import { ObjectEnum } from '../../object-enum';
-import { READABLE_VIRTIO } from '../constants';
+import { ObjectEnum } from '@console/shared/src/constants/object-enum';
+import { SelectDropdownObjectEnum } from '../../select-dropdown-object-enum';
+import {
+  DISK_TYPE_SATA_DESC,
+  DISK_TYPE_VIRTIO_DESC,
+  DISK_TYPE_SCSI_DESC,
+} from '../../../utils/strings';
 
-export class DiskBus extends ObjectEnum<string> {
-  static readonly VIRTIO = new DiskBus('virtio');
-  static readonly SATA = new DiskBus('sata');
-  static readonly SCSI = new DiskBus('scsi');
+export class DiskBus extends SelectDropdownObjectEnum<string> {
+  static readonly VIRTIO = new DiskBus('virtio', {
+    description: DISK_TYPE_VIRTIO_DESC,
+  });
+  static readonly SATA = new DiskBus('sata', {
+    description: DISK_TYPE_SATA_DESC,
+  });
+  static readonly SCSI = new DiskBus('scsi', {
+    description: DISK_TYPE_SCSI_DESC,
+  });
 
   private static readonly ALL = Object.freeze(
     ObjectEnum.getAllClassEnumProperties<DiskBus>(DiskBus),
@@ -22,11 +33,4 @@ export class DiskBus extends ObjectEnum<string> {
   static getAll = () => DiskBus.ALL;
 
   static fromString = (model: string): DiskBus => DiskBus.stringMapper[model];
-
-  toString() {
-    if (this === DiskBus.VIRTIO) {
-      return READABLE_VIRTIO;
-    }
-    return this.value;
-  }
 }

@@ -16,7 +16,12 @@ import {
   VIRTUAL_MACHINE_TEMPLATE_EXISTS,
 } from '../../../../utils/validations/strings';
 import { getFieldTitle } from '../../utils/renderable-field-utils';
-import { iGet } from '../../../../utils/immutable';
+import {
+  iGet,
+  iGetLoadedData,
+  iGetLoadError,
+  immutableListToJS,
+} from '../../../../utils/immutable';
 import {
   checkTabValidityChanged,
   iGetCommonData,
@@ -29,6 +34,12 @@ import { combineIntegerValidationResults } from '../../../../utils/validations/t
 import { getFieldsValidity, getValidationUpdate } from './utils';
 import { getTemplateValidations } from '../../selectors/template';
 import { BinaryUnit, convertToBytes } from '../../../form/size-unit-utils';
+import {
+  VALIDATION_PXE_NAD_ERROR_INFO,
+  VALIDATION_PXE_NAD_MISSING_INFO,
+} from '../../strings/networking';
+import { ProvisionSource } from '../../../../constants/vm/provision-source';
+import { UIValidation } from '../../../../types/ui/ui';
 
 const validateVm: Validator = (field, options) => {
   const { getState, id } = options;
@@ -49,6 +60,7 @@ const validateVm: Validator = (field, options) => {
         ? VIRTUAL_MACHINE_TEMPLATE_EXISTS
         : VIRTUAL_MACHINE_EXISTS,
       subject: getFieldTitle(iGetFieldKey(field)),
+      validations: immutableListToJS(iGet(field, 'validations')) as UIValidation[],
     },
   );
 };
@@ -108,6 +120,24 @@ const asVMSettingsFieldValidator = (
     subject: getFieldTitle(iGetFieldKey(field)),
   });
 
+const validateSource: Validator = (field, options): ValidationObject => {
+  const value = iGetFieldValue(field);
+
+  if (value === ProvisionSource.PXE.getValue()) {
+    const { getState, id } = options;
+    const state = getState();
+
+    const nads = iGetCommonData(state, id, VMWizardProps.nads);
+    return iGetLoadError(nads)
+      ? asValidationObject(VALIDATION_PXE_NAD_ERROR_INFO)
+      : iGetLoadedData(nads)?.size === 0
+      ? asValidationObject(VALIDATION_PXE_NAD_MISSING_INFO)
+      : null;
+  }
+
+  return null;
+};
+
 const validationConfig: ValidationConfig = {
   [VMSettingsField.NAME]: {
     detectValueChanges: [VMSettingsField.NAME],
@@ -139,6 +169,10 @@ const validationConfig: ValidationConfig = {
     ],
     detectCommonDataChanges: [VMWizardProps.userTemplate, VMWizardProps.commonTemplates],
     validator: memoryValidation,
+  },
+  [VMSettingsField.PROVISION_SOURCE_TYPE]: {
+    detectValueChanges: [VMSettingsField.PROVISION_SOURCE_TYPE],
+    validator: validateSource,
   },
 };
 

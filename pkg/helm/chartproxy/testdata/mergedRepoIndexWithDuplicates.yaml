@@ -1,0 +1,233 @@
+apiVersion: v1
+entries:
+  ibm-cpq-prod--sample-repo-1:
+    - apiVersion: v2
+      appVersion: 10.0.0.6
+      created: "2020-07-15T16:32:34.607411698+05:30"
+      description: |-
+        IBM Sterling Configure, Price, Quote (CPQ) solution enables you to quickly configure, price, quote and order the right products and services.\n
+        To sell competitively in todayâ€™s multichannel environment, organizations need a way to easily manage product and service configuration and pricing rules that allow prospects, customers, sales staff, call center representatives and Business Partners to quickly find, configure and order the right products and services.\n
+        IBMÂ® Sterling Configure, Price, Quote solution automates every step of the configure, price and quote process to help organizations easily create Web storefronts, offer dynamic catalog and pricing information,  and direct customers and partners to find, configure and order the right products and services.\n
+        This enables you to transform how you sell complex products and services by removing the internal complexity of multi-tiered selling within your organization and with your partners.\n
+
+        Documentation\n
+        Additional information about installation can be found at https://ibm.biz/BdqqUS.
+
+        License\n
+        Sterling Configure Price Quote Software is licensed under https://ibm.biz/Bdqqgd which must be accepted during the install of the Product.
+      digest: 2d93c570ff47b27858901dacafc22fe64d868e9a8ecb4742867396f2912eded8
+      icon: https://raw.githubusercontent.com/IBM/charts/master/logo/ibm-oms-logo.png
+      keywords:
+        - cpq
+        - ifs
+        - sterling
+        - yantra
+        - order
+        - fulfillment
+        - om
+        - amd64
+        - framework
+        - Commercial
+        - RHOCP
+        - All items
+        - Languages
+        - Databases
+        - Middleware
+        - CI/CD
+        - Other
+      kubeVersion: '>=1.11.0'
+      maintainers:
+        - name: IBM
+      name: ibm-cpq-prod
+      response:
+        - https://redhat-developer.github.com/redhat-helm-charts/charts/ibm-cpq-prod-2.0.0.tgz
+      version: 2.0.0
+  ibm-object-storage-plugin--sample-repo-1:
+    - apiVersion: v2
+      appVersion: 2.0.0
+      created: "2020-07-15T16:32:34.612556197+05:30"
+      description: |
+        Chart for deploying ibmcloud object storage plugin.
+        IBM Cloud Object Storage is persistent, highly available storage
+        that you can mount to apps that run in a Kubernetes cluster by using
+        the IBM Cloud Object Storage plug-in. The plug-in is a Kubernetes Flex-Volume plug-in
+        that connects Cloud Object Storage buckets to pods in your cluster.
+
+        Documentation
+        For additional details regarding install parameters see here
+        ibm.biz/BdqPR6
+
+        License
+        By installing this product you accept the license terms.
+        https://www.apache.org/licenses/LICENSE-2.0
+      digest: 469e5e4093386c9b2a2f50cf55197db1c2489832bd3bc72018a17f0df9553474
+      icon: https://cache.globalcatalog.cloud.ibm.com/static/cache/2461-acb0d10a1725d783/images/uploaded/icons/object-storage.png
+      keywords:
+        - IKS
+        - amd64
+        - Storage
+        - Commercial
+        - Limited
+        - Other
+        - ROKS
+      maintainers:
+        - email: contsto2@in.ibm.com
+          name: IBM
+      name: ibm-object-storage-plugin
+      response:
+        - https://redhat-developer.github.com/redhat-helm-charts/charts/ibm-object-storage-plugin-2.0.0.tgz
+      version: 2.0.0
+  ibm-oms-ent-prod--sample-repo-1:
+    - apiVersion: v2
+      appVersion: 10.0.0
+      created: "2020-07-15T16:32:34.663118186+05:30"
+      dependencies:
+        - alias: sch
+          name: ibm-sch
+          repository: '@sch'
+          version: 1.2.15
+      description: |-
+        IBM Order management Software Enterprise Edition v10 provides cross-channel order orchestration capabilities to enable intelligent brokering of orders across many disparate systems. It also provides a global view of inventory across the supply chain and enables business users to make changes to order process.
+
+        For additional details regarding install parameters check: http://ibm.biz/oms-helm-readme.
+
+        By installing this product you accept the license terms http://ibm.biz/oms-license and http://ibm.biz/oms-apps-license.
+      digest: f01226a974704ea84685d95ad48feae8666ea154254cdca888859430d5517961
+      icon: https://raw.githubusercontent.com/IBM/charts/master/logo/ibm-oms-logo.png
+      keywords:
+        - oms
+        - sterling
+        - yantra
+        - order
+        - fulfillment
+        - om
+        - amd64
+        - ppc64le
+        - framework
+        - Commercial
+        - RHOCP
+        - Other
+      kubeVersion: '>=1.11.0'
+      maintainers:
+        - name: IBM
+      name: ibm-oms-ent-prod
+      type: application
+      response:
+        - https://redhat-developer.github.com/redhat-helm-charts/charts/ibm-oms-ent-prod-5.0.0.tgz
+      version: 5.0.0
+  ibm-cpq-prod--sample-repo-2:
+    - apiVersion: v2
+      appVersion: 10.0.0.6
+      created: "2020-07-15T16:32:34.607411698+05:30"
+      description: |-
+        IBM Sterling Configure, Price, Quote (CPQ) solution enables you to quickly configure, price, quote and order the right products and services.\n
+        To sell competitively in todayâ€™s multichannel environment, organizations need a way to easily manage product and service configuration and pricing rules that allow prospects, customers, sales staff, call center representatives and Business Partners to quickly find, configure and order the right products and services.\n
+        IBMÂ® Sterling Configure, Price, Quote solution automates every step of the configure, price and quote process to help organizations easily create Web storefronts, offer dynamic catalog and pricing information,  and direct customers and partners to find, configure and order the right products and services.\n
+        This enables you to transform how you sell complex products and services by removing the internal complexity of multi-tiered selling within your organization and with your partners.\n
+
+        Documentation\n
+        Additional information about installation can be found at https://ibm.biz/BdqqUS.
+
+        License\n
+        Sterling Configure Price Quote Software is licensed under https://ibm.biz/Bdqqgd which must be accepted during the install of the Product.
+      digest: 2d93c570ff47b27858901dacafc22fe64d868e9a8ecb4742867396f2912eded8
+      icon: https://raw.githubusercontent.com/IBM/charts/master/logo/ibm-oms-logo.png
+      keywords:
+        - cpq
+        - ifs
+        - sterling
+        - yantra
+        - order
+        - fulfillment
+        - om
+        - amd64
+        - framework
+        - Commercial
+        - RHOCP
+        - All items
+        - Languages
+        - Databases
+        - Middleware
+        - CI/CD
+        - Other
+      kubeVersion: '>=1.11.0'
+      maintainers:
+        - name: IBM
+      name: ibm-cpq-prod
+      response:
+        - https://redhat-developer.github.com/redhat-helm-charts/charts/ibm-cpq-prod-2.0.0.tgz
+      version: 2.0.0
+  ibm-object-storage-plugin--sample-repo-2:
+    - apiVersion: v2
+      appVersion: 2.0.0
+      created: "2020-07-15T16:32:34.612556197+05:30"
+      description: |
+        Chart for deploying ibmcloud object storage plugin.
+        IBM Cloud Object Storage is persistent, highly available storage
+        that you can mount to apps that run in a Kubernetes cluster by using
+        the IBM Cloud Object Storage plug-in. The plug-in is a Kubernetes Flex-Volume plug-in
+        that connects Cloud Object Storage buckets to pods in your cluster.
+
+        Documentation
+        For additional details regarding install parameters see here
+        ibm.biz/BdqPR6
+
+        License
+        By installing this product you accept the license terms.
+        https://www.apache.org/licenses/LICENSE-2.0
+      digest: 469e5e4093386c9b2a2f50cf55197db1c2489832bd3bc72018a17f0df9553474
+      icon: https://cache.globalcatalog.cloud.ibm.com/static/cache/2461-acb0d10a1725d783/images/uploaded/icons/object-storage.png
+      keywords:
+        - IKS
+        - amd64
+        - Storage
+        - Commercial
+        - Limited
+        - Other
+        - ROKS
+      maintainers:
+        - email: contsto2@in.ibm.com
+          name: IBM
+      name: ibm-object-storage-plugin
+      response:
+        - https://redhat-developer.github.com/redhat-helm-charts/charts/ibm-object-storage-plugin-2.0.0.tgz
+      version: 2.0.0
+  ibm-oms-ent-prod--sample-repo-2:
+    - apiVersion: v2
+      appVersion: 10.0.0
+      created: "2020-07-15T16:32:34.663118186+05:30"
+      dependencies:
+        - alias: sch
+          name: ibm-sch
+          repository: '@sch'
+          version: 1.2.15
+      description: |-
+        IBM Order management Software Enterprise Edition v10 provides cross-channel order orchestration capabilities to enable intelligent brokering of orders across many disparate systems. It also provides a global view of inventory across the supply chain and enables business users to make changes to order process.
+
+        For additional details regarding install parameters check: http://ibm.biz/oms-helm-readme.
+
+        By installing this product you accept the license terms http://ibm.biz/oms-license and http://ibm.biz/oms-apps-license.
+      digest: f01226a974704ea84685d95ad48feae8666ea154254cdca888859430d5517961
+      icon: https://raw.githubusercontent.com/IBM/charts/master/logo/ibm-oms-logo.png
+      keywords:
+        - oms
+        - sterling
+        - yantra
+        - order
+        - fulfillment
+        - om
+        - amd64
+        - ppc64le
+        - framework
+        - Commercial
+        - RHOCP
+        - Other
+      kubeVersion: '>=1.11.0'
+      maintainers:
+        - name: IBM
+      name: ibm-oms-ent-prod
+      type: application
+      response:
+        - https://redhat-developer.github.com/redhat-helm-charts/charts/ibm-oms-ent-prod-5.0.0.tgz
+      version: 5.0.0
+generated: "2020-07-15T16:32:34.538582491+05:30"

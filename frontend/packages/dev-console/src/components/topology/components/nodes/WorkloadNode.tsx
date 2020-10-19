@@ -57,12 +57,12 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
   const workloadData = element.getData().data;
   const filters = useDisplayFilters();
   const size = Math.min(width, height);
-  const { donutStatus, editURL, vcsURI } = workloadData;
+  const { donutStatus, editURL, vcsURI, vcsRef } = workloadData;
   const { radius, decoratorRadius } = calculateRadius(size);
   const cheEnabled = !!cheURL;
   const cx = width / 2;
   const cy = height / 2;
-  const editUrl = editURL || getEditURL(vcsURI, cheURL);
+  const editUrl = editURL || getEditURL(vcsURI, vcsRef, cheURL);
   const repoIcon = routeDecoratorIcon(editUrl, decoratorRadius, cheEnabled);
   const tipContent = dropTooltip || `Create a visual connector`;
   const showPodCountFilter = getFilterById(SHOW_POD_COUNT_FILTER_ID, filters);
@@ -113,7 +113,7 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
                   circleRef={urlAnchorRef}
                 >
                   <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
-                    <ExternalLinkAltIcon style={{ fontSize: decoratorRadius }} alt="Open URL" />
+                    <ExternalLinkAltIcon style={{ fontSize: decoratorRadius }} title="Open URL" />
                   </g>
                 </Decorator>
               </Tooltip>

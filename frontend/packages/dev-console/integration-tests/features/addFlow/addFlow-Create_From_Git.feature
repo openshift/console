@@ -8,7 +8,7 @@ Background:
 
 @regression
 Scenario Outline: Builder iamge detected for git url "<git_url>" : A-04-TC01
-   Given user is at Import from git page
+   Given user is at Import from Git page
    When user enters Git Repo url as "<git_url>"
    Then git url gets Validated
    And builder image is detetced
@@ -32,7 +32,7 @@ Examples:
 
 @regression, @smoke
 Scenario Outline: Add new git workload with new application for resoruce type "<resource_type>" : A-04-TC02, A-04-TC13
-   Given user is at Import from git page
+   Given user is at Import from Git page
    When user enters Git Repo url as "<git_url>"
    And user enters Application name as "<app_name>"
    And user enters Name as "<name>"
@@ -49,7 +49,7 @@ Examples:
 
 @regression
 Scenario: Add new git workload to the existing application : A-04-TC03
-   Given user is at Import from git page
+   Given user is at Import from Git page
    When user enters Git Repo url as "https://github.com/sclorg/nodejs-ex.git"
    And user enters Application name as "nodejs-ex-git-app"
    And user enters Name as "nodejs-ex-2-git"
@@ -61,7 +61,7 @@ Scenario: Add new git workload to the existing application : A-04-TC03
 
 @regression
 Scenario: Cancel the git workload creation : A-04-TC04
-   Given user is at Import from git page
+   Given user is at Import from Git page
    When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
    And user clicks Cancel button on Add page 
    Then user will be redirected to Add page
@@ -69,7 +69,7 @@ Scenario: Cancel the git workload creation : A-04-TC04
 
 @regression
 Scenario: Create workload without application route : A-04-TC05
-   Given user is at Import from git page
+   Given user is at Import from Git page
    When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
    And user enters Application name as "app-no-route"
    And user enters Name as "app-no-route"
@@ -81,7 +81,7 @@ Scenario: Create workload without application route : A-04-TC05
 
 @regression
 Scenario Outline: Create a git workload with advanced option "Routing" : A-04-TC06
-   Given user is at Import from git page
+   Given user is at Import from Git page
    When user enters Git Repo url as "<git_url>"
    And user enters name as "<name>" in General section
    And user clicks "Routing" link in Advanced Options section
@@ -99,7 +99,7 @@ Examples:
 
 @regression
 Scenario Outline: Creaete the workload by unselecting options in "Build Configuration" section: A-04-TC07
-   Given user is at Import from git page
+   Given user is at Import from Git page
    When user enters Git Repo url as "<git_url>"
    And user enters name as "<name>" in General section
    And user clicks "Build Configuration" link in Advanced Options section
@@ -119,7 +119,7 @@ Examples:
 
 @regression
 Scenario Outline: Create a git workload with advanced option "Deployment" : A-04-TC08
-   Given user is at Import from git page
+   Given user is at Import from Git page
    When user enters Git Repo url as "<git_url>"
    And user enters name as "<name>" in General section
    And user clicks "Deployment" link in Advanced Options section
@@ -136,7 +136,7 @@ Examples:
 
 @regression
 Scenario Outline: Create a git workload with advanced option "Resource Limits" : A-04-TC09
-   Given user is at Import from git page
+   Given user is at Import from Git page
    When user enters Git Repo url as "<git_url>"
    And user enters name as "<name>" in General section
    And user clicks "Resource Limits" link in Advanced Options section
@@ -154,7 +154,7 @@ Examples:
 
 @regression
 Scenario Outline: Create a git workload with advanced option "Scaling" : A-04-TC10
-   Given user is at Import from git page
+   Given user is at Import from Git page
    When user enters Git Repo url as "<git_url>"
    And user enters name as "<name>" in General section
    And user clicks "Scaling" link in Advanced Options section
@@ -169,7 +169,7 @@ Examples:
 
 @regression
 Scenario Outline: Create a git workload with advanced option "Labels" : A-04-TC11
-   Given user is at Import from git page
+   Given user is at Import from Git page
    When user enters Git Repo url as "<git_url>"
    And user enters name as "<name>" in General section
    And user clicks "Labels" link in Advanced Options section
@@ -185,7 +185,7 @@ Examples:
 
 @regression
 Scenario Outline: Create a git workload with advanced option "Health Checks" : A-04-TC12
-   Given user is at Import from git page
+   Given user is at Import from Git page
    When user enters Git Repo url as "<git_url>"
    And user enters name as "<name>" in General section
    And user clicks "Health Checks" link in Advanced Options section

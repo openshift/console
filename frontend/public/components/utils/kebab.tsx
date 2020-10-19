@@ -25,6 +25,7 @@ import {
   K8sResourceKind,
   K8sResourceKindReference,
   referenceForModel,
+  VolumeSnapshotKind,
 } from '../../module/k8s';
 import { impersonateStateToProps } from '../../reducers/ui';
 import { connectToModel } from '../../kinds';
@@ -334,6 +335,8 @@ const kebabFactory: KebabFactory = {
   }),
   PVCSnapshot: (kind, obj) => ({
     label: 'Create Snapshot',
+    isDisabled: obj?.status?.phase !== 'Bound',
+    tooltip: obj?.status?.phase !== 'Bound' ? 'PVC is not Bound' : '',
     href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/${
       VolumeSnapshotModel.plural
     }/~new/form`,
@@ -341,6 +344,8 @@ const kebabFactory: KebabFactory = {
   }),
   ClonePVC: (kind, obj) => ({
     label: 'Clone PVC',
+    isDisabled: obj?.status?.phase !== 'Bound',
+    tooltip: obj?.status?.phase !== 'Bound' ? 'PVC is not Bound' : '',
     callback: () =>
       clonePVCModal({
         kind,
@@ -348,8 +353,10 @@ const kebabFactory: KebabFactory = {
       }),
     accessReview: asAccessReview(kind, obj, 'create'),
   }),
-  RestorePVC: (kind, obj) => ({
+  RestorePVC: (kind, obj: VolumeSnapshotKind) => ({
     label: 'Restore as new PVC',
+    isDisabled: !obj?.status?.readyToUse,
+    tooltip: !obj?.status?.readyToUse ? 'Volume Snapshot is not Ready' : '',
     callback: () =>
       restorePVCModal({
         kind,
@@ -380,13 +387,13 @@ export const getExtensionsKebabActionsForKind = (kind: K8sKind) => {
 };
 
 export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
-  const { actions, kindObj, resource, isDisabled } = props;
+  const { actions, kindObj, resource, isDisabled, customData } = props;
 
   if (!kindObj) {
     return null;
   }
   const options = _.reject(
-    actions.map((a) => a(kindObj, resource)),
+    actions.map((a) => a(kindObj, resource, null, customData)),
     'hidden',
   );
   return (
@@ -541,6 +548,7 @@ export type ResourceKebabProps = {
   kind: K8sResourceKindReference;
   resource: K8sResourceKind;
   isDisabled?: boolean;
+  customData?: { [key: string]: any };
 };
 
 type KebabSubMenu = {

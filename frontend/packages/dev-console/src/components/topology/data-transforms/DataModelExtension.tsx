@@ -27,31 +27,43 @@ export const DataModelExtension: React.FC<DataModelExtensionProps> = ({ dataMode
       };
       dataModelContext.updateExtension(id, extensionContext.current);
 
-      dataModelFactory.properties
-        .getDataModel()
-        .then((getter) => {
-          extensionContext.current.dataModelGetter = getter;
-          dataModelContext.updateExtension(id, extensionContext.current);
-        })
-        .catch(() => {
-          extensionContext.current.dataModelGetter = () => Promise.resolve({});
-          dataModelContext.updateExtension(id, extensionContext.current);
-        });
+      const {
+        getDataModel,
+        isResourceDepicted,
+        getDataModelReconciler,
+      } = dataModelFactory.properties;
+      if (getDataModel) {
+        getDataModel()
+          .then((getter) => {
+            extensionContext.current.dataModelGetter = getter;
+            dataModelContext.updateExtension(id, extensionContext.current);
+          })
+          .catch(() => {
+            extensionContext.current.dataModelGetter = () => Promise.resolve({});
+            dataModelContext.updateExtension(id, extensionContext.current);
+          });
+      } else {
+        extensionContext.current.dataModelGetter = () => Promise.resolve({});
+        dataModelContext.updateExtension(id, extensionContext.current);
+      }
 
-      dataModelFactory.properties
-        .isResourceDepicted()
-        .then((depicter) => {
-          extensionContext.current.dataModelDepicter = depicter;
-          dataModelContext.updateExtension(id, extensionContext.current);
-        })
-        .catch(() => {
-          extensionContext.current.dataModelDepicter = () => false;
-          dataModelContext.updateExtension(id, extensionContext.current);
-        });
+      if (isResourceDepicted) {
+        isResourceDepicted()
+          .then((depicter) => {
+            extensionContext.current.dataModelDepicter = depicter;
+            dataModelContext.updateExtension(id, extensionContext.current);
+          })
+          .catch(() => {
+            extensionContext.current.dataModelDepicter = () => false;
+            dataModelContext.updateExtension(id, extensionContext.current);
+          });
+      } else {
+        extensionContext.current.dataModelDepicter = () => false;
+        dataModelContext.updateExtension(id, extensionContext.current);
+      }
 
-      const reconcilerPromise = dataModelFactory.properties.getDataModelReconciler;
-      if (reconcilerPromise) {
-        reconcilerPromise()
+      if (getDataModelReconciler) {
+        getDataModelReconciler()
           .then((reconciler) => {
             extensionContext.current.dataModelReconciler = reconciler;
             dataModelContext.updateExtension(id, extensionContext.current);

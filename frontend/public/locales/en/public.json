@@ -1,0 +1,8 @@
+{
+  "{{date, MMM D, h:mm a}}": "{{date, MMM D, h:mm a}}",
+  "Resume": "Resume",
+  "Pause": "Pause",
+  "Warning": "Warning",
+  "Not available": "Not available",
+  "Resource": "Resource"
+}

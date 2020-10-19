@@ -98,7 +98,6 @@ const useCloudShellWorkspace = (
       (async () => {
         setNoNamespaceFound(false);
         setSearching(true);
-        setNamespace(undefined);
         try {
           const projects = await k8sList(ProjectModel);
           if (unmounted) return;

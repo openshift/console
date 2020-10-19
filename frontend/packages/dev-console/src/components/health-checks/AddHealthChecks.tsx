@@ -19,6 +19,7 @@ import { getResourcesType } from '../edit-application/edit-application-utils';
 import HealthChecks from './HealthChecks';
 import { getHealthChecksData } from './create-health-checks-probe-utils';
 import './AddHealthChecks.scss';
+import { useViewOnlyAccess, HealthCheckContext } from './health-checks-utils';
 
 type AddHealthChecksProps = {
   resource?: K8sResourceKind;
@@ -37,6 +38,7 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
   values,
   dirty,
 }) => {
+  const viewOnly = useViewOnlyAccess(resource);
   const [currentKey, setCurrentKey] = React.useState(currentContainer);
   const containers = resource?.spec?.template?.spec?.containers;
   const healthCheckAdded = _.every(
@@ -67,7 +69,7 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
   };
 
   return (
-    <>
+    <HealthCheckContext.Provider value={{ viewOnly }}>
       <Helmet>
         <title>{pageTitle}</title>
       </Helmet>
@@ -97,7 +99,7 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
             inline
           />
         </p>
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={!viewOnly ? handleSubmit : undefined}>
           <div>
             Container &nbsp;
             {_.size(containers) > 1 ? (
@@ -121,10 +123,11 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
             submitLabel={healthCheckAdded ? 'Save' : 'Add'}
             disableSubmit={isFormClean || !dirty || !_.isEmpty(errors)}
             resetLabel="Cancel"
+            hideSubmit={viewOnly}
           />
         </Form>
       </div>
-    </>
+    </HealthCheckContext.Provider>
   );
 };
 

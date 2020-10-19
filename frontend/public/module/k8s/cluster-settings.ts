@@ -168,20 +168,13 @@ export const getOpenShiftVersion = (cv: ClusterVersionKind): string => {
   return lastUpdate.state === 'Partial' ? `Updating to ${lastUpdate.version}` : lastUpdate.version;
 };
 
-type ParsedVersion = {
-  major: number;
-  minor: number;
-  patch: number;
-  prerelease: string[];
-};
-
 export const getCurrentVersion = (cv: ClusterVersionKind): string => {
   return _.get(cv, 'status.history[0].version') || _.get(cv, 'spec.desiredUpdate.version');
 };
 
 export const getReportBugLink = (cv: ClusterVersionKind): { label: string; href: string } => {
   const version: string = getCurrentVersion(cv);
-  const parsed: ParsedVersion = semver.parse(version);
+  const parsed = semver.parse(version);
   if (!parsed) {
     return null;
   }
@@ -214,7 +207,7 @@ export const getReleaseNotesLink = (version: string): string => {
     return null;
   }
 
-  const parsed: ParsedVersion = semver.parse(version);
+  const parsed = semver.parse(version);
   if (!parsed) {
     return null;
   }

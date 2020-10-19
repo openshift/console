@@ -42,6 +42,7 @@ import { DiskWrapper } from '../../../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../../../k8s/wrapper/vm/volume-wrapper';
 import { PersistentVolumeClaimWrapper } from '../../../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { BinaryUnit, convertToHighestUnit } from '../../../../../form/size-unit-utils';
+import { VMwareFirmware } from '../../../../../../constants/v2v-import/vmware/vmware-firmware';
 
 export const getNics = (parsedVm): VMWizardNetwork[] => {
   const devices = _.get(parsedVm, ['Config', 'Hardware', 'Device']);
@@ -152,6 +153,12 @@ export const prefillUpdateCreator = (options: UpdateOptions) => {
   const raw = vm.getIn(['detail', 'raw']);
 
   const parsedVm = JSON.parse(raw);
+
+  const firmware = VMwareFirmware.fromString(parsedVm?.Config?.Firmware);
+
+  if (!firmware?.isSupported()) {
+    return; // unsupported - let the validations handle rest
+  }
 
   const memory = _.get(parsedVm, ['Config', 'Hardware', 'MemoryMB']);
   const guestId = _.get(parsedVm, ['Config', 'GuestId']);

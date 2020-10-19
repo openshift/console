@@ -15,14 +15,15 @@ import { getCurrentDeviceSetIndex } from '../../../utils/add-capacity';
 import { OSD_CAPACITY_SIZES } from '../../../utils/osd-size-dropdown';
 import { NO_PROVISIONER, OCS_DEVICE_SET_REPLICA } from '../../../constants';
 import {
-  labelTooltip,
+  requestedCapacityTooltip,
   storageClassTooltip,
   defaultRequestSize,
 } from '../../../constants/ocs-install';
 import { OCSStorageClassDropdown } from '../storage-class-dropdown';
 import { PVsAvailableCapacity } from '../../ocs-install/pvs-available-capacity';
-import { createDeviceSet, DeviceSet } from '../../ocs-install/ocs-request-data';
+import { createDeviceSet } from '../../ocs-install/ocs-request-data';
 import { cephCapacityResource } from '../../../constants/resources';
+import { DeviceSet } from '../../../types';
 import './_add-capacity-modal.scss';
 
 const getProvisionedCapacity = (value: number) => (value % 1 ? (value * 3).toFixed(2) : value * 3);
@@ -131,7 +132,7 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
             <div>
               <label className="control-label" htmlFor="requestSize">
                 Raw Capacity
-                <FieldLevelHelp>{labelTooltip}</FieldLevelHelp>
+                <FieldLevelHelp>{requestedCapacityTooltip}</FieldLevelHelp>
               </label>
               <div className="ceph-add-capacity__form">
                 <input

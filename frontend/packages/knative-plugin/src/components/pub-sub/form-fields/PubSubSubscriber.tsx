@@ -47,7 +47,7 @@ const PubSubSubscriber: React.FC = () => {
       {resourceAlert && (
         <>
           <Alert variant="default" title="No Subscriber available" isInline>
-            To create a Subscriber create, a Knative Service from the Add page.
+            To create a Subscriber, first create a Knative Service from the Add page.
           </Alert>
           &nbsp;
         </>

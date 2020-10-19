@@ -3,13 +3,12 @@ reviewers:
   - afreen23
   - bipuladh
   - cloudbehl
-  - gnehapk
   - rawagner
 approvers:
+  - a2batic
   - afreen23
   - bipuladh
   - cloudbehl
-  - gnehapk
   - rawagner
 labels:
   - component/noobaa

@@ -2,7 +2,7 @@ Feature: Perform Actions on created VM
     As a user, I should be able to perform Actions on imported VM
 
 
-Background: 
+Background:
     Given user is at developer perspecitve
     And user has selected namespace "aut-vm-actions"
     And user has created VM
@@ -28,13 +28,13 @@ Scenario: Edit Application Groupings action on VM: VM-04-TC02
 
 
 @regression
-Scenario: Edit Application Groupings to unassigned action on VM: VM-04-TC02
+Scenario: Edit Application Groupings to no application group on VM: VM-04-TC02
     When user right clicks on the VM to open the context menu
     And user clicks on the Edit Application Groupings
     And user will click on the Application dropdown on the modal
-    And user selects the unassigned item
+    And user selects the no application group item
     And user clicks on Save button
-    Then user will see that VM is unassigned
+    Then user will see that VM does not belong to an application group
 
 
 @regression

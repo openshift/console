@@ -85,7 +85,7 @@ const toTypeAbstraction = (obj): SecretTypeAbstraction => {
     case SecretType.dockercfg:
       return SecretTypeAbstraction.image;
     default:
-      if (data[WebHookSecretKey] && _.size(data) === 1) {
+      if (data?.[WebHookSecretKey] && _.size(data) === 1) {
         return SecretTypeAbstraction.webhook;
       }
       return SecretTypeAbstraction.generic;
@@ -920,7 +920,9 @@ export class SSHAuthSubform extends React.Component<SSHAuthSubformProps, SSHAuth
   changeData(event) {
     this.setState(
       {
-        'ssh-privatekey': event.target.value,
+        'ssh-privatekey': event.target.value.endsWith('\n')
+          ? event.target.value
+          : `${event.target.value}\n`,
       },
       () => this.props.onChange(this.state),
     );
@@ -928,7 +930,7 @@ export class SSHAuthSubform extends React.Component<SSHAuthSubformProps, SSHAuth
   onFileChange(fileData) {
     this.setState(
       {
-        'ssh-privatekey': fileData,
+        'ssh-privatekey': fileData.endsWith('\n') ? fileData : `${fileData}\n`,
       },
       () => this.props.onChange(this.state),
     );

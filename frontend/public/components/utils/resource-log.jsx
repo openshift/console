@@ -4,7 +4,12 @@ import { Base64 } from 'js-base64';
 import { saveAs } from 'file-saver';
 import { Alert, AlertActionLink, Button } from '@patternfly/react-core';
 import * as _ from 'lodash-es';
-import { CompressIcon, ExpandIcon, DownloadIcon } from '@patternfly/react-icons';
+import {
+  CompressIcon,
+  ExpandIcon,
+  DownloadIcon,
+  OutlinedWindowRestoreIcon,
+} from '@patternfly/react-icons';
 import * as classNames from 'classnames';
 import { FLAGS } from '@console/shared/src/constants';
 import { LoadingInline, LogWindow, TogglePlay, ExternalLink } from './';
@@ -50,7 +55,7 @@ const replaceVariables = (template, values) => {
 // Component for log stream controls
 export const LogControls = ({
   dropdown,
-  onDownload,
+  logURL,
   toggleFullscreen,
   isFullscreen,
   status,
@@ -111,10 +116,17 @@ export const LogControls = ({
               </React.Fragment>
             );
           })}
-        <Button variant="link" isInline onClick={onDownload}>
+        <a href={logURL} target="_blank" rel="noopener noreferrer">
+          <OutlinedWindowRestoreIcon className="co-icon-space-r" />
+          Raw
+        </a>
+        <span aria-hidden="true" className="co-action-divider hidden-xs">
+          |
+        </span>
+        <a href={logURL} download>
           <DownloadIcon className="co-icon-space-r" />
           Download
-        </Button>
+        </a>
         {screenfull.enabled && (
           <>
             <span aria-hidden="true" className="co-action-divider hidden-xs">
@@ -143,13 +155,13 @@ export const LogControls = ({
 LogControls.propTypes = {
   isFullscreen: PropTypes.bool.isRequired,
   dropdown: PropTypes.node,
+  logURL: PropTypes.string.required,
   status: PropTypes.string,
   resource: PropTypes.object,
   containerName: PropTypes.string,
   podLogLinks: PropTypes.arrayOf(PropTypes.object), // k8sResourceKind
   namespaceUID: PropTypes.string,
   toggleStreaming: PropTypes.func,
-  onDownload: PropTypes.func.isRequired,
   toggleFullscreen: PropTypes.func.isRequired,
 };
 
@@ -170,6 +182,7 @@ class ResourceLog_ extends React.Component {
     this._resourceLogRef = React.createRef();
     this.state = {
       error: false,
+      hasTruncated: false,
       lines: [],
       linesBehind: 0,
       resourceStatus: LOG_SOURCE_WAITING,
@@ -276,7 +289,8 @@ class ResourceLog_ extends React.Component {
       const linesAdded = this._buffer.ingest(text);
       this.setState({
         linesBehind: status === STREAM_PAUSED ? linesBehind + linesAdded : linesBehind,
-        lines: this._buffer.getLines(),
+        lines: [...this._buffer.getLines(), this._buffer.getTail()],
+        hasTruncated: this._buffer.getHasTruncated(),
       });
     }
   }
@@ -292,6 +306,7 @@ class ResourceLog_ extends React.Component {
     this.setState(
       {
         error: false,
+        hasTruncated: false,
         lines: [],
         linesBehind: 0,
         stale: false,
@@ -375,6 +390,7 @@ class ResourceLog_ extends React.Component {
     const { resource, containerName, dropdown, bufferSize } = this.props;
     const {
       error,
+      hasTruncated,
       lines,
       linesBehind,
       stale,
@@ -384,7 +400,12 @@ class ResourceLog_ extends React.Component {
       namespaceUID,
     } = this.state;
     const bufferFull = lines.length === bufferSize;
-
+    const logURL = resourceURL(modelFor(resource.kind), {
+      name: resource.metadata.name,
+      ns: resource.metadata.namespace,
+      path: 'log',
+      queryParams: { container: containerName || '' },
+    });
     return (
       <>
         {error && (
@@ -395,6 +416,24 @@ class ResourceLog_ extends React.Component {
             title="An error occurred while retrieving the requested logs."
             actionLinks={<AlertActionLink onClick={this._restartStream}>Retry</AlertActionLink>}
           />
+        )}
+        {hasTruncated && (
+          <Alert
+            isInline
+            className="co-alert"
+            variant="warning"
+            title={'Some lines have been abridged because they are exceptionally long.'}
+          >
+            To view unabridged log content, you can either{' '}
+            <a href={logURL} target="_blank" rel="noopener noreferrer">
+              open the raw file in another window
+            </a>{' '}
+            or{' '}
+            <a href={logURL} download>
+              download it
+            </a>
+            .
+          </Alert>
         )}
         {stale && (
           <Alert
@@ -412,7 +451,8 @@ class ResourceLog_ extends React.Component {
           <LogControls
             dropdown={dropdown}
             isFullscreen={isFullscreen}
-            onDownload={this._download}
+            logURL={logURL}
+            setLineWrap={this._setLineWrap}
             status={status}
             toggleFullscreen={this._toggleFullscreen}
             toggleStreaming={this._toggleStreaming}
@@ -422,10 +462,10 @@ class ResourceLog_ extends React.Component {
             namespaceUID={namespaceUID}
           />
           <LogWindow
-            lines={lines}
-            linesBehind={linesBehind}
             bufferFull={bufferFull}
             isFullscreen={isFullscreen}
+            lines={lines}
+            linesBehind={linesBehind}
             status={status}
             updateStatus={this._updateStatus}
           />

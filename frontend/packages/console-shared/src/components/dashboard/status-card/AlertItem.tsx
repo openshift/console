@@ -14,8 +14,8 @@ import {
   getAlertTime,
 } from './alert-utils';
 
-const CriticalIcon = () => <RedExclamationCircleIcon alt="Critical" title="Critical" />;
-const WarningIcon = () => <YellowExclamationTriangleIcon alt="Warning" title="Warning" />;
+const CriticalIcon = () => <RedExclamationCircleIcon title="Critical" />;
+const WarningIcon = () => <YellowExclamationTriangleIcon title="Warning" />;
 const getSeverityIcon = (severity: string) => {
   switch (severity) {
     case 'critical':
@@ -34,7 +34,10 @@ export const StatusItem: React.FC<StatusItemProps> = ({ Icon, timestamp, message
       </div>
       <div className="co-status-card__alert-item-text">
         <div className="co-status-card__alert-item-message">
-          <div className="co-health-card__alert-item-timestamp co-status-card__health-item-text text-secondary">
+          <div
+            className="co-health-card__alert-item-timestamp co-status-card__health-item-text text-secondary"
+            data-test="timestamp"
+          >
             {timestamp && <Timestamp simple timestamp={timestamp} />}
           </div>
           <span className="co-status-card__health-item-text co-break-word">{message}</span>

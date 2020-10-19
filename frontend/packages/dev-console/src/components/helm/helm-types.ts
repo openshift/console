@@ -41,6 +41,7 @@ export interface HelmChartMetaData {
   type?: string;
   urls: string[];
   kubeVersion?: string;
+  repoName?: string;
 }
 
 export type HelmChartEntries = {

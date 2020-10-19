@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { FormikProps, FormikValues } from 'formik';
-import { TextInputTypes, Grid, GridItem, Button } from '@patternfly/react-core';
+import { TextInputTypes, Grid, GridItem, Button, Alert } from '@patternfly/react-core';
 import {
   InputField,
   FormFooter,
@@ -22,6 +22,7 @@ export interface HelmInstallUpgradeFormProps {
   helmActionConfig: HelmActionConfigType;
   chartMetaDescription: React.ReactNode;
   onVersionChange: (chart: HelmChart) => void;
+  chartError: Error;
 }
 
 const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUpgradeFormProps> = ({
@@ -36,12 +37,16 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
   dirty,
   chartMetaDescription,
   onVersionChange,
+  chartError,
 }) => {
   const { chartName, chartVersion, chartReadme, formData, formSchema, editorType } = values;
   const { type: helmAction, title, subTitle } = helmActionConfig;
 
   const isSubmitDisabled =
-    (helmAction === HelmActionType.Upgrade && !dirty) || status?.isSubmitting || !_.isEmpty(errors);
+    (helmAction === HelmActionType.Upgrade && !dirty) ||
+    status?.isSubmitting ||
+    !_.isEmpty(errors) ||
+    !!chartError;
 
   const uiSchema = React.useMemo(() => getJSONSchemaOrder(formSchema, {}), [formSchema]);
 
@@ -88,6 +93,11 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
   return (
     <FlexForm onSubmit={handleSubmit}>
       <FormHeader title={title} helpText={formHelpText} marginBottom="lg" />
+      {chartError && (
+        <Alert variant="danger" isInline title="Helm chart cannot be installed">
+          The Helm chart is currently unavailable. {`${chartError}.`}
+        </Alert>
+      )}
       <FormSection fullWidth>
         <Grid hasGutter>
           <GridItem xl={7} lg={8} md={12}>
@@ -97,7 +107,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
               label="Release Name"
               helpText="A unique name for the Helm Chart release."
               required
-              isDisabled={helmAction === HelmActionType.Upgrade}
+              isDisabled={!!chartError || helmAction === HelmActionType.Upgrade}
             />
           </GridItem>
           <GridItem xl={5} lg={4} md={12}>
@@ -110,11 +120,13 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
           </GridItem>
         </Grid>
       </FormSection>
-      <SyncedEditorField
-        name="editorType"
-        formContext={{ name: 'formData', editor: formEditor, isDisabled: !formSchema }}
-        yamlContext={{ name: 'yamlData', editor: yamlEditor }}
-      />
+      {!chartError && (
+        <SyncedEditorField
+          name="editorType"
+          formContext={{ name: 'formData', editor: formEditor, isDisabled: !formSchema }}
+          yamlContext={{ name: 'yamlData', editor: yamlEditor }}
+        />
+      )}
       <FormFooter
         handleReset={handleReset}
         errorMessage={status && status.submitError}

@@ -8,6 +8,7 @@ import {
   SinkType,
   AddChannelFormData,
   NormalizedEventSources,
+  EventSources,
 } from '../../components/add/import-types';
 import { ClusterServiceVersionKind, InstallModeType } from '@console/operator-lifecycle-manager';
 import { RevisionModel, ServiceModel, KafkaModel } from '../../models';
@@ -274,15 +275,15 @@ export const deploymentKnativeData: K8sResourceKind = {
 };
 
 const eventSourceData = {
-  cronjobsource: {
+  [EventSources.CronJobSource]: {
     data: '',
     schedule: '* * * * *',
   },
-  pingsource: {
-    data: '',
+  [EventSources.PingSource]: {
+    jsonData: '',
     schedule: '* * * * *',
   },
-  apiserversource: {
+  [EventSources.ApiServerSource]: {
     mode: '',
     serviceAccountName: '',
     resources: [
@@ -292,7 +293,7 @@ const eventSourceData = {
       },
     ],
   },
-  kafkasource: {
+  [EventSources.KafkaSource]: {
     bootstrapServers: ['my-cluster-kafka-bootstrap.kafka:9092'],
     topics: ['knative-demo-topic'],
     consumerGroup: 'knative-group',
@@ -311,7 +312,7 @@ const eventSourceData = {
     },
     serviceAccountName: '',
   },
-  containersource: {
+  [EventSources.ContainerSource]: {
     template: {
       spec: {
         containers: [
@@ -346,28 +347,11 @@ export const getDefaultEventingData = (typeEventSource: string): EventSourceForm
       apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
       name: 'event-display',
       kind: ServiceModel.kind,
-    },
-    limits: {
-      cpu: {
-        request: '',
-        requestUnit: 'm',
-        defaultRequestUnit: 'm',
-        limit: '',
-        limitUnit: 'm',
-        defaultLimitUnit: 'm',
-      },
-      memory: {
-        request: '',
-        requestUnit: 'Mi',
-        defaultRequestUnit: 'Mi',
-        limit: '',
-        limitUnit: 'Mi',
-        defaultLimitUnit: 'Mi',
-      },
+      key: `${ServiceModel.kind}-event-display`,
     },
     type: typeEventSource,
     data: {
-      [typeEventSource.toLowerCase()]: eventSourceData[typeEventSource.toLowerCase()],
+      [typeEventSource]: eventSourceData[typeEventSource],
     },
     yamlData: '',
   };

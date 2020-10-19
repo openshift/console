@@ -105,15 +105,15 @@ const commonPipelineSchema = yup.object().shape({
     }),
   ),
   resources: formResources,
-});
-
-export const startPipelineSchema = commonPipelineSchema.shape({
   workspaces: yup.array().of(
     yup.object().shape({
       type: yup.string().required('Required'),
       data: volumeTypeSchema,
     }),
   ),
+});
+
+export const startPipelineSchema = commonPipelineSchema.shape({
   secretOpen: yup.boolean().equals([false]),
 });
 

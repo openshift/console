@@ -41,6 +41,20 @@ export const getAddPageUrl = (
     case ImportOptions.EVENTPUBSUB:
       pageUrl = `/add/ns/${ns}`;
       break;
+    case ImportOptions.OPERATORBACKED:
+      pageUrl = `/catalog/ns/${ns}`;
+      params.append('kind', JSON.stringify(['ClusterServiceVersion']));
+      break;
+    case ImportOptions.HELMCHARTS:
+      pageUrl = `/catalog/ns/${ns}`;
+      params.append('kind', JSON.stringify(['HelmChart']));
+      break;
+    case ImportOptions.SAMPLES:
+      pageUrl = `/samples/ns/${ns}`;
+      break;
+    case ImportOptions.EVENTCHANNEL:
+      pageUrl = `/channel/ns/${ns}`;
+      break;
     default:
       throw new Error('Invalid Import option provided');
   }

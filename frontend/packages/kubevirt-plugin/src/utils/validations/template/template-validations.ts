@@ -1,7 +1,8 @@
 /* eslint-disable lines-between-class-members */
 import * as _ from 'lodash';
+import { ObjectEnum } from '@console/shared/src/constants/object-enum';
 import { ValidationErrorType } from '@console/shared/src';
-import { ObjectEnum, DiskBus, DiskType } from '../../../constants';
+import { DiskBus, DiskType } from '../../../constants';
 import { CommonTemplatesValidation } from '../../../types/template';
 import {
   IntervalValidationResult,

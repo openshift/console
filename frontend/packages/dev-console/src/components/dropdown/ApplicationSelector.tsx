@@ -9,6 +9,7 @@ import {
 import { setActiveApplication } from '@console/internal/actions/ui';
 import { RootState } from '@console/internal/redux';
 import { getActiveNamespace, getActiveApplication } from '@console/internal/reducers/ui';
+import { UNASSIGNED_LABEL } from '../../const';
 import ApplicationDropdown from './ApplicationDropdown';
 
 export interface ApplicationSelectorProps {
@@ -27,16 +28,21 @@ interface DispatchProps {
 type Props = ApplicationSelectorProps & StateProps & DispatchProps;
 
 const ApplicationSelector: React.FC<Props> = ({ namespace, application, onChange, disabled }) => {
-  if (namespace === ALL_NAMESPACES_KEY) return null;
-
   const allApplicationsTitle = 'all applications';
-  const noApplicationsTitle = 'unassigned';
-  const title: string =
+  const noApplicationsTitle = UNASSIGNED_LABEL;
+  const dropdownTitle: string =
     application === ALL_APPLICATIONS_KEY
       ? allApplicationsTitle
       : application === UNASSIGNED_APPLICATIONS_KEY
       ? noApplicationsTitle
       : application;
+  const [title, setTitle] = React.useState<string>(dropdownTitle);
+  React.useEffect(() => {
+    if (!disabled) {
+      setTitle(dropdownTitle);
+    }
+  }, [disabled, dropdownTitle]);
+  if (namespace === ALL_NAMESPACES_KEY) return null;
 
   const onApplicationChange = (newApplication: string, key: string) => {
     key === ALL_APPLICATIONS_KEY ? onChange(key) : onChange(newApplication);

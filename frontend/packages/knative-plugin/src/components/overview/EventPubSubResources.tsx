@@ -98,6 +98,7 @@ const EventPubSubResources: React.FC<EventPubSubResourcesProps> = ({ item }) => 
         <>
           <PubSubResourceOverviewList items={eventSources} title="Event Sources" />
           <PubSubSubscribers subscribers={subscribers} />
+          {channels?.length > 0 && <PubSubResourceOverviewList items={channels} title="Channel" />}
         </>
       );
   }

@@ -1,37 +1,90 @@
 /* eslint-disable lines-between-class-members */
-
-import { ObjectEnum, VolumeType } from '../../../constants';
+import { ObjectEnum } from '@console/shared/src/constants/object-enum';
+import { VolumeType } from '../../../constants';
 import { DataVolumeSourceType, DiskType } from '../../../constants/vm/storage';
 import { getStringEnumValues } from '../../../utils/types';
 import { BinaryUnit } from '../../form/size-unit-utils';
+import {
+  UI_SOURCE_ATTACH_CLONED_DISK_DESC,
+  UI_SOURCE_ATTACH_DISK_DESC,
+  UI_SOURCE_BLANK_DESC,
+  UI_SOURCE_CONTAINER_DESC,
+  UI_SOURCE_IMPORT_DISK_DESC,
+  UI_SOURCE_URL_DESC,
+} from '../../../utils/strings';
+import {
+  SelectDropdownData,
+  SelectDropdownObjectEnum,
+} from '../../../constants/select-dropdown-object-enum';
 
-export class StorageUISource extends ObjectEnum<string> {
+export class StorageUISource extends SelectDropdownObjectEnum<string> {
   static readonly BLANK = new StorageUISource(
     'Blank',
-    VolumeType.DATA_VOLUME,
-    DataVolumeSourceType.BLANK,
+    {
+      volumeType: VolumeType.DATA_VOLUME,
+      dataVolumeSourceType: DataVolumeSourceType.BLANK,
+    },
+    {
+      description: UI_SOURCE_BLANK_DESC,
+      order: 1,
+    },
   );
   static readonly URL = new StorageUISource(
     'URL',
-    VolumeType.DATA_VOLUME,
-    DataVolumeSourceType.HTTP,
+    {
+      volumeType: VolumeType.DATA_VOLUME,
+      dataVolumeSourceType: DataVolumeSourceType.HTTP,
+    },
+    {
+      label: 'Upload via URL',
+      description: UI_SOURCE_URL_DESC,
+      order: 2,
+    },
   );
-  static readonly CONTAINER = new StorageUISource('Container', VolumeType.CONTAINER_DISK);
+  static readonly CONTAINER = new StorageUISource(
+    'Container',
+    {
+      volumeType: VolumeType.CONTAINER_DISK,
+    },
+    {
+      description: UI_SOURCE_CONTAINER_DESC,
+      order: 6,
+    },
+  );
   static readonly ATTACH_CLONED_DISK = new StorageUISource(
     'Attach Cloned Disk',
-    VolumeType.DATA_VOLUME,
-    DataVolumeSourceType.PVC,
+    {
+      volumeType: VolumeType.DATA_VOLUME,
+      dataVolumeSourceType: DataVolumeSourceType.PVC,
+    },
+    {
+      label: 'Clone an existing PVC',
+      description: UI_SOURCE_ATTACH_CLONED_DISK_DESC,
+      order: 4,
+    },
   );
   static readonly ATTACH_DISK = new StorageUISource(
     'Attach Disk',
-    VolumeType.PERSISTENT_VOLUME_CLAIM,
-    undefined,
+    {
+      volumeType: VolumeType.PERSISTENT_VOLUME_CLAIM,
+    },
+    {
+      label: 'Use an existing PVC',
+      description: UI_SOURCE_ATTACH_DISK_DESC,
+      order: 3,
+    },
   );
   static readonly IMPORT_DISK = new StorageUISource(
     'Import Disk',
-    VolumeType.PERSISTENT_VOLUME_CLAIM,
-    undefined,
-    true,
+    {
+      volumeType: VolumeType.PERSISTENT_VOLUME_CLAIM,
+      hasNewPVC: true,
+    },
+    {
+      label: 'Import an existing PVC',
+      description: UI_SOURCE_IMPORT_DISK_DESC,
+      order: 7,
+    },
   );
 
   static readonly OTHER = new StorageUISource('Other');
@@ -54,11 +107,18 @@ export class StorageUISource extends ObjectEnum<string> {
 
   protected constructor(
     value: string,
-    volumeType?: VolumeType,
-    dataVolumeSourceType?: DataVolumeSourceType,
-    hasNewPVC: boolean = false,
+    {
+      volumeType,
+      dataVolumeSourceType,
+      hasNewPVC = false,
+    }: {
+      volumeType?: VolumeType;
+      dataVolumeSourceType?: DataVolumeSourceType;
+      hasNewPVC?: boolean;
+    } = {},
+    selectData: SelectDropdownData = {},
   ) {
-    super(value);
+    super(value, selectData);
     this.volumeType = volumeType;
     this.dataVolumeSourceType = dataVolumeSourceType;
     this.hasNewPVC = hasNewPVC;

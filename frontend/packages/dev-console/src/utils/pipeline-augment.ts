@@ -45,6 +45,15 @@ export interface PipelineTaskRef {
   name: string;
 }
 
+export interface PipelineTaskSpec {
+  steps: {
+    name: string;
+    image?: string;
+    args?: string[];
+    script?: string[];
+  }[];
+}
+
 export interface PipelineTaskParam {
   name: string;
   value: any;
@@ -61,11 +70,18 @@ export interface PipelineTaskResource {
 export interface PipelineTask {
   name: string;
   runAfter?: string[];
-  taskRef: PipelineTaskRef;
+  taskRef?: PipelineTaskRef;
+  taskSpec?: PipelineTaskSpec;
   params?: PipelineTaskParam[];
   resources?: PipelineTaskResources;
+  workspaces?: PipelineTaskWorkspace[];
 }
-
+export interface PipelineTaskWorkspace {
+  name: string;
+  description?: string;
+  mountPath?: string;
+  readOnly?: boolean;
+}
 export interface Resource {
   propsReferenceForRuns: string[];
   resources: FirehoseResource[];
@@ -92,6 +108,8 @@ export type PipelineRunReferenceResource = PipelineRunResourceCommonProperties &
   };
 };
 export type PipelineRunResource = PipelineRunReferenceResource | PipelineRunInlineResource;
+
+export type PipelineWorkspace = Param;
 
 export interface Runs {
   data?: PipelineRun[];
@@ -209,6 +227,7 @@ export interface Param {
 }
 
 export interface PipelineParam extends Param {
+  type?: string | string[];
   default?: string | string[];
   description?: string;
 }
@@ -239,13 +258,6 @@ export type VolumeTypeConfigMaps = {
 export type VolumeTypePVC = {
   claimName: string;
 };
-
-export interface PipelineWorkspace extends Param {
-  type: string;
-  data?: {
-    [volumeType: string]: VolumeTypeSecret | VolumeTypeConfigMaps | VolumeTypePVC | {};
-  };
-}
 
 export interface PipelineRunWorkspace extends Param {
   [volumeType: string]: VolumeTypeSecret | VolumeTypeConfigMaps | VolumeTypePVC | {};

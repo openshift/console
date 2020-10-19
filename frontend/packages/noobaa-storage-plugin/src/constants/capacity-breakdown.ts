@@ -1,6 +1,6 @@
 export enum ServiceType {
   MCG = 'Multi Cloud Gateway',
-  RGW = 'RADOS Gateway',
+  RGW = 'Object Gateway (RGW)',
   ALL = 'All',
 }
 
@@ -20,10 +20,10 @@ export namespace CapacityBreakdown {
 
   export const serviceMetricMap = Object.freeze({
     [ServiceType.ALL]: {
-      [CapacityBreakdown.Metrics.TOTAL]: ['RADOS Gateway', 'Multi Cloud Gateway'],
+      [CapacityBreakdown.Metrics.TOTAL]: ['Object Gateway (RGW)', 'Multi Cloud Gateway'],
     },
     [ServiceType.RGW]: {
-      [CapacityBreakdown.Metrics.TOTAL]: ['RADOS Gateway'],
+      [CapacityBreakdown.Metrics.TOTAL]: ['Object Gateway (RGW)'],
     },
     [ServiceType.MCG]: {
       [CapacityBreakdown.Metrics.TOTAL]: ['Multi Cloud Gateway'],

@@ -60,28 +60,36 @@ export const operatorsDataModelReconciler = (
   installedOperators.forEach((csv) => {
     const crds = csv?.spec?.customresourcedefinitions?.owned ?? [];
     const crdKinds = crds.map((crd) => crd.kind);
-    const operatorNodes = model.nodes.filter((node: OdcNodeModel) => {
+    const operatorGroupNodes = model.nodes.reduce((groupNodes, node: OdcNodeModel) => {
       const { resource } = node;
+      if (!resource) {
+        return groupNodes;
+      }
 
       // Hide operator backed if belong to source
       if (resources && isOperatorBackedKnResource(resource, resources)) {
-        return false;
+        return groupNodes;
       }
 
       const owner = resource?.metadata?.ownerReferences?.[0];
       if (!owner) {
-        return false;
+        return groupNodes;
       }
 
       const nodeOwnerKind = owner.kind;
       const nodeOwnerId = owner.uid;
-      return nodeOwnerId === csv.metadata.uid || crdKinds.includes(nodeOwnerKind);
-    });
+      if (nodeOwnerId === csv.metadata.uid || crdKinds.includes(nodeOwnerKind)) {
+        const key = resource?.metadata?.ownerReferences?.[0].name;
+        if (!groupNodes[key]) {
+          groupNodes[key] = [];
+        }
+        groupNodes[key].push(node);
+      }
+      return groupNodes;
+    }, {});
 
-    if (operatorNodes.length) {
-      // TODO: https://issues.redhat.com/browse/ODC-4730
-      // Here we should be creating different operator groups based on the ownerReference data from
-      // each node, it has the correct UID, kind, and name.
+    Object.keys(operatorGroupNodes).forEach((key) => {
+      const operatorNodes = operatorGroupNodes[key];
 
       const baseNode = operatorNodes[0] as OdcNodeModel;
       const operatorGroupItem = getOperatorGroupResource(baseNode.resource, resources);
@@ -140,6 +148,6 @@ export const operatorsDataModelReconciler = (
         );
         model.nodes.push(obsNode);
       }
-    }
+    });
   });
 };

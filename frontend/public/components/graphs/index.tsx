@@ -6,6 +6,7 @@ import { AsyncComponent } from '../utils/async';
 export const PROMETHEUS_BASE_PATH = window.SERVER_FLAGS.prometheusBaseURL;
 export const PROMETHEUS_TENANCY_BASE_PATH = window.SERVER_FLAGS.prometheusTenancyBaseURL;
 export const ALERT_MANAGER_BASE_PATH = window.SERVER_FLAGS.alertManagerBaseURL;
+export const ALERT_MANAGER_TENANCY_BASE_PATH = 'api/alertmanager-tenancy'; // remove it once it get added to SERVER_FLAGS
 
 // Components
 export * from './require-prometheus';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';
 import { k8sKill, K8sResourceKind } from '@console/internal/module/k8s';
-import { NodeMaintenanceModel } from '../../models';
+import { NodeMaintenanceModel, NodeMaintenanceOldModel } from '../../models';
 import { getNodeMaintenanceReason, getNodeMaintenanceNodeName } from '../../selectors';
 
 const stopNodeMaintenanceModal = (nodeMaintenance: K8sResourceKind) => {
@@ -17,7 +17,13 @@ const stopNodeMaintenanceModal = (nodeMaintenance: K8sResourceKind) => {
       </>
     ),
     btnText: title,
-    executeFn: () => k8sKill(NodeMaintenanceModel, nodeMaintenance),
+    executeFn: () =>
+      k8sKill(
+        nodeMaintenance.apiVersion.includes(NodeMaintenanceModel.apiGroup)
+          ? NodeMaintenanceModel
+          : NodeMaintenanceOldModel,
+        nodeMaintenance,
+      ),
   });
 };
 

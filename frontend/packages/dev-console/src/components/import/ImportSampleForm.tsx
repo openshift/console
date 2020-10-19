@@ -54,7 +54,7 @@ const ImportSampleForm: React.FC<Props> = ({
         errorMessage={status && status.submitError}
         isSubmitting={isSubmitting}
         submitLabel="Create"
-        disableSubmit={!_.isEmpty(errors)}
+        disableSubmit={!_.isEmpty(errors) || isSubmitting}
         resetLabel="Cancel"
         sticky
       />

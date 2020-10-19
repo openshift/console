@@ -70,6 +70,7 @@ import {
   OperatorsTopologyConsumedExtensions,
   operatorsTopologyPlugin,
 } from './components/topology/operators/operatorsTopologyPlugin';
+import { pipelinesTopologyPlugin } from './components/topology/pipelines/pipelinesTopologyPlugin';
 import { usePerspectiveDetection } from './utils/usePerspectiveDetection';
 import { getGuidedTour } from './components/guided-tour';
 
@@ -126,7 +127,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'FeatureFlag/Model',
     properties: {
-      model: models.ServiceBindingRequestModel,
+      model: models.ServiceBindingModel,
       flag: ALLOW_SERVICE_BINDING,
     },
   },
@@ -1053,7 +1054,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       id: 'import-from-git',
       url: '/import',
       label: 'From Git',
-      description: 'Import code from your git repository to be built and deployed',
+      description: 'Import code from your Git repository to be built and deployed',
       icon: importGitIcon,
       accessReview: [
         BuildConfigModel,
@@ -1098,7 +1099,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       id: 'import-from-dockerfile',
       url: '/import?importType=docker',
       label: 'From Dockerfile',
-      description: 'Import your Dockerfile from your git repo to be built and deployed',
+      description: 'Import your Dockerfile from your Git repository to be built and deployed',
       icon: dockerfileIcon,
       accessReview: [
         BuildConfigModel,
@@ -1202,6 +1203,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   },
   ...helmTopologyPlugin,
   ...operatorsTopologyPlugin,
+  ...pipelinesTopologyPlugin,
 ];
 
 export default plugin;

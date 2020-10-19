@@ -67,6 +67,7 @@ import {
   KebabOption,
   resourceObjPath,
   KebabAction,
+  openshiftHelpBase,
 } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
@@ -628,12 +629,11 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
       Installed Operators are represented by Cluster Service Versions within this namespace. For
       more information, see the{' '}
       <ExternalLink
-        href="https://github.com/operator-framework/operator-lifecycle-manager/blob/master/doc/design/architecture.md"
-        text="Operator Lifecycle Manager documentation"
+        href={`${openshiftHelpBase}operators/understanding/olm-what-operators-are.html`}
+        text="Understanding Operators documentation"
       />
       . Or create an Operator and Cluster Service Version using the{' '}
-      <ExternalLink href="https://github.com/operator-framework/operator-sdk" text="Operator SDK" />
-      .
+      <ExternalLink href="https://sdk.operatorframework.io/" text="Operator SDK" />.
     </>
   );
 
@@ -647,7 +647,7 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
       ),
     ].filter(
       (obj, i, all) =>
-        isSubscription(obj) ||
+        isCSV(obj) ||
         _.isUndefined(
           all.find(({ metadata }) =>
             [_.get(obj, 'status.currentCSV'), _.get(obj, 'spec.startingCSV')].includes(
@@ -850,6 +850,18 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
     }
   }
 
+  let supportWorkflowUrl;
+  if (marketplaceSupportWorkflow) {
+    try {
+      const url = new URL(marketplaceSupportWorkflow);
+      url.searchParams.set('utm_source', 'openshift_console');
+      supportWorkflowUrl = url.toString();
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error.message);
+    }
+  }
+
   return (
     <>
       <ScrollToTopOnMount />
@@ -883,11 +895,11 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
                 <dd>
                   {spec.provider && spec.provider.name ? spec.provider.name : 'Not available'}
                 </dd>
-                {marketplaceSupportWorkflow && (
+                {supportWorkflowUrl && (
                   <>
                     <dt>Support</dt>
                     <dd>
-                      <ExternalLink href={marketplaceSupportWorkflow} text="Get support" />
+                      <ExternalLink href={supportWorkflowUrl} text="Get support" />
                     </dd>
                   </>
                 )}

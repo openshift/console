@@ -6,11 +6,13 @@ import TopologyGroupResourceList from './TopologyGroupResourceList';
 type TopologyGroupResourcesPanelProps = {
   manifestResources: K8sResourceKind[];
   releaseNamespace: string;
+  linkForResource?: (obj: K8sResourceKind) => React.ReactElement;
 };
 
 const TopologyGroupResourcesPanel: React.SFC<TopologyGroupResourcesPanelProps> = ({
   manifestResources,
   releaseNamespace,
+  linkForResource,
 }) => {
   const kinds = manifestResources
     .reduce((resourceKinds, resource) => {
@@ -29,7 +31,11 @@ const TopologyGroupResourcesPanel: React.SFC<TopologyGroupResourcesPanelProps> =
       lists.push(
         <div key={model.kind}>
           <SidebarSectionHeading text={model.labelPlural} />
-          <TopologyGroupResourceList resources={resources} releaseNamespace={releaseNamespace} />
+          <TopologyGroupResourceList
+            resources={resources}
+            releaseNamespace={releaseNamespace}
+            linkForResource={linkForResource}
+          />
         </div>,
       );
     }

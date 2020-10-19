@@ -9,7 +9,7 @@ import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src';
 import { ALLOW_SERVICE_BINDING } from '../../../const';
-import { ServiceBindingRequestModel } from '../../../models';
+import { ServiceBindingModel } from '../../../models';
 import { getCreateConnector } from './actions';
 import {
   getIsOperatorResource,
@@ -34,9 +34,14 @@ const getOperatorWatchedResources = (namespace: string): WatchK8sResources<any> 
       namespace,
       optional: true,
     },
+  };
+};
+
+const getServiceBindingWatchedResources = (namespace: string): WatchK8sResources<any> => {
+  return {
     serviceBindingRequests: {
       isList: true,
-      kind: referenceForModel(ServiceBindingRequestModel),
+      kind: referenceForModel(ServiceBindingModel),
       namespace,
       optional: true,
     },
@@ -59,6 +64,17 @@ export const operatorsTopologyPlugin: Plugin<OperatorsTopologyConsumedExtensions
       resources: getOperatorWatchedResources,
       isResourceDepicted: getIsOperatorResource,
       getDataModelReconciler,
+    },
+  },
+  {
+    type: 'Topology/DataModelFactory',
+    properties: {
+      id: 'service-binding-topology-model-factory',
+      priority: 501,
+      resources: getServiceBindingWatchedResources,
+    },
+    flags: {
+      required: [ALLOW_SERVICE_BINDING],
     },
   },
   {

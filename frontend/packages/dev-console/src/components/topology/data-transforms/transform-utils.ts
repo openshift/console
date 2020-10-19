@@ -18,7 +18,6 @@ import {
   TYPE_KNATIVE_REVISION,
 } from '@console/knative-plugin/src/topology/const';
 import { edgesFromAnnotations } from '../../../utils/application-utils';
-import { tknPipelineAndPipelineRunsWatchResources } from '../../../utils/pipeline-plugin-utils';
 import {
   TopologyDataObject,
   TopologyOverviewItem,
@@ -90,6 +89,7 @@ export const createTopologyNodeData = (
       kind: referenceFor(resource),
       editURL: deploymentsAnnotations['app.openshift.io/edit-url'],
       vcsURI: deploymentsAnnotations['app.openshift.io/vcs-uri'],
+      vcsRef: deploymentsAnnotations['app.openshift.io/vcs-ref'],
       builderImage: builderImageIcon || defaultIcon,
       isKnativeResource:
         type && (type === TYPE_EVENT_SOURCE || type === TYPE_KNATIVE_REVISION)
@@ -276,26 +276,30 @@ export const addToTopologyDataModel = (
   graphModel: Model,
   dataModelDepicters: TopologyDataModelDepicted[] = [],
 ) => {
-  graphModel.edges.push(...newModel.edges);
-  graphModel.nodes.push(
-    ...newModel.nodes.filter(
-      (n) =>
-        !n.group &&
-        !graphModel.nodes.find((existing) => {
-          if (n.id === existing.id) {
-            return true;
-          }
-          const { resource } = n as OdcNodeModel;
-          return (
-            !resource || !!dataModelDepicters.find((depicter) => depicter(resource, graphModel))
-          );
-        }),
-    ),
-  );
-  mergeGroups(
-    newModel.nodes.filter((n) => n.group),
-    graphModel.nodes,
-  );
+  if (newModel?.edges) {
+    graphModel.edges.push(...newModel.edges);
+  }
+  if (newModel?.nodes) {
+    graphModel.nodes.push(
+      ...newModel.nodes.filter(
+        (n) =>
+          !n.group &&
+          !graphModel.nodes.find((existing) => {
+            if (n.id === existing.id) {
+              return true;
+            }
+            const { resource } = n as OdcNodeModel;
+            return (
+              !resource || !!dataModelDepicters.find((depicter) => depicter(resource, graphModel))
+            );
+          }),
+      ),
+    );
+    mergeGroups(
+      newModel.nodes.filter((n) => n.group),
+      graphModel.nodes,
+    );
+  }
 };
 
 /**
@@ -430,6 +434,5 @@ export const getBaseWatchedResources = (namespace: string): WatchK8sResources<an
       namespace,
       optional: true,
     },
-    ...tknPipelineAndPipelineRunsWatchResources(namespace),
   };
 };

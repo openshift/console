@@ -16,6 +16,7 @@ export const NO_PROVISIONER = 'kubernetes.io/no-provisioner';
 export const OCS_SUPPORT_ANNOTATION = 'features.ocs.openshift.io/enabled';
 export const OCS_DEVICE_SET_REPLICA = 3;
 export const ATTACHED_DEVICES_ANNOTATION = 'cluster.ocs.openshift.io/local-devices';
+export const DASHBOARD_LINK = '/dashboards/persistent-storage';
 export const AVAILABLE = 'Available';
 export const OSD_REMOVAL_TEMPLATE = 'ocs-osd-removal';
 export const dropdownUnits = {
@@ -24,6 +25,10 @@ export const dropdownUnits = {
 };
 export const CEPH_INTERNAL_CR_NAME = 'ocs-storagecluster-cephcluster';
 export const CEPH_EXTERNAL_CR_NAME = 'ocs-external-storagecluster-cephcluster';
+export const ZONE_LABELS = [
+  'topology.kubernetes.io/zone',
+  'failure-domain.beta.kubernetes.io/zone', // deprecated
+];
 
 export enum OCS_PROVISIONER {
   BLOCK = 'openshift-storage.rbd.csi.ceph.com',
@@ -45,3 +50,8 @@ export enum MODES {
 
 export const OSD_DOWN_ALERT = 'CephOSDDiskNotResponding';
 export const OSD_DOWN_AND_OUT_ALERT = 'CephOSDDiskUnavailable';
+
+export enum CLUSTER_STATUS {
+  READY = 'Ready',
+  PROGRESSING = 'Progressing',
+}

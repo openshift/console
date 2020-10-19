@@ -1,10 +1,13 @@
 import * as _ from 'lodash';
 import { Dispatch } from 'react-redux';
-import { K8sResourceKind, k8sList, StorageClassResourceKind } from '@console/internal/module/k8s';
-import { ClusterServiceVersionModel, SubscriptionModel } from '@console/operator-lifecycle-manager';
+import { k8sList, StorageClassResourceKind, ListKind } from '@console/internal/module/k8s';
+import {
+  ClusterServiceVersionModel,
+  ClusterServiceVersionKind,
+} from '@console/operator-lifecycle-manager';
 import { setFlag } from '@console/internal/actions/features';
 import { FeatureDetector } from '@console/plugin-sdk';
-import { getAnnotations } from '@console/shared/src/selectors/common';
+import { getAnnotations, getName } from '@console/shared/src/selectors/common';
 import { fetchK8s } from '@console/internal/graphql/client';
 import { StorageClassModel } from '@console/internal/models';
 import { OCSServiceModel } from './models';
@@ -14,8 +17,9 @@ import {
   ATTACHED_DEVICES_ANNOTATION,
   RGW_PROVISIONER,
   SECOND,
+  OCS_OPERATOR,
 } from './constants';
-import { OCSStorageClusterKind } from './types';
+import { StorageClusterKind } from './types';
 
 export const OCS_INDEPENDENT_FLAG = 'OCS_INDEPENDENT';
 export const OCS_CONVERGED_FLAG = 'OCS_CONVERGED';
@@ -34,7 +38,7 @@ export const RGW_FLAG = 'RGW';
 export const OCS_SUPPORT_FLAGS = {
   EXTERNAL: 'EXTERNAL',
   MINIMAL_DEPLOYMENT: 'MINIMAL_DEPLOYMENT',
-  ENCRPYTION: 'ENCRYPTION',
+  ENCRYPTION: 'ENCRYPTION',
 };
 
 const handleError = (res: any, flags: string[], dispatch: Dispatch, cb: FeatureDetector) => {
@@ -72,7 +76,7 @@ export const detectOCS: FeatureDetector = async (dispatch) => {
   try {
     const storageClusters = await k8sList(OCSServiceModel, { ns: CEPH_STORAGE_NAMESPACE });
     const storageCluster = storageClusters.find(
-      (sc: OCSStorageClusterKind) => sc.status.phase !== 'Ignored',
+      (sc: StorageClusterKind) => sc.status.phase !== 'Ignored',
     );
     const isInternal = _.isEmpty(storageCluster.spec.externalStorage);
     const isAttachedDevicesCluster =
@@ -99,16 +103,12 @@ export const detectOCS: FeatureDetector = async (dispatch) => {
 
 export const detectOCSSupportedFeatures: FeatureDetector = async (dispatch) => {
   try {
-    const subscription = await fetchK8s<K8sResourceKind>(
-      SubscriptionModel,
-      'ocs-subscription',
-      CEPH_STORAGE_NAMESPACE,
-    );
-    const ocsCSV = await fetchK8s(
+    const csvList = await fetchK8s<ListKind<ClusterServiceVersionKind>>(
       ClusterServiceVersionModel,
-      subscription?.status?.currentCSV,
+      '',
       CEPH_STORAGE_NAMESPACE,
     );
+    const ocsCSV = csvList.items.find((obj) => _.startsWith(getName(obj), OCS_OPERATOR));
 
     const support = getAnnotations(ocsCSV)[OCS_SUPPORT_ANNOTATION];
     _.keys(OCS_SUPPORT_FLAGS).forEach((feature) => {

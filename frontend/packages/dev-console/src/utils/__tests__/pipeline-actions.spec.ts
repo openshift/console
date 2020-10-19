@@ -5,8 +5,10 @@ import {
   reRunPipelineRun,
   startPipeline,
   getPipelineKebabActions,
+  editPipeline,
 } from '../pipeline-actions';
 import { PipelineRun, Pipeline } from '../pipeline-augment';
+import { mockPipelinesJSON } from './pipeline-test-data';
 
 export const actionPipelines: Pipeline[] = [
   {
@@ -111,5 +113,11 @@ describe('getPipelineKebabActions', () => {
     expect(pipelineKebabActions[1](PipelineRunModel, actionPipelineRuns[0]).label).not.toBe(
       'Start Last Run',
     );
+  });
+  it('expect Edit Pipeline option should be hidden when pipeline has inline taskSpec', () => {
+    const editPipelineAction = editPipeline(PipelineModel, mockPipelinesJSON[2]);
+    expect(editPipelineAction.label).toBe('Edit Pipeline');
+    expect(editPipelineAction.callback).not.toBeNull();
+    expect(editPipelineAction.hidden).toBeTruthy();
   });
 });

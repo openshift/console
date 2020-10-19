@@ -45,7 +45,7 @@ export const VirtualMachinesInstanceDetailsPage: React.FC<VirtualMachinesInstanc
 
   const consolePage = {
     href: VM_DETAIL_CONSOLES_HREF,
-    name: 'Consoles',
+    name: 'Console',
     component: VMConsoleFirehose,
   };
 

@@ -1,0 +1,21 @@
+@mixin firefox-only {
+  @at-root {
+    @-moz-document url-prefix() {
+      & {
+        @content;
+      }
+    }
+  }
+}
+.odc-topology-graph-view {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  @include firefox-only {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+}

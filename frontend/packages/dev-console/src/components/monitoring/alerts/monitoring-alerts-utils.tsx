@@ -24,12 +24,7 @@ import {
   alertSeverityOrder,
   alertingRuleStateOrder,
 } from '@console/internal/reducers/monitoring';
-import {
-  Alert,
-  Rule,
-  RuleStates,
-  AlertStates,
-} from '@console/internal/components/monitoring/types';
+import { Alert, Rule, AlertStates } from '@console/internal/components/monitoring/types';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { labelsToParams } from '@console/internal/components/monitoring/utils';
 import SilenceAlert from './SilenceAlert';
@@ -108,7 +103,7 @@ export const monitoringAlertRows = (
           title: _.isEmpty(rls.alerts) ? '-' : <StateCounts alerts={rls.alerts} />,
         },
         {
-          title: <SilenceAlert rule={rls} />,
+          title: <SilenceAlert rule={rls} namespace={namespace} />,
         },
         {
           title: (
@@ -157,13 +152,15 @@ const setOrderBy = (orderBy: SortByDirection, data: Rule[]): Rule[] => {
   return orderBy === SortByDirection.asc ? data : data.reverse();
 };
 
-const alertingRuleNotificationsOrder = (rule: Rule) => [
-  rule.state === RuleStates.Silenced ? 1 : 0,
-  rule.state,
-];
+export const alertingRuleNotificationsOrder = (rule: Rule): number[] => {
+  const counts = _.countBy(rule.alerts, 'state');
+  return [AlertStates.Silenced, AlertStates.Firing, AlertStates.Pending].map(
+    (state) => Number.MAX_SAFE_INTEGER - (counts[state] ?? 0),
+  );
+};
 
 const sortFunc = {
-  nameOrder: (rule) => rule.name,
+  nameOrder: (rule: Rule) => rule.name,
   alertSeverityOrder,
   alertingRuleStateOrder,
   alertingRuleNotificationsOrder,

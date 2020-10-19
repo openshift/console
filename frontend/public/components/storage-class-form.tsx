@@ -11,6 +11,7 @@ import {
   isStorageClassProvisioner,
   ExtensionSCProvisionerProp,
 } from '@console/plugin-sdk/src/typings/storage-class-params';
+import { withExtensions } from '@console/plugin-sdk';
 
 import {
   AsyncComponent,
@@ -26,7 +27,6 @@ import {
 import { k8sCreate, K8sResourceKind, referenceForModel, referenceFor } from './../module/k8s';
 import * as k8sActions from '../actions/k8s';
 import { CSIDriverModel, StorageClassModel } from './../models';
-import { withExtensions } from '../plugins';
 
 enum Provisioner {
   CSI = 'csi',

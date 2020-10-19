@@ -7,6 +7,7 @@ import {
   referenceFor,
 } from '@console/internal/module/k8s';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src';
+import { isOperatorBackedService } from '@console/shared/src/utils/operator-utils';
 import { getOperatorBackedServiceKindMap } from '@console/shared';
 import { isOperatorBackedKnResource } from '@console/knative-plugin/src/topology/knative-topology-utils';
 import { WORKLOAD_TYPES } from '../topology-utils';
@@ -24,13 +25,13 @@ export const edgesFromServiceBinding = (
   sbrs.forEach((sbr) => {
     let edgeExists = false;
     const reference = referenceFor(source);
-    if (reference && sbr?.spec?.applicationSelector?.resource === modelFor(reference)?.plural) {
-      if (sbr?.spec?.applicationSelector?.resourceRef === source.metadata.name) {
+    if (reference && sbr?.spec?.application?.resource === modelFor(reference)?.plural) {
+      if (sbr?.spec?.application?.name === source.metadata.name) {
         edgeExists = true;
       } else {
-        const matchLabels = sbr?.spec?.applicationSelector?.matchLabels;
+        const matchLabels = sbr?.spec?.application?.matchLabels;
         if (matchLabels) {
-          const sbrSelector = new LabelSelector(sbr.spec.applicationSelector);
+          const sbrSelector = new LabelSelector(sbr.spec.application);
           if (sbrSelector.matches(source)) {
             edgeExists = true;
           }
@@ -54,12 +55,10 @@ export const getServiceBindingEdges = (
   }
 
   _.forEach(edgesFromServiceBinding(dc, sbrs), (sbr) => {
-    // look for multiple backing services first in `backingServiceSelectors`
-    // followed by a fallback to the single reference in `backingServiceSelector`
-    _.forEach(sbr.spec.backingServiceSelectors || [sbr.spec.backingServiceSelector], (bss) => {
+    _.forEach(sbr.spec.services, (bss) => {
       if (bss) {
         const targetGroup = obsGroups.find(
-          (group) => group.kind === bss.kind && group.metadata.name === bss.resourceRef,
+          (group) => group.kind === bss.kind && group.metadata.name === bss.name,
         );
         const target = targetGroup?.metadata.uid;
         const source = dc.metadata.uid;
@@ -80,36 +79,18 @@ export const getServiceBindingEdges = (
   return edges;
 };
 
-const isOperatorBackedService = (
-  obj: K8sResourceKind,
-  installedOperators: ClusterServiceVersionKind[],
-  resources?: TopologyDataResources,
-): boolean => {
-  const kind = _.get(obj, 'metadata.ownerReferences[0].kind', null);
-  const ownerUid = _.get(obj, 'metadata.ownerReferences[0].uid');
-  // added this as needs to hide oprator backed if belong to source
-  if (resources && isOperatorBackedKnResource(obj, resources)) {
-    return false;
-  }
-  const operatorBackedServiceKindMap = getOperatorBackedServiceKindMap(installedOperators);
-  const operatorResource: K8sResourceKind = _.find(installedOperators, {
-    metadata: { uid: ownerUid },
-  }) as K8sResourceKind;
-  return !!(
-    kind &&
-    operatorBackedServiceKindMap &&
-    (!_.isEmpty(operatorResource) || kind in operatorBackedServiceKindMap)
-  );
-};
-
 export const getOperatorGroupResource = (
   resource: K8sResourceKind,
   resources?: TopologyDataResources,
 ): K8sResourceKind => {
   const installedOperators = resources?.clusterServiceVersions?.data as ClusterServiceVersionKind[];
   const operatorBackedServiceKindMap = getOperatorBackedServiceKindMap(installedOperators);
+  // added this as needs to hide operator backed if belong to source
+  if (resources && isOperatorBackedKnResource(resource, resources)) {
+    return null;
+  }
 
-  if (isOperatorBackedService(resource, installedOperators, resources)) {
+  if (isOperatorBackedService(resource, installedOperators)) {
     const ownerReference = resource?.metadata?.ownerReferences?.[0];
     const ownerUid = ownerReference?.uid;
     const nodeResourceKind = ownerReference?.kind;

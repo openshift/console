@@ -15,6 +15,7 @@ import {
   getChartValuesYAML,
   getChartReadme,
   concatVersions,
+  getChartEntriesByName,
 } from '../helm-utils';
 
 export type HelmChartVersionDropdownProps = {
@@ -33,7 +34,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
 }) => {
   const {
     setFieldValue,
-    values: { yamlData, formData, appVersion },
+    values: { chartRepoName, yamlData, formData, appVersion },
     setFieldTouched,
   } = useFormikContext<FormikValues>();
   const [helmChartVersions, setHelmChartVersions] = React.useState({});
@@ -94,17 +95,20 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
         if (ignore) return;
       }
       if (ignore) return;
-      setHelmChartEntries(json?.entries?.[chartName]);
-      setHelmChartVersions(getChartVersions(json?.entries?.[chartName]));
+      const chartEntries = getChartEntriesByName(json?.entries, chartName, chartRepoName);
+      setHelmChartEntries(chartEntries);
+      setHelmChartVersions(getChartVersions(chartEntries));
     };
     fetchChartVersions();
     return () => {
       ignore = true;
     };
-  }, [chartName]);
+  }, [chartName, chartRepoName]);
 
   const onChartVersionChange = (value: string) => {
-    const chartURL = getChartURL(helmChartEntries, value);
+    const [version, repoName] = value.split('--');
+
+    const chartURL = getChartURL(helmChartEntries, version, repoName);
 
     setFieldValue('chartVersion', value);
     setFieldValue('chartURL', chartURL);
@@ -148,6 +152,12 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
       ? 'Select the Chart Version.'
       : 'Select the version to upgrade to.';
 
+  const title =
+    _.isEmpty(helmChartVersions) && !chartVersion
+      ? 'No versions available'
+      : helmChartVersions[`${chartVersion}`] ||
+        concatVersions(chartVersion, appVersion, chartRepoName);
+
   return (
     <GridItem span={6}>
       <DropdownField
@@ -156,7 +166,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
         items={helmChartVersions}
         helpText={helpText}
         disabled={_.isEmpty(helmChartVersions) || _.keys(helmChartVersions).length === 1}
-        title={helmChartVersions[chartVersion] || concatVersions(chartVersion, appVersion)}
+        title={title}
         onChange={handleChartVersionChange}
         required
         fullWidth

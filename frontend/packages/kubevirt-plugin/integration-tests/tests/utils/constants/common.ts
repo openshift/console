@@ -1,6 +1,6 @@
 import { execSync } from 'child_process';
 
-export const { STORAGE_CLASS = 'standard' } = process.env;
+export const { STORAGE_CLASS = 'standard', KUBEVIRT_PROJECT_NAME = 'openshift-cnv' } = process.env;
 
 const rhelTinyCommonTemplateName = execSync(
   "kubectl get template -n openshift | grep rhel7-desktop-tiny | awk '{print $1}'",
@@ -36,6 +36,8 @@ export const JASMINE_EXTENDED_TIMEOUT_INTERVAL = 500 * SEC;
 export const V2V_INSTANCE_CONNECTION_TIMEOUT = 30 * SEC;
 export const V2V_VM_IMPORT_TIMEOUT = 3600 * SEC;
 
+export const CDI_UPLOAD_TIMEOUT_SECS = 300 * SEC;
+
 export const VIRTUALIZATION_TITLE = 'Virtualization';
 
 // Wizard strings
@@ -60,7 +62,6 @@ export const NODE_READY_STATUS = 'Ready';
 
 // Kubevirt related
 export const KUBEVIRT_STORAGE_CLASS_DEFAULTS = 'kubevirt-storage-class-defaults';
-export const KUBEVIRT_PROJECT_NAME = 'openshift-cnv';
 
 export const commonTemplateVersion = () => rhelTinyCommonTemplateName.match(/v\d+\.\d+\.\d+/)[0];
 export const INNER_TEMPLATE_VERSION = 'v0.11.0';

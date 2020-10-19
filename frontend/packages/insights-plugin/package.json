@@ -1,0 +1,19 @@
+{
+  "name": "@console/insights-plugin",
+  "version": "0.0.0-fixed",
+  "description": "Insights - provide cluster health data and integrate with OpenShift Cluster Manager",
+  "private": true,
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "yarn --cwd ../.. test packages/insights-plugin"
+  },
+  "dependencies": {
+    "@console/internal": "0.0.0-fixed",
+    "@console/patternfly": "0.0.0-fixed",
+    "@console/plugin-sdk": "0.0.0-fixed",
+    "@console/shared": "0.0.0-fixed"
+  },
+  "consolePlugin": {
+    "entry": "src/plugin.tsx"
+  }
+}

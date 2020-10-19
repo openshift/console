@@ -9,6 +9,7 @@ export const GraphEmpty: React.FC<GraphEmptyProps> = ({ height = 180, loading = 
       justifyContent: 'center',
       padding: '5px',
       width: '100%',
+      flexGrow: 1,
     }}
   >
     {loading ? (

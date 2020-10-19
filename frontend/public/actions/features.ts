@@ -2,7 +2,7 @@ import { Dispatch } from 'react-redux';
 import * as _ from 'lodash-es';
 import { ActionType as Action, action } from 'typesafe-actions';
 import { FLAGS } from '@console/shared/src/constants/common';
-import { GroupModel, UserModel } from '../models';
+import { GroupModel, UserModel, VolumeSnapshotContentModel } from '../models';
 import { ClusterVersionKind } from '../module/k8s';
 import { receivedResources } from './k8s';
 import { pluginStore } from '../plugins';
@@ -138,6 +138,15 @@ const ssarChecks = [
       verb: 'list',
     },
   },
+  // TODO: Move into Core Plugin
+  {
+    flag: FLAGS.CAN_LIST_VSC,
+    resourceAttributes: {
+      group: VolumeSnapshotContentModel.apiGroup,
+      resource: VolumeSnapshotContentModel.plural,
+      verb: 'list',
+    },
+  },
 ];
 
 export const clearSSARFlags = () =>
@@ -221,7 +230,7 @@ const ssarCheckActions = ssarChecks.map(({ flag, resourceAttributes, after }) =>
             after(dispatch, allowed);
           }
         },
-        (err) => handleError({ response: err.graphQLErrors[0].extensions }, flag, dispatch, fn),
+        (err) => handleError({ response: err.graphQLErrors[0]?.extensions }, flag, dispatch, fn),
       );
   return fn;
 });

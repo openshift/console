@@ -11,7 +11,6 @@ import {
   ChartStack,
   ChartThemeColor,
   ChartThemeVariant,
-  ChartTooltip,
   ChartVoronoiContainer,
   getCustomTheme,
 } from '@patternfly/react-charts';
@@ -27,6 +26,7 @@ import {
 } from '@patternfly/react-core';
 import { ChartLineIcon } from '@patternfly/react-icons';
 import { connect } from 'react-redux';
+import { VictoryPortal } from 'victory';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 
 import * as UIActions from '../../actions/ui';
@@ -150,12 +150,19 @@ const tooltipStateToProps = ({ UI }: RootState, { seriesIndex }) => {
   return props;
 };
 
+const TOOLTIP_WIDTH = 240;
+const TOOLTIP_MAX_HEIGHT = 500;
+const TOOLTIP_MIN_X = -80;
+// Offset relative to the graph width
+const TOOLTIP_MAX_X_OFFSET = 40 - TOOLTIP_WIDTH;
+
 const TooltipInner_: React.FC<TooltipInnerProps> = ({
   datumX,
   datumY,
   labels,
   query,
   seriesIndex,
+  width,
   x,
   y,
 }) => {
@@ -163,21 +170,22 @@ const TooltipInner_: React.FC<TooltipInnerProps> = ({
     return null;
   }
 
-  const width = 240;
-
-  // This is actually the max tooltip height
-  const height = 500;
+  // Constrain the tooltip so it doesn't stick out on the left or right side of the graph frame
+  const tooltipX = x - TOOLTIP_WIDTH / 2;
+  const constraintedX = _.clamp(tooltipX, TOOLTIP_MIN_X, width + TOOLTIP_MAX_X_OFFSET);
+  const arrowStyle =
+    tooltipX === constraintedX ? undefined : { marginLeft: 2 * (tooltipX - constraintedX) };
 
   return (
     <foreignObject
       className="query-browser__tooltip-svg-wrap"
-      height={height}
-      width={width}
-      x={x - width / 2}
+      height={TOOLTIP_MAX_HEIGHT}
+      width={TOOLTIP_WIDTH}
+      x={constraintedX}
       y={y}
     >
       <div className="query-browser__tooltip-wrap">
-        <div className="query-browser__tooltip-arrow" />
+        <div className="query-browser__tooltip-arrow" style={arrowStyle} />
         <div className="query-browser__tooltip">
           <div className="query-browser__tooltip-group">
             <div
@@ -207,16 +215,29 @@ const TooltipInner_: React.FC<TooltipInnerProps> = ({
     </foreignObject>
   );
 };
-const TooltipInner = connect(tooltipStateToProps)(TooltipInner_);
+const TooltipInner = withFallback(connect(tooltipStateToProps)(TooltipInner_));
 
-const Tooltip_: React.FC<TooltipProps> = ({ datum, x, y }) =>
-  datum && _.isFinite(datum.y) && _.isFinite(x) && _.isFinite(y) ? (
-    <TooltipInner datumX={datum.x} datumY={datum.y} seriesIndex={datum._stack - 1} x={x} y={y} />
-  ) : null;
-const Tooltip = withFallback(Tooltip_);
+// For performance, use this instead of PatternFly's ChartTooltip or Victory VictoryTooltip
+const Tooltip: React.FC<TooltipProps> = ({ active, datum, width, x, y }) => {
+  if (!active || !datum || !_.isFinite(datum.y) || !_.isFinite(x) || !_.isFinite(y)) {
+    return null;
+  }
 
-// The `center` prop is required by ChartTooltip, but is actually overridden by our custom tooltip
-const graphLabelComponent = <ChartTooltip center={{ x: 0, y: 0 }} flyoutComponent={<Tooltip />} />;
+  return (
+    <VictoryPortal>
+      <TooltipInner
+        datumX={datum.x}
+        datumY={datum.y}
+        seriesIndex={datum._stack - 1}
+        width={width}
+        x={x}
+        y={y}
+      />
+    </VictoryPortal>
+  );
+};
+
+const graphLabelComponent = <Tooltip />;
 
 // Set activateData to false to work around VictoryVoronoiContainer crash (see
 // https://github.com/FormidableLabs/victory/issues/1314)
@@ -236,12 +257,15 @@ const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
   );
 };
 
+type GraphSeries = GraphDataPoint[] | null;
+
 const Graph: React.FC<GraphProps> = React.memo(
   ({ allSeries, disabledSeries, formatLegendLabel, isStack, span, width, xDomain }) => {
     // Remove any disabled series
-    const data = _.flatMap(allSeries, (series, i) => {
-      return _.map(series, ([metric, values]) => {
-        return _.some(disabledSeries[i], (s) => _.isEqual(s, metric)) ? [{}] : values;
+    const data: GraphSeries[] = [];
+    _.each(allSeries, (series, i) => {
+      _.each(series, ([metric, values]) => {
+        data.push(_.some(disabledSeries[i], (s) => _.isEqual(s, metric)) ? null : values);
       });
     });
 
@@ -259,10 +283,10 @@ const Graph: React.FC<GraphProps> = React.memo(
       }
     } else {
       // Set a reasonable Y-axis range based on the min and max values in the data
-      const findMin = (series: GraphDataPoint[]) => _.minBy(series, 'y');
-      const findMax = (series: GraphDataPoint[]) => _.maxBy(series, 'y');
-      let minY = _.get(findMin(_.map(data, findMin)), 'y', 0);
-      let maxY = _.get(findMax(_.map(data, findMax)), 'y', 0);
+      const findMin = (series: GraphSeries) => _.minBy(series, 'y');
+      const findMax = (series: GraphSeries) => _.maxBy(series, 'y');
+      let minY: number = findMin(data.map(findMin))?.y ?? 0;
+      let maxY: number = findMax(data.map(findMax))?.y ?? 0;
       if (minY === 0 && maxY === 0) {
         minY = -1;
         maxY = 1;
@@ -313,10 +337,11 @@ const Graph: React.FC<GraphProps> = React.memo(
         <ChartAxis crossAxis={false} dependentAxis tickCount={6} tickFormat={yTickFormat} />
         {isStack ? (
           <ChartStack>
-            {_.map(data, (values, i) => (
+            {data.map((values, i) => (
               <ChartArea
                 key={i}
                 data={values}
+                groupComponent={<g />}
                 labels={() => ' '}
                 labelComponent={graphLabelComponent}
               />
@@ -324,14 +349,19 @@ const Graph: React.FC<GraphProps> = React.memo(
           </ChartStack>
         ) : (
           <ChartGroup>
-            {_.map(data, (values, i) => (
-              <ChartLine
-                key={i}
-                data={values}
-                labels={() => ' '}
-                labelComponent={graphLabelComponent}
-              />
-            ))}
+            {data.map((values, i) =>
+              values === null ? (
+                <ChartLine key={i} groupComponent={<g />} />
+              ) : (
+                <ChartLine
+                  key={i}
+                  data={values}
+                  groupComponent={<g />}
+                  labels={() => ' '}
+                  labelComponent={graphLabelComponent}
+                />
+              ),
+            )}
           </ChartGroup>
         )}
         {legendData && (
@@ -680,10 +710,13 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
     setSpan(to - from);
   };
 
+  const isGraphDataEmpty = !graphData || graphData.every((d) => d.length === 0);
+
   return (
     <div
       className={classNames('query-browser__wrapper', {
-        'graph-empty-state': _.isEmpty(graphData),
+        'graph-empty-state': isGraphDataEmpty,
+        'graph-empty-state__loaded': isGraphDataEmpty && !updating,
       })}
     >
       {hideControls ? (
@@ -702,8 +735,8 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
         </div>
       )}
       {error && <Error error={error} />}
-      {_.isEmpty(graphData) && !updating && <GraphEmpty />}
-      {!_.isEmpty(graphData) && (
+      {isGraphDataEmpty && !updating && <GraphEmpty />}
+      {!isGraphDataEmpty && (
         <>
           {samples < maxSamplesForSpan && !updating && (
             <Alert
@@ -768,7 +801,7 @@ type GraphDataPoint = {
   y: number;
 };
 
-type Series = [PrometheusLabels, GraphDataPoint[][]];
+type Series = [PrometheusLabels, GraphDataPoint[]];
 
 export type QueryObj = {
   disabledSeries?: PrometheusLabels[];
@@ -838,12 +871,15 @@ type TooltipInnerProps = {
   labels?: PrometheusLabels;
   query?: string;
   seriesIndex: number;
+  width: number;
   x: number;
   y: number;
 };
 
 type TooltipProps = {
+  active?: boolean;
   datum?: TooltipDatum;
+  width?: number;
   x?: number;
   y?: number;
 };

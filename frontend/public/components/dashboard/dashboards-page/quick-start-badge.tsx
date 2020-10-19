@@ -1,7 +1,9 @@
 import * as React from 'react';
-import { Label, Button } from '@patternfly/react-core';
-import { RouteIcon } from '@patternfly/react-icons';
+import { Label } from '@patternfly/react-core';
+import { RocketIcon } from '@patternfly/react-icons';
 import { history } from '../../utils';
+
+import './quick-start-badge.scss';
 
 const HIDE_QUICK_START_BADGE_STORAGE_KEY = 'bridge/hide-quick-start-badge';
 
@@ -12,7 +14,15 @@ const QuickStartBadge: React.FC = () => {
     !isQuickStartBadgeHidden,
   );
 
-  const handleQuickStartBadgeClose = () => {
+  const handleQuickStartBadgeClick = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    history.push('/quickstart');
+  };
+
+  const handleQuickStartBadgeClose = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
     localStorage.setItem(HIDE_QUICK_START_BADGE_STORAGE_KEY, 'true');
     setShowQuickStartBadge(false);
   };
@@ -22,10 +32,15 @@ const QuickStartBadge: React.FC = () => {
   }
 
   return (
-    <Label color="green" icon={<RouteIcon />} onClose={handleQuickStartBadgeClose}>
-      <Button variant="link" onClick={() => history.push('/quickstart')} isInline>
-        Quick start available
-      </Button>
+    <Label
+      color="green"
+      className="co-quick-start-badge"
+      href="/quickstart"
+      icon={<RocketIcon />}
+      onClick={handleQuickStartBadgeClick}
+      onClose={handleQuickStartBadgeClose}
+    >
+      Quick start available
     </Label>
   );
 };

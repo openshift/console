@@ -202,3 +202,12 @@ export const getAffinityFromRowsData = (affinityRows: AffinityRowData[]) => {
 
   return affinity;
 };
+
+export const getAvailableAffinityID = (affinities: AffinityRowData[]) => {
+  const idSet = new Set(affinities.map((aff) => aff.id));
+  let id = 1;
+  while (idSet.has(id.toString())) {
+    id++;
+  }
+  return id.toString();
+};

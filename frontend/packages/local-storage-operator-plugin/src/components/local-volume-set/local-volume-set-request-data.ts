@@ -15,8 +15,7 @@ export const getLocalVolumeSetRequestData = (state: State): LocalVolumeSetKind =
       storageClassName: state.storageClassName || state.volumeSetName,
       volumeMode: state.diskMode,
       deviceInclusionSpec: {
-        // Only Raw disk supported for 4.6
-        deviceTypes: [DiskType.RawDisk],
+        deviceTypes: [DiskType.RawDisk, DiskType.Partition],
         deviceMechanicalProperties:
           state.diskType === 'HDD'
             ? [DiskMechanicalProperties[state.diskType]]

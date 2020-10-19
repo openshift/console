@@ -11,7 +11,9 @@ declare global {
 
 // any command added below, must be added to global Cypress interface above
 
-Cypress.Commands.add('byTestID', (selector: string) => cy.get(`[data-test="${selector}"]`));
+Cypress.Commands.add('byTestID', (selector: string) => {
+  cy.get(`[data-test="${selector}"]`);
+});
 Cypress.Commands.add('byTestActionID', (selector: string) =>
   cy.get(`[data-test-action="${selector}"]:not(.pf-m-disabled)`),
 );

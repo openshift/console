@@ -49,7 +49,7 @@ const TaskListNode: React.FC<TaskListNodeProps> = ({ element, unselectedText }) 
 
   return (
     <foreignObject width={width} height={height} className="odc-task-list-node">
-      <div className="odc-task-list-node__trigger-background" ref={triggerRef}>
+      <div ref={triggerRef} className="odc-task-list-node__trigger-background" style={{ height }}>
         <Button
           className="odc-task-list-node__trigger"
           isDisabled={options.length === 0}
@@ -87,7 +87,7 @@ const TaskListNode: React.FC<TaskListNodeProps> = ({ element, unselectedText }) 
         <FocusTrap
           focusTrapOptions={{ clickOutsideDeactivates: true, returnFocusOnDeactivate: false }}
         >
-          <div className="pf-c-dropdown pf-m-expanded">
+          <div className="pf-c-dropdown pf-m-expanded odc-task-list-node__container">
             <ul className="pf-c-dropdown__menu pf-m-align-right oc-kebab__popper-items odc-task-list-node__list-items">
               {options.map((option) => (
                 <li key={option.key}>

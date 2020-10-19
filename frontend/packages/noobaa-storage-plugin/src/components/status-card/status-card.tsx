@@ -16,18 +16,22 @@ import {
   DashboardItemProps,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
-import { referenceForModel } from '@console/internal/module/k8s';
+import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { getDataResiliencyState } from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/status-card/utils';
 import { CephObjectStoreModel } from '@console/ceph-storage-plugin/src/models';
-import { RGW_FLAG, OCS_INDEPENDENT_FLAG } from '@console/ceph-storage-plugin/src/features';
+import { RGW_FLAG } from '@console/ceph-storage-plugin/src/features';
 import { useFlag } from '@console/shared/src/hooks/flag';
-import { MODES } from '@console/ceph-storage-plugin/src/constants';
-import { filterNooBaaAlerts, filterRGWAlerts } from '../../utils';
-import { StatusCardQueries } from '../../queries';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { filterNooBaaAlerts, filterRGWAlerts, decodeRGWPrefix } from '../../utils';
+import {
+  StatusCardQueries,
+  dataResiliencyQueryMap,
+  ObjectServiceDashboardQuery,
+} from '../../queries';
 import { NooBaaSystemModel } from '../../models';
 import { getNooBaaState, getRGWHealthState } from './statuses';
 import { ObjectServiceStatus } from './object-service-health';
-import { StatusType } from '../../constants';
+import { StatusType, secretResource } from '../../constants';
 import './status-card.scss';
 
 const statusCardQueries = Object.keys(StatusCardQueries);
@@ -74,20 +78,39 @@ const StatusCard: React.FC<DashboardItemProps> = ({
   stopWatchPrometheusQuery,
   prometheusResults,
 }) => {
-  const RGW = useFlag(RGW_FLAG);
+  const isRGWSupported = useFlag(RGW_FLAG);
+
+  const [secretData, secretLoaded, secretLoadError] = useK8sWatchResource<K8sResourceKind>(
+    secretResource,
+  );
+  const rgwPrefix = React.useMemo(
+    () => (isRGWSupported && secretLoaded && !secretLoadError ? decodeRGWPrefix(secretData) : ''),
+    [secretData, secretLoaded, secretLoadError, isRGWSupported],
+  );
+
+  const rgwResiliencyQuery = dataResiliencyQueryMap[
+    ObjectServiceDashboardQuery.RGW_REBUILD_PROGRESS_QUERY
+  ](rgwPrefix);
+
   React.useEffect(() => {
     watchK8sResource(noobaaResource);
     watchK8sResource(cephObjectStoreResource);
     statusCardQueries.forEach((key) => watchPrometheus(StatusCardQueries[key]));
+    isRGWSupported && watchPrometheus(rgwResiliencyQuery);
     return () => {
       stopWatchK8sResource(noobaaResource);
       stopWatchK8sResource(cephObjectStoreResource);
       statusCardQueries.forEach((key) => stopWatchPrometheusQuery(StatusCardQueries[key]));
+      isRGWSupported && stopWatchPrometheusQuery(rgwResiliencyQuery);
     };
-  }, [watchK8sResource, stopWatchK8sResource, watchPrometheus, stopWatchPrometheusQuery]);
-
-  const isExternal = useFlag(OCS_INDEPENDENT_FLAG);
-  const MODE = isExternal ? MODES.EXTERNAL : MODES.INTERNAL;
+  }, [
+    watchK8sResource,
+    stopWatchK8sResource,
+    watchPrometheus,
+    stopWatchPrometheusQuery,
+    rgwResiliencyQuery,
+    isRGWSupported,
+  ]);
 
   const healthStatusResult = prometheusResults.getIn([
     StatusCardQueries.HEALTH_QUERY,
@@ -110,14 +133,11 @@ const StatusCard: React.FC<DashboardItemProps> = ({
   ]);
 
   const rgwResiliencyResult = prometheusResults.getIn([
-    StatusCardQueries.RGW_RESILIENCY_QUERY,
+    rgwResiliencyQuery,
     'data',
   ]) as PrometheusResponse;
 
-  const rgwResiliencyError = prometheusResults.getIn([
-    StatusCardQueries.MCG_REBUILD_PROGRESS_QUERY,
-    'loadError',
-  ]);
+  const rgwResiliencyError = prometheusResults.getIn([rgwResiliencyQuery, 'loadError']);
 
   const noobaa = _.get(resources, 'noobaa') as FirehoseResult;
   const rgw = resources?.rgw?.data?.[0];
@@ -127,7 +147,7 @@ const StatusCard: React.FC<DashboardItemProps> = ({
     noobaa,
   );
 
-  const RGWState = getRGWHealthState(rgw, MODE);
+  const RGWState = getRGWHealthState(rgw);
 
   const dataResiliencyState: SubsystemHealth = getDataResiliencyState([
     { response: progressResult, error: progressError },
@@ -147,14 +167,14 @@ const StatusCard: React.FC<DashboardItemProps> = ({
           <Gallery className="nb-status-card__health" hasGutter>
             <GalleryItem>
               <ObjectServiceStatus
-                RGWMetrics={RGW ? RGWState : undefined}
+                RGWMetrics={isRGWSupported ? RGWState : undefined}
                 MCGMetrics={MCGState}
                 statusType={StatusType.HEALTH}
               />
             </GalleryItem>
             <GalleryItem>
               <ObjectServiceStatus
-                RGWMetrics={RGW ? RGWResiliencyState : undefined}
+                RGWMetrics={isRGWSupported ? RGWResiliencyState : undefined}
                 MCGMetrics={dataResiliencyState}
                 statusType={StatusType.RESILIENCY}
               />

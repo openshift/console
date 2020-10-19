@@ -4,7 +4,6 @@ import FormSection from '@console/dev-console/src/components/import/section/Form
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import KafkaSourceSection from '../KafkaSourceSection';
 import KafkaSourceNetSection from '../KafkaSourceNetSection';
-import ServiceAccountDropdown from '../../../dropdowns/ServiceAccountDropdown';
 
 type KafkaSourceSectionProps = React.ComponentProps<typeof KafkaSourceSection>;
 
@@ -42,7 +41,7 @@ describe('KafkaSourceSection', () => {
     expect(topicsField.props().required).toBeTruthy();
   });
 
-  it('should render consumergroup, netsection and service dropdown', () => {
+  it('should render consumergroup, netsection', () => {
     (useK8sWatchResources as jest.Mock).mockReturnValue({
       kafkas: { data: [], loaded: true },
       kafkatopics: { data: [], loaded: true },
@@ -51,8 +50,6 @@ describe('KafkaSourceSection', () => {
     const consumerGroupField = wrapper.find('[data-test-id="kafkasource-consumergroup-field"]');
     expect(consumerGroupField).toHaveLength(1);
     expect(consumerGroupField.props().required).toBeTruthy();
-
     expect(wrapper.find(KafkaSourceNetSection)).toHaveLength(1);
-    expect(wrapper.find(ServiceAccountDropdown)).toHaveLength(1);
   });
 });

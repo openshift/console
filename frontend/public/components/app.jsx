@@ -8,13 +8,15 @@ import { Route, Router, Switch } from 'react-router-dom';
 // AbortController is not supported in some older browser versions
 import 'abort-controller/polyfill';
 import store from '../redux';
+import { withTranslation } from 'react-i18next';
+
 import { detectFeatures } from '../actions/features';
 import AppContents from './app-contents';
 import { getBrandingDetails, Masthead } from './masthead';
 import { ConsoleNotifier } from './console-notifier';
 import { ConnectedNotificationDrawer } from './notification-drawer';
 import { Navigation } from './nav';
-import { history, AsyncComponent } from './utils';
+import { history, AsyncComponent, LoadingBox } from './utils';
 import * as UIActions from '../actions/ui';
 import { fetchSwagger, getCachedResources } from '../module/k8s';
 import { receivedResources, watchAPIServices } from '../actions/k8s';
@@ -30,6 +32,7 @@ const consoleLoader = () =>
     '@console/kubevirt-plugin/src/components/connected-vm-console/vm-console-page' /* webpackChunkName: "kubevirt" */
   ).then((m) => m.VMConsolePage);
 import QuickStartDrawer from '@console/app/src/components/quick-starts/QuickStartDrawer';
+import '../i18n';
 import '../vendor.scss';
 import '../style.scss';
 
@@ -40,6 +43,7 @@ const breakpointMD = 768;
 const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
 // Edge lacks URLSearchParams
 import 'url-search-params-polyfill';
+import { graphQLReady } from '../graphql/client';
 
 // Disable linkify 'fuzzy links' across the app.
 // Only linkify url strings beginning with a proper protocol scheme.
@@ -148,7 +152,7 @@ class App_ extends React.PureComponent {
     const content = (
       <>
         <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
-        <QuickStartDrawer>
+        <QuickStartDrawer id="app-container">
           <ConsoleNotifier location="BannerTop" />
           <Page
             header={<Masthead onNavToggle={this._onNavToggle} />}
@@ -167,11 +171,11 @@ class App_ extends React.PureComponent {
               <AppContents />
             </ConnectedNotificationDrawer>
           </Page>
-          <div id="modal-container" />
           <CloudShell />
           <GuidedTour />
           <ConsoleNotifier location="BannerBottom" />
         </QuickStartDrawer>
+        <div id="modal-container" />
       </>
     );
 
@@ -192,75 +196,90 @@ class App_ extends React.PureComponent {
 
 const App = withExtensions({ contextProviderExtensions: isContextProvider })(App_);
 
-const startDiscovery = () => store.dispatch(watchAPIServices());
+render(<LoadingBox />, document.getElementById('app'));
 
-// Load cached API resources from localStorage to speed up page load.
-getCachedResources()
-  .then((resources) => {
-    if (resources) {
-      store.dispatch(receivedResources(resources));
+const AppWithTranslation = withTranslation()(App);
+
+graphQLReady.onReady(() => {
+  const startDiscovery = () => store.dispatch(watchAPIServices());
+
+  // Load cached API resources from localStorage to speed up page load.
+  getCachedResources()
+    .then((resources) => {
+      if (resources) {
+        store.dispatch(receivedResources(resources));
+      }
+      // Still perform discovery to refresh the cache.
+      startDiscovery();
+    })
+    .catch(startDiscovery);
+
+  store.dispatch(detectFeatures());
+
+  // Global timer to ensure all <Timestamp> components update in sync
+  setInterval(() => store.dispatch(UIActions.updateTimestamps(Date.now())), 10000);
+
+  // Fetch swagger on load if it's stale.
+  fetchSwagger();
+
+  // Used by GUI tests to check for unhandled exceptions
+  window.windowError = null;
+  window.onerror = (message, source, lineno, colno, error) => {
+    // eslint-disable-next-line no-console
+    console.error('Uncaught error', error);
+    window.windowError = error;
+  };
+  window.onunhandledrejection = (promiseRejectionEvent) => {
+    // eslint-disable-next-line no-console
+    console.error('Unhandled promise rejection', promiseRejectionEvent);
+    window.windowError = promiseRejectionEvent;
+  };
+
+  if ('serviceWorker' in navigator) {
+    if (window.SERVER_FLAGS.loadTestFactor > 1) {
+      // eslint-disable-next-line import/no-unresolved
+      import('file-loader?name=load-test.sw.js!../load-test.sw.js')
+        .then(() => navigator.serviceWorker.register('/load-test.sw.js'))
+        .then(
+          () =>
+            new Promise((r) =>
+              navigator.serviceWorker.controller
+                ? r()
+                : navigator.serviceWorker.addEventListener('controllerchange', () => r()),
+            ),
+        )
+        .then(() =>
+          navigator.serviceWorker.controller.postMessage({
+            topic: 'setFactor',
+            value: window.SERVER_FLAGS.loadTestFactor,
+          }),
+        );
+    } else {
+      navigator.serviceWorker
+        .getRegistrations()
+        .then((registrations) => registrations.forEach((reg) => reg.unregister()))
+        // eslint-disable-next-line no-console
+        .catch((e) => console.warn('Error unregistering service workers', e));
     }
-    // Still perform discovery to refresh the cache.
-    startDiscovery();
-  })
-  .catch(startDiscovery);
-
-store.dispatch(detectFeatures());
-
-// Global timer to ensure all <Timestamp> components update in sync
-setInterval(() => store.dispatch(UIActions.updateTimestamps(Date.now())), 10000);
-
-// Fetch swagger on load if it's stale.
-fetchSwagger();
-
-// Used by GUI tests to check for unhandled exceptions
-window.windowError = false;
-window.onerror = window.onunhandledrejection = (e) => {
-  // eslint-disable-next-line no-console
-  console.error('Uncaught error', e);
-  window.windowError = e || true;
-};
-
-if ('serviceWorker' in navigator) {
-  if (window.SERVER_FLAGS.loadTestFactor > 1) {
-    // eslint-disable-next-line import/no-unresolved
-    import('file-loader?name=load-test.sw.js!../load-test.sw.js')
-      .then(() => navigator.serviceWorker.register('/load-test.sw.js'))
-      .then(
-        () =>
-          new Promise((r) =>
-            navigator.serviceWorker.controller
-              ? r()
-              : navigator.serviceWorker.addEventListener('controllerchange', () => r()),
-          ),
-      )
-      .then(() =>
-        navigator.serviceWorker.controller.postMessage({
-          topic: 'setFactor',
-          value: window.SERVER_FLAGS.loadTestFactor,
-        }),
-      );
-  } else {
-    navigator.serviceWorker
-      .getRegistrations()
-      .then((registrations) => registrations.forEach((reg) => reg.unregister()))
-      // eslint-disable-next-line no-console
-      .catch((e) => console.warn('Error unregistering service workers', e));
   }
-}
 
-render(
-  <Provider store={store}>
-    <Router history={history} basename={window.SERVER_FLAGS.basePath}>
-      <Switch>
-        <Route
-          path="/k8s/ns/:ns/virtualmachineinstances/:name/standaloneconsole"
-          render={(componentProps) => <AsyncComponent loader={consoleLoader} {...componentProps} />}
-        />
-        <Route path="/terminal" component={CloudShellTab} />
-        <Route path="/" component={App} />
-      </Switch>
-    </Router>
-  </Provider>,
-  document.getElementById('app'),
-);
+  render(
+    <React.Suspense fallback={<LoadingBox />}>
+      <Provider store={store}>
+        <Router history={history} basename={window.SERVER_FLAGS.basePath}>
+          <Switch>
+            <Route
+              path="/k8s/ns/:ns/virtualmachineinstances/:name/standaloneconsole"
+              render={(componentProps) => (
+                <AsyncComponent loader={consoleLoader} {...componentProps} />
+              )}
+            />
+            <Route path="/terminal" component={CloudShellTab} />
+            <Route path="/" component={AppWithTranslation} />
+          </Switch>
+        </Router>
+      </Provider>
+    </React.Suspense>,
+    document.getElementById('app'),
+  );
+});

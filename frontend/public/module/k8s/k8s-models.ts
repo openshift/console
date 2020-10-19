@@ -26,26 +26,33 @@ export const modelsToMap = (models: K8sKind[]): ImmutableMap<K8sResourceKindRefe
  * Contains static resource definitions for Kubernetes objects.
  * Keys are of type `group:version:Kind`, but TypeScript doesn't support regex types (https://github.com/Microsoft/TypeScript/issues/6579).
  */
-let k8sModels = modelsToMap(_.values(staticModels));
+let k8sModels;
 
-const hasModel = (model: K8sKind) => k8sModels.has(modelKey(model));
+const getK8sModels = () => {
+  if (!k8sModels) {
+    k8sModels = modelsToMap(_.values(staticModels));
 
-k8sModels = k8sModels.withMutations((map) => {
-  const pluginModels = _.flatMap(
-    pluginStore
-      .getAllExtensions()
-      .filter(isModelDefinition)
-      .map((md) => md.properties.models),
-  );
-  map.merge(modelsToMap(pluginModels.filter((model) => !hasModel(model))));
-});
+    const hasModel = (model: K8sKind) => k8sModels.has(modelKey(model));
+
+    k8sModels = k8sModels.withMutations((map) => {
+      const pluginModels = _.flatMap(
+        pluginStore
+          .getAllExtensions()
+          .filter(isModelDefinition)
+          .map((md) => md.properties.models),
+      );
+      map.merge(modelsToMap(pluginModels.filter((model) => !hasModel(model))));
+    });
+  }
+  return k8sModels;
+};
 
 /**
  * Provides a synchronous way to acquire a statically-defined Kubernetes model.
  * NOTE: This will not work for CRDs defined at runtime, use `connectToModels` instead.
  */
 export const modelFor = (ref: K8sResourceKindReference) => {
-  let m = k8sModels.get(ref);
+  let m = getK8sModels().get(ref);
   if (m) {
     return m;
   }
@@ -57,7 +64,7 @@ export const modelFor = (ref: K8sResourceKindReference) => {
   if (m) {
     return m;
   }
-  m = k8sModels.get(kindForReference(ref));
+  m = getK8sModels().get(kindForReference(ref));
   if (m) {
     return m;
   }
@@ -74,7 +81,7 @@ export const modelFor = (ref: K8sResourceKindReference) => {
  * Provides a synchronous way to acquire all statically-defined Kubernetes models.
  * NOTE: This will not work for CRDs defined at runtime, use `connectToModels` instead.
  */
-export const allModels = () => k8sModels;
+export const allModels = getK8sModels;
 
 /**
  * Use this hook to find the model for resources using only group and plural

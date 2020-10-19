@@ -38,6 +38,7 @@ import {
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
 } from '@console/shared/src/components/status/icons';
+import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { InstallPlanPreview } from './install-plan';
 
 const getInitializationResourceJSON = (
@@ -179,7 +180,7 @@ const InitializationResourceRequiredMessage: React.FC<InitializationResourceRequ
           <StatusIconAndText icon={<RedExclamationCircleIcon />} title="Required" />
         </ResourceStatus>
       </span>
-      <p>{description}</p>
+      <SyncMarkdownView content={description} />
     </div>
   );
 };
@@ -252,6 +253,7 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = (props) => {
     loading = false;
   } else if (subscription) {
     // There is no ClusterServiceVersion for the package, so look at Subscriptions/InstallPlans
+    loading = false;
     status = subscription?.status?.state || null;
     const installPlanName = subscription?.status?.installplan?.name || '';
     const installPlan: InstallPlanKind = resources?.installPlan?.data?.find(
@@ -259,7 +261,6 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = (props) => {
     );
     if (installPlan) {
       installObj = installPlan;
-      loading = false;
     }
   }
 

@@ -165,8 +165,22 @@ export const isInternalResource = (resource: K8sResourceKind): boolean => {
   return false;
 };
 
-const isSubscriber = (resource: K8sResourceKind, relatedResource: K8sResourceKind): boolean => {
+const isSubscriber = (
+  resource: K8sResourceKind,
+  relatedResource: K8sResourceKind,
+  mainResource: K8sResourceKind,
+): boolean => {
   const subscriberRef = relatedResource?.spec?.subscriber?.ref;
+  // check for channel reference as channel with different kind can have same name
+  const channelRef = relatedResource?.spec?.channel;
+  if (
+    channelRef &&
+    (mainResource.metadata.name !== channelRef.name ||
+      mainResource.kind !== channelRef.kind ||
+      mainResource.apiVersion !== channelRef.apiVersion)
+  ) {
+    return false;
+  }
   return (
     subscriberRef &&
     referenceFor(resource) === referenceFor(subscriberRef) &&
@@ -191,7 +205,11 @@ const isPublisher = (
     return relationshipResource.spec?.broker === relatedResource.metadata.name;
   }
   const channel = relationshipResource.spec?.channel;
-  return channel && channel.name === relatedResource.metadata.name;
+  return (
+    channel &&
+    channel.name === relatedResource.metadata.name &&
+    channel.kind === relatedResource.kind
+  );
 };
 
 export const getTriggerFilters = (resource: K8sResourceKind) => {
@@ -565,6 +583,11 @@ export const createPubSubDataItems = (
     metadata: { name },
     spec,
   } = resource;
+  const channelProps = getDynamicChannelModelRefs();
+  const depChannelResources = getOwnedResources(
+    resource,
+    getKnativeDynamicResources(resources, channelProps),
+  );
   const subscriptionData = resources?.eventingsubscription?.data ?? [];
   const triggerList = resources?.triggers?.data ?? [];
   let triggersData = {};
@@ -627,6 +650,7 @@ export const createPubSubDataItems = (
     buildConfigs: [],
     routes: [],
     services: [],
+    ...(depChannelResources && { channels: depChannelResources }),
     eventSources,
     ...channelSubsData,
     ...triggersData,
@@ -690,7 +714,7 @@ export const getSinkUriTopologyNodeItems = (
     id,
     type,
     resource: data.resource,
-    resourceKind: 'Uri',
+    resourceKind: 'URI',
     data,
     ...(nodeProps || {}),
   });
@@ -749,9 +773,10 @@ export const getEventTopologyEdgeItems = (resource: K8sResourceKind, { data }): 
   if (sinkTarget) {
     _.forEach(data, (res) => {
       const {
+        kind,
         metadata: { uid: resUid, name: resName },
       } = res;
-      if (resName === sinkTarget.name) {
+      if (resName === sinkTarget.name && kind === sinkTarget.kind) {
         edges.push({
           id: `${uid}_${resUid}`,
           type: EdgeType.EventSource,
@@ -811,13 +836,14 @@ export const getSubscriptionTopologyEdgeItems = (
   resources,
 ): EdgeModel[] => {
   const {
+    kind,
     metadata: { uid, name },
   } = resource;
   const { eventingsubscription, ksservices } = resources;
   const edges = [];
   _.forEach(eventingsubscription?.data, (subRes) => {
     const channelData = subRes?.spec?.channel;
-    if (name === channelData?.name && ksservices) {
+    if (name === channelData?.name && kind === channelData?.kind && ksservices) {
       const svcData = subRes?.spec?.subscriber?.ref;
       svcData &&
         _.forEach(ksservices?.data, (res) => {
@@ -970,7 +996,7 @@ export const transformKnNodeData = (
               },
               spec: { sinkUri },
               type: { nodeType: NodeType.SinkUri },
-              kind: 'Uri',
+              kind: 'URI',
             };
             const sinkData: TopologyDataObject = {
               id: sinkTargetUid,

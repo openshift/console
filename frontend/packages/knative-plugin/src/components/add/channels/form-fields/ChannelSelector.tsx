@@ -9,50 +9,41 @@ import { EventingChannelModel } from '../../../../models';
 type ChannelSelectorProps = {
   channels: string[];
   defaultConfiguredChannel: string;
-  defaultConfiguredChannelLoaded: boolean;
 } & Omit<DropdownFieldProps, 'name'>;
 
 const ChannelSelector: React.FC<ChannelSelectorProps> = ({
   channels,
   onChange,
   defaultConfiguredChannel,
-  defaultConfiguredChannelLoaded,
 }) => {
   const [selected] = useField('type');
 
-  const eventingChannels = channels.filter(
-    (ch) => EventingChannelModel.kind !== getChannelKind(ch),
-  );
   const filteredChannels = _.flatten(
-    _.partition(eventingChannels, (ref) => getChannelKind(ref) === defaultConfiguredChannel),
+    _.partition(channels, (ref) => getChannelKind(ref) === EventingChannelModel.kind),
   );
 
   const channelData = filteredChannels.reduce((acc, channel) => {
     const channelName = getChannelKind(channel);
     acc[channel] =
-      channelName === defaultConfiguredChannel ? `${channelName} (Default)` : channelName;
+      channelName === EventingChannelModel.kind && defaultConfiguredChannel
+        ? `Default ${channelName} (${defaultConfiguredChannel})`
+        : channelName;
     return acc;
   }, {});
 
-  const getDefaultChannel = React.useCallback((): string => {
+  const getGenericChannel = React.useCallback((): string => {
     return (
-      filteredChannels.find((ch) => getChannelKind(ch) === defaultConfiguredChannel) ||
+      filteredChannels.find((ch) => getChannelKind(ch) === EventingChannelModel.kind) ||
       filteredChannels[0]
     );
-  }, [defaultConfiguredChannel, filteredChannels]);
+  }, [filteredChannels]);
 
   React.useEffect(() => {
-    if (!selected.value && defaultConfiguredChannelLoaded && filteredChannels.length > 0) {
-      const channel = getDefaultChannel();
+    if (!selected.value && filteredChannels.length > 0) {
+      const channel = getGenericChannel();
       onChange && onChange(channel);
     }
-  }, [
-    selected.value,
-    defaultConfiguredChannelLoaded,
-    getDefaultChannel,
-    onChange,
-    filteredChannels.length,
-  ]);
+  }, [selected.value, getGenericChannel, onChange, filteredChannels.length]);
 
   return (
     <FormSection extraMargin>

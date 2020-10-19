@@ -235,6 +235,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         resource: referenceForModel(VolumeSnapshotContentModel),
       },
     },
+    flags: {
+      required: [FLAGS.CAN_LIST_VSC],
+    },
   },
   {
     type: 'Page/Resource/List',
@@ -245,6 +248,9 @@ const plugin: Plugin<ConsumedExtensions> = [
           './components/volume-snapshot/volume-snapshot-content' /* webpackChunkName: "volume-snapshot-content-page" */
         ).then((m) => m.default),
     },
+    flags: {
+      required: [FLAGS.CAN_LIST_VSC],
+    },
   },
   {
     type: 'Page/Resource/Details',
@@ -254,6 +260,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/volume-snapshot/volume-snapshot-content-details' /* webpackChunkName: "volume-snapshot-content-details-page" */
         ).then((m) => m.default),
+    },
+    flags: {
+      required: [FLAGS.CAN_LIST_VSC],
     },
   },
   {

@@ -5,6 +5,7 @@ import { click } from '@console/shared/src/test-utils/utils';
 import { isNodeReady } from '@console/shared/src/selectors/node';
 import { PodKind } from '@console/internal/module/k8s';
 import { getName } from '@console/shared/src/selectors/common';
+import { DeviceSet } from '../../../src/types';
 import { verifyFields, selectSCDropdown, currentACSelector } from '../../views/add-capacity.view';
 import {
   CLUSTER_STATUS,
@@ -18,6 +19,7 @@ import {
   ZONE,
   MINUTE,
   STORAGE_CLUSTER_NAME,
+  OSD_SIZES_MAP,
 } from '../../utils/consts';
 import {
   createOSDTreeMap,
@@ -63,8 +65,9 @@ describe('Check add capacity functionality for ocs service', () => {
     beforeAll(async () => {
       [expansionObjects.clusterJSON] = storageCluster.items;
       expansionObjects.name = getName(expansionObjects.clusterJSON);
-      expansionObjects.previousCnt =
-        expansionObjects.clusterJSON?.spec?.storageDeviceSets?.[0]?.count;
+      const initialDeviceSet: DeviceSet =
+        expansionObjects.clusterJSON?.spec?.storageDeviceSets?.[0];
+      expansionObjects.previousCnt = initialDeviceSet?.count;
 
       expansionObjects.uid = expansionObjects.clusterJSON?.metadata?.uid;
       expansionObjects.previousPods = JSON.parse(
@@ -77,6 +80,8 @@ describe('Check add capacity functionality for ocs service', () => {
         ).toString(),
       );
       expansionObjects.previousOSDIds = getIds(expansionObjects.previousOSDTree.nodes, OSD);
+      const initialClusterCapacity =
+        initialDeviceSet?.dataPVCTemplate?.spec?.resources?.requests?.storage;
 
       await selectSCDropdown(expansionObjects.uid);
 
@@ -87,7 +92,7 @@ describe('Check add capacity functionality for ocs service', () => {
         .toString()
         .trim();
       await click(currentACSelector.getSCOption(expansionObjects.defaultSC));
-      verifyFields();
+      verifyFields(OSD_SIZES_MAP[initialClusterCapacity]);
       await click(currentACSelector.confirmButton);
 
       await browser.sleep(5 * SECOND);
@@ -102,7 +107,6 @@ describe('Check add capacity functionality for ocs service', () => {
     });
 
     it('Newly added capacity should takes into effect at the storage level', () => {
-      // by default 2Tib capacity is being added
       expect(expansionObjects.updatedCnt - expansionObjects.previousCnt).toEqual(1);
     });
 

@@ -31,6 +31,7 @@ export const WorkloadTableRow: React.FC<WorkloadTableRowProps> = ({
   style,
   kind,
   menuActions,
+  customData,
 }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={rowKey} style={style}>
@@ -67,7 +68,7 @@ export const WorkloadTableRow: React.FC<WorkloadTableRowProps> = ({
         <Selector selector={obj.spec.selector} namespace={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[5]}>
-        <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
+        <ResourceKebab actions={menuActions} kind={kind} resource={obj} customData={customData} />
       </TableData>
     </TableRow>
   );
@@ -80,6 +81,7 @@ type WorkloadTableRowProps = {
   style: object;
   kind: string;
   menuActions: KebabAction[];
+  customData?: { [key: string]: any };
 };
 
 export const WorkloadTableHeader = () => {

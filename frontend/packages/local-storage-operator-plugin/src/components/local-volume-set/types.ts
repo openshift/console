@@ -11,12 +11,12 @@ export type NodeTableRow = {
 
 export enum DiskType {
   RawDisk = 'disk',
-  Partition = 'Partition',
+  Partition = 'part',
 }
 
 export enum DiskMechanicalProperties {
-  SSD = 'Rotational',
-  HDD = 'NonRotational',
+  SSD = 'NonRotational',
+  HDD = 'Rotational',
 }
 
 export type LocalVolumeSetKind = K8sResourceCommon & {
@@ -24,7 +24,7 @@ export type LocalVolumeSetKind = K8sResourceCommon & {
     storageClassName: string;
     volumeMode: string;
     deviceInclusionSpec: {
-      deviceTypes: DiskType[];
+      deviceTypes?: DiskType[];
       deviceMechanicalProperties: DiskMechanicalProperties[];
       minSize?: string;
       maxSize?: string;

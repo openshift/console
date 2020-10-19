@@ -5,20 +5,12 @@ import { Tooltip, Popover, Button } from '@patternfly/react-core';
 import { ListIcon, TopologyIcon, QuestionCircleIcon } from '@patternfly/react-icons';
 import { observer } from '@patternfly/react-topology';
 import { useQueryParams } from '@console/shared/src';
-import {
-  StatusBox,
-  Firehose,
-  HintBlock,
-  removeQueryArgument,
-} from '@console/internal/components/utils';
-import EmptyState from '../EmptyState';
+import { Firehose, removeQueryArgument } from '@console/internal/components/utils';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import ProjectsExistWrapper from '../ProjectsExistWrapper';
 import CreateProjectListPage from '../projects/CreateProjectListPage';
-import ConnectedTopologyDataController from './TopologyDataController';
-import { RenderProps } from './TopologyDataRenderer';
+import { TopologyDataRenderer } from './TopologyDataRenderer';
 import TopologyShortcuts from './TopologyShortcuts';
-import { ConnectedTopologyView } from './TopologyView';
 import { LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY } from './components/const';
 import { TOPOLOGY_SEARCH_FILTER_KEY } from './filters';
 import DataModelProvider from './data-transforms/DataModelProvider';
@@ -39,49 +31,6 @@ const setTopologyActiveView = (id: string) => {
 const getTopologyActiveView = () => {
   return localStorage.getItem(LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY);
 };
-
-const EmptyMsg = () => (
-  <EmptyState
-    title="Topology"
-    hintBlock={
-      <HintBlock title="No workloads found">
-        <p>
-          To add content to your project, create an application, component or service using one of
-          these options.
-        </p>
-      </HintBlock>
-    }
-  />
-);
-
-export function renderTopology({
-  loaded,
-  loadError,
-  model,
-  namespace,
-  showGraphView,
-}: RenderProps) {
-  const skeletonOverview = (
-    <div className="skeleton-overview">
-      <div className="skeleton-overview--head" />
-      <div className="skeleton-overview--tile" />
-      <div className="skeleton-overview--tile" />
-      <div className="skeleton-overview--tile" />
-    </div>
-  );
-  return (
-    <StatusBox
-      skeleton={showGraphView ? undefined : skeletonOverview}
-      data={model ? model.nodes : null}
-      label="Topology"
-      loaded={loaded}
-      loadError={loadError}
-      EmptyMsg={EmptyMsg}
-    >
-      <ConnectedTopologyView showGraphView={showGraphView} model={model} namespace={namespace} />
-    </StatusBox>
-  );
-}
 
 export const TopologyPageContext: React.FC<TopologyPageProps> = observer(({ match }) => {
   const queryParams = useQueryParams();
@@ -163,11 +112,7 @@ export const TopologyPageContext: React.FC<TopologyPageProps> = observer(({ matc
         <Firehose resources={[{ kind: 'Project', prop: 'projects', isList: true }]}>
           <ProjectsExistWrapper title="Topology">
             {namespace ? (
-              <ConnectedTopologyDataController
-                showGraphView={showGraphView}
-                render={renderTopology}
-                namespace={namespace}
-              />
+              <TopologyDataRenderer showGraphView={showGraphView} />
             ) : (
               <CreateProjectListPage title="Topology">
                 Select a project to view the topology

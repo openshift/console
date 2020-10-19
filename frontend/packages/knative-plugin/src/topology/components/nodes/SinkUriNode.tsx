@@ -112,7 +112,7 @@ const SinkUriNode: React.FC<SinkUriNodeProps> = ({
               external
             >
               <g transform={`translate(-${DECORATOR_RADIUS / 2}, -${DECORATOR_RADIUS / 2})`}>
-                <ExternalLinkAltIcon style={{ fontSize: DECORATOR_RADIUS }} alt="Open URL" />
+                <ExternalLinkAltIcon style={{ fontSize: DECORATOR_RADIUS }} title="Open URL" />
               </g>
             </Decorator>
           </Tooltip>

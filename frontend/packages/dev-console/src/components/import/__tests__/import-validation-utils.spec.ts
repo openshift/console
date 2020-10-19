@@ -114,14 +114,14 @@ describe('ValidationUtils', () => {
       });
     });
 
-    it('should not throw an error when unassigned application is chosen', async () => {
+    it('should not throw an error when no application group is chosen', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.application.selectedKey = UNASSIGNED_KEY;
       mockData.application.name = '';
       await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(true));
     });
 
-    it('should not throw an error when allowing either create or unassigned application', async () => {
+    it('should not throw an error when allowing either create or remove application', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.application.selectedKey = '';
       mockData.application.name = '';

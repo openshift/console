@@ -3,9 +3,7 @@ import { NodeKind, MatchExpression } from '@console/internal/module/k8s';
 import { NodeAffinityTerm, HostNamesMap } from '../components/auto-detect-volume/types';
 import { getName } from '@console/shared';
 
-export const hasTaints = (node: NodeKind): boolean => {
-  return !_.isEmpty(node.spec?.taints);
-};
+export const hasNoTaints = (node: NodeKind): boolean => _.isEmpty(node.spec?.taints);
 
 export const getNodes = (
   showNodes: boolean,

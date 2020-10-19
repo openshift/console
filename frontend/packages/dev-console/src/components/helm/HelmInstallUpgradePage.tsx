@@ -35,6 +35,7 @@ export type HelmInstallUpgradeFormData = {
   releaseName: string;
   chartURL?: string;
   chartName: string;
+  chartRepoName: string;
   chartVersion: string;
   chartReadme: string;
   appVersion: string;
@@ -54,6 +55,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
   const initialChartURL = decodeURIComponent(searchParams.get('chartURL'));
   const initialReleaseName = match.params.releaseName || '';
   const helmChartName = searchParams.get('chartName');
+  const helmChartRepoName = searchParams.get('chartRepoName');
   const helmActionOrigin = searchParams.get('actionOrigin') as HelmActionOrigins;
 
   const [chartData, setChartData] = React.useState<HelmChart>(null);
@@ -62,6 +64,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
   const [appVersion, setAppVersion] = React.useState<string>('');
   const [chartReadme, setChartReadme] = React.useState<string>('');
   const [chartHasValues, setChartHasValues] = React.useState<boolean>(false);
+  const [chartError, setChartError] = React.useState<Error>(null);
 
   const [initialYamlData, setInitialYamlData] = React.useState<string>('');
   const [initialFormData, setInitialFormData] = React.useState<object>();
@@ -87,9 +90,12 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
 
     const fetchHelmRelease = async () => {
       let res;
+      let error: Error = null;
       try {
         res = await coFetchJSON(config.helmReleaseApi);
-      } catch {} // eslint-disable-line no-empty
+      } catch (e) {
+        error = e;
+      }
       if (ignore) return;
       const chart: HelmChart = res?.chart || res;
       const chartValues = getChartValuesYAML(chart);
@@ -100,12 +106,13 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
       setInitialYamlData(valuesYAML);
       setInitialFormData(valuesJSON);
       setInitialFormSchema(valuesSchema);
-      setChartName(chart.metadata.name);
-      setChartVersion(chart.metadata.version);
-      setAppVersion(chart.metadata.appVersion);
+      setChartName(chart?.metadata.name);
+      setChartVersion(chart?.metadata.version);
+      setAppVersion(chart?.metadata.appVersion);
       setChartReadme(getChartReadme(chart));
       setChartHasValues(!!valuesYAML);
       setChartData(chart);
+      setChartError(error);
     };
 
     fetchHelmRelease();
@@ -119,6 +126,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
     releaseName: initialReleaseName || helmChartName || '',
     chartURL: initialChartURL,
     chartName,
+    chartRepoName: helmChartRepoName || '',
     appVersion,
     chartVersion,
     chartReadme,
@@ -199,7 +207,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
       });
   };
 
-  if (!chartData) {
+  if (!chartData && !chartError) {
     return <LoadingBox />;
   }
 
@@ -224,6 +232,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
               chartMetaDescription={chartMetaDescription}
               helmActionConfig={config}
               onVersionChange={setChartData}
+              chartError={chartError}
             />
           )}
         </Formik>

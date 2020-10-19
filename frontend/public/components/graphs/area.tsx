@@ -121,7 +121,7 @@ export const AreaChart: React.FC<AreaChartProps> = ({
   return (
     <PrometheusGraph className={className} ref={containerRef} title={title}>
       {processedData?.length ? (
-        <PrometheusGraphLink query={query}>
+        <PrometheusGraphLink query={query} title={title}>
           <Chart
             containerComponent={container}
             domainPadding={{ y: 20 }}

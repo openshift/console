@@ -10,7 +10,7 @@ Background:
 Scenario: Default state of Display dropdown
     Given user is at the Topology page
     When user clicks on the Display dropdown
-    Then user will see the Show Groups is checked
+    Then user will see the Connectivity Mode is checked
     And user will see the Expand is checked
     And user will see the Knative Services checkbox checked
     And user will see the Helm Releses checkbox checked
@@ -18,10 +18,10 @@ Scenario: Default state of Display dropdown
 
 
 @regression
-Scenario: Uncheck the Show Groups
+Scenario: Check the Consumption Mode
     Given user is at the Topology page
     When user clicks on the Display dropdown
-    And user unchecks the Show Groups
+    And user checks the Consumption Mode
     Then user will see that the Expand and it's children are disabled
     And user will see that the group no longer appear in the view
 

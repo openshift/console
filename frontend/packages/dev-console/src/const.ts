@@ -15,3 +15,6 @@ export const RESOURCE_NAME_TRUNCATE_LENGTH = 13;
 
 export const CREATE_APPLICATION_KEY = '#CREATE_APPLICATION_KEY#';
 export const UNASSIGNED_KEY = '#UNASSIGNED_APP#';
+
+export const CREATE_APPLICATION_LABEL = 'Create Application';
+export const UNASSIGNED_LABEL = 'no application group';

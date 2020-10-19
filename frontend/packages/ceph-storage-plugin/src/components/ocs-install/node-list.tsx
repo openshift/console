@@ -9,27 +9,29 @@ import {
   hasLabel,
 } from '@console/shared';
 import { useSelectList } from '@console/shared/src/hooks/select-list';
-import { humanizeCpuCores, ResourceLink, pluralize } from '@console/internal/components/utils/';
+import { humanizeCpuCores, ResourceLink } from '@console/internal/components/utils/';
 import { NodeKind } from '@console/internal/module/k8s';
 import { Table } from '@console/internal/components/factory';
-import { IRow } from '@patternfly/react-table';
-import { hasOCSTaint, hasTaints, getConvertedUnits } from '../../utils/install';
+import { IRow, sortable } from '@patternfly/react-table';
+import { hasOCSTaint, hasNoTaints, getConvertedUnits } from '../../utils/install';
 import { cephStorageLabel } from '../../selectors';
+import { ZONE_LABELS } from '../../constants';
 import { GetRows, NodeTableProps } from './types';
-
 import './ocs-install.scss';
 
 const tableColumnClasses = [
-  classNames('pf-u-w-50-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-10-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-10-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-10-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-10-on-sm'),
+  classNames('pf-u-w-33-on-md', 'pf-u-w-50-on-sm'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-u-w-inherit-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-u-w-inherit-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-md', 'pf-u-w-inherit-on-md'),
+  classNames('pf-u-w-inherit'),
 ];
 
 export const getColumns = () => [
   {
     title: 'Name',
+    sortField: 'metadata.name',
+    transforms: [sortable],
     props: { className: tableColumnClasses[0] },
   },
   {
@@ -37,15 +39,15 @@ export const getColumns = () => [
     props: { className: tableColumnClasses[1] },
   },
   {
-    title: 'Zone',
+    title: 'CPU',
     props: { className: tableColumnClasses[2] },
   },
   {
-    title: 'CPU',
+    title: 'Memory',
     props: { className: tableColumnClasses[3] },
   },
   {
-    title: 'Memory',
+    title: 'Zone',
     props: { className: tableColumnClasses[4] },
   },
 ];
@@ -59,12 +61,13 @@ const getRows: GetRows = (
 ) => {
   const { data } = componentProps;
 
-  const filteredData = data.filter((node: NodeKind) => hasOCSTaint(node) || !hasTaints(node));
+  const filteredData = data.filter((node: NodeKind) => hasOCSTaint(node) || hasNoTaints(node));
 
   const rows = filteredData.map((node: NodeKind) => {
     const roles = getNodeRoles(node).sort();
     const cpuSpec: string = getNodeCPUCapacity(node);
     const memSpec: string = getNodeAllocatableMemory(node);
+    const nodeLabels = node.metadata?.labels;
     const cells: IRow['cells'] = [
       {
         title: <ResourceLink kind="Node" name={getName(node)} title={getName(node)} />,
@@ -73,13 +76,13 @@ const getRows: GetRows = (
         title: roles.join(', ') ?? '-',
       },
       {
-        title: node.metadata.labels?.['failure-domain.beta.kubernetes.io/zone'] ?? '-',
-      },
-      {
         title: `${humanizeCpuCores(cpuSpec).string || '-'}`,
       },
       {
         title: `${getConvertedUnits(memSpec)}`,
+      },
+      {
+        title: nodeLabels[ZONE_LABELS[0]] || nodeLabels[ZONE_LABELS[1]] || '-',
       },
     ];
     return {
@@ -106,9 +109,8 @@ const getRows: GetRows = (
   return rows;
 };
 
-const NodeTable: React.FC<NodeTableProps> = (props) => {
-  const [visibleRows, setVisibleRows] = React.useState<Set<string>>();
-
+const InternalNodeTable: React.FC<NodeTableProps> = (props) => {
+  const [visibleRows, setVisibleRows] = React.useState<Set<string>>(props.customData.nodes);
   const {
     onSelect,
     selectedRows: selectedNodes,
@@ -116,25 +118,20 @@ const NodeTable: React.FC<NodeTableProps> = (props) => {
   } = useSelectList<NodeKind>(props.data, visibleRows, props.customData.onRowSelected);
 
   return (
-    <>
-      <div className="ceph-node-list__max-height ceph-ocs-install__node-list">
-        <Table
-          aria-label="Node Table"
-          data-test-id="select-nodes-table"
-          {...props}
-          Rows={(rowProps) =>
-            getRows(rowProps, visibleRows, setVisibleRows, selectedNodes, setSelectedNodes)
-          }
-          Header={getColumns}
-          virtualize={false}
-          onSelect={onSelect}
-        />
-      </div>
-      <p className="control-label help-block" data-test-id="nodes-selected">
-        {pluralize(selectedNodes?.size, 'node')} selected
-      </p>
-    </>
+    <div className="ceph-ocs-install__select-nodes-table">
+      <Table
+        aria-label="Node Table"
+        data-test-id="select-nodes-table"
+        {...props}
+        Rows={(rowProps) =>
+          getRows(rowProps, visibleRows, setVisibleRows, selectedNodes, setSelectedNodes)
+        }
+        Header={getColumns}
+        virtualize={false}
+        onSelect={onSelect}
+      />
+    </div>
   );
 };
 
-export default NodeTable;
+export default InternalNodeTable;

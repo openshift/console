@@ -8,7 +8,7 @@ import {
 import { RootState } from '@console/internal/redux';
 import { getRouteWebURL } from '@console/internal/components/routes';
 import { OverviewItem } from '@console/shared';
-import { Node, Edge } from '@patternfly/react-topology';
+import { Node, Edge, GraphElement } from '@patternfly/react-topology';
 import {
   createResourceConnection,
   updateResourceApplication,
@@ -35,8 +35,9 @@ export const getServiceBindingStatus = ({ FLAGS }: RootState): boolean =>
 export const getCheURL = (consoleLinks: K8sResourceKind[]) =>
   _.get(_.find(consoleLinks, ['metadata.name', 'che']), 'spec.href', '');
 
-export const getEditURL = (gitURL: string, cheURL: string) => {
-  return gitURL && cheURL ? `${cheURL}/f?url=${gitURL}&policies.create=peruser` : gitURL;
+export const getEditURL = (gitURL: string, gitBranch: string, cheURL: string) => {
+  const fullGitURL = gitBranch ? `${gitURL}/tree/${gitBranch}` : gitURL;
+  return gitURL && cheURL ? `${cheURL}/f?url=${fullGitURL}&policies.create=peruser` : fullGitURL;
 };
 
 export const getNamespaceDashboardKialiLink = (
@@ -69,10 +70,10 @@ export const filterBasedOnActiveApplication = (
  */
 const getRouteData = (resource: K8sResourceKind, ksroutes: K8sResourceKind[]): string => {
   if (ksroutes && ksroutes.length > 0 && !_.isEmpty(ksroutes[0].status)) {
-    const trafficData = _.find(ksroutes[0].status.traffic, {
+    const trafficData: { [x: string]: any } = _.find(ksroutes[0].status.traffic, {
       revisionName: resource.metadata.name,
     });
-    return _.get(trafficData, 'url', ksroutes[0].status.url);
+    return trafficData?.url;
   }
   return null;
 };
@@ -161,4 +162,11 @@ export const removeTopologyResourceConnection = (edge: Edge): Promise<any> => {
   }
 
   return removeResourceConnection(source, target);
+};
+
+export const isOperatorBackedNode = (element: Node | GraphElement): boolean => {
+  if (element?.getData()?.resources?.isOperatorBackedService) {
+    return true;
+  }
+  return element?.hasParent() ? isOperatorBackedNode(element.getParent()) : false;
 };

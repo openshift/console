@@ -91,6 +91,7 @@ export type PodMetrics = {
 
 export type NodeMetrics = {
   cpu: MetricValuesByName;
+  totalCPU: MetricValuesByName;
   pods: MetricValuesByName;
   usedMemory: MetricValuesByName;
   totalMemory: MetricValuesByName;
@@ -103,19 +104,25 @@ export type PVCMetrics = {
 };
 
 // URL routes that can be namespaced
-export const namespacedResources = new Set();
+let namespacedResources;
 
-allModels().forEach((v, k) => {
-  if (!v.namespaced) {
-    return;
+export const getNamespacedResources = () => {
+  if (!namespacedResources) {
+    namespacedResources = new Set();
+    allModels().forEach((v, k) => {
+      if (!v.namespaced) {
+        return;
+      }
+      if (v.crd) {
+        namespacedResources.add(k);
+      }
+      if (!v.crd || v.legacyPluralURL) {
+        namespacedResources.add(v.plural);
+      }
+    });
   }
-  if (v.crd) {
-    namespacedResources.add(k);
-  }
-  if (!v.crd || v.legacyPluralURL) {
-    namespacedResources.add(v.plural);
-  }
-});
+  return namespacedResources;
+};
 
 export const getActiveNamespace = (): string => store.getState().UI.get('activeNamespace');
 

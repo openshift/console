@@ -28,29 +28,27 @@ export type ModelExtensionContext = {
 export class ExtensibleModel {
   private extensions: { [id: string]: ModelExtensionContext } = {};
 
-  private namespaceP: string;
+  public namespace: string;
+
+  @observable.ref
+  public model: Model = { nodes: [], edges: [] };
 
   @observable
-  private modelP: Model = { nodes: [], edges: [] };
+  public loaded: boolean = false;
 
-  public dataResources: TopologyDataResources = {};
+  @observable
+  public loadError: string;
 
+  @observable
   public extensionsLoaded: boolean = false;
 
+  @observable.ref
   public watchedResources: WatchK8sResources<any> = {};
 
   public onExtensionsLoaded: (extensibleModel: ExtensibleModel) => void;
 
   public constructor(namespace?: string) {
     this.namespace = namespace;
-  }
-
-  public get namespace(): string {
-    return this.namespaceP;
-  }
-
-  public set namespace(namespace: string) {
-    this.namespaceP = namespace;
   }
 
   private updateExtensionsLoaded(): void {
@@ -154,48 +152,51 @@ export class ExtensibleModel {
     }, []);
   }
 
-  public set model(model: Model) {
-    this.modelP = model;
-  }
-
-  public get model(): Model {
-    return this.modelP;
-  }
-
   @computed
   public get isEmptyModel(): boolean {
-    return (this.modelP?.nodes?.length ?? 0) === 0;
+    return (this.model?.nodes?.length ?? 0) === 0;
   }
 
   public getExtensionModels = async (resources: TopologyDataResources): Promise<Model> => {
-    const getters = this.dataModelGetters;
-    const depicters = this.dataModelDepicters;
-    const workloadResources = this.getWorkloadResources(resources);
-    const promises = getters?.length ? getters : [Promise.resolve];
-
     const topologyModel: Model = {
       nodes: [],
       edges: [],
     };
+    const getters = this.dataModelGetters;
 
-    const addToModel = async (promise: any): Promise<Model> => {
-      const model = await promise(this.namespace, resources, workloadResources);
-      addToTopologyDataModel(model, topologyModel, depicters);
-      return topologyModel;
-    };
-
-    for (const i in promises) {
-      if (promises[i]) {
-        // eslint-disable-next-line no-await-in-loop
-        await addToModel(promises[i]);
-      }
+    if (!getters?.length) {
+      return Promise.resolve(topologyModel);
     }
+
+    const depicters = this.dataModelDepicters;
+    const workloadResources = this.getWorkloadResources(resources);
+    const promises = getters.map((getter) => getter(this.namespace, resources, workloadResources));
+
+    await Promise.all(promises).then((models) => {
+      models.forEach((model) => {
+        if (model) {
+          try {
+            addToTopologyDataModel(model, topologyModel, depicters);
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error('Unable to add some resources to topology', e);
+          }
+        }
+      });
+    });
 
     return Promise.resolve(topologyModel);
   };
 
   public reconcileModel = (model: Model, resources: TopologyDataResources): void => {
-    this.dataModelReconcilers.forEach((reconciler) => reconciler(model, resources));
+    this.dataModelReconcilers.forEach((reconciler) => {
+      try {
+        reconciler(model, resources);
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error('Unable to reconcile some resources in topology', e);
+      }
+    });
   };
 }
 

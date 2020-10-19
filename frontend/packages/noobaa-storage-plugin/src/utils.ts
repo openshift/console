@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { Alert } from '@console/internal/components/monitoring/types';
-import { PrometheusResponse } from '@console/internal/components/graphs';
+import { PrometheusResponse, DataPoint } from '@console/internal/components/graphs';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { StorageClass } from '@console/internal/components/storage-class-form';
 
@@ -27,3 +27,19 @@ export const getPhase = (obj: K8sResourceKind): string => {
 export const isBound = (obj: K8sResourceKind): boolean => getPhase(obj) === 'Bound';
 
 export const getSCProvisioner = (obj: StorageClass) => obj.provisioner;
+
+export const isFunctionThenApply = (fn: any) => (args: string) =>
+  typeof fn === 'function' ? fn(args) : fn;
+
+export const decodeRGWPrefix = (secretData: K8sResourceKind) => {
+  try {
+    return JSON.parse(atob(secretData?.data?.external_cluster_details)).find(
+      (item) => item?.name === 'ceph-rgw',
+    )?.data?.poolPrefix;
+  } catch {
+    return '';
+  }
+};
+
+export const convertNaNToNull = (value: DataPoint) =>
+  _.isNaN(value?.y) ? Object.assign(value, { y: null }) : value;

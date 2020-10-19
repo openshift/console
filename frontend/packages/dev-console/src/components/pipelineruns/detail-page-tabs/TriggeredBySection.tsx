@@ -3,7 +3,7 @@ import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { EventListenerModel } from '../../../models';
 import { PipelineRun } from '../../../utils/pipeline-augment';
-import { StartedByLabel } from '../../pipelines/const';
+import { StartedByAnnotation, StartedByLabel } from '../../pipelines/const';
 
 type TriggeredByProps = {
   pipelineRun: PipelineRun;
@@ -12,12 +12,12 @@ type TriggeredByProps = {
 const TriggeredBySection: React.FC<TriggeredByProps> = (props) => {
   const {
     pipelineRun: {
-      metadata: { namespace, labels },
+      metadata: { annotations, namespace, labels },
     },
   } = props;
 
-  const manualTrigger = labels[StartedByLabel.user];
-  const autoTrigger = labels[StartedByLabel.triggers];
+  const manualTrigger = annotations?.[StartedByAnnotation.user];
+  const autoTrigger = labels?.[StartedByLabel.triggers];
 
   if (!manualTrigger && !autoTrigger) {
     return null;

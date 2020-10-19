@@ -46,7 +46,7 @@ export const MonitoringDashboardGraph: React.FC<MonitoringDashboardGraphProps> =
   pollInterval,
 }) => {
   return (
-    <DashboardCard className="odc-monitoring-dashboard-graph">
+    <DashboardCard className="monitoring-dashboards__card odc-monitoring-dashboard-graph">
       <DashboardCardHeader>
         <DashboardCardTitle>{title}</DashboardCardTitle>
       </DashboardCardHeader>
@@ -62,6 +62,7 @@ export const MonitoringDashboardGraph: React.FC<MonitoringDashboardGraphProps> =
               isStack={graphType === GraphTypes.area}
               timespan={timespan}
               pollInterval={pollInterval}
+              formatLegendLabel={(labels) => labels.pod}
             />
           </div>
         </PrometheusGraphLink>

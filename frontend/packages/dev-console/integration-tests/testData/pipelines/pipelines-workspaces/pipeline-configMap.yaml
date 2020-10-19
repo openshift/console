@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sensitive-recipe-storage
+data:
+  brownies: |
+    1. Heat oven to 325 degrees F
+    2. Melt 1/2 cup butter w/ 1/2 cup cocoa, stirring smooth.
+    3. Remove from heat, allow to cool for a few minutes.
+    4. Transfer to bowl.
+    5. Whisk in 2 eggs, one at a time.
+    6. Stir in vanilla.
+    7. Separately combine 1 cup sugar, 1/4 cup flour, 1 cup chopped
+       walnuts and pinch of salt
+    8. Combine mixtures.
+    9. Bake in greased pan for 30 minutes. Watch carefully for
+       appropriate level of gooeyness.

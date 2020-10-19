@@ -62,3 +62,15 @@
     max-width: 70%;
   }
 }
+
+.ceph-ocs-install__recommened-req-toottip {
+  padding-left: 0;
+  margin-top: var(--pf-global--spacer--md);
+}
+
+.ceph-ocs-install__select-nodes-table {
+  margin-bottom: var(--pf-global--spacer--md);
+  max-height: 300px;
+  overflow-y: auto;
+  scrollbar-color: var(--pf-global--BackgroundColor--light-300) var(--pf-global--palette--white);
+}

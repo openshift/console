@@ -42,12 +42,16 @@ const StepComponent: React.FC<StepComponentProps> = ({
       showStepBadge={showStepBadge}
       nextButtonText={nextButtonText}
       backButtonText={backButtonText}
-      onClose={() => tourDispatch(TourActions.complete)}
+      onClose={() => tourDispatch({ type: TourActions.complete })}
       onNext={() =>
-        step > totalSteps ? tourDispatch(TourActions.complete) : tourDispatch(TourActions.next)
+        step > totalSteps
+          ? tourDispatch({ type: TourActions.complete })
+          : tourDispatch({ type: TourActions.next })
       }
       onBack={() =>
-        step === 0 ? tourDispatch(TourActions.complete) : tourDispatch(TourActions.back)
+        step === 0
+          ? tourDispatch({ type: TourActions.complete })
+          : tourDispatch({ type: TourActions.back })
       }
     />
   );

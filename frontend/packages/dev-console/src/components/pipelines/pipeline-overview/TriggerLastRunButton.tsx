@@ -7,7 +7,7 @@ import { useAccessReview } from '@console/internal/components/utils';
 import { AccessReviewResourceAttributes } from '@console/internal/module/k8s';
 import { rerunPipelineAndStay } from '../../../utils/pipeline-actions';
 import { PipelineRunModel } from '../../../models';
-import { usePipelineRunWithUserLabel } from '../../pipelineruns/triggered-by';
+import { usePipelineRunWithUserAnnotation } from '../../pipelineruns/triggered-by';
 import { getLatestRun, PipelineRun } from '../../../utils/pipeline-augment';
 
 type TriggerLastRunButtonProps = {
@@ -21,7 +21,7 @@ const TriggerLastRunButton: React.FC<TriggerLastRunButtonProps> = ({
   namespace,
   impersonate,
 }) => {
-  const latestRun = usePipelineRunWithUserLabel(
+  const latestRun = usePipelineRunWithUserAnnotation(
     getLatestRun({ data: pipelineRuns }, 'startTimestamp'),
   );
   const { label, callback, accessReview: utilityAccessReview } = rerunPipelineAndStay(

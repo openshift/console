@@ -9,6 +9,7 @@ import {
   SidebarSectionHeading,
   ExternalLink,
   KebabAction,
+  ResourceIcon,
 } from '@console/internal/components/utils';
 
 export type SinkUriResourcesTabProps = {
@@ -29,7 +30,10 @@ const SinkUriResourcesTab: React.FC<SinkUriResourcesTabProps> = ({ itemData, men
     <div className="overview__sidebar-pane resource-overview">
       <div className="overview__sidebar-pane-head resource-overview__heading">
         <h1 className="co-m-pane__heading">
-          <div className="co-m-pane__name co-resource-item">URI</div>
+          <div className="co-m-pane__name co-resource-item">
+            <ResourceIcon className="co-m-resource-icon--lg" kind={obj?.kind || 'Uri'} />
+            <ExternalLink href={sinkUri} text={sinkUri} />
+          </div>
           <div className="co-actions">
             <ActionsMenu actions={actions} />
           </div>
@@ -48,19 +52,6 @@ const SinkUriResourcesTab: React.FC<SinkUriResourcesTabProps> = ({ itemData, men
         </li>
       </ul>
       <div className="overview__sidebar-pane-body">
-        <SidebarSectionHeading text="URI" />
-        <ul className="list-group">
-          {sinkUri && (
-            <li className="list-group-item  container-fluid">
-              <ExternalLink
-                href={sinkUri}
-                additionalClassName="co-external-link--block"
-                text={sinkUri}
-              />
-            </li>
-          )}
-        </ul>
-
         <SidebarSectionHeading text="Event Sources" />
         <ul className="list-group">
           {_.map(eventSources, (resource) => {

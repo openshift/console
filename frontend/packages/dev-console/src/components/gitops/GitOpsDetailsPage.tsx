@@ -2,6 +2,8 @@ import * as React from 'react';
 import Helmet from 'react-helmet';
 import { RouteComponentProps } from 'react-router-dom';
 import * as _ from 'lodash';
+import { LoadingBox } from '@console/internal/components/utils';
+import { DevPreviewBadge } from '@console/shared';
 import { GitOpsAppGroupData, GitOpsEnvironment } from './utils/gitops-types';
 import {
   fetchAppGroups,
@@ -12,7 +14,6 @@ import {
 import useDefaultSecret from './utils/useDefaultSecret';
 import GitOpsDetailsPageHeading from './details/GitOpsDetailsPageHeading';
 import GitOpsDetailsController from './details/GitOpsDetailsController';
-import { LoadingBox } from '@console/internal/components/utils';
 
 type GitOpsDetailsPageProps = RouteComponentProps<{ appName?: string }>;
 
@@ -76,7 +77,12 @@ const GitOpsDetailsPage: React.FC<GitOpsDetailsPageProps> = ({ match, location }
       <Helmet>
         <title>{`${appName} · Details`}</title>
       </Helmet>
-      <GitOpsDetailsPageHeading url={match.url} appName={appName} manifestURL={manifestURL} />
+      <GitOpsDetailsPageHeading
+        url={match.url}
+        appName={appName}
+        manifestURL={manifestURL}
+        badge={<DevPreviewBadge />}
+      />
       {!envsData && !emptyStateMsg ? (
         <LoadingBox />
       ) : (

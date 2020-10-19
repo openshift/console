@@ -7,7 +7,7 @@ type V2VProviderStatusFlags = {
   requestsVM?: boolean;
 };
 
-const hasV2vVMWareStatus = (providerCR: K8sResourceKind, flags: V2VProviderStatusFlags) => {
+const hasV2VStatus = (providerCR: K8sResourceKind, flags: V2VProviderStatusFlags) => {
   if (providerCR && flags.requestsVM) {
     return { status: V2VProviderStatus.LOADING_VM_DETAIL };
   }
@@ -34,14 +34,13 @@ const hasSetStatus = (flags: V2VProviderStatusFlags) => {
   return null;
 };
 
-export const getV2VPRoviderStatus = (
+export const getV2VProviderStatus = (
   providerCR?: K8sResourceKind,
   flags: V2VProviderStatusFlags = { hasConnectionFailed: false, requestsVM: false },
 ) =>
-  hasV2vVMWareStatus(providerCR, flags) ||
-  hasSetStatus(flags) || { status: V2VProviderStatus.UNKNOWN };
+  hasV2VStatus(providerCR, flags) || hasSetStatus(flags) || { status: V2VProviderStatus.UNKNOWN };
 
 export const getSimpleV2VPRoviderStatus = (
   providerCR: K8sResourceKind,
   flags: V2VProviderStatusFlags = { hasConnectionFailed: false, requestsVM: false },
-) => getV2VPRoviderStatus(providerCR, flags).status;
+) => getV2VProviderStatus(providerCR, flags).status;

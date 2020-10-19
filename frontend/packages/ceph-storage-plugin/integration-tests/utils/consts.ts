@@ -79,6 +79,7 @@ export enum OCP_HEALTH_ICON_COLORS {
   GREEN = '#486b00',
   YELLOW = '#f0ab00',
   RED = '#c9190b',
+  GREEN46 = '#3e8635',
 }
 
 export const EXAMPLE_PVC = {
@@ -101,3 +102,9 @@ export const SC_STEPS_NAME = {
   STORAGECLUSTER: 'Create Storage Cluster',
 };
 export const CONFIRM_MODAL_TITLE = 'Create Storage Class';
+
+export const OSD_SIZES_MAP = {
+  '512Gi': 0.5,
+  '2Ti': 2,
+  '4Ti': 4,
+};

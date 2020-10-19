@@ -12,11 +12,11 @@ import {
 } from '@console/internal/components/utils';
 import { HOSTNAME_LABEL_KEY } from '@console/local-storage-operator-plugin/src/constants';
 import { getNodeCPUCapacity, getNodeAllocatableMemory } from '@console/shared';
-import { ocsTaint, NO_PROVISIONER, AVAILABLE } from '../constants';
+import { ocsTaint, NO_PROVISIONER, AVAILABLE, MINIMUM_NODES, ZONE_LABELS } from '../constants';
 import { Discoveries } from '../components/ocs-install/attached-devices/create-sc/state';
 
-export const hasTaints = (node: NodeKind) => {
-  return !_.isEmpty(node.spec?.taints);
+export const hasNoTaints = (node: NodeKind) => {
+  return _.isEmpty(node.spec?.taints);
 };
 
 export const hasOCSTaint = (node: NodeKind) => {
@@ -57,31 +57,29 @@ export const getAssociatedNodes = (pvs: K8sResourceKind[]): string[] => {
   return Array.from(nodes);
 };
 
-export const shouldDeployInternalAsMinimal = (nodes: NodeKind[]) => {
-  const { totalCPU, totalMemory } = nodes.reduce(
-    (acc, curr) => {
-      const cpus = humanizeCpuCores(getNodeCPUCapacity(curr)).value;
-      const memoryRaw = getNodeAllocatableMemory(curr);
-      const memory = humanizeBinaryBytes(convertToBaseValue(memoryRaw)).value;
-      acc.totalCPU += cpus;
-      acc.totalMemory += memory;
-      return acc;
+export const getNodeInfo = (nodes: NodeKind[]) =>
+  nodes.reduce(
+    (data, node) => {
+      const cpus = humanizeCpuCores(Number(getNodeCPUCapacity(node))).value;
+      const memoryRaw = getNodeAllocatableMemory(node);
+      const memory = convertToBaseValue(memoryRaw);
+      const zone = node.metadata.labels?.[ZONE_LABELS[0]] || node.metadata.labels?.[ZONE_LABELS[1]];
+      data.cpu += cpus;
+      data.memory += memory;
+      if (zone && hasNoTaints(node)) data.zones.add(zone);
+      return data;
     },
     {
-      totalCPU: 0,
-      totalMemory: 0,
+      cpu: 0,
+      memory: 0,
+      zones: new Set(),
     },
   );
-  return totalCPU < 30 || totalMemory < 60;
-};
 
-export const shouldDeployAttachedAsMinimal = (nodes: NodeKind[]) =>
-  nodes.reduce((acc, curr) => {
-    const cpus = humanizeCpuCores(getNodeCPUCapacity(curr)).value;
-    const memoryRaw = getNodeAllocatableMemory(curr);
-    const memory = humanizeBinaryBytes(convertToBaseValue(memoryRaw)).value;
-    if (memory < 60 || cpus < 10) {
-      return [...acc, curr];
-    }
-    return acc;
-  }, []).length > 0;
+export const shouldDeployAsMinimal = (cpu: number, memory: number, nodesCount: number): boolean => {
+  if (nodesCount >= MINIMUM_NODES) {
+    const humanizedMem = humanizeBinaryBytes(memory, null, 'GiB').value;
+    return cpu < 30 || humanizedMem < 72;
+  }
+  return false;
+};

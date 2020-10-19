@@ -1,6 +1,6 @@
 apiVersion: v1
 entries:
-  aks-helloworld:
+  aks-helloworld--sample-repo-1:
     - apiVersion: v1
       created: "2020-03-30T16:27:13.4350608-05:00"
       description: A Helm chart for Kubernetes
@@ -17,7 +17,7 @@ entries:
       response:
         - https://azure-samples.github.io/helm-charts/aks-helloworld-0.1.0.tgz
       version: 0.1.0
-  azure-vote:
+  azure-vote--sample-repo-1:
     - apiVersion: v1
       created: "2020-03-30T16:27:13.4454224-05:00"
       description: A Helm chart for Kubernetes
@@ -34,7 +34,7 @@ entries:
       response:
         - https://azure-samples.github.io/helm-charts/azure-vote-0.1.0.tgz
       version: 0.1.0
-  azure-vote-osba:
+  azure-vote-osba--sample-repo-1:
     - apiVersion: v1
       created: "2020-03-30T16:27:13.4518442-05:00"
       description: A Helm chart for Kubernetes
@@ -43,7 +43,7 @@ entries:
       response:
         - https://azure-samples.github.io/helm-charts/azure-vote-osba-0.1.0.tgz
       version: 0.1.0
-  burst-scheduler:
+  burst-scheduler--sample-repo-1:
     - apiVersion: v1
       created: "2020-03-30T16:27:13.455658-05:00"
       description: A Helm chart for Kubernetes
@@ -52,7 +52,7 @@ entries:
       response:
         - https://azure-samples.github.io/helm-charts/burst-scheduler-0.1.0.tgz
       version: 0.1.0
-  image-pull-secret:
+  image-pull-secret--sample-repo-1:
     - apiVersion: v1
       created: "2020-03-30T16:27:13.4592817-05:00"
       description: A Helm chart for Kubernetes
@@ -61,7 +61,7 @@ entries:
       response:
         - https://azure-samples.github.io/helm-charts/image-pull-secret-0.1.0.tgz
       version: 0.1.0
-  open-service-broker-azure:
+  open-service-broker-azure--sample-repo-1:
     - apiVersion: v1
       appVersion: v0.0.1
       created: "2020-03-30T16:27:13.4706997-05:00"
@@ -89,7 +89,7 @@ entries:
       response:
         - https://azure-samples.github.io/helm-charts/open-service-broker-azure-v0.0.1.tgz
       version: v0.0.1
-  osba-container-instances-demo:
+  osba-container-instances-demo--sample-repo-1:
     - apiVersion: v1
       created: "2020-03-30T16:27:13.4798738-05:00"
       description: A Helm chart for Kubernetes
@@ -98,7 +98,7 @@ entries:
       response:
         - https://azure-samples.github.io/helm-charts/osba-container-instances-demo-0.1.0.tgz
       version: 0.1.0
-  osba-cosmos-mongodb-demo:
+  osba-cosmos-mongodb-demo--sample-repo-1:
     - apiVersion: v1
       created: "2020-03-30T16:27:13.489062-05:00"
       description: A Helm chart for Kubernetes
@@ -107,7 +107,7 @@ entries:
       response:
         - https://azure-samples.github.io/helm-charts/osba-cosmos-mongodb-demo-0.1.0.tgz
       version: 0.1.0
-  osba-mysql-demo:
+  osba-mysql-demo--sample-repo-1:
     - apiVersion: v1
       created: "2020-03-30T16:27:13.4958437-05:00"
       description: A Helm chart for Kubernetes
@@ -116,7 +116,7 @@ entries:
       response:
         - https://azure-samples.github.io/helm-charts/osba-mysql-demo-0.1.0.tgz
       version: 0.1.0
-  osba-storage-demo:
+  osba-storage-demo--sample-repo-1:
     - apiVersion: v1
       created: "2020-03-30T16:27:13.5013751-05:00"
       description: A Helm chart for Kubernetes
@@ -125,7 +125,7 @@ entries:
       response:
         - https://azure-samples.github.io/helm-charts/osba-storage-demo-0.1.0.tgz
       version: 0.1.0
-  osba-text-analytics-demo:
+  osba-text-analytics-demo--sample-repo-1:
     - apiVersion: v1
       created: "2020-03-30T16:27:13.5060898-05:00"
       description: A Helm chart for Kubernetes
@@ -134,7 +134,7 @@ entries:
       response:
         - https://azure-samples.github.io/helm-charts/osba-text-analytics-demo-0.1.0.tgz
       version: 0.1.0
-  tweet-factory-operator:
+  tweet-factory-operator--sample-repo-1:
     - apiVersion: v1
       created: "2020-03-30T16:27:13.5104606-05:00"
       description: A Helm chart for Kubernetes
@@ -143,7 +143,7 @@ entries:
       response:
         - https://azure-samples.github.io/helm-charts/tweet-factory-operator-0.1.0.tgz
       version: 0.1.0
-  twitter-sentiment:
+  twitter-sentiment--sample-repo-1:
     - apiVersion: v1
       created: "2020-03-30T16:27:13.5145249-05:00"
       description: A Helm chart for Kubernetes
@@ -152,7 +152,7 @@ entries:
       response:
         - https://azure-samples.github.io/helm-charts/twitter-sentiment-0.1.0.tgz
       version: 0.1.0
-  twitter-sentiment-cnab:
+  twitter-sentiment-cnab--sample-repo-1:
     - apiVersion: v1
       created: "2020-03-30T16:27:13.5192786-05:00"
       description: A Helm chart for Kubernetes
@@ -161,7 +161,7 @@ entries:
       response:
         - https://azure-samples.github.io/helm-charts/twitter-sentiment-cnab-0.1.0.tgz
       version: 0.1.0
-  ibm-cpq-prod:
+  ibm-cpq-prod--sample-repo-2:
     - apiVersion: v2
       appVersion: 10.0.0.6
       created: "2020-07-15T16:32:34.607411698+05:30"
@@ -203,7 +203,7 @@ entries:
       response:
         - https://redhat-developer.github.com/redhat-helm-charts/charts/ibm-cpq-prod-2.0.0.tgz
       version: 2.0.0
-  ibm-object-storage-plugin:
+  ibm-object-storage-plugin--sample-repo-2:
     - apiVersion: v2
       appVersion: 2.0.0
       created: "2020-07-15T16:32:34.612556197+05:30"
@@ -238,7 +238,7 @@ entries:
       response:
         - https://redhat-developer.github.com/redhat-helm-charts/charts/ibm-object-storage-plugin-2.0.0.tgz
       version: 2.0.0
-  ibm-oms-ent-prod:
+  ibm-oms-ent-prod--sample-repo-2:
     - apiVersion: v2
       appVersion: 10.0.0
       created: "2020-07-15T16:32:34.663118186+05:30"
@@ -276,7 +276,7 @@ entries:
       response:
         - https://redhat-developer.github.com/redhat-helm-charts/charts/ibm-oms-ent-prod-5.0.0.tgz
       version: 5.0.0
-  ibm-oms-pro-prod:
+  ibm-oms-pro-prod--sample-repo-2:
     - apiVersion: v2
       appVersion: 10.0.0
       created: "2020-07-15T16:32:34.695882333+05:30"
@@ -314,7 +314,7 @@ entries:
       response:
         - https://redhat-developer.github.com/redhat-helm-charts/charts/ibm-oms-pro-prod-5.0.0.tgz
       version: 5.0.0
-  ibm-operator-catalog-enablement:
+  ibm-operator-catalog-enablement--sample-repo-2:
     - apiVersion: v2
       appVersion: 1.0.0
       created: "2020-07-15T16:32:34.697730479+05:30"
@@ -347,7 +347,7 @@ entries:
       response:
         - https://redhat-developer.github.com/redhat-helm-charts/charts/ibm-operator-catalog-enablement-1.0.0.tgz
       version: 1.0.0
-  nodejs-ex-k:
+  nodejs-ex-k--sample-repo-2:
     - apiVersion: v2
       appVersion: 1.16.0
       created: "2020-07-15T16:32:34.700484147+05:30"

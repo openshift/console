@@ -143,7 +143,7 @@ const HealthChecksLink: React.FC = () => {
   );
 };
 
-const NodeAlerts: React.FC = () => {
+const NodeAlerts: React.FC = ({ children }) => {
   const { cpuLimit, memoryLimit, healthCheck } = React.useContext(NodeDashboardContext);
 
   const cpuMessage = getMessage(cpuLimit, {
@@ -199,6 +199,7 @@ const NodeAlerts: React.FC = () => {
           />
         </StatusItem>
       )}
+      {children}
     </AlertsBody>
   );
 };

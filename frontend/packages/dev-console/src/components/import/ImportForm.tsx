@@ -9,7 +9,7 @@ import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
 import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/imagestream-utils';
 import { doContextualBinding, sanitizeApplicationValue } from '../../utils/application-utils';
-import { ALLOW_SERVICE_BINDING, UNASSIGNED_KEY } from '../../const';
+import { ALLOW_SERVICE_BINDING, UNASSIGNED_KEY, UNASSIGNED_LABEL } from '../../const';
 import { GitImportFormData, FirehoseList, ImportData, Resources } from './import-types';
 import { createOrUpdateResources, handleRedirect } from './import-submit-utils';
 import { validationSchema } from './import-validation-utils';
@@ -53,7 +53,8 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
     application: {
       initial: sanitizeApplicationValue(activeApplication),
       name: sanitizeApplicationValue(activeApplication),
-      selectedKey: activeApplication === 'unassigned' ? UNASSIGNED_KEY : activeApplication,
+      selectedKey: activeApplication === UNASSIGNED_LABEL ? UNASSIGNED_KEY : activeApplication,
+      isInContext: !!sanitizeApplicationValue(activeApplication),
     },
     git: {
       url: '',
@@ -170,13 +171,11 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
         .catch(() => {});
     }
 
-    resourceActions
+    return resourceActions
       .then(() => {
-        actions.setSubmitting(false);
         handleRedirect(projectName, perspective, perspectiveExtensions);
       })
       .catch((err) => {
-        actions.setSubmitting(false);
         actions.setStatus({ submitError: err.message });
       });
   };

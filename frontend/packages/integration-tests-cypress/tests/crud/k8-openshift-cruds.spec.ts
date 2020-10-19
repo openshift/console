@@ -45,7 +45,18 @@ describe('Kubernetes resource CRUD operations', () => {
     .set('limitranges', { kind: 'LimitRange' })
     .set('horizontalpodautoscalers', { kind: 'HorizontalPodAutoscaler' })
     .set('networkpolicies', { kind: 'NetworkPolicy' })
-    .set('roles', { kind: 'Role' });
+    .set('roles', { kind: 'Role' })
+    .set('snapshot.storage.k8s.io~v1beta1~VolumeSnapshot', {
+      kind: 'snapshot.storage.k8s.io~v1beta1~VolumeSnapshot',
+    })
+    .set('snapshot.storage.k8s.io~v1beta1~VolumeSnapshotClass', {
+      kind: 'snapshot.storage.k8s.io~v1beta1~VolumeSnapshotClass',
+      namespaced: false,
+    })
+    .set('snapshot.storage.k8s.io~v1beta1~VolumeSnapshotContent', {
+      kind: 'snapshot.storage.k8s.io~v1beta1~VolumeSnapshotContent',
+      namespaced: false,
+    });
   const openshiftObjs = OrderedMap<string, { kind: string; namespaced?: boolean }>()
     .set('deploymentconfigs', { kind: 'DeploymentConfig' })
     .set('buildconfigs', { kind: 'BuildConfig' })
@@ -63,7 +74,12 @@ describe('Kubernetes resource CRUD operations', () => {
   let testObjs = Cypress.env('openshift') === true ? k8sObjs.merge(openshiftObjs) : k8sObjs;
   testObjs = Cypress.env('servicecatalog') === true ? testObjs.merge(serviceCatalogObjs) : testObjs;
   const testLabel = 'automated-test-name';
-  const resourcesWithCreationForm = new Set(['StorageClass', 'Route', 'PersistentVolumeClaim']);
+  const resourcesWithCreationForm = new Set([
+    'StorageClass',
+    'Route',
+    'PersistentVolumeClaim',
+    'snapshot.storage.k8s.io~v1beta1~VolumeSnapshot',
+  ]);
 
   testObjs.forEach(({ kind, namespaced = true }, resource) => {
     describe(kind, () => {
@@ -87,16 +103,16 @@ describe('Kubernetes resource CRUD operations', () => {
         cy.testA11y(`YAML Editor for ${kind}: ${name}`);
         let newContent;
         // get, update, and set yaml editor content.
-        return yamlEditor.getEditorContent().then((content) => {
+        yamlEditor.getEditorContent().then((content) => {
           newContent = _.defaultsDeep(
             {},
             { metadata: { name, labels: { [testLabel]: testName } } },
             safeLoad(content),
           );
-          yamlEditor.setEditorContent(safeDump(newContent, { sortKeys: true }));
-          cy.log('creates a new resource instance');
-          yamlEditor.clickSaveCreateButton();
-          cy.get(errorMessage).should('not.exist');
+          yamlEditor.setEditorContent(safeDump(newContent, { sortKeys: true })).then(() => {
+            yamlEditor.clickSaveCreateButton();
+            cy.get(errorMessage).should('not.exist');
+          });
         });
       });
 
@@ -111,11 +127,11 @@ describe('Kubernetes resource CRUD operations', () => {
           `${namespaced ? `/k8s/ns/${testName}` : '/k8s/cluster'}/${resource}?name=${testName}`,
         );
         if (namespaced) {
-          cy.log('has a working namespace dropdown on namespaced objects');
+          // should have a namespace dropdown for namespaced objects');
           listPage.projectDropdownShouldExist();
           listPage.projectDropdownShouldContain(testName);
         } else {
-          cy.log('does not have a namespace dropdown on non-namespaced objects');
+          // should not have a namespace dropdown for non-namespaced objects');
           listPage.projectDropdownShouldNotExist();
         }
         listPage.rows.shouldBeLoaded();
@@ -134,7 +150,7 @@ describe('Kubernetes resource CRUD operations', () => {
         listPage.rows.shouldExist(name);
         cy.testA11y(`Search page for ${kind}: ${name}`);
 
-        cy.log('link to to details page');
+        // link to to details page
         listPage.rows.clickRowByName(name);
         cy.url().should('include', `/${name}`);
         detailsPage.titleShouldContain(name);

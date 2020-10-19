@@ -11,6 +11,7 @@ import {
 import { RequestType } from './health-checks-types';
 import FormSection from '../import/section/FormSection';
 import './ProbeForm.scss';
+import { HealthCheckContext } from './health-checks-utils';
 
 const getRequestTypeForm = (value: string, probeType: string) => {
   switch (value) {
@@ -42,7 +43,7 @@ const ProbeForm: React.FC<ProbeFormProps> = ({ onSubmit, onClose, probeType }) =
     values: { healthChecks },
     errors,
   } = useFormikContext<FormikValues>();
-
+  const { viewOnly } = React.useContext(HealthCheckContext);
   return (
     <div className="odc-heath-check-probe-form">
       <FormSection>
@@ -51,6 +52,7 @@ const ProbeForm: React.FC<ProbeFormProps> = ({ onSubmit, onClose, probeType }) =
           label="Type"
           items={RequestTypeOptions}
           title={RequestType.HTTPGET}
+          disabled={viewOnly}
           fullWidth
         />
         {getRequestTypeForm(healthChecks?.[probeType]?.data?.requestType, probeType)}
@@ -60,6 +62,7 @@ const ProbeForm: React.FC<ProbeFormProps> = ({ onSubmit, onClose, probeType }) =
           label="Failure Threshold"
           style={{ maxWidth: '100%' }}
           helpText="How many times the probe will try starting or restarting before giving up."
+          isDisabled={viewOnly}
         />
         <InputField
           type={TextInputTypes.number}
@@ -67,6 +70,7 @@ const ProbeForm: React.FC<ProbeFormProps> = ({ onSubmit, onClose, probeType }) =
           label="Success Threshold"
           style={{ maxWidth: '100%' }}
           helpText="How many consecutive successes for the probe to be considered successful after having failed."
+          isDisabled={viewOnly}
         />
         <InputGroupField
           type={TextInputTypes.number}
@@ -75,6 +79,7 @@ const ProbeForm: React.FC<ProbeFormProps> = ({ onSubmit, onClose, probeType }) =
           helpText="How long to wait after the container starts before checking it's health."
           afterInput={<InputGroupText>{'seconds'}</InputGroupText>}
           style={{ maxWidth: '100%' }}
+          isDisabled={viewOnly}
         />
         <InputGroupField
           type={TextInputTypes.number}
@@ -83,6 +88,7 @@ const ProbeForm: React.FC<ProbeFormProps> = ({ onSubmit, onClose, probeType }) =
           helpText="How often to perform the probe."
           afterInput={<InputGroupText>{'seconds'}</InputGroupText>}
           style={{ maxWidth: '100%' }}
+          isDisabled={viewOnly}
         />
         <InputGroupField
           type={TextInputTypes.number}
@@ -91,10 +97,11 @@ const ProbeForm: React.FC<ProbeFormProps> = ({ onSubmit, onClose, probeType }) =
           helpText="How long to wait for the probe to finish, if the time is exceeded, the probe is considered failed."
           afterInput={<InputGroupText>{'seconds'}</InputGroupText>}
           style={{ maxWidth: '100%' }}
+          isDisabled={viewOnly}
         />
       </FormSection>
       <ActionGroupWithIcons
-        onSubmit={onSubmit}
+        onSubmit={!viewOnly ? onSubmit : undefined}
         onClose={onClose}
         isDisabled={!_.isEmpty(errors?.healthChecks?.[probeType])}
       />

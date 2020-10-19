@@ -1,4 +1,3 @@
-import { LimitsData } from '@console/dev-console/src/components/import/import-types';
 import {
   EventSourceApiServerModel,
   EventSourceContainerModel,
@@ -6,7 +5,6 @@ import {
   EventSourceKafkaModel,
   EventSourcePingModel,
   EventSourceSinkBindingModel,
-  EventingChannelModel,
   EventingIMCModel,
   EventingKafkaChannelModel,
 } from '../../models';
@@ -20,7 +18,6 @@ export const EventSources = {
   SinkBinding: EventSourceSinkBindingModel.kind,
 };
 export const defaultChannels = {
-  Channel: EventingChannelModel,
   InMemoryChannel: EventingIMCModel,
   KafkaChannel: EventingKafkaChannelModel,
 };
@@ -44,6 +41,7 @@ export interface SinkResourceData {
   apiVersion: string;
   name: string;
   kind: string;
+  key: string;
   uri?: string;
 }
 
@@ -55,7 +53,6 @@ export interface EventSourceFormData {
   type: string;
   sinkType: string;
   sink: SinkResourceData;
-  limits: LimitsData;
   data?: EventSourceData;
   yamlData?: string;
 }
@@ -81,6 +78,8 @@ export enum SinkType {
   Resource = 'resource',
   Uri = 'uri',
 }
+
+export const EVENT_SOURCES_APP = 'event-sources-app';
 
 export const sourceSinkType = {
   Resource: {

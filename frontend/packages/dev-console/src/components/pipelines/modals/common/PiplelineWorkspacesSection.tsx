@@ -2,11 +2,11 @@ import * as React from 'react';
 import { useFormikContext, FormikValues, useField } from 'formik';
 import { SecretModel, ConfigMapModel } from '@console/internal/models';
 import { DropdownField } from '@console/shared';
-import { PipelineWorkspace } from '../../../../utils/pipeline-augment';
 import FormSection from '../../../import/section/FormSection';
 import { VolumeTypes } from '../../const';
 import PVCDropdown from './PVCDropdown';
 import MultipleResourceKeySelector from './MultipleResourceKeySelector';
+import { PipelineModalFormWorkspace } from './types';
 
 const getVolumeTypeFields = (volumeType: VolumeTypes, index: number) => {
   switch (VolumeTypes[volumeType]) {
@@ -44,7 +44,7 @@ const getVolumeTypeFields = (volumeType: VolumeTypes, index: number) => {
 
 const PipelineWorkspacesSection: React.FC = () => {
   const { setFieldValue } = useFormikContext<FormikValues>();
-  const [{ value: workspaces }] = useField<PipelineWorkspace[]>('workspaces');
+  const [{ value: workspaces }] = useField<PipelineModalFormWorkspace[]>('workspaces');
   return (
     workspaces.length > 0 && (
       <FormSection title="Workspaces" fullWidth>
@@ -58,6 +58,8 @@ const PipelineWorkspacesSection: React.FC = () => {
                 setFieldValue(
                   `workspaces.${index}.data`,
                   VolumeTypes[type] === VolumeTypes.EmptyDirectory ? { emptyDir: {} } : {},
+                  // Validation is automatically done by DropdownField useFormikValidationFix
+                  false,
                 )
               }
               fullWidth
