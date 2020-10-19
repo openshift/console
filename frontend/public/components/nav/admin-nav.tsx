@@ -83,7 +83,9 @@ const MonitoringNavSection_ = ({ canAccess }) => {
           startsWith={['monitoring/query-browser']}
         />
       )}
-      {canAccessPrometheus && <HrefLink href="/monitoring/dashboards" name={t('nav~Dashboards')} namespaced={true} />}
+      {canAccessPrometheus && (
+        <HrefLink href="/monitoring/dashboards" name={t('nav~Dashboards')} namespaced={true} />
+      )}
     </NavSection>
   ) : null;
 };
@@ -111,8 +113,18 @@ const AdminNav = () => {
           name={t('nav~Projects')}
           required={FLAGS.OPENSHIFT}
         />
-        <HrefLink href="/search" name={t('nav~Search')} namespaced={true} startsWith={searchStartsWith} />
-        <HrefLink href="/api-explorer" name={t('nav~Explore')} namespaced={false} startsWith={apiExplorerStartsWith} />
+        <HrefLink
+          href="/search"
+          name={t('nav~Search')}
+          namespaced={true}
+          startsWith={searchStartsWith}
+        />
+        <HrefLink
+          href="/api-explorer"
+          name={t('nav~Explore')}
+          namespaced={false}
+          startsWith={apiExplorerStartsWith}
+        />
         <ResourceNSLink resource="events" name={t('nav~Events')} />
       </NavSection>
 
@@ -190,7 +202,7 @@ const AdminNav = () => {
       <NavSection title={t('nav~Service Catalog')} required={FLAGS.SERVICE_CATALOG}>
         <HrefLink
           href="/provisionedservices"
-          name={t('nav~Provisioned Services')} 
+          name={t('nav~Provisioned Services')}
           namespaced={true}
           activePath="/provisionedservices/"
           startsWith={provisionedServicesStartsWith}
@@ -198,7 +210,7 @@ const AdminNav = () => {
         <HrefLink
           href="/brokermanagement"
           name={t('nav~Broker Management')}
-          namespaced={false}  
+          namespaced={false}
           activePath="/brokermanagement/"
           startsWith={brokerManagementStartsWith}
         />
