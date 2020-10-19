@@ -173,7 +173,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       group: 'top',
       componentProps: {
         name: 'GitOps',
-        namespaced: true,
+        namespaced: false,
         href: '/gitops',
         testID: 'gitops-header',
       },
