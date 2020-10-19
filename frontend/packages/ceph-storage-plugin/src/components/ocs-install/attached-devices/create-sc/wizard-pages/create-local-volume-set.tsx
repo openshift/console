@@ -17,23 +17,31 @@ import {
   allNodesSelectorTxt,
 } from '../../../../../constants';
 import '../../attached-devices.scss';
+import { RequestErrors } from '../../../install-wizard/review-and-create';
 
-const makeLocalVolumeSetCall = (state: State, dispatch: React.Dispatch<Action>) => {
-  dispatch({ type: 'setIsLoading', value: true });
+const makeLocalVolumeSetCall = (
+  state: State,
+  dispatch: React.Dispatch<Action>,
+  setInProgress,
+  setErrorMessage,
+) => {
+  setInProgress(true);
   const requestData = getLocalVolumeSetRequestData(state);
   k8sCreate(LocalVolumeSetModel, requestData)
     .then(() => {
       state.onNextClick();
-      dispatch({ type: 'setIsLoading', value: false });
+      setInProgress(false);
       dispatch({ type: 'setFinalStep', value: true });
     })
     .catch((err) => {
-      dispatch({ type: 'setError', value: err.message });
-      dispatch({ type: 'setIsLoading', value: false });
+      setErrorMessage(err.message);
+      setInProgress(false);
     });
 };
 
 export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({ state, dispatch }) => {
+  const [inProgress, setInProgress] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState('');
   return (
     <>
       <LocalVolumeSetHeader />
@@ -49,7 +57,12 @@ export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({ stat
         </Form>
         <DiscoveryDonutChart state={state} dispatch={dispatch} />
       </div>
-      <ConfirmationModal state={state} dispatch={dispatch} />
+      <ConfirmationModal
+        state={state}
+        dispatch={dispatch}
+        setInProgress={setInProgress}
+        setErrorMessage={setErrorMessage}
+      />
       {state.filteredNodes.length < MINIMUM_NODES && (
         <Alert
           className="co-alert ceph-ocs-install__wizard-alert"
@@ -62,6 +75,7 @@ export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({ stat
           adjust the filters to include more nodes.
         </Alert>
       )}
+      <RequestErrors errorMessage={errorMessage} inProgress={inProgress} />
     </>
   );
 };
@@ -71,10 +85,10 @@ type CreateLocalVolumeSetProps = {
   dispatch: React.Dispatch<Action>;
 };
 
-const ConfirmationModal = ({ state, dispatch }) => {
+const ConfirmationModal = ({ state, dispatch, setInProgress, setErrorMessage }) => {
   const makeLVSCall = () => {
     dispatch({ type: 'setShowConfirmModal', value: false });
-    makeLocalVolumeSetCall(state, dispatch);
+    makeLocalVolumeSetCall(state, dispatch, setInProgress, setErrorMessage);
   };
 
   const cancel = () => {

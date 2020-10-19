@@ -28,7 +28,7 @@ import {
   Validation,
 } from '../../../../utils/common-ocs-install-el';
 import InternalNodeTable from '../../node-list';
-import { SelectNodesText, SelectNodesDetails } from '../../wizard-steps/capacity-and-nodes';
+import { SelectNodesText, SelectNodesDetails } from '../../install-wizard/capacity-and-nodes';
 
 const validate = (scName, enableMinimal): Validation[] => {
   const validations = [];
@@ -36,7 +36,7 @@ const validate = (scName, enableMinimal): Validation[] => {
     validations.push(VALIDATIONS.MINIMAL);
   }
   if (!scName) {
-    validations.push(VALIDATIONS.STORAGECLASS);
+    validations.push(VALIDATIONS.INTERNALSTORAGECLASS);
   }
   return validations;
 };
@@ -75,6 +75,7 @@ export const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
               onChange={(sc: StorageClassResourceKind) =>
                 dispatch({ type: ActionType.SET_STORAGE_CLASS, payload: sc })
               }
+              noSelection
               filter={filterSCWithoutNoProv}
               hideClassName="ocs-install-wizard__storage-class-label"
             />

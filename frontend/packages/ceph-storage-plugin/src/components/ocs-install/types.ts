@@ -1,5 +1,6 @@
-import { NodeKind } from '@console/internal/module/k8s';
 import { IRow } from '@patternfly/react-table';
+import { NodeKind } from '@console/internal/module/k8s';
+import { TableProps } from '@console/internal/components/factory';
 
 type NodeTableRow = {
   cells: IRow['cells'];
@@ -16,9 +17,10 @@ export type GetRows = (
   }: {
     componentProps: { data: NodeKind[] };
     customData?: {
-      filteredNodes: string[];
-      setNodes: React.Dispatch<React.SetStateAction<NodeKind[]>>;
-      nodes: NodeKind[];
+      onRowSelected?: (nodes: NodeKind[]) => void;
+      nodes?: NodeKind[];
+      filteredNodes?: string[];
+      setNodes?: (nodes: NodeKind[]) => void;
     };
   },
   visibleRows?: Set<string>,
@@ -27,11 +29,13 @@ export type GetRows = (
   setSelectedNodes?: (nodes: NodeKind[]) => void,
 ) => NodeTableRow[];
 
-export type NodeTableProps = {
+export type NodeTableProps = TableProps & {
   data: NodeKind[];
   customData?: {
-    onRowSelected: (nodes: NodeKind[]) => void;
-    nodes?: Set<string>;
+    onRowSelected?: (nodes: NodeKind[]) => void;
+    nodes?: NodeKind[];
+    filteredNodes?: string[];
+    setNodes?: (nodes: NodeKind[]) => void;
   };
   filters: { name: string; label: { all: string[] } };
 };
