@@ -7,7 +7,7 @@ import { sortable } from '@patternfly/react-table';
 // @ts-ignore
 import { connect, useSelector } from 'react-redux';
 import { Tooltip, Button } from '@patternfly/react-core';
-import { withTranslation } from 'react-i18next';
+import { useTranslation, withTranslation } from 'react-i18next';
 import i18next from 'i18next';
 
 import { PencilAltIcon } from '@patternfly/react-icons';
@@ -142,103 +142,94 @@ const namespaceColumnInfo = Object.freeze({
   name: {
     classes: '',
     id: 'name',
-    title: 'Name',
   },
   displayName: {
     classes: 'co-break-word',
     id: 'displayName',
-    title: 'Display Name',
   },
   status: {
     classes: '',
     id: 'status',
-    title: 'Status',
   },
   requester: {
     classes: '',
     id: 'requester',
-    title: 'Requester',
   },
   memory: {
     classes: '',
     id: 'memory',
-    title: 'Memory',
   },
   cpu: {
     classes: '',
     id: 'cpu',
-    title: 'CPU',
   },
   created: {
     classes: '',
     id: 'created',
-    title: 'Created',
   },
   description: {
     classes: '',
     id: 'description',
-    title: 'Description',
   },
   labels: {
     classes: '',
     id: 'labels',
-    title: 'Labels',
   },
 });
 
 const NamespacesTableHeader = () => {
   return [
     {
-      title: namespaceColumnInfo.name.title,
+      title: i18next.t('namespace~Name'),
       id: namespaceColumnInfo.name.id,
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: namespaceColumnInfo.name.classes },
     },
     {
-      title: namespaceColumnInfo.displayName.title,
+      title: i18next.t('namespace~Display name'),
       id: namespaceColumnInfo.displayName.id,
       sortField: 'metadata.annotations["openshift.io/display-name"]',
       transforms: [sortable],
       props: { className: namespaceColumnInfo.displayName.classes },
     },
     {
-      title: namespaceColumnInfo.status.title,
+      title: i18next.t('namespace~Status'),
       id: namespaceColumnInfo.status.id,
       sortField: 'status.phase',
       transforms: [sortable],
       props: { className: namespaceColumnInfo.status.classes },
     },
     {
-      title: namespaceColumnInfo.requester.title,
+      title: i18next.t('namespace~Requester'),
       id: namespaceColumnInfo.requester.id,
       sortField: "metadata.annotations.['openshift.io/requester']",
       transforms: [sortable],
       props: { className: namespaceColumnInfo.requester.classes },
     },
     {
-      title: namespaceColumnInfo.memory.title,
+      title: i18next.t('namespace~Memory'),
       id: namespaceColumnInfo.memory.id,
       sortFunc: 'namespaceMemory',
       transforms: [sortable],
       props: { className: namespaceColumnInfo.memory.classes },
     },
     {
-      title: namespaceColumnInfo.cpu.title,
+      title: i18next.t('namespace~CPU'),
       id: namespaceColumnInfo.cpu.id,
       sortFunc: 'namespaceCPU',
       transforms: [sortable],
       props: { className: namespaceColumnInfo.cpu.classes },
     },
     {
-      title: namespaceColumnInfo.created.title,
+      title: i18next.t('namespace~Created'),
       id: namespaceColumnInfo.created.id,
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: namespaceColumnInfo.created.classes },
     },
     {
-      title: namespaceColumnInfo.description.title,
+      title: i18next.t('namespace~Description'),
       id: namespaceColumnInfo.description.id,
       sortField: "metadata.annotations.['openshift.io/description']",
       transforms: [sortable],
@@ -246,7 +237,7 @@ const NamespacesTableHeader = () => {
       additional: true,
     },
     {
-      title: namespaceColumnInfo.labels.title,
+      title: i18next.t('namespace~Labels'),
       id: namespaceColumnInfo.labels.id,
       sortField: 'metadata.labels',
       transforms: [sortable],
@@ -277,7 +268,7 @@ const namespacesRowStateToProps = ({ UI }) => ({
 });
 
 const NamespacesTableRow = connect(namespacesRowStateToProps)(
-  ({ obj: ns, index, key, style, metrics, selectedColumns }) => {
+  withTranslation()(({ obj: ns, index, key, style, metrics, selectedColumns, t }) => {
     const name = getName(ns);
     const requester = getRequester(ns);
     const bytes = metrics?.memory?.[name];
@@ -298,7 +289,9 @@ const NamespacesTableRow = connect(namespacesRowStateToProps)(
           columnID={namespaceColumnInfo.displayName.id}
         >
           <span className="co-break-word co-line-clamp">
-            {getDisplayName(ns) || <span className="text-muted">No display name</span>}
+            {getDisplayName(ns) || (
+              <span className="text-muted">{t('namespace~No display name')}</span>
+            )}
           </span>
         </TableData>
         <TableData
@@ -313,7 +306,7 @@ const NamespacesTableRow = connect(namespacesRowStateToProps)(
           columns={columns}
           columnID={namespaceColumnInfo.requester.id}
         >
-          {requester || <span className="text-muted">No requester</span>}
+          {requester || <span className="text-muted">{t('namespace~No requester')}</span>}
         </TableData>
         <TableData
           className={namespaceColumnInfo.memory.classes}
@@ -327,7 +320,7 @@ const NamespacesTableRow = connect(namespacesRowStateToProps)(
           columns={columns}
           columnID={namespaceColumnInfo.cpu.id}
         >
-          {cores ? `${formatCores(cores)} cores` : '-'}
+          {cores ? t('namespace~{{cores}} cores', { cores: formatCores(cores) }) : '-'}
         </TableData>
         <TableData
           className={namespaceColumnInfo.created.classes}
@@ -342,7 +335,7 @@ const NamespacesTableRow = connect(namespacesRowStateToProps)(
           columnID={namespaceColumnInfo.description.id}
         >
           <span className="co-break-word co-line-clamp">
-            {description || <span className="text-muted">No description</span>}
+            {description || <span className="text-muted">{t('namespace~No description')}</span>}
           </span>
         </TableData>
         <TableData
@@ -357,7 +350,7 @@ const NamespacesTableRow = connect(namespacesRowStateToProps)(
         </TableData>
       </TableRow>
     );
-  },
+  }),
 );
 
 const NamespacesRow = (rowArgs) => (
@@ -384,11 +377,12 @@ export const NamespacesList = connect(
     const id = setInterval(updateMetrics, 30 * 1000);
     return () => clearInterval(id);
   }, [setNamespaceMetrics]);
+  const { t } = useTranslation();
   return (
     <Table
       {...props}
       columnManagementID={NamespacesColumnManagementID}
-      aria-label="Namespaces"
+      aria-label={t('namespace~Namespaces')}
       Header={NamespacesTableHeader}
       Row={NamespacesRow}
       virtualize
@@ -400,6 +394,7 @@ export const NamespacesPage = (props) => {
   let selectedColumns = new Set(
     useSelector(({ UI }) => UI.getIn(['columnManagement', NamespacesColumnManagementID])),
   );
+  const { t } = useTranslation();
   if (_.isEmpty(selectedColumns)) {
     selectedColumns = getNamespacesSelectedColumns();
   }
@@ -410,7 +405,7 @@ export const NamespacesPage = (props) => {
       canCreate={true}
       createHandler={() => createNamespaceModal({ blocking: true })}
       columnLayout={{
-        columns: NamespacesTableHeader().map((column) =>
+        columns: NamespacesTableHeader(null, t).map((column) =>
           _.pick(column, ['title', 'additional', 'id']),
         ),
         id: NamespacesColumnManagementID,
@@ -428,28 +423,28 @@ const projectColumnManagementID = referenceForModel(ProjectModel);
 const projectTableHeader = ({ showMetrics, showActions }) => {
   return [
     {
-      title: namespaceColumnInfo.name.title,
+      title: i18next.t('namespace~Name'),
       id: namespaceColumnInfo.name.id,
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: namespaceColumnInfo.name.classes },
     },
     {
-      title: namespaceColumnInfo.displayName.title,
+      title: i18next.t('namespace~Display name'),
       id: namespaceColumnInfo.displayName.id,
       sortField: 'metadata.annotations["openshift.io/display-name"]',
       transforms: [sortable],
       props: { className: namespaceColumnInfo.displayName.classes },
     },
     {
-      title: namespaceColumnInfo.status.title,
+      title: i18next.t('namespace~Status'),
       id: namespaceColumnInfo.status.id,
       sortField: 'status.phase',
       transforms: [sortable],
       props: { className: namespaceColumnInfo.status.classes },
     },
     {
-      title: namespaceColumnInfo.requester.title,
+      title: i18next.t('namespace~Requester'),
       id: namespaceColumnInfo.requester.id,
       sortField: "metadata.annotations.['openshift.io/requester']",
       transforms: [sortable],
@@ -458,14 +453,14 @@ const projectTableHeader = ({ showMetrics, showActions }) => {
     ...(showMetrics
       ? [
           {
-            title: namespaceColumnInfo.memory.title,
+            title: i18next.t('namespace~Memory'),
             id: namespaceColumnInfo.memory.id,
             sortFunc: 'namespaceMemory',
             transforms: [sortable],
             props: { className: namespaceColumnInfo.memory.classes },
           },
           {
-            title: namespaceColumnInfo.cpu.title,
+            title: i18next.t('namespace~CPU'),
             id: namespaceColumnInfo.cpu.id,
             sortFunc: 'namespaceCPU',
             transforms: [sortable],
@@ -474,14 +469,14 @@ const projectTableHeader = ({ showMetrics, showActions }) => {
         ]
       : []),
     {
-      title: namespaceColumnInfo.created.title,
+      title: i18next.t('namespace~Created'),
       id: namespaceColumnInfo.created.id,
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: namespaceColumnInfo.created.classes },
     },
     {
-      title: namespaceColumnInfo.description.title,
+      title: i18next.t('namespace~Description'),
       id: namespaceColumnInfo.description.id,
       sortField: "metadata.annotations.['openshift.io/description']",
       transforms: [sortable],
@@ -489,7 +484,7 @@ const projectTableHeader = ({ showMetrics, showActions }) => {
       additional: true,
     },
     {
-      title: namespaceColumnInfo.labels.title,
+      title: i18next.t('namespace~Labels'),
       id: namespaceColumnInfo.labels.id,
       sortField: 'metadata.labels',
       transforms: [sortable],
@@ -543,117 +538,123 @@ const projectRowStateToProps = ({ UI }) => ({
 });
 
 const ProjectTableRow = connect(projectRowStateToProps)(
-  ({ obj: project, index, rowKey, style, customData = {}, metrics, selectedColumns }) => {
-    const name = getName(project);
-    const requester = getRequester(project);
-    const {
-      ProjectLinkComponent,
-      actionsEnabled = true,
-      showMetrics,
-      showActions,
-      isColumnManagementEnabled = true,
-    } = customData;
-    const bytes = metrics?.memory?.[name];
-    const cores = metrics?.cpu?.[name];
-    const description = getDescription(project);
-    const labels = project.metadata.labels;
-    const columns = isColumnManagementEnabled
-      ? new Set(
-          selectedColumns?.get(projectColumnManagementID) ||
-            getProjectSelectedColumns({ showMetrics, showActions }),
-        )
-      : null;
-    return (
-      <TableRow id={project.metadata.uid} index={index} trKey={rowKey} style={style}>
-        <TableData className={namespaceColumnInfo.name.classes}>
-          {customData && ProjectLinkComponent ? (
-            <ProjectLinkComponent project={project} />
-          ) : (
-            <span className="co-resource-item">
-              <ResourceLink
-                kind="Project"
-                name={project.metadata.name}
-                title={project.metadata.uid}
-              />
-            </span>
-          )}
-        </TableData>
-        <TableData
-          className={namespaceColumnInfo.displayName.classes}
-          columns={columns}
-          columnID={namespaceColumnInfo.displayName.id}
-        >
-          <span className="co-break-word co-line-clamp">
-            {getDisplayName(project) || <span className="text-muted">No display name</span>}
-          </span>
-        </TableData>
-        <TableData
-          className={namespaceColumnInfo.status.classes}
-          columns={columns}
-          columnID={namespaceColumnInfo.status.id}
-        >
-          <Status status={project.status.phase} />
-        </TableData>
-        <TableData
-          className={classNames(namespaceColumnInfo.requester.classes, 'co-break-word')}
-          columns={columns}
-          columnID={namespaceColumnInfo.requester.id}
-        >
-          {requester || <span className="text-muted">No requester</span>}
-        </TableData>
-        {showMetrics && (
-          <>
-            <TableData
-              className={namespaceColumnInfo.memory.classes}
-              columns={columns}
-              columnID={namespaceColumnInfo.memory.id}
-            >
-              {bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-'}
-            </TableData>
-            <TableData
-              className={namespaceColumnInfo.cpu.classes}
-              columns={columns}
-              columnID={namespaceColumnInfo.cpu.id}
-            >
-              {cores ? `${formatCores(cores)} cores` : '-'}
-            </TableData>
-          </>
-        )}
-        <TableData
-          className={namespaceColumnInfo.created.classes}
-          columns={columns}
-          columnID={namespaceColumnInfo.created.id}
-        >
-          <Timestamp timestamp={project.metadata.creationTimestamp} />
-        </TableData>
-        {isColumnManagementEnabled && (
-          <>
-            <TableData
-              className={namespaceColumnInfo.description.classes}
-              columns={columns}
-              columnID={namespaceColumnInfo.description.id}
-            >
-              <span className="co-break-word co-line-clamp">
-                {description || <span className="text-muted">No description</span>}
+  withTranslation()(
+    ({ obj: project, index, rowKey, style, customData = {}, metrics, selectedColumns, t }) => {
+      const name = getName(project);
+      const requester = getRequester(project);
+      const {
+        ProjectLinkComponent,
+        actionsEnabled = true,
+        showMetrics,
+        showActions,
+        isColumnManagementEnabled = true,
+      } = customData;
+      const bytes = metrics?.memory?.[name];
+      const cores = metrics?.cpu?.[name];
+      const description = getDescription(project);
+      const labels = project.metadata.labels;
+      const columns = isColumnManagementEnabled
+        ? new Set(
+            selectedColumns?.get(projectColumnManagementID) ||
+              getProjectSelectedColumns({ showMetrics, showActions }),
+          )
+        : null;
+      return (
+        <TableRow id={project.metadata.uid} index={index} trKey={rowKey} style={style}>
+          <TableData className={namespaceColumnInfo.name.classes}>
+            {customData && ProjectLinkComponent ? (
+              <ProjectLinkComponent project={project} />
+            ) : (
+              <span className="co-resource-item">
+                <ResourceLink
+                  kind="Project"
+                  name={project.metadata.name}
+                  title={project.metadata.uid}
+                />
               </span>
-            </TableData>
-            <TableData
-              className={namespaceColumnInfo.labels.classes}
-              columns={columns}
-              columnID={namespaceColumnInfo.labels.id}
-            >
-              <LabelList labels={labels} kind="Project" />
-            </TableData>
-          </>
-        )}
-        {actionsEnabled && (
-          <TableData className={Kebab.columnClass}>
-            <ResourceKebab actions={projectMenuActions} kind="Project" resource={project} />
+            )}
           </TableData>
-        )}
-      </TableRow>
-    );
-  },
+          <TableData
+            className={namespaceColumnInfo.displayName.classes}
+            columns={columns}
+            columnID={namespaceColumnInfo.displayName.id}
+          >
+            <span className="co-break-word co-line-clamp">
+              {getDisplayName(project) || (
+                <span className="text-muted">{t('namespace~No display name')}</span>
+              )}
+            </span>
+          </TableData>
+          <TableData
+            className={namespaceColumnInfo.status.classes}
+            columns={columns}
+            columnID={namespaceColumnInfo.status.id}
+          >
+            <Status status={project.status.phase} />
+          </TableData>
+          <TableData
+            className={classNames(namespaceColumnInfo.requester.classes, 'co-break-word')}
+            columns={columns}
+            columnID={namespaceColumnInfo.requester.id}
+          >
+            {requester || <span className="text-muted">{t('namespace~No requester')}</span>}
+          </TableData>
+          {showMetrics && (
+            <>
+              <TableData
+                className={namespaceColumnInfo.memory.classes}
+                columns={columns}
+                columnID={namespaceColumnInfo.memory.id}
+              >
+                {bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-'}
+              </TableData>
+              <TableData
+                className={namespaceColumnInfo.cpu.classes}
+                columns={columns}
+                columnID={namespaceColumnInfo.cpu.id}
+              >
+                {cores ? t('namespace~{{cores}} cores', { cores: formatCores(cores) }) : '-'}
+              </TableData>
+            </>
+          )}
+          <TableData
+            className={namespaceColumnInfo.created.classes}
+            columns={columns}
+            columnID={namespaceColumnInfo.created.id}
+          >
+            <Timestamp timestamp={project.metadata.creationTimestamp} />
+          </TableData>
+          {isColumnManagementEnabled && (
+            <>
+              <TableData
+                className={namespaceColumnInfo.description.classes}
+                columns={columns}
+                columnID={namespaceColumnInfo.description.id}
+              >
+                <span className="co-break-word co-line-clamp">
+                  {description || (
+                    <span className="text-muted">{t('namespace~No description')}</span>
+                  )}
+                </span>
+              </TableData>
+              <TableData
+                className={namespaceColumnInfo.labels.classes}
+                columns={columns}
+                columnID={namespaceColumnInfo.labels.id}
+              >
+                <LabelList labels={labels} kind="Project" />
+              </TableData>
+            </>
+          )}
+          {actionsEnabled && (
+            <TableData className={Kebab.columnClass}>
+              <ResourceKebab actions={projectMenuActions} kind="Project" resource={project} />
+            </TableData>
+          )}
+        </TableRow>
+      );
+    },
+  ),
 );
 ProjectTableRow.displayName = 'ProjectTableRow';
 
@@ -667,20 +668,23 @@ const ProjectRow = (rowArgs) => (
   />
 );
 
-export const ProjectsTable = (props) => (
-  <Table
-    {...props}
-    aria-label="Projects"
-    Header={projectHeaderWithoutActions}
-    Row={ProjectRow}
-    customData={{
-      ProjectLinkComponent: ProjectLink,
-      actionsEnabled: false,
-      isColumnManagementEnabled: false,
-    }}
-    virtualize
-  />
-);
+export const ProjectsTable = (props) => {
+  const { t } = useTranslation();
+  return (
+    <Table
+      {...props}
+      aria-label={t('namespace~Projects')}
+      Header={projectHeaderWithoutActions}
+      Row={ProjectRow}
+      customData={{
+        ProjectLinkComponent: ProjectLink,
+        actionsEnabled: false,
+        isColumnManagementEnabled: false,
+      }}
+      virtualize
+    />
+  );
+};
 
 const headerWithMetrics = () => projectTableHeader({ showMetrics: true, showActions: true });
 const headerNoMetrics = () => projectTableHeader({ showMetrics: false, showActions: true });
@@ -700,6 +704,7 @@ const ProjectList_ = connectToFlags(
     }
   }, [showMetrics]);
   /* eslint-enable react-hooks/exhaustive-deps */
+  const { t } = useTranslation();
 
   // Don't render the table until we know whether we can get metrics. It's
   // not possible to change the table headers once the component is mounted.
@@ -709,16 +714,16 @@ const ProjectList_ = connectToFlags(
 
   const ProjectEmptyMessage = () => (
     <MsgBox
-      title="Welcome to OpenShift"
+      title={t('namespace~Welcome to OpenShift')}
       detail={<OpenShiftGettingStarted canCreateProject={flags[FLAGS.CAN_CREATE_PROJECT]} />}
     />
   );
-  const ProjectNotFoundMessage = () => <MsgBox title="No Projects Found" />;
+  const ProjectNotFoundMessage = () => <MsgBox title={t('namespace~No projects found')} />;
   return (
     <Table
       {...tableProps}
       columnManagementID={projectColumnManagementID}
-      aria-label="Projects"
+      aria-label={t('namespace~Projects')}
       data={data}
       Header={showMetrics ? headerWithMetrics : headerNoMetrics}
       Row={ProjectRow}
@@ -745,13 +750,14 @@ export const ProjectsPage = connectToFlags(
   const selectedColumns = new Set(
     useSelector(({ UI }) => UI.getIn(['columnManagement', projectColumnManagementID])),
   );
+  const { t } = useTranslation();
   return (
     <ListPage
       {...rest}
       ListComponent={ProjectList}
       canCreate={flags[FLAGS.CAN_CREATE_PROJECT]}
       createHandler={() => createProjectModal({ blocking: true })}
-      filterLabel="by name or display name"
+      filterLabel={t('namespace~by name or display name')}
       skipAccessReview
       textFilter="project-name"
       kind="Project"
@@ -771,6 +777,7 @@ export const ProjectsPage = connectToFlags(
 export const PullSecret = (props) => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [data, setData] = React.useState(undefined);
+  const { t } = useTranslation();
 
   React.useEffect(() => {
     k8sGet(SecretModel, null, props.namespace.metadata.name, {
@@ -798,53 +805,63 @@ export const PullSecret = (props) => {
 
   return (
     <Button variant="link" type="button" isInline onClick={modal}>
-      {_.get(data, 'metadata.name') || 'Not Configured'}
+      {_.get(data, 'metadata.name') || t('namespace~Not configured')}
       <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
     </Button>
   );
 };
 
-export const NamespaceLineCharts = ({ ns }) => (
-  <div className="row">
-    <div className="col-md-6 col-sm-12">
-      <Area
-        title="CPU Usage"
-        humanize={humanizeCpuCores}
-        namespace={ns.metadata.name}
-        query={`namespace:container_cpu_usage:sum{namespace='${ns.metadata.name}'}`}
-      />
+export const NamespaceLineCharts = ({ ns }) => {
+  const { t } = useTranslation();
+  return (
+    <div className="row">
+      <div className="col-md-6 col-sm-12">
+        <Area
+          title={t('namespace~CPU usage')}
+          humanize={humanizeCpuCores}
+          namespace={ns.metadata.name}
+          query={`namespace:container_cpu_usage:sum{namespace='${ns.metadata.name}'}`}
+        />
+      </div>
+      <div className="col-md-6 col-sm-12">
+        <Area
+          title={t('namespace~Memory usage')}
+          humanize={humanizeBinaryBytes}
+          byteDataType={ByteDataTypes.BinaryBytes}
+          namespace={ns.metadata.name}
+          query={`sum by(namespace) (container_memory_working_set_bytes{namespace="${ns.metadata.name}",container="",pod!=""})`}
+        />
+      </div>
     </div>
-    <div className="col-md-6 col-sm-12">
-      <Area
-        title="Memory Usage"
-        humanize={humanizeBinaryBytes}
-        byteDataType={ByteDataTypes.BinaryBytes}
-        namespace={ns.metadata.name}
-        query={`sum by(namespace) (container_memory_working_set_bytes{namespace="${ns.metadata.name}",container="",pod!=""})`}
-      />
+  );
+};
+
+export const TopPodsBarChart = ({ ns }) => {
+  const { t } = useTranslation();
+  return (
+    <Bar
+      title={t('namespace~Memory usage by pod (top 10)')}
+      namespace={ns.metadata.name}
+      query={`sort_desc(topk(10, sum by (pod)(container_memory_working_set_bytes{container="",pod!="",namespace="${ns.metadata.name}"})))`}
+      humanize={humanizeBinaryBytes}
+      metric="pod"
+    />
+  );
+};
+
+const ResourceUsage = requirePrometheus(({ ns }) => {
+  const { t } = useTranslation();
+  return (
+    <div className="co-m-pane__body">
+      <SectionHeading text={t('namespace~Resource usage')} />
+      <NamespaceLineCharts ns={ns} />
+      <TopPodsBarChart ns={ns} />
     </div>
-  </div>
-);
-
-export const TopPodsBarChart = ({ ns }) => (
-  <Bar
-    title="Memory Usage by Pod (Top 10)"
-    namespace={ns.metadata.name}
-    query={`sort_desc(topk(10, sum by (pod)(container_memory_working_set_bytes{container="",pod!="",namespace="${ns.metadata.name}"})))`}
-    humanize={humanizeBinaryBytes}
-    metric="pod"
-  />
-);
-
-const ResourceUsage = requirePrometheus(({ ns }) => (
-  <div className="co-m-pane__body">
-    <SectionHeading text="Resource Usage" />
-    <NamespaceLineCharts ns={ns} />
-    <TopPodsBarChart ns={ns} />
-  </div>
-));
+  );
+});
 
 export const NamespaceSummary = ({ ns }) => {
+  const { t } = useTranslation();
   const displayName = getDisplayName(ns);
   const description = getDescription(ns);
   const requester = getRequester(ns);
@@ -861,15 +878,15 @@ export const NamespaceSummary = ({ ns }) => {
       <div className="col-sm-6 col-xs-12">
         {/* Labels aren't editable on kind Project, only Namespace. */}
         <ResourceSummary resource={ns} showLabelEditor={ns.kind === 'Namespace'}>
-          <dt>Display Name</dt>
+          <dt>{t('namespace~Display name')}</dt>
           <dd
             className={classNames({
               'text-muted': !displayName,
             })}
           >
-            {displayName || 'No display name'}
+            {displayName || t('namespace~No display name')}
           </dd>
-          <dt>Description</dt>
+          <dt>{t('namespace~Description')}</dt>
           <dd>
             <p
               className={classNames({
@@ -878,7 +895,7 @@ export const NamespaceSummary = ({ ns }) => {
                 'co-namespace-summary__description': description,
               })}
             >
-              {description || 'No description'}
+              {description || t('namespace~No description')}
             </p>
           </dd>
           {requester && <dt>Requester</dt>}
@@ -887,26 +904,28 @@ export const NamespaceSummary = ({ ns }) => {
       </div>
       <div className="col-sm-6 col-xs-12">
         <dl className="co-m-pane__details">
-          <DetailsItem label="Status" obj={ns} path="status.phase">
+          <DetailsItem label={t('namespace~Status')} obj={ns} path="status.phase">
             <Status status={ns.status.phase} />
           </DetailsItem>
           {canListSecrets && (
             <>
-              <dt>Default Pull Secret</dt>
+              <dt>{t('namespace~Default pull secret')}</dt>
               <dd>
                 <PullSecret namespace={ns} />
               </dd>
             </>
           )}
-          <dt>Network Policies</dt>
+          <dt>{t('namespace~Network policies')}</dt>
           <dd>
-            <Link to={`/k8s/ns/${ns.metadata.name}/networkpolicies`}>Network Policies</Link>
+            <Link to={`/k8s/ns/${ns.metadata.name}/networkpolicies`}>
+              {t('namespace~Network policies')}
+            </Link>
           </dd>
           {serviceMeshEnabled && (
             <>
-              <dt>Service Mesh</dt>
+              <dt>{t('namespace~Service mesh')}</dt>
               <dd>
-                <GreenCheckCircleIcon /> Service Mesh Enabled
+                <GreenCheckCircleIcon /> {t('namespace~Service mesh enabled')}
               </dd>
             </>
           )}
@@ -917,6 +936,7 @@ export const NamespaceSummary = ({ ns }) => {
 };
 
 export const NamespaceDetails = ({ obj: ns, customData }) => {
+  const { t } = useTranslation();
   const [consoleLinks] = useK8sWatchResource({
     isList: true,
     kind: referenceForModel(ConsoleLinkModel),
@@ -926,13 +946,15 @@ export const NamespaceDetails = ({ obj: ns, customData }) => {
   return (
     <div>
       <div className="co-m-pane__body">
-        {!customData?.hideHeading && <SectionHeading text={`${ns.kind} Details`} />}
+        {!customData?.hideHeading && (
+          <SectionHeading text={t('namespace~{{kind}} details', { kind: ns.kind })} />
+        )}
         <NamespaceSummary ns={ns} />
       </div>
       {ns.kind === 'Namespace' && <ResourceUsage ns={ns} />}
       {!_.isEmpty(links) && (
         <div className="co-m-pane__body">
-          <SectionHeading text="Launcher" />
+          <SectionHeading text={t('namespace~Launcher')} />
           <ul className="list-unstyled">
             {_.map(_.sortBy(links, 'spec.text'), (link) => {
               return (
@@ -1078,7 +1100,7 @@ class NamespaceBarDropdowns_ extends React.Component {
 const NamespaceBarDropdownsWithTranslation = connect(
   namespaceBarDropdownStateToProps,
   namespaceBarDropdownDispatchToProps,
-)(NamespaceBarDropdowns_);
+)(withTranslation()(NamespaceBarDropdowns_));
 
 const NamespaceBarDropdowns = withTranslation()(NamespaceBarDropdownsWithTranslation);
 
@@ -1133,24 +1155,27 @@ export const NamespacesDetailsPage = (props) => (
   />
 );
 
-export const ProjectsDetailsPage = (props) => (
-  <DetailsPage
-    {...props}
-    menuActions={projectMenuActions}
-    pages={[
-      {
-        href: '',
-        name: 'Overview',
-        component: ProjectDashboard,
-      },
-      {
-        href: 'details',
-        name: 'Details',
-        component: NamespaceDetails,
-      },
-      navFactory.editYaml(),
-      navFactory.workloads(OverviewListPage),
-      navFactory.roles(RolesPage),
-    ]}
-  />
-);
+export const ProjectsDetailsPage = (props) => {
+  const { t } = useTranslation();
+  return (
+    <DetailsPage
+      {...props}
+      menuActions={projectMenuActions}
+      pages={[
+        {
+          href: '',
+          name: t('namespace~Overview'),
+          component: ProjectDashboard,
+        },
+        {
+          href: 'details',
+          name: t('namespace~Details'),
+          component: NamespaceDetails,
+        },
+        navFactory.editYaml(),
+        navFactory.workloads(OverviewListPage),
+        navFactory.roles(RolesPage),
+      ]}
+    />
+  );
+};

@@ -86,6 +86,7 @@ i18n
         'machine-sets',
         'modal',
         'monitoring',
+        'namespace',
         'nav',
         'nodes',
         'oauth',
