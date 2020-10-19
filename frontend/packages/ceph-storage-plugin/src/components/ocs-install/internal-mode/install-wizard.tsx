@@ -3,25 +3,31 @@ import * as React from 'react';
 // @ts-ignore
 import { useDispatch } from 'react-redux';
 import { match as RouteMatch } from 'react-router';
-import { Alert, Wizard, AlertActionCloseButton, Stack, StackItem } from '@patternfly/react-core';
+import {
+  Alert,
+  Wizard,
+  AlertActionCloseButton,
+  Stack,
+  StackItem,
+  WizardStep,
+} from '@patternfly/react-core';
 import { history } from '@console/internal/components/utils';
 import { setFlag } from '@console/internal/actions/features';
 import { k8sCreate, referenceForModel } from '@console/internal/module/k8s';
 import { getName } from '@console/shared';
 import { OCSServiceModel } from '../../../models';
 import { OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG, OCS_FLAG } from '../../../features';
-import { OCS_INTERNAL_CR_NAME, MINIMUM_NODES } from '../../../constants';
+import { OCS_INTERNAL_CR_NAME, MINIMUM_NODES, CreateStepsSC } from '../../../constants';
 import { StorageClusterKind } from '../../../types';
 import { labelNodes, getOCSRequestData } from '../ocs-request-data';
 import { SelectCapacityAndNodes, Configure, ReviewAndCreate } from './install-wizard-steps';
 import { initialState, reducer, InternalClusterState } from './reducer';
-import './install-wizard.scss';
+import '../install-wizard/install-wizard.scss';
 
 const makeOCSRequest = (state: InternalClusterState): Promise<StorageClusterKind> => {
   const { storageClass, capacity, enableEncryption, nodes, enableMinimal } = state;
-  const scName = getName(storageClass);
   const storageCluster: StorageClusterKind = getOCSRequestData(
-    scName,
+    storageClass,
     capacity,
     enableEncryption,
     enableMinimal,
@@ -41,20 +47,20 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({ ma
   const scName = getName(state.storageClass);
   const hasEnabledCreateStep = !!(state.nodes.length >= MINIMUM_NODES && scName);
 
-  const steps = [
+  const steps: WizardStep[] = [
     {
       name: 'Select capacity and nodes',
-      id: 'step-1',
+      id: CreateStepsSC.STORAGEANDNODES,
       component: <SelectCapacityAndNodes state={state} dispatch={dispatch} />,
     },
     {
       name: 'Configure',
-      id: 'step-2',
+      id: CreateStepsSC.CONFIGURE,
       component: <Configure state={state} dispatch={dispatch} />,
     },
     {
       name: 'Review and create',
-      id: 'step-3',
+      id: CreateStepsSC.REVIEWANDCREATE,
       component: (
         <ReviewAndCreate state={state} errorMessage={errorMessage} inProgress={inProgress} />
       ),

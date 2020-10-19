@@ -1,9 +1,13 @@
 .ocs-install-info-alert {
-  margin: 15px 30px;
+  margin: var(--pf-global--spacer--md) var(--pf-global--spacer--xl);
 }
 
 .ocs-install-wizard {
-  border-top: 1px solid #ccc;
+  .pf-c-wizard__nav {
+    width: 16rem;
+  }
+
+  border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
 
   &__card {
     max-width: 27rem;
@@ -41,23 +45,7 @@
   &__select-nodes {
     .co-m-pane__body {
       /* Removes padding from the list page to align the table with rest of the form fields*/
-      padding: 0px;
-    }
-
-    .pf-c-table {
-      border: 1px solid #ccc;
-
-      .pf-c-table__check {
-        /* This overrides the default overrides of checkboxes for ocs based tables */
-        width: 4.6% !important;
-
-        @media screen and (max-width: 1620px) {
-          width: 7% !important;
-        }
-        @media screen and (max-width: 1200px) {
-          width: 10% !important;
-        }
-      }
+      padding: 0;
     }
   }
 

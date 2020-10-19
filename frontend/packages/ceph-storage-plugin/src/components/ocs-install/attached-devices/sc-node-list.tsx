@@ -15,20 +15,10 @@ import { getColumns } from '../node-list';
 import { GetRows, NodeTableProps } from '../types';
 import '../ocs-install.scss';
 
-const getRows: GetRows = ({ componentProps, customData }) => {
+const getRows: GetRows = ({ componentProps }) => {
   const { data } = componentProps;
-  const { nodes, setNodes, filteredNodes } = customData;
-  let filteredData: NodeKind[] = data;
 
-  if (filteredNodes) {
-    filteredData = data.filter(
-      (node: NodeKind) =>
-        filteredNodes.includes(getName(node)) ||
-        filteredNodes.includes(node.metadata.labels?.['kubernetes.io/hostname']),
-    );
-  }
-
-  const rows = filteredData.map((node) => {
+  const rows = data.map((node) => {
     const roles = getNodeRoles(node).sort();
     const cpuSpec: string = getNodeCPUCapacity(node);
     const memSpec: string = getNodeAllocatableMemory(node);
@@ -40,13 +30,13 @@ const getRows: GetRows = ({ componentProps, customData }) => {
         title: roles.join(', ') || '-',
       },
       {
-        title: node.metadata.labels?.['failure-domain.beta.kubernetes.io/zone'] || '-',
-      },
-      {
         title: `${humanizeCpuCores(cpuSpec).string || '-'}`,
       },
       {
         title: `${getConvertedUnits(memSpec)}`,
+      },
+      {
+        title: node.metadata.labels?.['failure-domain.beta.kubernetes.io/zone'] || '-',
       },
     ];
     return {
@@ -57,24 +47,37 @@ const getRows: GetRows = ({ componentProps, customData }) => {
     };
   });
 
-  if (setNodes && !_.isEqual(filteredData, nodes)) {
-    setNodes(filteredData);
-  }
-
   return rows;
 };
 
-const AttachedDevicesNodeTable: React.FC<NodeTableProps> = (props) => (
-  <div className="ceph-node-list__max-height ceph-ocs-install__node-list">
-    <Table
-      aria-label="Node Table"
-      data-test-id="attached-devices-nodes-table"
-      {...props}
-      Rows={getRows}
-      Header={getColumns}
-      virtualize={false}
-    />
-  </div>
-);
+const AttachedDevicesNodeTable: React.FC<NodeTableProps> = (props) => {
+  const { data, customData } = props;
+  const { filteredNodes, nodes = [], setNodes } = customData;
+  const tableData: NodeKind[] = data.filter(
+    (node: NodeKind) =>
+      filteredNodes.includes(getName(node)) ||
+      filteredNodes.includes(node.metadata.labels?.['kubernetes.io/hostname']),
+  );
+
+  React.useEffect(() => {
+    if (setNodes && !_.isEqual(tableData, nodes)) {
+      setNodes(tableData);
+    }
+  }, [tableData, setNodes, nodes, filteredNodes]);
+
+  return (
+    <div className="ceph-ocs-install__select-nodes-table">
+      <Table
+        {...props}
+        aria-label="Node Table"
+        data-test-id="attached-devices-nodes-table"
+        data={tableData}
+        Rows={getRows}
+        Header={getColumns}
+        virtualize={false}
+      />
+    </div>
+  );
+};
 
 export default AttachedDevicesNodeTable;

@@ -62,13 +62,11 @@ const makeOCSRequest = (
   isMinimal: boolean,
 ): Promise<any> => {
   const promises = labelNodes(selectedNodes);
-  const scName = getName(storageClass);
   const ocsObj = getOCSRequestData(
-    scName,
+    storageClass,
     defaultRequestSize.BAREMETAL,
     isEncrypted,
     isMinimal,
-    NO_PROVISIONER,
   );
 
   return Promise.all(promises).then(() => k8sCreate(OCSServiceModel, ocsObj));

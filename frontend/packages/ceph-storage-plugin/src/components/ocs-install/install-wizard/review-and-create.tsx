@@ -17,7 +17,11 @@ import {
   ErrorAlert,
   RedExclamationCircleIcon,
 } from '@console/shared';
-import { ValidationMessage, Validation } from '../../../utils/common-ocs-install-el';
+import {
+  ActionValidationMessage,
+  ValidationMessage,
+  Validation,
+} from '../../../utils/common-ocs-install-el';
 import { NodeKind } from '@console/internal/module/k8s';
 
 const REVIEW_ICON_MAP = {
@@ -58,12 +62,13 @@ export const ReviewListBody: React.FC<ReviewListBodyProps> = ({
           </SplitItem>
           <SplitItem isFilled>
             {children}
-            {validation?.variant && (
-              <ValidationMessage
-                className="ocs-install-wizard__review-list-item-alert"
-                validation={validation}
-              />
-            )}
+            {validation?.variant ? (
+              validation?.actionLinkStep ? (
+                <ActionValidationMessage validation={validation} />
+              ) : (
+                <ValidationMessage validation={validation} />
+              )
+            ) : null}
           </SplitItem>
         </Split>
       ) : (

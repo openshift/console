@@ -17,7 +17,8 @@
 
 .ceph-ocs-install__wizard-alert {
   width: 90%;
-  margin: var(--pf-c-wizard__main-body--PaddingTop) var(--pf-c-wizard__main-body--PaddingRight) var(--pf-c-wizard__main-body--PaddingBottom) var(--pf-c-wizard__main-body--PaddingLeft);
+  margin: var(--pf-c-wizard__main-body--PaddingTop) var(--pf-c-wizard__main-body--PaddingRight)
+    var(--pf-c-wizard__main-body--PaddingBottom) var(--pf-c-wizard__main-body--PaddingLeft);
 }
 
 .ceph-ocs-install__create-sc-form {
@@ -85,6 +86,10 @@
     padding-left: 0;
     padding-right: 0;
   }
+}
+
+.ceph-ocs-install__lso-install-alert {
+  margin: var(--pf-global--spacer--md) var(--pf-global--spacer--xl);
 }
 
 // inner class of modal for modifying margin

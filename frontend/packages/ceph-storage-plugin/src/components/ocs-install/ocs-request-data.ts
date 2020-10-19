@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { k8sPatch, NodeKind } from '@console/internal/module/k8s';
+import { k8sPatch, NodeKind, StorageClassResourceKind } from '@console/internal/module/k8s';
 import { NodeModel } from '@console/internal/models';
 import {
   NO_PROVISIONER,
@@ -8,7 +8,7 @@ import {
   OCS_DEVICE_SET_REPLICA,
   ATTACHED_DEVICES_ANNOTATION,
 } from '../../constants';
-import { hasLabel } from '@console/shared';
+import { hasLabel, getName } from '@console/shared';
 import { cephStorageLabel } from '../../selectors';
 import {
   StorageClusterKind,
@@ -96,14 +96,16 @@ export const createDeviceSet = (
   },
 });
 
-// @TODO: pass storage class object then get name and provisioner
 export const getOCSRequestData = (
-  scName: string,
+  storageClass: StorageClassResourceKind,
   storage: string,
   encrypted: boolean,
   isMinimal: boolean,
-  provisioner?: string,
 ): StorageClusterKind => {
+  const scName: string = getName(storageClass);
+  const isNoProvisioner: boolean = storageClass.provisioner === NO_PROVISIONER;
+  const isPortable: boolean = !isNoProvisioner;
+
   const requestData: StorageClusterKind = {
     apiVersion: 'ocs.openshift.io/v1',
     kind: 'StorageCluster',
@@ -118,14 +120,13 @@ export const getOCSRequestData = (
         enable: encrypted,
       },
       storageDeviceSets: [
-        createDeviceSet(scName, storage, true, isMinimal ? MIN_DEVICESET_RESOURCES : {}),
+        createDeviceSet(scName, storage, isPortable, isMinimal ? MIN_DEVICESET_RESOURCES : {}),
       ],
     },
   };
 
-  if (provisioner === NO_PROVISIONER) {
+  if (isNoProvisioner) {
     requestData.spec.monDataDirHostPath = '/var/lib/rook';
-    requestData.spec.storageDeviceSets[0].portable = false;
     requestData.metadata = {
       ...requestData.metadata,
       annotations: {

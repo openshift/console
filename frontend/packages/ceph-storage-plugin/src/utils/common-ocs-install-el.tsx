@@ -1,13 +1,20 @@
 import * as React from 'react';
 import * as cx from 'classnames';
-import { Alert, FormGroup, Switch, AlertVariant } from '@patternfly/react-core';
+import {
+  Alert,
+  FormGroup,
+  Switch,
+  AlertVariant,
+  AlertActionLink,
+  WizardContextConsumer,
+} from '@patternfly/react-core';
 import { ListPage } from '@console/internal/components/factory';
 import { NodeModel } from '@console/internal/models';
 import { FieldLevelHelp } from '@console/internal/components/utils';
 import { StorageClassResourceKind } from '@console/internal/module/k8s';
 import { TechPreviewBadge } from '@console/shared';
 import { OCSStorageClassDropdown } from '../components/modals/storage-class-dropdown';
-import { storageClassTooltip } from '../constants/ocs-install';
+import { storageClassTooltip, CreateStepsSC } from '../constants/ocs-install';
 import '../components/ocs-install/ocs-install.scss';
 import { Link } from 'react-router-dom';
 
@@ -17,12 +24,16 @@ export type Validation = {
   variant?: keyof typeof AlertVariant;
   link?: string;
   linkText?: string;
+  actionLinkText?: string;
+  actionLinkStep?: string;
 };
 
 enum ValidationType {
   'MINIMAL' = 'MINIMAL',
-  'STORAGECLASS' = 'STORAGECLASS',
+  'INTERNALSTORAGECLASS' = 'INTERNALSTORAGECLASS',
+  'BAREMETALSTORAGECLASS' = 'BAREMETALSTORAGECLASS',
   'ALLREQUIREDFIELDS' = 'ALLREQUIREDFIELDS',
+  'MINIMUMNODES' = 'MINIMUMNODES',
 }
 
 export const VALIDATIONS: { [key in ValidationType]: Validation } = {
@@ -36,21 +47,68 @@ export const VALIDATIONS: { [key in ValidationType]: Validation } = {
     ),
     text:
       'The selected nodes do not match the OCS storage cluster requirement of an aggregated 30 CPUs and 72 GiB of RAM. If the selection cannot be modified, a minimal cluster will be deployed.',
+    actionLinkStep: CreateStepsSC.STORAGEANDNODES,
+    actionLinkText: 'Back to nodes selection',
   },
-  [ValidationType.STORAGECLASS]: {
+  [ValidationType.INTERNALSTORAGECLASS]: {
     variant: AlertVariant.danger,
     title: 'Select a storage class to continue',
     text: `This is a required field. ${storageClassTooltip}`,
     link: '/k8s/cluster/storageclasses/~new/form',
     linkText: 'Create new storage class',
   },
+  [ValidationType.BAREMETALSTORAGECLASS]: {
+    variant: AlertVariant.danger,
+    title: 'Select a storage class to continue',
+    text: `This is a required field. ${storageClassTooltip}`,
+  },
   [ValidationType.ALLREQUIREDFIELDS]: {
     variant: AlertVariant.danger,
     title: 'All required fields are not set',
     text:
-      'In order to create the storage cluster, you must set the storage class, select at least 3 nodes (preferably in 3 different zones) and meet the minimum and recommended requirement',
+      'In order to create the storage cluster, you must set the storage class, select at least 3 nodes (preferably in 3 different zones) and meet the minimum or recommended requirement',
+  },
+  [ValidationType.MINIMUMNODES]: {
+    variant: AlertVariant.danger,
+    title: 'Minimum Node Requirement',
+    text:
+      'The OCS Storage cluster require a minimum of 3 nodes for the initial deployment. Please choose a different storage class or go to create a new volume set that matches the minimum node requirement.',
+    actionLinkText: 'Create new volume set instance',
+    actionLinkStep: CreateStepsSC.DISCOVER,
   },
 };
+
+export const ActionValidationMessage: React.FC<ValidationMessageProps> = ({
+  validation,
+  className,
+}) => (
+  <WizardContextConsumer>
+    {({ goToStepById }) => {
+      const {
+        variant = AlertVariant.info,
+        title,
+        text,
+        actionLinkText,
+        actionLinkStep,
+      } = validation;
+      return (
+        <Alert
+          className={cx('co-alert', className)}
+          variant={variant}
+          title={title}
+          isInline
+          actionLinks={
+            <AlertActionLink onClick={() => goToStepById(actionLinkStep)}>
+              {actionLinkText}
+            </AlertActionLink>
+          }
+        >
+          <p>{text}</p>
+        </Alert>
+      );
+    }}
+  </WizardContextConsumer>
+);
 
 export const ValidationMessage: React.FC<ValidationMessageProps> = ({ className, validation }) => {
   const { variant = AlertVariant.info, title, text, link, linkText } = validation;

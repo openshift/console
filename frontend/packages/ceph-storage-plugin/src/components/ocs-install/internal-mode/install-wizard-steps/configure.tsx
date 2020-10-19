@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Form } from '@patternfly/react-core';
 import { InternalClusterAction, InternalClusterState, ActionType } from '../reducer';
-import { EncryptionFormGroup } from '../../wizard-steps/configure';
+import { EncryptionFormGroup } from '../../install-wizard/configure';
 
 export const Configure: React.FC<ConfigureProps> = ({ state, dispatch }) => {
   const { enableEncryption } = state;

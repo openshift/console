@@ -6,12 +6,13 @@ import { TotalCapacityText, OSD_CAPACITY_SIZES } from '../../../../utils/osd-siz
 import { VALIDATIONS, ValidationMessage } from '../../../../utils/common-ocs-install-el';
 import { getNodeInfo } from '../../../../utils/install';
 import { InternalClusterState } from '../reducer';
+import { MINIMUM_NODES } from '../../../../constants';
 import {
   ReviewListTitle,
   ReviewListBody,
   NodesCard,
   RequestErrors,
-} from '../../wizard-steps/review-and-create';
+} from '../../install-wizard/review-and-create';
 
 export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
   state,
@@ -21,7 +22,8 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
   const { nodes, enableEncryption, capacity, enableMinimal, storageClass } = state;
   const { cpu, memory, zones } = getNodeInfo(state.nodes);
   const scName = getName(storageClass);
-  const emptyRequiredField = !nodes.length && !zones.size && !scName && !memory && !cpu;
+  const emptyRequiredField =
+    nodes.length < MINIMUM_NODES && !zones.size && !scName && !memory && !cpu;
 
   return (
     <>
@@ -39,11 +41,11 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
         </ReviewListBody>
         <ReviewListBody
           noValue={!scName}
-          validation={!scName && !emptyRequiredField && VALIDATIONS.STORAGECLASS}
+          validation={!scName && !emptyRequiredField && VALIDATIONS.INTERNALSTORAGECLASS}
         >
           Storage Class: <span className="text-secondary">{scName ?? 'None'}</span>
         </ReviewListBody>
-        <ReviewListBody noValue={!nodes.length}>
+        <ReviewListBody noValue={nodes.length < MINIMUM_NODES}>
           <div>
             <p>{pluralize(nodes.length, 'node')} selected</p>
             <NodesCard nodes={nodes} />
