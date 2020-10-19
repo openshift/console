@@ -33,23 +33,27 @@ export type StoragePoolKind = K8sResourceCommon & {
   };
 };
 
-export type OCSStorageClusterKind = K8sResourceCommon & {
+export type StorageClusterKind = K8sResourceCommon & {
   spec: {
-    monDataDirHostPath?: string;
     manageNodes: boolean;
-    storageDeviceSets: StorageDeviceSet[];
+    storageDeviceSets: DeviceSet[];
+    resources: StorageClusterResource;
+    encryption: {
+      enable: boolean;
+    };
+    monDataDirHostPath?: string;
   };
   status?: {
     phase: string;
   };
 };
 
-type StorageDeviceSet = {
+export type DeviceSet = {
   name: string;
   count: number;
   replica: number;
-  resources: {};
-  placement: {};
+  resources: ResourceConstraints;
+  placement?: any;
   portable: boolean;
   dataPVCTemplate: {
     spec: {
@@ -62,5 +66,21 @@ type StorageDeviceSet = {
         };
       };
     };
+  };
+};
+
+export type StorageClusterResource = {
+  mds?: ResourceConstraints;
+  rgw?: ResourceConstraints;
+};
+
+export type ResourceConstraints = {
+  limits?: {
+    cpu: string;
+    memory: string;
+  };
+  requests?: {
+    cpu: string;
+    memory: string;
   };
 };

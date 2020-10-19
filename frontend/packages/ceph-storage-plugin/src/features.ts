@@ -19,7 +19,7 @@ import {
   SECOND,
   OCS_OPERATOR,
 } from './constants';
-import { OCSStorageClusterKind } from './types';
+import { StorageClusterKind } from './types';
 
 export const OCS_INDEPENDENT_FLAG = 'OCS_INDEPENDENT';
 export const OCS_CONVERGED_FLAG = 'OCS_CONVERGED';
@@ -76,7 +76,7 @@ export const detectOCS: FeatureDetector = async (dispatch) => {
   try {
     const storageClusters = await k8sList(OCSServiceModel, { ns: CEPH_STORAGE_NAMESPACE });
     const storageCluster = storageClusters.find(
-      (sc: OCSStorageClusterKind) => sc.status.phase !== 'Ignored',
+      (sc: StorageClusterKind) => sc.status.phase !== 'Ignored',
     );
     const isInternal = _.isEmpty(storageCluster.spec.externalStorage);
     const isAttachedDevicesCluster =

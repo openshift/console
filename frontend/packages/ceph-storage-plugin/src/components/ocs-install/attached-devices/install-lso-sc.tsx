@@ -20,9 +20,8 @@ import {
 import { setFlag } from '@console/internal/actions/features';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { getName } from '@console/shared';
-import { useFlag } from '@console/shared/src/hooks/flag';
 import {
-  minSelectedNode,
+  MINIMUM_NODES,
   defaultRequestSize,
   NO_PROVISIONER,
   OCS_INTERNAL_CR_NAME,
@@ -36,11 +35,9 @@ import {
   OCS_FLAG,
   OCS_ATTACHED_DEVICES_FLAG,
   OCS_INDEPENDENT_FLAG,
-  OCS_SUPPORT_FLAGS,
 } from '../../../features';
-import { makeLabelNodesRequest } from '../create-form';
 import { scResource, pvResource } from '../../../constants/resources';
-import { getOCSRequestData } from '../ocs-request-data';
+import { labelNodes, getOCSRequestData } from '../ocs-request-data';
 import {
   OCSAlert,
   SelectNodesSection,
@@ -52,27 +49,26 @@ import {
   filterSCWithNoProv,
   getAssociatedNodes,
   shouldDeployAsMinimal,
+  getNodeInfo,
 } from '../../../utils/install';
 import { getSCAvailablePVs } from '../../../selectors';
 import '../ocs-install.scss';
 import './attached-devices.scss';
 
 const makeOCSRequest = (
-  selectedData: NodeKind[],
+  selectedNodes: NodeKind[],
   storageClass: StorageClassResourceKind,
   isEncrypted: boolean,
-  isMinimal?: boolean,
-  isEncryptionSupported?: boolean,
+  isMinimal: boolean,
 ): Promise<any> => {
-  const promises = makeLabelNodesRequest(selectedData);
+  const promises = labelNodes(selectedNodes);
   const scName = getName(storageClass);
   const ocsObj = getOCSRequestData(
     scName,
     defaultRequestSize.BAREMETAL,
     isEncrypted,
-    NO_PROVISIONER,
     isMinimal,
-    isEncryptionSupported,
+    NO_PROVISIONER,
   );
 
   return Promise.all(promises).then(() => k8sCreate(OCSServiceModel, ocsObj));
@@ -97,10 +93,9 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
     scResource,
   );
   const [pvData, pvLoaded, pvLoadError] = useK8sWatchResource<K8sResourceKind[]>(pvResource);
-  const isMinimalSupported = useFlag(OCS_SUPPORT_FLAGS.MINIMAL_DEPLOYMENT);
-  const isEncryptionSupported = useFlag(OCS_SUPPORT_FLAGS.ENCRYPTION);
 
-  const isMinimal = nodes.length >= minSelectedNode ? shouldDeployAsMinimal(nodes) : false;
+  const { cpu, memory } = getNodeInfo(nodes);
+  const isMinimal = shouldDeployAsMinimal(cpu, memory, nodes.length);
 
   React.useEffect(() => {
     // this is needed to ensure that the useEffect should be called only when setHasNoProvSC is defined
@@ -147,20 +142,17 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
   const submit = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     // eslint-disable-next-line promise/catch-or-return
-    handlePromise(
-      makeOCSRequest(nodes, storageClass, isEncrypted, isMinimal, isEncryptionSupported),
-      () => {
-        dispatch(setFlag(OCS_ATTACHED_DEVICES_FLAG, true));
-        dispatch(setFlag(OCS_CONVERGED_FLAG, true));
-        dispatch(setFlag(OCS_INDEPENDENT_FLAG, false));
-        dispatch(setFlag(OCS_FLAG, true));
-        history.push(
-          `/k8s/ns/${ns}/clusterserviceversions/${appName}/${referenceForModel(
-            OCSServiceModel,
-          )}/${OCS_INTERNAL_CR_NAME}`,
-        );
-      },
-    );
+    handlePromise(makeOCSRequest(nodes, storageClass, isEncrypted, isMinimal), () => {
+      dispatch(setFlag(OCS_ATTACHED_DEVICES_FLAG, true));
+      dispatch(setFlag(OCS_CONVERGED_FLAG, true));
+      dispatch(setFlag(OCS_INDEPENDENT_FLAG, false));
+      dispatch(setFlag(OCS_FLAG, true));
+      history.push(
+        `/k8s/ns/${ns}/clusterserviceversions/${appName}/${referenceForModel(
+          OCSServiceModel,
+        )}/${OCS_INTERNAL_CR_NAME}`,
+      );
+    });
   };
 
   const onlyNoProvSC = React.useCallback(filterSCWithNoProv, []);
@@ -180,9 +172,9 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
             storageClass={storageClass}
           />
         </StorageClassSection>
-        {isEncryptionSupported && (
-          <EncryptSection onToggle={setEncrypted} isChecked={isEncrypted} />
-        )}
+
+        <EncryptSection onToggle={setEncrypted} isChecked={isEncrypted} />
+
         {storageClass && (
           <>
             <h3 className="co-m-pane__heading co-m-pane__heading--baseline ceph-ocs-install__pane--margin">
@@ -196,7 +188,7 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
             </SelectNodesSection>
           </>
         )}
-        {storageClass && filteredNodes?.length < minSelectedNode && (
+        {storageClass && filteredNodes?.length < MINIMUM_NODES && (
           <Alert className="co-alert" variant="danger" title="Minimum Node Requirement" isInline>
             The OCS Storage cluster require a minimum of 3 nodes for the initial deployment. Please
             choose a different storage class or go to create a new volume set that matches the
@@ -213,14 +205,14 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
             </div>
           </Alert>
         )}
-        <>{isMinimalSupported && isMinimal && <MinimalDeploymentAlert />}</>
+        <>{isMinimal && <MinimalDeploymentAlert />}</>
         <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
           <ActionGroup className="pf-c-form">
             <Button
               type="button"
               variant="primary"
               onClick={submit}
-              isDisabled={(filteredNodes?.length ?? 0) < minSelectedNode}
+              isDisabled={(filteredNodes?.length ?? 0) < MINIMUM_NODES}
             >
               Create
             </Button>

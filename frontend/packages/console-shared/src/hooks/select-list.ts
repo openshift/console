@@ -11,7 +11,7 @@ export const useSelectList = <R extends K8sResourceCommon>(
   selectedRows: Set<string>;
   updateSelectedRows: (rows: R[]) => void;
 } => {
-  const [selectedRows, setSelectedRows] = React.useState<Set<string>>(new Set());
+  const [selectedRows, setSelectedRows] = React.useState<Set<string>>(visibleRows);
 
   const onSelect = React.useCallback(
     (_event, isSelected, rowIndex, rowData) => {

@@ -9,7 +9,7 @@ import { InfrastructureModel } from '@console/internal/models';
 import { getRequiredKeys, createDownloadFile } from '../independent-mode/utils';
 import { OCSServiceModel } from '../../models';
 import CreateExternalCluster from '../independent-mode/install';
-import { CreateInternalCluster } from './create-form';
+import { CreateInternalCluster } from './internal-mode/install-wizard';
 import { OCS_SUPPORT_ANNOTATION, MODES } from '../../constants';
 import { CreateAttachedDevicesCluster } from './attached-devices/install';
 import './install-page.scss';
@@ -123,17 +123,15 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
           onChange={handleModeChange}
         />
       </div>
-      <div>
-        {mode === MODES.INTERNAL && <CreateInternalCluster match={match} />}
-        {mode === MODES.EXTERNAL && (
-          <CreateExternalCluster
-            match={match}
-            minRequiredKeys={independentReqdKeys}
-            downloadFile={downloadFile}
-          />
-        )}
-        {mode === MODES.ATTACHED_DEVICES && <CreateAttachedDevicesCluster match={match} />}
-      </div>
+      {mode === MODES.INTERNAL && <CreateInternalCluster match={match} />}
+      {mode === MODES.EXTERNAL && (
+        <CreateExternalCluster
+          match={match}
+          minRequiredKeys={independentReqdKeys}
+          downloadFile={downloadFile}
+        />
+      )}
+      {mode === MODES.ATTACHED_DEVICES && <CreateAttachedDevicesCluster match={match} />}
     </>
   );
 };

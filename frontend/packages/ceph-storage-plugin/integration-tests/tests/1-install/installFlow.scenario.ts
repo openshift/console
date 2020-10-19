@@ -43,7 +43,7 @@ import {
 } from '../../utils/helpers';
 import { ClusterMetadata } from '../../mocks/independent-external-cluster-data';
 import { testNoProvisionerSC } from '../../mocks/storage-class';
-import { minSelectedNode } from '../../../src/constants';
+import { MINIMUM_NODES } from '../../../src/constants';
 import { goToInstalledOperators } from '../../views/add-capacity.view';
 
 const Installer = new InstallCluster();
@@ -226,7 +226,7 @@ if (TEST_PLATFORM === Platform.OCS && MODE === Mode.ATTACHED_DEVICES) {
         const numOfNodes =
           discoveryCR?.spec?.nodeSelector?.nodeSelectorTerms?.[0]?.matchExpressions?.[0]?.values
             ?.length;
-        expect(numOfNodes).toBe(minSelectedNode);
+        expect(numOfNodes).toBe(MINIMUM_NODES);
 
         await browser.wait(until.visibilityOf(currentSelectors.localVolumeSetView));
         step = await currentSelectors.currentStep.getText();
@@ -240,7 +240,7 @@ if (TEST_PLATFORM === Platform.OCS && MODE === Mode.ATTACHED_DEVICES) {
         // next btn should be enabled now as lvs name is entered
         expect(classes).not.toContain('pf-m-disabled');
         const nodesCnt = await currentSelectors.nodesCntOnLVS.getText();
-        expect(nodesCnt.includes(minSelectedNode)).toBeTruthy();
+        expect(nodesCnt.includes(MINIMUM_NODES)).toBeTruthy();
         // next btn
         await click(currentSelectors.primaryButton);
 

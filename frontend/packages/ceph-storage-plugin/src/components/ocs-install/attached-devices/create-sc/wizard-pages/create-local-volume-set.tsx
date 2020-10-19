@@ -11,7 +11,7 @@ import { getLocalVolumeSetRequestData } from '@console/local-storage-operator-pl
 import { State, Action } from '../state';
 import { DiscoveryDonutChart } from './donut-chart';
 import {
-  minSelectedNode,
+  MINIMUM_NODES,
   diskTypeDropdownItems,
   diskModeDropdownItems,
   allNodesSelectorTxt,
@@ -50,7 +50,7 @@ export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({ stat
         <DiscoveryDonutChart state={state} dispatch={dispatch} />
       </div>
       <ConfirmationModal state={state} dispatch={dispatch} />
-      {state.filteredNodes.length < minSelectedNode && (
+      {state.filteredNodes.length < MINIMUM_NODES && (
         <Alert
           className="co-alert ceph-ocs-install__wizard-alert"
           variant="danger"

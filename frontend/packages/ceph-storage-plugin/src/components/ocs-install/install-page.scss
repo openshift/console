@@ -16,6 +16,7 @@
 
 .ceph-install__mode-toggle {
   // no pf class for 0.3rem
-  padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--xl) 0.3rem var(--pf-global--spacer--xl);
+  padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--xl) 0.3rem
+    var(--pf-global--spacer--xl);
   border-bottom: var(--pf-global--BorderWidth--sm) solid #ddd;
 }
