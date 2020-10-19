@@ -49,15 +49,14 @@ export enum VM_STATUS {
 
 // Network
 export enum NIC_MODEL {
-  VirtIO = 'VirtIO',
+  VirtIO = 'virtio',
   e1000e = 'e1000e',
 }
 
 export enum NIC_TYPE {
-  bridge = 'bridge',
-  masquerade = 'masquerade',
-  slirp = 'slirp',
-  sriov = 'sriov',
+  bridge = 'Bridge',
+  masquerade = 'Masquerade',
+  sriov = 'SR-IOV',
 }
 
 export const networkTabCol = {
@@ -71,16 +70,16 @@ Object.freeze(networkTabCol);
 
 // Storage
 export enum DISK_SOURCE {
-  AttachDisk = 'Attach Disk',
-  AttachClonedDisk = 'Attach Cloned Disk',
+  AttachDisk = 'Use an existing PVC',
+  AttachClonedDisk = 'Clone an existing PVC',
   Blank = 'Blank',
   Container = 'Container',
-  Url = 'URL',
+  Url = 'Upload via URL',
 }
 
 export enum DISK_DRIVE {
   Disk = 'Disk',
-  CDROM = 'CDROM',
+  CDROM = 'CD-ROM',
 }
 
 export const diskAccessMode = {
@@ -99,7 +98,7 @@ export const diskAccessMode = {
 };
 
 export enum DISK_INTERFACE {
-  VirtIO = 'VirtIO',
+  VirtIO = 'virtio',
   sata = 'sata',
   scsi = 'scsi',
 }

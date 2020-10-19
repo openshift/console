@@ -23,7 +23,6 @@ import {
   getVMManifest,
   defaultWizardPodNetworkingInterface,
   defaultYAMLPodNetworkingInterface,
-  provisionSources,
 } from './mocks/mocks';
 import { getBasicVMBuilder } from './mocks/vmBuilderPresets';
 import {
@@ -43,9 +42,10 @@ import { VirtualMachine } from './models/virtualMachine';
 import { Wizard } from './models/wizard';
 import { NetworkInterfaceDialog } from './dialogs/networkInterfaceDialog';
 import { VMBuilder } from './models/vmBuilder';
+import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 describe('Add/remove disks and NICs on respective VM pages', () => {
-  const testVm = getVMManifest('Container', testName, `vm-disk-nic-${testName}`);
+  const testVm = getVMManifest(ProvisionSource.CONTAINER, testName, `vm-disk-nic-${testName}`);
   const vm = new VirtualMachine(testVm.metadata);
 
   beforeAll(async () => {
@@ -124,7 +124,7 @@ describe('Test network type presets and options', () => {
   const leakedResources = new Set<string>();
 
   const vm = new VMBuilder(getBasicVMBuilder())
-    .setProvisionSource(provisionSources.Container)
+    .setProvisionSource(ProvisionSource.CONTAINER)
     .build();
 
   beforeAll(async () => {

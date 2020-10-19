@@ -7,6 +7,7 @@ import { vmDetailBootOrderEditButton } from '../views/virtualMachine.view';
 import { VirtualMachineInstance } from './models/virtualMachineInstance';
 import * as kubevirtDetailView from '../views/kubevirtUIResource.view';
 import { VM_STATUS, TAB } from './utils/constants/vm';
+import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 const waitForVM = async (manifest: any, status: VM_STATUS) => {
   const vm = new VirtualMachineInstance(manifest.metadata);
@@ -16,7 +17,7 @@ const waitForVM = async (manifest: any, status: VM_STATUS) => {
 };
 
 describe('KubeVirt VMI detail - editing', () => {
-  const testVM = getVMIManifest('Container', testName);
+  const testVM = getVMIManifest(ProvisionSource.CONTAINER, testName);
   let vmi: VirtualMachineInstance;
 
   afterAll(() => {

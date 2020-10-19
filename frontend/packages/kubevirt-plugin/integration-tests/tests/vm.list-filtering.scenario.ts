@@ -7,9 +7,10 @@ import { VirtualMachine } from './models/virtualMachine';
 import { filterCount } from '../views/vms.list.view';
 import { browser } from 'protractor';
 import { waitForFilterCount } from './utils/utils';
+import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 describe('Test List View Filtering', () => {
-  const testVM = getVMManifest('URL', testName);
+  const testVM = getVMManifest(ProvisionSource.URL, testName);
   const vm = new VirtualMachine(testVM.metadata);
 
   beforeAll(() => {

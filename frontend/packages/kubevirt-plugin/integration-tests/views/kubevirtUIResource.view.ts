@@ -14,9 +14,7 @@ export const createDiskButton = $('#add-disk');
 // Used to determine presence of a new row by looking for confirmation buttons
 export const newResourceRow = $('.kubevirt-vm-create-device-row__confirmation-buttons');
 
-const tableContent = $('.ReactVirtualized__VirtualGrid.ReactVirtualized__List');
-export const tableRows = () =>
-  tableContent.getAttribute('innerText').then((text) => text.split('\n'));
+export const tableRows = () => resourceRows.map((row) => row.getText());
 export const tableRowForName = (name: string) =>
   resourceRows
     .filter((row) =>

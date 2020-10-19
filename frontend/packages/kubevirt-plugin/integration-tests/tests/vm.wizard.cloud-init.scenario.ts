@@ -1,10 +1,11 @@
 import { get } from 'lodash';
 import { withResource } from '@console/shared/src/test-utils/utils';
 import { getCloudInitVolume } from '../../src/selectors/vm/selectors';
-import { provisionSources, cloudInitScript } from './mocks/mocks';
+import { cloudInitScript } from './mocks/mocks';
 import { CloudInitConfig } from './types/types';
 import { VMBuilder } from './models/vmBuilder';
 import { getBasicVMBuilder } from './mocks/vmBuilderPresets';
+import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 describe('Kubevirt create VM using cloud-init', () => {
   const leakedResources = new Set<string>();
@@ -26,7 +27,7 @@ describe('Kubevirt create VM using cloud-init', () => {
 
   it('ID(CNV-874) Create vm using hostname and key as cloud-init data', async () => {
     const vm = new VMBuilder(getBasicVMBuilder())
-      .setProvisionSource(provisionSources.Container)
+      .setProvisionSource(ProvisionSource.CONTAINER)
       .setCloudInit(cloudinitConfig)
       .build();
 
@@ -44,7 +45,7 @@ describe('Kubevirt create VM using cloud-init', () => {
 
   it('ID(CNV-4022) Create VM using custom script as cloud-init data', async () => {
     const vm = new VMBuilder(getBasicVMBuilder())
-      .setProvisionSource(provisionSources.Container)
+      .setProvisionSource(ProvisionSource.CONTAINER)
       .setCloudInit(customScript)
       .build();
 

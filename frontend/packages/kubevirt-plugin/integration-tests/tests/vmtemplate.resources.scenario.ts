@@ -5,14 +5,15 @@ import {
   deleteResources,
 } from '@console/shared/src/test-utils/utils';
 import { TEMPLATE_ACTIONS_TIMEOUT_SECS } from './utils/constants/common';
-import { multusNAD, hddDisk, multusNetworkInterface, provisionSources } from './mocks/mocks';
+import { multusNAD, hddDisk, multusNetworkInterface } from './mocks/mocks';
 import { VMTemplateBuilder } from './models/vmtemplateBuilder';
 import { getBasicVMTBuilder, getBasicVMBuilder } from './mocks/vmBuilderPresets';
 import { VMBuilder } from './models/vmBuilder';
+import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 describe('Test adding/removing discs/nics to/from a VM template', () => {
   const vmt = new VMTemplateBuilder(getBasicVMTBuilder())
-    .setProvisionSource(provisionSources.Container)
+    .setProvisionSource(ProvisionSource.CONTAINER)
     .build();
 
   const vm = new VMBuilder(getBasicVMBuilder())
@@ -29,7 +30,7 @@ describe('Test adding/removing discs/nics to/from a VM template', () => {
     deleteResources([multusNAD, vmt.asResource()]);
   });
 
-  describe('Test adding discs/nics to a VM template', () => {
+  describe('Test adding disks/nics to a VM template', () => {
     beforeAll(async () => {
       await vmt.addDisk(hddDisk);
       await vmt.addNIC(multusNetworkInterface);
@@ -53,7 +54,7 @@ describe('Test adding/removing discs/nics to/from a VM template', () => {
     });
   });
 
-  describe('Test removing discs/nics from a VM template', () => {
+  describe('Test removing disks/nics from a VM template', () => {
     beforeAll(async () => {
       await vmt.removeDisk(hddDisk.name);
       await vmt.removeNIC(multusNetworkInterface.name);

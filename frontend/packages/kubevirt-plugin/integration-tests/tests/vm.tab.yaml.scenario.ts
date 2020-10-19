@@ -30,6 +30,7 @@ import { getVMManifest, multusNAD } from './mocks/mocks';
 import { virtualizationTitle } from '../views/vms.list.view';
 import { activeTab } from '../views/uiResource.view';
 import { VM_ACTION } from './utils/constants/vm';
+import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 describe('Test VM creation from YAML', () => {
   const leakedResources = new Set<string>();
@@ -65,7 +66,7 @@ describe('Test VM creation from YAML', () => {
   );
 
   it('ID(CNV-2942) Fails to create VM from YAML if VM already exists.', async () => {
-    createResource(getVMManifest('Container', testName, DEFAULT_YAML_VM_NAME));
+    createResource(getVMManifest(ProvisionSource.CONTAINER, testName, DEFAULT_YAML_VM_NAME));
     const vm = new VirtualMachine({ name: DEFAULT_YAML_VM_NAME, namespace: testName });
     await withResource(leakedResources, vm.asResource(), async () => {
       await click(saveButton);
@@ -75,7 +76,7 @@ describe('Test VM creation from YAML', () => {
   });
 
   it('ID(CNV-2943) Fails to create VM from invalid Manifest.', async () => {
-    const vmManifest = getVMManifest('Container', testName);
+    const vmManifest = getVMManifest(ProvisionSource.CONTAINER, testName);
     vmManifest.kind += testName.slice(-5); // malform VM manifest
     await setEditorContent(JSON.stringify(vmManifest));
     await click(saveButton);

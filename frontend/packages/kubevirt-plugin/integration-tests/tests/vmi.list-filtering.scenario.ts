@@ -4,6 +4,7 @@ import { getVMManifest, getVMIManifest } from './mocks/mocks';
 import { VM_STATUS } from './utils/constants/vm';
 import { filterCount } from '../views/vms.list.view';
 import { VirtualMachineInstance } from './models/virtualMachineInstance';
+import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 const waitForVM = async (manifest: any, status: VM_STATUS) => {
   const vmi = new VirtualMachineInstance(manifest.metadata);
@@ -13,8 +14,8 @@ const waitForVM = async (manifest: any, status: VM_STATUS) => {
 };
 
 describe('Test List View Filtering (VMI)', () => {
-  const testVM = getVMManifest('Container', testName, `${testName}-vm-test`);
-  const testVMI = getVMIManifest('Container', testName, `${testName}-vmi-test`);
+  const testVM = getVMManifest(ProvisionSource.CONTAINER, testName, `${testName}-vm-test`);
+  const testVMI = getVMIManifest(ProvisionSource.CONTAINER, testName, `${testName}-vmi-test`);
 
   beforeAll(async () => {
     await waitForVM(testVM, VM_STATUS.Off);

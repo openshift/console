@@ -11,9 +11,10 @@ import { VirtualMachine } from './models/virtualMachine';
 import { getVMManifest, hddDisk } from './mocks/mocks';
 import { getRandStr, getSelectOptions, selectOptionByText } from './utils/utils';
 import { dragAndDrop } from './utils/scripts/drag-drop';
+import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 describe('KubeVirt VM detail - Boot Order Dialog', () => {
-  const testVM = getVMManifest('Container', testName, `bootordervm-${getRandStr(5)}`);
+  const testVM = getVMManifest(ProvisionSource.CONTAINER, testName, `bootordervm-${getRandStr(5)}`);
   const vm = new VirtualMachine(testVM.metadata);
 
   beforeAll(async () => {

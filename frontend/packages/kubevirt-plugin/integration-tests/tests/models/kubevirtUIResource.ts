@@ -132,7 +132,7 @@ export class KubevirtUIResource<T extends BaseVMBuilderData> extends UIResource 
     await this.navigateToTab(TAB.Disks);
     const rows = await kubevirtDetailView.tableRows();
     return rows.map((line) => {
-      const cols = line.split(/\t/);
+      const cols = line.split(/\n/);
       return {
         name: cols[diskTabCol.name],
         size: cols[diskTabCol.size].slice(0, -4),
@@ -147,7 +147,7 @@ export class KubevirtUIResource<T extends BaseVMBuilderData> extends UIResource 
     await this.navigateToTab(TAB.NetworkInterfaces);
     const rows = await kubevirtDetailView.tableRows();
     return rows.map((line) => {
-      const cols = line.split(/\t/);
+      const cols = line.split(/\n/);
       return {
         name: cols[networkTabCol.name],
         model: cols[networkTabCol.model],

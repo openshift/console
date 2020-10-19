@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop, no-console */
-import { cloneDeep } from 'lodash';
 import { browser, ExpectedConditions as until } from 'protractor';
+import { cloneDeepWithEnum } from '@console/shared/src/constants/object-enum';
 import {
   waitForStringNotInElement,
   click,
@@ -34,7 +34,7 @@ export class VirtualMachine extends BaseVirtualMachine {
   }
 
   getData(): VMBuilderData {
-    return cloneDeep(this.data);
+    return cloneDeepWithEnum(this.data);
   }
 
   /**
@@ -159,8 +159,15 @@ export class VirtualMachine extends BaseVirtualMachine {
 
   async create() {
     const wizard = new Wizard();
+    const { template } = this.getData();
     await this.navigateToListView();
-    await wizard.openWizard(VirtualMachineModel);
+
+    if (template) {
+      await wizard.openVMFromTemplateWizard(template, this.namespace);
+    } else {
+      await wizard.openWizard(VirtualMachineModel);
+    }
+
     await wizard.processWizard(this.data);
 
     await this.navigateToDetail();
