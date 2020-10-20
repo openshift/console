@@ -5,18 +5,16 @@ import {
   getTaskStatus,
   runStatus,
   getRunStatusColor,
-  Pipeline,
   PipelineRun,
 } from '../../../utils/pipeline-augment';
 import TaskStatusToolTip from './TaskStatusTooltip';
 
 export interface PipelineBarProps {
   pipelinerun: PipelineRun;
-  pipeline?: { data: Pipeline };
 }
 
-export const PipelineBars: React.FC<PipelineBarProps> = ({ pipelinerun, pipeline }) => {
-  const taskStatus = getTaskStatus(pipelinerun, pipeline?.data);
+export const PipelineBars: React.FC<PipelineBarProps> = ({ pipelinerun }) => {
+  const taskStatus = getTaskStatus(pipelinerun);
 
   return (
     <Tooltip content={<TaskStatusToolTip taskStatus={taskStatus} />}>

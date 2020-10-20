@@ -26,7 +26,10 @@ export const testData: PipelineAugmentData[] = [
             apiVersion: 'abhiapi/v1',
             kind: 'PipelineRun',
             metadata: { name: 'apple-1-run1', creationTimestamp: '21-05-2019' },
-            status: { conditions: [{ type: 'Succeeded', status: 'True' }] },
+            status: {
+              pipelineSpec: { tasks: [] },
+              conditions: [{ type: 'Succeeded', status: 'True' }],
+            },
           },
         ],
       },
@@ -87,7 +90,10 @@ export const testData: PipelineAugmentData[] = [
             apiVersion: 'abhiapi/v1',
             kind: 'PipelineRun',
             metadata: { name: 'apple-2-run1', creationTimestamp: '31-04-2019' },
-            status: { conditions: [{ type: 'Succeeded', status: 'True' }] },
+            status: {
+              pipelineSpec: { tasks: [] },
+              conditions: [{ type: 'Succeeded', status: 'True' }],
+            },
           },
         ],
       },

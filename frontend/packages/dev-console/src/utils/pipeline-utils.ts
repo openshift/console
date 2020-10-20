@@ -21,7 +21,6 @@ import { PIPELINE_SERVICE_ACCOUNT, SecretAnnotationId } from '../components/pipe
 import { PipelineModalFormWorkspace } from '../components/pipelines/modals/common/types';
 import {
   getLatestRun,
-  Pipeline,
   PipelineRun,
   runStatus,
   PipelineParam,
@@ -30,7 +29,7 @@ import {
   PipelineRunWorkspace,
   TaskRunKind,
 } from './pipeline-augment';
-import { pipelineFilterReducer, pipelineRunStatus } from './pipeline-filter-reducer';
+import { pipelineRunFilterReducer, pipelineRunStatus } from './pipeline-filter-reducer';
 import {
   PipelineRunModel,
   TaskRunModel,
@@ -288,44 +287,36 @@ export const containerToLogSourceStatus = (container: ContainerStatus): string =
   return LOG_SOURCE_RUNNING;
 };
 
-type CurrentPipelineStatus = {
-  currentPipeline: Pipeline;
+type LatestPipelineRunStatus = {
+  latestPipelineRun: PipelineRun;
   status: string;
 };
 
 /**
- * Takes a pipeline and a series of matching pipeline runs and produces a current pipeline state.
+ * Takes pipeline runs and produces a latest pipeline run state.
  */
-export const constructCurrentPipeline = (
-  pipeline: Pipeline,
+export const getLatestPipelineRunStatus = (
   pipelineRuns: PipelineRun[],
-): CurrentPipelineStatus => {
-  if (!pipeline || !pipelineRuns || pipelineRuns.length === 0) {
+): LatestPipelineRunStatus => {
+  if (!pipelineRuns || pipelineRuns.length === 0) {
     // Not enough data to build the current state
     return null;
   }
 
-  const latestRun = getLatestRun({ data: pipelineRuns }, 'creationTimestamp');
+  const latestPipelineRun = getLatestRun({ data: pipelineRuns }, 'creationTimestamp');
 
-  if (!latestRun) {
-    return {
-      currentPipeline: pipeline,
-      status: runStatus.PipelineNotStarted,
-    };
+  if (!latestPipelineRun) {
+    // Without the latestRun we will not have progress to show
+    return { latestPipelineRun: null, status: runStatus.PipelineNotStarted };
   }
 
-  const currentPipeline: Pipeline = {
-    ...pipeline,
-    latestRun,
-  };
-
-  let status: string = pipelineFilterReducer(currentPipeline);
+  let status: string = pipelineRunFilterReducer(latestPipelineRun);
   if (status === '-') {
     status = runStatus.Pending;
   }
 
   return {
-    currentPipeline,
+    latestPipelineRun,
     status,
   };
 };

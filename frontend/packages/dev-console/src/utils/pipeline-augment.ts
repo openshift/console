@@ -12,6 +12,7 @@ import {
   PersistentVolumeClaimKind,
   referenceForModel,
   GroupVersionKind,
+  apiVersionForModel,
 } from '@console/internal/module/k8s';
 import {
   ClusterTaskModel,
@@ -19,8 +20,10 @@ import {
   PipelineRunModel,
   TaskModel,
   TriggerBindingModel,
+  PipelineModel,
 } from '../models';
 import { pipelineRunFilterReducer } from './pipeline-filter-reducer';
+import { TektonResourceLabel } from '../components/pipelines/const';
 
 interface Metadata {
   name: string;
@@ -123,16 +126,16 @@ export interface Runs {
 }
 
 export type KeyedRuns = { [key: string]: Runs };
-
+export interface PipelineSpec {
+  params?: PipelineParam[];
+  resources?: PipelineResource[];
+  workspaces?: PipelineWorkspace[];
+  tasks: PipelineTask[];
+  serviceAccountName?: string;
+}
 export interface Pipeline extends K8sResourceKind {
   latestRun?: PipelineRun;
-  spec: {
-    params?: PipelineParam[];
-    resources?: PipelineResource[];
-    workspaces?: PipelineWorkspace[];
-    tasks: PipelineTask[];
-    serviceAccountName?: string;
-  };
+  spec: PipelineSpec;
 }
 
 export type TaskRunWorkspace = {
@@ -213,6 +216,7 @@ export interface PipelineRun extends K8sResourceKind {
     startTime?: string;
     completionTime?: string;
     taskRuns?: PLRTaskRuns;
+    pipelineSpec: PipelineSpec;
   };
 }
 
@@ -357,7 +361,7 @@ export const getLatestRun = (runs: Runs, field: string): PipelineRun => {
     latestRun = runs.data[runs.data.length - 1];
   }
   if (!latestRun.status) {
-    latestRun = { ...latestRun, status: {} };
+    latestRun = { ...latestRun, status: { pipelineSpec: { tasks: [] } } };
   }
   if (!latestRun.status.succeededCondition) {
     latestRun.status = { ...latestRun.status, succeededCondition: '' };
@@ -431,9 +435,25 @@ export const getRunStatusColor = (status: string): StatusMessage => {
 export const truncateName = (name: string, length: number): string =>
   name.length < length ? name : `${name.slice(0, length - 1)}...`;
 
-export const getTaskStatus = (pipelinerun: PipelineRun, pipeline: Pipeline): TaskStatus => {
-  const totalTasks =
-    pipeline && pipeline.spec && pipeline.spec.tasks ? pipeline.spec.tasks.length : 0;
+export const getPipelineFromPipelineRun = (pipelineRun: PipelineRun): Pipeline => {
+  const pipelineName = pipelineRun?.metadata?.labels?.[TektonResourceLabel.pipeline];
+  if (!pipelineName || !pipelineRun?.status?.pipelineSpec) {
+    return null;
+  }
+  return {
+    apiVersion: apiVersionForModel(PipelineModel),
+    kind: PipelineModel.kind,
+    metadata: {
+      name: pipelineName,
+      namespace: pipelineRun.metadata.namespace,
+    },
+    spec: pipelineRun?.status?.pipelineSpec,
+  };
+};
+
+export const getTaskStatus = (pipelinerun: PipelineRun): TaskStatus => {
+  const executedPipeline = getPipelineFromPipelineRun(pipelinerun);
+  const totalTasks = (executedPipeline?.spec?.tasks || []).length ?? 0;
   const plrTasks =
     pipelinerun && pipelinerun.status && pipelinerun.status.taskRuns
       ? Object.keys(pipelinerun.status.taskRuns)
