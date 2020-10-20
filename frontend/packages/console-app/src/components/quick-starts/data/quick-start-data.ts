@@ -5,6 +5,7 @@ import { serverlessApplicationQuickStart } from './serverless-application-quicks
 import { sampleApplicationQuickStart } from './sample-application-quickstart';
 import { addHealthChecksQuickStart } from './add-healthchecks-quickstart';
 import { monitorSampleAppQuickStart } from './monitor-sampleapp-quickstart';
+import GetStartedWithOCS from './ocs-getting-started';
 import { QuickStart } from '../utils/quick-start-types';
 
 export const allQuickStarts: QuickStart[] = [
@@ -15,4 +16,5 @@ export const allQuickStarts: QuickStart[] = [
   sampleApplicationQuickStart,
   addHealthChecksQuickStart,
   monitorSampleAppQuickStart,
+  GetStartedWithOCS,
 ];
