@@ -237,12 +237,19 @@ const Tooltip: React.FC<TooltipProps> = ({ active, datum, width, x, y }) => {
   );
 };
 
-const graphLabelComponent = <Tooltip />;
+const tooltipComponent = <Tooltip />;
 
-// Set activateData to false to work around VictoryVoronoiContainer crash (see
-// https://github.com/FormidableLabs/victory/issues/1314)
+// We don't use this result, but we need to return a string so that the label (tooltip) is rendered
+const tooltipLabels = () => ' ';
+
 const graphContainer = (
-  <ChartVoronoiContainer activateData={false} className="query-browser__graph-container" />
+  // Set activateData to false to work around VictoryVoronoiContainer crash (see
+  // https://github.com/FormidableLabs/victory/issues/1314)
+  <ChartVoronoiContainer
+    activateData={false}
+    className="query-browser__graph-container"
+    voronoiPadding={0}
+  />
 );
 
 const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
@@ -342,8 +349,8 @@ const Graph: React.FC<GraphProps> = React.memo(
                 key={i}
                 data={values}
                 groupComponent={<g />}
-                labels={() => ' '}
-                labelComponent={graphLabelComponent}
+                labelComponent={tooltipComponent}
+                labels={tooltipLabels}
               />
             ))}
           </ChartStack>
@@ -357,8 +364,8 @@ const Graph: React.FC<GraphProps> = React.memo(
                   key={i}
                   data={values}
                   groupComponent={<g />}
-                  labels={() => ' '}
-                  labelComponent={graphLabelComponent}
+                  labelComponent={tooltipComponent}
+                  labels={tooltipLabels}
                 />
               ),
             )}
