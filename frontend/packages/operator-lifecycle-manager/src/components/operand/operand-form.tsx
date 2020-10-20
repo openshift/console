@@ -1,8 +1,13 @@
 import { JSONSchema6 } from 'json-schema';
 import { k8sCreate, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { history, useScrollToTopOnMount } from '@console/internal/components/utils';
+import {
+  history,
+  resourcePathFromModel,
+  useScrollToTopOnMount,
+} from '@console/internal/components/utils';
 import * as _ from 'lodash';
 import * as React from 'react';
+import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind, CRDDescription, APIServiceDefinition } from '../../types';
 import { ClusterServiceVersionLogo } from '../index';
 import { DynamicForm } from '@console/shared/src/components/dynamic-form';
@@ -40,6 +45,20 @@ export const OperandForm: React.FC<OperandFormProps> = ({
       .catch((e) => setErrors([e.message]));
   };
 
+  const handleCancel = () => {
+    if (new URLSearchParams(window.location.search).has('useInitializationResource')) {
+      history.replace(
+        resourcePathFromModel(
+          ClusterServiceVersionModel,
+          csv.metadata.name,
+          csv.metadata.namespace,
+        ),
+      );
+    } else {
+      history.goBack();
+    }
+  };
+
   const uiSchema = React.useMemo(() => getUISchema(schema, providedAPI), [schema, providedAPI]);
 
   useScrollToTopOnMount();
@@ -69,6 +88,7 @@ export const OperandForm: React.FC<OperandFormProps> = ({
             onChange={onChange}
             onError={setErrors}
             onSubmit={handleSubmit}
+            onCancel={handleCancel}
             schema={schema}
           />
         </div>

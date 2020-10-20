@@ -28,6 +28,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
   onChange = _.noop,
   onError = _.noop,
   onSubmit = _.noop,
+  onCancel,
   schema,
   uiSchema = {},
   widgets = {},
@@ -87,7 +88,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
                 <Button type="submit" variant="primary">
                   Create
                 </Button>
-                <Button onClick={history.goBack} variant="secondary">
+                <Button onClick={onCancel || history.goBack} variant="secondary">
                   Cancel
                 </Button>
               </ActionGroup>
@@ -104,6 +105,7 @@ type DynamicFormProps = FormProps<any> & {
   ErrorTemplate?: React.FC<{ errors: string[] }>;
   noActions?: boolean;
   customUISchema?: boolean;
+  onCancel?: () => void;
 };
 
 export * from './types';
