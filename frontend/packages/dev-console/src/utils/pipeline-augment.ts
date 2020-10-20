@@ -6,7 +6,12 @@ import {
   chart_color_black_400 as skippedColor,
   chart_color_black_500 as cancelledColor,
 } from '@patternfly/react-tokens';
-import { K8sKind, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import {
+  K8sKind,
+  K8sResourceKind,
+  PersistentVolumeClaimKind,
+  referenceForModel,
+} from '@console/internal/module/k8s';
 import {
   ClusterTaskModel,
   ClusterTriggerBindingModel,
@@ -81,6 +86,7 @@ export interface PipelineTaskWorkspace {
   description?: string;
   mountPath?: string;
   readOnly?: boolean;
+  workspace?: string;
 }
 export interface Resource {
   propsReferenceForRuns: string[];
@@ -128,8 +134,27 @@ export interface Pipeline extends K8sResourceKind {
   };
 }
 
-/** TODO: Define */
-export type TaskRunKind = K8sResourceKind;
+export type TaskRunWorkspace = {
+  name: string;
+  volumeClaimTemplate?: PersistentVolumeClaimKind;
+  persistentVolumeClaim?: VolumeTypePVC;
+  configMap?: VolumeTypeConfigMaps;
+  emptyDir?: {};
+  secret?: VolumeTypeSecret;
+  subPath?: string;
+};
+
+export interface TaskRunKind extends K8sResourceKind {
+  spec: {
+    taskRef?: PipelineTaskRef;
+    taskSpec?: PipelineTaskSpec;
+    serviceAccountName?: string;
+    params?: PipelineTaskParam[];
+    resources?: PipelineResource[];
+    timeout?: string;
+    workspaces?: TaskRunWorkspace[];
+  };
+}
 
 export type PLRTaskRunStep = {
   container: string;

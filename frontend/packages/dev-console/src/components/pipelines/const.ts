@@ -5,6 +5,11 @@ export enum StartedByAnnotation {
   user = 'pipeline.openshift.io/started-by',
 }
 
+export enum TektonResourceLabel {
+  pipelinerun = 'tekton.dev/pipelineRun',
+  taskrun = 'tekton.dev/taskRun',
+}
+
 export enum PipelineResourceType {
   git = 'git',
   image = 'image',
