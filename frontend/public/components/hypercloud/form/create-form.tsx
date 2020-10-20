@@ -8,9 +8,9 @@ import { k8sCreate, referenceFor, K8sResourceKind, modelFor } from '../../../mod
 import { pluralToKind } from './';
 import { ButtonBar, history, resourceObjPath } from '../../utils';
 
-export const WithCommonForm = (SubForm, params, modal?: boolean) => {
+export const WithCommonForm = (SubForm, params, defaultValues, modal?: boolean) => {
   const FormComponent: React.FC<CommonFormProps_> = props => {
-    const methods = useForm();
+    const methods = useForm({defaultValues: defaultValues});
 
     const kind = pluralToKind(params.plural);
     const title = `${props.titleVerb} ${params.type === 'form' ? '' : params.type} ${kind}`;
