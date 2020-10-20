@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { match as Rmatch } from 'react-router-dom';
-import MultiTabListPage from '../multi-tab-list/MultiTabListPage';
 import { referenceForModel } from '@console/internal/module/k8s';
 import {
   EventListenerModel,
@@ -9,8 +8,9 @@ import {
   ClusterTriggerBindingModel,
 } from '../../models';
 import { Page } from '@console/internal/components/utils';
-import { TechPreviewBadge } from '@console/shared';
+import { TechPreviewBadge, MultiTabListPage } from '@console/shared';
 import { DefaultPage } from '@console/internal/components/default-resource';
+import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 
 interface TriggersPageProps {
   match: Rmatch<any>;
@@ -74,13 +74,15 @@ const TriggersPage: React.FC<TriggersPageProps> = ({ match }) => {
   ];
 
   return (
-    <MultiTabListPage
-      pages={pages}
-      match={match}
-      title="Triggers"
-      badge={<TechPreviewBadge />}
-      menuActions={menuActions}
-    />
+    <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
+      <MultiTabListPage
+        pages={pages}
+        match={match}
+        title="Triggers"
+        badge={<TechPreviewBadge />}
+        menuActions={menuActions}
+      />
+    </NamespacedPage>
   );
 };
 

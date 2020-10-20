@@ -11,9 +11,9 @@ import {
   GlobalConfig,
   KebabActions,
   YAMLTemplate,
+  HrefNavItem,
 } from '@console/plugin-sdk';
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
-import { referenceForModel } from '@console/internal/module/k8s';
 import { AddAction } from '@console/dev-console/src/extensions/add-actions';
 import * as models from './models';
 import { yamlTemplates } from './yaml-templates';
@@ -39,6 +39,7 @@ type ConsumedExtensions =
   | ResourceListPage
   | RoutePage
   | KebabActions
+  | HrefNavItem
   | YAMLTemplate
   | ResourceDetailsPage
   | AddAction
@@ -107,42 +108,21 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'NavItem/ResourceNS',
+    type: 'NavItem/Href',
     properties: {
+      perspective: 'admin',
       section: 'Serverless',
       componentProps: {
-        name: models.ServiceModel.labelPlural,
-        resource: referenceForModel(models.ServiceModel),
+        name: 'Serving',
+        href: '/serving',
       },
     },
     flags: {
-      required: [FLAG_KNATIVE_SERVING_SERVICE],
-    },
-  },
-  {
-    type: 'NavItem/ResourceNS',
-    properties: {
-      section: 'Serverless',
-      componentProps: {
-        name: models.RevisionModel.labelPlural,
-        resource: referenceForModel(models.RevisionModel),
-      },
-    },
-    flags: {
-      required: [FLAG_KNATIVE_SERVING_REVISION],
-    },
-  },
-  {
-    type: 'NavItem/ResourceNS',
-    properties: {
-      section: 'Serverless',
-      componentProps: {
-        name: models.RouteModel.labelPlural,
-        resource: referenceForModel(models.RouteModel),
-      },
-    },
-    flags: {
-      required: [FLAG_KNATIVE_SERVING_ROUTE],
+      required: [
+        FLAG_KNATIVE_SERVING_SERVICE,
+        FLAG_KNATIVE_SERVING_REVISION,
+        FLAG_KNATIVE_SERVING_ROUTE,
+      ],
     },
   },
   {
@@ -175,7 +155,31 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: async () =>
         (
           await import(
-            './components/revisions/RevisionDetailsPage' /* webpackChunkName: "knative-revisions-details page" */
+            './components/revisions/RevisionDetailsPage' /* webpackChunkName: "revision-details-page" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.RouteModel,
+      loader: async () =>
+        (
+          await import(
+            './components/routes/RouteDetailsPage' /* webpackChunkName: "route-details-page" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.ServiceModel,
+      loader: async () =>
+        (
+          await import(
+            './components/services/ServiceDetailsPage' /* webpackChunkName: "service-details-page" */
           )
         ).default,
     },
@@ -263,6 +267,30 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [FLAG_KNATIVE_EVENTING],
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/serving'],
+      component: NamespaceRedirect,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_SERVING],
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: false,
+      path: ['/serving/all-namespaces', '/serving/ns/:ns'],
+      loader: async () =>
+        (
+          await import(
+            './components/overview/serving-list/ServingListsPage' /* webpackChunkName: "serving-list-page" */
+          )
+        ).default,
     },
   },
   {
