@@ -48,6 +48,7 @@ export const usePodsForRevisions = (
       setLoadError(resources[errorKey].loadError);
       return;
     }
+    setLoadError('');
     if (
       Object.keys(resources).length > 0 &&
       Object.keys(resources).every((key) => resources[key].loaded)
@@ -65,7 +66,6 @@ export const usePodsForRevisions = (
         }
       });
       setLoaded(true);
-      setLoadError(null);
       setPods(revisionsPods);
     }
   }, [revisionResources, resources]);

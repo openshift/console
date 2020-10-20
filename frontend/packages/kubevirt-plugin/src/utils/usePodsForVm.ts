@@ -44,6 +44,7 @@ export const usePodsForVm = (
       setLoadError(resources[errorKey].loadError);
       return;
     }
+    setLoadError('');
     if (
       Object.keys(resources).length > 0 &&
       Object.keys(resources).every((key) => resources[key].loaded)
@@ -62,7 +63,6 @@ export const usePodsForVm = (
         obj: vm,
       };
       setLoaded(true);
-      setLoadError(null);
       setPodData(podRCData);
     }
   }, [resources, vm]);

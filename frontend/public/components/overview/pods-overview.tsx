@@ -237,6 +237,7 @@ export const PodsOverviewMultiple: React.SFC<PodsOverviewMultipleProps> = ({
       setLoadError(resources[errorKey].loadError);
       return;
     }
+    setLoadError('');
     if (
       Object.keys(resources).length > 0 &&
       Object.keys(resources).every((key) => resources[key].loaded)
