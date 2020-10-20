@@ -4,9 +4,7 @@ import {
   useK8sWatchResources,
   WatchK8sResources,
 } from '@console/internal/components/utils/k8s-watch-hook';
-import { PROMETHEUS_TENANCY_BASE_PATH } from '@console/internal/components/graphs';
-import { useURLPoll } from '@console/internal/components/utils/url-poll-hook';
-import { Alerts, PrometheusRulesResponse } from '@console/internal/components/monitoring/types';
+import { usePrometheusRulesPoll } from '@console/internal/components/graphs/prometheus-rules-hook';
 import { getAlertsAndRules } from '@console/internal/components/monitoring/utils';
 import { RootState } from '@console/internal/redux';
 import { TopologyResourcesObject, TrafficData } from './topology-types';
@@ -22,8 +20,6 @@ export type TopologyDataRetrieverProps = {
   trafficData?: TrafficData;
 };
 
-const POLL_DELAY = 15 * 1000;
-
 export const ConnectedTopologyDataRetriever: React.FC<TopologyDataRetrieverProps & StateProps> = ({
   kindsInFlight,
   trafficData,
@@ -38,20 +34,27 @@ export const ConnectedTopologyDataRetriever: React.FC<TopologyDataRetrieverProps
   );
 
   const resources = useK8sWatchResources<TopologyResourcesObject>(resourcesList);
+  const [alertsResponse, alertsError, alertsLoading] = usePrometheusRulesPoll({ namespace });
+  const monitoringAlerts = React.useMemo(() => {
+    let alertData;
+    if (!alertsLoading && !alertsError) {
+      alertData = getAlertsAndRules(alertsResponse?.data).alerts;
 
-  const url = PROMETHEUS_TENANCY_BASE_PATH
-    ? `${PROMETHEUS_TENANCY_BASE_PATH}/api/v1/rules?namespace=${namespace}`
-    : null;
-  const [response, error, loading] = useURLPoll<PrometheusRulesResponse>(
-    url,
-    POLL_DELAY,
-    namespace,
-  );
-
-  const monitoringAlerts: Alerts = React.useMemo(() => {
-    const { alerts } = getAlertsAndRules(response?.data);
-    return { data: alerts, loaded: !loading, loadError: error };
-  }, [response, error, loading]);
+      // Don't update due to time changes
+      alertData.forEach((alert) => {
+        delete alert.activeAt;
+        if (alert.rule) {
+          delete alert.rule.evaluationTime;
+          delete alert.rule.lastEvaluation;
+          alert.rule.alerts &&
+            alert.rule.alerts.forEach((ruleAlert) => {
+              delete ruleAlert.activeAt;
+            });
+        }
+      });
+    }
+    return { data: alertData, loaded: !alertsLoading, loadError: alertsError };
+  }, [alertsError, alertsLoading, alertsResponse]);
 
   // Wipe the current model on a namespace change
   React.useEffect(() => {

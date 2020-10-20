@@ -46,6 +46,7 @@ import { ClusterVersionModel } from '../models';
 import { useK8sWatchResource, WatchK8sResource } from './utils/k8s-watch-hook';
 import { useAccessReview } from './utils/rbac';
 import { LinkifyExternal } from './utils';
+import { PrometheusEndpoint } from './graphs/helpers';
 
 const criticalCompare = (a: Alert): boolean => getAlertSeverity(a) === 'critical';
 const otherAlertCompare = (a: Alert): boolean => getAlertSeverity(a) !== 'critical';
@@ -225,7 +226,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
     const { alertManagerBaseURL, prometheusBaseURL } = window.SERVER_FLAGS;
 
     if (prometheusBaseURL) {
-      poll(`${prometheusBaseURL}/api/v1/rules`, 'notificationAlerts', getAlerts);
+      poll(`${prometheusBaseURL}/${PrometheusEndpoint.RULES}`, 'notificationAlerts', getAlerts);
     } else {
       store.dispatch(
         UIActions.monitoringErrored('notificationAlerts', new Error('prometheusBaseURL not set')),
