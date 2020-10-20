@@ -31,11 +31,11 @@ const NodeDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (pro
         <PodsPage showTitle={false} fieldSelector={`spec.nodeName=${obj.metadata.name}`} />
       )),
       events(ResourceEventStream),
-      ...(_.find(
+      ...(!_.some(
         node?.metadata?.labels,
-        (label) =>
-          label['corev1.LabelOSStable'] !== 'windows' ||
-          label['node.openshift.io/os_id'] !== 'Windows',
+        (v, k) =>
+          (k === 'node.openshift.io/os_id' && v === 'Windows') ||
+          (k === 'corev1.LabelOSStable' && v === 'windows'),
       )
         ? [{ href: 'terminal', name: 'Terminal', component: NodeTerminal }]
         : []),
