@@ -15,8 +15,7 @@ import {
   RectAnchor,
 } from '@patternfly/react-topology';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
-import { nodeDragSourceSpec } from '../../components/componentUtils';
-import { TYPE_OPERATOR_BACKED_SERVICE } from './const';
+import { noRegroupDragSourceSpec } from '../../components/componentUtils';
 import {
   getFilterById,
   useDisplayFilters,
@@ -49,19 +48,8 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
 }) => {
   const [hover, hoverRef] = useHover();
   const [innerHover, innerHoverRef] = useHover();
-  const [{ dragging, regrouping }, dragNodeRef] = useDragNode(
-    nodeDragSourceSpec(TYPE_OPERATOR_BACKED_SERVICE, false),
-    {
-      element,
-    },
-  );
-  const [{ dragging: labelDragging, regrouping: labelRegrouping }, dragLabelRef] = useDragNode(
-    nodeDragSourceSpec(TYPE_OPERATOR_BACKED_SERVICE, false),
-    {
-      element,
-    },
-  );
-
+  const [{ dragging }, dragNodeRef] = useDragNode(noRegroupDragSourceSpec);
+  const [{ dragging: labelDragging }, dragLabelRef] = useDragNode(noRegroupDragSourceSpec);
   const nodeRefs = useCombineRefs(innerHoverRef, dragNodeRef);
   const hasChildren = element.getChildren()?.length > 0;
   const { data } = element.getData();
@@ -84,9 +72,7 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
       })}
     >
       <NodeShadows />
-      <Layer
-        id={(dragging || labelDragging) && (regrouping || labelRegrouping) ? undefined : 'groups2'}
-      >
+      <Layer id={dragging || labelDragging ? undefined : 'groups2'}>
         <Tooltip
           content="Create a binding connector"
           trigger="manual"

@@ -24,8 +24,7 @@ import {
   useSearchFilter,
   SHOW_LABELS_FILTER_ID,
 } from '../../filters';
-import { nodeDragSourceSpec } from '../../components/componentUtils';
-import { TYPE_HELM_RELEASE } from './const';
+import { noRegroupDragSourceSpec } from '../../components/componentUtils';
 
 export type HelmReleaseGroupProps = {
   element: Node;
@@ -45,13 +44,8 @@ const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
 }) => {
   const [hover, hoverRef] = useHover();
   const [innerHover, innerHoverRef] = useHover();
-  const dragSpec = nodeDragSourceSpec(TYPE_HELM_RELEASE, false);
-  const [{ dragging, regrouping }, dragNodeRef] = useDragNode(dragSpec, { element });
-  const [
-    { dragging: labelDragging, regrouping: labelRegrouping },
-    dragLabelRef,
-  ] = useDragNode(dragSpec, { element });
-
+  const [{ dragging }, dragNodeRef] = useDragNode(noRegroupDragSourceSpec);
+  const [{ dragging: labelDragging }, dragLabelRef] = useDragNode(noRegroupDragSourceSpec);
   const nodeRefs = useCombineRefs(innerHoverRef, dragNodeRef);
   const [filtered] = useSearchFilter(element.getLabel());
   const displayFilters = useDisplayFilters();
@@ -71,9 +65,7 @@ const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
       })}
     >
       <NodeShadows />
-      <Layer
-        id={(dragging || labelDragging) && (regrouping || labelRegrouping) ? undefined : 'groups2'}
-      >
+      <Layer id={dragging || labelDragging ? undefined : 'groups2'}>
         <g
           ref={nodeRefs}
           className={classNames('odc-helm-release', {
