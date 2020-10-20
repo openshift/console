@@ -16,10 +16,14 @@ import { SelectorInput } from '../../../utils';
 //   },
 // };
 
-
+const defaultValues = {
+  metadata: {
+    name: 'example-name'
+  }
+}
 
 const namespaceFormFactory = (params) => {
-  return WithCommonForm(CreateNamespaceComponent, params);
+  return WithCommonForm(CreateNamespaceComponent, params, defaultValues);
 };
 
 const CreateNamespaceComponent: React.FC<NamespaceFormProps> = (props) => {
