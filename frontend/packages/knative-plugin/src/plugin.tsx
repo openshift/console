@@ -5,8 +5,6 @@ import {
   ModelFeatureFlag,
   ModelDefinition,
   OverviewResourceTab,
-  OverviewCRD,
-  OverviewResourceUtil,
   ResourceListPage,
   ResourceDetailsPage,
   RoutePage,
@@ -27,22 +25,7 @@ import {
   FLAG_KNATIVE_SERVING_SERVICE,
   FLAG_KNATIVE_EVENTING,
 } from './const';
-import {
-  knativeServingResourcesRevision,
-  knativeServingResourcesConfigurations,
-  knativeServingResourcesRoutes,
-  knativeServingResourcesServices,
-  getKnativeServingRevisions,
-  getKnativeServingConfigurations,
-  getKnativeServingRoutes,
-  getKnativeServingServices,
-  knativeEventingResourcesSubscription,
-} from './utils/get-knative-resources';
 import { getKebabActionsForKind } from './utils/kebab-actions';
-import {
-  getDynamicEventSourcesResourceList,
-  getDynamicChannelResourceList,
-} from './utils/fetch-dynamic-eventsources-utils';
 import { TopologyConsumedExtensions, topologyPlugin } from './topology/topology-plugin';
 import * as eventSourceIcon from './imgs/event-source.svg';
 import * as channelIcon from './imgs/channel.svg';
@@ -53,8 +36,6 @@ type ConsumedExtensions =
   | ModelDefinition
   | GlobalConfig
   | OverviewResourceTab
-  | OverviewCRD
-  | OverviewResourceUtil
   | ResourceListPage
   | RoutePage
   | KebabActions
@@ -173,105 +154,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/overview/OverviewDetailsKnativeResourcesTab' /* webpackChunkName: "knative-overview" */
         ).then((m) => m.default),
-    },
-  },
-  {
-    type: 'Overview/CRD',
-    properties: {
-      resources: knativeServingResourcesRevision,
-    },
-    flags: {
-      required: [FLAG_KNATIVE_SERVING_REVISION],
-    },
-  },
-  {
-    type: 'Overview/CRD',
-    properties: {
-      resources: knativeServingResourcesConfigurations,
-    },
-    flags: {
-      required: [FLAG_KNATIVE_SERVING_CONFIGURATION],
-    },
-  },
-  {
-    type: 'Overview/CRD',
-    properties: {
-      resources: knativeServingResourcesRoutes,
-    },
-    flags: {
-      required: [FLAG_KNATIVE_SERVING_ROUTE],
-    },
-  },
-  {
-    type: 'Overview/CRD',
-    properties: {
-      resources: knativeServingResourcesServices,
-    },
-    flags: {
-      required: [FLAG_KNATIVE_SERVING_REVISION],
-    },
-  },
-  {
-    type: 'Overview/CRD',
-    properties: {
-      resources: getDynamicEventSourcesResourceList,
-    },
-    flags: {
-      required: [FLAG_KNATIVE_EVENTING],
-    },
-  },
-  {
-    type: 'Overview/CRD',
-    properties: {
-      resources: knativeEventingResourcesSubscription,
-    },
-    flags: {
-      required: [FLAG_KNATIVE_EVENTING],
-    },
-  },
-  {
-    type: 'Overview/CRD',
-    properties: {
-      resources: getDynamicChannelResourceList,
-    },
-    flags: {
-      required: [FLAG_KNATIVE_EVENTING],
-    },
-  },
-  {
-    type: 'Overview/ResourceUtil',
-    properties: {
-      getResources: getKnativeServingRevisions,
-    },
-    flags: {
-      required: [FLAG_KNATIVE_SERVING_REVISION],
-    },
-  },
-  {
-    type: 'Overview/ResourceUtil',
-    properties: {
-      getResources: getKnativeServingConfigurations,
-    },
-    flags: {
-      required: [FLAG_KNATIVE_SERVING_CONFIGURATION],
-    },
-  },
-  {
-    type: 'Overview/ResourceUtil',
-    properties: {
-      getResources: getKnativeServingRoutes,
-    },
-    flags: {
-      required: [FLAG_KNATIVE_SERVING_ROUTE],
-    },
-  },
-  {
-    type: 'Overview/ResourceUtil',
-    properties: {
-      getResources: getKnativeServingServices,
-    },
-    flags: {
-      required: [FLAG_KNATIVE_SERVING_SERVICE],
     },
   },
   {
