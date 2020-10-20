@@ -1,13 +1,13 @@
 import { K8sKind } from '@console/internal/module/k8s';
 
-export const ServiceBindingRequestModel: K8sKind = {
-  id: 'servicebindingrequest',
-  kind: 'ServiceBindingRequest',
-  plural: 'servicebindingrequests',
-  label: 'ServiceBindingRequest',
-  labelPlural: 'ServiceBindingRequests',
-  abbr: 'SBR',
-  apiGroup: 'apps.openshift.io',
+export const ServiceBindingModel: K8sKind = {
+  id: 'servicebinding',
+  kind: 'ServiceBinding',
+  plural: 'servicebindings',
+  label: 'ServiceBinding',
+  labelPlural: 'ServiceBindings',
+  abbr: 'SB',
+  apiGroup: 'operators.coreos.com',
   apiVersion: 'v1alpha1',
   namespaced: true,
   crd: true,
