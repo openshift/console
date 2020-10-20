@@ -1,4 +1,5 @@
 import { Store } from 'redux';
+import * as _ from 'lodash';
 import { RootState } from '@console/internal/redux';
 import { PluginStore } from '@console/plugin-sdk/src/store';
 import { ActivePlugin } from '@console/plugin-sdk/src/typings';
@@ -24,10 +25,10 @@ if (process.env.NODE_ENV !== 'test') {
 export const pluginStore = new PluginStore(activePlugins);
 export const registry = pluginStore.registry;
 
-export const initConsolePlugins = (reduxStore: Store<RootState>) => {
+export const initConsolePlugins = _.once((reduxStore: Store<RootState>) => {
   initSubscriptionService(pluginStore, reduxStore);
   registerPluginEntryCallback(pluginStore);
-};
+});
 
 if (process.env.NODE_ENV !== 'production') {
   // Expose Console plugin store for debugging
