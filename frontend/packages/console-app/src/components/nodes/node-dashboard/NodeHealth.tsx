@@ -31,6 +31,7 @@ import { ResourceLink } from '@console/internal/components/utils';
 import { NodeDashboardContext } from './NodeDashboardContext';
 import NodeStatus from '../NodeStatus';
 import { CONDITIONS_WARNING } from './messages';
+import MarkAsSchedulablePopover from '../popovers/MarkAsSchedulablePopover';
 
 import './node-health.scss';
 
@@ -260,7 +261,11 @@ const NodeHealth: React.FC = () => {
     <HealthBody>
       <Gallery className="co-overview-status__health" hasGutter>
         <GalleryItem>
-          <NodeStatus node={obj} className="co-node-health__status" />
+          {!obj.spec.unschedulable ? (
+            <NodeStatus className="co-node-health__status" node={obj} showPopovers />
+          ) : (
+            <MarkAsSchedulablePopover node={obj} />
+          )}
         </GalleryItem>
         <GalleryItem>
           <HealthChecksItem />

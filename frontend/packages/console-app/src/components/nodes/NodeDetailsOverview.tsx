@@ -17,6 +17,7 @@ import { PencilAltIcon } from '@patternfly/react-icons';
 import { getNodeMachineNameAndNamespace, getNodeAddresses } from '@console/shared';
 import NodeIPList from './NodeIPList';
 import NodeStatus from './NodeStatus';
+import MarkAsSchedulablePopover from './popovers/MarkAsSchedulablePopover';
 
 type NodeDetailsOverviewProps = {
   node: NodeKind;
@@ -41,7 +42,11 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
             <dd>{node.metadata.name || '-'}</dd>
             <dt>Status</dt>
             <dd>
-              <NodeStatus node={node} />
+              {!node.spec.unschedulable ? (
+                <NodeStatus node={node} showPopovers />
+              ) : (
+                <MarkAsSchedulablePopover node={node} />
+              )}
             </dd>
             <dt>External ID</dt>
             <dd>{_.get(node, 'spec.externalID', '-')}</dd>
