@@ -2,6 +2,7 @@ import * as React from 'react';
 import classNames from 'classnames';
 import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';
 import { HealthState, healthStateMapping } from './states';
+import { SecondaryStatus } from '../../status';
 
 const HealthItemIcon: React.FC<HealthItemIconProps> = ({ state }) => (
   <div className="co-dashboard-icon">
@@ -37,9 +38,7 @@ const HealthItem: React.FC<HealthItemProps> = React.memo(
             )}
           </span>
           {state !== HealthState.LOADING && detailMessage && (
-            <div className="co-dashboard-text--small co-status-card__health-item-text co-status-card__health-item-subtitle">
-              {detailMessage}
-            </div>
+            <SecondaryStatus status={detailMessage} className="co-status-card__health-item-text" />
           )}
         </div>
       </div>
