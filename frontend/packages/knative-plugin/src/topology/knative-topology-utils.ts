@@ -175,9 +175,7 @@ const isSubscriber = (
   const channelRef = relatedResource?.spec?.channel;
   if (
     channelRef &&
-    (mainResource.metadata.name !== channelRef.name ||
-      mainResource.kind !== channelRef.kind ||
-      mainResource.apiVersion !== channelRef.apiVersion)
+    (mainResource.metadata.name !== channelRef.name || mainResource.kind !== channelRef.kind)
   ) {
     return false;
   }
@@ -193,12 +191,8 @@ const isPublisher = (
   relationshipResource: K8sResourceKind,
   mainResource: K8sResourceKind,
 ): boolean => {
-  const { name, kind, apiVersion } = relationshipResource.spec?.subscriber?.ref || {};
-  if (
-    mainResource.metadata.name !== name ||
-    mainResource.kind !== kind ||
-    mainResource.apiVersion !== apiVersion
-  ) {
+  const { name, kind } = relationshipResource.spec?.subscriber?.ref || {};
+  if (mainResource.metadata.name !== name || mainResource.kind !== kind) {
     return false;
   }
   if (relationshipResource.kind === EventingTriggerModel.kind) {

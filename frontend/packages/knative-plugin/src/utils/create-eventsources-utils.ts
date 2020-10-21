@@ -149,7 +149,7 @@ export const getEventSourceData = (source: string) => {
       },
     },
     apiserversource: {
-      mode: 'Ref',
+      mode: 'Reference',
       serviceAccountName: '',
       resources: [
         {
