@@ -75,9 +75,6 @@ export const silenceStateOrder = (silence: Silence): ListOrder => [
 export const isSilenced = (alert: Alert, silence: Silence): boolean =>
   [AlertStates.Firing, AlertStates.Silenced].includes(alert.state) &&
   _.every(silence.matchers, (m) => {
-    const alertValue = _.get(alert.labels, m.name);
-    return (
-      alertValue !== undefined &&
-      (m.isRegex ? new RegExp(`^${m.value}$`).test(alertValue) : alertValue === m.value)
-    );
+    const alertValue = _.get(alert.labels, m.name, '');
+    return m.isRegex ? new RegExp(`^${m.value}$`).test(alertValue) : alertValue === m.value;
   });
