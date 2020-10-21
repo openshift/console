@@ -113,6 +113,7 @@ export interface WorkloadData {
   url?: string;
   editURL?: string;
   vcsURI?: string;
+  vcsRef?: string;
   builderImage?: string;
   kind?: string;
   isKnativeResource?: boolean;

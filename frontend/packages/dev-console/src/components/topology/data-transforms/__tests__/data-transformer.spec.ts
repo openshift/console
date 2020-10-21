@@ -181,12 +181,14 @@ describe('data transformer ', () => {
     const mockCheURL = 'https://mock-che.test-cluster.com';
     const mockGitURL =
       mockResources.deploymentConfigs.data[0].metadata.annotations['app.openshift.io/vcs-uri'];
+    const mockGitBranch =
+      mockResources.deploymentConfigs.data[0].metadata.annotations['app.openshift.io/vcs-ref'];
     const { topologyTransformedData, keys } = getTranformedTopologyData(mockResources, [
       'deploymentConfigs',
     ]);
-    const generatedEditURL = getEditURL(mockGitURL, mockCheURL);
-    const { editURL, vcsURI } = topologyTransformedData[keys[0]].data as WorkloadData;
-    const editUrl = editURL || getEditURL(vcsURI, mockCheURL);
+    const generatedEditURL = getEditURL(mockGitURL, mockGitBranch, mockCheURL);
+    const { editURL, vcsURI, vcsRef } = topologyTransformedData[keys[0]].data as WorkloadData;
+    const editUrl = editURL || getEditURL(vcsURI, vcsRef, mockCheURL);
 
     expect(editUrl).toBe(generatedEditURL);
   });
@@ -194,11 +196,24 @@ describe('data transformer ', () => {
   it('should return the git repo URL if cheURL is not there', () => {
     const mockGitURL =
       mockResources.deploymentConfigs.data[0].metadata.annotations['app.openshift.io/vcs-uri'];
+    const mockGitBranch =
+      mockResources.deploymentConfigs.data[0].metadata.annotations['app.openshift.io/vcs-ref'];
     const { topologyTransformedData, keys } = getTranformedTopologyData(mockResources, [
       'deploymentConfigs',
     ]);
-    const { editURL, vcsURI } = topologyTransformedData[keys[0]].data as WorkloadData;
-    const editUrl = editURL || getEditURL(vcsURI, '');
+    const { vcsURI, vcsRef } = topologyTransformedData[keys[0]].data as WorkloadData;
+    const editUrl = getEditURL(vcsURI, vcsRef, '');
+    expect(editUrl).toBe(`${mockGitURL}/tree/${mockGitBranch}`);
+  });
+
+  it('should return only the git repo URL if branch name is not provided', () => {
+    const mockGitURL =
+      mockResources.deploymentConfigs.data[0].metadata.annotations['app.openshift.io/vcs-uri'];
+    const { topologyTransformedData, keys } = getTranformedTopologyData(mockResources, [
+      'deploymentConfigs',
+    ]);
+    const { vcsURI } = topologyTransformedData[keys[0]].data as WorkloadData;
+    const editUrl = getEditURL(vcsURI, '', '');
     expect(editUrl).toBe(mockGitURL);
   });
 
