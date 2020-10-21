@@ -14,7 +14,7 @@ export interface ResourceDropdownFieldProps extends DropdownFieldProps {
   resources: FirehoseResource[];
   showBadge?: boolean;
   onLoad?: (items: ResourceDropdownItems) => void;
-  onChange?: (key: string, name?: string | object) => void;
+  onChange?: (key: string, name?: string | object, resource?: K8sResourceKind) => void;
   resourceFilter?: (resource: K8sResourceKind) => boolean;
   autoSelect?: boolean;
   placeholder?: string;
@@ -23,6 +23,7 @@ export interface ResourceDropdownFieldProps extends DropdownFieldProps {
     actionKey: string;
   }[];
   appendItems?: ResourceDropdownItems;
+  customResourceKey?: (key: string, resource: K8sResourceKind) => string;
 }
 
 const ResourceDropdownField: React.FC<ResourceDropdownFieldProps> = ({
@@ -62,8 +63,8 @@ const ResourceDropdownField: React.FC<ResourceDropdownFieldProps> = ({
           dropDownClassName={cx({ 'dropdown--full-width': fullWidth })}
           onLoad={onLoad}
           resourceFilter={resourceFilter}
-          onChange={(value: string, name) => {
-            props.onChange && props.onChange(value, name);
+          onChange={(value: string, name: string | object, resource: K8sResourceKind) => {
+            props.onChange && props.onChange(value, name, resource);
             setFieldValue(props.name, value);
             setFieldTouched(props.name, true);
           }}
