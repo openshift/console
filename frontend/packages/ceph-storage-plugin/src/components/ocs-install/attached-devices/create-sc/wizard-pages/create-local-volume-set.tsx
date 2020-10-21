@@ -78,7 +78,6 @@ const ConfirmationModal = ({ state, dispatch }) => {
   };
 
   const cancel = () => {
-    dispatch({ type: 'setCreateLVS', value: false });
     dispatch({ type: 'setShowConfirmModal', value: false });
   };
 
