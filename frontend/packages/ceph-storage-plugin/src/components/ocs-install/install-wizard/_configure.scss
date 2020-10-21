@@ -1,0 +1,16 @@
+.ceph__install-radio--inline {
+  .pf-c-form__group-control {
+    display: inline-flex;
+  }
+  .pf-c-radio {
+    margin-right: var(--pf-global--spacer--lg);
+  }
+}
+
+.ceph__multus-dropdown {
+  min-width: 18em;
+}
+
+.ceph__multus-dropdown-button {
+  min-width: 18em;
+}

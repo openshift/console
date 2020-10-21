@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import * as cx from 'classnames';
 import {
   Alert,
@@ -8,10 +9,8 @@ import {
   FormGroup,
   Switch,
 } from '@patternfly/react-core';
-import { storageClassTooltip, CreateStepsSC } from '../constants/ocs-install';
 import { Link } from 'react-router-dom';
 import { TechPreviewBadge } from '@console/shared';
-import '../components/ocs-install/ocs-install.scss';
 import { ListPage } from '@console/internal/components/factory';
 import { NodeModel } from '@console/internal/models';
 import { FieldLevelHelp } from '@console/internal/components/utils';
@@ -20,7 +19,8 @@ import { StorageClassResourceKind } from '@console/internal/module/k8s/types';
 import { MODES } from '../constants';
 import { Action } from '../components/ocs-install/attached-devices/create-sc/state';
 import { InternalClusterAction } from '../components/ocs-install/internal-mode/reducer';
-import * as _ from 'lodash';
+import { storageClassTooltip, CreateStepsSC } from '../constants/ocs-install';
+import '../components/ocs-install/ocs-install.scss';
 
 export type Validation = {
   title: React.ReactNode;
@@ -40,6 +40,7 @@ enum ValidationType {
   'MINIMUMNODES' = 'MINIMUMNODES',
   'ENCRYPTION' = 'ENCRYPTION',
   'REQUIRED_FIELD_KMS' = 'REQUIRED_FIELD_KMS',
+  'NETWORK' = 'NETWORK',
 }
 
 export const VALIDATIONS: { [key in ValidationType]: Validation } = {
@@ -91,6 +92,11 @@ export const VALIDATIONS: { [key in ValidationType]: Validation } = {
     variant: AlertVariant.danger,
     title: 'Fill out the details in order to connect to key management system',
     text: 'This is a required field.',
+  },
+  [ValidationType.NETWORK]: {
+    variant: AlertVariant.danger,
+    title: 'Public Network Attachment Definition cannot be empty',
+    text: 'To use Multus networking the public Network Attachment Definition must be selected.',
   },
 };
 

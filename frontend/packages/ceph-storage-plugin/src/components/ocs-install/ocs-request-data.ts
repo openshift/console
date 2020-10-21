@@ -101,6 +101,8 @@ export const getOCSRequestData = (
   storage: string,
   encrypted: boolean,
   isMinimal: boolean,
+  publicNetwork?: string,
+  clusterNetwork?: string,
 ): StorageClusterKind => {
   const scName: string = getName(storageClass);
   const isNoProvisioner: boolean = storageClass.provisioner === NO_PROVISIONER;
@@ -122,6 +124,19 @@ export const getOCSRequestData = (
       storageDeviceSets: [
         createDeviceSet(scName, storage, isPortable, isMinimal ? MIN_DEVICESET_RESOURCES : {}),
       ],
+      ...Object.assign(
+        publicNetwork
+          ? {
+              network: {
+                provider: 'multus',
+                selectors: {
+                  public: publicNetwork,
+                  ...Object.assign(clusterNetwork ? { cluster: clusterNetwork } : {}),
+                },
+              },
+            }
+          : {},
+      ),
     },
   };
 

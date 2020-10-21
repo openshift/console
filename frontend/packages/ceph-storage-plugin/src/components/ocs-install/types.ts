@@ -51,3 +51,8 @@ export type KMSConfig = {
   name: string;
   hasHandled: boolean;
 };
+
+export enum NetworkType {
+  DEFAULT = 'DEFAULT',
+  MULTUS = 'MULTUS',
+}
