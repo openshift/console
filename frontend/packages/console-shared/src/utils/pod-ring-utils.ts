@@ -39,6 +39,14 @@ type PodRingLabelType = {
   titleComponent: React.ReactElement;
 };
 
+type PodRingLabelData = {
+  title: string;
+  longTitle: boolean;
+  subTitle: string;
+  longSubtitle: boolean;
+  reversed: boolean;
+};
+
 export const podRingFirehoseProps = {
   [PodModel.kind]: 'pods',
   [ReplicaSetModel.kind]: 'replicaSets',
@@ -147,13 +155,19 @@ export const podRingLabel = (
   obj: K8sResourceKind,
   ownerKind: string,
   pods: ExtPodKind[],
-): PodRingLabelType => {
+): PodRingLabelData => {
   let currentPodCount;
   let desiredPodCount;
-  let title;
-  let subTitle;
   let isPending;
   let titleData;
+  const podRingLabelData: PodRingLabelData = {
+    title: '',
+    subTitle: '',
+    longTitle: false,
+    longSubtitle: false,
+    reversed: false,
+  };
+
   const failedPodCount = getFailedPods(pods);
   switch (ownerKind) {
     case DaemonSetModel.kind:
@@ -162,67 +176,57 @@ export const podRingLabel = (
       desiredPodCount = obj.status?.desiredNumberScheduled;
       isPending = isPendingPods(pods, currentPodCount, desiredPodCount);
       titleData = getTitleAndSubtitle(isPending, currentPodCount, desiredPodCount);
-      return {
-        title: titleData.title,
-        subTitle: titleData.subTitle,
-        titleComponent: getTitleComponent(titleData.longTitle, titleData.longSubtitle),
-      };
+      podRingLabelData.title = titleData.title;
+      podRingLabelData.subTitle = titleData.subTitle;
+      podRingLabelData.longSubtitle = titleData.longSubtitle;
+      break;
     case RevisionModel.kind:
       currentPodCount = (obj.status?.readyReplicas || 0) + failedPodCount;
       desiredPodCount = obj.spec?.replicas;
       isPending = isPendingPods(pods, currentPodCount, desiredPodCount);
       if (!isPending && !desiredPodCount) {
-        title = 'Autoscaled';
-        subTitle = 'to 0';
-        return {
-          title,
-          subTitle,
-          titleComponent: getTitleComponent(false, false, true),
-        };
+        podRingLabelData.title = 'Autoscaled';
+        podRingLabelData.subTitle = 'to 0';
+        podRingLabelData.reversed = true;
+        break;
       }
       if (isPending) {
-        title = '0';
-        subTitle = `scaling to ${desiredPodCount}`;
+        podRingLabelData.title = '0';
+        podRingLabelData.subTitle = `scaling to ${desiredPodCount}`;
       } else {
-        title = currentPodCount;
-        subTitle = podKindString(currentPodCount);
+        podRingLabelData.title = currentPodCount;
+        podRingLabelData.subTitle = podKindString(currentPodCount);
       }
-      return {
-        title,
-        subTitle,
-        titleComponent: getTitleComponent(),
-      };
+      break;
     case PodModel.kind:
     case JobModel.kind:
-      return {
-        title: '1',
-        subTitle: PodModel.label,
-        titleComponent: getTitleComponent(),
-      };
+      podRingLabelData.title = '1';
+      podRingLabelData.subTitle = PodModel.label;
+      break;
     case CronJobModel.kind:
-      return {
-        title: `${pods.length}`,
-        subTitle: podKindString(currentPodCount),
-        titleComponent: getTitleComponent(),
-      };
+      podRingLabelData.title = `${pods.length}`;
+      podRingLabelData.subTitle = podKindString(currentPodCount);
+      break;
     default:
       currentPodCount = (obj.status?.readyReplicas || 0) + failedPodCount;
       desiredPodCount = obj.spec?.replicas;
       isPending = isPendingPods(pods, currentPodCount, desiredPodCount);
       titleData = getTitleAndSubtitle(isPending, currentPodCount, desiredPodCount);
-      return {
-        title: titleData.title,
-        subTitle: titleData.subTitle,
-        titleComponent: getTitleComponent(titleData.longTitle, titleData.longSubtitle),
-      };
+      podRingLabelData.title = titleData.title;
+      podRingLabelData.subTitle = titleData.subTitle;
+      podRingLabelData.longTitle = titleData.longTitle;
+      podRingLabelData.longSubtitle = titleData.longSubtitle;
+      break;
   }
+
+  return podRingLabelData;
 };
 
 export const hpaPodRingLabel = (
   obj: K8sResourceKind,
   hpa: HorizontalPodAutoscalerKind,
   pods: ExtPodKind[],
-): PodRingLabelType => {
+): PodRingLabelData => {
   const desiredPodCount = obj.spec?.replicas;
   const desiredPods = hpa.status?.desiredReplicas || desiredPodCount;
   const currentPods = hpa.status?.currentReplicas;
@@ -231,8 +235,32 @@ export const hpaPodRingLabel = (
   return {
     title: scaling ? 'Autoscaling' : 'Autoscaled',
     subTitle: `to ${desiredPods}`,
-    titleComponent: getTitleComponent(false, false, true),
+    longTitle: false,
+    longSubtitle: false,
+    reversed: true,
   };
+};
+
+export const usePodRingLabel = (
+  obj: K8sResourceKind,
+  ownerKind: string,
+  pods: ExtPodKind[],
+  hpaControlledScaling: boolean = false,
+  hpa?: HorizontalPodAutoscalerKind,
+): PodRingLabelType => {
+  const podRingLabelData = hpaControlledScaling
+    ? hpaPodRingLabel(obj, hpa, pods)
+    : podRingLabel(obj, ownerKind, pods);
+  const { title, subTitle, longTitle, longSubtitle, reversed } = podRingLabelData;
+
+  return React.useMemo(
+    () => ({
+      title,
+      subTitle,
+      titleComponent: getTitleComponent(longTitle, longSubtitle, reversed),
+    }),
+    [longSubtitle, longTitle, reversed, subTitle, title],
+  );
 };
 
 export const usePodScalingAccessStatus = (
