@@ -526,11 +526,13 @@ export const createOrUpdateResources = async (
   if (!_.isEmpty(ports) || buildStrategy === 'Docker' || buildStrategy === 'Source') {
     const originalService = _.get(appResources, 'service.data');
     const service = createService(formData, imageStream, originalService);
-    requests.push(
+    const request =
       verb === 'update'
-        ? k8sUpdate(ServiceModel, service)
-        : k8sCreate(ServiceModel, service, dryRun ? dryRunOpt : {}),
-    );
+        ? !_.isEmpty(originalService)
+          ? k8sUpdate(ServiceModel, service)
+          : null
+        : k8sCreate(ServiceModel, service, dryRun ? dryRunOpt : {});
+    requests.push(request);
     const originalRoute = _.get(appResources, 'route.data');
     const route = createRoute(formData, imageStream, originalRoute);
     if (verb === 'update' && disable) {

@@ -425,12 +425,15 @@ export const createOrUpdateDeployImageResources = async (
       );
     }
     if (!_.isEmpty(ports)) {
-      const service = createService(formData, undefined, _.get(appResources, 'service.data'));
-      requests.push(
+      const originalService = appResources?.service?.data;
+      const service = createService(formData, undefined, originalService);
+      const request =
         verb === 'update'
-          ? k8sUpdate(ServiceModel, service)
-          : k8sCreate(ServiceModel, service, dryRun ? dryRunOpt : {}),
-      );
+          ? !_.isEmpty(originalService)
+            ? k8sUpdate(ServiceModel, service)
+            : null
+          : k8sCreate(ServiceModel, service, dryRun ? dryRunOpt : {});
+      requests.push(request);
       const route = createRoute(formData, undefined, _.get(appResources, 'route.data'));
       if (verb === 'update' && disable) {
         requests.push(k8sUpdate(RouteModel, route));
