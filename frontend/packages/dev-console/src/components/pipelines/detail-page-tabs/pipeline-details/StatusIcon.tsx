@@ -5,7 +5,7 @@ import {
   CheckCircleIcon,
   CircleIcon,
   ExclamationCircleIcon,
-  PendingIcon,
+  HourglassHalfIcon,
   SyncAltIcon,
 } from '@patternfly/react-icons';
 import { getRunStatusColor, runStatus } from '../../../../utils/pipeline-augment';
@@ -30,7 +30,7 @@ export const StatusIcon: React.FC<StatusIconProps> = ({ status, ...props }) => {
 
     case runStatus.Idle:
     case runStatus.Pending:
-      return <PendingIcon {...props} />;
+      return <HourglassHalfIcon {...props} />;
 
     case runStatus.Cancelled:
       return <BanIcon {...props} />;
