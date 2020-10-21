@@ -4,6 +4,7 @@ import { Button, PageHeaderToolsItem, Tooltip } from '@patternfly/react-core';
 import { TopologyIcon } from '@patternfly/react-icons';
 import {
   TopologyControlBar as PfTopologyControlBar,
+  observer,
   action,
   createTopologyControlButtons,
   defaultControlButtonsOptions,
@@ -15,8 +16,8 @@ interface TopologyControlBarProps {
   visualization: Visualization;
 }
 
-const TopologyControlBar: React.FC<TopologyControlBarProps> = ({ visualization }) => {
-  const layout = visualization.getGraph()?.getLayout() ?? 'COLA_LAYOUT';
+const TopologyControlBar: React.FC<TopologyControlBarProps> = observer(({ visualization }) => {
+  const layout = visualization.getGraph()?.getLayout() ?? COLA_LAYOUT;
   return (
     <span className="pf-topology-control-bar">
       <PfTopologyControlBar
@@ -77,6 +78,6 @@ const TopologyControlBar: React.FC<TopologyControlBarProps> = ({ visualization }
       </PfTopologyControlBar>
     </span>
   );
-};
+});
 
-export default React.memo(TopologyControlBar);
+export default TopologyControlBar;
