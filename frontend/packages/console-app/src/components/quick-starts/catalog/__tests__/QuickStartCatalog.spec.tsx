@@ -5,6 +5,14 @@ import { EmptyBox } from '@console/internal/components/utils';
 import { InternalQuickStartCatalog } from '../QuickStartCatalog';
 import { getQuickStarts } from '../../utils/quick-start-utils';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key: string) => key }),
+  };
+});
+
 describe('QuickStartCatalog', () => {
   it('should load an emptybox if no QS exist', () => {
     const QuickStartCatalogProps = { quickStarts: [], onClick: jest.fn() };

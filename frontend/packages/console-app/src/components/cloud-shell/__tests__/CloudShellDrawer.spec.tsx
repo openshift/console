@@ -3,6 +3,16 @@ import { shallow } from 'enzyme';
 import CloudShellDrawer from '../CloudShellDrawer';
 import { Drawer } from '@console/shared';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key: string) => key }),
+  };
+});
+
+const i18nNS = 'cloudshell';
+
 describe('CloudShellDrawerComponent', () => {
   it('should render children as Drawer children when present', () => {
     const wrapper = shallow(
@@ -29,7 +39,7 @@ describe('CloudShellDrawerComponent', () => {
       .find(Drawer)
       .shallow()
       .find('[data-test-id="cloudshell-terminal-close"]');
-    expect(closeButton.props()['aria-label']).toEqual('Close terminal');
+    expect(closeButton.props()['aria-label']).toEqual(`${i18nNS}~Close terminal`);
     closeButton.simulate('click');
     expect(onClose).toHaveBeenCalled();
   });

@@ -11,6 +11,14 @@ jest.mock('../useCloudShellWorkspace', () => ({
   default: jest.fn(),
 }));
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key: string) => key }),
+  };
+});
+
 describe('CloudShellTerminal', () => {
   it('should display loading box', () => {
     (useCloudShellWorkspace as jest.Mock).mockReturnValueOnce([null, false]);

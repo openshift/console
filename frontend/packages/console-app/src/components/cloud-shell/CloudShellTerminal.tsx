@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { RootState } from '@console/internal/redux';
 import { StatusBox, LoadError } from '@console/internal/components/utils/status-box';
 import { UserKind } from '@console/internal/module/k8s';
@@ -39,6 +40,8 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ user, onCancel 
 
   const username = user?.metadata?.name;
 
+  const { t } = useTranslation();
+
   // save the namespace once the workspace has loaded
   React.useEffect(() => {
     if (loaded && !loadError) {
@@ -64,7 +67,9 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ user, onCancel 
         })
         .catch((e) => {
           if (!unmounted) {
-            const defaultError = 'Failed to connect to your OpenShift command line terminal';
+            const defaultError = t(
+              'cloudshell~Failed to connect to your OpenShift command line terminal',
+            );
             if (e?.response?.headers?.get('Content-Type')?.startsWith('text/plain')) {
               // eslint-disable-next-line promise/no-nesting
               e.response
@@ -85,18 +90,24 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ user, onCancel 
     return () => {
       unmounted = true;
     };
-  }, [username, workspaceName, workspaceNamespace, workspacePhase]);
+  }, [username, workspaceName, workspaceNamespace, workspacePhase, t]);
 
   // failed to load the workspace
   if (loadError) {
     return (
-      <StatusBox loaded={loaded} loadError={loadError} label="OpenShift command line terminal" />
+      <StatusBox
+        loaded={loaded}
+        loadError={loadError}
+        label={t('cloudshell~OpenShift command line terminal')}
+      />
     );
   }
 
   // failed to init the terminal
   if (initError) {
-    return <LoadError message={initError} label="OpenShift command line terminal" />;
+    return (
+      <LoadError message={initError} label={t('cloudshell~OpenShift command line terminal')} />
+    );
   }
 
   // loading the workspace resource

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useFormikContext, FormikValues, useField } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { TextInputTypes } from '@patternfly/react-core';
 import { ProjectModel } from '@console/internal/models';
 import { InputField, ResourceDropdownField, useFormikValidationFix, FLAGS } from '@console/shared';
@@ -13,6 +14,7 @@ const NamespaceSection: React.FC<NamespaceSectionProps> = ({ flags }) => {
   const canCreate = flags[FLAGS.CAN_CREATE_PROJECT];
   const [namespace] = useField('namespace');
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
+  const { t } = useTranslation();
 
   useFormikValidationFix(namespace.value);
 
@@ -40,8 +42,8 @@ const NamespaceSection: React.FC<NamespaceSectionProps> = ({ flags }) => {
     <>
       <ResourceDropdownField
         name="namespace"
-        label="Project"
-        placeholder="Select Project"
+        label={t('cloudshell~Project')}
+        placeholder={t('cloudshell~Select Project')}
         fullWidth
         required
         selectedKey={namespace.value}
@@ -58,17 +60,24 @@ const NamespaceSection: React.FC<NamespaceSectionProps> = ({ flags }) => {
           canCreate
             ? [
                 {
-                  actionTitle: 'Create Project',
+                  actionTitle: t('cloudshell~Create Project'),
                   actionKey: CREATE_NAMESPACE_KEY,
                 },
               ]
             : undefined
         }
         onLoad={handleOnLoad}
-        helpText="This project will be used to initialize your command line terminal"
+        helpText={t(
+          'cloudshell~This project will be used to initialize your command line terminal',
+        )}
       />
       {namespace.value === CREATE_NAMESPACE_KEY && (
-        <InputField type={TextInputTypes.text} required name="newNamespace" label="Project Name" />
+        <InputField
+          type={TextInputTypes.text}
+          required
+          name="newNamespace"
+          label={t('cloudshell~Project Name')}
+        />
       )}
     </>
   );

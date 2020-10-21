@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import {
   Drawer,
   DrawerPanelContent,
@@ -47,6 +48,7 @@ const QuickStartDrawer: React.FC<QuickStartDrawerProps> = ({
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
   const quickStart = getQuickStartByName(activeQuickStartID);
   const [scrollDirection, handleScrollCallback] = useScrollDirection();
+  const { t } = useTranslation();
 
   const handleClose = () => {
     if (activeQuickStartStatus === QuickStartStatus.IN_PROGRESS) {
@@ -80,7 +82,9 @@ const QuickStartDrawer: React.FC<QuickStartDrawerProps> = ({
             >
               {quickStart?.spec.displayName}{' '}
               <small className="co-quick-start-drawer__duration text-secondary">
-                {`${quickStart?.spec.duration} minutes`}
+                {t('quickstart~{{duration, number}} minutes', {
+                  duration: quickStart?.spec.duration,
+                })}
               </small>
             </Title>
           </div>

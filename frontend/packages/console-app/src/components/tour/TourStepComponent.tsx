@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Popover, PopoverPlacement, Modal } from '@console/shared';
 import { ModalVariant } from '@patternfly/react-core';
 import StepHeader from './steps/StepHeader';
@@ -39,6 +40,7 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
   onBack,
   onClose,
 }) => {
+  const { t } = useTranslation();
   const header = <StepHeader>{heading}</StepHeader>;
   const footer = (
     <StepFooter
@@ -89,7 +91,7 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
       onClose={handleClose}
       id="guided-tour-modal"
       data-test="guided-tour-modal"
-      aria-label={`guided tour ${step}`}
+      aria-label={t('tour~guided tour {{step, number}}', { step })}
       isFullScreen
     >
       {stepContent}
