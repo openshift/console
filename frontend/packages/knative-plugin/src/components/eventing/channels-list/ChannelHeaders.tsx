@@ -19,11 +19,6 @@ const ChannelHeaders = () => {
       transforms: [sortable],
     },
     {
-      title: 'Subscriptions',
-      sortField: 'kind',
-      transforms: [sortable],
-    },
-    {
       title: 'Created',
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],

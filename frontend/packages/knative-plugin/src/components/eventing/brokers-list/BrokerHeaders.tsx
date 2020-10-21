@@ -14,9 +14,6 @@ const BrokerHeaders = () => {
       transforms: [sortable],
     },
     {
-      title: 'Triggers',
-    },
-    {
       title: 'Created',
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
