@@ -4,7 +4,6 @@ import { Kebab, ResourceKebab, ResourceLink, Timestamp } from '@console/internal
 import { referenceFor } from '@console/internal/module/k8s';
 import { EventingBrokerModel } from '../../../models';
 import { EventBrokerKind } from '../../../types';
-import BrokerTriggers from '../BrokerTriggers';
 
 const BrokerRow: RowFunction<EventBrokerKind> = ({ obj, index, key, style }) => {
   const objReference = referenceFor(obj);
@@ -24,9 +23,6 @@ const BrokerRow: RowFunction<EventBrokerKind> = ({ obj, index, key, style }) => 
       </TableData>
       <TableData className="co-break-word">
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-      </TableData>
-      <TableData>
-        <BrokerTriggers broker={obj} />
       </TableData>
       <TableData>
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
