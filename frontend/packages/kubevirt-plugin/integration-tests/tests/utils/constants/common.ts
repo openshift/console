@@ -5,6 +5,14 @@ export const {
   KUBEVIRT_PROJECT_NAME = 'openshift-cnv',
   VOLUME_MODE,
 } = process.env;
+export const REMOTE_IMAGE =
+  'http://cnv-qe-server.rhevdev.lab.eng.rdu2.redhat.com/files/cnv-tests/cirros-images/cirros-0.4.0-x86_64-disk.qcow2';
+export const {
+  CIRROS_IMAGE = REMOTE_IMAGE,
+  FEDORA_IMAGE = REMOTE_IMAGE,
+  RHEL7_IMAGE = REMOTE_IMAGE,
+  WIN10_IMAGE = REMOTE_IMAGE,
+} = process.env;
 
 const rhelTinyCommonTemplateName = execSync(
   "kubectl get template -n openshift | grep rhel7-desktop-tiny | awk '{print $1}'",
@@ -80,6 +88,7 @@ export const DEFAULT_YAML_VM_NAME = 'vm-example';
 
 export const KUBEVIRT_SCRIPTS_PATH =
   './packages/kubevirt-plugin/integration-tests/tests/utils/scripts';
+export const EXPECT_LOGIN_SCRIPT_PATH = `${KUBEVIRT_SCRIPTS_PATH}/expect-login.sh`;
 export const KUBEVIRT_TEMPLATES_PATH =
   './packages/kubevirt-plugin/integration-tests/tests/utils/templates';
 

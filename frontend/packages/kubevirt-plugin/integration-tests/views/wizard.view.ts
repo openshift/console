@@ -57,6 +57,8 @@ export const customCloudInitScriptTextArea = $('#cloudinit-custom-custom-script'
 export const cloudInitAddKeyButton = $('#cloudinit-ssh_authorized_keys-add');
 export const cloudInitHostname = $('#cloudinit-hostname');
 export const cloudInitSSHKey = (rowNumber) => $(`#cloudinit-ssh_authorized_keys-key-${rowNumber}`);
+export const cloudInitFirstOption = $('#cloud-init-edit-mode-first-option');
+export const cloudInitSecondOption = $('#cloud-init-edit-mode-second-option');
 
 // Review tab
 export const nameReviewValue = $('#wizard-review-name');
@@ -89,5 +91,6 @@ export const tableRowAttribute = async (name: string, columnIndex: number): Prom
 };
 export const dropDownItem = (text) =>
   element(by.cssContainingText('.pf-c-select__menu-item', text));
-export const dropDownItemTitle = (text) =>
+export const dropDownItemMain = (text) =>
   element(by.cssContainingText('.pf-c-select__menu-item-main', text));
+export const uploadLink = element(by.linkText('upload a new disk image'));

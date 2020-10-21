@@ -31,6 +31,7 @@ import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
 import { DiskDialog } from '../dialogs/diskDialog';
 import { Flavor } from '../utils/constants/wizard';
 import { resourceHorizontalTab } from '../../views/uiResource.view';
+import { confirmActionButton } from '../../views/importWizard.view';
 import { virtualizationTitle } from '../../views/vms.list.view';
 import { VMBuilderData } from '../types/vm';
 import { ProvisionSource } from '../utils/constants/enums/provisionSource';
@@ -99,7 +100,7 @@ export class Wizard {
   }
 
   async selectFlavor(flavor: FlavorConfig) {
-    await selectItemFromDropdown(view.flavorSelect, view.dropDownItem(flavor.flavor));
+    await selectItemFromDropdown(view.flavorSelect, view.dropDownItemMain(flavor.flavor));
     if (flavor.flavor === Flavor.CUSTOM && (!flavor.memory || !flavor.cpu)) {
       throw Error('Custom Flavor requires memory and cpu values.');
     }
@@ -112,7 +113,10 @@ export class Wizard {
   }
 
   async selectWorkloadProfile(workloadProfile: string) {
-    await selectItemFromDropdown(view.workloadProfileSelect, view.dropDownItem(workloadProfile));
+    await selectItemFromDropdown(
+      view.workloadProfileSelect,
+      view.dropDownItemMain(workloadProfile),
+    );
   }
 
   async disableGoldenImageCloneCheckbox() {
@@ -132,7 +136,7 @@ export class Wizard {
   async selectProvisionSource(provisionSource: ProvisionSource) {
     await selectItemFromDropdown(
       view.provisionSourceSelect,
-      view.dropDownItemTitle(provisionSource.getDescription()),
+      view.dropDownItemMain(provisionSource.getDescription()),
     );
     if (provisionSource.getSource()) {
       await fillInput(
@@ -151,6 +155,8 @@ export class Wizard {
       await click(view.cloudInitCustomScriptCheckbox);
       await fillInput(view.customCloudInitScriptTextArea, cloudInitOptions.customScript);
     } else {
+      await click(view.cloudInitFirstOption);
+      await click(confirmActionButton);
       await fillInput(view.cloudInitHostname, cloudInitOptions.hostname || '');
       await asyncForEach(cloudInitOptions.sshKeys, async (sshKey: string, index: number) => {
         await fillInput(view.cloudInitSSHKey(index + 1), sshKey);
@@ -257,9 +263,8 @@ export class Wizard {
       if (provisionSource) {
         await this.disableGoldenImageCloneCheckbox();
         await this.selectProvisionSource(provisionSource);
-      } else {
-        throw Error('VM Provision source not defined');
       }
+
       if (workload) {
         await this.selectWorkloadProfile(workload);
       } else {

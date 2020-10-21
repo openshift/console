@@ -16,7 +16,7 @@ import {
 } from '@console/ceph-storage-plugin/integration-tests/views/pvc.view';
 import { click, fillInput } from '@console/shared/src/test-utils/utils';
 import { selectOptionByText } from '../utils/utils';
-import * as cdiUploadView from '../../views/cdiUploadView';
+import * as pvcView from '../../views/pvc.view';
 import { PVCData } from '../types/pvc';
 
 export class UploadForm {
@@ -24,7 +24,7 @@ export class UploadForm {
     await clickNavLink(['Storage', 'Persistent Volume Claims']);
     await isLoaded();
     await click(createItemButton);
-    await click(cdiUploadView.uploadCdiFormButton);
+    await click(pvcView.uploadCdiFormButton);
 
     await browser.wait(
       until.textToBePresentInElement(
@@ -40,12 +40,12 @@ export class UploadForm {
       (document.querySelector('input[type="file"]') as HTMLElement).style.display = 'inline';
       callback();
     });
-    await cdiUploadView.uploadInput.sendKeys(name);
+    await pvcView.uploadInput.sendKeys(name);
   }
 
   async selectGoldenOS(os: string) {
-    await click(cdiUploadView.goldenOSCheckbox);
-    await selectOptionByText(cdiUploadView.goldenOSDropDownID, os);
+    await click(pvcView.goldenOSCheckbox);
+    await selectOptionByText(pvcView.goldenOSDropDownID, os);
   }
 
   async fillPVCName(pvcName: string) {
