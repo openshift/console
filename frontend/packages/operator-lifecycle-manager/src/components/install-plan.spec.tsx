@@ -149,6 +149,7 @@ describe('InstallPlanTableRow', () => {
         .find('tr')
         .childAt(STATUS_INDEX)
         .render()
+        .find('[data-test="status-text"]')
         .text(),
     ).toEqual(testInstallPlan.status.phase);
   });
