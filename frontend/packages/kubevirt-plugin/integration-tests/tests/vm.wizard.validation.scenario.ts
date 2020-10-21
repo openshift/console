@@ -1,5 +1,5 @@
 import { execSync } from 'child_process';
-import { browser, ExpectedConditions as until } from 'protractor';
+import { browser } from 'protractor';
 import { click, waitForStringInElement } from '@console/shared/src/test-utils/utils';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import {
@@ -20,9 +20,6 @@ import { DiskDialog } from './dialogs/diskDialog';
 import { saveButton } from '../views/kubevirtUIResource.view';
 import { vmNameHelper } from '../views/importWizard.view';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
-import { isLoaded, createItemButton } from '../../../../integration-tests/views/crud.view';
-import * as view from '../../integration-tests/views/wizard.view'
-import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
 
 describe('Wizard validation', () => {
   const wizard = new Wizard();
@@ -54,24 +51,6 @@ describe('Wizard validation', () => {
 
   afterEach(async () => {
     await wizard.closeWizard();
-  });
-
-  it('ICNV-5045 - dont let the user continue If PXE provision source is selected on a cluster without a NAD available', async () => {
-    await browser.get(`${appHost}/k8s/ns/${testName}/virtualization`);
-    await isLoaded();
-    await click(createItemButton);
-    await click(view.createWithWizardButton);
-    await view.waitForNoLoaders();
-    const wizard = new Wizard();
-    await wizard.fillName(getRandStr(5));
-    
-    await wizard.selectProvisionSource(ProvisionSource.PXE);
-  
-    await wizard.selectOperatingSystem(OperatingSystem.RHEL7);
-    await wizard.selectFlavor(customFlavorSufficientMemory);
-    await wizard.selectWorkloadProfile(Workload.DESKTOP);
-    await click(view.nextButton);
-    await browser.wait(until.presenceOf(view.footerError), 1000);
   });
 
   it('ID(CNV-3697) Wizard validates custom flavor memory', async () => {
