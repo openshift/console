@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import {
   Form,
   FormSelect,
@@ -15,18 +14,15 @@ import { ModalBody } from '@console/internal/components/factory';
 import { ValidationErrorType } from '@console/shared';
 import { isLoaded } from '../../../../../../utils';
 import { ModalFooter } from '../../../../modal/modal-footer';
-import {
-  AFFINITY_TYPE_LABLES,
-  AFFINITY_CONDITIONS,
-  AFFINITY_CONDITION_LABELS,
-} from '../../../shared/consts';
+import { AFFINITY_TYPE_LABLES, AFFINITY_CONDITION_LABELS } from '../../../shared/consts';
 import { FormRow } from '../../../../../form/form-row';
 import { isWeightValid, isTermsInvalid, getTopologyKeyValidation } from '../../validations';
 import { useIDEntities } from '../../../../../../hooks/use-id-entities';
 import { NodeChecker } from '../../../shared/NodeChecker/node-checker';
 import { useNodeQualifier } from '../../../shared/hooks';
-import { AffinityLabel, AffinityRowData } from '../../types';
+import { AffinityCondition, AffinityLabel, AffinityRowData } from '../../types';
 import { AffinityExpressionList } from '../affinity-expression-list/affinity-expression-list';
+import { getIntersectedQualifiedNodes } from '../../helpers';
 import './affinity-edit.scss';
 
 export const AffinityEdit: React.FC<AffinityEditProps> = ({
@@ -78,19 +74,6 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
 
   const qualifiedExpressionNodes = useNodeQualifier(nodes, 'label', affinityExpressions);
   const qualifiedFieldNodes = useNodeQualifier(nodes, 'field', affinityFields);
-
-  const getQualifiedNodes = () => {
-    if (affinityExpressions.length > 0 && affinityFields.length > 0) {
-      return _.intersection(qualifiedExpressionNodes, qualifiedFieldNodes);
-    }
-    if (affinityExpressions.length > 0) {
-      return qualifiedExpressionNodes;
-    }
-    if (affinityFields.length > 0) {
-      return qualifiedFieldNodes;
-    }
-    return [];
-  };
 
   const isExpressionsInvalid = isTermsInvalid(affinityExpressions);
   const isFieldsInvalid = isTermsInvalid(affinityFields);
@@ -150,18 +133,18 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
               isDisabled={isDisabled}
             >
               <FormSelectOption
-                key={AFFINITY_CONDITIONS.preferred}
-                value={AFFINITY_CONDITIONS.preferred}
-                label={AFFINITY_CONDITION_LABELS[AFFINITY_CONDITIONS.preferred]}
+                key={AffinityCondition.preferred}
+                value={AffinityCondition.preferred}
+                label={AFFINITY_CONDITION_LABELS[AffinityCondition.preferred]}
               />
               <FormSelectOption
-                key={AFFINITY_CONDITIONS.required}
-                value={AFFINITY_CONDITIONS.required}
-                label={AFFINITY_CONDITION_LABELS[AFFINITY_CONDITIONS.required]}
+                key={AffinityCondition.required}
+                value={AffinityCondition.required}
+                label={AFFINITY_CONDITION_LABELS[AffinityCondition.required]}
               />
             </FormSelect>
           </FormRow>
-          {focusedAffinity?.condition === AFFINITY_CONDITIONS.preferred && (
+          {focusedAffinity?.condition === AffinityCondition.preferred && (
             <FormRow
               title="Weight"
               fieldId={'weight'}
@@ -284,8 +267,16 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
                   rowID="affinity-field"
                 />
               </FormRow>
-              {(affinityExpressions.length > 0 || affinityFields.length > 0) &&
-                !isAffinityInvalid && <NodeChecker qualifiedNodes={getQualifiedNodes()} />}
+              {(affinityExpressions.length > 0 || affinityFields.length > 0) && !isAffinityInvalid && (
+                <NodeChecker
+                  qualifiedNodes={getIntersectedQualifiedNodes({
+                    expressionNodes: qualifiedExpressionNodes,
+                    fieldNodes: qualifiedFieldNodes,
+                    expressions: affinityExpressions,
+                    fields: affinityFields,
+                  })}
+                />
+              )}
             </>
           )}
         </Form>

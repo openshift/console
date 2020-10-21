@@ -1,25 +1,26 @@
 // import * as _ from 'lodash';
 import {
+  AffinityCondition,
   NodeAffinity,
   PodAffinity,
 } from '../../components/modals/scheduling-modals/affinity-modal/types';
 
 export const getRequiredScheduling = (affinity: NodeAffinity | PodAffinity) =>
-  affinity?.requiredDuringSchedulingIgnoredDuringExecution;
+  affinity?.[AffinityCondition.required];
 
 export const getPreferredScheduling = (affinity: NodeAffinity | PodAffinity) =>
-  affinity?.preferredDuringSchedulingIgnoredDuringExecution;
+  affinity?.[AffinityCondition.preferred];
 
 // Node Affinity
 export const getNodeAffinityRequiredTerms = (affinity: NodeAffinity) =>
-  affinity?.requiredDuringSchedulingIgnoredDuringExecution?.nodeSelectorTerms;
+  affinity?.[AffinityCondition.required]?.nodeSelectorTerms;
 
 export const getNodeAffinityPreferredTerms = (affinity: NodeAffinity) =>
-  affinity?.preferredDuringSchedulingIgnoredDuringExecution;
+  affinity?.[AffinityCondition.preferred];
 
 // Pod Affinity
 export const getPodAffinityRequiredTerms = (affinity: PodAffinity) =>
-  affinity?.requiredDuringSchedulingIgnoredDuringExecution;
+  affinity?.[AffinityCondition.required];
 
 export const getPodAffinityPreferredTerms = (affinity: PodAffinity) =>
-  affinity?.preferredDuringSchedulingIgnoredDuringExecution;
+  affinity?.[AffinityCondition.preferred];

@@ -1,8 +1,7 @@
-import { AFFINITY_CONDITIONS } from '../shared/consts';
-import { AffinityRowData, AffinityLabel } from './types';
+import { AffinityRowData, AffinityLabel, AffinityCondition, AffinityType } from './types';
 
 export const isWeightValid = (focusedAffinity: AffinityRowData) =>
-  focusedAffinity.condition === AFFINITY_CONDITIONS.required ||
+  focusedAffinity.condition === AffinityCondition.required ||
   (focusedAffinity.weight > 0 && focusedAffinity.weight <= 100);
 
 export const isTermsInvalid = (terms: AffinityLabel[]) =>
@@ -18,15 +17,15 @@ export const getTopologyKeyValidation = ({ type, condition, topologyKey }: Affin
     topologyValidationMessage: '',
   };
 
-  if (condition === AFFINITY_CONDITIONS.required) {
-    if (type === 'podAffinity') {
+  if (condition === AffinityCondition.required) {
+    if (type === AffinityType.pod) {
       topology.topologyValidationMessage = 'Topology key must not be empty';
       topology.isTopologyInvalid = !topologyKey;
     } else {
       topology.isTopologyDisabled = true;
       topology.topologyValidationMessage = 'topologyKey is limited with current config';
     }
-  } else if (type === 'podAntiAffinity') {
+  } else if (type === AffinityType.podAnti) {
     topology.topologyValidationMessage = 'Empty topologyKey is interpreted as “all topologies”';
   }
   return topology;

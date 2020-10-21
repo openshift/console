@@ -1,6 +1,8 @@
 import * as _ from 'lodash';
 import * as classNames from 'classnames';
+import { getName } from '@console/shared';
 import { Kebab } from '@console/internal/components/utils';
+import { NodeKind } from '@console/internal/module/k8s';
 import {
   getNodeAffinityRequiredTerms,
   getNodeAffinityPreferredTerms,
@@ -17,12 +19,13 @@ import {
   PreferredPodAffinityTerm,
   AffinityRowData,
   AffinityLabel,
+  AffinityType,
+  AffinityCondition,
 } from './types';
-import { AFFINITY_CONDITIONS } from '../shared/consts';
 
 export const defaultNewAffinity = {
-  type: 'nodeAffinity',
-  condition: AFFINITY_CONDITIONS.required,
+  type: AffinityType.node,
+  condition: AffinityCondition.required,
   expressions: [{ id: 0, key: '', values: [], operator: 'In' }],
   fields: [],
   topologyKey: 'kubernetes.io/hostname',
@@ -52,8 +55,8 @@ const getNodeAffinityRows = (nodeAffinity: NodeAffinity): AffinityRowData[] => {
 
   const required = requiredTerms.map(({ matchExpressions, matchFields }, i) => ({
     id: `node-required-${i}`,
-    type: 'nodeAffinity',
-    condition: AFFINITY_CONDITIONS.required,
+    type: AffinityType.node,
+    condition: AffinityCondition.required,
     expressions: setIDsToEntity(matchExpressions),
     fields: setIDsToEntity(matchFields),
   }));
@@ -61,8 +64,8 @@ const getNodeAffinityRows = (nodeAffinity: NodeAffinity): AffinityRowData[] => {
   const preferred = preferredTerms.map(({ preference, weight }, i) => ({
     id: `node-preferred-${i}`,
     weight,
-    type: 'nodeAffinity',
-    condition: AFFINITY_CONDITIONS.preferred,
+    type: AffinityType.node,
+    condition: AffinityCondition.preferred,
     expressions: setIDsToEntity(preference.matchExpressions),
     fields: setIDsToEntity(preference.matchFields),
   }));
@@ -79,8 +82,8 @@ const getPodLikeAffinityRows = (
 
   const required = requiredTerms?.map((podAffinityTerm, i) => ({
     id: isAnti ? `pod-anti-required-${i}` : `pod-required-${i}`,
-    type: isAnti ? 'podAntiAffinity' : 'podAffinity',
-    condition: AFFINITY_CONDITIONS.required,
+    type: isAnti ? AffinityType.podAnti : AffinityType.pod,
+    condition: AffinityCondition.required,
     expressions: setIDsToEntity(podAffinityTerm?.labelSelector?.matchExpressions),
     namespaces: podAffinityTerm?.namespaces,
     topologyKey: podAffinityTerm?.topologyKey,
@@ -88,8 +91,8 @@ const getPodLikeAffinityRows = (
 
   const preferred = preferredTerms?.map(({ podAffinityTerm, weight }, i) => ({
     id: isAnti ? `pod-anti-preferred-${i}` : `pod-preferred-${i}`,
-    type: isAnti ? 'podAntiAffinity' : 'podAffinity',
-    condition: AFFINITY_CONDITIONS.preferred,
+    type: isAnti ? AffinityType.podAnti : AffinityType.pod,
+    condition: AffinityCondition.preferred,
     weight,
     expressions: setIDsToEntity(podAffinityTerm?.labelSelector?.matchExpressions),
     namespaces: podAffinityTerm?.namespaces,
@@ -161,46 +164,69 @@ export const getAffinityFromRowsData = (affinityRows: AffinityRowData[]) => {
 
   const affinity = {
     nodeAffinity: {
-      requiredDuringSchedulingIgnoredDuringExecution: {
+      [AffinityCondition.required]: {
         nodeSelectorTerms: pickRows(
-          'nodeAffinity',
-          AFFINITY_CONDITIONS.required,
+          AffinityType.node,
+          AffinityCondition.required,
           getRequiredNodeTermFromRowData,
         ),
       },
-      preferredDuringSchedulingIgnoredDuringExecution: pickRows(
-        'nodeAffinity',
-        AFFINITY_CONDITIONS.preferred,
+      [AffinityCondition.preferred]: pickRows(
+        AffinityType.node,
+        AffinityCondition.preferred,
         getPreferredNodeTermFromRowData,
       ),
     },
     podAffinity: {
-      requiredDuringSchedulingIgnoredDuringExecution: pickRows(
-        'podAffinity',
-        AFFINITY_CONDITIONS.required,
+      [AffinityCondition.required]: pickRows(
+        AffinityType.pod,
+        AffinityCondition.required,
         getRequiredPodTermFromRowData,
       ),
-      preferredDuringSchedulingIgnoredDuringExecution: pickRows(
-        'podAffinity',
-        AFFINITY_CONDITIONS.preferred,
+      [AffinityCondition.preferred]: pickRows(
+        AffinityType.pod,
+        AffinityCondition.preferred,
         getPreferredPodTermFromRowData,
       ),
     },
     podAntiAffinity: {
-      requiredDuringSchedulingIgnoredDuringExecution: pickRows(
-        'podAntiAffinity',
-        AFFINITY_CONDITIONS.required,
+      [AffinityCondition.required]: pickRows(
+        AffinityType.podAnti,
+        AffinityCondition.required,
         getRequiredPodTermFromRowData,
       ),
-      preferredDuringSchedulingIgnoredDuringExecution: pickRows(
-        'podAntiAffinity',
-        AFFINITY_CONDITIONS.preferred,
+      [AffinityCondition.preferred]: pickRows(
+        AffinityType.podAnti,
+        AffinityCondition.preferred,
         getPreferredPodTermFromRowData,
       ),
     },
   };
 
   return affinity;
+};
+
+export const getIntersectedQualifiedNodes = ({
+  expressions,
+  fields,
+  expressionNodes,
+  fieldNodes,
+}: {
+  expressions: AffinityLabel[];
+  fields: AffinityLabel[];
+  expressionNodes: NodeKind[];
+  fieldNodes: NodeKind[];
+}) => {
+  if (expressions.length > 0 && fields.length > 0) {
+    return _.intersectionWith(expressionNodes, fieldNodes, (a, b) => getName(a) === getName(b));
+  }
+  if (expressions.length > 0) {
+    return expressionNodes;
+  }
+  if (fields.length > 0) {
+    return fieldNodes;
+  }
+  return [];
 };
 
 export const getAvailableAffinityID = (affinities: AffinityRowData[]) => {

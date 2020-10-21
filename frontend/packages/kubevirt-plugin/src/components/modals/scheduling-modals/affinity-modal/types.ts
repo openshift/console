@@ -1,6 +1,17 @@
 import { Selector } from '@console/internal/module/k8s';
 import { IDEntity } from '../../../../types';
 
+export enum AffinityType {
+  node = 'nodeAffinity',
+  pod = 'podAffinity',
+  podAnti = 'podAntiAffinity',
+}
+
+export enum AffinityCondition {
+  required = 'requiredDuringSchedulingIgnoredDuringExecution',
+  preferred = 'preferredDuringSchedulingIgnoredDuringExecution',
+}
+
 export type MatchExpression =
   | { key: string; operator: 'Exists' | 'DoesNotExist' }
   | {
@@ -28,8 +39,8 @@ export type PreferredNodeAffinityTerm = {
 };
 
 export type NodeAffinity = {
-  preferredDuringSchedulingIgnoredDuringExecution?: PreferredNodeAffinityTerm[];
-  requiredDuringSchedulingIgnoredDuringExecution?: RequiredNodeAffinityTerm;
+  [AffinityCondition.preferred]?: PreferredNodeAffinityTerm[];
+  [AffinityCondition.required]?: RequiredNodeAffinityTerm;
 };
 
 export type PodAffinityTerm = {
@@ -44,8 +55,8 @@ export type PreferredPodAffinityTerm = {
 };
 
 export type PodAffinity = {
-  preferredDuringSchedulingIgnoredDuringExecution: PreferredPodAffinityTerm[];
-  requiredDuringSchedulingIgnoredDuringExecution: PodAffinityTerm[];
+  [AffinityCondition.preferred]: PreferredPodAffinityTerm[];
+  [AffinityCondition.required]: PodAffinityTerm[];
 };
 
 export type Affinity = {
@@ -62,10 +73,8 @@ export type AffinityLabel = IDEntity & {
 
 export type AffinityRowData = {
   id: string;
-  type: 'nodeAffinity' | 'podAffinity' | 'podAntiAffinity';
-  condition:
-    | 'requiredDuringSchedulingIgnoredDuringExecution'
-    | 'preferredDuringSchedulingIgnoredDuringExecution';
+  type: AffinityType;
+  condition: AffinityCondition;
   weight?: number;
   topologyKey?: string;
   expressions?: AffinityLabel[];
