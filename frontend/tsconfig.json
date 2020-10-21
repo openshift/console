@@ -11,12 +11,9 @@
     "experimentalDecorators": true,
     "sourceMap": true,
     "noUnusedLocals": true,
-    "types": ["jest", "cypress", "cypress-axe"],
-    "paths": {
-      "protractor": ["integration-tests/protractor.d.ts"]
-    },
+    "types": ["node", "jest", "cypress", "cypress-axe"],
     "typeRoots": ["node_modules/@types", "@types"]
   },
-  "exclude": [".yarn", "**/node_modules", "public/dist"],
+  "exclude": [".yarn", "**/node_modules", "**/dist", "dynamic-demo-plugin"],
   "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.json"]
 }

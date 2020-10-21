@@ -1,3 +1,13 @@
+import * as React from 'react';
+
+/**
+ * Console feature flags used to gate extension instances.
+ */
+export type ExtensionFlags = Partial<{
+  required: string[];
+  disallowed: string[];
+}>;
+
 /**
  * An extension of the Console application.
  *
@@ -19,10 +29,7 @@
 export type Extension<P = any> = {
   type: string;
   properties: P;
-  flags?: Partial<{
-    required: string[];
-    disallowed: string[];
-  }>;
+  flags?: ExtensionFlags;
 };
 
 /**

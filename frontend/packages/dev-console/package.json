@@ -6,7 +6,7 @@
   "scripts": {
     "coverage": "yarn test --coverage --collectCoverageFrom='[\"packages/dev-console/src/**\",\"!**/__tests__/**\",\"!packages/dev-console/src/test/**\"]'",
     "lint": "yarn --cwd ../.. eslint packages/dev-console",
-    "test": "yarn --cwd ../.. run test packages/dev-console"
+    "test": "yarn --cwd ../.. test packages/dev-console"
   },
   "dependencies": {
     "@console/git-service": "0.0.0-fixed",

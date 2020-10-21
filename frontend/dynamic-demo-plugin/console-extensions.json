@@ -1,0 +1,24 @@
+{
+  "$schema": "../packages/console-dynamic-plugin-sdk/dist/schema/console-extensions.json",
+  "data": [
+    {
+      "type": "console.flag",
+      "properties": {
+        "handler": {
+          "$codeRef": "barUtils.testHandler"
+        }
+      }
+    },
+    {
+      "type": "console.flag/model",
+      "properties": {
+        "flag": "EXAMPLE",
+        "model": {
+          "group": "kubevirt.io",
+          "version": "v1alpha3",
+          "kind": "ExampleModel"
+        }
+      }
+    }
+  ]
+}

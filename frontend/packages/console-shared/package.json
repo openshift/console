@@ -5,6 +5,6 @@
   "private": true,
   "main": "src/index.ts",
   "scripts": {
-    "test": "yarn --cwd ../.. run test packages/console-shared"
+    "test": "yarn --cwd ../.. test packages/console-shared"
   }
 }
