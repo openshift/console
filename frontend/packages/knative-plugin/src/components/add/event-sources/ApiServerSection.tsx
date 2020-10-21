@@ -37,7 +37,7 @@ const ApiServerSection: React.FC<ApiServerSectionProps> = ({ title }) => {
     [setFieldValue],
   );
   const modeItems = {
-    Ref: 'Ref',
+    Reference: 'Reference',
     Resource: 'Resource',
   };
   const fieldId = getFieldId(values.type, 'res-input');
@@ -68,7 +68,7 @@ const ApiServerSection: React.FC<ApiServerSectionProps> = ({ title }) => {
         name={`data.${EventSources.ApiServerSource}.mode`}
         label={t('knative-plugin~Mode')}
         items={modeItems}
-        title={modeItems.Ref}
+        title={modeItems.Reference}
         helpText={t('knative-plugin~The mode the receive adapter controller runs under')}
         fullWidth
       />

@@ -127,8 +127,8 @@ export const EventSourcePingModel: K8sKind = {
 };
 
 export const EventSourceContainerModel: K8sKind = {
-  apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
-  apiVersion: 'v1alpha1',
+  apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP,
+  apiVersion: 'v1alpha2',
   kind: 'ContainerSource',
   label: 'Container Source',
   labelPlural: 'Container Sources',
@@ -142,7 +142,7 @@ export const EventSourceContainerModel: K8sKind = {
 
 export const EventSourceApiServerModel: K8sKind = {
   apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP,
-  apiVersion: 'v1alpha1',
+  apiVersion: 'v1alpha2',
   kind: 'ApiServerSource',
   label: 'ApiServerSource',
   labelPlural: 'ApiServerSources',
@@ -198,7 +198,7 @@ export const EventSourceSinkBindingModel: K8sKind = {
 
 export const EventingSubscriptionModel: K8sKind = {
   apiGroup: KNATIVE_EVENT_MESSAGE_APIGROUP,
-  apiVersion: 'v1',
+  apiVersion,
   kind: 'Subscription',
   label: 'Subscription',
   labelPlural: 'Subscriptions',
@@ -212,7 +212,7 @@ export const EventingSubscriptionModel: K8sKind = {
 
 export const EventingIMCModel: K8sKind = {
   apiGroup: KNATIVE_EVENT_MESSAGE_APIGROUP,
-  apiVersion: 'v1beta1',
+  apiVersion,
   kind: 'InMemoryChannel',
   label: 'InMemoryChannel',
   labelPlural: 'inmemorychannels',
@@ -226,7 +226,7 @@ export const EventingIMCModel: K8sKind = {
 
 export const EventingChannelModel: K8sKind = {
   apiGroup: KNATIVE_EVENT_MESSAGE_APIGROUP,
-  apiVersion: 'v1beta1',
+  apiVersion,
   kind: 'Channel',
   label: 'Channel',
   labelPlural: 'channels',
@@ -254,7 +254,7 @@ export const EventingKafkaChannelModel: K8sKind = {
 
 export const EventingBrokerModel: K8sKind = {
   apiGroup: KNATIVE_EVENTING_APIGROUP,
-  apiVersion: 'v1beta1',
+  apiVersion,
   kind: 'Broker',
   label: 'Broker',
   labelPlural: 'Brokers',
@@ -268,7 +268,7 @@ export const EventingBrokerModel: K8sKind = {
 
 export const EventingTriggerModel: K8sKind = {
   apiGroup: KNATIVE_EVENTING_APIGROUP,
-  apiVersion: 'v1',
+  apiVersion,
   kind: 'Trigger',
   label: 'Trigger',
   labelPlural: 'Triggers',
@@ -282,7 +282,7 @@ export const EventingTriggerModel: K8sKind = {
 
 export const CamelIntegrationModel: K8sKind = {
   apiGroup: 'camel.apache.org',
-  apiVersion: 'v1',
+  apiVersion,
   kind: 'Integration',
   label: 'Integration',
   labelPlural: 'Integrations',
