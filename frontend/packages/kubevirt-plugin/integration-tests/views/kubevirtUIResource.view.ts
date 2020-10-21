@@ -15,7 +15,7 @@ export const createDiskButton = $('#add-disk');
 export const newResourceRow = $('.kubevirt-vm-create-device-row__confirmation-buttons');
 
 export const tableRows = () => resourceRows.map((row) => row.getText());
-export const tableRowForName = (name: string) =>
+const tableRowForName = (name: string) =>
   resourceRows
     .filter((row) =>
       row

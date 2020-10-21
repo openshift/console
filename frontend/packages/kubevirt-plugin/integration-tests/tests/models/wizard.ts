@@ -300,12 +300,8 @@ export class Wizard {
   }
 
   async processAdvanceStep(data: VMBuilderData) {
-    const { cloudInit, template } = data;
+    const { cloudInit } = data;
     if (cloudInit) {
-      if (template !== undefined) {
-        // TODO: wizard.useCloudInit needs to check state of checkboxes before clicking them to ensure desired state is achieved with specified template
-        throw new Error('Using cloud init with template not yet implemented.');
-      }
       await this.configureCloudInit(cloudInit);
     }
     await this.next();

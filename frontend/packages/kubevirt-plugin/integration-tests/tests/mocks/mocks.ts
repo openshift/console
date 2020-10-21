@@ -428,6 +428,7 @@ export function getVMManifest(
       template: {
         metadata: {
           labels: {
+            'flavor.template.kubevirt.io/tiny': 'true',
             'kubevirt.io/domain': metadata.name,
             'kubevirt.io/size': Flavor.TINY,
             'vm.kubevirt.io/name': metadata.name,
