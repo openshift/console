@@ -117,6 +117,10 @@ const testSuites = {
     'tests/dashboards/project-dashboard.scenario.ts',
     'tests/event.scenario.ts',
   ]),
+  omri: suite([
+    '../packages/kubevirt-plugin/integration-tests/tests/vm.wizard.scenario'
+        
+  ]),
   all: suite([
     'tests/crud.scenario.ts',
     'tests/overview/overview.scenario.ts',
