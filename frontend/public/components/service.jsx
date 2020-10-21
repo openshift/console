@@ -88,8 +88,12 @@ const ServiceAddress = ({ s }) => {
     <div className="co-ip-row">
       <div className="row">
         <div className="col-xs-6">
-          <p className="ip-name">{name}</p>
-          <p className="ip-desc">{desc}</p>
+          <p className="ip-name" data-i18n-translated>
+            {name}
+          </p>
+          <p className="ip-desc" data-i18n-translated>
+            {desc}
+          </p>
         </div>
         <div className="col-xs-6">
           {note && <span className="text-muted">{note}</span>}
@@ -132,8 +136,12 @@ const ServiceAddress = ({ s }) => {
   return (
     <div>
       <div className="row co-ip-header">
-        <div className="col-xs-6">{t('network-service~Type')}</div>
-        <div className="col-xs-6">{t('network-service~Location')}</div>
+        <div className="col-xs-6" data-i18n-translated>
+          {t('network-service~Type')}
+        </div>
+        <div className="col-xs-6" data-i18n-translated>
+          {t('network-service~Location')}
+        </div>
       </div>
       <div className="rows">
         {ServiceType(s.spec.type)}
@@ -153,10 +161,18 @@ const ServicePortMapping = ({ ports }) => {
   return (
     <div>
       <div className="row co-ip-header">
-        <div className="col-xs-3">{t('network-service~Name')}</div>
-        <div className="col-xs-3">{t('network-service~Port')}</div>
-        <div className="col-xs-3">{t('network-service~Protocol')}</div>
-        <div className="col-xs-3">{t('network-service~Pod port or name')}</div>
+        <div className="col-xs-3" data-i18n-translated>
+          {t('network-service~Name')}
+        </div>
+        <div className="col-xs-3" data-i18n-translated>
+          {t('network-service~Port')}
+        </div>
+        <div className="col-xs-3" data-i18n-translated>
+          {t('network-service~Protocol')}
+        </div>
+        <div className="col-xs-3" data-i18n-translated>
+          {t('network-service~Pod port or name')}
+        </div>
       </div>
       <div className="rows">
         {ports.map((portObj, i) => {

@@ -117,9 +117,15 @@ const IngressHeader = () => {
   const { t } = useTranslation();
   return (
     <div className="row co-m-table-grid__head">
-      <div className="col-xs-4">{t('network-policy~Target pods')}</div>
-      <div className="col-xs-5">{t('network-policy~From')}</div>
-      <div className="col-xs-3">{t('network-policy~To ports')}</div>
+      <div data-i18n-translated className="col-xs-4">
+        {t('network-policy~Target pods')}
+      </div>
+      <div data-i18n-translated className="col-xs-5">
+        {t('network-policy~From')}
+      </div>
+      <div data-i18n-translated className="col-xs-3">
+        {t('network-policy~To ports')}
+      </div>
     </div>
   );
 };
@@ -193,7 +199,7 @@ const Details_ = ({ obj: np, flags }) => {
       </div>
       <div className="co-m-pane__body">
         <SectionHeading text={t('network-policy~Ingress rules')} />
-        <p className="co-m-pane__explanation">
+        <p data-i18n-translated className="co-m-pane__explanation">
           {t(
             'network-policy~Pods accept all traffic by default. They can be isolated via Network Policies which specify a whitelist of ingress rules. When a Pod is selected by a Network Policy, it will reject all traffic not explicitly allowed via a Network Policy. See more details in:',
           )}

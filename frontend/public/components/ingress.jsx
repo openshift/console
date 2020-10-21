@@ -42,7 +42,7 @@ const TLSCert = (ingress) => {
   if (!_.has(ingress.spec, 'tls')) {
     return (
       <div>
-        <span>{t('ingress~Not configured')}</span>
+        <span data-i18n-translated>{t('ingress~Not configured')}</span>
       </div>
     );
   }
@@ -103,10 +103,18 @@ const RulesHeader = () => {
   const { t } = useTranslation();
   return (
     <div className="row co-m-table-grid__head">
-      <div className="col-xs-3">{t('ingress~Host')}</div>
-      <div className="col-xs-3">{t('ingress~Path')}</div>
-      <div className="col-xs-3">{t('ingress~Service')}</div>
-      <div className="col-xs-2">{t('ingress~Service port')}</div>
+      <div data-i18n-translated className="col-xs-3">
+        {t('ingress~Host')}
+      </div>
+      <div data-i18n-translated className="col-xs-3">
+        {t('ingress~Path')}
+      </div>
+      <div data-i18n-translated className="col-xs-3">
+        {t('ingress~Service')}
+      </div>
+      <div data-i18n-translated className="col-xs-2">
+        {t('ingress~Service port')}
+      </div>
     </div>
   );
 };
@@ -184,7 +192,7 @@ const Details = ({ obj: ingress }) => {
       </div>
       <div className="co-m-pane__body">
         <SectionHeading text={t('ingress~Ingress rules')} />
-        <p className="co-m-pane__explanation">
+        <p data-i18n-translated className="co-m-pane__explanation">
           {t(
             'ingress~These rules are handled by a routing layer (Ingress Controller) which is updated as the rules are modified. The Ingress controller implementation defines how headers and other metadata are forwarded or manipulated',
           )}

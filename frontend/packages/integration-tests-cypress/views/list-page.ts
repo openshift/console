@@ -27,6 +27,9 @@ export const listPage = {
     numberOfActiveFiltersShouldBe: (numFilters: number) => {
       cy.get("[class='pf-c-toolbar__item pf-m-chip-group']").should('have.length', numFilters);
     },
+    clickFilterDropdown: () => {
+      cy.byLegacyTestID('filter-dropdown-toggle').click();
+    },
   },
   rows: {
     shouldBeLoaded: () => {
@@ -38,8 +41,10 @@ export const listPage = {
     clickKebabAction: (resourceName: string, actionName: string) => {
       cy.get(`[data-test-rows="resource-row"]`)
         .contains(resourceName)
-        .byLegacyTestID('kebab-button')
-        .click();
+        .parents('tr')
+        .within(() => {
+          cy.get('[data-test-id="kebab-button"]').click();
+        });
       cy.byTestActionID(actionName).click();
     },
     hasLabel: (resourceName: string, label: string) => {
