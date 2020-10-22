@@ -4,7 +4,7 @@ import { match as RMatch } from 'react-router';
 import { useFormContext, Controller } from 'react-hook-form';
 import { WithCommonForm } from './form/create-form';
 import { SelectorInput } from '../utils';
-// import {RadioGroup} from './utils/radio'
+import { RadioGroup } from './utils/radio';
 import { Section } from './utils/section';
 
 const defaultValues = {
@@ -23,20 +23,21 @@ const sampleFormFactory = params => {
 
 const CreateSampleComponent: React.FC<SampleFormProps> = props => {
   const { control } = useFormContext();
-  // const resources = [ // RadioGroup 컴포넌트에 넣어줄 items
-  //   {
-  //     title: 'Cpu',
-  //     value: 'cpu'
-  //   },
-  //   {
-  //     title: 'Gpu',
-  //     value: 'gpu'
-  //   },
-  //   {
-  //     title: 'Memory',
-  //     value: 'memory'
-  //   }
-  // ];
+  const resources = [
+    // RadioGroup 컴포넌트에 넣어줄 items
+    {
+      title: 'Cpu',
+      value: 'cpu',
+    },
+    {
+      title: 'Gpu',
+      value: 'gpu',
+    },
+    {
+      title: 'Memory',
+      value: 'memory',
+    },
+  ];
 
   return (
     <div>
@@ -46,15 +47,15 @@ const CreateSampleComponent: React.FC<SampleFormProps> = props => {
             <Controller name="metadata.labels" id="label" labelClassName="co-text-sample" as={SelectorInput} control={control} tags={[]} />
           </div>
         </Section>
-      </div>
-      {/* <div className="form-group"> 
-        <Section label="Radio Group">
+      <Section id="resources" label="Radio Group">
+        <RadioGroup
           <RadioGroup 
-            name="spec.resources" // RequestDO 실제로 들어갈 path (필수)
-            items={resources} // [{title: '', value: ''}] (필수)
-            inline={true} // inline속성 먹일거면 true, 아니면 빼면 됨 (선택)
-          />
-        </Section>
+        <RadioGroup
+          name="spec.resources" // RequestDO 실제로 들어갈 path (필수)
+          items={resources} // [{title: '', value: ''}] (필수)
+          inline={true} // inline속성 먹일거면 true, 아니면 빼면 됨 (선택)
+        />
+      </Section>
       </div> */}
     </div>
   );
