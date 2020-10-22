@@ -7,11 +7,11 @@ import { ActionGroup, Button } from '@patternfly/react-core';
 import { k8sCreate, referenceFor, K8sResourceKind, modelFor } from '../../../module/k8s';
 import { pluralToKind } from './';
 import { ButtonBar, history, resourceObjPath } from '../../utils';
-import {Section} from '../utils/section'
+import { Section } from '../utils/section';
 
 export const WithCommonForm = (SubForm, params, defaultValues, modal?: boolean) => {
   const FormComponent: React.FC<CommonFormProps_> = props => {
-    const methods = useForm({defaultValues: defaultValues});
+    const methods = useForm({ defaultValues: defaultValues });
 
     const kind = pluralToKind(params.plural);
     const title = `${props.titleVerb} ${params?.type === 'form' ? '' : params.type || 'Sample'} ${kind || ''}`;
@@ -35,8 +35,8 @@ export const WithCommonForm = (SubForm, params, defaultValues, modal?: boolean) 
             <p className="co-m-pane__explanation">{props.explanation}</p>
             <fieldset>
               <div className="form-group">
-                <Section label="Name" isRequired={true}>
-                <input className="pf-c-form-control" id="name" name="metadata.name" ref={methods.register} />
+                <Section label="Name" id="name" isRequired={true}>
+                  <input className="pf-c-form-control" id="name" name="metadata.name" ref={methods.register} />
                 </Section>
               </div>
             </fieldset>

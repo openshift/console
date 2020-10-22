@@ -1,9 +1,9 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 
-export const Section: React.FC<SectionProps> = ({ label, description, children, isRequired=false }) => (
+export const Section: React.FC<SectionProps> = ({ id, label, description, children, isRequired=false }) => (
   <div className="form-group">
-    <label className={"control-label "+ (isRequired ? "co-required" : "")} htmlFor="secret-type">
+    <label className={"control-label "+ (isRequired ? "co-required" : "")} htmlFor={id}>
       {label}
     </label>
     <div>{children}</div>
@@ -12,6 +12,7 @@ export const Section: React.FC<SectionProps> = ({ label, description, children, 
 );
 
 type SectionProps = {
+  id: string;
   label?: string;
   description?: string;
   isRequired?: boolean

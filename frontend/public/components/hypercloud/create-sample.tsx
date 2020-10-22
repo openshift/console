@@ -1,29 +1,27 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { match as RMatch } from 'react-router';
-import { useFormContext, Controller } from "react-hook-form"
-import { WithCommonForm } from './form/create-form'
+import { useFormContext, Controller } from 'react-hook-form';
+import { WithCommonForm } from './form/create-form';
 import { SelectorInput } from '../utils';
 // import {RadioGroup} from './utils/radio'
-import {Section} from './utils/section'
+import { Section } from './utils/section';
 
-
-const defaultValues = { // requestDo에 넣어줄 형식으로 defaultValues 작성
+const defaultValues = {
+  // requestDo에 넣어줄 형식으로 defaultValues 작성
   metadata: {
-    name: 'test-name'
+    name: 'test-name',
   },
   spec: {
-    resources: 'cpu'
-  }
-}
+    resources: 'cpu',
+  },
+};
 
-const namespaceFormFactory = (params) => {
+const sampleFormFactory = params => {
   return WithCommonForm(CreateSampleComponent, params, defaultValues);
 };
 
-
-
-const CreateSampleComponent: React.FC<NamespaceFormProps> = (props) => {
+const CreateSampleComponent: React.FC<SampleFormProps> = props => {
   const { control } = useFormContext();
   // const resources = [ // RadioGroup 컴포넌트에 넣어줄 items
   //   {
@@ -43,15 +41,9 @@ const CreateSampleComponent: React.FC<NamespaceFormProps> = (props) => {
   return (
     <div>
       <div className="form-group">
-        <Section label="Labels" description="이것은 Label입니다.">
+        <Section label="Labels" id="label" description="이것은 Label입니다.">
           <div className="modal-body__field">
-            <Controller
-              name="metadata.labels"
-              labelClassName="co-text-sample"
-              as={SelectorInput}
-              control={control}
-              tags={[]}
-            />
+            <Controller name="metadata.labels" id="label" labelClassName="co-text-sample" as={SelectorInput} control={control} tags={[]} />
           </div>
         </Section>
       </div>
@@ -65,29 +57,21 @@ const CreateSampleComponent: React.FC<NamespaceFormProps> = (props) => {
         </Section>
       </div> */}
     </div>
-  )
-}
+  );
+};
 
-export const CreateSample: React.FC<CreateSampleProps> = (props) => {
-  const formComponent = namespaceFormFactory(props.match.params);
+export const CreateSample: React.FC<CreateSampleProps> = props => {
+  const formComponent = sampleFormFactory(props.match.params);
   const SampleFormComponent = formComponent;
-  return (
-    <SampleFormComponent
-      fixed={{}}
-      explanation={''}
-      titleVerb="Create"
-      onSubmitCallback={onSubmitCallback}
-      isCreate={true}
-    />
-  )
-}
+  return <SampleFormComponent fixed={{}} explanation="" titleVerb="Create" onSubmitCallback={onSubmitCallback} isCreate={true} />;
+};
 
-export const onSubmitCallback = (data) => {
+export const onSubmitCallback = data => {
   let labels = SelectorInput.objectify(data.metadata.labels);
   delete data.metadata.labels;
   data = _.defaultsDeep(data, { metadata: { labels: labels } });
   return data;
-}
+};
 
 type CreateSampleProps = {
   match: RMatch<{
@@ -98,12 +82,12 @@ type CreateSampleProps = {
   titleVerb: string;
   saveButtonText?: string;
   isCreate: boolean;
-}
+};
 
-type NamespaceFormProps = {
+type SampleFormProps = {
   onChange: Function;
   stringData: {
-    [key: string]: string
-  }
+    [key: string]: string;
+  };
   isCreate: boolean;
-}
+};
