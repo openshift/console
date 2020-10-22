@@ -50,7 +50,7 @@ import { AlertmanagerYAMLEditorWrapper } from '../monitoring/alert-manager-yaml-
 import { AlertmanagerConfigWrapper } from '../monitoring/alert-manager-config';
 import MonitoringDashboardsPage from '../monitoring/dashboards';
 import { QueryBrowserPage, ToggleGraph } from '../monitoring/metrics';
-import { QueryBrowser, QueryObj } from '../monitoring/query-browser';
+import { FormatLegendLabel, QueryBrowser, QueryObj } from '../monitoring/query-browser';
 import { CreateSilence, EditSilence } from '../monitoring/silence-form';
 import {
   Alert,
@@ -381,6 +381,7 @@ const queryBrowserURL = (query: string, namespace: string) =>
 const Graph_: React.FC<GraphProps> = ({
   deleteAll,
   filterLabels = undefined,
+  formatLegendLabel,
   patchQuery,
   rule,
   namespace,
@@ -407,6 +408,7 @@ const Graph_: React.FC<GraphProps> = ({
     <QueryBrowser
       defaultTimespan={timespan}
       filterLabels={filterLabels}
+      formatLegendLabel={formatLegendLabel}
       GraphLink={GraphLink}
       queries={queries}
     />
@@ -814,6 +816,13 @@ export const AlertRulesDetailsPage = withFallback(
     const { loaded, loadError, namespace, rule } = props;
     const { alerts = [], annotations, duration, labels, name = '', query = '' } = rule || {};
     const severity = labels?.severity;
+
+    const formatLegendLabel = (alertLabels) => {
+      const nameLabel = alertLabels.__name__ ?? '';
+      const otherLabels = _.omit(alertLabels, '__name__');
+      return `${nameLabel}{${_.map(otherLabels, (v, k) => `${k}="${v}"`).join(',')}}`;
+    };
+
     return (
       <>
         <Helmet>
@@ -911,7 +920,7 @@ export const AlertRulesDetailsPage = withFallback(
               <SectionHeading text="Active Alerts" />
               <div className="row">
                 <div className="col-sm-12">
-                  <Graph namespace={namespace} rule={rule} />
+                  <Graph formatLegendLabel={formatLegendLabel} namespace={namespace} rule={rule} />
                 </div>
               </div>
               <div className="row">
@@ -1645,6 +1654,7 @@ type AlertingPageProps = {
 type GraphProps = {
   deleteAll: () => never;
   filterLabels?: PrometheusLabels;
+  formatLegendLabel?: FormatLegendLabel;
   namespace?: string;
   patchQuery: (index: number, patch: QueryObj) => any;
   rule: Rule;

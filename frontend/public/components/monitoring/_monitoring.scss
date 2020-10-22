@@ -34,6 +34,10 @@ $tooltip-background-color: #151515;
 .graph-wrapper--query-browser {
   padding-left: 50px;
   padding-right: 10px;
+
+  &--with-legend {
+    min-height: 305px;
+  }
 }
 
 .monitoring-dashboards__card {
@@ -52,10 +56,6 @@ $tooltip-background-color: #151515;
     &:after {
       width: calc(100% - 10px);
     }
-  }
-
-  .graph-wrapper--query-browser {
-    min-height: 305px; // Allow for chart legend
   }
 
   // Move tooltip above cursor to work around bug where the legend is visible through the tooltip
