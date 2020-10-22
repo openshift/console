@@ -30,7 +30,7 @@ export const WithCommonForm = (SubForm, params, defaultValues, modal?: boolean) 
           <Helmet>
             <title>{title}</title>
           </Helmet>
-          <form className="co-m-pane__body-group co-create-secret-form co-m-pane__form">
+          <form className="co-m-pane__body-group co-m-pane__form">
             <h1 className="co-m-pane__heading">{title}</h1>
             <p className="co-m-pane__explanation">{props.explanation}</p>
             <fieldset>

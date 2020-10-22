@@ -1,8 +1,9 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { match as RMatch } from 'react-router';
-import { useFormContext, Controller } from "react-hook-form"
-import { WithCommonForm } from '../create-form'
+import { useFormContext, Controller } from 'react-hook-form';
+import { WithCommonForm } from '../create-form';
+import { Section } from '../../utils/section';
 import { SelectorInput } from '../../../utils';
 
 // const allow = 'allow';
@@ -18,31 +19,20 @@ import { SelectorInput } from '../../../utils';
 
 const defaultValues = {
   metadata: {
-    name: 'example-name'
-  }
-}
+    name: 'example-name',
+  },
+};
 
-const namespaceFormFactory = (params) => {
+const namespaceFormFactory = params => {
   return WithCommonForm(CreateNamespaceComponent, params, defaultValues);
 };
 
-const CreateNamespaceComponent: React.FC<NamespaceFormProps> = (props) => {
+const CreateNamespaceComponent: React.FC<NamespaceFormProps> = props => {
   const { control } = useFormContext();
   return (
-    <div className="form-group">
-      <label htmlFor="tags-input" className="control-label">
-        Labels
-        </label>
-      <div className="modal-body__field">
-        <Controller
-          name="metadata.labels"
-          labelClassName="co-text-namespace"
-          as={SelectorInput}
-          control={control}
-          tags={[]}
-        />
-      </div>
-    </div>
+    <Section label="Labels" id="label" description="이것은 Label입니다.">
+      <Controller name="metadata.labels" id="label" labelClassName="co-text-sample" as={SelectorInput} control={control} tags={[]} />
+    </Section>
     /* <div className="form-group">
       <label htmlFor="network-policy" className="control-label">
         Default Network Policy
@@ -57,29 +47,21 @@ const CreateNamespaceComponent: React.FC<NamespaceFormProps> = (props) => {
         />
       </div>
     </div> */
-  )
-}
+  );
+};
 
-export const CreateNamespace: React.FC<CreateNamespaceProps> = (props) => {
+export const CreateNamespace: React.FC<CreateNamespaceProps> = props => {
   const formComponent = namespaceFormFactory(props.match.params);
   const NamespaceFormComponent = formComponent;
-  return (
-    <NamespaceFormComponent
-      fixed={{}}
-      explanation={''}
-      titleVerb="Create"
-      onSubmitCallback={onSubmitCallback}
-      isCreate={true}
-    />
-  )
-}
+  return <NamespaceFormComponent fixed={{}} explanation={''} titleVerb="Create" onSubmitCallback={onSubmitCallback} isCreate={true} />;
+};
 
-export const onSubmitCallback = (data) => {
+export const onSubmitCallback = data => {
   let labels = SelectorInput.objectify(data.metadata.labels);
   delete data.metadata.labels;
   data = _.defaultsDeep(data, { metadata: { labels: labels } });
   return data;
-}
+};
 
 type CreateNamespaceProps = {
   match: RMatch<{
@@ -90,12 +72,12 @@ type CreateNamespaceProps = {
   titleVerb: string;
   saveButtonText?: string;
   isCreate: boolean;
-}
+};
 
 type NamespaceFormProps = {
   onChange: Function;
   stringData: {
-    [key: string]: string
-  }
+    [key: string]: string;
+  };
   isCreate: boolean;
-}
+};

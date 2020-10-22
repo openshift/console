@@ -47,15 +47,10 @@ const CreateSampleComponent: React.FC<SampleFormProps> = props => {
 
   return (
     <div>
-      <div className="form-group">
-        <Section label="Labels" id="label" description="이것은 Label입니다.">
-          <div className="modal-body__field">
-            <Controller name="metadata.labels" id="label" labelClassName="co-text-sample" as={SelectorInput} control={control} tags={[]} />
-          </div>
-        </Section>
+      <Section label="Labels" id="label" description="이것은 Label입니다.">
+        <Controller name="metadata.labels" id="label" labelClassName="co-text-sample" as={SelectorInput} control={control} tags={[]} />
+      </Section>
       <Section id="resources" label="Radio Group">
-        <RadioGroup
-          <RadioGroup 
         <RadioGroup
           name="spec.resources" // RequestDO 실제로 들어갈 path (필수)
           items={resources} // [{title: '', value: ''}] (필수)
@@ -76,6 +71,7 @@ export const CreateSample: React.FC<CreateSampleProps> = props => {
 };
 
 export const onSubmitCallback = data => {
+  // submit하기 전에 data를 가공해야 할 경우
   let labels = SelectorInput.objectify(data.metadata.labels);
   delete data.metadata.labels;
   data = _.defaultsDeep(data, { metadata: { labels: labels } });
