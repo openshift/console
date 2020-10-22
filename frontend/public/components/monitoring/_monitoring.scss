@@ -116,9 +116,20 @@ $tooltip-background-color: #151515;
 .monitoring-dashboards__legend-wrap {
   height: 75px;
   overflow-x: auto;
+  padding-right: var(--pf-global--spacer--lg);
   padding-top: 1px;
   svg {
     max-height: 50px; // Required for Chrome. legend-wrap - scrollbar height
+  }
+  &:after {
+    background: linear-gradient(to left, var(--pf-global--BackgroundColor--100), rgba(255, 255, 255, 0));
+    content: '';
+    height: calc(100% - 10px); // Leave gap for the horizontal scrollbar
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: var(--pf-global--spacer--lg);
   }
 }
 
