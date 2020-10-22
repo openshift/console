@@ -763,7 +763,11 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
               variant="info"
             />
           )}
-          <div className="graph-wrapper graph-wrapper--query-browser">
+          <div
+            className={classNames('graph-wrapper graph-wrapper--query-browser', {
+              'graph-wrapper--query-browser--with-legend': !!formatLegendLabel,
+            })}
+          >
             <div ref={containerRef} style={{ width: '100%' }}>
               {width > 0 && (
                 <>
