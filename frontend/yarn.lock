@@ -1715,10 +1715,10 @@
   resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-4.9.12.tgz#ff56acc98823c723c1ccb7e46f38fcc8ea780f15"
   integrity sha512-bO4eaZRZOYRDnO096RCFMhV1VHXE9woRFxIs+i9Q7eSTlxpJm2b8FAIb7RDtOURGAfBlJKd/d1dFgZnPq7xQ0g==
 
-"@patternfly/react-topology@4.6.31":
-  version "4.6.31"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-topology/-/react-topology-4.6.31.tgz#4c3cd648319c1abd135abce1148899a818f77cad"
-  integrity sha512-s/6Kpkq6bmCNk2JCi03+tKZoRQH5U32ItptFnuoMlvkxXO0w5sNkBpGZBJwQjzHBEl4uv3x5c7jMqmf6AtvSgg==
+"@patternfly/react-topology@4.6.32":
+  version "4.6.32"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-topology/-/react-topology-4.6.32.tgz#c2558c364a342bdf2783538ce94d743476f11ffb"
+  integrity sha512-EJ5FhPb9MBkftDDLwDlY2xh+z31LOb4lhRwG9r9vAw+F9Pk7EnPkVXEfpZ8nOpQ5FnUMJ9mLx1H0gHSOb600Lg==
   dependencies:
     "@patternfly/react-core" "^4.64.5"
     "@patternfly/react-icons" "^4.7.12"
