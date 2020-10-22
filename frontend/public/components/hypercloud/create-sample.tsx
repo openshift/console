@@ -43,7 +43,7 @@ const CreateSampleComponent: React.FC<NamespaceFormProps> = (props) => {
   return (
     <div>
       <div className="form-group">
-        <Section label="Labels">
+        <Section label="Labels" description="이것은 Label입니다.">
           <div className="modal-body__field">
             <Controller
               name="metadata.labels"
