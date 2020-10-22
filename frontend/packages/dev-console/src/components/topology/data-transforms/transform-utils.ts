@@ -180,15 +180,13 @@ export const getTopologyEdgeItems = (
   });
 
   _.forEach(edgesFromServiceBinding(dc, sbrs), (sbr) => {
-    // look for multiple backing services first in `backingServiceSelectors`
-    // followed by a fallback to the single reference in `backingServiceSelector`
-    _.forEach(sbr.spec.backingServiceSelectors || [sbr.spec.backingServiceSelector], (bss) => {
+    _.forEach(sbr.spec.services, (bss) => {
       if (bss) {
         // handles multiple edges
         const targetResource = resources.find(
           (deployment) =>
             deployment?.metadata?.ownerReferences?.[0]?.kind === bss.kind &&
-            deployment?.metadata?.ownerReferences?.[0]?.name === bss.resourceRef,
+            deployment?.metadata?.ownerReferences?.[0]?.name === bss.name,
         );
         const target = targetResource?.metadata?.uid;
         const source = dc?.metadata?.uid;

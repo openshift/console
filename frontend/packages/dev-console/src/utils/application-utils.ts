@@ -11,6 +11,7 @@ import {
   LabelSelector,
   referenceFor,
   referenceForModel,
+  apiVersionForModel,
 } from '@console/internal/module/k8s';
 import {
   ImageStreamModel,
@@ -31,7 +32,7 @@ import { getOperatorBackedServiceKindMap } from '@console/shared';
 import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '../const';
 import { TopologyDataObject, ConnectsToData } from '../components/topology/topology-types';
 import { detectGitType } from '../components/import/import-validation-utils';
-import { ServiceBindingRequestModel } from '../models';
+import { ServiceBindingModel } from '../models';
 
 export const sanitizeApplicationValue = (
   application: string,
@@ -68,13 +69,13 @@ export const edgesFromServiceBinding = (
   const sourceBindings = [];
   _.forEach(sbrs, (sbr) => {
     let edgeExists = false;
-    if (_.get(sbr, 'spec.applicationSelector.resource') === modelFor(referenceFor(source)).plural) {
-      if (_.get(sbr, 'spec.applicationSelector.resourceRef') === source.metadata.name) {
+    if (_.get(sbr, 'spec.application.resource') === modelFor(referenceFor(source)).plural) {
+      if (_.get(sbr, 'spec.application.name') === source.metadata.name) {
         edgeExists = true;
       } else {
-        const matchLabels = _.has(sbr, 'spec.applicationSelector.matchLabels');
+        const matchLabels = _.has(sbr, 'spec.application.matchLabels');
         if (matchLabels) {
-          const sbrSelector = new LabelSelector(sbr.spec.applicationSelector);
+          const sbrSelector = new LabelSelector(sbr.spec.application);
           if (sbrSelector.matches(source)) {
             edgeExists = true;
           }
@@ -262,35 +263,37 @@ export const createServiceBinding = (
     modelFor(target.kind).abbr
   }`;
 
-  const serviceBindingRequest = {
-    apiVersion: 'apps.openshift.io/v1alpha1',
-    kind: 'ServiceBindingRequest',
+  const serviceBinding = {
+    apiVersion: apiVersionForModel(ServiceBindingModel),
+    kind: ServiceBindingModel.kind,
     metadata: {
       name: sbrName,
       namespace,
     },
     spec: {
-      applicationSelector: {
-        resourceRef: sourceName,
+      application: {
+        name: sourceName,
         group: sourceGroup[0],
         version: sourceGroup[1],
         resource: modelFor(referenceFor(source)).plural,
       },
-      backingServiceSelector: {
-        group: targetResourceGroup[0],
-        version: targetResourceGroup[1],
-        kind: targetResourceKind,
-        resourceRef: targetResourceRefName,
-      },
+      services: [
+        {
+          group: targetResourceGroup[0],
+          version: targetResourceGroup[1],
+          kind: targetResourceKind,
+          name: targetResourceRefName,
+        },
+      ],
       detectBindingResources: true,
     },
   };
 
-  return k8sCreate(ServiceBindingRequestModel, serviceBindingRequest);
+  return k8sCreate(ServiceBindingModel, serviceBinding);
 };
 
 export const removeServiceBinding = (sbr: K8sResourceKind): Promise<any> => {
-  return k8sKill(ServiceBindingRequestModel, sbr);
+  return k8sKill(ServiceBindingModel, sbr);
 };
 
 // Get the index of the replaced target of the visual connector

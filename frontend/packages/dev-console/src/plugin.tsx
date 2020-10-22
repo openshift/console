@@ -103,7 +103,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'FeatureFlag/Model',
     properties: {
-      model: models.ServiceBindingRequestModel,
+      model: models.ServiceBindingModel,
       flag: ALLOW_SERVICE_BINDING,
     },
   },

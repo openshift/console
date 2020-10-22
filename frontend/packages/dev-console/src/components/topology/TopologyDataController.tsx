@@ -7,7 +7,7 @@ import { getResourceList } from '@console/shared';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
 import { safeLoadAll } from 'js-yaml';
-import { ServiceBindingRequestModel } from '../../models';
+import { ServiceBindingModel } from '../../models';
 import { transformTopologyData } from './data-transforms/data-transformer';
 import { allowedResources, getHelmReleaseKey, getServiceBindingStatus } from './topology-utils';
 import { TopologyDataModel, TopologyDataResources, TrafficData } from './topology-types';
@@ -124,7 +124,7 @@ export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
   if (serviceBinding) {
     resources.push({
       isList: true,
-      kind: referenceForModel(ServiceBindingRequestModel),
+      kind: referenceForModel(ServiceBindingModel),
       namespace,
       prop: 'serviceBindingRequests',
       optional: true,
