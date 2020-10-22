@@ -436,7 +436,7 @@ export const UtilizationCard = () => {
       </DashboardCardHeader>
       <UtilizationBody timestamps={timestamps}>
         <PrometheusUtilizationItem
-          title="CPU"
+          title={t('dashboard~CPU')}
           utilizationQuery={queries[OverviewQuery.CPU_UTILIZATION].utilization}
           totalQuery={queries[OverviewQuery.CPU_UTILIZATION].total}
           TopConsumerPopover={cpuPopover}
@@ -445,7 +445,7 @@ export const UtilizationCard = () => {
           setTimestamps={setTimestamps}
         />
         <PrometheusUtilizationItem
-          title="Memory"
+          title={t('dashboard~Memory')}
           utilizationQuery={queries[OverviewQuery.MEMORY_UTILIZATION].utilization}
           totalQuery={queries[OverviewQuery.MEMORY_UTILIZATION].total}
           TopConsumerPopover={memPopover}
@@ -454,7 +454,7 @@ export const UtilizationCard = () => {
           byteDataType={ByteDataTypes.BinaryBytes}
         />
         <PrometheusUtilizationItem
-          title="Filesystem"
+          title={t('dashboard~Filesystem')}
           utilizationQuery={queries[OverviewQuery.STORAGE_UTILIZATION].utilization}
           totalQuery={queries[OverviewQuery.STORAGE_UTILIZATION].total}
           TopConsumerPopover={storagePopover}
@@ -463,14 +463,14 @@ export const UtilizationCard = () => {
           byteDataType={ByteDataTypes.BinaryBytes}
         />
         <PrometheusMultilineUtilizationItem
-          title="Network Transfer"
+          title={t('dashboard~Network transfer')}
           queries={multilineQueries[OverviewQuery.NETWORK_UTILIZATION]}
           duration={duration}
           humanizeValue={humanizeDecimalBytesPerSec}
           TopConsumerPopovers={[networkInPopover, networkOutPopover]}
         />
         <PrometheusUtilizationItem
-          title="Pod count"
+          title={t('dashboard~Pod count')}
           utilizationQuery={queries[OverviewQuery.POD_UTILIZATION].utilization}
           TopConsumerPopover={podPopover}
           duration={duration}
