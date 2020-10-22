@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { MultiListPage } from '@console/internal/components/factory';
+import { K8sResourceKind, referenceFor, referenceForModel } from '@console/internal/module/k8s';
+import { RowFilter } from '@console/internal/components/filter-toolbar';
 import EventSourceList from './EventSourceList';
 import {
   getDynamicEventSourceModel,
   useEventSourceModels,
 } from '../../../utils/fetch-dynamic-eventsources-utils';
-import { K8sResourceKind, referenceFor, referenceForModel } from '@console/internal/module/k8s';
-import { RowFilter } from '@console/internal/components/filter-toolbar';
 
 const EventSourceListPage: React.FC<React.ComponentProps<typeof MultiListPage>> = (props) => {
   const { loaded: modelsLoaded, eventSourceModels } = useEventSourceModels();

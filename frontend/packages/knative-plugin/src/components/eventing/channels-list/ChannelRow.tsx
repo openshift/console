@@ -6,25 +6,23 @@ import { getDynamicChannelModel } from '../../../utils/fetch-dynamic-eventsource
 import { EventChannelKind } from '../../../types';
 
 const ChannelRow: RowFunction<EventChannelKind> = ({ obj, index, key, style }) => {
+  const {
+    metadata: { name, namespace, creationTimestamp, uid },
+  } = obj;
   const objReference = referenceFor(obj);
   const kind = getDynamicChannelModel(objReference);
   const menuActions = [...Kebab.getExtensionsActionsForKind(kind), ...Kebab.factory.common];
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData>
-        <ResourceLink
-          kind={objReference}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
-          title={obj.metadata.uid}
-        />
+        <ResourceLink kind={objReference} name={name} namespace={namespace} title={uid} />
       </TableData>
-      <TableData className="co-break-word">
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+      <TableData className="co-break-word" columnID="namespace">
+        <ResourceLink kind="Namespace" name={namespace} />
       </TableData>
       <TableData>{kind.label}</TableData>
       <TableData>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
+        <Timestamp timestamp={creationTimestamp} />
       </TableData>
       <TableData className={Kebab.columnClass}>
         <ResourceKebab actions={menuActions} kind={objReference} resource={obj} />

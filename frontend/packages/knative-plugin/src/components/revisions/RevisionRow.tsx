@@ -29,7 +29,7 @@ const RevisionRow: RowFunction<RevisionKind> = ({ obj, index, key, style }) => {
           title={obj.metadata.uid}
         />
       </TableData>
-      <TableData className={cx(tableColumnClasses[1], 'co-break-word')}>
+      <TableData className={cx(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={cx(tableColumnClasses[2], 'co-break-word')}>

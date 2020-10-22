@@ -9,6 +9,7 @@ const ChannelHeaders = () => {
       transforms: [sortable],
     },
     {
+      id: 'namespace',
       title: 'Namespace',
       sortField: 'metadata.namespace',
       transforms: [sortable],

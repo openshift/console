@@ -10,6 +10,7 @@ const RouteHeader = () => {
       props: { className: tableColumnClasses[0] },
     },
     {
+      id: 'namespace',
       title: 'Namespace',
       sortField: 'metadata.namespace',
       transforms: [sortable],
