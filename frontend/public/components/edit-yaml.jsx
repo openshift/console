@@ -6,6 +6,7 @@ import { saveAs } from 'file-saver';
 import { connect } from 'react-redux';
 import { ActionGroup, Alert, Button, Split, SplitItem } from '@patternfly/react-core';
 import { DownloadIcon, InfoCircleIcon } from '@patternfly/react-icons';
+import { withTranslation } from 'react-i18next';
 
 import { FLAGS, ALL_NAMESPACES_KEY, getBadgeFromType } from '@console/shared';
 import YAMLEditor from '@console/shared/src/components/editor/YAMLEditor';
@@ -174,6 +175,7 @@ export const EditYAML_ = connect(stateToProps)(
       }
 
       convertObjToYAMLString(obj) {
+        const { t } = this.props;
         let yaml = '';
         if (obj) {
           if (_.isString(obj)) {
@@ -183,7 +185,7 @@ export const EditYAML_ = connect(stateToProps)(
               yaml = safeDump(obj);
               this.checkEditAccess(obj);
             } catch (e) {
-              yaml = `Error getting YAML: ${e}`;
+              yaml = t('yaml~Error getting YAML: {{e}}', { e });
             }
           }
         }
@@ -248,6 +250,7 @@ export const EditYAML_ = connect(stateToProps)(
       }
 
       updateYAML(obj, model, newNamespace, newName) {
+        const { t } = this.props;
         this.setState({ success: null, error: null }, () => {
           let action = k8sUpdate;
           let redirect = false;
@@ -270,7 +273,10 @@ export const EditYAML_ = connect(stateToProps)(
                 // TODO: (ggreer). show message on new page. maybe delete old obj?
                 return;
               }
-              const success = `${newName} has been updated to version ${o.metadata.resourceVersion}`;
+              const success = t('yaml~{{newName}} has been updated to version {{version}}', {
+                newName,
+                version: o.metadata.resourceVersion,
+              });
               this.setState({ success, error: null });
               this.loadYaml(true, o);
             })
@@ -279,7 +285,7 @@ export const EditYAML_ = connect(stateToProps)(
       }
 
       save() {
-        const { onSave } = this.props;
+        const { onSave, t } = this.props;
         const { owner } = this.state;
         let obj;
 
@@ -291,30 +297,33 @@ export const EditYAML_ = connect(stateToProps)(
         try {
           obj = safeLoad(this.getEditor().getValue());
         } catch (e) {
-          this.handleError(`Error parsing YAML: ${e}`);
+          this.handleError(t('yaml~Error parsing YAML: {{e}}', { e }));
           return;
         }
 
         if (!obj.apiVersion) {
-          this.handleError('No "apiVersion" field found in YAML.');
+          this.handleError(t('yaml~No "apiVersion" field found in YAML.'));
           return;
         }
 
         if (!obj.kind) {
-          this.handleError('No "kind" field found in YAML.');
+          this.handleError(t('yaml~No "kind" field found in YAML.'));
           return;
         }
 
         const model = this.getModel(obj);
         if (!model) {
           this.handleError(
-            `The server doesn't have a resource type "kind: ${obj.kind}, apiVersion: ${obj.apiVersion}".`,
+            t(
+              'yaml~The server doesn\'t have a resource type "kind: {{kind}}, apiVersion: {{apiVersion}}".',
+              { kind: obj.kind, apiVersion: obj.apiVersion },
+            ),
           );
           return;
         }
 
         if (!obj.metadata) {
-          this.handleError('No "metadata" field found in YAML.');
+          this.handleError(t('yaml~No "metadata" field found in YAML.'));
           return;
         }
 
@@ -325,7 +334,7 @@ export const EditYAML_ = connect(stateToProps)(
         // If this is a namespaced resource, default to the active namespace when none is specified in the YAML.
         if (!obj.metadata.namespace && model.namespaced) {
           if (this.props.activeNamespace === ALL_NAMESPACES_KEY) {
-            this.handleError('No "metadata.namespace" field found in YAML.');
+            this.handleError(t('yaml~No "metadata.namespace" field found in YAML.'));
             return;
           }
           obj.metadata.namespace = this.props.activeNamespace;
@@ -338,19 +347,28 @@ export const EditYAML_ = connect(stateToProps)(
 
           if (name !== newName) {
             this.handleError(
-              `Cannot change resource name (original: "${name}", updated: "${newName}").`,
+              t(
+                'yaml~Cannot change resource name (original: "{{name}}", updated: "{{newName}}").',
+                { name, newName },
+              ),
             );
             return;
           }
           if (namespace !== newNamespace) {
             this.handleError(
-              `Cannot change resource namespace (original: "${namespace}", updated: "${newNamespace}").`,
+              t(
+                'yaml~Cannot change resource namespace (original: "{{namespace}}", updated: "{{newNamespace}}").',
+                { namespace, newNamespace },
+              ),
             );
             return;
           }
           if (this.props.obj.kind !== obj.kind) {
             this.handleError(
-              `Cannot change resource kind (original: "${this.props.obj.kind}", updated: "${obj.kind}").`,
+              t(
+                'yaml~Cannot change resource kind (original: "{{original}}", updated: "{{updated}}").',
+                { original: this.props.obj.kind, updated: obj.kind },
+              ),
             );
             return;
           }
@@ -359,7 +377,10 @@ export const EditYAML_ = connect(stateToProps)(
           const newAPIGroup = groupVersionFor(obj.apiVersion).group;
           if (apiGroup !== newAPIGroup) {
             this.handleError(
-              `Cannot change API group (original: "${apiGroup}", updated: "${newAPIGroup}").`,
+              t(
+                'yaml~Cannot change API group (original: "{{apiGroup}}", updated: "{{newAPIGroup}}").',
+                { apiGroup, newAPIGroup },
+              ),
             );
             return;
           }
@@ -393,6 +414,7 @@ export const EditYAML_ = connect(stateToProps)(
       }
 
       getYamlContent_(id = 'default', yaml = '', kind = referenceForModel(this.props.model)) {
+        const { t } = this.props;
         try {
           const sampleObj = generateObjToLoad(
             this.props.templateExtensions,
@@ -405,10 +427,10 @@ export const EditYAML_ = connect(stateToProps)(
           return sampleObj;
         } catch (error) {
           errorModal({
-            title: 'Failed to Parse YAML Sample',
+            title: t('yaml~Failed to parse YAML sample'),
             error: (
               <div className="co-pre-line">
-                {error.message || error.name || 'An error occurred.'}
+                {error.message || error.name || t('yaml~An error occurred.')}
               </div>
             ),
           });
@@ -461,6 +483,7 @@ export const EditYAML_ = connect(stateToProps)(
           yamlSamplesList,
           customClass,
           onChange = () => null,
+          t,
         } = this.props;
         const klass = classNames('co-file-dropzone-container', {
           'co-file-dropzone--drop-over': isOver,
@@ -487,7 +510,7 @@ export const EditYAML_ = connect(stateToProps)(
           !showSidebar && hasSidebarContent ? (
             <Button type="button" variant="link" isInline onClick={this.toggleSidebar}>
               <InfoCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />
-              View sidebar
+              {t('yaml~View sidebar')}
             </Button>
           ) : null;
 
@@ -495,7 +518,7 @@ export const EditYAML_ = connect(stateToProps)(
           <div className="co-file-dropzone co-file-dropzone__flex">
             {canDrop && (
               <div className={klass}>
-                <p className="co-file-dropzone__drop-text">Drop file here</p>
+                <p className="co-file-dropzone__drop-text">{t('yaml~Drop file here')}</p>
               </div>
             )}
 
@@ -508,8 +531,9 @@ export const EditYAML_ = connect(stateToProps)(
                   <SplitItem>{getBadgeFromType(model && model.badge)}</SplitItem>
                 </Split>
                 <p className="help-block">
-                  Create by manually entering YAML or JSON definitions, or by dragging and dropping
-                  a file into the editor.
+                  {t(
+                    'yaml~Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.',
+                  )}
                 </p>
               </div>
             )}
@@ -537,7 +561,7 @@ export const EditYAML_ = connect(stateToProps)(
                           isInline
                           className="co-alert co-alert--scrollable"
                           variant="danger"
-                          title="An error occurred"
+                          title={t('yaml~An error occurred')}
                         >
                           <div className="co-pre-line">{error}</div>
                         </Alert>
@@ -550,9 +574,9 @@ export const EditYAML_ = connect(stateToProps)(
                           isInline
                           className="co-alert"
                           variant="info"
-                          title="This object has been updated."
+                          title={t('yaml~This object has been updated.')}
                         >
-                          Click reload to see the new version.
+                          {t('yaml~Click reload to see the new version.')}
                         </Alert>
                       )}
                       <ActionGroup className="pf-c-form__group--no-top-margin">
@@ -564,7 +588,7 @@ export const EditYAML_ = connect(stateToProps)(
                             data-test="save-changes"
                             onClick={() => this.save()}
                           >
-                            Create
+                            {t('yaml~Create')}
                           </Button>
                         )}
                         {!create && !readOnly && (
@@ -575,7 +599,7 @@ export const EditYAML_ = connect(stateToProps)(
                             data-test="save-changes"
                             onClick={() => this.save()}
                           >
-                            Save
+                            {t('yaml~Save')}
                           </Button>
                         )}
                         {!create && !genericYAML && (
@@ -586,7 +610,7 @@ export const EditYAML_ = connect(stateToProps)(
                             data-test="reload-object"
                             onClick={() => this.reload()}
                           >
-                            Reload
+                            {t('yaml~Reload')}
                           </Button>
                         )}
                         <Button
@@ -595,7 +619,7 @@ export const EditYAML_ = connect(stateToProps)(
                           data-test="cancel"
                           onClick={() => this.onCancel()}
                         >
-                          Cancel
+                          {t('yaml~Cancel')}
                         </Button>
                         {download && (
                           <Button
@@ -604,7 +628,7 @@ export const EditYAML_ = connect(stateToProps)(
                             className="pf-c-button--align-right hidden-sm hidden-xs"
                             onClick={() => this.download()}
                           >
-                            <DownloadIcon /> Download
+                            <DownloadIcon /> {t('yaml~Download')}
                           </Button>
                         )}
                       </ActionGroup>
@@ -638,6 +662,8 @@ export const EditYAML_ = connect(stateToProps)(
   ),
 );
 
+const EditYAMLWithTranslation = withTranslation()(EditYAML_);
+
 export const EditYAML = connectToFlags(FLAGS.CONSOLE_YAML_SAMPLE)(({ flags, ...props }) => {
   const resources = flags[FLAGS.CONSOLE_YAML_SAMPLE]
     ? [
@@ -651,7 +677,7 @@ export const EditYAML = connectToFlags(FLAGS.CONSOLE_YAML_SAMPLE)(({ flags, ...p
 
   return (
     <Firehose resources={resources}>
-      <EditYAML_ {...props} />
+      <EditYAMLWithTranslation {...props} />
     </Firehose>
   );
 });
