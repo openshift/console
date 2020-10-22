@@ -54,6 +54,9 @@ export const getRGWHealthState = (cr: K8sResourceKind): SubsystemHealth => {
   switch (health) {
     case Phase.CONNECTED:
       return { state: HealthState.OK };
+    // Applicable only for OCS 4.5
+    case Phase.READY:
+      return { state: HealthState.OK };
     case Phase.PROGRESSING:
       return { state: HealthState.PROGRESS };
     case Phase.FAILURE:
