@@ -2,6 +2,8 @@ import * as React from 'react';
 import { navFactory } from '@console/internal/components/utils';
 import { DetailsPage } from '@console/internal/components/factory';
 import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { VMDisksAndFileSystemsPage } from '../vm-disks/vm-disks';
 import {
   DataVolumeModel,
@@ -9,6 +11,7 @@ import {
   VirtualMachineInstanceMigrationModel,
   VirtualMachineInstanceModel,
   VirtualMachineModel,
+  VirtualMachineSnapshotModel,
 } from '../../models';
 import { getResource } from '../../utils';
 import {
@@ -22,12 +25,18 @@ import { VMConsoleFirehose } from './vm-console';
 import { VMDetailsFirehose } from './vm-details';
 import { vmMenuActionsCreator } from './menu-actions';
 import { VMDashboard } from './vm-dashboard';
-import { TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_VM, VM_DETAIL_ENVIRONMENT } from '../../constants/vm';
+import {
+  TEMPLATE_TYPE_LABEL,
+  TEMPLATE_TYPE_VM,
+  VM_DETAIL_ENVIRONMENT,
+  VM_DETAIL_SNAPSHOTS,
+} from '../../constants/vm';
 import { VMEnvironmentFirehose } from './vm-environment/vm-environment-page';
 import { VMNics } from '../vm-nics';
 import { PendingChangesWarningFirehose } from './pending-changes-warning';
+import { VMSnapshotsPage } from '../vm-snapshots/vm-snapshots';
 
-export const breadcrumbsForVMPage = (match: any) => () => [
+export const breadcrumbsForVMPage = (match: any, addDetailsLabel = true) => () => [
   {
     name: 'Virtualization',
     path: `/k8s/ns/${match.params.ns || 'default'}/virtualization`,
@@ -36,11 +45,12 @@ export const breadcrumbsForVMPage = (match: any) => () => [
     name: 'Virtual Machines',
     path: `/k8s/ns/${match.params.ns || 'default'}/virtualization`,
   },
-  { name: `${match.params.name} Details`, path: `${match.url}` },
+  { name: `${match.params.name}${addDetailsLabel && ' Details'}`, path: `${match.url}` },
 ];
 
 export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProps> = (props) => {
   const { name, ns: namespace } = props.match.params;
+  const [snapshotResource] = useK8sModel(referenceForModel(VirtualMachineSnapshotModel));
 
   const dashboardPage = {
     href: '', // default landing page
@@ -78,13 +88,11 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
     component: VMEnvironmentFirehose,
   };
 
-  /* Disabled for 4.6 (BZ 1881125)
   const snapshotsPage = {
     href: VM_DETAIL_SNAPSHOTS,
     name: 'Snapshots',
     component: VMSnapshotsPage,
   };
-  */
 
   const pages = [
     dashboardPage,
@@ -95,6 +103,7 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
     consolePage,
     nicsPage,
     disksPage,
+    ...(snapshotResource ? [snapshotsPage] : []),
   ];
 
   const resources = [

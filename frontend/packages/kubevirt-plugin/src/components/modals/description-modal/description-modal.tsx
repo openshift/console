@@ -8,28 +8,26 @@ import {
   ModalSubmitFooter,
   ModalComponentProps,
 } from '@console/internal/components/factory';
-import { k8sPatch } from '@console/internal/module/k8s';
+import { K8sKind, k8sPatch, K8sResourceKind } from '@console/internal/module/k8s';
 import { getDescription } from '../../../selectors/selectors';
-import { VMGenericLikeEntityKind } from '../../../types/vmLike';
-import { getVMLikeModel } from '../../../selectors/vm';
 import { getUpdateDescriptionPatches } from '../../../k8s/patches/vm/vm-patches';
 
 // TODO: should be moved under kubevirt-plugin/src/style.scss
-import './_vm-description-modal.scss';
+import './_description-modal.scss';
 
-export const VMDescriptionModal = withHandlePromise((props: VMDescriptionModalProps) => {
-  const { vmLikeEntity, inProgress, errorMessage, handlePromise, close, cancel } = props;
+const DescriptionModal = withHandlePromise((props: DescriptionModalProps) => {
+  const { resource, kind, inProgress, errorMessage, handlePromise, close, cancel } = props;
 
-  const [description, setDescription] = React.useState(getDescription(vmLikeEntity));
+  const [description, setDescription] = React.useState(getDescription(resource));
 
   const submit = (e) => {
     e.preventDefault();
 
-    const patches = getUpdateDescriptionPatches(vmLikeEntity, description);
+    const patches = getUpdateDescriptionPatches(resource, description);
     if (patches.length === 0) {
       close();
     } else {
-      const promise = k8sPatch(getVMLikeModel(vmLikeEntity), vmLikeEntity, patches);
+      const promise = k8sPatch(kind, resource, patches);
       handlePromise(promise, close);
     }
   };
@@ -55,9 +53,10 @@ export const VMDescriptionModal = withHandlePromise((props: VMDescriptionModalPr
   );
 });
 
-export type VMDescriptionModalProps = HandlePromiseProps &
+export type DescriptionModalProps = HandlePromiseProps &
   ModalComponentProps & {
-    vmLikeEntity: VMGenericLikeEntityKind;
+    resource: K8sResourceKind;
+    kind: K8sKind;
   };
 
-export const vmDescriptionModal = createModalLauncher(VMDescriptionModal);
+export const descriptionModal = createModalLauncher(DescriptionModal);

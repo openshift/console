@@ -16,6 +16,7 @@ import {
   snapshotSize,
   snapshotSource,
   ALL_NAMESPACES_KEY,
+  getName,
 } from '@console/shared';
 import * as UIActions from '../../actions/ui';
 import {
@@ -168,11 +169,14 @@ const sorts = {
   pvcUsed: (pvc: K8sResourceKind): number => pvcUsed(pvc),
   volumeSnapshotSize: (snapshot: VolumeSnapshotKind): number => snapshotSize(snapshot),
   volumeSnapshotSource: (snapshot: VolumeSnapshotKind): string => snapshotSource(snapshot),
+  snapshotLastRestore: (snapshot: K8sResourceKind, { restores }) =>
+    restores[getName(snapshot)]?.status?.restoreTime,
 };
 
 const stateToProps = (
   { UI },
   {
+    customData = {},
     customSorts = {},
     data = [],
     defaultSortField = 'metadata.name',
@@ -212,7 +216,9 @@ const stateToProps = (
     }
 
     const getSortValue = (resource) => {
-      const val = _.isFunction(sortBy) ? sortBy(resource) : _.get(resource, sortBy as string);
+      const val = _.isFunction(sortBy)
+        ? sortBy(resource, customData)
+        : _.get(resource, sortBy as string);
       return val ?? '';
     };
     newData?.sort((a, b) => {
