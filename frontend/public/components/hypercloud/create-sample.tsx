@@ -6,6 +6,7 @@ import { WithCommonForm } from './form/create-form';
 import { SelectorInput } from '../utils';
 import { RadioGroup } from './utils/radio';
 import { Section } from './utils/section';
+import { InputSelectBox } from './utils/inputSelectBox';
 
 const defaultValues = {
   // requestDo에 넣어줄 형식으로 defaultValues 작성
@@ -38,6 +39,11 @@ const CreateSampleComponent: React.FC<SampleFormProps> = props => {
       value: 'memory',
     },
   ];
+  const dropdownUnits = {
+    Mi: 'MiB',
+    Gi: 'GiB',
+    Ti: 'TiB',
+  };
 
   return (
     <div>
@@ -56,7 +62,9 @@ const CreateSampleComponent: React.FC<SampleFormProps> = props => {
           inline={true} // inline속성 먹일거면 true, 아니면 빼면 됨 (선택)
         />
       </Section>
-      </div> */}
+      <Section id="cpu" label="Input Selectbox">
+        <InputSelectBox textName="spec.cpu" dropdownName="spec.cpuRange" selectedKey="Mi" items={dropdownUnits} />
+      </Section>
     </div>
   );
 };
