@@ -70,6 +70,7 @@ i18n
         'image-stream',
         'keystone-idp-form',
         'language-preferences-modal',
+        'kubevirt-plugin',
         'ldap-idp-form',
         'limit-range',
         'logs',

@@ -37,4 +37,23 @@
   "{{count}} user_plural": "{{count}} users",
   "VM not running": "VM not running",
   "Guest agent required": "Guest agent required"
+  "Edit": "Edit",
+  "Delete": "Delete",
+  "(pending restart)": "(pending restart)",
+  "Windows tools: {{container}}": "Windows tools: {{container}}",
+  "Container: {{container}}": "Container: {{container}}",
+  "URL: {{url}}": "URL: {{url}}",
+  "PVC: {{ pvc }}": "PVC: {{ pvc }}",
+  "{{name}}": "{{name}}",
+  "{{value}}": "{{value}}",
+  "FileSystems": "FileSystems",
+  "No File Systems Found": "No File Systems Found",
+  "File Systems": "File Systems",
+  "File systems description": "File systems description",
+  "The following information regarding how the disks are partitioned is provided by the guest agent.": "The following information regarding how the disks are partitioned is provided by the guest agent.",
+  "Content": "Content",
+  "Source": "Source",
+  "Interface": "Interface",
+  "Storage Class": "Storage Class",
+  "Disks description": "Disks description"
 }

@@ -12,7 +12,6 @@ import { isGuestAgentInstalled } from '../dashboards-page/vm-dashboard/vm-alerts
 import { VMIKind } from '../../types/vm';
 import { VMStatusBundle } from '../../statuses/vm/types';
 import { getGuestAgentFieldNotAvailMsg } from '../../utils/guest-agent-strings';
-import { GUEST_AGENT_FILE_SYSTEMS_DESCRIPTION } from '../../strings/vm/messages';
 
 import './guest-agent-file-systems.scss';
 
@@ -101,7 +100,7 @@ export const FileSystemsList: React.FC<FileSystemsListProps> = ({ vmi, vmStatusB
       </div>
     ) : (
       <Table
-        aria-label="FileSystems"
+        aria-label={t('kubevirt-plugin~FileSystems')}
         Header={FileSystemsTableHeader}
         Row={FileSystemTableRow}
         data={data}
@@ -109,7 +108,7 @@ export const FileSystemsList: React.FC<FileSystemsListProps> = ({ vmi, vmStatusB
         loaded={!loading}
         EmptyMsg={() => (
           <div id="no-files-systems-found-msg" className="text-center">
-            No File Systems Found
+            {t('kubevirt-plugin~No File Systems Found')}
           </div>
         )}
         virtualize
@@ -120,11 +119,17 @@ export const FileSystemsList: React.FC<FileSystemsListProps> = ({ vmi, vmStatusB
   return (
     <div className="kubevirt-vm-details__file-systems">
       <h3 id="file-systems-header">
-        File Systems
+        {t('kubevirt-plugin~File Systems')}
         <Popover
-          aria-label="File systems description"
+          aria-label={t('kubevirt-plugin~File systems description')}
           position="top"
-          bodyContent={<>{GUEST_AGENT_FILE_SYSTEMS_DESCRIPTION}</>}
+          bodyContent={
+            <>
+              {t(
+                'kubevirt-plugin~The following information regarding how the disks are partitioned is provided by the guest agent.',
+              )}
+            </>
+          }
         >
           <Button variant="plain">
             <QuestionCircleIcon />

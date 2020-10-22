@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { TableData, TableRow, RowFunction } from '@console/internal/components/factory';
 import {
   asAccessReview,
@@ -25,14 +27,14 @@ import {
   VMStorageRowCustomData,
 } from './types';
 import { validateDisk } from '../../utils/validations/vm/disk';
-import { PENDING_RESTART_LABEL } from '../../constants';
 
 const menuActionEdit = (
   disk: CombinedDisk,
   vmLikeEntity: VMLikeEntityKind,
+  t: TFunction,
   { withProgress, templateValidations }: VMStorageRowActionOpts,
 ): KebabOption => ({
-  label: 'Edit',
+  label: t('kubevirt-plugin~Edit'),
   callback: () =>
     withProgress(
       diskModalEnhanced({
@@ -55,9 +57,10 @@ const menuActionEdit = (
 const menuActionDelete = (
   disk: CombinedDisk,
   vmLikeEntity: VMLikeEntityKind,
+  t: TFunction,
   { withProgress }: VMNicRowActionOpts,
 ): KebabOption => ({
-  label: 'Delete',
+  label: t('kubevirt-plugin~Delete'),
   callback: () =>
     withProgress(
       deleteDiskModal({
@@ -76,6 +79,7 @@ const menuActionDelete = (
 const getActions = (
   disk: CombinedDisk,
   vmLikeEntity: VMLikeEntityKind,
+  t: TFunction,
   opts: VMStorageRowActionOpts,
 ) => {
   const actions = [];
@@ -88,7 +92,7 @@ const getActions = (
   }
 
   actions.push(menuActionDelete);
-  return actions.map((a) => a(disk, vmLikeEntity, opts));
+  return actions.map((a) => a(disk, vmLikeEntity, t, opts));
 };
 
 export type VMDiskSimpleRowProps = {
@@ -110,6 +114,7 @@ export const DiskSimpleRow: React.FC<VMDiskSimpleRowProps> = ({
   style,
   isPendingRestart,
 }) => {
+  const { t } = useTranslation();
   const dimensify = dimensifyRow(columnClasses);
 
   const isSizeLoading = size === undefined;
@@ -119,7 +124,7 @@ export const DiskSimpleRow: React.FC<VMDiskSimpleRowProps> = ({
       <TableData className={dimensify()}>
         <ValidationCell
           validation={validation.name}
-          additionalLabel={isPendingRestart ? PENDING_RESTART_LABEL : null}
+          additionalLabel={isPendingRestart ? t('kubevirt-plugin~(pending restart)') : null}
         >
           {name}
         </ValidationCell>
@@ -165,6 +170,7 @@ export const DiskRow: RowFunction<StorageBundle, VMStorageRowCustomData> = ({
   index,
   style,
 }) => {
+  const { t } = useTranslation();
   const diskValidations = validateDisk(
     disk.diskWrapper,
     disk.volumeWrapper,
@@ -193,7 +199,7 @@ export const DiskRow: RowFunction<StorageBundle, VMStorageRowCustomData> = ({
       style={style}
       actionsComponent={
         <Kebab
-          options={getActions(disk, vmLikeEntity, {
+          options={getActions(disk, vmLikeEntity, t, {
             withProgress,
             templateValidations,
           })}

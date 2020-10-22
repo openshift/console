@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Popover } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import { QuestionCircleIcon } from '@patternfly/react-icons';
@@ -116,6 +117,8 @@ const getHeader = (columnClasses: string[]) => () =>
 export const VMDisksTable: React.FC<React.ComponentProps<typeof Table> | VMDisksTableProps> = (
   props,
 ) => {
+  const { t } = useTranslation();
+
   return (
     <div>
       {props?.customData?.showGuestAgentHelp && (
@@ -123,7 +126,7 @@ export const VMDisksTable: React.FC<React.ComponentProps<typeof Table> | VMDisks
           <h3>
             Disks
             <Popover
-              aria-label="Disks description"
+              aria-label={t('kubevirt-plugin~Disks description')}
               position="top"
               bodyContent={<>{VM_DISKS_DESCRIPTION}</>}
             >
