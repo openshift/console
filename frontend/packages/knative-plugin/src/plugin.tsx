@@ -197,6 +197,30 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.EventingTriggerModel,
+      loader: async () =>
+        (
+          await import(
+            './components/pub-sub/details/TriggerDetailsPage' /* webpackChunkName: "trigger-details-page" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.EventingSubscriptionModel,
+      loader: async () =>
+        (
+          await import(
+            './components/pub-sub/details/SubscriptionDetailsPage' /* webpackChunkName: "subscription-details-page" */
+          )
+        ).default,
+    },
+  },
+  {
     type: 'Page/Resource/List',
     properties: {
       model: models.RouteModel,
