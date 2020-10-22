@@ -7,7 +7,7 @@ import { isCustomFeatureFlag } from '@console/plugin-sdk/src/typings';
 import {
   subscribeToExtensions,
   extensionDiffListener,
-} from '@console/plugin-sdk/src/subscribeToExtensions';
+} from '@console/plugin-sdk/src/api/subscribeToExtensions';
 import store from '../redux';
 import { GroupModel, UserModel, VolumeSnapshotContentModel } from '../models';
 import { ClusterVersionKind } from '../module/k8s';

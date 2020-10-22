@@ -7,7 +7,7 @@ import DataModelProvider from '../data-transforms/DataModelProvider';
 import { TopologyDataRetriever } from '../TopologyDataRetriever';
 import { TopologyPageContext } from '../TopologyPage';
 
-jest.mock('@console/plugin-sdk/src/useExtensions', () => ({
+jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({
   useExtensions: () => [],
 }));
 jest.mock('@console/shared', () => {

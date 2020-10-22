@@ -1,8 +1,8 @@
 import { Store } from 'redux';
 import * as _ from 'lodash';
 import { RootState } from '@console/internal/redux';
-import { isExtensionInUse, PluginStore } from './store';
-import { Extension, ExtensionTypeGuard } from './typings';
+import { isExtensionInUse, PluginStore } from '../store';
+import { Extension, ExtensionTypeGuard } from '../typings';
 
 let subscriptionServiceInitialized = false;
 

@@ -107,14 +107,16 @@ describe('augmentExtension', () => {
           type: 'Foo',
           properties: {},
         },
+        'Test@1.2.3',
         'Test',
         0,
       ),
     ).toEqual({
       type: 'Foo',
       properties: {},
+      pluginID: 'Test@1.2.3',
       pluginName: 'Test',
-      uid: 'Test[0]',
+      uid: 'Test@1.2.3[0]',
     });
 
     expect(
@@ -124,11 +126,13 @@ describe('augmentExtension', () => {
           properties: {},
         },
         'Test',
+        'Test',
         1,
       ),
     ).toEqual({
       type: 'Bar',
       properties: {},
+      pluginID: 'Test',
       pluginName: 'Test',
       uid: 'Test[1]',
     });
@@ -137,7 +141,7 @@ describe('augmentExtension', () => {
   it('returns the same extension instance', () => {
     const testExtension: Extension = { type: 'Foo/Bar', properties: {} };
 
-    expect(augmentExtension(testExtension, 'Test', 0)).toBe(testExtension);
+    expect(augmentExtension(testExtension, 'Test@1.2.3', 'Test', 0)).toBe(testExtension);
   });
 });
 

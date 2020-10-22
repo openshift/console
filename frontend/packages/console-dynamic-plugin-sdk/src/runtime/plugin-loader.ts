@@ -14,8 +14,6 @@ type ConsolePluginData = {
   entryCallbackFired: boolean;
 };
 
-let pluginEntryCallbackRegistered = false;
-
 const pluginMap = new Map<string, ConsolePluginData>();
 
 const getPluginID = (m: ConsolePluginManifestJSON) => `${m.name}@${m.version}`;
@@ -46,12 +44,6 @@ export const loadDynamicPlugin = (baseURL: string, manifest: ConsolePluginManife
 };
 
 export const registerPluginEntryCallback = (pluginStore: PluginStore) => {
-  if (pluginEntryCallbackRegistered) {
-    throw new Error('Plugin entry callback is already registered');
-  }
-
-  pluginEntryCallbackRegistered = true;
-
   window.loadPluginEntry = (pluginID: string, entryModule: RemoteEntryModule) => {
     if (!pluginMap.has(pluginID)) {
       console.error(`Received callback for unknown plugin ${pluginID}`);

@@ -14,7 +14,7 @@ import KnativeServiceResources from '../KnativeServiceResources';
 import KSRoutesOverviewList from '../RoutesOverviewList';
 import RevisionsOverviewList from '../RevisionsOverviewList';
 
-jest.mock('@console/plugin-sdk/src/useExtensions', () => ({
+jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({
   useExtensions: jest.fn(),
 }));
 
