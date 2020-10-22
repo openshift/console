@@ -25,9 +25,8 @@ export const initialState: State = {
   nodesDiscoveries: [],
   filteredDiscoveries: [],
   filteredNodes: [],
-  chartSelectedData: '',
-  chartTotalData: '',
-  chartDataUnit: '',
+  chartSelectedData: 0,
+  chartTotalData: 0,
   showConfirmModal: false,
   finalStep: false,
   showDiskList: false,
@@ -68,9 +67,8 @@ export type State = {
   maxDiskSize: string;
   diskSizeUnit: string;
   isValidMaxSize: boolean;
-  chartSelectedData: string;
-  chartTotalData: string;
-  chartDataUnit: string;
+  chartSelectedData: number;
+  chartTotalData: number;
   showNodesListOnADV: boolean;
   nodeNamesForLVS: string[];
   isLoading: boolean;
@@ -107,9 +105,8 @@ export type Action =
   | { type: 'setError'; value: string }
   | { type: 'setAllNodeNamesOnADV'; value: string[] }
   | { type: 'setNodesDiscoveries'; value: Discoveries[] }
-  | { type: 'setChartSelectedData'; value: string }
-  | { type: 'setChartTotalData'; value: string }
-  | { type: 'setChartDataUnit'; unit: string }
+  | { type: 'setChartSelectedData'; value: number }
+  | { type: 'setChartTotalData'; value: number }
   | { type: 'setShowConfirmModal'; value: boolean }
   | { type: 'setOnNextClick'; value: OnNextClick }
   | { type: 'setFilteredDiscoveries'; value: Discoveries[] }
@@ -160,8 +157,6 @@ export const reducer = (state: State, action: Action) => {
       return Object.assign({}, state, { chartSelectedData: action.value });
     case 'setChartTotalData':
       return Object.assign({}, state, { chartTotalData: action.value });
-    case 'setChartDataUnit':
-      return Object.assign({}, state, { chartDataUnit: action.unit });
     case 'setShowConfirmModal':
       return Object.assign({}, state, { showConfirmModal: action.value });
     case 'setOnNextClick':
