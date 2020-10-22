@@ -38,7 +38,7 @@ describe('QuickStartTasks', () => {
     expect(wrapper.find(TaskHeader).length).toBe(2);
   });
 
-  it('should render SyncMarkdownView with description or recapitulation according to task status', () => {
+  it('should render SyncMarkdownView with description or summary according to task status', () => {
     wrapper = shallow(
       <QuickStartTask
         {...props}
@@ -56,14 +56,14 @@ describe('QuickStartTasks', () => {
         .find(SyncMarkdownView)
         .at(0)
         .props().content,
-    ).toEqual(props.tasks[0].recapitulation.success);
+    ).toEqual(props.tasks[0].summary.success);
 
     expect(
       wrapper
         .find(SyncMarkdownView)
         .at(1)
         .props().content,
-    ).toEqual(props.tasks[1].recapitulation.failed);
+    ).toEqual(props.tasks[1].summary.failed);
 
     expect(
       wrapper

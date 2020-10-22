@@ -47,6 +47,6 @@ describe('QuickStartTaskReview', () => {
         .find(SyncMarkdownView)
         .at(1)
         .props().content,
-    ).toEqual(props.review.taskHelp);
+    ).toEqual(props.review.failedTaskHelp);
   });
 });

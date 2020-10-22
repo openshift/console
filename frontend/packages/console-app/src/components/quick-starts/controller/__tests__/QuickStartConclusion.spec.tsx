@@ -19,7 +19,7 @@ const i18nNS = 'quickstart';
 type QuickStartConclusionProps = React.ComponentProps<typeof QuickStartConclusion>;
 let wrapper: ShallowWrapper<QuickStartConclusionProps>;
 const props: QuickStartConclusionProps = {
-  tasks: getQuickStartByName('explore-serverless').spec.tasks,
+  tasks: getQuickStartByName('explore-pipelines').spec.tasks,
   allTaskStatuses: [
     QuickStartTaskStatus.SUCCESS,
     QuickStartTaskStatus.SUCCESS,

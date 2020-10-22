@@ -1,5 +1,4 @@
-import { FLAG_OPENSHIFT_PIPELINE } from '@console/pipelines-plugin/src/const';
-import { QuickStart } from '../utils/quick-start-types';
+import { QuickStart } from '../../../utils/quick-start-types';
 import { pipelineIcon } from './tour-icons';
 
 export const explorePipelinesQuickStart: QuickStart = {
@@ -11,10 +10,10 @@ export const explorePipelinesQuickStart: QuickStart = {
   spec: {
     version: 4.7,
     displayName: `Installing the Pipelines Operator`,
-    duration: 10,
-    iconURL: pipelineIcon,
+    durationMinutes: 10,
+    icon: pipelineIcon,
     description: `Install the OpenShift® Pipelines Operator to build Pipelines using Tekton.`,
-    prerequisites: '',
+    prerequisites: [''],
     introduction: `OpenShift® Pipelines is a cloud-native, continuous integration and continuous delivery (CI/CD) solution based on Kubernetes resources. It uses Tekton building blocks to automate deployments across multiple Kubernetes distributions by abstracting away the underlying implementation details.
 * OpenShift Pipelines is a serverless CI/CD system that runs pipelines with all the required dependencies in isolated containers.
 * They are designed for decentralized teams that work on a microservice-based architecture.
@@ -41,16 +40,16 @@ To start using Pipelines, install the OpenShift® Pipelines Operator on your clu
 2. Verify that the **OpenShift Pipelines Operator** appears in the list of Operators.
 
 In the status column, is the status of the OpenShift Pipelines Operator **Succeeded**?`,
-          taskHelp: `This task isn’t verified yet. Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/pipelines/installing-pipelines.html#op-installing-pipelines-operator-in-web-console_installing-pipelines) about this topic.`,
+          failedTaskHelp: `This task isn’t verified yet. Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/pipelines/installing-pipelines.html#op-installing-pipelines-operator-in-web-console_installing-pipelines) about this topic.`,
         },
-        recapitulation: {
+        summary: {
           success: `You have installed the Pipelines Operator!`,
           failed: `Try the steps again.`,
         },
       },
     ],
     conclusion: `You successfully installed the OpenShift Pipelines Operator! If you want to learn how to deploy an application and associate a Pipeline with it, take the Creating a Pipeline quick start.`,
-    nextQuickStart: `install-app-and-associate-pipeline`,
+    nextQuickStart: [`install-app-and-associate-pipeline`],
     accessReviewResources: [
       {
         group: 'operators.coreos.com',
@@ -63,8 +62,5 @@ In the status column, is the status of the OpenShift Pipelines Operator **Succee
         verb: 'list',
       },
     ],
-    flags: {
-      disallowed: [FLAG_OPENSHIFT_PIPELINE],
-    },
   },
 };

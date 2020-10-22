@@ -1,32 +1,20 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import { useTranslation } from 'react-i18next';
-import {
-  Drawer,
-  DrawerPanelContent,
-  DrawerContent,
-  DrawerPanelBody,
-  DrawerHead,
-  DrawerActions,
-  DrawerCloseButton,
-  DrawerContentBody,
-  Title,
-} from '@patternfly/react-core';
+
+import { Drawer, DrawerContent, DrawerContentBody } from '@patternfly/react-core';
 import { RootState } from '@console/internal/redux';
-import { AsyncComponent } from '@console/internal/components/utils';
-import { useScrollDirection, ScrollDirection } from '@console/shared/';
 import {
   getActiveQuickStartID,
   getActiveQuickStartStatus,
 } from '../../redux/reducers/quick-start-reducer';
 import { setActiveQuickStart } from '../../redux/actions/quick-start-actions';
-import { getQuickStartByName } from './utils/quick-start-utils';
 import { QuickStartStatus } from './utils/quick-start-types';
-
-import './QuickStartDrawer.scss';
+import QuickStartPanelContent from './QuickStartPanelContent';
 import QuickStartCloseModal from './QuickStartCloseModal';
+import QuickStartsLoader from './loader/QuickStartsLoader';
+import './QuickStartDrawer.scss';
 
 type StateProps = {
   activeQuickStartID: string;
@@ -46,9 +34,6 @@ const QuickStartDrawer: React.FC<QuickStartDrawerProps> = ({
   onClose,
 }) => {
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
-  const quickStart = getQuickStartByName(activeQuickStartID);
-  const [scrollDirection, handleScrollCallback] = useScrollDirection();
-  const { t } = useTranslation();
 
   const handleClose = () => {
     if (activeQuickStartStatus === QuickStartStatus.IN_PROGRESS) {
@@ -65,42 +50,17 @@ const QuickStartDrawer: React.FC<QuickStartDrawerProps> = ({
 
   const onModalCancel = () => setModalOpen(false);
 
-  const headerClasses = classNames('co-quick-start-drawer-head', {
-    'pf-u-box-shadow-sm-bottom':
-      scrollDirection && scrollDirection !== ScrollDirection.scrolledToTop,
-  });
-
-  const panelContent = quickStart ? (
-    <DrawerPanelContent onScroll={handleScrollCallback}>
-      <div className={headerClasses}>
-        <DrawerHead>
-          <div className="co-quick-start-drawer__title">
-            <Title
-              headingLevel="h1"
-              size="xl"
-              style={{ marginRight: 'var(--pf-global--spacer--md)' }}
-            >
-              {quickStart?.spec.displayName}{' '}
-              <small className="co-quick-start-drawer__duration text-secondary">
-                {t('quickstart~{{duration, number}} minutes', {
-                  duration: quickStart?.spec.duration,
-                })}
-              </small>
-            </Title>
-          </div>
-          <DrawerActions>
-            <DrawerCloseButton onClick={handleClose} />
-          </DrawerActions>
-        </DrawerHead>
-      </div>
-      <DrawerPanelBody>
-        <AsyncComponent
-          loader={() => import('./QuickStartController').then((c) => c.default)}
-          quickStart={quickStart}
+  const panelContent = (
+    <QuickStartsLoader>
+      {(quickStarts) => (
+        <QuickStartPanelContent
+          quickStarts={quickStarts}
+          handleClose={handleClose}
+          activeQuickStartID={activeQuickStartID}
         />
-      </DrawerPanelBody>
-    </DrawerPanelContent>
-  ) : null;
+      )}
+    </QuickStartsLoader>
+  );
 
   return (
     <>
