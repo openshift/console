@@ -113,7 +113,7 @@ export const EventSourceCronJobModel: K8sKind = {
 
 export const EventSourcePingModel: K8sKind = {
   apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP,
-  apiVersion: 'v1alpha1',
+  apiVersion: 'v1alpha2',
   kind: 'PingSource',
   label: 'Ping Source',
   labelPlural: 'Ping Sources',
@@ -169,7 +169,7 @@ export const EventSourceCamelModel: K8sKind = {
 
 export const EventSourceKafkaModel: K8sKind = {
   apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP,
-  apiVersion: 'v1alpha1',
+  apiVersion: 'v1beta1',
   kind: 'KafkaSource',
   label: 'KafkaSource',
   labelPlural: 'KafkaSources',
@@ -183,7 +183,7 @@ export const EventSourceKafkaModel: K8sKind = {
 
 export const EventSourceSinkBindingModel: K8sKind = {
   apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP,
-  apiVersion: 'v1alpha1',
+  apiVersion: 'v1alpha2',
   kind: 'SinkBinding',
   label: 'SinkBinding',
   labelPlural: 'SinkBindings',

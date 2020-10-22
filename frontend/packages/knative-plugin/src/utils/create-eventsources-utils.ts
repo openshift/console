@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { safeLoad } from 'js-yaml';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { checkAccess } from '@console/internal/components/utils';
@@ -60,9 +59,6 @@ export const getEventSourcesDepResource = (formData: EventSourceFormData): K8sRe
 };
 
 export const getKafkaSourceResource = (formData: EventSourceFormData): K8sResourceKind => {
-  const {
-    limits: { cpu, memory },
-  } = formData;
   const baseResource = getEventSourcesDepResource(formData);
   const { net } = baseResource.spec;
   baseResource.spec.net = {
@@ -70,25 +66,7 @@ export const getKafkaSourceResource = (formData: EventSourceFormData): K8sResour
     ...(!net.sasl?.enable && { sasl: { user: {}, password: {} } }),
     ...(!net.tls?.enable && { tls: { caCert: {}, cert: {}, key: {} } }),
   };
-  const kafkaSource = {
-    spec: {
-      resources: {
-        ...((cpu.limit || memory.limit) && {
-          limits: {
-            ...(cpu.limit && { cpu: `${cpu.limit}${cpu.limitUnit}` }),
-            ...(memory.limit && { memory: `${memory.limit}${memory.limitUnit}` }),
-          },
-        }),
-        ...((cpu.request || memory.request) && {
-          requests: {
-            ...(cpu.request && { cpu: `${cpu.request}${cpu.requestUnit}` }),
-            ...(memory.request && { memory: `${memory.request}${memory.requestUnit}` }),
-          },
-        }),
-      },
-    },
-  };
-  return _.merge({}, baseResource, kafkaSource);
+  return baseResource;
 };
 
 export const getEventSourceResource = (formData: EventSourceFormData): K8sResourceKind => {
@@ -113,7 +91,7 @@ export const getEventSourceData = (source: string) => {
       schedule: '',
     },
     pingsource: {
-      data: '',
+      jsonData: '',
       schedule: '',
     },
     sinkbinding: {
@@ -126,7 +104,7 @@ export const getEventSourceData = (source: string) => {
       },
     },
     apiserversource: {
-      mode: 'Ref',
+      mode: 'Reference',
       serviceAccountName: '',
       resources: [
         {
@@ -152,7 +130,6 @@ export const getEventSourceData = (source: string) => {
           key: { secretKeyRef: { name: '', key: '' } },
         },
       },
-      serviceAccountName: '',
     },
     containersource: {
       template: {

@@ -30,7 +30,7 @@ const ApiServerSection: React.FC = () => {
     [setFieldValue],
   );
   const modeItems = {
-    Ref: 'Ref',
+    Reference: 'Reference',
     Resource: 'Resource',
   };
   const fieldId = getFieldId(values.type, 'res-input');
@@ -61,7 +61,7 @@ const ApiServerSection: React.FC = () => {
         name="data.apiserversource.mode"
         label="Mode"
         items={modeItems}
-        title={modeItems.Ref}
+        title={modeItems.Reference}
         helpText="The mode the receive adapter controller runs under"
         fullWidth
       />
