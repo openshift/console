@@ -7,6 +7,7 @@ type EventSourceProps = React.ComponentProps<typeof EventSource>;
 describe('EventSourceSpec', () => {
   let wrapper: ShallowWrapper<EventSourceProps>;
   const namespaceName = 'myApp';
+  const perspective = 'dev';
   const activeApplicationName = 'appGroup';
   const eventSourceStatusData = null;
 
@@ -14,6 +15,7 @@ describe('EventSourceSpec', () => {
     wrapper = shallow(
       <EventSource
         namespace={namespaceName}
+        perspective={perspective}
         eventSourceStatus={eventSourceStatusData}
         activeApplication={activeApplicationName}
       />,
@@ -31,6 +33,7 @@ describe('EventSourceSpec', () => {
     wrapper = shallow(
       <EventSource
         namespace={namespaceName}
+        perspective={perspective}
         eventSourceStatus={eventSourceStatusData}
         contextSource={contextSourceData}
         activeApplication={activeApplicationName}

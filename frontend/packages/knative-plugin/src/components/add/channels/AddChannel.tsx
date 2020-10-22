@@ -2,15 +2,17 @@ import * as React from 'react';
 import { Formik } from 'formik';
 import { connect } from 'react-redux';
 import { history } from '@console/internal/components/utils';
-import { getActiveApplication } from '@console/internal/reducers/ui';
+import { getActiveApplication, getActivePerspective } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { K8sResourceKind, k8sCreate, modelFor, referenceFor } from '@console/internal/module/k8s';
 import { sanitizeApplicationValue } from '@console/dev-console/src/utils/application-utils';
+import { isPerspective, Perspective, useExtensions } from '@console/plugin-sdk';
 import { AddChannelFormData, ChannelListProps } from '../import-types';
 import { addChannelValidationSchema } from '../eventSource-validation-utils';
 import ChannelForm from './ChannelForm';
 import { getCreateChannelResource } from '../../../utils/create-channel-utils';
+import { handleRedirect } from '../../../utils/create-eventsources-utils';
 
 interface ChannelProps {
   namespace: string;
@@ -21,11 +23,12 @@ interface ChannelProps {
 
 interface StateProps {
   activeApplication: string;
+  perspective: string;
 }
 
 type Props = ChannelProps & StateProps;
 
-const AddChannel: React.FC<Props> = ({ namespace, channels, activeApplication }) => {
+const AddChannel: React.FC<Props> = ({ namespace, channels, activeApplication, perspective }) => {
   const initialValues: AddChannelFormData = {
     application: {
       initial: sanitizeApplicationValue(activeApplication),
@@ -39,7 +42,7 @@ const AddChannel: React.FC<Props> = ({ namespace, channels, activeApplication })
     data: {},
     yamlData: '',
   };
-
+  const perspectiveExtension = useExtensions<Perspective>(isPerspective);
   const createResources = (rawFormData: any): Promise<K8sResourceKind> => {
     const channelResource = getCreateChannelResource(rawFormData);
     if (channelResource?.kind && modelFor(referenceFor(channelResource))) {
@@ -56,7 +59,7 @@ const AddChannel: React.FC<Props> = ({ namespace, channels, activeApplication })
     createResources(values)
       .then(() => {
         actions.setSubmitting(false);
-        history.push(`/topology/ns/${values.namespace}`);
+        handleRedirect(values.namespace, perspective, perspectiveExtension);
       })
       .catch((err) => {
         actions.setSubmitting(false);
@@ -80,8 +83,10 @@ const AddChannel: React.FC<Props> = ({ namespace, channels, activeApplication })
 
 const mapStateToProps = (state: RootState, ownProps: ChannelProps): StateProps => {
   const activeApplication = ownProps.selectedApplication || getActiveApplication(state);
+  const perspective = getActivePerspective(state);
   return {
     activeApplication: activeApplication !== ALL_APPLICATIONS_KEY ? activeApplication : '',
+    perspective,
   };
 };
 
