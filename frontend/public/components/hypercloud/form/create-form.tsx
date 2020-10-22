@@ -7,13 +7,14 @@ import { ActionGroup, Button } from '@patternfly/react-core';
 import { k8sCreate, referenceFor, K8sResourceKind, modelFor } from '../../../module/k8s';
 import { pluralToKind } from './';
 import { ButtonBar, history, resourceObjPath } from '../../utils';
+import { Section } from '../utils/section';
 
 export const WithCommonForm = (SubForm, params, defaultValues, modal?: boolean) => {
   const FormComponent: React.FC<CommonFormProps_> = props => {
-    const methods = useForm({defaultValues: defaultValues});
+    const methods = useForm({ defaultValues: defaultValues });
 
     const kind = pluralToKind(params.plural);
-    const title = `${props.titleVerb} ${params.type === 'form' ? '' : params.type} ${kind}`;
+    const title = `${props.titleVerb} ${params?.type === 'form' ? '' : params.type || 'Sample'} ${kind || ''}`;
 
     const [inProgress] = React.useState(false); // onSubmit이나 나중에 Error관련 메서드에서 inProgress를 false로 변경해줘야함.
 
@@ -34,10 +35,9 @@ export const WithCommonForm = (SubForm, params, defaultValues, modal?: boolean) 
             <p className="co-m-pane__explanation">{props.explanation}</p>
             <fieldset>
               <div className="form-group">
-                <label className="control-label co-required" htmlFor="name">
-                  Name
-                </label>
-                <input className="pf-c-form-control" id="name" name="metadata.name" ref={methods.register} />
+                <Section label="Name" id="name" isRequired={true}>
+                  <input className="pf-c-form-control" id="name" name="metadata.name" ref={methods.register} />
+                </Section>
               </div>
             </fieldset>
             <SubForm isCreate={props.isCreate} />
