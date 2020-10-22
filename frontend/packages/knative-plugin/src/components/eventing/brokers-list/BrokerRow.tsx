@@ -6,26 +6,24 @@ import { EventingBrokerModel } from '../../../models';
 import { EventBrokerKind } from '../../../types';
 
 const BrokerRow: RowFunction<EventBrokerKind> = ({ obj, index, key, style }) => {
+  const {
+    metadata: { name, namespace, creationTimestamp, uid },
+  } = obj;
   const objReference = referenceFor(obj);
   const menuActions = [
     ...Kebab.getExtensionsActionsForKind(EventingBrokerModel),
     ...Kebab.factory.common,
   ];
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <TableRow id={uid} index={index} trKey={key} style={style}>
       <TableData>
-        <ResourceLink
-          kind={objReference}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
-          title={obj.metadata.uid}
-        />
+        <ResourceLink kind={objReference} name={name} namespace={namespace} title={uid} />
       </TableData>
-      <TableData className="co-break-word">
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+      <TableData className="co-break-word" columnID="namespace">
+        <ResourceLink kind="Namespace" name={namespace} />
       </TableData>
       <TableData>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
+        <Timestamp timestamp={creationTimestamp} />
       </TableData>
       <TableData className={Kebab.columnClass}>
         <ResourceKebab actions={menuActions} kind={objReference} resource={obj} />

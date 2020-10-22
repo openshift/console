@@ -9,6 +9,7 @@ const EventSourceHeaders = () => {
       transforms: [sortable],
     },
     {
+      id: 'namespace',
       title: 'Namespace',
       sortField: 'metadata.namespace',
       transforms: [sortable],

@@ -10,6 +10,7 @@ const RevisionHeader = () => {
       props: { className: tableColumnClasses[0] },
     },
     {
+      id: 'namesoace',
       title: 'Namespace',
       sortField: 'metadata.namespace',
       transforms: [sortable],
