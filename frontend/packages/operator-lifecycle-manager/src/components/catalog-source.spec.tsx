@@ -24,6 +24,14 @@ import {
 } from './catalog-source';
 import { PackageManifestList } from './package-manifest';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 describe(CatalogSourceDetails.displayName, () => {
   let wrapper: ShallowWrapper<CatalogSourceDetailsProps>;
   let obj: CatalogSourceDetailsProps['obj'];
@@ -48,22 +56,12 @@ describe(CatalogSourceDetails.displayName, () => {
   });
 
   it('renders name and publisher of the catalog', () => {
-    expect(
-      wrapper
-        .findWhere((node) => node.equals(<dt>Name</dt>))
-        .parents()
-        .at(0)
-        .find('dd')
-        .text(),
-    ).toEqual(obj.spec.displayName);
-    expect(
-      wrapper
-        .findWhere((node) => node.equals(<dt>Publisher</dt>))
-        .parents()
-        .at(0)
-        .find('dd')
-        .text(),
-    ).toEqual(obj.spec.publisher);
+    expect(wrapper.find('[data-test-id="catalog-source-name"]').text()).toEqual(
+      obj.spec.displayName,
+    );
+    expect(wrapper.find('[data-test-id="catalog-source-publisher"]').text()).toEqual(
+      obj.spec.publisher,
+    );
   });
 
   it('renders a `PackageManifestList` component', () => {

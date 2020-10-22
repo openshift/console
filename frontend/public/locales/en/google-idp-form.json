@@ -1,0 +1,8 @@
+{
+  "Add Identity Provider: Google": "Add Identity Provider: Google",
+  "You can use Google integration for users authenticating with Google credentials.": "You can use Google integration for users authenticating with Google credentials.",
+  "Client ID": "Client ID",
+  "Client secret": "Client secret",
+  "Hosted domain": "Hosted domain",
+  "Restrict users to a Google App domain.": "Restrict users to a Google App domain."
+}

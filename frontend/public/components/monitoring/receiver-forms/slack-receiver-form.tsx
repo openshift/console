@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { RadioInput } from '../../radio';
 import { ExpandCollapse, ExternalLink } from '../../utils';
@@ -20,6 +21,7 @@ const GLOBAL_FIELDS = [
 ];
 
 export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
+  const { t } = useTranslation();
   return (
     <div data-test-id="slack-receiver-form">
       <div className="form-group">
@@ -28,7 +30,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
           className="control-label co-required"
           htmlFor="slack-api-url"
         >
-          Slack API URL
+          {t('slack-receiver-form~Slack API URL')}
         </label>
         <div className="row">
           <div className="col-sm-7">
@@ -51,21 +53,22 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
             <SaveAsDefaultCheckbox
               formField="slackSaveAsDefault"
               disabled={formValues.slack_api_url === globals?.slack_api_url}
-              label="Save as default Slack API URL"
+              label={t('slack-receiver-form~Save as default Slack API URL')}
               formValues={formValues}
               dispatchFormChange={dispatchFormChange}
-              tooltip="Checking this box will write the API URL to the global section of the
-                configuration file where it will become the default API URL for future Slack receivers."
+              tooltip={t(
+                'slack-receiver-form~Checking this box will write the API URL to the global section of the configuration file where it will become the default API URL for future Slack receivers.',
+              )}
             />
           </div>
         </div>
         <div className="help-block" id="slack-api-url-help">
-          The URL of the Slack Webhook.
+          {t('slack-receiver-form~The URL of the Slack webhook.')}
         </div>
       </div>
       <div className="form-group">
         <label className="control-label co-required" htmlFor="slack-channel">
-          Channel
+          {t('slack-receiver-form~Channel')}
         </label>
         <input
           className="pf-c-form-control"
@@ -82,13 +85,13 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
           }
         />
         <div className="help-block" id="slack-channel-help">
-          The Slack channel or user to send notifications to.
+          {t('slack-receiver-form~The Slack channel or user to send notifications to.')}
         </div>
       </div>
       <div className="form-group">
         <ExpandCollapse
-          textCollapsed="Show advanced configuration"
-          textExpanded="Hide advanced configuration"
+          textCollapsed={t('slack-receiver-form~Show advanced configuration')}
+          textExpanded={t('slack-receiver-form~Hide advanced configuration')}
         >
           <div className="co-form-subsection">
             <div className="form-group">
@@ -100,9 +103,9 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
             </div>
             <div className="form-group">
               <label className="control-label" htmlFor="slack-icon-type">
-                Icon &nbsp;
+                {t('slack-receiver-form~Icon')} &nbsp;
                 <RadioInput
-                  title="URL"
+                  title={t('slack-receiver-form~URL')}
                   name="slackIconType"
                   id="slack-icon-type"
                   value="url"
@@ -116,7 +119,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                   inline
                 />
                 <RadioInput
-                  title="Emoji"
+                  title={t('slack-receiver-form~Emoji')}
                   name="slackIconType"
                   value="emoji"
                   data-test-id="slack-icon-type-emoji"
@@ -147,7 +150,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                     }
                   />
                   <div className="help-block" id="slack-icon-url-help">
-                    The URL of the icon.
+                    {t('slack-receiver-form~The URL of the icon.')}
                   </div>
                 </>
               )}
@@ -169,19 +172,21 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                     }
                   />
                   <div className="help-block" id="slack-icon-emoji-help">
-                    An{' '}
-                    <ExternalLink
-                      href="https://www.webfx.com/tools/emoji-cheat-sheet/"
-                      text="emoji code"
-                    />{' '}
-                    to use in place of the default icon.
+                    <Trans ns="slack-receiver-form">
+                      An{' '}
+                      <ExternalLink
+                        href="https://www.webfx.com/tools/emoji-cheat-sheet/"
+                        text={t('slack-receiver-form~emoji code')}
+                      />{' '}
+                      to use in place of the default icon.
+                    </Trans>
                   </div>
                 </>
               )}
             </div>
             <div className="form-group">
               <label className="control-label" htmlFor="slack-username">
-                Username
+                {t('slack-receiver-form~Username')}
               </label>
               <input
                 className="pf-c-form-control"
@@ -198,7 +203,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                 }
               />
               <div className="help-block" id="slack-username-help">
-                The displayed username.
+                {t('slack-receiver-form~The displayed username.')}
               </div>
             </div>
             <div className="form-group">
@@ -217,11 +222,11 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                     }
                     checked={formValues.slack_link_names}
                   />
-                  Link Names
+                  {t('slack-receiver-form~Link names')}
                 </label>
               </div>
               <div className="help-block" id="slack-link-names-help">
-                Find and link channel names and usernames.
+                {t('slack-receiver-form~Find and link channel names and usernames.')}
               </div>
             </div>
           </div>

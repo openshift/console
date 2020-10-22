@@ -162,7 +162,10 @@ describe('Kubernetes resource CRUD operations', () => {
     it('displays YAML editor for creating a new custom resource instance', async () => {
       await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${name}`);
       await crudView.isLoaded();
-      await crudView.clickKebabAction(crd.spec.names.kind, 'View Instances');
+      await crudView.clickKebabAction(
+        crd.spec.names.kind,
+        'custom-resource-definition~View instances',
+      );
       await crudView.isLoaded();
       await crudView.createYAMLButton.click();
       await yamlView.isLoaded();
@@ -178,7 +181,7 @@ describe('Kubernetes resource CRUD operations', () => {
     it('deletes the `CustomResourceDefinition`', async () => {
       await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${name}`);
       await crudView.resourceRowsPresent();
-      await crudView.deleteRow('CustomResourceDefinition')(crd.spec.names.kind);
+      await crudView.deleteRow('CustomResourceDefinition', true)(crd.spec.names.kind);
       leakedResources.delete(JSON.stringify({ name, plural: 'customresourcedefinitions' }));
     });
   });

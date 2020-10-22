@@ -1,0 +1,22 @@
+{
+  "You must specify a CA File.": "You must specify a CA File.",
+  "Add Identity Provider: Request Header": "Add Identity Provider: Request Header",
+  "Use request header to identify users from request header values. It is typically used in combination with an authenticating proxy, which sets the request header value.": "Use request header to identify users from request header values. It is typically used in combination with an authenticating proxy, which sets the request header value.",
+  "URLs": "URLs",
+  "At least one URL must be provided.": "At least one URL must be provided.",
+  "Challenge URL": "Challenge URL",
+  "The URL to redirect unauthenticated requests from OAuth clients which expect interactive logins.": "The URL to redirect unauthenticated requests from OAuth clients which expect interactive logins.",
+  "Login URL": "Login URL",
+  "The URL to redirect unauthenticated requests from OAuth clients which expect WWW-Authenticate challenges.": "The URL to redirect unauthenticated requests from OAuth clients which expect WWW-Authenticate challenges.",
+  "More options": "More options",
+  "Client common names": "Client common names",
+  "The set of common names to require a match from.": "The set of common names to require a match from.",
+  "Headers": "Headers",
+  "The set of headers to check for identity information.": "The set of headers to check for identity information.",
+  "Preferred username headers": "Preferred username headers",
+  "The set of headers to check for the preferred username.": "The set of headers to check for the preferred username.",
+  "Name headers": "Name headers",
+  "The set of headers to check for the display name.": "The set of headers to check for the display name.",
+  "Email headers": "Email headers",
+  "The set of headers to check for the email address.": "The set of headers to check for the email address."
+}

@@ -588,7 +588,7 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective }) => {
               loader={() =>
                 import(
                   './cluster-settings/openid-idp-form' /* webpackChunkName: "openid-idp-form" */
-                ).then((m) => m.AddOpenIDPage)
+                ).then((m) => m.AddOpenIDIDPPage)
               }
             />
             <LazyRoute

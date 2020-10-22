@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import { withTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { SecretModel, ConfigMapModel } from '../../models';
@@ -9,7 +11,10 @@ import { addIDP, getOAuthResource, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
 
-export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
+class AddOpenIDIDPPageWithTranslation extends PromiseComponent<
+  AddOpenIDIDPPageProps,
+  AddOpenIDIDPPageState
+> {
   readonly state: AddOpenIDIDPPageState = {
     name: 'openid',
     clientID: '',
@@ -180,7 +185,8 @@ export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
       claimEmails,
       caFileContent,
     } = this.state;
-    const title = 'Add Identity Provider: OpenID Connect';
+    const { t } = this.props;
+    const title = t('openid-idp-form~Add Identity Provider: OpenID Connect');
     return (
       <div className="co-m-pane__body">
         <Helmet>
@@ -189,12 +195,14 @@ export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
         <form onSubmit={this.submit} name="form" className="co-m-pane__body-group co-m-pane__form">
           <h1 className="co-m-pane__heading">{title}</h1>
           <p className="co-m-pane__explanation">
-            Integrate with an OpenID Connect identity provider using an Authorization Code Flow.
+            {t(
+              'openid-idp-form~Integrate with an OpenID Connect identity provider using an Authorization Code Flow.',
+            )}
           </p>
           <IDPNameInput value={name} onChange={this.nameChanged} />
           <div className="form-group">
             <label className="control-label co-required" htmlFor="client-id">
-              Client ID
+              {t('openid-idp-form~Client ID')}
             </label>
             <input
               className="pf-c-form-control"
@@ -207,7 +215,7 @@ export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
           </div>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="client-secret">
-              Client Secret
+              {t('openid-idp-form~Client secret')}
             </label>
             <input
               className="pf-c-form-control"
@@ -220,7 +228,7 @@ export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
           </div>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="issuer">
-              Issuer URL
+              {t('openid-idp-form~Issuer URL')}
             </label>
             <input
               className="pf-c-form-control"
@@ -232,49 +240,59 @@ export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
               aria-describedby="issuer-help"
             />
             <div className="help-block" id="issuer-help">
-              The URL that the OpenID Provider asserts as its Issuer Identifier. It must use the
-              https scheme with no URL query parameters or fragment.
+              {t(
+                'openid-idp-form~The URL that the OpenID provider asserts as its issuer identifier. It must use the https scheme with no URL query parameters or fragment.',
+              )}
             </div>
           </div>
           <div className="co-form-section__separator" />
-          <h3>Claims</h3>
+          <h3>{t('openid-idp-form~Claims')}</h3>
           <p className="co-help-text">
-            Claims map metadata from the OpenID provider to an OpenShift user. The first non-empty
-            claim is used.
+            {t(
+              'openid-idp-form~Claims map metadata from the OpenID provider to an OpenShift user. The first non-empty claim is used.',
+            )}
           </p>
           <ListInput
-            label="Preferred Username"
+            label={t('openid-idp-form~Preferred username')}
             initialValues={claimPreferredUsernames}
             onChange={this.claimPreferredUsernamesChanged}
-            helpText="Any scopes to request in addition to the standard openid scope."
+            helpText={t(
+              'openid-idp-form~Any scopes to request in addition to the standard openid scope.',
+            )}
           />
           <ListInput
-            label="Name"
+            label={t('openid-idp-form~Name')}
             initialValues={claimNames}
             onChange={this.claimNamesChanged}
-            helpText="The list of claims whose values should be used as the display name."
+            helpText={t(
+              'openid-idp-form~The list of claims whose values should be used as the display name.',
+            )}
           />
           <ListInput
-            label="Email"
+            label={t('openid-idp-form~Email')}
             initialValues={claimEmails}
             onChange={this.claimEmailsChanged}
-            helpText="The list of claims whose values should be used as the email address."
+            helpText={t(
+              'openid-idp-form~The list of claims whose values should be used as the email address.',
+            )}
           />
           <div className="co-form-section__separator" />
           <h3>More Options</h3>
           <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
           <ListInput
-            label="Extra Scopes"
+            label={t('openid-idp-form~Extra scopes')}
             onChange={this.extraScopesChanged}
-            helpText="Any scopes to request in addition to the standard openid scope."
+            helpText={t(
+              'openid-idp-form~Any scopes to request in addition to the standard openid scope.',
+            )}
           />
           <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
             <ActionGroup className="pf-c-form">
               <Button type="submit" variant="primary" data-test-id="add-idp">
-                Add
+                {t('public~Add')}
               </Button>
               <Button type="button" variant="secondary" onClick={history.goBack}>
-                Cancel
+                {t('public~Cancel')}
               </Button>
             </ActionGroup>
           </ButtonBar>
@@ -283,6 +301,8 @@ export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
     );
   }
 }
+
+export const AddOpenIDIDPPage = withTranslation()(AddOpenIDIDPPageWithTranslation);
 
 export type AddOpenIDIDPPageState = {
   name: string;
@@ -296,4 +316,8 @@ export type AddOpenIDIDPPageState = {
   extraScopes: string[];
   inProgress: boolean;
   errorMessage: string;
+};
+
+type AddOpenIDIDPPageProps = {
+  t: TFunction;
 };

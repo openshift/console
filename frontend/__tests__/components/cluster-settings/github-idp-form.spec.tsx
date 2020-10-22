@@ -10,6 +10,19 @@ import {
 } from '../../../public/components/cluster-settings/github-idp-form';
 import { controlButtonTest } from './basicauth-idp-form.spec';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    withTranslation: () => (Component) => {
+      Component.defaultProps = { ...Component.defaultProps, t: (s) => s };
+      return Component;
+    },
+  };
+});
+
+const i18nNS = 'github-idp-form';
+
 describe('Add Identity Provider: GitHub', () => {
   let wrapper: ShallowWrapper<{}, AddGitHubPageState>;
 
@@ -22,7 +35,7 @@ describe('Add Identity Provider: GitHub', () => {
   });
 
   it('should render correct GitHub IDP page title', () => {
-    expect(wrapper.contains('Add Identity Provider: GitHub')).toBeTruthy();
+    expect(wrapper.contains(`${i18nNS}~Add Identity Provider: GitHub`)).toBeTruthy();
   });
 
   it('should render the form elements of AddGitHubPage component', () => {
@@ -35,7 +48,7 @@ describe('Add Identity Provider: GitHub', () => {
   });
 
   it('should render control buttons in a button bar', () => {
-    controlButtonTest(wrapper);
+    controlButtonTest(wrapper, 'public');
   });
 
   it('should prefill github in name field by default', () => {

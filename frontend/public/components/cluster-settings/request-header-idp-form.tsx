@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import { withTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { ConfigMapModel } from '../../models';
@@ -9,7 +11,10 @@ import { addIDP, getOAuthResource, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
 
-export class AddRequestHeaderPage extends PromiseComponent<{}, AddRequestHeaderPageState> {
+class AddRequestHeaderPageWithTranslation extends PromiseComponent<
+  AddRequestHeaderPageProps,
+  AddRequestHeaderPageState
+> {
   readonly state: AddRequestHeaderPageState = {
     name: 'request-header',
     challengeURL: '',
@@ -88,7 +93,9 @@ export class AddRequestHeaderPage extends PromiseComponent<{}, AddRequestHeaderP
   submit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     if (!this.state.caFileContent) {
-      this.setState({ errorMessage: 'You must specify a CA File.' });
+      this.setState({
+        errorMessage: this.props.t('request-header-idp-form~You must specify a CA File.'),
+      });
       return;
     }
 
@@ -147,7 +154,8 @@ export class AddRequestHeaderPage extends PromiseComponent<{}, AddRequestHeaderP
 
   render() {
     const { name, challengeURL, loginURL, caFileContent } = this.state;
-    const title = 'Add Identity Provider: Request Header';
+    const { t } = this.props;
+    const title = t('request-header-idp-form~Add Identity Provider: Request Header');
     return (
       <div className="co-m-pane__body">
         <Helmet>
@@ -156,16 +164,19 @@ export class AddRequestHeaderPage extends PromiseComponent<{}, AddRequestHeaderP
         <form onSubmit={this.submit} name="form" className="co-m-pane__body-group co-m-pane__form">
           <h1 className="co-m-pane__heading">{title}</h1>
           <p className="co-m-pane__explanation">
-            Use request header to identify users from request header values. It is typically used in
-            combination with an authenticating proxy, which sets the request header value.
+            {t(
+              'request-header-idp-form~Use request header to identify users from request header values. It is typically used in combination with an authenticating proxy, which sets the request header value.',
+            )}
           </p>
           <IDPNameInput value={name} onChange={this.nameChanged} />
           <div className="co-form-section__separator" />
-          <h3 className="co-required">URLs</h3>
-          <p className="co-m-pane__explanation">At least one URL must be provided.</p>
+          <h3 className="co-required">{t('request-header-idp-form~URLs')}</h3>
+          <p className="co-m-pane__explanation">
+            {t('request-header-idp-form~At least one URL must be provided.')}
+          </p>
           <div className="form-group">
             <label className="control-label" htmlFor="challenge-url">
-              Challenge URL
+              {t('request-header-idp-form~Challenge URL')}
             </label>
             <input
               className="pf-c-form-control"
@@ -176,13 +187,14 @@ export class AddRequestHeaderPage extends PromiseComponent<{}, AddRequestHeaderP
               aria-describedby="challenge-url-help"
             />
             <div className="help-block" id="challenge-url-help">
-              The URL to redirect unauthenticated requests from OAuth clients which expect
-              interactive logins.
+              {t(
+                'request-header-idp-form~The URL to redirect unauthenticated requests from OAuth clients which expect interactive logins.',
+              )}
             </div>
           </div>
           <div className="form-group">
             <label className="control-label" htmlFor="login-url">
-              Login URL
+              {t('request-header-idp-form~Login URL')}
             </label>
             <input
               className="pf-c-form-control"
@@ -193,46 +205,55 @@ export class AddRequestHeaderPage extends PromiseComponent<{}, AddRequestHeaderP
               aria-describedby="login-url-help"
             />
             <div className="help-block" id="login-url-help">
-              The URL to redirect unauthenticated requests from OAuth clients which expect
-              WWW-Authenticate challenges.
+              {t(
+                'request-header-idp-form~The URL to redirect unauthenticated requests from OAuth clients which expect WWW-Authenticate challenges.',
+              )}
             </div>
           </div>
           <div className="co-form-section__separator" />
-          <h3>More Options</h3>
+          <h3>{t('request-header-idp-form~More options')}</h3>
           <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} isRequired />
           <ListInput
-            label="Client Common Names"
+            label={t('request-header-idp-form~Client common names')}
             onChange={this.clientCommonNamesChanged}
-            helpText="The set of common names to require a match from."
+            helpText={t('request-header-idp-form~The set of common names to require a match from.')}
           />
           <ListInput
-            label="Headers"
+            label={t('request-header-idp-form~Headers')}
             onChange={this.headersChanged}
-            helpText="The set of headers to check for identity information."
+            helpText={t(
+              'request-header-idp-form~The set of headers to check for identity information.',
+            )}
             required
           />
           <ListInput
-            label="Preferred Username Headers"
+            label={t('request-header-idp-form~Preferred username headers')}
             onChange={this.preferredUsernameHeadersChanged}
-            helpText="The set of headers to check for the preferred username."
+            helpText={t(
+              'request-header-idp-form~The set of headers to check for the preferred username.',
+            )}
           />
           <ListInput
-            label="Name Headers"
+            label={t('request-header-idp-form~Name headers')}
             onChange={this.nameHeadersChanged}
-            helpText="The set of headers to check for the display name."
+            helpText={t(
+              'request-header-idp-form~The set of headers to check for the display name.',
+            )}
           />
           <ListInput
-            label="Email Headers"
+            label={t('request-header-idp-form~Email headers')}
             onChange={this.emailHeadersChanged}
-            helpText="The set of headers to check for the email address."
+            helpText={t(
+              'request-header-idp-form~The set of headers to check for the email address.',
+            )}
           />
           <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
             <ActionGroup className="pf-c-form">
               <Button type="submit" variant="primary">
-                Add
+                {t('public~Add')}
               </Button>
               <Button type="button" variant="secondary" onClick={history.goBack}>
-                Cancel
+                {t('public~Cancel')}
               </Button>
             </ActionGroup>
           </ButtonBar>
@@ -241,6 +262,8 @@ export class AddRequestHeaderPage extends PromiseComponent<{}, AddRequestHeaderP
     );
   }
 }
+
+export const AddRequestHeaderPage = withTranslation()(AddRequestHeaderPageWithTranslation);
 
 export type AddRequestHeaderPageState = {
   name: string;
@@ -254,4 +277,8 @@ export type AddRequestHeaderPageState = {
   caFileContent: string;
   inProgress: boolean;
   errorMessage: string;
+};
+
+type AddRequestHeaderPageProps = {
+  t: TFunction;
 };

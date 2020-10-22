@@ -2,7 +2,7 @@ import { OrderedMap } from 'immutable';
 import { safeLoad, safeDump } from 'js-yaml';
 import * as _ from 'lodash';
 
-import { testName, editHumanizedKind, deleteHumanizedKind, checkErrors } from '../../support';
+import { testName, editKind, deleteKind, checkErrors } from '../../support';
 import { listPage } from '../../views/list-page';
 import { detailsPage } from '../../views/details-page';
 import { modal } from '../../views/modal';
@@ -24,7 +24,10 @@ describe('Kubernetes resource CRUD operations', () => {
     cy.logout();
   });
 
-  const k8sObjs = OrderedMap<string, { kind: string; namespaced?: boolean }>()
+  const k8sObjs = OrderedMap<
+    string,
+    { kind: string; namespaced?: boolean; humanizeKind?: boolean }
+  >()
     .set('pods', { kind: 'Pod' })
     .set('services', { kind: 'Service' })
     .set('serviceaccounts', { kind: 'ServiceAccount' })
@@ -41,8 +44,8 @@ describe('Kubernetes resource CRUD operations', () => {
     .set('replicationcontrollers', { kind: 'ReplicationController' })
     .set('persistentvolumeclaims', { kind: 'PersistentVolumeClaim' })
     .set('statefulsets', { kind: 'StatefulSet' })
-    .set('resourcequotas', { kind: 'ResourceQuota' })
-    .set('limitranges', { kind: 'LimitRange' })
+    .set('resourcequotas', { kind: 'ResourceQuota', humanizeKind: false })
+    .set('limitranges', { kind: 'LimitRange', humanizeKind: false })
     .set('horizontalpodautoscalers', { kind: 'HorizontalPodAutoscaler' })
     .set('networkpolicies', { kind: 'NetworkPolicy' })
     .set('roles', { kind: 'Role' })
@@ -81,7 +84,7 @@ describe('Kubernetes resource CRUD operations', () => {
     'snapshot.storage.k8s.io~v1beta1~VolumeSnapshot',
   ]);
 
-  testObjs.forEach(({ kind, namespaced = true }, resource) => {
+  testObjs.forEach(({ kind, namespaced = true, humanizeKind = true }, resource) => {
     describe(kind, () => {
       const name = `${testName}-${_.kebabCase(kind)}`;
 
@@ -163,7 +166,7 @@ describe('Kubernetes resource CRUD operations', () => {
             namespaced ? `ns/${testName}` : 'all-namespaces'
           }?kind=${kind}&q=${testLabel}%3d${testName}&name=${name}`,
         );
-        listPage.rows.clickKebabAction(name, editHumanizedKind(kind));
+        listPage.rows.clickKebabAction(name, editKind(kind, humanizeKind));
         if (kind !== 'Secret') {
           yamlEditor.isLoaded();
           yamlEditor.clickReloadButton();
@@ -175,7 +178,7 @@ describe('Kubernetes resource CRUD operations', () => {
         cy.visit(`${namespaced ? `/k8s/ns/${testName}` : '/k8s/cluster'}/${resource}`);
         listPage.filter.byName(name);
         listPage.rows.countShouldBe(1);
-        listPage.rows.clickKebabAction(name, deleteHumanizedKind(kind));
+        listPage.rows.clickKebabAction(name, deleteKind(kind, humanizeKind));
         modal.shouldBeOpened();
         modal.submit();
         modal.shouldBeClosed();
