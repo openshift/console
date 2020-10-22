@@ -1,13 +1,22 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import { getName } from '@console/shared/src/selectors/common';
 import { usePrometheusQueries } from '@console/shared/src/components/dashboard/utilization-card/prometheus-hook';
 import { getRangeVectorStats } from '@console/internal/components/graphs/utils';
 import { PrometheusResponse, DataPoint } from '@console/internal/components/graphs';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { referenceForModel } from '@console/internal/module/k8s';
+import {
+  ClusterServiceVersionModel,
+  ClusterServiceVersionKind,
+} from '@console/operator-lifecycle-manager';
 import { RGW_FLAG } from '@console/ceph-storage-plugin/src/features';
 import { useFlag } from '@console/shared/src/hooks/flag';
+import { CEPH_STORAGE_NAMESPACE, OCS_OPERATOR } from '@console/ceph-storage-plugin/src/constants';
 import { Breakdown, Metrics, ServiceType } from '../../constants';
 import { DataConsumptionDropdown } from './data-consumption-card-dropdown';
 import { DATA_CONSUMPTION_QUERIES } from '../../queries';
@@ -20,11 +29,24 @@ const timeSpan = {
   [ServiceType.MCG]: null,
 };
 
+const csvResource = {
+  isList: true,
+  namespace: CEPH_STORAGE_NAMESPACE,
+  kind: referenceForModel(ClusterServiceVersionModel),
+};
+
 const DataConsumptionCard: React.FC = () => {
   const [breakdownBy, setBreakdownBy] = React.useState(Breakdown.PROVIDERS);
   const [metric, setMetric] = React.useState(Metrics.IOPS);
   const [serviceType, setServiceType] = React.useState(ServiceType.MCG);
   const RGW = useFlag(RGW_FLAG);
+  const [csvList, csvLoaded, csvLoadError] = useK8sWatchResource<ClusterServiceVersionKind[]>(
+    csvResource,
+  );
+  const isOCS45 =
+    csvLoaded &&
+    !csvLoadError &&
+    csvList?.find((obj) => _.startsWith(getName(obj), `${OCS_OPERATOR}.v4.5`));
 
   const queries: string[] = React.useMemo(() => {
     return serviceType === ServiceType.MCG
@@ -63,7 +85,7 @@ const DataConsumptionCard: React.FC = () => {
           setSelectedBreakdown={setBreakdownBy}
           selectedMetric={metric}
           setSelectedMetric={setMetric}
-          isRgwSupported={RGW}
+          isRgwSupported={RGW && !isOCS45}
         />
       </DashboardCardHeader>
       <DashboardCardBody className="co-dashboard-card__body--top-margin">
