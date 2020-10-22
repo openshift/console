@@ -132,8 +132,7 @@ const CreateSC: React.FC<CreateSCProps> = ({ match }) => {
 
       dispatch({ type: 'setNodesDiscoveries', value: nodesDiscoveries });
       const capacity = getTotalDeviceCapacity(nodesDiscoveries);
-      dispatch({ type: 'setChartTotalData', value: capacity?.value });
-      dispatch({ type: 'setChartDataUnit', unit: capacity?.unit });
+      dispatch({ type: 'setChartTotalData', value: capacity });
     }
   }, [
     discoveriesData,
