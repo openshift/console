@@ -19,6 +19,7 @@ export const ATTACHED_DEVICES_ANNOTATION = 'cluster.ocs.openshift.io/local-devic
 export const DASHBOARD_LINK = '/dashboards/persistent-storage';
 export const AVAILABLE = 'Available';
 export const OSD_REMOVAL_TEMPLATE = 'ocs-osd-removal';
+export const DEFAULT_RBD_POOL = 'ocs-storagecluster-cephblockpool';
 export const dropdownUnits = {
   GiB: 'Gi',
   TiB: 'Ti',

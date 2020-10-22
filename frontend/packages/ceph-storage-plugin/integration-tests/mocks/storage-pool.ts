@@ -9,6 +9,7 @@ export const poolData: StoragePoolKind = {
     namespace: NS,
   },
   spec: {
+    failureDomain: '',
     compressionMode: '',
     replicated: {
       size: 2,

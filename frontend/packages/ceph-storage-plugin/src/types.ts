@@ -19,6 +19,7 @@ type CephDeviceClass = {
 
 export type StoragePoolKind = K8sResourceCommon & {
   spec: {
+    failureDomain: string;
     compressionMode?: string;
     deviceClass?: string;
     replicated: {

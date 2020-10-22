@@ -10,6 +10,7 @@ import {
   EmptyStateBody,
   ActionGroup,
   Button,
+  Alert,
 } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
 
@@ -31,10 +32,15 @@ import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
+import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 
 import { CephClusterKind, StoragePoolKind } from '../../../types';
 import { CephBlockPoolModel } from '../../../models';
-import { CEPH_STORAGE_NAMESPACE, OCS_DEVICE_REPLICA } from '../../../constants/index';
+import {
+  CEPH_STORAGE_NAMESPACE,
+  OCS_DEVICE_REPLICA,
+  DEFAULT_RBD_POOL,
+} from '../../../constants/index';
 import { PROGRESS_STATUS } from '../../../utils/storage-pool';
 import { SECOND } from '../../../../integration-tests/utils/consts';
 import {
@@ -97,6 +103,12 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
 
   const [newPool, newPoolLoaded, newPoolLoadError] = useK8sWatchResource<StoragePoolKind>(
     poolResource,
+  );
+
+  const [defaultPool, defaultPoolLoaded, defaultPoollLoadError] = useK8sGet<StoragePoolKind>(
+    CephBlockPoolModel,
+    DEFAULT_RBD_POOL,
+    CEPH_STORAGE_NAMESPACE,
   );
 
   React.useEffect(() => {
@@ -163,6 +175,7 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
 
   const submit = (event: React.FormEvent<EventTarget>) => {
     setPoolStatus(POOL_PROGRESS.PROGRESS);
+    const defaultFailureDomain: string = defaultPool?.spec.failureDomain;
     event.preventDefault();
     const poolObj: StoragePoolKind = {
       apiVersion: apiVersionForModel(CephBlockPoolModel),
@@ -172,6 +185,7 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
         namespace: CEPH_STORAGE_NAMESPACE,
       },
       spec: {
+        failureDomain: defaultFailureDomain,
         compressionMode: isCompressed ? COMPRESSION_ON : '',
         // deviceClass: deviceClass || '',
         parameters: {
@@ -329,9 +343,17 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
         ) : (
           <PoolStatusComponent status={POOL_PROGRESS.NOTREADY} />
         )}
+        {defaultPoollLoadError && (
+          <Alert
+            className="co-alert"
+            variant="danger"
+            title="Error retrieving information"
+            isInline
+          />
+        )}
       </ModalBody>
       <ModalSubmitFooter
-        inProgress={inProgress}
+        inProgress={inProgress || !defaultPoolLoaded}
         submitText="Create"
         cancel={cancel}
         submitDisabled={!newPoolName || !replicaSize}
