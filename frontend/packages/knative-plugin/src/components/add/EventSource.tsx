@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Formik } from 'formik';
 import { connect } from 'react-redux';
 import { history } from '@console/internal/components/utils';
-import { getActiveApplication } from '@console/internal/reducers/ui';
+import { getActiveApplication, getActivePerspective } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import {
@@ -13,9 +13,10 @@ import {
   getGroupVersionKind,
 } from '@console/internal/module/k8s';
 import { sanitizeApplicationValue } from '@console/dev-console/src/utils/application-utils';
+import { isPerspective, Perspective, useExtensions } from '@console/plugin-sdk';
 import { eventSourceValidationSchema } from './eventSource-validation-utils';
 import EventSourceForm from './EventSourceForm';
-import { getEventSourceResource } from '../../utils/create-eventsources-utils';
+import { getEventSourceResource, handleRedirect } from '../../utils/create-eventsources-utils';
 import {
   EventSourceFormData,
   EventSourceListData,
@@ -32,6 +33,7 @@ interface EventSourceProps {
 
 interface StateProps {
   activeApplication: string;
+  perspective: string;
 }
 
 type Props = EventSourceProps & StateProps;
@@ -41,7 +43,9 @@ export const EventSource: React.FC<Props> = ({
   eventSourceStatus,
   activeApplication,
   contextSource,
+  perspective,
 }) => {
+  const perpectiveExtension = useExtensions<Perspective>(isPerspective);
   const [sinkGroupVersionKind = '', sinkName = ''] = contextSource?.split('/') ?? [];
   const [sinkGroup = '', sinkVersion = '', sinkKind = ''] =
     getGroupVersionKind(sinkGroupVersionKind) ?? [];
@@ -93,7 +97,7 @@ export const EventSource: React.FC<Props> = ({
     eventSrcRequest
       .then(() => {
         actions.setSubmitting(false);
-        history.push(`/topology/ns/${projectName}`);
+        handleRedirect(projectName, perspective, perpectiveExtension);
       })
       .catch((err) => {
         actions.setSubmitting(false);
@@ -122,9 +126,11 @@ export const EventSource: React.FC<Props> = ({
 };
 
 const mapStateToProps = (state: RootState, ownProps: EventSourceProps): StateProps => {
+  const perspective = getActivePerspective(state);
   const activeApplication = ownProps.selectedApplication || getActiveApplication(state);
   return {
     activeApplication: activeApplication !== ALL_APPLICATIONS_KEY ? activeApplication : '',
+    perspective,
   };
 };
 

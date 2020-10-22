@@ -9,7 +9,7 @@ import {
   K8sKind,
 } from '@console/internal/module/k8s';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { checkAccess } from '@console/internal/components/utils';
+import { checkAccess, history } from '@console/internal/components/utils';
 import { parseALMExamples, ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 import {
   getAppLabels,
@@ -37,6 +37,7 @@ import {
   EventSourceCronJobModel,
 } from '../models';
 import { EVENT_SOURCE_LABEL } from '../const';
+import { Perspective } from '@console/plugin-sdk';
 
 export const isKnownEventSource = (eventSource: string): boolean =>
   Object.keys(EventSources).includes(eventSource);
@@ -349,4 +350,14 @@ export const getBootstrapServers = (kafkaResources: K8sResourceKind[]) => {
     });
   });
   return servers;
+};
+
+export const handleRedirect = (
+  project: string,
+  perspective: string,
+  perspectiveExtensions: Perspective[],
+) => {
+  const perspectiveData = perspectiveExtensions.find((item) => item.properties.id === perspective);
+  const redirectURL = perspectiveData.properties.getImportRedirectURL(project);
+  history.push(redirectURL);
 };
