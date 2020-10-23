@@ -14,7 +14,6 @@ import { OCSServiceModel } from './models';
 import {
   CEPH_STORAGE_NAMESPACE,
   OCS_SUPPORT_ANNOTATION,
-  ATTACHED_DEVICES_ANNOTATION,
   RGW_PROVISIONER,
   SECOND,
   OCS_OPERATOR,
@@ -23,8 +22,7 @@ import { StorageClusterKind } from './types';
 
 export const OCS_INDEPENDENT_FLAG = 'OCS_INDEPENDENT';
 export const OCS_CONVERGED_FLAG = 'OCS_CONVERGED';
-/* INFO: Flag OCS_ATTACHED_DEVICES_FLAG used in local-storage-plugin without import */
-export const OCS_ATTACHED_DEVICES_FLAG = 'OCS_ATTACHED_DEVICES';
+
 // Used to activate NooBaa dashboard
 export const OCS_FLAG = 'OCS';
 // Todo(bipuladh): Remove this completely in 4.6
@@ -79,24 +77,15 @@ export const detectOCS: FeatureDetector = async (dispatch) => {
       (sc: StorageClusterKind) => sc.status.phase !== 'Ignored',
     );
     const isInternal = _.isEmpty(storageCluster.spec.externalStorage);
-    const isAttachedDevicesCluster =
-      getAnnotations(storageCluster)?.[ATTACHED_DEVICES_ANNOTATION] === 'true';
     dispatch(setFlag(OCS_FLAG, true));
-    dispatch(setFlag(OCS_ATTACHED_DEVICES_FLAG, isAttachedDevicesCluster));
     dispatch(setFlag(OCS_CONVERGED_FLAG, isInternal));
     dispatch(setFlag(OCS_INDEPENDENT_FLAG, !isInternal));
   } catch (e) {
     if (e?.response?.status !== 404)
-      handleError(
-        e,
-        [OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG, OCS_ATTACHED_DEVICES_FLAG],
-        dispatch,
-        detectOCS,
-      );
+      handleError(e, [OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG], dispatch, detectOCS);
     else {
       dispatch(setFlag(OCS_CONVERGED_FLAG, false));
       dispatch(setFlag(OCS_INDEPENDENT_FLAG, false));
-      dispatch(setFlag(OCS_ATTACHED_DEVICES_FLAG, false));
     }
   }
 };
