@@ -10,7 +10,6 @@ import { StorageClassModel } from '@console/internal/models';
 import { fetchK8s } from '@console/internal/graphql/client';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { LOCAL_STORAGE_NAMESPACE } from '@console/local-storage-operator-plugin/src/constants';
-import { CreateOCS } from './install-lso-sc';
 import { LSOSubscriptionResource } from '../../../constants/resources';
 import { filterSCWithNoProv } from '../../../utils/install';
 import CreateSC from './create-sc/create-sc';
@@ -21,9 +20,7 @@ export const CreateAttachedDevicesCluster: React.FC<CreateAttachedDevicesCluster
 }) => {
   const { appName, ns } = match.params;
   const [hasNoProvSC, setHasNoProvSC] = React.useState(false);
-  // LSO stands for local-storage-operator
   const [LSOEnabled, setLSOEnabled] = React.useState(false);
-  const [isNewSCToBeCreated, setIsNewSCToBeCreated] = React.useState<boolean>(false);
   const [LSODataLoaded, setLSODataLoaded] = React.useState(false);
   const [LSOData, LSOLoaded, LSOLoadError] = useK8sWatchResource<K8sResourceKind>(
     LSOSubscriptionResource,
@@ -65,37 +62,26 @@ export const CreateAttachedDevicesCluster: React.FC<CreateAttachedDevicesCluster
     );
   };
 
-  return (
-    <div className="co-m-pane__body">
-      {!LSODataLoaded && !LSOLoadError && <LoadingBox />}
-      {(LSOLoadError || (!LSOEnabled && LSODataLoaded)) && (
-        <Alert
-          className="co-alert"
-          variant="info"
-          title="Local Storage Operator Not Installed"
-          isInline
-        >
-          <div>
-            Before we can create a storage cluster, the local storage operator needs to be
-            installed. When installation is finished come back to OpenShift Container Storage to
-            create a storage cluster.
-            <div className="ceph-ocs-install__lso-alert__button">
-              <Button type="button" variant="primary" onClick={goToLSOInstallationPage}>
-                Install
-              </Button>
-            </div>
-          </div>
-        </Alert>
-      )}
-      {hasNoProvSC && LSOEnabled && !isNewSCToBeCreated && (
-        <CreateOCS
-          match={match}
-          setIsNewSCToBeCreated={setIsNewSCToBeCreated}
-          setHasNoProvSC={setHasNoProvSC}
-        />
-      )}
-      {((!hasNoProvSC && LSOEnabled) || isNewSCToBeCreated) && <CreateSC match={match} />}
-    </div>
+  return !LSODataLoaded && !LSOLoadError ? (
+    <LoadingBox />
+  ) : LSOLoadError || (!LSOEnabled && LSODataLoaded) ? (
+    <Alert
+      className="co-alert ceph-ocs-install__lso-install-alert"
+      variant="info"
+      title="Local Storage Operator Not Installed"
+      isInline
+    >
+      Before we can create a storage cluster, the local storage operator needs to be installed in
+      the <strong>{LOCAL_STORAGE_NAMESPACE}</strong>. When installation is finished come back to
+      OpenShift Container Storage to create a storage cluster.
+      <div className="ceph-ocs-install__lso-alert__button">
+        <Button type="button" variant="primary" onClick={goToLSOInstallationPage}>
+          Install
+        </Button>
+      </div>
+    </Alert>
+  ) : (
+    <CreateSC hasNoProvSC={hasNoProvSC} setHasNoProvSC={setHasNoProvSC} match={match} />
   );
 };
 

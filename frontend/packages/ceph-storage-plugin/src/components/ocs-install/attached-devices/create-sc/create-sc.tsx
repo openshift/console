@@ -1,5 +1,8 @@
 import * as React from 'react';
 import { match as RouterMatch } from 'react-router';
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+import { useDispatch } from 'react-redux';
 import {
   Wizard,
   WizardFooter,
@@ -8,10 +11,18 @@ import {
   Alert,
   WizardStep,
   AlertActionCloseButton,
+  Stack,
+  StackItem,
 } from '@patternfly/react-core';
 import { history } from '@console/internal/components/utils/router';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { k8sCreate, k8sPatch, K8sResourceKind } from '@console/internal/module/k8s';
+import { setFlag } from '@console/internal/actions/features';
+import {
+  k8sCreate,
+  k8sPatch,
+  K8sResourceKind,
+  referenceForModel,
+} from '@console/internal/module/k8s';
 import { fetchK8s } from '@console/internal/graphql/client';
 import { LocalVolumeDiscovery } from '@console/local-storage-operator-plugin/src/models';
 import { getDiscoveryRequestData } from '@console/local-storage-operator-plugin/src/components/auto-detect-volume/discovery-request-data';
@@ -36,9 +47,28 @@ import { AutoDetectVolume } from './wizard-pages/auto-detect-volume';
 import { CreateLocalVolumeSet } from './wizard-pages/create-local-volume-set';
 import { nodesDiscoveriesResource } from '../../../../constants/resources';
 import { getTotalDeviceCapacity } from '../../../../utils/install';
-import { AVAILABLE, CreateStepsSC, MINIMUM_NODES } from '../../../../constants';
-import { CreateOCS } from '../install-lso-sc';
+import {
+  AVAILABLE,
+  CreateStepsSC,
+  MINIMUM_NODES,
+  defaultRequestSize,
+  OCS_INTERNAL_CR_NAME,
+} from '../../../../constants';
+import { StorageAndNodes } from './wizard-pages/storage-and-nodes-step';
 import '../attached-devices.scss';
+import { getName } from '@console/shared';
+import { StorageClusterKind } from '../../../../types';
+import { getOCSRequestData, labelNodes } from '../../ocs-request-data';
+import { OCSServiceModel } from '../../../../models';
+import {
+  OCS_ATTACHED_DEVICES_FLAG,
+  OCS_CONVERGED_FLAG,
+  OCS_INDEPENDENT_FLAG,
+  OCS_FLAG,
+} from '../../../../features';
+import { ReviewAndCreate } from './wizard-pages/review-and-create-step';
+import { Configure } from './wizard-pages/configure-step';
+import '../../install-wizard/install-wizard.scss';
 
 const makeAutoDiscoveryCall = (
   onNext: OnNextClick,
@@ -96,12 +126,15 @@ const makeAutoDiscoveryCall = (
     });
 };
 
-const CreateSC: React.FC<CreateSCProps> = ({ match }) => {
+const CreateSC: React.FC<CreateSCProps> = ({ match, hasNoProvSC }) => {
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const [discoveriesData, discoveriesLoaded, discoveriesLoadError] = useK8sWatchResource<
     K8sResourceKind[]
   >(nodesDiscoveriesResource);
   const [showInfoAlert, setShowInfoAlert] = React.useState(true);
+  const [inProgress, setInProgress] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState('');
+  const flagDispatcher = useDispatch();
 
   React.useEffect(() => {
     if (discoveriesLoaded && !discoveriesLoadError && discoveriesData.length) {
@@ -150,7 +183,7 @@ const CreateSC: React.FC<CreateSCProps> = ({ match }) => {
     dispatch({ type: 'setHostNamesMapForLVS', value: state.hostNamesMapForADV });
   }, [state.hostNamesMapForADV]);
 
-  const steps = [
+  const steps: WizardStep[] = [
     {
       id: CreateStepsSC.DISCOVER,
       name: 'Discover Disks',
@@ -162,9 +195,21 @@ const CreateSC: React.FC<CreateSCProps> = ({ match }) => {
       component: <CreateLocalVolumeSet dispatch={dispatch} state={state} />,
     },
     {
-      id: CreateStepsSC.STORAGECLUSTER,
-      name: 'Create Storage Cluster',
-      component: <CreateOCS match={match} />,
+      id: CreateStepsSC.STORAGEANDNODES,
+      name: 'Storage and Nodes',
+      component: <StorageAndNodes dispatch={dispatch} state={state} />,
+    },
+    {
+      id: CreateStepsSC.CONFIGURE,
+      name: 'Configure',
+      component: <Configure dispatch={dispatch} state={state} />,
+    },
+    {
+      id: CreateStepsSC.REVIEWANDCREATE,
+      name: 'Review and Create',
+      component: (
+        <ReviewAndCreate state={state} inProgress={inProgress} errorMessage={errorMessage} />
+      ),
     },
   ];
 
@@ -179,9 +224,38 @@ const CreateSC: React.FC<CreateSCProps> = ({ match }) => {
         if (!state.volumeSetName.trim().length) return true;
         if (state.filteredNodes.length < MINIMUM_NODES) return true;
         return !state.volumeSetName.trim().length;
-
+      case CreateStepsSC.REVIEWANDCREATE:
+        return state.nodes.length < MINIMUM_NODES || !getName(state.storageClass);
       default:
         return false;
+    }
+  };
+
+  const createCluster = async () => {
+    const { appName, ns } = match.params;
+    try {
+      setInProgress(true);
+      const { storageClass, enableEncryption, nodes, enableMinimal } = state;
+      const storageCluster: StorageClusterKind = getOCSRequestData(
+        storageClass,
+        defaultRequestSize.BAREMETAL,
+        enableEncryption,
+        enableMinimal,
+      );
+      await Promise.all(labelNodes(nodes)).then(() => k8sCreate(OCSServiceModel, storageCluster));
+      flagDispatcher(setFlag(OCS_ATTACHED_DEVICES_FLAG, true));
+      flagDispatcher(setFlag(OCS_CONVERGED_FLAG, true));
+      flagDispatcher(setFlag(OCS_INDEPENDENT_FLAG, false));
+      flagDispatcher(setFlag(OCS_FLAG, true));
+      history.push(
+        `/k8s/ns/${ns}/clusterserviceversions/${appName}/${referenceForModel(
+          OCSServiceModel,
+        )}/${OCS_INTERNAL_CR_NAME}`,
+      );
+    } catch (error) {
+      setErrorMessage(error.message);
+    } finally {
+      setInProgress(false);
     }
   };
 
@@ -192,81 +266,76 @@ const CreateSC: React.FC<CreateSCProps> = ({ match }) => {
       makeAutoDiscoveryCall(onNext, state, dispatch);
     } else if (activeStep.id === CreateStepsSC.STORAGECLASS) {
       dispatch({ type: 'setShowConfirmModal', value: true });
+    } else if (activeStep.id === CreateStepsSC.REVIEWANDCREATE) {
+      createCluster();
+    } else {
+      onNext();
     }
   };
 
   const CustomFooter = (
-    <div>
-      {!state.isLoading && state.error && (
-        <Alert
-          className="co-alert ceph-ocs-install__wizard-alert"
-          variant="danger"
-          title="An error occured"
-          isInline
-        >
-          {state.error}
-        </Alert>
-      )}
-      <WizardFooter>
-        <WizardContextConsumer>
-          {({ activeStep, onNext, onBack, onClose }) => {
-            if (activeStep.id !== CreateStepsSC.STORAGECLUSTER) {
-              return (
-                <>
-                  <Button
-                    variant="primary"
-                    type="submit"
-                    onClick={() => makeCall(activeStep, onNext)}
-                    className={
-                      state.isLoading || getDisabledCondition(activeStep) ? 'pf-m-disabled' : ''
-                    }
-                  >
-                    Next
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    onClick={onBack}
-                    className={activeStep.id === CreateStepsSC.STORAGECLASS ? '' : 'pf-m-disabled'}
-                  >
-                    Back
-                  </Button>
-                  <Button variant="link" onClick={onClose}>
-                    Cancel
-                  </Button>
-                </>
-              );
-            }
-            return null;
-          }}
-        </WizardContextConsumer>
-      </WizardFooter>
-    </div>
+    <WizardFooter>
+      <WizardContextConsumer>
+        {({ activeStep, onNext, onBack, onClose }) => (
+          <>
+            <Button
+              variant="primary"
+              type="submit"
+              onClick={() => makeCall(activeStep, onNext)}
+              className={state.isLoading || getDisabledCondition(activeStep) ? 'pf-m-disabled' : ''}
+            >
+              {activeStep.id === CreateStepsSC.REVIEWANDCREATE ? 'Create' : 'Next'}
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={onBack}
+              className={activeStep.id === CreateStepsSC.DISCOVER ? 'pf-m-disabled' : ''}
+            >
+              Back
+            </Button>
+            <Button variant="link" onClick={onClose}>
+              Cancel
+            </Button>
+          </>
+        )}
+      </WizardContextConsumer>
+    </WizardFooter>
   );
 
   return (
-    <>
-      {showInfoAlert && !state.finalStep && (
-        <Alert
-          className="co-alert"
-          variant="info"
-          title="Missing storage class"
-          isInline
-          actionClose={<AlertActionCloseButton onClose={() => setShowInfoAlert(false)} />}
-        >
-          The storage cluster needs to use a storage class to consume the local storage. In order to
-          create one you need to discover the available disks and create a storage class using the
-          filters to select the disks you wish to use.
-        </Alert>
-      )}
-      <div className="ceph-create-sc-wizard">
-        <Wizard steps={steps} onClose={() => history.goBack()} footer={CustomFooter} />
-      </div>
-    </>
+    <Stack>
+      <StackItem>
+        {showInfoAlert && (
+          <Alert
+            className="co-alert ocs-install-info-alert"
+            variant="info"
+            isInline
+            title={!hasNoProvSC ? 'Missing storage class' : 'Internal - Attached devices'}
+            actionClose={<AlertActionCloseButton onClose={() => setShowInfoAlert(false)} />}
+          >
+            {!hasNoProvSC
+              ? 'The storage cluster needs to use a storage class to consume the local storage. In order to create one you need to discover the available disks and create a storage class using the filters to select the disks you wish to use'
+              : 'This mode support bare metal and attached devices deployments. As part of the storage cluster creation, a bucket will be created on the default backing store.'}
+          </Alert>
+        )}
+      </StackItem>
+      <StackItem isFilled>
+        <Wizard
+          className="ocs-install-wizard"
+          steps={steps}
+          startAtStep={hasNoProvSC ? 3 : 1}
+          onClose={() => history.goBack()}
+          footer={CustomFooter}
+        />
+      </StackItem>
+    </Stack>
   );
 };
 
 type CreateSCProps = {
   match: RouterMatch<{ appName: string; ns: string }>;
+  hasNoProvSC: boolean;
+  setHasNoProvSC: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export default CreateSC;

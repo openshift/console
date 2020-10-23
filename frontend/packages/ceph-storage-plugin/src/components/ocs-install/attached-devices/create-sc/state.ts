@@ -1,5 +1,6 @@
 import { HostNamesMap } from '@console/local-storage-operator-plugin/src/components/auto-detect-volume/types';
 import { diskTypeDropdownItems, diskModeDropdownItems } from '../../../../constants';
+import { StorageClassResourceKind, NodeKind } from '@console/internal/module/k8s';
 
 export const initialState: State = {
   // states for step 1
@@ -36,6 +37,12 @@ export const initialState: State = {
   isLoading: false,
   error: '',
   onNextClick: null,
+
+  // states for step 3-5
+  enableMinimal: false,
+  storageClass: { provisioner: '', reclaimPolicy: '' },
+  nodes: [],
+  enableEncryption: false,
 };
 
 export type Discoveries = {
@@ -84,6 +91,10 @@ export type State = {
   hostNamesMapForADV: HostNamesMap;
   hostNamesMapForLVS: HostNamesMap;
   showNodeList: boolean;
+  enableMinimal: boolean;
+  storageClass: StorageClassResourceKind;
+  nodes: NodeKind[];
+  enableEncryption: boolean;
 };
 
 export type Action =
@@ -115,7 +126,11 @@ export type Action =
   | { type: 'setHostNamesMapForADV'; value: HostNamesMap }
   | { type: 'setHostNamesMapForLVS'; value: HostNamesMap }
   | { type: 'setShowNodeList'; value: boolean }
-  | { type: 'setFilteredNodes'; value: string[] };
+  | { type: 'setFilteredNodes'; value: string[] }
+  | { type: 'setEnableMinimal'; value: boolean }
+  | { type: 'setStorageClass'; value: StorageClassResourceKind }
+  | { type: 'setNodes'; value: NodeKind[] }
+  | { type: 'setEnableEncryption'; value: boolean };
 
 export const reducer = (state: State, action: Action) => {
   switch (action.type) {
@@ -175,6 +190,14 @@ export const reducer = (state: State, action: Action) => {
       return Object.assign({}, state, { showNodeList: action.value });
     case 'setFilteredNodes':
       return Object.assign({}, state, { filteredNodes: action.value });
+    case 'setEnableMinimal':
+      return Object.assign({}, state, { enableMinimal: action.value });
+    case 'setStorageClass':
+      return Object.assign({}, state, { storageClass: action.value });
+    case 'setNodes':
+      return Object.assign({}, state, { nodes: action.value });
+    case 'setEnableEncryption':
+      return Object.assign({}, state, { enableEncryption: action.value });
     default:
       return initialState;
   }

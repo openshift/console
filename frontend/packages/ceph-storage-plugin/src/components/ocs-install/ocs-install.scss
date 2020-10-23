@@ -73,4 +73,20 @@
   max-height: 300px;
   overflow-y: auto;
   scrollbar-color: var(--pf-global--BackgroundColor--light-300) var(--pf-global--palette--white);
+
+  .pf-c-table {
+    border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+
+    .pf-c-table__check {
+      /* This overrides the default overrides of checkboxes for ocs based tables */
+      width: 4.6% !important;
+
+      @media screen and (max-width: 1620px) {
+        width: 7% !important;
+      }
+      @media screen and (max-width: 1200px) {
+        width: 10% !important;
+      }
+    }
+  }
 }

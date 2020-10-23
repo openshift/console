@@ -21,7 +21,9 @@ export enum defaultRequestSize {
 export enum CreateStepsSC {
   DISCOVER = 'DISCOVER',
   STORAGECLASS = 'STORAGECLASS',
-  STORAGECLUSTER = 'STORAGECLUSTER',
+  STORAGEANDNODES = 'STORAGEANDNODES',
+  CONFIGURE = 'CONFIGURE',
+  REVIEWANDCREATE = 'REVIEWANDCREATE',
 }
 
 export const diskModeDropdownItems = Object.freeze({
