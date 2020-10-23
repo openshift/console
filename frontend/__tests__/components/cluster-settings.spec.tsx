@@ -20,13 +20,13 @@ import {
   CurrentChannel,
   CurrentVersion,
   CurrentVersionHeader,
+  NodesUpdatesGroup,
   UpdateInProgress,
   UpdateLink,
   UpdatesGraph,
   UpdatesProgress,
   UpdateStatus,
   UpdatingMessageText,
-  WorkerNodes,
 } from '../../public/components/cluster-settings/cluster-settings';
 import { GlobalConfigPage } from '../../public/components/cluster-settings/global-config';
 import { Firehose, HorizontalNav, ResourceLink, Timestamp } from '../../public/components/utils';
@@ -416,10 +416,7 @@ describe('Update In Progress while updating', () => {
       <UpdateInProgress
         desiredVersion={cv.spec.desiredUpdate.version}
         machineConfigPools={machineConfigPoolsProps.items}
-        percentWorkerNodes={100}
-        workerMachinePoolConfig={workerMachineConfigPoolProp}
-        totalWorkerNodes={workerMachineConfigPoolProp.status.machineCount}
-        updatedWorkerNodes={3}
+        workerMachineConfigPool={workerMachineConfigPoolProp}
         updateStartedTime="2020-08-05T21:09:02Z"
       />,
     );
@@ -433,19 +430,19 @@ describe('Update In Progress while updating', () => {
         .find(Link)
         .at(0)
         .text(),
-    ).toBe(`${i18nNS}~Cluster operators`);
+    ).toBe('ClusterOperators');
     expect(
       wrapper
-        .find(Link)
-        .at(1)
-        .text(),
-    ).toBe(`${i18nNS}~Master nodes`);
-    expect(
-      wrapper
-        .find(WorkerNodes)
+        .find(NodesUpdatesGroup)
         .at(0)
-        .exists(),
-    ).toBe(true);
+        .props().name,
+    ).toBe('Master');
+    expect(
+      wrapper
+        .find(NodesUpdatesGroup)
+        .at(1)
+        .props().name,
+    ).toBe('Worker');
   });
 });
 
