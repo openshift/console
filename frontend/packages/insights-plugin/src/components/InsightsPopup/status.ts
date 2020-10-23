@@ -22,7 +22,7 @@ export const getClusterInsightsComponentStatus = (
     return { state: HealthState.UNKNOWN, message: 'Not available' };
   }
   const issuesNumber = Object.values(values).reduce((acc, cur) => acc + cur, 0);
-  const issueStr = `${issuesNumber} issues found`;
+  const issueStr = `${issuesNumber} ${issuesNumber === 1 ? 'issue' : 'issues'} found`;
   if (values.critical > 0) {
     return { state: HealthState.ERROR, message: issueStr };
   }
