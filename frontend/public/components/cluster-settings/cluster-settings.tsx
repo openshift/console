@@ -34,6 +34,7 @@ import {
   ClusterOperatorModel,
   ClusterVersionModel,
   MachineConfigPoolModel,
+  NodeModel,
 } from '../../models';
 import {
   ClusterOperator,
@@ -481,41 +482,78 @@ const UpdatesType: React.FC<UpdatesTypeProps> = ({ children }) => {
   return <div className="co-cluster-settings__updates-type">{children}</div>;
 };
 
-export const WorkerNodes: React.FC<WorkerNodesProps> = ({
-  percentWorkerNodes,
-  totalWorkerNodes,
-  updatedWorkerNodes,
+export const NodesUpdatesGroup: React.FC<NodesUpdatesGroupProps> = ({
+  divided,
+  hideIfComplete,
+  machineConfigPool,
+  name,
+  updateStartedTime,
 }) => {
-  return (
-    <UpdatesGroup divided>
+  const MCPUpdatingTime = getUpdatingTimeForMCP(machineConfigPool);
+  const totalMCPNodes = machineConfigPool?.status?.machineCount || 0;
+  const updatedMCPNodes =
+    MCPUpdatingTime > updateStartedTime ? machineConfigPool?.status?.updatedMachineCount : 0;
+  const percentMCPNodes = calculatePercentage(updatedMCPNodes, totalMCPNodes);
+  return hideIfComplete && percentMCPNodes === 100 ? null : (
+    <UpdatesGroup divided={divided}>
       <UpdatesType>
-        <Link to="/k8s/cluster/nodes?rowFilter-node-role=worker">Worker Nodes</Link>
-        <Popover
-          bodyContent={
-            <>
-              Worker nodes may continue to update after the update of master nodes and operators are
-              complete.
-            </>
-          }
-        >
-          <Button
-            variant="plain"
-            aria-label="Help"
-            className="co-help-popover-button co-help-popover-button--space-l"
+        <Link to={`/k8s/cluster/nodes?rowFilter-node-role=${machineConfigPool.metadata.name}`}>
+          {name} {NodeModel.labelPlural}
+        </Link>
+        {name !== 'Master' && (
+          <Popover
+            bodyContent={
+              <>
+                {name} {NodeModel.labelPlural} may continue to update after the update of Master{' '}
+                {NodeModel.labelPlural} and Cluster Operators are complete.
+              </>
+            }
           >
-            <OutlinedQuestionCircleIcon />
-          </Button>
-        </Popover>
+            <Button
+              variant="plain"
+              aria-label="Help"
+              className="co-help-popover-button co-help-popover-button--space-l"
+            >
+              <OutlinedQuestionCircleIcon />
+            </Button>
+          </Popover>
+        )}
       </UpdatesType>
       <UpdatesBar>
         <Progress
-          title={`${updatedWorkerNodes} of ${totalWorkerNodes}`}
-          value={!_.isNaN(percentWorkerNodes) ? percentWorkerNodes : null}
+          title={`${updatedMCPNodes} of ${totalMCPNodes}`}
+          value={!_.isNaN(percentMCPNodes) ? percentMCPNodes : null}
           size={ProgressSize.sm}
-          variant={percentWorkerNodes === 100 ? ProgressVariant.success : null}
+          variant={percentMCPNodes === 100 ? ProgressVariant.success : null}
         />
       </UpdatesBar>
     </UpdatesGroup>
+  );
+};
+
+const OtherNodes: React.FC<OtherNodesProps> = ({
+  hideIfComplete,
+  machineConfigPools,
+  updateStartedTime,
+}) => {
+  const otherNodes = machineConfigPools
+    .filter((mcp) => mcp.metadata.name !== 'master' && mcp.metadata.name !== 'worker')
+    .sort((a, b) => a.metadata.creationTimestamp.localeCompare(b.metadata.creationTimestamp));
+  return (
+    <>
+      {otherNodes.map((mcp) => {
+        return (
+          <NodesUpdatesGroup
+            divided
+            hideIfComplete={hideIfComplete}
+            key={mcp.metadata.uid}
+            name={mcp.metadata.name}
+            machineConfigPool={mcp}
+            updateStartedTime={updateStartedTime}
+          />
+        );
+      })}
+    </>
   );
 };
 
@@ -594,10 +632,7 @@ const MachineConfigPoolsResource: WatchK8sResource = {
 export const UpdateInProgress: React.FC<UpdateInProgressProps> = ({
   desiredVersion,
   machineConfigPools,
-  percentWorkerNodes,
-  workerMachinePoolConfig,
-  totalWorkerNodes,
-  updatedWorkerNodes,
+  workerMachineConfigPool,
   updateStartedTime,
 }) => {
   const [clusterOperators] = useK8sWatchResource<ClusterOperator[]>(ClusterOperatorsResource);
@@ -605,13 +640,6 @@ export const UpdateInProgress: React.FC<UpdateInProgressProps> = ({
   const updatedOperatorsCount = getUpdatedOperatorsCount(clusterOperators, desiredVersion);
   const percentOperators = calculatePercentage(updatedOperatorsCount, totalOperatorsCount);
   const masterMachinePoolConfig = getMCPByName(machineConfigPools, 'master');
-  const masterMachinePoolConfigUpdatingTime = getUpdatingTimeForMCP(masterMachinePoolConfig);
-  const totalMasterNodes = masterMachinePoolConfig?.status?.machineCount || 0;
-  const updatedMasterNodes =
-    masterMachinePoolConfigUpdatingTime > updateStartedTime
-      ? masterMachinePoolConfig?.status?.updatedMachineCount
-      : 0;
-  const percentMasterNodes = calculatePercentage(updatedMasterNodes, totalMasterNodes);
 
   return (
     <UpdatesProgress>
@@ -629,26 +657,22 @@ export const UpdateInProgress: React.FC<UpdateInProgressProps> = ({
         </UpdatesBar>
       </UpdatesGroup>
       {masterMachinePoolConfig && (
-        <UpdatesGroup>
-          <UpdatesType>
-            <Link to="/k8s/cluster/nodes?rowFilter-node-role=master">Master Nodes</Link>
-          </UpdatesType>
-          <UpdatesBar>
-            <Progress
-              title={`${updatedMasterNodes} of ${totalMasterNodes}`}
-              value={!_.isNaN(percentMasterNodes) ? percentMasterNodes : null}
-              size={ProgressSize.sm}
-              variant={percentMasterNodes === 100 ? ProgressVariant.success : null}
-            />
-          </UpdatesBar>
-        </UpdatesGroup>
-      )}
-      {workerMachinePoolConfig && (
-        <WorkerNodes
-          percentWorkerNodes={percentWorkerNodes}
-          totalWorkerNodes={totalWorkerNodes}
-          updatedWorkerNodes={updatedWorkerNodes}
+        <NodesUpdatesGroup
+          machineConfigPool={masterMachinePoolConfig}
+          name="Master"
+          updateStartedTime={updateStartedTime}
         />
+      )}
+      {workerMachineConfigPool && (
+        <NodesUpdatesGroup
+          divided
+          machineConfigPool={workerMachineConfigPool}
+          name="Worker"
+          updateStartedTime={updateStartedTime}
+        />
+      )}
+      {machineConfigPools.length > 2 && (
+        <OtherNodes machineConfigPools={machineConfigPools} updateStartedTime={updateStartedTime} />
       )}
     </UpdatesProgress>
   );
@@ -677,14 +701,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
   );
   const desiredVersion = getDesiredClusterVersion(cv);
   const updateStartedTime = getStartedTimeForCVDesiredVersion(cv, desiredVersion);
-  const workerMachinePoolConfig = getMCPByName(machineConfigPools, 'worker');
-  const workerMachinePoolConfigUpdatingTime = getUpdatingTimeForMCP(workerMachinePoolConfig);
-  const totalWorkerNodes = workerMachinePoolConfig?.status?.machineCount || 0;
-  const updatedWorkerNodes =
-    workerMachinePoolConfigUpdatingTime > updateStartedTime
-      ? workerMachinePoolConfig?.status?.updatedMachineCount
-      : 0;
-  const percentWorkerNodes = calculatePercentage(updatedWorkerNodes, totalWorkerNodes);
+  const workerMachineConfigPool = getMCPByName(machineConfigPools, 'worker');
   if (new URLSearchParams(window.location.search).has('showVersions')) {
     clusterUpdateModal({ cv })
       .then(() => removeQueryArgument('showVersions'))
@@ -738,13 +755,22 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
                   status === ClusterUpdateStatus.UpdatesAvailable) && (
                   <>
                     <UpdatesGraph cv={cv} />
-                    {workerMachinePoolConfig && percentWorkerNodes < 100 && (
+                    {workerMachineConfigPool && (
                       <UpdatesProgress>
-                        <WorkerNodes
-                          percentWorkerNodes={percentWorkerNodes}
-                          totalWorkerNodes={totalWorkerNodes}
-                          updatedWorkerNodes={updatedWorkerNodes}
+                        <NodesUpdatesGroup
+                          divided
+                          hideIfComplete
+                          machineConfigPool={workerMachineConfigPool}
+                          name="Worker"
+                          updateStartedTime={updateStartedTime}
                         />
+                        {machineConfigPools.length > 2 && (
+                          <OtherNodes
+                            hideIfComplete
+                            machineConfigPools={machineConfigPools}
+                            updateStartedTime={updateStartedTime}
+                          />
+                        )}
                       </UpdatesProgress>
                     )}
                   </>
@@ -756,10 +782,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
                     desiredVersion={desiredVersion}
                     machineConfigPools={machineConfigPools}
                     updateStartedTime={updateStartedTime}
-                    workerMachinePoolConfig={workerMachinePoolConfig}
-                    percentWorkerNodes={percentWorkerNodes}
-                    totalWorkerNodes={totalWorkerNodes}
-                    updatedWorkerNodes={updatedWorkerNodes}
+                    workerMachineConfigPool={workerMachineConfigPool}
                   />
                 )}
               </div>
@@ -993,19 +1016,24 @@ type UpdatesTypeProps = {
   children: React.ReactNode;
 };
 
-type WorkerNodesProps = {
-  percentWorkerNodes: number;
-  totalWorkerNodes: number;
-  updatedWorkerNodes: number;
+type NodesUpdatesGroupProps = {
+  divided?: boolean;
+  hideIfComplete?: boolean;
+  name: string;
+  machineConfigPool: MachineConfigPoolKind;
+  updateStartedTime: string;
+};
+
+type OtherNodesProps = {
+  hideIfComplete?: boolean;
+  machineConfigPools: MachineConfigPoolKind[];
+  updateStartedTime: string;
 };
 
 type UpdateInProgressProps = {
   desiredVersion: string;
   machineConfigPools: MachineConfigPoolKind[];
-  percentWorkerNodes: number;
-  workerMachinePoolConfig: MachineConfigPoolKind;
-  totalWorkerNodes: number;
-  updatedWorkerNodes: number;
+  workerMachineConfigPool: MachineConfigPoolKind;
   updateStartedTime: string;
 };
 

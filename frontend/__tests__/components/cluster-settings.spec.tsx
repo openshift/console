@@ -20,13 +20,13 @@ import {
   CurrentChannel,
   CurrentVersion,
   CurrentVersionHeader,
+  NodesUpdatesGroup,
   UpdateInProgress,
   UpdateLink,
   UpdatesGraph,
   UpdatesProgress,
   UpdateStatus,
   UpdatingMessageText,
-  WorkerNodes,
 } from '../../public/components/cluster-settings/cluster-settings';
 import { GlobalConfigPage } from '../../public/components/cluster-settings/global-config';
 import { Firehose, HorizontalNav, ResourceLink, Timestamp } from '../../public/components/utils';
@@ -406,10 +406,7 @@ describe('Update In Progress while updating', () => {
       <UpdateInProgress
         desiredVersion={cv.spec.desiredUpdate.version}
         machineConfigPools={machineConfigPoolsProps.items}
-        percentWorkerNodes={100}
-        workerMachinePoolConfig={workerMachineConfigPoolProp}
-        totalWorkerNodes={workerMachineConfigPoolProp.status.machineCount}
-        updatedWorkerNodes={3}
+        workerMachineConfigPool={workerMachineConfigPoolProp}
         updateStartedTime="2020-08-05T21:09:02Z"
       />,
     );
@@ -426,16 +423,16 @@ describe('Update In Progress while updating', () => {
     ).toBe('Cluster Operators');
     expect(
       wrapper
-        .find(Link)
-        .at(1)
-        .text(),
-    ).toBe('Master Nodes');
+        .find(NodesUpdatesGroup)
+        .at(0)
+        .props().name,
+    ).toBe('Master');
     expect(
       wrapper
-        .find(WorkerNodes)
-        .at(0)
-        .exists(),
-    ).toBe(true);
+        .find(NodesUpdatesGroup)
+        .at(1)
+        .props().name,
+    ).toBe('Worker');
   });
 });
 
