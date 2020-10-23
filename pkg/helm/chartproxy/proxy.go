@@ -6,6 +6,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	v1 "k8s.io/client-go/kubernetes/typed/core/v1"
 	"k8s.io/client-go/rest"
+	"k8s.io/klog"
 )
 
 type proxy struct {
@@ -73,7 +74,7 @@ func (p *proxy) IndexFile() (*repo.IndexFile, error) {
 	for _, helmRepo := range helmRepos {
 		idxFile, err := helmRepo.IndexFile()
 		if err != nil {
-			plog.Errorf("Error retrieving index file for %v: %v", helmRepo, err)
+			klog.Errorf("Error retrieving index file for %v: %v", helmRepo, err)
 			continue
 		}
 		for key, entry := range idxFile.Entries {

@@ -7,7 +7,6 @@ import (
 
 	"net/http"
 
-	"github.com/coreos/pkg/capnslog"
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/helm/actions"
 	"github.com/openshift/console/pkg/serverutils"
@@ -16,10 +15,6 @@ import (
 	"helm.sh/helm/v3/pkg/release"
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/yaml"
-)
-
-var (
-	plog = capnslog.NewPackageLogger("github.com/openshift/console", "helm/handlers")
 )
 
 func New(apiUrl string, transport http.RoundTripper) *helmHandlers {
