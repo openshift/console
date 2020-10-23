@@ -92,9 +92,9 @@ export const CAPACITY_BREAKDOWN_QUERIES = {
 
 export const POOL_STORAGE_EFFICIENCY_QUERIES = {
   [StorageDashboardQuery.POOL_CAPACITY_RATIO]:
-    'sum(ceph_bluestore_bluestore_compressed_original) / clamp_min(sum(ceph_bluestore_bluestore_compressed),1)',
+    'sum(ceph_bluestore_bluestore_compressed_original) / clamp_min(sum(ceph_bluestore_bluestore_compressed_allocated),1)',
   [StorageDashboardQuery.POOL_SAVED_CAPACITY]:
-    '(sum(ceph_bluestore_bluestore_compressed_original) - sum(ceph_bluestore_bluestore_compressed))',
+    '(sum(ceph_bluestore_bluestore_compressed_original) - sum(ceph_bluestore_bluestore_compressed_allocated))',
 };
 
 export const breakdownQueryMap = {
