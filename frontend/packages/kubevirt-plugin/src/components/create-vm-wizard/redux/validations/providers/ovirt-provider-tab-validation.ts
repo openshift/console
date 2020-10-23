@@ -18,12 +18,25 @@ const validationConfig: ValidationConfig<OvirtProviderField> = {
     detectValueChanges: [OvirtProviderField.API_URL],
     validator: (field) => {
       const apiURL = iGetFieldValue(field);
+      const invalidEnding = apiURL && !apiURL.endsWith('/ovirt-engine/api');
+      const invalidStart = apiURL && !apiURL.startsWith('https://');
 
-      if (apiURL && !apiURL.endsWith('/ovirt-engine/api')) {
+      if (invalidStart && invalidEnding) {
         return asValidationObject(
-          `URL should end with "/ovirt-engine/api"`,
-          ValidationErrorType.Info,
+          `URL has to start with "https://" and end with "/ovirt-engine/api"`,
+          ValidationErrorType.Error,
         );
+      }
+
+      if (invalidEnding) {
+        return asValidationObject(
+          `URL has to end with "/ovirt-engine/api"`,
+          ValidationErrorType.Error,
+        );
+      }
+
+      if (invalidStart) {
+        return asValidationObject(`URL has to start with "https://"`, ValidationErrorType.Error);
       }
 
       return null;
