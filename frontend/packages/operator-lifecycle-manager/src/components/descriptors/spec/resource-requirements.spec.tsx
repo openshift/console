@@ -14,6 +14,14 @@ import { Button } from '@patternfly/react-core';
 
 import Spy = jasmine.Spy;
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 describe(ResourceRequirementsModal.name, () => {
   let wrapper: ReactWrapper<ResourceRequirementsModalProps>;
   const title = 'TestResource Resource Requests';

@@ -4,12 +4,19 @@ import { mount } from 'enzyme';
 import { Alert, DataList, DataListCheck } from '@patternfly/react-core';
 import store from '@console/internal/redux';
 
-import {
-  ColumnManagementModal,
-  MAX_VIEW_COLS,
-} from '@console/internal/components/modals/column-management-modal';
+import { ColumnManagementModal } from '@console/internal/components/modals/column-management-modal';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PodModel } from '@console/internal/models';
+
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
+const i18nNS = 'modal';
 
 const columnManagementID = referenceForModel(PodModel);
 const columnManagementType = 'Pod';
@@ -153,7 +160,7 @@ describe(ColumnManagementModal.displayName, () => {
   it('renders max row info alert', () => {
     expect(wrapper.find(Alert).props().variant).toEqual('info');
     expect(wrapper.find(Alert).props().title).toEqual(
-      `You can select up to ${MAX_VIEW_COLS} columns`,
+      `${i18nNS}~You can select up to {{MAX_VIEW_COLS}} columns`,
     );
   });
 
