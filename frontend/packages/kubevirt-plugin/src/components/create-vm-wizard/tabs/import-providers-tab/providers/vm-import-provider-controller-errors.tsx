@@ -14,6 +14,40 @@ import { errorsFirstSort } from '../../../../../k8s/enhancedK8sMethods/k8sMethod
 import { ResultTabRow } from '../../result-tab/result-tab-row';
 import { resultContentToString } from '../../../utils/utils';
 import { iGetImportProviders } from '../../../selectors/immutable/import-providers';
+import { ExternalLink } from '@console/internal/components/utils';
+import {
+  VMWARE_DOCURL,
+  OVIRT_DOCURL,
+  V2VProviderErrorSpecialUIMessageRequest,
+} from '../../../../../constants/v2v';
+
+const getDocURL = (providerType: VMImportProvider) =>
+  providerType === VMImportProvider.VMWARE ? VMWARE_DOCURL : OVIRT_DOCURL;
+
+const resolveUIMessageTemplating = (message: string, provider: VMImportProvider) => {
+  if (!message) {
+    return message;
+  }
+
+  const chunks = message.split(V2VProviderErrorSpecialUIMessageRequest.supplyDoclink);
+
+  return (
+    <>
+      {...chunks.map((chunk, idx) => {
+        const key = `${idx}`;
+        if (idx === chunks.length - 1) {
+          return <React.Fragment key={key}>{chunk}</React.Fragment>;
+        }
+        return (
+          <React.Fragment key={key}>
+            {chunk}
+            <ExternalLink text="documentation" href={getDocURL(provider)} />
+          </React.Fragment>
+        );
+      })}
+    </>
+  );
+};
 
 const VmImportProviderControllerErrorsComponent: React.FC<VmImportProviderControllerErrorsComponentProps> = React.memo(
   ({ errors, provider }) => {
@@ -29,7 +63,11 @@ const VmImportProviderControllerErrorsComponent: React.FC<VmImportProviderContro
       <div id={`v2v-${provider.toLowerCase()}-error`}>
         <Errors
           errors={[
-            { title: 'Error', message: resultWrapper.mainError },
+            {
+              title: resultWrapper.mainError?.title || 'Error',
+              message: resolveUIMessageTemplating(resultWrapper.mainError?.message, provider),
+              detail: resolveUIMessageTemplating(resultWrapper.mainError?.detail, provider),
+            },
             ...resultWrapper.errors,
           ].map((error) => ({
             ...error,
