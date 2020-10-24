@@ -148,7 +148,7 @@ describe('Project Dashboard', () => {
     });
     it('has duration dropdown', () => {
       expect(projectDashboardView.durationDropdown.isDisplayed()).toBe(true);
-      expect(projectDashboardView.durationDropdown.getText()).toEqual('1 Hour');
+      expect(projectDashboardView.durationDropdown.getText()).toEqual('1 hour');
     });
   });
 
