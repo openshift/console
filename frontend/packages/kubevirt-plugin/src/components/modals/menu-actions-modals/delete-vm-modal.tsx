@@ -11,8 +11,16 @@ import {
   ModalComponentProps,
 } from '@console/internal/components/factory';
 import { apiVersionForModel } from '@console/internal/module/k8s';
-import { VMKind, VMIKind } from '../../../types/vm';
-import { VirtualMachineModel, VirtualMachineImportModel } from '../../../models';
+import {
+  useK8sWatchResource,
+  WatchK8sResource,
+} from '@console/internal/components/utils/k8s-watch-hook';
+import { VMKind, VMIKind, VMSnapshot } from '../../../types/vm';
+import {
+  VirtualMachineModel,
+  VirtualMachineImportModel,
+  VirtualMachineSnapshotModel,
+} from '../../../models';
 import { getVolumes } from '../../../selectors/vm';
 import { useOwnedVolumeReferencedResources } from '../../../hooks/use-owned-volume-referenced-resources';
 import { useVirtualMachineImport } from '../../../hooks/use-virtual-machine-import';
@@ -20,13 +28,23 @@ import { useUpToDateVMLikeEntity } from '../../../hooks/use-vm-like-entity';
 import { deleteVM } from '../../../k8s/requests/vm';
 import { VMIUsersAlert } from './vmi-users-alert';
 import { redirectToList } from './utils';
+import { getVmSnapshotVmName } from '../../../selectors/snapshot/snapshot';
 
 export const DeleteVMModal = withHandlePromise((props: DeleteVMModalProps) => {
   const { inProgress, errorMessage, handlePromise, close, cancel, vm, vmi } = props;
 
+  const snapshotResource: WatchK8sResource = {
+    isList: true,
+    kind: VirtualMachineSnapshotModel.kind,
+    namespaced: true,
+    namespace: getNamespace(vm),
+  };
+
   const vmUpToDate = useUpToDateVMLikeEntity<VMKind>(vm);
   const [deleteDisks, setDeleteDisks] = React.useState<boolean>(true);
   const [deleteVMImport, setDeleteVMImport] = React.useState<boolean>(true);
+  const [snapshots] = useK8sWatchResource<VMSnapshot[]>(snapshotResource);
+  const vmHasSnapshots = snapshots.some((snap) => getVmSnapshotVmName(snap) === getName(vm));
 
   const namespace = getNamespace(vmUpToDate);
   const name = getName(vmUpToDate);
@@ -69,8 +87,10 @@ export const DeleteVMModal = withHandlePromise((props: DeleteVMModalProps) => {
         Delete {VirtualMachineModel.label}?
       </ModalTitle>
       <ModalBody>
-        Are you sure you want to delete <strong className="co-break-word">{name}</strong> in
-        namespace <strong>{namespace}</strong>?
+        <p>
+          Are you sure you want to delete <strong className="co-break-word">{name}</strong> in
+          namespace <strong>{namespace}</strong>?
+        </p>
         {numOfAllResources > 0 && (
           <p>
             The following resources will be deleted along with this virtual machine. Unchecked items
@@ -100,6 +120,11 @@ export const DeleteVMModal = withHandlePromise((props: DeleteVMModalProps) => {
               Delete {VirtualMachineImportModel.label} Resource
             </label>
           </div>
+        )}
+        {vmHasSnapshots && (
+          <>
+            <strong>Warning: </strong>All snapshots of this virtual machine will be deleted as well.
+          </>
         )}
       </ModalBody>
       <VMIUsersAlert vmi={vmi} cancel={cancel} alertTitle="Delete Virtual Machine alert" />

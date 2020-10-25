@@ -7,7 +7,8 @@ import {
   getOwnerReferences,
   getCreationTimestamp,
 } from '@console/shared/src/selectors/common';
-import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s/types';
+import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
+import { K8sKind, K8sResourceKind, OwnerReference } from '@console/internal/module/k8s/types';
 import { K8sResourceKindMethods } from '../types/types';
 import { ObjectWithTypePropertyWrapper } from './object-with-type-property-wrapper';
 import { clearMetadata, clearRuntimeMetadata, initK8sObject, K8sInitAddon } from './util/k8s-mixin';
@@ -81,6 +82,21 @@ export abstract class K8sResourceObjectWithTypePropertyWrapper<
     if (key) {
       this.ensurePath('metadata.labels');
       this.data.metadata.labels[key] = value;
+    }
+    return (this as any) as SELF;
+  };
+
+  addOwnerReferences = (...additionalOwnerReferences: OwnerReference[]) => {
+    this.ensurePath('metadata.ownerReferences', []);
+    if (additionalOwnerReferences) {
+      const ownerReferences = getOwnerReferences(this.data);
+      additionalOwnerReferences.forEach((newReference) => {
+        if (
+          !ownerReferences.some((oldReference) => compareOwnerReference(oldReference, newReference))
+        ) {
+          ownerReferences.push(newReference);
+        }
+      });
     }
     return (this as any) as SELF;
   };
