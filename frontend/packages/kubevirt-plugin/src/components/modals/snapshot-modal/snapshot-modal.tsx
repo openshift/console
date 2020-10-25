@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Alert, AlertVariant, Form, TextArea, TextInput } from '@patternfly/react-core';
-import { prefixedID } from '../../../utils';
+import { buildOwnerReference, prefixedID } from '../../../utils';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { getName, getNamespace } from '@console/shared';
 import {
@@ -30,12 +30,14 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
 
   const submit = async (e) => {
     e.preventDefault();
-    const snapshotWrapper = new VMSnapshotWrapper().init({
-      name,
-      description,
-      namespace: getNamespace(vmLikeEntity),
-      vmName,
-    });
+    const snapshotWrapper = new VMSnapshotWrapper()
+      .init({
+        name,
+        description,
+        namespace: getNamespace(vmLikeEntity),
+        vmName,
+      })
+      .addOwnerReferences(buildOwnerReference(vmLikeEntity));
 
     handlePromise(k8sCreate(snapshotWrapper.getModel(), snapshotWrapper.asResource()), close);
   };
