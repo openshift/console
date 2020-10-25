@@ -10,7 +10,6 @@ import {
 } from '@console/shared/src/test-utils/utils';
 import * as view from '../views/wizard.view';
 import { Wizard } from './models/wizard';
-import { VirtualMachine } from './models/virtualMachine';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { getAnnotations, getLabels } from '../../src/selectors/selectors';
 
@@ -83,8 +82,7 @@ describe('Kubevirt create VM using wizard', () => {
     );
   }
   it('ICNV-5045 - dont let the user continue If PXE provision source is selected on a cluster without a NAD available', async () => {
-    const vm: VirtualMachine;
-    vm = new VMBuilder(getBasicVMBuilder()).build();
+    const vm = new VMBuilder(getBasicVMBuilder()).build();
     const wizard = new Wizard();
     await vm.navigateToListView();
     await isLoaded();
