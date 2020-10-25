@@ -1,19 +1,19 @@
 import * as _ from 'lodash';
 import { browser, ExpectedConditions as until } from 'protractor';
-import { isLoaded, createItemButton } from '../../../../integration-tests/views/crud.view';
-import { click } from '@console/shared/src/test-utils/utils';
-import * as view from '../../integration-tests/views/wizard.view'
-import { Wizard } from './models/wizard';
-import { getRandStr } from './utils/utils';
-import { FlavorConfig } from './types/types';
-import { testName, appHost } from '@console/internal-integration-tests/protractor.conf';
-import { getAnnotations, getLabels } from '../../src/selectors/selectors';
+import { isLoaded } from '../../../../integration-tests/views/crud.view';
 import {
+  click,
   removeLeakedResources,
   withResource,
   createResources,
   deleteResources,
 } from '@console/shared/src/test-utils/utils';
+import * as view from '../views/wizard.view';
+import { Wizard } from './models/wizard';
+import { VirtualMachine } from './models/virtualMachine';
+import { testName } from '@console/internal-integration-tests/protractor.conf';
+import { getAnnotations, getLabels } from '../../src/selectors/selectors';
+
 import {
   VM_BOOTUP_TIMEOUT_SECS,
   CLONE_VM_TIMEOUT_SECS,
@@ -31,7 +31,7 @@ import {
   kubevirtStorage,
   getDiskToCloneFrom,
 } from './mocks/mocks';
-import { Flavor, Workload, OperatingSystem } from './utils/constants/wizard';
+import { Workload, OperatingSystem } from './utils/constants/wizard';
 import { vmPresets, getBasicVMBuilder } from './mocks/vmBuilderPresets';
 import { VMBuilder } from './models/vmBuilder';
 import {
@@ -67,7 +67,6 @@ describe('Kubevirt create VM using wizard', () => {
   afterEach(() => {
     removeLeakedResources(leakedResources);
   });
-
   for (const [id, vm] of Object.entries(VMTestCaseIDs)) {
     const { provisionSource } = vm.getData();
     const specTimeout =
@@ -83,28 +82,20 @@ describe('Kubevirt create VM using wizard', () => {
       specTimeout,
     );
   }
-
   it('ICNV-5045 - dont let the user continue If PXE provision source is selected on a cluster without a NAD available', async () => {
-    const customFlavorSufficientMemory: FlavorConfig = {
-      flavor: Flavor.CUSTOM,
-      cpu: '1',
-      memory: '5',
-      };
-    
-      await browser.get(`${appHost}/k8s/ns/${testName}/virtualization`);
-    await isLoaded();
-    await click(createItemButton);
-    await click(view.createWithWizardButton);
-    await view.waitForNoLoaders();
+    const vm: VirtualMachine;
+    vm = new VMBuilder(getBasicVMBuilder()).build();
     const wizard = new Wizard();
-    await wizard.fillName(getRandStr(5));
-    
+    await vm.navigateToListView();
+    await isLoaded();
+    await wizard.openWizard(null);
+    await wizard.fillName(testName);
+    await wizard.selectFlavor(flavorConfigs.Tiny);
+    await wizard.selectOperatingSystem(OperatingSystem.FEDORA);
     await wizard.selectProvisionSource(ProvisionSource.PXE);
-  
-    await wizard.selectOperatingSystem(OperatingSystem.RHEL7);
-    await wizard.selectFlavor(customFlavorSufficientMemory);
-    await wizard.selectWorkloadProfile(Workload.DESKTOP);
+
     await click(view.nextButton);
+
     await browser.wait(until.presenceOf(view.footerError), 1000);
   });
 
