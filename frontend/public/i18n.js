@@ -64,6 +64,7 @@ i18n
         'keystone-idp-form',
         'ldap-idp-form',
         'limit-range',
+        'logs',
         'masthead',
         'modal',
         'nav',
