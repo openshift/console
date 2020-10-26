@@ -36,7 +36,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
                 y: v,
               }))}
               title={`${numberOfIssues}`}
-              subTitle="Total issues"
+              subTitle={`Total ${numberOfIssues === 1 ? 'issue' : 'issues'}`}
               legendData={Object.entries(resource).map(([k, v]) => ({ name: `${k}: ${v}` }))}
               legendOrientation="vertical"
               width={304}
