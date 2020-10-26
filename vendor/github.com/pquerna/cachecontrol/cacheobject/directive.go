@@ -70,7 +70,8 @@ func parse(value string, cd cacheDirective) error {
 			j++
 		}
 
-		token := value[i:j]
+		token := strings.ToLower(value[i:j])
+		tokenHasFields := hasFieldNames(token)
 		/*
 			println("GOT TOKEN:")
 			println("	i -> ", i)
@@ -92,15 +93,21 @@ func parse(value string, cd cacheDirective) error {
 			} else {
 				z := k
 				for z < len(value) {
-					if whitespace(value[z]) {
-						break
+					if tokenHasFields {
+						if whitespace(value[z]) {
+							break
+						}
+					} else {
+						if whitespace(value[z]) || value[z] == ',' {
+							break
+						}
 					}
 					z++
 				}
 				i = z
 
 				result := value[k:z]
-				if result[len(result)-1] == ',' {
+				if result != "" && result[len(result)-1] == ',' {
 					result = result[:len(result)-1]
 				}
 
@@ -253,10 +260,19 @@ func (cd *RequestCacheDirectives) addPair(token string, v string) error {
 	switch token {
 	case "max-age":
 		cd.MaxAge, err = parseDeltaSeconds(v)
+		if err != nil {
+			err = ErrMaxAgeDeltaSeconds
+		}
 	case "max-stale":
 		cd.MaxStale, err = parseDeltaSeconds(v)
+		if err != nil {
+			err = ErrMaxStaleDeltaSeconds
+		}
 	case "min-fresh":
 		cd.MinFresh, err = parseDeltaSeconds(v)
+		if err != nil {
+			err = ErrMinFreshDeltaSeconds
+		}
 	case "no-cache":
 		err = ErrNoCacheNoArgs
 	case "no-store":
@@ -434,6 +450,16 @@ func (cd *ResponseCacheDirectives) addToken(token string) error {
 		cd.Extensions = append(cd.Extensions, token)
 	}
 	return err
+}
+
+func hasFieldNames(token string) bool {
+	switch token {
+	case "no-cache":
+		return true
+	case "private":
+		return true
+	}
+	return false
 }
 
 func (cd *ResponseCacheDirectives) addPair(token string, v string) error {
