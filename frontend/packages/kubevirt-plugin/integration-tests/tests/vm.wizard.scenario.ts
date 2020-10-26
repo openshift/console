@@ -1,10 +1,11 @@
 import * as _ from 'lodash';
-import { browser, ExpectedConditions as until } from 'protractor';
+import { browser } from 'protractor';
 import { isLoaded } from '../../../../integration-tests/views/crud.view';
 import {
   click,
   removeLeakedResources,
   withResource,
+  waitForStringInElement,
   createResources,
   deleteResources,
 } from '@console/shared/src/test-utils/utils';
@@ -81,21 +82,6 @@ describe('Kubevirt create VM using wizard', () => {
       specTimeout,
     );
   }
-  it('ICNV-5045 - dont let the user continue If PXE provision source is selected on a cluster without a NAD available', async () => {
-    const vm = new VMBuilder(getBasicVMBuilder()).build();
-    const wizard = new Wizard();
-    await vm.navigateToListView();
-    await isLoaded();
-    await wizard.openWizard(null);
-    await wizard.fillName(testName);
-    await wizard.selectFlavor(flavorConfigs.Tiny);
-    await wizard.selectOperatingSystem(OperatingSystem.FEDORA);
-    await wizard.selectProvisionSource(ProvisionSource.PXE);
-
-    await click(view.nextButton);
-
-    await browser.wait(until.presenceOf(view.footerError), 1000);
-  });
 
   it('ID(CNV-3657) Creates VM with CD ROM added in Wizard', async () => {
     const vm = new VMBuilder(getBasicVMBuilder())
@@ -241,4 +227,25 @@ describe('Kubevirt create VM using wizard', () => {
     },
     CLONE_VM_TIMEOUT_SECS,
   );
+
+  it('ICNV-5045 - dont let the user continue If PXE provision source is selected on a cluster without a NAD available', async () => {
+    deleteResources([multusNAD]);
+    const vm = new VMBuilder(getBasicVMBuilder()).build();
+    const wizard = new Wizard();
+    await vm.navigateToListView();
+    await isLoaded();
+    await wizard.openWizard(null);
+    await wizard.fillName(testName);
+    await wizard.selectOperatingSystem(OperatingSystem.FEDORA);
+    await wizard.selectProvisionSource(ProvisionSource.PXE);
+    await wizard.selectFlavor(flavorConfigs.Tiny);
+    await wizard.selectWorkloadProfile(Workload.DESKTOP);
+    await click(view.nextButton);
+
+    await browser.wait(
+      waitForStringInElement(view.footerError, 'Please correct the following field: Boot Source.'),
+      1000,
+    );
+    createResources([multusNAD]);
+  });
 });
