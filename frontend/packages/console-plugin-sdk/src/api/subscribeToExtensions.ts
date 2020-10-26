@@ -2,7 +2,7 @@ import { Store } from 'redux';
 import * as _ from 'lodash';
 import { RootState } from '@console/internal/redux';
 import { isExtensionInUse, PluginStore } from '../store';
-import { Extension, ExtensionTypeGuard } from '../typings';
+import { Extension, ExtensionTypeGuard, LoadedExtension } from '../typings';
 
 let subscriptionServiceInitialized = false;
 
@@ -90,7 +90,7 @@ export const initSubscriptionService = (pluginStore: PluginStore, reduxStore: St
  * @returns Function that unsubscribes the listener.
  */
 export const subscribeToExtensions = <E extends Extension>(
-  listener: ExtensionListener<E>,
+  listener: ExtensionListener<LoadedExtension<E>>,
   ...typeGuards: ExtensionTypeGuard<E>[]
 ): VoidFunction => {
   if (typeGuards.length === 0) {

@@ -41,10 +41,10 @@ export const getGatingFlagNames = (extensions: Extension[]): string[] =>
  */
 export class PluginStore {
   // Extensions contributed by static plugins
-  private readonly staticExtensions: Extension[];
+  private readonly staticExtensions: LoadedExtension[];
 
   // Extensions contributed by dynamic plugins
-  private dynamicExtensions: Extension[] = [];
+  private dynamicExtensions: LoadedExtension[] = [];
 
   // TODO(vojtech): legacy, remove
   public readonly registry: ExtensionRegistry;
@@ -65,14 +65,14 @@ export class PluginStore {
     this.updateDynamicExtensions = _.debounce(this.updateDynamicExtensions, 1000);
   }
 
-  public getAllExtensions(): Extension[] {
+  public getAllExtensions() {
     return [...this.staticExtensions, ...this.dynamicExtensions];
   }
 
   private updateDynamicExtensions() {
     this.dynamicExtensions = Array.from(this.dynamicPlugins.values()).reduce(
       (acc, plugin) => (plugin.enabled ? [...acc, ...plugin.resolvedExtensions] : acc),
-      [] as Extension[],
+      [],
     );
 
     this.listeners.forEach((listener) => {
@@ -150,6 +150,6 @@ type DynamicPluginMetadata = Omit<DynamicPluginManifest, 'extensions'>;
 
 type DynamicPlugin = {
   manifest: DynamicPluginManifest;
-  resolvedExtensions: Extension[];
+  resolvedExtensions: Readonly<LoadedExtension[]>;
   enabled: boolean;
 };

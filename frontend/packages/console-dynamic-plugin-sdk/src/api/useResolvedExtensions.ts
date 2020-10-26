@@ -32,6 +32,7 @@ import {
  * ```ts
  * const navItemExtensions = useResolvedExtensions<NavItem>(isNavItem);
  * const perspectiveExtensions = useResolvedExtensions<Perspective>(isPerspective);
+ * // process adapted extensions and render your component
  * ```
  *
  * The hook's result is guaranteed to be referentially stable across re-renders.
