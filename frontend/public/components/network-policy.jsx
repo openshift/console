@@ -181,7 +181,7 @@ const Details_ = ({ obj: np, flags }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Namespace Details" />
+        <SectionHeading text="Network Policy Details" />
         <ResourceSummary resource={np} podSelector={'spec.podSelector'} showPodSelector />
       </div>
       <div className="co-m-pane__body">
