@@ -9,7 +9,7 @@ const inventoryItems = [
   { title: 'PVC', link: '/k8s/all-namespaces/persistentvolumeclaims' },
 ];
 
-const utilizationItems = ['CPU', 'Memory', 'Filesystem', 'Network Transfer', 'Pod count'];
+const utilizationItems = ['CPU', 'Memory', 'Filesystem', 'Network transfer', 'Pod count'];
 
 describe('Cluster Dashboard', () => {
   beforeAll(async () => {
@@ -21,11 +21,11 @@ describe('Cluster Dashboard', () => {
     it('has all fields populated', async () => {
       expect(clusterDashboardView.detailsCard.isDisplayed()).toBe(true);
       const expectedItems = [
-        'Cluster API Address',
+        'Cluster API address',
         'Cluster ID',
         'Provider',
-        'OpenShift Version',
-        'Update Channel',
+        'OpenShift version',
+        'Update channel',
       ];
       const items = clusterDashboardView.detailsCardList.$$('dt');
       const values = clusterDashboardView.detailsCardList.$$('dd');
@@ -36,7 +36,7 @@ describe('Cluster Dashboard', () => {
         const text = values.get(i).getText();
         expect(text.length).not.toBe(0);
         // `Update Channel` is expected to be `Not available` in CI.
-        if (label !== 'Update Channel') {
+        if (label !== 'Update channel') {
           expect(text).not.toBe('Not available');
         }
       });
@@ -90,7 +90,7 @@ describe('Cluster Dashboard', () => {
     });
     it('has duration dropdown', () => {
       expect(clusterDashboardView.durationDropdown.isDisplayed()).toBe(true);
-      expect(clusterDashboardView.durationDropdown.getText()).toEqual('1 Hour');
+      expect(clusterDashboardView.durationDropdown.getText()).toEqual('1 hour');
     });
   });
 

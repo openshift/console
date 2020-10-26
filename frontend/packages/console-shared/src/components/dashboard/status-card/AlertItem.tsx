@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { isAlertAction, useExtensions, AlertAction } from '@console/plugin-sdk';
 import { getAlertActions } from '@console/internal/components/notification-drawer';
 import { Timestamp } from '@console/internal/components/utils/timestamp';
@@ -51,6 +52,7 @@ export const StatusItem: React.FC<StatusItemProps> = ({ Icon, timestamp, message
 const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
   const actionsExtensions = useExtensions<AlertAction>(isAlertAction);
   const action = getAlertActions(actionsExtensions).get(alert.rule.name);
+  const { t } = useTranslation();
   return (
     <StatusItem
       Icon={getSeverityIcon(getAlertSeverity(alert))}
@@ -60,7 +62,7 @@ const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
       {action ? (
         <Link to={_.isFunction(action.path) ? action.path(alert) : action.path}>{action.text}</Link>
       ) : (
-        <Link to={alertURL(alert, alert.rule.id)}>View details</Link>
+        <Link to={alertURL(alert, alert.rule.id)}>{t('dashboard~View details')}</Link>
       )}
     </StatusItem>
   );

@@ -3,6 +3,7 @@ import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   useExtensions,
   DashboardsOverviewHealthSubsystem,
@@ -100,14 +101,16 @@ const ClusterAlerts = withDashboardResources(
         name: 'version',
       }) && window.SERVER_FLAGS.branding !== 'dedicated';
 
+    const { t } = useTranslation();
+
     if (hasCVResource && cvLoaded && hasAvailableUpdates(cv) && clusterVersionIsEditable) {
       items.push(
         <StatusItem
           key="clusterUpdate"
           Icon={UpdateIcon}
-          message="A cluster version update is available"
+          message={t('dashboard~A cluster version update is available')}
         >
-          <Link to="/settings/cluster?showVersions">Update cluster</Link>
+          <Link to="/settings/cluster?showVersions">{t('dashboard~Update cluster')}</Link>
         </StatusItem>,
       );
     }
@@ -141,7 +144,7 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
     [subsystems],
   );
   const { infrastructure, infrastructureLoaded } = React.useContext(ClusterDashboardContext);
-
+  const { t } = useTranslation();
   const healthItems: { title: string; Component: React.ReactNode }[] = [];
   subsystems.forEach((subsystem) => {
     if (isDashboardsOverviewHealthURLSubsystem(subsystem)) {
@@ -180,8 +183,8 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
   return (
     <DashboardCard gradient data-test-id="status-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>Status</DashboardCardTitle>
-        <DashboardCardLink to="/monitoring/alerts">View alerts</DashboardCardLink>
+        <DashboardCardTitle>{t('dashboard~Status')}</DashboardCardTitle>
+        <DashboardCardLink to="/monitoring/alerts">{t('dashboard~View alerts')}</DashboardCardLink>
       </DashboardCardHeader>
       <DashboardCardBody>
         <HealthBody>

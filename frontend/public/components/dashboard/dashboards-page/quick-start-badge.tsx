@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Label } from '@patternfly/react-core';
 import { RocketIcon } from '@patternfly/react-icons';
 import { history } from '../../utils';
+import { useTranslation } from 'react-i18next';
 
 import './quick-start-badge.scss';
 
@@ -13,6 +14,7 @@ const QuickStartBadge: React.FC = () => {
   const [showQuickStartBadge, setShowQuickStartBadge] = React.useState<boolean>(
     !isQuickStartBadgeHidden,
   );
+  const { t } = useTranslation();
 
   const handleQuickStartBadgeClick = (e) => {
     e.stopPropagation();
@@ -40,7 +42,7 @@ const QuickStartBadge: React.FC = () => {
       onClick={handleQuickStartBadgeClick}
       onClose={handleQuickStartBadgeClose}
     >
-      Quick start available
+      {t('dashboard~Quick start available')}
     </Label>
   );
 };
