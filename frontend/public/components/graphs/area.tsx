@@ -119,7 +119,7 @@ export const AreaChart: React.FC<AreaChartProps> = ({
   }, [formatDate, getLabel, multiLine, processedData, showAllTooltip]);
 
   return (
-    <PrometheusGraph className={className} ref={containerRef} title={title}>
+    <PrometheusGraph className={className} ref={containerRef}>
       {processedData?.length ? (
         <PrometheusGraphLink query={query} title={title}>
           <Chart
