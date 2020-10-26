@@ -112,6 +112,7 @@ const createVMImport = async (
   const targetVMName = simpleSettings[VMSettingsField.NAME];
   const description = simpleSettings[VMSettingsField.DESCRIPTION];
   const vm = getOvirtAttribute(importProviders, OvirtProviderField.VM, 'vm');
+  const secretWrapper = new SecretWrappper(secret);
   const vmAnnotations = {};
 
   if (description) {
@@ -123,10 +124,7 @@ const createVMImport = async (
     .setType(VMImportType.OVIRT)
     .setTargetVMName(targetVMName)
     .setStartVM(simpleSettings[VMSettingsField.START_VM])
-    .setCredentialsSecret(
-      getOvirtField(importProviders, OvirtProviderField.CURRENT_RESOLVED_OVIRT_ENGINE_SECRET_NAME),
-      namespace,
-    );
+    .setCredentialsSecret(secretWrapper.getName(), secretWrapper.getNamespace());
 
   if (!_.isEmpty(vmAnnotations)) {
     vmImport.addAnotation(
@@ -144,8 +142,6 @@ const createVMImport = async (
 
   const vmImportResult = await enhancedK8sMethods.k8sWrapperCreate(vmImport);
   const vmImportOwnerReference = buildOwnerReference(vmImportResult);
-
-  const secretWrapper = new SecretWrappper(secret);
 
   await enhancedK8sMethods.k8sWrapperPatch(secretWrapper, [
     new PatchBuilder('/metadata/ownerReferences')
