@@ -16,6 +16,7 @@ import {
   getCommonAnnotations,
 } from '@console/dev-console/src/utils/resource-label-utils';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
+import { Perspective } from '@console/plugin-sdk';
 import {
   EventSources,
   EventSourceFormData,
@@ -37,7 +38,6 @@ import {
   EventSourceCronJobModel,
 } from '../models';
 import { EVENT_SOURCE_LABEL } from '../const';
-import { Perspective } from '@console/plugin-sdk';
 
 export const isKnownEventSource = (eventSource: string): boolean =>
   Object.keys(EventSources).includes(eventSource);
