@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { NamespaceModel } from '@console/internal/models';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { Kebab, ResourceKebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
@@ -20,7 +21,7 @@ const BrokerRow: RowFunction<EventBrokerKind> = ({ obj, index, key, style }) => 
         <ResourceLink kind={objReference} name={name} namespace={namespace} title={uid} />
       </TableData>
       <TableData className="co-break-word" columnID="namespace">
-        <ResourceLink kind="Namespace" name={namespace} />
+        <ResourceLink kind={NamespaceModel.kind} name={namespace} />
       </TableData>
       <TableData>
         <Timestamp timestamp={creationTimestamp} />

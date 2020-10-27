@@ -1,6 +1,7 @@
 import { isEqual } from 'lodash';
 import * as coFetch from '@console/internal/co-fetch';
 import { referenceForModel } from '@console/internal/module/k8s';
+
 import {
   EventSourceApiServerModel,
   EventSourceSinkBindingModel,
@@ -20,6 +21,7 @@ import {
   getDynamicEventSourceModel,
   getDynamicChannelResourceList,
   getDynamicEventSourcesResourceList,
+  getDynamicChannelModel,
 } from '../fetch-dynamic-eventsources-utils';
 import { mockEventSourcCRDData } from '../__mocks__/dynamic-event-source-crd-mock';
 import { mockChannelCRDData } from '../__mocks__/dynamic-channels-crd-mock';
@@ -101,18 +103,20 @@ describe('fetch-dynamic-eventsources: Channels', () => {
         json: () => ({ ...mockChannelCRDData }),
       }),
     );
-    await fetchChannelsCrd();
   });
 
   it('should return true for IMC channel model', async () => {
+    await fetchChannelsCrd();
     expect(isEventingChannelResourceKind(referenceForModel(EventingIMCModel))).toBe(true);
   });
 
   it('should return false for ksvc model', async () => {
+    await fetchChannelsCrd();
     expect(isEventingChannelResourceKind(referenceForModel(ServiceModel))).toBe(false);
   });
 
   it('should return refs for all channel models', async () => {
+    await fetchChannelsCrd();
     const expectedRefs = [referenceForModel(EventingIMCModel)];
     const modelRefs = getDynamicChannelModelRefs();
     expectedRefs.forEach((ref) => {
@@ -121,12 +125,26 @@ describe('fetch-dynamic-eventsources: Channels', () => {
   });
 
   it('should return limit if passed to getDynamicChannelResourceList', async () => {
+    await fetchChannelsCrd();
     const resultModel = getDynamicChannelResourceList('sample-app', 1);
     expect(resultModel[0].limit).toBe(1);
   });
 
   it('should not return limit if not passed to getDynamicChannelResourceList', async () => {
+    await fetchChannelsCrd();
     const resultModel = getDynamicChannelResourceList('sample-app');
     expect(resultModel[0].limit).toBeUndefined();
+  });
+
+  it('should get model from reference', async () => {
+    await fetchChannelsCrd();
+    const resultModel = getDynamicChannelModel(referenceForModel(EventingIMCModel));
+    expect(resultModel.kind).toEqual(EventingIMCModel.kind);
+  });
+
+  it('should get model from reference', async () => {
+    await fetchChannelsCrd();
+    const resultModel = getDynamicChannelModel('ab~v1~r');
+    expect(resultModel).toEqual(undefined);
   });
 });
