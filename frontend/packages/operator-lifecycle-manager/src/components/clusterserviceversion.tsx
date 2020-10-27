@@ -69,7 +69,7 @@ import {
   KebabAction,
   openshiftHelpBase,
 } from '@console/internal/components/utils';
-import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { RootState } from '@console/internal/redux';
 import {
@@ -707,7 +707,7 @@ export const MarkdownView = (props: {
   );
 };
 
-export const CRDCard: React.SFC<CRDCardProps> = (props) => {
+export const CRDCard: React.FC<CRDCardProps> = (props) => {
   const { csv, crd, canCreate, required = false } = props;
   const reference = referenceForProvidedAPI(crd);
   const model = modelFor(reference);
@@ -783,7 +783,7 @@ export const CRDCardRow = connect(crdCardRowStateToProps)((props: CRDCardRowProp
   );
 });
 
-const InitializationResourceAlert: React.SFC<InitializationResourceAlertProps> = (props) => {
+const InitializationResourceAlert: React.FC<InitializationResourceAlertProps> = (props) => {
   const { initializationResource, csv } = props;
 
   const initializationResourceKind = initializationResource?.kind;
@@ -792,12 +792,13 @@ const InitializationResourceAlert: React.SFC<InitializationResourceAlertProps> =
   );
   const model = modelFor(referenceFor(initializationResource));
 
-  // Check if the CR is already present - only checks for the specific name/ns in the initialization-resource
-  const [customResource, customResourceLoaded] = useK8sGet<K8sResourceCommon>(
-    model,
-    initializationResource?.metadata.name,
-    model?.namespaced ? initializationResource?.metadata.namespace || csv.metadata.namespace : null,
-  );
+  // Check if the CR is already present - only watches for the model in namespace
+  const [customResource, customResourceLoaded] = useK8sWatchResource<K8sResourceCommon[]>({
+    kind: referenceForModel(model),
+    namespaced: true,
+    isList: true,
+  });
+
   const canCreateCustomResource = useAccessReview({
     group: initializationResourceGroup,
     resource: model?.plural,
@@ -807,7 +808,7 @@ const InitializationResourceAlert: React.SFC<InitializationResourceAlertProps> =
     verb: 'create',
   });
 
-  if (!customResource && customResourceLoaded && canCreateCustomResource) {
+  if (customResourceLoaded && customResource.length === 0 && canCreateCustomResource) {
     return (
       <Alert
         isInline
