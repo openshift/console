@@ -131,7 +131,7 @@ const SingleVariableDropdown_: React.FC<SingleVariableDropdownProps> = ({
         endpoint: PrometheusEndpoint.QUERY_RANGE,
         query: prometheusQuery,
         samples: NUM_SAMPLES,
-        timeout: '5s',
+        timeout: '30s',
         timespan,
       });
 
