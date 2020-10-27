@@ -1,0 +1,14 @@
+{
+  "Name": "Name",
+  "Namespace": "Namespace",
+  "Labels": "Labels",
+  "Pod selector": "Pod selector",
+  "Node selector": "Node selector",
+  "Node": "Node",
+  "Tolerations": "Tolerations",
+  "Annotations": "Annotations",
+  "Created at": "Created at",
+  "Owner": "Owner",
+  "Current count": "Current count",
+  "Desired count": "Desired count"
+}

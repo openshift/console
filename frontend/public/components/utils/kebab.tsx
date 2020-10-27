@@ -3,9 +3,9 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import * as FocusTrap from 'focus-trap-react';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { KEY_CODES, Tooltip } from '@patternfly/react-core';
 import { AngleRightIcon, EllipsisVIcon } from '@patternfly/react-icons';
-import { useTranslation } from 'react-i18next';
 import Popper from '@console/shared/src/components/popper/Popper';
 import {
   annotationsModal,
