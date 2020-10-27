@@ -33,7 +33,7 @@ export const titleResolver: RenderableFieldResolver = {
   [VMSettingsField.FLAVOR]: 'Flavor',
   [VMSettingsField.MEMORY]: 'Memory',
   [VMSettingsField.CPU]: 'CPUs',
-  [VMSettingsField.WORKLOAD_PROFILE]: 'Workload Profile',
+  [VMSettingsField.WORKLOAD_PROFILE]: 'Workload Type',
   [VMSettingsField.PROVISION_SOURCE_TYPE]: 'Boot Source',
   [VMSettingsField.CONTAINER_IMAGE]: 'Container Image',
   [VMSettingsField.IMAGE_URL]: 'URL',
@@ -49,7 +49,7 @@ export const placeholderResolver = {
   [VMWareProviderField.VM]: '--- Select VM or Template ---',
   [VMSettingsField.OPERATING_SYSTEM]: '--- Select Operating System ---',
   [VMSettingsField.FLAVOR]: '--- Select Flavor ---',
-  [VMSettingsField.WORKLOAD_PROFILE]: '--- Select Workload Profile ---',
+  [VMSettingsField.WORKLOAD_PROFILE]: '--- Select Workload Type ---',
   [VMSettingsField.PROVISION_SOURCE_TYPE]: '--- Select Source ---',
 };
 

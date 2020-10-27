@@ -1,7 +1,9 @@
 import * as _ from 'lodash';
 import { TemplateKind } from '@console/internal/module/k8s';
+import { getLabel } from '@console/shared';
 import {
   CUSTOM_FLAVOR,
+  TEMPLATE_DEFAULT_LABEL,
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_OS_LABEL,
   TEMPLATE_WORKLOAD_LABEL,
@@ -12,16 +14,17 @@ import {
   getTemplateWorkloadProfiles,
 } from './advanced';
 import { isCustomFlavor } from '../vm-like/flavor';
+import { getLabelValue } from '../selectors';
 
-const getLabel = (labelPrefix: string, value: string) => {
+const buildLabel = (labelPrefix: string, value: string) => {
   if (!value) {
     return undefined;
   }
   return `${labelPrefix}/${_.get(value, 'id') || value}`;
 };
 
-export const getWorkloadLabel = (workload: string) => getLabel(TEMPLATE_WORKLOAD_LABEL, workload);
-export const getOsLabel = (os: string) => getLabel(TEMPLATE_OS_LABEL, os);
+export const getWorkloadLabel = (workload: string) => buildLabel(TEMPLATE_WORKLOAD_LABEL, workload);
+export const getOsLabel = (os: string) => buildLabel(TEMPLATE_OS_LABEL, os);
 export const getFlavorLabel = (flavor: string) => {
   if (!isCustomFlavor(flavor)) {
     return `${TEMPLATE_FLAVOR_LABEL}/${flavor}`;
@@ -55,3 +58,8 @@ export const getFlavors = (
 
   return flavors;
 };
+
+export const getOsDefaultTemplate = (templates: TemplateKind[], os: string) =>
+  templates.find(
+    (tmp) => getLabel(tmp, getOsLabel(os)) && getLabelValue(tmp, TEMPLATE_DEFAULT_LABEL) === 'true',
+  );

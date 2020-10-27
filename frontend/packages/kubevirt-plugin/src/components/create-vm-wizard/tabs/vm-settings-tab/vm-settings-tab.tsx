@@ -18,9 +18,9 @@ import { ActionType } from '../../redux/types';
 import { iGetCommonData } from '../../selectors/immutable/selectors';
 import { getStepsMetadata } from '../../selectors/immutable/wizard-selectors';
 import { iGetProvisionSourceStorage } from '../../selectors/immutable/storage';
-import { WorkloadProfile } from './workload-profile';
+import { WorkloadSelect } from './workload-profile';
 import { OS } from './os';
-import { Flavor } from './flavor';
+import { FlavorSelect } from './flavor';
 import { MemoryCPU } from './memory-cpu';
 import { ContainerSource } from './container-source';
 import { ProvisionSourceComponent } from './provision-source';
@@ -103,7 +103,7 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
         onProvisionSourceStorageChange={updateStorage}
         provisionSourceStorage={provisionSourceStorage}
       />
-      <Flavor
+      <FlavorSelect
         iUserTemplate={iUserTemplate}
         commonTemplates={commonTemplates}
         os={getFieldValue(VMSettingsField.OPERATING_SYSTEM)}
@@ -118,9 +118,10 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
         cpuField={getField(VMSettingsField.CPU)}
         onChange={onFieldChange}
       />
-      <WorkloadProfile
+      <WorkloadSelect
         iUserTemplate={iUserTemplate}
         commonTemplates={commonTemplates}
+        os={getFieldValue(VMSettingsField.OPERATING_SYSTEM)}
         workloadProfileField={getField(VMSettingsField.WORKLOAD_PROFILE)}
         operatingSystem={getFieldValue(VMSettingsField.OPERATING_SYSTEM)}
         flavor={getFieldValue(VMSettingsField.FLAVOR)}
