@@ -93,14 +93,18 @@ export const OS: React.FC<OSProps> = React.memo(
 
     const workloadProfiles = getWorkloadProfiles(templates, params);
 
-    const loadingResources = openshiftFlag
+    const loadingResources: any = openshiftFlag
       ? {
           commonTemplates,
         }
       : {};
 
-    if (openshiftFlag && iUserTemplate) {
-      Object.assign(loadingResources, { iUserTemplate });
+    if (iUserTemplate) {
+      loadingResources.iUserTemplate = iUserTemplate;
+    }
+
+    if (cnvBaseImages && !iGetIsLoaded(cnvBaseImages) && !iGetLoadError(cnvBaseImages)) {
+      loadingResources.cnvBaseImages = cnvBaseImages;
     }
 
     let operatingSystemValidation;

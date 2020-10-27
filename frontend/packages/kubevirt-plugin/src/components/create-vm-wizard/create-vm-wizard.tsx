@@ -12,7 +12,7 @@ import {
 import { TemplateModel } from '@console/internal/models';
 import { Firehose, history } from '@console/internal/components/utils';
 import { usePrevious } from '@console/shared/src/hooks/previous';
-import { PersistentVolumeClaimKind, referenceForModel } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
 import { Location } from 'history';
 import { match as RouterMatch } from 'react-router';
@@ -38,6 +38,7 @@ import {
   VMWizardProps,
   VMWizardTab,
   VMWizardTabsMetadata,
+  DirectCommonDataProps,
 } from './types';
 import { CREATE_VM, CREATE_VM_TEMPLATE, IMPORT_VM, TabTitleResolver } from './strings/strings';
 import { vmWizardActions } from './redux/actions';
@@ -96,6 +97,7 @@ const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
+
   React.useEffect(() => {
     props.onInitialize();
 
@@ -106,23 +108,11 @@ const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const commonTemplates = React.useMemo(
-    () => immutableListToShallowJS(iGetLoadedData(props.commonTemplates)),
-    [props.commonTemplates],
-  );
-  const [dataVolumePVCs, dataVolumePVCsLoaded, dataVolumePVCsLoadError] = usePVCBaseImages(
-    commonTemplates,
-  );
-
   // Store previuse props
   const prevProps = usePrevious<CreateVMWizardComponentProps>(props);
-  const prevDataVolumePVCData = usePrevious<[PersistentVolumeClaimKind[], boolean, string]>([
-    dataVolumePVCs,
-    dataVolumePVCsLoaded,
-    dataVolumePVCsLoadError,
-  ]);
 
   // componentDidUpdate
+  // takes care about firing onCommonDataChanged when fresh data is detected in props
   React.useEffect(() => {
     if (closed.current || !prevProps) {
       return;
@@ -134,38 +124,25 @@ const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) 
       }
       return changedPropsAcc;
     }, new Set()) as ChangedCommonData;
+    // lightweight equal - heavy computation should not occur here.
     const referencesChanged = !_.isEqual(prevProps.dataIDReferences, props.dataIDReferences);
-    const dataVolumePVCsChanged = !_.isEqual(prevDataVolumePVCData, [
-      dataVolumePVCs,
-      dataVolumePVCsLoaded,
-      dataVolumePVCsLoadError,
-    ]);
 
-    if (changedProps.size > 0 || referencesChanged || dataVolumePVCsChanged) {
+    if (changedProps.size > 0 || referencesChanged) {
       let commonDataUpdate: CommonData = referencesChanged
         ? { dataIDReferences: props.dataIDReferences }
         : undefined;
-      if (changedProps.has(VMWizardProps.storageClassConfigMap)) {
-        commonDataUpdate = {
-          ...commonDataUpdate,
-          data: {
-            [VMWizardProps.storageClassConfigMap]: props[VMWizardProps.storageClassConfigMap],
-          },
-        };
-      }
-      if (dataVolumePVCsChanged) {
-        commonDataUpdate = {
-          ...commonDataUpdate,
-          data: {
-            ...commonDataUpdate?.data,
-            [VMWizardProps.openshiftCNVBaseImages]: {
-              data: dataVolumePVCs,
-              loaded: dataVolumePVCsLoaded,
-              loadError: dataVolumePVCsLoadError,
+
+      commonDataUpdate = [...DirectCommonDataProps]
+        .filter((propName) => changedProps.has(propName))
+        .reduce((updateAcc, propName) => {
+          return {
+            ...updateAcc,
+            data: {
+              ...updateAcc?.data,
+              [propName]: props[propName],
             },
-          },
-        };
-      }
+          };
+        }, commonDataUpdate);
       props.onCommonDataChanged(commonDataUpdate, changedProps);
     }
   });
@@ -332,7 +309,7 @@ const wizardStateToProps = (state, { reduxID }) => ({
   iUserTemplate: iGetLoadedCommonData(state, reduxID, VMWizardProps.userTemplate),
   // fetch data from store to detect and fire changes
   ...[...DetectCommonDataChanges]
-    .filter((v) => v !== VMWizardProps.storageClassConfigMap) // passed directly
+    .filter((v) => !DirectCommonDataProps.has(v)) // ignore props that are passed directly
     .reduce((acc, propName) => {
       acc[propName] = iGetCommonData(state, reduxID, propName);
       return acc;
@@ -348,6 +325,7 @@ const wizardDispatchToProps = (dispatch, props) => ({
           isProviderImport: props.isProviderImport,
           isUserTemplateInitialized: false,
           storageClassConfigMap: undefined,
+          openshiftCNVBaseImages: undefined,
           isSimpleView: props.isSimpleView,
         },
         dataIDReferences: props.dataIDReferences,
@@ -394,6 +372,7 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
   location,
   flags,
   wsResources,
+  commonTemplates,
   hasCompleted,
 }) => {
   const activeNamespace = match && match.params && match.params.ns;
@@ -464,6 +443,25 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
 
   const storageClassConfigMap = useStorageClassConfigMapWrapped();
 
+  const loadedCommonTemplates = React.useMemo(
+    () =>
+      userMode === VMWizardMode.IMPORT // make empty for import so no PVCBaseImages get loaded
+        ? []
+        : immutableListToShallowJS(iGetLoadedData(commonTemplates)),
+    [commonTemplates, userMode],
+  );
+
+  const openshiftCNVBaseImagesListResult = usePVCBaseImages(loadedCommonTemplates);
+  // TODO integrate the list of watches into the redux store to prevent unnecessary copying of data
+  const openshiftCNVBaseImages = React.useMemo(
+    () => ({
+      data: openshiftCNVBaseImagesListResult[0],
+      loaded: openshiftCNVBaseImagesListResult[1],
+      loadError: openshiftCNVBaseImagesListResult[2],
+    }),
+    [openshiftCNVBaseImagesListResult],
+  );
+
   const dataIDReferences = makeIDReferences(resources);
 
   dataIDReferences[VMWizardProps.activeNamespace] = ['UI', 'activeNamespace'];
@@ -481,6 +479,7 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
         isSimpleView={isSimpleView}
         dataIDReferences={dataIDReferences}
         storageClassConfigMap={storageClassConfigMap}
+        openshiftCNVBaseImages={openshiftCNVBaseImages}
         reduxID={reduxID}
         onClose={() => history.goBack()}
       />
@@ -492,6 +491,7 @@ type CreateVMWizardPageComponentProps = {
   reduxID?: string;
   location?: Location;
   wsResources?: FirehoseResourceEnhanced[];
+  commonTemplates?: any;
   hasCompleted: boolean;
   match?: RouterMatch<{ ns: string; plural: string; appName?: string }>;
   flags: FlagsObject;
@@ -504,6 +504,11 @@ export const CreateVMWizardPage = compose(
     (state, props: any) => ({
       hasCompleted: isStepValid(state, props.reduxID, VMWizardTab.RESULT),
       wsResources: getExtraWSQueries(state, props.reduxID),
+      [VMWizardProps.commonTemplates]: iGetCommonData(
+        state,
+        props.reduxID,
+        VMWizardProps.commonTemplates,
+      ),
     }),
     undefined,
     undefined,

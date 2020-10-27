@@ -24,6 +24,7 @@ import { FormPFSelect } from '../../../form/form-pf-select';
 export const Flavor: React.FC<FlavorProps> = React.memo(
   ({
     iUserTemplate,
+    cnvBaseImages,
     commonTemplates,
     os,
     flavorField,
@@ -50,14 +51,18 @@ export const Flavor: React.FC<FlavorProps> = React.memo(
 
     const workloadProfiles = getWorkloadProfiles(templates, params);
 
-    const loadingResources = openshiftFlag
+    const loadingResources: any = openshiftFlag
       ? {
           commonTemplates,
         }
       : {};
 
-    if (openshiftFlag && iUserTemplate) {
-      Object.assign(loadingResources, { iUserTemplate });
+    if (iUserTemplate) {
+      loadingResources.iUserTemplate = iUserTemplate;
+    }
+
+    if (cnvBaseImages && !iGetIsLoaded(cnvBaseImages) && !iGetLoadError(cnvBaseImages)) {
+      loadingResources.cnvBaseImages = cnvBaseImages;
     }
 
     let flavorValidation;
@@ -108,5 +113,6 @@ type FlavorProps = {
   os: string;
   workloadProfile: string;
   openshiftFlag: boolean;
+  cnvBaseImages: any;
   onChange: (key: string, value: string | boolean) => void;
 };
