@@ -13451,10 +13451,10 @@ prettier@1.19.1:
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.19.1.tgz#f7d7f5ff8a9cd872a7be4ca142095956a60797cb"
   integrity sha512-s7PoyDv/II1ObgQunCbB9PdLmUcBZcnWOcxDh7O0N/UwDEsHyqkW+Qh28jW+mVuCdx7gLB0BotYI1Y6uI9iyew==
 
-prettier@^1.18.2:
-  version "1.18.2"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.18.2.tgz#6823e7c5900017b4bd3acf46fe9ac4b4d7bda9ea"
-  integrity sha512-OeHeMc0JhFE9idD4ZdtNibzY0+TPHSpSSb9h8FqtP+YnoZZ1sl8Vc9b1sasjfymH3SonAF4QcA2+mzHPhMvIiw==
+prettier@2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.0.5.tgz#d6d56282455243f2f92cc1716692c08aa31522d4"
+  integrity sha512-7PtVymN48hGcO4fGjybyBSIWDsLU4H4XlvOHfq91pz9kkGlonzwTfYkaIEwiRg/dAJF9YlbsduBAgtYLi+8cFg==
 
 pretty-bytes@^5.3.0:
   version "5.3.0"
@@ -18471,10 +18471,10 @@ yaml-ast-parser@^0.0.40:
   resolved "https://registry.yarnpkg.com/yaml-ast-parser/-/yaml-ast-parser-0.0.40.tgz#08536d4e73d322b1c9ce207ab8dd70e04d20ae6e"
   integrity sha1-CFNtTnPTIrHJziB6uN1w4E0grm4=
 
-yaml-language-server@0.9.0:
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/yaml-language-server/-/yaml-language-server-0.9.0.tgz#6f7b0068dfd182589320da7d36f7ade897f6c4a0"
-  integrity sha512-nRExM5NfJXzxTKlFmHKr/ZtoxZCddH1kuuWNfHRvTLCEHzexIn/YvI/DBZHxKLh/ym9f4Q4j4zW76vB6J18lUQ==
+yaml-language-server@0.10.1:
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/yaml-language-server/-/yaml-language-server-0.10.1.tgz#5968635ffff54121c393ab324765065b42361858"
+  integrity sha512-R9SEt/nWTuZ8weB040L7yyaIVARlZ0ian1Kv6ptu4+xyVlIMobTZXaBTtgyhlMWqcQ3BpsAZu4q/2plRVG3tLQ==
   dependencies:
     js-yaml "^3.13.1"
     jsonc-parser "^2.2.1"
@@ -18486,7 +18486,7 @@ yaml-language-server@0.9.0:
     vscode-uri "^2.1.1"
     yaml-ast-parser-custom-tags "0.0.43"
   optionalDependencies:
-    prettier "^1.18.2"
+    prettier "2.0.5"
 
 yaml@^1.10.0, yaml@^1.7.2:
   version "1.10.0"
