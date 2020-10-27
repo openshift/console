@@ -4,8 +4,9 @@ import { match as RMatch } from 'react-router';
 import { useFormContext, Controller } from 'react-hook-form';
 import { WithCommonForm } from './form/create-form';
 import { SelectorInput } from '../utils';
-// import {RadioGroup} from './utils/radio'
+import { RadioGroup } from './utils/radio';
 import { Section } from './utils/section';
+import { InputSelectBox } from './utils/inputSelectBox';
 
 const defaultValues = {
   // requestDo에 넣어줄 형식으로 defaultValues 작성
@@ -23,39 +24,42 @@ const sampleFormFactory = params => {
 
 const CreateSampleComponent: React.FC<SampleFormProps> = props => {
   const { control } = useFormContext();
-  // const resources = [ // RadioGroup 컴포넌트에 넣어줄 items
-  //   {
-  //     title: 'Cpu',
-  //     value: 'cpu'
-  //   },
-  //   {
-  //     title: 'Gpu',
-  //     value: 'gpu'
-  //   },
-  //   {
-  //     title: 'Memory',
-  //     value: 'memory'
-  //   }
-  // ];
+  const resources = [
+    // RadioGroup 컴포넌트에 넣어줄 items
+    {
+      title: 'Cpu',
+      value: 'cpu',
+    },
+    {
+      title: 'Gpu',
+      value: 'gpu',
+    },
+    {
+      title: 'Memory',
+      value: 'memory',
+    },
+  ];
+  const dropdownUnits = {
+    Mi: 'MiB',
+    Gi: 'GiB',
+    Ti: 'TiB',
+  };
 
   return (
     <div>
-      <div className="form-group">
-        <Section label="Labels" id="label" description="이것은 Label입니다.">
-          <div className="modal-body__field">
-            <Controller name="metadata.labels" id="label" labelClassName="co-text-sample" as={SelectorInput} control={control} tags={[]} />
-          </div>
-        </Section>
-      </div>
-      {/* <div className="form-group"> 
-        <Section label="Radio Group">
-          <RadioGroup 
-            name="spec.resources" // RequestDO 실제로 들어갈 path (필수)
-            items={resources} // [{title: '', value: ''}] (필수)
-            inline={true} // inline속성 먹일거면 true, 아니면 빼면 됨 (선택)
-          />
-        </Section>
-      </div> */}
+      <Section label="Labels" id="label" description="이것은 Label입니다.">
+        <Controller name="metadata.labels" id="label" labelClassName="co-text-sample" as={SelectorInput} control={control} tags={[]} />
+      </Section>
+      <Section id="resources" label="Radio Group">
+        <RadioGroup
+          name="spec.resources" // 서버에 보낼 데이터에서의 path (필수)
+          items={resources} // [{title: '', value: ''}] (필수)
+          inline={true} // inline속성 먹일거면 true, 아니면 빼면 됨 (선택)
+        />
+      </Section>
+      <Section id="cpu" label="Input Selectbox">
+        <InputSelectBox textName="spec.cpu" dropdownName="spec.cpuRange" selectedKey="Mi" items={dropdownUnits} />
+      </Section>
     </div>
   );
 };
@@ -67,6 +71,7 @@ export const CreateSample: React.FC<CreateSampleProps> = props => {
 };
 
 export const onSubmitCallback = data => {
+  // submit하기 전에 data를 가공해야 할 경우
   let labels = SelectorInput.objectify(data.metadata.labels);
   delete data.metadata.labels;
   data = _.defaultsDeep(data, { metadata: { labels: labels } });

@@ -30,15 +30,13 @@ export const WithCommonForm = (SubForm, params, defaultValues, modal?: boolean) 
           <Helmet>
             <title>{title}</title>
           </Helmet>
-          <form className="co-m-pane__body-group co-create-secret-form co-m-pane__form">
+          <form className="co-m-pane__body-group co-m-pane__form">
             <h1 className="co-m-pane__heading">{title}</h1>
             <p className="co-m-pane__explanation">{props.explanation}</p>
             <fieldset>
-              <div className="form-group">
-                <Section label="Name" id="name" isRequired={true}>
-                  <input className="pf-c-form-control" id="name" name="metadata.name" ref={methods.register} />
-                </Section>
-              </div>
+              <Section label="Name" id="name" isRequired={true}>
+                <input className="pf-c-form-control" id="name" name="metadata.name" ref={methods.register} />
+              </Section>
             </fieldset>
             <SubForm isCreate={props.isCreate} />
             <ButtonBar inProgress={inProgress}>

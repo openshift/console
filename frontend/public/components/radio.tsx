@@ -2,51 +2,25 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 
-export const RadioInput: React.SFC<RadioInputProps> = (props) => {
-  const inputProps: React.InputHTMLAttributes<any> = _.omit(props, [
-    'title',
-    'subTitle',
-    'desc',
-    'children',
-    'inline',
-  ]);
+export const RadioInput: React.SFC<RadioInputProps> = props => {
+  const inputProps: React.InputHTMLAttributes<any> = _.omit(props, ['title', 'subTitle', 'desc', 'children', 'inline']);
+  const { inline, disabled, title, subTitle, desc, children } = props;
   const inputElement = (
     <>
-      <label
-        className={classNames({ 'radio-inline': props.inline, 'co-disabled': props.disabled })}
-      >
+      <label className={classNames({ 'radio-inline': inline, 'co-disabled': disabled })}>
         <input type="radio" {...inputProps} />
-        {props.title} {props.subTitle && <span className="co-no-bold">{props.subTitle}</span>}
+        {title} {subTitle && <span className="co-no-bold">{subTitle}</span>}
       </label>
-      {props.desc && <p className="co-m-radio-desc text-muted">{props.desc}</p>}
-      {props.children}
+      {desc && <p className="co-m-radio-desc text-muted">{desc}</p>}
+      {children}
     </>
   );
 
-  return props.inline ? inputElement : <div className="radio">{inputElement}</div>;
+  return inline ? inputElement : <div className="radio">{inputElement}</div>;
 };
 
-export const RadioGroup: React.SFC<RadioGroupProps> = ({
-  currentValue,
-  inline = false,
-  items,
-  label,
-  onChange,
-  id = JSON.stringify(items),
-}) => {
-  const radios = items.map(({ desc, title, subTitle, value, disabled }) => (
-    <RadioInput
-      key={value}
-      checked={value === currentValue}
-      desc={desc}
-      onChange={onChange}
-      title={title}
-      subTitle={subTitle}
-      value={value}
-      disabled={disabled}
-      inline={inline}
-    />
-  ));
+export const RadioGroup: React.SFC<RadioGroupProps> = ({ currentValue, inline = false, items, label, onChange, id = JSON.stringify(items) }) => {
+  const radios = items.map(({ desc, title, subTitle, value, disabled }) => <RadioInput key={value} checked={value === currentValue} desc={desc} onChange={onChange} title={title} subTitle={subTitle} value={value} disabled={disabled} inline={inline} />);
   return (
     <div className={classNames('co-radio-group', { 'co-radio-group--inline': inline })}>
       {label ? (
