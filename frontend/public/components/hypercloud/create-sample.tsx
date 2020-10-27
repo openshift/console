@@ -52,7 +52,7 @@ const CreateSampleComponent: React.FC<SampleFormProps> = props => {
       </Section>
       <Section id="resources" label="Radio Group">
         <RadioGroup
-          name="spec.resources" // RequestDO 실제로 들어갈 path (필수)
+          name="spec.resources" // 서버에 보낼 데이터에서의 path (필수)
           items={resources} // [{title: '', value: ''}] (필수)
           inline={true} // inline속성 먹일거면 true, 아니면 빼면 됨 (선택)
         />
