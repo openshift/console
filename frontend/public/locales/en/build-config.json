@@ -1,0 +1,10 @@
+{
+  "Start build": "Start build",
+  "Build Config details": "Build Config details",
+  "Name": "Name",
+  "Namespace": "Namespace",
+  "Labels": "Labels",
+  "Created": "Created",
+  "Build Configs": "Build Configs",
+  "Build strategy": "Build strategy"
+}
