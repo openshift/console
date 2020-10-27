@@ -8,6 +8,8 @@ import { Map as ImmutableMap } from 'immutable';
 import * as fuzzy from 'fuzzysearch';
 import { Tooltip } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
+import i18next from 'i18next';
 
 import { ALL_NAMESPACES_KEY, FLAGS, APIError } from '@console/shared';
 import { useAccessReview } from '@console/internal/components/utils';
@@ -87,7 +89,10 @@ const APIResourceLink = connect<APIResourceLinkStateProps, {}, APIResourceLinkOw
   mapStateToProps,
 )(APIResourceLink_);
 
-const EmptyAPIResourcesMsg: React.FC<{}> = () => <EmptyBox label="API Resources" />;
+const EmptyAPIResourcesMsg: React.FC<{}> = () => {
+  const { t } = useTranslation();
+  return <EmptyBox label={t('api-explorer~API resources')} />;
+};
 
 const Group: React.FC<{ value: string }> = ({ value }) => {
   if (!value) {
@@ -113,37 +118,6 @@ const tableClasses = [
   'col-lg-3 col-md-5 hidden-sm hidden-xs',
 ];
 
-const APIResourceHeader = () => [
-  {
-    title: 'Kind',
-    sortField: 'kind',
-    transforms: [sortable],
-    props: { className: tableClasses[0] },
-  },
-  {
-    title: 'Group',
-    sortField: 'apiGroup',
-    transforms: [sortable],
-    props: { className: tableClasses[1] },
-  },
-  {
-    title: 'Version',
-    sortField: 'apiVersion',
-    transforms: [sortable],
-    props: { className: tableClasses[2] },
-  },
-  {
-    title: 'Namespaced',
-    sortField: 'namespaced',
-    transforms: [sortable],
-    props: { className: tableClasses[3] },
-  },
-  {
-    title: 'Description',
-    props: { className: tableClasses[4] },
-  },
-];
-
 const APIResourceRows = ({ componentProps: { data } }) =>
   _.map(data, (model: K8sKind) => [
     {
@@ -163,7 +137,7 @@ const APIResourceRows = ({ componentProps: { data } }) =>
       props: { className: tableClasses[2] },
     },
     {
-      title: model.namespaced ? 'true' : 'false',
+      title: model.namespaced ? i18next.t('api-explorer~true') : i18next.t('api-explorer~false'),
       props: { className: tableClasses[3] },
     },
     {
@@ -191,7 +165,7 @@ const APIResourcesList = compose(
   const versionFilter = search.get(VERSION_PARAM) || ALL;
   const textFilter = search.get(TEXT_FILTER_PARAM) || '';
   const scopeFilter = search.get(SCOPE_PARAM) || ALL;
-
+  const { t } = useTranslation();
   // group options
   const groups: Set<string> = models.reduce((result: Set<string>, { apiGroup }) => {
     return apiGroup ? result.add(apiGroup) : result;
@@ -202,7 +176,7 @@ const APIResourcesList = compose(
       result[group] = <Group value={group} />;
       return result;
     },
-    { [ALL]: 'All Groups', '': 'No Group' },
+    { [ALL]: t('api-explorer~All groups'), '': t('api-explorer~No group') },
   );
 
   const groupSpacer = new Set<string>();
@@ -224,7 +198,7 @@ const APIResourcesList = compose(
       result[version] = version;
       return result;
     },
-    { [ALL]: 'All Versions' },
+    { [ALL]: t('api-explorer~All versions') },
   );
 
   const versionSpacer = new Set<string>();
@@ -233,9 +207,9 @@ const APIResourcesList = compose(
   }
 
   const scopeOptions = {
-    [ALL]: 'All Scopes',
-    cluster: 'Cluster',
-    namespace: 'Namespace',
+    [ALL]: t('api-explorer~All scopes'),
+    cluster: t('api-explorer~Cluster'),
+    namespace: t('api-explorer~Namespace'),
   };
   const scopeSpacer = new Set<string>(['cluster']);
 
@@ -289,6 +263,37 @@ const APIResourcesList = compose(
     }
   };
 
+  const APIResourceHeader = () => [
+    {
+      title: t('api-explorer~Kind'),
+      sortField: 'kind',
+      transforms: [sortable],
+      props: { className: tableClasses[0] },
+    },
+    {
+      title: t('api-explorer~Group'),
+      sortField: 'apiGroup',
+      transforms: [sortable],
+      props: { className: tableClasses[1] },
+    },
+    {
+      title: t('api-explorer~Version'),
+      sortField: 'apiVersion',
+      transforms: [sortable],
+      props: { className: tableClasses[2] },
+    },
+    {
+      title: t('api-explorer~Namespaced'),
+      sortField: 'namespaced',
+      transforms: [sortable],
+      props: { className: tableClasses[3] },
+    },
+    {
+      title: t('api-explorer~Description'),
+      props: { className: tableClasses[4] },
+    },
+  ];
+
   return (
     <>
       <div className="co-m-pane__filter-bar">
@@ -320,7 +325,11 @@ const APIResourcesList = compose(
           />
         </div>
         <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-          <TextFilter value={textFilter} label="by kind" onChange={setTextFilter} />
+          <TextFilter
+            value={textFilter}
+            label={t('api-explorer~by kind')}
+            onChange={setTextFilter}
+          />
         </div>
       </div>
       <div className="co-m-pane__body">
@@ -328,7 +337,7 @@ const APIResourcesList = compose(
           EmptyMsg={EmptyAPIResourcesMsg}
           Header={APIResourceHeader}
           Rows={APIResourceRows}
-          aria-label="API Resources"
+          aria-label={t('api-explorer~API resources')}
           data={sortedResources}
           loaded={!!models.size}
           virtualize={false}
@@ -339,40 +348,48 @@ const APIResourcesList = compose(
 });
 APIResourcesList.displayName = 'APIResourcesList';
 
-export const APIExplorerPage: React.FC<{}> = () => (
-  <>
-    <Helmet>
-      <title>Explore API Resources</title>
-    </Helmet>
-    <div className="co-m-nav-title">
-      <h1 className="co-m-pane__heading">Explore API Resources</h1>
-    </div>
-    <APIResourcesList />
-  </>
-);
+export const APIExplorerPage: React.FC<{}> = () => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <Helmet>
+        <title>{t('api-explorer~Explore API Resources')}</title>
+      </Helmet>
+      <div className="co-m-nav-title">
+        <h1 className="co-m-pane__heading">{t('api-explorer~Explore API Resources')}</h1>
+      </div>
+      <APIResourcesList />
+    </>
+  );
+};
 APIExplorerPage.displayName = 'APIExplorerPage';
 
 const APIResourceDetails: React.FC<APIResourceTabProps> = ({ customData: { kindObj } }) => {
   const { kind, apiGroup, apiVersion, namespaced, verbs, shortNames } = kindObj;
   const description = getResourceDescription(kindObj);
+  const { t } = useTranslation();
   return (
     <div className="co-m-pane__body">
       <dl className="co-m-pane__details">
-        <dt>Kind</dt>
+        <dt>{t('api-explorer~Kind')}</dt>
         <dd>{kind}</dd>
-        <dt>API Group</dt>
+        <dt>{t('api-explorer~API group')}</dt>
         <dd className="co-select-to-copy">{apiGroup || '-'}</dd>
-        <dt>API Version</dt>
+        <dt>{t('api-explorer~API version')}</dt>
         <dd>{apiVersion}</dd>
-        <dt>Namespaced</dt>
+        <dt>{t('api-explorer~Namespaced')}</dt>
         <dd>{namespaced ? 'true' : 'false'}</dd>
-        <dt>Verbs</dt>
+        <dt>{t('api-explorer~Verbs')}</dt>
         <dd>{verbs.join(', ')}</dd>
         {shortNames && (
           <>
             <dt>
-              <Tooltip content="Short names can be used to match this resource on the CLI.">
-                <span>Short Names</span>
+              <Tooltip
+                content={t(
+                  'api-explorer~Short names can be used to match this resource on the CLI.',
+                )}
+              >
+                <span>{t('api-explorer~Short names')}</span>
               </Tooltip>
             </dt>
             <dd>{shortNames.join(', ')}</dd>
@@ -380,7 +397,7 @@ const APIResourceDetails: React.FC<APIResourceTabProps> = ({ customData: { kindO
         )}
         {description && (
           <>
-            <dt>Description</dt>
+            <dt>{t('api-explorer~Description')}</dt>
             <dd className="co-break-word co-pre-wrap">
               <LinkifyExternal>{description}</LinkifyExternal>
             </dd>
@@ -433,19 +450,6 @@ const Subject: React.FC<{ value: string }> = ({ value }) => {
   );
 };
 
-const AccessTableHeader = () => [
-  {
-    title: 'Subject',
-    sortField: 'name',
-    transforms: [sortable],
-  },
-  {
-    title: 'Type',
-    sortField: 'type',
-    transforms: [sortable],
-  },
-];
-
 const AccessTableRows = ({ componentProps: { data } }) =>
   _.map(data, (subject) => [
     {
@@ -460,7 +464,10 @@ const AccessTableRows = ({ componentProps: { data } }) =>
     },
   ]);
 
-const EmptyAccessReviewMsg: React.FC<{}> = () => <EmptyBox label="Subjects" />;
+const EmptyAccessReviewMsg: React.FC<{}> = () => {
+  const { t } = useTranslation();
+  return <EmptyBox label={t('api-explorer~Subjects')} />;
+};
 
 const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
   customData: { kindObj, namespace },
@@ -475,6 +482,7 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
   const [showServiceAccounts, setShowServiceAccounts] = React.useState(false);
   const [accessResponse, setAccessResponse] = React.useState<ResourceAccessReviewResponse>();
   const [error, setError] = React.useState<APIError>();
+  const { t } = useTranslation();
 
   // perform the access review
   React.useEffect(() => {
@@ -500,7 +508,7 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
     return (
       <LoadError
         message={error.message}
-        label="Access Review"
+        label={t('api-explorer~Access review')}
         className="loading-box loading-box__errored"
       />
     );
@@ -534,7 +542,18 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
   const selectedCount = data.length;
   const filteredData = data.filter(({ name }: { name: string }) => fuzzy(filter, name));
   const sortedData = _.orderBy(filteredData, ['type', 'name'], ['asc', 'asc']);
-
+  const AccessTableHeader = () => [
+    {
+      title: t('api-explorer~Subject'),
+      sortField: 'name',
+      transforms: [sortable],
+    },
+    {
+      title: t('api-explorer~Type'),
+      sortField: 'type',
+      transforms: [sortable],
+    },
+  ];
   // event handlers
   const toggleShowUsers = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -563,11 +582,15 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
             items={verbOptions}
             onChange={(v: K8sVerb) => setVerb(v)}
             selectedKey={verb}
-            titlePrefix="Verb"
+            titlePrefix={t('api-explorer~Verb')}
           />
         </div>
         <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-          <TextFilter defaultValue={filter} label="by subject" onChange={(val) => setFilter(val)} />
+          <TextFilter
+            defaultValue={filter}
+            label={t('api-explorer~by subject')}
+            onChange={(val) => setFilter(val)}
+          />
         </div>
       </div>
       <div className="co-m-pane__body">
@@ -578,35 +601,37 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
           onSelectAll={onSelectAll}
         >
           <CheckBox
-            title="User"
+            title={t('api-explorer~User')}
             active={showUsers}
             number={users.length}
             toggle={toggleShowUsers}
           />
           <CheckBox
-            title="Group"
+            title={t('api-explorer~Group')}
             active={showGroups}
             number={groups.length}
             toggle={toggleShowGroups}
           />
           <CheckBox
-            title="ServiceAccount"
+            title={t('api-explorer~ServiceAccount')}
             active={showServiceAccounts}
             number={serviceAccounts.length}
             toggle={toggleShowServiceAccounts}
           />
         </CheckBoxControls>
         <p className="co-m-pane__explanation">
-          The following subjects can {verb} {plural}
-          {namespaced && namespace && <> in namespace {namespace}</>}
-          {namespaced && !namespace && <> in all namespaces</>}
-          {!namespaced && <> at the cluster scope</>}.
+          {t('api-explorer~The following subjects can {{verb}} {{plural}}', { verb, plural })}
+          {namespaced && namespace && (
+            <> {t('api-explorer~in namespace {{ namespace }}', { namespace })}</>
+          )}
+          {namespaced && !namespace && <> {t('api-explorer~in all namespaces')}</>}
+          {!namespaced && <> {t('api-explorer~at the cluster scope')}</>}.
         </p>
         <Table
           EmptyMsg={EmptyAccessReviewMsg}
           Header={AccessTableHeader}
           Rows={AccessTableRows}
-          aria-label="API Resources"
+          aria-label={t('api-explorer~API resources')}
           data={sortedData}
           loaded
           virtualize={false}
@@ -628,6 +653,7 @@ const APIResourcePage_ = ({
   flags: FlagsObject;
 }) => {
   const namespace = kindObj?.namespaced ? match.params.ns : undefined;
+  const { t } = useTranslation();
 
   const canCreateResourceAccessReview = useAccessReview({
     group: namespace
@@ -645,18 +671,20 @@ const APIResourcePage_ = ({
       <LoadingBox />
     ) : (
       <div className="co-m-pane__body">
-        <h1 className="co-m-pane__heading co-m-pane__heading--center">404: Not Found</h1>
+        <h1 className="co-m-pane__heading co-m-pane__heading--center">
+          {t('api-explorer~404: Not found')}
+        </h1>
       </div>
     );
   }
 
   const breadcrumbs = [
     {
-      name: 'Explore',
+      name: t('api-explorer~Explore'),
       path: '/api-explorer',
     },
     {
-      name: 'Resource Details',
+      name: t('api-explorer~Resource details'),
       path: match.url,
     },
   ];
@@ -664,12 +692,12 @@ const APIResourcePage_ = ({
   const pages = [
     {
       href: '',
-      name: 'Details',
+      name: t('api-explorer~Details'),
       component: APIResourceDetails,
     },
     {
       href: 'schema',
-      name: 'Schema',
+      name: t('api-explorer~Schema'),
       component: APIResourceSchema,
     },
   ];
@@ -677,7 +705,7 @@ const APIResourcePage_ = ({
   if (_.isEmpty(kindObj.verbs) || kindObj.verbs.includes('list')) {
     pages.push({
       href: 'instances',
-      name: 'Instances',
+      name: t('api-explorer~Instances'),
       component: APIResourceInstances,
     });
   }
@@ -685,7 +713,7 @@ const APIResourcePage_ = ({
   if (flags[FLAGS.OPENSHIFT] && canCreateResourceAccessReview) {
     pages.push({
       href: 'access',
-      name: 'Access Review',
+      name: t('api-explorer~Access review'),
       component: APIResourceAccessReview,
     });
   }
