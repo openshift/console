@@ -163,16 +163,7 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective, flags }) 
             // <LazyRoute path="/k8s/ns/:ns/roles/:name/add-rule" exact loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.EditRulePage)} />
             // <LazyRoute path="/k8s/ns/:ns/roles/:name/:rule/edit" exact loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.EditRulePage)} />
           }
-          {/* <LazyRoute
-            path="/k8s/ns/:ns/secrets/~new/:type"
-            exact
-            kind="Secret"
-            loader={() =>
-              import('./secrets/create-secret' ).then(
-                (m) => m.CreateSecret,
-              )
-            }
-          /> */} // 기존에 있는 Secret 생성페이지 라우트 (공통 폼에디터 라우트 임의로 secrete파일로 해놨는데 다른 샘플 생기면 수정 필요)
+          {/*Create Form */}
           <LazyRoute path="/k8s/ns/:ns/routes/~new/form" exact kind="Route" loader={() => import('./routes/create-route' /* webpackChunkName: "create-route" */).then(m => m.CreateRoute)} />
           <LazyRoute path="/k8s/cluster/rolebindings/~new" exact loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.CreateRoleBinding)} kind="RoleBinding" />
           <LazyRoute path="/k8s/ns/:ns/rolebindings/~new" exact loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.CreateRoleBinding)} kind="RoleBinding" />
@@ -182,7 +173,8 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective, flags }) 
           <LazyRoute path="/k8s/cluster/:plural/~new" exact loader={() => import('./create-yaml' /* webpackChunkName: "create-yaml" */).then(m => m.CreateYAML)} />
           <LazyRoute path="/k8s/ns/:ns/:plural/~new" exact loader={() => import('./create-yaml' /* webpackChunkName: "create-yaml" */).then(m => NamespaceFromURL(m.CreateYAML))} />
           <LazyRoute path="/k8s/ns/:ns/secrets/~new/:type" exact kind="Secret" loader={() => import('./secrets/create-secret' /* webpackChunkName: "create-secret" */).then(m => m.CreateSecret)} />
-          <LazyRoute path="/k8s/:plural/~new/:type" exact kind="form" />
+          <LazyRoute path="/k8s/ns/:ns/:plural/~new/:type" exact kind="form" />
+          <LazyRoute path="/k8s/cluster/:plural/~new/:type" exact kind="form" />
           <LazyRoute path="/k8s/ns/:ns/secrets/:name/edit" exact kind="Secret" loader={() => import('./secrets/create-secret' /* webpackChunkName: "create-secret" */).then(m => m.EditSecret)} />
           <LazyRoute path="/k8s/ns/:ns/secrets/:name/edit-yaml" exact kind="Secret" loader={() => import('./create-yaml').then(m => m.EditYAMLPage)} />
           <LazyRoute path="/k8s/ns/:ns/rolebindings/:name/copy" exact kind="RoleBinding" loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.CopyRoleBinding)} />
