@@ -65,7 +65,7 @@ export const onSubmitCallback = data => {
 
 type CreateNamespaceProps = {
   match: RMatch<{
-    params?: string;
+    type?: string;
   }>;
   fixed: object;
   explanation: string;

@@ -80,7 +80,7 @@ export const onSubmitCallback = data => {
 
 type CreateSampleProps = {
   match: RMatch<{
-    params?: string;
+    type?: string;
   }>;
   fixed: object;
   explanation: string;
