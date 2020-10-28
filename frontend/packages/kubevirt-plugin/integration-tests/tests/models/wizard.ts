@@ -230,7 +230,7 @@ export class Wizard {
     );
   }
 
-  async processGeneralStep(data: VMBuilderData) {
+  async processGeneralStep(data: VMBuilderData, ignoreWarnings: boolean = false) {
     const { name, description, provisionSource, os, flavor, workload } = data;
     if (name) {
       await this.fillName(name);
@@ -268,7 +268,7 @@ export class Wizard {
     } else {
       throw Error('VM Flavor not defined');
     }
-    await this.next();
+    await this.next(ignoreWarnings);
   }
 
   async processNetworkStep(data: VMBuilderData) {
