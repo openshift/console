@@ -1,13 +1,14 @@
 import * as React from 'react';
-import { Popper } from '../popper';
-import styles from '@patternfly/react-styles/css/components/Popover/popover';
 import { css } from '@patternfly/react-styles';
+import { FocusTrap } from '@patternfly/react-core';
+import styles from '@patternfly/react-styles/css/components/Popover/popover';
 import { PopoverArrow } from '@patternfly/react-core/dist/js/components/Popover/PopoverArrow';
 import { PopoverBody } from '@patternfly/react-core/dist/js/components/Popover/PopoverBody';
 import { PopoverCloseButton } from '@patternfly/react-core/dist/js/components/Popover/PopoverCloseButton';
 import { PopoverContent } from '@patternfly/react-core/dist/js/components/Popover/PopoverContent';
 import { PopoverHeader } from '@patternfly/react-core/dist/js/components/Popover/PopoverHeader';
 import { PopoverFooter } from '@patternfly/react-core/dist/js/components/Popover/PopoverFooter';
+import { Popper } from '../popper';
 import { PopoverPlacement } from './const';
 import './Popover.scss';
 
@@ -46,19 +47,21 @@ const Popover: React.FC<PopoverProps> = ({
         modifiers: { arrow: { element: '.ocs-popover__arrow' } },
       }}
     >
-      <div id={id} className={css(styles.popover, className)}>
-        <PopoverArrow className="ocs-popover__arrow" />
-        <PopoverContent>
-          <PopoverCloseButton onClose={onClose} aria-label={'closeBtnAriaLabel'} />
-          {headerContent && (
-            <PopoverHeader id={`popover-${uniqueId}-header`}>{headerContent}</PopoverHeader>
-          )}
-          <PopoverBody id={`popover-${uniqueId}-body`}>{children}</PopoverBody>
-          {footerContent && (
-            <PopoverFooter id={`popover-${uniqueId}-footer`}>{footerContent}</PopoverFooter>
-          )}
-        </PopoverContent>
-      </div>
+      <FocusTrap>
+        <div id={id} className={css(styles.popover, className)}>
+          <PopoverArrow className="ocs-popover__arrow" />
+          <PopoverContent>
+            <PopoverCloseButton onClose={onClose} aria-label={'closeBtnAriaLabel'} />
+            {headerContent && (
+              <PopoverHeader id={`popover-${uniqueId}-header`}>{headerContent}</PopoverHeader>
+            )}
+            <PopoverBody id={`popover-${uniqueId}-body`}>{children}</PopoverBody>
+            {footerContent && (
+              <PopoverFooter id={`popover-${uniqueId}-footer`}>{footerContent}</PopoverFooter>
+            )}
+          </PopoverContent>
+        </div>
+      </FocusTrap>
     </Popper>
   </>
 );

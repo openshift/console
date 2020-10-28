@@ -1,10 +1,9 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
-import * as FocusTrap from 'focus-trap-react';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { KEY_CODES, Tooltip } from '@patternfly/react-core';
+import { KEY_CODES, Tooltip, FocusTrap } from '@patternfly/react-core';
 import { AngleRightIcon, EllipsisVIcon } from '@patternfly/react-icons';
 import Popper from '@console/shared/src/components/popper/Popper';
 import {

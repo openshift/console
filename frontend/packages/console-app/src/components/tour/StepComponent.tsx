@@ -32,6 +32,7 @@ const StepComponent: React.FC<StepComponentProps> = ({
   } = React.useContext(TourContext);
   return (
     <TourStepComponent
+      key={step}
       step={step}
       content={content}
       heading={heading}
