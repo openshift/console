@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
+import { Trans, useTranslation } from 'react-i18next';
 import { Button, Popover } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import { EyeIcon, EyeSlashIcon, QuestionCircleIcon } from '@patternfly/react-icons';
@@ -150,45 +151,6 @@ const tableColumnClasses = [
 
 const kind = 'Route';
 
-const RouteTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Namespace',
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-      id: 'namespace',
-    },
-    {
-      title: 'Status',
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Location',
-      sortField: 'spec.host',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: 'Service',
-      sortField: 'spec.to.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[5] },
-    },
-  ];
-};
-RouteTableHeader.displayName = 'RouteTableHeader';
-
 const RouteTableRow: RowFunction<RouteKind> = ({ obj: route, index, key, style }) => {
   return (
     <TableRow id={route.metadata.uid} index={index} trKey={key} style={style}>
@@ -233,25 +195,30 @@ const RouteTableRow: RowFunction<RouteKind> = ({ obj: route, index, key, style }
 
 const TLSSettings: React.FC<TLSSettingsProps> = ({ route }) => {
   const [showKey, setShowKey] = React.useState(false);
+  const { t } = useTranslation();
   const { tls } = route.spec;
   if (!tls) {
-    return <>TLS is not enabled.</>;
+    return <>{t('network-route~TLS is not enabled')}.</>;
   }
 
   const visibleKeyValue = showKey ? tls.key : <MaskedData />;
   return (
     <dl>
-      <DetailsItem label="Termination Type" obj={route} path="spec.tls.termination" />
       <DetailsItem
-        label="Insecure Traffic"
+        label={t('network-route~Termination type')}
+        obj={route}
+        path="spec.tls.termination"
+      />
+      <DetailsItem
+        label={t('network-route~Insecure traffic')}
         obj={route}
         path="spec.tls.insecureEdgeTerminationPolicy"
       />
-      <DetailsItem label="Certificate" obj={route} path="spec.tls.certificate">
+      <DetailsItem label={t('network-route~Certificate')} obj={route} path="spec.tls.certificate">
         {tls.certificate ? <CopyToClipboard value={tls.certificate} /> : '-'}
       </DetailsItem>
       <dt className="co-m-route-tls-reveal__title">
-        Key{' '}
+        {t('network-route~Key')}{' '}
         {tls.key && (
           <Button
             className="pf-m-link--align-left"
@@ -262,24 +229,28 @@ const TLSSettings: React.FC<TLSSettingsProps> = ({ route }) => {
             {showKey ? (
               <>
                 <EyeSlashIcon className="co-icon-space-r" />
-                Hide
+                {t('network-route~Hide')}
               </>
             ) : (
               <>
                 <EyeIcon className="co-icon-space-r" />
-                Reveal
+                {t('network-route~Reveal')}
               </>
             )}
           </Button>
         )}
       </dt>
       <dd>{tls.key ? <CopyToClipboard value={tls.key} visibleValue={visibleKeyValue} /> : '-'}</dd>
-      <DetailsItem label="CA Certificate" obj={route} path="spec.tls.caCertificate">
+      <DetailsItem
+        label={t('network-route~CA certificate')}
+        obj={route}
+        path="spec.tls.caCertificate"
+      >
         {tls.certificate ? <CopyToClipboard value={tls.caCertificate} /> : '-'}
       </DetailsItem>
       {tls.termination === 'reencrypt' && (
         <DetailsItem
-          label="Destination CA Certificate"
+          label={t('network-route~Destination CA certificate')}
           obj={route}
           path="spec.tls.destinationCACertificate"
         >
@@ -353,60 +324,77 @@ const RouteTargetRow: React.FC<RouteTargetRowProps> = ({ route, target }) => (
   </tr>
 );
 
-const CustomRouteHelp: React.FC<CustomRouteHelpProps> = ({ host, routerCanonicalHostname }) => (
-  <Popover
-    headerContent={<>Custom Route</>}
-    bodyContent={
-      <div>
-        <p>
-          To use a custom route, you must update your DNS provider by creating a canonical name
-          (CNAME) record. Your CNAME record should point to your custom domain{' '}
-          <strong>{host}</strong>, to the OpenShift canonical router hostname,{' '}
-          <strong>{routerCanonicalHostname}</strong>, as the alias.
-        </p>
-      </div>
-    }
-  >
-    <Button className="pf-m-link--align-left" type="button" variant="link">
-      <QuestionCircleIcon /> Do you need to set up custom DNS?
-    </Button>
-  </Popover>
-);
+const CustomRouteHelp: React.FC<CustomRouteHelpProps> = ({ host, routerCanonicalHostname }) => {
+  const { t } = useTranslation();
+  return (
+    <Popover
+      headerContent={<>{t('network-route~Custom route')}</>}
+      bodyContent={
+        <div>
+          <p>
+            <Trans t={t} ns="network-route">
+              To use a custom route, you must update your DNS provider by creating a canonical name
+              (CNAME) record. Your CNAME record should point to your custom domain{' '}
+              <strong>{{ host }}</strong>, to the OpenShift canonical router hostname,{' '}
+              <strong>{{ routerCanonicalHostname }}</strong>, as the alias.
+            </Trans>
+          </p>
+        </div>
+      }
+    >
+      <Button className="pf-m-link--align-left" type="button" variant="link">
+        <QuestionCircleIcon /> {t('network-route~Do you need to set up custom DNS?')}
+      </Button>
+    </Popover>
+  );
+};
 
-const RouteIngressStatus: React.FC<RouteIngressStatusProps> = ({ route }) => (
-  <>
-    {_.map(route.status.ingress, (ingress: RouteIngress) => (
-      <div key={ingress.routerName} className="co-m-route-ingress-status">
-        <SectionHeading text={`Router: ${ingress.routerName}`} />
-        <dl>
-          <DetailsItem label="Host" obj={route} path="status.ingress.host">
-            {ingress.host}
-          </DetailsItem>
-          <DetailsItem label="Wildcard Policy" obj={route} path="status.ingress.wildcardPolicy">
-            {ingress.wildcardPolicy}
-          </DetailsItem>
-          <DetailsItem
-            label="Router Canonical Hostname"
-            obj={route}
-            path="status.ingress.routerCanonicalHostname"
-          >
-            <div>{ingress.routerCanonicalHostname || '-'}</div>
-            {showCustomRouteHelp(ingress, route.metadata.annotations) && (
-              <CustomRouteHelp
-                host={ingress.host}
-                routerCanonicalHostname={ingress.routerCanonicalHostname}
-              />
-            )}
-          </DetailsItem>
-        </dl>
-        <h3 className="co-section-heading-secondary">Conditions</h3>
-        <Conditions conditions={ingress.conditions} />
-      </div>
-    ))}
-  </>
-);
+const RouteIngressStatus: React.FC<RouteIngressStatusProps> = ({ route }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      {_.map(route.status.ingress, (ingress: RouteIngress) => (
+        <div key={ingress.routerName} className="co-m-route-ingress-status">
+          <SectionHeading
+            text={`${t('network-route~Router: {{routerName}}', {
+              routerName: ingress.routerName,
+            })}`}
+          />
+          <dl>
+            <DetailsItem label={t('network-route~Host')} obj={route} path="status.ingress.host">
+              {ingress.host}
+            </DetailsItem>
+            <DetailsItem
+              label={t('network-route~Wildcard policy')}
+              obj={route}
+              path="status.ingress.wildcardPolicy"
+            >
+              {ingress.wildcardPolicy}
+            </DetailsItem>
+            <DetailsItem
+              label={t('network-route~Router canonical hostname')}
+              obj={route}
+              path="status.ingress.routerCanonicalHostname"
+            >
+              <div>{ingress.routerCanonicalHostname || '-'}</div>
+              {showCustomRouteHelp(ingress, route.metadata.annotations) && (
+                <CustomRouteHelp
+                  host={ingress.host}
+                  routerCanonicalHostname={ingress.routerCanonicalHostname}
+                />
+              )}
+            </DetailsItem>
+          </dl>
+          <h3 className="co-section-heading-secondary">{t('network-route~Conditions')}</h3>
+          <Conditions conditions={ingress.conditions} />
+        </div>
+      ))}
+    </>
+  );
+};
 
 const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
+  const { t } = useTranslation();
   const primaryIngressStatus: IngressStatusProps = getIngressStatusForHost(
     route.spec.host,
     route.status.ingress,
@@ -414,7 +402,7 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Route Details" />
+        <SectionHeading text={t('network-route~Route details')} />
         <RouteCharts namespace={route.metadata.namespace} route={route.metadata.name} />
         <div className="row">
           <div className="col-sm-6">
@@ -427,24 +415,28 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
                   title={route.spec.to.name}
                 />
               </DetailsItem>
-              <DetailsItem label="Target Port" obj={route} path="spec.port.targetPort" />
+              <DetailsItem
+                label={t('network-route~Target port')}
+                obj={route}
+                path="spec.port.targetPort"
+              />
             </ResourceSummary>
           </div>
           <div className="col-sm-6">
             <dl className="co-m-pane__details">
-              <dt>Location</dt>
+              <dt>{t('network-route~Location')}</dt>
               <dd>
                 <RouteLocation obj={route} />
               </dd>
-              <dt>Status</dt>
+              <dt>{t('network-route~Status')}</dt>
               <dd>
                 <RouteStatus obj={route} />
               </dd>
-              <DetailsItem label="Host" obj={route} path="spec.host" />
-              <DetailsItem label="Path" obj={route} path="spec.path" />
+              <DetailsItem label={t('network-route~Host')} obj={route} path="spec.host" />
+              <DetailsItem label={t('network-route~Path')} obj={route} path="spec.path" />
               {primaryIngressStatus && (
                 <DetailsItem
-                  label="Router Canonical Hostname"
+                  label={t('network-route~Router canonical hostname')}
                   obj={route}
                   path="status.ingress.routerCanonicalHostname"
                 >
@@ -462,22 +454,22 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="TLS Settings" />
+        <SectionHeading text={t('network-route~TLS settings')} />
         <TLSSettings route={route} />
       </div>
       {!_.isEmpty(route.spec.alternateBackends) && (
         <div className="co-m-pane__body">
-          <SectionHeading text="Traffic" />
+          <SectionHeading text={t('network-route~Traffic')} />
           <p className="co-m-pane__explanation">
-            This route splits traffic across multiple services.
+            {t('network-route~This route splits traffic across multiple services.')}
           </p>
           <div className="co-table-container">
             <table className="table">
               <thead>
                 <tr>
-                  <th>Service</th>
-                  <th>Weight</th>
-                  <th>Percent</th>
+                  <th>{t('network-route~Service')}</th>
+                  <th>{t('network-route~Weight')}</th>
+                  <th>{t('network-route~Percent')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -492,7 +484,7 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
       )}
       {_.isEmpty(route.status.ingress) ? (
         <div className="cos-status-box">
-          <div className="text-center">No Route Status</div>
+          <div className="text-center">{t('network-route~No route status')}</div>
         </div>
       ) : (
         <div className="co-m-pane__body">
@@ -512,27 +504,75 @@ export const RoutesDetailsPage: React.FC<RoutesDetailsPageProps> = (props) => (
     pages={[navFactory.details(detailsPage(RouteDetails)), navFactory.editYaml()]}
   />
 );
-export const RoutesList: React.FC = (props) => (
-  <Table {...props} aria-label="Routes" Header={RouteTableHeader} Row={RouteTableRow} virtualize />
-);
 
-const filters = [
-  {
-    filterGroupName: 'Status',
-    type: 'route-status',
-    reducer: routeStatus,
-    items: [
-      { id: 'Accepted', title: 'Accepted' },
-      { id: 'Rejected', title: 'Rejected' },
-      { id: 'Pending', title: 'Pending' },
-    ],
-  },
-];
+export const RoutesList: React.FC = (props) => {
+  const { t } = useTranslation();
+  const RouteTableHeader = () => {
+    return [
+      {
+        title: t('network-route~Name'),
+        sortField: 'metadata.name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[0] },
+      },
+      {
+        title: t('network-route~Namespace'),
+        sortField: 'metadata.namespace',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[1] },
+        id: 'namespace',
+      },
+      {
+        title: t('network-route~Status'),
+        props: { className: tableColumnClasses[2] },
+      },
+      {
+        title: t('network-route~Location'),
+        sortField: 'spec.host',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[3] },
+      },
+      {
+        title: t('network-route~Service'),
+        sortField: 'spec.to.name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[4] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[5] },
+      },
+    ];
+  };
+  return (
+    <Table
+      {...props}
+      aria-label={t('network-route~Routes')}
+      Header={RouteTableHeader}
+      Row={RouteTableRow}
+      virtualize
+    />
+  );
+};
 
 export const RoutesPage: React.FC<RoutesPageProps> = (props) => {
+  const { t } = useTranslation();
   const createProps = {
     to: `/k8s/ns/${props.namespace || 'default'}/routes/~new/form`,
   };
+
+  const filters = [
+    {
+      filterGroupName: t('network-route~Status'),
+      type: 'route-status',
+      reducer: routeStatus,
+      items: [
+        { id: 'Accepted', title: t('network-route~Accepted') },
+        { id: 'Rejected', title: t('network-route~Rejected') },
+        { id: 'Pending', title: t('network-route~Pending') },
+      ],
+    },
+  ];
 
   return (
     <ListPage
