@@ -10,6 +10,7 @@ import {
   RoutePage,
   DevCatalogModel,
   DashboardsOverviewHealthOperator,
+  CatalogItemProvider,
 } from '@console/plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { FLAGS } from '@console/shared/src/constants';
@@ -21,6 +22,11 @@ import { ClusterServiceVersionKind } from './types';
 
 import './style.scss';
 
+const catalogCSVProvider = () =>
+  import('./utils/useClusterServiceVersions' /* webpackChunkName: "catalog-csv-provider" */).then(
+    (m) => m.default,
+  );
+
 type ConsumedExtensions =
   | ModelDefinition
   | ModelFeatureFlag
@@ -30,6 +36,7 @@ type ConsumedExtensions =
   | ResourceDetailsPage
   | RoutePage
   | DevCatalogModel
+  | CatalogItemProvider
   | DashboardsOverviewHealthOperator<ClusterServiceVersionKind>;
 
 const plugin: Plugin<ConsumedExtensions> = [
@@ -51,6 +58,19 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.ClusterServiceVersionModel,
       normalize: normalizeClusterServiceVersions,
+    },
+    flags: {
+      required: [Flags.OPERATOR_LIFECYCLE_MANAGER],
+    },
+  },
+  {
+    type: 'Catalog/ItemProvider',
+    properties: {
+      type: 'ClusterServiceVersion',
+      title: 'Operator Backed',
+      catalog: 'developer',
+      provider: catalogCSVProvider,
+      description: 'Add operator backed services to your project from the Developer Catalog.',
     },
     flags: {
       required: [Flags.OPERATOR_LIFECYCLE_MANAGER],

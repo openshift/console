@@ -89,6 +89,16 @@ export type ExtensionTypeGuard<E extends Extension> = (e: E) => e is E;
 export type LazyLoader<T extends {} = {}> = () => Promise<React.ComponentType<Partial<T>>>;
 
 /**
+ * Code reference, resolved to a function that returns the object `T`.
+ */
+export type CodeRef<T> = () => Promise<T>;
+
+/**
+ * React Lazy loader component
+ */
+export type ReactLazyLoader = () => Promise<{ default: React.ComponentType<any> }>;
+
+/**
  * From Console application perspective, a plugin is a list of extensions
  * enhanced with additional data.
  */

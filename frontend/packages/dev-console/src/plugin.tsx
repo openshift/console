@@ -73,6 +73,7 @@ import { pipelinesTopologyPlugin } from './components/topology/pipelines/pipelin
 import { usePerspectiveDetection } from './utils/usePerspectiveDetection';
 import { getGuidedTour } from './components/guided-tour';
 import { doConnectsToBinding } from './utils/connector-utils';
+import { CatalogConsumedExtensions, catalogPlugin } from './components/catalog/catalog-plugin';
 
 const {
   ClusterTaskModel,
@@ -107,7 +108,8 @@ type ConsumedExtensions =
   | GuidedTour
   | HelmTopologyConsumedExtensions
   | OperatorsTopologyConsumedExtensions
-  | PostFormSubmissionAction;
+  | PostFormSubmissionAction
+  | CatalogConsumedExtensions;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -1169,6 +1171,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   ...helmTopologyPlugin,
   ...operatorsTopologyPlugin,
   ...pipelinesTopologyPlugin,
+  ...catalogPlugin,
 ];
 
 export default plugin;

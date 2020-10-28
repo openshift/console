@@ -29,7 +29,9 @@ export interface HelmChart {
 export interface HelmChartMetaData {
   name: string;
   version: string;
+  created?: string;
   description?: string;
+  digest?: string;
   apiVersion: string;
   appVersion?: string;
   keywords?: string[];
