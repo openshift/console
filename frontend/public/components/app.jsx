@@ -230,14 +230,17 @@ graphQLReady.onReady(() => {
   // Used by GUI tests to check for unhandled exceptions
   window.windowError = null;
   window.onerror = (message, source, lineno, colno, error) => {
+    const { stack } = error;
+    const formattedStack = stack?.replace(/\\n/g, '\n');
+    window.windowError = `unhandled error: ${message} ${formattedStack || ''}`;
     // eslint-disable-next-line no-console
-    console.error('Uncaught error', error);
-    window.windowError = error;
+    console.error(window.windowError);
   };
   window.onunhandledrejection = (promiseRejectionEvent) => {
+    const { reason } = promiseRejectionEvent;
+    window.windowError = `unhandled promise rejection: ${reason}`;
     // eslint-disable-next-line no-console
-    console.error('Unhandled promise rejection', promiseRejectionEvent);
-    window.windowError = promiseRejectionEvent;
+    console.error(window.windowError);
   };
 
   if ('serviceWorker' in navigator) {
