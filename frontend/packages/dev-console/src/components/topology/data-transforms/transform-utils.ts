@@ -17,7 +17,7 @@ import {
   TYPE_EVENT_SOURCE,
   TYPE_KNATIVE_REVISION,
 } from '@console/knative-plugin/src/topology/const';
-import { edgesFromAnnotations } from '../../../utils/application-utils';
+import { edgesFromAnnotations } from '../../../utils/connector-utils';
 import {
   TopologyDataObject,
   TopologyOverviewItem,
