@@ -20,3 +20,4 @@ export * from './pvc';
 export * from './storage-class-params';
 export * from './notification-alerts';
 export * from './guided-tour';
+export * from './post-form-submit';

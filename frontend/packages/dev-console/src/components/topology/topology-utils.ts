@@ -9,11 +9,8 @@ import { RootState } from '@console/internal/redux';
 import { getRouteWebURL } from '@console/internal/components/routes';
 import { OverviewItem } from '@console/shared';
 import { Node, Edge, GraphElement } from '@patternfly/react-topology';
-import {
-  createResourceConnection,
-  updateResourceApplication,
-  removeResourceConnection,
-} from '../../utils/application-utils';
+import { updateResourceApplication, removeResourceConnection } from '../../utils/application-utils';
+import { createResourceConnection } from '../../utils/connector-utils';
 import { TopologyDataObject } from './topology-types';
 import { TYPE_OPERATOR_BACKED_SERVICE } from './operators/components/const';
 import { ALLOW_SERVICE_BINDING } from '../../const';
