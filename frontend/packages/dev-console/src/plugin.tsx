@@ -519,6 +519,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         '/add',
         '/import',
         '/import-sample',
+        '/extensible-catalog',
         '/samples',
         '/topology',
         '/deploy-image',
@@ -557,6 +558,19 @@ const plugin: Plugin<ConsumedExtensions> = [
         (
           await import(
             './components/topology/TopologyPage' /* webpackChunkName: "dev-console-topology" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/extensible-catalog/all-namespaces', '/extensible-catalog/ns/:ns'],
+      loader: async () =>
+        (
+          await import(
+            './components/catalog/CatalogPage' /* webpackChunkName: "dev-console-extensible-catalog" */
           )
         ).default,
     },
