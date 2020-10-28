@@ -21,7 +21,6 @@ import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
 import { findVMIPod } from '../../../selectors/pod/selectors';
 import { getUtilizationQueries, getMultilineUtilizationQueries, VMQueries } from './queries';
-import { getPrometheusQueryEndTimestamp } from '@console/internal/components/graphs/helpers';
 
 // TODO: extend humanizeCpuCores() from @console/internal for the flexibility of space
 const humanizeCpuCores = (v) => {
@@ -36,7 +35,7 @@ const adjustDurationForStart = (start: number, createdAt: string): number => {
   if (!createdAt) {
     return start;
   }
-  const endTimestamp = getPrometheusQueryEndTimestamp();
+  const endTimestamp = Date.now();
   const startTimestamp = endTimestamp - start;
   const createdAtTimestamp = Date.parse(createdAt);
   const adjustedStart = endTimestamp - createdAtTimestamp;

@@ -47,9 +47,9 @@ import {
   formatPrometheusDuration,
   parsePrometheusDuration,
   twentyFourHourTime,
-  twentyFourHourTimeWithSeconds,
 } from '../utils/datetime';
 import { PrometheusAPIError } from './types';
+import { ONE_MINUTE } from '@console/shared/src/constants/time';
 
 const spans = ['5m', '15m', '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w', '2w'];
 const dropdownItems = _.zipObject(spans, spans);
@@ -193,9 +193,7 @@ const TooltipInner_: React.FC<TooltipInnerProps> = ({
               style={{ backgroundColor: colors[seriesIndex % colors.length] }}
             />
             {datumX && (
-              <div className="query-browser__tooltip-time">
-                {twentyFourHourTimeWithSeconds(datumX)}
-              </div>
+              <div className="query-browser__tooltip-time">{twentyFourHourTime(datumX, true)}</div>
             )}
           </div>
           <div className="query-browser__tooltip-group">
@@ -309,9 +307,7 @@ const Graph: React.FC<GraphProps> = React.memo(
         yTickFormat = (v: number) => (v === 0 ? '0' : v.toExponential(1));
       }
     }
-
-    const xTickFormat = span < 5 * 60 * 1000 ? twentyFourHourTimeWithSeconds : twentyFourHourTime;
-
+    const xTickFormat = (d) => twentyFourHourTime(d, span < 5 * ONE_MINUTE);
     let xAxisStyle;
     if (width < 225) {
       xAxisStyle = {

@@ -1,6 +1,10 @@
 import * as _ from 'lodash-es';
-
-import { PROMETHEUS_BASE_PATH, PROMETHEUS_TENANCY_BASE_PATH } from './index';
+import {
+  PROMETHEUS_BASE_PATH,
+  PROMETHEUS_TENANCY_BASE_PATH,
+  DEFAULT_PROMETHEUS_SAMPLES,
+  DEFAULT_PROMETHEUS_TIMESPAN,
+} from './index';
 
 export enum PrometheusEndpoint {
   LABEL = 'api/v1/label',
@@ -9,20 +13,16 @@ export enum PrometheusEndpoint {
   QUERY_RANGE = 'api/v1/query_range',
 }
 
-export const getPrometheusQueryEndTimestamp = () => Date.now();
-
 // Range vector queries require end, start, and step search params
 const getRangeVectorSearchParams = (
-  timespan: number,
-  endTime: number = getPrometheusQueryEndTimestamp(),
-  samples: number = 60,
+  endTime: number = Date.now(),
+  samples: number = DEFAULT_PROMETHEUS_SAMPLES,
+  timespan: number = DEFAULT_PROMETHEUS_TIMESPAN,
 ): URLSearchParams => {
   const params = new URLSearchParams();
-  if (timespan > 0) {
-    params.append('start', `${(endTime - timespan) / 1000}`);
-    params.append('end', `${endTime / 1000}`);
-    params.append('step', `${timespan / samples / 1000}`);
-  }
+  params.append('start', `${(endTime - timespan) / 1000}`);
+  params.append('end', `${endTime / 1000}`);
+  params.append('step', `${timespan / samples / 1000}`);
   return params;
 };
 
@@ -35,7 +35,7 @@ const getSearchParams = ({
 }: PrometheusURLProps): URLSearchParams => {
   const searchParams =
     endpoint === PrometheusEndpoint.QUERY_RANGE
-      ? getRangeVectorSearchParams(timespan, endTime, samples)
+      ? getRangeVectorSearchParams(endTime, samples, timespan)
       : new URLSearchParams();
   _.each(params, (value, key) => value && searchParams.append(key, value.toString()));
   return searchParams;

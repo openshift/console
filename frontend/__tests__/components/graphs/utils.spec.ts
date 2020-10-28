@@ -41,9 +41,7 @@ describe('getRangeVectorStats()', () => {
 
     const [d1, d2] = data[0];
     const date1 = new Date(1000);
-    date1.setSeconds(0, 0);
     const date2 = new Date(2000);
-    date2.setSeconds(0, 0);
     expect(d1.x).toEqual(date1);
     expect(d1.y).toEqual(123.4);
     expect(d2.x).toEqual(date2);
