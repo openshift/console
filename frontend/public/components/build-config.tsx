@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
 import { K8sResourceKind, K8sResourceKindReference, referenceFor } from '../module/k8s';
 import { startBuild } from '../module/k8s/builds';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
@@ -34,7 +35,8 @@ import { BuildConfigModel } from '../models';
 const BuildConfigsReference: K8sResourceKindReference = 'BuildConfig';
 
 const startBuildAction: KebabAction = (kind, buildConfig) => ({
-  label: 'Start Build',
+  // t('build-config~Start build')
+  labelKey: 'build-config~Start build',
   callback: () =>
     startBuild(buildConfig)
       .then((build) => {
@@ -62,12 +64,12 @@ const menuActions = [
 
 export const BuildConfigsDetails: React.SFC<BuildConfigsDetailsProps> = ({ obj: buildConfig }) => {
   const hasPipeline = buildConfig.spec.strategy.type === BuildStrategyType.JenkinsPipeline;
-
+  const { t } = useTranslation();
   return (
     <>
       <div className="co-m-pane__body">
         {hasPipeline && <PipelineBuildStrategyAlert obj={buildConfig} />}
-        <SectionHeading text="Build Config Details" />
+        <SectionHeading text={t('build-config~Build Config details')} />
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={buildConfig} />
@@ -112,41 +114,6 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const BuildConfigsTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Namespace',
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-      id: 'namespace',
-    },
-    {
-      title: 'Labels',
-      sortField: 'metadata.labels',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Created',
-      sortField: 'metadata.creationTimestamp',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[4] },
-    },
-  ];
-};
-BuildConfigsTableHeader.displayName = 'BuildConfigsTableHeader';
-
 const BuildConfigsTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
@@ -186,41 +153,82 @@ const allStrategies = [
   BuildStrategyType.Source,
   BuildStrategyType.Custom,
 ];
-const filters = [
-  {
-    filterGroupName: 'Build Strategy',
-    type: 'build-strategy',
-    reducer: buildStrategy,
-    items: _.map(allStrategies, (strategy) => ({
-      id: strategy,
-      title: strategy,
-    })),
-  },
-];
 
-export const BuildConfigsList: React.SFC = (props) => (
-  <Table
-    {...props}
-    aria-label="Build Configs"
-    Header={BuildConfigsTableHeader}
-    Row={BuildConfigsTableRow}
-    virtualize
-  />
-);
+export const BuildConfigsList: React.SFC = (props) => {
+  const { t } = useTranslation();
+  const BuildConfigsTableHeader = () => {
+    return [
+      {
+        title: t('build-config~Name'),
+        sortField: 'metadata.name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[0] },
+      },
+      {
+        title: t('build-config~Namespace'),
+        sortField: 'metadata.namespace',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[1] },
+        id: 'namespace',
+      },
+      {
+        title: t('build-config~Labels'),
+        sortField: 'metadata.labels',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[2] },
+      },
+      {
+        title: t('build-config~Created'),
+        sortField: 'metadata.creationTimestamp',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[3] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[4] },
+      },
+    ];
+  };
+  BuildConfigsTableHeader.displayName = 'BuildConfigsTableHeader';
+
+  return (
+    <Table
+      {...props}
+      aria-label={t('build-config~Build Configs')}
+      Header={BuildConfigsTableHeader}
+      Row={BuildConfigsTableRow}
+      virtualize
+    />
+  );
+};
 
 BuildConfigsList.displayName = 'BuildConfigsList';
 
-export const BuildConfigsPage: React.SFC<BuildConfigsPageProps> = (props) => (
-  <ListPage
-    {...props}
-    title="Build Configs"
-    kind={BuildConfigsReference}
-    ListComponent={BuildConfigsList}
-    canCreate={true}
-    filterLabel={props.filterLabel}
-    rowFilters={filters}
-  />
-);
+export const BuildConfigsPage: React.FC<BuildConfigsPageProps> = (props) => {
+  const { t } = useTranslation();
+  const filters = [
+    {
+      filterGroupName: t('build-config~Build strategy'),
+      type: 'build-strategy',
+      reducer: buildStrategy,
+      items: _.map(allStrategies, (strategy) => ({
+        id: strategy,
+        title: strategy,
+      })),
+    },
+  ];
+  return (
+    <ListPage
+      {...props}
+      title={t('build-config~Build Configs')}
+      kind={BuildConfigsReference}
+      ListComponent={BuildConfigsList}
+      canCreate={true}
+      filterLabel={props.filterLabel}
+      rowFilters={filters}
+    />
+  );
+};
 BuildConfigsPage.displayName = 'BuildConfigsListPage';
 
 export type BuildConfigsDetailsProps = {
