@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useFormikContext } from 'formik';
 import { Badge, Expandable, FormHelperText } from '@patternfly/react-core';
 import FormSection from '../../../import/section/FormSection';
+import { usePipelineOperatorVersion } from '../../utils/pipeline-operator';
 import { TriggerBindingKind, TriggerBindingParam } from '../../resource-types';
 import TriggerBindingSelector from './TriggerBindingSelector';
 import { AddTriggerFormValues } from './types';
@@ -9,8 +10,17 @@ import { AddTriggerFormValues } from './types';
 import './TriggerBindingSection.scss';
 
 const TriggerBindingSection: React.FC = () => {
-  const { setFieldValue } = useFormikContext<AddTriggerFormValues>();
+  const { values, setFieldValue } = useFormikContext<AddTriggerFormValues>();
   const [bindingVars, setBindingVars] = React.useState<TriggerBindingParam[]>(null);
+
+  // Starting with Pipeline Operator 1.1 (Tekton Triggers 0.6) we should use a new param name.
+  const pipelineOperatorVersion = usePipelineOperatorVersion(values.namespace);
+  const paramPrefix =
+    pipelineOperatorVersion?.major === 0 ||
+    (pipelineOperatorVersion?.major === 1 && pipelineOperatorVersion?.minor === 0)
+      ? 'params.'
+      : 'tt.params.';
+
   const updateTriggerBindingVariables = React.useCallback(
     (selectedTriggerBinding: TriggerBindingKind) => {
       setBindingVars(selectedTriggerBinding.spec.params);
@@ -44,7 +54,7 @@ const TriggerBindingSection: React.FC = () => {
               className="odc-trigger-binding-section__variable-help-text"
             >
               Use this format when referencing variables in this form:{' '}
-              <code>{'$(params.parameter)'}</code>
+              <code>{`$(${paramPrefix}parameter)`}</code>
             </FormHelperText>
           </Expandable>
         )}

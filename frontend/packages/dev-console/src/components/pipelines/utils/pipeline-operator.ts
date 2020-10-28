@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { compare, parse, SemVer } from 'semver';
 import {
   ClusterServiceVersionKind,
@@ -22,4 +23,17 @@ export const getPipelineOperatorVersion = async (namespace: string): Promise<Sem
     return versions[versions.length - 1];
   }
   return null;
+};
+
+export const usePipelineOperatorVersion = (namespace: string): SemVer | null => {
+  const [version, setVersion] = React.useState<SemVer | null>(null);
+  React.useEffect(() => {
+    getPipelineOperatorVersion(namespace)
+      .then(setVersion)
+      .catch((error) =>
+        // eslint-disable-next-line no-console
+        console.warn('Error while determinate OpenShift Pipelines Operator version:', error),
+      );
+  }, [namespace]);
+  return version;
 };
