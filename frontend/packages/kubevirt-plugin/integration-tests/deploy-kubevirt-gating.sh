@@ -1,7 +1,7 @@
 KUBEVIRT_VERSION=$(curl -s https://github.com/kubevirt/kubevirt/releases/latest | grep -o "v[0-9]\.[0-9]*\.[0-9]*")
 CDI_VERSION=$(curl -s https://github.com/kubevirt/containerized-data-importer/releases/latest | grep -o "v[0-9]\.[0-9]*\.[0-9]*")
 
-VIRTCTL_DOWNLOAD_URL="https://github.com/kubevirt/kubevirt/releases/download/${KUBEVIRT_VERSION}/virtctl-${KUBEVIRT_VERSION}" 
+VIRTCTL_DOWNLOAD_URL="https://github.com/kubevirt/kubevirt/releases/download/${KUBEVIRT_VERSION}/virtctl-${KUBEVIRT_VERSION}"
 VIRTCTL_X86_64="${VIRTCTL_DOWNLOAD_URL}-linux-x86_64"
 VIRTCTL_AMD64="${VIRTCTL_DOWNLOAD_URL}-linux-amd64"
 
@@ -49,7 +49,7 @@ metadata:
   labels:
   kubevirt.io: ""
 data:
-  feature-gates: "LiveMigration"
+  feature-gates: "DataVolumes,SRIOV,LiveMigration,CPUManager,CPUNodeDiscovery,Sidecar,Snapshot"
 EOF
 
 # Install virtctl binary and add in to PATH
