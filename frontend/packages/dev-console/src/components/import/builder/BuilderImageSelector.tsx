@@ -16,15 +16,15 @@ const BuilderImageSelector: React.FC<BuilderImageSelectorProps> = ({
   loadingImageStream,
   builderImages,
 }) => {
-  const { values, setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
-  const { selected, recommended, isRecommending, couldNotRecommend } = values.image;
+  const { values, setFieldValue, setFieldTouched, validateForm } = useFormikContext<FormikValues>();
+  const { selected, recommended, isRecommending, couldNotRecommend, tag } = values.image;
 
   React.useEffect(() => {
-    if (selected) {
-      setFieldValue('image.tag', _.get(builderImages, `${selected}.recentTag.name`, ''));
+    if (selected && !tag) {
+      setFieldValue('image.tag', builderImages?.[selected]?.recentTag?.name ?? '');
       setFieldTouched('image.tag', true);
     }
-  }, [selected, setFieldValue, setFieldTouched, builderImages]);
+  }, [selected, setFieldValue, setFieldTouched, builderImages, tag]);
 
   const fieldId = getFieldId('image.name', 'selector');
 
@@ -41,7 +41,7 @@ const BuilderImageSelector: React.FC<BuilderImageSelectorProps> = ({
 
   return (
     <FormGroup fieldId={fieldId} label="Builder Image">
-      {isRecommending && (
+      {isRecommending && !recommended && (
         <>
           <LoadingInline /> Detecting recommended builder images...
         </>
@@ -68,6 +68,11 @@ const BuilderImageSelector: React.FC<BuilderImageSelectorProps> = ({
         name="image.selected"
         loadingItems={loadingImageStream}
         recommended={values.image.recommended}
+        onSelect={() => {
+          setFieldValue('image.tag', '', false);
+          setFieldTouched('image.tag', true);
+          validateForm();
+        }}
       />
     </FormGroup>
   );
