@@ -25,14 +25,12 @@ function removeValues(i18nFile, filePath) {
 
   fs.writeFile(tmpFile, JSON.stringify(updatedFile, null, 2), function writeJSON(e) {
     if (e) {
-      // eslint-disable-next-line no-console
       return console.error(e);
     }
   });
 }
 
 function processFile(fileName, package, language) {
-  /* eslint-disable no-undef, no-console */
   if (package) {
     const i18nFile = path.join(__dirname, `./../packages/${package}/locales/en/${fileName}.json`);
 
@@ -74,7 +72,6 @@ function processFile(fileName, package, language) {
     common.deleteFile(tmpFile);
     console.log(`Processed ${fileName}`);
   }
-  /* eslint-enable */
 }
 
 const options = {
@@ -97,7 +94,6 @@ const options = {
 const args = minimist(process.argv.slice(2), options);
 
 if (args.help) {
-  // eslint-disable-next-line no-console
   return console.log(
     "-h: help\n-l: language (defaults to 'ja')\n-p: package (i.e. 'dev-console'; defaults to undefined)\n-f: file name to convert (i.e. 'nav')",
   );
