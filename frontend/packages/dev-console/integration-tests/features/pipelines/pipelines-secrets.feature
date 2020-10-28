@@ -13,7 +13,7 @@ Scenario: Add Secrets : P-11-TC01
    When user selects "Start" option from kebab menu for pipeline "pipe-task-with-resource"
    And user clicks on Show Credentials link present in Start Pipeline modal
    And user clicks on "Add Secret" link
-   Then user is able to see Create Source Secret section
+   Then user is able to see Create Secret section
    And user is able to see Secret Name, Access to, Server UrL fields and authernication type fields
 
 

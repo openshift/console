@@ -72,7 +72,7 @@ const PipelineSecretSection: React.FC<PipelineSecretSectionProps> = ({ namespace
       <div className="odc-pipeline-secret-section">
         <p>
           {t(
-            'pipelines-plugin~The following secrets are available for all pipelines in this namespace to authenticate to the specified Git server or Docker registry:',
+            'pipelines-plugin~The following secrets are available for all pipelines in this namespace to authenticate to the specified Git server or Image registry:',
           )}
         </p>
         <div className="odc-pipeline-secret-section__secrets">

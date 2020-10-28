@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { FormikValues, useFormikContext } from 'formik';
+import { FormikProps } from 'formik';
 import { TextInputTypes } from '@patternfly/react-core';
 import { ButtonBar } from '@console/internal/components/utils';
 import {
@@ -11,14 +11,8 @@ import {
   CreateConfigSubform,
 } from '@console/internal/components/secrets/create-secret';
 import { DropdownField, InputField, ActionGroupWithIcons } from '@console/shared';
-import SecretAnnotation from './SecretAnnotation';
+import { SecretAnnotationId } from '../../const';
 import './SecretForm.scss';
-
-const authTypes = {
-  [SecretType.dockerconfigjson]: 'Image Registry Credentials',
-  [SecretType.basicAuth]: 'Basic Authentication',
-  [SecretType.sshAuth]: 'SSH Key',
-};
 
 const renderSecretForm = (
   type: SecretType,
@@ -48,19 +42,86 @@ const renderSecretForm = (
   }
 };
 
-const SecretForm: React.FC<FormikValues> = ({
+interface SecretFormValues {
+  secretName: string;
+  type: SecretType;
+  annotations: {
+    key: SecretAnnotationId;
+    value: string; // url
+  };
+  formData: any;
+}
+
+const SecretForm: React.FC<FormikProps<SecretFormValues>> = ({
+  values,
+  setFieldValue,
+  setFieldTouched,
   handleSubmit,
   handleReset,
   status,
   isSubmitting,
 }) => {
   const { t } = useTranslation();
-  const { values, setFieldValue } = useFormikContext<FormikValues>();
   const [stringData, setStringData] = React.useState({
     [SecretType.basicAuth]: {},
     [SecretType.sshAuth]: {},
     [SecretType.dockerconfigjson]: {},
   });
+
+  const secretTypes = React.useMemo<Record<string, string>>(
+    () => ({
+      [SecretAnnotationId.Git]: t('pipelines-plugin~Git Server'),
+      [SecretAnnotationId.Image]: t('pipelines-plugin~Image Registry'),
+    }),
+    [t],
+  );
+
+  const authTypes = React.useMemo<Record<string, string>>(() => {
+    switch (values.annotations.key) {
+      case SecretAnnotationId.Git:
+        return {
+          [SecretType.basicAuth]: t('pipelines-plugin~Basic Authentication'),
+          [SecretType.sshAuth]: t('pipelines-plugin~SSH Key'),
+        };
+      case SecretAnnotationId.Image:
+        return {
+          [SecretType.basicAuth]: t('pipelines-plugin~Basic Authentication'),
+          [SecretType.dockerconfigjson]: t('pipelines-plugin~Image Registry Credentials'),
+        };
+      default:
+        return {};
+    }
+  }, [values.annotations.key, t]);
+
+  const clearServerURL = React.useCallback(() => {
+    setFieldValue('annotations', {
+      key: values.annotations.key,
+      value: '', // clear url
+    });
+    setFieldTouched('annotations', false);
+  }, [setFieldTouched, setFieldValue, values.annotations.key]);
+
+  React.useEffect(() => {
+    const availableAuthTypes = Object.keys(authTypes);
+    if (!availableAuthTypes.includes(values.type)) {
+      setFieldValue('type', SecretType.basicAuth);
+      clearServerURL();
+    }
+  }, [authTypes, values.type, setFieldValue, clearServerURL]);
+
+  // Uses a memo instead of const outside of the function so that we can add i18n right here
+  const helpText = React.useMemo(
+    () => ({
+      [SecretType.dockerconfigjson]: t(
+        'pipelines-plugin~The base server url (e.g. https://quay.io/)',
+      ),
+      [SecretType.basicAuth]: t('pipelines-plugin~The base server url (e.g. https://github.com)'),
+      [SecretType.sshAuth]: t(
+        'pipelines-plugin~Server hostname without schema or path (e.g. github.com)',
+      ),
+    }),
+    [t],
+  );
 
   const setValues = (type: SecretType) => {
     if (type === SecretType.dockerconfigjson) {
@@ -70,6 +131,9 @@ const SecretForm: React.FC<FormikValues> = ({
       );
     } else {
       setFieldValue('formData', stringData[type]);
+    }
+    if (values.type !== type) {
+      clearServerURL();
     }
   };
 
@@ -81,19 +145,26 @@ const SecretForm: React.FC<FormikValues> = ({
   return (
     <div className="odc-secret-form">
       <h1 className="co-section-heading-tertiary odc-secret-form__title">
-        {t('pipelines-plugin~Create Source Secret')}
+        {t('pipelines-plugin~Create Secret')}
       </h1>
       <div className="form-group">
         <InputField
           type={TextInputTypes.text}
-          required
           name="secretName"
           label={t('pipelines-plugin~Secret name')}
           helpText={t('pipelines-plugin~Unique name of the new secret.')}
+          required
         />
       </div>
       <div className="form-group">
-        <SecretAnnotation fieldName="annotations" />
+        <DropdownField
+          name="annotations.key"
+          label={t('pipelines-plugin~Access to')}
+          helpText={t('pipelines-plugin~Designate provider to be authenticated.')}
+          items={secretTypes}
+          fullWidth
+          required
+        />
       </div>
       <div className="form-group">
         <DropdownField
@@ -103,6 +174,15 @@ const SecretForm: React.FC<FormikValues> = ({
           title={authTypes[values.type]}
           onChange={(type: SecretType) => setValues(type)}
           fullWidth
+          required
+        />
+      </div>
+      <div className="form-group">
+        <InputField
+          name="annotations.value"
+          label={t('pipelines-plugin~Server URL')}
+          helpText={helpText[values.type]}
+          type={TextInputTypes.text}
           required
         />
       </div>

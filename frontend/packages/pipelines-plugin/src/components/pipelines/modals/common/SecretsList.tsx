@@ -52,7 +52,7 @@ const Secrets: React.FC<SecretsProps> = ({ secrets, serviceaccounts }) => {
         );
       })}
       {_.isEmpty(sortedFilterData) && (
-        <SecondaryStatus status={t('pipelines-plugin~No source secrets found')} />
+        <SecondaryStatus status={t('pipelines-plugin~No secrets found')} />
       )}
     </div>
   );
