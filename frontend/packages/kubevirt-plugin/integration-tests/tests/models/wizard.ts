@@ -36,7 +36,7 @@ import { TemplateModel } from '@console/internal/models';
 import { templateCreateVMLink } from '../../views/template.view';
 
 export class Wizard {
-  async openWizard(model: K8sKind) {
+  async openWizard(model: K8sKind = null) {
     if (
       !(await virtualizationTitle.isPresent()) ||
       (await virtualizationTitle.getText()) !== VIRTUALIZATION_TITLE

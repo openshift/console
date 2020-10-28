@@ -240,7 +240,7 @@ describe('Kubevirt create VM using wizard', () => {
     const wizard = new Wizard();
     await vm.navigateToListView();
     await isLoaded();
-    await wizard.openWizard(null);
+    await wizard.openWizard();
     await wizard.processGeneralStep(vm.getData(), true);
     await browser.wait(
       waitForStringInElement(view.footerError, 'Please correct the following field: Boot Source.'),
