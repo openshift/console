@@ -3,13 +3,20 @@ import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
 import * as PropTypes from 'prop-types';
 import { Alert } from '@patternfly/react-core';
-
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { FLAGS } from '@console/shared/src/constants';
 import { Dropdown } from './dropdown';
 import { Firehose } from './firehose';
 import { LoadingInline } from './status-box';
 import { ResourceName } from './resource-icon';
-import { connectToFlags, flagPending } from '../../reducers/features';
+import { flagPending } from '../../reducers/features';
+import { useAccessReview } from '@console/internal/components/utils';
+import { createNamespaceModal, createProjectModal } from '../modals';
+import { NamespaceModel, ProjectModel } from '@console/internal/models';
+
+const getKey = (key, keyKind) => {
+  return keyKind ? `${key}-${keyKind}` : key;
+};
 
 class ListDropdown_ extends React.Component {
   constructor(props) {
@@ -19,9 +26,7 @@ class ListDropdown_ extends React.Component {
     };
 
     if (props.selectedKey) {
-      this.state.selectedKey = props.selectedKeyKind
-        ? `${props.selectedKey}-${props.selectedKeyKind}`
-        : props.selectedKey;
+      this.state.selectedKey = getKey(props.selectedKey, props.selectedKeyKind);
     }
 
     this.state.title = props.loaded ? props.placeholder : <LoadingInline />;
@@ -29,9 +34,12 @@ class ListDropdown_ extends React.Component {
     this.autocompleteFilter = (text, item) => fuzzy(text, item.props.name);
     // Pass both the resource name and the resource kind to onChange()
     this.onChange = (key) => {
+      if (_.find(this.props.actionItems, { actionKey: key })) {
+        this.props.onChange(key);
+      }
       const { name, kindLabel, resource } = _.get(this.state, ['items', key], {});
       this.setState({ selectedKey: key, title: <ResourceName kind={kindLabel} name={name} /> });
-      this.props.onChange(name, kindLabel, resource);
+      this.props.onChange?.(name, kindLabel, resource);
     };
   }
 
@@ -49,12 +57,13 @@ class ListDropdown_ extends React.Component {
     loadError,
     resources,
     dataFilter,
+    ...nextProps
   }) {
     if (!loaded) {
       return;
     }
 
-    this.setState(({ selectedKey }) => {
+    this.setState((currentState) => {
       if (loadError) {
         return {
           title: <div className="cos-error-title">Error Loading {desc}</div>,
@@ -85,8 +94,17 @@ class ListDropdown_ extends React.Component {
         .forEach((key) => {
           sortedList[key] = unsortedList[key];
         });
+
+      const keyChanged = currentState.selectedKey !== nextProps.selectedKey;
+      const keyKindChanged = currentState.selectedKeyKind !== nextProps.selectedKeyKind;
+      const selectedKey =
+        keyChanged || keyKindChanged
+          ? getKey(nextProps.selectedKey, nextProps.selectedKeyKind)
+          : currentState.selectedKey;
+
       const selectedItem = sortedList[selectedKey];
       return {
+        selectedKey,
         items: sortedList,
         title: selectedItem ? (
           <ResourceName kind={selectedItem.kindLabel} name={selectedItem.name} />
@@ -116,6 +134,7 @@ class ListDropdown_ extends React.Component {
       items[selectedKey]
     ) : (
       <Dropdown
+        actionItems={this.props.actionItems}
         autocompleteFilter={this.autocompleteFilter}
         autocompletePlaceholder={placeholder}
         items={items}
@@ -175,22 +194,77 @@ ListDropdown.propTypes = {
   id: PropTypes.string,
 };
 
-const NsDropdown_ = (props) => {
-  const openshiftFlag = props.flags[FLAGS.OPENSHIFT];
-  if (flagPending(openshiftFlag)) {
-    return null;
+const useProjectOrNamespaceModel = () => {
+  const canCreateNamespace = useAccessReview({
+    group: NamespaceModel.apiGroup,
+    resource: NamespaceModel.plural,
+    verb: 'create',
+  });
+
+  const canCreateProject = useFlag(FLAGS.CAN_CREATE_PROJECT);
+  const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
+
+  if (flagPending(openshiftFlag) || flagPending(canCreateProject)) {
+    return [];
   }
-  const kind = openshiftFlag ? 'Project' : 'Namespace';
-  const resources = [{ kind }];
-  return (
+
+  // NamespaceModal is used when not on an openshift cluster
+  const model = canCreateNamespace || !openshiftFlag ? NamespaceModel : ProjectModel;
+  const canCreate = canCreateNamespace || (openshiftFlag && canCreateProject);
+  return [model, canCreate];
+};
+
+/** @type {React.FC<{dataFilter?: (ns: any) => boolean, desc?: string, selectedKey?: string, fixed?: boolean, placeholder?: string, onChange?: (selectedKey: string, selectedKeyKind: string,  selectedResource?: K8sResourceKind) => void, id?: string, dataTest?: string}}>} */
+export const NsDropdown = (props) => {
+  const [selectedKey, setSelectedKey] = React.useState(props.selectedKey);
+  const [model, canCreate] = useProjectOrNamespaceModel();
+
+  const actionItems =
+    model && canCreate
+      ? [
+          {
+            actionTitle: `Create ${model.label}`,
+            actionKey: `Create_${model.label}`,
+          },
+        ]
+      : [];
+
+  const onChange = (actionKey, kindLabel, resource) => {
+    switch (actionKey) {
+      case 'Create_Namespace':
+        createNamespaceModal({
+          blocking: true,
+          onSubmit: (newNamespace) => {
+            setSelectedKey(newNamespace.metadata.name);
+            props.onChange?.(newNamespace.metadata.name, newNamespace.kind, newNamespace);
+          },
+        });
+        break;
+      case 'Create_Project':
+        createProjectModal({
+          blocking: true,
+          onSubmit: (newProject) => {
+            setSelectedKey(newProject.metadata.name);
+            props.onChange?.(newProject.metadata.name, newProject.kind, newProject);
+          },
+        });
+        break;
+      default:
+        props.onChange?.(actionKey, kindLabel, resource);
+        break;
+    }
+  };
+
+  return model ? (
     <ListDropdown
       {...props}
-      desc="Namespaces"
-      resources={resources}
-      selectedKeyKind={kind}
-      placeholder="Select namespace"
+      actionItems={actionItems}
+      desc={model.plural}
+      onChange={onChange}
+      placeholder={`Select ${model.kind}`}
+      resources={[{ kind: `${model.kind}` }]}
+      selectedKeyKind={model.kind}
+      selectedKey={selectedKey}
     />
-  );
+  ) : null;
 };
-/** @type {React.FC<{dataFilter?: (ns: any) => boolean, desc?: string, selectedKey?: string, selectedKeyKind?: string, fixed?: boolean, placeholder?: string, onChange?: (selectedKey: string, event: React.Event) => void, id?: string}}>} */
-export const NsDropdown = connectToFlags(FLAGS.OPENSHIFT)(NsDropdown_);

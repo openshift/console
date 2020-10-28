@@ -506,7 +506,8 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     <NsDropdown
       id="dropdown-selectbox"
       selectedKey={selectedTargetNamespace}
-      onChange={setTargetNamespace}
+      onChange={(ns) => setTargetNamespace(ns)}
+      dataTest="dropdown-selectbox"
     />
   ) : (
     <div className="form-group">
@@ -531,13 +532,14 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         }}
         value={suggestedNamespace}
         checked={!useSuggestedNSForSingleInstallMode}
-        title="Pick an existing namespace"
+        title="Select a namespace"
       />
       {!useSuggestedNSForSingleInstallMode && (
         <NsDropdown
           id="dropdown-selectbox"
           selectedKey={selectedTargetNamespace}
-          onChange={setTargetNamespace}
+          onChange={(ns) => setTargetNamespace(ns)}
+          dataTest="dropdown-selectbox"
         />
       )}
     </div>
