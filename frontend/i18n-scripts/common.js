@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 
-// eslint-disable-next-line no-undef
 module.exports = {
   isDirectory: function(filePath) {
     try {
@@ -27,7 +26,6 @@ module.exports = {
           argFunction(filePath, package);
         }
       } catch (e) {
-        // eslint-disable-next-line no-console
         console.error(e);
       }
     })();
@@ -36,7 +34,6 @@ module.exports = {
     try {
       fs.unlinkSync(filePath);
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.error(e);
     }
   },
