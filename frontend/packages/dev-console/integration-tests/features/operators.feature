@@ -93,6 +93,16 @@ Scenario: Create HyperConverged Cluster: VM-01-TC02
     Then user will see a HyperConverged Cluster created
     And user will see Virtualization item under Workloads
 
+@regression @smoke
+Scenario: Quay container security operator
+   Given user is at Operator Hub page with the header name "OperatorHub"
+   When user searches for "quay container security"
+   And user clicks on quay container security operator card on Operator Hub page
+   And user clicks install button present on the right sidebar
+   And user installs the quay container security operator with default values
+   Then user will see a quay container security installing modal
+   And user will see a View Operator button
+
 
 @regression
 Scenario: Uninstall the Pipeline Operator from Operator Hub page : P-013-TC01, P-013-TC02
