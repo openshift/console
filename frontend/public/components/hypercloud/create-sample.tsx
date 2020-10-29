@@ -58,7 +58,7 @@ const CreateSampleComponent: React.FC<SampleFormProps> = props => {
         />
       </Section>
       <Section id="cpu" label="Input Selectbox">
-        <InputSelectBox textName="spec.cpu" dropdownName="spec.cpuRange" selectedKey="Mi" items={dropdownUnits} />
+        <InputSelectBox textName="spec.cpu" id="cpu" dropdownName="spec.cpuRange" selectedKey="Mi" items={dropdownUnits} />
       </Section>
     </div>
   );
@@ -80,7 +80,7 @@ export const onSubmitCallback = data => {
 
 type CreateSampleProps = {
   match: RMatch<{
-    params?: string;
+    type?: string;
   }>;
   fixed: object;
   explanation: string;
