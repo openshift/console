@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -exuo pipefail
+set -euo pipefail
 cd frontend
 yarn install
 
@@ -8,8 +8,51 @@ function generateReport {
 }
 trap generateReport EXIT
 
-if [ $# -gt 0 ] && [ -n "$1" ]; then
-  yarn run test-cypress-headless --spec "$1"
-else
-  yarn run test-cypress-headless
+while getopts p:s:h:l: flag
+do
+  case "${flag}" in
+    p) pkg=${OPTARG};;
+    s) spec=${OPTARG};;
+    h) headless=${OPTARG};;
+  esac
+done
+
+if [ $# -eq 0 ]; then
+    echo "Runs Cypress tests in Test Runner or headless mode"
+    echo "Usage: test-cypress [-p] <package> [-s] <filemask> [-h true]"
+    echo "  '-p <package>' may be 'console, 'olm' or 'devconsole'"
+    echo "  '-s <specmask>' is a file mask for spec test files, such as 'tests/monitoring/*'. Used only in headless mode when '-p' is specified."
+    echo "  '-h true' runs Cypress in headless mode. When omitted, launches Cypress Test Runner"
+    echo "Examples:"
+    echo "  test-cypress.sh                                       // displays this help text"
+    echo "  test-cypress.sh -p console                            // opens Cypress Test Runner for console tests"
+    echo "  test-cypress.sh -p olm                                // opens Cypress Test Runner for OLM tests"
+    echo "  test-cypress.sh -h true                               // runs all packages in headless mode"
+    echo "  test-cypress.sh -p olm -h true                        // runs OLM tests in headless mode"
+    echo "  test-cypress.sh -p console -s 'tests/crud/*' -h true  // runs console CRUD tests in headless mode"
+    trap EXIT
+    exit;
 fi
+
+if [ -n "${headless-}" ] && [ -z "${pkg-}" ]; then
+  echo "yarn run test-cypress-console-headless"
+  echo "yarn run test-cypress-olm-headless"
+  echo "yarn run test-cypress-devconsole-headless"
+  exit;
+fi
+
+yarn_script="test-cypress"
+
+if [ -n "${pkg-}" ]; then
+    yarn_script="$yarn_script-$pkg"
+fi
+
+if [ -n "${headless-}" ]; then
+  yarn_script="$yarn_script-headless"
+fi
+
+if [ -n "${spec-}" ]; then
+  yarn_script="$yarn_script --spec '$spec'"
+fi
+
+yarn run $yarn_script

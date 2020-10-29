@@ -39,7 +39,7 @@ if [ "$SCENARIO" != "login" ]; then
 fi
 
 if [ "$SCENARIO" == "e2e" ] || [ "$SCENARIO" == "release" ]; then
-  ./test-cypress.sh
+  ./test-cypress.sh -h true
 elif [ "$SCENARIO" == "login" ]; then
-  ./test-cypress.sh 'tests/app/auth-multiuser-login.spec.ts'
+  ./test-cypress.sh -p console -s 'tests/app/auth-multiuser-login.spec.ts' -h true
 fi
