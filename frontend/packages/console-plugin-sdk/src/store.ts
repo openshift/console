@@ -71,7 +71,7 @@ export class PluginStore {
 
   private updateDynamicExtensions() {
     this.dynamicExtensions = Array.from(this.dynamicPlugins.values()).reduce(
-      (acc, plugin) => (plugin.enabled ? [...acc, ...plugin.resolvedExtensions] : acc),
+      (acc, plugin) => (plugin.enabled ? [...acc, ...plugin.processedExtensions] : acc),
       [],
     );
 
@@ -100,7 +100,7 @@ export class PluginStore {
     if (!this.dynamicPlugins.has(pluginID)) {
       this.dynamicPlugins.set(pluginID, {
         manifest: Object.freeze(manifest),
-        resolvedExtensions: resolvedExtensions.map((e, index) =>
+        processedExtensions: resolvedExtensions.map((e, index) =>
           Object.freeze(augmentExtension(sanitizeExtension(e), pluginID, manifest.name, index)),
         ),
         enabled: false,
@@ -140,6 +140,15 @@ export class PluginStore {
       return acc;
     }, {} as { [pluginID: string]: DynamicPluginMetadata });
   }
+
+  public getStateForTestPurposes() {
+    return {
+      staticExtensions: this.staticExtensions,
+      dynamicExtensions: this.dynamicExtensions,
+      dynamicPlugins: this.dynamicPlugins,
+      listeners: this.listeners,
+    };
+  }
 }
 
 type FlagsObject = { [key: string]: boolean };
@@ -150,6 +159,6 @@ type DynamicPluginMetadata = Omit<DynamicPluginManifest, 'extensions'>;
 
 type DynamicPlugin = {
   manifest: DynamicPluginManifest;
-  resolvedExtensions: Readonly<LoadedExtension[]>;
+  processedExtensions: Readonly<LoadedExtension[]>;
   enabled: boolean;
 };
