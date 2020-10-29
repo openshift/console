@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { ConfigMapData, ConfigMapBinaryData } from './configmap-and-secret-data';
 import {
@@ -20,41 +21,6 @@ const menuActions = [...Kebab.getExtensionsActionsForKind(ConfigMapModel), ...Ke
 const kind = 'ConfigMap';
 
 const tableColumnClasses = ['', '', 'hidden-xs', 'hidden-xs', Kebab.columnClass];
-
-const ConfigMapTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Namespace',
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-      id: 'namespace',
-    },
-    {
-      title: 'Size',
-      sortFunc: 'dataSize',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Created',
-      sortField: 'metadata.creationTimestamp',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[4] },
-    },
-  ];
-};
-ConfigMapTableHeader.displayName = 'ConfigMapTableHeader';
 
 const ConfigMapTableRow = ({ obj: configMap, index, key, style }) => {
   return (
@@ -90,44 +56,83 @@ const ConfigMapTableRow = ({ obj: configMap, index, key, style }) => {
   );
 };
 
-const ConfigMapDetails = ({ obj: configMap }) => {
+const ConfigMaps = (props) => {
+  const { t } = useTranslation();
+  const ConfigMapTableHeader = () => [
+    {
+      title: t('workload~Name'),
+      sortField: 'metadata.name',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: t('workload~Namespace'),
+      sortField: 'metadata.namespace',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+      id: 'namespace',
+    },
+    {
+      title: t('workload~Size'),
+      sortFunc: 'dataSize',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: t('workload~Created'),
+      sortField: 'metadata.creationTimestamp',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: '',
+      props: { className: tableColumnClasses[4] },
+    },
+  ];
+
   return (
-    <>
-      <div className="co-m-pane__body">
-        <SectionHeading text="Config Map Details" />
-        <ResourceSummary resource={configMap} />
-      </div>
-      <div className="co-m-pane__body">
-        <SectionHeading text="Data" />
-        <ConfigMapData data={configMap.data} label="Data" />
-      </div>
-      <div className="co-m-pane__body">
-        <SectionHeading text="Binary Data" />
-        <ConfigMapBinaryData data={configMap.binaryData} />
-      </div>
-    </>
+    <Table
+      {...props}
+      aria-label="Config Maps"
+      Header={ConfigMapTableHeader}
+      Row={ConfigMapTableRow}
+      virtualize
+    />
   );
 };
-
-const ConfigMaps = (props) => (
-  <Table
-    {...props}
-    aria-label="Config Maps"
-    Header={ConfigMapTableHeader}
-    Row={ConfigMapTableRow}
-    virtualize
-  />
-);
 
 const ConfigMapsPage = (props) => (
   <ListPage ListComponent={ConfigMaps} canCreate={true} {...props} />
 );
-const ConfigMapsDetailsPage = (props) => (
-  <DetailsPage
-    {...props}
-    menuActions={menuActions}
-    pages={[navFactory.details(ConfigMapDetails), navFactory.editYaml()]}
-  />
-);
+
+const ConfigMapsDetailsPage = (props) => {
+  const { t } = useTranslation();
+  const ConfigMapDetails = ({ obj: configMap }) => {
+    return (
+      <>
+        <div className="co-m-pane__body">
+          <SectionHeading text={t('workload~ConfigMap details')} />
+          <ResourceSummary resource={configMap} />
+        </div>
+        <div className="co-m-pane__body">
+          <SectionHeading text={t('workload~Data')} />
+          <ConfigMapData data={configMap.data} label="Data" />
+        </div>
+        <div className="co-m-pane__body">
+          <SectionHeading text={t('workload~Binary data')} />
+          <ConfigMapBinaryData data={configMap.binaryData} />
+        </div>
+      </>
+    );
+  };
+
+  return (
+    <DetailsPage
+      {...props}
+      menuActions={menuActions}
+      pages={[navFactory.details(ConfigMapDetails), navFactory.editYaml()]}
+    />
+  );
+};
 
 export { ConfigMaps, ConfigMapsPage, ConfigMapsDetailsPage };
