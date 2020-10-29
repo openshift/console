@@ -95,6 +95,7 @@ i18n
         'ingress',
         'console-shared',
         'workload',
+        'devconsole',
       ],
       defaultNS: 'public',
       nsSeparator: '~',

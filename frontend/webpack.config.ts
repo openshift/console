@@ -203,6 +203,7 @@ const config: Configuration = {
     new CopyWebpackPlugin([
       { from: './packages/operator-lifecycle-manager/locales', to: 'locales' },
     ]),
+    new CopyWebpackPlugin([{ from: './packages/dev-console/locales', to: 'locales' }]),
     new MomentLocalesPlugin({
       localesToKeep: Object.keys(SUPPORTED_LOCALES).map((key) => (key === 'zh' ? 'zh-cn' : key)),
     }),
