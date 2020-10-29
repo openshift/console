@@ -23,6 +23,14 @@ const OBJ = {
   },
 };
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 describe('Status descriptors', () => {
   let wrapper: ReactWrapper<DescriptorDetailsItemProps>;
   let descriptor: Descriptor;

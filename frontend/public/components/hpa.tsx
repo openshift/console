@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
 import {
   K8sResourceKind,
   K8sResourceKindReference,
@@ -46,34 +47,6 @@ const externalRow = (metric, current, key) => {
   return <MetricsRow key={key} type={type} current={currentValue} target={targetValue} />;
 };
 
-const objectRow = (metric, current, ns, key, scaleTarget) => {
-  const { object } = metric;
-  const type = (
-    <>
-      {object.metric.name} on
-      <ResourceLink
-        kind={scaleTarget.kind}
-        name={scaleTarget.name}
-        namespace={ns}
-        title={object.metric.name}
-      />
-    </>
-  );
-  const currentValue = current?.object?.current.value;
-  const targetValue = object.target.value;
-
-  return <MetricsRow key={key} type={type} current={currentValue} target={targetValue} />;
-};
-
-const podRow = (metric, current, key) => {
-  const { pods } = metric;
-  const type = `${pods.metric.name} on pods`;
-  const currentValue = current?.pods?.current.averageValue;
-  const targetValue = pods.target.averageValue;
-
-  return <MetricsRow key={key} type={type} current={currentValue} target={targetValue} />;
-};
-
 const getResourceUtilization = (currentMetric) => {
   const currentUtilization = currentMetric?.resource?.current?.averageUtilization;
 
@@ -89,34 +62,64 @@ const getResourceUtilization = (currentMetric) => {
     : `${currentUtilization}%`;
 };
 
-const resourceRow = (metric, current, key) => {
-  const { resource } = metric;
-  const targetUtilization = resource.target.averageUtilization;
-  const resourceLabel = `resource ${resource.name}`;
-  const type = targetUtilization ? (
-    <>
-      {resourceLabel}&nbsp;<span className="small text-muted">(as a percentage of request)</span>
-    </>
-  ) : (
-    resourceLabel
-  );
-  const currentValue = targetUtilization
-    ? getResourceUtilization(current)
-    : resource?.current?.averageValue;
-  const targetValue = targetUtilization ? `${targetUtilization}%` : resource.target.averageValue;
-
-  return <MetricsRow key={key} type={type} current={currentValue} target={targetValue} />;
-};
-
 const MetricsTable: React.FC<MetricsTableProps> = ({ obj: hpa }) => {
+  const { t } = useTranslation();
+  const resourceRow = (metric, current, key) => {
+    const { resource } = metric;
+    const targetUtilization = resource.target.averageUtilization;
+    const resourceLabel = t('workload~resource {{name}}', { name: resource.name });
+    const type = targetUtilization ? (
+      <>
+        {resourceLabel}&nbsp;
+        <span className="small text-muted">{t('workload~(as a percentage of request)')}</span>
+      </>
+    ) : (
+      resourceLabel
+    );
+    const currentValue = targetUtilization
+      ? getResourceUtilization(current)
+      : resource?.current?.averageValue;
+    const targetValue = targetUtilization ? `${targetUtilization}%` : resource.target.averageValue;
+
+    return <MetricsRow key={key} type={type} current={currentValue} target={targetValue} />;
+  };
+
+  const podRow = (metric, current, key) => {
+    const { pods } = metric;
+    const type = t('workload~{{name}} on pods', { name: pods.metric.name });
+    const currentValue = current?.pods?.current.averageValue;
+    const targetValue = pods.target.averageValue;
+
+    return <MetricsRow key={key} type={type} current={currentValue} target={targetValue} />;
+  };
+
+  const objectRow = (metric, current, ns, key, scaleTarget) => {
+    const { object } = metric;
+    const type = (
+      <>
+        {object.metric.name} {t('workload~on')}
+        <ResourceLink
+          kind={scaleTarget.kind}
+          name={scaleTarget.name}
+          namespace={ns}
+          title={object.metric.name}
+        />
+      </>
+    );
+    const currentValue = current?.object?.current.value;
+    const targetValue = object.target.value;
+
+    return <MetricsRow key={key} type={type} current={currentValue} target={targetValue} />;
+  };
+
   return (
     <>
-      <SectionHeading text="Metrics" />
+      <SectionHeading text={t('workload~Metrics')} />
       <div className="co-m-table-grid co-m-table-grid--bordered">
         <div className="row co-m-table-grid__head">
-          <div className="col-xs-6">Type</div>
-          <div className="col-xs-3">Current</div>
-          <div className="col-xs-3">Target</div>
+          <div className="col-xs-6">{t('workload~Type')}</div>
+          <div className="col-xs-3">{t('workload~Current')}</div>
+          <div className="col-xs-3">{t('workload~Target')}</div>
         </div>
         <div className="co-m-table-grid__body">
           {hpa.spec.metrics.map((metric, i) => {
@@ -141,7 +144,8 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ obj: hpa }) => {
                 return (
                   <div key={i} className="row">
                     <div className="col-xs-12">
-                      {metric.type} <span className="small text-muted">(unrecognized type)</span>
+                      {metric.type}{' '}
+                      <span className="small text-muted">{t('workload~(unrecognized type)')}</span>
                     </div>
                   </div>
                 );
@@ -155,44 +159,59 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ obj: hpa }) => {
 
 export const HorizontalPodAutoscalersDetails: React.FC<HorizontalPodAutoscalersDetailsProps> = ({
   obj: hpa,
-}) => (
-  <>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Horizontal Pod Autoscaler Details" />
-      <div className="row">
-        <div className="col-sm-6">
-          <ResourceSummary resource={hpa} />
-        </div>
-        <div className="col-sm-6">
-          <dl className="co-m-pane__details">
-            <DetailsItem label="Scale Target" obj={hpa} path="spec.scaleTargetRef">
-              <ResourceLink
-                kind={hpa.spec.scaleTargetRef.kind}
-                name={hpa.spec.scaleTargetRef.name}
-                namespace={hpa.metadata.namespace}
-                title={hpa.spec.scaleTargetRef.name}
+}) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <div className="co-m-pane__body">
+        <SectionHeading text={t('workload~HorizontalPodAutoscaler details')} />
+        <div className="row">
+          <div className="col-sm-6">
+            <ResourceSummary resource={hpa} />
+          </div>
+          <div className="col-sm-6">
+            <dl className="co-m-pane__details">
+              <DetailsItem label={t('workload~Scale target')} obj={hpa} path="spec.scaleTargetRef">
+                <ResourceLink
+                  kind={hpa.spec.scaleTargetRef.kind}
+                  name={hpa.spec.scaleTargetRef.name}
+                  namespace={hpa.metadata.namespace}
+                  title={hpa.spec.scaleTargetRef.name}
+                />
+              </DetailsItem>
+              <DetailsItem label={t('workload~Min replicas')} obj={hpa} path="spec.minReplicas" />
+              <DetailsItem label={t('workload~Max replicas')} obj={hpa} path="spec.maxReplicas" />
+              <DetailsItem
+                label={t('workload~Last scale time')}
+                obj={hpa}
+                path="status.lastScaleTime"
+              >
+                <Timestamp timestamp={hpa.status.lastScaleTime} />
+              </DetailsItem>
+              <DetailsItem
+                label={t('workload~Current replicas')}
+                obj={hpa}
+                path="status.currentReplicas"
               />
-            </DetailsItem>
-            <DetailsItem label="Min Replicas" obj={hpa} path="spec.minReplicas" />
-            <DetailsItem label="Max Replicas" obj={hpa} path="spec.maxReplicas" />
-            <DetailsItem label="Last Scale Time" obj={hpa} path="status.lastScaleTime">
-              <Timestamp timestamp={hpa.status.lastScaleTime} />
-            </DetailsItem>
-            <DetailsItem label="Current Replicas" obj={hpa} path="status.currentReplicas" />
-            <DetailsItem label="Desired Replicas" obj={hpa} path="status.desiredReplicas" />
-          </dl>
+              <DetailsItem
+                label={t('workload~Desired replicas')}
+                obj={hpa}
+                path="status.desiredReplicas"
+              />
+            </dl>
+          </div>
         </div>
       </div>
-    </div>
-    <div className="co-m-pane__body">
-      <MetricsTable obj={hpa} />
-    </div>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Conditions" />
-      <Conditions conditions={hpa.status.conditions} />
-    </div>
-  </>
-);
+      <div className="co-m-pane__body">
+        <MetricsTable obj={hpa} />
+      </div>
+      <div className="co-m-pane__body">
+        <SectionHeading text={t('workload~Conditions')} />
+        <Conditions conditions={hpa.status.conditions} />
+      </div>
+    </>
+  );
+};
 
 const pages = [
   navFactory.details(HorizontalPodAutoscalersDetails),
@@ -222,53 +241,6 @@ const tableColumnClasses = [
 ];
 
 const kind = 'HorizontalPodAutoscaler';
-
-const HorizontalPodAutoscalersTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Namespace',
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-      id: 'namespace',
-    },
-    {
-      title: 'Labels',
-      sortField: 'metadata.labels',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Scale Target',
-      sortField: 'spec.scaleTargetRef.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: 'Min Pods',
-      sortField: 'spec.minReplicas',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: 'Max Pods',
-      sortField: 'spec.maxReplicas',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[5] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[6] },
-    },
-  ];
-};
-HorizontalPodAutoscalersTableHeader.displayName = 'HorizontalPodAutoscalersTableHeader';
 
 const HorizontalPodAutoscalersTableRow: RowFunction<K8sResourceKind> = ({
   obj,
@@ -320,15 +292,62 @@ const HorizontalPodAutoscalersTableRow: RowFunction<K8sResourceKind> = ({
   );
 };
 
-const HorizontalPodAutoscalersList: React.SFC = (props) => (
-  <Table
-    {...props}
-    aria-label="Horizontal Pod Auto Scalers"
-    Header={HorizontalPodAutoscalersTableHeader}
-    Row={HorizontalPodAutoscalersTableRow}
-    virtualize
-  />
-);
+const HorizontalPodAutoscalersList: React.FC = (props) => {
+  const { t } = useTranslation();
+  const HorizontalPodAutoscalersTableHeader = () => [
+    {
+      title: t('workload~Name'),
+      sortField: 'metadata.name',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: t('workload~Namespace'),
+      sortField: 'metadata.namespace',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+      id: 'namespace',
+    },
+    {
+      title: t('workload~Labels'),
+      sortField: 'metadata.labels',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: t('workload~Scale target'),
+      sortField: 'spec.scaleTargetRef.name',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: t('workload~Min pods'),
+      sortField: 'spec.minReplicas',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[4] },
+    },
+    {
+      title: t('workload~Max pods'),
+      sortField: 'spec.maxReplicas',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[5] },
+    },
+    {
+      title: '',
+      props: { className: tableColumnClasses[6] },
+    },
+  ];
+
+  return (
+    <Table
+      {...props}
+      aria-label="Horizontal Pod Auto Scalers"
+      Header={HorizontalPodAutoscalersTableHeader}
+      Row={HorizontalPodAutoscalersTableRow}
+      virtualize
+    />
+  );
+};
 HorizontalPodAutoscalersList.displayName = 'HorizontalPodAutoscalersList';
 
 export const HorizontalPodAutoscalersPage: React.FC<HorizontalPodAutoscalersPageProps> = (
