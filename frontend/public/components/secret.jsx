@@ -2,6 +2,8 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
+import i18next from 'i18next';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { SecretData } from './configmap-and-secret-data';
 import {
@@ -25,7 +27,7 @@ export const addSecretToWorkload = (kindObj, secret) => {
 
   return {
     callback: () => configureAddSecretToWorkloadModal({ secretName, namespace, blocking: true }),
-    label: 'Add Secret to Workload',
+    label: i18next.t('workload~Add Secret to workload'),
   };
 };
 
@@ -34,17 +36,20 @@ const actionButtons = [addSecretToWorkload];
 const menuActions = [
   Kebab.factory.ModifyLabels,
   Kebab.factory.ModifyAnnotations,
-  (kind, obj) => ({
-    label: `Edit ${kind.label}`,
-    href: `${resourceObjPath(obj, kind.kind)}/edit`,
-    accessReview: {
-      group: kind.apiGroup,
-      resource: kind.plural,
-      name: obj.metadata.name,
-      namespace: obj.metadata.namespace,
-      verb: 'update',
-    },
-  }),
+  (kind, obj) => {
+    return {
+      // t('workload~Edit Secret')
+      labelKey: 'workload~Edit Secret',
+      href: `${resourceObjPath(obj, kind.kind)}/edit`,
+      accessReview: {
+        group: kind.apiGroup,
+        resource: kind.plural,
+        name: obj.metadata.name,
+        namespace: obj.metadata.namespace,
+        verb: 'update',
+      },
+    };
+  },
   Kebab.factory.Delete,
 ];
 
@@ -58,47 +63,6 @@ const tableColumnClasses = [
   classNames('col-md-3', 'hidden-sm', 'hidden-xs'),
   Kebab.columnClass,
 ];
-
-const SecretTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Namespace',
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-      id: 'namespace',
-    },
-    {
-      title: 'Type',
-      sortField: 'type',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Size',
-      sortFunc: 'dataSize',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: 'Created',
-      sortField: 'metadata.creationTimestamp',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[5] },
-    },
-  ];
-};
-SecretTableHeader.displayName = 'SecretTableHeader';
 
 const SecretTableRow = ({ obj: secret, index, key, style }) => {
   const data = _.size(secret.data);
@@ -137,10 +101,11 @@ const SecretTableRow = ({ obj: secret, index, key, style }) => {
 };
 
 const SecretDetails = ({ obj: secret }) => {
+  const { t } = useTranslation();
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Secret Details" />
+        <SectionHeading text={t('workload~Secret details')} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={secret} />
@@ -154,15 +119,56 @@ const SecretDetails = ({ obj: secret }) => {
   );
 };
 
-const SecretsList = (props) => (
-  <Table
-    {...props}
-    aria-label="Secrets"
-    Header={SecretTableHeader}
-    Row={SecretTableRow}
-    virtualize
-  />
-);
+const SecretsList = (props) => {
+  const { t } = useTranslation();
+  const SecretTableHeader = () => [
+    {
+      title: t('workload~Name'),
+      sortField: 'metadata.name',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: t('workload~Namespace'),
+      sortField: 'metadata.namespace',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+      id: 'namespace',
+    },
+    {
+      title: t('workload~Type'),
+      sortField: 'type',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: t('workload~Size'),
+      sortFunc: 'dataSize',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: t('workload~Created'),
+      sortField: 'metadata.creationTimestamp',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[4] },
+    },
+    {
+      title: '',
+      props: { className: tableColumnClasses[5] },
+    },
+  ];
+
+  return (
+    <Table
+      {...props}
+      aria-label="Secrets"
+      Header={SecretTableHeader}
+      Row={SecretTableRow}
+      virtualize
+    />
+  );
+};
 SecretsList.displayName = 'SecretsList';
 
 const IMAGE_FILTER_VALUE = 'Image';
@@ -212,12 +218,13 @@ const filters = [
 ];
 
 const SecretsPage = (props) => {
+  const { t } = useTranslation();
   const createItems = {
-    generic: 'Key/Value Secret',
-    image: 'Image Pull Secret',
-    source: 'Source Secret',
-    webhook: 'Webhook Secret',
-    yaml: 'From YAML',
+    generic: t('workload~Key/value secret'),
+    image: t('workload~Image pull secret'),
+    source: t('workload~Source secret'),
+    webhook: t('workload~Webhook secret'),
+    yaml: t('workload~From YAML'),
   };
 
   const createProps = {
@@ -231,7 +238,7 @@ const SecretsPage = (props) => {
       ListComponent={SecretsList}
       canCreate={true}
       rowFilters={filters}
-      createButtonText="Create"
+      createButtonText={t('workload~Create')}
       createProps={createProps}
       {...props}
     />

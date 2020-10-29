@@ -7,8 +7,7 @@ export const listPage = {
   projectDropdownShouldNotExist: () =>
     cy.byLegacyTestID('namespace-bar-dropdown').should('not.exist'),
   clickCreateYAMLdropdownButton: () => {
-    return cy
-      .byLegacyTestID('dropdown-button')
+    cy.byTestID('item-create')
       .click()
       .get('body')
       .then(($body) => {
