@@ -93,6 +93,7 @@ i18n
         'network-policy',
         'ingress',
         'console-shared',
+        'workload',
       ],
       defaultNS: 'public',
       nsSeparator: '~',
