@@ -1,0 +1,8 @@
+{
+  "Select application": "Select application",
+  "Application": "Application",
+  "Application Name": "Application Name",
+  "Warning: the application grouping already exists.": "Warning: the application grouping already exists.",
+  "A unique name given to the application grouping to label your resources.": "A unique name given to the application grouping to label your resources.",
+  "Select an application for your grouping or {{UNASSIGNED_LABEL}} to not use an application grouping.": "Select an application for your grouping or {{UNASSIGNED_LABEL}} to not use an application grouping."
+}
