@@ -281,18 +281,21 @@ export const OperandList: React.FC<OperandListProps> = (props) => {
     ),
     [],
   );
-  const ensureKind = (data: K8sResourceKind[]) =>
-    data.map((obj) => {
-      if (obj.apiVersion && obj.kind) {
-        return obj;
-      }
-      const reference = props.kinds[0];
-      return {
-        apiVersion: apiVersionForReference(reference),
-        kind: kindForReference(reference),
-        ...obj,
-      };
-    });
+  const data = React.useMemo(
+    () =>
+      props.data?.map?.((obj) => {
+        if (obj.apiVersion && obj.kind) {
+          return obj;
+        }
+        const reference = props.kinds[0];
+        return {
+          apiVersion: apiVersionForReference(reference),
+          kind: kindForReference(reference),
+          ...obj,
+        };
+      }) ?? [],
+    [props.data, props.kinds],
+  );
   const EmptyMsg = () => (
     <MsgBox
       title="No Operands Found"
@@ -306,7 +309,7 @@ export const OperandList: React.FC<OperandListProps> = (props) => {
       customSorts={{
         operandStatus: getOperandStatusText,
       }}
-      data={ensureKind(props.data)}
+      data={data}
       EmptyMsg={EmptyMsg}
       aria-label="Operands"
       Header={OperandTableHeader}
