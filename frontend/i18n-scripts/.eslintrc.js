@@ -1,0 +1,68 @@
+var fs = require('fs');
+
+module.exports = {
+  root: true,
+  env: {
+    browser: true,
+    es6: true,
+    jasmine: true,
+    jest: true,
+  },
+  extends: [
+    'eslint:recommended',
+    'plugin:import/errors',
+    'plugin:import/warnings',
+    'plugin:console/prettier',
+  ],
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    project: './tsconfig.json',
+    comment: true,
+    ecmaVersion: 2017,
+    sourceType: 'module',
+    tsconfigRootDir: './',
+  },
+  plugins: ['@typescript-eslint'],
+  rules: {
+    camelcase: [
+      'error',
+      { allow: [] },
+    ],
+    'consistent-return': 0,
+    'consistent-this': [1, 'that'],
+    curly: [2, 'all'],
+    'default-case': [2],
+    'dot-notation': [2],
+    'no-multiple-empty-lines': [2, { max: 2, maxEOF: 0 }],
+    eqeqeq: [2, 'allow-null'],
+    'guard-for-in': 2,
+    'import/no-unresolved': ['error'],
+    'import/no-duplicates': ['error'],
+    'max-nested-callbacks': [1, 4],
+    'no-alert': 2,
+    'no-caller': 2,
+    'no-console': 0,
+    'no-constant-condition': 2,
+    'no-debugger': 2,
+    'no-else-return': ['error'],
+    'no-global-strict': 0,
+    'no-irregular-whitespace': ['error'],
+    'no-prototype-builtins': 0, // Disable with exlint v6 update.
+    'no-shadow': ['error'],
+    'no-undef': 0,
+    'no-underscore-dangle': 0,
+    'no-var': 2,
+    'object-shorthand': ['error', 'properties'],
+    'prefer-const': ['error', { destructuring: 'all' }],
+    'prefer-template': 2,
+    radix: 2,
+    'require-atomic-updates': 0,
+  },
+  settings: {
+    'import/extensions': ['.js'],
+    'import/resolver': { node: { extensions: ['.js'] } },
+  },
+  globals: {
+    process: 'readonly',
+  },
+};

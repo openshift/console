@@ -3,9 +3,7 @@ const path = require('path');
 const common = require('./common.js');
 const { gettextToI18next } = require('i18next-conv');
 
-// eslint-disable-next-line no-undef
 const public = path.join(__dirname, './../public/locales/pos');
-// eslint-disable-next-line no-undef
 const packages = path.join(__dirname, './../packages');
 
 function save(target) {
@@ -24,16 +22,37 @@ function processFile(fileName, package) {
   if (fileName.includes('ja_JP')) {
     language = 'ja';
     remainingPath = fileName.split(/-ja_JP\.po+/g)[0];
+  } else {
+    console.error(
+      "You must provide a PO name that includes the language in the following format: 'ja_JP' or 'zh_CN'",
+    );
+    return;
   }
   const newFileName = remainingPath.split('/');
 
   let newFilePath;
   if (package) {
-    newFilePath = `./../packages/${package}/locales/${language}/${
-      newFileName[newFileName.length - 1]
-    }.json`;
+    if (!fs.existsSync(path.join(__dirname, `./../packages/${package}/locales/${language}`))) {
+      fs.mkdirSync(path.join(__dirname, `./../packages/${package}/locales/${language}`), {
+        recursive: true,
+      });
+    }
+    newFilePath = path.join(
+      __dirname,
+      `./../packages/${package}/locales/${language}/${newFileName[newFileName.length - 1]}.json`,
+    );
+    console.log(
+      `Saving packages/${package}/locales/${language}/${newFileName[newFileName.length - 1]}.json`,
+    );
   } else {
-    newFilePath = `./../public/locales/${language}/${newFileName[newFileName.length - 1]}.json`;
+    if (!fs.existsSync(path.join(__dirname, `../public/locales/${language}/`))) {
+      fs.mkdirSync(path.join(__dirname, `../public/locales/${language}/`), { recursive: true });
+    }
+    newFilePath = path.join(
+      __dirname,
+      `../public/locales/${language}/${newFileName[newFileName.length - 1]}.json`,
+    );
+    console.log(`Saving public/locales/${language}/${newFileName[newFileName.length - 1]}.json`);
   }
   gettextToI18next(language, fs.readFileSync(fileName)).then(save(newFilePath));
 }
@@ -51,7 +70,6 @@ function processPackages(filePath) {
   }
 }
 
-// eslint-disable-next-line no-console
 console.log('You must save PO files to locales/pos in order to use this tool.');
 
 if (fs.existsSync(public)) {
