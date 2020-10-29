@@ -56,6 +56,8 @@ const PipelineWorkspacesSection: React.FC = () => {
                 setFieldValue(
                   `workspaces.${index}.data`,
                   VolumeTypes[type] === VolumeTypes.EmptyDirectory ? { emptyDir: {} } : {},
+                  // Validation is automatically done by DropdownField useFormikValidationFix
+                  false,
                 )
               }
               fullWidth
