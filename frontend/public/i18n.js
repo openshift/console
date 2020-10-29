@@ -36,6 +36,7 @@ i18n
       load: 'all',
       debug: process.env.NODE_ENV === 'development',
       detection: { caches: [] },
+      contextSeparator: '~',
       ns: [
         'alert-manager-config',
         'alert-manager-receiver-forms',

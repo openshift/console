@@ -9943,10 +9943,10 @@ i18next-browser-languagedetector@^6.0.1:
   dependencies:
     "@babel/runtime" "^7.5.5"
 
-i18next-conv@^10.0.2:
-  version "10.0.2"
-  resolved "https://registry.yarnpkg.com/i18next-conv/-/i18next-conv-10.0.2.tgz#e3ffd9ec533bffd47853be23de30772076651335"
-  integrity sha512-KZp+OfvPN50ZQHCiqhVhxA5uowuE6xIZ42M1Mtht87/xh2tp3GJl3ds0wsewhFxQRmHOVWOaq0ZYoK/oHWrbzg==
+i18next-conv@^10.1.0:
+  version "10.1.0"
+  resolved "https://registry.yarnpkg.com/i18next-conv/-/i18next-conv-10.1.0.tgz#bc30c8383194a65da3d0f29fcbb334d2d7d04148"
+  integrity sha512-NI3FQvXp81MZmJaPbjNGzAvLuILzUGCEMikSjk4lEgl3yuWsOKpkWF/9mWWTucB2gRC288zMfhBkNovSlFTp/w==
   dependencies:
     arrify "^2.0.1"
     chalk "^4.0.0"
