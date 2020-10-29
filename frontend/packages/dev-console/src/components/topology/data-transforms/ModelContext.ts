@@ -28,6 +28,7 @@ export type ModelExtensionContext = {
 export class ExtensibleModel {
   private extensions: { [id: string]: ModelExtensionContext } = {};
 
+  @observable
   public namespace: string;
 
   @observable.ref

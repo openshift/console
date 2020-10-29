@@ -1,15 +1,12 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { Link } from 'react-router-dom';
-import { Tooltip } from '@patternfly/react-core';
-import { TopologyPageContext } from '../TopologyPage';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import NamespacedPage from '../../NamespacedPage';
-import CreateProjectListPage from '../../projects/CreateProjectListPage';
-import { TopologyDataRenderer } from '../TopologyDataRenderer';
+import { TopologyPage } from '../TopologyPage';
 
-type TopologyPageProps = React.ComponentProps<typeof TopologyPageContext>;
-
-let topologyProps: TopologyPageProps;
+jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
+  useK8sWatchResources: jest.fn(),
+}));
 
 jest.mock('react', () => {
   const ActualReact = require.requireActual('react');
@@ -28,107 +25,72 @@ jest.mock('react-redux', () => {
   };
 });
 
+let mockViewParam = '';
+
 jest.mock('@console/shared', () => {
   const ActualShared = require.requireActual('@console/shared');
   return {
     ...ActualShared,
-    useQueryParams: () => new Map(),
+    useQueryParams: () => new Map().set('view', mockViewParam),
   };
 });
 
+const match = { params: { name: 'default' }, isExact: true, path: '', url: '' };
+
 describe('Topology page tests', () => {
   beforeEach(() => {
-    topologyProps = {
-      match: {
-        params: {
-          name: 'topology-test',
-        },
-        isExact: true,
-        path: '/topology/ns/topology-test/graph',
-        url: '',
-      },
-    };
+    mockViewParam = '';
+    (useK8sWatchResources as jest.Mock).mockReturnValue({
+      projects: { data: [], loaded: true, loadError: '' },
+    });
   });
 
   it('should render topology page', () => {
-    topologyProps.match.path = '/topology/ns/topology-test/list';
-    const wrapper = shallow(<TopologyPageContext {...topologyProps} />);
+    const wrapper = shallow(<TopologyPage match={match} title="Topology" hideProjects={false} />);
     expect(wrapper.find(NamespacedPage).exists()).toBe(true);
   });
 
-  it('should render topology graph page', () => {
-    const wrapper = shallow(<TopologyPageContext {...topologyProps} />);
-    expect(wrapper.find(TopologyDataRenderer).exists()).toBe(true);
+  it('should default to list view', () => {
+    const wrapper = shallow(<TopologyPage match={match} title="Topology" hideProjects={false} />);
+    expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(true);
   });
 
-  it('should render projects list page', () => {
-    topologyProps.match.params.name = '';
-    const wrapper = shallow(<TopologyPageContext {...topologyProps} />);
-    expect(wrapper.find(CreateProjectListPage).exists()).toBe(true);
-  });
-
-  it('should render view shortcuts button on topology page toolbar', () => {
-    const wrapper = shallow(<TopologyPageContext {...topologyProps} />);
-    const namespacesPageWrapper = wrapper.find(NamespacedPage).shallow();
-    expect(namespacesPageWrapper.find('[data-test-id="topology-view-shortcuts"]').exists()).toBe(
-      true,
+  it('should use local storage setting', () => {
+    localStorage.setItem('fake-key', 'graph');
+    let wrapper = shallow(
+      <TopologyPage
+        match={match}
+        title="Topology"
+        hideProjects={false}
+        activeViewStorageKey="fake-key"
+      />,
     );
-  });
+    expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(false);
 
-  it('should not render view shortcuts button on topology list page toolbar', () => {
-    topologyProps.match.path = '/topology/ns/topology-test/list';
-    const wrapper = shallow(<TopologyPageContext {...topologyProps} />);
-    const namespacesPageWrapper = wrapper.find(NamespacedPage).shallow();
-    expect(namespacesPageWrapper.find('[data-test-id="topology-view-shortcuts"]').exists()).toBe(
-      false,
+    localStorage.setItem('fake-key', 'list');
+    wrapper = shallow(
+      <TopologyPage
+        match={match}
+        title="Topology"
+        hideProjects={false}
+        activeViewStorageKey="fake-key"
+      />,
     );
+    expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(true);
   });
 
-  it('should show the topology icon when on topology list page', () => {
-    topologyProps.match.path = '/topology/ns/topology-test/list';
-    const wrapper = shallow(<TopologyPageContext {...topologyProps} />);
-    const namespacesPageWrapper = wrapper.find(NamespacedPage).shallow();
-    expect(namespacesPageWrapper.find(Tooltip).props().content).toBe('Topology View');
-    expect(namespacesPageWrapper.find(Link).props().to).toContain(
-      '/topology/ns/topology-test/graph',
-    );
-  });
-
-  it('should show the topology list icon when on topology page', () => {
-    const wrapper = shallow(<TopologyPageContext {...topologyProps} />);
-    const namespacesPageWrapper = wrapper.find(NamespacedPage).shallow();
-    expect(namespacesPageWrapper.find(Tooltip).props().content).toBe('List View');
-    expect(namespacesPageWrapper.find(Link).props().to).toContain(
-      '/topology/ns/topology-test/list',
-    );
-  });
-
-  it('should not contain view switcher when when no project is selected', () => {
-    topologyProps.match.params.name = '';
-    const wrapper = shallow(<TopologyPageContext {...topologyProps} />);
-    const namespacesPageWrapper = wrapper.find(NamespacedPage).shallow();
-    expect(namespacesPageWrapper.find(Link).exists()).toBe(false);
-  });
-});
-
-describe('Topology page tests', () => {
-  beforeEach(() => {
-    spyOn(React, 'useContext').and.returnValue({ isEmptyModel: true });
-    topologyProps = {
-      match: {
-        params: {
-          name: 'topology-test',
-        },
-        isExact: true,
-        path: '/topology/ns/topology-test/graph',
-        url: '',
-      },
+  it('should continue to support URL view path', () => {
+    const viewMatch = {
+      params: { name: 'default' },
+      isExact: true,
+      path: '/topology/graph',
+      url: '',
     };
-  });
+    let wrapper = shallow(<TopologyPage match={viewMatch} title="Topology" hideProjects={false} />);
+    expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(false);
 
-  it('should not contain view switcher when no model', () => {
-    const wrapper = shallow(<TopologyPageContext {...topologyProps} />);
-    const namespacesPageWrapper = wrapper.find(NamespacedPage).shallow();
-    expect(namespacesPageWrapper.find(Link).exists()).toBe(false);
+    viewMatch.path = '/topology/list';
+    wrapper = shallow(<TopologyPage match={viewMatch} title="Topology" hideProjects={false} />);
+    expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(true);
   });
 });

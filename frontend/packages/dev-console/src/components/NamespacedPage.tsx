@@ -12,6 +12,7 @@ export enum NamespacedPageVariants {
 
 export interface NamespacedPageProps {
   disabled?: boolean;
+  hideProjects?: boolean;
   hideApplications?: boolean;
   onNamespaceChange?: (newNamespace: string) => void;
   variant?: NamespacedPageVariants;
@@ -22,12 +23,17 @@ const NamespacedPage: React.FC<NamespacedPageProps> = ({
   children,
   disabled,
   onNamespaceChange,
+  hideProjects = false,
   hideApplications = false,
   variant = NamespacedPageVariants.default,
   toolbar,
 }) => (
   <div className="odc-namespaced-page">
-    <NamespaceBar disabled={disabled} onNamespaceChange={onNamespaceChange}>
+    <NamespaceBar
+      disabled={disabled}
+      onNamespaceChange={onNamespaceChange}
+      hideProjects={hideProjects}
+    >
       {!hideApplications && <ApplicationSelector disabled={disabled} />}
       {toolbar && <div className="odc-namespaced-page__toolbar">{toolbar}</div>}
     </NamespaceBar>
