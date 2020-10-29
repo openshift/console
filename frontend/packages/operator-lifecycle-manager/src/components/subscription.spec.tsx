@@ -19,6 +19,7 @@ import {
 } from '../models';
 import {
   testSubscription,
+  testSubscriptions,
   testClusterServiceVersion,
   testPackageManifest,
   testCatalogSource,
@@ -40,6 +41,17 @@ import {
   SubscriptionStatus,
 } from './subscription';
 import { Button } from '@patternfly/react-core';
+
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    withTranslation: () => (Component) => {
+      Component.defaultProps = { ...Component.defaultProps, t: (s) => s };
+      return Component;
+    },
+  };
+});
 
 describe(SubscriptionTableHeader.displayName, () => {
   it('returns column header definition for subscription table header', () => {
@@ -323,6 +335,7 @@ describe(SubscriptionUpdates.name, () => {
         catalogSource={testCatalogSource}
         obj={testSubscription}
         pkg={testPackageManifest}
+        subscriptions={testSubscriptions}
       />,
     );
   });
@@ -367,6 +380,7 @@ describe(SubscriptionDetails.displayName, () => {
         obj={testSubscription}
         packageManifests={[testPackageManifest]}
         catalogSources={[testCatalogSource]}
+        subscriptions={testSubscriptions}
       />,
     );
   });
@@ -465,6 +479,12 @@ describe(SubscriptionDetailsPage.displayName, () => {
         kind: referenceForModel(CatalogSourceModel),
         isList: true,
         prop: 'catalogSources',
+      },
+      {
+        kind: referenceForModel(SubscriptionModel),
+        isList: true,
+        namespace: 'default',
+        prop: 'subscriptions',
       },
     ]);
   });

@@ -352,6 +352,39 @@ export const testSubscription: SubscriptionKind = {
   },
 };
 
+export const testSubscriptions: SubscriptionKind[] = [
+  {
+    apiVersion: 'operators.coreos.com/v1alpha1',
+    kind: 'Subscription',
+    metadata: {
+      namespace: 'default',
+      name: 'test-subscription',
+      uid: '09232c51-ed3e-4e60-b58e-9bee576ee612',
+    },
+    spec: {
+      source: 'test-catalog',
+      sourceNamespace: 'tectonic-system',
+      name: 'test-package',
+      channel: 'stable',
+    },
+  },
+  {
+    apiVersion: 'operators.coreos.com/v1alpha1',
+    kind: 'Subscription',
+    metadata: {
+      namespace: 'default',
+      name: 'test-subscription-2',
+      uid: '09232c51-ed3e-4e60-b58e-9bee576ee61a',
+    },
+    spec: {
+      source: 'test-catalog-2',
+      sourceNamespace: 'tectonic-system',
+      name: 'test-package-2',
+      channel: 'stable',
+    },
+  },
+];
+
 export const testCRD: CustomResourceDefinitionKind = {
   apiVersion: 'apiextensions.k8s.io/v1',
   kind: 'CustomResourceDefinition',
