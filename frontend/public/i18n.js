@@ -91,7 +91,7 @@ i18n
         'user',
         'role-binding',
         'service-account',
-        'usermanagement-group',
+        'group',
         'webhook-receiver-form',
         'yaml',
         'editor',
