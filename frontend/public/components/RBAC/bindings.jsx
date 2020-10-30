@@ -203,37 +203,39 @@ export const RoleLink = ({ binding }) => {
   return <ResourceLink kind={kind} name={binding.roleRef.name} namespace={ns} />;
 };
 
-const RoleBindingsTableRow = ({ obj: binding, index, key, style }) => (
-  <TableRow id={binding.metadata.uid} index={index} trKey={key} style={style}>
-    <TableData className={tableColumnClasses[0]}>
-      <ResourceLink
-        kind={bindingKind(binding)}
-        name={binding.metadata.name}
-        namespace={binding.metadata.namespace}
-        className="co-resource-item__resource-name"
-      />
-    </TableData>
-    <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
-      <RoleLink binding={binding} />
-    </TableData>
-    <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
-      {binding.subject.kind}
-    </TableData>
-    <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
-      {binding.subject.name}
-    </TableData>
-    <TableData className={classNames(tableColumnClasses[4], 'co-break-word')}>
-      {binding.metadata.namespace ? (
-        <ResourceLink kind="Namespace" name={binding.metadata.namespace} />
-      ) : (
-        i18next.t('role-binding~All Namespaces')
-      )}
-    </TableData>
-    <TableData className={tableColumnClasses[5]}>
-      <BindingKebab binding={binding} />
-    </TableData>
-  </TableRow>
-);
+const RoleBindingsTableRow = ({ obj: binding, index, key, style }) => {
+  return (
+    <TableRow id={binding.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink
+          kind={bindingKind(binding)}
+          name={binding.metadata.name}
+          namespace={binding.metadata.namespace}
+          className="co-resource-item__resource-name"
+        />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+        <RoleLink binding={binding} />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+        {binding.subject.kind}
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
+        {binding.subject.name}
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[4], 'co-break-word')}>
+        {binding.metadata.namespace ? (
+          <ResourceLink kind="Namespace" name={binding.metadata.namespace} />
+        ) : (
+          i18next.t('role-binding~All Namespaces')
+        )}
+      </TableData>
+      <TableData className={tableColumnClasses[5]}>
+        <BindingKebab binding={binding} />
+      </TableData>
+    </TableRow>
+  );
+};
 
 const EmptyMsg = () => {
   const { t } = useTranslation();
