@@ -1,0 +1,15 @@
+{
+  "Name": "Name",
+  "Namespace": "Namensbereich",
+  "Pod selector": "Pod selektor",
+  "Network policies": "Netzrichtlinien",
+  "Target pods": "Zielpods",
+  "From": "Von",
+  "To ports": "Zu Ports",
+  "NS selector": "NNS-",
+  "Network policy details": "Netzrichtliniendetails",
+  "Ingress rules": "Ingress-Regeln",
+  "Pods accept all traffic by default. They can be isolated via Network Policies which specify a whitelist of ingress rules. When a Pod is selected by a Network Policy, it will reject all traffic not explicitly allowed via a Network Policy. See more details in:": "Pods akzeptieren standardmäßig den gesamten Datenverkehr. Sie können über Netzwerkrichtlinien isoliert werden, die eine Whitelist der Ingress-Regeln angeben. Wenn ein Pod von einer Netzrichtlinie ausgewählt wird, wird der gesamte Datenverkehr zurückgewiesen, der nicht explizit über eine Netzrichtlinie zulässig ist. Weitere Informationen finden Sie unter:",
+  "Network Policies documentation": "Dokumentation zu Netzrichtlinien",
+  "All traffic is allowed to Pods in {{namespace}}": "Der gesamte Datenverkehr ist in {{namespace}} für Pods zulässig."
+}

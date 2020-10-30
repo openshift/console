@@ -1,0 +1,16 @@
+{
+  "Not configured": "未配置",
+  "Host": "主机",
+  "Path": "路径",
+  "Service": "服务",
+  "Service port": "服务端口",
+  "Ingress details": "入口详细信息",
+  "TLS certificate": "TLS 证书",
+  "Ingress rules": "入口规则",
+  "These rules are handled by a routing layer (Ingress Controller) which is updated as the rules are modified. The Ingress controller implementation defines how headers and other metadata are forwarded or manipulated": "这些规则由更新为规则的路由层 (出口控制器) 处理。 入口控制器实现定义如何转发或操纵头和其他元数据",
+  "Name": "名称",
+  "Namespace": "名称空间",
+  "Labels": "标签",
+  "Hosts": "主机",
+  "Ingresses": "英格塞"
+}

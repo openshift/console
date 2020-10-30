@@ -1,0 +1,15 @@
+{
+  "Name": "Nombre",
+  "Namespace": "Nombre",
+  "Pod selector": "Selector de Pod",
+  "Network policies": "Políticas de red",
+  "Target pods": "Vainas diana",
+  "From": "De",
+  "To ports": "Puertos",
+  "NS selector": "Selector NS",
+  "Network policy details": "Detalles de política de red",
+  "Ingress rules": "Normas de ingreso",
+  "Pods accept all traffic by default. They can be isolated via Network Policies which specify a whitelist of ingress rules. When a Pod is selected by a Network Policy, it will reject all traffic not explicitly allowed via a Network Policy. See more details in:": "Las vainas aceptan todo el tráfico de forma predeterminada. Se pueden aislar a través de Políticas de red que especifican una lista blanca de reglas de ingreso. Cuando una política de red selecciona un Pod, rechazará todo el tráfico no permitido explícitamente a través de una política de red. Ver más detalles en:",
+  "Network Policies documentation": "Documentación de políticas de red",
+  "All traffic is allowed to Pods in {{namespace}}": "Todo el tráfico se permite a los Pods en {{namespace}}"
+}

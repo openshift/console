@@ -1,0 +1,15 @@
+{
+  "Name": "名字",
+  "Namespace": "名稱空間",
+  "Pod selector": "Pod 選取器",
+  "Network policies": "網路原則",
+  "Target pods": "目標艙",
+  "From": "從",
+  "To ports": "目標埠",
+  "NS selector": "NS 選取器",
+  "Network policy details": "網路原則詳細資料",
+  "Ingress rules": "傳入規則",
+  "Pods accept all traffic by default. They can be isolated via Network Policies which specify a whitelist of ingress rules. When a Pod is selected by a Network Policy, it will reject all traffic not explicitly allowed via a Network Policy. See more details in:": "Pods 依預設接受所有資料流量。 它們可以透過「網路原則」進行隔離，該「網路原則」指定一個白名單（ ingress 規則）。 當「網路原則」選取「 Pod 」時，它將拒絕透過「網路原則」明確容許的所有資料流量。 請參閱中的詳細資料：",
+  "Network Policies documentation": "網路原則文件",
+  "All traffic is allowed to Pods in {{namespace}}": "在 {{namespace}} 中，所有資料流量都可以使用 Pods"
+}

@@ -1,6 +1,6 @@
 {
   "Start build": "ビルドの開始",
-  "Build Config Details": "ビルド構成の詳細",
+  "Build Config details": "ビルド構成の詳細",
   "Name": "名称",
   "Namespace": "名前空間",
   "Labels": "ラベル",

@@ -1,0 +1,15 @@
+{
+  "Name": "Nome",
+  "Namespace": "Namespace",
+  "Pod selector": "Seletor de pod",
+  "Network policies": "Políticas de rede",
+  "Target pods": "Podas de alvo",
+  "From": "De",
+  "To ports": "Para portas",
+  "NS selector": "Seletor NS",
+  "Network policy details": "Detalhes da política de rede",
+  "Ingress rules": "Regras de ingresso",
+  "Pods accept all traffic by default. They can be isolated via Network Policies which specify a whitelist of ingress rules. When a Pod is selected by a Network Policy, it will reject all traffic not explicitly allowed via a Network Policy. See more details in:": "Os pods aceitam todo o tráfego por padrão. Eles podem ser isolados via Políticas de Rede que especificam um whitelist de regras de ingresso. Quando um Pod é selecionado por uma Política de Rede, ele rejeitará todo o tráfego não explicitamente permitido através de uma Política de Rede. Veja mais detalhes em:",
+  "Network Policies documentation": "Documentação Políticas de Rede",
+  "All traffic is allowed to Pods in {{namespace}}": "Todo o tráfego é permitido a Pods em {{namespace}}"
+}

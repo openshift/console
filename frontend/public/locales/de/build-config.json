@@ -1,6 +1,6 @@
 {
   "Start build": "Build starten",
-  "Build Config Details": "Konfigurationsdetails erstellen",
+  "Build Config details": "Details zum Build-Konfiguration",
   "Name": "Name",
   "Namespace": "Namensbereich",
   "Labels": "Bezeichnungen",

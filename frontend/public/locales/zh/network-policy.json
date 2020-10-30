@@ -1,0 +1,15 @@
+{
+  "Name": "名称",
+  "Namespace": "名称空间",
+  "Pod selector": "Pod 选择器",
+  "Network policies": "网络策略",
+  "Target pods": "目标 pod",
+  "From": "从",
+  "To ports": "到端口",
+  "NS selector": "NS 选择器",
+  "Network policy details": "网络策略详细信息",
+  "Ingress rules": "入口规则",
+  "Pods accept all traffic by default. They can be isolated via Network Policies which specify a whitelist of ingress rules. When a Pod is selected by a Network Policy, it will reject all traffic not explicitly allowed via a Network Policy. See more details in:": "缺省情况下， pod 接受所有流量。 可以通过网络策略隔离这些规则，这些策略指定进入规则的白名单。 当 \" 网络策略 \" 选择 Pod 时，它将拒绝通过网络策略明确允许的所有流量。 请参阅以下内容中的更多详细信息 :",
+  "Network Policies documentation": "网络策略文档",
+  "All traffic is allowed to Pods in {{namespace}}": "所有流量都允许在 {{namespace}} 中的 Pods"
+}

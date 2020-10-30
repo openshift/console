@@ -1,0 +1,16 @@
+{
+  "Not configured": "Non configurato",
+  "Host": "Host",
+  "Path": "Percorso",
+  "Service": "Servizio",
+  "Service port": "Porta di servizio",
+  "Ingress details": "Dettagli ingressi",
+  "TLS certificate": "Certificato TLS",
+  "Ingress rules": "Regole di ingresso",
+  "These rules are handled by a routing layer (Ingress Controller) which is updated as the rules are modified. The Ingress controller implementation defines how headers and other metadata are forwarded or manipulated": "Queste regole sono gestite da uno strato di routing (Ingress Controller) che viene aggiornato man mano che le regole vengono modificate. L'Ingress controller di implementazione definisce come le intestazioni e gli altri metadati vengono inoltrati o manipolati",
+  "Name": "Nome",
+  "Namespace": "Namespace",
+  "Labels": "Etichette",
+  "Hosts": "Host",
+  "Ingresses": "Ingressi"
+}

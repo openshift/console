@@ -1,6 +1,6 @@
 {
   "Start build": "启动构建",
-  "Build Config Details": "构建配置详细信息",
+  "Build Config details": "构建配置详细信息",
   "Name": "名称",
   "Namespace": "名称空间",
   "Labels": "标签",

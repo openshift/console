@@ -1,0 +1,16 @@
+{
+  "Not configured": "未配置",
+  "Host": "主機",
+  "Path": "路徑",
+  "Service": "服務",
+  "Service port": "服務埠",
+  "Ingress details": "傳入明細",
+  "TLS certificate": "TLS 憑證",
+  "Ingress rules": "傳入規則",
+  "These rules are handled by a routing layer (Ingress Controller) which is updated as the rules are modified. The Ingress controller implementation defines how headers and other metadata are forwarded or manipulated": "這些規則由遞送層（Ingress Controller）來處理，其會在修改規則時更新。 傳入控制器實作定義標頭和其他 meta 資料是如何轉遞或操作的",
+  "Name": "名字",
+  "Namespace": "名稱空間",
+  "Labels": "拉貝爾斯",
+  "Hosts": "主機",
+  "Ingresses": "因格雷塞斯"
+}

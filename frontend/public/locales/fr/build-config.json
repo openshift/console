@@ -1,6 +1,6 @@
 {
   "Start build": "Démarrer la génération",
-  "Build Config Details": "Détails de configuration de génération",
+  "Build Config details": "Détails de la configuration de génération",
   "Name": "Nom",
   "Namespace": "Espace de nom",
   "Labels": "Libellés",
