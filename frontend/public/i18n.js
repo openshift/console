@@ -89,7 +89,7 @@ i18n
         'tour',
         'utils',
         'user',
-        'usermanagement-rolebinding',
+        'role-binding',
         'usermanagement-serviceaccount',
         'usermanagement-group',
         'webhook-receiver-form',

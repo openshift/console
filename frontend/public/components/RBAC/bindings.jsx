@@ -32,6 +32,7 @@ import {
 import { isSystemRole } from './index';
 import { connectToFlags, flagPending } from '../../reducers/features';
 import { useTranslation, withTranslation } from 'react-i18next';
+import i18next from 'i18next';
 
 const bindingKind = (binding) =>
   binding.metadata.namespace ? 'RoleBinding' : 'ClusterRoleBinding';
@@ -65,6 +66,65 @@ export const flatten = (resources) =>
     return ret;
   });
 
+const menuActions = ({ subjectIndex, subjects }, startImpersonate_) => {
+  const subject = subjects[subjectIndex];
+
+  const actions = [
+    (kind, obj) => ({
+      label: i18next.t('role-binding~Duplicate {{label}}', kind),
+      href: `${resourceObjPath(obj, kind.kind)}/copy?subjectIndex=${subjectIndex}`,
+      // Only perform access checks when duplicating cluster role bindings.
+      // It's not practical to check namespace role bindings since we don't know what namespace the user will pick in the form.
+      accessReview: _.get(obj, 'metadata.namespace')
+        ? null
+        : { group: kind.apiGroup, resource: kind.plural, verb: 'create' },
+    }),
+    (kind, obj) => ({
+      label: i18next.t('role-binding~Edit {{label}} subject', kind),
+      href: `${resourceObjPath(obj, kind.kind)}/edit?subjectIndex=${subjectIndex}`,
+      accessReview: {
+        group: kind.apiGroup,
+        resource: kind.plural,
+        name: obj.metadata.name,
+        namespace: obj.metadata.namespace,
+        verb: 'update',
+      },
+    }),
+    subjects.length === 1
+      ? Kebab.factory.Delete
+      : (kind, binding_) => ({
+          label: i18next.t('role-binding~Delete {{label}} subject', kind),
+          callback: () =>
+            confirmModal({
+              title: i18next.t('role-binding~Delete {{label}} subject', kind),
+              message: i18next.t(
+                'role-binding~Are you sure you want to delete subject {{name}} of type {{kind}}?',
+                subject,
+              ),
+              btnText: i18next.t('role-binding~Delete subject'),
+              executeFn: () =>
+                k8sPatch(kind, binding_, [{ op: 'remove', path: `/subjects/${subjectIndex}` }]),
+            }),
+          accessReview: {
+            group: kind.apiGroup,
+            resource: kind.plural,
+            name: binding_.metadata.name,
+            namespace: binding_.metadata.namespace,
+            verb: 'patch',
+          },
+        }),
+  ];
+
+  if (subject.kind === 'User' || subject.kind === 'Group') {
+    actions.unshift(() => ({
+      label: i18next.t('role-binding~Impersonate {{kind}} "{{name}}"', subject),
+      callback: () => startImpersonate_(subject.kind, subject.name),
+    }));
+  }
+
+  return actions;
+};
+
 const tableColumnClasses = [
   classNames('col-md-3', 'col-sm-4', 'col-xs-6'),
   classNames('col-md-3', 'col-sm-4', 'hidden-xs'),
@@ -73,6 +133,44 @@ const tableColumnClasses = [
   classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-6'),
   Kebab.columnClass,
 ];
+
+const RoleBindingsTableHeader = () => [
+  {
+    title: i18next.t('role-binding~Name'),
+    sortField: 'metadata.name',
+    transforms: [sortable],
+    props: { className: tableColumnClasses[0] },
+  },
+  {
+    title: i18next.t('role-binding~Role ref'),
+    sortField: 'roleRef.name',
+    transforms: [sortable],
+    props: { className: tableColumnClasses[1] },
+  },
+  {
+    title: i18next.t('role-binding~Subject kind'),
+    sortField: 'subject.kind',
+    transforms: [sortable],
+    props: { className: tableColumnClasses[2] },
+  },
+  {
+    title: i18next.t('role-binding~Subject name'),
+    sortField: 'subject.name',
+    transforms: [sortable],
+    props: { className: tableColumnClasses[3] },
+  },
+  {
+    title: i18next.t('role-binding~Namespace'),
+    sortField: 'metadata.namespace',
+    transforms: [sortable],
+    props: { className: tableColumnClasses[4] },
+  },
+  {
+    title: '',
+    props: { className: tableColumnClasses[5] },
+  },
+];
+RoleBindingsTableHeader.displayName = 'RoleBindingsTableHeader';
 
 export const BindingName = ({ binding }) => {
   <ResourceLink
@@ -86,66 +184,6 @@ export const BindingName = ({ binding }) => {
 export const BindingKebab = connect(null, {
   startImpersonate: UIActions.startImpersonate,
 })(({ binding, startImpersonate }) => {
-  const { t } = useTranslation();
-  const menuActions = ({ subjectIndex, subjects }, startImpersonate_) => {
-    const subject = subjects[subjectIndex];
-
-    const actions = [
-      (kind, obj) => ({
-        label: t('usermanagement-rolebinding~Duplicate {{label}}', kind),
-        href: `${resourceObjPath(obj, kind.kind)}/copy?subjectIndex=${subjectIndex}`,
-        // Only perform access checks when duplicating cluster role bindings.
-        // It's not practical to check namespace role bindings since we don't know what namespace the user will pick in the form.
-        accessReview: _.get(obj, 'metadata.namespace')
-          ? null
-          : { group: kind.apiGroup, resource: kind.plural, verb: 'create' },
-      }),
-      (kind, obj) => ({
-        label: t('usermanagement-rolebinding~Edit {{label}} subject', kind),
-        href: `${resourceObjPath(obj, kind.kind)}/edit?subjectIndex=${subjectIndex}`,
-        accessReview: {
-          group: kind.apiGroup,
-          resource: kind.plural,
-          name: obj.metadata.name,
-          namespace: obj.metadata.namespace,
-          verb: 'update',
-        },
-      }),
-      subjects.length === 1
-        ? Kebab.factory.Delete
-        : (kind, binding_) => ({
-            label: t('usermanagement-rolebinding~Delete {{label}} subject', kind),
-            callback: () =>
-              confirmModal({
-                title: t('usermanagement-rolebinding~Delete {{label}} subject', kind),
-                message: t(
-                  'usermanagement-rolebinding~Are you sure you want to delete subject {{name}} of type {{kind}}?',
-                  subject,
-                ),
-                btnText: t('usermanagement-rolebinding~Delete subject'),
-                executeFn: () =>
-                  k8sPatch(kind, binding_, [{ op: 'remove', path: `/subjects/${subjectIndex}` }]),
-              }),
-            accessReview: {
-              group: kind.apiGroup,
-              resource: kind.plural,
-              name: binding_.metadata.name,
-              namespace: binding_.metadata.namespace,
-              verb: 'patch',
-            },
-          }),
-    ];
-
-    if (subject.kind === 'User' || subject.kind === 'Group') {
-      actions.unshift(() => ({
-        label: t('usermanagement-rolebinding~Impersonate {{kind}} "{{name}}"', subject),
-        callback: () => startImpersonate_(subject.kind, subject.name),
-      }));
-    }
-
-    return actions;
-  };
-
   return binding.subjects ? (
     <ResourceKebab
       actions={menuActions(binding, startImpersonate)}
@@ -167,94 +205,52 @@ const EmptyMsg = () => {
   const { t } = useTranslation();
   return (
     <MsgBox
-      title={t('usermanagement-rolebinding~No Role Bindings found')}
+      title={t('role-binding~No Role Bindings found')}
       detail={t(
-        'usermanagement-rolebinding~Roles grant access to types of objects in the cluster. Roles are applied to a group or user via a Role Binding.',
+        'role-binding~Roles grant access to types of objects in the cluster. Roles are applied to a group or user via a Role Binding.',
       )}
     />
   );
 };
 
+const RoleBindingsTableRow = ({ obj: binding, index, key, style }) => (
+  <TableRow id={binding.metadata.uid} index={index} trKey={key} style={style}>
+    <TableData className={tableColumnClasses[0]}>
+      <ResourceLink
+        kind={bindingKind(binding)}
+        name={binding.metadata.name}
+        namespace={binding.metadata.namespace}
+        className="co-resource-item__resource-name"
+      />
+    </TableData>
+    <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      <RoleLink binding={binding} />
+    </TableData>
+    <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+      {binding.subject.kind}
+    </TableData>
+    <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
+      {binding.subject.name}
+    </TableData>
+    <TableData className={classNames(tableColumnClasses[4], 'co-break-word')}>
+      {binding.metadata.namespace ? (
+        <ResourceLink kind="Namespace" name={binding.metadata.namespace} />
+      ) : (
+        i18next.t('role-binding~All Namespaces')
+      )}
+    </TableData>
+    <TableData className={tableColumnClasses[5]}>
+      <BindingKebab binding={binding} />
+    </TableData>
+  </TableRow>
+);
+
 export const BindingsList = (props) => {
   const { t } = useTranslation();
-  const RoleBindingsTableHeader = () => {
-    return [
-      {
-        title: t('usermanagement-rolebinding~Name'),
-        sortField: 'metadata.name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
-      },
-      {
-        title: t('usermanagement-rolebinding~Role ref'),
-        sortField: 'roleRef.name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
-      },
-      {
-        title: t('usermanagement-rolebinding~Subject kind'),
-        sortField: 'subject.kind',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[2] },
-      },
-      {
-        title: t('usermanagement-rolebinding~Subject name'),
-        sortField: 'subject.name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[3] },
-      },
-      {
-        title: t('usermanagement-rolebinding~Namespace'),
-        sortField: 'metadata.namespace',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[4] },
-      },
-      {
-        title: '',
-        props: { className: tableColumnClasses[5] },
-      },
-    ];
-  };
-  RoleBindingsTableHeader.displayName = 'RoleBindingsTableHeader';
-
-  const RoleBindingsTableRow = ({ obj: binding, index, key, style }) => {
-    return (
-      <TableRow id={binding.metadata.uid} index={index} trKey={key} style={style}>
-        <TableData className={tableColumnClasses[0]}>
-          <ResourceLink
-            kind={bindingKind(binding)}
-            name={binding.metadata.name}
-            namespace={binding.metadata.namespace}
-            className="co-resource-item__resource-name"
-          />
-        </TableData>
-        <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
-          <RoleLink binding={binding} />
-        </TableData>
-        <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
-          {binding.subject.kind}
-        </TableData>
-        <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
-          {binding.subject.name}
-        </TableData>
-        <TableData className={classNames(tableColumnClasses[4], 'co-break-word')}>
-          {binding.metadata.namespace ? (
-            <ResourceLink kind="Namespace" name={binding.metadata.namespace} />
-          ) : (
-            t('usermanagement-rolebinding~All Namespaces')
-          )}
-        </TableData>
-        <TableData className={tableColumnClasses[5]}>
-          <BindingKebab binding={binding} />
-        </TableData>
-      </TableRow>
-    );
-  };
-
   return (
     <Table
       {...props}
-      aria-label={t('usermanagement-rolebinding~Role Bindings')}
+      aria-label={t('role-binding~Role Bindings')}
       EmptyMsg={EmptyMsg}
       Header={RoleBindingsTableHeader}
       Row={RoleBindingsTableRow}
@@ -295,13 +291,13 @@ export const RoleBindingsPage = ({
       reducer: bindingType,
       itemsGenerator: ({ ClusterRoleBinding: data }) => {
         const items = [
-          { id: 'namespace', title: t('usermanagement-rolebinding~Namespace Role Bindings') },
-          { id: 'system', title: t('usermanagement-rolebinding~System Role Bindings') },
+          { id: 'namespace', title: t('role-binding~Namespace Role Bindings') },
+          { id: 'system', title: t('role-binding~System Role Bindings') },
         ];
         if (data && data.loaded && !data.loadError) {
           items.unshift({
             id: 'cluster',
-            title: t('usermanagement-rolebinding~Cluster-wide Role Bindings'),
+            title: t('role-binding~Cluster-wide Role Bindings'),
           });
         }
         return items;
@@ -311,14 +307,14 @@ export const RoleBindingsPage = ({
   return (
     <MultiListPage
       canCreate={!mock}
-      createButtonText={t('usermanagement-rolebinding~Create binding')}
+      createButtonText={t('role-binding~Create binding')}
       createProps={{
         to: createPath,
       }}
       mock={mock}
-      filterLabel={t('usermanagement-rolebinding~by role or subject')}
+      filterLabel={t('role-binding~by role or subject')}
       flatten={flatten}
-      label={t('usermanagement-rolebinding~Role Bindings')}
+      label={t('role-binding~Role Bindings')}
       ListComponent={BindingsList}
       namespace={namespace}
       resources={roleResources}
@@ -326,7 +322,7 @@ export const RoleBindingsPage = ({
       staticFilters={staticFilters}
       showTitle={showTitle}
       textFilter="role-binding"
-      title={t('usermanagement-rolebinding~Role Bindings')}
+      title={t('role-binding~Role Bindings')}
     />
   );
 };
@@ -355,9 +351,9 @@ const NsRoleDropdown_ = (props) => {
     <ListDropdown
       {...props}
       dataFilter={roleFilter}
-      desc={t('usermanagement-rolebinding~Namespace Roles (Role)')}
+      desc={t('role-binding~Namespace Roles (Role)')}
       resources={resources}
-      placeholder={t('usermanagement-rolebinding~Select role name')}
+      placeholder={t('role-binding~Select role name')}
     />
   );
 };
@@ -369,9 +365,9 @@ const ClusterRoleDropdown = (props) => {
     <ListDropdown
       {...props}
       dataFilter={(role) => !isSystemRole(role)}
-      desc={t('usermanagement-rolebinding~Cluster-wide Roles (ClusterRole)')}
+      desc={t('role-binding~Cluster-wide Roles (ClusterRole)')}
       resources={[{ kind: 'ClusterRole' }]}
-      placeholder={t('usermanagement-rolebinding~Select role name')}
+      placeholder={t('role-binding~Select role name')}
     />
   );
 };
@@ -471,7 +467,7 @@ const BaseEditRoleBinding = connect(null, { setActiveNamespace: UIActions.setAct
           (kind === 'RoleBinding' && !metadata.namespace) ||
           (subject.kind === 'ServiceAccount' && !subject.namespace)
         ) {
-          this.setState({ error: t('usermanagement-rolebinding~Please complete all fields.') });
+          this.setState({ error: t('role-binding~Please complete all fields.') });
           return;
         }
 
@@ -506,24 +502,24 @@ const BaseEditRoleBinding = connect(null, { setActiveNamespace: UIActions.setAct
         const bindingKinds = [
           {
             value: 'RoleBinding',
-            title: t('usermanagement-rolebinding~Namespace Role Binding (RoleBinding)'),
+            title: t('role-binding~Namespace Role Binding (RoleBinding)'),
             desc: t(
-              'usermanagement-rolebinding~Grant the permissions to a user or set of users within the selected namespace.',
+              'role-binding~Grant the permissions to a user or set of users within the selected namespace.',
             ),
           },
           {
             value: 'ClusterRoleBinding',
-            title: t('usermanagement-rolebinding~Cluster-wide Role Binding (ClusterRoleBinding)'),
+            title: t('role-binding~Cluster-wide Role Binding (ClusterRoleBinding)'),
             desc: t(
-              'usermanagement-rolebinding~Grant the permissions to a user or set of users at the cluster level and in all namespaces.',
+              'role-binding~Grant the permissions to a user or set of users at the cluster level and in all namespaces.',
             ),
           },
         ];
 
         const subjectKinds = [
-          { value: 'User', title: t('usermanagement-rolebinding~User') },
-          { value: 'Group', title: t('usermanagement-rolebinding~Group') },
-          { value: 'ServiceAccount', title: t('usermanagement-rolebinding~Service Account') },
+          { value: 'User', title: t('role-binding~User') },
+          { value: 'Group', title: t('role-binding~Group') },
+          { value: 'ServiceAccount', title: t('role-binding~Service Account') },
         ];
 
         return (
@@ -535,22 +531,22 @@ const BaseEditRoleBinding = connect(null, { setActiveNamespace: UIActions.setAct
               <h1 className="co-m-pane__heading">{title}</h1>
               <p className="co-m-pane__explanation">
                 {t(
-                  'usermanagement-rolebinding~Associate a user/group to the selected role to define the type of access and resources that are allowed.',
+                  'role-binding~Associate a user/group to the selected role to define the type of access and resources that are allowed.',
                 )}
               </p>
 
               {!_.get(fixed, 'kind') && (
-                <Section label={t('usermanagement-rolebinding~Binding type')}>
+                <Section label={t('role-binding~Binding type')}>
                   <RadioGroup currentValue={kind} items={bindingKinds} onChange={this.setKind} />
                 </Section>
               )}
 
               <div className="co-form-section__separator" />
 
-              <Section label={t('usermanagement-rolebinding~Role Binding')}>
+              <Section label={t('role-binding~Role Binding')}>
                 <div className="form-group">
                   <label htmlFor="role-binding-name" className="co-required">
-                    {t('usermanagement-rolebinding~Name')}
+                    {t('role-binding~Name')}
                   </label>
                   {_.get(fixed, 'metadata.name') ? (
                     <ResourceName kind={kind} name={metadata.name} />
@@ -559,7 +555,7 @@ const BaseEditRoleBinding = connect(null, { setActiveNamespace: UIActions.setAct
                       className="pf-c-form-control"
                       type="text"
                       onChange={this.changeName}
-                      placeholder={t('usermanagement-rolebinding~Role binding name')}
+                      placeholder={t('role-binding~Role binding name')}
                       value={metadata.name}
                       required
                       id="role-binding-name"
@@ -569,7 +565,7 @@ const BaseEditRoleBinding = connect(null, { setActiveNamespace: UIActions.setAct
                 {kind === 'RoleBinding' && (
                   <div className="form-group">
                     <label htmlFor="ns-dropdown" className="co-required">
-                      {t('usermanagement-rolebinding~Namespace')}
+                      {t('role-binding~Namespace')}
                     </label>
                     <NsDropdown
                       fixed={!!_.get(fixed, 'metadata.namespace')}
@@ -583,10 +579,10 @@ const BaseEditRoleBinding = connect(null, { setActiveNamespace: UIActions.setAct
 
               <div className="co-form-section__separator" />
 
-              <Section label={t('usermanagement-rolebinding~Role')}>
+              <Section label={t('role-binding~Role')}>
                 <div className="form-group">
                   <label htmlFor="role-dropdown" className="co-required">
-                    {t('usermanagement-rolebinding~Role name')}
+                    {t('role-binding~Role name')}
                   </label>
                   <RoleDropdown
                     fixed={!!_.get(fixed, 'roleRef.name')}
@@ -601,7 +597,7 @@ const BaseEditRoleBinding = connect(null, { setActiveNamespace: UIActions.setAct
 
               <div className="co-form-section__separator" />
 
-              <Section label={t('usermanagement-rolebinding~Subject')}>
+              <Section label={t('role-binding~Subject')}>
                 <div className="form-group">
                   <RadioGroup
                     currentValue={subject.kind}
@@ -612,7 +608,7 @@ const BaseEditRoleBinding = connect(null, { setActiveNamespace: UIActions.setAct
                 {subject.kind === 'ServiceAccount' && (
                   <div className="form-group">
                     <label htmlFor="subject-namespace" className="co-required">
-                      {t('usermanagement-rolebinding~Subject namespace')}
+                      {t('role-binding~Subject namespace')}
                     </label>
                     <NsDropdown
                       id="subject-namespace"
@@ -623,13 +619,13 @@ const BaseEditRoleBinding = connect(null, { setActiveNamespace: UIActions.setAct
                 )}
                 <div className="form-group">
                   <label htmlFor="subject-name" className="co-required">
-                    {t('usermanagement-rolebinding~Subject name')}
+                    {t('role-binding~Subject name')}
                   </label>
                   <input
                     className="pf-c-form-control"
                     type="text"
                     onChange={this.changeSubjectName}
-                    placeholder={t('usermanagement-rolebinding~Subject name')}
+                    placeholder={t('role-binding~Subject name')}
                     value={subject.name}
                     required
                     id="subject-name"
@@ -642,10 +638,10 @@ const BaseEditRoleBinding = connect(null, { setActiveNamespace: UIActions.setAct
               <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
                 <ActionGroup className="pf-c-form">
                   <Button type="submit" id="save-changes" variant="primary">
-                    {saveButtonText || t('usermanagement-rolebinding~Create')}
+                    {saveButtonText || t('role-binding~Create')}
                   </Button>
                   <Button onClick={history.goBack} id="cancel" variant="secondary">
-                    {t('usermanagement-rolebinding~Cancel')}
+                    {t('role-binding~Cancel')}
                   </Button>
                 </ActionGroup>
               </ButtonBar>
@@ -678,7 +674,7 @@ export const CreateRoleBinding = ({ match: { params }, location }) => {
       metadata={metadata}
       fixed={fixed}
       isCreate={true}
-      titleVerb={t('usermanagement-rolebinding~Create')}
+      titleVerb={t('role-binding~Create')}
     />
   );
 };
@@ -707,8 +703,8 @@ export const EditRoleBinding = ({ match: { params }, kind }) => {
       <BindingLoadingWrapper
         fixedKeys={['kind', 'metadata', 'roleRef']}
         subjectIndex={getSubjectIndex()}
-        titleVerb={t('usermanagement-rolebinding~Edit')}
-        saveButtonText={t('usermanagement-rolebinding~Save')}
+        titleVerb={t('role-binding~Edit')}
+        saveButtonText={t('role-binding~Save')}
       />
     </Firehose>
   );
@@ -724,7 +720,7 @@ export const CopyRoleBinding = ({ match: { params }, kind }) => {
         isCreate={true}
         fixedKeys={['kind']}
         subjectIndex={getSubjectIndex()}
-        titleVerb={t('usermanagement-rolebinding~Duplicate')}
+        titleVerb={t('role-binding~Duplicate')}
       />
     </Firehose>
   );
