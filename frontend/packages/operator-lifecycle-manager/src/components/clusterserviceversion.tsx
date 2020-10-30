@@ -22,6 +22,7 @@ import {
   getNamespace,
   getUID,
   StatusIconAndText,
+  useDeepCompareMemoize,
 } from '@console/shared';
 import {
   DetailsPage,
@@ -69,7 +70,10 @@ import {
   KebabAction,
   openshiftHelpBase,
 } from '@console/internal/components/utils';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import {
+  useK8sWatchResource,
+  useK8sWatchResources,
+} from '@console/internal/components/utils/k8s-watch-hook';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { RootState } from '@console/internal/redux';
 import {
@@ -1034,35 +1038,177 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
   );
 };
 
-export const CSVSubscription: React.FC<CSVSubscriptionProps> = ({
-  obj,
-  subscriptions = [],
-  ...rest
-}) => {
+export const CSVSubscription: React.FC<CSVSubscriptionProps> = ({ obj, customData }) => {
   const EmptyMsg = () => (
     <MsgBox title="No Operator Subscription" detail="This Operator will not receive updates." />
   );
 
-  const subscription = React.useMemo(() => subscriptionForCSV(subscriptions, obj), [
-    obj,
-    subscriptions,
-  ]);
+  const [
+    { subscription, catalogSource, installPlan, packageManifest },
+    loaded,
+    loadError,
+  ] = customData;
 
   return (
-    <StatusBox EmptyMsg={EmptyMsg} loaded data={subscription}>
+    <StatusBox EmptyMsg={EmptyMsg} loaded={loaded} loadError={loadError} data={subscription}>
       <SubscriptionDetails
-        {...rest}
+        catalogSources={[catalogSource]}
+        installPlans={[installPlan]}
+        packageManifests={[packageManifest]}
         obj={subscription}
+        subscriptions={[subscription]}
         clusterServiceVersions={[obj]}
-        subscriptions={subscriptions}
       />
     </StatusBox>
   );
 };
 
+type DataLoaderProps = {
+  name: string;
+  namespace: string;
+};
+
+type DataLoaderResults = [
+  {
+    packageManifest: PackageManifestKind;
+    installPlan: InstallPlanKind;
+    catalogSource: CatalogSourceKind;
+    subscription: SubscriptionKind;
+    csv: ClusterServiceVersionKind;
+  },
+  boolean,
+  any,
+];
+
+const useCSVPageDataLoader = (dataLoaderProps: DataLoaderProps): DataLoaderResults => {
+  const { name, namespace } = dataLoaderProps;
+  const csvResource = {
+    kind: referenceForModel(ClusterServiceVersionModel),
+    name,
+    namespace,
+    isList: false,
+  };
+
+  const [csvData, csvLoaded, csvLoadError] = useK8sWatchResource<ClusterServiceVersionKind>(
+    csvResource,
+  );
+
+  const memoizedCSVData = useDeepCompareMemoize(csvData, true);
+
+  const operatorNamespace = memoizedCSVData?.metadata?.annotations?.['olm.operatorNamesapce'];
+
+  const subscriptionResource = {
+    isList: true,
+    kind: referenceForModel(SubscriptionModel),
+    namespace: operatorNamespace,
+  };
+
+  const [subscriptionData, subscriptionLoaded, subscriptionLoadError] = useK8sWatchResource<
+    SubscriptionKind[]
+  >(subscriptionResource);
+
+  const memoizedSubscriptionData = useDeepCompareMemoize(subscriptionData, true);
+
+  const currSubscription = React.useMemo(
+    () =>
+      _.find(memoizedSubscriptionData, {
+        status: {
+          installedCSV: name,
+        },
+      }),
+    [memoizedSubscriptionData, name],
+  );
+
+  const pkgManifestResource = {
+    kind: referenceForModel(PackageManifestModel),
+    name: currSubscription?.spec?.name,
+    namespace: currSubscription?.spec?.sourceNamespace,
+    isList: false,
+  };
+
+  const installPlanResource = {
+    kind: referenceForModel(InstallPlanModel),
+    namespace: currSubscription?.status?.installPlanRef.namespace,
+    name: currSubscription?.status?.installPlanRef.name,
+    isList: false,
+  };
+
+  const catalogSourceResource = {
+    kind: referenceForModel(CatalogSourceModel),
+    name: currSubscription?.spec?.source,
+    namespace: currSubscription?.spec?.sourceNamespace,
+    isList: false,
+  };
+
+  const data = useK8sWatchResources<{
+    packageManifest: PackageManifestKind;
+    installPlan: InstallPlanKind;
+    catalogSource: CatalogSourceKind;
+  }>({
+    packageManifest: pkgManifestResource,
+    installPlan: installPlanResource,
+    catalogSource: catalogSourceResource,
+  });
+
+  const {
+    packageManifest: {
+      data: pkgManifestData,
+      loaded: pkgManifestLoaded,
+      loadError: pkgManifestLoadError,
+    },
+    installPlan: {
+      data: installPlanData,
+      loaded: installPlanLoaded,
+      loadError: installPlanLoadError,
+    },
+    catalogSource: {
+      data: catalogSourceData,
+      loaded: catalogSourceLoaded,
+      loadError: catalogSourceLoadError,
+    },
+  } = data;
+
+  const loaded =
+    pkgManifestLoaded ||
+    installPlanLoaded ||
+    catalogSourceLoaded ||
+    csvLoaded ||
+    subscriptionLoaded;
+  const loadError =
+    pkgManifestLoadError ||
+    installPlanLoadError ||
+    catalogSourceLoadError ||
+    csvLoadError ||
+    subscriptionLoadError;
+
+  const memoizedPkgManifest = useDeepCompareMemoize(pkgManifestData, true);
+  const memoizedInstallPlan = useDeepCompareMemoize(installPlanData, true);
+  const memoizedCatalogSource = useDeepCompareMemoize(catalogSourceData, true);
+
+  return [
+    {
+      packageManifest: memoizedPkgManifest,
+      installPlan: memoizedInstallPlan,
+      catalogSource: memoizedCatalogSource,
+      subscription: currSubscription,
+      csv: memoizedCSVData,
+    },
+    loaded,
+    loadError,
+  ];
+};
+
 export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsDetailsPageProps> = (
   props,
 ) => {
+  const { match } = props;
+  const [data, loaded, loadError] = useCSVPageDataLoader({
+    name: props.match.params.name,
+    namespace: match.params.ns,
+  });
+
+  const { subscription, csv, catalogSource, installPlan, packageManifest } = data;
+
   const instancePagesFor = (obj: ClusterServiceVersionKind) => {
     const internalObjects = getInternalObjects(obj);
     const allInstancesPage: Page = {
@@ -1096,19 +1242,11 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
     );
   };
 
-  type ExtraResources = { subscriptions: SubscriptionKind[] };
-  const menuActions = (
-    model,
-    obj: ClusterServiceVersionKind,
-    { subscriptions }: ExtraResources,
-  ) => {
-    const subscription = subscriptionForCSV(subscriptions, obj);
-    return [
-      ...(_.isEmpty(subscription)
-        ? [Kebab.factory.Delete(model, obj)]
-        : [editSubscription(subscription), uninstall(subscription, obj)]),
-    ];
-  };
+  const menuActions = (model, obj: ClusterServiceVersionKind) => [
+    ...(_.isEmpty(subscription)
+      ? [Kebab.factory.Delete(model, obj)]
+      : [editSubscription(subscription), uninstall(subscription, obj)]),
+  ];
 
   const canListSubscriptions = useAccessReview({
     group: SubscriptionModel.apiGroup,
@@ -1122,7 +1260,11 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
         navFactory.details(ClusterServiceVersionDetails),
         navFactory.editYaml(),
         canListSubscriptions
-          ? { href: 'subscription', name: 'Subscription', component: CSVSubscription }
+          ? {
+              href: 'subscription',
+              name: 'Subscription',
+              component: CSVSubscription,
+            }
           : null,
         navFactory.events(ResourceEventStream),
         ...instancePagesFor(obj),
@@ -1140,12 +1282,6 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
         },
         { name: 'Operator Details', path: props.match.url },
       ]}
-      resources={[
-        { kind: referenceForModel(SubscriptionModel), isList: true, prop: 'subscriptions' },
-        { kind: referenceForModel(PackageManifestModel), isList: true, prop: 'packageManifests' },
-        { kind: referenceForModel(CatalogSourceModel), isList: true, prop: 'catalogSources' },
-        { kind: referenceForModel(InstallPlanModel), isList: true, prop: 'installPlans' },
-      ]}
       icon={({ obj }) => (
         <ClusterServiceVersionLogo
           displayName={_.get(obj.spec, 'displayName')}
@@ -1156,9 +1292,15 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
       )}
       namespace={props.match.params.ns}
       kind={referenceForModel(ClusterServiceVersionModel)}
+      kindObj={(csv as unknown) as K8sKind}
       name={props.match.params.name}
       pagesFor={pagesFor}
       menuActions={menuActions}
+      customData={[
+        { subscription, catalogSource, installPlan, packageManifest },
+        loaded,
+        loadError,
+      ]}
     />
   );
 };
@@ -1202,6 +1344,7 @@ export type CRDCardRowState = {
 
 export type ClusterServiceVersionsDetailsPageProps = {
   match: RouterMatch<any>;
+  subscription: SubscriptionKind;
 };
 
 export type ClusterServiceVersionDetailsProps = {
@@ -1241,11 +1384,17 @@ type ManagedNamespacesProps = {
 };
 
 export type CSVSubscriptionProps = {
-  catalogSources: CatalogSourceKind[];
-  installPlans: InstallPlanKind[];
   obj: ClusterServiceVersionKind;
-  packageManifests: PackageManifestKind[];
-  subscriptions: SubscriptionKind[];
+  customData: [
+    {
+      subscription: SubscriptionKind;
+      catalogSource: CatalogSourceKind;
+      installPlan: InstallPlanKind;
+      packageManifest: PackageManifestKind;
+    },
+    boolean,
+    boolean,
+  ];
 };
 
 type ClusterServiceVersionStateProps = {

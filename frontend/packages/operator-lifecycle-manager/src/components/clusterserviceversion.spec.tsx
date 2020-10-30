@@ -19,6 +19,7 @@ import {
   StatusBox,
 } from '@console/internal/components/utils';
 import * as rbac from '@console/internal/components/utils/rbac';
+import * as watchers from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel } from '@console/internal/module/k8s';
 import * as operatorLogo from '@console/internal/imgs/operator.svg';
 import {
@@ -29,7 +30,7 @@ import {
   testInstallPlan,
 } from '../../mocks';
 import { ClusterServiceVersionModel } from '../models';
-import { ClusterServiceVersionKind, ClusterServiceVersionPhase } from '../types';
+import { ClusterServiceVersionKind, ClusterServiceVersionPhase, SubscriptionKind } from '../types';
 import {
   ClusterServiceVersionsDetailsPage,
   ClusterServiceVersionsDetailsPageProps,
@@ -404,16 +405,22 @@ describe(CSVSubscription.displayName, () => {
     wrapper = shallow(
       <CSVSubscription
         obj={testClusterServiceVersion}
-        packageManifests={[]}
-        subscriptions={[]}
-        catalogSources={[]}
-        installPlans={[]}
+        customData={[
+          {
+            subscription: {} as SubscriptionKind,
+            catalogSource: {} as any,
+            installPlan: {} as any,
+            packageManifest: {} as any,
+          },
+          true,
+          null,
+        ]}
       />,
     );
 
     expect(wrapper.find(StatusBox).props().EmptyMsg).toBeDefined();
     expect(wrapper.find(StatusBox).props().loaded).toBe(true);
-    expect(wrapper.find(StatusBox).props().data).toBeUndefined();
+    expect(wrapper.find(StatusBox).props().data).toEqual({});
   });
 
   it('renders `SubscriptionDetails` with correct props when Operator subscription exists', () => {
@@ -427,10 +434,16 @@ describe(CSVSubscription.displayName, () => {
     wrapper = shallow(
       <CSVSubscription
         obj={obj}
-        packageManifests={[testPackageManifest]}
-        subscriptions={[testSubscription, subscription]}
-        catalogSources={[testCatalogSource]}
-        installPlans={[testInstallPlan]}
+        customData={[
+          {
+            subscription,
+            catalogSource: testCatalogSource,
+            installPlan: testInstallPlan,
+            packageManifest: testPackageManifest,
+          },
+          true,
+          null,
+        ]}
       />,
     );
 
@@ -451,19 +464,20 @@ describe(CSVSubscription.displayName, () => {
     const subscription = _.set(_.cloneDeep(testSubscription), 'status', {
       installedCSV: obj.metadata.name,
     });
-    const otherPkg = _.set(
-      _.cloneDeep(testPackageManifest),
-      'status.catalogSource',
-      'other-source',
-    );
 
     wrapper = shallow(
       <CSVSubscription
         obj={obj}
-        packageManifests={[testPackageManifest, otherPkg]}
-        subscriptions={[testSubscription, subscription]}
-        catalogSources={[testCatalogSource]}
-        installPlans={[testInstallPlan]}
+        customData={[
+          {
+            subscription,
+            catalogSource: testCatalogSource,
+            installPlan: testInstallPlan,
+            packageManifest: testPackageManifest,
+          },
+          true,
+          null,
+        ]}
       />,
     );
 
@@ -485,9 +499,28 @@ describe(ClusterServiceVersionsDetailsPage.displayName, () => {
 
   beforeEach(() => {
     spyOn(rbac, 'useAccessReview').and.returnValue(true);
+    spyOn(watchers, 'useK8sWatchResource').and.returnValue([{}, true, null]);
+    spyOn(watchers, 'useK8sWatchResources').and.returnValue({
+      packageManifest: {
+        data: {},
+        loaded: true,
+        loadError: null,
+      },
+      installPlan: {
+        data: {},
+        loaded: true,
+        loadError: null,
+      },
+      catalogSource: {
+        data: {},
+        loaded: true,
+        loadError: null,
+      },
+    });
     wrapper = shallow(
       <ClusterServiceVersionsDetailsPage
         match={{ params: { ns, name }, isExact: true, url: '', path: '' }}
+        subscription={{} as SubscriptionKind}
       />,
     );
   });
