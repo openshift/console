@@ -100,7 +100,7 @@ export const CreateOCS = withHandlePromise<CreateOCSProps & HandlePromiseProps>(
   const isMinimalSupported = useFlag(OCS_SUPPORT_FLAGS.MINIMAL_DEPLOYMENT);
   const isEncryptionSupported = useFlag(OCS_SUPPORT_FLAGS.ENCRYPTION);
 
-  const isMinimal = nodes.length > minSelectedNode ? shouldDeployAsMinimal(nodes) : false;
+  const isMinimal = nodes.length >= minSelectedNode ? shouldDeployAsMinimal(nodes) : false;
 
   React.useEffect(() => {
     // this is needed to ensure that the useEffect should be called only when setHasNoProvSC is defined

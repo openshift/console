@@ -71,6 +71,28 @@ export const getOCSRequestData = (
             memory: '8Gi',
           },
         },
+        rgw: {
+          limits: {
+            cpu: '2',
+            memory: '4Gi',
+          },
+          requests: {
+            cpu: '1',
+            memory: '4Gi',
+          },
+        },
+      },
+    });
+    requestData.spec.storageDeviceSets[0] = Object.assign(requestData.spec.storageDeviceSets[0], {
+      resources: {
+        limits: {
+          cpu: '2',
+          memory: '5Gi',
+        },
+        requests: {
+          cpu: '1',
+          memory: '5Gi',
+        },
       },
     });
   }
