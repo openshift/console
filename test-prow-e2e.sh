@@ -35,7 +35,7 @@ export DBUS_SESSION_BUS_ADDRESS
 SCENARIO="${1:-e2e}"
 
 if [ "$SCENARIO" != "login" ]; then
-  CHROME_VERSION=$(google-chrome --version) ./test-gui.sh "$SCENARIO"
+  CHROME_VERSION=$(google-chrome --version) ./test-protractor.sh "$SCENARIO"
 fi
 
 if [ "$SCENARIO" == "e2e" ] || [ "$SCENARIO" == "release" ]; then

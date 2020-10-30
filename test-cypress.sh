@@ -35,9 +35,9 @@ if [ $# -eq 0 ]; then
 fi
 
 if [ -n "${headless-}" ] && [ -z "${pkg-}" ]; then
-  echo "yarn run test-cypress-console-headless"
-  echo "yarn run test-cypress-olm-headless"
-  echo "yarn run test-cypress-devconsole-headless"
+  yarn run test-cypress-console-headless
+  yarn run test-cypress-olm-headless
+  # yarn run test-cypress-devconsole-headless
   exit;
 fi
 
