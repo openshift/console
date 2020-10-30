@@ -10,5 +10,17 @@
   "Labels": "Labels",
   "Pod selector": "Pod selector",
   "{{currentNumber}} of {{desiredNumber}} pods": "{{currentNumber}} of {{desiredNumber}} pods",
-  "DaemonSets": "DaemonSets"
+  "DaemonSets": "DaemonSets",
+  "StatefulSet details": "StatefulSet details",
+  "StatefulSets": "StatefulSets",
+  "Image": "Image",
+  "Resource limits": "Resource limits",
+  "Ports": "Ports",
+  "Remove volume": "Remove volume",
+  "Mount path": "Mount path",
+  "SubPath": "SubPath",
+  "Type": "Type",
+  "Permissions": "Permissions",
+  "Utilized by": "Utilized by",
+  "{{statusReplicas}} of {{specReplicas}} pods": "{{statusReplicas}} of {{specReplicas}} pods"
 }
