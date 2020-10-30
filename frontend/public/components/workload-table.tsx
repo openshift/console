@@ -4,7 +4,8 @@ import { sortable } from '@patternfly/react-table';
 import { Link } from 'react-router-dom';
 import { K8sResourceKind } from '../module/k8s';
 import { TableRow, TableData } from './factory';
-
+import { useTranslation } from 'react-i18next';
+import i18next from 'i18next';
 import {
   Kebab,
   KebabAction,
@@ -33,6 +34,7 @@ export const WorkloadTableRow: React.FC<WorkloadTableRowProps> = ({
   menuActions,
   customData,
 }) => {
+  const { t } = useTranslation();
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={rowKey} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -58,7 +60,10 @@ export const WorkloadTableRow: React.FC<WorkloadTableRowProps> = ({
           to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`}
           title="pods"
         >
-          {obj.status.replicas || 0} of {obj.spec.replicas} pods
+          {t('workload~{{statusReplicas}} of {{specReplicas}} pods', {
+            statusReplicas: obj.status.replicas || 0,
+            specReplicas: obj.spec.replicas,
+          })}
         </Link>
       </TableData>
       <TableData className={tableColumnClasses[3]}>
@@ -87,32 +92,32 @@ type WorkloadTableRowProps = {
 export const WorkloadTableHeader = () => {
   return [
     {
-      title: 'Name',
+      title: i18next.t('workload~Name'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Namespace',
+      title: i18next.t('workload~Namespace'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
       id: 'namespace',
     },
     {
-      title: 'Status',
+      title: i18next.t('workload~Status'),
       sortFunc: 'numReplicas',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Labels',
+      title: i18next.t('workload~Labels'),
       sortField: 'metadata.labels',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Pod Selector',
+      title: i18next.t('workload~Pod selector'),
       sortField: 'spec.selector',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },

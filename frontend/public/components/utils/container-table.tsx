@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-
+import { useTranslation } from 'react-i18next';
 import { ContainerSpec } from '../../module/k8s';
 
-const ContainerRow: React.SFC<ContainerRowProps> = ({ container }) => {
+const ContainerRow: React.FC<ContainerRowProps> = ({ container }) => {
   const resourceLimits = _.get(container, 'resources.limits');
   const ports = _.get(container, 'ports');
   return (
@@ -22,21 +22,24 @@ const ContainerRow: React.SFC<ContainerRowProps> = ({ container }) => {
   );
 };
 
-export const ContainerTable: React.SFC<ContainerTableProps> = ({ containers }) => (
-  <div className="co-m-table-grid co-m-table-grid--bordered">
-    <div className="row co-m-table-grid__head">
-      <div className="col-xs-5 col-sm-4 col-md-3">Name</div>
-      <div className="col-xs-7 col-sm-5">Image</div>
-      <div className="col-sm-3 col-md-2 hidden-xs">Resource Limits</div>
-      <div className="col-md-2 hidden-xs hidden-sm">Ports</div>
+export const ContainerTable: React.FC<ContainerTableProps> = ({ containers }) => {
+  const { t } = useTranslation();
+  return (
+    <div className="co-m-table-grid co-m-table-grid--bordered">
+      <div className="row co-m-table-grid__head">
+        <div className="col-xs-5 col-sm-4 col-md-3">{t('workload~Name')}</div>
+        <div className="col-xs-7 col-sm-5">{t('workload~Image')}</div>
+        <div className="col-sm-3 col-md-2 hidden-xs">{t('workload~Resource limits')}</div>
+        <div className="col-md-2 hidden-xs hidden-sm">{t('workload~Ports')}</div>
+      </div>
+      <div className="co-m-table-grid__body">
+        {_.map(containers, (c, i) => (
+          <ContainerRow key={i} container={c} />
+        ))}
+      </div>
     </div>
-    <div className="co-m-table-grid__body">
-      {_.map(containers, (c, i) => (
-        <ContainerRow key={i} container={c} />
-      ))}
-    </div>
-  </div>
-);
+  );
+};
 
 export type ContainerRowProps = {
   container: ContainerSpec;
