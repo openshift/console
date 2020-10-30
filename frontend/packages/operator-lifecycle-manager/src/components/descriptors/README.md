@@ -120,5 +120,5 @@ To sufficiently test your component, modify `descriptors.scenario.ts` and add a 
 Run the OLM end-to-end tests against a cluster with OLM installed:
 
 ```shell
-$ yarn test-suite --suite olmFull
+$ yarn test-protractor-suite --suite olmFull
 ```
