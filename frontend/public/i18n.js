@@ -90,7 +90,7 @@ i18n
         'utils',
         'user',
         'role-binding',
-        'usermanagement-serviceaccount',
+        'service-account',
         'usermanagement-group',
         'webhook-receiver-form',
         'yaml',
