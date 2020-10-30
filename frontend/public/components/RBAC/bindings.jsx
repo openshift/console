@@ -92,7 +92,7 @@ const menuActions = ({ subjectIndex, subjects }, startImpersonate_) => {
     }),
     subjects.length === 1
       ? Kebab.factory.Delete
-      : (kind, binding_) => ({
+      : (kind, binding) => ({
           label: i18next.t('role-binding~Delete {{label}} subject', kind),
           callback: () =>
             confirmModal({
@@ -103,13 +103,13 @@ const menuActions = ({ subjectIndex, subjects }, startImpersonate_) => {
               ),
               btnText: i18next.t('role-binding~Delete subject'),
               executeFn: () =>
-                k8sPatch(kind, binding_, [{ op: 'remove', path: `/subjects/${subjectIndex}` }]),
+                k8sPatch(kind, binding, [{ op: 'remove', path: `/subjects/${subjectIndex}` }]),
             }),
           accessReview: {
             group: kind.apiGroup,
             resource: kind.plural,
-            name: binding_.metadata.name,
-            namespace: binding_.metadata.namespace,
+            name: binding.metadata.name,
+            namespace: binding.metadata.namespace,
             verb: 'patch',
           },
         }),
@@ -134,42 +134,44 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const RoleBindingsTableHeader = () => [
-  {
-    title: i18next.t('role-binding~Name'),
-    sortField: 'metadata.name',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[0] },
-  },
-  {
-    title: i18next.t('role-binding~Role ref'),
-    sortField: 'roleRef.name',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[1] },
-  },
-  {
-    title: i18next.t('role-binding~Subject kind'),
-    sortField: 'subject.kind',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[2] },
-  },
-  {
-    title: i18next.t('role-binding~Subject name'),
-    sortField: 'subject.name',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[3] },
-  },
-  {
-    title: i18next.t('role-binding~Namespace'),
-    sortField: 'metadata.namespace',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[4] },
-  },
-  {
-    title: '',
-    props: { className: tableColumnClasses[5] },
-  },
-];
+const RoleBindingsTableHeader = () => {
+  return [
+    {
+      title: i18next.t('role-binding~Name'),
+      sortField: 'metadata.name',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: i18next.t('role-binding~Role ref'),
+      sortField: 'roleRef.name',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: i18next.t('role-binding~Subject kind'),
+      sortField: 'subject.kind',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: i18next.t('role-binding~Subject name'),
+      sortField: 'subject.name',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: i18next.t('role-binding~Namespace'),
+      sortField: 'metadata.namespace',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[4] },
+    },
+    {
+      title: '',
+      props: { className: tableColumnClasses[5] },
+    },
+  ];
+};
 RoleBindingsTableHeader.displayName = 'RoleBindingsTableHeader';
 
 export const BindingName = ({ binding }) => {
@@ -199,18 +201,6 @@ export const RoleLink = ({ binding }) => {
   // Cluster Roles have no namespace and for Roles, the Role's namespace matches the Role Binding's namespace
   const ns = kind === 'ClusterRole' ? undefined : binding.metadata.namespace;
   return <ResourceLink kind={kind} name={binding.roleRef.name} namespace={ns} />;
-};
-
-const EmptyMsg = () => {
-  const { t } = useTranslation();
-  return (
-    <MsgBox
-      title={t('role-binding~No Role Bindings found')}
-      detail={t(
-        'role-binding~Roles grant access to types of objects in the cluster. Roles are applied to a group or user via a Role Binding.',
-      )}
-    />
-  );
 };
 
 const RoleBindingsTableRow = ({ obj: binding, index, key, style }) => (
@@ -244,6 +234,18 @@ const RoleBindingsTableRow = ({ obj: binding, index, key, style }) => (
     </TableData>
   </TableRow>
 );
+
+const EmptyMsg = () => {
+  const { t } = useTranslation();
+  return (
+    <MsgBox
+      title={t('role-binding~No Role Bindings found')}
+      detail={t(
+        'role-binding~Roles grant access to types of objects in the cluster. Roles are applied to a group or user via a Role Binding.',
+      )}
+    />
+  );
+};
 
 export const BindingsList = (props) => {
   const { t } = useTranslation();

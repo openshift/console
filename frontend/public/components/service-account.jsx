@@ -23,7 +23,7 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 
 const KubeConfigify = (kind, sa) => ({
-  label: i18next.t('usermanagement-serviceaccount~Download kubeconfig file'),
+  label: i18next.t('service-account~Download kubeconfig file'),
   weight: 200,
   callback: () => {
     const name = sa.metadata.name;
@@ -44,7 +44,7 @@ const KubeConfigify = (kind, sa) => ({
         );
         if (!secret) {
           errorModal({
-            error: i18next.t('usermanagement-serviceaccount~Unable to get service account token.'),
+            error: i18next.t('service-account~Unable to get service account token.'),
           });
           return;
         }
@@ -155,11 +155,11 @@ const Details = ({ obj: serviceaccount }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('usermanagement-serviceaccount~Service Account details')} />
+        <SectionHeading text={t('service-account~Service Account details')} />
         <ResourceSummary resource={serviceaccount} />
       </div>
       <div className="co-m-pane__body co-m-pane__body--section-heading">
-        <SectionHeading text={t('usermanagement-serviceaccount~Secrets')} />
+        <SectionHeading text={t('service-account~Secrets')} />
       </div>
       <SecretsPage
         kind="Secret"
@@ -186,26 +186,26 @@ const ServiceAccountsList = (props) => {
   const ServiceAccountTableHeader = () => {
     return [
       {
-        title: t('usermanagement-serviceaccount~Name'),
+        title: t('service-account~Name'),
         sortField: 'metadata.name',
         transforms: [sortable],
         props: { className: tableColumnClasses[0] },
       },
       {
-        title: t('usermanagement-serviceaccount~Namespace'),
+        title: t('service-account~Namespace'),
         sortField: 'metadata.namespace',
         transforms: [sortable],
         props: { className: tableColumnClasses[1] },
         id: 'namespace',
       },
       {
-        title: t('usermanagement-serviceaccount~Secrets'),
+        title: t('service-account~Secrets'),
         sortField: 'secrets',
         transforms: [sortable],
         props: { className: tableColumnClasses[2] },
       },
       {
-        title: t('usermanagement-serviceaccount~Created'),
+        title: t('service-account~Created'),
         sortField: 'metadata.creationTimestamp',
         transforms: [sortable],
         props: { className: tableColumnClasses[3] },
@@ -221,7 +221,7 @@ const ServiceAccountsList = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('usermanagement-serviceaccount~Service Accounts')}
+      aria-label={t('service-account~Service Accounts')}
       Header={ServiceAccountTableHeader}
       Row={ServiceAccountTableRow}
       virtualize
