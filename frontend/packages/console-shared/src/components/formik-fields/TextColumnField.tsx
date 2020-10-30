@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { FieldArray, useField } from 'formik';
 import {
   Flex,
@@ -37,6 +38,7 @@ const TextColumnField: React.FC<TextColumnFieldProps> = ({
   tooltip,
 }) => {
   const [field, { touched, error }] = useField<string[]>(name);
+  const { t } = useTranslation();
   useFormikValidationFix(field.value);
   const rowValues = field.value ?? [''];
   const fieldId = getFieldId(name, 'single-column');
@@ -70,9 +72,9 @@ const TextColumnField: React.FC<TextColumnFieldProps> = ({
                     </FlexItem>
                     {!isReadOnly && (
                       <FlexItem>
-                        <Tooltip content={tooltip || 'Remove'}>
+                        <Tooltip content={tooltip || t('console-shared~Remove')}>
                           <Button
-                            aria-label={tooltip || 'Remove'}
+                            aria-label={tooltip || t('console-shared~Remove')}
                             variant={ButtonVariant.plain}
                             type={ButtonType.button}
                             isInline

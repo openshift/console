@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Firehose, FirehoseResource } from '@console/internal/components/utils';
 import { PodRingResources, PodRingData } from '../../types';
 import { transformPodRingData, podRingFirehoseProps } from '../../utils';
@@ -34,10 +35,11 @@ interface PodRingDataControllerProps {
 
 const Controller: React.FC<ControllerProps> = React.memo(
   ({ resources, render, loaded, loadError, kind }) => {
+    const { t } = useTranslation();
     return render({
       loaded,
       loadError,
-      data: loaded ? transformPodRingData(resources, kind) : null,
+      data: loaded ? transformPodRingData(resources, kind, t) : null,
     });
   },
 );

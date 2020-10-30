@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { EditorType, EditorToggle } from './editor-toggle';
@@ -35,6 +36,7 @@ export const SyncedEditor: React.FC<SyncedEditorProps> = ({
   YAMLEditor,
 }) => {
   const { formContext, yamlContext } = context;
+  const { t } = useTranslation();
   const [formData, setFormData] = React.useState<K8sResourceKind>(initialData);
   const [yaml, setYAML] = React.useState(safeJSToYAML(initialData));
   const [type, setType] = React.useState<EditorType>(initialType);
@@ -106,15 +108,15 @@ export const SyncedEditor: React.FC<SyncedEditorProps> = ({
           className="co-synced-editor__yaml-warning"
           variant="danger"
           isInline
-          title="Invalid YAML cannot be persisted"
+          title={t('console-shared~Invalid YAML cannot be persisted')}
         >
-          <p>Switching to Form View will delete any invalid YAML.</p>
+          <p>{t('console-shared~Switching to Form View will delete any invalid YAML.')}</p>
           <Button variant="danger" onClick={onClickYAMLWarningConfirm}>
-            Switch and Delete
+            {t('console-shared~Switch and Delete')}
           </Button>
           &nbsp;
           <Button variant="secondary" onClick={onClickYAMLWarningCancel}>
-            Cancel
+            {t('console-shared~Cancel')}
           </Button>
         </Alert>
       )}

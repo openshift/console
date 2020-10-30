@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { css } from '@patternfly/react-styles';
 import { FocusTrap } from '@patternfly/react-core';
 import styles from '@patternfly/react-styles/css/components/Popover/popover';
@@ -36,35 +37,38 @@ const Popover: React.FC<PopoverProps> = ({
   trigger,
   className,
   id,
-}) => (
-  <>
-    <Popper
-      reference={document.querySelector(trigger)}
-      open={open}
-      placement={placement}
-      className="ocs-popover"
-      popperOptions={{
-        modifiers: { arrow: { element: '.ocs-popover__arrow' } },
-      }}
-    >
-      <FocusTrap>
-        <div id={id} className={css(styles.popover, className)}>
-          <PopoverArrow className="ocs-popover__arrow" />
-          <PopoverContent>
-            <PopoverCloseButton onClose={onClose} aria-label={'closeBtnAriaLabel'} />
-            {headerContent && (
-              <PopoverHeader id={`popover-${uniqueId}-header`}>{headerContent}</PopoverHeader>
-            )}
-            <PopoverBody id={`popover-${uniqueId}-body`}>{children}</PopoverBody>
-            {footerContent && (
-              <PopoverFooter id={`popover-${uniqueId}-footer`}>{footerContent}</PopoverFooter>
-            )}
-          </PopoverContent>
-        </div>
-      </FocusTrap>
-    </Popper>
-  </>
-);
+}) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <Popper
+        reference={document.querySelector(trigger)}
+        open={open}
+        placement={placement}
+        className="ocs-popover"
+        popperOptions={{
+          modifiers: { arrow: { element: '.ocs-popover__arrow' } },
+        }}
+      >
+        <FocusTrap>
+          <div id={id} className={css(styles.popover, className)}>
+            <PopoverArrow className="ocs-popover__arrow" />
+            <PopoverContent>
+              <PopoverCloseButton onClose={onClose} aria-label={t('console-shared~Close')} />
+              {headerContent && (
+                <PopoverHeader id={`popover-${uniqueId}-header`}>{headerContent}</PopoverHeader>
+              )}
+              <PopoverBody id={`popover-${uniqueId}-body`}>{children}</PopoverBody>
+              {footerContent && (
+                <PopoverFooter id={`popover-${uniqueId}-footer`}>{footerContent}</PopoverFooter>
+              )}
+            </PopoverContent>
+          </div>
+        </FocusTrap>
+      </Popper>
+    </>
+  );
+};
 
 Popover.displayName = 'Popover';
 

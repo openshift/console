@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { MouseIcon } from '@patternfly/react-icons';
 import './Shortcut.scss';
@@ -34,6 +35,7 @@ const Shortcut: React.FC<ShortcutProps> = ({
   rightClick,
   shift,
 }) => {
+  const { t } = useTranslation();
   const isMac = window.navigator.platform.includes('Mac');
   return (
     <tr>
@@ -44,7 +46,7 @@ const Shortcut: React.FC<ShortcutProps> = ({
         {isMac && ctrlCmd && <Command>⌘ Cmd</Command>}
         {hover && (
           <Command>
-            <MouseIcon /> Hover
+            <MouseIcon /> {t('console-shared~Hover')}
           </Command>
         )}
         {keyName && (
@@ -54,17 +56,17 @@ const Shortcut: React.FC<ShortcutProps> = ({
         )}
         {drag && (
           <Command>
-            <MouseIcon /> Drag
+            <MouseIcon /> {t('console-shared~Drag')}
           </Command>
         )}
         {click && (
           <Command>
-            <MouseIcon /> Click
+            <MouseIcon /> {t('console-shared~Click')}
           </Command>
         )}
         {rightClick && (
           <Command>
-            <MouseIcon /> Right Click
+            <MouseIcon /> {t('console-shared~Right Click')}
           </Command>
         )}
       </td>

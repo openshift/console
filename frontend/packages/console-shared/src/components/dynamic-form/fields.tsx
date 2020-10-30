@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import * as classnames from 'classnames';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { JSONSchema6 } from 'json-schema';
 import { getUiOptions } from 'react-jsonschema-form/lib/utils';
 import { FieldProps, UiSchema } from 'react-jsonschema-form';
@@ -42,7 +43,12 @@ export const FormField: React.FC<FormFieldProps> = ({
   schema,
   uiSchema,
 }) => {
-  const [showLabel, label] = useSchemaLabel(schema, uiSchema, defaultLabel || 'Value');
+  const { t } = useTranslation();
+  const [showLabel, label] = useSchemaLabel(
+    schema,
+    uiSchema,
+    defaultLabel || t('console-shared~Value'),
+  );
   return (
     <div id={`${id}_field`} className="form-group">
       {showLabel && label && (
@@ -106,46 +112,49 @@ export const ResourceRequirementsField: React.FC<FieldProps> = ({
   required,
   schema,
   uiSchema,
-}) => (
-  <FieldSet
-    defaultLabel={name || 'Resource Requirements'}
-    idSchema={idSchema}
-    required={required}
-    schema={schema}
-    uiSchema={uiSchema}
-  >
-    <dl id={idSchema.$id}>
-      <dt>Limits</dt>
-      <dd>
-        <ResourceRequirements
-          cpu={formData?.limits?.cpu || ''}
-          memory={formData?.limits?.memory || ''}
-          storage={formData?.limits?.['ephemeral-storage'] || ''}
-          onChangeCPU={(cpu) => onChange(_.set(_.cloneDeep(formData), 'limits.cpu', cpu))}
-          onChangeMemory={(mem) => onChange(_.set(_.cloneDeep(formData), 'limits.memory', mem))}
-          onChangeStorage={(sto) =>
-            onChange(_.set(_.cloneDeep(formData), 'limits.ephemeral-storage', sto))
-          }
-          path={`${idSchema.$id}.limits`}
-        />
-      </dd>
-      <dt>Requests</dt>
-      <dd>
-        <ResourceRequirements
-          cpu={formData?.requests?.cpu || ''}
-          memory={formData?.requests?.memory || ''}
-          storage={formData?.requests?.['ephemeral-storage'] || ''}
-          onChangeCPU={(cpu) => onChange(_.set(_.cloneDeep(formData), 'requests.cpu', cpu))}
-          onChangeMemory={(mem) => onChange(_.set(_.cloneDeep(formData), 'requests.memory', mem))}
-          onChangeStorage={(sto) =>
-            onChange(_.set(_.cloneDeep(formData), 'requests.ephemeral-storage', sto))
-          }
-          path={`${idSchema.$id}.requests`}
-        />
-      </dd>
-    </dl>
-  </FieldSet>
-);
+}) => {
+  const { t } = useTranslation();
+  return (
+    <FieldSet
+      defaultLabel={name || t('console-shared~Resource Requirements')}
+      idSchema={idSchema}
+      required={required}
+      schema={schema}
+      uiSchema={uiSchema}
+    >
+      <dl id={idSchema.$id}>
+        <dt>{t('console-shared~Limits')}</dt>
+        <dd>
+          <ResourceRequirements
+            cpu={formData?.limits?.cpu || ''}
+            memory={formData?.limits?.memory || ''}
+            storage={formData?.limits?.['ephemeral-storage'] || ''}
+            onChangeCPU={(cpu) => onChange(_.set(_.cloneDeep(formData), 'limits.cpu', cpu))}
+            onChangeMemory={(mem) => onChange(_.set(_.cloneDeep(formData), 'limits.memory', mem))}
+            onChangeStorage={(sto) =>
+              onChange(_.set(_.cloneDeep(formData), 'limits.ephemeral-storage', sto))
+            }
+            path={`${idSchema.$id}.limits`}
+          />
+        </dd>
+        <dt>{t('console-shared~Requests')}</dt>
+        <dd>
+          <ResourceRequirements
+            cpu={formData?.requests?.cpu || ''}
+            memory={formData?.requests?.memory || ''}
+            storage={formData?.requests?.['ephemeral-storage'] || ''}
+            onChangeCPU={(cpu) => onChange(_.set(_.cloneDeep(formData), 'requests.cpu', cpu))}
+            onChangeMemory={(mem) => onChange(_.set(_.cloneDeep(formData), 'requests.memory', mem))}
+            onChangeStorage={(sto) =>
+              onChange(_.set(_.cloneDeep(formData), 'requests.ephemeral-storage', sto))
+            }
+            path={`${idSchema.$id}.requests`}
+          />
+        </dd>
+      </dl>
+    </FieldSet>
+  );
+};
 
 export const UpdateStrategyField: React.FC<FieldProps> = ({
   formData,
@@ -156,10 +165,11 @@ export const UpdateStrategyField: React.FC<FieldProps> = ({
   schema,
   uiSchema,
 }) => {
+  const { t } = useTranslation();
   const description = useSchemaDescription(schema, uiSchema, UPDATE_STRATEGY_DESCRIPTION);
   return (
     <FormField
-      defaultLabel={name || 'Update Strategy'}
+      defaultLabel={name || t('console-shared~Update Strategy')}
       id={idSchema.$id}
       required={required}
       schema={schema}
@@ -193,22 +203,24 @@ export const NodeAffinityField: React.FC<FieldProps> = ({
   required,
   schema,
   uiSchema,
-}) => (
-  <FieldSet
-    defaultLabel={name || 'Node Affinity'}
-    idSchema={idSchema}
-    required={required}
-    schema={schema}
-    uiSchema={uiSchema}
-  >
-    <NodeAffinity
-      affinity={formData}
-      onChange={(affinity) => onChange(affinity)}
-      uid={idSchema.$id}
-    />
-  </FieldSet>
-);
-
+}) => {
+  const { t } = useTranslation();
+  return (
+    <FieldSet
+      defaultLabel={name || t('console-shared~Node Affinity')}
+      idSchema={idSchema}
+      required={required}
+      schema={schema}
+      uiSchema={uiSchema}
+    >
+      <NodeAffinity
+        affinity={formData}
+        onChange={(affinity) => onChange(affinity)}
+        uid={idSchema.$id}
+      />
+    </FieldSet>
+  );
+};
 export const PodAffinityField: React.FC<FieldProps> = ({
   formData,
   idSchema,
@@ -217,21 +229,24 @@ export const PodAffinityField: React.FC<FieldProps> = ({
   required,
   schema,
   uiSchema,
-}) => (
-  <FieldSet
-    defaultLabel={name || 'Pod Affinity'}
-    idSchema={idSchema}
-    required={required}
-    schema={schema}
-    uiSchema={uiSchema}
-  >
-    <PodAffinity
-      affinity={formData}
-      onChange={(affinity) => onChange(affinity)}
-      uid={idSchema.$id}
-    />
-  </FieldSet>
-);
+}) => {
+  const { t } = useTranslation();
+  return (
+    <FieldSet
+      defaultLabel={name || t('console-shared~Pod Affinity')}
+      idSchema={idSchema}
+      required={required}
+      schema={schema}
+      uiSchema={uiSchema}
+    >
+      <PodAffinity
+        affinity={formData}
+        onChange={(affinity) => onChange(affinity)}
+        uid={idSchema.$id}
+      />
+    </FieldSet>
+  );
+};
 
 export const MatchExpressionsField: React.FC<FieldProps> = ({
   formData,
@@ -241,22 +256,24 @@ export const MatchExpressionsField: React.FC<FieldProps> = ({
   required,
   schema,
   uiSchema,
-}) => (
-  <FieldSet
-    defaultLabel={name || 'Match Expressions'}
-    idSchema={idSchema}
-    required={required}
-    schema={schema}
-    uiSchema={uiSchema}
-  >
-    <MatchExpressions
-      matchExpressions={formData}
-      onChange={(v) => onChange(v)}
-      uid={idSchema.$id}
-    />
-  </FieldSet>
-);
-
+}) => {
+  const { t } = useTranslation();
+  return (
+    <FieldSet
+      defaultLabel={name || t('console-shared~Expressions')}
+      idSchema={idSchema}
+      required={required}
+      schema={schema}
+      uiSchema={uiSchema}
+    >
+      <MatchExpressions
+        matchExpressions={formData}
+        onChange={(v) => onChange(v)}
+        uid={idSchema.$id}
+      />
+    </FieldSet>
+  );
+};
 export const BooleanField: React.FC<FieldProps> = ({
   formData,
   idSchema,
@@ -264,7 +281,10 @@ export const BooleanField: React.FC<FieldProps> = ({
   onChange,
   uiSchema,
 }) => {
-  const { labelOn = 'true', labelOff = 'false' } = getUiOptions(uiSchema);
+  const { t } = useTranslation();
+  const { labelOn = t('console-shared~true'), labelOff = t('console-shared~false') } = getUiOptions(
+    uiSchema,
+  );
   return (
     <Switch
       id={idSchema?.$id || name}
@@ -309,12 +329,13 @@ export const DropdownField: React.FC<FieldProps> = ({
   schema,
   uiSchema = {},
 }) => {
+  const { t } = useTranslation();
   const { items, title } = getUiOptions(uiSchema);
   return (
     <Dropdown
       id={idSchema.$id}
       key={idSchema.$id}
-      title={`Select ${title || schema?.title || name}`}
+      title={t('console-shared~Select {{title}}', { title: title || schema?.title || name })}
       selectedKey={formData}
       items={items ?? {}}
       onChange={(val) => onChange(val)}
