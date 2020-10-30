@@ -1,0 +1,14 @@
+{
+  "Name": "名称",
+  "Namespace": "名前空間",
+  "Labels": "ラベル",
+  "Pod selector": "ポッドセレクター",
+  "Node selector": "ノード・セレクター",
+  "Node": "ノード",
+  "Tolerations": "トレレーションズ",
+  "Annotations": "注釈",
+  "Created at": "作成日時",
+  "Owner": "所有者",
+  "Current count": "現在のカウント",
+  "Desired count": "必要な数"
+}

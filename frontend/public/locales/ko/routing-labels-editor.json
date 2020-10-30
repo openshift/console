@@ -1,0 +1,13 @@
+{
+  "Invalid name.": "올바르지 않은 이름.",
+  "Label name must not begin with a digit and contain only alphanumeric characters or '_'.": "레이블 이름은 숫자로 시작하지 않고 영숫자 또는 '_' 만 포함해야 합니다.",
+  "Routing labels": "라우팅 레이블",
+  "Firing alerts with labels that match all of these selectors will be sent to this receiver. Label values can be matched exactly or with a <2></2>.": "이러한 모든 선택기와 일치하는 레이블을 가진 첫 번째 경보가 이 수신자로 전송됩니다. 라벨 값들은 정확하게 매칭될 수 있거나 또는 &lt; 2 &gt; 와 함께 매칭될 수 있다.\n<!--2-->",
+  "regular expression": "정규식",
+  "Name": "이름",
+  "Value": "가치",
+  "Regular expression": "정규식",
+  "Remove": "제거",
+  "Routing label names must be unique.": "라우팅 레이블 이름은 고유해야 합니다.",
+  "Add label": "레이블 추가하기"
+}

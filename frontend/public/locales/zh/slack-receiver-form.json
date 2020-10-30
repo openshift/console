@@ -1,0 +1,20 @@
+{
+  "Slack API URL": "松弛 API URL",
+  "Save as default Slack API URL": "另存为缺省 Slack API URL",
+  "Checking this box will write the API URL to the global section of the configuration file where it will become the default API URL for future Slack receivers.": "选中此框将将 API URL 写入配置文件的全局部分，它将成为将来 Slack 接收器的缺省 API URL 。",
+  "The URL of the Slack webhook.": "Slack Webhook的 URL 。",
+  "Channel": "渠道",
+  "The Slack channel or user to send notifications to.": "用于向其发送通知的松弛通道或用户。",
+  "Show advanced configuration": "显示高级配置",
+  "Hide advanced configuration": "隐藏高级配置",
+  "Icon": "孔图",
+  "URL": "URL",
+  "Emoji": "Em治",
+  "The URL of the icon.": "图标的 URL 。",
+  "An <2></2> to use in place of the default icon.": "<2>\n<!--2--> 用于代替缺省图标。",
+  "emoji code": "emoji 代码",
+  "Username": "用户名",
+  "The displayed username.": "显示的用户名。",
+  "Link names": "链接名称",
+  "Find and link channel names and usernames.": "查找和链接通道名称和用户名。"
+}

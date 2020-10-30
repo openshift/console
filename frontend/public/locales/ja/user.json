@@ -1,0 +1,12 @@
+{
+  "Impersonate User ": "偽名ユーザー ",
+  "No Users Found": "ユーザーが見つからない",
+  "Add identity providers (IDPs) to the OAuth configuration to allow others to log in.": "アイデンティティー・プロバイダー (IDP) を OAuth 構成に追加して、他のユーザーがログインできるようにします。",
+  "Add IDP": "IDP の追加",
+  "Name": "名称",
+  "Full name": "フルネーム",
+  "Identities": "ID",
+  "Users": "利用者",
+  "Users are automatically added the first time they log in.": "ユーザーは、初めてログインしたときに自動的に追加されます。",
+  "User Details": "ユーザー詳細"
+}

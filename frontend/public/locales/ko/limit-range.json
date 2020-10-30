@@ -1,0 +1,14 @@
+{
+  "Name": "이름",
+  "Namespace": "네임스페이스",
+  "Created": "작성된",
+  "Limits": "한계",
+  "Type": "유형",
+  "Resource": "자원",
+  "Min": "민씨",
+  "Max": "최대",
+  "Default request": "디폴트 요청",
+  "Default limit": "디폴트 한계",
+  "Max limit/request ratio": "최대 무제/요청 비율",
+  "{{resource}} details": "{{resource}} 세부사항"
+}

@@ -1,0 +1,16 @@
+{
+  "Log stream ended.": "La secuencia de registro ha finalizado",
+  "Loading log...": "Cargando registro ...",
+  "Log stream paused.": "Secuencia de registro en pausa.",
+  "Log streaming...": "Registro en modalidad continua ...",
+  "Raw": "Bruto",
+  "Download": "Descargar",
+  "Collapse": "Colapso",
+  "Expand": "Ampliar",
+  "An error occurred while retrieving the requested logs.": "Se ha producido un error al recuperar los registros solicitados.",
+  "Retry": "Reintento",
+  "Some lines have been abridged because they are exceptionally long.": "Algunas líneas han sido abreviadas porque son excepcionalmente largas.",
+  "To view unabridged log content, you can either <2>open the raw file in another window</2> or <6>download it</6>.": "Para ver contenido de registro no abreviado, puede &lt; 2 &gt; abrir el archivo sin formato en otra ventana\n<!--2--> o &lt; 6 &gt; descargarlo\n<!--6-->.",
+  "The logs for this {{resourceKind}} may be stale.": "Los registros de este {{resourceKind}} pueden ser obsoletos.",
+  "Refresh": "Renovar"
+}

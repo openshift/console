@@ -1,0 +1,12 @@
+{
+  "Values for certificate and key should both be either excluded or provided.": "証明書および鍵の値の両方が除外されるか、または指定されている",
+  "Add Identity Provider: Keystone Authentication": "ID プロバイダーの追加 : Keystone 認証",
+  "Adding Keystone enables shared authentication with an OpenStack server configured to store users in an internal Keystone database.": "Keystone を追加すると、内部の Keystone データベースにユーザーを格納するように構成された OpenStack サーバーとの共有認証が有効になります",
+  "Domain name": "ドメイン名",
+  "URL": "ウルル",
+  "The remote URL to connect to.": "接続先のリモート URL 。",
+  "Certificate": "証明書",
+  "PEM-encoded TLS client certificate to present when connecting to the server.": "サーバーへの接続時に存在する、 PEM エンコードされた TLS クライアント証明書。",
+  "Key": "キー",
+  "PEM-encoded TLS private key for the client certificate. Required if certificate is specified.": "クライアント証明書の PEM エンコード TLS 秘密鍵。 証明書を指定する場合は必須です。"
+}

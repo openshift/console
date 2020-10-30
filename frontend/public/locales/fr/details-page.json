@@ -1,0 +1,14 @@
+{
+  "Name": "Nom",
+  "Namespace": "Espace de nom",
+  "Labels": "Libellés",
+  "Pod selector": "Sélecteur de l'od",
+  "Node selector": "Sélecteur de noeud",
+  "Node": "Noeud",
+  "Tolerations": "Tolérances",
+  "Annotations": "Annotations",
+  "Created at": "Créé à",
+  "Owner": "Propriétaire",
+  "Current count": "Nombre actuel",
+  "Desired count": "Nombre souhaité"
+}

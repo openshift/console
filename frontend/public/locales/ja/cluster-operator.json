@@ -1,0 +1,10 @@
+{
+  "Name": "名称",
+  "Status": "状況",
+  "Version": "バージョン",
+  "Message": "メッセージ",
+  "{{resource}} details": "{{resource}} の詳細",
+  "Conditions": "条件",
+  "Operand versions": "オペランドのバージョン",
+  "Related objects": "関連オブジェクト"
+}

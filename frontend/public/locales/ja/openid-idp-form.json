@@ -1,0 +1,17 @@
+{
+  "Add Identity Provider: OpenID Connect": "アイデンティティー・プロバイダーの追加 : OpenID Connect",
+  "Integrate with an OpenID Connect identity provider using an Authorization Code Flow.": "許可コード・フローを使用して OpenID Connect ID プロバイダーと統合します。",
+  "Client ID": "クライアント ID",
+  "Client secret": "クライアント秘密鍵",
+  "Issuer URL": "発行者 URL",
+  "The URL that the OpenID provider asserts as its issuer identifier. It must use the https scheme with no URL query parameters or fragment.": "OpenID プロバイダーが発行者 IDとして表明する URL 。 URL 照会パラメーターまたはフラグメントを指定せずに、 https スキームを使用する必要があります。",
+  "Claims": "クレーム",
+  "Claims map metadata from the OpenID provider to an OpenShift user. The first non-empty claim is used.": "OpenID プロバイダーから OpenShift ユーザーにマップ・メタデータがマップされます。 最初の空でない請求が使用されます。",
+  "Preferred username": "優先ユーザー名",
+  "Any scopes to request in addition to the standard openid scope.": "標準の openid スコープに加えて、要求する有効範囲。",
+  "Name": "名称",
+  "The list of claims whose values should be used as the display name.": "値を表示名として使用する必要のある請求のリスト。",
+  "Email": "E メール",
+  "The list of claims whose values should be used as the email address.": "値を E メール・アドレスとして使用する必要のある請求のリスト。",
+  "Extra scopes": "エクストラ・スコープ"
+}

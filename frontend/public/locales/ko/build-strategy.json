@@ -1,0 +1,16 @@
+{
+  "Type": "유형",
+  "Git repository": "Git 저장소",
+  "Git ref": "Git 참조",
+  "Git commit": "Git 커미트",
+  "Binary file": "2진 파일",
+  "Context dir": "컨텍스트 디렉토리",
+  "Dockerfile": "Dockerfile",
+  "JenskinsFile path": "JenskinsFile 경로",
+  "Build from": "빌드하기",
+  "Output to": "출력 결과",
+  "Push secret": "밀어 넣기",
+  "Run policy": "정책 실행",
+  "Resource limits": "자원 제한",
+  "Triggers": "트리거"
+}

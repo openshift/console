@@ -1,0 +1,19 @@
+{
+  "{{label}}": "{{label}}",
+  "Identity providers": "Provedores de identidade",
+  "Name": "Nome",
+  "Type": "Tipo",
+  "Mapping method": "Método de mapeamento",
+  "Basic Authentication": "Autenticação básica",
+  "GitHub": "GitHub",
+  "GitLab": "GitLab",
+  "Google": "Google",
+  "HTPasswd": "HTPasswd",
+  "Keystone": "Keystone",
+  "LDAP": "LDAP",
+  "OpenID Connect": "Conexão do OpenID",
+  "Request Header": "Cabeçalho Do Pedido",
+  "{{resource}} details": "{{resource}} detalhes",
+  "Access token max age": "Acessar o token max age",
+  "Identity providers determine how users log into the cluster.": "Os provedores de identidade determinam como os usuários fazem login no cluster."
+}

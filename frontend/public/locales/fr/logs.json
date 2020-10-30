@@ -1,0 +1,16 @@
+{
+  "Log stream ended.": "Le flot de journalisation s'est terminé.",
+  "Loading log...": "Chargement du journal ...",
+  "Log stream paused.": "Le flux de journalisation a été interrompu.",
+  "Log streaming...": "Consignation en continu ...",
+  "Raw": "Brut",
+  "Download": "Télécharger",
+  "Collapse": "Réduire",
+  "Expand": "Développer",
+  "An error occurred while retrieving the requested logs.": "Une erreur s'est produite lors de l'extraction des journaux demandés.",
+  "Retry": "Réessayer",
+  "Some lines have been abridged because they are exceptionally long.": "Certaines lignes ont été abrégées parce qu'elles sont exceptionnellement longues.",
+  "To view unabridged log content, you can either <2>open the raw file in another window</2> or <6>download it</6>.": "Pour afficher le contenu du journal non abrégé, vous pouvez soit &lt; 2 &gt; ouvrir le fichier brut dans une autre fenêtre\n<!--2--> Ou &lt; 6 &gt; télécharger\n<!--6-->.",
+  "The logs for this {{resourceKind}} may be stale.": "Les journaux de ce {{resourceKind}} peuvent être périmés.",
+  "Refresh": "Actualiser"
+}

@@ -1,0 +1,21 @@
+{
+  "To address": "Para abordar",
+  "The email address to send notifications to.": "O endereço de e-mail para envio de notificações.",
+  "SMTP configuration": "Configuração SMTP",
+  "Save as default SMTP configuration": "Salvar como configuração SMTP padrão",
+  "Checking this box will write these values to the global section of the configuration file where they will become defaults for future email receivers.": "A verificação desta caixa irá gravar esses valores para a seção global do arquivo de configuração onde eles se tornarão padrões para futuros receptores de e-mail.",
+  "From address": "Do endereço",
+  "The email address to send notifications from.": "O endereço de e-mail para envio de notificações.",
+  "SMTP smarthost": "Smarthost SMTP",
+  "Smarthost used for sending emails, including port number.": "Smarthost usado para envio de emails, incluindo número de porta.",
+  "SMTP hello": "SMTP olá",
+  "The hostname to identify to the SMTP server.": "O hostname para identificar para o servidor SMTP.",
+  "Auth username": "Auth username",
+  "Auth password (using LOGIN and PLAIN)": "Auth senha (usando LOGIN e PLAIN)",
+  "Auth identity (using PLAIN)": "Identidade de auth (usando PLAIN)",
+  "Auth secret (CRAM-MDS)": "Auth secret (CRAM-MDS)",
+  "Require TLS": "Requerer TLS",
+  "Show advanced configuration": "Mostrar configuração avançada",
+  "Hide advanced configuration": "Ocultar configuração avançada",
+  "Body of email notifications (HTML)": "Corpo de notificações por e-mail (HTML)"
+}

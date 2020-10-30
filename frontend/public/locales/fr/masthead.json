@@ -1,0 +1,16 @@
+{
+  "System status": "Etat du système",
+  "Red Hat applications": "Applications Red Hat",
+  "OpenShift Cluster Manager": "Gestionnaire de cluster OpenShift",
+  "Quick starts": "Démarrage rapide",
+  "Documentation": "Documentation",
+  "Command line tools": "Outils de ligne de commande",
+  "About": "A propos",
+  "Copy login command": "Copier la commande de connexion",
+  "Log out": "Se déconnecter",
+  "Import YAML": "Importer YAML",
+  "Utility menu": "Menu Utilitaire",
+  "User menu": "Menu utilisateur",
+  "Notification drawer": "Tiroir de notification",
+  "Help menu": "Menu Aide"
+}

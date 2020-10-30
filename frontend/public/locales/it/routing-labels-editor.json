@@ -1,0 +1,13 @@
+{
+  "Invalid name.": "Nome non valido.",
+  "Label name must not begin with a digit and contain only alphanumeric characters or '_'.": "Il nome etichetta non deve iniziare con una cifra e contenere solo caratteri alfanumerici o '_'.",
+  "Routing labels": "Etichette di routing",
+  "Firing alerts with labels that match all of these selectors will be sent to this receiver. Label values can be matched exactly or with a <2></2>.": "Gli avvisi di cottura con etichette che corrispondono a tutti questi selettori verranno inviati a questo ricevitore. I valori di etichetta possono essere abbinati esattamente o con un &lt; 2 &gt;\n<!--2-->.",
+  "regular expression": "espressione regolare",
+  "Name": "Nome",
+  "Value": "Valore",
+  "Regular expression": "Espressione regolare",
+  "Remove": "Rimuovi",
+  "Routing label names must be unique.": "I nomi delle etichette di routing devono essere univmi.",
+  "Add label": "Aggiungi etichetta"
+}

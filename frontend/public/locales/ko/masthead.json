@@ -1,0 +1,16 @@
+{
+  "System status": "시스템 상태",
+  "Red Hat applications": "Red Hat 애플리케이션",
+  "OpenShift Cluster Manager": "OpenShift Cluster Manager",
+  "Quick starts": "빠른 시작",
+  "Documentation": "문서",
+  "Command line tools": "명령행 도구",
+  "About": "정보",
+  "Copy login command": "로그인 명령 복사하기",
+  "Log out": "로그아웃",
+  "Import YAML": "YAML 가져오기",
+  "Utility menu": "유틸리티 메뉴",
+  "User menu": "사용자 메뉴",
+  "Notification drawer": "알림 드로어",
+  "Help menu": "도움말 메뉴"
+}

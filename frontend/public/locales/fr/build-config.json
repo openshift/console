@@ -1,0 +1,10 @@
+{
+  "Start build": "Démarrer la génération",
+  "Build Config Details": "Détails de configuration de génération",
+  "Name": "Nom",
+  "Namespace": "Espace de nom",
+  "Labels": "Libellés",
+  "Created": "Créé",
+  "Build Configs": "Générer des configurations",
+  "Build strategy": "Stratégie de génération"
+}

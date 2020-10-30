@@ -1,0 +1,11 @@
+{
+  "Values for certificate and key should both be either excluded or provided.": "인증서 및 키의 값은 둘 다 제외 또는 제공되어야 합니다.",
+  "Add Identity Provider: Basic Authentication": "ID 제공자 추가: 기본 인증",
+  "Basic authentication is a generic backend integration mechanism that allows users to authenticate with credentials validated against a remote identity provider.": "기본 인증은 사용자가 원격 ID 제공자에 대해 유효성 검증된 신임 정보를 사용하여 인증할 수 있도록 하는 일반 백엔드 통합 메커니즘입니다.",
+  "URL": "우르르",
+  "The remote URL to connect to.": "연결할 원격 URL.",
+  "Certificate": "인증서",
+  "PEM-encoded TLS client certificate to present when connecting to the server.": "서버에 연결할 때 존재하는 PEM 인코드 TLS 클라이언트 인증서.",
+  "Key": "키",
+  "PEM-encoded TLS private key for the client certificate. Required if certificate is specified.": "클라이언트 인증서에 대한 PEM 인코딩된 TLS 개인 키. 인증서가 지정된 경우 필수입니다."
+}

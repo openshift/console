@@ -1,0 +1,16 @@
+{
+  "Add role binding": "添加角色绑定",
+  "Name": "名称",
+  "Subject kind": "主题类型",
+  "Subject name": "主题名称",
+  "Namespace": "名称空间",
+  "Create binding": "创建绑定",
+  "No roles found": "找不到角色",
+  "Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a Role Binding.": "角色授予对集群中对象类型的访问权。 角色通过角色绑定应用于团队或用户。",
+  "Roles": "角色",
+  "Create role": "创建角色",
+  "Role": "角色",
+  "Cluster-wide roles": "集群范围的角色",
+  "Namespace roles": "名称空间角色",
+  "System roles": "系统角色"
+}

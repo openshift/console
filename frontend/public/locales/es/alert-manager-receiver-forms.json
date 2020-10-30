@@ -1,0 +1,19 @@
+{
+  "PagerDuty": "PagerDuty",
+  "Webhook": "Webhook",
+  "Email": "Correo electrónico",
+  "Slack": "Flojos",
+  "Your default receiver will automatically receive all alerts from this cluster that are not caught by other receivers first.": "El receptor predeterminado recibirá automáticamente todas las alertas de este clúster que no sean capturadas por otros receptores en primer lugar.",
+  "The routing labels for this receiver are configured to capture critical alerts.  Finish setting up this receiver by selecting a \"Receiver Type\" to choose a destination for these alerts.  If this receiver is deleted, critical alerts will go to the default receiver instead.": "Las etiquetas de direccionamiento de este receptor se configuran para capturar alertas críticas. &nbsp; Finalice la configuración de este receptor seleccionando un \"Tipo de destinatario\" para elegir un destino para estas alertas. &nbsp; Si se suprime este receptor, las alertas críticas irán al receptor predeterminado en su lugar.",
+  "The Watchdog alert fires constantly to confirm that your alerting stack is functioning correctly. This receiver is configured to prevent it from creating unnecessary notifications. You can edit this receiver if you plan to use the information that Watchdog provides, otherwise this receiver should remain in its current state with no set receiver type.": "La alerta de vigilancia se activa constantemente para confirmar que la pila de alertas está funcionando correctamente. Este receptor está configurado para evitar que cree notificaciones innecesarias. Puede editar este receptor si tiene previsto utilizar la información que proporciona Watchdog, de lo contrario este receptor debe permanecer en su estado actual sin ningún tipo de receptor establecido.",
+  "unknown receiver type": "tipo de receptor desconocido",
+  "Receiver": "Receptor",
+  "{{receiverTypeLabel}}": "{{receiverTypeLabel}}",
+  "Default": "Valor predeterminado",
+  "{{titleVerb}} Receiver": "Receptor {{titleVerb}}",
+  "{{titleVerb}} {{receiverTypeLabel}} {{defaultString}} Receiver": "Receptor {{titleVerb}} {{receiverTypeLabel}} {{defaultString}}",
+  "Receiver name": "Nombre del receptor",
+  "A receiver with that name already exists.": "Ya existe un receptor con ese nombre.",
+  "Receiver type": "Tipo receptor",
+  "Send resolved alerts to this receiver?": "¿Enviar alertas resueltas a este receptor?"
+}

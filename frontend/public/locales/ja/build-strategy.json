@@ -1,0 +1,16 @@
+{
+  "Type": "種類",
+  "Git repository": "Git リポジトリー",
+  "Git ref": "Git 参照",
+  "Git commit": "Git コミット",
+  "Binary file": "バイナリー・ファイル",
+  "Context dir": "コンテキスト・ディレクトリー",
+  "Dockerfile": "ドッケルファイル",
+  "JenskinsFile path": "JenskinsFile パス",
+  "Build from": "ビルド元",
+  "Output to": "出力先",
+  "Push secret": "プッシュ秘密",
+  "Run policy": "ポリシーの実行",
+  "Resource limits": "リソース限界",
+  "Triggers": "トリガー"
+}

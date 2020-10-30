@@ -1,0 +1,16 @@
+{
+  "Add role binding": "Rollenbindung hinzufügen",
+  "Name": "Name",
+  "Subject kind": "Gegenstand",
+  "Subject name": "Fachname",
+  "Namespace": "Namensbereich",
+  "Create binding": "Bindung erstellen",
+  "No roles found": "Keine Rollen gefunden",
+  "Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a Role Binding.": "Rollen gewähren Zugriff auf Typen von Objekten im Cluster. Rollen werden über eine Rollenbindung auf ein Team oder einen Benutzer angewendet.",
+  "Roles": "Rollen",
+  "Create role": "Rolle erstellen",
+  "Role": "Rolle",
+  "Cluster-wide roles": "Clusterweite Rollen",
+  "Namespace roles": "Namespace-Rollen",
+  "System roles": "Systemrollen"
+}

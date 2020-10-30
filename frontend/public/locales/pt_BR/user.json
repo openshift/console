@@ -1,0 +1,12 @@
+{
+  "Impersonate User ": "Usuário do Impersonate ",
+  "No Users Found": "Nenhum Usuário Encontrado",
+  "Add identity providers (IDPs) to the OAuth configuration to allow others to log in.": "Adicionar provedores de identidade (IDPs) à configuração OAuth para permitir que outros efetuem o login.",
+  "Add IDP": "Adicionar IDP",
+  "Name": "Nome",
+  "Full name": "Nome completo",
+  "Identities": "Identidades",
+  "Users": "Usuários",
+  "Users are automatically added the first time they log in.": "Os usuários são automaticamente adicionados na primeira vez em que efetuam o login.",
+  "User Details": "Detalhes do Usuário"
+}

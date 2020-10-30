@@ -1,0 +1,13 @@
+{
+  "Invalid name.": "Ungültiger Name.",
+  "Label name must not begin with a digit and contain only alphanumeric characters or '_'.": "Der Kennsatzname darf nicht mit einer Ziffer beginnen und darf nur alphanumerische Zeichen (_) oder '_' enthalten.",
+  "Routing labels": "Routing-Beschriftungen",
+  "Firing alerts with labels that match all of these selectors will be sent to this receiver. Label values can be matched exactly or with a <2></2>.": "Das Auslösen von Alerts mit Beschriftungen, die mit allen ausgewählten Selektoren übereinstimmen, wird an diesen Empfänger gesendet. Kennsatzwerte können exakt oder mit einem &lt; 2 &gt; abgeglichen werden.\n<!--2-->.",
+  "regular expression": "regulärer Ausdruck",
+  "Name": "Name",
+  "Value": "Wert",
+  "Regular expression": "Regulärer Ausdruck",
+  "Remove": "Entfernen",
+  "Routing label names must be unique.": "Die Namen der Routing-Kennsätze müssen eindeutig sein.",
+  "Add label": "Beschriftung hinzufügen"
+}

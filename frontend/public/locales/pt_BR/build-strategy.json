@@ -1,0 +1,16 @@
+{
+  "Type": "Tipo",
+  "Git repository": "Repositório Git",
+  "Git ref": "Git ref",
+  "Git commit": "Git commit",
+  "Binary file": "Arquivo binário",
+  "Context dir": "Dir de contexto",
+  "Dockerfile": "Dockerfile",
+  "JenskinsFile path": "Caminho de JenskinsFile",
+  "Build from": "Construir a partir",
+  "Output to": "Saída para",
+  "Push secret": "Segredo de push",
+  "Run policy": "Política de execução",
+  "Resource limits": "Limites de recursos",
+  "Triggers": "Triggers"
+}

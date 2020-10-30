@@ -1,0 +1,16 @@
+{
+  "Log stream ended.": "日誌串流已結束。",
+  "Loading log...": "正在載入日誌...",
+  "Log stream paused.": "已暫停日誌串流。",
+  "Log streaming...": "日誌串流...",
+  "Raw": "原始",
+  "Download": "下載",
+  "Collapse": "收合",
+  "Expand": "展開",
+  "An error occurred while retrieving the requested logs.": "擷取所要求的日誌時發生錯誤。",
+  "Retry": "重試",
+  "Some lines have been abridged because they are exceptionally long.": "有些線因為異常長的時間而被刪起。",
+  "To view unabridged log content, you can either <2>open the raw file in another window</2> or <6>download it</6>.": "若要檢視未取消的日誌內容，您可以 <2>在另一個視窗中開啟原始檔案\n<!--2--> 或 <6>下載\n<!--6-->。",
+  "The logs for this {{resourceKind}} may be stale.": "此 {{resourceKind}} 的日誌可能已過時。",
+  "Refresh": "重新整理"
+}

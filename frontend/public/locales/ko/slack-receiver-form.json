@@ -1,0 +1,20 @@
+{
+  "Slack API URL": "Slack API URL",
+  "Save as default Slack API URL": "기본 Slack API URL로 저장하기",
+  "Checking this box will write the API URL to the global section of the configuration file where it will become the default API URL for future Slack receivers.": "이 상자를 선택하면 구성 파일의 글로벌 섹션에 API URL이 작성되며, 이는 향후 슬랙 수신기에 대한 기본 API URL이 된다.",
+  "The URL of the Slack webhook.": "Slack webhook의 URL.",
+  "Channel": "채널",
+  "The Slack channel or user to send notifications to.": "알림을 전송할 Slack 채널 또는 사용자입니다.",
+  "Show advanced configuration": "고급 구성 표시",
+  "Hide advanced configuration": "고급 구성 숨기기",
+  "Icon": "아이콘",
+  "URL": "우르르",
+  "Emoji": "에모지",
+  "The URL of the icon.": "아이콘의 URL 이다.",
+  "An <2></2> to use in place of the default icon.": "< 2 >\n<!--2--> 기본 아이콘 대신 사용할 수 있습니다.",
+  "emoji code": "이모지 코드",
+  "Username": "사용자 이름",
+  "The displayed username.": "표시된 사용자 이름.",
+  "Link names": "링크 이름",
+  "Find and link channel names and usernames.": "채널 이름 및 사용자 이름을 찾고 링크합니다."
+}

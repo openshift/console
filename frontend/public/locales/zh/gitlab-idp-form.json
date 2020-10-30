@@ -1,0 +1,8 @@
+{
+  "Add Identity Provider: GitLab": "添加身份提供者:GitLab",
+  "You can use GitLab integration for users authenticating with GitLab credentials.": "您可以将 GitLab 集成用于使用 GitLab 凭证进行认证的用户。",
+  "URL": "URL",
+  "The OAuth server base URL.": "OAuth 服务器基本 URL。",
+  "Client ID": "客户机标识",
+  "Client secret": "客户机密钥"
+}

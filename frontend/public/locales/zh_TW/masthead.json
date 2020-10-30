@@ -1,0 +1,16 @@
+{
+  "System status": "系統狀態",
+  "Red Hat applications": "Red Hat 應用程式",
+  "OpenShift Cluster Manager": "OpenShift 叢集管理程式",
+  "Quick starts": "快速啟動",
+  "Documentation": "文件",
+  "Command line tools": "指令行工具",
+  "About": "關於",
+  "Copy login command": "複製登入指令",
+  "Log out": "登出",
+  "Import YAML": "匯入 YAML",
+  "Utility menu": "公用程式功能表",
+  "User menu": "使用者功能表",
+  "Notification drawer": "通知抽屜",
+  "Help menu": "說明功能表"
+}

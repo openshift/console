@@ -1,0 +1,15 @@
+{
+  "Add": "Hinzufügen",
+  "Cancel": "Abbrechen",
+  "Update": "Aktualisieren",
+  "Save": "Speichern",
+  "{{description}} for": "{{description}} für",
+  "Edit": "Bearbeiten",
+  "Create": "Erstellen",
+  "{{date, MMM D, h:mm a}}": "{{date, MMM D, h:mm a}}",
+  "Resume": "Wiederaufnehmen",
+  "Pause": "Pause",
+  "Warning": "Warnung",
+  "Not available": "Nicht verfügbar",
+  "Resource": "Ressource"
+}

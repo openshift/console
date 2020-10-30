@@ -1,0 +1,20 @@
+{
+  "View instances": "インスタンスの表示",
+  "true": "真",
+  "false": "虚偽",
+  "CRD versions": "CRD バージョン",
+  "Name": "名称",
+  "Served": "提供",
+  "Storage": "貯蔵",
+  "{{resource}} details": "{{resource}} の詳細",
+  "Established": "確立された",
+  "Group": "グループ",
+  "Latest version": "最新バージョン",
+  "Scope": "スコープ",
+  "Conditions": "条件",
+  "Versions": "バージョン",
+  "Namespaced": "ネームスペース",
+  "Yes": "そうだ",
+  "No": "違う。",
+  "Instances": "インスタンス"
+}

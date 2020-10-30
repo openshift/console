@@ -1,0 +1,17 @@
+{
+  "Add Identity Provider: OpenID Connect": "Añadir proveedor de identidades: OpenID Connect",
+  "Integrate with an OpenID Connect identity provider using an Authorization Code Flow.": "Integre con un proveedor de identidad de OpenID Connect utilizando un flujo de código de autorización.",
+  "Client ID": "ID de cliente",
+  "Client secret": "Secreto de cliente",
+  "Issuer URL": "URL del emisor",
+  "The URL that the OpenID provider asserts as its issuer identifier. It must use the https scheme with no URL query parameters or fragment.": "El URL que el proveedor de OpenID afirma como su identificador de emisor. Debe utilizar el esquema https sin ningún parámetro o fragmento de consulta de URL.",
+  "Claims": "Créditos",
+  "Claims map metadata from the OpenID provider to an OpenShift user. The first non-empty claim is used.": "Reclama metadatos de correlación desde el proveedor de OpenID a un usuario de OpenShift. Se utiliza la primera reclamación no vacía.",
+  "Preferred username": "Nombre de usuario",
+  "Any scopes to request in addition to the standard openid scope.": "Cualquier ámbito a solicitar además del ámbito de Openid estándar.",
+  "Name": "Nombre",
+  "The list of claims whose values should be used as the display name.": "La lista de reclamaciones cuyos valores deben utilizarse como nombre de visualización.",
+  "Email": "Correo electrónico",
+  "The list of claims whose values should be used as the email address.": "La lista de reclamaciones cuyos valores deben utilizarse como dirección de correo electrónico.",
+  "Extra scopes": "Ámbitos adicionales"
+}

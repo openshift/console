@@ -1,0 +1,19 @@
+{
+  "{{label}}": "{{label}}",
+  "Identity providers": "ID 제공자",
+  "Name": "이름",
+  "Type": "유형",
+  "Mapping method": "맵핑 방법",
+  "Basic Authentication": "기본 인증",
+  "GitHub": "깃허브",
+  "GitLab": "깃랩",
+  "Google": "구글",
+  "HTPasswd": "HTPasswd",
+  "Keystone": "키스톤",
+  "LDAP": "LDAP",
+  "OpenID Connect": "OpenID Connect",
+  "Request Header": "요청 헤더",
+  "{{resource}} details": "{{resource}} 세부사항",
+  "Access token max age": "액세스 토큰 최대 연령",
+  "Identity providers determine how users log into the cluster.": "ID 제공자는 사용자가 클러스터에 로그인하는 방법을 결정합니다."
+}

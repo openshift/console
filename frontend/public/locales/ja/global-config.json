@@ -1,0 +1,11 @@
+{
+  "Edit {{name}} resource": "{{name}} リソースの編集",
+  "Explore {{name}} API": "{{name}} API の探索",
+  "Create Receiver": "受信側の作成",
+  "Edit configuration YAML": "構成 YAML の編集",
+  "Edit the following resources to manage the configuration of your cluster.": "以下のリソースを編集して、クラスターの構成を管理します。",
+  "by name or description": "名前または説明による",
+  "Configuration resources": "構成リソース",
+  "Configuration resource": "構成リソース",
+  "Description": "解説"
+}

@@ -1,0 +1,8 @@
+{
+  "Add Identity Provider: Google": "新增身分提供者：Google",
+  "You can use Google integration for users authenticating with Google credentials.": "您可以使用 Google 整合來使用 Google 認證來鑑別使用者。",
+  "Client ID": "用戶端 ID",
+  "Client secret": "用戶端密碼",
+  "Hosted domain": "代管網域",
+  "Restrict users to a Google App domain.": "限制使用者至 Google 應用程式網域。"
+}

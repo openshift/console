@@ -1,0 +1,17 @@
+{
+  "Specify either organizations or teams, but not both.": "請指定組織或團隊，但不能同時指定兩者。",
+  "Add Identity Provider: GitHub": "新增身分提供者：GitHub",
+  "You can use the GitHub integration to connect to either GitHub or GitHub Enterprise. For GitHub Enterprise, you must provide the hostname of your instance and can optionally provide a CA certificate bundle to use in requests to the server.": "您可以使用 GitHub 整合來連接 GitHub Enterprise或 GitHub Enterprise。 若為 GitHub Enterprise ，您必須提供實例的主機名稱，且可以選擇性地提供要在伺服器要求中使用的 CA 憑證組合。",
+  "Client ID": "用戶端 ID",
+  "Client secret": "用戶端密碼",
+  "Hostname": "主機名稱",
+  "Optional domain for use with a hosted instance of GitHub Enterprise.": "選用的網域，用於與 GitHub Enterprise 的代管實例搭配使用。",
+  "Organizations": "組織",
+  "teams-help": "選擇性地列出組織。 如果指定，則只允許屬於其中一個列出組織成員的 GitHub 使用者，才能登入。 無法與 <1>團隊一起使用\n<!--1-->。",
+  "Organization": "組織",
+  "Restricts which organizations are allowed to log in.": "限制容許哪些組織登入。",
+  "Teams": "團隊",
+  "organizations-help": "選擇性地列出團隊。 如果指定，則只容許屬於其中一個列出的團隊成員的 GitHub 使用者登入。 無法與 <2>組織組合使用\n<!--2-->。",
+  "Team": "團隊",
+  "Restricts which teams are allowed to log in. The format is <org>/<team>.": "限制容許哪些團隊登入。 格式為 <org>/<team>。"
+}

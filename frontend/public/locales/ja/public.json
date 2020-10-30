@@ -1,3 +1,15 @@
 {
-  "{{date, MMM D, h:mm a}}": "{{date, MMM D, h:mm a}}"
+  "Add": "追加",
+  "Cancel": "キャンセル",
+  "Update": "アップデート",
+  "Save": "セーブ",
+  "{{description}} for": "{{description}} の対象 :",
+  "Edit": "編集",
+  "Create": "クリエイ作成",
+  "{{date, MMM D, h:mm a}}": "{{date, MMM D, h:mm a}}",
+  "Resume": "再開",
+  "Pause": "一時停止",
+  "Warning": "警告",
+  "Not available": "使用不可",
+  "Resource": "リソース"
 }

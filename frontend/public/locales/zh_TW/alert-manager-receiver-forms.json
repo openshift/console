@@ -1,0 +1,19 @@
+{
+  "PagerDuty": "帕格德勤",
+  "Webhook": "Webhook",
+  "Email": "電子郵件",
+  "Slack": "斯拉克",
+  "Your default receiver will automatically receive all alerts from this cluster that are not caught by other receivers first.": "您的預設接收端會自動接收來自此叢集的所有警示，這些警示不會先由其他接收端捕捉。",
+  "The routing labels for this receiver are configured to capture critical alerts.  Finish setting up this receiver by selecting a \"Receiver Type\" to choose a destination for these alerts.  If this receiver is deleted, critical alerts will go to the default receiver instead.": "此接收端的遞送標籤配置為擷取重要警示。 若要完成設定此接收器，請選取「接收端類型」，以選擇這些警示的目的地。 如果刪除此接收器，則重要警示會改為跳至預設接收端。",
+  "The Watchdog alert fires constantly to confirm that your alerting stack is functioning correctly. This receiver is configured to prevent it from creating unnecessary notifications. You can edit this receiver if you plan to use the information that Watchdog provides, otherwise this receiver should remain in its current state with no set receiver type.": "Watchdog 警示會持續發動，以確認您的警示堆疊正常運作。 此接收器配置為防止其建立不必要的通知。 如果您計劃使用 Watchdog 所提供的資訊，則您可以編輯此接收器，否則此接收器應保持其現行狀態，且沒有設定的接收端類型。",
+  "unknown receiver type": "不明接收端類型",
+  "Receiver": "接收機",
+  "{{receiverTypeLabel}}": "{{receiverTypeLabel}}",
+  "Default": "預設",
+  "{{titleVerb}} Receiver": "{{titleVerb}} 接收端",
+  "{{titleVerb}} {{receiverTypeLabel}} {{defaultString}} Receiver": "{{titleVerb}} {{receiverTypeLabel}} {{defaultString}} 接收端",
+  "Receiver name": "接收端名稱",
+  "A receiver with that name already exists.": "具有該名稱的接收器已存在。",
+  "Receiver type": "接收端類型",
+  "Send resolved alerts to this receiver?": "傳送已解析的警示給此接收端？"
+}

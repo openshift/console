@@ -1,0 +1,12 @@
+{
+  "Values for certificate and key should both be either excluded or provided.": "Werte für Zertifikat und Schlüssel sollten entweder ausgeschlossen oder bereitgestellt werden.",
+  "Add Identity Provider: Keystone Authentication": "Identitätsprovider hinzufügen: Keystone-Authentifizierung",
+  "Adding Keystone enables shared authentication with an OpenStack server configured to store users in an internal Keystone database.": "Das Hinzufügen von Keystone ermöglicht die gemeinsame Authentifizierung mit einem OpenStack-Server, der für die Speicherung von Benutzern in einer internen Keystone-Datenbank konfiguriert ist.",
+  "Domain name": "Domänenname",
+  "URL": "URL",
+  "The remote URL to connect to.": "Die ferne URL für die Verbindung zu.",
+  "Certificate": "Zertifikat",
+  "PEM-encoded TLS client certificate to present when connecting to the server.": "PEM-codiertes TLS-Clientzertifikat, das beim Herstellen einer Verbindung zum Server vorhanden ist.",
+  "Key": "Schlüssel",
+  "PEM-encoded TLS private key for the client certificate. Required if certificate is specified.": "PEM-codierter TLS-privater Schlüssel für das Clientzertifikat. Erforderlich, wenn das Zertifikat angegeben ist."
+}

@@ -1,0 +1,20 @@
+{
+  "Slack API URL": "Slack API URL",
+  "Save as default Slack API URL": "儲存為預設 Slack API URL",
+  "Checking this box will write the API URL to the global section of the configuration file where it will become the default API URL for future Slack receivers.": "勾選此方框會將 API URL 寫入至配置檔的廣域區段，其中它將成為未來 Slack 接收端的預設 API URL 。",
+  "The URL of the Slack webhook.": "Slack Webhook 的 URL 。",
+  "Channel": "海峽",
+  "The Slack channel or user to send notifications to.": "要傳送通知的 Slack 通道或使用者。",
+  "Show advanced configuration": "顯示進階配置",
+  "Hide advanced configuration": "隱藏進階配置",
+  "Icon": "圖示",
+  "URL": "URL",
+  "Emoji": "埃莫吉",
+  "The URL of the icon.": "圖示的 URL 。",
+  "An <2></2> to use in place of the default icon.": "An <2>\n<!--2--> 以取代預設圖示。",
+  "emoji code": "表情碼",
+  "Username": "Username",
+  "The displayed username.": "顯示的使用者名稱。",
+  "Link names": "鏈結名稱",
+  "Find and link channel names and usernames.": "尋找及鏈結通道名稱和使用者名稱。"
+}

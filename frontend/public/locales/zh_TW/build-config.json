@@ -1,0 +1,10 @@
+{
+  "Start build": "開始建置",
+  "Build Config Details": "建置配置詳細資料",
+  "Name": "名字",
+  "Namespace": "名稱空間",
+  "Labels": "拉貝爾斯",
+  "Created": "已建立",
+  "Build Configs": "建置配置",
+  "Build strategy": "建置策略"
+}

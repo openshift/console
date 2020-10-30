@@ -1,0 +1,13 @@
+{
+  "Invalid name.": "無効な名前です。",
+  "Label name must not begin with a digit and contain only alphanumeric characters or '_'.": "ラベル名の先頭は数字ではなく、英数字または「_」のみを使用してください。",
+  "Routing labels": "ルーティング・ラベル",
+  "Firing alerts with labels that match all of these selectors will be sent to this receiver. Label values can be matched exactly or with a <2></2>.": "これらのセレクターのすべてに一致するラベルを持つアラートを実行すると、この受信者に送信されます。 ラベルの値は、正確に一致するか &lt;2&gt; と一致させる\n<!--2-->を",
+  "regular expression": "正規表現",
+  "Name": "名称",
+  "Value": "価値",
+  "Regular expression": "正規表現",
+  "Remove": "削除",
+  "Routing label names must be unique.": "ルーティング・ラベル名は固有でなければなりません",
+  "Add label": "ラベルの追加"
+}

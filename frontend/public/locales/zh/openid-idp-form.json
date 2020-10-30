@@ -1,0 +1,17 @@
+{
+  "Add Identity Provider: OpenID Connect": "添加身份提供者:OpenID Connect",
+  "Integrate with an OpenID Connect identity provider using an Authorization Code Flow.": "使用授权代码流与 OpenID Connect 身份提供者集成。",
+  "Client ID": "客户机标识",
+  "Client secret": "客户机密钥",
+  "Issuer URL": "发布者 URL",
+  "The URL that the OpenID provider asserts as its issuer identifier. It must use the https scheme with no URL query parameters or fragment.": "OpenID 提供者声明为其颁发者标识的 URL 。 它必须使用没有 URL 查询参数或片段的  方案。",
+  "Claims": "索赔",
+  "Claims map metadata from the OpenID provider to an OpenShift user. The first non-empty claim is used.": "提供从 OpenID 提供程序到 OpenShift 用户的映射元数据。 使用第一个非空声明。",
+  "Preferred username": "首选用户名",
+  "Any scopes to request in addition to the standard openid scope.": "除标准 openid 作用域以外的任何请求作用域。",
+  "Name": "名称",
+  "The list of claims whose values should be used as the display name.": "应将其值用作显示名称的声明的列表。",
+  "Email": "电子邮件",
+  "The list of claims whose values should be used as the email address.": "应将其值用作电子邮件地址的索赔的列表。",
+  "Extra scopes": "额外作用域"
+}

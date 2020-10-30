@@ -1,0 +1,14 @@
+{
+  "Name": "名称",
+  "Namespace": "名称空间",
+  "Created": "已创建",
+  "Limits": "限制",
+  "Type": "类型",
+  "Resource": "资源",
+  "Min": "明",
+  "Max": "马克斯",
+  "Default request": "缺省请求",
+  "Default limit": "缺省限制",
+  "Max limit/request ratio": "最大限制 / 请求比率",
+  "{{resource}} details": "{{resource}} 个详细信息"
+}

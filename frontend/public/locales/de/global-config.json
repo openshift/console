@@ -1,0 +1,11 @@
+{
+  "Edit {{name}} resource": "Ressource {{name}} bearbeiten",
+  "Explore {{name}} API": "API {{name}} durchsuchen",
+  "Create Receiver": "Empfänger erstellen",
+  "Edit configuration YAML": "Konfiguration YAML bearbeiten",
+  "Edit the following resources to manage the configuration of your cluster.": "Bearbeiten Sie die folgenden Ressourcen, um die Konfiguration Ihres Clusters zu verwalten.",
+  "by name or description": "nach Name oder Beschreibung",
+  "Configuration resources": "Konfigurationsressourcen",
+  "Configuration resource": "Konfigurationsressource",
+  "Description": "Beschreibung"
+}

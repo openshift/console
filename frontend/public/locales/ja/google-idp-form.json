@@ -1,0 +1,8 @@
+{
+  "Add Identity Provider: Google": "アイデンティティー・プロバイダーの追加 : Google",
+  "You can use Google integration for users authenticating with Google credentials.": "Google の資格情報で認証するユーザーのために Google の統合を使用できます。",
+  "Client ID": "クライアント ID",
+  "Client secret": "クライアント秘密鍵",
+  "Hosted domain": "ホストされたドメイン",
+  "Restrict users to a Google App domain.": "ユーザーを Google アプリケーション・ドメインに制限します。"
+}

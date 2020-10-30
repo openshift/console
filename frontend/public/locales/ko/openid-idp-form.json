@@ -1,0 +1,17 @@
+{
+  "Add Identity Provider: OpenID Connect": "ID 제공자 추가: OpenID Connect",
+  "Integrate with an OpenID Connect identity provider using an Authorization Code Flow.": "권한 부여 코드 플로우를 사용하여 OpenID Connect ID 제공자와 통합한다.",
+  "Client ID": "클라이언트 ID",
+  "Client secret": "클라이언트 시크릿",
+  "Issuer URL": "발행자 URL",
+  "The URL that the OpenID provider asserts as its issuer identifier. It must use the https scheme with no URL query parameters or fragment.": "OpenID 제공자가 발행자 식별자로서 주장하는 URL. URL 조회 매개변수 또는 단편이 없는 https 스키마를 사용해야 합니다.",
+  "Claims": "청구",
+  "Claims map metadata from the OpenID provider to an OpenShift user. The first non-empty claim is used.": "OpenID 제공자로부터 OpenShift 사용자에 대한 청구항들의 맵 메타데이터가 있다. 비어 있지 않은 첫 번째 청구가 사용됩니다.",
+  "Preferred username": "바람직한 사용자 이름",
+  "Any scopes to request in addition to the standard openid scope.": "표준 개방 범위에 추가하여 요청할 모든 범위입니다.",
+  "Name": "이름",
+  "The list of claims whose values should be used as the display name.": "값이 표시 이름으로 사용되어야 하는 청구 목록입니다.",
+  "Email": "전자 우편",
+  "The list of claims whose values should be used as the email address.": "값이 이메일 주소로 사용되어야 하는 청구 목록입니다.",
+  "Extra scopes": "추가 범위"
+}

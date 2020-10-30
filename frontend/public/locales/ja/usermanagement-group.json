@@ -1,0 +1,14 @@
+{
+  "Add Users": "ユーザーの追加",
+  "Remove User": "ユーザーの削除",
+  "Name": "名称",
+  "Users": "利用者",
+  "Created": "作成済み",
+  "Groups": "グループ",
+  "Group details": "グループの詳細",
+  "Add new users to group {name}.": "新規ユーザーをグループ {name}に追加します。",
+  "Save": "セーブ",
+  "Remove User from Group?": "グループからのユーザーの削除",
+  "Remove user {user} from group {name}?": "ユーザー {user} をグループ {name}から削除しますか ?",
+  "Remove": "削除"
+}

@@ -1,0 +1,12 @@
+{
+  "Impersonate User ": "위장 사용자 ",
+  "No Users Found": "사용자가 없음",
+  "Add identity providers (IDPs) to the OAuth configuration to allow others to log in.": "다른 사용자가 로그인할 수 있도록 ID 제공자 (IDP) 를 OAuth 구성에 추가한다.",
+  "Add IDP": "IDP 추가",
+  "Name": "이름",
+  "Full name": "전체 이름",
+  "Identities": "ID",
+  "Users": "사용자",
+  "Users are automatically added the first time they log in.": "사용자는 처음 로그인할 때 자동으로 추가됩니다.",
+  "User Details": "사용자 세부사항"
+}

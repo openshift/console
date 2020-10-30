@@ -1,0 +1,20 @@
+{
+  "View instances": "Istanze di visualizzazione",
+  "true": "vero",
+  "false": "falso",
+  "CRD versions": "Versioni CRS",
+  "Name": "Nome",
+  "Served": "Servito",
+  "Storage": "Archiviazione",
+  "{{resource}} details": "{{resource}} dettagli",
+  "Established": "Stabilito",
+  "Group": "Gruppo",
+  "Latest version": "Ultima versione",
+  "Scope": "Ambito",
+  "Conditions": "Condizioni",
+  "Versions": "Versioni",
+  "Namespaced": "Namespacato",
+  "Yes": "Sì",
+  "No": "No",
+  "Instances": "Istanze"
+}

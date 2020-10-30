@@ -1,0 +1,20 @@
+{
+  "Slack API URL": "Slack API URL",
+  "Save as default Slack API URL": "デフォルトの Slack API URL として保存",
+  "Checking this box will write the API URL to the global section of the configuration file where it will become the default API URL for future Slack receivers.": "このチェック・ボックスをオンにすると、 API URL が構成ファイルのグローバル・セクションに書き込まれます。このグローバル・セクションは、将来の Slack 受信者のデフォルト API URL になります。",
+  "The URL of the Slack webhook.": "Slack のウェブフックの URL 。",
+  "Channel": "チャンネル",
+  "The Slack channel or user to send notifications to.": "通知の送信先の Slack チャネルまたはユーザー。",
+  "Show advanced configuration": "拡張構成の表示",
+  "Hide advanced configuration": "拡張構成を隠す",
+  "Icon": "アイコン",
+  "URL": "ウルル",
+  "Emoji": "エモジ",
+  "The URL of the icon.": "アイコンの URL 。",
+  "An <2></2> to use in place of the default icon.": "&lt;2&gt;\n<!--2--> デフォルト・アイコンの代わりに使用します。",
+  "emoji code": "絵文字コード",
+  "Username": "ユーザー名",
+  "The displayed username.": "表示されるユーザー名。",
+  "Link names": "リンク名",
+  "Find and link channel names and usernames.": "チャネル名およびユーザー名を検索してリンクします。"
+}

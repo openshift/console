@@ -1,0 +1,22 @@
+{
+  "You must specify a CA File.": "您必須指定 CA 檔案。",
+  "Add Identity Provider: Request Header": "新增身分提供者：要求標頭",
+  "Use request header to identify users from request header values. It is typically used in combination with an authenticating proxy, which sets the request header value.": "使用要求標頭，從要求標頭值中識別使用者。 它通常與鑑別 Proxy 一起使用，其會設定要求標頭值。",
+  "URLs": "URL",
+  "At least one URL must be provided.": "至少必須提供一個 URL 。",
+  "Challenge URL": "盤查 URL",
+  "The URL to redirect unauthenticated requests from OAuth clients which expect interactive logins.": "用來重新導向來自 OAuth 用戶端的未經鑑別要求的 URL ，這些用戶端預期互動式登入。",
+  "Login URL": "登入 URL",
+  "The URL to redirect unauthenticated requests from OAuth clients which expect WWW-Authenticate challenges.": "用來重新導向預期 WWW - Authenticate 盤查之 OAuth 用戶端之未鑑別要求的 URL 。",
+  "More options": "其他選項",
+  "Client common names": "用戶端一般名稱",
+  "The set of common names to require a match from.": "需要相符的一般名稱集。",
+  "Headers": "標頭",
+  "The set of headers to check for identity information.": "要檢查身分資訊的標頭集。",
+  "Preferred username headers": "偏好的使用者名稱標頭",
+  "The set of headers to check for the preferred username.": "要檢查偏好使用者名稱的標頭集。",
+  "Name headers": "名稱標頭",
+  "The set of headers to check for the display name.": "要檢查顯示名稱的標頭集。",
+  "Email headers": "電子郵件標頭",
+  "The set of headers to check for the email address.": "要檢查電子郵件位址的標頭集。"
+}

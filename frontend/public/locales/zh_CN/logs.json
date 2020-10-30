@@ -1,0 +1,16 @@
+{
+  "Log stream ended.": "日志流已结束。",
+  "Loading log...": "正在装入日志...",
+  "Log stream paused.": "日志流已暂停。",
+  "Log streaming...": "日志流...",
+  "Raw": "劳",
+  "Download": "下载",
+  "Collapse": "崩溃",
+  "Expand": "展开",
+  "An error occurred while retrieving the requested logs.": "检索请求的日志时发生错误。",
+  "Retry": "重试",
+  "Some lines have been abridged because they are exceptionally long.": "一些线路已被删节，因为它们格外长。",
+  "To view unabridged log content, you can either <2>open the raw file in another window</2> or <6>download it</6>.": "要查看未删删的日志内容，您可以 <2> 打开另一个窗口中的原始文件\n<!--2--> 或 <6>下载\n<!--6-->- 是啊",
+  "The logs for this {{resourceKind}} may be stale.": "此 {{resourceKind}} 的日志可能是旧的。",
+  "Refresh": "刷新"
+}

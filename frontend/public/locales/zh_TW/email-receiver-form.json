@@ -1,0 +1,21 @@
+{
+  "To address": "收件者位址",
+  "The email address to send notifications to.": "要將通知傳送至的電子郵件位址。",
+  "SMTP configuration": "SMTP 配置",
+  "Save as default SMTP configuration": "儲存為預設 SMTP 配置",
+  "Checking this box will write these values to the global section of the configuration file where they will become defaults for future email receivers.": "勾選這個勾選框會將這些值寫入配置檔的廣域區段中，這些值會變成未來電子郵件接收端的預設值。",
+  "From address": "來源位址",
+  "The email address to send notifications from.": "要從傳送通知的電子郵件位址。",
+  "SMTP smarthost": "SMTP smarthostst",
+  "Smarthost used for sending emails, including port number.": "用於傳送電子郵件的智慧型主機，包括埠號。",
+  "SMTP hello": "SMTP hello",
+  "The hostname to identify to the SMTP server.": "要識別 SMTP 伺服器的主機名稱。",
+  "Auth username": "Auth username",
+  "Auth password (using LOGIN and PLAIN)": "鑑別密碼（使用 LOGIN 和 PLAIN）",
+  "Auth identity (using PLAIN)": "鑑別身分（使用 PLAIN）",
+  "Auth secret (CRAM-MDS)": "鑑別密碼（ CRAM-MDS）",
+  "Require TLS": "需要 TLS",
+  "Show advanced configuration": "顯示進階配置",
+  "Hide advanced configuration": "隱藏進階配置",
+  "Body of email notifications (HTML)": "電子郵件通知內文（ HTML）"
+}

@@ -1,0 +1,16 @@
+{
+  "Type": "Type",
+  "Git repository": "Référentiel Git",
+  "Git ref": "Réf. De Git",
+  "Git commit": "Validation Git",
+  "Binary file": "Fichier binaire",
+  "Context dir": "Répertoire de contexte",
+  "Dockerfile": "Fichier Dockerfile",
+  "JenskinsFile path": "Chemin JenskinsFile",
+  "Build from": "Générer à partir de",
+  "Output to": "Sortie vers",
+  "Push secret": "Push secret",
+  "Run policy": "Exécuter la règle",
+  "Resource limits": "Limites de ressources",
+  "Triggers": "Déclencheurs"
+}

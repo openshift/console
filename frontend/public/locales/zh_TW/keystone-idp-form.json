@@ -1,0 +1,12 @@
+{
+  "Values for certificate and key should both be either excluded or provided.": "憑證及金鑰的值應該同時排除或提供。",
+  "Add Identity Provider: Keystone Authentication": "新增身分提供者： Keystone 鑑別",
+  "Adding Keystone enables shared authentication with an OpenStack server configured to store users in an internal Keystone database.": "新增 Keystone 會啟用與配置為將使用者儲存在內部 Keystone 資料庫中的 OpenStack 伺服器共用鑑別。",
+  "Domain name": "網域名稱",
+  "URL": "URL",
+  "The remote URL to connect to.": "要連接的遠端 URL 。",
+  "Certificate": "證書",
+  "PEM-encoded TLS client certificate to present when connecting to the server.": "連接至伺服器時， PEM 編碼的 TLS 用戶端憑證。",
+  "Key": "鑰匙",
+  "PEM-encoded TLS private key for the client certificate. Required if certificate is specified.": "PEM 編碼的 TLS 私密金鑰（用於用戶端憑證）。 如果指定了憑證，則為必要。"
+}

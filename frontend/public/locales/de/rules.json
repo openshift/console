@@ -1,0 +1,8 @@
+{
+  "Rules": "Regeln",
+  "Actions": "Aktionen",
+  "API groups": "API-Gruppen",
+  "Resources": "Ressourcen",
+  "Delete rule": "Regel löschen",
+  "Are you sure you want to delete rule #{{ruleNumber}}?": "Möchten Sie die Regel # {{ruleNumber}} wirklich löschen?"
+}

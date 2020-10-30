@@ -1,0 +1,14 @@
+{
+  "Name": "Nome",
+  "Namespace": "Namespace",
+  "Labels": "Etichette",
+  "Pod selector": "Selettore di Pod",
+  "Node selector": "Selettore del nodo",
+  "Node": "Nodo",
+  "Tolerations": "Tollerazioni",
+  "Annotations": "Annotazioni",
+  "Created at": "Creato a",
+  "Owner": "Proprietario",
+  "Current count": "Conteggio corrente",
+  "Desired count": "Conteggio desiderato"
+}

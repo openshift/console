@@ -1,0 +1,10 @@
+{
+  "Start build": "启动构建",
+  "Build Config Details": "构建配置详细信息",
+  "Name": "名称",
+  "Namespace": "名称空间",
+  "Labels": "标签",
+  "Created": "已创建",
+  "Build Configs": "构建配置",
+  "Build strategy": "构建策略"
+}

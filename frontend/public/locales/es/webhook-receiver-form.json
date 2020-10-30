@@ -1,0 +1,6 @@
+{
+  "URL": "URL",
+  "The endpoint to send HTTP POST requests to.": "El punto final al que enviar solicitudes HTTP POST.",
+  "Show advanced configuration": "Mostrar configuración avanzada",
+  "Hide advanced configuration": "Ocultar configuración avanzada"
+}

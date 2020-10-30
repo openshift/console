@@ -1,0 +1,16 @@
+{
+  "Add role binding": "Adicionar ligação de função",
+  "Name": "Nome",
+  "Subject kind": "Tipo de assunto",
+  "Subject name": "Nome do assunto",
+  "Namespace": "Namespace",
+  "Create binding": "Criar ligação",
+  "No roles found": "Sem funções encontradas",
+  "Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a Role Binding.": "As funções concedem acesso a tipos de objetos no cluster. As funções são aplicadas em uma equipe ou usuário por meio de uma Ligação de Função.",
+  "Roles": "Funções",
+  "Create role": "Criar função",
+  "Role": "Função",
+  "Cluster-wide roles": "Funções de cluster",
+  "Namespace roles": "Funções de namespace",
+  "System roles": "Funções do sistema"
+}

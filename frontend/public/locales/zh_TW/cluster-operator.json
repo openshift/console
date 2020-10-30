@@ -1,0 +1,10 @@
+{
+  "Name": "名字",
+  "Status": "狀態",
+  "Version": "版本",
+  "Message": "Message",
+  "{{resource}} details": "{{resource}} 詳細資料",
+  "Conditions": "條件",
+  "Operand versions": "運算元版本",
+  "Related objects": "相關物件"
+}

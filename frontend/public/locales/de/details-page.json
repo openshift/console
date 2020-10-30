@@ -1,0 +1,14 @@
+{
+  "Name": "Name",
+  "Namespace": "Namensbereich",
+  "Labels": "Bezeichnungen",
+  "Pod selector": "Pod selektor",
+  "Node selector": "Knotenselektor",
+  "Node": "Knoten",
+  "Tolerations": "Tolerierungen",
+  "Annotations": "Anmerkungen",
+  "Created at": "Erstellt am",
+  "Owner": "Eigner",
+  "Current count": "Aktuelle Anzahl",
+  "Desired count": "Gewünschte Anzahl"
+}

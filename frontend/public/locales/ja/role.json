@@ -1,0 +1,16 @@
+{
+  "Add role binding": "役割バインディングの追加",
+  "Name": "名称",
+  "Subject kind": "サブジェクトの種類",
+  "Subject name": "サブジェクト名",
+  "Namespace": "名前空間",
+  "Create binding": "バインディングの作成",
+  "No roles found": "ロールが見つからない",
+  "Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a Role Binding.": "ロールは、クラスター内のタイプのオブジェクトへのアクセスを許可します 役割は、役割バインディングを介してチームまたはユーザーに適用されます。",
+  "Roles": "役割",
+  "Create role": "役割の作成",
+  "Role": "役割",
+  "Cluster-wide roles": "クラスター全体の役割",
+  "Namespace roles": "名前空間の役割",
+  "System roles": "システム・ロール"
+}

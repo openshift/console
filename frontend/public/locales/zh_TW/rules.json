@@ -1,0 +1,8 @@
+{
+  "Rules": "規則",
+  "Actions": "Actions",
+  "API groups": "API 群組",
+  "Resources": "資源",
+  "Delete rule": "刪除規則",
+  "Are you sure you want to delete rule #{{ruleNumber}}?": "您確定要刪除規則 #{{ruleNumber}}嗎？"
+}

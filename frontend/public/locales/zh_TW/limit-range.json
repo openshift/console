@@ -1,0 +1,14 @@
+{
+  "Name": "名字",
+  "Namespace": "名稱空間",
+  "Created": "已建立",
+  "Limits": "限制",
+  "Type": "類型",
+  "Resource": "資源",
+  "Min": "敏",
+  "Max": "麥斯",
+  "Default request": "預設要求",
+  "Default limit": "預設限制",
+  "Max limit/request ratio": "限制 / 要求比例上限",
+  "{{resource}} details": "{{resource}} 詳細資料"
+}

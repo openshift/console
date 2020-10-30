@@ -1,0 +1,20 @@
+{
+  "View instances": "인스턴스 보기",
+  "true": "진정한",
+  "false": "잘못된",
+  "CRD versions": "CRD 버전",
+  "Name": "이름",
+  "Served": "제공된",
+  "Storage": "스토리지",
+  "{{resource}} details": "{{resource}} 세부사항",
+  "Established": "확립된",
+  "Group": "그룹",
+  "Latest version": "최신 버전",
+  "Scope": "범위",
+  "Conditions": "조건",
+  "Versions": "버전",
+  "Namespaced": "남편감",
+  "Yes": "예",
+  "No": "아니오",
+  "Instances": "인스턴스"
+}

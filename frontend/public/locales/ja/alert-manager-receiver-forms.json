@@ -1,0 +1,19 @@
+{
+  "PagerDuty": "PagerDuty",
+  "Webhook": "ウェブフック",
+  "Email": "E メール",
+  "Slack": "スラック",
+  "Your default receiver will automatically receive all alerts from this cluster that are not caught by other receivers first.": "デフォルトの受信側は、他の受信側によって最初にキャッチされない、このクラスターからのすべてのアラートを自動的に受け取ります。",
+  "The routing labels for this receiver are configured to capture critical alerts.  Finish setting up this receiver by selecting a \"Receiver Type\" to choose a destination for these alerts.  If this receiver is deleted, critical alerts will go to the default receiver instead.": "この受信側のルーティング・ラベルは、重大なアラートをキャプチャーするように構成されます &nbsp;「受信側のタイプ」を選択してこれらのアラートの宛先を選択することにより、このレシーバーのセットアップを終了します。 この &nbsp; が削除されると、重要なアラートが代わりにデフォルトの受信側に送信されます。",
+  "The Watchdog alert fires constantly to confirm that your alerting stack is functioning correctly. This receiver is configured to prevent it from creating unnecessary notifications. You can edit this receiver if you plan to use the information that Watchdog provides, otherwise this receiver should remain in its current state with no set receiver type.": "Watchdog アラートは、アラート・スタックが正常に機能していることを確認するために、常に実行します。 このレシーバーは、不必要な通知を作成しないように構成されています。 Watchdog が提供する情報を使用する予定の場合は、このレシーバーを編集することができます。そうしないと、このレシーバーは、受信側タイプの設定なしで現在の状態のままになります",
+  "unknown receiver type": "不明な受信側タイプ",
+  "Receiver": "受信側",
+  "{{receiverTypeLabel}}": "{{receiverTypeLabel}}",
+  "Default": "デフォルト",
+  "{{titleVerb}} Receiver": "{{titleVerb}} 受信側",
+  "{{titleVerb}} {{receiverTypeLabel}} {{defaultString}} Receiver": "{{titleVerb}} {{receiverTypeLabel}} {{defaultString}} 受信側",
+  "Receiver name": "受信側の名前",
+  "A receiver with that name already exists.": "その名前のレシーバーは既に存在しています。",
+  "Receiver type": "受信側タイプ",
+  "Send resolved alerts to this receiver?": "解決されたアラートをこの受信者に送信"
+}

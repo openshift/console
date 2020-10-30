@@ -1,0 +1,20 @@
+{
+  "View instances": "Instâncias de visualização",
+  "true": "true",
+  "false": "falso",
+  "CRD versions": "Versões CRD",
+  "Name": "Nome",
+  "Served": "Servido",
+  "Storage": "Armazenamento",
+  "{{resource}} details": "{{resource}} detalhes",
+  "Established": "Estabelecido",
+  "Group": "Grupo",
+  "Latest version": "Versão mais recente",
+  "Scope": "Escopo",
+  "Conditions": "Condições",
+  "Versions": "Versões",
+  "Namespaced": "Namespaced",
+  "Yes": "Sim",
+  "No": "Não",
+  "Instances": "Instâncias"
+}

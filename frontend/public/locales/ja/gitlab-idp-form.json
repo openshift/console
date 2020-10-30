@@ -1,0 +1,8 @@
+{
+  "Add Identity Provider: GitLab": "アイデンティティー・プロバイダーの追加 : GitLab",
+  "You can use GitLab integration for users authenticating with GitLab credentials.": "GitLab 資格情報を使用して認証するユーザーに GitLab 統合を使用することができます。",
+  "URL": "ウルル",
+  "The OAuth server base URL.": "OAuth サーバーのベース URL。",
+  "Client ID": "クライアント ID",
+  "Client secret": "クライアント秘密鍵"
+}

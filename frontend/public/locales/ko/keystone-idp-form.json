@@ -1,0 +1,12 @@
+{
+  "Values for certificate and key should both be either excluded or provided.": "인증서 및 키의 값은 둘 다 제외 또는 제공되어야 합니다.",
+  "Add Identity Provider: Keystone Authentication": "ID 제공자 추가: Keystone 인증",
+  "Adding Keystone enables shared authentication with an OpenStack server configured to store users in an internal Keystone database.": "키스톤을 추가하면 내부 키스톤 데이터베이스에 사용자를 저장하도록 구성된 OpenStack 서버와의 공유 인증이 가능하다.",
+  "Domain name": "도메인 이름",
+  "URL": "우르르",
+  "The remote URL to connect to.": "연결할 원격 URL.",
+  "Certificate": "인증서",
+  "PEM-encoded TLS client certificate to present when connecting to the server.": "서버에 연결할 때 존재하는 PEM 인코드 TLS 클라이언트 인증서.",
+  "Key": "키",
+  "PEM-encoded TLS private key for the client certificate. Required if certificate is specified.": "클라이언트 인증서에 대한 PEM 인코딩된 TLS 개인 키. 인증서가 지정된 경우 필수입니다."
+}

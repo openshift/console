@@ -1,0 +1,10 @@
+{
+  "Start build": "빌드 시작",
+  "Build Config Details": "구성 세부 사항 빌드하기",
+  "Name": "이름",
+  "Namespace": "네임스페이스",
+  "Labels": "레이블",
+  "Created": "작성된",
+  "Build Configs": "빌드 구성",
+  "Build strategy": "빌드 전략"
+}

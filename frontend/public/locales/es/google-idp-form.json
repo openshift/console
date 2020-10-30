@@ -1,0 +1,8 @@
+{
+  "Add Identity Provider: Google": "Añadir proveedor de identidades: Google",
+  "You can use Google integration for users authenticating with Google credentials.": "Puede utilizar la integración de Google para los usuarios que se autentican con las credenciales de Google.",
+  "Client ID": "ID de cliente",
+  "Client secret": "Secreto de cliente",
+  "Hosted domain": "Dominio alojado",
+  "Restrict users to a Google App domain.": "Restringir a los usuarios a un dominio de aplicaciones de Google."
+}

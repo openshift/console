@@ -1,0 +1,19 @@
+{
+  "PagerDuty": "PagerDuty",
+  "Webhook": "韦克胡克",
+  "Email": "电子邮件",
+  "Slack": "斯莱克",
+  "Your default receiver will automatically receive all alerts from this cluster that are not caught by other receivers first.": "缺省接收方将自动接收此集群中未被其他接收方捕获的所有警报。",
+  "The routing labels for this receiver are configured to capture critical alerts.  Finish setting up this receiver by selecting a \"Receiver Type\" to choose a destination for these alerts.  If this receiver is deleted, critical alerts will go to the default receiver instead.": "此接收器的路由标签配置为捕获紧急警报。 通过选择 \"接收方类型 \" 以选择这些警报的目标，完成设置此接收方。 如果删除此接收器，那么关键警报将改为缺省接收器。",
+  "The Watchdog alert fires constantly to confirm that your alerting stack is functioning correctly. This receiver is configured to prevent it from creating unnecessary notifications. You can edit this receiver if you plan to use the information that Watchdog provides, otherwise this receiver should remain in its current state with no set receiver type.": "看守程序警报将不断触发，以确认警报堆栈正在正常运行。 此接收器配置为防止其创建不必要的通知。 如果计划使用看守程序提供的信息，那么可以编辑此接收方，否则此接收方应保持其当前状态，而没有设置接收方类型。",
+  "unknown receiver type": "未知接收方类型",
+  "Receiver": "接收器",
+  "{{receiverTypeLabel}}": "{{receiverTypeLabel}}",
+  "Default": "缺省值",
+  "{{titleVerb}} Receiver": "{{titleVerb}} 接收方",
+  "{{titleVerb}} {{receiverTypeLabel}} {{defaultString}} Receiver": "{{titleVerb}} {{receiverTypeLabel}} {{defaultString}} 接收方",
+  "Receiver name": "接收方名称",
+  "A receiver with that name already exists.": "已存在具有该名称的接收器。",
+  "Receiver type": "接收器类型",
+  "Send resolved alerts to this receiver?": "向此接收方发送已解决的警报 ?"
+}

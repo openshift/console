@@ -1,0 +1,17 @@
+{
+  "Specify either organizations or teams, but not both.": "조직 또는 팀을 지정하십시오. 둘 다 지정하지 마십시오.",
+  "Add Identity Provider: GitHub": "ID 제공자 추가: GitHub",
+  "You can use the GitHub integration to connect to either GitHub or GitHub Enterprise. For GitHub Enterprise, you must provide the hostname of your instance and can optionally provide a CA certificate bundle to use in requests to the server.": "GitHub 통합을 사용하여 GitHub 또는 GitHub Enterprise에 연결할 수 있다. GitHub Enterprise의 경우, 인스턴스의 호스트 이름을 제공해야 하며 선택적으로 서버에 대한 요청에 사용할 CA 인증서 번들을 제공할 수 있다.",
+  "Client ID": "클라이언트 ID",
+  "Client secret": "클라이언트 시크릿",
+  "Hostname": "호스트 이름",
+  "Optional domain for use with a hosted instance of GitHub Enterprise.": "GitHub Enterprise의 호스트 인스턴스와 함께 사용하기 위한 선택적 도메인입니다.",
+  "Organizations": "조직",
+  "teams-help": "선택적으로 조직 목록 지정된 경우, 나열된 조직 중 최소한 하나의 구성원인 GitHub 사용자만 로그인할 수 있다. < 1 > 팀과 조합하여 사용할 수 없음\n<!--1-->",
+  "Organization": "조직",
+  "Restricts which organizations are allowed to log in.": "조직이 로그인할 수 있는 제한을 제한합니다.",
+  "Teams": "팀",
+  "organizations-help": "선택적으로 팀을 나열합니다 지정된 경우, 나열된 팀 중 하나 이상의 구성원인 GitHub 사용자만 로그인할 수 있다. < 2 > 조직과 조합하여 사용할 수 없음\n<!--2-->",
+  "Team": "팀",
+  "Restricts which teams are allowed to log in. The format is <org>/<team>.": "팀이 로그인할 수 있는 구역을 제한합니다. 형식은 <org>/<team>입니다."
+}

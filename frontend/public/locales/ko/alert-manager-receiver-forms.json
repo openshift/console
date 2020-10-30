@@ -1,0 +1,19 @@
+{
+  "PagerDuty": "파고다",
+  "Webhook": "웹 후크",
+  "Email": "전자 우편",
+  "Slack": "슬랙",
+  "Your default receiver will automatically receive all alerts from this cluster that are not caught by other receivers first.": "기본 수신자는 다른 수신자가 먼저 발견하지 않는 이 클러스터에서 모든 경보를 자동으로 수신합니다.",
+  "The routing labels for this receiver are configured to capture critical alerts.  Finish setting up this receiver by selecting a \"Receiver Type\" to choose a destination for these alerts.  If this receiver is deleted, critical alerts will go to the default receiver instead.": "이 수신자의 라우팅 레이블은 위험 경보를 캡처하도록 구성됩니다. 이 경보에 대한 대상을 선택하려면 \"수신자 유형\" 을 선택하여 이 수신자를 설정하는 작업을 완료하십시오. 이 수신자가 삭제되면 위험 경보가 대신 기본 수신자로 이동합니다.",
+  "The Watchdog alert fires constantly to confirm that your alerting stack is functioning correctly. This receiver is configured to prevent it from creating unnecessary notifications. You can edit this receiver if you plan to use the information that Watchdog provides, otherwise this receiver should remain in its current state with no set receiver type.": "감시기 경보는 경보 스택이 올바르게 작동하는지 확인하기 위해 지속적으로 실행됩니다. 이 수신자는 불필요한 알림을 작성하지 못하도록 구성됩니다. 감시기가 제공하는 정보를 사용하려는 경우 이 수신자를 편집할 수 있습니다. 그렇지 않으면 이 수신자는 설정된 수신자 유형이 없는 현재 상태로 남아 있어야 합니다.",
+  "unknown receiver type": "알 수 없는 수신자 유형",
+  "Receiver": "리시버",
+  "{{receiverTypeLabel}}": "{{receiverTypeLabel}}",
+  "Default": "기본값",
+  "{{titleVerb}} Receiver": "{{titleVerb}} 수신자",
+  "{{titleVerb}} {{receiverTypeLabel}} {{defaultString}} Receiver": "{{titleVerb}} {{receiverTypeLabel}} {{defaultString}} 수신자",
+  "Receiver name": "수신자 이름",
+  "A receiver with that name already exists.": "해당 이름의 수신자가 이미 있습니다.",
+  "Receiver type": "리시버 유형",
+  "Send resolved alerts to this receiver?": "해결된 경보를 이 수신자에게 송신하시겠습니까?"
+}

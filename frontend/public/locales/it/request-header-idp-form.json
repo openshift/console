@@ -1,0 +1,22 @@
+{
+  "You must specify a CA File.": "È necessario specificare un file CA.",
+  "Add Identity Provider: Request Header": "Aggiungi identità Provider: Header richiesta",
+  "Use request header to identify users from request header values. It is typically used in combination with an authenticating proxy, which sets the request header value.": "Utilizzare intestazione di richiesta per identificare gli utenti dai valori di intestazione della richiesta. Viene utilizzato tipicamente in combinazione con un proxy di autenticazione, che imposta il valore di intestazione della richiesta.",
+  "URLs": "URL",
+  "At least one URL must be provided.": "Deve essere fornito almeno un URL.",
+  "Challenge URL": "URL di sfida",
+  "The URL to redirect unauthenticated requests from OAuth clients which expect interactive logins.": "L'URL per reindirizzare le richieste non autenticate dai client OAuth che prevedono accessi interattivi.",
+  "Login URL": "URL di login",
+  "The URL to redirect unauthenticated requests from OAuth clients which expect WWW-Authenticate challenges.": "L'URL per reindirizzare le richieste non autenticate dai client OAuth che si aspettano le sfide WWW - Authenticate.",
+  "More options": "Più opzioni",
+  "Client common names": "Nomi comuni del client",
+  "The set of common names to require a match from.": "La serie di nomi comuni a cui richiedere una corrispondenza.",
+  "Headers": "Intestazioni",
+  "The set of headers to check for identity information.": "L'insieme delle intestazioni per verificare le informazioni sull'identità.",
+  "Preferred username headers": "Intestazioni username preferite",
+  "The set of headers to check for the preferred username.": "L'insieme delle intestazioni da controllare per l'username preferito.",
+  "Name headers": "Intestazioni di nome",
+  "The set of headers to check for the display name.": "L'insieme delle intestazioni da controllare per il nome del display.",
+  "Email headers": "Intestazioni email",
+  "The set of headers to check for the email address.": "L'insieme delle intestazioni da controllare per l'indirizzo email."
+}

@@ -1,0 +1,14 @@
+{
+  "Name": "名称",
+  "Namespace": "名称空间",
+  "Labels": "标签",
+  "Pod selector": "Pod 选择器",
+  "Node selector": "节点选择器",
+  "Node": "节点",
+  "Tolerations": "容差",
+  "Annotations": "注释",
+  "Created at": "创建于",
+  "Owner": "业主",
+  "Current count": "当前计数",
+  "Desired count": "期望计数"
+}

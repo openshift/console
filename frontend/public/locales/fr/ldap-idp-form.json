@@ -1,0 +1,21 @@
+{
+  "Add Identity Provider: LDAP": "Ajouter un fournisseur d'identité: LDAP",
+  "Integrate with an LDAP identity provider.": "Intégration avec un fournisseur d'identité LDAP.",
+  "URL": "URL",
+  "An RFC 2255 URL which specifies the LDAP search parameters to use.": "URL RFC 2255 qui spécifie les paramètres de recherche LDAP à utiliser.",
+  "Bind DN": "DN de liaison",
+  "DN to bind with during the search phase.": "Nom distinctif à lier pendant la phase de recherche.",
+  "Bind password": "Mot de passe de liaison",
+  "Password to bind with during the search phase.": "Mot de passe à lier pendant la phase de recherche.",
+  "Attributes": "Attributs",
+  "Attributes map LDAP attributes to identities.": "Les attributs mappsur les attributs LDAP sur les identités.",
+  "ID": "ID",
+  "The list of attributes whose values should be used as the user ID.": "Liste des attributs dont les valeurs doivent être utilisées comme ID utilisateur.",
+  "Preferred username": "Nom d'utilisateur préféré",
+  "The list of attributes whose values should be used as the preferred username.": "Liste des attributs dont les valeurs doivent être utilisées comme nom d'utilisateur préféré.",
+  "Name": "Nom",
+  "The list of attributes whose values should be used as the display name.": "Liste des attributs dont les valeurs doivent être utilisées comme nom d'affichage.",
+  "Email": "Courrier électronique",
+  "The list of attributes whose values should be used as the email address.": "Liste des attributs dont les valeurs doivent être utilisées comme adresse électronique.",
+  "More options": "Autres options"
+}

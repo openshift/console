@@ -1,0 +1,16 @@
+{
+  "Add role binding": "新增角色連結",
+  "Name": "名字",
+  "Subject kind": "主題種類",
+  "Subject name": "主題名稱",
+  "Namespace": "名稱空間",
+  "Create binding": "建立連結",
+  "No roles found": "找不到角色",
+  "Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a Role Binding.": "對叢集中物件類型的角色授與存取權。 角色會透過「角色連結」套用至團隊或使用者。",
+  "Roles": "角色",
+  "Create role": "建立角色",
+  "Role": "角色",
+  "Cluster-wide roles": "叢集層面角色",
+  "Namespace roles": "名稱空間角色",
+  "System roles": "系統角色"
+}

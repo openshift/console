@@ -1,0 +1,13 @@
+{
+  "Invalid name.": "名稱無效。",
+  "Label name must not begin with a digit and contain only alphanumeric characters or '_'.": "標籤名稱的開頭不能是數字，且只能包含英數字元或 '_'。",
+  "Routing labels": "遞送標籤",
+  "Firing alerts with labels that match all of these selectors will be sent to this receiver. Label values can be matched exactly or with a <2></2>.": "具有符合所有這些選取器的標籤的發動警示，將傳送至這個接收端。 標籤值可以完全符合，也可以與 <2> 相符\n<!--2-->。",
+  "regular expression": "正規表示式",
+  "Name": "名字",
+  "Value": "價值",
+  "Regular expression": "正規表示式",
+  "Remove": "移除",
+  "Routing label names must be unique.": "遞送標籤名稱必須是唯一的。",
+  "Add label": "新增標籤"
+}

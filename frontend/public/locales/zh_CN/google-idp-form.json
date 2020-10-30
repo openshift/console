@@ -1,0 +1,8 @@
+{
+  "Add Identity Provider: Google": "添加身份提供者:Google",
+  "You can use Google integration for users authenticating with Google credentials.": "您可以将 Google 集成用于使用 Google 凭证进行认证的用户。",
+  "Client ID": "客户机标识",
+  "Client secret": "客户机密钥",
+  "Hosted domain": "托管域",
+  "Restrict users to a Google App domain.": "将用户限制为 Google 应用域。"
+}

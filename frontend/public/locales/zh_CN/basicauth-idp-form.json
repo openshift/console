@@ -1,0 +1,11 @@
+{
+  "Values for certificate and key should both be either excluded or provided.": "证书和密钥的值都应排除或提供。",
+  "Add Identity Provider: Basic Authentication": "添加身份提供者: 基本认证",
+  "Basic authentication is a generic backend integration mechanism that allows users to authenticate with credentials validated against a remote identity provider.": "基本认证是通用后端集成机制，允许用户使用针对远程身份提供者验证的凭证进行认证。",
+  "URL": "URL",
+  "The remote URL to connect to.": "要连接的远程 URL 。",
+  "Certificate": "证书",
+  "PEM-encoded TLS client certificate to present when connecting to the server.": "PEM 编码的 TLS 客户机证书，用于连接到服务器时提供。",
+  "Key": "钥匙",
+  "PEM-encoded TLS private key for the client certificate. Required if certificate is specified.": "客户机证书的 PEM 编码 TLS 专用密钥。 如果指定了证书，那么为必需。"
+}

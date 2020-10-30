@@ -1,0 +1,10 @@
+{
+  "Start build": "Iniciar construção",
+  "Build Config Details": "Detalhes Do Build Config",
+  "Name": "Nome",
+  "Namespace": "Namespace",
+  "Labels": "Etiquetas",
+  "Created": "Criado",
+  "Build Configs": "Configs de Construção",
+  "Build strategy": "Estratégia de construção"
+}

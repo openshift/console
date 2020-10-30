@@ -1,0 +1,14 @@
+{
+  "Name": "Name",
+  "Namespace": "Namensbereich",
+  "Created": "Erstellt",
+  "Limits": "Grenzwerte",
+  "Type": "Typ",
+  "Resource": "Ressource",
+  "Min": "Min.",
+  "Max": "Max.",
+  "Default request": "Standardanforderung",
+  "Default limit": "Standardgrenzwert",
+  "Max limit/request ratio": "Max. Grenzwert/Anforderungsverhältnis",
+  "{{resource}} details": "{{resource}} Details"
+}

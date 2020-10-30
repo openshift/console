@@ -1,0 +1,15 @@
+{
+  "Add": "추가",
+  "Cancel": "취소",
+  "Update": "업데이트",
+  "Save": "저장",
+  "{{description}} for": "다음에 대한 {{description}}",
+  "Edit": "편집",
+  "Create": "작성",
+  "{{date, MMM D, h:mm a}}": "{{date, MMM D, h:mm a}}",
+  "Resume": "재개",
+  "Pause": "일시 중지",
+  "Warning": "경고",
+  "Not available": "사용 불가능",
+  "Resource": "자원"
+}

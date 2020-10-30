@@ -1,0 +1,12 @@
+{
+  "Impersonate User ": "模拟用户 ",
+  "No Users Found": "未找到用户",
+  "Add identity providers (IDPs) to the OAuth configuration to allow others to log in.": "向 OAuth 配置添加身份提供者 (IDP ) 以允许其他人登录。",
+  "Add IDP": "添加 IDP",
+  "Name": "名称",
+  "Full name": "全名",
+  "Identities": "身份",
+  "Users": "用户",
+  "Users are automatically added the first time they log in.": "用户首次登录时将自动添加。",
+  "User Details": "用户详细信息"
+}

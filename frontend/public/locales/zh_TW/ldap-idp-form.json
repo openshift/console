@@ -1,0 +1,21 @@
+{
+  "Add Identity Provider: LDAP": "新增身分提供者：LDAP",
+  "Integrate with an LDAP identity provider.": "Integrate with an LDAP identity provider.",
+  "URL": "URL",
+  "An RFC 2255 URL which specifies the LDAP search parameters to use.": "一個 RFC 2255 URL ，指定要使用的 LDAP 搜尋參數。",
+  "Bind DN": "連結 DN",
+  "DN to bind with during the search phase.": "在搜尋階段期間要連結的 DN 。",
+  "Bind password": "連結密碼",
+  "Password to bind with during the search phase.": "在搜尋階段期間與連結的密碼。",
+  "Attributes": "屬性",
+  "Attributes map LDAP attributes to identities.": "屬性將 LDAP 屬性對映至身分。",
+  "ID": "ID",
+  "The list of attributes whose values should be used as the user ID.": "其值應該用來作為使用者 ID的屬性清單。",
+  "Preferred username": "偏好的使用者名稱",
+  "The list of attributes whose values should be used as the preferred username.": "其值應該用來作為偏好使用者名稱的屬性清單。",
+  "Name": "名字",
+  "The list of attributes whose values should be used as the display name.": "其值應該用來作為顯示名稱的屬性清單。",
+  "Email": "電子郵件",
+  "The list of attributes whose values should be used as the email address.": "其值應用作電子郵件位址的屬性清單。",
+  "More options": "其他選項"
+}

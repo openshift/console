@@ -1,0 +1,19 @@
+{
+  "{{label}}": "{{label}}",
+  "Identity providers": "身份提供者",
+  "Name": "名称",
+  "Type": "类型",
+  "Mapping method": "映射方法",
+  "Basic Authentication": "基本认证",
+  "GitHub": "GitHub",
+  "GitLab": "GitLab",
+  "Google": "Google",
+  "HTPasswd": "HTPasswd",
+  "Keystone": "基斯通",
+  "LDAP": "LDAP",
+  "OpenID Connect": "OpenID Connect",
+  "Request Header": "请求头",
+  "{{resource}} details": "{{resource}} 个详细信息",
+  "Access token max age": "访问令牌最大寿命",
+  "Identity providers determine how users log into the cluster.": "身份提供者确定用户登录集群的方式。"
+}

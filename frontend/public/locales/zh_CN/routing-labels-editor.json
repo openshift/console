@@ -1,0 +1,13 @@
+{
+  "Invalid name.": "名称无效。",
+  "Label name must not begin with a digit and contain only alphanumeric characters or '_'.": "标签名称不能以数字开头，并且只能包含字母数字字符或 \"_\"。",
+  "Routing labels": "路由标签",
+  "Firing alerts with labels that match all of these selectors will be sent to this receiver. Label values can be matched exactly or with a <2></2>.": "将向此接收方发送具有与所有这些选择器匹配的标签的触发警报。 标签值可以完全匹配或与 <2> 匹配\n<!--2-->- 是啊",
+  "regular expression": "正则表达式",
+  "Name": "名称",
+  "Value": "价值",
+  "Regular expression": "正则表达式",
+  "Remove": "除去",
+  "Routing label names must be unique.": "路由标签名称必须唯一。",
+  "Add label": "添加标签"
+}

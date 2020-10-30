@@ -1,0 +1,16 @@
+{
+  "Log stream ended.": "Protokolldatenstrom wurde beendet.",
+  "Loading log...": "Protokoll wird geladen ...",
+  "Log stream paused.": "Protokolldatenstrom angehalten.",
+  "Log streaming...": "Protokollstreaming ...",
+  "Raw": "Unformatiert",
+  "Download": "Herunterladen",
+  "Collapse": "Ausblenden",
+  "Expand": "Erweitern",
+  "An error occurred while retrieving the requested logs.": "Beim Abrufen der angeforderten Protokolle ist ein Fehler aufgetreten.",
+  "Retry": "Wiederholung",
+  "Some lines have been abridged because they are exceptionally long.": "Einige Zeilen wurden abgerissen, weil sie außergewöhnlich lang sind.",
+  "To view unabridged log content, you can either <2>open the raw file in another window</2> or <6>download it</6>.": "Um einen ungekürzten Protokollinhalt anzuzeigen, können Sie entweder &lt; 2 &gt; die unformatierte Datei in einem anderen Fenster öffnen.\n<!--2--> oder &lt; 6 &gt; herunterladen\n<!--6-->.",
+  "The logs for this {{resourceKind}} may be stale.": "Die Protokolle für diesen {{resourceKind}} können veraltet sein.",
+  "Refresh": "Aktualisieren"
+}

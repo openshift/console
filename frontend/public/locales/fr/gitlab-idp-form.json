@@ -1,0 +1,8 @@
+{
+  "Add Identity Provider: GitLab": "Ajouter un fournisseur d'identité: GitLab",
+  "You can use GitLab integration for users authenticating with GitLab credentials.": "Vous pouvez utiliser l'intégration GitLab pour les utilisateurs authentifiant avec les données d'identification GitLab.",
+  "URL": "URL",
+  "The OAuth server base URL.": "URL de base du serveur OAuth.",
+  "Client ID": "ID client",
+  "Client secret": "Secret client"
+}

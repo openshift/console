@@ -1,0 +1,13 @@
+{
+  "Invalid name.": "Nom non valide.",
+  "Label name must not begin with a digit and contain only alphanumeric characters or '_'.": "Le nom de libellé ne doit pas commencer par un chiffre et ne doit contenir que des caractères alphanumériques ou'_'.",
+  "Routing labels": "Etiquettes de routage",
+  "Firing alerts with labels that match all of these selectors will be sent to this receiver. Label values can be matched exactly or with a <2></2>.": "Les alertes de déclenchement avec des libellés qui correspondent à tous ces sélecteurs seront envoyées à ce récepteur. Les valeurs de libellé peuvent être identiques ou avec un &lt; 2 &gt;\n<!--2-->.",
+  "regular expression": "Expression régulière",
+  "Name": "Nom",
+  "Value": "Valeur",
+  "Regular expression": "Expression régulière",
+  "Remove": "Supprimer",
+  "Routing label names must be unique.": "Les noms des libellés de routage doivent être uniques.",
+  "Add label": "Ajouter un libellé"
+}

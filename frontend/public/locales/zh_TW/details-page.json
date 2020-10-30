@@ -1,0 +1,14 @@
+{
+  "Name": "名字",
+  "Namespace": "名稱空間",
+  "Labels": "拉貝爾斯",
+  "Pod selector": "Pod 選取器",
+  "Node selector": "節點選取器",
+  "Node": "節點",
+  "Tolerations": "容忍",
+  "Annotations": "註釋",
+  "Created at": "建立於",
+  "Owner": "所有者",
+  "Current count": "現行計數",
+  "Desired count": "需要計數"
+}

@@ -1,0 +1,6 @@
+{
+  "URL": "URL",
+  "The endpoint to send HTTP POST requests to.": "用來將 HTTP POST 要求傳送至的端點。",
+  "Show advanced configuration": "顯示進階配置",
+  "Hide advanced configuration": "隱藏進階配置"
+}

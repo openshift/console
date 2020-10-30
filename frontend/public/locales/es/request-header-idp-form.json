@@ -1,0 +1,22 @@
+{
+  "You must specify a CA File.": "Debe especificar un archivo de CA.",
+  "Add Identity Provider: Request Header": "Añadir proveedor de identidades: Cabecera de solicitud",
+  "Use request header to identify users from request header values. It is typically used in combination with an authenticating proxy, which sets the request header value.": "Utilice la cabecera de solicitud para identificar usuarios de los valores de cabecera de solicitud. Normalmente se utiliza en combinación con un proxy de autenticación, que establece el valor de cabecera de solicitud.",
+  "URLs": "URL",
+  "At least one URL must be provided.": "Debe proporcionarse al menos un URL.",
+  "Challenge URL": "URL de reto",
+  "The URL to redirect unauthenticated requests from OAuth clients which expect interactive logins.": "El URL para redirigir solicitudes no autenticadas de clientes OAuth que esperan inicios de sesión interactivos.",
+  "Login URL": "URL de conexión",
+  "The URL to redirect unauthenticated requests from OAuth clients which expect WWW-Authenticate challenges.": "El URL para redirigir solicitudes no autenticadas de clientes OAuth que esperan retos de WWW-Authenticate.",
+  "More options": "Más opciones",
+  "Client common names": "Nombres comunes de cliente",
+  "The set of common names to require a match from.": "El conjunto de nombres comunes para requerir una coincidencia.",
+  "Headers": "Cabeceras",
+  "The set of headers to check for identity information.": "El conjunto de cabeceras para comprobar la información de identidad.",
+  "Preferred username headers": "Cabeceras de usuario preferidas",
+  "The set of headers to check for the preferred username.": "El conjunto de cabeceras para comprobar el nombre de usuario preferido.",
+  "Name headers": "Cabeceras de nombre",
+  "The set of headers to check for the display name.": "El conjunto de cabeceras para comprobar el nombre de visualización.",
+  "Email headers": "Cabeceras de correo",
+  "The set of headers to check for the email address.": "El conjunto de cabeceras para comprobar la dirección de correo electrónico."
+}

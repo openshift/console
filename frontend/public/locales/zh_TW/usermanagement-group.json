@@ -1,0 +1,14 @@
+{
+  "Add Users": "新增使用者",
+  "Remove User": "移除使用者",
+  "Name": "名字",
+  "Users": "使用者",
+  "Created": "已建立",
+  "Groups": "群組",
+  "Group details": "群組詳細資料",
+  "Add new users to group {name}.": "新增使用者至群組 {name}。",
+  "Save": "儲存",
+  "Remove User from Group?": "從群組中移除使用者？",
+  "Remove user {user} from group {name}?": "從群組 {name} 中移除使用者 {user} ？",
+  "Remove": "移除"
+}

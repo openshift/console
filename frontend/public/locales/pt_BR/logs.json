@@ -1,0 +1,16 @@
+{
+  "Log stream ended.": "Fluxo de log encerrado.",
+  "Loading log...": "Log de carregamento ...",
+  "Log stream paused.": "Fluxo de log pausado.",
+  "Log streaming...": "Streaming de log ...",
+  "Raw": "Bruto",
+  "Download": "Download",
+  "Collapse": "Colapso",
+  "Expand": "Expandir",
+  "An error occurred while retrieving the requested logs.": "Ocorreu um erro ao recuperar os logs solicitados.",
+  "Retry": "Nova tentativa",
+  "Some lines have been abridged because they are exceptionally long.": "Algumas linhas foram abriladas porque são excepcionalmente longas.",
+  "To view unabridged log content, you can either <2>open the raw file in another window</2> or <6>download it</6>.": "Para visualizar conteúdo de log inabridged, você pode ou &lt; 2 &gt; abrir o arquivo bruto em outra janela\n<!--2--> ou &lt; 6 &gt; baixe-o\n<!--6-->.",
+  "The logs for this {{resourceKind}} may be stale.": "Os logs para este {{resourceKind}} podem ser estantes.",
+  "Refresh": "Atualização"
+}

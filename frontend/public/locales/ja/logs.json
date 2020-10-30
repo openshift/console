@@ -1,0 +1,16 @@
+{
+  "Log stream ended.": "ログ・ストリームが終了した",
+  "Loading log...": "ログのロード中",
+  "Log stream paused.": "ログ・ストリームが一時停止",
+  "Log streaming...": "ログ・ストリーミング...",
+  "Raw": "未加工",
+  "Download": "ダウンロード",
+  "Collapse": "崩壊",
+  "Expand": "展開",
+  "An error occurred while retrieving the requested logs.": "要求したログの取得中にエラーが発生しました。",
+  "Retry": "再試行",
+  "Some lines have been abridged because they are exceptionally long.": "例外的に長いため、いくつかの線が簡略化されています。",
+  "To view unabridged log content, you can either <2>open the raw file in another window</2> or <6>download it</6>.": "要約されていないログ・コンテンツを表示するには、 &lt;2&gt; 別のウィンドウでロー・ファイルを開くことができます。\n<!--2--> または、 &lt; 6&gt;ダウンロードしてください\n<!--6-->を",
+  "The logs for this {{resourceKind}} may be stale.": "この {{resourceKind}} のログは不整合になっている可能性があります。",
+  "Refresh": "リフレッシュ"
+}

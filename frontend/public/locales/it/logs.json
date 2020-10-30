@@ -1,0 +1,16 @@
+{
+  "Log stream ended.": "Flusso di log terminato.",
+  "Loading log...": "Caricamento log ...",
+  "Log stream paused.": "Flusso di log in pausa.",
+  "Log streaming...": "Log streaming ...",
+  "Raw": "Raw",
+  "Download": "Scarica",
+  "Collapse": "Collapse",
+  "Expand": "Espandi",
+  "An error occurred while retrieving the requested logs.": "Si è verificato un errore durante il richiamo dei log richiesti.",
+  "Retry": "Nuovo tentativo",
+  "Some lines have been abridged because they are exceptionally long.": "Alcune linee sono state abbreviate perché sono eccezionalmente lunghe.",
+  "To view unabridged log content, you can either <2>open the raw file in another window</2> or <6>download it</6>.": "Per visualizzare i contenuti di registrazione non abbreviati, è possibile &lt; 2 &gt; aprire la file raw in un'altra finestra\n<!--2--> o &lt; 6 &gt; scaricalo\n<!--6-->.",
+  "The logs for this {{resourceKind}} may be stale.": "I log per questo {{resourceKind}} possono essere stanti.",
+  "Refresh": "Aggiornamento"
+}

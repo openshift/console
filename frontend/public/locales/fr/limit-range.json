@@ -1,0 +1,14 @@
+{
+  "Name": "Nom",
+  "Namespace": "Espace de nom",
+  "Created": "Créé",
+  "Limits": "Limites",
+  "Type": "Type",
+  "Resource": "Ressource",
+  "Min": "Min",
+  "Max": "Max",
+  "Default request": "Demande par défaut",
+  "Default limit": "Limite par défaut",
+  "Max limit/request ratio": "Nombre maximal de demandes / nombre de demandes",
+  "{{resource}} details": "{{resource}} détails"
+}

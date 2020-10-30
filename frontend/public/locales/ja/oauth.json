@@ -1,0 +1,19 @@
+{
+  "{{label}}": "{{label}}",
+  "Identity providers": "アイデンティティー・プロバイダー",
+  "Name": "名称",
+  "Type": "種類",
+  "Mapping method": "マッピング方式",
+  "Basic Authentication": "基本認証",
+  "GitHub": "ギトハブ",
+  "GitLab": "ギトラボ",
+  "Google": "グーグル",
+  "HTPasswd": "HTPasswd",
+  "Keystone": "キーストーン",
+  "LDAP": "ルダップ",
+  "OpenID Connect": "OpenID Connect",
+  "Request Header": "要求ヘッダー",
+  "{{resource}} details": "{{resource}} の詳細",
+  "Access token max age": "アクセス・トークン最大経過時間",
+  "Identity providers determine how users log into the cluster.": "ID プロバイダーは、ユーザーがクラスターにログインする方法を決定します"
+}

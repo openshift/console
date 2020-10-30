@@ -1,0 +1,15 @@
+{
+  "Add": "新增",
+  "Cancel": "取消",
+  "Update": "更新",
+  "Save": "儲存",
+  "{{description}} for": "{{description}} 代表",
+  "Edit": "編輯",
+  "Create": "建立",
+  "{{date, MMM D, h:mm a}}": "{{date, MMM D, h:mm a}}",
+  "Resume": "履歷",
+  "Pause": "暫停",
+  "Warning": "警告",
+  "Not available": "無法使用",
+  "Resource": "資源"
+}

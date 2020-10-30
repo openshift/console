@@ -1,0 +1,20 @@
+{
+  "Slack API URL": "Slack-API-URL",
+  "Save as default Slack API URL": "Als Standard-Slack-API-URL speichern",
+  "Checking this box will write the API URL to the global section of the configuration file where it will become the default API URL for future Slack receivers.": "Wenn Sie dieses Kontrollkästchen aktivieren, wird die API-URL in den globalen Abschnitt der Konfigurationsdatei geschrieben, in dem sie die Standard-API-URL für künftige Slack-Empfänger wird.",
+  "The URL of the Slack webhook.": "Die URL des Webhakens von Slack.",
+  "Channel": "Kanal",
+  "The Slack channel or user to send notifications to.": "Der Slack-Kanal oder -Benutzer, an den Benachrichtigungen gesendet werden sollen.",
+  "Show advanced configuration": "Erweiterte Konfiguration anzeigen",
+  "Hide advanced configuration": "Erweiterte Konfiguration ausblenden",
+  "Icon": "Symbol",
+  "URL": "URL",
+  "Emoji": "Emoji",
+  "The URL of the icon.": "Die URL des Symbols.",
+  "An <2></2> to use in place of the default icon.": "Ein &lt; 2 &gt;\n<!--2--> um anstelle des Standardsymbols zu verwenden.",
+  "emoji code": "emoji-Code",
+  "Username": "Benutzername",
+  "The displayed username.": "Der angezeigte Benutzername.",
+  "Link names": "Linknamen",
+  "Find and link channel names and usernames.": "Finden und verknüpfen Sie Kanalnamen und Benutzernamen."
+}

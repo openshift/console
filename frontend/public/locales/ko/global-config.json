@@ -1,0 +1,11 @@
+{
+  "Edit {{name}} resource": "{{name}} 자원 편집",
+  "Explore {{name}} API": "{{name}} API 탐색",
+  "Create Receiver": "수신자 작성",
+  "Edit configuration YAML": "편집 구성 YAML",
+  "Edit the following resources to manage the configuration of your cluster.": "다음 자원을 편집하여 클러스터의 구성을 관리하십시오.",
+  "by name or description": "이름 또는 설명",
+  "Configuration resources": "구성 자원",
+  "Configuration resource": "구성 자원",
+  "Description": "설명"
+}

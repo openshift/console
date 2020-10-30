@@ -1,0 +1,21 @@
+{
+  "Add Identity Provider: LDAP": "アイデンティティー・プロバイダーの追加 : LDAP",
+  "Integrate with an LDAP identity provider.": "LDAP ID プロバイダーと統合します。",
+  "URL": "ウルル",
+  "An RFC 2255 URL which specifies the LDAP search parameters to use.": "使用する LDAP 検索パラメーターを指定する RFC 2255 URL 。",
+  "Bind DN": "バインド DN",
+  "DN to bind with during the search phase.": "検索フェーズ中にバインドする DN 。",
+  "Bind password": "バインド・パスワード",
+  "Password to bind with during the search phase.": "検索フェーズ中にバインドするためのパスワード。",
+  "Attributes": "属性",
+  "Attributes map LDAP attributes to identities.": "属性は、 LDAP 属性を識別します。",
+  "ID": "ID",
+  "The list of attributes whose values should be used as the user ID.": "値をユーザー ID として使用する必要のある属性のリスト。",
+  "Preferred username": "優先ユーザー名",
+  "The list of attributes whose values should be used as the preferred username.": "優先ユーザー名として値を使用する必要がある属性のリスト。",
+  "Name": "名称",
+  "The list of attributes whose values should be used as the display name.": "値を表示名として使用する必要のある属性のリスト。",
+  "Email": "E メール",
+  "The list of attributes whose values should be used as the email address.": "値を E メール・アドレスとして使用する必要がある属性のリスト。",
+  "More options": "その他のオプション"
+}

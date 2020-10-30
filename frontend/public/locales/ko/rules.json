@@ -1,0 +1,8 @@
+{
+  "Rules": "규칙",
+  "Actions": "행동",
+  "API groups": "API 그룹",
+  "Resources": "자원",
+  "Delete rule": "삭제 규칙",
+  "Are you sure you want to delete rule #{{ruleNumber}}?": "{{ruleNumber}} 규칙을 삭제하시겠습니까?"
+}

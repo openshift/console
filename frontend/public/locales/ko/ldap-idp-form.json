@@ -1,0 +1,21 @@
+{
+  "Add Identity Provider: LDAP": "ID 제공자 추가: LDAP",
+  "Integrate with an LDAP identity provider.": "LDAP ID 제공자와 통합한다.",
+  "URL": "우르르",
+  "An RFC 2255 URL which specifies the LDAP search parameters to use.": "사용할 LDAP 검색 매개변수를 지정하는 RFC 2255 URL.",
+  "Bind DN": "바인드 DN",
+  "DN to bind with during the search phase.": "검색 단계 중에 바인드할 DN.",
+  "Bind password": "바인드 비밀번호",
+  "Password to bind with during the search phase.": "검색 단계 중에 바인드할 비밀번호입니다.",
+  "Attributes": "속성",
+  "Attributes map LDAP attributes to identities.": "속성은 ID를 ID로 맵핑한다.",
+  "ID": "ID",
+  "The list of attributes whose values should be used as the user ID.": "값이 사용자 ID로 사용되어야 하는 속성의 목록입니다.",
+  "Preferred username": "바람직한 사용자 이름",
+  "The list of attributes whose values should be used as the preferred username.": "값을 선호하는 사용자 이름으로 사용해야 하는 속성의 목록입니다.",
+  "Name": "이름",
+  "The list of attributes whose values should be used as the display name.": "값이 표시 이름으로 사용되어야 하는 속성의 목록입니다.",
+  "Email": "전자 우편",
+  "The list of attributes whose values should be used as the email address.": "값이 이메일 주소로 사용되어야 하는 속성 목록입니다.",
+  "More options": "추가 옵션"
+}

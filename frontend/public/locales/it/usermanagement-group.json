@@ -1,0 +1,14 @@
+{
+  "Add Users": "Aggiungi utenti",
+  "Remove User": "Rimuovi utente",
+  "Name": "Nome",
+  "Users": "Utenti",
+  "Created": "Creato",
+  "Groups": "Gruppi",
+  "Group details": "Dettagli di gruppo",
+  "Add new users to group {name}.": "Aggiungere nuovi utenti al gruppo {name}.",
+  "Save": "Salva",
+  "Remove User from Group?": "Rimuovere l'Utente da Group?",
+  "Remove user {user} from group {name}?": "Rimuovere l'utente {user} dal gruppo {name}?",
+  "Remove": "Rimuovi"
+}

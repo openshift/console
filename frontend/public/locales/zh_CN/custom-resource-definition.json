@@ -1,0 +1,20 @@
+{
+  "View instances": "查看实例",
+  "true": "真实",
+  "false": "虚假",
+  "CRD versions": "CRD 版本",
+  "Name": "名称",
+  "Served": "已送达",
+  "Storage": "储存",
+  "{{resource}} details": "{{resource}} 个详细信息",
+  "Established": "已建立",
+  "Group": "组",
+  "Latest version": "最新版本",
+  "Scope": "范围",
+  "Conditions": "条件",
+  "Versions": "版本",
+  "Namespaced": "纳梅斯特德",
+  "Yes": "是啊",
+  "No": "没有",
+  "Instances": "实例"
+}

@@ -1,0 +1,17 @@
+{
+  "Specify either organizations or teams, but not both.": "Geben Sie entweder Organisationen oder Teams an, aber nicht beides.",
+  "Add Identity Provider: GitHub": "Identitätsprovider hinzufügen: GitHub",
+  "You can use the GitHub integration to connect to either GitHub or GitHub Enterprise. For GitHub Enterprise, you must provide the hostname of your instance and can optionally provide a CA certificate bundle to use in requests to the server.": "Sie können die GitHub-Integration verwenden, um eine Verbindung zu GitHub oder GitHub Enterprise herzustellen. Für GitHub Enterprise müssen Sie den Hostnamen Ihrer Instanz angeben und optional ein CA-Zertifikatsbündel bereitstellen, das in Anforderungen an den Server verwendet werden soll.",
+  "Client ID": "Client-ID",
+  "Client secret": "Geheimer Client",
+  "Hostname": "Hostname",
+  "Optional domain for use with a hosted instance of GitHub Enterprise.": "Optionale Domäne für die Verwendung mit einer gehosteten Instanz von GitHub Enterprise.",
+  "Organizations": "Organisationen",
+  "teams-help": "Optional auflisten Organisationen. Falls angegeben, können nur GitHub-Benutzer, die Mitglieder von mindestens einer der aufgelisteten Organisationen sind, sich anmelden. Kann nicht in Kombination mit &lt; 1 &gt; Teams verwendet werden.\n<!--1-->.",
+  "Organization": "Organisation",
+  "Restricts which organizations are allowed to log in.": "Beschränkt, welche Organisationen sich anmelden dürfen.",
+  "Teams": "Teams",
+  "organizations-help": "Optional auflisten Teams. Falls angegeben, können nur GitHub-Benutzer, die Mitglieder von mindestens einem der aufgelisteten Teams sind, sich anmelden. Kann nicht in Kombination mit &lt; 2 &gt; Organisationen verwendet werden\n<!--2-->.",
+  "Team": "Team",
+  "Restricts which teams are allowed to log in. The format is <org>/<team>.": "Beschränkt sich auf, welche Teams sich einloggen dürfen. Das Format ist <org>/<team>."
+}

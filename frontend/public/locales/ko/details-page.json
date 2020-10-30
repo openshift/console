@@ -1,0 +1,14 @@
+{
+  "Name": "이름",
+  "Namespace": "네임스페이스",
+  "Labels": "레이블",
+  "Pod selector": "Pod 선택기",
+  "Node selector": "노드 선택기",
+  "Node": "노드",
+  "Tolerations": "허용 한도",
+  "Annotations": "주석",
+  "Created at": "작성자:",
+  "Owner": "소유자",
+  "Current count": "현재 계수",
+  "Desired count": "원하는 개수"
+}

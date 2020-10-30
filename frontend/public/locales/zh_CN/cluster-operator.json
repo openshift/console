@@ -1,0 +1,10 @@
+{
+  "Name": "名称",
+  "Status": "地位",
+  "Version": "版本",
+  "Message": "消息",
+  "{{resource}} details": "{{resource}} 个详细信息",
+  "Conditions": "条件",
+  "Operand versions": "操作数版本",
+  "Related objects": "相关对象"
+}

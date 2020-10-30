@@ -1,0 +1,16 @@
+{
+  "System status": "システム状況",
+  "Red Hat applications": "Red Hat アプリケーション",
+  "OpenShift Cluster Manager": "OpenShift クラスター・マネージャー",
+  "Quick starts": "クイック・スタート",
+  "Documentation": "ドキュメンテーション",
+  "Command line tools": "コマンド行ツール",
+  "About": "アバウト",
+  "Copy login command": "login ログイン・コマンド",
+  "Log out": "ログアウト",
+  "Import YAML": "YAML のインポート",
+  "Utility menu": "ユーティリティー・メニュー",
+  "User menu": "ユーザー・メニュー",
+  "Notification drawer": "通知ドロワー",
+  "Help menu": "ヘルプ・メニュー"
+}

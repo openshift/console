@@ -1,0 +1,22 @@
+{
+  "You must specify a CA File.": "Sie müssen eine CA-Datei angeben.",
+  "Add Identity Provider: Request Header": "Identitätsprovider hinzufügen: Anforderungsheader",
+  "Use request header to identify users from request header values. It is typically used in combination with an authenticating proxy, which sets the request header value.": "Verwenden Sie den Anforderungsheader, um Benutzer anhand von Anforderungsheaderwerten zu identifizieren. Sie wird in der Regel in Kombination mit einem authentifizierenden Proxy verwendet, der den Anforderungsheaderwert festlegt.",
+  "URLs": "URLs",
+  "At least one URL must be provided.": "Es muss mindestens eine URL angegeben werden.",
+  "Challenge URL": "URL für Abfrage",
+  "The URL to redirect unauthenticated requests from OAuth clients which expect interactive logins.": "Die URL, mit der nicht authentifizierte Anforderungen von OAuth-Clients umgeleitet werden, die interaktive Anmeldungen erwarten.",
+  "Login URL": "Anmelde-URL",
+  "The URL to redirect unauthenticated requests from OAuth clients which expect WWW-Authenticate challenges.": "Die URL, mit der nicht authentifizierte Anforderungen von OAuth-Clients umgeleitet werden, die die WWW-Authenticate-Herausforderungen erwarten.",
+  "More options": "Weitere Optionen",
+  "Client common names": "Allgemeine Clientnamen",
+  "The set of common names to require a match from.": "Die Gruppe von allgemeinen Namen, von denen eine Übereinstimmung erforderlich ist.",
+  "Headers": "Header",
+  "The set of headers to check for identity information.": "Die Gruppe von Headern, die auf Identitätsinformationen überprüft werden sollen.",
+  "Preferred username headers": "Bevorzugte Benutzername-Header",
+  "The set of headers to check for the preferred username.": "Die Gruppe von Headern, die auf den bevorzugten Benutzernamen überprüft werden sollen.",
+  "Name headers": "Namensheader",
+  "The set of headers to check for the display name.": "Die Gruppe von Headern, die auf den Anzeigenamen überprüft werden sollen.",
+  "Email headers": "E-Mail-Header",
+  "The set of headers to check for the email address.": "Die Gruppe von Headern, die auf die E-Mail-Adresse überprüft werden sollen."
+}

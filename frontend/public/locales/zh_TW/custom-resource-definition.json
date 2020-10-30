@@ -1,0 +1,20 @@
+{
+  "View instances": "檢視實例",
+  "true": "真",
+  "false": "假",
+  "CRD versions": "CRD 版本",
+  "Name": "名字",
+  "Served": "塞韋德",
+  "Storage": "貯存",
+  "{{resource}} details": "{{resource}} 詳細資料",
+  "Established": "設立",
+  "Group": "組",
+  "Latest version": "最新版本",
+  "Scope": "範圍",
+  "Conditions": "條件",
+  "Versions": "版本",
+  "Namespaced": "Namespaced",
+  "Yes": "是的",
+  "No": "沒有",
+  "Instances": "實例"
+}

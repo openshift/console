@@ -1,0 +1,14 @@
+{
+  "Add Users": "사용자 추가",
+  "Remove User": "사용자 제거",
+  "Name": "이름",
+  "Users": "사용자",
+  "Created": "작성된",
+  "Groups": "그룹",
+  "Group details": "그룹 세부 사항",
+  "Add new users to group {name}.": "{name} 그룹에 새 사용자를 추가하십시오.",
+  "Save": "저장",
+  "Remove User from Group?": "그룹에서 사용자 제거?",
+  "Remove user {user} from group {name}?": "{name} 그룹에서 {user} 사용자를 제거하시겠습니까?",
+  "Remove": "제거"
+}

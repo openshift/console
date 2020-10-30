@@ -1,0 +1,16 @@
+{
+  "Type": "類型",
+  "Git repository": "Git 儲存庫",
+  "Git ref": "Git 參照",
+  "Git commit": "Git 確定",
+  "Binary file": "二進位檔",
+  "Context dir": "環境定義目錄",
+  "Dockerfile": "Dockerfile",
+  "JenskinsFile path": "JenskinsFile 路徑",
+  "Build from": "建置來源",
+  "Output to": "輸出至",
+  "Push secret": "推送秘密",
+  "Run policy": "執行原則",
+  "Resource limits": "資源限制",
+  "Triggers": "特里格斯"
+}

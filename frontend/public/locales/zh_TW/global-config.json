@@ -1,0 +1,11 @@
+{
+  "Edit {{name}} resource": "編輯 {{name}} 資源",
+  "Explore {{name}} API": "探索 {{name}} API",
+  "Create Receiver": "建立接收端",
+  "Edit configuration YAML": "編輯配置 YAML",
+  "Edit the following resources to manage the configuration of your cluster.": "編輯下列資源，以管理叢集的配置。",
+  "by name or description": "依名稱或說明",
+  "Configuration resources": "配置資源",
+  "Configuration resource": "配置資源",
+  "Description": "說明"
+}

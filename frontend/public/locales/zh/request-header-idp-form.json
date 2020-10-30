@@ -1,0 +1,22 @@
+{
+  "You must specify a CA File.": "必须指定 CA 文件。",
+  "Add Identity Provider: Request Header": "添加身份提供者: 请求头",
+  "Use request header to identify users from request header values. It is typically used in combination with an authenticating proxy, which sets the request header value.": "使用请求头来标识来自请求头值的用户。 它通常与用于设置请求头值的认证代理组合使用。",
+  "URLs": "URL",
+  "At least one URL must be provided.": "必须提供至少一个 URL 。",
+  "Challenge URL": "挑战 URL",
+  "The URL to redirect unauthenticated requests from OAuth clients which expect interactive logins.": "用于重定向来自期望交互式登录的 OAuth 客户机的未认证请求的 URL 。",
+  "Login URL": "登录 URL",
+  "The URL to redirect unauthenticated requests from OAuth clients which expect WWW-Authenticate challenges.": "用于重定向来自期望 WWW - Authenticate 挑战的 OAuth 客户机的未认证请求的 URL 。",
+  "More options": "更多选项",
+  "Client common names": "客户机公共名称",
+  "The set of common names to require a match from.": "需要匹配的公共名称集合。",
+  "Headers": "头",
+  "The set of headers to check for identity information.": "要检查身份信息的头集。",
+  "Preferred username headers": "首选用户名",
+  "The set of headers to check for the preferred username.": "要检查首选用户名的头集。",
+  "Name headers": "名称标题",
+  "The set of headers to check for the display name.": "要检查显示名称的头集。",
+  "Email headers": "电子邮件标题",
+  "The set of headers to check for the email address.": "要检查电子邮件地址的头集。"
+}
