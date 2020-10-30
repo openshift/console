@@ -5,6 +5,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Button, TextInput } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { useDocumentListener, KEYBOARD_SHORTCUTS } from '@console/shared';
@@ -382,13 +383,13 @@ export const ListPage = withFallback((props) => {
   if (!namespaced && usedNamespace) {
     return <ErrorPage404 />;
   }
-
+  const { t } = useTranslation();
   return (
     <MultiListPage
       autoFocus={autoFocus}
       canCreate={canCreate}
       createAccessReview={createAccessReview}
-      createButtonText={createButtonText || `Create ${label}`}
+      createButtonText={createButtonText || t('list-page~Create {{label}}', { label })}
       createProps={createProps}
       customData={customData}
       filterLabel={filterLabel || 'by name'}
