@@ -10,8 +10,9 @@ const node = (className, children, description) => (
 
 const makeNode = (id, label, description, children, isRequired) => {
   // children node 개수에 따라 가로 분할 class 적용
-  let className = children.length ? `col-md-${12 / children.length}` : 'col-md-12';
-  return children.length ? children.map(cur => node(className, cur, description)) : node(className, children, description);
+  let isArray = Array.isArray(children);
+  let className = isArray ? `col-md-${12 / children.length}` : 'col-md-12';
+  return isArray ? children.map(cur => node(className, cur, description)) : node(className, children, description);
 };
 
 export const Section: React.FC<SectionProps> = ({ id, label, description, children, isRequired = false }) => {
