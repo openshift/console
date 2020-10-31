@@ -7,7 +7,7 @@ import {
   history,
   useAccessReview,
 } from '@console/internal/components/utils';
-import { TechPreviewBadge, ALL_NAMESPACES_KEY } from '@console/shared';
+import { ALL_NAMESPACES_KEY } from '@console/shared';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage from '../projects/CreateProjectListPage';
@@ -66,11 +66,11 @@ export const PageContents: React.FC<MonitoringPageProps> = ({ match }) => {
   ];
   return activeNamespace ? (
     <>
-      <PageHeading badge={<TechPreviewBadge />} title="Monitoring" />
+      <PageHeading title="Monitoring" />
       <HorizontalNav pages={pages} match={match} noStatusBox />
     </>
   ) : (
-    <CreateProjectListPage badge={<TechPreviewBadge />} title="Monitoring">
+    <CreateProjectListPage title="Monitoring">
       Select a project to view monitoring metrics
     </CreateProjectListPage>
   );
