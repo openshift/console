@@ -60,7 +60,7 @@ describe('Kubevirt create VM using wizard', () => {
   });
 
   afterAll(async () => {
-    deleteResources([multusNAD, testDataVolume]);
+    deleteResources([testDataVolume]);
   });
 
   afterEach(() => {
@@ -231,7 +231,6 @@ describe('Kubevirt create VM using wizard', () => {
   it('ICNV-5045 - dont let the user continue If PXE provision source is selected on a cluster without a NAD available', async () => {
     deleteResources([multusNAD]);
     const vm = new VMBuilder(getBasicVMBuilder())
-      .setFlavor(flavorConfigs.Tiny)
       .setName(testName)
       .setOS(OperatingSystem.FEDORA)
       .setProvisionSource(ProvisionSource.PXE)
@@ -243,9 +242,12 @@ describe('Kubevirt create VM using wizard', () => {
     await wizard.openWizard();
     await wizard.processGeneralStep(vm.getData(), true);
     await browser.wait(
+      waitForStringInElement(view.bootError, 'No Network Attachment Definitions available'),
+      1000,
+    );
+    await browser.wait(
       waitForStringInElement(view.footerError, 'Please correct the following field: Boot Source.'),
       1000,
     );
-    createResources([multusNAD]);
   });
 });
