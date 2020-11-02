@@ -1,6 +1,6 @@
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
-import { safeDump } from 'js-yaml';
+import { loadAll, safeDump, DEFAULT_SAFE_SCHEMA } from 'js-yaml';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
@@ -231,6 +231,14 @@ export const getChartValuesYAML = (chart: HelmChart): string => {
   if (orderedValues) return orderedValues;
 
   return !_.isEmpty(chart?.values) ? safeDump(chart?.values) : '';
+};
+
+export const loadHelmManifestResources = (release: HelmRelease): K8sResourceKind[] => {
+  if (!release || !release.manifest) {
+    return [];
+  }
+  const manifests = loadAll(release.manifest, null, { schema: DEFAULT_SAFE_SCHEMA, json: true });
+  return manifests.filter(Boolean);
 };
 
 export const getChartReadme = (chart: HelmChart): string => {
