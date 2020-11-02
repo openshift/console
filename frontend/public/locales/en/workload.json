@@ -1,0 +1,14 @@
+{
+  "Current count": "Current count",
+  "Desired count": "Desired count",
+  "DaemonSet details": "DaemonSet details",
+  "Containers": "Containers",
+  "Volumes": "Volumes",
+  "Name": "Name",
+  "Namespace": "Namespace",
+  "Status": "Status",
+  "Labels": "Labels",
+  "Pod selector": "Pod selector",
+  "{{currentNumber}} of {{desiredNumber}} pods": "{{currentNumber}} of {{desiredNumber}} pods",
+  "DaemonSets": "DaemonSets"
+}

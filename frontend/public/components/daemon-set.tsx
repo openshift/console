@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-
+import { useTranslation } from 'react-i18next';
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
 import { K8sResourceKind } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
@@ -47,136 +47,71 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const DaemonSetTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Namespace',
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-      id: 'namespace',
-    },
-    {
-      title: 'Status',
-      sortFunc: 'daemonsetNumScheduled',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Labels',
-      sortField: 'metadata.labels',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: 'Pod Selector',
-      sortField: 'spec.selector',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[5] },
-    },
-  ];
-};
-DaemonSetTableHeader.displayName = 'DaemonSetTableHeader';
-
-const DaemonSetTableRow: RowFunction<K8sResourceKind> = ({ obj: daemonset, index, key, style }) => {
+export const DaemonSetDetailsList: React.FC<DaemonSetDetailsListProps> = ({ ds }) => {
+  const { t } = useTranslation();
   return (
-    <TableRow id={daemonset.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={kind}
-          name={daemonset.metadata.name}
-          namespace={daemonset.metadata.namespace}
-          title={daemonset.metadata.uid}
-        />
-      </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
-        <ResourceLink
-          kind="Namespace"
-          name={daemonset.metadata.namespace}
-          title={daemonset.metadata.namespace}
-        />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        <Link
-          to={`/k8s/ns/${daemonset.metadata.namespace}/daemonsets/${daemonset.metadata.name}/pods`}
-          title="pods"
-        >
-          {daemonset.status.currentNumberScheduled} of {daemonset.status.desiredNumberScheduled}{' '}
-          pods
-        </Link>
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        <LabelList kind={kind} labels={daemonset.metadata.labels} />
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
-        <Selector selector={daemonset.spec.selector} namespace={daemonset.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
-        <ResourceKebab actions={menuActions} kind={kind} resource={daemonset} />
-      </TableData>
-    </TableRow>
+    <dl className="co-m-pane__details">
+      <DetailsItem
+        label={t('workload~Current count')}
+        obj={ds}
+        path="status.currentNumberScheduled"
+      />
+      <DetailsItem
+        label={t('workload~Desired count')}
+        obj={ds}
+        path="status.desiredNumberScheduled"
+      />
+    </dl>
   );
 };
 
-export const DaemonSetDetailsList: React.FC<DaemonSetDetailsListProps> = ({ ds }) => (
-  <dl className="co-m-pane__details">
-    <DetailsItem label="Current Count" obj={ds} path="status.currentNumberScheduled" />
-    <DetailsItem label="Desired Count" obj={ds} path="status.desiredNumberScheduled" />
-  </dl>
-);
-
-const DaemonSetDetails: React.FC<DaemonSetDetailsProps> = ({ obj: daemonset }) => (
-  <>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Daemon Set Details" />
-      <PodRingController
-        namespace={daemonset.metadata.namespace}
-        kind={daemonset.kind}
-        render={(d) => {
-          return d.loaded ? (
-            <PodRing
-              key={daemonset.metadata.uid}
-              pods={d.data[daemonset.metadata.uid].pods}
-              obj={daemonset}
-              resourceKind={DaemonSetModel}
-              enableScaling={false}
+const DaemonSetDetails: React.FC<DaemonSetDetailsProps> = ({ obj: daemonset }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <div className="co-m-pane__body">
+        <SectionHeading text={t('workload~DaemonSet details')} />
+        <PodRingController
+          namespace={daemonset.metadata.namespace}
+          kind={daemonset.kind}
+          render={(d) => {
+            return d.loaded ? (
+              <PodRing
+                key={daemonset.metadata.uid}
+                pods={d.data[daemonset.metadata.uid].pods}
+                obj={daemonset}
+                resourceKind={DaemonSetModel}
+                enableScaling={false}
+              />
+            ) : (
+              <LoadingInline />
+            );
+          }}
+        />
+        <div className="row">
+          <div className="col-lg-6">
+            <ResourceSummary
+              resource={daemonset}
+              showPodSelector
+              showNodeSelector
+              showTolerations
             />
-          ) : (
-            <LoadingInline />
-          );
-        }}
-      />
-      <div className="row">
-        <div className="col-lg-6">
-          <ResourceSummary resource={daemonset} showPodSelector showNodeSelector showTolerations />
-        </div>
-        <div className="col-lg-6">
-          <DaemonSetDetailsList ds={daemonset} />
+          </div>
+          <div className="col-lg-6">
+            <DaemonSetDetailsList ds={daemonset} />
+          </div>
         </div>
       </div>
-    </div>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Containers" />
-      <ContainerTable containers={daemonset.spec.template.spec.containers} />
-    </div>
-    <div className="co-m-pane__body">
-      <VolumesTable resource={daemonset} heading="Volumes" />
-    </div>
-  </>
-);
+      <div className="co-m-pane__body">
+        <SectionHeading text={t('workload~Containers')} />
+        <ContainerTable containers={daemonset.spec.template.spec.containers} />
+      </div>
+      <div className="co-m-pane__body">
+        <VolumesTable resource={daemonset} heading={t('workload~Volumes')} />
+      </div>
+    </>
+  );
+};
 
 const EnvironmentPage: React.FC<EnvironmentPageProps> = (props) => (
   <AsyncComponent
@@ -195,15 +130,106 @@ const EnvironmentTab: React.FC<EnvironmentTabProps> = (props) => (
   />
 );
 const { details, pods, editYaml, envEditor, events } = navFactory;
-export const DaemonSets: React.FC = (props) => (
-  <Table
-    {...props}
-    aria-label="Daemon Sets"
-    Header={DaemonSetTableHeader}
-    Row={DaemonSetTableRow}
-    virtualize
-  />
-);
+export const DaemonSets: React.FC = (props) => {
+  const { t } = useTranslation();
+  const DaemonSetTableHeader = () => [
+    {
+      title: t('workload~Name'),
+      sortField: 'metadata.name',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: t('workload~Namespace'),
+      sortField: 'metadata.namespace',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+      id: 'namespace',
+    },
+    {
+      title: t('workload~Status'),
+      sortFunc: 'daemonsetNumScheduled',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: t('workload~Labels'),
+      sortField: 'metadata.labels',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: t('workload~Pod selector'),
+      sortField: 'spec.selector',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[4] },
+    },
+    {
+      title: '',
+      props: { className: tableColumnClasses[5] },
+    },
+  ];
+
+  const DaemonSetTableRow: RowFunction<K8sResourceKind> = ({
+    obj: daemonset,
+    index,
+    key,
+    style,
+  }) => {
+    return (
+      <TableRow id={daemonset.metadata.uid} index={index} trKey={key} style={style}>
+        <TableData className={tableColumnClasses[0]}>
+          <ResourceLink
+            kind={kind}
+            name={daemonset.metadata.name}
+            namespace={daemonset.metadata.namespace}
+            title={daemonset.metadata.uid}
+          />
+        </TableData>
+        <TableData
+          className={classNames(tableColumnClasses[1], 'co-break-word')}
+          columnID="namespace"
+        >
+          <ResourceLink
+            kind="Namespace"
+            name={daemonset.metadata.namespace}
+            title={daemonset.metadata.namespace}
+          />
+        </TableData>
+        <TableData className={tableColumnClasses[2]}>
+          <Link
+            to={`/k8s/ns/${daemonset.metadata.namespace}/daemonsets/${daemonset.metadata.name}/pods`}
+            title="pods"
+          >
+            {t('workload~{{currentNumber}} of {{desiredNumber}} pods', {
+              currentNumber: daemonset.status.currentNumberScheduled,
+              desiredNumber: daemonset.status.desiredNumberScheduled,
+            })}
+          </Link>
+        </TableData>
+        <TableData className={tableColumnClasses[3]}>
+          <LabelList kind={kind} labels={daemonset.metadata.labels} />
+        </TableData>
+        <TableData className={tableColumnClasses[4]}>
+          <Selector selector={daemonset.spec.selector} namespace={daemonset.metadata.namespace} />
+        </TableData>
+        <TableData className={tableColumnClasses[5]}>
+          <ResourceKebab actions={menuActions} kind={kind} resource={daemonset} />
+        </TableData>
+      </TableRow>
+    );
+  };
+
+  return (
+    <Table
+      {...props}
+      aria-label={t('workload~DaemonSets')}
+      Header={DaemonSetTableHeader}
+      Row={DaemonSetTableRow}
+      virtualize
+    />
+  );
+};
 
 export const DaemonSetsPage: React.FC<DaemonSetsPageProps> = (props) => (
   <ListPage canCreate={true} ListComponent={DaemonSets} kind={kind} {...props} />
