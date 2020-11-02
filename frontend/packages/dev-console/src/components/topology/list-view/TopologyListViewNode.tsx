@@ -42,8 +42,13 @@ interface TopologyListViewNodeProps {
   onSelect: (ids: string[]) => void;
   badgeCell?: React.ReactNode;
   labelCell?: React.ReactNode;
+  alertsCell?: React.ReactNode;
+  memoryCell?: React.ReactNode;
+  cpuCell?: React.ReactNode;
+  statusCell?: React.ReactNode;
   groupResourcesCell?: React.ReactNode;
-  additionalCells?: React.ReactNode[];
+  hideAlerts?: boolean;
+  noPods?: boolean;
 }
 
 const ObservedTopologyListViewNode: React.FC<TopologyListViewNodeProps & DispatchProps> = ({
@@ -53,8 +58,13 @@ const ObservedTopologyListViewNode: React.FC<TopologyListViewNodeProps & Dispatc
   onSelectTab,
   badgeCell,
   labelCell,
+  alertsCell,
+  memoryCell,
+  cpuCell,
+  statusCell,
   groupResourcesCell,
-  additionalCells,
+  hideAlerts = false,
+  noPods = false,
   children,
 }) => {
   const [filtered] = useSearchFilter(item.getLabel());
@@ -102,15 +112,17 @@ const ObservedTopologyListViewNode: React.FC<TopologyListViewNodeProps & Dispatc
     if (item.isCollapsed()) {
       cells.push(groupResourcesCell || <GroupResourcesCell key="resources" group={item} />);
     }
-  } else if (additionalCells) {
-    cells.push(...additionalCells);
   } else {
-    cells.push(<AlertsCell key="alerts" item={item} />);
-    if (!selectedIds[0]) {
-      cells.push(<MemoryCell key="memory" item={item} />);
-      cells.push(<CpuCell key="cpu" item={item} />);
+    if (!hideAlerts) {
+      cells.push(alertsCell || <AlertsCell key="alerts" item={item} />);
     }
-    cells.push(<StatusCell key="status" item={item} />);
+    if (!noPods) {
+      if (!selectedIds[0]) {
+        cells.push(memoryCell || <MemoryCell key="memory" item={item} />);
+        cells.push(cpuCell || <CpuCell key="cpu" item={item} />);
+      }
+      cells.push(statusCell || <StatusCell key="status" item={item} />);
+    }
   }
 
   const className = classNames('odc-topology-list-view__item-row', { 'is-filtered': filtered });
