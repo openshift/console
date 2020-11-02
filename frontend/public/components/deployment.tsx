@@ -2,9 +2,9 @@ import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
-import { RootState } from '@console/internal/redux';
-import { Status, PodRingController, useCsvWatchResource } from '@console/shared';
 import { useTranslation } from 'react-i18next';
+import { RootState } from '@console/internal/redux';
+import { Status, useCsvWatchResource } from '@console/shared';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
 import {
@@ -32,7 +32,6 @@ import {
   SectionHeading,
   togglePaused,
   WorkloadPausedAlert,
-  LoadingInline,
 } from './utils';
 import { ReplicaSetsPage } from './replicaset';
 import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
@@ -144,26 +143,7 @@ const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({ obj: deployment }
       <div className="co-m-pane__body">
         <SectionHeading text={t('workload~Deployment details')} />
         {deployment.spec.paused && <WorkloadPausedAlert obj={deployment} model={DeploymentModel} />}
-        <PodRingController
-          namespace={deployment.metadata.namespace}
-          kind={deployment.kind}
-          render={(d) => {
-            if (!d.loaded) {
-              return <LoadingInline />;
-            } else if (!d.data[deployment.metadata.uid]) {
-              return null;
-            }
-            return (
-              <PodRingSet
-                key={deployment.metadata.uid}
-                podData={d.data[deployment.metadata.uid]}
-                obj={deployment}
-                resourceKind={DeploymentModel}
-                path="/spec/replicas"
-              />
-            );
-          }}
-        />
+        <PodRingSet key={deployment.metadata.uid} obj={deployment} path="/spec/replicas" />
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-6">

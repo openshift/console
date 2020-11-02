@@ -105,7 +105,7 @@ export const createTopologyNodeData = (
         current,
         previous,
         isRollingOut,
-        dc: resource,
+        obj: resource,
       },
     },
   };

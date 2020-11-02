@@ -10,22 +10,11 @@ import { ResourceOverviewDetails } from './resource-overview-details';
 import { OverviewItem } from '@console/shared';
 
 const StatefulSetOverviewDetails: React.SFC<StatefulSetOverviewDetailsProps> = ({
-  item: { obj: ss, pods: pods, current, previous, isRollingOut },
+  item: { obj: ss },
 }) => (
   <div className="overview__sidebar-pane-body resource-overview__body">
     <div className="resource-overview__pod-counts">
-      <PodRingSet
-        key={ss.metadata.uid}
-        podData={{
-          pods,
-          current,
-          previous,
-          isRollingOut,
-        }}
-        obj={ss}
-        resourceKind={StatefulSetModel}
-        path="/spec/replicas"
-      />
+      <PodRingSet key={ss.metadata.uid} obj={ss} path="/spec/replicas" />
     </div>
     <ResourceSummary resource={ss} showPodSelector showNodeSelector showTolerations />
   </div>

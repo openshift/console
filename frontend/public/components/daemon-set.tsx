@@ -4,6 +4,7 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
+import { usePodsWatcher, PodRing } from '@console/shared';
 import { K8sResourceKind } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import {
@@ -26,7 +27,6 @@ import {
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
 import { DaemonSetModel } from '../models';
-import { PodRingController, PodRing } from '@console/shared';
 
 export const menuActions: KebabAction[] = [
   AddHealthChecks,
@@ -67,27 +67,22 @@ export const DaemonSetDetailsList: React.FC<DaemonSetDetailsListProps> = ({ ds }
 
 const DaemonSetDetails: React.FC<DaemonSetDetailsProps> = ({ obj: daemonset }) => {
   const { t } = useTranslation();
+  const { podData, loaded } = usePodsWatcher(daemonset);
   return (
     <>
       <div className="co-m-pane__body">
         <SectionHeading text={t('workload~DaemonSet details')} />
-        <PodRingController
-          namespace={daemonset.metadata.namespace}
-          kind={daemonset.kind}
-          render={(d) => {
-            return d.loaded ? (
-              <PodRing
-                key={daemonset.metadata.uid}
-                pods={d.data[daemonset.metadata.uid].pods}
-                obj={daemonset}
-                resourceKind={DaemonSetModel}
-                enableScaling={false}
-              />
-            ) : (
-              <LoadingInline />
-            );
-          }}
-        />
+        {loaded ? (
+          <PodRing
+            key={daemonset.metadata.uid}
+            pods={podData?.pods || []}
+            obj={daemonset}
+            resourceKind={DaemonSetModel}
+            enableScaling={false}
+          />
+        ) : (
+          <LoadingInline />
+        )}
         <div className="row">
           <div className="col-lg-6">
             <ResourceSummary

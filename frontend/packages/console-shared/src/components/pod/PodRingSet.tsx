@@ -1,43 +1,46 @@
 import * as React from 'react';
-import { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
 import { Split, SplitItem, Bullseye } from '@patternfly/react-core';
 import { LongArrowAltRightIcon } from '@patternfly/react-icons';
 import { global_Color_200 as color200 } from '@patternfly/react-tokens/dist/js/global_Color_200';
-import { PodRCData } from '../../types';
+import { K8sResourceKind, modelFor } from '@console/internal/module/k8s';
+import { LoadingInline } from '@console/internal/components/utils';
 import { getPodData } from '../../utils';
+import { usePodsWatcher } from '../../hooks';
 import PodRing from './PodRing';
 
 interface PodRingSetProps {
-  podData: PodRCData;
   obj: K8sResourceKind;
-  resourceKind: K8sKind;
   path: string;
   impersonate?: string;
 }
 
-const PodRingSet: React.FC<PodRingSetProps> = ({ podData, resourceKind, obj, path }) => {
-  const { inProgressDeploymentData, completedDeploymentData } = getPodData(
-    obj,
-    podData.pods,
-    podData.current,
-    podData.previous,
-    podData.isRollingOut,
-  );
-  const current = podData.current && podData.current.obj;
-  const previous = podData.previous && podData.previous.obj;
+const PodRingSet: React.FC<PodRingSetProps> = ({ obj, path }) => {
+  const { podData, loadError, loaded } = usePodsWatcher(obj);
+  const resourceKind = modelFor(obj?.kind);
+
+  const deploymentData = React.useMemo(() => {
+    return loaded && !loadError
+      ? getPodData(obj, podData.pods, podData.current, podData.previous, podData.isRollingOut)
+      : { inProgressDeploymentData: null, completedDeploymentData: null };
+  }, [loadError, loaded, podData, obj]);
+
+  const current = podData?.current && podData?.current.obj;
+  const previous = podData?.previous && podData?.previous.obj;
+  const { inProgressDeploymentData, completedDeploymentData } = deploymentData;
   const progressRC = inProgressDeploymentData && current;
   const completedRC = !!inProgressDeploymentData && completedDeploymentData ? previous : current;
-  return (
+
+  return loaded ? (
     <Split hasGutter>
       <SplitItem>
         <PodRing
           key={inProgressDeploymentData ? 'deploy' : 'notDeploy'}
           pods={completedDeploymentData}
-          rc={podData.isRollingOut ? completedRC : undefined}
+          rc={podData?.isRollingOut ? completedRC : undefined}
           resourceKind={resourceKind}
           obj={obj}
           path={path}
-          enableScaling={!podData.isRollingOut}
+          enableScaling={!podData?.isRollingOut}
         />
       </SplitItem>
       {inProgressDeploymentData && (
@@ -60,6 +63,8 @@ const PodRingSet: React.FC<PodRingSetProps> = ({ podData, resourceKind, obj, pat
         </>
       )}
     </Split>
+  ) : (
+    <LoadingInline />
   );
 };
 

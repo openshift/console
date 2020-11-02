@@ -11,22 +11,11 @@ import { BuildOverview } from './build-overview';
 import { JobsOverview } from './jobs-overview';
 
 const CronJobOverviewDetails: React.SFC<CronJobOverviewDetailsProps> = ({
-  item: { obj: cronjob, pods: pods },
+  item: { obj: cronjob },
 }) => (
   <div className="overview__sidebar-pane-body resource-overview__body">
     <div className="resource-overview__pod-counts">
-      <PodRingSet
-        key={cronjob.metadata.uid}
-        podData={{
-          pods,
-          current: undefined,
-          previous: undefined,
-          isRollingOut: true,
-        }}
-        obj={cronjob}
-        resourceKind={CronJobModel}
-        path=""
-      />
+      <PodRingSet key={cronjob.metadata.uid} obj={cronjob} path="" />
     </div>
     <ResourceSummary resource={cronjob} showPodSelector>
       <DetailsItem label="Schedule" obj={cronjob} path="spec.schedule" />

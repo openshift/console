@@ -11,24 +11,13 @@ import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import { OverviewItem } from '@console/shared';
 
 const DeploymentOverviewDetails: React.SFC<DeploymentOverviewDetailsProps> = ({
-  item: { obj: d, pods: pods, current, previous, isRollingOut },
+  item: { obj: d },
 }) => {
   return (
     <div className="overview__sidebar-pane-body resource-overview__body">
       {d.spec.paused && <WorkloadPausedAlert obj={d} model={DeploymentModel} />}
       <div className="resource-overview__pod-counts">
-        <PodRingSet
-          key={d.metadata.uid}
-          podData={{
-            pods,
-            current,
-            previous,
-            isRollingOut,
-          }}
-          obj={d}
-          resourceKind={DeploymentModel}
-          path="/spec/replicas"
-        />
+        <PodRingSet key={d.metadata.uid} obj={d} path="/spec/replicas" />
       </div>
       <div className="resource-overview__summary">
         <ResourceSummary resource={d} showPodSelector showNodeSelector showTolerations>

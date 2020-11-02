@@ -13,18 +13,7 @@ const PodOverviewDetails: React.SFC<PodOverviewDetailsProps> = ({ item: { obj: p
   return (
     <div className="overview__sidebar-pane-body resource-overview__body">
       <div className="resource-overview__pod-counts">
-        <PodRingSet
-          key={pod.metadata.uid}
-          podData={{
-            pods: [pod],
-            current: undefined,
-            previous: undefined,
-            isRollingOut: true,
-          }}
-          obj={pod}
-          resourceKind={PodModel}
-          path=""
-        />
+        <PodRingSet key={pod.metadata.uid} obj={pod} path="" />
       </div>
       <div className="resource-overview__summary">
         <PodResourceSummary pod={pod} />

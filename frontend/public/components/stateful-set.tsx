@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
-import { PodRingController } from '@console/shared';
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
 import { K8sResourceKind } from '../module/k8s';
 import { ResourceEventStream } from './events';
@@ -17,7 +16,6 @@ import {
   ResourceSummary,
   SectionHeading,
   navFactory,
-  LoadingInline,
   PodsComponent,
 } from './utils';
 import { VolumesTable } from './volumes-table';
@@ -59,23 +57,7 @@ const StatefulSetDetails: React.FC<StatefulSetDetailsProps> = ({ obj: ss }) => {
     <>
       <div className="co-m-pane__body">
         <SectionHeading text={t('workload~StatefulSet details')} />
-        <PodRingController
-          namespace={ss.metadata.namespace}
-          kind={ss.kind}
-          render={(d) => {
-            return d.loaded ? (
-              <PodRingSet
-                key={ss.metadata.uid}
-                podData={d.data[ss.metadata.uid]}
-                obj={ss}
-                resourceKind={StatefulSetModel}
-                path="/spec/replicas"
-              />
-            ) : (
-              <LoadingInline />
-            );
-          }}
-        />
+        <PodRingSet key={ss.metadata.uid} obj={ss} path="/spec/replicas" />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={ss} showPodSelector showNodeSelector showTolerations />

@@ -67,6 +67,5 @@
   "Autoscaled": "Autoscaled",
   "to 0": "to 0",
   "Autoscaling": "Autoscaling",
-  "to {{podSubTitle}}": "to {{podSubTitle}}",
-  "Invalid target resource: ({{targetResource}})": "Invalid target resource: ({{targetResource}})"
+  "to {{podSubTitle}}": "to {{podSubTitle}}"
 }

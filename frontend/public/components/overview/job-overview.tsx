@@ -8,23 +8,10 @@ import { DetailsItem, KebabAction, pluralize, ResourceSummary } from '../utils';
 import { ResourceOverviewDetails } from './resource-overview-details';
 import { PodsOverview } from './pods-overview';
 
-const JobOverviewDetails: React.FC<JobOverviewDetailsProps> = ({
-  item: { obj: job, pods: pods },
-}) => (
+const JobOverviewDetails: React.FC<JobOverviewDetailsProps> = ({ item: { obj: job } }) => (
   <div className="overview__sidebar-pane-body resource-overview__body">
     <div className="resource-overview__pod-counts">
-      <PodRingSet
-        key={job.metadata.uid}
-        podData={{
-          pods,
-          current: undefined,
-          previous: undefined,
-          isRollingOut: true,
-        }}
-        obj={job}
-        resourceKind={JobModel}
-        path=""
-      />
+      <PodRingSet key={job.metadata.uid} obj={job} path="" />
     </div>
     <ResourceSummary resource={job} showPodSelector>
       <DetailsItem label="Desired Completions" obj={job} path="spec.completions" />
