@@ -16,7 +16,7 @@ else
 fi
 
 if [ $# -gt 0 ] && [ -n "$1" ]; then
-  yarn run test-suite --suite "$1" --params.openshift true
+  yarn run test-protractor-suite --suite "$1" --params.openshift true
 else
-  yarn run test-gui --params.openshift true
+  yarn run test-protractor --params.openshift true
 fi
