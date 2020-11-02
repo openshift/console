@@ -11,7 +11,7 @@ import {
   RowFunction,
 } from '@console/internal/components/factory';
 import { VolumeSnapshotClassModel } from '@console/internal/models';
-import { getBadgeFromType, BadgeType } from '@console/shared';
+import { getBadgeFromType, BadgeType, getAnnotations } from '@console/shared';
 
 const tableColumnClasses = [
   '', // name
@@ -19,7 +19,11 @@ const tableColumnClasses = [
   classNames('pf-m-hidden', 'pf-m-visible-on-md'), // Deletion Policy
   Kebab.columnClass,
 ];
-
+const defaultSnapshotClassAnnotation: string = 'snapshot.storage.kubernetes.io/is-default-class';
+export const isDefaultSnapshotClass = (volumeSnapshotClass: VolumeSnapshotClassKind) =>
+  getAnnotations(volumeSnapshotClass, { defaultSnapshotClassAnnotation: 'false' })[
+    defaultSnapshotClassAnnotation
+  ] === 'true';
 const Header = () => [
   {
     title: 'Name',
@@ -51,7 +55,11 @@ const Row: RowFunction<VolumeSnapshotClassKind> = ({ obj, index, style, key }) =
   return (
     <TableRow id={obj?.metadata?.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink name={name} kind={referenceForModel(VolumeSnapshotClassModel)} />
+        <ResourceLink name={name} kind={referenceForModel(VolumeSnapshotClassModel)}>
+          {isDefaultSnapshotClass(obj) && (
+            <span className="small text-muted co-resource-item__help-text">&ndash; Default</span>
+          )}
+        </ResourceLink>
       </TableData>
       <TableData className={tableColumnClasses[1]}>{driver}</TableData>
       <TableData className={tableColumnClasses[2]}>{deletionPolicy}</TableData>
