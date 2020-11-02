@@ -70,6 +70,7 @@ i18n
         'logs',
         'masthead',
         'modal',
+        'monitoring',
         'nav',
         'oauth',
         'openid-idp-form',

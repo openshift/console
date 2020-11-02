@@ -25,6 +25,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { ChartLineIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { VictoryPortal } from 'victory';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
@@ -86,6 +87,8 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(
     const [isValid, setIsValid] = React.useState(true);
     const [text, setText] = React.useState(formatPrometheusDuration(span));
 
+    const { t } = useTranslation();
+
     React.useEffect(() => {
       setText(formatPrometheusDuration(span));
     }, [span]);
@@ -127,7 +130,7 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(
           type="button"
           variant="tertiary"
         >
-          Reset Zoom
+          {t('monitoring~Reset zoom')}
         </Button>
       </>
     );

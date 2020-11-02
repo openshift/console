@@ -7,19 +7,19 @@ import { nav } from '../../views/nav';
 
 const shouldBeWatchdogAlertDetailsPage = () => {
   cy.byTestID('resource-title').contains('Watchdog');
-  detailsPage.sectionHeaderShouldExist('Alert Details');
+  detailsPage.sectionHeaderShouldExist('Alert details');
   detailsPage.labelShouldExist('alertname=Watchdog');
 };
 
 const shouldBeWatchdogAlertRulesPage = () => {
   cy.byTestID('resource-title').contains('Watchdog');
-  detailsPage.sectionHeaderShouldExist('Alerting Rule Details');
-  detailsPage.sectionHeaderShouldExist('Active Alerts');
+  detailsPage.sectionHeaderShouldExist('Alerting rule details');
+  detailsPage.sectionHeaderShouldExist('Active alerts');
 };
 
 const shouldBeWatchdogSilencePage = () => {
   cy.byTestID('resource-title').contains('Watchdog');
-  detailsPage.sectionHeaderShouldExist('Silence Details');
+  detailsPage.sectionHeaderShouldExist('Silence details');
   detailsPage.labelShouldExist('alertname=Watchdog');
 };
 
@@ -39,7 +39,7 @@ describe('Monitoring: Alerts', () => {
   });
 
   it('displays and filters the Alerts list page, links to detail pages', () => {
-    cy.log('use sidebar nav to goto Monitoring -> Alerting');
+    cy.log('use sidebar nav to go to Monitoring -> Alerting');
     nav.sidenav.clickNavLink(['Monitoring', 'Alerting']);
     // TODO, switch to 'listPage.titleShouldHaveText('Alerting');', when we switch to new test id
     cy.byLegacyTestID('resource-title').should('have.text', 'Alerting');
@@ -56,15 +56,15 @@ describe('Monitoring: Alerts', () => {
     shouldBeWatchdogAlertDetailsPage();
     cy.testA11y('Alerting details page');
 
-    cy.log('drill down to the Alerting Rule details page');
+    cy.log('drill down to the Alerting rule details page');
     cy.byTestID('alert-rules-detail-resource-link')
       .contains('Watchdog')
       .click();
     shouldBeWatchdogAlertRulesPage();
-    cy.testA11y('Alerting Rule details page');
+    cy.testA11y('Alerting rule details page');
 
     cy.log('drill back up to the Alert details page');
-    // Active Alerts list should contain a link back to the Alert details page
+    // Active alerts list should contain a link back to the Alert details page
     cy.byTestID('active-alerts')
       .first()
       .click();
