@@ -86,6 +86,7 @@ i18n
         'openid-idp-form',
         'operator-hub-details',
         'operator-hub-subscribe',
+        'operator-install-page',
         'pagerduty-receiver-form',
         'public',
         'quickstart',

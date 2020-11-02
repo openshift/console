@@ -17,6 +17,7 @@ import {
   ClusterServiceVersionKind,
   CRDDescription,
   InstallPlanApproval,
+  InstallPlanKind,
   PackageManifestKind,
   ProvidedAPI,
   StepResource,
@@ -197,6 +198,23 @@ export type ClusterServiceVersionLogoProps = {
   version?: string;
 };
 
+const InstallPlanCSVNames: React.FC<InstallPlanReviewProps> = ({ installPlan }) =>
+  installPlan?.spec.clusterServiceVersionNames
+    .sort()
+    .map((CSVName, i) => <strong key={`${CSVName}-${i}`}>{CSVName}</strong>)
+    .map((CSVName, i) => (i > 0 ? <span key={`${CSVName}-${i}`}>, {CSVName}</span> : CSVName));
+
+export const InstallPlanReview: React.FC<InstallPlanReviewProps> = ({ installPlan }) => (
+  <p>
+    <Trans ns="operator-install-page">
+      Review the manual install plan for operators <InstallPlanCSVNames installPlan={installPlan} />
+      . Once approved, the following resources will be created in order to satisfy the requirements
+      for the components specified in the plan. Click the resource name to view the resource in
+      detail.
+    </Trans>
+  </p>
+);
+
 export type OperatorsWithManualApprovalProps = {
   subscriptions: SubscriptionKind[];
 };
@@ -206,6 +224,11 @@ export type NamespaceIncludesManualApprovalProps = {
   subscriptions: SubscriptionKind[];
 };
 
+export type InstallPlanReviewProps = {
+  installPlan: ClusterServiceVersionKind | InstallPlanKind;
+};
+
 ClusterServiceVersionLogo.displayName = 'ClusterServiceVersionLogo';
 OperatorsWithManualApproval.displayName = 'OperatorsWithManualApproval';
 NamespaceIncludesManualApproval.displayName = 'NamespaceIncludesManualApproval';
+InstallPlanReview.displayName = 'InstallPlanReview';
