@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { match as RMatch } from 'react-router';
-import { safeLoadAll } from 'js-yaml';
 import { MultiListPage } from '@console/internal/components/factory';
 import { FirehoseResource } from '@console/internal/components/utils';
 import {
@@ -9,7 +8,7 @@ import {
   modelFor,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { flattenReleaseResources } from '../../helm-utils';
+import { flattenReleaseResources, loadHelmManifestResources } from '../../helm-utils';
 import { HelmRelease } from '../../helm-types';
 import HelmReleaseResourcesList from './HelmReleaseResourcesList';
 
@@ -23,10 +22,9 @@ export interface HelmReleaseResourcesProps {
 
 const HelmReleaseResources: React.FC<HelmReleaseResourcesProps> = ({ match, customData }) => {
   const namespace = match.params.ns;
-  const helmManifest = customData ? safeLoadAll(customData.manifest) : [];
-  const helmManifestResources: FirehoseResource[] = helmManifest
-    .filter((obj) => obj)
-    .map((resource: K8sResourceKind) => {
+  const helmManifestResources = loadHelmManifestResources(customData);
+  const firehoseResources: FirehoseResource[] = helmManifestResources.map(
+    (resource: K8sResourceKind) => {
       const resourceKind = referenceFor(resource);
       const model = modelFor(resourceKind);
       return {
@@ -37,11 +35,12 @@ const HelmReleaseResources: React.FC<HelmReleaseResourcesProps> = ({ match, cust
         isList: false,
         optional: true,
       };
-    });
+    },
+  );
   return (
     <MultiListPage
       filterLabel="Resources by name"
-      resources={helmManifestResources}
+      resources={firehoseResources}
       flatten={flattenReleaseResources}
       label="Resources"
       ListComponent={HelmReleaseResourcesList}

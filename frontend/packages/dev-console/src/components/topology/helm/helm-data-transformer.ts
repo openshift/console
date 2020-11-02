@@ -1,4 +1,3 @@
-import { safeLoadAll } from 'js-yaml';
 import { Model, NodeModel } from '@patternfly/react-topology';
 import { apiVersionForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { SecretModel } from '@console/internal/models';
@@ -13,7 +12,7 @@ import {
   TYPE_HELM_WORKLOAD,
 } from './components/const';
 import { HelmReleaseResourcesMap } from '../../helm/helm-types';
-import { fetchHelmReleases } from '../../helm/helm-utils';
+import { fetchHelmReleases, loadHelmManifestResources } from '../../helm/helm-utils';
 import { WORKLOAD_TYPES } from '../topology-utils';
 import {
   addToTopologyDataModel,
@@ -164,8 +163,7 @@ const getHelmReleaseMap = (namespace: string) => {
     .then((releases) =>
       releases.reduce((acc, release) => {
         try {
-          let manifestResources: K8sResourceKind[] = safeLoadAll(release.manifest);
-          manifestResources = manifestResources.filter((obj) => obj);
+          const manifestResources = loadHelmManifestResources(release);
           manifestResources.forEach((resource) => {
             const resourceKindName = getHelmReleaseKey(resource);
             if (!acc.hasOwnProperty(resourceKindName)) {
