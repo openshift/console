@@ -25,8 +25,6 @@ import {
   createOverviewItemsForType,
   createPodItems,
   createWorkloadItems,
-  getPodsForDeploymentConfigs,
-  getPodsForDeployments,
   getWorkloadMonitoringAlerts,
 } from '../resource-utils';
 import { mockAlerts } from '../__mocks__/alerts-and-rules-data';
@@ -91,7 +89,6 @@ const podKeys = [Keys.ALERTS, Keys.OBJ, Keys.ROUTES, Keys.SERVICE, Keys.STATUS];
 const dsAndSSKeys = [...podKeys, Keys.BC, Keys.PODS];
 const dcKeys = [...dsAndSSKeys, Keys.CURRENT, Keys.ROLLINGOUT, Keys.PREVIOUS];
 const knativeKeys = [...dcKeys, Keys.REVISIONS, Keys.KNATIVECONFIGS, Keys.KSROUTES];
-const podRCKeys = [Keys.OBJ, Keys.CURRENT, Keys.PREVIOUS, Keys.PODS, Keys.ROLLINGOUT];
 
 describe('TransformResourceData', () => {
   it('should create Deployment config Items for a provided dc', () => {
@@ -193,22 +190,6 @@ describe('TransformResourceData', () => {
     expect(transformedData[0][Keys.PREVIOUS]).toBeUndefined();
     expect(transformedData[0][Keys.ROLLINGOUT]).toBeUndefined();
     expect(transformedData[0][Keys.BC]).toHaveLength(0);
-  });
-
-  it('should return pods and replication controllers for a given DeploymentConfig', () => {
-    const transformedData = getPodsForDeploymentConfigs(
-      sampleDeploymentConfigs.data,
-      MockResources,
-    );
-    expect(transformedData).toHaveLength(2);
-    expect(transformedData[0]).toHaveProperties(podRCKeys);
-  });
-
-  it('should return pods and replication controllers for a given DeploymentConfig', () => {
-    const transformedData = getPodsForDeployments(sampleDeployments.data, MockResources);
-    expect(transformedData).toHaveLength(3);
-    expect(transformedData[0]).toHaveProperties(podRCKeys);
-    expect(transformedData[1]).toHaveProperties(podRCKeys);
   });
 
   it('should return only pods and not replication controllers for a given resource', () => {

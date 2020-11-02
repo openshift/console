@@ -39,11 +39,11 @@ const JobOverviewDetails: React.FC<JobOverviewDetailsProps> = ({
 );
 
 export const JobResourcesTab: React.SFC<JobResourcesTabProps> = ({ item }) => {
-  const { obj, pods } = item;
+  const { obj } = item;
   const pluginComponents = usePluginsOverviewTabSection(item);
   return (
     <div className="overview__sidebar-pane-body">
-      <PodsOverview pods={pods} obj={obj} />
+      <PodsOverview obj={obj} />
       {pluginComponents.map(({ Component, key }) => (
         <Component key={key} item={item} />
       ))}

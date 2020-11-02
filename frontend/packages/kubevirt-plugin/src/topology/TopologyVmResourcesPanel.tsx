@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from '@patternfly/react-topology';
-import { PodsOverview } from '@console/internal/components/overview/pods-overview';
+import { PodsOverviewContent } from '@console/internal/components/overview/pods-overview';
 import { NetworkingOverview } from '@console/internal/components/overview/networking-overview';
 import { VMNode } from './types';
 
@@ -15,7 +15,7 @@ export const TopologyVmResourcesPanel: React.FC<TopologyVmResourcePanelProps> = 
 
     return (
       <div className="overview__sidebar-pane-body">
-        <PodsOverview pods={pods} obj={vm} />
+        <PodsOverviewContent obj={vm} pods={pods} loaded loadError={null} />
         <NetworkingOverview services={services} routes={routes} />
       </div>
     );

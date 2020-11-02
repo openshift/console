@@ -29,7 +29,7 @@ import {
   getPodsForDeployments,
   getPodsForStatefulSets,
   getPodsForDaemonSets,
-} from './resource-utils';
+} from './pod-resource-utils';
 import { AllPodStatus } from '../constants';
 
 import './pod-ring-text.scss';

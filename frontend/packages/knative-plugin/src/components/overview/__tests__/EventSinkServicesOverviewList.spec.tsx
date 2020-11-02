@@ -1,13 +1,17 @@
 import * as React from 'react';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import * as _ from 'lodash';
 import { referenceForModel, PodKind } from '@console/internal/module/k8s';
 import { PodControllerOverviewItem } from '@console/shared';
-import { PodsOverview } from '@console/internal/components/overview/pods-overview';
+import {
+  PodsOverview,
+  PodsOverviewContent,
+} from '@console/internal/components/overview/pods-overview';
 import {
   ResourceLink,
   ExternalLink,
   SidebarSectionHeading,
+  history,
 } from '@console/internal/components/utils';
 import { getEventSourceResponse } from '../../../topology/__tests__/topology-knative-test-data';
 import {
@@ -17,6 +21,9 @@ import {
   EventingIMCModel,
 } from '../../../models';
 import EventSinkServicesOverviewList from '../EventSinkServicesOverviewList';
+import { Provider } from 'react-redux';
+import store from '@console/internal/redux';
+import { Router } from 'react-router';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');
@@ -175,12 +182,19 @@ describe('EventSinkServicesOverviewList', () => {
   });
 
   it('should not show pods if not present', () => {
-    const wrapper = shallow(
+    const wrapper = mount(
       <EventSinkServicesOverviewList
         obj={getEventSourceResponse(EventSourceApiServerModel).data[0]}
         current={current}
       />,
+      {
+        wrappingComponent: ({ children }) => (
+          <Router history={history}>
+            <Provider store={store}>{children}</Provider>
+          </Router>
+        ),
+      },
     );
-    expect(wrapper.find(PodsOverview)).toHaveLength(0);
+    expect(wrapper.find(PodsOverviewContent)).toHaveLength(0);
   });
 });

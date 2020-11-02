@@ -5,7 +5,7 @@ import { podPhase } from '@console/internal/module/k8s';
 import { BuildOverview } from '@console/internal/components/overview/build-overview';
 import { PodModel } from '@console/internal/models';
 import { AllPodStatus, OverviewItem, usePluginsOverviewTabSection } from '@console/shared';
-import { PodsOverview } from '@console/internal/components/overview/pods-overview';
+import { PodsOverviewContent } from '@console/internal/components/overview/pods-overview';
 import { Subscriber } from '../../topology/topology-types';
 import { getSubscriberByType } from '../../topology/knative-topology-utils';
 import RevisionsOverviewList from './RevisionsOverviewList';
@@ -44,9 +44,11 @@ const KnativeServiceResources: React.FC<KnativeServiceResourceProps> = ({ item }
   const pluginComponents = usePluginsOverviewTabSection(item);
   return (
     <>
-      <PodsOverview
+      <PodsOverviewContent
         pods={activePods}
         obj={obj}
+        loaded
+        loadError={null}
         emptyText={REVISIONS_AUTOSCALED}
         allPodsLink={linkUrl}
       />

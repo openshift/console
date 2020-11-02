@@ -24,7 +24,6 @@ export type EventSinkServicesOverviewListProps = {
 
 const EventSinkServicesOverviewList: React.FC<EventSinkServicesOverviewListProps> = ({
   obj,
-  pods,
   current,
 }) => {
   const { t } = useTranslation();
@@ -73,7 +72,7 @@ const EventSinkServicesOverviewList: React.FC<EventSinkServicesOverviewListProps
       ) : (
         <span className="text-muted">{t('knative-plugin~No sink found for this resource.')}</span>
       )}
-      {pods?.length > 0 && <PodsOverview pods={pods} obj={obj} allPodsLink={linkUrl} />}
+      {<PodsOverview hideIfEmpty obj={obj} allPodsLink={linkUrl} />}
       {deploymentData?.name && (
         <>
           <SidebarSectionHeading text="Deployment" />
