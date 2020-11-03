@@ -15,6 +15,7 @@ import { AppResources } from './edit-application-types';
 import { RegistryType } from '../../utils/imagestream-utils';
 import { getHealthChecksData } from '../health-checks/create-health-checks-probe-utils';
 import { detectGitType } from '../import/import-validation-utils';
+import { Pipeline } from '../../utils/pipeline-augment';
 
 export enum CreateApplicationFlow {
   Git = 'Import from Git',
@@ -59,7 +60,7 @@ const checkIfTriggerExists = (
   });
 };
 
-export const getGitData = (buildConfig: K8sResourceKind) => {
+export const getGitDataFromBuildConfig = (buildConfig: K8sResourceKind) => {
   const url = buildConfig?.spec?.source?.git?.uri ?? '';
   const gitData = {
     url,
@@ -71,6 +72,22 @@ export const getGitData = (buildConfig: K8sResourceKind) => {
     isUrlValidating: false,
   };
   return gitData;
+};
+
+const getGitDataFromPipeline = (pipeline: Pipeline) => {
+  const params = pipeline?.spec?.params;
+  const url = (params?.find((param) => param?.name === 'GIT_REPO')?.default ?? '') as string;
+  const ref = params?.find((param) => param?.name === 'GIT_REVISION')?.default ?? '';
+  const dir = params?.find((param) => param?.name === 'PATH_CONTEXT')?.default ?? '/';
+  return {
+    url,
+    ref,
+    dir,
+    type: detectGitType(url),
+    showGitType: false,
+    secret: '',
+    isUrlValidating: false,
+  };
 };
 
 export const getRouteData = (route: K8sResourceKind, resource: K8sResourceKind) => {
@@ -110,7 +127,7 @@ export const getRouteData = (route: K8sResourceKind, resource: K8sResourceKind) 
   return routeData;
 };
 
-export const getBuildData = (buildConfig: K8sResourceKind, gitType: string) => {
+export const getBuildData = (buildConfig: K8sResourceKind, pipeline: Pipeline, gitType: string) => {
   const buildStrategyType = _.get(buildConfig, 'spec.strategy.type', '');
   let buildStrategyData;
   switch (buildStrategyType) {
@@ -131,7 +148,12 @@ export const getBuildData = (buildConfig: K8sResourceKind, gitType: string) => {
       image: checkIfTriggerExists(triggers, 'ImageChange'),
       config: checkIfTriggerExists(triggers, 'ConfigChange'),
     },
-    strategy: buildStrategyType,
+    strategy:
+      buildStrategyType ||
+      (pipeline?.metadata?.labels?.['pipeline.openshift.io/strategy'] ===
+      _.toLower(BuildStrategyType.Docker)
+        ? BuildStrategyType.Docker
+        : BuildStrategyType.Source),
   };
   return buildData;
 };
@@ -252,6 +274,7 @@ export const getUserLabels = (resource: K8sResourceKind) => {
 export const getCommonInitialValues = (
   editAppResource: K8sResourceKind,
   route: K8sResourceKind,
+  pipelineData: Pipeline,
   name: string,
   namespace: string,
 ) => {
@@ -270,7 +293,7 @@ export const getCommonInitialValues = (
     resources: getResourcesType(editAppResource),
     serverless: getServerlessData(editAppResource),
     pipeline: {
-      enabled: false,
+      enabled: !_.isEmpty(pipelineData),
     },
     deployment: getDeploymentData(editAppResource),
     labels: getUserLabels(editAppResource),
@@ -290,28 +313,29 @@ export const getIconInitialValues = (editAppResource: K8sResourceKind) => {
 
 export const getGitAndDockerfileInitialValues = (
   buildConfig: K8sResourceKind,
+  pipeline: Pipeline,
   route: K8sResourceKind,
 ) => {
-  if (_.isEmpty(buildConfig)) {
+  if (_.isEmpty(buildConfig) && _.isEmpty(pipeline)) {
     return {};
   }
-  const currentImage = _.split(
-    _.get(buildConfig, 'spec.strategy.sourceStrategy.from.name', ''),
-    ':',
-  );
-  const git = getGitData(buildConfig);
+
+  const currentImage = _.split(buildConfig?.spec?.strategy?.sourceStrategy?.from?.name ?? '', ':');
+  const git = !_.isEmpty(buildConfig)
+    ? getGitDataFromBuildConfig(buildConfig)
+    : getGitDataFromPipeline(pipeline);
   const initialValues = {
     git,
     docker: {
-      dockerfilePath: _.get(
-        buildConfig,
-        'spec.strategy.dockerStrategy.dockerfilePath',
+      dockerfilePath:
+        buildConfig?.spec?.strategy?.dockerStrategy?.dockerfilePath ||
+        pipeline?.spec?.params?.find((param) => param?.name === 'DOCKERFILE')?.default ||
         'Dockerfile',
-      ),
       containerPort: parseInt(_.split(_.get(route, 'spec.port.targetPort'), '-')[0], 10),
     },
     image: {
-      selected: currentImage[0] || '',
+      selected:
+        currentImage[0] || (pipeline?.metadata?.labels?.['pipeline.openshift.io/runtime'] ?? ''),
       recommended: '',
       tag: currentImage[1] || '',
       tagObj: {},
@@ -319,7 +343,7 @@ export const getGitAndDockerfileInitialValues = (
       isRecommending: false,
       couldNotRecommend: false,
     },
-    build: getBuildData(buildConfig, git.type),
+    build: getBuildData(buildConfig, pipeline, git.type),
   };
   return initialValues;
 };
@@ -423,9 +447,20 @@ export const getInitialValues = (
   const editAppResourceData = appResources.editAppResource?.data;
   const routeData = appResources.route?.data;
   const buildConfigData = appResources.buildConfig?.data;
+  const pipelineData = appResources.pipeline?.data;
 
-  const commonValues = getCommonInitialValues(editAppResourceData, routeData, appName, namespace);
-  const gitDockerValues = getGitAndDockerfileInitialValues(buildConfigData, routeData);
+  const commonValues = getCommonInitialValues(
+    editAppResourceData,
+    routeData,
+    pipelineData,
+    appName,
+    namespace,
+  );
+  const gitDockerValues = getGitAndDockerfileInitialValues(
+    buildConfigData,
+    pipelineData,
+    routeData,
+  );
 
   let iconValues = {};
   let externalImageValues = {};

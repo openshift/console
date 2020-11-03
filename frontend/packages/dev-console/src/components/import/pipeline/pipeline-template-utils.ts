@@ -1,9 +1,12 @@
 import * as _ from 'lodash';
 import { k8sCreate } from '@console/internal/module/k8s';
-import { Pipeline } from 'packages/dev-console/src/utils/pipeline-augment';
+import { Pipeline, PipelineRun } from 'packages/dev-console/src/utils/pipeline-augment';
 import { PipelineModel } from '../../../models';
 import { GitImportFormData } from '../import-types';
 import { createPipelineResource } from '../../pipelines/pipeline-resource/pipelineResource-utils';
+import { convertPipelineToModalData } from '../../pipelines/modals/common/utils';
+import { submitStartPipeline } from '../../pipelines/modals/start-pipeline/submit-utils';
+import { StartPipelineFormValues } from '../../pipelines/modals/start-pipeline/types';
 
 const getImageUrl = (name: string, namespace: string) => {
   return `image-registry.openshift-image-registry.svc:5000/${namespace}/${name}`;
@@ -28,6 +31,7 @@ export const createPipelineForImportFlow = async (formData: GitImportFormData) =
     project: { name: namespace },
     git,
     pipeline,
+    docker: { dockerfilePath },
   } = formData;
   const template = _.cloneDeep(pipeline.template) as Pipeline;
 
@@ -49,17 +53,23 @@ export const createPipelineForImportFlow = async (formData: GitImportFormData) =
         return { ...param, default: git.dir.replace(/^\//, '') || param.default };
       case 'IMAGE_NAME':
         return { ...param, default: getImageUrl(name, namespace) };
+      case 'DOCKERFILE':
+        return { ...param, default: dockerfilePath };
       default:
         return param;
     }
   });
 
-  if (template.spec.resources?.find((r) => r.type === 'git' && r.name === 'app-source')) {
-    await createGitResource(git.url, namespace, git.ref);
-  }
-  if (template.spec.resources?.find((r) => r.type === 'image' && r.name === 'app-image')) {
-    await createImageResource(name, namespace);
-  }
-
   return k8sCreate(PipelineModel, template, { ns: namespace });
+};
+
+export const createPipelineRunForImportFlow = async (
+  formData: GitImportFormData,
+  pipeline: Pipeline,
+): Promise<PipelineRun> => {
+  const pipelineInitialValues: StartPipelineFormValues = {
+    ...convertPipelineToModalData(pipeline),
+    secretOpen: false,
+  };
+  return submitStartPipeline(pipelineInitialValues, pipeline);
 };

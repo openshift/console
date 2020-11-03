@@ -7,7 +7,7 @@ import {
   getInitialValues,
   getExternalImagelValues,
 } from '../edit-application-utils';
-import { Resources } from '../../import/import-types';
+import { GitImportFormData, Resources } from '../../import/import-types';
 import {
   knativeService,
   knAppResources,
@@ -29,7 +29,31 @@ describe('Edit Application Utils', () => {
   });
 
   it('getInitialValues should return values based on the resources and the create flow used to create the application', () => {
-    const { route, editAppResource, buildConfig, imageStream } = appResources;
+    const { route, editAppResource, buildConfig, pipeline, imageStream } = appResources;
+    const gitImportValues: GitImportFormData = {
+      ...gitImportInitialValues,
+      git: {
+        ...gitImportInitialValues.git,
+        ref: 'master',
+      },
+      pipeline: {
+        enabled: true,
+      },
+      build: {
+        ...gitImportInitialValues.build,
+        triggers: { config: false, image: false, webhook: false },
+      },
+      image: {
+        ...gitImportInitialValues.image,
+        tag: '',
+      },
+    };
+    expect(
+      getInitialValues({ pipeline, editAppResource, route }, 'nationalparks-py', 'div'),
+    ).toEqual(gitImportValues);
+    expect(
+      getInitialValues({ buildConfig, editAppResource, route }, 'nationalparks-py', 'div'),
+    ).toEqual(gitImportInitialValues);
     expect(
       getInitialValues({ buildConfig, editAppResource, route }, 'nationalparks-py', 'div'),
     ).toEqual(gitImportInitialValues);

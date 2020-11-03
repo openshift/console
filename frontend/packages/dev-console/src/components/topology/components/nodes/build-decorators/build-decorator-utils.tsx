@@ -6,6 +6,7 @@ import { PipelineRunModel } from '../../../../../models';
 import { constructCurrentPipeline } from '../../../../../utils/pipeline-utils';
 import { WorkloadData } from '../../../topology-types';
 import PipelineBuildDecoratorTooltip from './PipelineBuildDecoratorTooltip';
+import { runStatus } from '../../../../../utils/pipeline-augment';
 
 type BuildDecoratorData = {
   decoratorIcon: React.ReactElement;
@@ -28,7 +29,11 @@ export const getBuildDecoratorParts = (workloadData: WorkloadData): BuildDecorat
 
   if (currentPipelineStatus) {
     const { currentPipeline, status } = currentPipelineStatus;
-    tooltipContent = <PipelineBuildDecoratorTooltip pipeline={currentPipeline} status={status} />;
+    if (status === runStatus.PipelineNotStarted) {
+      tooltipContent = 'Pipeline not started';
+    } else {
+      tooltipContent = <PipelineBuildDecoratorTooltip pipeline={currentPipeline} status={status} />;
+    }
     decoratorIcon = <Status status={status} iconOnly noTooltip />;
     linkRef = `${resourcePathFromModel(
       PipelineRunModel,
