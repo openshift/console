@@ -7,6 +7,9 @@ reviewers:
   - jelkosz
   - rhrazdil
   - yaacov
+  - glekner
+  - irosenzw
+  - gouyang
 approvers:
   - mareklibra
   - rawagner
@@ -14,5 +17,8 @@ approvers:
   - jelkosz
   - rhrazdil
   - yaacov
+  - glekner
+  - pcbailey
+  - irosenzw
 labels:
   - component/kubevirt
