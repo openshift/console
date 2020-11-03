@@ -1,0 +1,17 @@
+{
+  "Cluster-wide {{resource}}": "クラスター全体 {{resource}}",
+  "Catalog will be available in all namespaces": "カタログはすべての名前空間で利用可能になります",
+  "Namespace {{resource}}": "名前空間 {{resource}}",
+  "Catalog will only be available in a single namespace": "カタログは単一の名前空間でのみ利用可能になります",
+  "Create {{resource}}": "作成する {{resource}}",
+  "Create a {{resource}} in order to make operators available in OperatorHub.": "作成する{{resource}}OperatorHubで演算子を使用できるようにするため。",
+  "{{resource}} name": "{{resource}} 名前",
+  "Display name": "表示名",
+  "Publisher name": "出版社名",
+  "Image (URL of container image)": "画像（コンテナ画像のURL）",
+  "URL of container image hosted on a registry": "レジストリでホストされているコンテナイメージのURL",
+  "Availability": "可用性",
+  "Namespace": "Namespace",
+  "Create": "作成する",
+  "Cancel": "キャンセル"
+}

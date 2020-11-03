@@ -1,0 +1,16 @@
+{
+  "Disable": "無効にする",
+  "Enable": "有効にする",
+  "Name": "名前",
+  "Publisher": "出版社",
+  "Packages": "パッケージ",
+  "Package not found": "パッケージが見つかりません",
+  "Cannot create a Subscription to a non-existent package.": "存在しないパッケージへのサブスクリプションを作成できません。",
+  "Availability": "可用性",
+  "Endpoint": "終点",
+  "# of Operators": "演算子の数",
+  "Disabled": "無効",
+  "Operators provided by this source will not appear in OperatorHub and any operators installed from this source will not receive updates until this source is re-enabled.": "このソースによって提供されたオペレーターはOperatorHubに表示されず、このソースからインストールされたオペレーターは、このソースが再度有効になるまで更新を受け取りません。",
+  "Enable source": "ソースを有効にする",
+  "Create {{resource}}": "作成する {{resource}}"
+}

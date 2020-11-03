@@ -1,0 +1,17 @@
+{
+  "Specify either organizations or teams, but not both.": "組織またはチームのいずれかを指定しますが、両方は指定しません。",
+  "Add Identity Provider: GitHub": "IDプロバイダーの追加：GitHub",
+  "You can use the GitHub integration to connect to either GitHub or GitHub Enterprise. For GitHub Enterprise, you must provide the hostname of your instance and can optionally provide a CA certificate bundle to use in requests to the server.": "GitHub統合を使用して、GitHubまたはGitHubEnterpriseに接続できます。 GitHub Enterpriseの場合、インスタンスのホスト名を指定する必要があり、オプションで、サーバーへのリクエストで使用するCA証明書バンドルを指定できます。",
+  "Client ID": "クライアントID",
+  "Client secret": "クライアントシークレット",
+  "Hostname": "ホスト名",
+  "Optional domain for use with a hosted instance of GitHub Enterprise.": "GitHubEnterpriseのホストされたインスタンスで使用するためのオプションのドメイン。",
+  "Organizations": "組織",
+  "teams-help": "teams-help",
+  "Organization": "組織",
+  "Restricts which organizations are allowed to log in.": "ログインを許可する組織を制限します。",
+  "Teams": "チーム",
+  "organizations-help": "organizations-help",
+  "Team": "チーム",
+  "Restricts which teams are allowed to log in. The format is <org>/<team>.": "ログインを許可するチームを制限します。形式は次のとおりです。<org> /<team> 。"
+}

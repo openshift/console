@@ -1,0 +1,4 @@
+{
+  "Update this YAML to configure Routes, Receivers, Groupings and other Alertmanager settings.": "このYAMLを更新して、ルート、レシーバー、グループ化、その他のAlertmanager設定を構成します。",
+  "Alerting": "アラート"
+}
