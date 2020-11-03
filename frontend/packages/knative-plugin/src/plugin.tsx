@@ -24,6 +24,8 @@ import {
   FLAG_KNATIVE_SERVING_ROUTE,
   FLAG_KNATIVE_SERVING_SERVICE,
   FLAG_KNATIVE_EVENTING,
+  FLAG_KNATIVE_EVENTING_CHANNEL,
+  FLAG_KNATIVE_EVENTING_BROKER,
 } from './const';
 import { getKebabActionsForKind } from './utils/kebab-actions';
 import { TopologyConsumedExtensions, topologyPlugin } from './topology/topology-plugin';
@@ -95,6 +97,20 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: models.EventingBrokerModel,
+      flag: FLAG_KNATIVE_EVENTING_BROKER,
+    },
+  },
+  {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: models.EventingChannelModel,
+      flag: FLAG_KNATIVE_EVENTING_CHANNEL,
+    },
+  },
+  {
     type: 'GlobalConfig',
     properties: {
       kind: 'KnativeServing',
@@ -122,6 +138,24 @@ const plugin: Plugin<ConsumedExtensions> = [
         FLAG_KNATIVE_SERVING_SERVICE,
         FLAG_KNATIVE_SERVING_REVISION,
         FLAG_KNATIVE_SERVING_ROUTE,
+      ],
+    },
+  },
+  {
+    type: 'NavItem/Href',
+    properties: {
+      perspective: 'admin',
+      section: 'Serverless',
+      componentProps: {
+        name: 'Eventing',
+        href: '/eventing',
+      },
+    },
+    flags: {
+      required: [
+        FLAG_KNATIVE_EVENTING,
+        FLAG_KNATIVE_EVENTING_BROKER,
+        FLAG_KNATIVE_EVENTING_CHANNEL,
       ],
     },
   },
@@ -313,6 +347,30 @@ const plugin: Plugin<ConsumedExtensions> = [
         (
           await import(
             './components/overview/serving-list/ServingListsPage' /* webpackChunkName: "serving-list-page" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/eventing'],
+      component: NamespaceRedirect,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: false,
+      path: ['/eventing/all-namespaces', '/eventing/ns/:ns'],
+      loader: async () =>
+        (
+          await import(
+            './components/eventing/EventingListPage' /* webpackChunkName: "eventing-list-page" */
           )
         ).default,
     },
