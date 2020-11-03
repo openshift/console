@@ -80,11 +80,12 @@ export const setStoragesTabValidity = (options: UpdateOptions) => {
         iGetIn(storageBundle, ['disk', 'bootOrder']) === 1 &&
         (iGetIn(storageBundle, ['disk', 'disk']) || iGetIn(storageBundle, ['disk', 'cdrom'])) &&
         (iGetIn(storageBundle, ['volume', 'persistentVolumeClaim']) ||
+          iGetIn(storageBundle, ['volume', 'containerDisk']) ||
           iGetIn(storageBundle, ['dataVolume', 'spec', 'source', 'pvc']) ||
           iGetIn(storageBundle, ['dataVolume', 'spec', 'source', 'http'])),
     );
     if (!hasBootSource) {
-      error = 'Please select the boot source.';
+      error = 'Please select a disk with a defined boot source.';
       hasAllRequiredFilled = false;
     }
   }

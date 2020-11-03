@@ -5,7 +5,11 @@ import { VMWizardStorage } from '../../types';
 import { FormRow } from '../../../form/form-row';
 import { FormSelectPlaceholderOption } from '../../../form/form-select-placeholder-option';
 import { ignoreCaseSort } from '../../../../utils/sort';
-import { NO_BOOTABLE_ATTACHED_DISK_ERROR, SELECT_BOOTABLE_DISK } from '../../strings/storage';
+import {
+  NO_BOOTABLE_ATTACHED_DISK_ERROR,
+  SELECT_BOOTABLE_DISK,
+  BOOTABLE_ATTACHED_DISK_MESSAGE,
+} from '../../strings/storage';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
@@ -26,26 +30,32 @@ export const StorageBootSource: React.FC<StorageBootOrderProps> = ({
   storages,
   className,
 }) => {
-  const filteredStorages = storages.filter(
-    ({ volume, dataVolume }) =>
-      new VolumeWrapper(volume).getType() === VolumeType.PERSISTENT_VOLUME_CLAIM ||
-      [DataVolumeSourceType.PVC, DataVolumeSourceType.HTTP].includes(
-        new DataVolumeWrapper(dataVolume).getType(),
-      ),
-  );
-  const hasStorages = filteredStorages.length > 0;
-
-  const selectedStorage = filteredStorages.find((storage) =>
+  const selectedStorage = storages.find((storage) =>
     new DiskWrapper(storage.disk).isFirstBootableDevice(),
   );
+
+  const isBootSourceValid =
+    new VolumeWrapper(selectedStorage?.volume).getType() === VolumeType.PERSISTENT_VOLUME_CLAIM ||
+    new VolumeWrapper(selectedStorage?.volume).getType() === VolumeType.CONTAINER_DISK ||
+    [DataVolumeSourceType.PVC, DataVolumeSourceType.HTTP].includes(
+      new DataVolumeWrapper(selectedStorage?.dataVolume).getType(),
+    );
 
   return (
     <Form className={className}>
       <FormRow
         title="Boot Source"
         fieldId={STORAGE_BOOT_SOURCE}
-        validationMessage={!hasStorages && NO_BOOTABLE_ATTACHED_DISK_ERROR}
-        validationType={!hasStorages && ValidationErrorType.Error}
+        validationMessage={
+          selectedStorage
+            ? !isBootSourceValid && NO_BOOTABLE_ATTACHED_DISK_ERROR
+            : BOOTABLE_ATTACHED_DISK_MESSAGE
+        }
+        validationType={
+          selectedStorage
+            ? !isBootSourceValid && ValidationErrorType.Error
+            : ValidationErrorType.Info
+        }
         isRequired
       >
         <FormSelect
@@ -56,11 +66,9 @@ export const StorageBootSource: React.FC<StorageBootOrderProps> = ({
           isDisabled={isDisabled}
         >
           <FormSelectPlaceholderOption isDisabled placeholder={SELECT_BOOTABLE_DISK} />
-          {ignoreCaseSort(filteredStorages, null, (storage) => storage.disk?.name).map(
-            (storage) => (
-              <FormSelectOption key={storage.id} value={storage.id} label={storage.disk?.name} />
-            ),
-          )}
+          {ignoreCaseSort(storages, null, (storage) => storage.disk?.name).map((storage) => (
+            <FormSelectOption key={storage.id} value={storage.id} label={storage.disk?.name} />
+          ))}
         </FormSelect>
       </FormRow>
     </Form>
