@@ -1,17 +1,15 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
-import { useSelector } from 'react-redux';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { CatalogItem, CatalogItemDetailsPropertyVariant } from '@console/plugin-sdk';
-import { getActiveNamespace } from '@console/internal/reducers/ui';
+import { CatalogExtensionHook, CatalogItem } from '@console/plugin-sdk';
 import { ClusterServiceVersionModel } from '../models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ClusterServiceVersionKind } from '../types';
 import { getImageForCSVIcon } from '@console/shared';
 import { providedAPIsFor, referenceForProvidedAPI } from '../components';
 import { isInternal } from '../dev-catalog';
+import { ExpandCollapseDescription } from '@console/internal/components/catalog/description-utils';
+import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 
 const normalizeClusterServiceVersions = (
   clusterServiceVersions: ClusterServiceVersionKind[],
@@ -32,15 +30,16 @@ const normalizeClusterServiceVersions = (
     // remove internal CRDs
     .filter((crd) => !isInternal(crd))
     .map((desc) => {
-      const { creationTimestamp } = desc.csv.metadata;
+      const { uid, creationTimestamp } = desc.csv.metadata;
       const { description } = desc;
       const provider = desc.csv.spec.provider.name;
+      const operatorName = desc.csv.spec.displayName;
       const supportUrl =
         desc.csv.metadata.annotations?.['marketplace.openshift.io/support-workflow'];
       const markdownDescription = formatTileDescription(desc.csv.spec.description);
-      const longDescription = `This resource is provided by ${desc.csv.spec.displayName}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.`;
+      const longDescription = `This resource is provided by ${operatorName}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.`;
       const documentationUrl = _.get(
-        (desc.csv.spec.links || []).find(({ name }) => name === 'Documentation'),
+        (desc.csv.spec.links || []).find(({ linkName }) => linkName === 'Documentation'),
         'url',
       );
       const capabilityLevel = _.get(desc, ['csv', 'metadata', 'annotations', 'capabilities'], '')
@@ -49,70 +48,48 @@ const normalizeClusterServiceVersions = (
 
       const detailsProperties = [
         {
-          type: CatalogItemDetailsPropertyVariant.TEXT,
-          title: 'Capability Level',
+          label: 'Capability Level',
           value: capabilityLevel,
-        },
-        {
-          type: CatalogItemDetailsPropertyVariant.EXTERNAL_LINK,
-          title: 'Support',
-          label: 'Get Support',
-          value: supportUrl,
-        },
-        {
-          type: CatalogItemDetailsPropertyVariant.EXTERNAL_LINK,
-          title: 'Documentation',
-          value: documentationUrl,
-        },
-        {
-          type: CatalogItemDetailsPropertyVariant.TEXT,
-          title: 'Provider',
-          value: provider,
-        },
-        {
-          type: CatalogItemDetailsPropertyVariant.TIMESTAMP,
-          title: 'Created At',
-          value: creationTimestamp,
         },
       ];
 
+      const operatorDescription = (
+        <ExpandCollapseDescription>
+          <SyncMarkdownView content={markdownDescription} />
+        </ExpandCollapseDescription>
+      );
+
       const detailsDescriptions = [
         {
-          type: CatalogItemDetailsPropertyVariant.MARKDOWN,
-          title: 'Description',
-          value: description,
+          value: <p>{longDescription}</p>,
         },
         {
-          type: CatalogItemDetailsPropertyVariant.MARKDOWN,
-          title: 'Operator Description',
-          value: markdownDescription,
-        },
-        {
-          type: CatalogItemDetailsPropertyVariant.TEXT,
-          value: longDescription,
+          label: 'Operator Description',
+          value: operatorDescription,
         },
       ];
+
       return {
         // NOTE: Faking a real k8s object to avoid fetching all CRDs
-        type: 'InstalledOperator',
+        uid,
+        type: 'OperatorBackedService',
         name: desc.displayName || desc.kind,
         description,
         provider,
         tags: desc.csv.spec.keywords,
-        obj: {
-          metadata: {
-            uid: `${desc.csv.metadata.uid}-${desc.displayName}`,
-            creationTimestamp,
-          },
-          ...desc,
+        creationTimestamp,
+        supportUrl,
+        documentationUrl,
+        attributes: {
+          operatorName,
         },
         icon: {
           class: null,
-          url: getImageForCSVIcon(desc.csv.spec.icon),
+          url: getImageForCSVIcon(desc.csv.spec.icon[0]),
         },
         cta: {
           label: 'Create',
-          href: `/ns/${desc.csv.metadata.namespace}/clusterserviceversions/${
+          href: `/k8s/ns/${desc.csv.metadata.namespace}/clusterserviceversions/${
             desc.csv.metadata.name
           }/${referenceForProvidedAPI(desc)}/~new`,
         },
@@ -126,18 +103,18 @@ const normalizeClusterServiceVersions = (
   return operatorProvidedAPIs;
 };
 
-const useClusterServiceVersions = (): [CatalogItem[], boolean, any] => {
-  const activeNamespace = useSelector(getActiveNamespace);
-
+const useClusterServiceVersions: CatalogExtensionHook<CatalogItem[]> = ({
+  namespace,
+}): [CatalogItem[], boolean, any] => {
   const resourceSelector = React.useMemo(
     () => ({
       isList: true,
       kind: referenceForModel(ClusterServiceVersionModel),
       namespaced: ClusterServiceVersionModel.namespaced,
-      namespace: activeNamespace,
+      namespace,
       prop: referenceForModel(ClusterServiceVersionModel),
     }),
-    [activeNamespace],
+    [namespace],
   );
 
   const [clusterServiceVersions, loaded, loadedError] = useK8sWatchResource<

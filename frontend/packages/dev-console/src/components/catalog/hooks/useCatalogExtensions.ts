@@ -1,38 +1,29 @@
-import * as React from 'react';
-import { CatalogItemProvider, isCatalogItemProvider, useExtensions } from '@console/plugin-sdk';
+import {
+  CatalogItemProvider,
+  CatalogItemType,
+  isCatalogItemProvider,
+  isCatalogItemType,
+} from '@console/plugin-sdk';
+import {
+  ResolvedExtension,
+  useResolvedExtensions,
+} from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 
-const useCatalogExtensions = () => {
-  const catalogExtensions = useExtensions<CatalogItemProvider>(isCatalogItemProvider);
-  const [resolvedExtensions, setResolvedExtensions] = React.useState<any>([]);
-  const [loaded, setLoaded] = React.useState<boolean>(false);
+const useCatalogExtensions = (
+  catalogType: string,
+): [ResolvedExtension<CatalogItemType>[], ResolvedExtension<CatalogItemProvider>[]] => {
+  const itemTypeExtensions = useResolvedExtensions<CatalogItemType>(isCatalogItemType);
+  const itemProviderExtensions = useResolvedExtensions<CatalogItemProvider>(isCatalogItemProvider);
 
-  React.useEffect(() => {
-    let disposed = false;
+  const catalogTypeExtensions = catalogType
+    ? itemTypeExtensions.filter((e) => e.properties.type === catalogType)
+    : itemTypeExtensions;
 
-    // eslint-disable-next-line promise/catch-or-return
-    Promise.all(
-      catalogExtensions.map(async (e) => {
-        const provider = await e.properties.provider();
-        const filters = e.properties.filters && (await e.properties.filters());
-        const groupings = e.properties.groupings && (await e.properties.groupings());
-        return Object.freeze({
-          ...e,
-          properties: { ...e.properties, provider, filters, groupings },
-        });
-      }),
-    ).then((result) => {
-      if (!disposed) {
-        setResolvedExtensions(result);
-        setLoaded(true);
-      }
-    });
+  const catalogProviderExtensions = catalogType
+    ? itemProviderExtensions.filter((e) => e.properties.type === catalogType)
+    : itemProviderExtensions;
 
-    return () => {
-      disposed = true;
-    };
-  }, [catalogExtensions]);
-
-  return [resolvedExtensions, loaded];
+  return [catalogTypeExtensions, catalogProviderExtensions];
 };
 
 export default useCatalogExtensions;

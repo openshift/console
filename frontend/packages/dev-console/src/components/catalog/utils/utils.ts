@@ -10,7 +10,6 @@ export const keywordCompare = (filterString: string, item: CatalogItem) => {
 
   return (
     item.name.toLowerCase().includes(filterString) ||
-    (item.obj.metadata.name ?? '').toLowerCase().includes(filterString) ||
     (item.description && item.description.toLowerCase().includes(filterString)) ||
     (item.tags && item.tags.includes(filterString))
   );

@@ -7,26 +7,35 @@ namespace ExtensionProperties {
     normalize: (data: K8sResourceKind[]) => K8sResourceKind[];
   }
 
-  export interface CatalogItemProvider {
+  export interface CatalogItemType {
     /** Type for the catalog item. */
     type: string;
     /** Title fpr the catalog item. */
     title: string;
-    /** Catalog ID for which this provider contributes to. Idea here is to be able to support multiple catalogs. */
-    catalog: string;
-    /** Fetch items and normalize it for the catalog. Value is a react effect hook. */
-    provider: CodeRef<() => CatalogItemProviderResult>;
-    /** Description for the catalog item. */
-    description?: string;
+    /** Description for the type specific catalog. */
+    catalogDescription: string;
+    /** Description for the catalog item type. */
+    typeDescription: string;
     /** Custom filters specific to the catalog item  */
-    filters?: CodeRef<CatalogFilters>;
+    filters?: CatalogFilter[];
     /** Custom groupings specific to the catalog item */
-    groupings?: CodeRef<CatalogGroupings>;
+    groupings?: CatalogGrouping[];
+  }
+
+  export interface CatalogItemProvider {
+    /** Type ID for the catalog item type. */
+    type: string;
+    /** Fetch items and normalize it for the catalog. Value is a react effect hook. */
+    provider: CodeRef<CatalogExtensionHook<CatalogItem[]>>;
   }
 }
 
 export interface DevCatalogModel extends Extension<ExtensionProperties.DevCatalogModel> {
   type: 'DevCatalogModel';
+}
+
+export interface CatalogItemType extends Extension<ExtensionProperties.CatalogItemType> {
+  type: 'Catalog/ItemType';
 }
 
 export interface CatalogItemProvider extends Extension<ExtensionProperties.CatalogItemProvider> {
@@ -37,32 +46,36 @@ export const isDevCatalogModel = (e: Extension): e is DevCatalogModel => {
   return e.type === 'DevCatalogModel';
 };
 
+export const isCatalogItemType = (e: Extension): e is CatalogItemType => {
+  return e.type === 'Catalog/ItemType';
+};
+
 export const isCatalogItemProvider = (e: Extension): e is CatalogItemProvider => {
   return e.type === 'Catalog/ItemProvider';
 };
 
-export type CatalogItemProviderResult = [CatalogItem[], boolean, any];
+export type CatalogExtensionHookResult<T> = [T, boolean, any];
 
-type Metadata = {
-  uid?: string;
-  name?: string;
-  namespace?: string;
-  creationTimestamp?: string;
+export type CatalogExtensionHookOptions = {
+  namespace: string;
 };
 
+export type CatalogExtensionHook<T> = (
+  options: CatalogExtensionHookOptions,
+) => CatalogExtensionHookResult<T>;
+
 export type CatalogItem = {
-  type?: string;
-  name?: string;
+  uid: string;
+  type: string;
+  name: string;
   provider?: string;
   description?: string;
   tags?: string[];
-  obj?: {
-    metadata?: Metadata;
-    csv?: {
-      kind?: string;
-      spec: { displayName: string };
-      metadata?: Metadata;
-    };
+  creationTimestamp?: string;
+  supportUrl?: string;
+  documentationUrl?: string;
+  attributes?: {
+    [key: string]: string;
   };
   cta: {
     label: string;
@@ -74,34 +87,26 @@ export type CatalogItem = {
   };
   details?: {
     properties?: CatalogItemDetailsProperty[];
-    descriptions?: CatalogItemDetailsProperty[];
+    descriptions?: CatalogItemDetailsDescription[];
   };
 };
 
 export type CatalogItemDetailsProperty = {
-  type: CatalogItemDetailsPropertyVariant;
-  title?: string;
+  label: string;
+  value: string | React.ReactNode;
+};
+
+export type CatalogItemDetailsDescription = {
   label?: string;
-  value: string | (() => Promise<string>);
+  value: string | React.ReactNode;
 };
 
-export enum CatalogItemDetailsPropertyVariant {
-  TEXT = 'TEXT',
-  LINK = 'LINK',
-  EXTERNAL_LINK = 'EXTERNAL_LINK',
-  MARKDOWN = 'MARKDOWN',
-  ASYNC_MARKDOWN = 'ASYNC_MARKDOWN',
-  TIMESTAMP = 'TIMESTAMP',
-}
-
-export type CatalogItemFilterProperties = {
-  [key: string]: string;
+export type CatalogFilter = {
+  label: string;
+  attribute: string;
 };
 
-export type CatalogItemGroupingProperties = {
-  [key: string]: string;
+export type CatalogGrouping = {
+  label: string;
+  attribute: string;
 };
-
-export type CatalogFilters = { [key: string]: CatalogItemFilterProperties[] };
-
-export type CatalogGroupings = { [key: string]: CatalogItemGroupingProperties[] };

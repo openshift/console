@@ -1,9 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
-import { useSelector } from 'react-redux';
-import { CatalogItem, CatalogItemDetailsPropertyVariant } from '@console/plugin-sdk';
+import { CatalogExtensionHook, CatalogItem } from '@console/plugin-sdk';
 import {
   getAnnotationTags,
   getMostRecentBuilderTag,
@@ -16,24 +13,53 @@ import {
   getImageStreamIcon,
 } from '@console/internal/components/catalog/catalog-item-icon';
 import { ANNOTATIONS } from '@console/shared';
-import { getActiveNamespace } from '@console/internal/reducers/ui';
+import { ExternalLink } from '@console/internal/components/utils';
+
+const imageStreamText = (
+  <>
+    <hr />
+    <p>The following resources will be created:</p>
+    <ul>
+      <li>
+        A <span className="co-catalog-item-details__kind-label">build config</span> to build source
+        from a Git repository.
+      </li>
+      <li>
+        An <span className="co-catalog-item-details__kind-label">image stream</span> to track built
+        images.
+      </li>
+      <li>
+        A <span className="co-catalog-item-details__kind-label">deployment config</span> to rollout
+        new revisions when the image changes.
+      </li>
+      <li>
+        A <span className="co-catalog-item-details__kind-label">service</span> to expose your
+        workload inside the cluster.
+      </li>
+      <li>
+        An optional <span className="co-catalog-item-details__kind-label">route</span> to expose
+        your workload outside the cluster.
+      </li>
+    </ul>
+  </>
+);
 
 const normalizeBuilderImages = (
   builderImageStreams: K8sResourceKind[],
   activeNamespace: string = '',
 ): CatalogItem[] => {
   const normalizedBuilderImages = _.map(builderImageStreams, (imageStream) => {
-    const { name, namespace } = imageStream.metadata;
+    const { uid, name, namespace } = imageStream.metadata;
     const tag = getMostRecentBuilderTag(imageStream);
-    const tileName =
+    const displayName =
       _.get(imageStream, ['metadata', 'annotations', ANNOTATIONS.displayName]) || name;
-    const iconClass = getImageStreamIcon(tag);
-    const tileImgUrl = getImageForIconClass(iconClass);
-    const tileIconClass = tileImgUrl ? null : iconClass;
-    const tileDescription = _.get(tag, 'annotations.description');
+    const icon = getImageStreamIcon(tag);
+    const imgUrl = getImageForIconClass(icon);
+    const iconClass = imgUrl ? null : icon;
+    const description = _.get(tag, 'annotations.description');
     const tags = getAnnotationTags(tag);
     const createLabel = 'Create Application';
-    const tileProvider = _.get(tag, ['annotations', ANNOTATIONS.providerDisplayName]);
+    const provider = _.get(tag, ['annotations', ANNOTATIONS.providerDisplayName]);
     const href = `/catalog/source-to-image?imagestream=${name}&imagestream-ns=${namespace}&preselected-ns=${activeNamespace}`;
     const builderImageTag = _.head(_.get(imageStream, 'spec.tags'));
     const sampleRepo = _.get(builderImageTag, 'annotations.sampleRepo');
@@ -41,44 +67,34 @@ const normalizeBuilderImages = (
 
     const detailsProperties = [
       {
-        type: CatalogItemDetailsPropertyVariant.TEXT,
-        title: 'Provider',
-        value: tileProvider,
-      },
-      {
-        type: CatalogItemDetailsPropertyVariant.EXTERNAL_LINK,
-        title: 'Sample Repository',
-        value: sampleRepo,
-      },
-      {
-        type: CatalogItemDetailsPropertyVariant.TIMESTAMP,
-        title: 'Created At',
-        value: creationTimestamp,
+        label: 'Sample Repository',
+        value: (
+          <ExternalLink href={sampleRepo} additionalClassName="co-break-all" text={sampleRepo} />
+        ),
       },
     ];
 
     const detailsDescriptions = [
       {
-        type: CatalogItemDetailsPropertyVariant.MARKDOWN,
-        title: 'Description',
-        value: tileDescription,
+        value: imageStreamText,
       },
     ];
 
     const item: CatalogItem = {
-      type: 'ImageStream',
-      name: tileName,
-      provider: tileProvider,
-      description: tileDescription,
+      uid,
+      type: 'BuilderImage',
+      name: displayName,
+      provider,
+      description,
       tags,
-      obj: imageStream,
+      creationTimestamp,
       cta: {
         label: createLabel,
         href,
       },
       icon: {
-        url: tileImgUrl,
-        class: tileIconClass,
+        url: imgUrl,
+        class: iconClass,
       },
       details: {
         properties: detailsProperties,
@@ -92,7 +108,9 @@ const normalizeBuilderImages = (
   return normalizedBuilderImages;
 };
 
-const useBuilderImages = (): [CatalogItem[], boolean, any] => {
+const useBuilderImages: CatalogExtensionHook<CatalogItem[]> = ({
+  namespace,
+}): [CatalogItem[], boolean, any] => {
   const resourceSelector = {
     isList: true,
     kind: 'ImageStream',
@@ -103,13 +121,13 @@ const useBuilderImages = (): [CatalogItem[], boolean, any] => {
     resourceSelector,
   );
 
-  const activeNamespace = useSelector(getActiveNamespace);
-
-  const builderImageStreams = _.filter(imageStreams, isBuilder);
+  const builderImageStreams = React.useMemo(() => _.filter(imageStreams, isBuilder), [
+    imageStreams,
+  ]);
 
   const normalizedBuilderImages = React.useMemo(
-    () => normalizeBuilderImages(builderImageStreams, activeNamespace),
-    [activeNamespace, builderImageStreams],
+    () => normalizeBuilderImages(builderImageStreams, namespace),
+    [builderImageStreams, namespace],
   );
 
   return [normalizedBuilderImages, loaded, loadedError];

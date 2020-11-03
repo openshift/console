@@ -11,8 +11,10 @@ import {
   DevCatalogModel,
   DashboardsOverviewHealthOperator,
   CatalogItemProvider,
+  CatalogItemType,
 } from '@console/plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { getExecutableCodeRef } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-utils';
 import { FLAGS } from '@console/shared/src/constants';
 import { normalizeClusterServiceVersions } from './dev-catalog';
 import * as models from './models';
@@ -22,10 +24,11 @@ import { ClusterServiceVersionKind } from './types';
 
 import './style.scss';
 
-const catalogCSVProvider = () =>
+const catalogCSVProvider = getExecutableCodeRef(() =>
   import('./utils/useClusterServiceVersions' /* webpackChunkName: "catalog-csv-provider" */).then(
     (m) => m.default,
-  );
+  ),
+);
 
 type ConsumedExtensions =
   | ModelDefinition
@@ -37,6 +40,7 @@ type ConsumedExtensions =
   | RoutePage
   | DevCatalogModel
   | CatalogItemProvider
+  | CatalogItemType
   | DashboardsOverviewHealthOperator<ClusterServiceVersionKind>;
 
 const plugin: Plugin<ConsumedExtensions> = [
@@ -64,13 +68,30 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Catalog/ItemType',
+    properties: {
+      type: 'OperatorBackedService',
+      title: 'Operator Backed',
+      catalogDescription:
+        'Browse for a variety of managed services that are installed by cluster administrators. Cluster administrators can customize the content made available in the catalog.',
+      typeDescription:
+        'Operator backed includes a variety of services managed by Kubernetes controllers.',
+      groupings: [
+        {
+          label: 'Operators',
+          attribute: 'operatorName',
+        },
+      ],
+    },
+    flags: {
+      required: [Flags.OPERATOR_LIFECYCLE_MANAGER],
+    },
+  },
+  {
     type: 'Catalog/ItemProvider',
     properties: {
-      type: 'ClusterServiceVersion',
-      title: 'Operator Backed',
-      catalog: 'developer',
+      type: 'OperatorBackedService',
       provider: catalogCSVProvider,
-      description: 'Add operator backed services to your project from the Developer Catalog.',
     },
     flags: {
       required: [Flags.OPERATOR_LIFECYCLE_MANAGER],
