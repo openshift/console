@@ -11,7 +11,7 @@ import { k8sList, k8sWatch, k8sGet } from '../module/k8s/resource';
 import { makeReduxID } from '../components/utils/k8s-watcher';
 import { APIServiceModel } from '../models';
 import { coFetchJSON } from '../co-fetch';
-import { referenceForModel, K8sResourceKind, K8sKind } from '../module/k8s';
+import { referenceForModel, K8sResourceKind, K8sKind, fetchSwagger } from '../module/k8s';
 
 export enum ActionType {
   ReceivedResources = 'resources',
@@ -65,7 +65,10 @@ export const getResources = () => (dispatch: Dispatch) => {
       dispatch(receivedResources(resources));
     })
     // eslint-disable-next-line no-console
-    .catch((err) => console.error(err));
+    .catch((err) => console.error(err))
+    .finally(() => {
+      setTimeout(fetchSwagger, 10000);
+    });
 };
 
 export const filterList = (id: string, name: string, value: string) =>

@@ -222,8 +222,10 @@ graphQLReady.onReady(() => {
   // Global timer to ensure all <Timestamp> components update in sync
   setInterval(() => store.dispatch(UIActions.updateTimestamps(Date.now())), 10000);
 
-  // Fetch swagger on load if it's stale.
+  // Fetch swagger definitions immediately upon application start
   fetchSwagger();
+  // then poll swagger definitions every 5 minutes to ensure they stay up to date
+  setInterval(fetchSwagger, 5 * 60 * 1000);
 
   // Used by GUI tests to check for unhandled exceptions
   window.windowError = null;
