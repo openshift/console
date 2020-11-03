@@ -76,7 +76,11 @@ const StatefulSetDetails: React.FC<StatefulSetDetailsProps> = ({ obj: ss }) => {
             );
           }}
         />
-        <ResourceSummary resource={ss} showPodSelector showNodeSelector showTolerations />
+        <div className="row">
+          <div className="col-md-6">
+            <ResourceSummary resource={ss} showPodSelector showNodeSelector showTolerations />
+          </div>
+        </div>
       </div>
       <div className="co-m-pane__body">
         <SectionHeading text={t('workload~Containers')} />

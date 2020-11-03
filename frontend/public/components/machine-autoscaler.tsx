@@ -140,16 +140,20 @@ const MachineAutoscalerDetails: React.FC<MachineAutoscalerDetailsProps> = ({ obj
     <>
       <div className="co-m-pane__body">
         <SectionHeading text={t('machine-autoscalers~MachineAutoscaler details')} />
-        <ResourceSummary resource={obj}>
-          <dt>{t('machine-autoscalers~Scale target')}</dt>
-          <dd>
-            <MachineAutoscalerTargetLink obj={obj} />
-          </dd>
-          <dt>{t('machine-autoscalers~Min replicas')}</dt>
-          <dd>{_.get(obj, 'spec.minReplicas') || '-'}</dd>
-          <dt>{t('machine-autoscalers~Max replicas')}</dt>
-          <dd>{_.get(obj, 'spec.maxReplicas') || '-'}</dd>
-        </ResourceSummary>
+        <div className="row">
+          <div className="col-md-6">
+            <ResourceSummary resource={obj}>
+              <dt>{t('machine-autoscalers~Scale target')}</dt>
+              <dd>
+                <MachineAutoscalerTargetLink obj={obj} />
+              </dd>
+              <dt>{t('machine-autoscalers~Min replicas')}</dt>
+              <dd>{_.get(obj, 'spec.minReplicas') || '-'}</dd>
+              <dt>{t('machine-autoscalers~Max replicas')}</dt>
+              <dd>{_.get(obj, 'spec.maxReplicas') || '-'}</dd>
+            </ResourceSummary>
+          </div>
+        </div>
       </div>
     </>
   );

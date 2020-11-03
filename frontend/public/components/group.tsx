@@ -150,7 +150,11 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({ obj }) => {
     <>
       <div className="co-m-pane__body">
         <SectionHeading text="Group Details" />
-        <ResourceSummary resource={obj} />
+        <div className="row">
+          <div className="col-md-6">
+            <ResourceSummary resource={obj} />
+          </div>
+        </div>
       </div>
       <div className="co-m-pane__body">
         <SectionHeading text="Users" />

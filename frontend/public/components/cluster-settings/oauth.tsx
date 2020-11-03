@@ -92,14 +92,18 @@ const OAuthDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthKind }) 
     <>
       <div className="co-m-pane__body">
         <SectionHeading text={t('oauth~{{resource}} details', { resource: OAuthModel.label })} />
-        <ResourceSummary resource={obj}>
-          {tokenConfig && (
-            <>
-              <dt>{t('oauth~Access token max age')}</dt>
-              <dd>{tokenDuration(tokenConfig.accessTokenMaxAgeSeconds)}</dd>
-            </>
-          )}
-        </ResourceSummary>
+        <div className="row">
+          <div className="col-md-6">
+            <ResourceSummary resource={obj}>
+              {tokenConfig && (
+                <>
+                  <dt>{t('oauth~Access token max age')}</dt>
+                  <dd>{tokenDuration(tokenConfig.accessTokenMaxAgeSeconds)}</dd>
+                </>
+              )}
+            </ResourceSummary>
+          </div>
+        </div>
       </div>
       <div className="co-m-pane__body">
         <SectionHeading text={t('oauth~Identity providers')} />

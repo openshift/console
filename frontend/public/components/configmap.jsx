@@ -112,7 +112,11 @@ const ConfigMapsDetailsPage = (props) => {
       <>
         <div className="co-m-pane__body">
           <SectionHeading text={t('workload~ConfigMap details')} />
-          <ResourceSummary resource={configMap} />
+          <div className="row">
+            <div className="col-md-6">
+              <ResourceSummary resource={configMap} />
+            </div>
+          </div>
         </div>
         <div className="co-m-pane__body">
           <SectionHeading text={t('workload~Data')} />

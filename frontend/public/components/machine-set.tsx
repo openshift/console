@@ -215,34 +215,38 @@ const MachineSetDetails: React.SFC<MachineSetDetailsProps> = ({ obj }) => {
       <div className="co-m-pane__body">
         <SectionHeading text={t('machine-sets~Machine set details')} />
         <MachineCounts resourceKind={MachineSetModel} resource={obj} />
-        <ResourceSummary resource={obj}>
-          <dt>{t('machine-sets~Selector')}</dt>
-          <dd>
-            <Selector
-              kind={machineReference}
-              selector={obj.spec?.selector}
-              namespace={obj.metadata.namespace}
-            />
-          </dd>
-          {machineRole && (
-            <>
-              <dt>{t('machine-sets~Machine role')}</dt>
-              <dd>{machineRole}</dd>
-            </>
-          )}
-          {region && (
-            <>
-              <dt>{t('machine-sets~Region')}</dt>
-              <dd>{region}</dd>
-            </>
-          )}
-          {availabilityZone && (
-            <>
-              <dt>{t('machine-sets~Availability zone')}</dt>
-              <dd>{availabilityZone}</dd>
-            </>
-          )}
-        </ResourceSummary>
+        <div className="row">
+          <div className="col-md-6">
+            <ResourceSummary resource={obj}>
+              <dt>{t('machine-sets~Selector')}</dt>
+              <dd>
+                <Selector
+                  kind={machineReference}
+                  selector={obj.spec?.selector}
+                  namespace={obj.metadata.namespace}
+                />
+              </dd>
+              {machineRole && (
+                <>
+                  <dt>{t('machine-sets~Machine role')}</dt>
+                  <dd>{machineRole}</dd>
+                </>
+              )}
+              {region && (
+                <>
+                  <dt>{t('machine-sets~Region')}</dt>
+                  <dd>{region}</dd>
+                </>
+              )}
+              {availabilityZone && (
+                <>
+                  <dt>{t('machine-sets~Availability zone')}</dt>
+                  <dd>{availabilityZone}</dd>
+                </>
+              )}
+            </ResourceSummary>
+          </div>
+        </div>
       </div>
     </>
   );
