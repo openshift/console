@@ -34,9 +34,3 @@ type SectionProps = {
   description?: string;
   isRequired?: boolean;
 };
-
-type NodeProps = {
-  className: string;
-  childrent: Array<React.ReactNode> | React.ReactNode;
-  description?: string;
-};
