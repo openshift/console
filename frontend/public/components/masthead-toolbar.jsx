@@ -36,6 +36,7 @@ import { clusterVersionReference, getReportBugLink } from '../module/k8s/cluster
 import * as redhatLogoImg from '../imgs/logos/redhat.svg';
 import { GuidedTourMastheadTrigger } from '@console/app/src/components/tour';
 import { ConsoleLinkModel } from '../models';
+import { languagePreferencesModal } from './modals';
 
 const SystemStatusButton = ({ statuspageData, className }) => {
   const { t } = useTranslation();
@@ -434,9 +435,16 @@ class MastheadToolbarContents_ extends React.Component {
     }
 
     const actions = [];
-    if (flags[FLAGS.AUTH_ENABLED]) {
-      const userActions = [];
+    const userActions = [
+      {
+        label: t('masthead~Language preferences'),
+        callback: () => languagePreferencesModal({}),
+        component: 'button',
+        dataTest: 'language',
+      },
+    ];
 
+    if (flags[FLAGS.AUTH_ENABLED]) {
       const logout = (e) => {
         e.preventDefault();
         if (flags[FLAGS.OPENSHIFT]) {
@@ -447,7 +455,7 @@ class MastheadToolbarContents_ extends React.Component {
       };
 
       if (window.SERVER_FLAGS.requestTokenURL) {
-        userActions.push({
+        userActions.unshift({
           label: t('masthead~Copy login command'),
           href: window.SERVER_FLAGS.requestTokenURL,
           externalLink: true,
@@ -460,13 +468,13 @@ class MastheadToolbarContents_ extends React.Component {
         component: 'button',
         dataTest: 'log-out',
       });
-
-      actions.push({
-        name: '',
-        isSection: true,
-        actions: userActions,
-      });
     }
+
+    actions.push({
+      name: '',
+      isSection: true,
+      actions: userActions,
+    });
 
     if (!_.isEmpty(additionalUserActions.actions)) {
       actions.unshift(additionalUserActions);
@@ -504,17 +512,11 @@ class MastheadToolbarContents_ extends React.Component {
       );
     }
 
-    if (_.isEmpty(actions)) {
-      return (
-        <div data-test="username" className="co-username">
-          {username}
-        </div>
-      );
-    }
-
     const userToggle = (
       <span className="pf-c-dropdown__toggle">
-        <span className="co-username">{username}</span>
+        <span className="co-username" data-test="username">
+          {username}
+        </span>
         <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
       </span>
     );
