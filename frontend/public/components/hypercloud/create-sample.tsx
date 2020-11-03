@@ -54,11 +54,27 @@ const CreateSampleComponent: React.FC<SampleFormProps> = props => {
         <RadioGroup
           name="spec.resources" // 서버에 보낼 데이터에서의 path (필수)
           items={resources} // [{title: '', value: ''}] (필수)
-          inline={true} // inline속성 먹일거면 true, 아니면 빼면 됨 (선택)
+          inline={false} // inline속성 먹일거면 true, 아니면 빼면 됨 (선택)
         />
       </Section>
       <Section id="cpu" label="Input Selectbox">
         <InputSelectBox textName="spec.cpu" id="cpu" dropdownName="spec.cpuRange" selectedKey="Mi" items={dropdownUnits} />
+      </Section>
+      <Section id="section" label="Grid Section" isRequired={true}>
+        {/* sample로 각각다른 3개 node 넣어봄. 1,2,3,4 개 일 경우 다 정상동작 하는 것 확인.*/}
+        <Section id="label" label="Label (for Section)">
+          <Controller name="metadata.section.label" id="label" labelClassName="co-text-sample" as={SelectorInput} control={control} tags={[]} />
+        </Section>
+        <Section id="cpu" label="Input Selectbox (for Section)">
+          <InputSelectBox textName="spec.section.cpu" id="cpu" dropdownName="spec.section.cpuRange" selectedKey="Mi" items={dropdownUnits} />
+        </Section>
+        <Section id="resources" label="Radio Group (for Section)">
+          <RadioGroup
+            name="spec.section.resources" // 서버에 보낼 데이터에서의 path (필수)
+            items={resources} // [{title: '', value: ''}] (필수)
+            inline={false} // inline속성 먹일거면 true, 아니면 빼면 됨 (선택)
+          />
+        </Section>
       </Section>
     </div>
   );
