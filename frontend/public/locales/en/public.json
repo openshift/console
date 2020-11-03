@@ -442,5 +442,7 @@
   "Disable": "Disable",
   "default": "default",
   "OK": "OK",
-  "Last updated": "Last updated"
+  "Last updated": "Last updated",
+  "Disabled": "Disabled",
+  "Enabled": "Enabled"
 }
