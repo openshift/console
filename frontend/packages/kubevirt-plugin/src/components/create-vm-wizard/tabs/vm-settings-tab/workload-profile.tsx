@@ -9,18 +9,25 @@ import {
 } from '../../../../utils/immutable';
 import { FormFieldRow } from '../../form/form-field-row';
 import { FormField, FormFieldType } from '../../form/form-field';
-import { getWorkloadProfiles } from '../../../../selectors/vm-template/combined-dependent';
+import {
+  getOsDefaultTemplate,
+  getWorkloadLabel,
+  getWorkloadProfiles,
+} from '../../../../selectors/vm-template/combined-dependent';
 import { ignoreCaseSort } from '../../../../utils/sort';
 import { VMSettingsField } from '../../types';
 import { nullOnEmptyChange } from '../../utils/utils';
 import { iGetFieldValue } from '../../selectors/immutable/field';
 import { FormPFSelect } from '../../../form/form-pf-select';
+import { WorkloadProfile } from '../../../../constants/vm/workload-profile';
+import { getLabelValue } from '../../../../selectors/selectors';
 
-export const WorkloadProfile: React.FC<WorkloadProps> = React.memo(
+export const WorkloadSelect: React.FC<WorkloadProps> = React.memo(
   ({
     iUserTemplate,
     cnvBaseImages,
     commonTemplates,
+    os,
     workloadProfileField,
     operatingSystem,
     flavor,
@@ -33,6 +40,8 @@ export const WorkloadProfile: React.FC<WorkloadProps> = React.memo(
         ? [toShallowJS(iGetLoadedData(iUserTemplate))]
         : []
       : immutableListToShallowJS(iGetLoadedData(commonTemplates));
+
+    const defaultTemplate = getOsDefaultTemplate(templates, os);
 
     const workloadProfiles = ignoreCaseSort(
       getWorkloadProfiles(templates, {
@@ -66,9 +75,24 @@ export const WorkloadProfile: React.FC<WorkloadProps> = React.memo(
                 nullOnEmptyChange(onChange, VMSettingsField.WORKLOAD_PROFILE)(v.toString())
               }
             >
-              {workloadProfiles.map((workloadProfile) => {
-                return <SelectOption key={workloadProfile} value={workloadProfile} />;
-              })}
+              {(workloadProfiles || [])
+                .map(WorkloadProfile.fromString)
+                .sort((a, b) => a.getOrder() - b.getOrder())
+                .map((workload) => {
+                  const isDefault =
+                    getLabelValue(defaultTemplate, getWorkloadLabel(workload.getValue())) ===
+                    'true';
+
+                  return (
+                    <SelectOption
+                      key={workload.getValue()}
+                      value={workload.getValue()}
+                      description={workload.getDescription()}
+                    >
+                      {workload.toString().concat(isDefault ? ' (default)' : '')}
+                    </SelectOption>
+                  );
+                })}
             </FormPFSelect>
           </FormField>
         </FormFieldRow>
@@ -80,6 +104,7 @@ export const WorkloadProfile: React.FC<WorkloadProps> = React.memo(
 type WorkloadProps = {
   iUserTemplate: any;
   commonTemplates: any;
+  os: string;
   workloadProfileField: any;
   flavor: string;
   operatingSystem: string;

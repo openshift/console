@@ -16,6 +16,7 @@ export const TEMPLATE_PARAM_VM_NAME = 'NAME';
 export const TEMPLATE_PARAM_VM_NAME_DESC = 'Name for the new VM';
 export const TEMPLATE_TYPE_LABEL = 'template.kubevirt.io/type';
 export const TEMPLATE_VERSION_LABEL = 'template.kubevirt.io/version';
+export const TEMPLATE_DEFAULT_LABEL = 'template.kubevirt.io/default-os-variant';
 export const TEMPLATE_TYPE_VM = 'vm';
 export const TEMPLATE_TYPE_BASE = 'base';
 export const TEMPLATE_WORKLOAD_LABEL = 'workload.template.kubevirt.io';

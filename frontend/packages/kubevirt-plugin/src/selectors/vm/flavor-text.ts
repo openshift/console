@@ -11,7 +11,7 @@ export const getFlavorText = ({
 }: {
   cpu: CPURaw;
   memory: string;
-  flavor: string;
+  flavor?: string;
 }) => {
   const vcpusCount = vCPUCount(cpu);
   const vcpusText = `${vcpusCount} vCPU${vcpusCount > 1 ? 's' : ''}`;
@@ -19,5 +19,7 @@ export const getFlavorText = ({
   const memoryBase = convertToBytes(memory);
   const memoryText = humanizeBinaryBytes(memoryBase).string;
 
-  return `${toUIFlavorLabel(flavor)}: ${vcpusText}, ${memoryText} Memory`;
+  return (flavor ? `${toUIFlavorLabel(flavor)}: ` : '').concat(
+    `${vcpusText}, ${memoryText} Memory`,
+  );
 };
