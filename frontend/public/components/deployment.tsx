@@ -89,7 +89,7 @@ export const DeploymentDetailsList: React.FC<DeploymentDetailsListProps> = ({ de
             obj={deployment}
             path="spec.strategy.rollingUpdate.maxUnavailable"
           >
-            {deployment.spec.strategy.rollingUpdate.maxUnavailable || 1} of{' '}
+            {deployment.spec.strategy.rollingUpdate.maxUnavailable ?? 1} of{' '}
             {pluralize(deployment.spec.replicas, 'pod')}
           </DetailsItem>
           <DetailsItem
@@ -97,7 +97,7 @@ export const DeploymentDetailsList: React.FC<DeploymentDetailsListProps> = ({ de
             obj={deployment}
             path="spec.strategy.rollingUpdate.maxSurge"
           >
-            {deployment.spec.strategy.rollingUpdate.maxSurge || 1} greater than{' '}
+            {deployment.spec.strategy.rollingUpdate.maxSurge ?? 1} greater than{' '}
             {pluralize(deployment.spec.replicas, 'pod')}
           </DetailsItem>
         </>
