@@ -15,7 +15,7 @@ declare global {
 
 // This will add to 'createProject(...)' to cy
 // ex: cy.createProject(name)
-Cypress.Commands.add('createProject', (name: string) => {
+Cypress.Commands.add('createProject', (name: string, devConsole: boolean = false) => {
   cy.log(`create project`);
   cy.visit(`/k8s/cluster/projects`);
   listPage.clickCreateYAMLbutton();
@@ -24,7 +24,9 @@ Cypress.Commands.add('createProject', (name: string) => {
   modal.submit();
   modal.shouldBeClosed();
   // TODO, switch to 'listPage.titleShouldHaveText(name)', when we switch to new test id
-  cy.byLegacyTestID('resource-title').should('have.text', name);
+  if (devConsole === false) {
+    cy.byLegacyTestID('resource-title').should('have.text', name);
+  }
 });
 
 Cypress.Commands.add('deleteProject', (name: string) => {
