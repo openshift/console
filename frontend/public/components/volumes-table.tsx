@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
-
+import { useTranslation } from 'react-i18next';
 import {
   ContainerSpec,
   K8sKind,
@@ -29,7 +29,8 @@ import { connectToModel } from '../kinds';
 
 const removeVolume = (kind: K8sKind, obj: K8sResourceKind, volume: RowVolumeData): KebabOption => {
   return {
-    label: 'Remove Volume',
+    // t('workload~Remove volume')
+    labelKey: 'workload~Remove volume',
     callback: () =>
       removeVolumeModal({
         kind,
@@ -98,50 +99,6 @@ const volumeRowColumnClasses = [
   Kebab.columnClass,
 ];
 
-const VolumesTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'name',
-      transforms: [sortable],
-      props: { className: volumeRowColumnClasses[0] },
-    },
-    {
-      title: 'Mount Path',
-      sortField: 'mountPath',
-      transforms: [sortable],
-      props: { className: volumeRowColumnClasses[1] },
-    },
-    {
-      title: 'SubPath',
-      sortField: 'subPath',
-      transforms: [sortable],
-      props: { className: volumeRowColumnClasses[2] },
-    },
-    {
-      title: 'Type',
-      props: { className: volumeRowColumnClasses[3] },
-    },
-    {
-      title: 'Permissions',
-      sortField: 'readOnly',
-      transforms: [sortable],
-      props: { className: volumeRowColumnClasses[4] },
-    },
-    {
-      title: 'Utilized By',
-      sortField: 'container',
-      transforms: [sortable],
-      props: { className: volumeRowColumnClasses[5] },
-    },
-    {
-      title: '',
-      props: { className: volumeRowColumnClasses[6] },
-    },
-  ];
-};
-VolumesTableHeader.displayName = 'VolumesTableHeader';
-
 const VolumesTableRows = ({ componentProps: { data } }) => {
   return _.map(data, (volume: RowVolumeData) => {
     const { container, mountPath, name, readOnly, resource, subPath, volumeDetail } = volume;
@@ -208,18 +165,60 @@ const VolumesTableRows = ({ componentProps: { data } }) => {
 };
 
 export const VolumesTable = (props) => {
+  const { t } = useTranslation();
   const { resource, ...tableProps } = props;
   const data: RowVolumeData[] = getRowVolumeData(resource);
   const pod: PodTemplate = getPodTemplate(resource);
+  const VolumesTableHeader = () => [
+    {
+      title: t('workload~Name'),
+      sortField: 'name',
+      transforms: [sortable],
+      props: { className: volumeRowColumnClasses[0] },
+    },
+    {
+      title: t('workload~Mount path'),
+      sortField: 'mountPath',
+      transforms: [sortable],
+      props: { className: volumeRowColumnClasses[1] },
+    },
+    {
+      title: t('workload~SubPath'),
+      sortField: 'subPath',
+      transforms: [sortable],
+      props: { className: volumeRowColumnClasses[2] },
+    },
+    {
+      title: t('workload~Type'),
+      props: { className: volumeRowColumnClasses[3] },
+    },
+    {
+      title: t('workload~Permissions'),
+      sortField: 'readOnly',
+      transforms: [sortable],
+      props: { className: volumeRowColumnClasses[4] },
+    },
+    {
+      title: t('workload~Utilized by'),
+      sortField: 'container',
+      transforms: [sortable],
+      props: { className: volumeRowColumnClasses[5] },
+    },
+    {
+      title: '',
+      props: { className: volumeRowColumnClasses[6] },
+    },
+  ];
+
   return (
     <>
       {props.heading && <SectionHeading text={props.heading} />}
       {_.isEmpty(pod.spec.volumes) && !anyContainerWithVolumeMounts(pod.spec.containers) ? (
-        <EmptyBox label="Volumes" />
+        <EmptyBox label={t('workload~Volumes')} />
       ) : (
         <Table
           {...tableProps}
-          aria-label="Volumes"
+          aria-label={t('workload~Volumes')}
           loaded={true}
           label={props.heading}
           data={data}
@@ -243,9 +242,7 @@ const VolumeKebab = connectToModel((props: VolumeKebabProps) => {
   return (
     <Kebab
       options={options}
-      isDisabled={
-        isDisabled !== undefined ? isDisabled : _.get(resource.metadata, 'deletionTimestamp')
-      }
+      isDisabled={isDisabled !== undefined ? isDisabled : resource?.metadata?.deletionTimestamp}
     />
   );
 });
