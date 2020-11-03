@@ -5,7 +5,7 @@ namespace ExtensionProperties {
     /** action type */
     type: string;
     /** callback for the related action */
-    callback: (arg: T, payload?: P) => void;
+    callback: (arg: T, payload?: P) => Promise<T>;
   }
 }
 

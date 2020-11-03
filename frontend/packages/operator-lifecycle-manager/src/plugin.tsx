@@ -229,19 +229,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: `/k8s/ns/:ns/${models.ClusterServiceVersionModel.plural}/:appName/:plural/~new`,
-      loader: async () =>
-        (
-          await import(
-            './components/operand/create-operand' /* webpackChunkName: "create-operand" */
-          )
-        ).CreateOperandPage,
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      exact: true,
       path: '/operatorhub/all-namespaces',
       loader: async () =>
         (

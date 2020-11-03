@@ -9,7 +9,7 @@ import { useQueryParams } from './useQueryParams';
 
 export const usePostFormSubmitAction = <R = K8sResourceCommon[]>(
   key: string = 'action',
-): ((arg: R) => void) => {
+): ((arg: R) => Promise<R>) => {
   const params = useQueryParams();
   const actionParams = params.get(key);
 
@@ -40,16 +40,19 @@ export const usePostFormSubmitAction = <R = K8sResourceCommon[]>(
   );
 
   const formCallback = useCallback(
-    (arg: R) => {
+    async (arg: R) => {
       if (filteredExtensions.length > 0) {
-        filteredExtensions.forEach(({ properties: { type, callback } }) => {
-          if (actionPayload[type]) {
-            callback(arg, actionPayload[type]);
-          } else {
-            callback(arg);
-          }
-        });
+        await Promise.all(
+          filteredExtensions.map(async ({ properties: { type, callback } }) => {
+            if (actionPayload[type]) {
+              await callback(arg, actionPayload[type]);
+            } else {
+              await callback(arg);
+            }
+          }),
+        );
       }
+      return arg;
     },
     [filteredExtensions, actionPayload],
   );

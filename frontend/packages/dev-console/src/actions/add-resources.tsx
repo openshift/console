@@ -14,6 +14,7 @@ import HelmChartsIcon from '../components/helm/HelmChartsIcon';
 
 export const allImportResourceAccess = 'allImportResourceAccess';
 export const allCatalogImageResourceAccess = 'allCatalogImageResourceAccess';
+export const serviceBindingAvailable = 'serviceBindingAvailable';
 
 export const fromGit = createKebabAction(
   'From Git',
@@ -54,6 +55,7 @@ export const fromOperatorBacked = createKebabAction(
   'Operator Backed',
   <BoltIcon />,
   ImportOptions.OPERATORBACKED,
+  serviceBindingAvailable,
 );
 
 export const fromHelmCharts = createKebabAction(

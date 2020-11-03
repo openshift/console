@@ -13,7 +13,7 @@ import {
   getTopologyResourceObject,
   WORKLOAD_TYPES,
 } from '../../components/topology/topology-utils';
-import { CONNECTOR_INCONTEXT_ACTIONS, UNASSIGNED_KEY } from '../../const';
+import { INCONTEXT_ACTIONS_CONNECTS_TO, UNASSIGNED_KEY } from '../../const';
 import { ImportOptions } from '../../components/import/import-types';
 import {
   MockResources,
@@ -55,7 +55,7 @@ describe('addResourceMenuUtils: ', () => {
     expect(url.searchParams.get('application')).toBe('application-1');
     expect(url.searchParams.get('action')).toBe(
       JSON.stringify({
-        type: CONNECTOR_INCONTEXT_ACTIONS.connectsTo,
+        type: INCONTEXT_ACTIONS_CONNECTS_TO,
         payload: 'apps~v1~DeploymentConfig/nodejs',
       }),
     );

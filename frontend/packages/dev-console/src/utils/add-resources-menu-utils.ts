@@ -1,7 +1,12 @@
 import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { KebabOption } from '@console/internal/components/utils';
 import { ImportOptions } from '../components/import/import-types';
-import { QUERY_PROPERTIES, UNASSIGNED_KEY, CONNECTOR_INCONTEXT_ACTIONS } from '../const';
+import {
+  QUERY_PROPERTIES,
+  UNASSIGNED_KEY,
+  INCONTEXT_ACTIONS_CONNECTS_TO,
+  INCONTEXT_ACTIONS_SERVICE_BINDING,
+} from '../const';
 
 const PART_OF = 'app.kubernetes.io/part-of';
 
@@ -23,7 +28,7 @@ export const getAddPageUrl = (
       contextSource &&
         params.append(
           QUERY_PROPERTIES.CONTEXT_ACTION,
-          JSON.stringify({ type: CONNECTOR_INCONTEXT_ACTIONS.connectsTo, payload: contextSource }),
+          JSON.stringify({ type: INCONTEXT_ACTIONS_CONNECTS_TO, payload: contextSource }),
         );
       break;
     case ImportOptions.CONTAINER:
@@ -31,7 +36,7 @@ export const getAddPageUrl = (
       contextSource &&
         params.append(
           QUERY_PROPERTIES.CONTEXT_ACTION,
-          JSON.stringify({ type: CONNECTOR_INCONTEXT_ACTIONS.connectsTo, payload: contextSource }),
+          JSON.stringify({ type: INCONTEXT_ACTIONS_CONNECTS_TO, payload: contextSource }),
         );
       break;
     case ImportOptions.CATALOG:
@@ -43,7 +48,7 @@ export const getAddPageUrl = (
       contextSource &&
         params.append(
           QUERY_PROPERTIES.CONTEXT_ACTION,
-          JSON.stringify({ type: CONNECTOR_INCONTEXT_ACTIONS.connectsTo, payload: contextSource }),
+          JSON.stringify({ type: INCONTEXT_ACTIONS_CONNECTS_TO, payload: contextSource }),
         );
       break;
     case ImportOptions.DATABASE:
@@ -60,6 +65,14 @@ export const getAddPageUrl = (
     case ImportOptions.OPERATORBACKED:
       pageUrl = `/catalog/ns/${ns}`;
       params.append('kind', JSON.stringify(['ClusterServiceVersion']));
+      contextSource &&
+        params.append(
+          QUERY_PROPERTIES.CONTEXT_ACTION,
+          JSON.stringify({
+            type: INCONTEXT_ACTIONS_SERVICE_BINDING,
+            payload: contextSource,
+          }),
+        );
       break;
     case ImportOptions.HELMCHARTS:
       pageUrl = `/catalog/ns/${ns}`;

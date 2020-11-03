@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useFlag } from '@console/shared';
 import { AccessReviewResourceAttributes, K8sKind } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
 import {
@@ -10,7 +11,12 @@ import {
   SecretModel,
   ServiceModel,
 } from '@console/internal/models';
-import { allCatalogImageResourceAccess, allImportResourceAccess } from '../actions/add-resources';
+import {
+  allCatalogImageResourceAccess,
+  allImportResourceAccess,
+  serviceBindingAvailable,
+} from '../actions/add-resources';
+import { ALLOW_SERVICE_BINDING } from '../const';
 
 const resourceAttributes = (model: K8sKind, namespace: string): AccessReviewResourceAttributes => {
   return {
@@ -22,8 +28,6 @@ const resourceAttributes = (model: K8sKind, namespace: string): AccessReviewReso
 };
 
 export const useAddToProjectAccess = (activeNamespace: string): string[] => {
-  const [addAccess, setAddAccess] = React.useState<string[]>([]);
-
   const buildConfigsAccess = useAccessReview(resourceAttributes(BuildConfigModel, activeNamespace));
   const imageStreamAccess = useAccessReview(resourceAttributes(ImageStreamModel, activeNamespace));
   const deploymentConfigAccess = useAccessReview(
@@ -36,7 +40,9 @@ export const useAddToProjectAccess = (activeNamespace: string): string[] => {
   const routeAccess = useAccessReview(resourceAttributes(RouteModel, activeNamespace));
   const serviceAccess = useAccessReview(resourceAttributes(ServiceModel, activeNamespace));
 
-  React.useEffect(() => {
+  const serviceBindingEnabled = useFlag(ALLOW_SERVICE_BINDING);
+
+  return React.useMemo(() => {
     const createResourceAccess: string[] = [];
     if (
       buildConfigsAccess &&
@@ -51,7 +57,10 @@ export const useAddToProjectAccess = (activeNamespace: string): string[] => {
         createResourceAccess.push(allCatalogImageResourceAccess);
       }
     }
-    setAddAccess(createResourceAccess);
+    if (serviceBindingEnabled) {
+      createResourceAccess.push(serviceBindingAvailable);
+    }
+    return createResourceAccess;
   }, [
     buildConfigsAccess,
     deploymentConfigAccess,
@@ -60,7 +69,6 @@ export const useAddToProjectAccess = (activeNamespace: string): string[] => {
     routeAccess,
     secretAccess,
     serviceAccess,
+    serviceBindingEnabled,
   ]);
-
-  return addAccess;
 };
