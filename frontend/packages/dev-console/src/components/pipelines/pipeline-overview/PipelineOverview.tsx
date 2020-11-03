@@ -12,6 +12,7 @@ import { PipelineRunModel, PipelineModel } from '@console/dev-console/src/models
 import { TopologyOverviewItem } from '../../topology/topology-types';
 import TriggerLastRunButton from './TriggerLastRunButton';
 import PipelineRunItem from './PipelineRunItem';
+import PipelineStartButton from './PipelineStartButton';
 
 const MAX_VISIBLE = 3;
 
@@ -52,7 +53,11 @@ const PipelinesOverview: React.FC<PipelinesOverviewProps> = ({
               />
             </FlexItem>
             <FlexItem>
-              <TriggerLastRunButton pipelineRuns={pipelineRuns} namespace={namespace} />
+              {pipelineRuns.length === 0 ? (
+                <PipelineStartButton pipeline={pipeline} namespace={namespace} />
+              ) : (
+                <TriggerLastRunButton pipelineRuns={pipelineRuns} namespace={namespace} />
+              )}
             </FlexItem>
           </Flex>
         </li>
