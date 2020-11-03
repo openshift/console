@@ -56,14 +56,23 @@ describe('Kubevirt create VM using wizard', () => {
   };
 
   beforeAll(async () => {
-    createResources([multusNAD, testDataVolume]);
+    createResources([testDataVolume]);
   });
 
   afterAll(async () => {
     deleteResources([testDataVolume]);
   });
 
+  beforeEach(async () => {
+    createResources([multusNAD]);
+  });
+
   afterEach(() => {
+    try {
+      deleteResources([multusNAD]);
+    } catch (e) {
+      // unable to delete NAD
+    }
     removeLeakedResources(leakedResources);
   });
 
