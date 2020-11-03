@@ -149,10 +149,16 @@ export const ConfigureUpdateStrategyModal = withHandlePromise(
     const [maxSurge, setMaxSurge] = React.useState(
       _.get(props.deployment.spec, 'strategy.rollingUpdate.maxSurge', '25%'),
     );
+    const [errorMessage, setErrorMessage] = React.useState('');
 
     const submit = (event) => {
       event.preventDefault();
+      errorMessage !== '' && setErrorMessage('');
 
+      if (getNumberOrPercent(maxUnavailable) === 0 || getNumberOrPercent(maxSurge) === 0) {
+        setErrorMessage('Values for Max Unavailable and Max Surge cannot be set to 0.');
+        return;
+      }
       const patch: Patch = { path: '/spec/strategy/rollingUpdate', op: 'remove' };
       if (strategyType === 'RollingUpdate') {
         patch.value = {
@@ -161,6 +167,7 @@ export const ConfigureUpdateStrategyModal = withHandlePromise(
         };
         patch.op = 'add';
       }
+
       const promise = k8sPatch(DeploymentModel, props.deployment, [
         patch,
         { path: '/spec/strategy/type', value: strategyType, op: 'replace' },
@@ -182,7 +189,7 @@ export const ConfigureUpdateStrategyModal = withHandlePromise(
           />
         </ModalBody>
         <ModalSubmitFooter
-          errorMessage={props.errorMessage}
+          errorMessage={props.errorMessage || errorMessage}
           inProgress={props.inProgress}
           submitText="Save"
           cancel={props.cancel}
