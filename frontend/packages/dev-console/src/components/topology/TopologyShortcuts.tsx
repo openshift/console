@@ -10,6 +10,9 @@ const TopologyShortcuts: React.ReactElement = (
     <Shortcut rightClick>Access context menu</Shortcut>
     <Shortcut click>View details in side panel</Shortcut>
     <Shortcut hover>Access create connector handle</Shortcut>
+    <Shortcut ctrl keyName="Spacebar">
+      Open quick search modal
+    </Shortcut>
   </ShortcutTable>
 );
 
