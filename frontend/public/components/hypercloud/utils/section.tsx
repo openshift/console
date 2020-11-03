@@ -1,22 +1,22 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 
-const node = (className, children, description) => (
+const Node = ({ className, children, description }) => (
   <div className={className}>
     <div>{children}</div>
     <p className="help-block">{description}</p>
   </div>
 );
 
-const makeNode = (id, label, description, children, isRequired) => {
+const CombineNodes = (id, label, description, children, isRequired) => {
   // children node 개수에 따라 가로 분할 class 적용
   let isArray = Array.isArray(children);
   let className = isArray ? `col-md-${12 / children.length}` : 'col-md-12';
-  return isArray ? children.map(cur => node(className, cur, description)) : node(className, children, description);
+  return isArray ? children.map(cur => <Node className={className} children={cur} description={description} />) : <Node className={className} children={children} description={description} />;
 };
 
 export const Section: React.FC<SectionProps> = ({ id, label, description, children, isRequired = false }) => {
-  let result = makeNode(id, label, description, children, isRequired);
+  let result = CombineNodes(id, label, description, children, isRequired);
   return (
     <div className="form-group">
       <label className={'control-label ' + (isRequired ? 'co-required' : '')} htmlFor={id}>
@@ -33,4 +33,10 @@ type SectionProps = {
   label?: string;
   description?: string;
   isRequired?: boolean;
+};
+
+type NodeProps = {
+  className: string;
+  childrent: Array<React.ReactNode> | React.ReactNode;
+  description?: string;
 };
