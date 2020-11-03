@@ -203,6 +203,7 @@ const Topology: React.FC<TopologyProps & StateProps & DispatchProps> = ({
             y: storedGraphModel.y,
             scale: storedGraphModel.scale,
             scaleExtent: storedGraphModel.scaleExtent,
+            data: visualization.getGraph()?.getData(),
           };
         }
         const storedLayout = getTopologyLayout(namespace);
