@@ -5,10 +5,10 @@ import { history, AsyncComponent } from '@console/internal/components/utils';
 import { getActivePerspective, getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { connect } from 'react-redux';
-import { ALL_APPLICATIONS_KEY } from '@console/shared';
+import { ALL_APPLICATIONS_KEY, usePostFormSubmitAction } from '@console/shared';
 import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
 import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/imagestream-utils';
-import { doContextualBinding, sanitizeApplicationValue } from '../../utils/application-utils';
+import { sanitizeApplicationValue } from '../../utils/application-utils';
 import { ALLOW_SERVICE_BINDING, UNASSIGNED_KEY, UNASSIGNED_LABEL } from '../../const';
 import { GitImportFormData, FirehoseList, ImportData, Resources } from './import-types';
 import { createOrUpdateResources, handleRedirect } from './import-submit-utils';
@@ -40,9 +40,9 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
   perspective,
   activeApplication,
   projects,
-  serviceBindingAvailable,
 }) => {
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
+  const postFormCallback = usePostFormSubmitAction();
   const initialValues: GitImportFormData = {
     name: '',
     project: {
@@ -163,13 +163,11 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       true,
     ).then(() => createOrUpdateResources(values, imageStream));
 
-    if (contextualSource) {
-      resourceActions
-        .then((resources) =>
-          doContextualBinding(resources, contextualSource, serviceBindingAvailable),
-        )
-        .catch(() => {});
-    }
+    resourceActions
+      .then((resources) => {
+        postFormCallback(resources);
+      })
+      .catch(() => {});
 
     return resourceActions
       .then(() => {

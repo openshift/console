@@ -24,6 +24,7 @@ import {
   OverviewTabSection,
   ReduxReducer,
   GuidedTour,
+  PostFormSubmissionAction,
 } from '@console/plugin-sdk';
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
 import { FLAGS } from '@console/shared/src/constants';
@@ -41,7 +42,12 @@ import {
 } from '@console/internal/models';
 import * as models from './models';
 import { getKebabActionsForKind } from './utils/kebab-actions';
-import { FLAG_OPENSHIFT_PIPELINE, ALLOW_SERVICE_BINDING, FLAG_OPENSHIFT_GITOPS } from './const';
+import {
+  FLAG_OPENSHIFT_PIPELINE,
+  ALLOW_SERVICE_BINDING,
+  FLAG_OPENSHIFT_GITOPS,
+  CONNECTOR_INCONTEXT_ACTIONS,
+} from './const';
 import {
   newPipelineTemplate,
   newTaskTemplate,
@@ -66,6 +72,7 @@ import {
 import { pipelinesTopologyPlugin } from './components/topology/pipelines/pipelinesTopologyPlugin';
 import { usePerspectiveDetection } from './utils/usePerspectiveDetection';
 import { getGuidedTour } from './components/guided-tour';
+import { doConnectsToBinding } from './utils/connector-utils';
 
 const {
   ClusterTaskModel,
@@ -99,7 +106,8 @@ type ConsumedExtensions =
   | AddAction
   | GuidedTour
   | HelmTopologyConsumedExtensions
-  | OperatorsTopologyConsumedExtensions;
+  | OperatorsTopologyConsumedExtensions
+  | PostFormSubmissionAction;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -1149,6 +1157,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       perspective: 'dev',
       tour: getGuidedTour(),
+    },
+  },
+  {
+    type: 'PostFormSubmissionAction',
+    properties: {
+      type: CONNECTOR_INCONTEXT_ACTIONS.connectsTo,
+      callback: doConnectsToBinding,
     },
   },
   ...helmTopologyPlugin,

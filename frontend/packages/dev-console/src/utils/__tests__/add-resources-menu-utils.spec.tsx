@@ -13,7 +13,7 @@ import {
   getTopologyResourceObject,
   WORKLOAD_TYPES,
 } from '../../components/topology/topology-utils';
-import { UNASSIGNED_KEY } from '../../const';
+import { CONNECTOR_INCONTEXT_ACTIONS, UNASSIGNED_KEY } from '../../const';
 import { ImportOptions } from '../../components/import/import-types';
 import {
   MockResources,
@@ -53,7 +53,12 @@ describe('addResourceMenuUtils: ', () => {
     expect(url.pathname).toBe('/import/ns/testproject1');
     expect(url.searchParams.get('importType')).toBe('git');
     expect(url.searchParams.get('application')).toBe('application-1');
-    expect(url.searchParams.get('contextSource')).toBe('apps~v1~DeploymentConfig/nodejs');
+    expect(url.searchParams.get('action')).toBe(
+      JSON.stringify({
+        type: CONNECTOR_INCONTEXT_ACTIONS.connectsTo,
+        payload: 'apps~v1~DeploymentConfig/nodejs',
+      }),
+    );
     expect(Array.from(url.searchParams.entries())).toHaveLength(3);
   });
 

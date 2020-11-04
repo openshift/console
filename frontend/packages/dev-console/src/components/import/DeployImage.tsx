@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { Formik, FormikHelpers } from 'formik';
 import { connect } from 'react-redux';
-import { ALL_APPLICATIONS_KEY } from '@console/shared';
+import { ALL_APPLICATIONS_KEY, usePostFormSubmitAction } from '@console/shared';
 import { history } from '@console/internal/components/utils';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { doContextualBinding, sanitizeApplicationValue } from '../../utils/application-utils';
+import { sanitizeApplicationValue } from '../../utils/application-utils';
 import { ALLOW_SERVICE_BINDING } from '../../const';
 import { DeployImageFormData, FirehoseList, Resources } from './import-types';
 import { createOrUpdateDeployImageResources } from './deployImage-submit-utils';
@@ -32,8 +32,8 @@ const DeployImage: React.FC<Props> = ({
   projects,
   activeApplication,
   contextualSource,
-  serviceBindingAvailable,
 }) => {
+  const postFormCallback = usePostFormSubmitAction();
   const initialValues: DeployImageFormData = {
     project: {
       name: namespace || '',
@@ -155,14 +155,7 @@ const DeployImage: React.FC<Props> = ({
       const requests: Promise<K8sResourceKind[]> = createOrUpdateDeployImageResources(values);
       return requests;
     });
-
-    if (contextualSource) {
-      resourceActions
-        .then((resources) =>
-          doContextualBinding(resources, contextualSource, serviceBindingAvailable),
-        )
-        .catch(() => {});
-    }
+    resourceActions.then((resources) => postFormCallback(resources)).catch(() => {});
 
     return resourceActions
       .then(() => {

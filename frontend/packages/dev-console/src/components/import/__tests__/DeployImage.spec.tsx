@@ -20,6 +20,12 @@ jest.mock('react-i18next', () => {
   };
 });
 
+jest.mock('@console/shared/src/hooks/post-form-submit-action', () => {
+  return {
+    usePostFormSubmitAction: () => () => {},
+  };
+});
+
 describe('DeployImage Page Test', () => {
   type DeployImagePageProps = React.ComponentProps<typeof DeployImagePage>;
   let deployImagePageProps: DeployImagePageProps;
