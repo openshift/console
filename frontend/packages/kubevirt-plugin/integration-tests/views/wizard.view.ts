@@ -16,6 +16,7 @@ export const modalCancelButton = $('.modal-content').element(by.buttonText('Canc
 // Errors
 export const footerError = $('div[aria-label="Danger Alert"]');
 export const footerErrorDescroption = footerError.$('.pf-c-alert__description');
+export const bootError = $('#image-source-type-dropdown-helper');
 
 // Basic Settings tab
 export const templateSelect = $('#template-dropdown');
