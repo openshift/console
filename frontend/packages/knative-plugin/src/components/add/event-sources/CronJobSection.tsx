@@ -7,21 +7,22 @@ import { useTranslation } from 'react-i18next';
 
 interface CronJobSectionProps {
   title: string;
+  fullWidth?: boolean;
 }
 
-const CronJobSection: React.FC<CronJobSectionProps> = ({ title }) => {
+const CronJobSection: React.FC<CronJobSectionProps> = ({ title, fullWidth }) => {
   const { t } = useTranslation();
   return (
-    <FormSection title={title} extraMargin>
+    <FormSection title={title} extraMargin fullWidth={fullWidth}>
       <InputField
         type={TextInputTypes.text}
-        name={`data.${EventSources.CronJobSource}.data`}
+        name={`formData.data.${EventSources.CronJobSource}.data`}
         label={t('knative-plugin~Data')}
         helpText={t('knative-plugin~The data posted to the target function')}
       />
       <InputField
         type={TextInputTypes.text}
-        name={`data.${EventSources.CronJobSource}.schedule`}
+        name={`formData.data.${EventSources.CronJobSource}.schedule`}
         label={t('knative-plugin~Schedule')}
         helpText={t(
           'knative-plugin~Schedule is described using the unix-cron string format (* * * * *)',

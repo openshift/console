@@ -9,7 +9,7 @@ import { getSuggestedName } from '@console/dev-console/src/utils/imagestream-uti
 import { EventSources } from '../import-types';
 import { useTranslation } from 'react-i18next';
 
-const templateSpec = `data.${EventSources.ContainerSource}.template.spec.containers[0]`;
+const templateSpec = `formData.data.${EventSources.ContainerSource}.template.spec.containers[0]`;
 const containerPaths = {
   Image: `${templateSpec}.image`,
   Name: `${templateSpec}.name`,
@@ -19,17 +19,20 @@ const containerPaths = {
 
 interface ContainerSourceSectionProps {
   title: string;
+  fullWidth?: boolean;
 }
 
-const ContainerSourceSection: React.FC<ContainerSourceSectionProps> = ({ title }) => {
+const ContainerSourceSection: React.FC<ContainerSourceSectionProps> = ({ title, fullWidth }) => {
   const { t } = useTranslation();
   const { values, setFieldValue } = useFormikContext<FormikValues>();
   const {
-    data: {
-      [EventSources.ContainerSource]: {
-        template: {
-          spec: {
-            containers: [{ env: envs, args }],
+    formData: {
+      data: {
+        [EventSources.ContainerSource]: {
+          template: {
+            spec: {
+              containers: [{ env: envs, args }],
+            },
           },
         },
       },
@@ -48,7 +51,7 @@ const ContainerSourceSection: React.FC<ContainerSourceSectionProps> = ({ title }
     [setFieldValue],
   );
   return (
-    <FormSection title={title} extraMargin>
+    <FormSection title={title} extraMargin fullWidth={fullWidth}>
       <h3 className="co-section-heading-tertiary">{t('knative-plugin~Container')}</h3>
       <InputField
         data-test-id="container-image-field"

@@ -11,12 +11,14 @@ import { EventSources } from '../import-types';
 
 interface ApiServerSectionProps {
   title: string;
+  fullWidth?: boolean;
 }
 
-const ApiServerSection: React.FC<ApiServerSectionProps> = ({ title }) => {
+const ApiServerSection: React.FC<ApiServerSectionProps> = ({ title, fullWidth }) => {
   const { t } = useTranslation();
-  const { values, setFieldValue } = useFormikContext<FormikValues>();
-  const initVal = values?.data?.[EventSources.ApiServerSource]?.resources || [];
+  const { values, setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
+  const defaultInitvalue = values?.formData?.data?.[EventSources.ApiServerSource] || {};
+  const initVal = defaultInitvalue?.resources || [];
   const initialValueResources = !_.isEmpty(initVal)
     ? initVal.map((val) => _.values(val))
     : [['', '']];
@@ -32,7 +34,10 @@ const ApiServerSection: React.FC<ApiServerSectionProps> = ({ title }) => {
         }),
       );
       setNameValue(nameValuePairs);
-      setFieldValue(`data.${EventSources.ApiServerSource}.resources`, updatedNameValuePairs);
+      setFieldValue(
+        `formData.data.${EventSources.ApiServerSource}.resources`,
+        updatedNameValuePairs,
+      );
     },
     [setFieldValue],
   );
@@ -41,8 +46,17 @@ const ApiServerSection: React.FC<ApiServerSectionProps> = ({ title }) => {
     Resource: 'Resource',
   };
   const fieldId = getFieldId(values.type, 'res-input');
+  const onloadData = (items) => {
+    if (
+      defaultInitvalue?.serviceAccountName &&
+      !Object.keys(items).includes(defaultInitvalue.serviceAccountName)
+    ) {
+      setFieldValue(`formData.data.${EventSources.ApiServerSource}.serviceAccountName`, '');
+      setFieldTouched(`formData.data.${EventSources.ApiServerSource}.serviceAccountName`, true);
+    }
+  };
   return (
-    <FormSection title={title} extraMargin>
+    <FormSection title={title} extraMargin fullWidth={fullWidth}>
       <FormGroup
         fieldId={fieldId}
         label={t('knative-plugin~Resource')}
@@ -65,14 +79,17 @@ const ApiServerSection: React.FC<ApiServerSectionProps> = ({ title }) => {
         />
       </FormGroup>
       <DropdownField
-        name={`data.${EventSources.ApiServerSource}.mode`}
+        name={`formData.data.${EventSources.ApiServerSource}.mode`}
         label={t('knative-plugin~Mode')}
         items={modeItems}
         title={modeItems.Reference}
         helpText={t('knative-plugin~The mode the receive adapter controller runs under')}
         fullWidth
       />
-      <ServiceAccountDropdown name={`data.${EventSources.ApiServerSource}.serviceAccountName`} />
+      <ServiceAccountDropdown
+        name={`formData.data.${EventSources.ApiServerSource}.serviceAccountName`}
+        onLoad={onloadData}
+      />
     </FormSection>
   );
 };

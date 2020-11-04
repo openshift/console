@@ -3,7 +3,6 @@ import * as _ from 'lodash';
 import { FormikProps, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { FormFooter, FlexForm } from '@console/shared';
-import { LoadingInline } from '@console/internal/components/utils';
 import EventSourcesSelector from './event-sources/EventSourcesSelector';
 import EventSourceSection from './event-sources/EventSourceSection';
 import { EventSourceListData } from './import-types';
@@ -32,7 +31,6 @@ const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
           <EventSourceSection namespace={namespace} />{' '}
         </>
       )}
-      {eventSourceStatus && !eventSourceStatus.loaded && <LoadingInline />}
       <FormFooter
         handleReset={handleReset}
         errorMessage={status && status.submitError}

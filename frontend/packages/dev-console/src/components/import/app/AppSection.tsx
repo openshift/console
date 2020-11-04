@@ -11,20 +11,28 @@ export interface AppSectionProps {
   project: ProjectData;
   noProjectsAvailable?: boolean;
   extraMargin?: boolean;
+  subPath?: string;
+  fullWidth?: boolean;
 }
 
-const AppSection: React.FC<AppSectionProps> = ({ project, noProjectsAvailable, extraMargin }) => {
+const AppSection: React.FC<AppSectionProps> = ({
+  project,
+  noProjectsAvailable,
+  extraMargin,
+  subPath,
+  fullWidth,
+}) => {
   const [initialApplication] = useField('application.initial');
   const [formType] = useField('formType');
   const { t } = useTranslation();
   return (
-    <FormSection title={t('devconsole~General')} extraMargin={extraMargin}>
+    <FormSection title={t('devconsole~General')} extraMargin={extraMargin} fullWidth={fullWidth}>
       {noProjectsAvailable && (
         <>
           <InputField
             type={TextInputTypes.text}
             data-test-id="application-form-project-name"
-            name="project.name"
+            name={subPath ? `${subPath}.project.name` : 'project.name'}
             label={t('devconsole~Project Name')}
             helpText={t('devconsole~A unique name for the project.')}
             required
@@ -32,23 +40,27 @@ const AppSection: React.FC<AppSectionProps> = ({ project, noProjectsAvailable, e
           <InputField
             type={TextInputTypes.text}
             data-test-id="application-form-project-display-name"
-            name="project.displayName"
+            name={subPath ? `${subPath}.project.displayName` : 'project.displayName'}
             label={t('devconsole~Project Display Name')}
           />
           <TextAreaField
             data-test-id="application-form-project-description"
-            name="project.description"
+            name={subPath ? `${subPath}.project.description` : 'project.description'}
             label={t('devconsole~Project Description')}
           />
         </>
       )}
       {!initialApplication.value && (
-        <ApplicationSelector namespace={project.name} noProjectsAvailable={noProjectsAvailable} />
+        <ApplicationSelector
+          namespace={project.name}
+          noProjectsAvailable={noProjectsAvailable}
+          subPath={subPath}
+        />
       )}
       <InputField
         type={TextInputTypes.text}
         data-test-id="application-form-app-name"
-        name="name"
+        name={subPath ? `${subPath}.name` : 'name'}
         label={t('devconsole~Name')}
         helpText={t(
           'devconsole~A unique name given to the component that will be used to name associated resources.',

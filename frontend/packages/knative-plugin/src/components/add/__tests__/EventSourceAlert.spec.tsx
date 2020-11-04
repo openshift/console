@@ -33,7 +33,9 @@ describe('EventSourceAlert', () => {
   });
 
   it('should show alert if eventSources is null', () => {
-    const wrapper = shallow(<EventSourceAlert eventSourceStatus={null} />);
+    const wrapper = shallow(
+      <EventSourceAlert eventSourceStatus={{ loaded: true, eventSourceList: null }} />,
+    );
     expect(wrapper.find(Alert).exists()).toBe(true);
   });
 

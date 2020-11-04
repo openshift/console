@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { safeLoad } from 'js-yaml';
 import {
   K8sResourceKind,
   referenceForModel,
@@ -10,6 +9,7 @@ import {
 } from '@console/internal/module/k8s';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { checkAccess, history } from '@console/internal/components/utils';
+import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { parseALMExamples, ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 import {
   getAppLabels,
@@ -17,9 +17,11 @@ import {
 } from '@console/dev-console/src/utils/resource-label-utils';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { Perspective } from '@console/plugin-sdk';
+import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import {
   EventSources,
   EventSourceFormData,
+  EventSourceSyncFormData,
   EventSourceListData,
   SinkType,
   EventSourceList,
@@ -69,6 +71,7 @@ export const getEventSourcesDepResource = (formData: EventSourceFormData): K8sRe
       annotations: getCommonAnnotations(),
     },
     spec: {
+      ...(eventSrcData && eventSrcData),
       ...(sinkType === SinkType.Resource && sinkName && sinkApiVersion && sinkKind
         ? {
             sink: {
@@ -84,15 +87,14 @@ export const getEventSourcesDepResource = (formData: EventSourceFormData): K8sRe
               uri: sinkUri,
             },
           }),
-      ...(eventSrcData && eventSrcData),
     },
   };
 
   return eventSourceResource;
 };
 
-export const getKafkaSourceResource = (formData: EventSourceFormData): K8sResourceKind => {
-  const baseResource = getEventSourcesDepResource(formData);
+export const getKafkaSourceResource = (sourceFormData: any): K8sResourceKind => {
+  const baseResource = getEventSourcesDepResource(sourceFormData.formData);
   const { net } = baseResource.spec;
   baseResource.spec.net = {
     ...net,
@@ -102,12 +104,14 @@ export const getKafkaSourceResource = (formData: EventSourceFormData): K8sResour
   return baseResource;
 };
 
-export const loadYamlData = (formData: EventSourceFormData) => {
+export const loadYamlData = (formData: EventSourceSyncFormData) => {
   const {
-    project: { name: namespace },
+    formData: {
+      project: { name: namespace },
+    },
     yamlData,
   } = formData;
-  let yamlDataObj = safeLoad(yamlData);
+  let yamlDataObj = safeYAMLToJS(yamlData);
   const modelData = yamlDataObj && modelFor(referenceFor(yamlDataObj));
   if (yamlDataObj?.metadata && modelData?.namespaced && !yamlDataObj.metadata?.namespace) {
     yamlDataObj = { ...yamlDataObj, metadata: { ...yamlDataObj.metadata, namespace } };
@@ -115,18 +119,34 @@ export const loadYamlData = (formData: EventSourceFormData) => {
   return yamlDataObj;
 };
 
-export const getEventSourceResource = (formData: EventSourceFormData): K8sResourceKind => {
-  switch (formData.type) {
+export const getEventSourceResource = (
+  sourceFormData: EventSourceSyncFormData,
+): K8sResourceKind => {
+  switch (sourceFormData.formData.type) {
     case EventSources.KafkaSource:
-      return getKafkaSourceResource(formData);
+      return getKafkaSourceResource(sourceFormData);
     case EventSources.ContainerSource:
     case EventSources.CronJobSource:
     case EventSources.ApiServerSource:
     case EventSources.SinkBinding:
     case EventSources.PingSource:
-      return getEventSourcesDepResource(formData);
+      return getEventSourcesDepResource(sourceFormData.formData);
     default:
-      return loadYamlData(formData);
+      return loadYamlData(sourceFormData);
+  }
+};
+
+export const getCatalogEventSourceResource = (
+  sourceFormData: EventSourceSyncFormData,
+): K8sResourceKind => {
+  if (sourceFormData.editorType === EditorType.YAML) {
+    return loadYamlData(sourceFormData);
+  }
+  switch (sourceFormData.formData.type) {
+    case EventSources.KafkaSource:
+      return getKafkaSourceResource(sourceFormData);
+    default:
+      return getEventSourcesDepResource(sourceFormData.formData);
   }
 };
 
@@ -195,6 +215,58 @@ export const getEventSourceData = (source: string) => {
   return eventSourceData[source];
 };
 
+export const sanitizeKafkaSourceResource = (formData: EventSourceFormData): EventSourceFormData => {
+  const formDataActual = formData.data?.[EventSources.KafkaSource] || {};
+  const initialSecretKeyData = { secretKeyRef: { name: '', key: '' } };
+  return {
+    ...formData,
+    data: {
+      [EventSources.KafkaSource]: {
+        bootstrapServers: Array.isArray(formDataActual.bootstrapServers)
+          ? formDataActual.bootstrapServers
+          : [],
+        topics: Array.isArray(formDataActual.topics) ? formDataActual.topics : [],
+        consumerGroup:
+          typeof formDataActual.consumerGroup === 'string' ? formDataActual.consumerGroup : '',
+        net: {
+          sasl: {
+            enable:
+              typeof formDataActual.net?.sasl?.enable === 'boolean'
+                ? formDataActual.net?.sasl?.enable
+                : false,
+            user:
+              typeof formDataActual.net?.sasl?.user === 'object'
+                ? { ...initialSecretKeyData, ...formDataActual.net.sasl.user }
+                : initialSecretKeyData,
+            password:
+              typeof formDataActual.net?.sasl?.password === 'object'
+                ? { ...initialSecretKeyData, ...formDataActual.net.sasl.password }
+                : initialSecretKeyData,
+          },
+          tls: {
+            enable:
+              typeof formDataActual.net?.tls?.enable === 'boolean'
+                ? formDataActual.net?.tls?.enable
+                : false,
+            caCert:
+              typeof formDataActual.net?.tls?.caCert === 'object'
+                ? { ...initialSecretKeyData, ...formDataActual.net.tls.caCert }
+                : initialSecretKeyData,
+            cert:
+              typeof formDataActual.net?.tls?.cert === 'object'
+                ? { ...initialSecretKeyData, ...formDataActual.net.tls.cert }
+                : initialSecretKeyData,
+            key:
+              typeof formDataActual.net?.tls?.key === 'object'
+                ? { ...initialSecretKeyData, ...formDataActual.net.tls.key }
+                : initialSecretKeyData,
+          },
+        },
+      },
+    },
+  };
+};
+
 export const getEventSourceConnectorList = (
   namespace: string,
   csvData: ClusterServiceVersionKind[],
@@ -247,6 +319,7 @@ export const getEventSourceList = (namespace: string, eventSourceModels: K8sKind
         iconUrl: getEventSourceIcon(kind),
         displayName: _.startCase(kind),
         title: _.startCase(kind),
+        provider: isKnownEventSource(kind) ? 'Red Hat' : '',
       },
     };
     return accessList.push(
@@ -309,7 +382,7 @@ export const sortSourcesData = (sourcesObj: NormalizedEventSources): NormalizedE
   }, {});
 };
 
-export const useEventSourceList = (namespace: string): EventSourceListData | null => {
+export const useEventSourceList = (namespace: string): EventSourceListData => {
   const [accessData, setAccessData] = useSafetyFirst({ loaded: false, eventSourceList: {} });
   const { eventSourceModels, loaded: modelLoaded } = useEventSourceModels();
   const getCSVResources = React.useMemo(
@@ -338,7 +411,9 @@ export const useEventSourceList = (namespace: string): EventSourceListData | nul
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modelLoaded, csvDataLoaded]);
-  return eventSourceModels.length === 0 && accessData.loaded ? null : accessData;
+  return eventSourceModels.length === 0 && accessData.loaded
+    ? { loaded: true, eventSourceList: null }
+    : accessData;
 };
 
 export const getBootstrapServers = (kafkaResources: K8sResourceKind[]) => {

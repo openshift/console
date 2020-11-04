@@ -30,7 +30,10 @@ describe('ApplicationSelector', () => {
       noProjectsAvailable: true,
       namespace: 'rhd-test-ns',
     };
-    spyUseField.mockReturnValue([{ value: CREATE_APPLICATION_KEY }, {}]);
+    spyUseField.mockReturnValue([
+      { value: CREATE_APPLICATION_KEY, name: 'application.selectedKey' },
+      {},
+    ]);
     spyUseFormikContext.mockReturnValue({
       setFieldValue,
       setFieldTouched,
@@ -67,6 +70,9 @@ describe('ApplicationSelector', () => {
   });
 
   it('should reset the application name if the application list is empty', () => {
+    spyUseField
+      .mockReturnValueOnce([{ value: CREATE_APPLICATION_KEY, name: 'application.selectedKey' }, {}])
+      .mockReturnValueOnce([{ value: '', name: 'application.name' }, {}]);
     spyUseField.mockImplementationOnce(() => [{ value: CREATE_APPLICATION_KEY }]);
     wrapper.setProps({ noProjectsAvailable: false });
     wrapper
@@ -79,6 +85,9 @@ describe('ApplicationSelector', () => {
   });
 
   it('should set the application name and selectedKey on dropdown change', () => {
+    spyUseField
+      .mockReturnValueOnce([{ value: CREATE_APPLICATION_KEY, name: 'application.selectedKey' }, {}])
+      .mockReturnValueOnce([{ value: '', name: 'application.name' }, {}]);
     wrapper.setProps({ noProjectsAvailable: false });
     wrapper
       .find(ApplicationDropdown)
@@ -92,6 +101,9 @@ describe('ApplicationSelector', () => {
   });
 
   it('should not set the application name on dropdown change if the application is undefined', () => {
+    spyUseField
+      .mockReturnValueOnce([{ value: CREATE_APPLICATION_KEY, name: 'application.selectedKey' }, {}])
+      .mockReturnValueOnce([{ value: '', name: 'application.name' }, {}]);
     wrapper.setProps({ noProjectsAvailable: false });
     wrapper
       .find(ApplicationDropdown)

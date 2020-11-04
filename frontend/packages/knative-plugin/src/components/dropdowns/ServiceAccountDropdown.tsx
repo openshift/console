@@ -6,9 +6,11 @@ import { ResourceDropdownField } from '@console/shared';
 import { ServiceAccountModel } from '@console/internal/models';
 import { RootState } from '@console/internal/redux';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
+import { ResourceDropdownItems } from '@console/shared/src/components/dropdown/ResourceDropdown';
 
 interface ServiceAccountDropdownProps {
   name: string;
+  onLoad?: (items: ResourceDropdownItems) => void;
 }
 
 interface StateProps {
@@ -17,6 +19,7 @@ interface StateProps {
 
 const ServiceAccountDropdown: React.FC<ServiceAccountDropdownProps & StateProps> = ({
   name,
+  onLoad,
   namespace,
 }) => {
   const { t } = useTranslation();
@@ -40,6 +43,7 @@ const ServiceAccountDropdown: React.FC<ServiceAccountDropdownProps & StateProps>
       autocompleteFilter={autocompleteFilter}
       helpText={t('knative-plugin~The name of Service Account use to run this')}
       fullWidth
+      onLoad={onLoad}
       showBadge
     />
   );

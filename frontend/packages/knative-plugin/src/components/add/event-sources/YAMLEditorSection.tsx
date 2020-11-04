@@ -16,19 +16,21 @@ interface YAMLEditorSectionProps {
 
 const YAMLEditorSection: React.FC<YAMLEditorSectionProps> = ({ title }) => {
   const { setFieldValue, setFieldTouched, values } = useFormikContext<FormikValues>();
-  const formData = React.useRef(values);
-  if (formData.current.type !== values.type) {
-    formData.current = values;
+  const formDataRef = React.useRef(values);
+  if (formDataRef.current.formData.type !== values.formData.type) {
+    formDataRef.current = values;
   }
 
   React.useEffect(() => {
-    if (!isKnownEventSource(values.type)) {
+    if (!isKnownEventSource(values.formData.type)) {
       const {
-        project: { name: namespace },
-        data: { itemData },
-      } = formData.current;
+        formData: {
+          project: { name: namespace },
+          data: { itemData },
+        },
+      } = formDataRef.current;
       const yamlDumpData = _.isEmpty(itemData?.data?.almData)
-        ? getEventSourcesDepResource(formData.current as EventSourceFormData)
+        ? getEventSourcesDepResource(formDataRef.current.formData as EventSourceFormData)
         : {
             ...itemData.data.almData,
             metadata: { ...itemData.data.almData.metadata, namespace },
@@ -36,7 +38,7 @@ const YAMLEditorSection: React.FC<YAMLEditorSectionProps> = ({ title }) => {
       setFieldValue('yamlData', safeDump(yamlDumpData));
       setFieldTouched('yamlData', true);
     }
-  }, [values.type, setFieldTouched, setFieldValue]);
+  }, [setFieldTouched, setFieldValue, values.formData.type]);
 
   return (
     <FormSection title={title} flexLayout fullWidth>

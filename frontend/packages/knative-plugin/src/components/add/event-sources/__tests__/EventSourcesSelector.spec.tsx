@@ -26,9 +26,11 @@ jest.mock('formik', () => ({
     validateForm: jest.fn(),
     setErrors: jest.fn(),
     values: {
-      application: { selectedKey: '' },
-      type: 'SinkBinding',
-      name: 'sink-binding',
+      formData: {
+        application: { selectedKey: '' },
+        type: 'SinkBinding',
+        name: 'sink-binding',
+      },
     },
   })),
   getFieldId: jest.fn(),

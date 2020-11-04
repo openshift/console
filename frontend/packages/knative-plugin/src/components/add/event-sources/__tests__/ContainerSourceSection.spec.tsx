@@ -22,16 +22,18 @@ jest.mock('formik', () => ({
     setFieldTouched: jest.fn(),
     validateForm: jest.fn(),
     values: {
-      type: 'ContainerSource',
-      data: {
-        ContainerSource: {
-          template: {
-            spec: {
-              containers: [
-                {
-                  args: [],
-                },
-              ],
+      formData: {
+        type: 'ContainerSource',
+        data: {
+          ContainerSource: {
+            template: {
+              spec: {
+                containers: [
+                  {
+                    args: [],
+                  },
+                ],
+              },
             },
           },
         },

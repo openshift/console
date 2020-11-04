@@ -6,8 +6,8 @@ import {
   projectNameValidationSchema,
   applicationNameValidationSchema,
 } from '@console/dev-console/src/components/import/validation-schema';
+import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { EventSources, SinkType } from './import-types';
-import { isKnownEventSource } from '../../utils/create-eventsources-utils';
 import { isDefaultChannel, getChannelKind } from '../../utils/create-channel-utils';
 
 export const sinkTypeUriValidatiuon = (t) =>
@@ -185,19 +185,19 @@ export const sourceDataSpecSchema = (t: TFunction) =>
     });
 
 export const eventSourceValidationSchema = (t: TFunction) =>
-  yup.lazy((formData) => {
-    if (isKnownEventSource(formData.type)) {
-      return yup.object().shape({
+  yup.object().shape({
+    editorType: yup.string(),
+    formData: yup.object().when('editorType', {
+      is: EditorType.Form,
+      then: yup.object().shape({
         project: projectNameValidationSchema,
         application: applicationNameValidationSchema,
         name: nameValidationSchema,
         sink: sinkServiceSchema(t),
         data: sourceDataSpecSchema(t),
-      });
-    }
-    return yup.object().shape({
-      yamlData: yup.string(),
-    });
+      }),
+    }),
+    yamlData: yup.string(),
   });
 
 export const addChannelValidationSchema = (t: TFunction) =>

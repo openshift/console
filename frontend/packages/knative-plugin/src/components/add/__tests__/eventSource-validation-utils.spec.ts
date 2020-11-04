@@ -21,7 +21,7 @@ describe('Event Source ValidationUtils', () => {
     it('should throw an error for required fields if empty', async () => {
       const defaultEventingData = getDefaultEventingData(EventSources.CronJobSource);
       const mockData = _.cloneDeep(defaultEventingData);
-      mockData.sink = {
+      mockData.formData.sink = {
         apiVersion: '',
         name: '',
         kind: '',
@@ -53,13 +53,13 @@ describe('Event Source ValidationUtils', () => {
     it('should throw an error for required fields if empty', async () => {
       const defaultEventingData = getDefaultEventingData(EventSources.ApiServerSource);
       const mockData = _.cloneDeep(defaultEventingData);
-      mockData.sink = {
+      mockData.formData.sink = {
         apiVersion: '',
         name: '',
         kind: '',
         key: '',
       };
-      mockData.data.ApiServerSource.resources[0] = { apiVersion: '', kind: '' };
+      mockData.formData.data.ApiServerSource.resources[0] = { apiVersion: '', kind: '' };
       await eventSourceValidationSchema(t)
         .resolve({ value: mockData })
         .isValid(mockData)
@@ -86,7 +86,7 @@ describe('Event Source ValidationUtils', () => {
     it('should throw an error for required fields if empty', async () => {
       const defaultEventingData = getDefaultEventingData(EventSources.KafkaSource);
       const mockData = _.cloneDeep(defaultEventingData);
-      mockData.data.KafkaSource.bootstrapServers = [];
+      mockData.formData.data.KafkaSource.bootstrapServers = [];
       await eventSourceValidationSchema(t)
         .resolve({ value: mockData })
         .isValid(mockData)
@@ -115,7 +115,7 @@ describe('Event Source ValidationUtils', () => {
       const ContainerSourceData = {
         ...getDefaultEventingData(EventSources.ContainerSource),
       };
-      ContainerSourceData.data.ContainerSource.template.spec.containers[0].image = '';
+      ContainerSourceData.formData.data.ContainerSource.template.spec.containers[0].image = '';
       await eventSourceValidationSchema(t)
         .resolve({ value: ContainerSourceData })
         .isValid(ContainerSourceData)
@@ -142,7 +142,7 @@ describe('Event Source ValidationUtils', () => {
     it('should throw an error for required fields if empty', async () => {
       const defaultEventingData = getDefaultEventingData(EventSources.PingSource);
       const mockData = _.cloneDeep(defaultEventingData);
-      mockData.data.PingSource.schedule = '';
+      mockData.formData.data.PingSource.schedule = '';
       await eventSourceValidationSchema(t)
         .resolve({ value: mockData })
         .isValid(mockData)

@@ -16,18 +16,23 @@ import ApplicationDropdown from './ApplicationDropdown';
 interface ApplicationSelectorProps {
   namespace?: string;
   noProjectsAvailable?: boolean;
+  subPath?: string;
 }
 
 const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
   namespace,
   noProjectsAvailable,
+  subPath,
 }) => {
   const { t } = useTranslation();
   const [applicationsAvailable, setApplicationsAvailable] = React.useState(true);
   const availableApplications = React.useRef<string[]>([]);
   const projectsAvailable = !noProjectsAvailable;
 
-  const [selectedKey, { touched, error }] = useField('application.selectedKey');
+  const [selectedKey, { touched, error }] = useField(
+    subPath ? `${subPath}.application.selectedKey` : 'application.selectedKey',
+  );
+  const [nameField] = useField(subPath ? `${subPath}.application.name` : 'application.name');
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const [applicationExists, setApplicationExists] = React.useState<boolean>(false);
   const fieldId = getFieldId('application-name', 'dropdown');
@@ -37,10 +42,10 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
   useFormikValidationFix(selectedKey.value);
 
   const onDropdownChange = (key: string, application: string) => {
-    setFieldValue('application.selectedKey', key);
-    setFieldTouched('application.selectedKey', true);
-    setFieldValue('application.name', sanitizeApplicationValue(application, key));
-    setFieldTouched('application.name', true);
+    setFieldValue(selectedKey.name, key);
+    setFieldTouched(selectedKey.name, true);
+    setFieldValue(nameField.name, sanitizeApplicationValue(application, key));
+    setFieldTouched(nameField.name, true);
     setApplicationExists(false);
   };
 
@@ -49,8 +54,11 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
     setApplicationsAvailable(!noApplicationsAvailable);
     availableApplications.current = _.keys(applicationList);
     if (noApplicationsAvailable) {
-      setFieldValue('application.selectedKey', '');
-      setFieldValue('application.name', '');
+      setFieldValue(selectedKey.name, '');
+      setFieldValue(
+        nameField.name,
+        (selectedKey.value !== UNASSIGNED_KEY && nameField.value) ?? '',
+      );
     }
   };
 
@@ -103,7 +111,7 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
         <InputField
           type={TextInputTypes.text}
           required={selectedKey.value === CREATE_APPLICATION_KEY}
-          name="application.name"
+          name={nameField.name}
           label={t('topology~Application Name')}
           data-test-id="application-form-app-input"
           helpText={inputHelpText}

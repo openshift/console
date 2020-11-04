@@ -294,7 +294,12 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: ['/event-source/all-namespaces', '/event-source/ns/:ns'],
+      path: [
+        '/event-source/all-namespaces',
+        '/event-source/ns/:ns',
+        '/extensible-catalog/all-namespaces/eventsource',
+        '/extensible-catalog/ns/:ns/eventsource',
+      ],
       loader: async () =>
         (
           await import(

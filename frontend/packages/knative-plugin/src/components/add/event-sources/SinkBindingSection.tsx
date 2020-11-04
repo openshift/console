@@ -10,12 +10,14 @@ import { EventSources } from '../import-types';
 
 interface SinkBindingSectionProps {
   title: string;
+  fullWidth?: boolean;
 }
 
-const SinkBindingSection: React.FC<SinkBindingSectionProps> = ({ title }) => {
+const SinkBindingSection: React.FC<SinkBindingSectionProps> = ({ title, fullWidth }) => {
   const { t } = useTranslation();
   const { values, setFieldValue } = useFormikContext<FormikValues>();
-  const initVal = values?.data?.[EventSources.SinkBinding]?.subject?.selector?.matchLabels || {};
+  const initVal =
+    values?.formData?.data?.[EventSources.SinkBinding]?.subject?.selector?.matchLabels || {};
   const initialValueResources = !_.isEmpty(initVal)
     ? _.map(initVal, (key, val) => [val, key])
     : [['', '']];
@@ -32,7 +34,7 @@ const SinkBindingSection: React.FC<SinkBindingSectionProps> = ({ title }) => {
       });
       setNameValue(nameValuePairs);
       setFieldValue(
-        `data.${EventSources.SinkBinding}.subject.selector.matchLabels`,
+        `formData.data.${EventSources.SinkBinding}.subject.selector.matchLabels`,
         updatedNameValuePairs,
       );
     },
@@ -40,19 +42,19 @@ const SinkBindingSection: React.FC<SinkBindingSectionProps> = ({ title }) => {
   );
   const fieldId = getFieldId(values.type, 'subject-matchLabels');
   return (
-    <FormSection title={title} extraMargin>
+    <FormSection title={title} extraMargin fullWidth={fullWidth}>
       <h3 className="co-section-heading-tertiary">{t('knative-plugin~Subject')}</h3>
       <InputField
         data-test-id="sinkbinding-apiversion-field"
         type={TextInputTypes.text}
-        name={`data.${EventSources.SinkBinding}.subject.apiVersion`}
+        name={`formData.data.${EventSources.SinkBinding}.subject.apiVersion`}
         label={t('knative-plugin~apiVersion')}
         required
       />
       <InputField
         data-test-id="sinkbinding-kind-field"
         type={TextInputTypes.text}
-        name={`data.${EventSources.SinkBinding}.subject.kind`}
+        name={`formData.data.${EventSources.SinkBinding}.subject.kind`}
         label={t('knative-plugin~Kind')}
         required
       />
