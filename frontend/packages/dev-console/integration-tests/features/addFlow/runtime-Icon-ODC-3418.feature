@@ -3,13 +3,14 @@ Feature: Select Runtime Icon while deploying image and allow images insecure reg
 
 
 Background: 
-    Given user is at Developer perspective
+    Given user is at developer perspective
+    And user has selected namespace "aut-addflow-containerimage"
 
 
 @regression
 Scenario: Select Runtime icon while deploying secure image from external registry
-    Given user is at +Add page
-    When user clicks on Container Image card
+    Given user is at Add page
+    When user clicks on "Container Image" card
     And user selects image name from external registry radio button
     And user enters the image name
     And user selects the fedora icon from Runtime Icon dropdown
@@ -23,7 +24,7 @@ Scenario: Select Runtime icon while deploying secure image from external registr
 
 @regression
 Scenario: Select Runtime icon while deploying insecure image from external registry
-    Given user is at +Add page
+    Given user is at Add page
     When user clicks on Container Image card
     And user selects image name from external registry radio button
     And user enters the insecure image name
@@ -39,7 +40,7 @@ Scenario: Select Runtime icon while deploying insecure image from external regis
 
 @regression, @manual
 Scenario: Select Runtime icon while deploying image from internal registry
-    Given user is at +Add page
+    Given user is at Add page
     When user clicks on Container Image card
     And user selects image name from internal registry radio button
     And user selects the project from Projects dropdown

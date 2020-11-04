@@ -1,5 +1,6 @@
 import { addOptions, gitAdvancedOptions, buildConfigOptions } from '../../constants/add';
 import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
+import { pageTitle } from '../../staticText/addFlow'
 
 export const addPageObj = {
   cardTitle: 'div.catalog-tile-pf-title',
@@ -88,7 +89,7 @@ export const addPage = {
       .should('be.visible');
     cy.get(addPageObj.pipeline.infoMessage).should('have.text', message);
   },
-  enterGitUrl: (gitUrl: string) => cy.get(addPageObj.gitRepoUrl).type(gitUrl),
+  enterGitUrl: (gitUrl: string) => cy.get(addPageObj.gitRepoUrl).clear().type(gitUrl),
   verifyPipelineCheckBox: () => cy.get(addPageObj.pipeline.addPipeline).should('be.visible'),
   enterAppName: (appName: string) => {
     cy.get(addPageObj.appName).then(($el) => {
@@ -178,44 +179,44 @@ export const addPage = {
       case 'Git':
       case addOptions.Git:
         cy.byLegacyTestID('import-from-git').click();
-        detailsPage.titleShouldContain('Import from git');
+        detailsPage.titleShouldContain(pageTitle.Git);
         break;
       case 'Deploy Image':
       case addOptions.ContainerImage:
         cy.byLegacyTestID('deploy-image').click();
-        detailsPage.titleShouldContain('Deploy Image');
+        detailsPage.titleShouldContain(pageTitle.ContainerImage);
         break;
       case 'Import from Dockerfile':
       case addOptions.DockerFile:
         cy.byLegacyTestID('import-from-dockerfile').click();
-        detailsPage.titleShouldContain('Import from Dockerfile');
+        detailsPage.titleShouldContain(pageTitle.DockerFile);
         break;
       case 'Developer Catalog':
       case 'From Catalog':
       case addOptions.DeveloperCatalog:
         cy.byLegacyTestID('dev-catalog').click();
-        detailsPage.titleShouldContain('Developer Catalog');
+        detailsPage.titleShouldContain(pageTitle.DeveloperCatalog);
         break;
       case 'Database':
       case addOptions.Database:
         cy.byLegacyTestID('dev-catalog-databases').click();
-        detailsPage.titleShouldContain('Developer Catalog');
+        detailsPage.titleShouldContain(pageTitle.DeveloperCatalog);
         break;
       case 'Event Source':
       case addOptions.EventSource:
         cy.byLegacyTestID('knative-event-source').click();
-        detailsPage.titleShouldContain('Event Sources');
+        detailsPage.titleShouldContain(pageTitle.EventSource);
         break;
       case 'Helm Chart':
       case addOptions.HelmChart:
         cy.byLegacyTestID('helm').click();
-        detailsPage.titleShouldContain('Developer Catalog');
+        detailsPage.titleShouldContain(pageTitle.DeveloperCatalog);
         cy.byTestID('kind-helm-chart').should('be.checked');
         break;
       case 'Operator Backed':
       case addOptions.OperatorBacked:
         cy.byLegacyTestID('operator-backed').click();
-        detailsPage.titleShouldContain('Developer Catalog');
+        detailsPage.titleShouldContain(pageTitle.DeveloperCatalog);
         cy.byTestID('kind-cluster-service-version').should('be.checked');
         break;
       case 'Pipelines':
