@@ -4,6 +4,7 @@ export enum OperatingSystem {
   WINDOWS_10 = 'Microsoft Windows 10',
   VALIDATION_TEST = 'Validation Test',
   FEDORA = 'Fedora 31 or higher',
+  12,
 }
 
 export const OSIDLookup = {
@@ -20,8 +21,8 @@ export enum Flavor {
 
 export enum Workload {
   DESKTOP = 'Desktop',
-  HIGH_PERFORMANCE = 'highperformance',
-  SERVER = 'server',
+  HIGH_PERFORMANCE = 'High-performance',
+  SERVER = 'Server',
 }
 
 export enum Provider {
