@@ -3,6 +3,7 @@ import { MenuOptions } from '@console/dev-console/src/utils/add-resources-menu-u
 import {
   addResourceMenuWithoutCatalog,
   addResourceMenu,
+  addGroupResourceMenu,
 } from '@console/dev-console/src/actions/add-resources';
 import { GraphData, getResource } from '@console/dev-console/src/components/topology';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -23,7 +24,13 @@ export const getKnativeContextMenuAction = (
   graphData: GraphData,
   menu: MenuOptions,
   connectorSource?: Node,
+  isGroupActions: boolean = false,
 ): MenuOptions => {
+  if (!connectorSource && isGroupActions) {
+    if (graphData.eventSourceEnabled) {
+      return [...addGroupResourceMenu, addEventSource, addChannels];
+    }
+  }
   if (!connectorSource) {
     if (graphData.eventSourceEnabled) {
       return [...addResourceMenu, addEventSource, addChannels];
@@ -37,7 +44,9 @@ export const getKnativeContextMenuAction = (
   switch (sourceKind) {
     case referenceForModel(ServiceModel):
       return graphData.eventSourceEnabled
-        ? [...addResourceMenuWithoutCatalog, addEventSource]
+        ? isGroupActions
+          ? [...addGroupResourceMenu, addEventSource]
+          : [...addResourceMenuWithoutCatalog, addEventSource]
         : menu;
     case referenceForModel(EventingBrokerModel):
       return [addTrigger(EventingTriggerModel, connectorSource.getData().resource)];

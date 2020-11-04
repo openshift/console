@@ -4,7 +4,7 @@ import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { Model, Node } from '@patternfly/react-topology';
 import { asAccessReview } from '@console/internal/components/utils';
 import { getKnativeContextMenuAction } from '@console/knative-plugin/src/topology/create-connector-utils';
-import { addResourceMenuWithoutCatalog } from '../../../actions/add-resources';
+import { addGroupResourceMenu } from '../../../actions/add-resources';
 import { TopologyApplicationObject, GraphData, OdcNodeModel } from '../topology-types';
 import { getResource, getTopologyResourceObject } from '../topology-utils';
 import { deleteResourceModal } from '../../modals';
@@ -58,8 +58,8 @@ const addResourcesMenu = (
 ) => {
   const primaryResource = application.resources[0].resource;
   const connectorSourceObj = getResource(connectorSource) || {};
-  let resourceMenu: MenuOptions = addResourceMenuWithoutCatalog;
-  resourceMenu = getKnativeContextMenuAction(graphData, resourceMenu, connectorSource);
+  let resourceMenu: MenuOptions = addGroupResourceMenu;
+  resourceMenu = getKnativeContextMenuAction(graphData, resourceMenu, connectorSource, true);
   return _.reduce(
     resourceMenu,
     (menuItems, menuItem) => {

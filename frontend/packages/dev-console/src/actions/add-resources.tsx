@@ -73,8 +73,11 @@ export const addResourceMenu: KebabAction[] = [
   fromHelmCharts,
 ];
 
+export const addGroupResourceMenu: KebabAction[] = [fromGit, containerImage, fromDockerfile];
+
 export const addResourceMenuWithoutCatalog: KebabAction[] = [
   fromGit,
   containerImage,
   fromDockerfile,
+  fromOperatorBacked,
 ];
