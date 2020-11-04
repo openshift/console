@@ -7,6 +7,7 @@ import { SelectorInput } from '../utils';
 import { RadioGroup } from './utils/radio';
 import { Section } from './utils/section';
 import { InputSelectBox } from './utils/inputSelectBox';
+import { NumberSpinner } from './utils/number-spinner';
 
 const defaultValues = {
   // requestDo에 넣어줄 형식으로 defaultValues 작성
@@ -73,6 +74,13 @@ const CreateSampleComponent: React.FC<SampleFormProps> = props => {
             name="spec.section.resources" // 서버에 보낼 데이터에서의 path (필수)
             items={resources} // [{title: '', value: ''}] (필수)
             inline={false} // inline속성 먹일거면 true, 아니면 빼면 됨 (선택)
+          />
+        </Section>
+        <Section id="numberspinner" label="Number Spinner">
+          <NumberSpinner
+            min={-1}
+            max={3}
+            name="spinner1" // 한 페이지에 spinner 여러 개 만들 경우 name에 unique한 값을 넣어줘야 됨 (한개만 만들 땐 name이 필수 아님)
           />
         </Section>
       </Section>
