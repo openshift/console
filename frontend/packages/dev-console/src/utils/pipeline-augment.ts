@@ -11,6 +11,7 @@ import {
   K8sResourceKind,
   PersistentVolumeClaimKind,
   referenceForModel,
+  GroupVersionKind,
 } from '@console/internal/module/k8s';
 import {
   ClusterTaskModel,
@@ -491,3 +492,8 @@ export const getResourceModelFromTask = (task: PipelineTask): K8sKind => {
 
 export const pipelineRefExists = (pipelineRun: PipelineRun): boolean =>
   !!pipelineRun.spec.pipelineRef?.name;
+
+export const getModelReferenceFromTaskKind = (kind: string): GroupVersionKind => {
+  const model = getResourceModelFromTaskKind(kind);
+  return referenceForModel(model);
+};
