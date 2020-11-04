@@ -10,6 +10,7 @@ import * as ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin
 import { resolvePluginPackages, getActivePluginsModule } from '@console/plugin-sdk/src/codegen';
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
 import { CircularDependencyPreset } from './webpack.circular-deps';
+import { sharedVendorModules } from '@console/dynamic-plugin-sdk/src/shared-modules';
 
 interface Configuration extends webpack.Configuration {
   devServer?: WebpackDevServerConfiguration;
@@ -29,6 +30,7 @@ const WDS_PORT = 8080;
 /* Helpers */
 const extractCSS = new MiniCssExtractPlugin({ filename: 'app-bundle.[contenthash].css' });
 const overpassTest = /overpass-.*\.(woff2?|ttf|eot|otf)(\?.*$|$)/;
+const sharedVendorTest = new RegExp(`node_modules\\/(${sharedVendorModules.join('|')})\\/`);
 
 const config: Configuration = {
   entry: [
@@ -64,6 +66,11 @@ const config: Configuration = {
   },
   module: {
     rules: [
+      {
+        // Disable tree shaking on modules shared with Console dynamic plugins
+        test: sharedVendorTest,
+        sideEffects: true,
+      },
       { test: /\.glsl$/, loader: 'raw!glslify' },
       {
         test: /(\.jsx?)|(\.tsx?)$/,
@@ -192,6 +199,12 @@ const config: Configuration = {
     }),
     new CopyWebpackPlugin([{ from: './public/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/console-shared/locales', to: 'locales' }]),
+    new CopyWebpackPlugin([{ from: './packages/console-app/locales', to: 'locales' }]),
+    new CopyWebpackPlugin([
+      { from: './packages/operator-lifecycle-manager/locales', to: 'locales' },
+    ]),
+    new CopyWebpackPlugin([{ from: './packages/dev-console/locales', to: 'locales' }]),
+    new CopyWebpackPlugin([{ from: './packages/knative-plugin/locales', to: 'locales' }]),
     new MomentLocalesPlugin({
       localesToKeep: Object.keys(SUPPORTED_LOCALES).map((key) => (key === 'zh' ? 'zh-cn' : key)),
     }),

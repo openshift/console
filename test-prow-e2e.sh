@@ -17,7 +17,7 @@ trap copyArtifacts EXIT
 
 # don't log kubeadmin-password
 set +x
-BRIDGE_KUBEADMIN_PASSWORD="$(cat "${INSTALLER_DIR}/auth/kubeadmin-password")"
+BRIDGE_KUBEADMIN_PASSWORD="$(cat "${KUBEADMIN_PASSWORD_FILE:-${INSTALLER_DIR}/auth/kubeadmin-password}")"
 export BRIDGE_KUBEADMIN_PASSWORD
 set -x
 BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jsonpath='{.status.consoleURL}')"
@@ -35,11 +35,11 @@ export DBUS_SESSION_BUS_ADDRESS
 SCENARIO="${1:-e2e}"
 
 if [ "$SCENARIO" != "login" ]; then
-  CHROME_VERSION=$(google-chrome --version) ./test-gui.sh "$SCENARIO"
+  CHROME_VERSION=$(google-chrome --version) ./test-protractor.sh "$SCENARIO"
 fi
 
 if [ "$SCENARIO" == "e2e" ] || [ "$SCENARIO" == "release" ]; then
-  ./test-cypress.sh
+  ./test-cypress.sh -h true
 elif [ "$SCENARIO" == "login" ]; then
-  ./test-cypress.sh 'tests/app/auth-multiuser-login.spec.ts'
+  ./test-cypress.sh -p console -s 'tests/app/auth-multiuser-login.spec.ts' -h true
 fi

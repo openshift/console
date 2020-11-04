@@ -3,6 +3,17 @@ import { shallow } from 'enzyme';
 import ResourceDropdown from '../ResourceDropdown';
 import { mockDropdownData } from '../__mocks__/dropdown-data-mock';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    withTranslation: () => (Component) => {
+      Component.defaultProps = { ...Component.defaultProps, t: (s) => s };
+      return Component;
+    },
+  };
+});
+
 const componentFactory = (props = {}) => (
   <ResourceDropdown
     placeholder="Select an Item"

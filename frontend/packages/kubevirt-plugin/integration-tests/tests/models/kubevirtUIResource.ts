@@ -1,4 +1,5 @@
 /* eslint-disable no-await-in-loop */
+import * as _ from 'lodash';
 import { browser, ExpectedConditions as until } from 'protractor';
 import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
 import { click, waitForCount } from '@console/shared/src/test-utils/utils';
@@ -131,11 +132,12 @@ export class KubevirtUIResource<T extends BaseVMBuilderData> extends UIResource 
   async getAttachedDisks(): Promise<Disk[]> {
     await this.navigateToTab(TAB.Disks);
     const rows = await kubevirtDetailView.tableRows();
-    return rows.map((line) => {
-      const cols = line.split(/\n/);
+    return rows.map((row: string) => {
+      const newRow = row.replace('(pending restart)\n', ''); // if disk added when VM was up
+      const cols = newRow.split(/\n/);
       return {
         name: cols[diskTabCol.name],
-        size: cols[diskTabCol.size].slice(0, -4),
+        size: cols[diskTabCol.size]?.slice(0, -4),
         drive: cols[diskTabCol.drive],
         interface: cols[diskTabCol.interface],
         storageClass: cols[diskTabCol.storageClass],
@@ -146,14 +148,15 @@ export class KubevirtUIResource<T extends BaseVMBuilderData> extends UIResource 
   async getAttachedNICs(): Promise<Network[]> {
     await this.navigateToTab(TAB.NetworkInterfaces);
     const rows = await kubevirtDetailView.tableRows();
-    return rows.map((line) => {
-      const cols = line.split(/\n/);
+    return rows.map((row: string) => {
+      const newRow = row.replace('(pending restart)\n', ''); // if Nic added when VM was up
+      const cols = newRow.split(/\n/);
       return {
         name: cols[networkTabCol.name],
         model: cols[networkTabCol.model],
         mac: cols[networkTabCol.mac],
         network: cols[networkTabCol.network],
-        type: cols[networkTabCol.type],
+        type: _.capitalize(cols[networkTabCol.type]),
       };
     });
   }

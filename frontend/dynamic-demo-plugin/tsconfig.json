@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "target": "es2016",
+    "jsx": "react",
+    "allowJs": true,
+    "strict": true,
+    "noUnusedLocals": true
+  },
+  "include": ["src"]
+}

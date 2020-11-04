@@ -1,0 +1,34 @@
+{
+  "name": "@console/dynamic-demo-plugin",
+  "version": "0.0.0-fixed",
+  "private": true,
+  "scripts": {
+    "clean": "rm -rf ./dist",
+    "build": "yarn clean && yarn ts-node ./node_modules/.bin/webpack",
+    "http-server": "http-server ./dist -p 9001 -c-1 --cors",
+    "ts-node": "ts-node -O '{\"module\":\"commonjs\"}' -I '/node_modules/(?!(@console)/)/'"
+  },
+  "dependencies": {
+    "react": "16.9.0"
+  },
+  "devDependencies": {
+    "@console/dynamic-plugin-sdk": "link:../packages/console-dynamic-plugin-sdk",
+    "@types/react": "16.8.13",
+    "http-server": "0.12.x",
+    "ts-loader": "6.2.2",
+    "ts-node": "5.0.1",
+    "typescript": "3.8.3",
+    "webpack": "5.0.0-beta.16",
+    "webpack-cli": "3.3.9"
+  },
+  "consolePlugin": {
+    "displayName": "Dynamic Demo Plugin",
+    "description": "Plasma reactors online. Initiating hyper drive.",
+    "exposedModules": {
+      "barUtils": "./utils/bar"
+    },
+    "dependencies": {
+      "@console/pluginAPI": "~0.0.1"
+    }
+  }
+}

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import cx from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { Title, WizardNavItem } from '@patternfly/react-core';
 import { CheckCircleIcon, TimesCircleIcon } from '@patternfly/react-icons';
 import { QuickStartTaskStatus } from '../utils/quick-start-types';
@@ -21,10 +22,11 @@ const TaskIcon: React.FC<{ taskIndex; taskStatus; isActiveTask }> = ({
   taskStatus,
   isActiveTask,
 }) => {
+  const { t } = useTranslation();
   if (isActiveTask) {
     return (
       <span className="co-icon-and-text__icon co-quick-start-task-header__task-icon-init">
-        {taskIndex}
+        {t('quickstart~{{taskIndex, number}}', { taskIndex })}
       </span>
     );
   }
@@ -44,7 +46,7 @@ const TaskIcon: React.FC<{ taskIndex; taskStatus; isActiveTask }> = ({
     default:
       return (
         <span className="co-icon-and-text__icon co-quick-start-task-header__task-icon-init">
-          {taskIndex}
+          {t('quickstart~{{taskIndex, number}}', { taskIndex })}
         </span>
       );
   }

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useFormikContext, FormikValues } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { FormGroup } from '@patternfly/react-core';
 import { AsyncComponent } from '@console/internal/components/utils/async';
 import { DropdownField, getFieldId } from '@console/shared';
@@ -13,6 +14,7 @@ interface ApiServerSectionProps {
 }
 
 const ApiServerSection: React.FC<ApiServerSectionProps> = ({ title }) => {
+  const { t } = useTranslation();
   const { values, setFieldValue } = useFormikContext<FormikValues>();
   const initVal = values?.data?.[EventSources.ApiServerSource]?.resources || [];
   const initialValueResources = !_.isEmpty(initVal)
@@ -43,8 +45,8 @@ const ApiServerSection: React.FC<ApiServerSectionProps> = ({ title }) => {
     <FormSection title={title} extraMargin>
       <FormGroup
         fieldId={fieldId}
-        label="Resource"
-        helperText="The list of resources to watch"
+        label={t('knative-plugin~Resource')}
+        helperText={t('knative-plugin~The list of resources to watch')}
         isRequired
       >
         <AsyncComponent
@@ -56,7 +58,7 @@ const ApiServerSection: React.FC<ApiServerSectionProps> = ({ title }) => {
           nameValuePairs={nameValue}
           valueString="kind"
           nameString="apiVersion"
-          addString="Add Resource"
+          addString={t('knative-plugin~Add Resource')}
           readOnly={false}
           allowSorting={false}
           updateParentData={handleNameValuePairs}
@@ -64,10 +66,10 @@ const ApiServerSection: React.FC<ApiServerSectionProps> = ({ title }) => {
       </FormGroup>
       <DropdownField
         name={`data.${EventSources.ApiServerSource}.mode`}
-        label="Mode"
+        label={t('knative-plugin~Mode')}
         items={modeItems}
         title={modeItems.Ref}
-        helpText="The mode the receive adapter controller runs under"
+        helpText={t('knative-plugin~The mode the receive adapter controller runs under')}
         fullWidth
       />
       <ServiceAccountDropdown name={`data.${EventSources.ApiServerSource}.serviceAccountName`} />

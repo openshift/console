@@ -16,7 +16,12 @@ import {
   iGetName,
   iGetNamespace,
 } from '../../selectors/immutable/selectors';
-import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
+import {
+  iGetDefaultTemplate,
+  iGetRelevantTemplate,
+  getITemplateDefaultFlavor,
+  getITemplateDefaultWorkload,
+} from '../../../../selectors/immutable/template/combined';
 import {
   CUSTOM_FLAVOR,
   TEMPLATE_DATAVOLUME_NAME_PARAMETER,
@@ -85,6 +90,31 @@ const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
       { isHidden: asHidden(!isWindows, VMSettingsField.OPERATING_SYSTEM), value: isWindows },
     ),
   );
+
+  const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
+  const iDefaultTemplate = iCommonTemplates && iGetDefaultTemplate(iCommonTemplates, os);
+  const defaultFlavor = getITemplateDefaultFlavor(iDefaultTemplate);
+  const defaultWorkload = getITemplateDefaultWorkload(iDefaultTemplate);
+
+  if (defaultFlavor) {
+    dispatch(
+      vmWizardInternalActions[InternalActionType.UpdateVmSettingsField](
+        id,
+        VMSettingsField.FLAVOR,
+        { value: defaultFlavor.getValue() },
+      ),
+    );
+  }
+
+  if (defaultWorkload) {
+    dispatch(
+      vmWizardInternalActions[InternalActionType.UpdateVmSettingsField](
+        id,
+        VMSettingsField.WORKLOAD_PROFILE,
+        { value: defaultWorkload.getValue() },
+      ),
+    );
+  }
 };
 
 const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {

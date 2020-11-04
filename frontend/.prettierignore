@@ -1,5 +1,4 @@
-node_modules
-bower_components
 .cache-loader
 .yarn
+node_modules
 public/dist

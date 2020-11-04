@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Form } from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { global_warning_color_100 as warningColor } from '@patternfly/react-tokens';
@@ -25,6 +26,7 @@ type DeleteHPAModalProps = ModalComponentProps & {
 const DeleteHPAModal: React.FC<DeleteHPAModalProps> = ({ close, hpa, workload }) => {
   const [submitError, setSubmitError] = React.useState<string>(null);
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
+  const { t } = useTranslation();
   const hpaName = hpa.metadata.name;
   const workloadName = workload.metadata.name;
 
@@ -38,7 +40,10 @@ const DeleteHPAModal: React.FC<DeleteHPAModalProps> = ({ close, hpa, workload })
       .catch((error) => {
         setSubmitError(
           error?.message ||
-            `Unknown error removing ${HorizontalPodAutoscalerModel.label} ${hpaName}.`,
+            t('console-shared~Unknown error removing {{hpaLabel}} {{hpaName}}.', {
+              hpaLabel: HorizontalPodAutoscalerModel.label,
+              hpaName,
+            }),
         );
       });
   };
@@ -47,19 +52,23 @@ const DeleteHPAModal: React.FC<DeleteHPAModalProps> = ({ close, hpa, workload })
     <Form onSubmit={handleSubmit}>
       <div className="modal-content">
         <ModalTitle>
-          <ExclamationTriangleIcon color={warningColor.value} /> Remove{' '}
-          {HorizontalPodAutoscalerModel.label}?
+          <ExclamationTriangleIcon color={warningColor.value} />{' '}
+          {t('console-shared~Remove {{label}}?', { label: HorizontalPodAutoscalerModel.label })}
         </ModalTitle>
         <ModalBody>
           {hpaName ? (
             <>
               <p>
-                Are you sure you want to remove the {HorizontalPodAutoscalerModel.label}{' '}
-                <b>{hpaName}</b> from <b>{workloadName}</b>?
+                {t('console-shared~Are you sure you want to remove the {{hpaLabel}}', {
+                  hpaLabel: HorizontalPodAutoscalerModel.label,
+                })}{' '}
+                <b>{hpaName}</b> {t('console-shared~from')} <b>{workloadName}</b>?
               </p>
               <p>
-                The resources that are attached to the {HorizontalPodAutoscalerModel.label} will be
-                deleted.
+                {t(
+                  'console-shared~The resources that are attached to the {{hpaLabel}} will be deleted.',
+                  { hpaLabel: HorizontalPodAutoscalerModel.label },
+                )}
               </p>
             </>
           ) : (
@@ -69,7 +78,7 @@ const DeleteHPAModal: React.FC<DeleteHPAModalProps> = ({ close, hpa, workload })
         <ModalSubmitFooter
           errorMessage={submitError}
           inProgress={isSubmitting}
-          submitText="Remove"
+          submitText={t('console-shared~Remove')}
           submitDanger
           submitDisabled={!!submitError}
           cancel={close}

@@ -19,7 +19,6 @@ const AlertSeverityIcon: React.FC<AlertSeverityIconProps> = ({
             fontSize,
             color: 'var(--pf-global--danger-color--100)',
           }}
-          title="Monitoring Alert"
         />
       );
     case AlertSeverity.Warning:
@@ -29,7 +28,6 @@ const AlertSeverityIcon: React.FC<AlertSeverityIconProps> = ({
             fontSize,
             color: 'var(--pf-global--warning-color--100)',
           }}
-          title="Monitoring Alert"
         />
       );
     default:

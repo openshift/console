@@ -1,6 +1,5 @@
 import * as React from 'react';
-import * as FocusTrap from 'focus-trap-react';
-import { Button, Flex, FlexItem } from '@patternfly/react-core';
+import { Button, Flex, FlexItem, FocusTrap } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import Popper from '@console/shared/src/components/popper/Popper';
 import { KebabItem, KebabOption, ResourceIcon } from '@console/internal/components/utils';

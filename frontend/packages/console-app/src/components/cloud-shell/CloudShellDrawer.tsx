@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Tooltip, Flex, FlexItem, Button } from '@patternfly/react-core';
 import { CloseIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { InlineTechPreviewBadge } from '@console/shared';
@@ -20,6 +21,7 @@ const getMastheadHeight = (): number => {
 
 const CloudShellDrawer: React.FC<CloudShellDrawerProps> = ({ children, onClose }) => {
   const [expanded, setExpanded] = React.useState<boolean>(true);
+  const { t } = useTranslation();
   const onMRButtonClick = (expandedState: boolean) => {
     setExpanded(!expandedState);
   };
@@ -28,35 +30,37 @@ const CloudShellDrawer: React.FC<CloudShellDrawerProps> = ({ children, onClose }
   };
   const header = (
     <Flex style={{ flexGrow: 1 }}>
-      <FlexItem className="co-cloud-shell-drawer__heading">Command line terminal</FlexItem>
+      <FlexItem className="co-cloud-shell-drawer__heading">
+        {t('cloudshell~Command line terminal')}
+      </FlexItem>
       <FlexItem>
         <InlineTechPreviewBadge />
       </FlexItem>
       <FlexItem align={{ default: 'alignRight' }}>
-        <Tooltip content="Open terminal in new tab">
+        <Tooltip content={t('cloudshell~Open terminal in new tab')}>
           <Button
             variant="plain"
             component="a"
             href="/terminal"
             target="_blank"
-            aria-label="Open terminal in new tab"
+            aria-label={t('cloudshell~Open terminal in new tab')}
           >
             <ExternalLinkAltIcon />
           </Button>
         </Tooltip>
         <MinimizeRestoreButton
           minimize={expanded}
-          minimizeText="Minimize terminal"
-          restoreText="Restore terminal"
+          minimizeText={t('cloudshell~Minimize terminal')}
+          restoreText={t('cloudshell~Restore terminal')}
           onClick={onMRButtonClick}
         />
-        <Tooltip content="Close terminal">
+        <Tooltip content={t('cloudshell~Close terminal')}>
           <Button
             variant="plain"
             data-test-id="cloudshell-terminal-close"
             type="button"
             onClick={onClose}
-            aria-label="Close terminal"
+            aria-label={t('cloudshell~Close terminal')}
           >
             <CloseIcon />
           </Button>

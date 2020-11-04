@@ -1,0 +1,16 @@
+{
+  "Log stream ended.": "Log stream ended.",
+  "Loading log...": "Loading log...",
+  "Log stream paused.": "Log stream paused.",
+  "Log streaming...": "Log streaming...",
+  "Raw": "Raw",
+  "Download": "Download",
+  "Collapse": "Collapse",
+  "Expand": "Expand",
+  "An error occurred while retrieving the requested logs.": "An error occurred while retrieving the requested logs.",
+  "Retry": "Retry",
+  "Some lines have been abridged because they are exceptionally long.": "Some lines have been abridged because they are exceptionally long.",
+  "To view unabridged log content, you can either <2>open the raw file in another window</2> or <6>download it</6>.": "To view unabridged log content, you can either <2>open the raw file in another window</2> or <6>download it</6>.",
+  "The logs for this {{resourceKind}} may be stale.": "The logs for this {{resourceKind}} may be stale.",
+  "Refresh": "Refresh"
+}

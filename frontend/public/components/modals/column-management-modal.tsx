@@ -12,6 +12,7 @@ import {
   DataListCell,
   DataListItemCells,
 } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory';
 import { setTableColumns } from '../../actions/ui';
@@ -55,6 +56,7 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps> = ({
   close,
   columnLayout,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const defaultColumns = columnLayout.columns.filter((column) => column.id && !column.additional);
   const additionalColumns = columnLayout.columns.filter((column) => column.additional);
@@ -96,26 +98,32 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps> = ({
 
   return (
     <form onSubmit={submit} name="form" className="modal-content">
-      <ModalTitle className="modal-header">Manage Columns</ModalTitle>
+      <ModalTitle className="modal-header">{t('modal~Manage columns')}</ModalTitle>
       <ModalBody>
         <div className="co-m-form-row">
-          <p>Selected columns will appear in the table.</p>
+          <p>{t('modal~Selected columns will appear in the table.')}</p>
         </div>
         <div className="co-m-form-row">
           <Alert
             className="co-alert"
             isInline
-            title={`You can select up to ${MAX_VIEW_COLS} columns`}
+            title={t('modal~You can select up to {{MAX_VIEW_COLS}} columns', { MAX_VIEW_COLS })}
             variant="info"
           >
-            The namespace column is only shown when in 'All Projects'
+            {t('modal~The namespace column is only shown when in "All projects"')}
           </Alert>
         </div>
         <div className="row co-m-form-row">
           <div className="col-sm-12">
             <span className="col-sm-6">
-              <label className="control-label">Default {columnLayout.type} Columns</label>
-              <DataList aria-label="default column list" id="defalt-column-management" isCompact>
+              <label className="control-label">
+                {t('modal~Default {{resourceKind}} columns', { resourceKind: columnLayout.type })}
+              </label>
+              <DataList
+                aria-label={t('modal~Default column list')}
+                id="defalt-column-management"
+                isCompact
+              >
                 {defaultColumns.map((defaultColumn) => (
                   <DataListRow
                     key={defaultColumn.id}
@@ -128,9 +136,9 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps> = ({
               </DataList>
             </span>
             <span className="col-sm-6">
-              <label className="control-label">Additional Columns</label>
+              <label className="control-label">{t('modal~Additional columns')}</label>
               <DataList
-                aria-label="Additional column list"
+                aria-label={t('modal~Additional column list')}
                 id="additional-column-management"
                 isCompact
               >
@@ -151,8 +159,8 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps> = ({
       <ModalSubmitFooter
         inProgress={false}
         cancel={cancel}
-        submitText="Save"
-        resetText="Restore Default Columns"
+        submitText={t('public~Save')}
+        resetText={t('modal~Restore default columns')}
         reset={resetColumns}
       />
     </form>

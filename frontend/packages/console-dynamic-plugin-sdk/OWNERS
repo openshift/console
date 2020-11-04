@@ -1,0 +1,10 @@
+reviewers:
+  - christianvogt
+  - spadgett
+  - vojtechszocs
+approvers:
+  - christianvogt
+  - spadgett
+  - vojtechszocs
+labels:
+  - component/sdk

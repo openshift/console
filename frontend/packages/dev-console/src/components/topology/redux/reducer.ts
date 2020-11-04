@@ -58,5 +58,14 @@ export default (state: State, action: TopologyAction) => {
     return state.set('supportedKinds', action.payload.supportedKinds);
   }
 
+  if (action.type === Actions.topologyGraphModel) {
+    const savedGraphModels = state.get('topologyGraphModel');
+    const updatedGraphModels = {
+      ...savedGraphModels,
+      [action.payload.namespace]: action.payload.graphModel,
+    };
+    return state.set('topologyGraphModel', updatedGraphModels);
+  }
+
   return state;
 };

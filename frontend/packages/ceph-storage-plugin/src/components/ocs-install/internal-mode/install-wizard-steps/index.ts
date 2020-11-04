@@ -1,3 +1,3 @@
-export * from './step1';
-export * from './step2';
-export * from './step3';
+export * from './select-capacity-and-nodes-step';
+export * from './configure';
+export * from './review-and-create';

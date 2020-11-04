@@ -14,6 +14,14 @@ import { EventSourceContainerModel } from '../../../models';
 type EventSourceFormProps = React.ComponentProps<typeof EventSourceForm>;
 let formProps: EventSourceFormProps;
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 describe('EventSource Form', () => {
   const defaultEventingData = getDefaultEventingData(EventSources.CronJobSource);
   const eventSourceStatusData = {

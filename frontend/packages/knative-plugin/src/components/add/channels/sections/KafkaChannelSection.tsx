@@ -1,20 +1,28 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { NumberSpinnerField } from '@console/shared';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 
-const KafkaChannelSection: React.FC = () => (
-  <FormSection extraMargin>
-    <NumberSpinnerField
-      name="data.kafkachannel.numPartitions"
-      label="Number of Partitions"
-      helpText="The number of partitions of a Kafka topic. By default is, set to 1."
-    />
-    <NumberSpinnerField
-      name="data.kafkachannel.replicationFactor"
-      label="Replication Factor"
-      helpText="The Replication Factor of a Kafka topic. By default is, set to 1."
-    />
-  </FormSection>
-);
+const KafkaChannelSection: React.FC = () => {
+  const { t } = useTranslation();
+  return (
+    <FormSection extraMargin>
+      <NumberSpinnerField
+        name="data.kafkachannel.numPartitions"
+        label={t('knative-plugin~Number of Partitions')}
+        helpText={t(
+          'knative-plugin~The number of partitions of a Kafka topic. By default is, set to 1.',
+        )}
+      />
+      <NumberSpinnerField
+        name="data.kafkachannel.replicationFactor"
+        label={t('knative-plugin~Replication Factor')}
+        helpText={t(
+          'knative-plugin~The Replication Factor of a Kafka topic. By default is, set to 1.',
+        )}
+      />
+    </FormSection>
+  );
+};
 
 export default KafkaChannelSection;

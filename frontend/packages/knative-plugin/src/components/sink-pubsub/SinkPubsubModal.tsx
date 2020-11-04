@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { FormikProps, FormikValues } from 'formik';
+import { useTranslation } from 'react-i18next';
 import {
   ModalTitle,
   ModalBody,
@@ -33,6 +34,7 @@ const SinkPubsubModal: React.FC<Props> = ({
   values,
   initialValues,
 }) => {
+  const { t } = useTranslation();
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
   const onSinkChange = React.useCallback(
     (selectedValue, target) => {
@@ -59,7 +61,7 @@ const SinkPubsubModal: React.FC<Props> = ({
       <ModalTitle>{labelTitle}</ModalTitle>
       <ModalBody>
         <p>
-          Connects <strong>{resourceName}</strong> to
+          {t('knative-plugin~Connects')} <strong>{resourceName}</strong> {t('knative-plugin~to')}
         </p>
         <FormSection fullWidth>
           <ResourceDropdownField
@@ -68,7 +70,7 @@ const SinkPubsubModal: React.FC<Props> = ({
             dataSelector={['metadata', 'name']}
             fullWidth
             required
-            placeholder="Select a sink"
+            placeholder="knative-plugin~Select a sink"
             showBadge
             autocompleteFilter={autocompleteFilter}
             onChange={onSinkChange}
@@ -79,7 +81,8 @@ const SinkPubsubModal: React.FC<Props> = ({
       </ModalBody>
       <ModalSubmitFooter
         inProgress={isSubmitting}
-        submitText="Save"
+        submitText={t('knative-plugin~Save')}
+        cancelText={t('knative-plugin~Cancel')}
         submitDisabled={!dirty}
         cancel={cancel}
         errorMessage={status.error}

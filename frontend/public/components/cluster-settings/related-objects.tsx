@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import '@patternfly/patternfly/patternfly-addons.css';
+import { useTranslation } from 'react-i18next';
 import { Table, TableRow, TableData, RowFunctionArgs } from '../factory';
 import {
   referenceForModel,
@@ -16,33 +17,6 @@ const tableColumnClasses = [
   classNames('pf-m-hidden', 'pf-m-visible-on-sm'), // Resource
   classNames('pf-m-hidden', 'pf-m-visible-on-md'), // Group
   '', // NS
-];
-
-const Header = () => [
-  {
-    title: 'Name',
-    sortField: 'name',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[0] },
-  },
-  {
-    title: 'Resource',
-    sortField: 'resource',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[1] },
-  },
-  {
-    title: 'Group',
-    sortField: 'group',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[2] },
-  },
-  {
-    title: 'Namespace',
-    sortField: 'namespace',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[3] },
-  },
 ];
 
 const Row: React.FC<RowFunctionArgs> = ({ obj, index, key, style, customData: { findModel } }) => {
@@ -71,6 +45,33 @@ const EmptyMessage = () => <EmptyBox label="Related Objects" />;
 
 const RelatedObjects: React.FC<RelatedObjectsProps> = (props) => {
   const { findModel } = useModelFinder();
+  const { t } = useTranslation();
+  const Header = () => [
+    {
+      title: t('related-objects~Name'),
+      sortField: 'name',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: t('related-objects~Resource'),
+      sortField: 'resource',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: t('related-objects~Group'),
+      sortField: 'group',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: t('related-objects~Namespace'),
+      sortField: 'namespace',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+  ];
   return (
     <div className="co-m-pane__body">
       <Table
@@ -78,7 +79,7 @@ const RelatedObjects: React.FC<RelatedObjectsProps> = (props) => {
         Header={Header}
         Row={Row}
         customData={{ findModel }}
-        aria-label="Related Objects"
+        aria-label={t('related-objects~Related objects')}
         NoDataEmptyMsg={EmptyMessage}
       />
     </div>

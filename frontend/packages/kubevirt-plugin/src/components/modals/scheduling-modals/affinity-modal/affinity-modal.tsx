@@ -5,6 +5,7 @@ import {
   HandlePromiseProps,
   FirehoseResult,
 } from '@console/internal/components/utils';
+import { getName } from '@console/shared';
 import {
   Button,
   ButtonVariant,
@@ -16,6 +17,8 @@ import {
   EmptyStateVariant,
   Title,
   EmptyStateBody,
+  Stack,
+  StackItem,
 } from '@patternfly/react-core';
 import { ModalTitle, ModalBody, ModalComponentProps } from '@console/internal/components/factory';
 import { NodeModel } from '@console/internal/models';
@@ -30,7 +33,7 @@ import { AFFINITY_MODAL_TITLE, AFFINITY_CREATE, AFFINITY_EDITING } from '../shar
 import { AffinityTable } from './components/affinity-table/affinity-table';
 import { AffinityRow } from './components/affinity-table/affinity-row';
 import { AffinityEdit } from './components/affinity-edit/affinity-edit';
-import { AffinityRowData } from './types';
+import { AffinityCondition, AffinityRowData, AffinityType } from './types';
 import {
   getRowsDataFromAffinity,
   getAffinityFromRowsData,
@@ -38,8 +41,9 @@ import {
   columnClasses,
   getAvailableAffinityID,
 } from './helpers';
+import { useAffinitiesQualifiedNodes } from '../shared/hooks';
+import { NodeChecker } from '../shared/NodeChecker/node-checker';
 import { getAffinityPatch } from '../../../../k8s/patches/vm/vm-scheduling-patches';
-
 import '../shared/scheduling-modals.scss';
 
 export const AffinityModal = withHandlePromise<AffinityModalProps>(
@@ -69,6 +73,47 @@ export const AffinityModal = withHandlePromise<AffinityModalProps>(
       vmLikeFinal,
       (oldVM: VMLikeEntityKind, newVM: VMLikeEntityKind) =>
         _.isEqual(getVMLikeAffinity(oldVM), getVMLikeAffinity(newVM)),
+    );
+
+    const [requiredNodeAffinities, preferredNodeAffinities] = React.useMemo(
+      () => [
+        affinities?.filter(
+          (aff) => aff?.type === AffinityType.node && aff?.condition === AffinityCondition.required,
+        ),
+        affinities?.filter(
+          (aff) =>
+            aff?.type === AffinityType.node && aff?.condition === AffinityCondition.preferred,
+        ),
+      ],
+      [affinities],
+    );
+
+    // OR Relation between Required Affinities
+    const qualifiedRequiredNodes = useAffinitiesQualifiedNodes(
+      nodes,
+      requiredNodeAffinities,
+      React.useCallback(
+        (suitableNodes) =>
+          suitableNodes.reduce(
+            (acc, curr) => _.unionWith([...acc, ...curr], (a, b) => getName(a) === getName(b)),
+            [],
+          ),
+        [],
+      ),
+    );
+
+    // AND Relation between Preferred Affinities
+    const qualifiedPreferredNodes = useAffinitiesQualifiedNodes(
+      nodes,
+      preferredNodeAffinities,
+      React.useCallback(
+        (suitableNodes) =>
+          suitableNodes.reduce(
+            (acc, curr) => _.intersectionWith(acc, curr, (a, b) => getName(a) === getName(b)),
+            suitableNodes[0],
+          ),
+        [],
+      ),
     );
 
     const onReload = () => {
@@ -183,17 +228,29 @@ export const AffinityModal = withHandlePromise<AffinityModalProps>(
                 </div>
               )}
               {affinities.length > 0 ? (
-                <AffinityTable
-                  columnClasses={columnClasses}
-                  data={affinities}
-                  customData={{
-                    isDisabled: false,
-                    vmLikeFinal,
-                    onEdit: onAffinityClickEdit,
-                    onDelete: onAffinityDelete,
-                  }}
-                  row={AffinityRow}
-                />
+                <Stack>
+                  <StackItem>
+                    <AffinityTable
+                      columnClasses={columnClasses}
+                      data={affinities}
+                      customData={{
+                        isDisabled: false,
+                        vmLikeFinal,
+                        onEdit: onAffinityClickEdit,
+                        onDelete: onAffinityDelete,
+                      }}
+                      row={AffinityRow}
+                    />
+                  </StackItem>
+                  {(requiredNodeAffinities?.length > 0 || preferredNodeAffinities?.length > 0) && (
+                    <StackItem>
+                      <NodeChecker
+                        qualifiedNodes={qualifiedRequiredNodes}
+                        qualifiedPerferredNodes={qualifiedPreferredNodes}
+                      />
+                    </StackItem>
+                  )}
+                </Stack>
               ) : (
                 <EmptyState variant={EmptyStateVariant.full}>
                   <Title headingLevel="h5" size="lg">

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import cx from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { Alert, Radio } from '@patternfly/react-core';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { QuickStartTaskStatus, QuickStartTaskReview } from '../utils/quick-start-types';
@@ -29,13 +30,14 @@ const QuickStartTaskReview: React.FC<QuickStartTaskReviewProps> = ({
   onTaskReview,
 }) => {
   const { instructions, taskHelp } = review;
+  const { t } = useTranslation();
 
   const alertClassNames = cx('co-quick-start-task-review', {
     'co-quick-start-task-review--success': taskStatus === QuickStartTaskStatus.SUCCESS,
     'co-quick-start-task-review--failed': taskStatus === QuickStartTaskStatus.FAILED,
   });
 
-  const title = <span className={alertClassNames}>Check your work</span>;
+  const title = <span className={alertClassNames}>{t('quickstart~Check your work')}</span>;
 
   return (
     <Alert variant={getAlertVariant(taskStatus)} title={title} isInline>
@@ -44,7 +46,7 @@ const QuickStartTaskReview: React.FC<QuickStartTaskReviewProps> = ({
         <Radio
           id="review-success"
           name="review-success"
-          label="Yes"
+          label={t('quickstart~Yes')}
           className="co-quick-start-task-review__radio"
           isChecked={taskStatus === QuickStartTaskStatus.SUCCESS}
           onChange={() => onTaskReview(QuickStartTaskStatus.SUCCESS)}
@@ -52,7 +54,7 @@ const QuickStartTaskReview: React.FC<QuickStartTaskReviewProps> = ({
         <Radio
           id="review-failed"
           name="review-failed"
-          label="No"
+          label={t('quickstart~No')}
           className="co-quick-start-task-review__radio"
           isChecked={taskStatus === QuickStartTaskStatus.FAILED}
           onChange={() => onTaskReview(QuickStartTaskStatus.FAILED)}

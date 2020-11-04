@@ -247,6 +247,19 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Page/Route',
+    properties: {
+      path: '/k8s/ns/:ns/virtualmachinesnapshots/:name',
+      loader: () =>
+        import(
+          './components/vm-snapshots/vm-snapshot-details' /* webpackChunkName: "kubevirt" */
+        ).then((m) => m.SnapshotDetailsPage),
+    },
+    flags: {
+      required: [FLAG_KUBEVIRT],
+    },
+  },
+  {
     type: 'Dashboards/Overview/Health/URL',
     properties: {
       title: 'Virtualization',

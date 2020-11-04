@@ -14,9 +14,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/coreos/pkg/capnslog"
 	"github.com/coreos/pkg/flagutil"
-
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/bridge"
 	"github.com/openshift/console/pkg/knative"
@@ -24,10 +22,8 @@ import (
 	"github.com/openshift/console/pkg/server"
 	"github.com/openshift/console/pkg/serverconfig"
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
-)
 
-var (
-	log = capnslog.NewPackageLogger("github.com/openshift/console", "cmd/main")
+	"k8s.io/klog"
 )
 
 const (
@@ -61,10 +57,10 @@ const (
 )
 
 func main() {
-	rl := capnslog.MustRepoLogger("github.com/openshift/console")
-	capnslog.SetFormatter(capnslog.NewStringFormatter(os.Stderr))
-
 	fs := flag.NewFlagSet("bridge", flag.ExitOnError)
+	klog.InitFlags(fs)
+	defer klog.Flush()
+
 	fListen := fs.String("listen", "http://0.0.0.0:9000", "")
 
 	fBaseAddress := fs.String("base-address", "", "Format: <http | https>://domainOrIPAddress[:port]. Example: https://openshift.example.com.")
@@ -137,7 +133,7 @@ func main() {
 
 	if *fConfig != "" {
 		if err := serverconfig.SetFlagsFromConfig(fs, *fConfig); err != nil {
-			log.Fatalf("Failed to load config: %v", err)
+			klog.Fatalf("Failed to load config: %v", err)
 		}
 	}
 
@@ -207,18 +203,18 @@ func main() {
 
 	if *fCustomLogoFile != "" {
 		if _, err := os.Stat(*fCustomLogoFile); err != nil {
-			log.Fatalf("could not read logo file: %v", err)
+			klog.Fatalf("could not read logo file: %v", err)
 		}
 	}
 
 	if *fInactivityTimeout < 300 {
-		log.Warning("Flag inactivity-timeout is set to less then 300 seconds and will be ignored!")
+		klog.Warning("Flag inactivity-timeout is set to less then 300 seconds and will be ignored!")
 	} else {
 		if *fK8sAuth != "oidc" && *fK8sAuth != "openshift" {
 			fmt.Fprintln(os.Stderr, "In order activate the user inactivity timout, flag --user-auth must be one of: oidc, openshift")
 			os.Exit(1)
 		}
-		log.Infof("Setting user inactivity timout to %d seconds", *fInactivityTimeout)
+		klog.Infof("Setting user inactivity timout to %d seconds", *fInactivityTimeout)
 	}
 
 	srv := &server.Server{
@@ -254,14 +250,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	capnslog.SetGlobalLogLevel(capnslog.INFO)
 	if *fLogLevel != "" {
-		llc, err := rl.ParseLogLevelConfig(*fLogLevel)
-		if err != nil {
-			log.Fatal(err)
-		}
-		rl.SetLogLevel(llc)
-		log.Infof("Setting log level to %s", *fLogLevel)
+		klog.Warningf("DEPRECATED: --log-level is now deprecated, use verbosity flag --v=Level instead")
 	}
 
 	var (
@@ -277,17 +267,17 @@ func main() {
 		var err error
 
 		if srv.DexClient, err = auth.NewDexClient(*fDexAPIHost, *fDexClientCAFile, *fDexClientCertFile, *fDexClientKeyFile); err != nil {
-			log.Fatalf("Failed to create a Dex API client: %v", err)
+			klog.Fatalf("Failed to create a Dex API client: %v", err)
 		}
 	}
 
 	var secureCookies bool
 	if baseURL.Scheme == "https" {
 		secureCookies = true
-		log.Info("cookies are secure!")
+		klog.Info("cookies are secure!")
 	} else {
 		secureCookies = false
-		log.Warning("cookies are not secure because base-address is not https!")
+		klog.Warning("cookies are not secure because base-address is not https!")
 	}
 
 	var k8sEndpoint *url.URL
@@ -298,11 +288,11 @@ func main() {
 		var err error
 		k8sCertPEM, err = ioutil.ReadFile(k8sInClusterCA)
 		if err != nil {
-			log.Fatalf("Error inferring Kubernetes config from environment: %v", err)
+			klog.Fatalf("Error inferring Kubernetes config from environment: %v", err)
 		}
 		rootCAs := x509.NewCertPool()
 		if !rootCAs.AppendCertsFromPEM(k8sCertPEM) {
-			log.Fatalf("No CA found for the API server")
+			klog.Fatal("No CA found for the API server")
 		}
 		tlsConfig := oscrypto.SecureTLSConfig(&tls.Config{
 			RootCAs: rootCAs,
@@ -310,7 +300,7 @@ func main() {
 
 		bearerToken, err := ioutil.ReadFile(k8sInClusterBearerToken)
 		if err != nil {
-			log.Fatalf("failed to read bearer token: %v", err)
+			klog.Fatalf("failed to read bearer token: %v", err)
 		}
 
 		srv.K8sProxyConfig = &proxy.Config{
@@ -325,11 +315,11 @@ func main() {
 		if *fServiceCAFile != "" {
 			serviceCertPEM, err := ioutil.ReadFile(*fServiceCAFile)
 			if err != nil {
-				log.Fatalf("failed to read service-ca.crt file: %v", err)
+				klog.Fatalf("failed to read service-ca.crt file: %v", err)
 			}
 			serviceProxyRootCAs := x509.NewCertPool()
 			if !serviceProxyRootCAs.AppendCertsFromPEM(serviceCertPEM) {
-				log.Fatalf("no CA found for Kubernetes services")
+				klog.Fatal("no CA found for Kubernetes services")
 			}
 			serviceProxyTLSConfig := oscrypto.SecureTLSConfig(&tls.Config{
 				RootCAs: serviceProxyRootCAs,
@@ -502,7 +492,7 @@ func main() {
 		if *fUserAuthOIDCClientSecretFile != "" {
 			buf, err := ioutil.ReadFile(*fUserAuthOIDCClientSecretFile)
 			if err != nil {
-				log.Fatalf("Failed to read client secret file: %v", err)
+				klog.Fatalf("Failed to read client secret file: %v", err)
 			}
 			oidcClientSecret = string(buf)
 		}
@@ -545,10 +535,10 @@ func main() {
 		}
 
 		if srv.Auther, err = auth.NewAuthenticator(context.Background(), oidcClientConfig); err != nil {
-			log.Fatalf("Error initializing authenticator: %v", err)
+			klog.Fatalf("Error initializing authenticator: %v", err)
 		}
 	case "disabled":
-		log.Warningf("running with AUTHENTICATION DISABLED!")
+		klog.Warning("running with AUTHENTICATION DISABLED!")
 	default:
 		bridge.FlagFatalf("user-auth", "must be one of: oidc, openshift, disabled")
 	}
@@ -660,17 +650,17 @@ func main() {
 				http.Redirect(res, req, redirectURL.String(), http.StatusMovedPermanently)
 			})
 			redirectPort := fmt.Sprintf(":%d", *fRedirectPort)
-			log.Infof("Listening on %q for custom hostname redirect...", redirectPort)
-			log.Fatal(http.ListenAndServe(redirectPort, redirectServer))
+			klog.Infof("Listening on %q for custom hostname redirect...", redirectPort)
+			klog.Fatal(http.ListenAndServe(redirectPort, redirectServer))
 		}()
 	}
 
-	log.Infof("Binding to %s...", httpsrv.Addr)
+	klog.Infof("Binding to %s...", httpsrv.Addr)
 	if listenURL.Scheme == "https" {
-		log.Info("using TLS")
-		log.Fatal(httpsrv.ListenAndServeTLS(*fTlSCertFile, *fTlSKeyFile))
+		klog.Info("using TLS")
+		klog.Fatal(httpsrv.ListenAndServeTLS(*fTlSCertFile, *fTlSKeyFile))
 	} else {
-		log.Info("not using TLS")
-		log.Fatal(httpsrv.ListenAndServe())
+		klog.Info("not using TLS")
+		klog.Fatal(httpsrv.ListenAndServe())
 	}
 }

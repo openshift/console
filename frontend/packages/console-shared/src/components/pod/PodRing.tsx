@@ -1,10 +1,11 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { Button, Split, SplitItem, Bullseye } from '@patternfly/react-core';
 import { K8sResourceKind, k8sPatch, K8sKind } from '@console/internal/module/k8s';
 import { AngleUpIcon, AngleDownIcon } from '@patternfly/react-icons';
 import { useRelatedHPA } from '@console/dev-console/src/components/hpa/hooks';
-import { hpaPodRingLabel, podRingLabel, usePodScalingAccessStatus } from '../../utils';
+import { usePodRingLabel, usePodScalingAccessStatus } from '../../utils';
 import { ExtPodKind } from '../../types';
 import PodStatus from './PodStatus';
 import './PodRing.scss';
@@ -29,6 +30,7 @@ const PodRing: React.FC<PodRingProps> = ({
   enableScaling = true,
 }) => {
   const [clickCount, setClickCount] = React.useState(obj.spec.replicas);
+  const { t } = useTranslation();
   const isAccessScalingAllowed = usePodScalingAccessStatus(
     obj,
     resourceKind,
@@ -80,9 +82,14 @@ const PodRing: React.FC<PodRingProps> = ({
   const isScalingAllowed = isAccessScalingAllowed && !hpaControlledScaling;
 
   const resourceObj = rc || obj;
-  const { title, subTitle, titleComponent } = hpaControlledScaling
-    ? hpaPodRingLabel(resourceObj, hpa, pods)
-    : podRingLabel(resourceObj, kind, pods);
+  const { title, subTitle, titleComponent } = usePodRingLabel(
+    resourceObj,
+    kind,
+    pods,
+    hpaControlledScaling,
+    t,
+    hpa,
+  );
 
   return (
     <Split>
@@ -104,8 +111,8 @@ const PodRing: React.FC<PodRingProps> = ({
               <Button
                 type="button"
                 variant="plain"
-                aria-label="Increase the pod count"
-                title="Increase the pod count"
+                aria-label={t('console-shared~Increase the pod count')}
+                title={t('console-shared~Increase the pod count')}
                 onClick={() => handleClick(1)}
                 isBlock
               >
@@ -114,8 +121,8 @@ const PodRing: React.FC<PodRingProps> = ({
               <Button
                 type="button"
                 variant="plain"
-                aria-label="Decrease the pod count"
-                title="Decrease the pod count"
+                aria-label={t('console-shared~Decrease the pod count')}
+                title={t('console-shared~Decrease the pod count')}
                 onClick={() => handleClick(-1)}
                 isBlock
                 isDisabled={clickCount <= 0}

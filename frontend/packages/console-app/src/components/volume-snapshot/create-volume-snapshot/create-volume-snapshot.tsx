@@ -36,7 +36,6 @@ import {
   VolumeSnapshotClassModel,
   StorageClassModel,
   NamespaceModel,
-  PersistentVolumeModel,
 } from '@console/internal/models';
 import { accessModeRadios } from '@console/internal/components/storage/shared';
 import { PVCDropdown } from '@console/internal/components/utils/pvc-dropdown';
@@ -240,7 +239,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
             /* eslint-disable jsx-a11y/label-has-associated-control */
             <>
               <label className="control-label co-required" html-for="claimName">
-                {PersistentVolumeModel.label}
+                {PersistentVolumeClaimModel.label}
               </label>
               <PVCDropdown
                 dataTest="pvc-dropdown"

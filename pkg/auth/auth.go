@@ -18,13 +18,14 @@ import (
 
 	"github.com/coreos/dex/api"
 	oidc "github.com/coreos/go-oidc"
-	"github.com/coreos/pkg/capnslog"
 	"golang.org/x/oauth2"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
+
+	"k8s.io/klog"
 )
 
 const (
@@ -42,8 +43,6 @@ const (
 )
 
 var (
-	log = capnslog.NewPackageLogger("github.com/openshift/console", "auth")
-
 	// Cache HTTP clients to avoid recreating them for each request to the
 	// OAuth server. The key is the ca.crt bytes cast to a string and the
 	// value is a pointer to the http.Client. Keep two maps: one that
@@ -137,7 +136,7 @@ func newHTTPClient(issuerCA string, includeSystemRoots bool) (*http.Client, erro
 		}
 		certPool, err = x509.SystemCertPool()
 		if err != nil {
-			log.Errorf("error copying system cert pool: %v", err)
+			klog.Errorf("error copying system cert pool: %v", err)
 			certPool = x509.NewCertPool()
 		}
 	} else {
@@ -229,11 +228,11 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 		if err != nil {
 			steps++
 			if steps > maxSteps {
-				log.Errorf("error contacting auth provider: %v", err)
+				klog.Errorf("error contacting auth provider: %v", err)
 				return nil, err
 			}
 
-			log.Errorf("error contacting auth provider (retrying in %s): %v", backoff, err)
+			klog.Errorf("error contacting auth provider (retrying in %s): %v", backoff, err)
 
 			time.Sleep(backoff)
 			continue
@@ -251,7 +250,7 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 
 			currentEndpoint, currentLoginMethod, errAuthSource := authSourceFunc()
 			if errAuthSource != nil {
-				log.Errorf("failed to get latest auth source data: %v", errAuthSource)
+				klog.Errorf("failed to get latest auth source data: %v", errAuthSource)
 				return &baseOAuth2Config, fallbackLoginMethod
 			}
 
@@ -273,7 +272,7 @@ func newUnstartedAuthenticator(c *Config) (*Authenticator, error) {
 	clientFunc := func() *http.Client {
 		currentClient, err := newHTTPClient(c.IssuerCA, true)
 		if err != nil {
-			log.Errorf("failed to get latest http client: %v", err)
+			klog.Errorf("failed to get latest http client: %v", err)
 			return fallbackClient
 		}
 		return currentClient
@@ -358,7 +357,7 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 
 		cookieState, err := r.Cookie(stateCookieName)
 		if err != nil {
-			log.Errorf("failed to parse state cookie: %v", err)
+			klog.Errorf("failed to parse state cookie: %v", err)
 			a.redirectAuthError(w, errorMissingState)
 			return
 		}
@@ -370,13 +369,13 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 		}
 
 		if code == "" {
-			log.Infof("missing auth code in query param")
+			klog.Info("missing auth code in query param")
 			a.redirectAuthError(w, errorMissingCode)
 			return
 		}
 
 		if urlState != cookieState.Value {
-			log.Errorf("State in url does not match State cookie")
+			klog.Error("State in url does not match State cookie")
 			a.redirectAuthError(w, errorInvalidState)
 			return
 		}
@@ -384,19 +383,19 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 		oauthConfig, lm := a.authFunc()
 		token, err := oauthConfig.Exchange(ctx, code)
 		if err != nil {
-			log.Infof("unable to verify auth code with issuer: %v", err)
+			klog.Infof("unable to verify auth code with issuer: %v", err)
 			a.redirectAuthError(w, errorInvalidCode)
 			return
 		}
 
 		ls, err := lm.login(w, token)
 		if err != nil {
-			log.Errorf("error constructing login state: %v", err)
+			klog.Errorf("error constructing login state: %v", err)
 			a.redirectAuthError(w, errorInternal)
 			return
 		}
 
-		log.Infof("oauth success, redirecting to: %q", a.successURL)
+		klog.Infof("oauth success, redirecting to: %q", a.successURL)
 		fn(ls.toLoginJSON(), a.successURL, w)
 	}
 }
@@ -502,12 +501,12 @@ func NewDexClient(hostAndPort string, caCrt, clientCrt, clientKey string) (api.D
 		var err error
 
 		if caPEM, err = ioutil.ReadFile(caCrt); err != nil {
-			log.Fatalf("Failed to read cert file: %v", err)
+			klog.Fatalf("Failed to read cert file: %v", err)
 		}
 
 		certPool = x509.NewCertPool()
 		if !certPool.AppendCertsFromPEM(caPEM) {
-			log.Fatalf("No certs found in %q", caCrt)
+			klog.Fatalf("No certs found in %q", caCrt)
 		}
 	}
 

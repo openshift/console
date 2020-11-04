@@ -9,6 +9,14 @@ import { EventSources } from '../../import-types';
 
 type EventSourcesSelectorProps = React.ComponentProps<typeof EventSourcesSelector>;
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 jest.mock('formik', () => ({
   useField: jest.fn(() => [{}, {}]),
   useFormikContext: jest.fn(() => ({

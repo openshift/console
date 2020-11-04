@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { podPhase } from '@console/internal/module/k8s';
 import { BuildOverview } from '@console/internal/components/overview/build-overview';
 import { PodModel } from '@console/internal/models';
@@ -21,6 +22,7 @@ type KnativeServiceResourceProps = {
 };
 
 const KnativeServiceResources: React.FC<KnativeServiceResourceProps> = ({ item }) => {
+  const { t } = useTranslation();
   const {
     revisions,
     ksroutes,
@@ -52,10 +54,17 @@ const KnativeServiceResources: React.FC<KnativeServiceResourceProps> = ({ item }
       <KSRoutesOverviewList ksroutes={ksroutes} resource={obj} />
       {buildConfigs.length > 0 && <BuildOverview buildConfigs={buildConfigs} />}
       {eventSources.length > 0 && (
-        <PubSubResourceOverviewList items={eventSources} title="Event Sources" />
+        <PubSubResourceOverviewList
+          items={eventSources}
+          title={t('knative-plugin~Event Sources')}
+        />
       )}
-      {channels.length > 0 && <PubSubSubscribers subscribers={channels} title="Subscriptions" />}
-      {brokers.length > 0 && <PubSubSubscribers subscribers={brokers} title="Triggers" />}
+      {channels.length > 0 && (
+        <PubSubSubscribers subscribers={channels} title={t('knative-plugin~Subscriptions')} />
+      )}
+      {brokers.length > 0 && (
+        <PubSubSubscribers subscribers={brokers} title={t('knative-plugin~Triggers')} />
+      )}
       {pluginComponents.map(({ Component, key }) => (
         <Component key={key} item={item} />
       ))}

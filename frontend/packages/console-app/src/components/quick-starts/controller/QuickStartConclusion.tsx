@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@patternfly/react-core';
 import { ArrowRightIcon } from '@patternfly/react-icons';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
@@ -23,6 +24,7 @@ const QuickStartConclusion: React.FC<QuickStartConclusionProps> = ({
   onTaskSelect,
 }) => {
   const hasFailedTask = allTaskStatuses.includes(QuickStartTaskStatus.FAILED);
+  const { t } = useTranslation();
   return (
     <>
       {tasks.map((task, index) => (
@@ -38,13 +40,15 @@ const QuickStartConclusion: React.FC<QuickStartConclusionProps> = ({
       <SyncMarkdownView
         content={
           hasFailedTask
-            ? 'One or more verifications did not pass during this quick start. Revisit the tasks or the help links, and then try again.'
+            ? t(
+                'quickstart~One or more verifications did not pass during this quick start. Revisit the tasks or the help links, and then try again.',
+              )
             : conclusion
         }
       />
       {nextQuickStart && !hasFailedTask && (
         <Button variant="link" onClick={() => onQuickStartChange(nextQuickStart)} isInline>
-          {`Start ${nextQuickStart} quick start`}{' '}
+          {t('quickstart~Start {{nextQuickStart}} quick start', { nextQuickStart })}{' '}
           <ArrowRightIcon
             style={{ marginLeft: 'var(--pf-global--spacer--xs)', verticalAlign: 'middle' }}
           />

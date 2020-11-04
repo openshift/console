@@ -1,0 +1,10 @@
+{
+  "Get Started": "Get Started",
+  "Skip tour": "Skip tour",
+  "Okay, got it!": "Okay, got it!",
+  "Back": "Back",
+  "Next": "Next",
+  "Guided Tour": "Guided Tour",
+  "Step {{stepNumber, number}}/{{totalSteps, number}}": "Step {{stepNumber, number}}/{{totalSteps, number}}",
+  "guided tour {{step, number}}": "guided tour {{step, number}}"
+}

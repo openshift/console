@@ -1,16 +1,9 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import {
-  LimitRangeTableHeader,
   LimitRangeDetailsRowProps,
   LimitRangeDetailsRow,
 } from '../../public/components/limit-range';
-
-describe(LimitRangeTableHeader.displayName, () => {
-  it('returns column header definition for resource', () => {
-    expect(Array.isArray(LimitRangeTableHeader()));
-  });
-});
 
 describe(LimitRangeDetailsRow.displayName, () => {
   let wrapper: ShallowWrapper<LimitRangeDetailsRowProps>;

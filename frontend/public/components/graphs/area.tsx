@@ -9,6 +9,7 @@ import {
   ChartVoronoiContainer,
   getCustomTheme,
   ChartGroup,
+  ChartAreaProps,
 } from '@patternfly/react-charts';
 import { global_warning_color_100 as warningColor } from '@patternfly/react-tokens/dist/js/global_warning_color_100';
 import { global_danger_color_100 as dangerColor } from '@patternfly/react-tokens/dist/js/global_danger_color_100';
@@ -19,15 +20,18 @@ import { PrometheusEndpoint } from './helpers';
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { usePrometheusPoll } from './prometheus-poll-hook';
 import { areaTheme } from './themes';
-import { DataPoint, CursorVoronoiContainer } from './';
+import {
+  DataPoint,
+  CursorVoronoiContainer,
+  DEFAULT_PROMETHEUS_SAMPLES,
+  DEFAULT_PROMETHEUS_TIMESPAN,
+} from './';
 import { mapLimitsRequests } from './utils';
 import { GraphEmpty } from './graph-empty';
 import { ChartLegendTooltip } from './tooltip';
 
 const DEFAULT_HEIGHT = 180;
-const DEFAULT_SAMPLES = 60;
 const DEFAULT_TICK_COUNT = 3;
-const DEFAULT_TIMESPAN = 60 * 60 * 1000; // 1 hour
 
 export enum AreaChartStatus {
   ERROR = 'ERROR',
@@ -51,11 +55,13 @@ export const AreaChart: React.FC<AreaChartProps> = ({
   query,
   tickCount = DEFAULT_TICK_COUNT,
   title,
+  ariaChartLabel,
   xAxis = true,
   yAxis = true,
   chartStyle,
   byteDataType = '',
   showAllTooltip,
+  ...rest
 }) => {
   // Note: Victory incorrectly typed ThemeBaseProps.padding as number instead of PaddingProps
   // @ts-ignore
@@ -75,10 +81,19 @@ export const AreaChart: React.FC<AreaChartProps> = ({
     [processedData],
   );
 
-  const tickFormat = React.useCallback((tick) => `${humanize(tick, unit, unit).string}`, [
+  const xTickFormat = React.useCallback((tick) => formatDate(tick), [formatDate]);
+  const yTickFormat = React.useCallback((tick) => `${humanize(tick, unit, unit).string}`, [
     humanize,
     unit,
   ]);
+
+  const domain = React.useMemo<AreaChartProps['domain']>(
+    () => ({
+      ...(allZero && { y: [0, 1] }),
+      ...(rest.domain ?? {}),
+    }),
+    [allZero, rest.domain],
+  );
 
   const getLabel = React.useCallback(
     (prop, includeDate = true) => {
@@ -121,7 +136,7 @@ export const AreaChart: React.FC<AreaChartProps> = ({
   return (
     <PrometheusGraph className={className} ref={containerRef} title={title}>
       {processedData?.length ? (
-        <PrometheusGraphLink query={query} title={title}>
+        <PrometheusGraphLink query={query} ariaChartLabel={ariaChartLabel}>
           <Chart
             containerComponent={container}
             domainPadding={{ y: 20 }}
@@ -130,10 +145,10 @@ export const AreaChart: React.FC<AreaChartProps> = ({
             theme={theme}
             scale={{ x: 'time', y: 'linear' }}
             padding={padding}
-            {...(allZero && { domain: { y: [0, 1] } })}
+            domain={domain}
           >
-            {xAxis && <ChartAxis tickCount={tickCount} tickFormat={formatDate} />}
-            {yAxis && <ChartAxis dependentAxis tickCount={tickCount} tickFormat={tickFormat} />}
+            {xAxis && <ChartAxis tickCount={tickCount} tickFormat={xTickFormat} />}
+            {yAxis && <ChartAxis dependentAxis tickCount={tickCount} tickFormat={yTickFormat} />}
             <ChartGroup>
               {processedData.map((datum, index) => (
                 <ChartArea
@@ -154,52 +169,50 @@ export const AreaChart: React.FC<AreaChartProps> = ({
 };
 
 export const Area: React.FC<AreaProps> = ({
+  endTime = Date.now(),
   namespace,
   query,
   limitQuery,
   requestedQuery,
-  samples = DEFAULT_SAMPLES,
+  samples = DEFAULT_PROMETHEUS_SAMPLES,
   timeout,
-  timespan = DEFAULT_TIMESPAN,
+  timespan = DEFAULT_PROMETHEUS_TIMESPAN,
   ...rest
 }) => {
-  const [utilization, , utilizationLoading] = usePrometheusPoll({
+  const prometheusPollProps = {
     endpoint: PrometheusEndpoint.QUERY_RANGE,
+    endTime,
     namespace,
-    query,
     samples,
     timeout,
     timespan,
+  };
+
+  const [utilization, , utilizationLoading] = usePrometheusPoll({
+    query,
+    ...prometheusPollProps,
   });
   const [limit, , limitLoading] = usePrometheusPoll({
-    endpoint: PrometheusEndpoint.QUERY_RANGE,
-    namespace,
     query: limitQuery,
-    samples,
-    timeout,
-    timespan,
+    ...prometheusPollProps,
   });
   const [requested, , requestedLoading] = usePrometheusPoll({
-    endpoint: PrometheusEndpoint.QUERY_RANGE,
-    namespace,
     query: requestedQuery,
-    samples,
-    timeout,
-    timespan,
+    ...prometheusPollProps,
   });
+
+  const loading = utilizationLoading && limitLoading && requestedLoading;
   const { data, chartStyle } = mapLimitsRequests(utilization, limit, requested);
-  const loading =
-    utilizationLoading &&
-    (limitQuery ? limitLoading : true) &&
-    (requestedQuery ? requestedLoading : true);
+
   return (
-    <AreaChart data={data} loading={loading} query={query} chartStyle={chartStyle} {...rest} />
+    <AreaChart chartStyle={chartStyle} data={data} loading={loading} query={query} {...rest} />
   );
 };
 
 export type AreaChartProps = {
   className?: string;
-  formatDate?: (date: Date) => string;
+  domain?: ChartAreaProps['domain'];
+  formatDate?: (date: Date, showSeconds?: boolean) => string;
   humanize?: Humanize;
   height?: number;
   loading?: boolean;
@@ -207,6 +220,7 @@ export type AreaChartProps = {
   theme?: any; // TODO figure out the best way to import VictoryThemeDefinition
   tickCount?: number;
   title?: string;
+  ariaChartLabel?: string;
   data?: DataPoint[][];
   xAxis?: boolean;
   yAxis?: boolean;
@@ -217,6 +231,7 @@ export type AreaChartProps = {
 };
 
 type AreaProps = AreaChartProps & {
+  endTime?: number;
   namespace?: string;
   query: string;
   samples?: number;

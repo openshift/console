@@ -15,6 +15,16 @@ import RevisionsOverviewList, { RevisionsOverviewListProps } from '../RevisionsO
 import RevisionsOverviewListItem from '../RevisionsOverviewListItem';
 import { RevisionModel } from '../../../models';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
+const i18nNS = 'knative-plugin';
+
 describe('RevisionsOverviewList', () => {
   let wrapper: ShallowWrapper<RevisionsOverviewListProps>;
   beforeEach(() => {
@@ -33,7 +43,7 @@ describe('RevisionsOverviewList', () => {
         .find(utils.SidebarSectionHeading)
         .at(0)
         .props().text,
-    ).toEqual('Revisions');
+    ).toEqual(`${i18nNS}~Revisions`);
   });
 
   it('should show info if no Revisions present, link for all revisions should not be shown and traffic split button should be disabled', () => {
@@ -78,7 +88,7 @@ describe('RevisionsOverviewList', () => {
         .find(Link)
         .at(0)
         .props().children,
-    ).toEqual('View all (4)');
+    ).toEqual(`${i18nNS}~View all ({{revLength}})`);
   });
 
   it('should not show Resource Link if number of revisions is less than MAX_REVISIONS', () => {
@@ -94,7 +104,7 @@ describe('RevisionsOverviewList', () => {
         .find(Button)
         .at(0)
         .props().children,
-    ).toEqual('Set Traffic Distribution');
+    ).toEqual(`${i18nNS}~Set Traffic Distribution`);
     expect(
       wrapper
         .find(Button)

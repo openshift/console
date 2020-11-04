@@ -1,10 +1,14 @@
+import { AffinityCondition, AffinityType } from '../affinity-modal/types';
 import { pluralize } from '@console/internal/components/utils';
-import { AffinityRowData } from '../affinity-modal/types';
 
 // Node Checker
 const pluralNode = (size) => pluralize(size, 'node', 'nodes', false);
 export const SCHEDULING_NODES_MATCH_TEXT = (nodeAmount) =>
   `${nodeAmount} matching ${pluralNode(nodeAmount)} found`;
+export const SCHEDULING_WITH_PREFERRED_NODES_MATCH_TEXT = (nodeAmount, preferredNodeAmount) =>
+  `${nodeAmount} matching ${pluralNode(
+    nodeAmount,
+  )} found, ${preferredNodeAmount} matching preferred ${pluralNode(preferredNodeAmount)} found`;
 export const SCHEDULING_NODES_MATCH_BUTTON_TEXT = (nodeAmount) =>
   `View ${nodeAmount} matching ${pluralNode(nodeAmount)}`;
 export const SCHEDULING_NO_NODES_MATCH_BUTTON_TEXT =
@@ -34,19 +38,14 @@ export const AFFINITY_CREATE = 'New Affinity';
 export const AFFINITY_EDITING = 'Edit Affinity';
 
 export const AFFINITY_CONDITION_LABELS = {
-  preferredDuringSchedulingIgnoredDuringExecution: 'Preferred during scheduling',
-  requiredDuringSchedulingIgnoredDuringExecution: 'Required during scheduling',
-};
-
-export const AFFINITY_CONDITIONS = {
-  preferred: 'preferredDuringSchedulingIgnoredDuringExecution' as AffinityRowData['condition'],
-  required: 'requiredDuringSchedulingIgnoredDuringExecution' as AffinityRowData['condition'],
+  [AffinityCondition.preferred]: 'Preferred during scheduling',
+  [AffinityCondition.required]: 'Required during scheduling',
 };
 
 export const AFFINITY_TYPE_LABLES = {
-  nodeAffinity: 'Node Affinity',
-  podAffinity: 'Workload (pod) Affinity',
-  podAntiAffinity: 'Workload (pod) Anti-Affinity',
+  [AffinityType.node]: 'Node Affinity',
+  [AffinityType.pod]: 'Workload (pod) Affinity',
+  [AffinityType.podAnti]: 'Workload (pod) Anti-Affinity',
 };
 
 export const EXPRESSION_OPERATORS = ['In', 'NotIn', 'Exists', 'DoesNotExist'];

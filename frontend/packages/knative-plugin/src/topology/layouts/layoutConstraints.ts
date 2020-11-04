@@ -35,6 +35,8 @@ const alignNodeConnector = (
     .filter(
       (e) =>
         e.element.getType() === type &&
+        !e.target.isFixed &&
+        !e.source.isFixed &&
         (e.target.element === g.element || e.target.element.getParent() === g.element),
     )
     .sort((l1: ColaLink, l2: ColaLink) => nodeSorter(l1.source, l2.source));
@@ -94,7 +96,8 @@ export const layoutConstraints = (
       [TYPE_EVENT_PUB_SUB, TYPE_SINK_URI, TYPE_KNATIVE_SERVICE].includes(g.element.getType()),
     )
     .forEach((g) => {
-      const leafNodes = g instanceof ColaGroup && g.leaves.sort(nodeSorter);
+      const leafNodes =
+        g instanceof ColaGroup && g.leaves.sort(nodeSorter).filter((n) => !n.isFixed);
       const filteredNode = (leafNodes && _.first(leafNodes)) || g;
       if (g.element.getType() === TYPE_KNATIVE_SERVICE) {
         const serviceConstraint: any = {

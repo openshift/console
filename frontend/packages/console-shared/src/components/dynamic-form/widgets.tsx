@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Checkbox } from '@patternfly/react-core';
 import { WidgetProps } from 'react-jsonschema-form';
 import { NumberSpinner, ListDropdown, Dropdown } from '@console/internal/components/utils';
@@ -111,6 +112,7 @@ export const K8sResourceWidget: React.FC<K8sResourceWidgetProps> = ({
   formContext,
   onChange,
 }) => {
+  const { t } = useTranslation();
   const { model, groupVersionKind } = options;
   const { namespace } = formContext;
   const selectedKey = value ? `${value}-${model.kind}` : null;
@@ -123,12 +125,16 @@ export const K8sResourceWidget: React.FC<K8sResourceWidgetProps> = ({
           id={id}
           resources={[{ kind: groupVersionKind, namespace: model.namespaced ? namespace : null }]}
           desc={label}
-          placeholder={`Select ${model.label}`}
+          placeholder={t('console-shared~Select {{label}}', { label: model.label })}
           onChange={(next) => onChange(next)}
           selectedKey={selectedKey}
         />
       ) : (
-        <span>Cluster does not have resource {groupVersionKind}</span>
+        <span>
+          {t('console-shared~Cluster does not have resource {{groupVersionKind}}', {
+            groupVersionKind,
+          })}
+        </span>
       )}
     </div>
   );
@@ -156,6 +162,7 @@ export const SelectWidget: React.FC<WidgetProps> = ({
   schema,
   value,
 }) => {
+  const { t } = useTranslation();
   const { enumOptions = [], title } = options;
   const items = _.reduce(
     enumOptions as DynamicFormFieldOptionsList,
@@ -171,7 +178,7 @@ export const SelectWidget: React.FC<WidgetProps> = ({
     <Dropdown
       id={id}
       key={id}
-      title={`Select ${title || schema?.title || label}`}
+      title={t('console-shared~Select {{title}}', { title: title || schema?.title || label })}
       selectedKey={value}
       items={items}
       onChange={(val) => onChange(val)}

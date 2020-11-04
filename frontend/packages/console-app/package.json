@@ -5,7 +5,7 @@
   "private": true,
   "main": "src/index.ts",
   "scripts": {
-    "test": "yarn --cwd ../.. run test packages/console-app"
+    "test": "yarn --cwd ../.. test packages/console-app"
   },
   "dependencies": {
     "@console/ceph-storage-plugin": "0.0.0-fixed",

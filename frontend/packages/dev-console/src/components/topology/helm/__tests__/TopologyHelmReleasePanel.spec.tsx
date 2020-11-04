@@ -8,6 +8,17 @@ import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { ConnectedTopologyHelmReleasePanel } from '../TopologyHelmReleasePanel';
 import HelmReleaseNotesEmptyState from '../../../helm/details/notes/HelmReleaseNotesEmptyState';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    withTranslation: () => (Component) => {
+      Component.defaultProps = { ...Component.defaultProps, t: (s) => s };
+      return Component;
+    },
+  };
+});
+
 describe('TopologyHelmReleasePanel', () => {
   it('should render the resources tab by default', () => {
     const component = mount(

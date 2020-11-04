@@ -1,7 +1,6 @@
 package actions
 
 import (
-	"github.com/coreos/pkg/capnslog"
 	"net/http"
 
 	"helm.sh/helm/v3/pkg/action"
@@ -12,7 +11,6 @@ import (
 )
 
 var settings = initSettings()
-var plog = capnslog.NewPackageLogger("github.com/openshift/console", "helm/actions")
 
 type configFlagsWithTransport struct {
 	*genericclioptions.ConfigFlags
@@ -46,7 +44,7 @@ func GetActionConfigurations(host, ns, token string, transport *http.RoundTrippe
 	inClusterCfg, err := rest.InClusterConfig()
 
 	if err != nil {
-		plog.Debug("Running outside cluster, CAFile is unset")
+		klog.V(4).Info("Running outside cluster, CAFile is unset")
 	} else {
 		confFlags.CAFile = &inClusterCfg.CAFile
 	}

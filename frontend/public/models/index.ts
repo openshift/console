@@ -532,18 +532,18 @@ export const StatefulSetModel: K8sKind = {
 };
 
 export const ResourceQuotaModel: K8sKind = {
-  label: 'Resource Quota',
+  label: 'ResourceQuota',
   apiVersion: 'v1',
   plural: 'resourcequotas',
   abbr: 'RQ',
   namespaced: true,
   kind: 'ResourceQuota',
   id: 'resourcequota',
-  labelPlural: 'Resource Quotas',
+  labelPlural: 'ResourceQuotas',
 };
 
 export const ClusterResourceQuotaModel: K8sKind = {
-  label: 'Cluster Resource Quota',
+  label: 'ClusterResourceQuota',
   apiGroup: 'quota.openshift.io',
   apiVersion: 'v1',
   plural: 'clusterresourcequotas',
@@ -551,7 +551,7 @@ export const ClusterResourceQuotaModel: K8sKind = {
   namespaced: false,
   kind: 'ClusterResourceQuota',
   id: 'clusterresourcequota',
-  labelPlural: 'Cluster Resource Quotas',
+  labelPlural: 'ClusterResourceQuotas',
   crd: true,
 };
 
@@ -568,7 +568,7 @@ export const NetworkPolicyModel: K8sKind = {
 };
 
 export const CustomResourceDefinitionModel: K8sKind = {
-  label: 'Custom Resource Definition',
+  label: 'CustomResourceDefinition',
   apiGroup: 'apiextensions.k8s.io',
   apiVersion: 'v1',
   abbr: 'CRD',
@@ -576,7 +576,7 @@ export const CustomResourceDefinitionModel: K8sKind = {
   plural: 'customresourcedefinitions',
   kind: 'CustomResourceDefinition',
   id: 'customresourcedefinition',
-  labelPlural: 'Custom Resource Definitions',
+  labelPlural: 'CustomResourceDefinitions',
 };
 
 export const CronJobModel: K8sKind = {
@@ -670,14 +670,14 @@ export const ServiceBindingModel: K8sKind = {
 };
 
 export const LimitRangeModel: K8sKind = {
-  label: 'Limit Range',
+  label: 'LimitRange',
   apiVersion: 'v1',
   plural: 'limitranges',
   abbr: 'LR',
   namespaced: true,
   kind: 'LimitRange',
   id: 'limitrange',
-  labelPlural: 'Limit Ranges',
+  labelPlural: 'LimitRanges',
 };
 
 export const APIServiceModel: K8sKind = {
@@ -814,8 +814,8 @@ export const MachineHealthCheckModel: K8sKind = {
 
 // Openshift cluster resources
 export const ClusterOperatorModel: K8sKind = {
-  label: 'Cluster Operator',
-  labelPlural: 'Cluster Operators',
+  label: 'ClusterOperator',
+  labelPlural: 'ClusterOperators',
   apiVersion: 'v1',
   apiGroup: 'config.openshift.io',
   plural: 'clusteroperators',
@@ -827,8 +827,8 @@ export const ClusterOperatorModel: K8sKind = {
 };
 
 export const ClusterVersionModel: K8sKind = {
-  label: 'Cluster Version',
-  labelPlural: 'Cluster Versions',
+  label: 'ClusterVersion',
+  labelPlural: 'ClusterVersions',
   apiVersion: 'v1',
   apiGroup: 'config.openshift.io',
   plural: 'clusterversions',

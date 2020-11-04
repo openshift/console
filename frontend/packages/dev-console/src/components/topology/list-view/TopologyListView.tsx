@@ -164,6 +164,10 @@ const ConnectedTopologyListView: React.FC<TopologyListViewProps &
 
     React.useEffect(() => {
       if (model) {
+        // Clear out any layout that might have been saved
+        if (model.graph?.layout) {
+          delete model.graph.layout;
+        }
         visualization.fromModel(model);
         const selectedItem = selectedId ? visualization.getElementById(selectedId) : null;
         if (!selectedItem || !selectedItem.isVisible()) {

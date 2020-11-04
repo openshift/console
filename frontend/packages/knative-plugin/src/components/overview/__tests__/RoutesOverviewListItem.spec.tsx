@@ -10,6 +10,15 @@ import RoutesUrlLink, { RoutesUrlLinkProps } from '../RoutesUrlLink';
 
 type RoutesOverviewListItemProps = React.ComponentProps<typeof RoutesOverviewListItem>;
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+const i18nNS = 'knative-plugin';
+
 describe('RoutesOverviewListItem', () => {
   let wrapper: ShallowWrapper<RoutesOverviewListItemProps>;
 
@@ -82,11 +91,11 @@ describe('RoutesOverviewListItem', () => {
     const { urls, title }: RoutesUrlLinkProps = getRouteUrlLinkProps(1);
 
     expect(wrapper.find(RoutesUrlLink)).toHaveLength(2);
-    expect(baseTitle).toEqual('Location');
+    expect(baseTitle).toEqual(`${i18nNS}~Location`);
     expect(baseUrl).toEqual([
       'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
     ]);
-    expect(title).toEqual('Unique Route');
+    expect(title).toEqual(`${i18nNS}~Unique Route`);
     expect(urls).toEqual([
       'http://abc-overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
     ]);
@@ -107,11 +116,11 @@ describe('RoutesOverviewListItem', () => {
 
     const { urls: baseUrl, title: baseTitle }: RoutesUrlLinkProps = getRouteUrlLinkProps(0);
     const { urls, title }: RoutesUrlLinkProps = getRouteUrlLinkProps(1);
-    expect(baseTitle).toEqual('Location');
+    expect(baseTitle).toEqual(`${i18nNS}~Location`);
     expect(baseUrl).toEqual([
       'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
     ]);
-    expect(title).toEqual('Unique Route');
+    expect(title).toEqual(`${i18nNS}~Unique Route`);
     expect(urls).toEqual(['https://tag1.test.com', 'https://tag2.test.com']);
     expect(wrapper.find('span.text-right').text()).toBe('50%');
   });

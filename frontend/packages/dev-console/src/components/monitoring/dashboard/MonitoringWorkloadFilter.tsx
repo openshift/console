@@ -35,6 +35,7 @@ export const MonitoringWorkloadFilter: React.FC<MonitoringWorkloadFilterProps> =
       <Firehose resources={resourcesDefs}>
         <ResourceDropdown
           id="odc-monitoring-dashboard-workload-filter"
+          data-test="odc-monitoring-dashboard-workload-filter"
           dataSelector={['metadata', 'name']}
           selectedKey={selectedTaskRef.current}
           placeholder="Filter by workload"

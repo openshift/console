@@ -702,7 +702,8 @@ export const ActionsMenu = connect(impersonateStateToProps)(ActionsMenu_);
 ActionsMenu.propTypes = {
   actions: PropTypes.arrayOf(
     PropTypes.shape({
-      label: PropTypes.node.isRequired,
+      label: PropTypes.node,
+      labelKey: PropTypes.string,
       href: PropTypes.string,
       callback: PropTypes.func,
       accessReview: PropTypes.object,

@@ -1,4 +1,8 @@
-import { K8sResourceKind, ObjectMetadata } from '@console/internal/module/k8s';
+import {
+  K8sResourceCondition,
+  K8sResourceKind,
+  ObjectMetadata,
+} from '@console/internal/module/k8s';
 import { V1alpha1DataVolume } from './disk/V1alpha1DataVolume';
 
 // https://kubevirt.io/api-reference/master/definitions.html#_v1_virtualmachineinstancespec
@@ -123,5 +127,10 @@ export type VMRestore = {
     virtualMachineSnapshotName: string;
     includeVolumes: string[];
     excludeVolumes: string[];
+  };
+  status: {
+    complete: boolean;
+    conditions: K8sResourceCondition[];
+    restoreTime: string;
   };
 } & K8sResourceKind;

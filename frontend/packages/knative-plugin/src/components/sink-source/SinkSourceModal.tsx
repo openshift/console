@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { FormikProps, FormikValues } from 'formik';
+import { useTranslation } from 'react-i18next';
 import {
   ModalTitle,
   ModalBody,
@@ -28,14 +29,15 @@ const SinkSourceModal: React.FC<Props> = ({
   values,
   initialValues,
 }) => {
+  const { t } = useTranslation();
   const dirty =
     values?.sink?.name !== initialValues.sink.name || values?.sink?.uri !== initialValues.sink.uri;
   return (
     <form className="modal-content modal-content--no-inner-scroll" onSubmit={handleSubmit}>
-      <ModalTitle>Move Sink</ModalTitle>
+      <ModalTitle>{t('knative-plugin~Move Sink')}</ModalTitle>
       <ModalBody>
         <p>
-          Connects <strong>{resourceName}</strong> to
+          {t('knative-plugin~Connects')} <strong>{resourceName}</strong> {t('knative-plugin~to')}
         </p>
         <FormSection fullWidth>
           <SinkUriResourcesGroup namespace={namespace} isMoveSink />
@@ -43,8 +45,9 @@ const SinkSourceModal: React.FC<Props> = ({
       </ModalBody>
       <ModalSubmitFooter
         inProgress={isSubmitting}
-        submitText="Save"
+        submitText={t('knative-plugin~Save')}
         submitDisabled={!dirty || !_.isEmpty(errors)}
+        cancelText={t('knative-plugin~Cancel')}
         cancel={cancel}
         errorMessage={status.error}
       />

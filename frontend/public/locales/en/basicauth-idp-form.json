@@ -1,0 +1,11 @@
+{
+  "Values for certificate and key should both be either excluded or provided.": "Values for certificate and key should both be either excluded or provided.",
+  "Add Identity Provider: Basic Authentication": "Add Identity Provider: Basic Authentication",
+  "Basic authentication is a generic backend integration mechanism that allows users to authenticate with credentials validated against a remote identity provider.": "Basic authentication is a generic backend integration mechanism that allows users to authenticate with credentials validated against a remote identity provider.",
+  "URL": "URL",
+  "The remote URL to connect to.": "The remote URL to connect to.",
+  "Certificate": "Certificate",
+  "PEM-encoded TLS client certificate to present when connecting to the server.": "PEM-encoded TLS client certificate to present when connecting to the server.",
+  "Key": "Key",
+  "PEM-encoded TLS private key for the client certificate. Required if certificate is specified.": "PEM-encoded TLS private key for the client certificate. Required if certificate is specified."
+}

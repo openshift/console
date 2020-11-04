@@ -5,7 +5,7 @@ import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
-
+import { useTranslation } from 'react-i18next';
 import { DetailsPage, ListPage, Table, TableData, TableRow } from './factory';
 import {
   Kebab,
@@ -42,16 +42,17 @@ const Details = ({ obj: replicaSet }) => {
     'annotations',
     'deployment.kubernetes.io/revision',
   ]);
+  const { t } = useTranslation();
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Replica Set Details" />
+        <SectionHeading text={t('workload~ReplicaSet details')} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={replicaSet} showPodSelector showNodeSelector showTolerations>
               {revision && (
                 <>
-                  <dt>Deployment Revision</dt>
+                  <dt>{t('workload~Deployment revision')}</dt>
                   <dd>{revision}</dd>
                 </>
               )}
@@ -63,11 +64,11 @@ const Details = ({ obj: replicaSet }) => {
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="Containers" />
+        <SectionHeading text={t('workload~Containers')} />
         <ContainerTable containers={replicaSet.spec.template.spec.containers} />
       </div>
       <div className="co-m-pane__body">
-        <VolumesTable resource={replicaSet} heading="Volumes" />
+        <VolumesTable resource={replicaSet} heading={t('workload~Volumes')} />
       </div>
     </>
   );
@@ -119,86 +120,42 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const ReplicaSetTableRow = ({ obj, index, key, style }) => {
-  return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={kind}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
-          title={obj.metadata.uid}
-        />
-      </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
-        <ResourceLink
-          kind="Namespace"
-          name={obj.metadata.namespace}
-          title={obj.metadata.namespace}
-        />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        <Link
-          to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`}
-          title="pods"
-        >
-          {obj.status.replicas || 0} of {obj.spec.replicas} pods
-        </Link>
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        <LabelList kind={kind} labels={obj.metadata.labels} />
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
-        <OwnerReferences resource={obj} />
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
-      </TableData>
-      <TableData className={tableColumnClasses[6]}>
-        <ResourceKebab actions={replicaSetMenuActions} kind={kind} resource={obj} />
-      </TableData>
-    </TableRow>
-  );
-};
-
-const ReplicaSetTableHeader = () => {
-  return [
+const ReplicaSetsList = (props) => {
+  const { t } = useTranslation();
+  const ReplicaSetTableHeader = () => [
     {
-      title: 'Name',
+      title: t('workload~Name'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Namespace',
+      title: t('workload~Namespace'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
       id: 'namespace',
     },
     {
-      title: 'Status',
+      title: t('workload~Status'),
       sortFunc: 'numReplicas',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Labels',
+      title: t('workload~Labels'),
       sortField: 'metadata.labels',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Owner',
+      title: t('workload~Owner'),
       sortField: 'metadata.ownerReferences[0].name',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
     },
     {
-      title: 'Created',
+      title: t('workload~Created'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[5] },
@@ -208,19 +165,65 @@ const ReplicaSetTableHeader = () => {
       props: { className: tableColumnClasses[6] },
     },
   ];
+
+  const ReplicaSetTableRow = ({ obj, index, key, style }) => {
+    return (
+      <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+        <TableData className={tableColumnClasses[0]}>
+          <ResourceLink
+            kind={kind}
+            name={obj.metadata.name}
+            namespace={obj.metadata.namespace}
+            title={obj.metadata.uid}
+          />
+        </TableData>
+        <TableData
+          className={classNames(tableColumnClasses[1], 'co-break-word')}
+          columnID="namespace"
+        >
+          <ResourceLink
+            kind="Namespace"
+            name={obj.metadata.namespace}
+            title={obj.metadata.namespace}
+          />
+        </TableData>
+        <TableData className={tableColumnClasses[2]}>
+          <Link
+            to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`}
+            title="pods"
+          >
+            {t('workload~{{count1}} of {{count2}} pods', {
+              count1: obj.status.replicas || 0,
+              count2: obj.spec.replicas,
+            })}
+          </Link>
+        </TableData>
+        <TableData className={tableColumnClasses[3]}>
+          <LabelList kind={kind} labels={obj.metadata.labels} />
+        </TableData>
+        <TableData className={tableColumnClasses[4]}>
+          <OwnerReferences resource={obj} />
+        </TableData>
+        <TableData className={tableColumnClasses[5]}>
+          <Timestamp timestamp={obj.metadata.creationTimestamp} />
+        </TableData>
+        <TableData className={tableColumnClasses[6]}>
+          <ResourceKebab actions={replicaSetMenuActions} kind={kind} resource={obj} />
+        </TableData>
+      </TableRow>
+    );
+  };
+
+  return (
+    <Table
+      {...props}
+      aria-label={t('workload~ReplicaSets')}
+      Header={ReplicaSetTableHeader}
+      Row={ReplicaSetTableRow}
+      virtualize
+    />
+  );
 };
-
-ReplicaSetTableHeader.displayName = 'ReplicaSetTableHeader';
-
-const ReplicaSetsList = (props) => (
-  <Table
-    {...props}
-    aria-label="Replica Sets"
-    Header={ReplicaSetTableHeader}
-    Row={ReplicaSetTableRow}
-    virtualize
-  />
-);
 const ReplicaSetsPage = (props) => {
   const { canCreate = true } = props;
   return (

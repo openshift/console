@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { Button } from '@patternfly/react-core';
 
@@ -12,16 +13,19 @@ const MultiColumnFieldFooter: React.FC<MultiColumnFieldHeader> = ({
   addLabel,
   onAdd,
   disableAddRow = false,
-}) => (
-  <Button
-    variant="link"
-    isDisabled={disableAddRow}
-    onClick={onAdd}
-    icon={<PlusCircleIcon />}
-    isInline
-  >
-    {addLabel || 'Add values'}
-  </Button>
-);
+}) => {
+  const { t } = useTranslation();
+  return (
+    <Button
+      variant="link"
+      isDisabled={disableAddRow}
+      onClick={onAdd}
+      icon={<PlusCircleIcon />}
+      isInline
+    >
+      {addLabel || t('console-shared~Add values')}
+    </Button>
+  );
+};
 
 export default MultiColumnFieldFooter;

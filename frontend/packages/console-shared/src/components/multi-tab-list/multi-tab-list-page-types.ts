@@ -2,7 +2,7 @@ import { K8sKind } from '@console/internal/module/k8s';
 
 export type MenuAction = {
   label?: string;
-  model: K8sKind;
+  model?: K8sKind;
   onSelection?: (key: string, thisAction: MenuAction, currentURL: string) => string | undefined;
 };
 

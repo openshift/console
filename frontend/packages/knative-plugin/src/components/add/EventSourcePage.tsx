@@ -11,20 +11,27 @@ import ConnectedEventSource from './EventSource';
 import { KnativeEventingModel } from '../../models';
 import EventSourceAlert from './EventSourceAlert';
 import { useEventSourceList } from '../../utils/create-eventsources-utils';
+import { useTranslation } from 'react-i18next';
 
 type EventSourcePageProps = RouteComponentProps<{ ns?: string }>;
 
 const EventSourcePage: React.FC<EventSourcePageProps> = ({ match, location }) => {
   const namespace = match.params.ns;
   const eventSourceStatus = useEventSourceList(namespace);
+  const { t } = useTranslation();
   const searchParams = new URLSearchParams(location.search);
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
       <Helmet>
-        <title>Event Sources</title>
+        <title>{t('knative-plugin~Event Sources')}</title>
       </Helmet>
-      <PageHeading badge={getBadgeFromType(KnativeEventingModel.badge)} title="Event Sources">
-        Create an event source to register interest in a class of events from a particular system
+      <PageHeading
+        badge={getBadgeFromType(KnativeEventingModel.badge)}
+        title={t('knative-plugin~Event Sources')}
+      >
+        {t(
+          'knative-plugin~Create an event source to register interest in a class of events from a particular system',
+        )}
       </PageHeading>
       <PageBody flexLayout>
         <EventSourceAlert eventSourceStatus={eventSourceStatus} />

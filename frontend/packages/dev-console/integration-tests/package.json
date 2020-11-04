@@ -1,0 +1,9 @@
+{
+  "name": "@dev-console/integration-tests",
+  "version": "0.0.1",
+  "description": "OpenShift Developer Perspective Cypress tests",
+  "private": true,
+  "cypress-cucumber-preprocessor": {
+    "step_definitions": "support/step-definitions/*/"
+  }
+}

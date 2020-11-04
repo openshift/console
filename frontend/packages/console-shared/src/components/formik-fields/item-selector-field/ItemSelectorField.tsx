@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import * as fuzzy from 'fuzzysearch';
 import { useField, useFormikContext, FormikValues } from 'formik';
@@ -11,7 +12,6 @@ import {
   Button,
   TextInput,
   EmptyStateBody,
-  pluralize,
 } from '@patternfly/react-core';
 import { getFieldId, useDebounceCallback } from '@console/shared';
 import SelectorCard from './SelectorCard';
@@ -39,6 +39,7 @@ interface ItemSelectorFieldProps {
   showIfSingle?: boolean;
   showFilter?: boolean;
   showCount?: boolean;
+  emptyStateMessage?: string;
 }
 
 const ItemSelectorField: React.FC<ItemSelectorFieldProps> = ({
@@ -52,7 +53,9 @@ const ItemSelectorField: React.FC<ItemSelectorFieldProps> = ({
   showIfSingle = false,
   showFilter = false,
   showCount = false,
+  emptyStateMessage,
 }) => {
+  const { t } = useTranslation();
   const [selected, { error: selectedError, touched: selectedTouched }] = useField(name);
   const { setFieldValue, setFieldTouched, validateForm } = useFormikContext<FormikValues>();
   const [filteredList, setFilteredList] = React.useState(itemList);
@@ -146,12 +149,12 @@ const ItemSelectorField: React.FC<ItemSelectorFieldProps> = ({
                 className="odc-item-selector-filter__input"
                 onChange={handleFilterChange}
                 value={filterText}
-                placeholder="Filter by type..."
-                aria-label="Filter by type"
+                placeholder={t('console-shared~Filter by type...')}
+                aria-label={t('console-shared~Filter by type')}
               />
               {showCount && (
                 <span className="odc-item-selector-filter__count">
-                  {pluralize(itemCount, 'item')}
+                  {t('console-shared~{{count}} item', { count: itemCount })}
                 </span>
               )}
             </div>
@@ -159,14 +162,17 @@ const ItemSelectorField: React.FC<ItemSelectorFieldProps> = ({
           {showFilter && itemCount === 0 ? (
             <EmptyState>
               <Title headingLevel="h2" size="lg">
-                No results match the filter criteria
+                {t('console-shared~No results match the filter criteria')}
               </Title>
               <EmptyStateBody>
-                No Event Source types are being shown due to the filters being applied.
+                {emptyStateMessage ||
+                  t(
+                    'console-shared~No Event Source types are being shown due to the filters being applied.',
+                  )}
               </EmptyStateBody>
               <EmptyStatePrimary>
                 <Button variant="link" onClick={handleClearFilter}>
-                  Clear filter
+                  {t('console-shared~Clear filter')}
                 </Button>
               </EmptyStatePrimary>
             </EmptyState>

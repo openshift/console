@@ -51,6 +51,7 @@ import '../../create-vm-wizard-footer.scss';
 import './cloud-init-tab.scss';
 import { iGetCommonData } from '../../selectors/immutable/selectors';
 import { V2V_IMPORT_CLOUD_INIT_NOT_AVAILABLE } from '../../../../strings/vm/messages';
+import { CloudInitInfoHelper } from './cloud-init-info-helper';
 
 type CustomScriptProps = {
   id: string;
@@ -302,7 +303,7 @@ const CloudInitTabComponent: React.FC<ResultTabComponentProps> = ({
       )}
       <Form>
         <Title headingLevel="h5" size="lg">
-          Cloud-init
+          Cloud-init <CloudInitInfoHelper />
         </Title>
         {isDisabled && isProviderImport && (
           <Alert

@@ -1,0 +1,16 @@
+{
+  "Disable": "Disable",
+  "Enable": "Enable",
+  "Name": "Name",
+  "Publisher": "Publisher",
+  "Packages": "Packages",
+  "Package not found": "Package not found",
+  "Cannot create a Subscription to a non-existent package.": "Cannot create a Subscription to a non-existent package.",
+  "Availability": "Availability",
+  "Endpoint": "Endpoint",
+  "# of Operators": "# of Operators",
+  "Disabled": "Disabled",
+  "Operators provided by this source will not appear in OperatorHub and any operators installed from this source will not receive updates until this source is re-enabled.": "Operators provided by this source will not appear in OperatorHub and any operators installed from this source will not receive updates until this source is re-enabled.",
+  "Enable source": "Enable source",
+  "Create {{resource}}": "Create {{resource}}"
+}

@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { k8sPatch, K8sResourceKind, K8sKind } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
@@ -25,15 +26,17 @@ export const TagsModal = withHandlePromise((props: TagsModalProps) => {
   );
   const [errorMessage, setErrorMessage] = React.useState(props.errorMessage);
 
+  const { t } = useTranslation();
+
   const submit = (e) => {
     e.preventDefault();
 
     // We just throw away any rows where the key is blank
-    const usedTags = _.reject(tags, (t) => _.isEmpty(t[NameValueEditorPair.Name]));
+    const usedTags = _.reject(tags, (tag) => _.isEmpty(tag[NameValueEditorPair.Name]));
 
-    const keys = usedTags.map((t) => t[NameValueEditorPair.Name]);
+    const keys = usedTags.map((tag) => tag[NameValueEditorPair.Name]);
     if (_.uniq(keys).length !== keys.length) {
-      setErrorMessage('Duplicate keys found.');
+      setErrorMessage(t('modal~Duplicate keys found.'));
       return;
     }
     // Make sure to 'add' if the path does not already exist, otherwise the patch request will fail
@@ -45,7 +48,7 @@ export const TagsModal = withHandlePromise((props: TagsModalProps) => {
 
   return (
     <form onSubmit={submit} className="modal-content">
-      <ModalTitle>{props.title}</ModalTitle>
+      <ModalTitle>{t(props.titleKey)}</ModalTitle>
       <ModalBody>
         <NameValueEditorComponent
           nameValuePairs={tags}
@@ -54,7 +57,7 @@ export const TagsModal = withHandlePromise((props: TagsModalProps) => {
         />
       </ModalBody>
       <ModalSubmitFooter
-        submitText="Save"
+        submitText={t('modal~Save')}
         cancel={props.cancel}
         errorMessage={props.errorMessage || errorMessage}
         inProgress={props.inProgress}
@@ -67,7 +70,8 @@ export const annotationsModal = createModalLauncher((props: AnnotationsModalProp
   <TagsModal
     path="/metadata/annotations"
     tags={props.resource.metadata.annotations}
-    title="Edit Annotations"
+    // t('modal~Edit annotations')
+    titleKey="modal~Edit annotations"
     {...props}
   />
 ));
@@ -75,7 +79,7 @@ export const annotationsModal = createModalLauncher((props: AnnotationsModalProp
 type TagsModalProps = {
   tags?: { [key: string]: string };
   path: string;
-  title: string;
+  titleKey: string;
   kind: K8sKind;
   resource: K8sResourceKind;
   inProgress: boolean;
@@ -84,6 +88,6 @@ type TagsModalProps = {
   close?: () => void;
 } & HandlePromiseProps;
 
-type AnnotationsModalProps = Omit<TagsModalProps, 'path' | 'tags' | 'title'>;
+type AnnotationsModalProps = Omit<TagsModalProps, 'path' | 'tags'>;
 
 TagsModal.displayName = 'TagsModal';

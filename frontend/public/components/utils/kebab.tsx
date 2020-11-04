@@ -1,9 +1,9 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
-import * as FocusTrap from 'focus-trap-react';
 import { connect } from 'react-redux';
-import { KEY_CODES, Tooltip } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { KEY_CODES, Tooltip, FocusTrap } from '@patternfly/react-core';
 import { AngleRightIcon, EllipsisVIcon } from '@patternfly/react-icons';
 import Popper from '@console/shared/src/components/popper/Popper';
 import {
@@ -29,7 +29,7 @@ import {
 } from '../../module/k8s';
 import { impersonateStateToProps } from '../../reducers/ui';
 import { connectToModel } from '../../kinds';
-import * as plugins from '../../plugins';
+import { registry } from '../../plugins';
 import { VolumeSnapshotModel } from '../../models';
 
 export const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] => {
@@ -78,16 +78,18 @@ const KebabItem_: React.FC<KebabItemProps & { isAllowed: boolean }> = ({
   };
   const disabled = !isAllowed || option.isDisabled;
   const classes = classNames('pf-c-dropdown__menu-item', { 'pf-m-disabled': disabled });
+  const { t } = useTranslation();
+
   return (
     <button
       className={classes}
       onClick={(e) => !disabled && onClick(e, option)}
       autoFocus={autoFocus}
       onKeyDown={onEscape && handleEscape}
-      data-test-action={option.label}
+      data-test-action={option.labelKey ? option.labelKey : option.label}
     >
       {option.icon && <span className="oc-kebab__icon">{option.icon}</span>}
-      {option.label}
+      {option.labelKey ? t(option.labelKey) : option.label}
     </button>
   );
 };
@@ -376,7 +378,7 @@ kebabFactory.common = [
 
 export const getExtensionsKebabActionsForKind = (kind: K8sKind) => {
   const extensionActions = [];
-  _.forEach(plugins.registry.getKebabActions(), (getActions: any) => {
+  _.forEach(registry.getKebabActions(), (getActions: any) => {
     if (getActions) {
       _.forEach(getActions.properties.getKebabActionsForKind(kind), (kebabAction) => {
         extensionActions.push(kebabAction);
@@ -523,7 +525,8 @@ export class Kebab extends React.Component<any, { active: boolean }> {
 
 export type KebabOption = {
   hidden?: boolean;
-  label: React.ReactNode;
+  label?: React.ReactNode;
+  labelKey?: string;
   href?: string;
   callback?: () => any;
   accessReview?: AccessReviewResourceAttributes;

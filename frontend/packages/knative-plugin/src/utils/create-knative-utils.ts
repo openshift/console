@@ -24,7 +24,7 @@ export const getKnativeServiceDepResource = (
     runtimeIcon,
     serverless: { scaling },
     limits,
-    route: { unknownTargetPort, create, targetPort },
+    route: { unknownTargetPort, create, defaultUnknownPort },
     labels,
     image: { tag: imageTag },
     deployment: {
@@ -34,9 +34,7 @@ export const getKnativeServiceDepResource = (
     healthChecks,
     resources,
   } = formData;
-  const contTargetPort = targetPort
-    ? parseInt(targetPort.split('-')[0], 10)
-    : parseInt(unknownTargetPort, 10);
+  const contTargetPort = parseInt(unknownTargetPort, 10) || defaultUnknownPort;
   const imgPullPolicy = imagePolicy ? ImagePullPolicy.Always : ImagePullPolicy.IfNotPresent;
   const { concurrencylimit, concurrencytarget, minpods, maxpods } = scaling;
   const {

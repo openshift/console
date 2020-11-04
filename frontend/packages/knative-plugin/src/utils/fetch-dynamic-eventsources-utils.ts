@@ -43,6 +43,7 @@ export const fetchEventSourcesCrd = async () => {
             names: { kind, plural, singular },
           },
         } = crd;
+        const label = kind.replace(/([A-Z])/g, ' $1').trim();
         const crdLatestVersion = getLatestVersionForCRD(crd);
         if (crdLatestVersion) {
           const sourceModel = {
@@ -51,8 +52,8 @@ export const fetchEventSourcesCrd = async () => {
             kind,
             plural,
             id: singular,
-            label: singular,
-            labelPlural: plural,
+            label,
+            labelPlural: `${label}s`,
             abbr: kindToAbbr(kind),
             namespaced: true,
             crd: true,
@@ -163,14 +164,15 @@ export const fetchChannelsCrd = async () => {
           },
         } = crd;
         const crdLatestVersion = getLatestVersionForCRD(crd);
+        const label = kind.replace(/([A-Z])/g, ' $1').trim();
         const sourceModel = {
           apiGroup: group,
           apiVersion: crdLatestVersion,
           kind,
           plural,
           id: singular,
-          label: singular,
-          labelPlural: plural,
+          label,
+          labelPlural: `${label}s`,
           abbr: kindToAbbr(kind),
           namespaced: true,
           crd: true,
@@ -187,6 +189,27 @@ export const fetchChannelsCrd = async () => {
     eventSourceData.eventSourceChannels = [];
   }
   return eventSourceData.eventSourceChannels;
+};
+
+export const useChannelModels = () => {
+  const [modelsData, setModelsData] = useSafetyFirst({ loaded: false, eventSourceChannels: [] });
+  useEffect(() => {
+    if (eventSourceData.eventSourceChannels.length === 0) {
+      fetchChannelsCrd()
+        .then((data) => {
+          setModelsData({ loaded: true, eventSourceChannels: data });
+        })
+        .catch((err) => {
+          setModelsData({ loaded: true, eventSourceChannels: eventSourceData.eventSourceChannels });
+          // eslint-disable-next-line no-console
+          console.warn('Error fetching CRDs for dynamic event sources', err);
+        });
+    } else {
+      setModelsData({ loaded: true, eventSourceChannels: eventSourceData.eventSourceChannels });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return modelsData;
 };
 
 export const getDynamicChannelResourceList = (namespace: string, limit?: number) => {
@@ -246,6 +269,11 @@ export const useChannelResourcesList = (): EventChannelData => {
 
 export const getDynamicChannelModelRefs = (): string[] => {
   return eventSourceData.eventSourceChannels.map((model: K8sKind) => referenceForModel(model));
+};
+export const getDynamicChannelModel = (resourceRef: string): K8sKind => {
+  return eventSourceData.eventSourceChannels.find(
+    (model: K8sKind) => referenceForModel(model) === resourceRef,
+  );
 };
 
 export const isEventingChannelResourceKind = (resourceRef: string): boolean => {

@@ -3,6 +3,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 import { Helmet } from 'react-helmet';
+import { useTranslation } from 'react-i18next';
 
 import { ClusterDashboard } from './cluster-dashboard/cluster-dashboard';
 import { HorizontalNav, PageHeading, LoadingBox, Page, AsyncComponent } from '../../utils';
@@ -48,7 +49,8 @@ const getPluginTabPages = (tabs: DashboardsTab[], cards: DashboardsCard[]): Page
   });
 
 const DashboardsPage_: React.FC<DashboardsPageProps> = ({ match, kindsInFlight, k8sModels }) => {
-  const title = 'Overview';
+  const { t } = useTranslation();
+  const title = t('dashboard~Overview');
   const tabExtensions = useExtensions<DashboardsTab>(isDashboardsTab);
   const cardExtensions = useExtensions<DashboardsCard>(isDashboardsCard);
 
@@ -61,12 +63,12 @@ const DashboardsPage_: React.FC<DashboardsPageProps> = ({ match, kindsInFlight, 
     () => [
       {
         href: '',
-        name: 'Cluster',
+        name: t('dashboard~Cluster'),
         component: ClusterDashboard,
       },
       ...pluginPages,
     ],
-    [pluginPages],
+    [pluginPages, t],
   );
 
   return kindsInFlight && k8sModels.size === 0 ? (

@@ -27,6 +27,7 @@ const tableColumnClasses = [
   classNames('pf-u-w-inherit'),
 ];
 
+// Same columns are used for attached devices mode tables
 export const getColumns = () => [
   {
     title: 'Name',

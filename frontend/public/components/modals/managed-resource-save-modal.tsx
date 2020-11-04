@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { referenceForOwnerRef, K8sResourceCommon, OwnerReference } from '../../module/k8s/';
@@ -14,23 +15,26 @@ const ManagedResourceSaveModal: React.SFC<ManagedResourceSaveModalProps> = (prop
   };
 
   const { owner, resource } = props;
+  const { t } = useTranslation();
   return (
     <form onSubmit={submit} name="form" className="modal-content ">
       <ModalTitle>
-        <YellowExclamationTriangleIcon className="co-icon-space-r" /> Managed resource
+        <YellowExclamationTriangleIcon className="co-icon-space-r" /> {t('modal~Managed resource')}
       </ModalTitle>
       <ModalBody className="modal-body">
-        This resource is managed by{' '}
-        <ResourceLink
-          className="modal__inline-resource-link"
-          inline
-          kind={referenceForOwnerRef(owner)}
-          name={owner.name}
-          namespace={resource.metadata.namespace}
-        />{' '}
-        and any modifications may be overwritten. Edit the managing resource to preserve changes.
+        <Trans t={t} ns="modal">
+          This resource is managed by{' '}
+          <ResourceLink
+            className="modal__inline-resource-link"
+            inline
+            kind={referenceForOwnerRef(owner)}
+            name={owner.name}
+            namespace={resource.metadata.namespace}
+          />{' '}
+          and any modifications may be overwritten. Edit the managing resource to preserve changes.
+        </Trans>
       </ModalBody>
-      <ModalSubmitFooter submitText="Save" cancel={props.close} inProgress={false} />
+      <ModalSubmitFooter submitText={t('modal~Save')} cancel={props.close} inProgress={false} />
     </form>
   );
 };

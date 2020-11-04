@@ -14,9 +14,17 @@ import KnativeServiceResources from '../KnativeServiceResources';
 import KSRoutesOverviewList from '../RoutesOverviewList';
 import RevisionsOverviewList from '../RevisionsOverviewList';
 
-jest.mock('@console/plugin-sdk/src/useExtensions', () => ({
+jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({
   useExtensions: jest.fn(),
 }));
+
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
 
 describe('KnativeServiceResources', () => {
   beforeEach(() => {

@@ -4,12 +4,17 @@ import {
   TEMPLATE_VERSION_LABEL,
   TEMPLATE_TYPE_BASE,
   TEMPLATE_TYPE_LABEL,
+  TEMPLATE_DEFAULT_LABEL,
+  TEMPLATE_FLAVOR_LABEL,
+  TEMPLATE_WORKLOAD_LABEL,
 } from '../../../constants/vm';
 import { ITemplate } from '../../../types/template';
 import { iGetCreationTimestamp, iGetLabels } from '../common';
 import { compareVersions } from '../../../utils/sort';
 import { iGet, iGetIn } from '../../../utils/immutable';
 import { VirtualMachineModel } from '../../../models';
+import { Flavor } from '../../../constants/vm/flavor';
+import { WorkloadProfile } from '../../../constants/vm/workload-profile';
 
 type FindTemplateOptions = {
   workload?: string;
@@ -99,3 +104,24 @@ export const iGetCommonTemplateCloudInit = (tmp: ITemplate) => {
   );
   return iGet(iCloudInitStorage, 'cloudInitNoCloud');
 };
+
+export const iGetDefaultTemplate = (
+  iCommonTemplates: ImmutableMap<string, ITemplate>,
+  os: string,
+): ITemplate =>
+  (iCommonTemplates || ImmutableMap()).valueSeq().find((iTemplate) => {
+    const labels = iGetLabels(iTemplate);
+    return labels && labels.get(getOsLabel(os)) && labels.get(TEMPLATE_DEFAULT_LABEL) === 'true';
+  });
+
+export const getITemplateDefaultFlavor = (template: ITemplate): Flavor =>
+  template &&
+  Flavor.getAll().find(
+    (f) => iGetLabels(template).get(`${TEMPLATE_FLAVOR_LABEL}/${f.getValue()}`) === 'true',
+  );
+
+export const getITemplateDefaultWorkload = (template: ITemplate): WorkloadProfile =>
+  template &&
+  WorkloadProfile.getAll().find(
+    (w) => iGetLabels(template).get(`${TEMPLATE_WORKLOAD_LABEL}/${w.getValue()}`) === 'true',
+  );

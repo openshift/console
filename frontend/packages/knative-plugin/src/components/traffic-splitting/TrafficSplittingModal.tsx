@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { FormikProps, FormikValues } from 'formik';
+import { useTranslation } from 'react-i18next';
 import {
   ModalTitle,
   ModalBody,
@@ -16,17 +17,21 @@ interface TrafficSplittingModalProps {
 type Props = FormikProps<FormikValues> & TrafficSplittingModalProps & ModalComponentProps;
 
 const TrafficSplittingModal: React.FC<Props> = (props) => {
+  const { t } = useTranslation();
   const { handleSubmit, cancel, isSubmitting, status } = props;
   return (
     <form className="modal-content" onSubmit={handleSubmit}>
-      <ModalTitle>Set Traffic Distribution</ModalTitle>
+      <ModalTitle>{t('knative-plugin~Set Traffic Distribution')}</ModalTitle>
       <ModalBody>
-        <p>Set traffic distribution for the Revisions of the Knative Service</p>
+        <p>
+          {t('knative-plugin~Set traffic distribution for the Revisions of the Knative Service')}
+        </p>
         <TrafficSplittingFields {...props} />
       </ModalBody>
       <ModalSubmitFooter
         inProgress={isSubmitting}
-        submitText="Save"
+        submitText={t('knative-plugin~Save')}
+        cancelText={t('knative-plugin~Cancel')}
         cancel={cancel}
         errorMessage={status.error}
       />

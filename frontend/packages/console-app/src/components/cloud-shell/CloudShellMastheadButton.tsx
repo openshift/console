@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { RootState } from '@console/internal/redux';
 import { TerminalIcon } from '@patternfly/react-icons';
 import { isCloudShellExpanded } from '../../redux/reducers/cloud-shell-reducer';
@@ -24,6 +25,7 @@ type Props = WithFlagsProps & StateProps & DispatchProps;
 const ClouldShellMastheadButton: React.FC<Props> = ({ flags, onClick, open }) => {
   const [terminalAvailable, setTerminalAvailable] = React.useState(false);
   const flagEnabled = flags[FLAG_DEVWORKSPACE];
+  const { t } = useTranslation();
   React.useEffect(() => {
     let mounted = true;
     if (flagEnabled) {
@@ -60,12 +62,16 @@ const ClouldShellMastheadButton: React.FC<Props> = ({ flags, onClick, open }) =>
   return (
     <PageHeaderToolsItem>
       <Tooltip
-        content={open ? 'Close command line terminal' : 'Open command line terminal'}
+        content={
+          open
+            ? t('cloudshell~Close command line terminal')
+            : t('cloudshell~Open command line terminal')
+        }
         position={TooltipPosition.bottom}
       >
         <Button
           variant="plain"
-          aria-label="Command line terminal"
+          aria-label={t('cloudshell~Command line terminal')}
           onClick={toggleTerminal}
           className={open ? 'pf-m-selected' : undefined}
           data-tour-id="tour-cloud-shell-button"

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
+import { withTranslation } from 'react-i18next';
 
 class SimpleTab extends React.PureComponent<SimpleTabProps> {
   constructor(props) {
@@ -27,7 +28,7 @@ class SimpleTab extends React.PureComponent<SimpleTabProps> {
   }
 }
 
-export class SimpleTabNav extends React.Component<SimpleTabNavProps, SimpleTabNavState> {
+class SimpleTabNav_ extends React.Component<SimpleTabNavProps, SimpleTabNavState> {
   constructor(props) {
     super(props);
     this.state = { selectedTab: props.selectedTab };
@@ -55,7 +56,7 @@ export class SimpleTabNav extends React.Component<SimpleTabNavProps, SimpleTabNa
   }
 
   render() {
-    const { tabs, tabProps, additionalClassNames } = this.props;
+    const { tabs, tabProps, additionalClassNames, t } = this.props;
     const { selectedTab } = this.state;
     const selectedTabData = _.find(tabs, { name: selectedTab }) || _.head(tabs);
     const Component = selectedTabData.component;
@@ -66,9 +67,9 @@ export class SimpleTabNav extends React.Component<SimpleTabNavProps, SimpleTabNa
           {_.map(tabs, (tab) => (
             <SimpleTab
               active={selectedTabData.name === tab.name}
-              key={tab.name}
+              key={tab.nameKey ? tab.nameKey : tab.name}
               onClick={this.onClickTab}
-              title={tab.name}
+              title={tab.nameKey ? t(tab.nameKey) : tab.name}
             />
           ))}
         </ul>
@@ -78,15 +79,19 @@ export class SimpleTabNav extends React.Component<SimpleTabNavProps, SimpleTabNa
   }
 }
 
+export const SimpleTabNav = withTranslation()(SimpleTabNav_);
+
 type SimpleTabNavProps = {
   onClickTab?: (name: string) => void;
   selectedTab?: string;
   tabProps: any;
   tabs: {
-    name: string;
+    name?: string;
+    nameKey?: string;
     component: any;
   }[];
   additionalClassNames?: string;
+  t?: any;
 };
 
 type SimpleTabNavState = {

@@ -1,0 +1,21 @@
+{
+  "To address": "To address",
+  "The email address to send notifications to.": "The email address to send notifications to.",
+  "SMTP configuration": "SMTP configuration",
+  "Save as default SMTP configuration": "Save as default SMTP configuration",
+  "Checking this box will write these values to the global section of the configuration file where they will become defaults for future email receivers.": "Checking this box will write these values to the global section of the configuration file where they will become defaults for future email receivers.",
+  "From address": "From address",
+  "The email address to send notifications from.": "The email address to send notifications from.",
+  "SMTP smarthost": "SMTP smarthost",
+  "Smarthost used for sending emails, including port number.": "Smarthost used for sending emails, including port number.",
+  "SMTP hello": "SMTP hello",
+  "The hostname to identify to the SMTP server.": "The hostname to identify to the SMTP server.",
+  "Auth username": "Auth username",
+  "Auth password (using LOGIN and PLAIN)": "Auth password (using LOGIN and PLAIN)",
+  "Auth identity (using PLAIN)": "Auth identity (using PLAIN)",
+  "Auth secret (CRAM-MDS)": "Auth secret (CRAM-MDS)",
+  "Require TLS": "Require TLS",
+  "Show advanced configuration": "Show advanced configuration",
+  "Hide advanced configuration": "Hide advanced configuration",
+  "Body of email notifications (HTML)": "Body of email notifications (HTML)"
+}

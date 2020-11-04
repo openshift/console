@@ -9,6 +9,7 @@ export enum QUERY_PROPERTIES {
   APPLICATION = 'application',
   /** For defining a contextual source of the redirect (ie, connect a new workload from this contextual source) */
   CONTEXT_SOURCE = 'contextSource',
+  CONTEXT_ACTION = 'action',
 }
 
 export const RESOURCE_NAME_TRUNCATE_LENGTH = 13;
@@ -16,5 +17,10 @@ export const RESOURCE_NAME_TRUNCATE_LENGTH = 13;
 export const CREATE_APPLICATION_KEY = '#CREATE_APPLICATION_KEY#';
 export const UNASSIGNED_KEY = '#UNASSIGNED_APP#';
 
-export const CREATE_APPLICATION_LABEL = 'Create Application';
+export const CREATE_APPLICATION_LABEL = 'Create application';
 export const UNASSIGNED_LABEL = 'no application group';
+
+export enum CONNECTOR_INCONTEXT_ACTIONS {
+  /** connects to action for resources */
+  connectsTo = 'connectsTo',
+}

@@ -4,9 +4,19 @@ import { Formik } from 'formik';
 import { EventSource } from '../EventSource';
 
 type EventSourceProps = React.ComponentProps<typeof EventSource>;
+
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 describe('EventSourceSpec', () => {
   let wrapper: ShallowWrapper<EventSourceProps>;
   const namespaceName = 'myApp';
+  const perspective = 'dev';
   const activeApplicationName = 'appGroup';
   const eventSourceStatusData = null;
 
@@ -14,6 +24,7 @@ describe('EventSourceSpec', () => {
     wrapper = shallow(
       <EventSource
         namespace={namespaceName}
+        perspective={perspective}
         eventSourceStatus={eventSourceStatusData}
         activeApplication={activeApplicationName}
       />,
@@ -31,6 +42,7 @@ describe('EventSourceSpec', () => {
     wrapper = shallow(
       <EventSource
         namespace={namespaceName}
+        perspective={perspective}
         eventSourceStatus={eventSourceStatusData}
         contextSource={contextSourceData}
         activeApplication={activeApplicationName}

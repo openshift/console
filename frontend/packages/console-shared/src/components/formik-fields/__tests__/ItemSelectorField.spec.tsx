@@ -3,6 +3,14 @@ import { shallow } from 'enzyme';
 import ItemSelectorField from '../item-selector-field/ItemSelectorField';
 import { EmptyState } from '@patternfly/react-core';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 jest.mock('formik', () => ({
   useField: jest.fn(() => [{}, {}]),
   useFormikContext: jest.fn(() => ({
@@ -11,6 +19,7 @@ jest.mock('formik', () => ({
     validateForm: jest.fn(),
   })),
 }));
+
 describe('ItemSelectorField', () => {
   it('Should not render if showIfSingle is false and list contains single item', () => {
     const list = { ListItem: { name: 'ItemName', title: 'ItemName', iconUrl: 'DisplayIcon' } };

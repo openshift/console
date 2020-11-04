@@ -14,6 +14,8 @@ import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboa
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
 import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
+import { useTranslation } from 'react-i18next';
+
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { ClusterVersionModel } from '../../../../models';
 import {
@@ -47,6 +49,7 @@ const ClusterVersion: React.FC<ClusterVersionProps> = ({ cv }) => {
       verb: 'patch',
       name: 'version',
     }) && window.SERVER_FLAGS.branding !== 'dedicated';
+  const { t } = useTranslation();
 
   switch (status) {
     case ClusterUpdateStatus.Updating:
@@ -56,7 +59,7 @@ const ClusterVersion: React.FC<ClusterVersionProps> = ({ cv }) => {
           <div>
             <Link to="/settings/cluster/">
               <InProgressIcon className="co-icon-and-text__icon" />
-              Updating
+              {t('dashboard~Updating')}
             </Link>
           </div>
         </>
@@ -69,7 +72,7 @@ const ClusterVersion: React.FC<ClusterVersionProps> = ({ cv }) => {
             <div>
               <Link to="/settings/cluster?showVersions">
                 <BlueArrowCircleUpIcon className="co-icon-space-r" />
-                Update cluster
+                {t('dashboard~Update cluster')}
               </Link>
             </div>
           )}
@@ -79,7 +82,7 @@ const ClusterVersion: React.FC<ClusterVersionProps> = ({ cv }) => {
       return lastVersion ? (
         <span className="co-select-to-copy">{lastVersion}</span>
       ) : (
-        <span className="text-secondary">Not available</span>
+        <span className="text-secondary">{t('dashboard~Not available')}</span>
       );
   }
 };
@@ -129,19 +132,22 @@ export const DetailsCard_ = connect(mapStateToProps)(
     const infrastuctureApiUrl = getInfrastructureAPIURL(infrastructure);
 
     const k8sGitVersion = getK8sGitVersion(k8sVersion);
+    const { t } = useTranslation();
 
     return (
       <DashboardCard data-test-id="details-card">
         <DashboardCardHeader>
-          <DashboardCardTitle>Details</DashboardCardTitle>
-          <DashboardCardLink to="/settings/cluster/">View settings</DashboardCardLink>
+          <DashboardCardTitle>{t('dashboard~Details')}</DashboardCardTitle>
+          <DashboardCardLink to="/settings/cluster/">
+            {t('dashboard~View settings')}
+          </DashboardCardLink>
         </DashboardCardHeader>
         <DashboardCardBody isLoading={flagPending(openshiftFlag)}>
           <DetailsBody>
             {openshiftFlag ? (
               <>
                 <DetailItem
-                  title="Cluster API address"
+                  title={t('dashboard~Cluster API address')}
                   isLoading={!infrastructureLoaded}
                   error={!!infrastructureError || (infrastructure && !infrastuctureApiUrl)}
                   valueClassName="co-select-to-copy"
@@ -149,18 +155,21 @@ export const DetailsCard_ = connect(mapStateToProps)(
                   {infrastuctureApiUrl}
                 </DetailItem>
                 <DetailItem
-                  title="Cluster ID"
+                  title={t('dashboard~Cluster ID')}
                   error={!!clusterVersionError || (clusterVersionLoaded && !clusterId)}
                   isLoading={!clusterVersionLoaded}
                 >
                   <div className="co-select-to-copy">{clusterId}</div>
                   {window.SERVER_FLAGS.branding !== 'okd' &&
                     window.SERVER_FLAGS.branding !== 'azure' && (
-                      <ExternalLink text="OpenShift Cluster Manager" href={getOCMLink(clusterId)} />
+                      <ExternalLink
+                        text={t('dashboard~OpenShift Cluster Manager')}
+                        href={getOCMLink(clusterId)}
+                      />
                     )}
                 </DetailItem>
                 <DetailItem
-                  title="Provider"
+                  title={t('dashboard~Provider')}
                   error={!!infrastructureError || (infrastructure && !infrastructurePlatform)}
                   isLoading={!infrastructureLoaded}
                   valueClassName="co-select-to-copy"
@@ -168,14 +177,14 @@ export const DetailsCard_ = connect(mapStateToProps)(
                   {infrastructurePlatform}
                 </DetailItem>
                 <DetailItem
-                  title="OpenShift version"
+                  title={t('dashboard~OpenShift version')}
                   error={!!clusterVersionError || (clusterVersionLoaded && !openShiftVersion)}
                   isLoading={!clusterVersionLoaded}
                 >
                   <ClusterVersion cv={clusterVersionData} />
                 </DetailItem>
                 <DetailItem
-                  title="Update channel"
+                  title={t('dashboard~Update channel')}
                   isLoading={!clusterVersionLoaded && !clusterVersionError}
                   error={!!clusterVersionError || (clusterVersionLoaded && !cvChannel)}
                   valueClassName="co-select-to-copy"
@@ -186,7 +195,7 @@ export const DetailsCard_ = connect(mapStateToProps)(
             ) : (
               <DetailItem
                 key="kubernetes"
-                title="Kubernetes version"
+                title={t('dashboard~Kubernetes version')}
                 error={!!k8sVersionError || (k8sVersion && !k8sGitVersion)}
                 isLoading={!k8sVersion}
                 valueClassName="co-select-to-copy"

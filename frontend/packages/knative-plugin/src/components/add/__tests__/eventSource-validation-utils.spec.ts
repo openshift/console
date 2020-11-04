@@ -1,14 +1,18 @@
 import * as _ from 'lodash';
+import { TFunction } from 'i18next';
 import { eventSourceValidationSchema } from '../eventSource-validation-utils';
 import { getDefaultEventingData } from '../../../utils/__tests__/knative-serving-data';
 import { EventSources } from '../import-types';
+
+const t = (key): TFunction => key;
+const i18nNS = 'knative-plugin';
 
 describe('Event Source ValidationUtils', () => {
   describe('CronJobSource : Event Source Validation', () => {
     it('should validate the form data', async () => {
       const defaultEventingData = getDefaultEventingData(EventSources.CronJobSource);
       const mockData = _.omit(_.cloneDeep(defaultEventingData), 'data.CronJobSource.data');
-      await eventSourceValidationSchema
+      await eventSourceValidationSchema(t)
         .resolve({ value: mockData })
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(true));
@@ -23,14 +27,16 @@ describe('Event Source ValidationUtils', () => {
         kind: '',
         key: '',
       };
-      await eventSourceValidationSchema
+      await eventSourceValidationSchema(t)
         .resolve({ value: mockData })
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
-      await eventSourceValidationSchema.validate(mockData).catch((err) => {
-        expect(err.message).toBe('Required');
-        expect(err.type).toBe('required');
-      });
+      await eventSourceValidationSchema(t)
+        .validate(mockData)
+        .catch((err) => {
+          expect(err.message).toBe(`${i18nNS}~Required`);
+          expect(err.type).toBe('required');
+        });
     });
   });
 
@@ -38,7 +44,7 @@ describe('Event Source ValidationUtils', () => {
     it('should validate the form data', async () => {
       const defaultEventingData = getDefaultEventingData(EventSources.ApiServerSource);
       const mockData = _.cloneDeep(defaultEventingData);
-      await eventSourceValidationSchema
+      await eventSourceValidationSchema(t)
         .resolve({ value: mockData })
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(true));
@@ -54,14 +60,16 @@ describe('Event Source ValidationUtils', () => {
         key: '',
       };
       mockData.data.ApiServerSource.resources[0] = { apiVersion: '', kind: '' };
-      await eventSourceValidationSchema
+      await eventSourceValidationSchema(t)
         .resolve({ value: mockData })
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
-      await eventSourceValidationSchema.validate(mockData).catch((err) => {
-        expect(err.message).toBe('Required');
-        expect(err.type).toBe('required');
-      });
+      await eventSourceValidationSchema(t)
+        .validate(mockData)
+        .catch((err) => {
+          expect(err.message).toBe(`${i18nNS}~Required`);
+          expect(err.type).toBe('required');
+        });
     });
   });
 
@@ -69,7 +77,7 @@ describe('Event Source ValidationUtils', () => {
     it('should validate the form data', async () => {
       const defaultEventingData = getDefaultEventingData(EventSources.KafkaSource);
       const mockData = _.cloneDeep(defaultEventingData);
-      await eventSourceValidationSchema
+      await eventSourceValidationSchema(t)
         .resolve({ value: mockData })
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(true));
@@ -79,14 +87,16 @@ describe('Event Source ValidationUtils', () => {
       const defaultEventingData = getDefaultEventingData(EventSources.KafkaSource);
       const mockData = _.cloneDeep(defaultEventingData);
       mockData.data.KafkaSource.bootstrapServers = [];
-      await eventSourceValidationSchema
+      await eventSourceValidationSchema(t)
         .resolve({ value: mockData })
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
-      await eventSourceValidationSchema.validate(mockData).catch((err) => {
-        expect(err.message).toBe('Required');
-        expect(err.type).toBe('min');
-      });
+      await eventSourceValidationSchema(t)
+        .validate(mockData)
+        .catch((err) => {
+          expect(err.message).toBe(`${i18nNS}~Required`);
+          expect(err.type).toBe('min');
+        });
     });
   });
 
@@ -95,7 +105,7 @@ describe('Event Source ValidationUtils', () => {
       const ContainerSourceData = {
         ...getDefaultEventingData(EventSources.ContainerSource),
       };
-      await eventSourceValidationSchema
+      await eventSourceValidationSchema(t)
         .resolve({ value: ContainerSourceData })
         .isValid(ContainerSourceData)
         .then((valid) => expect(valid).toEqual(true));
@@ -106,14 +116,16 @@ describe('Event Source ValidationUtils', () => {
         ...getDefaultEventingData(EventSources.ContainerSource),
       };
       ContainerSourceData.data.ContainerSource.template.spec.containers[0].image = '';
-      await eventSourceValidationSchema
+      await eventSourceValidationSchema(t)
         .resolve({ value: ContainerSourceData })
         .isValid(ContainerSourceData)
         .then((valid) => expect(valid).toEqual(false));
-      await eventSourceValidationSchema.validate(ContainerSourceData).catch((err) => {
-        expect(err.message).toBe('Required');
-        expect(err.type).toBe('required');
-      });
+      await eventSourceValidationSchema(t)
+        .validate(ContainerSourceData)
+        .catch((err) => {
+          expect(err.message).toBe(`${i18nNS}~Required`);
+          expect(err.type).toBe('required');
+        });
     });
   });
 
@@ -121,7 +133,7 @@ describe('Event Source ValidationUtils', () => {
     it('should validate the form data', async () => {
       const defaultEventingData = getDefaultEventingData(EventSources.PingSource);
       const mockData = _.cloneDeep(defaultEventingData);
-      await eventSourceValidationSchema
+      await eventSourceValidationSchema(t)
         .resolve({ value: mockData })
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(true));
@@ -131,14 +143,16 @@ describe('Event Source ValidationUtils', () => {
       const defaultEventingData = getDefaultEventingData(EventSources.PingSource);
       const mockData = _.cloneDeep(defaultEventingData);
       mockData.data.PingSource.schedule = '';
-      await eventSourceValidationSchema
+      await eventSourceValidationSchema(t)
         .resolve({ value: mockData })
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
-      await eventSourceValidationSchema.validate(mockData).catch((err) => {
-        expect(err.message).toBe('Required');
-        expect(err.type).toBe('required');
-      });
+      await eventSourceValidationSchema(t)
+        .validate(mockData)
+        .catch((err) => {
+          expect(err.message).toBe(`${i18nNS}~Required`);
+          expect(err.type).toBe('required');
+        });
     });
   });
 });

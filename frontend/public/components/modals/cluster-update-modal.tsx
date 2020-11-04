@@ -1,8 +1,9 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { ClusterVersionModel } from '../../models';
-import { Dropdown, PromiseComponent } from '../utils';
+import { Dropdown, HandlePromiseProps, withHandlePromise } from '../utils';
 import {
   ClusterVersionKind,
   getAvailableClusterUpdates,
@@ -18,107 +19,77 @@ import {
   ModalTitle,
 } from '../factory/modal';
 
-class ClusterUpdateModal extends PromiseComponent<
-  ClusterUpdateModalProps,
-  ClusterUpdateModalState
-> {
-  readonly state: ClusterUpdateModalState;
-
-  constructor(public props: ClusterUpdateModalProps) {
-    super(props);
-    const available = getSortedUpdates(props.cv);
-    this.state.selectedVersion = _.get(available, '[0].version', '');
-  }
-
-  _submit = (e: React.FormEvent<EventTarget>) => {
+const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) => {
+  const { cancel, close, cv, errorMessage, handlePromise, inProgress } = props;
+  const [desiredVersion, setDesiredVersion] = React.useState(
+    getSortedUpdates(cv)[0]?.version || '',
+  );
+  const [error, setError] = React.useState(errorMessage);
+  const currentVersion = getDesiredClusterVersion(cv);
+  const availableSortedUpdates = getSortedUpdates(cv);
+  const dropdownItems = _.reduce(
+    availableSortedUpdates,
+    (acc, { version }) => {
+      acc[version] = version;
+      return acc;
+    },
+    {},
+  );
+  const submit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    const { selectedVersion } = this.state;
-    if (!selectedVersion) {
+    if (!desiredVersion) {
       return;
     }
-    const { cv } = this.props;
     const available = getAvailableClusterUpdates(cv);
-    const desired = _.find(available, { version: selectedVersion });
+    const desired = _.find(available, { version: desiredVersion });
     if (!desired) {
-      this.setState({
-        errorMessage: `Version ${selectedVersion} not found among the available updates. Select another version.`,
-      });
+      setError(
+        `Version ${desiredVersion} not found among the available updates. Select another version.`,
+      );
       return;
     }
 
     // Clear any previous error message.
-    this.setState({ errorMessage: '' });
+    setError('');
     const patch = [{ op: 'add', path: '/spec/desiredUpdate', value: desired }];
-    this.handlePromise(k8sPatch(ClusterVersionModel, cv, patch)).then(this.props.close);
+    return handlePromise(k8sPatch(ClusterVersionModel, cv, patch), close);
   };
+  const { t } = useTranslation();
 
-  _cancel = () => {
-    this.props.close();
-  };
-
-  _change = (selectedVersion: string) => {
-    this.setState({ selectedVersion });
-  };
-
-  render() {
-    const { cv } = this.props;
-    const { selectedVersion } = this.state;
-    const availableUpdates = getSortedUpdates(cv);
-    const currentVersion = getDesiredClusterVersion(cv);
-    const dropdownItems = _.reduce(
-      availableUpdates,
-      (acc, { version }) => {
-        acc[version] = version;
-        return acc;
-      },
-      {},
-    );
-    return (
-      <form
-        onSubmit={this._submit}
-        name="form"
-        className="modal-content modal-content--no-inner-scroll"
-      >
-        <ModalTitle>Update Cluster</ModalTitle>
-        <ModalBody>
-          {/* <p>
-          // TODO: Determine what content goes here.
-        </p> */}
-          <div className="form-group">
-            <label>Current Version</label>
-            <p>{currentVersion}</p>
-          </div>
-          <div className="form-group">
-            <label htmlFor="version_dropdown">Select New Version</label>
-            <Dropdown
-              className="cluster-update-modal__dropdown"
-              id="version_dropdown"
-              items={dropdownItems}
-              onChange={this._change}
-              selectedKey={selectedVersion}
-              title="Select Version"
-            />
-          </div>
-        </ModalBody>
-        <ModalSubmitFooter
-          errorMessage={this.state.errorMessage}
-          inProgress={this.state.inProgress}
-          submitText="Update"
-          cancel={this._cancel}
-        />
-      </form>
-    );
-  }
-}
+  return (
+    <form onSubmit={submit} name="form" className="modal-content modal-content--no-inner-scroll">
+      <ModalTitle>{t('cluster-update-modal~Update cluster')}</ModalTitle>
+      <ModalBody>
+        <div className="form-group">
+          <label>{t('cluster-update-modal~Current version')}</label>
+          <p>{currentVersion}</p>
+        </div>
+        <div className="form-group">
+          <label htmlFor="version_dropdown">{t('cluster-update-modal~Select new version')}</label>
+          <Dropdown
+            className="cluster-update-modal__dropdown"
+            id="version_dropdown"
+            items={dropdownItems}
+            onChange={(newDesiredVersion: string) => setDesiredVersion(newDesiredVersion)}
+            selectedKey={desiredVersion}
+            title={t('cluster-update-modal~Select version')}
+          />
+        </div>
+      </ModalBody>
+      <ModalSubmitFooter
+        errorMessage={error}
+        inProgress={inProgress}
+        submitText={t('public~Update')}
+        cancelText={t('public~Cancel')}
+        cancel={cancel}
+      />
+    </form>
+  );
+});
 
 export const clusterUpdateModal = createModalLauncher(ClusterUpdateModal);
 
 type ClusterUpdateModalProps = {
   cv: ClusterVersionKind;
-} & ModalComponentProps;
-
-type ClusterUpdateModalState = {
-  selectedVersion: string;
-  inProgress: boolean;
-  errorMessage: string;
-};
+} & ModalComponentProps &
+  HandlePromiseProps;

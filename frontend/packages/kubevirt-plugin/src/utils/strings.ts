@@ -23,6 +23,7 @@ export const RHEL_IMAGE_LINK =
   'https://access.redhat.com/downloads/content/479/ver=/rhel---8/8.2/x86_64/product-software';
 export const CLOUD_INIT_MISSING_USERNAME =
   'No username set, see operating system documentation for the default username.';
+export const CLOUD_INIT_DOC_LINK = 'https://cloudinit.readthedocs.io/en/latest/index.html';
 
 // storage ui sources descriptions
 export const UI_SOURCE_BLANK_DESC = 'Create an empty disk (PVC)';
@@ -64,6 +65,25 @@ export const DISK_TYPE_SATA_DESC =
 
 export const DISK_TYPE_SCSI_DESC =
   'Useful when the VM wants to interact with the device using direct scsi commands. Supported by most operating systems including Windows out of the box. Offers lower performance compared to virtio';
+
+// workload descriptions
+export const WORKLOAD_PROFILE_DESKTOP_DESC =
+  'Small scale consumption, recommended for using the graphical console';
+export const WORKLOAD_PROFILE_SERVER_DESC =
+  'Balances performance, compatible with a broad range of workloads';
+export const WORKLOAD_PROFILE_HIGH_PERFORMANCE_DESC =
+  'Optimized for High resource consumption workloads';
+
+// flavor descriptions
+export const FLAVOR_TINY_DESC =
+  'Minimum resources required to operate both the OS and the workload type selected';
+export const FLAVOR_SMALL_DESC =
+  'Sufficient resources required to operate both the OS and the workload type selected';
+export const FLAVOR_MEDIUM_DESC =
+  'Recommended resources required to operate both the OS and the workload type selected';
+export const FLAVOR_LARGE_DESC =
+  'Headroomed resources required to operate both the OS and the workload type selected';
+export const FLAVOR_CUSTOM_DESC = 'Enter CPU and Memory values';
 
 export const getDialogUIError = (hasAllRequiredFilled) =>
   hasAllRequiredFilled

@@ -3,9 +3,7 @@ const path = require('path');
 const pluralize = require('pluralize');
 const common = require('./common.js');
 
-// eslint-disable-next-line no-undef
 const public = path.join(__dirname, './../public/locales/');
-// eslint-disable-next-line no-undef
 const packages = path.join(__dirname, './../packages');
 
 function determineRule(key) {
@@ -59,7 +57,6 @@ function updateFile(fileName) {
 
   fs.writeFile(fileName, JSON.stringify(updatedFile, null, 2), function writeJSON(e) {
     if (e) {
-      // eslint-disable-next-line no-console
       return console.error(e);
     }
   });

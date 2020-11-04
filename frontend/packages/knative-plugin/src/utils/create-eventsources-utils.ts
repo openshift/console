@@ -9,13 +9,14 @@ import {
   K8sKind,
 } from '@console/internal/module/k8s';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { checkAccess } from '@console/internal/components/utils';
+import { checkAccess, history } from '@console/internal/components/utils';
 import { parseALMExamples, ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 import {
   getAppLabels,
   getCommonAnnotations,
 } from '@console/dev-console/src/utils/resource-label-utils';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
+import { Perspective } from '@console/plugin-sdk';
 import {
   EventSources,
   EventSourceFormData,
@@ -349,4 +350,14 @@ export const getBootstrapServers = (kafkaResources: K8sResourceKind[]) => {
     });
   });
   return servers;
+};
+
+export const handleRedirect = (
+  project: string,
+  perspective: string,
+  perspectiveExtensions: Perspective[],
+) => {
+  const perspectiveData = perspectiveExtensions.find((item) => item.properties.id === perspective);
+  const redirectURL = perspectiveData.properties.getImportRedirectURL(project);
+  history.push(redirectURL);
 };

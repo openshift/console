@@ -1,10 +1,5 @@
 import * as React from 'react';
-import {
-  HandlePromiseProps,
-  withHandlePromise,
-  history,
-  resourcePath,
-} from '@console/internal/components/utils';
+import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { getName, getNamespace, getRandomChars } from '@console/shared';
 import {
   createModalLauncher,
@@ -18,6 +13,7 @@ import { ModalFooter } from '../modal/modal-footer';
 import { VMRestoreWrapper } from '../../../k8s/wrapper/vm/vm-restore-wrapper';
 import { VMSnapshot } from '../../../types';
 import { getVmSnapshotVmName } from '../../../selectors/snapshot/snapshot';
+import { buildOwnerReference } from '../../../utils';
 
 const SnapshotRestoreModal = withHandlePromise((props: SnapshotRestoreModalProps) => {
   const { snapshot, inProgress, errorMessage, handlePromise, close, cancel } = props;
@@ -27,18 +23,19 @@ const SnapshotRestoreModal = withHandlePromise((props: SnapshotRestoreModalProps
     e.preventDefault();
     const restoreName = `${snapshotName}-restore-${getRandomChars()}`;
     const namespace = getNamespace(snapshot);
-    const snapshotRestoreWrapper = new VMRestoreWrapper().init({
-      name: restoreName,
-      namespace,
-      snapshotName,
-      vmName: getVmSnapshotVmName(snapshot),
-    });
+    const snapshotRestoreWrapper = new VMRestoreWrapper()
+      .init({
+        name: restoreName,
+        namespace,
+        snapshotName,
+        vmName: getVmSnapshotVmName(snapshot),
+      })
+      .addOwnerReferences(buildOwnerReference(snapshot));
 
     handlePromise(
       k8sCreate(snapshotRestoreWrapper.getModel(), snapshotRestoreWrapper.asResource()),
       () => {
         close();
-        history.push(resourcePath(snapshotRestoreWrapper.getModel().kind, restoreName, namespace));
       },
     );
   };

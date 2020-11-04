@@ -14,6 +14,7 @@ import { ChannelListProps } from '../import-types';
 import FormViewSection from './sections/FormViewSection';
 import ChannelSelector from './form-fields/ChannelSelector';
 import ChannelYamlEditor from './form-fields/ChannelYamlEditor';
+import { useTranslation } from 'react-i18next';
 
 interface OwnProps {
   namespace: string;
@@ -38,6 +39,7 @@ const ChannelForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
     setErrors,
     setStatus,
   } = useFormikContext<FormikValues>();
+  const { t } = useTranslation();
   useFormikValidationFix(values);
   const [defaultConfiguredChannel, defaultConfiguredChannelLoaded] = useDefaultChannelConfiguration(
     namespace,
@@ -86,17 +88,17 @@ const ChannelForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
           </>
         )}
       {channels && channels.loaded && _.isEmpty(channels.channelList) && (
-        <Alert variant="default" title="Channel cannot be created" isInline>
-          You do not have write access in this project.
+        <Alert variant="default" title={t('knative-plugin~Channel cannot be created')} isInline>
+          {t('knative-plugin~You do not have write access in this project.')}
         </Alert>
       )}
       <FormFooter
         handleReset={handleReset}
         errorMessage={status && status.submitError}
         isSubmitting={isSubmitting}
-        submitLabel="Create"
+        submitLabel={t('knative-plugin~Create')}
         disableSubmit={!dirty || !_.isEmpty(errors)}
-        resetLabel="Cancel"
+        resetLabel={t('knative-plugin~Cancel')}
         sticky
       />
     </FlexForm>

@@ -6,6 +6,16 @@ import { QuickStartTaskStatus } from '../../utils/quick-start-types';
 import QuickStartConclusion from '../QuickStartConclusion';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key: string) => key }),
+  };
+});
+
+const i18nNS = 'quickstart';
+
 type QuickStartConclusionProps = React.ComponentProps<typeof QuickStartConclusion>;
 let wrapper: ShallowWrapper<QuickStartConclusionProps>;
 const props: QuickStartConclusionProps = {
@@ -41,7 +51,7 @@ describe('QuickStartConclusion', () => {
         .find(Button)
         .at(0)
         .props().children[0],
-    ).toEqual('Start Serverless Application quick start');
+    ).toEqual(`${i18nNS}~Start {{nextQuickStart}} quick start`);
   });
 
   it('should not render link for next quick start if nextQuickStart props is not available', () => {
@@ -66,7 +76,7 @@ describe('QuickStartConclusion', () => {
         .first()
         .props().content,
     ).toEqual(
-      'One or more verifications did not pass during this quick start. Revisit the tasks or the help links, and then try again.',
+      `${i18nNS}~One or more verifications did not pass during this quick start. Revisit the tasks or the help links, and then try again.`,
     );
     expect(wrapper.find(Button).length).toBe(0);
   });

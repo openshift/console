@@ -8,6 +8,14 @@ import { K8sResourceKind } from '@console/internal/module/k8s/types';
 
 type RoutesOverviewListProps = React.ComponentProps<typeof RoutesOverviewList>;
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 describe('RoutesOverviewList', () => {
   let wrapper: ShallowWrapper<RoutesOverviewListProps>;
   beforeEach(() => {

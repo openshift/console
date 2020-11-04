@@ -8,8 +8,9 @@ import {
   flattenReleaseResources,
   getChartReadme,
   getChartEntriesByName,
+  loadHelmManifestResources,
 } from '../helm-utils';
-import { HelmReleaseStatus } from '../helm-types';
+import { HelmRelease, HelmReleaseStatus } from '../helm-types';
 import {
   mockHelmReleases,
   mockHelmChartData,
@@ -106,5 +107,88 @@ describe('Helm Releases Utils', () => {
 
   it('should return the readme for the chart provided', () => {
     expect(getChartReadme(mockHelmReleases[0].chart)).toEqual('example readme content');
+  });
+
+  describe('loadHelmManifestResources', () => {
+    it('should support an empty string', () => {
+      expect(loadHelmManifestResources({} as HelmRelease)).toEqual([]);
+    });
+
+    it('should filter out empty manifest values', () => {
+      expect(loadHelmManifestResources({ manifest: '\n---\n---\n' } as HelmRelease)).toEqual([]);
+    });
+
+    it('should support a single helm manifest', () => {
+      expect(
+        loadHelmManifestResources({
+          manifest: `
+# Comment
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: example-account
+`,
+        } as HelmRelease),
+      ).toEqual([
+        {
+          apiVersion: 'v1',
+          kind: 'ServiceAccount',
+          metadata: { name: 'example-account' },
+        },
+      ]);
+    });
+
+    it('should support multiple helm manifests', () => {
+      expect(
+        loadHelmManifestResources({
+          manifest: `
+# Comment
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: first-account
+---
+# Another comment
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: second-account
+`,
+        } as HelmRelease),
+      ).toEqual([
+        {
+          apiVersion: 'v1',
+          kind: 'ServiceAccount',
+          metadata: { name: 'first-account' },
+        },
+        {
+          apiVersion: 'v1',
+          kind: 'ServiceAccount',
+          metadata: { name: 'second-account' },
+        },
+      ]);
+    });
+
+    // https://bugzilla.redhat.com/show_bug.cgi?id=1866087
+    it('should support helm manifests with duplicated keys (invalid json)', () => {
+      expect(
+        loadHelmManifestResources({
+          manifest: `
+# Comment
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: first
+  name: second
+`,
+        } as HelmRelease),
+      ).toEqual([
+        {
+          apiVersion: 'v1',
+          kind: 'ServiceAccount',
+          metadata: { name: 'second' },
+        },
+      ]);
+    });
   });
 });

@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   PodStatus,
   calculateRadius,
   getPodData,
-  podRingLabel,
   podDataInProgress,
-  hpaPodRingLabel,
+  usePodRingLabel,
 } from '@console/shared';
 import { RevisionModel } from '@console/knative-plugin/src/models';
 import { DonutStatusData } from '../../topology-types';
@@ -54,6 +54,7 @@ export const podSetInnerRadius = (size: number, data: DonutStatusData) => {
 };
 
 const PodSet: React.FC<PodSetProps> = ({ size, data, x = 0, y = 0, showPodCount }) => {
+  const { t } = useTranslation();
   const { podStatusOuterRadius, podStatusInnerRadius, podStatusStrokeWidth } = calculateRadius(
     size,
   );
@@ -79,9 +80,14 @@ const PodSet: React.FC<PodSetProps> = ({ size, data, x = 0, y = 0, showPodCount 
 
   const obj = data.current?.obj || data.dc;
   const ownerKind = RevisionModel.kind === data.dc?.kind ? data.dc.kind : obj.kind;
-  const { title, subTitle, titleComponent } = hpaControlledScaling
-    ? hpaPodRingLabel(obj, hpa, data?.pods)
-    : podRingLabel(obj, ownerKind, data?.pods);
+  const { title, subTitle, titleComponent } = usePodRingLabel(
+    obj,
+    ownerKind,
+    data?.pods,
+    hpaControlledScaling,
+    t,
+    hpa,
+  );
   return (
     <>
       <PodStatus

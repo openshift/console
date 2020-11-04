@@ -7,7 +7,7 @@ import { Selector } from '@console/internal/components/utils/selector';
 import { VMKind, VMIKind } from '../../types';
 import { VMTemplateLink } from '../vm-templates/vm-template-link';
 import { getBasicID, prefixedID } from '../../utils';
-import { vmDescriptionModal, vmFlavorModal } from '../modals';
+import { descriptionModal, vmFlavorModal } from '../modals';
 import { BootOrderModal } from '../modals/boot-order-modal/boot-order-modal';
 import dedicatedResourcesModal from '../modals/scheduling-modals/dedicated-resources-modal/connected-dedicated-resources-modal';
 import nodeSelectorModal from '../modals/scheduling-modals/node-selector-modal/connected-node-selector-modal';
@@ -19,7 +19,7 @@ import { getDescription } from '../../selectors/selectors';
 import { EditButton } from '../edit-button';
 import { VMStatus } from '../vm-status/vm-status';
 import { BootOrderSummary } from '../boot-order';
-import { getOperatingSystemName, getOperatingSystem } from '../../selectors/vm';
+import { getOperatingSystemName, getOperatingSystem, getVMLikeModel } from '../../selectors/vm';
 import { getVmiIpAddresses } from '../../selectors/vmi/ip-address';
 import { findVMIPod } from '../../selectors/pod/selectors';
 import { isVMIPaused, getVMINodeName } from '../../selectors/vmi';
@@ -112,7 +112,7 @@ export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({
         {!description && <span className="text-secondary">Not available</span>}
         <EditButton
           canEdit={canUpdateVM}
-          onClick={() => vmDescriptionModal({ vmLikeEntity: vmiLike })}
+          onClick={() => descriptionModal({ resource: vmiLike, kind: getVMLikeModel(vmiLike) })}
         >
           {description}
         </EditButton>

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import {
   Tooltip,
@@ -31,36 +32,41 @@ const MultiColumnFieldRow: React.FC<MultiColumnFieldRowProps> = ({
   isReadOnly,
   disableDeleteRow,
   spans,
-}) => (
-  <div className="odc-multi-column-field__row">
-    <Grid>
-      {React.Children.map(children, (child: React.ReactElement, i) => {
-        const fieldName = `${name}.${rowIndex}.${child.props.name}`;
-        const newProps = { ...child.props, name: fieldName };
-        return (
-          <GridItem span={spans[i]} key={fieldName}>
-            <div className="odc-multi-column-field__col">{React.cloneElement(child, newProps)}</div>
-          </GridItem>
-        );
-      })}
-    </Grid>
-    {!isReadOnly && (
-      <div className={'odc-multi-column-field__col--button'}>
-        <Tooltip content={toolTip || 'Remove'}>
-          <Button
-            aria-label={toolTip || 'Remove'}
-            variant={ButtonVariant.plain}
-            type={ButtonType.button}
-            isInline
-            onClick={onDelete}
-            isDisabled={disableDeleteRow}
-          >
-            <MinusCircleIcon />
-          </Button>
-        </Tooltip>
-      </div>
-    )}
-  </div>
-);
+}) => {
+  const { t } = useTranslation();
+  return (
+    <div className="odc-multi-column-field__row">
+      <Grid>
+        {React.Children.map(children, (child: React.ReactElement, i) => {
+          const fieldName = `${name}.${rowIndex}.${child.props.name}`;
+          const newProps = { ...child.props, name: fieldName };
+          return (
+            <GridItem span={spans[i]} key={fieldName}>
+              <div className="odc-multi-column-field__col">
+                {React.cloneElement(child, newProps)}
+              </div>
+            </GridItem>
+          );
+        })}
+      </Grid>
+      {!isReadOnly && (
+        <div className={'odc-multi-column-field__col--button'}>
+          <Tooltip content={toolTip || t('console-shared~Remove')}>
+            <Button
+              aria-label={toolTip || t('console-shared~Remove')}
+              variant={ButtonVariant.plain}
+              type={ButtonType.button}
+              isInline
+              onClick={onDelete}
+              isDisabled={disableDeleteRow}
+            >
+              <MinusCircleIcon />
+            </Button>
+          </Tooltip>
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default MultiColumnFieldRow;

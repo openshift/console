@@ -2,14 +2,13 @@ import * as React from 'react';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { ResourceLink, Timestamp, Kebab, ResourceKebab } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { TaskRunKind } from '../../../utils/pipeline-augment';
-import { TaskRunModel, PipelineModel, TaskModel } from '../../../models';
+import { TaskRunKind, getModelReferenceFromTaskKind } from '../../../utils/pipeline-augment';
+import { TaskRunModel, PipelineModel } from '../../../models';
 import { tableColumnClasses } from './taskruns-table';
 import { Status } from '@console/shared';
 import { pipelineRunFilterReducer as taskRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
 
 const taskRunsReference = referenceForModel(TaskRunModel);
-const taskReference = referenceForModel(TaskModel);
 const pipelineReference = referenceForModel(PipelineModel);
 
 const TaskRunsRow: RowFunction<TaskRunKind> = ({ obj, index, key, style, ...props }) => (
@@ -42,7 +41,7 @@ const TaskRunsRow: RowFunction<TaskRunKind> = ({ obj, index, key, style, ...prop
     <TableData className={tableColumnClasses[3]}>
       {obj.spec.taskRef?.name ? (
         <ResourceLink
-          kind={taskReference}
+          kind={getModelReferenceFromTaskKind(obj.spec.taskRef?.kind)}
           name={obj.spec.taskRef.name}
           namespace={obj.metadata.namespace}
         />

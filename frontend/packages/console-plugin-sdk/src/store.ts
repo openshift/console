@@ -1,22 +1,27 @@
+/* eslint-disable no-console */
+
 import * as _ from 'lodash';
+import { ConsolePluginManifestJSON } from '@console/dynamic-plugin-sdk/src/schema/plugin-manifest';
 import { Extension, LoadedExtension, ActivePlugin } from './typings';
 import { ExtensionRegistry } from './registry';
 
-export const sanitizeExtension = (e: Extension): Extension => {
+export const sanitizeExtension = <E extends Extension>(e: E): E => {
   e.flags = e.flags || {};
   e.flags.required = _.uniq(e.flags.required || []);
   e.flags.disallowed = _.uniq(e.flags.disallowed || []);
   return e;
 };
 
-export const augmentExtension = (
-  e: Extension,
+export const augmentExtension = <E extends Extension>(
+  e: E,
+  pluginID: string,
   pluginName: string,
   index: number,
-): LoadedExtension<typeof e> =>
+): LoadedExtension<E> =>
   Object.assign(e, {
+    pluginID,
     pluginName,
-    uid: `${pluginName}[${index}]`,
+    uid: `${pluginID}[${index}]`,
   });
 
 export const isExtensionInUse = (e: Extension, flags: FlagsObject): boolean =>
@@ -33,28 +38,127 @@ export const getGatingFlagNames = (extensions: Extension[]): string[] =>
  * Provides access to Console plugin data.
  *
  * In development, this object is exposed as `window.pluginStore` for easier debugging.
- *
- * _For now, the runtime list of extensions is assumed to be immutable._
  */
 export class PluginStore {
-  private readonly extensions: Extension[];
+  // Extensions contributed by static plugins
+  private readonly staticExtensions: LoadedExtension[];
 
-  public readonly registry: ExtensionRegistry; // TODO(vojtech): legacy, remove
+  // Extensions contributed by dynamic plugins
+  private dynamicExtensions: LoadedExtension[] = [];
+
+  // TODO(vojtech): legacy, remove
+  public readonly registry: ExtensionRegistry;
+
+  private readonly dynamicPlugins = new Map<string, DynamicPlugin>();
+
+  private readonly listeners: VoidFunction[] = [];
 
   public constructor(plugins: ActivePlugin[]) {
-    this.extensions = _.flatMap(
+    this.staticExtensions = _.flatMap(
       plugins.map((p) =>
         p.extensions.map((e, index) =>
-          Object.freeze(augmentExtension(sanitizeExtension({ ...e }), p.name, index)),
+          Object.freeze(augmentExtension(sanitizeExtension({ ...e }), p.name, p.name, index)),
         ),
       ),
     );
     this.registry = new ExtensionRegistry(plugins);
+    this.updateDynamicExtensions = _.debounce(this.updateDynamicExtensions, 1000);
   }
 
-  public getAllExtensions(): readonly Extension[] {
-    return this.extensions;
+  public getAllExtensions() {
+    return [...this.staticExtensions, ...this.dynamicExtensions];
+  }
+
+  private updateDynamicExtensions() {
+    this.dynamicExtensions = Array.from(this.dynamicPlugins.values()).reduce(
+      (acc, plugin) => (plugin.enabled ? [...acc, ...plugin.processedExtensions] : acc),
+      [],
+    );
+
+    this.listeners.forEach((listener) => {
+      listener();
+    });
+  }
+
+  public subscribe(listener: VoidFunction): VoidFunction {
+    let isSubscribed = true;
+    this.listeners.push(listener);
+
+    return () => {
+      if (isSubscribed) {
+        isSubscribed = false;
+        this.listeners.splice(this.listeners.indexOf(listener), 1);
+      }
+    };
+  }
+
+  public addDynamicPlugin(
+    pluginID: string,
+    manifest: ConsolePluginManifestJSON,
+    resolvedExtensions: Extension[],
+  ) {
+    if (!this.dynamicPlugins.has(pluginID)) {
+      this.dynamicPlugins.set(pluginID, {
+        manifest: Object.freeze(manifest),
+        processedExtensions: resolvedExtensions.map((e, index) =>
+          Object.freeze(augmentExtension(sanitizeExtension(e), pluginID, manifest.name, index)),
+        ),
+        enabled: false,
+      });
+    } else {
+      console.warn(`Attempt to re-add plugin ${pluginID}`);
+    }
+  }
+
+  public setDynamicPluginEnabled(pluginID: string, enabled: boolean) {
+    if (this.dynamicPlugins.has(pluginID)) {
+      const plugin = this.dynamicPlugins.get(pluginID);
+
+      if (plugin.enabled !== enabled) {
+        plugin.enabled = enabled;
+        this.updateDynamicExtensions();
+      }
+    } else {
+      console.warn(`Attempt to ${enabled ? 'enable' : 'disable'} unknown plugin ${pluginID}`);
+    }
+  }
+
+  public isDynamicPluginEnabled(pluginID: string): boolean {
+    if (this.dynamicPlugins.has(pluginID)) {
+      const plugin = this.dynamicPlugins.get(pluginID);
+      return plugin.enabled;
+    }
+
+    console.warn(`Attempt to get enabled status for unknown plugin ${pluginID}`);
+    return false;
+  }
+
+  public getDynamicPluginMetadata() {
+    return Array.from(this.dynamicPlugins.keys()).reduce((acc, pluginID) => {
+      const plugin = this.dynamicPlugins.get(pluginID);
+      acc[pluginID] = _.omit(plugin.manifest, 'extensions');
+      return acc;
+    }, {} as { [pluginID: string]: DynamicPluginMetadata });
+  }
+
+  public getStateForTestPurposes() {
+    return {
+      staticExtensions: this.staticExtensions,
+      dynamicExtensions: this.dynamicExtensions,
+      dynamicPlugins: this.dynamicPlugins,
+      listeners: this.listeners,
+    };
   }
 }
 
 type FlagsObject = { [key: string]: boolean };
+
+type DynamicPluginManifest = Readonly<ConsolePluginManifestJSON>;
+
+type DynamicPluginMetadata = Omit<DynamicPluginManifest, 'extensions'>;
+
+type DynamicPlugin = {
+  manifest: DynamicPluginManifest;
+  processedExtensions: Readonly<LoadedExtension[]>;
+  enabled: boolean;
+};

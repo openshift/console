@@ -18,7 +18,7 @@ describe('Alertmanager: YAML', () => {
   it('displays the Alertmanager YAML page', async () => {
     await sidenavView.clickNavLink(['Administration', 'Cluster Settings']);
     await crudView.isLoaded();
-    await horizontalnavView.clickHorizontalTab('Global Configuration');
+    await horizontalnavView.clickHorizontalTab('Global configuration');
     await crudView.isLoaded();
     await monitoringView.wait(until.elementToBeClickable(firstElementByTestID('Alertmanager')));
     expect(firstElementByTestID('Alertmanager').getText()).toContain('Alertmanager');
@@ -52,7 +52,7 @@ describe('Alertmanager: Configuration', () => {
   it('displays the Alertmanager Configuration Details page', async () => {
     await browser.get(`${appHost}/monitoring/alertmanagerconfig`);
     await crudView.isLoaded();
-    expect(monitoringView.alertRoutingHeader.getText()).toContain('Alert Routing');
+    expect(monitoringView.alertRoutingHeader.getText()).toContain('Alert routing');
   });
 
   it('launches Alert Routing modal, edits and saves correctly', async () => {
@@ -99,9 +99,9 @@ describe('Alertmanager: Configuration', () => {
     expect(firstElementByTestID('pagerduty-receiver-form').isPresent()).toBe(true);
     expect(firstElementByTestID('receiver-routing-labels-editor').isPresent()).toBe(true);
 
-    expect(firstElementByTestID('pagerduty-key-label').getText()).toEqual('Routing Key');
+    expect(firstElementByTestID('pagerduty-key-label').getText()).toEqual('Routing key');
     await firstElementByTestID('integration-type-prometheus').click();
-    expect(firstElementByTestID('pagerduty-key-label').getText()).toEqual('Service Key');
+    expect(firstElementByTestID('pagerduty-key-label').getText()).toEqual('Service key');
 
     // pagerduty subform should still be invalid at this point, thus save button should be disabled
     expect(monitoringView.saveButton.isEnabled()).toBe(false);
@@ -150,7 +150,7 @@ describe('Alertmanager: Configuration', () => {
     await browser.wait(until.presenceOf(firstElementByTestID('cancel')));
     expect(firstElementByTestID('receiver-name').getAttribute('value')).toEqual('MyReceiver');
     expect(firstElementByTestID('dropdown-button').getText()).toEqual('PagerDuty');
-    expect(firstElementByTestID('pagerduty-key-label').getText()).toEqual('Service Key');
+    expect(firstElementByTestID('pagerduty-key-label').getText()).toEqual('Service key');
     expect(firstElementByTestID('integration-key').getAttribute('value')).toEqual(
       '<integration_key>',
     );
@@ -229,6 +229,6 @@ receivers:
     await horizontalnavView.clickHorizontalTab('Details');
     await monitoringView.openFirstRowKebabMenu();
     expect(monitoringView.disabledDeleteReceiverMenuItem.isPresent()).toBe(true);
-    expect(crudView.actionForLabel('Edit YAML').isPresent()).toBe(true); // should be 'Edit YAML' not 'Edit Receiver'
+    expect(crudView.actionForLabel('Edit Receiver').isPresent()).toBe(true);
   });
 });

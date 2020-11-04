@@ -3,7 +3,7 @@ import { ResourceSummary, LabelList } from '@console/internal/components/utils';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { K8sEntityMap } from '@console/shared/src';
 import { getBasicID, prefixedID } from '../../utils';
-import { vmDescriptionModal } from '../modals/vm-description-modal';
+import { descriptionModal } from '../modals/description-modal';
 import { BootOrderModal } from '../modals/boot-order-modal';
 import dedicatedResourcesModal from '../modals/scheduling-modals/dedicated-resources-modal/connected-dedicated-resources-modal';
 import tolerationsModal from '../modals/scheduling-modals/tolerations-modal/connected-tolerations-modal';
@@ -20,7 +20,7 @@ import { getTemplateOperatingSystems } from '../../selectors/vm-template/advance
 import { vmFlavorModal } from '../modals';
 import { EditButton } from '../edit-button';
 import { VMDetailsItem } from '../vms/vm-resource';
-import { asVM, getDevices } from '../../selectors/vm';
+import { asVM, getDevices, getVMLikeModel } from '../../selectors/vm';
 import { BootOrderSummary } from '../boot-order';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 import { VMTemplateLink } from './vm-template-link';
@@ -59,7 +59,7 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
         {!description && <span className="text-secondary">Not available</span>}
         <EditButton
           canEdit={canUpdateTemplate}
-          onClick={() => vmDescriptionModal({ vmLikeEntity: template })}
+          onClick={() => descriptionModal({ resource: template, kind: getVMLikeModel(template) })}
         >
           {description}
         </EditButton>
