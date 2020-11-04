@@ -81,27 +81,12 @@ const templatesResource: WatchK8sResource = {
 enum uploadErrorType {
   MISSING = 'missing',
   ALLOCATE = 'allocate',
-  TYPE = 'type',
   CERT = 'cert',
 }
 
 const uploadErrorMessage = {
   [uploadErrorType.MISSING]: 'File input is missing',
   [uploadErrorType.ALLOCATE]: 'Could not create persistent volume claim',
-  [uploadErrorType.TYPE]: (
-    <>
-      <p>
-        The format of the file you are uploading is not supported. Please use one of the supported
-        formats
-      </p>
-      <p>
-        <ExternalLink
-          text="Learn more about supported formats"
-          href={CDI_UPLOAD_SUPPORTED_TYPES_URL}
-        />
-      </p>
-    </>
-  ),
   [uploadErrorType.CERT]: (uploadProxy) => (
     <>
       It seems that your browser does not trust the certificate of the upload proxy. Please{' '}
@@ -471,6 +456,7 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
   const [disableFormSubmit, setDisableFormSubmit] = React.useState(false);
   const [fileValue, setFileValue] = React.useState<File>(null);
   const [fileName, setFileName] = React.useState('');
+  const [fileNameExtension, setFileNameExtension] = React.useState('');
   const [isFileRejected, setIsFileRejected] = React.useState(false);
   const [error, setError] = React.useState<string>('');
   const [isAllocating, setIsAllocating] = React.useState(false);
@@ -490,8 +476,6 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
     e.preventDefault();
     if (!fileName) {
       setError(uploadErrorType.MISSING);
-    } else if (isFileRejected) {
-      setError(uploadErrorType.TYPE);
     } else {
       // checking valid certificate for proxy
       setCheckingCertificate(true);
@@ -529,6 +513,9 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
   const handleFileChange = (value, filename) => {
     setFileName(filename);
     setFileValue(value);
+
+    setFileNameExtension(/[.][^.]+$/.exec(filename)?.toString());
+    setIsFileRejected(false);
     setError('');
   };
 
@@ -574,6 +561,24 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
             inProgress={!loadedTemplates || !loadedPvcs || isCheckingCertificate}
             errorMessage={errorMessage}
           >
+            {isFileRejected && (
+              <Alert variant="warning" isInline title="File type extension">
+                <p>
+                  Based on the file extension it seems like you are trying to upload a file which is
+                  not supported (
+                  {fileNameExtension
+                    ? `detected file extension is '${fileNameExtension}'`
+                    : 'no file extention detected'}
+                  ).
+                </p>
+                <p>
+                  <ExternalLink
+                    text="Learn more about supported formats"
+                    href={CDI_UPLOAD_SUPPORTED_TYPES_URL}
+                  />
+                </p>
+              </Alert>
+            )}
             <ActionGroup className="pf-c-form">
               <Button
                 isDisabled={disableFormSubmit || isCheckingCertificate}
