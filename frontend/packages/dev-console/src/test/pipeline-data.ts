@@ -66,6 +66,7 @@ export const pipelineTestData: PipelineTestData = {
         metadata: {
           name: 'simple-pipeline-br8cxv',
           namespace: 'tekton-pipelines',
+          creationTimestamp: '2020-10-29T06:11:46Z',
         },
         spec: {
           pipelineRef: { name: 'simple-pipeline' },
@@ -112,6 +113,7 @@ export const pipelineTestData: PipelineTestData = {
         metadata: {
           name: 'simple-pipeline-p1bun0',
           namespace: 'tekton-pipelines',
+          creationTimestamp: '2020-10-29T09:58:19Z',
         },
         spec: {
           pipelineRef: { name: 'simple-pipeline' },

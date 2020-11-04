@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
-import { KebabAction, navFactory } from '@console/internal/components/utils';
-import { k8sGet, k8sList } from '@console/internal/module/k8s';
+import { KebabAction, navFactory, LoadingBox } from '@console/internal/components/utils';
+import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { getPipelineKebabActions } from '../../utils/pipeline-actions';
-import { getLatestRun, PipelineRun } from '../../utils/pipeline-augment';
-import { PipelineRunModel, PipelineModel } from '../../models';
+import { Pipeline } from '../../utils/pipeline-augment';
+import { PipelineModel } from '../../models';
 import { useMenuActionsWithUserAnnotation } from '../pipelineruns/triggered-by';
 import {
   PipelineDetails,
@@ -17,42 +17,22 @@ import {
   resourcesValidationSchema,
 } from './detail-page-tabs';
 import { usePipelineTriggerTemplateNames } from './utils/triggers';
-import { usePipelinesBreadcrumbsFor } from './hooks';
+import { usePipelinesBreadcrumbsFor, useLatestPipelineRun } from './hooks';
 
 const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
-  const [errorCode, setErrorCode] = React.useState(null);
-  const [latestPipelineRun, setLatestPipelineRun] = React.useState<PipelineRun>({});
   const { name, namespace, kindObj, match } = props;
   const templateNames = usePipelineTriggerTemplateNames(name, namespace) || [];
   const breadcrumbsFor = usePipelinesBreadcrumbsFor(kindObj, match);
-
-  React.useEffect(() => {
-    k8sGet(PipelineModel, name, namespace)
-      .then((res) => {
-        // eslint-disable-next-line promise/no-nesting
-        k8sList(PipelineRunModel, {
-          ns: namespace,
-          labelSelector: { 'tekton.dev/pipeline': res.metadata.name },
-        })
-          .then((listres) => {
-            const latestRun = getLatestRun({ data: listres }, 'creationTimestamp');
-            setLatestPipelineRun(latestRun);
-          })
-          .catch((error) => {
-            setErrorCode(error.response.status);
-          });
-      })
-      .catch((error) => setErrorCode(error.response.status));
-  }, [name, namespace]);
+  const [, pipelineLoaded, pipelineError] = useK8sGet<Pipeline>(PipelineModel, name, namespace);
+  const latestPipelineRun = useLatestPipelineRun(name, namespace);
 
   const augmentedMenuActions: KebabAction[] = useMenuActionsWithUserAnnotation(
     getPipelineKebabActions(latestPipelineRun, templateNames.length > 0),
   );
-
-  if (errorCode === 404) {
+  if (pipelineLoaded && pipelineError?.response?.status === 404) {
     return <ErrorPage404 />;
   }
-  return (
+  return pipelineLoaded ? (
     <DetailsPage
       {...props}
       menuActions={augmentedMenuActions}
@@ -94,6 +74,8 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
         },
       ]}
     />
+  ) : (
+    <LoadingBox />
   );
 };
 
