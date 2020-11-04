@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Firehose } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ServiceModel } from '@console/knative-plugin';
@@ -42,6 +43,7 @@ interface ApplicationDropdownProps {
 }
 
 const ApplicationDropdown: React.FC<ApplicationDropdownProps> = ({ namespace, ...props }) => {
+  const { t } = useTranslation();
   const resources = [
     {
       isList: true,
@@ -116,7 +118,7 @@ const ApplicationDropdown: React.FC<ApplicationDropdownProps> = ({ namespace, ..
     <Firehose resources={resources}>
       <ResourceDropdown
         {...props}
-        placeholder="Select an Application"
+        placeholder={t('devconsole~Select application')}
         dataSelector={['metadata', 'labels', 'app.kubernetes.io/part-of']}
       />
     </Firehose>
