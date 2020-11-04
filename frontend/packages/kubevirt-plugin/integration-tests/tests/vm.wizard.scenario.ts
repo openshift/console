@@ -68,11 +68,8 @@ describe('Kubevirt create VM using wizard', () => {
   });
 
   afterEach(() => {
-    try {
-      deleteResources([multusNAD]);
-    } catch (e) {
-      // unable to delete NAD
-    }
+    deleteResources([multusNAD]);
+
     removeLeakedResources(leakedResources);
   });
 
