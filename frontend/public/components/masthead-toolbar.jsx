@@ -33,6 +33,7 @@ import { openshiftHelpBase } from './utils/documentation';
 import { AboutModal } from './about-modal';
 import { clusterVersionReference, getReportBugLink } from '../module/k8s/cluster-settings';
 import * as redhatLogoImg from '../imgs/logos/redhat.svg';
+import { withKeycloak } from '@react-keycloak/web';
 
 const SystemStatusButton = ({ statuspageData, className }) =>
   !_.isEmpty(_.get(statuspageData, 'incidents')) ? (
@@ -57,7 +58,6 @@ class MastheadToolbarContents_ extends React.Component {
       isUserDropdownOpen: false,
       isKebabDropdownOpen: false,
       statuspageData: null,
-      username: null,
       isKubeAdmin: false,
       showAboutModal: false,
     };
@@ -83,19 +83,19 @@ class MastheadToolbarContents_ extends React.Component {
   }
 
   componentDidMount() {
-    if (window.SERVER_FLAGS.statuspageID) {
-      this._getStatuspageData(window.SERVER_FLAGS.statuspageID);
-    }
-    this._updateUser();
+    // if (window.SERVER_FLAGS.statuspageID) {
+    //   this._getStatuspageData(window.SERVER_FLAGS.statuspageID);
+    // }
+    // this._updateUser();
   }
 
   componentDidUpdate(prevProps) {
-    if (
-      this.props.flags[FLAGS.OPENSHIFT] !== prevProps.flags[FLAGS.OPENSHIFT] ||
-      !_.isEqual(this.props.user, prevProps.user)
-    ) {
-      this._updateUser();
-    }
+    // if (
+    //   this.props.flags[FLAGS.OPENSHIFT] !== prevProps.flags[FLAGS.OPENSHIFT] ||
+    //   !_.isEqual(this.props.user, prevProps.user)
+    // ) {
+    //   this._updateUser();
+    // }
   }
 
   _getStatuspageData(statuspageID) {
@@ -274,19 +274,19 @@ class MastheadToolbarContents_ extends React.Component {
         },
         ...(flags[FLAGS.CONSOLE_CLI_DOWNLOAD]
           ? [
-              {
-                component: <Link to="/command-line-tools">Command Line Tools</Link>,
-              },
-            ]
+            {
+              component: <Link to="/command-line-tools">Command Line Tools</Link>,
+            },
+          ]
           : []),
         ...(reportBugLink
           ? [
-              {
-                label: reportBugLink.label,
-                externalLink: true,
-                href: reportBugLink.href,
-              },
-            ]
+            {
+              label: reportBugLink.label,
+              externalLink: true,
+              href: reportBugLink.href,
+            },
+          ]
           : []),
         {
           label: 'About',
@@ -373,8 +373,9 @@ class MastheadToolbarContents_ extends React.Component {
   }
 
   _renderMenu(mobile) {
-    const { flags, consoleLinks } = this.props;
-    const { isUserDropdownOpen, isKebabDropdownOpen, username } = this.state;
+    const { flags, consoleLinks, keycloak } = this.props;
+    const username = keycloak.idTokenParsed.email;
+    const { isUserDropdownOpen, isKebabDropdownOpen } = this.state;
     const additionalUserActions = this._getAdditionalActions(
       this._getAdditionalLinks(consoleLinks, 'UserMenu'),
     );
@@ -383,47 +384,48 @@ class MastheadToolbarContents_ extends React.Component {
     );
     const launchActions = this._launchActions();
 
-    if (
-      flagPending(flags[FLAGS.OPENSHIFT]) ||
-      flagPending(flags[FLAGS.AUTH_ENABLED]) ||
-      !username
-    ) {
-      return null;
-    }
+    // console.log(FLAGS)
+    // if (
+    //   flagPending(flags[FLAGS.OPENSHIFT]) ||
+    //   flagPending(flags[FLAGS.AUTH_ENABLED]) ||
+    //   !username
+    // ) {
+    //   return null;
+    // }
 
     const actions = [];
-    if (flags[FLAGS.AUTH_ENABLED]) {
-      const userActions = [];
+    // if (flags[FLAGS.AUTH_ENABLED]) {
+    const userActions = [];
 
-      const logout = (e) => {
-        e.preventDefault();
-        if (flags[FLAGS.OPENSHIFT]) {
-          authSvc.logoutOpenShift(this.state.isKubeAdmin);
-        } else {
-          authSvc.logout();
-        }
-      };
+    // const logout = (e) => {
+    //   e.preventDefault();
+    //   if (flags[FLAGS.OPENSHIFT]) {
+    //     authSvc.logoutOpenShift(this.state.isKubeAdmin);
+    //   } else {
+    //     authSvc.logout();
+    //   }
+    // };
 
-      if (window.SERVER_FLAGS.requestTokenURL) {
-        userActions.push({
-          label: 'Copy Login Command',
-          href: window.SERVER_FLAGS.requestTokenURL,
-          externalLink: true,
-        });
-      }
-
+    if (window.SERVER_FLAGS.requestTokenURL) {
       userActions.push({
-        label: 'Log out',
-        callback: logout,
-        component: 'button',
-      });
-
-      actions.push({
-        name: '',
-        isSection: true,
-        actions: userActions,
+        label: 'Copy Login Command',
+        href: window.SERVER_FLAGS.requestTokenURL,
+        externalLink: true,
       });
     }
+
+    userActions.push({
+      label: 'Log out',
+      callback: keycloak.logout,
+      component: 'button',
+    });
+
+    actions.push({
+      name: '',
+      isSection: true,
+      actions: userActions,
+    });
+    // }
 
     if (!_.isEmpty(additionalUserActions.actions)) {
       actions.unshift(additionalUserActions);
@@ -520,17 +522,17 @@ class MastheadToolbarContents_ extends React.Component {
               </ToolbarItem>
             )}
             {/* desktop -- (notification drawer button) */
-            alertAccess && (
-              <ToolbarItem>
-                <NotificationBadge
-                  aria-label="Notification Drawer"
-                  onClick={drawerToggle}
-                  isRead={notificationsRead}
-                >
-                  <BellIcon />
-                </NotificationBadge>
-              </ToolbarItem>
-            )}
+              alertAccess && (
+                <ToolbarItem>
+                  <NotificationBadge
+                    aria-label="Notification Drawer"
+                    onClick={drawerToggle}
+                    isRead={notificationsRead}
+                  >
+                    <BellIcon />
+                  </NotificationBadge>
+                </ToolbarItem>
+              )}
             <ToolbarItem>
               <Tooltip content="Import YAML" position={TooltipPosition.bottom}>
                 <Link
@@ -564,17 +566,17 @@ class MastheadToolbarContents_ extends React.Component {
           </ToolbarGroup>
           <ToolbarGroup>
             {/* mobile -- (notification drawer button) */
-            alertAccess && !notificationsRead && (
-              <ToolbarItem className="visible-xs-block">
-                <NotificationBadge
-                  aria-label="Notification Drawer"
-                  onClick={drawerToggle}
-                  isRead={notificationsRead}
-                >
-                  <BellIcon />
-                </NotificationBadge>
-              </ToolbarItem>
-            )}
+              alertAccess && !notificationsRead && (
+                <ToolbarItem className="visible-xs-block">
+                  <NotificationBadge
+                    aria-label="Notification Drawer"
+                    onClick={drawerToggle}
+                    isRead={notificationsRead}
+                  >
+                    <BellIcon />
+                  </NotificationBadge>
+                </ToolbarItem>
+              )}
             {/* mobile -- (system status button) */}
             <SystemStatusButton statuspageData={statuspageData} className="visible-xs-block" />
             {/* mobile -- kebab dropdown [(application launcher |) import yaml | documentation, about (| logout)] */}
@@ -605,19 +607,19 @@ const MastheadToolbarContents = connect(mastheadToolbarStateToProps, {
     FLAGS.AUTH_ENABLED,
     FLAGS.CONSOLE_CLI_DOWNLOAD,
     FLAGS.OPENSHIFT,
-  )(MastheadToolbarContents_),
+  )(withKeycloak(MastheadToolbarContents_)),
 );
 
 export const MastheadToolbar = connectToFlags(FLAGS.CLUSTER_VERSION)(({ flags }) => {
   const resources = flags[FLAGS.CLUSTER_VERSION]
     ? [
-        {
-          kind: clusterVersionReference,
-          name: 'version',
-          isList: false,
-          prop: 'cv',
-        },
-      ]
+      {
+        kind: clusterVersionReference,
+        name: 'version',
+        isList: false,
+        prop: 'cv',
+      },
+    ]
     : [];
   return (
     <Firehose resources={resources}>
