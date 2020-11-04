@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip, Flex, FlexItem, Button } from '@patternfly/react-core';
 import { CloseIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { InlineTechPreviewBadge } from '@console/shared';
 import Drawer from '@console/shared/src/components/drawer/Drawer';
 import MinimizeRestoreButton from './MinimizeRestoreButton';
 
@@ -32,9 +31,6 @@ const CloudShellDrawer: React.FC<CloudShellDrawerProps> = ({ children, onClose }
     <Flex style={{ flexGrow: 1 }}>
       <FlexItem className="co-cloud-shell-drawer__heading">
         {t('cloudshell~Command line terminal')}
-      </FlexItem>
-      <FlexItem>
-        <InlineTechPreviewBadge />
       </FlexItem>
       <FlexItem align={{ default: 'alignRight' }}>
         <Tooltip content={t('cloudshell~Open terminal in new tab')}>
