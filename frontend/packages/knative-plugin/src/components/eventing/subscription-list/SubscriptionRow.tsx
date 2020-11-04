@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { Kebab, ResourceKebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
-import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
-import { EventingTriggerModel, EventingBrokerModel } from '../../../models';
+import { referenceFor } from '@console/internal/module/k8s';
+import { EventingSubscriptionModel } from '../../../models';
 import { getConditionString, getCondition } from '../../../utils/condition-utils';
-import { EventTriggerKind, TriggerConditionTypes } from '../../../types';
-import { tableColumnClasses } from './trigger-table';
+import { EventSubscriptionKind, SubscriptionConditionTypes } from '../../../types';
+import { tableColumnClasses } from './subscription-table';
 
-type TriggerRowType = {
-  broker?: string;
+type SubscriptionRowType = {
+  channel?: string;
 };
-const TriggerRow: RowFunction<EventTriggerKind, TriggerRowType> = ({
+const SubscriptionRow: RowFunction<EventSubscriptionKind, SubscriptionRowType> = ({
   obj,
   index,
   key,
@@ -19,16 +19,17 @@ const TriggerRow: RowFunction<EventTriggerKind, TriggerRowType> = ({
 }) => {
   const {
     metadata: { name, namespace, creationTimestamp, uid },
-    spec: { subscriber, filter, broker: connectedBroker },
+    spec: { channel: connectedChannel, subscriber },
   } = obj;
 
   const objReference = referenceFor(obj);
+
   const menuActions = [
-    ...Kebab.getExtensionsActionsForKind(EventingTriggerModel),
+    ...Kebab.getExtensionsActionsForKind(EventingSubscriptionModel),
     ...Kebab.factory.common,
   ];
   const readyCondition = obj.status
-    ? getCondition(obj.status.conditions, TriggerConditionTypes.Ready)
+    ? getCondition(obj.status.conditions, SubscriptionConditionTypes.Ready)
     : null;
   return (
     <TableRow id={uid} index={index} trKey={key} style={style}>
@@ -44,37 +45,34 @@ const TriggerRow: RowFunction<EventTriggerKind, TriggerRowType> = ({
       <TableData columnID="condition" className={tableColumnClasses[3]}>
         {obj.status ? getConditionString(obj.status.conditions) : '-'}
       </TableData>
-      <TableData columnID="filters" className={tableColumnClasses[4]}>
-        {filter.attributes
-          ? Object.entries(filter.attributes).map(([fkey, val]) => (
-              <div key={fkey}>{`${fkey}:${val}`}</div>
-            ))
-          : '-'}
-      </TableData>
-      {!customData?.broker && (
-        <TableData columnID="broker" className={tableColumnClasses[5]}>
+      {!customData?.channel && (
+        <TableData columnID="channel" className={tableColumnClasses[4]}>
           <ResourceLink
-            kind={referenceForModel(EventingBrokerModel)}
-            name={connectedBroker}
+            kind={referenceFor(connectedChannel)}
+            name={connectedChannel.name}
             namespace={namespace}
           />
         </TableData>
       )}
-      <TableData columnID="subscriber" className={tableColumnClasses[6]}>
-        <ResourceLink
-          kind={referenceFor(subscriber.ref)}
-          name={subscriber.ref.name}
-          namespace={namespace}
-        />
+      <TableData columnID="subscriber" className={tableColumnClasses[5]}>
+        {subscriber.ref ? (
+          <ResourceLink
+            kind={referenceFor(subscriber.ref)}
+            name={subscriber.ref.name}
+            namespace={namespace}
+          />
+        ) : (
+          '-'
+        )}
       </TableData>
-      <TableData columnID="created" className={tableColumnClasses[7]}>
+      <TableData columnID="created" className={tableColumnClasses[6]}>
         <Timestamp timestamp={creationTimestamp} />
       </TableData>
-      <TableData className={tableColumnClasses[8]}>
+      <TableData className={tableColumnClasses[7]}>
         <ResourceKebab actions={menuActions} kind={objReference} resource={obj} />
       </TableData>
     </TableRow>
   );
 };
 
-export default TriggerRow;
+export default SubscriptionRow;

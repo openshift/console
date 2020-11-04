@@ -8,6 +8,7 @@ import EventSourceListPage from './eventsource-list/EventSourceListPage';
 import BrokerListPage from './brokers-list/BrokerListPage';
 import ChannelListPage from './channels-list/ChannelListPage';
 import TriggerListPage from './triggers-list/TriggerListPage';
+import SubscriptionListPage from './subscription-list/SubscriptionListPage';
 
 interface EventingListPageProps {
   match: Rmatch<{ ns: string }>;
@@ -61,6 +62,16 @@ const EventingListPage: React.FC<EventingListPageProps> = ({ match }) => {
       href: 'channels',
       name: t('knative-plugin~Channels'),
       component: ChannelListPage,
+      pageData: {
+        canCreate,
+        namespace,
+        showTitle,
+      },
+    },
+    {
+      href: 'subscriptions',
+      name: t('knative-plugin~Subscriptions'),
+      component: SubscriptionListPage,
       pageData: {
         canCreate,
         namespace,

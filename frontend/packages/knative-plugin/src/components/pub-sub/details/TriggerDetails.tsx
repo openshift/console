@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
 import { Conditions } from '@console/internal/components/conditions';
 import { K8sResourceKind, referenceFor, referenceForModel } from '@console/internal/module/k8s';
@@ -15,11 +16,12 @@ interface TriggerDetailsProps {
 }
 
 const TriggerDetails: React.FC<TriggerDetailsProps> = ({ obj: trigger }) => {
+  const { t } = useTranslation();
   const { filters: filterData } = getTriggerFilters(trigger);
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Trigger Details" />
+        <SectionHeading text={t('knative-plugin~Trigger Details')} />
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={trigger} />
@@ -28,7 +30,7 @@ const TriggerDetails: React.FC<TriggerDetailsProps> = ({ obj: trigger }) => {
             {filterData.length > 0 && (
               <div className="kn-resource-link-list kn-resource-link-list--addSpaceBelow">
                 <dl>
-                  <dt>Filter</dt>
+                  <dt>{t('knative-plugin~Filter')}</dt>
                   <dd>
                     <FilterTable filters={filterData} />
                   </dd>
@@ -37,7 +39,7 @@ const TriggerDetails: React.FC<TriggerDetailsProps> = ({ obj: trigger }) => {
             )}
             {trigger.spec?.broker && (
               <DynamicResourceLink
-                title="Broker"
+                title={t('knative-plugin~Broker')}
                 name={trigger.spec.broker}
                 namespace={trigger.metadata.namespace}
                 kind={referenceForModel(EventingBrokerModel)}
@@ -45,7 +47,7 @@ const TriggerDetails: React.FC<TriggerDetailsProps> = ({ obj: trigger }) => {
             )}
             {trigger.spec?.subscriber?.ref && (
               <DynamicResourceLink
-                title="Subscriber"
+                title={t('knative-plugin~Subscriber')}
                 name={trigger.spec.subscriber.ref.name}
                 namespace={trigger.metadata.namespace}
                 kind={referenceFor(trigger.spec.subscriber.ref)}
@@ -56,7 +58,7 @@ const TriggerDetails: React.FC<TriggerDetailsProps> = ({ obj: trigger }) => {
       </div>
       {_.isArray(trigger?.status?.conditions) && (
         <div className="co-m-pane__body">
-          <SectionHeading text="Conditions" />
+          <SectionHeading text={t('knative-plugin~Conditions')} />
           <Conditions conditions={trigger.status.conditions} />
         </div>
       )}

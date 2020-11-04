@@ -83,6 +83,7 @@ export const mockChannelCRDData = {
         versions: [
           { name: 'v1alpha1', served: true, storage: true },
           { name: 'v1beta1', served: true, storage: false },
+          { name: 'v1', served: true, storage: false },
         ],
       },
     },

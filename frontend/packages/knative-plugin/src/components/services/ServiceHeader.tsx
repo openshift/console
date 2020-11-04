@@ -1,49 +1,50 @@
+import { TFunction } from 'i18next';
 import { sortable } from '@patternfly/react-table';
 import { tableColumnClasses } from './service-table';
 
-const ServiceHeader = () => {
+const ServiceHeader = (t: TFunction) => () => {
   return [
     {
-      title: 'Name',
+      title: t('knative-plugin~Name'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      id: 'namespace',
+      id: t('knative-plugin~namespace'),
       title: 'Namespace',
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'URL',
+      title: t('knative-plugin~URL'),
       sortField: 'status.url',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Generation',
+      title: t('knative-plugin~Generation'),
       sortField: 'metadata.generation',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Created',
+      title: t('knative-plugin~Created'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
     },
     {
-      title: 'Conditions',
+      title: t('knative-plugin~Conditions'),
       props: { className: tableColumnClasses[5] },
     },
     {
-      title: 'Ready',
+      title: t('knative-plugin~Ready'),
       props: { className: tableColumnClasses[6] },
     },
     {
-      title: 'Reason',
+      title: t('knative-plugin~Reason'),
       props: { className: tableColumnClasses[7] },
     },
     {

@@ -7,14 +7,24 @@ import { triggerData } from '../../../../utils/__tests__/knative-eventing-data';
 import DynamicResourceLink from '../DynamicResourceLink';
 import FilterTable from '../../../overview/FilterTable';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
+const i18nNS = 'knative-plugin';
+
 describe('SubscriptionDetails', () => {
   const wrapper = shallow(<TriggerDetails obj={triggerData} />);
   it('should render two DynamicResourceLink with respective props', () => {
     const dynamicResourceLink = wrapper.find(DynamicResourceLink);
     expect(dynamicResourceLink).toHaveLength(2);
-    expect(dynamicResourceLink.at(0).props().title).toEqual('Broker');
+    expect(dynamicResourceLink.at(0).props().title).toEqual(`${i18nNS}~Broker`);
     expect(dynamicResourceLink.at(0).props().name).toEqual('default');
-    expect(dynamicResourceLink.at(1).props().title).toEqual('Subscriber');
+    expect(dynamicResourceLink.at(1).props().title).toEqual(`${i18nNS}~Subscriber`);
     expect(dynamicResourceLink.at(1).props().name).toEqual('broker-display');
   });
 

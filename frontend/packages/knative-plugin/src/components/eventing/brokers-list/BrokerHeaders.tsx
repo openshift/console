@@ -1,21 +1,30 @@
+import { TFunction } from 'i18next';
 import { sortable } from '@patternfly/react-table';
 import { Kebab } from '@console/internal/components/utils';
 
-const BrokerHeaders = () => {
+const BrokerHeaders = (t: TFunction) => () => {
   return [
     {
-      title: 'Name',
+      title: t('knative-plugin~Name'),
       sortField: 'metadata.name',
       transforms: [sortable],
     },
     {
       id: 'namespace',
-      title: 'Namespace',
+      title: t('knative-plugin~Namespace'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
     },
     {
-      title: 'Created',
+      id: 'ready',
+      title: t('knative-plugin~Ready'),
+    },
+    {
+      id: 'condition',
+      title: t('knative-plugin~Conditions'),
+    },
+    {
+      title: t('knative-plugin~Created'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
     },

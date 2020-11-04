@@ -4,7 +4,8 @@ import { TableRow, TableData, RowFunction } from '@console/internal/components/f
 import { Kebab, ResourceKebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
 import { EventingBrokerModel } from '../../../models';
-import { EventBrokerKind } from '../../../types';
+import { EventBrokerKind, BrokerConditionTypes } from '../../../types';
+import { getCondition, getConditionString } from '../../../utils/condition-utils';
 
 const BrokerRow: RowFunction<EventBrokerKind> = ({ obj, index, key, style }) => {
   const {
@@ -15,6 +16,9 @@ const BrokerRow: RowFunction<EventBrokerKind> = ({ obj, index, key, style }) => 
     ...Kebab.getExtensionsActionsForKind(EventingBrokerModel),
     ...Kebab.factory.common,
   ];
+  const readyCondition = obj.status
+    ? getCondition(obj.status.conditions, BrokerConditionTypes.Ready)
+    : null;
   return (
     <TableRow id={uid} index={index} trKey={key} style={style}>
       <TableData>
@@ -22,6 +26,10 @@ const BrokerRow: RowFunction<EventBrokerKind> = ({ obj, index, key, style }) => 
       </TableData>
       <TableData className="co-break-word" columnID="namespace">
         <ResourceLink kind={NamespaceModel.kind} name={namespace} />
+      </TableData>
+      <TableData columnID="ready">{(readyCondition && readyCondition.status) || '-'}</TableData>
+      <TableData columnID="condition">
+        {obj.status ? getConditionString(obj.status.conditions) : '-'}
       </TableData>
       <TableData>
         <Timestamp timestamp={creationTimestamp} />
