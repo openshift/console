@@ -32,6 +32,7 @@ import {
 } from '@patternfly/react-table';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
@@ -206,6 +207,7 @@ const graphStateToProps = ({ UI }: RootState) => ({
 });
 
 const ToggleGraph_ = ({ hideGraphs, toggle }) => {
+  const { t } = useTranslation();
   const icon = hideGraphs ? <ChartLineIcon /> : <CompressIcon />;
 
   return (
@@ -215,7 +217,7 @@ const ToggleGraph_ = ({ hideGraphs, toggle }) => {
       onClick={toggle}
       variant="link"
     >
-      {icon} {hideGraphs ? 'Show' : 'Hide'} Graph
+      {icon} {hideGraphs ? t('monitoring~Show graph') : t('monitoring~Hide graph')}
     </Button>
   );
 };
@@ -637,6 +639,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({
   const [perPage, setPerPage] = React.useState(50);
   const [sortBy, setSortBy] = React.useState<ISortBy>();
 
+  const { t } = useTranslation();
   const safeFetch = React.useCallback(useSafeFetch(), []);
 
   const tick = () => {
@@ -698,7 +701,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({
   if (!result || result.length === 0) {
     return (
       <div className="query-browser__table-message">
-        <YellowExclamationTriangleIcon /> No datapoints found.
+        <YellowExclamationTriangleIcon /> {t('monitoring~No datapoints found.')}
       </div>
     );
   }
