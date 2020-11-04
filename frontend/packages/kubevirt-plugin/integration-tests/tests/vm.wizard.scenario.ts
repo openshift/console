@@ -236,6 +236,7 @@ describe('Kubevirt create VM using wizard', () => {
 
   it('ICNV-5045 - dont let the user continue If PXE provision source is selected on a cluster without a NAD available', async () => {
     deleteResources([multusNAD]);
+
     const vm = new VMBuilder(getBasicVMBuilder())
       .setName(testName)
       .setOS(OperatingSystem.FEDORA)
