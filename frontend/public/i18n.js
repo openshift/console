@@ -96,6 +96,7 @@ i18n
         'console-shared',
         'workload',
         'devconsole',
+        'knative-plugin',
       ],
       defaultNS: 'public',
       nsSeparator: '~',

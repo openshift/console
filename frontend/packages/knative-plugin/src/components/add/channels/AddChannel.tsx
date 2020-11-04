@@ -13,6 +13,7 @@ import { addChannelValidationSchema } from '../eventSource-validation-utils';
 import ChannelForm from './ChannelForm';
 import { getCreateChannelResource } from '../../../utils/create-channel-utils';
 import { handleRedirect } from '../../../utils/create-eventsources-utils';
+import { useTranslation } from 'react-i18next';
 
 interface ChannelProps {
   namespace: string;
@@ -29,6 +30,7 @@ interface StateProps {
 type Props = ChannelProps & StateProps;
 
 const AddChannel: React.FC<Props> = ({ namespace, channels, activeApplication, perspective }) => {
+  const { t } = useTranslation();
   const initialValues: AddChannelFormData = {
     application: {
       initial: sanitizeApplicationValue(activeApplication),
@@ -50,8 +52,10 @@ const AddChannel: React.FC<Props> = ({ namespace, channels, activeApplication, p
     }
     const errMessage =
       channelResource?.kind && channelResource?.apiVersion
-        ? `No model registered for ${referenceFor(channelResource)}`
-        : 'Invalid YAML';
+        ? t('knative-plugin~No model registered for {{refrenceForChannel}}', {
+            refrenceForChannel: referenceFor(channelResource),
+          })
+        : t('knative-plugin~Invalid YAML');
     return Promise.reject(new Error(errMessage));
   };
 
@@ -74,7 +78,7 @@ const AddChannel: React.FC<Props> = ({ namespace, channels, activeApplication, p
       onReset={history.goBack}
       validateOnBlur={false}
       validateOnChange={false}
-      validationSchema={addChannelValidationSchema}
+      validationSchema={addChannelValidationSchema(t)}
     >
       {(formikProps) => <ChannelForm {...formikProps} namespace={namespace} channels={channels} />}
     </Formik>

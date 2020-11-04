@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { FormikProps, FormikValues } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { Alert } from '@patternfly/react-core';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import {
@@ -23,20 +24,22 @@ interface TrafficSplittingDeleteModalProps {
 type Props = FormikProps<FormikValues> & TrafficSplittingDeleteModalProps;
 
 const DeleteRevisionModal: React.FC<Props> = (props) => {
+  const { t } = useTranslation();
   const { deleteRevision, handleSubmit, isSubmitting, status, showTraffic, cancel } = props;
   const serviceName = deleteRevision.metadata.labels[KNATIVE_SERVING_LABEL];
 
   return (
     <form className="modal-content" onSubmit={handleSubmit}>
       <ModalTitle>
-        <YellowExclamationTriangleIcon className="co-icon-space-r" /> Delete {RevisionModel.label}?
+        <YellowExclamationTriangleIcon className="co-icon-space-r" />{' '}
+        {t('knative-plugin~Delete {{revlabel}}?', { revlabel: RevisionModel.label })}
       </ModalTitle>
       <ModalBody>
         <p>
-          Are you sure you want to delete{' '}
-          <strong className="co-break-word">{deleteRevision.metadata.name}</strong> from{' '}
-          <strong className="co-break-word">{serviceName}</strong> in namespace{' '}
-          <strong>{deleteRevision.metadata.namespace}</strong>?
+          {t('knative-plugin~Are you sure you want to delete ')}
+          <strong className="co-break-word">{deleteRevision.metadata.name}</strong>{' '}
+          {t('knative-plugin~from ')} <strong className="co-break-word">{serviceName}</strong>{' '}
+          {t('knative-plugin~in namespace ')} <strong>{deleteRevision.metadata.namespace}</strong>?
         </p>
         {showTraffic && (
           <>
@@ -44,7 +47,9 @@ const DeleteRevisionModal: React.FC<Props> = (props) => {
               isInline
               className="co-alert"
               variant="default"
-              title="Update the traffic distribution among the remaining Revisions"
+              title={t(
+                'knative-plugin~Update the traffic distribution among the remaining Revisions',
+              )}
             />
             <TrafficSplittingFields {...props} />
           </>
@@ -52,7 +57,8 @@ const DeleteRevisionModal: React.FC<Props> = (props) => {
       </ModalBody>
       <ModalSubmitFooter
         inProgress={isSubmitting}
-        submitText="Delete"
+        submitText={t('knative-plugin~Delete')}
+        cancelText={t('knative-plugin~Cancel')}
         cancel={cancel}
         errorMessage={status.error}
         submitDanger

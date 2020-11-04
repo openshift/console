@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Formik, FormikValues, FormikHelpers } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { K8sResourceKind, k8sUpdate, referenceFor, modelFor } from '@console/internal/module/k8s';
 import SinkUriModal from './SinkUriModal';
 
@@ -12,6 +13,7 @@ export interface SinkUriProps {
 }
 
 const SinkUri: React.FC<SinkUriProps> = ({ source, eventSourceList, cancel, close }) => {
+  const { t } = useTranslation();
   const initialValues = {
     uri: source.spec?.sinkUri ?? '',
   };
@@ -31,7 +33,8 @@ const SinkUri: React.FC<SinkUriProps> = ({ source, eventSourceList, cancel, clos
         close();
       })
       .catch((err) => {
-        action.setStatus({ error: err.message || 'An error occurred. Please try again' });
+        const errMessage = err.message || t('knative-plugin~An error occurred. Please try again');
+        action.setStatus({ error: errMessage });
       });
   };
 

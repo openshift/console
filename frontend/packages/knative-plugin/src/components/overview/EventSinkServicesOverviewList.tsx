@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   K8sResourceKind,
   referenceForGroupVersionKind,
@@ -26,6 +27,7 @@ const EventSinkServicesOverviewList: React.FC<EventSinkServicesOverviewListProps
   pods,
   current,
 }) => {
+  const { t } = useTranslation();
   const {
     kind,
     apiVersion,
@@ -45,7 +47,7 @@ const EventSinkServicesOverviewList: React.FC<EventSinkServicesOverviewListProps
   const isSinkReference = !!(sinkKind && sinkName && group && version);
   return (
     <>
-      <SidebarSectionHeading text="Sink" />
+      <SidebarSectionHeading text={t('knative-plugin~Sink')} />
       {isSinkReference || sinkUri ? (
         <ul className="list-group">
           <li className="list-group-item">
@@ -58,7 +60,7 @@ const EventSinkServicesOverviewList: React.FC<EventSinkServicesOverviewListProps
             )}
             {sinkUri && (
               <>
-                <span className="text-muted">Sink URI: </span>
+                <span className="text-muted">{t('knative-plugin~Sink URI:')} </span>
                 <ExternalLink
                   href={sinkUri}
                   additionalClassName="co-external-link--block"
@@ -69,7 +71,7 @@ const EventSinkServicesOverviewList: React.FC<EventSinkServicesOverviewListProps
           </li>
         </ul>
       ) : (
-        <span className="text-muted">No sink found for this resource.</span>
+        <span className="text-muted">{t('knative-plugin~No sink found for this resource.')}</span>
       )}
       {pods?.length > 0 && <PodsOverview pods={pods} obj={obj} allPodsLink={linkUrl} />}
       {deploymentData?.name && (

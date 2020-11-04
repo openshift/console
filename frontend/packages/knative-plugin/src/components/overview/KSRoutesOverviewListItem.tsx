@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { ResourceLink, ExternalLink } from '@console/internal/components/utils';
 import { RouteModel } from '../../models';
@@ -8,6 +9,7 @@ type KSRoutesOverviewListItemProps = {
 };
 
 const KSRoutesOverviewListItem: React.FC<KSRoutesOverviewListItemProps> = ({ ksroute }) => {
+  const { t } = useTranslation();
   const {
     metadata: { name, namespace },
     status,
@@ -20,7 +22,7 @@ const KSRoutesOverviewListItem: React.FC<KSRoutesOverviewListItemProps> = ({ ksr
             <ResourceLink kind={referenceForModel(RouteModel)} name={name} namespace={namespace} />
             {status.url?.length > 0 && (
               <>
-                <span className="text-muted">Location: </span>
+                <span className="text-muted">{t('knative-plugin~Location:')} </span>
                 <ExternalLink
                   href={status.url}
                   additionalClassName="co-external-link--block"

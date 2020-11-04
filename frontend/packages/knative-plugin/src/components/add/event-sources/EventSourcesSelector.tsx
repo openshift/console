@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useFormikContext, FormikValues } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { ItemSelectorField } from '@console/shared';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { NormalizedEventSources, EVENT_SOURCES_APP } from '../import-types';
@@ -13,6 +14,7 @@ interface EventSourcesSelectorProps {
 }
 
 const EventSourcesSelector: React.FC<EventSourcesSelectorProps> = ({ eventSourceList }) => {
+  const { t } = useTranslation();
   const eventSourceItems = Object.keys(eventSourceList).length;
   const {
     values: {
@@ -65,7 +67,7 @@ const EventSourcesSelector: React.FC<EventSourcesSelectorProps> = ({ eventSource
   );
 
   return (
-    <FormSection title="Type" fullWidth extraMargin>
+    <FormSection title={t('knative-plugin~Type')} fullWidth extraMargin>
       <ItemSelectorField
         itemList={eventSourceList}
         loadingItems={!eventSourceItems}
@@ -74,6 +76,9 @@ const EventSourcesSelector: React.FC<EventSourcesSelectorProps> = ({ eventSource
         showIfSingle
         showFilter
         showCount
+        emptyStateMessage={t(
+          'knative-plugin~No Event Source types are being shown due to the filters being applied.',
+        )}
       />
     </FormSection>
   );

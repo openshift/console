@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Formik, FormikValues, FormikHelpers } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { K8sResourceKind, k8sCreate } from '@console/internal/module/k8s';
 import { getRandomChars } from '@console/shared/src/utils';
 import PubSubModal from './PubSubModal';
@@ -19,6 +20,7 @@ const PubSub: React.FC<PubSubProps> = ({
   close,
   target = { metadata: { name: '' } },
 }) => {
+  const { t } = useTranslation();
   const {
     apiVersion: sourceApiVersion,
     kind: sourceKind,
@@ -70,14 +72,15 @@ const PubSub: React.FC<PubSubProps> = ({
         close();
       })
       .catch((err) => {
+        const errMessage = err.message || t('knative-plugin~An error occurred. Please try again');
         action.setStatus({
           subscriberAvailable: true,
-          error: err.message || 'An error occurred. Please try again',
+          error: errMessage,
         });
       });
   };
 
-  const labelTitle = `Add ${kind}`;
+  const labelTitle = t('knative-plugin~Add {{kind}}', { kind });
   return (
     <Formik
       initialValues={initialValues}

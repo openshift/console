@@ -39,6 +39,7 @@ interface ItemSelectorFieldProps {
   showIfSingle?: boolean;
   showFilter?: boolean;
   showCount?: boolean;
+  emptyStateMessage?: string;
 }
 
 const ItemSelectorField: React.FC<ItemSelectorFieldProps> = ({
@@ -52,6 +53,7 @@ const ItemSelectorField: React.FC<ItemSelectorFieldProps> = ({
   showIfSingle = false,
   showFilter = false,
   showCount = false,
+  emptyStateMessage,
 }) => {
   const { t } = useTranslation();
   const [selected, { error: selectedError, touched: selectedTouched }] = useField(name);
@@ -163,9 +165,10 @@ const ItemSelectorField: React.FC<ItemSelectorFieldProps> = ({
                 {t('console-shared~No results match the filter criteria')}
               </Title>
               <EmptyStateBody>
-                {t(
-                  'console-shared~No Event Source types are being shown due to the filters being applied.',
-                )}
+                {emptyStateMessage ||
+                  t(
+                    'console-shared~No Event Source types are being shown due to the filters being applied.',
+                  )}
               </EmptyStateBody>
               <EmptyStatePrimary>
                 <Button variant="link" onClick={handleClearFilter}>

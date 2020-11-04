@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { FormikProps, FormikValues } from 'formik';
 import { pickBy, size } from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { TextInputTypes } from '@patternfly/react-core';
 import { MultiColumnField, InputField } from '@console/shared';
 import { RevisionItems } from '../../utils/traffic-splitting-utils';
@@ -13,6 +14,7 @@ interface TrafficSplittingFieldProps {
 type Props = FormikProps<FormikValues> & TrafficSplittingFieldProps;
 
 const TrafficSplittingFields: React.FC<Props> = ({ revisionItems, values }) => {
+  const { t } = useTranslation();
   const selectedRevisions: string[] = values.trafficSplitting.map(
     (traffic) => traffic.revisionName,
   );
@@ -20,7 +22,7 @@ const TrafficSplittingFields: React.FC<Props> = ({ revisionItems, values }) => {
   return (
     <MultiColumnField
       name="trafficSplitting"
-      addLabel="Add Revision"
+      addLabel={t('knative-plugin~Add Revision')}
       headers={[{ name: 'Split', required: true }, 'Tag', { name: 'Revision', required: true }]}
       emptyValues={{ percent: '', tag: '', revisionName: '' }}
       disableDeleteRow={values.trafficSplitting.length === 1}
@@ -37,7 +39,7 @@ const TrafficSplittingFields: React.FC<Props> = ({ revisionItems, values }) => {
       <TrafficModalRevisionsDropdownField
         name="revisionName"
         revisionItems={items}
-        title="Select a revision"
+        title={t('knative-plugin~Select a revision')}
       />
     </MultiColumnField>
   );
