@@ -249,7 +249,6 @@ export class Wizard {
       } else {
         throw Error('VM OS not defined');
       }
-
       if (provisionSource) {
         await this.disableGoldenImageCloneCheckbox();
         await this.selectProvisionSource(provisionSource);
@@ -262,7 +261,6 @@ export class Wizard {
         throw Error('VM Workload not defined');
       }
     }
-
     if (flavor) {
       await this.selectFlavor(flavor);
     } else {
