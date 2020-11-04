@@ -36,7 +36,7 @@ import { TemplateModel } from '@console/internal/models';
 import { templateCreateVMLink } from '../../views/template.view';
 
 export class Wizard {
-  async openWizard(model: K8sKind) {
+  async openWizard(model: K8sKind = null) {
     if (
       !(await virtualizationTitle.isPresent()) ||
       (await virtualizationTitle.getText()) !== VIRTUALIZATION_TITLE
@@ -230,7 +230,7 @@ export class Wizard {
     );
   }
 
-  async processGeneralStep(data: VMBuilderData) {
+  async processGeneralStep(data: VMBuilderData, ignoreWarnings: boolean = false) {
     const { name, description, provisionSource, os, flavor, workload } = data;
     if (name) {
       await this.fillName(name);
@@ -268,7 +268,7 @@ export class Wizard {
     } else {
       throw Error('VM Flavor not defined');
     }
-    await this.next();
+    await this.next(ignoreWarnings);
   }
 
   async processNetworkStep(data: VMBuilderData) {

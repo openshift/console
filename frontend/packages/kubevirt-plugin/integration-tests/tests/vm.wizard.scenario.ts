@@ -1,12 +1,18 @@
 import * as _ from 'lodash';
-import { testName } from '@console/internal-integration-tests/protractor.conf';
-import { getAnnotations, getLabels } from '../../src/selectors/selectors';
+import { browser } from 'protractor';
+import { isLoaded } from '../../../../integration-tests/views/crud.view';
 import {
   removeLeakedResources,
   withResource,
+  waitForStringInElement,
   createResources,
   deleteResources,
 } from '@console/shared/src/test-utils/utils';
+import * as view from '../views/wizard.view';
+import { Wizard } from './models/wizard';
+import { testName } from '@console/internal-integration-tests/protractor.conf';
+import { getAnnotations, getLabels } from '../../src/selectors/selectors';
+
 import {
   VM_BOOTUP_TIMEOUT_SECS,
   CLONE_VM_TIMEOUT_SECS,
@@ -50,14 +56,20 @@ describe('Kubevirt create VM using wizard', () => {
   };
 
   beforeAll(async () => {
-    createResources([multusNAD, testDataVolume]);
+    createResources([testDataVolume]);
   });
 
   afterAll(async () => {
-    deleteResources([multusNAD, testDataVolume]);
+    deleteResources([testDataVolume]);
+  });
+
+  beforeEach(async () => {
+    createResources([multusNAD]);
   });
 
   afterEach(() => {
+    deleteResources([multusNAD]);
+
     removeLeakedResources(leakedResources);
   });
 
@@ -221,4 +233,28 @@ describe('Kubevirt create VM using wizard', () => {
     },
     CLONE_VM_TIMEOUT_SECS,
   );
+
+  it('ICNV-5045 - dont let the user continue If PXE provision source is selected on a cluster without a NAD available', async () => {
+    deleteResources([multusNAD]);
+
+    const vm = new VMBuilder(getBasicVMBuilder())
+      .setName(testName)
+      .setOS(OperatingSystem.FEDORA)
+      .setProvisionSource(ProvisionSource.PXE)
+      .setWorkload(Workload.DESKTOP)
+      .build();
+    const wizard = new Wizard();
+    await vm.navigateToListView();
+    await isLoaded();
+    await wizard.openWizard();
+    await wizard.processGeneralStep(vm.getData(), true);
+    await browser.wait(
+      waitForStringInElement(view.bootError, 'No Network Attachment Definitions available'),
+      1000,
+    );
+    await browser.wait(
+      waitForStringInElement(view.footerError, 'Please correct the following field: Boot Source.'),
+      1000,
+    );
+  });
 });
