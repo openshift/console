@@ -10,9 +10,10 @@ import {
 } from '../../../utils/pipeline-augment';
 import { PipelineModel, PipelineResourceModel } from '../../../models';
 import ResourceLinkList from '../../pipelines/resource-overview/ResourceLinkList';
-import PipelineRunDetailsErrorLog from '../logs/PipelineRunDetailsErrorLog';
+import RunDetailsErrorLog from '../logs/RunDetailsErrorLog';
 import PipelineRunVisualization from './PipelineRunVisualization';
 import TriggeredBySection from './TriggeredBySection';
+import { getPLRLogSnippet } from '../logs/pipelineRunLogSnippet';
 
 import './TriggeredBySection.scss';
 
@@ -43,7 +44,10 @@ export const PipelineRunDetails: React.FC<PipelineRunDetailsProps> = ({ obj: pip
               <Status status={pipelineRunFilterReducer(pipelineRun)} />
             </dd>
           </dl>
-          <PipelineRunDetailsErrorLog pipelineRun={pipelineRun} />
+          <RunDetailsErrorLog
+            logDetails={getPLRLogSnippet(pipelineRun)}
+            namespace={pipelineRun.metadata.name}
+          />
           {pipelineRefExists(pipelineRun) && (
             <dl>
               <dt>Pipeline</dt>

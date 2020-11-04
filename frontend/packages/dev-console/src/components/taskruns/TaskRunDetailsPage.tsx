@@ -4,6 +4,7 @@ import { navFactory, viewYamlComponent } from '@console/internal/components/util
 import TaskRunDetails from './TaskRunDetails';
 import TaskRunEvents from './events/TaskRunEvents';
 import { useTasksBreadcrumbsFor } from '../pipelines/hooks';
+import TaskRunLog from './TaskRunLog';
 
 const TaskRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const { kindObj, match } = props;
@@ -16,6 +17,12 @@ const TaskRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
       pages={[
         navFactory.details(TaskRunDetails),
         navFactory.editYaml(viewYamlComponent),
+        {
+          href: 'logs',
+          path: 'logs/:name?',
+          name: 'Logs',
+          component: TaskRunLog,
+        },
         navFactory.events(TaskRunEvents),
       ]}
     />

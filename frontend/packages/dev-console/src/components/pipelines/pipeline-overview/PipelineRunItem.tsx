@@ -9,7 +9,7 @@ import { pipelineRunStatus } from '../../../utils/pipeline-filter-reducer';
 import { PipelineRunModel } from '../../../models';
 import { PipelineRun } from '../../../utils/pipeline-augment';
 import LogSnippetBlock from '../../pipelineruns/logs/LogSnippetBlock';
-import { getLogSnippet } from '../../pipelineruns/logs/pipelineRunLogSnippet';
+import { getPLRLogSnippet } from '../../pipelineruns/logs/pipelineRunLogSnippet';
 import './PipelineRunItem.scss';
 
 type PipelineRunItemProps = {
@@ -25,7 +25,7 @@ const PipelineRunItem: React.FC<PipelineRunItemProps> = ({ pipelineRun }) => {
   const lastUpdated = status
     ? status.completionTime || status.startTime || creationTimestamp
     : creationTimestamp;
-  const logDetails = getLogSnippet(pipelineRun);
+  const logDetails = getPLRLogSnippet(pipelineRun);
 
   return (
     <li className="odc-pipeline-run-item list-group-item">
@@ -51,7 +51,7 @@ const PipelineRunItem: React.FC<PipelineRunItemProps> = ({ pipelineRun }) => {
         </GridItem>
         {logDetails && (
           <GridItem span={12}>
-            <LogSnippetBlock logDetails={logDetails} pipelineRun={pipelineRun}>
+            <LogSnippetBlock logDetails={logDetails} namespace={namespace}>
               {(logSnippet: string) => (
                 <LogSnippet message={logDetails.title} logSnippet={logSnippet} />
               )}

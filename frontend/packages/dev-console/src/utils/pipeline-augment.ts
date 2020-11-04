@@ -145,6 +145,14 @@ export type TaskRunWorkspace = {
   subPath?: string;
 };
 
+export type TaskRunStatus = {
+  completionTime?: string;
+  conditions?: Condition[];
+  podName?: string;
+  startTime?: string;
+  steps?: PLRTaskRunStep[];
+};
+
 export interface TaskRunKind extends K8sResourceKind {
   spec: {
     taskRef?: PipelineTaskRef;
@@ -155,6 +163,7 @@ export interface TaskRunKind extends K8sResourceKind {
     timeout?: string;
     workspaces?: TaskRunWorkspace[];
   };
+  status?: TaskRunStatus;
 }
 
 export type PLRTaskRunStep = {
