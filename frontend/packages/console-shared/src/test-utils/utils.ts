@@ -68,7 +68,7 @@ export function deleteResource(resource, ignoreNotFound = true) {
 
 export function deleteResources(resources) {
   resources.forEach((resource) => {
-    deleteResource(resource);
+    deleteResource(resource, true);
   });
 }
 
