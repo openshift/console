@@ -9,6 +9,7 @@
   "Restore terminal": "Restore terminal",
   "Close terminal": "Close terminal",
   "The terminal connection has closed.": "The terminal connection has closed.",
+  "The terminal connection has closed due to {{reason}}.": "The terminal connection has closed due to {{reason}}.",
   "connecting to {{container}}": "connecting to {{container}}",
   "OpenShift command line terminal": "OpenShift command line terminal",
   "Close command line terminal": "Close command line terminal",
