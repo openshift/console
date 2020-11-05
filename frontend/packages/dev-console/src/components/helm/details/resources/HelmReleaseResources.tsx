@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { match as RMatch } from 'react-router';
 import { MultiListPage } from '@console/internal/components/factory';
 import { FirehoseResource } from '@console/internal/components/utils';
@@ -21,6 +22,7 @@ export interface HelmReleaseResourcesProps {
 }
 
 const HelmReleaseResources: React.FC<HelmReleaseResourcesProps> = ({ match, customData }) => {
+  const { t } = useTranslation();
   const namespace = match.params.ns;
   const helmManifestResources = loadHelmManifestResources(customData);
   const firehoseResources: FirehoseResource[] = helmManifestResources.map(
@@ -39,10 +41,10 @@ const HelmReleaseResources: React.FC<HelmReleaseResourcesProps> = ({ match, cust
   );
   return (
     <MultiListPage
-      filterLabel="Resources by name"
+      filterLabel={t('devconsole~Resources by name')}
       resources={firehoseResources}
       flatten={flattenReleaseResources}
-      label="Resources"
+      label={t('devconsole~Resources')}
       ListComponent={HelmReleaseResourcesList}
     />
   );

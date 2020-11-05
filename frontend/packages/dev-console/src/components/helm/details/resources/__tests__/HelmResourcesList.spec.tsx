@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { TFunction } from 'i18next';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { Table } from '@console/internal/components/factory';
 import HelmResourcesList from '../HelmReleaseResourcesList';
@@ -8,12 +9,21 @@ import HelmReleaseResourcesRow from '../HelmReleaseResourcesRow';
 type Component = typeof HelmResourcesList;
 type Props = React.ComponentProps<Component>;
 let helmResourcesList: ShallowWrapper<Props>;
+const t = (key: TFunction) => key;
+
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
 
 describe('HelmResourcesList', () => {
   beforeEach(() => {
     helmResourcesList = shallow(
       <HelmResourcesList
-        Header={HelmReleaseResourcesHeader}
+        Header={HelmReleaseResourcesHeader(t)}
         Row={HelmReleaseResourcesRow}
         aria-label="Resources"
       />,
@@ -25,7 +35,12 @@ describe('HelmResourcesList', () => {
   });
 
   it('should render the proper Headers in the Resources tab', () => {
-    const expectedHelmResourcesHeader: string[] = ['Name', 'Type', 'Status', 'Created'];
+    const expectedHelmResourcesHeader: string[] = [
+      'devconsole~Name',
+      'devconsole~Type',
+      'devconsole~Status',
+      'devconsole~Created',
+    ];
 
     const headers = helmResourcesList
       .find(Table)

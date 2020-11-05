@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { HelmChart } from '../helm-types';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 
@@ -8,6 +9,7 @@ type HelmChartMetaDescriptionProps = {
 };
 
 const HelmChartMetaDescription: React.FC<HelmChartMetaDescriptionProps> = ({ chart }) => {
+  const { t } = useTranslation();
   const chartVersion = chart?.metadata?.version;
   const displayName = _.startCase(chart?.metadata?.name);
   const imgSrc = chart?.metadata?.icon || getImageForIconClass('icon-helm');
@@ -28,7 +30,10 @@ const HelmChartMetaDescription: React.FC<HelmChartMetaDescriptionProps> = ({ cha
           </h1>
           {provider && (
             <span className="co-clusterserviceversion-logo__name__provider text-muted">
-              {`${chartVersion || ''} provided by ${provider}`}
+              {t('devconsole~{{chartVersion}} provided by {{provider}}', {
+                chartVersion: chartVersion || '',
+                provider,
+              })}
             </span>
           )}
         </div>

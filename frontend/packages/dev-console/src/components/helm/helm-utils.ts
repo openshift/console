@@ -1,5 +1,6 @@
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
+import { TFunction } from 'i18next';
 import { loadAll, safeDump, DEFAULT_SAFE_SCHEMA } from 'js-yaml';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -123,25 +124,29 @@ export const getChartEntriesByName = (
 export const concatVersions = (
   chartVersion: string,
   appVersion: string,
+  t: TFunction,
   chartRepoName?: string,
 ): string => {
   let title = chartVersion.split('--')[0];
   if (appVersion) {
-    title += ` / App Version ${appVersion}`;
+    title += t('devconsole~ / App Version {{appVersion}}', { appVersion });
   }
   if (chartRepoName) {
-    title += ` (Provided by ${toTitleCase(chartRepoName)})`;
+    title += t('devconsole~ (Provided by {{chartRepoName}})', {
+      chartRepoName: toTitleCase(chartRepoName),
+    });
   }
   return title;
 };
 
-export const getChartVersions = (chartEntries: HelmChartMetaData[]) => {
+export const getChartVersions = (chartEntries: HelmChartMetaData[], t: TFunction) => {
   const chartVersions = _.reduce(
     chartEntries,
     (obj, chart) => {
       obj[`${chart.version}--${chart.repoName}`] = concatVersions(
         chart.version,
         chart.appVersion,
+        t,
         chart.repoName,
       );
       return obj;
@@ -172,6 +177,7 @@ export const getHelmActionConfig = (
   helmAction: HelmActionType,
   releaseName: string,
   namespace: string,
+  t: TFunction,
   actionOrigin?: HelmActionOrigins,
   chartURL?: string,
 ): HelmActionConfigType | undefined => {
@@ -179,11 +185,14 @@ export const getHelmActionConfig = (
     case HelmActionType.Install:
       return {
         type: HelmActionType.Install,
-        title: 'Install Helm Chart',
+        title: t('devconsole~Install Helm Chart'),
         subTitle: {
-          form:
-            'The Helm chart can be installed by completing the form. Default values may be provided by the Helm chart authors.',
-          yaml: 'The Helm chart can be installed by manually entering YAML or JSON definitions.',
+          form: t(
+            'devconsole~The Helm chart can be installed by completing the form. Default values may be provided by the Helm chart authors.',
+          ),
+          yaml: t(
+            'devconsole~The Helm chart can be installed by manually entering YAML or JSON definitions.',
+          ),
         },
         helmReleaseApi: `/api/helm/chart?url=${chartURL}`,
         fetch: coFetchJSON.post,
@@ -192,10 +201,12 @@ export const getHelmActionConfig = (
     case HelmActionType.Upgrade:
       return {
         type: HelmActionType.Upgrade,
-        title: 'Upgrade Helm Release',
+        title: t('devconsole~Upgrade Helm Release'),
         subTitle: {
-          form: 'Upgrade by selecting a new chart version or manually changing the form values.',
-          yaml: 'Upgrade by selecting a new chart version or manually changing YAML.',
+          form: t(
+            'devconsole~Upgrade by selecting a new chart version or manually changing the form values.',
+          ),
+          yaml: t('devconsole~Upgrade by selecting a new chart version or manually changing YAML.'),
         },
         helmReleaseApi: `/api/helm/release?ns=${namespace}&name=${releaseName}`,
         fetch: coFetchJSON.put,
@@ -205,7 +216,7 @@ export const getHelmActionConfig = (
     case HelmActionType.Rollback:
       return {
         type: HelmActionType.Rollback,
-        title: 'Rollback Helm Release',
+        title: t('devconsole~Rollback Helm Release'),
         subTitle: ``,
         helmReleaseApi: `/api/helm/release/history?ns=${namespace}&name=${releaseName}`,
         fetch: coFetchJSON.patch,
@@ -245,3 +256,9 @@ export const getChartReadme = (chart: HelmChart): string => {
   const readmeFile = chart?.files?.find((file) => file.name === 'README.md');
   return (readmeFile?.data && atob(readmeFile?.data)) ?? '';
 };
+
+export const helmActionString = (t: TFunction) => ({
+  Install: t('devconsole~Install'),
+  Upgrade: t('devconsole~Upgrade'),
+  Rollback: t('devconsole~Rollback'),
+});

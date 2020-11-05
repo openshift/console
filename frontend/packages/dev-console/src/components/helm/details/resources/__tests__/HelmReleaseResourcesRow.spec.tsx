@@ -1,11 +1,20 @@
+import * as React from 'react';
 import { shallow } from 'enzyme';
 import { Link } from 'react-router-dom';
 import { Status } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { RowFunctionArgs } from '@console/internal/components/factory';
-import HelmReleaseResourcesRow from '../HelmReleaseResourcesRow';
+import HelmReleaseResourcesRow, { HelmReleaseResourceStatus } from '../HelmReleaseResourcesRow';
 
 let rowArgs: RowFunctionArgs<K8sResourceKind>;
+
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key: string) => key }),
+  };
+});
 
 describe('helmReleaseResourcesRow', () => {
   beforeEach(() => {
@@ -30,16 +39,18 @@ describe('helmReleaseResourcesRow', () => {
   });
 
   it('should render the number of pods deployed for resources that support it', () => {
-    const helmReleaseResourcesRow = shallow(HelmReleaseResourcesRow(rowArgs));
-    expect(helmReleaseResourcesRow.find(Status).exists()).toBe(true);
-    expect(helmReleaseResourcesRow.find(Status).props().status).toEqual('Created');
+    const helmReleaseResourceStatus = shallow(<HelmReleaseResourceStatus resource={rowArgs.obj} />);
+    expect(helmReleaseResourceStatus.find(Status).exists()).toBe(true);
+    expect(helmReleaseResourceStatus.find(Status).props().status).toEqual('Created');
 
     rowArgs.obj.kind = 'Deployment';
     rowArgs.obj.spec = { replicas: 1 };
     rowArgs.obj.status = { replicas: 1 };
 
-    const helmReleaseResourcesTableRow = shallow(HelmReleaseResourcesRow(rowArgs));
-    expect(helmReleaseResourcesTableRow.find(Link).exists()).toBe(true);
-    expect(helmReleaseResourcesTableRow.find(Link).props().title).toEqual('pods');
+    const helmReleaseResourceStatus1 = shallow(
+      <HelmReleaseResourceStatus resource={rowArgs.obj} />,
+    );
+    expect(helmReleaseResourceStatus1.find(Link).exists()).toBe(true);
+    expect(helmReleaseResourceStatus1.find(Link).props().title).toEqual('devconsole~pods');
   });
 });

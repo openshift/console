@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   EmptyState,
   EmptyStateIcon,
@@ -30,6 +31,7 @@ interface HelmReleaseListProps {
 }
 
 const HelmReleaseList: React.FC<HelmReleaseListProps> = ({ namespace }) => {
+  const { t } = useTranslation();
   const secretsCountRef = React.useRef<number>(0);
   const [releasesLoaded, setReleasesLoaded] = React.useState<boolean>(false);
   const [loadError, setLoadError] = React.useState<string>();
@@ -75,7 +77,7 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = ({ namespace }) => {
           .catch((err) => {
             if (!destroyed) {
               setReleasesLoaded(true);
-              setLoadError(err.message || 'Unable to load Helm Releases');
+              setLoadError(err.message || t('devconsole~Unable to load Helm Releases'));
             }
           });
       }
@@ -84,10 +86,16 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = ({ namespace }) => {
     return () => {
       destroyed = true;
     };
-  }, [namespace, newCount, secretsLoadError, secretsLoaded]);
+  }, [namespace, newCount, secretsLoadError, secretsLoaded, t]);
 
   if (secretsLoadError || loadError) {
-    return <StatusBox loaded loadError={secretsLoadError || loadError} label="Helm Releases" />;
+    return (
+      <StatusBox
+        loaded
+        loadError={secretsLoadError || loadError}
+        label={t('devconsole~Helm Releases')}
+      />
+    );
   }
 
   const emptyState = () => {
@@ -103,10 +111,12 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = ({ namespace }) => {
       <EmptyState variant={EmptyStateVariant.full}>
         <EmptyStateIcon variant="container" component={helmImage} />
         <Title headingLevel="h3" size="lg">
-          No Helm Releases found
+          {t('devconsole~No Helm Releases found')}
         </Title>
         <EmptyStateSecondaryActions>
-          <Link to={installURL}>Install a Helm Chart from the developer catalog</Link>
+          <Link to={installURL}>
+            {t('devconsole~Install a Helm Chart from the developer catalog')}
+          </Link>
         </EmptyStateSecondaryActions>
       </EmptyState>
     );
@@ -125,7 +135,7 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = ({ namespace }) => {
       rowFilterReducer={filterHelmReleasesByStatus}
       textFilterReducer={filterHelmReleasesByName}
       resourceRow={HelmReleaseListRow}
-      resourceHeader={HelmReleaseListHeader}
+      resourceHeader={HelmReleaseListHeader(t)}
     />
   );
 };

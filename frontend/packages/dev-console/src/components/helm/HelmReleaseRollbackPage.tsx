@@ -2,6 +2,7 @@ import * as React from 'react';
 import Helmet from 'react-helmet';
 import { Formik } from 'formik';
 import { RouteComponentProps } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { PageBody } from '@console/shared';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { history, getQueryArgument } from '@console/internal/components/utils';
@@ -21,13 +22,14 @@ type HelmRollbackFormData = {
 };
 
 const HelmReleaseRollbackPage: React.FC<HelmReleaseRollbackPageProps> = ({ match }) => {
+  const { t } = useTranslation();
   const { releaseName, ns: namespace } = match.params;
   const actionOrigin = getQueryArgument('actionOrigin') as HelmActionOrigins;
   const [releaseHistory, setReleaseHistory] = React.useState<HelmRelease[]>(null);
 
   const config = React.useMemo(
-    () => getHelmActionConfig(HelmActionType.Rollback, releaseName, namespace, actionOrigin),
-    [actionOrigin, namespace, releaseName],
+    () => getHelmActionConfig(HelmActionType.Rollback, releaseName, namespace, t, actionOrigin),
+    [actionOrigin, namespace, releaseName, t],
   );
 
   React.useEffect(() => {
