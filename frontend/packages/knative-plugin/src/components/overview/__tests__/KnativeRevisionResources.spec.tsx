@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { PodsOverview } from '@console/internal/components/overview/pods-overview';
+import { PodsOverviewContent } from '@console/internal/components/overview/pods-overview';
 import {
   sampleKnativeConfigurations,
   sampleKnativePods,
@@ -30,7 +30,7 @@ describe('KnativeRevisionResources', () => {
         pods={sampleKnativePods.data}
       />,
     );
-    expect(wrapper.find(PodsOverview)).toHaveLength(1);
+    expect(wrapper.find(PodsOverviewContent)).toHaveLength(1);
     expect(wrapper.find(ConfigurationsOverviewList)).toHaveLength(1);
     expect(wrapper.find(KSRoutesOverviewList)).toHaveLength(1);
     expect(wrapper.find(DeploymentOverviewList)).toHaveLength(1);

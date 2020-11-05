@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind, PodKind, podPhase } from '@console/internal/module/k8s';
 import { PodControllerOverviewItem } from '@console/shared';
-import { PodsOverview } from '@console/internal/components/overview/pods-overview';
+import { PodsOverviewContent } from '@console/internal/components/overview/pods-overview';
 import ConfigurationsOverviewList from './ConfigurationsOverviewList';
 import KSRoutesOverviewList from './RoutesOverviewList';
 import DeploymentOverviewList from './DeploymentOverviewList';
@@ -35,9 +35,11 @@ const KnativeRevisionResources: React.FC<KnativeRevisionResourceProps> = ({
   )}`;
   return (
     <>
-      <PodsOverview
-        pods={activePods}
+      <PodsOverviewContent
         obj={obj}
+        pods={activePods}
+        loaded
+        loadError={null}
         emptyText={t('knative-plugin~Autoscaled to 0')}
         allPodsLink={linkUrl}
       />

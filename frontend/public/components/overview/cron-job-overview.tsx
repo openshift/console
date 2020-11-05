@@ -6,7 +6,7 @@ import { CronJobKind } from '../../module/k8s';
 import { menuActions } from '../cron-job';
 import { DetailsItem, KebabAction, pluralize, ResourceSummary, Timestamp } from '../utils';
 import { ResourceOverviewDetails } from './resource-overview-details';
-import { PodsOverview } from './pods-overview';
+import { PodsOverviewMultiple } from './pods-overview';
 import { BuildOverview } from './build-overview';
 import { JobsOverview } from './jobs-overview';
 
@@ -52,7 +52,7 @@ const CronJobResourcesTab: React.SFC<CronJobResourcesTabProps> = ({ item }) => {
   const pluginComponents = usePluginsOverviewTabSection(item);
   return (
     <div className="overview__sidebar-pane-body">
-      <PodsOverview pods={pods} obj={obj} />
+      <PodsOverviewMultiple obj={obj} podResources={jobs} />
       <JobsOverview jobs={jobs} pods={pods} obj={obj} />
       <BuildOverview buildConfigs={buildConfigs} />
       {pluginComponents.map(({ Component, key }) => (

@@ -3,9 +3,15 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 
 import { Alert, AlertActionLink } from '@patternfly/react-core';
-import { Status } from '@console/shared';
-import { ResourceLink, resourcePath, SidebarSectionHeading } from '../utils';
+import {
+  Status,
+  usePodsWatcher,
+  getPodsForResource,
+  getResourcesToWatchForPods,
+} from '@console/shared';
+import { ResourceLink, resourcePath, SidebarSectionHeading, LoadingBox } from '../utils';
 import { podPhase, PodKind, K8sResourceKind, referenceFor } from '../../module/k8s';
+import { useK8sWatchResources } from '../utils/k8s-watch-hook';
 
 const kind: string = 'Pod';
 const MAX_PODS: number = 3;
@@ -122,9 +128,11 @@ const PodsOverviewList: React.SFC<PodOverviewListProps> = ({ pods }) => (
 
 PodsOverviewList.displayName = 'PodsOverviewList';
 
-export const PodsOverview: React.SFC<PodsOverviewProps> = ({
-  pods,
+export const PodsOverviewContent: React.SFC<PodsOverviewContentProps> = ({
   obj,
+  pods,
+  loaded,
+  loadError,
   allPodsLink,
   emptyText,
   hasBuildConfig,
@@ -173,11 +181,90 @@ export const PodsOverview: React.SFC<PodsOverviewProps> = ({
         </Alert>
       ) : null}
       {_.isEmpty(filteredPods) ? (
-        <span className="text-muted">{emptyMessage}</span>
+        <span className="text-muted">{loadError || (loaded ? emptyMessage : <LoadingBox />)}</span>
       ) : (
         <PodsOverviewList pods={_.take(filteredPods, podsShown)} />
       )}
     </>
+  );
+};
+PodsOverviewContent.displayName = 'PodsOverviewContent';
+
+export const PodsOverview: React.SFC<PodsOverviewProps> = ({
+  obj,
+  podsFilter,
+  hideIfEmpty = false,
+  ...props
+}) => {
+  const {
+    metadata: { namespace },
+  } = obj;
+  const [pods, setPods] = React.useState<PodKind[]>([]);
+  const { podData, loadError, loaded } = usePodsWatcher(obj, obj.kind, namespace);
+
+  React.useEffect(() => {
+    if (!loadError && loaded) {
+      let updatedPods = podData.pods as PodKind[];
+      if (podsFilter) {
+        updatedPods = updatedPods.filter(podsFilter);
+      }
+      setPods(updatedPods);
+    }
+  }, [podData, loadError, loaded, podsFilter]);
+
+  if (!pods.length && hideIfEmpty) {
+    return null;
+  }
+
+  return (
+    <PodsOverviewContent obj={obj} pods={pods} loaded={loaded} loadError={loadError} {...props} />
+  );
+};
+
+export const PodsOverviewMultiple: React.SFC<PodsOverviewMultipleProps> = ({
+  obj,
+  podResources,
+  podsFilter,
+  ...props
+}) => {
+  const {
+    metadata: { namespace },
+  } = obj;
+
+  const [pods, setPods] = React.useState<PodKind[]>([]);
+  const [loaded, setLoaded] = React.useState<boolean>(false);
+  const [loadError, setLoadError] = React.useState<string>('');
+  const watchedResources = React.useMemo(() => getResourcesToWatchForPods('CronJob', namespace), [
+    namespace,
+  ]);
+
+  const resources = useK8sWatchResources(watchedResources);
+
+  React.useEffect(() => {
+    const errorKey = Object.keys(resources).find((key) => resources[key].loadError);
+    if (errorKey) {
+      setLoadError(resources[errorKey].loadError);
+      return;
+    }
+    setLoadError('');
+    if (
+      Object.keys(resources).length > 0 &&
+      Object.keys(resources).every((key) => resources[key].loaded)
+    ) {
+      let updatedPods = podResources.reduce((acc, resource) => {
+        acc.push(...getPodsForResource(resource, resources));
+        return acc;
+      }, []);
+      if (podsFilter) {
+        updatedPods = updatedPods.filter(podsFilter);
+      }
+      setPods(updatedPods);
+      setLoaded(true);
+    }
+  }, [podResources, podsFilter, resources]);
+
+  return (
+    <PodsOverviewContent obj={obj} pods={pods} loaded={loaded} loadError={loadError} {...props} />
   );
 };
 
@@ -185,10 +272,31 @@ type PodOverviewListProps = {
   pods: PodKind[];
 };
 
-type PodsOverviewProps = {
+type PodsOverviewContentProps = {
+  obj: K8sResourceKind;
   pods: PodKind[];
+  loaded: boolean;
+  loadError: string;
+  allPodsLink?: string;
+  emptyText?: string;
+  hasBuildConfig?: boolean;
+  podsFilter?: (pod: PodKind) => boolean;
+};
+
+type PodsOverviewProps = {
   obj: K8sResourceKind;
   allPodsLink?: string;
   emptyText?: string;
   hasBuildConfig?: boolean;
+  podsFilter?: (pod: PodKind) => boolean;
+  hideIfEmpty?: boolean;
+};
+
+type PodsOverviewMultipleProps = {
+  obj: K8sResourceKind;
+  podResources: K8sResourceKind[];
+  allPodsLink?: string;
+  emptyText?: string;
+  hasBuildConfig?: boolean;
+  podsFilter?: (pod: PodKind) => boolean;
 };
