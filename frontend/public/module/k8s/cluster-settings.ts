@@ -42,7 +42,7 @@ export const getSortedUpdates = (cv: ClusterVersionKind): ClusterUpdate[] => {
 export const getAvailableClusterChannels = (cv) => {
   // temporarily fall back to hard-coded values when `cv.status.desired.channels` are not present
   // TODO: remove fall back values once `cv.status.desired.channels` are widespread
-  return cv?.status?.desired?.channels || ['stable-4.6', 'fast-4.6', 'candidate-4.6'];
+  return cv?.status?.desired?.channels || ['stable-4.7', 'fast-4.7', 'candidate-4.7'];
 };
 
 export const getDesiredClusterVersion = (cv: ClusterVersionKind): string => {
