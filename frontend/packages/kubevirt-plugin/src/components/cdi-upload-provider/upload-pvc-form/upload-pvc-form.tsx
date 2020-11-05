@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import * as React from 'react';
+import axios from 'axios';
 import cx from 'classnames';
 import { Helmet } from 'react-helmet';
 import { match } from 'react-router';
@@ -59,9 +60,12 @@ import {
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_VM_COMMON_NAMESPACE,
 } from '../../../constants';
-import { CDI_UPLOAD_OS_URL_PARAM, CDI_UPLOAD_SUPPORTED_TYPES_URL } from '../consts';
+import {
+  CDI_UPLOAD_OS_URL_PARAM,
+  CDI_UPLOAD_SUPPORTED_TYPES_URL,
+  CDI_UPLOAD_URL_BUILDER,
+} from '../consts';
 import { OperatingSystemRecord } from '../../../types';
-
 import './upload-pvc-form.scss';
 
 const templatesResource: WatchK8sResource = {
@@ -74,11 +78,12 @@ const templatesResource: WatchK8sResource = {
   },
 };
 
-const uploadErrorType = {
-  MISSING: 'missing',
-  ALLOCATE: 'allocate',
-  TYPE: 'type',
-};
+enum uploadErrorType {
+  MISSING = 'missing',
+  ALLOCATE = 'allocate',
+  TYPE = 'type',
+  CERT = 'cert',
+}
 
 const uploadErrorMessage = {
   [uploadErrorType.MISSING]: 'File input is missing',
@@ -95,6 +100,15 @@ const uploadErrorMessage = {
           href={CDI_UPLOAD_SUPPORTED_TYPES_URL}
         />
       </p>
+    </>
+  ),
+  [uploadErrorType.CERT]: (uploadProxy) => (
+    <>
+      It seems that your browser does not trust the certificate of the upload proxy. Please{' '}
+      <a href={`https://${uploadProxy}`} rel="noopener noreferrer" target="_blank">
+        approve this certificate
+      </a>{' '}
+      and try again
     </>
   ),
 };
@@ -453,6 +467,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
 
 export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [isCheckingCertificate, setCheckingCertificate] = React.useState(false);
   const [disableFormSubmit, setDisableFormSubmit] = React.useState(false);
   const [fileValue, setFileValue] = React.useState<File>(null);
   const [fileName, setFileName] = React.useState('');
@@ -464,7 +479,7 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
     templatesResource,
   );
   const [goldenPvcs, loadedPvcs, errorPvcs] = usePVCBaseImages(commonTemplates);
-  const { uploads, uploadData } = React.useContext(CDIUploadContext);
+  const { uploads, uploadData, uploadProxyURL } = React.useContext(CDIUploadContext);
   const initialNamespace = props?.match?.params?.ns;
   const namespace = getNamespace(dvObj) || initialNamespace;
   const urlParams = new URLSearchParams(window.location.search);
@@ -478,10 +493,23 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
     } else if (isFileRejected) {
       setError(uploadErrorType.TYPE);
     } else {
-      setError('');
-      setIsAllocating(true);
-      setIsSubmitting(true);
-      createUploadPVC(dvObj)
+      // checking valid certificate for proxy
+      setCheckingCertificate(true);
+      axios
+        .get(CDI_UPLOAD_URL_BUILDER(uploadProxyURL))
+        .catch((catchError) => {
+          setCheckingCertificate(false);
+          // the GET request will return an error everytime, but it will be undefined only if the certificate is invalid.
+          if (catchError?.response === undefined) {
+            throw new Error(uploadErrorType.CERT);
+          }
+        })
+        .then(() => {
+          setError('');
+          setIsAllocating(true);
+          setIsSubmitting(true);
+          return createUploadPVC(dvObj);
+        })
         .then(({ token }) => {
           setIsAllocating(false);
           uploadData({
@@ -510,7 +538,10 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
     }
   }, [errorTemplates, errorPvcs]);
 
-  const errorMessage = uploadErrorMessage[error] || error;
+  const errorMessage =
+    error === uploadErrorType.CERT
+      ? uploadErrorMessage[uploadErrorType.CERT](uploadProxyURL)
+      : uploadErrorMessage[error] || error;
 
   return (
     <>
@@ -539,10 +570,13 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
             isLoading={!loadedTemplates}
             setDisableFormSubmit={setDisableFormSubmit}
           />
-          <ButtonBar inProgress={!loadedTemplates || !loadedPvcs} errorMessage={errorMessage}>
+          <ButtonBar
+            inProgress={!loadedTemplates || !loadedPvcs || isCheckingCertificate}
+            errorMessage={errorMessage}
+          >
             <ActionGroup className="pf-c-form">
               <Button
-                isDisabled={disableFormSubmit}
+                isDisabled={disableFormSubmit || isCheckingCertificate}
                 id="save-changes"
                 type="submit"
                 variant="primary"
