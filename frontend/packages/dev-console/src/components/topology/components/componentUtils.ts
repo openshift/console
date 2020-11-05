@@ -155,6 +155,21 @@ const nodeDragSourceSpec = (
   }),
 });
 
+const noRegroupDragSourceSpec: DragSourceSpec<
+  DragObjectWithType,
+  DragSpecOperationType<EditableDragOperationType>,
+  Node,
+  {
+    dragging?: boolean;
+  },
+  NodeComponentProps
+> = {
+  item: { type: NODE_DRAG_TYPE },
+  collect: (monitor) => ({
+    dragging: monitor.isDragging(),
+  }),
+};
+
 const nodesEdgeIsDragging = (monitor, props) => {
   if (!monitor.isDragging()) {
     return false;
@@ -354,6 +369,7 @@ export {
   EditableDragOperationType,
   DragNodeObject,
   nodesEdgeIsDragging,
+  noRegroupDragSourceSpec,
   nodeDragSourceSpec,
   nodeDropTargetSpec,
   graphDropTargetSpec,
