@@ -56,12 +56,8 @@ const ResourceSamples = ({ samples, kindObj, downloadSampleYaml, loadSampleYaml 
   />
 );
 
-const ResourceSnippets = ({ snippets, kindObj, insertSnippetYaml }) => (
-  <ResourceSidebarSnippets
-    snippets={snippets}
-    kindObj={kindObj}
-    insertSnippetYaml={insertSnippetYaml}
-  />
+const ResourceSnippets = ({ snippets, insertSnippetYaml }) => (
+  <ResourceSidebarSnippets snippets={snippets} insertSnippetYaml={insertSnippetYaml} />
 );
 
 export const ResourceSidebar = (props) => {
