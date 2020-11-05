@@ -6,6 +6,14 @@ import { Table, TableHeader, TableBody } from '@patternfly/react-table';
 import { FilterToolbar } from '@console/internal/components/filter-toolbar';
 import { MonitoringAlerts } from '../MonitoringAlerts';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 describe('MonitoringAlerts', () => {
   const monitoringAlertsProps: React.ComponentProps<typeof MonitoringAlerts> = {
     match: {

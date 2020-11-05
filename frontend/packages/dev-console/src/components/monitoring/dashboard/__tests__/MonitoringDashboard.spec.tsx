@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
+import { TFunction } from 'i18next';
 import * as link from '@console/internal/components/utils';
 import {
   TimespanDropdown,
@@ -13,6 +14,16 @@ import ConnectedMonitoringDashboardGraph from '../MonitoringDashboardGraph';
 import { monitoringDashboardQueries, topWorkloadMetricsQueries } from '../../queries';
 
 type MonitoringDashboardProps = React.ComponentProps<typeof MonitoringDashboard>;
+
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
+const t = (key: TFunction) => key;
 
 describe('Monitoring Dashboard Tab', () => {
   const monitoringDashboardProps: MonitoringDashboardProps = {
@@ -30,11 +41,11 @@ describe('Monitoring Dashboard Tab', () => {
 
   it('should render Monitoring Dashboard tab', () => {
     const wrapper = shallow(<MonitoringDashboard {...monitoringDashboardProps} />);
-    expect(wrapper.contains(<title>Dashboard</title>)).toBe(true);
+    expect(wrapper.contains(<title>devconsole~Dashboard</title>)).toBe(true);
   });
 
   it('should render all workload queries', () => {
-    const workloadQuery = topWorkloadMetricsQueries[0].query({
+    const workloadQuery = topWorkloadMetricsQueries(t)[0].query({
       namespace: monitoringDashboardProps.match.params.ns,
       workloadName: 'dotnet',
       workloadType: 'deployment',
@@ -51,7 +62,7 @@ describe('Monitoring Dashboard Tab', () => {
   });
 
   it('should render dashboard queries', () => {
-    const dashboardQuery = monitoringDashboardQueries[0].query({
+    const dashboardQuery = monitoringDashboardQueries(t)[0].query({
       namespace: monitoringDashboardProps.match.params.ns,
     });
     const spygetURLSearchParams = jest.spyOn(link, 'getURLSearchParams');

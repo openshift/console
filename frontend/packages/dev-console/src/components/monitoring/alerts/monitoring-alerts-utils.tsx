@@ -1,14 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
-import {
-  expandable,
-  sortable,
-  cellWidth,
-  SortByDirection,
-  ITransform,
-  IFormatter,
-} from '@patternfly/react-table';
+import { SortByDirection, ITransform, IFormatter } from '@patternfly/react-table';
 import {
   StateCounts,
   Severity,
@@ -34,42 +27,13 @@ const viewAlertRule = (rule: Rule, ns: string) => ({
   href: `/dev-monitoring/ns/${ns}/rules/${rule.id}`,
 });
 
-type MonitoringAlertColumn = {
+export type MonitoringAlertColumn = {
   title: string;
   cellFormatters?: IFormatter[];
   transforms?: ITransform[];
   fieldName?: string;
   sortFunc?: string;
 };
-
-export const monitoringAlertColumn: MonitoringAlertColumn[] = [
-  {
-    title: 'Name',
-    cellFormatters: [expandable],
-    transforms: [sortable],
-    fieldName: 'name',
-    sortFunc: 'nameOrder',
-  },
-  {
-    title: 'Severity',
-    transforms: [sortable, cellWidth(10)],
-    fieldName: 'severity',
-    sortFunc: 'alertSeverityOrder',
-  },
-  {
-    title: 'Alert State',
-    transforms: [sortable, cellWidth(15)],
-    fieldName: 'alertState',
-    sortFunc: 'alertingRuleStateOrder',
-  },
-  {
-    title: 'Notifications',
-    transforms: [sortable, cellWidth(20)],
-    fieldName: 'notifications',
-    sortFunc: 'alertingRuleNotificationsOrder',
-  },
-  { title: '' },
-];
 
 export const monitoringAlertRows = (
   alertrules: Rule[],

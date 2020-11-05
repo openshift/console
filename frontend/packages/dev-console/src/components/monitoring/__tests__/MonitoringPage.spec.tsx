@@ -4,6 +4,14 @@ import * as utils from '@console/internal/components/utils';
 import { PageContents } from '../MonitoringPage';
 import CreateProjectListPage from '../../projects/CreateProjectListPage';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+const I18N_NS = 'devconsole';
 describe('Monitoring Page ', () => {
   let monPageProps: React.ComponentProps<typeof PageContents>;
   const spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
@@ -18,12 +26,17 @@ describe('Monitoring Page ', () => {
     };
     const component = shallow(<PageContents {...monPageProps} />);
     expect(component.find(CreateProjectListPage).exists()).toBe(true);
-    expect(component.find(CreateProjectListPage).prop('title')).toBe('Monitoring');
+    expect(component.find(CreateProjectListPage).prop('title')).toBe(`${I18N_NS}~Monitoring`);
   });
 
   it('should render all Tabs of Monitoring page for selected project', () => {
     spyUseAccessReview.mockReturnValue(true);
-    const expectedTabs: string[] = ['Dashboard', 'Metrics', 'Alerts', 'Events'];
+    const expectedTabs: string[] = [
+      `${I18N_NS}~Dashboard`,
+      `${I18N_NS}~Metrics`,
+      `${I18N_NS}~Alerts`,
+      `${I18N_NS}~Events`,
+    ];
     monPageProps = {
       match: {
         path: '/dev-monitoring/ns/:ns',
@@ -37,7 +50,7 @@ describe('Monitoring Page ', () => {
 
     const component = shallow(<PageContents {...monPageProps} />);
     expect(component.find(utils.PageHeading).exists()).toBe(true);
-    expect(component.find(utils.PageHeading).prop('title')).toBe('Monitoring');
+    expect(component.find(utils.PageHeading).prop('title')).toBe(`${I18N_NS}~Monitoring`);
     expect(component.find(utils.HorizontalNav).exists()).toBe(true);
     const actualTabs = component
       .find(utils.HorizontalNav)
@@ -48,7 +61,11 @@ describe('Monitoring Page ', () => {
 
   it('should not render the Alerts tab if user has no access to get prometheousRule resource', () => {
     spyUseAccessReview.mockReturnValue(false);
-    const expectedTabs: string[] = ['Dashboard', 'Metrics', 'Events'];
+    const expectedTabs: string[] = [
+      `${I18N_NS}~Dashboard`,
+      `${I18N_NS}~Metrics`,
+      `${I18N_NS}~Events`,
+    ];
     monPageProps = {
       match: {
         path: '/dev-monitoring/ns/:ns',
