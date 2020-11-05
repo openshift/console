@@ -51,9 +51,15 @@ export const createService = (
     } = formData;
     ports = isiPorts;
   } else if (_.isEmpty(ports)) {
-    const portData = _.toInteger(unknownTargetPort) || defaultUnknownPort;
-    const port = { containerPort: portData, protocol: 'TCP' };
+    const port = { containerPort: defaultUnknownPort, protocol: 'TCP' };
     ports = [port];
+  }
+  if (
+    unknownTargetPort &&
+    !ports.some((port) => unknownTargetPort === port.containerPort.toString())
+  ) {
+    const port = { containerPort: _.toInteger(unknownTargetPort), protocol: 'TCP' };
+    ports = [...ports, port];
   }
 
   const newService: any = {
@@ -92,15 +98,7 @@ export const createRoute = (
     application: { name: applicationName },
     name,
     labels: userLabels,
-    route: {
-      hostname,
-      unknownTargetPort,
-      defaultUnknownPort,
-      secure,
-      path,
-      tls,
-      targetPort: routeTargetPort,
-    },
+    route: { hostname, unknownTargetPort, defaultUnknownPort, secure, path, tls },
     image: { ports: imagePorts, tag: selectedTag },
   } = formData;
 
@@ -120,20 +118,20 @@ export const createRoute = (
     ports = isiPorts;
   }
 
-  let targetPort;
+  let targetPort: string;
   if (_.get(formData, 'build.strategy') === 'Docker') {
     const port = _.get(formData, 'docker.containerPort');
     targetPort = makePortName({
       containerPort: _.toInteger(port),
       protocol: 'TCP',
     });
-  } else if (_.isEmpty(ports)) {
+  } else if (unknownTargetPort) {
+    targetPort = makePortName({ containerPort: _.toInteger(unknownTargetPort), protocol: 'TCP' });
+  } else {
     targetPort = makePortName({
-      containerPort: _.toInteger(unknownTargetPort) || defaultUnknownPort,
+      containerPort: ports[0]?.containerPort || defaultUnknownPort,
       protocol: 'TCP',
     });
-  } else {
-    targetPort = routeTargetPort || makePortName(_.head(ports));
   }
 
   const newRoute: any = {
