@@ -126,10 +126,9 @@ class App_ extends React.PureComponent {
   render() {
     if (!this.props.keycloakInitialized) {
       return <LoadingBox />;
-    }
-    else if (!this.props.keycloak.authenticated) {
+    } else if (!this.props.keycloak.authenticated) {
       keycloak.login();
-      return;
+      return null;
     }
 
     const { isNavOpen, isDrawerInline } = this.state;
@@ -201,7 +200,7 @@ if ('serviceWorker' in navigator) {
   }
 }
 const eventLogger = (event, error) => {
-  console.log('[onKeycloakEvent]', event, error)
+  console.log('[onKeycloakEvent]', event, error);
   switch (event) {
     case 'onReady':
       break;
@@ -218,18 +217,12 @@ const eventLogger = (event, error) => {
       keycloak.logout();
       break;
   }
-}
+};
 const tokenLogger = tokens => {
   // console.log('[onKeycloakTokens]', tokens);
-}
+};
 render(
-  <ReactKeycloakProvider
-    authClient={keycloak}
-    initOptinitOptions={{ onLoad: 'check-sso' }}
-    LoadingComponent={LoadingBox}
-    onTokens={tokenLogger}
-    onEvent={eventLogger}
-  >
+  <ReactKeycloakProvider authClient={keycloak} initOptinitOptions={{ onLoad: 'check-sso' }} LoadingComponent={<LoadingBox />} onTokens={tokenLogger} onEvent={eventLogger}>
     <Provider store={store}>
       <Router history={history} basename={window.SERVER_FLAGS.basePath}>
         <Switch>
@@ -238,6 +231,6 @@ render(
         </Switch>
       </Router>
     </Provider>
-  </ReactKeycloakProvider >,
+  </ReactKeycloakProvider>,
   document.getElementById('app'),
 );
