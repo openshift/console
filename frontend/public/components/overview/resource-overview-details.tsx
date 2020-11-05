@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import * as UIActions from '../../actions/ui';
 import { K8sKind } from '../../module/k8s';
-import { AsyncComponent, KebabAction, ResourceOverviewHeading, SimpleTabNav } from '../utils';
+import { AsyncComponent, KebabAction, ResourceOverviewHeading, SimpleTabNav, Tab } from '../utils';
 import { OverviewItem } from '@console/shared';
 import { useExtensions, OverviewResourceTab, isOverviewResourceTab } from '@console/plugin-sdk';
 
@@ -65,7 +65,7 @@ export const ResourceOverviewDetails = connect<PropsFromState, PropsFromDispatch
     const keys = Object.keys(item);
     const keysRef = React.useRef(keys);
     const tabsRef = React.useRef(tabs);
-    const pluginTabsRef = React.useRef<React.ComponentProps<typeof SimpleTabNav>['tabs']>();
+    const pluginTabsRef = React.useRef<Tab[]>();
     if (
       !pluginTabsRef.current ||
       !_.isEqual(keys, keysRef.current) ||

@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 import { ResourceSidebarSnippets, ResourceSidebarSamples } from './resource-sidebar-samples';
 import { ExploreType } from './explore-type-sidebar';
-import { SimpleTabNav } from '../utils';
+import { SimpleTabNav, Tab } from '../utils';
 
 const sidebarScrollTop = () => {
   document.getElementsByClassName('co-p-has-sidebar__sidebar')[0].scrollTop = 0;
@@ -65,6 +65,7 @@ const ResourceSnippets = ({ snippets, kindObj, insertSnippetYaml }) => (
 );
 
 export const ResourceSidebar = (props) => {
+  const { t } = useTranslation();
   const {
     downloadSampleYaml,
     kindObj,
@@ -86,26 +87,23 @@ export const ResourceSidebar = (props) => {
   const showSamples = !_.isEmpty(samples) && isCreateMode;
   const showSnippets = !_.isEmpty(snippets);
 
-  let tabs = [];
+  let tabs: Tab[] = [];
   if (showSamples) {
     tabs.push({
-      // t('sidebar~Samples')
-      nameKey: 'sidebar~Samples',
+      name: t('sidebar~Samples'),
       component: ResourceSamples,
     });
   }
   if (showSnippets) {
     tabs.push({
-      // t('sidebar~Snippets')
-      nameKey: 'sidebar~Snippets',
+      name: t('sidebar~Snippets'),
       component: ResourceSnippets,
     });
   }
   if (showSchema) {
     tabs = [
       {
-        // t('sidebar~Schema')
-        nameKey: 'sidebar~Schema',
+        name: t('sidebar~Schema'),
         component: ResourceSchema,
       },
       ...tabs,

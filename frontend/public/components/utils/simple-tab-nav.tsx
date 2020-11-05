@@ -56,7 +56,7 @@ class SimpleTabNav_ extends React.Component<SimpleTabNavProps, SimpleTabNavState
   }
 
   render() {
-    const { tabs, tabProps, additionalClassNames, t } = this.props;
+    const { tabs, tabProps, additionalClassNames } = this.props;
     const { selectedTab } = this.state;
     const selectedTabData = _.find(tabs, { name: selectedTab }) || _.head(tabs);
     const Component = selectedTabData.component;
@@ -66,10 +66,10 @@ class SimpleTabNav_ extends React.Component<SimpleTabNavProps, SimpleTabNavState
         <ul className={classNames('co-m-horizontal-nav__menu', additionalClassNames)}>
           {_.map(tabs, (tab) => (
             <SimpleTab
+              key={tab.name}
               active={selectedTabData.name === tab.name}
-              key={tab.nameKey ? tab.nameKey : tab.name}
               onClick={this.onClickTab}
-              title={tab.nameKey ? t(tab.nameKey) : tab.name}
+              title={tab.name}
             />
           ))}
         </ul>
@@ -79,19 +79,19 @@ class SimpleTabNav_ extends React.Component<SimpleTabNavProps, SimpleTabNavState
   }
 }
 
-export const SimpleTabNav = withTranslation()(SimpleTabNav_);
+export const SimpleTabNav = withTranslation()(SimpleTabNav_) as React.FC<SimpleTabNavProps>;
+
+export type Tab = {
+  name: string;
+  component: any;
+};
 
 type SimpleTabNavProps = {
   onClickTab?: (name: string) => void;
   selectedTab?: string;
   tabProps: any;
-  tabs: {
-    name?: string;
-    nameKey?: string;
-    component: any;
-  }[];
+  tabs: Tab[];
   additionalClassNames?: string;
-  t?: any;
 };
 
 type SimpleTabNavState = {
