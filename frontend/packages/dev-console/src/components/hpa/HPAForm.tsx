@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { isEmpty } from 'lodash';
 import { FormikProps } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { FlexForm, FormFooter, SyncedEditorField, YAMLEditorField } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { HorizontalPodAutoscalerKind, K8sResourceCommon } from '@console/internal/module/k8s';
@@ -24,6 +25,7 @@ const HPAForm: React.FC<FormikProps<HPAFormValues> & HPAFormProps> = ({
   validateForm,
   values,
 }) => {
+  const { t } = useTranslation();
   const isForm = values.editorType === EditorType.Form;
   const formEditor = <HPADetailsForm />;
   const yamlEditor = (
@@ -61,9 +63,9 @@ const HPAForm: React.FC<FormikProps<HPAFormValues> & HPAFormProps> = ({
         handleReset={handleReset}
         errorMessage={status?.submitError}
         isSubmitting={isSubmitting}
-        submitLabel="Save"
+        submitLabel={t('devconsole~Save')}
         disableSubmit={isForm && !isEmpty(errors)}
-        resetLabel="Cancel"
+        resetLabel={t('devconsole~Cancel')}
         sticky
       />
     </FlexForm>

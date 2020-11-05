@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Formik, FormikHelpers, FormikProps } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
@@ -29,6 +30,7 @@ type HPAFormikFormProps = {
 };
 
 const HPAFormikForm: React.FC<HPAFormikFormProps> = ({ existingHPA, targetResource }) => {
+  const { t } = useTranslation();
   const initialValues: HPAFormValues = {
     showCanUseYAMLMessage: true,
     disabledFields: {
@@ -62,7 +64,9 @@ const HPAFormikForm: React.FC<HPAFormikFormProps> = ({ existingHPA, targetResour
       })
       .catch((error) => {
         helpers.setSubmitting(false);
-        helpers.setStatus({ submitError: error?.message || 'Unknown error submitting' });
+        helpers.setStatus({
+          submitError: error?.message || t('devconsole~Unknown error submitting'),
+        });
       });
   };
 
@@ -71,7 +75,7 @@ const HPAFormikForm: React.FC<HPAFormikFormProps> = ({ existingHPA, targetResour
       initialValues={initialValues}
       onSubmit={handleSubmit}
       onReset={history.goBack}
-      validationSchema={hpaValidationSchema}
+      validationSchema={hpaValidationSchema(t)}
     >
       {(props: FormikProps<HPAFormValues>) => (
         <HPAForm {...props} targetResource={targetResource} />
