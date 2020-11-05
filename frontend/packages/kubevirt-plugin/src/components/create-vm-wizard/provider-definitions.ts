@@ -3,7 +3,10 @@ import { VMImportProvider } from './types';
 import { getVMWareProviderStateUpdater } from './redux/state-update/providers/vmware/vmware-state-update';
 import { UpdateOptions } from './redux/types';
 import { cleanupVmWareProvider } from './redux/state-update/providers/vmware/vmware-cleanup';
-import { getV2VVMwareImportProvidersTabValidity } from './redux/validations/providers/v2vvmware-tab-validation';
+import {
+  getV2VVMwareImportProvidersTabValidity,
+  validateVMwareSettings,
+} from './redux/validations/providers/v2vvmware-tab-validation';
 import { getOvirtInitialState } from './redux/initial-state/providers/ovirt-initial-state';
 import { getOvirtProviderStateUpdater } from './redux/state-update/providers/ovirt/ovirt-state-update';
 import { getProviderName } from './strings/import-providers';
@@ -42,6 +45,7 @@ export const getProviders = (): Provider[] => [
     getInitialState: getVmWareInitialState,
     getStateUpdater: getVMWareProviderStateUpdater,
     getImportProvidersTabValidity: getV2VVMwareImportProvidersTabValidity,
+    validate: validateVMwareSettings,
     cleanup: cleanupVmWareProvider,
   },
 ];
