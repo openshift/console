@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useFormikContext, FormikValues } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { GreenCheckCircleIcon } from '@console/shared';
 import { Button, ButtonVariant, Tooltip } from '@patternfly/react-core';
@@ -14,6 +15,7 @@ interface HealthCheckProbeProps {
 }
 
 const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
+  const { t } = useTranslation();
   const {
     values: { healthChecks },
     setFieldValue,
@@ -68,11 +70,14 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
             onClick={showProbe}
           >
             <span className="odc-heath-check-probe__successText">
-              <GreenCheckCircleIcon /> {`${getHealthChecksProbeConfig(probeType).formTitle} Added`}
+              <GreenCheckCircleIcon />{' '}
+              {t('devconsole~{{healthCheckProbeAdded}} Added', {
+                healthCheckProbeAdded: getHealthChecksProbeConfig(probeType, t).formTitle,
+              })}
             </span>
           </Button>
           {!viewOnly && (
-            <Tooltip content="Remove" position="right">
+            <Tooltip content={t('devconsole~Remove')} position="right">
               <Button
                 className="pf-m-plain--align-left"
                 variant={ButtonVariant.plain}
@@ -86,7 +91,9 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
       );
     }
     return viewOnly ? (
-      `No ${getHealthChecksProbeConfig(probeType).formTitle}`
+      t('devconsole~No {{noHealthCheckProbe}}', {
+        noHealthCheckProbe: getHealthChecksProbeConfig(probeType, t).formTitle,
+      })
     ) : (
       <Button
         className="pf-m-link--align-left"
@@ -94,7 +101,9 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
         onClick={handleAddProbe}
         icon={<PlusCircleIcon />}
       >
-        {`Add ${getHealthChecksProbeConfig(probeType).formTitle}`}
+        {t('devconsole~Add {{addHealthCheckProbe}}', {
+          addHealthCheckProbe: getHealthChecksProbeConfig(probeType, t).formTitle,
+        })}
       </Button>
     );
   };
@@ -102,7 +111,7 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
   return (
     <>
       <div className="co-section-heading-tertiary odc-heath-check-probe__formTitle">
-        {getHealthChecksProbeConfig(probeType).formTitle}
+        {getHealthChecksProbeConfig(probeType, t).formTitle}
         {healthChecks?.[probeType]?.enabled && (
           <Button
             className="pf-m-link--align-left"
@@ -110,12 +119,12 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
             onClick={showProbe}
           >
             &nbsp;&nbsp;
-            {`${viewOnly ? 'View' : 'Edit'} Probe`}
+            {`${viewOnly ? t('devconsole~View') : t('devconsole~Edit')} ${t('devconsole~Probe')}`}
           </Button>
         )}
       </div>
       <div className="pf-c-form__helper-text">
-        {getHealthChecksProbeConfig(probeType).formSubtitle}
+        {getHealthChecksProbeConfig(probeType, t).formSubtitle}
       </div>
       <div className="co-toolbar__group co-toolbar__group--left">{renderProbe()}</div>
     </>

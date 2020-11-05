@@ -1,26 +1,30 @@
+import { TFunction } from 'i18next';
 import { HealthChecksProbeType, RequestType, HealthCheckProbe } from './health-checks-types';
 
-export const getHealthChecksProbeConfig = (probe: string) => {
+export const getHealthChecksProbeConfig = (probe: string, t: TFunction) => {
   switch (probe) {
     case HealthChecksProbeType.ReadinessProbe: {
       return {
-        formTitle: 'Readiness Probe',
-        formSubtitle:
-          "A Readiness probe checks if the container is ready to handle requests. A failed readiness probe means that a container should not receive any traffic from a proxy, even if it's running.",
+        formTitle: t('devconsole~Readiness Probe'),
+        formSubtitle: t(
+          "devconsole~A Readiness probe checks if the container is ready to handle requests. A failed readiness probe means that a container should not receive any traffic from a proxy, even if it's running.",
+        ),
       };
     }
     case HealthChecksProbeType.LivenessProbe: {
       return {
-        formTitle: 'Liveness Probe',
-        formSubtitle:
-          'A Liveness probe checks if the container is still running. If the liveness probe fails the container is killed.',
+        formTitle: t('devconsole~Liveness Probe'),
+        formSubtitle: t(
+          'devconsole~A Liveness probe checks if the container is still running. If the liveness probe fails the container is killed.',
+        ),
       };
     }
     case HealthChecksProbeType.StartupProbe: {
       return {
-        formTitle: 'Startup Probe',
-        formSubtitle:
-          'A Startup probe checks if the application within the container is started. If the startup probe fails the container is killed.',
+        formTitle: t('devconsole~Startup Probe'),
+        formSubtitle: t(
+          'devconsole~A Startup probe checks if the application within the container is started. If the startup probe fails the container is killed.',
+        ),
       };
     }
     default:

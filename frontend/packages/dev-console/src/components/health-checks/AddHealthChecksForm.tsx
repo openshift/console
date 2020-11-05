@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 import { Formik } from 'formik';
-import { useTranslation } from 'react-i18next';
 import { FirehoseResult, LoadingBox, StatusBox, history } from '@console/internal/components/utils';
 import { K8sResourceKind, k8sUpdate, modelFor, referenceFor } from '@console/internal/module/k8s';
 import { getResourcesType } from '../edit-application/edit-application-utils';
@@ -35,7 +35,7 @@ const AddHealthChecksForm: React.FC<AddHealthChecksFormProps> = ({
   );
 
   if (_.isEmpty(container)) {
-    return <div className="text-center">Container not found</div>;
+    return <div className="text-center">{t('devconsole~Container not found')}</div>;
   }
 
   const handleSubmit = (values, actions) => {
