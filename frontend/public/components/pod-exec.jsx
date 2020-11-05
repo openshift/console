@@ -47,10 +47,16 @@ export const PodExec = connectToFlags(FLAGS.OPENSHIFT)(
     }
 
     connect_() {
-      const { metadata } = this.props.obj;
+      const {
+        metadata,
+        spec: { tolerations },
+      } = this.props.obj;
       const { activeContainer } = this.state;
       const usedClient = this.props.flags[FLAGS.OPENSHIFT] ? 'oc' : 'kubectl';
-
+      const isWindows = _.some(tolerations, (t) => {
+        return t.key === 'os' && t.value === 'Windows';
+      });
+      const command = isWindows ? ['cmd'] : ['sh', '-i', '-c', 'TERM=xterm sh'];
       const params = {
         ns: metadata.namespace,
         name: metadata.name,
@@ -61,9 +67,7 @@ export const PodExec = connectToFlags(FLAGS.OPENSHIFT)(
           stderr: 1,
           tty: 1,
           container: activeContainer,
-          command: ['sh', '-i', '-c', 'TERM=xterm sh']
-            .map((c) => encodeURIComponent(c))
-            .join('&command='),
+          command: command.map((c) => encodeURIComponent(c)).join('&command='),
         },
       };
 
