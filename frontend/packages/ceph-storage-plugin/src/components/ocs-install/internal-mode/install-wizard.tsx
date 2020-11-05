@@ -25,18 +25,18 @@ import { initialState, reducer, InternalClusterState } from './reducer';
 import '../install-wizard/install-wizard.scss';
 
 const makeOCSRequest = (state: InternalClusterState): Promise<StorageClusterKind> => {
-  const { storageClass, capacity, enableEncryption, nodes, enableMinimal } = state;
+  const { storageClass, capacity, encryption, nodes, enableMinimal } = state;
   const storageCluster: StorageClusterKind = getOCSRequestData(
     storageClass,
     capacity,
-    enableEncryption,
+    encryption.clusterWide,
     enableMinimal,
   );
 
   return Promise.all(labelNodes(nodes)).then(() => k8sCreate(OCSServiceModel, storageCluster));
 };
 
-export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({ match }) => {
+export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({ match, mode }) => {
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const [showInfoAlert, setShowInfoAlert] = React.useState(true);
   const [inProgress, setInProgress] = React.useState(false);
@@ -56,7 +56,8 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({ ma
     {
       name: 'Configure',
       id: CreateStepsSC.CONFIGURE,
-      component: <Configure state={state} dispatch={dispatch} />,
+      component: <Configure state={state} dispatch={dispatch} mode={mode} />,
+      enableNext: state.encryption.hasHandled,
     },
     {
       name: 'Review and create',
@@ -123,4 +124,5 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({ ma
 
 type CreateInternalClusterProps = {
   match: RouteMatch<{ appName: string; ns: string }>;
+  mode: string;
 };

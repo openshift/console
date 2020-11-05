@@ -126,7 +126,7 @@ const makeAutoDiscoveryCall = (
     });
 };
 
-const CreateSC: React.FC<CreateSCProps> = ({ match, hasNoProvSC }) => {
+const CreateSC: React.FC<CreateSCProps> = ({ match, hasNoProvSC, mode }) => {
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const [discoveriesData, discoveriesLoaded, discoveriesLoadError] = useK8sWatchResource<
     K8sResourceKind[]
@@ -202,7 +202,7 @@ const CreateSC: React.FC<CreateSCProps> = ({ match, hasNoProvSC }) => {
     {
       id: CreateStepsSC.CONFIGURE,
       name: 'Configure',
-      component: <Configure dispatch={dispatch} state={state} />,
+      component: <Configure dispatch={dispatch} state={state} mode={mode} />,
     },
     {
       id: CreateStepsSC.REVIEWANDCREATE,
@@ -225,7 +225,13 @@ const CreateSC: React.FC<CreateSCProps> = ({ match, hasNoProvSC }) => {
         if (state.filteredNodes.length < MINIMUM_NODES) return true;
         return !state.volumeSetName.trim().length;
       case CreateStepsSC.REVIEWANDCREATE:
-        return state.nodes.length < MINIMUM_NODES || !getName(state.storageClass);
+        return (
+          state.nodes.length < MINIMUM_NODES ||
+          !getName(state.storageClass) ||
+          !state.encryption.hasHandled
+        );
+      case CreateStepsSC.CONFIGURE:
+        return !state.encryption.hasHandled;
       default:
         return false;
     }
@@ -235,11 +241,11 @@ const CreateSC: React.FC<CreateSCProps> = ({ match, hasNoProvSC }) => {
     const { appName, ns } = match.params;
     try {
       setInProgress(true);
-      const { storageClass, enableEncryption, nodes, enableMinimal } = state;
+      const { storageClass, encryption, nodes, enableMinimal } = state;
       const storageCluster: StorageClusterKind = getOCSRequestData(
         storageClass,
         defaultRequestSize.BAREMETAL,
-        enableEncryption,
+        encryption.clusterWide,
         enableMinimal,
       );
       await Promise.all(labelNodes(nodes)).then(() => k8sCreate(OCSServiceModel, storageCluster));
@@ -336,6 +342,7 @@ type CreateSCProps = {
   match: RouterMatch<{ appName: string; ns: string }>;
   hasNoProvSC: boolean;
   setHasNoProvSC: React.Dispatch<React.SetStateAction<boolean>>;
+  mode: string;
 };
 
 export default CreateSC;

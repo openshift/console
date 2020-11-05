@@ -12,6 +12,8 @@ export const storageClassTooltip =
   'The Storage Class will be used to request storage from the underlying infrastructure to create the backing persistent volumes that will be used to provide the OpenShift Container Storage (OCS) service.';
 export const requestedCapacityTooltip =
   'The backing storage requested will be higher as it will factor in the requested capacity, replica factor, and fault tolerant costs associated with the requested capacity.';
+export const encryptionTooltip =
+  'The storage cluster encryption level can be set to include all components under the cluster (including storage class and PVs) or to include only storage class encryption. PV encryption can use an auth token that will be used with the KMS configuration to allow multi-tenancy.';
 
 export enum defaultRequestSize {
   BAREMETAL = '1',

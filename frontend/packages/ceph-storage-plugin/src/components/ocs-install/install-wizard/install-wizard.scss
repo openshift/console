@@ -56,4 +56,32 @@
   &__text-content {
     margin-bottom: var(--pf-global--spacer--md);
   }
+
+  &__review-encryption {
+    margin-bottom: 0;
+  }
+}
+
+.ocs-install-encryption {
+  padding-left: var(--pf-global--spacer--lg);
+
+  &__form-body {
+    padding: var(--pf-global--spacer--md);
+  }
+
+  &__form-alert {
+    margin: var(--pf-global--spacer--md);
+  }
+
+  &__form-checkbox {
+    margin-top: var(--pf-global--spacer--md);
+  }
+
+  &__pv-title {
+    display: inline-block;
+
+    &--padding {
+      padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--sm) var(--pf-global--spacer--sm) 0;
+    }
+  }
 }
