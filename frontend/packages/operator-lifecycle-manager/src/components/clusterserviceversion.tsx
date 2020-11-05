@@ -629,12 +629,11 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
       Installed Operators are represented by Cluster Service Versions within this namespace. For
       more information, see the{' '}
       <ExternalLink
-        href={`${openshiftHelpBase}operators/olm-what-operators-are.html`}
+        href={`${openshiftHelpBase}operators/understanding/olm-what-operators-are.html`}
         text="Understanding Operators documentation"
       />
       . Or create an Operator and Cluster Service Version using the{' '}
-      <ExternalLink href="https://github.com/operator-framework/operator-sdk" text="Operator SDK" />
-      .
+      <ExternalLink href="https://sdk.operatorframework.io/" text="Operator SDK" />.
     </>
   );
 
