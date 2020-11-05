@@ -38,6 +38,7 @@ import {
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
 } from '@console/shared/src/components/status/icons';
+import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { InstallPlanPreview } from './install-plan';
 
 const getInitializationResourceJSON = (
@@ -179,7 +180,7 @@ const InitializationResourceRequiredMessage: React.FC<InitializationResourceRequ
           <StatusIconAndText icon={<RedExclamationCircleIcon />} title="Required" />
         </ResourceStatus>
       </span>
-      <p>{description}</p>
+      <SyncMarkdownView content={description} />
     </div>
   );
 };
