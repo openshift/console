@@ -35,7 +35,7 @@ export const removeSecretEntryLink = $$(
 export const imageSecretForm = $$('[data-test-id="create-image-secret-form"]');
 export const genericSecretForm = $$('.co-create-generic-secret__form');
 
-const revealValuesButton = element(by.partialButtonText('Reveal Values'));
+const revealValuesButton = element(by.partialButtonText('Reveal values'));
 const addSecrettoWorkloadButton = element(by.partialButtonText('Add Secret to Workload'));
 
 const selectWorkloadBtn = $('#co-add-secret-to-workload__workload');
