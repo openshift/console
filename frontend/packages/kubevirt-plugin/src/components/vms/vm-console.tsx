@@ -82,9 +82,8 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
   const cloudInitVolume = getCloudInitVolume(vm);
   const data = new VolumeWrapper(cloudInitVolume).getCloudInitNoCloud();
   const cloudInitHelper = new CloudInitDataHelper(data);
-  const cloudInitUserData = cloudInitHelper.getUserData();
-  const cloudInitUsername = cloudInitUserData?.match(/(?<=user:\s+).*/);
-  const cloudInitPassword = cloudInitUserData?.match(/(?<=password:\s+).*/);
+  const cloudInitUsername = cloudInitHelper.get('user');
+  const cloudInitPassword = cloudInitHelper.get('password');
 
   if (!isVMIRunning(vmi)) {
     if (vmStatusBundle?.status?.isImporting() || vmStatusBundle?.status?.isMigrating()) {
