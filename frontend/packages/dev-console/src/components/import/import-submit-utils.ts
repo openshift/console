@@ -22,6 +22,7 @@ import {
   getCommonAnnotations,
   getTriggerAnnotation,
   mergeData,
+  getTemplateLabels,
 } from '../../utils/resource-label-utils';
 import { createService, createRoute, dryRunOpt } from '../../utils/shared-submit-utils';
 import { getProbesData } from '../health-checks/create-health-checks-probe-utils';
@@ -255,6 +256,7 @@ export const createOrUpdateDeployment = (
     ...getTriggerAnnotation(name, namespace, imageChange),
   };
   const podLabels = getPodLabels(name);
+  const templateLabels = getTemplateLabels(originalDeployment);
 
   const newDeployment = {
     apiVersion: 'apps/v1',
@@ -274,7 +276,7 @@ export const createOrUpdateDeployment = (
       replicas,
       template: {
         metadata: {
-          labels: { ...userLabels, ...podLabels },
+          labels: { ...templateLabels, ...userLabels, ...podLabels },
         },
         spec: {
           containers: [
@@ -334,6 +336,7 @@ export const createOrUpdateDeploymentConfig = (
   const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag });
   const defaultAnnotations = { ...getGitAnnotations(repository, ref), ...getCommonAnnotations() };
   const podLabels = getPodLabels(name);
+  const templateLabels = getTemplateLabels(originalDeploymentConfig);
 
   const newDeploymentConfig = {
     apiVersion: 'apps.openshift.io/v1',
@@ -349,7 +352,7 @@ export const createOrUpdateDeploymentConfig = (
       replicas,
       template: {
         metadata: {
-          labels: { ...userLabels, ...podLabels },
+          labels: { ...templateLabels, ...userLabels, ...podLabels },
         },
         spec: {
           containers: [

@@ -104,3 +104,16 @@ export const mergeData = (originalResource: K8sResourceKind, newResource: K8sRes
   }
   return mergedData;
 };
+
+export const getTemplateLabels = (deployment: K8sResourceKind) => {
+  return _.reduce(
+    deployment?.spec?.template?.metadata?.labels,
+    (acc, value, key) => {
+      if (!deployment.metadata?.labels?.hasOwnProperty(key)) {
+        acc[key] = value;
+      }
+      return acc;
+    },
+    {},
+  );
+};
