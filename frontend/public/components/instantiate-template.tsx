@@ -6,6 +6,7 @@ import * as classNames from 'classnames';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { ANNOTATIONS } from '@console/shared';
+import { isPerspective, Perspective, withExtensions } from '@console/plugin-sdk';
 import * as catalogImg from '../imgs/logos/catalog-icon.svg';
 import {
   getImageForIconClass,
@@ -20,7 +21,6 @@ import {
   LoadingBox,
   LoadError,
   NsDropdown,
-  resourcePathFromModel,
 } from './utils';
 import { SecretModel, TemplateInstanceModel } from '../models';
 import {
@@ -206,21 +206,17 @@ class TemplateForm_ extends React.Component<TemplateFormProps, TemplateFormState
       this.setState({ error: 'Please complete all fields.' });
       return;
     }
+    const { activePerspective, perspectiveExtensions } = this.props;
 
     this.setState({ error: '', inProgress: true });
     this.createTemplateSecret()
       .then((secret: K8sResourceKind) => {
-        return this.createTemplateInstance(secret).then((instance: TemplateInstanceKind) => {
+        return this.createTemplateInstance(secret).then(() => {
           this.setState({ inProgress: false });
-          history.push(
-            this.props.activePerspective === 'dev'
-              ? `/topology`
-              : resourcePathFromModel(
-                  TemplateInstanceModel,
-                  instance.metadata.name,
-                  instance.metadata.namespace,
-                ),
+          const activeExtension = perspectiveExtensions.find(
+            (p) => p.properties.id === activePerspective,
           );
+          history.push(activeExtension.properties.getImportRedirectURL(namespace));
         });
       })
       .catch((err) => this.setState({ inProgress: false, error: err.message }));
@@ -323,7 +319,10 @@ class TemplateForm_ extends React.Component<TemplateFormProps, TemplateFormState
     );
   }
 }
-const TemplateForm = connect(stateToProps)(TemplateForm_);
+
+const TemplateForm = connect(stateToProps)(
+  withExtensions<ExtensionsProps>({ perspectiveExtensions: isPerspective })(TemplateForm_),
+);
 
 export const InstantiateTemplatePage: React.FC<{}> = (props) => {
   const title = 'Instantiate Template';
@@ -364,7 +363,11 @@ type TemplateInfoProps = {
   template: TemplateKind;
 };
 
-type TemplateFormProps = {
+type ExtensionsProps = {
+  perspectiveExtensions: Perspective[];
+};
+
+type TemplateFormProps = ExtensionsProps & {
   obj: any;
   preselectedNamespace: string;
   models: any;

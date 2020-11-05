@@ -5,7 +5,7 @@ import store from '@console/internal/redux';
 import * as utils from '@console/internal/components/utils/url-poll-hook';
 import DataModelProvider from '../data-transforms/DataModelProvider';
 import { TopologyDataRetriever } from '../TopologyDataRetriever';
-import { TopologyPageContext } from '../TopologyPage';
+import { TopologyDataRenderer } from '../TopologyDataRenderer';
 
 jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({
   useExtensions: () => [],
@@ -25,20 +25,12 @@ type Props = {
 describe('DataModelProvider', () => {
   let wrapper: ReactWrapper<Props>;
   const spyUseURLPoll = jest.spyOn(utils, 'useURLPoll');
-  const match = {
-    params: {
-      name: 'topology-test',
-    },
-    isExact: true,
-    path: '/topology/ns/topology-test/graph',
-    url: '',
-  };
 
   beforeEach(() => {
     spyUseURLPoll.mockReturnValue([{}, null, false]);
     wrapper = mount(
       <DataModelProvider namespace="test-project">
-        <TopologyPageContext match={match} />
+        <TopologyDataRenderer showGraphView title="Topology" />
       </DataModelProvider>,
       {
         wrappingComponent: ({ children }) => <Provider store={store}>{children}</Provider>,
@@ -48,6 +40,6 @@ describe('DataModelProvider', () => {
 
   it('should render inner components', () => {
     expect(wrapper.find(TopologyDataRetriever)).toHaveLength(1);
-    expect(wrapper.find(TopologyPageContext)).toHaveLength(1);
+    expect(wrapper.find(TopologyDataRenderer)).toHaveLength(1);
   });
 });

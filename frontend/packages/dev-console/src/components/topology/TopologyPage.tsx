@@ -1,49 +1,84 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
-import { matchPath, match as RMatch, Link, Redirect } from 'react-router-dom';
-import { Tooltip, Popover, Button } from '@patternfly/react-core';
-import { ListIcon, TopologyIcon, QuestionCircleIcon } from '@patternfly/react-icons';
-import { observer } from '@patternfly/react-topology';
+import { matchPath, match as RMatch } from 'react-router-dom';
 import { useQueryParams } from '@console/shared/src';
-import { Firehose, removeQueryArgument } from '@console/internal/components/utils';
+import { removeQueryArgument, setQueryArgument } from '@console/internal/components/utils';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import ProjectsExistWrapper from '../ProjectsExistWrapper';
 import CreateProjectListPage from '../projects/CreateProjectListPage';
 import { TopologyDataRenderer } from './TopologyDataRenderer';
-import TopologyShortcuts from './TopologyShortcuts';
-import { LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY } from './components/const';
+import { LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY } from './components';
 import { TOPOLOGY_SEARCH_FILTER_KEY } from './filters';
 import DataModelProvider from './data-transforms/DataModelProvider';
-import ModelContext, { ExtensibleModel } from './data-transforms/ModelContext';
+import { TopologyPageToolbar } from './TopologyPageToolbar';
 
 import './TopologyPage.scss';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 
 export interface TopologyPageProps {
   match: RMatch<{
     name?: string;
   }>;
+  activeViewStorageKey?: string;
+  title?: string;
+  hideProjects?: boolean;
 }
 
-const setTopologyActiveView = (id: string) => {
-  localStorage.setItem(LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY, id);
+const setTopologyActiveView = (key: string, id: string) => {
+  localStorage.setItem(key, id);
 };
 
-const getTopologyActiveView = () => {
-  return localStorage.getItem(LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY);
+const getTopologyActiveView = (key: string) => {
+  return localStorage.getItem(key);
 };
 
-export const TopologyPageContext: React.FC<TopologyPageProps> = observer(({ match }) => {
-  const queryParams = useQueryParams();
+export const TopologyPage: React.FC<TopologyPageProps> = ({
+  match,
+  activeViewStorageKey = LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY,
+  title = 'Topology',
+  hideProjects = false,
+}) => {
   const namespace = match.params.name;
-  const dataModelContext = React.useContext<ExtensibleModel>(ModelContext);
-  const showListView = !!matchPath(match.path, {
+  const queryParams = useQueryParams();
+  let view = queryParams.get('view');
+  const { projects } = useK8sWatchResources<{ [key: string]: K8sResourceKind[] }>({
+    projects: { kind: 'Project', isList: true },
+  });
+
+  // Backwards Compatibility
+  const urlView = matchPath(match.path, {
     path: '*/list',
     exact: true,
-  });
-  const showGraphView = !!matchPath(match.path, {
-    path: '*/graph',
-    exact: true,
-  });
+  })
+    ? 'list'
+    : matchPath(match.path, {
+        path: '*/graph',
+        exact: true,
+      })
+    ? 'graph'
+    : null;
+
+  if (urlView && !view) {
+    setQueryArgument('view', urlView);
+    view = urlView;
+  }
+
+  if (!view) {
+    view = getTopologyActiveView(activeViewStorageKey);
+    setQueryArgument('view', view);
+  }
+
+  const showGraphView = view === 'graph';
+
+  const onViewChange = React.useCallback(
+    (graphView: boolean) => {
+      const viewId = graphView ? 'graph' : 'list';
+      setQueryArgument('view', viewId);
+      setTopologyActiveView(activeViewStorageKey, viewId);
+    },
+    [activeViewStorageKey],
+  );
 
   const handleNamespaceChange = (ns: string) => {
     if (ns !== namespace) {
@@ -51,85 +86,28 @@ export const TopologyPageContext: React.FC<TopologyPageProps> = observer(({ matc
     }
   };
 
-  React.useEffect(() => setTopologyActiveView(showListView && !showGraphView ? 'list' : 'graph'), [
-    showListView,
-    showGraphView,
-  ]);
-
-  if (!showGraphView && !showListView) {
-    return (
-      <Redirect
-        to={`/topology/${namespace ? `ns/${namespace}` : 'all-namespaces'}/${
-          getTopologyActiveView() === 'list' ? 'list' : 'graph'
-        }${queryParams ? `?${queryParams.toString()}` : ''}`}
-      />
-    );
-  }
-
   return (
-    <>
+    <DataModelProvider namespace={namespace}>
       <Helmet>
         <title>Topology</title>
       </Helmet>
       <NamespacedPage
-        variant={showListView ? NamespacedPageVariants.light : NamespacedPageVariants.default}
+        variant={showGraphView ? NamespacedPageVariants.default : NamespacedPageVariants.light}
         onNamespaceChange={handleNamespaceChange}
-        toolbar={
-          namespace && !dataModelContext.isEmptyModel ? (
-            <>
-              {!showListView && namespace && (
-                <Popover
-                  aria-label="Shortcuts"
-                  bodyContent={TopologyShortcuts}
-                  position="left"
-                  maxWidth="100vw"
-                >
-                  <Button
-                    type="button"
-                    variant="link"
-                    className="odc-topology__shortcuts-button"
-                    icon={<QuestionCircleIcon />}
-                    data-test-id="topology-view-shortcuts"
-                  >
-                    View shortcuts
-                  </Button>
-                </Popover>
-              )}
-              <Tooltip position="left" content={showListView ? 'Topology View' : 'List View'}>
-                <Link
-                  className="pf-c-button pf-m-plain odc-topology__view-switcher"
-                  to={`/topology/${namespace ? `ns/${namespace}` : 'all-namespaces'}${
-                    showListView ? '/graph' : '/list'
-                  }${queryParams ? `?${queryParams.toString()}` : ''}`}
-                >
-                  {showListView ? <TopologyIcon size="md" /> : <ListIcon size="md" />}
-                </Link>
-              </Tooltip>
-            </>
-          ) : null
-        }
+        hideProjects={hideProjects}
+        toolbar={<TopologyPageToolbar showGraphView={showGraphView} onViewChange={onViewChange} />}
+        data-test-id={showGraphView ? 'topology-graph-page' : 'topology-list-page'}
       >
-        <Firehose resources={[{ kind: 'Project', prop: 'projects', isList: true }]}>
-          <ProjectsExistWrapper title="Topology">
-            {namespace ? (
-              <TopologyDataRenderer showGraphView={showGraphView} />
-            ) : (
-              <CreateProjectListPage title="Topology">
-                Select a project to view the topology
-              </CreateProjectListPage>
-            )}
-          </ProjectsExistWrapper>
-        </Firehose>
+        <ProjectsExistWrapper title="Topology" projects={projects}>
+          {namespace ? (
+            <TopologyDataRenderer showGraphView={showGraphView} title={title} />
+          ) : (
+            <CreateProjectListPage title="Topology">
+              Select a project to view the topology
+            </CreateProjectListPage>
+          )}
+        </ProjectsExistWrapper>
       </NamespacedPage>
-    </>
-  );
-});
-
-export const TopologyPage: React.FC<TopologyPageProps> = ({ match }) => {
-  const namespace = match.params.name;
-  return (
-    <DataModelProvider namespace={namespace}>
-      <TopologyPageContext match={match} />
     </DataModelProvider>
   );
 };
