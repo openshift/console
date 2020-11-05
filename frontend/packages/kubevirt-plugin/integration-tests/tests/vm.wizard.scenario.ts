@@ -127,7 +127,7 @@ describe('Kubevirt create VM using wizard', () => {
           [`name.os.template.kubevirt.io/${osID}`]: OperatingSystem.WINDOWS_10,
         };
         const requiredLabels = {
-          [`workload.template.kubevirt.io/${vm.getData().workload}`]: 'true',
+          [`workload.template.kubevirt.io/${vm.getData().workload.toLowerCase()}`]: 'true',
           [`os.template.kubevirt.io/${osID}`]: 'true',
           'vm.kubevirt.io/template': `windows10-${vm
             .getData()
@@ -234,7 +234,7 @@ describe('Kubevirt create VM using wizard', () => {
     CLONE_VM_TIMEOUT_SECS,
   );
 
-  it('ICNV-5045 - dont let the user continue If PXE provision source is selected on a cluster without a NAD available', async () => {
+  it('ID(CNV-5045) - dont let the user continue If PXE provision source is selected on a cluster without a NAD available', async () => {
     deleteResources([multusNAD]);
 
     const vm = new VMBuilder(getBasicVMBuilder())
@@ -256,5 +256,6 @@ describe('Kubevirt create VM using wizard', () => {
       waitForStringInElement(view.footerError, 'Please correct the following field: Boot Source.'),
       1000,
     );
+    await wizard.closeWizard();
   });
 });

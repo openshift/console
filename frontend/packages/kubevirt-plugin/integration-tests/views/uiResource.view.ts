@@ -1,4 +1,4 @@
-import { $, by } from 'protractor';
+import { $, $$, by, element } from 'protractor';
 import { K8sKind } from '@console/internal/module/k8s/types';
 import { click } from '@console/shared/src/test-utils/utils';
 
@@ -20,3 +20,9 @@ export const switchClusterNamespace = async (namespace: string): Promise<void> =
   await click(namespaceDropdownButton);
   await click(namespaceButton(namespace));
 };
+
+export const dropDownItem = (text) =>
+  element(by.cssContainingText('.pf-c-select__menu-item', text));
+export const dropDownItemMain = (text) =>
+  element(by.cssContainingText('.pf-c-select__menu-item-main', text));
+export const dropDownList = $$('.pf-c-select__menu-item-main');

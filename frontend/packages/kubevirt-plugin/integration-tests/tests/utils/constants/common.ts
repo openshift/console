@@ -29,7 +29,7 @@ export const TEMPLATE_ACTIONS_TIMEOUT_SECS = 90 * SEC;
 export const VM_ACTIONS_TIMEOUT_SECS = 250 * SEC;
 export const VM_BOOTUP_TIMEOUT_SECS = 230 * SEC;
 export const VM_MIGRATION_TIMEOUT_SECS = 260 * SEC;
-export const VM_STOP_TIMEOUT_SECS = 60 * SEC;
+export const VM_STOP_TIMEOUT_SECS = 220 * SEC;
 export const VM_DELETE_TIMEOUT_SECS = 30 * SEC;
 export const VM_IP_ASSIGNMENT_TIMEOUT_SECS = 180 * SEC;
 export const VM_IMPORT_TIMEOUT_SECS = 160 * SEC;
@@ -63,9 +63,8 @@ export const RHV_PROVIDER = 'Red Hat Virtualization (RHV)';
 export const VMWARE_PROVIDER = 'VMware';
 
 // Web-UI Exceptions
-export const RHV_WIZARD_CREATE_SUCCESS = 'Started import of virtual machine';
-export const WIZARD_CREATE_SUCCESS = 'Started import of virtual machine';
-// export const WIZARD_CREATE_SUCCESS = 'Successfully created virtual machine';
+export const WIZARD_STARTED_IMPORT = 'Started import of virtual machine';
+export const WIZARD_CREATE_SUCCESS = 'Successfully created virtual machine';
 
 // Framework Exception
 export const UNEXPECTED_ACTION_ERROR = 'Received unexpected action.';

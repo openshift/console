@@ -22,6 +22,7 @@ import {
   DISK_INTERFACE,
   DISK_SOURCE,
   DISK_DRIVE,
+  diskAccessMode,
 } from '../utils/constants/vm';
 import { ProvisionSource } from '../utils/constants/enums/provisionSource';
 
@@ -144,6 +145,18 @@ export const rootDisk: Disk = {
   bootable: true,
   interface: DISK_INTERFACE.VirtIO,
   storageClass: `${STORAGE_CLASS}`,
+};
+deepFreeze(rootDisk);
+
+export const rwxRootDisk = {
+  name: 'rootdisk',
+  size: '1',
+  drive: DISK_DRIVE.Disk,
+  interface: DISK_INTERFACE.VirtIO,
+  storageClass: `${STORAGE_CLASS}`,
+  advanced: {
+    accessMode: diskAccessMode.ReadWriteMany.value,
+  },
 };
 deepFreeze(rootDisk);
 

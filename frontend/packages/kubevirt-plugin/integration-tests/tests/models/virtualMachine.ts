@@ -1,11 +1,7 @@
 /* eslint-disable no-await-in-loop, no-console */
 import { browser, ExpectedConditions as until } from 'protractor';
 import { cloneDeepWithEnum } from '@console/shared/src/constants/object-enum';
-import {
-  waitForStringNotInElement,
-  click,
-  waitForStringInElement,
-} from '@console/shared/src/test-utils/utils';
+import { click, waitForStringNotInElement } from '@console/shared/src/test-utils/utils';
 import { detailViewAction, listViewAction } from '@console/shared/src/test-utils/actions.view';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import { annotationDialogOverlay } from '@console/internal-integration-tests/views/modal-annotations.view';
@@ -182,10 +178,7 @@ export class VirtualMachine extends BaseVirtualMachine {
       );
     }
     if (this.data.startOnCreation) {
-      await browser.wait(
-        waitForStringInElement(vmView.vmDetailStatus(this.namespace, this.name), VM_STATUS.Running),
-        VM_BOOTUP_TIMEOUT_SECS,
-      );
+      await this.waitForStatus(VM_STATUS.Running, VM_BOOTUP_TIMEOUT_SECS);
     }
   }
 }

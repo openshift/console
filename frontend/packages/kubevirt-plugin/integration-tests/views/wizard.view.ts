@@ -48,7 +48,7 @@ export const pxeBootSourceSelect = $('#pxe-bootsource');
 export const addDiskButton = $('#add-disk');
 export const storageBootSourceSelect = $('#storage-bootsource');
 export const diskWarning = (resourceName) =>
-  $(`[data-id="${resourceName}"]`).$('.kubevirt-validation-cell__cell--warning');
+  $(`[data-id="${resourceName}"]`).$('.kv-validation-cell__cell--warning');
 
 // Advanced -- Cloud-init
 export const cloudInitFormCheckbox = $('#cloud-init-edit-mode-first-option');
@@ -89,8 +89,5 @@ export const tableRowAttribute = async (name: string, columnIndex: number): Prom
     .get(columnIndex)
     .getText();
 };
-export const dropDownItem = (text) =>
-  element(by.cssContainingText('.pf-c-select__menu-item', text));
-export const dropDownItemMain = (text) =>
-  element(by.cssContainingText('.pf-c-select__menu-item-main', text));
+
 export const uploadLink = element(by.linkText('upload a new disk image'));

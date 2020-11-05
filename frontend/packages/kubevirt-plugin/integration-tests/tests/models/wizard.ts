@@ -26,11 +26,11 @@ import {
   SEC,
   // CHARACTERS_NOT_ALLOWED,
 } from '../utils/constants/common';
-import * as view from '../../views/wizard.view';
 import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
 import { DiskDialog } from '../dialogs/diskDialog';
 import { Flavor } from '../utils/constants/wizard';
-import { resourceHorizontalTab } from '../../views/uiResource.view';
+import * as view from '../../views/wizard.view';
+import { resourceHorizontalTab, dropDownItem, dropDownItemMain } from '../../views/uiResource.view';
 import { confirmActionButton } from '../../views/importWizard.view';
 import { virtualizationTitle } from '../../views/vms.list.view';
 import { VMBuilderData } from '../types/vm';
@@ -96,11 +96,11 @@ export class Wizard {
   }
 
   async selectOperatingSystem(operatingSystem: string) {
-    await selectItemFromDropdown(view.operatingSystemSelect, view.dropDownItem(operatingSystem));
+    await selectItemFromDropdown(view.operatingSystemSelect, dropDownItem(operatingSystem));
   }
 
   async selectFlavor(flavor: FlavorConfig) {
-    await selectItemFromDropdown(view.flavorSelect, view.dropDownItemMain(flavor.flavor));
+    await selectItemFromDropdown(view.flavorSelect, dropDownItemMain(flavor.flavor));
     if (flavor.flavor === Flavor.CUSTOM && (!flavor.memory || !flavor.cpu)) {
       throw Error('Custom Flavor requires memory and cpu values.');
     }
@@ -113,10 +113,7 @@ export class Wizard {
   }
 
   async selectWorkloadProfile(workloadProfile: string) {
-    await selectItemFromDropdown(
-      view.workloadProfileSelect,
-      view.dropDownItemMain(workloadProfile),
-    );
+    await selectItemFromDropdown(view.workloadProfileSelect, dropDownItemMain(workloadProfile));
   }
 
   async disableGoldenImageCloneCheckbox() {
@@ -136,7 +133,7 @@ export class Wizard {
   async selectProvisionSource(provisionSource: ProvisionSource) {
     await selectItemFromDropdown(
       view.provisionSourceSelect,
-      view.dropDownItemMain(provisionSource.getDescription()),
+      dropDownItemMain(provisionSource.getDescription()),
     );
     if (provisionSource.getSource()) {
       await fillInput(

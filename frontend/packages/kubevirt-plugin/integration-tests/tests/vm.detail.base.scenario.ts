@@ -57,7 +57,7 @@ describe('Kubevirt VM details tab', () => {
       status: VM_STATUS.Off,
       description: testName,
       os: OperatingSystem.RHEL7,
-      profile: Workload.DESKTOP,
+      profile: Workload.DESKTOP.toLowerCase(),
       template: NOT_AVAILABLE,
       bootOrder: ['rootdisk (Disk)', 'nic-0 (NIC)', 'cloudinitdisk (Disk)'],
       flavorConfig: 'Tiny: 1 vCPU, 1 GiB Memory',

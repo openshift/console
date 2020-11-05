@@ -1,4 +1,5 @@
 import { browser, ExpectedConditions as until } from 'protractor';
+import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   isLoaded,
   createItemButton,
@@ -6,13 +7,13 @@ import {
   resourceTitle,
   errorMessage,
 } from '@console/internal-integration-tests/views/crud.view';
+import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
 import {
   isLoaded as yamlPageIsLoaded,
   saveButton,
   cancelButton,
   setEditorContent,
 } from '@console/internal-integration-tests/views/yaml.view';
-import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   click,
   withResource,
@@ -44,7 +45,7 @@ describe('Test VM creation from YAML', () => {
   });
 
   beforeEach(async () => {
-    await browser.get(`${appHost}/k8s/ns/${testName}/virtualization`);
+    await clickNavLink(['Workloads', 'Virtualization']);
     await isLoaded();
     await click(createItemButton);
     await click(createYAMLLink);

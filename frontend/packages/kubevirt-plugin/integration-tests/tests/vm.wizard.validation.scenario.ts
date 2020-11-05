@@ -74,10 +74,6 @@ describe('Wizard validation', () => {
     // Network tab
     await wizard.next();
     // Storage tab
-    // TODO: When BZ 1803132 is fixed, we should also verify that a warning is displayed
-    // Right away when user navigates to Storace section because Windows CTs use rootdisk
-    // with sata interface, which is not on the recommended list
-
     await clickKebabAction('rootdisk', KEBAP_ACTION.Edit); // Open dialog
     await diskDialog.selectInterface(WINDOWS_NOT_RECOMMENDED_INTERFACE);
     await browser.wait(

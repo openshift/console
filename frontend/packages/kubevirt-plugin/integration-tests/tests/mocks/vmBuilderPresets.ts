@@ -121,7 +121,7 @@ export const vmPresets: { [k: string]: VirtualMachine } = {
     .setProvisionSource(ProvisionSource.PXE)
     .setDisks([rootDisk])
     .setNetworks([multusNetworkInterface])
-    .setStartOnCreation(true)
+    .setStartOnCreation(false)
     .build(),
   [ProvisionSource.DISK.getValue()]: new VMBuilder(getBasicVMBuilder())
     .setProvisionSource(ProvisionSource.DISK)

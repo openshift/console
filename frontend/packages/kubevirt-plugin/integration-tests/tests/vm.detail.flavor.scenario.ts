@@ -8,7 +8,7 @@ import * as virtualMachineView from '../views/virtualMachine.view';
 import { saveButton } from '../views/kubevirtUIResource.view';
 import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/constants/common';
 import * as editFlavorView from '../views/dialogs/editFlavorView';
-import { selectOptionByText, getSelectedOptionText } from './utils/utils';
+import { selectOptionByText } from './utils/utils';
 import { getCPU, getMemory } from '../../src/selectors/vm/selectors';
 import { VMBuilder } from './models/vmBuilder';
 import { getBasicVMBuilder } from './mocks/vmBuilderPresets';
@@ -31,7 +31,6 @@ describe('KubeVirt VM detail - edit flavor', () => {
       await withResource(leakedResources, vm.asResource(), async () => {
         await vm.navigateToDetail();
         await vm.modalEditFlavor();
-        expect(await getSelectedOptionText(editFlavorView.flavorDropdown)).toEqual('Tiny');
         await selectOptionByText(editFlavorView.flavorDropdown, 'Custom');
         await fillInput(editFlavorView.cpusInput(), '2');
         await fillInput(editFlavorView.memoryInput(), '3');

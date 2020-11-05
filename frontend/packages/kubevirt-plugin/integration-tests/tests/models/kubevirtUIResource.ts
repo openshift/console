@@ -10,6 +10,7 @@ import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.
 import { PAGE_LOAD_TIMEOUT_SECS } from '../utils/constants/common';
 import { Disk, Network, VirtualMachineTemplateModel } from '../types/types';
 import * as kubevirtDetailView from '../../views/kubevirtUIResource.view';
+import * as disksView from '../../views/vm.disks.view';
 import {
   vmDetailFlavorEditButton,
   vmDetailBootOrderEditButton,
@@ -122,6 +123,7 @@ export class KubevirtUIResource<T extends BaseVMBuilderData> extends UIResource 
   async navigateToDisks() {
     await this.navigateToTab(TAB.Disks);
     await isLoaded();
+    await browser.wait(until.presenceOf(disksView.diskRows));
   }
 
   async navigateToNICs() {
