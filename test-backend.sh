@@ -48,7 +48,11 @@ TEST=("${split[@]/#/github.com/openshift/console/}")
 echo "Running tests..."
 if [ "$OPENSHIFT_CI" = true ]; then
     go test -v "${COVER}" "$@" "${TEST[@]}" 2>&1 | tee /tmp/artifacts/test.out
+    RESULT="${PIPESTATUS[0]}"
     go-junit-report < /tmp/artifacts/test.out > /tmp/artifacts/junit.xml
+    if [ "$RESULT" -ne 0 ]; then
+        exit 255
+    fi
 else
     go test "${COVER}" "$@" "${TEST[@]}"
 fi
