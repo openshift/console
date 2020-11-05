@@ -43,9 +43,9 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, builderImages }) =>
       setFieldValue('git.isUrlValidating', true);
       setValidated(ValidatedOptions.default);
 
-      const gitType = detectGitType(url);
+      const gitType = gitTypeTouched ? values.git.type : detectGitType(url);
       const gitRepoName = detectGitRepoName(url);
-      const showGitType = gitType === GitTypes.unsure;
+      const showGitType = gitType === GitTypes.unsure || gitTypeTouched;
 
       setFieldValue('git.type', gitType);
       setFieldValue('git.showGitType', showGitType);
@@ -82,10 +82,12 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, builderImages }) =>
     },
     [
       builderImages,
+      gitTypeTouched,
       setFieldTouched,
       setFieldValue,
       values.application.name,
       values.application.selectedKey,
+      values.git.type,
       values.name,
     ],
   );
@@ -138,8 +140,8 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, builderImages }) =>
 
   React.useEffect(() => {
     const { url, ref } = values.git;
-    !dirty && url && handleGitUrlChange(url, ref);
-  }, [dirty, handleGitUrlChange, values.git]);
+    (!dirty || gitTypeTouched) && values.git.url && handleGitUrlChange(url, ref);
+  }, [dirty, gitTypeTouched, handleGitUrlChange, values.git]);
 
   const getHelpText = () => {
     if (values.git.isUrlValidating) {
@@ -204,7 +206,7 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, builderImages }) =>
             fullWidth
             required
           />
-          {!gitTypeTouched && (
+          {!gitTypeTouched && values.git.type === GitTypes.unsure && (
             <Alert isInline variant="info" title="Defaulting Git Type to Other">
               We failed to detect the git type.
             </Alert>

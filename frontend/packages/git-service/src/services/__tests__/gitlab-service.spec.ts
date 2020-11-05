@@ -14,6 +14,15 @@ describe('Gitlab Service', () => {
 
     const gitService = new GitlabService(gitSource);
 
+    const metaData = gitService.getRepoMetadata();
+    expect(metaData).toEqual({
+      repoName: 'devconsole-git',
+      owner: 'jpratik999',
+      host: 'https://gitlab.com',
+      defaultBranch: 'master',
+      fullName: 'jpratik999/devconsole-git',
+    });
+
     return nockBack('repo.json').then(async ({ nockDone, context }) => {
       const isReachable = await gitService.isRepoReachable();
       expect(isReachable).toEqual(true);
@@ -27,9 +36,40 @@ describe('Gitlab Service', () => {
 
     const gitService = new GitlabService(gitSource);
 
+    const metaData = gitService.getRepoMetadata();
+    expect(metaData).toEqual({
+      repoName: 'devconsole-git',
+      owner: 'jpratik99',
+      host: 'https://gitlab.com',
+      defaultBranch: 'master',
+      fullName: 'jpratik99/devconsole-git',
+    });
+
     return nockBack('repo-not-reachable.json').then(async ({ nockDone, context }) => {
       const isReachable = await gitService.isRepoReachable();
       expect(isReachable).toEqual(false);
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
+
+  it('should return ok on public custom domain with subdomain', async () => {
+    const gitSource: GitSource = { url: 'https://version.helsinki.fi/random-user/public-project' };
+
+    const gitService = new GitlabService(gitSource);
+
+    const metaData = gitService.getRepoMetadata();
+    expect(metaData).toEqual({
+      repoName: 'public-project',
+      owner: 'random-user',
+      host: 'https://version.helsinki.fi',
+      defaultBranch: 'master',
+      fullName: 'random-user/public-project',
+    });
+
+    return nockBack('custom-domain-with-subdomain.json').then(async ({ nockDone, context }) => {
+      const isReachable = await gitService.isRepoReachable();
+      expect(isReachable).toEqual(true);
       context.assertScopesFinished();
       nockDone();
     });
