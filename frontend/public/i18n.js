@@ -68,6 +68,7 @@ i18n
         'editor',
         'email-receiver-form',
         'environment',
+        'events',
         'filter-toolbar',
         'github-idp-form',
         'gitlab-idp-form',
