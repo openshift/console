@@ -4,7 +4,6 @@ import FormSection from '@console/dev-console/src/components/import/section/Form
 import { InputField, SelectInputField, SelectInputOption } from '@console/shared';
 import { TextInputTypes } from '@patternfly/react-core';
 import KafkaSourceNetSection from './KafkaSourceNetSection';
-import ServiceAccountDropdown from '../../dropdowns/ServiceAccountDropdown';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { getBootstrapServers } from '../../../utils/create-eventsources-utils';
@@ -103,7 +102,6 @@ const KafkaSourceSection: React.FC<KafkaSourceSectionProps> = ({ title }) => {
         required
       />
       <KafkaSourceNetSection />
-      <ServiceAccountDropdown name="data.kafkasource.serviceAccountName" />
     </FormSection>
   );
 };

@@ -15,7 +15,6 @@ import KafkaSourceSection from './KafkaSourceSection';
 import YAMLEditorSection from './YAMLEditorSection';
 import { EventSources } from '../import-types';
 import SinkSection from './SinkSection';
-import AdvancedSection from '../AdvancedSection';
 import { isKnownEventSource } from '../../../utils/create-eventsources-utils';
 
 interface EventSourceSectionProps {
@@ -67,7 +66,6 @@ const EventSourceSection: React.FC<EventSourceSectionProps> = ({ namespace }) =>
           />
         </>
       )}
-      {values.type === EventSources.KafkaSource && <AdvancedSection />}
     </>
   );
 };
