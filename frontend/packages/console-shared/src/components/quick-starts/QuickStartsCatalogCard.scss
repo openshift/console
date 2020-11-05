@@ -1,13 +1,24 @@
-@import '../../../../public/style/vars';
+@import '../../../../../public/style/vars';
 
-.odc-quick-start-tile {
+.odc-quick-start-catalog-card {
   &__card {
     height: $co-m-catalog-tile-height;
-    width: $co-m-catalog-tile-width;
+  }
+
+  &__remove-help-text {
+    font-size: var(--pf-global--FontSize--xs);
   }
 
   &__tour {
     margin-bottom: var(--pf-global--spacer--sm);
+  }
+
+  &__tour-name {
+    font-size: var(--pf-global--FontSize--sm) !important;
+  }
+
+  &__tour-status {
+    font-size: var(--pf-global--FontSize--xs) !important;
   }
 
   &__arrow {

@@ -1,15 +1,16 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 import { Gallery, GalleryItem } from '@patternfly/react-core';
 import { CatalogTile } from '@patternfly/react-catalog-view-extension';
-import { connect } from 'react-redux';
 import { history, useAccessReview } from '@console/internal/components/utils';
 import { useExtensions } from '@console/plugin-sdk';
 import { RootState } from '@console/internal/redux';
 import { ALL_NAMESPACES_KEY, PageLayout } from '@console/shared';
+import { HIDE_QUICK_START_ADD_TILE_STORAGE_KEY } from '@console/shared/src/components/quick-starts/quick-starts-catalog-card-constants';
 import QuickStartsLoader from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
+import QuickStartsCatalogCard from '@console/shared/src/components/quick-starts/QuickStartsCatalogCard';
 import { isAddAction, AddAction } from '../extensions/add-actions';
-import QuickStartTile from './QuickStartTile';
 
 const navigateTo = (e: React.SyntheticEvent, url: string) => {
   history.push(url);
@@ -78,7 +79,12 @@ const ODCEmptyState: React.FC<Props> = ({ title, activeNamespace, hintBlock }) =
     <PageLayout title={title} hint={hintBlock || defaultHintBlockText} isDark>
       <Gallery className="co-catalog-tile-view" hasGutter>
         <QuickStartsLoader>
-          {(quickStarts) => <QuickStartTile quickStarts={quickStarts} />}
+          {(quickStarts) => (
+            <QuickStartsCatalogCard
+              quickStarts={quickStarts}
+              storageKey={HIDE_QUICK_START_ADD_TILE_STORAGE_KEY}
+            />
+          )}
         </QuickStartsLoader>
         {addActionExtensions.map((action) => (
           <Item key={action.properties.id} namespace={activeNamespace} action={action} />
