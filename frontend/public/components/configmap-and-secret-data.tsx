@@ -3,15 +3,18 @@ import { Base64 } from 'js-base64';
 import { saveAs } from 'file-saver';
 import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 import { Button } from '@patternfly/react-core';
-
+import { useTranslation } from 'react-i18next';
 import { CopyToClipboard, EmptyBox, SectionHeading } from './utils';
 
-export const MaskedData: React.FC<{}> = () => (
-  <>
-    <span className="sr-only">Value hidden</span>
-    <span aria-hidden="true">&bull;&bull;&bull;&bull;&bull;</span>
-  </>
-);
+export const MaskedData: React.FC<{}> = () => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <span className="sr-only">{t('workload~Value hidden')}</span>
+      <span aria-hidden="true">&bull;&bull;&bull;&bull;&bull;</span>
+    </>
+  );
+};
 
 const downloadBinary = (key, value) => {
   const rawBinary = window.atob(value);
@@ -26,6 +29,7 @@ const downloadBinary = (key, value) => {
 
 export const ConfigMapBinaryData: React.FC<DownloadValueProps> = ({ data }) => {
   const dl = [];
+  const { t } = useTranslation();
   Object.keys(data || {})
     .sort()
     .forEach((k) => {
@@ -39,12 +43,12 @@ export const ConfigMapBinaryData: React.FC<DownloadValueProps> = ({ data }) => {
             onClick={() => downloadBinary(k, value)}
             variant="link"
           >
-            Save File
+            {t('workload~Save file')}
           </Button>
         </dd>,
       );
     });
-  return dl.length ? <dl>{dl}</dl> : <EmptyBox label="Binary Data" />;
+  return dl.length ? <dl>{dl}</dl> : <EmptyBox label={t('workload~binary data')} />;
 };
 ConfigMapBinaryData.displayName = 'ConfigMapBinaryData';
 
@@ -66,8 +70,9 @@ export const ConfigMapData: React.FC<ConfigMapDataProps> = ({ data, label }) => 
 ConfigMapData.displayName = 'ConfigMapData';
 
 export const SecretValue: React.FC<SecretValueProps> = ({ value, reveal, encoded = true }) => {
+  const { t } = useTranslation();
   if (!value) {
-    return <span className="text-muted">No value</span>;
+    return <span className="text-muted">{t('workload~No value')}</span>;
   }
 
   const decodedValue = encoded ? Base64.decode(value) : value;
@@ -78,7 +83,7 @@ SecretValue.displayName = 'SecretValue';
 
 export const SecretData: React.FC<SecretDataProps> = ({ data, title = 'Data' }) => {
   const [reveal, setReveal] = React.useState(false);
-
+  const { t } = useTranslation();
   const dl = [];
   Object.keys(data || {})
     .sort()
@@ -104,18 +109,18 @@ export const SecretData: React.FC<SecretDataProps> = ({ data, title = 'Data' }) 
             {reveal ? (
               <>
                 <EyeSlashIcon className="co-icon-space-r" />
-                Hide Values
+                {t('workload~Hide values')}
               </>
             ) : (
               <>
                 <EyeIcon className="co-icon-space-r" />
-                Reveal Values
+                {t('workload~Reveal values')}
               </>
             )}
           </Button>
         ) : null}
       </SectionHeading>
-      {dl.length ? <dl className="secret-data">{dl}</dl> : <EmptyBox label="Data" />}
+      {dl.length ? <dl className="secret-data">{dl}</dl> : <EmptyBox label={t('workload~Data')} />}
     </>
   );
 };
