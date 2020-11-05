@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
-import { BellIcon, CaretDownIcon, EllipsisVIcon, PlusCircleIcon, QuestionCircleIcon } from '@patternfly/react-icons';
-import { ApplicationLauncher, ApplicationLauncherGroup, ApplicationLauncherItem, ApplicationLauncherSeparator, NotificationBadge, Toolbar, ToolbarGroup, ToolbarItem, TooltipPosition, Tooltip } from '@patternfly/react-core';
+import { BellIcon, CaretDownIcon, EllipsisVIcon, PlusCircleIcon, QuestionCircleIcon, OutlinedClockIcon } from '@patternfly/react-icons';
+import { ApplicationLauncher, ApplicationLauncherGroup, ApplicationLauncherItem, ApplicationLauncherSeparator, NotificationBadge, Toolbar, ToolbarGroup, ToolbarItem, TooltipPosition, Tooltip, Button } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
@@ -17,6 +17,7 @@ import { AboutModal } from './about-modal';
 import { clusterVersionReference, getReportBugLink } from '../module/k8s/cluster-settings';
 import * as redhatLogoImg from '../imgs/logos/redhat.svg';
 import { withKeycloak } from '@react-keycloak/web';
+import { ExpTimer } from './hypercloud/exp-timer';
 
 const SystemStatusButton = ({ statuspageData, className }) =>
   !_.isEmpty(_.get(statuspageData, 'incidents')) ? (
@@ -30,6 +31,7 @@ const SystemStatusButton = ({ statuspageData, className }) =>
 class MastheadToolbarContents_ extends React.Component {
   constructor(props) {
     super(props);
+    this.timerRef = null;
     this.state = {
       isApplicationLauncherDropdownOpen: false,
       isUserDropdownOpen: false,
@@ -53,6 +55,7 @@ class MastheadToolbarContents_ extends React.Component {
     this._onHelpDropdownToggle = this._onHelpDropdownToggle.bind(this);
     this._onAboutModal = this._onAboutModal.bind(this);
     this._closeAboutModal = this._closeAboutModal.bind(this);
+    this._tokenRefresh = this._tokenRefresh.bind(this);
   }
 
   componentDidMount() {
@@ -408,15 +411,67 @@ class MastheadToolbarContents_ extends React.Component {
     return <ApplicationLauncher aria-label="User menu" data-test="user-dropdown" className="co-app-launcher co-user-menu" onSelect={this._onUserDropdownSelect} onToggle={this._onUserDropdownToggle} isOpen={isUserDropdownOpen} items={this._renderApplicationItems(actions)} position="right" toggleIcon={userToggle} isGrouped />;
   }
 
+  _tokenRefresh = () => {
+    const { keycloak } = this.props;
+    const curTime = new Date();
+    const tokenExpTime = new Date((keycloak.idTokenParsed.exp + keycloak.timeSkew) * 1000);
+    const logoutTime = (tokenExpTime.getTime() - curTime.getTime()) / 1000;
+    keycloak
+      .updateToken(Math.ceil(logoutTime))
+      .then(refreshed => {
+        console.log('refreshed', refreshed);
+        if (refreshed) {
+          // expired time < 60
+          console.log('Token was successfully refreshed');
+          // TODO: 토큰 설정
+          // setAccessToken(keycloak.idToken);
+          this.timerRef.tokRefresh();
+          console.log('keycloak', keycloak);
+          console.log('idTokenParsed', keycloak.idTokenParsed);
+          console.log('exp', keycloak.idTokenParsed.exp);
+          console.log('tokenTimeoutHandle', keycloak.tokenTimeoutHandle);
+        } else {
+          // expired time > 60
+          console.log('Token is still valid');
+        }
+      })
+      .catch(() => {
+        // refresh token 없음
+        console.log('Failed to refresh the token, or the session has expired');
+      });
+  };
+
   render() {
     const { isApplicationLauncherDropdownOpen, isHelpDropdownOpen, showAboutModal, statuspageData } = this.state;
-    const { consoleLinks, drawerToggle, notificationsRead, canAccessNS } = this.props;
+    const { consoleLinks, drawerToggle, notificationsRead, canAccessNS, keycloak } = this.props;
     const launchActions = this._launchActions();
     const alertAccess = canAccessNS && !!window.SERVER_FLAGS.prometheusBaseURL;
     return (
       <>
         <Toolbar>
           <ToolbarGroup className="hidden-xs">
+            <ToolbarItem>
+              <OutlinedClockIcon />
+            </ToolbarItem>
+            <ToolbarItem>
+              <ExpTimer
+                ref={input => {
+                  this.timerRef = input;
+                }}
+                logout={keycloak.logout}
+                tokenRefresh={this._tokenRefresh}
+                keycloak={keycloak}
+              />
+            </ToolbarItem>
+            <ToolbarItem>
+              <Button
+                onClick={() => {
+                  this._tokenRefresh();
+                }}
+              >
+                Extend
+              </Button>
+            </ToolbarItem>
             {/* desktop -- (system status button) */}
             <SystemStatusButton statuspageData={statuspageData} />
             {/* desktop -- (application launcher dropdown), import yaml, help dropdown [documentation, about] */}
