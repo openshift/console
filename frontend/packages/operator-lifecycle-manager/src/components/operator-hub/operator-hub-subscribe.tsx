@@ -280,7 +280,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
       subjects: [
         {
           kind: 'ServiceAccount',
-          name: 'prometheus-operator',
+          name: 'prometheus-k8s',
           namespace: 'openshift-monitoring',
         },
       ],
