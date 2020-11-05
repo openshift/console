@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Popover, PopoverPlacement, Modal } from '@console/shared';
+import { Popover, PopoverPlacement, Modal, Spotlight } from '@console/shared';
 import { ModalVariant } from '@patternfly/react-core';
 import StepHeader from './steps/StepHeader';
 import StepFooter from './steps/StepFooter';
 import StepBadge from './steps/StepBadge';
 import StepContent from './steps/StepContent';
-import { Spotlight } from './Spotlight';
 import './TourStepComponent.scss';
 
 type TourStepComponentProps = {
