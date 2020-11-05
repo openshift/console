@@ -131,16 +131,19 @@ export const CreateInternalCluster = withHandlePromise<
   const submit = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     // eslint-disable-next-line promise/catch-or-return
-    handlePromise(makeOCSRequest(nodes, storageClass, osdSize, isEncrypted, isMinimal), () => {
-      dispatch(setFlag(OCS_CONVERGED_FLAG, true));
-      dispatch(setFlag(OCS_INDEPENDENT_FLAG, false));
-      dispatch(setFlag(OCS_FLAG, true));
-      history.push(
-        `/k8s/ns/${ns}/clusterserviceversions/${appName}/${referenceForModel(
-          OCSServiceModel,
-        )}/${OCS_INTERNAL_CR_NAME}`,
-      );
-    });
+    handlePromise(
+      makeOCSRequest(nodes, storageClass, osdSize, isEncrypted, isMinimal, isEncryptionSupported),
+      () => {
+        dispatch(setFlag(OCS_CONVERGED_FLAG, true));
+        dispatch(setFlag(OCS_INDEPENDENT_FLAG, false));
+        dispatch(setFlag(OCS_FLAG, true));
+        history.push(
+          `/k8s/ns/${ns}/clusterserviceversions/${appName}/${referenceForModel(
+            OCSServiceModel,
+          )}/${OCS_INTERNAL_CR_NAME}`,
+        );
+      },
+    );
   };
 
   const handleStorageClass = (sc: StorageClassResourceKind) => {
