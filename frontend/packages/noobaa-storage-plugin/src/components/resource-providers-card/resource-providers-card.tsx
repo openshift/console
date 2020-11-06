@@ -98,7 +98,7 @@ const ResourceProviders: React.FC<DashboardItemProps> = ({
       <DashboardCardHeader>
         <DashboardCardTitle>Resource Providers</DashboardCardTitle>
         <FieldLevelHelp>
-          A list of all MCG (Multi-cloud gateway) resources that are currently in use. Those
+          A list of all MCG (Multicloud Object Gateway) resources that are currently in use. Those
           resources are used to store data according to the buckets policies and can be a
           cloud-based resource or a bare metal resource.
         </FieldLevelHelp>
