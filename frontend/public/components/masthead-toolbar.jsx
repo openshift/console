@@ -343,26 +343,40 @@ class MastheadToolbarContents_ extends React.Component {
     // if (flags[FLAGS.AUTH_ENABLED]) {
     const userActions = [];
 
-    // const logout = (e) => {
-    //   e.preventDefault();
-    //   if (flags[FLAGS.OPENSHIFT]) {
-    //     authSvc.logoutOpenShift(this.state.isKubeAdmin);
-    //   } else {
-    //     authSvc.logout();
-    //   }
-    // };
+    const openAccountConsole = e => {
+      e.preventDefault();
+      window.open(keycloak.createAccountUrl());
+    };
 
-    if (window.SERVER_FLAGS.requestTokenURL) {
-      userActions.push({
-        label: 'Copy Login Command',
-        href: window.SERVER_FLAGS.requestTokenURL,
-        externalLink: true,
-      });
-    }
+    const logout = e => {
+      e.preventDefault();
+      // if (flags[FLAGS.OPENSHIFT]) {
+      //   authSvc.logoutOpenShift(this.state.isKubeAdmin);
+      // } else {
+      //   authSvc.logout();
+      // }
+      keycloak.logout();
+    };
+
+    // if (window.SERVER_FLAGS.requestTokenURL) {
+    //   userActions.push({
+    //     label: 'Copy Login Command',
+    //     href: window.SERVER_FLAGS.requestTokenURL,
+    //     externalLink: true,
+    //   });
+    // }
 
     userActions.push({
+      // TODO: i18n
+      label: 'Manage Account',
+      callback: openAccountConsole,
+      component: 'button',
+    });
+
+    userActions.push({
+      // TODO: i18n
       label: 'Log out',
-      callback: keycloak.logout,
+      callback: logout,
       component: 'button',
     });
 
