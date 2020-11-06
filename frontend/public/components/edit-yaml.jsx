@@ -16,7 +16,7 @@ import {
 } from '@console/shared';
 import YAMLEditor from '@console/shared/src/components/editor/YAMLEditor';
 import YAMLEditorSidebar from '@console/shared/src/components/editor/YAMLEditorSidebar';
-import { downloadYaml } from '@console/shared/src/components/editor/yaml-editor-utils';
+import { downloadYaml, fold } from '@console/shared/src/components/editor/yaml-editor-utils';
 import { isYAMLTemplate, withExtensions } from '@console/plugin-sdk';
 
 import { connectToFlags } from '../reducers/features';
@@ -146,6 +146,8 @@ export const EditYAML_ = connect(stateToProps)(
 
         reload() {
           this.loadYaml(true);
+          const currentEditor = this.getEditor();
+          fold(currentEditor, currentEditor.getModel(), false);
           this.setState({
             sampleObj: null,
             error: null,
