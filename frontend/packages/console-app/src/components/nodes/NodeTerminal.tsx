@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
+import { useTranslation, Trans } from 'react-i18next';
 import {
   Firehose,
   FirehoseResource,
@@ -94,10 +95,13 @@ const NodeTerminalError: React.FC<NodeTerminalErrorProps> = ({ error }) => {
 };
 
 const NodeTerminalInner: React.FC<NodeTerminalInnerProps> = ({ obj }) => {
+  const { t } = useTranslation();
   const message = (
-    <p>
-      To use host binaries, run <code>chroot /host</code>
-    </p>
+    <Trans i18nKey="host binaries" ns="nodes">
+      <p>
+        To use host binaries, run <code>chroot /host</code>
+      </p>
+    </Trans>
   );
   switch (obj?.data?.status?.phase) {
     case 'Failed':
@@ -105,7 +109,7 @@ const NodeTerminalInner: React.FC<NodeTerminalInnerProps> = ({ obj }) => {
         <NodeTerminalError
           error={
             <>
-              The debug pod failed.{' '}
+              {t('nodes~The debug pod failed. ')}
               {obj?.data?.status?.containerStatuses?.[0]?.state?.terminated?.message ||
                 obj?.data?.status?.message}
             </>

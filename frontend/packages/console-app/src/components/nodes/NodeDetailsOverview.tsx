@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { NodeKind, referenceForModel } from '@console/internal/module/k8s';
 import {
   useAccessReview,
@@ -12,7 +13,7 @@ import {
   Timestamp,
 } from '@console/internal/components/utils';
 import { NodeModel, MachineModel } from '@console/internal/models';
-import { Button, pluralize } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
 import { getNodeMachineNameAndNamespace, getNodeAddresses } from '@console/shared';
 import NodeIPList from './NodeIPList';
@@ -32,15 +33,17 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
     name: node.metadata.name,
     namespace: node.metadata.namespace,
   });
+  const { t } = useTranslation();
+
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text="Node Details" />
+      <SectionHeading text={t('nodes~Node details')} />
       <div className="row">
         <div className="col-md-6 col-xs-12">
           <dl className="co-m-pane__details">
-            <dt>Node Name</dt>
+            <dt>{t('nodes~Node name')}</dt>
             <dd>{node.metadata.name || '-'}</dd>
-            <dt>Status</dt>
+            <dt>{t('nodes~Status')}</dt>
             <dd>
               {!node.spec.unschedulable ? (
                 <NodeStatus node={node} showPopovers />
@@ -48,17 +51,17 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
                 <MarkAsSchedulablePopover node={node} />
               )}
             </dd>
-            <dt>External ID</dt>
+            <dt>{t('nodes~External ID')}</dt>
             <dd>{_.get(node, 'spec.externalID', '-')}</dd>
-            <dt>Node Addresses</dt>
+            <dt>{t('nodes~Node addresses')}</dt>
             <dd>
               <NodeIPList ips={getNodeAddresses(node)} expand />
             </dd>
-            <dt>Node Labels</dt>
+            <dt>{t('nodes~Node labels')}</dt>
             <dd>
               <LabelList kind="Node" labels={node.metadata.labels} />
             </dd>
-            <dt>Taints</dt>
+            <dt>{t('nodes~Taints')}</dt>
             <dd>
               {canUpdate ? (
                 <Button
@@ -67,14 +70,16 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
                   isInline
                   onClick={Kebab.factory.ModifyTaints(NodeModel, node).callback}
                 >
-                  {pluralize(_.size(node.spec.taints), 'Taint')}
+                  {_.size(node.spec.taints)} {t('nodes~Taint', { count: _.size(node.spec.taints) })}
                   <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
                 </Button>
               ) : (
-                pluralize(_.size(node.spec.taints), 'Taint')
+                <span>
+                  {_.size(node.spec.taints)} {t('nodes~Taint', { count: _.size(node.spec.taints) })}
+                </span>
               )}
             </dd>
-            <dt>Annotations</dt>
+            <dt>{t('nodes~Annotations')}</dt>
             <dd>
               {canUpdate ? (
                 <Button
@@ -83,16 +88,20 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
                   isInline
                   onClick={Kebab.factory.ModifyAnnotations(NodeModel, node).callback}
                 >
-                  {pluralize(_.size(node.metadata.annotations), 'Annotation')}
+                  {_.size(node.metadata.annotations)}{' '}
+                  {t('nodes~Annotation', { count: _.size(node.metadata.annotations) })}
                   <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
                 </Button>
               ) : (
-                pluralize(_.size(node.metadata.annotations), 'Annotation')
+                <span>
+                  {_.size(node.metadata.annotations)}{' '}
+                  {t('nodes~Annotation', { count: _.size(node.metadata.annotations) })}
+                </span>
               )}
             </dd>
             {machine.name && (
               <>
-                <dt>Machine</dt>
+                <dt>{t('nodes~Machine')}</dt>
                 <dd>
                   <ResourceLink
                     kind={referenceForModel(MachineModel)}
@@ -102,15 +111,15 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
                 </dd>
               </>
             )}
-            <dt>Provider ID</dt>
+            <dt>{t('nodes~Provider ID')}</dt>
             <dd>{cloudProviderNames([cloudProviderID(node)])}</dd>
-            {_.has(node, 'spec.unschedulable') && <dt>Unschedulable</dt>}
+            {_.has(node, 'spec.unschedulable') && <dt>{t('nodes~Unschedulable')}</dt>}
             {_.has(node, 'spec.unschedulable') && (
               <dd className="text-capitalize">
                 {_.get(node, 'spec.unschedulable', '-').toString()}
               </dd>
             )}
-            <dt>Created</dt>
+            <dt>{t('nodes~Created')}</dt>
             <dd>
               <Timestamp timestamp={node.metadata.creationTimestamp} />
             </dd>
@@ -118,23 +127,23 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
         </div>
         <div className="col-md-6 col-xs-12">
           <dl className="co-m-pane__details">
-            <dt>Operating System</dt>
+            <dt>{t('nodes~Operating system')}</dt>
             <dd className="text-capitalize">
               {_.get(node, 'status.nodeInfo.operatingSystem', '-')}
             </dd>
-            <dt>OS Image</dt>
+            <dt>{t('nodes~OS image')}</dt>
             <dd>{_.get(node, 'status.nodeInfo.osImage', '-')}</dd>
-            <dt>Architecture</dt>
+            <dt>{t('nodes~Architecture')}</dt>
             <dd className="text-uppercase">{_.get(node, 'status.nodeInfo.architecture', '-')}</dd>
-            <dt>Kernel Version</dt>
+            <dt>{t('nodes~Kernel version')}</dt>
             <dd>{_.get(node, 'status.nodeInfo.kernelVersion', '-')}</dd>
-            <dt>Boot ID</dt>
+            <dt>{t('nodes~Boot ID')}</dt>
             <dd>{_.get(node, 'status.nodeInfo.bootID', '-')}</dd>
-            <dt>Container Runtime</dt>
+            <dt>{t('nodes~Container runtime')}</dt>
             <dd>{_.get(node, 'status.nodeInfo.containerRuntimeVersion', '-')}</dd>
-            <dt>Kubelet Version</dt>
+            <dt>{t('nodes~Kubelet version')}</dt>
             <dd>{_.get(node, 'status.nodeInfo.kubeletVersion', '-')}</dd>
-            <dt>Kube-Proxy Version</dt>
+            <dt>{t('nodes~Kube-Proxy version')}</dt>
             <dd>{_.get(node, 'status.nodeInfo.kubeProxyVersion', '-')}</dd>
           </dl>
         </div>

@@ -5,6 +5,8 @@ import * as React from 'react';
 import { connect, useSelector } from 'react-redux';
 import * as _ from 'lodash';
 import { sortable } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
+import i18next from 'i18next';
 import {
   getName,
   getUID,
@@ -41,66 +43,79 @@ import NodeStatus from './NodeStatus';
 import { RootState } from '@console/internal/redux';
 import MarkAsSchedulablePopover from './popovers/MarkAsSchedulablePopover';
 
+// t('nodes~Name')
+// t('nodes~Status')
+// t('nodes~Role')
+// t('nodes~Pods')
+// t('nodes~Memory')
+// t('nodes~CPU')
+// t('nodes~Filesystem')
+// t('nodes~Created')
+// t('nodes~Instance type')
+// t('nodes~Machine')
+// t('nodes~Labels')
+// t('nodes~Zone')
+
 const nodeColumnInfo = Object.freeze({
   name: {
     classes: '',
     id: 'name',
-    title: 'Name',
+    title: 'nodes~Name',
   },
   status: {
     classes: '',
     id: 'status',
-    title: 'Status',
+    title: 'nodes~Status',
   },
   role: {
     classes: '',
     id: 'role',
-    title: 'Role',
+    title: 'nodes~Role',
   },
   pods: {
     classes: '',
     id: 'pods',
-    title: 'Pods',
+    title: 'nodes~Pods',
   },
   memory: {
     classes: '',
     id: 'memory',
-    title: 'Memory',
+    title: 'nodes~Memory',
   },
   cpu: {
     classes: '',
     id: 'cpu',
-    title: 'CPU',
+    title: 'nodes~CPU',
   },
   filesystem: {
     classes: '',
     id: 'filesystem',
-    title: 'Filesystem',
+    title: 'nodes~Filesystem',
   },
   created: {
     classes: '',
     id: 'created',
-    title: 'Created',
+    title: 'nodes~Created',
   },
   instanceType: {
     classes: '',
     id: 'instanceType',
-    title: 'Instance type',
+    title: 'nodes~Instance type',
   },
   machine: {
     classes: '',
     id: 'machine',
-    title: 'Machine',
+    title: 'nodes~Machine',
   },
   labels: {
     classes: '',
     id: 'labels',
-    title: 'Labels',
+    title: 'nodes~Labels',
   },
   zone: {
     classes: '',
     id: 'zone',
-    title: 'Zone',
+    title: 'nodes~Zone',
   },
 });
 
@@ -110,70 +125,70 @@ const kind = 'Node';
 const NodeTableHeader = () => {
   return [
     {
-      title: nodeColumnInfo.name.title,
+      title: i18next.t(nodeColumnInfo.name.title),
       id: nodeColumnInfo.name.id,
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: nodeColumnInfo.name.classes },
     },
     {
-      title: nodeColumnInfo.status.title,
+      title: i18next.t(nodeColumnInfo.status.title),
       id: nodeColumnInfo.status.id,
       sortFunc: 'nodeReadiness',
       transforms: [sortable],
       props: { className: nodeColumnInfo.status.classes },
     },
     {
-      title: nodeColumnInfo.role.title,
+      title: i18next.t(nodeColumnInfo.role.title),
       id: nodeColumnInfo.role.id,
       sortFunc: 'nodeRoles',
       transforms: [sortable],
       props: { className: nodeColumnInfo.role.classes },
     },
     {
-      title: nodeColumnInfo.pods.title,
+      title: i18next.t(nodeColumnInfo.pods.title),
       id: nodeColumnInfo.pods.id,
       sortFunc: 'nodePods',
       transforms: [sortable],
       props: { className: nodeColumnInfo.pods.classes },
     },
     {
-      title: nodeColumnInfo.memory.title,
+      title: i18next.t(nodeColumnInfo.memory.title),
       id: nodeColumnInfo.memory.id,
       sortFunc: 'nodeMemory',
       transforms: [sortable],
       props: { className: nodeColumnInfo.memory.classes },
     },
     {
-      title: nodeColumnInfo.cpu.title,
+      title: i18next.t(nodeColumnInfo.cpu.title),
       id: nodeColumnInfo.cpu.id,
       sortFunc: 'nodeCPU',
       transforms: [sortable],
       props: { className: nodeColumnInfo.cpu.classes },
     },
     {
-      title: nodeColumnInfo.filesystem.title,
+      title: i18next.t(nodeColumnInfo.filesystem.title),
       id: nodeColumnInfo.filesystem.id,
       sortFunc: 'nodeFS',
       transforms: [sortable],
       props: { className: nodeColumnInfo.filesystem.classes },
     },
     {
-      title: nodeColumnInfo.created.title,
+      title: i18next.t(nodeColumnInfo.created.title),
       id: nodeColumnInfo.created.id,
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: nodeColumnInfo.created.classes },
     },
     {
-      title: nodeColumnInfo.instanceType.title,
+      title: i18next.t(nodeColumnInfo.instanceType.title),
       id: nodeColumnInfo.instanceType.id,
       sortFunc: 'nodeInstanceType',
       transforms: [sortable],
       props: { className: nodeColumnInfo.instanceType.classes },
     },
     {
-      title: nodeColumnInfo.machine.title,
+      title: i18next.t(nodeColumnInfo.machine.title),
       id: nodeColumnInfo.machine.id,
       sortFunc: 'nodeMachine',
       transforms: [sortable],
@@ -181,7 +196,7 @@ const NodeTableHeader = () => {
       additional: true,
     },
     {
-      title: nodeColumnInfo.labels.title,
+      title: i18next.t(nodeColumnInfo.labels.title),
       id: nodeColumnInfo.labels.id,
       sortField: 'metadata.labels',
       transforms: [sortable],
@@ -189,7 +204,7 @@ const NodeTableHeader = () => {
       additional: true,
     },
     {
-      title: nodeColumnInfo.zone.title,
+      title: i18next.t(nodeColumnInfo.zone.title),
       id: nodeColumnInfo.zone.id,
       sortFunc: 'nodeZone',
       transforms: [sortable],
@@ -386,11 +401,12 @@ const NodesTable: React.FC<NodesTableProps> = React.memo((props) => {
     ),
     [],
   );
+  const { t } = useTranslation();
   return (
     <Table
       {...props}
       columnManagementID={columnManagementID}
-      aria-label="Nodes"
+      aria-label={t('nodes~Nodes')}
       Header={NodeTableHeader}
       Row={Row}
       virtualize
@@ -401,33 +417,6 @@ const NodesTable: React.FC<NodesTableProps> = React.memo((props) => {
 type NodesTableProps = React.ComponentProps<typeof Table> & {
   data: NodeKind[];
 };
-
-const filters = [
-  {
-    filterGroupName: 'Status',
-    type: 'node-status',
-    reducer: nodeStatus,
-    items: [
-      { id: 'Ready', title: 'Ready' },
-      { id: 'Not Ready', title: 'Not Ready' },
-    ],
-  },
-  {
-    filterGroupName: 'Role',
-    type: 'node-role',
-    reducer: getNodeRole,
-    items: [
-      {
-        id: 'master',
-        title: 'Master',
-      },
-      {
-        id: 'worker',
-        title: 'Worker',
-      },
-    ],
-  },
-];
 
 const fetchNodeMetrics = (): Promise<NodeMetrics> => {
   const metrics = [
@@ -505,6 +494,33 @@ const NodesPage = connect<{}, MapDispatchToProps>(
     return () => {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  const { t } = useTranslation();
+  const filters = [
+    {
+      filterGroupName: t('nodes~Status'),
+      type: 'node-status',
+      reducer: nodeStatus,
+      items: [
+        { id: 'Ready', title: t('nodes~Ready') },
+        { id: 'Not Ready', title: t('nodes~Not Ready') },
+      ],
+    },
+    {
+      filterGroupName: t('nodes~Role'),
+      type: 'node-role',
+      reducer: getNodeRole,
+      items: [
+        {
+          id: 'master',
+          title: t('nodes~Master'),
+        },
+        {
+          id: 'worker',
+          title: t('nodes~Worker'),
+        },
+      ],
+    },
+  ];
 
   return (
     <ListPage

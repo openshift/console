@@ -31,7 +31,6 @@ import {
   MachineAutoscalerModel,
   MachineConfigModel,
   MachineConfigPoolModel,
-  MachineDeploymentModel,
   MachineHealthCheckModel,
   MachineModel,
   MachineSetModel,
@@ -177,11 +176,6 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(MachineSetModel), () =>
     import('./machine-set' /* webpackChunkName: "machine-set" */).then(
       (m) => m.MachineSetDetailsPage,
-    ),
-  )
-  .set(referenceForModel(MachineDeploymentModel), () =>
-    import('./machine-deployment' /* webpackChunkName: "machine-deployment" */).then(
-      (m) => m.MachineDeploymentDetailsPage,
     ),
   )
   .set(referenceForModel(MachineHealthCheckModel), () =>
@@ -417,11 +411,6 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   )
   .set(referenceForModel(MachineModel), () =>
     import('./machine' /* webpackChunkName: "machine" */).then((m) => m.MachinePage),
-  )
-  .set(referenceForModel(MachineDeploymentModel), () =>
-    import('./machine-deployment' /* webpackChunkName: "machine-deployment" */).then(
-      (m) => m.MachineDeploymentPage,
-    ),
   )
   .set(referenceForModel(MachineHealthCheckModel), () =>
     import('./machine-health-check' /* webpackChunkName: "machine-health-check" */).then(

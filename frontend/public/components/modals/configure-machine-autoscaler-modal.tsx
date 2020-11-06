@@ -1,101 +1,107 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import { useTranslation, Trans } from 'react-i18next';
 
 import { MachineAutoscalerModel } from '../../models';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { history, NumberSpinner, PromiseComponent, resourcePathFromModel } from '../utils';
+import {
+  HandlePromiseProps,
+  history,
+  NumberSpinner,
+  resourcePathFromModel,
+  withHandlePromise,
+} from '../utils';
 import { k8sCreate, K8sResourceKind } from '../../module/k8s';
 
-export class ConfigureMachineAutoscalerModal extends PromiseComponent<
-  ConfigureMachineAutoscalerModalProps,
-  ConfigureMachineAutoscalerModalState
-> {
-  readonly state: ConfigureMachineAutoscalerModalState = {
-    inProgress: false,
-    errorMessage: '',
-    minReplicas: 1,
-    maxReplicas: 12,
-  };
+const ConfigureMachineAutoscalerModal = withHandlePromise(
+  (props: ConfigureMachineAutoscalerModalProps) => {
+    const [minReplicas, setMinReplicas] = React.useState(1);
+    const [maxReplicas, setMaxReplicas] = React.useState(12);
 
-  changeMinReplicas = (event) => {
-    const minReplicas = _.toInteger(event.target.value);
-    this.setState({ minReplicas });
-  };
-
-  changeMinReplicasBy = (operation) => {
-    const minReplicas = this.state.minReplicas + operation;
-    this.setState({ minReplicas });
-  };
-
-  changeMaxReplicas = (event) => {
-    const maxReplicas = _.toInteger(event.target.value);
-    this.setState({ maxReplicas });
-  };
-
-  changeMaxReplicasBy = (operation) => {
-    const maxReplicas = this.state.maxReplicas + operation;
-    this.setState({ maxReplicas });
-  };
-
-  createAutoscaler = (): Promise<K8sResourceKind> => {
-    const {
-      apiVersion,
-      kind,
-      metadata: { name, namespace },
-    } = this.props.machineSet;
-    const { minReplicas, maxReplicas } = this.state;
-
-    const machineAutoscaler = {
-      apiVersion: 'autoscaling.openshift.io/v1beta1',
-      kind: 'MachineAutoscaler',
-      metadata: {
-        name,
-        namespace,
-      },
-      spec: {
-        minReplicas,
-        maxReplicas,
-        scaleTargetRef: {
-          apiVersion,
-          kind,
-          name,
-        },
-      },
+    const changeMinReplicas = (event) => {
+      setMinReplicas(_.toInteger(event.target.value));
     };
 
-    return k8sCreate(MachineAutoscalerModel, machineAutoscaler);
-  };
+    const changeMinReplicasBy = (operation) => {
+      setMinReplicas(minReplicas + operation);
+    };
 
-  submit = (event): void => {
-    event.preventDefault();
-    const { close } = this.props;
-    const promise = this.createAutoscaler();
-    this.handlePromise(promise).then((obj: K8sResourceKind) => {
-      close();
-      history.push(
-        resourcePathFromModel(MachineAutoscalerModel, obj.metadata.name, obj.metadata.namespace),
-      );
-    });
-  };
+    const changeMaxReplicas = (event) => {
+      setMaxReplicas(_.toInteger(event.target.value));
+    };
 
-  render() {
-    const { name } = this.props.machineSet.metadata;
+    const changeMaxReplicasBy = (operation) => {
+      setMaxReplicas(maxReplicas + operation);
+    };
+
+    const createAutoscaler = (): Promise<K8sResourceKind> => {
+      const {
+        apiVersion,
+        kind,
+        metadata: { name, namespace },
+      } = props.machineSet;
+
+      const machineAutoscaler = {
+        apiVersion: 'autoscaling.openshift.io/v1beta1',
+        kind: 'MachineAutoscaler',
+        metadata: {
+          name,
+          namespace,
+        },
+        spec: {
+          minReplicas,
+          maxReplicas,
+          scaleTargetRef: {
+            apiVersion,
+            kind,
+            name,
+          },
+        },
+      };
+      return k8sCreate(MachineAutoscalerModel, machineAutoscaler);
+    };
+
+    const submit = (event): void => {
+      event.preventDefault();
+      const { close } = props;
+      const promise = createAutoscaler();
+      props.handlePromise(promise, (obj: K8sResourceKind) => {
+        close();
+        history.push(
+          resourcePathFromModel(MachineAutoscalerModel, obj.metadata.name, obj.metadata.namespace),
+        );
+      });
+    };
+
+    const {
+      machineSet: {
+        metadata: { name },
+      },
+      inProgress,
+      errorMessage,
+      cancel,
+    } = props;
+    const { t } = useTranslation();
 
     return (
-      <form onSubmit={this.submit} name="form" className="modal-content">
-        <ModalTitle className="modal-header">Create Machine Autoscaler</ModalTitle>
+      <form onSubmit={submit} name="form" className="modal-content">
+        <ModalTitle className="modal-header">
+          {t('machine-sets~Create MachineAutoscaler')}
+        </ModalTitle>
         <ModalBody>
           <p>
-            This will automatically scale machine set <b>{name}</b>.
+            <Trans i18nKey="scale machine set" ns="machine-sets">
+              This will automatically scale machine set <b>{{ name }}</b>.
+            </Trans>
           </p>
           <div className="form-group">
             <label>
-              Minimum Replicas:
+              {t('machine-sets~Minimum replicas:')}
               <NumberSpinner
                 className="pf-c-form-control"
-                value={this.state.minReplicas}
-                onChange={this.changeMinReplicas}
-                changeValueBy={this.changeMinReplicasBy}
+                value={minReplicas}
+                onChange={changeMinReplicas}
+                changeValueBy={changeMinReplicasBy}
                 autoFocus
                 required
               />
@@ -103,39 +109,35 @@ export class ConfigureMachineAutoscalerModal extends PromiseComponent<
           </div>
           <div className="form-group">
             <label>
-              Maximum Replicas:
+              {t('machine-sets~Maximum replicas:')}
               <NumberSpinner
                 className="pf-c-form-control"
-                value={this.state.maxReplicas}
-                onChange={this.changeMaxReplicas}
-                changeValueBy={this.changeMaxReplicasBy}
+                value={maxReplicas}
+                onChange={changeMaxReplicas}
+                changeValueBy={changeMaxReplicasBy}
                 required
               />
             </label>
           </div>
         </ModalBody>
         <ModalSubmitFooter
-          inProgress={this.state.inProgress}
-          errorMessage={this.state.errorMessage}
-          cancel={this.props.cancel}
-          submitText="Create"
+          inProgress={inProgress}
+          errorMessage={errorMessage}
+          cancel={cancel}
+          submitText={t('public~Create')}
+          cancelText={t('public~Cancel')}
         />
       </form>
     );
-  }
-}
+  },
+);
 
 export const configureMachineAutoscalerModal = createModalLauncher(ConfigureMachineAutoscalerModal);
 
-export type ConfigureMachineAutoscalerModalProps = {
+type ConfigureMachineAutoscalerModalProps = {
   machineSet: K8sResourceKind;
-  cancel: (e: React.SyntheticEvent<any, Event>) => void;
+  cancel: () => void;
   close: () => void;
-};
-
-export type ConfigureMachineAutoscalerModalState = {
   inProgress: boolean;
-  errorMessage: string;
-  minReplicas: number;
-  maxReplicas: number;
-};
+  errorMessage?: string;
+} & HandlePromiseProps;

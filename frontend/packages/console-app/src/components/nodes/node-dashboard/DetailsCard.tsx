@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
@@ -19,27 +20,28 @@ const DetailsCard: React.FC = () => {
   const detailsLink = `${resourcePathFromModel(NodeModel, obj.metadata.name)}/details`;
   const instanceType = obj.metadata.labels?.['beta.kubernetes.io/instance-type'];
   const zone = obj.metadata.labels?.['topology.kubernetes.io/zone'];
+  const { t } = useTranslation();
   return (
     <DashboardCard data-test-id="details-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>Details</DashboardCardTitle>
-        <DashboardCardLink to={detailsLink}>View all</DashboardCardLink>
+        <DashboardCardTitle>{t('nodes~Details')}</DashboardCardTitle>
+        <DashboardCardLink to={detailsLink}>{t('nodes~View all')}</DashboardCardLink>
       </DashboardCardHeader>
       <DashboardCardBody>
         <DetailsBody>
-          <DetailItem isLoading={!obj} title="Node Name">
+          <DetailItem isLoading={!obj} title={t('nodes~Node name')}>
             {obj.metadata.name}
           </DetailItem>
-          <DetailItem isLoading={!obj} title="Role">
+          <DetailItem isLoading={!obj} title={t('nodes~Role')}>
             <NodeRoles node={obj} />
           </DetailItem>
-          <DetailItem isLoading={!obj} title="Instance Type" error={!instanceType}>
+          <DetailItem isLoading={!obj} title={t('nodes~Instance type')} error={!instanceType}>
             {instanceType}
           </DetailItem>
-          <DetailItem isLoading={!obj} title="Zone" error={!zone}>
+          <DetailItem isLoading={!obj} title={t('nodes~Zone')} error={!zone}>
             {zone}
           </DetailItem>
-          <DetailItem isLoading={!obj} title="Node Addresses">
+          <DetailItem isLoading={!obj} title={t('nodes~Node addresses')}>
             <NodeIPList ips={getNodeAddresses(obj)} expand />
           </DetailItem>
         </DetailsBody>

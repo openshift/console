@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { NodeKind } from '@console/internal/module/k8s';
 import { SectionHeading, Timestamp, CamelCaseWrap } from '@console/internal/components/utils';
 
@@ -8,18 +9,19 @@ type NodeDetailsConditionsProps = {
 };
 
 const NodeDetailsConditions: React.FC<NodeDetailsConditionsProps> = ({ node }) => {
+  const { t } = useTranslation();
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text="Node Conditions" />
+      <SectionHeading text={t('nodes~Node conditions')} />
       <div className="co-table-container">
         <table className="table">
           <thead>
             <tr>
-              <th>Type</th>
-              <th>Status</th>
-              <th>Reason</th>
-              <th>Updated</th>
-              <th>Changed</th>
+              <th>{t('nodes~Type')}</th>
+              <th>{t('nodes~Status')}</th>
+              <th>{t('nodes~Reason')}</th>
+              <th>{t('nodes~Updated')}</th>
+              <th>{t('nodes~Changed')}</th>
             </tr>
           </thead>
           <tbody>

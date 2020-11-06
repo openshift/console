@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 
 import { MachineHealthCheckModel, MachineModel } from '../models';
 import { K8sResourceKind, MachineHealthCheckKind } from '../module/k8s/types';
@@ -31,35 +32,6 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const MachineHealthCheckTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Namespace',
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-      id: 'namespace',
-    },
-    {
-      title: 'Created',
-      sortField: 'metadata.creationTimestamp',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[3] },
-    },
-  ];
-};
-MachineHealthCheckTableHeader.displayName = 'MachineHealthCheckTableHeader';
-
 const MachineHealthCheckTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
@@ -86,26 +58,58 @@ const MachineHealthCheckTableRow: RowFunction<K8sResourceKind> = ({ obj, index, 
   );
 };
 
-const MachineHealthCheckList: React.FC = (props) => (
-  <Table
-    {...props}
-    aria-label="Machine HealthChecks"
-    Header={MachineHealthCheckTableHeader}
-    Row={MachineHealthCheckTableRow}
-    virtualize
-  />
-);
+const MachineHealthCheckList: React.FC = (props) => {
+  const { t } = useTranslation();
+  const MachineHealthCheckTableHeader = () => {
+    return [
+      {
+        title: t('machine-health-checks~Name'),
+        sortField: 'metadata.name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[0] },
+      },
+      {
+        title: t('machine-health-checks~Namespace'),
+        sortField: 'metadata.namespace',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[1] },
+        id: 'namespace',
+      },
+      {
+        title: t('machine-health-checks~Created'),
+        sortField: 'metadata.creationTimestamp',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[2] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[3] },
+      },
+    ];
+  };
+
+  return (
+    <Table
+      {...props}
+      aria-label={t('machine-health-checks~MachineHealthChecks')}
+      Header={MachineHealthCheckTableHeader}
+      Row={MachineHealthCheckTableRow}
+      virtualize
+    />
+  );
+};
 
 const UnhealthyConditionsTable: React.FC<{ obj: K8sResourceKind }> = ({ obj }) => {
+  const { t } = useTranslation();
   return _.isEmpty(obj.spec.unhealthyConditions) ? (
-    <EmptyBox label="Unhealthy Conditions" />
+    <EmptyBox label={t('machine-health-checks~Unhealthy conditions')} />
   ) : (
     <table className="table">
       <thead>
         <tr>
-          <th>Status</th>
-          <th>Timeout</th>
-          <th>Type</th>
+          <th>{t('machine-health-checks~Status')}</th>
+          <th>{t('machine-health-checks~Timeout')}</th>
+          <th>{t('machine-health-checks~Type')}</th>
         </tr>
       </thead>
       <tbody>
@@ -122,15 +126,20 @@ const UnhealthyConditionsTable: React.FC<{ obj: K8sResourceKind }> = ({ obj }) =
 };
 
 const MachineHealthCheckDetails: React.FC<MachineHealthCheckDetailsProps> = ({ obj }) => {
+  const { t } = useTranslation();
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Machine HealthCheck Details" />
+        <SectionHeading text={t('machine-health-checks~MachineHealthCheck details')} />
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-6">
               <ResourceSummary resource={obj}>
-                <DetailsItem label="Selector" obj={obj} path="spec.selector">
+                <DetailsItem
+                  label={t('machine-health-checks~Selector')}
+                  obj={obj}
+                  path="spec.selector"
+                >
                   <Selector
                     kind={referenceForModel(MachineModel)}
                     selector={_.get(obj, 'spec.selector')}
@@ -141,16 +150,28 @@ const MachineHealthCheckDetails: React.FC<MachineHealthCheckDetailsProps> = ({ o
             </div>
             <div className="col-sm-6">
               <dl className="co-m-pane__details">
-                <DetailsItem label="Max Unhealthy" obj={obj} path="spec.maxUnhealthy" />
-                <DetailsItem label="Expected Machines" obj={obj} path="status.expectedMachines" />
-                <DetailsItem label="Current Healthy" obj={obj} path="status.currentHealthy" />
+                <DetailsItem
+                  label={t('machine-health-checks~Max unhealthy')}
+                  obj={obj}
+                  path="spec.maxUnhealthy"
+                />
+                <DetailsItem
+                  label={t('machine-health-checks~Expected machines')}
+                  obj={obj}
+                  path="status.expectedMachines"
+                />
+                <DetailsItem
+                  label={t('machine-health-checks~Current healthy')}
+                  obj={obj}
+                  path="status.currentHealthy"
+                />
               </dl>
             </div>
           </div>
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="Unhealthy Conditions" />
+        <SectionHeading text={t('machine-health-checks~Unhealthy conditions')} />
         <UnhealthyConditionsTable obj={obj} />
       </div>
     </>

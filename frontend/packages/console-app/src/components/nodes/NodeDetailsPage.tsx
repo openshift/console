@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { navFactory } from '@console/internal/components/utils';
 import { PodsPage } from '@console/internal/components/pod';
 import { ResourceEventStream } from '@console/internal/components/events';
@@ -13,17 +14,18 @@ import NodeDashboard from './node-dashboard/NodeDashboard';
 
 const NodeDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
   const { editYaml, events, pods } = navFactory;
+  const { t } = useTranslation();
 
   const pagesFor = React.useCallback(
     (node: NodeKind) => [
       {
         href: '',
-        name: 'Overview',
+        name: t('nodes~Overview'),
         component: NodeDashboard,
       },
       {
         href: 'details',
-        name: 'Details',
+        name: t('nodes~Details'),
         component: NodeDetails,
       },
       editYaml(),
@@ -37,10 +39,10 @@ const NodeDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (pro
           (k === 'node.openshift.io/os_id' && v === 'Windows') ||
           (k === 'corev1.LabelOSStable' && v === 'windows'),
       )
-        ? [{ href: 'terminal', name: 'Terminal', component: NodeTerminal }]
+        ? [{ href: 'terminal', name: t('nodes~Terminal'), component: NodeTerminal }]
         : []),
     ],
-    [editYaml, events, pods],
+    [editYaml, events, pods, t],
   );
 
   return (

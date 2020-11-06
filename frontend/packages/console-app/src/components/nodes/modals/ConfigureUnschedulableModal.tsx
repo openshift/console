@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ModalTitle,
   ModalBody,
@@ -27,17 +28,19 @@ const ConfigureUnschedulableModal: React.FC<ConfigureUnschedulableModalProps> = 
     event.preventDefault();
     handlePromise(makeNodeUnschedulable(resource), close);
   };
+  const { t } = useTranslation();
   return (
     <form onSubmit={handleSubmit} name="form" className="modal-content ">
-      <ModalTitle>Mark as Unschedulable</ModalTitle>
+      <ModalTitle>{t('nodes~Mark as unschedulable')}</ModalTitle>
       <ModalBody>
-        Unschedulable nodes won&#39;t accept new pods. This is useful for scheduling maintenance or
-        preparing to decommission a node.
+        {t(
+          "nodes~Unschedulable nodes won't accept new pods. This is useful for scheduling maintenance or preparing to decommission a node.",
+        )}
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={errorMessage}
         inProgress={inProgress}
-        submitText="Mark Unschedulable"
+        submitText={t('nodes~Mark unschedulable')}
         cancel={cancel}
       />
     </form>

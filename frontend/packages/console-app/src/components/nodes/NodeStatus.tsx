@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
 import {
   getNodeSecondaryStatus,
@@ -35,6 +36,7 @@ const getDegradedStates = (node: NodeKind): Condition[] => {
 
 const NodeStatus: React.FC<NodeStatusProps> = ({ node, showPopovers = false, className }) => {
   const status = showPopovers ? getDegradedStates(node) : [];
+  const { t } = useTranslation();
   return (
     <>
       {!node.spec.unschedulable ? (
@@ -51,7 +53,10 @@ const NodeStatus: React.FC<NodeStatusProps> = ({ node, showPopovers = false, cla
               current={_.startCase(item)}
               consumers={PressureQueries[item](node.metadata.name)}
               humanize={humanizeMap[item]}
-              description={`This node's ${conditionDescriptionMap[item]}. Performance may be degraded.`}
+              description={t(
+                "nodes~This node's {{conditionDescription}}. Performance may be degraded.",
+                { conditionDescription: conditionDescriptionMap[item] },
+              )}
             />
           </div>
         ))}
