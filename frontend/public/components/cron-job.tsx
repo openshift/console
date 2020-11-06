@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-
+import { useTranslation } from 'react-i18next';
 import { getPodsForResource } from '@console/shared';
 import {
   DetailsPage,
@@ -25,7 +25,6 @@ import {
   SectionHeading,
   Timestamp,
   navFactory,
-  pluralize,
 } from './utils';
 import { ResourceEventStream } from './events';
 import { CronJobModel } from '../models';
@@ -45,47 +44,6 @@ const tableColumnClasses = [
   classNames('col-lg-3', 'hidden-md', 'hidden-sm', 'hidden-xs'),
   Kebab.columnClass,
 ];
-
-const CronJobTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Namespace',
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-      id: 'namespace',
-    },
-    {
-      title: 'Schedule',
-      sortField: 'spec.schedule',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Concurrency Policy',
-      sortField: 'spec.concurrencyPolicy',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: 'Starting Deadline Seconds',
-      sortField: 'spec.startingDeadlineSeconds',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[5] },
-    },
-  ];
-};
-CronJobTableHeader.displayName = 'CronJobTableHeader';
 
 const CronJobTableRow: RowFunction<CronJobKind> = ({ obj: cronjob, index, key, style }) => {
   return (
@@ -124,57 +82,66 @@ const CronJobTableRow: RowFunction<CronJobKind> = ({ obj: cronjob, index, key, s
 
 const CronJobDetails: React.FC<CronJobDetailsProps> = ({ obj: cronjob }) => {
   const job = cronjob.spec.jobTemplate;
+  const { t } = useTranslation();
   return (
     <>
       <div className="co-m-pane__body">
         <div className="row">
           <div className="col-md-6">
-            <SectionHeading text="CronJob Details" />
+            <SectionHeading text={t('workload~CronJob details')} />
             <ResourceSummary resource={cronjob}>
-              <DetailsItem label="Schedule" obj={cronjob} path="spec.schedule" />
-              <DetailsItem label="Concurrency Policy" obj={cronjob} path="spec.concurrencyPolicy" />
+              <DetailsItem label={t('workload~Schedule')} obj={cronjob} path="spec.schedule" />
               <DetailsItem
-                label="Starting Deadline Seconds"
+                label={t('workload~Concurrency policy')}
+                obj={cronjob}
+                path="spec.concurrencyPolicy"
+              />
+              <DetailsItem
+                label={t('workload~Starting deadline seconds')}
                 obj={cronjob}
                 path="spec.startingDeadlineSeconds"
               >
                 {cronjob.spec.startingDeadlineSeconds
-                  ? pluralize(cronjob.spec.startingDeadlineSeconds, 'second')
-                  : 'Not Configured'}
+                  ? t('workload~second', { count: cronjob.spec.startingDeadlineSeconds })
+                  : t('workload~Not configured')}
               </DetailsItem>
-              <DetailsItem label="Last Schedule Time" obj={cronjob} path="status.lastScheduleTime">
+              <DetailsItem
+                label={t('workload~Last schedule time')}
+                obj={cronjob}
+                path="status.lastScheduleTime"
+              >
                 <Timestamp timestamp={cronjob.status.lastScheduleTime} />
               </DetailsItem>
             </ResourceSummary>
           </div>
           <div className="col-md-6">
-            <SectionHeading text="Job Details" />
+            <SectionHeading text={t('workload~Job details')} />
             <dl className="co-m-pane__details">
               <DetailsItem
-                label="Desired Completions"
+                label={t('workload~Desired completions')}
                 obj={cronjob}
                 path="spec.jobTemplate.spec.completions"
               />
               <DetailsItem
-                label="Parallelism"
+                label={t('workload~Parallelism')}
                 obj={cronjob}
                 path="spec.jobTemplate.spec.parallelism"
               />
               <DetailsItem
-                label="Active Deadline Seconds"
+                label={t('workload~Active deadline seconds')}
                 obj={cronjob}
                 path="spec.jobTemplate.spec.activeDeadlineSeconds"
               >
                 {job.spec.activeDeadlineSeconds
-                  ? pluralize(job.spec.activeDeadlineSeconds, 'second')
-                  : 'Not Configured'}
+                  ? t('workload~second', { count: job.spec.activeDeadlineSeconds })
+                  : t('workload~Not configured')}
               </DetailsItem>
             </dl>
           </div>
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="Containers" />
+        <SectionHeading text={t('workload~Containers')} />
         <ContainerTable containers={job.spec.template.spec.containers} />
       </div>
     </>
@@ -258,15 +225,56 @@ export const CronJobJobsComponent: React.FC<CronJobJobsComponentProps> = ({ obj 
   </div>
 );
 
-export const CronJobsList: React.FC = (props) => (
-  <Table
-    {...props}
-    aria-label={CronJobModel.labelPlural}
-    Header={CronJobTableHeader}
-    Row={CronJobTableRow}
-    virtualize
-  />
-);
+export const CronJobsList: React.FC = (props) => {
+  const { t } = useTranslation();
+  const CronJobTableHeader = () => [
+    {
+      title: t('workload~Name'),
+      sortField: 'metadata.name',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: t('workload~Namespace'),
+      sortField: 'metadata.namespace',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+      id: 'namespace',
+    },
+    {
+      title: t('workload~Schedule'),
+      sortField: 'spec.schedule',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: t('workload~Concurrency policy'),
+      sortField: 'spec.concurrencyPolicy',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: t('workload~Starting deadline seconds'),
+      sortField: 'spec.startingDeadlineSeconds',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[4] },
+    },
+    {
+      title: '',
+      props: { className: tableColumnClasses[5] },
+    },
+  ];
+
+  return (
+    <Table
+      {...props}
+      aria-label={CronJobModel.labelPlural}
+      Header={CronJobTableHeader}
+      Row={CronJobTableRow}
+      virtualize
+    />
+  );
+};
 
 export const CronJobsPage: React.FC<CronJobsPageProps> = (props) => (
   <ListPage {...props} ListComponent={CronJobsList} kind={kind} canCreate={true} />
