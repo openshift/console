@@ -54,6 +54,38 @@ const validationConfig: ValidationConfig<OvirtProviderField> = {
       return null;
     },
   },
+  [OvirtProviderField.CERTIFICATE]: {
+    detectValueChanges: [OvirtProviderField.CERTIFICATE],
+    validator: (field) => {
+      const certificate = iGetFieldValue(field);
+
+      const invalidHeader = certificate && !certificate?.startsWith('-----BEGIN CERTIFICATE-----');
+      const invalidFooter = certificate && !certificate?.endsWith('-----END CERTIFICATE-----');
+
+      if (invalidHeader && invalidFooter) {
+        return asValidationObject(
+          `Invalid CA PEM format. First line has to be "-----BEGIN CERTIFICATE-----" \n\n and last line has to be "-----END CERTIFICATE-----"`,
+          ValidationErrorType.Error,
+        );
+      }
+
+      if (invalidFooter) {
+        return asValidationObject(
+          `Invalid CA PEM format. Last line has to be "-----END CERTIFICATE-----"`,
+          ValidationErrorType.Error,
+        );
+      }
+
+      if (invalidHeader) {
+        return asValidationObject(
+          `Invalid CA PEM format. First line has to be "-----BEGIN CERTIFICATE-----"`,
+          ValidationErrorType.Error,
+        );
+      }
+
+      return null;
+    },
+  },
 };
 
 export const validateOvirtSettings = (options: UpdateOptions) => {

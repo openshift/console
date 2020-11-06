@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button, Split, SplitItem, TextInput, ButtonVariant } from '@patternfly/react-core';
 import { connect } from 'react-redux';
+import { ValidationErrorType } from '@console/shared';
 import { OvirtProviderField, VMImportProvider, VMWareProviderField } from '../../../types';
 import { vmWizardActions } from '../../../redux/actions';
 import { ActionType } from '../../../redux/types';
@@ -19,8 +20,10 @@ import {
   iGetProviderFieldAttribute,
   iGetProviderFieldValue,
 } from '../../../selectors/immutable/provider/common';
-import { iGetOvirtFieldValue } from '../../../selectors/immutable/provider/ovirt/selectors';
-import { ValidationErrorType } from '@console/shared';
+import {
+  iGetOvirtFieldAttribute,
+  iGetOvirtFieldValue,
+} from '../../../selectors/immutable/provider/ovirt/selectors';
 
 const VMImportPasswordConnected: React.FC<VMImportPasswordConnectedProps> = React.memo(
   ({
@@ -105,11 +108,20 @@ const stateToProps = (state, { wizardReduxID, provider }) => {
     (!validationField || !isValidationCritical);
 
   if (provider === VMImportProvider.OVIRT && hasAllPrerequisiteValuesFiled) {
-    hasAllPrerequisiteValuesFiled = !!iGetOvirtFieldValue(
+    const certificateValidation = iGetOvirtFieldAttribute(
       state,
       wizardReduxID,
       OvirtProviderField.CERTIFICATE,
+      'validation',
     );
+    const isCertificateValidationCritical = [
+      ValidationErrorType.TrivialError,
+      ValidationErrorType.Error,
+    ].includes(iGet(certificateValidation, 'type'));
+
+    hasAllPrerequisiteValuesFiled =
+      !!iGetOvirtFieldValue(state, wizardReduxID, OvirtProviderField.CERTIFICATE) &&
+      !isCertificateValidationCritical;
   }
 
   return {
