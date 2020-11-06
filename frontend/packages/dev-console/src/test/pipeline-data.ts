@@ -1,5 +1,6 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { Pipeline, PipelineRun, TaskRunKind } from '../utils/pipeline-augment';
+import { Pipeline, PipelineRun, TaskRunKind, PipelineSpec } from '../utils/pipeline-augment';
+import { TektonResourceLabel } from '../components/pipelines/const';
 
 export enum DataState {
   IN_PROGRESS = 'In Progress',
@@ -35,7 +36,218 @@ type CombinedPipelineTestData = {
 };
 
 type PipelineTestData = { [key in PipelineExampleNames]?: CombinedPipelineTestData };
+type PipelineSpecData = { [key in PipelineExampleNames]?: PipelineSpec };
 
+const pipelineSpec: PipelineSpecData = {
+  [PipelineExampleNames.SIMPLE_PIPELINE]: {
+    tasks: [
+      {
+        name: 'hello-world-1',
+        taskRef: { name: 'hello-world-1' },
+      },
+      {
+        name: 'hello-world-truncate-more-than-20-char',
+        taskRef: { name: 'hello-world-truncate-more-than-20-char' },
+      },
+    ],
+  },
+  [PipelineExampleNames.PARTIAL_PIPELINE]: {
+    tasks: [
+      { name: 'hello-world-1', taskRef: { name: 'hello-world-1' } },
+      {
+        name: 'hello-world-truncate-more-than-20-char',
+        taskRef: { name: 'hello-world-truncate-more-than-20-char' },
+      },
+      { name: 'hello-world-3', taskRef: { name: 'hello-world-3' } },
+    ],
+  },
+  [PipelineExampleNames.COMPLEX_PIPELINE]: {
+    tasks: [
+      { name: 'build-app', taskRef: { name: 'noop-task' } },
+      { name: 'analyse-code', runAfter: ['build-app'], taskRef: { name: 'noop-task' } },
+      { name: 'style-checks', runAfter: ['build-app'], taskRef: { name: 'noop-task' } },
+      { name: 'find-bugs', runAfter: ['build-app'], taskRef: { name: 'noop-task' } },
+      {
+        name: 'build-image',
+        runAfter: ['find-bugs', 'style-checks', 'analyse-code'],
+        taskRef: { name: 'noop-task' },
+      },
+      { name: 'deploy-image', runAfter: ['build-image'], taskRef: { name: 'noop-task' } },
+      { name: 'test-suite-1', runAfter: ['deploy-image'], taskRef: { name: 'noop-task' } },
+      { name: 'test-suite-2', runAfter: ['deploy-image'], taskRef: { name: 'noop-task' } },
+      { name: 'test-suite-3', runAfter: ['deploy-image'], taskRef: { name: 'noop-task' } },
+      { name: 'test-suite-4', runAfter: ['deploy-image'], taskRef: { name: 'noop-task' } },
+      { name: 'test-suite-5', runAfter: ['deploy-image'], taskRef: { name: 'noop-task' } },
+      { name: 'test-suite-6', runAfter: ['deploy-image'], taskRef: { name: 'noop-task' } },
+      {
+        name: 'verify',
+        runAfter: [
+          'test-suite-1',
+          'test-suite-2',
+          'test-suite-3',
+          'test-suite-4',
+          'test-suite-5',
+          'test-suite-6',
+        ],
+        taskRef: { name: 'noop-task' },
+      },
+    ],
+  },
+  [PipelineExampleNames.CLUSTER_PIPELINE]: {
+    tasks: [
+      {
+        name: 'install-deps',
+        taskRef: { kind: 'ClusterTask', name: 'cluster-install-dependencies' },
+      },
+      {
+        name: 'code-sanity',
+        runAfter: ['install-deps'],
+        taskRef: { kind: 'ClusterTask', name: 'cluster-lint-and-test' },
+      },
+      {
+        name: 'compile',
+        runAfter: ['install-deps'],
+        taskRef: { kind: 'ClusterTask', name: 'cluster-build-dist' },
+      },
+      {
+        name: 'e2e-tests',
+        runAfter: ['code-sanity', 'compile'],
+        taskRef: { kind: 'ClusterTask', name: 'cluster-run-e2e-tests' },
+      },
+    ],
+  },
+  [PipelineExampleNames.BROKEN_MOCK_APP]: {
+    tasks: [
+      {
+        name: 'install-deps',
+        taskRef: {
+          kind: 'Task',
+          name: 'install-dependencies-2',
+        },
+      },
+      {
+        name: 'code-sanity',
+        runAfter: ['install-deps'],
+        taskRef: {
+          kind: 'Task',
+          name: 'lint-and-test-2',
+        },
+      },
+      {
+        name: 'x-compile',
+        runAfter: ['install-deps'],
+        taskRef: {
+          kind: 'Task',
+          name: 'build-dist-2',
+        },
+      },
+      {
+        name: 'e2e-tests',
+        runAfter: ['code-sanity', 'x-compile'],
+        taskRef: {
+          kind: 'Task',
+          name: 'run-e2e-tests-2',
+        },
+      },
+    ],
+  },
+  [PipelineExampleNames.INVALID_PIPELINE_MISSING_TASK]: {
+    tasks: [{ name: 'build-dist', taskRef: { kind: 'Task', name: 'not-a-task' } }],
+  },
+  [PipelineExampleNames.INVALID_PIPELINE_INVALID_TASK]: {
+    tasks: [
+      {
+        name: 'git-clone',
+        params: [
+          {
+            name: 'url',
+            value: 'https://github.com/nodeshift-starters/nodejs-rest-http',
+          },
+          {
+            name: 'revision',
+            value: 'master',
+          },
+          {
+            name: 'submodules',
+            value: 'true',
+          },
+          {
+            name: 'depth',
+            value: '1',
+          },
+          {
+            name: 'sslVerify',
+            value: 'true',
+          },
+          {
+            name: 'deleteExisting',
+            value: 'false',
+          },
+        ],
+        taskRef: {
+          kind: 'ClusterTask',
+          name: 'git-clone',
+        },
+      },
+    ],
+  },
+  [PipelineExampleNames.WORKSPACE_PIPELINE]: {
+    tasks: [
+      {
+        name: 'fetch-the-recipe',
+        taskRef: {
+          kind: 'Task',
+          name: 'fetch-secure-data',
+        },
+        workspaces: [
+          {
+            name: 'super-secret-password',
+            workspace: 'password-vault',
+          },
+          {
+            name: 'secure-store',
+            workspace: 'recipe-store',
+          },
+          {
+            name: 'filedrop',
+            workspace: 'shared-data',
+          },
+        ],
+      },
+      {
+        name: 'print-the-recipe',
+        params: [
+          {
+            name: 'filename',
+            value: 'recipe.txt',
+          },
+        ],
+        runAfter: ['fetch-the-recipe'],
+        taskRef: {
+          kind: 'Task',
+          name: 'print-data',
+        },
+        workspaces: [
+          {
+            name: 'storage',
+            workspace: 'shared-data',
+          },
+        ],
+      },
+    ],
+    workspaces: [
+      {
+        name: 'password-vault',
+      },
+      {
+        name: 'recipe-store',
+      },
+      {
+        name: 'shared-data',
+      },
+    ],
+  },
+};
 export const pipelineTestData: PipelineTestData = {
   [PipelineExampleNames.SIMPLE_PIPELINE]: {
     dataSource: 'simple-pipeline',
@@ -46,18 +258,7 @@ export const pipelineTestData: PipelineTestData = {
         name: 'simple-pipeline',
         namespace: 'tekton-pipelines',
       },
-      spec: {
-        tasks: [
-          {
-            name: 'hello-world-1',
-            taskRef: { name: 'hello-world-1' },
-          },
-          {
-            name: 'hello-world-truncate-more-than-20-char',
-            taskRef: { name: 'hello-world-truncate-more-than-20-char' },
-          },
-        ],
-      },
+      spec: pipelineSpec[PipelineExampleNames.SIMPLE_PIPELINE],
     },
     pipelineRuns: {
       [DataState.IN_PROGRESS]: {
@@ -67,6 +268,7 @@ export const pipelineTestData: PipelineTestData = {
           name: 'simple-pipeline-br8cxv',
           namespace: 'tekton-pipelines',
           creationTimestamp: '2020-10-29T06:11:46Z',
+          labels: { [TektonResourceLabel.pipeline]: 'simple-pipeline' },
         },
         spec: {
           pipelineRef: { name: 'simple-pipeline' },
@@ -76,6 +278,8 @@ export const pipelineTestData: PipelineTestData = {
           ],
         },
         status: {
+          completionTime: '2019-12-10T11:18:38Z',
+          pipelineSpec: pipelineSpec[PipelineExampleNames.SIMPLE_PIPELINE],
           conditions: [
             {
               lastTransitionTime: '2019-09-12T20:38:01Z',
@@ -114,6 +318,7 @@ export const pipelineTestData: PipelineTestData = {
           name: 'simple-pipeline-p1bun0',
           namespace: 'tekton-pipelines',
           creationTimestamp: '2020-10-29T09:58:19Z',
+          labels: { [TektonResourceLabel.pipeline]: 'simple-pipeline' },
         },
         spec: {
           pipelineRef: { name: 'simple-pipeline' },
@@ -126,6 +331,8 @@ export const pipelineTestData: PipelineTestData = {
           ],
         },
         status: {
+          pipelineSpec: pipelineSpec[PipelineExampleNames.SIMPLE_PIPELINE],
+          completionTime: '2019-10-29T11:57:53Z',
           conditions: [
             {
               lastTransitionTime: '2019-09-12T20:38:01Z',
@@ -168,16 +375,7 @@ export const pipelineTestData: PipelineTestData = {
         name: 'partial-pipeline',
         namespace: 'tekton-pipelines',
       },
-      spec: {
-        tasks: [
-          { name: 'hello-world-1', taskRef: { name: 'hello-world-1' } },
-          {
-            name: 'hello-world-truncate-more-than-20-char',
-            taskRef: { name: 'hello-world-truncate-more-than-20-char' },
-          },
-          { name: 'hello-world-3', taskRef: { name: 'hello-world-3' } },
-        ],
-      },
+      spec: pipelineSpec[PipelineExampleNames.PARTIAL_PIPELINE],
     },
     pipelineRuns: {
       [DataState.FAILED_BUT_COMPLETE]: {
@@ -186,11 +384,13 @@ export const pipelineTestData: PipelineTestData = {
         metadata: {
           name: 'partial-pipeline-3tt7aw',
           namespace: 'tekton-pipelines',
+          labels: { [TektonResourceLabel.pipeline]: 'partial-pipeline' },
         },
         spec: {
           pipelineRef: { name: 'partial-pipeline' },
         },
         status: {
+          pipelineSpec: pipelineSpec[PipelineExampleNames.PARTIAL_PIPELINE],
           conditions: [
             {
               status: 'False',
@@ -210,38 +410,7 @@ export const pipelineTestData: PipelineTestData = {
         name: 'complex-pipeline',
         namespace: 'tekton-pipelines',
       },
-      spec: {
-        tasks: [
-          { name: 'build-app', taskRef: { name: 'noop-task' } },
-          { name: 'analyse-code', runAfter: ['build-app'], taskRef: { name: 'noop-task' } },
-          { name: 'style-checks', runAfter: ['build-app'], taskRef: { name: 'noop-task' } },
-          { name: 'find-bugs', runAfter: ['build-app'], taskRef: { name: 'noop-task' } },
-          {
-            name: 'build-image',
-            runAfter: ['find-bugs', 'style-checks', 'analyse-code'],
-            taskRef: { name: 'noop-task' },
-          },
-          { name: 'deploy-image', runAfter: ['build-image'], taskRef: { name: 'noop-task' } },
-          { name: 'test-suite-1', runAfter: ['deploy-image'], taskRef: { name: 'noop-task' } },
-          { name: 'test-suite-2', runAfter: ['deploy-image'], taskRef: { name: 'noop-task' } },
-          { name: 'test-suite-3', runAfter: ['deploy-image'], taskRef: { name: 'noop-task' } },
-          { name: 'test-suite-4', runAfter: ['deploy-image'], taskRef: { name: 'noop-task' } },
-          { name: 'test-suite-5', runAfter: ['deploy-image'], taskRef: { name: 'noop-task' } },
-          { name: 'test-suite-6', runAfter: ['deploy-image'], taskRef: { name: 'noop-task' } },
-          {
-            name: 'verify',
-            runAfter: [
-              'test-suite-1',
-              'test-suite-2',
-              'test-suite-3',
-              'test-suite-4',
-              'test-suite-5',
-              'test-suite-6',
-            ],
-            taskRef: { name: 'noop-task' },
-          },
-        ],
-      },
+      spec: pipelineSpec[PipelineExampleNames.COMPLEX_PIPELINE],
     },
     pipelineRuns: {
       [DataState.CANCELLED1]: {
@@ -250,6 +419,7 @@ export const pipelineTestData: PipelineTestData = {
         metadata: {
           name: 'complex-pipeline-fm4hax',
           namespace: 'tekton-pipelines',
+          labels: { [TektonResourceLabel.pipeline]: 'complex-pipeline' },
         },
         spec: {
           params: [{ name: 'APP_NAME', value: '' }],
@@ -261,6 +431,7 @@ export const pipelineTestData: PipelineTestData = {
           status: 'PipelineRunCancelled',
         },
         status: {
+          pipelineSpec: pipelineSpec[PipelineExampleNames.COMPLEX_PIPELINE],
           conditions: [
             {
               reason: 'PipelineRunCancelled',
@@ -287,6 +458,7 @@ export const pipelineTestData: PipelineTestData = {
         metadata: {
           name: 'complex-pipeline-fm4hax',
           namespace: 'tekton-pipelines',
+          labels: { [TektonResourceLabel.pipeline]: 'complex-pipeline' },
         },
         spec: {
           params: [{ name: 'APP_NAME', value: '' }],
@@ -297,6 +469,7 @@ export const pipelineTestData: PipelineTestData = {
           ],
         },
         status: {
+          pipelineSpec: pipelineSpec[PipelineExampleNames.COMPLEX_PIPELINE],
           conditions: [
             {
               status: 'False',
@@ -322,6 +495,7 @@ export const pipelineTestData: PipelineTestData = {
         metadata: {
           name: 'complex-pipeline-fm4hax',
           namespace: 'tekton-pipelines',
+          labels: { [TektonResourceLabel.pipeline]: 'complex-pipeline' },
         },
         spec: {
           params: [{ name: 'APP_NAME', value: '' }],
@@ -333,6 +507,7 @@ export const pipelineTestData: PipelineTestData = {
           status: 'PipelineRunCancelled',
         },
         status: {
+          pipelineSpec: pipelineSpec[PipelineExampleNames.COMPLEX_PIPELINE],
           conditions: [
             {
               reason: 'PipelineRunCancelled',
@@ -384,6 +559,7 @@ export const pipelineTestData: PipelineTestData = {
         metadata: {
           name: 'complex-pipeline-fm4hax',
           namespace: 'tekton-pipelines',
+          labels: { [TektonResourceLabel.pipeline]: 'complex-pipeline' },
         },
         spec: {
           params: [{ name: 'APP_NAME', value: '' }],
@@ -394,6 +570,7 @@ export const pipelineTestData: PipelineTestData = {
           ],
         },
         status: {
+          pipelineSpec: pipelineSpec[PipelineExampleNames.COMPLEX_PIPELINE],
           conditions: [
             {
               status: 'False',
@@ -438,6 +615,7 @@ export const pipelineTestData: PipelineTestData = {
         metadata: {
           name: 'complex-pipeline-fm4hax',
           namespace: 'tekton-pipelines',
+          labels: { [TektonResourceLabel.pipeline]: 'complex-pipeline' },
         },
         spec: {
           params: [{ name: 'APP_NAME', value: '' }],
@@ -448,6 +626,7 @@ export const pipelineTestData: PipelineTestData = {
           ],
         },
         status: {
+          pipelineSpec: pipelineSpec[PipelineExampleNames.COMPLEX_PIPELINE],
           conditions: [
             {
               status: 'False',
@@ -522,6 +701,7 @@ export const pipelineTestData: PipelineTestData = {
         metadata: {
           name: 'complex-pipeline-fm4hax',
           namespace: 'tekton-pipelines',
+          labels: { [TektonResourceLabel.pipeline]: 'complex-pipeline' },
         },
         spec: {
           params: [{ name: 'APP_NAME', value: '' }],
@@ -533,6 +713,7 @@ export const pipelineTestData: PipelineTestData = {
           status: 'PipelineRunCancelled',
         },
         status: {
+          pipelineSpec: pipelineSpec[PipelineExampleNames.COMPLEX_PIPELINE],
           conditions: [
             {
               reason: 'PipelineRunCancelled',
@@ -608,6 +789,7 @@ export const pipelineTestData: PipelineTestData = {
         metadata: {
           name: 'complex-pipeline-6w9np2',
           namespace: 'tekton-pipelines',
+          labels: { [TektonResourceLabel.pipeline]: 'complex-pipeline' },
         },
         spec: {
           params: [{ name: 'APP_NAME', value: '' }],
@@ -618,6 +800,7 @@ export const pipelineTestData: PipelineTestData = {
           ],
         },
         status: {
+          pipelineSpec: pipelineSpec[PipelineExampleNames.COMPLEX_PIPELINE],
           taskRuns: {
             'complex-pipeline-6w9np2-build-app-6gkss': {
               pipelineTaskName: 'build-app',
@@ -636,6 +819,7 @@ export const pipelineTestData: PipelineTestData = {
         metadata: {
           name: 'complex-pipeline-6w9np2',
           namespace: 'tekton-pipelines',
+          labels: { [TektonResourceLabel.pipeline]: 'complex-pipeline' },
         },
         spec: {
           params: [{ name: 'APP_NAME', value: '' }],
@@ -646,6 +830,7 @@ export const pipelineTestData: PipelineTestData = {
           ],
         },
         status: {
+          pipelineSpec: pipelineSpec[PipelineExampleNames.COMPLEX_PIPELINE],
           taskRuns: {
             'complex-pipeline-6w9np2-test-suite-3-kh8pz': {
               pipelineTaskName: 'test-suite-3',
@@ -772,29 +957,7 @@ export const pipelineTestData: PipelineTestData = {
           '/apis/tekton.dev/v1alpha1/namespaces/openshift/pipelines/cluster-mock-app-pipeline',
         uid: 'd22b9451-cd71-47f3-be1a-4ca93647b76e',
       },
-      spec: {
-        tasks: [
-          {
-            name: 'install-deps',
-            taskRef: { kind: 'ClusterTask', name: 'cluster-install-dependencies' },
-          },
-          {
-            name: 'code-sanity',
-            runAfter: ['install-deps'],
-            taskRef: { kind: 'ClusterTask', name: 'cluster-lint-and-test' },
-          },
-          {
-            name: 'compile',
-            runAfter: ['install-deps'],
-            taskRef: { kind: 'ClusterTask', name: 'cluster-build-dist' },
-          },
-          {
-            name: 'e2e-tests',
-            runAfter: ['code-sanity', 'compile'],
-            taskRef: { kind: 'ClusterTask', name: 'cluster-run-e2e-tests' },
-          },
-        ],
-      },
+      spec: pipelineSpec[PipelineExampleNames.CLUSTER_PIPELINE],
     },
     pipelineRuns: {
       [DataState.SUCCESS]: {
@@ -822,6 +985,7 @@ export const pipelineTestData: PipelineTestData = {
         },
         status: {
           completionTime: '2019-11-22T15:21:55Z',
+          pipelineSpec: pipelineSpec[PipelineExampleNames.CLUSTER_PIPELINE],
           conditions: [
             {
               lastTransitionTime: '2019-11-22T15:21:55Z',
@@ -1023,41 +1187,7 @@ export const pipelineTestData: PipelineTestData = {
       metadata: {
         name: 'broken-app-pipeline',
       },
-      spec: {
-        tasks: [
-          {
-            name: 'install-deps',
-            taskRef: {
-              kind: 'Task',
-              name: 'install-dependencies-2',
-            },
-          },
-          {
-            name: 'code-sanity',
-            runAfter: ['install-deps'],
-            taskRef: {
-              kind: 'Task',
-              name: 'lint-and-test-2',
-            },
-          },
-          {
-            name: 'x-compile',
-            runAfter: ['install-deps'],
-            taskRef: {
-              kind: 'Task',
-              name: 'build-dist-2',
-            },
-          },
-          {
-            name: 'e2e-tests',
-            runAfter: ['code-sanity', 'x-compile'],
-            taskRef: {
-              kind: 'Task',
-              name: 'run-e2e-tests-2',
-            },
-          },
-        ],
-      },
+      spec: pipelineSpec[PipelineExampleNames.BROKEN_MOCK_APP],
     },
     pipelineRuns: {
       [DataState.FAILED1]: {
@@ -1078,6 +1208,7 @@ export const pipelineTestData: PipelineTestData = {
           timeout: '1h0m0s',
         },
         status: {
+          pipelineSpec: pipelineSpec[PipelineExampleNames.BROKEN_MOCK_APP],
           completionTime: '2020-07-13T17:22:41Z',
           conditions: [
             {
@@ -1245,9 +1376,7 @@ export const pipelineTestData: PipelineTestData = {
       metadata: {
         name: 'task-ref-error',
       },
-      spec: {
-        tasks: [{ name: 'build-dist', taskRef: { kind: 'Task', name: 'not-a-task' } }],
-      },
+      spec: pipelineSpec[PipelineExampleNames.INVALID_PIPELINE_MISSING_TASK],
     },
     pipelineRuns: {
       [DataState.FAILED1]: {
@@ -1268,12 +1397,12 @@ export const pipelineTestData: PipelineTestData = {
           timeout: '1h0m0s',
         },
         status: {
+          pipelineSpec: pipelineSpec[PipelineExampleNames.INVALID_PIPELINE_MISSING_TASK],
           completionTime: '2020-07-13T17:21:05Z',
           conditions: [
             {
               lastTransitionTime: '2020-07-13T17:21:05Z',
-              message:
-                'Pipeline andrew/task-ref-error can\'t be Run; it contains Tasks that don\'t exist: Couldn\'t retrieve Task "not-a-task": task.tekton.dev "not-a-task" not found',
+              message: 'Test error text',
               reason: 'CouldntGetTask',
               status: 'False',
               type: 'Succeeded',
@@ -1292,43 +1421,7 @@ export const pipelineTestData: PipelineTestData = {
       metadata: {
         name: 'new-pipeline',
       },
-      spec: {
-        tasks: [
-          {
-            name: 'git-clone',
-            params: [
-              {
-                name: 'url',
-                value: 'https://github.com/nodeshift-starters/nodejs-rest-http',
-              },
-              {
-                name: 'revision',
-                value: 'master',
-              },
-              {
-                name: 'submodules',
-                value: 'true',
-              },
-              {
-                name: 'depth',
-                value: '1',
-              },
-              {
-                name: 'sslVerify',
-                value: 'true',
-              },
-              {
-                name: 'deleteExisting',
-                value: 'false',
-              },
-            ],
-            taskRef: {
-              kind: 'ClusterTask',
-              name: 'git-clone',
-            },
-          },
-        ],
-      },
+      spec: pipelineSpec[PipelineExampleNames.INVALID_PIPELINE_INVALID_TASK],
     },
     pipelineRuns: {
       [DataState.FAILED1]: {
@@ -1349,6 +1442,7 @@ export const pipelineTestData: PipelineTestData = {
           timeout: '1h0m0s',
         },
         status: {
+          pipelineSpec: pipelineSpec[PipelineExampleNames.INVALID_PIPELINE_INVALID_TASK],
           completionTime: '2020-07-13T17:16:28Z',
           conditions: [
             {
@@ -1392,62 +1486,7 @@ export const pipelineTestData: PipelineTestData = {
         name: 'fetch-and-print-recipe',
         uid: 'c59a2137-05ec-4909-8d2b-0baea237210b',
       },
-      spec: {
-        tasks: [
-          {
-            name: 'fetch-the-recipe',
-            taskRef: {
-              kind: 'Task',
-              name: 'fetch-secure-data',
-            },
-            workspaces: [
-              {
-                name: 'super-secret-password',
-                workspace: 'password-vault',
-              },
-              {
-                name: 'secure-store',
-                workspace: 'recipe-store',
-              },
-              {
-                name: 'filedrop',
-                workspace: 'shared-data',
-              },
-            ],
-          },
-          {
-            name: 'print-the-recipe',
-            params: [
-              {
-                name: 'filename',
-                value: 'recipe.txt',
-              },
-            ],
-            runAfter: ['fetch-the-recipe'],
-            taskRef: {
-              kind: 'Task',
-              name: 'print-data',
-            },
-            workspaces: [
-              {
-                name: 'storage',
-                workspace: 'shared-data',
-              },
-            ],
-          },
-        ],
-        workspaces: [
-          {
-            name: 'password-vault',
-          },
-          {
-            name: 'recipe-store',
-          },
-          {
-            name: 'shared-data',
-          },
-        ],
-      },
+      spec: pipelineSpec[PipelineExampleNames.WORKSPACE_PIPELINE],
     },
     pipelineRuns: {
       [DataState.SUCCESS]: {
@@ -1494,6 +1533,8 @@ export const pipelineTestData: PipelineTestData = {
           ],
         },
         status: {
+          startTime: '2020-10-07T07:36:01Z',
+          pipelineSpec: pipelineSpec[PipelineExampleNames.WORKSPACE_PIPELINE],
           conditions: [
             {
               lastTransitionTime: '2020-10-07T07:36:01Z',

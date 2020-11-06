@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { resourcePathFromModel } from '@console/internal/components/utils';
-import { Pipeline, PipelineRun } from '../../../utils/pipeline-augment';
+import { PipelineRun } from '../../../utils/pipeline-augment';
 import { PipelineRunModel } from '../../../models';
-import { PipelineTaskStatus } from './PipelineTaskStatus';
+import { PipelineBars } from './PipelineBars';
 
 export interface LinkedPipelineRunTaskStatusProps {
-  pipeline?: Pipeline;
   pipelineRun: PipelineRun;
 }
 
@@ -15,15 +14,10 @@ export interface LinkedPipelineRunTaskStatusProps {
  * If it does not, it'll just render the pipeline status.
  */
 const LinkedPipelineRunTaskStatus: React.FC<LinkedPipelineRunTaskStatusProps> = ({
-  pipeline,
   pipelineRun,
 }) => {
   const pipelineStatus = (
-    <PipelineTaskStatus
-      key={pipelineRun.metadata?.name}
-      pipeline={pipeline}
-      pipelinerun={pipelineRun}
-    />
+    <PipelineBars key={pipelineRun.metadata?.name} pipelinerun={pipelineRun} />
   );
 
   if (pipelineRun.metadata?.name && pipelineRun.metadata?.namespace) {

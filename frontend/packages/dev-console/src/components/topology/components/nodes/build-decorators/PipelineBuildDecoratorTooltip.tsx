@@ -2,7 +2,7 @@ import * as React from 'react';
 import {
   getRunStatusColor,
   getTaskStatus,
-  Pipeline,
+  PipelineRun,
   runStatus,
 } from '../../../../../utils/pipeline-augment';
 import HorizontalStackedBars from '../../../../charts/HorizontalStackedBars';
@@ -10,19 +10,19 @@ import TaskStatusToolTip from '../../../../pipelineruns/status/TaskStatusTooltip
 import './PipelineBuildDecoratorTooltip.scss';
 
 export interface PipelineBuildDecoratorTooltipProps {
-  pipeline: Pipeline;
+  pipelineRun: PipelineRun;
   status: string;
 }
 
 const PipelineBuildDecoratorTooltip: React.FC<PipelineBuildDecoratorTooltipProps> = ({
-  pipeline,
+  pipelineRun,
   status,
 }) => {
-  if (!pipeline || !status) {
+  if (!pipelineRun || !status) {
     return null;
   }
 
-  const taskStatus = getTaskStatus(pipeline.latestRun, pipeline);
+  const taskStatus = getTaskStatus(pipelineRun);
   const pipelineBars = (
     <HorizontalStackedBars
       height="1em"

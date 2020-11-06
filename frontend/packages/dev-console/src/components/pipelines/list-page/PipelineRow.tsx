@@ -45,11 +45,7 @@ const PipelineRow: RowFunction<Pipeline> = ({ obj, index, key, style }) => {
         )}
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        {obj.latestRun ? (
-          <LinkedPipelineRunTaskStatus pipeline={obj} pipelineRun={obj.latestRun} />
-        ) : (
-          '-'
-        )}
+        {obj.latestRun ? <LinkedPipelineRunTaskStatus pipelineRun={obj.latestRun} /> : '-'}
       </TableData>
       <TableData className={tableColumnClasses[4]}>
         <Status status={pipelineFilterReducer(obj)} />

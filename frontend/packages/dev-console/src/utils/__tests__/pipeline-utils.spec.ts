@@ -10,7 +10,7 @@ import { SecretAnnotationId } from '../../components/pipelines/const';
 import {
   getPipelineTasks,
   containerToLogSourceStatus,
-  constructCurrentPipeline,
+  getLatestPipelineRunStatus,
   getPipelineRunParams,
   pipelineRunDuration,
   getSecretAnnotations,
@@ -62,23 +62,18 @@ describe('pipeline-utils ', () => {
     expect(status).toBe(LOG_SOURCE_TERMINATED);
   });
 
-  it('expect constructCurrentPipeline to return nothing if not provided with valid data', () => {
-    expect(constructCurrentPipeline(null, null)).toBeNull();
-    expect(constructCurrentPipeline(constructPipelineData.pipeline, null)).toBeNull();
-    expect(constructCurrentPipeline(constructPipelineData.pipeline, [])).toBeNull();
-    expect(constructCurrentPipeline(null, constructPipelineData.pipelineRuns)).toBeNull();
+  it('expect getLatestPipelineRunStatus to return nothing if not provided with valid data', () => {
+    expect(getLatestPipelineRunStatus(null)).toBeNull();
+    expect(getLatestPipelineRunStatus([])).toBeNull();
   });
 
-  it('expect constructCurrentPipeline to produce a grouped pipeline with the latest run', () => {
-    const data = constructCurrentPipeline(
-      constructPipelineData.pipeline,
-      constructPipelineData.pipelineRuns,
-    );
+  it('expect getLatestPipelineRunStatus to return the latest pipeline run', () => {
+    const data = getLatestPipelineRunStatus(constructPipelineData.pipelineRuns);
 
     expect(data).not.toBeNull();
-    expect(data.currentPipeline).not.toBeNull();
-    expect(data.currentPipeline.latestRun).not.toBeUndefined();
-    expect(data.currentPipeline.latestRun).not.toBeNull();
+    expect(data.latestPipelineRun).not.toBeNull();
+    expect(data.latestPipelineRun).not.toBeUndefined();
+    expect(data.latestPipelineRun).not.toBeNull();
     expect(data.status).not.toBeNull();
     expect(data.status).toBe('Pending');
   });

@@ -3,7 +3,7 @@ import { Status } from '@console/shared';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { BuildModel } from '@console/internal/models';
 import { PipelineRunModel } from '../../../../../models';
-import { constructCurrentPipeline } from '../../../../../utils/pipeline-utils';
+import { getLatestPipelineRunStatus } from '../../../../../utils/pipeline-utils';
 import { WorkloadData } from '../../../topology-types';
 import PipelineBuildDecoratorTooltip from './PipelineBuildDecoratorTooltip';
 import { runStatus } from '../../../../../utils/pipeline-augment';
@@ -21,24 +21,27 @@ export const getBuildDecoratorParts = (workloadData: WorkloadData): BuildDecorat
   let decoratorIcon = null;
   let linkRef = null;
 
-  let currentPipelineStatus = null;
+  let latestPipelineRunStatus = null;
   if (connectedPipeline) {
-    const { pipelineRuns, pipeline } = connectedPipeline;
-    currentPipelineStatus = constructCurrentPipeline(pipeline, pipelineRuns);
+    const { pipelineRuns } = connectedPipeline;
+    latestPipelineRunStatus = getLatestPipelineRunStatus(pipelineRuns);
   }
 
-  if (currentPipelineStatus) {
-    const { currentPipeline, status } = currentPipelineStatus;
+  if (latestPipelineRunStatus) {
+    const { latestPipelineRun, status } = latestPipelineRunStatus;
     if (status === runStatus.PipelineNotStarted) {
       tooltipContent = 'Pipeline not started';
     } else {
-      tooltipContent = <PipelineBuildDecoratorTooltip pipeline={currentPipeline} status={status} />;
+      tooltipContent = (
+        <PipelineBuildDecoratorTooltip pipelineRun={latestPipelineRun} status={status} />
+      );
     }
+
     decoratorIcon = <Status status={status} iconOnly noTooltip />;
     linkRef = `${resourcePathFromModel(
       PipelineRunModel,
-      currentPipeline.latestRun.metadata.name,
-      currentPipeline.latestRun.metadata.namespace,
+      latestPipelineRun.metadata.name,
+      latestPipelineRun.metadata.namespace,
     )}/logs`;
   } else if (build) {
     tooltipContent = `Build ${build.status && build.status.phase}`;
