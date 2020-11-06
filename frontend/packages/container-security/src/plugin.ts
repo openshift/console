@@ -17,7 +17,7 @@ import { ImageManifestVulnModel } from './models';
 import { ContainerSecurityFlag } from './const';
 import { securityHealthHandler } from './components/summary';
 import { WatchImageVuln } from './types';
-import { PodModel } from '@console/internal/models';
+import { NamespaceModel, PodModel, ProjectModel } from '@console/internal/models';
 
 type ConsumedExtensions =
   | ModelDefinition
@@ -143,6 +143,40 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/image-manifest-vuln' /* webpackChunkName: "container-security" */
         ).then((m) => m.ImageManifestVulnPodTab),
+    },
+    flags: {
+      required: [ContainerSecurityFlag],
+    },
+  },
+  {
+    type: 'HorizontalNavTab',
+    properties: {
+      model: ProjectModel,
+      page: {
+        name: 'Vulnerabilities',
+        href: 'vulnerabilities',
+      },
+      loader: () =>
+        import(
+          './components/image-manifest-vuln' /* webpackChunkName: "project-image-vuln-list" */
+        ).then((m) => m.ProjectImageManifestVulnListPage),
+    },
+    flags: {
+      required: [ContainerSecurityFlag],
+    },
+  },
+  {
+    type: 'HorizontalNavTab',
+    properties: {
+      model: NamespaceModel,
+      page: {
+        name: 'Vulnerabilities',
+        href: 'vulnerabilities',
+      },
+      loader: () =>
+        import(
+          './components/image-manifest-vuln' /* webpackChunkName: "project-image-vuln-list" */
+        ).then((m) => m.ProjectImageManifestVulnListPage),
     },
     flags: {
       required: [ContainerSecurityFlag],

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import * as classNames from 'classnames';
-import { Tooltip } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { EmptyState, EmptyStateVariant, Title, Tooltip } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import { SecurityIcon } from '@patternfly/react-icons';
 import {
@@ -13,7 +14,7 @@ import {
   ListPage,
   RowFunction,
 } from '@console/internal/components/factory';
-import { GreenCheckCircleIcon } from '@console/shared/';
+import { EmptyStateResourceBadge, GreenCheckCircleIcon } from '@console/shared/';
 import { referenceForModel, PodKind, ContainerStatus } from '@console/internal/module/k8s';
 import { match } from 'react-router';
 import {
@@ -26,7 +27,6 @@ import {
   Firehose,
   FirehoseResult,
   Loading,
-  MsgBox,
 } from '@console/internal/components/utils';
 import { ChartDonut } from '@patternfly/react-charts';
 import { DefaultList } from '@console/internal/components/default-resource';
@@ -44,6 +44,13 @@ const shortenImage = (img: string) =>
     .slice(1, 3)
     .join('/');
 const shortenHash = (hash: string) => hash.slice(7, 18);
+export const totalCount = (obj: ImageManifestVuln) => {
+  if (!obj.status) return 0;
+  const { highCount = 0, mediumCount = 0, lowCount = 0, unknownCount = 0 } = obj.status;
+  return highCount + mediumCount + lowCount + unknownCount;
+};
+export const affectedPodsCount = (obj: ImageManifestVuln) =>
+  Object.keys(obj.status.affectedPods).length;
 
 export const ImageVulnerabilityRow: React.FC<ImageVulnerabilityRowProps> = (props) => {
   return (
@@ -65,6 +72,7 @@ export const ImageVulnerabilityRow: React.FC<ImageVulnerabilityRowProps> = (prop
 };
 
 export const ImageVulnerabilitiesTable: React.FC<ImageVulnerabilitiesTableProps> = (props) => {
+  const { t } = useTranslation();
   const vulnerabilites = _.sortBy(
     _.flatten(
       props.features.map((feature) =>
@@ -79,11 +87,21 @@ export const ImageVulnerabilitiesTable: React.FC<ImageVulnerabilitiesTableProps>
       <SectionHeading text="Vulnerabilities" />
       <div className="co-m-table-grid co-m-table-grid--bordered">
         <div className="row co-m-table-grid__head">
-          <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">Vulnerability</div>
-          <div className="col-lg-2 col-md-2 col-sm-5 col-xs-6">Severity</div>
-          <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs">Package</div>
-          <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">Current Version</div>
-          <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">Fixed in Version</div>
+          <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
+            {t('container-security~Vulnerability')}
+          </div>
+          <div className="col-lg-2 col-md-2 col-sm-5 col-xs-6">
+            {t('container-security~Severity')}
+          </div>
+          <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs">
+            {t('container-security~Package')}
+          </div>
+          <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">
+            {t('container-security~Current Version')}
+          </div>
+          <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">
+            {t('container-security~Fixed in Version')}
+          </div>
         </div>
         <div className="co-m-table-grid__body">
           {vulnerabilites.map(({ feature, vulnerability }) => (
@@ -101,6 +119,7 @@ export const ImageVulnerabilitiesTable: React.FC<ImageVulnerabilitiesTableProps>
 };
 
 export const ImageManifestVulnDetails: React.FC<ImageManifestVulnDetailsProps> = (props) => {
+  const { t } = useTranslation();
   const total = props.obj.spec.features.reduce((sum, f) => sum + f.vulnerabilities.length, 0);
 
   return (
@@ -122,15 +141,28 @@ export const ImageManifestVulnDetails: React.FC<ImageManifestVulnDetailsProps> =
             />
           </div>
           <div className="imagemanifestvuln-details__summary">
-            <h3>Quay Security Scanner has detected {total} vulnerabilities.</h3>
-            <h4>Patches are available for {props.obj.status.fixableCount} vulnerabilities.</h4>
+            <h3>
+              {t(
+                'container-security~Quay Security Scanner has detected {{total, number}} vulnerabilities.',
+                { total },
+              )}
+            </h3>
+            <h4>
+              {t(
+                'container-security~Patches are available for {{fixableCount, number}} vulnerabilities.',
+                {
+                  fixableCount: props.obj.status.fixableCount,
+                },
+              )}
+            </h4>
             <div className="imagemanifestvuln-details__summary-list">
               {vulnPriority
                 .map((v, k) =>
                   totalFor(k)(props.obj) > 0 ? (
                     <span style={{ margin: '5px' }} key={v.index}>
                       <SecurityIcon color={v.color.value} />
-                      &nbsp;<strong>{totalFor(k)(props.obj)}</strong> {v.title} vulnerabilities.
+                      &nbsp;<strong>{totalFor(k)(props.obj)}</strong>{' '}
+                      {t('container-security~{{title}} vulnerabilities', { title: v.title })}.
                     </span>
                   ) : null,
                 )
@@ -182,6 +214,7 @@ export const AffectedPods: React.FC<AffectedPodsProps> = (props) => {
 export const ImageManifestVulnDetailsPage: React.FC<ImageManifestVulnDetailsPageProps> = (
   props,
 ) => {
+  const { t } = useTranslation();
   return (
     <DetailsPage
       match={props.match}
@@ -198,7 +231,7 @@ export const ImageManifestVulnDetailsPage: React.FC<ImageManifestVulnDetailsPage
         navFactory.editYaml(),
         {
           href: 'pods',
-          name: 'Affected Pods',
+          name: t('container-security~Affected Pods'),
           component: AffectedPods,
         },
       ]}
@@ -206,8 +239,15 @@ export const ImageManifestVulnDetailsPage: React.FC<ImageManifestVulnDetailsPage
   );
 };
 
-// TODO(alecmerdler): Fix classes here to ensure responsiveness
-const tableColumnClasses = ['', '', '', '', '', ''];
+const tableColumnClasses = [
+  '',
+  classNames('pf-m-hidden', 'pf-m-visible-on-md', 'co-break-word'),
+  '',
+  classNames('pf-m-hidden', 'pf-m-visible-on-md'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+];
 
 export const ImageManifestVulnTableRow: RowFunction<ImageManifestVuln> = ({
   obj,
@@ -216,7 +256,6 @@ export const ImageManifestVulnTableRow: RowFunction<ImageManifestVuln> = ({
   style,
 }) => {
   const { name, namespace } = obj.metadata;
-
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -227,7 +266,7 @@ export const ImageManifestVulnTableRow: RowFunction<ImageManifestVuln> = ({
           displayName={shortenImage(obj.spec.image)}
         />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      <TableData className={tableColumnClasses[1]} columnID="namespace">
         <ResourceLink kind="Namespace" name={namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
@@ -240,60 +279,80 @@ export const ImageManifestVulnTableRow: RowFunction<ImageManifestVuln> = ({
           <Loading />
         )}
       </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        {Object.keys(obj.status.affectedPods).length}
-      </TableData>
+      <TableData className={tableColumnClasses[3]}>{affectedPodsCount(obj)}</TableData>
       <TableData className={tableColumnClasses[4]}>{obj.status.fixableCount || 0}</TableData>
-      <TableData className={tableColumnClasses[4]}>
+      <TableData className={tableColumnClasses[5]}>{totalCount(obj)}</TableData>
+      <TableData className={tableColumnClasses[6]}>
         <ExternalLink text={shortenHash(obj.spec.manifest)} href={quayURLFor(obj)} />
       </TableData>
     </TableRow>
   );
 };
 
-export const ImageManifestVulnTableHeader = () => [
+export const ImageManifestVulnTableHeader = (t) => [
   {
-    title: 'Image Name',
+    title: t('container-security~Image Name'),
     sortField: 'spec.image',
     transforms: [sortable],
     props: { className: tableColumnClasses[0] },
   },
   {
-    title: 'Namespace',
+    title: t('container-security~Namespace'),
     sortField: 'metadata.namespace',
     transforms: [sortable],
     props: { className: tableColumnClasses[1] },
+    id: 'namespace',
   },
   {
-    title: 'Highest Severity',
+    title: t('container-security~Highest Severity'),
     sortField: 'status.highestSeverity',
     transforms: [sortable],
     props: { className: tableColumnClasses[2] },
   },
   {
-    title: 'Affected Pods',
+    title: t('container-security~Affected Pods'),
     props: { className: tableColumnClasses[3] },
+    transforms: [sortable],
+    sortFunc: 'affectedPodsOrder',
   },
   {
-    title: 'Fixable',
+    title: t('container-security~Fixable'),
     sortField: 'status.fixableCount',
     transforms: [sortable],
     props: { className: tableColumnClasses[4] },
   },
   {
-    title: 'Manifest',
+    title: t('container-security~Total'),
+    sortFunc: 'totalOrder',
+    transforms: [sortable],
     props: { className: tableColumnClasses[5] },
+  },
+  {
+    title: t('container-security~Manifest'),
+    props: { className: tableColumnClasses[6] },
   },
 ];
 
 export const ImageManifestVulnList: React.FC<ImageManifestVulnListProps> = (props) => {
-  const EmptyMsg = () => <MsgBox title="No Image Vulnerabilities Found" detail="" />;
+  const { t } = useTranslation();
+  const EmptyMsg = () => (
+    <EmptyState variant={EmptyStateVariant.large}>
+      <Title headingLevel="h4" size="lg">
+        <EmptyStateResourceBadge model={ImageManifestVulnModel} />
+        {t('container-security~No Image Vulnerabilities found')}
+      </Title>
+    </EmptyState>
+  );
 
   return (
     <Table
       {...props}
-      aria-label="Image Manifest Vulnerabilities"
-      Header={ImageManifestVulnTableHeader}
+      customSorts={{
+        totalOrder: totalCount,
+        affectedPodsOrder: affectedPodsCount,
+      }}
+      aria-label={t('container-security~Image Manifest Vulnerabilities')}
+      Header={() => ImageManifestVulnTableHeader(t)}
       Row={ImageManifestVulnTableRow}
       EmptyMsg={EmptyMsg}
       virtualize
@@ -302,31 +361,40 @@ export const ImageManifestVulnList: React.FC<ImageManifestVulnListProps> = (prop
 };
 
 export const ImageManifestVulnPage: React.FC<ImageManifestVulnPageProps> = (props) => {
+  const { t } = useTranslation();
+  const { showTitle = true, hideNameLabelFilters = true } = props;
+  const namespace = props.namespace || props.match.params.ns || props.match.params.name;
   return (
     <MultiListPage
       {...props}
-      namespace={props.namespace}
+      namespace={namespace}
       resources={[
         {
           kind: referenceForModel(ImageManifestVulnModel),
-          namespace: props.namespace,
+          namespace,
           namespaced: true,
           prop: 'imageManifestVuln',
         },
       ]}
       flatten={(resources) => _.get(resources.imageManifestVuln, 'data', [])}
-      title="Image Manifest Vulnerabilities"
+      title={t('container-security~Image Manifest Vulnerabilities')}
+      textFilter="image-name"
       canCreate={false}
-      showTitle
-      hideNameLabelFilters
+      showTitle={showTitle}
+      hideNameLabelFilters={hideNameLabelFilters}
       ListComponent={ImageManifestVulnList}
     />
   );
 };
 
+export const ProjectImageManifestVulnListPage: React.FC<ImageManifestVulnPageProps> = (props) => (
+  <ImageManifestVulnPage {...props} showTitle={false} hideNameLabelFilters={false} />
+);
+
 const podKey = (pod: PodKind) => [pod.metadata.namespace, pod.metadata.name].join('/');
 
 export const ContainerVulnerabilities: React.FC<ContainerVulnerabilitiesProps> = (props) => {
+  const { t } = useTranslation();
   const vulnFor = (containerStatus: ContainerStatus) =>
     _.get(props.imageManifestVuln, 'data', []).find(
       (imv) =>
@@ -345,11 +413,11 @@ export const ContainerVulnerabilities: React.FC<ContainerVulnerabilitiesProps> =
     <div className="co-m-pane__body">
       <div className="co-m-table-grid co-m-table-grid--bordered">
         <div className="row co-m-table-grid__head">
-          <div className="col-md-3">Container</div>
-          <div className="col-md-4">Image</div>
+          <div className="col-md-3">{t('container-security~Container')}</div>
+          <div className="col-md-4">{t('container-security~Image')}</div>
           <div className="col-md-2">
             <Tooltip content="Results provided by Quay security scanner">
-              <span>Security Scan</span>
+              <span>{t('container-security~Security Scan')}</span>
             </Tooltip>
           </div>
         </div>
@@ -388,8 +456,7 @@ export const ContainerVulnerabilities: React.FC<ContainerVulnerabilitiesProps> =
                     ),
                     () => (
                       <span>
-                        <GreenCheckCircleIcon />
-                        &nbsp;No vulnerabilities found
+                        <GreenCheckCircleIcon /> {t('container-security~No vulnerabilities found')}
                       </span>
                     ),
                   )
@@ -440,7 +507,9 @@ export type ImageManifestVulnDetailsPageProps = {
 
 export type ImageManifestVulnPageProps = {
   namespace?: string;
-  match?: match<{ ns?: string }>;
+  match?: match<{ ns?: string; name?: string }>;
+  hideNameLabelFilters?: boolean;
+  showTitle?: boolean;
   selector?: { [key: string]: string };
 };
 
