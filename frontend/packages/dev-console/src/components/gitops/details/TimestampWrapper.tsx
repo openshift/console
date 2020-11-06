@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { Timestamp } from '@console/internal/components/utils';
 import {
@@ -16,6 +17,7 @@ interface TimestampWrapperProps {
 
 const TimestampWrapper: React.FC<TimestampWrapperProps> = ({ resModels }) => {
   const [lastUpdatedTimestamp, setLastUpdatedTimestamp] = React.useState<number>(null);
+  const { t } = useTranslation();
   const memoResources = React.useMemo(() => {
     let resources = {};
     _.forEach(resModels, (res) => {
@@ -55,7 +57,7 @@ const TimestampWrapper: React.FC<TimestampWrapperProps> = ({ resModels }) => {
       {lastUpdatedTimestamp ? (
         <Timestamp timestamp={lastUpdatedTimestamp} />
       ) : (
-        <div>Info not available</div>
+        <div>{t('devconsole~Info not available')}</div>
       )}
     </>
   );

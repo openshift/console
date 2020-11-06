@@ -21,11 +21,11 @@ const GitOpsDetailsPageHeading: React.FC<GitOpsDetailsPageHeadingProps> = ({
   const { t } = useTranslation();
   const breadcrumbs = [
     {
-      name: 'Application Stages',
+      name: t('devconsole~Application Stages'),
       path: '/applicationstages',
     },
     {
-      name: 'Application Details',
+      name: t('devconsole~Application Details'),
       path: `${url}`,
     },
   ];
@@ -41,7 +41,7 @@ const GitOpsDetailsPageHeading: React.FC<GitOpsDetailsPageHeadingProps> = ({
         {badge && <span className="co-m-pane__heading-badge">{badge}</span>}
       </h1>
       <Split className="odc-gitops-details-page-heading__repo" hasGutter>
-        <SplitItem>Manifest File Repo:</SplitItem>
+        <SplitItem>{t('devconsole~Manifest File Repo')}:</SplitItem>
         <SplitItem isFilled>
           <Label
             style={{ fontSize: '12px' }}

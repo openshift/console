@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
+import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router-dom';
 import * as _ from 'lodash';
 import { LoadingBox } from '@console/internal/components/utils';
@@ -18,6 +19,7 @@ import GitOpsDetailsController from './details/GitOpsDetailsController';
 type GitOpsDetailsPageProps = RouteComponentProps<{ appName?: string }>;
 
 const GitOpsDetailsPage: React.FC<GitOpsDetailsPageProps> = ({ match, location }) => {
+  const { t } = useTranslation();
   const [envs, setEnvs] = React.useState<string[]>(null);
   const [envsData, setEnvsData] = React.useState<GitOpsEnvironment[]>(null);
   const [emptyStateMsg, setEmptyStateMsg] = React.useState(null);
@@ -42,8 +44,9 @@ const GitOpsDetailsPage: React.FC<GitOpsDetailsPageProps> = ({ match, location }
       if (ignore) return;
       const app = _.find(appGroups, (appObj) => appName === appObj?.name);
       if (!app?.environments) {
-        emptyMsg =
-          'Environment details were not found. Try reloading the page or contacting an administrator.';
+        emptyMsg = t(
+          'devconsole~Environment details were not found. Try reloading the page or contacting an administrator.',
+        );
       }
       setEmptyStateMsg(emptyMsg);
       setEnvs(app?.environments);
@@ -54,7 +57,7 @@ const GitOpsDetailsPage: React.FC<GitOpsDetailsPageProps> = ({ match, location }
     return () => {
       ignore = true;
     };
-  }, [appName, manifestURL, pipelinesBaseURI]);
+  }, [appName, manifestURL, pipelinesBaseURI, t]);
 
   React.useEffect(() => {
     const getEnvsData = async () => {
@@ -75,7 +78,7 @@ const GitOpsDetailsPage: React.FC<GitOpsDetailsPageProps> = ({ match, location }
   return (
     <>
       <Helmet>
-        <title>{`${appName} · Details`}</title>
+        <title>{t('devconsole~{{appName}} · Details', { appName })}</title>
       </Helmet>
       <GitOpsDetailsPageHeading
         url={match.url}

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   StackItem,
   Card,
@@ -18,6 +19,7 @@ interface GitOpsServiceDetailsSectionProps {
 }
 
 const GitOpsServiceDetailsSection: React.FC<GitOpsServiceDetailsSectionProps> = ({ services }) => {
+  const { t } = useTranslation();
   return (
     <>
       {_.map(
@@ -35,7 +37,7 @@ const GitOpsServiceDetailsSection: React.FC<GitOpsServiceDetailsSectionProps> = 
                 </CardTitle>
                 <CardBody>
                   <Label className="co-nowrap" style={{ fontSize: '12px' }} color="cyan">
-                    {service.image || <div>Image not available</div>}
+                    {service.image || <div>{t('devconsole~Image not available')}</div>}
                   </Label>
                   <Split className="odc-gitops-service__details">
                     <SplitItem>
@@ -58,7 +60,7 @@ const GitOpsServiceDetailsSection: React.FC<GitOpsServiceDetailsSectionProps> = 
                     />
                   ) : (
                     <div className="odc-gitops-service__details">
-                      Service source URL not available
+                      {t('devconsole~Service source URL not available')}
                     </div>
                   )}
                 </CardBody>

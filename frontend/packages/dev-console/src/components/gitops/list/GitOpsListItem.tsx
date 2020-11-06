@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { Grid, GridItem, Card, CardBody } from '@patternfly/react-core';
 import { history, ResourceLink } from '@console/internal/components/utils';
 import { GitOpsAppGroupData } from '../utils/gitops-types';
@@ -10,6 +11,7 @@ interface GitOpsListItemProps {
 }
 
 const GitOpsListItem: React.FC<GitOpsListItemProps> = ({ appGroup }) => {
+  const { t } = useTranslation();
   const handleCardClick = () => {
     history.push(`/applicationstages/${appGroup.name}?url=${appGroup.repo_url}`);
   };
@@ -22,7 +24,9 @@ const GitOpsListItem: React.FC<GitOpsListItemProps> = ({ appGroup }) => {
             <ResourceLink kind="application" name={appGroup.name} linkTo={false} />
           </GridItem>
           <GridItem lg={6} md={6} sm={6}>
-            {`${_.size(appGroup.environments)} Environments`}
+            {t('devconsole~{{count, number}} Environment', {
+              count: _.size(appGroup.environments),
+            })}
           </GridItem>
         </Grid>
       </CardBody>
