@@ -7,6 +7,7 @@ import {
   CEPH_STORAGE_NAMESPACE,
   OCS_DEVICE_SET_REPLICA,
   ATTACHED_DEVICES_ANNOTATION,
+  OCS_DEVICE_SET_ARBITER_REPLICA,
 } from '../../constants';
 import { hasLabel, getName } from '@console/shared';
 import { cephStorageLabel } from '../../selectors';
@@ -75,11 +76,12 @@ export const createDeviceSet = (
   osdSize: string,
   portable: boolean,
   resources?: ResourceConstraints,
+  replica?: number,
 ): DeviceSet => ({
   name: `ocs-deviceset-${scName}`,
   count: 1,
   portable,
-  replica: OCS_DEVICE_SET_REPLICA,
+  replica,
   resources: resources ?? {},
   placement: {},
   dataPVCTemplate: {
@@ -104,10 +106,15 @@ export const getOCSRequestData = (
   publicNetwork?: string,
   clusterNetwork?: string,
   kmsEnable?: boolean,
+  selectedArbiterZone?: string,
+  stretchClusterChecked?: boolean,
 ): StorageClusterKind => {
   const scName: string = getName(storageClass);
   const isNoProvisioner: boolean = storageClass.provisioner === NO_PROVISIONER;
   const isPortable: boolean = !isNoProvisioner;
+  const replica: number = stretchClusterChecked
+    ? OCS_DEVICE_SET_ARBITER_REPLICA
+    : OCS_DEVICE_SET_REPLICA;
 
   const requestData: StorageClusterKind = {
     apiVersion: 'ocs.openshift.io/v1',
@@ -123,8 +130,18 @@ export const getOCSRequestData = (
         enable: encrypted,
         kms: Object.assign(kmsEnable ? { enable: true } : {}),
       },
+      arbiter: {
+        enabled: stretchClusterChecked,
+        zone: selectedArbiterZone,
+      },
       storageDeviceSets: [
-        createDeviceSet(scName, storage, isPortable, isMinimal ? MIN_DEVICESET_RESOURCES : {}),
+        createDeviceSet(
+          scName,
+          storage,
+          isPortable,
+          isMinimal ? MIN_DEVICESET_RESOURCES : {},
+          replica,
+        ),
       ],
       ...Object.assign(
         publicNetwork

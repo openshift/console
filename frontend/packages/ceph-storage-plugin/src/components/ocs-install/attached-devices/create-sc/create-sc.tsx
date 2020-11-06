@@ -238,15 +238,27 @@ const CreateSC: React.FC<CreateSCProps> = ({ match, hasNoProvSC, mode, lsoNs }) 
     const { appName, ns } = match.params;
     try {
       setInProgress(true);
-      const { storageClass, encryption, nodes, enableMinimal, kms } = state;
+      const {
+        storageClass,
+        encryption,
+        nodes,
+        enableMinimal,
+        kms,
+        publicNetwork,
+        clusterNetwork,
+        selectedArbiterZone,
+        stretchClusterChecked,
+      } = state;
       const storageCluster: StorageClusterKind = getOCSRequestData(
         storageClass,
         defaultRequestSize.BAREMETAL,
         encryption.clusterWide,
         enableMinimal,
-        '',
-        '',
+        publicNetwork,
+        clusterNetwork,
         kms.hasHandled && encryption.advanced,
+        selectedArbiterZone,
+        stretchClusterChecked,
       );
       const promises: Promise<K8sResourceKind>[] = [...labelNodes(nodes)];
       if (encryption.advanced && kms.hasHandled) {

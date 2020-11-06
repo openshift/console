@@ -14,7 +14,7 @@ import { humanizeCpuCores, ResourceLink } from '@console/internal/components/uti
 import { NodeKind } from '@console/internal/module/k8s';
 import { Table } from '@console/internal/components/factory';
 import { IRow, sortable } from '@patternfly/react-table';
-import { hasOCSTaint, hasNoTaints, getConvertedUnits } from '../../utils/install';
+import { getConvertedUnits, nodesWithoutTaints } from '../../utils/install';
 import { cephStorageLabel } from '../../selectors';
 import { ZONE_LABELS } from '../../constants';
 import { GetRows, NodeTableProps } from './types';
@@ -39,7 +39,7 @@ const getRows: GetRows = (
 ) => {
   const { data } = componentProps;
 
-  const filteredData = data.filter((node: NodeKind) => hasOCSTaint(node) || hasNoTaints(node));
+  const filteredData = nodesWithoutTaints(data);
 
   const rows = filteredData.map((node: NodeKind) => {
     const roles = getNodeRoles(node).sort();

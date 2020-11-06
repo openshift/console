@@ -51,6 +51,10 @@ export type StorageClusterKind = K8sResourceCommon & {
         enable: boolean;
       };
     };
+    arbiter?: {
+      enabled: boolean;
+      kms: string;
+    };
     monDataDirHostPath?: string;
   };
   status?: {
