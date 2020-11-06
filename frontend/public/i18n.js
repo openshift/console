@@ -31,6 +31,7 @@ i18n
       backend: {
         loadPath: 'static/locales/{{lng}}/{{ns}}.json',
       },
+      lng: localStorage.getItem('bridge/language'),
       fallbackLng: FALLBACK_LOCALE,
       load: 'all',
       debug: process.env.NODE_ENV === 'development',
@@ -66,6 +67,7 @@ i18n
         'idp-cafile-input',
         'idp-name-input',
         'keystone-idp-form',
+        'language-preferences-modal',
         'ldap-idp-form',
         'limit-range',
         'logs',

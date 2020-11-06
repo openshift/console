@@ -3,10 +3,8 @@
 }
 
 .co-username {
-  font-size: $pf-header-icon-fontsize; // for cases where there is no user menu
   max-width: 140px !important; // PF4 does not limit username length (upstream bug)
   overflow-x: hidden;
-  padding: 0 8px; // so sizing is consistent with .pf-c-dropdown__toggle
   text-overflow: ellipsis;
   @media(min-width: 855px) {
     max-width: 225px !important;
