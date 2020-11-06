@@ -70,6 +70,14 @@
   "Owner": "Owner",
   "{{count1}} of {{count2}} pods": "{{count1}} of {{count2}} pods",
   "ReplicaSets": "ReplicaSets",
+  "Cancel rollout": "Cancel rollout",
+  "Are you sure you want to cancel this rollout?": "Are you sure you want to cancel this rollout?",
+  "Yes, cancel": "Yes, cancel",
+  "No, don't cancel": "No, don't cancel",
+  "ReplicationController details": "ReplicationController details",
+  "Phase": "Phase",
+  "{{statusReplicas}} of {{specReplicas}} pods": "{{statusReplicas}} of {{specReplicas}} pods",
+  "ReplicationControllers": "ReplicationControllers",
   "StatefulSet details": "StatefulSet details",
   "StatefulSets": "StatefulSets",
   "Image": "Image",
@@ -79,6 +87,5 @@
   "Mount path": "Mount path",
   "SubPath": "SubPath",
   "Permissions": "Permissions",
-  "Utilized by": "Utilized by",
-  "{{statusReplicas}} of {{specReplicas}} pods": "{{statusReplicas}} of {{specReplicas}} pods"
+  "Utilized by": "Utilized by"
 }
