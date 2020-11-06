@@ -99,6 +99,7 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
               id="storage-class-dropdown"
               onChange={handleStorageClass}
               filter={filterSCWithNoProv}
+              selectedKey={getName(storageClass) || state.storageClassName || state.volumeSetName}
               noSelection
               hideClassName="ocs-install-wizard__storage-class-label"
             />

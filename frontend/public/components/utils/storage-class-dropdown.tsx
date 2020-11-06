@@ -14,7 +14,7 @@ export class StorageClassDropdownInner extends React.Component<
   readonly state: StorageClassDropdownInnerState = {
     items: {},
     name: this.props.name,
-    selectedKey: null,
+    selectedKey: this.props.selectedKey,
     title: <LoadingInline />,
     defaultClass: this.props.defaultClass,
   };
@@ -241,4 +241,5 @@ export type StorageClassDropdownInnerProps = {
   hideClassName?: string;
   filter?: (param) => boolean;
   noSelection?: boolean;
+  selectedKey?: string;
 };
