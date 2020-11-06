@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
 import { EventListenerModel, PipelineModel } from '../../../models';
 import ResourceLinkList from '../resource-overview/ResourceLinkList';
@@ -15,11 +16,12 @@ export interface TriggerTemplateDetailsProps {
 const TriggerTemplateDetails: React.FC<TriggerTemplateDetailsProps> = ({
   obj: triggerTemplate,
 }) => {
+  const { t } = useTranslation();
   const eventListeners: string[] = useTriggerTemplateEventListenerNames(triggerTemplate);
   const pipelineName: string = getTriggerTemplatePipelineName(triggerTemplate);
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text="Trigger Template Details" />
+      <SectionHeading text={t('pipelines-plugin~Trigger Template Details')} />
       <div className="row">
         <div className="col-sm-6">
           <ResourceSummary resource={triggerTemplate} />

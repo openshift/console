@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import { KebabAction, navFactory, LoadingBox } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
@@ -20,6 +21,7 @@ import { usePipelineTriggerTemplateNames } from './utils/triggers';
 import { usePipelinesBreadcrumbsFor, useLatestPipelineRun } from './hooks';
 
 const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
+  const { t } = useTranslation();
   const { name, namespace, kindObj, match } = props;
   const templateNames = usePipelineTriggerTemplateNames(name, namespace) || [];
   const breadcrumbsFor = usePipelinesBreadcrumbsFor(kindObj, match);
@@ -43,17 +45,17 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
         navFactory.editYaml(),
         {
           href: 'Runs',
-          name: 'Pipeline Runs',
+          name: t('pipelines-plugin~Pipeline Runs'),
           component: PipelineRuns,
         },
         {
           href: 'parameters',
-          name: 'Parameters',
+          name: t('pipelines-plugin~Parameters'),
           component: (pageProps) => (
             <PipelineForm
               PipelineFormComponent={PipelineParametersForm}
               formName="parameters"
-              validationSchema={parametersValidationSchema}
+              validationSchema={parametersValidationSchema(t)}
               obj={pageProps.obj}
               {...pageProps}
             />
@@ -61,12 +63,12 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
         },
         {
           href: 'resources',
-          name: 'Resources',
+          name: t('pipelines-plugin~Resources'),
           component: (pageProps) => (
             <PipelineForm
               PipelineFormComponent={PipelineResourcesForm}
               formName="resources"
-              validationSchema={resourcesValidationSchema}
+              validationSchema={resourcesValidationSchema(t)}
               obj={pageProps.obj}
               {...pageProps}
             />

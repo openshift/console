@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary, ResourceLink } from '@console/internal/components/utils';
 import { PodModel } from '@console/internal/models';
 import { Status } from '@console/shared';
@@ -14,27 +15,30 @@ export interface TaskRunDetailsProps {
 }
 
 const TaskRunDetails: React.FC<TaskRunDetailsProps> = ({ obj: taskRun }) => {
+  const { t } = useTranslation();
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text={`${TaskRunModel.label} Details`} />
+      <SectionHeading
+        text={t('pipelines-plugin~{{taskRunLabel}} Details', { taskRunLabel: TaskRunModel.label })}
+      />
       <div className="row">
         <div className="col-sm-6">
           <ResourceSummary resource={taskRun} />
         </div>
         <div className="col-sm-6 odc-taskrun-details__status">
           <dl>
-            <dt>Status</dt>
+            <dt>{t('pipelines-plugin~Status')}</dt>
             <dd>
               <Status status={taskRunFilterReducer(taskRun)} />
             </dd>
           </dl>
           <RunDetailsErrorLog
-            logDetails={getTRLogSnippet(taskRun)}
+            logDetails={getTRLogSnippet(taskRun, t)}
             namespace={taskRun.metadata?.namespace}
           />
           {taskRun?.status?.podName && (
             <dl>
-              <dt>Pod</dt>
+              <dt>{t('pipelines-plugin~Pod')}</dt>
               <dd>
                 <ResourceLink
                   kind={PodModel.kind}

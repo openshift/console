@@ -1,3 +1,4 @@
+import { TFunction } from 'i18next';
 import {
   Condition,
   PipelineRun,
@@ -8,7 +9,7 @@ import { CombinedErrorDetails } from './log-snippet-types';
 import { pipelineRunStatus } from '../../../utils/pipeline-filter-reducer';
 import { taskRunSnippetMessage } from './log-snippet-utils';
 
-export const getPLRLogSnippet = (pipelineRun: PipelineRun): CombinedErrorDetails => {
+export const getPLRLogSnippet = (pipelineRun: PipelineRun, t: TFunction): CombinedErrorDetails => {
   if (!pipelineRun?.status) {
     // Lack information to pull from the Pipeline Run
     return null;
@@ -39,8 +40,8 @@ export const getPLRLogSnippet = (pipelineRun: PipelineRun): CombinedErrorDetails
   if (!failedTaskRun) {
     // No specific task run failure information, just print pipeline run status
     return {
-      staticMessage: succeededCondition.message || 'Unknown failure condition',
-      title: 'Failure - check logs for details.',
+      staticMessage: succeededCondition.message || t('pipelines-plugin~Unknown failure condition'),
+      title: t('pipelines-plugin~Failure - check logs for details.'),
     };
   }
 
@@ -48,5 +49,10 @@ export const getPLRLogSnippet = (pipelineRun: PipelineRun): CombinedErrorDetails
     (step: PLRTaskRunStep) => step.terminated?.exitCode !== 0,
   )?.container;
 
-  return taskRunSnippetMessage(failedTaskRun.pipelineTaskName, failedTaskRun.status, containerName);
+  return taskRunSnippetMessage(
+    failedTaskRun.pipelineTaskName,
+    failedTaskRun.status,
+    containerName,
+    t,
+  );
 };

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { TextInputTypes } from '@patternfly/react-core';
 import { MultiColumnField, InputField } from '@console/shared';
 
@@ -9,14 +10,23 @@ type PipelineParametersProps = {
 };
 
 const PipelineParameters: React.FC<PipelineParametersProps> = (props) => {
-  const { addLabel = 'Add Pipeline Parameter', fieldName, isReadOnly = false } = props;
-  const emptyMessage = 'No parameters are associated with this pipeline.';
+  const { t } = useTranslation();
+  const {
+    addLabel = t('pipelines-plugin~Add Pipeline Parameter'),
+    fieldName,
+    isReadOnly = false,
+  } = props;
+  const emptyMessage = t('pipelines-plugin~No parameters are associated with this pipeline.');
 
   return (
     <MultiColumnField
       name={fieldName}
       addLabel={addLabel}
-      headers={['Name', 'Description', 'Default Value']}
+      headers={[
+        t('pipelines-plugin~Name'),
+        t('pipelines-plugin~Description'),
+        t('pipelines-plugin~Default Value'),
+      ]}
       emptyValues={{ name: '', description: '', default: '' }}
       emptyMessage={emptyMessage}
       isReadOnly={isReadOnly}
@@ -24,19 +34,19 @@ const PipelineParameters: React.FC<PipelineParametersProps> = (props) => {
       <InputField
         name="name"
         type={TextInputTypes.text}
-        placeholder="Name"
+        placeholder={t('pipelines-plugin~Name')}
         isReadOnly={isReadOnly}
       />
       <InputField
         name="description"
         type={TextInputTypes.text}
-        placeholder="Description"
+        placeholder={t('pipelines-plugin~Description')}
         isReadOnly={isReadOnly}
       />
       <InputField
         name="default"
         type={TextInputTypes.text}
-        placeholder="Default Value"
+        placeholder={t('pipelines-plugin~Default Value')}
         isReadOnly={isReadOnly}
       />
     </MultiColumnField>

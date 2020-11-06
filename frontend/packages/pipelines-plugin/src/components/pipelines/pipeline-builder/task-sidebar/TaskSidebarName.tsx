@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { FormGroup, TextInput, TextInputTypes } from '@patternfly/react-core';
 import { SidebarInputWrapper } from './temp-utils';
 
@@ -9,13 +11,14 @@ type TaskSidebarNameProps = {
 };
 
 const VALID_NAME = /^([a-z]([-a-z0-9]*[a-z0-9])?)*$/;
-const INVALID_ERROR_MESSAGE =
-  'Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.';
 
-const getError = (value: string): string | null => {
+const getError = (value: string, t: TFunction): string | null => {
   let error = null;
+  const INVALID_ERROR_MESSAGE = t(
+    'pipelines-plugin~Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
+  );
   if (value === '') {
-    error = 'Required';
+    error = t('pipelines-plugin~Required');
   } else if (!VALID_NAME.test(value)) {
     error = INVALID_ERROR_MESSAGE;
   }
@@ -23,6 +26,7 @@ const getError = (value: string): string | null => {
 };
 
 const TaskSidebarName: React.FC<TaskSidebarNameProps> = (props) => {
+  const { t } = useTranslation();
   const { initialName, onChange, taskName } = props;
   const [interimName, setInterimName] = React.useState(initialName);
   const [error, setError] = React.useState(null);
@@ -31,7 +35,7 @@ const TaskSidebarName: React.FC<TaskSidebarNameProps> = (props) => {
   return (
     <FormGroup
       fieldId="task-name"
-      label="Display Name"
+      label={t('pipelines-plugin~Display Name')}
       helperTextInvalid={error}
       validated={isValid ? 'default' : 'error'}
       isRequired
@@ -43,7 +47,7 @@ const TaskSidebarName: React.FC<TaskSidebarNameProps> = (props) => {
           isRequired
           onChange={(value) => {
             setInterimName(value);
-            setError(getError(value));
+            setError(getError(value, t));
           }}
           onBlur={() => {
             if (isValid) {

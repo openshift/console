@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   getRunStatusColor,
   getTaskStatus,
@@ -18,6 +19,7 @@ const PipelineBuildDecoratorTooltip: React.FC<PipelineBuildDecoratorTooltipProps
   pipelineRun,
   status,
 }) => {
+  const { t } = useTranslation();
   if (!pipelineRun || !status) {
     return null;
   }
@@ -38,9 +40,13 @@ const PipelineBuildDecoratorTooltip: React.FC<PipelineBuildDecoratorTooltipProps
 
   return (
     <div className="odc-pipeline-build-decorator-tooltip">
-      <div className="odc-pipeline-build-decorator-tooltip__title">Pipeline {status}</div>
+      <div className="odc-pipeline-build-decorator-tooltip__title">
+        {t('pipelines-plugin~Pipeline {{status}}', { status })}
+      </div>
       <div className="odc-pipeline-build-decorator-tooltip__status-bars-wrapper">
-        <div className="odc-pipeline-build-decorator-tooltip__status-bars-title">Task Status</div>
+        <div className="odc-pipeline-build-decorator-tooltip__status-bars-title">
+          {t('pipelines-plugin~Task Status')}
+        </div>
         <div className="odc-pipeline-build-decorator-tooltip__status-bars">{pipelineBars}</div>
       </div>
       <div className="odc-pipeline-build-decorator-tooltip__status-breakdown">{breakdownInfo}</div>

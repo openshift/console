@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { DASH } from '@console/shared';
@@ -13,10 +14,11 @@ type PipelineRunStatusProps = {
   pipelineRun: PipelineRun;
 };
 const PipelineRunStatus: React.FC<PipelineRunStatusProps> = ({ status, pipelineRun }) => {
+  const { t } = useTranslation();
   return pipelineRun ? (
     <PipelineResourceStatus status={status}>
       <StatusPopoverContent
-        logDetails={getPLRLogSnippet(pipelineRun)}
+        logDetails={getPLRLogSnippet(pipelineRun, t)}
         namespace={pipelineRun.metadata.namespace}
         link={
           <Link
@@ -26,7 +28,7 @@ const PipelineRunStatus: React.FC<PipelineRunStatusProps> = ({ status, pipelineR
               pipelineRun.metadata.namespace,
             )}/logs`}
           >
-            View Logs
+            {t('pipelines-plugin~View Logs')}
           </Link>
         }
       />

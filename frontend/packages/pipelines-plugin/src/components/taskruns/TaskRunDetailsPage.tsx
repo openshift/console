@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import { navFactory, viewYamlComponent } from '@console/internal/components/utils';
 import TaskRunDetails from './TaskRunDetails';
@@ -7,6 +8,7 @@ import { useTasksBreadcrumbsFor } from '../pipelines/hooks';
 import TaskRunLog from './TaskRunLog';
 
 const TaskRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
+  const { t } = useTranslation();
   const { kindObj, match } = props;
   const breadcrumbsFor = useTasksBreadcrumbsFor(kindObj, match);
 
@@ -20,7 +22,7 @@ const TaskRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
         {
           href: 'logs',
           path: 'logs/:name?',
-          name: 'Logs',
+          name: t('pipelines-plugin~Logs'),
           component: TaskRunLog,
         },
         navFactory.events(TaskRunEvents),

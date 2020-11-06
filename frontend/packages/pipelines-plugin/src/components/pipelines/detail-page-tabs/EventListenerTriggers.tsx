@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { TriggerTemplateModel } from '../../../models';
@@ -16,9 +17,10 @@ interface EventListenerTriggersProps {
 }
 
 const EventListenerTriggers: React.FC<EventListenerTriggersProps> = ({ namespace, triggers }) => {
+  const { t } = useTranslation();
   return (
     <dl>
-      <dt>Triggers</dt>
+      <dt>{t('pipelines-plugin~Triggers')}</dt>
       <dd>
         {triggers.map((trigger) => {
           const triggerTemplateKind = referenceForModel(TriggerTemplateModel);

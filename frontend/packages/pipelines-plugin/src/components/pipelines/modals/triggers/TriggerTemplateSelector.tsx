@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useField } from 'formik';
+import { Trans, useTranslation } from 'react-i18next';
 import { DropdownField } from '@console/shared/src';
 import { Pipeline } from '../../../../utils/pipeline-augment';
 import { RouteTemplate, usePipelineTriggerTemplateNames } from '../../utils/triggers';
@@ -13,6 +14,7 @@ type TriggerTemplateSelectorProps = {
 };
 
 const TriggerTemplateSelector: React.FC<TriggerTemplateSelectorProps> = (props) => {
+  const { t } = useTranslation();
   const { name, pipeline, placeholder } = props;
   const {
     metadata: { name: pipelineName, namespace },
@@ -39,7 +41,9 @@ const TriggerTemplateSelector: React.FC<TriggerTemplateSelectorProps> = (props) 
       />
       {selection ? (
         <div className="co-break-word odc-trigger-template-selector__confirmationMessage">
-          Are you sure you want to remove <b>{selection}</b> from <b>{pipeline.metadata.name}</b>?
+          <Trans t={t} ns="pipelines-plugin">
+            Are you sure you want to remove <b>{selection}</b> from <b>{pipeline.metadata.name}</b>?
+          </Trans>
         </div>
       ) : (
         <div className="odc-trigger-template-selector__pfModalHack" />

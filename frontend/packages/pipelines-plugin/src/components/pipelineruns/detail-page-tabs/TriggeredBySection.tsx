@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { EventListenerModel } from '../../../models';
@@ -10,6 +11,7 @@ type TriggeredByProps = {
 };
 
 const TriggeredBySection: React.FC<TriggeredByProps> = (props) => {
+  const { t } = useTranslation();
   const {
     pipelineRun: {
       metadata: { annotations, namespace, labels },
@@ -40,7 +42,7 @@ const TriggeredBySection: React.FC<TriggeredByProps> = (props) => {
 
   return (
     <dl>
-      <dt>Triggered by:</dt>
+      <dt>{t('pipelines-plugin~Triggered by')}:</dt>
       <dd>{value}</dd>
     </dl>
   );

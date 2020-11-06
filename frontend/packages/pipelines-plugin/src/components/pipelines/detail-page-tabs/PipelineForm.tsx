@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { Formik } from 'formik';
 import { k8sUpdate, K8sResourceKind } from '@console/internal/module/k8s';
 import { PipelineModel } from '../../../models';
@@ -18,6 +19,7 @@ const PipelineForm: React.FC<PipelineFormProps> = ({
   validationSchema,
   obj,
 }) => {
+  const { t } = useTranslation();
   const initialValues = {
     parameters: _.get(obj.spec, 'params', []),
     resources: _.get(obj.spec, 'resources', []),
@@ -46,7 +48,11 @@ const PipelineForm: React.FC<PipelineFormProps> = ({
             parameters: _.get(newObj.spec, 'params', []),
             resources: _.get(newObj.spec, 'resources', []),
           },
-          status: { success: `Successfully updated the pipeline ${formName}.` },
+          status: {
+            success: t('pipelines-plugin~Successfully updated the pipeline {{formName}}.', {
+              formName,
+            }),
+          },
         });
       })
       .catch((err) => {

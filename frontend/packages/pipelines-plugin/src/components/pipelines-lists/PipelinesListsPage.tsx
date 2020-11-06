@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { match as Rmatch } from 'react-router-dom';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { Page } from '@console/internal/components/utils';
@@ -22,6 +23,7 @@ interface PipelinesListPageProps {
 }
 
 const PipelinesListPage: React.FC<PipelinesListPageProps> = ({ match }) => {
+  const { t } = useTranslation();
   const {
     params: { ns: namespace },
   } = match;
@@ -71,7 +73,7 @@ const PipelinesListPage: React.FC<PipelinesListPageProps> = ({ match }) => {
       <MultiTabListPage
         pages={pages}
         match={match}
-        title="Pipelines"
+        title={t('pipelines-plugin~Pipelines')}
         badge={<TechPreviewBadge />}
         menuActions={menuActions}
       />

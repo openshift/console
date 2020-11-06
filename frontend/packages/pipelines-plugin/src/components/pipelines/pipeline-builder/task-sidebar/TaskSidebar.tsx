@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useField } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { ActionsMenu, ResourceIcon } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
 import {
@@ -36,7 +37,8 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
     selectedPipelineTaskIndex,
     taskResource,
   } = props;
-  const formikTaskReference = `formData.tasks.${selectedPipelineTaskIndex}`;
+  const { t } = useTranslation();
+  const formikTaskReference = `tasks.${selectedPipelineTaskIndex}`;
   const [taskField] = useField<PipelineTask>(formikTaskReference);
 
   const updateTask = (newData: Partial<UpdateOperationUpdateTaskData>) => {
@@ -89,7 +91,7 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
             <ActionsMenu
               actions={[
                 {
-                  label: 'Remove Task',
+                  label: t('pipelines-plugin~Remove Task'),
                   callback: () => onRemoveTask(taskField.value.name),
                 },
               ]}
@@ -108,7 +110,7 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
 
         {params && (
           <>
-            <h2>Parameters</h2>
+            <h2>{t('pipelines-plugin~Parameters')}</h2>
             {params.map((param) => {
               const taskParams: PipelineTaskParam[] = taskField.value?.params || [];
               const thisParam = taskParams.find(
@@ -136,13 +138,13 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
 
         {inputResources && (
           <>
-            <h2>Input Resources</h2>
+            <h2>{t('pipelines-plugin~Input Resources')}</h2>
             {inputResources.map(renderResource('inputs'))}
           </>
         )}
         {outputResources && (
           <>
-            <h2>Output Resources</h2>
+            <h2>{t('pipelines-plugin~Output Resources')}</h2>
             {outputResources.map(renderResource('outputs'))}
           </>
         )}

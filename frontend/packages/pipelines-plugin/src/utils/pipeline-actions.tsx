@@ -39,7 +39,8 @@ export const triggerPipeline = (
 };
 
 export const reRunPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: PipelineRun) => ({
-  label: 'Rerun',
+  // t('pipelines-plugin~Rerun')
+  labelKey: 'pipelines-plugin~Rerun',
   callback: () => {
     const namespace = _.get(pipelineRun, 'metadata.namespace');
     const pipelineRef = _.get(pipelineRun, 'spec.pipelineRef.name');
@@ -59,7 +60,8 @@ export const reRunPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: Pipeli
 });
 
 export const editPipeline: KebabAction = (kind: K8sKind, pipeline: Pipeline) => ({
-  label: 'Edit Pipeline',
+  // t('pipelines-plugin~Edit Pipeline')
+  labelKey: 'pipelines-plugin~Edit Pipeline',
   hidden: hasInlineTaskSpec(pipeline.spec.tasks),
   callback: () => {
     const {
@@ -81,7 +83,8 @@ export const startPipeline: KebabAction = (
   pipeline: Pipeline,
   onSubmit?: (pipelineRun: PipelineRun) => void,
 ) => ({
-  label: 'Start',
+  // t('pipelines-plugin~Start')
+  labelKey: 'pipelines-plugin~Start',
   callback: () => {
     const params = _.get(pipeline, ['spec', 'params'], []);
     const resources = _.get(pipeline, ['spec', 'resources'], []);
@@ -108,17 +111,17 @@ export const startPipeline: KebabAction = (
 
 type RerunPipelineData = {
   onComplete?: (pipelineRun: PipelineRun) => void;
-  label?: string;
+  labelKey?: string;
 };
 const rerunPipeline: KebabAction = (
   kind: K8sKind,
   pipelineRun: PipelineRun,
   resources: any,
-  customData: RerunPipelineData = { label: 'Start Last Run' },
+  customData: RerunPipelineData = { labelKey: 'Start Last Run' },
 ) => {
   const { onComplete } = customData;
 
-  const sharedProps = { label: customData.label, accessReview: {} };
+  const sharedProps = { labelKey: customData.labelKey, accessReview: {} };
 
   if (
     !pipelineRun ||
@@ -146,13 +149,14 @@ const rerunPipeline: KebabAction = (
 };
 
 export const rerunPipelineAndStay: KebabAction = (kind: K8sKind, pipelineRun: PipelineRun) => {
-  return rerunPipeline(kind, pipelineRun);
+  return rerunPipeline(kind, pipelineRun, null, null);
 };
 
 export const rerunPipelineAndRedirect: KebabAction = (kind: K8sKind, pipelineRun: PipelineRun) => {
   return rerunPipeline(kind, pipelineRun, null, {
     onComplete: handlePipelineRunSubmit,
-    label: 'Start Last Run',
+    // t('pipelines-plugin~Start Last Run')
+    labelKey: 'pipelines-plugin~Start Last Run',
   });
 };
 
@@ -162,14 +166,16 @@ export const rerunPipelineRunAndRedirect: KebabAction = (
 ) => {
   return rerunPipeline(kind, pipelineRun, null, {
     onComplete: handlePipelineRunSubmit,
-    label: 'Rerun',
+    // t('pipelines-plugin~Rerun')
+    labelKey: 'pipelines-plugin~Rerun',
   });
 };
 
 export const stopPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: PipelineRun) => {
   // The returned function will be called using the 'kind' and 'obj' in Kebab Actions
   return {
-    label: 'Stop',
+    // t('pipelines-plugin~Stop')
+    labelKey: 'pipelines-plugin~Stop',
     callback: () => {
       k8sPatch(
         PipelineRunModel,
@@ -197,7 +203,8 @@ export const stopPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: Pipelin
 };
 
 const addTrigger: KebabAction = (kind: K8sKind, pipeline: Pipeline) => ({
-  label: 'Add Trigger',
+  // t('pipelines-plugin~Add Trigger')
+  labelKey: 'pipelines-plugin~Add Trigger',
   callback: () => {
     const cleanPipeline: Pipeline = {
       ...pipeline,
@@ -218,7 +225,8 @@ const addTrigger: KebabAction = (kind: K8sKind, pipeline: Pipeline) => ({
 });
 
 const removeTrigger: KebabAction = (kind: K8sKind, pipeline: Pipeline) => ({
-  label: 'Remove Trigger',
+  // t('pipelines-plugin~Remove Trigger')
+  labelKey: 'pipelines-plugin~Remove Trigger',
   callback: () => {
     removeTriggerModal({ pipeline });
   },
@@ -240,12 +248,14 @@ export const getPipelineKebabActions = (
   ...(isTriggerPresent ? [(model, pipeline) => removeTrigger(EventListenerModel, pipeline)] : []),
   Kebab.factory.ModifyLabels,
   Kebab.factory.ModifyAnnotations,
-  editPipeline,
+  (model, pipeline) => editPipeline(model, pipeline),
   Kebab.factory.Delete,
 ];
 
 export const getPipelineRunKebabActions = (redirectReRun?: boolean): KebabAction[] => [
-  redirectReRun ? rerunPipelineRunAndRedirect : reRunPipelineRun,
-  stopPipelineRun,
+  redirectReRun
+    ? (model, pipelineRun) => rerunPipelineRunAndRedirect(model, pipelineRun)
+    : (model, pipelineRun) => reRunPipelineRun(model, pipelineRun),
+  (model, pipelineRun) => stopPipelineRun(model, pipelineRun),
   Kebab.factory.Delete,
 ];

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Formik } from 'formik';
+import { useTranslation } from 'react-i18next';
 import {
   createModalLauncher,
   ModalComponentProps,
@@ -23,6 +24,7 @@ const StartPipelineModal: React.FC<StartPipelineModalProps & ModalComponentProps
   close,
   onSubmit,
 }) => {
+  const { t } = useTranslation();
   const userStartedAnnotation = useUserAnnotationForManualStart();
 
   const initialValues: StartPipelineFormValues = {
@@ -51,10 +53,15 @@ const StartPipelineModal: React.FC<StartPipelineModalProps & ModalComponentProps
     <Formik
       initialValues={initialValues}
       onSubmit={handleSubmit}
-      validationSchema={startPipelineSchema}
+      validationSchema={startPipelineSchema(t)}
     >
       {(formikProps) => (
-        <ModalStructure submitBtnText="Start" title="Start Pipeline" close={close} {...formikProps}>
+        <ModalStructure
+          submitBtnText={t('pipelines-plugin~Start')}
+          title={t('pipelines-plugin~Start Pipeline')}
+          close={close}
+          {...formikProps}
+        >
           <StartPipelineForm {...formikProps} />
         </ModalStructure>
       )}

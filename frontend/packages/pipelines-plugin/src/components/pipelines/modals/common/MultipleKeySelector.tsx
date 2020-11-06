@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { FieldArray, useFormikContext, FormikValues } from 'formik';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { DropdownField, InputField, getFieldId, useFormikValidationFix } from '@console/shared';
@@ -19,6 +20,7 @@ const MultipleKeySelector: React.FC<MultipleKeySelectorProps> = ({
   addString,
   tooltip,
 }) => {
+  const { t } = useTranslation();
   const { values } = useFormikContext<FormikValues>();
   const items = _.get(values, name, []);
   useFormikValidationFix(items);
@@ -30,7 +32,7 @@ const MultipleKeySelector: React.FC<MultipleKeySelectorProps> = ({
         return (
           <FormGroup
             fieldId={getFieldId(name, 'multiple-key-selector')}
-            label="Items"
+            label={t('pipelines-plugin~Items')}
             className="odc-multiple-key-selector"
           >
             {items.length > 0 &&
@@ -42,7 +44,7 @@ const MultipleKeySelector: React.FC<MultipleKeySelectorProps> = ({
                       <FlexItem grow={{ default: 'grow' }}>
                         <DropdownField
                           name={`${name}.${index}.key`}
-                          title="Select a key"
+                          title={t('pipelines-plugin~Select a key')}
                           items={keys}
                           fullWidth
                         />
@@ -51,12 +53,12 @@ const MultipleKeySelector: React.FC<MultipleKeySelectorProps> = ({
                         <InputField
                           name={`${name}.${index}.path`}
                           type={TextInputTypes.text}
-                          placeholder="Enter a path"
+                          placeholder={t('pipelines-plugin~Enter a path')}
                         />
                       </FlexItem>
                     </Flex>
                     <div className="odc-multiple-key-selector__deleteButton">
-                      <Tooltip content={tooltip || 'Remove'}>
+                      <Tooltip content={tooltip || t('pipelines-plugin~Remove')}>
                         <MinusCircleIcon aria-hidden="true" onClick={() => remove(index)} />
                       </Tooltip>
                     </div>
@@ -69,7 +71,7 @@ const MultipleKeySelector: React.FC<MultipleKeySelectorProps> = ({
               icon={<PlusCircleIcon />}
               isInline
             >
-              {addString || 'Add items'}
+              {addString || t('pipelines-plugin~Add items')}
             </Button>
           </FormGroup>
         );

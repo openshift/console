@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Flex, FlexItem, FocusTrap } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import Popper from '@console/shared/src/components/popper/Popper';
@@ -36,6 +37,7 @@ type TaskListNodeProps = {
 };
 
 const TaskListNode: React.FC<TaskListNodeProps> = ({ element, unselectedText }) => {
+  const { t } = useTranslation();
   const triggerRef = React.useRef(null);
   const [isMenuOpen, setMenuOpen] = React.useState(false);
   const { height, width } = element.getBounds();
@@ -58,11 +60,11 @@ const TaskListNode: React.FC<TaskListNodeProps> = ({ element, unselectedText }) 
           variant="control"
         >
           {options.length === 0 ? (
-            'No Tasks'
+            t('pipelines-plugin~No Tasks')
           ) : (
             <Flex flexWrap={{ default: 'nowrap' }} spaceItems={{ default: 'spaceItemsNone' }}>
               <FlexItem className="odc-task-list-node__label" grow={{ default: 'grow' }}>
-                {unselectedText || 'Select task'}
+                {unselectedText || t('pipelines-plugin~Select task')}
               </FlexItem>
               <FlexItem>
                 <CaretDownIcon />
@@ -105,7 +107,7 @@ const TaskListNode: React.FC<TaskListNodeProps> = ({ element, unselectedText }) 
                   </li>
                   <li>
                     <KebabItem
-                      option={{ label: 'Delete Task', callback: onRemoveTask }}
+                      option={{ label: t('pipelines-plugin~Delete Task'), callback: onRemoveTask }}
                       onClick={onRemoveTask}
                     />
                   </li>

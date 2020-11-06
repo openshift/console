@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
 import {
   getResourceModelFromTaskKind,
@@ -20,6 +21,7 @@ const PipelineDetails: React.FC<PipelineDetailsProps> = ({
   obj: pipeline,
   customData: routeTemplates,
 }) => {
+  const { t } = useTranslation();
   const taskLinks = pipeline.spec.tasks
     .filter((pipelineTask: PipelineTask) => !!pipelineTask.taskRef)
     .map((task) => ({
@@ -29,7 +31,7 @@ const PipelineDetails: React.FC<PipelineDetailsProps> = ({
     }));
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text="Pipeline Details" />
+      <SectionHeading text={t('pipelines-plugin~Pipeline Details')} />
       <PipelineVisualization pipeline={pipeline} />
       <div className="row">
         <div className="col-sm-6">
@@ -44,7 +46,7 @@ const PipelineDetails: React.FC<PipelineDetailsProps> = ({
           <DynamicResourceLinkList
             namespace={pipeline.metadata.namespace}
             links={taskLinks}
-            title="Tasks"
+            title={t('pipelines-plugin~Tasks')}
           />
         </div>
       </div>

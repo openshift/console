@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Node, NodeModel, observer } from '@patternfly/react-topology';
 import { BUILDER_NODE_ERROR_RADIUS } from './const';
 import ErrorNodeDecorator from './ErrorNodeDecorator';
@@ -10,6 +11,7 @@ type InvalidTaskListNodeProps = {
 };
 
 const InvalidTaskListNode: React.FC<InvalidTaskListNodeProps> = ({ element }) => {
+  const { t } = useTranslation();
   const {
     task: { name },
   } = element.getData();
@@ -20,7 +22,7 @@ const InvalidTaskListNode: React.FC<InvalidTaskListNodeProps> = ({ element }) =>
       <ErrorNodeDecorator
         x={BUILDER_NODE_ERROR_RADIUS / 2}
         y={BUILDER_NODE_ERROR_RADIUS / 4}
-        errorStr="Task does not exist"
+        errorStr={t('pipelines-plugin~Task does not exist')}
       />
     </g>
   );

@@ -4,6 +4,14 @@ import PipelineOverview from './PipelineOverview';
 import PipelineStartButton from './PipelineStartButton';
 import TriggerLastRunButton from './TriggerLastRunButton';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 describe('Pipeline sidebar overview', () => {
   let props: React.ComponentProps<typeof PipelineOverview>;
 
@@ -22,7 +30,7 @@ describe('Pipeline sidebar overview', () => {
       metadata: { name: pr, namespace: 'test' },
     }));
     const wrapper = shallow(<PipelineOverview {...props} />);
-    expect(wrapper.find('Link').text()).toBe('View all (4)');
+    expect(wrapper.find('Link').text()).toBe('pipelines-plugin~View all {{pipelineRunsLength}}');
   });
 
   it('should show not view all link if there exactly MAX_VISIBLE pipelineruns', () => {

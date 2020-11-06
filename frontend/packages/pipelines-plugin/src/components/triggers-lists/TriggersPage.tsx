@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { match as Rmatch } from 'react-router-dom';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { Page } from '@console/internal/components/utils';
@@ -19,6 +20,7 @@ interface TriggersPageProps {
 }
 
 const TriggersPage: React.FC<TriggersPageProps> = ({ match }) => {
+  const { t } = useTranslation();
   const {
     params: { ns: namespace },
   } = match;
@@ -80,7 +82,7 @@ const TriggersPage: React.FC<TriggersPageProps> = ({ match }) => {
       <MultiTabListPage
         pages={pages}
         match={match}
-        title="Triggers"
+        title={t('pipelines-plugin~Triggers')}
         badge={<TechPreviewBadge />}
         menuActions={menuActions}
       />

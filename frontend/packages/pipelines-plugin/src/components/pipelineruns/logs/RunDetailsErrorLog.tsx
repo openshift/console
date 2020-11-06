@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import LogSnippetBlock from './LogSnippetBlock';
 import { CombinedErrorDetails } from './log-snippet-types';
 
@@ -8,6 +9,7 @@ type RunDetailErrorLogProps = {
 };
 
 const RunDetailsErrorLog: React.FC<RunDetailErrorLogProps> = ({ logDetails, namespace }) => {
+  const { t } = useTranslation();
   if (!logDetails) {
     return null;
   }
@@ -15,11 +17,11 @@ const RunDetailsErrorLog: React.FC<RunDetailErrorLogProps> = ({ logDetails, name
   return (
     <>
       <dl>
-        <dt>Message</dt>
+        <dt>{t('pipelines-plugin~Message')}</dt>
         <dd>{logDetails.title}</dd>
       </dl>
       <dl>
-        <dt>Log Snippet</dt>
+        <dt>{t('pipelines-plugin~Log Snippet')}</dt>
         <dd>
           <LogSnippetBlock logDetails={logDetails} namespace={namespace}>
             {(logSnippet: string) => <pre>{logSnippet}</pre>}

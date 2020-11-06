@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { FormikValues, useFormikContext } from 'formik';
 import { TextInputTypes } from '@patternfly/react-core';
 import { ButtonBar } from '@console/internal/components/utils';
@@ -53,6 +54,7 @@ const SecretForm: React.FC<FormikValues> = ({
   status,
   isSubmitting,
 }) => {
+  const { t } = useTranslation();
   const { values, setFieldValue } = useFormikContext<FormikValues>();
   const [stringData, setStringData] = React.useState({
     [SecretType.basicAuth]: {},
@@ -78,14 +80,16 @@ const SecretForm: React.FC<FormikValues> = ({
 
   return (
     <div className="odc-secret-form">
-      <h1 className="co-section-heading-tertiary odc-secret-form__title">Create Source Secret</h1>
+      <h1 className="co-section-heading-tertiary odc-secret-form__title">
+        {t('pipelines-plugin~Create Source Secret')}
+      </h1>
       <div className="form-group">
         <InputField
           type={TextInputTypes.text}
           required
           name="secretName"
-          label="Secret Name"
-          helpText="Unique name of the new secret."
+          label={t('pipelines-plugin~Secret Name')}
+          helpText={t('pipelines-plugin~Unique name of the new secret.')}
         />
       </div>
       <div className="form-group">
@@ -94,7 +98,7 @@ const SecretForm: React.FC<FormikValues> = ({
       <div className="form-group">
         <DropdownField
           name="type"
-          label="Authentication Type"
+          label={t('pipelines-plugin~Authentication Type')}
           items={authTypes}
           title={authTypes[values.type]}
           onChange={(type: SecretType) => setValues(type)}

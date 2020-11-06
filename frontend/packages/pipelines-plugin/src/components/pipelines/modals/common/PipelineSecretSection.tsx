@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Formik, useField, useFormikContext, FormikValues } from 'formik';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { Button } from '@patternfly/react-core';
@@ -29,6 +30,7 @@ type PipelineSecretSectionProps = {
 };
 
 const PipelineSecretSection: React.FC<PipelineSecretSectionProps> = ({ namespace }) => {
+  const { t } = useTranslation();
   const [secretOpenField] = useField<boolean>('secretOpen');
   const { setFieldValue } = useFormikContext<FormikValues>();
 
@@ -63,11 +65,15 @@ const PipelineSecretSection: React.FC<PipelineSecretSectionProps> = ({ namespace
   };
 
   return (
-    <ExpandCollapse textExpanded="Hide Credential Options" textCollapsed="Show Credential Options">
+    <ExpandCollapse
+      textExpanded={t('pipelines-plugin~Hide Credential Options')}
+      textCollapsed={t('pipelines-plugin~Show Credential Options')}
+    >
       <div className="odc-pipeline-secret-section">
         <p>
-          The following secrets are available for all pipelines in this namespace to authenticate to
-          the specified Git server or Docker registry:
+          {t(
+            'pipelines-plugin~The following secrets are available for all pipelines in this namespace to authenticate to the specified Git server or Docker registry:',
+          )}
         </p>
         <div className="odc-pipeline-secret-section__secrets">
           <SecretsList namespace={namespace} />
@@ -75,7 +81,7 @@ const PipelineSecretSection: React.FC<PipelineSecretSectionProps> = ({ namespace
             <div className="odc-pipeline-secret-section__secret-form">
               <Formik
                 initialValues={initialValues}
-                validationSchema={advancedSectionValidationSchema}
+                validationSchema={advancedSectionValidationSchema(t)}
                 onSubmit={handleSubmit}
                 onReset={handleReset}
               >
@@ -91,7 +97,7 @@ const PipelineSecretSection: React.FC<PipelineSecretSectionProps> = ({ namespace
               className="odc-pipeline-secret-section__secret-action"
               icon={<PlusCircleIcon />}
             >
-              Add Secret
+              {t('pipelines-plugin~Add Secret')}
             </Button>
           )}
         </div>

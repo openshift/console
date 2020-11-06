@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { match as Rmatch } from 'react-router-dom';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { TaskModel, ClusterTaskModel, TaskRunModel } from '../../../models';
@@ -15,6 +16,7 @@ interface TasksListsPageProps {
 }
 
 const TasksListsPage: React.FC<TasksListsPageProps> = ({ match }) => {
+  const { t } = useTranslation();
   const {
     params: { ns: namespace },
   } = match;
@@ -62,7 +64,7 @@ const TasksListsPage: React.FC<TasksListsPageProps> = ({ match }) => {
       <MultiTabListPage
         pages={pages}
         match={match}
-        title="Tasks"
+        title={t('pipelines-plugin~Tasks')}
         badge={<TechPreviewBadge />}
         menuActions={menuActions}
       />

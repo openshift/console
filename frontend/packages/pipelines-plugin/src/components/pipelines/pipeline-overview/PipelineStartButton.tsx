@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Button } from '@patternfly/react-core';
 import { useAccessReview } from '@console/internal/components/utils';
@@ -26,6 +27,7 @@ const PipelineStartButton: React.FC<PipelineStartButtonProps & StateProps> = ({
   namespace,
   impersonate,
 }) => {
+  const { t } = useTranslation();
   const openPipelineModal = () =>
     startPipelineModal({
       pipeline,
@@ -42,7 +44,7 @@ const PipelineStartButton: React.FC<PipelineStartButtonProps & StateProps> = ({
   return (
     isAllowed && (
       <Button variant="secondary" onClick={openPipelineModal}>
-        Start
+        {t('pipelines-plugin~Start')}
       </Button>
     )
   );

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormGroup, ValidatedOptions } from '@patternfly/react-core';
 import { PipelineResourceTaskParam, PipelineTaskParam } from '../../../../utils/pipeline-augment';
 import { taskParamIsRequired, isFieldValid } from '../utils';
@@ -11,6 +12,7 @@ type TaskSidebarParamProps = {
 };
 
 const TaskSidebarParam: React.FC<TaskSidebarParamProps> = (props) => {
+  const { t } = useTranslation();
   const { onChange, resourceParam, taskParam } = props;
   const [dirty, setDirty] = React.useState(false);
 
@@ -37,7 +39,7 @@ const TaskSidebarParam: React.FC<TaskSidebarParamProps> = (props) => {
       fieldId={resourceParam.name}
       label={resourceParam.name}
       helperText={resourceParam.description}
-      helperTextInvalid="Required"
+      helperTextInvalid={t('pipelines-plugin~Required')}
       validated={isValid ? ValidatedOptions.default : ValidatedOptions.error}
       isRequired={emptyIsInvalid}
     >

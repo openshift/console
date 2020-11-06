@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Node, NodeModel, observer } from '@patternfly/react-topology';
 import {
   AddNodeDirection,
@@ -17,6 +18,7 @@ type BuilderNodeProps = {
 };
 
 const BuilderNode: React.FC<BuilderNodeProps> = ({ element }) => {
+  const { t } = useTranslation();
   const [showAdd, setShowAdd] = React.useState(false);
   const { width, height } = element.getBounds();
   const data = element.getData();
@@ -51,19 +53,19 @@ const BuilderNode: React.FC<BuilderNodeProps> = ({ element }) => {
         <PlusNodeDecorator
           x={width + BUILDER_NODE_ADD_RADIUS + BUILDER_NODE_ADD_PADDING}
           y={height / 2}
-          tooltip="Add a sequential task after this task"
+          tooltip={t('pipelines-plugin~Add a sequential task after this task')}
           onClick={() => onAddNode(AddNodeDirection.AFTER)}
         />
         <PlusNodeDecorator
           x={-BUILDER_NODE_ADD_RADIUS - BUILDER_NODE_ADD_PADDING}
           y={height / 2}
-          tooltip="Add a sequential task before this task"
+          tooltip={t('pipelines-plugin~Add a sequential task before this task')}
           onClick={() => onAddNode(AddNodeDirection.BEFORE)}
         />
         <PlusNodeDecorator
           x={width / 2}
           y={height + BUILDER_NODE_ADD_RADIUS + BUILDER_NODE_ADD_PADDING}
-          tooltip="Add a parallel task"
+          tooltip={t('pipelines-plugin~Add a parallel task')}
           tooltipPosition={TooltipPosition.bottom}
           onClick={() => onAddNode(AddNodeDirection.PARALLEL)}
         />

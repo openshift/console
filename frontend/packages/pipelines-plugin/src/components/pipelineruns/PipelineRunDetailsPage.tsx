@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import { KebabAction, navFactory, viewYamlComponent } from '@console/internal/components/utils';
 import { pipelineRunStatus } from '../../utils/pipeline-filter-reducer';
@@ -11,6 +12,7 @@ import TaskRuns from './detail-page-tabs/TaskRuns';
 import PipelineRunEvents from './events/PipelineRunEvents';
 
 const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
+  const { t } = useTranslation();
   const { kindObj, match } = props;
   const menuActions: KebabAction[] = useMenuActionsWithUserAnnotation(
     getPipelineRunKebabActions(true),
@@ -28,13 +30,13 @@ const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
         navFactory.editYaml(viewYamlComponent),
         {
           href: 'task-runs',
-          name: 'Task Runs',
+          name: t('pipelines-plugin~Task Runs'),
           component: TaskRuns,
         },
         {
           href: 'logs',
           path: 'logs/:name?',
-          name: 'Logs',
+          name: t('pipelines-plugin~Logs'),
           component: PipelineRunLogsWithActiveTask,
         },
         navFactory.events(PipelineRunEvents),
