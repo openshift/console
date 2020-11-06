@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { match as RMatch } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { history, useAccessReview, Page } from '@console/internal/components/utils';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import { NamespaceDetails, projectMenuActions } from '@console/internal/components/namespace';
@@ -32,6 +33,7 @@ export const PageContents: React.FC<MonitoringPageProps> = ({
   match,
   ...props
 }) => {
+  const { t } = useTranslation();
   const activeNamespace = match.params.ns;
 
   const canListRoleBindings = useAccessReview({
@@ -51,19 +53,19 @@ export const PageContents: React.FC<MonitoringPageProps> = ({
   const pages: Page[] = [
     {
       href: '',
-      name: 'Overview',
+      name: t('devconsole~Overview'),
       component: ProjectDashboard,
     },
     {
       href: 'details',
-      name: 'Details',
+      name: t('devconsole~Details'),
       component: NamespaceDetails,
     },
   ];
   if (canListRoleBindings && canCreateRoleBindings) {
     pages.push({
       href: 'access',
-      name: 'Project Access',
+      name: t('devconsole~Project Access'),
       component: ProjectAccessPage,
     });
   }
@@ -82,26 +84,29 @@ export const PageContents: React.FC<MonitoringPageProps> = ({
     />
   ) : (
     <CreateProjectListPage title="Project Details">
-      Select a project to view its details
+      {t('devconsole~Select a project to view its details')}
     </CreateProjectListPage>
   );
 };
 
 const PageContentsWithStartGuide = withStartGuide(PageContents);
 
-export const ProjectDetailsPage: React.FC<MonitoringPageProps> = (props) => (
-  <>
-    <Helmet>
-      <title>Project Details</title>
-    </Helmet>
-    <NamespacedPage
-      hideApplications
-      variant={NamespacedPageVariants.light}
-      onNamespaceChange={handleNamespaceChange}
-    >
-      <PageContentsWithStartGuide {...props} />
-    </NamespacedPage>
-  </>
-);
+export const ProjectDetailsPage: React.FC<MonitoringPageProps> = (props) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <Helmet>
+        <title>{t('devconsole~Project Details')}</title>
+      </Helmet>
+      <NamespacedPage
+        hideApplications
+        variant={NamespacedPageVariants.light}
+        onNamespaceChange={handleNamespaceChange}
+      >
+        <PageContentsWithStartGuide {...props} />
+      </NamespacedPage>
+    </>
+  );
+};
 
 export default ProjectDetailsPage;

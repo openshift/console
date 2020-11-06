@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { HintBlock, LoadingBox, FirehoseResult } from '@console/internal/components/utils';
 import ODCEmptyState from './EmptyState';
 
@@ -14,6 +15,7 @@ const ProjectsExistWrapper: React.FC<ProjectsExistWrapperProps> = ({
   projects,
   children,
 }) => {
+  const { t } = useTranslation();
   if (!projects.loaded) {
     return <LoadingBox />;
   }
@@ -23,10 +25,11 @@ const ProjectsExistWrapper: React.FC<ProjectsExistWrapperProps> = ({
       <ODCEmptyState
         title={title}
         hintBlock={
-          <HintBlock title="No projects exist">
+          <HintBlock title={t('devconsole~No projects exist')}>
             <p>
-              Select one of the following options to create an application, component or service. As
-              part of the creation process a project and application will be created.
+              {t(
+                'devconsole~Select one of the following options to create an application, component or service. As part of the creation process a project and application will be created.',
+              )}
             </p>
           </HintBlock>
         }
