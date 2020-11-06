@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { useFormikContext, useField } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { FormGroup } from '@patternfly/react-core';
 
 import FormSection from './FormSection';
 import IconDropdown from '../icon/IconDropdown';
 
 const IconSection: React.FC = () => {
+  const { t } = useTranslation();
   const [field] = useField<string>('runtimeIcon');
   const formik = useFormikContext<{ runtimeIcon: string }>();
 
@@ -18,10 +20,16 @@ const IconSection: React.FC = () => {
     <FormSection>
       <FormGroup
         fieldId="runtimeIcon"
-        label="Runtime Icon"
-        helperText="The icon represents your image in Topology view. A label will also be added to the resource defining the icon."
+        label={t('devconsole~Runtime Icon')}
+        helperText={t(
+          'devconsole~The icon represents your image in Topology view. A label will also be added to the resource defining the icon.',
+        )}
       >
-        <IconDropdown placeholder="Select an icon" value={field.value} onChanged={onChanged} />
+        <IconDropdown
+          placeholder={t('devconsole~Select an icon')}
+          value={field.value}
+          onChanged={onChanged}
+        />
       </FormGroup>
     </FormSection>
   );

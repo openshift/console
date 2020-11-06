@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import * as yup from 'yup';
 import { Formik } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { FirehoseResult, LoadingBox, StatusBox, history } from '@console/internal/components/utils';
 import { K8sResourceKind, k8sUpdate, modelFor, referenceFor } from '@console/internal/module/k8s';
 import { getResourcesType } from '../edit-application/edit-application-utils';
@@ -19,6 +20,7 @@ const AddHealthChecksForm: React.FC<AddHealthChecksFormProps> = ({
   resource,
   currentContainer,
 }) => {
+  const { t } = useTranslation();
   if (!resource.loaded && _.isEmpty(resource.loadError)) {
     return <LoadingBox />;
   }
@@ -64,7 +66,7 @@ const AddHealthChecksForm: React.FC<AddHealthChecksFormProps> = ({
     <Formik
       initialValues={initialValues}
       validationSchema={yup.object().shape({
-        healthChecks: healthChecksProbesValidationSchema,
+        healthChecks: healthChecksProbesValidationSchema(t),
       })}
       onSubmit={handleSubmit}
       onReset={history.goBack}

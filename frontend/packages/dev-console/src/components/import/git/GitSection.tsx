@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useFormikContext, FormikValues, FormikTouched } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { Alert, TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
 import { getGitService, GitProvider, BuildType } from '@console/git-service';
 import {
@@ -28,6 +29,7 @@ export interface GitSectionProps {
 }
 
 const GitSection: React.FC<GitSectionProps> = ({ showSample, builderImages }) => {
+  const { t } = useTranslation();
   const { values, setFieldValue, setFieldTouched, touched, dirty } = useFormikContext<
     FormikValues
   >();
@@ -172,14 +174,16 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, builderImages }) =>
 
   const getHelpText = () => {
     if (values.git.isUrlValidating) {
-      return 'Validating...';
+      return `${t('devconsole~Validating')}...`;
     }
 
     if (validated === ValidatedOptions.success) {
-      return 'Validated';
+      return t('devconsole~Validated');
     }
     if (validated === ValidatedOptions.warning) {
-      return 'URL is valid but cannot be reached. If this is a private repository, enter a source secret in Advanced Git Options';
+      return t(
+        'devconsole~URL is valid but cannot be reached. If this is a private repository, enter a source secret in Advanced Git Options',
+      );
     }
     return '';
   };
@@ -207,11 +211,11 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, builderImages }) =>
 
   useFormikValidationFix(values.git.url);
   return (
-    <FormSection title="Git">
+    <FormSection title={t('devconsole~Git')}>
       <InputField
         type={TextInputTypes.text}
         name="git.url"
-        label="Git Repo URL"
+        label={t('devconsole~Git Repo URL')}
         helpText={getHelpText()}
         helpTextInvalid={getHelpText()}
         validated={validated}
@@ -229,15 +233,15 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, builderImages }) =>
         <>
           <DropdownField
             name="git.type"
-            label="Git Type"
+            label={t('devconsole~Git Type')}
             items={GitReadableTypes}
             title={GitReadableTypes[values.git.type]}
             fullWidth
             required
           />
           {!gitTypeTouched && values.git.type === GitTypes.unsure && (
-            <Alert isInline variant="info" title="Defaulting Git Type to Other">
-              We failed to detect the Git type.
+            <Alert isInline variant="info" title={t('devconsole~Defaulting Git Type to Other')}>
+              {t('devconsole~We failed to detect the Git type.')}
             </Alert>
           )}
         </>

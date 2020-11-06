@@ -11,6 +11,14 @@ import { CustomResourceListProps } from '../custom-resource-list-types';
 
 let customResourceListProps: CustomResourceListProps;
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 const mockColumnClasses = {
   name: 'col-lg-4',
   version: 'col-lg-4',

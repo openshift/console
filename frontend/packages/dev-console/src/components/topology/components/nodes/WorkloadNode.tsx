@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { calculateRadius } from '@console/shared';
 import {
   Node,
@@ -52,6 +53,7 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
     kind: referenceForModel(ConsoleLinkModel),
     optional: true,
   });
+  const { t } = useTranslation();
   const cheURL = getCheURL(consoleLinks);
   const { width, height } = element.getDimensions();
   const workloadData = element.getData().data;
@@ -63,7 +65,7 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
   const cx = width / 2;
   const cy = height / 2;
   const editUrl = editURL || getEditURL(vcsURI, vcsRef, cheURL);
-  const repoIcon = routeDecoratorIcon(editUrl, decoratorRadius, cheEnabled);
+  const repoIcon = routeDecoratorIcon(editUrl, decoratorRadius, t, cheEnabled);
   const tipContent = dropTooltip || `Create a visual connector`;
   const showPodCountFilter = getFilterById(SHOW_POD_COUNT_FILTER_ID, filters);
   const showPodCount = showPodCountFilter?.value ?? false;

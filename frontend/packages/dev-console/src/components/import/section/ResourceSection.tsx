@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useField } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { connectToFlags, FlagsObject } from '@console/internal/reducers/features';
 import { K8sKind } from '@console/internal/module/k8s';
 import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';
@@ -27,6 +28,7 @@ const createHelpText = (k8sModel: K8sKind, helpText: string) => {
 };
 
 const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
+  const { t } = useTranslation();
   const [field] = useField<Resources[]>('resourceTypesNotValid');
   const invalidTypes = field.value || [];
 
@@ -37,7 +39,10 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
       value: Resources.Kubernetes,
       children: createHelpText(
         DeploymentModel,
-        `A ${DeploymentModel.label} enables declarative updates for Pods and ReplicaSets.`,
+        t(
+          'devconsole~A {{deploymentLabel}} enables declarative updates for Pods and ReplicaSets.',
+          { deploymentLabel: DeploymentModel.label },
+        ),
       ),
     });
   }
@@ -47,8 +52,10 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
       value: Resources.OpenShift,
       children: createHelpText(
         DeploymentConfigModel,
-        `A ${DeploymentConfigModel.label} defines the template for a pod \
-        and manages deploying new images or configuration changes.`,
+        t(
+          'devconsole~A {{deploymentConfigLabel}} defines the template for a pod and manages deploying new images or configuration changes.',
+          { deploymentConfigLabel: DeploymentConfigModel.label },
+        ),
       ),
     });
   }
@@ -69,13 +76,13 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
       value: Resources.KnativeService,
       children: createHelpText(
         ServiceModel,
-        `A type of deployment that enables Serverless scaling to 0 when idle.`,
+        t('devconsole~A type of deployment that enables Serverless scaling to 0 when idle.'),
       ),
     });
   }
   return (
-    <FormSection title="Resources" fullWidth>
-      <div>Select the resource type to generate</div>
+    <FormSection title={t('devconsole~Resources')} fullWidth>
+      <div>{t('devconsole~Select the resource type to generate')}</div>
       <RadioGroupField name="resources" options={radioOptions} />
     </FormSection>
   );

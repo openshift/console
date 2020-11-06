@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
+import Helmet from 'react-helmet';
+import { TFunction } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import { PageHeading, Firehose, FirehoseResource } from '@console/internal/components/utils';
 import { ImageStreamModel } from '@console/internal/models';
 import { QUERY_PROPERTIES } from '../../const';
@@ -11,33 +13,34 @@ import { ImportTypes, ImportData } from './import-types';
 
 export type ImportPageProps = RouteComponentProps<{ ns?: string }>;
 
-const ImportFlows: { [name: string]: ImportData } = {
+const ImportFlows = (t: TFunction): { [name: string]: ImportData } => ({
   git: {
     type: ImportTypes.git,
-    title: 'Import from Git',
+    title: t('devconsole~Import from Git'),
     buildStrategy: 'Source',
     loader: () =>
       import('./GitImportForm' /* webpackChunkName: "git-import-form" */).then((m) => m.default),
   },
   docker: {
     type: ImportTypes.docker,
-    title: 'Import from Dockerfile',
+    title: t('devconsole~Import from Dockerfile'),
     buildStrategy: 'Docker',
     loader: () =>
       import('./GitImportForm' /* webpackChunkName: "git-import-form" */).then((m) => m.default),
   },
   s2i: {
     type: ImportTypes.s2i,
-    title: 'Create Source-to-Image Application',
+    title: t('devconsole~Create Source-to-Image Application'),
     buildStrategy: 'Source',
     loader: () =>
       import('./SourceToImageForm' /* webpackChunkName: "source-to-image-form" */).then(
         (m) => m.default,
       ),
   },
-};
+});
 
 const ImportPage: React.FunctionComponent<ImportPageProps> = ({ match, location }) => {
+  const { t } = useTranslation();
   const namespace = match.params.ns;
   const searchParams = new URLSearchParams(location.search);
   const imageStreamName = searchParams.get('imagestream');
@@ -48,7 +51,7 @@ const ImportPage: React.FunctionComponent<ImportPageProps> = ({ match, location 
   let importData: ImportData;
   let resources: FirehoseResource[];
   if (imageStreamName && imageStreamNamespace) {
-    importData = ImportFlows.s2i;
+    importData = ImportFlows(t).s2i;
     resources = [
       {
         kind: ImageStreamModel.kind,
@@ -64,7 +67,7 @@ const ImportPage: React.FunctionComponent<ImportPageProps> = ({ match, location 
       },
     ];
   } else if (importType === ImportTypes.docker) {
-    importData = ImportFlows.docker;
+    importData = ImportFlows(t).docker;
     resources = [
       {
         kind: 'Project',
@@ -73,7 +76,7 @@ const ImportPage: React.FunctionComponent<ImportPageProps> = ({ match, location 
       },
     ];
   } else {
-    importData = ImportFlows.git;
+    importData = ImportFlows(t).git;
     resources = [
       {
         kind: ImageStreamModel.kind,

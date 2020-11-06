@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { useFormikContext, FormikValues } from 'formik';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ResourceDropdownField } from '@console/shared';
@@ -8,6 +9,7 @@ import { ImageStreamActions } from '../import-types';
 import { ImageStreamContext } from './ImageStreamContext';
 
 const ImageStreamDropdown: React.FC = () => {
+  const { t } = useTranslation();
   const imgCollection = {};
 
   const {
@@ -31,8 +33,8 @@ const ImageStreamDropdown: React.FC = () => {
     return loading && !isStreamsAvailable
       ? ''
       : !isStreamsAvailable || !hasCreateAccess
-      ? 'No Image Stream'
-      : 'Select Image Stream';
+      ? t('devconsole~No Image Stream')
+      : t('devconsole~Select Image Stream');
   };
 
   const onDropdownChange = React.useCallback(
@@ -80,7 +82,7 @@ const ImageStreamDropdown: React.FC = () => {
   return (
     <ResourceDropdownField
       name="imageStream.image"
-      label="Image Stream"
+      label={t('devconsole~Image Stream')}
       resources={getImageStreamResource(imageStream.namespace)}
       dataSelector={['metadata', 'name']}
       key={imageStream.namespace}

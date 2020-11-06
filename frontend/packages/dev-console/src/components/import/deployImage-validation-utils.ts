@@ -1,4 +1,5 @@
 import * as yup from 'yup';
+import { TFunction } from 'i18next';
 import {
   nameValidationSchema,
   projectNameValidationSchema,
@@ -12,15 +13,16 @@ import {
 } from './validation-schema';
 import { healthChecksProbesValidationSchema } from '../health-checks/health-checks-probe-validation-utils';
 
-export const deployValidationSchema = yup.object().shape({
-  project: projectNameValidationSchema,
-  application: applicationNameValidationSchema,
-  name: nameValidationSchema,
-  isi: isiValidationSchema,
-  serverless: serverlessValidationSchema,
-  deployment: deploymentValidationSchema,
-  route: routeValidationSchema,
-  limits: limitsValidationSchema,
-  resources: resourcesValidationSchema,
-  healthChecks: healthChecksProbesValidationSchema,
-});
+export const deployValidationSchema = (t: TFunction) =>
+  yup.object().shape({
+    project: projectNameValidationSchema,
+    application: applicationNameValidationSchema,
+    name: nameValidationSchema,
+    isi: isiValidationSchema(t),
+    serverless: serverlessValidationSchema(t),
+    deployment: deploymentValidationSchema(t),
+    route: routeValidationSchema(t),
+    limits: limitsValidationSchema(t),
+    resources: resourcesValidationSchema,
+    healthChecks: healthChecksProbesValidationSchema(t),
+  });

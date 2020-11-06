@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Formik, FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { getActivePerspective } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { history } from '@console/internal/components/utils';
@@ -30,6 +31,7 @@ const EditApplication: React.FC<EditApplicationProps & StateProps> = ({
   appName,
   resources: appResources,
 }) => {
+  const { t } = useTranslation();
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
   const initialValues = getInitialValues(appResources, appName, namespace);
   const pageHeading = getPageHeading(_.get(initialValues, 'build.strategy', ''));
@@ -115,7 +117,7 @@ const EditApplication: React.FC<EditApplicationProps & StateProps> = ({
       onSubmit={handleSubmit}
       onReset={history.goBack}
       validationSchema={
-        _.get(initialValues, 'build.strategy') ? gitValidationSchema : deployValidationSchema
+        _.get(initialValues, 'build.strategy') ? gitValidationSchema(t) : deployValidationSchema(t)
       }
     >
       {renderForm}
