@@ -72,7 +72,11 @@ export const VMUsersList: React.FC<VMUsersListProps> = ({ vmi, vmStatusBundle })
   );
 
   if (!guestAgentInfoRaw) {
-    return <div className="text-center">{guestAgentFieldNotAvailMsg}</div>;
+    return (
+      <div id="guest-agent-unavailable-msg" className="text-center">
+        {guestAgentFieldNotAvailMsg}
+      </div>
+    );
   }
 
   const data =
@@ -95,7 +99,11 @@ export const VMUsersList: React.FC<VMUsersListProps> = ({ vmi, vmStatusBundle })
       data={data}
       loadError={error?.message}
       loaded={!loading}
-      EmptyMsg={() => <div className="text-center">No Active Users</div>}
+      EmptyMsg={() => (
+        <div id="no-active-users-msg" className="text-center">
+          No Active Users
+        </div>
+      )}
       virtualize
     />
   );

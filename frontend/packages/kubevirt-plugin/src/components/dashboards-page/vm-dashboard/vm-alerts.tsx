@@ -6,7 +6,7 @@ import { VMIKind } from '../../../types';
 import { getVMIConditionsByType } from '../../../selectors/vmi';
 import {
   NO_GUEST_AGENT_MESSAGE,
-  GUEST_AGENT_VERSION_NOT_SUPPOETED_MESSAGE,
+  GUEST_AGENT_VERSION_NOT_SUPPORTED_MESSAGE,
 } from '../../../strings/vm/messages';
 
 // Based on: https://github.com/kubevirt/kubevirt/blob/f71e9c9615a6c36178169d66814586a93ba515b5/staging/src/kubevirt.io/client-go/api/v1/types.go#L337
@@ -31,7 +31,7 @@ export const VMAlerts: React.FC<VMAlertsProps> = ({ vmi }) => (
       <StatusItem Icon={BlueInfoCircleIcon} message={NO_GUEST_AGENT_MESSAGE} />
     )}
     {vmi && vmi.status && isGuestAgentVersionNotSupported(vmi) && (
-      <StatusItem Icon={BlueInfoCircleIcon} message={GUEST_AGENT_VERSION_NOT_SUPPOETED_MESSAGE} />
+      <StatusItem Icon={BlueInfoCircleIcon} message={GUEST_AGENT_VERSION_NOT_SUPPORTED_MESSAGE} />
     )}
   </AlertsBody>
 );

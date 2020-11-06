@@ -60,6 +60,14 @@ export const vmDetailLabelValue = async (labelKey) => {
   return value;
 };
 
+// Guest agent data fields
+export const vmDetailHostname = (namespace, vmName) =>
+  $(vmDetailItemId(namespace, vmName, 'hostname'));
+export const vmDetailTimeZone = (namespace, vmName) =>
+  $(vmDetailItemId(namespace, vmName, 'timezone'));
+export const vmDetailActiveUsersListGuestAgentUnavail = () => $('#guest-agent-unavailable-msg');
+export const vmDetailActiveUsersListNoUsers = $('#no-active-users-msg');
+
 export const vmDetailstatusButton = (namespace, name) =>
   $(`${vmDetailItemId(namespace, name, 'vm-statuses')} > .pf-c-button.pf-m-link.pf-m-inline`);
 

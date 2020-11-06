@@ -105,7 +105,11 @@ export const FileSystemsList: React.FC<FileSystemsListProps> = ({ vmi, vmStatusB
         data={data}
         loadError={error?.message}
         loaded={!loading}
-        EmptyMsg={() => <div className="text-center">No File Systems Found</div>}
+        EmptyMsg={() => (
+          <div id="no-files-systems-found-msg" className="text-center">
+            No File Systems Found
+          </div>
+        )}
         virtualize
       />
     );
@@ -113,7 +117,7 @@ export const FileSystemsList: React.FC<FileSystemsListProps> = ({ vmi, vmStatusB
 
   return (
     <div className="kubevirt-vm-details__file-systems">
-      <h3>
+      <h3 id="file-systems-header">
         File Systems
         <Popover
           aria-label="File systems description"
