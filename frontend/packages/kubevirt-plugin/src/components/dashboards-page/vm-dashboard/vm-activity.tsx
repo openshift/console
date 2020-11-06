@@ -25,7 +25,7 @@ import { VMILikeEntityKind } from '../../../types/vmLike';
 import './vm-activity.scss';
 
 const combinedVmFilter = (vm: VMILikeEntityKind): EventFilterFuncion => (event) =>
-  getVmEventsFilters(vm).some((filter) => filter(event.involvedObject));
+  getVmEventsFilters(vm).some((filter) => filter(event.involvedObject, event));
 
 const getEventsResource = (namespace: string): FirehoseResource => ({
   isList: true,

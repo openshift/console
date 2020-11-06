@@ -386,7 +386,7 @@ class EventStream extends React.Component {
       if (kind && !kindFilter(kind, obj)) {
         return false;
       }
-      if (filter && !filter.some((flt) => flt(obj.involvedObject))) {
+      if (filter && !filter.some((flt) => flt(obj.involvedObject, obj))) {
         return false;
       }
       if (!textMatches(obj)) {
