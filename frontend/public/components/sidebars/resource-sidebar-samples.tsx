@@ -421,6 +421,6 @@ type ResourceSidebarSamplesProps = {
   samples: Sample[];
   loadSampleYaml: LoadSampleYaml;
   downloadSampleYaml: DownloadSampleYaml;
-  yamlSamplesList: FirehoseResult;
+  yamlSamplesList?: FirehoseResult;
   kindObj: K8sKind;
 };
