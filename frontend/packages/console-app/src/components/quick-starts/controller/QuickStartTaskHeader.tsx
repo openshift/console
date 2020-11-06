@@ -76,9 +76,12 @@ const QuickStartTaskHeader: React.FC<QuickStartTaskHeaderProps> = ({
         {isActiveTask && subtitle && (
           <>
             {' '}
-            <small className="co-quick-start-task-header__subtitle text-secondary">
+            <span
+              className="co-quick-start-task-header__subtitle text-secondary"
+              data-test-id="quick-start-task-subtitle"
+            >
               {subtitle}
-            </small>
+            </span>
           </>
         )}
       </Title>
