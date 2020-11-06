@@ -19,7 +19,7 @@ const PipelineVisualization: React.FC<PipelineTopologyVisualizationProps> = ({
 }) => {
   const { nodes, edges } = getTopologyNodesEdges(pipeline, pipelineRun);
   let content: React.ReactElement;
-  if (hasInlineTaskSpec(pipeline)) {
+  if (hasInlineTaskSpec(pipeline.spec.tasks)) {
     // TODO: Inline taskSpec is not yet supported feature
     content = (
       <Alert

@@ -60,7 +60,7 @@ export const reRunPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: Pipeli
 
 export const editPipeline: KebabAction = (kind: K8sKind, pipeline: Pipeline) => ({
   label: 'Edit Pipeline',
-  hidden: hasInlineTaskSpec(pipeline),
+  hidden: hasInlineTaskSpec(pipeline.spec.tasks),
   callback: () => {
     const {
       metadata: { name, namespace },

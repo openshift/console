@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
-import { history, resourcePathFromModel } from '@console/internal/components/utils';
 import { apiVersionForModel, referenceForModel } from '@console/internal/module/k8s';
 import { getRandomChars } from '@console/shared';
+import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { PipelineModel, TaskModel } from '../../../models';
 import {
   Pipeline,
@@ -9,10 +9,10 @@ import {
   PipelineResourceTaskParam,
   PipelineTask,
 } from '../../../utils/pipeline-augment';
+import { removeEmptyDefaultFromPipelineParams } from '../detail-page-tabs/utils';
 import { getTaskParameters } from '../resource-utils';
 import { TASK_ERROR_STRINGS, TaskErrorType } from './const';
-import { PipelineBuilderFormikValues, PipelineBuilderFormValues, TaskErrorMap } from './types';
-import { removeEmptyDefaultFromPipelineParams } from '../detail-page-tabs/utils';
+import { PipelineBuilderFormValues, PipelineBuilderFormYamlValues, TaskErrorMap } from './types';
 
 export const getErrorMessage = (errorTypes: TaskErrorType[], errorMap: TaskErrorMap) => (
   taskName: string,
@@ -96,11 +96,11 @@ const removeEmptyDefaultParams = (task: PipelineTask): PipelineTask => {
 };
 
 export const convertBuilderFormToPipeline = (
-  formValues: PipelineBuilderFormikValues,
+  formValues: PipelineBuilderFormValues,
   namespace: string,
   existingPipeline?: Pipeline,
 ): Pipeline => {
-  const { name, resources, params, tasks, listTasks } = formValues;
+  const { name, resources, params, tasks, listTasks, ...unhandledSpec } = formValues;
   const listIds = listTasks.map((listTask) => listTask.name);
 
   return {
@@ -114,6 +114,7 @@ export const convertBuilderFormToPipeline = (
     },
     spec: {
       ...existingPipeline?.spec,
+      ...unhandledSpec,
       params: removeEmptyDefaultFromPipelineParams(params),
       resources,
       tasks: tasks.map((task) => removeEmptyDefaultParams(removeListRunAfters(task, listIds))),
@@ -121,7 +122,7 @@ export const convertBuilderFormToPipeline = (
   };
 };
 
-export const convertPipelineToBuilderForm = (pipeline: Pipeline): PipelineBuilderFormValues => {
+export const convertPipelineToBuilderForm = (pipeline: Pipeline): PipelineBuilderFormYamlValues => {
   if (!pipeline) return null;
 
   const {
@@ -130,24 +131,16 @@ export const convertPipelineToBuilderForm = (pipeline: Pipeline): PipelineBuilde
   } = pipeline;
 
   return {
-    name,
-    params,
-    resources,
-    tasks,
-    listTasks: [],
+    editorType: EditorType.Form,
+    yamlData: '',
+    formData: {
+      name,
+      params,
+      resources,
+      tasks,
+      listTasks: [],
+    },
   };
-};
-
-export const goToYAML = (existingPipeline?: Pipeline, namespace?: string) => {
-  history.push(
-    existingPipeline
-      ? `${resourcePathFromModel(
-          PipelineModel,
-          existingPipeline?.metadata?.name,
-          existingPipeline?.metadata?.namespace,
-        )}/yaml`
-      : `${getPipelineURL(namespace)}/~new`,
-  );
 };
 
 export const hasEmptyString = (arr: string[]) => _.find(arr, _.isEmpty) === '';

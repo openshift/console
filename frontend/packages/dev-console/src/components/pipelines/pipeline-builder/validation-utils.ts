@@ -1,6 +1,7 @@
 import * as yup from 'yup';
+import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 
-export const validationSchema = yup.object({
+const pipelineBuilderFormSchema = yup.object({
   name: yup.string().required('Required'),
   params: yup.array().of(
     yup.object({
@@ -37,4 +38,16 @@ export const validationSchema = yup.object({
       runAfter: yup.string(),
     }),
   ),
+});
+
+export const validationSchema = yup.object({
+  editorType: yup.string(),
+  yamlData: yup.string().when('editorType', {
+    is: EditorType.YAML,
+    then: yup.string().required(),
+  }),
+  formData: yup.object().when('editorType', {
+    is: EditorType.Form,
+    then: pipelineBuilderFormSchema,
+  }),
 });

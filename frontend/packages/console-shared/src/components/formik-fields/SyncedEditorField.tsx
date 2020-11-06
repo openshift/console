@@ -14,6 +14,7 @@ type EditorContext = {
   editor: React.ReactNode;
   isDisabled?: boolean;
   sanitizeTo?: (preFormData: any) => any;
+  label?: string;
 };
 
 type SyncedEditorFieldProps = {
@@ -58,7 +59,7 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
     const newYAML = safeJSToYAML(formData, yamlData, { skipInvalid: true });
     setFieldValue(
       yamlContext.name,
-      yamlContext.sanitizeTo ? formContext.sanitizeTo(newYAML) : newYAML,
+      yamlContext.sanitizeTo ? yamlContext.sanitizeTo(newYAML) : newYAML,
     );
     changeEditorType(EditorType.YAML);
   };
@@ -97,12 +98,12 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
           name={name}
           options={[
             {
-              label: t('console-shared~Form View'),
+              label: formContext.label || t('console-shared~Form View'),
               value: EditorType.Form,
               isDisabled: formContext.isDisabled,
             },
             {
-              label: t('console-shared~YAML View'),
+              label: yamlContext.label || t('console-shared~YAML View'),
               value: EditorType.YAML,
               isDisabled: yamlContext.isDisabled,
             },
