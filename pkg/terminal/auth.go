@@ -7,10 +7,10 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// checkUserPermissions checks if the terminal proxy is supported for a given user.
-// Returns true if we're willing to proxy the user's token, false otherwise. We don't
-// want to proxy highly privileged tokens to avoid privilege escalation issues.
-func (p *Proxy) checkUserPermissions(token string) (bool, error) {
+// isClusterAdmin does a subject access review to see if the user can create pods in openshift-terminal
+// if they can then they are considered a cluster admin
+// if they cannot they are not a cluster admin
+func (p *Proxy) isClusterAdmin(token string) (bool, error) {
 	client, err := p.createTypedClient(token)
 	if err != nil {
 		return false, err
@@ -19,7 +19,7 @@ func (p *Proxy) checkUserPermissions(token string) (bool, error) {
 	sar := &authv1.SelfSubjectAccessReview{
 		Spec: authv1.SelfSubjectAccessReviewSpec{
 			ResourceAttributes: &authv1.ResourceAttributes{
-				Namespace: "openshift-operators",
+				Namespace: "openshift-terminal",
 				Verb:      "create",
 				Resource:  "pods",
 			},
@@ -29,5 +29,5 @@ func (p *Proxy) checkUserPermissions(token string) (bool, error) {
 	if err != nil || res == nil {
 		return false, err
 	}
-	return !res.Status.Allowed, nil
+	return res.Status.Allowed, nil
 }

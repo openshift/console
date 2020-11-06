@@ -26,7 +26,7 @@ type Props = StateProps & {
   onCancel?: () => void;
 };
 
-const CloudShellSetup: React.FunctionComponent<Props> = ({
+const CloudShellDeveloperSetup: React.FunctionComponent<Props> = ({
   activeNamespace,
   onSubmit,
   onCancel,
@@ -80,4 +80,4 @@ const mapStateToProps = (state: RootState): StateProps => ({
   activeNamespace: state.UI.get('activeNamespace'),
 });
 
-export default connect<StateProps>(mapStateToProps)(CloudShellSetup);
+export default connect<StateProps>(mapStateToProps)(CloudShellDeveloperSetup);

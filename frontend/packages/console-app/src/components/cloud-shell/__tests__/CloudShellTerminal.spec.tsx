@@ -3,9 +3,9 @@ import { shallow } from 'enzyme';
 import { StatusBox } from '@console/internal/components/utils/status-box';
 import { InternalCloudShellTerminal } from '../CloudShellTerminal';
 import TerminalLoadingBox from '../TerminalLoadingBox';
-import CloudShellSetup from '../setup/CloudShellSetup';
 import { user } from './cloud-shell-test-data';
 import useCloudShellWorkspace from '../useCloudShellWorkspace';
+import CloudShellDeveloperSetup from '../setup/CloudShellDeveloperSetup';
 
 jest.mock('../useCloudShellWorkspace', () => ({
   default: jest.fn(),
@@ -18,6 +18,10 @@ jest.mock('react-i18next', () => {
     useTranslation: () => ({ t: (key: string) => key }),
   };
 });
+
+jest.mock('@console/internal/components/utils/rbac', () => ({
+  useAccessReview2: () => [false, false],
+}));
 
 jest.mock('@console/shared/src/hooks/useUserSettingsCompatibility', () => {
   return {
@@ -59,6 +63,6 @@ describe('CloudShellTerminal', () => {
         setUserSettingState={jest.fn()}
       />,
     );
-    expect(wrapper.find(CloudShellSetup)).toHaveLength(1);
+    expect(wrapper.find(CloudShellDeveloperSetup)).toHaveLength(1);
   });
 });
