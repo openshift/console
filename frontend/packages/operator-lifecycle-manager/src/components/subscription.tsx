@@ -3,7 +3,9 @@ import * as _ from 'lodash';
 import { match, Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { Alert, Button } from '@patternfly/react-core';
+import { withTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
+import { Alert, Button, Popover } from '@patternfly/react-core';
 import { InProgressIcon, PencilAltIcon } from '@patternfly/react-icons';
 import { Conditions } from '@console/internal/components/conditions';
 import {
@@ -36,6 +38,7 @@ import {
 } from '@console/internal/module/k8s';
 import {
   BlueArrowCircleUpIcon,
+  BlueInfoCircleIcon,
   getName,
   getNamespace,
   GreenCheckCircleIcon,
@@ -67,6 +70,7 @@ import { requireOperatorGroup } from './operator-group';
 import { createUninstallOperatorModal } from './modals/uninstall-operator-modal';
 import { createSubscriptionChannelModal } from './modals/subscription-channel-modal';
 import { createInstallPlanApprovalModal } from './modals/installplan-approval-modal';
+import { getManualSubscriptionsInNamespace, NamespaceIncludesManualApproval } from './index';
 
 export const catalogSourceForSubscription = (
   catalogSources: CatalogSourceKind[] = [],
@@ -326,6 +330,7 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
   installPlans = [],
   obj,
   packageManifests = [],
+  subscriptions = [],
 }) => {
   const catalogSource = catalogSourceForSubscription(catalogSources, obj);
   const catalogSourceName = getName(catalogSource);
@@ -375,6 +380,7 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
             obj={obj}
             installedCSV={installedCSV}
             installPlan={installPlan}
+            subscriptions={subscriptions}
           />
         </div>
         <div className="co-m-pane__body-group">
@@ -451,7 +457,7 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
   );
 };
 
-export class SubscriptionUpdates extends React.Component<
+class SubscriptionUpdatesWithTranslation extends React.Component<
   SubscriptionUpdatesProps,
   SubscriptionUpdatesState
 > {
@@ -480,7 +486,7 @@ export class SubscriptionUpdates extends React.Component<
   }
 
   render() {
-    const { catalogSource, installedCSV, obj, pkg } = this.props;
+    const { catalogSource, installedCSV, obj, pkg, subscriptions, t } = this.props;
 
     const k8sUpdateAndWait = (...args) =>
       k8sUpdate(...args).then(() => this.setState({ waitingForUpdate: true }));
@@ -498,6 +504,10 @@ export class SubscriptionUpdates extends React.Component<
           return '1 installing';
       }
     };
+    const manualSubscriptionsInNamespace = getManualSubscriptionsInNamespace(
+      subscriptions,
+      obj.metadata.namespace,
+    );
 
     return (
       <div className="co-detail-table">
@@ -530,10 +540,35 @@ export class SubscriptionUpdates extends React.Component<
                 {this.state.waitingForUpdate ? (
                   <LoadingInline />
                 ) : (
-                  <Button type="button" isInline onClick={approvalModal} variant="link">
-                    {obj.spec.installPlanApproval || 'Automatic'}
-                    <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
-                  </Button>
+                  <>
+                    <div>
+                      <Button type="button" isInline onClick={approvalModal} variant="link">
+                        {obj.spec.installPlanApproval || 'Automatic'}
+                        <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+                      </Button>
+                    </div>
+                    {obj.spec.installPlanApproval === InstallPlanApproval.Automatic &&
+                      manualSubscriptionsInNamespace?.length > 0 && (
+                        <div>
+                          <Popover
+                            headerContent={
+                              <>{t('subscription~Functioning as manual approval strategy')}</>
+                            }
+                            bodyContent={
+                              <NamespaceIncludesManualApproval
+                                subscriptions={manualSubscriptionsInNamespace}
+                                namespace={obj.metadata.namespace}
+                              />
+                            }
+                          >
+                            <Button type="button" isInline variant="link">
+                              <BlueInfoCircleIcon className="co-icon-space-r" />
+                              {t('subscription~Functioning as manual')}
+                            </Button>
+                          </Popover>
+                        </div>
+                      )}
+                  </>
                 )}
               </dd>
             </dl>
@@ -591,7 +626,9 @@ export class SubscriptionUpdates extends React.Component<
   }
 }
 
-export const SubscriptionDetailsPage: React.SFC<SubscriptionDetailsPageProps> = (props) => (
+export const SubscriptionUpdates = withTranslation()(SubscriptionUpdatesWithTranslation);
+
+export const SubscriptionDetailsPage: React.FC<SubscriptionDetailsPageProps> = (props) => (
   <DetailsPage
     {...props}
     namespace={props.match.params.ns}
@@ -622,6 +659,12 @@ export const SubscriptionDetailsPage: React.SFC<SubscriptionDetailsPageProps> = 
         isList: true,
         prop: 'catalogSources',
       },
+      {
+        kind: referenceForModel(SubscriptionModel),
+        namespace: props.namespace,
+        isList: true,
+        prop: 'subscriptions',
+      },
     ]}
     menuActions={menuActions}
   />
@@ -645,6 +688,8 @@ export type SubscriptionUpdatesProps = {
   pkg: PackageManifestKind;
   installedCSV?: ClusterServiceVersionKind;
   installPlan?: InstallPlanKind;
+  subscriptions: SubscriptionKind[];
+  t: TFunction;
 };
 
 export type SubscriptionUpdatesState = {
@@ -659,6 +704,7 @@ export type SubscriptionDetailsProps = {
   installPlans?: InstallPlanKind[];
   obj: SubscriptionKind;
   packageManifests: PackageManifestKind[];
+  subscriptions: SubscriptionKind[];
 };
 
 export type SubscriptionDetailsPageProps = {

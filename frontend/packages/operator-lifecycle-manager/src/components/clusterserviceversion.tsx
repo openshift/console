@@ -1052,7 +1052,12 @@ export const CSVSubscription: React.FC<CSVSubscriptionProps> = ({
 
   return (
     <StatusBox EmptyMsg={EmptyMsg} loaded data={subscription}>
-      <SubscriptionDetails {...rest} obj={subscription} clusterServiceVersions={[obj]} />
+      <SubscriptionDetails
+        {...rest}
+        obj={subscription}
+        clusterServiceVersions={[obj]}
+        subscriptions={subscriptions}
+      />
     </StatusBox>
   );
 };
