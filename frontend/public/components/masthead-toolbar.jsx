@@ -19,6 +19,9 @@ import * as redhatLogoImg from '../imgs/logos/redhat.svg';
 import { withKeycloak } from '@react-keycloak/web';
 import { ExpTimer } from './hypercloud/exp-timer';
 
+import { Translation } from 'react-i18next';
+import i18n from 'i18next';
+
 const SystemStatusButton = ({ statuspageData, className }) =>
   !_.isEmpty(_.get(statuspageData, 'incidents')) ? (
     <ToolbarItem className={className}>
@@ -35,6 +38,7 @@ class MastheadToolbarContents_ extends React.Component {
     this.state = {
       isApplicationLauncherDropdownOpen: false,
       isUserDropdownOpen: false,
+      isLanguageDropdownOpen: false,
       isKebabDropdownOpen: false,
       statuspageData: null,
       isKubeAdmin: false,
@@ -46,9 +50,12 @@ class MastheadToolbarContents_ extends React.Component {
     this._updateUser = this._updateUser.bind(this);
     this._onUserDropdownToggle = this._onUserDropdownToggle.bind(this);
     this._onUserDropdownSelect = this._onUserDropdownSelect.bind(this);
+    this._onLanguageDropdownToggle = this._onLanguageDropdownToggle.bind(this);
+    this._onLanguageDropdownSelect = this._onLanguageDropdownSelect.bind(this);
     this._onKebabDropdownToggle = this._onKebabDropdownToggle.bind(this);
     this._onKebabDropdownSelect = this._onKebabDropdownSelect.bind(this);
     this._renderMenu = this._renderMenu.bind(this);
+    this._renderI18n = this._renderI18n.bind(this);
     this._onApplicationLauncherDropdownSelect = this._onApplicationLauncherDropdownSelect.bind(this);
     this._onApplicationLauncherDropdownToggle = this._onApplicationLauncherDropdownToggle.bind(this);
     this._onHelpDropdownSelect = this._onHelpDropdownSelect.bind(this);
@@ -106,6 +113,18 @@ class MastheadToolbarContents_ extends React.Component {
   _onUserDropdownSelect() {
     this.setState({
       isUserDropdownOpen: !this.state.isUserDropdownOpen,
+    });
+  }
+
+  _onLanguageDropdownToggle(isLanguageDropdownOpen) {
+    this.setState({
+      isLanguageDropdownOpen,
+    });
+  }
+
+  _onLanguageDropdownSelect() {
+    this.setState({
+      isLanguageDropdownOpen: !this.state.isLanguageDropdownOpen,
     });
   }
 
@@ -424,6 +443,71 @@ class MastheadToolbarContents_ extends React.Component {
 
     return <ApplicationLauncher aria-label="User menu" data-test="user-dropdown" className="co-app-launcher co-user-menu" onSelect={this._onUserDropdownSelect} onToggle={this._onUserDropdownToggle} isOpen={isUserDropdownOpen} items={this._renderApplicationItems(actions)} position="right" toggleIcon={userToggle} isGrouped />;
   }
+  _renderI18n(mobile) {
+    const { flags, consoleLinks, keycloak } = this.props;
+    const { isLanguageDropdownOpen } = this.state;
+
+    const actions = [];
+    const i18nActions = [];
+
+    const enChange = e => {
+      e.preventDefault();
+      i18n.changeLanguage('en');
+      window.localStorage.setItem('i18nextLng', 'en');
+      // window.location.reload();
+    };
+    const koChange = e => {
+      e.preventDefault();
+      i18n.changeLanguage('ko');
+      window.localStorage.setItem('i18nextLng', 'ko');
+      // window.location.reload();
+    };
+
+    i18nActions.push({
+      label: 'EN-US',
+      callback: enChange,
+      component: 'button',
+    });
+
+    i18nActions.push({
+      label: '한국어',
+      callback: koChange,
+      component: 'button',
+    });
+
+    actions.push({
+      name: '',
+      isSection: true,
+      actions: i18nActions,
+    });
+
+    if (mobile) {
+      actions.unshift({
+        name: '',
+        isSection: true,
+        actions: [],
+      });
+
+      return <ApplicationLauncher aria-label="Utility menu" className="co-app-launcher" onSelect={this._onKebabDropdownSelect} onToggle={this._onKebabDropdownToggle} isOpen={isKebabDropdownOpen} items={this._renderApplicationItems(actions)} position="right" toggleIcon={<EllipsisVIcon />} isGrouped />;
+    }
+
+    if (_.isEmpty(actions)) {
+      return <div className="co-username"></div>;
+    }
+
+    const languageToggle = (
+      <Translation>
+        {t => (
+          <span className="pf-c-dropdown__toggle">
+            <span className="co-username">{t('LANGUAGE')}</span>
+            <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
+          </span>
+        )}
+      </Translation>
+    );
+
+    return <ApplicationLauncher aria-label="Language menu" data-test="language-dropdown" className="co-app-launcher co-user-menu" onSelect={this._onLanguageDropdownSelect} onToggle={this._onLanguageDropdownToggle} isOpen={isLanguageDropdownOpen} items={this._renderApplicationItems(actions)} position="right" toggleIcon={languageToggle} isGrouped />;
+  }
 
   _tokenRefresh = () => {
     const { keycloak } = this.props;
@@ -479,6 +563,7 @@ class MastheadToolbarContents_ extends React.Component {
             </ToolbarItem>
             <ToolbarItem>
               <Button
+                variant="tertiary"
                 onClick={() => {
                   this._tokenRefresh();
                 }}
@@ -528,6 +613,7 @@ class MastheadToolbarContents_ extends React.Component {
             {/* mobile -- kebab dropdown [(application launcher |) import yaml | documentation, about (| logout)] */}
             <ToolbarItem className="visible-xs-block">{this._renderMenu(true)}</ToolbarItem>
             {/* desktop -- (user dropdown [logout]) */}
+            <ToolbarItem className="hidden-xs">{this._renderI18n(false)}</ToolbarItem>
             <ToolbarItem className="hidden-xs">{this._renderMenu(false)}</ToolbarItem>
           </ToolbarGroup>
         </Toolbar>
