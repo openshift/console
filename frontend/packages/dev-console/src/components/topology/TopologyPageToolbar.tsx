@@ -4,14 +4,16 @@ import { Tooltip, Popover, Button } from '@patternfly/react-core';
 import { ListIcon, TopologyIcon, QuestionCircleIcon } from '@patternfly/react-icons';
 import TopologyShortcuts from './TopologyShortcuts';
 import ModelContext, { ExtensibleModel } from './data-transforms/ModelContext';
+import { TopologyViewType } from './topology-types';
 
 interface TopologyPageToolbarProps {
-  showGraphView: boolean;
-  onViewChange: (graphView: boolean) => void;
+  viewType: TopologyViewType;
+  onViewChange: (view: TopologyViewType) => void;
 }
 
 export const TopologyPageToolbar: React.FC<TopologyPageToolbarProps> = observer(
-  ({ showGraphView, onViewChange }) => {
+  ({ viewType, onViewChange }) => {
+    const showGraphView = viewType === TopologyViewType.graph;
     const dataModelContext = React.useContext<ExtensibleModel>(ModelContext);
     const { namespace, isEmptyModel } = dataModelContext;
 
@@ -43,7 +45,9 @@ export const TopologyPageToolbar: React.FC<TopologyPageToolbarProps> = observer(
           <Button
             variant="link"
             className="pf-m-plain odc-topology__view-switcher"
-            onClick={() => onViewChange(!showGraphView)}
+            onClick={() =>
+              onViewChange(showGraphView ? TopologyViewType.list : TopologyViewType.graph)
+            }
           >
             {showGraphView ? <ListIcon size="md" /> : <TopologyIcon size="md" />}
           </Button>

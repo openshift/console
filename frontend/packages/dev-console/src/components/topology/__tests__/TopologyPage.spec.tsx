@@ -3,6 +3,7 @@ import { shallow } from 'enzyme';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import NamespacedPage from '../../NamespacedPage';
 import { TopologyPage } from '../TopologyPage';
+import { TopologyViewType } from '../topology-types';
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResources: jest.fn(),
@@ -50,8 +51,20 @@ describe('Topology page tests', () => {
     expect(wrapper.find(NamespacedPage).exists()).toBe(true);
   });
 
-  it('should default to list view', () => {
+  it('should default to graph view', () => {
     const wrapper = shallow(<TopologyPage match={match} title="Topology" hideProjects={false} />);
+    expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(false);
+  });
+
+  it('should allow setting default to list view', () => {
+    const wrapper = shallow(
+      <TopologyPage
+        match={match}
+        title="Topology"
+        hideProjects={false}
+        defaultViewType={TopologyViewType.list}
+      />,
+    );
     expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(true);
   });
 

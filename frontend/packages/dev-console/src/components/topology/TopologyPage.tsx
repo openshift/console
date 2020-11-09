@@ -4,17 +4,18 @@ import { matchPath, match as RMatch } from 'react-router-dom';
 import { useQueryParams } from '@console/shared/src';
 import { removeQueryArgument, setQueryArgument } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import ProjectsExistWrapper from '../ProjectsExistWrapper';
 import CreateProjectListPage from '../projects/CreateProjectListPage';
 import { TopologyDataRenderer } from './TopologyDataRenderer';
 import { LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY } from './components';
 import { TOPOLOGY_SEARCH_FILTER_KEY } from './filters';
+import { TopologyViewType } from './topology-types';
 import DataModelProvider from './data-transforms/DataModelProvider';
 import { TopologyPageToolbar } from './TopologyPageToolbar';
 
 import './TopologyPage.scss';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 
 export interface TopologyPageProps {
   match: RMatch<{
@@ -23,14 +24,15 @@ export interface TopologyPageProps {
   activeViewStorageKey?: string;
   title?: string;
   hideProjects?: boolean;
+  defaultViewType?: TopologyViewType;
 }
 
-const setTopologyActiveView = (key: string, id: string) => {
-  localStorage.setItem(key, id);
+const setTopologyActiveView = (key: string, viewType: TopologyViewType) => {
+  localStorage.setItem(key, viewType);
 };
 
-const getTopologyActiveView = (key: string) => {
-  return localStorage.getItem(key);
+const getTopologyActiveView = (key: string): TopologyViewType => {
+  return localStorage.getItem(key) as TopologyViewType;
 };
 
 export const TopologyPage: React.FC<TopologyPageProps> = ({
@@ -38,44 +40,34 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({
   activeViewStorageKey = LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY,
   title = 'Topology',
   hideProjects = false,
+  defaultViewType = TopologyViewType.graph,
 }) => {
   const namespace = match.params.name;
   const queryParams = useQueryParams();
-  let view = queryParams.get('view');
+  let viewType = queryParams.get('view') as TopologyViewType;
   const { projects } = useK8sWatchResources<{ [key: string]: K8sResourceKind[] }>({
     projects: { kind: 'Project', isList: true },
   });
-
-  // Backwards Compatibility
-  const urlView = matchPath(match.path, {
-    path: '*/list',
-    exact: true,
-  })
-    ? 'list'
-    : matchPath(match.path, {
-        path: '*/graph',
-        exact: true,
-      })
-    ? 'graph'
-    : null;
-
-  if (urlView && !view) {
-    setQueryArgument('view', urlView);
-    view = urlView;
+  if (!viewType) {
+    // Backwards Compatibility, check path. Otherwise use any stored preference
+    viewType = matchPath(match.path, {
+      path: '*/list',
+      exact: true,
+    })
+      ? TopologyViewType.list
+      : matchPath(match.path, {
+          path: '*/graph',
+          exact: true,
+        })
+      ? TopologyViewType.graph
+      : getTopologyActiveView(activeViewStorageKey) || defaultViewType;
+    setQueryArgument('view', viewType);
   }
-
-  if (!view) {
-    view = getTopologyActiveView(activeViewStorageKey);
-    setQueryArgument('view', view);
-  }
-
-  const showGraphView = view === 'graph';
 
   const onViewChange = React.useCallback(
-    (graphView: boolean) => {
-      const viewId = graphView ? 'graph' : 'list';
-      setQueryArgument('view', viewId);
-      setTopologyActiveView(activeViewStorageKey, viewId);
+    (newViewType: TopologyViewType) => {
+      setQueryArgument('view', newViewType);
+      setTopologyActiveView(activeViewStorageKey, newViewType);
     },
     [activeViewStorageKey],
   );
@@ -92,15 +84,21 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({
         <title>Topology</title>
       </Helmet>
       <NamespacedPage
-        variant={showGraphView ? NamespacedPageVariants.default : NamespacedPageVariants.light}
+        variant={
+          viewType === TopologyViewType.graph
+            ? NamespacedPageVariants.default
+            : NamespacedPageVariants.light
+        }
         onNamespaceChange={handleNamespaceChange}
         hideProjects={hideProjects}
-        toolbar={<TopologyPageToolbar showGraphView={showGraphView} onViewChange={onViewChange} />}
-        data-test-id={showGraphView ? 'topology-graph-page' : 'topology-list-page'}
+        toolbar={<TopologyPageToolbar viewType={viewType} onViewChange={onViewChange} />}
+        data-test-id={
+          viewType === TopologyViewType.graph ? 'topology-graph-page' : 'topology-list-page'
+        }
       >
         <ProjectsExistWrapper title="Topology" projects={projects}>
           {namespace ? (
-            <TopologyDataRenderer showGraphView={showGraphView} title={title} />
+            <TopologyDataRenderer viewType={viewType} title={title} />
           ) : (
             <CreateProjectListPage title="Topology">
               Select a project to view the topology

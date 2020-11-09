@@ -2,7 +2,7 @@ import * as React from 'react';
 import { mount, shallow } from 'enzyme';
 import { Radio, SelectOption, Switch } from '@patternfly/react-core';
 import FilterDropdown from '../FilterDropdown';
-import { DisplayFilters, TopologyDisplayFilterType } from '../../topology-types';
+import { DisplayFilters, TopologyDisplayFilterType, TopologyViewType } from '../../topology-types';
 import {
   DEFAULT_TOPOLOGY_FILTERS,
   EXPAND_APPLICATION_GROUPS_FILTER_ID,
@@ -23,7 +23,7 @@ describe(FilterDropdown.displayName, () => {
     const wrapper = shallow(
       <FilterDropdown
         filters={dropdownFilter}
-        showGraphView
+        viewType={TopologyViewType.graph}
         supportedFilters={dropdownFilter.map((f) => f.id)}
         onChange={onChange}
       />,
@@ -35,7 +35,7 @@ describe(FilterDropdown.displayName, () => {
     const wrapper = mount(
       <FilterDropdown
         filters={dropdownFilter}
-        showGraphView
+        viewType={TopologyViewType.graph}
         supportedFilters={dropdownFilter.map((f) => f.id)}
         onChange={onChange}
         opened
@@ -48,7 +48,7 @@ describe(FilterDropdown.displayName, () => {
     const wrapper = mount(
       <FilterDropdown
         filters={dropdownFilter}
-        showGraphView={false}
+        viewType={TopologyViewType.list}
         supportedFilters={dropdownFilter.map((f) => f.id)}
         onChange={onChange}
         opened
@@ -63,7 +63,7 @@ describe(FilterDropdown.displayName, () => {
     const wrapper = mount(
       <FilterDropdown
         filters={dropdownFilter}
-        showGraphView
+        viewType={TopologyViewType.graph}
         supportedFilters={[EXPAND_APPLICATION_GROUPS_FILTER_ID]}
         onChange={onChange}
         opened
@@ -76,7 +76,7 @@ describe(FilterDropdown.displayName, () => {
     let wrapper = mount(
       <FilterDropdown
         filters={dropdownFilter}
-        showGraphView
+        viewType={TopologyViewType.graph}
         supportedFilters={dropdownFilter.map((f) => f.id)}
         onChange={onChange}
         opened
@@ -92,7 +92,7 @@ describe(FilterDropdown.displayName, () => {
     wrapper = mount(
       <FilterDropdown
         filters={dropdownFilter}
-        showGraphView
+        viewType={TopologyViewType.graph}
         supportedFilters={dropdownFilter.map((f) => f.id)}
         onChange={onChange}
         opened
@@ -108,7 +108,7 @@ describe(FilterDropdown.displayName, () => {
     const wrapper = mount(
       <FilterDropdown
         filters={dropdownFilter}
-        showGraphView
+        viewType={TopologyViewType.graph}
         supportedFilters={dropdownFilter.map((f) => f.id)}
         onChange={onChange}
         opened
@@ -122,7 +122,7 @@ describe(FilterDropdown.displayName, () => {
     const wrapper = mount(
       <FilterDropdown
         filters={dropdownFilter}
-        showGraphView
+        viewType={TopologyViewType.graph}
         supportedFilters={dropdownFilter.map((f) => f.id)}
         onChange={onChange}
         opened
@@ -141,7 +141,7 @@ describe(FilterDropdown.displayName, () => {
     const wrapper = mount(
       <FilterDropdown
         filters={dropdownFilter}
-        showGraphView
+        viewType={TopologyViewType.graph}
         supportedFilters={dropdownFilter.map((f) => f.id)}
         onChange={onChange}
         opened

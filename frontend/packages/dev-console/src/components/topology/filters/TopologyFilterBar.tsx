@@ -21,7 +21,7 @@ import { TextFilter } from '@console/internal/components/factory';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { ConsoleLinkModel } from '@console/internal/models';
 import { setTopologyFilters } from '../redux/action';
-import { DisplayFilters } from '../topology-types';
+import { DisplayFilters, TopologyViewType } from '../topology-types';
 import {
   getSupportedTopologyFilters,
   getSupportedTopologyKinds,
@@ -48,7 +48,7 @@ type DispatchProps = {
 
 type OwnProps = {
   visualization?: Visualization;
-  showGraphView: boolean;
+  viewType: TopologyViewType;
 };
 
 type MergeProps = StateProps & DispatchProps & OwnProps;
@@ -61,7 +61,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
   supportedKinds,
   onFiltersChange,
   visualization,
-  showGraphView,
+  viewType,
   namespace,
 }) => {
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
@@ -88,7 +88,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
           <ToolbarItem>
             <FilterDropdown
               filters={filters}
-              showGraphView={showGraphView}
+              viewType={viewType}
               supportedFilters={supportedFilters}
               onChange={onFiltersChange}
             />
@@ -113,7 +113,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
               className="odc-topology-filter-bar__text-filter"
             />
           </ToolbarItem>
-          {showGraphView ? (
+          {viewType === TopologyViewType.graph ? (
             <ToolbarItem>
               <Popover
                 aria-label="Find by name"
@@ -168,7 +168,7 @@ const dispatchToProps = (dispatch: Dispatch): DispatchProps => ({
 const mergeProps = (
   { filters, supportedFilters, supportedKinds, namespace }: StateProps,
   { onFiltersChange }: DispatchProps,
-  { visualization, showGraphView }: OwnProps,
+  { visualization, viewType }: OwnProps,
 ): MergeProps => ({
   filters,
   supportedFilters,
@@ -176,7 +176,7 @@ const mergeProps = (
   namespace,
   onFiltersChange,
   visualization,
-  showGraphView,
+  viewType,
 });
 
 export default connect<StateProps, DispatchProps, OwnProps, MergeProps>(

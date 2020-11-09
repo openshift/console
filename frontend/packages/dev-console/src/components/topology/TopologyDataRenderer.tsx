@@ -4,14 +4,15 @@ import { HintBlock, StatusBox } from '@console/internal/components/utils';
 import ModelContext, { ExtensibleModel } from './data-transforms/ModelContext';
 import { TopologyView } from './TopologyView';
 import EmptyState from '../EmptyState';
+import { TopologyViewType } from './topology-types';
 
 interface TopologyDataRendererProps {
-  showGraphView: boolean;
+  viewType: TopologyViewType;
   title: string;
 }
 
 export const TopologyDataRenderer: React.FC<TopologyDataRendererProps> = observer(
-  ({ showGraphView, title }) => {
+  ({ viewType, title }) => {
     const { namespace, model, loaded, loadError } = React.useContext<ExtensibleModel>(ModelContext);
     const EmptyMsg = React.useCallback(
       () => (
@@ -33,7 +34,7 @@ export const TopologyDataRenderer: React.FC<TopologyDataRendererProps> = observe
     return (
       <StatusBox
         skeleton={
-          !showGraphView && (
+          viewType === TopologyViewType.list && (
             <div className="co-m-pane__body skeleton-overview">
               <div className="skeleton-overview--head" />
               <div className="skeleton-overview--tile" />
@@ -48,7 +49,7 @@ export const TopologyDataRenderer: React.FC<TopologyDataRendererProps> = observe
         loadError={loadError}
         EmptyMsg={EmptyMsg}
       >
-        <TopologyView showGraphView={showGraphView} model={model} namespace={namespace} />
+        <TopologyView viewType={viewType} model={model} namespace={namespace} />
       </StatusBox>
     );
   },
