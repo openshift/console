@@ -8,7 +8,6 @@ import {
 import {
   OverviewItem,
   getRoutesForServices,
-  getBuildConfigsForResource,
   getReplicationControllersForResource,
   getServicesForResource,
 } from '@console/shared';
@@ -54,14 +53,12 @@ export const createVMOverviewItem = (vm: K8sResourceKind, resources: any): Overv
   const vmi = vmis.find((instance) => instance.metadata.name === name) as VMIKind;
   const { visibleReplicationControllers } = getReplicationControllersForResource(vm, resources);
   const [current, previous] = visibleReplicationControllers;
-  const buildConfigs = getBuildConfigsForResource(vm, resources);
   const services = getServicesForResource(vm, resources);
   const routes = getRoutesForServices(services, resources);
   const laucherPod = findVMIPod(vmi, resources.pods.data);
   const pods = laucherPod ? [laucherPod] : [];
 
-  const overviewItems = {
-    buildConfigs,
+  return {
     current,
     obj: vm,
     previous,
@@ -71,8 +68,6 @@ export const createVMOverviewItem = (vm: K8sResourceKind, resources: any): Overv
     isMonitorable: false,
     isOperatorBackedService: false,
   };
-
-  return overviewItems;
 };
 
 const createTopologyVMNodeData = (

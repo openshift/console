@@ -166,8 +166,10 @@ describe('knative data transformer ', () => {
 
     const spy = spyOn(k8s, 'k8sKill');
     const checkAccessSpy = spyOn(utils, 'checkAccess');
+    const spyK8sList = spyOn(k8s, 'k8sList');
     spyAndReturn(spy)(Promise.resolve({}));
     spyAndReturn(checkAccessSpy)(Promise.resolve({ status: { allowed: true } }));
+    spyAndReturn(spyK8sList)(Promise.resolve([]));
 
     cleanUpWorkload(node)
       .then(() => {

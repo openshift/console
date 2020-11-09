@@ -6,7 +6,6 @@ import {
 import { ConnectedWorkloadPipeline, WorkloadData } from '../../../../topology-types';
 
 export const bareMinimalWorkloadData: WorkloadData = {
-  build: null,
   connectedPipeline: null,
   donutStatus: null,
 };
@@ -19,7 +18,7 @@ const connectedPipelineOne: ConnectedWorkloadPipeline = {
   ],
 };
 
-const buildData = {
+export const buildData = {
   metadata: {
     annotations: {
       'openshift.io/build-config.name': 'react-web-app',
@@ -119,14 +118,12 @@ const buildData = {
   },
 };
 
-export const buildAndPipelineData: WorkloadData = {
-  build: buildData,
+export const pipelineData: WorkloadData = {
   connectedPipeline: connectedPipelineOne,
   donutStatus: null,
 };
 
-export const buildOnlyData: WorkloadData = {
-  build: buildData,
+export const noPiplelineData: WorkloadData = {
   connectedPipeline: { pipeline: null, pipelineRuns: [] },
   donutStatus: null,
 };

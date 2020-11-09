@@ -3,6 +3,7 @@ import { isGraph, Node } from '@patternfly/react-topology';
 import {
   K8sKind,
   k8sGet,
+  k8sList,
   k8sPatch,
   k8sKill,
   K8sResourceKind,
@@ -21,10 +22,12 @@ import {
   StatefulSetModel,
   JobModel,
   CronJobModel,
+  BuildModel,
 } from '@console/internal/models';
 import { ServiceModel as KnativeServiceModel } from '@console/knative-plugin/src/models';
 import { isDynamicEventResourceKind } from '@console/knative-plugin/src/utils/fetch-dynamic-eventsources-utils';
 import { checkAccess } from '@console/internal/components/utils';
+import { getBuildConfigsForResource } from '@console/shared';
 import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY, UNASSIGNED_LABEL } from '../const';
 import {
   TopologyDataObject,
@@ -208,12 +211,12 @@ const safeKill = async (model: K8sKind, obj: K8sResourceKind) => {
 
 const deleteWebhooks = (
   resource: K8sResourceKind,
+  buildConfigs: K8sResourceKind[],
   workload: TopologyDataObject<{ isKnativeResource?: boolean }>,
 ) => {
   const isKnativeResource = workload?.data?.isKnativeResource ?? false;
   const deploymentsAnnotations = resource.metadata?.annotations ?? {};
   const gitType = detectGitType(deploymentsAnnotations['app.openshift.io/vcs-uri']);
-  const buildConfigs = workload?.resources?.buildConfigs;
   return buildConfigs?.reduce((requests, bc) => {
     const triggers = bc.spec?.triggers ?? [];
     const reqs = triggers.reduce((a, t) => {
@@ -240,7 +243,6 @@ const deleteWebhooks = (
 export const cleanUpWorkload = async (workload: OdcNodeModel): Promise<K8sResourceKind[]> => {
   const { resource } = workload;
   const reqs = [];
-  const isBuildConfigPresent = !_.isEmpty(workload.data?.resources?.buildConfigs);
   const isImageStreamPresent = await k8sGet(
     ImageStreamModel,
     resource.metadata.name,
@@ -248,6 +250,23 @@ export const cleanUpWorkload = async (workload: OdcNodeModel): Promise<K8sResour
   )
     .then(() => true)
     .catch(() => false);
+  const buildConfigs = await k8sList(BuildConfigModel, { ns: resource.metadata.namespace });
+  const builds = await k8sList(BuildModel, { ns: resource.metadata.namespace });
+  const resources = {
+    buildConfigs: {
+      data: buildConfigs,
+      loaded: true,
+      loadError: null,
+    },
+    builds: {
+      data: builds,
+      loaded: true,
+      loadError: null,
+    },
+  };
+  const resourceBuildConfigs = getBuildConfigsForResource(resource, resources);
+  const isBuildConfigPresent = !_.isEmpty(resourceBuildConfigs);
+
   const deleteModels = [ServiceModel, RouteModel];
   const knativeDeleteModels = [KnativeServiceModel];
   if (isBuildConfigPresent) {
@@ -286,6 +305,7 @@ export const cleanUpWorkload = async (workload: OdcNodeModel): Promise<K8sResour
     default:
       break;
   }
-  isBuildConfigPresent && reqs.push(...deleteWebhooks(resource, workload.data));
+  isBuildConfigPresent &&
+    reqs.push(...deleteWebhooks(resource, resourceBuildConfigs, workload.data));
   return Promise.all(reqs);
 };

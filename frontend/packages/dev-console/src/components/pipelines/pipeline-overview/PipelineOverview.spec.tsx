@@ -10,7 +10,6 @@ describe('Pipeline sidebar overview', () => {
   beforeEach(() => {
     props = {
       item: {
-        buildConfigs: [],
         obj: {},
         routes: [],
         services: [],

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Status } from '@console/shared';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { BuildModel } from '@console/internal/models';
 import { PipelineRunModel } from '../../../../../models';
@@ -14,8 +15,11 @@ type BuildDecoratorData = {
   tooltipContent: React.ReactElement;
 };
 
-export const getBuildDecoratorParts = (workloadData: WorkloadData): BuildDecoratorData => {
-  const { build, connectedPipeline } = workloadData;
+export const getBuildDecoratorParts = (
+  workloadData: WorkloadData,
+  build: K8sResourceKind,
+): BuildDecoratorData => {
+  const { connectedPipeline } = workloadData;
 
   let tooltipContent = null;
   let decoratorIcon = null;

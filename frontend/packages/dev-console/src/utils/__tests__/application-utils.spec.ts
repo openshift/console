@@ -14,6 +14,8 @@ import { WORKLOAD_TYPES } from '../../components/topology/topology-utils';
 import { cleanUpWorkload } from '../application-utils';
 import {
   MockResources,
+  sampleBuildConfigs,
+  sampleBuilds,
   TEST_KINDS_MAP,
 } from '../../components/topology/__tests__/topology-test-data';
 import {
@@ -43,6 +45,9 @@ describe('ApplicationUtils ', () => {
   let spy;
   let checkAccessSpy;
   let spyK8sGet;
+  let mockBuilds = [];
+  let mockBuildConfigs = [];
+
   beforeEach(() => {
     spy = spyOn(k8s, 'k8sKill');
     checkAccessSpy = spyOn(utils, 'checkAccess');
@@ -50,10 +55,21 @@ describe('ApplicationUtils ', () => {
     spyAndReturn(spy)(Promise.resolve({}));
     spyAndReturn(checkAccessSpy)(Promise.resolve({ status: { allowed: true } }));
     spyAndReturn(spyK8sGet)(Promise.resolve(true));
+    spyOn(k8s, 'k8sList').and.callFake((model) => {
+      if (model.kind === 'Build') {
+        return Promise.resolve(mockBuilds);
+      }
+      if (model.kind === 'BuildConfig') {
+        return Promise.resolve(mockBuildConfigs);
+      }
+      return Promise.resolve([]);
+    });
   });
 
   it('Should delete all the specific models related to deployment config', async (done) => {
     const nodeModel = await getTopologyData(MockResources, 'nodejs');
+    mockBuilds = sampleBuilds.data;
+    mockBuildConfigs = sampleBuildConfigs.data;
     cleanUpWorkload(nodeModel)
       .then(() => {
         const allArgs = spy.calls.allArgs();

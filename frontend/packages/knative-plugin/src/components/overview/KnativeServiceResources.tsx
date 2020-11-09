@@ -4,7 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { podPhase } from '@console/internal/module/k8s';
 import { BuildOverview } from '@console/internal/components/overview/build-overview';
 import { PodModel } from '@console/internal/models';
-import { AllPodStatus, OverviewItem, usePluginsOverviewTabSection } from '@console/shared';
+import {
+  AllPodStatus,
+  OverviewItem,
+  usePluginsOverviewTabSection,
+  useBuildConfigsWatcher,
+} from '@console/shared';
 import { PodsOverviewContent } from '@console/internal/components/overview/pods-overview';
 import { Subscriber } from '../../topology/topology-types';
 import { getSubscriberByType } from '../../topology/knative-topology-utils';
@@ -23,15 +28,8 @@ type KnativeServiceResourceProps = {
 
 const KnativeServiceResources: React.FC<KnativeServiceResourceProps> = ({ item }) => {
   const { t } = useTranslation();
-  const {
-    revisions,
-    ksroutes,
-    obj,
-    pods,
-    buildConfigs,
-    eventSources = [],
-    subscribers = [],
-  } = item;
+  const { revisions, ksroutes, obj, pods, eventSources = [], subscribers = [] } = item;
+  const { buildConfigs } = useBuildConfigsWatcher(obj);
   const {
     kind: resKind,
     metadata: { name, namespace },
