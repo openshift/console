@@ -918,6 +918,7 @@ export class TileViewPage extends React.Component {
               <div>
                 <TextInput
                   className="co-catalog-page__input"
+                  data-test="search-operatorhub"
                   type="text"
                   ref={(ref) => (this.filterByKeywordInput = ref)}
                   placeholder="Filter by keyword..."

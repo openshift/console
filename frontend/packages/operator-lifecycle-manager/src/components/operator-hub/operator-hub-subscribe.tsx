@@ -445,6 +445,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         <div className="co-form-subsection">
           <Checkbox
             id="enable-monitoring-checkbox"
+            data-test="enable-monitoring"
             label="Enable operator recommended cluster monitoring on this namespace"
             onChange={setEnableMonitoring}
             isChecked={enableMonitoring}
@@ -679,7 +680,12 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
             <div className="co-form-section__separator" />
             {formError()}
             <ActionGroup className="pf-c-form">
-              <Button onClick={() => submit()} isDisabled={formValid()} variant="primary">
+              <Button
+                data-test="install-operator"
+                onClick={() => submit()}
+                isDisabled={formValid()}
+                variant="primary"
+              >
                 Install
               </Button>
               <Button variant="secondary" onClick={() => history.push('/operatorhub')}>
