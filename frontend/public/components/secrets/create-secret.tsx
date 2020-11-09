@@ -101,6 +101,24 @@ const generateSecret = () => {
   return s4() + s4() + s4() + s4();
 };
 
+const determineSecretType = (stringData): SecretType => {
+  const dataKeys = _.keys(stringData).sort();
+  if (_.isEqual(dataKeys, ['tls.crt', 'tls.key'])) {
+    return SecretType.tls;
+  } else if (_.isEqual(dataKeys, ['ca.crt', 'namespace', 'service-ca.crt', 'token'])) {
+    return SecretType.serviceAccountToken;
+  } else if (_.isEqual(dataKeys, ['.dockercfg'])) {
+    return SecretType.dockercfg;
+  } else if (_.isEqual(dataKeys, ['.dockerconfigjson'])) {
+    return SecretType.dockerconfigjson;
+  } else if (_.isEqual(dataKeys, ['password', 'username'])) {
+    return SecretType.basicAuth;
+  } else if (_.isEqual(dataKeys, ['ssh-privatekey'])) {
+    return SecretType.sshAuth;
+  }
+  return SecretType.opaque;
+};
+
 // withSecretForm returns SubForm which is a Higher Order Component for all the types of secret forms.
 export const withSecretForm = (SubForm, modal?: boolean) =>
   class SecretFormComponent extends React.Component<BaseEditSecretProps_, BaseEditSecretState_> {
@@ -137,7 +155,6 @@ export const withSecretForm = (SubForm, modal?: boolean) =>
     onDataChanged(secretsData) {
       this.setState({
         stringData: { ...secretsData.stringData },
-        type: secretsData.type,
       });
     }
     onError(err) {
@@ -167,7 +184,9 @@ export const withSecretForm = (SubForm, modal?: boolean) =>
         {},
         this.state.secret,
         { stringData: this.state.stringData },
-        { type: this.state.type },
+        // When creating new Secret, determine it's type from the `stringData` keys.
+        // When updating a Secret, use it's type.
+        this.props.isCreate ? { type: determineSecretType(this.state.stringData) } : {},
       );
       (this.props.isCreate
         ? k8sCreate(SecretModel, newSecret)
@@ -282,17 +301,6 @@ const getImageSecretKey = (secretType: SecretType): string => {
   }
 };
 
-const getImageSecretType = (secretKey: string): SecretType => {
-  switch (secretKey) {
-    case '.dockercfg':
-      return SecretType.dockercfg;
-    case '.dockerconfigjson':
-      return SecretType.dockerconfigjson;
-    default:
-      return SecretType.opaque;
-  }
-};
-
 export class ImageSecretForm extends React.Component<ImageSecretFormProps, ImageSecretFormState> {
   constructor(props) {
     super(props);
@@ -323,7 +331,6 @@ export class ImageSecretForm extends React.Component<ImageSecretFormProps, Image
       () =>
         this.props.onChange({
           stringData: _.mapValues(this.state.stringData, JSON.stringify),
-          type: getImageSecretType(dataKey),
         }),
     );
   }
@@ -966,7 +973,6 @@ type GenericSecretFormProps = {
   stringData: {
     [key: string]: string;
   };
-  secretType: SecretType;
   isCreate: boolean;
 };
 
@@ -1027,7 +1033,6 @@ class GenericSecretForm extends React.Component<GenericSecretFormProps, GenericS
       () =>
         this.props.onChange({
           stringData: this.genericSecretArrayToObject(this.state.secretEntriesArray),
-          type: SecretType.opaque,
         }),
     );
   }
@@ -1041,7 +1046,6 @@ class GenericSecretForm extends React.Component<GenericSecretFormProps, GenericS
       () =>
         this.props.onChange({
           stringData: this.genericSecretArrayToObject(this.state.secretEntriesArray),
-          type: SecretType.opaque,
         }),
     );
   }
@@ -1053,7 +1057,6 @@ class GenericSecretForm extends React.Component<GenericSecretFormProps, GenericS
       () =>
         this.props.onChange({
           stringData: this.genericSecretArrayToObject(this.state.secretEntriesArray),
-          type: SecretType.opaque,
         }),
     );
   }
