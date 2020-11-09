@@ -1,29 +1,20 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import {
   useK8sWatchResources,
   WatchK8sResources,
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { usePrometheusRulesPoll } from '@console/internal/components/graphs/prometheus-rules-hook';
 import { getAlertsAndRules } from '@console/internal/components/monitoring/utils';
-import { RootState } from '@console/internal/redux';
 import { TopologyResourcesObject, TrafficData } from './topology-types';
 import ModelContext, { ExtensibleModel } from './data-transforms/ModelContext';
 import { baseDataModelGetter } from './data-transforms';
 import { getFilterById, SHOW_GROUPS_FILTER_ID, useDisplayFilters } from './filters';
 
-interface StateProps {
-  kindsInFlight: boolean;
-}
-
 export type TopologyDataRetrieverProps = {
   trafficData?: TrafficData;
 };
 
-export const ConnectedTopologyDataRetriever: React.FC<TopologyDataRetrieverProps & StateProps> = ({
-  kindsInFlight,
-  trafficData,
-}) => {
+export const TopologyDataRetriever: React.FC<TopologyDataRetrieverProps> = ({ trafficData }) => {
   const dataModelContext = React.useContext<ExtensibleModel>(ModelContext);
   const { namespace } = dataModelContext;
   const filters = useDisplayFilters();
@@ -68,20 +59,12 @@ export const ConnectedTopologyDataRetriever: React.FC<TopologyDataRetrieverProps
       return;
     }
 
-    const resourcesLoaded =
-      !kindsInFlight &&
-      Object.keys(resources).length > 0 &&
-      Object.keys(resources).every((key) => resources[key].loaded || resources[key].loadError) &&
-      !Object.keys(resources).every((key) => resources[key].loadError);
-    if (!resourcesLoaded) {
+    if (!Object.keys(resources).every((key) => resources[key].loaded)) {
       return;
     }
 
-    const optionalResources = Object.keys(watchedResources).filter(
-      (key) => watchedResources[key].optional,
-    );
     const loadErrorKey = Object.keys(resources).find(
-      (key) => resources[key].loadError && !optionalResources.includes(key),
+      (key) => resources[key].loadError && !watchedResources[key].optional,
     );
     dataModelContext.loadError = loadErrorKey && resources[loadErrorKey].loadError;
     if (loadErrorKey) {
@@ -110,14 +93,7 @@ export const ConnectedTopologyDataRetriever: React.FC<TopologyDataRetrieverProps
         dataModelContext.model = fullModel;
       })
       .catch(() => {});
-  }, [resources, trafficData, dataModelContext, kindsInFlight, monitoringAlerts, showGroups]);
+  }, [resources, trafficData, dataModelContext, monitoringAlerts, showGroups]);
 
   return null;
 };
-
-const stateToProps = (state: RootState) => {
-  return {
-    kindsInFlight: state.k8s.getIn(['RESOURCES', 'inFlight']),
-  };
-};
-export const TopologyDataRetriever = connect(stateToProps)(ConnectedTopologyDataRetriever);

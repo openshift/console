@@ -8,7 +8,7 @@ import {
   CreateConnectionGetter,
   ViewComponentFactory,
   TopologyDataModelReconciler,
-} from '../components/topology';
+} from '../components/topology/topology-types';
 
 namespace ExtensionProperties {
   export interface TopologyComponentFactory {

@@ -1,16 +1,14 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Firehose } from '@console/internal/components/utils';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { ServiceModel } from '@console/knative-plugin';
-import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
-import { PodModel, JobModel, CronJobModel } from '@console/internal/models';
+import { FirehoseResult } from '@console/internal/components/utils';
 import { ResourceDropdown } from '@console/shared';
+import { useExtensions } from '@console/plugin-sdk/src';
 import {
-  getDynamicChannelResourceList,
-  getDynamicEventSourcesResourceList,
-} from '@console/knative-plugin/src/utils/fetch-dynamic-eventsources-utils';
-import { knativeEventingResourcesBroker } from '@console/knative-plugin/src/utils/get-knative-resources';
+  useK8sWatchResources,
+  WatchK8sResources,
+} from '@console/internal/components/utils/k8s-watch-hook';
+import { getBaseWatchedResources } from '../topology/data-transforms';
+import { isTopologyDataModelFactory, TopologyDataModelFactory } from '../../extensions/topology';
 
 interface ApplicationDropdownProps {
   id?: string;
@@ -42,86 +40,52 @@ interface ApplicationDropdownProps {
   onLoad?: (items: { [key: string]: string }) => void;
 }
 
+const applicationSelector = ['metadata', 'labels', 'app.kubernetes.io/part-of'];
+
 const ApplicationDropdown: React.FC<ApplicationDropdownProps> = ({ namespace, ...props }) => {
   const { t } = useTranslation();
-  const resources = [
-    {
-      isList: true,
-      namespace,
-      kind: 'DeploymentConfig',
-      prop: 'deploymentConfigs',
-    },
-    {
-      isList: true,
-      namespace,
-      kind: 'Deployment',
-      prop: 'deployments',
-    },
-    {
-      isList: true,
-      kind: 'StatefulSet',
-      namespace,
-      prop: 'statefulSets',
-    },
-    {
-      isList: true,
-      kind: 'DaemonSet',
-      namespace,
-      prop: 'daemonSets',
-    },
-    {
-      isList: true,
-      kind: referenceForModel(ServiceModel),
-      namespace,
-      prop: 'knativeService',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: 'Secret',
-      namespace,
-      prop: 'secrets',
-    },
-    {
-      isList: true,
-      kind: VirtualMachineModel.kind,
-      namespace,
-      prop: 'virtualMachines',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: CronJobModel.kind,
-      namespace,
-      prop: 'cronjobs',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: JobModel.kind,
-      namespace,
-      prop: 'jobs',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: PodModel.kind,
-      namespace,
-      prop: 'pods',
-      optional: true,
-    },
-    ...getDynamicChannelResourceList(namespace),
-    ...getDynamicEventSourcesResourceList(namespace),
-    ...knativeEventingResourcesBroker(namespace),
-  ];
+  const [resources, setResources] = React.useState<FirehoseResult[]>([]);
+  const [loaded, setLoaded] = React.useState<boolean>(false);
+  const [loadError, setLoadError] = React.useState(null);
+  const modelFactories = useExtensions<TopologyDataModelFactory>(isTopologyDataModelFactory);
+
+  const watchedResources = React.useMemo(() => {
+    const watchedBaseResources = getBaseWatchedResources(namespace);
+    return modelFactories.reduce((acc, modelFactory) => {
+      const factoryResources: WatchK8sResources<any> = modelFactory.properties.resources
+        ? modelFactory.properties.resources(namespace)
+        : {};
+      return { ...acc, ...factoryResources };
+    }, watchedBaseResources);
+  }, [modelFactories, namespace]);
+
+  const watchResults = useK8sWatchResources(watchedResources);
+  React.useEffect(() => {
+    if (!Object.keys(watchResults).every((key) => watchResults[key].loaded)) {
+      return;
+    }
+
+    const loadErrorKey = Object.keys(watchResults).find(
+      (key) => watchResults[key].loadError && !watchedResources[key].optional,
+    );
+    const loadedResources = Object.keys(watchResults).map((key) => ({
+      ...watchResults[key],
+    }));
+
+    setLoadError(loadErrorKey ? watchResults[loadErrorKey].loadError : null);
+    setLoaded(true);
+    setResources(loadedResources);
+  }, [watchResults, watchedResources]);
+
   return (
-    <Firehose resources={resources}>
-      <ResourceDropdown
-        {...props}
-        placeholder={t('devconsole~Select application')}
-        dataSelector={['metadata', 'labels', 'app.kubernetes.io/part-of']}
-      />
-    </Firehose>
+    <ResourceDropdown
+      {...props}
+      resources={resources}
+      loaded={loaded}
+      loadError={loadError}
+      placeholder={t('devconsole~Select application')}
+      dataSelector={applicationSelector}
+    />
   );
 };
 
