@@ -12,10 +12,12 @@ const options = {
 
 const resource = {
   en: {
-    translation: en,
+    COMMON: en.COMMON,
+    GENERAL: en.GENERAL,
   },
   ko: {
-    translation: ko,
+    COMMON: ko.COMMON,
+    GENERAL: ko.GENERAL,
   },
 };
 
