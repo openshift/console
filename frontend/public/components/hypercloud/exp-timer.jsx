@@ -1,16 +1,14 @@
 import * as React from 'react';
+import { NoticeExpirationModal_ } from './modals/notice-expiration-modal';
 let timerID = 0;
 let expTime = 0;
 
-// TODO: Typescript 변환, 함수형 컴포넌트로 변경
-
 export class ExpTimer extends React.Component {
-  state = {
-    expText: null,
-    modalShow: false,
-  };
   constructor(props) {
     super(props);
+    this.state = {
+      expText: null,
+    };
   }
   componentDidMount() {
     const curTime = new Date();
@@ -26,9 +24,6 @@ export class ExpTimer extends React.Component {
     const tokenExpTime = new Date((keycloak.idTokenParsed.exp + keycloak.timeSkew) * 1000);
     const logoutTime = (tokenExpTime.getTime() - curTime.getTime()) / 1000;
     expTime = logoutTime;
-  }
-  closeModal() {
-    this.setState({ modalShow: false });
   }
   componentWillUnmount() {
     // 타이머 등록 해제
@@ -51,9 +46,8 @@ export class ExpTimer extends React.Component {
     if (expTime > 0) {
       expTime -= 1;
     }
-    if (Math.floor(expTime) === 20) {
-      // TODO: 모달 띄우기
-      // NoticeExpirationModal_({ logout: this.props.logout, tokenRefresh: this.props.tokenRefresh, time: expTime });
+    if (Math.floor(expTime) === 60) {
+      NoticeExpirationModal_({ logout: this.props.logout, tokenRefresh: this.props.tokenRefresh, time: expTime });
     }
     this.expFormat();
   }
