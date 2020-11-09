@@ -4,6 +4,8 @@ import * as React from 'react';
 import { useSelector, useDispatch, Dispatch } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
+import { useDeepCompareMemoize } from '@console/shared/src/hooks/deep-compare-memoize';
+import { usePrevious } from '@console/shared/src/hooks/previous';
 import { makeQuery, makeReduxID } from './k8s-watcher';
 import * as k8sActions from '../../actions/k8s';
 import { K8sResourceCommon, K8sKind, K8sResourceKindReference, Selector } from '../../module/k8s';
@@ -62,21 +64,21 @@ const useModelsLoaded = (): boolean => {
 };
 
 export const useK8sWatchResource = <R extends K8sResourceCommon | K8sResourceCommon[]>(
-  resource: WatchK8sResource,
+  initResource: WatchK8sResource,
 ): WatchK8sResult<R> => {
+  const resource = useDeepCompareMemoize(initResource, true);
   const modelsLoaded = useModelsLoaded();
 
   const k8sModel = useSelector<RootState, K8sKind>(({ k8s }) =>
     resource ? k8s.getIn(['RESOURCES', 'models', resource.kind]) : null,
   );
 
-  const reduxID = React.useMemo(
-    () => getIDAndDispatch(resource, k8sModel),
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-    [k8sModel, JSON.stringify(resource)],
-  );
+  const reduxID = React.useMemo(() => getIDAndDispatch(resource, k8sModel), [k8sModel, resource]);
+
+  const prevReduxID = usePrevious(reduxID);
 
   const dispatch = useDispatch();
+
   React.useEffect(() => {
     if (reduxID) {
       dispatch(reduxID.dispatch);
@@ -98,7 +100,7 @@ export const useK8sWatchResource = <R extends K8sResourceCommon | K8sResourceCom
     }
     if (!resourceK8s) {
       const data = resource?.isList ? [] : {};
-      return modelsLoaded && !k8sModel
+      return modelsLoaded && !k8sModel && prevReduxID === reduxID
         ? [data, true, new NoModelError()]
         : [data, false, undefined];
     }
@@ -107,13 +109,13 @@ export const useK8sWatchResource = <R extends K8sResourceCommon | K8sResourceCom
     const loaded = resourceK8s.get('loaded');
     const loadError = resourceK8s.get('loadError');
     return [data, loaded, loadError];
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resourceK8s, JSON.stringify(resource), modelsLoaded, k8sModel]);
+  }, [resource, resourceK8s, modelsLoaded, k8sModel, prevReduxID, reduxID]);
 };
 
 export const useK8sWatchResources = <R extends ResourcesObject>(
-  resources: WatchK8sResources<R>,
+  initResources: WatchK8sResources<R>,
 ): WatchK8sResults<R> => {
+  const resources = useDeepCompareMemoize(initResources, true);
   const modelsLoaded = useModelsLoaded();
   const k8sModelSelectorCreator = React.useMemo(
     () =>
@@ -123,8 +125,7 @@ export const useK8sWatchResources = <R extends ResourcesObject>(
         (oldModels: ImmutableMap<string, any>, newModels: ImmutableMap<string, any>) =>
           Object.values(resources).every(({ kind }) => oldModels.get(kind) === newModels.get(kind)),
       ),
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-    [JSON.stringify(resources)],
+    [resources],
   );
 
   const k8sModelSelector = React.useMemo(
@@ -136,15 +137,14 @@ export const useK8sWatchResources = <R extends ResourcesObject>(
           return models.filter((model, key) => requiredModels.includes(key));
         },
       ),
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-    [k8sModelSelectorCreator, JSON.stringify(resources)],
+    [k8sModelSelectorCreator, resources],
   );
 
   const k8sModels = useSelector<RootState, ImmutableMap<string, any>>(k8sModelSelector);
-  const hasAllModelsLoaded = React.useMemo(() => modelsLoaded || k8sModels.every((m) => !!m), [
-    k8sModels,
-    modelsLoaded,
-  ]);
+  const hasAllModelsLoaded = React.useMemo(
+    () => modelsLoaded || Object.values(resources).every((r) => k8sModels.includes(r.kind)),
+    [k8sModels, modelsLoaded, resources],
+  );
 
   const reduxIDs = React.useMemo(
     () =>
@@ -160,19 +160,16 @@ export const useK8sWatchResources = <R extends ResourcesObject>(
             return ids;
           }, {})
         : {},
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-    [JSON.stringify(resources), k8sModels, hasAllModelsLoaded],
+    [resources, k8sModels, hasAllModelsLoaded],
   );
+
+  const prevReduxIDs = usePrevious(reduxIDs);
 
   const dispatch = useDispatch();
   React.useEffect(() => {
-    Object.keys(reduxIDs)
-      .filter((k) => !!reduxIDs[k])
-      .forEach((k) => dispatch(reduxIDs[k].dispatch));
+    Object.keys(reduxIDs).forEach((k) => dispatch(reduxIDs[k].dispatch));
     return () => {
-      Object.keys(reduxIDs)
-        .filter((k) => !!reduxIDs[k])
-        .forEach((k) => dispatch(k8sActions.stopK8sWatch(reduxIDs[k].id)));
+      Object.keys(reduxIDs).forEach((k) => dispatch(k8sActions.stopK8sWatch(reduxIDs[k].id)));
     };
   }, [dispatch, reduxIDs]);
 
@@ -182,9 +179,9 @@ export const useK8sWatchResources = <R extends ResourcesObject>(
         //specifying createSelectorCreator<ImmutableMap<string, K8sKind>> throws type error
         defaultMemoize as any,
         (oldK8s: ImmutableMap<string, K8sKind>, newK8s: ImmutableMap<string, K8sKind>) =>
-          Object.keys(reduxIDs)
-            .filter((id) => !!id)
-            .every((k) => oldK8s.get(reduxIDs[k].id) === newK8s.get(reduxIDs[k].id)),
+          Object.keys(reduxIDs).every(
+            (k) => oldK8s.get(reduxIDs[k].id) === newK8s.get(reduxIDs[k].id),
+          ),
       ),
     [reduxIDs],
   );
@@ -212,8 +209,8 @@ export const useK8sWatchResources = <R extends ResourcesObject>(
         } else {
           acc[key] = {
             data: resources[key].isList ? [] : {},
-            loaded: true,
-            loadError: new NoModelError(),
+            loaded: prevReduxIDs !== reduxIDs,
+            loadError: prevReduxIDs !== reduxIDs ? undefined : new NoModelError(),
           };
         }
         return acc;
@@ -226,8 +223,7 @@ export const useK8sWatchResources = <R extends ResourcesObject>(
         : { data, loaded: false, loadError: undefined };
       return acc;
     }, {});
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reduxIDs, JSON.stringify(resources), resourceK8s, noModels]);
+  }, [reduxIDs, resources, resourceK8s, noModels, prevReduxIDs]);
 
   return results;
 };
