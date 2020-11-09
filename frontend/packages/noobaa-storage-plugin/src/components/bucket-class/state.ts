@@ -1,33 +1,25 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { BackingStoreKind, PlacementPolicy } from '../../types';
 
 export const initialState = {
   namespace: 'openshift-storage',
   bucketClassName: '',
   description: '',
-  tier1Policy: 'Spread',
-  tier2Policy: '',
+  tier1Policy: PlacementPolicy.Spread,
+  tier2Policy: null,
   tier1BackingStore: [],
   tier2BackingStore: [],
-  backingStores: [],
   isLoading: false,
   error: '',
-};
-
-export type BackingStoreStateType = K8sResourceKind & {
-  id: string;
-  selected: boolean;
-  selectedBy: React.ReactText;
 };
 
 export type State = {
   namespace: string;
   bucketClassName: string;
   description: string;
-  tier1Policy: string;
-  tier2Policy: string;
-  tier1BackingStore: string[];
-  tier2BackingStore: string[];
-  backingStores: BackingStoreStateType[];
+  tier1Policy: PlacementPolicy;
+  tier2Policy: PlacementPolicy;
+  tier1BackingStore: BackingStoreKind[];
+  tier2BackingStore: BackingStoreKind[];
   isLoading: boolean;
   error: string;
 };
@@ -36,11 +28,10 @@ export type Action =
   | { type: 'setNamespace'; name: string }
   | { type: 'setBucketClassName'; name: string }
   | { type: 'setDescription'; value: string }
-  | { type: 'setPlacementPolicyTier1'; value: string }
-  | { type: 'setPlacementPolicyTier2'; value: string }
-  | { type: 'setBackingStoreTier1'; value: string[] }
-  | { type: 'setBackingStoreTier2'; value: string[] }
-  | { type: 'setBackingStores'; value: BackingStoreStateType[] }
+  | { type: 'setPlacementPolicyTier1'; value: PlacementPolicy }
+  | { type: 'setPlacementPolicyTier2'; value: PlacementPolicy }
+  | { type: 'setBackingStoreTier1'; value: BackingStoreKind[] }
+  | { type: 'setBackingStoreTier2'; value: BackingStoreKind[] }
   | { type: 'setIsLoading'; value: boolean }
   | { type: 'setError'; value: string };
 
@@ -60,8 +51,6 @@ export const reducer = (state: State, action: Action) => {
       return Object.assign({}, state, { tier1BackingStore: action.value });
     case 'setBackingStoreTier2':
       return Object.assign({}, state, { tier2BackingStore: action.value });
-    case 'setBackingStores':
-      return Object.assign({}, state, { backingStores: action.value });
     case 'setIsLoading':
       return Object.assign({}, state, { isLoading: action.value });
     case 'setError':

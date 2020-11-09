@@ -3,6 +3,8 @@ import { Alert } from '@console/internal/components/monitoring/types';
 import { PrometheusResponse, DataPoint } from '@console/internal/components/graphs';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { StorageClass } from '@console/internal/components/storage-class-form';
+import { PROVIDERS_NOOBAA_MAP, BUCKET_LABEL_NOOBAA_MAP, BC_PROVIDERS } from './constants';
+import { BackingStoreKind, BucketClassKind, PlacementPolicy } from './types';
 
 export const filterNooBaaAlerts = (alerts: Alert[]): Alert[] =>
   alerts.filter((alert) => _.get(alert, 'annotations.storage_type') === 'NooBaa');
@@ -43,3 +45,35 @@ export const decodeRGWPrefix = (secretData: K8sResourceKind) => {
 
 export const convertNaNToNull = (value: DataPoint) =>
   _.isNaN(value?.y) ? Object.assign(value, { y: null }) : value;
+// (Todo: bipuladh) Refactor this page into selectors file
+
+export const getBackingStoreType = (bs: BackingStoreKind): BC_PROVIDERS => {
+  let type: BC_PROVIDERS = null;
+  _.forEach(PROVIDERS_NOOBAA_MAP, (v, k) => {
+    if (bs?.spec?.[v]) {
+      type = k as BC_PROVIDERS;
+    }
+  });
+  return type;
+};
+
+export const getBucketName = (bs: BackingStoreKind): string => {
+  const type = getBackingStoreType(bs);
+  return bs.spec?.[PROVIDERS_NOOBAA_MAP[type]]?.[BUCKET_LABEL_NOOBAA_MAP[type]];
+};
+
+export const getRegion = (bs: BackingStoreKind): string => {
+  const type = getBackingStoreType(bs);
+  return bs.spec?.[PROVIDERS_NOOBAA_MAP[type]]?.region;
+};
+
+export const getBackingStoreNames = (bc: BucketClassKind, tier: 0 | 1): string[] =>
+  bc.spec.placementPolicy?.tiers?.[tier]?.backingStores ?? [];
+
+export const getBackingStorePolicy = (bc: BucketClassKind, tier: 0 | 1): PlacementPolicy =>
+  bc.spec.placementPolicy?.tiers?.[tier]?.placement;
+
+export const getBSLabel = (policy: PlacementPolicy) =>
+  policy === PlacementPolicy.Mirror
+    ? 'Select at least 2 Backing Store resources'
+    : 'Select at least 1 Backing Store resource';

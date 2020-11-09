@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Alert, Title } from '@patternfly/react-core';
 import { LoadingInline } from '@console/internal/components/utils';
+import { getName } from '@console/shared';
 import { State } from '../state';
 
 const ReviewPage: React.FC<ReviewPageProps> = ({ state }) => {
@@ -40,14 +41,18 @@ const ReviewPage: React.FC<ReviewPageProps> = ({ state }) => {
           <Title size="md" headingLevel="h5" data-testid="tier1-policy">
             Tier 1: {tier1Policy}
           </Title>
-          <p data-testid="tier1-stores">Selected Backing Store: {tier1BackingStore.join(', ')}</p>
+          <p data-testid="tier1-stores">
+            Selected Backing Store: {tier1BackingStore.map(getName).join(', ')}
+          </p>
         </div>
         {tier2Policy && (
           <>
             <Title size="md" headingLevel="h5" data-testid="tier2-policy">
               Tier 2: {tier2Policy}
             </Title>
-            <p data-testid="tier2-stores">Selected Backing Store: {tier2BackingStore.join(', ')}</p>
+            <p data-testid="tier2-stores">
+              Selected Backing Store: {tier2BackingStore.map(getName).join(', ')}
+            </p>
           </>
         )}
       </div>

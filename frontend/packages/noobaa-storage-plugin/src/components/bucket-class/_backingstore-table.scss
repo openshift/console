@@ -1,0 +1,22 @@
+.nb-bs-table {
+  .pf-c-toolbar__content {
+    padding-left: 0;
+  }
+
+  .pf-c-table {
+    border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+  }
+
+  .co-m-pane__body {
+    padding: 0;
+  }
+}
+
+.nb-bc-step-page-form {
+  .pf-c-alert.pf-m-inline.pf-m-info.co-alert {
+    margin-bottom: 0;
+  }
+  &--margin {
+    margin-bottom: var(--pf-global--spacer--lg);
+  }
+}
