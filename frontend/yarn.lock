@@ -8968,6 +8968,13 @@ git-url-parse@^11.1.2:
   dependencies:
     git-up "^4.0.0"
 
+git-url-parse@^11.4.0:
+  version "11.4.0"
+  resolved "https://registry.yarnpkg.com/git-url-parse/-/git-url-parse-11.4.0.tgz#f2bb1f2b00f05552540e95a62e31399a639a6aa6"
+  integrity sha512-KlIa5jvMYLjXMQXkqpFzobsyD/V2K5DRHl5OAf+6oDFPlPLxrGDVQlIdI63c4/Kt6kai4kALENSALlzTGST3GQ==
+  dependencies:
+    git-up "^4.0.0"
+
 gitlab@10.0.1:
   version "10.0.1"
   resolved "https://registry.yarnpkg.com/gitlab/-/gitlab-10.0.1.tgz#f1619e8d2d6c5a707d0ffec47c14219b232af143"

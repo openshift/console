@@ -23,6 +23,10 @@ import { getWorkloadResources } from '../transform-utils';
 
 const namespace = 'test-project';
 
+jest.mock('git-url-parse', () => ({
+  default: jest.fn(() => ({ source: 'github.com', owner: 'openshift', name: 'console' })),
+}));
+
 function getTransformedTopologyData(
   mockData: TopologyDataResources,
   transformByProp: string[] = WORKLOAD_TYPES,
@@ -210,36 +214,31 @@ describe('data transformer ', () => {
 
   it('should return a valid che workspace factory URL if cheURL is there', () => {
     const mockCheURL = 'https://mock-che.test-cluster.com';
-    const mockGitURL =
-      mockResources.deploymentConfigs.data[0].metadata.annotations['app.openshift.io/vcs-uri'];
-    const mockGitBranch =
-      mockResources.deploymentConfigs.data[0].metadata.annotations['app.openshift.io/vcs-ref'];
-    const graphData = getTransformedTopologyData(mockResources, ['deploymentConfigs']);
-    const generatedEditURL = getEditURL(mockGitURL, mockGitBranch, mockCheURL);
-    const { editURL, vcsURI, vcsRef } = graphData.nodes[0].data.data as WorkloadData;
-    const editUrl = editURL || getEditURL(vcsURI, vcsRef, mockCheURL);
-
-    expect(editUrl).toBe(generatedEditURL);
+    const vcsURI = 'https://github.com/openshift/console';
+    const vcsRef = 'testing';
+    const generatedEditURL = getEditURL(vcsURI, vcsRef, mockCheURL);
+    expect(generatedEditURL).toBe(
+      `${mockCheURL}/f?url=${vcsURI}/tree/${vcsRef}&policies.create=peruser`,
+    );
   });
 
   it('should return the git repo URL if cheURL is not there', () => {
-    const mockGitURL =
-      mockResources.deploymentConfigs.data[0].metadata.annotations['app.openshift.io/vcs-uri'];
-    const mockGitBranch =
-      mockResources.deploymentConfigs.data[0].metadata.annotations['app.openshift.io/vcs-ref'];
-    const graphData = getTransformedTopologyData(mockResources, ['deploymentConfigs']);
-    const { vcsURI, vcsRef } = graphData.nodes[0].data.data as WorkloadData;
+    const vcsURI = 'https://github.com/openshift/console';
+    const vcsRef = 'testing';
     const editUrl = getEditURL(vcsURI, vcsRef, '');
-    expect(editUrl).toBe(`${mockGitURL}/tree/${mockGitBranch}`);
+    expect(editUrl).toBe(`${vcsURI}/tree/${vcsRef}`);
   });
 
   it('should return only the git repo URL if branch name is not provided', () => {
-    const mockGitURL =
-      mockResources.deploymentConfigs.data[0].metadata.annotations['app.openshift.io/vcs-uri'];
-    const graphData = getTransformedTopologyData(mockResources, ['deploymentConfigs']);
-    const { vcsURI } = graphData.nodes[0].data.data as WorkloadData;
+    const vcsURI = 'https://github.com/openshift/console';
     const editUrl = getEditURL(vcsURI, '', '');
-    expect(editUrl).toBe(mockGitURL);
+    expect(editUrl).toBe(vcsURI);
+  });
+
+  it('should return transformed HTTP URL if the git repo URL is an SSH URL', () => {
+    const mockGitURI = 'git@github.com:openshift/console';
+    const editUrl = getEditURL(mockGitURI, '', '');
+    expect(editUrl).toBe('https://github.com/openshift/console');
   });
 
   it('should return builder image icon for nodejs', () => {

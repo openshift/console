@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import GitUrlParse from 'git-url-parse';
 import {
   K8sResourceKind,
   K8sResourceKindReference,
@@ -32,9 +33,11 @@ export const getServiceBindingStatus = ({ FLAGS }: RootState): boolean =>
 export const getCheURL = (consoleLinks: K8sResourceKind[]) =>
   _.get(_.find(consoleLinks, ['metadata.name', 'che']), 'spec.href', '');
 
-export const getEditURL = (gitURL: string, gitBranch: string, cheURL: string) => {
+export const getEditURL = (vcsURI: string, gitBranch?: string, cheURL?: string) => {
+  const parsedURL = GitUrlParse(vcsURI);
+  const gitURL = `https://${parsedURL.source}/${parsedURL.owner}/${parsedURL.name}`;
   const fullGitURL = gitBranch ? `${gitURL}/tree/${gitBranch}` : gitURL;
-  return gitURL && cheURL ? `${cheURL}/f?url=${fullGitURL}&policies.create=peruser` : fullGitURL;
+  return cheURL ? `${cheURL}/f?url=${fullGitURL}&policies.create=peruser` : fullGitURL;
 };
 
 export const getNamespaceDashboardKialiLink = (

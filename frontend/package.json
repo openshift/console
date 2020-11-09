@@ -124,6 +124,7 @@
     "focus-trap-react": "^6.0.0",
     "formik": "2.0.3",
     "fuzzysearch": "1.0.x",
+    "git-url-parse": "^11.4.0",
     "graphql": "^14.0.0",
     "history": "4.x",
     "hoist-non-react-statics": "3.x",
