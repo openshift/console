@@ -24,12 +24,14 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
   // entry contains the name, description, and path to the definition in the
   // OpenAPI document.
   const [drilldownHistory, setDrilldownHistory] = React.useState([]);
-  const { kindObj } = props;
-  if (!kindObj) {
+  const { kindObj, schema } = props;
+  if (!kindObj && !schema) {
     return null;
   }
 
-  const allDefinitions: SwaggerDefinitions = getSwaggerDefinitions();
+  const allDefinitions: SwaggerDefinitions = kindObj
+    ? getSwaggerDefinitions()
+    : schema && { 'custom-schema': schema };
   if (!allDefinitions) {
     return null;
   }
@@ -37,8 +39,8 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
   // Show the current selected property or the top-level definition for the kind.
   const currentPath = currentSelection
     ? currentSelection.path
-    : [getDefinitionKey(kindObj, allDefinitions)];
-  const currentDefinition: SwaggerDefinition = _.get(allDefinitions, currentPath) || {};
+    : [kindObj ? getDefinitionKey(kindObj, allDefinitions) : 'custom-schema'];
+  const currentDefinition: SwaggerDefinition = _.get(allDefinitions, currentPath);
   const currentProperties =
     _.get(currentDefinition, 'properties') || _.get(currentDefinition, 'items.properties');
 
@@ -48,7 +50,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
     : currentDefinition.description;
   const required = new Set(currentDefinition.required || []);
   const breadcrumbs = drilldownHistory.length
-    ? [kindObj.kind, ..._.map(drilldownHistory, 'name')]
+    ? [kindObj ? kindObj.kind : 'Schema', ..._.map(drilldownHistory, 'name')]
     : [];
 
   const drilldown = (
@@ -75,7 +77,9 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
   // - Inline property declartions
   // - Inline property declartions for array items
   const getDrilldownPath = (name: string): string[] => {
-    const path = getSwaggerPath(allDefinitions, currentPath, name, true);
+    const path = kindObj
+      ? getSwaggerPath(allDefinitions, currentPath, name, true)
+      : [...currentPath, 'properties', name];
     // Only allow drilldown if the reference has additional properties to explore.
     const child = _.get(allDefinitions, path) as SwaggerDefinition;
     return _.has(child, 'properties') || _.has(child, 'items.properties') ? path : null;
@@ -158,5 +162,6 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
 
 type ExploreTypeProps = {
   kindObj: K8sKind;
+  schema?: any;
   scrollTop?: () => void;
 };
