@@ -46,7 +46,7 @@ export const PipelineRunDetails: React.FC<PipelineRunDetailsProps> = ({ obj: pip
           </dl>
           <RunDetailsErrorLog
             logDetails={getPLRLogSnippet(pipelineRun)}
-            namespace={pipelineRun.metadata.name}
+            namespace={pipelineRun.metadata.namespace}
           />
           {pipelineRefExists(pipelineRun) && (
             <dl>

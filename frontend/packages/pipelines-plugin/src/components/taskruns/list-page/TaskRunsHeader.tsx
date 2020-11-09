@@ -1,4 +1,5 @@
 import { sortable } from '@patternfly/react-table';
+import { TektonResourceLabel } from '../../pipelines/const';
 import { tableColumnClasses } from './taskruns-table';
 
 const TaskRunsHeader = (showPipelineColumn: boolean = true) => () => {
@@ -18,13 +19,13 @@ const TaskRunsHeader = (showPipelineColumn: boolean = true) => () => {
     },
     {
       title: 'Pipeline',
-      sortField: 'metadata.labels["tekton.dev/pipeline"]',
+      sortField: `metadata.labels["${TektonResourceLabel.pipeline}"]`,
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
       title: 'Task',
-      sortField: 'spec.taskRef.name',
+      sortField: `metadata.labels["${TektonResourceLabel.pipelineTask}"]`,
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },

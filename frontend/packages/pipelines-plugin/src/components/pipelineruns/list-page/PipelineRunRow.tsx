@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Status } from '@console/shared';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -11,6 +10,7 @@ import { PipelineRunModel } from '../../../models';
 import LinkedPipelineRunTaskStatus from '../status/LinkedPipelineRunTaskStatus';
 import { ResourceKebabWithUserLabel } from '../triggered-by';
 import { tableColumnClasses } from './pipelinerun-table';
+import PipelineRunStatus from '../status/PipelineRunStatus';
 
 const pipelinerunReference = referenceForModel(PipelineRunModel);
 
@@ -30,7 +30,7 @@ const PipelineRunRow: RowFunction<PipelineRun> = ({ obj, index, key, style }) =>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <Status status={pipelineRunFilterReducer(obj)} />
+        <PipelineRunStatus status={pipelineRunFilterReducer(obj)} pipelineRun={obj} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         <LinkedPipelineRunTaskStatus pipelineRun={obj} />
