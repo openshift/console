@@ -7,11 +7,13 @@ import { SelectorInput } from '../utils';
 import { RadioGroup } from './utils/radio';
 import { Section } from './utils/section';
 import { InputSelectBox } from './utils/inputSelectBox';
+import { KeyValueListEditor } from './utils/key-value-list-editor';
 
 const defaultValues = {
   // requestDo에 넣어줄 형식으로 defaultValues 작성
   metadata: {
     name: 'test-name',
+    keyvaluelist: [{ key: "A", value: "aaa" }, { key: "B", value: "bbb" }, { key: "C", value: "ccc" }, { key: "D", value: "ddd" }, { key: "E", value: "eee" }]
   },
   spec: {
     resources: 'cpu',
@@ -75,6 +77,12 @@ const CreateSampleComponent: React.FC<SampleFormProps> = props => {
             inline={false} // inline속성 먹일거면 true, 아니면 빼면 됨 (선택)
           />
         </Section>
+      </Section>
+      <Section id="list" label="Key Value List">
+        <KeyValueListEditor
+          name="metadata.keyvaluelist" // 서버에 보낼 데이터에서의 path (필수)
+          disableReorder={false} // 순서바꾸기 제공여부 설정. 기본값은 false (선택)
+        />
       </Section>
     </div>
   );
