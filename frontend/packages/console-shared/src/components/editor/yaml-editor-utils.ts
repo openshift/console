@@ -100,12 +100,6 @@ export const registerYAMLCompletion = (
           return p2m.asCompletionResult(list);
         });
     },
-
-    resolveCompletionItem(item) {
-      return yamlService
-        .doResolve(m2p.asCompletionItem(item))
-        .then((result) => p2m.asCompletionItem(result));
-    },
   });
 };
 
