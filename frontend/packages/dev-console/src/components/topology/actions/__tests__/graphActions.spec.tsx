@@ -48,7 +48,7 @@ describe('graphActions: ', () => {
     const connectorSource = new OdcBaseNode();
     connectorSource.setData(topologyDataModel.nodes[0].data);
     const actions = graphActions(graphData, connectorSource);
-    expect(actions).toHaveLength(3);
+    expect(actions).toHaveLength(4);
   });
 
   it('should return the event source menu item when connector source is passed and event source is enabled', () => {
@@ -62,7 +62,7 @@ describe('graphActions: ', () => {
       knativeTopologyDataModel.topology['e187afa2-53b1-406d-a619-cf9ff1468031'],
     );
     const actions = graphActions(graphData, connectorSource);
-    expect(actions).toHaveLength(4);
+    expect(actions).toHaveLength(5);
     expect(actions.filter((action) => action.label === 'Event Source')).toHaveLength(1);
   });
 
