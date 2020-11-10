@@ -1001,7 +1001,7 @@ export class StorageClassForm_ extends React.Component<
               className="pf-c-form-control"
               placeholder={newStorageClass.name}
               id="storage-class-name"
-              onChange={(event) => this.setStorageHandler('name', event.target.value)}
+              onChange={(event) => this.setStorageHandler('name', event.target.value.trim())}
               value={_.get(newStorageClass, 'name', '')}
             />
             <span className="help-block">
