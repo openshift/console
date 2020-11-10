@@ -150,7 +150,7 @@ export const getEventSourceData = (source: string) => {
       },
     },
     [EventSources.ApiServerSource]: {
-      mode: 'Ref',
+      mode: 'Reference',
       serviceAccountName: '',
       resources: [
         {
