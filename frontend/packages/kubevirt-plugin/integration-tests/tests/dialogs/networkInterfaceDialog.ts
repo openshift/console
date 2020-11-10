@@ -1,13 +1,20 @@
 import { click, fillInput } from '@console/shared/src/test-utils/utils';
 import * as view from '../../views/dialogs/networkInterface.view';
-import { selectOptionByText, getSelectOptions, selectItemFromDropdown } from '../utils/utils';
+import {
+  selectOptionByText,
+  getSelectOptions,
+  selectItemFromDropdown,
+  checkForError,
+} from '../utils/utils';
 import { Network } from '../types/types';
 import { modalSubmitButton, saveButton } from '../../views/kubevirtUIResource.view';
 import { waitForNoLoaders } from '../../views/wizard.view';
+import * as wizardView from '../../views/importWizard.view';
 
 export class NetworkInterfaceDialog {
   async fillName(name: string) {
     await fillInput(view.nicName, name);
+    return checkForError(wizardView.errorHelper);
   }
 
   async selectModel(model: string) {

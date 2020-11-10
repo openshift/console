@@ -8,6 +8,7 @@ import {
   IMPORT_WIZARD_CONN_TO_NEW_INSTANCE,
   RHV_WIZARD_CREATE_SUCCESS,
   PAGE_LOAD_TIMEOUT_SECS,
+  IMPORT_WIZARD_CONN_NAME_PREFIX,
 } from '../utils/constants/common';
 import * as view from '../../views/importWizard.view';
 import * as rhvView from '../../views/rhvImportWizard.view';
@@ -50,11 +51,14 @@ export class RhvImportWizard extends ImportWizard {
   }
 
   async configureInstance(instanceConfig: InstanceConfig) {
-    await selectOptionByText(rhvView.ovirtInstanceSelect, instanceConfig.instance);
     if (instanceConfig.instance === IMPORT_WIZARD_CONN_TO_NEW_INSTANCE) {
+      await selectOptionByText(rhvView.ovirtInstanceSelect, instanceConfig.instance);
       await this.configureProvider(instanceConfig);
+      await this.connectToInstance();
+    } else if (instanceConfig.instance.includes(IMPORT_WIZARD_CONN_NAME_PREFIX)) {
+      await this.selectInstanceByPrefixName(rhvView.ovirtInstanceSelect);
     } else {
-      throw Error('Saved provider instances are not implemented');
+      throw Error('No RHV instance was found');
     }
   }
 
@@ -73,24 +77,12 @@ export class RhvImportWizard extends ImportWizard {
     );
   }
 
-  async import(config: VMImportConfig) {
-    const {
-      provider,
-      instanceConfig,
-      name,
-      description,
-      sourceVMName,
-      storageResources,
-      networkResources,
-      startOnCreation,
-    } = config;
-    await this.openWizard(VirtualMachineModel);
-
-    // General section
+  async importVmConnectProviderStep(config) {
+    const { provider, instanceConfig, sourceVMName } = config;
+    // Establishing connection:
     await this.selectProvider(provider);
     await this.waitForSpinner();
     await this.configureInstance(instanceConfig);
-    await this.connectToInstance();
     await this.waitForSpinner();
 
     // Selecting RHV cluster
@@ -99,9 +91,13 @@ export class RhvImportWizard extends ImportWizard {
     await this.selectSourceVirtualMachine(sourceVMName);
     await this.waitForSpinner();
     // Clicking `edit` button to reach network and storage settings
-    await click(rhvView.editButton);
+    await this.edit(config);
+    await browser.sleep(2000);
     await click(view.nextButton);
-    await this.next();
+  }
+
+  async importVmConfigStep(config) {
+    const { name, description } = config;
     // Impossible to do changes of flavor, workload profile and/or OS, only VM name and description can be updated
     if (name) {
       await this.fillName(name);
@@ -109,35 +105,22 @@ export class RhvImportWizard extends ImportWizard {
     if (description) {
       await this.fillDescription(description);
     }
-    await this.next();
-    // Binding networks
-    // First update imported network interfaces to comply with k8s
-    await this.updateImportedNICs();
-    // Adding networks if any
-    if (networkResources) {
-      await this.addVmNetworks(networkResources);
-    }
-    await this.next();
+    await click(view.nextButton);
+  }
 
-    // Binding storage disks
-    // First update disks that come from the source VM
-    await this.updateImportedDisks();
-    // Adding disks if any
-    if (storageResources) {
-      await this.addVmStorage(storageResources);
-    }
-    await this.next();
+  async import(config: VMImportConfig) {
+    const { name } = config;
+    await this.openWizard(VirtualMachineModel);
+
+    await this.importVmConnectProviderStep(config);
+    await this.importVmConfigStep(config);
+    await this.importNetworkStep(config);
+    await this.importDiskStep(config);
     // CloudInit page is in read-only mode
-    await this.next();
-    // Additional devices page is in read-only mode
     await this.next();
 
     // Review
-    await this.validateReviewTab(config);
-    if (startOnCreation) {
-      await this.startOnCreation();
-    }
-
+    await this.processReviewStep(config);
     // Import
     await this.confirmAndCreate();
     await this.waitForCreation();

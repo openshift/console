@@ -1,4 +1,5 @@
-import { $, element, by } from 'protractor';
+import { $ } from 'protractor';
+// import { $, element, by } from 'protractor';
 
 // RHV
 export const ovirtInstanceSelect = $('#ovirt-engine-dropdown');
@@ -9,6 +10,6 @@ export const ovirtPasswordInput = $('#ovirt-engine-password');
 export const ovirtClusterSelect = $('#ovirt-cluster-dropdown');
 export const ovirtVmSelect = $('#ovirt-vm-dropdown');
 export const connectRhvInstanceButton = $('#provider-ovirt-connect');
-export const editButton = element(by.buttonText('Edit'));
+export const editButton = $('#create-vm-wizard-edit-btn');
 
 export const confirmActionButton = $('#confirm-action');

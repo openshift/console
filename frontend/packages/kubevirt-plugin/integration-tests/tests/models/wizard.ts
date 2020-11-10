@@ -9,6 +9,7 @@ import {
   enabledAsBoolean,
   selectItemFromDropdown,
   getResourceUID,
+  checkForError,
 } from '../utils/utils';
 import {
   CloudInitConfig,
@@ -23,6 +24,7 @@ import {
   KEBAP_ACTION,
   VIRTUALIZATION_TITLE,
   SEC,
+  // CHARACTERS_NOT_ALLOWED,
 } from '../utils/constants/common';
 import * as view from '../../views/wizard.view';
 import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
@@ -85,6 +87,7 @@ export class Wizard {
 
   async fillName(name: string) {
     await fillInput(view.nameInput, name);
+    return checkForError(view.vmNameHelper);
   }
 
   async fillDescription(description: string) {
@@ -160,6 +163,7 @@ export class Wizard {
     await click(view.addNICButton);
     const addNICDialog = new NetworkInterfaceDialog();
     await addNICDialog.create(nic);
+    // const err = await addNICDialog.create(nic);
   }
 
   /**
