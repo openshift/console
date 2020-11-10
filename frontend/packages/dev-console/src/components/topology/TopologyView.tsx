@@ -99,20 +99,21 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     }
   }, []);
 
-  const onVisualizationChange = React.useCallback(
-    (vis: Visualization) => {
-      const graphData: GraphData = {
-        createResourceAccess,
-        namespace,
-        eventSourceEnabled,
-        createConnectorExtensions: createConnectors,
-      };
-      vis.getGraph().setData(graphData);
-
-      setVisualization(vis);
-    },
+  const graphData: GraphData = React.useMemo(
+    () => ({
+      createResourceAccess,
+      namespace,
+      eventSourceEnabled,
+      createConnectorExtensions: createConnectors,
+    }),
     [createConnectors, createResourceAccess, eventSourceEnabled, namespace],
   );
+
+  React.useEffect(() => {
+    if (visualization) {
+      visualization.getGraph().setData(graphData);
+    }
+  }, [visualization, graphData]);
 
   const createConnectorPromises = React.useMemo(
     () => createConnectorExtensions.map((creator) => creator.properties.getCreateConnector()),
@@ -224,17 +225,17 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
           namespace={namespace}
           application={applicationRef.current}
           onSelect={onSelect}
-          setVisualization={onVisualizationChange}
+          setVisualization={setVisualization}
         />
       ) : (
         <TopologyListView
           model={filteredModel}
           namespace={namespace}
           onSelect={onSelect}
-          setVisualization={onVisualizationChange}
+          setVisualization={setVisualization}
         />
       ),
-    [filteredModel, namespace, onSelect, onVisualizationChange, showGraphView],
+    [filteredModel, namespace, onSelect, showGraphView],
   );
 
   const topologyFilterBar = React.useMemo(
