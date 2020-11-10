@@ -207,10 +207,11 @@ export const useK8sWatchResources = <R extends ResourcesObject>(
           const loadError = resourceK8s.getIn([reduxIDs[key].id, 'loadError']);
           acc[key] = { data, loaded, loadError };
         } else {
+          const loaded = hasAllModelsLoaded && prevReduxIDs === reduxIDs;
           acc[key] = {
             data: resources[key].isList ? [] : {},
-            loaded: prevReduxIDs !== reduxIDs,
-            loadError: prevReduxIDs !== reduxIDs ? undefined : new NoModelError(),
+            loaded,
+            loadError: !loaded ? undefined : new NoModelError(),
           };
         }
         return acc;
@@ -223,7 +224,7 @@ export const useK8sWatchResources = <R extends ResourcesObject>(
         : { data, loaded: false, loadError: undefined };
       return acc;
     }, {});
-  }, [reduxIDs, resources, resourceK8s, noModels, prevReduxIDs]);
+  }, [reduxIDs, resources, resourceK8s, noModels, prevReduxIDs, hasAllModelsLoaded]);
 
   return results;
 };
