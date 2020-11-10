@@ -7,29 +7,6 @@ Feature: Create Application from git form
       And user has created namespace starts with "aut-addflow-git"
 
 
-   Scenario Outline: Builder iamge detected for git url "<git_url>" : A-04-TC01
-      Given user is at Import from git page
-      When user enters Git Repo url as "<git_url>"
-      Then git url gets Validated
-      And builder image is detetced
-      And builder image version drop down is displayed
-      And Application name displays as "<app_name>"
-      And Name displays as "<name>"
-
-      Examples:
-         | git_url                                                   | app_name                  | name                  |
-         | https://github.com/sclorg/dancer-ex.git                   | dancer-ex-git-app         | dancer-ex-git         |
-         | https://github.com/sclorg/cakephp-ex.git                  | cakephp-ex-git-app        | cakephp-ex-git        |
-         | https://github.com/sclorg/nginx-ex.git                    | nginx-ex-git-app          | nginx-ex-git          |
-         | https://github.com/sclorg/httpd-ex.git                    | httpd-ex-git-app          | httpd-ex-git          |
-         | https://github.com/redhat-developer/s2i-dotnetcore-ex.git | s2i-dotnetcore-ex-git-app | s2i-dotnetcore-ex-git |
-         | https://github.com/sclorg/golang-ex.git                   | golang-ex-git-app         | golang-ex-git         |
-         | https://github.com/sclorg/ruby-ex.git                     | ruby-ex-git-app           | ruby-ex-git           |
-         | https://github.com/sclorg/django-ex.git                   | django-ex-git-app         | django-ex-git         |
-         | https://github.com/jboss-openshift/openshift-quickstarts  | openshift-quickstarts-app | openshift-quickstarts |
-         | https://github.com/sclorg/nodejs-ex.git                   | nodejs-ex-git-app         | nodejs-ex-git         |
-
-
    @smoke
    Scenario Outline: Add new git workload with new application for resoruce type "<resource_type>" : A-04-TC02, A-04-TC13
       Given user is at Import from git page
@@ -49,7 +26,7 @@ Feature: Create Application from git form
 
    @regression
    Scenario: Add new git workload to the existing application : A-04-TC03
-      Given user created workload "nodejs-ex-git" with resource type "Deployment"
+      Given user has created workload "nodejs-ex-git" with resource type "Deployment"
       And user is at Add page
       And user is at Import from git page
       When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
@@ -58,7 +35,7 @@ Feature: Create Application from git form
       And user selects resource type as "Deployment Config"
       And user clicks Create button on Add page
       Then user will be redirected to Topology page
-      And created workload "dancer-ex.git" is linked to existing application "nodejs-ex-git-app"
+      And user can see the created workload "dancer-ex.git" is linked to existing application "nodejs-ex-git-app"
 
 
    @regression
@@ -89,10 +66,10 @@ Feature: Create Application from git form
       And user clicks "Routing" link in Advanced Options section
       And user enters Hostname as "home"
       And user enters Path as "/home"
-      And select default Target Port
+      And user selects default Target Port
       And user clicks Create button on Add page
       Then user will be redirected to Topology page
-      And the route of application "nodejs-ex-git" contains "home"
+      And the route of application "nodejs-ex-git" contains "home" in the Routes section of the workload sidebar
 
 
    @regression
@@ -117,7 +94,7 @@ Feature: Create Application from git form
       When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
       And user enters name as "nodejs-ex-5-git" in General section
       And user clicks "Deployment" link in Advanced Options section
-      And verify Auto deploy when new image is available checkbox is seleceted
+      And user verify the Auto deploy when new image is available checkbox is selected
       And user enters Name as "home" in Environment Variables Runtime only section
       And user enters Value as "value" in Environment Variables Runtime only section
       And user clicks Create button on Add page
@@ -172,3 +149,26 @@ Feature: Create Application from git form
       And user fills the Startup Probe details
       And user clicks Create button on Add page
       Then user will be redirected to Topology page
+
+
+   Scenario Outline: Builder iamge detected for git url "<git_url>" : A-04-TC01
+      Given user is at Import from git page
+      When user enters Git Repo url as "<git_url>"
+      Then git url gets Validated
+      And builder image is detected
+      And builder image version drop down is displayed
+      And Application name displays as "<app_name>"
+      And Name displays as "<name>"
+
+      Examples:
+         | git_url                                                   | app_name                  | name                  |
+         | https://github.com/sclorg/dancer-ex.git                   | dancer-ex-git-app         | dancer-ex-git         |
+         | https://github.com/sclorg/cakephp-ex.git                  | cakephp-ex-git-app        | cakephp-ex-git        |
+         | https://github.com/sclorg/nginx-ex.git                    | nginx-ex-git-app          | nginx-ex-git          |
+         | https://github.com/sclorg/httpd-ex.git                    | httpd-ex-git-app          | httpd-ex-git          |
+         | https://github.com/redhat-developer/s2i-dotnetcore-ex.git | s2i-dotnetcore-ex-git-app | s2i-dotnetcore-ex-git |
+         | https://github.com/sclorg/golang-ex.git                   | golang-ex-git-app         | golang-ex-git         |
+         | https://github.com/sclorg/ruby-ex.git                     | ruby-ex-git-app           | ruby-ex-git           |
+         | https://github.com/sclorg/django-ex.git                   | django-ex-git-app         | django-ex-git         |
+         | https://github.com/jboss-openshift/openshift-quickstarts  | openshift-quickstarts-app | openshift-quickstarts |
+         | https://github.com/sclorg/nodejs-ex.git                   | nodejs-ex-git-app         | nodejs-ex-git         |

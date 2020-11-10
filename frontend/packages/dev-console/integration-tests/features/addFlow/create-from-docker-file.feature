@@ -36,6 +36,6 @@ Feature: Create Application from Docker file
    Scenario: Perform cancel operation on Dockerfile form should will be redirected the user to Add page : A-06-TC02
       Given user is on Import from Docker file page
       When user enters docker git url as "https://github.com/sclorg/nodejs-ex.git"
-      And user selects "Deployment" radio button in Resoruce type section
+      And user selects "Deployment" radio button in Resource type section
       And user clicks Cancel button on Add page
       Then user will be redirected to Add page

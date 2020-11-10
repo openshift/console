@@ -10,7 +10,7 @@ Feature: Create Application from Catalog file
     Scenario: Developer Catalog page details: A-12-TC04
         When user selects From Catalog card from add page
         Then user will be redirected to Developer Catalog page
-        And user is ale to see Operator Backed, Helm Charts, Builder Image, Template, Service Class types are not selected by default
+        And user is able to see Operator Backed, Helm Charts, Builder Image, Template, Service Class types are not selected by default
         And search option is displayed in Developer Catalog page
         And GroupBy filter is selected with default option None
 
@@ -30,7 +30,7 @@ Feature: Create Application from Catalog file
     Scenario: Filter the catalog using GroupBy option
         Given user is at Developer Catlog page
         When user searches "node" card from catalog page
-        Then user is able to see cards with name contains "node"
+        Then user is able to see cards with name containing "node"
 
 
     @regression
