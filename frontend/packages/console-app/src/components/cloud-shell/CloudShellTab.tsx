@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { InlineTechPreviewBadge } from '@console/shared';
 import CloudShellTerminal from './CloudShellTerminal';
 import './CloudShellTab.scss';
 
@@ -12,7 +11,6 @@ const CloudShellTab: React.FC = () => {
         <div className="co-cloud-shell-tab__header-text">
           {t('cloudshell~OpenShift command line terminal')}
         </div>
-        <InlineTechPreviewBadge />
       </div>
       <div className="co-cloud-shell-tab__body">
         <CloudShellTerminal />
