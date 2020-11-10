@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { sortable } from '@patternfly/react-table';
 import { Button, Popover } from '@patternfly/react-core';
 import { QuestionCircleIcon } from '@patternfly/react-icons';
@@ -74,6 +75,7 @@ const FileSystemTableRow = ({ obj: fileSystem, index, key, style }) => {
 };
 
 export const FileSystemsList: React.FC<FileSystemsListProps> = ({ vmi, vmStatusBundle, delay }) => {
+  const { t } = useTranslation();
   const [guestAgentInfoRaw, error, loading] = useGuestAgentInfo({ vmi, delay });
   const guestAgentInfo = new GuestAgentInfoWrapper(guestAgentInfoRaw);
   const fsList = guestAgentInfo.getFSInfo().getDisks();
@@ -95,7 +97,7 @@ export const FileSystemsList: React.FC<FileSystemsListProps> = ({ vmi, vmStatusB
   const body = () => {
     return !guestAgentInfoRaw ? (
       <div className="text-center">
-        {getGuestAgentFieldNotAvailMsg(isGuestAgentInstalled(vmi), vmStatusBundle.status)}
+        {getGuestAgentFieldNotAvailMsg(t, isGuestAgentInstalled(vmi), vmStatusBundle.status)}
       </div>
     ) : (
       <Table

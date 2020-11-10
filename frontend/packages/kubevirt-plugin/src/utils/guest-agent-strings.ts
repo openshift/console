@@ -1,31 +1,28 @@
-import {
-  GUEST_AGENT_REQUIRED_MESSAGE,
-  NOT_AVAILABLE_MESSAGE,
-  NO_LOGGED_IN_USERS_MSG,
-  VM_NOT_RUNNING_MESSAGE,
-} from '../strings/vm/messages';
-import { pluralize } from './strings';
+import { TFunction } from 'i18next';
 import { VMStatus } from '../constants/vm/vm-status';
 
-export const getNumLoggedInUsersMessage = (numLoggedInUsers: number | null) => {
+export const getNumLoggedInUsersMessage = (t: TFunction, numLoggedInUsers: number | null) => {
   if (numLoggedInUsers == null) {
-    return NOT_AVAILABLE_MESSAGE;
+    return t('kubevirt-plugin~Not available');
   }
 
   if (numLoggedInUsers === 0) {
-    return NO_LOGGED_IN_USERS_MSG;
+    return t('kubevirt-plugin~No users logged in');
   }
 
-  return `${numLoggedInUsers} ${pluralize(numLoggedInUsers, 'user')}`;
+  return t('kubevirt-plugin~{{count}} user', { count: numLoggedInUsers });
 };
 
 export const getGuestAgentFieldNotAvailMsg = (
+  t: TFunction,
   isGuestAgentInstalled: boolean,
   vmStatus: VMStatus,
 ): string => {
   if (vmStatus !== VMStatus.RUNNING) {
-    return VM_NOT_RUNNING_MESSAGE;
+    return t('kubevirt-plugin~VM not running');
   }
 
-  return isGuestAgentInstalled ? NOT_AVAILABLE_MESSAGE : GUEST_AGENT_REQUIRED_MESSAGE;
+  return isGuestAgentInstalled
+    ? t('kubevirt-plugin~Not available')
+    : t('kubevirt-plugin~Guest agent required');
 };

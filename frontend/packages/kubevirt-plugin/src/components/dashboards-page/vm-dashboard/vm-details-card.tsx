@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { DashboardItemProps } from '@console/internal/components/dashboard/with-dashboard-resources';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
@@ -30,6 +31,7 @@ import {
 } from '../../../utils/guest-agent-strings';
 
 export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
+  const { t } = useTranslation();
   const vmDashboardContext = React.useContext(VMDashboardContext);
   const { vm, vmi, pods, vmStatusBundle } = vmDashboardContext;
   const vmiLike = vm || vmi;
@@ -38,6 +40,7 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
   const [guestAgentInfoRaw] = useGuestAgentInfo({ vmi });
   const guestAgentInfo = new GuestAgentInfoWrapper(guestAgentInfoRaw);
   const guestAgentFieldNotAvailMsg = getGuestAgentFieldNotAvailMsg(
+    t,
     isGuestAgentInstalled(vmi),
     status,
   );
@@ -62,7 +65,7 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
   const operatingSystem = guestAgentInfo.getOSInfo().getPrettyName();
   const timeZone = guestAgentInfo.getTimezoneName();
   const numLoggedInUsers: number | null = guestAgentInfo.getNumLoggedInUsers();
-  const numLoggedInUsersMsg: string = getNumLoggedInUsersMessage(numLoggedInUsers);
+  const numLoggedInUsersMsg: string = getNumLoggedInUsersMessage(t, numLoggedInUsers);
 
   return (
     <DashboardCard>

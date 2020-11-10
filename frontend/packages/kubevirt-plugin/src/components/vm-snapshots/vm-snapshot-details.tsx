@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import {
   DetailsItem,
   FirehoseResource,
@@ -23,7 +24,6 @@ import {
 } from '../../selectors/snapshot/snapshot';
 import { VMSnapshotStatus } from './vm-snapshot-status';
 import { VM_DETAIL_SNAPSHOTS } from '../../constants';
-import { NOT_AVAILABLE_MESSAGE } from '../../strings/vm/messages';
 import { useMappedVMRestores } from './use-mapped-vm-restores';
 import { descriptionModal } from '../modals';
 
@@ -39,6 +39,7 @@ const menuActions = [
 ];
 
 const SnapshotDetails: React.FC<DetailsProps> = ({ obj, customData: { restores } }) => {
+  const { t } = useTranslation();
   const relevantRestore = restores[getName(obj)];
   return (
     <>
@@ -58,7 +59,7 @@ const SnapshotDetails: React.FC<DetailsProps> = ({ obj, customData: { restores }
                 }
               >
                 {obj?.metadata?.annotations?.description || (
-                  <div className="text-muted">{NOT_AVAILABLE_MESSAGE}</div>
+                  <div className="text-muted">{t('kubevirt-plugin~Not available')}</div>
                 )}
               </DetailsItem>
             </ResourceSummary>
@@ -73,7 +74,7 @@ const SnapshotDetails: React.FC<DetailsProps> = ({ obj, customData: { restores }
                 {relevantRestore ? (
                   <Timestamp timestamp={getVmRestoreTime(relevantRestore)} />
                 ) : (
-                  NOT_AVAILABLE_MESSAGE
+                  t('kubevirt-plugin~Not available')
                 )}
               </dd>
             </dl>
