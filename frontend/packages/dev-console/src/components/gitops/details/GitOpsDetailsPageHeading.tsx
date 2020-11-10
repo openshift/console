@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { BreadCrumbs, ResourceIcon } from '@console/internal/components/utils';
 import { Split, SplitItem, Label } from '@patternfly/react-core';
 import { routeDecoratorIcon } from '../../import/render-utils';
@@ -17,6 +18,7 @@ const GitOpsDetailsPageHeading: React.FC<GitOpsDetailsPageHeadingProps> = ({
   manifestURL,
   badge,
 }) => {
+  const { t } = useTranslation();
   const breadcrumbs = [
     {
       name: 'Application Stages',
@@ -44,7 +46,7 @@ const GitOpsDetailsPageHeading: React.FC<GitOpsDetailsPageHeadingProps> = ({
           <Label
             style={{ fontSize: '12px' }}
             color="blue"
-            icon={routeDecoratorIcon(manifestURL, 12)}
+            icon={routeDecoratorIcon(manifestURL, 12, t)}
           >
             <a
               style={{ color: 'var(--pf-c-label__content--Color)' }}

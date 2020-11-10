@@ -61,7 +61,7 @@ describe('DeployImage Page Test', () => {
   });
   it('should render correct page title', () => {
     expect(deployImagePageWrapper.find(PageHeading).exists()).toBe(true);
-    expect(deployImagePageWrapper.find(PageHeading).prop('title')).toBe('Deploy Image');
+    expect(deployImagePageWrapper.find(PageHeading).prop('title')).toBe('devconsole~Deploy Image');
   });
 });
 

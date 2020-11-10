@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { Alert, FormGroup, ValidatedOptions } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import { useFormikContext, FormikValues } from 'formik';
@@ -45,6 +46,7 @@ export const ImageStreamReducer = (state: ImageStreamState, action: ImageStreamA
 };
 
 const ImageStream: React.FC = () => {
+  const { t } = useTranslation();
   const {
     values: { imageStream, project, registry, isi },
     setFieldValue,
@@ -112,23 +114,29 @@ const ImageStream: React.FC = () => {
         </FormGroup>
         {isNamespaceSelected && isImageStreamSelected && !isTagsAvailable && hasCreateAccess && (
           <div className="odc-imagestream-alert">
-            <Alert variant="warning" title="No Image streams tags found" isInline>
-              No tags are available in image stream {imageStream.image}
+            <Alert variant="warning" title={t('devconsole~No Image streams tags found')} isInline>
+              {t('devconsole~No tags are available in image stream {{image}}', {
+                image: imageStream.image,
+              })}
             </Alert>
           </div>
         )}
         {isNamespaceSelected && !loading && !isStreamsAvailable && hasCreateAccess && (
           <div className="odc-imagestream-alert">
-            <Alert variant="warning" title="No Image streams found" isInline>
-              No image streams are available in project {imageStream.namespace}
+            <Alert variant="warning" title={t('devconsole~No Image streams found')} isInline>
+              {t('devconsole~No image streams are available in project {{namespace}}', {
+                namespace: imageStream.namespace,
+              })}
             </Alert>
           </div>
         )}
         {isNamespaceSelected && !accessLoading && !hasCreateAccess && (
           <div className="odc-imagestream-alert">
-            <Alert variant="warning" title="Permission denied" isInline>
-              Service account default does not have authority to pull images from{' '}
-              {imageStream.namespace}. Select another project to continue.
+            <Alert variant="warning" title={t('devconsole~Permission denied')} isInline>
+              {t(
+                'devconsole~Service account default does not have authority to pull images from {{namespace}}. Select another project to continue.',
+                { namespace: imageStream.namespace },
+              )}
             </Alert>
           </div>
         )}
@@ -136,8 +144,10 @@ const ImageStream: React.FC = () => {
           <div className="odc-imagestream-alert">
             <CheckboxField
               name="imageStream.grantAccess"
-              label={`Grant service account default authority to pull images from
-                ${imageStream.namespace}`}
+              label={t(
+                'devconsole~Grant service account default authority to pull images from {{namespace}}',
+                { namespace: imageStream.namespace },
+              )}
             />
           </div>
         )}

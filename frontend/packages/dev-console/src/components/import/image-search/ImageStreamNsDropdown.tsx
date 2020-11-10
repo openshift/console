@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFormikContext, FormikValues } from 'formik';
 import { k8sGet } from '@console/internal/module/k8s';
 import { RoleBindingModel } from '@console/internal/models';
@@ -9,6 +10,7 @@ import { ImageStreamActions as Action } from '../import-types';
 import { ImageStreamContext } from './ImageStreamContext';
 
 const ImageStreamNsDropdown: React.FC = () => {
+  const { t } = useTranslation();
   const { values, setFieldValue, initialValues } = useFormikContext<FormikValues>();
   const { dispatch } = React.useContext(ImageStreamContext);
   const onDropdownChange = React.useCallback(
@@ -89,8 +91,8 @@ const ImageStreamNsDropdown: React.FC = () => {
   return (
     <ResourceDropdownField
       name="imageStream.namespace"
-      label="Project"
-      title="Select Project"
+      label={t('devconsole~Project')}
+      title={t('devconsole~Select Project')}
       fullWidth
       required
       resources={getProjectResource()}

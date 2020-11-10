@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useFormikContext, FormikValues } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { RadioGroupField } from '@console/shared';
 import FormSection from '../section/FormSection';
 import { imageRegistryType } from '../../../utils/imagestream-utils';
@@ -7,6 +8,7 @@ import ImageStream from './ImageStream';
 import ImageSearch from './ImageSearch';
 
 const ImageSearchSection: React.FC = () => {
+  const { t } = useTranslation();
   const { values, setFieldValue, initialValues } = useFormikContext<FormikValues>();
   const [registry, setRegistry] = React.useState(values.registry);
   React.useEffect(() => {
@@ -27,8 +29,8 @@ const ImageSearchSection: React.FC = () => {
 
   return (
     <FormSection
-      title="Image"
-      subTitle="Deploy an existing image from an image stream or image registry."
+      title={t('devconsole~Image')}
+      subTitle={t('devconsole~Deploy an existing image from an image stream or image registry.')}
     >
       <RadioGroupField
         name="registry"

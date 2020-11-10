@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { EmptyState, EmptyStateVariant } from '@patternfly/react-core';
 import { Table } from '@console/internal/components/factory';
 import { getQueryArgument, LoadingBox } from '@console/internal/components/utils';
@@ -20,6 +21,7 @@ const CustomResourceList: React.FC<CustomResourceListProps> = ({
   sortBy,
   sortOrder,
 }) => {
+  const { t } = useTranslation();
   const applyFilters = React.useCallback(() => {
     const queryArgument = queryArg ? getQueryArgument(queryArg) : undefined;
     const activeFilters = queryArgument?.split(',');
@@ -47,7 +49,7 @@ const CustomResourceList: React.FC<CustomResourceListProps> = ({
       <EmptyMsg />
     ) : (
       <EmptyState variant={EmptyStateVariant.full}>
-        <p>No resources found</p>
+        <p>{t('devconsole~No resources found')}</p>
       </EmptyState>
     );
   }

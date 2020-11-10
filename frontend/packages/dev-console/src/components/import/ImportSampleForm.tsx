@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { FormikProps, FormikValues } from 'formik';
 import { FormFooter } from '@console/shared/src/components/form-utils';
 import { Form, TextInputTypes } from '@patternfly/react-core';
@@ -23,6 +24,7 @@ const ImportSampleForm: React.FC<Props> = ({
   status,
   isSubmitting,
 }) => {
+  const { t } = useTranslation();
   const {
     image: { tag: selectedImagetag },
   } = values;
@@ -32,8 +34,10 @@ const ImportSampleForm: React.FC<Props> = ({
         <InputField
           type={TextInputTypes.text}
           name="name"
-          label="Name"
-          helpText="A unique name given to the component that will be used to name associated resources."
+          label={t('devconsole~Name')}
+          helpText={t(
+            'devconsole~A unique name given to the component that will be used to name associated resources.',
+          )}
           data-test-id="application-form-app-name"
           required
         />
@@ -44,7 +48,7 @@ const ImportSampleForm: React.FC<Props> = ({
         <InputField
           type={TextInputTypes.text}
           name="git.url"
-          label="Git Repo URL"
+          label={t('devconsole~Git Repo URL')}
           data-test-id="git-form-input-url"
           isDisabled
         />
@@ -53,9 +57,9 @@ const ImportSampleForm: React.FC<Props> = ({
         handleReset={handleReset}
         errorMessage={status && status.submitError}
         isSubmitting={isSubmitting}
-        submitLabel="Create"
+        submitLabel={t('devconsole~Create')}
         disableSubmit={!_.isEmpty(errors) || isSubmitting}
-        resetLabel="Cancel"
+        resetLabel={t('devconsole~Cancel')}
         sticky
       />
     </Form>

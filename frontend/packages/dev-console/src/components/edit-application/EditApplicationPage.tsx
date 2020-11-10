@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Firehose, FirehoseResource, LoadingBox } from '@console/internal/components/utils';
 import { ImageStreamModel } from '@console/internal/models';
 import { RouteComponentProps } from 'react-router-dom';
@@ -21,6 +22,7 @@ const EditApplicationComponentLoader: React.FunctionComponent<EditApplicationPro
 export type ImportPageProps = RouteComponentProps<{ ns?: string }>;
 
 const EditApplicationPage: React.FunctionComponent<ImportPageProps> = ({ match, location }) => {
+  const { t } = useTranslation();
   const namespace = match.params.ns;
   const queryParams = new URLSearchParams(location.search);
   const editAppResourceKind = queryParams.get('kind');
@@ -87,7 +89,7 @@ const EditApplicationPage: React.FunctionComponent<ImportPageProps> = ({ match, 
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
       <Helmet>
-        <title>Edit</title>
+        <title>{t('devconsole~Edit')}</title>
       </Helmet>
       <div className="co-m-pane__body">
         <Firehose resources={appResources}>

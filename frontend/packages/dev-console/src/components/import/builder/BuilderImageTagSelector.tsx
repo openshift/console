@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { useFormikContext, FormikValues } from 'formik';
 import { ResourceName } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -22,6 +23,7 @@ const BuilderImageTagSelector: React.FC<BuilderImageTagSelectorProps> = ({
   selectedBuilderImage,
   selectedImageTag,
 }) => {
+  const { t } = useTranslation();
   const { setFieldValue, setFieldError } = useFormikContext<FormikValues>();
   const {
     name: imageName,
@@ -60,7 +62,7 @@ const BuilderImageTagSelector: React.FC<BuilderImageTagSelectorProps> = ({
     <>
       <DropdownField
         name="image.tag"
-        label="Builder Image Version"
+        label={t('devconsole~Builder Image Version')}
         items={tagItems}
         title={tagItems[selectedImageTag]}
         fullWidth

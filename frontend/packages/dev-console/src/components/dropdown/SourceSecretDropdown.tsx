@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { SecretModel } from '@console/internal/models';
 import { Firehose } from '@console/internal/components/utils';
 import { ResourceDropdown } from '@console/shared';
@@ -17,6 +18,7 @@ interface SourceSecretDropdownProps {
 }
 
 const SourceSecretDropdown: React.FC<SourceSecretDropdownProps> = (props) => {
+  const { t } = useTranslation();
   const filterData = (item) => {
     return item.type === 'kubernetes.io/basic-auth' || item.type === 'kubernetes.io/ssh-auth';
   };
@@ -32,7 +34,7 @@ const SourceSecretDropdown: React.FC<SourceSecretDropdownProps> = (props) => {
     <Firehose resources={resources}>
       <ResourceDropdown
         {...props}
-        placeholder="Select Secret Name"
+        placeholder={t('devconsole~Select Secret Name')}
         resourceFilter={filterData}
         dataSelector={['metadata', 'name']}
       />

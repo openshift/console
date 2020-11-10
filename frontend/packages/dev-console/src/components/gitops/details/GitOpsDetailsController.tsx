@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import GitOpsDetails from './GitOpsDetails';
 import { routeDecoratorIcon } from '../../import/render-utils';
@@ -17,7 +19,7 @@ const getWorkLoad = (resources: GitOpsResource[]) => {
   return _.find(resources, (res) => _.includes(WORKLOAD_KINDS, res.kind));
 };
 
-const getTransformedServices = (originalEnv: GitOpsEnvironment) => {
+const getTransformedServices = (originalEnv: GitOpsEnvironment, t: TFunction) => {
   return _.sortBy(
     _.map(originalEnv?.services, (service) => {
       const workload = getWorkLoad(service?.resources);
@@ -26,7 +28,7 @@ const getTransformedServices = (originalEnv: GitOpsEnvironment) => {
         ...service,
         source: {
           ...service?.source,
-          icon: routeDecoratorIcon(service?.source?.url, 12),
+          icon: routeDecoratorIcon(service?.source?.url, 12, t),
         },
         workloadKind: workload?.kind,
         image,
@@ -38,12 +40,12 @@ const getTransformedServices = (originalEnv: GitOpsEnvironment) => {
   );
 };
 
-const getTransformedEnvsData = (originalEnvsData: GitOpsEnvironment[]) => {
+const getTransformedEnvsData = (originalEnvsData: GitOpsEnvironment[], t: TFunction) => {
   return _.map(originalEnvsData, (env) => {
     if (env) {
       const resModels = _.flatten(_.map(env?.services, (service) => service.resources));
       const timestamp = <TimestampWrapper resModels={resModels} />;
-      const services = getTransformedServices(env);
+      const services = getTransformedServices(env, t);
       return {
         ...env,
         services,
@@ -58,7 +60,8 @@ const GitOpsDetailsController: React.FC<GitOpsDetailsControllerProps> = ({
   envsData,
   emptyStateMsg,
 }) => {
-  const envs = React.useMemo(() => getTransformedEnvsData(envsData), [envsData]);
+  const { t } = useTranslation();
+  const envs = React.useMemo(() => getTransformedEnvsData(envsData, t), [envsData, t]);
 
   return emptyStateMsg ? (
     <GitOpsEmptyState emptyStateMsg={emptyStateMsg} />

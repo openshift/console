@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { connect, Dispatch } from 'react-redux';
 import {
   ALL_NAMESPACES_KEY,
@@ -28,7 +29,8 @@ interface DispatchProps {
 type Props = ApplicationSelectorProps & StateProps & DispatchProps;
 
 const ApplicationSelector: React.FC<Props> = ({ namespace, application, onChange, disabled }) => {
-  const allApplicationsTitle = 'all applications';
+  const { t } = useTranslation();
+  const allApplicationsTitle = t('devconsole~all applications');
   const noApplicationsTitle = UNASSIGNED_LABEL;
   const dropdownTitle: string =
     application === ALL_APPLICATIONS_KEY
@@ -55,7 +57,7 @@ const ApplicationSelector: React.FC<Props> = ({ namespace, application, onChange
       buttonClassName="pf-m-plain"
       namespace={namespace}
       title={title && <span className="btn-link__title">{title}</span>}
-      titlePrefix="Application"
+      titlePrefix={t('devconsole~Application')}
       allSelectorItem={{
         allSelectorKey: ALL_APPLICATIONS_KEY,
         allSelectorTitle: allApplicationsTitle,

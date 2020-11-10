@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import FormSection from '../section/FormSection';
 import { RouteData } from '../import-types';
 import CreateRoute from './CreateRoute';
@@ -9,8 +10,9 @@ interface RouteSectionProps {
 }
 
 const RouteSection: React.FC<RouteSectionProps> = ({ route }) => {
+  const { t } = useTranslation();
   return (
-    <FormSection title="Routing">
+    <FormSection title={t('devconsole~Routing')}>
       {route.create && (
         <>
           <CreateRoute />
