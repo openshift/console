@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 // FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
@@ -27,12 +28,14 @@ import { metricsQuery, getTopMetricsQueries } from '../queries';
 import './MetricsQueryInput.scss';
 
 const ADD_NEW_QUERY = '#ADD_NEW_QUERY#';
-const CUSTOM_QUERY = 'Custom Query';
 
 const MetricsQueryInput: React.FC = () => {
+  const { t } = useTranslation();
+  const CUSTOM_QUERY = t('devconsole~Custom Query');
+  const DEFAULT_TITLE = t('devconsole~Select Query');
   const params = getURLSearchParams();
   const query = params.query0;
-  const items = metricsQuery;
+  const items = metricsQuery(t);
   const autocompleteFilter = (strText, item) => fuzzy(strText, item);
   const defaultActionItem = [
     {
@@ -46,7 +49,7 @@ const MetricsQueryInput: React.FC = () => {
     state.UI.getIn(['queryBrowser', 'queries', 0]).toJS(),
   );
   const dispatch = useDispatch();
-  const [title, setTitle] = React.useState('Select Query');
+  const [title, setTitle] = React.useState(DEFAULT_TITLE);
   const [selectedKey, setSelectedKey] = React.useState('');
   const [changeKey, setChangeKey] = React.useState(false);
   const [metric, setMetric] = React.useState('');
@@ -56,10 +59,10 @@ const MetricsQueryInput: React.FC = () => {
   React.useEffect(() => {
     const runQueries = () => dispatch(queryBrowserRunQueries());
     const patchQuery = (v: QueryObj) => dispatch(queryBrowserPatchQuery(0, v));
-    const queryMetrics = metric && getTopMetricsQueries(namespace)[metric];
+    const queryMetrics = metric && getTopMetricsQueries(namespace, t)[metric];
     patchQuery({ text: queryMetrics || query || '' });
     runQueries();
-  }, [dispatch, metric, query, namespace, changeKey]);
+  }, [dispatch, metric, query, namespace, changeKey, t]);
 
   React.useEffect(() => {
     const q = queries?.query;
@@ -71,17 +74,17 @@ const MetricsQueryInput: React.FC = () => {
         removeQueryArgument('query0');
       }
     }
-  }, [query, queries]);
+  }, [query, queries, CUSTOM_QUERY]);
 
   React.useEffect(() => {
     if (query) {
-      const topMetricsQueries = getTopMetricsQueries(namespace);
+      const topMetricsQueries = getTopMetricsQueries(namespace, t);
       const selectedQuery = _.findKey(topMetricsQueries, (topQuery) => topQuery === query);
       const sKey = _.findKey(items, (item) => item === selectedQuery);
       setMetric(selectedQuery);
       selectedQuery ? setSelectedKey(sKey) : setTitle(CUSTOM_QUERY);
     }
-  }, [query, namespace, items]);
+  }, [query, namespace, items, CUSTOM_QUERY, t]);
 
   React.useEffect(() => {
     const setMetrics = (metrics: string[]) => dispatch(queryBrowserSetMetrics(metrics));
@@ -103,14 +106,14 @@ const MetricsQueryInput: React.FC = () => {
   }, [namespace, safeFetch, dispatch]);
 
   const onChange = (selectedValue: string) => {
-    setMetric(metricsQuery[selectedValue]);
+    setMetric(metricsQuery(t)[selectedValue]);
     setChangeKey(!changeKey);
     if (selectedValue && selectedValue === ADD_NEW_QUERY) {
       setTitle(CUSTOM_QUERY);
       setIsPromQlDisabled(true);
       setShowPromQl(true);
     } else {
-      setTitle(metricsQuery[selectedValue]);
+      setTitle(metricsQuery(t)[selectedValue]);
       setIsPromQlDisabled(false);
     }
     if (query) {
@@ -141,7 +144,7 @@ const MetricsQueryInput: React.FC = () => {
             isDisabled={isPromQlDisabled}
             onClick={() => setShowPromQl(!showPromQl)}
           >
-            {showPromQl ? 'Hide PromQL' : 'Show PromQL'}
+            {showPromQl ? t('devconsole~Hide PromQL') : t('devconsole~Show PromQL')}
           </Button>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { TFunction } from 'i18next';
 import { GraphTypes } from './dashboard/MonitoringDashboardGraph';
 import {
   Humanize,
@@ -14,98 +15,107 @@ export interface MonitoringQuery {
   title: string;
   humanize: Humanize;
   byteDataType: ByteDataTypes;
+  id?: string;
 }
 
-export const metricsQuery = {
-  PODS_BY_CPU: 'CPU Usage',
-  PODS_BY_MEMORY: 'Memory Usage',
-  PODS_BY_FILESYSTEM: 'Filesystem Usage',
-  PODS_BY_NETWORK_IN: 'Receive Bandwidth',
-  PODS_BY_NETWORK_OUT: 'Transmit Bandwidth',
-  RATE_OF_RECEIVED_PACKETS: 'Rate of Received Packets',
-  RATE_OF_TRANSMITTED_PACKETS: 'Rate of Transmitted Packets',
-  RATE_OF_RECEIVED_PACKETS_DROPPED: 'Rate of Received Packets Dropped',
-  RATE_OF_TRANSMITTED_PACKETS_DROPPED: 'Rate of Transmitted Packets Dropped',
-};
+export const metricsQuery = (t: TFunction) => ({
+  PODS_BY_CPU: t('devconsole~CPU Usage'),
+  PODS_BY_MEMORY: t('devconsole~Memory Usage'),
+  PODS_BY_FILESYSTEM: t('devconsole~Filesystem Usage'),
+  PODS_BY_NETWORK_IN: t('devconsole~Receive Bandwidth'),
+  PODS_BY_NETWORK_OUT: t('devconsole~Transmit Bandwidth'),
+  RATE_OF_RECEIVED_PACKETS: t('devconsole~Rate of Received Packets'),
+  RATE_OF_TRANSMITTED_PACKETS: t('devconsole~Rate of Transmitted Packets'),
+  RATE_OF_RECEIVED_PACKETS_DROPPED: t('devconsole~Rate of Received Packets Dropped'),
+  RATE_OF_TRANSMITTED_PACKETS_DROPPED: t('devconsole~Rate of Transmitted Packets Dropped'),
+});
 
-export const monitoringDashboardQueries: MonitoringQuery[] = [
+export const monitoringDashboardQueries = (t: TFunction): MonitoringQuery[] => [
   {
     query: _.template(
       `sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{cluster="", namespace='<%= namespace %>'}) by (pod)`,
     ),
     chartType: GraphTypes.area,
-    title: 'CPU Usage',
+    title: t('devconsole~CPU Usage'),
     humanize: humanizeCpuCores,
     byteDataType: ByteDataTypes.BinaryBytes,
+    id: 'cpu_usage',
   },
   {
     query: _.template(
       `sum(container_memory_working_set_bytes{cluster="", container!="", namespace='<%= namespace %>'}) by (pod)`,
     ),
     chartType: GraphTypes.area,
-    title: 'Memory Usage',
+    title: t('devconsole~Memory Usage'),
     humanize: humanizeBinaryBytes,
     byteDataType: ByteDataTypes.BinaryBytes,
+    id: 'memory_usage',
   },
   {
     query: _.template(
       `sum(irate(container_network_receive_bytes_total{cluster="", namespace='<%= namespace %>'}[2h])) by (pod)`,
     ),
     chartType: GraphTypes.area,
-    title: 'Receive Bandwidth',
+    title: t('devconsole~Receive Bandwidth'),
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.BinaryBytes,
+    id: 'receive_bandwidth',
   },
   {
     query: _.template(
       `sum(irate(container_network_transmit_bytes_total{cluster="", namespace='<%= namespace %>'}[2h])) by (pod)`,
     ),
     chartType: GraphTypes.area,
-    title: 'Transmit Bandwidth',
+    title: t('devconsole~Transmit Bandwidth'),
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.BinaryBytes,
+    id: 'transmit_bandwidth',
   },
   {
     query: _.template(
       `sum(irate(container_network_receive_packets_total{cluster="", namespace='<%= namespace %>'}[2h])) by (pod)`,
     ),
     chartType: GraphTypes.area,
-    title: 'Rate of Received Packets',
+    title: t('devconsole~Rate of Received Packets'),
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.BinaryBytes,
+    id: 'rate_of_received_packets',
   },
   {
     query: _.template(
       `sum(irate(container_network_transmit_packets_total{cluster="", namespace='<%= namespace %>'}[2h])) by (pod)`,
     ),
     chartType: GraphTypes.area,
-    title: 'Rate of Transmitted Packets',
+    title: t('devconsole~Rate of Transmitted Packets'),
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.BinaryBytes,
+    id: 'rate_of_transmitted_packets',
   },
   {
     query: _.template(
       `sum(irate(container_network_receive_packets_dropped_total{cluster="", namespace='<%= namespace %>'}[2h])) by (pod)`,
     ),
     chartType: GraphTypes.area,
-    title: 'Rate of Received Packets Dropped',
+    title: t('devconsole~Rate of Received Packets Dropped'),
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.BinaryBytes,
+    id: 'rate_of_received_packets_dropped',
   },
   {
     query: _.template(
       `sum(irate(container_network_transmit_packets_dropped_total{cluster="", namespace='<%= namespace %>'}[2h])) by (pod)`,
     ),
     chartType: GraphTypes.area,
-    title: 'Rate of Transmitted Packets Dropped',
+    title: t('devconsole~Rate of Transmitted Packets Dropped'),
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.BinaryBytes,
+    id: 'rate_of_transmitted_packets_dropped',
   },
 ];
 
-export const topWorkloadMetricsQueries: MonitoringQuery[] = [
+export const topWorkloadMetricsQueries = (t: TFunction): MonitoringQuery[] => [
   {
-    title: 'CPU Usage',
+    title: t('devconsole~CPU Usage'),
     chartType: GraphTypes.area,
     humanize: humanizeCpuCores,
     byteDataType: ByteDataTypes.BinaryBytes,
@@ -116,7 +126,7 @@ export const topWorkloadMetricsQueries: MonitoringQuery[] = [
     ),
   },
   {
-    title: 'Memory Usage',
+    title: t('devconsole~Memory Usage'),
     chartType: GraphTypes.area,
     humanize: humanizeBinaryBytes,
     byteDataType: ByteDataTypes.BinaryBytes,
@@ -127,7 +137,7 @@ export const topWorkloadMetricsQueries: MonitoringQuery[] = [
     ),
   },
   {
-    title: 'Receive Bandwidth',
+    title: t('devconsole~Receive Bandwidth'),
     chartType: GraphTypes.area,
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
@@ -139,9 +149,9 @@ export const topWorkloadMetricsQueries: MonitoringQuery[] = [
   },
 ];
 
-export const workloadMetricsQueries: MonitoringQuery[] = [
+export const workloadMetricsQueries = (t: TFunction): MonitoringQuery[] => [
   {
-    title: 'Transmit Bandwidth',
+    title: t('devconsole~Transmit Bandwidth'),
     chartType: GraphTypes.area,
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
@@ -152,7 +162,7 @@ export const workloadMetricsQueries: MonitoringQuery[] = [
     ),
   },
   {
-    title: 'Rate of Received Packets',
+    title: t('devconsole~Rate of Received Packets'),
     chartType: GraphTypes.area,
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
@@ -161,7 +171,7 @@ export const workloadMetricsQueries: MonitoringQuery[] = [
     ),
   },
   {
-    title: 'Rate of Transmitted Packets',
+    title: t('devconsole~Rate of Transmitted Packets'),
     chartType: GraphTypes.area,
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
@@ -170,7 +180,7 @@ export const workloadMetricsQueries: MonitoringQuery[] = [
     ),
   },
   {
-    title: 'Rate of Received Packets Dropped',
+    title: t('devconsole~Rate of Received Packets Dropped'),
     chartType: GraphTypes.area,
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
@@ -179,7 +189,7 @@ export const workloadMetricsQueries: MonitoringQuery[] = [
     ),
   },
   {
-    title: 'Rate of Transmitted Packets Dropped',
+    title: t('devconsole~Rate of Transmitted Packets Dropped'),
     chartType: GraphTypes.area,
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
@@ -190,7 +200,7 @@ export const workloadMetricsQueries: MonitoringQuery[] = [
     ),
   },
   {
-    title: 'Average Container Bandwidth by Pod: Received',
+    title: t('devconsole~Average Container Bandwidth by Pod: Received'),
     chartType: GraphTypes.area,
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
@@ -199,7 +209,7 @@ export const workloadMetricsQueries: MonitoringQuery[] = [
     ),
   },
   {
-    title: 'Average Container Bandwidth by Pod: Transmitted',
+    title: t('devconsole~Average Container Bandwidth by Pod: Transmitted'),
     chartType: GraphTypes.area,
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
@@ -209,51 +219,51 @@ export const workloadMetricsQueries: MonitoringQuery[] = [
   },
 ];
 
-const getMetricsQuery = (title: string): _.TemplateExecutor => {
-  const queryObject = _.find(monitoringDashboardQueries, (q) => q.title === title);
-  return queryObject.query;
+const getMetricsQuery = (id: string, t: TFunction): _.TemplateExecutor => {
+  const queryObject = _.find(monitoringDashboardQueries(t), (q) => q.id === id);
+  return queryObject?.query;
 };
 
-const topMetricsQueries = {
-  PODS_BY_CPU: getMetricsQuery('CPU Usage'),
-  PODS_BY_MEMORY: getMetricsQuery('Memory Usage'),
+const topMetricsQueries = (t: TFunction) => ({
+  PODS_BY_CPU: getMetricsQuery('cpu_usage', t),
+  PODS_BY_MEMORY: getMetricsQuery('memory_usage', t),
   PODS_BY_FILESYSTEM: _.template(
     `topk(25, sort_desc(sum(pod:container_fs_usage_bytes:sum{container="",pod!="",namespace='<%= namespace %>'}) BY (pod, namespace)))`,
   ),
-  PODS_BY_NETWORK_IN: getMetricsQuery('Receive Bandwidth'),
-  PODS_BY_NETWORK_OUT: getMetricsQuery('Transmit Bandwidth'),
-  RATE_OF_RECEIVED_PACKETS: getMetricsQuery('Rate of Received Packets'),
-  RATE_OF_TRANSMITTED_PACKETS: getMetricsQuery('Rate of Transmitted Packets'),
-  RATE_OF_RECEIVED_PACKETS_DROPPED: getMetricsQuery('Rate of Received Packets Dropped'),
-  RATE_OF_TRANSMITTED_PACKETS_DROPPED: getMetricsQuery('Rate of Transmitted Packets Dropped'),
-};
+  PODS_BY_NETWORK_IN: getMetricsQuery('receive_bandwidth', t),
+  PODS_BY_NETWORK_OUT: getMetricsQuery('transmit_bandwidth', t),
+  RATE_OF_RECEIVED_PACKETS: getMetricsQuery('rate_of_received_packets', t),
+  RATE_OF_TRANSMITTED_PACKETS: getMetricsQuery('rate_of_transmitted_packets', t),
+  RATE_OF_RECEIVED_PACKETS_DROPPED: getMetricsQuery('rate_of_received_packets_dropped', t),
+  RATE_OF_TRANSMITTED_PACKETS_DROPPED: getMetricsQuery('rate_of_transmitted_packets_dropped', t),
+});
 
-export const getTopMetricsQueries = (namespace: string) => ({
-  [metricsQuery.PODS_BY_CPU]: topMetricsQueries.PODS_BY_CPU({ namespace }),
-  [metricsQuery.PODS_BY_MEMORY]: topMetricsQueries.PODS_BY_MEMORY({ namespace }),
-  [metricsQuery.PODS_BY_FILESYSTEM]: topMetricsQueries.PODS_BY_FILESYSTEM({
+export const getTopMetricsQueries = (namespace: string, t: TFunction) => ({
+  [metricsQuery(t).PODS_BY_CPU]: topMetricsQueries(t).PODS_BY_CPU({ namespace }),
+  [metricsQuery(t).PODS_BY_MEMORY]: topMetricsQueries(t).PODS_BY_MEMORY({ namespace }),
+  [metricsQuery(t).PODS_BY_FILESYSTEM]: topMetricsQueries(t).PODS_BY_FILESYSTEM({
     namespace,
   }),
-  [metricsQuery.PODS_BY_NETWORK_IN]: topMetricsQueries.PODS_BY_NETWORK_IN({
+  [metricsQuery(t).PODS_BY_NETWORK_IN]: topMetricsQueries(t).PODS_BY_NETWORK_IN({
     namespace,
   }),
-  [metricsQuery.PODS_BY_NETWORK_OUT]: topMetricsQueries.PODS_BY_NETWORK_OUT({
+  [metricsQuery(t).PODS_BY_NETWORK_OUT]: topMetricsQueries(t).PODS_BY_NETWORK_OUT({
     namespace,
   }),
-  [metricsQuery.RATE_OF_RECEIVED_PACKETS]: topMetricsQueries.RATE_OF_RECEIVED_PACKETS({
+  [metricsQuery(t).RATE_OF_RECEIVED_PACKETS]: topMetricsQueries(t).RATE_OF_RECEIVED_PACKETS({
     namespace,
   }),
-  [metricsQuery.RATE_OF_TRANSMITTED_PACKETS]: topMetricsQueries.RATE_OF_TRANSMITTED_PACKETS({
+  [metricsQuery(t).RATE_OF_TRANSMITTED_PACKETS]: topMetricsQueries(t).RATE_OF_TRANSMITTED_PACKETS({
     namespace,
   }),
-  [metricsQuery.RATE_OF_RECEIVED_PACKETS_DROPPED]: topMetricsQueries.RATE_OF_RECEIVED_PACKETS_DROPPED(
-    {
-      namespace,
-    },
-  ),
-  [metricsQuery.RATE_OF_TRANSMITTED_PACKETS_DROPPED]: topMetricsQueries.RATE_OF_TRANSMITTED_PACKETS_DROPPED(
-    {
-      namespace,
-    },
-  ),
+  [metricsQuery(t).RATE_OF_RECEIVED_PACKETS_DROPPED]: topMetricsQueries(
+    t,
+  ).RATE_OF_RECEIVED_PACKETS_DROPPED({
+    namespace,
+  }),
+  [metricsQuery(t).RATE_OF_TRANSMITTED_PACKETS_DROPPED]: topMetricsQueries(
+    t,
+  ).RATE_OF_TRANSMITTED_PACKETS_DROPPED({
+    namespace,
+  }),
 });

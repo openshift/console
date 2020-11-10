@@ -1,15 +1,18 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
+import { TFunction } from 'i18next';
 import { QueryBrowser } from '@console/internal/components/monitoring/query-browser';
 import { PrometheusGraphLink } from '@console/internal/components/graphs/prometheus-graph';
 import { monitoringDashboardQueries } from '../../queries';
 import { MonitoringDashboardGraph, GraphTypes } from '../MonitoringDashboardGraph';
 
+const t = (key: TFunction) => key;
+
 describe('Monitoring Dashboard graph', () => {
   let monitoringDashboardGraphProps: React.ComponentProps<typeof MonitoringDashboardGraph>;
 
   beforeAll(() => {
-    const query = monitoringDashboardQueries[1];
+    const query = monitoringDashboardQueries(t)[1];
     monitoringDashboardGraphProps = {
       title: query.title,
       namespace: 'test-project',

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { match as RMatch } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
@@ -37,6 +38,7 @@ type StateProps = {
 type Props = MonitoringDashboardProps & StateProps;
 
 export const MonitoringDashboard: React.FC<Props> = ({ match, timespan, pollInterval }) => {
+  const { t } = useTranslation();
   const namespace = match.params.ns;
   const params = getURLSearchParams();
   const [workloadName, setWorkloadName] = React.useState(
@@ -49,9 +51,9 @@ export const MonitoringDashboard: React.FC<Props> = ({ match, timespan, pollInte
 
   const getQueries = React.useCallback(() => {
     return workloadName && workloadType && workloadName !== OptionTypes.selectAll
-      ? [...topWorkloadMetricsQueries, ...workloadMetricsQueries]
-      : monitoringDashboardQueries;
-  }, [workloadName, workloadType]);
+      ? [...topWorkloadMetricsQueries(t), ...workloadMetricsQueries(t)]
+      : monitoringDashboardQueries(t);
+  }, [t, workloadName, workloadType]);
 
   const [queries, setQueries] = React.useState(getQueries());
 
@@ -104,7 +106,7 @@ export const MonitoringDashboard: React.FC<Props> = ({ match, timespan, pollInte
   return (
     <>
       <Helmet>
-        <title>Dashboard</title>
+        <title>{t('devconsole~Dashboard')}</title>
       </Helmet>
       <div className="odc-monitoring-dashboard">
         <div className="odc-monitoring-dashboard__dropdown-options">
