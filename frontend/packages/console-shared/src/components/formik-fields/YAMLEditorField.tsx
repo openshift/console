@@ -10,14 +10,20 @@ import { YAMLEditorFieldProps } from './field-types';
 
 import './YAMLEditorField.scss';
 
-const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({ name, onSave, schemaModel }) => {
+const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({
+  name,
+  onSave,
+  schema,
+  schemaModel,
+  schemaLabel,
+}) => {
   const [field] = useField(name);
   const { setFieldValue } = useFormikContext<FormikValues>();
   const { t } = useTranslation();
 
   const [sidebarOpen, setSidebarOpen] = React.useState<boolean>(true);
   const definition = schemaModel ? definitionFor(schemaModel) : { properties: [] };
-  const showSchema = definition && !isEmpty(definition.properties);
+  const showSchema = schema || (definition && !isEmpty(definition.properties));
 
   return (
     <div className="osc-yaml-editor">
@@ -49,6 +55,8 @@ const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({ name, onSave, schemaM
               )
             }
             kindObj={schemaModel}
+            schema={schema}
+            sidebarLabel={schemaLabel}
             showSidebar={sidebarOpen}
             toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
             showSchema={showSchema}

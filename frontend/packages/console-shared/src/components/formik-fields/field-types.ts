@@ -87,6 +87,8 @@ export interface YAMLEditorFieldProps extends FieldProps {
   onChange?: (value: string) => void;
   onSave?: () => void;
   schemaModel?: K8sKind;
+  schemaLabel?: string;
+  schema?: any;
 }
 
 export interface NameValuePair {

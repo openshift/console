@@ -43,8 +43,8 @@ const ResourceSidebarWrapper = (props) => {
   );
 };
 
-const ResourceSchema = ({ kindObj }) => (
-  <ExploreType kindObj={kindObj} scrollTop={sidebarScrollTop} />
+const ResourceSchema = ({ kindObj, schema }) => (
+  <ExploreType kindObj={kindObj} schema={schema} scrollTop={sidebarScrollTop} />
 );
 
 const ResourceSamples = ({ samples, kindObj, downloadSampleYaml, loadSampleYaml }) => (
@@ -65,6 +65,8 @@ export const ResourceSidebar = (props) => {
   const {
     downloadSampleYaml,
     kindObj,
+    schema,
+    sidebarLabel,
     loadSampleYaml,
     insertSnippetYaml,
     isCreateMode,
@@ -74,11 +76,11 @@ export const ResourceSidebar = (props) => {
     snippets,
     showSchema,
   } = props;
-  if (!kindObj) {
+  if (!kindObj && !schema) {
     return null;
   }
 
-  const { label } = kindObj;
+  const { label = sidebarLabel } = kindObj ?? {};
 
   const showSamples = !_.isEmpty(samples) && isCreateMode;
   const showSnippets = !_.isEmpty(snippets);
@@ -114,6 +116,7 @@ export const ResourceSidebar = (props) => {
           tabProps={{
             downloadSampleYaml,
             kindObj,
+            schema,
             loadSampleYaml,
             insertSnippetYaml,
             samples,
@@ -122,7 +125,7 @@ export const ResourceSidebar = (props) => {
           additionalClassNames="co-m-horizontal-nav__menu--within-sidebar"
         />
       ) : (
-        <ResourceSchema kindObj={kindObj} />
+        <ResourceSchema schema={schema} kindObj={kindObj} />
       )}
     </ResourceSidebarWrapper>
   );
