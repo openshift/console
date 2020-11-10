@@ -94,7 +94,15 @@ export const DetailsForKind = (kind) =>
       <>
         <div className="co-m-pane__body">
           <SectionHeading text={`${kindForReference(kind)} Details`} />
-          <ResourceSummary resource={obj} podSelector="spec.podSelector" showNodeSelector={false} />
+          <div className="row">
+            <div className="col-md-6">
+              <ResourceSummary
+                resource={obj}
+                podSelector="spec.podSelector"
+                showNodeSelector={false}
+              />
+            </div>
+          </div>
         </div>
         {_.isArray(obj?.status?.conditions) && (
           <div className="co-m-pane__body">

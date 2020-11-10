@@ -175,12 +175,16 @@ const Details = ({ obj: ingress }) => {
     <>
       <div className="co-m-pane__body">
         <SectionHeading text={t('ingress~Ingress details')} />
-        <ResourceSummary resource={ingress}>
-          <dt>{t('ingress~TLS certificate')}</dt>
-          <dd>
-            <TLSCert ingress={ingress} />
-          </dd>
-        </ResourceSummary>
+        <div className="row">
+          <div className="col-md-6">
+            <ResourceSummary resource={ingress}>
+              <dt>{t('ingress~TLS certificate')}</dt>
+              <dd>
+                <TLSCert ingress={ingress} />
+              </dd>
+            </ResourceSummary>
+          </div>
+        </div>
       </div>
       <div className="co-m-pane__body">
         <SectionHeading text={t('ingress~Ingress rules')} />

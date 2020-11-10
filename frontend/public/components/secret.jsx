@@ -141,7 +141,11 @@ const SecretDetails = ({ obj: secret }) => {
     <>
       <div className="co-m-pane__body">
         <SectionHeading text="Secret Details" />
-        <ResourceSummary resource={secret} />
+        <div className="row">
+          <div className="col-md-6">
+            <ResourceSummary resource={secret} />
+          </div>
+        </div>
       </div>
       <div className="co-m-pane__body">
         <SecretData data={secret.data} type={secret.type} />

@@ -39,7 +39,7 @@ const MachineConfigDetails: React.SFC<MachineConfigDetailsProps> = ({ obj }) => 
     <div className="co-m-pane__body">
       <SectionHeading text={t('machine-configs~MachineConfig details')} />
       <div className="row">
-        <div className="col-xs-12">
+        <div className="col-md-6">
           <MachineConfigSummary obj={obj} t={t} />
         </div>
       </div>

@@ -223,15 +223,19 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({ obj: 
           />
         )}
         <SectionHeading text="Image Stream Details" />
-        <ResourceSummary resource={imageStream}>
-          {imageRepository && <dt>Image Repository</dt>}
-          {imageRepository && <dd>{imageRepository}</dd>}
-          {publicImageRepository && <dt>Public Image Repository</dt>}
-          {publicImageRepository && <dd>{publicImageRepository}</dd>}
-          <dt>Image Count</dt>
-          <dd>{imageCount ? imageCount : 0}</dd>
-        </ResourceSummary>
-        <ExampleDockerCommandPopover imageStream={imageStream} />
+        <div className="row">
+          <div className="col-md-6">
+            <ResourceSummary resource={imageStream}>
+              {imageRepository && <dt>Image Repository</dt>}
+              {imageRepository && <dd>{imageRepository}</dd>}
+              {publicImageRepository && <dt>Public Image Repository</dt>}
+              {publicImageRepository && <dd>{publicImageRepository}</dd>}
+              <dt>Image Count</dt>
+              <dd>{imageCount ? imageCount : 0}</dd>
+            </ResourceSummary>
+            <ExampleDockerCommandPopover imageStream={imageStream} />
+          </div>
+        </div>
       </div>
       <div className="co-m-pane__body">
         <SectionHeading text="Tags" />

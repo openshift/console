@@ -189,7 +189,11 @@ const Details_ = ({ obj: np, flags }) => {
     <>
       <div className="co-m-pane__body">
         <SectionHeading text={t('network-policy~Network policy details')} />
-        <ResourceSummary resource={np} podSelector={'spec.podSelector'} showPodSelector />
+        <div className="row">
+          <div className="col-md-6">
+            <ResourceSummary resource={np} podSelector={'spec.podSelector'} showPodSelector />
+          </div>
+        </div>
       </div>
       <div className="co-m-pane__body">
         <SectionHeading text={t('network-policy~Ingress rules')} />

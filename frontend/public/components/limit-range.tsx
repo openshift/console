@@ -182,7 +182,11 @@ export const LimitRangeDetailsPage = (props) => {
         <SectionHeading
           text={t('limit-range~{{resource}} details', { resource: LimitRangeModel.label })}
         />
-        <ResourceSummary resource={rq} />
+        <div className="row">
+          <div className="col-md-6">
+            <ResourceSummary resource={rq} />
+          </div>
+        </div>
       </div>
       <LimitRangeDetailsList resource={rq} />
     </>
