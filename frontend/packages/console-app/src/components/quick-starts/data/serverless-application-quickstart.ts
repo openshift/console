@@ -47,7 +47,7 @@ Do you see the completed application and build?`,
         description: `### To see your application scale:
 1. From the **Display Options** list at the top of the **Topology** view, click **Pod Count**.
 2. Wait for the Pod count to scale down to zero Pods. Scaling down may take a few minutes.
-3. Click the **Route URL** icon in the upper-right corner of the Knative Service panel. The application opens in a new tab.
+3. Click the **Open URL** icon in the upper-right corner of the Knative Service panel. The application opens in a new tab.
 4. Close the new browser tab and return to the **Topology** view.
 
 In the **Topology** view, you can see that your application scaled up to one Pod to accommodate your request.  After a few minutes, your application scales back down to zero Pods.
@@ -74,8 +74,7 @@ Is the Pod ring autoscaled to zero?`,
 4. Under the **Type** field, click **PingSource**.
 5. In the **Data** field, type \`This message is from PingSource\`. This message is posted when the service is called.
 6. In the **Schedule** field, type \`* * * * *\`.  This means that the PingSource will make a call every minute.
-7. In the **Application** field, select **Sample Serverless App**.
-8. Click **Create**.`,
+7. Click **Create**.`,
         review: {
           instructions: `#### To verify that the event connected to your Knative service:
 
@@ -94,15 +93,15 @@ Do you see a PingSource connected by a gray line to the side of your application
         title: `Forcing a new revision and set traffic distribution`,
         description: `### To force a revision and set traffic distribution:
 
-1. In **Topology**, click on the revision inside your service to view its details. The badges under the Pod ring and at the top of the detail panel should be (REV).
-2. In the side panel, click on the **Resources** tab.
-3. Scroll down and click on the configuration associated with your service.
+1. In **Topology**, click the revision inside your service to view its details. The badges under the Pod ring and at the top of the detail panel should be (REV).
+2. In the side panel, click the **Resources** tab.
+3. Scroll down and click the configuration associated with your service.
 4. Go to the resource’s **YAML** tab.
 5. Scroll all the way down until you see \`timeoutSeconds\`.
 6. Change the value from \`300\` to \`30\` and click **Save**.
 7. Go back to the **Topology** view.
-8. Click on your service. The badge at the top of the side panel should be (KSVC).
-9. In the side panel, click on the **Resources** tab.
+8. Click your service. The badge at the top of the side panel should be (KSVC).
+9. In the side panel, click the **Resources** tab.
 10. Next to **Revisions**, click **Set Traffic Distribution**.
 11. Click **Add Revision**.
 12. In the **Revision** dropdown, select the new revision.
@@ -129,7 +128,7 @@ Do you see two revisions in your Knative Service?`,
         description: `### To delete the application you just created:
 
 1. Click your application’s name. The badge at the top of the side panel should be (A).
-2. At the top of the resource details panel, click on the **Actions** list.
+2. At the top of the resource details panel, click the **Actions** list.
 3. Click **Delete application**.
 4. To confirm deletion, type the application’s name in the **Name** field, and then click **Delete**.`,
         review: {

@@ -25,11 +25,11 @@ Adding OpenShift Serverless to your OpenShift Container Platform cluster is quic
         title: `Install the OpenShift Serverless Operator`,
         description: `### To install the Serverless Operator:
 1. From the **Administrator** perspective, go to the **OperatorHub** from the **Operators** section of the navigation.
-2. In the **Filter by keyword** field at the top of the page, type the keyword \`Serverless\`.
+2. In the **Filter by keyword** field, type \`Serverless\`.
 3. If the tile has an **Installed** label on it, the Operator is already installed. Proceed to task two.
 4. Click the **OpenShift Serverless Operator** tile.
 5. At the top of the OpenShift Serverless Operator panel, click **Install**.
-6. Verify that the OpenShift Serverless Operator Update Channel is 4.5 and click **Install** again.
+6. Verify that the **OpenShift Serverless Operator Update Channel** is set to the latest version, then click **Install**.
 7. Wait for the OpenShift Serverless Operator's status to change from **Installing operator** to **Operator installed - Ready for use**.
 `,
 
@@ -52,11 +52,11 @@ In the Status column of the **Installed Operators** page, is the OpenShift Serve
 **To create the Knative Serving and Knative Eventing APIs:**
 1. Go to the **Installed Operators** page.
 2. Click **OpenShift Serverless Operator**.
-3. If it does not already exist, create a project called “knative_serving” under the Project list at the top of the page. If it does exist, select the project from the list.
-4. Click on the Knative Serving link under Provided APIs or, from Knative Serving tile, click **Create Instance**.
+3. If it does not already exist, create a project called “knative-serving” under the Project list at the top of the page. If it does exist, select the project from the list.
+4. Click the Knative Serving link under Provided APIs or, from Knative Serving tile, click **Create Instance**.
 5. Click **Create** to create the custom resource.
-6. Now, if it does not already exist, create a project called “knative_eventing” under the Project list at the top of the page. If it does exist, select the project from the list.
-7. Click on the Knative Eventing link under Provided APIs or, from Knative Eventing tile, click **Create Instance**.
+6. If it does not already exist, create a project called “knative-eventing” under the Project list at the top of the page. If it does exist, select the project from the list.
+7. Click the Knative Eventing link under Provided APIs or, from Knative Eventing tile, click **Create Instance**.
 8. Click **Create** to create the custom resource.
 `,
         review: {
@@ -73,7 +73,7 @@ Are the Knative Serving and Knative Eventing resources in the list of instances?
         },
       },
     ],
-    conclusion: `Your Serverless Operator is ready! If you want to learn how to deploy a serverless application, take the **Creating a Serverless application** quick start.`,
+    conclusion: `Your Serverless Operator is ready! If you want to learn how to deploy a serverless application, take the **Exploring Serverless applications** quick start.`,
     nextQuickStart: `serverless-application`,
     accessReviewResources: [
       {
