@@ -298,9 +298,9 @@ const Details = ({ obj: rq }) => {
               )}
             </p>
             <p>
-              {`${t(
-                'resource-quota~A cluster administrator can establish limits on both the amount you can Request and your Limits with a',
-              )} ${ResourceQuotaModel.label}${t('resource-quota~.')}`}
+              {t(
+                'resource-quota~A cluster administrator can establish limits on both the amount you can request and your limits with a ResourceQuota.',
+              )}
             </p>
           </FieldLevelHelp>
         </SectionHeading>
