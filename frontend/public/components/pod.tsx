@@ -5,6 +5,8 @@ import * as React from 'react';
 import { connect, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
+import i18next from 'i18next';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { Status } from '@console/shared';
@@ -42,7 +44,6 @@ import {
   humanizeDecimalBytesPerSec,
   humanizeCpuCores,
   navFactory,
-  pluralize,
   units,
   LabelList,
 } from './utils';
@@ -105,62 +106,62 @@ const podColumnInfo = Object.freeze({
   name: {
     classes: '',
     id: 'name',
-    title: 'Name',
+    title: i18next.t('workload~Name'),
   },
   namespace: {
     classes: '',
     id: 'namespace',
-    title: 'Namespace',
+    title: i18next.t('workload~Namespace'),
   },
   status: {
     classes: '',
     id: 'status',
-    title: 'Status',
+    title: i18next.t('workload~Status'),
   },
   ready: {
     classes: classNames('pf-m-nowrap', 'pf-u-w-10-on-lg', 'pf-u-w-8-on-xl'),
     id: 'ready',
-    title: 'Ready',
+    title: i18next.t('workload~Ready'),
   },
   restarts: {
     classes: classNames('pf-m-nowrap', 'pf-u-w-8-on-2xl'),
     id: 'restarts',
-    title: 'Restarts',
+    title: i18next.t('workload~Restarts'),
   },
   owner: {
     classes: '',
     id: 'owner',
-    title: 'Owner',
+    title: i18next.t('workload~Owner'),
   },
   node: {
     classes: '',
     id: 'node',
-    title: 'Node',
+    title: i18next.t('workload~Node'),
   },
   memory: {
     classes: classNames({ 'pf-u-w-10-on-2xl': showMetrics }),
     id: 'memory',
-    title: 'Memory',
+    title: i18next.t('workload~Memory'),
   },
   cpu: {
     classes: classNames({ 'pf-u-w-10-on-2xl': showMetrics }),
     id: 'cpu',
-    title: 'CPU',
+    title: i18next.t('workload~CPU'),
   },
   created: {
     classes: classNames('pf-u-w-10-on-2xl'),
     id: 'created',
-    title: 'Created',
+    title: i18next.t('workload~Created'),
   },
   labels: {
     classes: '',
     id: 'labels',
-    title: 'Labels',
+    title: i18next.t('workload~Labels'),
   },
   ipaddress: {
     classes: '',
     id: 'ipaddress',
-    title: 'IP Address',
+    title: i18next.t('workload~IP address'),
   },
 });
 
@@ -445,109 +446,120 @@ export const PodContainerTable: React.FC<PodContainerTableProps> = ({
   heading,
   containers,
   pod,
-}) => (
-  <>
-    <SectionHeading text={heading} />
-    <div className="co-m-table-grid co-m-table-grid--bordered">
-      <div className="row co-m-table-grid__head">
-        <div className="col-lg-2 col-md-3 col-sm-4 col-xs-5">Name</div>
-        <div className="col-lg-2 col-md-3 col-sm-5 col-xs-7">Image</div>
-        <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs">State</div>
-        <div className="col-lg-1 col-md-2 hidden-sm hidden-xs">Restarts</div>
-        <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">Started</div>
-        <div className="col-lg-2 hidden-md hidden-sm hidden-xs">Finished</div>
-        <div className="col-lg-1 hidden-md hidden-sm hidden-xs">Exit Code</div>
+}) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <SectionHeading text={heading} />
+      <div className="co-m-table-grid co-m-table-grid--bordered">
+        <div className="row co-m-table-grid__head">
+          <div className="col-lg-2 col-md-3 col-sm-4 col-xs-5">{t('workload~Name')}</div>
+          <div className="col-lg-2 col-md-3 col-sm-5 col-xs-7">{t('workload~Image')}</div>
+          <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs">{t('workload~State')}</div>
+          <div className="col-lg-1 col-md-2 hidden-sm hidden-xs">{t('workload~Restarts')}</div>
+          <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">{t('workload~Started')}</div>
+          <div className="col-lg-2 hidden-md hidden-sm hidden-xs">{t('workload~Finished')}</div>
+          <div className="col-lg-1 hidden-md hidden-sm hidden-xs">{t('workload~Exit code')}</div>
+        </div>
+        <div className="co-m-table-grid__body">
+          {containers.map((c: any, i: number) => (
+            <ContainerRow key={i} pod={pod} container={c} />
+          ))}
+        </div>
       </div>
-      <div className="co-m-table-grid__body">
-        {containers.map((c: any, i: number) => (
-          <ContainerRow key={i} pod={pod} container={c} />
-        ))}
-      </div>
-    </div>
-  </>
-);
+    </>
+  );
+};
 
 const getNetworkName = (result: PrometheusResult) =>
   // eslint-disable-next-line camelcase
   result?.metric?.network_name || 'unnamed interface';
 
-const PodGraphs = requirePrometheus(({ pod }) => (
-  <>
-    <div className="row">
-      <div className="col-md-12 col-lg-4">
-        <Area
-          title="Memory Usage"
-          humanize={humanizeBinaryBytes}
-          byteDataType={ByteDataTypes.BinaryBytes}
-          namespace={pod.metadata.namespace}
-          query={`sum(container_memory_working_set_bytes{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}',container='',}) BY (pod, namespace)`}
-          limitQuery={`sum(kube_pod_container_resource_limits_memory_bytes{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}) BY (pod, namespace)`}
-          requestedQuery={`sum(kube_pod_container_resource_requests_memory_bytes{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}) BY (pod, namespace)`}
-        />
+const PodGraphs = requirePrometheus(({ pod }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <div className="row">
+        <div className="col-md-12 col-lg-4">
+          <Area
+            title={t('workload~Memory usage')}
+            humanize={humanizeBinaryBytes}
+            byteDataType={ByteDataTypes.BinaryBytes}
+            namespace={pod.metadata.namespace}
+            query={`sum(container_memory_working_set_bytes{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}',container='',}) BY (pod, namespace)`}
+            limitQuery={`sum(kube_pod_container_resource_limits_memory_bytes{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}) BY (pod, namespace)`}
+            requestedQuery={`sum(kube_pod_container_resource_requests_memory_bytes{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}) BY (pod, namespace)`}
+          />
+        </div>
+        <div className="col-md-12 col-lg-4">
+          <Area
+            title={t('workload~CPU usage')}
+            humanize={humanizeCpuCores}
+            namespace={pod.metadata.namespace}
+            query={`pod:container_cpu_usage:sum{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`}
+            limitQuery={`sum(kube_pod_container_resource_limits_cpu_cores{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}) BY (pod, namespace)`}
+            requestedQuery={`sum(kube_pod_container_resource_requests_cpu_cores{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}) BY (pod, namespace)`}
+          />
+        </div>
+        <div className="col-md-12 col-lg-4">
+          <Area
+            title={t('workload~Filesystem')}
+            humanize={humanizeBinaryBytes}
+            byteDataType={ByteDataTypes.BinaryBytes}
+            namespace={pod.metadata.namespace}
+            query={`pod:container_fs_usage_bytes:sum{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`}
+          />
+        </div>
       </div>
-      <div className="col-md-12 col-lg-4">
-        <Area
-          title="CPU Usage"
-          humanize={humanizeCpuCores}
-          namespace={pod.metadata.namespace}
-          query={`pod:container_cpu_usage:sum{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`}
-          limitQuery={`sum(kube_pod_container_resource_limits_cpu_cores{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}) BY (pod, namespace)`}
-          requestedQuery={`sum(kube_pod_container_resource_requests_cpu_cores{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}) BY (pod, namespace)`}
-        />
+      <div className="row">
+        <div className="col-md-12 col-lg-4">
+          <Stack
+            title={t('workload~Network in')}
+            humanize={humanizeDecimalBytesPerSec}
+            namespace={pod.metadata.namespace}
+            query={`(sum(irate(container_network_receive_bytes_total{pod='${pod.metadata.name}', namespace='${pod.metadata.namespace}'}[5m])) by (pod, namespace, interface)) + on(namespace,pod,interface) group_left(network_name) ( pod_network_name_info )`}
+            description={getNetworkName}
+          />
+        </div>
+        <div className="col-md-12 col-lg-4">
+          <Stack
+            title={t('workload~Network out')}
+            humanize={humanizeDecimalBytesPerSec}
+            namespace={pod.metadata.namespace}
+            query={`(sum(irate(container_network_transmit_bytes_total{pod='${pod.metadata.name}', namespace='${pod.metadata.namespace}'}[5m])) by (pod, namespace, interface)) + on(namespace,pod,interface) group_left(network_name) ( pod_network_name_info )`}
+            description={getNetworkName}
+          />
+        </div>
       </div>
-      <div className="col-md-12 col-lg-4">
-        <Area
-          title="Filesystem"
-          humanize={humanizeBinaryBytes}
-          byteDataType={ByteDataTypes.BinaryBytes}
-          namespace={pod.metadata.namespace}
-          query={`pod:container_fs_usage_bytes:sum{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`}
-        />
-      </div>
-    </div>
-    <div className="row">
-      <div className="col-md-12 col-lg-4">
-        <Stack
-          title="Network In"
-          humanize={humanizeDecimalBytesPerSec}
-          namespace={pod.metadata.namespace}
-          query={`(sum(irate(container_network_receive_bytes_total{pod='${pod.metadata.name}', namespace='${pod.metadata.namespace}'}[5m])) by (pod, namespace, interface)) + on(namespace,pod,interface) group_left(network_name) ( pod_network_name_info )`}
-          description={getNetworkName}
-        />
-      </div>
-      <div className="col-md-12 col-lg-4">
-        <Stack
-          title="Network Out"
-          humanize={humanizeDecimalBytesPerSec}
-          namespace={pod.metadata.namespace}
-          query={`(sum(irate(container_network_transmit_bytes_total{pod='${pod.metadata.name}', namespace='${pod.metadata.namespace}'}[5m])) by (pod, namespace, interface)) + on(namespace,pod,interface) group_left(network_name) ( pod_network_name_info )`}
-          description={getNetworkName}
-        />
-      </div>
-    </div>
-    <br />
-  </>
-));
+      <br />
+    </>
+  );
+});
 
 export const PodStatus: React.FC<PodStatusProps> = ({ pod }) => <Status status={podPhase(pod)} />;
 
 export const PodDetailsList: React.FC<PodDetailsListProps> = ({ pod }) => {
+  const { t } = useTranslation();
   return (
     <dl className="co-m-pane__details">
-      <dt>Status</dt>
+      <dt>{t('workload~Status')}</dt>
       <dd>
         <PodStatus pod={pod} />
       </dd>
-      <DetailsItem label="Restart Policy" obj={pod} path="spec.restartPolicy">
+      <DetailsItem label={t('workload~Restart policy')} obj={pod} path="spec.restartPolicy">
         {getRestartPolicyLabel(pod)}
       </DetailsItem>
-      <DetailsItem label="Active Deadline Seconds" obj={pod} path="spec.activeDeadlineSeconds">
+      <DetailsItem
+        label={t('workload~Active deadline seconds')}
+        obj={pod}
+        path="spec.activeDeadlineSeconds"
+      >
         {pod.spec.activeDeadlineSeconds
-          ? pluralize(pod.spec.activeDeadlineSeconds, 'second')
-          : 'Not Configured'}
+          ? t('workload~second', { count: pod.spec.activeDeadlineSeconds })
+          : t('workload~Not configured')}
       </DetailsItem>
-      <DetailsItem label="Pod IP" obj={pod} path="status.podIP" />
-      <DetailsItem label="Node" obj={pod} path="spec.nodeName" hideEmpty>
+      <DetailsItem label={t('workload~Pod IP')} obj={pod} path="status.podIP" />
+      <DetailsItem label={t('workload~Node')} obj={pod} path="spec.nodeName" hideEmpty>
         <NodeLink name={pod.spec.nodeName} />
       </DetailsItem>
     </dl>
@@ -587,12 +599,12 @@ const Details: React.FC<PodDetailsProps> = ({ obj: pod }) => {
     },
     0,
   );
-
+  const { t } = useTranslation();
   return (
     <>
       <ScrollToTopOnMount />
       <div className="co-m-pane__body">
-        <SectionHeading text="Pod Details" />
+        <SectionHeading text={t('workload~Pod details')} />
         <PodGraphs pod={pod} />
         <div className="row">
           <div className="col-sm-6">
@@ -607,7 +619,7 @@ const Details: React.FC<PodDetailsProps> = ({ obj: pod }) => {
         <div className="co-m-pane__body">
           <PodContainerTable
             key="initContainerTable"
-            heading="Init Containers"
+            heading={t('workload~Init containers')}
             containers={pod.spec.initContainers}
             pod={pod}
           />
@@ -616,16 +628,16 @@ const Details: React.FC<PodDetailsProps> = ({ obj: pod }) => {
       <div className="co-m-pane__body">
         <PodContainerTable
           key="containerTable"
-          heading="Containers"
+          heading={t('workload~Containers')}
           containers={pod.spec.containers}
           pod={pod}
         />
       </div>
       <div className="co-m-pane__body">
-        <VolumesTable resource={pod} heading="Volumes" />
+        <VolumesTable resource={pod} heading={t('workload~Volumes')} />
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="Conditions" />
+        <SectionHeading text={t('workload~Conditions')} />
         <Conditions conditions={pod.status.conditions} />
       </div>
     </>
@@ -695,11 +707,12 @@ const getRow = (showNodes) => {
 
 export const PodList: React.FC<PodListProps> = (props) => {
   const showNodes = props?.customData?.showNodes;
+  const { t } = useTranslation();
   return (
     <Table
       {...props}
       columnManagementID={columnManagementID}
-      aria-label="Pods"
+      aria-label={t('workload~Pods')}
       Header={getHeader(showNodes)}
       Row={getRow(showNodes)}
       virtualize
