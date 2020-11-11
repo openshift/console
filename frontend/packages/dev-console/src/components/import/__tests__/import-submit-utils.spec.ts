@@ -9,11 +9,11 @@ import {
   BuildConfigModel,
   SecretModel,
 } from '@console/internal/models';
+import * as pipelineUtils from '@console/pipelines-plugin/src/components/import/pipeline/pipeline-template-utils';
+import { PipelineModel, PipelineRunModel } from '@console/pipelines-plugin/src/models';
 import { Resources } from '../import-types';
 import * as submitUtils from '../import-submit-utils';
-import * as pipelineUtils from '../pipeline/pipeline-template-utils';
 import { defaultData, nodeJsBuilderImage as buildImage } from './import-submit-utils-data';
-import { PipelineModel, PipelineRunModel } from '../../../models';
 
 const { createOrUpdateDeployment, createOrUpdateResources } = submitUtils;
 
@@ -164,11 +164,7 @@ describe('Import Submit Utils', () => {
 
       const createPipelineResourceSpy = jest
         .spyOn(pipelineUtils, 'createPipelineForImportFlow')
-        .mockImplementation((formData) => {
-          const {
-            name,
-            project: { name: namespace },
-          } = formData;
+        .mockImplementation((name, namespace) => {
           return {
             metadata: {
               name,
@@ -194,7 +190,15 @@ describe('Import Submit Utils', () => {
         false,
         'create',
       );
-      expect(createPipelineResourceSpy).toHaveBeenCalledWith(mockData);
+      expect(createPipelineResourceSpy).toHaveBeenCalledWith(
+        mockData.name,
+        mockData.project.name,
+        mockData.git.url,
+        mockData.git.ref,
+        mockData.git.dir,
+        mockData.pipeline,
+        mockData.docker.dockerfilePath,
+      );
       expect(createPipelineRunResourceSpy).toHaveBeenCalledTimes(1);
       const models = returnValue.map((data) => _.get(data, 'model.kind'));
       expect(models.includes(PipelineRunModel.kind)).toEqual(true);
@@ -215,7 +219,15 @@ describe('Import Submit Utils', () => {
         'create',
       );
 
-      expect(createPipelineResourceSpy).toHaveBeenCalledWith(mockData);
+      expect(createPipelineResourceSpy).toHaveBeenCalledWith(
+        mockData.name,
+        mockData.project.name,
+        mockData.git.url,
+        mockData.git.ref,
+        mockData.git.dir,
+        mockData.pipeline,
+        mockData.docker.dockerfilePath,
+      );
       const pipelineRunResource = returnValue[1].data;
       expect(pipelineRunResource.metadata.name.includes(mockData.name)).toEqual(true);
       done();

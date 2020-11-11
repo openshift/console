@@ -6,10 +6,10 @@ import { RouteComponentProps } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { ServiceModel } from '@console/knative-plugin';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { PipelineModel } from '@console/pipelines-plugin/src/models';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import EditApplication from './EditApplication';
 import { EditApplicationProps } from './edit-application-types';
-import { PipelineModel } from '../../models';
 
 const INSTANCE_LABEL = 'app.kubernetes.io/instance';
 const EditApplicationComponentLoader: React.FunctionComponent<EditApplicationProps> = (

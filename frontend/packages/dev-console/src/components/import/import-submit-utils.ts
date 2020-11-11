@@ -16,6 +16,10 @@ import { SecretType } from '@console/internal/components/secrets/create-secret';
 import { history } from '@console/internal/components/utils';
 import { getRandomChars } from '@console/shared/src/utils';
 import {
+  createPipelineForImportFlow,
+  createPipelineRunForImportFlow,
+} from '@console/pipelines-plugin/src/components/import/pipeline/pipeline-template-utils';
+import {
   getAppLabels,
   getPodLabels,
   getGitAnnotations,
@@ -34,10 +38,6 @@ import {
   GitReadableTypes,
   Resources,
 } from './import-types';
-import {
-  createPipelineForImportFlow,
-  createPipelineRunForImportFlow,
-} from './pipeline/pipeline-template-utils';
 import { Perspective } from '@console/plugin-sdk';
 
 export const generateSecret = () => {
@@ -468,8 +468,16 @@ export const createOrUpdateResources = async (
       ),
     );
   } else if (pipeline.template && !dryRun) {
-    const newPipeline = await createPipelineForImportFlow(formData);
-    requests.push(createPipelineRunForImportFlow(formData, newPipeline));
+    const newPipeline = await createPipelineForImportFlow(
+      formData.name,
+      formData.project.name,
+      formData.git.url,
+      formData.git.ref,
+      formData.git.dir,
+      formData.pipeline,
+      formData.docker.dockerfilePath,
+    );
+    requests.push(createPipelineRunForImportFlow(newPipeline));
   }
 
   verb === 'create' && requests.push(createWebhookSecret(formData, 'generic', dryRun));

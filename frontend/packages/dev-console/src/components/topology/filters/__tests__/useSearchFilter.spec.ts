@@ -1,4 +1,4 @@
-import { testHook } from '../../../../test/test-utils';
+import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { useSearchFilter } from '../useSearchFilter';
 
 jest.mock('../filter-utils', () => ({

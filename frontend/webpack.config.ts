@@ -206,6 +206,7 @@ const config: Configuration = {
     new CopyWebpackPlugin([{ from: './packages/dev-console/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/knative-plugin/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/container-security/locales', to: 'locales' }]),
+    new CopyWebpackPlugin([{ from: './packages/pipelines-plugin/locales', to: 'locales' }]),
     new MomentLocalesPlugin({
       localesToKeep: Object.keys(SUPPORTED_LOCALES).map((key) => (key === 'zh' ? 'zh-cn' : key)),
     }),

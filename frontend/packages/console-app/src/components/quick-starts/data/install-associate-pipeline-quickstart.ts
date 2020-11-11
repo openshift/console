@@ -1,4 +1,4 @@
-import { FLAG_OPENSHIFT_PIPELINE } from '@console/dev-console/src/const';
+import { FLAG_OPENSHIFT_PIPELINE } from '@console/pipelines-plugin/src/const';
 import { QuickStart } from '../utils/quick-start-types';
 import { pipelineIcon } from './tour-icons';
 

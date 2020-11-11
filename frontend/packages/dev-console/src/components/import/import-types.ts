@@ -4,6 +4,7 @@ import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models
 import { LazyLoader } from '@console/plugin-sdk';
 import { NameValuePair, NameValueFromPair } from '@console/shared';
 import { ServiceModel } from '@console/knative-plugin/src/models';
+import { PipelineData } from '@console/pipelines-plugin/src/components/import/import-types';
 import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
 import { HealthCheckProbe } from '../health-checks/health-checks-types';
 
@@ -196,11 +197,6 @@ export interface DeploymentData {
 
 export interface ServerlessData {
   scaling: ServerlessScaling;
-}
-
-export interface PipelineData {
-  enabled: boolean;
-  template?: K8sResourceKind;
 }
 
 export interface ServerlessScaling {

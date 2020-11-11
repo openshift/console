@@ -4,13 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { FormikProps, FormikValues } from 'formik';
 import { FormFooter } from '@console/shared/src/components/form-utils';
 import { Form } from '@patternfly/react-core';
+import PipelineSection from '@console/pipelines-plugin/src/components/import/pipeline/PipelineSection';
 import { SourceToImageFormProps } from './import-types';
 import GitSection from './git/GitSection';
 import BuilderSection from './builder/BuilderSection';
 import AppSection from './app/AppSection';
 import AdvancedSection from './advanced/AdvancedSection';
 import ResourceSection from './section/ResourceSection';
-import PipelineSection from './pipeline/PipelineSection';
 
 const SourceToImageForm: React.FC<FormikProps<FormikValues> & SourceToImageFormProps> = ({
   values,
