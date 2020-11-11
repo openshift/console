@@ -147,7 +147,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
   };
 
   const handlePvcName: React.ReactEventHandler<HTMLInputElement> = (event) => {
-    setPvcName(event.currentTarget.value);
+    setPvcName(event.currentTarget.value.trim());
   };
 
   const handleAccessMode: React.ReactEventHandler<HTMLInputElement> = (event) => {
@@ -184,6 +184,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
           aria-describedby="pvc-name-help"
           id="pvc-name"
           name="pvcName"
+          value={pvcName}
           required
         />
         <p className="help-block" id="pvc-name-help">
