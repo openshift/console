@@ -15,6 +15,7 @@ type Config struct {
 	Providers      `yaml:"providers"`
 	Helm           `yaml:"helm"`
 	MonitoringInfo `yaml:"monitoringInfo,omitempty"`
+	Plugins        map[string]string `yaml:"plugins,omitempty"`
 }
 
 // ServingInfo holds configuration for serving HTTP.

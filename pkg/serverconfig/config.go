@@ -7,11 +7,34 @@ import (
 	"fmt"
 	"io/ioutil"
 	"strconv"
+	"strings"
 
 	"github.com/coreos/pkg/flagutil"
 	"gopkg.in/yaml.v2"
 	"k8s.io/klog"
 )
+
+// MultiKeyValue is used for setting multiple key-value entries of a specific flag, eg.:
+// ... --plugins plugin-name=plugin-endpoint plugin-name2=plugin-endpoint2
+type MultiKeyValue map[string]string
+
+func (mkv *MultiKeyValue) String() string {
+	return fmt.Sprint(*mkv)
+}
+
+func (mkv *MultiKeyValue) Set(value string) error {
+	kv := strings.SplitN(value, "=", 2)
+	if len(kv) != 2 {
+		return fmt.Errorf("invalid value string %s", value)
+	}
+	emap := *mkv
+	emap[kv[0]] = kv[1]
+	return nil
+}
+
+func (mkv *MultiKeyValue) ToMap() map[string]string {
+	return map[string]string(*mkv)
+}
 
 // Parse configuration from
 // 1. Config file
@@ -75,6 +98,7 @@ func SetFlagsFromConfig(fs *flag.FlagSet, filename string) (err error) {
 	addProviders(fs, &config.Providers)
 	addMonitoringInfo(fs, &config.MonitoringInfo)
 	addHelmConfig(fs, &config.Helm)
+	addPlugins(fs, config.Plugins)
 
 	return nil
 }
@@ -239,4 +263,10 @@ func isAlreadySet(fs *flag.FlagSet, name string) bool {
 		}
 	})
 	return alreadySet
+}
+
+func addPlugins(fs *flag.FlagSet, plugins map[string]string) {
+	for pluginName, pluginEndpoint := range plugins {
+		fs.Set("plugins", fmt.Sprintf("%s=%s", pluginName, pluginEndpoint))
+	}
 }

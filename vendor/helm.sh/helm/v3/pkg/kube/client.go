@@ -137,7 +137,21 @@ func (c *Client) Wait(resources ResourceList, timeout time.Duration) error {
 		log:     c.Log,
 		timeout: timeout,
 	}
-	return w.waitForResources(resources)
+	return w.waitForResources(resources, false)
+}
+
+// WaitWithJobs wait up to the given timeout for the specified resources to be ready, including jobs.
+func (c *Client) WaitWithJobs(resources ResourceList, timeout time.Duration) error {
+	cs, err := c.getKubeClient()
+	if err != nil {
+		return err
+	}
+	w := waiter{
+		c:       cs,
+		log:     c.Log,
+		timeout: timeout,
+	}
+	return w.waitForResources(resources, true)
 }
 
 func (c *Client) namespace() string {
@@ -174,7 +188,7 @@ func (c *Client) Build(reader io.Reader, validate bool) (ResourceList, error) {
 }
 
 // Update takes the current list of objects and target list of objects and
-// creates resources that don't already exists, updates resources that have been
+// creates resources that don't already exist, updates resources that have been
 // modified in the target configuration, and deletes resources from the current
 // configuration that are not present in the target configuration. If an error
 // occurs, a Result will still be returned with the error, containing all

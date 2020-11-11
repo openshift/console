@@ -31,7 +31,9 @@ type Proxy struct {
 	config       *Config
 }
 
-func filterHeaders(r *http.Response) error {
+// These headers aren't things that proxies should pass along. Some are forbidden by http2.
+// This fixes the bug where Chrome users saw a ERR_SPDY_PROTOCOL_ERROR for all proxied requests.
+func FilterHeaders(r *http.Response) error {
 	badHeaders := []string{"Connection", "Keep-Alive", "Proxy-Connection", "Transfer-Encoding", "Upgrade"}
 	for _, h := range badHeaders {
 		r.Header.Del(h)
@@ -54,7 +56,7 @@ func NewProxy(cfg *Config) *Proxy {
 	reverseProxy := httputil.NewSingleHostReverseProxy(cfg.Endpoint)
 	reverseProxy.FlushInterval = time.Millisecond * 100
 	reverseProxy.Transport = transport
-	reverseProxy.ModifyResponse = filterHeaders
+	reverseProxy.ModifyResponse = FilterHeaders
 
 	proxy := &Proxy{
 		reverseProxy: reverseProxy,

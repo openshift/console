@@ -120,6 +120,9 @@ func main() {
 	fPrometheusPublicURL := fs.String("prometheus-public-url", "", "Public URL of the cluster's Prometheus server.")
 	fThanosPublicURL := fs.String("thanos-public-url", "", "Public URL of the cluster's Thanos server.")
 
+	consolePluginsFlags := serverconfig.MultiKeyValue{}
+	fs.Var(&consolePluginsFlags, "plugins", "List of plugin entries that are enabled for the console. Each entry consist of plugin-name as a key and plugin-endpoint as a value.")
+
 	fLoadTestFactor := fs.Int("load-test-factor", 0, "DEV ONLY. The factor used to multiply k8s API list responses for load testing purposes.")
 
 	fDevCatalogCategories := fs.String("developer-catalog-categories", "", "Allow catalog categories customization. (JSON as string)")
@@ -214,6 +217,14 @@ func main() {
 		klog.Infof("Setting user inactivity timout to %d seconds", *fInactivityTimeout)
 	}
 
+	consolePluginsMap := consolePluginsFlags.ToMap()
+	if len(consolePluginsMap) > 0 {
+		klog.Infoln("The following console plugins are enabled:")
+		for pluginName, _ := range consolePluginsMap {
+			klog.Infof(" - %s\n", pluginName)
+		}
+	}
+
 	srv := &server.Server{
 		PublicDir:             *fPublicDir,
 		BaseURL:               baseURL,
@@ -231,6 +242,7 @@ func main() {
 		InactivityTimeout:     *fInactivityTimeout,
 		DevCatalogCategories:  *fDevCatalogCategories,
 		UserSettingsLocation:  *fUserSettingsLocation,
+		EnabledConsolePlugins: consolePluginsMap,
 	}
 
 	// if !in-cluster (dev) we should not pass these values to the frontend
@@ -354,6 +366,7 @@ func main() {
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftMeteringHost, Path: "/api"},
 			}
 			srv.TerminalProxyTLSConfig = serviceProxyTLSConfig
+			srv.PluginsProxyTLSConfig = serviceProxyTLSConfig
 
 			srv.GitOpsProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
@@ -419,6 +432,7 @@ func main() {
 		}
 
 		srv.TerminalProxyTLSConfig = serviceProxyTLSConfig
+		srv.PluginsProxyTLSConfig = serviceProxyTLSConfig
 
 		if *fK8sModeOffClusterGitOps != "" {
 			offClusterGitOpsURL := bridge.ValidateFlagIsURL("k8s-mode-off-cluster-gitops", *fK8sModeOffClusterGitOps)
