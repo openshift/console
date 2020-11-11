@@ -41,21 +41,14 @@ const GitOpsListPage: React.FC = () => {
     };
   }, [baseURL, namespaces, nsError, nsLoaded]);
 
-  const [consoleLinks] = useK8sWatchResource({
+  const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
     kind: referenceForModel(ConsoleLinkModel),
     optional: true,
   });
-  let aLink;
-  _.filter(consoleLinks, (link: any) => {
-    if (link.spec.location === 'ApplicationMenu') {
-      if (link.metadata.name === "argocd") {
-        aLink = link;
-        return true;
-      }
-      return false;
-    }
-  });
+  let aLink = _.find(consoleLinks, (link: K8sResourceKind) => 
+   (link.metadata?.name === 'argocd' && link.spec?.location === 'ApplicationMenu')
+  );
 
   return (
     <>
@@ -65,10 +58,16 @@ const GitOpsListPage: React.FC = () => {
       <PageHeading 
         title="Application Stages" 
         badge={
-            <Split className="odc-gitops-list-page-heading">
-              {aLink && <ExternalLink href={aLink.spec.href} text="Argo CD" additionalClassName="odc-gitops-list-page-heading__argocd"/>}
-              <DevPreviewBadge />
-            </Split>
+            <>
+              {aLink ? (
+                <Split className="odc-gitops-list-page-heading">
+                  <ExternalLink href={aLink.spec.href} text="Argo CD" additionalClassName="odc-gitops-list-page-heading__argocd"/>
+                  <DevPreviewBadge />
+                </Split>
+              ) : (
+                <DevPreviewBadge />
+              )}
+            </>
         }>
       </PageHeading> 
       {!appGroups && !emptyStateMsg ? (
