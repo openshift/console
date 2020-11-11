@@ -2,8 +2,7 @@
 # usage ./expect-login.sh <vm name> <vm namespace>
 set vm_name [lindex $argv 0]
 set vm_namespace [lindex $argv 1]
-set hostname cirros
-set login_prompt "$hostname login: "
+set login_prompt "*login: "
 
 spawn virtctl console $vm_name -n $vm_namespace --timeout 7
 

@@ -86,6 +86,24 @@ export async function withResource(
   }
 }
 
+export async function withResources(
+  resourceSet: Set<string>,
+  resources: any,
+  callback: Function,
+  keepResource: boolean = false,
+) {
+  resources.forEach((resource) => {
+    addLeakableResource(resourceSet, resource);
+  });
+  await callback();
+  if (!keepResource) {
+    resources.forEach((resource) => {
+      deleteResource(resource);
+      removeLeakableResource(resourceSet, resource);
+    });
+  }
+}
+
 export async function click(elem: any, timeout?: number) {
   const _timeout = resolveTimeout(timeout, config.jasmineNodeOpts.defaultTimeoutInterval);
   await browser.wait(until.elementToBeClickable(elem), _timeout);
