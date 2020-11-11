@@ -7,6 +7,7 @@ import { SelectorInput } from '../utils';
 import { RadioGroup } from './utils/radio';
 import { Section } from './utils/section';
 import { InputSelectBox } from './utils/inputSelectBox';
+import { Dropdown } from './utils/dropdown';
 
 const defaultValues = {
   // requestDo에 넣어줄 형식으로 defaultValues 작성
@@ -75,6 +76,7 @@ const CreateSampleComponent: React.FC<SampleFormProps> = props => {
             inline={false} // inline속성 먹일거면 true, 아니면 빼면 됨 (선택)
           />
         </Section>
+        <Dropdown name="dropdown1" selectedKey="Mi" className="btn-group" items={dropdownUnits}></Dropdown>
       </Section>
     </div>
   );
