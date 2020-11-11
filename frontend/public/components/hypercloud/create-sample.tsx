@@ -17,6 +17,7 @@ const defaultValues = {
   spec: {
     resources: 'cpu',
   },
+  dropdown1: "Ti",
 };
 
 const sampleFormFactory = params => {
@@ -76,7 +77,7 @@ const CreateSampleComponent: React.FC<SampleFormProps> = props => {
             inline={false} // inline속성 먹일거면 true, 아니면 빼면 됨 (선택)
           />
         </Section>
-        <Dropdown name="dropdown1" selectedKey="Mi" className="btn-group" items={dropdownUnits}></Dropdown>
+        <Dropdown name="dropdown1" className="btn-group" items={dropdownUnits} required={true}/>
       </Section>
     </div>
   );

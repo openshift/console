@@ -35,7 +35,7 @@ const DropDownRow = React.memo((props) => {
 });
 
 const Dropdown_ = (props) => {
-  const { register, setValue } = useFormContext();
+  const { register, unregister, setValue, watch } = useFormContext();
 
   const {
     name,
@@ -46,14 +46,17 @@ const Dropdown_ = (props) => {
     dropDownClassName,
     titlePrefix,
     describedBy,
-    disabled
+    disabled,
+    required
   } = props;
 
-  const [title, setTitle] = React.useState(_.get(props.items, props.selectedKey, props.title));
+  const selectedKey = watch(name);
+
+  const [title, setTitle] = React.useState(_.get(props.items, selectedKey, props.title));
   const [active, setActive] = React.useState(!!props.active);
   const [items, setItems] = React.useState(Object.assign({}, props.items));
-  const [selectedKey, setSelectedKey] = React.useState(props.selectedKey);
   const [keyboardHoverKey, setKeyboardHoverKey] = React.useState();
+  
 
   const dropdownElement = React.useRef();
   const dropdownList = React.useRef();
@@ -82,8 +85,6 @@ const Dropdown_ = (props) => {
     setValue(name, selected);
 
     const newTitle = items[selected];
-
-    setSelectedKey(selected);
     setTitle(newTitle);
 
     hide();
@@ -157,12 +158,13 @@ const Dropdown_ = (props) => {
   }
 
   React.useEffect(() => {
-    register(name);
+    register({name}, {required});
 
     return () => {
+      unregister(name);
       window.removeEventListener('click', onWindowClick);
     }
-  }, [register]);
+  }, [name, register, unregister]);
 
   const spacerBefore = props.spacerBefore || new Set();
   const headerBefore = props.headerBefore || {};
@@ -282,7 +284,7 @@ const getHeaders = (container, initContainer) => {
 };
 
 const ContainerDropdown_ = (props) => {
-  const { name, currentKey, containers, initContainers } = props;
+  const { name, containers, initContainers } = props;
   if (_.isEmpty(containers) && _.isEmpty(initContainers)) {
     return null;
   }
@@ -291,7 +293,7 @@ const ContainerDropdown_ = (props) => {
   const spacerBefore = getSpacer(firstInitContainer);
   const headerBefore = getHeaders(firstContainer, firstInitContainer);
   const dropdownItems = _.mapValues(_.merge(containers, initContainers), containerLabel);
-  const title = _.get(dropdownItems, currentKey) || containerLabel(firstContainer);
+  const title = props.title || containerLabel(firstContainer);
   return (
     <Dropdown
       name={name}
@@ -301,7 +303,6 @@ const ContainerDropdown_ = (props) => {
       items={dropdownItems}
       spacerBefore={spacerBefore}
       title={title}
-      selectedKey={currentKey}
     />
   );
 };
@@ -310,11 +311,9 @@ export const ContainerDropdown = React.memo(ContainerDropdown_);
 
 ContainerDropdown.propTypes = {
   containers: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
-  currentKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   initContainers: PropTypes.object,
 };
 
 ContainerDropdown.defaultProps = {
-  currentKey: '',
   initContainers: {},
 };
