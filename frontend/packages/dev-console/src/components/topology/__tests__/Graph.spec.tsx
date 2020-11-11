@@ -3,6 +3,7 @@ import { mount } from 'enzyme';
 import { ConnectedTopologyView } from '../TopologyView';
 import { MockGraphResources } from './graph-test-data';
 import { baseDataModelGetter } from '../data-transforms';
+import { TopologyViewType } from '../topology-types';
 
 describe('Graph', () => {
   let topologyData;
@@ -17,7 +18,7 @@ describe('Graph', () => {
       <ConnectedTopologyView
         model={topologyData}
         namespace="test"
-        showGraphView
+        viewType={TopologyViewType.graph}
         application={''}
         eventSourceEnabled
         onSelectTab={() => {}}

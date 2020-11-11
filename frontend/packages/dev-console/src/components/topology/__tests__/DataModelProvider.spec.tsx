@@ -6,6 +6,7 @@ import * as utils from '@console/internal/components/utils/url-poll-hook';
 import DataModelProvider from '../data-transforms/DataModelProvider';
 import { TopologyDataRetriever } from '../TopologyDataRetriever';
 import { TopologyDataRenderer } from '../TopologyDataRenderer';
+import { TopologyViewType } from '../topology-types';
 
 jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({
   useExtensions: () => [],
@@ -30,7 +31,7 @@ describe('DataModelProvider', () => {
     spyUseURLPoll.mockReturnValue([{}, null, false]);
     wrapper = mount(
       <DataModelProvider namespace="test-project">
-        <TopologyDataRenderer showGraphView title="Topology" />
+        <TopologyDataRenderer viewType={TopologyViewType.graph} title="Topology" />
       </DataModelProvider>,
       {
         wrappingComponent: ({ children }) => <Provider store={store}>{children}</Provider>,

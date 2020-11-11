@@ -7,14 +7,14 @@ import {
   SelectVariant,
   Switch,
 } from '@patternfly/react-core';
-import { TopologyDisplayFilterType, DisplayFilters } from '../topology-types';
+import { DisplayFilters, TopologyDisplayFilterType, TopologyViewType } from '../topology-types';
 import { EXPAND_GROUPS_FILTER_ID, SHOW_GROUPS_FILTER_ID } from './const';
 
 import './FilterDropdown.scss';
 
 type FilterDropdownProps = {
   filters: DisplayFilters;
-  showGraphView: boolean;
+  viewType: TopologyViewType;
   supportedFilters: string[];
   onChange: (filter: DisplayFilters) => void;
   opened?: boolean; // Use only for testing
@@ -22,7 +22,7 @@ type FilterDropdownProps = {
 
 const FilterDropdown: React.FC<FilterDropdownProps> = ({
   filters,
-  showGraphView,
+  viewType,
   supportedFilters,
   onChange,
   opened = false,
@@ -123,7 +123,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
           </SelectGroup>
         </div>
       ) : null}
-      {showGraphView && showFilters.length ? (
+      {viewType === TopologyViewType.graph && showFilters.length ? (
         <div className="odc-topology-filter-dropdown__group">
           <SelectGroup label="Show">
             {showFilters.map((filter) => (

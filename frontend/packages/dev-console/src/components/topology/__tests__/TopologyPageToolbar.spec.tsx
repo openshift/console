@@ -2,6 +2,7 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { Button, Tooltip } from '@patternfly/react-core';
 import { TopologyPageToolbar } from '../TopologyPageToolbar';
+import { TopologyViewType } from '../topology-types';
 
 jest.mock('react', () => {
   const ActualReact = require.requireActual('react');
@@ -35,7 +36,9 @@ describe('TopologyPageToolbar tests', () => {
       isEmptyModel: false,
       namespace: 'test-namespace',
     });
-    const wrapper = shallow(<TopologyPageToolbar showGraphView onViewChange={mockViewChange} />);
+    const wrapper = shallow(
+      <TopologyPageToolbar viewType={TopologyViewType.graph} onViewChange={mockViewChange} />,
+    );
     expect(wrapper.find('[data-test-id="topology-view-shortcuts"]').exists()).toBe(true);
   });
 
@@ -46,7 +49,7 @@ describe('TopologyPageToolbar tests', () => {
       namespace: 'test-namespace',
     });
     const wrapper = shallow(
-      <TopologyPageToolbar showGraphView={false} onViewChange={mockViewChange} />,
+      <TopologyPageToolbar viewType={TopologyViewType.list} onViewChange={mockViewChange} />,
     );
     expect(wrapper.find('[data-test-id="topology-view-shortcuts"]').exists()).toBe(false);
   });
@@ -58,7 +61,7 @@ describe('TopologyPageToolbar tests', () => {
       namespace: 'test-namespace',
     });
     const wrapper = shallow(
-      <TopologyPageToolbar showGraphView={false} onViewChange={mockViewChange} />,
+      <TopologyPageToolbar viewType={TopologyViewType.list} onViewChange={mockViewChange} />,
     );
     expect(wrapper.find(Tooltip).props().content).toBe('Topology View');
   });
@@ -69,7 +72,9 @@ describe('TopologyPageToolbar tests', () => {
       isEmptyModel: false,
       namespace: 'test-namespace',
     });
-    const wrapper = shallow(<TopologyPageToolbar showGraphView onViewChange={mockViewChange} />);
+    const wrapper = shallow(
+      <TopologyPageToolbar viewType={TopologyViewType.graph} onViewChange={mockViewChange} />,
+    );
     expect(wrapper.find(Tooltip).props().content).toBe('List View');
   });
 
@@ -79,7 +84,9 @@ describe('TopologyPageToolbar tests', () => {
       isEmptyModel: false,
       namespace: undefined,
     });
-    const wrapper = shallow(<TopologyPageToolbar showGraphView onViewChange={mockViewChange} />);
+    const wrapper = shallow(
+      <TopologyPageToolbar viewType={TopologyViewType.graph} onViewChange={mockViewChange} />,
+    );
     expect(wrapper.find(Button).exists()).toBe(false);
   });
 
@@ -89,7 +96,9 @@ describe('TopologyPageToolbar tests', () => {
       isEmptyModel: true,
       namespace: 'test-namespace',
     });
-    const wrapper = shallow(<TopologyPageToolbar showGraphView onViewChange={mockViewChange} />);
+    const wrapper = shallow(
+      <TopologyPageToolbar viewType={TopologyViewType.graph} onViewChange={mockViewChange} />,
+    );
     expect(wrapper.find(Button).exists()).toBe(false);
   });
 });

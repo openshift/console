@@ -16,6 +16,7 @@ import {
   GraphData,
   TopologyApplyDisplayOptions,
   TopologyDisplayFilterType,
+  TopologyViewType,
 } from './topology-types';
 import {
   isTopologyCreateConnector,
@@ -53,7 +54,7 @@ interface DispatchProps {
 interface TopologyViewProps {
   model: Model;
   namespace: string;
-  showGraphView: boolean;
+  viewType: TopologyViewType;
 }
 
 type ComponentProps = TopologyViewProps & StateProps & DispatchProps;
@@ -61,7 +62,7 @@ type ComponentProps = TopologyViewProps & StateProps & DispatchProps;
 export const ConnectedTopologyView: React.FC<ComponentProps> = ({
   model,
   namespace,
-  showGraphView,
+  viewType,
   eventSourceEnabled,
   application,
   onFiltersChange,
@@ -219,7 +220,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
 
   const viewContent = React.useMemo(
     () =>
-      showGraphView ? (
+      viewType === TopologyViewType.graph ? (
         <Topology
           model={filteredModel}
           namespace={namespace}
@@ -235,12 +236,12 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
           setVisualization={setVisualization}
         />
       ),
-    [filteredModel, namespace, onSelect, showGraphView],
+    [filteredModel, namespace, onSelect, viewType],
   );
 
   const topologyFilterBar = React.useMemo(
-    () => <TopologyFilterBar showGraphView={showGraphView} visualization={visualization} />,
-    [showGraphView, visualization],
+    () => <TopologyFilterBar viewType={viewType} visualization={visualization} />,
+    [viewType, visualization],
   );
 
   const topologySideBar = React.useMemo(
