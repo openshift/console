@@ -7,11 +7,13 @@ import { SelectorInput } from '../utils';
 import { RadioGroup } from './utils/radio';
 import { Section } from './utils/section';
 import { InputSelectBox } from './utils/inputSelectBox';
+import { TagsLabel } from './utils/tags-label';
 
 const defaultValues = {
   // requestDo에 넣어줄 형식으로 defaultValues 작성
   metadata: {
     name: 'test-name',
+    tags: ['AAA', 'BBB'],
   },
   spec: {
     resources: 'cpu',
@@ -76,6 +78,12 @@ const CreateSampleComponent: React.FC<SampleFormProps> = props => {
           />
         </Section>
       </Section>
+      <Section id="tagslabel" label="Tags Label">
+        <TagsLabel
+          name="metadata.tags" // 서버에 보낼 데이터에서의 path (필수)
+          placeholder="Enter tag" // tag가 없을 때 보여줄 placeholder (선택)
+        />
+      </Section>
     </div>
   );
 };
@@ -91,6 +99,7 @@ export const onSubmitCallback = data => {
   let labels = SelectorInput.objectify(data.metadata.labels);
   delete data.metadata.labels;
   data = _.defaultsDeep(data, { metadata: { labels: labels } });
+  console.log('data? ', data);
   return data;
 };
 
