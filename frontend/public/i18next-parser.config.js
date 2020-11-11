@@ -1,5 +1,6 @@
 const SUPPORTED_LOCALES = {
   en: 'English',
+  ja: '日本語',
 };
 
 const FALLBACK_LOCALE = 'en';
