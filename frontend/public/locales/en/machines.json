@@ -1,5 +1,6 @@
 {
   "Machine details": "Machine details",
+  "Phase": "Phase",
   "Provider state": "Provider state",
   "Node": "Node",
   "Machine role": "Machine role",
@@ -10,7 +11,6 @@
   "Conditions": "Conditions",
   "Name": "Name",
   "Namespace": "Namespace",
-  "Phase": "Phase",
   "Machines": "Machines",
   "by machine or node name": "by machine or node name",
   "Provisioned as node": "Provisioned as node"
