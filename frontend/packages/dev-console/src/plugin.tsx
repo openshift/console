@@ -73,6 +73,7 @@ import { pipelinesTopologyPlugin } from './components/topology/pipelines/pipelin
 import { usePerspectiveDetection } from './utils/usePerspectiveDetection';
 import { getGuidedTour } from './components/guided-tour';
 import { doConnectsToBinding } from './utils/connector-utils';
+import { CatalogConsumedExtensions, catalogPlugin } from './components/catalog/catalog-plugin';
 
 const {
   ClusterTaskModel,
@@ -107,7 +108,8 @@ type ConsumedExtensions =
   | GuidedTour
   | HelmTopologyConsumedExtensions
   | OperatorsTopologyConsumedExtensions
-  | PostFormSubmissionAction;
+  | PostFormSubmissionAction
+  | CatalogConsumedExtensions;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -517,6 +519,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         '/add',
         '/import',
         '/import-sample',
+        '/extensible-catalog',
         '/samples',
         '/topology',
         '/deploy-image',
@@ -555,6 +558,19 @@ const plugin: Plugin<ConsumedExtensions> = [
         (
           await import(
             './components/topology/TopologyPage' /* webpackChunkName: "dev-console-topology" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/extensible-catalog/all-namespaces', '/extensible-catalog/ns/:ns'],
+      loader: async () =>
+        (
+          await import(
+            './components/catalog/CatalogPage' /* webpackChunkName: "dev-console-extensible-catalog" */
           )
         ).default,
     },
@@ -1169,6 +1185,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   ...helmTopologyPlugin,
   ...operatorsTopologyPlugin,
   ...pipelinesTopologyPlugin,
+  ...catalogPlugin,
 ];
 
 export default plugin;
