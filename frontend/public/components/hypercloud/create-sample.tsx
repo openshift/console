@@ -7,7 +7,7 @@ import { SelectorInput } from '../utils';
 import { RadioGroup } from './utils/radio';
 import { Section } from './utils/section';
 import { InputSelectBox } from './utils/inputSelectBox';
-import { Dropdown } from './utils/dropdown';
+import { Dropdown, ContainerDropdown } from './utils/dropdown';
 
 const defaultValues = {
   // requestDo에 넣어줄 형식으로 defaultValues 작성
@@ -46,6 +46,8 @@ const CreateSampleComponent: React.FC<SampleFormProps> = props => {
     Gi: 'GiB',
     Ti: 'TiB',
   };
+  const containers = {test:  {name: "test", order: 0}, sidecar: {name: "sidecar"}, sidecar2: {name: "sidecar2"}};
+  const initContainers = {initupload: {name: "initupload", order: 0}, ["place-entrypoint"]: {name: "place-entrypoint"}, ["place-entrypoint2"]: {name: "place-entrypoint2"}};
 
   return (
     <div>
@@ -78,6 +80,11 @@ const CreateSampleComponent: React.FC<SampleFormProps> = props => {
           />
         </Section>
         <Dropdown name="dropdown1" className="btn-group" items={dropdownUnits} required={true}/>
+        <ContainerDropdown
+          name="containerDropdown1"
+          containers={containers}
+          initContainers={initContainers}
+        />
       </Section>
     </div>
   );
