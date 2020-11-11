@@ -8,8 +8,8 @@ import { DevPreviewBadge } from '@console/shared';
 import GitOpsList from './list/GitOpsList';
 import { fetchAllAppGroups, getManifestURLs, getPipelinesBaseURI } from './utils/gitops-utils';
 import useDefaultSecret from './utils/useDefaultSecret';
-import { Split } from '@patternfly/react-core';
 import * as _ from 'lodash-es';
+import { Split } from '@patternfly/react-core';
 import './GitOpsListPage.scss';
 
 const projectRes = { isList: true, kind: ProjectModel.kind, optional: true };
