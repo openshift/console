@@ -112,6 +112,9 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   ...props
 }) => {
   const operatingSystems = getTemplateOperatingSystems(commonTemplates);
+  const operatingSystemHaveDV = operatingSystems.find(
+    (os) => os?.dataVolumeName && os?.dataVolumeNamespace,
+  );
   const [accessModeHelp, setAccessModeHelp] = React.useState('Permissions to the mounted drive.');
   const [allowedAccessModes, setAllowedAccessModes] = React.useState(initialAccessModes);
   const [storageClass, setStorageClass] = React.useState('');
@@ -280,14 +283,16 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
             onDropAccepted: () => setIsFileRejected(false),
           }}
         />
-        <Checkbox
-          id="golden-os-switch"
-          className="kv--create-upload__golden-switch"
-          label="Attach this data to a Virtual Machine operating system"
-          isChecked={isGolden}
-          onChange={handleGoldenCheckbox}
-          isDisabled={isLoading}
-        />
+        {operatingSystemHaveDV && (
+          <Checkbox
+            id="golden-os-switch"
+            className="kv--create-upload__golden-switch"
+            label="Attach this data to a Virtual Machine operating system"
+            isChecked={isGolden}
+            onChange={handleGoldenCheckbox}
+            isDisabled={isLoading}
+          />
+        )}
       </div>
       {isGolden && (
         <>
