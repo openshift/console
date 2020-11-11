@@ -223,7 +223,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   };
   const conflictingProvidedAPIs = (ns: string) => {
     const operatorGroups = props.operatorGroup.data.filter(
-      (og) => og.status.namespaces.includes(ns) || isGlobal(og),
+      (og) => og.status?.namespaces?.includes(ns) || isGlobal(og),
     );
     if (_.isEmpty(operatorGroups)) {
       return [];
