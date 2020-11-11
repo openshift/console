@@ -1,0 +1,14 @@
+{
+  "Name": "名前",
+  "Namespace": "Namespace",
+  "Created": "Created",
+  "Limits": "制限",
+  "Type": "タイプ",
+  "Resource": "リソース",
+  "Min": "最小",
+  "Max": "マックス",
+  "Default request": "デフォルトのリクエスト",
+  "Default limit": "デフォルトの制限",
+  "Max limit/request ratio": "最大制限/リクエスト比率",
+  "{{resource}} details": "{{resource}} 詳細"
+}

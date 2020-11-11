@@ -1,3 +1,15 @@
 {
-  "{{date, MMM D, h:mm a}}": "{{date, MMM D, h:mm a}}"
+  "Add": "追加",
+  "Cancel": "キャンセル",
+  "Update": "更新",
+  "Save": "保存する",
+  "{{description}} for": "{{description}} にとって",
+  "Edit": "編集する",
+  "Create": "作成する",
+  "{{date, MMM D, h:mm a}}": "{{date, MMM D, h:mm a}}",
+  "Resume": "履歴書",
+  "Pause": "一時停止",
+  "Warning": "Warning",
+  "Not available": "利用不可",
+  "Resource": "リソース"
 }

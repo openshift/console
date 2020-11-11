@@ -1,0 +1,21 @@
+{
+  "To address": "対処するには",
+  "The email address to send notifications to.": "通知を送信するメールアドレス。",
+  "SMTP configuration": "SMTP構成",
+  "Save as default SMTP configuration": "デフォルトのSMTP構成として保存",
+  "Checking this box will write these values to the global section of the configuration file where they will become defaults for future email receivers.": "このチェックボックスをオンにすると、これらの値が構成ファイルのグローバルセクションに書き込まれ、将来の電子メール受信者のデフォルトになります。",
+  "From address": "住所から",
+  "The email address to send notifications from.": "通知を送信するメールアドレス。",
+  "SMTP smarthost": "SMTPスマートホスト",
+  "Smarthost used for sending emails, including port number.": "ポート番号を含む電子メールの送信に使用されるスマートホスト。",
+  "SMTP hello": "SMTPこんにちは",
+  "The hostname to identify to the SMTP server.": "SMTPサーバーを識別するためのホスト名。",
+  "Auth username": "認証ユーザー名",
+  "Auth password (using LOGIN and PLAIN)": "認証パスワード（LOGINおよびPLAINを使用）",
+  "Auth identity (using PLAIN)": "IDの認証（PLAINを使用）",
+  "Auth secret (CRAM-MDS)": "認証シークレット（CRAM-MDS）",
+  "Require TLS": "TLSが必要",
+  "Show advanced configuration": "高度な構成を表示する",
+  "Hide advanced configuration": "高度な構成を非表示にする",
+  "Body of email notifications (HTML)": "電子メール通知の本文（HTML）"
+}

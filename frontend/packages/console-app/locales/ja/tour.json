@@ -1,0 +1,10 @@
+{
+  "Get Started": "始めましょう",
+  "Skip tour": "ツアーをスキップ",
+  "Okay, got it!": "了解しました。",
+  "Back": "バック",
+  "Next": "次",
+  "Guided Tour": "ガイド付きツアー",
+  "Step {{stepNumber, number}}/{{totalSteps, number}}": "ステップ{{stepNumber, number}}/{{totalSteps, number}}",
+  "guided tour {{step, number}}": "ガイド付きツアー {{step, number}}"
+}

@@ -1,0 +1,16 @@
+{
+  "Type": "タイプ",
+  "Git repository": "Gitリポジトリ",
+  "Git ref": "Git ref",
+  "Git commit": "Gitコミット",
+  "Binary file": "バイナリーファイル",
+  "Context dir": "コンテキストディレクトリ",
+  "Dockerfile": "Dockerfile",
+  "JenskinsFile path": "JenskinsFileパス",
+  "Build from": "から構築",
+  "Output to": "に出力",
+  "Push secret": "シークレットを押す",
+  "Run policy": "ポリシーを実行する",
+  "Resource limits": "リソース制限",
+  "Triggers": "トリガー"
+}

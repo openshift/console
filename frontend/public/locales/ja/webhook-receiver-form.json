@@ -1,0 +1,6 @@
+{
+  "URL": "URL",
+  "The endpoint to send HTTP POST requests to.": "HTTPPOSTリクエストを送信するエンドポイント。",
+  "Show advanced configuration": "高度な構成を表示する",
+  "Hide advanced configuration": "高度な構成を非表示にする"
+}
