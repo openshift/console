@@ -61,3 +61,5 @@ wget ${VIRTCTL_AMD64} -O virtctl/virtctl || wget ${VIRTCTL_X86_64} -O virtctl/vi
 chmod +x virtctl/virtctl
 
 export PATH="${PATH}:$(pwd)/virtctl"
+pwd
+echo $PATH
