@@ -18,5 +18,6 @@
 /frontend/gui_test_screenshots
 /frontend/packages/integration-tests-cypress/cypress-a11y-report.json
 /frontend/packages/dev-console/integration-tests/cypress-a11y-report.json
+/frontend/packages/ceph-storage-plugin/integration-tests-cypress/cypress-a11y-report.json
 /frontend/@types
 /frontend/package-lock.json
