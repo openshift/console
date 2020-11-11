@@ -2,14 +2,8 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { CaretDownIcon, MinusCircleIcon, PlusCircleIcon, StarIcon } from '@patternfly/react-icons';
-import { impersonateStateToProps } from '../../../reducers/ui';
-import { checkAccess } from '../../utils/rbac';
-import { history } from '../../utils/router';
-import { KebabItems } from '../../utils/kebab';
+import { CaretDownIcon } from '@patternfly/react-icons';
 import { ResourceName } from '../../utils/resource-icon';
-import { useSafetyFirst } from '../../safety-first';
 import { useFormContext } from 'react-hook-form';
 
 const DropDownRow = React.memo((props) => {
@@ -56,7 +50,7 @@ const Dropdown_ = (props) => {
   const [active, setActive] = React.useState(!!props.active);
   const [items, setItems] = React.useState(Object.assign({}, props.items));
   const [keyboardHoverKey, setKeyboardHoverKey] = React.useState();
-  
+
 
   const dropdownElement = React.useRef();
   const dropdownList = React.useRef();
@@ -158,7 +152,7 @@ const Dropdown_ = (props) => {
   }
 
   React.useEffect(() => {
-    register({name}, {required});
+    register({ name }, { required });
 
     return () => {
       unregister(name);
