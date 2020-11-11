@@ -51,7 +51,7 @@ export const isNodeReady = (node: NodeKind): boolean => {
 export const getNodeSecondaryStatus = (node: NodeKind): string[] => {
   const states = [];
   if (isNodeUnschedulable(node)) {
-    states.push(i18next.t('nodes~Scheduling disabled'));
+    states.push(i18next.t('console-shared~Scheduling disabled'));
   }
   return states;
 };

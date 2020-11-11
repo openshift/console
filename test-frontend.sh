@@ -21,7 +21,7 @@ if git status --short | grep 'yarn.lock' > /dev/null; then
 fi
 
 yarn i18n
-GIT_STATUS="$( git status --short --untracked-files -- ./locales )"
+GIT_STATUS="$(git status --short --untracked-files -- public/locales packages/**/locales)"
 if [ -n "$GIT_STATUS" ]; then
   echo "i18n files are not up to date. Commit them to fix."
   git diff

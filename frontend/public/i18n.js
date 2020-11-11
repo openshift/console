@@ -10,7 +10,6 @@ import 'moment/locale/ja';
 import 'moment/locale/en-gb';
 import moment from 'moment';
 
-import { FALLBACK_LOCALE } from './i18next-parser.config';
 const params = new URLSearchParams(window.location.search);
 const pseudolocalizationEnabled = params.get('pseudolocalization') === 'true';
 
@@ -32,7 +31,7 @@ i18n
         loadPath: 'static/locales/{{lng}}/{{ns}}.json',
       },
       lng: localStorage.getItem('bridge/language'),
-      fallbackLng: FALLBACK_LOCALE,
+      fallbackLng: 'en',
       load: 'all',
       debug: process.env.NODE_ENV === 'development',
       detection: { caches: [] },

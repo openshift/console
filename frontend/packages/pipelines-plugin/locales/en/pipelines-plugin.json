@@ -1,4 +1,5 @@
 {
+  "Pipelines": "Pipelines",
   "Select a builder image and resource to see if there is a pipeline template available for this runtime.": "Select a builder image and resource to see if there is a pipeline template available for this runtime.",
   "The pipeline template for Dockerfiles is not available at this time.": "The pipeline template for Dockerfiles is not available at this time.",
   "There are no pipeline templates available for {{builderImage}} and {{resourceType}} combination.": "There are no pipeline templates available for {{builderImage}} and {{resourceType}} combination.",
@@ -6,6 +7,5 @@
   "Add pipeline": "Add pipeline",
   "Hide": "Hide",
   "Show": "Show",
-  "pipeline visualization": "pipeline visualization",
-  "Pipelines": "Pipelines"
+  "pipeline visualization": "pipeline visualization"
 }
