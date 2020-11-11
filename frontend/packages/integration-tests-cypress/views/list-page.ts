@@ -18,7 +18,7 @@ export const listPage = {
       });
   },
   clickCreateYAMLbutton: () => {
-    return cy.byTestID('yaml-create').click();
+    cy.byTestID('yaml-create').click({ force: true });
   },
   filter: {
     byName: (name: string) => {

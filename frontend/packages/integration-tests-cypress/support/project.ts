@@ -18,9 +18,11 @@ declare global {
 Cypress.Commands.add('createProject', (name: string, devConsole: boolean = false) => {
   cy.log(`create project`);
   cy.visit(`/k8s/cluster/projects`);
+  listPage.rows.shouldBeLoaded();
   listPage.clickCreateYAMLbutton();
   modal.shouldBeOpened();
   cy.byTestID('input-name').type(name);
+  cy.testA11y('Create Project modal');
   modal.submit();
   modal.shouldBeClosed();
   // TODO, switch to 'listPage.titleShouldHaveText(name)', when we switch to new test id
@@ -37,6 +39,7 @@ Cypress.Commands.add('deleteProject', (name: string) => {
   modal.submitShouldBeDisabled();
   cy.byTestID('project-name-input').type(name);
   modal.submitShouldBeEnabled();
+  cy.testA11y('Delete Project modal');
   modal.submit();
   modal.shouldBeClosed();
   listPage.titleShouldHaveText('Projects');
