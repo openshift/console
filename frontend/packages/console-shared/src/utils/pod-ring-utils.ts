@@ -2,17 +2,7 @@ import * as React from 'react';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import * as classNames from 'classnames';
-import {
-  DeploymentConfigModel,
-  DeploymentModel,
-  DaemonSetModel,
-  StatefulSetModel,
-  ReplicationControllerModel,
-  ReplicaSetModel,
-  PodModel,
-  JobModel,
-  CronJobModel,
-} from '@console/internal/models';
+import { DaemonSetModel, PodModel, JobModel, CronJobModel } from '@console/internal/models';
 import { ChartLabel } from '@patternfly/react-charts';
 import {
   K8sResourceKind,
@@ -21,15 +11,9 @@ import {
   HorizontalPodAutoscalerKind,
 } from '@console/internal/module/k8s';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
-import { PodRCData, PodRingResources, PodRingData, ExtPodKind } from '../types';
+import { ExtPodKind } from '../types';
 import { checkPodEditAccess, getPodStatus } from './pod-utils';
 import { RevisionModel } from '@console/knative-plugin';
-import {
-  getPodsForDeploymentConfigs,
-  getPodsForDeployments,
-  getPodsForStatefulSets,
-  getPodsForDaemonSets,
-} from './pod-resource-utils';
 import { AllPodStatus } from '../constants';
 
 import './pod-ring-text.scss';
@@ -46,35 +30,6 @@ type PodRingLabelData = {
   subTitle: string;
   longSubtitle: boolean;
   reversed: boolean;
-};
-
-export const podRingFirehoseProps = {
-  [PodModel.kind]: 'pods',
-  [ReplicaSetModel.kind]: 'replicaSets',
-  [ReplicationControllerModel.kind]: 'replicationControllers',
-  [DeploymentModel.kind]: 'deployments',
-  [DeploymentConfigModel.kind]: 'deploymentConfigs',
-  [StatefulSetModel.kind]: 'statefulSets',
-  [DaemonSetModel.kind]: 'daemonSets',
-};
-
-const applyPods = (podsData: PodRingData, dc: PodRCData) => {
-  const {
-    pods,
-    current,
-    previous,
-    isRollingOut,
-    obj: {
-      metadata: { uid },
-    },
-  } = dc;
-  podsData[uid] = {
-    pods,
-    current,
-    previous,
-    isRollingOut,
-  };
-  return podsData;
 };
 
 const podKindString = (count: number) =>
@@ -299,42 +254,4 @@ export const usePodScalingAccessStatus = (
   const isKnativeRevision = obj.kind === 'Revision';
   const isScalingAllowed = !isKnativeRevision && editable && enableScaling;
   return isScalingAllowed;
-};
-
-export const transformPodRingData = (
-  resources: PodRingResources,
-  kind: string,
-  t: TFunction,
-): PodRingData => {
-  const targetResource = podRingFirehoseProps[kind];
-
-  if (!targetResource) {
-    throw new Error(
-      t('console-shared~Invalid target resource: ({{targetResource}})', { targetResource }),
-    );
-  }
-  if (_.isEmpty(resources[targetResource].data)) {
-    return {};
-  }
-
-  const podsData: PodRingData = {};
-  const resourceData = resources[targetResource].data;
-
-  if (kind === DeploymentConfigModel.kind) {
-    return getPodsForDeploymentConfigs(resourceData, resources).reduce(applyPods, podsData);
-  }
-
-  if (kind === DeploymentModel.kind) {
-    return getPodsForDeployments(resourceData, resources).reduce(applyPods, podsData);
-  }
-
-  if (kind === StatefulSetModel.kind) {
-    return getPodsForStatefulSets(resourceData, resources).reduce(applyPods, podsData);
-  }
-
-  if (kind === DaemonSetModel.kind) {
-    return getPodsForDaemonSets(resourceData, resources).reduce(applyPods, podsData);
-  }
-
-  return podsData;
 };

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ExtPodKind, OverviewItem, PodControllerOverviewItem } from '@console/shared';
+import { ExtPodKind, OverviewItem, PodRCData } from '@console/shared';
 import { K8sResourceKind, K8sResourceKindReference } from '@console/internal/module/k8s';
 import {
   Graph,
@@ -112,16 +112,8 @@ export interface WorkloadData {
   kind?: string;
   isKnativeResource?: boolean;
   build: K8sResourceKind;
-  donutStatus: DonutStatusData;
+  donutStatus: PodRCData;
   connectedPipeline: ConnectedWorkloadPipeline;
-}
-
-export interface DonutStatusData {
-  pods: ExtPodKind[];
-  current: PodControllerOverviewItem;
-  previous: PodControllerOverviewItem;
-  dc: K8sResourceKind;
-  isRollingOut: boolean;
 }
 
 export type TrafficData = {

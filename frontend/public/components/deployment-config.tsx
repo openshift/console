@@ -4,7 +4,7 @@ import * as _ from 'lodash-es';
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
 import { RootState } from '@console/internal/redux';
-import { Status, PodRingController, useCsvWatchResource } from '@console/shared';
+import { Status, useCsvWatchResource } from '@console/shared';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
 import {
@@ -27,7 +27,6 @@ import {
   DetailsItem,
   Kebab,
   KebabAction,
-  LoadingInline,
   ResourceSummary,
   SectionHeading,
   WorkloadPausedAlert,
@@ -168,23 +167,7 @@ export const DeploymentConfigsDetails: React.FC<{ obj: K8sResourceKind }> = ({ o
       <div className="co-m-pane__body">
         <SectionHeading text="Deployment Config Details" />
         {dc.spec.paused && <WorkloadPausedAlert obj={dc} model={DeploymentConfigModel} />}
-        <PodRingController
-          namespace={dc.metadata.namespace}
-          kind={dc.kind}
-          render={(d) => {
-            return d.loaded ? (
-              <PodRingSet
-                key={dc.metadata.uid}
-                podData={d.data[dc.metadata.uid]}
-                obj={dc}
-                resourceKind={DeploymentConfigModel}
-                path="/spec/replicas"
-              />
-            ) : (
-              <LoadingInline />
-            );
-          }}
-        />
+        <PodRingSet key={dc.metadata.uid} obj={dc} path="/spec/replicas" />
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-6">
