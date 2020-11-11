@@ -99,7 +99,6 @@ export const onSubmitCallback = data => {
   let labels = SelectorInput.objectify(data.metadata.labels);
   delete data.metadata.labels;
   data = _.defaultsDeep(data, { metadata: { labels: labels } });
-  console.log('data? ', data);
   return data;
 };
 
