@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useField, useFormikContext } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { Alert, AlertActionCloseButton, Flex } from '@patternfly/react-core';
 import { InputField, NumberSpinnerField } from '@console/shared';
 import { HorizontalPodAutoscalerKind } from '@console/internal/module/k8s';
@@ -8,6 +9,7 @@ import { getMetricByType } from './hpa-utils';
 import { HPAFormValues, SupportedMetricTypes } from './types';
 
 const HPADetailsForm: React.FC = () => {
+  const { t } = useTranslation();
   const name = 'formData';
   const [field] = useField<HorizontalPodAutoscalerKind>(name);
   const {
@@ -54,29 +56,39 @@ const HPADetailsForm: React.FC = () => {
             <AlertActionCloseButton onClose={() => setFieldValue('showCanUseYAMLMessage', false)} />
           }
           isInline
-          title={
-            'Note: Some fields may not be represented in this form view. Please select "YAML view" for full control.'
-          }
+          title={t(
+            'devconsole~Note: Some fields may not be represented in this form view. Please select "YAML view" for full control.',
+          )}
           variant="info"
         />
       )}
       <div className="row">
         <div className="col-lg-8">
           <Flex direction={{ default: 'column' }}>
-            <InputField isDisabled={nameDisabled} label="Name" name={`${name}.metadata.name`} />
-            <NumberSpinnerField label="Minimum Pods" name={`${name}.spec.minReplicas`} />
-            <NumberSpinnerField label="Maximum Pods" name={`${name}.spec.maxReplicas`} />
+            <InputField
+              isDisabled={nameDisabled}
+              label={t('devconsole~Name')}
+              name={`${name}.metadata.name`}
+            />
+            <NumberSpinnerField
+              label={t('devconsole~Minimum Pods')}
+              name={`${name}.spec.minReplicas`}
+            />
+            <NumberSpinnerField
+              label={t('devconsole~Maximum Pods')}
+              name={`${name}.spec.maxReplicas`}
+            />
             <HPAUtilizationField
               disabled={cpuUtilization}
               hpa={field.value}
-              label="CPU"
+              label={t('devconsole~CPU')}
               onUpdate={updateField('cpu')}
               type="cpu"
             />
             <HPAUtilizationField
               disabled={memoryUtilization}
               hpa={field.value}
-              label="Memory"
+              label={t('devconsole~Memory')}
               onUpdate={updateField('memory')}
               type="memory"
             />

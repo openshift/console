@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert, Flex } from '@patternfly/react-core';
 import { ResourceLink } from '@console/internal/components/utils';
 
@@ -19,16 +20,18 @@ const HPAPageHeader: React.FC<HPAPageHeaderProps> = ({
   limitWarning,
   validSupportedType,
 }) => {
+  const { t } = useTranslation();
   return (
     <Flex direction={{ default: 'column' }}>
       <h1 className="pf-c-title pf-m-2xl">{title}</h1>
       {validSupportedType ? (
         <>
           <div>
-            Resource <ResourceLink inline linkTo={false} kind={kind} name={name} />
+            {t('devconsole~Resource')}{' '}
+            <ResourceLink inline linkTo={false} kind={kind} name={name} />
           </div>
           {loadError ? (
-            <Alert isInline variant="danger" title="This resource is not available">
+            <Alert isInline variant="danger" title={t('devconsole~This resource is not available')}>
               {loadError}
             </Alert>
           ) : (
@@ -36,7 +39,11 @@ const HPAPageHeader: React.FC<HPAPageHeaderProps> = ({
           )}
         </>
       ) : (
-        <Alert isInline variant="danger" title="This is not a supported in-context type" />
+        <Alert
+          isInline
+          variant="danger"
+          title={t('devconsole~This is not a supported in-context type')}
+        />
       )}
     </Flex>
   );
