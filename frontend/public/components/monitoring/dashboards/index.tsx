@@ -356,7 +356,12 @@ const Card: React.FC<CardProps> = ({ panel }) => {
     );
   }
 
+  if (!['grafana-piechart-panel', 'graph', 'singlestat', 'table'].includes(panel.type)) {
+    return null;
+  }
+
   const panelClassModifier = getPanelClassModifier(panel);
+
   return (
     <div
       className={`monitoring-dashboards__panel monitoring-dashboards__panel--${panelClassModifier}`}
