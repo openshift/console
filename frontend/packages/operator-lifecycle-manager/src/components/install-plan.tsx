@@ -44,7 +44,7 @@ import {
 import { InstallPlanKind, InstallPlanApproval, Step } from '../types';
 import { requireOperatorGroup } from './operator-group';
 import { installPlanPreviewModal } from './modals/installplan-preview-modal';
-import { referenceForStepResource } from './index';
+import { InstallPlanReview, referenceForStepResource } from './index';
 
 const tableColumnClasses = [
   '',
@@ -362,11 +362,7 @@ export class InstallPlanPreview extends React.Component<
         {this.state.needsApproval && !hideApprovalBlock && (
           <div className="co-m-pane__body">
             <HintBlock title="Review Manual Install Plan">
-              <p>
-                Once approved, the following resources will be created in order to satisfy the
-                requirements for the components specified in the plan. Click the resource name to
-                view the resource in detail.
-              </p>
+              <InstallPlanReview installPlan={obj} />
               <div className="pf-c-form">
                 <div className="pf-c-form__actions">
                   <Button

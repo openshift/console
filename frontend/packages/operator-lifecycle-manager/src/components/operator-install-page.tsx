@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
-import { ClusterServiceVersionLogo, iconFor } from './index';
+import { ClusterServiceVersionLogo, iconFor, InstallPlanReview } from './index';
 import {
   ActionGroup,
   Alert,
@@ -86,16 +86,13 @@ const InstallFailedMessage: React.FC<InstallFailedMessageProps> = ({ namespace, 
 
 const InstallNeedsApprovalMessage: React.FC<InstallNeedsApprovalMessageProps> = ({
   namespace,
-  obj,
+  subscriptionObj,
+  installObj,
   approve,
 }) => (
   <>
     <h2 className="co-clusterserviceversion-install__heading">Manual approval required</h2>
-    <p>
-      Review the manual install plan. Once approved, the following resources will be created in
-      order to satisfy the requirements for the components specified in the plan. Click the resource
-      name to view the resource in detail.
-    </p>
+    <InstallPlanReview installPlan={installObj} />
     <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
       <Button variant="primary" onClick={approve}>
         Approve
@@ -103,7 +100,7 @@ const InstallNeedsApprovalMessage: React.FC<InstallNeedsApprovalMessageProps> = 
       <Link
         to={`${resourcePathFromModel(
           SubscriptionModel,
-          obj?.metadata?.name,
+          subscriptionObj?.metadata?.name,
           namespace,
         )}?showDelete=true`}
       >
@@ -302,7 +299,8 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = (props) => {
     installMessage = (
       <InstallNeedsApprovalMessage
         namespace={targetNamespace}
-        obj={subscription}
+        subscriptionObj={subscription}
+        installObj={installObj}
         approve={approve}
       />
     );
@@ -438,7 +436,8 @@ type InstallSuccededMessageProps = {
 };
 type InstallNeedsApprovalMessageProps = {
   namespace: string;
-  obj: SubscriptionKind;
+  subscriptionObj: SubscriptionKind;
+  installObj: ClusterServiceVersionKind | InstallPlanKind;
   approve: () => void;
 };
 type InstallingMessageProps = {
