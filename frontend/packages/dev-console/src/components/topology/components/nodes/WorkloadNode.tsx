@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { calculateRadius } from '@console/shared';
 import {
   Node,
   observer,
@@ -12,6 +11,7 @@ import {
 } from '@patternfly/react-topology';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { calculateRadius, useRoutesWatcher } from '@console/shared';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleLinkModel } from '@console/internal/models';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
@@ -20,7 +20,12 @@ import { Decorator } from './Decorator';
 import PodSet, { podSetInnerRadius } from './PodSet';
 import BuildDecorator from './build-decorators/BuildDecorator';
 import { BaseNode } from './BaseNode';
-import { getCheURL, getEditURL, getTopologyResourceObject } from '../../topology-utils';
+import {
+  getCheURL,
+  getEditURL,
+  getRoutesURL,
+  getTopologyResourceObject,
+} from '../../topology-utils';
 import { useDisplayFilters, getFilterById, SHOW_POD_COUNT_FILTER_ID } from '../../filters';
 import MonitoringAlertsDecorator from './MonitoringAlertsDecorator';
 import './WorkloadNode.scss';
@@ -70,6 +75,9 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
   const tipContent = dropTooltip || `Create a visual connector`;
   const showPodCountFilter = getFilterById(SHOW_POD_COUNT_FILTER_ID, filters);
   const showPodCount = showPodCountFilter?.value ?? false;
+  const routeResources = useRoutesWatcher(resourceObj);
+  const routes = routeResources.loaded && !routeResources.loadError ? routeResources.routes : [];
+  const url = getRoutesURL(resourceObj, routes);
 
   return (
     <g>
@@ -105,13 +113,13 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
                 </Decorator>
               </Tooltip>
             ),
-            workloadData.url && (
+            url && (
               <Tooltip key="route" content="Open URL" position={TooltipPosition.right}>
                 <Decorator
                   x={cx + radius - decoratorRadius * 0.7}
                   y={cy + -radius + decoratorRadius * 0.7}
                   radius={decoratorRadius}
-                  href={workloadData.url}
+                  href={url}
                   external
                   circleRef={urlAnchorRef}
                 >

@@ -5,6 +5,7 @@ import { LongArrowAltRightIcon } from '@patternfly/react-icons';
 import { K8sResourceKind, RouteKind } from '../../module/k8s';
 import { RouteLocation } from '../routes';
 import { ResourceLink, SidebarSectionHeading } from '../utils';
+import { useRoutesWatcher, useServicesWatcher } from '@console/shared/src';
 
 const ServicePortList: React.SFC<ServicePortListProps> = ({ service }) => {
   const ports = _.get(service, 'spec.ports', []);
@@ -60,7 +61,13 @@ const RoutesOverviewList: React.SFC<RoutesOverviewListProps> = ({ routes }) => (
   </ul>
 );
 
-export const NetworkingOverview: React.SFC<NetworkingOverviewProps> = ({ routes, services }) => {
+export const NetworkingOverview: React.SFC<NetworkingOverviewProps> = ({ obj }) => {
+  const serviceResources = useServicesWatcher(obj);
+  const services =
+    serviceResources.loaded && !serviceResources.loadError ? serviceResources.services : [];
+  const routeResources = useRoutesWatcher(obj);
+  const routes = routeResources.loaded && !routeResources.loadError ? routeResources.routes : [];
+
   return (
     <>
       <SidebarSectionHeading text="Services" />
@@ -89,8 +96,7 @@ type RoutesOverviewListItemProps = {
 };
 
 type NetworkingOverviewProps = {
-  routes: RouteKind[];
-  services: K8sResourceKind[];
+  obj: K8sResourceKind;
 };
 
 type ServicePortListProps = {

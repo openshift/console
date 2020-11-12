@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import {
   OverviewItem,
   usePluginsOverviewTabSection,
@@ -21,7 +20,7 @@ const { common } = Kebab.factory;
 export const OverviewDetailsResourcesTab: React.SFC<OverviewDetailsResourcesTabProps> = ({
   item,
 }) => {
-  const { hpas, routes, services, obj } = item;
+  const { hpas, obj } = item;
   const pluginComponents = usePluginsOverviewTabSection(item);
   const { buildConfigs } = useBuildConfigsWatcher(obj);
   const hasBuildConfig = buildConfigs?.length > 0;
@@ -34,7 +33,7 @@ export const OverviewDetailsResourcesTab: React.SFC<OverviewDetailsResourcesTabP
       {pluginComponents.map(({ Component, key }) => (
         <Component key={key} item={item} />
       ))}
-      <NetworkingOverview services={services} routes={routes} />
+      <NetworkingOverview obj={obj} />
     </div>
   );
 };

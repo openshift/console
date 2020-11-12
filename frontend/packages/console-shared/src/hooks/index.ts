@@ -8,6 +8,8 @@ export * from './debounce';
 export * from './select-list';
 export * from './useBuildConfigsWatcher';
 export * from './usePodsWatcher';
+export * from './useRoutesWatcher';
+export * from './useServicesWatcher';
 export * from './useQueryParams';
 export * from './version';
 export * from './csv-watch-hook';

@@ -104,14 +104,6 @@ describe('knative data transformer ', () => {
     expect((graphData.nodes[0].data.data as WorkloadData).isKnativeResource).toBeTruthy();
   });
 
-  it('should return knative routes for knative resource', async () => {
-    const graphData = await getTransformedTopologyData(mockResources);
-    expect(
-      (getNodeById('cea9496b-8ce0-11e9-bb7b-0ebb55b110b8', graphData).data.data as WorkloadData)
-        .url,
-    ).toEqual('http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com');
-  });
-
   it('should return revision resources for knative workloads', async () => {
     const graphData = await getTransformedTopologyData(mockResources);
     const revRes = getNodeById('cea9496b-8ce0-11e9-bb7b-0ebb55b110b8', graphData).data.resources

@@ -5,18 +5,12 @@ import {
   PodKind,
   referenceFor,
 } from '@console/internal/module/k8s';
-import {
-  OverviewItem,
-  getRoutesForServices,
-  getReplicationControllersForResource,
-  getServicesForResource,
-} from '@console/shared';
+import { OverviewItem, getReplicationControllersForResource } from '@console/shared';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { Model } from '@patternfly/react-topology';
 import {
   TopologyDataObject,
   TopologyDataResources,
-  getRoutesURL,
   getTopologyGroupItems,
   getTopologyNodeItem,
   mergeGroup,
@@ -53,8 +47,6 @@ export const createVMOverviewItem = (vm: K8sResourceKind, resources: any): Overv
   const vmi = vmis.find((instance) => instance.metadata.name === name) as VMIKind;
   const { visibleReplicationControllers } = getReplicationControllersForResource(vm, resources);
   const [current, previous] = visibleReplicationControllers;
-  const services = getServicesForResource(vm, resources);
-  const routes = getRoutesForServices(services, resources);
   const laucherPod = findVMIPod(vmi, resources.pods.data);
   const pods = laucherPod ? [laucherPod] : [];
 
@@ -63,8 +55,6 @@ export const createVMOverviewItem = (vm: K8sResourceKind, resources: any): Overv
     obj: vm,
     previous,
     pods,
-    routes,
-    services,
     isMonitorable: false,
     isOperatorBackedService: false,
   };
@@ -101,7 +91,6 @@ const createTopologyVMNodeData = (
     resource,
     resources: vmOverview,
     data: {
-      url: getRoutesURL(resource, vmOverview),
       kind: referenceFor(resource),
       vmi,
       vmStatusBundle,

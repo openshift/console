@@ -36,7 +36,7 @@ import {
   GROUP_HEIGHT,
   GROUP_PADDING,
 } from '../components/const';
-import { getRoutesURL, WORKLOAD_TYPES } from '../topology-utils';
+import { WORKLOAD_TYPES } from '../topology-utils';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 
 export const dataObjectFromModel = (node: OdcNodeModel): TopologyDataObject => {
@@ -84,7 +84,6 @@ export const createTopologyNodeData = (
     pods: overviewItem.pods,
     data: {
       monitoringAlerts,
-      url: getRoutesURL(resource, overviewItem),
       kind: referenceFor(resource),
       editURL: deploymentsAnnotations['app.openshift.io/edit-url'],
       vcsURI: deploymentsAnnotations['app.openshift.io/vcs-uri'],
@@ -363,18 +362,6 @@ export const getBaseWatchedResources = (namespace: string): WatchK8sResources<an
     replicationControllers: {
       isList: true,
       kind: 'ReplicationController',
-      namespace,
-      optional: true,
-    },
-    routes: {
-      isList: true,
-      kind: 'Route',
-      namespace,
-      optional: true,
-    },
-    services: {
-      isList: true,
-      kind: 'Service',
       namespace,
       optional: true,
     },

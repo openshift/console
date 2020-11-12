@@ -11,8 +11,6 @@ describe('Pipeline sidebar overview', () => {
     props = {
       item: {
         obj: {},
-        routes: [],
-        services: [],
         pipelines: [{ metadata: { name: 'pipeline', namespace: 'test' }, spec: { tasks: [] } }],
         pipelineRuns: [],
       },
