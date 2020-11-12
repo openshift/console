@@ -2,13 +2,12 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { RouteComponentProps } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { PageBody, getBadgeFromType } from '@console/shared';
+import { PageBody } from '@console/shared';
 import { PageHeading } from '@console/internal/components/utils';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
 import { QUERY_PROPERTIES } from '@console/dev-console/src/const';
-import { KnativeEventingModel } from '../../models';
 import { useChannelList } from '../../utils/create-channel-utils';
 import AddChannel from './channels/AddChannel';
 
@@ -24,10 +23,7 @@ const EventingChannelPage: React.FC<EventingChannelPageProps> = ({ match, locati
       <Helmet>
         <title>{t('knative-plugin~Channel')}</title>
       </Helmet>
-      <PageHeading
-        badge={getBadgeFromType(KnativeEventingModel.badge)}
-        title={t('knative-plugin~Channel')}
-      >
+      <PageHeading title={t('knative-plugin~Channel')}>
         {t(
           'knative-plugin~Create a Knative Channel to create an event forwarding and persistence layer with in-memory and reliable implementations',
         )}
