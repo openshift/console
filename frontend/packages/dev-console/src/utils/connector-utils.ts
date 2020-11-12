@@ -13,7 +13,6 @@ import {
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
 import { ConnectsToData } from '../components/topology/topology-types';
 import { createServiceBinding } from '../components/topology/operators/actions/serviceBindings';
-import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 
 const getModel = (groupVersionKind: string): K8sKind => {
   const m = allModels().get(groupVersionKind);
@@ -207,8 +206,9 @@ export const createResourceConnection = (
 };
 
 const getSourceAndTargetForBinding = async (
-  resources: K8sResourceKind[],
+  resources: K8sResourceKind[] | K8sResourceKind,
   contextualSource: string,
+  serviceBindingAvailable?: boolean,
 ): Promise<{ source: K8sResourceKind; target: K8sResourceKind }> => {
   if (!contextualSource) {
     return Promise.reject(new Error('Cannot do a contextual binding without a source'));
@@ -217,9 +217,14 @@ const getSourceAndTargetForBinding = async (
     referenceForModel(DeploymentConfigModel),
     referenceForModel(DeploymentModel),
   ];
-  const target: K8sResourceKind = resources.find((resource) =>
-    linkingModelRefs.includes(referenceFor(resource)),
-  );
+  let target;
+  if (serviceBindingAvailable) {
+    target = resources;
+  } else {
+    target = (resources as K8sResourceKind[]).find((resource) =>
+      linkingModelRefs.includes(referenceFor(resource)),
+    );
+  }
   const {
     metadata: { namespace },
   } = target;
@@ -246,39 +251,12 @@ export const doConnectsToBinding = async (
 
   return resources;
 };
-export const getOperatorBackedServiceKindMap = (installedOperators) =>
-  installedOperators
-    ? installedOperators.reduce((kindMap, csv) => {
-        (csv?.spec?.customresourcedefinitions?.owned || []).forEach((crd) => {
-          if (!(crd.kind in kindMap)) {
-            kindMap[crd.kind] = csv;
-          }
-        });
-        return kindMap;
-      }, {})
-    : {};
 
 export const doContextualBinding = async (
-  resources: K8sResourceKind[],
+  target: K8sResourceKind,
   contextualSource: string,
-  serviceBindingAvailable: boolean = true,
-): Promise<K8sResourceKind[]> => {
-  if (!serviceBindingAvailable) {
-    return resources;
-  }
-  const { source, target } = await getSourceAndTargetForBinding(resources, contextualSource);
-  const {
-    metadata: { namespace },
-  } = target;
-  const operatorBackedServiceKindMap = getOperatorBackedServiceKindMap(
-    await k8sList(ClusterServiceVersionModel, { ns: namespace }),
-  );
-  const ownerResourceKind = target?.metadata?.ownerReferences?.[0]?.kind;
-  const isOperatorBacked = ownerResourceKind in operatorBackedServiceKindMap;
-
-  if (isOperatorBacked) {
-    await createServiceBinding(source, target);
-  }
-
-  return resources;
+): Promise<K8sResourceKind> => {
+  const { source } = await getSourceAndTargetForBinding(target, contextualSource, true);
+  await createServiceBinding(source, target);
+  return target;
 };

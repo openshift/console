@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 import { CatalogItemHeader } from '@patternfly/react-catalog-view-extension';
-import { DEV_CATALOG_FILTER_KEY as filterKey, Modal } from '@console/shared';
+import { DEV_CATALOG_FILTER_KEY as filterKey, Modal, withQueryParams } from '@console/shared';
 import { history } from '../utils/router';
 import { CatalogTileDetails } from './catalog-item-details';
 import { TileViewPage } from '../utils/tile-view-page';
@@ -12,6 +12,7 @@ import { getAvailableFilters, getIconProps } from './utils';
 
 export type CatalogTileViewPageProps = {
   items: Item[];
+  queryParams: URLSearchParams;
 };
 export type CatalogTileViewPageState = {
   detailsItem: Item;
@@ -159,107 +160,117 @@ export const groupItems = (items: Item[], groupBy: string): Item[] | Record<stri
   return items;
 };
 
-export class CatalogTileViewPage extends React.Component<
-  CatalogTileViewPageProps,
-  CatalogTileViewPageState
-> {
-  static displayName = `CatalogTileViewPage`;
+export const CatalogTileViewPage = withQueryParams<CatalogTileViewPageProps>(
+  class CatalogTileViewPage extends React.Component<
+    CatalogTileViewPageProps,
+    CatalogTileViewPageState
+  > {
+    static displayName = `CatalogTileViewPage`;
 
-  constructor(props) {
-    super(props);
+    constructor(props) {
+      super(props);
 
-    this.state = { detailsItem: null };
-  }
-
-  componentDidMount() {
-    const { items } = this.props;
-    const searchParams = new URLSearchParams(window.location.search);
-    const detailsItemID = searchParams.get('details-item');
-    const detailsItem =
-      detailsItemID && _.find(items, (item) => detailsItemID === _.get(item, 'obj.metadata.uid'));
-    this.setState({ detailsItem });
-  }
-
-  openOverlay = (detailsItem: Item): void => {
-    const params = new URLSearchParams(window.location.search);
-    params.set('details-item', _.get(detailsItem, 'obj.metadata.uid'));
-    setURLParams(params);
-
-    this.setState({ detailsItem });
-  };
-
-  closeOverlay = (): void => {
-    const params = new URLSearchParams(window.location.search);
-    params.delete('details-item');
-    setURLParams(params);
-
-    this.setState({ detailsItem: null });
-  };
-
-  render() {
-    const { items } = this.props;
-    const { detailsItem } = this.state;
-    return (
-      <>
-        <TileViewPage
-          items={items}
-          itemsSorter={(itemsToSort) =>
-            _.sortBy(itemsToSort, ({ tileName }) => tileName.toLowerCase())
-          }
-          getAvailableCategories={() => catalogCategories}
-          // TODO(alecmerdler): Dynamic filters for each Operator and its provided APIs
-          getAvailableFilters={getAvailableFilters}
-          filterGroups={filterGroups}
-          storeFilterKey={filterKey}
-          filterGroupNameMap={filterGroupNameMap}
-          keywordCompare={keywordCompare}
-          filterRetentionPreference={filterPreference}
-          renderTile={this.renderTile}
-          pageDescription={pageDescription}
-          emptyStateInfo="No developer catalog items are being shown due to the filters being applied."
-          groupItems={groupItems}
-          groupByTypes={GroupByTypes}
-        />
-        {this.renderModal(detailsItem)}
-      </>
-    );
-  }
-
-  renderTile = (item: Item) => <CatalogTile item={item} onClick={this.openOverlay} />;
-
-  renderModal = (detailsItem: Item) => {
-    if (!detailsItem) {
-      return null;
+      this.state = { detailsItem: null };
     }
-    return (
-      <Modal
-        className="co-catalog-page__overlay co-catalog-page__overlay--right"
-        header={
-          <>
-            <CatalogItemHeader
-              title={detailsItem.tileName}
-              vendor={detailsItem.tileProvider ? `Provided by ${detailsItem.tileProvider}` : null}
-              {...getIconProps(detailsItem)}
-            />
-            <div className="co-catalog-page__overlay-actions">
-              <Link
-                className="pf-c-button pf-m-primary co-catalog-page__overlay-action"
-                to={detailsItem.href}
-                role="button"
-                title={detailsItem.createLabel}
-                onClick={this.closeOverlay}
-              >
-                {detailsItem.createLabel}
-              </Link>
-            </div>
-          </>
-        }
-        isOpen={!!detailsItem}
-        onClose={this.closeOverlay}
-        title={detailsItem.tileName}
-      >
-        <CatalogTileDetails item={detailsItem} />
-      </Modal>
-    );
-  };
-}
+
+    componentDidMount() {
+      const { items } = this.props;
+      const searchParams = new URLSearchParams(window.location.search);
+      const detailsItemID = searchParams.get('details-item');
+      const detailsItem =
+        detailsItemID && _.find(items, (item) => detailsItemID === _.get(item, 'obj.metadata.uid'));
+      this.setState({ detailsItem });
+    }
+
+    openOverlay = (detailsItem: Item): void => {
+      const params = new URLSearchParams(window.location.search);
+      params.set('details-item', _.get(detailsItem, 'obj.metadata.uid'));
+      setURLParams(params);
+
+      this.setState({ detailsItem });
+    };
+
+    closeOverlay = (): void => {
+      const params = new URLSearchParams(window.location.search);
+      params.delete('details-item');
+      setURLParams(params);
+
+      this.setState({ detailsItem: null });
+    };
+
+    render() {
+      const { items } = this.props;
+      const { detailsItem } = this.state;
+      return (
+        <>
+          <TileViewPage
+            items={items}
+            itemsSorter={(itemsToSort) =>
+              _.sortBy(itemsToSort, ({ tileName }) => tileName.toLowerCase())
+            }
+            getAvailableCategories={() => catalogCategories}
+            // TODO(alecmerdler): Dynamic filters for each Operator and its provided APIs
+            getAvailableFilters={getAvailableFilters}
+            filterGroups={filterGroups}
+            storeFilterKey={filterKey}
+            filterGroupNameMap={filterGroupNameMap}
+            keywordCompare={keywordCompare}
+            filterRetentionPreference={filterPreference}
+            renderTile={this.renderTile}
+            pageDescription={pageDescription}
+            emptyStateInfo="No developer catalog items are being shown due to the filters being applied."
+            groupItems={groupItems}
+            groupByTypes={GroupByTypes}
+          />
+          {this.renderModal(detailsItem)}
+        </>
+      );
+    }
+
+    renderTile = (item: Item) => <CatalogTile item={item} onClick={this.openOverlay} />;
+
+    attachParams = (link: string): string => {
+      const { queryParams } = this.props;
+      const [url, params] = link.split('?');
+      return params
+        ? `${url}?${params}&${queryParams.toString()}`
+        : `${url}?${queryParams.toString()}`;
+    };
+
+    renderModal = (detailsItem: Item) => {
+      if (!detailsItem) {
+        return null;
+      }
+      return (
+        <Modal
+          className="co-catalog-page__overlay co-catalog-page__overlay--right"
+          header={
+            <>
+              <CatalogItemHeader
+                title={detailsItem.tileName}
+                vendor={detailsItem.tileProvider ? `Provided by ${detailsItem.tileProvider}` : null}
+                {...getIconProps(detailsItem)}
+              />
+              <div className="co-catalog-page__overlay-actions">
+                <Link
+                  className="pf-c-button pf-m-primary co-catalog-page__overlay-action"
+                  to={this.attachParams(detailsItem.href)}
+                  role="button"
+                  title={detailsItem.createLabel}
+                  onClick={this.closeOverlay}
+                >
+                  {detailsItem.createLabel}
+                </Link>
+              </div>
+            </>
+          }
+          isOpen={!!detailsItem}
+          onClose={this.closeOverlay}
+          title={detailsItem.tileName}
+        >
+          <CatalogTileDetails item={detailsItem} />
+        </Modal>
+      );
+    };
+  },
+);

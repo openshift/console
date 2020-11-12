@@ -49,6 +49,7 @@ import {
 } from '../descriptors/spec/affinity';
 import { OperandFormProps } from './operand-form';
 import { ProvidedAPI } from '../../types';
+import { usePostFormSubmitAction } from '@console/shared';
 
 /*
  * Matches a path that contains an array index. Use Sting.match against an OperandField 'path'
@@ -518,6 +519,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
   match,
   next,
 }) => {
+  const postFormCallback = usePostFormSubmitAction<K8sResourceKind>();
   const immutableFormData = Immutable.fromJS(formData);
   const handleFormDataUpdate = (path: string, value: any): void => {
     const { regexMatch, index, pathBeforeIndex, pathAfterIndex } = parseArrayPath(path);
@@ -716,7 +718,8 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
           ? immutableFormData.setIn(['metadata', 'namespace'], match.params.ns).toJS()
           : immutableFormData.toJS(),
       )
-        .then(() => history.push(next))
+        .then((res) => postFormCallback(res))
+        .then(() => next && history.push(next))
         .catch((err: Error) => setError(err.message || 'Unknown error.'));
     }
   };

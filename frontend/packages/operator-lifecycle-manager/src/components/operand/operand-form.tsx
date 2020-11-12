@@ -7,6 +7,7 @@ import {
 } from '@console/internal/components/utils';
 import * as _ from 'lodash';
 import * as React from 'react';
+import { usePostFormSubmitAction } from '@console/shared';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind, CRDDescription, APIServiceDefinition } from '../../types';
 import { ClusterServiceVersionLogo } from '../index';
@@ -27,7 +28,7 @@ export const OperandForm: React.FC<OperandFormProps> = ({
 }) => {
   const [errors, setErrors] = React.useState<string[]>([]);
   // const [formData, setFormData] = React.useState(initialData);
-
+  const postFormCallback = usePostFormSubmitAction<K8sResourceKind>();
   const processFormData = ({ metadata, ...rest }) => {
     const data = {
       metadata: {
@@ -41,6 +42,7 @@ export const OperandForm: React.FC<OperandFormProps> = ({
 
   const handleSubmit = ({ formData: submitFormData }) => {
     k8sCreate(model, processFormData(submitFormData))
+      .then((res) => postFormCallback(res))
       .then(() => next && history.push(next))
       .catch((e) => setErrors([e.message]));
   };

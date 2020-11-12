@@ -1,4 +1,4 @@
-import { Plugin } from '@console/plugin-sdk';
+import { Plugin, PostFormSubmissionAction } from '@console/plugin-sdk';
 import {
   TopologyComponentFactory,
   TopologyDataModelFactory,
@@ -8,7 +8,7 @@ import {
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src';
-import { ALLOW_SERVICE_BINDING } from '../../../const';
+import { ALLOW_SERVICE_BINDING, INCONTEXT_ACTIONS_SERVICE_BINDING } from '../../../const';
 import { ServiceBindingModel } from '../../../models';
 import { getCreateConnector } from './actions';
 import {
@@ -18,12 +18,14 @@ import {
   getTopologyFilters,
   applyDisplayOptions,
 } from './index';
+import { doContextualBinding } from '../../../utils/connector-utils';
 
 export type OperatorsTopologyConsumedExtensions =
   | TopologyComponentFactory
   | TopologyDataModelFactory
   | TopologyCreateConnector
-  | TopologyDisplayFilters;
+  | TopologyDisplayFilters
+  | PostFormSubmissionAction;
 
 const getOperatorWatchedResources = (namespace: string): WatchK8sResources<any> => {
   return {
@@ -89,6 +91,16 @@ export const operatorsTopologyPlugin: Plugin<OperatorsTopologyConsumedExtensions
     properties: {
       getTopologyFilters,
       applyDisplayOptions,
+    },
+  },
+  {
+    type: 'PostFormSubmissionAction',
+    properties: {
+      type: INCONTEXT_ACTIONS_SERVICE_BINDING,
+      callback: doContextualBinding,
+    },
+    flags: {
+      required: [ALLOW_SERVICE_BINDING],
     },
   },
 ];

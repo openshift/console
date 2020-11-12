@@ -46,7 +46,7 @@ import {
   FLAG_OPENSHIFT_PIPELINE,
   ALLOW_SERVICE_BINDING,
   FLAG_OPENSHIFT_GITOPS,
-  CONNECTOR_INCONTEXT_ACTIONS,
+  INCONTEXT_ACTIONS_CONNECTS_TO,
 } from './const';
 import {
   newPipelineTemplate,
@@ -1178,7 +1178,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'PostFormSubmissionAction',
     properties: {
-      type: CONNECTOR_INCONTEXT_ACTIONS.connectsTo,
+      type: INCONTEXT_ACTIONS_CONNECTS_TO,
       callback: doConnectsToBinding,
     },
   },

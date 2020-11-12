@@ -20,7 +20,7 @@ export const UNASSIGNED_KEY = '#UNASSIGNED_APP#';
 export const CREATE_APPLICATION_LABEL = 'Create application';
 export const UNASSIGNED_LABEL = 'no application group';
 
-export enum CONNECTOR_INCONTEXT_ACTIONS {
-  /** connects to action for resources */
-  connectsTo = 'connectsTo',
-}
+/** connects to action for resources */
+export const INCONTEXT_ACTIONS_CONNECTS_TO = 'connectsTo';
+/** connector action for service binding */
+export const INCONTEXT_ACTIONS_SERVICE_BINDING = 'serviceBinding';

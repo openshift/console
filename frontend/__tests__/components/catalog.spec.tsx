@@ -28,6 +28,10 @@ import { developerCatalogItems, groupedByOperator } from './catalog-data';
 import { categorizeItems } from '../../public/components/utils/tile-view-page';
 import { Dropdown } from '../../public/components/utils';
 
+jest.mock('react-router-dom', () => ({
+  ...require.requireActual('react-router-dom'),
+  useLocation: () => ({ location: 'https://abcd.com', search: 'foo=bar&a=b' }),
+}));
 describe(CatalogTileViewPage.displayName, () => {
   let wrapper: ReactWrapper<CatalogListPageProps, CatalogListPageState>;
 
