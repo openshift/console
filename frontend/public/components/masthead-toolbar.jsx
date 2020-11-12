@@ -55,7 +55,7 @@ class MastheadToolbarContents_ extends React.Component {
     this._onKebabDropdownToggle = this._onKebabDropdownToggle.bind(this);
     this._onKebabDropdownSelect = this._onKebabDropdownSelect.bind(this);
     this._renderMenu = this._renderMenu.bind(this);
-    this._renderI18n = this._renderI18n.bind(this);
+    this._renderLanguageMenu = this._renderLanguageMenu.bind(this);
     this._onApplicationLauncherDropdownSelect = this._onApplicationLauncherDropdownSelect.bind(this);
     this._onApplicationLauncherDropdownToggle = this._onApplicationLauncherDropdownToggle.bind(this);
     this._onHelpDropdownSelect = this._onHelpDropdownSelect.bind(this);
@@ -404,7 +404,7 @@ class MastheadToolbarContents_ extends React.Component {
 
     return <ApplicationLauncher aria-label="User menu" data-test="user-dropdown" className="co-app-launcher co-user-menu" onSelect={this._onUserDropdownSelect} onToggle={this._onUserDropdownToggle} isOpen={isUserDropdownOpen} items={this._renderApplicationItems(actions)} position="right" toggleIcon={userToggle} isGrouped />;
   }
-  _renderI18n(mobile) {
+  _renderLanguageMenu(mobile) {
     const { flags, consoleLinks, keycloak } = this.props;
     const { isLanguageDropdownOpen } = this.state;
 
@@ -572,7 +572,7 @@ class MastheadToolbarContents_ extends React.Component {
             {/* mobile -- kebab dropdown [(application launcher |) import yaml | documentation, about (| logout)] */}
             <ToolbarItem className="visible-xs-block">{this._renderMenu(true)}</ToolbarItem>
             {/* desktop -- (user dropdown [logout]) */}
-            <ToolbarItem className="hidden-xs">{this._renderI18n(false)}</ToolbarItem>
+            <ToolbarItem className="hidden-xs">{this._renderLanguageMenu(false)}</ToolbarItem>
             <ToolbarItem className="hidden-xs">{this._renderMenu(false)}</ToolbarItem>
           </ToolbarGroup>
         </Toolbar>
