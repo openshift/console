@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
@@ -58,6 +59,8 @@ const InventoryCard: React.FC<DashboardItemProps> = ({
   stopWatchK8sResource,
   resources,
 }) => {
+  const { t } = useTranslation();
+
   React.useEffect(() => {
     k8sResources.forEach((r) => watchK8sResource(r));
     return () => {
@@ -85,7 +88,7 @@ const InventoryCard: React.FC<DashboardItemProps> = ({
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>Inventory</DashboardCardTitle>
+        <DashboardCardTitle>{t('ceph-storage-plugin~Inventory')}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
         <ResourceInventoryItem

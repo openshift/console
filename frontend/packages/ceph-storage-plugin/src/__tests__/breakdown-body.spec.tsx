@@ -12,6 +12,16 @@ import { BreakdownChartLoading } from '../components/dashboard-page/storage-dash
 
 const top5MetricsStats = getStackChartStats(breakdownData.top5, breakdownData.humanize);
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
+const i18ns = 'ceph-storage-plugin';
+
 describe('<BreakdownCardBody>', () => {
   let wrapper: ShallowWrapper<BreakdownBodyProps>;
   beforeEach(() => {
@@ -68,7 +78,7 @@ describe('<BreakdownCardBody>', () => {
 
   it('Shows usage data warning', () => {
     wrapper.setProps({ capacityUsed: '0' });
-    expect(wrapper.text()).toBe('Not enough usage data');
+    expect(wrapper.text()).toBe(`${i18ns}~Not enough usage data`);
   });
 
   it('Shows loading state', () => {
@@ -78,6 +88,6 @@ describe('<BreakdownCardBody>', () => {
 
   it('Shows not available', () => {
     wrapper.setProps({ capacityUsed: null, top5MetricsStats: [], hasLoadError: true });
-    expect(wrapper.text()).toBe('Not available');
+    expect(wrapper.text()).toBe(`dashboard~Not available`);
   });
 });

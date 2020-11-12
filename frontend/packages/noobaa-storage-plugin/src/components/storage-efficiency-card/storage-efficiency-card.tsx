@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -20,6 +21,8 @@ const StorageEfficiencyCard: React.FC<DashboardItemProps> = ({
   stopWatchPrometheusQuery,
   prometheusResults,
 }) => {
+  const { t } = useTranslation();
+
   React.useEffect(() => {
     Object.keys(ObjectStorageEfficiencyQueries).forEach((key) =>
       watchPrometheus(ObjectStorageEfficiencyQueries[key]),
@@ -63,7 +66,9 @@ const StorageEfficiencyCard: React.FC<DashboardItemProps> = ({
 
   const compressionStats = () => {
     const capacityRatio = Number(compressionRatio);
-    return `${Math.round(capacityRatio)}:1`;
+    return t('noobaa-storage-plugin~{{capacityRatio, number}}:1', {
+      capacityRatio: Math.round(capacityRatio),
+    });
   };
 
   const savingStats = () => {
@@ -78,9 +83,10 @@ const StorageEfficiencyCard: React.FC<DashboardItemProps> = ({
     stats: Number(compressionRatio),
     isLoading: !compressionQueryResult && !compressionQueryResultError,
     error: !!compressionQueryResultError || !compressionRatio || Number(compressionRatio) === 1,
-    title: 'Compression ratio',
-    infoText:
-      'Compression ratio refers to the deduplication and compression process effectiveness.',
+    title: t('noobaa-storage-plugin~Compression ratio'),
+    infoText: t(
+      'noobaa-storage-plugin~Compression ratio refers to the deduplication and compression process effectiveness.',
+    ),
     getStats: compressionStats,
   };
 
@@ -89,16 +95,17 @@ const StorageEfficiencyCard: React.FC<DashboardItemProps> = ({
     isLoading: !savingsQueryResult && !logicalSavingsQueryResult && !savingsQueryResultError,
     error:
       !!savingsQueryResultError || !!logicalSavingsQueryResultError || !savings || !logicalSize,
-    title: 'Savings',
-    infoText:
-      'Savings shows the uncompressed and non-deduped data that would have been stored without those techniques',
+    title: t('noobaa-storage-plugin~Savings'),
+    infoText: t(
+      'noobaa-storage-plugin~ Savings shows the uncompressed and non-deduped data that would have been stored without those techniques',
+    ),
     getStats: savingStats,
   };
 
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>Storage Efficiency</DashboardCardTitle>
+        <DashboardCardTitle>{t('noobaa-storage-plugin~Storage Efficiency')}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody className="co-dashboard-card__body--no-padding">
         <EfficiencyItemBody {...compressionRatioProps} />

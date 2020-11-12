@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
@@ -36,6 +37,7 @@ const csvResource = {
 };
 
 const DataConsumptionCard: React.FC = () => {
+  const { t } = useTranslation();
   const [breakdownBy, setBreakdownBy] = React.useState(Breakdown.PROVIDERS);
   const [metric, setMetric] = React.useState(Metrics.IOPS);
   const [serviceType, setServiceType] = React.useState(ServiceType.MCG);
@@ -77,7 +79,7 @@ const DataConsumptionCard: React.FC = () => {
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>Performance</DashboardCardTitle>
+        <DashboardCardTitle>{t('noobaa-storage-plugin~Performance')}</DashboardCardTitle>
         <DataConsumptionDropdown
           selectedService={serviceType}
           setSelectedService={setServiceType}

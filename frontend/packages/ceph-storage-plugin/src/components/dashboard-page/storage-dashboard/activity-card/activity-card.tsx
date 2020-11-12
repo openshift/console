@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
@@ -143,16 +144,20 @@ const OngoingActivity = withDashboardResources(
   },
 );
 
-export const ActivityCard: React.FC = React.memo(() => (
-  <DashboardCard gradient>
-    <DashboardCardHeader>
-      <DashboardCardTitle>Activity</DashboardCardTitle>
-    </DashboardCardHeader>
-    <DashboardCardBody>
-      <ActivityBody className="ceph-activity-card__body">
-        <OngoingActivity />
-        <RecentEvent />
-      </ActivityBody>
-    </DashboardCardBody>
-  </DashboardCard>
-));
+export const ActivityCard: React.FC = React.memo(() => {
+  const { t } = useTranslation();
+
+  return (
+    <DashboardCard gradient>
+      <DashboardCardHeader>
+        <DashboardCardTitle>{t('ceph-storage-plugin~Activity')}</DashboardCardTitle>
+      </DashboardCardHeader>
+      <DashboardCardBody>
+        <ActivityBody className="ceph-activity-card__body">
+          <OngoingActivity />
+          <RecentEvent />
+        </ActivityBody>
+      </DashboardCardBody>
+    </DashboardCard>
+  );
+});

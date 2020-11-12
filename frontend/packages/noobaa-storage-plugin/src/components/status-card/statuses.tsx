@@ -1,30 +1,40 @@
+import { TFunction } from 'i18next';
 import { PrometheusHealthHandler, SubsystemHealth } from '@console/plugin-sdk';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getGaugeValue } from '../../utils';
 import { Phase } from '../../constants';
 
-const nooBaaStatus = {
-  '0': { state: HealthState.OK },
-  '1': {
-    state: HealthState.ERROR,
-    message: 'All resources are unhealthy',
-  },
-  '2': {
-    state: HealthState.WARNING,
-    message: 'Object Bucket has an issue',
-  },
-  '3': {
-    state: HealthState.ERROR,
-    message: 'Many buckets have issues',
-  },
-  '4': {
-    state: HealthState.WARNING,
-    message: 'Some buckets have issues',
-  },
+const nooBaaStatus = (status: string, t: TFunction): SubsystemHealth => {
+  switch (status) {
+    case '0':
+      return { state: HealthState.OK };
+    case '1':
+      return {
+        state: HealthState.ERROR,
+        message: t('noobaa-storage-plugin~All resources are unhealthy'),
+      };
+    case '2':
+      return {
+        state: HealthState.WARNING,
+        message: t('noobaa-storage-plugin~Object Bucket has an issue'),
+      };
+    case '3':
+      return {
+        state: HealthState.ERROR,
+        message: t('noobaa-storage-plugin~Many buckets have issues'),
+      };
+    case '4':
+      return {
+        state: HealthState.WARNING,
+        message: t('noobaa-storage-plugin~Some buckets have issues'),
+      };
+    default:
+      return { state: HealthState.UNKNOWN };
+  }
 };
 
-export const getNooBaaState: PrometheusHealthHandler = (responses, _t, noobaa) => {
+export const getNooBaaState: PrometheusHealthHandler = (responses, t, noobaa) => {
   const { response, error } = responses[0];
   const noobaaLoaded = noobaa?.loaded;
   const noobaaLoadError = noobaa?.loadError;
@@ -39,11 +49,7 @@ export const getNooBaaState: PrometheusHealthHandler = (responses, _t, noobaa) =
   if (!statusIndex) {
     return { state: HealthState.NOT_AVAILABLE };
   }
-  return (
-    nooBaaStatus[statusIndex] || {
-      state: HealthState.UNKNOWN,
-    }
-  );
+  return nooBaaStatus(statusIndex, t);
 };
 
 export const getRGWHealthState = (cr: K8sResourceKind): SubsystemHealth => {

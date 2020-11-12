@@ -9,6 +9,3 @@ export enum Phase {
   FAILURE = 'Failure',
   READY = 'Ready',
 }
-
-export const healthString = 'The object service includes 2 services.';
-export const dataResiliency = 'The data resiliency includes 2 services';

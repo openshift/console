@@ -1,13 +1,19 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { FieldLevelHelp } from '@console/internal/components/utils';
 
 export const EfficiencyItemBody: React.FC<EfficiencyItemBodyProps> = React.memo(
   ({ stats, title, infoText, isLoading, error, getStats }) => {
+    const { t } = useTranslation();
+
     let status: React.ReactElement;
+
     if (isLoading) {
       status = <div className="skeleton-text ceph-storage-efficiency-card__item-body--loading" />;
     } else if (error || stats <= 0) {
-      status = <span className="co-dashboard-text--small text-muted">Not available</span>;
+      status = (
+        <span className="co-dashboard-text--small text-muted">{t('dashboard~Not available')}</span>
+      );
     } else {
       status = <span className="ceph-storage-efficiency-card__item-text">{getStats()}</span>;
     }

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { LoadingInline } from '@console/internal/components/utils';
 
 export const ResourceProvidersBody: React.FC<ResourceProvidersBodyProps> = ({
@@ -7,13 +8,18 @@ export const ResourceProvidersBody: React.FC<ResourceProvidersBodyProps> = ({
   children,
   error,
 }) => {
+  const { t } = useTranslation();
+
   let body: React.ReactNode;
+
   if (isLoading) {
     body = <LoadingInline />;
   }
   if (error || !hasProviders) {
     body = (
-      <div className="nb-resource-providers-card__not-available text-secondary">Not available</div>
+      <div className="nb-resource-providers-card__not-available text-secondary">
+        {t('dashboard~Not available')}
+      </div>
     );
   }
   return <>{body || children}</>;

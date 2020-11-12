@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { InProgressIcon, QuestionCircleIcon } from '@patternfly/react-icons';
 import { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
@@ -66,6 +67,7 @@ export const InventoryItem: React.FC<InventoryItemProps> = React.memo(
     TitleComponent,
     ExpandedComponent,
   }) => {
+    const { t } = useTranslation();
     const [expanded, setExpanded] = React.useState(false);
     const onClick = React.useCallback(() => setExpanded(!expanded), [expanded]);
     const titleMessage = pluralize(count, title, titlePlural, !isLoading && !error);
@@ -90,7 +92,9 @@ export const InventoryItem: React.FC<InventoryItemProps> = React.memo(
               {!expanded && (error || !isLoading) && (
                 <div className="co-inventory-card__item-status">
                   {error ? (
-                    <div className="co-dashboard-text--small text-secondary">Not available</div>
+                    <div className="co-dashboard-text--small text-secondary">
+                      {t('dashboard~Not available')}
+                    </div>
                   ) : (
                     children
                   )}
@@ -112,7 +116,9 @@ export const InventoryItem: React.FC<InventoryItemProps> = React.memo(
         {(error || !isLoading) && (
           <div className="co-inventory-card__item-status">
             {error ? (
-              <div className="co-dashboard-text--small text-secondary">Not available</div>
+              <div className="co-dashboard-text--small text-secondary">
+                {t('dashboard~Not available')}
+              </div>
             ) : (
               children
             )}

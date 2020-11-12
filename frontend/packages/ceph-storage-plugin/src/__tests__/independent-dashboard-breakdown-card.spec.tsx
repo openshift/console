@@ -1,21 +1,44 @@
 import * as React from 'react';
 import { ShallowWrapper, shallow } from 'enzyme';
-
+import { Select } from '@patternfly/react-core';
 import { DashboardItemProps } from '@console/internal/components/dashboard/with-dashboard-resources';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import { Select } from '@patternfly/react-core';
+import { PROJECTS, STORAGE_CLASSES, PODS } from '../constants';
 import { BreakdownCard } from '../components/independent-dashboard-page/breakdown-card';
 import { dashboardData } from '../__mocks__/independent-mode-dashboard-data';
 import { BreakdownCardBody } from '../components/dashboard-page/storage-dashboard/breakdown-card/breakdown-body';
 import { getSelectOptions } from '../components/dashboard-page/storage-dashboard/breakdown-card/breakdown-dropdown';
-import { breakdownIndependentQueryMap } from '../constants/queries';
+
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
+const i18ns = 'ceph-storage-plugin';
 
 describe('BreakdownCard', () => {
   let wrapper: ShallowWrapper<DashboardItemProps>;
-  const keys = Object.keys(breakdownIndependentQueryMap);
-  const breakdownSelectItems = getSelectOptions(keys);
+  const dropdownOptions = [
+    {
+      name: `${i18ns}~${PROJECTS}`,
+      id: PROJECTS,
+    },
+    {
+      name: `${i18ns}~${STORAGE_CLASSES}`,
+      id: STORAGE_CLASSES,
+    },
+    {
+      name: `${i18ns}~${PODS}`,
+      id: PODS,
+    },
+  ];
+
+  const breakdownSelectItems = getSelectOptions(dropdownOptions);
   beforeEach(() => {
     wrapper = shallow(
       <BreakdownCard

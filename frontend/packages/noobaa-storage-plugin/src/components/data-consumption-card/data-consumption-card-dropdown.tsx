@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Select,
   SelectVariant,
@@ -20,20 +21,6 @@ import {
 } from '../../constants';
 import './data-consumption-card.scss';
 
-const RGWDropdown = [
-  {
-    group: Groups.METRIC,
-    items: [Metrics.LATENCY, Metrics.BANDWIDTH],
-  },
-];
-
-const ServiceTypeDropdown = [
-  {
-    group: Groups.SERVICE,
-    items: [ServiceType.MCG, ServiceType.RGW],
-  },
-];
-
 export const DataConsumptionDropdown: React.FC<DataConsumptionDropdownProps> = (props) => {
   const {
     selectedService,
@@ -44,30 +31,63 @@ export const DataConsumptionDropdown: React.FC<DataConsumptionDropdownProps> = (
     setSelectedMetric,
     isRgwSupported,
   } = props;
+  const { t } = useTranslation();
   const [isOpenComboDropdown, setComboDropdown] = React.useState(false);
   const [isOpenServiceTypeDropdown, setServiceTypeDropdown] = React.useState(false);
 
   const MCGDropdown = React.useMemo(
     () => [
       {
-        group: Groups.BREAKDOWN,
-        items: [Breakdown.PROVIDERS, Breakdown.ACCOUNTS],
+        group: t('noobaa-storage-plugin~Break by'),
+        items: [
+          { id: Breakdown.PROVIDERS, name: t('noobaa-storage-plugin~Providers') },
+          { id: Breakdown.ACCOUNTS, name: t('noobaa-storage-plugin~Accounts') },
+        ],
       },
       {
-        group: Groups.METRIC,
+        group: t('noobaa-storage-plugin~Metric'),
         items: [
-          Metrics.IOPS,
-          ...(selectedBreakdown === Breakdown.ACCOUNTS ? [Metrics.LOGICAL] : [Metrics.PHY_VS_LOG]),
-          ...(selectedBreakdown === Breakdown.PROVIDERS ? [Metrics.EGRESS] : []),
+          { name: t('noobaa-storage-plugin~I/O Operations'), id: Metrics.IOPS },
+          ...(selectedBreakdown === Breakdown.ACCOUNTS
+            ? [{ name: t('noobaa-storage-plugin~Logial Used Capacity'), id: Metrics.LOGICAL }]
+            : [
+                {
+                  name: t('noobaa-storage-plugin~Physical vs. Logical used capacity'),
+                  id: Metrics.PHY_VS_LOG,
+                },
+              ]),
+          ...(selectedBreakdown === Breakdown.PROVIDERS
+            ? [{ name: t('noobaa-storage-plugin~Egress'), id: Metrics.EGRESS }]
+            : []),
         ],
       },
     ],
-    [selectedBreakdown],
+    [selectedBreakdown, t],
   );
+
+  const RGWDropdown = [
+    {
+      group: t('noobaa-storage-plugin~Metric'),
+      items: [
+        { name: t('noobaa-storage-plugin~Latency'), id: Metrics.LATENCY },
+        { name: t('noobaa-storage-plugin~Bandwidth'), id: Metrics.BANDWIDTH },
+      ],
+    },
+  ];
+
+  const ServiceTypeDropdown = [
+    {
+      group: t('noobaa-storage-plugin~Service Type'),
+      items: [
+        { name: ServiceType.MCG, id: ServiceType.MCG },
+        { name: ServiceType.RGW, id: ServiceType.RGW },
+      ],
+    },
+  ];
 
   const onSelectComboDropdown = (e: React.MouseEvent) => {
     const { id } = e.currentTarget;
-    const isBreakdown = (MCGDropdown[0].items as Breakdown[]).includes(id as Breakdown);
+    const isBreakdown = id === Breakdown.ACCOUNTS || id === Breakdown.PROVIDERS;
     const breakdownBy = isBreakdown ? Groups.BREAKDOWN : Groups.METRIC;
     switch (breakdownBy) {
       case Groups.BREAKDOWN:
@@ -119,7 +139,9 @@ export const DataConsumptionDropdown: React.FC<DataConsumptionDropdownProps> = (
           isOpen={isOpenServiceTypeDropdown}
           selections={[selectedService]}
           isGrouped
-          placeholderText={`Type: ${selectedService}`}
+          placeholderText={t('noobaa-storage-plugin~Type: {{selectedService}}', {
+            selectedService,
+          })}
           isCheckboxSelectionBadgeHidden
         >
           {serviceDropdownItems}
@@ -134,7 +156,12 @@ export const DataConsumptionDropdown: React.FC<DataConsumptionDropdownProps> = (
           <OptionsMenuToggle
             onToggle={() => setComboDropdown(!isOpenComboDropdown)}
             toggleTemplate={
-              selectedBreakdown ? `${selectedMetric} by ${selectedBreakdown}` : selectedMetric
+              selectedBreakdown
+                ? t('noobaa-storage-plugin~{{selectedMetric}} by {{selectedBreakdown}}', {
+                    selectedMetric,
+                    selectedBreakdown,
+                  })
+                : selectedMetric
             }
           />
         }

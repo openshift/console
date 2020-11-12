@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { getInfrastructurePlatform } from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
@@ -45,6 +46,7 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
     InfrastructureModel,
     'cluster',
   );
+  const { t } = useTranslation();
   React.useEffect(() => {
     watchK8sResource(SubscriptionResource);
     watchPrometheus(NOOBAA_SYSTEM_NAME_QUERY);
@@ -84,16 +86,21 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>Details</DashboardCardTitle>
+        <DashboardCardTitle>{t('noobaa-storage-plugin~Details')}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
         <DetailsBody>
-          <DetailItem key="service_name" title="Service Name" error={false} isLoading={false}>
+          <DetailItem
+            key="service_name"
+            title={t('noobaa-storage-plugin~Service Name')}
+            error={false}
+            isLoading={false}
+          >
             OpenShift Container Storage
           </DetailItem>
           <DetailItem
             key="system_name"
-            title="System Name"
+            title={t('noobaa-storage-plugin~System Name')}
             isLoading={!systemResult || !dashboardLinkResult}
             error={systemLoadError || dashboardLinkLoadError || !systemName || !systemLink}
           >
@@ -113,7 +120,7 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
           </DetailItem>
           <DetailItem
             key="provider"
-            title="Provider"
+            title={t('noobaa-storage-plugin~Provider')}
             error={!!infrastructureError || (infrastructure && !infrastructurePlatform)}
             isLoading={!infrastructureLoaded}
           >
@@ -121,7 +128,7 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
           </DetailItem>
           <DetailItem
             key="version"
-            title="Version"
+            title={t('noobaa-storage-plugin~Version')}
             isLoading={!subscriptionLoaded}
             error={subscriptionLoaded && !ocsVersion}
           >

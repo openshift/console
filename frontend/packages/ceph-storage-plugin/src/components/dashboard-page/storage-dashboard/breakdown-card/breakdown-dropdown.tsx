@@ -8,11 +8,17 @@ import {
 
 type GroupedSelectItems = {
   group: string;
-  items: string[];
+  items: { name: string; id: string }[];
 }[];
 
-export const getSelectOptions = (selectItems: string[]): React.ReactElement[] =>
-  selectItems.map((item) => <SelectOption key={item} value={item} />);
+export const getSelectOptions = (
+  selectItems: { name: string; id: string }[],
+): React.ReactElement[] =>
+  selectItems.map(({ id, name }) => (
+    <SelectOption key={id} value={id}>
+      {name}
+    </SelectOption>
+  ));
 
 export const getGroupedSelectOptions = (
   groupedSelectItems: GroupedSelectItems,
@@ -37,11 +43,11 @@ export const getOptionsMenuItems = (
       {items.map((item) => (
         <OptionsMenuItem
           onSelect={onSelect}
-          isSelected={selectedItems.includes(item)}
-          id={item}
-          key={item}
+          isSelected={selectedItems.includes(item.id)}
+          id={item.id}
+          key={item.id}
         >
-          {item}
+          {item.name}
         </OptionsMenuItem>
       ))}
     </OptionsMenuItemGroup>

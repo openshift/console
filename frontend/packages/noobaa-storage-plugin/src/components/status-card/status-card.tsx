@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { Gallery, GalleryItem } from '@patternfly/react-core';
 import { SubsystemHealth } from '@console/plugin-sdk';
@@ -79,6 +80,7 @@ const StatusCard: React.FC<DashboardItemProps> = ({
   prometheusResults,
 }) => {
   const isRGWSupported = useFlag(RGW_FLAG);
+  const { t } = useTranslation();
 
   const [secretData, secretLoaded, secretLoadError] = useK8sWatchResource<K8sResourceKind>(
     secretResource,
@@ -144,24 +146,26 @@ const StatusCard: React.FC<DashboardItemProps> = ({
 
   const MCGState = getNooBaaState(
     [{ response: healthStatusResult, error: healthStatusError }],
-    null,
+    t,
     noobaa,
   );
 
   const RGWState = getRGWHealthState(rgw);
 
-  const dataResiliencyState: SubsystemHealth = getDataResiliencyState([
-    { response: progressResult, error: progressError },
-  ]);
+  const dataResiliencyState: SubsystemHealth = getDataResiliencyState(
+    [{ response: progressResult, error: progressError }],
+    t,
+  );
 
-  const RGWResiliencyState = getDataResiliencyState([
-    { response: rgwResiliencyResult, error: rgwResiliencyError },
-  ]);
+  const RGWResiliencyState = getDataResiliencyState(
+    [{ response: rgwResiliencyResult, error: rgwResiliencyError }],
+    t,
+  );
 
   return (
     <DashboardCard gradient>
       <DashboardCardHeader>
-        <DashboardCardTitle>Status</DashboardCardTitle>
+        <DashboardCardTitle>{t('noobaa-storage-plugin~Status')}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
         <HealthBody>

@@ -390,6 +390,7 @@ export type PrometheusHealthHandler = (
 
 export type ResourceHealthHandler<R extends ResourcesObject> = (
   resourcesResult: WatchK8sResults<R>,
+  t?: TFunction,
 ) => SubsystemHealth;
 
 export type OperatorHealthHandler = (resources: FirehoseResourcesResult) => OperatorHealth;

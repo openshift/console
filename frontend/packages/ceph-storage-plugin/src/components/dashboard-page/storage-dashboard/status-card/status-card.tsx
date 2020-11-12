@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { Gallery, GalleryItem } from '@patternfly/react-core';
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
@@ -51,6 +52,7 @@ export const StatusCard: React.FC<DashboardItemProps> = ({
   stopWatchPrometheusQuery,
   prometheusResults,
 }) => {
+  const { t } = useTranslation();
   const [data, loaded, loadError] = useK8sWatchResource<K8sResourceKind[]>(cephClusterResource);
 
   React.useEffect(() => {
@@ -66,29 +68,30 @@ export const StatusCard: React.FC<DashboardItemProps> = ({
   ]) as PrometheusResponse;
   const resiliencyProgressError = prometheusResults.getIn([resiliencyProgressQuery, 'loadError']);
 
-  const cephHealthState = getCephHealthState({ ceph: { data, loaded, loadError } });
-  const dataResiliencyState = getDataResiliencyState([
-    { response: resiliencyProgress, error: resiliencyProgressError },
-  ]);
+  const cephHealthState = getCephHealthState({ ceph: { data, loaded, loadError } }, t);
+  const dataResiliencyState = getDataResiliencyState(
+    [{ response: resiliencyProgress, error: resiliencyProgressError }],
+    t,
+  );
 
   return (
     <DashboardCard gradient>
       <DashboardCardHeader>
-        <DashboardCardTitle>Status</DashboardCardTitle>
+        <DashboardCardTitle>{t('ceph-storage-plugin~Status')}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
         <HealthBody>
           <Gallery className="co-overview-status__health" hasGutter>
             <GalleryItem>
               <HealthItem
-                title="OCS Cluster"
+                title={t('ceph-storage-plugin~OCS Cluster')}
                 state={cephHealthState.state}
                 details={cephHealthState.message}
               />
             </GalleryItem>
             <GalleryItem>
               <HealthItem
-                title="Data Resiliency"
+                title={t('ceph-storage-plugin~Data Resiliency')}
                 state={dataResiliencyState.state}
                 details={dataResiliencyState.message}
               />

@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import i18next from 'i18next';
 import * as models from './models';
 import {
   AlertAction,
@@ -104,7 +105,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Tab',
     properties: {
       id: 'persistent-storage',
-      title: 'Persistent Storage',
+      title: i18next.t('ceph-storage-plugin~Persistent Storage'),
     },
     flags: {
       required: [OCS_CONVERGED_FLAG],
@@ -239,7 +240,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Dashboards/Overview/Health/Resource',
     properties: {
-      title: 'Storage',
+      title: i18next.t('ceph-storage-plugin~Storage'),
       resources: {
         ceph: {
           kind: referenceForModel(models.CephClusterModel),
@@ -278,7 +279,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Tab',
     properties: {
       id: 'independent-dashboard',
-      title: 'Persistent Storage',
+      title: i18next.t('ceph-storage-plugin~Persistent Storage'),
     },
     flags: {
       required: [OCS_INDEPENDENT_FLAG],
@@ -411,7 +412,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'AlertAction',
     properties: {
       alert: OSD_DOWN_ALERT,
-      text: 'Troubleshoot',
+      text: i18next.t('ceph-storage-plugin~Troubleshoot'),
       path: getAlertActionPath,
     },
     flags: {
@@ -422,7 +423,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'AlertAction',
     properties: {
       alert: OSD_DOWN_AND_OUT_ALERT,
-      text: 'Troubleshoot',
+      text: i18next.t('ceph-storage-plugin~Troubleshoot'),
       path: getAlertActionPath,
     },
     flags: {

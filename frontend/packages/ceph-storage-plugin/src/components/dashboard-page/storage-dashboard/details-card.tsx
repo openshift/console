@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { getInfrastructurePlatform } from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
@@ -43,6 +44,7 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
   stopWatchK8sResource,
   resources,
 }) => {
+  const { t } = useTranslation();
   const [infrastructure, infrastructureLoaded, infrastructureError] = useK8sGet<K8sResourceKind>(
     InfrastructureModel,
     'cluster',
@@ -71,16 +73,21 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>Details</DashboardCardTitle>
+        <DashboardCardTitle>{t('ceph-storage-plugin~Details')}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
         <DetailsBody>
-          <DetailItem key="service_name" title="Service Name" isLoading={false} error={false}>
+          <DetailItem
+            key="service_name"
+            title={t('ceph-storage-plugin~Service Name')}
+            isLoading={false}
+            error={false}
+          >
             OpenShift Container Storage
           </DetailItem>
           <DetailItem
             key="cluster_name"
-            title="Cluster Name"
+            title={t('ceph-storage-plugin~Cluster Name')}
             error={!!ocsError}
             isLoading={!ocsLoaded}
           >
@@ -88,16 +95,16 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
           </DetailItem>
           <DetailItem
             key="provider"
-            title="Provider"
+            title={t('ceph-storage-plugin~Provider')}
             error={!!infrastructureError || (infrastructure && !infrastructurePlatform)}
             isLoading={!infrastructureLoaded}
           >
             {infrastructurePlatform}
           </DetailItem>
-          <DetailItem title="Mode">Internal</DetailItem>
+          <DetailItem title={t('ceph-storage-plugin~Mode')}>Internal</DetailItem>
           <DetailItem
             key="version"
-            title="Version"
+            title={t('ceph-storage-plugin~Version')}
             isLoading={!subscriptionLoaded}
             error={subscriptionLoaded && !ocsVersion}
           >

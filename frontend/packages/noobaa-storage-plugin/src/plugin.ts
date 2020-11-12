@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import i18next from 'i18next';
 import {
   DashboardsCard,
   DashboardsTab,
@@ -105,7 +106,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Tab',
     properties: {
       id: 'object-service',
-      title: 'Object Service',
+      title: i18next.t('noobaa-storage-plugin~Object Service'),
     },
     flags: {
       required: [NOOBAA_FLAG, OCS_FLAG],
