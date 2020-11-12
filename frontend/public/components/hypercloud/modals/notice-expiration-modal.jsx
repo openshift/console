@@ -49,7 +49,7 @@ class NoticeExpirationModal extends Component {
       <form name="form" className="modal-content">
         <ModalTitle>세션 만료 알림</ModalTitle>
         <ModalBody>
-          <div className="form-group" style={{ width: '400px' }}>
+          <div className="form-group">
             <label className="control-label">{Math.floor(this.state.time)}초 뒤에 자동으로 로그아웃 될 예정입니다.</label>
             <label className="control-label">로그인 상태를 유지하시려면 연장 버튼을 클릭해주세요.</label>
           </div>
