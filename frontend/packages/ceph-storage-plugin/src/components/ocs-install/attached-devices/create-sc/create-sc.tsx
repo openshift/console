@@ -15,7 +15,6 @@ import { fetchK8s } from '@console/internal/graphql/client';
 import { LocalVolumeDiscovery } from '@console/local-storage-operator-plugin/src/models';
 import { getDiscoveryRequestData } from '@console/local-storage-operator-plugin/src/components/auto-detect-volume/discovery-request-data';
 import {
-  LOCAL_STORAGE_NAMESPACE,
   DISCOVERY_CR_NAME,
   HOSTNAME_LABEL_KEY,
   LABEL_OPERATOR,
@@ -43,6 +42,7 @@ const makeAutoDiscoveryCall = (
   onNext: OnNextClick,
   state: State,
   dispatch: React.Dispatch<Action>,
+  ns: string,
 ) => {
   dispatch({ type: 'setIsLoading', value: true });
   const selectedNodes = getNodes(
@@ -51,7 +51,7 @@ const makeAutoDiscoveryCall = (
     state.nodeNamesForLVS,
   );
 
-  fetchK8s(LocalVolumeDiscovery, DISCOVERY_CR_NAME, LOCAL_STORAGE_NAMESPACE)
+  fetchK8s(LocalVolumeDiscovery, DISCOVERY_CR_NAME, ns)
     .then((discoveryRes: K8sResourceKind) => {
       const nodeSelectorTerms = discoveryRes?.spec?.nodeSelector?.nodeSelectorTerms;
       const [selectorIndex, expIndex] = nodeSelectorTerms
@@ -81,7 +81,7 @@ const makeAutoDiscoveryCall = (
       if (err.message === AUTO_DISCOVER_ERR_MSG) {
         throw err;
       }
-      const requestData = getDiscoveryRequestData(state);
+      const requestData = getDiscoveryRequestData({ ...state, ns });
       return k8sCreate(LocalVolumeDiscovery, requestData);
     })
     .then(() => {
@@ -95,7 +95,7 @@ const makeAutoDiscoveryCall = (
     });
 };
 
-const CreateSC: React.FC<CreateSCProps> = ({ match }) => {
+const CreateSC: React.FC<CreateSCProps> = ({ match, lsoNs }) => {
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const [discoveriesData, discoveriesLoaded, discoveriesLoadError] = useK8sWatchResource<
     K8sResourceKind[]
@@ -158,7 +158,7 @@ const CreateSC: React.FC<CreateSCProps> = ({ match }) => {
     {
       id: CreateStepsSC.STORAGECLASS,
       name: 'Create Storage Class',
-      component: <CreateLocalVolumeSet dispatch={dispatch} state={state} />,
+      component: <CreateLocalVolumeSet dispatch={dispatch} state={state} ns={lsoNs} />,
     },
     {
       id: CreateStepsSC.STORAGECLUSTER,
@@ -188,7 +188,7 @@ const CreateSC: React.FC<CreateSCProps> = ({ match }) => {
     // TODO: Need to think of a way to remove this
     dispatch({ type: 'setOnNextClick', value: onNext });
     if (activeStep.id === CreateStepsSC.DISCOVER) {
-      makeAutoDiscoveryCall(onNext, state, dispatch);
+      makeAutoDiscoveryCall(onNext, state, dispatch, lsoNs);
     } else if (activeStep.id === CreateStepsSC.STORAGECLASS) {
       dispatch({ type: 'setShowConfirmModal', value: true });
     }
@@ -260,6 +260,7 @@ const CreateSC: React.FC<CreateSCProps> = ({ match }) => {
 
 type CreateSCProps = {
   match: RouterMatch<{ appName: string; ns: string }>;
+  lsoNs: string;
 };
 
 export default CreateSC;

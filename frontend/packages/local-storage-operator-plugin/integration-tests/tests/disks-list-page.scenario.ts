@@ -10,7 +10,6 @@ import {
   checkDiskFilter,
   clearDiskFilter,
 } from '../views/disks-list-page.views';
-import { LOCAL_STORAGE_NAMESPACE } from '../../src/constants';
 import {
   LocalVolumeDiscoveryResultKind,
   DiskMetadata,
@@ -22,9 +21,7 @@ describe('Disk list is accessible from Nodes view', () => {
   let discoveredDevices: DiskMetadata[];
   beforeAll(async () => {
     const lvdrJson = JSON.parse(
-      execSync(
-        `kubectl get localvolumediscoveryresults -n ${LOCAL_STORAGE_NAMESPACE} -o json`,
-      ).toString(),
+      execSync(`kubectl get localvolumediscoveryresults -A -o json`).toString(),
     );
     const lvdr: LocalVolumeDiscoveryResultKind = lvdrJson.items[0];
     const { nodeName } = lvdr.spec;
