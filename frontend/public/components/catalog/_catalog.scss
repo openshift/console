@@ -6,7 +6,6 @@ $catalog-item-icon-size-sm: 24px;
 $co-modal-ignore-warning-icon-width: 30px;
 $catalog-tile-width: $co-m-catalog-tile-width;
 
-
 // reset font size back to 13px since console h5 font size is 14px
 .catalog-item-header-pf-subtitle {
   font-size: 13px;
@@ -105,7 +104,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   padding: ($grid-gutter-width / 2) 0 0;
 
   &__btn-group__group-by {
-    display: inline;
+    display: inline-flex;
     margin-left: var(--pf-global--spacer--xl);
   }
 
@@ -158,8 +157,13 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 
   &__input {
+    display: inline-flex !important;
     margin: 0 10px 20px 30px;
     width: auto !important;
+  }
+
+  &__sort {
+    display: inline-flex;
   }
 
   &__num-items {
@@ -225,7 +229,8 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   &__overlay-actions {
     display: flex;
     flex-wrap: wrap;
-    padding: var(--pf-global--spacer--lg) var(--pf-global--spacer--md) var(--pf-global--spacer--md) 0;
+    padding: var(--pf-global--spacer--lg) var(--pf-global--spacer--md) var(--pf-global--spacer--md)
+      0;
     white-space: normal;
   }
 
@@ -368,7 +373,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 // Remove once https://github.com/patternfly/patternfly-react/issues/4117 is fixed
 .vertical-tabs-pf-tab {
   &.active a {
-    color: var(--pf-global--link--Color) !important;
+    // color: var(--pf-global--link--Color) !important;
 
     &::before {
       background: var(--pf-global--link--Color);

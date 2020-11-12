@@ -1,6 +1,8 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { PageHeading, skeletonCatalog, StatusBox } from '@console/internal/components/utils';
 import { CatalogService } from './service/CatalogServiceProvider';
+import CatalogView from './catalog-view/CatalogView';
 
 type CatalogControllerProps = CatalogService;
 
@@ -20,6 +22,25 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
     description = catalogExtensions[0].properties.catalogDescription;
   }
 
+  // initialFilters cannot be typed as it has multiple usages
+  const getAvailableFilters = React.useCallback(
+    (initialFilters) => {
+      const filters = _.cloneDeep(initialFilters);
+      filters.type = catalogExtensions.reduce((typeFilters, extension) => {
+        typeFilters[extension.properties.type] = {
+          label: extension.properties.title,
+          value: extension.properties.type,
+          active: false,
+        };
+
+        return typeFilters;
+      }, {});
+
+      return filters;
+    },
+    [catalogExtensions],
+  );
+
   return (
     <>
       <div className="co-m-page__body">
@@ -34,7 +55,11 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
               loadError={loadError}
               label="Catalog items"
             >
-              <h2>Loaded Catalog Items - {items.length}</h2>
+              <CatalogView
+                items={items}
+                description={description}
+                getAvailableFilters={getAvailableFilters}
+              />
             </StatusBox>
           </div>
         </div>

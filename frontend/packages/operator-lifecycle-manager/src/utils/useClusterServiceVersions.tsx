@@ -64,7 +64,6 @@ const normalizeClusterServiceVersions = (
           value: <p>{longDescription}</p>,
         },
         {
-          label: 'Operator Description',
           value: operatorDescription,
         },
       ];
