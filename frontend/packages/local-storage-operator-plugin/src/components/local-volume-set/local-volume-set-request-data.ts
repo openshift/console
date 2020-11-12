@@ -5,7 +5,7 @@ import { State } from './state';
 import { HOSTNAME_LABEL_KEY, LABEL_OPERATOR } from '../../constants';
 import { getNodes, getHostNames } from '../../utils';
 
-export const getLocalVolumeSetRequestData = (state: State, ns?: string): LocalVolumeSetKind => {
+export const getLocalVolumeSetRequestData = (state: State, ns: string): LocalVolumeSetKind => {
   const nodes = getNodes(state.showNodesListOnLVS, state.nodeNamesForLVS, state.nodeNames);
   const requestData = {
     apiVersion: apiVersionForModel(LocalVolumeSetModel),

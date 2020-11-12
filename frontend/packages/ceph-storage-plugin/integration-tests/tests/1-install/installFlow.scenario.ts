@@ -4,10 +4,7 @@ import * as _ from 'lodash';
 import { Base64 } from 'js-base64';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import { click } from '@console/shared/src/test-utils/utils';
-import {
-  LOCAL_STORAGE_NAMESPACE,
-  DISCOVERY_CR_NAME,
-} from '@console/local-storage-operator-plugin/src/constants';
+import { DISCOVERY_CR_NAME } from '@console/local-storage-operator-plugin/src/constants';
 import {
   MINUTE,
   OCS_NODE_LABEL,
@@ -219,9 +216,7 @@ if (TEST_PLATFORM === Platform.OCS && MODE === Mode.ATTACHED_DEVICES) {
 
         // verify dicovery CR got created
         const discoveryCR = JSON.parse(
-          execSync(
-            `kubectl get LocalVolumeDiscovery ${DISCOVERY_CR_NAME} -n ${LOCAL_STORAGE_NAMESPACE} -o json`,
-          ).toString(),
+          execSync(`kubectl get LocalVolumeDiscovery ${DISCOVERY_CR_NAME} -A -o json`).toString(),
         );
         const numOfNodes =
           discoveryCR?.spec?.nodeSelector?.nodeSelectorTerms?.[0]?.matchExpressions?.[0]?.values
