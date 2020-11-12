@@ -70,7 +70,6 @@ const testSuites = {
     '../packages/operator-lifecycle-manager/integration-tests/scenarios/descriptors.scenario.ts',
     '../packages/operator-lifecycle-manager/integration-tests/scenarios/operator-hub.scenario.ts',
     '../packages/operator-lifecycle-manager/integration-tests/scenarios/global-installmode.scenario.ts',
-    '../packages/operator-lifecycle-manager/integration-tests/scenarios/single-installmode.scenario.ts',
   ]),
   performance: suite(['tests/performance.scenario.ts']),
   serviceCatalog: suite([

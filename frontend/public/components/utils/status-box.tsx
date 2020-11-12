@@ -74,8 +74,16 @@ EmptyBox.displayName = 'EmptyBox';
 
 export const MsgBox: React.FC<MsgBoxProps> = ({ title, detail, className = '' }) => (
   <Box className={className}>
-    {title && <div className="cos-status-box__title">{title}</div>}
-    {detail && <div className="text-center cos-status-box__detail">{detail}</div>}
+    {title && (
+      <div className="cos-status-box__title" data-test="msg-box-title">
+        {title}
+      </div>
+    )}
+    {detail && (
+      <div className="text-center cos-status-box__detail" data-test="msg-box-detail">
+        {detail}
+      </div>
+    )}
   </Box>
 );
 MsgBox.displayName = 'MsgBox';

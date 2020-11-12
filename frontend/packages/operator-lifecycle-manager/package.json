@@ -22,9 +22,6 @@
       "olmOperatorHub": [
         "integration-tests/scenarios/operator-hub.scenario.ts"
       ],
-      "olmSingle": [
-        "integration-tests/scenarios/single-installmode.scenario.ts"
-      ],
       "olmGlobal": [
         "integration-tests/scenarios/global-installmode.scenario.ts"
       ],
