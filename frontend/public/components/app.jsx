@@ -200,7 +200,7 @@ if ('serviceWorker' in navigator) {
   }
 }
 const eventLogger = (event, error) => {
-  console.log('[onKeycloakEvent]', event, error);
+  // console.log('[onKeycloakEvent]', event, error);
   switch (event) {
     case 'onReady':
       break;
@@ -218,11 +218,9 @@ const eventLogger = (event, error) => {
       break;
   }
 };
-const tokenLogger = tokens => {
-  // console.log('[onKeycloakTokens]', tokens);
-};
+
 render(
-  <ReactKeycloakProvider authClient={keycloak} initOptinitOptions={{ onLoad: 'check-sso' }} LoadingComponent={<LoadingBox />} onTokens={tokenLogger} onEvent={eventLogger}>
+  <ReactKeycloakProvider authClient={keycloak} initOptinitOptions={{ onLoad: 'check-sso' }} LoadingComponent={<LoadingBox />} onEvent={eventLogger}>
     <Provider store={store}>
       <Router history={history} basename={window.SERVER_FLAGS.basePath}>
         <Switch>
