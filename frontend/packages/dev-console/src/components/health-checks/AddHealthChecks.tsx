@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import Helmet from 'react-helmet';
+import { useTranslation } from 'react-i18next';
 import { FormikProps, FormikValues } from 'formik';
 import { Form, Button } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
@@ -39,6 +40,7 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
   dirty,
 }) => {
   const viewOnly = useViewOnlyAccess(resource);
+  const { t } = useTranslation();
   const [currentKey, setCurrentKey] = React.useState(currentContainer);
   const containers = resource?.spec?.template?.spec?.containers;
   const healthCheckAdded = _.every(
@@ -46,7 +48,9 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
     (container) => container.readinessProbe || container.livenessProbe || container.startupProbe,
   );
   const containersByKey = _.keyBy(containers, 'name');
-  const pageTitle = healthCheckAdded ? 'Edit Health Checks' : 'Add Health Checks';
+  const pageTitle = healthCheckAdded
+    ? t('devconsole~Edit Health Checks')
+    : t('devconsole~Add Health Checks');
   const {
     kind,
     metadata: { name, namespace },
@@ -83,14 +87,14 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
               href={`${openshiftHelpBase}applications/application-health.html`}
               target="_blank"
             >
-              Learn More <ExternalLinkAltIcon />
+              {t('devconsole~Learn More')} <ExternalLinkAltIcon />
             </Button>
           </>
         }
       />
       <div className="odc-add-health-checks__body">
         <p>
-          Health checks for &nbsp;
+          {t('devconsole~Health checks for')} &nbsp;
           <ResourceLink
             kind={referenceFor(resource)}
             name={name}
@@ -101,7 +105,7 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
         </p>
         <Form onSubmit={!viewOnly ? handleSubmit : undefined}>
           <div>
-            Container &nbsp;
+            {t('devconsole~Container')} &nbsp;
             {_.size(containers) > 1 ? (
               <ContainerDropdown
                 currentKey={currentKey}
@@ -120,9 +124,9 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
             handleReset={handleReset}
             errorMessage={status && status?.errors?.json?.message}
             isSubmitting={isSubmitting}
-            submitLabel={healthCheckAdded ? 'Save' : 'Add'}
+            submitLabel={healthCheckAdded ? t('devconsole~Save') : t('devconsole~Add')}
             disableSubmit={isFormClean || !dirty || !_.isEmpty(errors)}
-            resetLabel="Cancel"
+            resetLabel={t('devconsole~Cancel')}
             hideSubmit={viewOnly}
           />
         </Form>

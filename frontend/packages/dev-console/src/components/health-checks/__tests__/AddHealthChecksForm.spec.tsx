@@ -42,7 +42,7 @@ describe('HealthCheckWrapper', () => {
   it('should show container not found error', () => {
     addHealthCheckWrapperProps.resource.loaded = true;
     const wrapper = shallow(<AddHealthChecksForm {...addHealthCheckWrapperProps} />);
-    expect(wrapper.find('div').text()).toEqual('Container not found');
+    expect(wrapper.find('div').text()).toEqual('devconsole~Container not found');
   });
 
   it('should load AddHealthCheck', () => {
