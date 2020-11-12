@@ -1,4 +1,5 @@
 import { FormikValues } from 'formik';
+import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import {
   PipelineParam,
   PipelineResource,
@@ -7,6 +8,7 @@ import {
 } from '../../../utils/pipeline-augment';
 import { PipelineVisualizationTaskItem } from '../../../utils/pipeline-utils';
 import { AddNodeDirection } from '../pipeline-topology/const';
+// eslint-disable-next-line import/no-cycle
 import { TaskErrorType, UpdateOperationType } from './const';
 
 export type UpdateErrors = (errors?: TaskErrorMap) => void;
@@ -30,7 +32,13 @@ export type PipelineBuilderFormValues = PipelineBuilderTaskGrouping & {
   resources: PipelineResource[];
 };
 
-export type PipelineBuilderFormikValues = FormikValues & PipelineBuilderFormValues;
+export type PipelineBuilderFormYamlValues = {
+  editorType: EditorType;
+  yamlData: string;
+  formData: PipelineBuilderFormValues;
+};
+
+export type PipelineBuilderFormikValues = FormikValues & PipelineBuilderFormYamlValues;
 
 export type SelectedBuilderTask = {
   resource: PipelineResourceTask;

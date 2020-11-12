@@ -153,12 +153,12 @@ describe('pipeline-utils ', () => {
   });
 
   it('expect pipeline with inline task spec to return true', () => {
-    const hasSpec = hasInlineTaskSpec(mockPipelinesJSON[2]);
+    const hasSpec = hasInlineTaskSpec(mockPipelinesJSON[2].spec.tasks);
     expect(hasSpec).toBe(true);
   });
 
   it('expect pipeline without inline task spec to return false', () => {
-    const hasSpec = hasInlineTaskSpec(mockPipelinesJSON[0]);
+    const hasSpec = hasInlineTaskSpec(mockPipelinesJSON[0].spec.tasks);
     expect(hasSpec).toBe(false);
   });
 });

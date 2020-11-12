@@ -2,17 +2,20 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { Formik, FormikBag } from 'formik';
+import { safeLoad } from 'js-yaml';
 import { history } from '@console/internal/components/utils';
+import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
 import { PipelineModel } from '../../../models';
 import { Pipeline } from '../../../utils/pipeline-augment';
 import PipelineBuilderForm from './PipelineBuilderForm';
-import { PipelineBuilderFormValues, PipelineBuilderFormikValues } from './types';
+import { PipelineBuilderFormYamlValues, PipelineBuilderFormikValues } from './types';
 import {
   convertBuilderFormToPipeline,
   convertPipelineToBuilderForm,
   getPipelineURL,
 } from './utils';
+import { initialPipelineFormData } from './const';
 import { validationSchema } from './validation-utils';
 
 import './PipelineBuilderPage.scss';
@@ -29,35 +32,40 @@ const PipelineBuilderPage: React.FC<PipelineBuilderPageProps> = (props) => {
     },
   } = props;
 
-  const initialValues: PipelineBuilderFormValues = {
-    name: 'new-pipeline',
-    params: [],
-    resources: [],
-    tasks: [],
-    listTasks: [],
+  const initialValues: PipelineBuilderFormYamlValues = {
+    editorType: EditorType.Form,
+    yamlData: '',
+    formData: initialPipelineFormData,
     ...(convertPipelineToBuilderForm(existingPipeline) || {}),
   };
 
   const handleSubmit = (
     values: PipelineBuilderFormikValues,
-    actions: FormikBag<any, PipelineBuilderFormValues>,
+    actions: FormikBag<any, PipelineBuilderFormYamlValues>,
   ) => {
-    let resourceCall;
-    if (existingPipeline) {
-      resourceCall = k8sUpdate(
-        PipelineModel,
-        convertBuilderFormToPipeline(values, ns, existingPipeline),
-        ns,
-        existingPipeline.metadata.name,
-      );
+    let pipeline: Pipeline;
+    if (values.editorType === EditorType.YAML) {
+      try {
+        pipeline = safeLoad(values.yamlData);
+      } catch (err) {
+        actions.setStatus({ submitError: `Invalid YAML - ${err}` });
+        return null;
+      }
     } else {
-      resourceCall = k8sCreate(PipelineModel, convertBuilderFormToPipeline(values, ns));
+      pipeline = convertBuilderFormToPipeline(values.formData, ns, existingPipeline);
+    }
+
+    let resourceCall: Promise<any>;
+    if (existingPipeline) {
+      resourceCall = k8sUpdate(PipelineModel, pipeline, ns, existingPipeline.metadata.name);
+    } else {
+      resourceCall = k8sCreate(PipelineModel, pipeline);
     }
 
     return resourceCall
       .then(() => {
         actions.setSubmitting(false);
-        history.push(`${getPipelineURL(ns)}/${values.name}`);
+        history.push(`${getPipelineURL(ns)}/${pipeline.metadata.name}`);
       })
       .catch((e) => {
         actions.setStatus({ submitError: e.message });

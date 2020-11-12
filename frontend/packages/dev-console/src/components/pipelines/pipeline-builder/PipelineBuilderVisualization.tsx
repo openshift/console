@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
 import { LoadingBox } from '@console/internal/components/utils';
+import { hasInlineTaskSpec } from '../../../utils/pipeline-utils';
 import { PipelineLayout } from '../pipeline-topology/const';
 import PipelineTopologyGraph from '../pipeline-topology/PipelineTopologyGraph';
 import { getEdgesFromNodes } from '../pipeline-topology/utils';
@@ -48,6 +49,16 @@ const PipelineBuilderVisualization: React.FC<PipelineBuilderVisualizationProps> 
   if (tasksCount === 0 && taskGroup.tasks.length === 0) {
     // No tasks, nothing we can do here...
     return <Alert variant="danger" isInline title="Unable to locate any tasks." />;
+  }
+
+  if (hasInlineTaskSpec(taskGroup.tasks)) {
+    return (
+      <Alert
+        variant="info"
+        isInline
+        title="This Pipeline cannot be visualized. Pipeline taskSpec is not supported."
+      />
+    );
   }
 
   return (

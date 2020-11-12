@@ -1,3 +1,6 @@
+// eslint-disable-next-line import/no-cycle
+import { PipelineBuilderFormValues } from './types';
+
 export const TASK_INCOMPLETE_ERROR_MESSAGE = 'Incomplete Task';
 
 export enum UpdateOperationType {
@@ -25,3 +28,11 @@ export const nodeTaskErrors = [
   TaskErrorType.MISSING_REQUIRED_PARAMS,
   TaskErrorType.MISSING_RESOURCES,
 ];
+
+export const initialPipelineFormData: PipelineBuilderFormValues = {
+  name: 'new-pipeline',
+  params: [],
+  resources: [],
+  tasks: [],
+  listTasks: [],
+};

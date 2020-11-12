@@ -28,6 +28,7 @@ import {
   PipelineTaskRef,
   PipelineRunWorkspace,
   TaskRunKind,
+  PipelineTask,
 } from './pipeline-augment';
 import { pipelineRunFilterReducer, pipelineRunStatus } from './pipeline-filter-reducer';
 import {
@@ -180,10 +181,9 @@ const appendPipelineRunStatus = (pipeline, pipelineRun) => {
     return mTask;
   });
 };
-export const hasInlineTaskSpec = (pipeline: K8sResourceKind) => {
-  const tasks = pipeline?.spec.tasks ?? [];
-  return tasks.some((task) => !!(task.taskSpec && !task.taskRef));
-};
+export const hasInlineTaskSpec = (tasks: PipelineTask[] = []): boolean =>
+  tasks.some((task) => !!(task.taskSpec && !task.taskRef));
+
 export const getPipelineTasks = (
   pipeline: K8sResourceKind,
   pipelineRun: K8sResourceKind = {
