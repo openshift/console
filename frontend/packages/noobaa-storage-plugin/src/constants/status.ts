@@ -7,6 +7,7 @@ export enum Phase {
   CONNECTED = 'Connected',
   PROGRESSING = 'Progressing',
   FAILURE = 'Failure',
+  READY = 'Ready',
 }
 
 export const healthString = 'The object service includes 2 services.';
