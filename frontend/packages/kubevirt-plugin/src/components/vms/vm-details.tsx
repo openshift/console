@@ -114,7 +114,7 @@ export const VMDetails: React.FC<VMDetailsProps> = (props) => {
       <div className="co-m-pane__body">
         {OSMismatchAlert}
         <HashAnchor hash="details" />
-        <SectionHeading text={t('kubevirt-plugin~{{label}} Details', { label: kindObj.label })} />
+        <SectionHeading text={t('kubevirt-plugin~{{name}} Details', { name: kindObj.label })} />
         <div className="row">
           <div className="col-sm-6">
             <VMResourceSummary

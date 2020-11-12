@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { getNamespace, createLookup, getName } from '@console/shared';
 import {
@@ -60,6 +61,7 @@ export const VMTemplateDetailsConnected = connect(stateToProps)(VMTemplateDetail
 
 const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = (props) => {
   const { template, dataVolumes, ...restProps } = props;
+  const { t } = useTranslation();
   const loaded = props.loaded || !props.hasDataVolumes;
 
   const canUpdate = useAccessReview(asAccessReview(TemplateModel, template, 'patch'));
@@ -69,7 +71,7 @@ const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = (props) => {
       <ScrollToTopOnMount />
       <div className="co-m-pane__body">
         <HashAnchor hash="details" />
-        <SectionHeading text="VM Template Details" />
+        <SectionHeading text={t('kubevirt-plugin~VM Template Details')} />
         <div className="row">
           <div className="col-sm-6">
             <VMTemplateResourceSummary template={template} canUpdateTemplate={canUpdate} />
@@ -85,7 +87,7 @@ const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = (props) => {
       </div>
       <div id="scheduling" className="co-m-pane__body">
         <HashAnchor hash="scheduling" />
-        <SectionHeading text="Scheduling and resources requirements" />
+        <SectionHeading text={t('kubevirt-plugin~Scheduling and resources requirements')} />
         <div className="row">
           <VMTemplateSchedulingList template={template} canUpdateTemplate={canUpdate} />
         </div>

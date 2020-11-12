@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { navFactory, HintBlock, ExternalLink } from '@console/internal/components/utils';
 import { DetailsPage } from '@console/internal/components/factory';
 import { PodModel, TemplateModel } from '@console/internal/models';
@@ -29,35 +30,36 @@ import './vmi-details-page.scss';
 export const VirtualMachinesInstanceDetailsPage: React.FC<VirtualMachinesInstanceDetailsPageProps> = (
   props,
 ) => {
+  const { t } = useTranslation();
   const { name, ns: namespace } = props.match.params;
 
   const overviewPage = {
     href: '', // default landing page
-    name: 'Overview',
+    name: t('kubevirt-plugin~Overview'),
     component: VMDashboard,
   };
 
   const detailsPage = {
     href: VM_DETAIL_DETAILS_HREF,
-    name: 'Details',
+    name: t('kubevirt-plugin~Details'),
     component: VMDetailsFirehose,
   };
 
   const consolePage = {
     href: VM_DETAIL_CONSOLES_HREF,
-    name: 'Console',
+    name: t('kubevirt-plugin~Console'),
     component: VMConsoleFirehose,
   };
 
   const nicsPage = {
     href: VM_DETAIL_NETWORKS_HREF,
-    name: 'Network Interfaces',
+    name: t('kubevirt-plugin~Network Interfaces'),
     component: VMNics,
   };
 
   const disksPage = {
     href: VM_DETAIL_DISKS_HREF,
-    name: 'Disks',
+    name: t('kubevirt-plugin~Disks'),
     component: VMDisksAndFileSystemsPage,
   };
 
@@ -99,20 +101,21 @@ export const VirtualMachinesInstanceDetailsPage: React.FC<VirtualMachinesInstanc
       menuActions={vmiMenuActionsCreator}
       pages={pages}
       resources={resources}
-      breadcrumbsFor={breadcrumbsForVMPage(props.match)}
+      breadcrumbsFor={breadcrumbsForVMPage(t, props.match)}
       customData={{ kindObj: VirtualMachineInstanceModel }}
     >
       <HintBlock
         className="kubevirt-details-page__hint-block"
-        title={`Virtual Machine Instance ${name}`}
+        title={t('kubevirt-plugin~`Virtual Machine Instance {{name}}`', { name })}
       >
         <p>
-          Consider using a Virtual Machine that will provide additional management capabilities to a
-          VirtualMachineInstance inside the cluster.
+          {t(
+            'kubevirt-plugin~Consider using a Virtual Machine that will provide additional management capabilities to a VirtualMachineInstance inside the cluster.',
+          )}
         </p>
         <ExternalLink
           href="https://kubevirt.io/user-guide/#/architecture?id=virtualmachine"
-          text="Learn more"
+          text={t('kubevirt-plugin~Learn more')}
         />
       </HintBlock>
     </DetailsPage>
