@@ -16,7 +16,6 @@ describe('KnativeResourceOverviewPage', () => {
   let item: OverviewItem;
   beforeEach(() => {
     item = {
-      buildConfigs: [],
       obj: revisionObj,
       routes: [],
       services: [],

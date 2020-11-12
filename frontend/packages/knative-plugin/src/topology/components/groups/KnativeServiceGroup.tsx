@@ -79,7 +79,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
   );
   const nodeRefs = useCombineRefs(innerHoverRef, dragNodeRef);
   const hasChildren = element.getChildren()?.length > 0;
-  const { data } = element.getData();
+  const { data, resource } = element.getData();
   const hasDataUrl = !!data.url;
   useAnchor(
     React.useCallback(
@@ -172,7 +172,13 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
             </Decorator>
           </Tooltip>
         )}
-        <BuildDecorator x={x} y={y + height} radius={DECORATOR_RADIUS} workloadData={data} />
+        <BuildDecorator
+          x={x}
+          y={y + height}
+          radius={DECORATOR_RADIUS}
+          workloadData={data}
+          resource={resource}
+        />
         {showLabels && (data.kind || element.getLabel()) && (
           <SvgBoxedText
             className="odc-knative-service__label odc-base-node__label"

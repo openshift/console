@@ -6,7 +6,7 @@ import {
   RouteKind,
 } from '@console/internal/module/k8s';
 import { DEPLOYMENT_STRATEGY } from '../constants';
-import { OverviewItemAlerts, PodControllerOverviewItem } from './pod';
+import { PodControllerOverviewItem } from './pod';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 import { Alert } from '@console/internal/components/monitoring/types';
 
@@ -26,8 +26,6 @@ export type BuildConfigOverviewItem = K8sResourceKind & {
 };
 
 export type OverviewItem<T = K8sResourceKind> = {
-  alerts?: OverviewItemAlerts;
-  buildConfigs: BuildConfigOverviewItem[];
   current?: PodControllerOverviewItem;
   isRollingOut?: boolean;
   obj: T;

@@ -18,7 +18,6 @@ describe('usePluginsOverviewTabSection', () => {
     item = {
       revisions: sampleKnativeRevisions.data,
       obj: knativeServiceObj,
-      buildConfigs: [],
     } as OverviewItem;
   });
 

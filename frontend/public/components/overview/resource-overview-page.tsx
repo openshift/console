@@ -1,5 +1,10 @@
 import * as React from 'react';
 
+import {
+  OverviewItem,
+  usePluginsOverviewTabSection,
+  useBuildConfigsWatcher,
+} from '@console/shared';
 import { connectToModel } from '../../kinds';
 import { referenceForModel } from '../../module/k8s';
 import { AsyncComponent, Kebab, ResourceOverviewHeading, ResourceSummary } from '../utils';
@@ -9,7 +14,6 @@ import { HPAOverview } from './hpa-overview';
 import { NetworkingOverview } from './networking-overview';
 import { PodsOverview } from './pods-overview';
 import { resourceOverviewPages } from './resource-overview-pages';
-import { OverviewItem, usePluginsOverviewTabSection } from '@console/shared';
 import { ManagedByOperatorLink } from '../utils/managed-by';
 
 const { common } = Kebab.factory;
@@ -17,9 +21,10 @@ const { common } = Kebab.factory;
 export const OverviewDetailsResourcesTab: React.SFC<OverviewDetailsResourcesTabProps> = ({
   item,
 }) => {
-  const { buildConfigs, hpas, routes, services, obj } = item;
-  const hasBuildConfig = buildConfigs?.length > 0;
+  const { hpas, routes, services, obj } = item;
   const pluginComponents = usePluginsOverviewTabSection(item);
+  const { buildConfigs } = useBuildConfigsWatcher(obj);
+  const hasBuildConfig = buildConfigs?.length > 0;
   return (
     <div className="overview__sidebar-pane-body">
       <ManagedByOperatorLink obj={item.obj} />

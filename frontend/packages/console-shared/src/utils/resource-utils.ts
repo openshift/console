@@ -55,57 +55,6 @@ type ResourceItem = {
 
 export type ResourceUtil = (obj: K8sResourceKind, props: any) => ResourceItem | undefined;
 
-export const getResourcePausedAlert = (resource: K8sResourceKind): OverviewItemAlerts => {
-  if (!resource.spec.paused) {
-    return {};
-  }
-  return {
-    [`${resource.metadata.uid}--Paused`]: {
-      severity: 'info',
-      message: `${resource.metadata.name} is paused.`,
-    },
-  };
-};
-
-export const getBuildAlerts = (buildConfigs: BuildConfigOverviewItem[]): OverviewItemAlerts => {
-  const buildAlerts = {};
-  const addAlert = (build: K8sResourceKind, buildPhase: string) =>
-    _.set(buildAlerts, `${build.metadata.uid}--build${buildPhase}`, {
-      severity: `build${buildPhase}`,
-      message: _.get(build, ['status', 'message'], buildPhase),
-    });
-
-  _.each(buildConfigs, (bc) => {
-    let seenComplete = false;
-    // Requires builds to be sorted by most recent first.
-    _.each(bc.builds, (build: K8sResourceKind) => {
-      const buildPhase = _.get(build, ['status', 'phase']);
-      switch (buildPhase) {
-        case 'Complete':
-          seenComplete = true;
-          break;
-        case 'Failed':
-        case 'Error':
-          if (!seenComplete) {
-            // show failure/error
-            addAlert(build, buildPhase);
-          }
-          break;
-        case 'New':
-        case 'Pending':
-        case 'Running':
-          // show new/pending/running
-          addAlert(build, buildPhase);
-          break;
-        default:
-          break;
-      }
-    });
-  });
-
-  return buildAlerts;
-};
-
 export const getOwnedResources = <T extends K8sResourceKind>(
   obj: K8sResourceKind,
   resources: T[],
@@ -561,6 +510,9 @@ export const getBuildConfigsForResource = (
   resource: K8sResourceKind,
   resources: any,
 ): BuildConfigOverviewItem[] => {
+  if (resource.kind === 'CronJob') {
+    return getBuildConfigsForCronJob(resource as CronJobKind, resources);
+  }
   const buildConfigs = resources?.buildConfigs?.data;
   const currentNamespace = resource.metadata.namespace;
   const nativeTriggers = resource?.spec?.triggers;
@@ -678,25 +630,15 @@ export const getOverviewItemsForResource = (
   current?: PodControllerOverviewItem,
   previous?: PodControllerOverviewItem,
   isRollingOut?: boolean,
-  customPods?: PodKind[],
-  additionalAlerts?: OverviewItemAlerts,
-  customBuildConfigs?: BuildConfigOverviewItem[],
 ) => {
   const monitoringAlerts = isMonitorable
     ? getWorkloadMonitoringAlerts(obj, resources?.monitoringAlerts)
     : undefined;
-  const buildConfigs = customBuildConfigs || getBuildConfigsForResource(obj, resources);
   const services = getServicesForResource(obj, resources);
   const routes = getRoutesForServices(services, resources);
-  const pods = customPods ?? getPodsForResource(obj, resources);
-  const alerts = {
-    ...(additionalAlerts ?? combinePodAlerts(pods)),
-    ...getBuildAlerts(buildConfigs),
-  };
+  const pods = getPodsForResource(obj, resources);
   const status = resourceStatus(obj, current, isRollingOut);
-  const overviewItems = {
-    alerts,
-    buildConfigs,
+  const overviewItem: OverviewItem = {
     obj,
     pods,
     routes,
@@ -712,9 +654,9 @@ export const getOverviewItemsForResource = (
   if (utils) {
     return utils.reduce((acc, util) => {
       return { ...acc, ...util(obj, resources) };
-    }, overviewItems);
+    }, overviewItem);
   }
-  return overviewItems;
+  return overviewItem;
 };
 
 export const createDeploymentConfigItem = (
@@ -722,21 +664,14 @@ export const createDeploymentConfigItem = (
   resources: any,
   utils?: ResourceUtil[],
 ): OverviewItem => {
-  const { mostRecentRC, visibleReplicationControllers } = getReplicationControllersForResource(
+  const { visibleReplicationControllers } = getReplicationControllersForResource(
     deploymentConfig,
     resources,
   );
   const [current, previous] = visibleReplicationControllers;
   const isRollingOut = getRolloutStatus(deploymentConfig, current, previous);
-  const buildConfigs = getBuildConfigsForResource(deploymentConfig, resources);
   const services = getServicesForResource(deploymentConfig, resources);
   const routes = getRoutesForServices(services, resources);
-  const rolloutAlerts = mostRecentRC ? getReplicationControllerAlerts(mostRecentRC) : {};
-  const alerts = {
-    ...getResourcePausedAlert(deploymentConfig),
-    ...getBuildAlerts(buildConfigs),
-    ...rolloutAlerts,
-  };
   const status = resourceStatus(deploymentConfig, current, isRollingOut);
   const pods = [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])];
   const monitoringAlerts = getWorkloadMonitoringAlerts(
@@ -744,9 +679,7 @@ export const createDeploymentConfigItem = (
     resources?.monitoringAlerts,
   );
   const hpas = resources?.hpas?.data?.filter(doesHpaMatch(deploymentConfig));
-  const overviewItems = {
-    alerts,
-    buildConfigs,
+  const overviewItem: OverviewItem = {
     current,
     hpas,
     isRollingOut,
@@ -763,9 +696,9 @@ export const createDeploymentConfigItem = (
   if (utils) {
     return utils.reduce((acc, util) => {
       return { ...acc, ...util(deploymentConfig, resources) };
-    }, overviewItems);
+    }, overviewItem);
   }
-  return overviewItems;
+  return overviewItem;
 };
 
 export const createDeploymentConfigItems = (
@@ -787,21 +720,14 @@ export const createDeploymentItem = (
   const replicaSets = getReplicaSetsForResource(deployment, resources);
   const [current, previous] = replicaSets;
   const isRollingOut = !!current && !!previous;
-  const buildConfigs = getBuildConfigsForResource(deployment, resources);
   const services = getServicesForResource(deployment, resources);
   const routes = getRoutesForServices(services, resources);
-  const alerts = {
-    ...getResourcePausedAlert(deployment),
-    ...getBuildAlerts(buildConfigs),
-  };
   const status = resourceStatus(deployment, current, isRollingOut);
   const pods = [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])];
   const monitoringAlerts = getWorkloadMonitoringAlerts(deployment, resources?.monitoringAlerts);
   const hpas = resources?.hpas?.data?.filter(doesHpaMatch(deployment));
-  const overviewItem = {
+  const overviewItem: OverviewItem = {
     obj: deployment,
-    alerts,
-    buildConfigs,
     current,
     hpas,
     isRollingOut,
@@ -837,25 +763,18 @@ export const createCronJobItem = (
   resources: any,
   utils?: ResourceUtil[],
 ): OverviewItem => {
-  const buildConfigs = getBuildConfigsForCronJob(cronJob, resources);
   const jobs = getJobsForCronJob(cronJob, resources);
   const pods = jobs?.reduce((acc, job) => {
     acc.push(...getPodsForResource(job, resources));
     return acc;
   }, []);
-  const alerts = {
-    ...combinePodAlerts(pods),
-    ...getBuildAlerts(buildConfigs),
-  };
   const status = resourceStatus(cronJob);
   const isMonitorable = isKindMonitorable(CronJobModel);
   const monitoringAlerts = isMonitorable
     ? getWorkloadMonitoringAlerts(cronJob, resources?.monitoringAlerts)
     : undefined;
-  const overviewItem = {
-    alerts,
+  const overviewItem: OverviewItem = {
     obj: cronJob,
-    buildConfigs,
     pods,
     jobs,
     status,
@@ -909,7 +828,6 @@ export const createPodItem = (pod: PodKind, resources: any): OverviewItem => {
   if (!_.isEmpty(owners) || phase === 'Succeeded' || phase === 'Failed') {
     return null;
   }
-  const alerts = getPodAlerts(pod);
   const services = getServicesForResource(pod, resources);
   const routes = getRoutesForServices(services, resources);
   const status = podStatus(pod as PodKind);
@@ -919,9 +837,7 @@ export const createPodItem = (pod: PodKind, resources: any): OverviewItem => {
     : undefined;
 
   return {
-    alerts,
     obj: pod,
-    buildConfigs: null,
     routes,
     services,
     status,

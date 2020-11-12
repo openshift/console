@@ -64,7 +64,6 @@ export const createTopologyNodeData = (
     current,
     previous,
     isRollingOut,
-    buildConfigs,
     pipelines = [],
     pipelineRuns = [],
     monitoringAlerts = [],
@@ -95,7 +94,6 @@ export const createTopologyNodeData = (
         type && (type === TYPE_EVENT_SOURCE || type === TYPE_KNATIVE_REVISION)
           ? true
           : isKnativeServing(resource, 'metadata.labels'),
-      build: buildConfigs?.[0]?.builds?.[0],
       connectedPipeline: {
         pipeline: pipelines[0],
         pipelineRuns,
@@ -395,18 +393,6 @@ export const getBaseWatchedResources = (namespace: string): WatchK8sResources<an
     cronJobs: {
       isList: true,
       kind: 'CronJob',
-      namespace,
-      optional: true,
-    },
-    buildConfigs: {
-      isList: true,
-      kind: 'BuildConfig',
-      namespace,
-      optional: true,
-    },
-    builds: {
-      isList: true,
-      kind: 'Build',
       namespace,
       optional: true,
     },

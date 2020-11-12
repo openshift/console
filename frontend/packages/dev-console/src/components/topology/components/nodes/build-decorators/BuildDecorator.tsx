@@ -1,19 +1,30 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
+import { useBuildConfigsWatcher } from '@console/shared/src';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { WorkloadData } from '../../../topology-types';
 import { Decorator } from '../Decorator';
 import { getBuildDecoratorParts } from './build-decorator-utils';
 
 export interface BuildDecoratorProps {
+  resource: K8sResourceKind;
   workloadData: WorkloadData;
   radius: number;
   x: number;
   y: number;
 }
 
-const BuildDecorator: React.FC<BuildDecoratorProps> = ({ workloadData, radius, x, y }) => {
-  const { decoratorIcon, linkRef, tooltipContent } = getBuildDecoratorParts(workloadData);
+const BuildDecorator: React.FC<BuildDecoratorProps> = ({
+  resource,
+  workloadData,
+  radius,
+  x,
+  y,
+}) => {
+  const { buildConfigs } = useBuildConfigsWatcher(resource);
+  const build = buildConfigs?.[0]?.builds?.[0];
+  const { decoratorIcon, linkRef, tooltipContent } = getBuildDecoratorParts(workloadData, build);
 
   if (!decoratorIcon && !tooltipContent) {
     return null;

@@ -20,7 +20,7 @@ import { Decorator } from './Decorator';
 import PodSet, { podSetInnerRadius } from './PodSet';
 import BuildDecorator from './build-decorators/BuildDecorator';
 import { BaseNode } from './BaseNode';
-import { getCheURL, getEditURL } from '../../topology-utils';
+import { getCheURL, getEditURL, getTopologyResourceObject } from '../../topology-utils';
 import { useDisplayFilters, getFilterById, SHOW_POD_COUNT_FILTER_ID } from '../../filters';
 import MonitoringAlertsDecorator from './MonitoringAlertsDecorator';
 import './WorkloadNode.scss';
@@ -57,6 +57,7 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
   const cheURL = getCheURL(consoleLinks);
   const { width, height } = element.getDimensions();
   const workloadData = element.getData().data;
+  const resourceObj = getTopologyResourceObject(element.getData());
   const filters = useDisplayFilters();
   const size = Math.min(width, height);
   const { donutStatus, editURL, vcsURI, vcsRef } = workloadData;
@@ -121,6 +122,7 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
               </Tooltip>
             ),
             <BuildDecorator
+              resource={resourceObj}
               key="build"
               workloadData={workloadData}
               x={cx - radius + decoratorRadius * 0.7}

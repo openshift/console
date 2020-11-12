@@ -111,7 +111,6 @@ export interface WorkloadData {
   builderImage?: string;
   kind?: string;
   isKnativeResource?: boolean;
-  build: K8sResourceKind;
   donutStatus: PodRCData;
   connectedPipeline: ConnectedWorkloadPipeline;
 }

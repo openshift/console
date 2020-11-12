@@ -7,6 +7,7 @@ import {
   sampleKnativeRoutes,
   sampleKnativeRevisions,
   knativeServiceObj,
+  MockKnativeBuildConfig,
 } from '../../../topology/__tests__/topology-knative-test-data';
 import { BuildOverview } from '@console/internal/components/overview/build-overview';
 import { OverviewItem } from '@console/shared';
@@ -26,18 +27,34 @@ jest.mock('react-i18next', () => {
   };
 });
 
+let mockBuildConfigs = [];
+
+jest.mock('@console/shared', () => {
+  const ActualShared = require.requireActual('@console/shared');
+  return {
+    ...ActualShared,
+    useBuildConfigsWatcher: () => {
+      return {
+        loaded: true,
+        loadError: '',
+        buildConfigs: mockBuildConfigs,
+      };
+    },
+  };
+});
+
 describe('KnativeServiceResources', () => {
   beforeEach(() => {
     (useExtensions as jest.Mock).mockReturnValueOnce([]);
   });
 
   it('should render KnativeServiceResources', () => {
+    mockBuildConfigs = [];
     const item = {
       revisions: sampleKnativeRevisions.data,
       ksroutes: sampleKnativeRoutes.data,
       obj: knativeServiceObj,
       pods: sampleKnativePods.data,
-      buildConfigs: [],
     } as OverviewItem;
     const wrapper = shallow(<KnativeServiceResources item={item} />);
     expect(wrapper.find(PodsOverviewContent)).toHaveLength(1);
@@ -47,12 +64,12 @@ describe('KnativeServiceResources', () => {
   });
 
   it('should render buildOverview if buildconfigs is present', () => {
+    mockBuildConfigs = [MockKnativeBuildConfig];
     const item = {
       revisions: sampleKnativeRevisions.data,
       ksroutes: sampleKnativeRoutes.data,
       obj: knativeServiceObj,
       pods: sampleKnativePods.data,
-      buildConfigs: [{}],
     } as OverviewItem;
     const wrapper = shallow(<KnativeServiceResources item={item} />);
     expect(wrapper.find(BuildOverview)).toHaveLength(1);

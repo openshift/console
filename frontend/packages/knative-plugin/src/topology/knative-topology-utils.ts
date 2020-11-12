@@ -9,8 +9,6 @@ import {
   kindForReference,
 } from '@console/internal/module/k8s';
 import {
-  getResourcePausedAlert,
-  getBuildAlerts,
   getOwnedResources,
   getBuildConfigsForResource,
   getReplicaSetsForResource,
@@ -530,17 +528,10 @@ const createKnativeDeploymentItems = (
     const replicaSets = getReplicaSetsForResource(depObj, resources);
     const [current, previous] = replicaSets;
     const isRollingOut = !!current && !!previous;
-    const buildConfigs = getBuildConfigsForResource(depObj, resources);
     const services = getServicesForResource(depObj, resources);
     const routes = getRoutesForServices(services, resources);
-    const alerts = {
-      ...getResourcePausedAlert(depObj),
-      ...getBuildAlerts(buildConfigs),
-    };
-    const overviewItems = {
+    const overviewItem = {
       obj: resource,
-      alerts,
-      buildConfigs,
       current,
       isRollingOut,
       previous,
@@ -553,15 +544,14 @@ const createKnativeDeploymentItems = (
     if (utils) {
       return utils.reduce((acc, util) => {
         return { ...acc, ...util(resource, resources) };
-      }, overviewItems);
+      }, overviewItem);
     }
 
-    return overviewItems;
+    return overviewItem;
   }
   const knResources = getKnativeServiceData(resource, resources, utils);
   return {
     obj: resource,
-    buildConfigs: [],
     routes: [],
     services: [],
     ...knResources,
@@ -641,7 +631,6 @@ export const createPubSubDataItems = (
 
   return {
     obj: resource,
-    buildConfigs: [],
     routes: [],
     services: [],
     ...(depChannelResources && { channels: depChannelResources }),
@@ -928,7 +917,6 @@ export const createTopologyServiceNodeData = (
         pipeline: pipelines[0],
         pipelineRuns,
       },
-      build: svcRes.buildConfigs?.[0]?.builds?.[0],
     },
   };
 };

@@ -47,7 +47,6 @@ describe('EventPubSubResources', () => {
   sampleItemData = {
     item: {
       obj: EventSubscriptionObj,
-      buildConfigs: [],
       eventSources: [],
       routes: [],
       services: [],

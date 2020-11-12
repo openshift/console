@@ -6,13 +6,14 @@ import { getBuildDecoratorParts } from '../build-decorator-utils';
 import PipelineBuildDecoratorTooltip from '../PipelineBuildDecoratorTooltip';
 import {
   bareMinimalWorkloadData,
-  buildAndPipelineData,
-  buildOnlyData,
+  pipelineData,
+  buildData,
+  noPiplelineData,
 } from './build-decorator-utils-data';
 
 describe('build-decorator-utils', () => {
   it('expect get build decorator parts to return nothing when giving insufficient data', () => {
-    const missingData = getBuildDecoratorParts(bareMinimalWorkloadData);
+    const missingData = getBuildDecoratorParts(bareMinimalWorkloadData, null);
 
     expect(missingData.decoratorIcon).toBeNull();
     expect(missingData.linkRef).toBeNull();
@@ -20,7 +21,7 @@ describe('build-decorator-utils', () => {
   });
 
   it('expect get build decorator parts to return pipeline-specific when providing both build and pipeline', () => {
-    const buildAndPipeline = getBuildDecoratorParts(buildAndPipelineData);
+    const buildAndPipeline = getBuildDecoratorParts(pipelineData, buildData);
 
     // Got back data
     expect(buildAndPipeline.decoratorIcon).not.toBeNull();
@@ -36,7 +37,7 @@ describe('build-decorator-utils', () => {
   });
 
   it('expect getBuildDecorator to return build-specific when not providing pipeline data', () => {
-    const buildOnly = getBuildDecoratorParts(buildOnlyData);
+    const buildOnly = getBuildDecoratorParts(noPiplelineData, buildData);
 
     // Got back data
     expect(buildOnly.decoratorIcon).not.toBeNull();

@@ -69,8 +69,6 @@ expect.extend({
 });
 
 enum Keys {
-  ALERTS = 'alerts',
-  BC = 'buildConfigs',
   CURRENT = 'current',
   ROLLINGOUT = 'isRollingOut',
   OBJ = 'obj',
@@ -85,8 +83,8 @@ enum Keys {
   KSROUTES = 'ksroutes',
 }
 
-const podKeys = [Keys.ALERTS, Keys.OBJ, Keys.ROUTES, Keys.SERVICE, Keys.STATUS];
-const dsAndSSKeys = [...podKeys, Keys.BC, Keys.PODS];
+const podKeys = [Keys.OBJ, Keys.ROUTES, Keys.SERVICE, Keys.STATUS];
+const dsAndSSKeys = [...podKeys, Keys.PODS];
 const dcKeys = [...dsAndSSKeys, Keys.CURRENT, Keys.ROLLINGOUT, Keys.PREVIOUS];
 const knativeKeys = [...dcKeys, Keys.REVISIONS, Keys.KNATIVECONFIGS, Keys.KSROUTES];
 
@@ -164,7 +162,6 @@ describe('TransformResourceData', () => {
     expect(transformedData[0][Keys.CURRENT]).toBeUndefined();
     expect(transformedData[0][Keys.PREVIOUS]).toBeUndefined();
     expect(transformedData[0][Keys.ROLLINGOUT]).toBeUndefined();
-    expect(transformedData[0][Keys.BC]).toHaveLength(0);
   });
 
   it('should create DaemonSets Items for a provided ds', () => {
@@ -189,7 +186,6 @@ describe('TransformResourceData', () => {
     expect(transformedData[0][Keys.CURRENT]).toBeUndefined();
     expect(transformedData[0][Keys.PREVIOUS]).toBeUndefined();
     expect(transformedData[0][Keys.ROLLINGOUT]).toBeUndefined();
-    expect(transformedData[0][Keys.BC]).toHaveLength(0);
   });
 
   it('should return only pods and not replication controllers for a given resource', () => {
@@ -212,7 +208,6 @@ describe('TransformResourceData', () => {
     expect(transformedData[0][Keys.CURRENT]).toBeUndefined();
     expect(transformedData[0][Keys.PREVIOUS]).toBeUndefined();
     expect(transformedData[0][Keys.ROLLINGOUT]).toBeUndefined();
-    expect(transformedData[0][Keys.BC]).toHaveLength(0);
   });
 
   it('should create CronJob Items', () => {
@@ -221,7 +216,6 @@ describe('TransformResourceData', () => {
     expect(transformedData[0][Keys.CURRENT]).toBeUndefined();
     expect(transformedData[0][Keys.PREVIOUS]).toBeUndefined();
     expect(transformedData[0][Keys.ROLLINGOUT]).toBeUndefined();
-    expect(transformedData[0][Keys.BC]).toHaveLength(1);
     expect(transformedData[0][Keys.JOBS]).toHaveLength(2);
     expect(transformedData[0][Keys.PODS]).toHaveLength(2);
   });

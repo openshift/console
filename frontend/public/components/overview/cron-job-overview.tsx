@@ -1,6 +1,10 @@
 import * as React from 'react';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
-import { OverviewItem, usePluginsOverviewTabSection } from '@console/shared';
+import {
+  OverviewItem,
+  usePluginsOverviewTabSection,
+  useBuildConfigsWatcher,
+} from '@console/shared';
 import { CronJobModel } from '../../models';
 import { CronJobKind } from '../../module/k8s';
 import { menuActions } from '../cron-job';
@@ -37,8 +41,9 @@ const CronJobOverviewDetails: React.SFC<CronJobOverviewDetailsProps> = ({
 );
 
 const CronJobResourcesTab: React.SFC<CronJobResourcesTabProps> = ({ item }) => {
-  const { buildConfigs, pods, jobs, obj } = item;
+  const { pods, jobs, obj } = item;
   const pluginComponents = usePluginsOverviewTabSection(item);
+  const { buildConfigs } = useBuildConfigsWatcher(obj);
   return (
     <div className="overview__sidebar-pane-body">
       <PodsOverviewMultiple obj={obj} podResources={jobs} />
