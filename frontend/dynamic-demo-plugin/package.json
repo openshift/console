@@ -1,6 +1,6 @@
 {
   "name": "@console/dynamic-demo-plugin",
-  "version": "0.0.0-fixed",
+  "version": "0.0.0",
   "private": true,
   "scripts": {
     "clean": "rm -rf ./dist",

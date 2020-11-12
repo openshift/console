@@ -28,7 +28,7 @@ declared via the `consolePlugin` object.
 ```jsonc
 {
   "name": "@console/dynamic-demo-plugin",
-  "version": "0.0.0-fixed",
+  "version": "0.0.0",
   "private": true,
   // scripts, dependencies, devDependencies, ...
   "consolePlugin": {
@@ -46,7 +46,7 @@ declared via the `consolePlugin` object.
 
 Dynamic plugins can expose modules representing additional code to be referenced, loaded and executed
 at runtime. A separate [webpack chunk](https://webpack.js.org/guides/code-splitting/) is generated for
-each exposed module.
+each exposed module. Exposed modules are resolved relative to webpack `context` option.
 
 ## `console-extensions.json`
 
@@ -133,9 +133,10 @@ Provides asynchronous access to specific modules exposed by the plugin.
 
 ## Runtime constraints and specifics
 
-- Loading two or more plugins with the same `name` is not allowed.
+- Loading multiple plugins with the same `name` is not allowed.
 - Console will [override](https://webpack.js.org/concepts/module-federation/#overriding) certain modules
   to ensure a single version of React etc. is loaded and used by the application.
 - Enabling a plugin makes all of its extensions available for consumption. Individual extensions cannot
   be enabled or disabled separately.
-- Failure to resolve a code reference (unable to load module or missing export) will disable the plugin.
+- Failure to resolve a code reference (unable to load module, missing module export etc.) will disable
+  the plugin.

@@ -1,225 +1,140 @@
-# OpenShift Console Plugins
+# OpenShift Console Static Plugins
 
-Openshift Console Plugins extend the functionality of the console. Plugins are enabled by
-adding them as `dependencies` of the [console-app](/frontend/packages/console-app) package.
+Static plugins become part of the Console application during its webpack build. Their code is maintained
+as part of the frontend monorepo, built and released as an integral part of Console.
 
-- Plugins are static. Their code gets bundled ("baked") into the Console build output:
-  - Plugins are not loaded dynamically at runtime, which in turn simplifies the architecture (no need to sandbox plugin execution or its interaction with the Console app or Bridge).
-  - Console-app dependencies control the set of plugins to include in the Console build. This can be overridden using the CONSOLE_PLUGINS environment variable.
-- Plugins have their code represented as Console monorepo packages:
-  - This increases the level of trust between the Console app and its plugins.
-  - Plugin code close to Console code avoids cross-repo PR maintenance issues.
-  - Each plugin has an OWNERS file denoting its ownership (see the OWNERS File section below for details on reviewers and approvers).
-- Plugins are declarative, meaning they provide a list of extensions to be interpreted:
-  - Each extension has a unique type and properties representing its parameters (data and/or callbacks).
-  - Each extension has a flags object to support gating by Console feature flags.
-- The Console demo plugin is used to demonstrate specific extensions:
-  - It should contain at least one instance of every extension type (sadly, this isn't the case yet).
-  - It should be a "synthetic" (foo-bar, not-a-real-world) example acting as a starting point for further exploration.
+The `@console/app` package represents the core application. Static plugins to be automatically included
+in the build are declared as `dependencies` of this package. This can be overridden via `CONSOLE_PLUGINS`
+env. variable whose value is a comma separated list of plugin package names.
 
-See the [demo plugin](/frontend/packages/console-demo-plugin) for reference.
+For example:
 
-## Directory and File Names
-
-Plugin packages should be in the [frontend/packages](/frontend/packages) directory.
-
-The plugin directory name should match the plugin name (core plugins are an exception). As a convention, plugin
-directory names should end with the `-plugin` suffix (eg. `my-plugin`) to denote its purpose.
-
-- Every plugin should have `package.json` and `OWNERS` files.
-- Every plugin should follow the recommended file structure:
-  - `src` directory.
-  - `integration-tests` directory (if needed).
-  - `src/plugin.ts` file for the Plugin entry module.
-  - `src/components` directory for React components.
-  - `src/models` directory for k8s model definitions.
-  - Unit tests co-located at `</path/to/unit>/__tests__/unit.spec.ts`, see the Unit Tests section below for more details.
-
-``` bash
-    .
-    ├── ...
-    ├── frontend
-    │   ├── packages
-    |   |   ├── ...
-    │   |   ├── my-plugin
-    |   |   |   ├── integration-tests
-    |   |   |   |   └── ...
-    |   |   |   ├── src
-    |   |   |   |   ├── plugin.tsx
-    |   |   |   |   ├── __tests__
-    |   |   |   |   |   ├── some-test.spec.ts
-    |   |   |   |   |   └── ...
-    |   |   |   |   └── ...
-    |   |   |   ├── OWNERS
-    |   |   |   ├── package.json
-    |   |   |   └── ...
-    |   |   └── ...
-    │   └── ...
-    └── ...
+```sh
+CONSOLE_PLUGINS=dev-console,operator-lifecycle-manager yarn dev
 ```
 
-Packages whose name starts with `console-` are expected to be maintained by the core Console team, so they shouldn't have an `OWNERS` file.
-Every (non-core) plugin package must have an `OWNERS` file.
+starts webpack dev-server with only DevConsole and OLM plugins included in the build.
 
-## Package.json
+Example project structure:
 
-Plugins are packages. The package definition (package.json) of a plugin should include a `consolePlugin`
-map that defines the plugin entry module (value of `entry` key) and the plugin integration tests.
+```
+packages/foo-plugin/
+├── integration-tests/
+├── src/
+├── console-extensions.json
+├── OWNERS
+└── package.json
+```
 
-The `consolePlugin.entry` path should point to a module that exports the Plugin object (plugin entry module).
+## `package.json`
 
-From the plugin author perspective, a Plugin is simply a list of extensions.
-The plugin entry module is loaded immediately upon Console startup, so it should lazy-load other code (use the import function) instead of directly referring to it.
+`name` must include the `@console` scope. `version` should be `0.0.0-fixed`. Additional plugin metadata
+is declared via the `consolePlugin` object.
 
-``` json
-// File: package.json
-
+```jsonc
 {
-  "name": "@console/demo-plugin",
+  "name": "@console/foo-plugin",
   "version": "0.0.0-fixed",
-  "description": "Demo plugin for Console web application",
   "private": true,
-  "dependencies": {
-    "@console/plugin-sdk": "0.0.0-fixed",
-    "@console/shared": "0.0.0-fixed"
-  },
+  // scripts, dependencies, devDependencies, ...
   "consolePlugin": {
-    "entry": "src/plugin.tsx",
-    "integrationTestSuites": {
-      "demo": ["integration-tests/**/*.scenario.ts"]
+    "entry": "src/plugin.ts",
+    "exposedModules": {
+      "barUtils": "src/utils/bar.ts"
     }
   }
 }
 ```
 
-## Plugin Entry Module (`.../src/plugin.tsx`)
+Static plugins can provide both static and dynamic extensions. All paths in the `consolePlugin` object
+are relative to plugin package root directory and expected to reference actual files (including proper
+file extension).
 
-The plugin entry module path (relative to the plugin root directory) is defined in the `consolePlugin.entry` property of the `package.json` file.
+## Static extensions
 
-``` json
-// File: package.json
+The `consolePlugin.entry` path in `package.json` file points to the plugin entry module which exports
+all of the plugin's static extensions.
 
-{
-  ...
-  "consolePlugin": {
-    "entry": "src/plugin.tsx",
-    ...
-  }
-}
-```
+```ts
+import { Plugin, DashboardsTab, DashboardsCard } from '@console/plugin-sdk';
 
-The plugin entry module will export a variable of type `Plugin<ConsumedExtensions>` which will contain an array of objects of type `Extension`. Each `Extension` object must contain the following properties:
-
-- `type` - A string that describes the broader category and any specialization(s) into which the extension falls.
-- `properties` - An object containing options relevant to the extension.
-
-``` es6
-// File: src/plugin.tsx
+type ConsumedExtensions = DashboardsTab | DashboardsCard;
 
 const plugin: Plugin<ConsumedExtensions> = [
-  ...
   {
     type: 'Dashboards/Tab',
     properties: {
-      id: 'persistent-storage',
-      title: 'Persistent Storage',
+      id: 'foo-tab',
+      title: 'Foo',
     },
   },
-  ...
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'foo-tab',
+      loader: () => import('./components/foo-card' /* webpackChunkName: "foo" */).then((m) => m.FooCard),
+    },
+  },
 ];
 
 export default plugin;
 ```
 
-In addition, every plugin should typically provide (at least) these two extensions:
+The standard way to reference additional code in static extensions is via ES6 module `import` function,
+which generates a separate [webpack chunk](https://webpack.js.org/guides/code-splitting/) to be loaded
+on demand at runtime.
 
-- `ModelDefinition` - Add new k8s model definitions.
-- `FeatureFlag/Model` (in future also FeatureFlag/Action) - Add new feature flag, and use the newly added feature flags (possibly together with core Console flags) to gate its extensions.
+## Dynamic extensions
 
-See the [demo plugin](/frontend/packages/console-demo-plugin) for available Plugin extension points.
+Plugin's dynamic extensions are declared via `console-extensions.json` file; see the relevant section in
+[Console Dynamic Plugins README](/frontend/packages/console-dynamic-plugin-sdk/README.md) for details.
 
-For better type checking and code completion, use a type parameter that represents the union of all the extension types consumed by the plugin.
+When loading static plugins during Console startup, the overall list of plugin's extensions is computed
+as `[...staticExtensions, ...dynamicExtensions]`.
 
-``` es6
-// Bad
-const plugin: Plugin<any> = [ /* stuff */ ];
+## Integration tests
 
-// Good
-const plugin: Plugin<FooExtension | BarExtension> = [ /* stuff */ ];
+Static plugins can extend the list of core [Protractor](https://www.protractortest.org/) test suites via
+the `consolePlugin.integrationTestSuites` object in their `package.json` file.
 
-// Better
-type ConsumedExtensions = FooExtension | BarExtension;
-const plugin: Plugin<ConsumedExtensions> = [ /* stuff */ ];
-```
-
-## Monorepo Architecture
-
-Console plugins are first class citizens of the Console monorepo and therefore reuse the same testing (Jest, Protractor, etc.) infrastructure and conventions.
-See Tests and OWNERS sections below for details.
-
-## Unit Tests
-
-Unit tests are highly encouraged, but optional. Unit tests should be placed in `__tests__` directories as close as possible to the source code that they test.
-
-The [jest](https://jestjs.io/) framework is used for unit tests. It will automatically run any file located in a directory named `.../__tests__` and whose name ends with a `.spec.(ts|tsx|js|jsx)` suffix.
-
-``` bash
-  .
-  ├── my-plugin
-  |   ├── src
-  |   |   ├── __tests__
-  |   |   |   ├── some-test.spec.ts
-  |   |   |   └── ...
-  |   |   └── ...
-  |   └── ...
-  └── ...
-```
-
-## Integration Tests
-
-Integration tests should be placed in an `integration-tests` directory at the root level of the plugin directory.
-
-Integration tests use [protractor](http://www.protractortest.org) and must be defined in the `consolePlugin` map, in the plugin's `package.json`.
-The test path is relative to the plugin root directory. It is possible to include common tests defined in `@console/internal-integration-tests`
-and use common testing methods defined in the internal package by requiring it in the test.
-
-``` json
-// File: package.json
-
+```jsonc
 {
-  ...
+  "name": "@console/foo-plugin",
+  "version": "0.0.0-fixed",
+  "private": true,
+  // scripts, dependencies, devDependencies, ...
   "consolePlugin": {
-    ...
+    "entry": "src/plugin.ts",
     "integrationTestSuites": {
-      "demo": ["integration-tests/**/*.scenario.ts"]
+      "foo": [
+        "integration-tests/**/*.scenario.ts"
+      ]
     }
   }
 }
 ```
 
-``` bash
-  .
-  ├── my-plugin
-  |   ├── integration-tests
-  |   |   ├── tests
-  |   |   |   ├── demo.scenario.ts
-  |   |   |   └── ...
-  |   |   └── ...
-  |   └── ...
-  └── ...
-```
+Protractor test suite integration uses the same plugin resolution as the webpack build; only the plugins
+that would be included in the Console build will have their test suites added to the list.
 
-## OWNERS File
+Plugin developers should consider writing new integration tests using [Cypress](https://www.cypress.io/).
+The `integration-tests-cypress` package currently hosts tests to be moved out into appropriate packages.
 
-The OWNERS file defines a list of maintainers. Community plugins must define a list of `reviewers` and `approvers` who will
-be responsible for reviewing and approving pull requests for the plugin. For more in-depth information, see the [prow](https://github.com/kubernetes/test-infra/tree/master/prow) documentation.
+## `OWNERS`
 
-The OWNERS file should also include `labels` metadata, indicating organization ownership, usually of the format `component/<name of plugin>`:
+The main purpose of `OWNERS` file is to list people responsible for reviewing and approving pull requests
+related to the given package or project. It also gives us the ability to add labels to pull requests for
+easier categorization.
 
-``` yaml
+Packages maintained by core Console group (`packages/console-xxx`) usually inherit their reviewer/approver
+list from root frontend `OWNERS` file. Packages maintained by other groups (`packages/xxx-plugin`) should
+provide their own list.
+
+```yaml
 reviewers:
   - christianvogt
   - spadgett
+  - vojtechszocs
 approvers:
   - christianvogt
   - spadgett
@@ -228,8 +143,15 @@ labels:
   - component/sdk
 ```
 
-To add a new component label, open a PR with the new label added to https://github.com/openshift/release/blob/master/core-services/prow/02_config/_labels.yaml
+To add new component label in [Prow CI/CD system](https://github.com/kubernetes/test-infra), open a pull
+request that modifies
+[`core-services/prow/02_config/_labels.yaml`](https://github.com/openshift/release/blob/master/core-services/prow/02_config/_labels.yaml)
+in `openshift/release` repository.
 
-## Common vs. Community Plugins
+## Build time constraints and specifics
 
-Plugins can be owned either by the Console team or community teams. Plugins maintained by the Console team will not have an `OWNERS` file and will use a directory named `console-<some-name>` by convention.
+- From webpack perspective, the list of plugins to be included in the build is immutable.
+- The core application package (`@console/app`) is a static plugin, loaded before any other plugins.
+- Plugin entry modules are loaded during Console startup. To avoid breaking the overall Console UX:
+  - Additional code should be loaded via the `import` function.
+  - Side effects, such as CSS imports, should be avoided if possible.

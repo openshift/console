@@ -15,6 +15,9 @@
   "[json]": {
     "editor.formatOnSave": true
   },
+  "[jsonc]": {
+    "editor.formatOnSave": true
+  },
   "[graphql]": {
     "editor.formatOnSave": true
   },
