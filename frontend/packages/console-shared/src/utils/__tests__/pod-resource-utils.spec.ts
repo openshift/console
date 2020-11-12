@@ -1,12 +1,12 @@
 import * as _ from 'lodash';
 import {
-  MockResources,
   sampleCronJobs,
   sampleDaemonSets,
   sampleDeploymentConfigs,
   sampleDeployments,
   sampleStatefulSets,
-} from '@console/dev-console/src/components/topology/__tests__/topology-test-data';
+  MockResources,
+} from '@console/shared/src/utils/__tests__/test-resource-data';
 import {
   getPodsForDeploymentConfig,
   getPodsForDeployment,

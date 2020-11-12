@@ -1,21 +1,16 @@
 import * as _ from 'lodash';
-import { Model, NodeModel } from '@patternfly/react-topology';
-import { getPodStatus, podStatus } from '@console/shared';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import {
-  WorkloadData,
-  TopologyDataResources,
-  TrafficData,
-  OdcNodeModel,
-} from '../../topology-types';
+import { WorkloadData, TopologyDataResources, TrafficData } from '../../topology-types';
 import { TYPE_TRAFFIC_CONNECTOR } from '../../components/const';
 import { getTrafficConnectors, baseDataModelGetter } from '../data-transformer';
 import { getEditURL, WORKLOAD_TYPES } from '../../topology-utils';
 import {
-  resources,
-  topologyData,
   MockBaseResources,
   sampleDeployments,
+} from '@console/shared/src/utils/__tests__/test-resource-data';
+import {
+  resources,
+  topologyData,
   MockKialiGraphData,
   TEST_KINDS_MAP,
 } from '../../__tests__/topology-test-data';
@@ -42,10 +37,6 @@ function getTransformedTopologyData(
   const model = { nodes: [], edges: [] };
 
   return baseDataModelGetter(model, namespace, mockData, workloadResources, [], trafficData);
-}
-
-function getNodeForName(name: string, model: Model): NodeModel {
-  return model.nodes.find((node) => (node as OdcNodeModel)?.resource?.metadata.name === name);
 }
 
 describe('data transformer ', () => {
@@ -103,41 +94,6 @@ describe('data transformer ', () => {
     ).toMatchSnapshot();
   });
 
-  it('should return a valid pod status', () => {
-    const graphData = getTransformedTopologyData(mockResources, [
-      'deploymentConfigs',
-      'deployments',
-      'pods',
-    ]);
-    const node = getNodeForName('nodejs', graphData);
-    const status = getPodStatus((node.data.data as WorkloadData).donutStatus.pods[0]);
-    expect(podStatus.includes(status)).toBe(true);
-  });
-
-  it('should return empty pod list in TopologyData in case of no pods', () => {
-    const knativeMockResp = { ...mockResources, pods: { loaded: true, loadError: '', data: [] } };
-    const graphData = getTransformedTopologyData(knativeMockResp, [
-      'deploymentConfigs',
-      'deployments',
-    ]);
-    expect((graphData.nodes[0].data.data as WorkloadData).donutStatus.pods).toHaveLength(0);
-  });
-
-  it('should return a Idle pod status in a non-serverless application', () => {
-    // simulate pod are scaled to zero in nodejs deployment.
-    mockResources = {
-      ..._.cloneDeep(mockResources),
-      pods: { loaded: true, loadError: '', data: [] },
-    };
-    mockResources.deploymentConfigs.data[0].metadata.annotations = {
-      'idling.alpha.openshift.io/idled-at': '2019-04-22T11:58:33Z',
-    };
-    const graphData = getTransformedTopologyData(mockResources, ['deploymentConfigs']);
-    const status = getPodStatus((graphData.nodes[0].data.data as WorkloadData).donutStatus.pods[0]);
-    expect(podStatus.includes(status)).toBe(true);
-    expect(status).toEqual('Idle');
-  });
-
   it('should return false for non knative resource', () => {
     mockResources = { ...mockResources, pods: { loaded: true, loadError: '', data: [] } };
     const graphData = getTransformedTopologyData(mockResources, [
@@ -153,24 +109,10 @@ describe('data transformer ', () => {
     expect(graphData.nodes[0].data.resources.obj.kind).toEqual('DaemonSet');
   });
 
-  it('should return a daemon set pod ', () => {
-    const graphData = getTransformedTopologyData(mockResources, ['daemonSets', 'pods']);
-    expect(graphData.nodes).toHaveLength(2);
-    const daemonSets = graphData.nodes.filter((n) => n.data.resources.obj.kind === 'DaemonSet');
-    expect((daemonSets[0].data.data as WorkloadData).donutStatus.pods).toHaveLength(1);
-  });
-
   it('should return a valid stateful set', () => {
     const graphData = getTransformedTopologyData(mockResources, ['statefulSets']);
     expect(graphData.nodes).toHaveLength(1);
     expect(graphData.nodes[0].data.resources.obj.kind).toEqual('StatefulSet');
-  });
-
-  it('should return a stateful set pod ', () => {
-    const graphData = getTransformedTopologyData(mockResources, ['statefulSets', 'pods']);
-    expect(graphData.nodes).toHaveLength(2);
-    const statefulSets = graphData.nodes.filter((n) => n.data.resources.obj.kind === 'StatefulSet');
-    expect((statefulSets[0].data.data as WorkloadData).donutStatus.pods).toHaveLength(1);
   });
 
   it('should return a valid standalone pod', () => {
@@ -179,36 +121,16 @@ describe('data transformer ', () => {
     expect(graphData.nodes[0].data.resources.obj.kind).toEqual('Pod');
   });
 
-  it('should return a standalone pod pod ', () => {
-    const graphData = getTransformedTopologyData(mockResources, ['pods']);
-    expect(graphData.nodes).toHaveLength(1);
-    expect((graphData.nodes[0].data.data as WorkloadData).donutStatus.pods).toHaveLength(1);
-  });
-
   it('should return a valid standalone job', () => {
     const graphData = getTransformedTopologyData(mockResources, ['jobs']);
     expect(graphData.nodes).toHaveLength(1);
     expect(graphData.nodes[0].data.resources.obj.kind).toEqual('Job');
   });
 
-  it('should return a standalone job pod ', () => {
-    const graphData = getTransformedTopologyData(mockResources, ['jobs', 'pods']);
-    expect(graphData.nodes).toHaveLength(2);
-    const jobs = graphData.nodes.filter((n) => n.data.resources.obj.kind === 'Job');
-    expect((jobs[0].data.data as WorkloadData).donutStatus.pods).toHaveLength(1);
-  });
-
   it('should return a valid cronjobs', () => {
     const graphData = getTransformedTopologyData(mockResources, ['cronJobs']);
     expect(graphData.nodes).toHaveLength(1);
     expect(graphData.nodes[0].data.resources.obj.kind).toEqual('CronJob');
-  });
-
-  it('should return a CronJob pod ', () => {
-    const graphData = getTransformedTopologyData(mockResources, ['cronJobs', 'jobs', 'pods']);
-    expect(graphData.nodes).toHaveLength(3);
-    const cronJobs = graphData.nodes.filter((n) => n.data.resources.obj.kind === 'CronJob');
-    expect((cronJobs[0].data.data as WorkloadData).donutStatus.pods).toHaveLength(2);
   });
 
   it('should return a valid che workspace factory URL if cheURL is there', () => {

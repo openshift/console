@@ -22,6 +22,8 @@ export type KnativeItem = {
   configurations?: K8sResourceKind[];
   ksroutes?: K8sResourceKind[];
   ksservices?: K8sResourceKind[];
+  eventSources?: K8sResourceKind[];
+  eventingsubscription?: K8sResourceKind[];
   eventSourceCronjob?: K8sResourceKind[];
   eventSourceContainers?: K8sResourceKind[];
   eventSourceApiserver?: K8sResourceKind[];

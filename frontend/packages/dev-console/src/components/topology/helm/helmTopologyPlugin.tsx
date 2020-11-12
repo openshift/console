@@ -1,4 +1,5 @@
 import { Plugin } from '@console/plugin-sdk';
+import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   TopologyComponentFactory,
   TopologyDataModelFactory,
@@ -17,6 +18,17 @@ export type HelmTopologyConsumedExtensions =
   | TopologyDataModelFactory
   | TopologyDisplayFilters;
 
+const getHelmWatchedResources = (namespace: string): WatchK8sResources<any> => {
+  return {
+    secrets: {
+      isList: true,
+      kind: 'Secret',
+      namespace,
+      optional: true,
+    },
+  };
+};
+
 export const helmTopologyPlugin: Plugin<HelmTopologyConsumedExtensions> = [
   {
     type: 'Topology/ComponentFactory',
@@ -30,6 +42,7 @@ export const helmTopologyPlugin: Plugin<HelmTopologyConsumedExtensions> = [
       id: 'helm-topology-model-factory',
       priority: 400,
       getDataModel: getHelmTopologyDataModel,
+      resources: getHelmWatchedResources,
       isResourceDepicted: getIsHelmResource,
     },
   },

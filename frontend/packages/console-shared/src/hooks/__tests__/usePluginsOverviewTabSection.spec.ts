@@ -1,13 +1,10 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { useExtensions, OverviewTabSection, LazyLoader } from '@console/plugin-sdk';
-import {
-  knativeServiceObj,
-  sampleKnativeRevisions,
-} from '@console/knative-plugin/src/topology/__tests__/topology-knative-test-data';
 import { OverviewItem } from '../../types/resource';
 import { testHook } from '../../test-utils/hooks-utils';
 import { usePluginsOverviewTabSection } from '../plugins-overview-tab-section';
+import { sampleDeploymentConfigs } from '../../utils/__tests__/test-resource-data';
 
 jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({
   useExtensions: jest.fn(),
@@ -16,8 +13,9 @@ describe('usePluginsOverviewTabSection', () => {
   let item: OverviewItem;
   beforeEach(() => {
     item = {
-      revisions: sampleKnativeRevisions.data,
-      obj: knativeServiceObj,
+      obj: sampleDeploymentConfigs.data[0],
+      deploymentConfigs: sampleDeploymentConfigs,
+      isMonitorable: true,
     } as OverviewItem;
   });
 
@@ -35,7 +33,7 @@ describe('usePluginsOverviewTabSection', () => {
     const tabSection: OverviewTabSection = {
       type: 'Overview/Section',
       properties: {
-        key: 'revisions',
+        key: 'deploymentConfigs',
         loader,
       },
     };

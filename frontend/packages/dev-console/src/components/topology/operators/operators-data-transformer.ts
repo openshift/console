@@ -7,8 +7,10 @@ import {
   referenceFor,
 } from '@console/internal/module/k8s';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src';
-import { isOperatorBackedService } from '@console/shared/src/utils/operator-utils';
-import { getOperatorBackedServiceKindMap } from '@console/shared';
+import {
+  isOperatorBackedService,
+  getOperatorBackedServiceKindMap,
+} from '@console/shared/src/utils/operator-utils';
 import { isOperatorBackedKnResource } from '@console/knative-plugin/src/topology/knative-topology-utils';
 import { WORKLOAD_TYPES } from '../topology-utils';
 import { TYPE_SERVICE_BINDING } from '../components';

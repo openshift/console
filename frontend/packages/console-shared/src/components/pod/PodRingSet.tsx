@@ -20,7 +20,7 @@ const PodRingSet: React.FC<PodRingSetProps> = ({ obj, path }) => {
 
   const deploymentData = React.useMemo(() => {
     return loaded && !loadError
-      ? getPodData(obj, podData.pods, podData.current, podData.previous, podData.isRollingOut)
+      ? getPodData({ ...podData, obj })
       : { inProgressDeploymentData: null, completedDeploymentData: null };
   }, [loadError, loaded, podData, obj]);
 

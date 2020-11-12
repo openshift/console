@@ -26,9 +26,7 @@ const ObservedKnativeRevisionListViewNode: React.FC<KnativeRevisionListViewNodeP
 }) => {
   const resource = getTopologyResourceObject(item.getData());
   const metrics = useOverviewMetrics();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const revisions = React.useMemo(() => [resource], [resource.metadata.uid]);
-  const { loaded, pods } = usePodsForRevisions(revisions, resource.metadata.namespace);
+  const { loaded, pods } = usePodsForRevisions(resource.metadata.uid, resource.metadata.namespace);
   const podData = React.useMemo(() => {
     if (!loaded) {
       return null;

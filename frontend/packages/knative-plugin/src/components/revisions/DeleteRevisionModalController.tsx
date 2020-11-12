@@ -25,11 +25,11 @@ import {
 import { KNATIVE_SERVING_LABEL } from '../../const';
 import { RevisionModel, ServiceModel } from '../../models';
 import {
-  transformTrafficSplittingData,
   knativeServingResourcesTrafficSplitting,
   getRevisionItems,
   constructObjForUpdate,
 } from '../../utils/traffic-splitting-utils';
+import { getKnativeRevisionsData } from '../../topology/knative-topology-utils';
 import { TrafficSplittingType } from '../traffic-splitting/TrafficSplitting';
 import DeleteRevisionModal from './DeleteRevisionModal';
 import { Traffic } from '../../types';
@@ -55,7 +55,7 @@ const Controller: React.FC<ControllerProps> = ({ loaded, resources, revision, ca
     return revision.metadata.labels[KNATIVE_SERVING_LABEL] === s.metadata.name;
   });
 
-  const revisions = transformTrafficSplittingData(service, resources).filter(
+  const revisions = getKnativeRevisionsData(service, resources).filter(
     (r) => revision.metadata.uid !== r.metadata.uid,
   );
 

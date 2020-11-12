@@ -3,6 +3,7 @@ import * as React from 'react';
 import { GitAltIcon } from '@patternfly/react-icons';
 import { KebabOption } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
+import { MockResources } from '@console/shared/src/utils/__tests__/test-resource-data';
 import {
   getMenuPath,
   getAddPageUrl,
@@ -15,10 +16,7 @@ import {
 } from '../../components/topology/topology-utils';
 import { INCONTEXT_ACTIONS_CONNECTS_TO, UNASSIGNED_KEY } from '../../const';
 import { ImportOptions } from '../../components/import/import-types';
-import {
-  MockResources,
-  TEST_KINDS_MAP,
-} from '../../components/topology/__tests__/topology-test-data';
+import { TEST_KINDS_MAP } from '../../components/topology/__tests__/topology-test-data';
 import { TopologyDataResources } from '../../components/topology/topology-types';
 import {
   baseDataModelGetter,

@@ -42,14 +42,14 @@ const CronJobOverviewDetails: React.SFC<CronJobOverviewDetailsProps> = ({
 );
 
 const CronJobResourcesTab: React.SFC<CronJobResourcesTabProps> = ({ item }) => {
-  const { pods, obj } = item;
+  const { obj } = item;
   const pluginComponents = usePluginsOverviewTabSection(item);
   const { buildConfigs } = useBuildConfigsWatcher(obj);
   const { jobs } = useJobsForCronJobWatcher(obj);
   return (
     <div className="overview__sidebar-pane-body">
       <PodsOverviewMultiple obj={obj} podResources={jobs} />
-      <JobsOverview jobs={jobs} pods={pods} obj={obj} />
+      <JobsOverview jobs={jobs} obj={obj} />
       <BuildOverview buildConfigs={buildConfigs} />
       {pluginComponents.map(({ Component, key }) => (
         <Component key={key} item={item} />

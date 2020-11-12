@@ -1,12 +1,13 @@
 import * as _ from 'lodash';
 import { getImageForCSVIcon, ALL_APPLICATIONS_KEY } from '@console/shared';
 import { Model, NodeModel } from '@patternfly/react-topology';
+import { MockResources } from '@console/shared/src/utils/__tests__/test-resource-data';
 import {
   WorkloadData,
   TopologyDataResources,
   TopologyDisplayFilterType,
 } from '../../topology-types';
-import { MockResources, TEST_KINDS_MAP } from '../../__tests__/topology-test-data';
+import { TEST_KINDS_MAP } from '../../__tests__/topology-test-data';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '../components/const';
 import {
   DEFAULT_TOPOLOGY_FILTERS,

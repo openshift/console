@@ -1,12 +1,6 @@
 import * as _ from 'lodash';
 import { ResourceUtil } from '@console/shared';
-import {
-  MockResources,
-  sampleDeploymentConfigs,
-  sampleDeployments,
-  sampleStatefulSets,
-  sampleDaemonSets,
-} from '@console/dev-console/src/components/topology/__tests__/topology-test-data';
+import { MockResources, sampleDeploymentConfigs, sampleDeployments } from './test-resource-data';
 import {
   getKnativeServingRevisions,
   getKnativeServingConfigurations,
@@ -17,16 +11,9 @@ import {
   sampleKnativeDeployments,
   MockKnativeResources,
 } from '@console/knative-plugin/src/topology/__tests__/topology-knative-test-data';
-import { DaemonSetModel, StatefulSetModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Alert } from '@console/internal/components/monitoring/types';
-import {
-  createDeploymentConfigItems,
-  createOverviewItemsForType,
-  createPodItems,
-  createWorkloadItems,
-  getWorkloadMonitoringAlerts,
-} from '../resource-utils';
+import { createOverviewItemsForType, getWorkloadMonitoringAlerts } from '../resource-utils';
 import { mockAlerts } from '../__mocks__/alerts-and-rules-data';
 
 declare global {
@@ -69,151 +56,100 @@ expect.extend({
 });
 
 enum Keys {
-  CURRENT = 'current',
-  ROLLINGOUT = 'isRollingOut',
-  OBJ = 'obj',
-  PODS = 'pods',
-  PREVIOUS = 'previous',
-  STATUS = 'status',
   REVISIONS = 'revisions',
   KNATIVECONFIGS = 'configurations',
   KSROUTES = 'ksroutes',
 }
 
-const podKeys = [Keys.OBJ, Keys.STATUS];
-const dsAndSSKeys = [...podKeys, Keys.PODS];
-const dcKeys = [...dsAndSSKeys, Keys.CURRENT, Keys.ROLLINGOUT, Keys.PREVIOUS];
-const knativeKeys = [...dcKeys, Keys.REVISIONS, Keys.KNATIVECONFIGS, Keys.KSROUTES];
+const knativeKeys = [Keys.REVISIONS, Keys.KNATIVECONFIGS, Keys.KSROUTES];
 
 describe('TransformResourceData', () => {
-  it('should create Deployment config Items for a provided dc', () => {
-    const transformedData = createDeploymentConfigItems(
-      sampleDeploymentConfigs.data,
+  it('should create Deployment config Items', () => {
+    const transformedData = createOverviewItemsForType(
+      'deploymentConfigs',
       MockResources,
       knativeOverviewResourceUtils,
     );
     expect(transformedData).toHaveLength(2);
-    expect(transformedData[0]).toHaveProperties(dcKeys);
+    expect(transformedData[0].obj).toEqual(sampleDeploymentConfigs.data[0]);
+    expect(transformedData[0].isMonitorable).toBeTruthy();
+    expect(transformedData[0].monitoringAlerts).toHaveLength(0);
+    expect(transformedData[1].obj).toEqual(sampleDeploymentConfigs.data[1]);
+    expect(transformedData[1].isMonitorable).toBeTruthy();
+    expect(transformedData[1].monitoringAlerts).toHaveLength(0);
+    expect(transformedData[0]).not.toHaveProperties(knativeKeys);
   });
 
-  it('should only have keys mentions in dcKeys for created Deployment config Items for a provided dc', () => {
-    const transformedData = createDeploymentConfigItems(
-      sampleDeploymentConfigs.data,
-      MockResources,
-      knativeOverviewResourceUtils,
-    );
-    expect(transformedData).toHaveLength(2);
-    expect(transformedData[0]).not.toHaveProperties([...dcKeys, 'revisions']);
-  });
-
-  it('should create Deployment Items for a provided deployment', () => {
-    const transformedData = createDeploymentConfigItems(
-      sampleDeployments.data,
+  it('should create Deployment Items', () => {
+    const transformedData = createOverviewItemsForType(
+      'deployments',
       MockResources,
       knativeOverviewResourceUtils,
     );
     expect(transformedData).toHaveLength(3);
-    expect(transformedData[0]).toHaveProperties(dcKeys);
-    expect(transformedData[1]).toHaveProperties(dcKeys);
+    expect(transformedData[0].obj).toEqual(sampleDeployments.data[0]);
+    expect(transformedData[0].isMonitorable).toBeTruthy();
+    expect(transformedData[0].monitoringAlerts).toHaveLength(0);
+    expect(transformedData[0]).not.toHaveProperties(knativeKeys);
+    expect(transformedData[1].obj).toEqual(sampleDeployments.data[1]);
+    expect(transformedData[1].isMonitorable).toBeTruthy();
+    expect(transformedData[1].monitoringAlerts).toHaveLength(0);
+    expect(transformedData[1]).not.toHaveProperties(knativeKeys);
+    expect(transformedData[2].obj).toEqual(sampleDeployments.data[2]);
+    expect(transformedData[2].isMonitorable).toBeTruthy();
+    expect(transformedData[2].monitoringAlerts).toHaveLength(0);
+    expect(transformedData[2]).not.toHaveProperties(knativeKeys);
   });
 
   it('should create Knative Deployment Items for a provided deployment', () => {
-    const transformedData = createDeploymentConfigItems(
-      sampleKnativeDeployments.data,
-      MockKnativeResources,
+    const transformedData = createOverviewItemsForType(
+      'deployments',
+      { ...MockKnativeResources, deployments: sampleKnativeDeployments },
       knativeOverviewResourceUtils,
     );
     expect(transformedData).toHaveLength(2);
     expect(transformedData[0]).toHaveProperties(knativeKeys);
   });
 
-  it('should only have keys mentions in KnativeKeys for created Deployment Items for a provided deployment', () => {
-    const transformedData = createDeploymentConfigItems(
-      sampleDeployments.data,
-      MockResources,
-      knativeOverviewResourceUtils,
-    );
-    expect(transformedData).toHaveLength(3);
-    expect(transformedData[0]).not.toHaveProperties([...knativeKeys, 'key']);
-  });
-
   it('should create StatefulSets Items for a provided ss', () => {
-    const transformedData = createWorkloadItems(
-      StatefulSetModel,
-      sampleStatefulSets.data,
+    const transformedData = createOverviewItemsForType(
+      'statefulSets',
       MockResources,
       knativeOverviewResourceUtils,
     );
     expect(transformedData).toHaveLength(1);
-    expect(transformedData[0]).toHaveProperties(dsAndSSKeys);
-  });
-
-  it('should not have rc current or previous prop for created StatefulSets Items for a provided ss', () => {
-    const transformedData = createWorkloadItems(
-      StatefulSetModel,
-      sampleStatefulSets.data,
-      MockResources,
-      knativeOverviewResourceUtils,
-    );
-    expect(transformedData).toHaveLength(1);
-    expect(transformedData[0][Keys.CURRENT]).toBeUndefined();
-    expect(transformedData[0][Keys.PREVIOUS]).toBeUndefined();
-    expect(transformedData[0][Keys.ROLLINGOUT]).toBeUndefined();
+    expect(transformedData[0]).not.toHaveProperties(knativeKeys);
   });
 
   it('should create DaemonSets Items for a provided ds', () => {
-    const transformedData = createWorkloadItems(
-      DaemonSetModel,
-      sampleDaemonSets.data,
+    const transformedData = createOverviewItemsForType(
+      'daemonSets',
       MockResources,
       knativeOverviewResourceUtils,
     );
     expect(transformedData).toHaveLength(1);
-    expect(transformedData[0]).toHaveProperties(dsAndSSKeys);
+    expect(transformedData[0]).not.toHaveProperties(knativeKeys);
   });
 
-  it('should not have rc current or previous prop for created DaemonSets Items for a provided ds', () => {
-    const transformedData = createWorkloadItems(
-      DaemonSetModel,
-      sampleDaemonSets.data,
+  it('should return only standalone pods', () => {
+    const transformedData = createOverviewItemsForType(
+      'pods',
       MockResources,
       knativeOverviewResourceUtils,
     );
     expect(transformedData).toHaveLength(1);
-    expect(transformedData[0][Keys.CURRENT]).toBeUndefined();
-    expect(transformedData[0][Keys.PREVIOUS]).toBeUndefined();
-    expect(transformedData[0][Keys.ROLLINGOUT]).toBeUndefined();
-  });
-
-  it('should return only pods and not replication controllers for a given resource', () => {
-    const transformedData = createPodItems(MockResources.pods.data, MockResources);
-    transformedData.forEach((element) => {
-      expect(element).toHaveProperties(podKeys);
-    });
-  });
-
-  it('should return pods and not replication controllers for a given resource', () => {
-    const transformedData = createOverviewItemsForType('pods', MockResources);
-    transformedData.forEach((element) => {
-      expect(element).not.toHaveProperties([...podKeys, 'current', 'previous']);
-    });
+    expect(transformedData[0]).not.toHaveProperties(knativeKeys);
   });
 
   it('should create standalone Job Items', () => {
     const transformedData = createOverviewItemsForType('jobs', MockResources);
     expect(transformedData).toHaveLength(1);
-    expect(transformedData[0][Keys.CURRENT]).toBeUndefined();
-    expect(transformedData[0][Keys.PREVIOUS]).toBeUndefined();
-    expect(transformedData[0][Keys.ROLLINGOUT]).toBeUndefined();
+    expect(transformedData[0]).not.toHaveProperties(knativeKeys);
   });
 
   it('should create CronJob Items', () => {
     const transformedData = createOverviewItemsForType('cronJobs', MockResources);
     expect(transformedData).toHaveLength(1);
-    expect(transformedData[0][Keys.CURRENT]).toBeUndefined();
-    expect(transformedData[0][Keys.PREVIOUS]).toBeUndefined();
-    expect(transformedData[0][Keys.ROLLINGOUT]).toBeUndefined();
-    expect(transformedData[0][Keys.PODS]).toHaveLength(2);
   });
 
   it('should return all the alerts related to a workload', () => {

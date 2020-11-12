@@ -65,7 +65,9 @@ describe('Pod Utils:', () => {
   it('should return pods if there are no rolling strategy', () => {
     const current: PodControllerOverviewItem = { pods: [], alerts: {}, revision: 0, obj: {} };
     const previous: PodControllerOverviewItem = { pods: [], alerts: {}, revision: 0, obj: {} };
-    expect(getPodData(statefulSets, allpods, current, previous, false)).toEqual({
+    expect(
+      getPodData({ obj: statefulSets, pods: allpods, current, previous, isRollingOut: false }),
+    ).toEqual({
       inProgressDeploymentData: null,
       completedDeploymentData: allpods,
     });
@@ -80,7 +82,9 @@ describe('Pod Utils:', () => {
       phase: 'Complete',
     };
     const previous: PodControllerOverviewItem = { pods: allpods, alerts: {}, revision: 0, obj: {} };
-    expect(getPodData(deploymentConfig, allpods, current, previous, false)).toEqual({
+    expect(
+      getPodData({ obj: deploymentConfig, pods: allpods, current, previous, isRollingOut: false }),
+    ).toEqual({
       inProgressDeploymentData: null,
       completedDeploymentData: [],
     });
@@ -94,7 +98,9 @@ describe('Pod Utils:', () => {
       obj: {},
     };
     const previous: PodControllerOverviewItem = { pods: allpods, alerts: {}, revision: 0, obj: {} };
-    expect(getPodData(deploymentConfig, allpods, current, previous, true)).toEqual({
+    expect(
+      getPodData({ obj: deploymentConfig, pods: allpods, current, previous, isRollingOut: true }),
+    ).toEqual({
       inProgressDeploymentData: [],
       completedDeploymentData: allpods,
     });

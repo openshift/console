@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import {
   apiVersionForModel,
   K8sResourceCommon,
@@ -6,19 +7,20 @@ import {
 } from '@console/internal/module/k8s';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import {
-  getOwnedResources,
   getReplicaSetsForResource,
   PodControllerOverviewItem,
+  useDeepCompareMemoize,
 } from '@console/shared/src';
 import { DeploymentModel } from '@console/internal/models';
 
 export const usePodsForRevisions = (
-  revisionResources: K8sResourceKind[],
+  revisionIds: string | string[],
   namespace: string,
 ): { loaded: boolean; loadError: string; pods: PodControllerOverviewItem[] } => {
   const [loaded, setLoaded] = React.useState<boolean>(false);
   const [loadError, setLoadError] = React.useState<string>('');
   const [pods, setPods] = React.useState<PodControllerOverviewItem[]>();
+  const revisions = useDeepCompareMemoize(Array.isArray(revisionIds) ? revisionIds : [revisionIds]);
   const watchedResources = React.useMemo(
     () => ({
       deployments: {
@@ -52,23 +54,26 @@ export const usePodsForRevisions = (
       Object.keys(resources).length > 0 &&
       Object.keys(resources).every((key) => resources[key].loaded)
     ) {
-      const revisionsPods = [];
-      revisionResources.forEach((revision) => {
-        const associatedDeployment = getOwnedResources(revision, resources.deployments.data);
+      const revisionsPods = revisions.reduce((acc, uid) => {
+        const associatedDeployment = _.filter(
+          resources?.deployments?.data,
+          ({ metadata: { ownerReferences } }) => _.some(ownerReferences, { uid, controller: true }),
+        );
         if (associatedDeployment?.[0]) {
           const depObj: K8sResourceKind = {
             ...associatedDeployment[0],
             apiVersion: apiVersionForModel(DeploymentModel),
             kind: DeploymentModel.kind,
           };
-          revisionsPods.push(...getReplicaSetsForResource(depObj, resources));
+          acc.push(...getReplicaSetsForResource(depObj, resources));
         }
-      });
+        return acc;
+      }, []);
       setLoaded(true);
       setLoadError(null);
       setPods(revisionsPods);
     }
-  }, [revisionResources, resources]);
+  }, [resources, revisions]);
 
   return { loaded, loadError, pods };
 };

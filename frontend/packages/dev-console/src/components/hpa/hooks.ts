@@ -15,8 +15,12 @@ export const useRelatedHPA = (
   const [hpaName, setHPAName] = React.useState<string>(null);
 
   React.useEffect(() => {
+    let destroyed = false;
     k8sList(HorizontalPodAutoscalerModel, { ns: workloadNamespace })
       .then((hpaList: HorizontalPodAutoscalerKind[]) => {
+        if (destroyed) {
+          return;
+        }
         const matchingHPA = hpaList.find(
           doesHpaMatch({
             apiVersion: workloadAPI,
@@ -31,11 +35,17 @@ export const useRelatedHPA = (
         setHPAName(matchingHPA.metadata.name);
       })
       .catch((error) => {
+        if (destroyed) {
+          return;
+        }
         setLoaded(true);
         setErrorMessage(
           error?.message || `No matching ${HorizontalPodAutoscalerModel.label} found.`,
         );
       });
+    return () => {
+      destroyed = true;
+    };
   }, [workloadAPI, workloadKind, workloadName, workloadNamespace]);
 
   const resource = React.useMemo(

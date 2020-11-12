@@ -7,10 +7,8 @@ import {
   K8sResourceKindReference,
   kindForReference,
   referenceFor,
-  referenceForModel,
 } from '@console/internal/module/k8s';
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src';
 import { isKnativeServing } from '@console/shared';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
@@ -60,14 +58,7 @@ export const createTopologyNodeData = (
   defaultIcon: string,
   operatorBackedService: boolean = false,
 ): TopologyDataObject => {
-  const {
-    current,
-    previous,
-    isRollingOut,
-    pipelines = [],
-    pipelineRuns = [],
-    monitoringAlerts = [],
-  } = overviewItem;
+  const { pipelines = [], pipelineRuns = [], monitoringAlerts = [] } = overviewItem;
   const dcUID = _.get(resource, 'metadata.uid');
   const deploymentsLabels = _.get(resource, 'metadata.labels', {});
   const deploymentsAnnotations = _.get(resource, 'metadata.annotations', {});
@@ -81,7 +72,6 @@ export const createTopologyNodeData = (
     type,
     resource,
     resources: { ...overviewItem, isOperatorBackedService: operatorBackedService },
-    pods: overviewItem.pods,
     data: {
       monitoringAlerts,
       kind: referenceFor(resource),
@@ -96,13 +86,6 @@ export const createTopologyNodeData = (
       connectedPipeline: {
         pipeline: pipelines[0],
         pipelineRuns,
-      },
-      donutStatus: {
-        pods: overviewItem.pods,
-        current,
-        previous,
-        isRollingOut,
-        obj: resource,
       },
     },
   };
@@ -359,18 +342,6 @@ export const getBaseWatchedResources = (namespace: string): WatchK8sResources<an
       namespace,
       optional: true,
     },
-    replicationControllers: {
-      isList: true,
-      kind: 'ReplicationController',
-      namespace,
-      optional: true,
-    },
-    replicaSets: {
-      isList: true,
-      kind: 'ReplicaSet',
-      namespace,
-      optional: true,
-    },
     jobs: {
       isList: true,
       kind: 'Job',
@@ -389,21 +360,9 @@ export const getBaseWatchedResources = (namespace: string): WatchK8sResources<an
       namespace,
       optional: true,
     },
-    secrets: {
-      isList: true,
-      kind: 'Secret',
-      namespace,
-      optional: true,
-    },
     hpas: {
       isList: true,
       kind: HorizontalPodAutoscalerModel.kind,
-      namespace,
-      optional: true,
-    },
-    clusterServiceVersions: {
-      isList: true,
-      kind: referenceForModel(ClusterServiceVersionModel),
       namespace,
       optional: true,
     },

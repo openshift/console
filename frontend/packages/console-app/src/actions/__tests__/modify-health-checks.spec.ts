@@ -1,4 +1,4 @@
-import { sampleDeployments } from '@console/dev-console/src/components/topology/__tests__/topology-test-data';
+import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-resource-data';
 import { AddHealthChecks, EditHealthChecks } from '../modify-health-checks';
 import { DeploymentModel } from '@console/internal/models';
 

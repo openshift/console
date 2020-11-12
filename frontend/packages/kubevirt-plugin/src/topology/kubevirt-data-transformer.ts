@@ -5,7 +5,7 @@ import {
   PodKind,
   referenceFor,
 } from '@console/internal/module/k8s';
-import { OverviewItem, getReplicationControllersForResource } from '@console/shared';
+import { OverviewItem } from '@console/shared';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { Model } from '@patternfly/react-topology';
 import {
@@ -19,7 +19,6 @@ import {
 import { VMIKind, VMKind } from '../types';
 import { VirtualMachineModel } from '../models';
 import { TYPE_VIRTUAL_MACHINE } from './components/const';
-import { findVMIPod } from '../selectors/pod/selectors';
 import { getVMStatus } from '../statuses/vm/vm-status';
 import { V1alpha1DataVolume } from '../types/vm/disk/V1alpha1DataVolume';
 import { VMImportKind } from '../types/vm-import/ovirt/vm-import';
@@ -35,26 +34,16 @@ export const getOperatingSystemImage = (vm: VMKind, templates: K8sResourceKind[]
   return getImageForIconClass(template.metadata.annotations.iconClass);
 };
 
-export const createVMOverviewItem = (vm: K8sResourceKind, resources: any): OverviewItem => {
+export const createVMOverviewItem = (vm: K8sResourceKind): OverviewItem => {
   if (!vm.apiVersion) {
     vm.apiVersion = apiVersionForModel(VirtualMachineModel);
   }
   if (!vm.kind) {
     vm.kind = VirtualMachineModel.kind;
   }
-  const { name } = vm.metadata;
-  const vmis = resources.virtualmachineinstances.data;
-  const vmi = vmis.find((instance) => instance.metadata.name === name) as VMIKind;
-  const { visibleReplicationControllers } = getReplicationControllersForResource(vm, resources);
-  const [current, previous] = visibleReplicationControllers;
-  const laucherPod = findVMIPod(vmi, resources.pods.data);
-  const pods = laucherPod ? [laucherPod] : [];
 
   return {
-    current,
     obj: vm,
-    previous,
-    pods,
     isMonitorable: false,
     isOperatorBackedService: false,
   };
@@ -108,7 +97,7 @@ export const getKubevirtTopologyDataModel = (
 
   if (resources.virtualmachines?.data.length) {
     resources.virtualmachines.data.forEach((resource) => {
-      const vmOverview = createVMOverviewItem(resource, resources);
+      const vmOverview = createVMOverviewItem(resource);
       const { uid } = resource.metadata;
       vmsResources.push(uid);
       const data = createTopologyVMNodeData(resource, vmOverview, resources);

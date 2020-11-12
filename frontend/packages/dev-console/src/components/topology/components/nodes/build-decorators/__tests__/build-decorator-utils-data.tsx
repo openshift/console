@@ -7,7 +7,6 @@ import { ConnectedWorkloadPipeline, WorkloadData } from '../../../../topology-ty
 
 export const bareMinimalWorkloadData: WorkloadData = {
   connectedPipeline: null,
-  donutStatus: null,
 };
 
 const connectedPipelineOne: ConnectedWorkloadPipeline = {
@@ -120,10 +119,8 @@ export const buildData = {
 
 export const pipelineData: WorkloadData = {
   connectedPipeline: connectedPipelineOne,
-  donutStatus: null,
 };
 
 export const noPiplelineData: WorkloadData = {
   connectedPipeline: { pipeline: null, pipelineRuns: [] },
-  donutStatus: null,
 };

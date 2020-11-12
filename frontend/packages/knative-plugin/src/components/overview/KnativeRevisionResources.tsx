@@ -1,49 +1,58 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { AllPodStatus } from '@console/shared';
 import { K8sResourceKind, PodKind, podPhase } from '@console/internal/module/k8s';
-import { PodControllerOverviewItem } from '@console/shared';
 import { PodsOverviewContent } from '@console/internal/components/overview/pods-overview';
+import { usePodsForRevisions } from '../../utils/usePodsForRevisions';
 import ConfigurationsOverviewList from './ConfigurationsOverviewList';
 import KSRoutesOverviewList from './RoutesOverviewList';
 import DeploymentOverviewList from './DeploymentOverviewList';
 
-const AUTOSCALED = 'Autoscaled to 0';
 type KnativeRevisionResourceProps = {
   ksroutes: K8sResourceKind[];
   configurations: K8sResourceKind[];
   obj: K8sResourceKind;
-  pods?: PodKind[];
-  current?: PodControllerOverviewItem;
 };
 
 const KnativeRevisionResources: React.FC<KnativeRevisionResourceProps> = ({
   ksroutes,
   configurations,
   obj,
-  pods,
-  current,
 }) => {
   const { t } = useTranslation();
   const {
     kind: resKind,
     metadata: { name, namespace },
   } = obj;
-  const activePods = _.filter(pods, (pod) => podPhase(pod) !== AUTOSCALED);
   const linkUrl = `/search/ns/${namespace}?kind=Pod&q=${encodeURIComponent(
     `serving.knative.dev/${resKind.toLowerCase()}=${name}`,
   )}`;
+  const { loaded, loadError, pods } = usePodsForRevisions(obj.metadata.uid, obj.metadata.namespace);
+  const revisionPods = React.useMemo(() => {
+    if (loaded && !loadError) {
+      return pods.reduce((acc, pod) => {
+        if (pod.pods) {
+          acc.push(
+            ...pod.pods.filter((p) => podPhase(p as PodKind) !== AllPodStatus.AutoScaledTo0),
+          );
+        }
+        return acc;
+      }, []);
+    }
+    return [];
+  }, [loadError, loaded, pods]);
+
   return (
     <>
       <PodsOverviewContent
         obj={obj}
-        pods={activePods}
-        loaded
-        loadError={null}
+        pods={revisionPods}
+        loaded={loaded}
+        loadError={loadError}
         emptyText={t('knative-plugin~Autoscaled to 0')}
         allPodsLink={linkUrl}
       />
-      <DeploymentOverviewList current={current} />
+      <DeploymentOverviewList current={pods?.[0]} />
       <KSRoutesOverviewList ksroutes={ksroutes} resource={obj} />
       <ConfigurationsOverviewList configurations={configurations} />
     </>

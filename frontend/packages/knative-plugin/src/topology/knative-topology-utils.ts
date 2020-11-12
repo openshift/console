@@ -5,14 +5,9 @@ import {
   referenceFor,
   modelFor,
   k8sUpdate,
-  PodKind,
   kindForReference,
 } from '@console/internal/module/k8s';
-import {
-  getOwnedResources,
-  getBuildConfigsForResource,
-  getReplicaSetsForResource,
-} from '@console/shared';
+import { getOwnedResources } from '@console/shared';
 import { Edge, EdgeModel, Model, Node, NodeModel, NodeShape } from '@patternfly/react-topology';
 import {
   TopologyDataResources,
@@ -48,10 +43,12 @@ import { EventingBrokerModel, EventSourceCamelModel, EventingTriggerModel } from
 import {
   NodeType,
   Subscriber,
-  RevK8sResourceKind,
   EdgeType,
   PubsubNodes,
   KnativeUtil,
+  KnativeServiceOverviewItem,
+  KnativeDeploymentOverviewItem,
+  KnativeTopologyDataObject,
 } from './topology-types';
 
 export const getKnNodeModelProps = (type: string) => {
@@ -155,10 +152,7 @@ export const filterRevisionsByActiveApplication = (
   return filteredRevisions;
 };
 export const isInternalResource = (resource: K8sResourceKind): boolean => {
-  if (resource.kind !== EventingBrokerModel.kind && resource.metadata?.ownerReferences) {
-    return true;
-  }
-  return false;
+  return resource.kind !== EventingBrokerModel.kind && !!resource.metadata?.ownerReferences;
 };
 
 const isSubscriber = (
@@ -171,7 +165,9 @@ const isSubscriber = (
   const channelRef = relatedResource?.spec?.channel;
   if (
     channelRef &&
-    (mainResource.metadata.name !== channelRef.name || mainResource.kind !== channelRef.kind)
+    (mainResource.metadata.name !== channelRef.name ||
+      mainResource.kind !== channelRef.kind ||
+      mainResource.apiVersion !== channelRef.apiVersion)
   ) {
     return false;
   }
@@ -187,8 +183,12 @@ const isPublisher = (
   relationshipResource: K8sResourceKind,
   mainResource: K8sResourceKind,
 ): boolean => {
-  const { name, kind } = relationshipResource.spec?.subscriber?.ref || {};
-  if (mainResource.metadata.name !== name || mainResource.kind !== kind) {
+  const { name, kind, apiVersion } = relationshipResource.spec?.subscriber?.ref || {};
+  if (
+    mainResource.metadata.name !== name ||
+    mainResource.kind !== kind ||
+    mainResource.apiVersion !== apiVersion
+  ) {
     return false;
   }
   if (relationshipResource.kind === EventingTriggerModel.kind) {
@@ -344,8 +344,7 @@ export const getSubscriberByType = (
   return _.partition(subscribers, (sub) => channelResourceProps.includes(sub.kind));
 };
 /**
- * return the dyanmic channel reference
- * @param name
+ * return the dynamic channel reference
  * @param kind
  */
 const getChannelRef = (kind: string): string => {
@@ -363,7 +362,7 @@ const getChannelRef = (kind: string): string => {
 export const getSubscribedPubSubNodes = (
   ksvc: K8sResourceKind,
   resources: TopologyDataResources,
-) => {
+): K8sResourceKind[] => {
   const pubsubConnectors = ['triggers', 'eventingsubscription'];
   const pubsubNodes: PubsubNodes = { channels: [], brokers: [] };
   pubsubConnectors.forEach((connector: string) => {
@@ -438,6 +437,18 @@ export const getSubscribedPubSubNodes = (
   return eventSources;
 };
 
+export const getKnativeRevisionsData = (
+  resource: K8sResourceKind,
+  resources: TopologyDataResources,
+) => {
+  const configurations = getOwnedResources(resource, resources.configurations.data);
+  const revisions =
+    configurations && configurations.length
+      ? getOwnedResources(configurations[0], resources.revisions.data)
+      : undefined;
+  return revisions;
+};
+
 /**
  * Forms data with respective revisions, configurations, routes based on kntaive service
  */
@@ -447,49 +458,16 @@ export const getKnativeServiceData = (
   utils?: KnativeUtil[],
 ): KnativeItem => {
   const configurations = getOwnedResources(resource, resources.configurations.data);
-  const revisions =
-    configurations && configurations.length
-      ? getOwnedResources(configurations[0], resources.revisions.data)
-      : undefined;
-  const revisionsDeploymentData = _.reduce(
-    revisions,
-    (acc, revision) => {
-      let revisionDep: RevK8sResourceKind = revision;
-      let pods: PodKind[];
-      if (resources.deployments) {
-        const associatedDeployment = getOwnedResources(revision, resources.deployments.data);
-        if (!_.isEmpty(associatedDeployment)) {
-          const depObj: K8sResourceKind = {
-            ...associatedDeployment[0],
-            apiVersion: apiVersionForModel(DeploymentModel),
-            kind: DeploymentModel.kind,
-          };
-          const replicaSets = getReplicaSetsForResource(depObj, resources);
-          const [current, previous] = replicaSets;
-          pods = [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])];
-          revisionDep = { ...revisionDep, resources: { pods, current } };
-        }
-      }
-      acc.revisionsDep.push(revisionDep);
-      pods && acc.allPods.push(...pods);
-      return acc;
-    },
-    { revisionsDep: [], allPods: [] },
-  );
+  const revisions = getKnativeRevisionsData(resource, resources);
   const ksroutes = resources.ksroutes
     ? getOwnedResources(resource, resources.ksroutes.data)
     : undefined;
-  const buildConfigs = getBuildConfigsForResource(resource, resources);
   const eventSources = getSubscribedPubSubNodes(resource, resources);
-  const subscribers = getPubSubSubscribers(resource, resources);
-  const overviewItem = {
+  const overviewItem: KnativeItem = {
+    revisions,
     configurations,
-    revisions: revisionsDeploymentData.revisionsDep,
     ksroutes,
-    buildConfigs,
     eventSources,
-    subscribers,
-    pods: revisionsDeploymentData.allPods,
   };
   if (utils) {
     return utils.reduce((acc, util) => {
@@ -506,7 +484,7 @@ const createKnativeDeploymentItems = (
   resource: K8sResourceKind,
   resources: TopologyDataResources,
   utils?: KnativeUtil[],
-): TopologyOverviewItem => {
+): KnativeServiceOverviewItem => {
   let associatedDeployment = getOwnedResources(resource, resources.deployments.data);
   // form Deployments for camelSource as they are owned by integrations
   if (resource.kind === EventSourceCamelModel.kind && resources.integrations) {
@@ -523,29 +501,24 @@ const createKnativeDeploymentItems = (
       apiVersion: apiVersionForModel(DeploymentModel),
       kind: DeploymentModel.kind,
     };
-    const replicaSets = getReplicaSetsForResource(depObj, resources);
-    const [current, previous] = replicaSets;
-    const isRollingOut = !!current && !!previous;
-    const overviewItem = {
+    const overviewItems: KnativeDeploymentOverviewItem = {
       obj: resource,
-      current,
-      isRollingOut,
-      previous,
-      pods: [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])],
       associatedDeployment: depObj,
     };
 
     if (utils) {
       return utils.reduce((acc, util) => {
         return { ...acc, ...util(resource, resources) };
-      }, overviewItem);
+      }, overviewItems);
     }
 
-    return overviewItem;
+    return overviewItems;
   }
+  const subscribers = getPubSubSubscribers(resource, resources);
   const knResources = getKnativeServiceData(resource, resources, utils);
   return {
     obj: resource,
+    subscribers,
     ...knResources,
   };
 };
@@ -553,7 +526,7 @@ const createKnativeDeploymentItems = (
 export const createPubSubDataItems = (
   resource: K8sResourceKind,
   resources: TopologyDataResources,
-) => {
+): KnativeServiceOverviewItem => {
   const {
     kind: resKind,
     metadata: { name },
@@ -722,7 +695,7 @@ const getSinkTargetUid = (nodeData: NodeModel[], sinkUri: string) => {
 
 const getEventSourcesData = (sinkUri: string, resources) => {
   const eventSourceProps = getDynamicEventSourcesModelRefs();
-  const eventSources = _.reduce(
+  return _.reduce(
     getKnativeDynamicResources(resources, eventSourceProps),
     (acc, evSrc) => {
       const evSrcSinkUri = evSrc.spec?.sink?.uri || '';
@@ -733,7 +706,6 @@ const getEventSourcesData = (sinkUri: string, resources) => {
     },
     [],
   );
-  return eventSources;
 };
 
 /**
@@ -934,6 +906,19 @@ export const createTopologyPubSubNodeData = (
   };
 };
 
+/**
+ * get the route data
+ */
+export const getRouteData = (resource: K8sResourceKind, ksroutes: K8sResourceKind[]): string => {
+  if (ksroutes && ksroutes.length > 0 && !_.isEmpty(ksroutes[0].status)) {
+    const trafficData: { [x: string]: any } = _.find(ksroutes[0].status.traffic, {
+      revisionName: resource.metadata.name,
+    });
+    return trafficData?.url;
+  }
+  return null;
+};
+
 export const transformKnNodeData = (
   knResourcesData: K8sResourceKind[],
   type: string,
@@ -970,7 +955,7 @@ export const transformKnNodeData = (
               type: { nodeType: NodeType.SinkUri },
               kind: 'URI',
             };
-            const sinkData: TopologyDataObject = {
+            const sinkData: KnativeTopologyDataObject<KnativeServiceOverviewItem> = {
               id: sinkTargetUid,
               name: 'URI',
               type: NodeType.SinkUri,
