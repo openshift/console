@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import * as PropTypes from 'prop-types';
 import { createModalLauncher, ModalBody, ModalTitle } from '../../factory';
 import { CustomModalSubmitFooter } from './modal';
 
@@ -55,11 +54,5 @@ class NoticeExpirationModal extends Component {
     );
   }
 }
-
-NoticeExpirationModal.propTypes = {
-  cancel: PropTypes.func.isRequired,
-  close: PropTypes.func.isRequired,
-  executeFn: PropTypes.func.isRequired,
-};
 
 export const NoticeExpirationModal_ = createModalLauncher(props => <NoticeExpirationModal path="status" title="세션 만료 알림" {...props} />);
