@@ -65,22 +65,6 @@ class MastheadToolbarContents_ extends React.Component {
     this._tokenRefresh = this._tokenRefresh.bind(this);
   }
 
-  componentDidMount() {
-    // if (window.SERVER_FLAGS.statuspageID) {
-    //   this._getStatuspageData(window.SERVER_FLAGS.statuspageID);
-    // }
-    // this._updateUser();
-  }
-
-  componentDidUpdate(prevProps) {
-    // if (
-    //   this.props.flags[FLAGS.OPENSHIFT] !== prevProps.flags[FLAGS.OPENSHIFT] ||
-    //   !_.isEqual(this.props.user, prevProps.user)
-    // ) {
-    //   this._updateUser();
-    // }
-  }
-
   _getStatuspageData(statuspageID) {
     fetch(`https://${statuspageID}.statuspage.io/api/v2/summary.json`, {
       headers: { Accept: 'application/json' },
@@ -349,17 +333,7 @@ class MastheadToolbarContents_ extends React.Component {
     const helpActions = this._helpActions(this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'HelpMenu')));
     const launchActions = this._launchActions();
 
-    // console.log(FLAGS)
-    // if (
-    //   flagPending(flags[FLAGS.OPENSHIFT]) ||
-    //   flagPending(flags[FLAGS.AUTH_ENABLED]) ||
-    //   !username
-    // ) {
-    //   return null;
-    // }
-
     const actions = [];
-    // if (flags[FLAGS.AUTH_ENABLED]) {
     const userActions = [];
 
     const openAccountConsole = e => {
@@ -369,21 +343,9 @@ class MastheadToolbarContents_ extends React.Component {
 
     const logout = e => {
       e.preventDefault();
-      // if (flags[FLAGS.OPENSHIFT]) {
-      //   authSvc.logoutOpenShift(this.state.isKubeAdmin);
-      // } else {
-      //   authSvc.logout();
-      // }
+
       keycloak.logout();
     };
-
-    // if (window.SERVER_FLAGS.requestTokenURL) {
-    //   userActions.push({
-    //     label: 'Copy Login Command',
-    //     href: window.SERVER_FLAGS.requestTokenURL,
-    //     externalLink: true,
-    //   });
-    // }
 
     userActions.push({
       // TODO: i18n
@@ -404,7 +366,6 @@ class MastheadToolbarContents_ extends React.Component {
       isSection: true,
       actions: userActions,
     });
-    // }
 
     if (!_.isEmpty(additionalUserActions.actions)) {
       actions.unshift(additionalUserActions);
@@ -454,13 +415,11 @@ class MastheadToolbarContents_ extends React.Component {
       e.preventDefault();
       i18n.changeLanguage('en');
       window.localStorage.setItem('i18nextLng', 'en');
-      // window.location.reload();
     };
     const koChange = e => {
       e.preventDefault();
       i18n.changeLanguage('ko');
       window.localStorage.setItem('i18nextLng', 'ko');
-      // window.location.reload();
     };
 
     i18nActions.push({
