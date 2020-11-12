@@ -12,7 +12,7 @@ class NoticeExpirationModal extends Component {
     };
 
     this._cancel = props.cancel.bind(this);
-    this._logout = this.props.logout.bind(this);
+    this._logout = this._logout.bind(this);
     this._extend = this._extend.bind(this);
   }
 
@@ -32,6 +32,11 @@ class NoticeExpirationModal extends Component {
       this._logout();
     }
   }
+  _logout(e) {
+    e.preventDefault();
+    this.props.logout();
+    this._cancel();
+  }
 
   _extend() {
     this.props.tokenRefresh();
@@ -49,7 +54,7 @@ class NoticeExpirationModal extends Component {
             <label className="control-label">로그인 상태를 유지하시려면 연장 버튼을 클릭해주세요.</label>
           </div>
         </ModalBody>
-        <CustomModalSubmitFooter inProgress={this.state.inProgress} leftBtnText="세션 연장" rightBtnText="로그아웃" onClickLeft={this._extend} onClickRight={this._logout} />
+        <CustomModalSubmitFooter inProgress={false} leftBtnText="세션 연장" rightBtnText="로그아웃" onClickLeft={this._extend} onClickRight={this._logout} />
       </form>
     );
   }
