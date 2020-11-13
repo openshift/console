@@ -112,7 +112,7 @@ export const DeploymentConfigDetailsList = ({ dc }) => {
       <DetailsItem label="Latest Version" obj={dc} path="status.latestVersion" />
       <DetailsItem label="Message" obj={dc} path="status.details.message" hideEmpty />
       <DetailsItem label="Update Strategy" obj={dc} path="spec.strategy.type" />
-      {dc.spec.strategy.type === 'RollingUpdate' && (
+      {dc.spec.strategy.type === 'Rolling' && (
         <>
           <DetailsItem
             label="Timeout"
@@ -143,11 +143,11 @@ export const DeploymentConfigDetailsList = ({ dc }) => {
             obj={dc}
             path="spec.strategy.rollingParams.maxUnavailable"
           >
-            {dc.spec.strategy.rollingUpdate.maxUnavailable ?? 1} of{' '}
+            {dc.spec.strategy.rollingParams.maxUnavailable ?? 1} of{' '}
             {pluralize(dc.spec.replicas, 'pod')}
           </DetailsItem>
           <DetailsItem label="Max Surge" obj={dc} path="spec.strategy.rollingParams.maxSurge">
-            {dc.spec.strategy.rollingUpdate.maxSurge ?? 1} greater than{' '}
+            {dc.spec.strategy.rollingParams.maxSurge ?? 1} greater than{' '}
             {pluralize(dc.spec.replicas, 'pod')}
           </DetailsItem>
         </>
