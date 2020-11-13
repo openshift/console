@@ -46,6 +46,16 @@ const STATUS_INDEX = _.findIndex(COLUMNS, { title: 'Status' });
 const LABELS_INDEX = _.findIndex(COLUMNS, { title: 'Labels' });
 const LAST_UPDATED_INDEX = _.findIndex(COLUMNS, { title: 'Last Updated' });
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
+const i18nNS = 'details-page';
+
 describe(OperandTableHeader.displayName, () => {
   it('returns column header definition for resource', () => {
     expect(Array.isArray(OperandTableHeader())).toBe(true);
@@ -281,9 +291,9 @@ describe(OperandDetailsPage.displayName, () => {
   it('renders a `DetailsPage` with the correct subpages', () => {
     const detailsPage = wrapper.find(DetailsPage);
 
-    expect(detailsPage.props().pages[0].name).toEqual('Details');
+    expect(detailsPage.props().pages[0].nameKey).toEqual(`${i18nNS}~Details`);
     expect(detailsPage.props().pages[0].href).toEqual('');
-    expect(detailsPage.props().pages[1].name).toEqual('YAML');
+    expect(detailsPage.props().pages[1].nameKey).toEqual(`${i18nNS}~YAML`);
     expect(detailsPage.props().pages[1].href).toEqual('yaml');
     expect(detailsPage.props().pages[2].name).toEqual('Resources');
     expect(detailsPage.props().pages[2].href).toEqual('resources');

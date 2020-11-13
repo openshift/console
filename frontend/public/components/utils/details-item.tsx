@@ -10,6 +10,7 @@ import {
   Split,
   SplitItem,
 } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 import { getPropertyDescription, K8sResourceKind, referenceFor } from '../../module/k8s';
 import { LinkifyExternal } from './link';
@@ -58,6 +59,7 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
   path,
   valueClassName,
 }) => {
+  const { t } = useTranslation();
   const [model] = useK8sModel(referenceFor(obj));
   const hide = hideEmpty && _.isEmpty(_.get(obj, path));
   const popoverContent: string = description ?? getPropertyDescription(model, path);
@@ -96,7 +98,7 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
             <>
               <SplitItem isFilled />
               <SplitItem>
-                <EditButton onClick={onEdit}>Edit</EditButton>
+                <EditButton onClick={onEdit}>{t('public~Edit')}</EditButton>
               </SplitItem>
             </>
           )}

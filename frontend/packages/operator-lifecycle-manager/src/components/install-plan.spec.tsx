@@ -52,6 +52,8 @@ const STATUS_INDEX = _.findIndex(COLUMNS, (c) => c.title === 'Status');
 const COMPONENTS_INDEX = _.findIndex(COLUMNS, (c) => c.title === 'Components');
 const SUBSCRIPTIONS_INDEX = _.findIndex(COLUMNS, (c) => c.title === 'Subscriptions');
 
+const i18nNS = 'details-page';
+
 describe(InstallPlanTableHeader.displayName, () => {
   it('returns column header definition for install plans', () => {
     expect(Array.isArray(InstallPlanTableHeader()));
@@ -465,7 +467,7 @@ describe(InstallPlanDetailsPage.displayName, () => {
       wrapper
         .find(DetailsPage)
         .props()
-        .pages.map((p) => p.name),
-    ).toEqual(['Details', 'YAML', 'Components']);
+        .pages.map((p) => p.name || p.nameKey),
+    ).toEqual([`${i18nNS}~Details`, `${i18nNS}~YAML`, 'Components']);
   });
 });

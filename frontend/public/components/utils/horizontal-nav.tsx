@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { History, Location } from 'history';
+import { useTranslation } from 'react-i18next';
 import { Route, Switch, Link, withRouter, match, matchPath } from 'react-router-dom';
 
 import { EmptyBox, StatusBox } from './status-box';
@@ -51,7 +52,8 @@ export class PodsComponent extends React.PureComponent<PodsComponentProps> {
 export type Page = {
   href?: string;
   path?: string;
-  name: string;
+  name?: string;
+  nameKey?: string;
   component?: React.ComponentType<PageComponentProps>;
   pageData?: any;
 };
@@ -60,97 +62,115 @@ type NavFactory = { [name: string]: (c?: React.ComponentType<any>) => Page };
 export const navFactory: NavFactory = {
   details: (component) => ({
     href: '',
-    name: 'Details',
+    // t('details-page~Details')
+    nameKey: 'details-page~Details',
     component,
   }),
   events: (component) => ({
     href: 'events',
-    name: 'Events',
+    // t('details-page~Events')
+    nameKey: 'details-page~Events',
     component,
   }),
   logs: (component) => ({
     href: 'logs',
-    name: 'Logs',
+    // t('details-page~Logs')
+    nameKey: 'details-page~Logs',
     component,
   }),
   editYaml: (component = editYamlComponent) => ({
     href: 'yaml',
-    name: 'YAML',
+    // t('details-page~YAML')
+    nameKey: 'details-page~YAML',
     component,
   }),
   pods: (component) => ({
     href: 'pods',
-    name: 'Pods',
+    // t('details-page~Pods')
+    nameKey: 'details-page~Pods',
     component: component || PodsComponent,
   }),
   jobs: (component) => ({
     href: 'jobs',
-    name: 'Jobs',
+    // t('details-page~Jobs')
+    nameKey: 'details-page~Jobs',
     component,
   }),
   roles: (component) => ({
     href: 'roles',
-    name: 'Role Bindings',
+    // t('details-page~Role Bindings')
+    nameKey: 'details-page~Role Bindings',
     component,
   }),
   builds: (component) => ({
     href: 'builds',
-    name: 'Builds',
+    // t('details-page~Builds')
+    nameKey: 'details-page~Builds',
     component,
   }),
   envEditor: (component) => ({
     href: 'environment',
-    name: 'Environment',
+    // t('details-page~Environment')
+    nameKey: 'details-page~Environment',
     component,
   }),
   clusterServiceClasses: (component) => ({
     href: 'serviceclasses',
-    name: 'Service Classes',
+    // t('details-page~Service Classes')
+    nameKey: 'details-page~Service Classes',
     component,
   }),
   clusterServicePlans: (component) => ({
     href: 'serviceplans',
-    name: 'Service Plans',
+    // t('details-page~Service Plans')
+    nameKey: 'details-page~Service Plans',
     component,
   }),
   serviceBindings: (component) => ({
     href: 'servicebindings',
-    name: 'Service Bindings',
+    // t('details-page~Service Bindings')
+    nameKey: 'details-page~Service Bindings',
     component,
   }),
   clusterOperators: (component) => ({
     href: 'clusteroperators',
-    name: 'Cluster Operators',
+    // t('details-page~Cluster Operators')
+    nameKey: 'details-page~Cluster Operators',
     component,
   }),
   machineConfigs: (component) => ({
     href: 'machineconfigs',
-    name: 'Machine Configs',
+    // t('details-page~Machine Configs')
+    nameKey: 'details-page~Machine Configs',
     component,
   }),
   machines: (component) => ({
     href: 'machines',
-    name: 'Machines',
+    // t('details-page~Machines')
+    nameKey: 'details-page~Machines',
     component,
   }),
   workloads: (component) => ({
     href: 'workloads',
-    name: 'Workloads',
+    // t('details-page~Workloads')
+    nameKey: 'details-page~Workloads',
     component,
   }),
   history: (component) => ({
     href: 'history',
-    name: 'History',
+    // t('details-page~History')
+    nameKey: 'details-page~History',
     component,
   }),
 };
 
 export const NavBar = withRouter<NavBarProps>(({ pages, baseURL, basePath }) => {
+  const { t } = useTranslation();
   basePath = basePath.replace(/\/$/, '');
 
   const tabs = (
     <>
-      {pages.map(({ name, href, path }) => {
+      {pages.map(({ name, nameKey, href, path }) => {
         const matchURL = matchPath(location.pathname, {
           path: `${basePath}/${path || href}`,
           exact: true,
@@ -164,7 +184,7 @@ export const NavBar = withRouter<NavBarProps>(({ pages, baseURL, basePath }) => 
               to={`${baseURL.replace(/\/$/, '')}/${href}`}
               data-test-id={`horizontal-link-${name}`}
             >
-              {name}
+              {nameKey ? t(nameKey) : name}
             </Link>
           </li>
         );

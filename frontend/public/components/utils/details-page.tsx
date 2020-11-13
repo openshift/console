@@ -52,6 +52,7 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({
   podSelector = 'spec.selector',
   nodeSelector = 'spec.template.spec.nodeSelector',
 }) => {
+  const { t } = useTranslation();
   const { metadata, type } = resource;
   const reference = referenceFor(resource);
   const model = modelFor(reference);
@@ -64,7 +65,6 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({
     name: metadata.name,
     namespace: metadata.namespace,
   });
-  const { t } = useTranslation();
 
   return (
     <dl data-test-id="resource-summary" className="co-m-pane__details">
@@ -83,7 +83,7 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({
           />
         </DetailsItem>
       )}
-      {type ? <dt>Type</dt> : null}
+      {type ? <dt>{t('details-page~Type')}</dt> : null}
       {type ? <dd>{type}</dd> : null}
       <DetailsItem
         label={t('details-page~Labels')}
@@ -118,11 +118,11 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({
               onClick={Kebab.factory.ModifyTolerations(model, resource).callback}
               variant="link"
             >
-              {pluralize(_.size(tolerations), 'Toleration')}
+              {t('details-page~{{count}} toleration', { count: _.size(tolerations) })}
               <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
             </Button>
           ) : (
-            pluralize(_.size(tolerations), 'Toleration')
+            t('details-page~{{count}} toleration', { count: _.size(tolerations) })
           )}
         </DetailsItem>
       )}
@@ -140,11 +140,11 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({
               onClick={Kebab.factory.ModifyAnnotations(model, resource).callback}
               variant="link"
             >
-              {pluralize(_.size(metadata.annotations), 'Annotation')}
+              {t('details-page~{{count}} annotation', { count: _.size(metadata.annotations) })}
               <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
             </Button>
           ) : (
-            pluralize(_.size(metadata.annotations), 'Annotation')
+            t('details-page~{{count}} annotation', { count: _.size(metadata.annotations) })
           )}
         </DetailsItem>
       )}

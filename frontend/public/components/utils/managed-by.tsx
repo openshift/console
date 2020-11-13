@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import { ResourceIcon } from './resource-icon';
 import {
@@ -48,6 +49,7 @@ export const ManagedByOperatorResourceLink: React.SFC<ManagerLinkProps> = (props
 };
 
 export const ManagedByOperatorLink: React.SFC<ManagedByLinkProps> = (props) => {
+  const { t } = useTranslation();
   const { obj, className } = props;
   const [data, setData] = React.useState<ClusterServiceVersionKind[] | undefined>();
   const namespace = obj.metadata.namespace;
@@ -68,7 +70,7 @@ export const ManagedByOperatorLink: React.SFC<ManagedByLinkProps> = (props) => {
   if (owner && csv) {
     return (
       <div className={classNames('co-m-pane__heading-owner', className)}>
-        Managed by{' '}
+        {t('details-page~Managed by')}{' '}
         <ManagedByOperatorResourceLink
           className="co-resource-item"
           namespace={namespace}
