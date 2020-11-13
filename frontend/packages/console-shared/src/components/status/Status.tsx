@@ -7,10 +7,10 @@ import {
   BanIcon,
   ExclamationTriangleIcon,
   UnknownIcon,
-  OutlinedHourglassIcon,
 } from '@patternfly/react-icons';
 import { DASH } from '../../constants';
 import { YellowExclamationTriangleIcon } from './icons';
+import NotStartedIcon from './NotStartedIcon';
 import StatusIconAndText from './StatusIconAndText';
 import { ErrorStatus, InfoStatus, ProgressStatus, SuccessStatus } from './statuses';
 import { StatusComponentProps } from './types';
@@ -95,7 +95,7 @@ export const Status: React.FC<StatusProps> = ({
       return <StatusIconAndText {...statusProps} icon={<UnknownIcon />} />;
 
     case 'PipelineNotStarted':
-      return <StatusIconAndText {...statusProps} icon={<OutlinedHourglassIcon />} />;
+      return <StatusIconAndText {...statusProps} icon={<NotStartedIcon />} />;
 
     default:
       return <>{status || DASH}</>;

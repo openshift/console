@@ -7,6 +7,7 @@ import {
 } from '@console/internal/components/utils';
 import { ContainerStatus } from '@console/internal/module/k8s';
 import { SecretAnnotationId } from '../../components/pipelines/const';
+import { runStatus } from '../pipeline-augment';
 import {
   getPipelineTasks,
   containerToLogSourceStatus,
@@ -16,6 +17,7 @@ import {
   getSecretAnnotations,
   calculateRelativeTime,
   hasInlineTaskSpec,
+  LatestPipelineRunStatus,
 } from '../pipeline-utils';
 import {
   constructPipelineData,
@@ -62,12 +64,16 @@ describe('pipeline-utils ', () => {
     expect(status).toBe(LOG_SOURCE_TERMINATED);
   });
 
-  it('expect getLatestPipelineRunStatus to return nothing if not provided with valid data', () => {
-    expect(getLatestPipelineRunStatus(null)).toBeNull();
-    expect(getLatestPipelineRunStatus([])).toBeNull();
+  it('should expect getLatestPipelineRunStatus to return a non-started state if not provided with valid data', () => {
+    const emptyState: LatestPipelineRunStatus = {
+      latestPipelineRun: null,
+      status: runStatus.PipelineNotStarted,
+    };
+    expect(getLatestPipelineRunStatus(null)).toEqual(emptyState);
+    expect(getLatestPipelineRunStatus([])).toEqual(emptyState);
   });
 
-  it('expect getLatestPipelineRunStatus to return the latest pipeline run', () => {
+  it('should expect getLatestPipelineRunStatus to return the latest pipeline run', () => {
     const data = getLatestPipelineRunStatus(constructPipelineData.pipelineRuns);
 
     expect(data).not.toBeNull();
