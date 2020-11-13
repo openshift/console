@@ -24,7 +24,7 @@ import {
   TemplateModel,
 } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { history } from '@console/internal/components/utils';
+import { history, LoadingBox } from '@console/internal/components/utils';
 
 import { ReviewAndCreate } from './tabs/review-create';
 import { SelectTemplate } from './tabs/select-template';
@@ -60,6 +60,7 @@ import { createVM } from '../../k8s/requests/vm/create/simple-create';
 
 import '../create-vm-wizard/create-vm-wizard.scss';
 import './create-vm.scss';
+import { URLParams } from '../create-vm-wizard/types';
 
 enum WIZARD_STEPS {
   TEMPLATE = 'Template',
@@ -166,13 +167,21 @@ const Footer: React.FC<FooterProps> = ({
 };
 
 export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
-  const searchParams = new URLSearchParams(location && location.search);
-  const preselectedTemplate = searchParams.get('common-template');
-  const [namespace, setNamespace] = React.useState(searchParams.get('namespace'));
+  const initData = React.useMemo(() => {
+    const searchParams = new URLSearchParams(location && location.search);
+    return {
+      commonTemplate: searchParams.get(URLParams.COMMON_TEMPLATE_NAME),
+      userTemplate: searchParams.get(URLParams.USER_TEMPLATE),
+      userTemplateNs: searchParams.get(URLParams.USER_TEMPLATE_NS),
+      namespace: searchParams.get(URLParams.NAMESPACE),
+    };
+  }, [location]);
+  const [namespace, setNamespace] = React.useState(initData.namespace);
   const [state, dispatch] = React.useReducer(formReducer, initFormState(namespace));
   const [isCreating, setCreating] = React.useState(false);
   const [created, setCreated] = React.useState(false);
   const [createError, setCreateError] = React.useState<string>();
+  const [templatePreselectError, setTemplatePreselectError] = React.useState<string>();
   const [selectedTemplate, selectTemplate] = React.useState<TemplateItem>();
   const [bootState, bootDispatch] = React.useReducer(bootFormReducer, initBootFormState);
   const [userTemplates, utLoaded, utError] = useK8sWatchResource<TemplateKind[]>({
@@ -251,19 +260,27 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
     });
 
   React.useEffect(() => {
-    if (preselectedTemplate && !selectedTemplate && loaded && !loadError) {
+    if ((initData.commonTemplate || initData.userTemplate) && !selectedTemplate && loaded) {
+      const name = initData.commonTemplate ?? initData.userTemplate;
+      const ns = initData.commonTemplate ? 'openshift' : initData.userTemplateNs;
       let templateVariant: TemplateKind;
       const templateItem = templates?.find((tItem) => {
-        templateVariant = tItem.variants.find((v) => v.metadata.name === preselectedTemplate);
+        templateVariant = tItem.variants.find(
+          (v) => v.metadata.name === name && v.metadata.namespace === ns,
+        );
         return !!templateVariant;
       });
-      selectTemplate(templateItem);
-      dispatch({ type: FORM_ACTION_TYPE.SET_TEMPLATE, payload: templateVariant });
+      if (templateVariant) {
+        selectTemplate(templateItem);
+        dispatch({ type: FORM_ACTION_TYPE.SET_TEMPLATE, payload: templateVariant });
+      } else {
+        setTemplatePreselectError('Requested template could not be found');
+      }
     }
-  }, [loadError, loaded, preselectedTemplate, selectedTemplate, templates]);
+  }, [loaded, initData, templates, userTemplates, selectedTemplate]);
 
   let templateIsReady = false;
-  let customBootSource = !!preselectedTemplate;
+  let customBootSource = false;
   let selectTemplateAlert: React.ReactNode;
   if (selectedTemplate) {
     if (selectedTemplate.isCommon) {
@@ -332,66 +349,123 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
       }),
     );
 
-  const steps = [
-    {
-      id: WIZARD_STEPS.TEMPLATE,
-      name: 'Select template',
-      component: (
-        <SelectTemplate
-          loaded={loaded}
-          loadError={loadError}
-          pods={allPods}
-          pvcs={allPVCs}
-          dataVolumes={allDVs}
-          templates={templates}
-          selectedTemplate={selectedTemplate}
-          selectTemplate={(template) => {
-            selectTemplate(template);
-            bootDispatch({ type: BOOT_ACTION_TYPE.RESET });
-            dispatch({ type: FORM_ACTION_TYPE.RESET });
-            dispatch({ type: FORM_ACTION_TYPE.SET_TEMPLATE, payload: template.variants[0] });
-          }}
-          namespace={namespace}
-          setNamespace={setNamespace}
-          namespaces={projects.map((p) => p.metadata.name)}
-        />
-      ),
-      canJumpTo: !isCreating,
-    },
-    {
-      id: WIZARD_STEPS.REVIEW,
-      name: 'Review and create',
-      component: (
-        <ReviewAndCreate
-          sourceStatus={sourceStatus}
-          template={selectedTemplate}
-          state={state}
-          dispatch={dispatch}
-          customSource={bootState}
-          onCustomize={onCustomize}
-        />
-      ),
-      canJumpTo: !isCreating && templateIsReady && (customBootSource ? bootState.isValid : true),
-    },
-  ];
+  let body: React.ReactNode;
+  if (created) {
+    body = <SuccessResultsComponent name={state.name} namespace={state.namespace} />;
+  } else if (
+    (initData.commonTemplate || initData.userTemplate) &&
+    !templateIsReady &&
+    !templatePreselectError
+  ) {
+    body = <LoadingBox />;
+  } else {
+    const steps = [
+      {
+        id: WIZARD_STEPS.TEMPLATE,
+        name: 'Select template',
+        component: (
+          <SelectTemplate
+            loaded={loaded}
+            loadError={loadError}
+            pods={allPods}
+            pvcs={allPVCs}
+            dataVolumes={allDVs}
+            templates={templates}
+            selectedTemplate={selectedTemplate}
+            selectTemplate={(template) => {
+              selectTemplate(template);
+              bootDispatch({ type: BOOT_ACTION_TYPE.RESET });
+              dispatch({ type: FORM_ACTION_TYPE.RESET });
+              dispatch({ type: FORM_ACTION_TYPE.SET_TEMPLATE, payload: template.variants[0] });
+            }}
+            namespace={namespace}
+            setNamespace={setNamespace}
+            namespaces={projects.map((p) => p.metadata.name)}
+            templatePreselectError={templatePreselectError}
+          />
+        ),
+        canJumpTo: !isCreating,
+      },
+      {
+        id: WIZARD_STEPS.REVIEW,
+        name: 'Review and create',
+        component: (
+          <ReviewAndCreate
+            sourceStatus={sourceStatus}
+            template={selectedTemplate}
+            state={state}
+            dispatch={dispatch}
+            customSource={bootState}
+            onCustomize={onCustomize}
+          />
+        ),
+        canJumpTo: !isCreating && templateIsReady && (customBootSource ? bootState.isValid : true),
+      },
+    ];
 
-  if (customBootSource) {
-    steps.splice(1, 0, {
-      id: WIZARD_STEPS.SOURCE,
-      name: 'Boot source',
-      component: (
-        <BootSource
-          template={selectedTemplate}
-          state={bootState}
-          dispatch={bootDispatch}
-          onCustomize={onCustomize}
-          loaded={loaded}
-          loadError={loadError}
-          templates={templates}
-        />
-      ),
-      canJumpTo: !isCreating,
-    });
+    if (customBootSource) {
+      steps.splice(1, 0, {
+        id: WIZARD_STEPS.SOURCE,
+        name: 'Boot source',
+        component: (
+          <BootSource
+            template={selectedTemplate}
+            state={bootState}
+            dispatch={bootDispatch}
+            onCustomize={onCustomize}
+          />
+        ),
+        canJumpTo: !isCreating,
+      });
+    }
+
+    body = (
+      <Wizard
+        hasNoBodyPadding
+        onClose={history.goBack}
+        steps={steps}
+        startAtStep={
+          (initData.commonTemplate ?? initData.userTemplate) &&
+          !templatePreselectError &&
+          !loadError
+            ? 2
+            : 1
+        }
+        footer={
+          <WizardContextConsumer>
+            {(footerProps) => (
+              <Footer
+                {...footerProps}
+                formIsValid={state.isValid}
+                isCreating={isCreating}
+                createError={createError}
+                cleanError={() => setCreateError(undefined)}
+                onFinish={async () => {
+                  setCreateError(undefined);
+                  setCreating(true);
+                  try {
+                    await createVM(state.template, sourceStatus, bootState, state, scConfigMap);
+                    setCreated(true);
+                  } catch (err) {
+                    setCreateError(err?.message || 'Error occured while creating VM.');
+                  } finally {
+                    setCreating(false);
+                  }
+                }}
+                onCustomize={onCustomize}
+                customSource={bootState}
+                customBootSource={customBootSource}
+                templateIsReady={templateIsReady}
+                template={selectedTemplate}
+                loaded={loaded}
+              >
+                {selectTemplateAlert}
+              </Footer>
+            )}
+          </WizardContextConsumer>
+        }
+      />
+    );
   }
 
   return (
@@ -399,49 +473,7 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
       <div className="yaml-editor__header">
         <h1 className="yaml-editor__header-text">Create Virtual machine from template</h1>
       </div>
-      {created ? (
-        <SuccessResultsComponent name={state.name} namespace={state.namespace} />
-      ) : (
-        <Wizard
-          hasNoBodyPadding
-          onClose={history.goBack}
-          steps={steps}
-          startAtStep={preselectedTemplate ? 2 : 1}
-          footer={
-            <WizardContextConsumer>
-              {(footerProps) => (
-                <Footer
-                  {...footerProps}
-                  formIsValid={state.isValid}
-                  isCreating={isCreating}
-                  createError={createError}
-                  cleanError={() => setCreateError(undefined)}
-                  onFinish={async () => {
-                    setCreateError(undefined);
-                    setCreating(true);
-                    try {
-                      await createVM(state.template, sourceStatus, bootState, state, scConfigMap);
-                      setCreated(true);
-                    } catch (err) {
-                      setCreateError(err?.message || 'Error occured while creating VM.');
-                    } finally {
-                      setCreating(false);
-                    }
-                  }}
-                  onCustomize={onCustomize}
-                  customSource={bootState}
-                  customBootSource={customBootSource}
-                  templateIsReady={templateIsReady}
-                  template={selectedTemplate}
-                  loaded={loaded}
-                >
-                  {selectTemplateAlert}
-                </Footer>
-              )}
-            </WizardContextConsumer>
-          }
-        />
-      )}
+      {body}
     </div>
   );
 };

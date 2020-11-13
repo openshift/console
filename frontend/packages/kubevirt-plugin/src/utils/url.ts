@@ -90,8 +90,12 @@ export const getVMWizardCreateLink = ({
     if (namespace) {
       params.append(URLParams.NAMESPACE, namespace);
     }
-    if (template && isCommonTemplate(template)) {
-      params.append(URLParams.COMMON_TEMPLATE_NAME, template.metadata.name);
+    if (template) {
+      if (isCommonTemplate(template)) {
+        params.append(URLParams.COMMON_TEMPLATE_NAME, template.metadata.name);
+      } else {
+        params.append(URLParams.USER_TEMPLATE, template.metadata.name);
+      }
     }
     const paramsString = params.toString() ? `?${params}` : '';
     return `/k8s/virtualization/~new-from-template${paramsString}`;

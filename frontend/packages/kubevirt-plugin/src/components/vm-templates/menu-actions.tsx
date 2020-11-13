@@ -23,7 +23,6 @@ type CustomData = {
   sourceStatus: TemplateSourceStatus;
   sourceLoaded: boolean;
   sourceLoadError: any;
-  withCreate?: boolean;
 };
 
 type MenuAction = (kind: K8sKind, vmTemplate: TemplateItem, customData?: CustomData) => KebabOption;
@@ -47,7 +46,7 @@ const newTemplateFromCommon: MenuAction = (kind, vmTemplate, { namespace }) => (
 const vmTemplateCreateVMAction: MenuAction = (
   kind,
   obj,
-  { withSupportModal, sourceStatus, sourceLoaded, sourceLoadError, withCreate },
+  { withSupportModal, sourceStatus, sourceLoaded, sourceLoadError },
 ) => ({
   label: `Create Virtual Machine`,
   callback: () => withSupportModal(obj, () => createVMAction(obj, sourceStatus)),
@@ -57,7 +56,6 @@ const vmTemplateCreateVMAction: MenuAction = (
     'create',
   ),
   isDisabled: !sourceLoaded || !!sourceLoadError,
-  hidden: !withCreate,
 });
 
 export const menuActionDeleteVMTemplate: MenuAction = (kindObj, vmTemplate) => {
@@ -113,10 +111,10 @@ export const menuActionsCreator = (
   const actions = templateItem.isCommon
     ? [vmTemplateCreateVMAction, newTemplateFromCommon, menuActionDeleteVMTemplate]
     : [
+        vmTemplateCreateVMAction,
         Kebab.factory.ModifyLabels,
         Kebab.factory.ModifyAnnotations,
         vmTemplateEditAction,
-        vmTemplateCreateVMAction,
         menuActionDeleteVMTemplate,
       ];
 

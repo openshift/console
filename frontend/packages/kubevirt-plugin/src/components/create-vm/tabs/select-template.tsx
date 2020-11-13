@@ -3,6 +3,8 @@ import * as fuzzy from 'fuzzysearch';
 import { PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
 import { CatalogTile } from '@patternfly/react-catalog-view-extension';
 import {
+  Alert,
+  AlertVariant,
   Button,
   ButtonVariant,
   InputGroup,
@@ -118,6 +120,7 @@ type SelectTemplateProps = {
   setNamespace: React.Dispatch<string>;
   loaded: boolean;
   loadError: any;
+  templatePreselectError: string;
 };
 
 export const SelectTemplate: React.FC<SelectTemplateProps> = ({
@@ -132,6 +135,7 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
   setNamespace,
   loaded,
   loadError,
+  templatePreselectError,
 }) => {
   const [isPinned] = usePinnedTemplates();
   const [filters, setFilters] = React.useState<{
@@ -257,6 +261,11 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
             customized from the review step. <br />
             <VMTemplateSupport />
           </StackItem>
+          {templatePreselectError && (
+            <StackItem>
+              <Alert variant={AlertVariant.danger} isInline title={templatePreselectError} />
+            </StackItem>
+          )}
           <StackItem>
             <Toolbar
               className="kv-select-template__toolbar"

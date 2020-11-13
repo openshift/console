@@ -110,7 +110,6 @@ export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (prop
         sourceStatus,
         sourceLoaded,
         sourceLoadError,
-        withCreate: true,
       }}
     />
   );

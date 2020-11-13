@@ -266,8 +266,8 @@ const VMTemplateTableRow: RowFunction<TemplateItem, VMTemplateTableRowProps> = (
           </Button>
         </Popover>
         <Button
-          onClick={() => withSupportModal(obj, () => createVMAction(obj, sourceStatus))}
           variant="secondary"
+          onClick={() => withSupportModal(obj, () => createVMAction(obj, sourceStatus))}
         >
           Create Virtual Machine
         </Button>

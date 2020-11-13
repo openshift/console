@@ -6,7 +6,6 @@ import { getTemplateName, isCommonTemplate } from '../../selectors/vm-template/b
 import { isTemplateSourceError, TemplateSourceStatus } from '../../statuses/template/types';
 import { TemplateItem } from '../../types/template';
 import { getVMWizardCreateLink } from '../../utils/url';
-import { createVMModal } from '../modals/create-vm/create-vm';
 import { sourceErrorModal, sourceNotReadyModal } from '../modals/vm-template-modals/source-modal';
 
 const DEFAULT_OS_VARIANT = 'template.kubevirt.io/default-os-variant';
@@ -58,21 +57,16 @@ export const filterTemplates = (
 };
 
 export const createVMAction = (template: TemplateItem, sourceStatus: TemplateSourceStatus) => {
-  if (!sourceStatus) {
+  if (isTemplateSourceError(sourceStatus)) {
+    sourceErrorModal({ sourceStatus });
+  } else if (!sourceStatus || sourceStatus.isReady) {
     history.push(
       getVMWizardCreateLink({
         wizardName: VMWizardName.BASIC,
         template: template.variants[0],
       }),
     );
-  } else if (isTemplateSourceError(sourceStatus)) {
-    sourceErrorModal({ sourceStatus });
-  } else if (!sourceStatus.isReady) {
-    sourceNotReadyModal({});
   } else {
-    createVMModal({
-      template,
-      sourceStatus,
-    });
+    sourceNotReadyModal({});
   }
 };
