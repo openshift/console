@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { navFactory } from '@console/internal/components/utils';
 import { DetailsPage } from '@console/internal/components/factory';
 import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
@@ -36,61 +38,65 @@ import { VMNics } from '../vm-nics';
 import { PendingChangesWarningFirehose } from './pending-changes-warning';
 import { VMSnapshotsPage } from '../vm-snapshots/vm-snapshots';
 
-export const breadcrumbsForVMPage = (match: any, addDetailsLabel = true) => () => [
+export const breadcrumbsForVMPage = (t: TFunction, match: any) => () => [
   {
-    name: 'Virtualization',
+    name: t('kubevirt-plugin~Virtualization'),
     path: `/k8s/ns/${match.params.ns || 'default'}/virtualization`,
   },
   {
-    name: 'Virtual Machines',
+    name: t('kubevirt-plugin~Virtual Machines'),
     path: `/k8s/ns/${match.params.ns || 'default'}/virtualization`,
   },
-  { name: `${match.params.name}${addDetailsLabel && ' Details'}`, path: `${match.url}` },
+  {
+    name: t('kubevirt-plugin~{{name}} Details', { name: match.params.name }),
+    path: `${match.url}`,
+  },
 ];
 
 export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProps> = (props) => {
   const { name, ns: namespace } = props.match.params;
+  const { t } = useTranslation();
   const [snapshotResource] = useK8sModel(referenceForModel(VirtualMachineSnapshotModel));
 
   const dashboardPage = {
     href: '', // default landing page
-    name: 'Overview',
+    name: t('kubevirt-plugin~Overview'),
     component: VMDashboard,
   };
 
   const overviewPage = {
     href: VM_DETAIL_DETAILS_HREF,
-    name: 'Details',
+    name: t('kubevirt-plugin~Details'),
     component: VMDetailsFirehose,
   };
 
   const consolePage = {
     href: VM_DETAIL_CONSOLES_HREF,
-    name: 'Console',
+    name: t('kubevirt-plugin~Console'),
     component: VMConsoleFirehose,
   };
 
   const nicsPage = {
     href: VM_DETAIL_NETWORKS_HREF,
-    name: 'Network Interfaces',
+    name: t('kubevirt-plugin~Network Interfaces'),
     component: VMNics,
   };
 
   const disksPage = {
     href: VM_DETAIL_DISKS_HREF,
-    name: 'Disks',
+    name: t('kubevirt-plugin~Disks'),
     component: VMDisksAndFileSystemsPage,
   };
 
   const environmentPage = {
     href: VM_DETAIL_ENVIRONMENT,
-    name: 'Environment',
+    name: t('kubevirt-plugin~Environment'),
     component: VMEnvironmentFirehose,
   };
 
   const snapshotsPage = {
     href: VM_DETAIL_SNAPSHOTS,
-    name: 'Snapshots',
+    name: t('kubevirt-plugin~Snapshots'),
     component: VMSnapshotsPage,
   };
 
@@ -153,7 +159,7 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
       menuActions={vmMenuActionsCreator}
       pages={pages}
       resources={resources}
-      breadcrumbsFor={breadcrumbsForVMPage(props.match)}
+      breadcrumbsFor={breadcrumbsForVMPage(t, props.match)}
       customData={{ kindObj: VirtualMachineModel }}
     >
       <PendingChangesWarningFirehose name={name} namespace={namespace} />

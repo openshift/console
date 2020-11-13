@@ -113,6 +113,7 @@ i18n
         'workload',
         'devconsole',
         'knative-plugin',
+        'kubevirt-plugin',
         'container-security',
       ],
       defaultNS: 'public',

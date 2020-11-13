@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { sortable } from '@patternfly/react-table';
 import { fromNow } from '@console/internal/components/utils/datetime';
 import { Table, TableRow, TableData } from '@console/internal/components/factory';
@@ -62,11 +63,13 @@ const UsersTableRow = ({ obj: user, index, key, style }) => {
 };
 
 export const VMUsersList: React.FC<VMUsersListProps> = ({ vmi, vmStatusBundle }) => {
+  const { t } = useTranslation();
   const [guestAgentInfoRaw, error, loading] = useGuestAgentInfo({ vmi });
   const guestAgentInfo = new GuestAgentInfoWrapper(guestAgentInfoRaw);
   const userList = guestAgentInfo.getUserList();
 
   const guestAgentFieldNotAvailMsg = getGuestAgentFieldNotAvailMsg(
+    t,
     isGuestAgentInstalled(vmi),
     vmStatusBundle.status,
   );

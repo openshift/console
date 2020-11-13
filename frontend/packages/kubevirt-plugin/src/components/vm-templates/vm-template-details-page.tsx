@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { navFactory } from '@console/internal/components/utils';
 import { DetailsPage } from '@console/internal/components/factory';
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
@@ -8,28 +10,33 @@ import { VMNics } from '../vm-nics';
 import { menuActions } from './menu-actions';
 import { VMTemplateDetailsConnected } from './vm-template-details';
 
-export const breadcrumbsForVMTemplatePage = (match: any) => () => [
+export const breadcrumbsForVMTemplatePage = (t: TFunction, match: any) => () => [
   {
-    name: 'Virtualization',
+    name: t('kubevirt-plugin~Virtualization'),
     path: `/k8s/ns/${match.params.ns || 'default'}/virtualization`,
   },
   {
-    name: 'Virtual Machines Templates',
+    name: t('kubevirt-plugin~Virtual Machines Templates'),
     path: `/k8s/ns/${match.params.ns || 'default'}/virtualization/templates`,
   },
-  { name: `${match.params.name} Details`, path: `${match.url}` },
+  {
+    name: t('kubevirt-plugin~{{name}} Details', { name: match.params.name }),
+    path: `${match.url}`,
+  },
 ];
 
 export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (props) => {
+  const { t } = useTranslation();
+
   const nicsPage = {
     href: 'nics',
-    name: 'Network Interfaces',
+    name: t('kubevirt-plugin~Network Interfaces'),
     component: VMNics,
   };
 
   const disksPage = {
     href: 'disks',
-    name: 'Disks',
+    name: t('kubevirt-plugin~Disks'),
     component: VMDisksFirehose,
   };
 
@@ -49,7 +56,7 @@ export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (prop
       namespace={props.match.params.ns}
       menuActions={menuActions}
       pages={pages}
-      breadcrumbsFor={breadcrumbsForVMTemplatePage(props.match)}
+      breadcrumbsFor={breadcrumbsForVMTemplatePage(t, props.match)}
     />
   );
 };

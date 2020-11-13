@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Firehose,
   StatusBox,
@@ -80,6 +81,8 @@ export const VMDetailsFirehose: React.FC<VMTabProps> = ({
 };
 
 export const VMDetails: React.FC<VMDetailsProps> = (props) => {
+  const { t } = useTranslation();
+
   const { kindObj, vm, vmi, pods, vmStatusBundle, templates, ...restProps } = props;
 
   const vmiLike = kindObj === VirtualMachineModel ? vm : vmi;
@@ -93,11 +96,15 @@ export const VMDetails: React.FC<VMDetailsProps> = (props) => {
   const OSMismatchExists =
     vmi && guestAgentInfoRaw && isWindows(vmiLike) !== (operatingSystemID === 'mswindows');
   const OSMismatchAlert = OSMismatchExists && (
-    <Alert className="co-alert" variant="warning" title="Operating system mismatch" isInline>
-      The operating system defined for this virtual machine does not match what is being reported by
-      the Guest Agent. In order to correct this, you need to re-create the virtual machine with the
-      correct VM selection. The disks of this virtual machine can be attached to the newly created
-      one.
+    <Alert
+      className="co-alert"
+      variant="warning"
+      title={t('kubevirt-plugin~Operating system mismatch')}
+      isInline
+    >
+      {t(
+        'kubevirt-plugin~The operating system defined for this virtual machine does not match what is being reported by the Guest Agent. In order to correct this, you need to re-create the virtual machine with the correct VM selection. The disks of this virtual machine can be attached to the newly created one.',
+      )}
     </Alert>
   );
 
@@ -107,7 +114,7 @@ export const VMDetails: React.FC<VMDetailsProps> = (props) => {
       <div className="co-m-pane__body">
         {OSMismatchAlert}
         <HashAnchor hash="details" />
-        <SectionHeading text={`${kindObj.label} Details`} />
+        <SectionHeading text={t('kubevirt-plugin~{{name}} Details', { name: kindObj.label })} />
         <div className="row">
           <div className="col-sm-6">
             <VMResourceSummary
@@ -132,19 +139,19 @@ export const VMDetails: React.FC<VMDetailsProps> = (props) => {
       </div>
       <div id="scheduling" className="co-m-pane__body">
         <HashAnchor hash="scheduling" />
-        <SectionHeading text="Scheduling and resources requirements" />
+        <SectionHeading text={t('kubevirt-plugin~Scheduling and resources requirements')} />
         <div className="row">
           <VMSchedulingList kindObj={kindObj} canUpdateVM={canUpdate} vm={vm} vmi={vmi} />
         </div>
       </div>
       <div id="services" className="co-m-pane__body">
         <HashAnchor hash="services" />
-        <SectionHeading text="Services" />
-        <ServicesList {...restProps} data={vmServicesData} label="Services" />
+        <SectionHeading text={t('kubevirt-plugin~Services')} />
+        <ServicesList {...restProps} data={vmServicesData} label={t('kubevirt-plugin~Services')} />
       </div>
       <div id="logged-in-users" className="co-m-pane__body">
         <HashAnchor hash="logged-in-users" />
-        <SectionHeading text="Active Users" />
+        <SectionHeading text={t('kubevirt-plugin~Active Users')} />
         <VMUsersList {...restProps} vmi={vmi} vmStatusBundle={vmStatusBundle} />
       </div>
     </StatusBox>
