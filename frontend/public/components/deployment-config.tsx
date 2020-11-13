@@ -115,7 +115,7 @@ export const DeploymentConfigDetailsList = ({ dc }) => {
       <DetailsItem label={t('workload~Latest version')} obj={dc} path="status.latestVersion" />
       <DetailsItem label={t('workload~Message')} obj={dc} path="status.details.message" hideEmpty />
       <DetailsItem label={t('workload~Update strategy')} obj={dc} path="spec.strategy.type" />
-      {dc.spec.strategy.type === 'RollingUpdate' && (
+      {dc.spec.strategy.type === 'Rolling' && (
         <>
           <DetailsItem
             label={t('workload~Timeout')}
@@ -147,7 +147,7 @@ export const DeploymentConfigDetailsList = ({ dc }) => {
             path="spec.strategy.rollingParams.maxUnavailable"
           >
             {t('workload~{{maxUnavailable}} of {{count}} pod', {
-              maxUnavailable: dc.spec.strategy.rollingUpdate.maxUnavailable ?? 1,
+              maxUnavailable: dc.spec.strategy.rollingParams.maxUnavailable ?? 1,
               count: dc.spec.replicas,
             })}
           </DetailsItem>
@@ -157,7 +157,7 @@ export const DeploymentConfigDetailsList = ({ dc }) => {
             path="spec.strategy.rollingParams.maxSurge"
           >
             {t('workload~{{maxSurge}} greater than {{count}} pod', {
-              maxSurge: dc.spec.strategy.rollingUpdate.maxSurge ?? 1,
+              maxSurge: dc.spec.strategy.rollingParams.maxSurge ?? 1,
               count: dc.spec.replicas,
             })}
           </DetailsItem>
