@@ -407,7 +407,7 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={route}>
-              <DetailsItem label={route.spec.to.kind} obj={route} path="spec.to.name">
+              <DetailsItem label={t('network-route~Service')} obj={route} path="spec.to.name">
                 <ResourceLink
                   kind={route.spec.to.kind}
                   name={route.spec.to.name}

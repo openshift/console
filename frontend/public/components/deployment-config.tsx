@@ -253,13 +253,13 @@ const ReplicationControllersTab: React.FC<ReplicationControllersTabProps> = ({ o
     />
   );
 };
-
+// t('details-page~ReplicationControllers')
 const pages = [
   navFactory.details(DeploymentConfigsDetails),
   navFactory.editYaml(),
   {
     href: 'replicationcontrollers',
-    name: 'Replication Controllers',
+    nameKey: 'details-page~ReplicationControllers',
     component: ReplicationControllersTab,
   },
   navFactory.pods(),

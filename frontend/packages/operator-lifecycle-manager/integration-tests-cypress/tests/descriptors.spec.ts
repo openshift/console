@@ -117,7 +117,7 @@ describe('Using OLM descriptor components', () => {
     cy.visit(
       `/ns/${testName}/clusterserviceversions/${testCSV.metadata.name}/${testCRD.spec.group}~${testCRD.spec.version}~${testCRD.spec.names.kind}`,
     );
-    cy.byTestID('yaml-create').click();
+    cy.byTestID('item-create').click();
     cy.byLegacyTestID('resource-title').should('have.text', 'Create App');
   });
 

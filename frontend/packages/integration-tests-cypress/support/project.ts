@@ -22,7 +22,8 @@ Cypress.Commands.add('createProject', (name: string, devConsole: boolean = false
   listPage.clickCreateYAMLbutton();
   modal.shouldBeOpened();
   cy.byTestID('input-name').type(name);
-  cy.testA11y('Create Project modal');
+  // TODO: uncomment once https://bugzilla.redhat.com/show_bug.cgi?id=1897008 is fixed
+  // cy.testA11y('Create Project modal');
   modal.submit();
   modal.shouldBeClosed();
   // TODO, switch to 'listPage.titleShouldHaveText(name)', when we switch to new test id
@@ -39,7 +40,8 @@ Cypress.Commands.add('deleteProject', (name: string) => {
   modal.submitShouldBeDisabled();
   cy.byTestID('project-name-input').type(name);
   modal.submitShouldBeEnabled();
-  cy.testA11y('Delete Project modal');
+  // TODO: uncomment once https://bugzilla.redhat.com/show_bug.cgi?id=1897008 is fixed
+  // cy.testA11y('Delete Project modal');
   modal.submit();
   modal.shouldBeClosed();
   listPage.titleShouldHaveText('Projects');
