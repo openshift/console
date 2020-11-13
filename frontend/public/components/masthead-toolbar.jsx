@@ -458,7 +458,8 @@ class MastheadToolbarContents_ extends React.Component {
       <Translation>
         {t => (
           <span className="pf-c-dropdown__toggle">
-            <span className="co-username">{t('LANGUAGE')}</span>
+            {/* i18n 키값 요청 후 적용하기 */}
+            <span className="co-username">Language</span>
             <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
           </span>
         )}
@@ -478,8 +479,6 @@ class MastheadToolbarContents_ extends React.Component {
       .then(refreshed => {
         console.log('refreshed', refreshed);
         if (refreshed) {
-          // expired time < 60
-          console.log('Token was successfully refreshed');
           // TODO: 토큰 설정
           // setAccessToken(keycloak.idToken);
           this.timerRef.tokRefresh();

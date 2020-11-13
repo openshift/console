@@ -50,7 +50,7 @@ class DeleteModal extends PromiseComponent {
           <form onSubmit={this._submit} name="form" className="modal-content ">
             <ModalTitle>
               <YellowExclamationTriangleIcon className="co-icon-space-r" />
-              {t('DELETE_SENTENCE', { something: t(resourceUpperCase) })}?
+              {t('COMMON.MSG_MAIN_ACTIONBUTTON_16', { something: t(resourceUpperCase) })}?
             </ModalTitle>
             <ModalBody className="modal-body">
               {message}
