@@ -483,10 +483,6 @@ class MastheadToolbarContents_ extends React.Component {
           // TODO: 토큰 설정
           // setAccessToken(keycloak.idToken);
           this.timerRef.tokRefresh();
-          console.log('keycloak', keycloak);
-          console.log('idTokenParsed', keycloak.idTokenParsed);
-          console.log('exp', keycloak.idTokenParsed.exp);
-          console.log('tokenTimeoutHandle', keycloak.tokenTimeoutHandle);
         } else {
           // expired time > 60
           console.log('Token is still valid');
