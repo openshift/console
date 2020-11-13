@@ -454,12 +454,12 @@ export const getReplicaSetsForResource = (
   );
 };
 
-export const getJobsForCronJob = (cronJob: K8sResourceKind, resources: any): JobKind[] => {
-  if (!cronJob || !resources?.jobs?.data?.length) {
+export const getJobsForCronJob = (cronJobUid: string, resources: any): JobKind[] => {
+  if (!resources?.jobs?.data?.length) {
     return [];
   }
   return resources.jobs.data
-    .filter((job) => job.metadata?.ownerReferences?.find((ref) => ref.uid === cronJob.metadata.uid))
+    .filter((job) => job.metadata?.ownerReferences?.find((ref) => ref.uid === cronJobUid))
     .map((job) => ({
       ...job,
       apiVersion: apiVersionForModel(JobModel),
@@ -749,7 +749,7 @@ export const createCronJobItem = (
   resources: any,
   utils?: ResourceUtil[],
 ): OverviewItem => {
-  const jobs = getJobsForCronJob(cronJob, resources);
+  const jobs = getJobsForCronJob(cronJob.metadata.uid, resources);
   const pods = jobs?.reduce((acc, job) => {
     acc.push(...getPodsForResource(job, resources));
     return acc;
@@ -762,7 +762,6 @@ export const createCronJobItem = (
   const overviewItem: OverviewItem = {
     obj: cronJob,
     pods,
-    jobs,
     status,
     isMonitorable,
     monitoringAlerts,

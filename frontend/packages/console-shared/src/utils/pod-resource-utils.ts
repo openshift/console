@@ -112,7 +112,7 @@ export const getPodsForCronJob = (cronJob: K8sResourceKind, resources: any): Pod
     apiVersion: apiVersionForModel(CronJobModel),
     kind: CronJobModel.kind,
   };
-  const jobs = getJobsForCronJob(cronJob, resources);
+  const jobs = getJobsForCronJob(cronJob?.metadata?.uid, resources);
   return {
     obj,
     current: undefined,

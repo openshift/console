@@ -251,10 +251,12 @@ export const PodsOverviewMultiple: React.SFC<PodsOverviewMultipleProps> = ({
       Object.keys(resources).length > 0 &&
       Object.keys(resources).every((key) => resources[key].loaded)
     ) {
-      let updatedPods = podResources.reduce((acc, resource) => {
-        acc.push(...getPodsForResource(resource, resources));
-        return acc;
-      }, []);
+      let updatedPods = podResources?.length
+        ? podResources.reduce((acc, resource) => {
+            acc.push(...getPodsForResource(resource, resources));
+            return acc;
+          }, [])
+        : [];
       if (podsFilter) {
         updatedPods = updatedPods.filter(podsFilter);
       }

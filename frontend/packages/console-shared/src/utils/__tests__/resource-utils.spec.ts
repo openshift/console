@@ -73,7 +73,6 @@ enum Keys {
   ROLLINGOUT = 'isRollingOut',
   OBJ = 'obj',
   PODS = 'pods',
-  JOBS = 'jobs',
   PREVIOUS = 'previous',
   STATUS = 'status',
   REVISIONS = 'revisions',
@@ -214,7 +213,6 @@ describe('TransformResourceData', () => {
     expect(transformedData[0][Keys.CURRENT]).toBeUndefined();
     expect(transformedData[0][Keys.PREVIOUS]).toBeUndefined();
     expect(transformedData[0][Keys.ROLLINGOUT]).toBeUndefined();
-    expect(transformedData[0][Keys.JOBS]).toHaveLength(2);
     expect(transformedData[0][Keys.PODS]).toHaveLength(2);
   });
 

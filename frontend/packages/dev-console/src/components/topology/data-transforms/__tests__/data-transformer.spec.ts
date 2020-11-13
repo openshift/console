@@ -204,7 +204,6 @@ describe('data transformer ', () => {
     const graphData = getTransformedTopologyData(mockResources, ['cronJobs', 'jobs', 'pods']);
     expect(graphData.nodes).toHaveLength(3);
     const cronJobs = graphData.nodes.filter((n) => n.data.resources.obj.kind === 'CronJob');
-    expect(cronJobs[0].data.resources.jobs).toHaveLength(2);
     expect((cronJobs[0].data.data as WorkloadData).donutStatus.pods).toHaveLength(2);
   });
 

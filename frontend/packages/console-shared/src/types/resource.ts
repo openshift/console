@@ -1,6 +1,5 @@
 import {
   HorizontalPodAutoscalerKind,
-  JobKind,
   K8sResourceKind,
   PodKind,
 } from '@console/internal/module/k8s';
@@ -31,7 +30,6 @@ export type OverviewItem<T = K8sResourceKind> = {
   hpas?: HorizontalPodAutoscalerKind[];
   pods?: PodKind[];
   previous?: PodControllerOverviewItem;
-  jobs?: JobKind[];
   status?: React.ReactNode;
   ksroutes?: K8sResourceKind[];
   configurations?: K8sResourceKind[];
