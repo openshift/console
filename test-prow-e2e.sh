@@ -38,6 +38,9 @@ if [ "$SCENARIO" != "login" ]; then
   CHROME_VERSION=$(google-chrome --version) ./test-protractor.sh "$SCENARIO"
 fi
 
+# Disable color codes in Cypress since they do not render well CI test logs.
+# https://docs.cypress.io/guides/guides/continuous-integration.html#Colors
+export NO_COLOR=1
 if [ "$SCENARIO" == "e2e" ] || [ "$SCENARIO" == "release" ]; then
   ./test-cypress.sh -h true
 elif [ "$SCENARIO" == "login" ]; then
