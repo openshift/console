@@ -3,7 +3,7 @@ import { createOverviewItemForType } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { Alerts } from '@console/internal/components/monitoring/types';
-import { getPipelinesAndPipelineRunsForResource } from '../../../utils/pipeline-plugin-utils';
+import { getPipelinesAndPipelineRunsForResource } from '@console/pipelines-plugin/src/utils/pipeline-plugin-utils';
 import {
   TopologyDataResources,
   TrafficData,

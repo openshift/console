@@ -1,0 +1,23 @@
+{
+  "name": "@console/pipelines-plugin",
+  "version": "0.0.0-fixed",
+  "description": "OpenShift Pipelines Plugin",
+  "main": "src/index.ts",
+  "private": true,
+  "scripts": {
+    "coverage": "yarn test --coverage --collectCoverageFrom='[\"packages/pipelines-plugin/src/**\",\"!**/__tests__/**\",\"!packages/pipelines-plugin/src/test/**\"]'",
+    "lint": "yarn --cwd ../.. eslint packages/pipelines-plugin",
+    "test": "yarn --cwd ../.. test packages/pipelines-plugin"
+  },
+  "dependencies": {
+    "@console/plugin-sdk": "0.0.0-fixed"
+  },
+  "consolePlugin": {
+    "entry": "src/plugin.tsx",
+    "integrationTestSuites": {
+      "pipelinesPlugin": [
+        "integration-tests/**/*.scenario.ts"
+      ]
+    }
+  }
+}

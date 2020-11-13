@@ -3,11 +3,11 @@ import { Status } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { BuildModel } from '@console/internal/models';
-import { PipelineRunModel } from '../../../../../models';
-import { getLatestPipelineRunStatus } from '../../../../../utils/pipeline-utils';
+import { PipelineRunModel } from '@console/pipelines-plugin/src/models';
+import { getLatestPipelineRunStatus } from '@console/pipelines-plugin/src/utils/pipeline-utils';
+import PipelineBuildDecoratorTooltip from '@console/pipelines-plugin/src/topology/build-decorators/PipelineBuildDecoratorTooltip';
+import { runStatus } from '@console/pipelines-plugin/src/utils/pipeline-augment';
 import { WorkloadData } from '../../../topology-types';
-import PipelineBuildDecoratorTooltip from './PipelineBuildDecoratorTooltip';
-import { runStatus } from '../../../../../utils/pipeline-augment';
 
 type BuildDecoratorData = {
   decoratorIcon: React.ReactElement;

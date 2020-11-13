@@ -10,7 +10,7 @@ import BuilderSection from './builder/BuilderSection';
 import AppSection from './app/AppSection';
 import AdvancedSection from './advanced/AdvancedSection';
 import DockerSection from './git/DockerSection';
-import PipelineSection from './pipeline/PipelineSection';
+import PipelineSection from '@console/pipelines-plugin/src/components/import/pipeline/PipelineSection';
 import ResourceSection from './section/ResourceSection';
 
 const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = ({

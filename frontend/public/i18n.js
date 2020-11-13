@@ -90,6 +90,7 @@ i18n
         'operator-hub-subscribe',
         'operator-install-page',
         'pagerduty-receiver-form',
+        'pipelines-plugin',
         'public',
         'quickstart',
         'related-objects',

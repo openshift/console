@@ -12,7 +12,7 @@ import {
   GraphElement,
 } from '@patternfly/react-topology';
 import { WatchK8sResults } from '@console/internal/components/utils/k8s-watch-hook';
-import { Pipeline, PipelineRun } from '../../utils/pipeline-augment';
+import { Pipeline, PipelineRun } from '@console/pipelines-plugin/src/utils/pipeline-augment';
 
 export type Point = [number, number];
 

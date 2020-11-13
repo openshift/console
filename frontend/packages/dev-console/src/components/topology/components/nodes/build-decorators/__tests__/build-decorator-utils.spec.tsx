@@ -1,9 +1,9 @@
 import { Status } from '@console/shared';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { BuildModel } from '@console/internal/models';
-import { PipelineRunModel } from '../../../../../../models';
+import { PipelineRunModel } from '@console/pipelines-plugin/src/models';
+import PipelineBuildDecoratorTooltip from '@console/pipelines-plugin/src/topology/build-decorators/PipelineBuildDecoratorTooltip';
 import { getBuildDecoratorParts } from '../build-decorator-utils';
-import PipelineBuildDecoratorTooltip from '../PipelineBuildDecoratorTooltip';
 import {
   bareMinimalWorkloadData,
   pipelineData,
