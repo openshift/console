@@ -200,7 +200,6 @@ if ('serviceWorker' in navigator) {
   }
 }
 const eventLogger = (event, error) => {
-  // console.log('[onKeycloakEvent]', event, error);
   switch (event) {
     case 'onReady':
       break;
