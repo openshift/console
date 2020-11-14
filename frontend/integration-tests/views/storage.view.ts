@@ -11,7 +11,7 @@ export const addNewStorageToWorkload = async function(
   pvcSize: string,
   mountPath: string,
 ) {
-  await crudView.clickDetailsPageAction('Add Storage');
+  await crudView.clickDetailsPageAction('Add storage');
   await browser.wait(until.presenceOf(createNewClaim));
   await createNewClaim.click();
   await inputPVCName.sendKeys(pvcName);

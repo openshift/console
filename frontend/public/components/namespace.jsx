@@ -7,6 +7,8 @@ import { sortable } from '@patternfly/react-table';
 // @ts-ignore
 import { connect, useSelector } from 'react-redux';
 import { Tooltip, Button } from '@patternfly/react-core';
+import { withTranslation } from 'react-i18next';
+import i18next from 'i18next';
 
 import { PencilAltIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom';
@@ -77,9 +79,10 @@ const getDisplayName = (obj) =>
 const CREATE_NEW_RESOURCE = '#CREATE_RESOURCE_ACTION#';
 
 export const deleteModal = (kind, ns) => {
-  let { label, weight, accessReview } = Kebab.factory.Delete(kind, ns);
+  const { labelKey, labelKind, weight, accessReview } = Kebab.factory.Delete(kind, ns);
   let callback = undefined;
   let tooltip;
+  let label;
 
   if (ns.metadata.name === 'default') {
     tooltip = `${kind.label} default cannot be deleted`;
@@ -92,12 +95,12 @@ export const deleteModal = (kind, ns) => {
     label = (
       <div className="dropdown__disabled">
         <Tooltip content={tooltip}>
-          <span>{label}</span>
+          <span>{i18next.t(labelKey, labelKind)}</span>
         </Tooltip>
       </div>
     );
   }
-  return { label, weight, callback, accessReview };
+  return { label, labelKey, labelKind, weight, callback, accessReview };
 };
 
 const nsMenuActions = [
@@ -988,6 +991,7 @@ class NamespaceBarDropdowns_ extends React.Component {
       useProjects,
       children,
       disabled,
+      t,
     } = this.props;
     if (flagPending(canListNS)) {
       return null;
@@ -995,7 +999,8 @@ class NamespaceBarDropdowns_ extends React.Component {
 
     const { loaded, data } = this.props.namespace;
     const model = getModel(useProjects);
-    const allNamespacesTitle = `all ${model.labelPlural.toLowerCase()}`;
+    const allNamespacesTitle =
+      model.label === 'Project' ? t('dropdown~All Projects') : t('dropdown~All Namespaces');
     const items = {};
     if (canListNS) {
       items[ALL_NAMESPACES_KEY] = allNamespacesTitle;
@@ -1015,7 +1020,10 @@ class NamespaceBarDropdowns_ extends React.Component {
     const defaultActionItem = canCreateProject
       ? [
           {
-            actionTitle: `Create ${model.label}`,
+            actionTitle:
+              model.label === 'Project'
+                ? t('dropdown~Create Project')
+                : t('dropdown~Create Namespace'),
             actionKey: CREATE_NEW_RESOURCE,
           },
         ]
@@ -1047,12 +1055,16 @@ class NamespaceBarDropdowns_ extends React.Component {
           canFavorite
           items={items}
           actionItems={defaultActionItem}
-          titlePrefix={model.label}
+          titlePrefix={model.label === 'Project' ? t('dropdown~Project') : t('dropdown~Namespace')}
           title={title}
           onChange={onChange}
           selectedKey={activeNamespace || ALL_NAMESPACES_KEY}
           autocompleteFilter={autocompleteFilter}
-          autocompletePlaceholder={`Select ${model.label.toLowerCase()}...`}
+          autocompletePlaceholder={
+            model.label === 'Project'
+              ? t('dropdown~Select Project...')
+              : t('dropdown~Select Namespace...')
+          }
           defaultBookmarks={defaultBookmarks}
           storageKey={NAMESPACE_LOCAL_STORAGE_KEY}
           shortCut={KEYBOARD_SHORTCUTS.focusNamespaceDropdown}
@@ -1063,10 +1075,12 @@ class NamespaceBarDropdowns_ extends React.Component {
   }
 }
 
-const NamespaceBarDropdowns = connect(
+const NamespaceBarDropdownsWithTranslation = connect(
   namespaceBarDropdownStateToProps,
   namespaceBarDropdownDispatchToProps,
 )(NamespaceBarDropdowns_);
+
+const NamespaceBarDropdowns = withTranslation()(NamespaceBarDropdownsWithTranslation);
 
 const NamespaceBar_ = ({
   hideProjects = false,

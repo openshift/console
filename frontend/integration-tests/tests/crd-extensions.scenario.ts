@@ -6,8 +6,6 @@ import { appHost, testName, checkLogs, checkErrors } from '../protractor.conf';
 import * as crudView from '../views/crud.view';
 import * as yamlView from '../views/yaml.view';
 
-const i18nNS = 'custom-resource-definition';
-
 describe('CRD extensions', () => {
   afterEach(() => {
     checkLogs();
@@ -36,7 +34,7 @@ describe('CRD extensions', () => {
     it(`displays YAML editor for creating a new ${crd} instance`, async () => {
       await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
       await crudView.isLoaded();
-      await crudView.clickKebabAction(crd, `${i18nNS}~View instances`);
+      await crudView.clickKebabAction(crd, 'View instances');
       await crudView.isLoaded();
       await crudView.clickCreateWithYAML();
       await yamlView.isLoaded();
@@ -64,7 +62,7 @@ describe('CRD extensions', () => {
     it(`deletes the ${crd} instance`, async () => {
       await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
       await crudView.isLoaded();
-      await crudView.clickKebabAction(crd, `${i18nNS}~View instances`);
+      await crudView.clickKebabAction(crd, 'View instances');
       await crudView.resourceRowsPresent();
       // cannot use `await crudView.deleteRow(crd)(name)` because ConsoleCLIDownload is humanized as 'Console C L I Download';
       await crudView.clickKebabAction(name, 'Delete Console CLI Download');
@@ -104,7 +102,7 @@ describe('CRD extensions', () => {
         it(`displays YAML editor for creating a new ${crd} ${dropdownMenuName} instance`, async () => {
           await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
           await crudView.isLoaded();
-          await crudView.clickKebabAction(crd, `${i18nNS}~View instances`);
+          await crudView.clickKebabAction(crd, 'View instances');
           await crudView.isLoaded();
           await crudView.clickCreateWithYAML();
           await yamlView.isLoaded();
@@ -151,7 +149,7 @@ describe('CRD extensions', () => {
         it(`deletes the ${crd} ${dropdownMenuName} instance`, async () => {
           await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
           await crudView.isLoaded();
-          await crudView.clickKebabAction(crd, `${i18nNS}~View instances`);
+          await crudView.clickKebabAction(crd, 'View instances');
           await crudView.resourceRowsPresent();
           await crudView.deleteRow(crd)(instanceName);
         });
@@ -169,7 +167,7 @@ describe('CRD extensions', () => {
     it(`displays YAML editor for creating a new ${crd} instance`, async () => {
       await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
       await crudView.isLoaded();
-      await crudView.clickKebabAction(crd, `${i18nNS}~View instances`);
+      await crudView.clickKebabAction(crd, 'View instances');
       await crudView.isLoaded();
       await crudView.clickCreateWithYAML();
       await yamlView.isLoaded();
@@ -224,7 +222,7 @@ describe('CRD extensions', () => {
     it(`deletes the ${crd} instance`, async () => {
       await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
       await crudView.isLoaded();
-      await crudView.clickKebabAction(crd, `${i18nNS}~View instances`);
+      await crudView.clickKebabAction(crd, 'View instances');
       await crudView.resourceRowsPresent();
       await crudView.deleteRow(crd)(name);
     });
@@ -241,7 +239,7 @@ describe('CRD extensions', () => {
     it(`displays YAML editor for creating a new ${crd} instance`, async () => {
       await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
       await crudView.isLoaded();
-      await crudView.clickKebabAction(crd, `${i18nNS}~View instances`);
+      await crudView.clickKebabAction(crd, 'View instances');
       await crudView.isLoaded();
       await crudView.clickCreateWithYAML();
       await yamlView.isLoaded();
@@ -292,7 +290,7 @@ describe('CRD extensions', () => {
     it(`displays YAML editor for adding namespaceFilter to the ${crd} instance`, async () => {
       await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
       await crudView.isLoaded();
-      await crudView.clickKebabAction(crd, `${i18nNS}~View instances`);
+      await crudView.clickKebabAction(crd, 'View instances');
       await crudView.resourceRowsPresent();
       await crudView.editRow(crd)(name);
       await yamlView.isLoaded();
@@ -320,7 +318,7 @@ describe('CRD extensions', () => {
     it(`deletes the ${crd} instance`, async () => {
       await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
       await crudView.isLoaded();
-      await crudView.clickKebabAction(crd, `${i18nNS}~View instances`);
+      await crudView.clickKebabAction(crd, 'View instances');
       await crudView.resourceRowsPresent();
       await crudView.deleteRow(crd)(name);
     });
