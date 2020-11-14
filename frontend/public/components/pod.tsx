@@ -102,66 +102,79 @@ export const menuActions = [
   ...Kebab.factory.common,
 ];
 
+// t('workload~Name')
+// t('workload~Namespace')
+// t('workload~Status')
+// t('workload~Ready')
+// t('workload~Restarts')
+// t('workload~Owner')
+// t('workload~Node')
+// t('workload~Memory')
+// t('workload~CPU')
+// t('workload~Created')
+// t('workload~Labels')
+// t('workload~IP address')
+
 const podColumnInfo = Object.freeze({
   name: {
     classes: '',
     id: 'name',
-    title: i18next.t('workload~Name'),
+    title: 'workload~Name',
   },
   namespace: {
     classes: '',
     id: 'namespace',
-    title: i18next.t('workload~Namespace'),
+    title: 'workload~Namespace',
   },
   status: {
     classes: '',
     id: 'status',
-    title: i18next.t('workload~Status'),
+    title: 'workload~Status',
   },
   ready: {
     classes: classNames('pf-m-nowrap', 'pf-u-w-10-on-lg', 'pf-u-w-8-on-xl'),
     id: 'ready',
-    title: i18next.t('workload~Ready'),
+    title: 'workload~Ready',
   },
   restarts: {
     classes: classNames('pf-m-nowrap', 'pf-u-w-8-on-2xl'),
     id: 'restarts',
-    title: i18next.t('workload~Restarts'),
+    title: 'workload~Restarts',
   },
   owner: {
     classes: '',
     id: 'owner',
-    title: i18next.t('workload~Owner'),
+    title: 'workload~Owner',
   },
   node: {
     classes: '',
     id: 'node',
-    title: i18next.t('workload~Node'),
+    title: 'workload~Node',
   },
   memory: {
     classes: classNames({ 'pf-u-w-10-on-2xl': showMetrics }),
     id: 'memory',
-    title: i18next.t('workload~Memory'),
+    title: 'workload~Memory',
   },
   cpu: {
     classes: classNames({ 'pf-u-w-10-on-2xl': showMetrics }),
     id: 'cpu',
-    title: i18next.t('workload~CPU'),
+    title: 'workload~CPU',
   },
   created: {
     classes: classNames('pf-u-w-10-on-2xl'),
     id: 'created',
-    title: i18next.t('workload~Created'),
+    title: 'workload~Created',
   },
   labels: {
     classes: '',
     id: 'labels',
-    title: i18next.t('workload~Labels'),
+    title: 'workload~Labels',
   },
   ipaddress: {
     classes: '',
     id: 'ipaddress',
-    title: i18next.t('workload~IP address'),
+    title: 'workload~IP address',
   },
 });
 
@@ -177,70 +190,72 @@ const getHeader = (showNodes) => {
   return () => {
     return [
       {
-        title: podColumnInfo.name.title,
+        title: i18next.t(podColumnInfo.name.title),
         id: podColumnInfo.name.id,
         sortField: 'metadata.name',
         transforms: [sortable],
         props: { className: podColumnInfo.name.classes },
       },
       {
-        title: podColumnInfo.namespace.title,
+        title: i18next.t(podColumnInfo.namespace.title),
         id: podColumnInfo.namespace.id,
         sortField: 'metadata.namespace',
         transforms: [sortable],
         props: { className: podColumnInfo.namespace.classes },
       },
       {
-        title: podColumnInfo.status.title,
+        title: i18next.t(podColumnInfo.status.title),
         id: podColumnInfo.status.id,
         sortFunc: 'podPhase',
         transforms: [sortable],
         props: { className: podColumnInfo.status.classes },
       },
       {
-        title: podColumnInfo.ready.title,
+        title: i18next.t(podColumnInfo.ready.title),
         id: podColumnInfo.ready.id,
         sortFunc: 'podReadiness',
         transforms: [sortable],
         props: { className: podColumnInfo.ready.classes },
       },
       {
-        title: podColumnInfo.restarts.title,
+        title: i18next.t(podColumnInfo.restarts.title),
         id: podColumnInfo.restarts.id,
         sortFunc: 'podRestarts',
         transforms: [sortable],
         props: { className: podColumnInfo.restarts.classes },
       },
       {
-        title: showNodes ? podColumnInfo.node.title : podColumnInfo.owner.title,
+        title: showNodes
+          ? i18next.t(podColumnInfo.node.title)
+          : i18next.t(podColumnInfo.owner.title),
         id: podColumnInfo.owner.id,
         sortField: showNodes ? 'spec.nodeName' : 'metadata.ownerReferences[0].name',
         transforms: [sortable],
         props: { className: podColumnInfo.owner.classes },
       },
       {
-        title: podColumnInfo.memory.title,
+        title: i18next.t(podColumnInfo.memory.title),
         id: podColumnInfo.memory.id,
         sortFunc: 'podMemory',
         transforms: [sortable],
         props: { className: podColumnInfo.memory.classes },
       },
       {
-        title: podColumnInfo.cpu.title,
+        title: i18next.t(podColumnInfo.cpu.title),
         id: podColumnInfo.cpu.id,
         sortFunc: 'podCPU',
         transforms: [sortable],
         props: { className: podColumnInfo.cpu.classes },
       },
       {
-        title: podColumnInfo.created.title,
+        title: i18next.t(podColumnInfo.created.title),
         id: podColumnInfo.created.id,
         sortField: 'metadata.creationTimestamp',
         transforms: [sortable],
         props: { className: podColumnInfo.created.classes },
       },
       {
-        title: podColumnInfo.node.title,
+        title: i18next.t(podColumnInfo.node.title),
         id: podColumnInfo.node.id,
         sortField: 'spec.nodeName',
         transforms: [sortable],
@@ -248,7 +263,7 @@ const getHeader = (showNodes) => {
         additional: true,
       },
       {
-        title: podColumnInfo.labels.title,
+        title: i18next.t(podColumnInfo.labels.title),
         id: podColumnInfo.labels.id,
         sortField: 'metadata.labels',
         transforms: [sortable],
@@ -256,7 +271,7 @@ const getHeader = (showNodes) => {
         additional: true,
       },
       {
-        title: podColumnInfo.ipaddress.title,
+        title: i18next.t(podColumnInfo.ipaddress.title),
         id: podColumnInfo.ipaddress.id,
         sortField: 'status.hostIP',
         transforms: [sortable],
