@@ -8,8 +8,8 @@ export const cancelBtn = $$('.pf-m-secondary')
   .first();
 export const confirmActionBtn = $('#confirm-action');
 const annotationRows = $$('.pairs-list__row');
-export const annotationRowsKey = $$('[placeholder="key"]');
-export const annotationRowsValue = $$('[placeholder="value"]');
+export const annotationRowsKey = $$('[placeholder="Key"]');
+export const annotationRowsValue = $$('[placeholder="Value"]');
 export const annotationRowsDelete = $$('[data-test-id="pairs-list__delete-btn"]');
 export const annotationDialogOverlay = $('.co-overlay');
 

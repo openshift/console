@@ -4,6 +4,7 @@ import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Alert, Button, ActionGroup, AlertActionCloseButton } from '@patternfly/react-core';
 import * as classNames from 'classnames';
+import { Trans, withTranslation } from 'react-i18next';
 
 import { k8sPatch, k8sGet, referenceFor, referenceForOwnerRef } from '../module/k8s';
 import {
@@ -285,371 +286,384 @@ const stateToProps = ({ k8s, UI }, { obj }) => ({
   impersonate: UI.get('impersonate'),
 });
 
-export const EnvironmentPage = connect(stateToProps)(
-  class EnvironmentPage extends PromiseComponent {
-    /**
-     * Set initial state and decide which kind of env we are setting up
-     *
-     * @param props
-     */
-    constructor(props) {
-      super(props);
+export class UnconnectedEnvironmentPage extends PromiseComponent {
+  /**
+   * Set initial state and decide which kind of env we are setting up
+   *
+   * @param props
+   */
+  constructor(props) {
+    super(props);
 
-      this.reload = this._reload.bind(this);
-      this.saveChanges = this._saveChanges.bind(this);
-      this.updateEnvVars = this._updateEnvVars.bind(this);
-      this.selectContainer = this._selectContainer.bind(this);
-      const currentEnvVars = new CurrentEnvVars(this.props.rawEnvData);
-      this.state = {
-        currentEnvVars,
-        success: null,
-        containerIndex: 0,
-        containerType:
-          currentEnvVars.isContainerArray || currentEnvVars.isCreate ? 'containers' : 'buildObject',
-      };
+    this.reload = this._reload.bind(this);
+    this.saveChanges = this._saveChanges.bind(this);
+    this.updateEnvVars = this._updateEnvVars.bind(this);
+    this.selectContainer = this._selectContainer.bind(this);
+    const currentEnvVars = new CurrentEnvVars(this.props.rawEnvData);
+    this.state = {
+      currentEnvVars,
+      success: null,
+      containerIndex: 0,
+      containerType:
+        currentEnvVars.isContainerArray || currentEnvVars.isCreate ? 'containers' : 'buildObject',
+    };
+  }
+
+  componentDidMount() {
+    this._checkEditAccess();
+    const { addConfigMapSecret, readOnly, t } = this.props;
+    if (!addConfigMapSecret || readOnly) {
+      const configMaps = {},
+        secrets = {};
+      this.setState({ configMaps, secrets });
+      return;
     }
+    const envNamespace = _.get(this.props, 'obj.metadata.namespace');
 
-    componentDidMount() {
-      this._checkEditAccess();
-      const { addConfigMapSecret, readOnly } = this.props;
-      if (!addConfigMapSecret || readOnly) {
-        const configMaps = {},
-          secrets = {};
-        this.setState({ configMaps, secrets });
-        return;
-      }
-      const envNamespace = _.get(this.props, 'obj.metadata.namespace');
+    Promise.all([
+      k8sGet(ConfigMapModel, null, envNamespace).catch((err) => {
+        if (err.response.status !== 403) {
+          const errorMessage = err.message || t('environment~Could not load ConfigMaps.');
+          this.setState({ errorMessage });
+        }
+        return {
+          configMaps: {},
+        };
+      }),
+      k8sGet(SecretModel, null, envNamespace).catch((err) => {
+        if (err.response.status !== 403) {
+          const errorMessage = err.message || t('environment~Could not load Secrets.');
+          this.setState({ errorMessage });
+        }
+        return {
+          secrets: {},
+        };
+      }),
+    ]).then(([configMaps, secrets]) => this.setState({ configMaps, secrets }));
+  }
 
-      Promise.all([
-        k8sGet(ConfigMapModel, null, envNamespace).catch((err) => {
-          if (err.response.status !== 403) {
-            const errorMessage = err.message || 'Could not load config maps.';
-            this.setState({ errorMessage });
-          }
-          return {
-            configMaps: {},
-          };
-        }),
-        k8sGet(SecretModel, null, envNamespace).catch((err) => {
-          if (err.response.status !== 403) {
-            const errorMessage = err.message || 'Could not load secrets.';
-            this.setState({ errorMessage });
-          }
-          return {
-            secrets: {},
-          };
-        }),
-      ]).then(([configMaps, secrets]) => this.setState({ configMaps, secrets }));
-    }
+  componentDidUpdate(prevProps) {
+    const { obj, model, impersonate, readOnly, rawEnvData } = this.props;
+    const { dirty } = this.state;
 
-    componentDidUpdate(prevProps) {
-      const { obj, model, impersonate, readOnly, rawEnvData } = this.props;
-      const { dirty } = this.state;
-
-      if (!_.isEqual(rawEnvData, prevProps.rawEnvData)) {
-        this.setState({
-          ...(!dirty && { currentEnvVars: new CurrentEnvVars(rawEnvData) }),
-          stale: dirty,
-        });
-      }
-
-      if (
-        _.get(prevProps.obj, 'metadata.uid') !== _.get(obj, 'metadata.uid') ||
-        _.get(prevProps.model, 'apiGroup') !== _.get(model, 'apiGroup') ||
-        _.get(prevProps.model, 'path') !== _.get(model, 'path') ||
-        prevProps.impersonate !== impersonate ||
-        prevProps.readOnly !== readOnly
-      ) {
-        this._checkEditAccess();
-      }
-    }
-
-    _checkEditAccess() {
-      const { obj, model, impersonate, readOnly } = this.props;
-      if (readOnly) {
-        return;
-      }
-
-      // Only check RBAC if editing an existing resource. The form will always
-      // be enabled when creating a new application (git import / deploy image).
-      if (_.isEmpty(obj) || !model) {
-        this.setState({ allowed: true });
-        return;
-      }
-
-      const { name, namespace } = obj.metadata;
-      const resourceAttributes = {
-        group: model.apiGroup,
-        resource: model.plural,
-        verb: 'patch',
-        name,
-        namespace,
-      };
-      checkAccess(resourceAttributes, impersonate).then((resp) =>
-        this.setState({ allowed: resp.status.allowed }),
-      );
-    }
-
-    /**
-     * Callback for NVEditor update our state with new values
-     * @param env
-     * @param i
-     */
-    _updateEnvVars(env, i = 0, type = EnvType.ENV) {
-      const { onChange } = this.props;
-      const { currentEnvVars, containerType } = this.state;
-      const currentEnv = _.cloneDeep(currentEnvVars);
-      currentEnv.setFormattedVars(containerType, i, type, env.nameValuePairs);
+    if (!_.isEqual(rawEnvData, prevProps.rawEnvData)) {
       this.setState({
-        currentEnvVars: currentEnv,
-        dirty: true,
-        success: null,
+        ...(!dirty && { currentEnvVars: new CurrentEnvVars(rawEnvData) }),
+        stale: dirty,
       });
-      _.isFunction(onChange) && onChange(currentEnv.dispatchNewEnvironmentVariables());
     }
 
-    /**
-     * Reset the page to initial state
-     * @private
-     */
-    _reload() {
-      const { rawEnvData } = this.props;
+    if (
+      _.get(prevProps.obj, 'metadata.uid') !== _.get(obj, 'metadata.uid') ||
+      _.get(prevProps.model, 'apiGroup') !== _.get(model, 'apiGroup') ||
+      _.get(prevProps.model, 'path') !== _.get(model, 'path') ||
+      prevProps.impersonate !== impersonate ||
+      prevProps.readOnly !== readOnly
+    ) {
+      this._checkEditAccess();
+    }
+  }
+
+  _checkEditAccess() {
+    const { obj, model, impersonate, readOnly } = this.props;
+    if (readOnly) {
+      return;
+    }
+
+    // Only check RBAC if editing an existing resource. The form will always
+    // be enabled when creating a new application (git import / deploy image).
+    if (_.isEmpty(obj) || !model) {
+      this.setState({ allowed: true });
+      return;
+    }
+
+    const { name, namespace } = obj.metadata;
+    const resourceAttributes = {
+      group: model.apiGroup,
+      resource: model.plural,
+      verb: 'patch',
+      name,
+      namespace,
+    };
+    checkAccess(resourceAttributes, impersonate).then((resp) =>
+      this.setState({ allowed: resp.status.allowed }),
+    );
+  }
+
+  /**
+   * Callback for NVEditor update our state with new values
+   * @param env
+   * @param i
+   */
+  _updateEnvVars(env, i = 0, type = EnvType.ENV) {
+    const { onChange } = this.props;
+    const { currentEnvVars, containerType } = this.state;
+    const currentEnv = _.cloneDeep(currentEnvVars);
+    currentEnv.setFormattedVars(containerType, i, type, env.nameValuePairs);
+    this.setState({
+      currentEnvVars: currentEnv,
+      dirty: true,
+      success: null,
+    });
+    _.isFunction(onChange) && onChange(currentEnv.dispatchNewEnvironmentVariables());
+  }
+
+  /**
+   * Reset the page to initial state
+   * @private
+   */
+  _reload() {
+    const { rawEnvData } = this.props;
+    this.setState({
+      currentEnvVars: new CurrentEnvVars(rawEnvData),
+      dirty: false,
+      errorMessage: null,
+      stale: false,
+      success: null,
+    });
+  }
+
+  _selectContainer(containerName) {
+    const { rawEnvData } = this.props;
+    let containerIndex = _.findIndex(rawEnvData.containers, { name: containerName });
+    if (containerIndex !== -1) {
+      return this.setState({
+        containerIndex,
+        containerType: 'containers',
+      });
+    }
+    containerIndex = _.findIndex(rawEnvData.initContainers, { name: containerName });
+    if (containerIndex !== -1) {
+      return this.setState({
+        containerIndex,
+        containerType: 'initContainers',
+      });
+    }
+  }
+
+  /**
+   * Make it so. Patch the values for the env var changes made on the page.
+   * 1. Validate for dup keys
+   * 2. Throw out empty rows
+   * 3. Use add command if we are adding new env vars, and replace if we are modifying
+   * 4. Send the patch command down to REST, and update with response
+   *
+   * @param e
+   */
+  _saveChanges(e) {
+    const { envPath, obj, model, t } = this.props;
+    const { currentEnvVars } = this.state;
+
+    e.preventDefault();
+
+    const patches = currentEnvVars.getPatches(envPath);
+    const promise = k8sPatch(model, obj, patches);
+    this.handlePromise(promise).then((res) => {
       this.setState({
-        currentEnvVars: new CurrentEnvVars(rawEnvData),
+        currentEnvVars: new CurrentEnvVars(res, currentEnvVars.isContainerArray, envPath),
         dirty: false,
         errorMessage: null,
         stale: false,
-        success: null,
+        success: t('environment~Successfully updated the environment variables.'),
       });
+    });
+  }
+
+  dismissSuccess = () => {
+    this.setState({ success: null });
+  };
+
+  render() {
+    const {
+      errorMessage,
+      success,
+      inProgress,
+      currentEnvVars,
+      stale,
+      configMaps,
+      secrets,
+      containerIndex,
+      containerType,
+      allowed,
+    } = this.state;
+    const { rawEnvData, obj, addConfigMapSecret, useLoadingInline, t } = this.props;
+    const readOnly = this.props.readOnly || !allowed;
+
+    if (!configMaps || !currentEnvVars || !secrets) {
+      if (useLoadingInline) {
+        return <LoadingInline />;
+      }
+      return <LoadingBox />;
     }
 
-    _selectContainer(containerName) {
-      const { rawEnvData } = this.props;
-      let containerIndex = _.findIndex(rawEnvData.containers, { name: containerName });
-      if (containerIndex !== -1) {
-        return this.setState({
-          containerIndex,
-          containerType: 'containers',
-        });
-      }
-      containerIndex = _.findIndex(rawEnvData.initContainers, { name: containerName });
-      if (containerIndex !== -1) {
-        return this.setState({
-          containerIndex,
-          containerType: 'initContainers',
-        });
-      }
-    }
+    const envVar = currentEnvVars.getEnvVarByTypeAndIndex(containerType, containerIndex);
 
-    /**
-     * Make it so. Patch the values for the env var changes made on the page.
-     * 1. Validate for dup keys
-     * 2. Throw out empty rows
-     * 3. Use add command if we are adding new env vars, and replace if we are modifying
-     * 4. Send the patch command down to REST, and update with response
-     *
-     * @param e
-     */
-    _saveChanges(e) {
-      const { envPath, obj, model } = this.props;
-      const { currentEnvVars } = this.state;
+    const containerDropdown = currentEnvVars.isContainerArray ? (
+      <ContainerDropdown
+        currentKey={rawEnvData[containerType][containerIndex].name}
+        containers={getContainersObjectForDropdown(rawEnvData.containers)}
+        initContainers={getContainersObjectForDropdown(rawEnvData.initContainers)}
+        onChange={this.selectContainer}
+      />
+    ) : null;
 
-      e.preventDefault();
-
-      const patches = currentEnvVars.getPatches(envPath);
-      const promise = k8sPatch(model, obj, patches);
-      this.handlePromise(promise).then((res) => {
-        this.setState({
-          currentEnvVars: new CurrentEnvVars(res, currentEnvVars.isContainerArray, envPath),
-          dirty: false,
-          errorMessage: null,
-          stale: false,
-          success: 'Successfully updated the environment variables.',
-        });
-      });
-    }
-
-    dismissSuccess = () => {
-      this.setState({ success: null });
-    };
-
-    render() {
-      const {
-        errorMessage,
-        success,
-        inProgress,
-        currentEnvVars,
-        stale,
-        configMaps,
-        secrets,
-        containerIndex,
-        containerType,
-        allowed,
-      } = this.state;
-      const { rawEnvData, obj, addConfigMapSecret, useLoadingInline } = this.props;
-      const readOnly = this.props.readOnly || !allowed;
-
-      if (!configMaps || !currentEnvVars || !secrets) {
-        if (useLoadingInline) {
-          return <LoadingInline />;
-        }
-        return <LoadingBox />;
-      }
-
-      const envVar = currentEnvVars.getEnvVarByTypeAndIndex(containerType, containerIndex);
-
-      const containerDropdown = currentEnvVars.isContainerArray ? (
-        <ContainerDropdown
-          currentKey={rawEnvData[containerType][containerIndex].name}
-          containers={getContainersObjectForDropdown(rawEnvData.containers)}
-          initContainers={getContainersObjectForDropdown(rawEnvData.initContainers)}
-          onChange={this.selectContainer}
-        />
-      ) : null;
-
-      const owners = _.get(obj.metadata, 'ownerReferences', []).map((o, i) => (
-        <ResourceLink
-          key={i}
-          kind={referenceForOwnerRef(o)}
-          name={o.name}
-          namespace={obj.metadata.namespace}
-          title={o.uid}
-          inline
-        />
-      ));
-      const containerVars = (
-        <>
-          {readOnly && !_.isEmpty(owners) && (
-            <div className="co-toolbar__group co-toolbar__group--left">
-              <Alert
-                isInline
-                className="co-alert col-md-11 col-xs-10"
-                variant="info"
-                title="Environment variables set from parent"
-              >
-                View environment for resource {owners.length > 1 ? <>owners: {owners}</> : owners}
-              </Alert>
+    const owners = _.get(obj.metadata, 'ownerReferences', []).map((o, i) => (
+      <ResourceLink
+        key={i}
+        kind={referenceForOwnerRef(o)}
+        name={o.name}
+        namespace={obj.metadata.namespace}
+        title={o.uid}
+        inline
+      />
+    ));
+    const containerVars = (
+      <>
+        {readOnly && !_.isEmpty(owners) && (
+          <div className="co-toolbar__group co-toolbar__group--left">
+            <Alert
+              isInline
+              className="co-alert col-md-11 col-xs-10"
+              variant="info"
+              title={t('environment~Environment variables set from parent')}
+            >
+              {t('environment~View environment for resource')}{' '}
+              {owners.length > 1 ? <>t('environment~owners:') {owners}</> : owners}
+            </Alert>
+          </div>
+        )}
+        {currentEnvVars.isContainerArray && (
+          <div className="co-toolbar__group co-toolbar__group--left">
+            <div className="co-toolbar__item">
+              {containerType === 'containers'
+                ? t('environment~Container:')
+                : t('environment~Init container:')}
             </div>
-          )}
-          {currentEnvVars.isContainerArray && (
-            <div className="co-toolbar__group co-toolbar__group--left">
-              <div className="co-toolbar__item">
-                {containerType === 'containers' ? 'Container:' : 'Init Container:'}
-              </div>
-              <div className="co-toolbar__item">{containerDropdown}</div>
-            </div>
-          )}
-          <div className={classNames({ 'co-m-pane__body-group': !currentEnvVars.isCreate })}>
-            {!currentEnvVars.isCreate && (
-              <h3 className="co-section-heading-tertiary">
-                Single values (env)
-                {!readOnly && (
-                  <FieldLevelHelp>
+            <div className="co-toolbar__item">{containerDropdown}</div>
+          </div>
+        )}
+        <div className={classNames({ 'co-m-pane__body-group': !currentEnvVars.isCreate })}>
+          {!currentEnvVars.isCreate && (
+            <h3 className="co-section-heading-tertiary">
+              {t('environment~Single values (env)')}
+              {!readOnly && (
+                <FieldLevelHelp>
+                  <Trans t={t} ns="environment">
                     Define environment variables as key-value pairs to store configuration settings.
                     You can enter text or add values from a ConfigMap or Secret. Drag and drop
                     environment variables to change the order in which they are run. A variable can
                     reference any other variables that come before it in the list, for example{' '}
                     <code>FULLDOMAIN = $(SUBDOMAIN).example.com</code>.
-                  </FieldLevelHelp>
-                )}
-              </h3>
-            )}
-            <NameValueEditorComponent
+                  </Trans>
+                </FieldLevelHelp>
+              )}
+            </h3>
+          )}
+          <NameValueEditorComponent
+            nameValueId={containerIndex}
+            nameValuePairs={envVar[EnvType.ENV]}
+            updateParentData={this.updateEnvVars}
+            nameString={t('environment~Name')}
+            readOnly={readOnly}
+            allowSorting={true}
+            configMaps={configMaps}
+            secrets={secrets}
+            addConfigMapSecret={addConfigMapSecret}
+          />
+        </div>
+        {currentEnvVars.isContainerArray && (
+          <div className="co-m-pane__body-group environment-buttons">
+            <h3 className="co-section-heading-tertiary">
+              {t('environment~All values from existing ConfigMaps or Secrets (envFrom)')}
+              {!readOnly && (
+                <FieldLevelHelp>
+                  <>
+                    {t(
+                      'environment~Add new values by referencing an existing ConfigMap or Secret. Drag and drop environment variables within this section to change the order in which they are run.',
+                    )}
+                    <br />
+                    <strong>{t('environment~Note:')}</strong>{' '}
+                    {t(
+                      'environment~If identical values exist in both lists, the single value in the list above will take precedence.',
+                    )}
+                  </>
+                </FieldLevelHelp>
+              )}
+            </h3>
+            <EnvFromEditorComponent
               nameValueId={containerIndex}
-              nameValuePairs={envVar[EnvType.ENV]}
+              nameValuePairs={envVar[EnvType.ENV_FROM]}
               updateParentData={this.updateEnvVars}
-              nameString="Name"
               readOnly={readOnly}
-              allowSorting={true}
               configMaps={configMaps}
               secrets={secrets}
-              addConfigMapSecret={addConfigMapSecret}
             />
           </div>
-          {currentEnvVars.isContainerArray && (
-            <div className="co-m-pane__body-group environment-buttons">
-              <h3 className="co-section-heading-tertiary">
-                All values from existing config maps or secrets (envFrom)
-                {!readOnly && (
-                  <FieldLevelHelp>
-                    Add new values by referencing an existing config map or secret. Drag and drop
-                    environment variables within this section to change the order in which they are
-                    run.
-                    <br />
-                    <strong>Note: </strong>If identical values exist in both lists, the single value
-                    in the list above will take precedence.
-                  </FieldLevelHelp>
-                )}
-              </h3>
-              <EnvFromEditorComponent
-                nameValueId={containerIndex}
-                nameValuePairs={envVar[EnvType.ENV_FROM]}
-                updateParentData={this.updateEnvVars}
-                readOnly={readOnly}
-                configMaps={configMaps}
-                secrets={secrets}
-              />
-            </div>
-          )}
-        </>
-      );
+        )}
+      </>
+    );
 
-      return (
-        <div className={classNames({ 'co-m-pane__body': !currentEnvVars.isCreate })}>
-          {containerVars}
-          {!currentEnvVars.isCreate && (
-            <div className="co-m-pane__body-group">
-              <div className="pf-c-form environment-buttons">
-                {errorMessage && (
-                  <Alert isInline className="co-alert" variant="danger" title={errorMessage} />
-                )}
-                {stale && (
-                  <Alert
-                    isInline
-                    className="co-alert"
-                    variant="info"
-                    title="The information on this page is no longer current."
+    return (
+      <div className={classNames({ 'co-m-pane__body': !currentEnvVars.isCreate })}>
+        {containerVars}
+        {!currentEnvVars.isCreate && (
+          <div className="co-m-pane__body-group">
+            <div className="pf-c-form environment-buttons">
+              {errorMessage && (
+                <Alert isInline className="co-alert" variant="danger" title={errorMessage} />
+              )}
+              {stale && (
+                <Alert
+                  isInline
+                  className="co-alert"
+                  variant="info"
+                  title={t('environment~The information on this page is no longer current.')}
+                >
+                  {t(
+                    'environment~Click Reload to update and lose edits, or Save Changes to overwrite.',
+                  )}
+                </Alert>
+              )}
+              {success && (
+                <Alert
+                  isInline
+                  className="co-alert"
+                  variant="success"
+                  title={success}
+                  actionClose={<AlertActionCloseButton onClose={this.dismissSuccess} />}
+                />
+              )}
+              {!readOnly && (
+                <ActionGroup>
+                  <Button
+                    isDisabled={inProgress}
+                    type="submit"
+                    variant="primary"
+                    onClick={this.saveChanges}
                   >
-                    Click Reload to update and lose edits, or Save Changes to overwrite.
-                  </Alert>
-                )}
-                {success && (
-                  <Alert
-                    isInline
-                    className="co-alert"
-                    variant="success"
-                    title={success}
-                    actionClose={<AlertActionCloseButton onClose={this.dismissSuccess} />}
-                  />
-                )}
-                {!readOnly && (
-                  <ActionGroup>
-                    <Button
-                      isDisabled={inProgress}
-                      type="submit"
-                      variant="primary"
-                      onClick={this.saveChanges}
-                    >
-                      Save
-                    </Button>
-                    <Button
-                      isDisabled={inProgress}
-                      type="button"
-                      variant="secondary"
-                      onClick={this.reload}
-                    >
-                      Reload
-                    </Button>
-                  </ActionGroup>
-                )}
-              </div>
+                    {t('environment~Save')}
+                  </Button>
+                  <Button
+                    isDisabled={inProgress}
+                    type="button"
+                    variant="secondary"
+                    onClick={this.reload}
+                  >
+                    {t('environment~Reload')}
+                  </Button>
+                </ActionGroup>
+              )}
             </div>
-          )}
-        </div>
-      );
-    }
-  },
-);
+          </div>
+        )}
+      </div>
+    );
+  }
+}
+
+const EnvironmentPage_ = connect(stateToProps)(UnconnectedEnvironmentPage);
+export const EnvironmentPage = withTranslation()(EnvironmentPage_);
+
 EnvironmentPage.propTypes = {
   obj: PropTypes.object,
   rawEnvData: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),

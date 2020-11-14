@@ -2,6 +2,17 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { NameValueEditor } from '../../../public/components/utils/name-value-editor';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    withTranslation: () => (Component) => {
+      Component.defaultProps = { ...Component.defaultProps, t: (s) => s };
+      return Component;
+    },
+  };
+});
+
 describe('Name Value Editor', () => {
   describe('When supplied with attributes nameString and valueString', () => {
     it('renders header correctly', () => {
@@ -11,6 +22,7 @@ describe('Name Value Editor', () => {
           updateParentData={() => {}}
           nameString={'foo'}
           valueString={'bar'}
+          t={(key) => key}
         />,
       );
 
@@ -22,7 +34,11 @@ describe('Name Value Editor', () => {
   describe('When supplied with nameValuePairs', () => {
     it('renders PairElement correctly', () => {
       const wrapper = shallow(
-        <NameValueEditor nameValuePairs={[['name', 'value', 0]]} updateParentData={() => {}} />,
+        <NameValueEditor
+          nameValuePairs={[['name', 'value', 0]]}
+          updateParentData={() => {}}
+          t={(key) => key}
+        />,
       );
 
       expect(wrapper.html()).toContain('value="name"');
@@ -37,6 +53,7 @@ describe('Name Value Editor', () => {
           nameValuePairs={[['name', 'value', 0]]}
           updateParentData={() => {}}
           readOnly={true}
+          t={(key) => key}
         />,
       );
 
@@ -49,6 +66,7 @@ describe('Name Value Editor', () => {
           nameValuePairs={[['name', 'value', 0]]}
           updateParentData={() => {}}
           readOnly={true}
+          t={(key) => key}
         />,
       );
       expect(wrapper.html()).not.toContain('pairs-list__delete-icon');
@@ -64,6 +82,7 @@ describe('Name Value Editor', () => {
           updateParentData={() => {}}
           readOnly={false}
           allowSorting={true}
+          t={(key) => key}
         />,
       );
 
@@ -79,6 +98,7 @@ describe('Name Value Editor', () => {
           updateParentData={() => {}}
           readOnly={false}
           allowSorting={true}
+          t={(key) => key}
         />,
       );
 
@@ -94,6 +114,7 @@ describe('Name Value Editor', () => {
           nameValuePairs={[['name', 'value', 0]]}
           updateParentData={() => {}}
           allowSorting={false}
+          t={(key) => key}
         />,
       );
       expect(wrapper.html()).toContain('pairs-list__delete-icon');

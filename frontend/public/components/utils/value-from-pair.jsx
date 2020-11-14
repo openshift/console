@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
+import { useTranslation } from 'react-i18next';
 
 import { Dropdown, ResourceName } from './';
 
@@ -31,21 +32,6 @@ const getSpacer = (configMap, secret) => {
   return _.isEmpty(configMap) || _.isEmpty(secret) ? spacerBefore : spacerBefore.add(secret);
 };
 
-const getHeaders = (configMap, secret, serviceAccount) => {
-  const headers = {};
-  if (configMap && !_.isEmpty(configMap)) {
-    headers[configMap] = 'Config Maps';
-  }
-  if (secret && !_.isEmpty(secret)) {
-    headers[secret] = 'Secrets';
-  }
-  if (serviceAccount && !_.isEmpty(serviceAccount)) {
-    headers[serviceAccount] = 'Service Accounts';
-  }
-
-  return headers;
-};
-
 const getKeys = (keyMap) => {
   const itemKeys = {};
   _.mapKeys(keyMap, (value, key) => (itemKeys[key] = key));
@@ -64,6 +50,23 @@ export const NameKeyDropdownPair = ({
   placeholderString,
   isKeyRef = true,
 }) => {
+  const { t } = useTranslation();
+
+  const getHeaders = (configMap, secret, serviceAccount) => {
+    const headers = {};
+    if (configMap && !_.isEmpty(configMap)) {
+      headers[configMap] = t('environment~ConfigMaps');
+    }
+    if (secret && !_.isEmpty(secret)) {
+      headers[secret] = t('environment~Secrets');
+    }
+    if (serviceAccount && !_.isEmpty(serviceAccount)) {
+      headers[serviceAccount] = t('environment~ServiceAccounts');
+    }
+
+    return headers;
+  };
+
   let itemKeys = {};
   let refProperty;
   const cmItems = {};
@@ -71,7 +74,7 @@ export const NameKeyDropdownPair = ({
   const saItems = {};
   const nameAutocompleteFilter = (text, item) => fuzzy(text, item.props.name);
   const keyAutocompleteFilter = (text, item) => fuzzy(text, item);
-  const keyTitle = _.isEmpty(key) ? 'Select a key' : key;
+  const keyTitle = _.isEmpty(key) ? t('environment~Select a key') : key;
   const cmRefProperty = isKeyRef ? 'configMapKeyRef' : 'configMapRef';
   const secretRefProperty = isKeyRef ? 'secretKeyRef' : 'secretRef';
   const serviceAccountRefProperty = isKeyRef ? 'serviceAccountKeyRef' : 'serviceAccountRef';
@@ -137,7 +140,7 @@ export const NameKeyDropdownPair = ({
           menuClassName="value-from__menu dropdown-menu--text-wrap"
           className="value-from value-from--key"
           autocompleteFilter={keyAutocompleteFilter}
-          autocompletePlaceholder="Key"
+          autocompletePlaceholder={t('environment~Key')}
           items={itemKeys}
           selectedKey={key}
           title={keyTitle}
@@ -168,9 +171,10 @@ const ConfigMapSecretKeyRef = ({
   disabled,
   kind,
 }) => {
-  const placeholderString = 'Config Map or Secret';
+  const { t } = useTranslation();
+  const placeholderString = t('environment~ConfigMap or Secret');
   const nameTitle = _.isEmpty(name) ? (
-    'Select a resource'
+    t('environment~Select a resource')
   ) : (
     <ResourceName kind={kind} name={name} />
   );
@@ -209,9 +213,10 @@ const ConfigMapSecretRef = ({
   disabled,
   kind,
 }) => {
-  const placeholderString = 'Config Map or Secret';
+  const { t } = useTranslation();
+  const placeholderString = t('environment~ConfigMap or Secret');
   const nameTitle = _.isEmpty(name) ? (
-    'Select a resource'
+    t('environment~Select a resource')
   ) : (
     <ResourceName kind={kind} name={name} />
   );
@@ -226,7 +231,7 @@ const ConfigMapSecretRef = ({
           className="pf-c-form-control"
           value={nameString}
           disabled
-          placeholder="config map/secret"
+          placeholder={t('environment~ConfigMap/Secret')}
         />
       </div>
     );

@@ -3,8 +3,8 @@ import { $, $$, browser, ExpectedConditions as until, by, element } from 'protra
 const BROWSER_TIMEOUT = 15000;
 
 const inputs = $$('.pf-c-form-control');
-export const rowsKey = $('[placeholder="name"]');
-export const rowsValue = $('[placeholder="value"]');
+export const rowsKey = $('[placeholder="Name"]');
+export const rowsValue = $('[placeholder="Value"]');
 export const deleteBtn = $$('[data-test-id="pairs-list__delete-btn"]').first();
 export const deleteFromBtn = $('[data-test-id="pairs-list__delete-from-btn"]');
 export const saveBtn = element(by.cssContainingText('.pf-m-primary', 'Save'));
@@ -13,7 +13,7 @@ export const prefix = $('[data-test-id=env-prefix]');
 export const resources = $$('.co-resource-item__resource-name');
 const option = $$('[role="option"]');
 const dropDownBtn = $$('.value-from');
-const textFilter = $('[placeholder="Config Map or Secret"]');
+const textFilter = $('[placeholder="ConfigMap or Secret"]');
 
 export const isLoaded = () => browser.wait(until.presenceOf(inputs.first()), BROWSER_TIMEOUT);
 
