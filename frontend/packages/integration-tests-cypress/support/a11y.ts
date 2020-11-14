@@ -41,6 +41,7 @@ Cypress.Commands.add('testA11y', (target: string) => {
       { id: 'color-contrast', enabled: false }, // seem to be somewhat inaccurate and has difficulty always picking up the correct colors, tons of open issues for it on axe-core
       { id: 'focusable-content', enabled: false }, // recently updated and need to give the PF team time to fix issues before enabling
       { id: 'scrollable-region-focusable', enabled: false }, // recently updated and need to give the PF team time to fix issues before enabling
+      { id: 'aria-hidden-focus', enabled: false }, // disabling until we implement correct handling of Modals, see https://dequeuniversity.com/rules/axe/3.4/aria-hidden-focus?application=axeAPI
     ],
   });
   a11yTestResults.numberChecks += 1;
