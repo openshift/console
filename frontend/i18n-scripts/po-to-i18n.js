@@ -1,10 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const common = require('./common.js');
+const minimist = require('minimist');
 const { gettextToI18next } = require('i18next-conv');
-
-const public = path.join(__dirname, './../public/locales/pos');
-const packages = path.join(__dirname, './../packages');
 
 function save(target) {
   return (result) => {
@@ -12,25 +9,13 @@ function save(target) {
   };
 }
 
-function processFile(fileName, package) {
-  let language;
-  let remainingPath;
-  if (fileName.includes('zh_CN')) {
-    language = 'zh';
-    remainingPath = fileName.split(/-zh_CN\.po+/g)[0];
-  }
-  if (fileName.includes('ja_JP')) {
-    language = 'ja';
-    remainingPath = fileName.split(/-ja_JP\.po+/g)[0];
-  } else {
-    console.error(
-      "You must provide a PO name that includes the language in the following format: 'ja_JP' or 'zh_CN'",
-    );
-    return;
-  }
-  const newFileName = remainingPath.split('/');
-
+function processFile(fileName, language) {
   let newFilePath;
+  const package =
+    fileName.includes('_package=') && path.basename(fileName, '.po').split('_package=')[1];
+  const newFileName = package
+    ? path.basename(fileName, '.po').split('_package=')[0]
+    : path.basename(fileName, '.po');
   if (package) {
     if (!fs.existsSync(path.join(__dirname, `./../packages/${package}/locales/${language}`))) {
       fs.mkdirSync(path.join(__dirname, `./../packages/${package}/locales/${language}`), {
@@ -39,40 +24,55 @@ function processFile(fileName, package) {
     }
     newFilePath = path.join(
       __dirname,
-      `./../packages/${package}/locales/${language}/${newFileName[newFileName.length - 1]}.json`,
+      `./../packages/${package}/locales/${language}/${newFileName}.json`,
     );
-    console.log(
-      `Saving packages/${package}/locales/${language}/${newFileName[newFileName.length - 1]}.json`,
-    );
+    console.log(`Saving packages/${package}/locales/${language}/${newFileName}.json`);
   } else {
     if (!fs.existsSync(path.join(__dirname, `../public/locales/${language}/`))) {
       fs.mkdirSync(path.join(__dirname, `../public/locales/${language}/`), { recursive: true });
     }
-    newFilePath = path.join(
-      __dirname,
-      `../public/locales/${language}/${newFileName[newFileName.length - 1]}.json`,
-    );
-    console.log(`Saving public/locales/${language}/${newFileName[newFileName.length - 1]}.json`);
+    newFilePath = path.join(__dirname, `../public/locales/${language}/${newFileName}.json`);
+    console.log(`Saving public/locales/${language}/${newFileName}.json`);
   }
   gettextToI18next(language, fs.readFileSync(fileName)).then(save(newFilePath));
 }
 
-function findPOFiles(directory, package) {
-  const poFolder = path.join(directory, 'pos');
-  if (fs.existsSync(poFolder)) {
-    common.parseFolder(poFolder, processFile, package);
+function processDirectory(directory, language) {
+  if (fs.existsSync(directory)) {
+    (async () => {
+      try {
+        const files = await fs.promises.readdir(directory);
+        for (const file of files) {
+          const filePath = path.join(directory, file);
+          processFile(filePath, language);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    })();
+  } else {
+    console.error('Directory does not exist.');
   }
 }
 
-function processPackages(filePath) {
-  if (common.isDirectory(filePath)) {
-    common.findLocalesFolder(filePath, findPOFiles, path.basename(filePath));
-  }
+const options = {
+  string: ['language', 'directory'],
+  boolean: ['help'],
+  alias: {
+    h: 'help',
+    d: 'directory',
+    l: 'language',
+  },
+};
+
+const args = minimist(process.argv.slice(2), options);
+
+if (args.help) {
+  return console.log(
+    "-h: help\n-l: language (i.e. 'ja')\n-d: directory to convert files in (i.e. './new-pos')",
+  );
 }
 
-console.log('You must save PO files to locales/pos in order to use this tool.');
-
-if (fs.existsSync(public)) {
-  common.parseFolder(public, processFile);
+if (args.directory && args.language) {
+  processDirectory(args.directory, args.language);
 }
-common.parseFolder(packages, processPackages);

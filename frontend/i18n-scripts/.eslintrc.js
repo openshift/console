@@ -15,13 +15,6 @@ module.exports = {
     'plugin:console/prettier',
   ],
   parser: '@typescript-eslint/parser',
-  parserOptions: {
-    project: './tsconfig.json',
-    comment: true,
-    ecmaVersion: 2017,
-    sourceType: 'module',
-    tsconfigRootDir: './',
-  },
   plugins: ['@typescript-eslint'],
   rules: {
     camelcase: [

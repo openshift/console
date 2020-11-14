@@ -45,9 +45,10 @@
     "generate": "yarn generate-gql && yarn generate-plugin-assets",
     "generate-gql": "graphql-codegen",
     "generate-plugin-assets": "yarn --cwd packages/console-dynamic-plugin-sdk schema",
-    "i18n-to-pot": "node ./i18n-scripts/i18n-to-pot.js",
+    "i18n-to-po": "node ./i18n-scripts/i18n-to-po.js",
     "po-to-i18n": "node ./i18n-scripts/po-to-i18n.js",
-    "i18n": "./i18n-scripts/build-i18n.sh && node ./i18n-scripts/consolidate-public-folders && node ./i18n-scripts/set-english-defaults.js"
+    "i18n": "./i18n-scripts/build-i18n.sh && node ./i18n-scripts/consolidate-public-folders && node ./i18n-scripts/set-english-defaults.js",
+    "export-pos": "./i18n-scripts/export-pos.sh"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -132,7 +133,7 @@
     "hoist-non-react-statics": "3.x",
     "i18next": "^19.8.3",
     "i18next-browser-languagedetector": "^6.0.1",
-    "i18next-conv": "^10.0.2",
+    "i18next-conv": "^10.1.0",
     "i18next-http-backend": "^1.0.21",
     "immutable": "3.x",
     "js-base64": "^2.5.1",
