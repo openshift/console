@@ -169,7 +169,7 @@ export const AreaChart: React.FC<AreaChartProps> = ({
 };
 
 export const Area: React.FC<AreaProps> = ({
-  endTime = Date.now(),
+  endTime,
   namespace,
   query,
   limitQuery,
