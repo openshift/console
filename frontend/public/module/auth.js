@@ -118,6 +118,13 @@ export const authSvc = {
   },
 
   login: () => {
-    window.location = window.SERVER_FLAGS.loginURL;
+    // Ensure that we don't redirect to the current URL in a loop
+    // when using local bridge in development mode without authorization.
+    if (
+      window.location.href !== window.SERVER_FLAGS.loginURL &&
+      window.location.pathname !== window.SERVER_FLAGS.loginURL
+    ) {
+      window.location = window.SERVER_FLAGS.loginURL;
+    }
   },
 };
