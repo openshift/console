@@ -1,45 +1,24 @@
 import * as React from 'react';
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { RootState } from '@console/internal/redux';
 import { Gallery, GalleryItem } from '@patternfly/react-core';
 import { EmptyBox, LoadingBox } from '@console/internal/components/utils';
-import * as QuickStartActions from '../../../redux/actions/quick-start-actions';
-import {
-  getActiveQuickStartID,
-  getAllQuickStartStates,
-} from '../../../redux/reducers/quick-start-reducer';
-import { QuickStart, AllQuickStartStates } from '../utils/quick-start-types';
+import { QuickStart } from '../utils/quick-start-types';
 import { getQuickStartStatus } from '../utils/quick-start-utils';
 import QuickStartTile from './QuickStartTile';
+import { QuickStartContext, QuickStartContextValues } from '../utils/quick-start-context';
 
 import './QuickStartCatalog.scss';
 
-type StateProps = {
-  activeQuickStartID?: string;
-  allQuickStartStates?: AllQuickStartStates;
-};
-
-type DispatchProps = {
-  setActiveQuickStart?: (quickStartID: string, totalTasks: number) => void;
-};
-
-type OwnProps = {
+type QuickStartCatalogProps = {
   quickStarts: QuickStart[];
 };
 
-type QuickStartCatalogProps = OwnProps & DispatchProps & StateProps;
-
-const QuickStartCatalog: React.FC<QuickStartCatalogProps> = ({
-  quickStarts,
-  activeQuickStartID,
-  allQuickStartStates,
-  setActiveQuickStart,
-}) => {
+const QuickStartCatalog: React.FC<QuickStartCatalogProps> = ({ quickStarts }) => {
   const { t } = useTranslation();
+  const { activeQuickStartID, allQuickStartStates, setActiveQuickStart } = React.useContext<
+    QuickStartContextValues
+  >(QuickStartContext);
   if (!quickStarts) return <LoadingBox />;
-
   return quickStarts.length === 0 ? (
     <EmptyBox label={t('quickstart~Quick Starts')} />
   ) : (
@@ -65,20 +44,4 @@ const QuickStartCatalog: React.FC<QuickStartCatalogProps> = ({
   );
 };
 
-const mapStateToProps = (state: RootState): StateProps => ({
-  activeQuickStartID: getActiveQuickStartID(state),
-  allQuickStartStates: getAllQuickStartStates(state),
-});
-
-const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
-  setActiveQuickStart: (quickStartID: string, totalTasks: number) =>
-    dispatch(QuickStartActions.setActiveQuickStart(quickStartID, totalTasks)),
-});
-
-// exposed for testing
-export const InternalQuickStartCatalog = QuickStartCatalog;
-
-export default connect<StateProps, DispatchProps, OwnProps>(
-  mapStateToProps,
-  mapDispatchToProps,
-)(QuickStartCatalog);
+export default QuickStartCatalog;

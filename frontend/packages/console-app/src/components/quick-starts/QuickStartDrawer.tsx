@@ -1,40 +1,19 @@
 import * as React from 'react';
-
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
-
 import { Drawer, DrawerContent, DrawerContentBody } from '@patternfly/react-core';
-import { RootState } from '@console/internal/redux';
-import {
-  getActiveQuickStartID,
-  getActiveQuickStartStatus,
-} from '../../redux/reducers/quick-start-reducer';
-import { setActiveQuickStart } from '../../redux/actions/quick-start-actions';
+import { QuickStartContext, QuickStartContextValues } from './utils/quick-start-context';
 import { QuickStartStatus } from './utils/quick-start-types';
 import QuickStartPanelContent from './QuickStartPanelContent';
 import QuickStartCloseModal from './QuickStartCloseModal';
 import QuickStartsLoader from './loader/QuickStartsLoader';
 import './QuickStartDrawer.scss';
 
-type StateProps = {
-  activeQuickStartID: string;
-  activeQuickStartStatus: QuickStartStatus;
-};
-
-type DispatchProps = {
-  onClose: () => void;
-};
-
-type QuickStartDrawerProps = StateProps & DispatchProps;
-
-const QuickStartDrawer: React.FC<QuickStartDrawerProps> = ({
-  children,
-  activeQuickStartID,
-  activeQuickStartStatus,
-  onClose,
-}) => {
+const QuickStartDrawer: React.FC = ({ children }) => {
+  const { activeQuickStartID, activeQuickStartState, setActiveQuickStart } = React.useContext<
+    QuickStartContextValues
+  >(QuickStartContext);
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
-
+  const activeQuickStartStatus = activeQuickStartState?.status;
+  const onClose = () => setActiveQuickStart('');
   const handleClose = () => {
     if (activeQuickStartStatus === QuickStartStatus.IN_PROGRESS) {
       setModalOpen(true);
@@ -78,16 +57,4 @@ const QuickStartDrawer: React.FC<QuickStartDrawerProps> = ({
   );
 };
 
-const mapStateToProps = (state: RootState): StateProps => ({
-  activeQuickStartID: getActiveQuickStartID(state),
-  activeQuickStartStatus: getActiveQuickStartStatus(state),
-});
-
-const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
-  onClose: () => dispatch(setActiveQuickStart('')),
-});
-
-export default connect<StateProps, DispatchProps>(
-  mapStateToProps,
-  mapDispatchToProps,
-)(QuickStartDrawer);
+export default QuickStartDrawer;

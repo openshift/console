@@ -1,22 +1,8 @@
 import * as React from 'react';
-import { Dispatch, connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Flex, FlexItem, Button } from '@patternfly/react-core';
-import { RootState } from '@console/internal/redux';
-import * as QuickStartActions from '../../../redux/actions/quick-start-actions';
-import { getActiveQuickStartID } from '../../../redux/reducers/quick-start-reducer';
 import { QuickStartStatus } from '../utils/quick-start-types';
-
-type StateProps = {
-  activeQuickStartId?: string;
-};
-
-type DispatchProps = {
-  setActiveQuickStart?: (quickStartID: string, totalTasks: number) => void;
-  resetQuickStart?: (quickStartID: string, totalTasks: number) => void;
-  setQuickStartStatus?: (quickStartId: string, quickStartStatus: QuickStartStatus) => void;
-  setQuickStartTaskNumber?: (quickStartId: string, taskNumber: number) => void;
-};
+import { QuickStartContext, QuickStartContextValues } from '../utils/quick-start-context';
 
 type QuickStartTileFooterProps = {
   quickStartId: string;
@@ -24,27 +10,27 @@ type QuickStartTileFooterProps = {
   totalTasks?: number;
 };
 
-type Props = QuickStartTileFooterProps & StateProps & DispatchProps;
-
-const QuickStartTileFooter: React.FC<Props> = ({
+const QuickStartTileFooter: React.FC<QuickStartTileFooterProps> = ({
   quickStartId,
-  activeQuickStartId,
   status,
   totalTasks,
-  setActiveQuickStart,
-  setQuickStartStatus,
-  resetQuickStart,
 }) => {
   const { t } = useTranslation();
+  const {
+    activeQuickStartID,
+    setActiveQuickStart,
+    setQuickStartStatus,
+    resetQuickStart,
+  } = React.useContext<QuickStartContextValues>(QuickStartContext);
   const startQuickStart = React.useCallback(
     (e: React.SyntheticEvent) => {
       e.preventDefault();
       e.stopPropagation();
-      if (!activeQuickStartId || activeQuickStartId !== quickStartId)
+      if (!activeQuickStartID || activeQuickStartID !== quickStartId)
         setActiveQuickStart(quickStartId, totalTasks);
       setQuickStartStatus(quickStartId, QuickStartStatus.IN_PROGRESS);
     },
-    [activeQuickStartId, quickStartId, setActiveQuickStart, setQuickStartStatus, totalTasks],
+    [activeQuickStartID, quickStartId, setActiveQuickStart, setQuickStartStatus, totalTasks],
   );
 
   const restartQuickStart = React.useCallback(
@@ -64,7 +50,7 @@ const QuickStartTileFooter: React.FC<Props> = ({
           </Button>
         </FlexItem>
       )}
-      {status === QuickStartStatus.IN_PROGRESS && activeQuickStartId !== quickStartId && (
+      {status === QuickStartStatus.IN_PROGRESS && activeQuickStartID !== quickStartId && (
         <FlexItem>
           <Button variant="link" isInline>
             {t('quickstart~Resume the tour')}
@@ -89,24 +75,4 @@ const QuickStartTileFooter: React.FC<Props> = ({
   );
 };
 
-const mapStateToProps = (state: RootState): StateProps => ({
-  activeQuickStartId: getActiveQuickStartID(state),
-});
-
-const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
-  setActiveQuickStart: (quickStartID: string, totalTasks: number) =>
-    dispatch(QuickStartActions.setActiveQuickStart(quickStartID, totalTasks)),
-  resetQuickStart: (quickStartID: string, totalTasks: number) =>
-    dispatch(QuickStartActions.resetQuickStart(quickStartID, totalTasks)),
-  setQuickStartStatus: (quickStartId: string, quickStartStatus: QuickStartStatus) =>
-    dispatch(QuickStartActions.setQuickStartStatus(quickStartId, quickStartStatus)),
-  setQuickStartTaskNumber: (quickStartId: string, taskNumber: number) =>
-    dispatch(QuickStartActions.setQuickStartTaskNumber(quickStartId, taskNumber)),
-});
-
-export const InternalQuickStartTileFooter = QuickStartTileFooter; // for testing
-
-export default connect<StateProps, DispatchProps, QuickStartTileFooterProps>(
-  mapStateToProps,
-  mapDispatchToProps,
-)(QuickStartTileFooter);
+export default QuickStartTileFooter;
