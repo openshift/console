@@ -5,7 +5,7 @@ import { DeploymentConfigModel } from '@console/internal/models';
 import { RevisionModel } from '@console/knative-plugin';
 import * as utils from '../pod-utils';
 import { usePodScalingAccessStatus, podRingLabel, getFailedPods } from '../pod-ring-utils';
-import { testHook } from '../../test-utils/hooks-utils';
+import { testHook } from '../../../../../__tests__/utils/hooks-utils';
 import {
   deployment,
   deploymentConfig,

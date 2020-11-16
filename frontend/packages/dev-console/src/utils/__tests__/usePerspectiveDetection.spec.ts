@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
-import { testHook } from '@console/shared/src/test-utils/hooks-utils';
+import { testHook } from '../../../../../__tests__/utils/hooks-utils';
 import { usePerspectiveDetection } from '../usePerspectiveDetection';
 
 jest.mock('react-redux', () => ({

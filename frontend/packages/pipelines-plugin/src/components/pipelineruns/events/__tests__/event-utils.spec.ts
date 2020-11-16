@@ -1,6 +1,6 @@
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { EventInvolvedObject } from '@console/internal/module/k8s';
+import { testHook } from '../../../../../../../__tests__/utils/hooks-utils';
 import {
   DataState,
   PipelineExampleNames,
