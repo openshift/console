@@ -270,7 +270,7 @@ function hasError() {
 export const checkErrors = async () =>
   await browser.executeScript(hasError).then((err) => {
     if (err) {
-      fail(`omg js error: ${err}`);
+      fail(err);
     }
   });
 
