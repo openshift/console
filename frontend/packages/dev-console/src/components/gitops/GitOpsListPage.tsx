@@ -8,8 +8,8 @@ import { DevPreviewBadge } from '@console/shared';
 import GitOpsList from './list/GitOpsList';
 import { fetchAllAppGroups, getManifestURLs, getPipelinesBaseURI } from './utils/gitops-utils';
 import useDefaultSecret from './utils/useDefaultSecret';
-import * as _ from 'lodash-es';
-import { Split } from '@patternfly/react-core';
+import * as _ from 'lodash';
+import { Split, SplitItem } from '@patternfly/react-core';
 import './GitOpsListPage.scss';
 
 const projectRes = { isList: true, kind: ProjectModel.kind, optional: true };
@@ -46,8 +46,10 @@ const GitOpsListPage: React.FC = () => {
     kind: referenceForModel(ConsoleLinkModel),
     optional: true,
   });
-  let aLink = _.find(consoleLinks, (link: K8sResourceKind) => 
-   (link.metadata?.name === 'argocd' && link.spec?.location === 'ApplicationMenu')
+  const argocdLink = _.find(
+    consoleLinks,
+    (link: K8sResourceKind) =>
+      link.metadata?.name === 'argocd' && link.spec?.location === 'ApplicationMenu',
   );
 
   return (
@@ -55,21 +57,23 @@ const GitOpsListPage: React.FC = () => {
       <Helmet>
         <title>Application Stages</title>
       </Helmet>
-      <PageHeading 
-        title="Application Stages" 
+      <PageHeading
+        title="Application Stages"
         badge={
-            <>
-              {aLink ? (
-                <Split className="odc-gitops-list-page-heading">
-                  <ExternalLink href={aLink.spec.href} text="Argo CD" additionalClassName="odc-gitops-list-page-heading__argocd"/>
-                  <DevPreviewBadge />
-                </Split>
-              ) : (
-                <DevPreviewBadge />
+          <Split className="odc-gitops-list-page-heading" hasGutter>
+            <SplitItem>
+              {argocdLink && (
+                <ExternalLink
+                  href={argocdLink.spec.href}
+                  text="Argo CD"
+                  additionalClassName="odc-gitops-list-page-heading__argocd"
+                />
               )}
-            </>
-        }>
-      </PageHeading> 
+              <DevPreviewBadge />
+            </SplitItem>
+          </Split>
+        }
+      />
       {!appGroups && !emptyStateMsg ? (
         <LoadingBox />
       ) : (
