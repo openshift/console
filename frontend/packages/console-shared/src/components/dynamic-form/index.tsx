@@ -89,7 +89,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
           {!noActions && (
             <div style={{ paddingBottom: '30px' }}>
               <ActionGroup className="pf-c-form">
-                <Button type="submit" variant="primary">
+                <Button type="submit" variant="primary" data-test="create-dynamic-form">
                   {t('console-shared~Create')}
                 </Button>
                 <Button onClick={onCancel || history.goBack} variant="secondary">
