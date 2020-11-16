@@ -75,7 +75,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       catalogDescription:
         'Browse for a variety of managed services that are installed by cluster administrators. Cluster administrators can customize the content made available in the catalog.',
       typeDescription:
-        'Operator backed includes a variety of services managed by Kubernetes controllers.',
+        '**Operator backed** includes a variety of services managed by Kubernetes controllers.',
       groupings: [
         {
           label: 'Operators',

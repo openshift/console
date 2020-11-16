@@ -91,6 +91,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     menuActions,
     buttonActions,
     obj,
+    breadcrumbs,
     breadcrumbsFor,
     titleFunc,
     style,
@@ -114,21 +115,22 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     (hasButtonActions || hasMenuActions) && hasData && !_.get(data, 'metadata.deletionTimestamp');
   const resourceStatus = hasData && getResourceStatus ? getResourceStatus(data) : null;
   const showHeading = props.icon || kind || resourceTitle || resourceStatus || badge || showActions;
+  const showBreadcrumbs = breadcrumbs || (breadcrumbsFor && !_.isEmpty(data));
   return (
     <div
       className={classNames(
         'co-m-nav-title',
         { 'co-m-nav-title--detail': detail },
         { 'co-m-nav-title--logo': props.icon },
-        { 'co-m-nav-title--breadcrumbs': breadcrumbsFor && !_.isEmpty(data) },
+        { 'co-m-nav-title--breadcrumbs': showBreadcrumbs },
         className,
       )}
       style={style}
     >
-      {breadcrumbsFor && !_.isEmpty(data) && (
+      {showBreadcrumbs && (
         <Split style={{ alignItems: 'baseline' }}>
           <SplitItem isFilled>
-            <BreadCrumbs breadcrumbs={breadcrumbsFor(data)} />
+            <BreadCrumbs breadcrumbs={breadcrumbs || breadcrumbsFor(data)} />
           </SplitItem>
           {badge && (
             <SplitItem>{<span className="co-m-pane__heading-badge">{badge}</span>}</SplitItem>
@@ -270,6 +272,7 @@ export type KebabOptionsCreator = (
 ) => KebabOption[];
 
 export type PageHeadingProps = {
+  breadcrumbs?: { name: string; path: string }[];
   breadcrumbsFor?: (obj: K8sResourceKind) => { name: string; path: string }[];
   buttonActions?: any[];
   children?: React.ReactChildren;

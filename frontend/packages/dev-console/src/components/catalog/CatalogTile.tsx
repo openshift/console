@@ -6,23 +6,29 @@ import {
 } from '@patternfly/react-catalog-view-extension';
 import { Badge } from '@patternfly/react-core';
 import { CatalogItem } from '@console/plugin-sdk';
-import { getIconProps } from '../utils/utils';
+import { getIconProps } from './utils/utils';
+import { CatalogType } from './utils/types';
 
 type CatalogTileProps = {
   item: CatalogItem;
-  getAvailableFilters: (initialFilters) => any;
+  catalogTypes: CatalogType[];
   onClick: (item: CatalogItem) => void;
 };
 
-const CatalogTile: React.FC<CatalogTileProps> = ({ item, getAvailableFilters, onClick }) => {
+const CatalogTile: React.FC<CatalogTileProps> = ({ item, catalogTypes, onClick }) => {
   if (!item) {
     return null;
   }
   const { uid, name, provider, description, type } = item;
 
   const vendor = provider ? `Provided by ${provider}` : null;
-  const { type: filters } = getAvailableFilters({ type });
-  const filter = _.find(filters, ['value', type]);
+  const catalogType = _.find(catalogTypes, ['value', type]);
+
+  const badges = [
+    <CatalogTileBadge key="type">
+      <Badge isRead>{catalogType?.label}</Badge>
+    </CatalogTileBadge>,
+  ];
 
   return (
     <PfCatalogTile
@@ -30,15 +36,11 @@ const CatalogTile: React.FC<CatalogTileProps> = ({ item, getAvailableFilters, on
       key={uid}
       onClick={() => onClick(item)}
       title={name}
-      badges={[
-        <CatalogTileBadge key="type">
-          <Badge isRead>{filter.label}</Badge>
-        </CatalogTileBadge>,
-      ]}
-      {...getIconProps(item)}
+      badges={badges}
       vendor={vendor}
       description={description}
       data-test={`${type}-${name}`}
+      {...getIconProps(item)}
     />
   );
 };

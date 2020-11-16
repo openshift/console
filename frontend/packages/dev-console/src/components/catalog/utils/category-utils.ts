@@ -41,9 +41,9 @@ export const filterSubcategories = (category, item) => {
 // categorize item under sub and main categories
 export const addItem = (item, category, subcategory = null) => {
   // Add the item to the category
-  if (!category.items) {
+  if (!category?.items) {
     category.items = [item];
-  } else if (!category.items.includes(item)) {
+  } else if (!category?.items.includes(item)) {
     category.items = category.items.concat(item);
   }
 

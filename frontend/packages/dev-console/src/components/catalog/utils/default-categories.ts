@@ -1,7 +1,6 @@
-export const defaultCatalogCategories: Record<
-  string,
-  Record<string, string | Record<string, string | Record<string, any>>>
-> = {
+import { CatalogCategories } from './types';
+
+export const defaultCatalogCategories: CatalogCategories = {
   languages: {
     id: 'languages',
     label: 'Languages',

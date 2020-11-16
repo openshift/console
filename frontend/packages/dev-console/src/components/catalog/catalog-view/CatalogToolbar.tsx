@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TextInput } from '@patternfly/react-core';
+import { SearchInput } from '@patternfly/react-core';
 import { Dropdown } from '@console/internal/components/utils';
 import { CatalogCategory, CatalogSortOrder } from '../utils/types';
 
@@ -35,7 +35,7 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
         <div className="co-catalog-page__heading text-capitalize">{activeCategory.label}</div>
         <div className="co-catalog-page__filter">
           <div>
-            <TextInput
+            <SearchInput
               ref={inputRef}
               className="co-catalog-page__input"
               data-test="search-catalog"
@@ -43,7 +43,7 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
               placeholder="Filter by keyword..."
               value={keyword}
               onChange={onKeywordChange}
-              // onClear={() => onKeywordChange('')}
+              onClear={() => onKeywordChange('')}
               aria-label="Filter by keyword..."
             />
             <Dropdown

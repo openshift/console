@@ -41,12 +41,10 @@ const CatalogDetailsPanel: React.FC<CatalogDetailsPanelProps> = ({ item }) => {
             <div className="co-catalog-page__overlay-description">
               <SectionHeading text="Description" />
               {description && <p>{description}</p>}
-              <br />
               {details?.descriptions?.map((desc) => (
                 <React.Fragment key={desc.label}>
                   {desc.label && <SectionHeading text={desc.label} />}
                   {desc.value}
-                  <br />
                 </React.Fragment>
               ))}
             </div>

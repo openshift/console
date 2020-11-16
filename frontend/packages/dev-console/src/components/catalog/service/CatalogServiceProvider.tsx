@@ -40,7 +40,7 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
     catalogTypeExtensions.every(({ properties: { type } }) => catalogItemsMap[type]);
 
   const catalogItems = React.useMemo(
-    () => (loaded ? _.sortBy(_.flatten(Object.values(catalogItemsMap)), 'name') : []),
+    () => (loaded ? _.flatten(Object.values(catalogItemsMap)) : []),
     [catalogItemsMap, loaded],
   );
 
@@ -59,7 +59,7 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
     type: catalogType,
     items: catalogItems,
     itemsMap: catalogItemsMap,
-    loaded,
+    loaded: catalogTypeExtensions.length === 0 ? true : catalogItems.length > 0,
     loadError,
     searchCatalog,
     catalogExtensions: catalogTypeExtensions,

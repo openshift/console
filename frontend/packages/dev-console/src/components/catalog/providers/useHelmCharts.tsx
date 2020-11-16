@@ -1,12 +1,45 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { safeLoad } from 'js-yaml';
-import { coFetch } from '@console/internal/co-fetch';
+import { coFetch, coFetchJSON } from '@console/internal/co-fetch';
 import { APIError, toTitleCase } from '@console/shared';
 import { CatalogExtensionHook, CatalogItem } from '@console/plugin-sdk';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { ExternalLink } from '@console/internal/components/utils';
 import { HelmChartEntries, HelmChartMetaData } from '../../helm/helm-types';
+import { SyncMarkdownView } from '@console/internal/components/markdown-view';
+
+const HelmReadmeLoader = ({ chartURL }) => {
+  const [readme, setReadme] = React.useState<string>();
+
+  React.useEffect(() => {
+    let unmounted = false;
+
+    const fetchReadme = async () => {
+      let chartData;
+
+      try {
+        chartData = await coFetchJSON(`/api/helm/chart?url=${chartURL}`);
+        // eslint-disable-next-line no-empty
+      } catch {}
+
+      const readmeFile = chartData?.files?.find((file) => file.name === 'README.md');
+      const readmeData = readmeFile?.data && atob(readmeFile?.data);
+
+      if (readmeData && !unmounted) setReadme(`## README\n${readmeData}`);
+    };
+
+    fetchReadme();
+
+    return () => {
+      unmounted = true;
+    };
+  }, [chartURL]);
+
+  if (!readme) return <div className="loading-skeleton--table" />;
+
+  return <SyncMarkdownView content={readme} />;
+};
 
 const normalizeHelmCharts = (
   chartEntries: HelmChartEntries,
@@ -62,6 +95,12 @@ const normalizeHelmCharts = (
           },
         ];
 
+        const detailsDescriptions = [
+          {
+            value: <HelmReadmeLoader chartURL={chartURL} />,
+          },
+        ];
+
         const helmChart = {
           uid: digest,
           type: 'HelmChart',
@@ -85,6 +124,7 @@ const normalizeHelmCharts = (
           },
           details: {
             properties: detailsProperties,
+            descriptions: detailsDescriptions,
           },
         };
 

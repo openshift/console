@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Helmet from 'react-helmet';
 import { RouteComponentProps } from 'react-router';
 import { getQueryArgument } from '@console/internal/components/utils';
 import CreateProjectListPage from '../projects/CreateProjectListPage';
@@ -17,9 +16,6 @@ const CatalogPage: React.FC<CatalogPageProps> = ({ match }) => {
 
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
-      <Helmet>
-        <title>Developer Catalog</title>
-      </Helmet>
       {namespace ? (
         <CatalogServiceProvider namespace={namespace} catalogType={catalogType}>
           {(service) => <CatalogController {...service} />}

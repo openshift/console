@@ -1,17 +1,15 @@
 import * as React from 'react';
 import {
   CatalogItem,
-  CatalogFilter,
-  CatalogGrouping,
   CatalogExtensionHook,
   CatalogExtensionHookOptions,
 } from '@console/plugin-sdk';
 
 type CatalogExtensionHookResolverProps = {
   id: string;
-  useValue: CatalogExtensionHook<CatalogItem[] | CatalogFilter[] | CatalogGrouping[]>;
+  useValue: CatalogExtensionHook<CatalogItem[]>;
   options: CatalogExtensionHookOptions;
-  onValueResolved: (value: CatalogItem[] | CatalogFilter[] | CatalogGrouping[], id: string) => void;
+  onValueResolved: (value: CatalogItem[], id: string) => void;
   onValueError: (error: any) => void;
 };
 
