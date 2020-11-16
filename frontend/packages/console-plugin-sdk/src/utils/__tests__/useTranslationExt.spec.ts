@@ -12,20 +12,20 @@ jest.mock('react-i18next', () => {
 describe('useTranslationExt', () => {
   it('should return the input if key does not match translation pattern', () => {
     testHook(() => {
-      const { t } = useTranslationExt();
-      expect(t('%')).toBe('%');
-      expect(t('a%')).toBe('a%');
-      expect(t('%a')).toBe('%a');
-      expect(t('%%')).toBe('%%');
-      expect(t('foo')).toBe('foo');
+      const { t: translate } = useTranslationExt();
+      expect(translate('%')).toBe('%');
+      expect(translate('a%')).toBe('a%');
+      expect(translate('%a')).toBe('%a');
+      expect(translate('%%')).toBe('%%');
+      expect(translate('foo')).toBe('foo');
     });
   });
 
   it('should parse as a translation key', () => {
     testHook(() => {
-      const { t } = useTranslationExt();
+      const { t: translate } = useTranslationExt();
       const key = '%test~key%';
-      expect(t(key)).toBe(`translated: ${key.substr(1, key.length - 2)}`);
+      expect(translate(key)).toBe(`translated: ${key.substr(1, key.length - 2)}`);
     });
   });
 });

@@ -389,9 +389,11 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'knative-event-source',
       url: '/event-source',
-      label: 'Event Source',
+      // t('knative-plugin~Event Source')
+      label: '%knative-plugin~Event Source%',
+      // t('knative-plugin~Create an event source to register interest in a class of events from a particular system')
       description:
-        'Create an event source to register interest in a class of events from a particular system',
+        '%knative-plugin~Create an event source to register interest in a class of events from a particular system%',
       icon: eventSourceIcon,
     },
   },
@@ -403,9 +405,11 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'knative-eventing-channel',
       url: '/channel',
-      label: 'Channel',
+      // t('knative-plugin~Channel')
+      label: '%knative-plugin~Channel%',
+      // t('knative-plugin~Create a Knative Channel to create an event forwarding and persistence layer with in-memory and reliable implementations')
       description:
-        'Create a Knative Channel to create an event forwarding and persistence layer with in-memory and reliable implementations',
+        '%knative-plugin~Create a Knative Channel to create an event forwarding and persistence layer with in-memory and reliable implementations%',
       icon: channelIcon,
     },
   },

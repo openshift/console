@@ -310,5 +310,22 @@
   "Select one of the following options to create an application, component or service. As part of the creation process a project and application will be created.": "Select one of the following options to create an application, component or service. As part of the creation process a project and application will be created.",
   "Remove quick starts": "Remove quick starts",
   "Quick Starts": "Quick Starts",
-  "See all Quick Starts": "See all Quick Starts"
+  "See all Quick Starts": "See all Quick Starts",
+  "Create an application from a code sample": "Create an application from a code sample",
+  "From Git": "From Git",
+  "Import code from your Git repository to be built and deployed": "Import code from your Git repository to be built and deployed",
+  "Container Image": "Container Image",
+  "Deploy an existing image from an image registry or image stream tag": "Deploy an existing image from an image registry or image stream tag",
+  "From Dockerfile": "From Dockerfile",
+  "Import your Dockerfile from your Git repository to be built and deployed": "Import your Dockerfile from your Git repository to be built and deployed",
+  "YAML": "YAML",
+  "Create resources from their YAML or JSON definitions": "Create resources from their YAML or JSON definitions",
+  "From Catalog": "From Catalog",
+  "Browse the catalog to discover, deploy and connect to services": "Browse the catalog to discover, deploy and connect to services",
+  "Database": "Database",
+  "Browse the catalog to discover database services to add to your application": "Browse the catalog to discover database services to add to your application",
+  "Operator Backed": "Operator Backed",
+  "Browse the catalog to discover and deploy operator managed services": "Browse the catalog to discover and deploy operator managed services",
+  "Helm Chart": "Helm Chart",
+  "Browse the catalog to discover and install Helm Charts": "Browse the catalog to discover and install Helm Charts"
 }
