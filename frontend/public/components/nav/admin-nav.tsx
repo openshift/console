@@ -56,7 +56,7 @@ const AdminNav = () => (
   <Translation>
     {t => (
       <>
-        <NavSection title={t('COMMON.MSG_LNB_MENU_1')}>
+        <NavSection title={t('COMMON:MSG_LNB_MENU_1')}>
           <HrefLink href="/dashboards" activePath="/dashboards/" name="Overview" required={[FLAGS.CAN_GET_NS, FLAGS.OPENSHIFT]} />
           <ResourceClusterLink resource="projects" name="Projects" required={FLAGS.OPENSHIFT} />
           <HrefLink href="/search" name="Search" startsWith={searchStartsWith} />
