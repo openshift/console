@@ -81,6 +81,7 @@
 .co-status-card__health-item {
   align-items: center;
   display: flex;
+  flex-direction: row;
   height: 100%;
   padding-right: 3rem;
 }

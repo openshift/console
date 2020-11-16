@@ -6,6 +6,7 @@ import {
   DashboardsOverviewHealthURLSubsystem,
   DashboardsOverviewHealthPrometheusSubsystem,
   DashboardsOverviewHealthResourceSubsystem,
+  SubsystemHealth,
 } from '@console/plugin-sdk';
 import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
 import { OperatorsSection } from '@console/shared/src/components/dashboard/status-card/OperatorStatusBody';
@@ -16,7 +17,12 @@ import {
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { K8sKind } from '../../../../module/k8s';
 import { FirehoseResourcesResult, AsyncComponent, resourcePath } from '../../../utils';
-import { useK8sWatchResources } from '../../../utils/k8s-watch-hook';
+import {
+  ResourcesObject,
+  useK8sWatchResources,
+  WatchK8sResources,
+  WatchK8sResults,
+} from '../../../utils/k8s-watch-hook';
 import { withDashboardResources, DashboardItemProps } from '../../with-dashboard-resources';
 import { uniqueResource } from './utils';
 import { getPrometheusQueryResponse } from '../../../../actions/dashboards';
@@ -226,11 +232,21 @@ export const PrometheusHealthItem = withDashboardResources<PrometheusHealthItemP
   },
 );
 
-export const ResourceHealthItem: React.FC<ResourceHealthItemProps> = ({ subsystem }) => {
+export const ResourceHealthItem: React.FC<ResourceHealthItemProps> = ({ subsystem, namespace }) => {
   const { title, resources, healthHandler, popupComponent, popupTitle } = subsystem;
-  const resourcesResult = useK8sWatchResources(resources);
+  const resourcesWithNamespace: WatchK8sResources<ResourcesObject> = React.useMemo(() => {
+    return {
+      ...resources,
+      ...(resources.imageManifestVuln && {
+        imageManifestVuln: { ...resources.imageManifestVuln, namespace },
+      }),
+    };
+  }, [resources, namespace]);
 
-  const healthState = healthHandler(resourcesResult);
+  const resourcesResult: WatchK8sResults<ResourcesObject> = useK8sWatchResources(
+    resourcesWithNamespace,
+  );
+  const healthState: SubsystemHealth = healthHandler(resourcesResult);
 
   return (
     <HealthItem
@@ -239,7 +255,9 @@ export const ResourceHealthItem: React.FC<ResourceHealthItemProps> = ({ subsyste
       details={healthState.message}
       popupTitle={popupTitle}
     >
-      {popupComponent && <AsyncComponent loader={popupComponent} {...resourcesResult} />}
+      {popupComponent && resourcesResult && (
+        <AsyncComponent loader={popupComponent} {...resourcesResult} namespace={namespace} />
+      )}
     </HealthItem>
   );
 };
@@ -260,6 +278,7 @@ type PrometheusHealthItemProps = DashboardItemProps & {
 
 type ResourceHealthItemProps = {
   subsystem: DashboardsOverviewHealthResourceSubsystem['properties'];
+  namespace?: string;
 };
 
 type OperatorsPopupProps = {
