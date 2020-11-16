@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Status } from '@console/shared';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -7,6 +6,7 @@ import { pipelineFilterReducer } from '../../../utils/pipeline-filter-reducer';
 import { Pipeline } from '../../../utils/pipeline-augment';
 import { PipelineModel, PipelineRunModel } from '../../../models';
 import LinkedPipelineRunTaskStatus from '../../pipelineruns/status/LinkedPipelineRunTaskStatus';
+import PipelineRunStatus from '../../pipelineruns/status/PipelineRunStatus';
 import { tableColumnClasses } from './pipeline-table';
 import PipelineRowKebabActions from './PipelineRowKebabActions';
 
@@ -48,7 +48,7 @@ const PipelineRow: RowFunction<Pipeline> = ({ obj, index, key, style }) => {
         {obj.latestRun ? <LinkedPipelineRunTaskStatus pipelineRun={obj.latestRun} /> : '-'}
       </TableData>
       <TableData className={tableColumnClasses[4]}>
-        <Status status={pipelineFilterReducer(obj)} />
+        <PipelineRunStatus status={pipelineFilterReducer(obj)} pipelineRun={obj.latestRun} />
       </TableData>
       <TableData className={tableColumnClasses[5]}>
         {(obj.latestRun && obj.latestRun.status && obj.latestRun.status.completionTime && (

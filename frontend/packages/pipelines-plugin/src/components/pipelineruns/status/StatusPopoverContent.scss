@@ -1,0 +1,8 @@
+.odc-statuspopover-content {
+  min-height: 175px;
+  display: flex;
+  flex-direction: column;
+  pre {
+    flex-grow: 1;
+  }
+}

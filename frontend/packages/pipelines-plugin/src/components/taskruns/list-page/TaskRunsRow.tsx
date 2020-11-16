@@ -5,8 +5,9 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { TaskRunKind, getModelReferenceFromTaskKind } from '../../../utils/pipeline-augment';
 import { TaskRunModel, PipelineModel } from '../../../models';
 import { tableColumnClasses } from './taskruns-table';
-import { Status } from '@console/shared';
 import { pipelineRunFilterReducer as taskRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
+import { TektonResourceLabel } from '../../pipelines/const';
+import TaskRunStatus from '../status/TaskRunStatus';
 
 const taskRunsReference = referenceForModel(TaskRunModel);
 const pipelineReference = referenceForModel(PipelineModel);
@@ -27,10 +28,10 @@ const TaskRunsRow: RowFunction<TaskRunKind> = ({ obj, index, key, style, ...prop
     </TableData>
     {props.customData?.showPipelineColumn && (
       <TableData className={tableColumnClasses[2]}>
-        {obj.metadata.labels['tekton.dev/pipeline'] ? (
+        {obj.metadata.labels[TektonResourceLabel.pipeline] ? (
           <ResourceLink
             kind={pipelineReference}
-            name={obj.metadata.labels['tekton.dev/pipeline']}
+            name={obj.metadata.labels[TektonResourceLabel.pipeline]}
             namespace={obj.metadata.namespace}
           />
         ) : (
@@ -42,6 +43,7 @@ const TaskRunsRow: RowFunction<TaskRunKind> = ({ obj, index, key, style, ...prop
       {obj.spec.taskRef?.name ? (
         <ResourceLink
           kind={getModelReferenceFromTaskKind(obj.spec.taskRef?.kind)}
+          displayName={obj.metadata.labels[TektonResourceLabel.pipelineTask]}
           name={obj.spec.taskRef.name}
           namespace={obj.metadata.namespace}
         />
@@ -57,7 +59,7 @@ const TaskRunsRow: RowFunction<TaskRunKind> = ({ obj, index, key, style, ...prop
       )}
     </TableData>
     <TableData className={tableColumnClasses[5]}>
-      <Status status={taskRunFilterReducer(obj)} />
+      <TaskRunStatus status={taskRunFilterReducer(obj)} taskRun={obj} />
     </TableData>
     <TableData className={tableColumnClasses[6]}>
       <Timestamp timestamp={obj?.status?.startTime} />
