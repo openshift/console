@@ -55,6 +55,7 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
 }) => {
   const [wsOpen, setWsOpen] = React.useState<boolean>(false);
   const [wsError, setWsError] = React.useState<string>();
+  const [wsReopening, setWsReopening] = React.useState<boolean>(false);
   const [customResource, setCustomResource] = React.useState<CloudShellResource>();
   const ws = React.useRef<WSFactory>();
   const terminal = React.useRef<ImperativeTerminalType>();
@@ -176,11 +177,24 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
         );
     }
 
+    setWsReopening(false);
+
     return () => {
       unmounted = true;
       websocket.destroy();
     };
-  }, [tick, container, flags, impersonate, namespace, podname, shcommand, t, workspaceName]);
+  }, [
+    tick,
+    container,
+    flags,
+    impersonate,
+    namespace,
+    podname,
+    shcommand,
+    t,
+    workspaceName,
+    wsReopening,
+  ]);
 
   if (wsError) {
     return (
@@ -190,10 +204,12 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
           <Button
             variant="primary"
             onClick={() => {
-              if (customResource) {
+              if (customResource && customResource.status.phase !== 'Running') {
                 startWorkspace(customResource);
-                setWsError(undefined);
+              } else if (!wsReopening) {
+                setWsReopening(true);
               }
+              setWsError(undefined);
             }}
           >
             Restart Terminal
