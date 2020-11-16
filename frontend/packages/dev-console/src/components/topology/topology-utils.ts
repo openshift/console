@@ -33,7 +33,10 @@ export const getServiceBindingStatus = ({ FLAGS }: RootState): boolean =>
 export const getCheURL = (consoleLinks: K8sResourceKind[]) =>
   _.get(_.find(consoleLinks, ['metadata.name', 'che']), 'spec.href', '');
 
-export const getEditURL = (vcsURI: string, gitBranch?: string, cheURL?: string) => {
+export const getEditURL = (vcsURI?: string, gitBranch?: string, cheURL?: string) => {
+  if (!vcsURI) {
+    return null;
+  }
   const parsedURL = GitUrlParse(vcsURI);
   const gitURL = `https://${parsedURL.source}/${parsedURL.owner}/${parsedURL.name}`;
   const fullGitURL = gitBranch ? `${gitURL}/tree/${gitBranch}` : gitURL;
