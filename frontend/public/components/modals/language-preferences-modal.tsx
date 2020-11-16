@@ -10,13 +10,16 @@ import {
   ModalSubmitFooter,
   ModalTitle,
 } from '../factory/modal';
-import { FALLBACK_LOCALE, SUPPORTED_LOCALES } from '../../i18next-parser.config';
 
 const LanguagePreferencesModal = (props: LanguagePreferencesModalProps) => {
   const { i18n, t } = useTranslation();
-  const langOptions = Object.keys(SUPPORTED_LOCALES).map((lang) => ({
+  const supportedLocales = {
+    en: 'English',
+    ja: '日本語',
+  };
+  const langOptions = Object.keys(supportedLocales).map((lang) => ({
     lang,
-    value: SUPPORTED_LOCALES[lang],
+    value: supportedLocales[lang],
   }));
   const initLang =
     localStorage.getItem('bridge/language') ||
@@ -25,7 +28,7 @@ const LanguagePreferencesModal = (props: LanguagePreferencesModalProps) => {
   const { close } = props;
   const submit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    i18n.changeLanguage(language ? language : FALLBACK_LOCALE);
+    i18n.changeLanguage(language ? language : 'en');
     localStorage.setItem('bridge/language', language);
     close();
   };
@@ -43,7 +46,7 @@ const LanguagePreferencesModal = (props: LanguagePreferencesModalProps) => {
           <label htmlFor="language_dropdown">{t('language-preferences-modal~Language')}</label>
           <Dropdown
             id="language_dropdown"
-            items={SUPPORTED_LOCALES}
+            items={supportedLocales}
             onChange={(newLanguage: string) => setLanguage(newLanguage)}
             selectedKey={language}
             title={t('language-preferences-modal~Select language')}

@@ -62,6 +62,7 @@
   "Drag": "Drag",
   "Click": "Click",
   "Right Click": "Right Click",
+  "Scheduling disabled": "Scheduling disabled",
   "Scaled to 0": "Scaled to 0",
   "scaling to {{podSubTitle}}": "scaling to {{podSubTitle}}",
   "Autoscaled": "Autoscaled",

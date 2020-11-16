@@ -9,7 +9,7 @@ const publicFileNames = {};
 
 function processFile(fileName) {
   const language = path.basename(path.dirname(fileName));
-  if (publicFileNames[language].includes(path.basename(fileName))) {
+  if (publicFileNames[language] && publicFileNames[language].includes(path.basename(fileName))) {
     console.log(`Merging ${fileName} with matching public namespace.`);
     const file = require(fileName);
     const publicFile = path.join(

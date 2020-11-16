@@ -1,16 +1,9 @@
-const SUPPORTED_LOCALES = {
-  en: 'English',
-  ja: '日本語',
-};
-
 const FALLBACK_LOCALE = 'en';
 
 /*eslint no-undef: "error"*/
 /*eslint-env node*/
 
 module.exports = {
-  SUPPORTED_LOCALES,
-
   FALLBACK_LOCALE,
 
   contextSeparator: '_',
@@ -55,7 +48,7 @@ module.exports = {
   lineEnding: 'auto',
   // Control the line ending. See options at https://github.com/ryanve/eol
 
-  locales: Object.keys(SUPPORTED_LOCALES),
+  locales: ['en'],
   // An array of the locales in your applications
 
   namespaceSeparator: '~',
