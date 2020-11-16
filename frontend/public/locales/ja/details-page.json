@@ -2,13 +2,13 @@
   "Name": "名前",
   "Namespace": "Namespace",
   "Labels": "ラベル",
-  "Pod selector": "ポッドセレクター",
+  "Pod selector": "Pod セレクター",
   "Node selector": "ノードセレクター",
   "Node": "ノード",
   "Tolerations": "容認",
   "Annotations": "アノテーション",
-  "Created at": "で作成",
-  "Owner": "所有する Operator ",
+  "Created at": "作成:",
+  "Owner": "オーナー",
   "Current count": "現在のカウント",
-  "Desired count": "希望数"
+  "Desired count": "必要なカウント"
 }

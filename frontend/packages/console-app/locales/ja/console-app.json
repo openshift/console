@@ -1,0 +1,22 @@
+{
+  "Clone": "クローン",
+  "Name": "名前",
+  "Clone PVC": "PVC のクローン",
+  "Size": "サイズ",
+  "Size should be equal or greater than the requested size of PVC": "サイズは、要求された PVC のサイズ以上である必要があります",
+  "PVC details": "PVC の詳細",
+  "Namespace": "namespace",
+  "Storage Class": "ストレージクラス",
+  "Requested capacity": "要求された容量",
+  "Used capacity": "使用された容量",
+  "Access mode": "アクセスモード",
+  "Volume mode": "ボリュームモード",
+  "Restore as new PVC": "新規 PVC として復元",
+  "When restore action for snapshot <1>{{snapshotName}}</1> is finished a new crash-consistent PVC copy will be created.": "スナップショット <1>{{snapshotName}}</1> の復元アクションが終了すると、クラッシュコンシスタント (crash-consistent) の新規の PVC コピーが作成されます。",
+  "Size should be equal or greater than the restore size of snapshot": "サイズはスナップショットの復元サイズ以上である必要があります",
+  "{{resourceKind}} details": "{{resourceKind}} の詳細",
+  "Created at": "作成:",
+  "Status": "ステータス",
+  "API version": "API バージョン",
+  "Restore": "復元"
+}

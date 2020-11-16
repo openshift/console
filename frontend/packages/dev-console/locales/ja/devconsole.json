@@ -1,0 +1,8 @@
+{
+  "Select application": "アプリケーションの選択",
+  "Application": "アプリケーション",
+  "Application Name": "アプリケーション名",
+  "Warning: the application grouping already exists.": "警告: アプリケーションのグループはすでに存在します。",
+  "A unique name given to the application grouping to label your resources.": "リソースにラベルを付けるためにアプリケーションのグループに付けられた一意の名前。",
+  "Select an application for your grouping or {{UNASSIGNED_LABEL}} to not use an application grouping.": "グループに対してアプリケーションを選択するか、またはアプリケーションのグループを使用しない場合は {{UNASSIGNED_LABEL}} を選択します。"
+}

@@ -1,3 +1,15 @@
 {
-  "{{date, MMM D, h:mm a}}": "{{date, MMM D, h:mm a}}"
+  "Add": "添加",
+  "Cancel": "取消",
+  "Update": "更新",
+  "Save": "保存",
+  "{{description}} for": "{{description}} ",
+  "Edit": "编辑",
+  "Create": "创建",
+  "{{date, MMM D, h:mm a}}": "{{date, MMM D, h:mm a}}",
+  "Resume": "恢复",
+  "Pause": "暂停",
+  "Warning": "警告",
+  "Not available": "不可用",
+  "Resource": "资源"
 }

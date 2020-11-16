@@ -1,0 +1,22 @@
+{
+  "Clone": "克隆",
+  "Name": "名称",
+  "Clone PVC": "克隆 PVC",
+  "Size": "Size",
+  "Size should be equal or greater than the requested size of PVC": "大小应等于或大于要求的 PVC 大小",
+  "PVC details": "PVC 详情",
+  "Namespace": "命名空间",
+  "Storage Class": "存储类",
+  "Requested capacity": "要求的容量",
+  "Used capacity": "使用的容量",
+  "Access mode": "访问模式",
+  "Volume mode": "卷模式",
+  "Restore as new PVC": "恢复为新的 PVC",
+  "When restore action for snapshot <1>{{snapshotName}}</1> is finished a new crash-consistent PVC copy will be created.": "在快照<1>{{snapshotName}}</1>恢复操作完成后，将创建一个新的与崩溃系统一致的 PVC 副本。",
+  "Size should be equal or greater than the restore size of snapshot": "大小应等于或大于快照的恢复大小",
+  "{{resourceKind}} details": "{{resourceKind}} 详情",
+  "Created at": "创建于",
+  "Status": "状态",
+  "API version": "API 版本",
+  "Restore": "恢复"
+}

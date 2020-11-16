@@ -1,10 +1,10 @@
 {
-  "Start build": "ビルドを開始します",
-  "Build Config details": "ビルド構成の詳細",
+  "Start build": "ビルドの開始",
+  "Build Config details": "ビルド設定の詳細",
   "Name": "名前",
-  "Namespace": "Namespace",
+  "Namespace": "namespace",
   "Labels": "ラベル",
-  "Created": "Created",
-  "Build Configs": "構成の構築",
-  "Build strategy": "戦略を構築する"
+  "Created": "作成:",
+  "Build Configs": "ビルドの設定",
+  "Build strategy": "ビルドストラテジー"
 }

@@ -1,0 +1,20 @@
+{
+  "View instances": "查看实例",
+  "true": "true",
+  "false": "false",
+  "CRD versions": "CRD 版本",
+  "Name": "名称",
+  "Served": "服务的",
+  "Storage": "存储",
+  "{{resource}} details": "{{resource}} 详情",
+  "Established": "建立",
+  "Group": "Group",
+  "Latest version": "最新版本",
+  "Scope": "影响范围",
+  "Conditions": "条件",
+  "Versions": "版本",
+  "Namespaced": "命名空间的",
+  "Yes": "是",
+  "No": "否",
+  "Instances": "实例"
+}

@@ -1,8 +1,8 @@
 {
   "Shortcuts": "ショートカット",
-  "Activate auto complete": "オートコンプリートを有効にする",
+  "Activate auto complete": "オートコンプリートをアクティブにする",
   "View document outline": "ドキュメントの概要を表示",
-  "View property descriptions": "プロパティの説明を表示する",
-  "Save": "保存する",
-  "View shortcuts": "ショートカットを表示する"
+  "View property descriptions": "プロパティーの説明を表示",
+  "Save": "保存",
+  "View shortcuts": "ショートカットの表示"
 }

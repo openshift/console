@@ -1,0 +1,8 @@
+{
+  "Select application": "选择应用程序",
+  "Application": "应用程序",
+  "Application Name": "应用程序名称",
+  "Warning: the application grouping already exists.": "警告：应用程序组已存在。",
+  "A unique name given to the application grouping to label your resources.": "为应用程序组指定一个唯一名称以标记您的资源。",
+  "Select an application for your grouping or {{UNASSIGNED_LABEL}} to not use an application grouping.": "选择用于分组的应用程序或{{UNASSIGNED_LABEL}}以不使用应用程序分组。"
+}

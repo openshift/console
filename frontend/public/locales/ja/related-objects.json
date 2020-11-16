@@ -2,6 +2,6 @@
   "Name": "名前",
   "Resource": "リソース",
   "Group": "グループ",
-  "Namespace": "Namespace",
+  "Namespace": "namespace",
   "Related objects": "関連オブジェクト"
 }
