@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Translation } from 'react-i18next';
 import { createModalLauncher, ModalBody, ModalTitle } from '../../factory';
 import { CustomModalSubmitFooter } from './modal';
 
@@ -45,19 +46,27 @@ class NoticeExpirationModal extends Component {
 
   render() {
     return (
-      // TODO: i18n
-      <form name="form" className="modal-content">
-        <ModalTitle>세션 만료 알림</ModalTitle>
-        <ModalBody>
-          <div className="form-group">
-            <label className="control-label">{Math.floor(this.state.time)}초 뒤에 자동으로 로그아웃 될 예정입니다.</label>
-            <label className="control-label">로그인 상태를 유지하시려면 연장 버튼을 클릭해주세요.</label>
-          </div>
-        </ModalBody>
-        <CustomModalSubmitFooter inProgress={false} leftBtnText="세션 연장" rightBtnText="로그아웃" onClickLeft={this._extend} onClickRight={this._logout} />
-      </form>
+      <Translation>
+        {t => (
+          <>
+            <form name="form" className="modal-content">
+              <ModalTitle>{t('COMMON:MSG_GNB_SESSION_9')}</ModalTitle>
+              <ModalBody>
+                <div className="form-group">
+                  <label className="control-label">
+                    {t('COMMON:MSG_GNB_SESSION_10', {
+                      count: Math.floor(this.state.time),
+                    })}
+                  </label>
+                </div>
+              </ModalBody>
+              <CustomModalSubmitFooter inProgress={false} leftBtnText={t('COMMON:MSG_GNB_SESSION_9')} rightBtnText={t('COMMON:MSG_GNB_ACCOUNT_2')} onClickLeft={this._extend} onClickRight={this._logout} />
+            </form>
+          </>
+        )}
+      </Translation>
     );
   }
 }
 
-export const NoticeExpirationModal_ = createModalLauncher(props => <NoticeExpirationModal path="status" title="세션 만료 알림" {...props} />);
+export const NoticeExpirationModal_ = createModalLauncher(props => <Translation>{t => <NoticeExpirationModal path="status" title={t('COMMON:MSG_GNB_SESSION_9')} {...props} />}</Translation>);
