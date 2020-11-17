@@ -19,6 +19,8 @@ import {
   createPipelineForImportFlow,
   createPipelineRunForImportFlow,
 } from '@console/pipelines-plugin/src/components/import/pipeline/pipeline-template-utils';
+import { Perspective } from '@console/plugin-sdk';
+import { setPipelineNotStarted } from '@console/pipelines-plugin/src/components/pipelines/pipeline-overview/pipeline-overview-utils';
 import {
   getAppLabels,
   getPodLabels,
@@ -38,7 +40,6 @@ import {
   GitReadableTypes,
   Resources,
 } from './import-types';
-import { Perspective } from '@console/plugin-sdk';
 
 export const generateSecret = () => {
   // http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
@@ -477,7 +478,13 @@ export const createOrUpdateResources = async (
       formData.pipeline,
       formData.docker.dockerfilePath,
     );
-    requests.push(createPipelineRunForImportFlow(newPipeline));
+    try {
+      await createPipelineRunForImportFlow(newPipeline);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(error);
+      setPipelineNotStarted(newPipeline.metadata.name, newPipeline.metadata.namespace);
+    }
   }
 
   verb === 'create' && requests.push(createWebhookSecret(formData, 'generic', dryRun));

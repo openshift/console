@@ -45,3 +45,4 @@ export const SecretAnnotationType = {
 };
 
 export const PIPELINE_SERVICE_ACCOUNT = 'pipeline';
+export const PIPELINE_RUN_AUTO_START_FAILED = `bridge/pipeline-run-auto-start-failed`;
