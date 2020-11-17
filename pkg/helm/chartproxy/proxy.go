@@ -1,11 +1,14 @@
 package chartproxy
 
 import (
+	"helm.sh/helm/v3/pkg/chartutil"
 	"helm.sh/helm/v3/pkg/repo"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
 	v1 "k8s.io/client-go/kubernetes/typed/core/v1"
 	"k8s.io/client-go/rest"
+
+	"github.com/openshift/console/pkg/version"
 )
 
 type proxy struct {
@@ -13,10 +16,11 @@ type proxy struct {
 	dynamicClient  dynamic.Interface
 	coreV1Client   v1.CoreV1Interface
 	helmRepoGetter HelmRepoGetter
+	kubeVersion    string
 }
 
 type Proxy interface {
-	IndexFile() (*repo.IndexFile, error)
+	IndexFile(onlyCompatible bool) (*repo.IndexFile, error)
 }
 
 type RestConfigProvider func() (*rest.Config, error)
@@ -43,13 +47,16 @@ func coreClientProvider(p *proxy) error {
 
 var defaultOptions = []ProxyOption{dynamicKubeClientProvider, coreClientProvider}
 
-func New(k8sConfig RestConfigProvider, opts ...ProxyOption) (Proxy, error) {
+func New(k8sConfig RestConfigProvider, kubeVersionGetter version.KubeVersionGetter, opts ...ProxyOption) (Proxy, error) {
 	config, err := k8sConfig()
+
 	if err != nil {
 		return nil, err
 	}
+
 	p := &proxy{
-		config: config,
+		config:      config,
+		kubeVersion: kubeVersionGetter.GetKubeVersion(),
 	}
 
 	if len(opts) == 0 {
@@ -63,7 +70,7 @@ func New(k8sConfig RestConfigProvider, opts ...ProxyOption) (Proxy, error) {
 	return p, nil
 }
 
-func (p *proxy) IndexFile() (*repo.IndexFile, error) {
+func (p *proxy) IndexFile(onlyCompatible bool) (*repo.IndexFile, error) {
 	helmRepos, err := p.helmRepoGetter.List()
 	if err != nil {
 		return nil, err
@@ -76,8 +83,20 @@ func (p *proxy) IndexFile() (*repo.IndexFile, error) {
 			plog.Errorf("Error retrieving index file for %v: %v", helmRepo, err)
 			continue
 		}
+
 		for key, entry := range idxFile.Entries {
-			indexFile.Entries[key+"--"+helmRepo.Name] = entry
+			if onlyCompatible {
+				for i := len(entry) - 1; i >= 0; i-- {
+					if entry[i].Metadata.KubeVersion != "" && p.kubeVersion != "" {
+						if !chartutil.IsCompatibleRange(entry[i].Metadata.KubeVersion, p.kubeVersion) {
+							entry = append(entry[:i], entry[i+1:]...)
+						}
+					}
+				}
+			}
+			if len(entry) > 0 {
+				indexFile.Entries[key+"--"+helmRepo.Name] = entry
+			}
 		}
 	}
 	return indexFile, nil
