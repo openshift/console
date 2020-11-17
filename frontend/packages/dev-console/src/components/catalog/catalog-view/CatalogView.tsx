@@ -15,11 +15,12 @@ import {
   recategorizeItems,
   updateActiveFilters,
 } from '../utils/filter-utils';
-import { keywordCompare } from '../utils/utils';
+import { keywordCompare, NoGrouping } from '../utils/utils';
 import {
   CatalogCategories as CategoriesType,
   CatalogFilters as FiltersType,
   CatalogSortOrder,
+  CatalogStringMap,
   CatalogType,
 } from '../utils/types';
 
@@ -38,9 +39,10 @@ type CatalogViewProps = {
   availableCategories: CategoriesType;
   availableFilters: FiltersType;
   filterGroups: string[];
-  filterGroupNameMap: { [key: string]: string };
+  filterGroupNameMap: CatalogStringMap;
   filterStoreKey: string;
   filterRetentionPreference: string[];
+  groupings: CatalogStringMap;
   renderTile: (item: CatalogItem) => React.ReactNode;
 };
 
@@ -55,6 +57,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({
   filterGroupNameMap,
   filterStoreKey,
   filterRetentionPreference,
+  groupings,
   renderTile,
 }) => {
   const [categorizedItems, setCategorizedItems] = React.useState();
@@ -62,6 +65,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({
   const [activeFilters, setActiveFilters] = React.useState(defaultFilters);
   const [filterGroupsShowAll, setFilterGroupsShowAll] = React.useState({});
   const [sortOrder, setSortOrder] = React.useState<CatalogSortOrder>(CatalogSortOrder.ASC);
+  const [activeGrouping, setActiveGrouping] = React.useState<string>(NoGrouping);
 
   const searchInputRef = React.useRef<HTMLInputElement>();
 
@@ -215,6 +219,14 @@ const CatalogView: React.FC<CatalogViewProps> = ({
     });
   }, []);
 
+  const isGrouped = activeGrouping !== NoGrouping;
+
+  const catalogItems = React.useMemo(() => {
+    if (!isGrouped) return activeCategory?.items;
+
+    return _.groupBy(activeCategory?.items, (item) => item.attributes?.[activeGrouping]);
+  }, [activeCategory, activeGrouping, isGrouped]);
+
   return (
     <div className="co-catalog-page">
       {showSidebar && (
@@ -252,12 +264,15 @@ const CatalogView: React.FC<CatalogViewProps> = ({
               activeCategory={activeCategory}
               keyword={activeFilters.keyword.value}
               sortOrder={sortOrder}
+              groupings={groupings}
+              activeGrouping={activeGrouping}
+              onGroupingChange={setActiveGrouping}
               onSortOrderChange={setSortOrder}
               onKeywordChange={handleKeywordSearch}
             />
 
             {activeCategory.numItems > 0 ? (
-              <CatalogGrid items={activeCategory.items} renderTile={renderTile} isGrouped={false} />
+              <CatalogGrid items={catalogItems} renderTile={renderTile} isGrouped={isGrouped} />
             ) : (
               <CatalogEmptyState keyword={activeFilters.keyword.value} onClear={clearFilters} />
             )}

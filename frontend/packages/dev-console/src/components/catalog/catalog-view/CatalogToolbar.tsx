@@ -1,7 +1,9 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { SearchInput } from '@patternfly/react-core';
 import { Dropdown } from '@console/internal/components/utils';
-import { CatalogCategory, CatalogSortOrder } from '../utils/types';
+import { CatalogCategory, CatalogSortOrder, CatalogStringMap } from '../utils/types';
+import { NoGrouping } from '../utils/utils';
 
 type CatalogToolbarProps = {
   activeCategory: CatalogCategory;
@@ -9,9 +11,9 @@ type CatalogToolbarProps = {
   onKeywordChange: (keyword: string) => void;
   sortOrder: CatalogSortOrder;
   onSortOrderChange: (sortOrder: CatalogSortOrder) => void;
-  groupings?: any;
-  selectedGrouping?: any;
-  onGroupingChange?: any;
+  groupings?: CatalogStringMap;
+  activeGrouping?: string;
+  onGroupingChange?: (grouping: string) => void;
 };
 
 const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
@@ -23,12 +25,19 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
       sortOrder,
       onSortOrderChange,
       groupings,
-      selectedGrouping,
+      activeGrouping,
       onGroupingChange,
     },
     inputRef,
   ) => {
     const catalogSortItems = { [CatalogSortOrder.ASC]: 'A-Z', [CatalogSortOrder.DESC]: 'Z-A' };
+
+    const showGrouping = !_.isEmpty(groupings);
+
+    const catalogGroupItems = {
+      ...groupings,
+      [NoGrouping]: 'None',
+    };
 
     return (
       <div className="co-catalog-page__header">
@@ -52,14 +61,14 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
               title={catalogSortItems[sortOrder]}
               onChange={onSortOrderChange}
             />
-            {groupings && (
+            {showGrouping && (
               <Dropdown
                 className="co-catalog-page__btn-group__group-by"
                 menuClassName="dropdown-menu--text-wrap"
-                items={groupings}
+                items={catalogGroupItems}
                 onChange={onGroupingChange}
                 titlePrefix="Group By"
-                title={selectedGrouping}
+                title={catalogGroupItems[activeGrouping]}
               />
             )}
           </div>

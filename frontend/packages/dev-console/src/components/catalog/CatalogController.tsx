@@ -16,7 +16,7 @@ import CatalogTile from './CatalogTile';
 import { DEV_CATALOG_FILTER_KEY } from '@console/shared';
 import { defaultFilters, determineAvailableFilters } from './utils/filter-utils';
 import Helmet from 'react-helmet';
-import { CatalogFilters, CatalogType } from './utils/types';
+import { CatalogFilters, CatalogStringMap, CatalogType } from './utils/types';
 
 type CatalogControllerProps = CatalogService;
 
@@ -38,11 +38,13 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
   const availableCategories = useCatalogCategories();
 
   // Filter property white list
-  const filterGroups = [];
+  const filterGroups: string[] = [];
 
-  const filterGroupNameMap: Record<string, string> = {};
+  const filterGroupNameMap: CatalogStringMap = {};
 
-  const filterPreference = [];
+  const filterPreference: string[] = [];
+
+  const groupings: CatalogStringMap = {};
 
   const breadcrumbs = [
     {
@@ -69,6 +71,9 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
         filterGroups.push(filter.attribute);
         filterGroupNameMap[filter.attribute] = filter.label;
       });
+
+    const typeGroupings = typeExtension?.properties.groupings;
+    typeGroupings && typeGroupings.forEach((group) => (groupings[group.attribute] = group.label));
   }
 
   const catalogTypes: CatalogType[] = React.useMemo(
@@ -155,6 +160,7 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
                 filterGroupNameMap={filterGroupNameMap}
                 filterStoreKey={DEV_CATALOG_FILTER_KEY}
                 filterRetentionPreference={filterPreference}
+                groupings={groupings}
                 renderTile={renderTile}
               />
               <CatalogDetailsModal item={selectedItem} onClose={closeDetailsPanel} />

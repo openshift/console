@@ -15,6 +15,8 @@ export type CatalogFilters = Record<string, CatalogFilter | CatalogFilterItem>;
 
 export type CatalogFilterCounts = Record<string, { [key: string]: number }>;
 
+export type CatalogStringMap = Record<string, string>;
+
 export type CatalogType = {
   label: string;
   value: string;

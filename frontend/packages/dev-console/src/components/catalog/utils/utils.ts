@@ -2,6 +2,8 @@ import { normalizeIconClass } from '@console/internal/components/catalog/catalog
 import { CatalogItem } from '@console/plugin-sdk';
 import * as catalogImg from '@console/internal/imgs/logos/catalog-icon.svg';
 
+export const NoGrouping = 'none';
+
 export const keywordCompare = (filterString: string, item: CatalogItem) => {
   if (!filterString) {
     return true;

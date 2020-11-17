@@ -126,8 +126,10 @@ export const categorize = (items, categories) => {
     }
   });
 
-  categories.all.numItems = _.size(items);
-  categories.all.items = items;
+  if (categories.all) {
+    categories.all.numItems = _.size(items);
+    categories.all.items = items;
+  }
 };
 
 /**
