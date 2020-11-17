@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import cx from 'classnames';
 import * as fuzzy from 'fuzzysearch';
@@ -37,6 +38,7 @@ const MultipleResourceKeySelector: React.FC<StateProps & MultipleResourceKeySele
   resourceKeysField,
   addString,
 }) => {
+  const { t } = useTranslation();
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const [field, { touched, error }] = useField(resourceNameField);
   const isValid = !(touched && error);
@@ -84,7 +86,7 @@ const MultipleResourceKeySelector: React.FC<StateProps & MultipleResourceKeySele
         loadError={loadError}
         dataSelector={['metadata', 'name']}
         selectedKey={field.value}
-        placeholder={`Select a ${resourceModel.label}`}
+        placeholder={t('pipelines-plugin~Select a {{label}}', { label: resourceModel.label })}
         autocompleteFilter={autocompleteFilter}
         dropDownClassName={cx({ 'dropdown--full-width': true })}
         onChange={(value: string) => {

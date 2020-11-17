@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Flex, FlexItem } from '@patternfly/react-core';
 import {
@@ -26,6 +27,7 @@ const PipelinesOverview: React.FC<PipelinesOverviewProps> = ({
     pipelineRuns,
   },
 }) => {
+  const { t } = useTranslation();
   const {
     metadata: { name, namespace },
   } = pipeline;
@@ -37,7 +39,9 @@ const PipelinesOverview: React.FC<PipelinesOverviewProps> = ({
             className="sidebar__section-view-all"
             to={`${resourcePath(referenceForModel(PipelineModel), name, namespace)}/Runs`}
           >
-            {`View all (${pipelineRuns.length})`}
+            {t('pipelines-plugin~View all {{pipelineRunsLength}}', {
+              pipelineRunsLength: pipelineRuns.length,
+            })}
           </Link>
         )}
       </SidebarSectionHeading>

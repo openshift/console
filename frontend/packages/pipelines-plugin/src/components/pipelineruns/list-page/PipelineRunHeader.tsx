@@ -1,41 +1,42 @@
+import { TFunction } from 'i18next';
 import { sortable } from '@patternfly/react-table';
 import { tableColumnClasses } from './pipelinerun-table';
 
-const PipelineRunHeader = () => {
+const PipelineRunHeader = (t: TFunction) => () => {
   return [
     {
-      title: 'Name',
+      title: t('pipelines-plugin~Name'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Namespace',
+      title: t('pipelines-plugin~Namespace'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
       id: 'namespace',
     },
     {
-      title: 'Status',
+      title: t('pipelines-plugin~Status'),
       sortField: 'status.conditions[0].reason',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Task Status',
+      title: t('pipelines-plugin~Task Status'),
       sortField: 'status.conditions[0].reason',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Started',
+      title: t('pipelines-plugin~Started'),
       sortField: 'status.startTime',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
     },
     {
-      title: 'Duration',
+      title: t('pipelines-plugin~Duration'),
       sortField: 'status.completionTime',
       transforms: [sortable],
       props: { className: tableColumnClasses[5] },

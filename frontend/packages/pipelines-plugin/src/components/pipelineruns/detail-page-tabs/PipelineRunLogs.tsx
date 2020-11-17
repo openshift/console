@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { withTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -15,12 +17,16 @@ import './PipelineRunLogs.scss';
 interface PipelineRunLogsProps {
   obj: PipelineRun;
   activeTask?: string;
+  t: TFunction;
 }
 interface PipelineRunLogsState {
   activeItem: string;
   navUntouched: boolean;
 }
-class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunLogsState> {
+class PipelineRunLogsWithTranslation extends React.Component<
+  PipelineRunLogsProps,
+  PipelineRunLogsState
+> {
   constructor(props) {
     super(props);
     this.state = { activeItem: null, navUntouched: true };
@@ -75,7 +81,7 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
   };
 
   render() {
-    const { obj } = this.props;
+    const { obj, t } = this.props;
     const { activeItem } = this.state;
     const taskRunFromYaml = _.get(obj, ['status', 'taskRuns'], {});
     const taskRuns = this.getSortedTaskRun(taskRunFromYaml);
@@ -88,6 +94,7 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
             taskRunFromYaml,
             obj.metadata?.namespace,
             obj.metadata?.name,
+            t,
           )
         : undefined;
     const podName = taskRunFromYaml[activeItem]?.status?.podName;
@@ -136,7 +143,9 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
               </NavList>
             </Nav>
           ) : (
-            <div className="odc-pipeline-run-logs__nav">No Task Runs Found</div>
+            <div className="odc-pipeline-run-logs__nav">
+              {t('pipelines-plugin~No Task Runs Found')}
+            </div>
           )}
         </div>
         <div className="odc-pipeline-run-logs__container">
@@ -144,14 +153,18 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
             <Firehose key={activeItem} resources={resources}>
               <LogsWrapperComponent
                 taskName={_.get(taskRunFromYaml, [activeItem, 'pipelineTaskName'], '-')}
-                downloadAllLabel="Download All Task Logs"
+                downloadAllLabel={t('pipelines-plugin~Download All Task Logs')}
                 onDownloadAll={downloadAllCallback}
               />
             </Firehose>
           ) : (
             <div className="odc-pipeline-run-logs__log">
               <div className="odc-pipeline-run-logs__logtext">
-                {_.get(obj, ['status', 'conditions', 0, 'message'], 'No Logs Found')}
+                {_.get(
+                  obj,
+                  ['status', 'conditions', 0, 'message'],
+                  t('pipelines-plugin~No Logs Found'),
+                )}
               </div>
             </div>
           )}
@@ -165,6 +178,8 @@ type PipelineRunLogsWithActiveTaskProps = {
   obj: PipelineRun;
   params?: RouteComponentProps;
 };
+
+const PipelineRunLogs = withTranslation()(PipelineRunLogsWithTranslation);
 
 export const PipelineRunLogsWithActiveTask: React.FC<PipelineRunLogsWithActiveTaskProps> = ({
   obj,

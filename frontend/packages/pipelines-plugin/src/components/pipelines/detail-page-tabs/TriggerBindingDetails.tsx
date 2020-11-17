@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
 import { EventListenerModel } from '../../../models';
 import { getResourceModelFromBindingKind } from '../../../utils/pipeline-augment';
@@ -11,11 +12,14 @@ export interface TriggerBindingDetailsProps {
 }
 
 const TriggerBindingDetails: React.FC<TriggerBindingDetailsProps> = ({ obj: triggerBinding }) => {
+  const { t } = useTranslation();
   const eventListeners: string[] = useTriggerBindingEventListenerNames(triggerBinding);
   return (
     <div className="co-m-pane__body">
       <SectionHeading
-        text={`${getResourceModelFromBindingKind(triggerBinding.kind).label} Details`}
+        text={t('pipelines-plugin~{{triggerBindingLabel}} Details', {
+          triggerBindingLabel: getResourceModelFromBindingKind(triggerBinding.kind).label,
+        })}
       />
       <div className="row">
         <div className="col-sm-6">

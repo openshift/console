@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Base64 } from 'js-base64';
+import { useTranslation } from 'react-i18next';
 import { Alert } from '@patternfly/react-core';
 import { resourceURL, modelFor, PodKind, ContainerSpec } from '@console/internal/module/k8s';
 import { WSFactory } from '@console/internal/module/ws-factory';
@@ -24,6 +25,7 @@ const Logs: React.FC<LogsProps> = ({
   render,
   autoScroll = true,
 }) => {
+  const { t } = useTranslation();
   const { name } = container;
   const { kind, metadata = {} } = resource;
   const { name: resName, namespace: resNamespace } = metadata;
@@ -127,7 +129,7 @@ const Logs: React.FC<LogsProps> = ({
         <Alert
           variant="danger"
           isInline
-          title="An error occurred while retrieving the requested logs."
+          title={t('pipelines-plugin~An error occurred while retrieving the requested logs.')}
         />
       )}
       <div className="odc-logs__content" ref={contentRef} />

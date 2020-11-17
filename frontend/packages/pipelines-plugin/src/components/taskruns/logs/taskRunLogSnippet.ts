@@ -1,9 +1,10 @@
+import { TFunction } from 'i18next';
 import { Condition, PLRTaskRunStep, TaskRunKind } from '../../../utils/pipeline-augment';
 import { taskRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
 import { CombinedErrorDetails } from '../../pipelineruns/logs/log-snippet-types';
 import { taskRunSnippetMessage } from '../../pipelineruns/logs/log-snippet-utils';
 
-export const getTRLogSnippet = (taskRun: TaskRunKind): CombinedErrorDetails => {
+export const getTRLogSnippet = (taskRun: TaskRunKind, t: TFunction): CombinedErrorDetails => {
   if (!taskRun?.status) {
     // Lack information to pull from the Pipeline Run
     return null;
@@ -26,5 +27,5 @@ export const getTRLogSnippet = (taskRun: TaskRunKind): CombinedErrorDetails => {
     (step: PLRTaskRunStep) => step.terminated?.exitCode !== 0,
   )?.container;
 
-  return taskRunSnippetMessage(taskRun.metadata.name, taskRun.status, containerName);
+  return taskRunSnippetMessage(taskRun.metadata.name, taskRun.status, containerName, t);
 };

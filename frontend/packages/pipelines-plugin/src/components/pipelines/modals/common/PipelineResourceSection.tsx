@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { capitalize } from 'lodash';
 import { FieldArray, useField } from 'formik';
+import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import PipelineResourceDropdownField from './PipelineResourceDropdownField';
 import { PipelineModalFormResource } from './types';
@@ -34,6 +35,7 @@ const reduceToSections = (
 };
 
 const PipelineResourceSection: React.FC = () => {
+  const { t } = useTranslation();
   const [{ value: resources }] = useField<PipelineModalFormResource[]>('resources');
 
   const sections: ResourceSection = resources.reduce(reduceToSections, {} as ResourceSection);
@@ -49,7 +51,10 @@ const PipelineResourceSection: React.FC = () => {
             const section = sections[type];
 
             return (
-              <FormSection title={`${capitalize(type)} Resources`} fullWidth>
+              <FormSection
+                title={t('pipelines-plugin~{{type}} Resources', { type: capitalize(type) })}
+                fullWidth
+              >
                 {section.map((sectionData: ResourceSectionType) => {
                   const { formikIndex, resource } = sectionData;
 

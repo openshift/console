@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormGroup } from '@patternfly/react-core';
 import { Dropdown } from '@console/internal/components/utils';
 import {
@@ -16,6 +17,7 @@ type TaskSidebarResourceProps = {
 };
 
 const TaskSidebarResource: React.FC<TaskSidebarResourceProps> = (props) => {
+  const { t } = useTranslation();
   const { availableResources, onChange, resource, taskResource } = props;
 
   const dropdownResources = availableResources.filter(
@@ -26,16 +28,22 @@ const TaskSidebarResource: React.FC<TaskSidebarResourceProps> = (props) => {
     <FormGroup
       fieldId={resource.name}
       label={resource.name}
-      helperText={`Only showing resources for this type (${resource.type}).`}
+      helperText={t('pipelines-plugin~Only showing resources for this type ({{resourceType}}).', {
+        resourceType: resource.type,
+      })}
       helperTextInvalid={
-        dropdownResources.length === 0 ? `No resources available. Add pipeline resources.` : ''
+        dropdownResources.length === 0
+          ? t('pipelines-plugin~No resources available. Add pipeline resources.')
+          : ''
       }
       validated={dropdownResources.length > 0 ? 'default' : 'error'}
       isRequired={!resource?.optional}
     >
       <SidebarInputWrapper>
         <Dropdown
-          title={`Select ${resource.type} resource...`}
+          title={t('pipelines-plugin~Select {{resourceType}} resource...', {
+            resourceType: resource.type,
+          })}
           items={dropdownResources.reduce((acc, { name }) => ({ ...acc, [name]: name }), {})}
           disabled={dropdownResources.length === 0}
           selectedKey={taskResource?.resource || ''}

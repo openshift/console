@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ClusterTaskModel, TaskModel } from '../../../models';
@@ -41,6 +42,7 @@ type UseTasks = {
   errorMsg?: string;
 };
 export const useTasks = (namespace?: string): UseTasks => {
+  const { t } = useTranslation();
   const memoizedResources = React.useMemo(
     () => ({
       tasks: { kind: referenceForModel(TaskModel), isList: true, namespace },
@@ -57,10 +59,14 @@ export const useTasks = (namespace?: string): UseTasks => {
   );
   let errorMsg: string;
   if (tasks.loadError) {
-    errorMsg = `Failed to load namespace Tasks. ${tasks.loadError}`;
+    errorMsg = t('pipelines-plugin~Failed to load namespace Tasks. {{tasksLoadError}}', {
+      tasksLoadError: tasks.loadError,
+    });
   }
   if (clusterTasks.loadError) {
-    errorMsg = `Failed to load ClusterTasks. ${clusterTasks.loadError}`;
+    errorMsg = t('pipelines-plugin~Failed to load ClusterTasks. {{clusterTasksLoadError}}', {
+      clusterTasksLoadError: clusterTasks.loadError,
+    });
   }
 
   return {

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   ResourceLink,
   Firehose,
@@ -26,6 +27,7 @@ type SecretsListProps = {
 const secretTypes = [SecretType.dockerconfigjson, SecretType.basicAuth, SecretType.sshAuth];
 
 const Secrets: React.FC<SecretsProps> = ({ secrets, serviceaccounts }) => {
+  const { t } = useTranslation();
   const serviceAccountSecrets = _.map(serviceaccounts.data.secrets, 'name');
   const filterData = _.filter(
     secrets.data,
@@ -49,7 +51,9 @@ const Secrets: React.FC<SecretsProps> = ({ secrets, serviceaccounts }) => {
           />
         );
       })}
-      {_.isEmpty(sortedFilterData) && <SecondaryStatus status="No source secrets found" />}
+      {_.isEmpty(sortedFilterData) && (
+        <SecondaryStatus status={t('pipelines-plugin~No source secrets found')} />
+      )}
     </div>
   );
 };

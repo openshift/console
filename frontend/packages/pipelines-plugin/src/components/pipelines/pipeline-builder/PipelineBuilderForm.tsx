@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { FormikProps } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { Stack, StackItem } from '@patternfly/react-core';
 import { FormFooter, SyncedEditorField, YAMLEditorField, FlexForm } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
@@ -34,6 +35,7 @@ type PipelineBuilderFormProps = FormikProps<PipelineBuilderFormikValues> & {
 };
 
 const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
+  const { t } = useTranslation();
   const [selectedTask, setSelectedTask] = React.useState<SelectedBuilderTask>(null);
   const selectedTaskRef = React.useRef<SelectedBuilderTask>(null);
   selectedTaskRef.current = selectedTask;
@@ -140,7 +142,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
             formContext={{
               name: 'formData',
               editor: formEditor,
-              label: 'Pipeline Builder',
+              label: t('pipelines-plugin~Pipeline Builder'),
               sanitizeTo: sanitizeToForm,
             }}
             yamlContext={{ name: 'yamlData', editor: yamlEditor, sanitizeTo: sanitizeToYaml }}
@@ -149,7 +151,9 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
             handleReset={closeSidebarAndHandleReset}
             errorMessage={status?.submitError}
             isSubmitting={isSubmitting}
-            submitLabel={existingPipeline ? 'Save' : 'Create'}
+            submitLabel={
+              existingPipeline ? t('pipelines-plugin~Save') : t('pipelines-plugin~Create')
+            }
             disableSubmit={
               values.editorType === EditorType.YAML
                 ? !dirty
@@ -158,7 +162,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
                   !_.isEmpty(status?.tasks) ||
                   values.formData.tasks.length === 0
             }
-            resetLabel="Cancel"
+            resetLabel={t('pipelines-plugin~Cancel')}
             sticky
           />
         </FlexForm>
@@ -184,15 +188,19 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
                 );
               }}
               onRemoveTask={(taskName) => {
-                removeTaskModal(taskName, () => {
-                  setSelectedTask(null);
-                  updateTasks(
-                    applyChange(taskGroup, {
-                      type: UpdateOperationType.REMOVE_TASK,
-                      data: { taskName },
-                    }),
-                  );
-                });
+                removeTaskModal(
+                  taskName,
+                  () => {
+                    setSelectedTask(null);
+                    updateTasks(
+                      applyChange(taskGroup, {
+                        type: UpdateOperationType.REMOVE_TASK,
+                        data: { taskName },
+                      }),
+                    );
+                  },
+                  t,
+                );
               }}
               selectedPipelineTaskIndex={selectedTask.taskIndex}
               taskResource={selectedTask.resource}

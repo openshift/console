@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary, ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
@@ -22,6 +23,7 @@ export interface PipelineRunDetailsProps {
 }
 
 export const PipelineRunDetails: React.FC<PipelineRunDetailsProps> = ({ obj: pipelineRun }) => {
+  const { t } = useTranslation();
   // FIXME: If they are inline resources, we are not going to render them
   const unfilteredResources = pipelineRun.spec.resources as PipelineRunReferenceResource[];
   const renderResources =
@@ -31,7 +33,7 @@ export const PipelineRunDetails: React.FC<PipelineRunDetailsProps> = ({ obj: pip
 
   return (
     <div className="co-m-pane__body odc-pipeline-run-details">
-      <SectionHeading text="Pipeline Run Details" />
+      <SectionHeading text={t('pipelines-plugin~Pipeline Run Details')} />
       <PipelineRunVisualization pipelineRun={pipelineRun} />
       <div className="row">
         <div className="col-sm-6">
@@ -39,18 +41,18 @@ export const PipelineRunDetails: React.FC<PipelineRunDetailsProps> = ({ obj: pip
         </div>
         <div className="col-sm-6 odc-pipeline-run-details__customDetails">
           <dl>
-            <dt>Status</dt>
+            <dt>{t('pipelines-plugin~Status')}</dt>
             <dd>
               <Status status={pipelineRunFilterReducer(pipelineRun)} />
             </dd>
           </dl>
           <RunDetailsErrorLog
-            logDetails={getPLRLogSnippet(pipelineRun)}
+            logDetails={getPLRLogSnippet(pipelineRun, t)}
             namespace={pipelineRun.metadata.namespace}
           />
           {pipelineRefExists(pipelineRun) && (
             <dl>
-              <dt>Pipeline</dt>
+              <dt>{t('pipelines-plugin~Pipeline')}</dt>
               <dd>
                 <ResourceLink
                   kind={referenceForModel(PipelineModel)}

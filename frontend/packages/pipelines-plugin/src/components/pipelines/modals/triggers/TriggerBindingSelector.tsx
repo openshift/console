@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useFormikContext } from 'formik';
 import * as fuzzy from 'fuzzysearch';
+import { useTranslation } from 'react-i18next';
 import { ResourceDropdownField } from '@console/shared';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { ClusterTriggerBindingModel, TriggerBindingModel } from '../../../../models';
@@ -16,6 +17,7 @@ type TriggerBindingSelectorProps = {
 const KEY_DIVIDER = '~';
 
 const TriggerBindingSelector: React.FC<TriggerBindingSelectorProps> = (props) => {
+  const { t } = useTranslation();
   const { description, label = TriggerBindingModel.label, onChange } = props;
   const { values } = useFormikContext<AddTriggerFormValues>();
   const autoCompleteFilter = (strText: string, item: React.ReactElement): boolean =>
@@ -54,8 +56,8 @@ const TriggerBindingSelector: React.FC<TriggerBindingSelectorProps> = (props) =>
       fullWidth
       helpText={description}
       label={label}
-      placeholder={`Select ${label}`}
-      title={`Select ${label}`}
+      placeholder={t('pipelines-plugin~Select {{label}}', { label })}
+      title={t('pipelines-plugin~Select {{label}}', { label })}
       showBadge
       onChange={onTriggerChange}
     />

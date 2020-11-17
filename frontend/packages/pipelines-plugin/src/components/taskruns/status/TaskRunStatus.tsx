@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { TaskRunKind } from '../../../utils/pipeline-augment';
@@ -11,24 +12,27 @@ type TaskRunStatusProps = {
   status: string;
   taskRun: TaskRunKind;
 };
-const TaskRunStatus: React.FC<TaskRunStatusProps> = ({ status, taskRun }) => (
-  <PipelineResourceStatus status={status}>
-    <StatusPopoverContent
-      logDetails={getTRLogSnippet(taskRun)}
-      namespace={taskRun.metadata.namespace}
-      link={
-        <Link
-          to={`${resourcePathFromModel(
-            TaskRunModel,
-            taskRun.metadata.name,
-            taskRun.metadata.namespace,
-          )}/logs`}
-        >
-          View Logs
-        </Link>
-      }
-    />
-  </PipelineResourceStatus>
-);
+const TaskRunStatus: React.FC<TaskRunStatusProps> = ({ status, taskRun }) => {
+  const { t } = useTranslation();
+  return (
+    <PipelineResourceStatus status={status}>
+      <StatusPopoverContent
+        logDetails={getTRLogSnippet(taskRun, t)}
+        namespace={taskRun.metadata.namespace}
+        link={
+          <Link
+            to={`${resourcePathFromModel(
+              TaskRunModel,
+              taskRun.metadata.name,
+              taskRun.metadata.namespace,
+            )}/logs`}
+          >
+            {t('pipelines-plugin~View Logs')}
+          </Link>
+        }
+      />
+    </PipelineResourceStatus>
+  );
+};
 
 export default TaskRunStatus;

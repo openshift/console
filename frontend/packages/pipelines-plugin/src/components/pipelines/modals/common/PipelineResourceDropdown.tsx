@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { FormikValues, useField, useFormikContext } from 'formik';
 import { Select, SelectOption } from '@patternfly/react-core';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -23,6 +24,7 @@ type PipelineResourceDropdownProps = {
 };
 
 const PipelineResourceDropdown: React.FC<PipelineResourceDropdownProps> = (props) => {
+  const { t } = useTranslation();
   const { autoSelect, filterType, name, namespace, selectedKey } = props;
 
   const [isExpanded, setExpanded] = React.useState(false);
@@ -58,7 +60,7 @@ const PipelineResourceDropdown: React.FC<PipelineResourceDropdownProps> = (props
   }, [canAutoSelect, name, availableResources, setFieldTouched, setFieldValue]);
 
   const options = [
-    { label: 'Create Pipeline Resource', value: CREATE_PIPELINE_RESOURCE },
+    { label: t('pipelines-plugin~Create Pipeline Resource'), value: CREATE_PIPELINE_RESOURCE },
     ...availableResources.map((resource) => {
       const resourceName = resource.metadata.name;
       const url = _.find(resource.spec.params, ['name', 'url'])?.value || '';
@@ -78,7 +80,7 @@ const PipelineResourceDropdown: React.FC<PipelineResourceDropdownProps> = (props
         setFieldValue(name, value);
         setExpanded(false);
       }}
-      placeholderText={!loaded ? <LoadingInline /> : 'Select Pipeline Resource'}
+      placeholderText={!loaded ? <LoadingInline /> : t('pipelines-plugin~Select Pipeline Resource')}
       isDisabled={loaded && availableResources.length === 0}
     >
       {options.map(({ label, value }) => (

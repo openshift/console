@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert } from '@patternfly/react-core';
 import { LoadingBox } from '@console/internal/components/utils';
 import { hasInlineTaskSpec } from '../../../utils/pipeline-utils';
@@ -28,6 +29,7 @@ const PipelineBuilderVisualization: React.FC<PipelineBuilderVisualizationProps> 
   taskGroup,
   tasksInError,
 }) => {
+  const { t } = useTranslation();
   const { tasksLoaded, tasksCount, nodes, loadingTasksError } = useNodes(
     namespace,
     onTaskSelection,
@@ -38,7 +40,7 @@ const PipelineBuilderVisualization: React.FC<PipelineBuilderVisualizationProps> 
 
   if (loadingTasksError) {
     return (
-      <Alert variant="danger" isInline title="Error loading the tasks.">
+      <Alert variant="danger" isInline title={t('pipelines-plugin~Error loading the tasks.')}>
         {loadingTasksError}
       </Alert>
     );
@@ -48,7 +50,9 @@ const PipelineBuilderVisualization: React.FC<PipelineBuilderVisualizationProps> 
   }
   if (tasksCount === 0 && taskGroup.tasks.length === 0) {
     // No tasks, nothing we can do here...
-    return <Alert variant="danger" isInline title="Unable to locate any tasks." />;
+    return (
+      <Alert variant="danger" isInline title={t('pipelines-plugin~Unable to locate any tasks.')} />
+    );
   }
 
   if (hasInlineTaskSpec(taskGroup.tasks)) {
@@ -56,7 +60,9 @@ const PipelineBuilderVisualization: React.FC<PipelineBuilderVisualizationProps> 
       <Alert
         variant="info"
         isInline
-        title="This Pipeline cannot be visualized. Pipeline taskSpec is not supported."
+        title={t(
+          'pipelines-plugin~This Pipeline cannot be visualized. Pipeline taskSpec is not supported.',
+        )}
       />
     );
   }

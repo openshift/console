@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
 import { EventListenerKind } from '../resource-types';
 import EventListenerURL from './EventListenerURL';
@@ -9,9 +10,10 @@ export interface EventListenerDetailsProps {
 }
 
 const EventListenerDetails: React.FC<EventListenerDetailsProps> = ({ obj: eventListener }) => {
+  const { t } = useTranslation();
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text="Event Listener Details" />
+      <SectionHeading text={t('pipelines-plugin~Event Listener Details')} />
       <div className="row">
         <div className="col-sm-6">
           <ResourceSummary resource={eventListener} />

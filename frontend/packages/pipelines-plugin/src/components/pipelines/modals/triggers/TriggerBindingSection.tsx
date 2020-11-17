@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useFormikContext } from 'formik';
+import { Trans, useTranslation } from 'react-i18next';
 import { Badge, ExpandableSection, FormHelperText } from '@patternfly/react-core';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { usePipelineOperatorVersion } from '../../utils/pipeline-operator';
@@ -10,6 +11,7 @@ import { AddTriggerFormValues } from './types';
 import './TriggerBindingSection.scss';
 
 const TriggerBindingSection: React.FC = () => {
+  const { t } = useTranslation();
   const { values, setFieldValue } = useFormikContext<AddTriggerFormValues>();
   const [bindingVars, setBindingVars] = React.useState<TriggerBindingParam[]>(null);
 
@@ -31,10 +33,12 @@ const TriggerBindingSection: React.FC = () => {
 
   return (
     <div className="odc-trigger-binding-section">
-      <FormSection title="Webhook" fullWidth>
+      <FormSection title={t('pipelines-plugin~Webhook')} fullWidth>
         <TriggerBindingSelector
-          description="Select your Git provider type to be associated with the Trigger"
-          label="Git Provider Type"
+          description={t(
+            'pipelines-plugin~Select your Git provider type to be associated with the Trigger',
+          )}
+          label={t('pipelines-plugin~Git Provider Type')}
           onChange={updateTriggerBindingVariables}
         />
         {bindingVars && (
@@ -44,7 +48,9 @@ const TriggerBindingSection: React.FC = () => {
           >
             <div className="odc-trigger-binding-section__variable-container">
               <p className="odc-trigger-binding-section__variable-descriptor">
-                The following variables can be used in the Parameters or when created new Resources.
+                {t(
+                  'pipelines-plugin~The following variables can be used in the Parameters or when created new Resources.',
+                )}
               </p>
               {bindingVars.map(({ name }) => (
                 <Badge key={name} className="odc-trigger-binding-section__variable-badge" isRead>
@@ -56,8 +62,10 @@ const TriggerBindingSection: React.FC = () => {
               isHidden={false}
               className="odc-trigger-binding-section__variable-help-text"
             >
-              Use this format when referencing variables in this form:{' '}
-              <code>{`$(${paramPrefix}parameter)`}</code>
+              <Trans t={t} ns="pipelines-plugin">
+                Use this format when referencing variables in this form:{' '}
+                <code>{`$(${paramPrefix}parameter)`}</code>
+              </Trans>
             </FormHelperText>
           </ExpandableSection>
         )}

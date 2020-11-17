@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { saveAs } from 'file-saver';
 import { Button, Flex, FlexItem } from '@patternfly/react-core';
 import { DownloadIcon, CompressIcon, ExpandIcon } from '@patternfly/react-icons';
@@ -25,6 +26,7 @@ export const MultiStreamLogs: React.FC<MultiStreamLogsProps> = ({
   downloadAllLabel,
   onDownloadAll,
 }) => {
+  const { t } = useTranslation();
   const scrollPane = React.useRef<HTMLDivElement>();
   const completedRef = React.useRef<boolean[]>([]);
   const [renderToCount, setRenderToCount] = React.useState(0);
@@ -64,7 +66,7 @@ export const MultiStreamLogs: React.FC<MultiStreamLogsProps> = ({
       })
       .catch((err: Error) => {
         setDownloadAllStatus(false);
-        const error = err.message || 'Error downloading logs.';
+        const error = err.message || t('pipelines-plugin~Error downloading logs.');
         errorModal({ error });
       });
   };
@@ -89,7 +91,7 @@ export const MultiStreamLogs: React.FC<MultiStreamLogsProps> = ({
         <FlexItem className="odc-multi-stream-logs__button" align={{ default: 'alignRight' }}>
           <Button variant="link" onClick={downloadLogs} isInline>
             <DownloadIcon className="odc-multi-stream-logs__icon" />
-            Download
+            {t('pipelines-plugin~Download')}
           </Button>
         </FlexItem>
         {divider}
@@ -103,7 +105,7 @@ export const MultiStreamLogs: React.FC<MultiStreamLogsProps> = ({
                 isInline
               >
                 <DownloadIcon className="odc-multi-stream-logs__icon" />
-                {downloadAllLabel || 'Download All'}
+                {downloadAllLabel || t('pipelines-plugin~Download All')}
                 {downloadAllStatus && <LoadingInline />}
               </Button>
             </FlexItem>
@@ -116,12 +118,12 @@ export const MultiStreamLogs: React.FC<MultiStreamLogsProps> = ({
               {isFullscreen ? (
                 <>
                   <CompressIcon className="odc-multi-stream-logs__icon" />
-                  Collapse
+                  {t('pipelines-plugin~Collapse')}
                 </>
               ) : (
                 <>
                   <ExpandIcon className="odc-multi-stream-logs__icon" />
-                  Expand
+                  {t('pipelines-plugin~Expand')}
                 </>
               )}
             </Button>

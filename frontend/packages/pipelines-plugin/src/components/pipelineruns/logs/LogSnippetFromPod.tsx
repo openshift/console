@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert } from '@patternfly/react-core';
 import { coFetchText } from '@console/internal/co-fetch';
 import { resourceURL } from '@console/internal/module/k8s';
@@ -20,6 +21,7 @@ const LogSnippetFromPod: React.FC<LogSnippetFromPodProps> = ({
   podName,
   title,
 }) => {
+  const { t } = useTranslation();
   const [logSnippet, setLogSnippet] = React.useState<string>(null);
   const [logError, setLogError] = React.useState<string>(null);
 
@@ -39,9 +41,9 @@ const LogSnippetFromPod: React.FC<LogSnippetFromPodProps> = ({
         setLogSnippet(logContent);
       })
       .catch((error) => {
-        setLogError(error?.message || 'Unknown error retrieving logs');
+        setLogError(error?.message || t('pipelines-plugin~Unknown error retrieving logs'));
       });
-  }, [containerName, namespace, podName]);
+  }, [containerName, namespace, podName, t]);
 
   if (logError) {
     return (

@@ -22,6 +22,15 @@ const latestPipelineRun = jest.spyOn(hookUtils, 'useLatestPipelineRun');
 jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
   useK8sGet: jest.fn(),
 }));
+
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 type PipelineDetailsPageProps = React.ComponentProps<typeof PipelineDetailsPage>;
 const mockData = pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE];
 const pipelineRuns: PipelineRun[] = Object.values(mockData.pipelineRuns);
@@ -74,7 +83,8 @@ describe('PipelineDetailsPage:', () => {
     const wrapper = shallow(<PipelineDetailsPage {...PipelineDetailsPageProps} />);
     const menuItems = wrapper.props().menuActions;
     const startLastRun = menuItems.find(
-      (menu) => menu(PipelineModel, mockData.pipeline).label === 'Start Last Run',
+      (menu) =>
+        menu(PipelineModel, mockData.pipeline).labelKey === 'pipelines-plugin~Start Last Run',
     );
     expect(startLastRun).toBeUndefined();
   });
@@ -84,7 +94,8 @@ describe('PipelineDetailsPage:', () => {
     const wrapper = shallow(<PipelineDetailsPage {...PipelineDetailsPageProps} />);
     const menuItems = wrapper.props().menuActions;
     const startLastRun = menuItems.find(
-      (menu) => menu(PipelineModel, mockData.pipeline).label === 'Start Last Run',
+      (menu) =>
+        menu(PipelineModel, mockData.pipeline).labelKey === 'pipelines-plugin~Start Last Run',
     );
     expect(startLastRun).toBeDefined();
   });

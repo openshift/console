@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
 import { getBadgeFromType } from '@console/shared';
 import CreateProjectListPage from '@console/dev-console/src/components/projects/CreateProjectListPage';
@@ -8,6 +9,7 @@ import PipelineRunsResourceList from './PipelineRunsResourceList';
 type PipelineRunsPageProps = RouteComponentProps<{ ns: string }>;
 
 const PipelineRunsPage: React.FC<PipelineRunsPageProps> = (props) => {
+  const { t } = useTranslation();
   const {
     match: {
       params: { ns: namespace },
@@ -22,7 +24,9 @@ const PipelineRunsPage: React.FC<PipelineRunsPageProps> = (props) => {
       title={PipelineRunModel.labelPlural}
       badge={getBadgeFromType(PipelineRunModel.badge)}
     >
-      Select a project to view the list of {PipelineRunModel.labelPlural}
+      {t('pipelines-plugin~Select a project to view the list of {{pipelineRunLabel}}', {
+        pipelineRunLabel: PipelineRunModel.labelPlural,
+      })}
     </CreateProjectListPage>
   );
 };

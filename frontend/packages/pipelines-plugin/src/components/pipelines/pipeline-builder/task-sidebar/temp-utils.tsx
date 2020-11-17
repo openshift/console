@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { global_disabled_color_200 as disabledColor } from '@patternfly/react-tokens';
 import {
@@ -44,6 +45,7 @@ export const StringParam: React.FC<ParameterProps> = (props) => {
 };
 
 export const ArrayParam: React.FC<ParameterProps> = (props) => {
+  const { t } = useTranslation();
   const {
     currentValue,
     defaultValue,
@@ -62,7 +64,7 @@ export const ArrayParam: React.FC<ParameterProps> = (props) => {
         fieldId={name}
         label={name}
         helperText={description}
-        helperTextInvalid="Required"
+        helperTextInvalid={t('pipelines-plugin~Required')}
         validated={
           isFieldValid(values, dirty, emptyIsInvalid)
             ? ValidatedOptions.default
@@ -90,7 +92,7 @@ export const ArrayParam: React.FC<ParameterProps> = (props) => {
                 />
               </FlexItem>
               <FlexItem>
-                <Tooltip content="Remove">
+                <Tooltip content={t('pipelines-plugin~Remove')}>
                   <MinusCircleIcon
                     aria-hidden="true"
                     style={{ color: values.length === 1 ? disabledColor.value : null }}
@@ -113,7 +115,7 @@ export const ArrayParam: React.FC<ParameterProps> = (props) => {
         })}
       </FormGroup>
       <MultiColumnFieldFooter
-        addLabel="Add another value"
+        addLabel={t('pipelines-plugin~Add another value')}
         onAdd={() => {
           setDirty(true);
           onChange([...values, '']);

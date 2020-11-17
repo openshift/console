@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ExternalLink } from '@console/internal/components/utils';
 import { EventListenerKind } from '../resource-types';
 import { useEventListenerURL } from '../utils/triggers';
@@ -11,12 +12,13 @@ type EventListenerURLProps = {
 };
 
 const EventListenerURL: React.FC<EventListenerURLProps> = ({ eventListener, namespace }) => {
+  const { t } = useTranslation();
   const routeURL = useEventListenerURL(eventListener, namespace);
   return (
     routeURL && (
       <div className="odc-event-listener-url">
         <dl>
-          <dt>URL</dt>
+          <dt>{t('pipelines-plugin~URL')}</dt>
           <dd>
             <ExternalLink href={routeURL} text={routeURL} />
           </dd>

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Alert } from '@patternfly/react-core';
 import { LoadingBox } from '@console/internal/components/utils';
@@ -12,6 +13,7 @@ import './PipelineBuilderEditPage.scss';
 type PipelineBuilderEditPageProps = RouteComponentProps<{ ns: string; pipelineName: string }>;
 
 const PipelineBuilderEditPage: React.FC<PipelineBuilderEditPageProps> = (props) => {
+  const { t } = useTranslation();
   const [editPipeline, setEditPipeline] = React.useState<Pipeline>(null);
   const [error, setError] = React.useState<string>(null);
   const {
@@ -26,17 +28,20 @@ const PipelineBuilderEditPage: React.FC<PipelineBuilderEditPageProps> = (props) 
         setEditPipeline(res);
       })
       .catch(() => {
-        setError('Unable to load Pipeline');
+        setError(t('pipelines-plugin~Unable to load Pipeline'));
       });
-  }, [pipelineName, ns]);
+  }, [pipelineName, ns, t]);
 
   if (error) {
     // TODO: confirm verbiage with UX
     return (
       <div className="odc-pipeline-builder-edit-page">
         <Alert variant="danger" isInline title={error}>
-          Navigate back to the{' '}
-          <Link to={`/k8s/ns/${ns}/${referenceForModel(PipelineModel)}`}>Pipelines page</Link>.
+          {t('pipelines-plugin~Navigate back to the')}{' '}
+          <Link to={`/k8s/ns/${ns}/${referenceForModel(PipelineModel)}`}>
+            {t('pipelines-plugin~Pipelines page')}
+          </Link>
+          .
         </Alert>
       </div>
     );

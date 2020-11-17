@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { resourcePath } from '@console/internal/components/utils';
@@ -17,6 +18,7 @@ type PipelineRunItemProps = {
 };
 
 const PipelineRunItem: React.FC<PipelineRunItemProps> = ({ pipelineRun }) => {
+  const { t } = useTranslation();
   const {
     metadata: { name, namespace, creationTimestamp },
     status,
@@ -25,7 +27,7 @@ const PipelineRunItem: React.FC<PipelineRunItemProps> = ({ pipelineRun }) => {
   const lastUpdated = status
     ? status.completionTime || status.startTime || creationTimestamp
     : creationTimestamp;
-  const logDetails = getPLRLogSnippet(pipelineRun);
+  const logDetails = getPLRLogSnippet(pipelineRun, t);
 
   return (
     <li className="odc-pipeline-run-item list-group-item">
@@ -47,7 +49,7 @@ const PipelineRunItem: React.FC<PipelineRunItemProps> = ({ pipelineRun }) => {
           <Status status={pipelineRunStatus(pipelineRun) || 'Pending'} />
         </GridItem>
         <GridItem span={3} className="text-right">
-          <Link to={`${path}/logs`}>View logs</Link>
+          <Link to={`${path}/logs`}>{t('pipelines-plugin~View logs')}</Link>
         </GridItem>
         {logDetails && (
           <GridItem span={12}>

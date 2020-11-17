@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Formik, FormikHelpers } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { createModalLauncher, ModalComponentProps } from '@console/internal/components/factory';
 import { Pipeline } from '../../../../utils/pipeline-augment';
 import ModalStructure from '../common/ModalStructure';
@@ -13,6 +14,7 @@ type RemoveTriggerModalProps = ModalComponentProps & {
 };
 
 const RemoveTriggerModal: React.FC<RemoveTriggerModalProps> = ({ pipeline, close }) => {
+  const { t } = useTranslation();
   const initialValues: RemoveTriggerFormValues = {
     selectedTrigger: null,
   };
@@ -38,14 +40,14 @@ const RemoveTriggerModal: React.FC<RemoveTriggerModalProps> = ({ pipeline, close
     <Formik
       initialValues={initialValues}
       onSubmit={handleSubmit}
-      validationSchema={removeTriggerSchema}
+      validationSchema={removeTriggerSchema(t)}
     >
       {(formikProps) => (
         <ModalStructure
           {...formikProps}
-          submitBtnText="Remove"
+          submitBtnText={t('pipelines-plugin~Remove')}
           submitDanger
-          title="Remove Trigger"
+          title={t('pipelines-plugin~Remove Trigger')}
           close={close}
         >
           <RemoveTriggerForm pipeline={pipeline} />

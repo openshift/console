@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
 import { getBadgeFromType } from '@console/shared';
 import { withStartGuide } from '@console/internal/components/start-guide';
@@ -9,6 +10,7 @@ import PipelinesResourceList from './PipelinesResourceList';
 type PipelinesPageProps = RouteComponentProps<{ ns: string }>;
 
 export const PipelinesPage: React.FC<PipelinesPageProps> = (props) => {
+  const { t } = useTranslation();
   const {
     match: {
       params: { ns: namespace },
@@ -28,7 +30,9 @@ export const PipelinesPage: React.FC<PipelinesPageProps> = (props) => {
       title={PipelineModel.labelPlural}
       badge={getBadgeFromType(PipelineModel.badge)}
     >
-      Select a project to view the list of {PipelineModel.labelPlural}
+      {t('pipelines-plugin~Select a project to view the list of {{pipelinesPageTitle}}', {
+        pipelinesPageTitle: PipelineModel.labelPlural,
+      })}
     </CreateProjectListPage>
   );
 };
