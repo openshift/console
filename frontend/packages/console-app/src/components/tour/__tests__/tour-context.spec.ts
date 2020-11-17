@@ -1,6 +1,6 @@
 import * as redux from 'react-redux';
 import * as plugins from '@console/plugin-sdk';
-import { testHook } from '@console/shared/src/test-utils/hooks-utils';
+import { testHook } from '../../../../../../__tests__/utils/hooks-utils';
 import { TourState, tourReducer, useTourValuesForContext } from '../tour-context';
 import { TourActions } from '../const';
 import { TourDataType } from '../type';

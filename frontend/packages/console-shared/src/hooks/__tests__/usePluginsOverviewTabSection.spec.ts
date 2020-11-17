@@ -6,7 +6,7 @@ import {
   sampleKnativeRevisions,
 } from '@console/knative-plugin/src/topology/__tests__/topology-knative-test-data';
 import { OverviewItem } from '../../types/resource';
-import { testHook } from '../../test-utils/hooks-utils';
+import { testHook } from '../../../../../__tests__/utils/hooks-utils';
 import { usePluginsOverviewTabSection } from '../plugins-overview-tab-section';
 
 jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({

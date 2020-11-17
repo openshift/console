@@ -613,8 +613,10 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'import-from-samples',
       url: '/samples',
-      label: 'Samples',
-      description: 'Create an application from a code sample',
+      // t('devconsole~Samples')
+      label: '%devconsole~Samples%',
+      // t('devconsole~Create an application from a code sample')
+      description: '%devconsole~Create an application from a code sample%',
       icon: <LaptopCodeIcon />,
       accessReview: [
         BuildConfigModel,
@@ -635,8 +637,10 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'import-from-git',
       url: '/import',
-      label: 'From Git',
-      description: 'Import code from your Git repository to be built and deployed',
+      // t('devconsole~From Git')
+      label: '%devconsole~From Git%',
+      // t('devconsole~Import code from your Git repository to be built and deployed')
+      description: '%devconsole~Import code from your Git repository to be built and deployed%',
       icon: importGitIcon,
       accessReview: [
         BuildConfigModel,
@@ -657,8 +661,11 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'deploy-image',
       url: '/deploy-image',
-      label: 'Container Image',
-      description: 'Deploy an existing image from an image registry or image stream tag',
+      // t('devconsole~Container Image')
+      label: '%devconsole~Container Image%',
+      // t('devconsole~Deploy an existing image from an image registry or image stream tag')
+      description:
+        '%devconsole~Deploy an existing image from an image registry or image stream tag%',
       iconClass: 'pficon-image',
       accessReview: [
         BuildConfigModel,
@@ -680,8 +687,11 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'import-from-dockerfile',
       url: '/import?importType=docker',
-      label: 'From Dockerfile',
-      description: 'Import your Dockerfile from your Git repository to be built and deployed',
+      // t('devconsole~From Dockerfile')
+      label: '%devconsole~From Dockerfile%',
+      // t('devconsole~Import your Dockerfile from your Git repository to be built and deployed')
+      description:
+        '%devconsole~Import your Dockerfile from your Git repository to be built and deployed%',
       icon: dockerfileIcon,
       accessReview: [
         BuildConfigModel,
@@ -702,8 +712,10 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'import-yaml',
       url: '/k8s/ns/:namespace/import',
-      label: 'YAML',
-      description: 'Create resources from their YAML or JSON definitions',
+      // t('devconsole~YAML')
+      label: '%devconsole~YAML%',
+      // t('devconsole~Create resources from their YAML or JSON definitions')
+      description: '%devconsole~Create resources from their YAML or JSON definitions%',
       icon: yamlIcon,
     },
   },
@@ -712,8 +724,10 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'dev-catalog',
       url: '/catalog',
-      label: 'From Catalog',
-      description: 'Browse the catalog to discover, deploy and connect to services',
+      // t('devconsole~From Catalog')
+      label: '%devconsole~From Catalog%',
+      // t('devconsole~Browse the catalog to discover, deploy and connect to services')
+      description: '%devconsole~Browse the catalog to discover, deploy and connect to services%',
       icon: <CatalogIcon />,
     },
   },
@@ -722,8 +736,11 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'dev-catalog-databases',
       url: '/catalog?category=databases',
-      label: 'Database',
-      description: 'Browse the catalog to discover database services to add to your application',
+      // t('devconsole~Database')
+      label: '%devconsole~Database%',
+      // t('devconsole~Browse the catalog to discover database services to add to your application')
+      description:
+        '%devconsole~Browse the catalog to discover database services to add to your application%',
       icon: <DatabaseIcon />,
     },
   },
@@ -732,8 +749,11 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'operator-backed',
       url: '/catalog?kind=%5B"ClusterServiceVersion"%5D',
-      label: 'Operator Backed',
-      description: 'Browse the catalog to discover and deploy operator managed services',
+      // t('devconsole~Operator Backed')
+      label: '%devconsole~Operator Backed%',
+      // t('devconsole~Browse the catalog to discover and deploy operator managed services')
+      description:
+        '%devconsole~Browse the catalog to discover and deploy operator managed services%',
       icon: <BoltIcon />,
     },
   },
@@ -742,8 +762,10 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'helm',
       url: '/catalog?kind=%5B"HelmChart"%5D',
-      label: 'Helm Chart',
-      description: 'Browse the catalog to discover and install Helm Charts',
+      // t('devconsole~Helm Chart')
+      label: '%devconsole~Helm Chart%',
+      // t('devconsole~Browse the catalog to discover and install Helm Charts')
+      description: '%devconsole~Browse the catalog to discover and install Helm Charts%',
       icon: helmIcon,
     },
   },
