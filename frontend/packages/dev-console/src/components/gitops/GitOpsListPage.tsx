@@ -62,13 +62,9 @@ const GitOpsListPage: React.FC = () => {
         badge={
           <Split className="odc-gitops-list-page-heading" hasGutter>
             <SplitItem>
-              {argocdLink && (
-                <ExternalLink
-                  href={argocdLink.spec.href}
-                  text="Argo CD"
-                  additionalClassName="odc-gitops-list-page-heading__argocd"
-                />
-              )}
+              {argocdLink && <ExternalLink href={argocdLink.spec.href} text="Argo CD" />}
+            </SplitItem>
+            <SplitItem>
               <DevPreviewBadge />
             </SplitItem>
           </Split>
