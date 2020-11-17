@@ -265,6 +265,9 @@ const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
   );
 };
 
+const Null = () => null;
+const nullComponent = <Null />;
+
 type GraphSeries = GraphDataPoint[] | null;
 
 const Graph: React.FC<GraphProps> = React.memo(
@@ -340,7 +343,13 @@ const Graph: React.FC<GraphProps> = React.memo(
         width={width}
       >
         <ChartAxis style={xAxisStyle} tickCount={5} tickFormat={xTickFormat} />
-        <ChartAxis crossAxis={false} dependentAxis tickCount={6} tickFormat={yTickFormat} />
+        <ChartAxis
+          crossAxis={false}
+          dependentAxis
+          tickComponent={nullComponent}
+          tickCount={6}
+          tickFormat={yTickFormat}
+        />
         {isStack ? (
           <ChartStack>
             {data.map((values, i) => (
