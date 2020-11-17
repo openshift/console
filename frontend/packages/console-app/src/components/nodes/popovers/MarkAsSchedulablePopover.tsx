@@ -32,7 +32,7 @@ const MarkAsSchedulablePopover: React.FC<MarkAsSchedulablePopoverProps> = ({ nod
     >
       <p>
         {t(
-          'nodes~No new Pods or workloads will be placed on this Node until it&apos;s marked as schedulable.',
+          "nodes~No new Pods or workloads will be placed on this Node until it's marked as schedulable.",
         )}
       </p>
       <Button isInline variant="link" onClick={onClickMarkAsSchedulable}>

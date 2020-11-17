@@ -79,6 +79,6 @@
   "The debug pod failed. ": "The debug pod failed. ",
   "An error occurred. Please try again": "An error occurred. Please try again",
   "Scheduling disabled": "Scheduling disabled",
-  "No new Pods or workloads will be placed on this Node until it&apos;s marked as schedulable.": "No new Pods or workloads will be placed on this Node until it&apos;s marked as schedulable.",
+  "No new Pods or workloads will be placed on this Node until it's marked as schedulable.": "No new Pods or workloads will be placed on this Node until it's marked as schedulable.",
   "Mark as schedulable": "Mark as schedulable"
 }
