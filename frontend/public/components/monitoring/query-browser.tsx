@@ -374,6 +374,7 @@ const Graph: React.FC<GraphProps> = React.memo(
           <ChartLegend
             data={legendData}
             groupComponent={<LegendContainer />}
+            gutter={30}
             itemsPerRow={4}
             orientation="vertical"
             style={{
