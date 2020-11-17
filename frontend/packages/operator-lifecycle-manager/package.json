@@ -19,9 +19,6 @@
       "olmDescriptors": [
         "integration-tests/scenarios/descriptors.scenario.ts"
       ],
-      "olmOperatorHub": [
-        "integration-tests/scenarios/operator-hub.scenario.ts"
-      ],
       "all": [
         "integration-tests/**/*.scenario.ts"
       ]

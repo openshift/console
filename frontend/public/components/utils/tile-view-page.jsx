@@ -760,6 +760,7 @@ export class TileViewPage extends React.Component {
         onActivate={() => this.selectCategory(id)}
         hasActiveDescendant={hasActiveDescendant(selectedCategoryId, category)}
         shown={shown}
+        data-test={id}
       >
         {subcategories && (
           <VerticalTabs restrictTabs activeTab={isActiveTab(selectedCategoryId, category)}>
