@@ -66,9 +66,6 @@ const testSuites = {
   crudBasic: suite(['tests/crud.scenario.ts']),
   monitoring: suite(['tests/monitoring.scenario.ts']),
   newApp: suite(['tests/overview/overview.scenario.ts', 'tests/deploy-image.scenario.ts']),
-  olmFull: suite([
-    '../packages/operator-lifecycle-manager/integration-tests/scenarios/descriptors.scenario.ts',
-  ]),
   performance: suite(['tests/performance.scenario.ts']),
   serviceCatalog: suite([
     'tests/service-catalog/service-catalog.scenario.ts',
@@ -119,7 +116,6 @@ const testSuites = {
     'tests/overview/overview.scenario.ts',
     'tests/secrets.scenario.ts',
     'tests/storage.scenario.ts',
-    'tests/olm/**/*.scenario.ts',
     'tests/service-catalog/**/*.scenario.ts',
     'tests/filter.scenario.ts',
     'tests/modal-annotations.scenario.ts',

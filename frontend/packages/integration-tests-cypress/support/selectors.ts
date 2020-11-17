@@ -11,7 +11,6 @@ declare global {
       byTestDropDownMenu(selector: string): Chainable<Element>;
       byTestOperatorRow(selector: string): Chainable<Element>;
       byTestSectionHeading(selector: string): Chainable<Element>;
-      byTestDropdownMenu(selector: string): Chainable<Element>;
       byTestOperandLink(selector: string): Chainable<Element>;
     }
   }
@@ -52,10 +51,6 @@ Cypress.Commands.add('byTestOperatorRow', (selector: string) =>
 
 Cypress.Commands.add('byTestSectionHeading', (selector: string) =>
   cy.get(`[data-test-section-heading="${selector}"]`),
-);
-
-Cypress.Commands.add('byTestDropdownMenu', (selector: string) =>
-  cy.get(`[data-test-dropdown-menu="${selector}"]`),
 );
 
 Cypress.Commands.add('byTestOperandLink', (selector: string) =>

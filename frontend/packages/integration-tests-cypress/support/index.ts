@@ -71,3 +71,15 @@ export const editKind = (kind: string, humanizeKind: boolean) =>
   actionOnKind(actions.edit, kind, humanizeKind);
 export const deleteKind = (kind: string, humanizeKind: boolean) =>
   actionOnKind(actions.delete, kind, humanizeKind);
+
+export const create = (obj) => {
+  const filename = [
+    Cypress.config('screenshotsFolder')
+      .toString()
+      .replace('/cypress/screenshots', ''),
+    `${obj.metadata.name}.${obj.kind.toLowerCase()}.json`,
+  ].join('/');
+  cy.writeFile(filename, JSON.stringify(obj));
+  cy.exec(`kubectl create -f ${filename}`);
+  cy.exec(`rm ${filename}`);
+};

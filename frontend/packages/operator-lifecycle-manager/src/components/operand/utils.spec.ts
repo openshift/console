@@ -1,4 +1,3 @@
-import { testCRD } from '../../../integration-tests/mocks';
 import { getJSONSchemaOrder } from '@console/shared/src/components/dynamic-form/utils';
 import { ServiceAccountModel } from '@console/internal/models';
 import { capabilitiesToUISchema } from './utils';
@@ -19,7 +18,63 @@ describe('getJSONSchemaOrder', () => {
       },
     };
     const uiOrder = getJSONSchemaOrder(
-      testCRD.spec.validation.openAPIV3Schema.properties.spec,
+      {
+        type: 'object',
+        required: ['password', 'select'],
+        properties: {
+          password: {
+            type: 'string',
+            minLength: 1,
+            maxLength: 25,
+            pattern: '^[a-zA-Z0-9._\\-%]*$',
+          },
+          number: {
+            type: 'integer',
+            minimum: 2,
+            maximum: 4,
+          },
+          select: {
+            type: 'string',
+            title: 'Select',
+            enum: ['DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL'],
+          },
+          fieldGroup: {
+            type: 'object',
+            properties: {
+              itemOne: {
+                type: 'string',
+              },
+              itemTwo: {
+                type: 'integer',
+              },
+            },
+          },
+          arrayFieldGroup: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                itemOne: {
+                  title: 'Item One',
+                  type: 'string',
+                },
+                itemTwo: {
+                  title: 'Item Two',
+                  type: 'integer',
+                },
+              },
+            },
+          },
+          hiddenFieldGroup: {
+            type: 'object',
+            properties: {
+              hiddenItem: {
+                type: 'object',
+              },
+            },
+          },
+        },
+      },
       testUISchema,
     );
     expect(uiOrder['ui:order']).toEqual([

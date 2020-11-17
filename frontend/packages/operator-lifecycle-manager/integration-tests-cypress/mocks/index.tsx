@@ -1,5 +1,5 @@
-import { testName } from '@console/internal-integration-tests/protractor.conf';
-import { SpecCapability, StatusCapability } from '../src/components/descriptors/types';
+import { testName } from '../../../integration-tests-cypress/support';
+import { SpecCapability, StatusCapability } from '../../src/components/descriptors/types';
 
 const defaultValueFor = <C extends SpecCapability | StatusCapability>(capability: C) => {
   switch (capability) {
