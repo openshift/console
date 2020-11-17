@@ -9,6 +9,8 @@ import {
   useFormikValidationFix,
   useDebounceCallback,
 } from '@console/shared';
+import { UNASSIGNED_KEY, CREATE_APPLICATION_KEY } from '@console/topology/src/const';
+import { BuildStrategyType } from '@console/internal/components/build';
 import { GitReadableTypes, GitTypes } from '../import-types';
 import { detectGitType, detectGitRepoName } from '../import-validation-utils';
 import {
@@ -20,8 +22,6 @@ import {
 import FormSection from '../section/FormSection';
 import SampleRepo from './SampleRepo';
 import AdvancedGitOptions from './AdvancedGitOptions';
-import { UNASSIGNED_KEY, CREATE_APPLICATION_KEY } from '../../../const';
-import { BuildStrategyType } from '@console/internal/components/build';
 
 export interface GitSectionProps {
   showSample?: boolean;

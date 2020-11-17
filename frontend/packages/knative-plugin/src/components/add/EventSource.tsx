@@ -13,7 +13,7 @@ import {
   k8sCreate,
   getGroupVersionKind,
 } from '@console/internal/module/k8s';
-import { sanitizeApplicationValue } from '@console/dev-console/src/utils/application-utils';
+import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import { isPerspective, Perspective, useExtensions } from '@console/plugin-sdk';
 import { eventSourceValidationSchema } from './eventSource-validation-utils';
 import EventSourceForm from './EventSourceForm';

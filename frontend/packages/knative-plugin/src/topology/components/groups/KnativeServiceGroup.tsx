@@ -19,20 +19,22 @@ import {
   useCombineRefs,
   WithCreateConnectorProps,
 } from '@patternfly/react-topology';
-import SvgBoxedText from '@console/dev-console/src/components/svg/SvgBoxedText';
 import {
   NodeShadows,
   NODE_SHADOW_FILTER_ID,
   NODE_SHADOW_FILTER_ID_HOVER,
   nodeDragSourceSpec,
   Decorator,
+  BuildDecorator,
+} from '@console/topology/src/components/graph-view';
+import {
   useSearchFilter,
   useDisplayFilters,
   useAllowEdgeCreation,
   getFilterById,
   SHOW_LABELS_FILTER_ID,
-} from '@console/dev-console/src/components/topology';
-import BuildDecorator from '@console/dev-console/src/components/topology/components/nodes/build-decorators/BuildDecorator';
+} from '@console/topology/src/filters';
+import SvgBoxedText from '@console/topology/src/components/svg/SvgBoxedText';
 import { TYPE_KNATIVE_SERVICE, EVENT_MARKER_RADIUS } from '../../const';
 import RevisionTrafficSourceAnchor from '../anchors/RevisionTrafficSourceAnchor';
 

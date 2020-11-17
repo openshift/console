@@ -1,4 +1,3 @@
-export const ALLOW_SERVICE_BINDING = 'ALLOW_SERVICE_BINDING';
 export const FLAG_OPENSHIFT_GITOPS = 'OPENSHIFT_GITOPS';
 
 /** URL query params that adjust scope / purpose of the page */
@@ -10,15 +9,12 @@ export enum QUERY_PROPERTIES {
   CONTEXT_ACTION = 'action',
 }
 
-export const RESOURCE_NAME_TRUNCATE_LENGTH = 13;
-
-export const CREATE_APPLICATION_KEY = '#CREATE_APPLICATION_KEY#';
-export const UNASSIGNED_KEY = '#UNASSIGNED_APP#';
-
-export const CREATE_APPLICATION_LABEL = 'Create application';
-export const UNASSIGNED_LABEL = 'no application group';
-
 /** connects to action for resources */
 export const INCONTEXT_ACTIONS_CONNECTS_TO = 'connectsTo';
 /** connector action for service binding */
 export const INCONTEXT_ACTIONS_SERVICE_BINDING = 'serviceBinding';
+
+export enum CONNECTOR_INCONTEXT_ACTIONS {
+  /** connects to action for resources */
+  connectsTo = 'connectsTo',
+}

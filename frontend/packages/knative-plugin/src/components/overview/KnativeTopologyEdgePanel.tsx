@@ -9,8 +9,8 @@ import {
   SidebarSectionHeading,
   ExternalLink,
 } from '@console/internal/components/utils';
-import { edgeActions } from '@console/dev-console/src/components/topology/actions/edgeActions';
-import { TopologyDataObject } from '@console/dev-console/src/components/topology/topology-types';
+import { edgeActions } from '@console/topology/src/actions';
+import { TopologyDataObject } from '@console/topology/src/topology-types';
 import { TYPE_EVENT_SOURCE_LINK, TYPE_REVISION_TRAFFIC } from '../../topology/const';
 import { setSinkSource } from '../../actions/sink-source';
 

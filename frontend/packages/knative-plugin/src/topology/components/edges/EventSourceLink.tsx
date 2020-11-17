@@ -8,7 +8,8 @@ import {
   WithSourceDragProps,
   WithTargetDragProps,
 } from '@patternfly/react-topology';
-import { getResource, BaseEdge } from '@console/dev-console/src/components/topology';
+import { getResource } from '@console/topology/src/utils';
+import { BaseEdge } from '@console/topology/src/components/graph-view';
 import { EVENT_MARKER_RADIUS } from '../../const';
 import './EventSourceLink.scss';
 

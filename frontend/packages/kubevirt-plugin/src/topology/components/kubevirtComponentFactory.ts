@@ -14,15 +14,14 @@ import {
   NodeComponentProps,
   nodeDragSourceSpec,
   nodeDropTargetSpec,
-  withEditReviewAccess,
-  withContextMenu,
-  createMenuItems,
-  TopologyDataObject,
-  getResource,
   createConnectorCallback,
   CreateConnector,
-} from '@console/dev-console/src/components/topology';
-import { ModifyApplication } from '@console/dev-console/src/actions/modify-application';
+  withContextMenu,
+  createMenuItems,
+} from '@console/topology/src/components/graph-view';
+import { withEditReviewAccess, getResource } from '@console/topology/src/utils';
+import { TopologyDataObject } from '@console/topology/src/topology-types';
+import { ModifyApplication } from '@console/topology/src/actions';
 import { vmMenuActions } from '../../components/vms/menu-actions';
 import { VmNode } from './nodes/VmNode';
 import { TYPE_VIRTUAL_MACHINE } from './const';

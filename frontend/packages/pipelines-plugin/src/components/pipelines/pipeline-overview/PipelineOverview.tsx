@@ -9,8 +9,8 @@ import {
   resourcePath,
 } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { TopologyOverviewItem } from '@console/topology/src/topology-types';
 import { PipelineRunModel, PipelineModel } from '../../../models';
-import { TopologyOverviewItem } from '@console/dev-console/src/components/topology/topology-types';
 import TriggerLastRunButton from './TriggerLastRunButton';
 import PipelineRunItem from './PipelineRunItem';
 import PipelineStartButton from './PipelineStartButton';

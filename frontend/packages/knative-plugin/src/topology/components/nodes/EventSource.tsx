@@ -12,16 +12,19 @@ import {
   WithDragNodeProps,
   createSvgIdUrl,
 } from '@patternfly/react-topology';
-import SvgBoxedText from '@console/dev-console/src/components/svg/SvgBoxedText';
+import SvgBoxedText from '@console/topology/src/components/svg/SvgBoxedText';
 import {
   NodeShadows,
   NODE_SHADOW_FILTER_ID_HOVER,
   NODE_SHADOW_FILTER_ID,
+} from '@console/topology/src/components/graph-view';
+import {
   useSearchFilter,
   useDisplayFilters,
   getFilterById,
   SHOW_LABELS_FILTER_ID,
-} from '@console/dev-console/src/components/topology';
+} from '@console/topology/src/filters';
+
 import { getEventSourceIcon } from '../../../utils/get-knative-icon';
 
 import './EventSource.scss';

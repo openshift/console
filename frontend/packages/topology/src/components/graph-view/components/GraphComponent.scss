@@ -1,0 +1,27 @@
+@import '../../topology-utils';
+
+.odc-m-drag-active {
+  cursor: no-drop;
+  &.odc-m-valid-drop-target {
+    cursor: grab;
+    .odc-m-drag-create {
+      cursor: none;
+    }
+  }
+}
+
+.topology-connector__remove-bg {
+  fill: #{$interactive-stroke-color};
+  cursor: pointer;
+  .odc-m-drag-active & {
+    display: none;
+  }
+}
+
+.topology-connector__remove-icon {
+  color: var(--pf-global--Color--light-100);
+  cursor: pointer;
+  .odc-m-drag-active & {
+    display: none;
+  }
+}

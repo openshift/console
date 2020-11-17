@@ -10,7 +10,8 @@
     "test": "yarn --cwd ../.. test packages/knative-plugin"
   },
   "dependencies": {
-    "@console/plugin-sdk": "0.0.0-fixed"
+    "@console/plugin-sdk": "0.0.0-fixed",
+    "@console/topology": "0.0.0-fixed"
   },
   "consolePlugin": {
     "entry": "src/plugin.tsx",

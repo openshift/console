@@ -1,9 +1,9 @@
 import * as yup from 'yup';
 import * as _ from 'lodash';
 import { TFunction } from 'i18next';
+import { CREATE_APPLICATION_KEY } from '@console/topology/src/const';
 import { convertToBaseValue } from '@console/internal/components/utils';
 import { isInteger } from '../../utils/yup-validation-util';
-import { CREATE_APPLICATION_KEY } from '../../const';
 import { Resources } from './import-types';
 
 const hostnameRegex = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/;

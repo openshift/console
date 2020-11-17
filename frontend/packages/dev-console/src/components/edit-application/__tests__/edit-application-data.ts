@@ -1,6 +1,6 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ServiceModel } from '@console/knative-plugin';
-import { UNASSIGNED_KEY } from '../../../const';
+import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { DeployImageFormData, GitImportFormData, Resources } from '../../import/import-types';
 import { AppResources } from '../edit-application-types';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';

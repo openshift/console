@@ -11,12 +11,12 @@ import {
   SecretModel,
   ServiceModel,
 } from '@console/internal/models';
+import { ALLOW_SERVICE_BINDING_FLAG } from '@console/topology/src/const';
 import {
   allCatalogImageResourceAccess,
   allImportResourceAccess,
   serviceBindingAvailable,
 } from '../actions/add-resources';
-import { ALLOW_SERVICE_BINDING } from '../const';
 
 const resourceAttributes = (model: K8sKind, namespace: string): AccessReviewResourceAttributes => {
   return {
@@ -40,7 +40,7 @@ export const useAddToProjectAccess = (activeNamespace: string): string[] => {
   const routeAccess = useAccessReview(resourceAttributes(RouteModel, activeNamespace));
   const serviceAccess = useAccessReview(resourceAttributes(ServiceModel, activeNamespace));
 
-  const serviceBindingEnabled = useFlag(ALLOW_SERVICE_BINDING);
+  const serviceBindingEnabled = useFlag(ALLOW_SERVICE_BINDING_FLAG);
 
   return React.useMemo(() => {
     const createResourceAccess: string[] = [];

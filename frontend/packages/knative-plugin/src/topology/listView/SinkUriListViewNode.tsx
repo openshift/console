@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { observer } from '@patternfly/react-topology';
+import { OdcBaseNode } from '@console/topology/src/elements';
 import {
-  OdcBaseNode,
   TopologyListViewNode,
   TypedResourceBadgeCell,
-} from '@console/dev-console/src/components/topology';
+} from '@console/topology/src/components/list-view';
 import { DataListCell } from '@patternfly/react-core';
 
 interface SinkUriListViewNodeProps {

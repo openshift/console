@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as cx from 'classnames';
 import { NamespaceBar } from '@console/internal/components/namespace';
-import ApplicationSelector from './dropdown/ApplicationSelector';
+import NamespaceBarApplicationSelector from '@console/topology/src/components/dropdowns/NamespaceBarApplicationSelector';
 
 import './NamespacedPage.scss';
 
@@ -34,7 +34,7 @@ const NamespacedPage: React.FC<NamespacedPageProps> = ({
       onNamespaceChange={onNamespaceChange}
       hideProjects={hideProjects}
     >
-      {!hideApplications && <ApplicationSelector disabled={disabled} />}
+      {!hideApplications && <NamespaceBarApplicationSelector disabled={disabled} />}
       {toolbar && <div className="odc-namespaced-page__toolbar">{toolbar}</div>}
     </NamespaceBar>
     <div

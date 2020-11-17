@@ -4,8 +4,7 @@ import {
   TopologyDataModelFactory,
   TopologyDisplayFilters,
   TopologyCreateConnector,
-} from '@console/dev-console/src/extensions/topology';
-
+} from '@console/topology/src/extensions';
 import {
   getIsKnativeResource,
   getKnativeComponentFactory,

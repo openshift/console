@@ -12,19 +12,21 @@ import { Edge, EdgeModel, Model, Node, NodeModel, NodeShape } from '@patternfly/
 import {
   TopologyDataResources,
   TopologyDataObject,
+  TopologyOverviewItem,
+} from '@console/topology/src/topology-types';
+import { NODE_WIDTH, NODE_HEIGHT, NODE_PADDING } from '@console/topology/src/const';
+import {
   getTopologyGroupItems,
   createTopologyNodeData,
   getTopologyNodeItem,
   mergeGroup,
+  WorkloadModelProps,
+} from '@console/topology/src/data-transforms/transform-utils';
+import {
   filterBasedOnActiveApplication,
   getTopologyResourceObject,
-  TopologyOverviewItem,
-  NODE_WIDTH,
-  NODE_HEIGHT,
-  NODE_PADDING,
-  WorkloadModelProps,
   getResource,
-} from '@console/dev-console/src/components/topology';
+} from '@console/topology/src/utils/topology-utils';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { DeploymentModel, PodModel } from '@console/internal/models';
 import { RootState } from '@console/internal/redux';

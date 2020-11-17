@@ -1,0 +1,60 @@
+@import '../../components/topology-utils';
+
+.odc-operator-backed-service {
+  outline: none;
+  cursor: pointer;
+
+  .odc-m-drag-active & {
+    pointer-events: none;
+  }
+
+  &__bg {
+    fill: $group-node-fill-color;
+    fill-opacity: $group-node-fill-opacity;
+    stroke: $group-node-stroke-color;
+    stroke-width: $group-node-stroke-width;
+    stroke-dasharray: $group-node-stroke-dasharray;
+  }
+
+  &.is-filtered &__bg {
+    stroke: $filtered-stroke-color;
+    stroke-width: $group-node-filtered-stroke-width;
+    stroke-dasharray: none;
+  }
+
+  &.is-selected &__bg {
+    fill: $selected-fill-color;
+    stroke: $selected-stroke-color;
+    stroke-width: $group-node-selected-stroke-width;
+    stroke-dasharray: $group-node-stroke-dasharray;
+  }
+
+  &.is-highlight &__bg {
+    fill: $pf-color-black-150;
+    stroke: $interactive-stroke-color;
+  }
+
+  &.is-dropTarget &__bg {
+    fill: $interactive-fill-color;
+    stroke: $interactive-stroke-color;
+  }
+}
+
+.odc-m-drag-active,
+.odc-m-filter-active {
+  .odc-operator-backed-service {
+    opacity: $de-emphasize-opacity;
+    &.is-highlight,
+    &.is-dragging {
+      opacity: 1;
+    }
+  }
+}
+
+.odc-m-filter-active:not(.odc-m-drag-active) {
+  .odc-operator-backed-service {
+    &.is-filtered {
+      opacity: 1;
+    }
+  }
+}

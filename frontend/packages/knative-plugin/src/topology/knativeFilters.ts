@@ -1,11 +1,6 @@
 import { Model } from '@patternfly/react-topology';
-import {
-  DisplayFilters,
-  getFilterById,
-  isExpanded,
-  SHOW_GROUPS_FILTER_ID,
-  TopologyDisplayFilterType,
-} from '@console/dev-console/src/components/topology';
+import { getFilterById, isExpanded, SHOW_GROUPS_FILTER_ID } from '@console/topology/src/filters';
+import { DisplayFilters, TopologyDisplayFilterType } from '@console/topology/src/topology-types';
 import {
   TYPE_EVENT_SOURCE,
   TYPE_KNATIVE_REVISION,

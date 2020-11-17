@@ -3,7 +3,7 @@ import {
   TopologyComponentFactory,
   TopologyDataModelFactory,
   TopologyDisplayFilters,
-} from '@console/dev-console/src/extensions/topology';
+} from '@console/topology/src/extensions';
 import { TemplateModel } from '@console/internal/models';
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
 import * as models from '../models';

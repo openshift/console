@@ -9,7 +9,8 @@ import {
   WithTargetDragProps,
   WithContextMenuProps,
 } from '@patternfly/react-topology';
-import { getTopologyResourceObject, BaseEdge } from '@console/dev-console/src/components/topology';
+import { getTopologyResourceObject } from '@console/topology/src/utils';
+import { BaseEdge } from '@console/topology/src/components/graph-view';
 import { EventingBrokerModel } from '@console/knative-plugin/src/models';
 import { EVENT_MARKER_RADIUS } from '../../const';
 

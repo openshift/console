@@ -3,12 +3,14 @@ import { Node, observer } from '@patternfly/react-topology';
 import { DataListCell } from '@patternfly/react-core';
 import {
   CpuCellComponent,
-  getTopologyResourceObject,
   MemoryCellComponent,
   TopologyListViewNode,
-} from '@console/dev-console/src/components/topology';
-import { useOverviewMetrics } from '@console/dev-console/src/utils/useOverviewMetrics';
-import { getPodMetricStats } from '@console/dev-console/src/components/topology/list-view/metricStats';
+} from '@console/topology/src/components/list-view';
+import {
+  getTopologyResourceObject,
+  useOverviewMetrics,
+  getPodMetricStats,
+} from '@console/topology/src/utils';
 import { usePodsForVm } from '../../utils/usePodsForVm';
 
 interface VmListViewNodeProps {

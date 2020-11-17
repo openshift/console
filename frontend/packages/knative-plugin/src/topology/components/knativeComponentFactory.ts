@@ -14,14 +14,14 @@ import {
   withContextMenu,
   withNoDrop,
   nodeDragSourceSpec,
-  withEditReviewAccess,
   createMenuItems,
-  getResource,
   createConnectorCallback,
   CreateConnector,
   EditableDragOperationType,
-} from '@console/dev-console/src/components/topology';
-import { ModifyApplication } from '@console/dev-console/src/actions/modify-application';
+} from '@console/topology/src/components/graph-view';
+import { withEditReviewAccess, getResource } from '@console/topology/src/utils';
+import { ModifyApplication } from '@console/topology/src/actions';
+
 import { Kebab, kebabOptionsToMenu } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { RevisionModel } from '../../models';

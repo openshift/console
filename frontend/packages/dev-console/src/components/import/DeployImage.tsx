@@ -7,8 +7,8 @@ import { history } from '@console/internal/components/utils';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { sanitizeApplicationValue } from '../../utils/application-utils';
-import { ALLOW_SERVICE_BINDING } from '../../const';
+import { ALLOW_SERVICE_BINDING_FLAG } from '@console/topology/src/const';
+import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import { DeployImageFormData, FirehoseList, Resources } from './import-types';
 import { createOrUpdateDeployImageResources } from './deployImage-submit-utils';
 import { deployValidationSchema } from './deployImage-validation-utils';
@@ -188,7 +188,7 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => {
 
   return {
     activeApplication: activeApplication !== ALL_APPLICATIONS_KEY ? activeApplication : '',
-    serviceBindingAvailable: state.FLAGS.get(ALLOW_SERVICE_BINDING),
+    serviceBindingAvailable: state.FLAGS.get(ALLOW_SERVICE_BINDING_FLAG),
   };
 };
 

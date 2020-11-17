@@ -9,7 +9,7 @@ import {
 } from '@patternfly/react-topology';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
-import { getResource } from '@console/dev-console/src/components/topology';
+import { getResource } from '@console/topology/src/utils';
 import KnativeServiceNode from './KnativeServiceNode';
 import KnativeServiceGroup from './KnativeServiceGroup';
 

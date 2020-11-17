@@ -14,3 +14,4 @@ export * from './label-filter';
 export * from './alert-utils';
 export * from './operator-utils';
 export * from './helm-utils';
+export * from './hpa-utils';

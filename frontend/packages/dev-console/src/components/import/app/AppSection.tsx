@@ -3,9 +3,9 @@ import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { TextInputTypes } from '@patternfly/react-core';
 import { InputField, TextAreaField } from '@console/shared';
+import ApplicationSelector from '@console/topology/src/components/dropdowns/ApplicationSelector';
 import { ProjectData } from '../import-types';
 import FormSection from '../section/FormSection';
-import ApplicationSelector from './ApplicationSelector';
 
 export interface AppSectionProps {
   project: ProjectData;

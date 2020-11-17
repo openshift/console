@@ -19,22 +19,25 @@ import {
 } from '@patternfly/react-topology';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import SvgBoxedText from '@console/dev-console/src/components/svg/SvgBoxedText';
+import SvgBoxedText from '@console/topology/src/components/svg/SvgBoxedText';
 import {
-  useDisplayFilters,
-  getResource,
-  useSearchFilter,
-  useAllowEdgeCreation,
-  NODE_SHADOW_FILTER_ID,
-  NODE_SHADOW_FILTER_ID_HOVER,
   NodeShadows,
-  TopologyDataObject,
+  NODE_SHADOW_FILTER_ID_HOVER,
+  NODE_SHADOW_FILTER_ID,
+} from '@console/topology/src/components/graph-view';
+import {
+  useSearchFilter,
+  useDisplayFilters,
+  useAllowEdgeCreation,
   getFilterById,
   SHOW_LABELS_FILTER_ID,
-} from '@console/dev-console/src/components/topology';
-import './VmNode.scss';
+} from '@console/topology/src/filters';
+import { getResource } from '@console/topology/src/utils';
+import { TopologyDataObject } from '@console/topology/src/topology-types';
 import { VMStatus } from '../../../constants/vm/vm-status';
 import { VMNodeData } from '../../types';
+
+import './VmNode.scss';
 
 export type VmNodeProps = {
   element: Node<NodeModel, TopologyDataObject<VMNodeData>>;

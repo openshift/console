@@ -3,7 +3,6 @@ import { safeJSToYAML, safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import {
   HorizontalPodAutoscalerKind,
   HPAMetric,
-  K8sResourceCommon,
   K8sResourceKind,
   referenceForModel,
 } from '@console/internal/module/k8s';
@@ -162,18 +161,6 @@ export const getInvalidUsageError = (
   }
 
   return null;
-};
-
-export const doesHpaMatch = (workload: K8sResourceCommon) => (
-  thisHPA: HorizontalPodAutoscalerKind,
-) => {
-  const {
-    apiVersion,
-    kind,
-    metadata: { name },
-  } = workload;
-  const ref = thisHPA?.spec?.scaleTargetRef;
-  return ref && ref.apiVersion === apiVersion && ref.kind === kind && ref.name === name;
 };
 
 export const hasCustomMetrics = (hpa?: HorizontalPodAutoscalerKind): boolean => {

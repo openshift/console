@@ -1,9 +1,7 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Model } from '@patternfly/react-topology';
-import {
-  TopologyDataResources,
-  addToTopologyDataModel,
-} from '@console/dev-console/src/components/topology';
+import { TopologyDataResources } from '@console/topology/src/topology-types';
+import { addToTopologyDataModel } from '@console/topology/src/data-transforms/transform-utils';
 import {
   getRevisionsData,
   transformKnNodeData,
