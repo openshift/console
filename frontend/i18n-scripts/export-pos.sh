@@ -17,3 +17,8 @@ for d in */ ; do
     done
   fi
 done
+
+cd ..
+# remove po files that don't contain untranslated strings
+# so we only send the translation team what's necessary
+grep -r -L -Z 'msgstr ""' po-files | xargs rm
