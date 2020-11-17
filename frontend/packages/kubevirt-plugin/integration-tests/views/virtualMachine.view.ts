@@ -1,4 +1,4 @@
-import { $, $$ } from 'protractor';
+import { $, $$, element, by } from 'protractor';
 
 export const consoleSelectorDropdownId = '#console-type-selector';
 export const consoleNetworkInterfaceDropdownId = '#nic-dropdown';
@@ -67,11 +67,15 @@ export const vmDetailTimeZone = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'timezone'));
 export const vmDetailActiveUsersListGuestAgentUnavail = () => $('#guest-agent-unavailable-msg');
 export const vmDetailActiveUsersListNoUsers = $('#no-active-users-msg');
-
+export const vmDetailsActiveUsersList = element(
+  by.xpath('//*[@aria-label="Users"]//*[@data-key="0-0"]//td'),
+);
 export const vmDetailstatusButton = (namespace, name) =>
   $(`${vmDetailItemId(namespace, name, 'vm-statuses')} > .pf-c-button.pf-m-link.pf-m-inline`);
 
 export const vmDetailService = (serviceName) => $(`[data-test-id="${serviceName}"]`);
+
+export const vmLoggedInUsers = element(by.xpath('//a[contains(@href,"logged-in-users")]'));
 
 // Scheduling view
 export const vmDetailDedicatedResources = (namespace, vmName) =>
