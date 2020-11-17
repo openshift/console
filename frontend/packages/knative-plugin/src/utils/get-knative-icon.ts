@@ -16,7 +16,7 @@ import {
   EventSourcePingModel,
   EventSourceSinkBindingModel,
 } from '../models';
-import { EVENT_SOURCE_ICON } from '../const';
+import { EVENT_SOURCE_ICON, CAMEL_KAMELET_ICON } from '../const';
 
 const getEventSourceIconFromKind = (kind: string): string => {
   switch (kindForReference(kind)) {
@@ -39,7 +39,10 @@ const getEventSourceIconFromKind = (kind: string): string => {
 };
 
 export const getEventSourceIcon = (kind: string, obj?: K8sResourceKind) => {
-  return obj && isValidUrl(obj.metadata?.annotations?.[EVENT_SOURCE_ICON])
-    ? obj.metadata?.annotations?.[EVENT_SOURCE_ICON]
+  const objAnnotations = obj?.metadata?.annotations;
+  return isValidUrl(objAnnotations?.[EVENT_SOURCE_ICON])
+    ? objAnnotations?.[EVENT_SOURCE_ICON]
+    : isValidUrl(objAnnotations?.[CAMEL_KAMELET_ICON])
+    ? objAnnotations?.[CAMEL_KAMELET_ICON]
     : getEventSourceIconFromKind(kind);
 };

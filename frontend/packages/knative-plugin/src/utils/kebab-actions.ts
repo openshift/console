@@ -13,6 +13,7 @@ import {
   EventingSubscriptionModel,
   EventingTriggerModel,
   EventingBrokerModel,
+  CamelKameletBindingModel,
 } from '../models';
 import {
   getDynamicEventSourcesModelRefs,
@@ -26,7 +27,10 @@ export const getKebabActionsForKind = (resourceKind: K8sKind): KebabAction[] => 
     if (referenceForModel(resourceKind) === referenceForModel(ServiceModel)) {
       menuActions.push(setTrafficDistribution, AddHealthChecks, EditApplication, EditHealthChecks);
     }
-    if (_.includes(eventSourceModelrefs, referenceForModel(resourceKind))) {
+    if (
+      _.includes(eventSourceModelrefs, referenceForModel(resourceKind)) ||
+      referenceForModel(resourceKind) === referenceForModel(CamelKameletBindingModel)
+    ) {
       menuActions.push(setSinkSource);
     }
     if (

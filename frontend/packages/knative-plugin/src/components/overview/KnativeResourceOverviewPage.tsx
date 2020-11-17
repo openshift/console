@@ -10,6 +10,7 @@ import {
   KNATIVE_SERVING_APIGROUP,
   KNATIVE_EVENT_MESSAGE_APIGROUP,
   KNATIVE_EVENTING_APIGROUP,
+  CAMEL_APIGROUP,
 } from '../../const';
 import { RevisionModel } from '../../models';
 import { getRevisionActions } from '../../actions/getRevisionActions';
@@ -102,6 +103,7 @@ const mapStateToProps = (state: RootState): StateProps => {
           model.apiGroup === KNATIVE_SERVING_APIGROUP ||
           model.apiGroup === KNATIVE_EVENTING_APIGROUP ||
           model.apiGroup === KNATIVE_EVENT_MESSAGE_APIGROUP ||
+          model.apiGroup === CAMEL_APIGROUP ||
           isDynamicEventResourceKind(referenceForModel(model)) ||
           isEventingChannelResourceKind(referenceForModel(model)),
       ),

@@ -8,6 +8,7 @@ import {
   KNATIVE_EVENT_MESSAGE_APIGROUP,
   KNATIVE_EVENTING_APIGROUP,
   STRIMZI_KAFKA_APIGROUP,
+  CAMEL_APIGROUP,
 } from './const';
 
 const apiVersion = 'v1';
@@ -279,7 +280,7 @@ export const EventingTriggerModel: K8sKind = {
 };
 
 export const CamelIntegrationModel: K8sKind = {
-  apiGroup: 'camel.apache.org',
+  apiGroup: CAMEL_APIGROUP,
   apiVersion,
   kind: 'Integration',
   label: 'Integration',
@@ -315,6 +316,20 @@ export const KafkaTopicModel: K8sKind = {
   plural: 'kafkatopics',
   id: 'kafkatopic',
   abbr: 'KT',
+  namespaced: true,
+  crd: true,
+  color: knativeEventingColor.value,
+};
+
+export const CamelKameletBindingModel: K8sKind = {
+  apiGroup: CAMEL_APIGROUP,
+  apiVersion: 'v1alpha1',
+  kind: 'KameletBinding',
+  label: 'KameletBinding',
+  labelPlural: 'KameletBindings',
+  plural: 'kameletbindings',
+  id: 'kameletbinding',
+  abbr: 'KB',
   namespaced: true,
   crd: true,
   color: knativeEventingColor.value,

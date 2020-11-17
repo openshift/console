@@ -39,7 +39,12 @@ import {
   getDynamicEventSourcesModelRefs,
   getDynamicChannelModelRefs,
 } from '../utils/fetch-dynamic-eventsources-utils';
-import { EventingBrokerModel, EventSourceCamelModel, EventingTriggerModel } from '../models';
+import {
+  EventingBrokerModel,
+  EventSourceCamelModel,
+  EventingTriggerModel,
+  CamelKameletBindingModel,
+} from '../models';
 import {
   NodeType,
   Subscriber,
@@ -229,7 +234,7 @@ export const getSubscribedEventsources = (
   pubSubResource: K8sResourceKind,
   resources: TopologyDataResources,
 ) => {
-  const eventSourceProps = getDynamicEventSourcesModelRefs();
+  const eventSourceProps = [...getDynamicEventSourcesModelRefs(), CamelKameletBindingModel.plural];
   return _.reduce(
     getKnativeDynamicResources(resources, eventSourceProps),
     (acc, evSrc) => {
@@ -694,7 +699,7 @@ const getSinkTargetUid = (nodeData: NodeModel[], sinkUri: string) => {
 };
 
 const getEventSourcesData = (sinkUri: string, resources) => {
-  const eventSourceProps = getDynamicEventSourcesModelRefs();
+  const eventSourceProps = [...getDynamicEventSourcesModelRefs(), CamelKameletBindingModel.plural];
   return _.reduce(
     getKnativeDynamicResources(resources, eventSourceProps),
     (acc, evSrc) => {
