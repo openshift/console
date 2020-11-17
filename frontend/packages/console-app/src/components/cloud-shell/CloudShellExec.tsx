@@ -212,7 +212,9 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
               setWsError(undefined);
             }}
           >
-            Restart Terminal
+            {customResource.status.phase === 'Running'
+              ? t('Reconnect to terminal')
+              : t('Restart Terminal')}
           </Button>
         </EmptyState>
       </div>

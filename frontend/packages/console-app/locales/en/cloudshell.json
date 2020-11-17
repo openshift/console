@@ -23,5 +23,7 @@
   "Create Project": "Create Project",
   "This project will be used to initialize your command line terminal": "This project will be used to initialize your command line terminal",
   "Project Name": "Project Name",
-  "Connecting to your OpenShift command line terminal ...": "Connecting to your OpenShift command line terminal ..."
+  "Connecting to your OpenShift command line terminal ...": "Connecting to your OpenShift command line terminal ...",
+  "Reconnect to terminal": "Reconnect to terminal",
+  "Restart Terminal": "Restart Terminal"
 }
