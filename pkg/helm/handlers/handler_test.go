@@ -146,9 +146,14 @@ type fakeProxy struct {
 	repo *repo.IndexFile
 	chartproxy.Proxy
 	error
+	onlyCompatible bool
+	testContext    *testing.T
 }
 
-func (p fakeProxy) IndexFile() (*repo.IndexFile, error) {
+func (p fakeProxy) IndexFile(onlyCompatible bool) (*repo.IndexFile, error) {
+	if onlyCompatible != p.onlyCompatible {
+		p.testContext.Errorf("Expected compatible flag is %t received %t", p.onlyCompatible, onlyCompatible)
+	}
 	return p.repo, p.error
 }
 
@@ -681,10 +686,11 @@ func TestHelmHandlers_Index(t *testing.T) {
 		proxyNewError    error
 		indexFileError   error
 		expectedResponse string
+		urlQuery         string
+		onlyCompatible   bool
 	}{
 		{
-			name:           "valid repo index file should return correct response",
-			httpStatusCode: http.StatusOK,
+			name: "valid repo index file should return correct response",
 			indexFile: &repo.IndexFile{
 				APIVersion: "v1",
 				Entries: map[string]repo.ChartVersions{
@@ -700,18 +706,88 @@ func TestHelmHandlers_Index(t *testing.T) {
 					},
 				},
 			},
+			onlyCompatible: true,
+			httpStatusCode: http.StatusOK,
+		},
+		{
+			name: "valid repo index file should contain only entries compatible with the given cluster",
+			indexFile: &repo.IndexFile{
+				APIVersion: "v1",
+				Entries: map[string]repo.ChartVersions{
+					"redhat-chart": {
+						{
+							Metadata: &chart.Metadata{
+								Name:        "redhat-chart",
+								Version:     "v1.0.0",
+								APIVersion:  "v1",
+								KubeVersion: ">v1.16.0",
+							},
+							URLs: []string{"https://redhat-chart.url.com"},
+						},
+					},
+				},
+			},
+			httpStatusCode: http.StatusOK,
+			urlQuery:       "?onlyCompatible=true",
+			onlyCompatible: true,
+		},
+		{
+			name: "valid repo index file should contain only all entries",
+			indexFile: &repo.IndexFile{
+				APIVersion: "v1",
+				Entries: map[string]repo.ChartVersions{
+					"redhat-chart": {
+						{
+							Metadata: &chart.Metadata{
+								Name:        "redhat-chart",
+								Version:     "v1.0.0",
+								APIVersion:  "v1",
+								KubeVersion: ">v1.16.0",
+							},
+							URLs: []string{"https://redhat-chart.url.com"},
+						},
+					},
+				},
+			},
+			httpStatusCode: http.StatusOK,
+			urlQuery:       "?onlyCompatible=false",
+			onlyCompatible: false,
+		},
+		{
+			name: "valid repo index file should contain only entries compatible with the given cluster",
+			indexFile: &repo.IndexFile{
+				APIVersion: "v1",
+				Entries: map[string]repo.ChartVersions{
+					"redhat-chart": {
+						{
+							Metadata: &chart.Metadata{
+								Name:        "redhat-chart",
+								Version:     "v1.0.0",
+								APIVersion:  "v1",
+								KubeVersion: ">v1.16.0",
+							},
+							URLs: []string{"https://redhat-chart.url.com"},
+						},
+					},
+				},
+			},
+			httpStatusCode: http.StatusOK,
+			urlQuery:       "?onlyCompatible=true",
+			onlyCompatible: true,
 		},
 		{
 			name:             "error case should return correct http header",
 			httpStatusCode:   http.StatusInternalServerError,
 			proxyNewError:    errors.New("Fake error"),
 			expectedResponse: `{"error":"Failed to get k8s config: Fake error"}`,
+			onlyCompatible:   true,
 		},
 		{
 			name:             "Report error while retrieving the merged index",
 			httpStatusCode:   http.StatusInternalServerError,
 			indexFileError:   errors.New("Fake error"),
 			expectedResponse: `{"error":"Failed to get index file: Fake error"}`,
+			onlyCompatible:   true,
 		},
 	}
 
@@ -719,7 +795,7 @@ func TestHelmHandlers_Index(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			var request *http.Request
 
-			request = httptest.NewRequest(http.MethodGet, "/api/helm/charts/index.yaml", strings.NewReader(""))
+			request = httptest.NewRequest(http.MethodGet, "/api/helm/charts/index.yaml"+tt.urlQuery, strings.NewReader(""))
 			response := httptest.NewRecorder()
 
 			user := &auth.User{
@@ -730,7 +806,12 @@ func TestHelmHandlers_Index(t *testing.T) {
 					if token != user.Token {
 						t.Errorf("Expected token %s but got %s", user.Token, token)
 					}
-					return &fakeProxy{repo: tt.indexFile, error: tt.indexFileError}, tt.proxyNewError
+					return &fakeProxy{
+						repo:           tt.indexFile,
+						error:          tt.indexFileError,
+						testContext:    t,
+						onlyCompatible: tt.onlyCompatible,
+					}, tt.proxyNewError
 				},
 			}
 

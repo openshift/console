@@ -9,16 +9,20 @@ import (
 	"html/template"
 	"io"
 	"io/ioutil"
+	"k8s.io/client-go/rest"
 	"net/http"
 	"net/url"
 	"os"
 	"path"
 	"strings"
 
+	"k8s.io/klog"
+
 	"github.com/coreos/dex/api"
 	"github.com/coreos/pkg/health"
 
 	"github.com/openshift/console/pkg/auth"
+	"github.com/openshift/console/pkg/helm/actions"
 	helmhandlerspkg "github.com/openshift/console/pkg/helm/handlers"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/serverutils"
@@ -401,8 +405,19 @@ func (s *Server) HTTPHandler() http.Handler {
 	}
 	handle("/api/console/user-settings", authHandlerWithUser(userSettingHandler.HandleUserSettings))
 
+	// Get running kubernetes version and inject into helm handlers.
+	config := &rest.Config{
+		APIPath:   s.K8sProxyConfig.Endpoint.String(),
+		Transport: s.K8sClient.Transport,
+	}
+	kubeVersion, err := actions.GetKubeVersion(config)
+	if err != nil {
+		klog.Warningf("Failed to get cluster k8s version %s", err.Error())
+	}
+
+	helmHandlers := helmhandlerspkg.New(s.K8sProxyConfig.Endpoint.String(), s.K8sClient.Transport, kubeVersion)
+
 	// Helm Endpoints
-	helmHandlers := helmhandlerspkg.New(s.K8sProxyConfig.Endpoint.String(), s.K8sClient.Transport)
 	handle("/api/helm/template", authHandlerWithUser(helmHandlers.HandleHelmRenderManifests))
 	handle("/api/helm/releases", authHandlerWithUser(helmHandlers.HandleHelmList))
 	handle("/api/helm/chart", authHandlerWithUser(helmHandlers.HandleChartGet))

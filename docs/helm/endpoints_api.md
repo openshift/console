@@ -335,6 +335,10 @@ _Returns repository index file containing all entries from all configured reposi
 
   `GET`
 
+* **Supported URL Query Parameter:**
+    *  `onlyCompatible` - `true`/`false` Setting true would return helm charts which are supported in the provided cluster.
+    Default value is set to true if not provided.
+
 * **Success Response:**
 
   * **Code:** 200 <br />

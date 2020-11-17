@@ -3,17 +3,18 @@ package chartproxy
 import (
 	"errors"
 	"fmt"
-	helmrepo "helm.sh/helm/v3/pkg/repo"
 	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
+	"reflect"
+	"testing"
+
+	helmrepo "helm.sh/helm/v3/pkg/repo"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	fakeclient "k8s.io/client-go/dynamic/fake"
 	k8sfake "k8s.io/client-go/kubernetes/fake"
 	fakeclienttest "k8s.io/client-go/testing"
-	"net/http"
-	"net/http/httptest"
-	"reflect"
-	"testing"
 
 	"github.com/openshift/console/pkg/helm/actions/fake"
 )

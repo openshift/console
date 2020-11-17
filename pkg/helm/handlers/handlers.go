@@ -3,21 +3,21 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/openshift/console/pkg/helm/chartproxy"
-
-	"net/http"
-
-	"github.com/openshift/console/pkg/auth"
-	"github.com/openshift/console/pkg/helm/actions"
-	"github.com/openshift/console/pkg/serverutils"
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/release"
 	"k8s.io/client-go/rest"
+	"net/http"
 	"sigs.k8s.io/yaml"
+	"strconv"
+
+	"github.com/openshift/console/pkg/auth"
+	"github.com/openshift/console/pkg/helm/actions"
+	"github.com/openshift/console/pkg/helm/chartproxy"
+	"github.com/openshift/console/pkg/serverutils"
 )
 
-func New(apiUrl string, transport http.RoundTripper) *helmHandlers {
+func New(apiUrl string, transport http.RoundTripper, kubeversion string) *helmHandlers {
 	h := &helmHandlers{
 		ApiServerHost:           apiUrl,
 		Transport:               transport,
@@ -32,11 +32,13 @@ func New(apiUrl string, transport http.RoundTripper) *helmHandlers {
 		rollbackRelease:         actions.RollbackRelease,
 		getReleaseHistory:       actions.GetReleaseHistory,
 	}
+
 	h.newProxy = func(bearerToken string) (getter chartproxy.Proxy, err error) {
 		return chartproxy.New(func() (*rest.Config, error) {
 			return h.restConfig(bearerToken), nil
-		})
+		}, kubeversion)
 	}
+
 	return h
 }
 
@@ -255,6 +257,7 @@ func (h *helmHandlers) HandleGetReleaseHistory(user *auth.User, w http.ResponseW
 }
 
 func (h *helmHandlers) HandleIndexFile(user *auth.User, w http.ResponseWriter, r *http.Request) {
+
 	proxy, err := h.newProxy(user.Token)
 
 	if err != nil {
@@ -265,7 +268,20 @@ func (h *helmHandlers) HandleIndexFile(user *auth.User, w http.ResponseWriter, r
 	w.Header().Set("Content-Type", "application/yaml")
 	w.Header().Set("Cache-Control", "no-store, must-revalidate")
 
-	indexFile, err := proxy.IndexFile()
+	// Setting this by default to true, this always serves helm index file with compatible chart lists.
+	onlyCompatible := true
+	onlyCompatibleParam := r.URL.Query().Get("onlyCompatible")
+	if onlyCompatibleParam != "" {
+		// set default to true if not provided in the query param
+		var err error
+		onlyCompatible, err = strconv.ParseBool(onlyCompatibleParam)
+		if err != nil {
+			serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: fmt.Sprintf("Supported value for onlyCompatible query param is true or false, received: %s", onlyCompatibleParam)})
+			return
+		}
+	}
+
+	indexFile, err := proxy.IndexFile(onlyCompatible)
 
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: fmt.Sprintf("Failed to get index file: %v", err)})
