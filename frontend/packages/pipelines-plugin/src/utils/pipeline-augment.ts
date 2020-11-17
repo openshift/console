@@ -13,6 +13,7 @@ import {
   referenceForModel,
   GroupVersionKind,
   apiVersionForModel,
+  ObjectMetadata,
 } from '@console/internal/module/k8s';
 import {
   ClusterTaskModel,
@@ -298,8 +299,32 @@ export type VolumeTypePVC = {
   claimName: string;
 };
 
+export type PersistentVolumeClaimType = {
+  persistentVolumeClaim: VolumeTypePVC;
+};
+
+export type VolumeClaimTemplateType = {
+  volumeClaimTemplate: VolumeTypeClaim;
+};
+export type VolumeTypeClaim = {
+  metadata: ObjectMetadata;
+  spec: {
+    accessModes: string[];
+    resources: {
+      requests: {
+        storage: string;
+      };
+    };
+  };
+};
+
 export interface PipelineRunWorkspace extends Param {
-  [volumeType: string]: VolumeTypeSecret | VolumeTypeConfigMaps | VolumeTypePVC | {};
+  [volumeType: string]:
+    | VolumeTypeSecret
+    | VolumeTypeConfigMaps
+    | VolumeTypePVC
+    | VolumeTypeClaim
+    | {};
 }
 
 interface FirehoseResource {

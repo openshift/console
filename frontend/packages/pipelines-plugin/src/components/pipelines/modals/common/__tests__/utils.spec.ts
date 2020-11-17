@@ -5,7 +5,12 @@ import {
   PipelineExampleNames,
   DataState,
 } from '../../../../../test-data/pipeline-data';
-import { getPipelineRunData, getPipelineRunFromForm, migratePipelineRun } from '../utils';
+import {
+  convertPipelineToModalData,
+  getPipelineRunData,
+  getPipelineRunFromForm,
+  migratePipelineRun,
+} from '../utils';
 import { CommonPipelineModalFormikValues } from '../types';
 
 const samplePipeline = pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE].pipeline;
@@ -214,5 +219,23 @@ describe('PipelineAction testing migratePipelineRun', () => {
 
     // Should still have other spec properties
     expect(result.spec.pipelineRef).toEqual(samplePipelineRun.spec.pipelineRef);
+  });
+});
+
+describe('convertPipelineToModalData', () => {
+  const workspacePipeline = pipelineTestData[PipelineExampleNames.WORKSPACE_PIPELINE].pipeline;
+  it('expect to return workspaces', () => {
+    expect(convertPipelineToModalData(workspacePipeline).workspaces).toHaveLength(3);
+  });
+
+  it('expect to return workspaces with type EmptyDirectory, if preselect PVC argument is not passed', () => {
+    const { workspaces } = convertPipelineToModalData(workspacePipeline);
+    expect(workspaces.filter((workspace) => workspace.type === 'EmptyDirectory')).toHaveLength(3);
+  });
+
+  it('expect to return workspaces with type PVC, if preselect PVC argument is passed', () => {
+    const { workspaces } = convertPipelineToModalData(workspacePipeline, false, 'test-pvc');
+    expect(workspaces.filter((workspace) => workspace.type === 'EmptyDirectory')).toHaveLength(0);
+    expect(workspaces.filter((workspace) => workspace.type === 'PVC')).toHaveLength(3);
   });
 });
