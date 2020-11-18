@@ -118,9 +118,10 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/ResourceNS',
     properties: {
+      id: 'imagevulnerabilities',
       perspective: 'admin',
       section: 'Administration',
-      mergeBefore: 'Custom Resource Definitions',
+      insertBefore: 'customresourcedefinitions',
       componentProps: {
         name: 'Image Vulnerabilities',
         resource: referenceForModel(ImageManifestVulnModel),

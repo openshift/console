@@ -14,6 +14,7 @@ describe('active-plugins', () => {
         {
           type: 'NavItem/Href',
           properties: {
+            id: 'foo',
             componentProps: {
               name: 'Foo Link',
               href: '/foo',
@@ -25,6 +26,7 @@ describe('active-plugins', () => {
         {
           type: 'NavItem/Href',
           properties: {
+            id: 'bar',
             componentProps: {
               name: 'Bar Link',
               href: '/bar',

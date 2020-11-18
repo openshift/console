@@ -75,6 +75,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/Href',
     properties: {
+      id: 'home',
       section: 'Home',
       componentProps: {
         name: 'Test Href Link',
@@ -88,6 +89,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/ResourceNS',
     properties: {
+      id: 'testresourcens',
       section: 'Home',
       componentProps: {
         name: 'Test ResourceNS Link',
@@ -101,6 +103,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/ResourceCluster',
     properties: {
+      id: 'testresourcecluster',
       section: 'Home',
       componentProps: {
         name: 'Test ResourceCluster Link',
@@ -180,6 +183,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/Href',
     properties: {
+      id: 'testhome',
       perspective: 'test',
       componentProps: {
         name: 'Test Home',
@@ -190,6 +194,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/ResourceCluster',
     properties: {
+      id: 'testprojects',
       perspective: 'test',
       section: 'Advanced',
       componentProps: {

@@ -126,6 +126,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/Href',
     properties: {
+      id: 'serverlessserving',
       perspective: 'admin',
       section: 'Serverless',
       componentProps: {
@@ -144,6 +145,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/Href',
     properties: {
+      id: 'serverlesseventing',
       perspective: 'admin',
       section: 'Serverless',
       componentProps: {

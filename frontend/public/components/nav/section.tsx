@@ -32,12 +32,30 @@ const navSectionStateToProps = (
   };
 };
 
+const findChildIndex = (id: string, Children: React.ReactElement[]) =>
+  Children.findIndex((c) => c.props.id === id);
+
 const mergePluginChild = (
   Children: React.ReactElement[],
   pluginChild: React.ReactElement,
-  mergeBefore?: string,
+  insertBefore?: string | string[],
+  insertAfter?: string | string[],
 ) => {
-  const index = Children.findIndex((c) => c.props.name === mergeBefore);
+  let index = -1;
+  const before = Array.isArray(insertBefore) ? insertBefore : [insertBefore];
+  const after = Array.isArray(insertAfter) ? insertAfter : [insertAfter];
+  let count = 0;
+  while (count < before.length && index < 0) {
+    index = findChildIndex(before[count++], Children);
+  }
+  count = 0;
+  while (count < after.length && index < 0) {
+    index = findChildIndex(after[count++], Children);
+    if (index >= 0) {
+      index += 1;
+    }
+  }
+
   if (index >= 0) {
     Children.splice(index, 0, pluginChild);
   } else {
@@ -174,7 +192,12 @@ export const NavSection = connect(navSectionStateToProps)(
         this.getNavItemExtensions(perspective, title).forEach((item) => {
           const pluginChild = this.mapChild(createLink(item));
           if (pluginChild) {
-            mergePluginChild(Children, pluginChild, item.properties.mergeBefore);
+            mergePluginChild(
+              Children,
+              pluginChild,
+              item.properties.insertBefore,
+              item.properties.insertAfter,
+            );
           }
         });
 
