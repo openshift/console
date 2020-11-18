@@ -8,6 +8,14 @@ import { LoadingInline } from '../../public/components/utils';
 import { testNamespace } from '../../__mocks__/k8sResourcesMocks';
 import { SecretModel } from '../../public/models';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 describe(PullSecret.displayName, () => {
   let wrapper: ReactWrapper;
 

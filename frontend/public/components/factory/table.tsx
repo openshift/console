@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { withTranslation } from 'react-i18next';
 import {
   getNodeRoles,
   getMachinePhase,
@@ -534,243 +535,252 @@ export const Table = connect<
     next.get('listSorts') === prev.get('listSorts') &&
     next.get('columnManagement') === prev.get('columnManagement'),
 })(
-  class TableInner extends React.Component<TableInnerProps, TableInnerState> {
-    static propTypes = {
-      customData: PropTypes.any,
-      data: PropTypes.array,
-      unfilteredData: PropTypes.array,
-      NoDataEmptyMsg: PropTypes.func,
-      EmptyMsg: PropTypes.func,
-      expand: PropTypes.bool,
-      fieldSelector: PropTypes.string,
-      filters: filterPropType,
-      Header: PropTypes.func.isRequired,
-      Row: PropTypes.func,
-      Rows: PropTypes.func,
-      loaded: PropTypes.bool,
-      loadError: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
-      mock: PropTypes.bool,
-      namespace: PropTypes.string,
-      reduxID: PropTypes.string,
-      reduxIDs: PropTypes.array,
-      selector: PropTypes.object,
-      staticFilters: PropTypes.array,
-      virtualize: PropTypes.bool,
-      currentSortField: PropTypes.string,
-      currentSortFunc: PropTypes.string,
-      currentSortOrder: PropTypes.any,
-      defaultSortField: PropTypes.string,
-      defaultSortFunc: PropTypes.string,
-      label: PropTypes.string,
-      listId: PropTypes.string,
-      sortList: PropTypes.func,
-      onSelect: PropTypes.func,
-      scrollElement: PropTypes.oneOf([PropTypes.object, PropTypes.func]),
-      columnManagementID: PropTypes.string, // for column management should use gvk for workloads
-    };
-    _columnShift: number;
+  withTranslation()(
+    class TableInner extends React.Component<TableInnerProps, TableInnerState> {
+      static propTypes = {
+        customData: PropTypes.any,
+        data: PropTypes.array,
+        unfilteredData: PropTypes.array,
+        NoDataEmptyMsg: PropTypes.func,
+        EmptyMsg: PropTypes.func,
+        expand: PropTypes.bool,
+        fieldSelector: PropTypes.string,
+        filters: filterPropType,
+        Header: PropTypes.func.isRequired,
+        Row: PropTypes.func,
+        Rows: PropTypes.func,
+        loaded: PropTypes.bool,
+        loadError: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
+        mock: PropTypes.bool,
+        namespace: PropTypes.string,
+        reduxID: PropTypes.string,
+        reduxIDs: PropTypes.array,
+        selector: PropTypes.object,
+        staticFilters: PropTypes.array,
+        virtualize: PropTypes.bool,
+        currentSortField: PropTypes.string,
+        currentSortFunc: PropTypes.string,
+        currentSortOrder: PropTypes.any,
+        defaultSortField: PropTypes.string,
+        defaultSortFunc: PropTypes.string,
+        label: PropTypes.string,
+        listId: PropTypes.string,
+        sortList: PropTypes.func,
+        onSelect: PropTypes.func,
+        scrollElement: PropTypes.oneOf([PropTypes.object, PropTypes.func]),
+        columnManagementID: PropTypes.string, // for column management should use gvk for workloads
+      };
+      _columnShift: number;
 
-    constructor(props) {
-      super(props);
-      const componentProps: ComponentProps = _.pick(props, [
-        'data',
-        'filters',
-        'selected',
-        'match',
-        'kindObj',
-      ]);
-      const columns = getActiveColumns(
-        this.props.Header,
-        componentProps,
-        this.props.activeColumns,
-        this.props.columnManagementID,
-      );
-      const { currentSortField, currentSortFunc, currentSortOrder } = props;
+      constructor(props) {
+        super(props);
+        const componentProps: ComponentProps = _.pick(props, [
+          'data',
+          'filters',
+          'selected',
+          'match',
+          'kindObj',
+        ]);
+        const columns = getActiveColumns(
+          this.props.Header,
+          componentProps,
+          this.props.activeColumns,
+          this.props.columnManagementID,
+        );
+        const { currentSortField, currentSortFunc, currentSortOrder } = props;
 
-      this._columnShift = props.onSelect ? 1 : 0; //shift indexes by 1 if select provided
-      this._applySort = this._applySort.bind(this);
-      this._onSort = this._onSort.bind(this);
-      this._handleResize = _.debounce(this._handleResize.bind(this), 100);
+        this._columnShift = props.onSelect ? 1 : 0; //shift indexes by 1 if select provided
+        this._applySort = this._applySort.bind(this);
+        this._onSort = this._onSort.bind(this);
+        this._handleResize = _.debounce(this._handleResize.bind(this), 100);
 
-      let sortBy = {};
-      if (currentSortField && currentSortOrder) {
-        const columnIndex = _.findIndex(columns, { sortField: currentSortField });
-        if (columnIndex > -1) {
-          sortBy = { index: columnIndex + this._columnShift, direction: currentSortOrder };
+        let sortBy = {};
+        if (currentSortField && currentSortOrder) {
+          const columnIndex = _.findIndex(columns, { sortField: currentSortField });
+          if (columnIndex > -1) {
+            sortBy = { index: columnIndex + this._columnShift, direction: currentSortOrder };
+          }
+        } else if (currentSortFunc && currentSortOrder) {
+          const columnIndex = _.findIndex(columns, { sortFunc: currentSortFunc });
+          if (columnIndex > -1) {
+            sortBy = { index: columnIndex + this._columnShift, direction: currentSortOrder };
+          }
         }
-      } else if (currentSortFunc && currentSortOrder) {
-        const columnIndex = _.findIndex(columns, { sortFunc: currentSortFunc });
-        if (columnIndex > -1) {
-          sortBy = { index: columnIndex + this._columnShift, direction: currentSortOrder };
-        }
+        this.state = { sortBy, columns };
+        props.i18n.on('languageChanged', () => {
+          this.setState({
+            columns: props.Header(componentProps, props.t),
+          });
+        });
       }
-      this.state = { sortBy };
-    }
 
-    componentDidMount() {
-      const componentProps: ComponentProps = _.pick(this.props, [
-        'data',
-        'filters',
-        'selected',
-        'match',
-        'kindObj',
-      ]);
-      const columns = getActiveColumns(
-        this.props.Header,
-        componentProps,
-        this.props.activeColumns,
-        this.props.columnManagementID,
-      );
-      const sp = new URLSearchParams(window.location.search);
-      const columnIndex = _.findIndex(columns, { title: sp.get('sortBy') });
+      componentDidMount() {
+        const componentProps: ComponentProps = _.pick(this.props, [
+          'data',
+          'filters',
+          'selected',
+          'match',
+          'kindObj',
+        ]);
+        const columns = getActiveColumns(
+          this.props.Header,
+          componentProps,
+          this.props.activeColumns,
+          this.props.columnManagementID,
+        );
+        const sp = new URLSearchParams(window.location.search);
+        const columnIndex = _.findIndex(columns, { title: sp.get('sortBy') });
 
-      if (columnIndex > -1) {
-        const sortOrder = sp.get('orderBy') || SortByDirection.asc;
-        const column = columns[columnIndex];
-        this._applySort(column.sortField, column.sortFunc, sortOrder, column.title);
+        if (columnIndex > -1) {
+          const sortOrder = sp.get('orderBy') || SortByDirection.asc;
+          const column = columns[columnIndex];
+          this._applySort(column.sortField, column.sortFunc, sortOrder, column.title);
+          this.setState({
+            sortBy: {
+              index: columnIndex + this._columnShift,
+              direction: sortOrder,
+            },
+          });
+        }
+
+        // re-render after resize
+        window.addEventListener('resize', this._handleResize);
+      }
+
+      componentWillUnmount() {
+        window.removeEventListener('resize', this._handleResize);
+      }
+
+      _handleResize() {
+        this.forceUpdate();
+      }
+
+      _applySort(sortField, sortFunc, direction, columnTitle) {
+        const { sortList, listId, currentSortFunc } = this.props;
+        const applySort = _.partial(sortList, listId);
+        applySort(sortField, sortFunc || currentSortFunc, direction, columnTitle);
+      }
+
+      _onSort(event, index, direction) {
+        event.preventDefault();
+        const componentProps: ComponentProps = _.pick(this.props, [
+          'data',
+          'filters',
+          'selected',
+          'match',
+          'kindObj',
+        ]);
+        const columns = getActiveColumns(
+          this.props.Header,
+          componentProps,
+          this.props.activeColumns,
+          this.props.columnManagementID,
+        );
+        const sortColumn = columns[index - this._columnShift];
+        this._applySort(sortColumn.sortField, sortColumn.sortFunc, direction, sortColumn.title);
         this.setState({
           sortBy: {
-            index: columnIndex + this._columnShift,
-            direction: sortOrder,
+            index,
+            direction,
           },
         });
       }
 
-      // re-render after resize
-      window.addEventListener('resize', this._handleResize);
-    }
-
-    componentWillUnmount() {
-      window.removeEventListener('resize', this._handleResize);
-    }
-
-    _handleResize() {
-      this.forceUpdate();
-    }
-
-    _applySort(sortField, sortFunc, direction, columnTitle) {
-      const { sortList, listId, currentSortFunc } = this.props;
-      const applySort = _.partial(sortList, listId);
-      applySort(sortField, sortFunc || currentSortFunc, direction, columnTitle);
-    }
-
-    _onSort(event, index, direction) {
-      event.preventDefault();
-      const componentProps: ComponentProps = _.pick(this.props, [
-        'data',
-        'filters',
-        'selected',
-        'match',
-        'kindObj',
-      ]);
-      const columns = getActiveColumns(
-        this.props.Header,
-        componentProps,
-        this.props.activeColumns,
-        this.props.columnManagementID,
-      );
-      const sortColumn = columns[index - this._columnShift];
-      this._applySort(sortColumn.sortField, sortColumn.sortFunc, direction, sortColumn.title);
-      this.setState({
-        sortBy: {
-          index,
-          direction,
-        },
-      });
-    }
-
-    render() {
-      const {
-        columnManagementID,
-        scrollElement,
-        Rows,
-        Row,
-        expand,
-        label,
-        mock,
-        onSelect,
-        selectedResourcesForKind,
-        'aria-label': ariaLabel,
-        virtualize = true,
-        customData,
-        gridBreakPoint = TableGridBreakpoint.none,
-        Header,
-        activeColumns,
-      } = this.props;
-      const { sortBy } = this.state;
-      const componentProps: any = _.pick(this.props, [
-        'data',
-        'filters',
-        'selected',
-        'match',
-        'kindObj',
-      ]);
-      const columns = getActiveColumns(Header, componentProps, activeColumns, columnManagementID);
-      const ariaRowCount = componentProps.data && componentProps.data.length;
-      const scrollNode = typeof scrollElement === 'function' ? scrollElement() : scrollElement;
-      const renderVirtualizedTable = (scrollContainer) => (
-        <WindowScroller scrollElement={scrollContainer}>
-          {({ height, isScrolling, registerChild, onChildScroll, scrollTop }) => (
-            <AutoSizer disableHeight>
-              {({ width }) => (
-                <div ref={registerChild}>
-                  <VirtualBody
-                    Row={Row}
-                    customData={customData}
-                    height={height}
-                    isScrolling={isScrolling}
-                    onChildScroll={onChildScroll}
-                    data={componentProps.data}
-                    columns={columns}
-                    scrollTop={scrollTop}
-                    width={width}
-                    expand={expand}
-                  />
-                </div>
-              )}
-            </AutoSizer>
-          )}
-        </WindowScroller>
-      );
-      const children = mock ? (
-        <EmptyBox label={label} />
-      ) : (
-        <TableWrapper virtualize={virtualize} ariaLabel={ariaLabel} ariaRowCount={ariaRowCount}>
-          <PfTable
-            cells={columns}
-            rows={virtualize ? [] : Rows({ componentProps, selectedResourcesForKind, customData })}
-            gridBreakPoint={gridBreakPoint}
-            onSort={this._onSort}
-            onSelect={onSelect}
-            sortBy={sortBy}
-            className="pf-m-compact pf-m-border-rows"
-            role={virtualize ? 'presentation' : 'grid'}
-            aria-label={virtualize ? null : ariaLabel}
-          >
-            <TableHeader />
-            {!virtualize && <TableBody />}
-          </PfTable>
-          {virtualize &&
-            (scrollNode ? (
-              renderVirtualizedTable(scrollNode)
+      render() {
+        const {
+          columnManagementID,
+          scrollElement,
+          Rows,
+          Row,
+          expand,
+          label,
+          mock,
+          onSelect,
+          selectedResourcesForKind,
+          'aria-label': ariaLabel,
+          virtualize = true,
+          customData,
+          gridBreakPoint = TableGridBreakpoint.none,
+          Header,
+          activeColumns,
+        } = this.props;
+        const { sortBy } = this.state;
+        const componentProps: any = _.pick(this.props, [
+          'data',
+          'filters',
+          'selected',
+          'match',
+          'kindObj',
+        ]);
+        const columns = getActiveColumns(Header, componentProps, activeColumns, columnManagementID);
+        const ariaRowCount = componentProps.data && componentProps.data.length;
+        const scrollNode = typeof scrollElement === 'function' ? scrollElement() : scrollElement;
+        const renderVirtualizedTable = (scrollContainer) => (
+          <WindowScroller scrollElement={scrollContainer}>
+            {({ height, isScrolling, registerChild, onChildScroll, scrollTop }) => (
+              <AutoSizer disableHeight>
+                {({ width }) => (
+                  <div ref={registerChild}>
+                    <VirtualBody
+                      Row={Row}
+                      customData={customData}
+                      height={height}
+                      isScrolling={isScrolling}
+                      onChildScroll={onChildScroll}
+                      data={componentProps.data}
+                      columns={columns}
+                      scrollTop={scrollTop}
+                      width={width}
+                      expand={expand}
+                    />
+                  </div>
+                )}
+              </AutoSizer>
+            )}
+          </WindowScroller>
+        );
+        const children = mock ? (
+          <EmptyBox label={label} />
+        ) : (
+          <TableWrapper virtualize={virtualize} ariaLabel={ariaLabel} ariaRowCount={ariaRowCount}>
+            <PfTable
+              cells={columns}
+              rows={
+                virtualize ? [] : Rows({ componentProps, selectedResourcesForKind, customData })
+              }
+              gridBreakPoint={gridBreakPoint}
+              onSort={this._onSort}
+              onSelect={onSelect}
+              sortBy={sortBy}
+              className="pf-m-compact pf-m-border-rows"
+              role={virtualize ? 'presentation' : 'grid'}
+              aria-label={virtualize ? null : ariaLabel}
+            >
+              <TableHeader />
+              {!virtualize && <TableBody />}
+            </PfTable>
+            {virtualize &&
+              (scrollNode ? (
+                renderVirtualizedTable(scrollNode)
+              ) : (
+                <WithScrollContainer>{renderVirtualizedTable}</WithScrollContainer>
+              ))}
+          </TableWrapper>
+        );
+        return (
+          <div className="co-m-table-grid co-m-table-grid--bordered">
+            {mock ? (
+              children
             ) : (
-              <WithScrollContainer>{renderVirtualizedTable}</WithScrollContainer>
-            ))}
-        </TableWrapper>
-      );
-      return (
-        <div className="co-m-table-grid co-m-table-grid--bordered">
-          {mock ? (
-            children
-          ) : (
-            <StatusBox skeleton={<div className="loading-skeleton--table" />} {...this.props}>
-              {children}
-            </StatusBox>
-          )}
-        </div>
-      );
-    }
-  },
+              <StatusBox skeleton={<div className="loading-skeleton--table" />} {...this.props}>
+                {children}
+              </StatusBox>
+            )}
+          </div>
+        );
+      }
+    },
+  ),
 );
 
 export type TableInnerProps = {
@@ -820,4 +830,5 @@ export type TableInnerProps = {
 
 export type TableInnerState = {
   sortBy: object;
+  columns?: any;
 };
