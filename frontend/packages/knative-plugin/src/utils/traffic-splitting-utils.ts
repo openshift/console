@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { FirehoseResource } from '@console/internal/components/utils';
-import { getKnativeServiceData } from '../topology/knative-topology-utils';
 import {
   knativeServingResourcesRevision,
   knativeServingResourcesConfigurations,
@@ -22,14 +21,6 @@ export const constructObjForUpdate = (traffic, service) => {
     ...obj,
     spec: { ...obj.spec, traffic },
   };
-};
-
-export const transformTrafficSplittingData = (
-  obj: K8sResourceKind,
-  resources,
-): K8sResourceKind[] => {
-  const { revisions } = getKnativeServiceData(obj, resources);
-  return revisions;
 };
 
 export const knativeServingResourcesTrafficSplitting = (namespace: string): FirehoseResource[] => [

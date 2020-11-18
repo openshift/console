@@ -8,10 +8,20 @@ import { MockKnativeResources } from '../../../topology/__tests__/topology-knati
 import RevisionsOverviewListItem, {
   RevisionsOverviewListItemProps,
 } from '../RevisionsOverviewListItem';
+import { usePodsForRevisions } from '../../../utils/usePodsForRevisions';
+
+jest.mock('../../../utils/usePodsForRevisions', () => ({
+  usePodsForRevisions: jest.fn(),
+}));
 
 describe('RevisionsOverviewListItem', () => {
   let wrapper: ShallowWrapper<RevisionsOverviewListItemProps>;
   beforeEach(() => {
+    (usePodsForRevisions as jest.Mock).mockReturnValue({
+      loaded: true,
+      loadError: null,
+      pods: {},
+    });
     wrapper = shallow(
       <RevisionsOverviewListItem
         revision={MockKnativeResources.revisions.data[0]}
@@ -73,6 +83,29 @@ describe('RevisionsOverviewListItem', () => {
 
   describe('RevisionsOverviewListItem: deployments', () => {
     beforeEach(() => {
+      (usePodsForRevisions as jest.Mock).mockReturnValue({
+        loaded: true,
+        loadError: null,
+        pods: [
+          {
+            obj: {
+              metadata: {
+                ownerReferences: [
+                  {
+                    apiVersion: 'apps/v1',
+                    blockOwnerDeletion: true,
+                    controller: true,
+                    kind: 'Deployment',
+                    name: 'event-greeter-v1-deployment',
+                    uid: 'd0387ddc-51e8-437d-a100-a001be806d45',
+                  },
+                ],
+              },
+              status: { availableReplicas: 1 },
+            },
+          },
+        ],
+      });
       const resources = {
         current: {
           obj: {

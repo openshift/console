@@ -1,11 +1,11 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { PodStatus } from '@console/shared';
 import { ChartLabel } from '@patternfly/react-charts';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { K8sResourceKind, OwnerReference, referenceForModel } from '@console/internal/module/k8s';
 import { ResourceLink } from '@console/internal/components/utils';
 import { Traffic } from '../../types';
 import { RevisionModel } from '../../models';
+import { usePodsForRevisions } from '../../utils/usePodsForRevisions';
 import RoutesUrlLink from './RoutesUrlLink';
 
 import './RevisionsOverviewListItem.scss';
@@ -46,9 +46,10 @@ const RevisionsOverviewListItem: React.FC<RevisionsOverviewListItemProps> = ({
       percent: trafficPercent.percent ? `${trafficPercent.percent}%` : null,
     };
   };
-  const deploymentData = _.get(revision, 'resources.current.obj.metadata.ownerReferences[0]', {});
-  const current = _.get(revision, 'resources.current', null);
-  const availableReplicas = _.get(revision, 'resources.current.obj.status.availableReplicas', '0');
+  const { pods } = usePodsForRevisions(revision.metadata.uid, namespace);
+  const current = pods?.[0];
+  const deploymentData = current?.obj?.metadata.ownerReferences?.[0] || ({} as OwnerReference);
+  const availableReplicas = current?.obj?.status?.availableReplicas || '0';
   const { urls = [], percent: trafficPercent } = getTrafficByRevision(name);
   return (
     <li className="list-group-item">

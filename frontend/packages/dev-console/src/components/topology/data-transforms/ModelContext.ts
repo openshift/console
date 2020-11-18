@@ -171,7 +171,15 @@ export class ExtensibleModel {
 
     const depicters = this.dataModelDepicters;
     const workloadResources = this.getWorkloadResources(resources);
-    const promises = getters.map((getter) => getter(this.namespace, resources, workloadResources));
+    const promises = getters.map((getter) => {
+      try {
+        return getter(this.namespace, resources, workloadResources);
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error('Unable to add some resources to topology', e);
+        return null;
+      }
+    });
 
     await Promise.all(promises).then((models) => {
       models.forEach((model) => {

@@ -55,6 +55,12 @@ const virtualMachineResourceWatchers = (namespace: string): WatchK8sResources<an
     optional: true,
     kind: models.VirtualMachineImportModel.kind,
   },
+  pods: {
+    isList: true,
+    kind: 'Pod',
+    namespace,
+    optional: true,
+  },
 });
 
 export const getTopologyPlugin = (required: string[]): Plugin<TopologyConsumedExtensions> => [

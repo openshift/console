@@ -1,5 +1,10 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { KnativeItem } from '../utils/get-knative-resources';
+import { OverviewItem, PodControllerOverviewItem } from '@console/shared/src';
+import {
+  TopologyDataObject,
+  TopologyOverviewItem,
+} from '@console/dev-console/src/components/topology';
 
 export enum NodeType {
   EventSource = 'event-source',
@@ -39,5 +44,22 @@ export type PubsubNodes = {
   }[];
   brokers: string[];
 };
+
+export type KnativeServiceOverviewItem = OverviewItem &
+  KnativeItem & {
+    subscribers?: Subscriber[];
+    current?: PodControllerOverviewItem;
+    previous?: PodControllerOverviewItem;
+    isRollingOut?: boolean;
+  };
+
+export type KnativeDeploymentOverviewItem = TopologyOverviewItem & {
+  associatedDeployment: K8sResourceKind;
+};
+
+export interface KnativeTopologyDataObject<O extends OverviewItem, D = {}>
+  extends TopologyDataObject<D> {
+  resources: O;
+}
 
 export type KnativeUtil = (dc: K8sResourceKind, props) => KnativeItem | undefined;

@@ -1,7 +1,24 @@
 import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src';
-import { getOperatorBackedServiceKindMap } from './resource-utils';
+
+export type OperatorBackedServiceKindMap = {
+  [name: string]: ClusterServiceVersionKind;
+};
+
+export const getOperatorBackedServiceKindMap = (
+  installedOperators: ClusterServiceVersionKind[],
+): OperatorBackedServiceKindMap =>
+  installedOperators
+    ? installedOperators.reduce((kindMap, csv) => {
+        (csv?.spec?.customresourcedefinitions?.owned || []).forEach((crd) => {
+          if (!(crd.kind in kindMap)) {
+            kindMap[crd.kind] = csv;
+          }
+        });
+        return kindMap;
+      }, {})
+    : {};
 
 export const isOperatorBackedService = (
   obj: K8sResourceKind,

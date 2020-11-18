@@ -62,13 +62,7 @@ const PodSet: React.FC<PodSetProps> = ({ size, data, x = 0, y = 0, showPodCount 
     podStatusInnerRadius,
     podStatusStrokeWidth,
   );
-  const { inProgressDeploymentData, completedDeploymentData } = getPodData(
-    data.obj,
-    data.pods,
-    data.current,
-    data.previous,
-    data.isRollingOut,
-  );
+  const { inProgressDeploymentData, completedDeploymentData } = getPodData(data);
 
   const [hpa] = useRelatedHPA(
     data.obj.apiVersion,

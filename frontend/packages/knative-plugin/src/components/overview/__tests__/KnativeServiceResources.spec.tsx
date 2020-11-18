@@ -3,17 +3,17 @@ import { shallow } from 'enzyme';
 import { useExtensions } from '@console/plugin-sdk';
 import { PodsOverviewContent } from '@console/internal/components/overview/pods-overview';
 import {
-  sampleKnativePods,
   sampleKnativeRoutes,
   sampleKnativeRevisions,
   knativeServiceObj,
   MockKnativeBuildConfig,
 } from '../../../topology/__tests__/topology-knative-test-data';
 import { BuildOverview } from '@console/internal/components/overview/build-overview';
-import { OverviewItem } from '@console/shared';
 import KnativeServiceResources from '../KnativeServiceResources';
 import KSRoutesOverviewList from '../RoutesOverviewList';
 import RevisionsOverviewList from '../RevisionsOverviewList';
+import { KnativeServiceOverviewItem } from '../../../topology/topology-types';
+import { usePodsForRevisions } from '../../../utils/usePodsForRevisions';
 
 jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({
   useExtensions: jest.fn(),
@@ -26,6 +26,10 @@ jest.mock('react-i18next', () => {
     useTranslation: () => ({ t: (key) => key }),
   };
 });
+
+jest.mock('../../../utils/usePodsForRevisions', () => ({
+  usePodsForRevisions: jest.fn(),
+}));
 
 let mockBuildConfigs = [];
 
@@ -46,6 +50,11 @@ jest.mock('@console/shared', () => {
 describe('KnativeServiceResources', () => {
   beforeEach(() => {
     (useExtensions as jest.Mock).mockReturnValueOnce([]);
+    (usePodsForRevisions as jest.Mock).mockReturnValueOnce({
+      loaded: true,
+      loadError: null,
+      pods: [],
+    });
   });
 
   it('should render KnativeServiceResources', () => {
@@ -54,8 +63,7 @@ describe('KnativeServiceResources', () => {
       revisions: sampleKnativeRevisions.data,
       ksroutes: sampleKnativeRoutes.data,
       obj: knativeServiceObj,
-      pods: sampleKnativePods.data,
-    } as OverviewItem;
+    } as KnativeServiceOverviewItem;
     const wrapper = shallow(<KnativeServiceResources item={item} />);
     expect(wrapper.find(PodsOverviewContent)).toHaveLength(1);
     expect(wrapper.find(KSRoutesOverviewList)).toHaveLength(1);
@@ -69,8 +77,7 @@ describe('KnativeServiceResources', () => {
       revisions: sampleKnativeRevisions.data,
       ksroutes: sampleKnativeRoutes.data,
       obj: knativeServiceObj,
-      pods: sampleKnativePods.data,
-    } as OverviewItem;
+    } as KnativeServiceOverviewItem;
     const wrapper = shallow(<KnativeServiceResources item={item} />);
     expect(wrapper.find(BuildOverview)).toHaveLength(1);
   });

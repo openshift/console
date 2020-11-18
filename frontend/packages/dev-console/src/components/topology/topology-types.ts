@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ExtPodKind, OverviewItem, PodRCData } from '@console/shared';
+import { ExtPodKind, OverviewItem } from '@console/shared';
 import { K8sResourceKind, K8sResourceKindReference } from '@console/internal/module/k8s';
 import {
   Graph,
@@ -110,7 +110,6 @@ export interface WorkloadData {
   builderImage?: string;
   kind?: string;
   isKnativeResource?: boolean;
-  donutStatus: PodRCData;
   connectedPipeline: ConnectedWorkloadPipeline;
 }
 

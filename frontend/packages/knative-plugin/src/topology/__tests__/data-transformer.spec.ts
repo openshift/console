@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import * as k8s from '@console/internal/module/k8s';
-import { getPodStatus, podStatus, ALL_APPLICATIONS_KEY } from '@console/shared';
+import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { Model, NodeModel, EdgeModel } from '@patternfly/react-topology';
 import {
   baseDataModelGetter,
@@ -16,10 +16,8 @@ import {
   TopologyDataModelDepicted,
   OdcNodeModel,
 } from '@console/dev-console/src/components/topology';
-import {
-  MockBaseResources,
-  TEST_KINDS_MAP,
-} from '@console/dev-console/src/components/topology/__tests__/topology-test-data';
+import { MockBaseResources } from '@console/shared/src/utils/__tests__/test-resource-data';
+import { TEST_KINDS_MAP } from '@console/dev-console/src/components/topology/__tests__/topology-test-data';
 import { cleanUpWorkload } from '@console/dev-console/src/utils/application-utils';
 import * as utils from '@console/internal/components/utils';
 import { getKnativeTopologyDataModel } from '../data-transformer';
@@ -87,16 +85,6 @@ describe('knative data transformer ', () => {
 
   beforeEach(() => {
     mockResources = _.cloneDeep(MockKnativeResources);
-  });
-
-  it('should return a valid pod status for scale to 0', async () => {
-    const graphData = await getTransformedTopologyData(mockResources);
-    const status = getPodStatus(
-      (getNodeById('02c34a0e-9638-11e9-b134-06a61d886b62', graphData).data.data as WorkloadData)
-        .donutStatus.pods[0],
-    );
-    expect(podStatus.includes(status)).toBe(true);
-    expect(status).toEqual('Autoscaled to 0');
   });
 
   it('should return true for knative resource', async () => {

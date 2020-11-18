@@ -9,15 +9,15 @@ import {
   StatefulSetModel,
 } from '@console/internal/models';
 import * as utils from '@console/internal/components/utils';
-import { TopologyDataResources } from '../../components/topology/topology-types';
-import { WORKLOAD_TYPES } from '../../components/topology/topology-utils';
-import { cleanUpWorkload } from '../application-utils';
 import {
   MockResources,
   sampleBuildConfigs,
   sampleBuilds,
-  TEST_KINDS_MAP,
-} from '../../components/topology/__tests__/topology-test-data';
+} from '@console/shared/src/utils/__tests__/test-resource-data';
+import { TopologyDataResources } from '../../components/topology/topology-types';
+import { WORKLOAD_TYPES } from '../../components/topology/topology-utils';
+import { cleanUpWorkload } from '../application-utils';
+import { TEST_KINDS_MAP } from '../../components/topology/__tests__/topology-test-data';
 import {
   baseDataModelGetter,
   getWorkloadResources,

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { PodKind } from '@console/internal/module/k8s';
-import { samplePods } from '@console/dev-console/src/components/topology/__tests__/topology-test-data';
+import { samplePods } from '@console/shared/src/utils/__tests__/test-resource-data';
 import { LongArrowAltRightIcon } from '@patternfly/react-icons';
 import PodRingSet from '../PodRingSet';
 import { PodRCData } from '../../../types';

@@ -28,8 +28,8 @@ type LoadedTopologyVmDetailsPanelProps = TopologyVmDetailsPanelProps & {
 const LoadedTopologyVmDetailsPanel: React.FC<LoadedTopologyVmDetailsPanelProps> = observer(
   ({ loaded, vmNode, templates }) => {
     const vmData = vmNode.getData();
-    const { pods, obj } = vmData.resources;
-    const vmObj = obj as VMKind;
+    const { pod } = vmData.data.vmStatusBundle;
+    const vmObj = vmData.resource as VMKind;
     const { vmi, vmStatusBundle } = vmData.data;
     const canUpdate =
       useAccessReview(asAccessReview(VirtualMachineModel, vmObj || {}, 'patch')) && !!vmObj;
@@ -53,7 +53,7 @@ const LoadedTopologyVmDetailsPanel: React.FC<LoadedTopologyVmDetailsPanelProps> 
             canUpdateVM={canUpdate}
             vm={vmObj}
             vmi={vmi}
-            pods={pods}
+            pods={[pod]}
             kindObj={VirtualMachineModel}
             vmStatusBundle={vmStatusBundle}
           />

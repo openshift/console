@@ -1,5 +1,9 @@
 import * as _ from 'lodash';
 import { ALL_APPLICATIONS_KEY } from '@console/shared';
+import {
+  MockResources,
+  sampleDeploymentConfigs,
+} from '@console/shared/src/utils/__tests__/test-resource-data';
 import { TopologyDataResources, TopologyDisplayFilterType } from '../../topology-types';
 import {
   getHelmGraphModelFromMap,
@@ -7,9 +11,7 @@ import {
   isHelmReleaseNode,
 } from '../helm-data-transformer';
 import {
-  MockResources,
   sampleHelmChartDeploymentConfig,
-  sampleDeploymentConfigs,
   sampleHelmResourcesMap,
   TEST_KINDS_MAP,
 } from '../../__tests__/topology-test-data';
