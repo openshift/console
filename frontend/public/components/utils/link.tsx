@@ -21,7 +21,6 @@ const basePathPattern = new RegExp(`^/?${window.SERVER_FLAGS.basePath}`);
 
 export const namespacedPrefixes = [
   '/api-resource',
-  '/catalog',
   '/k8s',
   '/operatorhub',
   '/operatormanagement',
