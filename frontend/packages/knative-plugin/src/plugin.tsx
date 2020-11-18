@@ -12,6 +12,7 @@ import {
   KebabActions,
   YAMLTemplate,
   HrefNavItem,
+  HorizontalNavTab,
 } from '@console/plugin-sdk';
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
 import { AddAction } from '@console/dev-console/src/extensions/add-actions';
@@ -45,7 +46,8 @@ type ConsumedExtensions =
   | YAMLTemplate
   | ResourceDetailsPage
   | AddAction
-  | TopologyConsumedExtensions;
+  | TopologyConsumedExtensions
+  | HorizontalNavTab;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -411,6 +413,37 @@ const plugin: Plugin<ConsumedExtensions> = [
       description:
         '%knative-plugin~Create a Knative Channel to create an event forwarding and persistence layer with in-memory and reliable implementations%',
       icon: channelIcon,
+    },
+  },
+  {
+    type: 'HorizontalNavTab',
+    properties: {
+      model: models.EventingBrokerModel,
+      page: {
+        name: 'Triggers',
+        href: 'triggers',
+      },
+      loader: async () =>
+        (
+          await import(
+            './components/eventing/BrokerTriggerTab' /* webpackChunkName: "knative-broker-triggers-list" */
+          )
+        ).default,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
+    },
+  },
+  {
+    type: 'Page/Resource/List',
+    properties: {
+      model: models.EventingTriggerModel,
+      loader: async () =>
+        (
+          await import(
+            './components/eventing/triggers-list/TriggerListPage' /* webpackChunkName: "knative-triggers-page" */
+          )
+        ).default,
     },
   },
   ...topologyPlugin,
