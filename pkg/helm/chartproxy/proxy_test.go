@@ -44,7 +44,7 @@ func TestProxy_IndexFile(t *testing.T) {
 		{
 			name:       "returned merged index file for all accessible helm repos",
 			indexFiles: []string{"testdata/azureRepoIndex.yaml"},
-			mergedFile: "testdata/azureRepoIndex.yaml",
+			mergedFile: "testdata/mergedAzureRepoIndex.yaml",
 			helmCRS: []*unstructured.Unstructured{
 				{
 					Object: map[string]interface{}{
