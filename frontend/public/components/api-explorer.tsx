@@ -620,12 +620,23 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
           />
         </CheckBoxControls>
         <p className="co-m-pane__explanation">
-          {t('api-explorer~The following subjects can {{verb}} {{plural}}', { verb, plural })}
-          {namespaced && namespace && (
-            <> {t('api-explorer~in namespace {{ namespace }}', { namespace })}</>
-          )}
-          {namespaced && !namespace && <> {t('api-explorer~in all namespaces')}</>}
-          {!namespaced && <> {t('api-explorer~at the cluster scope')}</>}.
+          {namespaced &&
+            namespace &&
+            t(
+              'api-explorer~The following subjects can {{verb}} {{plural}} in namespace {{ namespace }}',
+              { verb, plural, namespace },
+            )}
+          {namespaced &&
+            !namespace &&
+            t('api-explorer~The following subjects can {{verb}} {{plural}} in all namespaces', {
+              verb,
+              plural,
+            })}
+          {!namespaced &&
+            t('api-explorer~The following subjects can {{verb}} {{plural}} at the cluster scope', {
+              verb,
+              plural,
+            })}
         </p>
         <Table
           EmptyMsg={EmptyAccessReviewMsg}
