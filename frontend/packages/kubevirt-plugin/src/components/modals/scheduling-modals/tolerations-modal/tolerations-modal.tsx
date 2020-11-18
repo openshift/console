@@ -1,5 +1,6 @@
-import * as React from 'react';
 import * as _ from 'lodash';
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ModalTitle, ModalBody, ModalComponentProps } from '@console/internal/components/factory';
 import { Button, ButtonVariant, Text, TextVariants } from '@patternfly/react-core';
 import {
@@ -20,7 +21,6 @@ import { useNodeQualifier } from '../shared/hooks';
 import { getTolerationsPatch } from '../../../../k8s/patches/vm/vm-scheduling-patches';
 import { LabelsList } from '../../../LabelsList/labels-list';
 import {
-  TOLERATIONS_MODAL_TITLE,
   TOLERATIONS_EFFECTS,
   SCHEDULING_NO_NODES_TAINTED_MATCH_TEXT,
   SCHEDULING_NO_NODES_TAINTED_MATCH_BUTTON_TEXT,
@@ -44,6 +44,7 @@ export const TModal = withHandlePromise(
     vmLikeEntity,
     vmLikeEntityLoading,
   }: TModalProps) => {
+    const { t } = useTranslation();
     const vmLikeFinal = getLoadedData(vmLikeEntityLoading, vmLikeEntity);
     const loadError = getLoadError(nodes, NodeModel);
 
@@ -102,19 +103,21 @@ export const TModal = withHandlePromise(
 
     return (
       <div className="modal-content">
-        <ModalTitle>{TOLERATIONS_MODAL_TITLE}</ModalTitle>
+        <ModalTitle>{t('kubevirt-plugin~Tolerations')}</ModalTitle>
         <ModalBody>
           <div className="scheduling-modals__desc-container">
             <Text className="scheduling-modals__desc" component={TextVariants.small}>
-              {
-                'Tolerations are applied to VMs, and allow (but do not require) the VMs to schedule onto nodes with matching taints.'
-              }
+              {t(
+                'kubevirt-plugin~Tolerations are applied to VMs, and allow (but do not require) the VMs to schedule onto nodes with matching taints.',
+              )}
             </Text>
             <Text className="scheduling-modals__desc" component={TextVariants.small}>
-              {'Add tolerations to allow a VM to schedule onto nodes with matching taints.'}
+              {t(
+                'kubevirt-plugin~Add tolerations to allow a VM to schedule onto nodes with matching taints.',
+              )}
             </Text>
             <ExternalLink
-              text="Taints and Tolerations documentation"
+              text={t('kubevirt-plugin~Taints and Tolerations documentation')}
               href={
                 'https://kubevirt.io/user-guide/#/usage/node-placement?id=taints-and-tolerations'
               }
@@ -124,8 +127,8 @@ export const TModal = withHandlePromise(
             isEmpty={tolerationsLabels.length === 0}
             kind="Node"
             onLabelAdd={onTolerationAdd}
-            addRowText="Add Toleration"
-            emptyStateAddRowText="Add Toleration to specify qualifying nodes"
+            addRowText={t('kubevirt-plugin~Add Toleration')}
+            emptyStateAddRowText={t('kubevirt-plugin~Add Toleration to specify qualifying nodes')}
           >
             {tolerationsLabels.length > 0 && (
               <>
@@ -156,14 +159,19 @@ export const TModal = withHandlePromise(
           isSimpleError={!!loadError}
           onSubmit={onSubmit}
           onCancel={close}
-          submitButtonText="Save"
-          infoTitle={showCollisionAlert && 'Tolerations has been updated outside this flow.'}
+          submitButtonText={t('kubevirt-plugin~Save')}
+          infoTitle={
+            showCollisionAlert &&
+            t('kubevirt-plugin~Tolerations has been updated outside this flow.')
+          }
           infoMessage={
             <>
-              Saving these changes will override any Tolerations previously saved.
+              {t(
+                'kubevirt-plugin~Saving these changes will override any Tolerations previously saved.',
+              )}
               <br />
               <Button variant={ButtonVariant.link} isInline onClick={onReload}>
-                Reload Tolerations
+                {t('kubevirt-plugin~Reload Tolerations')}
               </Button>
               .
             </>

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, ButtonVariant, Checkbox, Text, TextVariants } from '@patternfly/react-core';
 import { ModalTitle, ModalBody, ModalComponentProps } from '@console/internal/components/factory';
 import { NodeModel } from '@console/internal/models';
@@ -17,7 +18,7 @@ import { useCollisionChecker } from '../../../../hooks/use-collision-checker';
 import { useNodeQualifier } from '../shared/hooks';
 import { ModalFooter } from '../../modal/modal-footer';
 import { NodeChecker } from '../shared/NodeChecker/node-checker';
-import { DEDICATED_RESOURCES_MODAL_TITLE, DEDICATED_RESOURCES_LABELS } from '../shared/consts';
+import { DEDICATED_RESOURCES_LABELS } from '../shared/consts';
 import './dedicated-resources-modal.scss';
 
 export const DedicatedResourcesModal = withHandlePromise<DedicatedResourcesModalProps>(
@@ -30,6 +31,7 @@ export const DedicatedResourcesModal = withHandlePromise<DedicatedResourcesModal
     inProgress,
     errorMessage,
   }) => {
+    const { t } = useTranslation();
     const vmLikeFinal = getLoadedData(vmLikeEntityLoading, vmLikeEntity);
     const loadError = getLoadError(nodes, NodeModel);
     const isCurrentCPUPinned = isDedicatedCPUPlacement(asVM(vmLikeFinal));
@@ -66,11 +68,13 @@ export const DedicatedResourcesModal = withHandlePromise<DedicatedResourcesModal
 
     return (
       <div className="modal-content">
-        <ModalTitle>{DEDICATED_RESOURCES_MODAL_TITLE}</ModalTitle>
+        <ModalTitle>{t('kubevirt-plugin~Dedicated Resources')}</ModalTitle>
         <ModalBody>
           <Checkbox
             className="kubevirt-dedicated-resources__checkbox"
-            label="Schedule this workload with dedicated resources (guaranteed policy)"
+            label={t(
+              'kubevirt-plugin~Schedule this workload with dedicated resources (guaranteed policy)',
+            )}
             isChecked={isPinned}
             isDisabled={!isLoaded(nodes) || inProgress}
             onChange={(flag) => setIsPinned(flag)}
@@ -80,7 +84,7 @@ export const DedicatedResourcesModal = withHandlePromise<DedicatedResourcesModal
             className="kubevirt-dedicated-resources__helper-text"
             component={TextVariants.small}
           >
-            Available only on Nodes with labels{' '}
+            {t('kubevirt-plugin~Available only on Nodes with labels')}{' '}
             <Label kind={NodeModel.kind} name="cpumanager" value="true" expand />
           </Text>
           <NodeChecker qualifiedNodes={qualifiedNodes} />
@@ -93,14 +97,16 @@ export const DedicatedResourcesModal = withHandlePromise<DedicatedResourcesModal
           isSimpleError={!!loadError}
           onSubmit={onSubmit}
           onCancel={close}
-          submitButtonText="Save"
-          infoTitle={showCollisionAlert && 'Policy has been updated outside this flow.'}
+          submitButtonText={t('kubevirt-plugin~Save')}
+          infoTitle={
+            showCollisionAlert && t('kubevirt-plugin~Policy has been updated outside this flow.')
+          }
           infoMessage={
             <>
-              Saving these changes will override any policy previously saved.
+              {t('kubevirt-plugin~Saving these changes will override any policy previously saved.')}
               <br />
               <Button variant={ButtonVariant.link} isInline onClick={onReload}>
-                Reload Policy
+                {t('kubevirt-plugin~Reload Policy')}
               </Button>
               .
             </>
