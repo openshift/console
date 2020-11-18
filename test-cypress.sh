@@ -5,6 +5,9 @@ yarn install
 
 function generateReport {
   yarn run cypress-postreport
+  if test -f ./packages/integration-tests-cypress/cypress-a11y-report.json; then
+    yarn cypress-a11y-report
+  fi
 }
 trap generateReport EXIT
 
