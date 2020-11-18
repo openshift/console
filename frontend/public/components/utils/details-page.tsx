@@ -40,7 +40,7 @@ const getTolerationsPath = (obj: K8sResourceKind): string => {
   return obj.kind === 'Pod' ? 'spec.tolerations' : 'spec.template.spec.tolerations';
 };
 
-export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({
+export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
   children,
   resource,
   customPathName,

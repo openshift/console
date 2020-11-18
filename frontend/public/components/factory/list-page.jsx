@@ -218,6 +218,7 @@ export const FireMan_ = connect(null, { filterList })(
               <Dropdown
                 buttonClassName="pf-m-primary"
                 id="item-create"
+                dataTest="item-create"
                 menuClassName={classNames({ 'pf-m-align-right-on-md': title })}
                 title={createButtonText}
                 noSelection

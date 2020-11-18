@@ -81,9 +81,10 @@ export const SecretValue: React.FC<SecretValueProps> = ({ value, reveal, encoded
 };
 SecretValue.displayName = 'SecretValue';
 
-export const SecretData: React.FC<SecretDataProps> = ({ data, title = 'Data' }) => {
+export const SecretData: React.FC<SecretDataProps> = ({ data, title }) => {
   const [reveal, setReveal] = React.useState(false);
   const { t } = useTranslation();
+  const titleI18n = title || t('workload~Data');
   const dl = [];
   Object.keys(data || {})
     .sort()
@@ -98,7 +99,7 @@ export const SecretData: React.FC<SecretDataProps> = ({ data, title = 'Data' }) 
 
   return (
     <>
-      <SectionHeading text={title}>
+      <SectionHeading text={titleI18n}>
         {dl.length ? (
           <Button
             type="button"
