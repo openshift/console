@@ -907,7 +907,7 @@ export class TileViewPage extends React.Component {
     }
 
     return (
-      <div className="co-catalog-page">
+      <div className="co-catalog-page co-catalog-page--with-sidebar">
         <div className="co-catalog-page__tabs">
           {this.renderCategoryTabs(activeCategory.id)}
           {this.renderSidePanel()}

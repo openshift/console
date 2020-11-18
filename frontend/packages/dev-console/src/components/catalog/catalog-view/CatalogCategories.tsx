@@ -5,12 +5,14 @@ import { CatalogCategories } from '../utils/types';
 
 type CatalogCategoriesProp = {
   categories: CatalogCategories;
+  categorizedIds: Record<string, string[]>;
   selectedCategory: string;
   onSelectCategory: (category: string) => void;
 };
 
 const CatalogCategories: React.FC<CatalogCategoriesProp> = ({
   categories,
+  categorizedIds,
   selectedCategory,
   onSelectCategory,
 }) => {
@@ -31,6 +33,8 @@ const CatalogCategories: React.FC<CatalogCategoriesProp> = ({
   };
 
   const renderTabs = (category, selectedCategoryId) => {
+    if (!categorizedIds[category.id]) return null;
+
     const { id, label, subcategories, numItems } = category;
     const active = id === selectedCategory;
     const shown = _.has(categories, id);

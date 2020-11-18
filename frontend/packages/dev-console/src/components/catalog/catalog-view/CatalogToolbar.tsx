@@ -2,34 +2,34 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { SearchInput } from '@patternfly/react-core';
 import { Dropdown } from '@console/internal/components/utils';
-import { CatalogCategory, CatalogSortOrder, CatalogStringMap } from '../utils/types';
-import { NoGrouping } from '../utils/utils';
+import { CatalogSortOrder, CatalogStringMap } from '../utils/types';
+import { NoGrouping } from '../utils/catalog-utils';
 
 type CatalogToolbarProps = {
-  activeCategory: CatalogCategory;
-  keyword: string;
-  onKeywordChange: (keyword: string) => void;
+  title: string;
+  totalItems: number;
+  searchKeyword: string;
   sortOrder: CatalogSortOrder;
+  groupings: CatalogStringMap;
+  activeGrouping: string;
+  onGroupingChange: (grouping: string) => void;
+  onSearchKeywordChange: (searchKeyword: string) => void;
   onSortOrderChange: (sortOrder: CatalogSortOrder) => void;
-  groupings?: CatalogStringMap;
-  activeGrouping?: string;
-  onGroupingChange?: (grouping: string) => void;
 };
 
+// update to use inputRef when SearchInput support refs.
 const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
-  (
-    {
-      activeCategory,
-      keyword,
-      onKeywordChange,
-      sortOrder,
-      onSortOrderChange,
-      groupings,
-      activeGrouping,
-      onGroupingChange,
-    },
-    inputRef,
-  ) => {
+  ({
+    title,
+    totalItems,
+    searchKeyword,
+    sortOrder,
+    groupings,
+    activeGrouping,
+    onGroupingChange,
+    onSearchKeywordChange,
+    onSortOrderChange,
+  }) => {
     const catalogSortItems = { [CatalogSortOrder.ASC]: 'A-Z', [CatalogSortOrder.DESC]: 'Z-A' };
 
     const showGrouping = !_.isEmpty(groupings);
@@ -41,18 +41,17 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
 
     return (
       <div className="co-catalog-page__header">
-        <div className="co-catalog-page__heading text-capitalize">{activeCategory.label}</div>
+        <div className="co-catalog-page__heading text-capitalize">{title}</div>
         <div className="co-catalog-page__filter">
           <div>
             <SearchInput
-              ref={inputRef}
               className="co-catalog-page__input"
               data-test="search-catalog"
               type="text"
               placeholder="Filter by keyword..."
-              value={keyword}
-              onChange={onKeywordChange}
-              onClear={() => onKeywordChange('')}
+              value={searchKeyword}
+              onChange={onSearchKeywordChange}
+              onClear={() => onSearchKeywordChange('')}
               aria-label="Filter by keyword..."
             />
             <Dropdown
@@ -72,7 +71,7 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
               />
             )}
           </div>
-          <div className="co-catalog-page__num-items">{activeCategory.numItems} items</div>
+          <div className="co-catalog-page__num-items">{totalItems} items</div>
         </div>
       </div>
     );

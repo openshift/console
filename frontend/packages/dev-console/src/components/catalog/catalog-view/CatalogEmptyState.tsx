@@ -3,26 +3,30 @@ import {
   Button,
   EmptyState,
   EmptyStateBody,
+  EmptyStateIcon,
   EmptyStateSecondaryActions,
   EmptyStateVariant,
   Title,
 } from '@patternfly/react-core';
+import { SearchIcon } from '@patternfly/react-icons';
 
 type CatalogEmptyStateProps = {
-  keyword: string;
   onClear: () => void;
 };
 
-const CatalogEmptyState: React.FC<CatalogEmptyStateProps> = ({ keyword, onClear }) => {
+const CatalogEmptyState: React.FC<CatalogEmptyStateProps> = ({ onClear }) => {
   return (
     <EmptyState variant={EmptyStateVariant.full}>
+      <EmptyStateIcon icon={SearchIcon} />
       <Title headingLevel="h2" size="lg">
-        No matching results for &quot;{keyword}&quot;
+        No results found
       </Title>
-      <EmptyStateBody>No results match this search</EmptyStateBody>
+      <EmptyStateBody>
+        No results match the filter criteria. Remove filters or clear all filters to show results.
+      </EmptyStateBody>
       <EmptyStateSecondaryActions>
         <Button variant="link" onClick={onClear} data-test-id="catalog-clear-filters">
-          Clear search
+          Clear all filters
         </Button>
       </EmptyStateSecondaryActions>
     </EmptyState>

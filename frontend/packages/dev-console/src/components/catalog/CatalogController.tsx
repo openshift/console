@@ -1,4 +1,6 @@
 import * as React from 'react';
+import * as _ from 'lodash';
+import Helmet from 'react-helmet';
 import {
   PageHeading,
   skeletonCatalog,
@@ -7,15 +9,15 @@ import {
   removeQueryArgument,
   setQueryArgument,
 } from '@console/internal/components/utils';
+import { CatalogItem, CatalogItemAttribute } from '@console/plugin-sdk';
+import { DEV_CATALOG_FILTER_KEY } from '@console/shared';
+
 import { CatalogService } from './service/CatalogServiceProvider';
 import CatalogView from './catalog-view/CatalogView';
 import useCatalogCategories from './hooks/useCatalogCategories';
-import { CatalogItem, CatalogItemAttribute } from '@console/plugin-sdk';
 import CatalogDetailsModal from './details/CatalogDetailsModal';
 import CatalogTile from './CatalogTile';
-import { DEV_CATALOG_FILTER_KEY } from '@console/shared';
-import { defaultFilters, determineAvailableFilters } from './utils/filter-utils';
-import Helmet from 'react-helmet';
+import { determineAvailableFilters } from './utils/filter-utils';
 import { CatalogFilters, CatalogStringMap, CatalogType } from './utils/types';
 
 type CatalogControllerProps = CatalogService;
@@ -57,8 +59,8 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
     const typeExtension = catalogExtensions?.find(
       (extension) => extension.properties.type === type,
     );
-    title = typeExtension?.properties.title;
-    description = typeExtension?.properties.catalogDescription;
+    title = typeExtension?.properties.title ?? title;
+    description = typeExtension?.properties.catalogDescription ?? description;
 
     breadcrumbs.push({
       name: title,
@@ -76,29 +78,27 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
     typeGroupings && typeGroupings.forEach((group) => (groupings[group.attribute] = group.label));
   }
 
-  const catalogTypes: CatalogType[] = React.useMemo(
-    () =>
-      catalogExtensions.map((extension) => ({
-        label: extension.properties.title,
-        value: extension.properties.type,
-        description: extension.properties.typeDescription,
-        numItems: itemsMap[extension.properties.type]?.length ?? 0,
-      })),
-    [catalogExtensions, itemsMap],
-  );
+  const catalogTypes: CatalogType[] = React.useMemo(() => {
+    const types = catalogExtensions.map((extension) => ({
+      label: extension.properties.title,
+      value: extension.properties.type,
+      description: extension.properties.typeDescription,
+      numItems: itemsMap[extension.properties.type]?.length ?? 0,
+    }));
+
+    return _.sortBy(types, ({ label }) => label.toLowerCase());
+  }, [catalogExtensions, itemsMap]);
+
+  const catalogItems = React.useMemo(() => (catalogType ? itemsMap[catalogType] : items), [
+    catalogType,
+    items,
+    itemsMap,
+  ]);
 
   const availableFilters: CatalogFilters = React.useMemo(
-    () => determineAvailableFilters(defaultFilters, items, filterGroups),
-    [filterGroups, items],
+    () => determineAvailableFilters({}, catalogItems, filterGroups),
+    [catalogItems, filterGroups],
   );
-
-  React.useEffect(() => {
-    const selectedId = getQueryArgument('selectedId');
-    if (selectedId) {
-      const item = items.find((it) => selectedId === it.uid);
-      setSelectedItem(item);
-    }
-  }, [items]);
 
   const openDetailsPanel = React.useCallback((item: CatalogItem): void => {
     setQueryArgument('selectedId', item.uid);
@@ -126,11 +126,24 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
     setQueryArgument('catalogType', value);
   }, []);
 
-  const catalogItems = React.useMemo(() => (catalogType ? itemsMap[catalogType] : items), [
-    catalogType,
-    items,
-    itemsMap,
-  ]);
+  React.useEffect(() => {
+    let unmounted = false;
+    const selectedId = getQueryArgument('selectedId');
+
+    if (!unmounted) {
+      if (selectedId) {
+        const item = items.find((it) => selectedId === it.uid);
+        setSelectedItem(item);
+      } else {
+        setSelectedItem(null);
+      }
+      setCatalogType(type);
+    }
+
+    return () => {
+      unmounted = true;
+    };
+  }, [items, type]);
 
   return (
     <>
@@ -139,7 +152,10 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
       </Helmet>
       <div className="co-m-page__body">
         <div className="co-catalog">
-          <PageHeading title={title} breadcrumbs={catalogType ? breadcrumbs : null} />
+          <PageHeading
+            title={title}
+            breadcrumbs={catalogType && items?.length > 0 ? breadcrumbs : null}
+          />
           <p className="co-catalog-page__description">{description}</p>
           <div className="co-catalog__body">
             <StatusBox

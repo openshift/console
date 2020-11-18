@@ -9,7 +9,11 @@ import { ExternalLink } from '@console/internal/components/utils';
 import { HelmChartEntries, HelmChartMetaData } from '../../helm/helm-types';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 
-const HelmReadmeLoader = ({ chartURL }) => {
+type HelmReadmeLoaderProps = {
+  chartURL: string;
+};
+
+const HelmReadmeLoader: React.FC<HelmReadmeLoaderProps> = ({ chartURL }) => {
   const [readme, setReadme] = React.useState<string>();
 
   React.useEffect(() => {
@@ -20,8 +24,10 @@ const HelmReadmeLoader = ({ chartURL }) => {
 
       try {
         chartData = await coFetchJSON(`/api/helm/chart?url=${chartURL}`);
-        // eslint-disable-next-line no-empty
-      } catch {}
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.warn('Error fetching helm chart details for readme', e);
+      }
 
       const readmeFile = chartData?.files?.find((file) => file.name === 'README.md');
       const readmeData = readmeFile?.data && atob(readmeFile?.data);

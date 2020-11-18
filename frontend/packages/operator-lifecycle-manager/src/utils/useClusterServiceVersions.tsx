@@ -30,7 +30,8 @@ const normalizeClusterServiceVersions = (
     // remove internal CRDs
     .filter((crd) => !isInternal(crd))
     .map((desc) => {
-      const { uid, creationTimestamp } = desc.csv.metadata;
+      const { creationTimestamp } = desc.csv.metadata;
+      const uid = `${desc.csv.metadata.uid}-${desc.displayName}`;
       const { description } = desc;
       const provider = desc.csv.spec.provider.name;
       const operatorName = desc.csv.spec.displayName;

@@ -20,7 +20,6 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   flex-direction: column;
   min-height: 100%;
   min-width: 515px; // in order to accommodate filters and tiles at mobile
-  padding: 0 0 ($grid-gutter-width / 2);
 }
 
 .co-catalog-tile-view {
@@ -100,12 +99,15 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   border: 1px solid var(--pf-global--BorderColor--300);
   display: flex;
   flex: 1;
-  margin: 0 ($grid-gutter-width / 2);
-  padding: ($grid-gutter-width / 2) 0 0;
+
+  &--with-sidebar {
+    margin: 0 ($grid-gutter-width / 2);
+    padding: ($grid-gutter-width / 2) 0;
+  }
 
   &__btn-group__group-by {
     display: inline-flex;
-    margin-left: var(--pf-global--spacer--xl);
+    margin-left: var(--pf-global--spacer--md);
   }
 
   &__content {
@@ -158,17 +160,26 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 
   &__input {
     display: inline-flex !important;
-    margin: 0 10px 20px 30px;
+    margin: 0 0 20px 30px;
     width: auto !important;
   }
 
   &__sort {
     display: inline-flex;
+    margin-left: var(--pf-global--spacer--md);
   }
 
   &__num-items {
     font-weight: var(--pf-global--FontWeight--bold);
     padding: 0 0 20px;
+  }
+
+  &__info-icon {
+    vertical-align: middle;
+    color: #6a6e73;
+    &:hover {
+      color: #151515;
+    }
   }
 
   // Enable scrolling on the modal
@@ -367,25 +378,4 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 
 .properties-side-panel-pf-property-value__capability-levels {
   list-style: none;
-}
-
-// Override upstream issue where PF3 colors are still being used.
-// Remove once https://github.com/patternfly/patternfly-react/issues/4117 is fixed
-.vertical-tabs-pf-tab {
-  &.active a {
-    // color: var(--pf-global--link--Color) !important;
-
-    &::before {
-      background: var(--pf-global--link--Color);
-    }
-  }
-
-  > a {
-    font-size: $font-size-base;
-
-    &:focus,
-    &:hover {
-      color: var(--pf-global--link--Color--hover);
-    }
-  }
 }

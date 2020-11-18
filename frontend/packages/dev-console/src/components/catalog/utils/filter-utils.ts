@@ -1,41 +1,13 @@
+import { CatalogItem } from '@console/plugin-sdk';
 import * as _ from 'lodash';
-import {
-  categorize,
-  clearItemsFromCategories,
-  findActiveCategory,
-  processCategories,
-} from './category-utils';
+import { keywordCompare } from './catalog-utils';
+import { CatalogFilters } from './types';
 
-export const FilterTypes = {
-  category: 'category',
-  keyword: 'keyword',
-};
-
-export const defaultFilters = {
-  keyword: {
-    value: '',
-    active: false,
-  },
-};
-
-export const filterByKeyword = (items, filters, compFunction) => {
-  const { keyword } = filters;
-  if (!keyword || !keyword.active) {
-    return items;
-  }
-
-  const filterString = keyword.value.toLowerCase();
-  return _.filter(items, (item) => compFunction(filterString, item));
-};
-
-export const filterByGroup = (items, filters) => {
+export const filterByGroup = (items: CatalogItem[], filters): Record<string, CatalogItem[]> => {
   // Filter items by each filter group
   return _.reduce(
     filters,
     (filtered, group, key) => {
-      if (key === FilterTypes.keyword) {
-        return filtered;
-      }
       // Only apply active filters
       const activeFilters = _.filter(group, 'active');
       if (activeFilters.length) {
@@ -63,41 +35,44 @@ export const filterByGroup = (items, filters) => {
   );
 };
 
-export const filterItems = (items, filters, keywordCompare) => {
+export const filterByAttributes = (
+  items: CatalogItem[],
+  filters: CatalogFilters,
+): CatalogItem[] => {
   if (_.isEmpty(filters)) {
     return items;
   }
-
-  // Filter items by keyword first
-  const filteredByKeyword = filterByKeyword(items, filters, keywordCompare);
 
   // Apply each filter property individually. Example:
   //  filteredByGroup = {
   //    provider: [/*array of items filtered by provider*/],
   //    healthIndex: [/*array of items filtered by healthIndex*/],
   //  };
-  const filteredByGroup = filterByGroup(filteredByKeyword, filters);
+  const filteredByGroup = filterByGroup(items, filters);
 
   // Intersection of individually applied filters is all filters
   // In the case no filters are active, returns items filteredByKeyword
-  return [..._.values(filteredByGroup), filteredByKeyword].reduce((a, b) =>
-    a.filter((c) => b.includes(c)),
-  );
+  return [..._.values(filteredByGroup), items].reduce((a, b) => a.filter((c) => b.includes(c)));
 };
 
-export const recategorizeItems = (items, itemsSorter, filters, keywordCompare, categories) => {
-  const filteredItems = filterItems(items, filters, keywordCompare);
-
-  const newCategories = _.cloneDeep(categories);
-  clearItemsFromCategories(newCategories);
-
-  categorize(filteredItems, newCategories);
-  processCategories(newCategories, itemsSorter);
-
-  return newCategories;
+export const filterBySearchKeyword = (
+  items: CatalogItem[],
+  searchKeyword: string,
+): CatalogItem[] => {
+  return searchKeyword ? items.filter((item) => keywordCompare(searchKeyword, item)) : items;
 };
 
-export const determineAvailableFilters = (initialFilters, items, filterGroups) => {
+export const filterByCategory = (
+  items: CatalogItem[],
+  categoryId: string,
+  categorizedIds: Record<string, string[]>,
+): CatalogItem[] => {
+  return categoryId !== 'all'
+    ? items.filter((item) => categorizedIds[categoryId]?.includes(item.uid))
+    : items;
+};
+
+export const determineAvailableFilters = (initialFilters, items, filterGroups): CatalogFilters => {
   const filters = _.cloneDeep(initialFilters);
 
   _.each(filterGroups, (field) => {
@@ -117,24 +92,20 @@ export const determineAvailableFilters = (initialFilters, items, filterGroups) =
 };
 
 export const getActiveFilters = (
-  keywordFilter,
-  groupFilters,
+  attributeFilters,
   activeFilters,
-  categoryFilter = null,
   storeFilterKey = null,
   filterRetentionPreference = null,
-) => {
-  activeFilters.keyword.value = keywordFilter || '';
-  activeFilters.keyword.active = !!keywordFilter;
-
+): CatalogFilters => {
   const userFilters = storeFilterKey ? localStorage.getItem(storeFilterKey) : null;
+
   if (userFilters) {
     try {
       const lastFilters = JSON.parse(userFilters);
       if (lastFilters) {
         if (filterRetentionPreference) {
           _.each(filterRetentionPreference, (filterGroup) => {
-            if (!groupFilters || !groupFilters[filterGroup]) {
+            if (!attributeFilters || !attributeFilters[filterGroup]) {
               if (lastFilters[filterGroup]) {
                 activeFilters[filterGroup] = lastFilters[filterGroup];
               }
@@ -148,14 +119,7 @@ export const getActiveFilters = (
     }
   }
 
-  if (categoryFilter) {
-    // removing default and localstore filters if category filters are present over URL
-    _.each(_.keys(activeFilters.kind), (key) =>
-      _.set(activeFilters, ['kind', key, 'active'], false),
-    );
-  }
-
-  _.forOwn(groupFilters, (filterValues, filterType) => {
+  _.forOwn(attributeFilters, (filterValues, filterType) => {
     // removing default and localstore filters if Filters are present over URL
     _.each(_.keys(activeFilters[filterType]), (key) =>
       _.set(activeFilters, [filterType, key, 'active'], false),
@@ -168,22 +132,21 @@ export const getActiveFilters = (
   return activeFilters;
 };
 
-export const updateActiveFilters = (activeFilters, filterType, id, value) => {
-  if (filterType === FilterTypes.keyword) {
-    _.set(activeFilters, 'keyword.value', value);
-    _.set(activeFilters, 'keyword.active', !!value);
-  } else {
-    _.set(activeFilters, [filterType, id, 'active'], value);
-  }
+export const updateActiveFilters = (
+  activeFilters: CatalogFilters,
+  filterType: string,
+  id: string,
+  value: boolean,
+) => {
+  _.set(activeFilters, [filterType, id, 'active'], value);
 
   return activeFilters;
 };
 
-export const clearActiveFilters = (activeFilters, filterGroups) => {
-  // Clear the keyword filter
-  _.set(activeFilters, 'keyword.value', '');
-  _.set(activeFilters, 'keyword.active', false);
-
+export const clearActiveFilters = (
+  activeFilters: CatalogFilters,
+  filterGroups: string[],
+): CatalogFilters => {
   // Clear the group filters
   _.each(filterGroups, (field) => {
     _.each(_.keys(activeFilters[field]), (key) =>
@@ -195,37 +158,24 @@ export const clearActiveFilters = (activeFilters, filterGroups) => {
 };
 
 export const getFilterGroupCounts = (
-  items,
-  itemsSorter,
-  filterGroups,
-  selectedCategoryId,
-  filters,
-  categories,
-  keywordCompare,
+  items: CatalogItem[],
+  activeFilters: CatalogFilters,
+  filterGroups: string[],
 ) => {
-  // Filter only by keyword
-  const filteredItems = filterByKeyword(items, filters, keywordCompare);
-
-  const categoriesForCounts = recategorizeItems(
-    filteredItems,
-    itemsSorter,
-    [],
-    keywordCompare,
-    categories,
-  );
-
-  const activeCategory = findActiveCategory(selectedCategoryId, categoriesForCounts);
-  const activeItems = activeCategory ? activeCategory.items : [];
   const newFilterCounts = {};
 
+  if (_.isEmpty(activeFilters)) {
+    return newFilterCounts;
+  }
+
   _.each(filterGroups, (filterGroup) => {
-    _.each(_.keys(filters[filterGroup]), (key) => {
+    _.each(_.keys(activeFilters[filterGroup]), (key) => {
       const filterValues = [
-        _.get(filters, [filterGroup, key, 'value']),
-        ..._.get(filters, [filterGroup, key, 'synonyms'], []),
+        _.get(activeFilters, [filterGroup, key, 'value']),
+        ..._.get(activeFilters, [filterGroup, key, 'synonyms'], []),
       ];
 
-      const matchedItems = _.filter(activeItems, (item) => {
+      const matchedItems = _.filter(items, (item) => {
         const filterValue = item[filterGroup] || item.attributes?.[filterGroup];
         if (Array.isArray(filterValue)) {
           return filterValue.some((f) => filterValues.includes(f));

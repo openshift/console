@@ -1,21 +1,22 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import * as cx from 'classnames';
 import { CatalogItem } from '@console/plugin-sdk';
 import { isModalOpen } from '@console/internal/components/modals';
-import { updateURLParams } from '@console/internal/components/utils/tile-view-page';
 
-import { categorizeItems, findActiveCategory } from '../utils/category-utils';
-import { clearFilterURLParams, getActiveValuesFromURL } from '../utils/catalog-view-utils';
+import { categorize, findActiveCategory } from '../utils/category-utils';
+import { setURLParams, updateURLParams, NoGrouping } from '../utils/catalog-utils';
 import {
   clearActiveFilters,
-  defaultFilters,
-  FilterTypes,
+  filterByAttributes,
+  filterByCategory,
+  filterBySearchKeyword,
+  getActiveFilters,
   getFilterGroupCounts,
   getFilterSearchParam,
-  recategorizeItems,
   updateActiveFilters,
 } from '../utils/filter-utils';
-import { keywordCompare, NoGrouping } from '../utils/utils';
+
 import {
   CatalogCategories as CategoriesType,
   CatalogFilters as FiltersType,
@@ -60,12 +61,15 @@ const CatalogView: React.FC<CatalogViewProps> = ({
   groupings,
   renderTile,
 }) => {
-  const [categorizedItems, setCategorizedItems] = React.useState();
-  const [selectedCategory, setSelectedCategory] = React.useState<string>('all');
-  const [activeFilters, setActiveFilters] = React.useState(defaultFilters);
+  const [activeCategoryId, setActiveCategoryId] = React.useState<string>('all');
+  const [activeSearchKeyword, setActiveSearchKeyword] = React.useState<string>('');
+  const [activeFilters, setActiveFilters] = React.useState<FiltersType>();
+  const [activeGrouping, setActiveGrouping] = React.useState<string>(NoGrouping);
   const [filterGroupsShowAll, setFilterGroupsShowAll] = React.useState({});
   const [sortOrder, setSortOrder] = React.useState<CatalogSortOrder>(CatalogSortOrder.ASC);
-  const [activeGrouping, setActiveGrouping] = React.useState<string>(NoGrouping);
+  const [filterGroupCounts, setFilterGroupCounts] = React.useState(null);
+
+  const isGrouped = activeGrouping !== NoGrouping;
 
   const searchInputRef = React.useRef<HTMLInputElement>();
 
@@ -73,80 +77,6 @@ const CatalogView: React.FC<CatalogViewProps> = ({
     (itemsToSort) => _.orderBy(itemsToSort, ({ name }) => name.toLowerCase(), [sortOrder]),
     [sortOrder],
   );
-
-  React.useEffect(() => {
-    searchInputRef.current && searchInputRef.current.focus({ preventScroll: true });
-  }, []);
-
-  React.useEffect(() => {
-    setCategorizedItems(categorizeItems(items, itemsSorter, availableCategories));
-  }, [availableCategories, items, itemsSorter]);
-
-  React.useEffect(() => {
-    let unmounted = false;
-
-    const activeValues = getActiveValuesFromURL(
-      availableFilters,
-      filterGroups,
-      null,
-      filterStoreKey,
-      filterRetentionPreference,
-    );
-
-    if (!unmounted) {
-      setActiveFilters(activeValues.activeFilters);
-      setSelectedCategory(activeValues.selectedCategory);
-      setCategorizedItems((prevCategorizedItems) =>
-        recategorizeItems(
-          items,
-          itemsSorter,
-          activeValues.activeFilters,
-          keywordCompare,
-          prevCategorizedItems,
-        ),
-      );
-    }
-
-    return () => {
-      unmounted = true;
-    };
-  }, [
-    availableFilters,
-    filterGroups,
-    filterRetentionPreference,
-    filterStoreKey,
-    items,
-    itemsSorter,
-  ]);
-
-  const filterCounts = React.useMemo(
-    () =>
-      categorizedItems
-        ? getFilterGroupCounts(
-            items,
-            itemsSorter,
-            filterGroups,
-            selectedCategory,
-            activeFilters,
-            categorizedItems,
-            keywordCompare,
-          )
-        : null,
-    [activeFilters, categorizedItems, filterGroups, items, itemsSorter, selectedCategory],
-  );
-
-  const activeCategory = React.useMemo(
-    () =>
-      findActiveCategory(selectedCategory, categorizedItems) ||
-      findActiveCategory('all', categorizedItems),
-    [categorizedItems, selectedCategory],
-  );
-
-  const showCategories = Object.keys(categorizedItems ?? {}).length !== 2;
-
-  const showFilters = Object.keys(activeFilters).length > 1;
-
-  const showSidebar = showCategories || showFilters || !catalogType;
 
   const storeFilters = React.useCallback(
     (filters) => {
@@ -164,52 +94,51 @@ const CatalogView: React.FC<CatalogViewProps> = ({
   );
 
   const clearFilters = React.useCallback(() => {
-    clearFilterURLParams(selectedCategory);
+    const params = new URLSearchParams();
+    activeCategoryId && params.set('category', activeCategoryId);
+    catalogType && items.length > 0 && params.set('catalogType', catalogType);
+    setURLParams(params);
 
     const clearedFilters = clearActiveFilters(activeFilters, filterGroups);
 
+    setActiveSearchKeyword('');
     setActiveFilters(clearedFilters);
 
     // Don't take focus if a modal was opened while the page was loading.
     if (!isModalOpen()) {
+      // this doesn't work right now because of issue with PF SearchInput
       searchInputRef.current && searchInputRef.current.focus({ preventScroll: true });
     }
 
     storeFilters(clearedFilters);
-  }, [activeFilters, filterGroups, selectedCategory, storeFilters]);
+  }, [activeCategoryId, activeFilters, catalogType, filterGroups, items.length, storeFilters]);
 
   const handleCategoryChange = React.useCallback((categoryId) => {
-    updateURLParams(FilterTypes.category, categoryId);
-    setSelectedCategory(categoryId);
+    updateURLParams('category', categoryId);
+    setActiveCategoryId(categoryId);
   }, []);
 
   const handleFilterChange = React.useCallback(
     (filterType, id, value) => {
-      if (filterType === FilterTypes.keyword) {
-        updateURLParams(FilterTypes.keyword, `${value}`);
-      } else {
-        const groupFilter = _.cloneDeep(activeFilters[filterType]);
-        _.set(groupFilter, [id, 'active'], value);
-        updateURLParams(filterType, getFilterSearchParam(groupFilter));
-      }
-
-      const updatedFilters = updateActiveFilters(activeFilters, filterType, id, value);
-
-      setActiveFilters(updatedFilters);
-
-      setCategorizedItems((prevCategorizedItems) =>
-        recategorizeItems(items, itemsSorter, updatedFilters, keywordCompare, prevCategorizedItems),
-      );
-
-      storeFilters(updatedFilters);
+      setActiveFilters((oldFilters) => {
+        const updatedFilters = updateActiveFilters(oldFilters, filterType, id, value);
+        updateURLParams(filterType, getFilterSearchParam(updatedFilters[filterType]));
+        storeFilters(updatedFilters);
+        return updatedFilters;
+      });
     },
-    [activeFilters, items, itemsSorter, storeFilters],
+    [storeFilters],
   );
 
-  const handleKeywordSearch = React.useCallback(
-    (value) => handleFilterChange('keyword', null, value),
-    [handleFilterChange],
-  );
+  const handleSearchKeywordChange = React.useCallback((searchKeyword) => {
+    updateURLParams('keyword', searchKeyword);
+    setActiveSearchKeyword(searchKeyword);
+  }, []);
+
+  const handleGroupingChange = React.useCallback((grouping) => {
+    updateURLParams('grouping', grouping);
+    setActiveGrouping(grouping);
+  }, []);
 
   const handleShowAllToggle = React.useCallback((groupName) => {
     setFilterGroupsShowAll((showAll) => {
@@ -219,26 +148,125 @@ const CatalogView: React.FC<CatalogViewProps> = ({
     });
   }, []);
 
-  const isGrouped = activeGrouping !== NoGrouping;
+  const catalogCategories = React.useMemo(() => {
+    const allCategory = { id: 'all', label: 'All Items' };
+    const otherCategory = { id: 'other', label: 'Other' };
+
+    return {
+      all: allCategory,
+      ...availableCategories,
+      other: otherCategory,
+    };
+  }, [availableCategories]);
+
+  const categorizedIds = React.useMemo(() => categorize(items, catalogCategories), [
+    catalogCategories,
+    items,
+  ]);
+
+  const activeCategory = React.useMemo(
+    () =>
+      findActiveCategory(activeCategoryId, catalogCategories) ||
+      findActiveCategory('all', catalogCategories),
+    [activeCategoryId, catalogCategories],
+  );
+
+  const filteredItems: CatalogItem[] = React.useMemo(() => {
+    const filteredByCategoryItems = filterByCategory(items, activeCategoryId, categorizedIds);
+    const filteredBySearchItems = filterBySearchKeyword(
+      filteredByCategoryItems,
+      activeSearchKeyword,
+    );
+    const filteredByAttributes = filterByAttributes(filteredBySearchItems, activeFilters);
+
+    const counts = getFilterGroupCounts(filteredBySearchItems, activeFilters, filterGroups);
+    setFilterGroupCounts(counts);
+
+    return itemsSorter(filteredByAttributes);
+  }, [
+    activeCategoryId,
+    activeFilters,
+    activeSearchKeyword,
+    categorizedIds,
+    filterGroups,
+    items,
+    itemsSorter,
+  ]);
+
+  const totalItems = filteredItems.length;
+
+  const showCategories = Object.keys(categorizedIds ?? {}).length > 2;
+
+  const showFilters = React.useMemo(
+    () =>
+      !_.isEmpty(activeFilters) &&
+      Object.values(activeFilters).some((filterGroup) => Object.keys(filterGroup).length > 1),
+    [activeFilters],
+  );
+
+  const showTypeSelector = !catalogType && catalogTypes?.length > 1;
+
+  const showSidebar = showCategories || showFilters || showTypeSelector;
 
   const catalogItems = React.useMemo(() => {
-    if (!isGrouped) return activeCategory?.items;
+    if (!isGrouped) return filteredItems;
 
-    return _.groupBy(activeCategory?.items, (item) => item.attributes?.[activeGrouping]);
-  }, [activeCategory, activeGrouping, isGrouped]);
+    return _.groupBy(filteredItems, (item) => item.attributes?.[activeGrouping]);
+  }, [activeGrouping, filteredItems, isGrouped]);
+
+  React.useEffect(() => {
+    let unmounted = false;
+    const searchParams = new URLSearchParams(window.location.search);
+    const categoryParam = searchParams.get('category');
+    const keywordParam = searchParams.get('keyword');
+    const groupingParam = searchParams.get('grouping');
+    const attributeFilters = {};
+
+    _.each(filterGroups, (filterGroup) => {
+      const attributeFilterParam = searchParams.get(filterGroup);
+      try {
+        _.set(attributeFilters, filterGroup, JSON.parse(attributeFilterParam));
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.warn('could not update filters from url params: could not parse search params', e);
+      }
+    });
+
+    const newFilters = getActiveFilters(
+      attributeFilters,
+      availableFilters,
+      filterStoreKey,
+      filterRetentionPreference,
+    );
+
+    if (!unmounted) {
+      categoryParam && setActiveCategoryId(categoryParam);
+      keywordParam && setActiveSearchKeyword(keywordParam);
+      groupingParam && setActiveGrouping(groupingParam);
+      newFilters && setActiveFilters(newFilters);
+    }
+
+    // this doesn't work right now because of issue with PF SearchInput
+    searchInputRef.current && searchInputRef.current.focus({ preventScroll: true });
+
+    return () => {
+      unmounted = true;
+    };
+  }, [availableFilters, filterGroups, filterRetentionPreference, filterStoreKey]);
 
   return (
-    <div className="co-catalog-page">
+    <div className={cx('co-catalog-page', { 'co-catalog-page--with-sidebar': showSidebar })}>
       {showSidebar && (
         <div className="co-catalog-page__tabs">
           {showCategories && (
             <CatalogCategories
-              categories={categorizedItems}
-              selectedCategory={selectedCategory}
+              categories={catalogCategories}
+              categorizedIds={categorizedIds}
+              selectedCategory={activeCategoryId}
               onSelectCategory={handleCategoryChange}
             />
           )}
-          {!catalogType && catalogTypes && (
+          {showTypeSelector && (
             <CatalogTypeSelector
               catalogTypes={catalogTypes}
               onCatalogTypeChange={onCatalogTypeChange}
@@ -247,7 +275,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({
           {showFilters && (
             <CatalogFilters
               activeFilters={activeFilters}
-              filterCounts={filterCounts}
+              filterGroupCounts={filterGroupCounts}
               filterGroupNameMap={filterGroupNameMap}
               filterGroupsShowAll={filterGroupsShowAll}
               onShowAllToggle={handleShowAllToggle}
@@ -257,27 +285,26 @@ const CatalogView: React.FC<CatalogViewProps> = ({
         </div>
       )}
       <div className="co-catalog-page__content">
-        {activeCategory && (
-          <>
-            <CatalogToolbar
-              ref={searchInputRef}
-              activeCategory={activeCategory}
-              keyword={activeFilters.keyword.value}
-              sortOrder={sortOrder}
-              groupings={groupings}
-              activeGrouping={activeGrouping}
-              onGroupingChange={setActiveGrouping}
-              onSortOrderChange={setSortOrder}
-              onKeywordChange={handleKeywordSearch}
-            />
+        <>
+          <CatalogToolbar
+            ref={searchInputRef}
+            title={activeCategory.label}
+            totalItems={totalItems}
+            searchKeyword={activeSearchKeyword}
+            sortOrder={sortOrder}
+            groupings={groupings}
+            activeGrouping={activeGrouping}
+            onGroupingChange={handleGroupingChange}
+            onSortOrderChange={setSortOrder}
+            onSearchKeywordChange={handleSearchKeywordChange}
+          />
 
-            {activeCategory.numItems > 0 ? (
-              <CatalogGrid items={catalogItems} renderTile={renderTile} isGrouped={isGrouped} />
-            ) : (
-              <CatalogEmptyState keyword={activeFilters.keyword.value} onClear={clearFilters} />
-            )}
-          </>
-        )}
+          {totalItems > 0 ? (
+            <CatalogGrid items={catalogItems} renderTile={renderTile} isGrouped={isGrouped} />
+          ) : (
+            <CatalogEmptyState onClear={clearFilters} />
+          )}
+        </>
       </div>
     </div>
   );

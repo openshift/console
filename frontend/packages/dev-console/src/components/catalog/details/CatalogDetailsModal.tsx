@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { CatalogItem } from '@console/plugin-sdk';
 import { Modal } from '@console/shared';
 import { CatalogItemHeader } from '@patternfly/react-catalog-view-extension';
-import { getIconProps } from '../utils/utils';
+import { getIconProps } from '../utils/catalog-utils';
 import CatalogDetailsPanel from './CatalogDetailsPanel';
 
 type CatalogDetailsModalProps = {

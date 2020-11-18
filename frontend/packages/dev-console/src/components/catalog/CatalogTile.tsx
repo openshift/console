@@ -6,7 +6,7 @@ import {
 } from '@patternfly/react-catalog-view-extension';
 import { Badge } from '@patternfly/react-core';
 import { CatalogItem } from '@console/plugin-sdk';
-import { getIconProps } from './utils/utils';
+import { getIconProps } from './utils/catalog-utils';
 import { CatalogType } from './utils/types';
 
 type CatalogTileProps = {

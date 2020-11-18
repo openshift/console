@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { CatalogExtensionHookOptions, CatalogItem } from '@console/plugin-sdk';
 import { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
-import { keywordCompare } from '../utils/utils';
+import { keywordCompare } from '../utils/catalog-utils';
 import useCatalogExtensions from '../hooks/useCatalogExtensions';
 import CatalogItemsLoader from './CatalogItemsLoader';
 
@@ -59,7 +59,7 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
     type: catalogType,
     items: catalogItems,
     itemsMap: catalogItemsMap,
-    loaded: catalogTypeExtensions.length === 0 ? true : catalogItems.length > 0,
+    loaded: catalogType || catalogTypeExtensions.length === 0 ? true : catalogItems.length > 0,
     loadError,
     searchCatalog,
     catalogExtensions: catalogTypeExtensions,
