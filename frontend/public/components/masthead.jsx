@@ -4,6 +4,7 @@ import { Brand, PageHeader } from '@patternfly/react-core';
 
 import { MastheadToolbar } from './masthead-toolbar';
 import { history } from './utils';
+import hcLogoImg from '../imgs/logo_symbol_text.svg';
 import okdLogoImg from '../imgs/okd-logo.svg';
 import openshiftLogoImg from '../imgs/openshift-logo.svg';
 import ocpLogoImg from '../imgs/openshift-platform-logo.svg';
@@ -35,8 +36,8 @@ export const getBrandingDetails = () => {
       productName = 'Azure Red Hat OpenShift';
       break;
     default:
-      logoImg = okdLogoImg;
-      productName = 'OKD';
+      logoImg = hcLogoImg;
+      productName = 'HyperCloud';
   }
   if (window.SERVER_FLAGS.customLogoURL) {
     logoImg = window.SERVER_FLAGS.customLogoURL;
@@ -59,16 +60,7 @@ export const Masthead = React.memo(({ onNavToggle }) => {
     },
   };
 
-  return (
-    <PageHeader
-      id="page-main-header"
-      logo={<Brand src={details.logoImg} alt={details.productName} />}
-      logoProps={logoProps}
-      toolbar={<MastheadToolbar />}
-      showNavToggle
-      onNavToggle={onNavToggle}
-    />
-  );
+  return <PageHeader id="page-main-header" logo={<Brand src={details.logoImg} alt={details.productName} />} logoProps={logoProps} toolbar={<MastheadToolbar />} showNavToggle onNavToggle={onNavToggle} />;
 });
 
 Masthead.propTypes = {
