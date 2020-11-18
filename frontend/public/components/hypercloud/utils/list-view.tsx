@@ -9,7 +9,7 @@ export const ListView: React.FC<ListViewProps> = ({ name, defaultItem = { key: '
 
   const DefaultListHeaderFragment = (
     <div className="row pairs-list__heading">
-      <div className="col-xs-4 text-uppercase">KEY</div>
+      <div className="col-xs-4 text-secondary text-uppercase">KEY</div>
       <div className="col-xs-4 text-secondary text-uppercase">VALUE</div>
       <div className="col-xs-1 co-empty__header" />
     </div>

@@ -91,7 +91,7 @@ const CreateSampleComponent: React.FC<SampleFormProps> = props => {
 
   const listHeaderFragment = (
     <div className="row pairs-list__heading">
-      <div className="col-xs-4 text-uppercase">NAME</div>
+      <div className="col-xs-4 text-secondary text-uppercase">NAME</div>
       <div className="col-xs-4 text-secondary text-uppercase">NUM</div>
       <div className="col-xs-1 co-empty__header" />
     </div>
