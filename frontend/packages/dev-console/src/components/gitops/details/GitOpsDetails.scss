@@ -7,6 +7,12 @@
     margin-right: 35px;
     min-width: 285px;
     max-width: 285px;
+    &__argocd-link {
+      margin-top: var(--pf-global--spacer--md)
+    }
+    &__co-resource-item {
+      margin-top: var(--pf-global--spacer--sm)
+    }
     &__header {
       display: flex;
       flex-direction: column;

@@ -89,7 +89,11 @@ const GitOpsDetailsPage: React.FC<GitOpsDetailsPageProps> = ({ match, location }
       {!envsData && !emptyStateMsg ? (
         <LoadingBox />
       ) : (
-        <GitOpsDetailsController envsData={envsData} emptyStateMsg={emptyStateMsg} />
+        <GitOpsDetailsController
+          envsData={envsData}
+          emptyStateMsg={emptyStateMsg}
+          appName={appName}
+        />
       )}
     </>
   );
