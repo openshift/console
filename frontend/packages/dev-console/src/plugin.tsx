@@ -110,6 +110,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/Href',
     properties: {
+      id: 'add',
       perspective: 'dev',
       group: 'top',
       componentProps: {
@@ -122,6 +123,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/Href',
     properties: {
+      id: 'topology',
       perspective: 'dev',
       group: 'top',
       componentProps: {
@@ -137,6 +139,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/Href',
     properties: {
+      id: 'monitoring',
       perspective: 'dev',
       group: 'top',
       componentProps: {
@@ -153,6 +156,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/Href',
     properties: {
+      id: 'search',
       perspective: 'dev',
       group: 'top',
       componentProps: {
@@ -166,6 +170,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/ResourceNS',
     properties: {
+      id: 'builds',
       perspective: 'dev',
       group: 'resources',
       componentProps: {
@@ -181,6 +186,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/Href',
     properties: {
+      id: 'applicationstages',
       perspective: 'dev',
       group: 'resources',
       componentProps: {
@@ -196,6 +202,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/Href',
     properties: {
+      id: 'helm',
       perspective: 'dev',
       group: 'resources',
       componentProps: {
@@ -211,6 +218,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/Href',
     properties: {
+      id: 'project',
       perspective: 'dev',
       group: 'resources',
       componentProps: {

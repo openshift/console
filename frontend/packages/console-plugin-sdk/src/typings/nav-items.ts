@@ -8,16 +8,26 @@ import { Extension } from './base';
 
 namespace ExtensionProperties {
   interface NavItem {
+    /** Item id, should be unique for all items and sections */
+    id: string;
     /** Perspective id to which this item belongs to. If not specified, use the default perspective. */
     perspective?: string;
-    /** Nav section to which this item belongs to. If not specified, render item as top-level link. */
+    /** Nav section to which this item belongs to.If not specified, render item as top-level link. */
     section?: string;
     /** Nav group to which this item belongs to. Add items to a grouping with a separator above */
     group?: string;
     /** Props to pass to the corresponding `NavLink` component. */
     componentProps: Pick<NavLinkProps, 'name' | 'startsWith' | 'testID' | 'data-tour-id'>;
-    /** Nav item before which this item should be placed. */
-    mergeBefore?: string;
+    /*
+     * TODO: Resolve issue of extensions adding optional sections
+     * Providing insertBefore and mergeAfter capability to handles simple cases where extensions
+     * could add optional sections. This only handles cases where either the prev or next nav
+     * item is always there.
+     */
+    /** Nav item before which this item should be placed. For arrays, first one found in order is used */
+    insertBefore?: string | string[];
+    /** Nav item after which this item should be placed (before takes precedence). For arrays, first one found in order is used */
+    insertAfter?: string | string[];
   }
 
   export interface SeparatorNavItem extends Omit<NavItem, 'componentProps'> {

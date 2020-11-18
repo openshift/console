@@ -224,6 +224,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/ResourceCluster',
     properties: {
+      id: 'objectbuckets',
       section: 'Storage',
       componentProps: {
         name: 'Object Buckets',
@@ -257,6 +258,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/ResourceNS',
     properties: {
+      id: 'objectbucketclaims',
       section: 'Storage',
       componentProps: {
         name: 'Object Bucket Claims',

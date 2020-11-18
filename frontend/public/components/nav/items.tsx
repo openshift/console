@@ -70,7 +70,6 @@ class NavLink<P extends NavLinkProps> extends React.PureComponent<P> {
   render() {
     const {
       isActive,
-      id,
       name,
       tipText,
       onClick,
@@ -89,7 +88,6 @@ class NavLink<P extends NavLinkProps> extends React.PureComponent<P> {
       <NavItem className={itemClasses} isActive={isActive}>
         <Link
           className={linkClasses}
-          id={id}
           data-test-id={testID}
           to={this.to}
           onClick={onClick}
@@ -193,12 +191,13 @@ export const createLink = (item: PluginNavItem, rootNavLink = false): React.Reac
       Component = ResourceClusterLink;
     }
     if (Component) {
+      const { id } = item.properties;
       const key = item.properties.componentProps.name;
       const props = item.properties.componentProps;
       if (rootNavLink) {
-        return <RootNavLink {...props} key={key} component={Component} />;
+        return <RootNavLink id={id} {...props} key={key} component={Component} />;
       }
-      return <Component {...props} key={key} />;
+      return <Component id={id} {...props} key={key} />;
     }
   }
   return undefined;

@@ -84,12 +84,13 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/ResourceNS',
     properties: {
+      id: 'virtualization',
       section: 'Workloads',
       componentProps: {
         name: 'Virtualization',
         resource: 'virtualization',
       },
-      mergeBefore: 'Deployments',
+      insertBefore: 'deployments',
     },
     flags: {
       required: [FLAG_KUBEVIRT],

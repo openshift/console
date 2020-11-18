@@ -78,8 +78,10 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/ResourceNS',
     properties: {
+      id: 'pipelines',
       perspective: 'dev',
       group: 'resources',
+      insertAfter: 'builds',
       componentProps: {
         name: PipelineModel.labelPlural,
         resource: referenceForModel(PipelineModel),
@@ -93,6 +95,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/Href',
     properties: {
+      id: 'pipelines',
       perspective: 'admin',
       section: 'Pipelines',
       componentProps: {
@@ -107,6 +110,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/Href',
     properties: {
+      id: 'pipelinetasks',
       perspective: 'admin',
       section: 'Pipelines',
       componentProps: {
@@ -121,6 +125,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/Href',
     properties: {
+      id: 'pipelinetriggers',
       perspective: 'admin',
       section: 'Pipelines',
       componentProps: {

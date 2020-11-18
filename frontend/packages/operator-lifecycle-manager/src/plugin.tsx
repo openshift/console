@@ -100,6 +100,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/Href',
     properties: {
+      id: 'operatorhub',
       section: 'Operators',
       componentProps: {
         name: 'OperatorHub',
@@ -113,6 +114,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/ResourceNS',
     properties: {
+      id: 'operators',
       section: 'Operators',
       componentProps: {
         name: 'Installed Operators',
