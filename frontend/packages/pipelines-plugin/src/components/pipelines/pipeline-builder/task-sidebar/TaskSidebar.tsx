@@ -38,7 +38,7 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
     taskResource,
   } = props;
   const { t } = useTranslation();
-  const formikTaskReference = `tasks.${selectedPipelineTaskIndex}`;
+  const formikTaskReference = `formData.tasks.${selectedPipelineTaskIndex}`;
   const [taskField] = useField<PipelineTask>(formikTaskReference);
 
   const updateTask = (newData: Partial<UpdateOperationUpdateTaskData>) => {
