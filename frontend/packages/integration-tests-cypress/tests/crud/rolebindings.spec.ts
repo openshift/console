@@ -30,7 +30,7 @@ describe('RoleBindings', () => {
     cy.visit(`/k8s/all-namespaces/rolebindings`);
     detailsPage.isLoaded();
     listPage.clickCreateYAMLbutton();
-    roleBindings.titleShouldHaveText('Create Role Binding');
+    roleBindings.titleShouldHaveText('Create RoleBinding');
     roleBindings.inputName(bindingName);
     roleBindings.selectNamespace(testName);
     roleBindings.selectRole(roleName);
@@ -41,7 +41,7 @@ describe('RoleBindings', () => {
     listPage.rows.shouldBeLoaded();
     listPage.filter.byName(bindingName);
     listPage.rows.shouldExist(bindingName);
-    listPage.rows.clickKebabAction(bindingName, 'Delete Role Binding');
+    listPage.rows.clickKebabAction(bindingName, 'Delete RoleBinding');
     modal.shouldBeOpened();
     modal.submit();
     modal.shouldBeClosed();

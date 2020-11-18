@@ -881,6 +881,7 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
         userSettingState: tableColumns,
         ...listProps
       } = props;
+      const { t } = useTranslation();
       /* eslint-disable react-hooks/exhaustive-deps */
       React.useEffect(() => {
         if (showMetrics) {
@@ -919,7 +920,7 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
               tableColumns?.[columnManagementID]?.length > 0
                 ? new Set(tableColumns[columnManagementID])
                 : null,
-            type: 'Pod',
+            type: t('public~Pod'),
           }}
         />
       );

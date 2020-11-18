@@ -16,14 +16,16 @@ export const getBreadcrumbPath = (match: any, customPlural?: string) => {
 
 export const breadcrumbsForDetailsPage = (kindObj: K8sKind, match: any) => () =>
   kindObj.apiGroup === 'config.openshift.io' && match.params.name === 'cluster'
-    ? breadcrumbsForGlobalConfig(kindObj.label, match.url)
+    ? breadcrumbsForGlobalConfig(i18next.t(kindObj.labelKey) || kindObj.label, match.url)
     : [
         {
-          name: `${kindObj.labelPlural}`,
+          name: i18next.t(kindObj.labelPluralKey) || kindObj.labelPlural,
           path: getBreadcrumbPath(match),
         },
         {
-          name: i18next.t('details-page~{{kind}} details', { kind: kindObj.label }),
+          name: i18next.t('details-page~{{kind}} details', {
+            kind: i18next.t(kindObj.labelKey) || kindObj.label,
+          }),
           path: `${match.url}`,
         },
       ];

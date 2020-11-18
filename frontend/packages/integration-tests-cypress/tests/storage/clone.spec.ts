@@ -16,7 +16,7 @@ if (Cypress.env('BRIDGE_AWS')) {
       cy.createProject(testName);
       cy.exec(`echo '${JSON.stringify(PVC)}' | oc apply -n ${testName} -f -`);
       cy.exec(`echo '${JSON.stringify(testerDeployment)}' | oc apply -n ${testName} -f -`);
-      nav.sidenav.clickNavLink(['Storage', 'Persistent Volume Claims']);
+      nav.sidenav.clickNavLink(['Storage', 'PersistentVolumeClaims']);
       listPage.filter.byName(PVC.metadata.name);
       resourceStatusShouldContain('Bound');
     });
@@ -57,14 +57,14 @@ if (Cypress.env('BRIDGE_AWS')) {
     });
 
     it('Lists Clone', () => {
-      nav.sidenav.clickNavLink(['Persistent Volume Claims']);
+      nav.sidenav.clickNavLink(['PersistentVolumeClaims']);
       listPage.rows.shouldBeLoaded();
       listPage.rows.shouldExist(cloneName);
     });
 
     it('Deletes PVC Clone', () => {
       listPage.filter.byName(cloneName);
-      listPage.rows.clickKebabAction(cloneName, 'Delete Persistent Volume Claim');
+      listPage.rows.clickKebabAction(cloneName, 'Delete PersistentVolumeClaim');
       modal.shouldBeOpened();
       modal.submitShouldBeEnabled();
       modal.submit();

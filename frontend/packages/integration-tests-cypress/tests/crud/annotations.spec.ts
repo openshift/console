@@ -7,8 +7,8 @@ import { detailsPage } from '../../views/details-page';
 import { modal } from '../../views/modal';
 
 const createExampleConfigMapInstance = () => {
-  nav.sidenav.clickNavLink(['Workloads', 'Config Maps']);
-  cy.byLegacyTestID('resource-title').should('have.text', 'Config Maps');
+  nav.sidenav.clickNavLink(['Workloads', 'ConfigMaps']);
+  cy.byLegacyTestID('resource-title').should('have.text', 'ConfigMaps');
   listPage.clickCreateYAMLbutton();
   cy.byTestID('resource-sidebar').should('exist');
   yamlEditor.isLoaded();
@@ -19,7 +19,7 @@ const createExampleConfigMapInstance = () => {
 const deleteExampleConfigMapInstance = () => {
   detailsPage.isLoaded();
   detailsPage.titleShouldContain('example');
-  detailsPage.clickPageActionFromDropdown('Delete Config Map');
+  detailsPage.clickPageActionFromDropdown('Delete ConfigMap');
   modal.shouldBeOpened();
   modal.submit();
   modal.shouldBeClosed();

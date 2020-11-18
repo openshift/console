@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import i18next from 'i18next';
 import { KEY_CODES, Tooltip, FocusTrap } from '@patternfly/react-core';
 import { AngleRightIcon, EllipsisVIcon } from '@patternfly/react-icons';
 import Popper from '@console/shared/src/components/popper/Popper';
@@ -84,7 +85,6 @@ const KebabItem_: React.FC<KebabItemProps & { isAllowed: boolean }> = ({
   };
   const disabled = !isAllowed || option.isDisabled;
   const classes = classNames('pf-c-dropdown__menu-item', { 'pf-m-disabled': disabled });
-
   return (
     <button
       className={classes}
@@ -256,7 +256,7 @@ const kebabFactory: KebabFactory = {
   Delete: (kind, obj) => ({
     // t('details-page~Delete {{kind}}', {kind: kind.label})
     labelKey: 'details-page~Delete {{kind}}',
-    labelKind: { kind: kind.label },
+    labelKind: { kind: kind.labelKey ? i18next.t(kind.labelKey) : kind.label },
     callback: () =>
       deleteModal({
         kind,
@@ -267,7 +267,7 @@ const kebabFactory: KebabFactory = {
   Edit: (kind, obj) => ({
     // t('details-page~Edit {{kind}}', {kind: kind.label})
     labelKey: 'details-page~Edit {{kind}}',
-    labelKind: { kind: kind.label },
+    labelKind: { kind: kind.labelKey ? i18next.t(kind.labelKey) : kind.label },
     dataTest: `Edit ${kind.label}`,
     href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/yaml`,
     // TODO: Fallback to "View YAML"? We might want a similar fallback for annotations, labels, etc.
@@ -549,7 +549,7 @@ export type KebabOption = {
   hidden?: boolean;
   label?: React.ReactNode;
   labelKey?: string;
-  labelKind?: { [key: string]: string };
+  labelKind?: { [key: string]: string | string[] };
   href?: string;
   callback?: () => any;
   accessReview?: AccessReviewResourceAttributes;

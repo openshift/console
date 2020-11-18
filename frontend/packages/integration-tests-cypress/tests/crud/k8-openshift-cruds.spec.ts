@@ -31,24 +31,38 @@ describe('Kubernetes resource CRUD operations', () => {
   >()
     .set('pods', { kind: 'Pod' })
     .set('services', { kind: 'Service' })
-    .set('serviceaccounts', { kind: 'ServiceAccount', testI18n: false })
+    .set('serviceaccounts', { kind: 'ServiceAccount', humanizeKind: false, testI18n: false })
     .set('secrets', { kind: 'Secret' })
-    .set('configmaps', { kind: 'ConfigMap' })
-    .set('persistentvolumes', { kind: 'PersistentVolume', namespaced: false, testI18n: false })
-    .set('storageclasses', { kind: 'StorageClass', namespaced: false, testI18n: false })
+    .set('configmaps', { kind: 'ConfigMap', humanizeKind: false })
+    .set('persistentvolumes', {
+      kind: 'PersistentVolume',
+      namespaced: false,
+      testI18n: false,
+      humanizeKind: false,
+    })
+    .set('storageclasses', {
+      kind: 'StorageClass',
+      namespaced: false,
+      testI18n: false,
+      humanizeKind: false,
+    })
     .set('ingresses', { kind: 'Ingress' })
-    .set('cronjobs', { kind: 'CronJob' })
+    .set('cronjobs', { kind: 'CronJob', humanizeKind: false })
     .set('jobs', { kind: 'Job' })
-    .set('daemonsets', { kind: 'DaemonSet' })
+    .set('daemonsets', { kind: 'DaemonSet', humanizeKind: false })
     .set('deployments', { kind: 'Deployment' })
-    .set('replicasets', { kind: 'ReplicaSet' })
-    .set('replicationcontrollers', { kind: 'ReplicationController' })
-    .set('persistentvolumeclaims', { kind: 'PersistentVolumeClaim', testI18n: false })
-    .set('statefulsets', { kind: 'StatefulSet' })
+    .set('replicasets', { kind: 'ReplicaSet', humanizeKind: false })
+    .set('replicationcontrollers', { kind: 'ReplicationController', humanizeKind: false })
+    .set('persistentvolumeclaims', {
+      kind: 'PersistentVolumeClaim',
+      testI18n: false,
+      humanizeKind: false,
+    })
+    .set('statefulsets', { kind: 'StatefulSet', humanizeKind: false })
     .set('resourcequotas', { kind: 'ResourceQuota', humanizeKind: false })
     .set('limitranges', { kind: 'LimitRange', humanizeKind: false })
-    .set('horizontalpodautoscalers', { kind: 'HorizontalPodAutoscaler' })
-    .set('networkpolicies', { kind: 'NetworkPolicy' })
+    .set('horizontalpodautoscalers', { kind: 'HorizontalPodAutoscaler', humanizeKind: false })
+    .set('networkpolicies', { kind: 'NetworkPolicy', humanizeKind: false })
     .set('roles', { kind: 'Role', testI18n: false })
     .set('snapshot.storage.k8s.io~v1beta1~VolumeSnapshot', {
       kind: 'snapshot.storage.k8s.io~v1beta1~VolumeSnapshot',
@@ -66,11 +80,11 @@ describe('Kubernetes resource CRUD operations', () => {
     });
   const openshiftObjs = OrderedMap<
     string,
-    { kind: string; namespaced?: boolean; testI18n?: boolean }
+    { kind: string; namespaced?: boolean; testI18n?: boolean; humanizeKind?: boolean }
   >()
-    .set('deploymentconfigs', { kind: 'DeploymentConfig' })
-    .set('buildconfigs', { kind: 'BuildConfig' })
-    .set('imagestreams', { kind: 'ImageStream' })
+    .set('deploymentconfigs', { kind: 'DeploymentConfig', humanizeKind: false })
+    .set('buildconfigs', { kind: 'BuildConfig', humanizeKind: false })
+    .set('imagestreams', { kind: 'ImageStream', humanizeKind: false })
     .set('routes', { kind: 'Route' })
     .set('user.openshift.io~v1~Group', {
       kind: 'user.openshift.io~v1~Group',
@@ -79,11 +93,12 @@ describe('Kubernetes resource CRUD operations', () => {
     });
   const serviceCatalogObjs = OrderedMap<
     string,
-    { kind: string; namespaced?: boolean; testI18n?: boolean }
+    { kind: string; namespaced?: boolean; testI18n?: boolean; humanizeKind?: boolean }
   >().set('clusterservicebrokers', {
     kind: 'servicecatalog.k8s.io~v1beta1~ClusterServiceBroker',
     namespaced: false,
     testI18n: false,
+    humanizeKind: false,
   });
 
   let testObjs = Cypress.env('openshift') === true ? k8sObjs.merge(openshiftObjs) : k8sObjs;

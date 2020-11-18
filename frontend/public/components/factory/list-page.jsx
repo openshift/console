@@ -347,8 +347,8 @@ export const ListPage = withFallback((props) => {
   const { t } = useTranslation();
   let { createProps } = props;
   const ko = kindObj(kind);
-  const { label, labelPlural, namespaced, plural } = ko;
-  const title = props.title || labelPlural;
+  const { label, labelKey, labelPlural, labelPluralKey, namespaced, plural } = ko;
+  const title = props.title || t(labelPluralKey) || labelPlural;
   const usedNamespace = !namespace && namespaced ? _.get(match, 'params.ns') : namespace;
 
   let href = usedNamespace
@@ -391,7 +391,9 @@ export const ListPage = withFallback((props) => {
       autoFocus={autoFocus}
       canCreate={canCreate}
       createAccessReview={createAccessReview}
-      createButtonText={createButtonText || t('list-page~Create {{label}}', { label })}
+      createButtonText={
+        createButtonText || t('list-page~Create {{label}}', { label: t(labelKey) || label })
+      }
       createProps={createProps}
       customData={customData}
       filterLabel={filterLabel || t('list-page~by name')}
@@ -399,7 +401,7 @@ export const ListPage = withFallback((props) => {
       labelFilterPlaceholder={labelFilterPlaceholder}
       flatten={flatten}
       helpText={helpText}
-      label={labelPlural}
+      label={t(labelPluralKey) || labelPlural}
       ListComponent={ListComponent}
       mock={mock}
       namespace={usedNamespace}
