@@ -87,7 +87,6 @@ export const queryBrowserTheme = {
       grid: {
         stroke: '#EDEDED',
       },
-      ticks: axisTicks,
       tickLabels: pfDependentAxisTickLabels,
     },
   },
