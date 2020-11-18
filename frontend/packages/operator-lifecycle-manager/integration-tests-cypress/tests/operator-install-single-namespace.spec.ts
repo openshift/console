@@ -79,7 +79,7 @@ describe(`Interacting with a single namespace install mode Operator (${operatorN
     cy.log('navigate to the form');
     cy.byLegacyTestID('dropdown-button')
       .click()
-      .byTestDropDownMenu('apimanagerbackups.apps.3scale.net')
+      .get('[data-test-dropdown-menu="apimanagerbackups.apps.3scale.net"]')
       .click();
     cy.byLegacyTestID('resource-title').should('contain', `Create ${operatorInstance}`);
   });
