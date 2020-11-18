@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { TFunction } from 'i18next';
 import {
   ImageStreamModel,
   BuildConfigModel,
@@ -41,6 +42,7 @@ import {
   GitTypes,
   GitReadableTypes,
   Resources,
+  DevfileSuggestedResources,
 } from './import-types';
 
 export const generateSecret = () => {
@@ -154,6 +156,11 @@ export const createOrUpdateBuildConfig = (
   let buildStrategyData;
 
   switch (buildStrategy) {
+    case 'Devfile':
+      buildStrategyData = originalBuildConfig?.spec?.stategy || {
+        dockerStrategy: { env, dockerfilePath },
+      };
+      break;
     case 'Docker':
       buildStrategyData = {
         dockerStrategy: { env, dockerfilePath },
@@ -450,7 +457,98 @@ export const managePipelineResources = async (
   }
 };
 
+export const createDevfileResources = async (
+  formData: GitImportFormData,
+  dryRun: boolean,
+  appResources: AppResources,
+  generatedImageStreamName: string = '',
+): Promise<K8sResourceKind[]> => {
+  const verb: K8sVerb = 'create';
+
+  const {
+    name,
+    project: { name: namespace },
+    application: { name: applicationName },
+    git: { url: repository, ref = 'master' },
+    devfile: { devfileSuggestedResources },
+  } = formData;
+
+  const defaultLabels = getAppLabels({ name, applicationName });
+  const defaultAnnotations = {
+    ...getGitAnnotations(repository, ref),
+    isFromDevfile: 'true',
+  };
+
+  const devfileResourceObjects: DevfileSuggestedResources = Object.keys(
+    devfileSuggestedResources,
+  ).reduce((acc: DevfileSuggestedResources, resourceType: string) => {
+    const resource: K8sResourceKind = devfileSuggestedResources[resourceType];
+    return {
+      ...acc,
+      [resourceType]: {
+        ...resource,
+        metadata: {
+          ...resource.metadata,
+          annotations: {
+            ...defaultAnnotations,
+            ...resource.metadata?.annotations,
+          },
+          name,
+          namespace,
+          labels: {
+            ...defaultLabels,
+            ...resource.metadata?.labels,
+          },
+        },
+      },
+    };
+  }, {} as DevfileSuggestedResources);
+
+  return Promise.all([
+    createOrUpdateImageStream(
+      formData,
+      devfileResourceObjects.imageStream,
+      dryRun,
+      appResources,
+      verb,
+      generatedImageStreamName,
+    ),
+
+    createOrUpdateBuildConfig(
+      formData,
+      devfileResourceObjects.imageStream,
+      dryRun,
+      devfileResourceObjects.buildResource,
+      verb,
+      generatedImageStreamName,
+    ),
+
+    createWebhookSecret(formData, 'generic', dryRun),
+
+    createOrUpdateDeployment(
+      formData,
+      devfileResourceObjects.imageStream,
+      dryRun,
+      devfileResourceObjects.deployResource,
+      verb,
+    ),
+
+    k8sCreate(
+      ServiceModel,
+      createService(formData, devfileResourceObjects.imageStream, devfileResourceObjects.service),
+      dryRun ? dryRunOpt : {},
+    ),
+
+    k8sCreate(
+      RouteModel,
+      createRoute(formData, devfileResourceObjects.imageStream, devfileResourceObjects.route),
+      dryRun ? dryRunOpt : {},
+    ),
+  ]);
+};
+
 export const createOrUpdateResources = async (
+  t: TFunction,
   formData: GitImportFormData,
   imageStream: K8sResourceKind,
   createNewProject?: boolean,
@@ -488,6 +586,13 @@ export const createOrUpdateResources = async (
     verb === 'update'
   ) {
     generatedImageStreamName = `${name}-${getRandomChars()}`;
+  }
+
+  if (buildStrategy === 'Devfile') {
+    if (verb !== 'create') {
+      throw new Error(t('devconsole~Cannot update Devfile resources'));
+    }
+    return createDevfileResources(formData, dryRun, appResources, generatedImageStreamName);
   }
 
   requests.push(

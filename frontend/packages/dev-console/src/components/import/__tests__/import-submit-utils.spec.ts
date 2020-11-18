@@ -18,6 +18,8 @@ import { defaultData, nodeJsBuilderImage as buildImage } from './import-submit-u
 const { createOrUpdateDeployment, createOrUpdateResources } = submitUtils;
 
 describe('Import Submit Utils', () => {
+  const t = jest.fn();
+
   describe('createDeployment tests', () => {
     beforeAll(() => {
       jest
@@ -91,7 +93,7 @@ describe('Import Submit Utils', () => {
       const mockData = _.cloneDeep(defaultData);
       mockData.resources = Resources.Kubernetes;
 
-      const returnValue = await createOrUpdateResources(mockData, buildImage.obj, false);
+      const returnValue = await createOrUpdateResources(t, mockData, buildImage.obj, false);
       expect(returnValue).toHaveLength(7);
       const models = returnValue.map((data) => _.get(data, 'model.kind'));
       expect(models).toEqual([
@@ -110,7 +112,7 @@ describe('Import Submit Utils', () => {
       const mockData = _.cloneDeep(defaultData);
       mockData.resources = Resources.OpenShift;
 
-      const returnValue = await createOrUpdateResources(mockData, buildImage.obj, false);
+      const returnValue = await createOrUpdateResources(t, mockData, buildImage.obj, false);
       expect(returnValue).toHaveLength(7);
       const models = returnValue.map((data) => _.get(data, 'model.kind'));
       expect(models).toEqual([
@@ -137,7 +139,7 @@ describe('Import Submit Utils', () => {
           },
         }));
 
-      const returnValue = await createOrUpdateResources(mockData, buildImage.obj, false);
+      const returnValue = await createOrUpdateResources(t, mockData, buildImage.obj, false);
       // createImageStream is called as separate entity
       expect(imageStreamSpy).toHaveBeenCalled();
       expect(returnValue).toHaveLength(1);
@@ -183,7 +185,7 @@ describe('Import Submit Utils', () => {
         'createPipelineRunForImportFlow',
       );
 
-      await createOrUpdateResources(mockData, buildImage.obj, false, false, 'create');
+      await createOrUpdateResources(t, mockData, buildImage.obj, false, false, 'create');
       expect(createPipelineResourceSpy).toHaveBeenCalledWith(
         mockData.name,
         mockData.project.name,
@@ -205,6 +207,7 @@ describe('Import Submit Utils', () => {
       const createPipelineResourceSpy = jest.spyOn(pipelineUtils, 'createPipelineForImportFlow');
 
       const returnValue = await createOrUpdateResources(
+        t,
         mockData,
         buildImage.obj,
         false,
@@ -236,6 +239,7 @@ describe('Import Submit Utils', () => {
         .mockImplementation(() => Promise.reject(new Error('PipelineRun error')));
 
       const returnValue = await createOrUpdateResources(
+        t,
         mockData,
         buildImage.obj,
         false,
@@ -259,7 +263,7 @@ describe('Import Submit Utils', () => {
         .mockImplementation(() => Promise.reject(new Error('Deployment')));
 
       await expect(
-        createOrUpdateResources(mockData, buildImage.obj, false, false, 'create'),
+        createOrUpdateResources(t, mockData, buildImage.obj, false, false, 'create'),
       ).rejects.toEqual(new Error('Deployment'));
       done();
     });
@@ -268,6 +272,7 @@ describe('Import Submit Utils', () => {
       const mockData = _.cloneDeep(defaultData);
 
       const returnValue = await createOrUpdateResources(
+        t,
         mockData,
         buildImage.obj,
         false,
