@@ -26,8 +26,9 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
 }) => {
   const renderFilterItem = (filter, filterName, groupName) => {
     const { label, active } = filter;
-    const count = _.get(filterGroupCounts, [groupName, filterName], 0);
-    const dummyProps = {} as any; // To fix the props type issue with FilterSidePanelCategoryItem.
+    const count = filterGroupCounts[groupName]?.[filterName] ?? 0;
+    // TODO remove when adopting https://github.com/patternfly/patternfly-react/issues/5139
+    const dummyProps = {} as any;
     return (
       <FilterSidePanelCategoryItem
         key={filterName}
@@ -37,7 +38,7 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
           onFilterChange(groupName, filterName, e.target.checked)
         }
         data-test={`${groupName}-${_.kebabCase(filterName)}`}
-        {...dummyProps} // To fix the props type issue with FilterSidePanelCategoryItem.
+        {...dummyProps}
       >
         {label}
       </FilterSidePanelCategoryItem>
@@ -50,7 +51,7 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
         key={groupName}
         title={filterGroupNameMap[groupName] || groupName}
         onShowAllToggle={() => onShowAllToggle(groupName)}
-        showAll={_.get(filterGroupsShowAll, groupName, false)}
+        showAll={filterGroupsShowAll[groupName] ?? false}
         data-test-group-name={groupName}
       >
         {_.map(filterGroup, (filter, filterName) =>

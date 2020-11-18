@@ -2,8 +2,13 @@ import { history } from '@console/internal/components/utils';
 import { normalizeIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { CatalogItem } from '@console/plugin-sdk';
 import * as catalogImg from '@console/internal/imgs/logos/catalog-icon.svg';
+import { CatalogType, CatalogTypeCounts } from './types';
 
-export const NoGrouping = 'none';
+export const NO_GROUPING = 'none';
+
+export const DEFAULT_CATEGORY = 'all';
+
+export const OTHER_CATEGORY = 'other';
 
 export const keywordCompare = (filterString: string, item: CatalogItem): boolean => {
   if (!filterString) {
@@ -47,4 +52,18 @@ export const updateURLParams = (paramName: string, value: string | string[]) => 
     params.delete(paramName);
   }
   setURLParams(params);
+};
+
+export const getCatalogTypeCounts = (
+  items: CatalogItem[],
+  catalogTypes: CatalogType[],
+): CatalogTypeCounts => {
+  const catalogTypeCounts = {};
+
+  catalogTypes.forEach((catalogType) => {
+    const matchedItems = items.filter((item) => item.type === catalogType.value);
+    catalogTypeCounts[catalogType.value] = matchedItems.length;
+  });
+
+  return catalogTypeCounts;
 };

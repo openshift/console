@@ -49,20 +49,19 @@ const normalizeBuilderImages = (
   activeNamespace: string = '',
 ): CatalogItem[] => {
   const normalizedBuilderImages = _.map(builderImageStreams, (imageStream) => {
-    const { uid, name, namespace } = imageStream.metadata;
+    const { uid, name, namespace, annotations } = imageStream.metadata;
     const tag = getMostRecentBuilderTag(imageStream);
-    const displayName =
-      _.get(imageStream, ['metadata', 'annotations', ANNOTATIONS.displayName]) || name;
+    const displayName = annotations?.[ANNOTATIONS.displayName] ?? name;
     const icon = getImageStreamIcon(tag);
     const imgUrl = getImageForIconClass(icon);
     const iconClass = imgUrl ? null : icon;
-    const description = _.get(tag, 'annotations.description');
+    const description = tag?.['annotations']?.['description'] ?? '';
     const tags = getAnnotationTags(tag);
     const createLabel = 'Create Application';
-    const provider = _.get(tag, ['annotations', ANNOTATIONS.providerDisplayName]);
+    const provider = annotations?.[ANNOTATIONS.providerDisplayName] ?? '';
     const href = `/catalog/source-to-image?imagestream=${name}&imagestream-ns=${namespace}&preselected-ns=${activeNamespace}`;
-    const builderImageTag = _.head(_.get(imageStream, 'spec.tags'));
-    const sampleRepo = _.get(builderImageTag, 'annotations.sampleRepo');
+    const builderImageTag = _.head(imageStream.spec?.tags);
+    const sampleRepo = builderImageTag?.['annotations']?.['sampleRepo'];
     const creationTimestamp = imageStream.metadata?.creationTimestamp;
 
     const detailsProperties = [

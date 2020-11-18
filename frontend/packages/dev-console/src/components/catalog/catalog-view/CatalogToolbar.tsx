@@ -1,9 +1,10 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import * as _ from 'lodash';
 import { SearchInput } from '@patternfly/react-core';
 import { Dropdown } from '@console/internal/components/utils';
 import { CatalogSortOrder, CatalogStringMap } from '../utils/types';
-import { NoGrouping } from '../utils/catalog-utils';
+import { NO_GROUPING } from '../utils/catalog-utils';
 
 type CatalogToolbarProps = {
   title: string;
@@ -17,33 +18,45 @@ type CatalogToolbarProps = {
   onSortOrderChange: (sortOrder: CatalogSortOrder) => void;
 };
 
-// update to use inputRef when SearchInput support refs.
+// TODO: update to use inputRef on SearchInput once https://github.com/patternfly/patternfly-react/issues/5168 is fixed.
 const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
-  ({
-    title,
-    totalItems,
-    searchKeyword,
-    sortOrder,
-    groupings,
-    activeGrouping,
-    onGroupingChange,
-    onSearchKeywordChange,
-    onSortOrderChange,
-  }) => {
+  (
+    {
+      title,
+      totalItems,
+      searchKeyword,
+      sortOrder,
+      groupings,
+      activeGrouping,
+      onGroupingChange,
+      onSearchKeywordChange,
+      onSortOrderChange,
+    },
+    toolbarRef,
+  ) => {
+    const inputRef = React.useRef<HTMLDivElement>();
+
     const catalogSortItems = { [CatalogSortOrder.ASC]: 'A-Z', [CatalogSortOrder.DESC]: 'Z-A' };
 
     const showGrouping = !_.isEmpty(groupings);
 
     const catalogGroupItems = {
       ...groupings,
-      [NoGrouping]: 'None',
+      [NO_GROUPING]: 'None',
     };
+
+    React.useImperativeHandle(toolbarRef, () => {
+      // TODO: Remove this hack once https://github.com/patternfly/patternfly-react/issues/5168 is fixed.
+      // eslint-disable-next-line react/no-find-dom-node
+      const toolbarDOMNode = ReactDOM.findDOMNode(inputRef.current) as HTMLDivElement;
+      return toolbarDOMNode.querySelector('.pf-c-search-input__text-input') as HTMLInputElement;
+    });
 
     return (
       <div className="co-catalog-page__header">
         <div className="co-catalog-page__heading text-capitalize">{title}</div>
         <div className="co-catalog-page__filter">
-          <div>
+          <div ref={inputRef}>
             <SearchInput
               className="co-catalog-page__input"
               data-test="search-catalog"

@@ -1,19 +1,22 @@
 import * as React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Button, Popover, Title } from '@patternfly/react-core';
 import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
-import { VerticalTabs, VerticalTabsTab } from '@patternfly/react-catalog-view-extension';
+import { VerticalTabs } from '@patternfly/react-catalog-view-extension';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
-import { CatalogType } from '../utils/types';
+import { CatalogQueryParams, CatalogType, CatalogTypeCounts } from '../utils/types';
 
 interface CatalogTypeSelectorProps {
   catalogTypes: CatalogType[];
-  onCatalogTypeChange: (type: string) => void;
+  catalogTypeCounts: CatalogTypeCounts;
 }
 
 const CatalogTypeSelector: React.FC<CatalogTypeSelectorProps> = ({
   catalogTypes,
-  onCatalogTypeChange,
+  catalogTypeCounts,
 }) => {
+  const { pathname, search } = useLocation();
+
   const typeDescriptions = React.useMemo(
     () =>
       catalogTypes.map((type) => <SyncMarkdownView key={type.value} content={type.description} />),
@@ -34,13 +37,23 @@ const CatalogTypeSelector: React.FC<CatalogTypeSelectorProps> = ({
         Type {info}
       </Title>
       <VerticalTabs>
-        {catalogTypes.map((type) => (
-          <VerticalTabsTab
-            key={type.value}
-            title={`${type.label} (${type.numItems})`}
-            onActivate={() => onCatalogTypeChange(type.value)}
-          />
-        ))}
+        {catalogTypes.map((type) => {
+          const { value, label } = type;
+          const typeCount = catalogTypeCounts[value];
+          const queryParams = new URLSearchParams(search);
+          queryParams.set(CatalogQueryParams.TYPE, type.value);
+
+          const to = {
+            path: pathname,
+            search: `?${queryParams.toString()}`,
+          };
+
+          return typeCount > 0 ? (
+            <li key={value} className="vertical-tabs-pf-tab">
+              <Link to={to}>{`${label} (${typeCount})`}</Link>
+            </li>
+          ) : null;
+        })}
       </VerticalTabs>
     </>
   );

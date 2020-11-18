@@ -1,9 +1,12 @@
 import { CatalogItem } from '@console/plugin-sdk';
 import * as _ from 'lodash';
 import { keywordCompare } from './catalog-utils';
-import { CatalogFilters } from './types';
+import { CatalogFilter, CatalogFilterCounts, CatalogFilters } from './types';
 
-export const filterByGroup = (items: CatalogItem[], filters): Record<string, CatalogItem[]> => {
+export const filterByGroup = (
+  items: CatalogItem[],
+  filters: CatalogFilters,
+): Record<string, CatalogItem[]> => {
   // Filter items by each filter group
   return _.reduce(
     filters,
@@ -14,7 +17,7 @@ export const filterByGroup = (items: CatalogItem[], filters): Record<string, Cat
         const values = _.reduce(
           activeFilters,
           (filterValues, filter) => {
-            filterValues.push(filter.value, ..._.get(filter, 'synonyms', []));
+            filterValues.push(filter.value);
             return filterValues;
           },
           [],
@@ -72,7 +75,11 @@ export const filterByCategory = (
     : items;
 };
 
-export const determineAvailableFilters = (initialFilters, items, filterGroups): CatalogFilters => {
+export const determineAvailableFilters = (
+  initialFilters: CatalogFilters,
+  items: CatalogItem[],
+  filterGroups: string[],
+): CatalogFilters => {
   const filters = _.cloneDeep(initialFilters);
 
   _.each(filterGroups, (field) => {
@@ -94,8 +101,8 @@ export const determineAvailableFilters = (initialFilters, items, filterGroups): 
 export const getActiveFilters = (
   attributeFilters,
   activeFilters,
-  storeFilterKey = null,
-  filterRetentionPreference = null,
+  storeFilterKey: string = null,
+  filterRetentionPreference: string[] = null,
 ): CatalogFilters => {
   const userFilters = storeFilterKey ? localStorage.getItem(storeFilterKey) : null;
 
@@ -132,36 +139,11 @@ export const getActiveFilters = (
   return activeFilters;
 };
 
-export const updateActiveFilters = (
-  activeFilters: CatalogFilters,
-  filterType: string,
-  id: string,
-  value: boolean,
-) => {
-  _.set(activeFilters, [filterType, id, 'active'], value);
-
-  return activeFilters;
-};
-
-export const clearActiveFilters = (
-  activeFilters: CatalogFilters,
-  filterGroups: string[],
-): CatalogFilters => {
-  // Clear the group filters
-  _.each(filterGroups, (field) => {
-    _.each(_.keys(activeFilters[field]), (key) =>
-      _.set(activeFilters, [field, key, 'active'], false),
-    );
-  });
-
-  return activeFilters;
-};
-
 export const getFilterGroupCounts = (
   items: CatalogItem[],
   activeFilters: CatalogFilters,
   filterGroups: string[],
-) => {
+): CatalogFilterCounts => {
   const newFilterCounts = {};
 
   if (_.isEmpty(activeFilters)) {
@@ -170,10 +152,7 @@ export const getFilterGroupCounts = (
 
   _.each(filterGroups, (filterGroup) => {
     _.each(_.keys(activeFilters[filterGroup]), (key) => {
-      const filterValues = [
-        _.get(activeFilters, [filterGroup, key, 'value']),
-        ..._.get(activeFilters, [filterGroup, key, 'synonyms'], []),
-      ];
+      const filterValues = [activeFilters[filterGroup]?.[key]?.['value']];
 
       const matchedItems = _.filter(items, (item) => {
         const filterValue = item[filterGroup] || item.attributes?.[filterGroup];
@@ -191,7 +170,7 @@ export const getFilterGroupCounts = (
   return newFilterCounts;
 };
 
-export const getFilterSearchParam = (groupFilter) => {
+export const getFilterSearchParam = (groupFilter: CatalogFilter): string => {
   const activeValues = _.reduce(
     _.keys(groupFilter),
     (result, typeKey) => {

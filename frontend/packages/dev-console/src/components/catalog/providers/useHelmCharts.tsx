@@ -15,6 +15,7 @@ type HelmReadmeLoaderProps = {
 
 const HelmReadmeLoader: React.FC<HelmReadmeLoaderProps> = ({ chartURL }) => {
   const [readme, setReadme] = React.useState<string>();
+  const [loaded, setLoaded] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     let unmounted = false;
@@ -32,7 +33,10 @@ const HelmReadmeLoader: React.FC<HelmReadmeLoaderProps> = ({ chartURL }) => {
       const readmeFile = chartData?.files?.find((file) => file.name === 'README.md');
       const readmeData = readmeFile?.data && atob(readmeFile?.data);
 
-      if (readmeData && !unmounted) setReadme(`## README\n${readmeData}`);
+      if (!unmounted) {
+        setLoaded(true);
+        readmeData && setReadme(`## README\n${readmeData}`);
+      }
     };
 
     fetchReadme();
@@ -42,9 +46,9 @@ const HelmReadmeLoader: React.FC<HelmReadmeLoaderProps> = ({ chartURL }) => {
     };
   }, [chartURL]);
 
-  if (!readme) return <div className="loading-skeleton--table" />;
+  if (!loaded) return <div className="loading-skeleton--table" />;
 
-  return <SyncMarkdownView content={readme} />;
+  return <SyncMarkdownView content={readme} emptyMsg="README not available" />;
 };
 
 const normalizeHelmCharts = (
@@ -61,7 +65,7 @@ const normalizeHelmCharts = (
         const displayName = `${toTitleCase(name)} v${version}`;
         const provider = toTitleCase(chartRepositoryName);
         const imgUrl = chart.icon || getImageForIconClass('icon-helm');
-        const chartURL = _.get(chart, 'urls.0');
+        const chartURL = chart.urls[0];
         const encodedChartURL = encodeURIComponent(chartURL);
         const href = `/catalog/helm-install?chartName=${name}&chartRepoName=${chartRepositoryName}&chartURL=${encodedChartURL}&preselected-ns=${activeNamespace}`;
 

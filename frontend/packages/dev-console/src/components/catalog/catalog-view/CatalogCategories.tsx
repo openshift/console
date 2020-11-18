@@ -1,7 +1,9 @@
 import * as React from 'react';
-import { VerticalTabs, VerticalTabsTab } from '@patternfly/react-catalog-view-extension';
 import * as _ from 'lodash';
+import * as cx from 'classnames';
+import { VerticalTabs, VerticalTabsTab } from '@patternfly/react-catalog-view-extension';
 import { CatalogCategories } from '../utils/types';
+import { hasActiveDescendant, isActiveTab } from '../utils/category-utils';
 
 type CatalogCategoriesProp = {
   categories: CatalogCategories;
@@ -18,20 +20,6 @@ const CatalogCategories: React.FC<CatalogCategoriesProp> = ({
 }) => {
   const activeTab = _.has(categories, selectedCategory);
 
-  const hasActiveDescendant = (activeId, category) => {
-    if (_.has(category.subcategories, activeId)) {
-      return true;
-    }
-
-    return _.some(category.subcategories, (subcategory) =>
-      hasActiveDescendant(activeId, subcategory),
-    );
-  };
-
-  const isActiveTab = (activeId, category) => {
-    return _.has(category.subcategories, activeId);
-  };
-
   const renderTabs = (category, selectedCategoryId) => {
     if (!categorizedIds[category.id]) return null;
 
@@ -39,7 +27,7 @@ const CatalogCategories: React.FC<CatalogCategoriesProp> = ({
     const active = id === selectedCategory;
     const shown = _.has(categories, id);
 
-    const tabClasses = `text-capitalize${!numItems ? ' co-catalog-tab__empty' : ''}`;
+    const tabClasses = cx('text-capitalize', { 'co-catalog-tab__empty': !numItems });
 
     return (
       <VerticalTabsTab

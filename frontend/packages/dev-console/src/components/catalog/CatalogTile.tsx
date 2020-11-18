@@ -16,16 +16,13 @@ type CatalogTileProps = {
 };
 
 const CatalogTile: React.FC<CatalogTileProps> = ({ item, catalogTypes, onClick }) => {
-  if (!item) {
-    return null;
-  }
-  const { uid, name, provider, description, type } = item;
+  const { name, provider, description, type } = item;
 
   const vendor = provider ? `Provided by ${provider}` : null;
   const catalogType = _.find(catalogTypes, ['value', type]);
 
   const badges = [
-    <CatalogTileBadge key="type">
+    <CatalogTileBadge>
       <Badge isRead>{catalogType?.label}</Badge>
     </CatalogTileBadge>,
   ];
@@ -33,7 +30,6 @@ const CatalogTile: React.FC<CatalogTileProps> = ({ item, catalogTypes, onClick }
   return (
     <PfCatalogTile
       className="co-catalog-tile"
-      key={uid}
       onClick={() => onClick(item)}
       title={name}
       badges={badges}

@@ -64,7 +64,7 @@ export const getAddPageUrl = (
       break;
     case ImportOptions.OPERATORBACKED:
       pageUrl = `/catalog/ns/${ns}`;
-      params.append('kind', JSON.stringify(['ClusterServiceVersion']));
+      params.append('catalogType', 'OperatorBackedService');
       contextSource &&
         params.append(
           QUERY_PROPERTIES.CONTEXT_ACTION,

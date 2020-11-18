@@ -1,17 +1,19 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { getQueryArgument } from '@console/internal/components/utils';
+import { useQueryParams } from '@console/shared';
 import CreateProjectListPage from '../projects/CreateProjectListPage';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CatalogServiceProvider from './service/CatalogServiceProvider';
 import CatalogController from './CatalogController';
+import { CatalogQueryParams } from './utils/types';
 
 type CatalogPageProps = RouteComponentProps<{
   ns?: string;
 }>;
 
 const CatalogPage: React.FC<CatalogPageProps> = ({ match }) => {
-  const catalogType = getQueryArgument('catalogType');
+  const queryParams = useQueryParams();
+  const catalogType = queryParams.get(CatalogQueryParams.TYPE);
   const namespace = match.params.ns;
 
   return (

@@ -5,12 +5,11 @@ import {
   PageHeading,
   skeletonCatalog,
   StatusBox,
-  getQueryArgument,
   removeQueryArgument,
   setQueryArgument,
 } from '@console/internal/components/utils';
 import { CatalogItem, CatalogItemAttribute } from '@console/plugin-sdk';
-import { DEV_CATALOG_FILTER_KEY } from '@console/shared';
+import { DEV_CATALOG_FILTER_KEY, useQueryParams } from '@console/shared';
 
 import { CatalogService } from './service/CatalogServiceProvider';
 import CatalogView from './catalog-view/CatalogView';
@@ -18,7 +17,7 @@ import useCatalogCategories from './hooks/useCatalogCategories';
 import CatalogDetailsModal from './details/CatalogDetailsModal';
 import CatalogTile from './CatalogTile';
 import { determineAvailableFilters } from './utils/filter-utils';
-import { CatalogFilters, CatalogStringMap, CatalogType } from './utils/types';
+import { CatalogFilters, CatalogQueryParams, CatalogStringMap, CatalogType } from './utils/types';
 
 type CatalogControllerProps = CatalogService;
 
@@ -32,26 +31,20 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
 }) => {
   let title = 'Developer Catalog';
   let description =
-    'Add shared applications, services, event sources, or source-to-image builders to your project from the Developer catalog. Cluster administrators can customize the content made available in the catalog.';
+    'Add shared applications, services, event sources, or source-to-image builders to your project from the developer catalog. Cluster administrators can customize the content made available in the catalog.';
 
-  const [selectedItem, setSelectedItem] = React.useState<CatalogItem>();
-  const [catalogType, setCatalogType] = React.useState<string>(type);
-
-  const availableCategories = useCatalogCategories();
-
-  // Filter property white list
+  const queryParams = useQueryParams();
   const filterGroups: string[] = [];
-
   const filterGroupNameMap: CatalogStringMap = {};
-
   const filterPreference: string[] = [];
-
   const groupings: CatalogStringMap = {};
 
+  const selectedId = queryParams.get(CatalogQueryParams.SELECTED_ID);
+  queryParams.delete(CatalogQueryParams.TYPE);
   const breadcrumbs = [
     {
       name: 'Developer Catalog',
-      path: '/catalog',
+      path: `/catalog?${queryParams.toString()}`,
     },
   ];
 
@@ -64,7 +57,7 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
 
     breadcrumbs.push({
       name: title,
-      path: `/catalog?catalogType=${type}`,
+      path: `/catalog?${CatalogQueryParams.TYPE}=${type}`,
     });
 
     const typeFilters = typeExtension?.properties.filters;
@@ -78,21 +71,27 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
     typeGroupings && typeGroupings.forEach((group) => (groupings[group.attribute] = group.label));
   }
 
+  const availableCategories = useCatalogCategories();
+
+  const selectedItem = React.useMemo(() => items.find((it) => selectedId === it.uid), [
+    items,
+    selectedId,
+  ]);
+
   const catalogTypes: CatalogType[] = React.useMemo(() => {
     const types = catalogExtensions.map((extension) => ({
       label: extension.properties.title,
       value: extension.properties.type,
       description: extension.properties.typeDescription,
-      numItems: itemsMap[extension.properties.type]?.length ?? 0,
     }));
 
     return _.sortBy(types, ({ label }) => label.toLowerCase());
-  }, [catalogExtensions, itemsMap]);
+  }, [catalogExtensions]);
 
-  const catalogItems = React.useMemo(() => (catalogType ? itemsMap[catalogType] : items), [
-    catalogType,
+  const catalogItems = React.useMemo(() => (type ? itemsMap[type] : items), [
     items,
     itemsMap,
+    type,
   ]);
 
   const availableFilters: CatalogFilters = React.useMemo(
@@ -101,13 +100,11 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
   );
 
   const openDetailsPanel = React.useCallback((item: CatalogItem): void => {
-    setQueryArgument('selectedId', item.uid);
-    setSelectedItem(item);
+    setQueryArgument(CatalogQueryParams.SELECTED_ID, item.uid);
   }, []);
 
   const closeDetailsPanel = React.useCallback((): void => {
-    removeQueryArgument('selectedId');
-    setSelectedItem(null);
+    removeQueryArgument(CatalogQueryParams.SELECTED_ID);
   }, []);
 
   const renderTile = React.useCallback(
@@ -115,35 +112,11 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
       <CatalogTile
         item={item}
         onClick={openDetailsPanel}
-        catalogTypes={!catalogType ? catalogTypes : []}
+        catalogTypes={!type ? catalogTypes : []}
       />
     ),
-    [catalogType, catalogTypes, openDetailsPanel],
+    [catalogTypes, openDetailsPanel, type],
   );
-
-  const handleCatalogTypeChange = React.useCallback((value) => {
-    setCatalogType(value);
-    setQueryArgument('catalogType', value);
-  }, []);
-
-  React.useEffect(() => {
-    let unmounted = false;
-    const selectedId = getQueryArgument('selectedId');
-
-    if (!unmounted) {
-      if (selectedId) {
-        const item = items.find((it) => selectedId === it.uid);
-        setSelectedItem(item);
-      } else {
-        setSelectedItem(null);
-      }
-      setCatalogType(type);
-    }
-
-    return () => {
-      unmounted = true;
-    };
-  }, [items, type]);
 
   return (
     <>
@@ -152,10 +125,7 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
       </Helmet>
       <div className="co-m-page__body">
         <div className="co-catalog">
-          <PageHeading
-            title={title}
-            breadcrumbs={catalogType && items?.length > 0 ? breadcrumbs : null}
-          />
+          <PageHeading title={title} breadcrumbs={type && items?.length > 0 ? breadcrumbs : null} />
           <p className="co-catalog-page__description">{description}</p>
           <div className="co-catalog__body">
             <StatusBox
@@ -166,12 +136,11 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
               label="Catalog items"
             >
               <CatalogView
-                catalogType={catalogType}
+                catalogType={type}
                 catalogTypes={catalogTypes}
-                onCatalogTypeChange={handleCatalogTypeChange}
                 items={catalogItems}
-                availableCategories={availableCategories}
-                availableFilters={availableFilters}
+                categories={availableCategories}
+                filters={availableFilters}
                 filterGroups={filterGroups}
                 filterGroupNameMap={filterGroupNameMap}
                 filterStoreKey={DEV_CATALOG_FILTER_KEY}

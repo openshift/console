@@ -99,10 +99,11 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   border: 1px solid var(--pf-global--BorderColor--300);
   display: flex;
   flex: 1;
+  padding-top: ($grid-gutter-width / 2);
 
   &--with-sidebar {
     margin: 0 ($grid-gutter-width / 2);
-    padding: ($grid-gutter-width / 2) 0;
+    padding-bottom: ($grid-gutter-width / 2);
   }
 
   &__btn-group__group-by {
