@@ -8,6 +8,7 @@ import Pseudo from 'i18next-pseudo';
 import 'moment/locale/zh-cn';
 import 'moment/locale/ja';
 import 'moment/locale/en-gb';
+import 'moment/locale/ko';
 import moment from 'moment';
 
 const params = new URLSearchParams(window.location.search);

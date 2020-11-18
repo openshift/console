@@ -207,7 +207,7 @@ const config: Configuration = {
     new CopyWebpackPlugin([{ from: './packages/container-security/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/pipelines-plugin/locales', to: 'locales' }]),
     new MomentLocalesPlugin({
-      localesToKeep: ['en', 'ja'],
+      localesToKeep: ['en', 'ja', 'ko'],
     }),
     new webpack.IgnorePlugin(/prettier/),
     extractCSS,

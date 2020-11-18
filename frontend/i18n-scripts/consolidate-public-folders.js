@@ -39,13 +39,7 @@ function processFile(fileName) {
 }
 
 function processLocalesFolder(filePath) {
-  if (path.basename(filePath) === 'en') {
-    common.parseFolder(filePath, processFile);
-  }
-  if (path.basename(filePath) === 'zh') {
-    common.parseFolder(filePath, processFile);
-  }
-  if (path.basename(filePath) === 'ja') {
+  if (common.isDirectory(filePath)) {
     common.parseFolder(filePath, processFile);
   }
 }
@@ -74,13 +68,7 @@ function logFiles(filePath) {
 }
 
 function processPublic(filePath) {
-  if (path.basename(filePath) === 'en') {
-    common.parseFolder(filePath, logFiles);
-  }
-  if (path.basename(filePath) === 'zh') {
-    common.parseFolder(filePath, logFiles);
-  }
-  if (path.basename(filePath) === 'ja') {
+  if (common.isDirectory(filePath)) {
     common.parseFolder(filePath, logFiles);
   }
 }
