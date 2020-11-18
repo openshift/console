@@ -11,7 +11,8 @@ import { Dropdown, ContainerDropdown } from './utils/dropdown';
 import { KeyValueListEditor } from './utils/key-value-list-editor';
 import { TagsLabel } from './utils/tags-label';
 import { NumberSpinner } from './utils/number-spinner';
-
+import { ListView } from './utils/list-view';
+import { Button } from '@patternfly/react-core';
 const defaultValues = {
   // requestDo에 넣어줄 형식으로 defaultValues 작성
   metadata: {
@@ -28,7 +29,35 @@ const defaultValues = {
   spec: {
     resources: 'cpu',
   },
-  dropdown1: "Ti",
+  keyValueList: [
+    {
+      key: 'AAA',
+      value: 'aaa',
+    },
+    {
+      key: 'BBB',
+      value: 'bbb',
+    },
+    {
+      key: 'CCC',
+      value: 'ccc',
+    },
+    {
+      key: 'DDD',
+      value: 'ddd',
+    },
+  ],
+  numList: [
+    {
+      name: 'Item1',
+      number: 3,
+    },
+    {
+      name: 'Item2',
+      number: 5,
+    },
+  ],
+  dropdown1: 'Ti',
 };
 
 const sampleFormFactory = params => {
@@ -57,8 +86,40 @@ const CreateSampleComponent: React.FC<SampleFormProps> = props => {
     Gi: 'GiB',
     Ti: 'TiB',
   };
-  const containers = { test: { name: "test", order: 0 }, sidecar: { name: "sidecar" }, sidecar2: { name: "sidecar2" } };
-  const initContainers = { initupload: { name: "initupload", order: 0 }, ["place-entrypoint"]: { name: "place-entrypoint" }, ["place-entrypoint2"]: { name: "place-entrypoint2" } };
+  const containers = { test: { name: 'test', order: 0 }, sidecar: { name: 'sidecar' }, sidecar2: { name: 'sidecar2' } };
+  const initContainers = { initupload: { name: 'initupload', order: 0 }, ['place-entrypoint']: { name: 'place-entrypoint' }, ['place-entrypoint2']: { name: 'place-entrypoint2' } };
+
+  const listHeaderFragment = (
+    <div className="row pairs-list__heading">
+      <div className="col-xs-4 text-uppercase">NAME</div>
+      <div className="col-xs-4 text-secondary text-uppercase">NUM</div>
+      <div className="col-xs-1 co-empty__header" />
+    </div>
+  );
+
+  const listItemRenderer = (register, item, index, ListActions, ListDefaultIcons) => (
+    <div className="row" key={item.id}>
+      <div className="col-xs-4 pairs-list__name-field">
+        <input ref={register()} className="pf-c-form-control" name={`metadata.numList[${index}].name`} defaultValue={item.name}></input>
+      </div>
+      <div className="col-xs-4 pairs-list__value-field">
+        <NumberSpinner initialValue={item.number} min={-15} max={15} name={`metadata.numList[${index}].number`} />
+      </div>
+      <div className="col-xs-1 pairs-list__action">
+        <Button
+          type="button"
+          data-test-id="pairs-list__delete-btn"
+          className="pairs-list__span-btns"
+          onClick={() => {
+            ListActions.remove(index);
+          }}
+          variant="plain"
+        >
+          {ListDefaultIcons.deleteIcon}
+        </Button>
+      </div>
+    </div>
+  );
 
   return (
     <div>
@@ -123,6 +184,12 @@ const CreateSampleComponent: React.FC<SampleFormProps> = props => {
           name="metadata.keyvaluelist" // 서버에 보낼 데이터에서의 path (필수)
           disableReorder={false} // 순서바꾸기 제공여부 설정. 기본값은 false (선택)
         />
+      </Section>
+      <Section id="listviewsection" label="List View">
+        <ListView name="metadata.keyValueList" addButtonText="Add Key/Value" />
+      </Section>
+      <Section id="listviewsection" label="List View">
+        <ListView name="metadata.numList" addButtonText="Add Name/Num" headerFragment={listHeaderFragment} itemRenderer={listItemRenderer} defaultItem={{ name: '', number: 0 }} />
       </Section>
     </div>
   );
