@@ -185,10 +185,10 @@ const CreateSampleComponent: React.FC<SampleFormProps> = props => {
           disableReorder={false} // 순서바꾸기 제공여부 설정. 기본값은 false (선택)
         />
       </Section>
-      <Section id="listviewsection" label="List View">
+      <Section id="listviewsection1" label="Default Key/Value List View">
         <ListView name="metadata.keyValueList" addButtonText="Add Key/Value" />
       </Section>
-      <Section id="listviewsection" label="List View">
+      <Section id="listviewsection2" label="Customized List View">
         <ListView name="metadata.numList" addButtonText="Add Name/Num" headerFragment={listHeaderFragment} itemRenderer={listItemRenderer} defaultItem={{ name: '', number: 0 }} />
       </Section>
     </div>
