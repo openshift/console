@@ -68,7 +68,6 @@ const testSuites = {
   newApp: suite(['tests/overview/overview.scenario.ts', 'tests/deploy-image.scenario.ts']),
   olmFull: suite([
     '../packages/operator-lifecycle-manager/integration-tests/scenarios/descriptors.scenario.ts',
-    '../packages/operator-lifecycle-manager/integration-tests/scenarios/operator-hub.scenario.ts',
   ]),
   performance: suite(['tests/performance.scenario.ts']),
   serviceCatalog: suite([
