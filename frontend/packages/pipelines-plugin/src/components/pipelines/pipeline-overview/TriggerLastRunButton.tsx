@@ -24,7 +24,7 @@ const TriggerLastRunButton: React.FC<TriggerLastRunButtonProps> = ({
   const latestRun = usePipelineRunWithUserAnnotation(
     getLatestRun({ data: pipelineRuns }, 'startTimestamp'),
   );
-  const { label, callback, accessReview: utilityAccessReview } = rerunPipelineAndStay(
+  const { labelKey, callback, accessReview: utilityAccessReview } = rerunPipelineAndStay(
     PipelineRunModel,
     latestRun,
   );
@@ -43,7 +43,7 @@ const TriggerLastRunButton: React.FC<TriggerLastRunButtonProps> = ({
         onClick={callback}
         isDisabled={pipelineRuns.length === 0 && !callback}
       >
-        {label}
+        {labelKey}
       </Button>
     )
   );
