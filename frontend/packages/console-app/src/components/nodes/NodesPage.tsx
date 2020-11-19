@@ -431,12 +431,11 @@ const fetchNodeMetrics = (): Promise<NodeMetrics> => {
     {
       key: 'usedStorage',
       query:
-        'sum by (instance) (node_filesystem_size_bytes{fstype!~"tmpfs|squashfs",mountpoint!~"/usr|/var"} - node_filesystem_free_bytes{fstype!~"tmpfs|squashfs",mountpoint!~"/usr|/var"})',
+        'sum by (instance) (node_filesystem_size_bytes{mountpoint="/var"} - node_filesystem_free_bytes{mountpoint="/var"})',
     },
     {
       key: 'totalStorage',
-      query:
-        'sum by (instance) (node_filesystem_size_bytes{fstype!~"tmpfs|squashfs",mountpoint!~"/usr|/var"})',
+      query: 'sum by (instance) (node_filesystem_size_bytes{mountpoint="/var"})',
     },
     {
       key: 'cpu',

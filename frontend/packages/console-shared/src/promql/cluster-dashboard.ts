@@ -44,7 +44,7 @@ const top25Queries = {
   [OverviewQuery.NODES_BY_MEMORY]:
     'topk(25, sort_desc(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes))',
   [OverviewQuery.NODES_BY_STORAGE]:
-    'topk(25, sort_desc(sum(node_filesystem_size_bytes{fstype!="tmpfs",mountpoint!="/boot|/boot/efi"} - node_filesystem_avail_bytes{instance=~".*",fstype!="tmpfs",mountpoint!="/boot|/boot/efi"}) BY (instance)))',
+    'topk(25, sort_desc(sum(node_filesystem_size_bytes{mountpoint="/var"} - node_filesystem_avail_bytes{instance=~".*",mountpoint="/var"}) BY (instance)))',
   [OverviewQuery.NODES_BY_PODS]:
     'topk(25, sort_desc(sum(avg_over_time(kubelet_running_pods[5m])) BY (node)))',
   [OverviewQuery.NODES_BY_NETWORK_IN]:
@@ -74,8 +74,8 @@ const overviewQueries = {
   [OverviewQuery.CPU_UTILIZATION]: 'cluster:cpu_usage_cores:sum',
   [OverviewQuery.CPU_TOTAL]: 'sum(cluster:capacity_cpu_cores:sum)',
   [OverviewQuery.STORAGE_UTILIZATION]:
-    '(sum(node_filesystem_size_bytes) - sum(node_filesystem_free_bytes))',
-  [OverviewQuery.STORAGE_TOTAL]: 'sum(node_filesystem_size_bytes)',
+    '(sum(node_filesystem_size_bytes{mountpoint="/var"}) - sum(node_filesystem_free_bytes{mountpoint="/var"}))',
+  [OverviewQuery.STORAGE_TOTAL]: 'sum(node_filesystem_size_bytes{mountpoint="/var"})',
   [OverviewQuery.POD_UTILIZATION]: 'count(kube_pod_info)',
   [OverviewQuery.NETWORK_IN_UTILIZATION]:
     'sum(instance:node_network_receive_bytes_excluding_lo:rate1m)',
