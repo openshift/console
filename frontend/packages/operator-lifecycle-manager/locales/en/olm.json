@@ -1,0 +1,21 @@
+{
+  "Delete CatalogSource?": "Delete CatalogSource?",
+  "By deleting a CatalogSource, any Operator that has been installed from this source will no longer receive updates.": "By deleting a CatalogSource, any Operator that has been installed from this source will no longer receive updates.",
+  "Confirm deletion by typing <2>{{name}}</2> below:": "Confirm deletion by typing <2>{{name}}</2> below:",
+  "Enter name": "Enter name",
+  "Disable CatalogSource?": "Disable CatalogSource?",
+  "By disabling a default source, the operators it provides will no longer appear in OperatorHub and any operator that has been installed from this source will no longer receive updates until the source is re-enabled. Disabling the source will also remove the corresponding OperatorSource and CatalogSource resources from the cluster.": "By disabling a default source, the operators it provides will no longer appear in OperatorHub and any operator that has been installed from this source will no longer receive updates until the source is re-enabled. Disabling the source will also remove the corresponding OperatorSource and CatalogSource resources from the cluster.",
+  "Change update approval strategy": "Change update approval strategy",
+  "What strategy is used for approving updates?": "What strategy is used for approving updates?",
+  "Automatic": "Automatic",
+  "New updates will be installed as soon as they become available.": "New updates will be installed as soon as they become available.",
+  "Manual": "Manual",
+  "New updates need to be manually approved before installation begins.": "New updates need to be manually approved before installation begins.",
+  "InstallPlan Preview": "InstallPlan Preview",
+  "Change Subscription update channel": "Change Subscription update channel",
+  "Which channel is used to receive updates?": "Which channel is used to receive updates?",
+  "Uninstall Operator?": "Uninstall Operator?",
+  "This will remove Operator <1>{{name}}</1> from <4>{{namespace}}</4>. Removing the Operator will not remove any of its custom resource definitions or managed resources. If your Operator has deployed applications on the cluster or configured off-cluster resources, these will continue to run and need to be cleaned up manually.": "This will remove Operator <1>{{name}}</1> from <4>{{namespace}}</4>. Removing the Operator will not remove any of its custom resource definitions or managed resources. If your Operator has deployed applications on the cluster or configured off-cluster resources, these will continue to run and need to be cleaned up manually.",
+  "Message from Operator developer": "Message from Operator developer",
+  "Uninstall": "Uninstall"
+}

@@ -9,6 +9,7 @@ import {
 } from '@console/internal/components/factory/modal';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { withHandlePromise, HandlePromiseProps } from '@console/internal/components/utils';
+import { Trans, useTranslation } from 'react-i18next';
 
 const DeleteCatalogSourceModal: React.FC<DeleteCatalogSourceModalProps> = ({
   kind,
@@ -19,6 +20,7 @@ const DeleteCatalogSourceModal: React.FC<DeleteCatalogSourceModalProps> = ({
   errorMessage,
   handlePromise,
 }) => {
+  const { t } = useTranslation();
   const [confirmed, setConfirmed] = React.useState<boolean>(false);
   const isConfirmed = (e: React.KeyboardEvent<HTMLInputElement>) => {
     setConfirmed(e.currentTarget.value === resource.metadata.name);
@@ -35,27 +37,30 @@ const DeleteCatalogSourceModal: React.FC<DeleteCatalogSourceModalProps> = ({
   return (
     <form onSubmit={submit} name="form" className="modal-content ">
       <ModalTitle>
-        <YellowExclamationTriangleIcon className="co-icon-space-r" /> Delete {kind.label}?
+        <YellowExclamationTriangleIcon className="co-icon-space-r" />{' '}
+        {t('olm~Delete CatalogSource?')}
       </ModalTitle>
       <ModalBody>
         <p>
-          By deleting a catlog source, any operator that has been installed from this source will no
-          longer receive updates.
+          {t(
+            'olm~By deleting a CatalogSource, any Operator that has been installed from this source will no longer receive updates.',
+          )}
         </p>
         <p>
-          Confirm deletion by typing &nbsp;
-          <strong className="co-break-word">{resource.metadata.name}</strong>
-          &nbsp; below:
+          <Trans ns="olm">
+            Confirm deletion by typing{' '}
+            <strong className="co-break-word">{{ name: resource.metadata.name }}</strong> below:
+          </Trans>
         </p>
         <input
           type="text"
           className="pf-c-form-control"
           onKeyUp={isConfirmed}
-          placeholder="Enter name"
+          placeholder={t('olm~Enter name')}
         />
       </ModalBody>
       <ModalSubmitFooter
-        submitText="Delete"
+        submitText={t('public~Delete')}
         submitDisabled={!confirmed}
         cancel={cancel}
         errorMessage={errorMessage}

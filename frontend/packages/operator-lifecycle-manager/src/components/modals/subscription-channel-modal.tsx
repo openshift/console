@@ -1,82 +1,88 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import {
   createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import { PromiseComponent, ResourceLink } from '@console/internal/components/utils';
+import { ResourceLink } from '@console/internal/components/utils';
 import { K8sKind, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { RadioInput } from '@console/internal/components/radio';
 import { SubscriptionKind, PackageManifestKind } from '../../types';
 import { SubscriptionModel, ClusterServiceVersionModel } from '../../models';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { useTranslation } from 'react-i18next';
 
-const getSelectedChannel = (props: SubscriptionChannelModalProps) =>
-  props.subscription.spec.channel || props.pkg.status.channels[0].name;
+export const SubscriptionChannelModal: React.FC<SubscriptionChannelModalProps> = ({
+  cancel,
+  close,
+  k8sUpdate,
+  pkg,
+  subscription,
+}) => {
+  const { t } = useTranslation();
+  const currentChannel = subscription?.spec?.channel ?? pkg?.status?.channels?.[0]?.name;
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
+  const [selectedChannel, setSelectedChannel] = React.useState(currentChannel);
 
-export class SubscriptionChannelModal extends PromiseComponent<
-  SubscriptionChannelModalProps,
-  SubscriptionChannelModalState
-> {
-  public state: SubscriptionChannelModalState;
+  const submit = React.useCallback(
+    (event: React.FormEvent<HTMLFormElement>): void => {
+      event.preventDefault();
+      handlePromise(
+        k8sUpdate(SubscriptionModel, {
+          ...subscription,
+          spec: {
+            ...subscription.spec,
+            channel: selectedChannel,
+          },
+        }),
+      )
+        .then(() => close?.())
+        .catch(() => {});
+    },
+    [close, handlePromise, k8sUpdate, selectedChannel, subscription],
+  );
 
-  constructor(public props: SubscriptionChannelModalProps) {
-    super(props);
-
-    this.state.selectedChannel = getSelectedChannel(props);
-  }
-
-  private submit(event): void {
-    event.preventDefault();
-
-    const updatedSub = _.cloneDeep(this.props.subscription);
-    updatedSub.spec.channel = this.state.selectedChannel;
-    this.handlePromise(this.props.k8sUpdate(SubscriptionModel, updatedSub))
-      .then(() => this.props.close())
-      .catch((err) => this.setState({ errorMessage: err }));
-  }
-
-  render() {
-    return (
-      <form onSubmit={this.submit.bind(this)} name="form" className="modal-content">
-        <ModalTitle className="modal-header">Change Subscription Update Channel</ModalTitle>
-        <ModalBody>
-          <div className="co-m-form-row">
-            <p>Which channel is used to receive updates?</p>
-          </div>
-          <div className="co-m-form-row row">
-            {this.props.pkg.status.channels.map((channel) => (
-              <div key={channel.name} className="col-sm-12">
-                <RadioInput
-                  onChange={(e) => this.setState({ selectedChannel: e.target.value })}
-                  value={channel.name}
-                  checked={this.state.selectedChannel === channel.name}
-                  title={channel.name}
-                  subTitle={
-                    <ResourceLink
-                      linkTo={false}
-                      name={channel.currentCSV}
-                      title={channel.currentCSV}
-                      kind={referenceForModel(ClusterServiceVersionModel)}
-                    />
-                  }
-                />
-              </div>
-            ))}
-          </div>
-        </ModalBody>
-        <ModalSubmitFooter
-          inProgress={this.state.inProgress}
-          errorMessage={this.state.errorMessage}
-          cancel={() => this.props.cancel()}
-          submitText="Save"
-          submitDisabled={this.state.selectedChannel === getSelectedChannel(this.props)}
-        />
-      </form>
-    );
-  }
-}
+  return (
+    <form onSubmit={submit} name="form" className="modal-content">
+      <ModalTitle className="modal-header">
+        {t('olm~Change Subscription update channel')}
+      </ModalTitle>
+      <ModalBody>
+        <div className="co-m-form-row">
+          <p>{t('olm~Which channel is used to receive updates?')}</p>
+        </div>
+        <div className="co-m-form-row row">
+          {pkg?.status?.channels?.map?.((channel) => (
+            <div key={channel.name} className="col-sm-12">
+              <RadioInput
+                onChange={(e) => setSelectedChannel(e.target.value)}
+                value={channel.name}
+                checked={selectedChannel === channel.name}
+                title={channel.name}
+                subTitle={
+                  <ResourceLink
+                    linkTo={false}
+                    name={channel.currentCSV}
+                    title={channel.currentCSV}
+                    kind={referenceForModel(ClusterServiceVersionModel)}
+                  />
+                }
+              />
+            </div>
+          ))}
+        </div>
+      </ModalBody>
+      <ModalSubmitFooter
+        inProgress={inProgress}
+        errorMessage={errorMessage}
+        cancel={cancel}
+        submitText={t('public~Save')}
+        submitDisabled={selectedChannel === currentChannel}
+      />
+    </form>
+  );
+};
 
 export const createSubscriptionChannelModal = createModalLauncher<SubscriptionChannelModalProps>(
   SubscriptionChannelModal,
@@ -88,10 +94,4 @@ export type SubscriptionChannelModalProps = {
   k8sUpdate: (kind: K8sKind, newObj: K8sResourceKind) => Promise<any>;
   subscription: SubscriptionKind;
   pkg: PackageManifestKind;
-};
-
-export type SubscriptionChannelModalState = {
-  inProgress: boolean;
-  errorMessage: string;
-  selectedChannel: string;
 };

@@ -13,13 +13,20 @@ import { testSubscription, testPackageManifest } from '../../../mocks';
 import {
   SubscriptionChannelModal,
   SubscriptionChannelModalProps,
-  SubscriptionChannelModalState,
 } from './subscription-channel-modal';
 
 import Spy = jasmine.Spy;
 
-describe(SubscriptionChannelModal.name, () => {
-  let wrapper: ShallowWrapper<SubscriptionChannelModalProps, SubscriptionChannelModalState>;
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
+describe('SubscriptionChannelModal', () => {
+  let wrapper: ShallowWrapper<SubscriptionChannelModalProps>;
   let k8sUpdate: Spy;
   let close: Spy;
   let cancel: Spy;
@@ -76,7 +83,7 @@ describe(SubscriptionChannelModal.name, () => {
   it('renders a modal form', () => {
     expect(wrapper.find('form').props().name).toEqual('form');
     expect(wrapper.find(ModalTitle).exists()).toBe(true);
-    expect(wrapper.find(ModalSubmitFooter).props().submitText).toEqual('Save');
+    expect(wrapper.find(ModalSubmitFooter).props().submitText).toEqual('public~Save');
   });
 
   it('renders a radio button for each available channel in the package', () => {
@@ -84,17 +91,17 @@ describe(SubscriptionChannelModal.name, () => {
   });
 
   it('calls `props.k8sUpdate` to update the subscription when form is submitted', (done) => {
-    wrapper = wrapper.setState({ selectedChannel: 'nightly' });
-
-    close.and.callFake(() => {
-      expect(k8sUpdate.calls.argsFor(0)[0]).toEqual(SubscriptionModel);
-      expect(k8sUpdate.calls.argsFor(0)[1]).toEqual({
-        ...subscription,
-        spec: { ...subscription.spec, channel: 'nightly' },
-      });
+    k8sUpdate.and.callFake((model, obj) => {
+      expect(model).toEqual(SubscriptionModel);
+      expect(obj.spec.channel).toEqual('nightly');
       done();
+      return Promise.resolve();
     });
-
+    wrapper
+      .find(RadioInput)
+      .at(1)
+      .props()
+      .onChange({ target: { value: 'nightly' } });
     wrapper.find('form').simulate('submit', new Event('submit'));
   });
 
