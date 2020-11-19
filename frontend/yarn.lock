@@ -6618,10 +6618,17 @@ debug@4.1.1, debug@^4.0.1, debug@^4.1.0, debug@^4.1.1:
   dependencies:
     ms "^2.1.1"
 
-debug@^3.0.0, debug@^3.0.1, debug@^3.1.0, debug@^3.1.1, debug@^3.2.5, debug@^3.2.6:
+debug@^3.0.0, debug@^3.0.1, debug@^3.1.1, debug@^3.2.5, debug@^3.2.6:
   version "3.2.6"
   resolved "https://registry.yarnpkg.com/debug/-/debug-3.2.6.tgz#e83d17de16d8a7efb7717edbe5fb10135eee629b"
   integrity sha512-mel+jf7nrtEl5Pn1Qx46zARXKDpBbvzezse7p7LqINmdoIk8PYP5SySaxEmYv6TZ0JyEKA1hsCId6DIhgITtWQ==
+  dependencies:
+    ms "^2.1.1"
+
+debug@^3.1.0:
+  version "3.2.7"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-3.2.7.tgz#72580b7e9145fb39b6676f9c5e5fb100b934179a"
+  integrity sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==
   dependencies:
     ms "^2.1.1"
 
@@ -9909,10 +9916,10 @@ https-proxy-agent@3.0.0:
     agent-base "^4.3.0"
     debug "^3.1.0"
 
-https-proxy-agent@^2.2.1:
-  version "2.2.2"
-  resolved "https://registry.yarnpkg.com/https-proxy-agent/-/https-proxy-agent-2.2.2.tgz#271ea8e90f836ac9f119daccd39c19ff7dfb0793"
-  integrity sha512-c8Ndjc9Bkpfx/vCJueCPy0jlP4ccCCSNDp8xwCZzPjKJUm+B+u9WX2x98Qx4n1PiMNTWo3D7KK5ifNV/yJyRzg==
+https-proxy-agent@^2.2.1, https-proxy-agent@^2.2.3:
+  version "2.2.4"
+  resolved "https://registry.yarnpkg.com/https-proxy-agent/-/https-proxy-agent-2.2.4.tgz#4ee7a737abd92678a293d9b34a1af4d0d08c787b"
+  integrity sha512-OmvfoQ53WLjtA9HeYP9RNrWMJzzAz1JGaSFr1nijg0PVR1JaD/xbJq1mdEIIlxGpXp9eSe/O2LgU9DJmTPd0Eg==
   dependencies:
     agent-base "^4.3.0"
     debug "^3.1.0"
@@ -11484,10 +11491,10 @@ jsonc-parser@^2.2.0:
   resolved "https://registry.yarnpkg.com/jsonc-parser/-/jsonc-parser-2.2.0.tgz#f206f87f9d49d644b7502052c04e82dd6392e9ef"
   integrity sha512-4fLQxW1j/5fWj6p78vAlAafoCKtuBm6ghv+Ij5W2DrDx0qE+ZdEl2c6Ko1mgJNF5ftX1iEWQQ4Ap7+3GlhjkOA==
 
-jsonc-parser@^2.2.1:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/jsonc-parser/-/jsonc-parser-2.3.0.tgz#7c7fc988ee1486d35734faaaa866fadb00fa91ee"
-  integrity sha512-b0EBt8SWFNnixVdvoR2ZtEGa9ZqLhbJnOjezn+WP+8kspFm+PFYDN8Z4Bc7pRlDjvuVcADSUkroIuTWWn/YiIA==
+jsonc-parser@^2.2.1, jsonc-parser@^2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/jsonc-parser/-/jsonc-parser-2.3.1.tgz#59549150b133f2efacca48fe9ce1ec0659af2342"
+  integrity sha512-H8jvkz1O50L3dMZCsLqiuB2tA7muqbSg1AtGEkN0leAqGjsUzDJir3Zwr02BhqdcITPg3ei3mZ+HjMocAknhhg==
 
 jsonfile@^4.0.0:
   version "4.0.0"
@@ -15860,13 +15867,13 @@ replaceall@^0.1.6:
   integrity sha1-gdgax663LX9cSUKt8ml6MiBojY4=
 
 request-light@^0.2.4:
-  version "0.2.4"
-  resolved "https://registry.yarnpkg.com/request-light/-/request-light-0.2.4.tgz#3cea29c126682e6bcadf7915353322eeba01a755"
-  integrity sha512-pM9Fq5jRnSb+82V7M97rp8FE9/YNeP2L9eckB4Szd7lyeclSIx02aIpPO/6e4m6Dy31+FBN/zkFMTd2HkNO3ow==
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/request-light/-/request-light-0.2.5.tgz#38a3da7b2e56f7af8cbba57e8a94930ee2380746"
+  integrity sha512-eBEh+GzJAftUnex6tcL6eV2JCifY0+sZMIUpUPOVXbs2nV5hla4ZMmO3icYKGuGVuQ2zHE9evh4OrRcH4iyYYw==
   dependencies:
     http-proxy-agent "^2.1.0"
-    https-proxy-agent "^2.2.1"
-    vscode-nls "^4.0.0"
+    https-proxy-agent "^2.2.3"
+    vscode-nls "^4.1.1"
 
 request-progress@^3.0.0:
   version "3.0.0"
@@ -18961,6 +18968,17 @@ void-elements@^2.0.1:
   resolved "https://registry.yarnpkg.com/void-elements/-/void-elements-2.0.1.tgz#c066afb582bb1cb4128d60ea92392e94d5e9dbec"
   integrity sha1-wGavtYK7HLQSjWDqkjkulNXp2+w=
 
+vscode-json-languageservice@^3.10.0:
+  version "3.10.0"
+  resolved "https://registry.yarnpkg.com/vscode-json-languageservice/-/vscode-json-languageservice-3.10.0.tgz#19eed884fd0f234f8ed2fa0a96e772f293ccc5c4"
+  integrity sha512-8IvuRSQnjznu+obqy6Dy4S4H68Ke7a3Kb+A0FcdctyAMAWEnrORpCpMOMqEYiPLm/OTYLVWJ7ql3qToDTozu4w==
+  dependencies:
+    jsonc-parser "^2.3.1"
+    vscode-languageserver-textdocument "^1.0.1"
+    vscode-languageserver-types "3.16.0-next.2"
+    vscode-nls "^5.0.0"
+    vscode-uri "^2.1.2"
+
 vscode-json-languageservice@^3.3.5:
   version "3.4.7"
   resolved "https://registry.yarnpkg.com/vscode-json-languageservice/-/vscode-json-languageservice-3.4.7.tgz#8d85f3c1d46a1e58e9867d747552fb8c83d934fd"
@@ -18971,17 +18989,6 @@ vscode-json-languageservice@^3.3.5:
     vscode-languageserver-types "^3.15.0-next.6"
     vscode-nls "^4.1.1"
     vscode-uri "^2.1.0"
-
-vscode-json-languageservice@^3.6.0:
-  version "3.8.0"
-  resolved "https://registry.yarnpkg.com/vscode-json-languageservice/-/vscode-json-languageservice-3.8.0.tgz#c7e7283f993e3db39fa5501407b023ada6fd3ae3"
-  integrity sha512-sYz5JElJMIlPoqhrRfG3VKnDjnPinLdblIiEVsJgTz1kj2hWD2q5BSbo+evH/5/jKDXDLfA8kb0lHC4vd5g5zg==
-  dependencies:
-    jsonc-parser "^2.2.1"
-    vscode-languageserver-textdocument "^1.0.1"
-    vscode-languageserver-types "^3.15.1"
-    vscode-nls "^4.1.2"
-    vscode-uri "^2.1.2"
 
 vscode-jsonrpc@^4.0.0:
   version "4.0.0"
@@ -19037,6 +19044,11 @@ vscode-languageserver-types@3.15.1, vscode-languageserver-types@^3.15.1:
   resolved "https://registry.yarnpkg.com/vscode-languageserver-types/-/vscode-languageserver-types-3.15.1.tgz#17be71d78d2f6236d414f0001ce1ef4d23e6b6de"
   integrity sha512-+a9MPUQrNGRrGU630OGbYVQ+11iOIovjCkqxajPa9w57Sd5ruK8WQNsslzpa0x/QJqC8kRc2DUxWjIFwoNm4ZQ==
 
+vscode-languageserver-types@3.16.0-next.2:
+  version "3.16.0-next.2"
+  resolved "https://registry.yarnpkg.com/vscode-languageserver-types/-/vscode-languageserver-types-3.16.0-next.2.tgz#940bd15c992295a65eae8ab6b8568a1e8daa3083"
+  integrity sha512-QjXB7CKIfFzKbiCJC4OWC8xUncLsxo19FzGVp/ADFvvi87PlmBSCAtZI5xwGjF5qE0xkLf0jjKUn3DzmpDP52Q==
+
 vscode-languageserver-types@^3.15.0-next.6:
   version "3.15.0-next.8"
   resolved "https://registry.yarnpkg.com/vscode-languageserver-types/-/vscode-languageserver-types-3.15.0-next.8.tgz#59bfe70e5690bcef7d28d0f3a7f813915edf62e1"
@@ -19050,7 +19062,7 @@ vscode-languageserver@^5.2.1:
     vscode-languageserver-protocol "3.14.1"
     vscode-uri "^1.0.6"
 
-vscode-nls@^4.0.0, vscode-nls@^4.1.1:
+vscode-nls@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/vscode-nls/-/vscode-nls-4.1.1.tgz#f9916b64e4947b20322defb1e676a495861f133c"
   integrity sha512-4R+2UoUUU/LdnMnFjePxfLqNhBS8lrAFyX7pjb2ud/lqDkrUavFUTcG7wR0HBZFakae0Q6KLBFjMS6W93F403A==
@@ -19059,6 +19071,11 @@ vscode-nls@^4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/vscode-nls/-/vscode-nls-4.1.2.tgz#ca8bf8bb82a0987b32801f9fddfdd2fb9fd3c167"
   integrity sha512-7bOHxPsfyuCqmP+hZXscLhiHwe7CSuFE4hyhbs22xPIhQ4jv99FcR4eBzfYYVLP356HNFpdvz63FFb/xw6T4Iw==
+
+vscode-nls@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/vscode-nls/-/vscode-nls-5.0.0.tgz#99f0da0bd9ea7cda44e565a74c54b1f2bc257840"
+  integrity sha512-u0Lw+IYlgbEJFF6/qAqG2d1jQmJl0eyAGJHoAJqr2HT4M2BNuQYSEiSE75f52pXHSJm8AlTjnLLbBFPrdz2hpA==
 
 vscode-uri@^1.0.6:
   version "1.0.8"
@@ -19748,30 +19765,30 @@ yallist@^4.0.0:
   resolved "https://registry.yarnpkg.com/yallist/-/yallist-4.0.0.tgz#9bb92790d9c0effec63be73519e11a35019a3a72"
   integrity sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==
 
-yaml-ast-parser-custom-tags@0.0.43:
-  version "0.0.43"
-  resolved "https://registry.yarnpkg.com/yaml-ast-parser-custom-tags/-/yaml-ast-parser-custom-tags-0.0.43.tgz#46968145ce4e24cb03c3312057f0f141b93a7d02"
-  integrity sha512-R5063FF/JSAN6qXCmylwjt9PcDH6M0ExEme/nJBzLspc6FJDmHHIqM7xh2WfEmsTJqClF79A9VkXjkAqmZw9SQ==
-
 yaml-ast-parser@^0.0.40:
   version "0.0.40"
   resolved "https://registry.yarnpkg.com/yaml-ast-parser/-/yaml-ast-parser-0.0.40.tgz#08536d4e73d322b1c9ce207ab8dd70e04d20ae6e"
   integrity sha1-CFNtTnPTIrHJziB6uN1w4E0grm4=
 
-yaml-language-server@0.10.1:
-  version "0.10.1"
-  resolved "https://registry.yarnpkg.com/yaml-language-server/-/yaml-language-server-0.10.1.tgz#5968635ffff54121c393ab324765065b42361858"
-  integrity sha512-R9SEt/nWTuZ8weB040L7yyaIVARlZ0ian1Kv6ptu4+xyVlIMobTZXaBTtgyhlMWqcQ3BpsAZu4q/2plRVG3tLQ==
+yaml-language-server-parser@0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/yaml-language-server-parser/-/yaml-language-server-parser-0.1.1.tgz#02cc9c022a8b10ffa7ba92096ffee86433a50b07"
+  integrity sha512-2PememGb1SrPqXAxXTpBD39rwYZap6CJVSvkfULNv9uwV3VHp1TfkgpsylBb+mpuuivH0JZ52lChXPvNa6yVxw==
+
+yaml-language-server@0.13.0:
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/yaml-language-server/-/yaml-language-server-0.13.0.tgz#ea18facf59618589b51675ee63e14e00c71c7906"
+  integrity sha512-5FHW7dUAyIjEM3mRzIplE0pZut2K30cA+K7coaOxFxi82LTk/oiVLS4/AQFnOtGicSyoi4YOiRqpMZ04vgtuew==
   dependencies:
     js-yaml "^3.13.1"
     jsonc-parser "^2.2.1"
     request-light "^0.2.4"
-    vscode-json-languageservice "^3.6.0"
+    vscode-json-languageservice "^3.10.0"
     vscode-languageserver "^5.2.1"
     vscode-languageserver-types "^3.15.1"
     vscode-nls "^4.1.2"
     vscode-uri "^2.1.1"
-    yaml-ast-parser-custom-tags "0.0.43"
+    yaml-language-server-parser "0.1.1"
   optionalDependencies:
     prettier "2.0.5"
 

@@ -186,7 +186,7 @@
     "vscode-languageserver-types": "^3.10.0",
     "whatwg-fetch": "2.x",
     "xterm": "^3.12.2",
-    "yaml-language-server": "0.10.1",
+    "yaml-language-server": "0.13.0",
     "yup": "^0.27.0"
   },
   "devDependencies": {
