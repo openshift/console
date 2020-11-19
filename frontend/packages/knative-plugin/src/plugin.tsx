@@ -437,6 +437,75 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'HorizontalNavTab',
+    properties: {
+      model: models.EventingChannelModel,
+      page: {
+        name: 'Subscriptions',
+        href: 'subscriptions',
+      },
+      loader: async () =>
+        (
+          await import(
+            './components/eventing/ChannelSubscriptionTab' /* webpackChunkName: "knative-channel-subscription-list" */
+          )
+        ).default,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
+    },
+  },
+  {
+    type: 'HorizontalNavTab',
+    properties: {
+      model: models.EventingKafkaChannelModel,
+      page: {
+        name: 'Subscriptions',
+        href: 'subscriptions',
+      },
+      loader: async () =>
+        (
+          await import(
+            './components/eventing/ChannelSubscriptionTab' /* webpackChunkName: "knative-channel-subscription-list" */
+          )
+        ).default,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
+    },
+  },
+  {
+    type: 'HorizontalNavTab',
+    properties: {
+      model: models.EventingIMCModel,
+      page: {
+        name: 'Subscriptions',
+        href: 'subscriptions',
+      },
+      loader: async () =>
+        (
+          await import(
+            './components/eventing/ChannelSubscriptionTab' /* webpackChunkName: "knative-channel-subscription-list" */
+          )
+        ).default,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
+    },
+  },
+  {
+    type: 'Page/Resource/List',
+    properties: {
+      model: models.EventingSubscriptionModel,
+      loader: async () =>
+        (
+          await import(
+            './components/eventing/subscription-list/SubscriptionListPage' /* webpackChunkName: "knative-subscription-page" */
+          )
+        ).default,
+    },
+  },
+  {
     type: 'Page/Resource/List',
     properties: {
       model: models.EventingTriggerModel,

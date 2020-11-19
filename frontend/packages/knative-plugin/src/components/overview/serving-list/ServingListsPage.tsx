@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { match as Rmatch } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { Page } from '@console/internal/components/utils';
 import { NamespaceBar } from '@console/internal/components/namespace';
@@ -14,6 +15,7 @@ interface ServingListPageProps {
 }
 
 const ServingListPage: React.FC<ServingListPageProps> = ({ match }) => {
+  const { t } = useTranslation();
   const {
     params: { ns: namespace },
   } = match;
@@ -24,7 +26,7 @@ const ServingListPage: React.FC<ServingListPageProps> = ({ match }) => {
   const pages: Page[] = [
     {
       href: '',
-      name: ServiceModel.labelPlural,
+      name: t('knative-plugin~Services'),
       component: ServicesPage,
       pageData: {
         kind: referenceForModel(ServiceModel),
@@ -35,7 +37,7 @@ const ServingListPage: React.FC<ServingListPageProps> = ({ match }) => {
     },
     {
       href: RevisionModel.plural,
-      name: RevisionModel.labelPlural,
+      name: t('knative-plugin~Revisions'),
       component: RevisionsPage,
       pageData: {
         kind: referenceForModel(RevisionModel),
@@ -46,7 +48,7 @@ const ServingListPage: React.FC<ServingListPageProps> = ({ match }) => {
     },
     {
       href: RouteModel.plural,
-      name: RouteModel.labelPlural,
+      name: t('knative-plugin~Routes'),
       component: RoutesPage,
       pageData: {
         kind: referenceForModel(RouteModel),
@@ -60,7 +62,12 @@ const ServingListPage: React.FC<ServingListPageProps> = ({ match }) => {
   return (
     <>
       <NamespaceBar />
-      <MultiTabListPage pages={pages} match={match} title="Serving" menuActions={menuActions} />
+      <MultiTabListPage
+        pages={pages}
+        match={match}
+        title={t('knative-plugin~Serving')}
+        menuActions={menuActions}
+      />
     </>
   );
 };

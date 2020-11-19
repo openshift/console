@@ -5,8 +5,17 @@ import { MultiTabListPage } from '@console/shared';
 import ServingListPage from '../ServingListsPage';
 import { RevisionModel } from '../../../../models';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 let servingListPageProps: React.ComponentProps<typeof ServingListPage>;
 let wrapper: ShallowWrapper;
+const i18nNS = 'knative-plugin';
 
 describe('ServingListPage', () => {
   beforeEach(() => {
@@ -30,7 +39,7 @@ describe('ServingListPage', () => {
 
   it('should render MultiTabListPage with all pages and menuActions', () => {
     const multiTablistPage = wrapper.find(MultiTabListPage);
-    expect(multiTablistPage.props().title).toEqual('Serving');
+    expect(multiTablistPage.props().title).toEqual(`${i18nNS}~Serving`);
     expect(multiTablistPage.props().pages).toHaveLength(3);
     expect(Object.keys(multiTablistPage.props().menuActions)).toHaveLength(1);
     expect(multiTablistPage.props().menuActions.service).toBeDefined();
