@@ -93,6 +93,7 @@ export const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
               selectedKey={getName(storageClass)}
               filter={filterSCWithoutNoProv}
               hideClassName="ocs-install-wizard__storage-class-label"
+              data-test="storage-class-dropdown"
             />
           </GridItem>
           <GridItem span={7} />

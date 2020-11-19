@@ -14,6 +14,7 @@ export const ResourceStatus: React.FC<ResourceStatusProps> = ({
           'co-resource-item__resource-status-badge--alt': badgeAlt,
         })}
         isRead
+        data-test="resource-status"
       >
         {children}
       </Badge>

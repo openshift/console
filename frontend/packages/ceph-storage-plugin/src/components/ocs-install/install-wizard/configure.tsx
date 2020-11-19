@@ -112,6 +112,7 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
   return (
     <FormGroup fieldId="configure-encryption" label="Encryption">
       <Checkbox
+        data-test="encryption-checkbox"
         id="configure-encryption"
         isChecked={encryptionChecked}
         label={t('ceph-storage-plugin~Enable Encryption')}

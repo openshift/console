@@ -166,6 +166,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
         <StorageClassDropdown
           onChange={handleStorageClass}
           id="storageclass-dropdown"
+          data-test="storageclass-dropdown"
           describedBy="storageclass-dropdown-help"
           required={false}
           name="storageClass"
@@ -183,6 +184,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
           placeholder="my-storage-claim"
           aria-describedby="pvc-name-help"
           id="pvc-name"
+          data-test="pvc-name"
           name="pvcName"
           value={pvcName}
           required
@@ -233,6 +235,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
         dropdownUnits={dropdownUnits}
         describedBy="request-size-help"
         inputID="request-size-input"
+        testID="pvc-size"
       />
       <p className="help-block" id="request-size-help">
         Desired storage capacity
@@ -322,7 +325,7 @@ export const CreatePVCPage: React.FC<CreatePVCPageProps> = (props) => {
         <CreatePVCForm onChange={setPvcObj} namespace={namespace} />
         <ButtonBar errorMessage={error} inProgress={inProgress}>
           <ActionGroup className="pf-c-form">
-            <Button id="save-changes" type="submit" variant="primary">
+            <Button id="save-changes" data-test="create-pvc" type="submit" variant="primary">
               Create
             </Button>
             <Button onClick={history.goBack} type="button" variant="secondary">
