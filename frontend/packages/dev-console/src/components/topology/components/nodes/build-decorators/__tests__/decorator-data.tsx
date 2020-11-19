@@ -121,6 +121,6 @@ export const pipelineData: WorkloadData = {
   connectedPipeline: connectedPipelineOne,
 };
 
-export const noPiplelineData: WorkloadData = {
+export const noPipelineData: WorkloadData = {
   connectedPipeline: { pipeline: null, pipelineRuns: [] },
 };

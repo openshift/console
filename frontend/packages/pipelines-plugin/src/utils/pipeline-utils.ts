@@ -287,7 +287,7 @@ export const containerToLogSourceStatus = (container: ContainerStatus): string =
   return LOG_SOURCE_RUNNING;
 };
 
-type LatestPipelineRunStatus = {
+export type LatestPipelineRunStatus = {
   latestPipelineRun: PipelineRun;
   status: string;
 };
@@ -300,7 +300,7 @@ export const getLatestPipelineRunStatus = (
 ): LatestPipelineRunStatus => {
   if (!pipelineRuns || pipelineRuns.length === 0) {
     // Not enough data to build the current state
-    return null;
+    return { latestPipelineRun: null, status: runStatus.PipelineNotStarted };
   }
 
   const latestPipelineRun = getLatestRun({ data: pipelineRuns }, 'creationTimestamp');
