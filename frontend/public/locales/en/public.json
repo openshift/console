@@ -25,6 +25,9 @@
   "Disable": "Disable",
   "default": "default",
   "OK": "OK",
+  "Labels": "Labels",
+  "Kind": "Kind",
+  "Last updated": "Last updated",
   "Latest version": "Latest version",
   "Created": "Created"
 }

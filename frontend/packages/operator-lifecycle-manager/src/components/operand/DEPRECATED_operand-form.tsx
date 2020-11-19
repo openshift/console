@@ -50,6 +50,7 @@ import {
 import { OperandFormProps } from './operand-form';
 import { ProvidedAPI } from '../../types';
 import { usePostFormSubmitAction } from '@console/shared';
+import { useTranslation } from 'react-i18next';
 
 /*
  * Matches a path that contains an array index. Use Sting.match against an OperandField 'path'
@@ -520,6 +521,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
   next,
 }) => {
   const postFormCallback = usePostFormSubmitAction<K8sResourceKind>();
+  const { t } = useTranslation();
   const immutableFormData = Immutable.fromJS(formData);
   const handleFormDataUpdate = (path: string, value: any): void => {
     const { regexMatch, index, pathBeforeIndex, pathAfterIndex } = parseArrayPath(path);
@@ -779,7 +781,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
       const storageRequestsPath = 'requests.ephemeral-storage';
       return (
         <dl style={{ marginLeft: '15px' }}>
-          <dt>Limits</dt>
+          <dt>{t('olm~Limits')}</dt>
           <dd>
             <ResourceRequirements
               cpu={currentValue.getIn?.(_.toPath(cpuLimitsPath))}
@@ -793,7 +795,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
               path={`${id}.limits`}
             />
           </dd>
-          <dt>Requests</dt>
+          <dt>{t('olm~Requests')}</dt>
           <dd>
             <ResourceRequirements
               cpu={currentValue.getIn?.(_.toPath(cpuRequestsPath))}
@@ -846,7 +848,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
             },
           ]}
           desc={displayName}
-          placeholder={`Select ${kindForReference(groupVersionKind)}`}
+          placeholder={t('olm~Select {{item}}', { item: kindForReference(groupVersionKind) })}
           onChange={(value) => handleFormDataUpdate(path, value)}
           selectedKey={currentValue ? `${currentValue}-${k8sModel?.kind}` : null}
         />
@@ -871,8 +873,8 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
           id={id}
           isChecked={(_.isNil(currentValue) ? false : currentValue) as boolean}
           onChange={(value) => handleFormDataUpdate(path, value)}
-          label="True"
-          labelOff="False"
+          label={t('public~True')}
+          labelOff={t('public~False')}
         />
       );
     }
@@ -967,7 +969,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
         <div>
           <Dropdown
             id={id}
-            title={`Select ${displayName}`}
+            title={t('olm~Select {{item}}', { item: displayName })}
             selectedKey={currentValue}
             items={capabilities
               .filter((c) => c.startsWith(SpecCapability.select))
@@ -1066,7 +1068,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
                     variant="link"
                   >
                     <MinusCircleIcon className="co-icon-space-r" />
-                    Remove {singularGroupDisplayName}
+                    {t('olm~Remove {{item}}', { item: singularGroupDisplayName })}
                   </Button>
                 </div>
               )}
@@ -1083,7 +1085,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
           <div className="row">
             <Button type="button" onClick={() => addArrayFieldGroup(fieldLists)} variant="link">
               <PlusCircleIcon className="co-icon-space-r" />
-              Add {singularGroupDisplayName}
+              {t('olm~Add {{item}}', { item: singularGroupDisplayName })}
             </Button>
           </div>
         </FieldGroup>
@@ -1128,8 +1130,8 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
     advancedFields.length > 0 && (
       <div>
         <ExpandCollapse
-          textExpanded="Advanced Configuration"
-          textCollapsed="Advanced Configuration"
+          textExpanded={t('olm~Advanced configuration')}
+          textCollapsed={t('olm~Advanced configuration')}
         >
           {_.map(advancedFields, (field) => (
             <OperandFormInputGroup
@@ -1164,9 +1166,9 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
             isInline
             className="co-alert co-break-word"
             variant="info"
-            title={
-              'Note: Some fields may not be represented in this form. Please select "YAML View" for full control of object creation.'
-            }
+            title={t(
+              'olm~Note: Some fields may not be represented in this form. Please select "YAML View" for full control of object creation.',
+            )}
           />
           <form className="co-dynamic-form" onSubmit={submit}>
             <Accordion asDefinitionList={false} className="co-dynamic-form__accordion">
@@ -1176,7 +1178,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
                 className="form-group"
               >
                 <label className="form-label co-required" htmlFor="DEPRECATED_root_metadata_name">
-                  Name
+                  {t('public~Name')}
                 </label>
                 <input
                   className="pf-c-form-control"
@@ -1193,7 +1195,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
                 className="form-group"
               >
                 <label className="form-label" htmlFor="tags-input">
-                  Labels
+                  {t('public~Labels')}
                 </label>
                 <SelectorInput
                   onChange={(value) =>
@@ -1217,16 +1219,16 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
                 variant="danger"
                 title="Error"
               >
-                {error || 'Fix above errors'}
+                {error || t('olm~Fix above errors')}
               </Alert>
             )}
             <div style={{ paddingBottom: '30px' }}>
               <ActionGroup className="pf-c-form">
                 <Button onClick={submit} type="submit" variant="primary">
-                  Create
+                  {t('public~Create')}
                 </Button>
                 <Button onClick={history.goBack} variant="secondary">
-                  Cancel
+                  {t('public~Cancel')}
                 </Button>
               </ActionGroup>
             </div>

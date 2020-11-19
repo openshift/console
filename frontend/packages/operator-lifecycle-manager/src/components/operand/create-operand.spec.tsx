@@ -23,6 +23,14 @@ import { EditorType } from '@console/shared/src/components/synced-editor/editor-
 
 import Spy = jasmine.Spy;
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 xdescribe('[https://issues.redhat.com/browse/CONSOLE-2137] CreateOperand', () => {
   let wrapper: ShallowWrapper<CreateOperandProps>;
 
@@ -186,7 +194,9 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] CreateOperandForm', (
     const error = { message: 'Failed to create' } as k8s.Status;
     /* eslint-disable-next-line prefer-promise-reject-errors */
     spyAndExpect(spyOn(k8s, 'k8sCreate'))(Promise.reject({ json: error }))
-      .then(() => new Promise((resolve) => setTimeout(() => resolve(), 10)))
+      .then(
+        () => new Promise<void>((resolve) => setTimeout(() => resolve(), 10)),
+      )
       .then(() => {
         expect(
           wrapper

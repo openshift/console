@@ -19,6 +19,7 @@ import {
 } from '../descriptors/const';
 import { getSchemaAtPath } from '@console/shared';
 import { JSONSchemaType } from '@console/shared/src/components/dynamic-form';
+import i18n from '@console/internal/i18n';
 
 const getCompatibleCapabilities = (jsonSchemaType: JSONSchemaType) => {
   switch (jsonSchemaType) {
@@ -167,19 +168,19 @@ const getValidCapabilities = (descriptor: Descriptor<SpecCapability>, jsonSchema
   );
 
   if (invalid?.length) {
-    invalid.forEach((i) => {
+    invalid.forEach((invalidCapability) => {
       // eslint-disable-next-line no-console
       console.warn(
-        `[Operand Form] x-descriptor "${i}" is not compatible with schema property at ${descriptor.path} and will have no effect on the corresponding form field.`,
+        `[OperandForm] x-descriptor "${invalidCapability}" is not compatible with schema property at ${descriptor.path} and will have no effect on the corresponding form field.`,
       );
     });
   }
 
   if (deprecated?.length) {
-    deprecated.forEach((i) => {
+    deprecated.forEach((deprecatedCapability) => {
       // eslint-disable-next-line no-console
       console.warn(
-        `[Operand Form] x-descriptor "${i}" is deprecated and will have no effect on the form field corresponding to ${descriptor.path}`,
+        `[OperandForm] x-descriptor "${deprecatedCapability}" is deprecated and will have no effect on the form field corresponding to ${descriptor.path}`,
       );
     });
   }
@@ -241,11 +242,11 @@ export const getUISchema = (jsonSchema, providedAPI) => {
     metadata: {
       ...hideAllExistingProperties(jsonSchema?.properties?.metadata as JSONSchema6),
       name: {
-        'ui:title': 'Name',
+        'ui:title': i18n.t('public~Name'),
         'ui:widget': 'TextWidget',
       },
       labels: {
-        'ui:title': 'Labels',
+        'ui:title': i18n.t('public~Labels'),
         'ui:field': 'LabelsField',
       },
       'ui:options': {
