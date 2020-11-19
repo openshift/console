@@ -21,11 +21,11 @@ const GitOpsDetailsPageHeading: React.FC<GitOpsDetailsPageHeadingProps> = ({
   const { t } = useTranslation();
   const breadcrumbs = [
     {
-      name: t('devconsole~Application Stages'),
-      path: '/applicationstages',
+      name: t('devconsole~Environments'),
+      path: '/environments',
     },
     {
-      name: t('devconsole~Application Details'),
+      name: t('devconsole~Application Environments'),
       path: `${url}`,
     },
   ];

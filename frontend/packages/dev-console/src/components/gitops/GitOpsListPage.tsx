@@ -9,8 +9,8 @@ import { DevPreviewBadge } from '@console/shared';
 import GitOpsList from './list/GitOpsList';
 import { fetchAllAppGroups, getManifestURLs, getPipelinesBaseURI } from './utils/gitops-utils';
 import useDefaultSecret from './utils/useDefaultSecret';
-import * as _ from 'lodash';
 import { Split, SplitItem } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import './GitOpsListPage.scss';
 
 const projectRes = { isList: true, kind: ProjectModel.kind, optional: true };
@@ -57,10 +57,10 @@ const GitOpsListPage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>{t('devconsole~Application Stages')}</title>
+        <title>{t('devconsole~Environments')}</title>
       </Helmet>
       <PageHeading
-        title={t('devconsole~Application Stages')}
+        title={t('devconsole~Environments')}
         badge={
           <Split className="odc-gitops-list-page-heading" hasGutter>
             <SplitItem>
