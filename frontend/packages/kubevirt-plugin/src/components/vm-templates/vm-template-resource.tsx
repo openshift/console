@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ResourceSummary, LabelList } from '@console/internal/components/utils';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { K8sEntityMap } from '@console/shared/src';
@@ -27,14 +28,6 @@ import { VMTemplateLink } from './vm-template-link';
 import { TemplateSource } from './vm-template-source';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 import { getVMTemplateNamespacedName } from '../../selectors/vm-template/selectors';
-import {
-  NODE_SELECTOR_MODAL_TITLE,
-  DEDICATED_RESOURCES_PINNED,
-  DEDICATED_RESOURCES_NOT_PINNED,
-  DEDICATED_RESOURCES_MODAL_TITLE,
-  TOLERATIONS_MODAL_TITLE,
-  AFFINITY_MODAL_TITLE,
-} from '../modals/scheduling-modals/shared/consts';
 import './_vm-template-resource.scss';
 import { getFlavorText } from '../../selectors/vm/flavor-text';
 
@@ -42,6 +35,8 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
   template,
   canUpdateTemplate,
 }) => {
+  const { t } = useTranslation();
+
   const id = getBasicID(template);
   const templateNamespacedName = getVMTemplateNamespacedName(template);
 
@@ -52,11 +47,13 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
   return (
     <ResourceSummary resource={template}>
       <VMDetailsItem
-        title="Description"
+        title={t('kubevirt-plugin~Description')}
         idValue={prefixedID(id, 'description')}
         valueClassName="kubevirt-vm-resource-summary__description"
       >
-        {!description && <span className="text-secondary">Not available</span>}
+        {!description && (
+          <span className="text-secondary">{t('kubevirt-plugin~Not available')}</span>
+        )}
         <EditButton
           canEdit={canUpdateTemplate}
           onClick={() => descriptionModal({ resource: template, kind: getVMLikeModel(template) })}
@@ -65,12 +62,16 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
         </EditButton>
       </VMDetailsItem>
 
-      <VMDetailsItem title="Operating System" idValue={prefixedID(id, 'os')} isNotAvail={!os}>
+      <VMDetailsItem
+        title={t('kubevirt-plugin~Operating System')}
+        idValue={prefixedID(id, 'os')}
+        isNotAvail={!os}
+      >
         {os ? os.name || os.id : null}
       </VMDetailsItem>
 
       <VMDetailsItem
-        title="Workload Profile"
+        title={t('kubevirt-plugin~Workload Profile')}
         idValue={prefixedID(id, 'workload-profile')}
         isNotAvail={!workloadProfile}
       >
@@ -78,7 +79,7 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
       </VMDetailsItem>
 
       <VMDetailsItem
-        title="Base Template"
+        title={t('kubevirt-plugin~Base Template')}
         idValue={prefixedID(id, 'base-template')}
         isNotAvail={!templateNamespacedName}
       >
@@ -92,13 +93,15 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
   template,
   dataVolumeLookup,
 }) => {
+  const { t } = useTranslation();
+
   const id = getBasicID(template);
   const devices = getDevices(template);
 
   return (
     <dl className="co-m-pane__details">
       <VMDetailsItem
-        title="Boot Order"
+        title={t('kubevirt-plugin~Boot Order')}
         canEdit
         editButtonId={prefixedID(id, 'boot-order-edit')}
         onEditClick={() => BootOrderModal({ vmLikeEntity: template, modalClassName: 'modal-lg' })}
@@ -107,7 +110,10 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
         <BootOrderSummary devices={devices} />
       </VMDetailsItem>
 
-      <VMDetailsItem title="Provision Source" idValue={prefixedID(id, 'provisioning-source')}>
+      <VMDetailsItem
+        title={t('kubevirt-plugin~Provision Source')}
+        idValue={prefixedID(id, 'provisioning-source')}
+      >
         <TemplateSource template={template} dataVolumeLookup={dataVolumeLookup} detailed />
       </VMDetailsItem>
     </dl>
@@ -118,6 +124,7 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
   template,
   canUpdateTemplate,
 }) => {
+  const { t } = useTranslation();
   const id = getBasicID(template);
   const vm = asVM(template);
   const vmWrapper = new VMWrapper(vm);
@@ -141,7 +148,7 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
         <dl className="co-m-pane__details">
           <VMDetailsItem
             canEdit={canUpdateTemplate}
-            title={NODE_SELECTOR_MODAL_TITLE}
+            title={t('kubevirt-plugin~Node Selector')}
             idValue={prefixedID(id, 'node-selector')}
             editButtonId={prefixedID(id, 'node-selector-edit')}
             onEditClick={() => nodeSelectorModal({ vmLikeEntity: template, blocking: true })}
@@ -151,7 +158,7 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
 
           <VMDetailsItem
             canEdit={canUpdateTemplate}
-            title={TOLERATIONS_MODAL_TITLE}
+            title={t('kubevirt-plugin~Tolerations')}
             idValue={prefixedID(id, 'tolerations')}
             editButtonId={prefixedID(id, 'tolerations-edit')}
             onEditClick={() =>
@@ -167,7 +174,7 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
 
           <VMDetailsItem
             canEdit={canUpdateTemplate}
-            title={AFFINITY_MODAL_TITLE}
+            title={t('kubevirt-plugin~Affinity Rules')}
             idValue={prefixedID(id, 'affinity')}
             editButtonId={prefixedID(id, 'affinity-edit')}
             onEditClick={() =>
@@ -178,14 +185,14 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
               })
             }
           >
-            {affinityWrapperCount} {'Affinity rules'}
+            {t('kubevirt-plugin~{{count}} Affinity rule', { count: affinityWrapperCount })}
           </VMDetailsItem>
         </dl>
       </div>
       <div className="col-sm-6">
         <dl className="co-m-pane__details">
           <VMDetailsItem
-            title="Flavor"
+            title={t('kubevirt-plugin~Flavor')}
             idValue={prefixedID(id, 'flavor')}
             canEdit={canUpdateTemplate}
             onEditClick={() => vmFlavorModal({ vmLike: template, blocking: true })}
@@ -196,7 +203,7 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
           </VMDetailsItem>
 
           <VMDetailsItem
-            title={DEDICATED_RESOURCES_MODAL_TITLE}
+            title={t('kubevirt-plugin~Dedicated Resources')}
             idValue={prefixedID(id, 'dedicated-resources')}
             canEdit={canUpdateTemplate}
             onEditClick={() =>
@@ -207,7 +214,9 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
             }
             editButtonId={prefixedID(id, 'dedicated-resources-edit')}
           >
-            {isCPUPinned ? DEDICATED_RESOURCES_PINNED : DEDICATED_RESOURCES_NOT_PINNED}
+            {isCPUPinned
+              ? t('kubevirt-plugin~Workload scheduled with dedicated resources (guaranteed policy)')
+              : t('kubevirt-plugin~No Dedicated resources applied')}
           </VMDetailsItem>
         </dl>
       </div>

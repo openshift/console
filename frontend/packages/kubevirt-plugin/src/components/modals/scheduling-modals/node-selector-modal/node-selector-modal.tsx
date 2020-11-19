@@ -1,5 +1,6 @@
-import * as React from 'react';
 import * as _ from 'lodash';
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ModalTitle, ModalBody, ModalComponentProps } from '@console/internal/components/factory';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 import {
@@ -19,7 +20,6 @@ import { NodeChecker } from '../shared/NodeChecker/node-checker';
 import { useNodeQualifier } from '../shared/hooks';
 import { LabelsList } from '../../../LabelsList/labels-list';
 import { LabelRow } from '../../../LabelsList/LabelRow/label-row';
-import { NODE_SELECTOR_MODAL_TITLE } from '../shared/consts';
 import { nodeSelectorToIDLabels } from './helpers';
 import { useIDEntities } from '../../../../hooks/use-id-entities';
 import { IDLabel } from '../../../LabelsList/types';
@@ -36,6 +36,7 @@ export const NSModal = withHandlePromise(
     vmLikeEntity,
     vmLikeEntityLoading,
   }: NSModalProps) => {
+    const { t } = useTranslation();
     const vmLikeFinal = getLoadedData(vmLikeEntityLoading, vmLikeEntity);
     const loadError = getLoadError(nodes, NodeModel);
 
@@ -83,7 +84,7 @@ export const NSModal = withHandlePromise(
 
     return (
       <div className="modal-content">
-        <ModalTitle>{NODE_SELECTOR_MODAL_TITLE}</ModalTitle>
+        <ModalTitle>{t('kubevirt-plugin~Node Selector')}</ModalTitle>
         <ModalBody>
           <LabelsList
             isEmpty={selectorLabels.length === 0}

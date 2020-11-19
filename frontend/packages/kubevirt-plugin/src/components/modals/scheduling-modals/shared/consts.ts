@@ -18,24 +18,11 @@ export const SCHEDULING_NO_NODES_TAINTED_MATCH_BUTTON_TEXT =
 export const SCHEDULING_NO_NODES_MATCH_TEXT = 'No matching nodes found for the labels';
 export const SCHEDULING_NO_NODES_TAINTED_MATCH_TEXT = 'No matching tainted nodes found';
 
-// Node Selector
-export const NODE_SELECTOR_MODAL_TITLE = 'Node Selector';
-
 // Dedicated Resources
 export const DEDICATED_RESOURCES_LABELS = [{ id: null, key: 'cpumanager', value: 'true' }];
-export const DEDICATED_RESOURCES_MODAL_TITLE = 'Dedicated Resources';
-export const DEDICATED_RESOURCES_NOT_PINNED = 'No Dedicated resources applied';
-export const DEDICATED_RESOURCES_PINNED =
-  'Workload scheduled with dedicated resources (guaranteed policy)';
 
 // Tolerations Modal
-export const TOLERATIONS_MODAL_TITLE = 'Tolerations';
 export const TOLERATIONS_EFFECTS = ['NoSchedule', 'PreferNoSchedule', 'NoExecute'];
-
-// Affinity Modal
-export const AFFINITY_MODAL_TITLE = 'Affinity Rules';
-export const AFFINITY_CREATE = 'New Affinity';
-export const AFFINITY_EDITING = 'Edit Affinity';
 
 export const AFFINITY_CONDITION_LABELS = {
   [AffinityCondition.preferred]: 'Preferred during scheduling',

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import {
   withHandlePromise,
@@ -29,7 +30,6 @@ import { getVMLikeAffinity } from '../../../../selectors/vm-like/selectors';
 import { getLoadedData, isLoaded, getLoadError } from '../../../../utils';
 import { useCollisionChecker } from '../../../../hooks/use-collision-checker';
 import { ModalFooter } from '../../modal/modal-footer';
-import { AFFINITY_MODAL_TITLE, AFFINITY_CREATE, AFFINITY_EDITING } from '../shared/consts';
 import { AffinityTable } from './components/affinity-table/affinity-table';
 import { AffinityRow } from './components/affinity-table/affinity-row';
 import { AffinityEdit } from './components/affinity-edit/affinity-edit';
@@ -56,6 +56,7 @@ export const AffinityModal = withHandlePromise<AffinityModalProps>(
     inProgress,
     errorMessage,
   }) => {
+    const { t } = useTranslation();
     const vmLikeFinal = getLoadedData(vmLikeEntityLoading, vmLikeEntity);
     const loadError = getLoadError(nodes, NodeModel);
     const currentAffinity = getVMLikeAffinity(vmLikeFinal);
@@ -177,10 +178,10 @@ export const AffinityModal = withHandlePromise<AffinityModalProps>(
     };
 
     const modalTitle = !isEditing
-      ? AFFINITY_MODAL_TITLE
+      ? t('kubevirt-plugin~Affinity Rules')
       : isCreating
-      ? AFFINITY_CREATE
-      : AFFINITY_EDITING;
+      ? t('kubevirt-plugin~New Affinity')
+      : t('kubevirt-plugin~Edit Affinity');
 
     return (
       <div className="modal-content">
@@ -192,7 +193,7 @@ export const AffinityModal = withHandlePromise<AffinityModalProps>(
           <SplitItem className="scheduling-modals__add-btn">
             {!isEditing && affinities.length > 0 && (
               <Button onClick={() => onAffinityClickAdd()} variant="secondary">
-                Add Affinity rule
+                {t('kubevirt-plugin~Add Affinity rule')}
               </Button>
             )}
           </SplitItem>
@@ -210,20 +211,20 @@ export const AffinityModal = withHandlePromise<AffinityModalProps>(
               {affinities.length > 0 && (
                 <div className="scheduling-modals__desc-container">
                   <Text className="scheduling-modals__desc" component={TextVariants.small}>
-                    {
-                      'Set scheduling requirements and affect the ranking of the nodes candidate for scheduling.'
-                    }
+                    {t(
+                      'kubevirt-plugin~Set scheduling requirements and affect the ranking of the nodes candidate for scheduling.',
+                    )}
                   </Text>
                   <Text className="scheduling-modals__desc" component={TextVariants.small}>
-                    {
-                      "Rules with 'Preferred' condition will stack with an 'AND' relation between them."
-                    }
+                    {t(
+                      "kubevirt-plugin~Rules with 'Preferred' condition will stack with an 'AND' relation between them.",
+                    )}
                   </Text>
 
                   <Text className="scheduling-modals__desc" component={TextVariants.small}>
-                    {
-                      "Rules with 'Required' condition will stack with an 'OR' relation between them."
-                    }
+                    {t(
+                      "kubevirt-plugin~Rules with 'Required' condition will stack with an 'OR' relation between them.",
+                    )}
                   </Text>
                 </div>
               )}
@@ -254,30 +255,30 @@ export const AffinityModal = withHandlePromise<AffinityModalProps>(
               ) : (
                 <EmptyState variant={EmptyStateVariant.full}>
                   <Title headingLevel="h5" size="lg">
-                    No Affinity rules found
+                    {t('kubevirt-plugin~No Affinity rules found')}
                   </Title>
                   <EmptyStateBody>
                     <div className="scheduling-modals__desc-container">
                       <Text className="scheduling-modals__desc" component={TextVariants.small}>
-                        {
-                          'Set scheduling requirements and affect the ranking of the nodes candidate for scheduling.'
-                        }
+                        {t(
+                          'kubevirt-plugin~Set scheduling requirements and affect the ranking of the nodes candidate for scheduling.',
+                        )}
                       </Text>
                       <Text className="scheduling-modals__desc" component={TextVariants.small}>
-                        {
-                          "Rules with 'Preferred' condition will stack with an 'AND' relation between them."
-                        }
+                        {t(
+                          "kubevirt-plugin~Rules with 'Preferred' condition will stack with an 'AND' relation between them.",
+                        )}
                       </Text>
 
                       <Text className="scheduling-modals__desc" component={TextVariants.small}>
-                        {
-                          "Rules with 'Required' condition will stack with an 'OR' relation between them."
-                        }
+                        {t(
+                          "kubevirt-plugin~Rules with 'Required' condition will stack with an 'OR' relation between them.",
+                        )}
                       </Text>
                     </div>
                   </EmptyStateBody>
                   <Button variant="secondary" onClick={() => onAffinityClickAdd()}>
-                    Add Affinity rule
+                    {t('kubevirt-plugin~Add Affinity rule')}
                   </Button>
                 </EmptyState>
               )}
@@ -290,14 +291,19 @@ export const AffinityModal = withHandlePromise<AffinityModalProps>(
               isSimpleError={!!loadError}
               onSubmit={submit}
               onCancel={onCancel}
-              submitButtonText={'Save'}
-              infoTitle={showCollisionAlert && 'Affinity has been updated outside this flow.'}
+              submitButtonText={t('kubevirt-plugin~Save')}
+              infoTitle={
+                showCollisionAlert &&
+                t('kubevirt-plugin~Affinity has been updated outside this flow.')
+              }
               infoMessage={
                 <>
-                  Saving these changes will override any Affinity previously saved.
+                  {t(
+                    'kubevirt-plugin~Saving these changes will override any Affinity previously saved.',
+                  )}
                   <br />
                   <Button variant={ButtonVariant.link} isInline onClick={onReload}>
-                    Reload Affinity
+                    {t('kubevirt-plugin~Reload Affinity')}
                   </Button>
                   .
                 </>
