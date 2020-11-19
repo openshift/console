@@ -101,7 +101,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'NavItem/Href',
     properties: {
       id: 'operatorhub',
-      section: 'Operators',
+      section: 'operators',
       componentProps: {
         name: 'OperatorHub',
         href: '/operatorhub',
@@ -115,7 +115,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'NavItem/ResourceNS',
     properties: {
       id: 'operators',
-      section: 'Operators',
+      section: 'operators',
       componentProps: {
         name: 'Installed Operators',
         resource: referenceForModel(models.ClusterServiceVersionModel),

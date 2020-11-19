@@ -230,8 +230,8 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/ResourceCluster',
     properties: {
-      id: 'storage',
-      section: 'Storage',
+      id: 'volumesnapshots',
+      section: 'storage',
       componentProps: {
         name: 'Volume Snapshot Contents',
         resource: referenceForModel(VolumeSnapshotContentModel),

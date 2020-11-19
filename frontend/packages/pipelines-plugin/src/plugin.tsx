@@ -4,6 +4,7 @@ import {
   ModelDefinition,
   ModelFeatureFlag,
   KebabActions,
+  NavSection,
   HrefNavItem,
   ResourceNSNavItem,
   ResourceClusterNavItem,
@@ -47,6 +48,7 @@ const {
 type ConsumedExtensions =
   | ModelDefinition
   | ModelFeatureFlag
+  | NavSection
   | HrefNavItem
   | ResourceClusterNavItem
   | ResourceNSNavItem
@@ -80,7 +82,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'pipelines',
       perspective: 'dev',
-      group: 'resources',
+      section: 'resources',
       insertAfter: 'builds',
       componentProps: {
         name: PipelineModel.labelPlural,
@@ -97,7 +99,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'pipelines',
       perspective: 'admin',
-      section: 'Pipelines',
+      section: 'pipelines',
       componentProps: {
         name: PipelineModel.labelPlural,
         href: '/pipelines',
@@ -112,7 +114,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'pipelinetasks',
       perspective: 'admin',
-      section: 'Pipelines',
+      section: 'pipelines',
       componentProps: {
         name: TaskModel.labelPlural,
         href: '/tasks',
@@ -127,7 +129,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'pipelinetriggers',
       perspective: 'admin',
-      section: 'Pipelines',
+      section: 'pipelines',
       componentProps: {
         name: 'Triggers',
         href: '/triggers',

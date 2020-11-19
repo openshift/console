@@ -93,7 +93,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'NavItem/Href',
     properties: {
       id: 'baremetal',
-      section: 'Compute',
+      section: 'compute',
       componentProps: {
         name: 'Bare Metal Hosts',
         href: formatNamespacedRouteForResource(

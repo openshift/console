@@ -12,10 +12,8 @@ namespace ExtensionProperties {
     id: string;
     /** Perspective id to which this item belongs to. If not specified, use the default perspective. */
     perspective?: string;
-    /** Nav section to which this item belongs to.If not specified, render item as top-level link. */
+    /** Nav section to which this item belongs to. If not specified, render item as top-level link. */
     section?: string;
-    /** Nav group to which this item belongs to. Add items to a grouping with a separator above */
-    group?: string;
     /** Props to pass to the corresponding `NavLink` component. */
     componentProps: Pick<NavLinkProps, 'name' | 'startsWith' | 'testID' | 'data-tour-id'>;
     /*

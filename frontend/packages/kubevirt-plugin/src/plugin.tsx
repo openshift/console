@@ -85,7 +85,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'NavItem/ResourceNS',
     properties: {
       id: 'virtualization',
-      section: 'Workloads',
+      section: 'workloads',
       componentProps: {
         name: 'Virtualization',
         resource: 'virtualization',

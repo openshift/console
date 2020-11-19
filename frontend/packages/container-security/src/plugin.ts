@@ -120,7 +120,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'imagevulnerabilities',
       perspective: 'admin',
-      section: 'Administration',
+      section: 'administration',
       insertBefore: 'customresourcedefinitions',
       componentProps: {
         name: 'Image Vulnerabilities',
