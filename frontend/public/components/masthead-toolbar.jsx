@@ -19,7 +19,7 @@ import * as redhatLogoImg from '../imgs/logos/redhat.svg';
 import { withKeycloak } from '@react-keycloak/web';
 import { ExpTimer } from './hypercloud/exp-timer';
 
-import { Translation } from 'react-i18next';
+import { withTranslation } from 'react-i18next';
 import i18n from 'i18next';
 
 const SystemStatusButton = ({ statuspageData, className }) =>
@@ -326,7 +326,7 @@ class MastheadToolbarContents_ extends React.Component {
   }
 
   _renderMenu(mobile) {
-    const { flags, consoleLinks, keycloak } = this.props;
+    const { flags, consoleLinks, keycloak, t } = this.props;
     const username = keycloak.idTokenParsed.email;
     const { isUserDropdownOpen, isKebabDropdownOpen } = this.state;
     const additionalUserActions = this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'UserMenu'));
@@ -348,15 +348,13 @@ class MastheadToolbarContents_ extends React.Component {
     };
 
     userActions.push({
-      // TODO: i18n
-      label: 'Manage Account',
+      label: t('COMMON:MSG_GNB_ACCOUNT_1'),
       callback: openAccountConsole,
       component: 'button',
     });
 
     userActions.push({
-      // TODO: i18n
-      label: 'Log out',
+      label: t('COMMON:MSG_GNB_ACCOUNT_2'),
       callback: logout,
       component: 'button',
     });
@@ -405,7 +403,7 @@ class MastheadToolbarContents_ extends React.Component {
     return <ApplicationLauncher aria-label="User menu" data-test="user-dropdown" className="co-app-launcher co-user-menu" onSelect={this._onUserDropdownSelect} onToggle={this._onUserDropdownToggle} isOpen={isUserDropdownOpen} items={this._renderApplicationItems(actions)} position="right" toggleIcon={userToggle} isGrouped />;
   }
   _renderLanguageMenu(mobile) {
-    const { flags, consoleLinks, keycloak } = this.props;
+    const { flags, consoleLinks, keycloak, t } = this.props;
     const { isLanguageDropdownOpen } = this.state;
 
     const actions = [];
@@ -423,13 +421,13 @@ class MastheadToolbarContents_ extends React.Component {
     };
 
     i18nActions.push({
-      label: 'EN-US',
+      label: t('COMMON:MSG_GNB_LANGUAGE_2'),
       callback: enChange,
       component: 'button',
     });
 
     i18nActions.push({
-      label: '한국어',
+      label: t('COMMON:MSG_GNB_LANGUAGE_1'),
       callback: koChange,
       component: 'button',
     });
@@ -455,15 +453,11 @@ class MastheadToolbarContents_ extends React.Component {
     }
 
     const languageToggle = (
-      <Translation>
-        {t => (
-          <span className="pf-c-dropdown__toggle">
-            {/* i18n 키값 요청 후 적용하기 */}
-            <span className="co-username">Language</span>
-            <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
-          </span>
-        )}
-      </Translation>
+      <span className="pf-c-dropdown__toggle">
+        {/* i18n 키값 요청 후 적용하기 - 현재 선택된 언어를 표현하는 키값 - 한국어, 영어 */}
+        <span className="co-username">Language</span>
+        <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
+      </span>
     );
 
     return <ApplicationLauncher aria-label="Language menu" data-test="language-dropdown" className="co-app-launcher co-user-menu" onSelect={this._onLanguageDropdownSelect} onToggle={this._onLanguageDropdownToggle} isOpen={isLanguageDropdownOpen} items={this._renderApplicationItems(actions)} position="right" toggleIcon={languageToggle} isGrouped />;
@@ -495,7 +489,7 @@ class MastheadToolbarContents_ extends React.Component {
 
   render() {
     const { isApplicationLauncherDropdownOpen, isHelpDropdownOpen, showAboutModal, statuspageData } = this.state;
-    const { consoleLinks, drawerToggle, notificationsRead, canAccessNS, keycloak } = this.props;
+    const { consoleLinks, drawerToggle, notificationsRead, canAccessNS, keycloak, t } = this.props;
     const launchActions = this._launchActions();
     const alertAccess = canAccessNS && !!window.SERVER_FLAGS.prometheusBaseURL;
     return (
@@ -522,7 +516,7 @@ class MastheadToolbarContents_ extends React.Component {
                   this._tokenRefresh();
                 }}
               >
-                Extend
+                {t('COMMON:MSG_GNB_SESSION_1')}
               </Button>
             </ToolbarItem>
             {/* desktop -- (system status button) */}
@@ -588,7 +582,7 @@ const mastheadToolbarStateToProps = state => ({
 
 const MastheadToolbarContents = connect(mastheadToolbarStateToProps, {
   drawerToggle: UIActions.notificationDrawerToggleExpanded,
-})(connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.CONSOLE_CLI_DOWNLOAD, FLAGS.OPENSHIFT)(withKeycloak(MastheadToolbarContents_)));
+})(connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.CONSOLE_CLI_DOWNLOAD, FLAGS.OPENSHIFT)(withKeycloak(withTranslation()(MastheadToolbarContents_))));
 
 export const MastheadToolbar = connectToFlags(FLAGS.CLUSTER_VERSION)(({ flags }) => {
   const resources = flags[FLAGS.CLUSTER_VERSION]
