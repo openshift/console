@@ -15,7 +15,7 @@ export const getDiscoveryRequestData = ({
   allNodeNamesOnADV: string[];
   showNodesListOnADV: boolean;
   hostNamesMapForADV: HostNamesMap;
-  ns?: string;
+  ns: string;
 }): AutoDetectVolumeKind => {
   const nodes = getNodes(showNodesListOnADV, allNodeNamesOnADV, nodeNamesForLVS);
   return {
