@@ -149,7 +149,7 @@ const rerunPipeline: KebabAction = (
 };
 
 export const rerunPipelineAndStay: KebabAction = (kind: K8sKind, pipelineRun: PipelineRun) => {
-  return rerunPipeline(kind, pipelineRun, null, null);
+  return rerunPipeline(kind, pipelineRun);
 };
 
 export const rerunPipelineAndRedirect: KebabAction = (kind: K8sKind, pipelineRun: PipelineRun) => {
