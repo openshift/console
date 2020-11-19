@@ -1,0 +1,14 @@
+.ocs-install-kms {
+  &__form-url {
+    display: inline-flex;
+    width: 100%;
+  }
+
+  &__form-address {
+    width: 70%;
+  }
+
+  &__form-port {
+    width: 30%;
+  }
+}

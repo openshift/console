@@ -2,7 +2,11 @@ import * as React from 'react';
 import { pluralize, TextContent, Text, TextVariants } from '@patternfly/react-core';
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
 import { getName } from '@console/shared';
-import { VALIDATIONS, ValidationMessage } from '../../../../../utils/common-ocs-install-el';
+import {
+  VALIDATIONS,
+  ValidationMessage,
+  getEncryptionLevel,
+} from '../../../../../utils/common-ocs-install-el';
 import { getNodeInfo } from '../../../../../utils/install';
 import { MINIMUM_NODES, NetworkTypeLabels } from '../../../../../constants';
 import { State } from '../state';
@@ -51,14 +55,19 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
         <ReviewListBody noValue={!zones.size}>
           <p>{pluralize(zones.size, 'zone')}</p>
         </ReviewListBody>
-        <ReviewListTitle text="Configure" />
         {(encryption.clusterWide || encryption.storageClass) && (
-          <ReviewListBody>
-            <p className="ocs-install-wizard__review-encryption">Enable Encryption</p>
-            {encryption.advanced && kms.hasHandled && (
-              <p>Connected to external key management service: {kms.name}</p>
-            )}
-          </ReviewListBody>
+          <>
+            <ReviewListTitle text="Configure" />
+            <ReviewListBody>
+              <p className="ocs-install-wizard__review-encryption">Enable Encryption</p>
+              {encryption.advanced && (
+                <p className="ocs-install-wizard__review-encryption">
+                  Connect to external key management service: {kms.name.value}
+                </p>
+              )}
+              <p>Encryption Level: {getEncryptionLevel(encryption)}</p>
+            </ReviewListBody>
+          </>
         )}
         <ReviewListBody
           validation={networkType === NetworkType.MULTUS && !publicNetwork && VALIDATIONS.NETWORK}

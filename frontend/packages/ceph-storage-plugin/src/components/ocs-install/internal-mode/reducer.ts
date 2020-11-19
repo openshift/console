@@ -1,6 +1,6 @@
 import { StorageClassResourceKind, NodeKind } from '@console/internal/module/k8s';
 import { EncryptionType, KMSConfig, NetworkType } from '../types';
-import { defaultRequestSize } from '../../../constants';
+import { defaultRequestSize, KMSEmptyState } from '../../../constants';
 
 export type InternalClusterState = {
   storageClass: StorageClassResourceKind;
@@ -24,6 +24,7 @@ export enum ActionType {
   // Encryption state actions
   SET_ENCRYPTION = 'SET_ENCRYPTION',
   SET_KMS_ENCRYPTION = 'SET_KMS_ENCRYPTION',
+  CLEAR_KMS_STATE = 'CLEAR_KMS_STATE',
   SET_NETWORK_TYPE = 'SET_NETWORK_TYPE',
   SET_PUBLIC_NETWORK = 'SET_PUBLIC_NETWORK',
   SET_CLUSTER_NETWORK = 'SET_CLUSTER_NETWORK',
@@ -38,6 +39,7 @@ export type InternalClusterAction =
   | { type: ActionType.SET_ENCRYPTION; payload: EncryptionType }
   // KMS action
   | { type: ActionType.SET_KMS_ENCRYPTION; payload: KMSConfig }
+  | { type: ActionType.CLEAR_KMS_STATE }
   | { type: ActionType.SET_ENABLE_ENCRYPTION; payload: boolean }
   | { type: ActionType.SET_ENABLE_MINIMAL; payload: boolean }
   | { type: ActionType.SET_NETWORK_TYPE; payload: NetworkType }
@@ -58,8 +60,32 @@ export const initialState: InternalClusterState = {
   },
   // KMS object state
   kms: {
-    name: 'ocs-vault-connection',
+    name: {
+      value: '',
+      valid: true,
+    },
+    token: {
+      value: '',
+      valid: true,
+    },
+    address: {
+      value: '',
+      valid: true,
+    },
+    port: {
+      value: '',
+      valid: true,
+    },
+    backend: '',
+    caCert: null,
+    tls: '',
+    clientCert: null,
+    clientKey: null,
+    providerNamespace: '',
     hasHandled: true,
+    caCertFile: '',
+    clientCertFile: '',
+    clientKeyFile: '',
   },
   publicNetwork: null,
   clusterNetwork: null,
@@ -123,6 +149,12 @@ export const reducer = (state: InternalClusterState, action: InternalClusterActi
       return {
         ...state,
         publicNetwork: action.payload,
+      };
+    }
+    case ActionType.CLEAR_KMS_STATE: {
+      return {
+        ...state,
+        kms: { ...KMSEmptyState },
       };
     }
     default:

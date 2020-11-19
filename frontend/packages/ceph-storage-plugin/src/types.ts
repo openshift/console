@@ -45,8 +45,11 @@ export type StorageClusterKind = K8sResourceCommon & {
     manageNodes: boolean;
     storageDeviceSets: DeviceSet[];
     resources: StorageClusterResource;
-    encryption: {
+    encryption?: {
       enable: boolean;
+      kms?: {
+        enable: boolean;
+      };
     };
     monDataDirHostPath?: string;
   };

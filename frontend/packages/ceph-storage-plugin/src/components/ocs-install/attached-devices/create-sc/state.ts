@@ -1,6 +1,6 @@
 import { HostNamesMap } from '@console/local-storage-operator-plugin/src/components/auto-detect-volume/types';
 import { diskTypeDropdownItems } from '@console/local-storage-operator-plugin/src/constants';
-import { diskModeDropdownItems } from '../../../../constants';
+import { diskModeDropdownItems, KMSEmptyState } from '../../../../constants';
 import { StorageClassResourceKind, NodeKind } from '@console/internal/module/k8s';
 import { EncryptionType, KMSConfig, NetworkType } from '../../types';
 
@@ -53,8 +53,32 @@ export const initialState: State = {
   },
   // KMS object state
   kms: {
-    name: 'ocs-vault-connection',
+    name: {
+      value: '',
+      valid: true,
+    },
+    token: {
+      value: '',
+      valid: true,
+    },
+    address: {
+      value: '',
+      valid: true,
+    },
+    port: {
+      value: '',
+      valid: true,
+    },
+    backend: '',
+    caCert: null,
+    tls: '',
+    clientCert: null,
+    clientKey: null,
+    providerNamespace: '',
     hasHandled: true,
+    caCertFile: '',
+    clientCertFile: '',
+    clientKeyFile: '',
   },
   networkType: NetworkType.DEFAULT,
   clusterNetwork: '',
@@ -154,6 +178,7 @@ export type Action =
   // Encryption state actions
   | { type: 'setEncryption'; value: EncryptionType }
   | { type: 'setKmsEncryption'; value: KMSConfig }
+  | { type: 'clearKmsState' }
   | { type: 'setNetworkType'; value: NetworkType }
   | { type: 'setClusterNetwork'; value: string }
   | { type: 'setPublicNetwork'; value: string };
@@ -228,6 +253,8 @@ export const reducer = (state: State, action: Action) => {
     // KMS state reducer
     case 'setKmsEncryption':
       return Object.assign({}, state, { kms: action.value });
+    case 'clearKmsState':
+      return Object.assign({}, state, { kms: { ...KMSEmptyState } });
     case 'setNetworkType':
       return Object.assign({}, state, { networkType: action.value });
     case 'setClusterNetwork':
