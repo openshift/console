@@ -13,7 +13,7 @@
   "LDAP": "LDAP",
   "OpenID Connect": "OpenID Connect",
   "Request Header": "请求标头",
-  "{{resource}} details": "{{resource}} 详情",
+  "{{resource}} details": "{{resource}}详情",
   "Access token max age": "访问令牌的最大年龄",
   "Identity providers determine how users log into the cluster.": "身份供应商确定用户如何登录到集群。"
 }

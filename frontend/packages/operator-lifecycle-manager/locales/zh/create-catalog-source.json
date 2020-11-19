@@ -1,9 +1,9 @@
 {
-  "Cluster-wide {{resource}}": "集群范围的{{resource}}",
+  "Cluster-wide {{resource}}": "集群范围的 {{resource}}",
   "Catalog will be available in all namespaces": "目录将在所有命名空间中可用",
   "Namespace {{resource}}": "命名空间 {{resource}}",
   "Catalog will only be available in a single namespace": "目录仅在一个命名空间中可用",
-  "Create {{resource}}": "创建{{resource}}",
+  "Create {{resource}}": "创建 {{resource}}",
   "Create a {{resource}} in order to make operators available in OperatorHub.": "创建一个 {{resource}} 以使 operator 在 OperatorHub 中可用。",
   "{{resource}} name": "名称",
   "Display name": "显示名称",

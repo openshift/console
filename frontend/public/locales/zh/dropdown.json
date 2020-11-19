@@ -1,0 +1,13 @@
+{
+  "All Projects": "所有项目",
+  "All Namespaces": "所有命名空间",
+  "Create Project": "创建项目",
+  "Create Namespace": "创建命名空间",
+  "Project": "项目",
+  "Namespace": "命名空间",
+  "Select Project...": "选择项目...",
+  "Select Namespace...": "选择命名空间...",
+  "Actions": "操作",
+  "Containers": "容器",
+  "Init containers": "Init 容器"
+}

@@ -61,11 +61,11 @@
   "Drag": "拖动",
   "Click": "点击",
   "Right Click": "右键点击",
+  "Scheduling disabled": "调度被禁用",
   "Scaled to 0": "缩放到 0",
   "scaling to {{podSubTitle}}": "扩展到 {{podSubTitle}}",
   "Autoscaled": "自动缩放",
   "to 0": "到 0",
   "Autoscaling": "自动缩放",
-  "to {{podSubTitle}}": "到 {{podSubTitle}}",
-  "Invalid target resource: ({{targetResource}})": "无效的目标资源：（{{targetResource}} ）"
+  "to {{podSubTitle}}": "到 {{podSubTitle}}"
 }

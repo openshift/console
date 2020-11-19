@@ -1,6 +1,6 @@
 {
   "Monitoring": "监控",
-  "Alerting": "警示",
+  "Alerting": "警报",
   "Metrics": "指标",
   "Dashboards": "仪表板",
   "Home": "家",
@@ -27,7 +27,7 @@
   "Serverless": "Serverless",
   "Networking": "网络",
   "Services": "服务",
-  "Routes": "Routes",
+  "Routes": "路由",
   "Ingresses": "入站",
   "Network Policies": "网络政策",
   "Storage": "存储",

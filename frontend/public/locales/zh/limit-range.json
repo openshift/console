@@ -1,8 +1,8 @@
 {
   "Name": "名称",
   "Namespace": "命名空间",
-  "Created": "Created",
-  "Limits": "Limits",
+  "Created": "创建的",
+  "Limits": "限值",
   "Type": "类型",
   "Resource": "资源",
   "Min": "最小",
@@ -10,5 +10,5 @@
   "Default request": "默认请求",
   "Default limit": "默认限制",
   "Max limit/request ratio": "最大限制/请求比率",
-  "{{resource}} details": "{{resource}} 详情"
+  "{{resource}} details": "{{resource}}详情"
 }

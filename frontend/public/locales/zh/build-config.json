@@ -4,7 +4,7 @@
   "Name": "名称",
   "Namespace": "命名空间",
   "Labels": "标签",
-  "Created": "Created",
+  "Created": "创建的",
   "Build Configs": "构建配置",
   "Build strategy": "构建策略"
 }

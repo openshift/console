@@ -54,7 +54,7 @@
   "Top {{label}} consumers": "顶级 {{label}}消费者",
   "Top consumers": "顶级消费者",
   "Select consumer type": "选择消费者类型",
-  "Usage": "使用方法",
+  "Usage": "使用",
   "{{humanAvailable}} available of {{humanLimit}} total limit": "{{humanAvailable}} 可用（{{humanLimit}}总限制）",
   "{{humanAvailable}} available of {{humanMax}}": "{{humanAvailable}} 可用（总共 {{humanMax}}）",
   "{{humanAvailable}} available": "{{humanAvailable}} 可用"

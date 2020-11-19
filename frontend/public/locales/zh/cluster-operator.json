@@ -1,7 +1,7 @@
 {
   "Name": "名称",
   "Status": "状态",
-  "Version": "Version",
+  "Version": "版本",
   "Message": "消息",
   "{{resource}} details": "{{resource}}详情",
   "Conditions": "条件",
