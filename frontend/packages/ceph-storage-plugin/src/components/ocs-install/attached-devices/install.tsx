@@ -17,6 +17,7 @@ import './attached-devices.scss';
 
 export const CreateAttachedDevicesCluster: React.FC<CreateAttachedDevicesClusterProps> = ({
   match,
+  mode,
 }) => {
   const { appName, ns } = match.params;
   const [hasNoProvSC, setHasNoProvSC] = React.useState(false);
@@ -81,10 +82,11 @@ export const CreateAttachedDevicesCluster: React.FC<CreateAttachedDevicesCluster
       </div>
     </Alert>
   ) : (
-    <CreateSC hasNoProvSC={hasNoProvSC} setHasNoProvSC={setHasNoProvSC} match={match} />
+    <CreateSC hasNoProvSC={hasNoProvSC} setHasNoProvSC={setHasNoProvSC} match={match} mode={mode} />
   );
 };
 
 type CreateAttachedDevicesClusterProps = {
   match: RouterMatch<{ appName: string; ns: string }>;
+  mode: string;
 };

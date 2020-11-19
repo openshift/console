@@ -1,6 +1,7 @@
 import { HostNamesMap } from '@console/local-storage-operator-plugin/src/components/auto-detect-volume/types';
 import { diskTypeDropdownItems, diskModeDropdownItems } from '../../../../constants';
 import { StorageClassResourceKind, NodeKind } from '@console/internal/module/k8s';
+import { EncryptionType, KMSConfig } from '../../types';
 
 export const initialState: State = {
   // states for step 1
@@ -42,7 +43,20 @@ export const initialState: State = {
   enableMinimal: false,
   storageClass: { provisioner: '', reclaimPolicy: '' },
   nodes: [],
-  enableEncryption: false,
+
+  // Encryption state initialization
+  encryption: {
+    clusterWide: false,
+    storageClass: false,
+    advanced: false,
+    hasHandled: true,
+  },
+
+  // KMS object state
+  kms: {
+    name: 'ocs-vault-connection',
+    hasHandled: true,
+  },
 };
 
 export type Discoveries = {
@@ -94,7 +108,10 @@ export type State = {
   enableMinimal: boolean;
   storageClass: StorageClassResourceKind;
   nodes: NodeKind[];
-  enableEncryption: boolean;
+
+  // Encryption state declare
+  encryption: EncryptionType;
+  kms: KMSConfig;
 };
 
 export type Action =
@@ -130,7 +147,10 @@ export type Action =
   | { type: 'setEnableMinimal'; value: boolean }
   | { type: 'setStorageClass'; value: StorageClassResourceKind }
   | { type: 'setNodes'; value: NodeKind[] }
-  | { type: 'setEnableEncryption'; value: boolean };
+
+  // Encryption state actions
+  | { type: 'setEncryption'; value: EncryptionType }
+  | { type: 'setKmsEncryption'; value: KMSConfig };
 
 export const reducer = (state: State, action: Action) => {
   switch (action.type) {
@@ -196,8 +216,14 @@ export const reducer = (state: State, action: Action) => {
       return Object.assign({}, state, { storageClass: action.value });
     case 'setNodes':
       return Object.assign({}, state, { nodes: action.value });
-    case 'setEnableEncryption':
-      return Object.assign({}, state, { enableEncryption: action.value });
+
+    // Encryption state reducer
+    case 'setEncryption':
+      return Object.assign({}, state, { encryption: action.value });
+
+    // KMS state reducer
+    case 'setKmsEncryption':
+      return Object.assign({}, state, { kms: action.value });
     default:
       return initialState;
   }

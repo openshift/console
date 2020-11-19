@@ -2,21 +2,25 @@ import * as React from 'react';
 import * as cx from 'classnames';
 import {
   Alert,
-  FormGroup,
-  Switch,
   AlertVariant,
   AlertActionLink,
   WizardContextConsumer,
+  FormGroup,
+  Switch,
 } from '@patternfly/react-core';
+import { storageClassTooltip, CreateStepsSC } from '../constants/ocs-install';
+import { Link } from 'react-router-dom';
+import { TechPreviewBadge } from '@console/shared';
+import '../components/ocs-install/ocs-install.scss';
 import { ListPage } from '@console/internal/components/factory';
 import { NodeModel } from '@console/internal/models';
 import { FieldLevelHelp } from '@console/internal/components/utils';
-import { StorageClassResourceKind } from '@console/internal/module/k8s';
-import { TechPreviewBadge } from '@console/shared';
 import { OCSStorageClassDropdown } from '../components/modals/storage-class-dropdown';
-import { storageClassTooltip, CreateStepsSC } from '../constants/ocs-install';
-import '../components/ocs-install/ocs-install.scss';
-import { Link } from 'react-router-dom';
+import { StorageClassResourceKind } from '@console/internal/module/k8s/types';
+import { MODES } from '../constants';
+import { Action } from '../components/ocs-install/attached-devices/create-sc/state';
+import { InternalClusterAction } from '../components/ocs-install/internal-mode/reducer';
+import * as _ from 'lodash';
 
 export type Validation = {
   title: React.ReactNode;
@@ -34,6 +38,8 @@ enum ValidationType {
   'BAREMETALSTORAGECLASS' = 'BAREMETALSTORAGECLASS',
   'ALLREQUIREDFIELDS' = 'ALLREQUIREDFIELDS',
   'MINIMUMNODES' = 'MINIMUMNODES',
+  'ENCRYPTION' = 'ENCRYPTION',
+  'REQUIRED_FIELD_KMS' = 'REQUIRED_FIELD_KMS',
 }
 
 export const VALIDATIONS: { [key in ValidationType]: Validation } = {
@@ -75,6 +81,16 @@ export const VALIDATIONS: { [key in ValidationType]: Validation } = {
       'The OCS Storage cluster require a minimum of 3 nodes for the initial deployment. Please choose a different storage class or go to create a new volume set that matches the minimum node requirement.',
     actionLinkText: 'Create new volume set instance',
     actionLinkStep: CreateStepsSC.DISCOVER,
+  },
+  [ValidationType.ENCRYPTION]: {
+    variant: AlertVariant.danger,
+    title: 'All required fields are not set',
+    text: 'Select at least 1 encryption level or disable encryption.',
+  },
+  [ValidationType.REQUIRED_FIELD_KMS]: {
+    variant: AlertVariant.danger,
+    title: 'Fill out the details in order to connect to key management system',
+    text: 'This is a required field.',
   },
 };
 
@@ -123,6 +139,18 @@ export const ValidationMessage: React.FC<ValidationMessageProps> = ({ className,
 type ValidationMessageProps = {
   className?: string;
   validation: Validation;
+};
+
+export const setDispatch = (
+  keyType: any,
+  valueType: any,
+  mode: string,
+  dispatch: React.Dispatch<Action | InternalClusterAction>,
+) => {
+  const stateType = mode === MODES.ATTACHED_DEVICES ? _.camelCase(keyType) : keyType;
+  const stateValue =
+    mode === MODES.ATTACHED_DEVICES ? { value: valueType } : { payload: valueType };
+  dispatch({ type: stateType, ...stateValue });
 };
 
 export const OCSAlert = () => (

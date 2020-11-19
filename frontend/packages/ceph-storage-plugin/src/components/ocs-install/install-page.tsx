@@ -123,7 +123,7 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
           onChange={handleModeChange}
         />
       </div>
-      {mode === MODES.INTERNAL && <CreateInternalCluster match={match} />}
+      {mode === MODES.INTERNAL && <CreateInternalCluster match={match} mode={mode} />}
       {mode === MODES.EXTERNAL && (
         <CreateExternalCluster
           match={match}
@@ -131,7 +131,9 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
           downloadFile={downloadFile}
         />
       )}
-      {mode === MODES.ATTACHED_DEVICES && <CreateAttachedDevicesCluster match={match} />}
+      {mode === MODES.ATTACHED_DEVICES && (
+        <CreateAttachedDevicesCluster match={match} mode={mode} />
+      )}
     </>
   );
 };

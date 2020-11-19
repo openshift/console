@@ -39,3 +39,15 @@ export type NodeTableProps = TableProps & {
   };
   filters: { name: string; label: { all: string[] } };
 };
+
+export type EncryptionType = {
+  clusterWide: boolean;
+  storageClass: boolean;
+  advanced: boolean;
+  hasHandled: boolean;
+};
+
+export type KMSConfig = {
+  name: string;
+  hasHandled: boolean;
+};
