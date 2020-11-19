@@ -149,18 +149,22 @@ const MetricsActionsMenu_: React.FC<MetricsActionsMenuProps> = ({
   isAllExpanded,
   setAllExpanded,
 }) => {
+  const { t } = useTranslation();
+
   const doDelete = () => {
     deleteAll();
     focusedQuery = undefined;
   };
 
   const actionsMenuActions = [
-    { label: 'Add query', callback: addQuery },
+    { label: t('monitoring~Add query'), callback: addQuery },
     {
-      label: `${isAllExpanded ? 'Collapse' : 'Expand'} all query tables`,
+      label: isAllExpanded
+        ? t('monitoring~Collapse all query tables')
+        : t('monitoring~Expand all query tables'),
       callback: () => setAllExpanded(!isAllExpanded),
     },
-    { label: 'Delete all queries', callback: doDelete },
+    { label: t('monitoring~Delete all queries'), callback: doDelete },
   ];
 
   return (
@@ -208,6 +212,7 @@ const graphStateToProps = ({ UI }: RootState) => ({
 
 const ToggleGraph_ = ({ hideGraphs, toggle }) => {
   const { t } = useTranslation();
+
   const icon = hideGraphs ? <ChartLineIcon /> : <CompressIcon />;
 
   return (
@@ -226,6 +231,8 @@ export const ToggleGraph = connect(graphStateToProps, { toggle: UIActions.monito
 );
 
 const MetricsDropdown_: React.FC<MetricsDropdownProps> = ({ insertText, setMetrics }) => {
+  const { t } = useTranslation();
+
   const [items, setItems] = React.useState<MetricsDropdownItems>();
   const [error, setError] = React.useState<PrometheusAPIError>();
 
@@ -258,7 +265,7 @@ const MetricsDropdown_: React.FC<MetricsDropdownProps> = ({ insertText, setMetri
     }
   };
 
-  let title: React.ReactNode = 'Insert Metric at Cursor';
+  let title: React.ReactNode = t('monitoring~Insert metric at cursor');
   if (error !== undefined) {
     const message =
       error?.response?.status === 403 ? 'Access restricted.' : 'Failed to load metrics list.';
@@ -396,6 +403,8 @@ const QueryInput_: React.FC<QueryInputProps> = ({
   runQueries,
   text = '',
 }) => {
+  const { t } = useTranslation();
+
   const [token, setToken] = React.useState('');
 
   const inputRef = React.useRef(null);
@@ -487,16 +496,18 @@ const QueryInput_: React.FC<QueryInputProps> = ({
   // Set the default textarea height to the number of lines in the query text
   const rows = _.clamp((text.match(/\n/g) || []).length + 1, 2, 10);
 
+  const placeholder = t('monitoring~Expression (press Shift+Enter for newlines)');
+
   return (
     <div className="query-browser__query pf-c-dropdown">
       <textarea
-        aria-label="Expression (press Shift+Enter for newlines)"
+        aria-label={placeholder}
         autoFocus
         className="pf-c-form-control query-browser__query-input"
         onBlur={onBlur}
         onChange={onChange}
         onKeyDown={onKeyDown}
-        placeholder="Expression (press Shift+Enter for newlines)"
+        placeholder={placeholder}
         ref={inputRef}
         rows={rows}
         spellCheck={false}
@@ -504,7 +515,7 @@ const QueryInput_: React.FC<QueryInputProps> = ({
       />
       <Button
         className="query-browser__clear-icon"
-        aria-label="Clear Query"
+        aria-label={t('monitoring~Clear query')}
         onClick={onClear}
         type="button"
         variant="plain"
@@ -552,6 +563,8 @@ const QueryKebab_: React.FC<QueryKebabProps> = ({
   series,
   toggleIsEnabled,
 }) => {
+  const { t } = useTranslation();
+
   const toggleAllSeries = () => patchQuery({ disabledSeries: isDisabledSeriesEmpty ? series : [] });
 
   const doDelete = () => {
@@ -562,12 +575,17 @@ const QueryKebab_: React.FC<QueryKebabProps> = ({
   return (
     <Kebab
       options={[
-        { label: `${isEnabled ? 'Disable' : 'Enable'} query`, callback: toggleIsEnabled },
         {
-          label: `${isDisabledSeriesEmpty ? 'Hide' : 'Show'} all series`,
+          label: isEnabled ? t('monitoring~Disable query') : t('monitoring~Enable query'),
+          callback: toggleIsEnabled,
+        },
+        {
+          label: isDisabledSeriesEmpty
+            ? t('monitoring~Hide all series')
+            : t('monitoring~Show all series'),
           callback: toggleAllSeries,
         },
-        { label: 'Delete query', callback: doDelete },
+        { label: t('monitoring~Delete query'), callback: doDelete },
       ]}
     />
   );
@@ -633,13 +651,14 @@ const QueryTable_: React.FC<QueryTableProps> = ({
   query,
   series,
 }) => {
+  const { t } = useTranslation();
+
   const [data, setData] = React.useState<PrometheusData>();
   const [error, setError] = React.useState<PrometheusAPIError>();
   const [page, setPage] = React.useState(1);
   const [perPage, setPerPage] = React.useState(50);
   const [sortBy, setSortBy] = React.useState<ISortBy>();
 
-  const { t } = useTranslation();
   const safeFetch = React.useCallback(useSafeFetch(), []);
 
   const tick = () => {
@@ -809,8 +828,10 @@ const Query_: React.FC<QueryProps> = ({
   patchQuery,
   toggleIsEnabled,
 }) => {
+  const { t } = useTranslation();
+
   const switchKey = `${id}-${isEnabled}`;
-  const switchLabel = `${isEnabled ? 'Disable' : 'Enable'} query`;
+  const switchLabel = isEnabled ? t('monitoring~Disable query') : t('monitoring~Enable query');
 
   const toggleIsExpanded = () => patchQuery({ isExpanded: !isExpanded });
 
@@ -850,6 +871,8 @@ const Query = connect(
 )(Query_);
 
 const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({ patchQuery, queriesList }) => {
+  const { t } = useTranslation();
+
   const queries = queriesList.toJS();
 
   // Initialize queries from URL parameters
@@ -893,13 +916,13 @@ const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({ patchQuery, 
       <EmptyState variant={EmptyStateVariant.full}>
         <EmptyStateIcon icon={ChartLineIcon} />
         <Title headingLevel="h2" size="md">
-          No Query Entered
+          {t('monitoring~No query entered')}
         </Title>
         <EmptyStateBody>
-          Enter a query in the box below to explore metrics for this cluster.
+          {t('monitoring~Enter a query in the box below to explore metrics for this cluster.')}
         </EmptyStateBody>
         <Button onClick={insertExampleQuery} variant="primary">
-          Insert Example Query
+          {t('monitoring~Insert example query')}
         </Button>
       </EmptyState>
     </div>
@@ -916,23 +939,31 @@ const QueryBrowserWrapper = connect(
   { patchQuery: UIActions.queryBrowserPatchQuery },
 )(QueryBrowserWrapper_);
 
-const AddQueryButton_ = ({ addQuery }) => (
-  <Button
-    className="query-browser__inline-control"
-    onClick={addQuery}
-    type="button"
-    variant="secondary"
-  >
-    Add Query
-  </Button>
-);
+const AddQueryButton_ = ({ addQuery }) => {
+  const { t } = useTranslation();
+
+  return (
+    <Button
+      className="query-browser__inline-control"
+      onClick={addQuery}
+      type="button"
+      variant="secondary"
+    >
+      {t('monitoring~Add query')}
+    </Button>
+  );
+};
 const AddQueryButton = connect(null, { addQuery: UIActions.queryBrowserAddQuery })(AddQueryButton_);
 
-const RunQueriesButton_ = ({ runQueries }) => (
-  <Button onClick={runQueries} type="submit" variant="primary">
-    Run Queries
-  </Button>
-);
+const RunQueriesButton_ = ({ runQueries }) => {
+  const { t } = useTranslation();
+
+  return (
+    <Button onClick={runQueries} type="submit" variant="primary">
+      {t('monitoring~Run queries')}
+    </Button>
+  );
+};
 const RunQueriesButton = connect(null, { runQueries: UIActions.queryBrowserRunQueries })(
   RunQueriesButton_,
 );
@@ -958,18 +989,20 @@ const PollIntervalDropdown = connect(
 )(IntervalDropdown);
 
 const QueryBrowserPage_: React.FC<QueryBrowserPageProps> = ({ deleteAll }) => {
+  const { t } = useTranslation();
+
   // Clear queries on unmount
   React.useEffect(() => deleteAll, [deleteAll]);
 
   return (
     <>
       <Helmet>
-        <title>Metrics</title>
+        <title>{t('monitoring~Metrics')}</title>
       </Helmet>
       <div className="co-m-nav-title">
         <h1 className="co-m-pane__heading">
           <span>
-            Metrics
+            {t('monitoring~Metrics')}
             <HeaderPrometheusLink />
           </span>
           <div className="co-actions">
