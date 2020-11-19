@@ -12,8 +12,10 @@ import {
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
 import { RootState } from '@console/internal/redux';
+import { useTranslation } from 'react-i18next';
 
 export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props) => {
+  const { t } = useTranslation();
   const { cpu, memory, storage, onChangeCPU, onChangeMemory, onChangeStorage, path = '' } = props;
 
   return (
@@ -24,7 +26,7 @@ export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props)
           className="text-muted text-uppercase"
           htmlFor={`${path}.cpu`}
         >
-          CPU cores
+          {t('olm~CPU cores')}
         </label>
         <input
           value={cpu}
@@ -42,7 +44,7 @@ export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props)
           className="text-muted text-uppercase"
           htmlFor={`${path}.memory`}
         >
-          Memory
+          {t('olm~Memory')}
         </label>
         <input
           value={memory}
@@ -60,7 +62,7 @@ export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props)
           className="text-muted text-uppercase"
           htmlFor={`${path}.ephemeral-storage`}
         >
-          Storage
+          {t('olm~Storage')}
         </label>
         <input
           value={storage}
@@ -78,6 +80,7 @@ export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props)
 
 export const ResourceRequirementsModal = withHandlePromise(
   (props: ResourceRequirementsModalProps) => {
+    const { t } = useTranslation();
     const { obj, path, type, model } = props;
     const [cpu, setCPU] = React.useState<string>(_.get(obj.spec, `${path}.${type}.cpu`, ''));
     const [memory, setMemory] = React.useState<string>(
@@ -122,7 +125,7 @@ export const ResourceRequirementsModal = withHandlePromise(
         <ModalSubmitFooter
           errorMessage={props.errorMessage}
           inProgress={props.inProgress}
-          submitText="Save"
+          submitText={t('public~Save')}
           cancel={props.cancel}
         />
       </form>
@@ -137,15 +140,16 @@ const stateToProps = ({ k8s }: RootState, { obj }) => ({
 export const ResourceRequirementsModalLink = connect(stateToProps)(
   (props: ResourceRequirementsModalLinkProps) => {
     const { obj, type, path, model } = props;
-    const { cpu, memory, 'ephemeral-storage': storage } = _.get(
-      obj.spec,
-      `${path}.${type}`,
-      'none',
-    );
+    const { t } = useTranslation();
+    const none = t('public~None');
+    const { cpu, memory, 'ephemeral-storage': storage } = _.get(obj.spec, `${path}.${type}`, {});
 
     const onClick = () => {
       const modal = createModalLauncher(ResourceRequirementsModal);
-      const description = `Define the resource ${type} for this ${obj.kind} instance.`;
+      const description = t('olm~Define the resource {{type}} for this {{kind}} instance.', {
+        type,
+        kind: obj.kind,
+      });
       const title = `${obj.kind} Resource ${_.capitalize(type)}`;
 
       return modal({ title, description, obj, model, type, path });
@@ -159,7 +163,7 @@ export const ResourceRequirementsModalLink = connect(stateToProps)(
         onClick={onClick}
         variant="link"
       >
-        {`CPU: ${cpu || 'none'}, Memory: ${memory || 'none'}, Storage: ${storage || 'none'}`}
+        {`CPU: ${cpu || none}, Memory: ${memory || none}, Storage: ${storage || none}`}
         <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
       </Button>
     );

@@ -10,15 +10,13 @@ import {
   Selector,
 } from '@console/internal/module/k8s';
 import { MatchExpressions } from './match-expressions';
+import { useTranslation } from 'react-i18next';
 
 enum AffinityRuleType {
   Preferred = 'Preferred',
   Required = 'Required',
 }
 
-const REQUIRED_TOOLTIP = 'Required rules must be met before a pod can be scheduled on a node.';
-const PREFERRED_TOOLTIP =
-  'Preferred rules specify that, if the rule is met, the scheduler tries to enforce the rules, but does not guarantee enforcement.';
 const ALLOWED_MATCH_EXPRESSION_OPERATORS: MatchExpression['operator'][] = [
   'In',
   'NotIn',
@@ -68,6 +66,7 @@ const NodeAffinityRule: React.FC<NodeAffinityRuleProps> = ({
   onChange = () => {},
   rule,
 }) => {
+  const { t } = useTranslation();
   const { weight, selector } = rule;
   const onChangeMatchExpressions = (matchExpressions: MatchExpression[]): void =>
     onChange({
@@ -96,13 +95,13 @@ const NodeAffinityRule: React.FC<NodeAffinityRuleProps> = ({
           variant="link"
         >
           <MinusCircleIcon className="co-icon-space-r" />
-          Remove {type}
+          {t('olm~Remove {{item}}', { item: type })}
         </Button>
       )}
       {type === AffinityRuleType.Preferred && (
         <div className="co-affinity-term__weight-input">
           <label className="control-label co-required" htmlFor={`preference-${key}`}>
-            Weight
+            {t('olm~Weight')}
           </label>
           <input
             className="pf-c-form-control"
@@ -124,6 +123,7 @@ const NodeAffinityRule: React.FC<NodeAffinityRuleProps> = ({
 };
 
 export const NodeAffinity: React.FC<NodeAffinityProps> = ({ affinity, onChange, uid = '' }) => {
+  const { t } = useTranslation();
   const requiredRules =
     affinity?.requiredDuringSchedulingIgnoredDuringExecution?.nodeSelectorTerms || [];
   const preferredRules = affinity?.preferredDuringSchedulingIgnoredDuringExecution || [];
@@ -183,8 +183,10 @@ export const NodeAffinity: React.FC<NodeAffinityProps> = ({ affinity, onChange, 
 
   return (
     <dl>
-      <Tooltip content={REQUIRED_TOOLTIP}>
-        <dt>Required During Scheduling Ignored During Execution</dt>
+      <Tooltip
+        content={t('olm~Required rules must be met before a pod can be scheduled on a node.')}
+      >
+        <dt>{t('olm~Required during scheduling, ignored during execution')}</dt>
       </Tooltip>
       <dd>
         {requiredRules.map((selector, requiredIndex) => (
@@ -202,12 +204,16 @@ export const NodeAffinity: React.FC<NodeAffinityProps> = ({ affinity, onChange, 
         <div className="row">
           <Button type="button" onClick={addRequiredRule} variant="link">
             <PlusCircleIcon className="co-icon-space-r" />
-            Add Required
+            {t('olm~Add required')}
           </Button>
         </div>
       </dd>
-      <Tooltip content={PREFERRED_TOOLTIP}>
-        <dt>Preferred During Scheduling Ignored During Execution</dt>
+      <Tooltip
+        content={t(
+          'olm~Preferred rules specify that, if the rule is met, the scheduler tries to enforce the rules, but does not guarantee enforcement.',
+        )}
+      >
+        <dt>{t('olm~Preferred during scheduling, ignored during execution')}</dt>
       </Tooltip>
       <dd>
         {preferredRules.map(({ preference: selector, weight }, preferredIndex) => (
@@ -225,7 +231,7 @@ export const NodeAffinity: React.FC<NodeAffinityProps> = ({ affinity, onChange, 
         <div className="row">
           <Button type="button" onClick={addPreferredRule} variant="link">
             <PlusCircleIcon className="co-icon-space-r" />
-            Add Preferred
+            {t('olm~Add preferred')}
           </Button>
         </div>
       </dd>
@@ -241,6 +247,7 @@ const PodAffinityRule: React.FC<PodAffinityRuleProps> = ({
   rule,
   type,
 }) => {
+  const { t } = useTranslation();
   const { podAffinityTerm, weight } = rule;
   const selector = podAffinityTerm?.labelSelector || {};
   const topologyKey = podAffinityTerm?.topologyKey;
@@ -282,14 +289,14 @@ const PodAffinityRule: React.FC<PodAffinityRuleProps> = ({
           variant="link"
         >
           <MinusCircleIcon className="co-icon-space-r" />
-          Remove {type}
+          {t('olm~Remove {{item}}', { item: type })}
         </Button>
       )}
       <div className="co-affinity-term__topology">
         {type === AffinityRuleType.Preferred && (
           <div className="co-affinity-term__weight-input">
             <label className="control-label co-required" htmlFor={`preference-${key}`}>
-              Weight
+              {t('olm~Weight')}
             </label>
             <input
               className="pf-c-form-control"
@@ -302,7 +309,7 @@ const PodAffinityRule: React.FC<PodAffinityRuleProps> = ({
         )}
         <div className="co-affinity-term__topology-input">
           <label className="control-label co-required" htmlFor={`topology-${key}`}>
-            Topology Key
+            {t('olm~Topology key')}
           </label>
           <input
             id={`topology-${key}`}
@@ -329,7 +336,7 @@ export const PodAffinity: React.FC<PodAffinityProps> = ({ affinity, onChange, ui
     requiredDuringSchedulingIgnoredDuringExecution: requiredRules = [],
     preferredDuringSchedulingIgnoredDuringExecution: preferredRules = [],
   } = affinity || {};
-
+  const { t } = useTranslation();
   const addRequiredRule = () =>
     onChange?.({
       ...affinity,
@@ -385,8 +392,10 @@ export const PodAffinity: React.FC<PodAffinityProps> = ({ affinity, onChange, ui
 
   return (
     <dl>
-      <Tooltip content={REQUIRED_TOOLTIP}>
-        <dt>Required During Scheduling Ignored During Execution</dt>
+      <Tooltip
+        content={t('olm~Required rules must be met before a pod can be scheduled on a node.')}
+      >
+        <dt>{t('olm~Required during scheduling, ignored during execution')}</dt>
       </Tooltip>
       <dd>
         {_.map(requiredRules, (podAffinityTerm, ruleIndex) => (
@@ -404,12 +413,16 @@ export const PodAffinity: React.FC<PodAffinityProps> = ({ affinity, onChange, ui
         <div className="row">
           <Button type="button" onClick={addRequiredRule} variant="link">
             <PlusCircleIcon className="co-icon-space-r" />
-            Add Required
+            {t('olm~Add required')}
           </Button>
         </div>
       </dd>
-      <Tooltip content={PREFERRED_TOOLTIP}>
-        <dt>Preferred During Scheduling Ignored During Execution</dt>
+      <Tooltip
+        content={t(
+          'olm~Preferred rules specify that, if the rule is met, the scheduler tries to enforce the rules, but does not guarantee enforcement.',
+        )}
+      >
+        <dt>{t('olm~Preferred during scheduling, ignored during execution')}</dt>
       </Tooltip>
       <dd>
         {preferredRules.map((preferredRule, ruleIndex) => {
@@ -430,7 +443,7 @@ export const PodAffinity: React.FC<PodAffinityProps> = ({ affinity, onChange, ui
         <div className="row">
           <Button type="button" onClick={addPreferredRule} variant="link">
             <PlusCircleIcon className="co-icon-space-r" />
-            Add Preferred
+            {t('olm~Add preferred')}
           </Button>
         </div>
       </dd>

@@ -9,6 +9,7 @@ import { SpecDescriptorDetailsItem } from './spec';
 import { StatusDescriptorDetailsItem } from './status';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { DescriptorGroup, groupDescriptorDetails } from './utils';
+import { useTranslation } from 'react-i18next';
 
 export const DescriptorDetailsItem = withFallback<DescriptorDetailsItemProps>(
   ({ descriptor, model, obj, onError, schema, type }) => {
@@ -50,6 +51,7 @@ const DescriptorDetailsItemArrayGroup: React.FC<DescriptorDetailsItemGroupProps>
   schema,
   type,
 }) => {
+  const { t } = useTranslation();
   const { arrayGroupPath, elementDescriptor, descriptor, nested } = group;
   const arrayGroupSchema = getSchemaAtPath(schema, `${type}.${arrayGroupPath}`);
   const description = descriptor?.description || arrayGroupSchema?.description;
@@ -84,7 +86,7 @@ const DescriptorDetailsItemArrayGroup: React.FC<DescriptorDetailsItemGroupProps>
             </div>
           ))
         ) : (
-          <span className="text-muted">None</span>
+          <span className="text-muted">{t('public~None')}</span>
         )}
       </div>
     </DetailsItem>
@@ -211,7 +213,6 @@ export type DescriptorDetailsItemProps = {
 type DescriptorDetailsItemGroupProps = Omit<DescriptorDetailsItemProps, 'descriptor'> & {
   group: DescriptorGroup;
   groupPath: string;
-  type: DescriptorType;
 };
 
 type DescriptorDetailsItemListProps = Omit<

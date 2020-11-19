@@ -4,6 +4,19 @@ import { DetailsItem, ResourceLink } from '@console/internal/components/utils';
 import { CapabilityProps, SpecCapability, StatusCapability } from './types';
 import { REGEXP_K8S_RESOURCE_SUFFIX } from './const';
 import { YellowExclamationTriangleIcon } from '@console/shared';
+import { Trans, useTranslation } from 'react-i18next';
+
+export const Invalid: React.FC<{ path: string }> = ({ path }) => {
+  return (
+    <span className="text-muted olm-descriptors__invalid-pod-descriptor">
+      <YellowExclamationTriangleIcon />
+      &nbsp;&nbsp;
+      <Trans ns="olm">
+        The field <code>{{ path }}</code> is invalid.
+      </Trans>
+    </span>
+  );
+};
 
 export const DefaultCapability: React.FC<CommonCapabilityProps> = ({
   description,
@@ -12,15 +25,16 @@ export const DefaultCapability: React.FC<CommonCapabilityProps> = ({
   fullPath,
   value,
 }) => {
+  const { t } = useTranslation();
   const detail = React.useMemo(() => {
     if (_.isEmpty(value) && !_.isFinite(value) && !_.isBoolean(value)) {
-      return <span className="text-muted">None</span>;
+      return <span className="text-muted">{t('public~None')}</span>;
     }
     if (_.isObject(value) || _.isArray(value)) {
-      return <span className="text-muted">Unsupported</span>;
+      return <span className="text-muted">{t('public~Unsupported')}</span>;
     }
     return _.toString(value);
-  }, [value]);
+  }, [t, value]);
 
   return (
     <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
@@ -38,24 +52,20 @@ export const K8sResourceLinkCapability: React.FC<CommonCapabilityProps> = ({
   obj,
   value,
 }) => {
+  const { t } = useTranslation();
   const detail = React.useMemo(() => {
     if (!value) {
-      return <span className="text-muted">None</span>;
+      return <span className="text-muted">{t('public~None')}</span>;
     }
 
     const [, suffix] = capability.match(REGEXP_K8S_RESOURCE_SUFFIX) ?? [];
     const gvk = suffix?.replace(/:/g, '~');
     if (!_.isString(value)) {
-      return (
-        <>
-          <YellowExclamationTriangleIcon /> Invalid descriptor: value at path &apos;
-          {descriptor.path}&apos; must be a {gvk} resource name.
-        </>
-      );
+      return <Invalid path={descriptor.path} />;
     }
 
     return <ResourceLink kind={gvk} name={value} namespace={obj.metadata.namespace} />;
-  }, [value, capability, obj.metadata.namespace, descriptor.path]);
+  }, [value, capability, obj.metadata.namespace, t, descriptor.path]);
   return (
     <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
       {detail}

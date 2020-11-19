@@ -3,6 +3,7 @@ import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { MatchExpression } from '@console/internal/module/k8s';
 import { Dropdown } from '@console/internal/components/utils';
+import { useTranslation } from 'react-i18next';
 
 const ALL_OPERATORS: MatchExpression['operator'][] = [
   'DoesNotExist',
@@ -18,57 +19,62 @@ const MatchExpression: React.FC<MatchExpressionProps> = ({
   onChange = () => {},
   allowedOperators = ALL_OPERATORS,
   onClickRemove = () => {},
-}) => (
-  <div className="row key-operator-value__row">
-    <div className="col-md-4 col-xs-5 key-operator-value__name-field">
-      <div className="key-operator-value__heading hidden-md hidden-lg text-secondary text-uppercase">
-        Key
+}) => {
+  const { t } = useTranslation();
+  return (
+    <div className="row key-operator-value__row">
+      <div className="col-md-4 col-xs-5 key-operator-value__name-field">
+        <div className="key-operator-value__heading hidden-md hidden-lg text-secondary text-uppercase">
+          {t('olm~Key')}
+        </div>
+        <input
+          type="text"
+          className="pf-c-form-control"
+          value={expression.key}
+          onChange={(e) => onChange({ ...expression, key: e.target.value })}
+        />
       </div>
-      <input
-        type="text"
-        className="pf-c-form-control"
-        value={expression.key}
-        onChange={(e) => onChange({ ...expression, key: e.target.value })}
-      />
-    </div>
-    <div className="col-md-3 col-xs-5 key-operator-value__operator-field">
-      <div className="key-operator-value__heading hidden-md hidden-lg text-secondary text-uppercase">
-        Operator
+      <div className="col-md-3 col-xs-5 key-operator-value__operator-field">
+        <div className="key-operator-value__heading hidden-md hidden-lg text-secondary text-uppercase">
+          {t('olm~Operator')}
+        </div>
+        <Dropdown
+          dropDownClassName="dropdown--full-width"
+          items={allowedOperators.reduce((acc, o) => ({ ...acc, [o]: o }), {})}
+          onChange={(operator: MatchExpression['operator']) =>
+            onChange({ ...expression, operator })
+          }
+          selectedKey={expression.operator}
+          title={expression.operator}
+        />
       </div>
-      <Dropdown
-        dropDownClassName="dropdown--full-width"
-        items={allowedOperators.reduce((acc, o) => ({ ...acc, [o]: o }), {})}
-        onChange={(operator: MatchExpression['operator']) => onChange({ ...expression, operator })}
-        selectedKey={expression.operator}
-        title={expression.operator}
-      />
-    </div>
-    <div className="col-md-3 col-xs-5 key-operator-value__value-field key-operator-value__value-field--stacked">
-      <div className="key-operator-value__heading hidden-md hidden-lg text-secondary text-uppercase">
-        Value
+      <div className="col-md-3 col-xs-5 key-operator-value__value-field key-operator-value__value-field--stacked">
+        <div className="key-operator-value__heading hidden-md hidden-lg text-secondary text-uppercase">
+          {t('olm~Value')}
+        </div>
+        <input
+          className="pf-c-form-control"
+          type="text"
+          value={expression?.value}
+          onChange={(e) => onChange({ ...expression, value: e?.target?.value })}
+          readOnly={['Exists', 'DoesNotExist'].includes(expression.operator)}
+        />
       </div>
-      <input
-        className="pf-c-form-control"
-        type="text"
-        value={expression?.value}
-        onChange={(e) => onChange({ ...expression, value: e?.target?.value })}
-        readOnly={['Exists', 'DoesNotExist'].includes(expression.operator)}
-      />
+      <div className="col-xs-1 key-operator-value__action key-operator-value__action--stacked">
+        <div className="key-operator-value__heading key-operator-value__heading-button hidden-md hidden-lg" />
+        <Button
+          type="button"
+          onClick={onClickRemove}
+          aria-label="Delete"
+          className="key-operator-value__delete-button"
+          variant="plain"
+        >
+          <MinusCircleIcon />
+        </Button>
+      </div>
     </div>
-    <div className="col-xs-1 key-operator-value__action key-operator-value__action--stacked">
-      <div className="key-operator-value__heading key-operator-value__heading-button hidden-md hidden-lg" />
-      <Button
-        type="button"
-        onClick={onClickRemove}
-        aria-label="Delete"
-        className="key-operator-value__delete-button"
-        variant="plain"
-      >
-        <MinusCircleIcon />
-      </Button>
-    </div>
-  </div>
-);
+  );
+};
 
 export const MatchExpressions: React.FC<MatchExpressionsProps> = ({
   matchExpressions = [],
@@ -76,6 +82,8 @@ export const MatchExpressions: React.FC<MatchExpressionsProps> = ({
   allowedOperators = ALL_OPERATORS,
   uid = '',
 }) => {
+  const { t } = useTranslation();
+
   const updateExpression = (index: number, newExpression: MatchExpression): void =>
     onChange(matchExpressions.map((exp, i) => (i === index ? newExpression : exp)));
 
@@ -88,9 +96,9 @@ export const MatchExpressions: React.FC<MatchExpressionsProps> = ({
   return (
     <>
       <div className="row key-operator-value__heading hidden-sm hidden-xs">
-        <div className="col-md-4 text-secondary text-uppercase">Key</div>
-        <div className="col-md-3 text-secondary text-uppercase">Operator</div>
-        <div className="col-md-3 text-secondary text-uppercase">Value</div>
+        <div className="col-md-4 text-secondary text-uppercase">{t('olm~Key')}</div>
+        <div className="col-md-3 text-secondary text-uppercase">{t('olm~Operator')}</div>
+        <div className="col-md-3 text-secondary text-uppercase">{t('olm~Value')}</div>
       </div>
       {matchExpressions.map((expression, index) => (
         // Have to use array index in the key bc any other unique id whould have to use editable fields.
@@ -106,7 +114,7 @@ export const MatchExpressions: React.FC<MatchExpressionsProps> = ({
       <div className="row">
         <Button type="button" onClick={addExpression} variant="link">
           <PlusCircleIcon className="co-icon-space-r" />
-          Add More
+          {t('olm~Add expression')}
         </Button>
       </div>
     </>

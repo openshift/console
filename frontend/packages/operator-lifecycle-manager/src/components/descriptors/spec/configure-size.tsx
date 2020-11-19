@@ -13,10 +13,14 @@ export const configureSizeModal = ({
     resourceKind: kindObj,
     resource,
     defaultValue: specValue || 0,
-    title: `Modify ${specDescriptor.displayName}`,
+    // t('olm~Modify {{item}}')
+    titleKey: 'olm~Modify {{item}}',
+    titleVariables: { item: specDescriptor.displayName },
     message: specDescriptor.description,
     path: `/spec/${getPatchPathFromDescriptor(specDescriptor)}`,
-    buttonText: `Update ${specDescriptor.displayName}`,
+    // t('olm~Update {{item}}')
+    buttonTextKey: 'olm~Update {{item}}',
+    buttonTextVariables: { item: specDescriptor.displayName },
   });
 };
 

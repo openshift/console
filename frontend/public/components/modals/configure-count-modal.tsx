@@ -8,6 +8,9 @@ import { NumberSpinner, withHandlePromise, HandlePromiseProps } from '../utils';
 
 export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModalProps) => {
   const {
+    buttonText,
+    buttonTextKey,
+    buttonTextVariables,
     defaultValue,
     path,
     resource,
@@ -15,6 +18,7 @@ export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModal
     handlePromise,
     title,
     titleKey,
+    titleVariables,
     message,
     messageKey,
     messageVariables,
@@ -44,7 +48,7 @@ export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModal
 
   return (
     <form onSubmit={submit} name="form" className="modal-content ">
-      <ModalTitle>{titleKey ? t(titleKey) : title}</ModalTitle>
+      <ModalTitle>{titleKey ? t(titleKey, titleVariables) : title}</ModalTitle>
       <ModalBody>
         <p>{messageKey ? t(messageKey, messageVariables) : message}</p>
         <NumberSpinner
@@ -60,7 +64,7 @@ export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModal
       <ModalSubmitFooter
         errorMessage={props.errorMessage}
         inProgress={props.inProgress}
-        submitText={props.buttonTextKey ? t(props.buttonTextKey) : props.buttonText}
+        submitText={buttonTextKey ? t(buttonTextKey, buttonTextVariables) : buttonText}
         cancel={props.cancel}
       />
     </form>
@@ -116,12 +120,14 @@ export type ConfigureCountModalProps = {
   messageVariables: { [key: string]: any };
   buttonText?: string;
   buttonTextKey?: string;
+  buttonTextVariables?: { [key: string]: any };
   defaultValue: number;
   path: string;
   resource: K8sResourceKind;
   resourceKind: K8sKind;
   title?: string;
   titleKey?: string;
+  titleVariables?: { [key: string]: any };
   invalidateState?: (isInvalid: boolean, count?: number) => void;
   inProgress: boolean;
   errorMessage: string;

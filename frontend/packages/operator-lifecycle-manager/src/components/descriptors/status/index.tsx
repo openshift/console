@@ -2,21 +2,15 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Button } from '@patternfly/react-core';
 import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
-import { Status, SuccessStatus, YellowExclamationTriangleIcon } from '@console/shared';
+import { Status, SuccessStatus } from '@console/shared';
 import { DetailsItem } from '@console/internal/components/utils';
 import { Conditions } from '@console/internal/components/conditions';
 import { SecretValue } from '@console/internal/components/configmap-and-secret-data';
 import { CapabilityProps, StatusCapability } from '../types';
 import { Phase } from './phase';
 import { PodStatusChart } from './pods';
-import { DefaultCapability, K8sResourceLinkCapability } from '../common';
-
-const Invalid: React.FC<{ path: string }> = ({ path }) => (
-  <span className="text-muted olm-descriptors__invalid-pod-descriptor">
-    <YellowExclamationTriangleIcon />
-    &nbsp;&nbsp;The field <code>status.{path}</code> is invalid
-  </span>
-);
+import { DefaultCapability, Invalid, K8sResourceLinkCapability } from '../common';
+import { useTranslation } from 'react-i18next';
 
 const PodStatuses: React.FC<StatusCapabilityProps> = ({
   description,
@@ -26,15 +20,16 @@ const PodStatuses: React.FC<StatusCapabilityProps> = ({
   obj,
   value,
 }) => {
+  const { t } = useTranslation();
   const detail = React.useMemo(() => {
     if (!_.isObject(value) || _.some(value, (v) => !_.isArray(v))) {
       return <Invalid path={descriptor.path} />;
     }
     if (_.every(value, (v) => _.isArray(v) && v.length === 0)) {
-      return <span className="text-muted">No members</span>;
+      return <span className="text-muted">{t('olm~No members')}</span>;
     }
     return <PodStatusChart statuses={value} subTitle={descriptor.path} />;
-  }, [descriptor.path, value]);
+  }, [descriptor.path, t, value]);
   return (
     <div className="co-operand-details__section--info">
       <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
@@ -52,14 +47,15 @@ const StatusConditions: React.FC<StatusCapabilityProps> = ({
   obj,
   value,
 }) => {
+  const { t } = useTranslation();
   const detail = React.useMemo(() => {
     return (
       (!_.isArray(value) && <Invalid path={descriptor.path} />) ||
-      (value.length === 0 && <span className="text-muted">No conditions present</span>) || (
-        <Conditions conditions={value} />
-      )
+      (value.length === 0 && (
+        <span className="text-muted">{t('olm~No conditions present')}</span>
+      )) || <Conditions conditions={value} />
     );
-  }, [descriptor.path, value]);
+  }, [descriptor.path, t, value]);
   return (
     <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
       {detail}
@@ -67,15 +63,18 @@ const StatusConditions: React.FC<StatusCapabilityProps> = ({
   );
 };
 
-const Link: React.FC<StatusCapabilityProps> = ({ description, fullPath, label, obj, value }) => (
-  <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
-    {!_.isNil(value) ? (
-      <a href={value}>{value.replace(/https?:\/\//, '')}</a>
-    ) : (
-      <span className="text-muted">None</span>
-    )}
-  </DetailsItem>
-);
+const Link: React.FC<StatusCapabilityProps> = ({ description, fullPath, label, obj, value }) => {
+  const { t } = useTranslation();
+  return (
+    <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+      {!_.isNil(value) ? (
+        <a href={value}>{value.replace(/https?:\/\//, '')}</a>
+      ) : (
+        <span className="text-muted">{t('public~None')}</span>
+      )}
+    </DetailsItem>
+  );
+};
 
 const K8sPhase: React.FC<StatusCapabilityProps> = ({
   description,
@@ -95,17 +94,21 @@ const K8sPhaseReason: React.FC<StatusCapabilityProps> = ({
   label,
   obj,
   value,
-}) => (
-  <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
-    {_.isEmpty(value) ? (
-      <span className="text-muted">None</span>
-    ) : (
-      <pre style={{ width: 'max-content' }}>{value}</pre>
-    )}
-  </DetailsItem>
-);
+}) => {
+  const { t } = useTranslation();
+  return (
+    <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+      {_.isEmpty(value) ? (
+        <span className="text-muted">{t('public~None')}</span>
+      ) : (
+        <pre style={{ width: 'max-content' }}>{value}</pre>
+      )}
+    </DetailsItem>
+  );
+};
 
 const Secret: React.FC<StatusCapabilityProps> = ({ description, label, obj, fullPath, value }) => {
+  const { t } = useTranslation();
   const [reveal, setReveal] = React.useState(false);
 
   return (
@@ -121,12 +124,12 @@ const Secret: React.FC<StatusCapabilityProps> = ({ description, label, obj, full
           {reveal ? (
             <>
               <EyeSlashIcon className="co-icon-space-r" />
-              Hide Values
+              {t('olm~Hide values')}
             </>
           ) : (
             <>
               <EyeIcon className="co-icon-space-r" />
-              Reveal Values
+              {t('olm~Reveal values')}
             </>
           )}
         </Button>

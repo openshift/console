@@ -65,7 +65,7 @@ describe(ResourceRequirementsModal.name, () => {
         .childAt(0)
         .text(),
     ).toContain(description);
-    expect(wrapper.find(modal.ModalSubmitFooter).props().submitText).toEqual('Save');
+    expect(wrapper.find(modal.ModalSubmitFooter).props().submitText).toEqual('public~Save');
   });
 
   it('calls function to update resource instance when form is submitted', (done) => {
@@ -142,13 +142,15 @@ describe(ResourceRequirementsModalLink.displayName, () => {
         .find(Button)
         .render()
         .text(),
-    ).toEqual('CPU: none, Memory: none, Storage: none');
+    ).toEqual('CPU: public~None, Memory: public~None, Storage: public~None');
   });
 
   it('opens resource requirements modal when clicked', (done) => {
     const modalSpy = jasmine.createSpy('modalSpy').and.callFake((args) => {
       expect(args.title).toEqual(`${obj.kind} Resource Limits`);
-      expect(args.description).toEqual(`Define the resource limits for this ${obj.kind} instance.`);
+      expect(args.description).toEqual(
+        'olm~Define the resource {{type}} for this {{kind}} instance.',
+      );
       expect(args.obj).toEqual(obj);
       expect(args.model).toEqual(testModel);
       expect(args.type).toEqual('limits');

@@ -62,7 +62,7 @@ describe('Spec descriptors', () => {
 
   it('renders spec value as text if no matching capability component', () => {
     expect(wrapper.find('dt').text()).toEqual(descriptor.displayName);
-    expect(wrapper.find('dd').text()).toEqual('None');
+    expect(wrapper.find('dd').text()).toEqual('public~None');
   });
 
   it('renders a pod count modal link', (done) => {
@@ -128,7 +128,7 @@ describe('Spec descriptors', () => {
         .find('dt')
         .at(0)
         .text(),
-    ).toEqual('Resource Limits');
+    ).toEqual('olm~Resource limits');
     expect(
       wrapper
         .find('dd')
@@ -142,7 +142,7 @@ describe('Spec descriptors', () => {
         .find('dt')
         .at(1)
         .text(),
-    ).toEqual('Resource Requests');
+    ).toEqual('olm~Resource requests');
     expect(
       wrapper
         .find('dd')

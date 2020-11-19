@@ -19,6 +19,7 @@ import { configureSizeModal } from './configure-size';
 import { configureUpdateStrategyModal } from './configure-update-strategy';
 import { DefaultCapability, K8sResourceLinkCapability } from '../common';
 import { getPatchPathFromDescriptor } from '../utils';
+import { useTranslation } from 'react-i18next';
 
 const PodCount: React.FC<SpecCapabilityProps> = ({
   description,
@@ -76,15 +77,18 @@ const NamespaceSelector: React.FC<SpecCapabilityProps> = ({
   obj,
   fullPath,
   value,
-}) => (
-  <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
-    {value?.matchNames?.[0] ? (
-      <ResourceLink kind="Namespace" name={value.matchNames[0]} title={value.matchNames[0]} />
-    ) : (
-      <span className="text-muted">None</span>
-    )}
-  </DetailsItem>
-);
+}) => {
+  const { t } = useTranslation();
+  return (
+    <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+      {value?.matchNames?.[0] ? (
+        <ResourceLink kind="Namespace" name={value.matchNames[0]} title={value.matchNames[0]} />
+      ) : (
+        <span className="text-muted">{t('public~None')}</span>
+      )}
+    </DetailsItem>
+  );
+};
 
 const ResourceRequirements: React.FC<SpecCapabilityProps> = ({
   description,
@@ -92,20 +96,23 @@ const ResourceRequirements: React.FC<SpecCapabilityProps> = ({
   label,
   obj,
   fullPath,
-}) => (
-  <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
-    <dl className="co-spec-descriptor--resource-requirements">
-      <dt>Resource Limits</dt>
-      <dd>
-        <ResourceRequirementsModalLink type="limits" obj={obj} path={descriptor.path} />
-      </dd>
-      <dt>Resource Requests</dt>
-      <dd>
-        <ResourceRequirementsModalLink type="requests" obj={obj} path={descriptor.path} />
-      </dd>
-    </dl>
-  </DetailsItem>
-);
+}) => {
+  const { t } = useTranslation();
+  return (
+    <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+      <dl className="co-spec-descriptor--resource-requirements">
+        <dt>{t('olm~Resource limits')}</dt>
+        <dd>
+          <ResourceRequirementsModalLink type="limits" obj={obj} path={descriptor.path} />
+        </dd>
+        <dt>{t('olm~Resource requests')}</dt>
+        <dd>
+          <ResourceRequirementsModalLink type="requests" obj={obj} path={descriptor.path} />
+        </dd>
+      </dl>
+    </DetailsItem>
+  );
+};
 
 const BasicSelector: React.FC<SpecCapabilityProps> = ({
   capability,
@@ -133,6 +140,7 @@ const BooleanSwitch: React.FC<SpecCapabilityProps> = ({
   fullPath,
   value,
 }) => {
+  const { t } = useTranslation();
   const [checked, setChecked] = React.useState(Boolean(value));
   const [confirmed, setConfirmed] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState(null);
@@ -171,8 +179,8 @@ const BooleanSwitch: React.FC<SpecCapabilityProps> = ({
             setConfirmed(false);
             setErrorMessage(null);
           }}
-          label="True"
-          labelOff="False"
+          label={t('public~True')}
+          labelOff={t('public~False')}
         />
         &nbsp;&nbsp;
         {checked !== Boolean(value) && confirmed && <LoadingInline />}
@@ -181,13 +189,15 @@ const BooleanSwitch: React.FC<SpecCapabilityProps> = ({
             &nbsp;&nbsp;
             <Button className="pf-m-link--align-left" type="button" variant="link" onClick={update}>
               <YellowExclamationTriangleIcon className="co-icon-space-r pf-c-button-icon--plain" />
-              Confirm change
+              {t('olm~Confirm change')}
             </Button>
           </>
         )}
       </div>
       {errorMessage && (
-        <div className="cos-error-title co-break-word">{errorMessage || 'An error occurred'}</div>
+        <div className="cos-error-title co-break-word">
+          {errorMessage || t('olm~An error occurred')}
+        </div>
       )}
     </DetailsItem>
   );
@@ -202,6 +212,7 @@ const CheckboxUIComponent: React.FC<SpecCapabilityProps> = ({
   fullPath,
   value,
 }) => {
+  const { t } = useTranslation();
   const [checked, setChecked] = React.useState(Boolean(value));
   const [confirmed, setConfirmed] = React.useState(false);
 
@@ -233,7 +244,7 @@ const CheckboxUIComponent: React.FC<SpecCapabilityProps> = ({
             &nbsp;&nbsp;
             <Button className="pf-m-link--align-left" type="button" variant="link" onClick={update}>
               <YellowExclamationTriangleIcon className="co-icon-space-r pf-c-button-icon--plain" />
-              Confirm change
+              {t('olm~Confirm change')}
             </Button>
           </>
         )}
@@ -243,6 +254,7 @@ const CheckboxUIComponent: React.FC<SpecCapabilityProps> = ({
 };
 
 const Secret: React.FC<SpecCapabilityProps> = ({ description, label, obj, fullPath, value }) => {
+  const { t } = useTranslation();
   const [reveal, setReveal] = React.useState(false);
 
   return (
@@ -258,12 +270,12 @@ const Secret: React.FC<SpecCapabilityProps> = ({ description, label, obj, fullPa
           {reveal ? (
             <>
               <EyeSlashIcon className="co-icon-space-r" />
-              Hide Values
+              {t('olm~Hide values')}
             </>
           ) : (
             <>
               <EyeIcon className="co-icon-space-r" />
-              Reveal Values
+              {t('olm~Reveal values')}
             </>
           )}
         </Button>
@@ -281,24 +293,27 @@ const UpdateStrategy: React.FC<SpecCapabilityProps> = ({
   obj,
   fullPath,
   value,
-}) => (
-  <DetailsItem
-    description={description}
-    label={label}
-    obj={obj}
-    onEdit={() =>
-      configureUpdateStrategyModal({
-        kindObj: model,
-        resource: obj,
-        specDescriptor: descriptor,
-        specValue: value,
-      })
-    }
-    path={fullPath}
-  >
-    {value?.type ?? 'None'}
-  </DetailsItem>
-);
+}) => {
+  const { t } = useTranslation();
+  return (
+    <DetailsItem
+      description={description}
+      label={label}
+      obj={obj}
+      onEdit={() =>
+        configureUpdateStrategyModal({
+          kindObj: model,
+          resource: obj,
+          specDescriptor: descriptor,
+          specValue: value,
+        })
+      }
+      path={fullPath}
+    >
+      {value?.type ?? t('public~None')}
+    </DetailsItem>
+  );
+};
 
 export const SpecDescriptorDetailsItem: React.FC<SpecCapabilityProps> = (props) => {
   const capability = (props.descriptor?.['x-descriptors'] ?? []).find(
