@@ -11,8 +11,6 @@ import {
   SplitItem,
   Stack,
   StackItem,
-  Button,
-  ButtonVariant,
   ExpandableSection,
 } from '@patternfly/react-core';
 import {
@@ -68,21 +66,7 @@ const generateName = (template: TemplateKind): string =>
     })}`,
   );
 
-export type CustomizeLinkProps = {
-  onCustomize: VoidFunction;
-};
-
-export const CustomizeLink: React.FC<CustomizeLinkProps> = ({ onCustomize }) => (
-  <>
-    You can also{' '}
-    <Button isInline variant={ButtonVariant.link} onClick={onCustomize}>
-      customize
-    </Button>{' '}
-    this virtual machine before you create it.
-  </>
-);
-
-export type CreateVMFormProps = CustomizeLinkProps & {
+export type CreateVMFormProps = {
   template: TemplateItem;
   sourceStatus: TemplateSourceStatus;
   customSource?: BootSourceState;
@@ -96,7 +80,6 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
   state,
   dispatch,
   customSource,
-  onCustomize,
 }) => {
   const { name, nameValidation, namespace, startVM, template } = state;
   const useProjects = useFlag(FLAGS.OPENSHIFT);
@@ -210,14 +193,7 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
   return (
     <Stack hasGutter>
       <StackItem>
-        <Stack>
-          <StackItem>
-            You are creating a virtual machine from the <b>{getTemplateName(template)}</b> template.
-          </StackItem>
-          <StackItem>
-            <CustomizeLink onCustomize={onCustomize} />
-          </StackItem>
-        </Stack>
+        You are creating a virtual machine from the <b>{getTemplateName(template)}</b> template.
       </StackItem>
       <StackItem>
         <Form onSubmit={preventDefault}>

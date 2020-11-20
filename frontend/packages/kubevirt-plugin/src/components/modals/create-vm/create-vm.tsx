@@ -54,7 +54,6 @@ const CreateVMModal: React.FC<CreateVMModalProps> = ({ close, cancel, sourceStat
               state={state}
               template={template}
               sourceStatus={sourceStatus}
-              onCustomize={onCustomize}
             />
           </ModalBody>
           <ModalFooter
