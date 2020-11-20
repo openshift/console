@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import * as cx from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@console/plugin-sdk';
 import { isModalOpen } from '@console/internal/components/modals';
 import { useQueryParams } from '@console/shared';
@@ -68,6 +69,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({
   groupings,
   renderTile,
 }) => {
+  const { t } = useTranslation();
   const queryParams = useQueryParams();
   const activeCategoryId = queryParams.get(CatalogQueryParams.CATEGORY) ?? DEFAULT_CATEGORY;
   const activeSearchKeyword = queryParams.get(CatalogQueryParams.KEYWORD) ?? '';
@@ -94,7 +96,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({
   const [filterGroupCounts, setFilterGroupCounts] = React.useState<CatalogFilterCounts>({});
   const [catalogTypeCounts, setCatalogTypeCounts] = React.useState<CatalogTypeCounts>({});
 
-  const isGrouped = activeGrouping !== NO_GROUPING;
+  const isGrouped = _.has(groupings, activeGrouping);
 
   const catalogToolbarRef = React.useRef<HTMLInputElement>();
 
@@ -166,15 +168,15 @@ const CatalogView: React.FC<CatalogViewProps> = ({
   }, []);
 
   const catalogCategories = React.useMemo(() => {
-    const allCategory = { id: DEFAULT_CATEGORY, label: 'All Items' };
-    const otherCategory = { id: OTHER_CATEGORY, label: 'Other' };
+    const allCategory = { id: DEFAULT_CATEGORY, label: t('devconsole~All Items') };
+    const otherCategory = { id: OTHER_CATEGORY, label: t('devconsole~Other') };
 
     return {
       all: allCategory,
       ...categories,
       other: otherCategory,
     };
-  }, [categories]);
+  }, [categories, t]);
 
   const categorizedIds = React.useMemo(() => categorize(items, catalogCategories), [
     catalogCategories,

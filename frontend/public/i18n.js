@@ -95,6 +95,7 @@ i18n
         'operator-hub-details',
         'operator-hub-subscribe',
         'operator-install-page',
+        'operator-lifecycle-manager',
         'pagerduty-receiver-form',
         'pipelines-plugin',
         'public',

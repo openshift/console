@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   EmptyState,
@@ -15,18 +16,21 @@ type CatalogEmptyStateProps = {
 };
 
 const CatalogEmptyState: React.FC<CatalogEmptyStateProps> = ({ onClear }) => {
+  const { t } = useTranslation();
   return (
     <EmptyState variant={EmptyStateVariant.full}>
       <EmptyStateIcon icon={SearchIcon} />
       <Title headingLevel="h2" size="lg">
-        No results found
+        {t('devconsole~No results found')}
       </Title>
       <EmptyStateBody>
-        No results match the filter criteria. Remove filters or clear all filters to show results.
+        {t(
+          'devconsole~No results match the filter criteria. Remove filters or clear all filters to show results.',
+        )}
       </EmptyStateBody>
       <EmptyStateSecondaryActions>
         <Button variant="link" onClick={onClear} data-test-id="catalog-clear-filters">
-          Clear all filters
+          {t('devconsole~Clear all filters')}
         </Button>
       </EmptyStateSecondaryActions>
     </EmptyState>

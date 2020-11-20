@@ -759,7 +759,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       url: '/catalog?catalogType=OperatorBackedService',
       // t('devconsole~Operator Backed')
       label: '%devconsole~Operator Backed%',
-      // t('%devconsole~Browse the catalog to discover and deploy operator managed services%')
+      // t('devconsole~Browse the catalog to discover and deploy operator managed services')
       description:
         '%devconsole~Browse the catalog to discover and deploy operator managed services%',
       icon: <BoltIcon />,
@@ -770,10 +770,10 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'helm',
       url: '/catalog?catalogType=HelmChart',
-      // t('%devconsole~Helm Chart%')
+      // t('devconsole~Helm Chart')
       label: '%devconsole~Helm Chart%',
       // t('devconsole~Browse the catalog to discover and install Helm Charts')
-      description: '%devconsole~Browse the catalog to discover and install Helm Charts',
+      description: '%devconsole~Browse the catalog to discover and install Helm Charts%',
       icon: helmIcon,
     },
   },

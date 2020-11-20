@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { SearchInput } from '@patternfly/react-core';
 import { Dropdown } from '@console/internal/components/utils';
 import { CatalogSortOrder, CatalogStringMap } from '../utils/types';
@@ -34,15 +35,19 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
     },
     toolbarRef,
   ) => {
+    const { t } = useTranslation();
     const inputRef = React.useRef<HTMLDivElement>();
 
-    const catalogSortItems = { [CatalogSortOrder.ASC]: 'A-Z', [CatalogSortOrder.DESC]: 'Z-A' };
+    const catalogSortItems = {
+      [CatalogSortOrder.ASC]: t('devconsole~A-Z'),
+      [CatalogSortOrder.DESC]: t('devconsole~Z-A'),
+    };
 
     const showGrouping = !_.isEmpty(groupings);
 
     const catalogGroupItems = {
       ...groupings,
-      [NO_GROUPING]: 'None',
+      [NO_GROUPING]: t('devconsole~None'),
     };
 
     React.useImperativeHandle(toolbarRef, () => {
@@ -61,11 +66,11 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
               className="co-catalog-page__input"
               data-test="search-catalog"
               type="text"
-              placeholder="Filter by keyword..."
+              placeholder={t('devconsole~Filter by keyword...')}
               value={searchKeyword}
               onChange={onSearchKeywordChange}
               onClear={() => onSearchKeywordChange('')}
-              aria-label="Filter by keyword..."
+              aria-label={t('devconsole~Filter by keyword...')}
             />
             <Dropdown
               className="co-catalog-page__sort"
@@ -79,12 +84,14 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
                 menuClassName="dropdown-menu--text-wrap"
                 items={catalogGroupItems}
                 onChange={onGroupingChange}
-                titlePrefix="Group By"
+                titlePrefix={t('devconsole~Group By')}
                 title={catalogGroupItems[activeGrouping]}
               />
             )}
           </div>
-          <div className="co-catalog-page__num-items">{totalItems} items</div>
+          <div className="co-catalog-page__num-items">
+            {t('devconsole~{{totalItems}} items', { totalItems })}
+          </div>
         </div>
       </div>
     );

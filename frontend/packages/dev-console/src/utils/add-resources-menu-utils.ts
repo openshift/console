@@ -76,7 +76,7 @@ export const getAddPageUrl = (
       break;
     case ImportOptions.HELMCHARTS:
       pageUrl = `/catalog/ns/${ns}`;
-      params.append('kind', JSON.stringify(['HelmChart']));
+      params.append('catalogType', 'HelmChart');
       break;
     case ImportOptions.SAMPLES:
       pageUrl = `/samples/ns/${ns}`;

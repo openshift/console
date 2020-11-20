@@ -1,5 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { CatalogExtensionHook, CatalogItem } from '@console/plugin-sdk';
 import {
   k8sListPartialMetadata,
@@ -16,6 +18,7 @@ import {
 const normalizeTemplates = (
   templates: (TemplateKind | PartialObjectMetadata)[],
   activeNamespace: string = '',
+  t: TFunction,
 ): CatalogItem[] => {
   const normalizedTemplates: CatalogItem[] = _.reduce(
     templates,
@@ -51,7 +54,7 @@ const normalizeTemplates = (
           url: imgUrl,
         },
         cta: {
-          label: 'Instantiate Template',
+          label: t('devconsole~Instantiate Template'),
           href: `/catalog/instantiate-template?template=${name}&template-ns=${namespace}&preselected-ns=${activeNamespace}`,
         },
       };
@@ -69,6 +72,7 @@ const normalizeTemplates = (
 const useTemplates: CatalogExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
+  const { t } = useTranslation();
   const [templates, setTemplates] = React.useState<TemplateKind[]>([]);
   const [templatesLoaded, setTemplatesLoaded] = React.useState<boolean>(false);
   const [templatesError, setTemplatesError] = React.useState<APIError>();
@@ -113,8 +117,8 @@ const useTemplates: CatalogExtensionHook<CatalogItem[]> = ({
   const error = templatesError || projectTemplatesError;
 
   const normalizedTemplates = React.useMemo(
-    () => normalizeTemplates([...templates, ...projectTemplates], namespace),
-    [namespace, projectTemplates, templates],
+    () => normalizeTemplates([...templates, ...projectTemplates], namespace, t),
+    [namespace, projectTemplates, t, templates],
   );
 
   return [normalizedTemplates, loaded, error];

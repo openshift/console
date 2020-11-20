@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import Helmet from 'react-helmet';
+import { useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   PageHeading,
   skeletonCatalog,
@@ -29,54 +31,82 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
   loadError,
   catalogExtensions,
 }) => {
-  let title = 'Developer Catalog';
-  let description =
-    'Add shared applications, services, event sources, or source-to-image builders to your project from the developer catalog. Cluster administrators can customize the content made available in the catalog.';
-
+  const { t } = useTranslation();
+  const { pathname } = useLocation();
   const queryParams = useQueryParams();
-  const filterGroups: string[] = [];
-  const filterGroupNameMap: CatalogStringMap = {};
+
+  const defaultTitle = t('devconsole~Developer Catalog');
+  const defaultDescription = t(
+    'devconsole~Add shared applications, services, event sources, or source-to-image builders to your project from the developer catalog. Cluster administrators can customize the content made available in the catalog.',
+  );
+
+  const typeExtension = React.useMemo(
+    () => catalogExtensions?.find((extension) => extension.properties.type === type),
+    [catalogExtensions, type],
+  );
+
+  const title = typeExtension?.properties.title ?? defaultTitle;
+  const description = typeExtension?.properties.catalogDescription ?? defaultDescription;
+
   const filterPreference: string[] = [];
-  const groupings: CatalogStringMap = {};
 
-  const selectedId = queryParams.get(CatalogQueryParams.SELECTED_ID);
-  queryParams.delete(CatalogQueryParams.TYPE);
-  const breadcrumbs = [
-    {
-      name: 'Developer Catalog',
-      path: `/catalog?${queryParams.toString()}`,
-    },
-  ];
-
-  if (type) {
-    const typeExtension = catalogExtensions?.find(
-      (extension) => extension.properties.type === type,
+  const filterGroups: string[] = React.useMemo(() => {
+    return (
+      typeExtension?.properties.filters?.map((filter: CatalogItemAttribute) => filter.attribute) ??
+      []
     );
-    title = typeExtension?.properties.title ?? title;
-    description = typeExtension?.properties.catalogDescription ?? description;
+  }, [typeExtension]);
 
-    breadcrumbs.push({
-      name: title,
-      path: `/catalog?${CatalogQueryParams.TYPE}=${type}`,
+  const filterGroupNameMap: CatalogStringMap = React.useMemo(() => {
+    return (
+      typeExtension?.properties.filters?.reduce((map, filter: CatalogItemAttribute) => {
+        map[filter.attribute] = filter.label;
+        return map;
+      }, {}) ?? {}
+    );
+  }, [typeExtension]);
+
+  const groupings: CatalogStringMap = React.useMemo(() => {
+    return (
+      typeExtension?.properties.groupings?.reduce((map, group: CatalogItemAttribute) => {
+        map[group.attribute] = group.label;
+        return map;
+      }, {}) ?? {}
+    );
+  }, [typeExtension]);
+
+  const breadcrumbs = React.useMemo(() => {
+    const categoryParam = queryParams.get(CatalogQueryParams.CATEGORY);
+    const keywordParam = queryParams.get(CatalogQueryParams.KEYWORD);
+    const sortParam = queryParams.get(CatalogQueryParams.SORT_ORDER);
+    const params = new URLSearchParams({
+      ...(categoryParam ? { [CatalogQueryParams.CATEGORY]: categoryParam } : {}),
+      ...(keywordParam ? { [CatalogQueryParams.KEYWORD]: keywordParam } : {}),
+      ...(sortParam ? { [CatalogQueryParams.SORT_ORDER]: sortParam } : {}),
     });
+    const crumbs = [
+      {
+        name: t('devconsole~Developer Catalog'),
+        path: `${pathname}?${params.toString()}`,
+      },
+    ];
 
-    const typeFilters = typeExtension?.properties.filters;
-    typeFilters &&
-      typeFilters.forEach((filter: CatalogItemAttribute) => {
-        filterGroups.push(filter.attribute);
-        filterGroupNameMap[filter.attribute] = filter.label;
+    if (type) {
+      crumbs.push({
+        name: title,
+        path: `${pathname}?${CatalogQueryParams.TYPE}=${type}`,
       });
+    }
 
-    const typeGroupings = typeExtension?.properties.groupings;
-    typeGroupings && typeGroupings.forEach((group) => (groupings[group.attribute] = group.label));
-  }
+    return crumbs;
+  }, [pathname, queryParams, t, title, type]);
 
   const availableCategories = useCatalogCategories();
 
-  const selectedItem = React.useMemo(() => items.find((it) => selectedId === it.uid), [
-    items,
-    selectedId,
-  ]);
+  const selectedItem = React.useMemo(() => {
+    const selectedId = queryParams.get(CatalogQueryParams.SELECTED_ID);
+    return items.find((it) => selectedId === it.uid);
+  }, [items, queryParams]);
 
   const catalogTypes: CatalogType[] = React.useMemo(() => {
     const types = catalogExtensions.map((extension) => ({
@@ -133,7 +163,7 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
               data={items}
               loaded={loaded}
               loadError={loadError}
-              label="Catalog items"
+              label={t('devconsole~Catalog items')}
             >
               <CatalogView
                 catalogType={type}

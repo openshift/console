@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import { Button, Popover, Title } from '@patternfly/react-core';
 import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
@@ -15,6 +16,7 @@ const CatalogTypeSelector: React.FC<CatalogTypeSelectorProps> = ({
   catalogTypes,
   catalogTypeCounts,
 }) => {
+  const { t } = useTranslation();
   const { pathname, search } = useLocation();
 
   const typeDescriptions = React.useMemo(
@@ -24,7 +26,7 @@ const CatalogTypeSelector: React.FC<CatalogTypeSelectorProps> = ({
   );
 
   const info = (
-    <Popover headerContent="Types" bodyContent={typeDescriptions}>
+    <Popover headerContent={t('devconsole~Types')} bodyContent={typeDescriptions}>
       <Button variant="link" isInline>
         <OutlinedQuestionCircleIcon className="co-catalog-page__info-icon" />
       </Button>
@@ -34,7 +36,7 @@ const CatalogTypeSelector: React.FC<CatalogTypeSelectorProps> = ({
   return (
     <>
       <Title headingLevel="h4" style={{ marginLeft: '14px' }}>
-        Type {info}
+        {t('devconsole~Type')} {info}
       </Title>
       <VerticalTabs>
         {catalogTypes.map((type) => {

@@ -71,11 +71,14 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Catalog/ItemType',
     properties: {
       type: 'OperatorBackedService',
-      title: 'Operator Backed',
+      // t('operator-lifecycle-manager~Operator Backed')
+      title: '%operator-lifecycle-manager~Operator Backed%',
+      // t('operator-lifecycle-manager~Browse for a variety of managed services that are installed by cluster administrators. Cluster administrators can customize the content made available in the catalog.')
       catalogDescription:
-        'Browse for a variety of managed services that are installed by cluster administrators. Cluster administrators can customize the content made available in the catalog.',
+        '%operator-lifecycle-manager~Browse for a variety of managed services that are installed by cluster administrators. Cluster administrators can customize the content made available in the catalog.%',
+      // t('operator-lifecycle-manager~**Operator backed** includes a variety of services managed by Kubernetes controllers.')
       typeDescription:
-        '**Operator backed** includes a variety of services managed by Kubernetes controllers.',
+        '%operator-lifecycle-manager~**Operator backed** includes a variety of services managed by Kubernetes controllers.%',
       groupings: [
         {
           label: 'Operators',

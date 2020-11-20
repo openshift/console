@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { useQueryParams } from '@console/shared';
 import CreateProjectListPage from '../projects/CreateProjectListPage';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
@@ -12,6 +13,7 @@ type CatalogPageProps = RouteComponentProps<{
 }>;
 
 const CatalogPage: React.FC<CatalogPageProps> = ({ match }) => {
+  const { t } = useTranslation();
   const queryParams = useQueryParams();
   const catalogType = queryParams.get(CatalogQueryParams.TYPE);
   const namespace = match.params.ns;
@@ -23,8 +25,8 @@ const CatalogPage: React.FC<CatalogPageProps> = ({ match }) => {
           {(service) => <CatalogController {...service} />}
         </CatalogServiceProvider>
       ) : (
-        <CreateProjectListPage title="Developer Catalog">
-          Select a project to view the Developer Catalog
+        <CreateProjectListPage title={t('devconsole~Developer Catalog')}>
+          {t('devconsole~Select a project to view the Developer Catalog')}
         </CreateProjectListPage>
       )}
     </NamespacedPage>

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { CatalogItem } from '@console/plugin-sdk';
 import { Modal, useQueryParams } from '@console/shared';
@@ -13,6 +14,7 @@ type CatalogDetailsModalProps = {
 };
 
 const CatalogDetailsModal: React.FC<CatalogDetailsModalProps> = ({ item, onClose }) => {
+  const { t } = useTranslation();
   const queryParams = useQueryParams();
 
   if (!item) {
@@ -28,13 +30,13 @@ const CatalogDetailsModal: React.FC<CatalogDetailsModalProps> = ({ item, onClose
     ? `${url}?${params}&${queryParams.toString()}`
     : `${url}?${queryParams.toString()}`;
 
+  const vendor = item.provider
+    ? t('devconsole~Provided by {{provider}}', { provider: item.provider })
+    : null;
+
   const modalHeader = (
     <>
-      <CatalogItemHeader
-        title={item.name}
-        vendor={item.provider ? `Provided by ${item.provider}` : null}
-        {...getIconProps(item)}
-      />
+      <CatalogItemHeader title={item.name} vendor={vendor} {...getIconProps(item)} />
       <div className="co-catalog-page__overlay-actions">
         <Link
           className="pf-c-button pf-m-primary co-catalog-page__overlay-action"

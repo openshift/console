@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   CatalogTileBadge,
   CatalogTile as PfCatalogTile,
@@ -16,9 +17,10 @@ type CatalogTileProps = {
 };
 
 const CatalogTile: React.FC<CatalogTileProps> = ({ item, catalogTypes, onClick }) => {
+  const { t } = useTranslation();
   const { name, provider, description, type } = item;
 
-  const vendor = provider ? `Provided by ${provider}` : null;
+  const vendor = provider ? t('devconsole~Provided by {{provider}}', { provider }) : null;
   const catalogType = _.find(catalogTypes, ['value', type]);
 
   const badges = [

@@ -11,9 +11,13 @@ import {
 
 const useCatalogExtensions = (
   catalogType: string,
-): [ResolvedExtension<CatalogItemType>[], ResolvedExtension<CatalogItemProvider>[]] => {
-  const itemTypeExtensions = useResolvedExtensions<CatalogItemType>(isCatalogItemType);
-  const itemProviderExtensions = useResolvedExtensions<CatalogItemProvider>(isCatalogItemProvider);
+): [ResolvedExtension<CatalogItemType>[], ResolvedExtension<CatalogItemProvider>[], boolean] => {
+  const [itemTypeExtensions, typesResolved] = useResolvedExtensions<CatalogItemType>(
+    isCatalogItemType,
+  );
+  const [itemProviderExtensions, providersResolved] = useResolvedExtensions<CatalogItemProvider>(
+    isCatalogItemProvider,
+  );
 
   const catalogTypeExtensions = catalogType
     ? itemTypeExtensions.filter((e) => e.properties.type === catalogType)
@@ -23,7 +27,7 @@ const useCatalogExtensions = (
     ? itemProviderExtensions.filter((e) => e.properties.type === catalogType)
     : itemProviderExtensions;
 
-  return [catalogTypeExtensions, catalogProviderExtensions];
+  return [catalogTypeExtensions, catalogProviderExtensions, typesResolved && providersResolved];
 };
 
 export default useCatalogExtensions;

@@ -28,7 +28,11 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
   namespace,
 }) => {
   const defaultOptions: CatalogExtensionHookOptions = { namespace };
-  const [catalogTypeExtensions, catalogProviderExtensions] = useCatalogExtensions(catalogType);
+  const [
+    catalogTypeExtensions,
+    catalogProviderExtensions,
+    extensionsResolved,
+  ] = useCatalogExtensions(catalogType);
 
   const [catalogItemsMap, setCatalogItemsMap] = React.useState<{ [key: string]: CatalogItem[] }>(
     {},
@@ -36,8 +40,9 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
   const [loadError, setLoadError] = React.useState();
 
   const loaded =
-    catalogTypeExtensions.length === 0 ||
-    catalogTypeExtensions.every(({ properties: { type } }) => catalogItemsMap[type]);
+    extensionsResolved &&
+    (catalogTypeExtensions.length === 0 ||
+      catalogTypeExtensions.every(({ properties: { type } }) => catalogItemsMap[type]));
 
   const catalogItems = React.useMemo(
     () => (loaded ? _.flatten(Object.values(catalogItemsMap)) : []),
@@ -59,7 +64,7 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
     type: catalogType,
     items: catalogItems,
     itemsMap: catalogItemsMap,
-    loaded: catalogType || catalogTypeExtensions.length === 0 ? true : catalogItems.length > 0,
+    loaded,
     loadError,
     searchCatalog,
     catalogExtensions: catalogTypeExtensions,
@@ -67,22 +72,23 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
 
   return (
     <>
-      {catalogTypeExtensions.map((typeExtension) => {
-        const providers = catalogProviderExtensions.filter(
-          (providerExtension) =>
-            typeExtension.properties.type === providerExtension.properties.type,
-        );
-        return (
-          <CatalogItemsLoader
-            key={typeExtension.properties.type}
-            catalogType={typeExtension.properties.type}
-            providerExtensions={providers}
-            onItemsLoaded={handleItemsLoaded}
-            onLoadError={setLoadError}
-            options={defaultOptions}
-          />
-        );
-      })}
+      {extensionsResolved &&
+        catalogTypeExtensions.map((typeExtension) => {
+          const providers = catalogProviderExtensions.filter(
+            (providerExtension) =>
+              typeExtension.properties.type === providerExtension.properties.type,
+          );
+          return (
+            <CatalogItemsLoader
+              key={typeExtension.properties.type}
+              catalogType={typeExtension.properties.type}
+              providerExtensions={providers}
+              onItemsLoaded={handleItemsLoaded}
+              onLoadError={setLoadError}
+              options={defaultOptions}
+            />
+          );
+        })}
       {children(catalogService)}
     </>
   );
