@@ -17,18 +17,18 @@ export const KeyValueListEditor: React.FC<KeyValueListEditorProps> = ({ name, di
   );
 
   // 중복되는 key 유무에 대한 validation
-  const validateKey = keyValue => {
+  const validateKey = keyInput => {
     let count = 0;
     const itemArray = _.get(getValues(), name);
     for (let item of itemArray) {
-      if (keyValue === item['key'] && ++count > 1) {
+      if (keyInput === item['key'] && ++count > 1) {
         return false;
       }
     }
     return true;
   };
 
-  const validateValue = valueValue => {
+  const validateValue = valueInput => {
     // value에 대한 validation은 아직 없음
     return true;
   };
