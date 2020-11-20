@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import { useState } from 'react';
+import * as PropTypes from 'prop-types';
 import * as classNames from 'classnames';
 import TagsInput from 'react-tagsinput';
 import { useFormContext, Controller } from 'react-hook-form';
@@ -59,7 +60,7 @@ export const TagsLabel = ({ name, placeholder = '' }) => {
       </span>
     );
   };
-  
+
   const inputProps = {
     className: classNames('input', { 'invalid-tag': !isInputValid }),
     spellCheck: 'false',
@@ -82,4 +83,9 @@ export const TagsLabel = ({ name, placeholder = '' }) => {
       )}
     ></Controller>
   );
+};
+
+TagsLabel.propTypes = {
+  name: PropTypes.string.isRequired,
+  placeholder: PropTypes.string,
 };
