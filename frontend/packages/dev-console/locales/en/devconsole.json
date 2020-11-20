@@ -210,7 +210,7 @@
   "Select insecure traffic type": "Select insecure traffic type",
   "Policy for traffic on insecure schemes like HTTP.": "Policy for traffic on insecure schemes like HTTP.",
   "Certificates": "Certificates",
-  "TLS certificates for edge and re-encrypt termination. If not specified, the router&apos;s default certificate is used.": "TLS certificates for edge and re-encrypt termination. If not specified, the router&apos;s default certificate is used.",
+  "TLS certificates for edge and re-encrypt termination. If not specified, the router's default certificate is used.": "TLS certificates for edge and re-encrypt termination. If not specified, the router's default certificate is used.",
   "Certificate": "Certificate",
   "The PEM format certificate. Upload file by dragging &amp; dropping, selecting it, or pasting from the clipboard.": "The PEM format certificate. Upload file by dragging &amp; dropping, selecting it, or pasting from the clipboard.",
   "Private Key": "Private Key",
