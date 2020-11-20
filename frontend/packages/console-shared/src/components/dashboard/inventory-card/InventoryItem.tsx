@@ -140,8 +140,8 @@ export const Status: React.FC<StatusProps> = ({ groupID, count }) => {
 
   return (
     <div className="co-inventory-card__status">
-      <span className="co-dashboard-icon">{groupIcon}</span>
       <span className="co-inventory-card__status-text">{count}</span>
+      <span className="co-dashboard-icon co-icon-space-l">{groupIcon}</span>
     </div>
   );
 };
@@ -175,9 +175,9 @@ const StatusLink: React.FC<StatusLinkProps> = ({
 
   return (
     <div className="co-inventory-card__status">
-      <Link to={to} style={{ textDecoration: 'none' }}>
-        <span className="co-dashboard-icon">{groupIcon}</span>
+      <Link to={to} className="co-inventory-card__status-link">
         <span className="co-inventory-card__status-text">{count}</span>
+        <span className="co-dashboard-icon co-icon-space-l">{groupIcon}</span>
       </Link>
     </div>
   );
