@@ -103,7 +103,7 @@
     "MSG_GNB_SESSION_7": "숫자만 입력할 수 있습니다.",
     "MSG_GNB_SESSION_8": "세션 만료 시간을 입력해 주세요.",
     "MSG_GNB_SESSION_9": "세션 연장",
-    "MSG_GNB_SESSION_10": "{0}초 뒤에 자동으로 로그아웃 될 예정입니다.\n로그인 상태를 유지하시려면 연장 버튼을 클릭해주세요.",
+    "MSG_GNB_SESSION_10": "{{count}}초 뒤에 자동으로 로그아웃 될 예정입니다.\n로그인 상태를 유지하시려면 연장 버튼을 클릭해주세요.",
     "MSG_GNB_NOTIFICATIONS_1": "경고",
     "MSG_GNB_IMPORTYAML_1": "",
     "MSG_GNB_MORE_1": "매뉴얼",
@@ -1653,3 +1653,4 @@
     "MSG_NAMESPACES_CREATENAMESPACECLAIMYAML_DIV3_TABSAMPLE_2": "네임스페이스에서 사용할수 있는 리소스(CPU, Memory) 범위를 지정할 때 사용할 수 있습니다.\nEdit Status를 이용해서 승인할 수 있습니다."
   }
 }
+
