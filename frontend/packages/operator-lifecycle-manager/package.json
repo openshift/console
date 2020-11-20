@@ -8,20 +8,6 @@
     "@console/plugin-sdk": "0.0.0-fixed"
   },
   "consolePlugin": {
-    "entry": "src/plugin.tsx",
-    "integrationTestSuites": {
-      "e2e": [
-        "integration-tests/**/*.scenario.ts"
-      ],
-      "olmFull": [
-        "integration-tests/**/*.scenario.ts"
-      ],
-      "olmDescriptors": [
-        "integration-tests/scenarios/descriptors.scenario.ts"
-      ],
-      "all": [
-        "integration-tests/**/*.scenario.ts"
-      ]
-    }
+    "entry": "src/plugin.tsx"
   }
 }
