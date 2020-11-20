@@ -2,8 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash';
-import { Form, FormControl, FormGroup, HelpBlock } from 'patternfly-react';
-import { ActionGroup, Alert, Button } from '@patternfly/react-core';
+import { ActionGroup, Alert, Button, Form, FormGroup, TextInput } from '@patternfly/react-core';
 import { referenceForModel, k8sCreate } from '@console/internal/module/k8s';
 import {
   ButtonBar,
@@ -218,29 +217,29 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
       <Form>
         <FormGroup
           fieldId="basic-settings-name"
-          validationState={fieldErrors.nameValidationMsg ? 'error' : null}
+          validated={fieldErrors.nameValidationMsg ? 'error' : null}
         >
           <label className="control-label co-required" htmlFor="network-attachment-definition-name">
             Name
           </label>
-          <FormControl
+          <TextInput
             type="text"
-            bsClass="pf-c-form-control"
             placeholder={name}
             id="network-attachment-definition-name"
-            onChange={(e) => handleNameChange(e.target.value, fieldErrors, setName, setFieldErrors)}
+            onChange={(value) => handleNameChange(value, fieldErrors, setName, setFieldErrors)}
             value={name}
           />
-          <HelpBlock>{fieldErrors.nameValidationMsg || null}</HelpBlock>
+          {fieldErrors.nameValidationMsg && (
+            <div className="text-secondary">{fieldErrors.nameValidationMsg}</div>
+          )}
         </FormGroup>
 
         <FormGroup fieldId="basic-settings-description">
           <label htmlFor="network-attachment-definition-description">Description</label>
-          <FormControl
+          <TextInput
             type="text"
-            bsClass="pf-c-form-control"
             id="network-attachment-definition-description"
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={setDescription}
             value={description}
           />
         </FormGroup>
@@ -267,7 +266,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
             items={networkTypeDropdownItems}
             dropDownClassName="dropdown--full-width"
             selectedKey={networkType}
-            onChange={(e) => setNetworkType(e)}
+            onChange={setNetworkType}
             disabled={_.isEmpty(networkTypeDropdownItems)}
           />
         </FormGroup>

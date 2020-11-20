@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { FormControl } from 'patternfly-react';
-import { Alert } from '@patternfly/react-core';
+import { Alert, FormGroup, Stack, StackItem, TextInput } from '@patternfly/react-core';
 import { withHandlePromise, HandlePromiseProps } from '@console/internal/components/utils';
 import {
   ModalTitle,
@@ -47,32 +46,38 @@ const StartNodeMaintenanceModal = withHandlePromise<StartNodeMaintenanceModalPro
     <form onSubmit={submit} name="form" className="modal-content">
       <ModalTitle>{action}</ModalTitle>
       <ModalBody>
-        <p>
-          All managed workloads will be moved off of this node. New workloads and data will not be
-          added to this node until maintenance is stopped.
-        </p>
-        <p>
-          If the node does not exit maintenance within <strong>30 minutes</strong>, the cluster will
-          automatically rebuild the node&apos;s data using replicated copies
-        </p>
-        <div className="form-group">
-          <label htmlFor="node-maintenance-reason">Reason</label>
-          <FormControl
-            type="text"
-            id="node-maintenance-reason"
-            value={reason}
-            onChange={(event) => setReason(event.target.value)}
-          />
-        </div>
-        {!cephClusterHealthy && (
-          <Alert
-            variant="warning"
-            title="The Ceph storage cluster is not in a healthy state."
-            isInline
-          >
-            Maintenance should not be started until the health of the storage cluster is restored.
-          </Alert>
-        )}
+        <Stack hasGutter>
+          <StackItem>
+            All managed workloads will be moved off of this node. New workloads and data will not be
+            added to this node until maintenance is stopped.
+          </StackItem>
+          <StackItem>
+            If the node does not exit maintenance within <strong>30 minutes</strong>, the cluster
+            will automatically rebuild the node&apos;s data using replicated copies
+          </StackItem>
+          <StackItem>
+            <FormGroup label="Reason" fieldId="node-maintenance-reason">
+              <TextInput
+                type="text"
+                id="node-maintenance-reason"
+                value={reason}
+                onChange={setReason}
+              />
+            </FormGroup>
+          </StackItem>
+          {!cephClusterHealthy && (
+            <StackItem>
+              <Alert
+                variant="warning"
+                title="The Ceph storage cluster is not in a healthy state."
+                isInline
+              >
+                Maintenance should not be started until the health of the storage cluster is
+                restored.
+              </Alert>
+            </StackItem>
+          )}
+        </Stack>
       </ModalBody>
       <ModalSubmitFooter
         submitDisabled={!loaded}
