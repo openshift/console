@@ -11,7 +11,7 @@ import {
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_VM_COMMON_NAMESPACE,
 } from '../../constants';
-import { usePVCBaseImages } from '../../hooks/use-pvc-base-images';
+import { useBaseImages } from '../../hooks/use-base-images';
 
 export const killCDIBoundPVC = (pvc: PersistentVolumeClaimKind) =>
   k8sKill(DataVolumeModel, {
@@ -34,7 +34,7 @@ export const PVCDeleteAlertExtension: React.FC<{ pvc: PersistentVolumeClaimKind 
   const [commonTemplates, loadedTemplates, errorTemplates] = useK8sWatchResource<TemplateKind[]>(
     templatesResource,
   );
-  const [goldenPvcs, loadedPvcs, errorPvcs] = usePVCBaseImages(commonTemplates);
+  const [goldenPvcs, loadedPvcs, errorPvcs] = useBaseImages(commonTemplates);
 
   const isGolden = goldenPvcs.find(
     (goldenPvc) => goldenPvc?.metadata?.name === pvc?.metadata?.name,

@@ -7,8 +7,15 @@ import { asVM } from './vmlike';
 import { VMLikeEntityKind } from '../../types/vmLike';
 import { V1Disk } from '../../types/vm/disk/V1Disk';
 
-export const getBootDeviceIndex = (devices, bootOrder) =>
-  devices.findIndex((device) => device.bootOrder === bootOrder);
+export const getBootDeviceIndex = <D extends V1Disk | V1NetworkInterface>(
+  devices: D[],
+  bootOrder: number,
+  deviceTypeFilter?: (device: D) => boolean,
+) =>
+  devices.findIndex(
+    (device) =>
+      device.bootOrder === bootOrder && (deviceTypeFilter ? deviceTypeFilter(device) : true),
+  );
 
 export const getDeviceBootOrder = (device, defaultValue?): number =>
   device && device.bootOrder === undefined ? defaultValue : device.bootOrder;

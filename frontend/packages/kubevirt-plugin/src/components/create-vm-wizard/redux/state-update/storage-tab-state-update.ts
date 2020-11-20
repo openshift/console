@@ -1,7 +1,11 @@
 import { ValidationErrorType } from '@console/shared/src';
 import { VMSettingsField, VMWizardStorage, VMWizardStorageType, VMWizardProps } from '../../types';
 import { InternalActionType, UpdateOptions } from '../types';
-import { hasStoragesChanged, iGetProvisionSourceStorage } from '../../selectors/immutable/storage';
+import {
+  hasStoragesChanged,
+  iGetProvisionSourceStorage,
+  iGetProvisionSourceAdditionalStorage,
+} from '../../selectors/immutable/storage';
 import {
   getNewProvisionSourceStorage,
   windowsToolsStorage,
@@ -20,7 +24,9 @@ import {
   hasVMSettingsValueChanged,
   iGetVmSettingValue,
 } from '../../selectors/immutable/vm-settings';
-import { iGetCommonData } from '../../selectors/immutable/selectors';
+import { iGetCommonData, iGetLoadedCommonData } from '../../selectors/immutable/selectors';
+import { toShallowJS } from '../../../../utils/immutable';
+import { getEmptyInstallStorage } from '../../../../utils/storage';
 
 export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
@@ -65,7 +71,13 @@ export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }:
       oldSourceStorage?.dataVolume?.spec?.source?.pvc?.namespace;
 
   if (newType !== oldType || baseDiskImageChanged) {
+    const additionalStorage = iGetProvisionSourceAdditionalStorage(state, id)?.toJSON();
     if (!newSourceStorage) {
+      if (additionalStorage) {
+        dispatch(
+          vmWizardInternalActions[InternalActionType.RemoveStorage](id, additionalStorage.id),
+        );
+      }
       // not a template provision source
       if (oldSourceStorage && oldSourceStorage.type === VMWizardStorageType.PROVISION_SOURCE_DISK) {
         dispatch(
@@ -73,12 +85,31 @@ export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }:
         );
       }
     } else {
+      const iStorageClassConfigMap = iGetLoadedCommonData(
+        state,
+        id,
+        VMWizardProps.storageClassConfigMap,
+      );
+      const idResolver = getNextIDResolver(getStorages(state, id));
       dispatch(
         vmWizardInternalActions[InternalActionType.UpdateStorage](id, {
-          id: oldSourceStorage ? oldSourceStorage.id : getNextIDResolver(getStorages(state, id))(),
+          id: oldSourceStorage ? oldSourceStorage.id : idResolver(),
           ...newSourceStorage,
         }),
       );
+      if (newSourceStorage.disk.cdrom && !additionalStorage) {
+        const emptyDisk = {
+          id: idResolver(),
+          type: VMWizardStorageType.PROVISION_SOURCE_ADDITIONAL_DISK,
+          ...getEmptyInstallStorage(toShallowJS(iStorageClassConfigMap)),
+        };
+
+        dispatch(vmWizardInternalActions[InternalActionType.UpdateStorage](id, emptyDisk));
+      } else if (additionalStorage) {
+        dispatch(
+          vmWizardInternalActions[InternalActionType.RemoveStorage](id, additionalStorage.id),
+        );
+      }
     }
   }
 };

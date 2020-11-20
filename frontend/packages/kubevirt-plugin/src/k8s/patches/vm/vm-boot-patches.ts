@@ -4,7 +4,7 @@ import { ANNOTATION_FIRST_BOOT, BOOT_ORDER_FIRST, BOOT_ORDER_SECOND } from '../.
 import { getBootDeviceIndex, getDisks, getInterfaces } from '../../../selectors/vm';
 import { VMKind } from '../../../types/vm';
 
-export const getPxeBootPatch = (vm: VMKind) => {
+export const getBootPatch = (vm: VMKind) => {
   const patches = [];
   const annotations = getAnnotations(vm);
   if (annotations && annotations[ANNOTATION_FIRST_BOOT]) {
@@ -15,11 +15,27 @@ export const getPxeBootPatch = (vm: VMKind) => {
           .build(),
       );
     } else {
+      const disks = getDisks(vm);
+      const interfaces = getInterfaces(vm);
       // find bootable disk and change boot order
-      const bootableDiskIndex = getBootDeviceIndex(getDisks(vm), BOOT_ORDER_SECOND);
-      const bootableInterfaceIndex = getBootDeviceIndex(getInterfaces(vm), BOOT_ORDER_FIRST);
+      const bootableDiskIndex = getBootDeviceIndex(disks, BOOT_ORDER_SECOND, (d) => !d.cdrom);
+      const bootableInterfaceIndex = getBootDeviceIndex(interfaces, BOOT_ORDER_FIRST);
+      const bootableCDRomIndex = getBootDeviceIndex(disks, BOOT_ORDER_FIRST, (d) => !!d.cdrom);
 
-      if (bootableDiskIndex !== -1 && bootableInterfaceIndex !== -1) {
+      let bootableDevice;
+      if (bootableInterfaceIndex !== -1) {
+        bootableDevice = {
+          index: bootableInterfaceIndex,
+          type: 'interfaces',
+        };
+      } else if (bootableCDRomIndex !== -1) {
+        bootableDevice = {
+          index: bootableCDRomIndex,
+          type: 'disks',
+        };
+      }
+
+      if (bootableDiskIndex !== -1 && bootableDevice) {
         patches.push(
           new PatchBuilder(
             `/spec/template/spec/domain/devices/disks/${bootableDiskIndex}/bootOrder`,
@@ -28,7 +44,7 @@ export const getPxeBootPatch = (vm: VMKind) => {
             .build(),
 
           new PatchBuilder(
-            `/spec/template/spec/domain/devices/interfaces/${bootableInterfaceIndex}/bootOrder`,
+            `/spec/template/spec/domain/devices/${bootableDevice.type}/${bootableDevice.index}/bootOrder`,
           )
             .remove()
             .build(),

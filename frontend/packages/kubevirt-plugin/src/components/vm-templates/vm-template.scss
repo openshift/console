@@ -2,3 +2,30 @@
   // Give kebab from last row enough space so it will be included in WindowScroller computation
   padding-bottom: 15em;
 }
+
+.kubevirt-vm-template-logo {
+  width: 2rem;
+  padding-right: var(--pf-global--spacer--sm);
+}
+
+.kubevirt-vm-template-actions {
+  text-align: right;
+  display: flex;
+}
+
+.kubevirt-vm-template-details {
+  margin: 0 var(--pf-global--spacer--sm);
+}
+
+.kubevirt-vm-template-popover {
+  display: flex;
+  justify-content: space-between;
+}
+
+.kubevirt-vm-template-popover-name {
+  margin-bottom: var(--pf-global--spacer--sm);
+}
+
+.kv-vm-template__support {
+  font-size: var(--pf-global--FontSize--sm);
+}

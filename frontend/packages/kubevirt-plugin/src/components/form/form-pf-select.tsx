@@ -5,6 +5,7 @@ export const FormPFSelect: React.FC<FormPFSelectProps> = ({
   onSelect,
   children,
   menuAppendTo = 'parent',
+  closeOnSelect = true,
   ...props
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -16,7 +17,7 @@ export const FormPFSelect: React.FC<FormPFSelectProps> = ({
       onToggle={(isExpanded) => setIsOpen(isExpanded)}
       onSelect={(e, v, i) => {
         onSelect(e, v, i);
-        setIsOpen(false);
+        closeOnSelect && setIsOpen(false);
       }}
       {...props}
     >
@@ -25,4 +26,6 @@ export const FormPFSelect: React.FC<FormPFSelectProps> = ({
   );
 };
 
-type FormPFSelectProps = Omit<SelectProps, 'onToggle' | 'isOpen'>;
+type FormPFSelectProps = Omit<SelectProps, 'onToggle' | 'isOpen'> & {
+  closeOnSelect?: boolean;
+};
