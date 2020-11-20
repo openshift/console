@@ -54,25 +54,22 @@ export class VMStatus extends StatusEnum<VMStatusSimpleLabel | StatusSimpleLabel
     'Launcher pod error',
     { isError: true },
   );
-  static readonly CDI_IMPORT_ERROR = new VMStatus('VMStatus_CDI_IMPORT_ERROR', 'Import error', {
+  static readonly CDI_IMPORT_ERROR = new VMStatus('VMStatus_CDI_IMPORT_ERROR', 'Disk image error', {
     isError: true,
-    group: StatusGroup.CDI,
   });
   static readonly CDI_IMPORTING = new VMStatus(
     'VMStatus_CDI_IMPORTING',
-    StatusSimpleLabel.Importing,
+    StatusSimpleLabel.Copying,
     {
       isImporting: true,
-      group: StatusGroup.CDI,
     },
   );
   static readonly CDI_IMPORT_PENDING = new VMStatus(
     'VMStatus_CDI_IMPORT_PENDING',
-    'Import pending',
+    'Disk image pending',
     {
       isImporting: true,
       isPending: true,
-      group: StatusGroup.CDI,
     },
   );
   static readonly MIGRATING = new VMStatus('VMStatus_MIGRATING', VMStatusSimpleLabel.Migrating, {

@@ -3,6 +3,7 @@ export enum StatusSimpleLabel {
   Completed = 'Completed',
   Pending = 'Pending',
   Importing = 'Importing',
+  Copying = 'Copying disk image',
   InProgress = 'InProgress',
   Other = 'Other',
 }
