@@ -22,3 +22,4 @@ export * from './modals';
 export * from './hpa';
 export * from './multi-tab-list';
 export * from './spotlight';
+export * from './markdown-highlight-extension';

@@ -4,7 +4,7 @@ import { Button } from '@patternfly/react-core';
 import { getQuickStartByName } from '../../utils/quick-start-utils';
 import { QuickStartTaskStatus } from '../../utils/quick-start-types';
 import QuickStartConclusion from '../QuickStartConclusion';
-import { SyncMarkdownView } from '@console/internal/components/markdown-view';
+import QuickStartMarkdownView from '../../QuickStartMarkdownView';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');
@@ -38,7 +38,7 @@ describe('QuickStartConclusion', () => {
   it('should render conclusion if there are no failed tasks', () => {
     expect(
       wrapper
-        .find(SyncMarkdownView)
+        .find(QuickStartMarkdownView)
         .first()
         .props().content,
     ).toEqual('conclusion');
@@ -72,7 +72,7 @@ describe('QuickStartConclusion', () => {
     );
     expect(
       wrapper
-        .find(SyncMarkdownView)
+        .find(QuickStartMarkdownView)
         .first()
         .props().content,
     ).toEqual(

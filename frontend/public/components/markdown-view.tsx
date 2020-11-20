@@ -5,12 +5,13 @@ import * as sanitizeHtml from 'sanitize-html';
 
 const tableTags = ['table', 'thead', 'tbody', 'tr', 'th', 'td'];
 
-const markdownConvert = (markdown) => {
+const markdownConvert = (markdown, extensions?: string[]) => {
   const unsafeHtml = new Converter({
     tables: true,
     openLinksInNewWindow: true,
     strikethrough: true,
     emoji: true,
+    extensions,
   }).makeHtml(markdown);
 
   return sanitizeHtml(unsafeHtml, {
@@ -33,10 +34,12 @@ const markdownConvert = (markdown) => {
       'li',
       'code',
       'pre',
+      'button',
       ...tableTags,
     ],
     allowedAttributes: {
-      a: ['href', 'target', 'rel'],
+      a: ['href', 'target', 'rel', 'data-*'],
+      button: ['class', 'data-*'],
     },
     allowedSchemes: ['http', 'https', 'mailto'],
     transformTags: {
@@ -45,16 +48,21 @@ const markdownConvert = (markdown) => {
   });
 };
 
-export class SyncMarkdownView extends React.Component<
-  {
-    content: string;
-    emptyMsg?: string;
-    styles?: string;
-    exactHeight?: boolean;
-    truncateContent?: boolean;
-  },
-  {}
-> {
+type SyncMarkdownProps = {
+  content: string;
+  emptyMsg?: string;
+  styles?: string;
+  exactHeight?: boolean;
+  truncateContent?: boolean;
+  extensions?: string[];
+  renderExtension?: (contentDocument: HTMLDocument) => React.ReactNode;
+};
+
+type State = {
+  loaded?: boolean;
+};
+
+export class SyncMarkdownView extends React.Component<SyncMarkdownProps, State> {
   private frame: any;
   private timeoutHandle: any;
 
@@ -86,6 +94,11 @@ export class SyncMarkdownView extends React.Component<
           .scrollHeight + 15}px`;
       }
     });
+  }
+
+  onLoad() {
+    this.updateDimensions();
+    this.setState({ loaded: true });
   }
 
   render() {
@@ -137,15 +150,23 @@ export class SyncMarkdownView extends React.Component<
       </style>
       <body class="pf-m-redhat-font"><div style="overflow-y: auto;">${markdownConvert(
         content || emptyMsg || 'Not available',
+        this.props.extensions,
       )}</div></body>`;
+    const hasExtension = this.props.extensions?.length > 0 && !!this.props.renderExtension;
     return (
-      <iframe
-        sandbox="allow-popups allow-same-origin"
-        srcDoc={contents}
-        style={{ border: '0px', display: 'block', width: '100%', height: '0' }}
-        ref={(r) => (this.frame = r)}
-        onLoad={() => this.updateDimensions()}
-      />
+      <>
+        <iframe
+          sandbox="allow-popups allow-same-origin"
+          srcDoc={contents}
+          style={{ border: '0px', display: 'block', width: '100%', height: '0' }}
+          ref={(r) => (this.frame = r)}
+          onLoad={() => this.onLoad()}
+        />
+        {this.state?.loaded &&
+          this.frame?.contentDocument &&
+          hasExtension &&
+          this.props.renderExtension(this.frame.contentDocument)}
+      </>
     );
   }
 }

@@ -2,7 +2,7 @@ import * as React from 'react';
 import cx from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { Alert, Radio } from '@patternfly/react-core';
-import { SyncMarkdownView } from '@console/internal/components/markdown-view';
+import QuickStartMarkdownView from '../QuickStartMarkdownView';
 import { QuickStartTaskStatus, QuickStartTaskReview } from '../utils/quick-start-types';
 
 import './QuickStartTaskReview.scss';
@@ -41,7 +41,7 @@ const QuickStartTaskReview: React.FC<QuickStartTaskReviewProps> = ({
 
   return (
     <Alert variant={getAlertVariant(taskStatus)} title={title} isInline>
-      <SyncMarkdownView content={instructions} />
+      <QuickStartMarkdownView content={instructions} />
       <span className="co-quick-start-task-review__actions">
         <Radio
           id="review-success"
@@ -61,7 +61,7 @@ const QuickStartTaskReview: React.FC<QuickStartTaskReviewProps> = ({
         />
       </span>
       {taskStatus === QuickStartTaskStatus.FAILED && taskHelp && (
-        <SyncMarkdownView content={taskHelp} />
+        <QuickStartMarkdownView content={taskHelp} />
       )}
     </Alert>
   );

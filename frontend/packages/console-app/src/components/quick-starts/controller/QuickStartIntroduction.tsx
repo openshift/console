@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { SyncMarkdownView } from '@console/internal/components/markdown-view';
+import QuickStartMarkdownView from '../QuickStartMarkdownView';
 import { QuickStartTask, QuickStartTaskStatus } from '../utils/quick-start-types';
 import TaskHeader from './QuickStartTaskHeader';
 
@@ -20,7 +20,7 @@ const QuickStartIntroduction: React.FC<QuickStartIntroductionProps> = ({
   const { t } = useTranslation();
   return (
     <>
-      <SyncMarkdownView content={introduction} />
+      <QuickStartMarkdownView content={introduction} />
       <p style={{ marginBottom: 'var(--pf-global--spacer--md)' }}>
         {t('quickstart~In this quick start, you will complete {{count, number}} task', {
           count: tasks.length,

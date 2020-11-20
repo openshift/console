@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { Alert } from '@patternfly/react-core';
-import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { getQuickStartByName } from '../../utils/quick-start-utils';
 import { QuickStartTaskStatus } from '../../utils/quick-start-types';
 import QuickStartTaskReview from '../QuickStartTaskReview';
+import QuickStartMarkdownView from '../../QuickStartMarkdownView';
 
 type QuickStartTaskReviewProps = React.ComponentProps<typeof QuickStartTaskReview>;
 let wrapper: ShallowWrapper<QuickStartTaskReviewProps>;
@@ -44,7 +44,7 @@ describe('QuickStartTaskReview', () => {
     wrapper = shallow(<QuickStartTaskReview {...props} />);
     expect(
       wrapper
-        .find(SyncMarkdownView)
+        .find(QuickStartMarkdownView)
         .at(1)
         .props().content,
     ).toEqual(props.review.failedTaskHelp);
