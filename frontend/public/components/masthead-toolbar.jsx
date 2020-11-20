@@ -372,15 +372,15 @@ class MastheadToolbarContents_ extends React.Component {
     if (mobile) {
       actions.unshift(...helpActions);
 
-      actions.unshift({
-        name: '',
-        isSection: true,
-        actions: [
-          {
-            component: <Link to={this._getImportYAMLPath()}>Import YAML</Link>,
-          },
-        ],
-      });
+      // actions.unshift({
+      //   name: '',
+      //   isSection: true,
+      //   actions: [
+      //     {
+      //       component: <Link to={this._getImportYAMLPath()}>Import YAML</Link>,
+      //     },
+      //   ],
+      // });
 
       if (!_.isEmpty(launchActions)) {
         actions.unshift(...launchActions);
@@ -492,7 +492,8 @@ class MastheadToolbarContents_ extends React.Component {
     const { isApplicationLauncherDropdownOpen, isHelpDropdownOpen, showAboutModal, statuspageData } = this.state;
     const { consoleLinks, drawerToggle, notificationsRead, canAccessNS, keycloak, t } = this.props;
     const launchActions = this._launchActions();
-    const alertAccess = canAccessNS && !!window.SERVER_FLAGS.prometheusBaseURL;
+    // TODO: notificatoin 기능 완료 되면 추가하기.
+    const alertAccess = false; //canAccessNS && !!window.SERVER_FLAGS.prometheusBaseURL;
     return (
       <>
         <Toolbar>
@@ -544,20 +545,22 @@ class MastheadToolbarContents_ extends React.Component {
                 </NotificationBadge>
               </ToolbarItem>
             )}
-            <ToolbarItem>
+            {/* <ToolbarItem>
               <Tooltip content="Import YAML" position={TooltipPosition.bottom}>
                 <Link to={this._getImportYAMLPath()} className="pf-c-button pf-m-plain" aria-label="Import YAML">
                   <PlusCircleIcon className="co-masthead-icon" />
                 </Link>
               </Tooltip>
-            </ToolbarItem>
+            </ToolbarItem> */}
             <CloudShellMastheadButton />
-            <ToolbarItem>
-              <ApplicationLauncher aria-label="Help menu" className="co-app-launcher" data-test="help-dropdown-toggle" onSelect={this._onHelpDropdownSelect} onToggle={this._onHelpDropdownToggle} isOpen={isHelpDropdownOpen} items={this._renderApplicationItems(this._helpActions(this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'HelpMenu'))))} position="right" toggleIcon={<QuestionCircleIcon />} isGrouped />
-            </ToolbarItem>
+            {/* TODO: 매뉴얼 완료 후 매뉴얼로 이동하는 링크 추가하기 */}
+            {/* <ToolbarItem className="co-masthead-icon__button">
+              <QuestionCircleIcon />
+            </ToolbarItem> */}
           </ToolbarGroup>
           <ToolbarGroup>
             {/* mobile -- (notification drawer button) */
+            // 기능 추가되면 완성하기
             alertAccess && !notificationsRead && (
               <ToolbarItem className="visible-xs-block">
                 <NotificationBadge aria-label="Notification Drawer" onClick={drawerToggle} isRead={notificationsRead}>
