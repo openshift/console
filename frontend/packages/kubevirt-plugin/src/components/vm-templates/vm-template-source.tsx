@@ -59,13 +59,13 @@ type AddSourceButtonProps = {
 
 const AddSourceButton: React.FC<AddSourceButtonProps> = ({ template }) => {
   const { t } = useTranslation();
-  const { uploads, uploadData } = React.useContext(CDIUploadContext);
+  const uploadContextProps = React.useContext(CDIUploadContext);
   return (
     isCommonTemplate(template) && (
       <Button
         isInline
         variant={ButtonVariant.link}
-        onClick={() => addTemplateSourceModal({ template, uploads, uploadData })}
+        onClick={() => addTemplateSourceModal({ template, ...uploadContextProps })}
       >
         <PlusCircleIcon className="co-icon-and-text__icon" />
         {t('kubevirt-plugin~Add source')}

@@ -1,10 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import cx from 'classnames';
 import { Helmet } from 'react-helmet';
 import { match } from 'react-router';
+import { Trans, useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import {
   FileUpload,
   ActionGroup,
@@ -79,25 +80,25 @@ const templatesResource: WatchK8sResource = {
   },
 };
 
-enum uploadErrorType {
+export enum uploadErrorType {
   MISSING = 'missing',
   ALLOCATE = 'allocate',
   CERT = 'cert',
 }
 
-const uploadErrorMessage = {
-  [uploadErrorType.MISSING]: 'File input is missing',
-  [uploadErrorType.ALLOCATE]: 'Could not create persistent volume claim',
+export const uploadErrorMessage = (t: TFunction) => ({
+  [uploadErrorType.MISSING]: t('kubevirt-plugin~File input is missing'),
+  [uploadErrorType.ALLOCATE]: t('kubevirt-plugin~Could not create persistent volume claim'),
   [uploadErrorType.CERT]: (uploadProxy) => (
-    <>
+    <Trans ns="kubevirt-plugin" t={t}>
       It seems that your browser does not trust the certificate of the upload proxy. Please{' '}
       <a href={`https://${uploadProxy}`} rel="noopener noreferrer" target="_blank">
         approve this certificate
       </a>{' '}
       and try again
-    </>
+    </Trans>
   ),
-};
+});
 
 export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   onChange,
@@ -555,8 +556,8 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
 
   const errorMessage =
     error === uploadErrorType.CERT
-      ? uploadErrorMessage[uploadErrorType.CERT](uploadProxyURL)
-      : uploadErrorMessage[error] || error;
+      ? uploadErrorMessage(t)[uploadErrorType.CERT](uploadProxyURL)
+      : uploadErrorMessage(t)[error] || error;
 
   return (
     <>

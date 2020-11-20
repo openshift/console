@@ -202,7 +202,7 @@ export type ModalBodyProps = {
 
 export type ModalFooterProps = {
   message?: string;
-  errorMessage?: string;
+  errorMessage?: React.ReactNode;
   inProgress: boolean;
 };
 
