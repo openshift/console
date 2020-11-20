@@ -93,7 +93,7 @@ const tableColumnClasses = (showNamespace: boolean) => [
   classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // provider
   classNames('pf-m-hidden', { 'pf-m-visible-on-lg': showNamespace }), // namespace
   '', // boot source
-  classNames('pf-u-w-25', 'kubevirt-vm-template-actions'), // actions
+  'kubevirt-vm-template-actions', // actions
   Kebab.columnClass,
 ];
 
@@ -265,7 +265,7 @@ const VMTemplateTableRow: RowFunction<TemplateItem, VMTemplateTableRowProps> = (
           headerContent={<div>{t('kubevirt-plugin~Template details')}</div>}
           bodyContent={<VMTemplateDetailsBody template={template} sourceStatus={sourceStatus} />}
         >
-          <Button variant="secondary" className="kubevirt-vm-template-details">
+          <Button variant="link" className="kubevirt-vm-template-details">
             {t('kubevirt-plugin~Details')}
           </Button>
         </Popover>
@@ -273,7 +273,7 @@ const VMTemplateTableRow: RowFunction<TemplateItem, VMTemplateTableRowProps> = (
           onClick={() => withSupportModal(obj, () => createVMAction(obj, sourceStatus))}
           variant="secondary"
         >
-          {t('kubevirt-plugin~Create Virtual Machine')}
+          {t('kubevirt-plugin~Create')}
         </Button>
       </TableData>
       <TableData className={dimensify(true)}>

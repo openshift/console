@@ -158,7 +158,7 @@ export const getTemplateSizeRequirement = (
       isCommonTemplate(template) &&
       (templateSource.dataVolume || templateSource.pvc)?.metadata.labels?.[LABEL_CDROM_SOURCE] ===
         'true';
-  } else if (!isTemplateSourceError(templateSource) && templateSource.dvTemplate) {
+  } else if (!isTemplateSourceError(templateSource) && templateSource?.dvTemplate) {
     sourceSize = convertToBaseValue(getDataVolumeStorageSize(templateSource.dvTemplate));
   }
 

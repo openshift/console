@@ -402,7 +402,7 @@ const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
     <MultiListPage
       {...modifiedProps}
       createAccessReview={createAccessReview}
-      createButtonText={t('kubevirt-plugin~Create Virtual Machine')}
+      createButtonText={t('kubevirt-plugin~Create virtual machine')}
       title={VirtualMachineModel.labelPlural}
       showTitle={showTitle}
       rowFilters={[vmStatusFilter]}

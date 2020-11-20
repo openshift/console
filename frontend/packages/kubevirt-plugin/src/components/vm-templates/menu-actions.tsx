@@ -113,10 +113,10 @@ export const menuActionsCreator = (
   const actions = templateItem.isCommon
     ? [vmTemplateCreateVMAction, newTemplateFromCommon, menuActionDeleteVMTemplate]
     : [
+        vmTemplateCreateVMAction,
         Kebab.factory.ModifyLabels,
         Kebab.factory.ModifyAnnotations,
         vmTemplateEditAction,
-        vmTemplateCreateVMAction,
         menuActionDeleteVMTemplate,
       ];
 
