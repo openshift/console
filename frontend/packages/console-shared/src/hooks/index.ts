@@ -17,3 +17,5 @@ export * from './csv-watch-hook';
 export * from './useTabbedTableBreadcrumb';
 export * from './post-form-submit-action';
 export * from './flag';
+export * from './useUserSettings';
+export * from './useUserSettingsCompatibility';
