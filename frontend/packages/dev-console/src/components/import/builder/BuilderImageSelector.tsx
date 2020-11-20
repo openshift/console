@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useFormikContext, FormikValues } from 'formik';
 import { LoadingInline } from '@console/internal/components/utils';
 import { FormGroup, Alert } from '@patternfly/react-core';
@@ -51,9 +51,10 @@ const BuilderImageSelector: React.FC<BuilderImageSelectorProps> = ({
       {recommended && builderImages.hasOwnProperty(recommended) && (
         <>
           <Alert variant="success" title={t('devconsole~Builder image(s) detected.')} isInline>
-            {t('devconsole~Recommended builder images are represented by')}{' '}
-            <StarIcon style={{ color: 'var(--pf-global--primary-color--100)' }} />{' '}
-            {t('devconsole~icon')}.
+            <Trans ns="devconsole" t={t}>
+              Recommended builder images are represented by{' '}
+              <StarIcon style={{ color: 'var(--pf-global--primary-color--100)' }} /> icon.
+            </Trans>
           </Alert>
           <br />
         </>
