@@ -528,6 +528,14 @@ class MastheadToolbarContents_ extends React.Component {
                 <ApplicationLauncher className="co-app-launcher" data-test-id="application-launcher" onSelect={this._onApplicationLauncherDropdownSelect} onToggle={this._onApplicationLauncherDropdownToggle} isOpen={isApplicationLauncherDropdownOpen} items={this._renderApplicationItems(this._launchActions())} position="right" isGrouped />
               </ToolbarItem>
             )}
+            <ToolbarItem>
+              <div className="co-masthead__line"></div>
+            </ToolbarItem>
+            {/* desktop -- (user dropdown [logout]) */}
+            <ToolbarItem className="hidden-xs">{this._renderLanguageMenu(false)}</ToolbarItem>
+            <ToolbarItem>
+              <div className="co-masthead__line"></div>
+            </ToolbarItem>
             {/* desktop -- (notification drawer button) */
             alertAccess && (
               <ToolbarItem>
@@ -561,8 +569,6 @@ class MastheadToolbarContents_ extends React.Component {
             <SystemStatusButton statuspageData={statuspageData} className="visible-xs-block" />
             {/* mobile -- kebab dropdown [(application launcher |) import yaml | documentation, about (| logout)] */}
             <ToolbarItem className="visible-xs-block">{this._renderMenu(true)}</ToolbarItem>
-            {/* desktop -- (user dropdown [logout]) */}
-            <ToolbarItem className="hidden-xs">{this._renderLanguageMenu(false)}</ToolbarItem>
             <ToolbarItem className="hidden-xs">{this._renderMenu(false)}</ToolbarItem>
           </ToolbarGroup>
         </Toolbar>

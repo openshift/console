@@ -1,7 +1,9 @@
 .co-masthead-icon {
-  font-size: $pf-header-icon-fontsize;
+.co-masthead__line {
+  border-right: 1px solid #c5c7c8;
+  height: 18px;
+  margin: 0px 10px;
 }
-
 .co-username {
   font-size: $pf-header-icon-fontsize; // for cases where there is no user menu
   max-width: 140px !important; // PF4 does not limit username length (upstream bug)
