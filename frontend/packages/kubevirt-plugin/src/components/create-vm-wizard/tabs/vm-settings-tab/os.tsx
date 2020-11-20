@@ -43,7 +43,7 @@ import {
 } from '../../../cdi-upload-provider/consts';
 import { getTemplateOperatingSystems } from '../../../../selectors/vm-template/advanced';
 import { FormPFSelect } from '../../../form/form-pf-select';
-import { useAccessReview } from '@console/internal/components/utils';
+import { ResourceLink, useAccessReview } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 
 export const OS: React.FC<OSProps> = React.memo(
@@ -145,7 +145,6 @@ export const OS: React.FC<OSProps> = React.memo(
         const osField: any = {
           id: operatingSystem.id,
           name: operatingSystem.name,
-          pvcName,
           baseImageFoundInCluster,
           message: '',
           longMessage: '',
@@ -154,11 +153,15 @@ export const OS: React.FC<OSProps> = React.memo(
 
         if (!iUserTemplate && !baseImagesLoadError) {
           if (baseImageFoundInCluster && pvcName && pvcNamespace) {
-            osField.message = isBaseImageUploading
-              ? BASE_IMAGE_AND_PVC_UPLOADING_SHORT
-              : BASE_IMAGE_AND_PVC_SHORT;
             osField.longMessage = BASE_IMAGE_AND_PVC_MESSAGE;
-            osField.checkboxDescription = isBaseImageUploading ? BASE_IMAGE_UPLOADING_MESSAGE : '';
+            if (isBaseImageUploading) {
+              osField.message = BASE_IMAGE_AND_PVC_UPLOADING_SHORT;
+              osField.checkboxDescription = BASE_IMAGE_UPLOADING_MESSAGE;
+            } else {
+              osField.message = BASE_IMAGE_AND_PVC_SHORT;
+              osField.pvcName = pvcName;
+              osField.pvcNamespace = pvcNamespace;
+            }
           } else if (pvcName && pvcNamespace) {
             osField.message = NO_BASE_IMAGE_SHORT;
             osField.longMessage = canUploadGoldenImage ? (
@@ -243,7 +246,7 @@ export const OS: React.FC<OSProps> = React.memo(
           )}
         </FormFieldRow>
         <FormFieldRow
-          className="kv-create-vm__input-checkbox"
+          className="kv-create-vm__input-checkbox kv-create-vm__clone-os"
           field={cloneBaseDiskImageField}
           fieldType={FormFieldType.INLINE_CHECKBOX}
           loadingResources={loadingResources}
@@ -254,6 +257,17 @@ export const OS: React.FC<OSProps> = React.memo(
               onChange={(v) => onChange(VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE, v)}
               description={baseImage?.checkboxDescription}
             />
+            {baseImage?.pvcName && baseImage?.pvcNamespace && (
+              <div className="kv-create-vm__clone-os-link">
+                (
+                <ResourceLink
+                  kind={PersistentVolumeClaimModel.kind}
+                  name={baseImage.pvcName}
+                  namespace={baseImage.pvcNamespace}
+                />
+                )
+              </div>
+            )}
           </FormField>
         </FormFieldRow>
         {mountedDisksErrorMsg}

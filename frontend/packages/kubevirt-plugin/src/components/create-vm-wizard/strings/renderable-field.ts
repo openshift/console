@@ -28,7 +28,8 @@ export const titleResolver: RenderableFieldResolver = {
   [VMSettingsField.NAME]: 'Name',
   [VMSettingsField.DESCRIPTION]: 'Description',
   [VMSettingsField.OPERATING_SYSTEM]: 'Operating System',
-  [VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE]: 'Clone available operating system source',
+  [VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE]:
+    'Clone available operating system source to this Virtual Machine',
   [VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS]: 'Mount Windows guest tools',
   [VMSettingsField.FLAVOR]: 'Flavor',
   [VMSettingsField.MEMORY]: 'Memory',
