@@ -1,0 +1,9 @@
+.vm-side-drawer-form {
+  grid-gap: var(--pf-global--spacer--md);
+}
+
+.vm-side-drawer-form-row {
+  .pf-c-form__group-label {
+    padding-bottom: 0;
+  }
+}

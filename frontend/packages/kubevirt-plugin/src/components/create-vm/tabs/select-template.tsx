@@ -33,7 +33,6 @@ import {
   getTemplateName,
   getTemplateProvider,
   getTemplateProviderType,
-  ProvidedType,
   templateProviders,
 } from '../../../selectors/vm-template/basic';
 import { getTemplateOSIcon, PinnedIcon } from '../../vm-templates/os-icons';
@@ -53,18 +52,19 @@ import { usePinnedTemplates } from '../../../hooks/use-pinned-templates';
 import { BOOT_SOURCE_AVAILABLE, BOOT_SOURCE_REQUIRED } from '../../../constants';
 import { FormPFSelect } from '../../form/form-pf-select';
 import { VMTemplateSupport } from '../../vm-templates/vm-template';
+import { useVmTemplatesFilters } from '../hooks/use-vm-templates-filters';
 
 import './select-template.scss';
 
-type TemplateTileProps = {
+export type TemplateTileProps = {
   template: TemplateItem;
   sourceStatus: TemplateSourceStatus;
   selectTemplate: React.Dispatch<TemplateItem>;
-  isSelected: boolean;
+  isSelected?: boolean;
   isPinned: boolean;
 };
 
-const TemplateTile: React.FC<TemplateTileProps> = ({
+export const TemplateTile: React.FC<TemplateTileProps> = ({
   template: templateItem,
   sourceStatus,
   selectTemplate,
@@ -159,49 +159,7 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
 }) => {
   const { t } = useTranslation();
   const [isPinned] = usePinnedTemplates();
-  const [filters, setFilters] = React.useState<{
-    text: string;
-    provider: ProvidedType[];
-    bootSource: string[];
-  }>({
-    text: undefined,
-    provider: undefined,
-    bootSource: undefined,
-  });
-
-  const clearFilter = (type?: string | { key: string; name: string }, id?: string) => {
-    if (!type && !id) {
-      setFilters({
-        text: undefined,
-        provider: undefined,
-        bootSource: undefined,
-      });
-    } else if (type && !id && typeof type !== 'string') {
-      setFilters({
-        ...filters,
-        [type.key]: undefined,
-      });
-    } else if (typeof type === 'string' && id) {
-      setFilters({
-        ...filters,
-        [type]: filters[type]?.filter((f) => f !== id),
-      });
-    }
-  };
-
-  const onSelect = (type, e, value) => {
-    if (!filters[type]?.includes(value)) {
-      setFilters({
-        ...filters,
-        [type]: filters[type] ? [...filters[type], value] : [value],
-      });
-    } else {
-      setFilters({
-        ...filters,
-        [type]: filters[type]?.filter((f) => f !== value),
-      });
-    }
-  };
+  const [filters, onSelect, clearFilter] = useVmTemplatesFilters();
 
   const items: TemplateTileProps[] = templates
     .map((template) => ({
@@ -334,7 +292,7 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
                         <FormPFSelect
                           variant={SelectVariant.checkbox}
                           aria-label={t('kubevirt-plugin~Template provider')}
-                          onSelect={(e, val) => onSelect('provider', e, val)}
+                          onSelect={(e, val) => onSelect('provider', val.toString())}
                           selections={filters.provider}
                           placeholderText={
                             filters.provider?.length
@@ -361,7 +319,7 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
                         <FormPFSelect
                           variant={SelectVariant.checkbox}
                           aria-label={t('kubevirt-plugin~Boot source')}
-                          onSelect={(e, val) => onSelect('bootSource', e, val)}
+                          onSelect={(e, val) => onSelect('bootSource', val.toString())}
                           selections={filters.bootSource}
                           placeholderText={
                             filters.bootSource?.length
@@ -384,8 +342,8 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
                       id="textFilter"
                       type="search"
                       aria-label="text filter"
-                      onChange={(text) => setFilters({ ...filters, text })}
-                      value={filters.text}
+                      onChange={(text) => onSelect('text', text)}
+                      value={filters.text || ''}
                       placeholder={t('kubevirt-plugin~Search by name, OS ...')}
                     />
                     <Button

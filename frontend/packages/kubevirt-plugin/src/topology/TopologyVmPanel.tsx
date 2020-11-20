@@ -40,7 +40,6 @@ type TopologyVmPanelProps = PropsFromState & PropsFromDispatch & OwnProps;
 
 export const ConnectedTopologyVmPanel: React.FC<TopologyVmPanelProps> = ({
   vmNode,
-  selectedDetailsTab,
   onClickTab,
 }: TopologyVmPanelProps) => {
   const name = vmNode.getLabel();
@@ -72,7 +71,6 @@ export const ConnectedTopologyVmPanel: React.FC<TopologyVmPanelProps> = ({
         </h1>
       </div>
       <SimpleTabNav
-        selectedTab={selectedDetailsTab || 'Resources'}
         onClickTab={onClickTab}
         tabs={[
           { name: 'Details', component: TopologyVmDetailsPanel },

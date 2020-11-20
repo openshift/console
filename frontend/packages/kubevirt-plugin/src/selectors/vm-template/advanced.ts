@@ -176,10 +176,13 @@ export const getTemplateMemory = (template: TemplateKind): string => {
   return humanizeBinaryBytes(baseMemoryValue).string;
 };
 
-export const getTemplateFlavorDesc = (template: TemplateKind): string =>
+export const getTemplateFlavorDesc = (
+  template: TemplateKind,
+  addMemoryText: boolean = true,
+): string =>
   `${_.capitalize(getFlavor(template) || 'Custom')} ${vCPUCount(
     getCPU(selectVM(template)),
-  )} CPU | ${getTemplateMemory(template)} Memory`;
+  )} CPU | ${getTemplateMemory(template).concat(addMemoryText ? ' Memory' : '')}`;
 
 export const getDefaultDiskBus = (template: TemplateKind): DiskBus => {
   const vmWrapper = new VMWrapper(template);

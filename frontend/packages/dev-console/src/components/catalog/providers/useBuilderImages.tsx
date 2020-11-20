@@ -49,7 +49,6 @@ const normalizeBuilderImages = (
 
     const imageStreamText = (
       <>
-        <hr />
         <p>{t('devconsole~The following resources will be created:')}</p>
         <ul>
           <li>

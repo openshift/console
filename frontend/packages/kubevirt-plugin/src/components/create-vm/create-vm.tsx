@@ -12,36 +12,15 @@ import {
   WizardContextConsumer,
   WizardContextType,
 } from '@patternfly/react-core';
-import {
-  K8sResourceCommon,
-  PersistentVolumeClaimKind,
-  PodKind,
-  TemplateKind,
-} from '@console/internal/module/k8s';
-import {
-  PersistentVolumeClaimModel,
-  PodModel,
-  ProjectModel,
-  TemplateModel,
-} from '@console/internal/models';
+import { K8sResourceCommon, TemplateKind } from '@console/internal/module/k8s';
+import { ProjectModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { history, LoadingBox } from '@console/internal/components/utils';
 
 import { ReviewAndCreate } from './tabs/review-create';
 import { SelectTemplate } from './tabs/select-template';
 import { formReducer, FORM_ACTION_TYPE, initFormState } from './forms/create-vm-form-reducer';
-import {
-  CDI_APP_LABEL,
-  DataVolumeSourceType,
-  TEMPLATE_TYPE_BASE,
-  TEMPLATE_TYPE_LABEL,
-  TEMPLATE_TYPE_VM,
-  VMWizardMode,
-  VMWizardName,
-} from '../../constants';
-import { DataVolumeModel } from '../../models';
-import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
-import { useBaseImages } from '../../hooks/use-base-images';
+import { DataVolumeSourceType, VMWizardMode, VMWizardName } from '../../constants';
 import { filterTemplates } from '../vm-templates/utils';
 import { getTemplateSourceStatus } from '../../statuses/template/template-source-status';
 import { isTemplateSourceError } from '../../statuses/template/types';
@@ -59,6 +38,7 @@ import { useSupportModal } from '../../hooks/use-support-modal';
 import { useStorageClassConfigMap } from '../../hooks/storage-class-config-map';
 import { createVM } from '../../k8s/requests/vm/create/simple-create';
 import { useErrorTranslation } from '../../hooks/use-error-translation';
+import { useVmTemplatesResources } from './hooks/use-vm-templates-resources';
 
 import '../create-vm-wizard/create-vm-wizard.scss';
 import './create-vm.scss';
@@ -180,79 +160,34 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
   const [templatePreselectError, setTemplatePreselectError] = React.useState<string>();
   const [selectedTemplate, selectTemplate] = React.useState<TemplateItem>();
   const [bootState, bootDispatch] = React.useReducer(bootFormReducer, initBootFormState);
-  const [userTemplates, utLoaded, utError] = useK8sWatchResource<TemplateKind[]>({
-    kind: TemplateModel.kind,
-    namespace,
-    selector: {
-      matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM },
-    },
-    isList: true,
-  });
-  const [baseTemplates, btLoaded, btError] = useK8sWatchResource<TemplateKind[]>({
-    kind: TemplateModel.kind,
-    namespace: 'openshift',
-    selector: {
-      matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_BASE },
-    },
-    isList: true,
-  });
-  const [pods, podsLoaded, podsError] = useK8sWatchResource<PodKind[]>({
-    kind: PodModel.kind,
-    namespace,
-    isList: true,
-    selector: {
-      matchLabels: { app: CDI_APP_LABEL },
-    },
-  });
-  const [dvs, dvsLoaded, dvsError] = useK8sWatchResource<V1alpha1DataVolume[]>({
-    kind: DataVolumeModel.kind,
-    namespace,
-    isList: true,
-  });
-  const [pvcs, pvcsLoaded, pvcsError] = useK8sWatchResource<PersistentVolumeClaimKind[]>({
-    kind: PersistentVolumeClaimModel.kind,
-    namespace,
-    isList: true,
-  });
-  const [baseImages, baseLoaded, baseError, baseDVs, basePods] = useBaseImages(baseTemplates, true);
+
   const [projects, projectsLoaded, projectsError] = useK8sWatchResource<K8sResourceCommon[]>({
     kind: ProjectModel.kind,
     isList: true,
   });
-
   const [scConfigMap, scLoaded, scError] = useStorageClassConfigMap();
+  const {
+    pods,
+    dataVolumes,
+    pvcs,
+    userTemplates,
+    baseTemplates,
+    resourcesLoaded,
+    resourcesLoadError,
+  } = useVmTemplatesResources(namespace);
 
   const templates = filterTemplates(userTemplates, baseTemplates);
-  const allPods = [...pods, ...basePods];
-  const allDVs = [...dvs, ...baseDVs];
-  const allPVCs = [...pvcs, ...baseImages];
 
-  const loaded =
-    utLoaded &&
-    btLoaded &&
-    podsLoaded &&
-    dvsLoaded &&
-    pvcsLoaded &&
-    baseLoaded &&
-    projectsLoaded &&
-    scLoaded;
-  const loadError =
-    utError ||
-    btError ||
-    podsError ||
-    dvsError ||
-    pvcsError ||
-    baseError ||
-    projectsError ||
-    scError;
+  const loaded = resourcesLoaded && projectsLoaded && scLoaded;
+  const loadError = resourcesLoadError || projectsError || scError;
 
   const sourceStatus =
     selectedTemplate &&
     getTemplateSourceStatus({
-      pvcs: allPVCs,
+      pvcs,
       template: selectedTemplate.variants[0],
-      pods: allPods,
-      dataVolumes: allDVs,
+      pods,
+      dataVolumes,
     });
 
   React.useEffect(() => {
@@ -368,9 +303,9 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
           <SelectTemplate
             loaded={loaded}
             loadError={loadError}
-            pods={allPods}
-            pvcs={allPVCs}
-            dataVolumes={allDVs}
+            pods={pods}
+            pvcs={pvcs}
+            dataVolumes={dataVolumes}
             templates={templates}
             selectedTemplate={selectedTemplate}
             selectTemplate={(template) => {

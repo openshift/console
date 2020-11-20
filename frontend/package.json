@@ -107,7 +107,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.9.0",
     "@patternfly/patternfly": "4.59.1",
-    "@patternfly/react-catalog-view-extension": "4.8.89",
+    "@patternfly/react-catalog-view-extension": "4.8.104",
     "@patternfly/react-charts": "6.11.7",
     "@patternfly/react-core": "4.75.2",
     "@patternfly/react-table": "4.19.5",
