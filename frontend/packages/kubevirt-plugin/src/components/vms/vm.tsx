@@ -193,8 +193,11 @@ const VMListEmpty: React.FC = () => {
       </Title>
       <EmptyStateBody>
         <Trans ns="kubevirt-plugin">
-          See the <Link to={`${location.pathname}/templates`}>templates tab</Link> to quickly create
-          a virtual machine from the available templates.
+          See the{' '}
+          <Link to={`${location.pathname}${location.pathname.endsWith('/') ? '' : '/'}templates`}>
+            templates tab
+          </Link>{' '}
+          to quickly create a virtual machine from the available templates.
         </Trans>
       </EmptyStateBody>
       <Button

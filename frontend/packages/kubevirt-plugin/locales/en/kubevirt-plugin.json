@@ -141,7 +141,7 @@
   "No Active Users": "No Active Users",
   "Pending changes": "Pending changes",
   "No virtual machines found": "No virtual machines found",
-  "See the <1>templates tab</1> to quickly create a virtual machine from the available templates.": "See the <1>templates tab</1> to quickly create a virtual machine from the available templates.",
+  "See the <2>templates tab</2> to quickly create a virtual machine from the available templates.": "See the <2>templates tab</2> to quickly create a virtual machine from the available templates.",
   "Create virtual machine": "Create virtual machine",
   "Create Virtual Machine": "Create Virtual Machine",
   "`Virtual Machine Instance {{name}}`": "`Virtual Machine Instance {{name}}`",

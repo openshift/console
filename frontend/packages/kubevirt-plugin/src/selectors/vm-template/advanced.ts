@@ -152,20 +152,13 @@ export const getTemplateSizeRequirement = (
         ? convertToBaseValue(customSource.pvcSize?.value)
         : convertToBaseValue(`${customSource.size?.value}${customSource.size?.value.unit}`);
     isCDRom = customSource.cdRom?.value;
-  } else if (
-    isCommonTemplate(template) &&
-    !isTemplateSourceError(templateSource) &&
-    templateSource?.pvc
-  ) {
+  } else if (!isTemplateSourceError(templateSource) && templateSource?.pvc) {
     sourceSize = convertToBaseValue(templateSource.pvc.spec.resources.requests.storage);
     isCDRom =
+      isCommonTemplate(template) &&
       (templateSource.dataVolume || templateSource.pvc)?.metadata.labels?.[LABEL_CDROM_SOURCE] ===
-      'true';
-  } else if (
-    !isCommonTemplate(template) &&
-    !isTemplateSourceError(templateSource) &&
-    templateSource.dvTemplate
-  ) {
+        'true';
+  } else if (!isTemplateSourceError(templateSource) && templateSource.dvTemplate) {
     sourceSize = convertToBaseValue(getDataVolumeStorageSize(templateSource.dvTemplate));
   }
 
