@@ -201,19 +201,40 @@ h6 {
     position: absolute;
     right: 0;
     top: 0;
+    color: black !important;
+    background-color: white;
+    border-bottom: 1px solid #c5c7c8;
   }
 
   &__header-brand-link {
     flex: 0 1 auto !important; // so link doesn't grow larger than logo
   }
+  &__header-brand-toggle button {
+    color: white !important;
+  }
 
   &__header-tools {
-    @media (max-width: $grid-float-breakpoint-max) {
-      margin-right: 8px !important;
-    }
+    margin-right: 5px !important;
     .pf-c-dropdown__toggle,
     .pf-c-app-launcher__toggle {
-      font-size: $pf-header-icon-fontsize !important;
+      font-size: 14px !important;
+      color: black !important;
+    }
+    .pf-c-badge {
+      cursor: pointer;
+      background-color: black;
+      font-weight: normal;
+      font-size: 12px;
+      margin: 0 10px;
+    }
+    .pf-c-notification-badge {
+      color: black;
+    }
+    .pf-l-toolbar__group:not(:last-child) {
+      margin-right: 20px;
+    }
+    .pf-l-toolbar__item > nav {
+      padding: 0px 10px;
     }
   }
 
