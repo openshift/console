@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { k8sCreate, ContainerPort } from '@console/internal/module/k8s';
 import { ImageStreamImportsModel } from '@console/internal/models';
 import { useFormikContext, FormikValues, FormikTouched } from 'formik';
@@ -182,21 +182,23 @@ const ImageSearch: React.FC = () => {
         required
       />
       <div className="help-block" id="image-name-help">
-        {t('devconsole~To deploy an image from a private repository, you must')}{' '}
-        <Button
-          variant="link"
-          isInline
-          onClick={() =>
-            secretModalLauncher({
-              namespace,
-              save: handleSave,
-              secretType: SecretTypeAbstraction.image,
-            })
-          }
-        >
-          {t('devconsole~create an image pull secret')}
-        </Button>{' '}
-        {t('devconsole~with your image registry credentials.')}
+        <Trans ns="devconsole" t={t}>
+          To deploy an image from a private repository, you must{' '}
+          <Button
+            variant="link"
+            isInline
+            onClick={() =>
+              secretModalLauncher({
+                namespace,
+                save: handleSave,
+                secretType: SecretTypeAbstraction.image,
+              })
+            }
+          >
+            create an image pull secret
+          </Button>{' '}
+          with your image registry credentials.
+        </Trans>
       </div>
       {newImageSecret && alertVisible && (
         <Alert
