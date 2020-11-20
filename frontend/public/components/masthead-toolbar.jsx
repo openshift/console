@@ -1,8 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
-import { BellIcon, CaretDownIcon, EllipsisVIcon, PlusCircleIcon, QuestionCircleIcon, OutlinedClockIcon } from '@patternfly/react-icons';
-import { ApplicationLauncher, ApplicationLauncherGroup, ApplicationLauncherItem, ApplicationLauncherSeparator, NotificationBadge, Toolbar, ToolbarGroup, ToolbarItem, TooltipPosition, Tooltip, Button } from '@patternfly/react-core';
+import { BellIcon, EllipsisVIcon, PlusCircleIcon, QuestionCircleIcon, ClockIcon, GlobeAmericasIcon, AngleDownIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom';
 import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
@@ -396,7 +395,7 @@ class MastheadToolbarContents_ extends React.Component {
     const userToggle = (
       <span className="pf-c-dropdown__toggle">
         <span className="co-username">{username}</span>
-        <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
+        <AngleDownIcon className="pf-c-dropdown__toggle-icon" />
       </span>
     );
 
@@ -455,8 +454,9 @@ class MastheadToolbarContents_ extends React.Component {
     const languageToggle = (
       <span className="pf-c-dropdown__toggle">
         {/* i18n 키값 요청 후 적용하기 - 현재 선택된 언어를 표현하는 키값 - 한국어, 영어 */}
+        <GlobeAmericasIcon />
         <span className="co-username">Language</span>
-        <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
+        <AngleDownIcon className="pf-c-dropdown__toggle-icon" />
       </span>
     );
 
@@ -497,7 +497,7 @@ class MastheadToolbarContents_ extends React.Component {
         <Toolbar>
           <ToolbarGroup className="hidden-xs">
             <ToolbarItem>
-              <OutlinedClockIcon />
+              <ClockIcon />
             </ToolbarItem>
             <ToolbarItem>
               <ExpTimer
