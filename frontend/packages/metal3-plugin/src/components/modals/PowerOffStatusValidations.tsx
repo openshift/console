@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { Alert, ExpandableSection } from '@patternfly/react-core';
+import { Alert, ExpandableSection, Stack, StackItem } from '@patternfly/react-core';
 import { DaemonSetModel, PodModel } from '@console/internal/models';
 import { ResourceLink } from '@console/internal/components/utils';
 import { PodKind } from '@console/internal/module/k8s';
@@ -11,8 +11,6 @@ import {
   HOST_HEALTH_ERROR,
   NODE_STATUS_STOPPING_MAINTENANCE,
 } from '../../constants';
-
-import './PowerOffStatusValidations.scss';
 
 type StatusValidationProps = {
   status: string;
@@ -191,13 +189,15 @@ export const StatusValidations: React.FC<StatusValidationProps> = ({
   }
 
   return (
-    <div className="metal3-poweroff-validations">
+    <Stack hasGutter>
       {validations.map((validation) => (
-        <Alert variant={validation.level} isInline title={validation.title} key={validation.title}>
-          {validation.description}
-          {validation.detail}
-        </Alert>
+        <StackItem key={validation.title}>
+          <Alert variant={validation.level} isInline title={validation.title}>
+            {validation.description}
+            {validation.detail}
+          </Alert>
+        </StackItem>
       ))}
-    </div>
+    </Stack>
   );
 };

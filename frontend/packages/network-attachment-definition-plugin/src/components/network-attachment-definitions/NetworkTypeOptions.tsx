@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
-import { FormControl, FormGroup, HelpBlock } from 'patternfly-react';
 import { Dropdown } from '@console/internal/components/utils';
 import { ELEMENT_TYPES, networkTypeParams, NetworkTypeParams } from '../../constants';
+import { FormGroup, TextArea, TextInput } from '@patternfly/react-core';
 
 const handleTypeParamChange = (
   paramKey,
@@ -75,9 +75,7 @@ export default (props) => {
             >
               {_.get(parameter, 'name', key)}
             </label>
-            <FormControl
-              componentClass={ELEMENT_TYPES.TEXTAREA}
-              bsClass="pf-c-form-control"
+            <TextArea
               value={_.get(typeParamsData, `${key}.value`, '')}
               onChange={(event) =>
                 handleTypeParamChange(
@@ -90,7 +88,7 @@ export default (props) => {
                 )
               }
             />
-            <HelpBlock>{validationMsg || null}</HelpBlock>
+            {validationMsg && <div className="text-secondary">{validationMsg}</div>}
           </>
         );
         break;
@@ -118,7 +116,7 @@ export default (props) => {
                 {_.get(parameter, 'name', key)}
               </label>
             </div>
-            <HelpBlock>{validationMsg || null}</HelpBlock>
+            {validationMsg && <div className="text-secondary">{validationMsg}</div>}
           </>
         );
         break;
@@ -144,7 +142,7 @@ export default (props) => {
                 )
               }
             />
-            <HelpBlock>{validationMsg || null}</HelpBlock>
+            {validationMsg && <div className="text-secondary">{validationMsg}</div>}
           </>
         );
         break;
@@ -159,9 +157,8 @@ export default (props) => {
             >
               {_.get(parameter, 'name', key)}
             </label>
-            <FormControl
+            <TextInput
               type="text"
-              bsClass="pf-c-form-control"
               value={_.get(typeParamsData, `${key}.value`, '')}
               onChange={(event) =>
                 handleTypeParamChange(
@@ -174,7 +171,7 @@ export default (props) => {
                 )
               }
             />
-            <HelpBlock>{validationMsg || null}</HelpBlock>
+            {validationMsg && <div className="text-secondary">{validationMsg}</div>}
           </>
         );
     }
@@ -182,8 +179,8 @@ export default (props) => {
     return (
       <FormGroup
         key={key}
-        controlId={`network-type-parameters-${key}`}
-        validationState={_.get(typeParamsData, `${key}.validationMsg`, null) ? 'error' : null}
+        fieldId={`network-type-parameters-${key}`}
+        validated={_.get(typeParamsData, `${key}.validationMsg`, null) ? 'error' : null}
       >
         {children}
       </FormGroup>

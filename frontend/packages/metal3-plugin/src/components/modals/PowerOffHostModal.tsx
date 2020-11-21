@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { FormGroup, Checkbox, HelpBlock } from 'patternfly-react';
-import { Alert, Button } from '@patternfly/react-core';
+import { Alert, Button, Stack, StackItem, Checkbox } from '@patternfly/react-core';
 import {
   withHandlePromise,
   HandlePromiseProps,
@@ -111,29 +110,34 @@ const ForcePowerOffDialog: React.FC<ForcePowerOffDialogProps> = ({
     : 'The host will power off immediately as if it were unplugged.';
 
   return (
-    <>
-      {mainText}
-      <StatusValidations
-        status={status.status}
-        nodePods={pods}
-        loadError={loadError}
-        onLinkClicked={cancel}
-      />
-      <div className="form-group">
-        <FormGroup controlId="host-force-off">
-          <Checkbox onChange={() => setForceOff(!forceOff)} checked={forceOff} inline>
-            Power off immediately
-          </Checkbox>
-          <HelpBlock id="host-force-off-help">{helpText}</HelpBlock>
-        </FormGroup>
+    <Stack hasGutter>
+      <StackItem>
+        {mainText}
+        <StatusValidations
+          status={status.status}
+          nodePods={pods}
+          loadError={loadError}
+          onLinkClicked={cancel}
+        />
+      </StackItem>
+      <StackItem>
+        <Checkbox
+          id="host-force-off"
+          label="Power off immediately"
+          onChange={setForceOff}
+          isChecked={forceOff}
+        />
+        <div className="text-secondary">{helpText}</div>
+      </StackItem>
+      <StackItem>
         {forceOff && (
           <Alert variant="warning" title="Applications may be temporarily disrupted." isInline>
             Workloads currently running on this host will not be moved before powering off. This may
             cause service disruptions.
           </Alert>
         )}
-      </div>
-    </>
+      </StackItem>
+    </Stack>
   );
 };
 
