@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import {
   Plugin,
+  NavSection,
   ResourceNSNavItem,
   ModelFeatureFlag,
   ModelDefinition,
@@ -34,6 +35,7 @@ import * as eventSourceIcon from './imgs/event-source.svg';
 import * as channelIcon from './imgs/channel.svg';
 
 type ConsumedExtensions =
+  | NavSection
   | ResourceNSNavItem
   | ModelFeatureFlag
   | ModelDefinition
@@ -126,11 +128,18 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Nav/Section',
+    properties: {
+      id: 'serverless',
+      name: 'Serverless',
+    },
+  },
+  {
     type: 'NavItem/Href',
     properties: {
       id: 'serverlessserving',
       perspective: 'admin',
-      section: 'Serverless',
+      section: 'serverless',
       componentProps: {
         name: 'Serving',
         href: '/serving',
@@ -149,7 +158,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'serverlesseventing',
       perspective: 'admin',
-      section: 'Serverless',
+      section: 'serverless',
       componentProps: {
         name: 'Eventing',
         href: '/eventing',

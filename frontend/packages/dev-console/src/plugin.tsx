@@ -12,6 +12,7 @@ import {
   ModelDefinition,
   ModelFeatureFlag,
   KebabActions,
+  NavSection,
   HrefNavItem,
   ResourceNSNavItem,
   ResourceClusterNavItem,
@@ -67,6 +68,7 @@ import { CatalogConsumedExtensions, catalogPlugin } from './components/catalog/c
 type ConsumedExtensions =
   | ModelDefinition
   | ModelFeatureFlag
+  | NavSection
   | HrefNavItem
   | ResourceClusterNavItem
   | ResourceNSNavItem
@@ -108,11 +110,25 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Nav/Section',
+    properties: {
+      id: 'top',
+      perspective: 'dev',
+    },
+  },
+  {
+    type: 'Nav/Section',
+    properties: {
+      id: 'resources',
+      perspective: 'dev',
+    },
+  },
+  {
     type: 'NavItem/Href',
     properties: {
       id: 'add',
       perspective: 'dev',
-      group: 'top',
+      section: 'top',
       componentProps: {
         name: '+Add',
         href: '/add',
@@ -125,7 +141,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'topology',
       perspective: 'dev',
-      group: 'top',
+      section: 'top',
       componentProps: {
         name: 'Topology',
         href: '/topology',
@@ -141,7 +157,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'monitoring',
       perspective: 'dev',
-      group: 'top',
+      section: 'top',
       componentProps: {
         name: 'Monitoring',
         href: '/dev-monitoring',
@@ -158,7 +174,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'search',
       perspective: 'dev',
-      group: 'top',
+      section: 'top',
       componentProps: {
         name: 'Search',
         href: '/search',
@@ -172,7 +188,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'builds',
       perspective: 'dev',
-      group: 'resources',
+      section: 'resources',
       componentProps: {
         name: 'Builds',
         resource: 'buildconfigs',
@@ -188,7 +204,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'applicationstages',
       perspective: 'dev',
-      group: 'resources',
+      section: 'resources',
       componentProps: {
         name: 'Application Stages',
         href: '/applicationstages',
@@ -204,7 +220,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'helm',
       perspective: 'dev',
-      group: 'resources',
+      section: 'resources',
       componentProps: {
         name: 'Helm',
         href: '/helm-releases',
@@ -220,7 +236,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'project',
       perspective: 'dev',
-      group: 'resources',
+      section: 'resources',
       componentProps: {
         name: 'Project',
         href: '/project-details',

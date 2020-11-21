@@ -69,7 +69,7 @@ const MonitoringNavSection_ = ({ canAccess }) => {
   const canAccessPrometheus = canAccess && !!window.SERVER_FLAGS.prometheusBaseURL;
   const showSilences = canAccess && !!window.SERVER_FLAGS.alertManagerBaseURL;
   return canAccessPrometheus || showSilences ? (
-    <NavSection title={t('nav~Monitoring')}>
+    <NavSection id="monitoring" title={t('nav~Monitoring')}>
       {canAccessPrometheus && (
         <HrefLink
           id="monitoringalerts"
@@ -107,7 +107,7 @@ const AdminNav = () => {
   const { t } = useTranslation();
   return (
     <>
-      <NavSection title={t('nav~Home')}>
+      <NavSection id="home" title={t('nav~Home')}>
         <HrefLink
           id="dashboards"
           href="/dashboards"
@@ -131,9 +131,9 @@ const AdminNav = () => {
         <ResourceNSLink id="events" resource="events" name={t('nav~Events')} />
       </NavSection>
 
-      <NavSection title={t('nav~Operators')} />
+      <NavSection id="operators" title={t('nav~Operators')} />
 
-      <NavSection title={t('nav~Workloads')}>
+      <NavSection id="workloads" title={t('nav~Workloads')}>
         <ResourceNSLink id="pods" resource="pods" name={t('nav~Pods')} />
         <ResourceNSLink id="deployments" resource="deployments" name={t('nav~Deployments')} />
         <ResourceNSLink
@@ -164,9 +164,9 @@ const AdminNav = () => {
 
       {/* Temporary addition of Knative Serverless section until extensibility allows for section ordering
           and admin-nav gets contributed through extensions. */}
-      <NavSection title={t('nav~Serverless')} />
+      <NavSection id="serverless" title={t('nav~Serverless')} />
 
-      <NavSection title={t('nav~Networking')}>
+      <NavSection id="networking" title={t('nav~Networking')}>
         <ResourceNSLink id="services" resource="services" name={t('nav~Services')} />
         <ResourceNSLink
           id="routes"
@@ -182,7 +182,7 @@ const AdminNav = () => {
         />
       </NavSection>
 
-      <NavSection title={t('nav~Storage')}>
+      <NavSection id="storage" title={t('nav~Storage')}>
         <ResourceClusterLink
           id="networkpolicies"
           resource="persistentvolumes"
@@ -211,7 +211,7 @@ const AdminNav = () => {
         />
       </NavSection>
 
-      <NavSection title={t('nav~Builds')} required={FLAGS.OPENSHIFT}>
+      <NavSection id="builds" title={t('nav~Builds')} required={FLAGS.OPENSHIFT}>
         <ResourceNSLink id="buildconfigs" resource="buildconfigs" name={t('nav~Build Configs')} />
         <ResourceNSLink id="builds" resource="builds" name={t('nav~Builds')} />
         <ResourceNSLink
@@ -224,9 +224,13 @@ const AdminNav = () => {
 
       {/* Temporary addition of Tekton Pipelines section until extensibility allows for section ordering
           and admin-nav gets contributed through extensions. */}
-      <NavSection title={t('nav~Pipelines')} />
+      <NavSection id="pipelines" title={t('nav~Pipelines')} />
 
-      <NavSection title={t('nav~Service Catalog')} required={FLAGS.SERVICE_CATALOG}>
+      <NavSection
+        id="servicecatalog"
+        title={t('nav~Service Catalog')}
+        required={FLAGS.SERVICE_CATALOG}
+      >
         <HrefLink
           id="provisionedservices"
           href="/provisionedservices"
@@ -245,7 +249,7 @@ const AdminNav = () => {
 
       <MonitoringNavSection />
 
-      <NavSection title={t('nav~Compute')} required={FLAGS.CAN_LIST_NODE}>
+      <NavSection id="compute" title={t('nav~Compute')} required={FLAGS.CAN_LIST_NODE}>
         <ResourceClusterLink id="nodes" resource="nodes" name={t('nav~Nodes')} />
         <HrefLink
           id="machines"
@@ -296,7 +300,7 @@ const AdminNav = () => {
         />
       </NavSection>
 
-      <NavSection title={t('nav~User Management')}>
+      <NavSection id="usermanagement" title={t('nav~User Management')}>
         <ResourceClusterLink
           id="users"
           resource={referenceForModel(UserModel)}
@@ -328,7 +332,7 @@ const AdminNav = () => {
         />
       </NavSection>
 
-      <NavSection title={t('nav~Administration')}>
+      <NavSection id="administration" title={t('nav~Administration')}>
         <HrefLink
           id="clustersettings"
           href="/settings/cluster"

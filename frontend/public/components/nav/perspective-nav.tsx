@@ -1,15 +1,18 @@
 import * as React from 'react';
 import { connect, Dispatch } from 'react-redux';
-import * as _ from 'lodash-es';
 import { NavItemSeparator, NavGroup, Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import {
   useExtensions,
+  NavSection as PluginNavSection,
   NavItem,
+  SeparatorNavItem,
+  isNavSection,
   isNavItem,
   isSeparatorNavItem,
   Perspective,
   isPerspective,
+  LoadedExtension,
 } from '@console/plugin-sdk';
 import { RootState } from '../../redux';
 import { setPinnedResources } from '../../actions/ui';
@@ -42,18 +45,109 @@ const getLabelForResource = (resource: string): string => {
   return model ? model.labelPlural : '';
 };
 
+const itemDependsOnItem = (
+  s1: LoadedExtension<PluginNavSection | NavItem | SeparatorNavItem>,
+  s2: LoadedExtension<PluginNavSection | NavItem | SeparatorNavItem>,
+) => {
+  if (!s1.properties.insertBefore && !s1.properties.insertAfter) {
+    return false;
+  }
+  const before = Array.isArray(s1.properties.insertBefore)
+    ? s1.properties.insertBefore
+    : [s1.properties.insertBefore];
+  const after = Array.isArray(s1.properties.insertAfter)
+    ? s1.properties.insertAfter
+    : [s1.properties.insertAfter];
+  return before.includes(s2.properties.id) || after.includes(s2.properties.id);
+};
+
+const isPositioned = (
+  item: LoadedExtension<PluginNavSection | NavItem | SeparatorNavItem>,
+  allItems: LoadedExtension<PluginNavSection | NavItem | SeparatorNavItem>[],
+) => !!allItems.find((i) => itemDependsOnItem(item, i));
+
+const findIndexForItem = (
+  item: LoadedExtension<PluginNavSection | NavItem | SeparatorNavItem>,
+  currentItems: LoadedExtension<PluginNavSection | NavItem | SeparatorNavItem>[],
+) => {
+  const { insertBefore, insertAfter } = item.properties;
+  let index = -1;
+  const before = Array.isArray(insertBefore) ? insertBefore : [insertBefore];
+  const after = Array.isArray(insertAfter) ? insertAfter : [insertAfter];
+  let count = 0;
+  while (count < before.length && index < 0) {
+    index = currentItems.findIndex((i) => i.properties.id === before[count]);
+    count++;
+  }
+  count = 0;
+  while (count < after.length && index < 0) {
+    index = currentItems.findIndex((i) => i.properties.id === after[count]);
+    if (index >= 0) {
+      index += 1;
+    }
+    count++;
+  }
+  return index;
+};
+
+const insertItem = (
+  item: LoadedExtension<PluginNavSection | NavItem | SeparatorNavItem>,
+  currentItems: LoadedExtension<PluginNavSection | NavItem | SeparatorNavItem>[],
+) => {
+  const index = findIndexForItem(item, currentItems);
+  if (index >= 0) {
+    currentItems.splice(index, 0, item);
+  } else {
+    currentItems.push(item);
+  }
+};
+
+const insertPositionedItems = (
+  insertItems: LoadedExtension<PluginNavSection | NavItem | SeparatorNavItem>[],
+  currentItems: LoadedExtension<PluginNavSection | NavItem | SeparatorNavItem>[],
+) => {
+  if (insertItems.length === 0) {
+    return;
+  }
+
+  const sortedItems = insertItems.filter((item) => !isPositioned(item, insertItems));
+  const positionedItems = insertItems.filter((item) => isPositioned(item, insertItems));
+
+  if (sortedItems.length === 0) {
+    // Circular dependencies
+    positionedItems.forEach((i) => insertItem(i, currentItems));
+    return;
+  }
+
+  sortedItems.forEach((i) => insertItem(i, currentItems));
+  insertPositionedItems(positionedItems, currentItems);
+};
+
+export const getSortedNavItems = (
+  topLevelItems: LoadedExtension<PluginNavSection | NavItem | SeparatorNavItem>[],
+) => {
+  const sortedItems = topLevelItems.filter((item) => !isPositioned(item, topLevelItems));
+  const positionedItems = topLevelItems.filter((item) => isPositioned(item, topLevelItems));
+  insertPositionedItems(positionedItems, sortedItems);
+  return sortedItems;
+};
+
 const PerspectiveNav: React.FC<StateProps & DispatchProps> = ({
   perspective,
   pinnedResources,
   onPinnedResourcesChange,
 }) => {
-  const navItemExtensions = useExtensions<NavItem>(isNavItem);
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
-
-  const matchingNavItems = React.useMemo(
-    () => navItemExtensions.filter((item) => item.properties.perspective === perspective),
-    [navItemExtensions, perspective],
+  const allItems = useExtensions<PluginNavSection | NavItem | SeparatorNavItem>(
+    isNavSection,
+    isNavItem,
   );
+  const orderedNavItems = React.useMemo(() => {
+    const topLevelItems = allItems.filter(
+      (s) => s.properties.perspective === perspective && !(s as NavItem).properties.section,
+    );
+    return getSortedNavItems(topLevelItems);
+  }, [allItems, perspective]);
 
   const unPin = (e: React.MouseEvent<HTMLButtonElement>, resource: string) => {
     e.preventDefault();
@@ -117,37 +211,22 @@ const PerspectiveNav: React.FC<StateProps & DispatchProps> = ({
       })
       .filter((p) => p !== null);
 
-  // track sections and groups so that we do not create duplicates
-  const renderedSections: string[] = [];
-  const renderedGroups: string[] = [];
-
   return (
     <>
-      {_.compact(
-        matchingNavItems.map((item, index) => {
-          const { section, group } = item.properties;
-          if (section) {
-            if (renderedSections.includes(section)) {
-              return;
-            }
-            renderedSections.push(section);
-            return <NavSection title={section} key={section} />;
-          }
-          if (group) {
-            if (renderedGroups.includes(group)) {
-              return;
-            }
-            renderedGroups.push(group);
-            return <NavSection title={group} key={group} isGrouped />;
-          }
-          if (isSeparatorNavItem(item)) {
-            return <NavItemSeparator key={`separator-${index}`} />;
-          }
+      {orderedNavItems.map((item, index) => {
+        if (isNavSection(item)) {
+          const { id, name } = item.properties;
+          return <NavSection id={id} title={name} key={id} isGrouped={!name} />;
+        }
+        if (isNavItem(item)) {
           return createLink(item, true);
-        }),
-      )}
+        }
+        if (isSeparatorNavItem(item)) {
+          return <NavItemSeparator key={`separator-${index}`} />;
+        }
+      })}
       {pinnedResources?.length ? (
-        <NavGroup className="oc-nav-group" title="" key={`group-pins`}>
+        <NavGroup className="oc-nav-group" title="" key="group-pins">
           {getPinnedItems(true)}
         </NavGroup>
       ) : null}

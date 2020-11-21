@@ -10,6 +10,7 @@ import {
   ResourceListPage,
   ResourceDetailsPage,
   Perspective,
+  NavSection,
   YAMLTemplate,
   RoutePage,
   DashboardsOverviewHealthPrometheusSubsystem,
@@ -43,6 +44,7 @@ type ConsumedExtensions =
   | ResourceListPage
   | ResourceDetailsPage
   | Perspective
+  | NavSection
   | YAMLTemplate
   | RoutePage
   | DashboardsOverviewHealthPrometheusSubsystem
@@ -73,10 +75,17 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'NavItem/Href',
+    type: 'Nav/Section',
     properties: {
       id: 'home',
-      section: 'Home',
+      name: 'Home',
+    },
+  },
+  {
+    type: 'NavItem/Href',
+    properties: {
+      id: 'testhreflink',
+      section: 'home',
       componentProps: {
         name: 'Test Href Link',
         href: '/test',
@@ -90,7 +99,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'NavItem/ResourceNS',
     properties: {
       id: 'testresourcens',
-      section: 'Home',
+      section: 'home',
       componentProps: {
         name: 'Test ResourceNS Link',
         resource: 'pods',
@@ -104,7 +113,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'NavItem/ResourceCluster',
     properties: {
       id: 'testresourcecluster',
-      section: 'Home',
+      section: 'home',
       componentProps: {
         name: 'Test ResourceCluster Link',
         resource: 'projects',
@@ -192,11 +201,18 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Nav/Section',
+    properties: {
+      id: 'advanced',
+      name: 'Advanced',
+    },
+  },
+  {
     type: 'NavItem/ResourceCluster',
     properties: {
       id: 'testprojects',
       perspective: 'test',
-      section: 'Advanced',
+      section: 'advanced',
       componentProps: {
         name: 'Test Projects',
         resource: 'projects',

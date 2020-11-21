@@ -139,7 +139,7 @@ export const NavSection = connect(navSectionStateToProps)(
         this.setState({ isOpen: expandState });
       };
 
-      getNavItemExtensions = (perspective: string, title: string) => {
+      getNavItemExtensions = (perspective: string, title: string, id: string) => {
         const { navItemExtensions, perspectiveExtensions } = this.props;
 
         const defaultPerspective = _.find(perspectiveExtensions, (p) => p.properties.default);
@@ -152,7 +152,7 @@ export const NavSection = connect(navSectionStateToProps)(
             // or if no perspective specified, are we in the default perspective
             (item.properties.perspective === perspective ||
               (!item.properties.perspective && isDefaultPerspective)) &&
-            (item.properties.section === title || item.properties.group === title),
+            item.properties.section === id,
         );
       };
 
@@ -186,10 +186,10 @@ export const NavSection = connect(navSectionStateToProps)(
       };
 
       getChildren() {
-        const { title, children, perspective } = this.props;
+        const { id, title, children, perspective } = this.props;
         const Children = React.Children.map(children, this.mapChild) || [];
 
-        this.getNavItemExtensions(perspective, title).forEach((item) => {
+        this.getNavItemExtensions(perspective, title, id).forEach((item) => {
           const pluginChild = this.mapChild(createLink(item));
           if (pluginChild) {
             mergePluginChild(
@@ -269,6 +269,7 @@ type NavSectionExtensionProps = {
 };
 
 type NavSectionProps = {
+  id: string;
   title: NavSectionTitle | string;
   isGrouped?: boolean;
   required?: string;
