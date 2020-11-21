@@ -109,6 +109,14 @@ const config: Configuration = {
         loader: 'umd-compat-loader',
       },
       {
+        test: /prettier\/parser-yaml/,
+        loader: 'null-loader',
+      },
+      {
+        test: /prettier/,
+        loader: 'null-loader',
+      },
+      {
         test: /node_modules[\\\\|/](vscode-json-languageservice)/,
         loader: 'umd-compat-loader',
       },
@@ -209,7 +217,6 @@ const config: Configuration = {
     new MomentLocalesPlugin({
       localesToKeep: ['en', 'ja', 'ko'],
     }),
-    new webpack.IgnorePlugin(/prettier/),
     extractCSS,
     ...(IS_WDS
       ? [

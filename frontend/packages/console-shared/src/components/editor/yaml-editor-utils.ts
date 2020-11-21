@@ -44,7 +44,7 @@ export const registerYAMLLanguage = (monaco) => {
 };
 
 export const createYAMLService = () => {
-  const resolveSchema = (url: string): Thenable<string> => {
+  const resolveSchema = (url: string): Promise<string> => {
     const promise = new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.onload = () => resolve(xhr.responseText);
@@ -52,14 +52,14 @@ export const createYAMLService = () => {
       xhr.open('GET', url, true);
       xhr.send();
     });
-    return promise as Thenable<string>;
+    return promise as Promise<string>;
   };
 
   const workspaceContext = {
     resolveRelativePath: (relativePath, resource) => URL.resolve(resource, relativePath),
   };
 
-  const yamlService = getLanguageService(resolveSchema, workspaceContext, []);
+  const yamlService = getLanguageService(resolveSchema, workspaceContext);
 
   // Prepare the schema
   const yamlOpenAPI = getSwaggerDefinitions();
@@ -123,7 +123,7 @@ export const registerYAMLHover = (languageID, monaco, m2p, p2m, createDocument, 
     provideHover(model, position) {
       const doc = createDocument(model);
       return yamlService
-        .doHover(doc, m2p.asPosition(position.lineNumber, position.column))
+        .doHover(doc, m2p.asPosition(position.lineNumber, position.column), true)
         .then((hover) => {
           return p2m.asHover(hover);
         })
