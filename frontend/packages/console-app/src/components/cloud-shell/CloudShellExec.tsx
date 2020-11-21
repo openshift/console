@@ -18,6 +18,7 @@ import {
   CloudShellResource,
 } from './cloud-shell-utils';
 import { Button, EmptyState, EmptyStateBody } from '@patternfly/react-core';
+import './CloudShellExec.scss';
 
 // pod exec WS protocol is FD prefixed, base64 encoded data (sometimes json stringified)
 
@@ -198,9 +199,9 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
 
   if (wsError) {
     return (
-      <div className="co-cloudshell-terminal__container-error">
+      <div className="co-cloudshell-exec__container-error">
         <EmptyState>
-          <EmptyStateBody className="cloudshell-error">{wsError}</EmptyStateBody>
+          <EmptyStateBody className="co-cloudshell-exec__error-msg">{wsError}</EmptyStateBody>
           <Button
             variant="primary"
             onClick={() => {
@@ -213,8 +214,8 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
             }}
           >
             {customResource.status.phase === 'Running'
-              ? t('Reconnect to terminal')
-              : t('Restart Terminal')}
+              ? t('cloudshell~Reconnect to terminal')
+              : t('cloudshell~Restart terminal')}
           </Button>
         </EmptyState>
       </div>
