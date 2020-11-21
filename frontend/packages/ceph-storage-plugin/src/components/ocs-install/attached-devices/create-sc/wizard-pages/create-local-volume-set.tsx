@@ -12,7 +12,6 @@ import { State, Action } from '../state';
 import { DiscoveryDonutChart } from './donut-chart';
 import {
   MINIMUM_NODES,
-  diskTypeDropdownItems,
   diskModeDropdownItems,
   allNodesSelectorTxt,
 } from '../../../../../constants';
@@ -55,7 +54,6 @@ export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({
           <LocalVolumeSetInner
             state={state}
             dispatch={dispatch}
-            diskTypeOptions={diskTypeDropdownItems}
             diskModeOptions={diskModeDropdownItems}
             allNodesHelpTxt={allNodesSelectorTxt}
           />

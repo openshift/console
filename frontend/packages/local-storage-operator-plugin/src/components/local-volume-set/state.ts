@@ -5,7 +5,7 @@ export const initialState = {
   volumeSetName: '',
   storageClassName: '',
   showNodesListOnLVS: false,
-  diskType: diskTypeDropdownItems.SSD,
+  diskType: diskTypeDropdownItems.All,
   diskMode: diskModeDropdownItems.BLOCK,
   maxDiskLimit: '',
   nodeNames: [],
