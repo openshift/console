@@ -4,7 +4,6 @@
 .co-inventory-card__item {
   align-items: center;
   display: flex;
-  font-size: 1rem;
   justify-content: space-between;
   line-height: 1.5rem;
   padding: 1rem 0 0 0;
@@ -36,8 +35,8 @@
   color: $pf-color-black-600;
 }
 
-.co-inventory-card__status-text {
-  margin-left: 0.25rem;
+.co-inventory-card__status-link {
+  text-decoration: none;
 }
 
 .co-inventory-card__accordion.pf-c-accordion {
