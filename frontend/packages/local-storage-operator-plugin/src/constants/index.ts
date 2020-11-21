@@ -1,8 +1,31 @@
+import { DiskMechanicalProperties } from '../components/local-volume-set/types';
+
 export const diskModeDropdownItems = Object.freeze({
   BLOCK: 'Block',
   FILESYSTEM: 'Filesystem',
 });
+
+export const DISK_TYPES: {
+  [key: string]: {
+    property?: keyof typeof DiskMechanicalProperties;
+    title: string;
+  };
+} = {
+  SSD: {
+    property: 'NonRotational',
+    title: 'SSD / NVMe',
+  },
+  HDD: {
+    property: 'Rotational',
+    title: 'HDD',
+  },
+  All: {
+    title: 'All',
+  },
+};
+
 export const diskTypeDropdownItems = Object.freeze({
+  All: 'All',
   SSD: 'SSD / NVMe',
   HDD: 'HDD',
 });

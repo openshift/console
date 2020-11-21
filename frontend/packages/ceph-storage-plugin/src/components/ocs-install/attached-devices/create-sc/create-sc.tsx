@@ -25,10 +25,7 @@ import {
   getLabelIndex,
   getHostNames,
 } from '@console/local-storage-operator-plugin/src/utils';
-import {
-  DiskMechanicalProperties,
-  DiskType,
-} from '@console/local-storage-operator-plugin/src/components/local-volume-set/types';
+import { DiskType } from '@console/local-storage-operator-plugin/src/components/local-volume-set/types';
 import { initialState, reducer, State, Action, Discoveries, OnNextClick } from './state';
 import { AutoDetectVolume } from './wizard-pages/auto-detect-volume';
 import { CreateLocalVolumeSet } from './wizard-pages/create-local-volume-set';
@@ -118,7 +115,6 @@ const CreateSC: React.FC<CreateSCProps> = ({ match, lsoNs }) => {
             // filter out non supported disks
             if (
               discovery?.status?.state === AVAILABLE &&
-              discovery.property === DiskMechanicalProperties.SSD &&
               (discovery.type === DiskType.RawDisk || discovery.type === DiskType.Partition)
             ) {
               discovery.node = name;
