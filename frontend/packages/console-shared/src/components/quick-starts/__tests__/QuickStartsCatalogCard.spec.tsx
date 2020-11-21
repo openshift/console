@@ -1,12 +1,10 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { shallow } from 'enzyme';
-import { getQuickStarts } from '@console/app/src/components/quick-starts/utils/quick-start-utils';
-import {
-  InternalQuickStartTile as QuickStartTile,
-  HIDE_QUICK_START_ADD_TILE_STORAGE_KEY,
-} from '../QuickStartTile';
 import { CardActions, Dropdown, CardBody, CardFooter, Button } from '@patternfly/react-core';
+import { getQuickStarts } from '@console/app/src/components/quick-starts/utils/quick-start-utils';
+import { InternalQuickStartsCatalogCard as QuickStartsCatalogCard } from '../QuickStartsCatalogCard';
+import { HIDE_QUICK_START_ADD_TILE_STORAGE_KEY } from '../quick-starts-catalog-card-constants';
 
 const mockQuickStarts = getQuickStarts();
 
@@ -18,8 +16,13 @@ jest.mock('react-i18next', () => {
   };
 });
 
-describe('QuickStartTile', () => {
-  const QuickStartTileWrapper = shallow(<QuickStartTile quickStarts={mockQuickStarts} />);
+describe('QuickStartsCatalogCard', () => {
+  const QuickStartTileWrapper = shallow(
+    <QuickStartsCatalogCard
+      quickStarts={mockQuickStarts}
+      storageKey={HIDE_QUICK_START_ADD_TILE_STORAGE_KEY}
+    />,
+  );
 
   it('should show proper CardAction', () => {
     const cardAction = QuickStartTileWrapper.find(CardActions);
@@ -40,9 +43,14 @@ describe('QuickStartTile', () => {
     expect(cardFooter.find(Link).prop('to')).toEqual('/quickstart');
   });
 
-  it('should hide QuickStartTile when locaStorage is set', () => {
+  it('should hide QuickStartsCatalogCard when localStorage is set', () => {
     localStorage.setItem(HIDE_QUICK_START_ADD_TILE_STORAGE_KEY, 'true');
-    const emptyWrapper = shallow(<QuickStartTile quickStarts={mockQuickStarts} />);
-    expect(emptyWrapper.find(QuickStartTile).exists()).toBe(false);
+    const emptyWrapper = shallow(
+      <QuickStartsCatalogCard
+        quickStarts={mockQuickStarts}
+        storageKey={HIDE_QUICK_START_ADD_TILE_STORAGE_KEY}
+      />,
+    );
+    expect(emptyWrapper.find(QuickStartsCatalogCard).exists()).toBe(false);
   });
 });
