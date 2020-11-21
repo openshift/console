@@ -29,7 +29,7 @@ const QuickStartTaskReview: React.FC<QuickStartTaskReviewProps> = ({
   taskStatus,
   onTaskReview,
 }) => {
-  const { instructions, taskHelp } = review;
+  const { instructions, failedTaskHelp: taskHelp } = review;
   const { t } = useTranslation();
 
   const alertClassNames = cx('co-quick-start-task-review', {

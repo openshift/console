@@ -26,14 +26,12 @@ const QuickStartTasks: React.FC<QuickStartTaskProps> = ({
       {tasks
         .filter((_, index) => index <= taskNumber)
         .map((task, index) => {
-          const { title, description, review, recapitulation } = task;
+          const { title, description, review, summary } = task;
           const isActiveTask = index === taskNumber;
           const taskStatus = allTaskStatuses[index];
-          const recapitulationInstructions =
-            taskStatus === QuickStartTaskStatus.SUCCESS
-              ? recapitulation.success
-              : recapitulation.failed;
-          const taskInstructions = isActiveTask ? description : recapitulationInstructions;
+          const summaryInstructions =
+            taskStatus === QuickStartTaskStatus.SUCCESS ? summary?.success : summary?.failed;
+          const taskInstructions = isActiveTask ? description : summaryInstructions;
 
           return (
             <React.Fragment key={title}>

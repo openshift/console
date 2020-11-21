@@ -24,9 +24,10 @@ const QuickStartContent: React.FC<QuickStartContentProps> = ({
   onQuickStartChange,
 }) => {
   const {
-    spec: { introduction, tasks, conclusion, nextQuickStart },
+    spec: { introduction, tasks, conclusion, nextQuickStart = [] },
   } = quickStart;
   const totalTasks = tasks.length;
+  const nextQS = nextQuickStart.length > 0 && nextQuickStart[0];
   return (
     <div className="co-quick-start-content">
       {taskNumber === -1 && (
@@ -51,7 +52,7 @@ const QuickStartContent: React.FC<QuickStartContentProps> = ({
           tasks={tasks}
           conclusion={conclusion}
           allTaskStatuses={allTaskStatuses}
-          nextQuickStart={nextQuickStart}
+          nextQuickStart={nextQS}
           onQuickStartChange={onQuickStartChange}
           onTaskSelect={onTaskSelect}
         />

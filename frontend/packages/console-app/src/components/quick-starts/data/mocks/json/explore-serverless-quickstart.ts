@@ -1,20 +1,19 @@
-import { FLAG_KNATIVE_SERVING } from '@console/knative-plugin';
-import { QuickStart } from '../utils/quick-start-types';
+import { QuickStart } from '../../../utils/quick-start-types';
 import { serverlessIcon } from './tour-icons';
 
 export const exploreServerlessQuickStart: QuickStart = {
   apiVersion: 'console.openshift.io/v1',
-  kind: 'QuickStarts',
+  kind: 'ConsoleQuickStarts',
   metadata: {
     name: 'explore-serverless',
   },
   spec: {
     version: 4.7,
     displayName: `Setting up Serverless`,
-    duration: 10,
-    iconURL: serverlessIcon,
+    durationMinutes: 10,
+    icon: serverlessIcon,
     description: `Install the OpenShift Serverless Operator to deploy stateless, event-trigger-based applications.`,
-    prerequisites: '',
+    prerequisites: [''],
     introduction: `Red Hat® OpenShift® Serverless lets you run stateless, serverless workloads on a single multi-cloud container platform.
 
 Serverless reduces the need to manage infrastructure or perform back-end development. Scaling is automated, and applications can run on any cloud, hybrid, or on-premises environment. Choosing Serverless means simplicity, portability, and efficiency.
@@ -37,10 +36,10 @@ Adding OpenShift Serverless to your OpenShift Container Platform cluster is quic
           instructions: `#### To verify that the OpenShift Serverless Operator is installed:
 
 In the Status column of the **Installed Operators** page, is the OpenShift Serverless Operator’s status **Succeeded?**`,
-          taskHelp: `This task is incomplete. Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/serverless/installing_serverless/installing-openshift-serverless.html) about this topic.`,
+          failedTaskHelp: `This task is incomplete. Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/serverless/installing_serverless/installing-openshift-serverless.html) about this topic.`,
         },
 
-        recapitulation: {
+        summary: {
           success: `You just installed the OpenShift Serverless Operator! Next, we'll install the required Knative Eventing and Knative Serving Custom Resource components for this Operator to run.`,
           failed: `This task is incomplete. Try the task again, or read more about this topic.`,
         },
@@ -65,16 +64,16 @@ Go to the **All Instances** tab of the OpenShift Serverless Operator.
 
 Are the Knative Serving and Knative Eventing resources in the list of instances?
 `,
-          taskHelp: `This task isn’t verified yet. Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/serverless/installing_serverless/installing-knative-serving.html#serverless-create-serving-project-web-console_installing-knative-serving) about this topic.`,
+          failedTaskHelp: `This task isn’t verified yet. Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/serverless/installing_serverless/installing-knative-serving.html#serverless-create-serving-project-web-console_installing-knative-serving) about this topic.`,
         },
-        recapitulation: {
+        summary: {
           success: `You just created instances of the Knative Service and Knative Eventing resources.`,
           failed: `Check your work to make sure that the Knative Service and Knative Eventing resources were created.`,
         },
       },
     ],
     conclusion: `Your Serverless Operator is ready! If you want to learn how to deploy a serverless application, take the **Exploring Serverless applications** quick start.`,
-    nextQuickStart: `serverless-application`,
+    nextQuickStart: [`serverless-application`],
     accessReviewResources: [
       {
         group: 'operators.coreos.com',
@@ -87,8 +86,5 @@ Are the Knative Serving and Knative Eventing resources in the list of instances?
         verb: 'list',
       },
     ],
-    flags: {
-      disallowed: [FLAG_KNATIVE_SERVING],
-    },
   },
 };

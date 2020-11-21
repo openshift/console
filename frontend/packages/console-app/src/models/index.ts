@@ -12,3 +12,16 @@ export const WorkspaceModel: K8sKind = {
   plural: 'devworkspaces',
   propagationPolicy: 'Background',
 };
+
+export const QuickStartModel: K8sKind = {
+  kind: 'ConsoleQuickStart',
+  label: 'ConsoleQuickStart',
+  labelPlural: 'ConsoleQuickStarts',
+  apiGroup: 'console.openshift.io',
+  apiVersion: 'v1',
+  abbr: 'CQS',
+  namespaced: false,
+  crd: true,
+  plural: 'consolequickstarts',
+  propagationPolicy: 'Background',
+};

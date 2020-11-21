@@ -24,23 +24,23 @@ const QuickStartTile: React.FC<QuickStartTileProps> = ({
 }) => {
   const {
     metadata: { name: id },
-    spec: { iconURL, tasks, displayName, description, duration, prerequisites },
+    spec: { icon, tasks, displayName, description, durationMinutes, prerequisites },
   } = quickStart;
 
-  const icon = (
+  const quickStartIcon = (
     <FallbackImg
       className="co-catalog-item-icon__img--large"
-      src={iconURL}
+      src={icon}
       fallback={<RocketIcon />}
     />
   );
 
   return (
     <CatalogTile
-      icon={icon}
+      icon={quickStartIcon}
       className="co-quick-start-tile"
       featured={isActive}
-      title={<QuickStartTileHeader name={displayName} status={status} duration={duration} />}
+      title={<QuickStartTileHeader name={displayName} status={status} duration={durationMinutes} />}
       onClick={onClick}
       description={
         <QuickStartTileDescription description={description} prerequisites={prerequisites} />
