@@ -35,6 +35,13 @@ export type StoragePoolKind = K8sResourceCommon & {
 
 export type StorageClusterKind = K8sResourceCommon & {
   spec: {
+    network: {
+      provider: string;
+      selectors: {
+        public: string;
+        private?: string;
+      };
+    };
     manageNodes: boolean;
     storageDeviceSets: DeviceSet[];
     resources: StorageClusterResource;

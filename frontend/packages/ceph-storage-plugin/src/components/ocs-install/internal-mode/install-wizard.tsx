@@ -22,15 +22,25 @@ import { StorageClusterKind } from '../../../types';
 import { labelNodes, getOCSRequestData } from '../ocs-request-data';
 import { SelectCapacityAndNodes, Configure, ReviewAndCreate } from './install-wizard-steps';
 import { initialState, reducer, InternalClusterState } from './reducer';
-import '../install-wizard/install-wizard.scss';
+import { NetworkType } from '../types';
 
 const makeOCSRequest = (state: InternalClusterState): Promise<StorageClusterKind> => {
-  const { storageClass, capacity, encryption, nodes, enableMinimal } = state;
+  const {
+    storageClass,
+    capacity,
+    nodes,
+    enableMinimal,
+    publicNetwork,
+    clusterNetwork,
+    encryption,
+  } = state;
   const storageCluster: StorageClusterKind = getOCSRequestData(
     storageClass,
     capacity,
     encryption.clusterWide,
     enableMinimal,
+    publicNetwork,
+    clusterNetwork,
   );
 
   return Promise.all(labelNodes(nodes)).then(() => k8sCreate(OCSServiceModel, storageCluster));
@@ -45,7 +55,11 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({ ma
 
   const title = 'create internal mode storage cluster wizard';
   const scName = getName(state.storageClass);
-  const hasEnabledCreateStep = !!(state.nodes.length >= MINIMUM_NODES && scName);
+  // User can't have empty public NAD when using multus
+  const hasConfiguredNetwork =
+    state.networkType === NetworkType.MULTUS ? !!state.publicNetwork : true;
+  const hasEnabledCreateStep =
+    !!(state.nodes.length >= MINIMUM_NODES && scName) && hasConfiguredNetwork;
 
   const steps: WizardStep[] = [
     {
@@ -57,7 +71,7 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({ ma
       name: 'Configure',
       id: CreateStepsSC.CONFIGURE,
       component: <Configure state={state} dispatch={dispatch} mode={mode} />,
-      enableNext: state.encryption.hasHandled,
+      enableNext: state.encryption.hasHandled && hasConfiguredNetwork,
     },
     {
       name: 'Review and create',

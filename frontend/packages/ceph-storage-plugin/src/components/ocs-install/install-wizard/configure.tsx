@@ -1,19 +1,23 @@
 import * as React from 'react';
-
-import { FormGroup, Checkbox } from '@patternfly/react-core';
-import { FieldLevelHelp } from '@console/internal/components/utils';
-import { encryptionTooltip } from '../../../constants/ocs-install';
-import { TechPreviewBadge } from '@console/shared';
+import { FormGroup, Checkbox, Radio } from '@patternfly/react-core';
+import { FieldLevelHelp, Firehose } from '@console/internal/components/utils';
+import { TechPreviewBadge, getName, ResourceDropdown } from '@console/shared';
+import { NetworkAttachmentDefinitionKind } from '@console/network-attachment-definition-plugin/src/types';
+import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { InternalClusterState, InternalClusterAction, ActionType } from '../internal-mode/reducer';
 import { State, Action } from '../attached-devices/create-sc/state';
 import { KMSConfigure } from '../../kms-config/kms-config';
-import './install-wizard.scss';
 import {
   Validation,
   ValidationMessage,
   VALIDATIONS,
   setDispatch,
 } from '../../../utils/common-ocs-install-el';
+import { NetworkType } from '../types';
+import { encryptionTooltip } from '../../../constants/ocs-install';
+import './install-wizard.scss';
+import './_configure.scss';
 
 const StorageClassEncryptionLabel: React.FC = () => (
   <div className="ocs-install-encryption__pv-title">
@@ -21,6 +25,15 @@ const StorageClassEncryptionLabel: React.FC = () => (
     <TechPreviewBadge />
   </div>
 );
+
+const resources = [
+  {
+    isList: true,
+    kind: referenceForModel(NetworkAttachmentDefinitionModel),
+    namespace: 'openshift-storage',
+    prop: 'ocsDevices',
+  },
+];
 
 const validate = (valid: boolean): Validation => {
   let validation: Validation;
@@ -144,8 +157,90 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
   );
 };
 
+export const NetworkFormGroup: React.FC<NetworkFormGroupProps> = ({
+  setNetworkType,
+  networkType,
+  publicNetwork,
+  clusterNetwork,
+  setNetwork,
+}) => {
+  const filterForPublicDevices = React.useCallback(
+    (device: NetworkAttachmentDefinitionKind) => clusterNetwork !== getName(device),
+    [clusterNetwork],
+  );
+
+  const filterForClusterDevices = React.useCallback(
+    (device: NetworkAttachmentDefinitionKind) => publicNetwork !== getName(device),
+    [publicNetwork],
+  );
+  return (
+    <>
+      <FormGroup
+        fieldId="configure-networking"
+        label="Network"
+        className="ceph__install-radio--inline"
+      >
+        <Radio
+          isChecked={networkType === NetworkType.DEFAULT}
+          name="default-network"
+          label="Default (SDN)"
+          onChange={() => setNetworkType(NetworkType.DEFAULT)}
+          value={NetworkType.DEFAULT}
+          id={NetworkType.DEFAULT}
+        />
+        <Radio
+          isChecked={networkType === NetworkType.MULTUS}
+          name="custom-network"
+          label="Custom (Multus)"
+          onChange={() => setNetworkType(NetworkType.MULTUS)}
+          value={NetworkType.MULTUS}
+          id={NetworkType.MULTUS}
+        />
+      </FormGroup>
+      {networkType === NetworkType.MULTUS && (
+        <>
+          <FormGroup fieldId="configure-multus" label="Public Network Interface" isRequired>
+            <Firehose resources={resources}>
+              <ResourceDropdown
+                dropDownClassName="ceph__multus-dropdown"
+                buttonClassName="ceph__multus-dropdown-button"
+                selectedKey={publicNetwork}
+                placeholder="Select a network"
+                dataSelector={['metadata', 'name']}
+                onChange={(key, name) => setNetwork('Public', name)}
+                resourceFilter={filterForPublicDevices}
+              />
+            </Firehose>
+          </FormGroup>
+          <FormGroup fieldId="configure-multus" label="Cluster Network Interface">
+            <Firehose resources={resources}>
+              <ResourceDropdown
+                dropDownClassName="ceph__multus-dropdown"
+                buttonClassName="ceph__multus-dropdown-button"
+                selectedKey={clusterNetwork}
+                placeholder="Select a network"
+                dataSelector={['metadata', 'name']}
+                onChange={(key, name) => setNetwork('Cluster', name)}
+                resourceFilter={filterForClusterDevices}
+              />
+            </Firehose>
+          </FormGroup>
+        </>
+      )}
+    </>
+  );
+};
+
 type EncryptionFormGroupProps = {
   state: State | InternalClusterState;
   dispatch: React.Dispatch<Action | InternalClusterAction>;
   mode: string;
+};
+
+type NetworkFormGroupProps = {
+  setNetworkType: any;
+  networkType: NetworkType;
+  publicNetwork: string;
+  clusterNetwork: string;
+  setNetwork: any;
 };

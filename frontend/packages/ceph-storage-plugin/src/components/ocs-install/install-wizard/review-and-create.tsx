@@ -17,12 +17,12 @@ import {
   ErrorAlert,
   RedExclamationCircleIcon,
 } from '@console/shared';
+import { NodeKind } from '@console/internal/module/k8s';
 import {
   ActionValidationMessage,
   ValidationMessage,
   Validation,
 } from '../../../utils/common-ocs-install-el';
-import { NodeKind } from '@console/internal/module/k8s';
 
 const REVIEW_ICON_MAP = {
   [AlertVariant.success]: GreenCheckCircleIcon,
