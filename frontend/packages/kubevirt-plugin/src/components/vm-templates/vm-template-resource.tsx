@@ -9,6 +9,7 @@ import dedicatedResourcesModal from '../modals/scheduling-modals/dedicated-resou
 import tolerationsModal from '../modals/scheduling-modals/tolerations-modal/connected-tolerations-modal';
 import nodeSelectorModal from '../modals/scheduling-modals/node-selector-modal/connected-node-selector-modal';
 import affinityModal from '../modals/scheduling-modals/affinity-modal/connected-affinity-modal';
+import evictionStrategyModal from '../modals/scheduling-modals/eviction-strategy-modal/eviction-strategy-modal';
 import { getRowsDataFromAffinity } from '../modals/scheduling-modals/affinity-modal/helpers';
 import { getDescription } from '../../selectors/selectors';
 import {
@@ -141,6 +142,7 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
   });
   const isCPUPinned = isDedicatedCPUPlacement(vm);
   const nodeSelector = vmWrapper?.getNodeSelector();
+  const evictionStrategy = vmWrapper?.getEvictionStrategy();
   const tolerations = vmWrapper?.getTolerations() || [];
   const tolerationsLabels = tolerations.reduce((acc, { key, value }) => {
     acc[key] = value;
@@ -223,6 +225,19 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
             {isCPUPinned
               ? t('kubevirt-plugin~Workload scheduled with dedicated resources (guaranteed policy)')
               : t('kubevirt-plugin~No Dedicated resources applied')}
+          </VMDetailsItem>
+          <VMDetailsItem
+            title={t('kubevirt-plugin~Eviction Strategy')}
+            idValue={prefixedID(id, 'eviction-strategy')}
+            canEdit={canUpdateTemplate}
+            onEditClick={() =>
+              evictionStrategyModal({ vmLikeEntity: vm, evictionStrategy, blocking: true })
+            }
+            editButtonId={prefixedID(id, 'eviction-strategy-edit')}
+          >
+            {evictionStrategy || (
+              <p className="text-muted">{t('kubevirt-plugin~No Eviction Strategy')}</p>
+            )}
           </VMDetailsItem>
         </dl>
       </div>

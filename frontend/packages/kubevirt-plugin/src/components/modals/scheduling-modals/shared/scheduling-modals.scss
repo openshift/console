@@ -11,3 +11,13 @@
     color: var(--pf-global--Color--200);
   }
 }
+
+.kubevirt-scheduling__checkbox {
+  margin-top: var(--pf-global--spacer--md);
+  margin-bottom: var(--pf-global--spacer--md);
+}
+
+.kubevirt-scheduling__helper-text {
+  color: var(--pf-global--Color--200);
+  margin-right: var(--pf-global--spacer--sm);
+}

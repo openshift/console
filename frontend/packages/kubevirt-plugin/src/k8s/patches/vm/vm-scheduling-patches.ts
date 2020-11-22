@@ -38,3 +38,15 @@ export const getAffinityPatch = (vmLikeEntity: VMLikeEntityKind, affinity: Affin
     : getVMLikePatches(vmLikeEntity, () => [
         new PatchBuilder('/spec/template/spec/affinity').remove().build(),
       ]);
+
+export const getEvictionStrategyPatch = (
+  vmLikeEntity: VMLikeEntityKind,
+  isEvictionStrategyChecked: boolean,
+): Patch[] =>
+  isEvictionStrategyChecked
+    ? getVMLikePatches(vmLikeEntity, () => [
+        new PatchBuilder('/spec/template/spec/evictionStrategy').add('LiveMigrate').build(),
+      ])
+    : getVMLikePatches(vmLikeEntity, () => [
+        new PatchBuilder('/spec/template/spec/evictionStrategy').remove().build(),
+      ]);
