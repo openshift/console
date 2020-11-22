@@ -19,9 +19,11 @@ import {
 export const useUserSettings = <T>(
   key: string,
   defaultValue?: T,
+  sync: boolean = false,
 ): [T, React.Dispatch<React.SetStateAction<T>>, boolean] => {
   const defaultValueRef = React.useRef<T>(defaultValue);
   const keyRef = React.useRef<string>(key);
+  const isRequestPending = React.useRef<boolean>(false);
   const userUid = useSelector(
     (state: RootState) => state.UI.get('user')?.metadata?.uid ?? 'kubeadmin',
   );
@@ -36,6 +38,8 @@ export const useUserSettings = <T>(
   );
   const [cfData, cfLoaded, cfLoadError] = useK8sWatchResource<K8sResourceKind>(configMapResource);
   const [settings, setSettings] = React.useState<T>();
+  const settingsRef = React.useRef<T>(settings);
+  settingsRef.current = settings;
   const [loaded, setLoaded] = React.useState(false);
 
   const [fallbackLocalStorage, setFallbackLocalStorage] = React.useState<boolean>(false);
@@ -77,15 +81,38 @@ export const useUserSettings = <T>(
   }, [cfLoadError, cfLoaded, fallbackLocalStorage]);
 
   React.useEffect(() => {
-    if (cfData && cfLoaded && settings !== undefined) {
-      const value = seralizeData(settings);
-      if (value !== cfData.data?.[key]) {
-        updateConfigMap(cfData, keyRef.current, value);
+    if (sync && !isRequestPending.current) {
+      if (
+        cfData &&
+        cfLoaded &&
+        seralizeData(settingsRef.current) !== cfData?.data?.[keyRef.current]
+      ) {
+        setSettings(deseralizeData(cfData?.data?.[keyRef.current]));
       }
     }
-    // This effect should only be run on change of settings state.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [settings]);
+  }, [cfData, cfLoaded, sync]);
 
-  return fallbackLocalStorage ? [lsData, setLsDataCallback, true] : [settings, setSettings, loaded];
+  const callback = React.useCallback<React.Dispatch<React.SetStateAction<T>>>(
+    (action: React.SetStateAction<T>) => {
+      if (isRequestPending.current) return;
+      const previousSettings = settingsRef.current;
+      const newState =
+        typeof action === 'function' ? (action as (prevState: T) => T)(previousSettings) : action;
+      setSettings(newState);
+      if (cfLoaded) {
+        isRequestPending.current = true;
+        updateConfigMap(cfData, keyRef.current, seralizeData(newState))
+          .then(() => {
+            isRequestPending.current = false;
+          })
+          .catch(() => {
+            setSettings(previousSettings);
+            isRequestPending.current = false;
+          });
+      }
+    },
+    [cfData, cfLoaded],
+  );
+
+  return fallbackLocalStorage ? [lsData, setLsDataCallback, true] : [settings, callback, loaded];
 };
