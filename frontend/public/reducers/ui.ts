@@ -8,7 +8,6 @@ import {
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
   NAMESPACE_LOCAL_STORAGE_KEY,
   LAST_PERSPECTIVE_LOCAL_STORAGE_KEY,
-  PINNED_RESOURCES_LOCAL_STORAGE_KEY,
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants';
 import { isSilenced } from '../reducers/monitoring';
@@ -83,9 +82,6 @@ export default (state: UIState, action: UIAction): UIState => {
         activeNamespace = localStorage.getItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY);
       }
     }
-
-    const storedPins = localStorage.getItem(PINNED_RESOURCES_LOCAL_STORAGE_KEY);
-    const pinnedResources = storedPins ? JSON.parse(storedPins) : {};
     let storedTableColumns = {};
     try {
       storedTableColumns =
@@ -124,7 +120,6 @@ export default (state: UIState, action: UIAction): UIState => {
         queries: ImmutableList([newQueryBrowserQuery()]),
       }),
       columnManagement: ImmutableMap(storedTableColumns),
-      pinnedResources,
     });
   }
 
@@ -380,14 +375,6 @@ export default (state: UIState, action: UIAction): UIState => {
       return state.setIn(['metrics', 'node'], action.payload.nodeMetrics);
     case ActionType.SetPVCMetrics:
       return state.setIn(['metrics', 'pvc'], action.payload.pvcMetrics);
-
-    case ActionType.SetPinnedResources: {
-      const pinnedResources = { ...state.get('pinnedResources') };
-      pinnedResources[state.get('activePerspective')] = action.payload.resources;
-      localStorage.setItem(PINNED_RESOURCES_LOCAL_STORAGE_KEY, JSON.stringify(pinnedResources));
-      return state.set('pinnedResources', pinnedResources);
-    }
-
     default:
       break;
   }
@@ -411,9 +398,6 @@ export const getActiveNamespace = ({ UI }: RootState): string => UI.get('activeN
 export const getActivePerspective = ({ UI }: RootState): string => UI.get('activePerspective');
 
 export const getActiveApplication = ({ UI }: RootState): string => UI.get('activeApplication');
-
-export const getPinnedResources = (rootState: RootState): string[] =>
-  rootState.UI.get('pinnedResources')[getActivePerspective(rootState)];
 
 export type NotificationAlerts = {
   data: Alert[];

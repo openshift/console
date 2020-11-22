@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { connect, Dispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import { NavItemSeparator, NavGroup, Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import {
@@ -10,13 +10,11 @@ import {
   isNavSection,
   isNavItem,
   isSeparatorNavItem,
-  Perspective,
-  isPerspective,
   LoadedExtension,
 } from '@console/plugin-sdk';
+import { usePinnedResources } from '@console/shared';
 import { RootState } from '../../redux';
-import { setPinnedResources } from '../../actions/ui';
-import { getActivePerspective, getPinnedResources } from '../../reducers/ui';
+import { getActivePerspective } from '../../reducers/ui';
 import { modelFor, referenceForModel } from '../../module/k8s';
 import confirmNavUnpinModal from './confirmNavUnpinModal';
 import { NavSection } from './section';
@@ -33,12 +31,7 @@ import './_perspective-nav.scss';
 
 type StateProps = {
   perspective: string;
-  pinnedResources: string[];
 };
-
-interface DispatchProps {
-  onPinnedResourcesChange: (resources: string[]) => void;
-}
 
 const getLabelForResource = (resource: string): string => {
   const model = modelFor(resource);
@@ -132,16 +125,12 @@ export const getSortedNavItems = (
   return sortedItems;
 };
 
-const PerspectiveNav: React.FC<StateProps & DispatchProps> = ({
-  perspective,
-  pinnedResources,
-  onPinnedResourcesChange,
-}) => {
-  const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
+const PerspectiveNav: React.FC<StateProps> = ({ perspective }) => {
   const allItems = useExtensions<PluginNavSection | NavItem | SeparatorNavItem>(
     isNavSection,
     isNavItem,
   );
+  const [pinnedResources, setPinnedResources, pinnedResourcesLoaded] = usePinnedResources();
   const orderedNavItems = React.useMemo(() => {
     const topLevelItems = allItems.filter(
       (s) => s.properties.perspective === perspective && !(s as NavItem).properties.section,
@@ -152,7 +141,7 @@ const PerspectiveNav: React.FC<StateProps & DispatchProps> = ({
   const unPin = (e: React.MouseEvent<HTMLButtonElement>, resource: string) => {
     e.preventDefault();
     e.stopPropagation();
-    confirmNavUnpinModal(resource, pinnedResources, onPinnedResourcesChange);
+    confirmNavUnpinModal(resource, pinnedResources, setPinnedResources);
   };
 
   // Until admin perspective is contributed through extensions, simply render static `AdminNav`
@@ -160,56 +149,53 @@ const PerspectiveNav: React.FC<StateProps & DispatchProps> = ({
     return <AdminNav />;
   }
 
-  const activePerspective = perspectiveExtensions.find((p) => p.properties.id === perspective);
-  if (!pinnedResources && activePerspective.properties.defaultPins) {
-    onPinnedResourcesChange(activePerspective.properties.defaultPins);
-  }
-
   const getPinnedItems = (rootNavLink: boolean = false): React.ReactElement[] =>
-    pinnedResources
-      .map((resource) => {
-        const model = modelFor(resource);
-        if (!model) {
-          return null;
-        }
-        const { labelPlural, apiVersion, apiGroup, namespaced, crd, plural } = model;
-        const duplicates =
-          pinnedResources.filter((res) => getLabelForResource(res) === labelPlural).length > 1;
-        const props = {
-          key: `pinned-${resource}`,
-          name: labelPlural,
-          resource: crd ? referenceForModel(model) : plural,
-          tipText: duplicates ? `${labelPlural}: ${apiGroup || 'core'}/${apiVersion}` : null,
-          id: resource,
-        };
-        const Component: NavLinkComponent = namespaced ? ResourceNSLink : ResourceClusterLink;
-        const removeButton = (
-          <Button
-            className="oc-nav-pinned-item__unpin-button"
-            variant="link"
-            aria-label="Unpin"
-            onClick={(e) => unPin(e, resource)}
-          >
-            <MinusCircleIcon className="oc-nav-pinned-item__icon" />
-          </Button>
-        );
+    pinnedResourcesLoaded
+      ? pinnedResources
+          .map((resource) => {
+            const model = modelFor(resource);
+            if (!model) {
+              return null;
+            }
+            const { labelPlural, apiVersion, apiGroup, namespaced, crd, plural } = model;
+            const duplicates =
+              pinnedResources.filter((res) => getLabelForResource(res) === labelPlural).length > 1;
+            const props = {
+              key: `pinned-${resource}`,
+              name: labelPlural,
+              resource: crd ? referenceForModel(model) : plural,
+              tipText: duplicates ? `${labelPlural}: ${apiGroup || 'core'}/${apiVersion}` : null,
+              id: resource,
+            };
+            const Component: NavLinkComponent = namespaced ? ResourceNSLink : ResourceClusterLink;
+            const removeButton = (
+              <Button
+                className="oc-nav-pinned-item__unpin-button"
+                variant="link"
+                aria-label="Unpin"
+                onClick={(e) => unPin(e, resource)}
+              >
+                <MinusCircleIcon className="oc-nav-pinned-item__icon" />
+              </Button>
+            );
 
-        return rootNavLink ? (
-          <RootNavLink
-            key={resource}
-            className="oc-nav-pinned-item"
-            component={Component}
-            {...props}
-          >
-            {removeButton}
-          </RootNavLink>
-        ) : (
-          <Component key={resource} className="oc-nav-pinned-item" {...props}>
-            {removeButton}
-          </Component>
-        );
-      })
-      .filter((p) => p !== null);
+            return rootNavLink ? (
+              <RootNavLink
+                key={resource}
+                className="oc-nav-pinned-item"
+                component={Component}
+                {...props}
+              >
+                {removeButton}
+              </RootNavLink>
+            ) : (
+              <Component key={resource} className="oc-nav-pinned-item" {...props}>
+                {removeButton}
+              </Component>
+            );
+          })
+          .filter((p) => p !== null)
+      : [];
 
   return (
     <>
@@ -225,7 +211,7 @@ const PerspectiveNav: React.FC<StateProps & DispatchProps> = ({
           return <NavItemSeparator key={`separator-${index}`} />;
         }
       })}
-      {pinnedResources?.length ? (
+      {pinnedResourcesLoaded && pinnedResources?.length ? (
         <NavGroup className="oc-nav-group" title="" key="group-pins">
           {getPinnedItems(true)}
         </NavGroup>
@@ -237,14 +223,7 @@ const PerspectiveNav: React.FC<StateProps & DispatchProps> = ({
 const mapStateToProps = (state: RootState): StateProps => {
   return {
     perspective: getActivePerspective(state),
-    pinnedResources: getPinnedResources(state),
   };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
-  onPinnedResourcesChange: (resources: string[]) => {
-    dispatch(setPinnedResources(resources));
-  },
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(PerspectiveNav);
+export default connect(mapStateToProps)(PerspectiveNav);

@@ -208,6 +208,7 @@ describe('useUserSettings', () => {
   it('should trigger update user settings when setter was called', async () => {
     // Mock already loaded data
     useK8sWatchResourceMock.mockReturnValue([savedDataConfigMap, true, null]);
+    updateConfigMapMock.mockReturnValue(Promise.resolve({}));
 
     const { result, rerender } = testHook(() => useUserSettings('console.key', 'default value'));
 

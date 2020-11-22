@@ -16,6 +16,17 @@ import {
   USER_SETTING_CONFIGMAP_NAMESPACE,
 } from '../utils/user-settings';
 
+const useCounterRef = (initialValue: number = 0): [boolean, () => void, () => void] => {
+  const counterRef = React.useRef<number>(initialValue);
+  const increment = React.useCallback(() => {
+    counterRef.current += 1;
+  }, []);
+  const decrement = React.useCallback(() => {
+    counterRef.current -= 1;
+  }, []);
+  return [counterRef.current !== initialValue, increment, decrement];
+};
+
 export const useUserSettings = <T>(
   key: string,
   defaultValue?: T,
@@ -23,7 +34,7 @@ export const useUserSettings = <T>(
 ): [T, React.Dispatch<React.SetStateAction<T>>, boolean] => {
   const defaultValueRef = React.useRef<T>(defaultValue);
   const keyRef = React.useRef<string>(key);
-  const isRequestPending = React.useRef<boolean>(false);
+  const [isRequestPending, increaseRequest, decreaseRequest] = useCounterRef();
   const userUid = useSelector(
     (state: RootState) => state.UI.get('user')?.metadata?.uid ?? 'kubeadmin',
   );
@@ -64,13 +75,29 @@ export const useUserSettings = <T>(
         }
       })();
     } else if (
+      /**
+       * update settings if key is present in config map but data is not equal to settings
+       */
       !fallbackLocalStorage &&
       cfData &&
       cfLoaded &&
-      (!cfData.data?.hasOwnProperty(keyRef.current) ||
-        seralizeData(settings) !== cfData.data?.[keyRef.current])
+      cfData.data?.hasOwnProperty(keyRef.current) &&
+      seralizeData(settings) !== cfData.data[keyRef.current]
     ) {
-      setSettings(deseralizeData(cfData.data?.[keyRef.current]) ?? defaultValueRef.current);
+      setSettings(deseralizeData(cfData.data[keyRef.current]));
+      setLoaded(true);
+    } else if (
+      /**
+       * if key doesn't exist in config map send patch request to add the key with default value
+       */
+      !fallbackLocalStorage &&
+      defaultValueRef.current !== undefined &&
+      cfData &&
+      cfLoaded &&
+      !cfData.data?.hasOwnProperty(keyRef.current)
+    ) {
+      updateConfigMap(cfData, keyRef.current, seralizeData(defaultValueRef.current));
+      setSettings(defaultValueRef.current);
       setLoaded(true);
     } else if (!fallbackLocalStorage && cfLoaded) {
       setSettings(defaultValueRef.current);
@@ -80,39 +107,54 @@ export const useUserSettings = <T>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cfLoadError, cfLoaded, fallbackLocalStorage]);
 
-  React.useEffect(() => {
-    if (sync && !isRequestPending.current) {
-      if (
-        cfData &&
-        cfLoaded &&
-        seralizeData(settingsRef.current) !== cfData?.data?.[keyRef.current]
-      ) {
-        setSettings(deseralizeData(cfData?.data?.[keyRef.current]));
-      }
-    }
-  }, [cfData, cfLoaded, sync]);
-
   const callback = React.useCallback<React.Dispatch<React.SetStateAction<T>>>(
     (action: React.SetStateAction<T>) => {
-      if (isRequestPending.current) return;
       const previousSettings = settingsRef.current;
       const newState =
         typeof action === 'function' ? (action as (prevState: T) => T)(previousSettings) : action;
       setSettings(newState);
       if (cfLoaded) {
-        isRequestPending.current = true;
+        increaseRequest();
         updateConfigMap(cfData, keyRef.current, seralizeData(newState))
           .then(() => {
-            isRequestPending.current = false;
+            decreaseRequest();
           })
           .catch(() => {
+            decreaseRequest();
             setSettings(previousSettings);
-            isRequestPending.current = false;
           });
       }
     },
-    [cfData, cfLoaded],
+    [cfData, cfLoaded, decreaseRequest, increaseRequest],
   );
 
-  return fallbackLocalStorage ? [lsData, setLsDataCallback, true] : [settings, callback, loaded];
+  const resultedSettings = React.useMemo(() => {
+    /**
+     * If key is deleted from the config map then return default value
+     */
+    if (
+      sync &&
+      cfLoaded &&
+      cfData &&
+      !cfData.data?.hasOwnProperty(keyRef.current) &&
+      settings !== undefined &&
+      !isRequestPending
+    ) {
+      return defaultValueRef.current;
+    }
+    if (
+      sync &&
+      !isRequestPending &&
+      cfLoaded &&
+      cfData &&
+      seralizeData(settingsRef.current) !== cfData?.data?.[keyRef.current]
+    ) {
+      return deseralizeData(cfData?.data?.[keyRef.current]);
+    }
+    return settings;
+  }, [sync, isRequestPending, cfData, cfLoaded, settings]);
+
+  return fallbackLocalStorage
+    ? [lsData, setLsDataCallback, true]
+    : [resultedSettings, callback, loaded];
 };
