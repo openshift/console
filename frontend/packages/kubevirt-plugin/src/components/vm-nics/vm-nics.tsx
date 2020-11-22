@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Table, RowFunction } from '@console/internal/components/factory';
 import { sortable } from '@patternfly/react-table';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { createBasicLookup, dimensifyHeader } from '@console/shared';
-import { EmptyBox } from '@console/internal/components/utils';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 import { VMGenericLikeEntityKind } from '../../types/vmLike';
 import { isVMI, isVM } from '../../selectors/check-type';
@@ -17,7 +17,6 @@ import { NicRow } from './nic-row';
 import { NetworkBundle } from './types';
 import { nicTableColumnClasses } from './utils';
 import { asVMILikeWrapper } from '../../k8s/wrapper/utils/convert';
-import { ADD_NETWORK_INTERFACE } from '../../utils/strings';
 import { isVMRunningOrExpectedRunning } from '../../selectors/vm/selectors';
 import { asVM } from '../../selectors/vm';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
@@ -56,44 +55,43 @@ export type VMNicsTableProps = {
   columnClasses: string[];
 };
 
-const NoDataEmptyMsg = () => <EmptyBox label="Network Interfaces" />;
-
 export const VMNicsTable: React.FC<VMNicsTableProps> = ({
   data,
   customData,
   row: Row,
   columnClasses,
 }) => {
+  const { t } = useTranslation();
   return (
     <Table
-      aria-label="VM Nics List"
+      aria-label={t('kubevirt-plugin~VM Nics List')}
       data={data}
-      NoDataEmptyMsg={NoDataEmptyMsg}
+      label={t('kubevirt-plugin~Network Interfaces')}
       Header={() =>
         dimensifyHeader(
           [
             {
-              title: 'Name',
+              title: t('kubevirt-plugin~Name,'),
               sortField: 'name',
               transforms: [sortable],
             },
             {
-              title: 'Model',
+              title: t('kubevirt-plugin~Model'),
               sortField: 'model',
               transforms: [sortable],
             },
             {
-              title: 'Network',
+              title: t('kubevirt-plugin~Network'),
               sortField: 'networkName',
               transforms: [sortable],
             },
             {
-              title: 'Type',
+              title: t('kubevirt-plugin~Type'),
               sortField: 'interfaceType',
               transforms: [sortable],
             },
             {
-              title: 'MAC Address',
+              title: t('kubevirt-plugin~MAC Address'),
               sortField: 'macAddress',
               transforms: [sortable],
             },
@@ -113,6 +111,7 @@ export const VMNicsTable: React.FC<VMNicsTableProps> = ({
 };
 
 export const VMNics: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis: vmisProp }) => {
+  const { t } = useTranslation();
   const [isLocked, setIsLocked] = useSafetyFirst(false);
   const withProgress = wrapWithProgress(setIsLocked);
   const isVMRunning = isVM(vmLikeEntity) && isVMRunningOrExpectedRunning(asVM(vmLikeEntity));
@@ -140,7 +139,7 @@ export const VMNics: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis: vmisProp
               }
               isDisabled={isLocked}
             >
-              {ADD_NETWORK_INTERFACE}
+              {t('kubevirt-plugin~Add Network Interface')}
             </Button>
           </div>
         </div>

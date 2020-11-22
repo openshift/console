@@ -6,9 +6,5 @@ export const NO_GUEST_AGENT_MESSAGE =
 export const GUEST_AGENT_VERSION_NOT_SUPPORTED_MESSAGE =
   'This VM has an unsupported version of the guest agent. When an unsupported version of a guest agent is installed, some management features are unavailable and the metrics might be inaccurate. Check with your system administrator for supported guest agent versions.';
 
-export const GUEST_AGENT_FILE_SYSTEMS_DESCRIPTION =
-  'The following information regarding how the disks are partitioned is provided by the guest agent.';
-export const VM_DISKS_DESCRIPTION =
-  'The following information is provided by the OpenShift Virtualization operator.';
 export const V2V_IMPORT_CLOUD_INIT_NOT_AVAILABLE =
   'This wizard shows a partial data set. A complete data set is available for viewing when you complete the import process.';

@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Table, RowFunction } from '@console/internal/components/factory';
 import { sortable } from '@patternfly/react-table';
 import { getName, getNamespace, dimensifyHeader } from '@console/shared';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { Button } from '@patternfly/react-core';
-import { EmptyBox } from '@console/internal/components/utils';
 import {
   WatchK8sResource,
   useK8sWatchResource,
@@ -15,7 +15,6 @@ import { isVMI } from '../../selectors/check-type';
 import { wrapWithProgress } from '../../utils/utils';
 import { VMLikeEntityTabProps } from '../vms/types';
 import { snapshotsTableColumnClasses } from './utils';
-import { ADD_SNAPSHOT } from '../../utils/strings';
 import { VirtualMachineSnapshotModel } from '../../models';
 import { VMSnapshotRow } from './vm-snapshot-row';
 import SnapshotModal from '../modals/snapshot-modal/snapshot-modal';
@@ -31,8 +30,6 @@ export type VMSnapshotsTableProps = {
   loaded: boolean;
 };
 
-const NoDataEmptyMsg = () => <EmptyBox label="Snapshots" />;
-
 export const VMSnapshotsTable: React.FC<VMSnapshotsTableProps> = ({
   data,
   customData,
@@ -40,53 +37,57 @@ export const VMSnapshotsTable: React.FC<VMSnapshotsTableProps> = ({
   columnClasses,
   loaded,
   loadError,
-}) => (
-  <Table
-    aria-label="VM Snapshots List"
-    loaded={loaded}
-    loadError={loadError}
-    data={data}
-    NoDataEmptyMsg={NoDataEmptyMsg}
-    Header={() =>
-      dimensifyHeader(
-        [
-          {
-            title: 'Name',
-            sortField: 'metadata.name',
-            transforms: [sortable],
-          },
-          {
-            title: 'Created',
-            sortField: 'metadata.creationTimestamp',
-            transforms: [sortable],
-          },
-          {
-            title: 'Status',
-            sortField: 'status.readyToUse',
-            transforms: [sortable],
-          },
-          {
-            title: 'Last restored',
-            sortFunc: 'snapshotLastRestore',
-            transforms: [sortable],
-          },
-          {
-            title: '',
-          },
-          {
-            title: '',
-          },
-        ],
-        columnClasses,
-      )
-    }
-    Row={Row}
-    customData={{ ...customData, columnClasses }}
-    virtualize
-  />
-);
+}) => {
+  const { t } = useTranslation();
+  return (
+    <Table
+      aria-label={t('kubevirt-plugin~VM Snapshots List')}
+      loaded={loaded}
+      loadError={loadError}
+      data={data}
+      label={t('kubevirt-plugin~Snapshots')}
+      Header={() =>
+        dimensifyHeader(
+          [
+            {
+              title: t('kubevirt-plugin~Name'),
+              sortField: 'metadata.name',
+              transforms: [sortable],
+            },
+            {
+              title: t('kubevirt-plugin~Created'),
+              sortField: 'metadata.creationTimestamp',
+              transforms: [sortable],
+            },
+            {
+              title: t('kubevirt-plugin~Status'),
+              sortField: 'status.readyToUse',
+              transforms: [sortable],
+            },
+            {
+              title: t('kubevirt-plugin~Last restored'),
+              sortFunc: 'snapshotLastRestore',
+              transforms: [sortable],
+            },
+            {
+              title: '',
+            },
+            {
+              title: '',
+            },
+          ],
+          columnClasses,
+        )
+      }
+      Row={Row}
+      customData={{ ...customData, columnClasses }}
+      virtualize
+    />
+  );
+};
 
 export const VMSnapshotsPage: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) => {
+  const { t } = useTranslation();
   const vmName = getName(vmLikeEntity);
   const namespace = getNamespace(vmLikeEntity);
 
@@ -125,7 +126,7 @@ export const VMSnapshotsPage: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEnt
               }
               isDisabled={isDisabled}
             >
-              {ADD_SNAPSHOT}
+              {t('kubevirt-plugin~Take Snapshot')}
             </Button>
           </div>
         </div>

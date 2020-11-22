@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { AccessConsoles, VncConsole } from '@patternfly/react-console/dist/js';
 import { Alert, AlertActionCloseButton, Button, Stack, StackItem } from '@patternfly/react-core';
 import { Firehose, FirehoseResult, LoadingInline } from '@console/internal/components/utils';
@@ -75,6 +76,7 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
   type,
   showOpenInNewWindow = true,
 }) => {
+  const { t } = useTranslation();
   const [showAlert, setShowAlert] = React.useState(true);
   const [showPassword, setShowPassword] = React.useState(false);
   const showVNCOption = getIsGraphicsConsoleAttached(vm) !== false;
@@ -142,30 +144,33 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
               )
             }
           >
-            Open Console in new Window
+            {t('kubevirt-plugin~Open Console in new Window')}
           </Button>
         </StackItem>
       )}
       {cloudInitPassword && (
         <StackItem>
-          <Alert variant="info" isInline title="Guest login credentials">
-            The following credentials for this operating system were created via{' '}
-            <strong>Cloud-init</strong>. If unsuccessful cloud-init could be improperly configured.
-            Please contact the image provider for more information.
+          <Alert variant="info" isInline title={t('kubevirt-plugin~Guest login credentials')}>
+            <Trans ns="kubevirt-plugin">
+              The following credentials for this operating system were created via{' '}
+              <strong>Cloud-init</strong>. If unsuccessful cloud-init could be improperly
+              configured. Please contact the image provider for more information.
+            </Trans>
             <p>
-              <strong>User name: </strong> {cloudInitUsername || CLOUD_INIT_MISSING_USERNAME}
+              <strong>{t('kubevirt-plugin~User name:')} </strong>{' '}
+              {cloudInitUsername || CLOUD_INIT_MISSING_USERNAME}
               {'  '}
-              <strong>Password: </strong>{' '}
+              <strong>{t('kubevirt-plugin~Password:')} </strong>{' '}
               {showPassword ? (
                 <>
                   {cloudInitPassword}{' '}
                   <Button isSmall isInline variant="link" onClick={() => setShowPassword(false)}>
-                    Hide password
+                    {t('kubevirt-plugin~Hide password')}
                   </Button>
                 </>
               ) : (
                 <Button isSmall isInline variant="link" onClick={() => setShowPassword(true)}>
-                  Show password
+                  {t('kubevirt-plugin~Show password')}
                 </Button>
               )}
             </p>
@@ -178,7 +183,10 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
             isInline
             variant="danger"
             actionClose={<AlertActionCloseButton onClose={() => setShowAlert(false)} />}
-            title={`Selected type ${type.toPatternflyLabel()} is unsupported, falling back to a supported type`}
+            title={t(
+              'kubevirt-plugin~`Selected type {{typeName}} is unsupported, falling back to a supported type`',
+              { typeName: type.toPatternflyLabel() },
+            )}
           />
         </StackItem>
       )}

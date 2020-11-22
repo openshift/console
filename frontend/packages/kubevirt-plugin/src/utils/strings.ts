@@ -9,14 +9,9 @@ export const DYNAMIC = 'Dynamic';
 
 export const EDIT = 'Edit';
 export const SAVE = 'Save';
-export const RESTORE = 'Restore';
 export const ADD = 'Add';
 export const READY = 'Ready';
 
-export const ADD_DISK = 'Add Disk';
-export const ADD_NETWORK_INTERFACE = 'Add Network Interface';
-export const ADD_SNAPSHOT = 'Take Snapshot';
-export const RESTORE_SNAPSHOT = 'Restore Snapshot';
 export const EXAMPLE_CONTAINER = 'kubevirt/fedora-cloud-container-disk-demo';
 export const FEDORA_IMAGE_LINK = 'https://alt.fedoraproject.org/cloud/';
 export const RHEL_IMAGE_LINK =

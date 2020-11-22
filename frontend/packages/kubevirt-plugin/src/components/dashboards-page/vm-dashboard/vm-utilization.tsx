@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Dropdown,
   humanizeBinaryBytes,
@@ -43,6 +44,7 @@ const adjustDurationForStart = (start: number, createdAt: string): number => {
 };
 
 export const VMUtilizationCard: React.FC = () => {
+  const { t } = useTranslation();
   const [timestamps, setTimestamps] = React.useState<Date[]>();
   const [duration, setDuration] = useMetricDuration();
   const { vm, vmi, pods } = React.useContext(VMDashboardContext);
@@ -79,12 +81,12 @@ export const VMUtilizationCard: React.FC = () => {
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>Utilization</DashboardCardTitle>
+        <DashboardCardTitle>{t('kubevirt-plugin~Utilization')}</DashboardCardTitle>
         <Dropdown items={Duration} onChange={setDuration} selectedKey={duration} title={duration} />
       </DashboardCardHeader>
       <UtilizationBody timestamps={timestamps}>
         <PrometheusUtilizationItem
-          title="CPU"
+          title={t('kubevirt-plugin~CPU')}
           utilizationQuery={queries[VMQueries.CPU_USAGE]}
           humanizeValue={humanizeCpuCores}
           duration={duration}
@@ -94,7 +96,7 @@ export const VMUtilizationCard: React.FC = () => {
           isDisabled={!vmiIsRunning}
         />
         <PrometheusUtilizationItem
-          title="Memory"
+          title={t('kubevirt-plugin~Memory')}
           utilizationQuery={queries[VMQueries.MEMORY_USAGE]}
           humanizeValue={humanizeBinaryBytes}
           byteDataType={ByteDataTypes.BinaryBytes}
@@ -104,7 +106,7 @@ export const VMUtilizationCard: React.FC = () => {
           isDisabled={!vmiIsRunning}
         />
         <PrometheusUtilizationItem
-          title="Filesystem"
+          title={t('kubevirt-plugin~Filesystem')}
           utilizationQuery={queries[VMQueries.FILESYSTEM_USAGE]}
           humanizeValue={humanizeBinaryBytes}
           byteDataType={ByteDataTypes.BinaryBytes}
@@ -114,7 +116,7 @@ export const VMUtilizationCard: React.FC = () => {
           isDisabled={!vmiIsRunning}
         />
         <PrometheusMultilineUtilizationItem
-          title="Network Transfer"
+          title={t('kubevirt-plugin~Network Transfer')}
           queries={multilineQueries[VMQueries.NETWORK_USAGE]}
           humanizeValue={humanizeBinaryBytes}
           byteDataType={ByteDataTypes.BinaryBytes}

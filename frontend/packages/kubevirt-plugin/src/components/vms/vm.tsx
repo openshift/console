@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import * as classNames from 'classnames';
+import { Trans, useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { match } from 'react-router';
 import { Link, useLocation } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
@@ -77,11 +79,11 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const VMHeader = () =>
+const VMHeader = (t: TFunction) => () =>
   dimensifyHeader(
     [
       {
-        title: 'Name',
+        title: t('kubevirt-plugin~Name'),
         sortField: 'metadata.name',
         transforms: [sortable],
       },
@@ -91,22 +93,22 @@ const VMHeader = () =>
         transforms: [sortable],
       },
       {
-        title: 'Status',
+        title: t('kubevirt-plugin~Status'),
         sortField: 'metadata.status',
         transforms: [sortable],
       },
       {
-        title: 'Created',
+        title: t('kubevirt-plugin~Created'),
         sortField: 'metadata.creationTimestamp',
         transforms: [sortable],
       },
       {
-        title: 'Node',
+        title: t('kubevirt-plugin~Node'),
         sortField: 'metadata.node',
         transforms: [sortable],
       },
       {
-        title: 'IP Address',
+        title: t('kubevirt-plugin~IP Address'),
       },
       {
         title: '',
@@ -114,6 +116,11 @@ const VMHeader = () =>
     ],
     tableColumnClasses,
   );
+
+const PendingChanges: React.FC = () => {
+  const { t } = useTranslation();
+  return <div className="kv-vm-row_status-extra-label">{t('kubevirt-plugin~Pending changes')}</div>;
+};
 
 const VMRow: RowFunction<VMRowObjType> = ({ obj, index, key, style }) => {
   const { vm, vmi, vmImport } = obj;
@@ -156,7 +163,7 @@ const VMRow: RowFunction<VMRowObjType> = ({ obj, index, key, style }) => {
           vmStatusBundle={vmStatusBundle}
           arePendingChanges={arePendingChanges}
         />
-        {arePendingChanges && <div className="kv-vm-row_status-extra-label">Pending changes</div>}
+        {arePendingChanges && <PendingChanges />}
       </TableData>
       <TableData className={dimensify()}>
         <Timestamp timestamp={creationTimestamp} />
@@ -175,17 +182,20 @@ const VMRow: RowFunction<VMRowObjType> = ({ obj, index, key, style }) => {
 };
 
 const VMListEmpty: React.FC = () => {
+  const { t } = useTranslation();
   const location = useLocation();
   const namespace = useNamespace();
   return (
     <EmptyState>
       <EmptyStateIcon icon={VirtualMachineIcon} />
       <Title headingLevel="h4" size="lg">
-        No virtual machines found
+        {t('kubevirt-plugin~No virtual machines found')}
       </Title>
       <EmptyStateBody>
-        See the <Link to={`${location.pathname}/templates`}>templates tab</Link> to quickly create a
-        virtual machine from the available templates.
+        <Trans ns="kubevirt-plugin">
+          See the <Link to={`${location.pathname}/templates`}>templates tab</Link> to quickly create
+          a virtual machine from the available templates.
+        </Trans>
       </EmptyStateBody>
       <Button
         data-test-id="create-vm-empty"
@@ -200,28 +210,32 @@ const VMListEmpty: React.FC = () => {
           )
         }
       >
-        Create virtual machine
+        {t('kubevirt-plugin~Create virtual machine')}
       </Button>
     </EmptyState>
   );
 };
 
-const VMList: React.FC<React.ComponentProps<typeof Table> & VMListProps> = (props) => (
-  <div className="kv-vm-list">
-    <Table
-      {...props}
-      EmptyMsg={VMListEmpty}
-      aria-label={VirtualMachineModel.labelPlural}
-      Header={VMHeader}
-      Row={VMRow}
-      virtualize
-    />
-  </div>
-);
+const VMList: React.FC<React.ComponentProps<typeof Table> & VMListProps> = (props) => {
+  const { t } = useTranslation();
+  return (
+    <div className="kv-vm-list">
+      <Table
+        {...props}
+        EmptyMsg={VMListEmpty}
+        aria-label={VirtualMachineModel.labelPlural}
+        Header={VMHeader(t)}
+        Row={VMRow}
+        virtualize
+      />
+    </div>
+  );
+};
 
 VMList.displayName = 'VMList';
 
 const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
+  const { t } = useTranslation();
   const { skipAccessReview, noProjectsAvailable, showTitle } = props.customData;
   const namespace = props.match.params.ns;
 
@@ -385,7 +399,7 @@ const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
     <MultiListPage
       {...modifiedProps}
       createAccessReview={createAccessReview}
-      createButtonText="Create Virtual Machine"
+      createButtonText={t('kubevirt-plugin~Create Virtual Machine')}
       title={VirtualMachineModel.labelPlural}
       showTitle={showTitle}
       rowFilters={[vmStatusFilter]}

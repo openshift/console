@@ -12,7 +12,7 @@ import {
 import { k8sCreate } from '@console/internal/module/k8s';
 import { VMLikeEntityKind } from '../../../types/vmLike';
 import { FormRow } from '../../form/form-row';
-import { ADD_SNAPSHOT, SAVE } from '../../../utils/strings';
+import { SAVE } from '../../../utils/strings';
 import { ModalFooter } from '../modal/modal-footer';
 import { VMSnapshotWrapper } from '../../../k8s/wrapper/vm/vm-snapshot-wrapper';
 
@@ -44,7 +44,7 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
 
   return (
     <div className="modal-content">
-      <ModalTitle>{ADD_SNAPSHOT}</ModalTitle>
+      <ModalTitle>{'Take Snapshot'}</ModalTitle>
       <ModalBody>
         <Alert
           title="Snapshot only includes disks backed by a snapshot supported storage class"
