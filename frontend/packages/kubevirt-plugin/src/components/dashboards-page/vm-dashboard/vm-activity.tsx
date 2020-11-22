@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { CardActions } from '@patternfly/react-core';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
@@ -58,6 +59,7 @@ const RecentEvent = withDashboardResources<RecentEventProps>(
 );
 
 export const VMActivityCard: React.FC = () => {
+  const { t } = useTranslation();
   const { vm, vmi } = React.useContext(VMDashboardContext);
   const vmiLike = vm || vmi;
 
@@ -75,9 +77,9 @@ export const VMActivityCard: React.FC = () => {
   return (
     <DashboardCard gradient>
       <DashboardCardHeader>
-        <DashboardCardTitle>Events</DashboardCardTitle>
+        <DashboardCardTitle>{t('kubevirt-plugin~Events')}</DashboardCardTitle>
         <CardActions className="kubevirt-activity-card__actions">
-          <DashboardCardLink to={viewEventsLink}>View all</DashboardCardLink>
+          <DashboardCardLink to={viewEventsLink}>{t('kubevirt-plugin~View all')}</DashboardCardLink>
           <PauseButton paused={paused} togglePause={togglePause} />
         </CardActions>
       </DashboardCardHeader>

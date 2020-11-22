@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { getName, getNamespace, getRandomChars } from '@console/shared';
 import {
@@ -8,7 +9,6 @@ import {
   ModalTitle,
 } from '@console/internal/components/factory';
 import { k8sCreate } from '@console/internal/module/k8s';
-import { RESTORE_SNAPSHOT, RESTORE } from '../../../utils/strings';
 import { ModalFooter } from '../modal/modal-footer';
 import { VMRestoreWrapper } from '../../../k8s/wrapper/vm/vm-restore-wrapper';
 import { VMSnapshot } from '../../../types';
@@ -16,6 +16,7 @@ import { getVmSnapshotVmName } from '../../../selectors/snapshot/snapshot';
 import { buildOwnerReference } from '../../../utils';
 
 const SnapshotRestoreModal = withHandlePromise((props: SnapshotRestoreModalProps) => {
+  const { t } = useTranslation();
   const { snapshot, inProgress, errorMessage, handlePromise, close, cancel } = props;
   const snapshotName = getName(snapshot);
 
@@ -42,14 +43,16 @@ const SnapshotRestoreModal = withHandlePromise((props: SnapshotRestoreModalProps
 
   return (
     <div className="modal-content">
-      <ModalTitle>{RESTORE_SNAPSHOT}</ModalTitle>
+      <ModalTitle>{t('kubevirt-plugin~Restore Snapshot')}</ModalTitle>
       <ModalBody>
-        Are you sure you want to restore <strong className="co-break-word">{snapshotName}</strong>{' '}
-        snapshot?
+        <Trans ns="kubevirt-plugin">
+          Are you sure you want to restore <strong className="co-break-word">{snapshotName}</strong>{' '}
+          snapshot?
+        </Trans>
       </ModalBody>
       <ModalFooter
         id="snapshot"
-        submitButtonText={RESTORE}
+        submitButtonText={t('kubevirt-plugin~{Restore}')}
         errorMessage={errorMessage}
         isDisabled={inProgress}
         inProgress={inProgress}

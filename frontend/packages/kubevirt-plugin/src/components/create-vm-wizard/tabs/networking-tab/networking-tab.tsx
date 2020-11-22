@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import {
   Bullseye,
@@ -31,7 +32,6 @@ import { vmWizardNicModalEnhanced } from './vm-wizard-nic-modal-enhanced';
 import { VMWizardNicRow } from './vm-wizard-nic-row';
 import { VMWizardNetworkBundle } from './types';
 import { NetworkBootSource } from './network-boot-source';
-import { ADD_NETWORK_INTERFACE } from '../../../../utils/strings';
 import { NetworkWrapper } from '../../../../k8s/wrapper/vm/network-wrapper';
 import { NetworkInterfaceWrapper } from '../../../../k8s/wrapper/vm/network-interface-wrapper';
 
@@ -64,6 +64,7 @@ const NetworkingTabComponent: React.FC<NetworkingTabComponentProps> = ({
   isUpdateDisabled,
   isDeleteDisabled,
 }) => {
+  const { t } = useTranslation();
   const showNetworks = networks.length > 0 || isBootNICRequired;
 
   const withProgress = wrapWithProgress(setTabLocked);
@@ -85,13 +86,13 @@ const NetworkingTabComponent: React.FC<NetworkingTabComponentProps> = ({
       <Split>
         <SplitItem isFilled>
           <Title headingLevel="h5" size="lg">
-            Network Interfaces
+            {t('kubevirt-plugin~Network Interfaces')}
           </Title>
         </SplitItem>
         {showNetworks && !isCreateDisabled && (
           <SplitItem>
             <Button {...addButtonProps} variant={ButtonVariant.secondary}>
-              {ADD_NETWORK_INTERFACE}
+              {t('kubevirt-plugin~Add Network Interface')}
             </Button>
           </SplitItem>
         )}
@@ -125,11 +126,11 @@ const NetworkingTabComponent: React.FC<NetworkingTabComponentProps> = ({
         <Bullseye>
           <EmptyState variant={EmptyStateVariant.full}>
             <Title headingLevel="h5" size="lg">
-              No network interface added
+              {t('kubevirt-plugin~No network interface added')}
             </Title>
             {!isCreateDisabled && (
               <Button {...addButtonProps} icon={<PlusCircleIcon />} variant={ButtonVariant.link}>
-                {ADD_NETWORK_INTERFACE}
+                {t('kubevirt-plugin~Add Network Interface')}
               </Button>
             )}
           </EmptyState>

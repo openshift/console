@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { VMKind } from '../../../types/vm';
 import {
   SecretKind,
@@ -118,10 +119,7 @@ const EnvFromEditorComponent = (props) => (
   />
 );
 
-const defaultEnvVar: EnvVarSource = {
-  configMapSecretRef: { name: 'Select a resource', key: '' },
-};
-const emptyEnvDisk: EnvDisk = ['', defaultEnvVar, 0];
+const emptyEnvDisk = (defaultEnvVar: EnvVarSource): EnvDisk => ['', defaultEnvVar, 0];
 
 /*
 This component uses `EnvFromEditor` drap-n-drop list.
@@ -143,6 +141,7 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
     inProgress,
     errorMessage,
   }) => {
+    const { t } = useTranslation();
     const configMaps = configmapsResource?.data;
     const secrets = secretsResource?.data;
     const serviceAccounts = serviceAccountsResource?.data;
@@ -151,6 +150,10 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
 
     const [errMsg, setErrMsg] = React.useState(errorMessage);
     const [isSuccess, setIsSuccess] = React.useState(false);
+
+    const defaultEnvVar: EnvVarSource = {
+      configMapSecretRef: { name: t('kubevirt-plugin~Select a resource'), key: '' },
+    };
 
     const getUsedSources = (): EnvDisk[] => {
       let counter = 0;
@@ -179,7 +182,7 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
         ]);
 
       const usedSources = [...configmapEnvDisks, ...secretsEnvDisks, ...serviceAccountEnvDisks];
-      return usedSources.length > 0 ? usedSources : [emptyEnvDisk];
+      return usedSources.length > 0 ? usedSources : [emptyEnvDisk(defaultEnvVar)];
     };
     const [savedEnvDisks, setSavedEnvDisks] = React.useState(getUsedSources());
     const [envDisks, setEnvDisks] = React.useState(savedEnvDisks);
@@ -262,7 +265,7 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
         // and there are no new envDisks
         newEnvDisks.length === 0 &&
         savedEnvDisks.length === 1 &&
-        _.isEqual(savedEnvDisks[0], emptyEnvDisk)
+        _.isEqual(savedEnvDisks[0], emptyEnvDisk(defaultEnvVar))
       ) {
         return false;
       }
@@ -304,7 +307,7 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
       if (newEnvDisks.nameValuePairs[0].length > 2) {
         setEnvDisks(newEnvDisks.nameValuePairs);
       } else {
-        setEnvDisks([emptyEnvDisk]);
+        setEnvDisks([emptyEnvDisk(defaultEnvVar)]);
       }
     };
 
@@ -368,7 +371,7 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
         promise,
         () => {
           setIsSuccess(true);
-          setEnvDisks(filterdEnvDisks.length > 0 ? filterdEnvDisks : [emptyEnvDisk]);
+          setEnvDisks(filterdEnvDisks.length > 0 ? filterdEnvDisks : [emptyEnvDisk(defaultEnvVar)]);
           setSavedEnvDisks(filterdEnvDisks);
         },
         (err) => {
@@ -408,10 +411,13 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
       <>
         <div className="co-m-pane__body-group">
           <h3 className="co-section-heading-tertiary">
-            Include all values from existing config maps, secrets or service accounts (as Disk)
+            {t(
+              'kubevirt-plugin~Include all values from existing config maps, secrets or service accounts (as Disk)',
+            )}
             <FieldLevelHelp>
-              Add new values by referencing an existing config map, secret or service account. Using
-              these values requires mounting them manually to the VM.
+              {t(
+                'kubevirt-plugin~Add new values by referencing an existing config map, secret or service account. Using these values requires mounting them manually to the VM.',
+              )}
             </FieldLevelHelp>
           </h3>
           <EnvFromEditorComponent
@@ -421,10 +427,10 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
             configMaps={availableConfigMaps}
             secrets={availableSecrets}
             serviceAccounts={availableServiceAccounts}
-            firstTitle="config map / secret / service account"
-            secondTitle="Serial Number"
+            firstTitle={t('kubevirt-plugin~config map / secret / service account')}
+            secondTitle={t('kubevirt-plugin~Serial Number')}
             addButtonDisabled={addButtonDisabled || inProgress}
-            addButtonLabel="Add Config Map, Secret or Service Account"
+            addButtonLabel={t('kubevirt-plugin~Add Config Map, Secret or Service Account')}
           />
         </div>
         <div className="environment-buttons">

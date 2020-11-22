@@ -1,10 +1,12 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { Button, Popover } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import { QuestionCircleIcon } from '@patternfly/react-icons';
 import { RowFunction, Table, MultiListPage } from '@console/internal/components/factory';
 import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/models';
-import { Firehose, FirehoseResult, EmptyBox } from '@console/internal/components/utils';
+import { Firehose, FirehoseResult } from '@console/internal/components/utils';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { K8sResourceKind, TemplateKind } from '@console/internal/module/k8s';
 import { dimensifyHeader, getNamespace } from '@console/shared';
@@ -19,7 +21,6 @@ import { StorageBundle } from './types';
 import { DiskRow } from './disk-row';
 import { diskTableColumnClasses } from './utils';
 import { isVMI, isVM } from '../../selectors/check-type';
-import { ADD_DISK } from '../../utils/strings';
 import {
   getVMTemplateNamespacedName,
   getTemplateValidationsFromTemplate,
@@ -28,7 +29,6 @@ import { diskSourceFilter } from './table-filters';
 import { VMLikeEntityTabProps, VMTabProps } from '../vms/types';
 import { getVMStatus } from '../../statuses/vm/vm-status';
 import { FileSystemsList } from './guest-agent-file-systems';
-import { VM_DISKS_DESCRIPTION } from '../../strings/vm/messages';
 import { isVMRunningOrExpectedRunning } from '../../selectors/vm/selectors';
 import { asVM } from '../../selectors/vm';
 import { VMIKind } from '../../types';
@@ -71,38 +71,36 @@ export type VMDisksTableProps = {
   loaded: boolean;
 };
 
-const NoDataEmptyMsg = () => <EmptyBox label="Disks" />;
-
-const getHeader = (columnClasses: string[]) => () =>
+const getHeader = (t: TFunction, columnClasses: string[]) => () =>
   dimensifyHeader(
     [
       {
-        title: 'Name',
+        title: t('kubevirt-plugin~Name'),
         sortField: 'name',
         transforms: [sortable],
       },
       {
-        title: 'Source',
+        title: t('kubevirt-plugin~Source'),
         sortField: 'source',
         transforms: [sortable],
       },
       {
-        title: 'Size',
+        title: t('kubevirt-plugin~Size'),
         sortField: 'size',
         transforms: [sortable],
       },
       {
-        title: 'Drive',
+        title: t('kubevirt-plugin~Drive'),
         sortField: 'type',
         transforms: [sortable],
       },
       {
-        title: 'Interface',
+        title: t('kubevirt-plugin~Interface'),
         sortField: 'diskInterface',
         transforms: [sortable],
       },
       {
-        title: 'Storage Class',
+        title: t('kubevirt-plugin~Storage Class'),
         sortField: 'storageClass',
         transforms: [sortable],
       },
@@ -116,16 +114,23 @@ const getHeader = (columnClasses: string[]) => () =>
 export const VMDisksTable: React.FC<React.ComponentProps<typeof Table> | VMDisksTableProps> = (
   props,
 ) => {
+  const { t } = useTranslation();
   return (
     <div>
       {props?.customData?.showGuestAgentHelp && (
         <>
           <h3>
-            Disks
+            {t('kubevirt-plugin~Disks')}
             <Popover
-              aria-label="Disks description"
+              aria-label={t('kubevirt-plugin~Disks description')}
               position="top"
-              bodyContent={<>{VM_DISKS_DESCRIPTION}</>}
+              bodyContent={
+                <>
+                  {t(
+                    'kubevirt-plugin~The following information is provided by the OpenShift Virtualization operator.',
+                  )}
+                </>
+              }
             >
               <Button variant="plain">
                 <QuestionCircleIcon />
@@ -136,9 +141,9 @@ export const VMDisksTable: React.FC<React.ComponentProps<typeof Table> | VMDisks
       )}
       <Table
         {...props}
-        aria-label="VM Disks List"
-        NoDataEmptyMsg={NoDataEmptyMsg}
-        Header={getHeader(props?.customData?.columnClasses)}
+        aria-label={t('kubevirt-plugin~VM Disks List')}
+        label={t('kubevirt-plugin~Disks')}
+        Header={getHeader(t, props?.customData?.columnClasses)}
         Row={props.Row || DiskRow}
         virtualize
       />
@@ -155,6 +160,7 @@ type VMDisksProps = {
 };
 
 export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, vmTemplate, vmi }) => {
+  const { t } = useTranslation();
   const namespace = getNamespace(vmLikeEntity);
   const [isLocked, setIsLocked] = useSafetyFirst(false);
   const withProgress = wrapWithProgress(setIsLocked);
@@ -199,7 +205,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, vmTemplate, vmi 
       ListComponent={VMDisksTable}
       resources={resources}
       flatten={flatten}
-      createButtonText={ADD_DISK}
+      createButtonText={t('kubevirt-plugin~Add Disk')}
       canCreate={!isVMI(vmLikeEntity)}
       createProps={{
         isDisabled: isLocked,

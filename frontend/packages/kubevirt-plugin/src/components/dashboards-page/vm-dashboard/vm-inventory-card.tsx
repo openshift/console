@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { DashboardItemProps } from '@console/internal/components/dashboard/with-dashboard-resources';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
@@ -27,6 +28,7 @@ import { VMSnapshot } from '../../../types';
 import { getVmSnapshotVmName } from '../../../selectors/snapshot/snapshot';
 
 export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
+  const { t } = useTranslation();
   const vmDashboardContext = React.useContext(VMDashboardContext);
   const { vm, vmi } = vmDashboardContext;
   const vmiLike = vm || vmi;
@@ -99,13 +101,13 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>Inventory</DashboardCardTitle>
+        <DashboardCardTitle>{t('kubevirt-plugin~Inventory')}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody isLoading={isLoading}>
         {nicCount > 0 && (
           <InventoryItem
             isLoading={isLoading}
-            title="NIC"
+            title={t('kubevirt-plugin~NIC')}
             count={nicCount}
             TitleComponent={NicsTitle}
             key="nic-inventory-item"
@@ -142,7 +144,7 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
           <InventoryItem
             isLoading={isLoading || !snapshotsLoaded}
             error={snapshotsError}
-            title="Snapshot"
+            title={t('kubevirt-plugin~Snapshot')}
             count={filteredSnapshots.length}
             TitleComponent={SnapshotsTitle}
             key="snapshots-inventory-item"

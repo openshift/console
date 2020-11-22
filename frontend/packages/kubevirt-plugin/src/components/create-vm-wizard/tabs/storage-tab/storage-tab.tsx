@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import {
   Bullseye,
@@ -37,7 +38,6 @@ import { VmWizardStorageRow } from './vm-wizard-storage-row';
 import { VMWizardStorageBundle } from './types';
 import { vmWizardStorageModalEnhanced } from './vm-wizard-storage-modal-enhanced';
 import { StorageBootSource } from './storage-boot-source';
-import { ADD_DISK } from '../../../../utils/strings';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 
 import './storage-tab.scss';
@@ -88,6 +88,7 @@ const StorageTabFirehose: React.FC<StorageTabFirehoseProps> = ({
   isUpdateDisabled,
   isDeleteDisabled,
 }) => {
+  const { t } = useTranslation();
   const showStorages = storages.length > 0 || isBootDiskRequired;
 
   const withProgress = wrapWithProgress(setTabLocked);
@@ -109,13 +110,13 @@ const StorageTabFirehose: React.FC<StorageTabFirehoseProps> = ({
       <Split>
         <SplitItem isFilled>
           <Title headingLevel="h5" size="lg">
-            Disks
+            {t('kubevirt-plugin~Disks')}
           </Title>
         </SplitItem>
         {showStorages && !isCreateDisabled && (
           <SplitItem>
             <Button {...addButtonProps} variant={ButtonVariant.secondary}>
-              {ADD_DISK}
+              {t('kubevirt-plugin~Add Disk')}
             </Button>
           </SplitItem>
         )}
@@ -150,11 +151,11 @@ const StorageTabFirehose: React.FC<StorageTabFirehoseProps> = ({
         <Bullseye>
           <EmptyState variant={EmptyStateVariant.full}>
             <Title headingLevel="h5" size="lg">
-              No disks attached
+              {t('kubevirt-plugin~No disks attached')}
             </Title>
             {!isCreateDisabled && (
               <Button {...addButtonProps} icon={<PlusCircleIcon />} variant={ButtonVariant.link}>
-                {ADD_DISK}
+                {t('kubevirt-plugin~Add Disk')}
               </Button>
             )}
           </EmptyState>

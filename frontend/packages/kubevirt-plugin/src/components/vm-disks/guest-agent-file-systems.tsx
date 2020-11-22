@@ -1,6 +1,7 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
+import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { Button, Popover } from '@patternfly/react-core';
 import { QuestionCircleIcon } from '@patternfly/react-icons';
@@ -12,7 +13,6 @@ import { isGuestAgentInstalled } from '../dashboards-page/vm-dashboard/vm-alerts
 import { VMIKind } from '../../types/vm';
 import { VMStatusBundle } from '../../statuses/vm/types';
 import { getGuestAgentFieldNotAvailMsg } from '../../utils/guest-agent-strings';
-import { GUEST_AGENT_FILE_SYSTEMS_DESCRIPTION } from '../../strings/vm/messages';
 
 import './guest-agent-file-systems.scss';
 
@@ -24,34 +24,34 @@ const tableColumnClasses = [
   classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'col-sm-4'),
 ];
 
-const FileSystemsTableHeader = () => {
+const FileSystemsTableHeader = (t: TFunction) => () => {
   return [
     {
-      title: 'Name',
+      title: t('kubevirt-plugin~Name'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'File System Type',
+      title: t('kubevirt-plugin~File System Type'),
       sortField: 'metadata.fileSystemType',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Mount Point',
+      title: t('kubevirt-plugin~Mount Point'),
       sortField: 'metadata.mountPoint',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Total Bytes',
+      title: t('kubevirt-plugin~Total Bytes'),
       sortField: 'metadata.totalBytes',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Used Bytes',
+      title: t('kubevirt-plugin~Used Bytes'),
       sortField: 'metadata.usedBytes',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
@@ -101,15 +101,15 @@ export const FileSystemsList: React.FC<FileSystemsListProps> = ({ vmi, vmStatusB
       </div>
     ) : (
       <Table
-        aria-label="FileSystems"
-        Header={FileSystemsTableHeader}
+        aria-label={t('kubevirt-plugin~FileSystems')}
+        Header={FileSystemsTableHeader(t)}
         Row={FileSystemTableRow}
         data={data}
         loadError={error?.message}
         loaded={!loading}
         EmptyMsg={() => (
           <div id="no-files-systems-found-msg" className="text-center">
-            No File Systems Found
+            {t('kubevirt-plugin~No File Systems Found')}
           </div>
         )}
         virtualize
@@ -120,11 +120,17 @@ export const FileSystemsList: React.FC<FileSystemsListProps> = ({ vmi, vmStatusB
   return (
     <div className="kubevirt-vm-details__file-systems">
       <h3 id="file-systems-header">
-        File Systems
+        {t('kubevirt-plugin~File Systems')}
         <Popover
           aria-label="File systems description"
           position="top"
-          bodyContent={<>{GUEST_AGENT_FILE_SYSTEMS_DESCRIPTION}</>}
+          bodyContent={
+            <>
+              {t(
+                'kubevirt-plugin~The following information regarding how the disks are partitioned is provided by the guest agent.',
+              )}
+            </>
+          }
         >
           <Button variant="plain">
             <QuestionCircleIcon />
