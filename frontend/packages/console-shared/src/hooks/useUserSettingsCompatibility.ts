@@ -5,10 +5,12 @@ export const useUserSettingsCompatibility = <T>(
   key: string,
   storageKey: string,
   defaultValue?: T,
+  sync: boolean = false,
 ): [T | string, React.Dispatch<React.SetStateAction<T>>, boolean] => {
   const [settings, setSettings, loaded] = useUserSettings<T | string>(
     key,
     localStorage.getItem(storageKey) || defaultValue,
+    sync,
   );
 
   React.useEffect(

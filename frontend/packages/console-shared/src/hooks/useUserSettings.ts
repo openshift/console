@@ -52,11 +52,14 @@ const updateConfigMap = async (configMap: ConfigMapKind, key: string, value: str
     ];
     try {
       await k8sPatch(ConfigMapModel, configMap, patch);
+      return Promise.resolve();
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error(err);
+      return Promise.reject();
     }
   }
+  return Promise.resolve();
 };
 
 const deseralizeData = <T>(data: T) => {
@@ -80,9 +83,11 @@ const seralizeData = <T>(data: T) => {
 export const useUserSettings = <T>(
   key: string,
   defaultValue?: T,
+  sync: boolean = false,
 ): [T, React.Dispatch<React.SetStateAction<T>>, boolean] => {
   const defaultValueRef = React.useRef<T>(defaultValue);
   const keyRef = React.useRef<string>(key);
+  const isRequestPending = React.useRef<boolean>(false);
   const userUid = useSelector(
     (state: RootState) => state.UI.get('user')?.metadata?.uid ?? 'kubeadmin',
   );
@@ -97,6 +102,8 @@ export const useUserSettings = <T>(
   );
   const [cfData, cfLoaded, cfLoadError] = useK8sWatchResource<K8sResourceKind>(configMapResource);
   const [settings, setSettings] = React.useState<T>();
+  const settingsRef = React.useRef<T>(settings);
+  settingsRef.current = settings;
   const [loaded, setLoaded] = React.useState(false);
 
   React.useEffect(() => {
@@ -138,12 +145,38 @@ export const useUserSettings = <T>(
   }, [cfLoaded, cfLoadError]);
 
   React.useEffect(() => {
-    if (cfData && cfLoaded && settings !== undefined) {
-      updateConfigMap(cfData, keyRef.current, seralizeData(settings));
+    if (sync && !isRequestPending.current) {
+      if (
+        cfData &&
+        cfLoaded &&
+        seralizeData(settingsRef.current) !== cfData?.data?.[keyRef.current]
+      ) {
+        setSettings(deseralizeData(cfData?.data?.[keyRef.current]));
+      }
     }
-    // This effect should only be run on change of settings state.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [settings]);
+  }, [cfData, cfLoaded, sync]);
 
-  return [settings, setSettings, loaded];
+  const callback = React.useCallback<React.Dispatch<React.SetStateAction<T>>>(
+    (action: React.SetStateAction<T>) => {
+      if (isRequestPending.current) return;
+      const previousSettings = settingsRef.current;
+      const newState =
+        typeof action === 'function' ? (action as (prevState: T) => T)(previousSettings) : action;
+      setSettings(newState);
+      if (cfLoaded) {
+        isRequestPending.current = true;
+        updateConfigMap(cfData, keyRef.current, seralizeData(newState))
+          .then(() => {
+            isRequestPending.current = false;
+          })
+          .catch(() => {
+            setSettings(previousSettings);
+            isRequestPending.current = false;
+          });
+      }
+    },
+    [cfData, cfLoaded],
+  );
+
+  return [settings, callback, loaded];
 };

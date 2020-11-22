@@ -1,4 +1,5 @@
 import * as redux from 'react-redux';
+import { act } from 'react-dom/test-utils';
 import * as k8s from '@console/internal/module/k8s';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { testHook } from '../../../../../__tests__/utils/hooks-utils';
@@ -54,20 +55,22 @@ describe('useUserSettings', () => {
     });
   });
 
-  it('should return value from default and run patch to update configMap', (done) => {
+  it('should return value from default and run patch to update configMap', () => {
     (useK8sWatchResource as jest.Mock).mockReturnValue([
       { data: { 'devconsole.topology.key1': true } },
       true,
     ]);
+    let settings;
+    let callback;
     testHook(() => {
-      const [settings, setSettings] = useUserSettings('devconsole.topology.key', 'list');
-      expect(setSettings).toBeDefined();
-      waitAndExpect(() => {
-        expect(settings).toEqual('list');
-        expect(spyK8sPatch).toHaveBeenCalledTimes(1);
-        done();
-      });
+      [settings, callback] = useUserSettings('devconsole.topology.key', 'list');
+      expect(callback).toBeDefined();
     });
+    act(() => {
+      callback('graph');
+    });
+    expect(settings).toEqual('graph');
+    expect(spyK8sPatch).toHaveBeenCalledTimes(1);
   });
 
   it('should call side effects if configmap not loaded', (done) => {
