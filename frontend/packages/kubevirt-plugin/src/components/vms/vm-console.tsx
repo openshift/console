@@ -184,7 +184,7 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
             variant="danger"
             actionClose={<AlertActionCloseButton onClose={() => setShowAlert(false)} />}
             title={t(
-              'kubevirt-plugin~`Selected type {{typeName}} is unsupported, falling back to a supported type`',
+              'kubevirt-plugin~Selected type {{typeName}} is unsupported, falling back to a supported type',
               { typeName: type.toPatternflyLabel() },
             )}
           />

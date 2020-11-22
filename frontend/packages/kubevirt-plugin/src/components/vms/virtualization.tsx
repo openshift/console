@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import {
@@ -96,6 +97,7 @@ const templateMenuItems = [
 ];
 
 export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (props) => {
+  const { t } = useTranslation();
   const [isOpen, setOpen] = React.useState(false);
   const [importAllowed, setImportAllowed] = useSafetyFirst(false);
   const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
@@ -128,7 +130,7 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
   const pages = [
     {
       href: '',
-      name: 'Virtual Machines',
+      name: t('kubevirt-plugin~Virtual Machines'),
       component: VirtualMachinesPage,
     },
   ];
@@ -136,7 +138,7 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
   if (openshiftFlag) {
     pages.push({
       href: 'templates',
-      name: 'Templates',
+      name: t('kubevirt-plugin~Templates'),
       component: VirtualMachineTemplatesPage,
     });
   }
