@@ -149,6 +149,13 @@ module.exports = {
   // Warns if a type assertion does not change the type of an expression
   '@typescript-eslint/no-unnecessary-type-assertion': 'error',
 
+  // Disallow Unused Expressions,
+  'no-unused-expressions': 'off',
+  '@typescript-eslint/no-unused-expressions': [
+    'error',
+    { allowShortCircuit: true, allowTernary: true },
+  ],
+
   // Disallow unused variables
   'no-unused-vars': 'off',
   '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true }],

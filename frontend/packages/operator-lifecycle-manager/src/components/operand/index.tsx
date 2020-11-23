@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import * as classNames from 'classnames';
 import { match } from 'react-router-dom';
-import { connect } from 'react-redux';
 import { sortable } from '@patternfly/react-table';
 import { JSONSchema6 } from 'json-schema';
 import { Status, SuccessStatus, getBadgeFromType } from '@console/shared';
@@ -41,7 +40,6 @@ import {
   apiGroupForReference,
   apiVersionForReference,
   kindForReference,
-  modelFor,
   referenceFor,
   referenceForModel,
   nameForModel,
@@ -50,13 +48,11 @@ import {
 } from '@console/internal/module/k8s';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { deleteModal } from '@console/internal/components/modals';
-import { RootState } from '@console/internal/redux';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind } from '../../types';
-import { isInternalObject, getInternalAPIReferences, getInternalObjects } from '../../utils';
 import { DescriptorType, StatusCapability, StatusDescriptor } from '../descriptors/types';
 import { Resources } from '../k8s-resource';
-import { referenceForProvidedAPI } from '../index';
+import { providedAPIsForCSV, referenceForProvidedAPI } from '../index';
 import { csvNameFromWindow, OperandLink } from './operand-link';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 import {
@@ -66,6 +62,7 @@ import {
 } from '@console/plugin-sdk';
 import { CustomResourceDefinitionModel } from '@console/internal/models';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
+import { useK8sModels } from '@console/shared/src/hooks/useK8sModels';
 import { DescriptorDetailsItem, DescriptorDetailsItemList } from '../descriptors';
 
 export const getOperandActions = (
@@ -319,28 +316,28 @@ export const OperandList: React.FC<OperandListProps> = (props) => {
   );
 };
 
-const inFlightStateToProps = ({ k8s }: RootState) => ({
-  inFlight: k8s.getIn(['RESOURCES', 'inFlight']),
-});
-
-export const ProvidedAPIsPage = connect(inFlightStateToProps)((props: ProvidedAPIsPageProps) => {
+export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
   const { obj } = props;
-  const { owned = [] } = obj.spec.customresourcedefinitions;
-  const internalObjects = getInternalObjects(obj);
-  const internalAPIs = getInternalAPIReferences(obj);
-  const firehoseResources = owned.reduce((resources, desc) => {
-    const reference = referenceForProvidedAPI(desc);
-    const model = modelFor(reference);
-    return model && !internalAPIs.some((api) => api === reference)
+  const [models, inFlight] = useK8sModels();
+  if (inFlight) {
+    return null;
+  }
+  const providedAPIs = providedAPIsForCSV(obj);
+
+  // Exclude provided APIs that do not have a model
+  const firehoseResources = providedAPIs.reduce((resourceAccumulator, api) => {
+    const reference = referenceForProvidedAPI(api);
+    const model = models?.[reference];
+    return model
       ? [
-          ...resources,
+          ...resourceAccumulator,
           {
-            kind: referenceForProvidedAPI(desc),
+            kind: referenceForProvidedAPI(api),
             namespaced: model.namespaced,
-            prop: desc.kind,
+            prop: api.kind,
           },
         ]
-      : resources;
+      : resourceAccumulator;
   }, []);
 
   const EmptyMsg = () => (
@@ -352,27 +349,21 @@ export const ProvidedAPIsPage = connect(inFlightStateToProps)((props: ProvidedAP
   const createLink = (name: string) =>
     `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${
       obj.metadata.name
-    }/${referenceForProvidedAPI(_.find(owned, { name }))}/~new`;
+    }/${referenceForProvidedAPI(_.find(providedAPIs, { name }))}/~new`;
   const createProps =
-    owned.length > 1
+    providedAPIs.length > 1
       ? {
-          items: owned.reduce(
-            (acc, crd) =>
-              !isInternalObject(internalObjects, crd.name)
-                ? { ...acc, [crd.name]: crd.displayName }
-                : acc,
-            {},
-          ),
+          items: providedAPIs.reduce((acc, api) => ({ ...acc, [api.name]: api.displayName }), {}),
           createLink,
         }
-      : { to: owned.length === 1 ? createLink(owned[0].name) : null };
+      : { to: providedAPIs.length === 1 ? createLink(providedAPIs[0].name) : null };
 
   const owners = (ownerRefs: OwnerReference[], items: K8sResourceKind[]) =>
     ownerRefs.filter(({ uid }) => items.filter(({ metadata }) => metadata.uid === uid).length > 0);
   const flatten = (resources: { [kind: string]: { data: K8sResourceKind[] } }) =>
     _.flatMap(resources, (resource) => _.map(resource.data, (item) => item)).filter(
       ({ kind, metadata }, i, allResources) =>
-        owned.filter((item) => item.kind === kind).length > 0 ||
+        providedAPIs.filter((item) => item.kind === kind).length > 0 ||
         owners(metadata.ownerReferences || [], allResources).length > 0,
     );
 
@@ -388,10 +379,6 @@ export const ProvidedAPIsPage = connect(inFlightStateToProps)((props: ProvidedAP
     },
   ];
 
-  if (props.inFlight) {
-    return null;
-  }
-
   return firehoseResources.length > 0 ? (
     <MultiListPage
       {...props}
@@ -399,16 +386,18 @@ export const ProvidedAPIsPage = connect(inFlightStateToProps)((props: ProvidedAP
       filterLabel="Resources by name"
       resources={firehoseResources}
       namespace={obj.metadata.namespace}
-      canCreate={owned.length > 0}
+      canCreate={providedAPIs.length > 0}
       createProps={createProps}
-      createButtonText={owned.length > 1 ? 'Create New' : `Create ${owned[0].displayName}`}
+      createButtonText={
+        providedAPIs.length > 1 ? 'Create New' : `Create ${providedAPIs[0].displayName}`
+      }
       flatten={flatten}
       rowFilters={firehoseResources.length > 1 ? rowFilters : null}
     />
   ) : (
     <StatusBox loaded EmptyMsg={EmptyMsg} />
   );
-});
+};
 
 export const ProvidedAPIPage = connectToModel((props: ProvidedAPIPageProps) => {
   const { namespace, kind, kindsInFlight, kindObj, csv } = props;

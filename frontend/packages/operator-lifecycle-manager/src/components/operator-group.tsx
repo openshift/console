@@ -149,7 +149,7 @@ export const installedFor = (allSubscriptions: SubscriptionKind[] = []) => (
   return !_.isNil(subscriptionFor(allSubscriptions)(allGroups)(pkgName)(ns));
 };
 
-export const providedAPIsFor = (og: OperatorGroupKind) =>
+export const providedAPIsForOperatorGroup = (og: OperatorGroupKind) =>
   _.get(og.metadata.annotations, 'olm.providedAPIs', '')
     .split(',')
     .map((api) => ({

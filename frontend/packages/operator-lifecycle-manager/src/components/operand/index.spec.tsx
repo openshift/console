@@ -54,6 +54,27 @@ jest.mock('react-i18next', () => {
   };
 });
 
+jest.mock('@console/shared/src/hooks/useK8sModels', () => ({
+  useK8sModels: () => [
+    {
+      'testapp.coreos.com~v1alpha1~TestResource': {
+        abbr: 'TR',
+        apiGroup: 'testapp.coreos.com',
+        apiVersion: 'v1alpha1',
+        crd: true,
+        kind: 'TestResource',
+        label: 'Test Resource',
+        labelPlural: 'Test Resources',
+        namespaced: true,
+        plural: 'testresources',
+        verbs: ['create'],
+      },
+    },
+    false,
+    null,
+  ],
+}));
+
 const i18nNS = 'details-page';
 
 describe(OperandTableHeader.displayName, () => {
@@ -415,7 +436,7 @@ describe(ProvidedAPIsPage.displayName, () => {
   });
 
   beforeEach(() => {
-    wrapper = shallow(<ProvidedAPIsPage.WrappedComponent obj={testClusterServiceVersion} />);
+    wrapper = shallow(<ProvidedAPIsPage obj={testClusterServiceVersion} />);
   });
 
   it('renders a `StatusBox` if given app has no owned or required custom resources', () => {
