@@ -1,14 +1,17 @@
 import * as React from 'react';
+import { deseralizeData } from '../utils/user-settings';
 import { useUserSettings } from './useUserSettings';
 
 export const useUserSettingsCompatibility = <T>(
   key: string,
   storageKey: string,
   defaultValue?: T,
-): [T | string, React.Dispatch<React.SetStateAction<T>>, boolean] => {
-  const [settings, setSettings, loaded] = useUserSettings<T | string>(
+): [T, React.Dispatch<React.SetStateAction<T>>, boolean] => {
+  const [settings, setSettings, loaded] = useUserSettings<T>(
     key,
-    localStorage.getItem(storageKey) || defaultValue,
+    localStorage.getItem(storageKey) !== null
+      ? deseralizeData(localStorage.getItem(storageKey))
+      : defaultValue,
   );
 
   React.useEffect(

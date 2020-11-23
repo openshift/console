@@ -4,78 +4,19 @@ import * as React from 'react';
 // @ts-ignore
 import { useSelector } from 'react-redux';
 import { RootState } from '@console/internal/redux';
-import { ConfigMapModel, ProjectRequestModel, ProjectModel } from '@console/internal/models';
-import {
-  K8sResourceKind,
-  k8sGet,
-  k8sCreate,
-  k8sPatch,
-  ConfigMapKind,
-} from '@console/internal/module/k8s';
+import { ConfigMapModel } from '@console/internal/models';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-
-// can't create project with name prefix with 'openshift-*', once we have proxy need to update
-const USER_SETTING_CONFIGMAP_NAMESPACE = 'console-user-settings';
-
-// This won't be needed once we have proxy api
-const getProject = async () => {
-  try {
-    await k8sGet(ProjectModel, USER_SETTING_CONFIGMAP_NAMESPACE);
-  } catch {
-    await k8sCreate(ProjectRequestModel, {
-      metadata: {
-        name: USER_SETTING_CONFIGMAP_NAMESPACE,
-      },
-    });
-  }
-};
-
-const createConfigMap = async (configMapData: K8sResourceKind): Promise<boolean> => {
-  try {
-    await k8sCreate(ConfigMapModel, configMapData);
-    return true;
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error(err);
-    return false;
-  }
-};
-
-const updateConfigMap = async (configMap: ConfigMapKind, key: string, value: string) => {
-  if (value !== configMap.data?.[key]) {
-    const patch = [
-      {
-        op: 'replace',
-        path: `/data/${key}`,
-        value,
-      },
-    ];
-    try {
-      await k8sPatch(ConfigMapModel, configMap, patch);
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error(err);
-    }
-  }
-};
-
-const deseralizeData = <T>(data: T) => {
-  if (typeof data !== 'string') {
-    return data;
-  }
-  try {
-    return JSON.parse(data);
-  } catch {
-    return data;
-  }
-};
-
-const seralizeData = <T>(data: T) => {
-  if (typeof data === 'string') {
-    return data;
-  }
-  return JSON.stringify(data);
-};
+import { useUserSettingsLocalStorage } from './useUserSettingsLocalStorage';
+import {
+  createConfigMap,
+  deseralizeData,
+  getProject,
+  createProject,
+  seralizeData,
+  updateConfigMap,
+  USER_SETTING_CONFIGMAP_NAMESPACE,
+} from '../utils/user-settings';
 
 export const useUserSettings = <T>(
   key: string,
@@ -99,29 +40,44 @@ export const useUserSettings = <T>(
   const [settings, setSettings] = React.useState<T>();
   const [loaded, setLoaded] = React.useState(false);
 
+  const [fallbackLocalStorage, setFallbackLocalStorage] = React.useState<boolean>(false);
+  const [lsData, setLsDataCallback] = useUserSettingsLocalStorage(
+    keyRef.current,
+    defaultValueRef.current,
+    fallbackLocalStorage,
+  );
+
   React.useEffect(() => {
     if (cfLoadError || (!cfData && cfLoaded)) {
       (async () => {
-        await getProject();
-        const cmCreated = await createConfigMap({
-          apiVersion: ConfigMapModel.apiVersion,
-          kind: ConfigMapModel.kind,
-          metadata: {
-            name: `user-settings-${userUid}`,
-            namespace: USER_SETTING_CONFIGMAP_NAMESPACE,
-          },
-          data: {
-            ...(defaultValueRef.current !== undefined && {
-              [keyRef.current]: seralizeData(defaultValueRef.current),
-            }),
-          },
-        });
-        if (!cmCreated) {
-          setSettings(deseralizeData(defaultValueRef.current));
-          setLoaded(true);
+        // this would be replaced with proxy endpoint to create ConfigMap
+        try {
+          const projectExists = await getProject();
+          if (!projectExists) await createProject();
+          await createConfigMap({
+            apiVersion: ConfigMapModel.apiVersion,
+            kind: ConfigMapModel.kind,
+            metadata: {
+              name: `user-settings-${userUid}`,
+              namespace: USER_SETTING_CONFIGMAP_NAMESPACE,
+            },
+            data: {
+              ...(defaultValueRef.current !== undefined && {
+                [keyRef.current]: seralizeData(defaultValueRef.current),
+              }),
+            },
+          });
+        } catch (err) {
+          if (err?.response?.status === 403) {
+            setFallbackLocalStorage(true);
+          } else {
+            setSettings(defaultValueRef.current);
+            setLoaded(true);
+          }
         }
       })();
     } else if (
+      !fallbackLocalStorage &&
       cfData &&
       cfLoaded &&
       (!cfData.data?.hasOwnProperty(keyRef.current) ||
@@ -129,13 +85,13 @@ export const useUserSettings = <T>(
     ) {
       setSettings(deseralizeData(cfData.data?.[keyRef.current]) ?? defaultValueRef.current);
       setLoaded(true);
-    } else if (cfLoaded) {
-      setSettings(deseralizeData(defaultValueRef.current));
+    } else if (!fallbackLocalStorage && cfLoaded) {
+      setSettings(defaultValueRef.current);
       setLoaded(true);
     }
     // This effect should only be run on change of configmap data, status.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cfLoaded, cfLoadError]);
+  }, [cfLoadError, cfLoaded, fallbackLocalStorage]);
 
   React.useEffect(() => {
     if (cfData && cfLoaded && settings !== undefined) {
@@ -145,5 +101,5 @@ export const useUserSettings = <T>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settings]);
 
-  return [settings, setSettings, loaded];
+  return fallbackLocalStorage ? [lsData, setLsDataCallback, true] : [settings, setSettings, loaded];
 };
