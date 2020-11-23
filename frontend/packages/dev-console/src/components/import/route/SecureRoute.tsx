@@ -52,7 +52,7 @@ const SecureRoute: React.FC = () => {
               <h3>{t('devconsole~Certificates')}</h3>
               <FormHelperText isHidden={false}>
                 {t(
-                  'devconsole~TLS certificates for edge and re-encrypt termination. If not specified, the router&apos;s default certificate is used.',
+                  "devconsole~TLS certificates for edge and re-encrypt termination. If not specified, the router's default certificate is used.",
                 )}
               </FormHelperText>
               <DroppableFileInputField
