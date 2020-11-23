@@ -55,7 +55,7 @@ Feature: Create Application from git form
       And user unselects the advanced option Create a route to the application
       And user clicks Create button on Add page
       Then user will be redirected to Topology page
-      And public url is not created for node "name-no-route"
+      And public url is not created for node "name-no-route" in the workload sidebar
 
 
    @regression

@@ -5,10 +5,10 @@ import { pageTitle } from '../../constants/pageTitle';
 import { topologyPO } from '../../pageObjects/topology-po';
 import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
 
-export function createHelmChartFromAddPage(
+export const createHelmChartFromAddPage = (
   releaseName: string = 'nodejs-ex-k',
   helmChartName: string = 'Nodejs Ex K v0.2.1',
-) {
+) => {
   addPage.verifyCard('Helm Chart');
   addPage.selectCardFromOptions(addOptions.HelmChart);
   detailsPage.titleShouldContain(pageTitle.DeveloperCatalog);
@@ -26,4 +26,4 @@ export function createHelmChartFromAddPage(
     .type(releaseName);
   cy.get('div.is-filtered').should('be.visible');
   cy.get(topologyPO.switcher).click();
-}
+};

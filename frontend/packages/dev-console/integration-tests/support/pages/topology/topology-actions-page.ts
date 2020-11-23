@@ -4,22 +4,19 @@ import { modal } from '../../../../../integration-tests-cypress/views/modal';
 export const topologyActions = {
   selectAction: (action: nodeActions | string) => {
     switch (action) {
-      case 'Edit Application Grouping':
-      case nodeActions.EditApplicatoinGrouping: {
+      case nodeActions.EditApplicatoinGrouping || 'Edit Application Grouping': {
         cy.byTestActionID(action)
           .should('be.visible')
           .click();
         break;
       }
-      case 'Edit Pod Count':
-      case nodeActions.EditPodCount: {
+      case nodeActions.EditPodCount || 'Edit Pod Count': {
         cy.byTestActionID(action)
           .should('be.visible')
           .click();
         break;
       }
-      case 'Edit Labels':
-      case nodeActions.EditLabels: {
+      case nodeActions.EditLabels || 'Edit Labels': {
         cy.byTestActionID(action)
           .should('be.visible')
           .click();
@@ -27,8 +24,7 @@ export const topologyActions = {
         modal.modalTitleShouldContain('Edit Labels');
         break;
       }
-      case 'Edit Annotations':
-      case nodeActions.EditAnnotations: {
+      case nodeActions.EditAnnotations || 'Edit Annotations': {
         cy.byTestActionID(action)
           .should('be.visible')
           .click();
@@ -36,43 +32,37 @@ export const topologyActions = {
         modal.modalTitleShouldContain('Edit Annotations');
         break;
       }
-      case 'Edit Update Strategy':
-      case nodeActions.EditUpdateStrategy: {
+      case nodeActions.EditUpdateStrategy || 'Edit Update Strategy': {
         cy.byTestActionID(action)
           .should('be.visible')
           .click();
         break;
       }
-      case 'Delete Deployment':
-      case nodeActions.DeleteDeployment: {
+      case nodeActions.DeleteDeployment || 'Delete Deployment': {
         cy.byTestActionID(action)
           .should('be.visible')
           .click();
         break;
       }
-      case 'Delete SinkBinding':
-      case nodeActions.DeleteSinkBinding: {
+      case nodeActions.DeleteSinkBinding || 'Delete SinkBinding': {
         cy.byTestActionID(action)
           .should('be.visible')
           .click();
         break;
       }
-      case 'Edit SinkBinding':
-      case nodeActions.EditSinkBinding: {
+      case nodeActions.EditSinkBinding || 'Edit SinkBinding': {
         cy.byTestActionID(action)
           .should('be.visible')
           .click();
         break;
       }
-      case 'Move Sink':
-      case nodeActions.MoveSink: {
+      case nodeActions.MoveSink || 'Move Sink': {
         cy.byTestActionID(action)
           .should('be.visible')
           .click();
         break;
       }
-      case 'Delete Service':
-      case nodeActions.DeleteService: {
+      case nodeActions.DeleteService || 'Delete Service': {
         cy.byTestActionID(action)
           .should('be.visible')
           .click();
