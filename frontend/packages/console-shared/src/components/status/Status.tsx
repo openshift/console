@@ -29,7 +29,7 @@ export const Status: React.FC<StatusProps> = ({
       return <StatusIconAndText {...statusProps} icon={<HourglassStartIcon />} />;
 
     case 'Pending':
-      return <StatusIconAndText {...statusProps} icon={<HourglassHalfIcon />} />;
+      return <StatusIconAndText {...statusProps} icon={<HourglassHalfIcon color="inherit" />} />;
 
     case 'Planning':
       return <StatusIconAndText {...statusProps} icon={<ClipboardListIcon />} />;
