@@ -1,0 +1,15 @@
+{
+  "Name": "名前",
+  "Namespace": "namespace",
+  "Created": "作成",
+  "MachineHealthChecks": "MachineHealthChecks",
+  "Unhealthy conditions": "正常でない状態",
+  "Status": "ステータス",
+  "Timeout": "Timeout",
+  "Type": "タイプ",
+  "MachineHealthCheck details": "MachineHealthCheck の詳細",
+  "Selector": "セレクター",
+  "Max unhealthy": "最大数 (正常でない状態)",
+  "Expected machines": "予想されるマシン",
+  "Current healthy": "現在 (正常な状態)"
+}

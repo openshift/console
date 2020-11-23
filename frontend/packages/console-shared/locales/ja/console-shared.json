@@ -61,11 +61,11 @@
   "Drag": "ドラッグ",
   "Click": "クリック",
   "Right Click": "右クリック",
+  "Scheduling disabled": "スケジュールの無効化",
   "Scaled to 0": "0 にスケーリング",
   "scaling to {{podSubTitle}}": "{{podSubTitle}} にスケーリング",
   "Autoscaled": "自動スケーリング",
   "to 0": "0 ",
   "Autoscaling": "自動スケーリング",
-  "to {{podSubTitle}}": "{{podSubTitle}}",
-  "Invalid target resource: ({{targetResource}})": "無効なターゲットリソース:({{targetResource}} ）"
+  "to {{podSubTitle}}": "{{podSubTitle}}"
 }
