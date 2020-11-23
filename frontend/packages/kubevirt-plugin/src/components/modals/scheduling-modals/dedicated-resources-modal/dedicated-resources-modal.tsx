@@ -19,7 +19,8 @@ import { useNodeQualifier } from '../shared/hooks';
 import { ModalFooter } from '../../modal/modal-footer';
 import { NodeChecker } from '../shared/NodeChecker/node-checker';
 import { DEDICATED_RESOURCES_LABELS } from '../shared/consts';
-import './dedicated-resources-modal.scss';
+
+import '../shared/scheduling-modals.scss';
 
 export const DedicatedResourcesModal = withHandlePromise<DedicatedResourcesModalProps>(
   ({
@@ -71,7 +72,7 @@ export const DedicatedResourcesModal = withHandlePromise<DedicatedResourcesModal
         <ModalTitle>{t('kubevirt-plugin~Dedicated Resources')}</ModalTitle>
         <ModalBody>
           <Checkbox
-            className="kubevirt-dedicated-resources__checkbox"
+            className="kubevirt-scheduling__checkbox"
             label={t(
               'kubevirt-plugin~Schedule this workload with dedicated resources (guaranteed policy)',
             )}
@@ -80,18 +81,14 @@ export const DedicatedResourcesModal = withHandlePromise<DedicatedResourcesModal
             onChange={(flag) => setIsPinned(flag)}
             id="dedicated-resources-checkbox"
           />
-          <Text
-            className="kubevirt-dedicated-resources__helper-text"
-            component={TextVariants.small}
-          >
-            {t('kubevirt-plugin~Available only on Nodes with labels')}{' '}
-            <Label kind={NodeModel.kind} name="cpumanager" value="true" expand />
+          <Text className="kubevirt-scheduling__helper-text" component={TextVariants.small}>
+            {t('kubevirt-plugin~Available only on Nodes with labels')}
           </Text>
+          <Label kind={NodeModel.kind} name="cpumanager" value="true" expand />
           <NodeChecker qualifiedNodes={qualifiedNodes} />
         </ModalBody>
         <ModalFooter
           id="dedicated-resources"
-          className="kubevirt-dedicated-resources__footer"
           errorMessage={errorMessage}
           inProgress={!isLoaded(nodes) || inProgress}
           isSimpleError={!!loadError}

@@ -11,7 +11,7 @@ export type VMISpec = {
   dnsConfig: any;
   dnsPolicy: string;
   domain?: any;
-  evictionStrategy: any;
+  evictionStrategy?: string;
   hostname: string;
   livenessProbe: any;
   networks?: any[];

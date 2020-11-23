@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { getLabels } from '@console/shared/src/selectors/common';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
-import { CPURaw, V1NetworkInterface, VMKind } from '../../../types/vm';
+import { CPURaw, V1NetworkInterface, VMISpec, VMKind } from '../../../types';
 import {
   getCloudInitVolume,
   getDataVolumeTemplates,
@@ -43,9 +43,10 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
   getOperatingSystem = () => findKeySuffixValue(this.getLabels(), TEMPLATE_OS_LABEL);
   getWorkloadProfile = () => findKeySuffixValue(this.getLabels(), TEMPLATE_WORKLOAD_LABEL);
   getFlavor = () => findKeySuffixValue(this.getLabels(), TEMPLATE_FLAVOR_LABEL);
-
-  getMemory = () => this.data?.spec?.template?.spec?.domain?.resources?.requests?.memory;
-  getCPU = (): CPURaw => this.data?.spec?.template?.spec?.domain?.cpu;
+  getVirtualMachineInstanceSpec = (): VMISpec => this.data?.spec?.template?.spec;
+  getEvictionStrategy = (): string => this.getVirtualMachineInstanceSpec()?.evictionStrategy;
+  getMemory = () => this.getVirtualMachineInstanceSpec()?.domain?.resources?.requests?.memory;
+  getCPU = (): CPURaw => this.getVirtualMachineInstanceSpec()?.domain?.cpu;
 
   getTemplateLabels = (defaultValue = {}) =>
     getLabels(_.get(this.data, 'spec.template'), defaultValue);

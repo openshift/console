@@ -1,5 +1,5 @@
 /* eslint-disable lines-between-class-members */
-import { CPURaw, VMIKind } from '../../../types/vm';
+import { CPURaw, VMIKind, VMISpec } from '../../../types';
 import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
 import {
   getVMIDisks,
@@ -30,9 +30,10 @@ export class VMIWrapper extends K8sResourceWrapper<VMIKind, VMIWrapper> implemen
   getOperatingSystem = () => findKeySuffixValue(this.getLabels(), TEMPLATE_OS_LABEL);
   getWorkloadProfile = () => findKeySuffixValue(this.getLabels(), TEMPLATE_WORKLOAD_LABEL);
   getFlavor = () => findKeySuffixValue(this.getLabels(), TEMPLATE_FLAVOR_LABEL);
-
-  getMemory = () => this.data?.spec?.domain?.resources?.requests?.memory;
-  getCPU = (): CPURaw => this.data?.spec?.domain?.cpu;
+  getVirtualMachineInstanceSpec = (): VMISpec => this.data?.spec;
+  getEvictionStrategy = (): string => this.getVirtualMachineInstanceSpec()?.evictionStrategy;
+  getMemory = () => this.getVirtualMachineInstanceSpec()?.domain?.resources?.requests?.memory;
+  getCPU = (): CPURaw => this.getVirtualMachineInstanceSpec()?.domain?.cpu;
 
   getNetworkInterfaces = (defaultValue = []) => getVMIInterfaces(this.data, defaultValue);
 
