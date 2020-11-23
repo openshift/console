@@ -1,25 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
-import {
-  BellIcon,
-  CaretDownIcon,
-  EllipsisVIcon,
-  PlusCircleIcon,
-  QuestionCircleIcon,
-} from '@patternfly/react-icons';
-import {
-  ApplicationLauncher,
-  ApplicationLauncherGroup,
-  ApplicationLauncherItem,
-  ApplicationLauncherSeparator,
-  NotificationBadge,
-  Toolbar,
-  ToolbarGroup,
-  ToolbarItem,
-  TooltipPosition,
-  Tooltip,
-} from '@patternfly/react-core';
+import { BellIcon, CaretDownIcon, EllipsisVIcon, PlusCircleIcon, QuestionCircleIcon, OutlinedClockIcon } from '@patternfly/react-icons';
+import { ApplicationLauncher, ApplicationLauncherGroup, ApplicationLauncherItem, ApplicationLauncherSeparator, NotificationBadge, Toolbar, ToolbarGroup, ToolbarItem, TooltipPosition, Tooltip, Button } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
@@ -33,17 +16,16 @@ import { openshiftHelpBase } from './utils/documentation';
 import { AboutModal } from './about-modal';
 import { clusterVersionReference, getReportBugLink } from '../module/k8s/cluster-settings';
 import * as redhatLogoImg from '../imgs/logos/redhat.svg';
+import { withKeycloak } from '@react-keycloak/web';
+import { ExpTimer } from './hypercloud/exp-timer';
+
+import { withTranslation } from 'react-i18next';
+import i18n from 'i18next';
 
 const SystemStatusButton = ({ statuspageData, className }) =>
   !_.isEmpty(_.get(statuspageData, 'incidents')) ? (
     <ToolbarItem className={className}>
-      <a
-        className="pf-c-button pf-m-plain"
-        aria-label="System Status"
-        href={statuspageData.page.url}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
+      <a className="pf-c-button pf-m-plain" aria-label="System Status" href={statuspageData.page.url} target="_blank" rel="noopener noreferrer">
         <YellowExclamationTriangleIcon className="co-masthead-icon" />
       </a>
     </ToolbarItem>
@@ -52,12 +34,13 @@ const SystemStatusButton = ({ statuspageData, className }) =>
 class MastheadToolbarContents_ extends React.Component {
   constructor(props) {
     super(props);
+    this.timerRef = null;
     this.state = {
       isApplicationLauncherDropdownOpen: false,
       isUserDropdownOpen: false,
+      isLanguageDropdownOpen: false,
       isKebabDropdownOpen: false,
       statuspageData: null,
-      username: null,
       isKubeAdmin: false,
       showAboutModal: false,
     };
@@ -67,43 +50,27 @@ class MastheadToolbarContents_ extends React.Component {
     this._updateUser = this._updateUser.bind(this);
     this._onUserDropdownToggle = this._onUserDropdownToggle.bind(this);
     this._onUserDropdownSelect = this._onUserDropdownSelect.bind(this);
+    this._onLanguageDropdownToggle = this._onLanguageDropdownToggle.bind(this);
+    this._onLanguageDropdownSelect = this._onLanguageDropdownSelect.bind(this);
     this._onKebabDropdownToggle = this._onKebabDropdownToggle.bind(this);
     this._onKebabDropdownSelect = this._onKebabDropdownSelect.bind(this);
     this._renderMenu = this._renderMenu.bind(this);
-    this._onApplicationLauncherDropdownSelect = this._onApplicationLauncherDropdownSelect.bind(
-      this,
-    );
-    this._onApplicationLauncherDropdownToggle = this._onApplicationLauncherDropdownToggle.bind(
-      this,
-    );
+    this._renderLanguageMenu = this._renderLanguageMenu.bind(this);
+    this._onApplicationLauncherDropdownSelect = this._onApplicationLauncherDropdownSelect.bind(this);
+    this._onApplicationLauncherDropdownToggle = this._onApplicationLauncherDropdownToggle.bind(this);
     this._onHelpDropdownSelect = this._onHelpDropdownSelect.bind(this);
     this._onHelpDropdownToggle = this._onHelpDropdownToggle.bind(this);
     this._onAboutModal = this._onAboutModal.bind(this);
     this._closeAboutModal = this._closeAboutModal.bind(this);
-  }
-
-  componentDidMount() {
-    if (window.SERVER_FLAGS.statuspageID) {
-      this._getStatuspageData(window.SERVER_FLAGS.statuspageID);
-    }
-    this._updateUser();
-  }
-
-  componentDidUpdate(prevProps) {
-    if (
-      this.props.flags[FLAGS.OPENSHIFT] !== prevProps.flags[FLAGS.OPENSHIFT] ||
-      !_.isEqual(this.props.user, prevProps.user)
-    ) {
-      this._updateUser();
-    }
+    this._tokenRefresh = this._tokenRefresh.bind(this);
   }
 
   _getStatuspageData(statuspageID) {
     fetch(`https://${statuspageID}.statuspage.io/api/v2/summary.json`, {
       headers: { Accept: 'application/json' },
     })
-      .then((response) => response.json())
-      .then((statuspageData) => this.setState({ statuspageData }));
+      .then(response => response.json())
+      .then(statuspageData => this.setState({ statuspageData }));
   }
 
   _getImportYAMLPath() {
@@ -130,6 +97,18 @@ class MastheadToolbarContents_ extends React.Component {
   _onUserDropdownSelect() {
     this.setState({
       isUserDropdownOpen: !this.state.isUserDropdownOpen,
+    });
+  }
+
+  _onLanguageDropdownToggle(isLanguageDropdownOpen) {
+    this.setState({
+      isLanguageDropdownOpen,
+    });
+  }
+
+  _onLanguageDropdownSelect() {
+    this.setState({
+      isLanguageDropdownOpen: !this.state.isLanguageDropdownOpen,
     });
   }
 
@@ -180,17 +159,14 @@ class MastheadToolbarContents_ extends React.Component {
 
   _getAdditionalLinks(links, type) {
     return _.sortBy(
-      _.filter(links, (link) => link.spec.location === type),
+      _.filter(links, link => link.spec.location === type),
       'spec.text',
     );
   }
 
   _getSectionLauncherItems(launcherItems, sectionName) {
     return _.sortBy(
-      _.filter(
-        launcherItems,
-        (link) => _.get(link, 'spec.applicationMenu.section', '') === sectionName,
-      ),
+      _.filter(launcherItems, link => _.get(link, 'spec.applicationMenu.section', '') === sectionName),
       'spec.text',
     );
   }
@@ -215,11 +191,7 @@ class MastheadToolbarContents_ extends React.Component {
     const launcherItems = this._getAdditionalLinks(consoleLinks, 'ApplicationMenu');
 
     const sections = [];
-    if (
-      clusterID &&
-      window.SERVER_FLAGS.branding !== 'okd' &&
-      window.SERVER_FLAGS.branding !== 'azure'
-    ) {
+    if (clusterID && window.SERVER_FLAGS.branding !== 'okd' && window.SERVER_FLAGS.branding !== 'azure') {
       sections.push({
         name: 'Red Hat Applications',
         isSection: true,
@@ -234,7 +206,7 @@ class MastheadToolbarContents_ extends React.Component {
       });
     }
 
-    _.each(launcherItems, (item) => {
+    _.each(launcherItems, item => {
       const sectionName = _.get(item, 'spec.applicationMenu.section', '');
       if (!_.find(sections, { name: sectionName })) {
         sections.push({ name: sectionName, isSection: true, actions: [] });
@@ -243,9 +215,9 @@ class MastheadToolbarContents_ extends React.Component {
 
     const sortedSections = _.sortBy(sections, [this._sectionSort, 'name']);
 
-    _.each(sortedSections, (section) => {
+    _.each(sortedSections, section => {
       const sectionItems = this._getSectionLauncherItems(launcherItems, section.name);
-      _.each(sectionItems, (item) => {
+      _.each(sectionItems, item => {
         section.actions.push({
           label: _.get(item, 'spec.text'),
           externalLink: true,
@@ -304,7 +276,7 @@ class MastheadToolbarContents_ extends React.Component {
   }
 
   _getAdditionalActions(links) {
-    const actions = _.map(links, (link) => {
+    const actions = _.map(links, link => {
       return {
         label: link.spec.text,
         externalLink: true,
@@ -319,8 +291,7 @@ class MastheadToolbarContents_ extends React.Component {
     };
   }
 
-  _externalProps = (action) =>
-    action.externalLink ? { isExternal: true, target: '_blank', rel: 'noopener noreferrer' } : {};
+  _externalProps = action => (action.externalLink ? { isExternal: true, target: '_blank', rel: 'noopener noreferrer' } : {});
 
   _renderApplicationItems(actions) {
     return _.map(actions, (action, groupIndex) => {
@@ -330,21 +301,12 @@ class MastheadToolbarContents_ extends React.Component {
             <>
               {_.map(action.actions, (sectionAction, itemIndex) => {
                 return (
-                  <ApplicationLauncherItem
-                    key={itemIndex}
-                    icon={sectionAction.image}
-                    href={sectionAction.href || '#'}
-                    onClick={sectionAction.callback}
-                    component={sectionAction.component}
-                    {...this._externalProps(sectionAction)}
-                  >
+                  <ApplicationLauncherItem key={itemIndex} icon={sectionAction.image} href={sectionAction.href || '#'} onClick={sectionAction.callback} component={sectionAction.component} {...this._externalProps(sectionAction)}>
                     {sectionAction.label}
                   </ApplicationLauncherItem>
                 );
               })}
-              {groupIndex < actions.length - 1 && (
-                <ApplicationLauncherSeparator key={`separator-${groupIndex}`} />
-              )}
+              {groupIndex < actions.length - 1 && <ApplicationLauncherSeparator key={`separator-${groupIndex}`} />}
             </>
           </ApplicationLauncherGroup>
         );
@@ -353,19 +315,10 @@ class MastheadToolbarContents_ extends React.Component {
       return (
         <ApplicationLauncherGroup key={groupIndex}>
           <>
-            <ApplicationLauncherItem
-              key={action.label}
-              icon={action.image}
-              href={action.href || '#'}
-              onClick={action.callback}
-              component={action.component}
-              {...this._externalProps(action)}
-            >
+            <ApplicationLauncherItem key={action.label} icon={action.image} href={action.href || '#'} onClick={action.callback} component={action.component} {...this._externalProps(action)}>
               {action.label}
             </ApplicationLauncherItem>
-            {groupIndex < actions.length - 1 && (
-              <ApplicationLauncherSeparator key={`separator-${groupIndex}`} />
-            )}
+            {groupIndex < actions.length - 1 && <ApplicationLauncherSeparator key={`separator-${groupIndex}`} />}
           </>
         </ApplicationLauncherGroup>
       );
@@ -373,57 +326,44 @@ class MastheadToolbarContents_ extends React.Component {
   }
 
   _renderMenu(mobile) {
-    const { flags, consoleLinks } = this.props;
-    const { isUserDropdownOpen, isKebabDropdownOpen, username } = this.state;
-    const additionalUserActions = this._getAdditionalActions(
-      this._getAdditionalLinks(consoleLinks, 'UserMenu'),
-    );
-    const helpActions = this._helpActions(
-      this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'HelpMenu')),
-    );
+    const { flags, consoleLinks, keycloak, t } = this.props;
+    const username = keycloak.idTokenParsed.email;
+    const { isUserDropdownOpen, isKebabDropdownOpen } = this.state;
+    const additionalUserActions = this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'UserMenu'));
+    const helpActions = this._helpActions(this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'HelpMenu')));
     const launchActions = this._launchActions();
 
-    if (
-      flagPending(flags[FLAGS.OPENSHIFT]) ||
-      flagPending(flags[FLAGS.AUTH_ENABLED]) ||
-      !username
-    ) {
-      return null;
-    }
-
     const actions = [];
-    if (flags[FLAGS.AUTH_ENABLED]) {
-      const userActions = [];
+    const userActions = [];
 
-      const logout = (e) => {
-        e.preventDefault();
-        if (flags[FLAGS.OPENSHIFT]) {
-          authSvc.logoutOpenShift(this.state.isKubeAdmin);
-        } else {
-          authSvc.logout();
-        }
-      };
+    const openAccountConsole = e => {
+      e.preventDefault();
+      window.open(keycloak.createAccountUrl());
+    };
 
-      if (window.SERVER_FLAGS.requestTokenURL) {
-        userActions.push({
-          label: 'Copy Login Command',
-          href: window.SERVER_FLAGS.requestTokenURL,
-          externalLink: true,
-        });
-      }
+    const logout = e => {
+      e.preventDefault();
 
-      userActions.push({
-        label: 'Log out',
-        callback: logout,
-        component: 'button',
-      });
+      keycloak.logout();
+    };
 
-      actions.push({
-        name: '',
-        isSection: true,
-        actions: userActions,
-      });
-    }
+    userActions.push({
+      label: t('COMMON:MSG_GNB_ACCOUNT_1'),
+      callback: openAccountConsole,
+      component: 'button',
+    });
+
+    userActions.push({
+      label: t('COMMON:MSG_GNB_ACCOUNT_2'),
+      callback: logout,
+      component: 'button',
+    });
+
+    actions.push({
+      name: '',
+      isSection: true,
+      actions: userActions,
+    });
 
     if (!_.isEmpty(additionalUserActions.actions)) {
       actions.unshift(additionalUserActions);
@@ -446,19 +386,7 @@ class MastheadToolbarContents_ extends React.Component {
         actions.unshift(...launchActions);
       }
 
-      return (
-        <ApplicationLauncher
-          aria-label="Utility menu"
-          className="co-app-launcher"
-          onSelect={this._onKebabDropdownSelect}
-          onToggle={this._onKebabDropdownToggle}
-          isOpen={isKebabDropdownOpen}
-          items={this._renderApplicationItems(actions)}
-          position="right"
-          toggleIcon={<EllipsisVIcon />}
-          isGrouped
-        />
-      );
+      return <ApplicationLauncher aria-label="Utility menu" className="co-app-launcher" onSelect={this._onKebabDropdownSelect} onToggle={this._onKebabDropdownToggle} isOpen={isKebabDropdownOpen} items={this._renderApplicationItems(actions)} position="right" toggleIcon={<EllipsisVIcon />} isGrouped />;
     }
 
     if (_.isEmpty(actions)) {
@@ -472,105 +400,158 @@ class MastheadToolbarContents_ extends React.Component {
       </span>
     );
 
-    return (
-      <ApplicationLauncher
-        aria-label="User menu"
-        data-test="user-dropdown"
-        className="co-app-launcher co-user-menu"
-        onSelect={this._onUserDropdownSelect}
-        onToggle={this._onUserDropdownToggle}
-        isOpen={isUserDropdownOpen}
-        items={this._renderApplicationItems(actions)}
-        position="right"
-        toggleIcon={userToggle}
-        isGrouped
-      />
+    return <ApplicationLauncher aria-label="User menu" data-test="user-dropdown" className="co-app-launcher co-user-menu" onSelect={this._onUserDropdownSelect} onToggle={this._onUserDropdownToggle} isOpen={isUserDropdownOpen} items={this._renderApplicationItems(actions)} position="right" toggleIcon={userToggle} isGrouped />;
+  }
+  _renderLanguageMenu(mobile) {
+    const { flags, consoleLinks, keycloak, t } = this.props;
+    const { isLanguageDropdownOpen } = this.state;
+
+    const actions = [];
+    const i18nActions = [];
+
+    const enChange = e => {
+      e.preventDefault();
+      i18n.changeLanguage('en');
+      window.localStorage.setItem('i18nextLng', 'en');
+    };
+    const koChange = e => {
+      e.preventDefault();
+      i18n.changeLanguage('ko');
+      window.localStorage.setItem('i18nextLng', 'ko');
+    };
+
+    i18nActions.push({
+      label: t('COMMON:MSG_GNB_LANGUAGE_2'),
+      callback: enChange,
+      component: 'button',
+    });
+
+    i18nActions.push({
+      label: t('COMMON:MSG_GNB_LANGUAGE_1'),
+      callback: koChange,
+      component: 'button',
+    });
+
+    actions.push({
+      name: '',
+      isSection: true,
+      actions: i18nActions,
+    });
+
+    if (mobile) {
+      actions.unshift({
+        name: '',
+        isSection: true,
+        actions: [],
+      });
+
+      return <ApplicationLauncher aria-label="Utility menu" className="co-app-launcher" onSelect={this._onKebabDropdownSelect} onToggle={this._onKebabDropdownToggle} isOpen={isKebabDropdownOpen} items={this._renderApplicationItems(actions)} position="right" toggleIcon={<EllipsisVIcon />} isGrouped />;
+    }
+
+    if (_.isEmpty(actions)) {
+      return <div className="co-username"></div>;
+    }
+
+    const languageToggle = (
+      <span className="pf-c-dropdown__toggle">
+        {/* i18n 키값 요청 후 적용하기 - 현재 선택된 언어를 표현하는 키값 - 한국어, 영어 */}
+        <span className="co-username">Language</span>
+        <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
+      </span>
     );
+
+    return <ApplicationLauncher aria-label="Language menu" data-test="language-dropdown" className="co-app-launcher co-user-menu" onSelect={this._onLanguageDropdownSelect} onToggle={this._onLanguageDropdownToggle} isOpen={isLanguageDropdownOpen} items={this._renderApplicationItems(actions)} position="right" toggleIcon={languageToggle} isGrouped />;
   }
 
+  _tokenRefresh = () => {
+    const { keycloak } = this.props;
+    const curTime = new Date();
+    const tokenExpTime = new Date((keycloak.idTokenParsed.exp + keycloak.timeSkew) * 1000);
+    const logoutTime = (tokenExpTime.getTime() - curTime.getTime()) / 1000;
+    keycloak
+      .updateToken(Math.ceil(logoutTime))
+      .then(refreshed => {
+        console.log('refreshed', refreshed);
+        if (refreshed) {
+          // TODO: 토큰 설정
+          // setAccessToken(keycloak.idToken);
+          this.timerRef.tokRefresh();
+        } else {
+          // expired time > 60
+          console.log('Token is still valid');
+        }
+      })
+      .catch(() => {
+        // refresh token 없음
+        console.log('Failed to refresh the token, or the session has expired');
+      });
+  };
+
   render() {
-    const {
-      isApplicationLauncherDropdownOpen,
-      isHelpDropdownOpen,
-      showAboutModal,
-      statuspageData,
-    } = this.state;
-    const { consoleLinks, drawerToggle, notificationsRead, canAccessNS } = this.props;
+    const { isApplicationLauncherDropdownOpen, isHelpDropdownOpen, showAboutModal, statuspageData } = this.state;
+    const { consoleLinks, drawerToggle, notificationsRead, canAccessNS, keycloak, t } = this.props;
     const launchActions = this._launchActions();
     const alertAccess = canAccessNS && !!window.SERVER_FLAGS.prometheusBaseURL;
     return (
       <>
         <Toolbar>
           <ToolbarGroup className="hidden-xs">
+            <ToolbarItem>
+              <OutlinedClockIcon />
+            </ToolbarItem>
+            <ToolbarItem>
+              <ExpTimer
+                ref={input => {
+                  this.timerRef = input;
+                }}
+                logout={keycloak.logout}
+                tokenRefresh={this._tokenRefresh}
+                keycloak={keycloak}
+              />
+            </ToolbarItem>
+            <ToolbarItem>
+              <Button
+                variant="tertiary"
+                onClick={() => {
+                  this._tokenRefresh();
+                }}
+              >
+                {t('COMMON:MSG_GNB_SESSION_1')}
+              </Button>
+            </ToolbarItem>
             {/* desktop -- (system status button) */}
             <SystemStatusButton statuspageData={statuspageData} />
             {/* desktop -- (application launcher dropdown), import yaml, help dropdown [documentation, about] */}
             {!_.isEmpty(launchActions) && (
               <ToolbarItem>
-                <ApplicationLauncher
-                  className="co-app-launcher"
-                  data-test-id="application-launcher"
-                  onSelect={this._onApplicationLauncherDropdownSelect}
-                  onToggle={this._onApplicationLauncherDropdownToggle}
-                  isOpen={isApplicationLauncherDropdownOpen}
-                  items={this._renderApplicationItems(this._launchActions())}
-                  position="right"
-                  isGrouped
-                />
+                <ApplicationLauncher className="co-app-launcher" data-test-id="application-launcher" onSelect={this._onApplicationLauncherDropdownSelect} onToggle={this._onApplicationLauncherDropdownToggle} isOpen={isApplicationLauncherDropdownOpen} items={this._renderApplicationItems(this._launchActions())} position="right" isGrouped />
               </ToolbarItem>
             )}
             {/* desktop -- (notification drawer button) */
             alertAccess && (
               <ToolbarItem>
-                <NotificationBadge
-                  aria-label="Notification Drawer"
-                  onClick={drawerToggle}
-                  isRead={notificationsRead}
-                >
+                <NotificationBadge aria-label="Notification Drawer" onClick={drawerToggle} isRead={notificationsRead}>
                   <BellIcon />
                 </NotificationBadge>
               </ToolbarItem>
             )}
             <ToolbarItem>
               <Tooltip content="Import YAML" position={TooltipPosition.bottom}>
-                <Link
-                  to={this._getImportYAMLPath()}
-                  className="pf-c-button pf-m-plain"
-                  aria-label="Import YAML"
-                >
+                <Link to={this._getImportYAMLPath()} className="pf-c-button pf-m-plain" aria-label="Import YAML">
                   <PlusCircleIcon className="co-masthead-icon" />
                 </Link>
               </Tooltip>
             </ToolbarItem>
             <CloudShellMastheadButton />
             <ToolbarItem>
-              <ApplicationLauncher
-                aria-label="Help menu"
-                className="co-app-launcher"
-                data-test="help-dropdown-toggle"
-                onSelect={this._onHelpDropdownSelect}
-                onToggle={this._onHelpDropdownToggle}
-                isOpen={isHelpDropdownOpen}
-                items={this._renderApplicationItems(
-                  this._helpActions(
-                    this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'HelpMenu')),
-                  ),
-                )}
-                position="right"
-                toggleIcon={<QuestionCircleIcon />}
-                isGrouped
-              />
+              <ApplicationLauncher aria-label="Help menu" className="co-app-launcher" data-test="help-dropdown-toggle" onSelect={this._onHelpDropdownSelect} onToggle={this._onHelpDropdownToggle} isOpen={isHelpDropdownOpen} items={this._renderApplicationItems(this._helpActions(this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'HelpMenu'))))} position="right" toggleIcon={<QuestionCircleIcon />} isGrouped />
             </ToolbarItem>
           </ToolbarGroup>
           <ToolbarGroup>
             {/* mobile -- (notification drawer button) */
             alertAccess && !notificationsRead && (
               <ToolbarItem className="visible-xs-block">
-                <NotificationBadge
-                  aria-label="Notification Drawer"
-                  onClick={drawerToggle}
-                  isRead={notificationsRead}
-                >
+                <NotificationBadge aria-label="Notification Drawer" onClick={drawerToggle} isRead={notificationsRead}>
                   <BellIcon />
                 </NotificationBadge>
               </ToolbarItem>
@@ -580,6 +561,7 @@ class MastheadToolbarContents_ extends React.Component {
             {/* mobile -- kebab dropdown [(application launcher |) import yaml | documentation, about (| logout)] */}
             <ToolbarItem className="visible-xs-block">{this._renderMenu(true)}</ToolbarItem>
             {/* desktop -- (user dropdown [logout]) */}
+            <ToolbarItem className="hidden-xs">{this._renderLanguageMenu(false)}</ToolbarItem>
             <ToolbarItem className="hidden-xs">{this._renderMenu(false)}</ToolbarItem>
           </ToolbarGroup>
         </Toolbar>
@@ -589,7 +571,7 @@ class MastheadToolbarContents_ extends React.Component {
   }
 }
 
-const mastheadToolbarStateToProps = (state) => ({
+const mastheadToolbarStateToProps = state => ({
   activeNamespace: state.UI.get('activeNamespace'),
   clusterID: state.UI.get('clusterID'),
   user: state.UI.get('user'),
@@ -600,13 +582,7 @@ const mastheadToolbarStateToProps = (state) => ({
 
 const MastheadToolbarContents = connect(mastheadToolbarStateToProps, {
   drawerToggle: UIActions.notificationDrawerToggleExpanded,
-})(
-  connectToFlags(
-    FLAGS.AUTH_ENABLED,
-    FLAGS.CONSOLE_CLI_DOWNLOAD,
-    FLAGS.OPENSHIFT,
-  )(MastheadToolbarContents_),
-);
+})(connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.CONSOLE_CLI_DOWNLOAD, FLAGS.OPENSHIFT)(withKeycloak(withTranslation()(MastheadToolbarContents_))));
 
 export const MastheadToolbar = connectToFlags(FLAGS.CLUSTER_VERSION)(({ flags }) => {
   const resources = flags[FLAGS.CLUSTER_VERSION]

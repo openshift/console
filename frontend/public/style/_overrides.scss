@@ -244,6 +244,7 @@ h6 {
   }
 
   .pf-c-page__sidebar {
+    background-color: #28384f;
     --pf-c-page__sidebar--Transition: all 100ms ease;
   }
 }
@@ -344,10 +345,10 @@ h6 {
       --pf-c-nav__simple-list-link--nested--PaddingLeft: var(--pf-global--spacer--xl);
     }
 
-    font-size: $co-side-nav-font-size;
+    font-size: 13px;
 
     .pf-c-nav__simple-list .pf-c-nav__link {
-      font-size: $font-size-base;
+      font-size: 13px;
       // fix bug where nav items retain focus after navigation
       // see https://github.com/patternfly/patternfly-next/issues/2463
       &:focus {
@@ -480,4 +481,31 @@ h6 {
 button.pf-c-dropdown__menu-item.pf-m-disabled {
   // enables tooltips for disabled menu items
   pointer-events: auto;
+}
+
+.pf-c-nav.pf-m-dark .pf-c-nav__list > .pf-c-nav__item.pf-m-current,
+.pf-c-nav.pf-m-dark .pf-c-nav__list > .pf-c-nav__item > .pf-c-nav__link.pf-m-current {
+  background-color: #435775 !important;
+}
+
+.pf-c-page__header-brand {
+  height: 100%;
+  width: 290px;
+  background-color: #28384f;
+  background-image: url('../imgs/gnb_logo_bg_mint.png');
+}
+
+.pf-c-nav__simple-list .pf-c-nav__link.pf-m-hover,
+.pf-c-nav__simple-list .pf-c-nav__link:hover {
+  background-color: #566d8e !important;
+}
+
+.pf-c-nav__list .pf-c-nav__link.pf-m-hover::after,
+.pf-c-nav__list .pf-c-nav__link:hover::after {
+  background-color: #0eb6d6;
+}
+
+.pf-c-nav__simple-list .pf-c-nav__link.pf-m-current,
+.pf-c-nav.pf-m-dark .pf-c-nav__item.pf-m-current {
+  background-color: #566d8e !important;
 }
