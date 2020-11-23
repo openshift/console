@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   getContainerImageByDisk,
   getURLSourceByDisk,
@@ -11,42 +12,46 @@ import { V1Disk } from '../../types/vm/disk/V1Disk';
 
 import './disk-summary.scss';
 
-export const DiskSummary: React.FC<DiskSummaryProps> = ({ disks, vm }) => (
-  <dl className="kubevirt-disk-summary">
-    {disks.map(({ name }) => {
-      const container = getContainerImageByDisk(vm, name);
-      const pvc = getPVCSourceByDisk(vm, name);
-      const url = getURLSourceByDisk(vm, name);
-      const nameKey = `kubevirt-disk-summary-disk-title-${name}`;
-      let value = '';
+export const DiskSummary: React.FC<DiskSummaryProps> = ({ disks, vm }) => {
+  const { t } = useTranslation();
 
-      if (_.includes(WINTOOLS_CONTAINER_NAMES, container)) {
-        value = `Windows Tools: ${container}`;
-      } else if (container) {
-        value = `Container: ${container}`;
-      } else if (url) {
-        value = `URL: ${url}`;
-      } else if (pvc) {
-        value = `PVC: ${pvc}`;
-      }
+  return (
+    <dl className="kubevirt-disk-summary">
+      {disks.map(({ name }) => {
+        const container = getContainerImageByDisk(vm, name);
+        const pvc = getPVCSourceByDisk(vm, name);
+        const url = getURLSourceByDisk(vm, name);
+        const nameKey = `kubevirt-disk-summary-disk-title-${name}`;
+        let value = '';
 
-      return (
-        <React.Fragment key={nameKey}>
-          <dt id={nameKey} key={nameKey} className="kubevirt-disk-summary__datalist-dt">
-            {name}
-          </dt>
-          <dd
-            id={`${nameKey}-info`}
-            key={`${nameKey}-info`}
-            className="kubevirt-disk-summary__datalist-dd"
-          >
-            {value}
-          </dd>
-        </React.Fragment>
-      );
-    })}
-  </dl>
-);
+        if (_.includes(WINTOOLS_CONTAINER_NAMES, container)) {
+          value = t('kubevirt-plugin~Windows tools: {{container}}', { container });
+        } else if (container) {
+          value = t('kubevirt-plugin~Container: {{container}}', { container });
+        } else if (url) {
+          value = t('kubevirt-plugin~URL: {{url}}', { url });
+        } else if (pvc) {
+          value = t('kubevirt-plugin~PVC: {{ pvc }}', { pvc });
+        }
+
+        return (
+          <React.Fragment key={nameKey}>
+            <dt id={nameKey} key={nameKey} className="kubevirt-disk-summary__datalist-dt">
+              {name}
+            </dt>
+            <dd
+              id={`${nameKey}-info`}
+              key={`${nameKey}-info`}
+              className="kubevirt-disk-summary__datalist-dd"
+            >
+              {value}
+            </dd>
+          </React.Fragment>
+        );
+      })}
+    </dl>
+  );
+};
 
 type DiskSummaryProps = {
   vm: VMKind;

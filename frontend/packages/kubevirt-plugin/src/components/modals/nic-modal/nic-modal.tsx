@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Alert,
   AlertVariant,
@@ -32,19 +33,14 @@ import {
 } from '../../../constants/vm/network';
 import { NetworkInterfaceWrapper } from '../../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../../k8s/wrapper/vm/network-wrapper';
-import { ADD, EDIT, getDialogUIError, getSequenceName, SAVE } from '../../../utils/strings';
+import { getDialogUIError, getSequenceName } from '../../../utils/strings';
 import { ModalFooter } from '../modal/modal-footer';
 import { useShowErrorToggler } from '../../../hooks/use-show-error-toggler';
 import { UINetworkEditConfig } from '../../../types/ui/nic';
 import { isFieldDisabled } from '../../../utils/ui/edit-config';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PendingChangesAlert } from '../../Alerts/PendingChangesAlert';
-import { MODAL_RESTART_IS_REQUIRED } from '../../../strings/vm/status';
 import { FormPFSelect } from '../../form/form-pf-select';
-import {
-  SELECT_PXE_NAD_ERROR_INFO,
-  SELECT_PXE_NAD_MISSING_INFO,
-} from '../../create-vm-wizard/strings/networking';
 
 const getNetworkChoices = (
   nads: K8sResourceKind[],
@@ -93,6 +89,7 @@ export const Network: React.FC<NetworkProps> = ({
   allowedMultusNetworkTypes,
   acceptEmptyValues,
 }) => {
+  const { t } = useTranslation();
   const nadsLoading = !isLoaded(nads);
   const nadsLoadError = getLoadError(nads, NetworkAttachmentDefinitionModel);
   const networkChoices = getNetworkChoices(
@@ -101,16 +98,20 @@ export const Network: React.FC<NetworkProps> = ({
     allowedMultusNetworkTypes,
   ).filter((n) => n.getType().isSupported());
   const validationMessage = nadsLoadError
-    ? SELECT_PXE_NAD_ERROR_INFO
+    ? t(
+        'kubevirt-plugin~Error fetching available Network Attachment Definitions. Contact your system administrator for additional support.',
+      )
     : networkChoices.length === 0
-    ? SELECT_PXE_NAD_MISSING_INFO
+    ? t(
+        'kubevirt-plugin~No Network Attachment Definitions available. Contact your system administrator for additional support.',
+      )
     : null;
   const validationType =
     nadsLoadError || networkChoices.length === 0 ? ValidationErrorType.Error : null;
 
   return (
     <FormRow
-      title="Network"
+      title={t('kubevirt-plugin~Network')}
       fieldId={id}
       isRequired
       isLoading={nadsLoading && !nadsLoadError}
@@ -131,7 +132,7 @@ export const Network: React.FC<NetworkProps> = ({
       >
         <FormSelectPlaceholderOption
           isDisabled={!acceptEmptyValues}
-          placeholder={'--- Select Network Attachment Definition ---'}
+          placeholder={t('kubevirt-plugin~--- Select Network Attachment Definition ---')}
         />
         {ignoreCaseSort(networkChoices, undefined, (n) => n.getReadableName()).map(
           (networkWrapper: NetworkWrapper) => {
@@ -168,6 +169,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
     editConfig,
     isVMRunning,
   } = props;
+  const { t } = useTranslation();
   const isDisabled = (fieldName: string, disabled?: boolean) =>
     inProgress || disabled || isFieldDisabled(editConfig, fieldName);
 
@@ -250,15 +252,24 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
 
   return (
     <div className="modal-content">
-      <ModalTitle>{isEditing ? EDIT : ADD} Network Interface</ModalTitle>
+      <ModalTitle>
+        {isEditing ? t('kubevirt-plugin~Edit') : t('kubevirt-plugin~Add')}{' '}
+        {t('kubevirt-plugin~Network Interface')}
+      </ModalTitle>
       <ModalBody>
-        {isVMRunning && <PendingChangesAlert warningMsg={MODAL_RESTART_IS_REQUIRED} />}
+        {isVMRunning && (
+          <PendingChangesAlert
+            warningMsg={t(
+              'kubevirt-plugin~The changes you are making require this virtual machine to be updated. Restart this VM to apply these changes.',
+            )}
+          />
+        )}
         <Form>
           {editConfig?.warning && (
             <Alert variant={AlertVariant.warning} isInline title={editConfig?.warning} />
           )}
           <FormRow
-            title="Name"
+            title={t('kubevirt-plugin~Name')}
             fieldId={asId('name')}
             isRequired
             isLoading={!usedInterfacesNames}
@@ -273,12 +284,12 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
               onChange={(v) => setName(v)}
             />
           </FormRow>
-          <FormRow title="Model" fieldId={asId('model')} isRequired>
+          <FormRow title={t('kubevirt-plugin~Model')} fieldId={asId('model')} isRequired>
             <FormPFSelect
               menuAppendTo={() => document.body}
               id={asId('model')}
               toggleId={asId('select-model')}
-              placeholderText="--- Select Model ---"
+              placeholderText={t('kubevirt-plugin~--- Select Model ---')}
               isDisabled={isDisabled('model') || interfaceType === NetworkInterfaceType.SRIOV}
               selections={asFormSelectValue(model?.getValue())}
               onSelect={(e, v) => setModel(NetworkInterfaceModel.fromString(v.toString()))}
@@ -316,12 +327,12 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
             }
             acceptEmptyValues={editConfig?.acceptEmptyValuesOverride?.network}
           />
-          <FormRow title="Type" fieldId={asId('type')} isRequired>
+          <FormRow title={t('kubevirt-plugin~Type')} fieldId={asId('type')} isRequired>
             <FormPFSelect
               menuAppendTo={() => document.body}
               onSelect={(e, v) => onNetworkInterfaceChange(v.toString())}
               id={asId('type')}
-              placeholderText="--- Select Type ---"
+              placeholderText={t('kubevirt-plugin~--- Select Type ---')}
               selections={asFormSelectValue(interfaceType?.getValue())}
               isDisabled={isDisabled('type')}
               toggleId={asId('select-type')}
@@ -341,7 +352,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
             </FormPFSelect>
           </FormRow>
           <FormRow
-            title="MAC Address"
+            title={t('kubevirt-plugin~MAC Address')}
             fieldId={asId('mac-address')}
             validation={macAddressValidation}
           >
@@ -357,7 +368,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
       </ModalBody>
       <ModalFooter
         id="nic"
-        submitButtonText={isEditing ? SAVE : ADD}
+        submitButtonText={isEditing ? t('kubevirt-plugin~Save') : t('kubevirt-plugin~Add')}
         errorMessage={
           errorMessage || (!isValid && showUIError ? getDialogUIError(hasAllRequiredFilled) : null)
         }

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormSelect, FormSelectOption, Split, SplitItem } from '@patternfly/react-core';
 import { ValidationObject } from '@console/shared';
 import { prefixedID } from '../../utils';
@@ -23,7 +24,7 @@ type SizeUnitFormRowProps = {
   onUnitChanged?: (unit: BinaryUnit) => void;
 };
 export const SizeUnitFormRow: React.FC<SizeUnitFormRowProps> = ({
-  title = 'Size',
+  title = null,
   size,
   unit,
   units,
@@ -33,41 +34,47 @@ export const SizeUnitFormRow: React.FC<SizeUnitFormRowProps> = ({
   isDisabled,
   onSizeChanged = () => undefined,
   onUnitChanged = () => undefined,
-}) => (
-  <FormRow
-    key="size"
-    title={title}
-    fieldId={prefixedID(id, 'size')}
-    isRequired={isRequired}
-    validation={validation}
-  >
-    <Split>
-      <SplitItem isFilled>
-        <Integer
-          isFullWidth
-          isValid={!isValidationError(validation)}
-          isDisabled={isDisabled}
-          id={prefixedID(id, 'size')}
-          value={size}
-          isPositive
-          onChange={React.useCallback((v) => onSizeChanged(v), [onSizeChanged])}
-          aria-label={`${title} size`}
-        />
-      </SplitItem>
-      <SplitItem>
-        <FormSelect
-          className="kubevirt-size-unit-form-row__unit"
-          onChange={React.useCallback((u) => onUnitChanged(u as BinaryUnit), [onUnitChanged])}
-          value={unit}
-          id={prefixedID(id, 'unit')}
-          isDisabled={isDisabled}
-          aria-label={`${title} unit`}
-        >
-          {(units || getStringEnumValues<BinaryUnit>(BinaryUnit)).map((u) => (
-            <FormSelectOption key={u} value={u} label={toIECUnit(u)} />
-          ))}
-        </FormSelect>
-      </SplitItem>
-    </Split>
-  </FormRow>
-);
+}) => {
+  const { t } = useTranslation();
+
+  const titleText = title || t('kubevirt-plugin~Size');
+
+  return (
+    <FormRow
+      key="size"
+      title={titleText}
+      fieldId={prefixedID(id, 'size')}
+      isRequired={isRequired}
+      validation={validation}
+    >
+      <Split>
+        <SplitItem isFilled>
+          <Integer
+            isFullWidth
+            isValid={!isValidationError(validation)}
+            isDisabled={isDisabled}
+            id={prefixedID(id, 'size')}
+            value={size}
+            isPositive
+            onChange={React.useCallback((v) => onSizeChanged(v), [onSizeChanged])}
+            aria-label={t('kubevirt-plugin~{{title}} size', { title: titleText })}
+          />
+        </SplitItem>
+        <SplitItem>
+          <FormSelect
+            className="kubevirt-size-unit-form-row__unit"
+            onChange={React.useCallback((u) => onUnitChanged(u as BinaryUnit), [onUnitChanged])}
+            value={unit}
+            id={prefixedID(id, 'unit')}
+            isDisabled={isDisabled}
+            aria-label={t('kubevirt-plugin~{{title}} unit', { title: titleText })}
+          >
+            {(units || getStringEnumValues<BinaryUnit>(BinaryUnit)).map((u) => (
+              <FormSelectOption key={u} value={u} label={toIECUnit(u)} />
+            ))}
+          </FormSelect>
+        </SplitItem>
+      </Split>
+    </FormRow>
+  );
+};
