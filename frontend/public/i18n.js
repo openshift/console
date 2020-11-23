@@ -120,6 +120,7 @@ i18n
         'devconsole',
         'knative-plugin',
         'kubevirt-plugin',
+        'metal3-plugin',
         'container-security',
       ],
       defaultNS: 'public',

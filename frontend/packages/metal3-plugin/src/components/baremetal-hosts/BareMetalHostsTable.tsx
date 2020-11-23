@@ -1,5 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { sortable } from '@patternfly/react-table';
 import { getName, getUID, getNamespace, DASH } from '@console/shared';
@@ -33,39 +35,39 @@ const tableColumnClasses = {
   kebab: Kebab.columnClass,
 };
 
-const HostsTableHeader = () => [
+const HostsTableHeader = (t: TFunction) => () => [
   {
-    title: 'Name',
+    title: t('metal3-plugin~Name'),
     sortField: 'host.metadata.name',
     transforms: [sortable],
     props: { className: tableColumnClasses.name },
   },
   {
-    title: 'Status',
+    title: t('metal3-plugin~Status'),
     sortField: 'status.status',
     transforms: [sortable],
     props: { className: tableColumnClasses.status },
   },
   {
-    title: 'Node',
+    title: t('metal3-plugin~Node'),
     sortField: 'node.metadata.name',
     transforms: [sortable],
     props: { className: tableColumnClasses.node },
   },
   {
-    title: 'Role',
+    title: t('metal3-plugin~Role'),
     sortField: 'machine.metadata.labels["machine.openshift.io/cluster-api-machine-role"]',
     transforms: [sortable],
     props: { className: tableColumnClasses.role },
   },
   {
-    title: 'Management Address',
+    title: t('metal3-plugin~Management Address'),
     sortField: 'host.spec.bmc.address',
     transforms: [sortable],
     props: { className: tableColumnClasses.address },
   },
   {
-    title: 'Serial Number',
+    title: t('metal3-plugin~Serial Number'),
     sortField: 'host.status.hardware.systemVendor.serialNumber',
     transforms: [sortable],
     props: { className: tableColumnClasses.serialNumber },
@@ -139,6 +141,7 @@ type BareMetalHostsTableProps = React.ComponentProps<typeof Table> & {
 };
 
 const BareMetalHostsTable: React.FC<BareMetalHostsTableProps> = (props) => {
+  const { t } = useTranslation();
   const row = React.useCallback<RowFunction<BareMetalHostBundle>>(
     (rowProps) => <HostsTableRow {...rowProps} />,
     [],
@@ -147,8 +150,8 @@ const BareMetalHostsTable: React.FC<BareMetalHostsTableProps> = (props) => {
     <Table
       {...props}
       defaultSortField="host.metadata.name"
-      aria-label="Bare Metal Hosts"
-      Header={HostsTableHeader}
+      aria-label={t('metal3-plugin~Bare Metal Hosts')}
+      Header={HostsTableHeader(t)}
       Row={row}
       virtualize
     />

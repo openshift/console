@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { RebootingIcon } from '@patternfly/react-icons';
 import {
   referenceForModel,
@@ -50,7 +51,6 @@ import { HOST_REGISTERING_STATES } from '../../constants/bare-metal-host';
 import MachineLink from './MachineLink';
 import BareMetalHostPowerStatusIcon from './BareMetalHostPowerStatusIcon';
 import BareMetalHostStatus from './BareMetalHostStatus';
-import { HOST_SCHEDULED_FOR_RESTART, HOST_NO_POWER_MGMT } from './BareMetalHostSecondaryStatus';
 
 type BareMetalHostDetailsProps = {
   obj: BareMetalHostKind;
@@ -65,6 +65,7 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
   nodes,
   nodeMaintenances,
 }) => {
+  const { t } = useTranslation();
   const { creationTimestamp } = host.metadata;
   const namespace = getNamespace(host);
   const nics = getHostNICs(host);
@@ -90,19 +91,19 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
 
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text="Bare Metal Host Details" />
+      <SectionHeading text={t('metal3-plugin~Bare Metal Host Details')} />
       <div className="row">
         <div className="col-xs-12 col-sm-6" id="name-description-column">
           <dl>
-            <dt>Name</dt>
+            <dt>{t('metal3-plugin~Name')}</dt>
             <dd>{getName(host)}</dd>
             {description && (
               <>
-                <dt>Description</dt>
+                <dt>{t('metal3-plugin~Description')}</dt>
                 <dd>{description}</dd>
               </>
             )}
-            <dt>Host Addresses</dt>
+            <dt>{t('metal3-plugin~Host Addresses')}</dt>
             <dd>
               <DetailPropertyList>
                 <DetailPropertyListItem title="Management">
@@ -116,7 +117,7 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
             </dd>
             {machineName && (
               <>
-                <dt>Machine</dt>
+                <dt>{t('metal3-plugin~Machine')}</dt>
                 <dd>
                   <MachineLink host={host} />
                 </dd>
@@ -124,7 +125,7 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
             )}
             {nodeName && (
               <>
-                <dt>Node</dt>
+                <dt>{t('metal3-plugin~Node')}</dt>
                 <dd>
                   <ResourceLink
                     kind={referenceForModel(NodeModel)}
@@ -135,7 +136,7 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
                 </dd>
               </>
             )}
-            <dt>Created at</dt>
+            <dt>{t('metal3-plugin~Created at')}</dt>
             <dd>
               <Timestamp timestamp={creationTimestamp} />
             </dd>
@@ -143,17 +144,17 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
         </div>
         <div className="col-xs-12 col-sm-6">
           <dl>
-            <dt>Status</dt>
+            <dt>{t('metal3-plugin~Status')}</dt>
             <dd>
               <BareMetalHostStatus {...status} nodeMaintenance={nodeMaintenance} host={host} />
             </dd>
             {/* power status is not available until host registration/inspection is finished */}
             {!HOST_REGISTERING_STATES.includes(provisioningState) && (
               <>
-                <dt>Power Status</dt>
+                <dt>{t('metal3-plugin~Power Status')}</dt>
                 <dd>
                   {!hasPowerManagement(host) ? (
-                    <SecondaryStatus status={HOST_NO_POWER_MGMT} />
+                    <SecondaryStatus status={t('metal3-plugin~No power management')} />
                   ) : (
                     <>
                       <StatusIconAndText
@@ -162,7 +163,7 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
                       />
                       {isHostScheduledForRestart(host) && (
                         <StatusIconAndText
-                          title={HOST_SCHEDULED_FOR_RESTART}
+                          title={t('metal3-plugin~Restart pending')}
                           icon={<RebootingIcon />}
                         />
                       )}
@@ -173,19 +174,19 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
             )}
             {role && (
               <>
-                <dt>Role</dt>
+                <dt>{t('metal3-plugin~Role')}</dt>
                 <dd>{role}</dd>
               </>
             )}
             {(manufacturer || productName) && (
               <>
-                <dt>Model</dt>
+                <dt>{t('metal3-plugin~Model')}</dt>
                 <dd>{_.filter([manufacturer, productName]).join(', ')}</dd>
               </>
             )}
             {bios && (
               <>
-                <dt>Bios</dt>
+                <dt>{t('metal3-plugin~Bios')}</dt>
                 <dd>
                   <DetailPropertyList>
                     <DetailPropertyListItem title="Version">
@@ -203,20 +204,22 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
             )}
             {serialNumber && (
               <>
-                <dt>Serial Number</dt>
+                <dt>{t('metal3-plugin~Serial Number')}</dt>
                 <dd>{serialNumber}</dd>
               </>
             )}
             {_.get(host, 'status.hardware') && (
               <>
-                <dt>Hardware</dt>
+                <dt>{t('metal3-plugin~Hardware')}</dt>
                 <dd>
                   <DetailPropertyList>
-                    <DetailPropertyListItem title="CPU">
+                    <DetailPropertyListItem title={t('metal3-plugin~CPU')}>
                       {CPUCount ? `${CPUCount}x ${CPUModel}` : DASH}
                     </DetailPropertyListItem>
-                    <DetailPropertyListItem title="RAM">{RAMGB}</DetailPropertyListItem>
-                    <DetailPropertyListItem title="Storage">
+                    <DetailPropertyListItem title={t('metal3-plugin~RAM')}>
+                      {RAMGB}
+                    </DetailPropertyListItem>
+                    <DetailPropertyListItem title={t('metal3-plugin~Storage')}>
                       {totalStorageCapacity}
                     </DetailPropertyListItem>
                   </DetailPropertyList>
