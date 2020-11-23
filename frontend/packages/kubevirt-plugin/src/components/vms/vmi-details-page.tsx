@@ -106,7 +106,7 @@ export const VirtualMachinesInstanceDetailsPage: React.FC<VirtualMachinesInstanc
     >
       <HintBlock
         className="kubevirt-details-page__hint-block"
-        title={t('kubevirt-plugin~`Virtual Machine Instance {{name}}`', { name })}
+        title={t('kubevirt-plugin~Virtual Machine Instance {{name}}', { name })}
       >
         <p>
           {t(

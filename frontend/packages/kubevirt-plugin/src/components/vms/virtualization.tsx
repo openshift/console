@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import {
@@ -20,7 +21,7 @@ import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { VirtualMachinesPage } from './vm';
 import { VirtualMachineTemplatesPage } from '../vm-templates/vm-template';
 import { VirtualMachineModel } from '../../models';
-import { VMWizardActionLabels, VMWizardMode, VMWizardName } from '../../constants';
+import { VMWizardMode, VMWizardName } from '../../constants';
 import { getVMWizardCreateLink } from '../../utils/url';
 import {
   VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAME,
@@ -55,44 +56,42 @@ export const RedirectToVirtualizationTemplatePage: React.FC<RouteComponentProps<
   />
 );
 
-const title = 'Virtualization';
-
-const vmMenuItems = [
+const vmMenuItems = (t: TFunction) => [
   {
     test: 'vm-wizard',
     wizardName: VMWizardName.BASIC,
     mode: VMWizardMode.VM,
-    label: VMWizardActionLabels.WIZARD,
+    label: t('kubevirt-plugin~With Wizard'),
   },
   {
     test: 'vm-yaml',
     wizardName: VMWizardName.YAML,
     mode: VMWizardMode.VM,
-    label: VMWizardActionLabels.YAML,
+    label: t('kubevirt-plugin~With YAML'),
   },
 ];
 
-const importMenuItems = [
+const importMenuItems = (t: TFunction) => [
   {
     test: 'vm-import',
     wizardName: VMWizardName.WIZARD,
     mode: VMWizardMode.IMPORT,
-    label: VMWizardActionLabels.IMPORT,
+    label: t('kubevirt-plugin~With Import wizard'),
   },
 ];
 
-const templateMenuItems = [
+const templateMenuItems = (t: TFunction) => [
   {
     test: 'template-wizard',
     wizardName: VMWizardName.WIZARD,
     mode: VMWizardMode.TEMPLATE,
-    label: VMWizardActionLabels.WIZARD,
+    label: t('kubevirt-plugin~With Wizard'),
   },
   {
     test: 'template-yaml',
     wizardName: VMWizardName.YAML,
     mode: VMWizardMode.TEMPLATE,
-    label: VMWizardActionLabels.YAML,
+    label: t('kubevirt-plugin~With YAML'),
   },
 ];
 
@@ -167,11 +166,11 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
   return (
     <>
       <Helmet>
-        <title>{title}</title>
+        <title>{t('kubevirt-plugin~Virtualization')}</title>
       </Helmet>
       <div className="co-m-nav-title co-m-nav-title--row">
         <h1 className="co-m-pane__heading" data-test-id="cluster-settings-page-heading">
-          {title}
+          {t('kubevirt-plugin~Virtualization')}
         </h1>
         <div className="co-actions" data-test-id="details-actions">
           <Dropdown
@@ -179,13 +178,17 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
             onSelect={() => setOpen(false)}
             toggle={
               <DropdownToggle onToggle={setOpen} isPrimary>
-                Create
+                {t('kubevirt-plugin~Create')}
               </DropdownToggle>
             }
             isOpen={isOpen}
             dropdownItems={[
-              <DropdownGroup className="kv-dropdown-group" label="Virtual machine" key="vm">
-                {[...vmMenuItems, ...(importAllowed ? importMenuItems : [])].map(getMenuItem)}
+              <DropdownGroup
+                className="kv-dropdown-group"
+                label={t('kubevirt-plugin~Virtual Machine')}
+                key="vm"
+              >
+                {[...vmMenuItems(t), ...(importAllowed ? importMenuItems(t) : [])].map(getMenuItem)}
               </DropdownGroup>,
               <DropdownGroup
                 className="kv-dropdown-group kv-dropdown-group--separator"
@@ -193,8 +196,12 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
               >
                 <DropdownSeparator />
               </DropdownGroup>,
-              <DropdownGroup className="kv-dropdown-group" label="Template" key="vm-template">
-                {templateMenuItems.map(getMenuItem)}
+              <DropdownGroup
+                className="kv-dropdown-group"
+                label={t('kubevirt-plugin~Template')}
+                key="vm-template"
+              >
+                {templateMenuItems(t).map(getMenuItem)}
               </DropdownGroup>,
             ]}
             isGrouped

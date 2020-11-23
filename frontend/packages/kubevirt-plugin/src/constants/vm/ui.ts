@@ -1,9 +1,3 @@
-export enum VMWizardActionLabels {
-  YAML = 'With YAML',
-  WIZARD = 'With Wizard',
-  IMPORT = 'With Import wizard',
-}
-
 export enum VMWizardName {
   YAML = 'yaml',
   WIZARD = 'wizard',

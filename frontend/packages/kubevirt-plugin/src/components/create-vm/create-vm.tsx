@@ -397,7 +397,7 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
   return (
     <div className="kubevirt-create-vm-modal__container">
       <div className="yaml-editor__header">
-        <h1 className="yaml-editor__header-text">Create Virtual machine from template</h1>
+        <h1 className="yaml-editor__header-text">Create Virtual Machine from template</h1>
       </div>
       {created ? (
         <SuccessResultsComponent name={state.name} namespace={state.namespace} />
