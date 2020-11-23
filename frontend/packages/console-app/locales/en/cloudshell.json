@@ -8,12 +8,14 @@
   "Minimize terminal": "Minimize terminal",
   "Restore terminal": "Restore terminal",
   "Close terminal": "Close terminal",
-  "The terminal connection has closed.": "The terminal connection has closed.",
   "The terminal connection has closed due to {{reason}}.": "The terminal connection has closed due to {{reason}}.",
+  "The terminal connection has closed.": "The terminal connection has closed.",
   "connecting to {{container}}": "connecting to {{container}}",
-  "OpenShift command line terminal": "OpenShift command line terminal",
+  "Reconnect to terminal": "Reconnect to terminal",
+  "Restart terminal": "Restart terminal",
   "Close command line terminal": "Close command line terminal",
   "Open command line terminal": "Open command line terminal",
+  "OpenShift command line terminal": "OpenShift command line terminal",
   "Failed to connect to your OpenShift command line terminal": "Failed to connect to your OpenShift command line terminal",
   "Initialize Terminal": "Initialize Terminal",
   "Start": "Start",
@@ -23,7 +25,5 @@
   "Create Project": "Create Project",
   "This project will be used to initialize your command line terminal": "This project will be used to initialize your command line terminal",
   "Project Name": "Project Name",
-  "Connecting to your OpenShift command line terminal ...": "Connecting to your OpenShift command line terminal ...",
-  "Reconnect to terminal": "Reconnect to terminal",
-  "Restart terminal": "Restart terminal"
+  "Connecting to your OpenShift command line terminal ...": "Connecting to your OpenShift command line terminal ..."
 }
