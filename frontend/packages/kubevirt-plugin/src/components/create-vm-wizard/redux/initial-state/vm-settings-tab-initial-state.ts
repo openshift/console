@@ -53,14 +53,7 @@ export const getInitialVmSettings = (data: CommonData): VMSettings => {
     [VMSettingsField.PROVISION_SOURCE_TYPE]: {
       isHidden: hiddenByProviderOrCloneCommonBaseDiskImage,
       isRequired: asRequired(!isProviderImport),
-      sources: OrderedSet(
-        [
-          ProvisionSource.PXE,
-          ProvisionSource.URL,
-          ProvisionSource.CONTAINER,
-          ProvisionSource.DISK,
-        ].map((s) => s.getValue()),
-      ),
+      sources: OrderedSet(ProvisionSource.getAdvancedWizardSources().map((s) => s.getValue())),
       initialized: !(
         initialData.source?.url ||
         initialData.source?.container ||

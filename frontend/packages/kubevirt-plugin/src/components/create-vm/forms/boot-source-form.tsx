@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { PersistentVolumeClaimKind, StorageClassResourceKind } from '@console/internal/module/k8s';
 import {
   FileUpload,
@@ -25,12 +25,14 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 
 import { FormRow } from '../../form/form-row';
 import { ProjectDropdown } from '../../form/project-dropdown';
-import { EXAMPLE_CONTAINER, FEDORA_IMAGE_LINK, RHEL_IMAGE_LINK } from '../../../utils/strings';
 import { getDefaultStorageClass } from '../../../selectors/config-map/sc-defaults';
 import { BootSourceAction, BootSourceState, BOOT_ACTION_TYPE } from './boot-source-form-reducer';
-import { AccessMode, DataVolumeSourceType } from '../../../constants';
+import { AccessMode } from '../../../constants';
 import { FormPFSelect } from '../../form/form-pf-select';
 import { preventDefault } from '../../form/utils';
+import { ProvisionSource } from '../../../constants/vm/provision-source';
+import { URLSourceHelp } from '../../form/helper/url-source-help';
+import { ContainerSourceHelp } from '../../form/helper/container-source-help';
 
 type BootSourceFormProps = {
   state: BootSourceState;
@@ -76,29 +78,31 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
     }
   }, [defaultSCName, handleStorageClass, scLoaded, state.storageClass]);
 
-  const isUpstream = window.SERVER_FLAGS.branding === 'okd';
   return (
     <Form onSubmit={preventDefault}>
-      <FormRow fieldId="form-data-source" title={t('kubevirt-plugin~Data source type')} isRequired>
+      <FormRow fieldId="form-data-source" title={t('kubevirt-plugin~Boot source type')} isRequired>
         <FormPFSelect
-          placeholderText={t('kubevirt-plugin~--- Select data source ---')}
-          aria-label={t('kubevirt-plugin~Select data source')}
-          onSelect={(e, value: DataVolumeSourceType) =>
+          placeholderText={t('kubevirt-plugin~--- Select boot source ---')}
+          aria-label={t('kubevirt-plugin~Select boot source')}
+          onSelect={(e, value: ProvisionSource) =>
             dispatch({
               type: BOOT_ACTION_TYPE.SET_DATA_SOURCE,
               payload: value.getValue(),
             })
           }
-          selections={DataVolumeSourceType.fromString(state.dataSource?.value)}
+          selections={ProvisionSource.fromString(state.dataSource?.value)}
         >
-          {DataVolumeSourceType.getBootSourceTypes()
-            .filter((ds) => (withUpload ? true : ds !== DataVolumeSourceType.UPLOAD))
+          {(withUpload
+            ? ProvisionSource.getVMTemplateBaseImageSources()
+            : ProvisionSource.getBasicWizardSources()
+          )
+            .sort((a, b) => a.getOrder() - b.getOrder())
             .map((ds) => (
               <SelectOption key={ds.getValue()} value={ds} description={ds.getDescription()} />
             ))}
         </FormPFSelect>
       </FormRow>
-      {state.dataSource?.value === DataVolumeSourceType.UPLOAD.getValue() && (
+      {state.dataSource?.value === ProvisionSource.UPLOAD.getValue() && (
         <FormRow fieldId="form-ds-file" title={t('kubevirt-plugin~Upload source')} isRequired>
           <FileUpload
             id="file-upload"
@@ -115,7 +119,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
           />
         </FormRow>
       )}
-      {state.dataSource?.value === DataVolumeSourceType.HTTP.getValue() && (
+      {state.dataSource?.value === ProvisionSource.URL.getValue() && (
         <FormRow
           fieldId="form-ds-url"
           title={t('kubevirt-plugin~Import URL')}
@@ -128,22 +132,10 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
             onChange={(payload) => dispatch({ type: BOOT_ACTION_TYPE.SET_URL, payload })}
             aria-label={t('kubevirt-plugin~Import URL')}
           />
-          <div className="pf-c-form__helper-text" aria-live="polite">
-            <Trans t={t} ns="kubevirt-plugin">
-              Example: Visit the{' '}
-              <a
-                href={isUpstream ? FEDORA_IMAGE_LINK : RHEL_IMAGE_LINK}
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                <strong>{isUpstream ? 'Fedora' : 'RHEL'} cloud image list</strong>
-              </a>{' '}
-              and copy a url for the field above
-            </Trans>
-          </div>
+          <URLSourceHelp />
         </FormRow>
       )}
-      {state.dataSource?.value === DataVolumeSourceType.REGISTRY.getValue() && (
+      {state.dataSource?.value === ProvisionSource.CONTAINER.getValue() && (
         <FormRow
           fieldId="form-ds-container"
           title={t('kubevirt-plugin~Container image')}
@@ -156,12 +148,10 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
             onChange={(payload) => dispatch({ type: BOOT_ACTION_TYPE.SET_CONTAINER, payload })}
             aria-label={t('kubevirt-plugin~Container image')}
           />
-          <div className="pf-c-form__helper-text" aria-live="polite">
-            {t('kubevirt-plugin~Example: {{example}}', { example: EXAMPLE_CONTAINER })}
-          </div>
+          <ContainerSourceHelp />
         </FormRow>
       )}
-      {state.dataSource?.value === DataVolumeSourceType.PVC.getValue() && (
+      {state.dataSource?.value === ProvisionSource.DISK.getValue() && (
         <>
           <FormRow
             fieldId="form-ds-pvc-ns"
@@ -232,11 +222,9 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
           id="cdrom"
         />
       </FormRow>
-      {[
-        DataVolumeSourceType.PVC,
-        DataVolumeSourceType.HTTP,
-        DataVolumeSourceType.REGISTRY,
-      ].includes(DataVolumeSourceType.fromString(state.dataSource?.value)) && (
+      {[ProvisionSource.UPLOAD, ProvisionSource.URL, ProvisionSource.CONTAINER].includes(
+        ProvisionSource.fromString(state.dataSource?.value),
+      ) && (
         <FormRow
           fieldId="form-ds-pvc-size"
           title={t('kubevirt-plugin~Persistent Volume Claim size')}

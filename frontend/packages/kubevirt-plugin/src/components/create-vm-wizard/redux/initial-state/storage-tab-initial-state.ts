@@ -49,28 +49,41 @@ import { getStorages } from '../../selectors/selectors';
 const WINTOOLS_DISK_NAME = 'windows-guest-tools';
 
 const getContainerStorage = (
+  storageClassConfigMap: ConfigMapKind,
   diskType = DiskType.DISK,
   bus = DiskBus.VIRTIO,
-  image = '',
-): VMWizardStorage => ({
-  type: VMWizardStorageType.PROVISION_SOURCE_DISK,
-  disk: DiskWrapper.initializeFromSimpleData({
-    name: ROOT_DISK_NAME,
-    type: diskType,
-    bus,
-    bootOrder: 1,
-  }).asResource(),
-  volume: VolumeWrapper.initializeFromSimpleData({
-    name: ROOT_DISK_NAME,
-    type: VolumeType.CONTAINER_DISK,
-    typeData: { image },
-  }).asResource(),
-  editConfig: {
-    isFieldEditableOverride: {
-      source: false,
+  url = '',
+  size = '15Gi',
+): VMWizardStorage => {
+  const dataVolumeName = generateDataVolumeName(DUMMY_VM_NAME, ROOT_DISK_NAME);
+
+  return {
+    type: VMWizardStorageType.PROVISION_SOURCE_DISK,
+    disk: new DiskWrapper()
+      .init({ name: ROOT_DISK_NAME, bootOrder: 1 })
+      .setType(diskType, { bus })
+      .asResource(),
+    volume: new VolumeWrapper()
+      .init({ name: ROOT_DISK_NAME })
+      .setType(VolumeType.DATA_VOLUME, { name: dataVolumeName })
+      .asResource(),
+    dataVolume: new DataVolumeWrapper()
+      .init({
+        name: dataVolumeName,
+        size,
+        unit: '',
+      })
+      .setType(DataVolumeSourceType.REGISTRY, { url })
+      .setVolumeMode(getDefaultSCVolumeMode(storageClassConfigMap))
+      .setAccessModes(getDefaultSCAccessModes(storageClassConfigMap))
+      .asResource(),
+    editConfig: {
+      isFieldEditableOverride: {
+        source: false,
+      },
     },
-  },
-});
+  };
+};
 
 export const windowsToolsStorage: VMWizardStorage = {
   type: VMWizardStorageType.WINDOWS_GUEST_TOOLS,
@@ -247,12 +260,14 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
   if (provisionSource === ProvisionSource.CONTAINER) {
     if (source?.container) {
       return getContainerStorage(
+        storageClassConfigMap,
         source.cdRom ? DiskType.CDROM : DiskType.DISK,
         diskBus,
         source.container,
+        source.size,
       );
     }
-    return getContainerStorage();
+    return getContainerStorage(storageClassConfigMap);
   }
   if (provisionSource === ProvisionSource.DISK && !iUserTemplate && cloneCommonBaseDiskImage) {
     const iStorageClassConfigMap = iGetLoadedCommonData(

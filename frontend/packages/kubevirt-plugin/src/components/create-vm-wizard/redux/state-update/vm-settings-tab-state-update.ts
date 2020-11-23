@@ -256,7 +256,9 @@ const provisioningSourceUpdater = ({ id, prevState, dispatch, getState }: Update
     return;
   }
   const source = iGetProvisionSource(state, id);
-  const isContainer = source === ProvisionSource.CONTAINER;
+  const isContainer = [ProvisionSource.CONTAINER, ProvisionSource.CONTAINER_EPHEMERAL].includes(
+    source,
+  );
   const isUrl = source === ProvisionSource.URL;
 
   dispatch(

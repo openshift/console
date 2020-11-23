@@ -38,11 +38,12 @@ const ProvisionSourceDiskHelpMsg: React.FC<ProvisionSourceDiskHelpMsgProps> = ({
           </TextContent>
         );
       case ProvisionSource.CONTAINER:
+      case ProvisionSource.CONTAINER_EPHEMERAL:
         return (
           <Text>Enter container image here or edit the rootdisk in the {storageBtn} step.</Text>
         );
       case ProvisionSource.DISK:
-        return <>Add a disk in the {storageBtn} step and select it from the boot source dropdown</>;
+        return <>Choose PVC to clone by editing the rootdisk in the {storageBtn} step</>;
       default:
         return null;
     }
@@ -107,6 +108,7 @@ export const ProvisionSourceComponent: React.FC<ProvisionSourceComponentProps> =
         {[
           ProvisionSource.URL.getValue(),
           ProvisionSource.CONTAINER.getValue(),
+          ProvisionSource.CONTAINER_EPHEMERAL.getValue(),
           ProvisionSource.DISK.getValue(),
         ].includes(provisionSourceValue) && (
           <ProvisionSourceDiskHelpMsg
