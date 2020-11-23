@@ -1,9 +1,7 @@
 import { K8sResourceKind, k8sPatch, k8sGet } from '@console/internal/module/k8s';
-import { STORAGE_PREFIX, getRandomChars } from '@console/shared';
+import { getRandomChars } from '@console/shared';
 import { coFetchJSON, coFetch } from '@console/internal/co-fetch';
 import { WorkspaceModel } from '../../models';
-
-const CLOUD_SHELL_NAMESPACE = `${STORAGE_PREFIX}/command-line-terminal-namespace`;
 
 type DevWorkspaceTemplateSpec = {
   components: Component[];
@@ -96,15 +94,6 @@ export const sendActivityTick = (workspaceName: string, namespace: string): void
 };
 
 export const checkTerminalAvailable = () => coFetch('/api/terminal/available');
-
-export const getCloudShellNamespace = () => localStorage.getItem(CLOUD_SHELL_NAMESPACE);
-export const setCloudShellNamespace = (namespace: string) => {
-  if (!namespace) {
-    localStorage.removeItem(CLOUD_SHELL_NAMESPACE);
-  } else {
-    localStorage.setItem(CLOUD_SHELL_NAMESPACE, namespace);
-  }
-};
 
 export const getCloudShellCR = (name: string, ns: string) => {
   return k8sGet(WorkspaceModel, name, ns);

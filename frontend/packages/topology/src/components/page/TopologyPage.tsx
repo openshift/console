@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { matchPath, match as RMatch } from 'react-router-dom';
-import { useQueryParams } from '@console/shared/src';
+import { useQueryParams, useUserSettingsCompatibility } from '@console/shared/src';
 import { removeQueryArgument, setQueryArgument } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -11,7 +11,10 @@ import NamespacedPage, {
 import ProjectsExistWrapper from '@console/dev-console/src/components/ProjectsExistWrapper';
 import CreateProjectListPage from '@console/dev-console/src/components/projects/CreateProjectListPage';
 import TopologyDataRenderer from './TopologyDataRenderer';
-import { LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY } from '../../const';
+import {
+  LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY,
+  TOPOLOGY_VIEW_CONFIG_STORAGE_KEY,
+} from '../../const';
 import { TOPOLOGY_SEARCH_FILTER_KEY } from '../../filters';
 import DataModelProvider from '../../data-transforms/DataModelProvider';
 import TopologyPageToolbar from './TopologyPageToolbar';
@@ -27,14 +30,6 @@ interface TopologyPageProps {
   defaultViewType?: TopologyViewType;
 }
 
-const setTopologyActiveView = (key: string, viewType: TopologyViewType) => {
-  localStorage.setItem(key, viewType);
-};
-
-const getTopologyActiveView = (key: string): TopologyViewType => {
-  return localStorage.getItem(key) as TopologyViewType;
-};
-
 const TopologyPage: React.FC<TopologyPageProps> = ({
   match,
   activeViewStorageKey = LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY,
@@ -42,6 +37,15 @@ const TopologyPage: React.FC<TopologyPageProps> = ({
   hideProjects = false,
   defaultViewType = TopologyViewType.graph,
 }) => {
+  const [
+    topologyViewState,
+    setTopologyViewState,
+    isTopologyViewStateLoaded,
+  ] = useUserSettingsCompatibility<TopologyViewType>(
+    TOPOLOGY_VIEW_CONFIG_STORAGE_KEY,
+    activeViewStorageKey,
+    defaultViewType,
+  );
   const namespace = match.params.name;
   const queryParams = useQueryParams();
   let viewType = queryParams.get('view') as TopologyViewType;
@@ -60,16 +64,16 @@ const TopologyPage: React.FC<TopologyPageProps> = ({
           exact: true,
         })
       ? TopologyViewType.graph
-      : getTopologyActiveView(activeViewStorageKey) || defaultViewType;
-    setQueryArgument('view', viewType);
+      : isTopologyViewStateLoaded && ((topologyViewState as TopologyViewType) || defaultViewType);
+    viewType && setQueryArgument('view', viewType);
   }
 
   const onViewChange = React.useCallback(
     (newViewType: TopologyViewType) => {
       setQueryArgument('view', newViewType);
-      setTopologyActiveView(activeViewStorageKey, newViewType);
+      setTopologyViewState(newViewType);
     },
-    [activeViewStorageKey],
+    [setTopologyViewState],
   );
 
   const handleNamespaceChange = (ns: string) => {

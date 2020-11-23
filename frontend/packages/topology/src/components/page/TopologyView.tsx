@@ -222,18 +222,18 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
 
   const viewContent = React.useMemo(
     () =>
-      viewType === TopologyViewType.graph ? (
-        <Topology
+      viewType === TopologyViewType.list ? (
+        <TopologyListView
           model={filteredModel}
           namespace={namespace}
-          application={applicationRef.current}
           onSelect={onSelect}
           setVisualization={setVisualization}
         />
       ) : (
-        <TopologyListView
+        <Topology
           model={filteredModel}
           namespace={namespace}
+          application={applicationRef.current}
           onSelect={onSelect}
           setVisualization={setVisualization}
         />

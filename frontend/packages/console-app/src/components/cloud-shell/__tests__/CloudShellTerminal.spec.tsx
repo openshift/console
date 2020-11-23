@@ -19,22 +19,46 @@ jest.mock('react-i18next', () => {
   };
 });
 
+jest.mock('@console/shared/src/hooks/useUserSettingsCompatibility', () => {
+  return {
+    useUserSettingsCompatibility: () => ['', () => {}],
+  };
+});
+
 describe('CloudShellTerminal', () => {
   it('should display loading box', () => {
     (useCloudShellWorkspace as jest.Mock).mockReturnValueOnce([null, false]);
-    const wrapper = shallow(<InternalCloudShellTerminal user={user} />);
+    const wrapper = shallow(
+      <InternalCloudShellTerminal
+        user={user}
+        userSettingState="my-app"
+        setUserSettingState={jest.fn()}
+      />,
+    );
     expect(wrapper.find(TerminalLoadingBox)).toHaveLength(1);
   });
 
   it('should display error statusBox', () => {
     (useCloudShellWorkspace as jest.Mock).mockReturnValueOnce([null, false, true]);
-    const wrapper = shallow(<InternalCloudShellTerminal user={user} />);
+    const wrapper = shallow(
+      <InternalCloudShellTerminal
+        user={user}
+        userSettingState="my-app"
+        setUserSettingState={jest.fn()}
+      />,
+    );
     expect(wrapper.find(StatusBox)).toHaveLength(1);
   });
 
   it('should display form if loaded and no workspace', () => {
     (useCloudShellWorkspace as jest.Mock).mockReturnValueOnce([[], true]);
-    const wrapper = shallow(<InternalCloudShellTerminal user={user} />);
+    const wrapper = shallow(
+      <InternalCloudShellTerminal
+        user={user}
+        userSettingState="my-app"
+        setUserSettingState={jest.fn()}
+      />,
+    );
     expect(wrapper.find(CloudShellSetup)).toHaveLength(1);
   });
 });

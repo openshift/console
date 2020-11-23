@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { useUserSettingsCompatibility } from '@console/shared/src';
 import NamespacedPage from '@console/dev-console/src/components/NamespacedPage';
 import TopologyPage from '../components/page/TopologyPage';
 import { TopologyViewType } from '../topology-types';
@@ -33,6 +34,7 @@ jest.mock('@console/shared', () => {
   return {
     ...ActualShared,
     useQueryParams: () => new Map().set('view', mockViewParam),
+    useUserSettingsCompatibility: jest.fn(),
   };
 });
 
@@ -44,6 +46,7 @@ describe('Topology page tests', () => {
     (useK8sWatchResources as jest.Mock).mockReturnValue({
       projects: { data: [], loaded: true, loadError: '' },
     });
+    (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['', () => {}]);
   });
 
   it('should render topology page', () => {
@@ -52,6 +55,7 @@ describe('Topology page tests', () => {
   });
 
   it('should default to graph view', () => {
+    (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['', () => {}, true]);
     const wrapper = shallow(<TopologyPage match={match} title="Topology" hideProjects={false} />);
     expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(false);
   });
@@ -68,8 +72,8 @@ describe('Topology page tests', () => {
     expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(true);
   });
 
-  it('should use local storage setting', () => {
-    localStorage.setItem('fake-key', 'graph');
+  it('should use useUserSettingsCompatibility setting', () => {
+    (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['graph', () => {}, true]);
     let wrapper = shallow(
       <TopologyPage
         match={match}
@@ -80,7 +84,7 @@ describe('Topology page tests', () => {
     );
     expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(false);
 
-    localStorage.setItem('fake-key', 'list');
+    (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['list', () => {}, true]);
     wrapper = shallow(
       <TopologyPage
         match={match}
@@ -93,6 +97,7 @@ describe('Topology page tests', () => {
   });
 
   it('should continue to support URL view path', () => {
+    (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['', () => {}, true]);
     const viewMatch = {
       params: { name: 'default' },
       isExact: true,
