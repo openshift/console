@@ -11,7 +11,7 @@ RUN ./build-backend.sh
 ##################################################
 #
 # nodejs frontend build
-FROM registry.svc.ci.openshift.org/ocp/builder:ubi8.nodejs.12 AS nodebuilder
+FROM registry.svc.ci.openshift.org/ocp/builder:ubi8.nodejs.14 AS nodebuilder
 
 ADD . .
 
@@ -30,7 +30,7 @@ ENV CHROMEDRIVER_SKIP_DOWNLOAD=true \
     SKIP_SASS_BINARY_DOWNLOAD_FOR_CI=true \
     CYPRESS_INSTALL_BINARY=0 \
     RHEL_ALLOW_PYTHON2_FOR_BUILD=1 \
-    NPM_CONFIG_TARBALL=$HOME/node-v12.16.1-headers.tar.gz
+    NPM_CONFIG_TARBALL=$HOME/node-v14.15.0-headers.tar.gz
 
 # run the build
 RUN container-entrypoint ./build-frontend.sh
