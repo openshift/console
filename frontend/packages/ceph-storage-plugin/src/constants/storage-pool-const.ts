@@ -9,6 +9,9 @@ export enum POOL_PROGRESS {
   PROGRESS = 'progress',
   TIMEOUT = 'timeout',
   NOTREADY = 'notReady',
+  EXCEEDED_PG_COUNT = 'pgCount',
+  FETCH_DATA = 'fetchData',
+  FETCH_DATA_ERROR = 'fetchDataError',
 }
 
 export const MODAL_TITLE = 'Create New Storage Pool';

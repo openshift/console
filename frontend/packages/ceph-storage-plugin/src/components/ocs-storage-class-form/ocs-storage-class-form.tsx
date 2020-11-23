@@ -82,6 +82,7 @@ export const PoolResourceComponent: React.FC<ProvisionerProps> = ({ onParamChang
           storagePoolModal({
             cephClusterObj,
             onPoolCreation,
+            readyPools: poolDropdownItems.length - 2, // -2 for `Create New Pool` and separator
           })
         }
       >

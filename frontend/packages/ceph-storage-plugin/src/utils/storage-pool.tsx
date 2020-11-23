@@ -47,4 +47,22 @@ export const PROGRESS_STATUS = [
     desc: NOT_READY_DESC,
     className: '',
   },
+  {
+    name: POOL_PROGRESS.EXCEEDED_PG_COUNT,
+    icon: ExclamationCircleIcon,
+    desc: `To add additional pools, the user needs to expand the storage cluster.`,
+    className: 'ceph-storage-pool__error-icon',
+  },
+  {
+    name: POOL_PROGRESS.FETCH_DATA,
+    icon: LoadingComponent,
+    desc: 'Loading',
+    className: '',
+  },
+  {
+    name: POOL_PROGRESS.FETCH_DATA_ERROR,
+    icon: ExclamationCircleIcon,
+    desc: 'Failed to fetch details',
+    className: 'ceph-storage-pool__error-icon',
+  },
 ];

@@ -211,3 +211,5 @@ export const getPVCUsedCapacityQuery = (pvcName: string): string =>
 export const osdDiskInfoMetric = _.template(
   `ceph_disk_occupation{exported_instance=~'<%= nodeName %>'}`,
 );
+
+export const numberOfOSDs = 'sum(ceph_osd_up)';

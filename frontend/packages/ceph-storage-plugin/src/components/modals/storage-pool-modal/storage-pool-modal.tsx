@@ -47,6 +47,9 @@ import {
 } from '../../../constants/storage-pool-const';
 
 import './storage-pool-modal.scss';
+import { usePrometheusPoll } from '@console/internal/components/graphs/prometheus-poll-hook';
+import { PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
+import { numberOfOSDs } from '../../../constants/queries';
 
 const PoolStatusComponent: React.FC<PoolStatusComponentProps> = ({ status, name, error = '' }) => {
   const statusObj = PROGRESS_STATUS.find((state) => state.name === status);
@@ -71,6 +74,7 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
     handlePromise,
     errorMessage,
     inProgress,
+    readyPools,
   } = props;
   const [newPoolName, setNewPoolName] = React.useState('sc-pool');
   const [isReplicaOpen, setReplicaOpen] = React.useState(false);
@@ -98,6 +102,11 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
   const [newPool, newPoolLoaded, newPoolLoadError] = useK8sWatchResource<StoragePoolKind>(
     poolResource,
   );
+
+  const [osdData, osdDataLoadError, osdDataLoading] = usePrometheusPoll({
+    endpoint: PrometheusEndpoint.QUERY,
+    query: numberOfOSDs,
+  });
 
   React.useEffect(() => {
     if (isSubmit) {
@@ -160,6 +169,97 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
 
   const isClusterReady: boolean =
     !poolStatus && cephClusterObj[0]?.status?.phase === POOL_STATE.READY;
+
+  const PgLimitNotReached: React.FC<{}> = () => {
+    const osds = _.get(osdData, 'data.result[0].value[1]');
+    const allowedPG = Math.floor((Number(osds) * 100) / 32);
+    if (allowedPG - readyPools > 1) {
+      return (
+        <>
+          <div className="form-group ceph-storage-pool__input">
+            <label className="control-label co-required" htmlFor="pool-name">
+              Pool Name
+            </label>
+            <input
+              className="pf-c-form-control"
+              type="text"
+              onChange={(e) => setNewPoolName(e.currentTarget.value)}
+              value={newPoolName}
+              placeholder="my-storage-pool"
+              aria-describedby="pool-name-help"
+              id="pool-name"
+              name="newPoolName"
+              required
+            />
+          </div>
+          <div className="form-group ceph-storage-pool__input">
+            <label className="control-label co-required" htmlFor="pool-replica-size">
+              Data Protection Policy
+            </label>
+            <Dropdown
+              className="dropdown dropdown--full-width"
+              toggle={
+                <DropdownToggle
+                  id="replica-dropdown"
+                  onToggle={() => setReplicaOpen(!isReplicaOpen)}
+                  toggleIndicator={CaretDownIcon}
+                >
+                  {replicaSize
+                    ? `${OCS_DEVICE_REPLICA[replicaSize]} Replication`
+                    : 'Select Replication'}
+                </DropdownToggle>
+              }
+              isOpen={isReplicaOpen}
+              dropdownItems={replicaDropdownItems}
+              onSelect={() => setReplicaOpen(false)}
+              id="pool-replica-size"
+            />
+          </div>
+          <div className="form-group ceph-storage-pool__input">
+            <label className="control-label co-required" htmlFor="compression-check">
+              Compression
+            </label>
+            <div className="checkbox">
+              <label>
+                <input
+                  type="checkbox"
+                  onChange={(event) => setCompression(event.target.checked)}
+                  checked={isCompressed}
+                  name="compression-check"
+                />
+                Enable Compression
+              </label>
+            </div>
+          </div>
+          {/* Not to be exposed for 4.6
+              {cephClusterObj[0]?.status?.storage?.deviceClasses && (
+                <div className="form-group ceph-storage-pool__input">
+                  <label className="control-label co-required" htmlFor="pool-device-type">
+                    Device Type
+                  </label>
+                  <Dropdown
+                    className="dropdown dropdown--full-width"
+                    toggle={
+                      <DropdownToggle
+                        id="toggle-id"
+                        onToggle={() => setPerfObjOpen(!isPerfObjOpen)}
+                        toggleIndicator={CaretDownIcon}
+                      >
+                        {deviceClass || 'Select device type'}
+                      </DropdownToggle>
+                    }
+                    isOpen={isPerfObjOpen}
+                    dropdownItems={availableDeviceClasses}
+                    onSelect={() => setPerfObjOpen(false)}
+                    id="pool-device-type"
+                  />
+                </div>
+              )} */}
+        </>
+      );
+    }
+    return <PoolStatusComponent status={POOL_PROGRESS.EXCEEDED_PG_COUNT} />;
+  };
 
   const submit = (event: React.FormEvent<EventTarget>) => {
     setPoolStatus(POOL_PROGRESS.PROGRESS);
@@ -245,87 +345,13 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
       <ModalBody>
         <p>{MODAL_DESC}</p>
         {isClusterReady ? (
-          <>
-            <div className="form-group ceph-storage-pool__input">
-              <label className="control-label co-required" htmlFor="pool-name">
-                Pool Name
-              </label>
-              <input
-                className="pf-c-form-control"
-                type="text"
-                onChange={(e) => setNewPoolName(e.currentTarget.value)}
-                value={newPoolName}
-                placeholder="my-storage-pool"
-                aria-describedby="pool-name-help"
-                id="pool-name"
-                name="newPoolName"
-                required
-              />
-            </div>
-            <div className="form-group ceph-storage-pool__input">
-              <label className="control-label co-required" htmlFor="pool-replica-size">
-                Data Protection Policy
-              </label>
-              <Dropdown
-                className="dropdown dropdown--full-width"
-                toggle={
-                  <DropdownToggle
-                    id="replica-dropdown"
-                    onToggle={() => setReplicaOpen(!isReplicaOpen)}
-                    toggleIndicator={CaretDownIcon}
-                  >
-                    {replicaSize
-                      ? `${OCS_DEVICE_REPLICA[replicaSize]} Replication`
-                      : 'Select Replication'}
-                  </DropdownToggle>
-                }
-                isOpen={isReplicaOpen}
-                dropdownItems={replicaDropdownItems}
-                onSelect={() => setReplicaOpen(false)}
-                id="pool-replica-size"
-              />
-            </div>
-            <div className="form-group ceph-storage-pool__input">
-              <label className="control-label co-required" htmlFor="compression-check">
-                Compression
-              </label>
-              <div className="checkbox">
-                <label>
-                  <input
-                    type="checkbox"
-                    onChange={(event) => setCompression(event.target.checked)}
-                    checked={isCompressed}
-                    name="compression-check"
-                  />
-                  Enable Compression
-                </label>
-              </div>
-            </div>
-            {/* Not to be exposed for 4.6
-            {cephClusterObj[0]?.status?.storage?.deviceClasses && (
-              <div className="form-group ceph-storage-pool__input">
-                <label className="control-label co-required" htmlFor="pool-device-type">
-                  Device Type
-                </label>
-                <Dropdown
-                  className="dropdown dropdown--full-width"
-                  toggle={
-                    <DropdownToggle
-                      id="toggle-id"
-                      onToggle={() => setPerfObjOpen(!isPerfObjOpen)}
-                      toggleIndicator={CaretDownIcon}
-                    >
-                      {deviceClass || 'Select device type'}
-                    </DropdownToggle>
-                  }
-                  isOpen={isPerfObjOpen}
-                  dropdownItems={availableDeviceClasses}
-                  onSelect={() => setPerfObjOpen(false)}
-                  id="pool-device-type"
-                />
-              </div>
-            )} */}
-          </>
+          osdDataLoading ? (
+            <PoolStatusComponent status={POOL_PROGRESS.FETCH_DATA} />
+          ) : osdDataLoadError || !osdData.data.result.length ? (
+            <PoolStatusComponent status={POOL_PROGRESS.FETCH_DATA_ERROR} />
+          ) : (
+            <PgLimitNotReached />
+          )
         ) : (
           <PoolStatusComponent status={POOL_PROGRESS.NOTREADY} />
         )}
@@ -343,6 +369,7 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
 export type StoragePoolModalProps = {
   cephClusterObj?: CephClusterKind[];
   onPoolCreation: (name: string) => void;
+  readyPools?: number;
 } & HandlePromiseProps &
   ModalComponentProps;
 
