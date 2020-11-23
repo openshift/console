@@ -88,7 +88,7 @@ const VMHeader = (t: TFunction) => () =>
         transforms: [sortable],
       },
       {
-        title: 'Namespace',
+        title: t('kubevirt-plugin~Namespace'),
         sortField: 'metadata.namespace',
         transforms: [sortable],
       },

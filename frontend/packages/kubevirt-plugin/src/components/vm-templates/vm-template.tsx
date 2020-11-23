@@ -1,5 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
@@ -95,52 +97,52 @@ const tableColumnClasses = (showNamespace: boolean) => [
   Kebab.columnClass,
 ];
 
-const VMTemplateTableHeader = (showNamespace: boolean) =>
+const VMTemplateTableHeader = (showNamespace: boolean, t: TFunction) =>
   dimensifyHeader(
     [
       {
-        title: 'Name',
+        title: t('kubevirt-plugin~Name'),
         sortFunc: 'vmTemplateName',
         transforms: [sortable],
       },
       {
-        title: 'Provider',
+        title: t('kubevirt-plugin~Provider'),
       },
       {
-        title: 'Namespace',
+        title: t('kubevirt-plugin~Namespace'),
         sortField: 'metadata.namespace',
         transforms: [sortable],
       },
       {
-        title: 'Boot source',
+        title: t('kubevirt-plugin~Boot source'),
         header: {
           info: {
             popover: (
               <Stack hasGutter>
                 <StackItem>
                   <SuccessStatus title={BOOT_SOURCE_COMMUNITY} />
-                  The image has been added to the cluster via the operator.
+                  {t('kubevirt-plugin~The image has been added to the cluster via the operator.')}
                 </StackItem>
                 <StackItem>
                   <SuccessStatus title={BOOT_SOURCE_USER} />
-                  The image has been added to the cluster by a user.
+                  {t('kubevirt-plugin~The image has been added to the cluster by a user.')}
                 </StackItem>
                 <StackItem>
                   <GenericStatus
                     Icon={(props) => <PlusCircleIcon {...props} color={blueInfoColor.value} />}
-                    title="Add source"
+                    title={t('kubevirt-plugin~Add source')}
                   />
-                  Provide a source for the template across the cluster.
+                  {t('kubevirt-plugin~Provide a source for the template across the cluster.')}
                 </StackItem>
                 <StackItem>
-                  <ErrorStatus title="Boot source error" />
-                  Error with the provided boot source.
+                  <ErrorStatus title={t('kubevirt-plugin~Boot source error')} />
+                  {t('kubevirt-plugin~Error with the provided boot source.')}
                 </StackItem>
               </Stack>
             ),
-            ariaLabel: 'More information on boot sources',
+            ariaLabel: t('kubevirt-plugin~More information on boot sources'),
             popoverProps: {
-              headerContent: 'Boot source',
+              headerContent: t('kubevirt-plugin~Boot source'),
             },
           },
         },
@@ -166,24 +168,25 @@ const VMTemplateDetailsBody: React.FC<VMTemplateDetailsBodyProps> = ({
   template,
   sourceStatus,
 }) => {
+  const { t } = useTranslation();
   return (
     <TextContent>
       <Text>{getTemplateName(template)}</Text>
       <Text>
         <div className="kubevirt-vm-template-popover">
-          <div>Storage</div>
+          <div>{t('kubevirt-plugin~Storage')}</div>
           <div>{getTemplateSizeRequirement(template, sourceStatus)}</div>
         </div>
         <div className="kubevirt-vm-template-popover">
-          <div>Memory</div>
+          <div>{t('kubevirt-plugin~Memory')}</div>
           <div>{getTemplateMemory(template)}</div>
         </div>
         <div className="kubevirt-vm-template-popover">
-          <div>CPU</div>
+          <div>{t('kubevirt-plugin~CPU')}</div>
           <div>{vCPUCount(getCPU(selectVM(template)))}</div>
         </div>
         <div className="kubevirt-vm-template-popover">
-          <div>Workload profile</div>
+          <div>{t('kubevirt-plugin~Workload profile')}</div>
           <div>{getWorkloadProfile(template)}</div>
         </div>
       </Text>
@@ -193,7 +196,7 @@ const VMTemplateDetailsBody: React.FC<VMTemplateDetailsBodyProps> = ({
         data-test-id={template.metadata.name}
         className="co-resource-item__resource-name"
       >
-        View full details
+        {t('kubevirt-plugin~View full details')}
       </Link>
     </TextContent>
   );
@@ -217,6 +220,7 @@ const VMTemplateTableRow: RowFunction<TemplateItem, VMTemplateTableRowProps> = (
   key,
   style,
 }) => {
+  const { t } = useTranslation();
   const [template] = obj.variants;
   const dimensify = dimensifyRow(tableColumnClasses(!namespace));
   const sourceStatus = getTemplateSourceStatus({ template, pvcs, dataVolumes, pods });
@@ -258,18 +262,18 @@ const VMTemplateTableRow: RowFunction<TemplateItem, VMTemplateTableRowProps> = (
       <TableData className={dimensify()}>
         <Popover
           position={PopoverPosition.top}
-          headerContent={<div>Template details</div>}
+          headerContent={<div>{t('kubevirt-plugin~Template details')}</div>}
           bodyContent={<VMTemplateDetailsBody template={template} sourceStatus={sourceStatus} />}
         >
           <Button variant="secondary" className="kubevirt-vm-template-details">
-            Details
+            {t('kubevirt-plugin~Details')}
           </Button>
         </Popover>
         <Button
           onClick={() => withSupportModal(obj, () => createVMAction(obj, sourceStatus))}
           variant="secondary"
         >
-          Create Virtual Machine
+          {t('kubevirt-plugin~Create Virtual Machine')}
         </Button>
       </TableData>
       <TableData className={dimensify(true)}>
@@ -301,14 +305,21 @@ type VirtualMachineTemplatesProps = React.ComponentProps<typeof Table> & {
   };
 };
 
-export const VMTemplateSupport: React.FC = () => (
-  <>
-    Red Hat supported templates are labeled below.{' '}
-    <ExternalLink href={SUPPORT_URL} text="Learn more about template support" />
-  </>
-);
+export const VMTemplateSupport: React.FC = () => {
+  const { t } = useTranslation();
+  return (
+    <>
+      {t('kubevirt-plugin~Red Hat supported templates are labeled below.')}{' '}
+      <ExternalLink
+        href={SUPPORT_URL}
+        text={t('kubevirt-plugin~Learn more about template support')}
+      />
+    </>
+  );
+};
 
 const VirtualMachineTemplates: React.FC<VirtualMachineTemplatesProps> = (props) => {
+  const { t } = useTranslation();
   const [isPinned, togglePin] = usePinnedTemplates();
   const activeNamespace = useSelector(getActiveNamespace);
   const namespace = activeNamespace === ALL_NAMESPACES_KEY ? undefined : activeNamespace;
@@ -337,7 +348,7 @@ const VirtualMachineTemplates: React.FC<VirtualMachineTemplatesProps> = (props) 
         <Table
           {...props}
           aria-label={VM_TEMPLATE_LABEL_PLURAL}
-          Header={() => VMTemplateTableHeader(!namespace)}
+          Header={() => VMTemplateTableHeader(!namespace, t)}
           Row={(rowProps) => <VMTemplateTableRow {...rowProps} />}
           virtualize
           customData={{
@@ -379,6 +390,7 @@ const flatten = ({ vmTemplates, vmCommonTemplates }) => {
 
 const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
   React.ComponentProps<typeof ListPage>> = (props) => {
+  const { t } = useTranslation();
   const { skipAccessReview, noProjectsAvailable, showTitle } = props.customData;
   const namespace = props.match.params.ns;
 
@@ -431,7 +443,7 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
     <MultiListPage
       {...modifiedProps}
       createAccessReview={createAccessReview}
-      createButtonText="Create"
+      createButtonText={t('kubevirt-plugin~Create')}
       title={VM_TEMPLATE_LABEL_PLURAL}
       showTitle={showTitle}
       ListComponent={VirtualMachineTemplates}
