@@ -246,7 +246,7 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({ obj: 
               {imageRepository && <dd>{imageRepository}</dd>}
               {publicImageRepository && <dt>{t('image-stream~Public image repository')}</dt>}
               {publicImageRepository && <dd>{publicImageRepository}</dd>}
-              <dt>Image Count</dt>
+              <dt>{t('image-stream~Image count')}</dt>
               <dd>{imageCount ? imageCount : 0}</dd>
             </ResourceSummary>
             <ExampleDockerCommandPopover imageStream={imageStream} />

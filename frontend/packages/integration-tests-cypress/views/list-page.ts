@@ -17,7 +17,7 @@ export const listPage = {
       });
   },
   clickCreateYAMLbutton: () => {
-    cy.byTestID('yaml-create').click({ force: true });
+    cy.byTestID('item-create').click({ force: true });
   },
   filter: {
     byName: (name: string) => {
@@ -25,6 +25,11 @@ export const listPage = {
     },
     numberOfActiveFiltersShouldBe: (numFilters: number) => {
       cy.get("[class='pf-c-toolbar__item pf-m-chip-group']").should('have.length', numFilters);
+    },
+    clickSearchByDropdown: () => {
+      cy.get('.pf-c-toolbar__content-section').within(() => {
+        cy.byLegacyTestID('dropdown-button').click();
+      });
     },
   },
   rows: {
@@ -37,8 +42,10 @@ export const listPage = {
     clickKebabAction: (resourceName: string, actionName: string) => {
       cy.get(`[data-test-rows="resource-row"]`)
         .contains(resourceName)
-        .byLegacyTestID('kebab-button')
-        .click();
+        .parents('tr')
+        .within(() => {
+          cy.get('[data-test-id="kebab-button"]').click();
+        });
       cy.byTestActionID(actionName).click();
     },
     hasLabel: (resourceName: string, label: string) => {
@@ -58,3 +65,7 @@ export const listPage = {
       cy.get(`[data-test-id="${resourceName}"]`, { timeout: 90000 }).should('not.be.visible'),
   },
 };
+
+export namespace ListPageSelector {
+  export const tableColumnHeaders = 'th .pf-c-table__text';
+}

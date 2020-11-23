@@ -207,7 +207,7 @@ export const FireMan_ = connect(null, { filterList })(
         if (createProps.to) {
           createLink = (
             <Link className="co-m-primary-action" {...createProps}>
-              <Button variant="primary" id="yaml-create" data-test="yaml-create">
+              <Button variant="primary" id="yaml-create" data-test="item-create">
                 {createButtonText}
               </Button>
             </Link>
@@ -230,7 +230,7 @@ export const FireMan_ = connect(null, { filterList })(
         } else {
           createLink = (
             <div className="co-m-primary-action">
-              <Button variant="primary" id="yaml-create" data-test="yaml-create" {...createProps}>
+              <Button variant="primary" id="yaml-create" data-test="item-create" {...createProps}>
                 {createButtonText}
               </Button>
             </div>

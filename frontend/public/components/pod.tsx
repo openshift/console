@@ -687,25 +687,28 @@ export const PodExecLoader: React.FC<PodExecLoaderProps> = ({ obj, message }) =>
   </div>
 );
 
-export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => (
-  <DetailsPage
-    {...props}
-    getResourceStatus={podPhase}
-    menuActions={menuActions}
-    pages={[
-      navFactory.details(Details),
-      navFactory.editYaml(),
-      navFactory.envEditor(PodEnvironmentComponent),
-      navFactory.logs(PodLogs),
-      navFactory.events(ResourceEventStream),
-      {
-        href: 'terminal',
-        name: 'Terminal',
-        component: PodExecLoader,
-      },
-    ]}
-  />
-);
+export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => {
+  // t('details-page~Terminal')
+  return (
+    <DetailsPage
+      {...props}
+      getResourceStatus={podPhase}
+      menuActions={menuActions}
+      pages={[
+        navFactory.details(Details),
+        navFactory.editYaml(),
+        navFactory.envEditor(PodEnvironmentComponent),
+        navFactory.logs(PodLogs),
+        navFactory.events(ResourceEventStream),
+        {
+          href: 'terminal',
+          nameKey: 'details-page~Terminal',
+          component: PodExecLoader,
+        },
+      ]}
+    />
+  );
+};
 PodsDetailsPage.displayName = 'PodsDetailsPage';
 
 const getRow = (showNodes) => {

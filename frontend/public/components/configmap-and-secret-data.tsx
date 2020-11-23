@@ -34,7 +34,11 @@ export const ConfigMapBinaryData: React.FC<DownloadValueProps> = ({ data }) => {
     .sort()
     .forEach((k) => {
       const value = data[k];
-      dl.push(<dt key={`${k}-k`}>{k}</dt>);
+      dl.push(
+        <dt i18n-not-translated="true" key={`${k}-k`}>
+          {k}
+        </dt>,
+      );
       dl.push(
         <dd key={`${k}-v`}>
           <Button
@@ -58,7 +62,11 @@ export const ConfigMapData: React.FC<ConfigMapDataProps> = ({ data, label }) => 
     .sort()
     .forEach((k) => {
       const value = data[k];
-      dl.push(<dt key={`${k}-k`}>{k}</dt>);
+      dl.push(
+        <dt i18n-not-translated="true" key={`${k}-k`}>
+          {k}
+        </dt>,
+      );
       dl.push(
         <dd key={`${k}-v`}>
           <CopyToClipboard value={value} />
@@ -89,7 +97,11 @@ export const SecretData: React.FC<SecretDataProps> = ({ data, title }) => {
   Object.keys(data || {})
     .sort()
     .forEach((k) => {
-      dl.push(<dt key={`${k}-k`}>{k}</dt>);
+      dl.push(
+        <dt i18n-not-translated="true" key={`${k}-k`}>
+          {k}
+        </dt>,
+      );
       dl.push(
         <dd key={`${k}-v`}>
           <SecretValue value={data[k]} reveal={reveal} />
