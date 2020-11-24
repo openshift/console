@@ -1,6 +1,6 @@
 .co-m-label {
-  background-color: $color-pf-black-150;
-  border: 1px solid $color-pf-black-200;
+  background-color: $pf-color-black-150;
+  border: 1px solid $pf-color-black-200;
   border-radius: 12px;
   display: inline-flex;
   line-height: $co-m-label-line-height;
@@ -122,7 +122,7 @@ tags-input .tags .input {
 }
 
 tags-input .tags .input.invalid-tag {
-  color: $color-pf-red-200;
+  color: $pf-color-red-200;
 }
 
 tags-input .tags .input::-ms-clear {
@@ -130,7 +130,7 @@ tags-input .tags .input::-ms-clear {
 }
 
 tags-input.ng-invalid .tags {
-  border-color: $color-pf-red-200;
+  border-color: $pf-color-red-200;
 }
 
 tags-input .autocomplete {

@@ -3,10 +3,7 @@
 
 // External dependency variables or mixins that are required/extended by our custom styles (tilde tells Webpack not to use relative path)
 // IMPORTANT: Please put non-variable/mixin external dependency imports in vendor.scss!
-// Patternfly variables must be imported before Bootstrap
-@import '~patternfly/dist/sass/patternfly/variables';
-@import '~bootstrap-sass/assets/stylesheets/bootstrap/variables';
-@import '~bootstrap-sass/assets/stylesheets/bootstrap/mixins';
+
 @import '~@fortawesome/fontawesome-free/scss/variables';
 
 @import 'style/base';
@@ -19,6 +16,12 @@
 @import 'style/mixin/scroll-shadows';
 @import 'style/mixin/truncate';
 @import 'style/mixin/line-clamp';
+
+// Ancillary Styles to support removing Bootstrap
+@import 'style/ancillary/bootstrap';
+
+// Ancillary Styles to achieve likeness with PatternFly4
+@import 'style/ancillary/patternfly4';
 
 // Overrides
 @import 'style/overrides';

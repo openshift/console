@@ -27,11 +27,15 @@
   display: flex;
   align-items: center;
   flex: 1;
+  .small {
+    font-weight: normal !important;
+  }
   .text-muted {
     margin-left: 10px;
   }
 }
 .co-search-group__accordion-toggle {
+  margin-top: 30px;
   .pf-c-accordion__toggle-text {
     display: flex;
     flex-direction: column;

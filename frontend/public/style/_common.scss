@@ -105,7 +105,6 @@ dl.co-inline {
 }
 
 .co-m-pane__heading-badge {
-  line-height: 0;
   @media (min-width: $screen-sm-min) {
     margin-left: var(--pf-global--spacer--sm);
   }
@@ -130,7 +129,7 @@ dl.co-inline {
 }
 
 .cos-error-title {
-  color: $color-pf-red;
+  color: $pf-color-red-100;
 }
 
 .co-section-heading {
@@ -155,6 +154,7 @@ dl.co-inline {
 }
 
 .co-m-pane__details {
+  line-height: 1.66;
   // TODO: refactor so <dl>s have margin-bottom by default
   margin-bottom: 20px;
   min-width: 0; // enable break-word
@@ -172,7 +172,7 @@ dl.co-inline {
 }
 
 .co-m-pane__explanation {
-  color: $color-pf-black-600;
+  color: $pf-color-black-600;
   margin-bottom: 30px;
 }
 
@@ -181,12 +181,12 @@ dl.co-inline {
 }
 
 .co-help-text {
-  color: $color-pf-black-600;
+  color: $pf-color-black-600;
 }
 
 .co-m-pane__explanation code {
-  background-color: $color-pf-black-150;
-  color: $color-pf-black-600;
+  background-color: $pf-color-black-150;
+  color: $pf-color-black-600;
 }
 
 .co-pre-line {
@@ -212,7 +212,7 @@ dl.co-inline {
 }
 
 .co-error {
-  color: $color-pf-red;
+  color: $pf-color-red-100;
   white-space: nowrap;
 }
 
@@ -223,7 +223,7 @@ dl.co-inline {
 }
 
 .co-action-divider {
-  color: $color-pf-black-600;
+  color: $pf-color-black-600;
   display: inline-block;
   margin: 0 10px 0 10px;
 }
@@ -251,11 +251,11 @@ dl.co-inline {
   top: 0;
   width: 12px;
   .pf-c-dropdown__menu-item & {
-    color: $color-pf-black-600;
+    color: $pf-color-black-600;
     margin-left: 5px;
   }
   .pf-c-nav__link & {
-    color: $color-pf-black-500;
+    color: $pf-color-black-500;
     margin-left: 4px;
   }
 }
@@ -433,7 +433,7 @@ dl.co-inline {
   word-break: break-word;
   &::after {
     @include font-awesome-free-solid;
-    color: $color-pf-black-600;
+    color: $pf-color-black-600;
     content: fa-content($fa-var-pencil-alt);
     line-height: 1;
     margin-left: 5px;
@@ -444,7 +444,7 @@ dl.co-inline {
     width: 15px;
   }
   &:hover::after {
-    color: $color-pf-black-700;
+    color: $pf-color-black-700;
   }
 }
 

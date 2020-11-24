@@ -1,7 +1,7 @@
-$global-notification-text: $color-pf-white;
+$global-notification-text: $pf-color-white;
 
 .co-global-notification {
-  background-color: $color-pf-blue-400;
+  background-color: $pf-color-blue-400;
   color: $global-notification-text;
   padding: 4px ($grid-gutter-width / 2);
   text-align: center;

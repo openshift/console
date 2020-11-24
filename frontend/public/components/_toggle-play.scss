@@ -1,6 +1,6 @@
 .co-toggle-play.pf-c-button {
   background-color: #fff;
-  border: 3px solid $color-pf-black-200;
+  border: 3px solid $pf-color-black-200;
   border-radius: 50%;
   height: 32px;
   margin-right: 15px;
@@ -19,6 +19,6 @@
   }
 
   &.co-toggle-play--active {
-    border-color: $color-pf-green-300;
+    border-color: $pf-color-green-300;
   }
 }

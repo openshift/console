@@ -210,7 +210,7 @@ $co-channel-height: 60px;
 
   &,
   &__section {
-    border-color: $color-pf-black-200;
+    border-color: $pf-color-black-200;
     border-style: solid;
   }
 
@@ -257,7 +257,7 @@ $co-channel-height: 60px;
     margin: 0 0 var(--pf-global--spacer--lg) 0;
 
     &--divided {
-      border-top: 1px solid $color-pf-black-200;
+      border-top: 1px solid $pf-color-black-200;
       padding-top: var(--pf-global--spacer--lg);
 
       // only add border and padding to first instance

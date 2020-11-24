@@ -57,7 +57,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 
   &__tag {
-    color: $color-pf-black-600;
+    color: $pf-color-black-600;
     font-size: ($font-size-base - 1);
     margin-right: 5px;
     text-transform: uppercase;
@@ -95,7 +95,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 }
 
 .co-catalog-page {
-  background: $color-pf-white;
+  background: $pf-color-white;
   border: 1px solid var(--pf-global--BorderColor--300);
   display: flex;
   flex: 1;
@@ -135,7 +135,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 
   &__grid {
-    background-color: $color-pf-black-150;
+    background-color: $pf-color-black-150;
   }
 
   &__grouped-items {
@@ -186,10 +186,6 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   // Enable scrolling on the modal
   &__overlay {
     border: 0 !important; // Collapse default PF4 modal border-width
-
-    .modal-body .co-hint-block {
-      margin-bottom: 10px;
-    }
 
     .properties-side-panel-pf {
       flex: 0 0 auto;
@@ -308,7 +304,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 }
 
 .co-catalog-tab__empty {
-  color: $color-pf-black-600;
+  color: $pf-color-black-600;
 }
 
 .co-modal-ignore-warning {

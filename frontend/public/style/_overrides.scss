@@ -21,15 +21,6 @@ form.pf-c-form {
   }
 }
 
-kbd {
-  border-radius: 3px;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
-}
-
-.modal-footer .alert {
-  text-align: left;
-}
-
 // fix bug where monaco-aria-container is visible in Firefox but shouldn't be
 // bug occurs only if the suggestions overlay has been enabled
 .monaco-aria-container {
@@ -37,19 +28,6 @@ kbd {
 }
 
 // PatternFly 4 overrides
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  // reset headings font family back to correct value
-  // bug caused by PF4 _shield-inheritable.scss
-  .pf-l-split {
-    font-family: $headings-font-family;
-  }
-}
 
 .pf-c-about-modal-box {
   &__brand {
@@ -80,7 +58,7 @@ h6 {
 
 .pf-c-app-launcher__group-title {
   // Reset font to RedHatText so it doesn't appear too bold
-  font-family: $font-family-base;
+  font-family: var(--pf-global--FontFamily--sans-serif);
 }
 
 .pf-c-breadcrumb {
@@ -294,6 +272,10 @@ h6 {
       --pf-c-nav__simple-list-link--nested--PaddingLeft: var(--pf-global--spacer--xl);
     }
 
+    .pf-c-nav__item {
+      list-style: none;
+    }
+
     .pf-c-nav__link {
       font-size: $co-side-nav-section-font-size;
     }
@@ -303,18 +285,7 @@ h6 {
         font-size: $co-side-nav-font-size;
       }
     }
-
-    // override list styles, necessary due to setting $pf-global--enable-reset to false
-    ul {
-      list-style: none;
-    }
   }
-}
-
-// Necessary due to setting $pf-global--enable-reset to false
-.pf-c-pagination .pf-c-options-menu__menu,
-.pf-c-alert-group {
-  list-style: none;
 }
 
 // pf table overrides
@@ -400,10 +371,6 @@ h6 {
   }
 }
 
-.text-secondary {
-  color: $color-text-secondary;
-}
-
 .xterm .xterm-screen canvas {
   // workaround bug where 1px white stripe appears atop terminal in Firefox for MacOS
   // see https://github.com/xtermjs/xterm.js/issues/1974
@@ -421,10 +388,6 @@ button.pf-c-dropdown__menu-item.pf-m-disabled {
 
 #modal-container .pf-c-backdrop {
   position: absolute !important;
-}
-
-.text-muted {
-  color: var(--pf-global--Color--200);
 }
 
 .form-group--doubled-bottom-margin {
