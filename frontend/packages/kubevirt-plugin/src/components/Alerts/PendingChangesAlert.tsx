@@ -1,9 +1,6 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert, AlertVariant } from '@patternfly/react-core';
-import {
-  MODAL_INFO_RESTART_IS_REQUIRED,
-  MODAL_WARNING_RESTART_IS_REQUIRED,
-} from '../../strings/vm/status';
 
 import './PendingChangesAlert.scss';
 
@@ -18,16 +15,19 @@ export const PendingChangesAlert: React.FC<PendingChangesAlertProps> = ({
   isWarning,
   title,
   children,
-}) => (
-  <Alert
-    title={title || 'Pending Changes'}
-    isInline
-    variant={isWarning ? AlertVariant.warning : AlertVariant.info}
-    className="kv__pending_changes-alert"
-  >
-    {warningMsg || children}
-  </Alert>
-);
+}) => {
+  const { t } = useTranslation();
+  return (
+    <Alert
+      title={title || t('kubevirt-plugin~Pending Changes')}
+      isInline
+      variant={isWarning ? AlertVariant.warning : AlertVariant.info}
+      className="kv__pending_changes-alert"
+    >
+      {warningMsg || children}
+    </Alert>
+  );
+};
 
 type ModalPendingChangesAlertProps = {
   isChanged: boolean;
@@ -36,12 +36,17 @@ type ModalPendingChangesAlertProps = {
 export const ModalPendingChangesAlert: React.FC<ModalPendingChangesAlertProps> = ({
   isChanged,
 }) => {
-  const modalMsg = isChanged ? MODAL_WARNING_RESTART_IS_REQUIRED : MODAL_INFO_RESTART_IS_REQUIRED;
+  const { t } = useTranslation();
+  const modalMsg = isChanged
+    ? t("kubevirt-plugin~The changes you've made required this virtual machine to be restarted.")
+    : t(
+        'kubevirt-plugin~If you make changes to the following settings you will need to restart the virtual machine in order for them to be applied',
+      );
   return (
     <PendingChangesAlert
       warningMsg={modalMsg}
       isWarning={isChanged}
-      title="Restart required to apply changes"
+      title={t('kubevirt-plugin~Restart required to apply changes')}
     />
   );
 };

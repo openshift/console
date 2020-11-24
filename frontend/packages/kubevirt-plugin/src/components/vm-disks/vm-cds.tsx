@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Table, RowFunction } from '@console/internal/components/factory';
 import { dimensifyHeader } from '@console/shared';
 import { sortable } from '@patternfly/react-table';
@@ -16,30 +17,32 @@ export const VMCDsTable: React.FC<VMCDsTableProps> = ({
   row: Row,
   columnClasses,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <Table
-      aria-label="VM Disks List"
+      aria-label={t('kubevirt-plugin~VM Disks List')}
       data={data}
       Header={() =>
         dimensifyHeader(
           [
             {
-              title: 'Content',
+              title: t('kubevirt-plugin~Content'),
               sortField: 'name',
               transforms: [sortable],
             },
             {
-              title: 'Source',
+              title: t('kubevirt-plugin~Source'),
               sortField: 'source',
               transforms: [sortable],
             },
             {
-              title: 'Interface',
+              title: t('kubevirt-plugin~Interface'),
               sortField: 'diskInterface',
               transforms: [sortable],
             },
             {
-              title: 'Storage Class',
+              title: t('kubevirt-plugin~Storage Class'),
               sortField: 'storageClass',
               transforms: [sortable],
             },

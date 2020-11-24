@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import classNames from 'classnames';
 import {
   Alert,
@@ -15,16 +16,19 @@ type ModalErrorMessageProps = {
   message: string;
 };
 
-export const ModalErrorMessage: React.FC<ModalErrorMessageProps> = ({ message }) => (
-  <Alert
-    isInline
-    className="co-alert co-alert--scrollable"
-    variant="danger"
-    title="An error occurred"
-  >
-    <div className="co-pre-line">{message}</div>
-  </Alert>
-);
+export const ModalErrorMessage: React.FC<ModalErrorMessageProps> = ({ message }) => {
+  const { t } = useTranslation();
+  return (
+    <Alert
+      isInline
+      className="co-alert co-alert--scrollable"
+      variant="danger"
+      title={t('kubevirt-plugin~An error occurred')}
+    >
+      <div className="co-pre-line">{message}</div>
+    </Alert>
+  );
+};
 
 type ModalSimpleMessageProps = {
   message: string;
@@ -77,18 +81,18 @@ export const ModalFooter: React.FC<ModalFooterProps> = ({
   onSubmit,
   onCancel,
   onSaveAndRestart,
-  submitButtonText = 'Add',
-  cancelButtonText = 'Cancel',
-  saveAndRestartText = 'Save and Restart',
+  submitButtonText = null,
+  cancelButtonText = null,
+  saveAndRestartText = null,
   infoMessage = null,
   infoTitle = null,
 }) => {
   const [showSpinner, setShowSpinner] = React.useState(false);
+  const { t } = useTranslation();
 
   React.useEffect(() => {
     setTimeout(() => setShowSpinner(true), 300);
   }, []);
-
   return (
     <footer
       className={classNames('co-m-btn-bar modal-footer kubevirt-modal-footer__buttons', className)}
@@ -108,7 +112,7 @@ export const ModalFooter: React.FC<ModalFooterProps> = ({
             data-test-id="modal-cancel-action"
             onClick={onCancel}
           >
-            {cancelButtonText}
+            {cancelButtonText || t('kubevirt-plugin~Cancel')}
           </Button>
         )}
         {isSaveAndRestart && (
@@ -118,7 +122,7 @@ export const ModalFooter: React.FC<ModalFooterProps> = ({
             id="save-and-restart"
             onClick={onSaveAndRestart}
           >
-            {saveAndRestartText}
+            {saveAndRestartText || t('kubevirt-plugin~Save and Restart')}
           </Button>
         )}
         <Button
@@ -128,7 +132,7 @@ export const ModalFooter: React.FC<ModalFooterProps> = ({
           onClick={onSubmit}
         >
           {inProgress && showSpinner && <Spinner id="modal-footer-spinner" size="md" />}
-          {submitButtonText}
+          {submitButtonText || t('kubevirt-plugin~Add')}
         </Button>
       </ActionGroup>
     </footer>
