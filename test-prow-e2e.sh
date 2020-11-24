@@ -34,7 +34,7 @@ export DBUS_SESSION_BUS_ADDRESS
 
 SCENARIO="${1:-e2e}"
 
-if [ "$SCENARIO" != "login" ] && [ "$SCENARIO" != "olmFull" ]; then
+if [ "$SCENARIO" != "login" ] && [ "$SCENARIO" != "olmFull" ] && ["$SCENARIO" != "ceph"]; then
   CHROME_VERSION=$(google-chrome --version) ./test-protractor.sh "$SCENARIO"
 fi
 
@@ -47,4 +47,6 @@ elif [ "$SCENARIO" == "login" ]; then
   ./test-cypress.sh -p console -s 'tests/app/auth-multiuser-login.spec.ts' -h true
 elif [ "$SCENARIO" == "olmFull" ]; then
   ./test-cypress.sh -p olm -h true
+elif [ "$SCENARIO" == "ceph" ]; then
+  ./test-cypress.sh -p ceph -h true
 fi
