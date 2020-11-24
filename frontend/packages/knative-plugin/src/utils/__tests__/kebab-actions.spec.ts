@@ -5,7 +5,11 @@ import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modi
 import { getKebabActionsForKind } from '../kebab-actions';
 import { setTrafficDistribution } from '../../actions/traffic-splitting';
 import { setSinkSource } from '../../actions/sink-source';
-import { EventSourceContainerModel, ServiceModel as knSvcModel } from '../../models';
+import {
+  EventSourceContainerModel,
+  ServiceModel as knSvcModel,
+  CamelKameletBindingModel,
+} from '../../models';
 import * as fetchDynamicEventsource from '../fetch-dynamic-eventsources-utils';
 
 describe('kebab-actions: ', () => {
@@ -38,5 +42,10 @@ describe('kebab-actions: ', () => {
   it('kebab action should not have options for ServiceModel', () => {
     const serviceActions = getKebabActionsForKind(ServiceModel);
     expect(serviceActions).toEqual([]);
+  });
+
+  it('kebab action should have "Move Sink" option for CamelKameletBindingModel', () => {
+    const eventSourceActions = getKebabActionsForKind(CamelKameletBindingModel);
+    expect(eventSourceActions).toEqual([setSinkSource]);
   });
 });

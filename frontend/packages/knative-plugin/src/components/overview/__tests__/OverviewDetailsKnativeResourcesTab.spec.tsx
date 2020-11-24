@@ -14,6 +14,7 @@ import {
   MockKnativeResources,
   getEventSourceResponse,
   sampleEventSourceSinkbinding,
+  sampleSourceKameletBinding,
   EventIMCObj,
   EventSubscriptionObj,
 } from '../../../topology/__tests__/topology-knative-test-data';
@@ -113,5 +114,14 @@ describe('OverviewDetailsKnativeResourcesTab', () => {
     };
     const wrapper = shallow(<OverviewDetailsKnativeResourcesTab {...knItem} />);
     expect(wrapper.find(EventPubSubResources)).toHaveLength(1);
+  });
+
+  it('should render EventSinkServicesOverviewList on sidebar for KameletBinding', () => {
+    knItem.item = {
+      ...knItem.item,
+      ...{ obj: sampleSourceKameletBinding.data[0] },
+    };
+    const wrapper = shallow(<OverviewDetailsKnativeResourcesTab {...knItem} />);
+    expect(wrapper.find(EventSinkServicesOverviewList)).toHaveLength(1);
   });
 });

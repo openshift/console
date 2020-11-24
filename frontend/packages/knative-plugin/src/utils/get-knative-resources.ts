@@ -15,6 +15,7 @@ import {
   KafkaModel,
   KafkaTopicModel,
   CamelIntegrationModel,
+  CamelKameletBindingModel,
 } from '../models';
 
 export type KnativeItem = {
@@ -302,4 +303,17 @@ export const strimziResourcesWatcher = (): WatchK8sResources<any> => {
     },
   };
   return strimziResources;
+};
+
+export const knativeCamelKameletBindingResourceWatchers = (
+  namespace: string,
+): WatchK8sResources<any> => {
+  return {
+    [CamelKameletBindingModel.plural]: {
+      isList: true,
+      kind: referenceForModel(CamelKameletBindingModel),
+      namespace,
+      optional: true,
+    },
+  };
 };

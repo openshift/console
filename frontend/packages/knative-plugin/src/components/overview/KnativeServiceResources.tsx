@@ -26,7 +26,7 @@ type KnativeServiceResourceProps = {
 const KnativeServiceResources: React.FC<KnativeServiceResourceProps> = ({ item }) => {
   const { t } = useTranslation();
   const { revisions, ksroutes, obj, eventSources = [], subscribers = [] } = item;
-  const { buildConfigs } = useBuildConfigsWatcher(obj);
+  const { buildConfigs = [] } = useBuildConfigsWatcher(obj);
   const {
     kind: resKind,
     metadata: { name, namespace },

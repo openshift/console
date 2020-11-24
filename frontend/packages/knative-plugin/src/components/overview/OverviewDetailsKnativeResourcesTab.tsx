@@ -7,6 +7,7 @@ import {
   EventingSubscriptionModel,
   EventingTriggerModel,
   EventingBrokerModel,
+  CamelKameletBindingModel,
 } from '../../models';
 import KnativeServiceResources from './KnativeServiceResources';
 import KnativeRevisionResources from './KnativeRevisionResources';
@@ -40,6 +41,8 @@ const getSidebarResources = (item: KnativeServiceOverviewItem) => {
       );
     case ServiceModel.kind:
       return <KnativeServiceResources item={item} />;
+    case CamelKameletBindingModel.kind:
+      return <EventSinkServicesOverviewList obj={obj} />;
     case EventingBrokerModel.kind:
     case EventingTriggerModel.kind:
     case EventingSubscriptionModel.kind:
