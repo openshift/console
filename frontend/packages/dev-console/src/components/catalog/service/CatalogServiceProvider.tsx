@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { CatalogExtensionHookOptions, CatalogItem } from '@console/plugin-sdk';
 import { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
-import { keywordCompare } from '../utils/utils';
+import { keywordCompare } from '../utils/catalog-utils';
 import useCatalogExtensions from '../hooks/useCatalogExtensions';
 import CatalogItemsLoader from './CatalogItemsLoader';
 
@@ -28,7 +28,11 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
   namespace,
 }) => {
   const defaultOptions: CatalogExtensionHookOptions = { namespace };
-  const [catalogTypeExtensions, catalogProviderExtensions] = useCatalogExtensions(catalogType);
+  const [
+    catalogTypeExtensions,
+    catalogProviderExtensions,
+    extensionsResolved,
+  ] = useCatalogExtensions(catalogType);
 
   const [catalogItemsMap, setCatalogItemsMap] = React.useState<{ [key: string]: CatalogItem[] }>(
     {},
@@ -36,11 +40,12 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
   const [loadError, setLoadError] = React.useState();
 
   const loaded =
-    catalogTypeExtensions.length === 0 ||
-    catalogTypeExtensions.every(({ properties: { type } }) => catalogItemsMap[type]);
+    extensionsResolved &&
+    (catalogTypeExtensions.length === 0 ||
+      catalogTypeExtensions.every(({ properties: { type } }) => catalogItemsMap[type]));
 
   const catalogItems = React.useMemo(
-    () => (loaded ? _.sortBy(_.flatten(Object.values(catalogItemsMap)), 'name') : []),
+    () => (loaded ? _.flatten(Object.values(catalogItemsMap)) : []),
     [catalogItemsMap, loaded],
   );
 
@@ -67,22 +72,23 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
 
   return (
     <>
-      {catalogTypeExtensions.map((typeExtension) => {
-        const providers = catalogProviderExtensions.filter(
-          (providerExtension) =>
-            typeExtension.properties.type === providerExtension.properties.type,
-        );
-        return (
-          <CatalogItemsLoader
-            key={typeExtension.properties.type}
-            catalogType={typeExtension.properties.type}
-            providerExtensions={providers}
-            onItemsLoaded={handleItemsLoaded}
-            onLoadError={setLoadError}
-            options={defaultOptions}
-          />
-        );
-      })}
+      {extensionsResolved &&
+        catalogTypeExtensions.map((typeExtension) => {
+          const providers = catalogProviderExtensions.filter(
+            (providerExtension) =>
+              typeExtension.properties.type === providerExtension.properties.type,
+          );
+          return (
+            <CatalogItemsLoader
+              key={typeExtension.properties.type}
+              catalogType={typeExtension.properties.type}
+              providerExtensions={providers}
+              onItemsLoaded={handleItemsLoaded}
+              onLoadError={setLoadError}
+              options={defaultOptions}
+            />
+          );
+        })}
       {children(catalogService)}
     </>
   );

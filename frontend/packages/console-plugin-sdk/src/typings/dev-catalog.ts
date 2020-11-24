@@ -17,9 +17,9 @@ namespace ExtensionProperties {
     /** Description for the catalog item type. */
     typeDescription: string;
     /** Custom filters specific to the catalog item  */
-    filters?: CatalogFilter[];
+    filters?: CatalogItemAttribute[];
     /** Custom groupings specific to the catalog item */
-    groupings?: CatalogGrouping[];
+    groupings?: CatalogItemAttribute[];
   }
 
   export interface CatalogItemProvider {
@@ -101,12 +101,7 @@ export type CatalogItemDetailsDescription = {
   value: string | React.ReactNode;
 };
 
-export type CatalogFilter = {
-  label: string;
-  attribute: string;
-};
-
-export type CatalogGrouping = {
+export type CatalogItemAttribute = {
   label: string;
   attribute: string;
 };

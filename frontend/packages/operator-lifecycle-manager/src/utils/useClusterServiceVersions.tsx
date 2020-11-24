@@ -1,21 +1,48 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { CatalogExtensionHook, CatalogItem } from '@console/plugin-sdk';
-import { ClusterServiceVersionModel } from '../models';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { ClusterServiceVersionKind } from '../types';
 import { getImageForCSVIcon } from '@console/shared';
+import { SyncMarkdownView } from '@console/internal/components/markdown-view';
+import { ExpandCollapse } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { ClusterServiceVersionModel } from '../models';
+import { ClusterServiceVersionKind } from '../types';
 import { providedAPIsFor, referenceForProvidedAPI } from '../components';
 import { isInternal } from '../dev-catalog';
-import { ExpandCollapseDescription } from '@console/internal/components/catalog/description-utils';
-import { SyncMarkdownView } from '@console/internal/components/markdown-view';
+
+type ExpandCollapseDescriptionProps = {
+  children: React.ReactNode;
+};
+
+export const ExpandCollapseDescription: React.FC<ExpandCollapseDescriptionProps> = ({
+  children,
+}) => {
+  const { t } = useTranslation();
+  const [expanded, setExpanded] = React.useState<boolean>(false);
+  const toggle = (isExpanded) => {
+    setExpanded(isExpanded);
+  };
+  return (
+    <ExpandCollapse
+      textExpanded={t('operator-lifecycle-manager~Hide operator description')}
+      textCollapsed={t('operator-lifecycle-manager~Show operator description')}
+      onToggle={toggle}
+    >
+      {/** used an empty Fragment here because Expandable always expects a children, using null throws react warning */}
+      {expanded ? children : <></>}
+    </ExpandCollapse>
+  );
+};
 
 const normalizeClusterServiceVersions = (
   clusterServiceVersions: ClusterServiceVersionKind[],
+  t: TFunction,
 ): CatalogItem[] => {
   const formatTileDescription = (csvDescription: string): string =>
-    `## Operator Description\n${csvDescription}`;
+    t('operator-lifecycle-manager~## Operator Description\n{{csvDescription}}', { csvDescription });
 
   const operatorProvidedAPIs: CatalogItem[] = _.flatten(
     clusterServiceVersions.map((csv) => providedAPIsFor(csv).map((desc) => ({ ...desc, csv }))),
@@ -30,14 +57,18 @@ const normalizeClusterServiceVersions = (
     // remove internal CRDs
     .filter((crd) => !isInternal(crd))
     .map((desc) => {
-      const { uid, creationTimestamp } = desc.csv.metadata;
+      const { creationTimestamp } = desc.csv.metadata;
+      const uid = `${desc.csv.metadata.uid}-${desc.displayName}`;
       const { description } = desc;
       const provider = desc.csv.spec.provider.name;
       const operatorName = desc.csv.spec.displayName;
       const supportUrl =
         desc.csv.metadata.annotations?.['marketplace.openshift.io/support-workflow'];
       const markdownDescription = formatTileDescription(desc.csv.spec.description);
-      const longDescription = `This resource is provided by ${operatorName}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.`;
+      const longDescription = t(
+        'operator-lifecycle-manager~This resource is provided by {{operatorName}}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.',
+        { operatorName },
+      );
       const documentationUrl = _.get(
         (desc.csv.spec.links || []).find(({ linkName }) => linkName === 'Documentation'),
         'url',
@@ -48,7 +79,7 @@ const normalizeClusterServiceVersions = (
 
       const detailsProperties = [
         {
-          label: 'Capability Level',
+          label: t('operator-lifecycle-manager~Capability Level'),
           value: capabilityLevel,
         },
       ];
@@ -64,7 +95,6 @@ const normalizeClusterServiceVersions = (
           value: <p>{longDescription}</p>,
         },
         {
-          label: 'Operator Description',
           value: operatorDescription,
         },
       ];
@@ -85,10 +115,10 @@ const normalizeClusterServiceVersions = (
         },
         icon: {
           class: null,
-          url: getImageForCSVIcon(desc.csv.spec.icon[0]),
+          url: getImageForCSVIcon(desc.csv.spec.icon?.[0]),
         },
         cta: {
-          label: 'Create',
+          label: t('operator-lifecycle-manager~Create'),
           href: `/k8s/ns/${desc.csv.metadata.namespace}/clusterserviceversions/${
             desc.csv.metadata.name
           }/${referenceForProvidedAPI(desc)}/~new`,
@@ -106,6 +136,7 @@ const normalizeClusterServiceVersions = (
 const useClusterServiceVersions: CatalogExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
+  const { t } = useTranslation();
   const resourceSelector = React.useMemo(
     () => ({
       isList: true,
@@ -122,8 +153,8 @@ const useClusterServiceVersions: CatalogExtensionHook<CatalogItem[]> = ({
   >(resourceSelector);
 
   const normalizedCSVs = React.useMemo(
-    () => normalizeClusterServiceVersions(clusterServiceVersions),
-    [clusterServiceVersions],
+    () => normalizeClusterServiceVersions(clusterServiceVersions, t),
+    [clusterServiceVersions, t],
   );
 
   return [normalizedCSVs, loaded, loadedError];

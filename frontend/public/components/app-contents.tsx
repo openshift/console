@@ -179,27 +179,6 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective }) => {
             />
 
             <Route path="/operatorhub" exact component={NamespaceRedirect} />
-
-            <LazyRoute
-              path="/catalog/all-namespaces"
-              exact
-              loader={() =>
-                import('./catalog/catalog-page' /* webpackChunkName: "catalog" */).then(
-                  (m) => m.CatalogPage,
-                )
-              }
-            />
-            <LazyRoute
-              path="/catalog/ns/:ns"
-              exact
-              loader={() =>
-                import('./catalog/catalog-page' /* webpackChunkName: "catalog" */).then(
-                  (m) => m.CatalogPage,
-                )
-              }
-            />
-            <Route path="/catalog" exact component={NamespaceRedirect} />
-
             <LazyRoute
               path="/provisionedservices/all-namespaces"
               loader={() =>

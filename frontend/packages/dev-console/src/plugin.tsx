@@ -279,7 +279,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         '/add',
         '/import',
         '/import-sample',
-        '/extensible-catalog',
+        '/catalog',
         '/samples',
         '/topology',
         '/deploy-image',
@@ -323,7 +323,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: ['/extensible-catalog/all-namespaces', '/extensible-catalog/ns/:ns'],
+      path: ['/catalog/all-namespaces', '/catalog/ns/:ns'],
       loader: async () =>
         (
           await import(
@@ -772,7 +772,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'AddAction',
     properties: {
       id: 'operator-backed',
-      url: '/catalog?kind=%5B"ClusterServiceVersion"%5D',
+      url: '/catalog?catalogType=OperatorBackedService',
       // t('devconsole~Operator Backed')
       label: '%devconsole~Operator Backed%',
       // t('devconsole~Browse the catalog to discover and deploy operator managed services')
@@ -785,7 +785,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'AddAction',
     properties: {
       id: 'helm',
-      url: '/catalog?kind=%5B"HelmChart"%5D',
+      url: '/catalog?catalogType=HelmChart',
       // t('devconsole~Helm Chart')
       label: '%devconsole~Helm Chart%',
       // t('devconsole~Browse the catalog to discover and install Helm Charts')

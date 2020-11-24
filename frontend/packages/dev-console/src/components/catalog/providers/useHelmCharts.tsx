@@ -1,16 +1,63 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { safeLoad } from 'js-yaml';
-import { coFetch } from '@console/internal/co-fetch';
+import { coFetch, coFetchJSON } from '@console/internal/co-fetch';
 import { APIError, toTitleCase } from '@console/shared';
 import { CatalogExtensionHook, CatalogItem } from '@console/plugin-sdk';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { ExternalLink } from '@console/internal/components/utils';
 import { HelmChartEntries, HelmChartMetaData } from '../../helm/helm-types';
+import { SyncMarkdownView } from '@console/internal/components/markdown-view';
+
+type HelmReadmeLoaderProps = {
+  chartURL: string;
+};
+
+const HelmReadmeLoader: React.FC<HelmReadmeLoaderProps> = ({ chartURL }) => {
+  const { t } = useTranslation();
+  const [readme, setReadme] = React.useState<string>();
+  const [loaded, setLoaded] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    let unmounted = false;
+
+    const fetchReadme = async () => {
+      let chartData;
+
+      try {
+        chartData = await coFetchJSON(`/api/helm/chart?url=${chartURL}`);
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.warn('Error fetching helm chart details for readme', e);
+      }
+
+      const readmeFile = chartData?.files?.find((file) => file.name === 'README.md');
+      const readmeData = readmeFile?.data && atob(readmeFile?.data);
+
+      if (!unmounted) {
+        setLoaded(true);
+        readmeData && setReadme(t('devconsole~## README\n{{readmeData}}', { readmeData }));
+      }
+    };
+
+    fetchReadme();
+
+    return () => {
+      unmounted = true;
+    };
+  }, [chartURL, t]);
+
+  if (!loaded) return <div className="loading-skeleton--table" />;
+
+  return <SyncMarkdownView content={readme} emptyMsg={t('devconsole~README not available')} />;
+};
 
 const normalizeHelmCharts = (
   chartEntries: HelmChartEntries,
   activeNamespace: string = '',
+  t: TFunction,
 ): CatalogItem[] => {
   return _.reduce(
     chartEntries,
@@ -22,7 +69,7 @@ const normalizeHelmCharts = (
         const displayName = `${toTitleCase(name)} v${version}`;
         const provider = toTitleCase(chartRepositoryName);
         const imgUrl = chart.icon || getImageForIconClass('icon-helm');
-        const chartURL = _.get(chart, 'urls.0');
+        const chartURL = chart.urls[0];
         const encodedChartURL = encodeURIComponent(chartURL);
         const href = `/catalog/helm-install?chartName=${name}&chartRepoName=${chartRepositoryName}&chartURL=${encodedChartURL}&preselected-ns=${activeNamespace}`;
 
@@ -45,20 +92,26 @@ const normalizeHelmCharts = (
 
         const detailsProperties = [
           {
-            label: 'Chart Version',
+            label: t('devconsole~Chart Version'),
             value: version,
           },
           {
-            label: 'App Version',
+            label: t('devconsole~App Version'),
             value: appVersion,
           },
           {
-            label: 'Home Page',
+            label: t('devconsole~Home Page'),
             value: homePage,
           },
           {
-            label: 'Maintainers',
+            label: t('devconsole~Maintainers'),
             value: maintainers,
+          },
+        ];
+
+        const detailsDescriptions = [
+          {
+            value: <HelmReadmeLoader chartURL={chartURL} />,
           },
         ];
 
@@ -80,11 +133,12 @@ const normalizeHelmCharts = (
             url: imgUrl,
           },
           cta: {
-            label: 'Install Helm Chart',
+            label: t('devconsole~Install Helm Chart'),
             href,
           },
           details: {
             properties: detailsProperties,
+            descriptions: detailsDescriptions,
           },
         };
 
@@ -120,6 +174,7 @@ const normalizeHelmCharts = (
 const useHelmCharts: CatalogExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
+  const { t } = useTranslation();
   const [helmCharts, setHelmCharts] = React.useState<HelmChartEntries>();
   const [loadedError, setLoadedError] = React.useState<APIError>();
 
@@ -134,8 +189,8 @@ const useHelmCharts: CatalogExtensionHook<CatalogItem[]> = ({
   }, []);
 
   const normalizedHelmCharts: CatalogItem[] = React.useMemo(
-    () => normalizeHelmCharts(helmCharts, namespace),
-    [helmCharts, namespace],
+    () => normalizeHelmCharts(helmCharts, namespace, t),
+    [helmCharts, namespace, t],
   );
 
   const loaded = !!helmCharts;

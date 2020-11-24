@@ -6,7 +6,6 @@ $catalog-item-icon-size-sm: 24px;
 $co-modal-ignore-warning-icon-width: 30px;
 $catalog-tile-width: $co-m-catalog-tile-width;
 
-
 // reset font size back to 13px since console h5 font size is 14px
 .catalog-item-header-pf-subtitle {
   font-size: 13px;
@@ -21,7 +20,6 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   flex-direction: column;
   min-height: 100%;
   min-width: 515px; // in order to accommodate filters and tiles at mobile
-  padding: 0 0 ($grid-gutter-width / 2);
 }
 
 .co-catalog-tile-view {
@@ -101,12 +99,16 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   border: 1px solid var(--pf-global--BorderColor--300);
   display: flex;
   flex: 1;
-  margin: 0 ($grid-gutter-width / 2);
-  padding: ($grid-gutter-width / 2) 0 0;
+  padding-top: ($grid-gutter-width / 2);
+
+  &--with-sidebar {
+    margin: 0 ($grid-gutter-width / 2);
+    padding-bottom: ($grid-gutter-width / 2);
+  }
 
   &__btn-group__group-by {
-    display: inline;
-    margin-left: var(--pf-global--spacer--xl);
+    display: inline-flex;
+    margin-left: var(--pf-global--spacer--md);
   }
 
   &__content {
@@ -158,13 +160,27 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 
   &__input {
-    margin: 0 10px 20px 30px;
+    display: inline-flex !important;
+    margin: 0 0 20px 30px;
     width: auto !important;
+  }
+
+  &__sort {
+    display: inline-flex;
+    margin-left: var(--pf-global--spacer--md);
   }
 
   &__num-items {
     font-weight: var(--pf-global--FontWeight--bold);
     padding: 0 0 20px;
+  }
+
+  &__info-icon {
+    vertical-align: middle;
+    color: #6a6e73;
+    &:hover {
+      color: #151515;
+    }
   }
 
   // Enable scrolling on the modal
@@ -225,7 +241,8 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   &__overlay-actions {
     display: flex;
     flex-wrap: wrap;
-    padding: var(--pf-global--spacer--lg) var(--pf-global--spacer--md) var(--pf-global--spacer--md) 0;
+    padding: var(--pf-global--spacer--lg) var(--pf-global--spacer--md) var(--pf-global--spacer--md)
+      0;
     white-space: normal;
   }
 
@@ -362,25 +379,4 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 
 .properties-side-panel-pf-property-value__capability-levels {
   list-style: none;
-}
-
-// Override upstream issue where PF3 colors are still being used.
-// Remove once https://github.com/patternfly/patternfly-react/issues/4117 is fixed
-.vertical-tabs-pf-tab {
-  &.active a {
-    color: var(--pf-global--link--Color) !important;
-
-    &::before {
-      background: var(--pf-global--link--Color);
-    }
-  }
-
-  > a {
-    font-size: $font-size-base;
-
-    &:focus,
-    &:hover {
-      color: var(--pf-global--link--Color--hover);
-    }
-  }
 }

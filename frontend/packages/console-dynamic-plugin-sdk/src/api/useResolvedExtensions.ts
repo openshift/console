@@ -43,10 +43,11 @@ import {
  */
 export const useResolvedExtensions = <E extends Extension>(
   ...typeGuards: ExtensionTypeGuard<E>[]
-): ResolvedExtension<E>[] => {
+): [ResolvedExtension<E>[], boolean] => {
   const extensions = useExtensions<E>(...typeGuards);
 
   const [resolvedExtensions, setResolvedExtensions] = React.useState<ResolvedExtension<E>[]>([]);
+  const [resolved, setResolved] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     let disposed = false;
@@ -60,6 +61,7 @@ export const useResolvedExtensions = <E extends Extension>(
     ).then((result) => {
       if (!disposed) {
         setResolvedExtensions(result);
+        setResolved(true);
       }
     });
 
@@ -68,7 +70,7 @@ export const useResolvedExtensions = <E extends Extension>(
     };
   }, [extensions]);
 
-  return resolvedExtensions;
+  return [resolvedExtensions, resolved];
 };
 
 export type ResolvedExtension<
