@@ -44,7 +44,15 @@ export const referenceForProvidedAPI = (
 export const referenceForStepResource = (resource: StepResource): GroupVersionKind =>
   referenceForGroupVersionKind(resource.group || 'core')(resource.version)(resource.kind);
 
-export const defaultChannelFor = (pkg: PackageManifestKind) =>
+export const defaultChannelFor = (packageManifest: PackageManifestKind) => {
+  const channel = !_.isEmpty(packageManifest.status.defaultChannel)
+    ? packageManifest.status.channels.find(
+        (ch) => ch.name === packageManifest.status.defaultChannel,
+      )
+    : packageManifest.status.channels[0];
+  return channel;
+};
+export const defaultChannelNameFor = (pkg: PackageManifestKind) =>
   pkg.status.defaultChannel || pkg?.status?.channels?.[0]?.name;
 export const installModesFor = (pkg: PackageManifestKind) => (channel: string) =>
   pkg.status.channels.find((ch) => ch.name === channel)?.currentCSVDesc?.installModes || [];

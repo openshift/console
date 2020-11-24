@@ -36,14 +36,22 @@ export const PropertyPath: React.FC<{ kind: string; path: string | string[] }> =
   );
 };
 
-const EditButton: React.SFC<{ onClick: (e: React.MouseEvent<HTMLButtonElement>) => void }> = (
-  props,
-) => (
-  <Button variant="link" isInline onClick={props.onClick}>
-    {props.children}
-    <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
-  </Button>
-);
+const EditButton: React.SFC<EditButtonProps> = (props) => {
+  return (
+    <Button
+      type="button"
+      variant="link"
+      isInline
+      onClick={props.onClick}
+      data-test={
+        props.testID ? `${props.testID}-details-item__edit-button` : 'details-item__edit-button'
+      }
+    >
+      {props.children}
+      <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+    </Button>
+  );
+};
 
 export const DetailsItem: React.FC<DetailsItemProps> = ({
   children,
@@ -86,7 +94,7 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
                 {...(path && { footerContent: <PropertyPath kind={model.kind} path={path} /> })}
                 maxWidth="30rem"
               >
-                <Button variant="plain" className="details-item__popover-button">
+                <Button data-test={label} variant="plain" className="details-item__popover-button">
                   {label}
                 </Button>
               </Popover>
@@ -110,7 +118,13 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
         })}
         data-test-selector={`details-item-value__${label}`}
       >
-        {editable && !editAsGroup ? <EditButton onClick={onEdit}>{value}</EditButton> : value}
+        {editable && !editAsGroup ? (
+          <EditButton testID={label} onClick={onEdit}>
+            {value}
+          </EditButton>
+        ) : (
+          value
+        )}
       </dd>
     </>
   );
@@ -128,6 +142,11 @@ export type DetailsItemProps = {
   onEdit?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   path: string | string[];
   valueClassName?: string;
+};
+
+type EditButtonProps = {
+  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  testID?: string;
 };
 
 DetailsItem.displayName = 'DetailsItem';

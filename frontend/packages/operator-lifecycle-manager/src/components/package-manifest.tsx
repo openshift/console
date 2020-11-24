@@ -2,93 +2,71 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Link, match } from 'react-router-dom';
 import * as classNames from 'classnames';
-import { Button } from '@patternfly/react-core';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
-import { StatusBox, MsgBox } from '@console/internal/components/utils';
+import { MsgBox, Timestamp, ResourceLink } from '@console/internal/components/utils';
 import {
   MultiListPage,
   Table,
   TableRow,
   TableData,
-  RowFunctionArgs,
+  RowFunction,
 } from '@console/internal/components/factory';
-import { getActiveNamespace } from '@console/internal/actions/ui';
-import { ALL_NAMESPACES_KEY, OPERATOR_HUB_LABEL } from '@console/shared';
-import {
-  PackageManifestModel,
-  SubscriptionModel,
-  CatalogSourceModel,
-  OperatorGroupModel,
-} from '../models';
-import { PackageManifestKind, SubscriptionKind, OperatorGroupKind } from '../types';
-import { requireOperatorGroup, installedFor, supports } from './operator-group';
-import {
-  ClusterServiceVersionLogo,
-  visibilityLabel,
-  installModesFor,
-  defaultChannelFor,
-} from './index';
+import { OPERATOR_HUB_LABEL } from '@console/shared';
+import { PackageManifestModel, CatalogSourceModel } from '../models';
+import { PackageManifestKind, CatalogSourceKind } from '../types';
+import { ClusterServiceVersionLogo, visibilityLabel, iconFor, defaultChannelFor } from './index';
+import { sortable } from '@patternfly/react-table';
 
 const tableColumnClasses = [
-  classNames('col-lg-4', 'col-md-4', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'hidden-xs'),
-  classNames('col-lg-5', 'col-md-5', 'col-sm-4', 'col-xs-6'),
+  '',
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  '',
 ];
 
 export const PackageManifestTableHeader = () => [
   {
     title: 'Name',
+    sortFunc: 'sortPackageManifestByDefaultChannelName',
+    transforms: [sortable],
     props: { className: tableColumnClasses[0] },
   },
   {
-    title: 'Latest Version',
+    title: 'Latest version',
     props: { className: tableColumnClasses[1] },
   },
   {
-    title: 'Subscriptions',
+    title: 'Created',
+    sortField: 'metadata.creationTimestamp',
+    transforms: [sortable],
     props: { className: tableColumnClasses[2] },
   },
 ];
 
-export const PackageManifestTableRow: React.SFC<PackageManifestTableRowProps> = ({
-  obj,
-  index,
-  rowKey,
-  style,
-  catalogSourceName,
-  catalogSourceNamespace,
-  subscription,
-  defaultNS,
-  canSubscribe,
-}) => {
-  const ns = getActiveNamespace();
-  const channel = !_.isEmpty(obj.status.defaultChannel)
-    ? obj.status.channels.find((ch) => ch.name === obj.status.defaultChannel)
-    : obj.status.channels[0];
-  const { displayName, icon = [], version, provider } = channel.currentCSVDesc;
+export const PackageManifestTableHeaderWithCatalogSource = () => [
+  ...PackageManifestTableHeader(),
+  {
+    title: 'CatalogSource',
+    sortField: 'status.catalogSource',
+    transforms: [sortable],
+    props: { className: tableColumnClasses[3] },
+  },
+];
 
-  const subscriptionLink = () =>
-    ns !== ALL_NAMESPACES_KEY ? (
-      <Link to={`/operatormanagement/ns/${ns}?name=${subscription.metadata.name}`}>
-        View<span className="visible-lg-inline"> subscription</span>
-      </Link>
-    ) : (
-      <Link to={`/operatormanagement/all-namespaces?name=${obj.metadata.name}`}>
-        View<span className="visible-lg-inline"> subscriptions</span>
-      </Link>
-    );
+export const PackageManifestTableRow: RowFunction<
+  PackageManifestKind,
+  { catalogSource: CatalogSourceKind }
+> = ({ obj: packageManifest, index, key, style, customData }) => {
+  const channel = defaultChannelFor(packageManifest);
 
-  const createSubscriptionLink = () =>
-    `/k8s/ns/${ns === ALL_NAMESPACES_KEY ? defaultNS : ns}/${SubscriptionModel.plural}/~new?pkg=${
-      obj.metadata.name
-    }&catalog=${catalogSourceName}&catalogNamespace=${catalogSourceNamespace}`;
+  const { displayName, version, provider } = channel?.currentCSVDesc;
 
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={rowKey} style={style}>
+    <TableRow id={packageManifest.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
         <ClusterServiceVersionLogo
           displayName={displayName}
-          icon={_.get(icon, '[0]')}
+          icon={iconFor(packageManifest)}
           provider={provider.name}
         />
       </TableData>
@@ -96,122 +74,56 @@ export const PackageManifestTableRow: React.SFC<PackageManifestTableRowProps> = 
         {version} ({channel.name})
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        {subscription ? subscriptionLink() : <span className="text-muted">None</span>}
-        {canSubscribe && (
-          <Link to={createSubscriptionLink()}>
-            <Button variant="primary" type="button">
-              Create<span className="visible-lg-inline"> Subscription</span>
-            </Button>
-          </Link>
-        )}
+        <Timestamp timestamp={packageManifest.metadata.creationTimestamp} />
       </TableData>
+      {!customData.catalogSource && (
+        <TableData className={tableColumnClasses[3]}>
+          <ResourceLink
+            kind={referenceForModel(CatalogSourceModel)}
+            name={packageManifest.status?.catalogSource}
+            namespace={packageManifest.status?.catalogSourceNamespace}
+          />
+        </TableData>
+      )}
     </TableRow>
   );
 };
 
-export const PackageManifestList = requireOperatorGroup((props: PackageManifestListProps) => {
-  type CatalogSourceInfo = {
-    displayName: string;
-    name: string;
-    publisher: string;
-    namespace: string;
-  };
-  const catalogs = (props.data || []).reduce(
-    (allCatalogs, { status }) =>
-      allCatalogs.set(status.catalogSource, {
-        displayName: status.catalogSourceDisplayName,
-        name: status.catalogSource,
-        publisher: status.catalogSourcePublisher,
-        namespace: status.catalogSourceNamespace,
-      }),
-    new Map<string, CatalogSourceInfo>(),
-  );
+export const PackageManifestList = (props: PackageManifestListProps) => {
+  const { customData } = props;
+
+  // If the CatalogSource is not present, display PackageManifests along with their CatalogSources (used in PackageManifest Search page)
+  const TableHeader = customData.catalogSource
+    ? PackageManifestTableHeader
+    : PackageManifestTableHeaderWithCatalogSource;
 
   return (
-    <StatusBox
+    <Table
+      {...props}
+      aria-label="Package Manifests"
       loaded={props.loaded}
-      loadError={props.loadError}
-      label={PackageManifestModel.labelPlural}
-      data={props.data}
+      data={props.data || []}
+      filters={props.filters}
+      Header={TableHeader}
+      Row={PackageManifestTableRow}
       EmptyMsg={() => (
         <MsgBox
-          title="No Package Manifests Found"
-          detail="Package Manifests are packaged Operators which can be subscribed to for automatic upgrades."
+          title="No PackageManifests Found"
+          detail="The CatalogSource author has not added any packages."
         />
       )}
-    >
-      {_.sortBy([...catalogs.values()], 'displayName').map((catalog) => (
-        <div key={catalog.name} className="co-catalogsource-list__section">
-          <div className="co-catalogsource-list__section__packages">
-            <div>
-              <h3>{catalog.displayName}</h3>
-              <span className="text-muted">Packaged by {catalog.publisher}</span>
-            </div>
-            {props.showDetailsLink && (
-              <Link
-                to={`/k8s/ns/${catalog.namespace}/${referenceForModel(CatalogSourceModel)}/${
-                  catalog.name
-                }`}
-              >
-                View catalog details
-              </Link>
-            )}
-          </div>
-          <Table
-            aria-label="Package Manifests"
-            loaded
-            data={(props.data || []).filter((pkg) => pkg.status.catalogSource === catalog.name)}
-            filters={props.filters}
-            Header={PackageManifestTableHeader}
-            Row={(rowArgs: RowFunctionArgs<PackageManifestKind>) => (
-              <PackageManifestTableRow
-                obj={rowArgs.obj}
-                index={rowArgs.index}
-                rowKey={rowArgs.key}
-                style={rowArgs.style}
-                catalogSourceName={catalog.name}
-                catalogSourceNamespace={catalog.namespace}
-                subscription={(props.subscription.data || [])
-                  .filter(
-                    (sub) =>
-                      _.isEmpty(props.namespace) || sub.metadata.namespace === props.namespace,
-                  )
-                  .find((sub) => sub.spec.name === rowArgs.obj.metadata.name)}
-                canSubscribe={
-                  props.canSubscribe &&
-                  !installedFor(props.subscription.data)(props.operatorGroup.data)(
-                    rowArgs.obj.status.packageName,
-                  )(getActiveNamespace()) &&
-                  props.operatorGroup.data
-                    .filter(
-                      (og) =>
-                        _.isEmpty(props.namespace) || og.metadata.namespace === props.namespace,
-                    )
-                    .some((og) =>
-                      supports(installModesFor(rowArgs.obj)(defaultChannelFor(rowArgs.obj)))(og),
-                    )
-                }
-                defaultNS={_.get(props.operatorGroup, 'data[0].metadata.namespace')}
-              />
-            )}
-            EmptyMsg={() => (
-              <MsgBox
-                title="No PackageManifests Found"
-                detail="The catalog author has not added any packages."
-              />
-            )}
-            virtualize
-          />
-        </div>
-      ))}
-    </StatusBox>
+      virtualize
+    />
   );
-});
+};
 
 export const PackageManifestsPage: React.SFC<PackageManifestsPageProps> = (props) => {
+  const { catalogSource } = props;
   const namespace = _.get(props.match, 'params.ns');
+
   type Flatten = (resources: { [kind: string]: { data: K8sResourceKind[] } }) => K8sResourceKind[];
   const flatten: Flatten = (resources) => _.get(resources.packageManifest, 'data', []);
+
   const helpText = (
     <>
       Catalogs are groups of Operators you can make available on the cluster. Use{' '}
@@ -223,12 +135,11 @@ export const PackageManifestsPage: React.SFC<PackageManifestsPageProps> = (props
   return (
     <MultiListPage
       {...props}
+      customData={{ catalogSource }}
       namespace={namespace}
       showTitle={false}
       helpText={helpText}
-      ListComponent={(listProps: PackageManifestListProps) => (
-        <PackageManifestList {...listProps} showDetailsLink namespace={namespace} />
-      )}
+      ListComponent={PackageManifestList}
       textFilter="packagemanifest-name"
       flatten={flatten}
       resources={[
@@ -239,28 +150,24 @@ export const PackageManifestsPage: React.SFC<PackageManifestsPageProps> = (props
           prop: 'packageManifest',
           selector: {
             matchExpressions: [
+              ...(catalogSource
+                ? [
+                    {
+                      key: 'catalog',
+                      operator: 'In',
+                      values: [catalogSource?.metadata.name],
+                    },
+                    {
+                      key: 'catalog-namespace',
+                      operator: 'In',
+                      values: [catalogSource?.metadata.namespace],
+                    },
+                  ]
+                : []),
               { key: visibilityLabel, operator: 'DoesNotExist' },
               { key: OPERATOR_HUB_LABEL, operator: 'DoesNotExist' },
             ],
           },
-        },
-        {
-          kind: referenceForModel(CatalogSourceModel),
-          isList: true,
-          namespaced: true,
-          prop: 'catalogSource',
-        },
-        {
-          kind: referenceForModel(SubscriptionModel),
-          isList: true,
-          namespaced: true,
-          prop: 'subscription',
-        },
-        {
-          kind: referenceForModel(OperatorGroupModel),
-          isList: true,
-          namespaced: true,
-          prop: 'operatorGroup',
         },
       ]}
     />
@@ -268,34 +175,22 @@ export const PackageManifestsPage: React.SFC<PackageManifestsPageProps> = (props
 };
 
 export type PackageManifestsPageProps = {
+  catalogSource: CatalogSourceKind;
   namespace?: string;
   match?: match<{ ns?: string }>;
 };
 
 export type PackageManifestListProps = {
+  customData?: { catalogSource: CatalogSourceKind };
   namespace?: string;
   data: PackageManifestKind[];
   filters?: { [name: string]: string };
-  subscription: { loaded: boolean; data?: SubscriptionKind[] };
-  operatorGroup: { loaded: boolean; data?: OperatorGroupKind[] };
   loaded: boolean;
   loadError?: string | Record<string, any>;
   showDetailsLink?: boolean;
-  canSubscribe?: boolean;
-};
-
-export type PackageManifestTableRowProps = {
-  obj: PackageManifestKind;
-  index: number;
-  rowKey: string;
-  style: object;
-  catalogSourceName: string;
-  catalogSourceNamespace: string;
-  subscription?: SubscriptionKind;
-  defaultNS: string;
-  canSubscribe: boolean;
 };
 
 PackageManifestTableHeader.displayName = 'PackageManifestTableHeader';
-PackageManifestTableRow.displayName = 'PackageManifestTableRow';
+PackageManifestTableHeaderWithCatalogSource.displayName =
+  'PackageManifestTableHeaderWithCatalogSource';
 PackageManifestList.displayName = 'PackageManifestList';

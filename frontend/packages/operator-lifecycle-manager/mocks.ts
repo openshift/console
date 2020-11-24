@@ -245,6 +245,7 @@ export const testPackageManifest: PackageManifestKind = {
   metadata: {
     name: 'test-package',
     namespace: 'default',
+    creationTimestamp: '2018-05-02T18:10:38Z',
   },
   spec: {},
   status: {
@@ -689,7 +690,7 @@ const svcatPackageManifest = {
   },
 };
 
-const dummyPackageManifest = {
+export const dummyPackageManifest = {
   apiVersion: 'packages.operators.coreos.com/v1' as PackageManifestKind['apiVersion'],
   kind: 'PackageManifest' as PackageManifestKind['kind'],
   metadata: {

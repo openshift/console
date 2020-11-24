@@ -1,20 +1,16 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 import { shallow, ShallowWrapper } from 'enzyme';
-import * as _ from 'lodash';
-import { Table, TableRow } from '@console/internal/components/factory';
+import { TableRow, RowFunction } from '@console/internal/components/factory';
 import * as UIActions from '@console/internal/actions/ui';
-import { testPackageManifest, testCatalogSource, testSubscription } from '../../mocks';
-import { PackageManifestKind } from '../types';
+import { testPackageManifest, testCatalogSource } from '../../mocks';
 import {
   PackageManifestTableHeader,
   PackageManifestTableRow,
-  PackageManifestTableRowProps,
-  PackageManifestList,
-  PackageManifestListProps,
+  PackageManifestTableHeaderWithCatalogSource,
 } from './package-manifest';
 import { ClusterServiceVersionLogo } from '.';
-import { Button } from '@patternfly/react-core';
+import { ResourceLink, Timestamp } from '@console/internal/components/utils';
+import { PackageManifestKind, CatalogSourceKind } from '../types';
 
 describe(PackageManifestTableHeader.displayName, () => {
   it('renders column header for package name', () => {
@@ -22,30 +18,39 @@ describe(PackageManifestTableHeader.displayName, () => {
   });
 
   it('renders column header for latest CSV version for package in catalog', () => {
-    expect(PackageManifestTableHeader()[1].title).toEqual('Latest Version');
+    expect(PackageManifestTableHeader()[1].title).toEqual('Latest version');
   });
 
-  it('renders column header for subscriptions', () => {
-    expect(PackageManifestTableHeader()[2].title).toEqual('Subscriptions');
+  it('renders column header for creation timestamp', () => {
+    expect(PackageManifestTableHeader()[2].title).toEqual('Created');
   });
 });
 
-describe(PackageManifestTableRow.displayName, () => {
-  let wrapper: ShallowWrapper<PackageManifestTableRowProps>;
+describe(PackageManifestTableHeaderWithCatalogSource.displayName, () => {
+  it('renders column header for catalog source', () => {
+    expect(PackageManifestTableHeaderWithCatalogSource()[3].title).toEqual('CatalogSource');
+  });
+});
+
+describe('PackageManifestTableRow', () => {
+  let wrapper: ShallowWrapper<RowFunction<
+    PackageManifestKind,
+    { catalogSource: CatalogSourceKind }
+  >>;
 
   beforeEach(() => {
     jest.spyOn(UIActions, 'getActiveNamespace').mockReturnValue('default');
+
+    const columns: any[] = [];
     wrapper = shallow(
       <PackageManifestTableRow
-        index={0}
-        rowKey={'0'}
-        style={null}
         obj={testPackageManifest}
-        catalogSourceNamespace={testCatalogSource.metadata.namespace}
-        catalogSourceName={testCatalogSource.metadata.name}
-        subscription={testSubscription}
-        defaultNS="default"
-        canSubscribe
+        customData={{ catalogSource: testCatalogSource }}
+        index={0}
+        key={'0'}
+        style={null}
+        isScrolling
+        columns={columns}
       />,
     );
   });
@@ -75,120 +80,41 @@ describe(PackageManifestTableRow.displayName, () => {
     ).toEqual(`${version} (${name})`);
   });
 
-  it('does not render link if no subscriptions exist in the current namespace', () => {
-    wrapper = wrapper.setProps({ subscription: null });
-
+  it('renders column for creation timestamp', () => {
+    const pkgManifestCreationTimestamp = testPackageManifest.metadata.creationTimestamp;
     expect(
       wrapper
         .find(TableRow)
         .childAt(2)
         .dive()
-        .text(),
-    ).toContain('None');
+        .find(Timestamp)
+        .props().timestamp,
+    ).toEqual(`${pkgManifestCreationTimestamp}`);
   });
 
-  it('renders column with link to subscriptions', () => {
-    expect(
-      wrapper
-        .find(TableRow)
-        .childAt(2)
-        .dive()
-        .find(Link)
-        .at(0)
-        .props().to,
-    ).toEqual(`/operatormanagement/ns/default?name=${testSubscription.metadata.name}`);
-    expect(
-      wrapper
-        .find(TableRow)
-        .childAt(2)
-        .dive()
-        .find(Link)
-        .at(0)
-        .childAt(0)
-        .text(),
-    ).toEqual('View');
-  });
-
-  it('renders button to create new subscription if `canSubscribe` is true', () => {
-    expect(
-      wrapper
-        .find(TableRow)
-        .childAt(2)
-        .dive()
-        .find(Link)
-        .at(1)
-        .find(Button)
-        .render()
-        .text(),
-    ).toEqual('Create Subscription');
-  });
-
-  it('does not render button to create new subscription if `canSubscribe` is false', () => {
-    wrapper = wrapper.setProps({ canSubscribe: false });
-
-    expect(
-      wrapper
-        .find(TableRow)
-        .childAt(2)
-        .dive()
-        .find(Link)
-        .at(1)
-        .exists(),
-    ).toBe(false);
-  });
-});
-
-describe(PackageManifestList.displayName, () => {
-  let wrapper: ShallowWrapper<PackageManifestListProps>;
-  let packages: PackageManifestKind[];
-
-  beforeEach(() => {
-    const otherPackageManifest = _.cloneDeep(testPackageManifest);
-    otherPackageManifest.status.catalogSource = 'another-catalog-source';
-    otherPackageManifest.status.catalogSourceDisplayName = 'Another Catalog Source';
-    otherPackageManifest.status.catalogSourcePublisher = 'Some Publisher';
-    packages = [otherPackageManifest, testPackageManifest];
+  // This is to verify cataloSource column gets rendered on the Search page for PackageManifest resource
+  it('renders column for catalog source for a package when no catalog source is defined', () => {
+    const catalogSourceName = testPackageManifest.status.catalogSource;
+    const columns: any[] = [];
 
     wrapper = shallow(
-      <PackageManifestList.WrappedComponent
-        loaded
-        data={packages}
-        operatorGroup={null}
-        subscription={null}
+      <PackageManifestTableRow
+        obj={testPackageManifest}
+        customData={{ catalogSource: null }}
+        index={0}
+        key={'0'}
+        style={null}
+        isScrolling
+        columns={columns}
       />,
     );
-  });
-
-  it('renders a section for each unique `CatalogSource` for the given packages', () => {
-    expect(wrapper.find('.co-catalogsource-list__section').length).toEqual(2);
-    packages.forEach(({ status }, i) => {
-      expect(
-        wrapper
-          .find('.co-catalogsource-list__section')
-          .at(i)
-          .find('h3')
-          .text(),
-      ).toEqual(status.catalogSourceDisplayName);
-    });
-  });
-
-  it('renders `Table` component with correct props for each section', () => {
-    expect(wrapper.find(Table).length).toEqual(2);
-    packages.forEach((pkg, i) => {
-      expect(
-        wrapper
-          .find('.co-catalogsource-list__section')
-          .at(i)
-          .find(Table)
-          .props().Header,
-      ).toEqual(PackageManifestTableHeader);
-      expect(
-        wrapper
-          .find('.co-catalogsource-list__section')
-          .at(i)
-          .find(Table)
-          .props().data.length,
-      ).toEqual(1);
-    });
+    expect(
+      wrapper
+        .find(TableRow)
+        .childAt(3)
+        .dive()
+        .find(ResourceLink)
+        .props().name,
+    ).toEqual(`${catalogSourceName}`);
   });
 });

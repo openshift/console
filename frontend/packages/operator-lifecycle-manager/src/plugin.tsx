@@ -206,6 +206,15 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Page/Resource/List',
+    properties: {
+      model: models.PackageManifestModel,
+      loader: async () =>
+        (await import('./components/package-manifest' /* webpackChunkName: "package-manifest" */))
+          .PackageManifestsPage,
+    },
+  },
+  {
     type: 'Page/Resource/Details',
     properties: {
       model: models.ClusterServiceVersionModel,
@@ -288,6 +297,15 @@ const plugin: Plugin<ConsumedExtensions> = [
       model: models.OperatorHubModel,
       loader: async () =>
         (await import('./components/operator-hub/operator-hub-details')).OperatorHubDetailsPage,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.CatalogSourceModel,
+      loader: async () =>
+        (await import('./components/catalog-source' /* webpackChunkName: "catalog-source" */))
+          .CatalogSourceDetailsPage,
     },
   },
   {

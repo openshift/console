@@ -5,7 +5,7 @@ import { safeLoad } from 'js-yaml';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { DetailsPage } from '@console/internal/components/factory';
 import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
-import { Firehose, LoadingBox } from '@console/internal/components/utils';
+import { Firehose, LoadingBox, DetailsItem } from '@console/internal/components/utils';
 import { CreateYAML, CreateYAMLProps } from '@console/internal/components/create-yaml';
 import {
   SubscriptionModel,
@@ -13,7 +13,7 @@ import {
   PackageManifestModel,
   OperatorGroupModel,
 } from '../models';
-import { testCatalogSource, testPackageManifest } from '../../mocks';
+import { testCatalogSource, testPackageManifest, dummyPackageManifest } from '../../mocks';
 import {
   CatalogSourceDetails,
   CatalogSourceDetailsProps,
@@ -21,8 +21,9 @@ import {
   CatalogSourceDetailsPageProps,
   CreateSubscriptionYAML,
   CreateSubscriptionYAMLProps,
+  CatalogSourceOperatorsPage,
 } from './catalog-source';
-import { PackageManifestList } from './package-manifest';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');
@@ -33,40 +34,33 @@ jest.mock('react-i18next', () => {
 });
 const i18nNS = 'details-page';
 
+jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
+  useK8sWatchResource: jest.fn(),
+}));
+
 describe(CatalogSourceDetails.displayName, () => {
   let wrapper: ShallowWrapper<CatalogSourceDetailsProps>;
   let obj: CatalogSourceDetailsProps['obj'];
 
   beforeEach(() => {
     obj = _.cloneDeep(testCatalogSource);
-
-    wrapper = shallow(
-      <CatalogSourceDetails
-        obj={obj}
-        packageManifests={[testPackageManifest]}
-        subscriptions={[]}
-        operatorGroups={[]}
-      />,
-    );
-  });
-
-  it('renders nothing if not all resources are loaded', () => {
-    wrapper = wrapper.setProps({ obj: null });
-
-    expect(wrapper.find('.co-catalog-details').exists()).toBe(false);
+    wrapper = shallow(<CatalogSourceDetails obj={obj} packageManifests={[testPackageManifest]} />);
   });
 
   it('renders name and publisher of the catalog', () => {
-    expect(wrapper.find('[data-test-id="catalog-source-name"]').text()).toEqual(
-      obj.spec.displayName,
-    );
-    expect(wrapper.find('[data-test-id="catalog-source-publisher"]').text()).toEqual(
-      obj.spec.publisher,
-    );
-  });
+    expect(
+      wrapper
+        .find(DetailsItem)
+        .at(1)
+        .props().obj.spec.displayName,
+    ).toEqual(obj.spec.displayName);
 
-  it('renders a `PackageManifestList` component', () => {
-    expect(wrapper.find(PackageManifestList).props().data).toEqual([testPackageManifest]);
+    expect(
+      wrapper
+        .find(DetailsItem)
+        .at(2)
+        .props().obj.spec.publisher,
+    ).toEqual(obj.spec.publisher);
   });
 });
 
@@ -75,40 +69,30 @@ describe(CatalogSourceDetailsPage.displayName, () => {
   let match: CatalogSourceDetailsPageProps['match'];
 
   beforeEach(() => {
+    (useK8sWatchResource as jest.Mock).mockReturnValue([dummyPackageManifest, true, null]);
     match = { isExact: true, params: { ns: 'default', name: 'some-catalog' }, path: '', url: '' };
     wrapper = shallow(<CatalogSourceDetailsPage match={match} />);
   });
 
   it('renders `DetailsPage` with correct props', () => {
-    const selector = { matchLabels: { catalog: match.params.name } };
-
     expect(wrapper.find(DetailsPage).props().kind).toEqual(referenceForModel(CatalogSourceModel));
-    expect(
-      wrapper
-        .find(DetailsPage)
-        .props()
-        .pages.map((p) => p.nameKey),
-    ).toEqual([`${i18nNS}~Details`, `${i18nNS}~YAML`]);
-    expect(wrapper.find(DetailsPage).props().pages[0].component).toEqual(CatalogSourceDetails);
+
+    const detailsPage = wrapper.find(DetailsPage);
+    const { pages } = detailsPage.props();
+    expect(pages.length).toEqual(3);
+    expect(pages[0].nameKey).toEqual(`${i18nNS}~Details`);
+    expect(pages[1].nameKey).toEqual(`${i18nNS}~YAML`);
+    expect(pages[2].nameKey).toEqual(`catalog-source~Operators`);
+
+    expect(pages[0].component).toEqual(CatalogSourceDetails);
+    expect(pages[2].component).toEqual(CatalogSourceOperatorsPage);
+
     expect(wrapper.find(DetailsPage).props().resources).toEqual([
       {
         kind: referenceForModel(PackageManifestModel),
         isList: true,
         namespace: match.params.ns,
-        selector,
         prop: 'packageManifests',
-      },
-      {
-        kind: referenceForModel(SubscriptionModel),
-        isList: true,
-        namespace: match.params.ns,
-        prop: 'subscriptions',
-      },
-      {
-        kind: referenceForModel(OperatorGroupModel),
-        isList: true,
-        namespace: match.params.ns,
-        prop: 'operatorGroups',
       },
     ]);
   });
