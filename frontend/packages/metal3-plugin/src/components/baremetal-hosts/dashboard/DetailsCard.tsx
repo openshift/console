@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -16,6 +17,7 @@ import { BareMetalHostModel } from '../../../models';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 
 const DetailsCard: React.FC<DetailsCardProps> = () => {
+  const { t } = useTranslation();
   const { obj, machine, node } = React.useContext(BareMetalHostDashboardContext);
   const hostName = getName(obj);
   const nodeCell = <NodeLink nodeName={getName(node)} />;
@@ -24,7 +26,7 @@ const DetailsCard: React.FC<DetailsCardProps> = () => {
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>Details</DashboardCardTitle>
+        <DashboardCardTitle>{t('metal3-plugin~Details')}</DashboardCardTitle>
         <DashboardCardLink
           to={`${resourcePathFromModel(
             BareMetalHostModel,
@@ -32,18 +34,18 @@ const DetailsCard: React.FC<DetailsCardProps> = () => {
             getNamespace(obj),
           )}/details`}
         >
-          View all
+          {t('metal3-plugin~View all')}
         </DashboardCardLink>
       </DashboardCardHeader>
       <DashboardCardBody>
         <DetailsBody>
-          <DetailItem title="Host name" isLoading={false} error={null}>
+          <DetailItem title={t('metal3-plugin~Host name')} isLoading={false} error={null}>
             {hostName}
           </DetailItem>
-          <DetailItem title="Role" isLoading={false} error={null}>
+          <DetailItem title={t('metal3-plugin~Role')} isLoading={false} error={null}>
             {hostRole}
           </DetailItem>
-          <DetailItem title="Node" isLoading={false} error={null}>
+          <DetailItem title={t('metal3-plugin~Node')} isLoading={false} error={null}>
             {nodeCell}
           </DetailItem>
         </DetailsBody>

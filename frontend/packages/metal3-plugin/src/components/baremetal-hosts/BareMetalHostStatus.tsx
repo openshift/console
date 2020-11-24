@@ -48,13 +48,13 @@ export const hostStatusActions = (t: TFunction) => ({
 
 const BareMetalHostStatus: React.FC<BareMetalHostStatusProps> = ({
   status,
-  title,
-  description,
+  titleKey,
+  descriptionKey,
   host,
   nodeMaintenance,
 }) => {
   const { t } = useTranslation();
-  const statusTitle = title || status;
+  const statusTitle = t(titleKey) || status;
   const action = hostStatusActions(t)[status]?.(host);
   switch (true) {
     case [NODE_STATUS_STARTING_MAINTENANCE, NODE_STATUS_UNDER_MAINTENANCE].includes(status):
@@ -62,14 +62,14 @@ const BareMetalHostStatus: React.FC<BareMetalHostStatusProps> = ({
     case [NODE_STATUS_STOPPING_MAINTENANCE, ...HOST_PROGRESS_STATES].includes(status):
       return (
         <ProgressStatus title={statusTitle}>
-          {description}
+          {t(descriptionKey)}
           {action}
         </ProgressStatus>
       );
     case HOST_ERROR_STATES.includes(status):
       return (
         <ErrorStatus title={statusTitle}>
-          <p>{description}</p>
+          <p>{t(descriptionKey)}</p>
           <p>{getHostErrorMessage(host)}</p>
           {action}
         </ErrorStatus>
@@ -77,23 +77,23 @@ const BareMetalHostStatus: React.FC<BareMetalHostStatusProps> = ({
     case HOST_SUCCESS_STATES.includes(status):
       return (
         <SuccessStatus title={statusTitle}>
-          {description}
+          {t(descriptionKey)}
           {action}
         </SuccessStatus>
       );
     case HOST_INFO_STATES.includes(status):
       return (
         <InfoStatus title={statusTitle}>
-          {description}
+          {t(descriptionKey)}
           {action}
         </InfoStatus>
       );
     default: {
       const statusBody = <Status status={status} title={statusTitle} />;
 
-      return description || action ? (
+      return descriptionKey || action ? (
         <PopoverStatus title={statusTitle} statusBody={statusBody}>
-          {description}
+          {t(descriptionKey)}
           {action}
         </PopoverStatus>
       ) : (

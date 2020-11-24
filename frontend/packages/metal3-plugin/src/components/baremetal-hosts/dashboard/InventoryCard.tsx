@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -54,6 +55,7 @@ const PodInventoryItem: React.FC = () => {
 };
 
 const InventoryCard: React.FC = () => {
+  const { t } = useTranslation();
   const { obj } = React.useContext(BareMetalHostDashboardContext);
 
   const namespace = getNamespace(obj);
@@ -80,23 +82,27 @@ const InventoryCard: React.FC = () => {
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>Inventory</DashboardCardTitle>
+        <DashboardCardTitle>{t('metal3-plugin~Inventory')}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
         <PodInventoryItem />
         <InventoryItem
-          title="Disk"
+          title={t('metal3-plugin~Disk')}
           isLoading={!obj}
           count={getHostStorage(obj).length}
           TitleComponent={DiskTitleComponent}
         />
         <InventoryItem
-          title="NIC"
+          title={t('metal3-plugin~NIC')}
           isLoading={!obj}
           count={getHostNICs(obj).length}
           TitleComponent={NICTitleComponent}
         />
-        <InventoryItem title="CPU" isLoading={!obj} count={getHostCPU(obj).count} />
+        <InventoryItem
+          title={t('metal3-plugin~CPU')}
+          isLoading={!obj}
+          count={getHostCPU(obj).count}
+        />
       </DashboardCardBody>
     </DashboardCard>
   );

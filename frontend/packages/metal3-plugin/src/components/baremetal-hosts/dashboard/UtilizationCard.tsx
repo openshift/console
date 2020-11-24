@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Dropdown } from '@console/internal/components/utils/dropdown';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -30,6 +31,7 @@ import {
 } from './queries';
 
 const UtilizationCard: React.FC = () => {
+  const { t } = useTranslation();
   const [timestamps, setTimestamps] = React.useState<Date[]>();
   const [duration, setDuration] = useMetricDuration();
 
@@ -55,7 +57,7 @@ const UtilizationCard: React.FC = () => {
       const topConsumerQueries = getTopConsumerQueries(nodeName);
       return (
         <ConsumerPopover
-          title="CPU"
+          title={t('metal3-plugin~CPU')}
           current={current}
           humanize={humanizeCpuCores}
           consumers={[
@@ -73,7 +75,7 @@ const UtilizationCard: React.FC = () => {
         />
       );
     },
-    [nodeName],
+    [nodeName, t],
   );
 
   const memPopover = React.useCallback(
@@ -81,7 +83,7 @@ const UtilizationCard: React.FC = () => {
       const topConsumerQueries = getTopConsumerQueries(nodeName);
       return (
         <ConsumerPopover
-          title="Memory"
+          title={t('metal3-plugin~Memory')}
           current={current}
           humanize={humanizeBinaryBytes}
           consumers={[
@@ -99,7 +101,7 @@ const UtilizationCard: React.FC = () => {
         />
       );
     },
-    [nodeName],
+    [nodeName, t],
   );
 
   const storagePopover = React.useCallback(
@@ -107,7 +109,7 @@ const UtilizationCard: React.FC = () => {
       const topConsumerQueries = getTopConsumerQueries(nodeName);
       return (
         <ConsumerPopover
-          title="Disk Usage"
+          title={t('metal3-plugin~Disk Usage')}
           current={current}
           humanize={humanizeBinaryBytes}
           consumers={[
@@ -125,18 +127,18 @@ const UtilizationCard: React.FC = () => {
         />
       );
     },
-    [nodeName],
+    [nodeName, t],
   );
 
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>Utilization</DashboardCardTitle>
+        <DashboardCardTitle>{t('metal3-plugin~Utilization')}</DashboardCardTitle>
         <Dropdown items={Duration} onChange={setDuration} selectedKey={duration} title={duration} />
       </DashboardCardHeader>
       <UtilizationBody timestamps={timestamps}>
         <PrometheusUtilizationItem
-          title="CPU"
+          title={t('metal3-plugin~CPU')}
           utilizationQuery={queries[HostQuery.CPU_UTILIZATION].utilization}
           humanizeValue={humanizeCpuCores}
           TopConsumerPopover={cpuPopover}
@@ -144,7 +146,7 @@ const UtilizationCard: React.FC = () => {
           setTimestamps={setTimestamps}
         />
         <PrometheusUtilizationItem
-          title="Memory"
+          title={t('metal3-plugin~Memory')}
           utilizationQuery={queries[HostQuery.MEMORY_UTILIZATION].utilization}
           totalQuery={queries[HostQuery.MEMORY_UTILIZATION].total}
           humanizeValue={humanizeBinaryBytes}
@@ -153,7 +155,7 @@ const UtilizationCard: React.FC = () => {
           duration={duration}
         />
         <PrometheusUtilizationItem
-          title="Filesystem"
+          title={t('metal3-plugin~Filesystem')}
           utilizationQuery={queries[HostQuery.STORAGE_UTILIZATION].utilization}
           totalQuery={queries[HostQuery.STORAGE_UTILIZATION].total}
           humanizeValue={humanizeBinaryBytes}
@@ -162,13 +164,13 @@ const UtilizationCard: React.FC = () => {
           duration={duration}
         />
         <PrometheusMultilineUtilizationItem
-          title="Network Transfer"
+          title={t('metal3-plugin~Network Transfer')}
           queries={multilineQueries[HostQuery.NETWORK_UTILIZATION]}
           humanizeValue={humanizeDecimalBytesPerSec}
           duration={duration}
         />
         <PrometheusUtilizationItem
-          title="Pod count"
+          title={t('metal3-plugin~Pod count')}
           utilizationQuery={queries[HostQuery.NUMBER_OF_PODS].utilization}
           humanizeValue={humanizePods}
           duration={duration}

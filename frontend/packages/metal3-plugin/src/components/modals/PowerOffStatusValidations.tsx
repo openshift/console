@@ -8,7 +8,7 @@ import { getName, getNamespace } from '@console/shared';
 import {
   NODE_STATUS_STARTING_MAINTENANCE,
   HOST_STATUS_UNKNOWN,
-  HOST_HEALTH_ERROR,
+  HOST_STATUS_ERROR,
   NODE_STATUS_STOPPING_MAINTENANCE,
 } from '../../constants';
 
@@ -131,7 +131,7 @@ export const StatusValidations: React.FC<StatusValidationProps> = ({
     });
   }
 
-  if ([HOST_STATUS_UNKNOWN, ...HOST_HEALTH_ERROR].includes(status)) {
+  if ([HOST_STATUS_UNKNOWN, ...HOST_STATUS_ERROR].includes(status)) {
     validations.push({
       title: 'The bare metal host is not healthy.',
       description: 'The host cannot be powered off gracefully untils its health is restored.',

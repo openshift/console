@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { Gallery, GalleryItem } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
@@ -23,7 +24,7 @@ import AlertItem, {
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { getBareMetalHostStatus } from '../../../status/host-status';
 import {
-  HOST_STATUS_DESCRIPTIONS,
+  HOST_STATUS_DESCRIPTION_KEYS,
   HOST_SUCCESS_STATES,
   HOST_ERROR_STATES,
   HOST_PROGRESS_STATES,
@@ -37,7 +38,7 @@ import { BareMetalHostModel } from '../../../models';
 import { hasPowerManagement } from '../../../selectors';
 
 const getHostHealthState = (obj: BareMetalHostKind): HostHealthState => {
-  const { status, title } = getBareMetalHostStatus(obj);
+  const { status, titleKey } = getBareMetalHostStatus(obj);
   let state: HealthState = HealthState.UNKNOWN;
 
   if ([...HOST_SUCCESS_STATES, ...HOST_INFO_STATES].includes(status)) {
@@ -53,21 +54,21 @@ const getHostHealthState = (obj: BareMetalHostKind): HostHealthState => {
   }
 
   return {
-    title,
+    titleKey,
     state,
   };
 };
 
 const getHostHardwareHealthState = (obj): HostHealthState => {
-  const { status, title } = getBareMetalHostStatus(obj);
+  const { status, titleKey } = getBareMetalHostStatus(obj);
 
   return HOST_HARDWARE_ERROR_STATES.includes(status)
     ? {
         state: HealthState.ERROR,
-        title,
+        titleKey,
       }
     : {
-        title: '',
+        titleKey: '',
         state: HealthState.OK,
       };
 };
@@ -80,6 +81,7 @@ const HealthCard: React.FC<HealthCardProps> = ({
   stopWatchAlerts,
   notificationAlerts,
 }) => {
+  const { t } = useTranslation();
   const { obj } = React.useContext(BareMetalHostDashboardContext);
 
   React.useEffect(() => {
@@ -102,10 +104,14 @@ const HealthCard: React.FC<HealthCardProps> = ({
         <HealthBody>
           <Gallery className="co-overview-status__health" hasGutter>
             <GalleryItem>
-              <HealthItem title={health.title} state={health.state} />
+              <HealthItem title={t(health.titleKey)} state={health.state} />
             </GalleryItem>
             <GalleryItem>
-              <HealthItem title="Hardware" state={hwHealth.state} details={hwHealth.title} />
+              <HealthItem
+                title={t('metal3-plugin~Hardware')}
+                state={hwHealth.state}
+                details={t(hwHealth.titleKey)}
+              />
             </GalleryItem>
           </Gallery>
         </HealthBody>
@@ -113,7 +119,7 @@ const HealthCard: React.FC<HealthCardProps> = ({
           {!hasPowerManagement(obj) && (
             <StatusItem
               Icon={BlueInfoCircleIcon}
-              message={HOST_STATUS_DESCRIPTIONS[HOST_STATUS_UNMANAGED]}
+              message={t(HOST_STATUS_DESCRIPTION_KEYS[HOST_STATUS_UNMANAGED])}
             >
               <Link
                 to={`${resourcePathFromModel(
@@ -141,7 +147,7 @@ export default withDashboardResources(HealthCard);
 
 type HostHealthState = {
   state: HealthState;
-  title: string;
+  titleKey: string;
 };
 
 type HealthCardProps = DashboardItemProps & {

@@ -25,47 +25,82 @@ export const HOST_POWER_STATUS_POWERED_OFF = 'Powered off';
 export const HOST_POWER_STATUS_POWERING_OFF = 'Powering off';
 export const HOST_POWER_STATUS_POWERING_ON = 'Powering on';
 
-export const HOST_STATUS_TITLES = {
-  [HOST_STATUS_READY]: 'Available',
-  [HOST_STATUS_AVAILABLE]: 'Available',
-  [HOST_STATUS_OK]: 'OK',
-  [HOST_STATUS_ERROR]: 'Error',
-  [HOST_STATUS_PROVISIONED]: 'Provisioned',
-  [HOST_STATUS_EXTERNALLY_PROVISIONED]: 'Externally provisioned',
-  [HOST_STATUS_DEPROVISIONED]: 'Deprovisioned',
-  [HOST_STATUS_REGISTERING]: 'Registering',
-  [HOST_STATUS_INSPECTING]: 'Inspecting',
-  [HOST_STATUS_PROVISIONING]: 'Provisioning',
-  [HOST_STATUS_DEPROVISIONING]: 'Deprovisioning',
-  [HOST_STATUS_REGISTRATION_ERROR]: 'Registration error',
-  [HOST_STATUS_INSPECTION_ERROR]: 'Inspection error',
-  [HOST_STATUS_PROVISIONING_ERROR]: 'Provisioning error',
-  [HOST_STATUS_POWER_MANAGEMENT_ERROR]: 'Power Management Error',
-  [HOST_STATUS_MATCH_PROFILE]: 'Matching profile',
-  [HOST_STATUS_DELETING]: 'Deleting',
-  [HOST_STATUS_UNKNOWN]: 'Unknown',
-  [HOST_STATUS_UNMANAGED]: 'Unmanaged',
+// NOTE(yaacov): HOST_STATUS_TITLE_KEYS translation keys.
+// t('metal3-plugin~Available')
+// t('metal3-plugin~OK')
+// t('metal3-plugin~Error')
+// t('metal3-plugin~Provisioned')
+// t('metal3-plugin~Externally provisioned')
+// t('metal3-plugin~Deprovisioned')
+// t('metal3-plugin~Registering')
+// t('metal3-plugin~Inspecting')
+// t('metal3-plugin~Provisioning')
+// t('metal3-plugin~Deprovisioning')
+// t('metal3-plugin~Registering')
+// t('metal3-plugin~Provisioned')
+// t('metal3-plugin~Registration error')
+// t('metal3-plugin~Inspection error')
+// t('metal3-plugin~Provisioning error')
+// t('metal3-plugin~Power Management Error'
+// t('metal3-plugin~Matching profile')
+// t('metal3-plugin~Deleting')
+// t('metal3-plugin~Unknown')
+// t('metal3-plugin~Unmanaged')
+
+export const HOST_STATUS_TITLE_KEYS = {
+  [HOST_STATUS_READY]: 'metal3-plugin~Available',
+  [HOST_STATUS_AVAILABLE]: 'metal3-plugin~Available',
+  [HOST_STATUS_OK]: 'metal3-plugin~OK',
+  [HOST_STATUS_ERROR]: 'metal3-plugin~Error',
+  [HOST_STATUS_PROVISIONED]: 'metal3-plugin~Provisioned',
+  [HOST_STATUS_EXTERNALLY_PROVISIONED]: 'metal3-plugin~Externally provisioned',
+  [HOST_STATUS_DEPROVISIONED]: 'metal3-plugin~Deprovisioned',
+  [HOST_STATUS_REGISTERING]: 'metal3-plugin~Registering',
+  [HOST_STATUS_INSPECTING]: 'metal3-plugin~Inspecting',
+  [HOST_STATUS_PROVISIONING]: 'metal3-plugin~Provisioning',
+  [HOST_STATUS_DEPROVISIONING]: 'metal3-plugin~Deprovisioning',
+  [HOST_STATUS_REGISTRATION_ERROR]: 'metal3-plugin~Registration error',
+  [HOST_STATUS_INSPECTION_ERROR]: 'metal3-plugin~Inspection error',
+  [HOST_STATUS_PROVISIONING_ERROR]: 'metal3-plugin~Provisioning error',
+  [HOST_STATUS_POWER_MANAGEMENT_ERROR]: 'metal3-plugin~Power Management Error',
+  [HOST_STATUS_MATCH_PROFILE]: 'metal3-plugin~Matching profile',
+  [HOST_STATUS_DELETING]: 'metal3-plugin~Deleting',
+  [HOST_STATUS_UNKNOWN]: 'metal3-plugin~Unknown',
+  [HOST_STATUS_UNMANAGED]: 'metal3-plugin~Unmanaged',
 };
 
-export const HOST_STATUS_DESCRIPTIONS = {
-  [HOST_STATUS_READY]: 'The host is available to be provisioned as a node.',
-  [HOST_STATUS_AVAILABLE]: 'The host is available to be provisioned as a node.',
+// NOTE(yaacov): HOST_STATUS_DESCRIPTION_KEYS translation keys.
+// t('metal3-plugin~The host is available to be provisioned as a node.')
+// t('metal3-plugin~The host is available to be provisioned as a node.')
+// t('metal3-plugin~The hardware details of the host are being collected. This will take a while. The host will become available when finished.')
+// t('metal3-plugin~An image is being written to the host's disk(s). This will take a while."')
+// t('metal3-plugin~The image is being wiped from the host's disk(s). This may take a while.')
+// t('metal3-plugin~The details for the host's BMC are either incorrect or incomplete therefore the host could not be managed.')
+// t('metal3-plugin~Collecting hardware details from the host failed.')
+// t('metal3-plugin~The image could not be written to the host.')
+// t('metal3-plugin~An error was found while trying to power the host either on or off.')
+// t('metal3-plugin~This host was provisioned outside of this cluster and added manually.')
+// t('metal3-plugin~Power operations cannot be performed on this host until Baseboard Management Controller (BMC) credentials are provided.')
+
+export const HOST_STATUS_DESCRIPTION_KEYS = {
+  [HOST_STATUS_READY]: 'metal3-plugin~The host is available to be provisioned as a node.',
+  [HOST_STATUS_AVAILABLE]: 'metal3-plugin~The host is available to be provisioned as a node.',
   [HOST_STATUS_INSPECTING]:
-    'The hardware details of the host are being collected. This will take a while. The host will become available when finished.',
+    'metal3-plugin~The hardware details of the host are being collected. This will take a while. The host will become available when finished.',
   [HOST_STATUS_PROVISIONING]:
-    "An image is being written to the host's disk(s). This will take a while.",
+    "metal3-plugin~An image is being written to the host's disk(s). This will take a while.",
   [HOST_STATUS_DEPROVISIONING]:
-    "The image is being wiped from the host's disk(s). This may take a while.",
+    "metal3-plugin~The image is being wiped from the host's disk(s). This may take a while.",
   [HOST_STATUS_REGISTRATION_ERROR]:
-    "The details for the host's BMC are either incorrect or incomplete therefore the host could not be managed.",
-  [HOST_STATUS_INSPECTION_ERROR]: 'Collecting hardware details from the host failed',
-  [HOST_STATUS_PROVISIONING_ERROR]: 'The image could not be written to the host.',
+    "metal3-plugin~The details for the host's BMC are either incorrect or incomplete therefore the host could not be managed.",
+  [HOST_STATUS_INSPECTION_ERROR]: 'metal3-plugin~Collecting hardware details from the host failed.',
+  [HOST_STATUS_PROVISIONING_ERROR]: 'metal3-plugin~The image could not be written to the host.',
   [HOST_STATUS_POWER_MANAGEMENT_ERROR]:
-    'An error was found while trying to power the host either on or off.',
+    'metal3-plugin~An error was found while trying to power the host either on or off.',
   [HOST_STATUS_EXTERNALLY_PROVISIONED]:
-    'This host was provisioned outside of this cluster and added manually.',
+    'metal3-plugin~This host was provisioned outside of this cluster and added manually.',
   [HOST_STATUS_UNMANAGED]:
-    'Power operations cannot be performed on this host until Baseboard Management Controller (BMC) credentials are provided.',
+    'metal3-plugin~Power operations cannot be performed on this host until Baseboard Management Controller (BMC) credentials are provided.',
 };
 
 export const HOST_REGISTERING_STATES = [
@@ -107,7 +142,3 @@ export const HOST_SUCCESS_STATES = [
 export const HOST_INFO_STATES = [HOST_STATUS_UNMANAGED];
 
 export const HOST_HARDWARE_ERROR_STATES = [HOST_STATUS_POWER_MANAGEMENT_ERROR];
-
-export const HOST_HEALTH_OK = 'Host is healthy';
-export const HOST_HEALTH_ERROR = 'Host is in an error state';
-export const HOST_HEALTH_LOADING = 'Loading host health data';
