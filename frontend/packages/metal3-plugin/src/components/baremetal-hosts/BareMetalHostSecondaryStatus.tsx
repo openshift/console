@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { SecondaryStatus } from '@console/shared';
 import { BareMetalHostKind } from '../../types';
 import {
@@ -13,20 +14,18 @@ type BareMetalHostSecondaryStatusProps = {
   host: BareMetalHostKind;
 };
 
-export const HOST_SCHEDULED_FOR_RESTART = 'Restart pending';
-export const HOST_NO_POWER_MGMT = 'No power management';
-
 const BareMetalHostSecondaryStatus: React.FC<BareMetalHostSecondaryStatusProps> = ({ host }) => {
+  const { t } = useTranslation();
   const powerStatus = getHostPowerStatus(host);
   const provisioningState = getHostProvisioningState(host);
   const status = [];
 
   if (!hasPowerManagement(host)) {
-    status.push(HOST_NO_POWER_MGMT);
+    status.push(t('metal3-plugin~No power management'));
     // don't show power status when host registration/inspection hasn't finished
   } else if (!HOST_REGISTERING_STATES.includes(provisioningState)) {
     if (isHostScheduledForRestart(host)) {
-      status.push(HOST_SCHEDULED_FOR_RESTART);
+      status.push(t('metal3-plugin~Restart pending'));
     }
 
     // don't show power status when host is powered on

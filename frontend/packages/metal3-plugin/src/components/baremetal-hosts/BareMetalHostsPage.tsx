@@ -1,5 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { getName, createLookup, getNodeMachineName } from '@console/shared';
 import { MachineModel, MachineSetModel, NodeModel } from '@console/internal/models';
 import { MultiListPage } from '@console/internal/components/factory';
@@ -79,10 +81,10 @@ type BareMetalHostsPageProps = {
   namespace: string;
 };
 
-const getCreateProps = ({ namespace }: { namespace: string }) => {
+const getCreateProps = ({ namespace, t }: { namespace: string; t: TFunction }) => {
   const items: any = {
-    dialog: 'New with Dialog',
-    yaml: 'New from YAML',
+    dialog: t('metal3-plugin~New with Dialog'),
+    yaml: t('metal3-plugin~New from YAML'),
   };
 
   return {
@@ -102,6 +104,7 @@ const getCreateProps = ({ namespace }: { namespace: string }) => {
 };
 
 const BareMetalHostsPage: React.FC<BareMetalHostsPageProps> = (props) => {
+  const { t } = useTranslation();
   const [hasNodeMaintenanceCapability, model] = useMaintenanceCapability();
   const { namespace } = props;
   const resources: FirehoseResource[] = [
@@ -143,13 +146,13 @@ const BareMetalHostsPage: React.FC<BareMetalHostsPageProps> = (props) => {
       {...props}
       canCreate
       rowFilters={[hostStatusFilter]}
-      createProps={getCreateProps({ namespace })}
-      createButtonText="Add Host"
+      createProps={getCreateProps({ namespace, t })}
+      createButtonText={t('metal3-plugin~Add Host')}
       namespace={namespace}
       resources={resources}
       flatten={flattenResources}
       ListComponent={BareMetalHostsTable}
-      title="Bare Metal Hosts"
+      title={t('metal3-plugin~Bare Metal Hosts')}
     />
   );
 };

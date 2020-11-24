@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory, FirehoseResource } from '@console/internal/components/utils';
@@ -21,6 +22,7 @@ type BareMetalHostDetailsPageProps = {
 };
 
 const BareMetalHostDetailsPage: React.FC<BareMetalHostDetailsPageProps> = (props) => {
+  const { t } = useTranslation();
   const [hasNodeMaintenanceCapability, maintenanceModel] = useMaintenanceCapability();
   const bmoEnabled = useFlag(BMO_ENABLED_FLAG);
   const resources: FirehoseResource[] = [
@@ -56,22 +58,22 @@ const BareMetalHostDetailsPage: React.FC<BareMetalHostDetailsPageProps> = (props
 
   const nicsPage = {
     href: 'nics',
-    name: 'Network Interfaces',
+    name: t('metal3-plugin~Network Interfaces'),
     component: BareMetalHostNICs,
   };
   const disksPage = {
     href: 'disks',
-    name: 'Disks',
+    name: t('metal3-plugin~Disks'),
     component: BareMetalHostDisks,
   };
   const dashboardPage = {
     href: '',
-    name: 'Overview',
+    name: t('metal3-plugin~Overview'),
     component: BareMetalHostDashboard,
   };
   const detailsPage = {
     href: 'details',
-    name: 'Details',
+    name: t('metal3-plugin~Details'),
     component: BareMetalHostDetails,
   };
   return (

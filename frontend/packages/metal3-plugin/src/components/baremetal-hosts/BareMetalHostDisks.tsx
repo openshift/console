@@ -1,18 +1,20 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { sortable } from '@patternfly/react-table';
 import { Table, TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { humanizeDecimalBytes } from '@console/internal/components/utils';
 import { getHostStorage } from '../../selectors';
 import { BareMetalHostDisk, BareMetalHostKind } from '../../types';
 
-const DisksTableHeader = () => [
-  { title: 'Name', sortField: 'name', transforms: [sortable] },
-  { title: 'Size', sortField: 'sizeBytes', transforms: [sortable] },
-  { title: 'Type', sortField: 'rotational', transforms: [sortable] },
-  { title: 'Model', sortField: 'model', transforms: [sortable] },
-  { title: 'Serial Number', sortField: 'serialNumber', transforms: [sortable] },
-  { title: 'Vendor', sortField: 'vendor', transforms: [sortable] },
-  { title: 'HCTL', sortField: 'hctl', transforms: [sortable] },
+const DisksTableHeader = (t: TFunction) => () => [
+  { title: t('metal3-plugin~Name'), sortField: 'name', transforms: [sortable] },
+  { title: t('metal3-plugin~Size'), sortField: 'sizeBytes', transforms: [sortable] },
+  { title: t('metal3-plugin~Type'), sortField: 'rotational', transforms: [sortable] },
+  { title: t('metal3-plugin~Model'), sortField: 'model', transforms: [sortable] },
+  { title: t('metal3-plugin~Serial Number'), sortField: 'serialNumber', transforms: [sortable] },
+  { title: t('metal3-plugin~Vendor'), sortField: 'vendor', transforms: [sortable] },
+  { title: t('metal3-plugin~HCTL'), sortField: 'hctl', transforms: [sortable] },
 ];
 
 const DisksTableRow: RowFunction<BareMetalHostDisk> = ({ obj, index, key, style }) => {
@@ -37,6 +39,7 @@ type BareMetalHostDisksProps = {
 };
 
 const BareMetalHostDisks: React.FC<BareMetalHostDisksProps> = ({ obj: host, loadError }) => {
+  const { t } = useTranslation();
   const disks = getHostStorage(host);
   return (
     <div className="co-m-list">
@@ -44,7 +47,7 @@ const BareMetalHostDisks: React.FC<BareMetalHostDisksProps> = ({ obj: host, load
         <Table
           data={disks}
           aria-label="Bare Metal Host Disks"
-          Header={DisksTableHeader}
+          Header={DisksTableHeader(t)}
           Row={DisksTableRow}
           loaded={!!host}
           loadError={loadError}
