@@ -4,5 +4,13 @@
   "Application": "Application",
   "Select an application for your grouping or {{UNASSIGNED_LABEL}} to not use an application grouping.": "Select an application for your grouping or {{UNASSIGNED_LABEL}} to not use an application grouping.",
   "Application Name": "Application Name",
-  "all applications": "all applications"
+  "all applications": "all applications",
+  "Quick Search Bar": "Quick Search Bar",
+  "Add to project": "Add to project",
+  "No Results": "No Results",
+  "Quick Search Button": "Quick Search Button",
+  "Provided by {{provider}}": "Provided by {{provider}}",
+  "Quick Search List": "Quick Search List",
+  "View all results for \"{{searchTerm}}\" ({{totalItems, number}})": "View all results for \"{{searchTerm}}\" ({{totalItems, number}})",
+  "Quick Search": "Quick Search"
 }

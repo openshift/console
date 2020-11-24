@@ -1,0 +1,9 @@
+.odc-quick-search-content {
+  &__list {
+    width: 40%;
+  }
+  &__details {
+    width: 60%;
+    padding-right: var(--pf-global--spacer--md);
+  }
+}
