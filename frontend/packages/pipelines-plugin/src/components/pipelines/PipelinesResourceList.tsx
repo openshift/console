@@ -14,7 +14,7 @@ interface PipelinesResourceListProps extends React.ComponentProps<typeof FireMan
 
 const PipelinesResourceList: React.FC<PipelinesResourceListProps> = (props) => {
   const { t } = useTranslation();
-  const { namespace, showTitle = true } = props;
+  const { namespace, showTitle = true, selector, name } = props;
 
   const resources = [
     {
@@ -23,6 +23,8 @@ const PipelinesResourceList: React.FC<PipelinesResourceListProps> = (props) => {
       namespace,
       prop: PipelineModel.id,
       filters: { ...filters },
+      selector,
+      name,
     },
   ];
 
@@ -46,7 +48,7 @@ const PipelinesResourceList: React.FC<PipelinesResourceListProps> = (props) => {
       badge={getBadgeFromType(PipelineModel.badge)}
     >
       <Firehose resources={resources}>
-        <PipelineAugmentRunsWrapper />
+        <PipelineAugmentRunsWrapper hideNameLabelFilters={props.hideNameLabelFilters} />
       </Firehose>
     </FireMan>
   );
