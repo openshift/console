@@ -4,7 +4,7 @@ import { helmPO } from '../../pageObjects/helm-po';
 import { modal } from '../../../../../integration-tests-cypress/views/modal';
 
 export const helmDetailsPage = {
-  verifyTitle: () => detailsPage.titleShouldContain(helmPageTitle.helmReleaseDetails),
+  verifyTitle: () => detailsPage.titleShouldContain(helmPageTitle.HelmReleaseDetails),
   verifyResourcesTab: () => cy.get(helmPO.resourcesTab).should('be.visible'),
   verifyReleaseNotesTab: () =>
     cy.byLegacyTestID('horizontal-link-Release Notes').should('be.visible'),

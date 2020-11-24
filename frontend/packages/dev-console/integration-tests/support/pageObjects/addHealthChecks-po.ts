@@ -1,4 +1,4 @@
-export const addHealthChecksObj = {
+export const addHealthChecksPO = {
   readinessProbe: {
     requestType: '#form-dropdown-healthChecks-readinessProbe-data-requestType-field',
     httpHeaderName: 'input[placeholder="header name"]',
@@ -37,4 +37,11 @@ export const addHealthChecksObj = {
   },
   add: '[data-test-id="submit-button"]',
   cancel: '[data-test-id="reset-button"]',
+  save: '[data-test-id="submit-button"]',
+  healthChecksForm: 'div.odc-heath-check-probe-form',
+  successText: 'span.odc-heath-check-probe__successText',
+  removeReadinessProbeIcon: '',
+  readinessProbeAdded: '',
+  livenessProbeAdded: '',
+  addStartUpProbeAdded: '',
 };

@@ -18,4 +18,8 @@ export const pageTitle = {
   Project: 'Project Details',
   ConfigMaps: 'Config Maps',
   Secrets: 'Secrets',
+  HelmReleaseDetails: 'Helm Release Details',
+  UpgradeHelmRelease: 'Upgrade Helm Release',
+  OperatorHub: 'OperatorHub',
+  AddHealthChecks: 'Add Health Checks',
 };

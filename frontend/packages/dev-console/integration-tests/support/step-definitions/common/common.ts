@@ -1,5 +1,5 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { perspective, projectNameSpace, naviagteTo } from '../../pages/app';
+import { perspective, projectNameSpace, navigateTo } from '../../pages/app';
 import { switchPerspective, devNavigationMenu } from '../../constants/global';
 import { guidedTour } from '../../../../../integration-tests-cypress/views/guided-tour';
 import { nav } from '../../../../../integration-tests-cypress/views/nav';
@@ -28,19 +28,22 @@ Given('user has created namespace starts with {string}', (projectName: string) =
   cy.log(`User has selected namespace "${projectName}-${timestamp}-ns"`);
 });
 
-Given('user has created or selected namespace {string}', (projectName: string) => {
-  perspective.switchTo(switchPerspective.Developer);
-  guidedTour.close();
-  projectNameSpace.selectOrCreateProject(`${projectName}`);
-  cy.log(`User has selected namespace "${projectName}"`);
-});
+Given(
+  'user has selected existing namespace or created namespace {string}',
+  (projectName: string) => {
+    perspective.switchTo(switchPerspective.Developer);
+    guidedTour.close();
+    projectNameSpace.selectOrCreateProject(`${projectName}`);
+    cy.log(`User has selected namespace "${projectName}"`);
+  },
+);
 
 Given('user is at pipelines page', () => {
-  naviagteTo(devNavigationMenu.Pipelines);
+  navigateTo(devNavigationMenu.Pipelines);
 });
 
 Given('user is at Monitoring page', () => {
-  naviagteTo(devNavigationMenu.Monitoring);
+  navigateTo(devNavigationMenu.Monitoring);
 });
 
 Given('user is at namespace {string}', (projectName: string) => {
