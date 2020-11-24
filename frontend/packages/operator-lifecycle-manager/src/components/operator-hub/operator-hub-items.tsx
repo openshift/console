@@ -13,9 +13,11 @@ import {
   Title,
 } from '@patternfly/react-core';
 import {
-  COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY,
+  COMMUNITY_PROVIDERS_WARNING_USERSETTINGS_KEY as userSettingsKey,
+  COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY as storeKey,
   GreenCheckCircleIcon,
   Modal,
+  useUserSettingsCompatibility,
 } from '@console/shared';
 import { history } from '@console/internal/components/utils/router';
 import { TileViewPage } from '@console/internal/components/utils/tile-view-page';
@@ -326,6 +328,9 @@ const setURLParams = (params) => {
 export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) => {
   const [detailsItem, setDetailsItem] = React.useState(null);
   const [showDetails, setShowDetails] = React.useState(false);
+  const [ignoreOperatorWarning, setIgnoreOperatorWarning, loaded] = useUserSettingsCompatibility<
+    boolean
+  >(userSettingsKey, storeKey, false);
 
   const filteredItems = filterByArchAndOS(props.items);
 
@@ -343,16 +348,13 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     setDetailsItem(item);
     setShowDetails(true);
 
-    if (ignoreWarning) {
-      localStorage.setItem(COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY, 'true');
+    if (loaded && ignoreWarning) {
+      setIgnoreOperatorWarning(true);
     }
   };
 
   const openOverlay = (item: OperatorHubItem) => {
-    const ignoreWarning =
-      localStorage.getItem(COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY) === 'true';
-
-    if (!ignoreWarning && item.providerType === COMMUNITY_PROVIDER_TYPE) {
+    if (!ignoreOperatorWarning && item.providerType === COMMUNITY_PROVIDER_TYPE) {
       communityOperatorWarningModal({
         showCommunityOperators: (ignore) => showCommunityOperator(item)(ignore),
       });
