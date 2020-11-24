@@ -7,6 +7,7 @@ import {
   ClusterServiceVersionPhase,
   ClusterServiceVersionStatus,
 } from '../types';
+import i18n from '@console/internal/i18n';
 
 const pedingPhases = [
   ClusterServiceVersionPhase.CSVPhasePending,
@@ -19,33 +20,37 @@ export const subscriptionForCSV = (
   subscriptions: SubscriptionKind[],
   csv: ClusterServiceVersionKind,
 ): SubscriptionKind =>
+  // TODO Replace _.find with Array.prototype.find
   _.find(subscriptions, {
     metadata: {
-      namespace: _.get(csv, ['metadata', 'annotations', 'olm.operatorNamespace']),
+      // FIXME Magic string. Make a constant.
+      namespace: csv?.metadata?.annotations?.['olm.operatorNamespace'],
     },
     status: {
       installedCSV: getName(csv),
     },
+    // TODO Imporove this type def
   } as any); // 'as any' to supress typescript error caused by lodash;
 
 export const getCSVStatus = (
   csv: ClusterServiceVersionKind,
 ): { status: ClusterServiceVersionStatus; title: string } => {
-  const statusPhase = _.get(csv, 'status.phase', ClusterServiceVersionPhase.CSVPhaseUnknown);
+  const statusPhase = csv?.status?.phase ?? ClusterServiceVersionPhase.CSVPhaseUnknown;
+  // TODO Get rid of let.
   let status: ClusterServiceVersionStatus;
   if (pedingPhases.includes(statusPhase)) {
-    status = ClusterServiceVersionStatus.Pending;
+    status = i18n.t('olm~Pending');
   } else {
     switch (statusPhase) {
       case ClusterServiceVersionPhase.CSVPhaseSucceeded:
-        status = ClusterServiceVersionStatus.OK;
+        status = i18n.t('olm~OK');
         break;
       case ClusterServiceVersionPhase.CSVPhaseFailed:
-        status = ClusterServiceVersionStatus.Failed;
+        status = i18n.t('olm~Failed');
         break;
       default:
         return {
-          status: ClusterServiceVersionStatus.Unknown,
+          status: i18n.t('olm~Unknown'),
           title: statusPhase,
         };
     }
@@ -62,17 +67,17 @@ export const getSubscriptionStatus = (subscription: SubscriptionKind): Subscript
     case SubscriptionState.SubscriptionStateUpgradeAvailable:
       return {
         status,
-        title: 'Upgrade available',
+        title: i18n.t('olm~Upgrade available'),
       };
     case SubscriptionState.SubscriptionStateUpgradePending:
       return {
         status,
-        title: 'Upgrading',
+        title: i18n.t('olm~Upgrading'),
       };
     case SubscriptionState.SubscriptionStateAtLatest:
       return {
         status,
-        title: 'Up to date',
+        title: i18n.t('olm~Up to date'),
       };
     default:
       return {
