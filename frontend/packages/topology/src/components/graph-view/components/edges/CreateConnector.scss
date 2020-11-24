@@ -1,0 +1,11 @@
+@import '../../../topology-utils';
+
+.odc-create-connector {
+  cursor: pointer;
+  &.is-dragging {
+    pointer-events: none;
+  }
+  &.topology-default-create-connector {
+    --create-connector-color: #{$interactive-stroke-color};
+  }
+}

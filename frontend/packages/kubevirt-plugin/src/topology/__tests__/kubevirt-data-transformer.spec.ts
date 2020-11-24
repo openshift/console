@@ -1,10 +1,8 @@
-import {
-  baseDataModelGetter,
-  getWorkloadResources,
-  TopologyDataResources,
-  WORKLOAD_TYPES,
-} from '@console/dev-console/src/components/topology';
-import { TEST_KINDS_MAP } from '@console/dev-console/src/components/topology/__tests__/topology-test-data';
+import { baseDataModelGetter } from '@console/topology/src/data-transforms/data-transformer';
+import { getWorkloadResources } from '@console/topology/src/data-transforms/transform-utils';
+import { TopologyDataResources } from '@console/topology/src/topology-types';
+import { WORKLOAD_TYPES } from '@console/topology/src/utils';
+import { TEST_KINDS_MAP } from '@console/topology/src/__tests__/topology-test-data';
 import { kubevirtResources } from './topology-kubevirt-test-data';
 import { VirtualMachineModel } from '../../models';
 import { VMStatus } from '../../constants/vm/vm-status';

@@ -19,3 +19,4 @@ export * from './post-form-submit-action';
 export * from './flag';
 export * from './useUserSettings';
 export * from './useUserSettingsCompatibility';
+export * from './hpa-hooks';

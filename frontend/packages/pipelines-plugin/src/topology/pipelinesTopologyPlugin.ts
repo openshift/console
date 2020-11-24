@@ -1,6 +1,6 @@
 import { Plugin } from '@console/plugin-sdk';
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { TopologyDataModelFactory } from '@console/dev-console/src/extensions/topology';
+import { TopologyDataModelFactory } from '@console/topology/src/extensions/topology';
 import { tknPipelineAndPipelineRunsWatchResources } from '../utils/pipeline-plugin-utils';
 import { FLAG_OPENSHIFT_PIPELINE } from '../const';
 

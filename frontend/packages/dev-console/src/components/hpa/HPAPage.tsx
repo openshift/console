@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
-import { PageBody } from '@console/shared';
+import { PageBody, useRelatedHPA } from '@console/shared';
 import { useTranslation } from 'react-i18next';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { LoadingBox, LoadingInline, PageComponentProps } from '@console/internal/components/utils';
@@ -11,7 +11,6 @@ import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import HPAFormikForm from './HPAFormikForm';
 import HPAPageHeader from './HPAPageHeader';
 import { getLimitWarning, VALID_HPA_TARGET_KINDS } from './hpa-utils';
-import { useRelatedHPA } from './hooks';
 
 const HPAPage: React.FC<PageComponentProps> = (props) => {
   const { t } = useTranslation();

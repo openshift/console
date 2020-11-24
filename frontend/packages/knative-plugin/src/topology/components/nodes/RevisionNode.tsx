@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { useAnchor, AnchorEnd, Node, observer } from '@patternfly/react-topology';
-import {
-  getTopologyResourceObject,
-  useRoutesURL,
-  WorkloadPodsNode,
-} from '@console/dev-console/src/components/topology';
+import { getTopologyResourceObject } from '@console/topology/src/utils';
+import { useRoutesURL } from '@console/topology/src/data-transforms/useRoutesURL';
+import { WorkloadPodsNode } from '@console/topology/src/components/graph-view';
 import RevisionTrafficTargetAnchor from '../anchors/RevisionTrafficTargetAnchor';
 import { usePodsForRevisions } from '../../../utils/usePodsForRevisions';
 

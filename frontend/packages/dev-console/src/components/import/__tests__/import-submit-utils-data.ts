@@ -1,6 +1,6 @@
+import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { GitImportFormData, Resources } from '../import-types';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
-import { UNASSIGNED_KEY } from '../../../const';
 
 export const mockPipelineTemplate = {
   apiVersion: 'tekton.dev/v1alpha1',

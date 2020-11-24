@@ -1,7 +1,4 @@
-import {
-  DEFAULT_GROUP_PAD,
-  GROUP_WIDTH,
-} from '@console/dev-console/src/components/topology/components/const';
+import { DEFAULT_GROUP_PAD, GROUP_WIDTH } from '@console/topology/src/const';
 
 export const TYPE_EVENT_SOURCE = 'event-source';
 export const TYPE_EVENT_SOURCE_LINK = 'event-source-link';

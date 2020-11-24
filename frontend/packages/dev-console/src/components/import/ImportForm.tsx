@@ -8,9 +8,13 @@ import { RootState } from '@console/internal/redux';
 import { connect } from 'react-redux';
 import { ALL_APPLICATIONS_KEY, usePostFormSubmitAction } from '@console/shared';
 import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
+import {
+  UNASSIGNED_KEY,
+  UNASSIGNED_LABEL,
+  ALLOW_SERVICE_BINDING_FLAG,
+} from '@console/topology/src/const';
+import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/imagestream-utils';
-import { sanitizeApplicationValue } from '../../utils/application-utils';
-import { ALLOW_SERVICE_BINDING, UNASSIGNED_KEY, UNASSIGNED_LABEL } from '../../const';
 import { GitImportFormData, FirehoseList, ImportData, Resources } from './import-types';
 import { createOrUpdateResources, handleRedirect } from './import-submit-utils';
 import { validationSchema } from './import-validation-utils';
@@ -210,7 +214,7 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => {
   return {
     perspective,
     activeApplication: activeApplication !== ALL_APPLICATIONS_KEY ? activeApplication : '',
-    serviceBindingAvailable: state.FLAGS.get(ALLOW_SERVICE_BINDING),
+    serviceBindingAvailable: state.FLAGS.get(ALLOW_SERVICE_BINDING_FLAG),
   };
 };
 

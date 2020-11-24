@@ -108,6 +108,7 @@ i18n
         'sidebar',
         'slack-receiver-form',
         'subscription',
+        'topology',
         'tour',
         'utils',
         'webhook-receiver-form',

@@ -21,8 +21,8 @@ import {
   NodeShadows,
   NODE_SHADOW_FILTER_ID_HOVER,
   NODE_SHADOW_FILTER_ID,
-} from '@console/dev-console/src/components/topology';
-import { Decorator } from '@console/dev-console/src/components/topology/components/nodes/Decorator';
+  Decorator,
+} from '@console/topology/src/components/graph-view';
 import { EVENT_MARKER_RADIUS } from '../../const';
 
 import './SinkUriNode.scss';

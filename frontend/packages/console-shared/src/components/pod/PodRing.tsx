@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { Button, Split, SplitItem, Bullseye } from '@patternfly/react-core';
 import { K8sResourceKind, k8sPatch, K8sKind } from '@console/internal/module/k8s';
 import { AngleUpIcon, AngleDownIcon } from '@patternfly/react-icons';
-import { useRelatedHPA } from '@console/dev-console/src/components/hpa/hooks';
+import { useRelatedHPA } from '../../hooks/hpa-hooks';
 import { usePodRingLabel, usePodScalingAccessStatus } from '../../utils';
 import { ExtPodKind } from '../../types';
 import PodStatus from './PodStatus';

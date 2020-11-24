@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { K8sKind, referenceForModel } from '@console/internal/module/k8s';
 import { KebabAction } from '@console/internal/components/utils';
-import { EditApplication } from '@console/dev-console/src/actions/modify-application';
+import { EditApplication } from '@console/topology/src/actions/modify-application';
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
 import { setTrafficDistribution } from '../actions/traffic-splitting';
 import { addTrigger } from '../actions/add-trigger';

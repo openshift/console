@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { TRIGGERS_ANNOTATION } from '@console/shared';
-import { UNASSIGNED_LABEL } from '../const';
+import { UNASSIGNED_LABEL } from '@console/topology/src/const';
 
 export const getAppLabels = ({
   name,

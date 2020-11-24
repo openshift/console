@@ -1,0 +1,27 @@
+{
+  "name": "@console/topology",
+  "version": "0.0.0-fixed",
+  "description": "OpenShift Topology Views",
+  "main": "src/index.ts",
+  "private": true,
+  "scripts": {
+    "coverage": "yarn test --coverage --collectCoverageFrom='[\"packages/topology/src/**\",\"!**/__tests__/**\",\"!packages/topology/src/test/**\"]'",
+    "lint": "yarn --cwd ../.. eslint packages/topology",
+    "test": "yarn --cwd ../.. test packages/topology"
+  },
+  "dependencies": {
+    "@console/git-service": "0.0.0-fixed",
+    "@console/knative-plugin": "0.0.0-fixed",
+    "@console/plugin-sdk": "0.0.0-fixed",
+    "@console/dev-console": "0.0.0-fixed",
+    "@console/pipelines-plugin": "0.0.0-fixed"
+  },
+  "consolePlugin": {
+    "entry": "src/plugin.tsx",
+    "integrationTestSuites": {
+      "topology": [
+        "integration-tests/**/*.scenario.ts"
+      ]
+    }
+  }
+}

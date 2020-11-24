@@ -22,9 +22,8 @@ import {
   nodeDragSourceSpec,
   GroupNode,
   GroupNodeAnchor,
-  useSearchFilter,
-  useAllowEdgeCreation,
-} from '@console/dev-console/src/components/topology';
+} from '@console/topology/src/components/graph-view';
+import { useSearchFilter, useAllowEdgeCreation } from '@console/topology/src/filters';
 import { TYPE_KNATIVE_SERVICE, EVENT_MARKER_RADIUS } from '../../const';
 
 type KnativeServiceNodeProps = {

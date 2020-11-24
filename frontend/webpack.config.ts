@@ -214,6 +214,7 @@ const config: Configuration = {
     new CopyWebpackPlugin([{ from: './packages/knative-plugin/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/container-security/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/pipelines-plugin/locales', to: 'locales' }]),
+    new CopyWebpackPlugin([{ from: './packages/topology/locales', to: 'locales' }]),
     new MomentLocalesPlugin({
       localesToKeep: ['en', 'ja', 'ko'],
     }),

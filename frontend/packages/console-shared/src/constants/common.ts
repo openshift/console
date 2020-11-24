@@ -18,6 +18,8 @@ export const KEYBOARD_SHORTCUTS = Object.freeze({
   focusNamespaceDropdown: 'n',
 });
 
+export const RESOURCE_NAME_TRUNCATE_LENGTH = 13;
+
 // Use a key for the "all" namespaces option that would be an invalid namespace name to avoid a potential clash
 export const ALL_NAMESPACES_KEY = '#ALL_NS#';
 

@@ -1,5 +1,5 @@
 import { ServiceModel } from '@console/internal/models';
-import { EditApplication } from '@console/dev-console/src/actions/modify-application';
+import { EditApplication } from '@console/topology/src/actions';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
 import { getKebabActionsForKind } from '../kebab-actions';

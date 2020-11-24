@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TFunction } from 'i18next';
 import { BitbucketIcon, GitAltIcon, GithubIcon, GitlabIcon } from '@patternfly/react-icons';
-import CheIcon from '../topology/components/nodes/CheIcon';
+import CheIcon from './CheIcon';
 import { detectGitType } from './import-validation-utils';
 import { GitTypes } from './import-types';
 

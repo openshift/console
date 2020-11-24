@@ -1,8 +1,8 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Model } from '@patternfly/react-topology';
-import { TYPE_EVENT_SOURCE } from './const';
-import { OdcNodeModel } from '@console/dev-console/src/components/topology';
+import { OdcNodeModel } from '@console/topology/src/topology-types';
 import { DeploymentModel } from '@console/internal/models';
+import { TYPE_EVENT_SOURCE } from './const';
 import { EventingBrokerModel } from '../models';
 import { CAMEL_SOURCE_INTEGRATION } from '../const';
 

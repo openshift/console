@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { TextInputTypes } from '@patternfly/react-core';
-import ApplicationSelector from '@console/dev-console/src/components/import/app/ApplicationSelector';
+import ApplicationSelector from '@console/topology/src/components/dropdowns/ApplicationSelector';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { InputField } from '@console/shared';
-import { useTranslation } from 'react-i18next';
 
 type DefaultChannelSectionProps = {
   namespace: string;

@@ -23,7 +23,6 @@ import {
   OverviewResourceTab,
   YAMLTemplate,
   OverviewTabSection,
-  ReduxReducer,
   GuidedTour,
   PostFormSubmissionAction,
 } from '@console/plugin-sdk';
@@ -40,29 +39,16 @@ import {
   ImageStreamImportsModel,
   ConfigMapModel,
 } from '@console/internal/models';
+import { doConnectsToBinding } from '@console/topology/src/utils/connector-utils';
 import * as models from './models';
 import { getKebabActionsForKind } from './utils/kebab-actions';
-import {
-  ALLOW_SERVICE_BINDING,
-  FLAG_OPENSHIFT_GITOPS,
-  INCONTEXT_ACTIONS_CONNECTS_TO,
-} from './const';
-import reducer from './utils/reducer';
+import { FLAG_OPENSHIFT_GITOPS, INCONTEXT_ACTIONS_CONNECTS_TO } from './const';
 import { AddAction } from './extensions/add-actions';
 import * as yamlIcon from './images/yaml.svg';
 import * as importGitIcon from './images/from-git.svg';
 import * as dockerfileIcon from './images/dockerfile.svg';
-import {
-  HelmTopologyConsumedExtensions,
-  helmTopologyPlugin,
-} from './components/topology/helm/helmTopologyPlugin';
-import {
-  OperatorsTopologyConsumedExtensions,
-  operatorsTopologyPlugin,
-} from './components/topology/operators/operatorsTopologyPlugin';
 import { usePerspectiveDetection } from './utils/usePerspectiveDetection';
 import { getGuidedTour } from './components/guided-tour';
-import { doConnectsToBinding } from './utils/connector-utils';
 import { CatalogConsumedExtensions, catalogPlugin } from './components/catalog/catalog-plugin';
 
 type ConsumedExtensions =
@@ -76,15 +62,12 @@ type ConsumedExtensions =
   | ResourceDetailsPage
   | Perspective
   | RoutePage
-  | ReduxReducer
   | KebabActions
   | OverviewResourceTab
   | YAMLTemplate
   | OverviewTabSection
   | AddAction
   | GuidedTour
-  | HelmTopologyConsumedExtensions
-  | OperatorsTopologyConsumedExtensions
   | PostFormSubmissionAction
   | CatalogConsumedExtensions;
 
@@ -93,13 +76,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'ModelDefinition',
     properties: {
       models: _.values(models),
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: models.ServiceBindingModel,
-      flag: ALLOW_SERVICE_BINDING,
     },
   },
   {
@@ -620,13 +596,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'ReduxReducer',
-    properties: {
-      namespace: 'devconsole',
-      reducer,
-    },
-  },
-  {
     type: 'KebabActions',
     properties: {
       getKebabActionsForKind,
@@ -807,8 +776,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       callback: doConnectsToBinding,
     },
   },
-  ...helmTopologyPlugin,
-  ...operatorsTopologyPlugin,
   ...catalogPlugin,
 ];
 

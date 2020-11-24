@@ -13,9 +13,9 @@ import {
 } from '@patternfly/react-core';
 import { SecretTypeAbstraction } from '@console/internal/components/secrets/create-secret';
 import { InputField, useDebounceCallback, CheckboxField } from '@console/shared';
+import { UNASSIGNED_KEY, CREATE_APPLICATION_KEY } from '@console/topology/src/const';
 import { getSuggestedName, getPorts, makePortName } from '../../../utils/imagestream-utils';
 import { secretModalLauncher } from '../CreateSecretModal';
-import { UNASSIGNED_KEY, CREATE_APPLICATION_KEY } from '../../../const';
 import './ImageSearch.scss';
 
 const ImageSearch: React.FC = () => {

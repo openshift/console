@@ -38,7 +38,7 @@ import {
   AllPodStatus,
 } from '../constants';
 import { isKnativeServing, isIdled } from './pod-utils';
-import { doesHpaMatch } from '@console/dev-console/src/components/hpa/hpa-utils';
+import { doesHpaMatch } from './hpa-utils';
 
 export const WORKLOAD_TYPES = [
   'deployments',

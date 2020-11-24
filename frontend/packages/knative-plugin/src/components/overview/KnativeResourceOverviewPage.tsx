@@ -5,7 +5,7 @@ import { ResourceOverviewDetails } from '@console/internal/components/overview/r
 import { groupVersionFor, K8sKind, referenceForModel } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
 import { OverviewItem } from '@console/shared';
-import { ModifyApplication } from '@console/dev-console/src/actions/modify-application';
+import { ModifyApplication } from '@console/topology/src/actions';
 import {
   KNATIVE_SERVING_APIGROUP,
   KNATIVE_EVENT_MESSAGE_APIGROUP,

@@ -7,7 +7,7 @@ import {
   DeploymentModel,
   StatefulSetModel,
 } from '@console/internal/models';
-import { EditApplication } from '../actions/modify-application';
+import { EditApplication } from '@console/topology/src/actions/modify-application';
 
 const modifyWebConsoleApplicationRefs = [
   referenceForModel(DeploymentConfigModel),

@@ -16,19 +16,21 @@ import {
   WithCreateConnectorProps,
   RectAnchor,
 } from '@patternfly/react-topology';
-import SvgBoxedText from '@console/dev-console/src/components/svg/SvgBoxedText';
+import SvgBoxedText from '@console/topology/src/components/svg/SvgBoxedText';
 import {
   NodeShadows,
   NODE_SHADOW_FILTER_ID_HOVER,
   NODE_SHADOW_FILTER_ID,
+} from '@console/topology/src/components/graph-view';
+import {
   useSearchFilter,
   useDisplayFilters,
   useAllowEdgeCreation,
   getFilterById,
   SHOW_LABELS_FILTER_ID,
-  getTopologyResourceObject,
-  TYPE_AGGREGATE_EDGE,
-} from '@console/dev-console/src/components/topology';
+} from '@console/topology/src/filters';
+import { TYPE_AGGREGATE_EDGE } from '@console/topology/src/const';
+import { getTopologyResourceObject } from '@console/topology/src/utils';
 import PubSubSourceAnchor from '../anchors/PubSubSourceAnchor';
 import PubSubTargetAnchor from '../anchors/PubSubTargetAnchor';
 

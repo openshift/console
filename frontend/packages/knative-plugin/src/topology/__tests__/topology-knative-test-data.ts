@@ -6,7 +6,7 @@ import {
   referenceForModel,
   K8sKind,
 } from '@console/internal/module/k8s';
-import { TopologyDataResources } from '@console/dev-console/src/components/topology';
+import { TopologyDataResources } from '@console/topology/src/topology-types';
 import {
   ConfigurationModel,
   RouteModel,

@@ -16,7 +16,7 @@ import {
   EDGE_DRAG_TYPE,
   EdgeComponentProps,
   EditableDragOperationType,
-} from '@console/dev-console/src/components/topology';
+} from '@console/topology/src/components/graph-view';
 import {
   TYPE_EVENT_SOURCE_LINK,
   TYPE_KNATIVE_SERVICE,

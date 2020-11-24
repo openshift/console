@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { OdcBaseNode, TopologyListViewNode } from '@console/dev-console/src/components/topology';
+import { OdcBaseNode } from '@console/topology/src/elements';
+import { TopologyListViewNode } from '@console/topology/src/components/list-view';
 
 interface NoStatusListViewNodeProps {
   item: OdcBaseNode;

@@ -1,6 +1,6 @@
 import { DeploymentConfigModel, ReplicaSetModel } from '@console/internal/models';
+import { EditApplication } from '@console/topology/src/actions';
 import { getKebabActionsForKind } from '../kebab-actions';
-import { EditApplication } from '../../actions/modify-application';
 
 describe('kebab-actions: ', () => {
   it('kebab action should have "Edit Application" option for deploymentConfig', () => {

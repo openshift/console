@@ -7,7 +7,7 @@ import { ValidatedOptions } from '@patternfly/react-core';
 import { DropdownField } from '@console/shared';
 import { k8sGet, K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
 import { ImageStreamTagModel } from '@console/internal/models';
-import { UNASSIGNED_KEY } from '../../../const';
+import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import {
   getImageStreamTags,
   getPorts,

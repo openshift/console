@@ -1,8 +1,8 @@
 import { cloneDeep } from 'lodash';
 import { TFunction } from 'i18next';
+import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '@console/topology/src/const';
 import { deployValidationSchema } from '../deployImage-validation-utils';
 import { mockDeployImageFormData } from '../__mocks__/deployImage-validation-mock';
-import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '../../../const';
 import { serverlessCommonTests } from './serverless-common-tests';
 
 const t = (key): TFunction => key;

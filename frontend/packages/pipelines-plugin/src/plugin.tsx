@@ -30,7 +30,7 @@ import {
 import * as models from './models';
 import * as pipelineIcon from './images/pipeline.svg';
 import { pipelinesTopologyPlugin } from './topology/pipelinesTopologyPlugin';
-import { TopologyDataModelFactory } from '@console/dev-console/src/extensions/topology';
+import { TopologyDataModelFactory } from '@console/topology/src/extensions/topology';
 
 const {
   PipelineModel,

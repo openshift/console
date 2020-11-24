@@ -5,7 +5,8 @@ import {
   addResourceMenu,
   addGroupResourceMenu,
 } from '@console/dev-console/src/actions/add-resources';
-import { GraphData, getResource } from '@console/dev-console/src/components/topology';
+import { GraphData } from '@console/topology/src/topology-types';
+import { getResource } from '@console/topology/src/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { addEventSource } from '../actions/add-event-source';
 import { addTrigger } from '../actions/add-trigger';

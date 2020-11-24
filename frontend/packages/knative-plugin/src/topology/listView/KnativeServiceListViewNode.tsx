@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Node, observer } from '@patternfly/react-topology';
+import { getResourceKind } from '@console/topology/src/utils';
 import {
-  getResourceKind,
   TopologyListViewNode,
   TypedResourceBadgeCell,
-} from '@console/dev-console/src/components/topology';
+} from '@console/topology/src/components/list-view';
 
 interface KnativeServiceListViewNodeProps {
   item: Node;

@@ -10,7 +10,7 @@ import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models
 import { hasIcon } from '@console/internal/components/catalog/catalog-item-icon';
 import { ServiceModel } from '@console/knative-plugin';
 import { Pipeline } from '@console/pipelines-plugin/src/utils/pipeline-augment';
-import { UNASSIGNED_KEY } from '../../const';
+import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { Resources, DeploymentData, GitReadableTypes } from '../import/import-types';
 import { AppResources } from './edit-application-types';
 import { RegistryType } from '../../utils/imagestream-utils';
