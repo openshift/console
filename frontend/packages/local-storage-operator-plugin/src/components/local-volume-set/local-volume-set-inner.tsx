@@ -21,6 +21,7 @@ import {
   diskTypeDropdownItems,
   diskSizeUnitOptions,
   allNodesSelectorTxt,
+  DISK_TYPES,
 } from '../../constants';
 import './create-local-volume-set.scss';
 
@@ -122,11 +123,9 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
           id="create-lvs-disk-type-dropdown"
           dropDownClassName="dropdown--full-width"
           items={diskTypeOptions}
-          title={state.diskType}
+          title={DISK_TYPES[state.diskType]?.title}
           selectedKey={state.diskType}
-          onChange={(type: string) =>
-            dispatch({ type: 'setDiskType', value: diskTypeDropdownItems[type] })
-          }
+          onChange={(type: string) => dispatch({ type: 'setDiskType', value: type })}
         />
       </FormGroup>
       <ExpandableSection toggleText="Advanced" data-test-id="create-lvs-form-advanced">
