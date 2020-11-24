@@ -13,9 +13,10 @@ import { EventSources } from '../import-types';
 
 interface KafkaSourceSectionProps {
   title: string;
+  fullWidth?: boolean;
 }
 
-const KafkaSourceSection: React.FC<KafkaSourceSectionProps> = ({ title }) => {
+const KafkaSourceSection: React.FC<KafkaSourceSectionProps> = ({ title, fullWidth }) => {
   const { t } = useTranslation();
   const memoResources = React.useMemo(() => strimziResourcesWatcher(), []);
   const { kafkas, kafkatopics } = useK8sWatchResources<{
@@ -82,10 +83,10 @@ const KafkaSourceSection: React.FC<KafkaSourceSectionProps> = ({ title }) => {
   }, [kafkatopics.loaded, kafkatopics.loadError, kafkatopics.data, t]);
 
   return (
-    <FormSection title={title} extraMargin>
+    <FormSection title={title} extraMargin fullWidth={fullWidth}>
       <SelectInputField
         data-test-id="kafkasource-bootstrapservers-field"
-        name={`data.${EventSources.KafkaSource}.bootstrapServers`}
+        name={`formData.data.${EventSources.KafkaSource}.bootstrapServers`}
         label={t('knative-plugin~Bootstrap Servers')}
         options={bootstrapServers}
         placeholderText={bsPlaceholder}
@@ -96,7 +97,7 @@ const KafkaSourceSection: React.FC<KafkaSourceSectionProps> = ({ title }) => {
       />
       <SelectInputField
         data-test-id="kafkasource-topics-field"
-        name={`data.${EventSources.KafkaSource}.topics`}
+        name={`formData.data.${EventSources.KafkaSource}.topics`}
         label={t('knative-plugin~Topics')}
         options={kafkaTopics}
         placeholderText={ktPlaceholder}
@@ -108,7 +109,7 @@ const KafkaSourceSection: React.FC<KafkaSourceSectionProps> = ({ title }) => {
       <InputField
         data-test-id="kafkasource-consumergroup-field"
         type={TextInputTypes.text}
-        name={`data.${EventSources.KafkaSource}.consumerGroup`}
+        name={`formData.data.${EventSources.KafkaSource}.consumerGroup`}
         label={t('knative-plugin~Consumer Group')}
         helpText={t('knative-plugin~A group that tracks maximum offset consumed')}
         required

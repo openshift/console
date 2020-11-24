@@ -18,6 +18,7 @@ import {
   getEventSourceConnectorList,
   getEventSourceList,
   getEventSourceData,
+  sanitizeKafkaSourceResource,
 } from '../create-eventsources-utils';
 import {
   getDefaultEventingData,
@@ -31,7 +32,7 @@ describe('Create knative Utils', () => {
   it('expect response to be of kind CronJobSource with proper ApiGroup', () => {
     const defaultEventingData = getDefaultEventingData(EventSources.CronJobSource);
     const mockData = _.cloneDeep(defaultEventingData);
-    mockData.apiVersion = 'sources.eventing.knative.dev/v1alpha1';
+    mockData.formData.apiVersion = 'sources.eventing.knative.dev/v1alpha1';
     const knEventingResource: k8sModels.K8sResourceKind = getEventSourceResource(mockData);
     expect(knEventingResource.kind).toBe(EventSourceCronJobModel.kind);
     expect(knEventingResource.apiVersion).toBe(
@@ -59,8 +60,8 @@ describe('Create knative Utils', () => {
   it('expect response to be of kind sinkBinding with proper ApiGroup', () => {
     const defaultEventingData = getDefaultEventingData(EventSources.CronJobSource);
     const mockData = _.cloneDeep(defaultEventingData);
-    mockData.type = 'SinkBinding';
-    mockData.apiVersion = 'sources.knative.dev/v1alpha2';
+    mockData.formData.type = 'SinkBinding';
+    mockData.formData.apiVersion = 'sources.knative.dev/v1alpha2';
     const knEventingResource: k8sModels.K8sResourceKind = getEventSourceResource(mockData);
     expect(knEventingResource.kind).toBe(EventSourceSinkBindingModel.kind);
     expect(knEventingResource.apiVersion).toBe(
@@ -82,7 +83,7 @@ describe('Create knative Utils', () => {
     const defaultEventingData = getDefaultEventingData(EventSourceCamelModel.kind);
     const mockData = {
       ...defaultEventingData,
-      yamlData: safeDump(getEventSourcesDepResource(defaultEventingData)),
+      yamlData: safeDump(getEventSourcesDepResource(defaultEventingData.formData)),
     };
     const knEventingResource: k8sModels.K8sResourceKind = loadYamlData(mockData);
     expect(knEventingResource.kind).toBe(EventSourceCamelModel.kind);
@@ -95,10 +96,10 @@ describe('Create knative Utils', () => {
   it('expect response of loadYamlData to update namespace if not there yamlEditor', () => {
     jest.spyOn(k8sModels, 'modelFor').mockImplementation(() => EventSourceCamelModel);
     const defaultEventingData = getDefaultEventingData(EventSourceCamelModel.kind);
-    defaultEventingData.project.name = '';
+    defaultEventingData.formData.project.name = '';
     const mockData = {
       ...getDefaultEventingData(EventSourceCamelModel.kind),
-      yamlData: safeDump(getEventSourcesDepResource(defaultEventingData)),
+      yamlData: safeDump(getEventSourcesDepResource(defaultEventingData.formData)),
     };
     const knEventingResource: k8sModels.K8sResourceKind = loadYamlData(mockData);
     expect(knEventingResource.kind).toBe(EventSourceCamelModel.kind);
@@ -183,5 +184,120 @@ describe('Create knative Utils', () => {
 
   it('expect getEventSourceData should return undefined for dynamic Sources', () => {
     expect(getEventSourceData('gcpsource')).toBeUndefined();
+  });
+
+  it('expect sanitizeKafkaSourceResource should return valid values for form', () => {
+    const KafkaSourceData = getDefaultEventingData(EventSources.KafkaSource);
+    expect(sanitizeKafkaSourceResource(KafkaSourceData.formData)).toBeDefined();
+  });
+
+  it('expect sanitizeKafkaSourceResource should return default values for form if data is not present', () => {
+    const KafkaSourceData = _.omit(
+      getDefaultEventingData(EventSources.KafkaSource),
+      'formData.data',
+    );
+    expect(sanitizeKafkaSourceResource(KafkaSourceData.formData)).toBeDefined();
+    expect(
+      sanitizeKafkaSourceResource(KafkaSourceData.formData).data[EventSources.KafkaSource]
+        .bootstrapServers,
+    ).toEqual([]);
+    expect(
+      sanitizeKafkaSourceResource(KafkaSourceData.formData).data[EventSources.KafkaSource].topics,
+    ).toEqual([]);
+    expect(
+      sanitizeKafkaSourceResource(KafkaSourceData.formData).data[EventSources.KafkaSource]
+        .consumerGroup,
+    ).toEqual('');
+    expect(
+      sanitizeKafkaSourceResource(KafkaSourceData.formData).data[EventSources.KafkaSource].net.sasl
+        .enable,
+    ).toEqual(false);
+    expect(
+      sanitizeKafkaSourceResource(KafkaSourceData.formData).data[EventSources.KafkaSource].net.sasl
+        .user,
+    ).toEqual({ secretKeyRef: { name: '', key: '' } });
+    expect(
+      sanitizeKafkaSourceResource(KafkaSourceData.formData).data[EventSources.KafkaSource].net.sasl
+        .password,
+    ).toEqual({ secretKeyRef: { name: '', key: '' } });
+    expect(
+      sanitizeKafkaSourceResource(KafkaSourceData.formData).data[EventSources.KafkaSource].net.tls
+        .enable,
+    ).toEqual(false);
+    expect(
+      sanitizeKafkaSourceResource(KafkaSourceData.formData).data[EventSources.KafkaSource].net.tls
+        .caCert,
+    ).toEqual({ secretKeyRef: { name: '', key: '' } });
+    expect(
+      sanitizeKafkaSourceResource(KafkaSourceData.formData).data[EventSources.KafkaSource].net.tls
+        .cert,
+    ).toEqual({ secretKeyRef: { name: '', key: '' } });
+    expect(
+      sanitizeKafkaSourceResource(KafkaSourceData.formData).data[EventSources.KafkaSource].net.tls
+        .key,
+    ).toEqual({ secretKeyRef: { name: '', key: '' } });
+  });
+
+  it('expect sanitizeKafkaSourceResource should return values from form if valid', () => {
+    const KafkaSourceData = getDefaultEventingData(EventSources.KafkaSource);
+    KafkaSourceData.formData.data[EventSources.KafkaSource] = {
+      ...KafkaSourceData.formData.data[EventSources.KafkaSource],
+      bootstrapServers: ['server1', 'server2'],
+      topics: ['topic1'],
+      consumerGroup: 'knative-group',
+      net: {
+        sasl: {
+          enable: true,
+          user: { secretKeyRef: { name: 'username', key: 'userkey' } },
+          password: { secretKeyRef: { name: 'passwordname', key: 'passwordkey' } },
+        },
+        tls: {
+          enable: true,
+          caCert: { secretKeyRef: { name: 'cacertname', key: 'cacertkey' } },
+          cert: { secretKeyRef: { name: 'certname', key: 'certkey' } },
+          key: { secretKeyRef: { name: 'key', key: 'key1' } },
+        },
+      },
+    };
+    expect(
+      sanitizeKafkaSourceResource(KafkaSourceData.formData).data[EventSources.KafkaSource]
+        .bootstrapServers,
+    ).toHaveLength(2);
+    expect(
+      sanitizeKafkaSourceResource(KafkaSourceData.formData).data[EventSources.KafkaSource].topics,
+    ).toHaveLength(1);
+    expect(
+      sanitizeKafkaSourceResource(KafkaSourceData.formData).data[EventSources.KafkaSource]
+        .consumerGroup,
+    ).toEqual('knative-group');
+
+    expect(
+      sanitizeKafkaSourceResource(KafkaSourceData.formData).data[EventSources.KafkaSource].net.sasl
+        .enable,
+    ).toEqual(true);
+    expect(
+      sanitizeKafkaSourceResource(KafkaSourceData.formData).data[EventSources.KafkaSource].net.sasl
+        .user,
+    ).toEqual({ secretKeyRef: { name: 'username', key: 'userkey' } });
+    expect(
+      sanitizeKafkaSourceResource(KafkaSourceData.formData).data[EventSources.KafkaSource].net.sasl
+        .password,
+    ).toEqual({ secretKeyRef: { name: 'passwordname', key: 'passwordkey' } });
+    expect(
+      sanitizeKafkaSourceResource(KafkaSourceData.formData).data[EventSources.KafkaSource].net.tls
+        .enable,
+    ).toEqual(true);
+    expect(
+      sanitizeKafkaSourceResource(KafkaSourceData.formData).data[EventSources.KafkaSource].net.tls
+        .caCert,
+    ).toEqual({ secretKeyRef: { name: 'cacertname', key: 'cacertkey' } });
+    expect(
+      sanitizeKafkaSourceResource(KafkaSourceData.formData).data[EventSources.KafkaSource].net.tls
+        .cert,
+    ).toEqual({ secretKeyRef: { name: 'certname', key: 'certkey' } });
+    expect(
+      sanitizeKafkaSourceResource(KafkaSourceData.formData).data[EventSources.KafkaSource].net.tls
+        .key,
+    ).toEqual({ secretKeyRef: { name: 'key', key: 'key1' } });
   });
 });

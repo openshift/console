@@ -2,7 +2,6 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
-import { LoadingInline } from '@console/internal/components/utils';
 import EventSourceForm from '../EventSourceForm';
 import EventSourcesSelector from '../event-sources/EventSourcesSelector';
 import { getDefaultEventingData } from '../../../utils/__tests__/knative-serving-data';
@@ -58,11 +57,6 @@ describe('EventSource Form', () => {
   it('should not render EventSourceSection if sources are loaded with no data', () => {
     const eventSourceForm = shallow(<EventSourceForm {...formProps} />);
     expect(eventSourceForm.find(EventSourceSection).exists()).toBe(false);
-  });
-
-  it('should render loading if sources are not loaded', () => {
-    const eventSourceForm = shallow(<EventSourceForm {...formProps} />);
-    expect(eventSourceForm.find(LoadingInline).exists()).toBe(true);
   });
 
   it('should render EventSourcesSelector if sources are loaded', () => {

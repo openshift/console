@@ -16,7 +16,7 @@ jest.mock('formik', () => ({
   useFormikContext: jest.fn(() => ({
     setFieldValue: jest.fn(),
     setFieldTouched: jest.fn(),
-    values: { type: 'CamelSource', yamlData: '' },
+    values: { formData: { type: 'CamelSource' }, yamlData: '' },
   })),
 }));
 

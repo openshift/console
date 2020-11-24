@@ -7,21 +7,22 @@ import { EventSources } from '../import-types';
 
 interface PingSourceSectionProps {
   title: string;
+  fullWidth?: boolean;
 }
 
-const PingSourceSection: React.FC<PingSourceSectionProps> = ({ title }) => {
+const PingSourceSection: React.FC<PingSourceSectionProps> = ({ title, fullWidth }) => {
   const { t } = useTranslation();
   return (
-    <FormSection title={title} extraMargin>
+    <FormSection title={title} extraMargin fullWidth={fullWidth}>
       <InputField
         type={TextInputTypes.text}
-        name={`data.${EventSources.PingSource}.jsonData`}
+        name={`formData.data.${EventSources.PingSource}.jsonData`}
         label={t('knative-plugin~Data')}
         helpText={t('knative-plugin~The data posted to the target function')}
       />
       <InputField
         type={TextInputTypes.text}
-        name={`data.${EventSources.PingSource}.schedule`}
+        name={`formData.data.${EventSources.PingSource}.schedule`}
         label={t('knative-plugin~Schedule')}
         helpText={t(
           'knative-plugin~Schedule is described using the unix-cron string format (* * * * *)',

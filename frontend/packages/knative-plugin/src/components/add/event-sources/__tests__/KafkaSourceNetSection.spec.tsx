@@ -14,19 +14,21 @@ jest.mock('react-i18next', () => {
 jest.mock('formik', () => ({
   useFormikContext: jest.fn(() => ({
     values: {
-      data: {
-        KafkaSource: {
-          net: {
-            sasl: {
-              enable: true,
-              user: { secretKeyRef: { name: '', key: '' } },
-              password: { secretKeyRef: { name: '', key: '' } },
-            },
-            tls: {
-              enable: true,
-              caCert: { secretKeyRef: { name: '', key: '' } },
-              cert: { secretKeyRef: { name: '', key: '' } },
-              key: { secretKeyRef: { name: '', key: '' } },
+      formData: {
+        data: {
+          KafkaSource: {
+            net: {
+              sasl: {
+                enable: true,
+                user: { secretKeyRef: { name: '', key: '' } },
+                password: { secretKeyRef: { name: '', key: '' } },
+              },
+              tls: {
+                enable: true,
+                caCert: { secretKeyRef: { name: '', key: '' } },
+                cert: { secretKeyRef: { name: '', key: '' } },
+                key: { secretKeyRef: { name: '', key: '' } },
+              },
             },
           },
         },

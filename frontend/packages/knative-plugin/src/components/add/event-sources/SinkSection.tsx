@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import * as fuzzy from 'fuzzysearch';
-import { useFormikContext, FormikValues } from 'formik';
+import { useFormikContext, FormikValues, useField } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { FormGroup, TextInputTypes, Alert } from '@patternfly/react-core';
 import { InputField, getFieldId, ResourceDropdownField, RadioGroupField } from '@console/shared';
@@ -17,6 +17,7 @@ import { sourceSinkType, SinkType } from '../import-types';
 
 interface SinkSectionProps {
   namespace: string;
+  fullWidth?: boolean;
 }
 
 interface SinkResourcesProps {
@@ -36,7 +37,7 @@ const SinkUri: React.FC = () => {
     >
       <InputField
         type={TextInputTypes.text}
-        name="sink.uri"
+        name="formData.sink.uri"
         placeholder={t('knative-plugin~Enter URI')}
         data-test-id="sink-section-uri"
         required
@@ -48,9 +49,10 @@ const SinkUri: React.FC = () => {
 const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) => {
   const { t } = useTranslation();
   const [resourceAlert, setResourceAlert] = React.useState(false);
-  const { setFieldValue, setFieldTouched, validateForm, initialValues, touched } = useFormikContext<
+  const { setFieldValue, setFieldTouched, validateForm, initialValues } = useFormikContext<
     FormikValues
   >();
+  const [, { touched: sinkTypeTouched }] = useField('formData.sinkType');
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
   const fieldId = getFieldId('sink-name', 'dropdown');
   const onChange = React.useCallback(
@@ -59,18 +61,18 @@ const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) 
       const name = valueObj?.props?.name;
       if (name && modelData) {
         const { apiGroup, apiVersion, kind } = modelData;
-        setFieldValue('sink.name', name);
-        setFieldTouched('sink.name', true);
-        setFieldValue('sink.apiVersion', `${apiGroup}/${apiVersion}`);
-        setFieldTouched('sink.apiVersion', true);
-        setFieldValue('sink.kind', kind);
-        setFieldTouched('sink.kind', true);
+        setFieldValue('formData.sink.name', name);
+        setFieldTouched('formData.sink.name', true);
+        setFieldValue('formData.sink.apiVersion', `${apiGroup}/${apiVersion}`);
+        setFieldTouched('formData.sink.apiVersion', true);
+        setFieldValue('formData.sink.kind', kind);
+        setFieldTouched('formData.sink.kind', true);
         validateForm();
       }
     },
     [setFieldValue, setFieldTouched, validateForm],
   );
-  const contextAvailable = isMoveSink ? false : !!initialValues.sink.name;
+  const contextAvailable = isMoveSink ? false : !!initialValues.formData.sink.name;
   const resourcesData = [
     ...knativeServingResourcesServices(namespace),
     ...getDynamicChannelResourceList(namespace),
@@ -80,9 +82,9 @@ const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) 
   const handleOnLoad = (resourceList: { [key: string]: string }) => {
     if (_.isEmpty(resourceList)) {
       setResourceAlert(true);
-      if (!touched.sinkType) {
-        setFieldValue('sinkType', SinkType.Uri);
-        setFieldTouched('sinkType', true);
+      if (!sinkTypeTouched) {
+        setFieldValue('formData.sinkType', SinkType.Uri);
+        setFieldTouched('formData.sinkType', true);
       }
     } else {
       setResourceAlert(false);
@@ -121,7 +123,7 @@ const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) 
         </>
       )}
       <ResourceDropdownField
-        name="sink.key"
+        name="formData.sink.key"
         resources={resourcesData}
         dataSelector={['metadata', 'name']}
         fullWidth
@@ -145,7 +147,7 @@ const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) 
 export const SinkUriResourcesGroup: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) => {
   return (
     <RadioGroupField
-      name="sinkType"
+      name="formData.sinkType"
       options={[
         {
           label: sourceSinkType.Resource.label,
@@ -162,7 +164,7 @@ export const SinkUriResourcesGroup: React.FC<SinkResourcesProps> = ({ namespace,
   );
 };
 
-const SinkSection: React.FC<SinkSectionProps> = ({ namespace }) => {
+const SinkSection: React.FC<SinkSectionProps> = ({ namespace, fullWidth }) => {
   const { t } = useTranslation();
   return (
     <FormSection
@@ -171,6 +173,7 @@ const SinkSection: React.FC<SinkSectionProps> = ({ namespace }) => {
         'knative-plugin~Add a Sink to route this Event Source to a Channel, Broker, Knative Service or another route.',
       )}
       extraMargin
+      fullWidth={fullWidth}
     >
       <SinkUriResourcesGroup namespace={namespace} />
     </FormSection>

@@ -4,7 +4,7 @@ import {
   Resources,
 } from '@console/dev-console/src/components/import/import-types';
 import {
-  EventSourceFormData,
+  EventSourceSyncFormData,
   SinkType,
   AddChannelFormData,
   NormalizedEventSources,
@@ -328,30 +328,33 @@ const eventSourceData = {
   },
 };
 
-export const getDefaultEventingData = (typeEventSource: string): EventSourceFormData => {
-  const defaultEventingData: EventSourceFormData = {
-    project: {
-      name: 'mock-project',
-      displayName: '',
-      description: '',
-    },
-    apiVersion: 'sources.knative.dev/v1alpha1',
-    application: {
-      initial: 'mock-app',
-      name: 'mock-app',
-      selectedKey: 'mock-app',
-    },
-    name: 'esmyapp',
-    sinkType: SinkType.Resource,
-    sink: {
-      apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
-      name: 'event-display',
-      kind: ServiceModel.kind,
-      key: `${ServiceModel.kind}-event-display`,
-    },
-    type: typeEventSource,
-    data: {
-      [typeEventSource]: eventSourceData[typeEventSource],
+export const getDefaultEventingData = (typeEventSource: string): EventSourceSyncFormData => {
+  const defaultEventingData: EventSourceSyncFormData = {
+    editorType: 'form',
+    formData: {
+      project: {
+        name: 'mock-project',
+        displayName: '',
+        description: '',
+      },
+      apiVersion: 'sources.knative.dev/v1alpha1',
+      application: {
+        initial: 'mock-app',
+        name: 'mock-app',
+        selectedKey: 'mock-app',
+      },
+      name: 'esmyapp',
+      sinkType: SinkType.Resource,
+      sink: {
+        apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
+        name: 'event-display',
+        kind: ServiceModel.kind,
+        key: `${ServiceModel.kind}-event-display`,
+      },
+      type: typeEventSource,
+      data: {
+        [typeEventSource]: eventSourceData[typeEventSource],
+      },
     },
     yamlData: '',
   };

@@ -148,6 +148,13 @@ export const isDynamicEventResourceKind = (resourceRef: string): boolean => {
   return index !== -1;
 };
 
+export const isDynamicEventSourceKind = (kind: string): boolean => {
+  const index = eventSourceData.eventSourceModels.findIndex(
+    (model: K8sKind) => model.kind === kind,
+  );
+  return index !== -1;
+};
+
 export const fetchChannelsCrd = async () => {
   const url = 'api/console/knative-channels';
   try {

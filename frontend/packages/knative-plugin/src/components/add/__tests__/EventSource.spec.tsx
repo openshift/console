@@ -18,7 +18,7 @@ describe('EventSourceSpec', () => {
   const namespaceName = 'myApp';
   const perspective = 'dev';
   const activeApplicationName = 'appGroup';
-  const eventSourceStatusData = null;
+  const eventSourceStatusData = { loaded: true, eventSourceList: null };
 
   it('should render form with proper initialvalues if contextSource is not passed', () => {
     wrapper = shallow(
@@ -26,15 +26,16 @@ describe('EventSourceSpec', () => {
         namespace={namespaceName}
         perspective={perspective}
         eventSourceStatus={eventSourceStatusData}
+        showCatalog={false}
         activeApplication={activeApplicationName}
       />,
     );
     const FormikField = wrapper.find(Formik);
     expect(FormikField.exists()).toBe(true);
-    expect(FormikField.get(0).props.initialValues.project.name).toBe('myApp');
-    expect(FormikField.get(0).props.initialValues.sink.apiVersion).toEqual('');
-    expect(FormikField.get(0).props.initialValues.sink.kind).toEqual('');
-    expect(FormikField.get(0).props.initialValues.sink.name).toEqual('');
+    expect(FormikField.get(0).props.initialValues.formData.project.name).toBe('myApp');
+    expect(FormikField.get(0).props.initialValues.formData.sink.apiVersion).toEqual('');
+    expect(FormikField.get(0).props.initialValues.formData.sink.kind).toEqual('');
+    expect(FormikField.get(0).props.initialValues.formData.sink.name).toEqual('');
   });
 
   it('should render form with proper initialvalues for sink if contextSource is passed', () => {
@@ -44,17 +45,18 @@ describe('EventSourceSpec', () => {
         namespace={namespaceName}
         perspective={perspective}
         eventSourceStatus={eventSourceStatusData}
+        showCatalog={false}
         contextSource={contextSourceData}
         activeApplication={activeApplicationName}
       />,
     );
     const FormikField = wrapper.find(Formik);
     expect(FormikField.exists()).toBe(true);
-    expect(FormikField.get(0).props.initialValues.project.name).toBe('myApp');
-    expect(FormikField.get(0).props.initialValues.sink.apiVersion).toEqual(
+    expect(FormikField.get(0).props.initialValues.formData.project.name).toBe('myApp');
+    expect(FormikField.get(0).props.initialValues.formData.sink.apiVersion).toEqual(
       'serving.knative.dev/v1',
     );
-    expect(FormikField.get(0).props.initialValues.sink.kind).toEqual('Service');
-    expect(FormikField.get(0).props.initialValues.sink.name).toEqual('svc-display');
+    expect(FormikField.get(0).props.initialValues.formData.sink.kind).toEqual('Service');
+    expect(FormikField.get(0).props.initialValues.formData.sink.name).toEqual('svc-display');
   });
 });
