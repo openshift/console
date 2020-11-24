@@ -311,7 +311,7 @@
     "webpack-virtual-modules": "0.3.x"
   },
   "engines": {
-    "node": ">=10.x"
+    "node": ">=14.x"
   },
   "resolutions": {
     "jquery": "3.5.1",

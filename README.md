@@ -1,11 +1,10 @@
-OpenShift Console
-=========================
+# OpenShift Console
 
 Codename: "Bridge"
 
 [quay.io/openshift/origin-console](https://quay.io/repository/openshift/origin-console?tab=tags)
 
-The console is a more friendly `kubectl` in the form of a single page webapp.  It also integrates with other services like monitoring, chargeback, and OLM.  Some things that go on behind the scenes include:
+The console is a more friendly `kubectl` in the form of a single page webapp. It also integrates with other services like monitoring, chargeback, and OLM. Some things that go on behind the scenes include:
 
 - Proxying the Kubernetes API under `/api/kubernetes`
 - Providing additional non-Kubernetes APIs for interacting with the cluster
@@ -16,7 +15,7 @@ The console is a more friendly `kubectl` in the form of a single page webapp.  I
 
 ### Dependencies:
 
-1. [node.js](https://nodejs.org/) >= 10 & [yarn](https://yarnpkg.com/en/docs/install) >= 1.3.2
+1. [node.js](https://nodejs.org/) >= 14 & [yarn](https://yarnpkg.com/en/docs/install) >= 1.20
 2. [go](https://golang.org/) >= 1.13+
 3. [oc](https://mirror.openshift.com/pub/openshift-v4/clients/oc/4.4/) or [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) and an OpenShift or Kubernetes cluster
 4. [jq](https://stedolan.github.io/jq/download/) (for `contrib/environment.sh`)
@@ -110,11 +109,13 @@ The script in `contrib/environment.sh` sets sensible defaults in the environment
 To configure the application to run by hand, (or if `environment.sh` doesn't work for some reason) you can manually provide a Kubernetes bearer token with the following steps.
 
 First get the secret ID that has a type of `kubernetes.io/service-account-token` by running:
+
 ```
 kubectl get secrets
 ```
 
 then get the secret contents:
+
 ```
 kubectl describe secrets/<secret-id-obtained-previously>
 ```
@@ -138,39 +139,46 @@ go 1.13+, nodejs/yarn, kubectl
 
 ### Frontend Development
 
-All frontend code lives in the `frontend/` directory.  The frontend uses node, yarn, and webpack to compile dependencies into self contained bundles which are loaded dynamically at run time in the browser.  These bundles are not committed to git. Tasks are defined in `package.json` in the `scripts` section and are aliased to `yarn run <cmd>` (in the frontend directory).
+All frontend code lives in the `frontend/` directory. The frontend uses node, yarn, and webpack to compile dependencies into self contained bundles which are loaded dynamically at run time in the browser. These bundles are not committed to git. Tasks are defined in `package.json` in the `scripts` section and are aliased to `yarn run <cmd>` (in the frontend directory).
 
 #### Install Dependencies
 
 To install the build tools and dependencies:
+
 ```
 cd frontend
 yarn install
 ```
+
 You must run this command once, and every time the dependencies change. `node_modules` are not committed to git.
 
 #### Interactive Development
 
 The following build task will watch the source code for changes and compile automatically.
 If you would like to disable hot reloading, set the environment variable `HOT_RELOAD` to `false`.
+
 ```
 yarn run dev
 ```
+
 If changes aren't detected, you might need to increase `fs.inotify.max_user_watches`. See <https://webpack.js.org/configuration/watch/#not-enough-watchers>. If you need to increase your watchers, it's common to see multiple errors beginning with `Error from chokidar`.
 
 ### Unit Tests
 
 Run all unit tests:
+
 ```
 ./test.sh
 ```
 
 Run backend tests:
+
 ```
 ./test-backend.sh
 ```
 
 Run frontend tests:
+
 ```
 ./test-frontend.sh
 ```
@@ -191,6 +199,7 @@ Run frontend tests:
 Cypress integration tests are implemented in [Cypress.io](https://www.cypress.io/).
 
 Launch Cypress test runner:
+
 ```
 cd frontend
 oc login ...
@@ -202,7 +211,8 @@ By default, it will look for Chrome in the system and use it, but if you want to
 
 ##### Execute Cypress in different packages
 
-An alternate way to execute cypress tests is via [test-cypress.sh](test-cypress.sh) which takes a `-p <package>` parameter to allow execution in different packages.  It also can run Cypress tests in the Test Runner UI or in `-- headless` mode:
+An alternate way to execute cypress tests is via [test-cypress.sh](test-cypress.sh) which takes a `-p <package>` parameter to allow execution in different packages. It also can run Cypress tests in the Test Runner UI or in `-- headless` mode:
+
 ```
 console>./test-cypress.sh
 Runs Cypress tests in Test Runner or headless mode
@@ -230,36 +240,46 @@ Requirements include Chrome or Firefox, a working cluster, kubectl, and bridge i
 By default, it will look for Chrome in the system and use it, but if you want to use Firefox instead, set `BRIDGE_E2E_BROWSER_NAME` environment variable in your shell with the value `firefox`.
 
 Setup (or any time you change node_modules - `yarn add` or `yarn install`)
+
 ```
 cd frontend && yarn run webdriver-update
 ```
 
 Run integration tests:
+
 ```
 yarn run test-protractor
 ```
 
 Run integration tests on an OpenShift cluster:
+
 ```
 yarn run test-protractor-openshift
 ```
+
 This will include the normal k8s CRUD tests and CRUD tests for OpenShift
 resources.
 
 If you get Jasmine spec timeout errors during runs perhaps against a busy cluster or over slow network, you can try setting a bigger timeout in milliseconds to `BRIDGE_JASMINE_TIMEOUT` environment variable in your shell before running the tests. Default 120000 (2 minutes).
 
 If you your local Chrome version doesn't match the Chromedriver version from the console dependencies, override the version with:
+
 ```
 yarn run webdriver-update --versions.chrome=77.0.3865.120
 ```
+
 For Fedora, you can use:
+
 ```
 yarn run webdriver-update-fedora
 ```
+
 For macOS, you can use:
+
 ```
 yarn run webdriver-update-macos
 ```
+
 ##### Hacking Protractor Tests
 
 To see what the tests are actually doing, it is posible to run in none `headless` mode by setting the `NO_HEADLESS` environment variable:
@@ -299,12 +319,15 @@ in the [openshift/release](https://github.com/openshift/release) repo and were g
 CI runs the [test-prow-e2e.sh](test-prow-e2e.sh) script, which runs [test-cypress.sh](test-cypress.sh) and ['test-protractor.sh e2e'](test-protractor.sh), which runs the protractor `e2e` test suite.
 
 ##### Cypress in CI
+
 The CI executes [test-cypress.sh](test-cypress.sh) to run all Cypress tests, in all 'packages' (console, olm, and devconsole), in `-- headless` mode via:
 
 `test-cypress.sh -h true`
 
 For more information on `test-cypress.sh` usage please see [Execute Cypress in different packages](#execute-cypress-in-different-packages)
+
 ##### Protractor in CI
+
 ['test-protractor.sh e2e'](test-protractor.sh) runs the protractor `e2e` test suite defined in [protractor.conf.ts](frontend/integration-tests/protractor.conf.ts)
 You can simulate an e2e run against an existing cluster with the following commands (replace `/path/to/install-dir` with your OpenShift install directory):
 
@@ -325,7 +348,7 @@ $ ./test-protractor.sh <suite>
 ### Deploying a Custom Image to an OpenShift Cluster
 
 Once you have made changes locally, these instructions will allow you to push
-changes to an OpenShift cluster for others to review.  This involves building a
+changes to an OpenShift cluster for others to review. This involves building a
 local image, pushing the image to an image registry, then updating the
 OpenShift cluster to pull the new image.
 
@@ -335,31 +358,43 @@ OpenShift cluster to pull the new image.
 2. An image registry like [quay.io](https://quay.io/signin/) or [Docker Hub](https://hub.docker.com/)
 
 #### Steps
+
 1. Create a repository in the image registry of your choice to hold the image.
 2. Build Image `docker build -t <your-image-name> <path-to-repository | url>`. For example:
+
 ```
 docker build -t quay.io/myaccount/console:latest .
 ```
-3. Push image to image registry `docker push <your-image-name>`.  Make sure
+
+3. Push image to image registry `docker push <your-image-name>`. Make sure
    docker is logged into your image registry! For example:
+
 ```
 docker push quay.io/myaccount/console:latest
 ```
+
 4. Put the console operator in unmanaged state:
+
 ```
 oc patch consoles.operator.openshift.io cluster --patch '{ "spec": { "managementState": "Unmanaged" } }' --type=merge
 ```
+
 5. Update the console Deployment with the new image:
+
 ```
 oc set image deploy console console=quay.io/myaccount/console:latest -n openshift-console
 ```
+
 6. Wait for the changes to rollout:
+
 ```
 oc rollout status -w deploy/console -n openshift-console
 ```
+
 You should now be able to see your development changes on the remote OpenShift cluster!
 
 When done, you can put the console operator back in a managed state to remove the custom image:
+
 ```
 oc patch consoles.operator.openshift.io cluster --patch '{ "spec": { "managementState": "Managed" } }' --type=merge
 ```
@@ -371,23 +406,27 @@ Dependencies should be pinned to an exact semver, sha, or git tag (eg, no ^).
 #### Backend
 
 Whenever making vendor changes:
+
 1. Finish updating dependencies & writing changes
-2. Commit everything *except* `vendor/` (eg, `server: add x feature`)
+2. Commit everything _except_ `vendor/` (eg, `server: add x feature`)
 3. Make a second commit with only `vendor/` (eg, `vendor: revendor`)
 
 Adding new or updating existing backend dependencies:
- 1. Edit the `go.mod` file to the desired version (most likely a git hash)
- 2. Run `go mod tidy && go mod vendor`
- 3. Verify update was successful. `go.sum` will have been updated to reflect the changes to `go.mod` and the package will have been updated in `vendor`.
+
+1.  Edit the `go.mod` file to the desired version (most likely a git hash)
+2.  Run `go mod tidy && go mod vendor`
+3.  Verify update was successful. `go.sum` will have been updated to reflect the changes to `go.mod` and the package will have been updated in `vendor`.
 
 #### Frontend
 
 Add new frontend dependencies:
+
 ```
 yarn add <package@version>
 ```
 
 Update existing frontend dependencies:
+
 ```
 yarn upgrade <package@version>
 ```
