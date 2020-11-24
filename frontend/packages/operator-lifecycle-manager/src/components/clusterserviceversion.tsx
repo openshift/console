@@ -686,6 +686,7 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
         namespace={props.namespace}
         ListComponent={ClusterServiceVersionList}
         helpText={helpText}
+        textFilter="cluster-service-version"
       />
     </>
   );

@@ -29,6 +29,9 @@ import { Alert, Rule, Silence } from '../monitoring/types';
 export const fuzzyCaseInsensitive = (a: string, b: string): boolean =>
   fuzzy(_.toLower(a), _.toLower(b));
 
+const clusterServiceVersionDisplayName = (csv: K8sResourceKind): string =>
+  csv?.spec?.displayName || csv?.metadata?.name;
+
 // TODO: Table filters are undocumented, stringly-typed, and non-obvious. We can change that.
 export const tableFilters: TableFilterMap = {
   name: (filter, obj) => fuzzyCaseInsensitive(filter, obj.metadata.name),
@@ -277,6 +280,12 @@ export const tableFilters: TableFilterMap = {
   'image-name': (str, imageManifestVuln) => fuzzyCaseInsensitive(str, imageManifestVuln.spec.image),
   vulnerability: (str, imageVulnerability) =>
     fuzzyCaseInsensitive(str, imageVulnerability.vulnerability.name),
+
+  // Filter cluster service version by displayName or name text match
+  'cluster-service-version': (str, csv) => {
+    const value = clusterServiceVersionDisplayName(csv);
+    return fuzzyCaseInsensitive(str, value);
+  },
 };
 
 export interface TableFilterGroups {
