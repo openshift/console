@@ -76,6 +76,7 @@ export enum VMSettingsField {
   IMAGE_URL = 'IMAGE_URL',
   START_VM = 'START_VM',
   TEMPLATE_PROVIDER = 'TEMPLATE_PROVIDER',
+  TEMPLATE_SUPPORTED = 'TEMPLATE_SUPPORTED',
 }
 
 export enum ImportProvidersField {

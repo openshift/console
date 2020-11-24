@@ -29,6 +29,9 @@ export const getInitialVmSettings = (data: CommonData): VMSettings => {
     [VMSettingsField.TEMPLATE_PROVIDER]: {
       isHidden: asHidden(!isCreateTemplate),
     },
+    [VMSettingsField.TEMPLATE_SUPPORTED]: {
+      isHidden: asHidden(!isCreateTemplate),
+    },
     [VMSettingsField.OPERATING_SYSTEM]: {
       isRequired: asRequired(true),
     },

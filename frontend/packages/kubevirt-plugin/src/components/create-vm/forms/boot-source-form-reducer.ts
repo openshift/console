@@ -38,6 +38,7 @@ export type BootSourceState = {
   storageClass: { value: string };
   accessMode: { value: string };
   accessModes: { value: string[] };
+  provider?: { value: string };
 };
 
 export enum BOOT_ACTION_TYPE {
@@ -54,6 +55,7 @@ export enum BOOT_ACTION_TYPE {
   SET_STORAGE_CLASS = 'storageClass',
   SET_ACCESS_MODES = 'accessModes',
   SET_ACCESS_MODE = 'accessMode',
+  SET_PROVIDER = 'provider',
 }
 
 export type BootSourceAction =
@@ -69,7 +71,8 @@ export type BootSourceAction =
   | { type: BOOT_ACTION_TYPE.SET_PVC_SIZE; payload: BootSourceState['pvcSize']['value'] }
   | { type: BOOT_ACTION_TYPE.SET_STORAGE_CLASS; payload: BootSourceState['storageClass']['value'] }
   | { type: BOOT_ACTION_TYPE.SET_ACCESS_MODES; payload: BootSourceState['accessModes']['value'] }
-  | { type: BOOT_ACTION_TYPE.SET_ACCESS_MODE; payload: BootSourceState['accessMode']['value'] };
+  | { type: BOOT_ACTION_TYPE.SET_ACCESS_MODE; payload: BootSourceState['accessMode']['value'] }
+  | { type: BOOT_ACTION_TYPE.SET_PROVIDER; payload: BootSourceState['provider']['value'] };
 
 export const initBootFormState: BootSourceState = {
   dataSource: undefined,
@@ -91,6 +94,7 @@ export const initBootFormState: BootSourceState = {
   storageClass: undefined,
   accessMode: { value: AccessMode.READ_WRITE_ONCE.getValue() },
   accessModes: { value: [AccessMode.READ_WRITE_ONCE.getValue()] },
+  provider: undefined,
 };
 
 export const bootFormReducer = (

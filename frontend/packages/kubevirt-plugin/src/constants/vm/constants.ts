@@ -1,12 +1,12 @@
 export const VIRT_LAUNCHER_POD_PREFIX = 'virt-launcher-';
 export const READABLE_VIRTIO = 'virtio';
 export const ANNOTATION_FIRST_BOOT = 'kubevirt.ui/firstBoot';
-export const ANNOTATION_USER_PROVIDER = 'kubevirt.ui/provider';
 export const ANNOTATION_DESCRIPTION = 'description';
 export const ANNOTATION_PXE_INTERFACE = 'kubevirt.ui/pxeInterface';
 export const ANNOTATION_VALIDATIONS = 'validations';
 export const ANNOTATION_ICON = 'iconClass';
 export const LABEL_CDROM_SOURCE = 'kubevirt.ui/cdrom';
+export const ANNOTATION_SOURCE_PROVIDER = 'kubevirt.ui/provider';
 export const CUSTOM_FLAVOR = 'Custom';
 
 export const APP = 'app';
@@ -30,6 +30,8 @@ export const TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER = 'SRC_PVC_NAMESPACE';
 export const TEMPLATE_VM_DOMAIN_LABEL = 'kubevirt.io/domain';
 export const TEMPLATE_VM_SIZE_LABEL = 'kubevirt.io/size';
 export const TEMPLATE_VM_COMMON_NAMESPACE = 'openshift';
+export const TEMPLATE_PROVIDER_ANNOTATION = 'template.kubevirt.io/provider';
+export const TEMPLATE_SUPPORT_LEVEL = 'template.kubevirt.io/provider-support-level';
 
 export const LABEL_USED_TEMPLATE_NAME = 'vm.kubevirt.io/template';
 export const LABEL_USED_TEMPLATE_NAMESPACE = 'vm.kubevirt.io/template.namespace';

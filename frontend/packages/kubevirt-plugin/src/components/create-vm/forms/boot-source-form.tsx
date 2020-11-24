@@ -249,6 +249,19 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
           </RequestSizeInput>
         </FormRow>
       )}
+      {withUpload && (
+        <FormRow fieldId="form-ds-provider" title={t('kubevirt-plugin~Source provider')}>
+          <TextInput
+            value={state.provider?.value}
+            type="text"
+            onChange={(payload) => dispatch({ type: BOOT_ACTION_TYPE.SET_PROVIDER, payload })}
+            aria-label={t('kubevirt-plugin~Source provider')}
+          />
+          <div className="pf-c-form__helper-text" aria-live="polite">
+            {t('kubevirt-plugin~Example: your company name')}
+          </div>
+        </FormRow>
+      )}
       <ExpandableSection toggleText={t('kubevirt-plugin~Advanced')}>
         <FormRow fieldId="form-ds-sc" title={t('kubevirt-plugin~Storage class')} isRequired>
           <FormSelect

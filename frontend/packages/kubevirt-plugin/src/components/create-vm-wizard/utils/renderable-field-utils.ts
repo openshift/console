@@ -33,18 +33,19 @@ const renderableFieldOrder: { [key in RenderableField]: number } = {
   [VMWareProviderField.STATUS]: 17,
   [VMSettingsField.NAME]: 18,
   [VMSettingsField.TEMPLATE_PROVIDER]: 19,
-  [VMSettingsField.DESCRIPTION]: 20,
-  [VMSettingsField.OPERATING_SYSTEM]: 21,
-  [VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE]: 22,
-  [VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS]: 23,
-  [VMSettingsField.FLAVOR]: 24,
-  [VMSettingsField.MEMORY]: 25,
-  [VMSettingsField.CPU]: 26,
-  [VMSettingsField.WORKLOAD_PROFILE]: 27,
-  [VMSettingsField.PROVISION_SOURCE_TYPE]: 28,
-  [VMSettingsField.CONTAINER_IMAGE]: 29,
-  [VMSettingsField.IMAGE_URL]: 30,
-  [VMSettingsField.START_VM]: 31,
+  [VMSettingsField.TEMPLATE_SUPPORTED]: 20,
+  [VMSettingsField.DESCRIPTION]: 21,
+  [VMSettingsField.OPERATING_SYSTEM]: 22,
+  [VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE]: 23,
+  [VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS]: 24,
+  [VMSettingsField.FLAVOR]: 25,
+  [VMSettingsField.MEMORY]: 26,
+  [VMSettingsField.CPU]: 27,
+  [VMSettingsField.WORKLOAD_PROFILE]: 28,
+  [VMSettingsField.PROVISION_SOURCE_TYPE]: 29,
+  [VMSettingsField.CONTAINER_IMAGE]: 30,
+  [VMSettingsField.IMAGE_URL]: 31,
+  [VMSettingsField.START_VM]: 32,
 };
 
 const idResolver: RenderableFieldResolver = {
@@ -79,6 +80,7 @@ const idResolver: RenderableFieldResolver = {
   [VMSettingsField.IMAGE_URL]: 'provision-source-url',
   [VMSettingsField.START_VM]: 'start-vm',
   [VMSettingsField.TEMPLATE_PROVIDER]: 'template-provider',
+  [VMSettingsField.TEMPLATE_SUPPORTED]: 'template-supported',
 };
 
 export const getFieldId = (key: RenderableField) => idResolver[key];

@@ -104,6 +104,7 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
       url: state.url?.value,
       dataSource: state.dataSource?.value,
       storageClass: state.storageClass?.value,
+      provider: state.provider?.value,
     })
       .setNamespace(baseImageNamespace)
       .asResource();

@@ -5,18 +5,18 @@ import {
   VolumeType,
   DataVolumeSourceType,
   LABEL_CDROM_SOURCE,
-  BOOT_SOURCE_COMMUNITY,
-  BOOT_SOURCE_USER,
+  BOOT_SOURCE_AVAILABLE,
   NetworkType,
+  ANNOTATION_SOURCE_PROVIDER,
 } from '../../constants';
 import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
 import { VMTemplateWrapper } from '../../k8s/wrapper/vm/vm-template-wrapper';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 import { getPvcImportPodName, getPvcUploadPodName } from '../../selectors/pvc/selectors';
-import { getParameterValue } from '../../selectors/selectors';
+import { getAnnotation, getParameterValue } from '../../selectors/selectors';
 import { isCommonTemplate } from '../../selectors/vm-template/basic';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
-import { GetTemplateSourceStatus, SOURCE_TYPE, TemplateSourceStatusBundle } from './types';
+import { GetTemplateSourceStatus, SOURCE_TYPE } from './types';
 import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
 import { DVStatusType, getDVStatus } from '../dv/dv-status';
 
@@ -27,10 +27,10 @@ const supportedDVSources = [
   DataVolumeSourceType.PVC,
 ];
 
-const getProvider = (resource: K8sResourceCommon): TemplateSourceStatusBundle['provider'] =>
-  resource?.metadata?.labels?.['kubevirt.io/provided'] // TODO how to detect red hat provided source ?
-    ? BOOT_SOURCE_COMMUNITY
-    : BOOT_SOURCE_USER;
+const getProvider = (resource: K8sResourceCommon): string => {
+  const provider = getAnnotation(resource, ANNOTATION_SOURCE_PROVIDER);
+  return provider ?? BOOT_SOURCE_AVAILABLE;
+};
 
 const isCDRom = (dataVolume: V1alpha1DataVolume, pvc: PersistentVolumeClaimKind) =>
   (dataVolume || pvc)?.metadata?.labels?.[LABEL_CDROM_SOURCE] === 'true';
@@ -105,7 +105,7 @@ export const getTemplateSourceStatus: GetTemplateSourceStatus = ({
     return wrapper.getType() === NetworkType.MULTUS
       ? {
           source: SOURCE_TYPE.PXE,
-          provider: BOOT_SOURCE_USER,
+          provider: BOOT_SOURCE_AVAILABLE,
           isReady: true,
           isCDRom: false,
           pxe: wrapper.getMultusNetworkName(),
@@ -142,7 +142,7 @@ export const getTemplateSourceStatus: GetTemplateSourceStatus = ({
       return supportedDVSources.includes(dataVolumeWrapper.getType())
         ? {
             source: SOURCE_TYPE.DATA_VOLUME_TEMPLATE,
-            provider: BOOT_SOURCE_USER,
+            provider: BOOT_SOURCE_AVAILABLE,
             isReady: true,
             dvTemplate: dataVolumeWrapper.asResource(),
             isCDRom: isCDRom(dataVolumeWrapper.asResource(), null),
@@ -202,7 +202,7 @@ export const getTemplateSourceStatus: GetTemplateSourceStatus = ({
   if (volumeWrapper.getType() === VolumeType.CONTAINER_DISK) {
     return {
       source: SOURCE_TYPE.CONTAINER,
-      provider: BOOT_SOURCE_USER,
+      provider: BOOT_SOURCE_AVAILABLE,
       container: volumeWrapper.getContainerImage(),
       isReady: true,
       isCDRom: false,

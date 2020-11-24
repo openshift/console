@@ -7,8 +7,6 @@ import { TFunction } from 'i18next';
 import { useSelector } from 'react-redux';
 import { match } from 'react-router';
 import { sortable } from '@patternfly/react-table';
-import { PlusCircleIcon } from '@patternfly/react-icons';
-import { global_palette_blue_300 as blueInfoColor } from '@patternfly/react-tokens/dist/js/global_palette_blue_300';
 import {
   ListPage,
   Table,
@@ -31,13 +29,7 @@ import {
   PodModel,
 } from '@console/internal/models';
 import { TemplateKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
-import {
-  dimensifyHeader,
-  dimensifyRow,
-  ALL_NAMESPACES_KEY,
-  SuccessStatus,
-  ErrorStatus,
-} from '@console/shared';
+import { dimensifyHeader, dimensifyRow, ALL_NAMESPACES_KEY } from '@console/shared';
 import {
   Button,
   Popover,
@@ -48,14 +40,8 @@ import {
   StackItem,
 } from '@patternfly/react-core';
 import { getActiveNamespace } from '@console/internal/actions/ui';
-import GenericStatus from '@console/shared/src/components/status/GenericStatus';
 
-import {
-  BOOT_SOURCE_COMMUNITY,
-  BOOT_SOURCE_USER,
-  SUPPORT_URL,
-  VM_TEMPLATE_LABEL_PLURAL,
-} from '../../constants/vm-templates';
+import { SUPPORT_URL, VM_TEMPLATE_LABEL_PLURAL } from '../../constants/vm-templates';
 import { getLoadedData } from '../../utils';
 import { TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_BASE, TEMPLATE_TYPE_VM } from '../../constants/vm';
 import { DataVolumeModel } from '../../models';
@@ -107,6 +93,8 @@ const VMTemplateTableHeader = (showNamespace: boolean, t: TFunction) =>
       },
       {
         title: t('kubevirt-plugin~Provider'),
+        sortFunc: 'vmTemplateProvider',
+        transforms: [sortable],
       },
       {
         title: t('kubevirt-plugin~Namespace'),
@@ -115,37 +103,6 @@ const VMTemplateTableHeader = (showNamespace: boolean, t: TFunction) =>
       },
       {
         title: t('kubevirt-plugin~Boot source'),
-        header: {
-          info: {
-            popover: (
-              <Stack hasGutter>
-                <StackItem>
-                  <SuccessStatus title={BOOT_SOURCE_COMMUNITY} />
-                  {t('kubevirt-plugin~The image has been added to the cluster via the operator.')}
-                </StackItem>
-                <StackItem>
-                  <SuccessStatus title={BOOT_SOURCE_USER} />
-                  {t('kubevirt-plugin~The image has been added to the cluster by a user.')}
-                </StackItem>
-                <StackItem>
-                  <GenericStatus
-                    Icon={(props) => <PlusCircleIcon {...props} color={blueInfoColor.value} />}
-                    title={t('kubevirt-plugin~Add source')}
-                  />
-                  {t('kubevirt-plugin~Provide a source for the template across the cluster.')}
-                </StackItem>
-                <StackItem>
-                  <ErrorStatus title={t('kubevirt-plugin~Boot source error')} />
-                  {t('kubevirt-plugin~Error with the provided boot source.')}
-                </StackItem>
-              </Stack>
-            ),
-            ariaLabel: t('kubevirt-plugin~More information on boot sources'),
-            popoverProps: {
-              headerContent: t('kubevirt-plugin~Boot source'),
-            },
-          },
-        },
       },
       {
         title: '',
@@ -170,35 +127,41 @@ const VMTemplateDetailsBody: React.FC<VMTemplateDetailsBodyProps> = ({
 }) => {
   const { t } = useTranslation();
   return (
-    <TextContent>
-      <Text>{getTemplateName(template)}</Text>
-      <Text>
-        <div className="kubevirt-vm-template-popover">
-          <div>{t('kubevirt-plugin~Storage')}</div>
-          <div>{getTemplateSizeRequirement(template, sourceStatus)}</div>
-        </div>
-        <div className="kubevirt-vm-template-popover">
-          <div>{t('kubevirt-plugin~Memory')}</div>
-          <div>{getTemplateMemory(template)}</div>
-        </div>
-        <div className="kubevirt-vm-template-popover">
-          <div>{t('kubevirt-plugin~CPU')}</div>
-          <div>{vCPUCount(getCPU(selectVM(template)))}</div>
-        </div>
-        <div className="kubevirt-vm-template-popover">
-          <div>{t('kubevirt-plugin~Workload profile')}</div>
-          <div>{getWorkloadProfile(template)}</div>
-        </div>
-      </Text>
-      <Link
-        to={`/k8s/ns/${template.metadata.namespace}/vmtemplates/${template.metadata.name}`}
-        title={template.metadata.uid}
-        data-test-id={template.metadata.name}
-        className="co-resource-item__resource-name"
-      >
-        {t('kubevirt-plugin~View full details')}
-      </Link>
-    </TextContent>
+    <Stack hasGutter>
+      <StackItem>
+        <VMTemplateLabel template={template} />
+      </StackItem>
+      <StackItem>
+        <TextContent>
+          <Text>
+            <div className="kubevirt-vm-template-popover">
+              <div>{t('kubevirt-plugin~Storage')}</div>
+              <div>{getTemplateSizeRequirement(template, sourceStatus)}</div>
+            </div>
+            <div className="kubevirt-vm-template-popover">
+              <div>{t('kubevirt-plugin~Memory')}</div>
+              <div>{getTemplateMemory(template)}</div>
+            </div>
+            <div className="kubevirt-vm-template-popover">
+              <div>{t('kubevirt-plugin~CPU')}</div>
+              <div>{vCPUCount(getCPU(selectVM(template)))}</div>
+            </div>
+            <div className="kubevirt-vm-template-popover">
+              <div>{t('kubevirt-plugin~Workload profile')}</div>
+              <div>{getWorkloadProfile(template)}</div>
+            </div>
+          </Text>
+          <Link
+            to={`/k8s/ns/${template.metadata.namespace}/vmtemplates/${template.metadata.name}`}
+            title={template.metadata.uid}
+            data-test-id={template.metadata.name}
+            className="co-resource-item__resource-name"
+          >
+            {t('kubevirt-plugin~View full details')}
+          </Link>
+        </TextContent>
+      </StackItem>
+    </Stack>
   );
 };
 
@@ -239,7 +202,6 @@ const VMTemplateTableRow: RowFunction<TemplateItem, VMTemplateTableRowProps> = (
         >
           {getTemplateName(template)}
         </Link>
-        <VMTemplateLabel template={template} />
         {pinned && <PinnedIcon />}
       </TableData>
       <TableData className={dimensify()}>{getTemplateProvider(t, template)}</TableData>
@@ -262,7 +224,7 @@ const VMTemplateTableRow: RowFunction<TemplateItem, VMTemplateTableRowProps> = (
       <TableData className={dimensify()}>
         <Popover
           position={PopoverPosition.top}
-          headerContent={<div>{t('kubevirt-plugin~Template details')}</div>}
+          headerContent={t('kubevirt-plugin~Template details')}
           bodyContent={<VMTemplateDetailsBody template={template} sourceStatus={sourceStatus} />}
         >
           <Button variant="link" className="kubevirt-vm-template-details">
@@ -309,10 +271,10 @@ export const VMTemplateSupport: React.FC = () => {
   const { t } = useTranslation();
   return (
     <div>
-      {t('kubevirt-plugin~Red Hat supported templates are labeled below.')}{' '}
+      {t('kubevirt-plugin~See template details for support.')}{' '}
       <ExternalLink
         href={SUPPORT_URL}
-        text={t('kubevirt-plugin~Learn more about template support')}
+        text={t('kubevirt-plugin~Learn more about Red Hat support')}
       />
     </div>
   );
@@ -363,6 +325,11 @@ const VirtualMachineTemplates: React.FC<VirtualMachineTemplatesProps> = (props) 
           }}
           isPinned={isPinned}
           defaultSortFunc="vmTemplateName"
+          customSorts={{
+            vmTemplateName: (template: TemplateItem) => getTemplateName(template.variants[0]),
+            vmTemplateProvider: (template: TemplateItem) =>
+              getTemplateProvider(t, template.variants[0]),
+          }}
         />
       </StackItem>
     </Stack>

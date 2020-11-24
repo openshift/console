@@ -44,6 +44,7 @@ export const resolveDefaultVM = async (params: DefaultVMLikeEntityParams): Promi
     [VMSettingsField.FLAVOR]: getFlavor(commonTemplate),
     [VMSettingsField.WORKLOAD_PROFILE]: getWorkloadProfile(commonTemplate),
     [VMSettingsField.TEMPLATE_PROVIDER]: null,
+    [VMSettingsField.TEMPLATE_SUPPORTED]: null,
     osID,
     osName,
   };

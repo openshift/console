@@ -40,6 +40,7 @@ export const titleResolver: RenderableFieldResolver = {
   [VMSettingsField.IMAGE_URL]: 'URL',
   [VMSettingsField.START_VM]: 'Start virtual machine on creation',
   [VMSettingsField.TEMPLATE_PROVIDER]: 'Template provider',
+  [VMSettingsField.TEMPLATE_SUPPORTED]: 'Add support label to this template',
 };
 
 export const placeholderResolver = {
