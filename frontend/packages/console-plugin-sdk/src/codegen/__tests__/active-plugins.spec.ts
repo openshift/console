@@ -9,12 +9,11 @@ import { PluginPackage } from '../plugin-resolver';
 import { Extension } from '../../typings';
 import * as activePluginsModule from '../active-plugins';
 import { trimStartMultiLine } from '../../utils/string';
-import * as moduleUtils from '../../utils/nodejs-modules';
 import { getTemplatePackage } from '../../utils/test-utils';
 
 const parseJSONC = jest.spyOn(jsoncModule, 'parseJSONC');
 const validateExtensionsFileSchema = jest.spyOn(assetPluginModule, 'validateExtensionsFileSchema');
-const reloadModule = jest.spyOn(moduleUtils, 'reloadModule');
+const reloadModule = jest.spyOn(activePluginsModule, 'reloadModule');
 
 const {
   getActivePluginsModule,

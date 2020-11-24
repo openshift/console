@@ -1,5 +1,3 @@
-/* eslint-disable no-empty-function */
-
 import * as semver from 'semver';
 import { ValidationResult } from './ValidationResult';
 

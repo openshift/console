@@ -210,6 +210,9 @@ module.exports = {
   // Covered by 'typescript/member-ordering'
   'sort-class-members/sort-class-members': 'off',
 
+  // Replaces base no-empty-function rule, handling TypeScript code that would otherwise trigger the rule
+  '@typescript-eslint/no-empty-function': ['error', { allow: ['arrowFunctions'] }],
+
   /**
    * 1. Disable things that are checked by Typescript
    */
@@ -235,13 +238,15 @@ module.exports = {
   'no-dupe-class-members': 'off',
   // This is already checked by Typescript.
   'no-redeclare': 'off',
+  // Replaced by @typescript-eslint/no-empty-function
+  'no-empty-function': 'off',
   /**
-   * 2. Enable more ideomatic code
+   * 2. Enable more idiomatic code
    */
   // Typescript allows const and let instead of var.
   'no-var': 'error',
   'prefer-const': 'error',
-  // The spread operator/rest parameters should be prefered in Typescript.
+  // The spread operator/rest parameters should be preferred in Typescript.
   'prefer-rest-params': 'error',
   'prefer-spread': 'error',
 };

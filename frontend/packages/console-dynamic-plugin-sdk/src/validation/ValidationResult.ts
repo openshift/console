@@ -1,5 +1,3 @@
-/* eslint-disable no-empty-function */
-
 import chalk from 'chalk';
 
 export class ValidationResult {

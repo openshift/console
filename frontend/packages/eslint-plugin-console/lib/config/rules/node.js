@@ -71,4 +71,6 @@ module.exports = {
   'node/prefer-promises/dns': 'error',
   // disallows callback API in favor of promise API for fs module
   'node/prefer-promises/fs': 'error',
+  // Disallow expressions in require()
+  'import/no-dynamic-require': 'off',
 };

@@ -1,5 +1,3 @@
-/* eslint-disable no-empty-function */
-
 import * as webpack from 'webpack';
 import * as path from 'path';
 import * as fs from 'fs';

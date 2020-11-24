@@ -11,8 +11,15 @@ import { parseJSONC } from '@console/dynamic-plugin-sdk/src/utils/jsonc';
 import { validateExtensionsFileSchema } from '@console/dynamic-plugin-sdk/src/webpack/ConsoleAssetPlugin';
 import { Extension, ActivePlugin } from '../typings';
 import { trimStartMultiLine } from '../utils/string';
-import { reloadModule } from '../utils/nodejs-modules';
 import { consolePkgScope, PluginPackage } from './plugin-resolver';
+
+/**
+ * Reload the requested module, bypassing `require.cache` mechanism.
+ */
+export const reloadModule = (request: string) => {
+  delete require.cache[require.resolve(request)];
+  return require(request);
+};
 
 /**
  * Generate the `@console/active-plugins` virtual module source.
@@ -59,7 +66,6 @@ export const loadActivePluginsForTestPurposes = (
     activePlugins.push({
       name: pkg.name,
       extensions: [
-        // eslint-disable-next-line
         ...require(`${pkg.name}/${pkg.consolePlugin.entry}`).default,
         ...dynamicExtensionHook(pkg),
       ],
