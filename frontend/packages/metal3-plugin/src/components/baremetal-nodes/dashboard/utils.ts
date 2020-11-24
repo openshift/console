@@ -5,14 +5,14 @@ import { NodeKind } from '@console/internal/module/k8s';
 import { InventoryStatusGroup } from '@console/shared/src/components/dashboard/inventory-card/status-group';
 import { getNodeMaintenanceNodeName } from '../../../selectors';
 import { bareMetalNodeStatus, NODE_STATUS_SERVER_CSR } from '../../../status/baremetal-node-status';
-import { NODE_STATUS_TITLES } from '../../../constants';
+import { NODE_STATUS_TITLE_KEYS } from '../../../constants';
 import { getNodeServerCSR } from '../../../selectors/csr';
 import { CertificateSigningRequestKind } from '../../../types';
 
 const BMN_STATUS_GROUP_MAPPER = {
   [InventoryStatusGroup.PROGRESS]: ['Not Ready', NODE_STATUS_SERVER_CSR],
   [InventoryStatusGroup.NOT_MAPPED]: ['Ready'],
-  'node-maintenance': Object.keys(NODE_STATUS_TITLES),
+  'node-maintenance': Object.keys(NODE_STATUS_TITLE_KEYS),
 };
 
 export const getBMNStatusGroups: StatusGroupMapper = (

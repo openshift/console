@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   FirehoseResource,
   FirehoseResult,
@@ -62,6 +63,7 @@ const EventsCard: React.FC<EventsCardProps> = ({
   stopWatchK8sResource,
   resources,
 }) => {
+  const { t } = useTranslation();
   const { obj, machine } = React.useContext(BareMetalHostDashboardContext);
   React.useEffect(() => {
     watchK8sResource(eventsResource);
@@ -86,7 +88,7 @@ const EventsCard: React.FC<EventsCardProps> = ({
             getNamespace(obj),
           )}/events`}
         >
-          View events
+          {t('metal3-plugin~View events')}
         </DashboardCardLink>
       </DashboardCardHeader>
       <DashboardCardBody>
@@ -96,7 +98,7 @@ const EventsCard: React.FC<EventsCardProps> = ({
             {inProgress ? (
               <Activity timestamp={null}>
                 <ActivityItem>
-                  {hostStatus.title}
+                  {t(hostStatus.titleKey)}
                   <ResourceLink
                     kind={BareMetalHostModel.kind}
                     name={getName(obj)}
@@ -106,7 +108,9 @@ const EventsCard: React.FC<EventsCardProps> = ({
               </Activity>
             ) : (
               <Activity>
-                <div className="text-secondary">There are no ongoing activities.</div>
+                <div className="text-secondary">
+                  {t('metal3-plugin~There are no ongoing activities.')}
+                </div>
               </Activity>
             )}
           </div>

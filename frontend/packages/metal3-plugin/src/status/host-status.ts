@@ -1,8 +1,8 @@
 import { K8sResourceKind, MachineKind, NodeKind } from '@console/internal/module/k8s';
 import { getHostOperationalStatus, getHostProvisioningState, getHostErrorType } from '../selectors';
 import {
-  HOST_STATUS_TITLES,
-  HOST_STATUS_DESCRIPTIONS,
+  HOST_STATUS_TITLE_KEYS,
+  HOST_STATUS_DESCRIPTION_KEYS,
   HOST_STATUS_ERROR,
   HOST_PROGRESS_STATES,
   HOST_STATUS_DEPROVISIONING,
@@ -33,8 +33,8 @@ export const getBareMetalHostStatus = (host: BareMetalHostKind): StatusProps => 
 
   return {
     status: hostStatus,
-    title: HOST_STATUS_TITLES[hostStatus] || hostStatus,
-    description: HOST_STATUS_DESCRIPTIONS[hostStatus],
+    titleKey: HOST_STATUS_TITLE_KEYS[hostStatus] || hostStatus,
+    descriptionKey: HOST_STATUS_DESCRIPTION_KEYS[hostStatus],
   };
 };
 

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Status, ProgressStatus } from '@console/shared';
 import {
   NODE_STATUS_UNDER_MAINTENANCE,
@@ -12,12 +13,13 @@ import CSRStatus from './CSRStatus';
 
 const BareMetalNodeStatus: React.FC<BareMetalHostStatusProps> = ({
   status,
-  title,
+  titleKey,
   nodeMaintenance,
   csr,
   className,
 }) => {
-  const statusTitle = title || status;
+  const { t } = useTranslation();
+  const statusTitle = t(titleKey) || status;
   switch (true) {
     case status === NODE_STATUS_SERVER_CSR:
       return <CSRStatus title={statusTitle} csr={csr} serverCSR />;

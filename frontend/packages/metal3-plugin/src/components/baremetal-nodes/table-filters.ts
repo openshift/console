@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
-import { NODE_STATUS_TITLES } from '../../constants';
+import { NODE_STATUS_TITLE_KEYS } from '../../constants';
 import { BareMetalNodeListBundle, isCSRBundle } from '../types';
 
 const statesToFilterMap = Object.freeze({
@@ -14,7 +14,7 @@ const statesToFilterMap = Object.freeze({
   },
   maintenance: {
     title: 'Maintenance',
-    states: Object.keys(NODE_STATUS_TITLES),
+    states: Object.keys(NODE_STATUS_TITLE_KEYS),
   },
   approval: {
     title: 'Approval Required',

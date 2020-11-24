@@ -145,7 +145,7 @@ const BareMetalHostsPage: React.FC<BareMetalHostsPageProps> = (props) => {
     <MultiListPage
       {...props}
       canCreate
-      rowFilters={[hostStatusFilter]}
+      rowFilters={[hostStatusFilter(t)]}
       createProps={getCreateProps({ namespace, t })}
       createButtonText={t('metal3-plugin~Add Host')}
       namespace={namespace}

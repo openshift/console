@@ -8,8 +8,8 @@ import { BareMetalHostKind, CertificateSigningRequestKind } from '../types';
 
 export type StatusProps = {
   status: string;
-  title?: string;
-  description?: string;
+  titleKey?: string;
+  descriptionKey?: string;
 };
 
 export type BareMetalHostStatusProps = StatusProps & {
