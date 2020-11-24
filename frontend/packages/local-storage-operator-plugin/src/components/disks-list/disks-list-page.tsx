@@ -1,6 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import * as cx from 'classnames';
+import { Link } from 'react-router-dom';
+import { Button, EmptyState, EmptyStateVariant } from '@patternfly/react-core';
+import { sortable } from '@patternfly/react-table';
 import {
   Table,
   TableProps,
@@ -9,11 +12,18 @@ import {
   RowFunction,
   MultiListPage,
 } from '@console/internal/components/factory';
-import { sortable } from '@patternfly/react-table';
-import { FirehoseResult, humanizeBinaryBytes, Kebab } from '@console/internal/components/utils';
+import {
+  FirehoseResult,
+  humanizeBinaryBytes,
+  Kebab,
+  LoadingInline,
+} from '@console/internal/components/utils';
 import { referenceForModel, NodeKind } from '@console/internal/module/k8s';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
-import { LocalVolumeDiscoveryResult } from '../../models';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { SubscriptionKind, SubscriptionModel } from '@console/operator-lifecycle-manager';
+import { getNamespace, getNodeRole } from '@console/shared/';
+import { LocalVolumeDiscovery, LocalVolumeDiscoveryResult } from '../../models';
 import { LABEL_SELECTOR } from '../../constants/disks-list';
 import { DiskMetadata, DiskStates, LocalVolumeDiscoveryResultKind } from './types';
 
@@ -105,15 +115,55 @@ const diskRow: RowFunction<DiskMetadata> = ({ obj, index, key, style }) => (
 );
 
 const DisksList: React.FC<TableProps> = (props) => (
-  <Table {...props} aria-label="Disks List" Header={diskHeader} Row={diskRow} virtualize />
+  <Table
+    {...props}
+    aria-label="Disks List"
+    Header={diskHeader}
+    Row={diskRow}
+    NoDataEmptyMsg={props.customData.EmptyMsg} // when no unfilteredData
+    virtualize
+  />
 );
 
 export const NodesDisksListPage: React.FC<NodesDisksListPageProps> = ({
   obj,
   ListComponent = undefined,
 }) => {
+  const [subscription, subscriptionLoaded] = useK8sWatchResource<SubscriptionKind[]>({
+    kind: referenceForModel(SubscriptionModel),
+    fieldSelector: 'metadata.name=local-storage-operator',
+    isList: true,
+  });
+
+  const operatorNs = getNamespace(subscription[0]);
+  const csvName = subscription?.[0]?.status?.installedCSV;
   const nodeName = obj.metadata.name;
+  const nodeRole = getNodeRole(obj);
   const propName = `lvdr-${nodeName}`;
+
+  const EmptyMsg = () => (
+    <EmptyState variant={EmptyStateVariant.large}>
+      {!subscriptionLoaded ? (
+        <LoadingInline />
+      ) : (
+        <>
+          <p>Disks Not Found</p>
+          {csvName && operatorNs && nodeRole !== 'master' && (
+            <Link
+              className="co-m-primary-action"
+              to={`/k8s/ns/${operatorNs}/clusterserviceversions/${csvName}/${referenceForModel(
+                LocalVolumeDiscovery,
+              )}/~new`}
+            >
+              <Button variant="primary" id="yaml-create" data-test="yaml-create">
+                Discover Disks
+              </Button>
+            </Link>
+          )}
+        </>
+      )}
+    </EmptyState>
+  );
 
   return (
     <MultiListPage
@@ -133,7 +183,7 @@ export const NodesDisksListPage: React.FC<NodesDisksListPageProps> = ({
           selector: { [LABEL_SELECTOR]: nodeName },
         },
       ]}
-      customData={{ node: nodeName }}
+      customData={{ node: nodeName, EmptyMsg }}
     />
   );
 };

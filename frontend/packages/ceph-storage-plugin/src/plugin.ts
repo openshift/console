@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import * as models from './models';
 import {
+  AlertAction,
   ClusterServiceVersionAction,
   DashboardsCard,
   DashboardsOverviewHealthResourceSubsystem,
@@ -23,6 +24,7 @@ import { GridPosition } from '@console/shared/src/components/dashboard/Dashboard
 import { referenceForModel } from '@console/internal/module/k8s';
 import { NodeModel } from '@console/internal/models';
 import { LSO_DEVICE_DISCOVERY } from '@console/local-storage-operator-plugin/src/plugin';
+import { OCS_ATTACHED_DEVICES_FLAG } from '@console/local-storage-operator-plugin/src/features';
 import { getCephHealthState } from './components/dashboard-page/storage-dashboard/status-card/utils';
 import { isClusterExpandActivity } from './components/dashboard-page/storage-dashboard/activity-card/cluster-expand-activity';
 import { StorageClassFormProvisoners } from './utils/ocs-storage-class-params';
@@ -34,10 +36,12 @@ import {
   CEPH_FLAG,
   OCS_INDEPENDENT_FLAG,
   OCS_CONVERGED_FLAG,
-  OCS_ATTACHED_DEVICES_FLAG,
 } from './features';
+import { getAlertActionPath } from './utils/alert-action-path';
+import { OSD_DOWN_ALERT, OSD_DOWN_AND_OUT_ALERT } from './constants';
 
 type ConsumedExtensions =
+  | AlertAction
   | ModelFeatureFlag
   | HorizontalNavTab
   | ModelDefinition
@@ -401,6 +405,28 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [OCS_ATTACHED_DEVICES_FLAG, LSO_DEVICE_DISCOVERY],
+    },
+  },
+  {
+    type: 'AlertAction',
+    properties: {
+      alert: OSD_DOWN_ALERT,
+      text: 'Troubleshoot',
+      path: getAlertActionPath,
+    },
+    flags: {
+      required: [LSO_DEVICE_DISCOVERY, OCS_ATTACHED_DEVICES_FLAG],
+    },
+  },
+  {
+    type: 'AlertAction',
+    properties: {
+      alert: OSD_DOWN_AND_OUT_ALERT,
+      text: 'Troubleshoot',
+      path: getAlertActionPath,
+    },
+    flags: {
+      required: [LSO_DEVICE_DISCOVERY, OCS_ATTACHED_DEVICES_FLAG],
     },
   },
 ];

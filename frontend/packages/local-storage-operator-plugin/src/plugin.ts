@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import {
   AlertAction,
+  CustomFeatureFlag,
   ModelDefinition,
   ModelFeatureFlag,
   Plugin,
@@ -10,11 +11,12 @@ import {
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { NodeModel } from '@console/internal/models';
-import { getAlertActionPath } from './utils/alert-actions-path';
+import { detectOCSAttachedDeviceMode, OCS_ATTACHED_DEVICES_FLAG } from './features';
 import * as models from './models';
 
 type ConsumedExtensions =
   | AlertAction
+  | CustomFeatureFlag
   | HorizontalNavTab
   | ModelFeatureFlag
   | ModelDefinition
@@ -22,8 +24,6 @@ type ConsumedExtensions =
 
 const LSO_FLAG = 'LSO';
 export const LSO_DEVICE_DISCOVERY = 'LSO_DEVICE_DISCOVERY';
-const OCS_ATTACHED_DEVICES_FLAG =
-  'OCS_ATTACHED_DEVICES'; /* Inline with OCS_ATTACHED_DEVICES_FLAG flag of `@console/ceph-storage-plugin/src/fetaures` */
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -42,8 +42,14 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'FeatureFlag/Model',
     properties: {
-      model: models.LocalVolumeDiscoveryResult,
+      model: models.LocalVolumeDiscovery,
       flag: LSO_DEVICE_DISCOVERY,
+    },
+  },
+  {
+    type: 'FeatureFlag/Custom',
+    properties: {
+      detect: detectOCSAttachedDeviceMode,
     },
   },
   {
@@ -78,28 +84,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     flags: {
       required: [LSO_DEVICE_DISCOVERY],
       disallowed: [OCS_ATTACHED_DEVICES_FLAG],
-    },
-  },
-  {
-    type: 'AlertAction',
-    properties: {
-      alert: 'CephOSDDiskNotResponding',
-      text: 'Troubleshoot',
-      path: getAlertActionPath,
-    },
-    flags: {
-      required: [LSO_DEVICE_DISCOVERY],
-    },
-  },
-  {
-    type: 'AlertAction',
-    properties: {
-      alert: 'CephOSDDiskUnavailable',
-      text: 'Troubleshoot',
-      path: getAlertActionPath,
-    },
-    flags: {
-      required: [LSO_DEVICE_DISCOVERY],
     },
   },
   {

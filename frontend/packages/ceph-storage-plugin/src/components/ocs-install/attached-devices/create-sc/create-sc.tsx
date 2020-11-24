@@ -38,6 +38,7 @@ import {
   getHostNames,
 } from '@console/local-storage-operator-plugin/src/utils';
 import { DiskType } from '@console/local-storage-operator-plugin/src/components/local-volume-set/types';
+import { OCS_ATTACHED_DEVICES_FLAG } from '@console/local-storage-operator-plugin/src/features';
 import { initialState, reducer, State, Action, Discoveries, OnNextClick } from './state';
 import { AutoDetectVolume } from './wizard-pages/auto-detect-volume';
 import { CreateLocalVolumeSet } from './wizard-pages/create-local-volume-set';
@@ -56,12 +57,7 @@ import { getName } from '@console/shared';
 import { StorageClusterKind } from '../../../../types';
 import { getOCSRequestData, labelNodes } from '../../ocs-request-data';
 import { OCSServiceModel } from '../../../../models';
-import {
-  OCS_ATTACHED_DEVICES_FLAG,
-  OCS_CONVERGED_FLAG,
-  OCS_INDEPENDENT_FLAG,
-  OCS_FLAG,
-} from '../../../../features';
+import { OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG, OCS_FLAG } from '../../../../features';
 import { ReviewAndCreate } from './wizard-pages/review-and-create-step';
 import { Configure } from './wizard-pages/configure-step';
 import '../../install-wizard/install-wizard.scss';

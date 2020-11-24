@@ -259,6 +259,7 @@ const OCSDisksList: React.FC<TableProps> = React.memo((props) => {
       Header={diskHeader}
       Row={diskRow}
       customData={{ ocsState, dispatch }}
+      NoDataEmptyMsg={props.customData.EmptyMsg}
       virtualize
     />
   );

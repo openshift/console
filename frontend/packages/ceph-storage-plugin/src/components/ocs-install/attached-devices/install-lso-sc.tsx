@@ -20,6 +20,7 @@ import {
 import { setFlag } from '@console/internal/actions/features';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { getName } from '@console/shared';
+import { OCS_ATTACHED_DEVICES_FLAG } from '@console/local-storage-operator-plugin/src/features';
 import {
   MINIMUM_NODES,
   defaultRequestSize,
@@ -30,12 +31,7 @@ import {
 import { OCSServiceModel } from '../../../models';
 import AttachedDevicesNodeTable from './sc-node-list';
 import { PVsAvailableCapacity } from '../pvs-available-capacity';
-import {
-  OCS_CONVERGED_FLAG,
-  OCS_FLAG,
-  OCS_ATTACHED_DEVICES_FLAG,
-  OCS_INDEPENDENT_FLAG,
-} from '../../../features';
+import { OCS_CONVERGED_FLAG, OCS_FLAG, OCS_INDEPENDENT_FLAG } from '../../../features';
 import { scResource, pvResource } from '../../../constants/resources';
 import { labelNodes, getOCSRequestData } from '../ocs-request-data';
 import {
