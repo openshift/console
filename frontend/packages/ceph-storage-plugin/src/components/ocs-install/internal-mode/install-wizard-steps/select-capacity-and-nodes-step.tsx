@@ -76,6 +76,7 @@ export const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
                 dispatch({ type: ActionType.SET_STORAGE_CLASS, payload: sc })
               }
               noSelection
+              selectedKey={getName(storageClass)}
               filter={filterSCWithoutNoProv}
               hideClassName="ocs-install-wizard__storage-class-label"
             />
