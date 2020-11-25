@@ -88,7 +88,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       id: 'virtualization',
       section: 'workloads',
       componentProps: {
-        name: 'Virtualization',
+        // t('kubevirt-virtualization~Virtualization')
+        name: '%kubevirt-virtualization~Virtualization%',
         resource: 'virtualization',
       },
       insertBefore: 'deployments',
