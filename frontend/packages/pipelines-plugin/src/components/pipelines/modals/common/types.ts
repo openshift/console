@@ -1,6 +1,7 @@
 import { FormikValues } from 'formik';
 import {
   PipelineParam,
+  VolumeTypeClaim,
   VolumeTypeConfigMaps,
   VolumeTypePVC,
   VolumeTypeSecret,
@@ -31,6 +32,9 @@ export type PipelineModalFormWorkspace = {
       }
     | {
         persistentVolumeClaim: VolumeTypePVC;
+      }
+    | {
+        volumeClaimTemplate: VolumeTypeClaim;
       };
 };
 

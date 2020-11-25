@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import { getRandomChars } from '@console/shared';
 import {
+  PersistentVolumeClaimType,
   Pipeline,
   PipelineResource,
   PipelineRun,
@@ -9,11 +10,13 @@ import {
   PipelineRunReferenceResource,
   PipelineRunResource,
   PipelineWorkspace,
+  VolumeClaimTemplateType,
 } from '../../../../utils/pipeline-augment';
 import { PipelineRunModel } from '../../../../models';
 import { getPipelineRunParams, getPipelineRunWorkspaces } from '../../../../utils/pipeline-utils';
 import { CREATE_PIPELINE_RESOURCE, initialResourceFormValues } from './const';
 import { CommonPipelineModalFormikValues, PipelineModalFormResource } from './types';
+import { TektonResourceLabel, VolumeTypes } from '../../const';
 
 /**
  * Migrates a PipelineRun from one version to another to support auto-upgrades with old (and invalid) PipelineRuns.
@@ -99,9 +102,34 @@ export const getPipelineRunData = (
   return migratePipelineRun(newPipelineRun);
 };
 
+export const getDefaultVolumeClaimTemplate = (pipelineName: string): VolumeClaimTemplateType => {
+  return {
+    volumeClaimTemplate: {
+      metadata: {
+        labels: { [TektonResourceLabel.pipeline]: pipelineName },
+      },
+      spec: {
+        accessModes: ['ReadWriteOnce'],
+        resources: {
+          requests: {
+            storage: '1Gi',
+          },
+        },
+      },
+    },
+  };
+};
+export const getDefaultPVC = (claimName: string): PersistentVolumeClaimType => {
+  return {
+    persistentVolumeClaim: {
+      claimName,
+    },
+  };
+};
 export const convertPipelineToModalData = (
   pipeline: Pipeline,
   alwaysCreateResources: boolean = false,
+  preselectPVC: string = '',
 ): CommonPipelineModalFormikValues => {
   const {
     metadata: { namespace },
@@ -121,8 +149,8 @@ export const convertPipelineToModalData = (
     })),
     workspaces: (pipeline.spec.workspaces || []).map((workspace: PipelineWorkspace) => ({
       ...workspace,
-      type: 'EmptyDirectory',
-      data: { emptyDir: {} },
+      type: preselectPVC ? VolumeTypes.PVC : 'EmptyDirectory',
+      data: preselectPVC ? getDefaultPVC(preselectPVC) : { emptyDir: {} },
     })),
   };
 };

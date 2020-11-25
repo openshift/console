@@ -5,6 +5,7 @@ import {
   createModalLauncher,
   ModalComponentProps,
 } from '@console/internal/components/factory/modal';
+import { LoadingBox } from '@console/internal/components/utils';
 import { Pipeline } from '../../../../utils/pipeline-augment';
 import ModalStructure from '../common/ModalStructure';
 import { convertPipelineToModalData } from '../common/utils';
@@ -13,6 +14,7 @@ import AddTriggerForm from './AddTriggerForm';
 import { TRIGGER_BINDING_EMPTY } from './const';
 import { submitTrigger } from './submit-utils';
 import { AddTriggerFormValues } from './types';
+import { usePipelinePVC } from '../../hooks';
 
 type AddTriggerModalProps = ModalComponentProps & {
   pipeline: Pipeline;
@@ -20,8 +22,16 @@ type AddTriggerModalProps = ModalComponentProps & {
 
 const AddTriggerModal: React.FC<AddTriggerModalProps> = ({ pipeline, close }) => {
   const { t } = useTranslation();
+  const [pipelinePVC, pipelinePVCLoaded] = usePipelinePVC(
+    pipeline.metadata?.name,
+    pipeline.metadata?.namespace,
+  );
+
+  if (!pipelinePVCLoaded) {
+    return <LoadingBox />;
+  }
   const initialValues: AddTriggerFormValues = {
-    ...convertPipelineToModalData(pipeline, true),
+    ...convertPipelineToModalData(pipeline, true, pipelinePVC?.metadata?.name),
     triggerBinding: {
       name: TRIGGER_BINDING_EMPTY,
       resource: null,

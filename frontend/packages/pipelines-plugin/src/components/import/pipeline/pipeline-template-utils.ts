@@ -1,10 +1,13 @@
 import * as _ from 'lodash';
 import { k8sCreate } from '@console/internal/module/k8s';
 import { PipelineData } from '../import-types';
-import { Pipeline, PipelineRun } from '../../../utils/pipeline-augment';
+import { Pipeline, PipelineRun, PipelineWorkspace } from '../../../utils/pipeline-augment';
 import { PipelineModel } from '../../../models';
 import { createPipelineResource } from '../../pipelines/pipeline-resource/pipelineResource-utils';
-import { convertPipelineToModalData } from '../../pipelines/modals/common/utils';
+import {
+  convertPipelineToModalData,
+  getDefaultVolumeClaimTemplate,
+} from '../../pipelines/modals/common/utils';
 import { submitStartPipeline } from '../../pipelines/modals/start-pipeline/submit-utils';
 import { StartPipelineFormValues } from '../../pipelines/modals/start-pipeline/types';
 
@@ -67,6 +70,11 @@ export const createPipelineForImportFlow = async (
 export const createPipelineRunForImportFlow = async (pipeline: Pipeline): Promise<PipelineRun> => {
   const pipelineInitialValues: StartPipelineFormValues = {
     ...convertPipelineToModalData(pipeline),
+    workspaces: (pipeline.spec.workspaces || []).map((workspace: PipelineWorkspace) => ({
+      ...workspace,
+      type: 'volumeClaimTemplate',
+      data: getDefaultVolumeClaimTemplate(pipeline?.metadata?.name),
+    })),
     secretOpen: false,
   };
   return submitStartPipeline(pipelineInitialValues, pipeline);
