@@ -1,13 +1,8 @@
-// FIXME upgrading redux types is causing many errors at this time
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
-import { useSelector } from 'react-redux';
-import { RootState } from '@console/internal/redux';
-import { DisplayFilters } from '../topology-types';
-import { getAppliedTopologyFilters } from './filter-utils';
+import { useContext } from 'react';
+import { FilterContext } from './FilterProvider';
 
-const useAppliedDisplayFilters = (): DisplayFilters => {
-  return useSelector((state: RootState) => getAppliedTopologyFilters(state));
+const useAppliedDisplayFilters = (): { [filterKey: string]: boolean } => {
+  return useContext(FilterContext).appliedFilters;
 };
 
 export { useAppliedDisplayFilters };

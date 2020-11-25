@@ -13,7 +13,6 @@ import { useAddToProjectAccess } from '@console/dev-console/src/utils/useAddToPr
 import { getEventSourceStatus } from '@console/knative-plugin/src/topology/knative-topology-utils';
 import {
   CreateConnectionGetter,
-  DisplayFilters,
   GraphData,
   TopologyApplyDisplayOptions,
   TopologyDisplayFilterType,
@@ -27,16 +26,12 @@ import {
 } from '../../extensions/topology';
 import { getTopologySearchQuery, useAppliedDisplayFilters, useDisplayFilters } from '../../filters';
 import { updateModelFromFilters } from '../../data-transforms/updateModelFromFilters';
-import {
-  setSupportedTopologyFilters,
-  setSupportedTopologyKinds,
-  setTopologyFilters,
-} from '../../redux/action';
+import { setSupportedTopologyFilters, setSupportedTopologyKinds } from '../../redux/action';
 import Topology from '../graph-view/Topology';
 import TopologyListView from '../list-view/TopologyListView';
 import TopologyFilterBar from '../../filters/TopologyFilterBar';
 import { getTopologySideBar } from '../side-bar/TopologySideBar';
-
+import { FilterContext } from '../../filters/FilterProvider';
 import './TopologyView.scss';
 
 const FILTER_ACTIVE_CLASS = 'odc-m-filter-active';
@@ -48,7 +43,6 @@ interface StateProps {
 
 interface DispatchProps {
   onSelectTab?: (name: string) => void;
-  onFiltersChange: (filters: DisplayFilters) => void;
   onSupportedFiltersChange: (supportedFilterIds: string[]) => void;
   onSupportedKindsChange: (supportedKinds: { [key: string]: number }) => void;
 }
@@ -67,10 +61,10 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
   viewType,
   eventSourceEnabled,
   application,
-  onFiltersChange,
   onSupportedFiltersChange,
   onSupportedKindsChange,
 }) => {
+  const { setTopologyFilters: onFiltersChange } = React.useContext(FilterContext);
   const [filteredModel, setFilteredModel] = React.useState<Model>();
   const [selectedEntity, setSelectedEntity] = React.useState<GraphElement>(null);
   const [visualization, setVisualization] = React.useState<Visualization>();
@@ -282,9 +276,6 @@ const TopologyStateToProps = (state: RootState): StateProps => {
 
 const TopologyDispatchToProps = (dispatch): DispatchProps => ({
   onSelectTab: (name) => dispatch(selectOverviewDetailsTab(name)),
-  onFiltersChange: (filters: DisplayFilters) => {
-    dispatch(setTopologyFilters(filters));
-  },
   onSupportedFiltersChange: (supportedFilterIds: string[]) => {
     dispatch(setSupportedTopologyFilters(supportedFilterIds));
   },
