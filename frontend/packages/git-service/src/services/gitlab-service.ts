@@ -1,5 +1,6 @@
 import { Gitlab } from 'gitlab';
 import * as GitUrlParse from 'git-url-parse';
+import i18n from 'i18next';
 import {
   GitSource,
   SecretType,
@@ -39,10 +40,13 @@ export class GitlabService extends BaseService {
     }
     const repo: GitlabRepo = await this.client.Projects.show(this.metadata.fullName);
     if (!repo) {
-      throw new Error('Unable to find any repo');
+      throw new Error(i18n.t('git-service~Unable to find repository'));
     } else if (repo.path_with_namespace !== this.metadata.fullName) {
       throw new Error(
-        `Repository path ${repo.path_with_namespace} does not match expected name ${this.metadata.fullName}`,
+        i18n.t('git-service~Repository path {{path}} does not match expected name {{name}}', {
+          path: repo.path_with_namespace,
+          name: this.metadata.fullName,
+        }),
       );
     }
 
