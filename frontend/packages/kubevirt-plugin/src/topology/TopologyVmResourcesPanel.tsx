@@ -16,7 +16,7 @@ export const TopologyVmResourcesPanel: React.FC<TopologyVmResourcePanelProps> = 
 
     return (
       <div className="overview__sidebar-pane-body">
-        <PodsOverviewContent obj={vm} pods={[pod]} loaded loadError={null} />
+        <PodsOverviewContent obj={vm} pods={pod ? [pod] : []} loaded loadError={null} />
         <NetworkingOverview obj={vm} />
       </div>
     );
