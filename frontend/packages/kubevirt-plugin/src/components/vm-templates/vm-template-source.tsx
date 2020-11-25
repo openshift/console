@@ -94,11 +94,14 @@ const DeleteSourceButton: React.FC<DeleteSourceButtonProps> = ({ template, sourc
 type ContainerSourceProps = {
   container: string;
   isCDRom: boolean;
+  clone?: boolean;
 };
 
-export const ContainerSource: React.FC<ContainerSourceProps> = ({ container, isCDRom }) => (
+export const ContainerSource: React.FC<ContainerSourceProps> = ({ container, isCDRom, clone }) => (
   <Stack>
-    <StackItem className="text-secondary">Boot from {isCDRom ? 'CD-ROM' : 'disk'}</StackItem>
+    <StackItem className="text-secondary">
+      {clone ? 'Clone and boot' : 'Boot'} from {isCDRom ? 'CD-ROM' : 'disk'}
+    </StackItem>
     <StackItem>Container {container}</StackItem>
   </Stack>
 );
@@ -121,11 +124,14 @@ type PVCSourceProps = {
   name: string;
   namespace: string;
   isCDRom: boolean;
+  clone?: boolean;
 };
 
-export const PVCSource: React.FC<PVCSourceProps> = ({ name, namespace, isCDRom }) => (
+export const PVCSource: React.FC<PVCSourceProps> = ({ name, namespace, isCDRom, clone }) => (
   <Stack>
-    <StackItem className="text-secondary">Boot from {isCDRom ? 'CD-ROM' : 'disk'}</StackItem>
+    <StackItem className="text-secondary">
+      {clone ? 'Clone and boot' : 'Boot'} from {isCDRom ? 'CD-ROM' : 'disk'}
+    </StackItem>
     <StackItem>
       <ResourceLink kind={PersistentVolumeClaimModel.kind} name={name} namespace={namespace} />
     </StackItem>
@@ -161,6 +167,14 @@ export const SourceDescription: React.FC<SourceDescriptionProps> = ({ sourceStat
   const { pvc, source, container, dvTemplate, pxe, isCDRom } = sourceStatus;
   switch (source) {
     case SOURCE_TYPE.BASE_IMAGE:
+      return (
+        <PVCSource
+          name={pvc.metadata.name}
+          namespace={pvc.metadata.namespace}
+          isCDRom={isCDRom}
+          clone
+        />
+      );
     case SOURCE_TYPE.PVC:
     case SOURCE_TYPE.DATA_VOLUME:
       return (
@@ -184,6 +198,7 @@ export const SourceDescription: React.FC<SourceDescriptionProps> = ({ sourceStat
               name={dvWrapper.getPesistentVolumeClaimName()}
               namespace={dvWrapper.getPesistentVolumeClaimNamespace()}
               isCDRom={isCDRom}
+              clone
             />
           );
         default:

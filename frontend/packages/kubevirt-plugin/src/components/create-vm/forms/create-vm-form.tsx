@@ -177,6 +177,7 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
             name={customSource.pvcName?.value}
             namespace={customSource.pvcNamespace?.value}
             isCDRom={cdRom}
+            clone
           />
         );
         break;
