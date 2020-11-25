@@ -24,7 +24,6 @@ import { LocalVolumeDiscovery as AutoDetectVolumeModel } from '../../models';
 import { initialState, reducer } from './state';
 import {
   DISCOVERY_CR_NAME,
-  LOCAL_STORAGE_NAMESPACE,
   HOSTNAME_LABEL_KEY,
   AUTO_DISCOVER_ERR_MSG,
   LABEL_OPERATOR,
@@ -42,7 +41,7 @@ const AutoDetectVolume: React.FC = withHandlePromise<AutoDetectVolumeProps & Han
       event.preventDefault();
 
       handlePromise(
-        fetchK8s(AutoDetectVolumeModel, DISCOVERY_CR_NAME, LOCAL_STORAGE_NAMESPACE)
+        fetchK8s(AutoDetectVolumeModel, DISCOVERY_CR_NAME, ns)
           .then((discoveryRes: K8sResourceKind) => {
             const nodeSelectorTerms = discoveryRes?.spec?.nodeSelector?.nodeSelectorTerms;
             const [selectorIndex, expIndex] = nodeSelectorTerms
@@ -77,7 +76,7 @@ const AutoDetectVolume: React.FC = withHandlePromise<AutoDetectVolumeProps & Han
             if (err.message === AUTO_DISCOVER_ERR_MSG) {
               throw err;
             }
-            const requestData = getDiscoveryRequestData(state);
+            const requestData = getDiscoveryRequestData({ ...state, ns });
             return k8sCreate(AutoDetectVolumeModel, requestData);
           })
           // eslint-disable-next-line promise/catch-or-return

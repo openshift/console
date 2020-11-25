@@ -46,7 +46,7 @@ const CreateLocalVolumeSet: React.FC = withHandlePromise<
   const onSubmit = (event: React.FormEvent<EventTarget>) => {
     event.preventDefault();
 
-    const requestData = getLocalVolumeSetRequestData(state);
+    const requestData = getLocalVolumeSetRequestData(state, ns);
 
     handlePromise(k8sCreate(LocalVolumeSetModel, requestData), () =>
       history.push(

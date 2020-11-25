@@ -18,9 +18,9 @@ import {
 } from '../../../../../constants';
 import '../../attached-devices.scss';
 
-const makeLocalVolumeSetCall = (state: State, dispatch: React.Dispatch<Action>) => {
+const makeLocalVolumeSetCall = (state: State, dispatch: React.Dispatch<Action>, ns: string) => {
   dispatch({ type: 'setIsLoading', value: true });
-  const requestData = getLocalVolumeSetRequestData(state);
+  const requestData = getLocalVolumeSetRequestData(state, ns);
   k8sCreate(LocalVolumeSetModel, requestData)
     .then(() => {
       state.onNextClick();
@@ -33,7 +33,11 @@ const makeLocalVolumeSetCall = (state: State, dispatch: React.Dispatch<Action>) 
     });
 };
 
-export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({ state, dispatch }) => {
+export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({
+  state,
+  dispatch,
+  ns,
+}) => {
   return (
     <>
       <LocalVolumeSetHeader />
@@ -49,7 +53,7 @@ export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({ stat
         </Form>
         <DiscoveryDonutChart state={state} dispatch={dispatch} />
       </div>
-      <ConfirmationModal state={state} dispatch={dispatch} />
+      <ConfirmationModal state={state} dispatch={dispatch} ns={ns} />
       {state.filteredNodes.length < minSelectedNode && (
         <Alert
           className="co-alert ceph-ocs-install__wizard-alert"
@@ -69,12 +73,13 @@ export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({ stat
 type CreateLocalVolumeSetProps = {
   state: State;
   dispatch: React.Dispatch<Action>;
+  ns: string;
 };
 
-const ConfirmationModal = ({ state, dispatch }) => {
+const ConfirmationModal = ({ state, dispatch, ns }) => {
   const makeLVSCall = () => {
     dispatch({ type: 'setShowConfirmModal', value: false });
-    makeLocalVolumeSetCall(state, dispatch);
+    makeLocalVolumeSetCall(state, dispatch, ns);
   };
 
   const cancel = () => {
