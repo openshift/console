@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
-import { BellIcon, CaretDownIcon, EllipsisVIcon, PlusCircleIcon, QuestionCircleIcon, OutlinedClockIcon } from '@patternfly/react-icons';
-import { ApplicationLauncher, ApplicationLauncherGroup, ApplicationLauncherItem, ApplicationLauncherSeparator, NotificationBadge, Toolbar, ToolbarGroup, ToolbarItem, TooltipPosition, Tooltip, Button } from '@patternfly/react-core';
+import { BellIcon, EllipsisVIcon, PlusCircleIcon, QuestionCircleIcon, ClockIcon, GlobeAmericasIcon, AngleDownIcon } from '@patternfly/react-icons';
+import { ApplicationLauncher, ApplicationLauncherGroup, ApplicationLauncherItem, ApplicationLauncherSeparator, NotificationBadge, Toolbar, ToolbarGroup, ToolbarItem, TooltipPosition, Tooltip, Button, Badge } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
@@ -372,15 +372,15 @@ class MastheadToolbarContents_ extends React.Component {
     if (mobile) {
       actions.unshift(...helpActions);
 
-      actions.unshift({
-        name: '',
-        isSection: true,
-        actions: [
-          {
-            component: <Link to={this._getImportYAMLPath()}>Import YAML</Link>,
-          },
-        ],
-      });
+      // actions.unshift({
+      //   name: '',
+      //   isSection: true,
+      //   actions: [
+      //     {
+      //       component: <Link to={this._getImportYAMLPath()}>Import YAML</Link>,
+      //     },
+      //   ],
+      // });
 
       if (!_.isEmpty(launchActions)) {
         actions.unshift(...launchActions);
@@ -396,7 +396,7 @@ class MastheadToolbarContents_ extends React.Component {
     const userToggle = (
       <span className="pf-c-dropdown__toggle">
         <span className="co-username">{username}</span>
-        <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
+        <AngleDownIcon className="pf-c-dropdown__toggle-icon" />
       </span>
     );
 
@@ -455,8 +455,9 @@ class MastheadToolbarContents_ extends React.Component {
     const languageToggle = (
       <span className="pf-c-dropdown__toggle">
         {/* i18n 키값 요청 후 적용하기 - 현재 선택된 언어를 표현하는 키값 - 한국어, 영어 */}
+        <GlobeAmericasIcon />
         <span className="co-username">Language</span>
-        <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
+        <AngleDownIcon className="pf-c-dropdown__toggle-icon" />
       </span>
     );
 
@@ -491,13 +492,14 @@ class MastheadToolbarContents_ extends React.Component {
     const { isApplicationLauncherDropdownOpen, isHelpDropdownOpen, showAboutModal, statuspageData } = this.state;
     const { consoleLinks, drawerToggle, notificationsRead, canAccessNS, keycloak, t } = this.props;
     const launchActions = this._launchActions();
-    const alertAccess = canAccessNS && !!window.SERVER_FLAGS.prometheusBaseURL;
+    // TODO: notificatoin 기능 완료 되면 추가하기.
+    const alertAccess = false; //canAccessNS && !!window.SERVER_FLAGS.prometheusBaseURL;
     return (
       <>
         <Toolbar>
           <ToolbarGroup className="hidden-xs">
             <ToolbarItem>
-              <OutlinedClockIcon />
+              <ClockIcon />
             </ToolbarItem>
             <ToolbarItem>
               <ExpTimer
@@ -510,14 +512,14 @@ class MastheadToolbarContents_ extends React.Component {
               />
             </ToolbarItem>
             <ToolbarItem>
-              <Button
-                variant="tertiary"
+              <Badge
+                key={1}
                 onClick={() => {
                   this._tokenRefresh();
                 }}
               >
                 {t('COMMON:MSG_GNB_SESSION_1')}
-              </Button>
+              </Badge>
             </ToolbarItem>
             {/* desktop -- (system status button) */}
             <SystemStatusButton statuspageData={statuspageData} />
@@ -527,6 +529,14 @@ class MastheadToolbarContents_ extends React.Component {
                 <ApplicationLauncher className="co-app-launcher" data-test-id="application-launcher" onSelect={this._onApplicationLauncherDropdownSelect} onToggle={this._onApplicationLauncherDropdownToggle} isOpen={isApplicationLauncherDropdownOpen} items={this._renderApplicationItems(this._launchActions())} position="right" isGrouped />
               </ToolbarItem>
             )}
+            <ToolbarItem>
+              <div className="co-masthead__line"></div>
+            </ToolbarItem>
+            {/* desktop -- (user dropdown [logout]) */}
+            <ToolbarItem className="hidden-xs">{this._renderLanguageMenu(false)}</ToolbarItem>
+            <ToolbarItem>
+              <div className="co-masthead__line"></div>
+            </ToolbarItem>
             {/* desktop -- (notification drawer button) */
             alertAccess && (
               <ToolbarItem>
@@ -535,20 +545,22 @@ class MastheadToolbarContents_ extends React.Component {
                 </NotificationBadge>
               </ToolbarItem>
             )}
-            <ToolbarItem>
+            {/* <ToolbarItem>
               <Tooltip content="Import YAML" position={TooltipPosition.bottom}>
                 <Link to={this._getImportYAMLPath()} className="pf-c-button pf-m-plain" aria-label="Import YAML">
                   <PlusCircleIcon className="co-masthead-icon" />
                 </Link>
               </Tooltip>
-            </ToolbarItem>
+            </ToolbarItem> */}
             <CloudShellMastheadButton />
-            <ToolbarItem>
-              <ApplicationLauncher aria-label="Help menu" className="co-app-launcher" data-test="help-dropdown-toggle" onSelect={this._onHelpDropdownSelect} onToggle={this._onHelpDropdownToggle} isOpen={isHelpDropdownOpen} items={this._renderApplicationItems(this._helpActions(this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'HelpMenu'))))} position="right" toggleIcon={<QuestionCircleIcon />} isGrouped />
-            </ToolbarItem>
+            {/* TODO: 매뉴얼 완료 후 매뉴얼로 이동하는 링크 추가하기 */}
+            {/* <ToolbarItem className="co-masthead-icon__button">
+              <QuestionCircleIcon />
+            </ToolbarItem> */}
           </ToolbarGroup>
           <ToolbarGroup>
             {/* mobile -- (notification drawer button) */
+            // 기능 추가되면 완성하기
             alertAccess && !notificationsRead && (
               <ToolbarItem className="visible-xs-block">
                 <NotificationBadge aria-label="Notification Drawer" onClick={drawerToggle} isRead={notificationsRead}>
@@ -560,8 +572,6 @@ class MastheadToolbarContents_ extends React.Component {
             <SystemStatusButton statuspageData={statuspageData} className="visible-xs-block" />
             {/* mobile -- kebab dropdown [(application launcher |) import yaml | documentation, about (| logout)] */}
             <ToolbarItem className="visible-xs-block">{this._renderMenu(true)}</ToolbarItem>
-            {/* desktop -- (user dropdown [logout]) */}
-            <ToolbarItem className="hidden-xs">{this._renderLanguageMenu(false)}</ToolbarItem>
             <ToolbarItem className="hidden-xs">{this._renderMenu(false)}</ToolbarItem>
           </ToolbarGroup>
         </Toolbar>
