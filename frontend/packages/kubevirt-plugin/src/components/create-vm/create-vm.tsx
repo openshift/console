@@ -368,7 +368,6 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
           state={state}
           dispatch={dispatch}
           customSource={bootState}
-          onCustomize={onCustomize}
         />
       ),
       canJumpTo: !isCreating && templateIsReady && (customBootSource ? bootState.isValid : true),
@@ -384,7 +383,6 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
           template={selectedTemplate}
           state={bootState}
           dispatch={bootDispatch}
-          onCustomize={onCustomize}
           loaded={loaded}
           loadError={loadError}
           templates={templates}
