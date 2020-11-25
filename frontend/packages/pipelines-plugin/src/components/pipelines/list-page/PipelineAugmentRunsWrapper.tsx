@@ -10,6 +10,7 @@ import PipelineList from './PipelineList';
 interface PipelineAugmentRunsWrapperProps {
   pipeline?: any;
   reduxIDs?: string[];
+  hideNameLabelFilters?: boolean;
 }
 
 const PipelineAugmentRunsWrapper: React.FC<PipelineAugmentRunsWrapperProps> = (props) => {
@@ -29,10 +30,12 @@ const PipelineAugmentRunsWrapper: React.FC<PipelineAugmentRunsWrapperProps> = (p
         propsReferenceForRuns={firehoseResources.propsReferenceForRuns}
       >
         <ListPageWrapper
+          {...props}
           flatten={(_resources) => _.get(_resources, ['pipeline', 'data'], {})}
           kinds={['Pipeline']}
           ListComponent={PipelineList}
           rowFilters={filters}
+          hideNameLabelFilters={props.hideNameLabelFilters}
         />
       </PipelineAugmentRuns>
     </Firehose>
