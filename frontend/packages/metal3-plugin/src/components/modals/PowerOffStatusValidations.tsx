@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { Alert, ExpandableSection, Stack, StackItem } from '@patternfly/react-core';
 import { DaemonSetModel, PodModel } from '@console/internal/models';
@@ -117,6 +118,7 @@ export const StatusValidations: React.FC<StatusValidationProps> = ({
   loadError,
   onLinkClicked,
 }) => {
+  const { t } = useTranslation();
   const validations = [];
   const [daemonSets, staticPods] = React.useMemo(
     () => [getDaemonSetsOfPods(nodePods), getStaticPods(nodePods)],
@@ -125,42 +127,48 @@ export const StatusValidations: React.FC<StatusValidationProps> = ({
 
   if (loadError) {
     validations.push({
-      title: 'Failed to load data.',
-      description: 'Failed to load subresources.',
+      title: t('metal3-plugin~Failed to load data.'),
+      description: t('metal3-plugin~Failed to load subresources.'),
       level: 'danger',
     });
   }
 
   if ([HOST_STATUS_UNKNOWN, ...HOST_STATUS_ERROR].includes(status)) {
     validations.push({
-      title: 'The bare metal host is not healthy.',
-      description: 'The host cannot be powered off gracefully untils its health is restored.',
+      title: t('metal3-plugin~The bare metal host is not healthy.'),
+      description: t(
+        'metal3-plugin~The host cannot be powered off gracefully untils its health is restored.',
+      ),
       level: 'warning',
     });
   }
 
   if (status === NODE_STATUS_STARTING_MAINTENANCE) {
     validations.push({
-      title: 'The node is starting maintenance.',
-      description:
-        'The node cannot be powered off gracefully until it finishes entering maintenance.',
+      title: t('metal3-plugin~The node is starting maintenance.'),
+      description: t(
+        'metal3-plugin~The node cannot be powered off gracefully until it finishes entering maintenance.',
+      ),
       level: 'info',
     });
   }
 
   if (status === NODE_STATUS_STOPPING_MAINTENANCE) {
     validations.push({
-      title: 'The node is stopping maintenance.',
-      description: 'The node cannot be powered off gracefully while it is exiting maintenance.',
+      title: t('metal3-plugin~The node is stopping maintenance.'),
+      description: t(
+        'metal3-plugin~The node cannot be powered off gracefully while it is exiting maintenance.',
+      ),
       level: 'info',
     });
   }
 
   if (daemonSets.length > 0) {
     validations.push({
-      title: 'This node contains DaemonSet pods.',
-      description:
-        'These DaemonSets will prevent some pods from being moved. This should not prevent the host from powering off gracefully.',
+      title: t('metal3-plugin~This node contains DaemonSet pods.'),
+      description: t(
+        'metal3-plugin~These DaemonSets will prevent some pods from being moved. This should not prevent the host from powering off gracefully.',
+      ),
       level: 'info',
       detail: (
         <ExpandableResources
@@ -174,9 +182,10 @@ export const StatusValidations: React.FC<StatusValidationProps> = ({
 
   if (staticPods.length > 0) {
     validations.push({
-      title: 'This host contains unmanaged static pods.',
-      description:
-        'These pods must be moved manually to continue running after the host powers off.',
+      title: t('metal3-plugin~This host contains unmanaged static pods.'),
+      description: t(
+        'metal3-plugin~These pods must be moved manually to continue running after the host powers off.',
+      ),
       level: 'warning',
       detail: (
         <ExpandableResources

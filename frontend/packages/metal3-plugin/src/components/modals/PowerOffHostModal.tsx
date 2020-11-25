@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { Alert, Button, Stack, StackItem, Checkbox } from '@patternfly/react-core';
 import {
   withHandlePromise,
@@ -28,36 +30,30 @@ import { StatusProps } from '../types';
 import { StatusValidations, getStaticPods, getDaemonSetsOfPods } from './PowerOffStatusValidations';
 import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 
-const getPowerOffMessage = (pods: PodKind[]) => {
+const getPowerOffMessage = (t: TFunction, pods: PodKind[]) => {
   const staticPods = getStaticPods(pods);
   const daemonSets = getDaemonSetsOfPods(pods);
   if (!staticPods.length && !daemonSets.length) {
-    return 'all workloads have already been moved.';
+    return t('metal3-plugin~all workloads have already been moved.');
   }
-  let desc = 'all workloads have already been moved, but ';
-  if (staticPods.length) {
-    desc += `${staticPods.length} static pods`;
+  if (staticPods.length && !daemonSets.length) {
+    return t(
+      'metal3-plugin~all workloads have already been moved, but {{length}} static pods have been skipped.',
+      { length: staticPods.length },
+    );
   }
-  if (daemonSets.length) {
-    if (staticPods.length) {
-      desc += ` and `;
-    }
-    desc += `${daemonSets.length} daemon sets`;
+  if (!staticPods.length && daemonSets.length) {
+    return t(
+      'metal3-plugin~all workloads have already been moved, but {{length}} daemon sets have been skipped.',
+      { length: daemonSets.length },
+    );
   }
-  desc += ' have been skipped.';
-  return desc;
+
+  return t(
+    'metal3-plugin~all workloads have already been moved, but {{podListlength}} static pods and {{daemonListlength}} daemon sets have been skipped.',
+    { podListlength: staticPods.length, daemonListlength: daemonSets.length },
+  );
 };
-
-type SafePowerOffDialogProps = { isUnderMaintenance: boolean; pods?: PodKind[] };
-
-const SafePowerOffDialog: React.FC<SafePowerOffDialogProps> = ({ isUnderMaintenance, pods }) => (
-  <p>
-    Host is ready to be gracefully powered off.{' '}
-    {isUnderMaintenance && (
-      <p>The host is currently under maintenance and {getPowerOffMessage(pods)}</p>
-    )}
-  </p>
-);
 
 type ForcePowerOffDialogProps = {
   canStartMaintenance: boolean;
@@ -80,6 +76,7 @@ const ForcePowerOffDialog: React.FC<ForcePowerOffDialogProps> = ({
   loadError,
   cancel,
 }) => {
+  const { t } = useTranslation();
   const hasMaintenance = [
     NODE_STATUS_STARTING_MAINTENANCE,
     NODE_STATUS_UNDER_MAINTENANCE,
@@ -87,27 +84,32 @@ const ForcePowerOffDialog: React.FC<ForcePowerOffDialogProps> = ({
   ].includes(status.status);
   let mainText: React.ReactNode;
   if (!nodeName) {
-    mainText = <p>The host will be powered off gracefully.</p>;
+    mainText = <p>{t('metal3-plugin~The host will be powered off gracefully.')}</p>;
   } else if (!hasMaintenance) {
+    const LinkButton: React.FC<{ children?: React.ReactNode }> = (text) => (
+      <Button
+        variant="link"
+        onClick={() => startNodeMaintenanceModal({ nodeName })}
+        isDisabled={!canStartMaintenance}
+        isInline
+      >
+        {text}
+      </Button>
+    );
+
     mainText = (
       <p>
-        To power off gracefully,{' '}
-        <Button
-          variant="link"
-          onClick={() => startNodeMaintenanceModal({ nodeName })}
-          isDisabled={!canStartMaintenance}
-          isInline
-        >
-          start maintenance
-        </Button>{' '}
-        on this host to move all managed workloads to other nodes in the cluster.
+        <Trans ns="metal3-plugin">
+          To power off gracefully, <LinkButton>start maintenance</LinkButton> on this host to move
+          all managed workloads to other nodes in the cluster.
+        </Trans>
       </p>
     );
   }
 
   const helpText = nodeName
-    ? 'Workloads will not be moved before the host powers off.'
-    : 'The host will power off immediately as if it were unplugged.';
+    ? t('metal3-plugin~Workloads will not be moved before the host powers off.')
+    : t('metal3-plugin~The host will power off immediately as if it were unplugged.');
 
   return (
     <Stack hasGutter>
@@ -123,7 +125,7 @@ const ForcePowerOffDialog: React.FC<ForcePowerOffDialogProps> = ({
       <StackItem>
         <Checkbox
           id="host-force-off"
-          label="Power off immediately"
+          label={t('metal3-plugin~Power off immediately')}
           onChange={setForceOff}
           isChecked={forceOff}
         />
@@ -131,9 +133,14 @@ const ForcePowerOffDialog: React.FC<ForcePowerOffDialogProps> = ({
       </StackItem>
       <StackItem>
         {forceOff && (
-          <Alert variant="warning" title="Applications may be temporarily disrupted." isInline>
-            Workloads currently running on this host will not be moved before powering off. This may
-            cause service disruptions.
+          <Alert
+            variant="warning"
+            title={t('metal3-plugin~Applications may be temporarily disrupted.')}
+            isInline
+          >
+            {t(
+              'metal3-plugin~Workloads currently running on this host will not be moved before powering off. This may cause service disruptions.',
+            )}
           </Alert>
         )}
       </StackItem>
@@ -162,6 +169,7 @@ const PowerOffHostModal = withHandlePromise<PowerOffHostModalProps & HandlePromi
       isList: true,
       fieldSelector: `spec.nodeName=${nodeName}`,
     });
+    const { t } = useTranslation();
     const [hasNodeMaintenanceCapability] = useMaintenanceCapability();
     const [forceOff, setForceOff] = React.useState(false);
 
@@ -176,12 +184,19 @@ const PowerOffHostModal = withHandlePromise<PowerOffHostModalProps & HandlePromi
     const isUnderMaintenance = status.status === NODE_STATUS_UNDER_MAINTENANCE;
     return (
       <form onSubmit={submit} name="form" className="modal-content">
-        <ModalTitle>Power Off Host</ModalTitle>
+        <ModalTitle>{t('metal3-plugin~Power Off Host')}</ModalTitle>
         <ModalBody>
           {!loaded ? (
             <LoadingBox />
           ) : canPowerOffSafely ? (
-            <SafePowerOffDialog isUnderMaintenance={isUnderMaintenance} pods={pods} />
+            isUnderMaintenance ? (
+              t(
+                'metal3-plugin~Host is ready to be gracefully powered off. The host is currently under maintenance and {{message}}',
+                { message: getPowerOffMessage(t, pods) },
+              )
+            ) : (
+              t('metal3-plugin~Host is ready to be gracefully powered off.')
+            )
           ) : (
             <ForcePowerOffDialog
               forceOff={forceOff}
@@ -200,7 +215,7 @@ const PowerOffHostModal = withHandlePromise<PowerOffHostModalProps & HandlePromi
           errorMessage={errorMessage}
           inProgress={inProgress}
           submitDisabled={!canPowerOffSafely && !forceOff}
-          submitText="Power Off"
+          submitText={t('metal3-plugin~Power Off')}
         />
       </form>
     );

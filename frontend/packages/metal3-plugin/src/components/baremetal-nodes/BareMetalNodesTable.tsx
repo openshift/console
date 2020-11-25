@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { Kebab, ResourceLink } from '@console/internal/components/utils';
@@ -28,33 +30,33 @@ const tableColumnClasses = {
   kebab: Kebab.columnClass,
 };
 
-const BareMetalNodesTableHeader = () => [
+const BareMetalNodesTableHeader = (t: TFunction) => () => [
   {
-    title: 'Name',
+    title: t('metal3-plugin~Name'),
     sortField: 'name',
     transforms: [sortable],
     props: { className: tableColumnClasses.name },
   },
   {
-    title: 'Status',
+    title: t('metal3-plugin~Status'),
     sortField: 'status.status',
     transforms: [sortable],
     props: { className: tableColumnClasses.status },
   },
   {
-    title: 'Role',
+    title: t('metal3-plugin~Role'),
     sortField: 'machine.metadata.labels["machine.openshift.io/cluster-api-machine-role"]',
     transforms: [sortable],
     props: { className: tableColumnClasses.role },
   },
   {
-    title: 'Machine',
+    title: t('metal3-plugin~Machine'),
     sortField: "metadata.annotations['machine.openshift.io/machine']",
     transforms: [sortable],
     props: { className: tableColumnClasses.machine },
   },
   {
-    title: 'Management Address',
+    title: t('metal3-plugin~Management Address'),
     sortField: 'host.spec.bmc.address',
     transforms: [sortable],
     props: { className: tableColumnClasses.address },
@@ -98,6 +100,7 @@ const BareMetalNodesTableRow: React.FC<BareMetalNodesTableRowProps<BareMetalNode
   rowKey,
   style,
 }) => {
+  const { t } = useTranslation();
   const [hasNodeMaintenanceCapability, maintenanceModel] = useMaintenanceCapability();
   const nodeName = getName(node);
   const hostName = getName(host);
@@ -144,7 +147,7 @@ const BareMetalNodesTableRow: React.FC<BareMetalNodesTableRowProps<BareMetalNode
               NodeModel,
               node,
               { csr },
-              { nodeMaintenance, hasNodeMaintenanceCapability, maintenanceModel },
+              { nodeMaintenance, hasNodeMaintenanceCapability, maintenanceModel, t },
             ),
           )}
           key={`kebab-for-${uid}`}
@@ -160,6 +163,7 @@ type BareMetalNodesTableProps = React.ComponentProps<typeof Table> & {
 };
 
 const BareMetalNodesTable: React.FC<BareMetalNodesTableProps> = (props) => {
+  const { t } = useTranslation();
   const row = React.useCallback<RowFunction<BareMetalNodeListBundle>>(
     (rowProps) =>
       isCSRBundle(rowProps.obj) ? (
@@ -183,8 +187,8 @@ const BareMetalNodesTable: React.FC<BareMetalNodesTableProps> = (props) => {
     <Table
       {...props}
       defaultSortField="node.metadata.name"
-      aria-label="Nodes"
-      Header={BareMetalNodesTableHeader}
+      aria-label={t('metal3-plugin~Nodes')}
+      Header={BareMetalNodesTableHeader(t)}
       Row={row}
       virtualize
     />

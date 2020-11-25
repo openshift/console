@@ -1,3 +1,4 @@
+import { TFunction } from 'i18next';
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
 import {
   K8sKind,
@@ -60,36 +61,45 @@ type ActionArgs = {
   maintenanceModel: K8sKind;
   status: StatusProps;
   bmoEnabled: string;
+  t: TFunction;
 };
 
-export const Edit = (kindObj: K8sKind, host: BareMetalHostKind): KebabOption => ({
-  label: `Edit ${kindObj.label}`,
+export const Edit = (
+  kindObj: K8sKind,
+  host: BareMetalHostKind,
+  { t }: ActionArgs,
+): KebabOption => ({
+  label: t('metal3-plugin~Edit Bare Metal Host'),
   href: `/k8s/ns/${getNamespace(host)}/${referenceForModel(kindObj)}/${getName(host)}/edit`,
 });
 
 export const SetNodeMaintenance = (
   kindObj: K8sKind,
   host: BareMetalHostKind,
-  { hasNodeMaintenanceCapability, nodeMaintenance, nodeName }: ActionArgs,
+  { hasNodeMaintenanceCapability, nodeMaintenance, nodeName, t }: ActionArgs,
 ): KebabOption => ({
   hidden: !nodeName || !hasNodeMaintenanceCapability || !!nodeMaintenance,
-  label: 'Start Maintenance',
+  label: t('metal3-plugin~Start Maintenance'),
   callback: () => startNodeMaintenanceModal({ nodeName }),
 });
 
 export const RemoveNodeMaintenance = (
   kindObj: K8sKind,
   host: BareMetalHostKind,
-  { hasNodeMaintenanceCapability, nodeMaintenance, nodeName, maintenanceModel }: ActionArgs,
+  { hasNodeMaintenanceCapability, nodeMaintenance, nodeName, maintenanceModel, t }: ActionArgs,
 ): KebabOption => ({
   hidden: !nodeName || !hasNodeMaintenanceCapability || !nodeMaintenance,
-  label: 'Stop Maintenance',
-  callback: () => stopNodeMaintenanceModal(nodeMaintenance),
+  label: t('metal3-plugin~Stop Maintenance'),
+  callback: () => stopNodeMaintenanceModal(nodeMaintenance, t),
   accessReview: nodeMaintenance && asAccessReview(maintenanceModel, nodeMaintenance, 'delete'),
 });
 
-export const PowerOn = (kindObj: K8sKind, host: BareMetalHostKind, { bmoEnabled }): KebabOption => {
-  const title = 'Power On';
+export const PowerOn = (
+  kindObj: K8sKind,
+  host: BareMetalHostKind,
+  { bmoEnabled, t },
+): KebabOption => {
+  const title = t('metal3-plugin~Power On');
   return {
     hidden:
       [HOST_POWER_STATUS_POWERED_ON, HOST_POWER_STATUS_POWERING_ON].includes(
@@ -116,9 +126,8 @@ export const PowerOn = (kindObj: K8sKind, host: BareMetalHostKind, { bmoEnabled 
 export const Deprovision = (
   kindObj: K8sKind,
   host: BareMetalHostKind,
-  { machine, machineSet, bmoEnabled }: ActionArgs,
+  { machine, machineSet, bmoEnabled, t }: ActionArgs,
 ): KebabOption => {
-  const title = 'Deprovision';
   return {
     hidden:
       [HOST_POWER_STATUS_POWERED_OFF, HOST_POWER_STATUS_POWERING_OFF].includes(
@@ -129,14 +138,21 @@ export const Deprovision = (
       !!getAnnotations(machine, {})[DELETE_MACHINE_ANNOTATION] ||
       (getMachineMachineSetOwner(machine) && !machineSet) ||
       !bmoEnabled,
-    label: title,
+    label: t('metal3-plugin~Deprovision'),
     callback: () =>
       confirmModal({
-        title: `${title} ${getName(host)}`,
-        message: `Are you sure you want to delete ${getName(machine)} machine${
-          machineSet ? ' and scale down its machine set?' : '?'
-        }`,
-        btnText: title,
+        title: t('metal3-plugin~Deprovision {{name}}', { name: getName(host) }),
+        message: machineSet
+          ? t(
+              'metal3-plugin~Are you sure you want to delete {{name}} machine and scale down its machine set?',
+              {
+                name: getName(machine),
+              },
+            )
+          : t('metal3-plugin~Are you sure you want to delete {{name}} machine?', {
+              name: getName(machine),
+            }),
+        btnText: t('metal3-plugin~Deprovision'),
         executeFn: () => deprovision(machine, machineSet),
       }),
     accessReview: machineSet
@@ -148,7 +164,7 @@ export const Deprovision = (
 export const PowerOff = (
   kindObj: K8sKind,
   host: BareMetalHostKind,
-  { nodeName, status, bmoEnabled }: ActionArgs,
+  { nodeName, status, bmoEnabled, t }: ActionArgs,
 ) => ({
   hidden:
     [HOST_POWER_STATUS_POWERED_OFF, HOST_POWER_STATUS_POWERING_OFF].includes(
@@ -156,7 +172,7 @@ export const PowerOff = (
     ) ||
     !hasPowerManagement(host) ||
     !bmoEnabled,
-  label: 'Power Off',
+  label: t('metal3-plugin~Power Off'),
   callback: () => powerOffHostModal({ host, nodeName, status }),
   accessReview: host && asAccessReview(BareMetalHostModel, host, 'update'),
 });
@@ -164,7 +180,7 @@ export const PowerOff = (
 export const Restart = (
   kindObj: K8sKind,
   host: BareMetalHostKind,
-  { nodeName, bmoEnabled }: ActionArgs,
+  { nodeName, bmoEnabled, t }: ActionArgs,
 ) => ({
   hidden:
     [HOST_POWER_STATUS_POWERED_OFF, HOST_POWER_STATUS_POWERING_OFF].includes(
@@ -173,7 +189,7 @@ export const Restart = (
     isHostScheduledForRestart(host) ||
     !hasPowerManagement(host) ||
     !bmoEnabled,
-  label: 'Restart',
+  label: t('metal3-plugin~Restart'),
   callback: () => restartHostModal({ host, nodeName }),
   accessReview: host && asAccessReview(BareMetalHostModel, host, 'update'),
 });
@@ -181,9 +197,9 @@ export const Restart = (
 export const Delete = (
   kindObj: K8sKind,
   host: BareMetalHostKind,
-  { status }: ActionArgs,
+  { status, t }: ActionArgs,
 ): KebabOption => {
-  const title = 'Delete Bare Metal Host';
+  const title = t('metal3-plugin~Delete Bare Metal Host');
   return {
     hidden: ![
       HOST_STATUS_UNKNOWN,
@@ -226,7 +242,7 @@ export const menuActionsCreator = (
   kindObj: K8sKind,
   host: BareMetalHostKind,
   { machines, machineSets, nodes, nodeMaintenances }: ExtraResources,
-  { hasNodeMaintenanceCapability, maintenanceModel, bmoEnabled },
+  { hasNodeMaintenanceCapability, maintenanceModel, bmoEnabled, t },
 ) => {
   const machine = getHostMachine(host, machines);
   const node = getMachineNode(machine, nodes);
@@ -247,6 +263,7 @@ export const menuActionsCreator = (
       status,
       bmoEnabled,
       maintenanceModel,
+      t,
     });
   });
 };

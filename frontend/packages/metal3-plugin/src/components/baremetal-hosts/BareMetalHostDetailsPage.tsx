@@ -90,7 +90,7 @@ const BareMetalHostDetailsPage: React.FC<BareMetalHostDetailsPageProps> = (props
       kind={referenceForModel(BareMetalHostModel)}
       resources={resources}
       menuActions={menuActionsCreator}
-      customData={{ hasNodeMaintenanceCapability, maintenanceModel, bmoEnabled }}
+      customData={{ hasNodeMaintenanceCapability, maintenanceModel, bmoEnabled, t }}
     />
   );
 };

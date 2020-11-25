@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import Helmet from 'react-helmet';
 import { referenceForModel, MachineKind, NodeKind } from '@console/internal/module/k8s';
@@ -53,6 +54,7 @@ const flattenResources = (resources: {
 };
 
 const BareMetalNodesPage: React.FC = (props) => {
+  const { t } = useTranslation();
   const [hasNodeMaintenanceCapability, model] = useMaintenanceCapability();
   const resources: FirehoseResource[] = [
     {
@@ -89,15 +91,15 @@ const BareMetalNodesPage: React.FC = (props) => {
   return (
     <div className="co-m-list">
       <Helmet>
-        <title>Nodes</title>
+        <title>{t('metal3-plugin~Nodes')}</title>
       </Helmet>
       <MultiListPage
         {...props}
-        rowFilters={[bareMetalNodeStatusFilter]}
+        rowFilters={[bareMetalNodeStatusFilter(t)]}
         resources={resources}
         flatten={flattenResources}
         ListComponent={BareMetalNodesTable}
-        title="Nodes"
+        title={t('metal3-plugin~Nodes')}
       />
     </div>
   );

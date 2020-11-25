@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { getName } from '@console/shared';
 import { withHandlePromise } from '@console/internal/components/utils';
 import {
@@ -29,6 +30,7 @@ const RestartHostModal = ({
   close = undefined,
   cancel = undefined,
 }: RestartHostModalProps) => {
+  const { t } = useTranslation();
   const onSubmit = React.useCallback(
     async (event) => {
       event.preventDefault();
@@ -40,21 +42,24 @@ const RestartHostModal = ({
   );
 
   const text = nodeName
-    ? `The bare metal host ${getName(
-        host,
-      )} will be restarted gracefully after all managed workloads are moved.`
-    : `The bare metal host ${getName(host)} will be restarted gracefully.`;
+    ? t(
+        'metal3-plugin~The bare metal host {{name}} will be restarted gracefully after all managed workloads are moved.',
+        { name: getName(host) },
+      )
+    : t('metal3-plugin~The bare metal host {{name}} will be restarted gracefully.', {
+        name: getName(host),
+      });
 
   return (
     <form onSubmit={onSubmit} name="form" className="modal-content">
-      <ModalTitle>Restart Bare Metal Host</ModalTitle>
+      <ModalTitle>{t('metal3-plugin~Restart Bare Metal Host')}</ModalTitle>
       <ModalBody>{text}</ModalBody>
       <ModalSubmitFooter
         cancel={cancel}
         errorMessage={errorMessage}
         inProgress={inProgress}
         submitDisabled={false}
-        submitText="Restart"
+        submitText={t('metal3-plugin~Restart')}
       />
     </form>
   );

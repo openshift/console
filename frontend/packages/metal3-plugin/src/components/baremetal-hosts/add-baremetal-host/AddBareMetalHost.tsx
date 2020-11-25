@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 import * as _ from 'lodash';
 import { Formik, FormikHelpers } from 'formik';
@@ -62,6 +63,7 @@ const AddBareMetalHost: React.FC<AddBareMetalHostProps> = ({
   name,
   enablePowerMgmt,
 }) => {
+  const { t } = useTranslation();
   const bmhResource = React.useMemo<WatchK8sResource>(
     () =>
       name
@@ -116,7 +118,7 @@ const AddBareMetalHost: React.FC<AddBareMetalHostProps> = ({
   }
 
   if (hostError || secretError || hostsError) {
-    return <LoadError label="resources" />;
+    return <LoadError label={t('metal3-plugin~resources')} />;
   }
 
   const hostNames = !name ? hosts.map(getName) : [];
@@ -131,20 +133,27 @@ const AddBareMetalHost: React.FC<AddBareMetalHostProps> = ({
       name: Yup.mixed()
         .test(
           'unique-name',
-          'Name "${value}" is already taken.', // eslint-disable-line no-template-curly-in-string
+          t('metal3-plugin~Name "${value}" is already taken.'), // eslint-disable-line no-template-curly-in-string
           (value) => !hostNames.includes(value),
         )
         .concat(nameValidationSchema),
       BMCAddress: enablePowerManagement
         ? Yup.string()
-            .matches(BMC_ADDRESS_REGEX, 'Value provided is not a valid BMC address')
-            .required('Required.')
+            .matches(
+              BMC_ADDRESS_REGEX,
+              t('metal3-plugin~Value provided is not a valid BMC address'),
+            )
+            .required(t('metal3-plugin~Required.'))
         : undefined,
-      username: enablePowerManagement ? Yup.string().required('Required.') : undefined,
-      password: enablePowerManagement ? Yup.string().required('Required.') : undefined,
+      username: enablePowerManagement
+        ? Yup.string().required(t('metal3-plugin~Required.'))
+        : undefined,
+      password: enablePowerManagement
+        ? Yup.string().required(t('metal3-plugin~Required.'))
+        : undefined,
       bootMACAddress: Yup.string()
-        .matches(MAC_REGEX, 'Value provided is not a valid MAC Address.')
-        .required('Required.'),
+        .matches(MAC_REGEX, t('metal3-plugin~Value provided is not a valid MAC Address.'))
+        .required(t('metal3-plugin~Required.')),
     }),
   );
 
