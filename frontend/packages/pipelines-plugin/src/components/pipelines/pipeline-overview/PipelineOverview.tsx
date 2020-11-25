@@ -14,6 +14,8 @@ import { PipelineRunModel, PipelineModel } from '../../../models';
 import TriggerLastRunButton from './TriggerLastRunButton';
 import PipelineRunItem from './PipelineRunItem';
 import PipelineStartButton from './PipelineStartButton';
+import { isPipelineNotStarted, removePipelineNotStarted } from './pipeline-overview-utils';
+import PipelineOverviewAlert from './PipelineOverviewAlert';
 
 const MAX_VISIBLE = 3;
 
@@ -31,9 +33,24 @@ const PipelinesOverview: React.FC<PipelinesOverviewProps> = ({
   const {
     metadata: { name, namespace },
   } = pipeline;
+  const [showAlert, setShowAlert] = React.useState(isPipelineNotStarted(name, namespace));
+
+  React.useEffect(() => {
+    setShowAlert(isPipelineNotStarted(name, namespace));
+  }, [name, namespace]);
+
   return (
     <>
       <SidebarSectionHeading text={PipelineRunModel.labelPlural}>
+        {showAlert && pipelineRuns.length === 0 && (
+          <PipelineOverviewAlert
+            title={t('pipelines-plugin~Pipeline could not be started automatically')}
+            onClose={() => {
+              setShowAlert(false);
+              removePipelineNotStarted(name, namespace);
+            }}
+          />
+        )}
         {pipelineRuns.length > MAX_VISIBLE && (
           <Link
             className="sidebar__section-view-all"

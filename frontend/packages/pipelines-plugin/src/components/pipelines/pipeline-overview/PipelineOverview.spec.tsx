@@ -3,6 +3,8 @@ import { shallow } from 'enzyme';
 import PipelineOverview from './PipelineOverview';
 import PipelineStartButton from './PipelineStartButton';
 import TriggerLastRunButton from './TriggerLastRunButton';
+import { setPipelineNotStarted } from './pipeline-overview-utils';
+import PipelineOverviewAlert from './PipelineOverviewAlert';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');
@@ -50,5 +52,19 @@ describe('Pipeline sidebar overview', () => {
     props.item.pipelineRuns = [{ metadata: { name: 'pipelinerun', namespace: 'test' } }];
     const wrapper = shallow(<PipelineOverview {...props} />);
     expect(wrapper.find(TriggerLastRunButton)).toHaveLength(1);
+  });
+
+  it('should show the pipeline not started Alert', () => {
+    const { name, namespace } = props.item.pipelines[0].metadata;
+    setPipelineNotStarted(name, namespace);
+    const wrapper = shallow(<PipelineOverview {...props} />);
+    expect(wrapper.find(PipelineOverviewAlert)).toHaveLength(1);
+    sessionStorage.clear();
+  });
+
+  it('should not show the pipeline not started Alert', () => {
+    sessionStorage.clear();
+    const wrapper = shallow(<PipelineOverview {...props} />);
+    expect(wrapper.find(PipelineOverviewAlert)).toHaveLength(0);
   });
 });

@@ -124,6 +124,7 @@
   "Select {{resourceType}} resource...": "Select {{resourceType}} resource...",
   "Add another value": "Add another value",
   "Must define at least one task": "Must define at least one task",
+  "Pipeline could not be started automatically": "Pipeline could not be started automatically",
   "View all {{pipelineRunsLength}}": "View all {{pipelineRunsLength}}",
   "View logs": "View logs",
   "Name of the cluster.": "Name of the cluster.",
