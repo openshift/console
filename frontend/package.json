@@ -9,6 +9,7 @@
     "integration-tests"
   ],
   "scripts": {
+    "postinstall": "yarn generate",
     "clean": "rm -rf ./public/dist",
     "dev": "yarn clean && yarn generate && NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack-dev-server",
     "dev-once": "yarn clean && yarn generate && NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack --mode=development",
