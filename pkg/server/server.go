@@ -23,6 +23,8 @@ import (
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/serverutils"
 	"github.com/openshift/console/pkg/terminal"
+
+	"github.com/openshift/console/pkg/usersettings"
 	"github.com/openshift/console/pkg/version"
 
 	graphql "github.com/graph-gophers/graphql-go"
@@ -96,6 +98,7 @@ type Server struct {
 	TectonicVersion      string
 	Auther               *auth.Authenticator
 	StaticUser           *auth.User
+	ServiceAccountToken  string
 	KubectlClientID      string
 	KubeAPIServerURL     string
 	DocumentationBaseURL *url.URL
@@ -388,6 +391,15 @@ func (s *Server) HTTPHandler() http.Handler {
 	handle("/api/console/knative-event-sources", authHandler(s.handleKnativeEventSourceCRDs))
 	handle("/api/console/knative-channels", authHandler(s.handleKnativeChannelCRDs))
 	handle("/api/console/version", authHandler(s.versionHandler))
+
+	// User settings
+	userSettingHandler := usersettings.UserSettingsHandler{
+		K8sProxyConfig:      s.K8sProxyConfig,
+		Client:              s.K8sClient,
+		Endpoint:            s.K8sProxyConfig.Endpoint.String(),
+		ServiceAccountToken: s.ServiceAccountToken,
+	}
+	handle("/api/console/user-settings", authHandlerWithUser(userSettingHandler.HandleUserSettings))
 
 	// Helm Endpoints
 	helmHandlers := helmhandlerspkg.New(s.K8sProxyConfig.Endpoint.String(), s.K8sClient.Transport)
