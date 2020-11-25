@@ -1,11 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Stack, StackItem, Card, CardTitle, SplitItem, Split, Label } from '@patternfly/react-core';
-import { ResourceIcon } from '@console/internal/components/utils';
+import { ExternalLink, ResourceIcon } from '@console/internal/components/utils';
 import GitOpsServiceDetailsSection from './GitOpsServiceDetailsSection';
 import { GitOpsEnvironment } from '../utils/gitops-types';
-import GitOpsEnvClusterLink from './GitOpsEnvClusterLink';
-import useConsoleURL from '../utils/useConsoleURL';
 import './GitOpsDetails.scss';
 
 interface GitOpsDetailsProps {
@@ -13,7 +11,6 @@ interface GitOpsDetailsProps {
 }
 
 const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ envs }) => {
-  const consoleURL = useConsoleURL();
   return (
     <div className="odc-gitops-details">
       {_.map(
@@ -47,13 +44,11 @@ const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ envs }) => {
                       </StackItem>
                       <StackItem className="co-truncate co-nowrap">
                         {env.cluster ? (
-                          <GitOpsEnvClusterLink
-                            className="odc-gitops-details__env-section__url"
-                            consoleURL={consoleURL}
-                            url={env.cluster}
-                          >
-                            {env.cluster}
-                          </GitOpsEnvClusterLink>
+                          <ExternalLink
+                            additionalClassName="odc-gitops-details__env-section__url"
+                            href={env.cluster}
+                            text={env.cluster}
+                          />
                         ) : (
                           <div className="odc-gitops-details__env-section__url-empty-state">
                             Cluster URL not available
@@ -63,20 +58,7 @@ const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ envs }) => {
                       <StackItem className="co-truncate co-nowrap">
                         <span className="co-resource-item">
                           <ResourceIcon kind="Project" />
-                          {env.cluster ? (
-                            <GitOpsEnvClusterLink
-                              className="co-resource-item__resource-name"
-                              consoleURL={consoleURL}
-                              url={env.cluster}
-                              path={`/topology/ns/${env.environment}`}
-                            >
-                              {env.environment}
-                            </GitOpsEnvClusterLink>
-                          ) : (
-                            <span className="co-resource-item__resource-name">
-                              {env.environment}
-                            </span>
-                          )}
+                          <span className="co-resource-item__resource-name">{env.environment}</span>
                         </span>
                       </StackItem>
                     </Stack>
