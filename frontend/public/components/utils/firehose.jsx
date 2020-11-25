@@ -185,8 +185,9 @@ export const Firehose = connect(
       const discoveryComplete =
         !this.props.inFlight && !this.props.loaded && this.state.firehoses.length === 0;
       const resourcesChanged =
+        prevProps.resources !== this.props.resources &&
         _.intersectionWith(prevProps.resources, this.props.resources, _.isEqual).length !==
-        this.props.resources.length;
+          this.props.resources.length;
 
       if (discoveryComplete || resourcesChanged) {
         this.clear();

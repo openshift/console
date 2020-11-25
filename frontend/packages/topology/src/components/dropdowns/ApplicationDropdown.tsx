@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Firehose } from '@console/internal/components/utils';
-import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ResourceDropdown } from '@console/shared';
 import { useExtensions } from '@console/plugin-sdk/src';
 import { isTopologyDataModelFactory, TopologyDataModelFactory } from '../../extensions';
@@ -40,23 +39,20 @@ const ApplicationDropdown: React.FC<ApplicationDropdownProps> = ({ namespace, ..
   const modelFactories = useExtensions<TopologyDataModelFactory>(isTopologyDataModelFactory);
 
   const resources = React.useMemo(() => {
-    const watchedBaseResources = getBaseWatchedResources(namespace);
-    const baseResources = Object.keys(watchedBaseResources).map((key) => ({
+    let watchedBaseResources = getBaseWatchedResources(namespace);
+    modelFactories.forEach((modelFactory) => {
+      const factoryResources = modelFactory.properties.resources?.(namespace);
+      if (factoryResources) {
+        watchedBaseResources = {
+          ...factoryResources,
+          ...watchedBaseResources,
+        };
+      }
+    });
+    return Object.keys(watchedBaseResources).map((key) => ({
       ...watchedBaseResources[key],
       prop: key,
     }));
-    return modelFactories.reduce((acc, modelFactory) => {
-      const factoryResources: WatchK8sResources<any> = modelFactory.properties.resources
-        ? modelFactory.properties.resources(namespace)
-        : {};
-      Object.keys(factoryResources).forEach((key) => {
-        acc.push({
-          ...factoryResources[key],
-          prop: key,
-        });
-      });
-      return acc;
-    }, baseResources);
   }, [modelFactories, namespace]);
 
   return (
