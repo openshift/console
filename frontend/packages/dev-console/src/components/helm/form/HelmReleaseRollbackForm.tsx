@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
 import { FormikProps, FormikValues } from 'formik';
 import { Form, FormGroup } from '@patternfly/react-core';
 import { FormFooter, FormHeader } from '@console/shared';
@@ -9,6 +10,7 @@ import { HelmRelease, HelmActionConfigType } from '../helm-types';
 
 import RevisionListHeader from './rollback/RevisionListHeader';
 import RevisionListRow from './rollback/RevisionListRow';
+import { helmActionString } from '../helm-utils';
 
 interface HelmReleaseRollbackFormProps {
   releaseName: string;
@@ -29,25 +31,26 @@ const HelmReleaseRollbackForm: React.FC<Props> = ({
   releaseName,
   helmActionConfig,
 }) => {
+  const { t } = useTranslation();
   const { type: helmAction, title } = helmActionConfig;
 
   const formHelpText = (
-    <>
-      Select the version to rollback <strong style={{ color: '#000' }}>{releaseName}</strong> to,
-      from the table below:
-    </>
+    <Trans t={t} ns="devconsole">
+      Select the version to rollback <strong style={{ color: '#000' }}>{{ releaseName }}</strong>{' '}
+      to, from the table below:
+    </Trans>
   );
 
   return (
     <Form onSubmit={handleSubmit}>
       <FormHeader title={title} helpText={formHelpText} />
-      <FormGroup fieldId="revision-list-field" label="Revision History" isRequired>
+      <FormGroup fieldId="revision-list-field" label={t('devconsole~Revision History')} isRequired>
         <Table
           data={releaseHistory}
           defaultSortField="version"
           defaultSortOrder={SortByDirection.desc}
-          aria-label="CustomResources"
-          Header={RevisionListHeader}
+          aria-label={t('devconsole~CustomResources')}
+          Header={RevisionListHeader(t)}
           Row={RevisionListRow}
           loaded={!!releaseHistory}
           virtualize
@@ -57,9 +60,9 @@ const HelmReleaseRollbackForm: React.FC<Props> = ({
         handleReset={handleReset}
         errorMessage={status?.submitError}
         isSubmitting={status?.isSubmitting || isSubmitting}
-        submitLabel={helmAction}
+        submitLabel={helmActionString(t)[helmAction]}
         disableSubmit={status?.isSubmitting || !dirty || !_.isEmpty(errors)}
-        resetLabel="Cancel"
+        resetLabel={t('devconsole~Cancel')}
         sticky
       />
     </Form>

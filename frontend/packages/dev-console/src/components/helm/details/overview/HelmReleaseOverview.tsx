@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ResourceSummary, SectionHeading } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { HelmRelease } from '../../helm-types';
@@ -10,9 +11,10 @@ export interface HelmReleaseOverviewProps {
 }
 
 const HelmReleaseOverview: React.FC<HelmReleaseOverviewProps> = ({ obj, customData }) => {
+  const { t } = useTranslation();
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text="Helm Release Details" />
+      <SectionHeading text={t('devconsole~Helm Release Details')} />
       <div className="row">
         <div className="col-sm-6">
           <ResourceSummary resource={obj} customPathName={'metadata.labels.name'} />

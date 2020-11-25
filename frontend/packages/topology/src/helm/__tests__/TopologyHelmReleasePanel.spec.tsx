@@ -16,6 +16,7 @@ jest.mock('react-i18next', () => {
       Component.defaultProps = { ...Component.defaultProps, t: (s) => s };
       return Component;
     },
+    useTranslation: () => ({ t: (key) => key }),
   };
 });
 

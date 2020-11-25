@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
 import { FormikProps, FormikValues } from 'formik';
 import { TextInputTypes, Grid, GridItem, Button, Alert } from '@patternfly/react-core';
 import {
@@ -16,6 +17,7 @@ import FormSection from '../../import/section/FormSection';
 import { helmReadmeModalLauncher } from '../HelmReadmeModal';
 import { HelmActionType, HelmChart, HelmActionConfigType } from '../helm-types';
 import HelmChartVersionDropdown from './HelmChartVersionDropdown';
+import { helmActionString } from '../helm-utils';
 
 export interface HelmInstallUpgradeFormProps {
   chartHasValues: boolean;
@@ -39,6 +41,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
   onVersionChange,
   chartError,
 }) => {
+  const { t } = useTranslation();
   const { chartName, chartVersion, chartReadme, formData, formSchema, editorType } = values;
   const { type: helmAction, title, subTitle } = helmActionConfig;
 
@@ -63,7 +66,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
     <YAMLEditorField
       schema={formSchema}
       name="yamlData"
-      schemaLabel="Helm Chart"
+      schemaLabel={t('devconsole~Helm Chart')}
       onSave={handleSubmit}
     />
   );
@@ -71,7 +74,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
   const formSubTitle = _.isString(subTitle) ? subTitle : subTitle?.[editorType];
 
   const readmeText = chartReadme && (
-    <>
+    <Trans t={t} ns="devconsole">
       For more information on the chart, refer to this{' '}
       <Button
         type="button"
@@ -87,7 +90,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
       >
         README
       </Button>
-    </>
+    </Trans>
   );
 
   const formHelpText = (
@@ -101,8 +104,8 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
     <FlexForm onSubmit={handleSubmit}>
       <FormHeader title={title} helpText={formHelpText} marginBottom="lg" />
       {chartError && (
-        <Alert variant="danger" isInline title="Helm chart cannot be installed">
-          The Helm chart is currently unavailable. {`${chartError}.`}
+        <Alert variant="danger" isInline title={t('devconsole~Helm chart cannot be installed')}>
+          {t('devconsole~The Helm chart is currently unavailable. {{chartError}}', { chartError })}
         </Alert>
       )}
       <FormSection fullWidth>
@@ -111,8 +114,8 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
             <InputField
               type={TextInputTypes.text}
               name="releaseName"
-              label="Release Name"
-              helpText="A unique name for the Helm Chart release."
+              label={t('devconsole~Release Name')}
+              helpText={t('devconsole~A unique name for the Helm Chart release.')}
               required
               isDisabled={!!chartError || helmAction === HelmActionType.Upgrade}
             />
@@ -138,9 +141,9 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
         handleReset={handleReset}
         errorMessage={status && status.submitError}
         isSubmitting={status?.isSubmitting || isSubmitting}
-        submitLabel={helmAction}
+        submitLabel={helmActionString(t)[helmAction]}
         disableSubmit={isSubmitDisabled}
-        resetLabel="Cancel"
+        resetLabel={t('devconsole~Cancel')}
         sticky
       />
     </FlexForm>

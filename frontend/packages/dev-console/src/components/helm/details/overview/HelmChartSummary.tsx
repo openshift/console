@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { HelmRelease } from '../../helm-types';
 import { Timestamp } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -9,6 +10,7 @@ interface HelmChartSummaryProps {
 }
 
 const HelmChartSummary: React.FC<HelmChartSummaryProps> = ({ obj, helmRelease }) => {
+  const { t } = useTranslation();
   if (!helmRelease) return null;
 
   const {
@@ -26,15 +28,15 @@ const HelmChartSummary: React.FC<HelmChartSummaryProps> = ({ obj, helmRelease })
 
   return (
     <dl className="co-m-pane__details">
-      <dt>Chart Name</dt>
+      <dt>{t('devconsole~Chart Name')}</dt>
       <dd>{chartName}</dd>
-      <dt>Chart Version</dt>
+      <dt>{t('devconsole~Chart Version')}</dt>
       <dd>{chartVersion}</dd>
-      <dt>App Version</dt>
+      <dt>{t('devconsole~App Version')}</dt>
       <dd>{appVersion || '-'}</dd>
-      <dt>Revision</dt>
+      <dt>{t('devconsole~Revision')}</dt>
       <dd>{revision}</dd>
-      <dt>Updated</dt>
+      <dt>{t('devconsole~Updated')}</dt>
       <dd>
         <Timestamp timestamp={updated} />
       </dd>

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { match as RMatch } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { SortByDirection } from '@patternfly/react-table';
 import { useDeepCompareMemoize } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -24,6 +25,7 @@ const HelmReleaseHistory: React.FC<HelmReleaseHistoryProps> = ({ match, obj }) =
   const [loadError, setLoadError] = React.useState<string>();
   const [revisions, setRevisions] = React.useState([]);
   const memoizedObj = useDeepCompareMemoize(obj);
+  const { t } = useTranslation();
 
   React.useEffect(() => {
     let destroyed = false;
@@ -38,16 +40,16 @@ const HelmReleaseHistory: React.FC<HelmReleaseHistoryProps> = ({ match, obj }) =
       .catch((err) => {
         if (!destroyed) {
           setRevisionsLoaded(true);
-          setLoadError(err.message || 'Unable to load Helm Release history');
+          setLoadError(err.message || t('devconsole~Unable to load Helm Release history'));
         }
       });
     return () => {
       destroyed = true;
     };
-  }, [helmReleaseName, namespace, memoizedObj]);
+  }, [helmReleaseName, namespace, memoizedObj, t]);
 
   if (loadError) {
-    return <StatusBox loaded loadError={loadError} label="Helm Release history" />;
+    return <StatusBox loaded loadError={loadError} label={t('devconsole~Helm Release history')} />;
   }
 
   return (
@@ -57,7 +59,7 @@ const HelmReleaseHistory: React.FC<HelmReleaseHistoryProps> = ({ match, obj }) =
       sortBy="version"
       sortOrder={SortByDirection.desc}
       resourceRow={HelmReleaseHistoryRow}
-      resourceHeader={HelmReleaseHistoryHeader}
+      resourceHeader={HelmReleaseHistoryHeader(t)}
     />
   );
 };

@@ -1,3 +1,4 @@
+import { TFunction } from 'i18next';
 import { sortable } from '@patternfly/react-table';
 
 export const tableColumnClasses = {
@@ -7,28 +8,28 @@ export const tableColumnClasses = {
   created: 'col-lg-4 col-md-3 hidden-sm hidden-xs',
 };
 
-const HelmReleaseResourcesHeader = () => {
+const HelmReleaseResourcesHeader = (t: TFunction) => () => {
   return [
     {
-      title: 'Name',
+      title: t('devconsole~Name'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses.name },
     },
     {
-      title: 'Type',
+      title: t('devconsole~Type'),
       sortField: 'kind',
       transforms: [sortable],
       props: { className: tableColumnClasses.type },
     },
     {
-      title: 'Status',
+      title: t('devconsole~Status'),
       sortField: 'status.phase',
       transforms: [sortable],
       props: { className: tableColumnClasses.status },
     },
     {
-      title: 'Created',
+      title: t('devconsole~Created'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses.created },

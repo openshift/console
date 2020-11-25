@@ -1,3 +1,4 @@
+import { TFunction } from 'i18next';
 import { sortable } from '@patternfly/react-table';
 import { Kebab } from '@console/internal/components/utils';
 
@@ -12,46 +13,46 @@ export const tableColumnClasses = {
   kebab: Kebab.columnClass,
 };
 
-const HelmReleaseHistoryHeader = () => {
+const HelmReleaseHistoryHeader = (t: TFunction) => () => {
   return [
     {
-      title: 'Revision',
+      title: t('devconsole~Revision'),
       sortField: 'version',
       transforms: [sortable],
       props: { className: tableColumnClasses.revision },
     },
     {
-      title: 'Updated',
+      title: t('devconsole~Updated'),
       sortField: 'info.last_deployed',
       transforms: [sortable],
       props: { className: tableColumnClasses.updated },
     },
     {
-      title: 'Status',
+      title: t('devconsole~Status'),
       sortField: 'info.status',
       transforms: [sortable],
       props: { className: tableColumnClasses.status },
     },
     {
-      title: 'Chart Name',
+      title: t('devconsole~Chart Name'),
       sortField: 'chart.metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses.chartName },
     },
     {
-      title: 'Chart Version',
+      title: t('devconsole~Chart Version'),
       sortField: 'chart.metadata.version',
       transforms: [sortable],
       props: { className: tableColumnClasses.chartVersion },
     },
     {
-      title: 'App Version',
+      title: t('devconsole~App Version'),
       sortField: 'chart.metadata.appVersion',
       transforms: [sortable],
       props: { className: tableColumnClasses.appVersion },
     },
     {
-      title: 'Description',
+      title: t('devconsole~Description'),
       props: { className: tableColumnClasses.description },
     },
     {

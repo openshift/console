@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { match as RMatch } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import {
   navFactory,
   LoadingBox,
@@ -44,6 +45,7 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
   secret,
   helmReleaseData,
 }) => {
+  const { t } = useTranslation();
   const namespace = match.params.ns;
   if (!helmReleaseData || !secret || (!secret.loaded && _.isEmpty(secret.loadError))) {
     return <LoadingBox />;
@@ -92,10 +94,10 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
       customData={helmReleaseData}
       breadcrumbsFor={() => [
         {
-          name: `Helm Releases`,
+          name: t('devconsole~Helm Releases'),
           path: `/helm-releases/ns/${namespace}`,
         },
-        { name: `Helm Release Details`, path: `${match.url}` },
+        { name: t('devconsole~Helm Release Details'), path: `${match.url}` },
       ]}
       title={title}
       kind={SecretReference}
@@ -103,17 +105,17 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
         navFactory.details(HelmReleaseOverview),
         {
           href: 'resources',
-          name: 'Resources',
+          name: t('devconsole~Resources'),
           component: HelmReleaseResources,
         },
         {
           href: 'history',
-          name: 'Revision History',
+          name: t('devconsole~Revision History'),
           component: HelmReleaseHistory,
         },
         {
           href: 'releasenotes',
-          name: 'Release Notes',
+          name: t('devconsole~Release Notes'),
           component: HelmReleaseNotes,
         },
       ]}
