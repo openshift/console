@@ -110,7 +110,7 @@ describe('Tests involving guest agent', () => {
       expect(vmView.vmLoggedInUsers.getText()).toEqual('1 user');
     });
 
-    it('Displays guest agent data in Disks tab', async () => {
+    it('ID(CNV-5320) Displays guest agent data in Disks tab', async () => {
       await vmLinux.navigateToDisks();
       await browser.wait(
         until.presenceOf(disksView.fileSystemsTableHeader),
