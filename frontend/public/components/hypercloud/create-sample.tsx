@@ -7,12 +7,22 @@ import { SelectorInput } from '../utils';
 import { RadioGroup } from './utils/radio';
 import { Section } from './utils/section';
 import { InputSelectBox } from './utils/inputSelectBox';
+import { KeyValueListEditor } from './utils/key-value-list-editor';
+import { TagsLabel } from './utils/tags-label';
 import { NumberSpinner } from './utils/number-spinner';
 
 const defaultValues = {
   // requestDo에 넣어줄 형식으로 defaultValues 작성
   metadata: {
     name: 'test-name',
+    keyvaluelist: [
+      { key: 'A', value: 'aaa' },
+      { key: 'B', value: 'bbb' },
+      { key: 'C', value: 'ccc' },
+      { key: 'D', value: 'ddd' },
+      { key: 'E', value: 'eee' },
+    ],
+    tags: ['AAA', 'BBB'],
   },
   spec: {
     resources: 'cpu',
@@ -83,6 +93,18 @@ const CreateSampleComponent: React.FC<SampleFormProps> = props => {
           min={-5}
           max={5}
           name="spinner1" // 한 페이지에 spinner 여러 개 만들 경우 name에 unique한 값을 넣어줘야 됨 (한개만 만들 땐 name이 필수 아님)
+        />
+      </Section>
+      <Section id="tagslabel" label="Tags Label">
+        <TagsLabel
+          name="metadata.tags" // 서버에 보낼 데이터에서의 path (필수)
+          placeholder="Enter tag" // tag가 없을 때 보여줄 placeholder (선택)
+        />
+      </Section>
+      <Section id="list" label="Key Value List">
+        <KeyValueListEditor
+          name="metadata.keyvaluelist" // 서버에 보낼 데이터에서의 path (필수)
+          disableReorder={false} // 순서바꾸기 제공여부 설정. 기본값은 false (선택)
         />
       </Section>
     </div>
