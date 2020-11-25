@@ -50,8 +50,6 @@ type CatalogViewProps = {
   filters: FiltersType;
   filterGroups: string[];
   filterGroupNameMap: CatalogStringMap;
-  filterStoreKey: string;
-  filterRetentionPreference: string[];
   groupings: CatalogStringMap;
   renderTile: (item: CatalogItem) => React.ReactNode;
 };
@@ -64,8 +62,6 @@ const CatalogView: React.FC<CatalogViewProps> = ({
   filters,
   filterGroups,
   filterGroupNameMap,
-  filterStoreKey,
-  filterRetentionPreference,
   groupings,
   renderTile,
 }) => {
@@ -89,8 +85,8 @@ const CatalogView: React.FC<CatalogViewProps> = ({
       }
     });
 
-    return getActiveFilters(attributeFilters, filters, filterStoreKey, filterRetentionPreference);
-  }, [filterGroups, filterRetentionPreference, filterStoreKey, filters, queryParams]);
+    return getActiveFilters(attributeFilters, filters);
+  }, [filterGroups, filters, queryParams]);
 
   const [filterGroupsShowAll, setFilterGroupsShowAll] = React.useState<Record<string, boolean>>({});
   const [filterGroupCounts, setFilterGroupCounts] = React.useState<CatalogFilterCounts>({});
@@ -105,21 +101,6 @@ const CatalogView: React.FC<CatalogViewProps> = ({
     [sortOrder],
   );
 
-  const storeFilters = React.useCallback(
-    (currentFilters) => {
-      if (filterStoreKey && filterRetentionPreference) {
-        const filtersToStore = {};
-        _.each(filterRetentionPreference, (filterGroup) => {
-          if (currentFilters[filterGroup]) {
-            filtersToStore[filterGroup] = currentFilters[filterGroup];
-          }
-        });
-        localStorage.setItem(filterStoreKey, JSON.stringify(filtersToStore));
-      }
-    },
-    [filterRetentionPreference, filterStoreKey],
-  );
-
   const clearFilters = React.useCallback(() => {
     const params = new URLSearchParams();
     catalogType && items.length > 0 && params.set('catalogType', catalogType);
@@ -130,21 +111,18 @@ const CatalogView: React.FC<CatalogViewProps> = ({
       // this doesn't work right now because of issue with PF SearchInput
       catalogToolbarRef.current && catalogToolbarRef.current.focus({ preventScroll: true });
     }
+  }, [catalogType, items.length]);
 
-    storeFilters(activeFilters);
-  }, [activeFilters, catalogType, items.length, storeFilters]);
-
-  const handleCategoryChange = React.useCallback((categoryId) => {
+  const handleCategoryChange = (categoryId) => {
     updateURLParams(CatalogQueryParams.CATEGORY, categoryId);
-  }, []);
+  };
 
   const handleFilterChange = React.useCallback(
     (filterType, id, value) => {
       const updatedFilters = _.set(activeFilters, [filterType, id, 'active'], value);
       updateURLParams(filterType, getFilterSearchParam(updatedFilters[filterType]));
-      storeFilters(updatedFilters);
     },
-    [activeFilters, storeFilters],
+    [activeFilters],
   );
 
   const handleSearchKeywordChange = React.useCallback((searchKeyword) => {

@@ -98,34 +98,7 @@ export const determineAvailableFilters = (
   return filters;
 };
 
-export const getActiveFilters = (
-  attributeFilters,
-  activeFilters,
-  storeFilterKey: string = null,
-  filterRetentionPreference: string[] = null,
-): CatalogFilters => {
-  const userFilters = storeFilterKey ? localStorage.getItem(storeFilterKey) : null;
-
-  if (userFilters) {
-    try {
-      const lastFilters = JSON.parse(userFilters);
-      if (lastFilters) {
-        if (filterRetentionPreference) {
-          _.each(filterRetentionPreference, (filterGroup) => {
-            if (!attributeFilters || !attributeFilters[filterGroup]) {
-              if (lastFilters[filterGroup]) {
-                activeFilters[filterGroup] = lastFilters[filterGroup];
-              }
-            }
-          });
-        }
-      }
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error('Failed parsing user filter settings.');
-    }
-  }
-
+export const getActiveFilters = (attributeFilters, activeFilters): CatalogFilters => {
   _.forOwn(attributeFilters, (filterValues, filterType) => {
     // removing default and localstore filters if Filters are present over URL
     _.each(_.keys(activeFilters[filterType]), (key) =>
