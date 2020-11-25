@@ -27,6 +27,12 @@ const useCatalogExtensions = (
     ? itemProviderExtensions.filter((e) => e.properties.type === catalogType)
     : itemProviderExtensions;
 
+  catalogProviderExtensions.sort((a, b) => {
+    const p1 = a.properties.priority ?? 0;
+    const p2 = b.properties.priority ?? 0;
+    return p1 - p2;
+  });
+
   return [catalogTypeExtensions, catalogProviderExtensions, typesResolved && providersResolved];
 };
 
