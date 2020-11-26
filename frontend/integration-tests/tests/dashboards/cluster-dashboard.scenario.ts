@@ -60,6 +60,27 @@ describe('Cluster Dashboard', () => {
       expect(items.get(0).getText()).toEqual('Cluster');
       expect(items.get(1).getText()).toMatch('Control Plane.*');
       expect(items.get(2).getText()).toMatch('Operators.*');
+      expect(items.get(3).getText()).toMatch('Insights.*');
+    });
+    describe('Insights Popup', () => {
+      beforeAll(async () => {
+        await clusterDashboardView.insightsButton.click();
+      });
+      afterAll(async () => {
+        await clusterDashboardView.insightsCloseButton.click();
+      });
+      it('has title', () => {
+        const title = clusterDashboardView.insightsPopover.$('h6[id*="header"]');
+        expect(title.getText()).toEqual('Insights status');
+      });
+      it('has OCM UI link', () => {
+        const link = clusterDashboardView.insightsPopover.$('a.co-external-link');
+        expect(link.isDisplayed()).toBe(true);
+      })
+      it('has chart', () => {
+        const pieChart = clusterDashboardView.insightsPopover.$('div.pf-c-chart');
+        expect(pieChart.isDisplayed()).toBe(true);
+      });
     });
   });
 
