@@ -26,7 +26,6 @@ describe('EventSourceSpec', () => {
         namespace={namespaceName}
         perspective={perspective}
         eventSourceStatus={eventSourceStatusData}
-        showCatalog={false}
         activeApplication={activeApplicationName}
       />,
     );
@@ -45,7 +44,6 @@ describe('EventSourceSpec', () => {
         namespace={namespaceName}
         perspective={perspective}
         eventSourceStatus={eventSourceStatusData}
-        showCatalog={false}
         contextSource={contextSourceData}
         activeApplication={activeApplicationName}
       />,

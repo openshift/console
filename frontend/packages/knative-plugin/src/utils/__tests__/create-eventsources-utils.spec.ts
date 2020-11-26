@@ -3,14 +3,12 @@ import { safeDump } from 'js-yaml';
 import * as k8sModels from '@console/internal/module/k8s';
 import * as utils from '@console/internal/components/utils';
 import {
-  ServiceModel,
   EventSourceCronJobModel,
   EventSourceSinkBindingModel,
   EventSourceKafkaModel,
   EventSourceCamelModel,
 } from '../../models';
 import {
-  getEventSourceResource,
   getBootstrapServers,
   loadYamlData,
   getEventSourcesDepResource,
@@ -29,46 +27,6 @@ import {
 import { EventSources } from '../../components/add/import-types';
 
 describe('Create knative Utils', () => {
-  it('expect response to be of kind CronJobSource with proper ApiGroup', () => {
-    const defaultEventingData = getDefaultEventingData(EventSources.CronJobSource);
-    const mockData = _.cloneDeep(defaultEventingData);
-    mockData.formData.apiVersion = 'sources.eventing.knative.dev/v1alpha1';
-    const knEventingResource: k8sModels.K8sResourceKind = getEventSourceResource(mockData);
-    expect(knEventingResource.kind).toBe(EventSourceCronJobModel.kind);
-    expect(knEventingResource.apiVersion).toBe(
-      `${EventSourceCronJobModel.apiGroup}/${EventSourceCronJobModel.apiVersion}`,
-    );
-  });
-
-  it('expect response to schedule in spec for CronJobSource', () => {
-    const defaultEventingData = getDefaultEventingData(EventSources.CronJobSource);
-    const mockData = _.cloneDeep(defaultEventingData);
-    const knEventingResource: k8sModels.K8sResourceKind = getEventSourceResource(mockData);
-    expect(knEventingResource.spec.schedule).toBe('* * * * *');
-  });
-
-  it('expect response for sink to be of kind knative service', () => {
-    const defaultEventingData = getDefaultEventingData(EventSources.CronJobSource);
-    const mockData = _.cloneDeep(defaultEventingData);
-    const knEventingResource: k8sModels.K8sResourceKind = getEventSourceResource(mockData);
-    expect(knEventingResource.spec.sink.ref.kind).toBe(ServiceModel.kind);
-    expect(knEventingResource.spec.sink.ref.apiVersion).toBe(
-      `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
-    );
-  });
-
-  it('expect response to be of kind sinkBinding with proper ApiGroup', () => {
-    const defaultEventingData = getDefaultEventingData(EventSources.CronJobSource);
-    const mockData = _.cloneDeep(defaultEventingData);
-    mockData.formData.type = 'SinkBinding';
-    mockData.formData.apiVersion = 'sources.knative.dev/v1alpha2';
-    const knEventingResource: k8sModels.K8sResourceKind = getEventSourceResource(mockData);
-    expect(knEventingResource.kind).toBe(EventSourceSinkBindingModel.kind);
-    expect(knEventingResource.apiVersion).toBe(
-      `${EventSourceSinkBindingModel.apiGroup}/${EventSourceSinkBindingModel.apiVersion}`,
-    );
-  });
-
   it('should return bootstrapServers', () => {
     expect(getBootstrapServers(Kafkas)).toEqual([
       'my-cluster-kafka-bootstrap.div.svc:9092',
