@@ -92,6 +92,9 @@ const normalizeClusterServiceVersions = (
 
       const detailsDescriptions = [
         {
+          value: <p>{description}</p>,
+        },
+        {
           value: <p>{longDescription}</p>,
         },
         {

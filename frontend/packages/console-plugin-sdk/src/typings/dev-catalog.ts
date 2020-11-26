@@ -72,7 +72,10 @@ export type CatalogItem = {
   type: string;
   name: string;
   provider?: string;
-  description?: string;
+  // Used as the tile description. If provided as a string, the description is truncated to 3 lines.
+  // If provided as a ReactNode, the contents will not be truncated.
+  // This description will also be shown in the side panel if there are no `details.descriptions`.
+  description?: string | React.ReactNode;
   tags?: string[];
   creationTimestamp?: string;
   supportUrl?: string;

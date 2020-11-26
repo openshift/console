@@ -111,6 +111,9 @@ const normalizeHelmCharts = (
 
         const detailsDescriptions = [
           {
+            value: <p>{description}</p>,
+          },
+          {
             value: <HelmReadmeLoader chartURL={chartURL} />,
           },
         ];

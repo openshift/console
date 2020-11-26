@@ -88,6 +88,9 @@ const normalizeBuilderImages = (
 
     const detailsDescriptions = [
       {
+        value: <p>{description}</p>,
+      },
+      {
         value: imageStreamText,
       },
     ];

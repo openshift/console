@@ -18,10 +18,12 @@ export const keywordCompare = (filterString: string, item: CatalogItem): boolean
     return false;
   }
 
+  const filterStringLowerCase = filterString.toLowerCase();
   return (
-    item.name.toLowerCase().includes(filterString) ||
-    (item.description && item.description.toLowerCase().includes(filterString)) ||
-    (item.tags && item.tags.some((tag) => tag.includes(filterString)))
+    item.name.toLowerCase().includes(filterStringLowerCase) ||
+    (typeof item.description === 'string' &&
+      item.description.toLowerCase().includes(filterStringLowerCase)) ||
+    (item.tags && item.tags.some((tag) => tag.includes(filterStringLowerCase)))
   );
 };
 
