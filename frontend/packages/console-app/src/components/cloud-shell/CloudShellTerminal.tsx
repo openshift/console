@@ -126,15 +126,13 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ user, onCancel 
 
   if (initData && workspaceNamespace) {
     return (
-      <div className="co-cloudshell-terminal__container">
-        <CloudshellExec
-          workspaceName={workspaceName}
-          namespace={workspaceNamespace}
-          container={initData.container}
-          podname={initData.pod}
-          shcommand={initData.cmd || []}
-        />
-      </div>
+      <CloudshellExec
+        workspaceName={workspaceName}
+        namespace={workspaceNamespace}
+        container={initData.container}
+        podname={initData.pod}
+        shcommand={initData.cmd || []}
+      />
     );
   }
 

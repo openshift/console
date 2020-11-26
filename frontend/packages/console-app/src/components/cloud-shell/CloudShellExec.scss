@@ -1,0 +1,12 @@
+@import '~patternfly/dist/sass/patternfly/color-variables';
+
+.co-cloudshell-exec {
+  &__container-error {
+    background-color: #fff;
+    height: 100%;
+  }
+
+  &__error-msg {
+    color: $color-pf-red !important;
+  }
+}

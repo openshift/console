@@ -2,7 +2,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Base64 } from 'js-base64';
 import { useTranslation } from 'react-i18next';
-import { LoadError } from '@console/internal/components/utils';
 import { connectToFlags, WithFlagsProps } from '@console/internal/reducers/features';
 import { impersonateStateToProps } from '@console/internal/reducers/ui';
 import { FLAGS } from '@console/shared';
@@ -12,6 +11,14 @@ import { PodModel } from '@console/internal/models';
 import Terminal, { ImperativeTerminalType } from './Terminal';
 import TerminalLoadingBox from './TerminalLoadingBox';
 import useActivityTick from './useActivityTick';
+import {
+  getCloudShellCR,
+  CLOUD_SHELL_STOPPED_BY_ANNOTATION,
+  startWorkspace,
+  CloudShellResource,
+} from './cloud-shell-utils';
+import { Button, EmptyState, EmptyStateBody } from '@patternfly/react-core';
+import './CloudShellExec.scss';
 
 // pod exec WS protocol is FD prefixed, base64 encoded data (sometimes json stringified)
 
@@ -49,6 +56,8 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
 }) => {
   const [wsOpen, setWsOpen] = React.useState<boolean>(false);
   const [wsError, setWsError] = React.useState<string>();
+  const [wsReopening, setWsReopening] = React.useState<boolean>(false);
+  const [customResource, setCustomResource] = React.useState<CloudShellResource>();
   const ws = React.useRef<WSFactory>();
   const terminal = React.useRef<ImperativeTerminalType>();
   const { t } = useTranslation();
@@ -124,11 +133,38 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
         if (!evt || evt.wasClean === true) {
           return;
         }
-        const currentTerminal = terminal.current;
-        const error = evt.reason || t('cloudshell~The terminal connection has closed.');
-        currentTerminal && currentTerminal.onConnectionClosed(error);
-        websocket.destroy();
-        if (!unmounted) setWsError(error);
+
+        setWsOpen(false);
+
+        // Check the Cloud Shell to see if it has any hints as to why the terminal connection was closed
+        const cloudShellCR = getCloudShellCR(workspaceName, namespace);
+        let stoppedByError;
+        cloudShellCR
+          .then((cr) => {
+            const stopReason = cr.metadata.annotations[CLOUD_SHELL_STOPPED_BY_ANNOTATION];
+            if (stopReason) {
+              stoppedByError = t(
+                'cloudshell~The terminal connection has closed due to {{reason}}.',
+                { reason: stopReason },
+              );
+            }
+            setCustomResource(cr);
+          })
+          .catch((err) => {
+            stoppedByError = err;
+          })
+          .finally(() => {
+            const error =
+              evt.reason || stoppedByError || t('cloudshell~The terminal connection has closed.');
+            const currentTerminal = terminal.current;
+            currentTerminal && currentTerminal.onConnectionClosed(error);
+            websocket.destroy();
+            if (!unmounted) setWsError(error);
+          })
+          .catch((e) => {
+            // eslint-disable-next-line no-console
+            console.error(e);
+          });
       }) // eslint-disable-next-line no-console
       .onerror((evt) => console.error(`WS error?! ${evt}`));
 
@@ -142,27 +178,63 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
         );
     }
 
+    setWsReopening(false);
+
     return () => {
       unmounted = true;
       websocket.destroy();
     };
-  }, [tick, container, flags, impersonate, namespace, podname, shcommand, t]);
+  }, [
+    tick,
+    container,
+    flags,
+    impersonate,
+    namespace,
+    podname,
+    shcommand,
+    t,
+    workspaceName,
+    wsReopening,
+  ]);
 
   if (wsError) {
     return (
-      <LoadError
-        message={wsError}
-        label={t('cloudshell~OpenShift command line terminal')}
-        canRetry={false}
-      />
+      <div className="co-cloudshell-exec__container-error">
+        <EmptyState>
+          <EmptyStateBody className="co-cloudshell-exec__error-msg">{wsError}</EmptyStateBody>
+          <Button
+            variant="primary"
+            onClick={() => {
+              if (customResource && customResource.status.phase !== 'Running') {
+                startWorkspace(customResource);
+              } else if (!wsReopening) {
+                setWsReopening(true);
+              }
+              setWsError(undefined);
+            }}
+          >
+            {customResource.status.phase === 'Running'
+              ? t('cloudshell~Reconnect to terminal')
+              : t('cloudshell~Restart terminal')}
+          </Button>
+        </EmptyState>
+      </div>
     );
   }
 
   if (wsOpen) {
-    return <Terminal onData={onData} ref={terminal} />;
+    return (
+      <div className="co-cloudshell-terminal__container">
+        <Terminal onData={onData} ref={terminal} />
+      </div>
+    );
   }
 
-  return <TerminalLoadingBox />;
+  return (
+    <div className="co-cloudshell-terminal__container">
+      <TerminalLoadingBox />
+    </div>
+  );
 };
 
 export default connect<StateProps>(impersonateStateToProps)(

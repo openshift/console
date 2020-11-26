@@ -1,4 +1,4 @@
-import { K8sResourceKind, k8sPatch } from '@console/internal/module/k8s';
+import { K8sResourceKind, k8sPatch, k8sGet } from '@console/internal/module/k8s';
 import { STORAGE_PREFIX, getRandomChars } from '@console/shared';
 import { coFetchJSON, coFetch } from '@console/internal/co-fetch';
 import { WorkspaceModel } from '../../models';
@@ -33,6 +33,7 @@ export type TerminalInitData = { pod: string; container: string; cmd: string[] }
 export const CLOUD_SHELL_LABEL = 'console.openshift.io/terminal';
 export const CLOUD_SHELL_CREATOR_LABEL = 'controller.devfile.io/creator';
 export const CLOUD_SHELL_RESTRICTED_ANNOTATION = 'controller.devfile.io/restricted-access';
+export const CLOUD_SHELL_STOPPED_BY_ANNOTATION = 'controller.devfile.io/stopped-by';
 
 export const createCloudShellResourceName = () => `terminal-${getRandomChars(6)}`;
 
@@ -103,4 +104,8 @@ export const setCloudShellNamespace = (namespace: string) => {
   } else {
     localStorage.setItem(CLOUD_SHELL_NAMESPACE, namespace);
   }
+};
+
+export const getCloudShellCR = (name: string, ns: string) => {
+  return k8sGet(WorkspaceModel, name, ns);
 };
