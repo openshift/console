@@ -29,6 +29,7 @@ const CatalogTile: React.FC<CatalogTileProps> = ({ item, catalogTypes, onClick }
     </CatalogTileBadge>,
   ];
 
+  const isDescriptionReactElement = React.isValidElement(description);
   return (
     <PfCatalogTile
       className="co-catalog-tile"
@@ -36,10 +37,12 @@ const CatalogTile: React.FC<CatalogTileProps> = ({ item, catalogTypes, onClick }
       title={name}
       badges={badges}
       vendor={vendor}
-      description={description}
+      description={isDescriptionReactElement ? undefined : description}
       data-test={`${type}-${name}`}
       {...getIconProps(item)}
-    />
+    >
+      {isDescriptionReactElement ? description : undefined}
+    </PfCatalogTile>
   );
 };
 
