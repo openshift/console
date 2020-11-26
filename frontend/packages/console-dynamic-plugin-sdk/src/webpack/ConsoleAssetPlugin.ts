@@ -1,17 +1,19 @@
 import * as webpack from 'webpack';
 import * as path from 'path';
-import * as fs from 'fs';
-import * as jsonc from 'comment-json';
 import { ConsolePackageJSON } from '../schema/plugin-package';
 import { ConsoleExtensionsJSON } from '../schema/console-extensions';
 import { ConsolePluginManifestJSON } from '../schema/plugin-manifest';
-import { ExtensionValidator } from '../validation/ExtensionValidator';
 import { SchemaValidator } from '../validation/SchemaValidator';
-import { extensionsFile, pluginManifestFile } from '../constants';
+import { ExtensionValidator } from '../validation/ExtensionValidator';
 import consoleExtensionsSchema from '../../dist/schema/console-extensions';
+import { extensionsFile, pluginManifestFile } from '../constants';
+import { parseJSONC } from '../utils/jsonc';
 
-const validateExtensionsFile = (ext: ConsoleExtensionsJSON) => {
-  return new SchemaValidator(extensionsFile).validate(consoleExtensionsSchema, ext);
+export const validateExtensionsFileSchema = (
+  ext: ConsoleExtensionsJSON,
+  description = extensionsFile,
+) => {
+  return new SchemaValidator(description).validate(consoleExtensionsSchema, ext);
 };
 
 const emitJSON = (compilation: webpack.Compilation, filename: string, data: any) => {
@@ -35,12 +37,8 @@ export class ConsoleAssetPlugin {
   private readonly manifest: ConsolePluginManifestJSON;
 
   constructor(private readonly pkg: ConsolePackageJSON) {
-    const ext = jsonc.parse(
-      fs.readFileSync(path.resolve(process.cwd(), extensionsFile), 'utf-8'),
-      null,
-      true,
-    ) as ConsoleExtensionsJSON;
-    validateExtensionsFile(ext).report();
+    const ext = parseJSONC<ConsoleExtensionsJSON>(path.resolve(process.cwd(), extensionsFile));
+    validateExtensionsFileSchema(ext).report();
 
     this.manifest = {
       name: pkg.name,
@@ -53,26 +51,24 @@ export class ConsoleAssetPlugin {
   }
 
   apply(compiler: webpack.Compiler) {
-    let success = true;
-
-    compiler.hooks.afterCompile.tap(ConsoleAssetPlugin.name, (compilation) => {
+    compiler.hooks.shouldEmit.tap(ConsoleAssetPlugin.name, (compilation) => {
       const result = new ExtensionValidator(extensionsFile).validate(
         compilation,
         this.manifest.extensions,
         this.pkg.consolePlugin.exposedModules || {},
       );
+
       if (result.hasErrors()) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
         // @ts-ignore
         compilation.errors.push(new Error(result.formatErrors()));
-        success = false;
       }
+
+      return result.hasErrors();
     });
 
     compiler.hooks.emit.tap(ConsoleAssetPlugin.name, (compilation) => {
       emitJSON(compilation, pluginManifestFile, this.manifest);
     });
-
-    compiler.hooks.shouldEmit.tap(ConsoleAssetPlugin.name, () => success);
   }
 }

@@ -5,7 +5,7 @@ import { pluginManifestFile } from '../constants';
 import pluginManifestSchema from '../../dist/schema/plugin-manifest';
 import { resolveURL } from '../utils/url';
 
-export const validatePluginManifest = async (
+export const validatePluginManifestSchema = async (
   manifest: ConsolePluginManifestJSON,
   manifestURL: string,
 ) => {
@@ -33,6 +33,6 @@ export const fetchPluginManifest = async (baseURL: string) => {
   const url = resolveURL(baseURL, pluginManifestFile, { trailingSlashInBaseURL: true });
   const response: Response = await coFetch(url, { method: 'GET' });
   const manifest = (await response.json()) as ConsolePluginManifestJSON;
-  (await validatePluginManifest(manifest, url)).report();
+  (await validatePluginManifestSchema(manifest, url)).report();
   return manifest;
 };

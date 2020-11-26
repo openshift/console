@@ -23,8 +23,6 @@ export type ExtensionFlags = Partial<{
  *
  * Each extension may specify `flags` referencing Console feature flags which
  * are required and/or disallowed in order to put this extension into effect.
- *
- * TODO(vojtech): write ESLint rule to guard against extension type duplicity
  */
 export type Extension<P extends {} = any> = {
   type: string;

@@ -3,7 +3,6 @@ import chalk from 'chalk';
 export class ValidationResult {
   private readonly errors: string[] = [];
 
-  // eslint-disable-next-line no-empty-function
   constructor(private readonly description: string) {}
 
   assertThat(condition: boolean, message: string) {

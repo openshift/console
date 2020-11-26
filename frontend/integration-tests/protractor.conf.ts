@@ -7,11 +7,11 @@ import * as ConsoleReporter from 'jasmine-console-reporter';
 import * as failFast from 'protractor-fail-fast';
 import { createWriteStream, writeFileSync } from 'fs';
 import { format } from 'util';
+import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
 import {
-  resolvePluginPackages,
   reducePluginTestSuites,
   mergeTestSuites,
-} from '@console/plugin-sdk/src/codegen';
+} from '@console/plugin-sdk/src/codegen/plugin-integration-tests';
 
 const tap = !!process.env.TAP;
 

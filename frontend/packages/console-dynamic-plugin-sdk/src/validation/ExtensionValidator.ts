@@ -74,7 +74,7 @@ export class ExtensionValidator {
         const [moduleName, exportName] = parseEncodedCodeRefValue(codeRefValue);
         const errorTrace = `in ${dataVar}.${extensionDataVar}[${data.index}] property '${propName}'`;
 
-        if (!moduleName) {
+        if (!moduleName || !exportName) {
           this.result.addError(`Invalid code reference '${codeRefValue}' ${errorTrace}`);
           return;
         }

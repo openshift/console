@@ -5,11 +5,13 @@ import * as glob from 'glob';
 import * as findUp from 'find-up';
 import * as readPkg from 'read-pkg';
 
-// the name of Console application package
-const consoleAppName = '@console/app';
+export const consolePkgScope = '@console';
 
 // glob that matches all the monorepo packages
 const consolePkgGlob = 'packages/*/package.json';
+
+// the name of Console application package
+const consoleAppName = `${consolePkgScope}/app`;
 
 // env. variable used to override the active plugin list
 const consolePluginOverrideEnvVar = 'CONSOLE_PLUGINS';
@@ -91,7 +93,7 @@ export const resolvePluginPackages = (
   if (_.isString(process.env[consolePluginOverrideEnvVar])) {
     const pkgNames = process.env[consolePluginOverrideEnvVar]
       .split(',')
-      .map((name) => (!name.startsWith('@') ? `@console/${name}` : name));
+      .map((name) => (!name.startsWith('@') ? `${consolePkgScope}/${name}` : name));
 
     return sortPluginPackages(
       appPackage,
@@ -113,6 +115,7 @@ export type PluginPackage = Package & {
   consolePlugin: {
     entry: string;
     integrationTestSuites?: Record<string, string[]>;
+    exposedModules?: { [moduleName: string]: string };
   };
 };
 

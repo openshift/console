@@ -7,10 +7,11 @@ import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as VirtualModulesPlugin from 'webpack-virtual-modules';
 import * as ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 
-import { resolvePluginPackages, getActivePluginsModule } from '@console/plugin-sdk/src/codegen';
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
-import { CircularDependencyPreset } from './webpack.circular-deps';
 import { sharedVendorModules } from '@console/dynamic-plugin-sdk/src/shared-modules';
+import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
+import { ConsoleActivePluginsModule } from '@console/plugin-sdk/src/webpack/ConsoleActivePluginsModule';
+import { CircularDependencyPreset } from './webpack.circular-deps';
 
 interface Configuration extends webpack.Configuration {
   devServer?: WebpackDevServerConfiguration;
@@ -28,6 +29,7 @@ const WDS_PORT = 8080;
 
 /* Helpers */
 const extractCSS = new MiniCssExtractPlugin({ filename: 'app-bundle.[contenthash].css' });
+const virtualModules = new VirtualModulesPlugin();
 const overpassTest = /overpass-.*\.(woff2?|ttf|eot|otf)(\?.*$|$)/;
 const sharedVendorTest = new RegExp(`node_modules\\/(${sharedVendorModules.join('|')})\\/`);
 
@@ -219,6 +221,8 @@ const config: Configuration = {
       localesToKeep: ['en', 'ja', 'ko'],
     }),
     extractCSS,
+    virtualModules,
+    new ConsoleActivePluginsModule(resolvePluginPackages(), virtualModules),
     ...(IS_WDS
       ? [
           new ReactRefreshWebpackPlugin({
@@ -252,12 +256,5 @@ if (NODE_ENV === 'production') {
   config.optimization.concatenateModules = false;
   config.stats = 'normal';
 }
-
-/* Console plugin support */
-config.plugins.push(
-  new VirtualModulesPlugin({
-    'node_modules/@console/active-plugins.js': getActivePluginsModule(resolvePluginPackages()),
-  }),
-);
 
 export default config;

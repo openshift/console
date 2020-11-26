@@ -53,6 +53,8 @@ module.exports = {
       rules: {
         // TODO fix for monorepo support
         'import/no-extraneous-dependencies': 'off',
+        // Allow invocation of require()
+        '@typescript-eslint/no-require-imports': 'off',
       },
     },
   },

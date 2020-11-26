@@ -4,16 +4,16 @@ import * as readPkg from 'read-pkg';
 import * as _ from 'lodash';
 import { ConsoleAssetPlugin } from './ConsoleAssetPlugin';
 import { ConsolePackageJSON } from '../schema/plugin-package';
-import { sharedVendorModules } from '../shared-modules';
 import { SchemaValidator } from '../validation/SchemaValidator';
-import { remoteEntryFile } from '../constants';
 import consolePkgMetadataSchema from '../../dist/schema/plugin-package';
+import { sharedVendorModules } from '../shared-modules';
+import { remoteEntryFile } from '../constants';
 
-const remoteEntryLibraryType = 'jsonp';
-const remoteEntryCallback = 'window.loadPluginEntry';
-
-const validatePackageFile = (pkg: ConsolePackageJSON) => {
-  const validator = new SchemaValidator('package.json');
+export const validatePackageFileSchema = (
+  pkg: ConsolePackageJSON,
+  description = 'package.json',
+) => {
+  const validator = new SchemaValidator(description);
   validator.assert.validSemverString(pkg.version, 'pkg.version');
 
   if (pkg.consolePlugin) {
@@ -34,12 +34,15 @@ const validatePackageFile = (pkg: ConsolePackageJSON) => {
   return validator.result;
 };
 
+const remoteEntryLibraryType = 'jsonp';
+const remoteEntryCallback = 'window.loadPluginEntry';
+
 export class ConsoleRemotePlugin {
   private readonly pkg: ConsolePackageJSON;
 
   constructor() {
     this.pkg = readPkg.sync({ normalize: false }) as ConsolePackageJSON;
-    validatePackageFile(this.pkg).report();
+    validatePackageFileSchema(this.pkg).report();
   }
 
   apply(compiler: webpack.Compiler) {
