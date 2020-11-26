@@ -165,6 +165,7 @@
   "Download All TaskRun Logs": "Download All TaskRun Logs",
   "Pod not found": "Pod not found",
   "TaskRun Log": "TaskRun Log",
+  "Create a Tekton Pipeline to automate delivery of your application": "Create a Tekton Pipeline to automate delivery of your application",
   "Pipeline {{status}}": "Pipeline {{status}}",
   "Rerun": "Rerun",
   "Edit Pipeline": "Edit Pipeline",

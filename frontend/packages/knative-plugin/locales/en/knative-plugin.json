@@ -159,6 +159,7 @@
   "Add Revision": "Add Revision",
   "Select a revision": "Select a revision",
   "Set traffic distribution for the Revisions of the Knative Service": "Set traffic distribution for the Revisions of the Knative Service",
+  "Serverless": "Serverless",
   "No Revisions": "No Revisions",
   "Move sink to {{resourceObjKind}}": "Move sink to {{resourceObjKind}}",
   "Move sink to URI": "Move sink to URI",

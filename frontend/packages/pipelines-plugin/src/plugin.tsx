@@ -85,7 +85,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       section: 'resources',
       insertAfter: 'builds',
       componentProps: {
-        name: PipelineModel.labelPlural,
+        // t('pipelines-plugin~Pipelines')
+        name: '%pipelines-plugin~Pipelines%',
         resource: referenceForModel(PipelineModel),
         testID: 'pipeline-header',
       },
@@ -101,7 +102,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       perspective: 'admin',
       section: 'pipelines',
       componentProps: {
-        name: PipelineModel.labelPlural,
+        // t('pipelines-plugin~Pipelines')
+        name: '%pipelines-plugin~Pipelines%',
         href: '/pipelines',
       },
     },
@@ -116,7 +118,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       perspective: 'admin',
       section: 'pipelines',
       componentProps: {
-        name: TaskModel.labelPlural,
+        // t('pipelines-plugin~Tasks')
+        name: '%pipelines-plugin~Tasks%',
         href: '/tasks',
       },
     },
@@ -131,7 +134,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       perspective: 'admin',
       section: 'pipelines',
       componentProps: {
-        name: 'Triggers',
+        // t('pipelines-plugin~Triggers')
+        name: '%pipelines-plugin~Triggers%',
         href: '/triggers',
       },
     },
@@ -465,7 +469,9 @@ const plugin: Plugin<ConsumedExtensions> = [
       id: 'pipeline',
       url: `/k8s/ns/:namespace/${referenceForModel(PipelineModel)}/~new/builder`,
       label: 'Pipeline',
-      description: 'Create a Tekton Pipeline to automate delivery of your application',
+      // t('pipelines-plugin~Create a Tekton Pipeline to automate delivery of your application')
+      description:
+        '%pipelines-plugin~Create a Tekton Pipeline to automate delivery of your application~',
       icon: pipelineIcon,
       accessReview: [
         {

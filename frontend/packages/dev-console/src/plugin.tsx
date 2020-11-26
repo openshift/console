@@ -106,7 +106,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       perspective: 'dev',
       section: 'top',
       componentProps: {
-        name: '+Add',
+        // t('devconsole~+Add')
+        name: '%devconsole~+Add%',
         href: '/add',
         testID: '+Add-header',
       },
@@ -119,7 +120,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       perspective: 'dev',
       section: 'top',
       componentProps: {
-        name: 'Topology',
+        // t('devconsole~Topology')
+        name: '%devconsole~Topology%',
         href: '/topology',
         testID: 'topology-header',
       },
@@ -135,7 +137,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       perspective: 'dev',
       section: 'top',
       componentProps: {
-        name: 'Monitoring',
+        // t('devconsole~Monitoring')
+        name: '%devconsole~Monitoring%',
         href: '/dev-monitoring',
         testID: 'monitoring-header',
         'data-tour-id': 'tour-monitoring-nav',
@@ -152,7 +155,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       perspective: 'dev',
       section: 'top',
       componentProps: {
-        name: 'Search',
+        // t('devconsole~Search')
+        name: '%devconsole~Search%',
         href: '/search',
         testID: 'search-header',
         'data-tour-id': 'tour-search-nav',
@@ -166,7 +170,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       perspective: 'dev',
       section: 'resources',
       componentProps: {
-        name: 'Builds',
+        // t('devconsole~Builds')
+        name: '%devconsole~Builds%',
         resource: 'buildconfigs',
         testID: 'build-header',
       },
@@ -182,7 +187,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       perspective: 'dev',
       section: 'resources',
       componentProps: {
-        name: 'Application Stages',
+        // t('devconsole~Application Stages')
+        name: '%devconsole~Application Stages%',
         href: '/applicationstages',
         testID: 'application-stages-header',
       },
@@ -198,7 +204,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       perspective: 'dev',
       section: 'resources',
       componentProps: {
-        name: 'Helm',
+        // t('devconsole~Helm')
+        name: '%devconsole~Helm%',
         href: '/helm-releases',
         testID: 'helm-releases-header',
       },
@@ -214,7 +221,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       perspective: 'dev',
       section: 'resources',
       componentProps: {
-        name: 'Project',
+        // t('devconsole~Project')
+        name: '%devconsole~Project%',
         href: '/project-details',
         testID: 'project-details-header',
       },
@@ -226,7 +234,8 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Overview/Resource',
     properties: {
-      name: 'Monitoring',
+      // t('devconsole~Monitoring')
+      name: '%devconsole~Monitoring%',
       key: 'isMonitorable',
       loader: () =>
         import(
@@ -238,7 +247,8 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Perspective',
     properties: {
       id: 'dev',
-      name: 'Developer',
+      // t('devconsole~Developer')
+      name: '%devconsole~Developer%',
       icon: <CodeIcon />,
       defaultPins: [ConfigMapModel.kind, SecretModel.kind],
       getLandingPageURL: () => '/topology',
