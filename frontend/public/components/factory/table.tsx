@@ -189,7 +189,6 @@ const stateToProps = (
     reduxIDs = null,
     staticFilters = [{}],
     rowFilters = [],
-    columnManagementID = '',
     isPinned,
   }: TableProps,
 ) => {
@@ -204,7 +203,6 @@ const stateToProps = (
   );
   const currentSortFunc = UI.getIn(['listSorts', listId, 'func'], defaultSortFunc);
   const currentSortOrder = UI.getIn(['listSorts', listId, 'orderBy'], defaultSortOrder);
-  const activeColumns = new Set(UI.getIn(['columnManagement', columnManagementID]));
   if (loaded) {
     let sortBy: string | Function = 'metadata.name';
     if (currentSortField) {
@@ -256,7 +254,6 @@ const stateToProps = (
     data: newData,
     unfilteredData: data,
     listId,
-    activeColumns,
   };
 };
 
@@ -486,6 +483,7 @@ export type TableProps = {
   columnManagementID?: string;
   isPinned?: (val: any) => boolean;
   staticFilters?: any[];
+  activeColumns?: Set<string>;
 };
 
 type TablePropsFromState = {};
@@ -539,9 +537,7 @@ export const Table = connect<
   TableProps,
   TableOptionProps
 >(stateToProps, { sortList: UIActions.sortList }, null, {
-  areStatesEqual: ({ UI: next }, { UI: prev }) =>
-    next.get('listSorts') === prev.get('listSorts') &&
-    next.get('columnManagement') === prev.get('columnManagement'),
+  areStatesEqual: ({ UI: next }, { UI: prev }) => next.get('listSorts') === prev.get('listSorts'),
 })(
   withTranslation()(
     class TableInner extends React.Component<TableInnerProps, TableInnerState> {

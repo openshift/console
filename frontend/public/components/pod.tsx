@@ -2,16 +2,23 @@ import * as React from 'react';
 // FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
-import { Status } from '@console/shared';
+import { Status, TableColumnsType } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-
+import {
+  withUserSettingsCompatibility,
+  WithUserSettingsCompatibilityProps,
+} from '@console/shared/src/hoc/withUserSettingsCompatibility';
+import {
+  COLUMN_MANAGEMENT_CONFIGMAP_KEY,
+  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+} from '@console/shared/src/constants/common';
 import * as UIActions from '../actions/ui';
 import { coFetchJSON } from '../co-fetch';
 import { ContainerSpec, K8sResourceKindReference, PodKind, referenceForModel } from '../module/k8s';
@@ -59,7 +66,6 @@ import {
 import { VolumesTable } from './volumes-table';
 import { PodModel } from '../models';
 import { Conditions } from './conditions';
-import { RootState } from '../redux';
 
 // Only request metrics if the device's screen width is larger than the
 // breakpoint where metrics are visible.
@@ -183,7 +189,6 @@ const columnManagementID = referenceForModel(PodModel);
 
 const podRowStateToProps = ({ UI }) => ({
   metrics: UI.getIn(['metrics', 'pod']),
-  selectedColumns: UI.getIn(['columnManagement']),
 });
 
 const getHeader = (showNodes) => {
@@ -298,121 +303,136 @@ const getSelectedColumns = (showNodes: boolean) => {
 };
 
 const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(podRowStateToProps)(
-  ({
-    obj: pod,
-    index,
-    rowKey,
-    style,
-    metrics,
-    showNodes,
-    selectedColumns,
-  }: PodTableRowProps & PodTableRowPropsFromState) => {
-    const { name, namespace, creationTimestamp, labels } = pod.metadata;
-    const { readyCount, totalContainers } = podReadiness(pod);
-    const phase = podPhase(pod);
-    const restarts = podRestarts(pod);
-    const bytes: number = _.get(metrics, ['memory', namespace, name]);
-    const cores: number = _.get(metrics, ['cpu', namespace, name]);
-    const columns = new Set(
-      selectedColumns?.get(columnManagementID) || getSelectedColumns(showNodes),
-    );
-    return (
-      <TableRow id={pod.metadata.uid} index={index} trKey={rowKey} style={style}>
-        <TableData className={podColumnInfo.name.classes}>
-          <ResourceLink kind={kind} name={name} namespace={namespace} />
-        </TableData>
-        <TableData
-          className={classNames(podColumnInfo.namespace.classes, 'co-break-word')}
-          columns={columns}
-          columnID={podColumnInfo.namespace.id}
-        >
-          <ResourceLink kind="Namespace" name={namespace} />
-        </TableData>
-        <TableData
-          className={podColumnInfo.status.classes}
-          columns={columns}
-          columnID={podColumnInfo.status.id}
-        >
-          <Status status={phase} />
-        </TableData>
-        <TableData
-          className={podColumnInfo.ready.classes}
-          columns={columns}
-          columnID={podColumnInfo.ready.id}
-        >
-          {readyCount}/{totalContainers}
-        </TableData>
-        <TableData
-          className={podColumnInfo.restarts.classes}
-          columns={columns}
-          columnID={podColumnInfo.restarts.id}
-        >
-          {restarts}
-        </TableData>
-        <TableData
-          className={podColumnInfo.owner.classes}
-          columns={columns}
-          columnID={podColumnInfo.owner.id}
-        >
-          {showNodes ? (
+  withUserSettingsCompatibility<
+    PodTableRowProps &
+      PodTableRowPropsFromState &
+      WithUserSettingsCompatibilityProps<TableColumnsType>,
+    TableColumnsType
+  >(
+    COLUMN_MANAGEMENT_CONFIGMAP_KEY,
+    COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+    undefined,
+    true,
+  )(
+    ({
+      obj: pod,
+      index,
+      rowKey,
+      style,
+      metrics,
+      showNodes,
+      userSettingState: tableColumns,
+    }: PodTableRowProps &
+      PodTableRowPropsFromState &
+      WithUserSettingsCompatibilityProps<TableColumnsType>) => {
+      const { name, namespace, creationTimestamp, labels } = pod.metadata;
+      const { readyCount, totalContainers } = podReadiness(pod);
+      const phase = podPhase(pod);
+      const restarts = podRestarts(pod);
+      const bytes: number = _.get(metrics, ['memory', namespace, name]);
+      const cores: number = _.get(metrics, ['cpu', namespace, name]);
+      const columns =
+        tableColumns?.[columnManagementID]?.length > 0
+          ? new Set(tableColumns[columnManagementID])
+          : getSelectedColumns(showNodes);
+      return (
+        <TableRow id={pod.metadata.uid} index={index} trKey={rowKey} style={style}>
+          <TableData className={podColumnInfo.name.classes}>
+            <ResourceLink kind={kind} name={name} namespace={namespace} />
+          </TableData>
+          <TableData
+            className={classNames(podColumnInfo.namespace.classes, 'co-break-word')}
+            columns={columns}
+            columnID={podColumnInfo.namespace.id}
+          >
+            <ResourceLink kind="Namespace" name={namespace} />
+          </TableData>
+          <TableData
+            className={podColumnInfo.status.classes}
+            columns={columns}
+            columnID={podColumnInfo.status.id}
+          >
+            <Status status={phase} />
+          </TableData>
+          <TableData
+            className={podColumnInfo.ready.classes}
+            columns={columns}
+            columnID={podColumnInfo.ready.id}
+          >
+            {readyCount}/{totalContainers}
+          </TableData>
+          <TableData
+            className={podColumnInfo.restarts.classes}
+            columns={columns}
+            columnID={podColumnInfo.restarts.id}
+          >
+            {restarts}
+          </TableData>
+          <TableData
+            className={podColumnInfo.owner.classes}
+            columns={columns}
+            columnID={podColumnInfo.owner.id}
+          >
+            {showNodes ? (
+              <ResourceLink kind="Node" name={pod.spec.nodeName} namespace={namespace} />
+            ) : (
+              <OwnerReferences resource={pod} />
+            )}
+          </TableData>
+          <TableData
+            className={podColumnInfo.memory.classes}
+            columns={columns}
+            columnID={podColumnInfo.memory.id}
+          >
+            {bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-'}
+          </TableData>
+          <TableData
+            className={podColumnInfo.cpu.classes}
+            columns={columns}
+            columnID={podColumnInfo.cpu.id}
+          >
+            {cores ? `${formatCores(cores)} cores` : '-'}
+          </TableData>
+          <TableData
+            className={podColumnInfo.created.classes}
+            columns={columns}
+            columnID={podColumnInfo.created.id}
+          >
+            <Timestamp timestamp={creationTimestamp} />
+          </TableData>
+          <TableData
+            className={podColumnInfo.node.classes}
+            columns={columns}
+            columnID={podColumnInfo.node.id}
+          >
             <ResourceLink kind="Node" name={pod.spec.nodeName} namespace={namespace} />
-          ) : (
-            <OwnerReferences resource={pod} />
-          )}
-        </TableData>
-        <TableData
-          className={podColumnInfo.memory.classes}
-          columns={columns}
-          columnID={podColumnInfo.memory.id}
-        >
-          {bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-'}
-        </TableData>
-        <TableData
-          className={podColumnInfo.cpu.classes}
-          columns={columns}
-          columnID={podColumnInfo.cpu.id}
-        >
-          {cores ? `${formatCores(cores)} cores` : '-'}
-        </TableData>
-        <TableData
-          className={podColumnInfo.created.classes}
-          columns={columns}
-          columnID={podColumnInfo.created.id}
-        >
-          <Timestamp timestamp={creationTimestamp} />
-        </TableData>
-        <TableData
-          className={podColumnInfo.node.classes}
-          columns={columns}
-          columnID={podColumnInfo.node.id}
-        >
-          <ResourceLink kind="Node" name={pod.spec.nodeName} namespace={namespace} />
-        </TableData>
-        <TableData
-          className={podColumnInfo.labels.classes}
-          columns={columns}
-          columnID={podColumnInfo.labels.id}
-        >
-          <LabelList kind={kind} labels={labels} />
-        </TableData>
-        <TableData
-          className={podColumnInfo.ipaddress.classes}
-          columns={columns}
-          columnID={podColumnInfo.ipaddress.id}
-        >
-          {pod?.status?.hostIP ?? '-'}
-        </TableData>
-        <TableData className={Kebab.columnClass}>
-          <ResourceKebab
-            actions={menuActions}
-            kind={kind}
-            resource={pod}
-            isDisabled={phase === 'Terminating'}
-          />
-        </TableData>
-      </TableRow>
-    );
-  },
+          </TableData>
+          <TableData
+            className={podColumnInfo.labels.classes}
+            columns={columns}
+            columnID={podColumnInfo.labels.id}
+          >
+            <LabelList kind={kind} labels={labels} />
+          </TableData>
+          <TableData
+            className={podColumnInfo.ipaddress.classes}
+            columns={columns}
+            columnID={podColumnInfo.ipaddress.id}
+          >
+            {pod?.status?.hostIP ?? '-'}
+          </TableData>
+          <TableData className={Kebab.columnClass}>
+            <ResourceKebab
+              actions={menuActions}
+              kind={kind}
+              resource={pod}
+              isDisabled={phase === 'Terminating'}
+            />
+          </TableData>
+        </TableRow>
+      );
+    },
+  ),
 );
 PodTableRow.displayName = 'PodTableRow';
 
@@ -723,12 +743,25 @@ const getRow = (showNodes) => {
   );
 };
 
-export const PodList: React.FC<PodListProps> = (props) => {
+export const PodList: React.FC<PodListProps> = withUserSettingsCompatibility<
+  PodListProps & WithUserSettingsCompatibilityProps<TableColumnsType>,
+  TableColumnsType
+>(
+  COLUMN_MANAGEMENT_CONFIGMAP_KEY,
+  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+  undefined,
+  true,
+)(({ userSettingState: tableColumns, ...props }) => {
   const showNodes = props?.customData?.showNodes;
   const { t } = useTranslation();
+  const selectedColumns: Set<string> =
+    tableColumns?.[columnManagementID]?.length > 0
+      ? new Set(tableColumns[columnManagementID])
+      : null;
   return (
     <Table
       {...props}
+      activeColumns={selectedColumns}
       columnManagementID={columnManagementID}
       aria-label={t('workload~Pods')}
       Header={getHeader(showNodes)}
@@ -736,7 +769,7 @@ export const PodList: React.FC<PodListProps> = (props) => {
       virtualize
     />
   );
-};
+});
 PodList.displayName = 'PodList';
 
 export const filters = [
@@ -765,51 +798,74 @@ const dispatchToProps = (dispatch): PodPagePropsFromDispatch => ({
 export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
   null,
   dispatchToProps,
-)((props: PodPageProps & PodPagePropsFromDispatch) => {
-  const { canCreate = true, namespace, setPodMetrics, customData, ...listProps } = props;
-  const selectedColumns: Set<string> = new Set(
-    useSelector<RootState, string>(({ UI }) => UI.getIn(['columnManagement', columnManagementID])),
-  );
-  /* eslint-disable react-hooks/exhaustive-deps */
-  React.useEffect(() => {
-    if (showMetrics) {
-      const updateMetrics = () =>
-        fetchPodMetrics(namespace)
-          .then(setPodMetrics)
-          .catch((e) => {
-            // Just log the error here. Showing a warning alert could be more annoying
-            // than helpful. It should be obvious there are no metrics in the list, and
-            // if monitoring is broken, it'll be really apparent since none of the
-            // graphs and dashboards will load in the UI.
-            // eslint-disable-next-line no-console
-            console.error('Unable to fetch pod metrics', e);
-          });
-      updateMetrics();
-      const id = setInterval(updateMetrics, 30 * 1000);
-      return () => clearInterval(id);
-    }
-  }, [namespace]);
-  /* eslint-enable react-hooks/exhaustive-deps */
-  return (
-    <ListPage
-      {...listProps}
-      canCreate={canCreate}
-      kind={kind}
-      ListComponent={PodList}
-      rowFilters={filters}
-      namespace={namespace}
-      customData={customData}
-      columnLayout={{
-        columns: getHeader(props?.customData?.showNodes)().map((column) =>
-          _.pick(column, ['title', 'additional', 'id']),
-        ),
-        id: columnManagementID,
-        selectedColumns,
-        type: 'Pod',
-      }}
-    />
-  );
-});
+)(
+  withUserSettingsCompatibility<
+    PodPagePropsFromDispatch & PodPageProps & WithUserSettingsCompatibilityProps<TableColumnsType>,
+    TableColumnsType
+  >(
+    COLUMN_MANAGEMENT_CONFIGMAP_KEY,
+    COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+    undefined,
+    true,
+  )(
+    (
+      props: PodPageProps &
+        PodPagePropsFromDispatch &
+        WithUserSettingsCompatibilityProps<TableColumnsType>,
+    ) => {
+      const {
+        canCreate = true,
+        namespace,
+        setPodMetrics,
+        customData,
+        userSettingState: tableColumns,
+        ...listProps
+      } = props;
+      /* eslint-disable react-hooks/exhaustive-deps */
+      React.useEffect(() => {
+        if (showMetrics) {
+          const updateMetrics = () =>
+            fetchPodMetrics(namespace)
+              .then(setPodMetrics)
+              .catch((e) => {
+                // Just log the error here. Showing a warning alert could be more annoying
+                // than helpful. It should be obvious there are no metrics in the list, and
+                // if monitoring is broken, it'll be really apparent since none of the
+                // graphs and dashboards will load in the UI.
+                // eslint-disable-next-line no-console
+                console.error('Unable to fetch pod metrics', e);
+              });
+          updateMetrics();
+          const id = setInterval(updateMetrics, 30 * 1000);
+          return () => clearInterval(id);
+        }
+      }, [namespace]);
+      /* eslint-enable react-hooks/exhaustive-deps */
+      return (
+        <ListPage
+          {...listProps}
+          canCreate={canCreate}
+          kind={kind}
+          ListComponent={PodList}
+          rowFilters={filters}
+          namespace={namespace}
+          customData={customData}
+          columnLayout={{
+            columns: getHeader(props?.customData?.showNodes)().map((column) =>
+              _.pick(column, ['title', 'additional', 'id']),
+            ),
+            id: columnManagementID,
+            selectedColumns:
+              tableColumns?.[columnManagementID]?.length > 0
+                ? new Set(tableColumns[columnManagementID])
+                : null,
+            type: 'Pod',
+          }}
+        />
+      );
+    },
+  ),
+);
 
 type ContainerLinkProps = {
   pod: PodKind;
@@ -858,7 +914,6 @@ type PodTableRowProps = {
 
 type PodTableRowPropsFromState = {
   metrics: UIActions.PodMetrics;
-  selectedColumns: Map<string, Set<string>>;
 };
 
 type PodListProps = {

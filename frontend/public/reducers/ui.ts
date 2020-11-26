@@ -8,7 +8,6 @@ import {
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
   NAMESPACE_LOCAL_STORAGE_KEY,
   LAST_PERSPECTIVE_LOCAL_STORAGE_KEY,
-  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants';
 import { isSilenced } from '../reducers/monitoring';
 import { legalNamePattern, getNamespace } from '../components/utils/link';
@@ -82,15 +81,6 @@ export default (state: UIState, action: UIAction): UIState => {
         activeNamespace = localStorage.getItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY);
       }
     }
-    let storedTableColumns = {};
-    try {
-      storedTableColumns =
-        JSON.parse(localStorage.getItem(COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY)) || {};
-    } catch (e) {
-      // Error parsing the data, do not store the current filters
-      /* eslint-disable-next-line no-console */
-      console.error('Error parsing column filters from local storage', e);
-    }
 
     return ImmutableMap({
       activeNavSectionId: 'workloads',
@@ -119,15 +109,10 @@ export default (state: UIState, action: UIAction): UIState => {
         pollInterval: null,
         queries: ImmutableList([newQueryBrowserQuery()]),
       }),
-      columnManagement: ImmutableMap(storedTableColumns),
     });
   }
 
   switch (action.type) {
-    case ActionType.SetTableColumns:
-      // use groupVersionKind to uniquely identify the
-      return state.setIn(['columnManagement', action.payload.id], action.payload.selectedColumns);
-
     case ActionType.SetActiveApplication:
       return state.set('activeApplication', action.payload.application);
 

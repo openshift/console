@@ -2,7 +2,7 @@ import * as React from 'react';
 // FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import * as _ from 'lodash';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
@@ -13,6 +13,11 @@ import {
   getNodeRole,
   getLabels,
   getNodeMachineNameAndNamespace,
+  WithUserSettingsCompatibilityProps,
+  TableColumnsType,
+  withUserSettingsCompatibility,
+  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+  COLUMN_MANAGEMENT_CONFIGMAP_KEY,
 } from '@console/shared';
 import { NodeModel, MachineModel } from '@console/internal/models';
 import { NodeKind, referenceForModel } from '@console/internal/module/k8s';
@@ -40,7 +45,6 @@ import { nodeStatus } from '../../status/node';
 import NodeRoles from './NodeRoles';
 import { menuActions } from './menu-actions';
 import NodeStatus from './NodeStatus';
-import { RootState } from '@console/internal/redux';
 import MarkAsSchedulablePopover from './popovers/MarkAsSchedulablePopover';
 
 // t('nodes~Name')
@@ -232,153 +236,168 @@ const getSelectedColumns = () => {
 
 const mapStateToProps = ({ UI }) => ({
   metrics: UI.getIn(['metrics', 'node']),
-  selectedColumns: UI.getIn(['columnManagement']),
 });
 
 type NodesRowMapFromStateProps = {
   metrics: NodeMetrics;
-  selectedColumns: Map<string, Set<string>>;
 };
 
+type Props = NodesRowMapFromStateProps & NodesTableRowProps;
+
 const NodesTableRow = connect<NodesRowMapFromStateProps, null, NodesTableRowProps>(mapStateToProps)(
-  ({
-    obj: node,
-    index,
-    rowKey,
-    style,
-    metrics,
-    selectedColumns,
-  }: NodesTableRowProps & NodesRowMapFromStateProps) => {
-    const nodeName = getName(node);
-    const nodeUID = getUID(node);
-    const usedMem = metrics?.usedMemory?.[nodeName];
-    const totalMem = metrics?.totalMemory?.[nodeName];
-    const memory =
-      Number.isFinite(usedMem) && Number.isFinite(totalMem)
-        ? `${humanizeBinaryBytes(usedMem).string} / ${humanizeBinaryBytes(totalMem).string}`
-        : '-';
-    const cores = metrics?.cpu?.[nodeName];
-    const totalCores = metrics?.totalCPU?.[nodeName];
-    const cpu =
-      Number.isFinite(cores) && Number.isFinite(totalCores)
-        ? `${formatCores(cores)} / ${totalCores} cores`
-        : '-';
-    const usedStrg = metrics?.usedStorage?.[nodeName];
-    const totalStrg = metrics?.totalStorage?.[nodeName];
-    const storage =
-      Number.isFinite(usedStrg) && Number.isFinite(totalStrg)
-        ? `${humanizeBinaryBytes(usedStrg).string} / ${humanizeBinaryBytes(totalStrg).string}`
-        : '-';
-    const pods = metrics?.pods?.[nodeName] ?? '-';
-    const machine = getNodeMachineNameAndNamespace(node);
-    const instanceType = node.metadata.labels?.['beta.kubernetes.io/instance-type'];
-    const labels = getLabels(node);
-    const zone = node.metadata.labels?.['topology.kubernetes.io/zone'];
-    const columns = new Set(selectedColumns?.get(columnManagementID) || getSelectedColumns());
-    return (
-      <TableRow id={nodeUID} index={index} trKey={rowKey} style={style}>
-        <TableData className={nodeColumnInfo.name.classes}>
-          <ResourceLink kind={referenceForModel(NodeModel)} name={nodeName} title={nodeUID} />
-        </TableData>
-        <TableData
-          className={nodeColumnInfo.status.classes}
-          columns={columns}
-          columnID={nodeColumnInfo.status.id}
-        >
-          {!node.spec.unschedulable ? (
-            <NodeStatus node={node} showPopovers />
-          ) : (
-            <MarkAsSchedulablePopover node={node} />
-          )}
-        </TableData>
-        <TableData
-          className={nodeColumnInfo.role.classes}
-          columns={columns}
-          columnID={nodeColumnInfo.role.id}
-        >
-          <NodeRoles node={node} />
-        </TableData>
-        <TableData
-          className={nodeColumnInfo.pods.classes}
-          columns={columns}
-          columnID={nodeColumnInfo.pods.id}
-        >
-          {pods}
-        </TableData>
-        <TableData
-          className={nodeColumnInfo.memory.classes}
-          columns={columns}
-          columnID={nodeColumnInfo.memory.id}
-        >
-          {memory}
-        </TableData>
-        <TableData
-          className={nodeColumnInfo.cpu.classes}
-          columns={columns}
-          columnID={nodeColumnInfo.cpu.id}
-        >
-          {cpu}
-        </TableData>
-        <TableData
-          className={nodeColumnInfo.filesystem.classes}
-          columns={columns}
-          columnID={nodeColumnInfo.filesystem.id}
-        >
-          {storage}
-        </TableData>
-        <TableData
-          className={nodeColumnInfo.created.classes}
-          columns={columns}
-          columnID={nodeColumnInfo.created.id}
-        >
-          <Timestamp timestamp={node.metadata.creationTimestamp} />
-        </TableData>
-        <TableData
-          className={nodeColumnInfo.instanceType.classes}
-          columns={columns}
-          columnID={nodeColumnInfo.instanceType.id}
-        >
-          {instanceType || '-'}
-        </TableData>
-        <TableData
-          className={nodeColumnInfo.machine.classes}
-          columns={columns}
-          columnID={nodeColumnInfo.machine.id}
-        >
-          {machine ? (
-            <ResourceLink
-              kind={referenceForModel(MachineModel)}
-              name={machine.name}
-              namespace={machine.namespace}
+  withUserSettingsCompatibility<
+    Props & WithUserSettingsCompatibilityProps<TableColumnsType>,
+    TableColumnsType
+  >(
+    COLUMN_MANAGEMENT_CONFIGMAP_KEY,
+    COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+    undefined,
+    true,
+  )(
+    ({
+      obj: node,
+      index,
+      rowKey,
+      style,
+      metrics,
+      userSettingState: tableColumns,
+    }: NodesTableRowProps &
+      NodesRowMapFromStateProps &
+      WithUserSettingsCompatibilityProps<TableColumnsType>) => {
+      const nodeName = getName(node);
+      const nodeUID = getUID(node);
+      const usedMem = metrics?.usedMemory?.[nodeName];
+      const totalMem = metrics?.totalMemory?.[nodeName];
+      const memory =
+        Number.isFinite(usedMem) && Number.isFinite(totalMem)
+          ? `${humanizeBinaryBytes(usedMem).string} / ${humanizeBinaryBytes(totalMem).string}`
+          : '-';
+      const cores = metrics?.cpu?.[nodeName];
+      const totalCores = metrics?.totalCPU?.[nodeName];
+      const cpu =
+        Number.isFinite(cores) && Number.isFinite(totalCores)
+          ? `${formatCores(cores)} / ${totalCores} cores`
+          : '-';
+      const usedStrg = metrics?.usedStorage?.[nodeName];
+      const totalStrg = metrics?.totalStorage?.[nodeName];
+      const storage =
+        Number.isFinite(usedStrg) && Number.isFinite(totalStrg)
+          ? `${humanizeBinaryBytes(usedStrg).string} / ${humanizeBinaryBytes(totalStrg).string}`
+          : '-';
+      const pods = metrics?.pods?.[nodeName] ?? '-';
+      const machine = getNodeMachineNameAndNamespace(node);
+      const instanceType = node.metadata.labels?.['beta.kubernetes.io/instance-type'];
+      const labels = getLabels(node);
+      const zone = node.metadata.labels?.['topology.kubernetes.io/zone'];
+      const columns =
+        tableColumns?.[columnManagementID]?.length > 0
+          ? new Set(tableColumns[columnManagementID])
+          : getSelectedColumns();
+      return (
+        <TableRow id={nodeUID} index={index} trKey={rowKey} style={style}>
+          <TableData className={nodeColumnInfo.name.classes}>
+            <ResourceLink kind={referenceForModel(NodeModel)} name={nodeName} title={nodeUID} />
+          </TableData>
+          <TableData
+            className={nodeColumnInfo.status.classes}
+            columns={columns}
+            columnID={nodeColumnInfo.status.id}
+          >
+            {!node.spec.unschedulable ? (
+              <NodeStatus node={node} showPopovers />
+            ) : (
+              <MarkAsSchedulablePopover node={node} />
+            )}
+          </TableData>
+          <TableData
+            className={nodeColumnInfo.role.classes}
+            columns={columns}
+            columnID={nodeColumnInfo.role.id}
+          >
+            <NodeRoles node={node} />
+          </TableData>
+          <TableData
+            className={nodeColumnInfo.pods.classes}
+            columns={columns}
+            columnID={nodeColumnInfo.pods.id}
+          >
+            {pods}
+          </TableData>
+          <TableData
+            className={nodeColumnInfo.memory.classes}
+            columns={columns}
+            columnID={nodeColumnInfo.memory.id}
+          >
+            {memory}
+          </TableData>
+          <TableData
+            className={nodeColumnInfo.cpu.classes}
+            columns={columns}
+            columnID={nodeColumnInfo.cpu.id}
+          >
+            {cpu}
+          </TableData>
+          <TableData
+            className={nodeColumnInfo.filesystem.classes}
+            columns={columns}
+            columnID={nodeColumnInfo.filesystem.id}
+          >
+            {storage}
+          </TableData>
+          <TableData
+            className={nodeColumnInfo.created.classes}
+            columns={columns}
+            columnID={nodeColumnInfo.created.id}
+          >
+            <Timestamp timestamp={node.metadata.creationTimestamp} />
+          </TableData>
+          <TableData
+            className={nodeColumnInfo.instanceType.classes}
+            columns={columns}
+            columnID={nodeColumnInfo.instanceType.id}
+          >
+            {instanceType || '-'}
+          </TableData>
+          <TableData
+            className={nodeColumnInfo.machine.classes}
+            columns={columns}
+            columnID={nodeColumnInfo.machine.id}
+          >
+            {machine ? (
+              <ResourceLink
+                kind={referenceForModel(MachineModel)}
+                name={machine.name}
+                namespace={machine.namespace}
+              />
+            ) : (
+              '-'
+            )}
+          </TableData>
+          <TableData
+            className={nodeColumnInfo.labels.classes}
+            columns={columns}
+            columnID={nodeColumnInfo.labels.id}
+          >
+            <LabelList kind={kind} labels={labels} />
+          </TableData>
+          <TableData
+            className={nodeColumnInfo.zone.classes}
+            columns={columns}
+            columnID={nodeColumnInfo.zone.id}
+          >
+            {zone}
+          </TableData>
+          <TableData className={Kebab.columnClass}>
+            <ResourceKebab
+              actions={menuActions}
+              kind={referenceForModel(NodeModel)}
+              resource={node}
             />
-          ) : (
-            '-'
-          )}
-        </TableData>
-        <TableData
-          className={nodeColumnInfo.labels.classes}
-          columns={columns}
-          columnID={nodeColumnInfo.labels.id}
-        >
-          <LabelList kind={kind} labels={labels} />
-        </TableData>
-        <TableData
-          className={nodeColumnInfo.zone.classes}
-          columns={columns}
-          columnID={nodeColumnInfo.zone.id}
-        >
-          {zone}
-        </TableData>
-        <TableData className={Kebab.columnClass}>
-          <ResourceKebab
-            actions={menuActions}
-            kind={referenceForModel(NodeModel)}
-            resource={node}
-          />
-        </TableData>
-      </TableRow>
-    );
-  },
+          </TableData>
+        </TableRow>
+      );
+    },
+  ),
 );
 NodesTableRow.displayName = 'NodesTableRow';
 
@@ -389,34 +408,52 @@ type NodesTableRowProps = {
   style: object;
 };
 
-const NodesTable: React.FC<NodesTableProps> = React.memo((props) => {
-  const Row = React.useCallback(
-    (rowArgs: RowFunctionArgs<NodeKind>) => (
-      <NodesTableRow
-        obj={rowArgs.obj}
-        index={rowArgs.index}
-        rowKey={rowArgs.key}
-        style={rowArgs.style}
+const NodesTable: React.FC<NodesTableProps &
+  WithUserSettingsCompatibilityProps<TableColumnsType>> = React.memo(
+  ({ userSettingState: tableColumns, ...props }) => {
+    const Row = React.useCallback(
+      (rowArgs: RowFunctionArgs<NodeKind>) => (
+        <NodesTableRow
+          obj={rowArgs.obj}
+          index={rowArgs.index}
+          rowKey={rowArgs.key}
+          style={rowArgs.style}
+        />
+      ),
+      [],
+    );
+    const { t } = useTranslation();
+    const selectedColumns: Set<string> =
+      tableColumns?.[columnManagementID]?.length > 0
+        ? new Set(tableColumns[columnManagementID])
+        : null;
+    return (
+      <Table
+        {...props}
+        activeColumns={selectedColumns}
+        columnManagementID={columnManagementID}
+        aria-label={t('nodes~Nodes')}
+        Header={NodeTableHeader}
+        Row={Row}
+        virtualize
       />
-    ),
-    [],
-  );
-  const { t } = useTranslation();
-  return (
-    <Table
-      {...props}
-      columnManagementID={columnManagementID}
-      aria-label={t('nodes~Nodes')}
-      Header={NodeTableHeader}
-      Row={Row}
-      virtualize
-    />
-  );
-});
+    );
+  },
+);
 
 type NodesTableProps = React.ComponentProps<typeof Table> & {
   data: NodeKind[];
 };
+
+const NodesTableWithUserSettings = withUserSettingsCompatibility<
+  NodesTableProps & WithUserSettingsCompatibilityProps<TableColumnsType>,
+  TableColumnsType
+>(
+  COLUMN_MANAGEMENT_CONFIGMAP_KEY,
+  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+  undefined,
+  true,
+)(NodesTable);
 
 const fetchNodeMetrics = (): Promise<NodeMetrics> => {
   const metrics = [
@@ -471,71 +508,81 @@ const showMetrics = PROMETHEUS_BASE_PATH && window.innerWidth > 1200;
 const NodesPage = connect<{}, MapDispatchToProps>(
   null,
   mapDispatchToProps,
-)((props: MapDispatchToProps) => {
-  const { setNodeMetrics: setMetrics } = props;
-  const selectedColumns: Set<string> = new Set(
-    useSelector<RootState, string>(({ UI }) => UI.getIn(['columnManagement', columnManagementID])),
-  );
+)(
+  withUserSettingsCompatibility<
+    MapDispatchToProps & WithUserSettingsCompatibilityProps<TableColumnsType>,
+    TableColumnsType
+  >(
+    COLUMN_MANAGEMENT_CONFIGMAP_KEY,
+    COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+    undefined,
+    true,
+  )((props: MapDispatchToProps & WithUserSettingsCompatibilityProps<TableColumnsType>) => {
+    const { setNodeMetrics: setMetrics, userSettingState: tableColumns } = props;
 
-  React.useEffect(() => {
-    const updateMetrics = () =>
-      fetchNodeMetrics()
-        .then(setMetrics)
-        .catch((e) => {
-          // eslint-disable-next-line no-console
-          console.error('Error fetching node metrics: ', e);
-        });
-    updateMetrics();
-    if (showMetrics) {
-      const id = setInterval(updateMetrics, 30 * 1000);
-      return () => clearInterval(id);
-    }
-    return () => {};
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  const { t } = useTranslation();
-  const filters = [
-    {
-      filterGroupName: t('nodes~Status'),
-      type: 'node-status',
-      reducer: nodeStatus,
-      items: [
-        { id: 'Ready', title: t('nodes~Ready') },
-        { id: 'Not Ready', title: t('nodes~Not Ready') },
-      ],
-    },
-    {
-      filterGroupName: t('nodes~Role'),
-      type: 'node-role',
-      reducer: getNodeRole,
-      items: [
-        {
-          id: 'master',
-          title: t('nodes~Master'),
-        },
-        {
-          id: 'worker',
-          title: t('nodes~Worker'),
-        },
-      ],
-    },
-  ];
+    React.useEffect(() => {
+      const updateMetrics = () =>
+        fetchNodeMetrics()
+          .then(setMetrics)
+          .catch((e) => {
+            // eslint-disable-next-line no-console
+            console.error('Error fetching node metrics: ', e);
+          });
+      updateMetrics();
+      if (showMetrics) {
+        const id = setInterval(updateMetrics, 30 * 1000);
+        return () => clearInterval(id);
+      }
+      return () => {};
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+    const { t } = useTranslation();
+    const filters = [
+      {
+        filterGroupName: t('nodes~Status'),
+        type: 'node-status',
+        reducer: nodeStatus,
+        items: [
+          { id: 'Ready', title: t('nodes~Ready') },
+          { id: 'Not Ready', title: t('nodes~Not Ready') },
+        ],
+      },
+      {
+        filterGroupName: t('nodes~Role'),
+        type: 'node-role',
+        reducer: getNodeRole,
+        items: [
+          {
+            id: 'master',
+            title: t('nodes~Master'),
+          },
+          {
+            id: 'worker',
+            title: t('nodes~Worker'),
+          },
+        ],
+      },
+    ];
 
-  return (
-    <ListPage
-      {...props}
-      kind={kind}
-      ListComponent={NodesTable}
-      rowFilters={filters}
-      columnLayout={{
-        columns: NodeTableHeader().map((column) => _.pick(column, ['title', 'additional', 'id'])),
-        id: columnManagementID,
-        selectedColumns,
-        type: 'Node',
-      }}
-    />
-  );
-});
+    return (
+      <ListPage
+        {...props}
+        kind={kind}
+        ListComponent={NodesTableWithUserSettings}
+        rowFilters={filters}
+        columnLayout={{
+          columns: NodeTableHeader().map((column) => _.pick(column, ['title', 'additional', 'id'])),
+          id: columnManagementID,
+          selectedColumns:
+            tableColumns?.[columnManagementID]?.length > 0
+              ? new Set(tableColumns[columnManagementID])
+              : null,
+          type: 'Node',
+        }}
+      />
+    );
+  }),
+);
 
 type MapDispatchToProps = {
   setNodeMetrics: (metrics) => void;
