@@ -27,9 +27,10 @@ import { VMTemplateLink } from './vm-template-link';
 import { TemplateSource } from './vm-template-source';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 import { getVMTemplateNamespacedName } from '../../selectors/vm-template/selectors';
-import './_vm-template-resource.scss';
 import { getFlavorText } from '../../selectors/vm/flavor-text';
 import { TemplateSourceStatus } from '../../statuses/template/types';
+
+import './_vm-template-resource.scss';
 
 export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps> = ({
   template,

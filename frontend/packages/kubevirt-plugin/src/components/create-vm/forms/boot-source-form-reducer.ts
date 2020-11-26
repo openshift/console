@@ -1,4 +1,3 @@
-import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { ValidationObject } from '@console/shared';
 
 import {
@@ -107,7 +106,7 @@ export const bootFormReducer = (
   };
   let isValid: boolean;
   const sizeValidation = validatePositiveInteger(`${newState.size?.value.value}`, {
-    subject: `${PersistentVolumeClaimModel.label} size`,
+    subject: `Persistent Volume Claim size`,
   });
   newState.size.validation = sizeValidation;
   switch (DataVolumeSourceType.fromString(newState.dataSource?.value)) {
@@ -117,7 +116,9 @@ export const bootFormReducer = (
     }
     case DataVolumeSourceType.HTTP: {
       if (newState.url?.value) {
-        newState.url.validation = validateURL(newState.url?.value, { subject: 'Import URL' });
+        newState.url.validation = validateURL(newState.url?.value, {
+          subject: 'Import URL',
+        });
       }
       isValid = !!newState.url?.value && !newState.url?.validation && !newState.size.validation;
       break;
@@ -125,7 +126,7 @@ export const bootFormReducer = (
     case DataVolumeSourceType.REGISTRY: {
       if (newState.container?.value) {
         newState.container.validation = validateTrim(newState.container?.value, {
-          subject: 'Container registry',
+          subject: 'Container image',
         });
       }
       isValid =

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as fuzzy from 'fuzzysearch';
 import { PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
 import { CatalogTile } from '@patternfly/react-catalog-view-extension';
@@ -70,9 +71,12 @@ const TemplateTile: React.FC<TemplateTileProps> = ({
   isSelected,
   isPinned,
 }) => {
+  const { t } = useTranslation();
   const [template] = templateItem.variants;
 
   const osName = getTemplateOperatingSystems(templateItem.variants)?.[0]?.name;
+  const workloadProfile = getWorkloadProfile(template) || t('kubevirt-plugin~Not available');
+  const provider = getTemplateProvider(t, template, true);
 
   return (
     <CatalogTile
@@ -85,9 +89,7 @@ const TemplateTile: React.FC<TemplateTileProps> = ({
           <StackItem>
             <b>{getTemplateName(template)}</b>
           </StackItem>
-          <StackItem className="text-secondary">
-            Provided by {getTemplateProvider(template)}
-          </StackItem>
+          {provider && <StackItem className="text-secondary">{provider}</StackItem>}
         </Stack>
       }
       onClick={() => selectTemplate(templateItem)}
@@ -96,11 +98,29 @@ const TemplateTile: React.FC<TemplateTileProps> = ({
       }
     >
       <Stack>
-        <StackItem>Project: {template.metadata.namespace}</StackItem>
-        <StackItem>Type: {getWorkloadProfile(template) || 'Not available'}</StackItem>
-        <StackItem>Flavor: {getTemplateFlavorDesc(template)}</StackItem>
-        <StackItem>Storage: {getTemplateSizeRequirement(template, sourceStatus)}</StackItem>
-        {osName && <StackItem>OS: {osName}</StackItem>}
+        <StackItem>
+          {t('kubevirt-plugin~Project: {{ namespace }}', {
+            namespace: template.metadata.namespace,
+          })}
+        </StackItem>
+        <StackItem>{t('kubevirt-plugin~Type: {{workloadProfile}}', { workloadProfile })}</StackItem>
+        <StackItem>
+          {t('kubevirt-plugin~Flavor: {{ flavor }}', {
+            flavor: getTemplateFlavorDesc(template),
+          })}
+        </StackItem>
+        <StackItem>
+          {t('kubevirt-plugin~Storage: {{ storage }}', {
+            storage: getTemplateSizeRequirement(template, sourceStatus),
+          })}
+        </StackItem>
+        {osName && (
+          <StackItem>
+            {t('kubevirt-plugin~OS: {{ osName }}', {
+              osName,
+            })}
+          </StackItem>
+        )}
       </Stack>
     </CatalogTile>
   );
@@ -137,6 +157,7 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
   loadError,
   templatePreselectError,
 }) => {
+  const { t } = useTranslation();
   const [isPinned] = usePinnedTemplates();
   const [filters, setFilters] = React.useState<{
     text: string;
@@ -163,7 +184,7 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
     } else if (typeof type === 'string' && id) {
       setFilters({
         ...filters,
-        [type]: filters[type]?.filter((t) => t !== id),
+        [type]: filters[type]?.filter((f) => f !== id),
       });
     }
   };
@@ -177,7 +198,7 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
     } else {
       setFilters({
         ...filters,
-        [type]: filters[type]?.filter((t) => t !== value),
+        [type]: filters[type]?.filter((f) => f !== value),
       });
     }
   };
@@ -246,6 +267,7 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
   });
 
   const canListNs = useFlag(FLAGS.CAN_LIST_NS);
+  const allProjects = t('kubevirt-plugin~All projects');
 
   return (
     <Stack className="kv-select-template">
@@ -253,17 +275,18 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
         <Stack hasGutter>
           <StackItem>
             <Title headingLevel="h5" size="lg">
-              Select a template
+              {t('kubevirt-plugin~Select a template')}
             </Title>
           </StackItem>
           <StackItem>
-            Only templates with valid boot source will be shown. The virtual machine can be
-            customized from the review step. <br />
+            {t(
+              'kubevirt-plugin~Only templates with valid boot source will be shown. The virtual machine can be customized from the review step.',
+            )}
             <VMTemplateSupport />
           </StackItem>
           {templatePreselectError && (
             <StackItem>
-              <Alert variant={AlertVariant.danger} isInline title={templatePreselectError} />
+              <Alert variant={AlertVariant.danger} isInline title={t(templatePreselectError)} />
             </StackItem>
           )}
           <StackItem>
@@ -279,16 +302,16 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
                       <ToolbarItem>
                         <FormPFSelect
                           variant={SelectVariant.single}
-                          aria-label="Project"
+                          aria-label={t('kubevirt-plugin~Project')}
                           onSelect={(e, val: string) =>
-                            setNamespace(val === 'All projects' ? undefined : val)
+                            setNamespace(val === allProjects ? undefined : val)
                           }
                           selections={namespace}
                           className="kv-select-template__project"
                           closeOnSelect={false}
                         >
                           {(canListNs
-                            ? ['All projects', ...namespaces.sort()]
+                            ? [allProjects, ...namespaces.sort()]
                             : namespaces.sort()
                           ).map((ns) => (
                             <SelectOption key={ns} value={ns}>
@@ -303,21 +326,24 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
                         chips={filters.provider}
                         deleteChip={clearFilter}
                         deleteChipGroup={clearFilter}
-                        categoryName={{ key: 'provider', name: 'Template provider' }}
+                        categoryName={{
+                          key: 'provider',
+                          name: t('kubevirt-plugin~Template provider'),
+                        }}
                       >
                         <FormPFSelect
                           variant={SelectVariant.checkbox}
-                          aria-label="Template provider"
+                          aria-label={t('kubevirt-plugin~Template provider')}
                           onSelect={(e, val) => onSelect('provider', e, val)}
                           selections={filters.provider}
                           placeholderText={
                             filters.provider?.length
-                              ? 'Template provider'
-                              : 'All template providers'
+                              ? t('kubevirt-plugin~Template provider')
+                              : t('kubevirt-plugin~All template providers')
                           }
                           className="kv-select-template__filter"
                         >
-                          {templateProviders.map((tp) => (
+                          {templateProviders(t).map((tp) => (
                             <SelectOption key={tp.id} value={tp.id}>
                               {tp.title}
                             </SelectOption>
@@ -330,15 +356,17 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
                         chips={filters.bootSource}
                         deleteChip={clearFilter}
                         deleteChipGroup={clearFilter}
-                        categoryName={{ key: 'bootSource', name: 'Boot source' }}
+                        categoryName={{ key: 'bootSource', name: t('kubevirt-plugin~Boot source') }}
                       >
                         <FormPFSelect
                           variant={SelectVariant.checkbox}
-                          aria-label="Boot source"
+                          aria-label={t('kubevirt-plugin~Boot source')}
                           onSelect={(e, val) => onSelect('bootSource', e, val)}
                           selections={filters.bootSource}
                           placeholderText={
-                            filters.bootSource?.length ? 'Boot source' : 'All boot sources'
+                            filters.bootSource?.length
+                              ? t('kubevirt-plugin~Boot source')
+                              : t('kubevirt-plugin~All boot sources')
                           }
                           className="kv-select-template__filter"
                         >
@@ -359,9 +387,12 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
                       aria-label="text filter"
                       onChange={(text) => setFilters({ ...filters, text })}
                       value={filters.text}
-                      placeholder="Search by name, OS ..."
+                      placeholder={t('kubevirt-plugin~Search by name, OS ...')}
                     />
-                    <Button variant={ButtonVariant.control} aria-label="Search">
+                    <Button
+                      variant={ButtonVariant.control}
+                      aria-label={t('kubevirt-plugin~Search')}
+                    >
                       <SearchIcon />
                     </Button>
                   </InputGroup>
@@ -372,7 +403,12 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
         </Stack>
       </StackItem>
       <StackItem isFilled>
-        <StatusBox data={templates} loaded={loaded} loadError={loadError} label="Resources">
+        <StatusBox
+          data={templates}
+          loaded={loaded}
+          loadError={loadError}
+          label={t('kubevirt-plugin~Resources')}
+        >
           <VirtualizedGrid
             items={filteredItems}
             renderCell={renderTile}

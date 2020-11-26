@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as classNames from 'classnames';
 import { RouteComponentProps } from 'react-router';
 import styles from '@patternfly/react-styles/css/components/Wizard/wizard';
@@ -57,6 +58,7 @@ import {
 import { useSupportModal } from '../../hooks/use-support-modal';
 import { useStorageClassConfigMap } from '../../hooks/storage-class-config-map';
 import { createVM } from '../../k8s/requests/vm/create/simple-create';
+import { useErrorTranslation } from '../../hooks/use-error-translation';
 
 import '../create-vm-wizard/create-vm-wizard.scss';
 import './create-vm.scss';
@@ -99,6 +101,7 @@ const Footer: React.FC<FooterProps> = ({
   onClose,
   loaded,
 }) => {
+  const { t } = useTranslation();
   const withSupportModal = useSupportModal();
   const isReview = activeStep.id === WizardStep.REVIEW;
   const isCustomSource = activeStep.id === WizardStep.SOURCE;
@@ -123,7 +126,7 @@ const Footer: React.FC<FooterProps> = ({
           className="kv-create-vm__error"
           variant={AlertVariant.danger}
           actionClose={<AlertActionCloseButton onClose={cleanError} />}
-          title="Error creating VM"
+          title={t('kubevirt-plugin~Error creating VM')}
         >
           {createError}
         </Alert>
@@ -142,7 +145,7 @@ const Footer: React.FC<FooterProps> = ({
           }
           isDisabled={!canContinue || isCreating}
         >
-          {isReview ? 'Create virtual machine' : 'Next'}
+          {isReview ? t('kubevirt-plugin~Create virtual machine') : t('kubevirt-plugin~Next')}
         </Button>
         {(isReview || isCustomSource) && (
           <Button
@@ -151,14 +154,14 @@ const Footer: React.FC<FooterProps> = ({
             isDisabled={isCreating || !loaded}
             data-test-id="wizard-customize"
           >
-            Customize virtual machine
+            {t('kubevirt-plugin~Customize virtual machine')}
           </Button>
         )}
         <Button variant="secondary" onClick={onBack} isDisabled={isSelectTemplate || isCreating}>
-          Back
+          {t('kubevirt-plugin~Back')}
         </Button>
         <Button variant="link" onClick={onClose} isDisabled={isCreating}>
-          Cancel
+          {t('kubevirt-plugin~Cancel')}
         </Button>
       </footer>
     </div>
@@ -166,13 +169,14 @@ const Footer: React.FC<FooterProps> = ({
 };
 
 export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
+  const { t } = useTranslation();
   const searchParams = new URLSearchParams(location && location.search);
   const initData = parseVMWizardInitialData(searchParams);
   const [namespace, setNamespace] = React.useState(searchParams.get('namespace'));
   const [state, dispatch] = React.useReducer(formReducer, initFormState(namespace));
   const [isCreating, setCreating] = React.useState(false);
   const [created, setCreated] = React.useState(false);
-  const [createError, setCreateError] = React.useState<string>();
+  const [createError, setCreateError, setCreateErrorKey, resetError] = useErrorTranslation();
   const [templatePreselectError, setTemplatePreselectError] = React.useState<string>();
   const [selectedTemplate, selectTemplate] = React.useState<TemplateItem>();
   const [bootState, bootDispatch] = React.useReducer(bootFormReducer, initBootFormState);
@@ -266,10 +270,11 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
         selectTemplate(templateItem);
         dispatch({ type: FORM_ACTION_TYPE.SET_TEMPLATE, payload: templateVariant });
       } else {
-        setTemplatePreselectError('Requested template could not be found');
+        // t('kubevirt-plugin~Requested template could not be found')
+        setTemplatePreselectError('kubevirt-plugin~Requested template could not be found');
       }
     }
-  }, [loaded, initData, templates, userTemplates, selectedTemplate]);
+  }, [loaded, initData, templates, userTemplates, selectedTemplate, t]);
 
   let templateIsReady = false;
   let customBootSource = false;
@@ -286,7 +291,9 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
           <Alert
             variant="danger"
             isInline
-            title="The boot source for the chosen template is in error state. Please repair the boot source."
+            title={t(
+              'kubevirt-plugin~The boot source for the chosen template is in error state. Please repair the boot source.',
+            )}
           />
         );
       } else if (!sourceStatus.isReady) {
@@ -296,7 +303,9 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
           <Alert
             variant="info"
             isInline
-            title="The boot source for the chosen template is still being prepared. Please wait until complete."
+            title={t(
+              'kubevirt-plugin~The boot source for the chosen template is still being prepared. Please wait until complete.',
+            )}
           />
         );
       } else {
@@ -354,7 +363,7 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
     const steps = [
       {
         id: WizardStep.TEMPLATE,
-        name: 'Select template',
+        name: t('kubevirt-plugin~Select template'),
         component: (
           <SelectTemplate
             loaded={loaded}
@@ -380,7 +389,7 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
       },
       {
         id: WizardStep.REVIEW,
-        name: 'Review and create',
+        name: t('kubevirt-plugin~Review and create'),
         component: (
           <ReviewAndCreate
             sourceStatus={sourceStatus}
@@ -397,7 +406,7 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
     if (customBootSource) {
       steps.splice(1, 0, {
         id: WizardStep.SOURCE,
-        name: 'Boot source',
+        name: t('kubevirt-plugin~Boot source'),
         component: (
           <BootSource template={selectedTemplate} state={bootState} dispatch={bootDispatch} />
         ),
@@ -427,13 +436,16 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
                 createError={createError}
                 cleanError={() => setCreateError(undefined)}
                 onFinish={async () => {
-                  setCreateError(undefined);
+                  resetError();
                   setCreating(true);
                   try {
                     await createVM(state.template, sourceStatus, bootState, state, scConfigMap);
                     setCreated(true);
                   } catch (err) {
-                    setCreateError(err?.message || 'Error occured while creating VM.');
+                    // t('kubevirt-plugin~Error occured while creating VM.')
+                    err?.message
+                      ? setCreateError(err.message)
+                      : setCreateErrorKey('kubevirt-plugin~Error occured while creating VM.');
                   } finally {
                     setCreating(false);
                   }
@@ -457,7 +469,9 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
   return (
     <div className="kubevirt-create-vm-modal__container">
       <div className="yaml-editor__header">
-        <h1 className="yaml-editor__header-text">Create Virtual Machine from template</h1>
+        <h1 className="yaml-editor__header-text">
+          {t('kubevirt-plugin~Create Virtual Machine from template')}
+        </h1>
       </div>
       {body}
     </div>

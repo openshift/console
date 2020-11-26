@@ -30,6 +30,7 @@ import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
 import { DataVolumeSourceType } from '../../constants';
 
 import './vm-template-source.scss';
+import { useTranslation } from 'react-i18next';
 
 type SourceStatusErrorBodyProps = {
   sourceStatus: TemplateSourceStatusError;
@@ -57,6 +58,7 @@ type AddSourceButtonProps = {
 };
 
 const AddSourceButton: React.FC<AddSourceButtonProps> = ({ template }) => {
+  const { t } = useTranslation();
   const { uploads, uploadData } = React.useContext(CDIUploadContext);
   return (
     isCommonTemplate(template) && (
@@ -66,7 +68,7 @@ const AddSourceButton: React.FC<AddSourceButtonProps> = ({ template }) => {
         onClick={() => addTemplateSourceModal({ template, uploads, uploadData })}
       >
         <PlusCircleIcon className="co-icon-and-text__icon" />
-        Add source
+        {t('kubevirt-plugin~Add source')}
       </Button>
     )
   );
@@ -77,19 +79,23 @@ type DeleteSourceButtonProps = {
   sourceStatus: TemplateSourceStatus;
 };
 
-const DeleteSourceButton: React.FC<DeleteSourceButtonProps> = ({ template, sourceStatus }) =>
-  isCommonTemplate(template) &&
-  (sourceStatus.dataVolume || sourceStatus.pvc) && (
-    <StackItem>
-      <Button
-        isInline
-        variant={ButtonVariant.link}
-        onClick={() => createDeleteSourceModal({ sourceStatus })}
-      >
-        Delete source
-      </Button>
-    </StackItem>
+const DeleteSourceButton: React.FC<DeleteSourceButtonProps> = ({ template, sourceStatus }) => {
+  const { t } = useTranslation();
+  return (
+    isCommonTemplate(template) &&
+    (sourceStatus.dataVolume || sourceStatus.pvc) && (
+      <StackItem>
+        <Button
+          isInline
+          variant={ButtonVariant.link}
+          onClick={() => createDeleteSourceModal({ sourceStatus })}
+        >
+          {t('kubevirt-plugin~Delete source')}
+        </Button>
+      </StackItem>
+    )
   );
+};
 
 type ContainerSourceProps = {
   container: string;
@@ -97,28 +103,41 @@ type ContainerSourceProps = {
   clone?: boolean;
 };
 
-export const ContainerSource: React.FC<ContainerSourceProps> = ({ container, isCDRom, clone }) => (
-  <Stack>
-    <StackItem className="text-secondary">
-      {clone ? 'Clone and boot' : 'Boot'} from {isCDRom ? 'CD-ROM' : 'disk'}
-    </StackItem>
-    <StackItem>Container {container}</StackItem>
-  </Stack>
-);
+export const ContainerSource: React.FC<ContainerSourceProps> = ({ container, isCDRom, clone }) => {
+  const { t } = useTranslation();
+  let msg: string;
+  if (clone) {
+    msg = isCDRom
+      ? t('kubevirt-plugin~Clone and boot from CD-ROM')
+      : t('kubevirt-plugin~Clone and boot from disk');
+  } else {
+    msg = isCDRom ? t('kubevirt-plugin~Boot from CD-ROM') : t('kubevirt-plugin~Boot from disk');
+  }
+  return (
+    <Stack>
+      <StackItem className="text-secondary">{msg}</StackItem>
+      <StackItem>{t('kubevirt-plugin~Container {{container}}', { container })}</StackItem>
+    </Stack>
+  );
+};
 
 type URLSourceProps = {
   url: string;
   isCDRom: boolean;
 };
 
-export const URLSource: React.FC<URLSourceProps> = ({ url, isCDRom }) => (
-  <Stack>
-    <StackItem className="text-secondary">Boot from {isCDRom ? 'CD-ROM' : 'disk'}</StackItem>
-    <StackItem>
-      <ExternalLink href={url} text={url} additionalClassName="kv-template-source--url" />
-    </StackItem>
-  </Stack>
-);
+export const URLSource: React.FC<URLSourceProps> = ({ url, isCDRom }) => {
+  const { t } = useTranslation();
+  const msg = isCDRom ? t('kubevirt-plugin~Boot from CD-ROM') : t('kubevirt-plugin~Boot from disk');
+  return (
+    <Stack>
+      <StackItem className="text-secondary">{msg}</StackItem>
+      <StackItem>
+        <ExternalLink href={url} text={url} additionalClassName="kv-template-source--url" />
+      </StackItem>
+    </Stack>
+  );
+};
 
 type PVCSourceProps = {
   name: string;
@@ -127,36 +146,50 @@ type PVCSourceProps = {
   clone?: boolean;
 };
 
-export const PVCSource: React.FC<PVCSourceProps> = ({ name, namespace, isCDRom, clone }) => (
-  <Stack>
-    <StackItem className="text-secondary">
-      {clone ? 'Clone and boot' : 'Boot'} from {isCDRom ? 'CD-ROM' : 'disk'}
-    </StackItem>
-    <StackItem>
-      <ResourceLink kind={PersistentVolumeClaimModel.kind} name={name} namespace={namespace} />
-    </StackItem>
-  </Stack>
-);
+export const PVCSource: React.FC<PVCSourceProps> = ({ name, namespace, isCDRom, clone }) => {
+  const { t } = useTranslation();
+  let msg: string;
+  if (clone) {
+    msg = isCDRom
+      ? t('kubevirt-plugin~Clone and boot from CD-ROM')
+      : t('kubevirt-plugin~Clone and boot from disk');
+  } else {
+    msg = isCDRom ? t('kubevirt-plugin~Boot from CD-ROM') : t('kubevirt-plugin~Boot from disk');
+  }
+  return (
+    <Stack>
+      <StackItem className="text-secondary">{msg}</StackItem>
+      <StackItem>
+        <ResourceLink kind={PersistentVolumeClaimModel.kind} name={name} namespace={namespace} />
+      </StackItem>
+    </Stack>
+  );
+};
 
 type PXESourceProps = {
   pxe?: string;
   namespace?: string;
 };
 
-const PXESource: React.FC<PXESourceProps> = ({ pxe, namespace }) => (
-  <Stack>
-    <StackItem className="text-secondary">Boot from network (PXE)</StackItem>
-    {pxe && (
-      <StackItem>
-        <ResourceLink
-          kind={referenceForModel(NetworkAttachmentDefinitionModel)}
-          name={pxe}
-          namespace={namespace}
-        />
+const PXESource: React.FC<PXESourceProps> = ({ pxe, namespace }) => {
+  const { t } = useTranslation();
+  return (
+    <Stack>
+      <StackItem className="text-secondary">
+        {t('kubevirt-plugin~Boot from network (PXE)')}
       </StackItem>
-    )}
-  </Stack>
-);
+      {pxe && (
+        <StackItem>
+          <ResourceLink
+            kind={referenceForModel(NetworkAttachmentDefinitionModel)}
+            name={pxe}
+            namespace={namespace}
+          />
+        </StackItem>
+      )}
+    </Stack>
+  );
+};
 
 type SourceDescriptionProps = {
   sourceStatus: TemplateSourceStatusBundle;
@@ -217,8 +250,9 @@ export const TemplateSource: React.FC<TemplateSourceProps> = ({
   sourceStatus,
   detailed,
 }) => {
+  const { t } = useTranslation();
   if (loadError) {
-    return <>Error</>;
+    return <>{t('kubevirt-plugin~Error')}</>;
   }
   if (!loaded) {
     return <LoadingInline />;
@@ -228,28 +262,32 @@ export const TemplateSource: React.FC<TemplateSourceProps> = ({
     if (isTemplateSourceError(sourceStatus)) {
       return (
         <Label variant="outline" color="red" icon={<RedExclamationCircleIcon />}>
-          Boot source error
+          {t('kubevirt-plugin~Boot source error')}
         </Label>
       );
     }
     if (sourceStatus) {
       return sourceStatus.isReady ? (
         <Label variant="outline" color="green" icon={<GreenCheckCircleIcon />}>
-          {sourceStatus.provider} boot source
+          {
+            // t('kubevirt-plugin~User defined boot source')
+            // t('kubevirt-plugin~Community defined boot source')
+          }
+          {t('kubevirt-plugin~{{provider}} boot source', { provider: sourceStatus.provider })}
         </Label>
       ) : (
         <Label variant="outline" color="blue" icon={<InProgressIcon />}>
-          Preparing boot source
+          {t('kubevirt-plugin~Preparing boot source')}
         </Label>
       );
     }
     return isCommonTemplate(template) ? (
       <Label variant="outline" color="orange" icon={<YellowExclamationTriangleIcon />}>
-        Boot source required
+        {t('kubevirt-plugin~Boot source required')}
       </Label>
     ) : (
       <Label variant="outline" color="red" icon={<RedExclamationCircleIcon />}>
-        Boot source error
+        {t('kubevirt-plugin~Boot source error')}
       </Label>
     );
   }
@@ -260,7 +298,7 @@ export const TemplateSource: React.FC<TemplateSourceProps> = ({
 
   if (isTemplateSourceError(sourceStatus)) {
     return (
-      <ErrorStatus title="Boot source error">
+      <ErrorStatus title={t('kubevirt-plugin~Boot source error')}>
         <Stack hasGutter>
           <StackItem>
             <SourceStatusErrorBody sourceStatus={sourceStatus} />
@@ -274,8 +312,10 @@ export const TemplateSource: React.FC<TemplateSourceProps> = ({
   const { isReady, dataVolume, pod } = sourceStatus;
 
   if (isReady) {
+    // t('kubevirt-plugin~User defined')
+    // t('kubevirt-plugin~Community defined')
     return (
-      <SuccessStatus title={sourceStatus.provider}>
+      <SuccessStatus title={t('kubevirt-plugin~{{provider}}', { provider: sourceStatus.provider })}>
         <Stack hasGutter>
           <StackItem>
             <SourceDescription template={template} sourceStatus={sourceStatus} />
@@ -293,7 +333,7 @@ export const TemplateSource: React.FC<TemplateSourceProps> = ({
       </DVImportStatus>
     );
   }
-  return <WarningStatus title="Unknown source" />;
+  return <WarningStatus title={t('kubevirt-plugin~Unknown source')} />;
 };
 
 export type TemplateSourceProps = {
