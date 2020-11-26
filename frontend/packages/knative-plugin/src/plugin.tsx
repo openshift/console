@@ -131,7 +131,8 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Nav/Section',
     properties: {
       id: 'serverless',
-      name: 'Serverless',
+      // t('knative-plugin~Serverless')
+      name: '%knative-plugin~Serverless%',
     },
   },
   {
@@ -141,7 +142,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       perspective: 'admin',
       section: 'serverless',
       componentProps: {
-        name: 'Serving',
+        // t('knative-plugin~Serving')
+        name: '%knative-plugin~Serving%',
         href: '/serving',
       },
     },
@@ -160,7 +162,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       perspective: 'admin',
       section: 'serverless',
       componentProps: {
-        name: 'Eventing',
+        // t('knative-plugin~Eventing')
+        name: '%knative-plugin~Eventing%',
         href: '/eventing',
       },
     },
@@ -175,7 +178,8 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Overview/Resource',
     properties: {
-      name: 'Resources',
+      // t('knative-plugin~Resources')
+      name: '%knative-plugin~Resources%',
       key: 'configurations',
       loader: () =>
         import(
@@ -436,7 +440,8 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.EventingBrokerModel,
       page: {
-        name: 'Triggers',
+        // t('knative-plugin~Triggers')
+        name: '%knative-plugin~Triggers%',
         href: 'triggers',
       },
       loader: async () =>
@@ -455,7 +460,8 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.EventingChannelModel,
       page: {
-        name: 'Subscriptions',
+        // t('knative-plugin~Subscriptions')
+        name: '%knative-plugin~Subscriptions%',
         href: 'subscriptions',
       },
       loader: async () =>
@@ -474,7 +480,8 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.EventingKafkaChannelModel,
       page: {
-        name: 'Subscriptions',
+        // t('knative-plugin~Subscriptions')
+        name: '%knative-plugin~Subscriptions%',
         href: 'subscriptions',
       },
       loader: async () =>
@@ -493,7 +500,8 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.EventingIMCModel,
       page: {
-        name: 'Subscriptions',
+        // t('knative-plugin~Subscriptions')
+        name: '%knative-plugin~Subscriptions%',
         href: 'subscriptions',
       },
       loader: async () =>
