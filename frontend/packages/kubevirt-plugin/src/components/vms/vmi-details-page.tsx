@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { navFactory, HintBlock, ExternalLink } from '@console/internal/components/utils';
+import { navFactory } from '@console/internal/components/utils';
 import { DetailsPage } from '@console/internal/components/factory';
 import { PodModel, TemplateModel } from '@console/internal/models';
 import { VMDisksAndFileSystemsPage } from '../vm-disks/vm-disks';
@@ -22,10 +22,9 @@ import { VMConsoleFirehose } from './vm-console';
 import { VMDetailsFirehose } from './vm-details';
 import { vmiMenuActionsCreator } from './menu-actions';
 import { VMDashboard } from './vm-dashboard';
+import VMIDetailsPageInfoMessage from '../info-messages/VMIDetailsPageInfoMessage';
 import { TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_VM } from '../../constants/vm';
 import { breadcrumbsForVMPage } from './vm-details-page';
-
-import './vmi-details-page.scss';
 
 export const VirtualMachinesInstanceDetailsPage: React.FC<VirtualMachinesInstanceDetailsPageProps> = (
   props,
@@ -104,20 +103,7 @@ export const VirtualMachinesInstanceDetailsPage: React.FC<VirtualMachinesInstanc
       breadcrumbsFor={breadcrumbsForVMPage(t, props.match)}
       customData={{ kindObj: VirtualMachineInstanceModel }}
     >
-      <HintBlock
-        className="kubevirt-details-page__hint-block"
-        title={t('kubevirt-plugin~Virtual Machine Instance {{name}}', { name })}
-      >
-        <p>
-          {t(
-            'kubevirt-plugin~Consider using a Virtual Machine that will provide additional management capabilities to a VirtualMachineInstance inside the cluster.',
-          )}
-        </p>
-        <ExternalLink
-          href="https://kubevirt.io/user-guide/#/architecture?id=virtualmachine"
-          text={t('kubevirt-plugin~Learn more')}
-        />
-      </HintBlock>
+      <VMIDetailsPageInfoMessage name={name} namespace={namespace} />
     </DetailsPage>
   );
 };
