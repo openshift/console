@@ -92,8 +92,13 @@ export const getVMWizardCreateLink = ({
     if (namespace) {
       params.append(VMWizardURLParams.NAMESPACE, namespace);
     }
-    if (template && isCommonTemplate(template)) {
-      initialData.commonTemplateName = template.metadata.name;
+    if (template) {
+      if (isCommonTemplate(template)) {
+        initialData.commonTemplateName = template.metadata.name;
+      } else {
+        initialData.userTemplateName = template.metadata.name;
+        initialData.userTemplateNs = template.metadata.namespace;
+      }
       params.append(VMWizardURLParams.INITIAL_DATA, JSON.stringify(initialData));
     }
     const paramsString = params.toString() ? `?${params}` : '';
