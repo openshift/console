@@ -16,9 +16,9 @@ namespace ExtensionProperties {
     catalogDescription: string;
     /** Description for the catalog item type. */
     typeDescription: string;
-    /** Custom filters specific to the catalog item  */
+    /** Custom filters specific to the catalog item.  */
     filters?: CatalogItemAttribute[];
-    /** Custom groupings specific to the catalog item */
+    /** Custom groupings specific to the catalog item. */
     groupings?: CatalogItemAttribute[];
   }
 
@@ -27,6 +27,9 @@ namespace ExtensionProperties {
     type: string;
     /** Fetch items and normalize it for the catalog. Value is a react effect hook. */
     provider: CodeRef<CatalogExtensionHook<CatalogItem[]>>;
+    /** Priority for this provider. Defaults to 0. Higher priority providers may override catalog
+        items provided by other providers. */
+    priority?: number;
   }
 }
 
