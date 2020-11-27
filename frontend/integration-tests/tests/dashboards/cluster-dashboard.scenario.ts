@@ -1,6 +1,8 @@
 import * as dashboardView from '@console/shared/src/test-views/dashboard-shared.view';
 import * as clusterDashboardView from '../../views/dashboard.view';
 import * as sideNavView from '../../views/sidenav.view';
+import { execSync } from 'child_process';
+import { get } from 'https';
 
 const inventoryItems = [
   { title: 'Node', link: '/k8s/cluster/nodes' },
@@ -76,10 +78,36 @@ describe('Cluster Dashboard', () => {
       it('has OCM UI link', () => {
         const link = clusterDashboardView.insightsPopover.$('a.co-external-link');
         expect(link.isDisplayed()).toBe(true);
-      })
+      });
       it('has chart', () => {
         const pieChart = clusterDashboardView.insightsPopover.$('div.pf-c-chart');
         expect(pieChart.isDisplayed()).toBe(true);
+      });
+      it('shows correct number of hits', (done) => {
+        const hitsCountUI = clusterDashboardView.insightsPopover.$$('tspan').get(5);
+        expect(hitsCountUI.isDisplayed()).toBe(true);
+        const pullSecret = JSON.parse(execSync('oc get secret/pull-secret -n openshift-config -o json').toString());
+        const dockerConfigJSON = JSON.parse(Buffer.from(pullSecret.data[".dockerconfigjson"], "base64").toString());
+        const token = dockerConfigJSON["auths"]["cloud.openshift.com"]["auth"];
+        const clusterId = JSON.parse(execSync('oc get clusterversion -o json').toString()).items[0].spec.clusterID;
+        const options = {
+          headers: {
+            'User-Agent': `insights-operator/test cluster/${clusterId}`,
+            'Authorization': `Bearer ${token}`
+          }
+        };
+        get(
+          `https://cloud.redhat.com/api/insights-results-aggregator/v1/clusters/${clusterId}/report`,
+          options,
+          (res) => {
+            res.on('data', (d) => {
+              const hitsCountAPI = JSON.parse(d).report.meta.count.toString();
+              expect(hitsCountUI.getText()).toEqual(hitsCountAPI);
+              done();
+          });
+        }).on('error', (e) => {
+          pending();
+        });
       });
     });
   });
