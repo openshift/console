@@ -17,6 +17,7 @@ export const listPage = {
       });
   },
   clickCreateYAMLbutton: () => {
+    cy.get(`[data-test="item-create"]`).should('be.visible');
     cy.byTestID('item-create').click({ force: true });
   },
   filter: {
