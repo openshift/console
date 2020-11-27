@@ -1,0 +1,18 @@
+.pipeline-metrics-dashboard {
+  background: var(--pf-global--palette--black-150);
+  &__body {
+    background: var(--pf-global--palette--black-150);
+    margin-bottom: 0 !important;
+    margin-top: 0;
+  }
+  &__body-content {
+    margin-top: var(--pf-global--spacer--lg);
+  }
+  &__toolbar {
+    margin-bottom: 0 !important;
+    padding: var(--pf-global--spacer--md) var(--pf-global--spacer--xl) 0;
+  }
+}
+.pipeline-metrics-empty-state {
+  background: var(--pf-global--palette--black-150);
+}

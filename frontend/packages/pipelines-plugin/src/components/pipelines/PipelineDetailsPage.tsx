@@ -17,6 +17,7 @@ import {
   parametersValidationSchema,
   resourcesValidationSchema,
 } from './detail-page-tabs';
+import PipelineMetrics from './pipeline-metrics/PipelineMetrics';
 import { usePipelineTriggerTemplateNames } from './utils/triggers';
 import { usePipelinesBreadcrumbsFor, useLatestPipelineRun } from './hooks';
 
@@ -42,6 +43,11 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
       breadcrumbsFor={() => breadcrumbsFor}
       pages={[
         navFactory.details(PipelineDetails),
+        {
+          href: 'dashboard',
+          name: t('pipelines-plugin~Dashboard'),
+          component: PipelineMetrics,
+        },
         navFactory.editYaml(),
         {
           href: 'Runs',

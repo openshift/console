@@ -1,0 +1,77 @@
+import * as React from 'react';
+import { shallow } from 'enzyme';
+import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
+import { DEFAULT_PROMETHEUS_TIMESPAN } from '@console/internal/components/graphs';
+import { parsePrometheusDuration } from '@console/internal/components/utils/datetime';
+import { LoadingInline } from '@console/internal/components/utils';
+import * as hookUtils from '../../hooks';
+import { LineChart } from '../charts/lineChart';
+import { DEFAULT_REFRESH_INTERVAL } from '../../const';
+import { PipelineExampleNames, pipelineTestData } from '../../../../test-data/pipeline-data';
+import PipelineRunTaskRunGraph from '../PipelineRunTaskRunGraph';
+
+jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
+  useK8sGet: jest.fn(),
+}));
+
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
+const usePipelineRunTaskRunPollSpy = jest.spyOn(hookUtils, 'usePipelineRunTaskRunPoll');
+
+const mockData = pipelineTestData[PipelineExampleNames.WORKSPACE_PIPELINE];
+const { pipeline } = mockData;
+
+type PipelineRunTaskRunGraphProps = React.ComponentProps<typeof PipelineRunTaskRunGraph>;
+
+describe('TaskRun Duration Graph', () => {
+  let PipelineRunTaskRunGraphProps: PipelineRunTaskRunGraphProps;
+  beforeEach(() => {
+    PipelineRunTaskRunGraphProps = {
+      pipeline,
+      timespan: DEFAULT_PROMETHEUS_TIMESPAN,
+      interval: parsePrometheusDuration(DEFAULT_REFRESH_INTERVAL),
+    };
+  });
+
+  it('Should render a LoadingInline if query result is loading', () => {
+    usePipelineRunTaskRunPollSpy.mockReturnValue([{ data: { result: [{ x: 'x' }] } }, false, true]);
+    const PipelineRunTaskRunGraphWrapper = shallow(
+      <PipelineRunTaskRunGraph {...PipelineRunTaskRunGraphProps} />,
+    );
+    expect(PipelineRunTaskRunGraphWrapper.find(LoadingInline).exists()).toBe(true);
+  });
+
+  it('Should render an empty state if query result is empty', () => {
+    usePipelineRunTaskRunPollSpy.mockReturnValue([{ data: { result: [] } }, false, false]);
+    const PipelineRunTaskRunGraphWrapper = shallow(
+      <PipelineRunTaskRunGraph {...PipelineRunTaskRunGraphProps} />,
+    );
+    expect(PipelineRunTaskRunGraphWrapper.find(GraphEmpty).exists()).toBe(true);
+  });
+
+  it('Should render an empty state if query resulted in error', () => {
+    usePipelineRunTaskRunPollSpy.mockReturnValue([{ data: { result: [] } }, true, false]);
+    const PipelineRunTaskRunGraphWrapper = shallow(
+      <PipelineRunTaskRunGraph {...PipelineRunTaskRunGraphProps} />,
+    );
+    expect(PipelineRunTaskRunGraphWrapper.find(GraphEmpty).exists()).toBe(true);
+  });
+
+  it('Should render a LineChart if data is available', () => {
+    usePipelineRunTaskRunPollSpy.mockReturnValue([
+      { data: { result: [{ x: Date.now(), y: 1 }] } },
+      false,
+      false,
+    ]);
+    const PipelineRunTaskRunGraphWrapper = shallow(
+      <PipelineRunTaskRunGraph {...PipelineRunTaskRunGraphProps} />,
+    );
+    expect(PipelineRunTaskRunGraphWrapper.find(LineChart).exists()).toBe(true);
+  });
+});
