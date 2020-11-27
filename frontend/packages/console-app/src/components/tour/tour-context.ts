@@ -6,6 +6,7 @@ import {
   Dispatch,
   ReducerAction,
   useEffect,
+  useCallback,
 } from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
@@ -16,12 +17,9 @@ import { getFlagsObject } from '@console/internal/reducers/features';
 import { useExtensions } from '@console/plugin-sdk';
 import { RootState } from '@console/internal/redux';
 import { isGuidedTour, GuidedTour } from '@console/plugin-sdk/src/typings/guided-tour';
-import { TourActions } from './const';
-import {
-  getTourLocalStorageForPerspective,
-  filterTourBasedonPermissionAndFlag,
-  setTourCompletionLocalStorageDataForPerspective,
-} from './utils';
+import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
+import { TourActions, TOUR_LOCAL_STORAGE_KEY } from './const';
+import { filterTourBasedonPermissionAndFlag } from './utils';
 import { TourDataType, Step } from './type';
 
 type TourStateAction = { type: TourActions; payload?: { completed?: boolean } };
@@ -81,6 +79,43 @@ const getRequiredFlagsByTour = createSelector(
   (flags, requiredFlags) => pick(flags, requiredFlags),
 );
 
+type TourLocalStorageType = {
+  completed: boolean;
+};
+
+type TourLocalStorageData = {
+  [key: string]: TourLocalStorageType;
+};
+
+const TOUR_CONFIGMAP_KEY = `console.guidedTour`;
+
+export const useTourStateForPerspective = (
+  perspective: string,
+): [TourLocalStorageType, (completed: boolean) => void, boolean] => {
+  const [tourLocalState, setTourLocalState, loaded] = useUserSettingsCompatibility<
+    TourLocalStorageData
+  >(TOUR_CONFIGMAP_KEY, TOUR_LOCAL_STORAGE_KEY, { [perspective]: { completed: false } });
+  useEffect(() => {
+    if (loaded && !tourLocalState.hasOwnProperty(perspective)) {
+      setTourLocalState((state) => ({ ...state, [perspective]: { completed: false } }));
+    }
+    // only run effect when the active perspective changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [perspective, loaded]);
+  return [
+    tourLocalState?.[perspective],
+    useCallback(
+      (completed: boolean) => {
+        setTourLocalState((state) => {
+          return { ...state, [perspective]: { ...state[perspective], completed } };
+        });
+      },
+      [perspective, setTourLocalState],
+    ),
+    loaded,
+  ];
+};
+
 export const useTourValuesForContext = (): TourContextType => {
   // declaring a method for the perspective instead of using getActivePerspective
   // because importing getActivePerspective in this file throws error
@@ -94,10 +129,13 @@ export const useTourValuesForContext = (): TourContextType => {
     (state: RootState) => getRequiredFlagsByTour(state, selectorSteps),
     isEqual,
   );
-  const { completed } = getTourLocalStorageForPerspective(perspective);
+  const [tourCompletionState, setTourCompletionState, loaded] = useTourStateForPerspective(
+    activePerspective,
+  );
+  const completed = tourCompletionState?.completed;
   const onComplete = () => {
     if (completed === false) {
-      setTourCompletionLocalStorageDataForPerspective(perspective, true);
+      setTourCompletionState(true);
     }
   };
   const [tourState, tourDispatch] = useReducer<TourReducer>(tourReducer, {
@@ -107,12 +145,13 @@ export const useTourValuesForContext = (): TourContextType => {
   });
 
   useEffect(() => {
-    const { completed: initCompleted } = getTourLocalStorageForPerspective(activePerspective);
-    tourDispatch({ type: TourActions.initialize, payload: { completed: initCompleted } });
+    tourDispatch({ type: TourActions.initialize, payload: { completed } });
     setPerspective(activePerspective);
-  }, [activePerspective]);
+    // only run effect when the active perspective changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activePerspective, loaded]);
 
-  if (!tour) return { tour: null };
+  if (!tour || !loaded) return { tour: null };
   const {
     properties: {
       tour: { intro, steps: unfilteredSteps, end },

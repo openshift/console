@@ -1,13 +1,16 @@
 import * as redux from 'react-redux';
 import * as plugins from '@console/plugin-sdk';
+import * as userHooks from '@console/shared/src/hooks/useUserSettingsCompatibility';
 import { testHook } from '../../../../../../__tests__/utils/hooks-utils';
-import { TourState, tourReducer, useTourValuesForContext } from '../tour-context';
+import * as TourModule from '../tour-context';
 import { TourActions } from '../const';
 import { TourDataType } from '../type';
 
+const { tourReducer, useTourValuesForContext, useTourStateForPerspective } = TourModule;
+
 describe('guided-tour-context', () => {
   describe('tour-reducer', () => {
-    let mockState: TourState;
+    let mockState;
     beforeEach(() => {
       mockState = { startTour: false, completedTour: false, stepNumber: 2 };
     });
@@ -71,6 +74,11 @@ describe('guided-tour-context', () => {
         B: false,
       });
       spyOn(plugins, 'useExtensions').and.returnValue(mockTourExtension);
+      spyOn(TourModule, 'useTourStateForPerspective').and.returnValue([
+        { completed: false },
+        () => null,
+        true,
+      ]);
       testHook(() => {
         const contextValue = useTourValuesForContext();
         const { tourState, tour, totalSteps } = contextValue;
@@ -93,12 +101,52 @@ describe('guided-tour-context', () => {
         B: false,
       });
       spyOn(plugins, 'useExtensions').and.returnValue([]);
+      spyOn(TourModule, 'useTourStateForPerspective').and.returnValue([
+        { completed: false },
+        () => null,
+        true,
+      ]);
       testHook(() => {
         const contextValue = useTourValuesForContext();
         const { tourState, tour, totalSteps } = contextValue;
         expect(tourState).toEqual(undefined);
         expect(tour).toEqual(null);
         expect(totalSteps).toEqual(undefined);
+      });
+    });
+
+    it('should return null from the hook if tour is available but data isnot loaded', () => {
+      spyOn(redux, 'useSelector').and.returnValues('dev', { A: true, B: false }, 'dev', {
+        A: true,
+        B: false,
+      });
+      spyOn(plugins, 'useExtensions').and.returnValue(mockTourExtension);
+      spyOn(TourModule, 'useTourStateForPerspective').and.returnValue([
+        { completed: false },
+        () => null,
+        false,
+      ]);
+      testHook(() => {
+        const contextValue = useTourValuesForContext();
+        const { tourState, tour, totalSteps } = contextValue;
+        expect(tourState).toEqual(undefined);
+        expect(tour).toEqual(null);
+        expect(totalSteps).toEqual(undefined);
+      });
+    });
+  });
+
+  describe('useTourStatePerspective', () => {
+    it('should return data based on the perspective passed as prop', () => {
+      spyOn(userHooks, 'useUserSettingsCompatibility').and.returnValue([
+        { dev: { a: true }, admin: { a: false } },
+        () => null,
+        true,
+      ]);
+      testHook(() => {
+        const [state, , loaded] = useTourStateForPerspective('dev');
+        expect(state).toEqual({ a: true });
+        expect(loaded).toEqual(true);
       });
     });
   });
