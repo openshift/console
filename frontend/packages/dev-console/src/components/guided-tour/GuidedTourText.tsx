@@ -4,14 +4,17 @@ import { useOpenshiftVersion } from '@console/shared/src/hooks/version';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { ConsoleLinkModel } from '@console/internal/models';
+import { useTranslation } from 'react-i18next';
 
 const DevPerspectiveTourText: React.FC = () => {
+  const { t } = useTranslation();
   const openshiftVersion = useOpenshiftVersion();
   return (
     <>
-      Get started with a tour of some of the key areas in OpenShift{' '}
-      {openshiftVersion ? `${openshiftVersion?.slice(0, 3)}'s` : '4.x'} Developer perspective that
-      can help you complete workflows and be more productive.
+      {t(
+        'devconsole~Get started with a tour of some of the key areas in OpenShift {{version}} Developer perspective that can help you complete workflows and be more productive.',
+        { version: openshiftVersion ? [openshiftVersion?.slice(0, 3), "'s"].join('') : '4.x' },
+      )}
     </>
   );
 };

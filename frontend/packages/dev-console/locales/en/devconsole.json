@@ -60,6 +60,7 @@
   "Cancel": "Cancel",
   "Edit": "Edit",
   "Select a way to create an application, component or service from one of the options.": "Select a way to create an application, component or service from one of the options.",
+  "Get started with a tour of some of the key areas in OpenShift {{version}} Developer perspective that can help you complete workflows and be more productive.": "Get started with a tour of some of the key areas in OpenShift {{version}} Developer perspective that can help you complete workflows and be more productive.",
   "Edit Health Checks": "Edit Health Checks",
   "Add Health Checks": "Add Health Checks",
   "Learn More": "Learn More",
