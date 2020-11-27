@@ -39,17 +39,13 @@ func (h *UserSettingsHandler) HandleUserSettings(user *auth.User, w http.Respons
 
 	serviceAccountClient, err := h.createServiceAccountClient()
 	if err != nil {
-		errMsg := fmt.Sprintf("Failed to create service account to handle user setting request: %v", err)
-		klog.Errorf(errMsg)
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: errMsg})
+		h.sendErrorResponse("Failed to create service account to handle user setting request: %v", err, w)
 		return
 	}
 
 	userSettingMeta, err := h.getUserSettingMeta(context, user)
 	if err != nil {
-		errMsg := fmt.Sprintf("Failed to get user data to handle user setting request: %v", err)
-		klog.Errorf(errMsg)
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: errMsg})
+		h.sendErrorResponse("Failed to get user data to handle user setting request: %v", err, w)
 		return
 	}
 
@@ -57,27 +53,21 @@ func (h *UserSettingsHandler) HandleUserSettings(user *auth.User, w http.Respons
 	case http.MethodGet:
 		configMap, err := h.getUserSettings(context, serviceAccountClient, userSettingMeta)
 		if err != nil {
-			errMsg := fmt.Sprintf("Failed to get user settings: %v", err)
-			klog.Errorf(errMsg)
-			serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: errMsg})
+			h.sendErrorResponse("Failed to get user settings: %v", err, w)
 			return
 		}
 		serverutils.SendResponse(w, http.StatusOK, configMap)
 	case http.MethodPost:
 		configMap, err := h.createUserSettings(context, serviceAccountClient, userSettingMeta)
 		if err != nil {
-			errMsg := fmt.Sprintf("Failed to create user settings: %v", err)
-			klog.Errorf(errMsg)
-			serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: errMsg})
+			h.sendErrorResponse("Failed to create user settings: %v", err, w)
 			return
 		}
 		serverutils.SendResponse(w, http.StatusOK, configMap)
 	case http.MethodDelete:
 		err := h.deleteUserSettings(context, serviceAccountClient, userSettingMeta)
 		if err != nil {
-			errMsg := fmt.Sprintf("Failed to delete user settings: %v", err)
-			klog.Errorf(errMsg)
-			serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: errMsg})
+			h.sendErrorResponse("Failed to delete user settings: %v", err, w)
 			return
 		}
 		w.WriteHeader(http.StatusNoContent)
@@ -85,6 +75,18 @@ func (h *UserSettingsHandler) HandleUserSettings(user *auth.User, w http.Respons
 		w.Header().Set("Allow", "GET, POST, DELETE")
 		serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Unsupported method, supported methods are GET POST DELETE"})
 	}
+}
+
+func (h *UserSettingsHandler) sendErrorResponse(format string, err error, w http.ResponseWriter) {
+	errMsg := fmt.Sprintf(format, err)
+	klog.Errorf(errMsg)
+	code := http.StatusBadGateway
+	if apierrors.IsNotFound(err) {
+		code = http.StatusNotFound
+	} else if apierrors.IsForbidden(err) {
+		code = http.StatusForbidden
+	}
+	serverutils.SendResponse(w, code, serverutils.ApiError{Err: errMsg})
 }
 
 // Fetch the user-setting ConfigMap of the current user, by using his token.
