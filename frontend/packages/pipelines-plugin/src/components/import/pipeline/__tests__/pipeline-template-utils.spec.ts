@@ -1,11 +1,16 @@
-import { k8sCreate } from '@console/internal/module/k8s';
+import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
 import { GitImportFormData } from '@console/dev-console/src/components/import/import-types';
 import { PipelineModel } from '../../../../models';
-import { createPipelineForImportFlow } from '../pipeline-template-utils';
+import { PIPELINE_RUNTIME_LABEL } from '../../../../const';
+import {
+  createPipelineForImportFlow,
+  updatePipelineForImportFlow,
+} from '../pipeline-template-utils';
 import { Pipeline } from '../../../../utils/pipeline-augment';
 
 jest.mock('@console/internal/module/k8s', () => ({
   k8sCreate: jest.fn(),
+  k8sUpdate: jest.fn(),
 }));
 jest.mock('../../../pipelines/pipeline-resource/pipelineResource-utils', () => ({
   createPipelineResource: jest.fn(),
@@ -287,5 +292,133 @@ describe('createPipelineForImportFlow', () => {
     expect(k8sCreate).toHaveBeenCalledWith(PipelineModel, expectedPipeline, {
       ns: 'a-project',
     });
+  });
+});
+
+describe('updatePipelineForImportFlow', () => {
+  const mockTemplate: Pipeline = {
+    metadata: {
+      labels: { 'app.kubernetes.io/instance': 'sample' },
+    },
+    spec: {
+      tasks: [],
+      params: [{ type: 'paramtype', name: 'PARAM1' }],
+    },
+  };
+
+  const mockPipeline: Pipeline = {
+    metadata: {
+      name: 'test',
+      labels: { 'app.kubernetes.io/instance': 'sample' },
+      resourceVersion: 'test',
+    },
+    spec: {
+      tasks: [],
+      params: [],
+    },
+  };
+
+  const props = {
+    pipelineData: {
+      enabled: true,
+      data: mockPipeline,
+      template: mockTemplate,
+    },
+    name: 'test',
+    namespace: 'test',
+    gitUrl: '',
+    gitRef: '',
+    gitDir: '',
+    dockerfilePath: '',
+  };
+
+  it('should dissociate pipeline if template is not available', async () => {
+    await updatePipelineForImportFlow(
+      mockPipeline,
+      null,
+      props.name,
+      props.namespace,
+      props.gitUrl,
+      props.gitRef,
+      props.gitDir,
+      props.dockerfilePath,
+    );
+
+    const expectedPipeline: Pipeline = {
+      metadata: {
+        name: 'test',
+        labels: {},
+        resourceVersion: 'test',
+      },
+      spec: {
+        tasks: [],
+        params: [],
+      },
+    };
+
+    expect(k8sUpdate).toHaveBeenCalledTimes(1);
+    expect(k8sUpdate).toHaveBeenCalledWith(PipelineModel, expectedPipeline, 'test', 'test');
+  });
+
+  it('should update params if template is of same type', async () => {
+    await updatePipelineForImportFlow(
+      mockPipeline,
+      mockTemplate,
+      props.name,
+      props.namespace,
+      props.gitUrl,
+      props.gitRef,
+      props.gitDir,
+      props.dockerfilePath,
+    );
+
+    const expectedPipeline: Pipeline = {
+      metadata: {
+        name: 'test',
+        labels: { 'app.kubernetes.io/instance': 'sample' },
+        resourceVersion: 'test',
+      },
+      spec: {
+        tasks: [],
+        params: [{ name: 'PARAM1', type: 'paramtype' }],
+      },
+    };
+
+    expect(k8sUpdate).toHaveBeenCalledTimes(1);
+    expect(k8sUpdate).toHaveBeenCalledWith(PipelineModel, expectedPipeline, 'test', 'test');
+  });
+
+  it('should update pipeline if template is of different type', async () => {
+    const template = { ...mockTemplate };
+    template.metadata.labels[PIPELINE_RUNTIME_LABEL] = 'newImage';
+    await updatePipelineForImportFlow(
+      mockPipeline,
+      mockTemplate,
+      props.name,
+      props.namespace,
+      props.gitUrl,
+      props.gitRef,
+      props.gitDir,
+      props.dockerfilePath,
+    );
+
+    const expectedPipeline: Pipeline = {
+      metadata: {
+        name: 'test',
+        namespace: 'test',
+        labels: {
+          [PIPELINE_RUNTIME_LABEL]: 'newImage',
+          'app.kubernetes.io/instance': 'test',
+        },
+        resourceVersion: 'test',
+      },
+      spec: {
+        tasks: [],
+        params: [{ name: 'PARAM1', type: 'paramtype' }],
+      },
+    };
+
+    expect(k8sUpdate).toHaveBeenCalledTimes(1);
+    expect(k8sUpdate).toHaveBeenCalledWith(PipelineModel, expectedPipeline, 'test', 'test');
   });
 });

@@ -1,8 +1,14 @@
 import * as _ from 'lodash';
-import { k8sCreate } from '@console/internal/module/k8s';
+import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
 import { PipelineData } from '../import-types';
-import { Pipeline, PipelineRun, PipelineWorkspace } from '../../../utils/pipeline-augment';
+import {
+  Pipeline,
+  PipelineRun,
+  PipelineWorkspace,
+  PipelineParam,
+} from '../../../utils/pipeline-augment';
 import { PipelineModel } from '../../../models';
+import { PIPELINE_RUNTIME_LABEL } from '../../../const';
 import { createPipelineResource } from '../../pipelines/pipeline-resource/pipelineResource-utils';
 import {
   convertPipelineToModalData,
@@ -28,24 +34,16 @@ export const createImageResource = (name: string, namespace: string) => {
   return createPipelineResource(params, 'image', namespace);
 };
 
-export const createPipelineForImportFlow = async (
+export const getPipelineParams = (
+  params: PipelineParam[],
   name: string,
   namespace: string,
-  gitUrl,
-  gitRef,
-  gitDir,
-  pipeline: PipelineData,
+  gitUrl: string,
+  gitRef: string,
+  gitDir: string,
   dockerfilePath: string,
 ) => {
-  const template = _.cloneDeep(pipeline.template) as Pipeline;
-
-  template.metadata = {
-    name: `${name}`,
-    namespace,
-    labels: { ...template.metadata?.labels, 'app.kubernetes.io/instance': name },
-  };
-
-  template.spec.params = template.spec.params?.map((param) => {
+  return params.map((param) => {
     switch (param.name) {
       case 'APP_NAME':
         return { ...param, default: name };
@@ -63,6 +61,36 @@ export const createPipelineForImportFlow = async (
         return param;
     }
   });
+};
+
+export const createPipelineForImportFlow = async (
+  name: string,
+  namespace: string,
+  gitUrl: string,
+  gitRef: string,
+  gitDir: string,
+  pipeline: PipelineData,
+  dockerfilePath: string,
+) => {
+  const template = _.cloneDeep(pipeline.template);
+
+  template.metadata = {
+    name: `${name}`,
+    namespace,
+    labels: { ...template.metadata?.labels, 'app.kubernetes.io/instance': name },
+  };
+
+  template.spec.params =
+    template.spec.params &&
+    getPipelineParams(
+      template.spec.params,
+      name,
+      namespace,
+      gitUrl,
+      gitRef,
+      gitDir,
+      dockerfilePath,
+    );
 
   return k8sCreate(PipelineModel, template, { ns: namespace });
 };
@@ -78,4 +106,48 @@ export const createPipelineRunForImportFlow = async (pipeline: Pipeline): Promis
     secretOpen: false,
   };
   return submitStartPipeline(pipelineInitialValues, pipeline);
+};
+
+export const updatePipelineForImportFlow = async (
+  pipeline: Pipeline,
+  template: Pipeline,
+  name: string,
+  namespace: string,
+  gitUrl: string,
+  gitRef: string,
+  gitDir: string,
+  dockerfilePath: string,
+): Promise<Pipeline> => {
+  let updatedPipeline = _.cloneDeep(pipeline);
+
+  if (!template) {
+    updatedPipeline.metadata.labels = _.omit(
+      updatedPipeline.metadata.labels,
+      'app.kubernetes.io/instance',
+    );
+  } else {
+    if (
+      template.metadata?.labels[PIPELINE_RUNTIME_LABEL] !==
+      pipeline.metadata?.labels[PIPELINE_RUNTIME_LABEL]
+    ) {
+      updatedPipeline = _.cloneDeep(template);
+      updatedPipeline.metadata = {
+        resourceVersion: pipeline.metadata.resourceVersion,
+        name: `${name}`,
+        namespace,
+        labels: { ...template.metadata?.labels, 'app.kubernetes.io/instance': name },
+      };
+    }
+
+    updatedPipeline.spec.params = getPipelineParams(
+      template.spec.params,
+      name,
+      namespace,
+      gitUrl,
+      gitRef,
+      gitDir,
+      dockerfilePath,
+    );
+  }
+  return k8sUpdate(PipelineModel, updatedPipeline, namespace, name);
 };
