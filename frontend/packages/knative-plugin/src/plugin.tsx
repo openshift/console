@@ -566,6 +566,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         '%knative-plugin~**Event sources** are objects that link to an event producer and an event sink or consumer.%',
       filters: [
         {
+          // t('knative-plugin~Provider')
           label: '%knative-plugin~Provider%',
           attribute: 'provider',
         },

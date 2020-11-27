@@ -7,6 +7,7 @@ import {
   EventSourceSinkBindingModel,
   EventingIMCModel,
   EventingKafkaChannelModel,
+  CamelKameletBindingModel,
 } from '../../models';
 
 export const EventSources = {
@@ -16,6 +17,7 @@ export const EventSources = {
   KafkaSource: EventSourceKafkaModel.kind,
   PingSource: EventSourcePingModel.kind,
   SinkBinding: EventSourceSinkBindingModel.kind,
+  KameletBinding: CamelKameletBindingModel.kind,
 };
 export const defaultChannels = {
   InMemoryChannel: EventingIMCModel,

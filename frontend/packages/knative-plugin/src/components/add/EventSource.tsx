@@ -24,6 +24,7 @@ import {
   isKnownEventSource,
   getEventSourceData,
   handleRedirect,
+  getKameletSourceData,
 } from '../../utils/create-eventsources-utils';
 import { getEventSourceModels } from '../../utils/fetch-dynamic-eventsources-utils';
 import { KNATIVE_EVENT_SOURCE_APIGROUP } from '../../const';
@@ -33,6 +34,7 @@ import {
   SinkType,
   EVENT_SOURCES_APP,
 } from './import-types';
+import { CamelKameletBindingModel } from '../../models';
 import EventSourceMetaDescription from './EventSourceMetadataDescription';
 
 interface EventSourceProps {
@@ -41,6 +43,7 @@ interface EventSourceProps {
   contextSource?: string;
   selectedApplication?: string;
   sourceKind?: string;
+  kameletSource?: K8sResourceKind;
 }
 
 interface StateProps {
@@ -57,6 +60,7 @@ export const EventSource: React.FC<Props> = ({
   contextSource,
   perspective,
   sourceKind = '',
+  kameletSource,
 }) => {
   const perpectiveExtension = useExtensions<Perspective>(isPerspective);
   const { t } = useTranslation();
@@ -67,11 +71,17 @@ export const EventSource: React.FC<Props> = ({
     const selDataModel = _.find(getEventSourceModels(), { kind: sourceKind });
     selApiVersion = selDataModel
       ? `${selDataModel?.apiGroup}/${selDataModel?.apiVersion}`
+      : kameletSource
+      ? `${CamelKameletBindingModel.apiGroup}/${CamelKameletBindingModel.apiVersion}`
       : `${KNATIVE_EVENT_SOURCE_APIGROUP}/v1alpha2`;
     sourceData = isKnownEventSource(sourceKind)
-      ? { [sourceKind]: getEventSourceData(sourceKind) }
+      ? kameletSource
+        ? { [sourceKind]: getKameletSourceData(kameletSource) }
+        : { [sourceKind]: getEventSourceData(sourceKind) }
       : {};
-    selSourceName = _.kebabCase(sourceKind);
+    selSourceName = kameletSource
+      ? `kamelet-${kameletSource.metadata.name}`
+      : _.kebabCase(sourceKind);
   }
   const [sinkGroupVersionKind = '', sinkName = ''] = contextSource?.split('/') ?? [];
   const [sinkGroup = '', sinkVersion = '', sinkKind = ''] =
@@ -82,7 +92,6 @@ export const EventSource: React.FC<Props> = ({
   const eventSourceMetaDescription = (
     <EventSourceMetaDescription eventSourceStatus={eventSourceStatus} sourceKind={sourceKind} />
   );
-
   const catalogInitialValues: EventSourceSyncFormData = {
     editorType: EditorType.Form,
     showCanUseYAMLMessage: true,
@@ -160,6 +169,7 @@ export const EventSource: React.FC<Props> = ({
           namespace={namespace}
           eventSourceStatus={eventSourceStatus}
           eventSourceMetaDescription={eventSourceMetaDescription}
+          kameletSource={kameletSource}
         />
       )}
     </Formik>
