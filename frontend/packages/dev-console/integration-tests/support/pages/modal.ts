@@ -1,4 +1,4 @@
-import { eventSourcePO } from '../pageObjects/add-flow-po.';
+import { eventSourcePO } from '../pageObjects/add-flow-po';
 
 export const modal = {
   clickCancel: () => {

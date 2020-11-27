@@ -1,6 +1,6 @@
 import { gitAdvancedOptions, buildConfigOptions } from '../../constants/add';
 import { messages } from '../../constants/staticText/addFlow-text';
-import { gitPO } from '../../pageObjects/add-flow-po.';
+import { gitPO } from '../../pageObjects/add-flow-po';
 
 export const gitPage = {
   unselectRoute: () => cy.get(gitPO.advancedOptions.createRoute).uncheck(),

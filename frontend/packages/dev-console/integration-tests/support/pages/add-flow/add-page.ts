@@ -1,7 +1,7 @@
 import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
 import { addOptions } from '../../constants/add';
 import { pageTitle } from '../../constants/pageTitle';
-import { cardTitle } from '../../pageObjects/add-flow-po.';
+import { cardTitle } from '../../pageObjects/add-flow-po';
 
 export const addPage = {
   selectCardFromOptions: (card: addOptions | string) => {

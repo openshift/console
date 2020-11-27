@@ -1,6 +1,6 @@
 import { When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { projectNameSpace } from '../../pages/app';
-import { cardTitle } from '../../pageObjects/add-flow-po.';
+import { cardTitle } from '../../pageObjects/add-flow-po';
 import { modal } from '../../../../../integration-tests-cypress/views/modal';
 
 When('user enters project name as {string} in Create Project modal', (projectName: string) => {

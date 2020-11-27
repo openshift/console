@@ -1,5 +1,5 @@
-import { catalogPO } from '../../pageObjects/add-flow-po.';
-import { caatalogCards, catalogTypes } from '../../constants/add';
+import { catalogPO } from '../../pageObjects/add-flow-po';
+import { catalogCards, catalogTypes } from '../../constants/add';
 
 export const catalogPage = {
   isCheckBoxSelected: (type: string) => cy.get(`input[title="${type}"]`).should('be.checked'),
@@ -71,21 +71,18 @@ export const catalogPage = {
       .get(catalogPO.installHelmChart.releaseName)
       .clear()
       .type(releaseName),
-  selectCardInCatalog: (card: caatalogCards | string) => {
+  selectCardInCatalog: (card: catalogCards | string) => {
     cy.byLegacyTestID('perspective-switcher-toggle').click();
     switch (card) {
-      case caatalogCards.mariaDB:
-      case 'MariaDB': {
+      case catalogCards.mariaDB || 'MariaDB': {
         cy.get(catalogPO.cards.mariaDBTemplate).click();
         break;
       }
-      case caatalogCards.cakePhp:
-      case 'CakePHP + MySQL': {
+      case catalogCards.cakePhp || 'CakePHP + MySQL': {
         cy.get(catalogPO.cards.phpCakeTemplate).click();
         break;
       }
-      case caatalogCards.nodeJs:
-      case 'Node.js': {
+      case catalogCards.nodeJs || 'Node.js': {
         cy.get(catalogPO.cards.nodeJsBuilderImage).click();
         break;
       }

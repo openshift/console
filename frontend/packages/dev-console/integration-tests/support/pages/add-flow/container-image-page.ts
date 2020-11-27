@@ -1,5 +1,5 @@
 import { messages } from '../../constants/staticText/addFlow-text';
-import { containerImagePO } from '../../pageObjects/add-flow-po.';
+import { containerImagePO } from '../../pageObjects/add-flow-po';
 
 export const containerImagePage = {
   enterExternalRegistryImageName: (imageName: string) =>
