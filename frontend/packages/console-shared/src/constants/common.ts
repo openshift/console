@@ -30,6 +30,8 @@ export const UNASSIGNED_APPLICATIONS_KEY = '#UNASSIGNED_APP#';
 // Prefix our localStorage items to avoid conflicts if another app ever runs on the same domain.
 export const STORAGE_PREFIX = 'bridge';
 
+export const USERSETTINGS_PREFIX = 'console';
+
 // This localStorage key predates the storage prefix.
 export const NAMESPACE_LOCAL_STORAGE_KEY = 'dropdown-storage-namespaces';
 export const APPLICATION_LOCAL_STORAGE_KEY = 'dropdown-storage-applications';

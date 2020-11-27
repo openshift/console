@@ -17,14 +17,17 @@ import {
   DaemonSetModel,
   StatefulSetModel,
 } from '@console/internal/models';
-import { STORAGE_PREFIX } from '../../constants';
+import { STORAGE_PREFIX, USERSETTINGS_PREFIX } from '../../constants';
+import { useUserSettingsCompatibility } from '../../hooks/useUserSettingsCompatibility';
+
 import './HealthChecksAlert.scss';
+
+const HIDE_HEALTH_CHECK_ALERT_FOR = `${STORAGE_PREFIX}/hide-health-check-alert-for`;
+const HEALTH_CHECK_CONFIGMAP_KEY = `${USERSETTINGS_PREFIX}.healthChecks`;
 
 type HealthChecksAlertProps = {
   resource: K8sResourceKind;
 };
-
-const HIDE_HEALTH_CHECK_ALERT_FOR = `${STORAGE_PREFIX}/hide-health-check-alert-for`;
 
 const addHealthChecksRefs = [
   referenceForModel(DeploymentConfigModel),
@@ -39,7 +42,15 @@ const HealthChecksAlert: React.FC<HealthChecksAlertProps> = ({ resource }) => {
     kind,
     metadata: { name, namespace, uid },
   } = resource;
-  const [hideHealthCheckAlertFor, setHideHealthCheckAlertFor] = React.useState([]);
+  const [
+    hideHealthCheckAlertFor,
+    setHideHealthCheckAlertFor,
+    loaded,
+  ] = useUserSettingsCompatibility<string[]>(
+    HEALTH_CHECK_CONFIGMAP_KEY,
+    HIDE_HEALTH_CHECK_ALERT_FOR,
+    [],
+  );
   const { t } = useTranslation();
   const kindForCRDResource = referenceFor(resource);
   const resourceModel = modelFor(kindForCRDResource);
@@ -53,10 +64,6 @@ const HealthChecksAlert: React.FC<HealthChecksAlertProps> = ({ resource }) => {
     verb: 'update',
   });
 
-  React.useEffect(() => {
-    setHideHealthCheckAlertFor(JSON.parse(localStorage.getItem(HIDE_HEALTH_CHECK_ALERT_FOR)) || []);
-  }, []);
-
   if (!_.includes(addHealthChecksRefs, referenceFor(resource))) {
     return null;
   }
@@ -69,13 +76,13 @@ const HealthChecksAlert: React.FC<HealthChecksAlertProps> = ({ resource }) => {
   );
 
   const handleAlertAction = () => {
-    const hideHealthCheckAlert = [...hideHealthCheckAlertFor, uid];
-    setHideHealthCheckAlertFor(hideHealthCheckAlert);
-    localStorage.setItem(HIDE_HEALTH_CHECK_ALERT_FOR, JSON.stringify(hideHealthCheckAlert));
+    if (loaded) {
+      setHideHealthCheckAlertFor((state) => [...state, uid]);
+    }
   };
 
   const showAlert =
-    !healthCheckAdded && !_.includes(hideHealthCheckAlertFor, uid) && canAddHealthChecks;
+    loaded && !healthCheckAdded && !_.includes(hideHealthCheckAlertFor, uid) && canAddHealthChecks;
 
   const addHealthChecksLink = `/k8s/ns/${namespace}/${resourceKind}/${name}/containers/${containersName[0]}/health-checks`;
 

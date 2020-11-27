@@ -13,6 +13,10 @@ jest.mock('react-i18next', () => {
   };
 });
 
+jest.mock('@console/shared/src/hooks/useUserSettingsCompatibility', () => ({
+  useUserSettingsCompatibility: () => [[], jest.fn(), true],
+}));
+
 describe('HealthChecksAlert', () => {
   const spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
   it('should show alert when health check probes not present', () => {
