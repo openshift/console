@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { TFunction } from 'i18next';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { GitOpsManifestData, GitOpsAppGroupData } from './gitops-types';
@@ -27,12 +28,12 @@ export const fetchAppGroups = async (
   return data?.applications ?? [];
 };
 
-export const fetchAllAppGroups = async (baseURL: string, manifestURLs: string[]) => {
+export const fetchAllAppGroups = async (baseURL: string, manifestURLs: string[], t: TFunction) => {
   let emptyMsg: string = null;
   let allAppGroups: GitOpsAppGroupData[] = null;
   if (baseURL) {
     if (_.isEmpty(manifestURLs)) {
-      emptyMsg = 'No GitOps Manifest URLs found';
+      emptyMsg = t('devconsole~No GitOps Manifest URLs found');
     } else {
       try {
         allAppGroups = _.sortBy(
@@ -45,7 +46,7 @@ export const fetchAllAppGroups = async (baseURL: string, manifestURLs: string[])
         );
       } catch {} // eslint-disable-line no-empty
       if (_.isEmpty(allAppGroups)) {
-        emptyMsg = 'No Application groups found';
+        emptyMsg = t('devconsole~No Application groups found');
       }
     }
   }

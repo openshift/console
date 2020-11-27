@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { PodModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind, modelFor } from '@console/internal/module/k8s';
@@ -12,6 +13,7 @@ interface PodRingWrapperProps {
 }
 
 const PodRingWrapper: React.FC<PodRingWrapperProps> = ({ workload }) => {
+  const { t } = useTranslation();
   const workloadResource = React.useMemo(
     () => ({
       kind: workload?.kind,
@@ -51,7 +53,7 @@ const PodRingWrapper: React.FC<PodRingWrapperProps> = ({ workload }) => {
           enableScaling={false}
         />
       ) : (
-        <div style={{ border: '1px solid' }}>Pod Info Not Available</div>
+        <div style={{ border: '1px solid' }}>{t('devconsole~Pod Info Not Available')}</div>
       )}
     </>
   );

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { Stack, StackItem, Card, CardTitle, SplitItem, Split, Label } from '@patternfly/react-core';
 import { ExternalLink, ResourceIcon } from '@console/internal/components/utils';
 import GitOpsServiceDetailsSection from './GitOpsServiceDetailsSection';
@@ -11,6 +12,7 @@ interface GitOpsDetailsProps {
 }
 
 const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ envs }) => {
+  const { t } = useTranslation();
   return (
     <div className="odc-gitops-details">
       {_.map(
@@ -51,7 +53,7 @@ const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ envs }) => {
                           />
                         ) : (
                           <div className="odc-gitops-details__env-section__url-empty-state">
-                            Cluster URL not available
+                            {t('devconsole~Cluster URL not available')}
                           </div>
                         )}
                       </StackItem>

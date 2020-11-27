@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
+import { useTranslation } from 'react-i18next';
 import { PageHeading, LoadingBox, ExternalLink } from '@console/internal/components/utils';
 import { ProjectModel, ConsoleLinkModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -20,6 +21,7 @@ const GitOpsListPage: React.FC = () => {
   const [namespaces, nsLoaded, nsError] = useK8sWatchResource<K8sResourceKind[]>(projectRes);
   const [secretNS, secretName] = useDefaultSecret();
   const baseURL = getPipelinesBaseURI(secretNS, secretName);
+  const { t } = useTranslation();
 
   React.useEffect(() => {
     let ignore = false;
@@ -27,7 +29,7 @@ const GitOpsListPage: React.FC = () => {
     const getAppGroups = async () => {
       if (nsLoaded) {
         const manifestURLs = (!nsError && getManifestURLs(namespaces)) || [];
-        const [allAppGroups, emptyMsg] = await fetchAllAppGroups(baseURL, manifestURLs);
+        const [allAppGroups, emptyMsg] = await fetchAllAppGroups(baseURL, manifestURLs, t);
         if (ignore) return;
         setAppGroups(allAppGroups);
         setEmptyStateMsg(emptyMsg);
@@ -39,7 +41,7 @@ const GitOpsListPage: React.FC = () => {
     return () => {
       ignore = true;
     };
-  }, [baseURL, namespaces, nsError, nsLoaded]);
+  }, [baseURL, namespaces, nsError, nsLoaded, t]);
 
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
@@ -55,14 +57,16 @@ const GitOpsListPage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Application Stages</title>
+        <title>{t('devconsole~Application Stages')}</title>
       </Helmet>
       <PageHeading
-        title="Application Stages"
+        title={t('devconsole~Application Stages')}
         badge={
           <Split className="odc-gitops-list-page-heading" hasGutter>
             <SplitItem>
-              {argocdLink && <ExternalLink href={argocdLink.spec.href} text="Argo CD" />}
+              {argocdLink && (
+                <ExternalLink href={argocdLink.spec.href} text={t('devconsole~Argo CD')} />
+              )}
             </SplitItem>
             <SplitItem>
               <DevPreviewBadge />
