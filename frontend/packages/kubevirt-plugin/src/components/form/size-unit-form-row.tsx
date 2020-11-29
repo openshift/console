@@ -13,7 +13,7 @@ import './size-unit-form-row.scss';
 
 type SizeUnitFormRowProps = {
   size: string;
-  title?: string;
+  title: string;
   unit: BinaryUnit;
   units?: BinaryUnit[];
   validation?: ValidationObject;
@@ -37,12 +37,10 @@ export const SizeUnitFormRow: React.FC<SizeUnitFormRowProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const titleText = title || t('kubevirt-plugin~Size');
-
   return (
     <FormRow
       key="size"
-      title={titleText}
+      title={title}
       fieldId={prefixedID(id, 'size')}
       isRequired={isRequired}
       validation={validation}
@@ -57,7 +55,7 @@ export const SizeUnitFormRow: React.FC<SizeUnitFormRowProps> = ({
             value={size}
             isPositive
             onChange={React.useCallback((v) => onSizeChanged(v), [onSizeChanged])}
-            aria-label={t('kubevirt-plugin~{{title}} size', { title: titleText })}
+            aria-label={t('kubevirt-plugin~{{title}} size', { title })}
           />
         </SplitItem>
         <SplitItem>
@@ -67,7 +65,7 @@ export const SizeUnitFormRow: React.FC<SizeUnitFormRowProps> = ({
             value={unit}
             id={prefixedID(id, 'unit')}
             isDisabled={isDisabled}
-            aria-label={t('kubevirt-plugin~{{title}} unit', { title: titleText })}
+            aria-label={t('kubevirt-plugin~{{title}} unit', { title })}
           >
             {(units || getStringEnumValues<BinaryUnit>(BinaryUnit)).map((u) => (
               <FormSelectOption key={u} value={u} label={toIECUnit(u)} />

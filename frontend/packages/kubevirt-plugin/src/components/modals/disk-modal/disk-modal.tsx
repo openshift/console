@@ -474,6 +474,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
 
           {source.requiresSize() && (
             <SizeUnitFormRow
+              title={t('kubevirt-plugin~Size')}
               key="size-row"
               id={asId('size-row')}
               size={size}
