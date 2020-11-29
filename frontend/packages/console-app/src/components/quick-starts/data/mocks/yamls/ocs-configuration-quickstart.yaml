@@ -1,0 +1,77 @@
+---
+apiVersion: console.openshift.io/v1
+kind: ConsoleQuickStart
+metadata:
+  name: ocs-configuration
+spec:
+  version: 4.7
+  displayName: Openshift Container Storage Configuration
+  durationMinutes: 5
+  icon: data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAxMDAgMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHdpZHRoPSIxMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0ibTY2LjcgNTUuOGM2LjYgMCAxNi4xLTEuNCAxNi4xLTkuMiAwLS42IDAtMS4yLS4yLTEuOGwtMy45LTE3Yy0uOS0zLjctMS43LTUuNC04LjMtOC43LTUuMS0yLjYtMTYuMi02LjktMTkuNS02LjktMy4xIDAtNCA0LTcuNiA0LTMuNSAwLTYuMS0yLjktOS40LTIuOS0zLjIgMC01LjIgMi4xLTYuOCA2LjYgMCAwLTQuNCAxMi41LTUgMTQuMy0uMS4zLS4xLjctLjEgMSAuMSA0LjcgMTkuMiAyMC42IDQ0LjcgMjAuNm0xNy4xLTZjLjkgNC4zLjkgNC44LjkgNS4zIDAgNy40LTguMyAxMS40LTE5LjEgMTEuNC0yNC42IDAtNDYuMS0xNC40LTQ2LjEtMjMuOSAwLTEuMy4zLTIuNi44LTMuOS04LjkuNS0yMC4zIDIuMS0yMC4zIDEyLjIgMCAxNi41IDM5LjIgMzYuOSA3MC4yIDM2LjkgMjMuOCAwIDI5LjgtMTAuNyAyOS44LTE5LjIgMC02LjctNS44LTE0LjMtMTYuMi0xOC44IiBmaWxsPSIjZWQxYzI0Ii8+PHBhdGggZD0ibTgzLjggNDkuOGMuOSA0LjMuOSA0LjguOSA1LjMgMCA3LjQtOC4zIDExLjQtMTkuMSAxMS40LTI0LjYgMC00Ni4xLTE0LjQtNDYuMS0yMy45IDAtMS4zLjMtMi42LjgtMy45bDEuOS00LjhjLS4xLjMtLjEuNy0uMSAxIDAgNC44IDE5LjEgMjAuNyA0NC43IDIwLjcgNi42IDAgMTYuMS0xLjQgMTYuMS05LjIgMC0uNiAwLTEuMi0uMi0xLjh6IiBmaWxsPSIjMDEwMTAxIi8+PC9zdmc+
+  description: Learn how to configure OpenShift Container Storage to meet your deployment
+    needs.
+  prerequisites: ["Getting Started with Openshift Container Storage"]
+  introduction: In this tour you will learn about the various configurations available
+    to customize your OpenShift Container Storage deployment.
+  tasks:
+  - title: Expand the OCS Storage Cluster
+    description: |- 
+      When we install the OCS operator we created a storage cluster, chose
+      the cluster size, provisioned the underlying storage subsystem, deployed necessary
+      drivers, and created the storage classes to allow the Openshift users to easily
+      provision and consume storage services that have just been deployed
+      
+      When the capacity of the cluster is about to run out we will notify you.
+
+      **To expand the OCS storage cluster follow these steps:**
+      
+      1. Go to installed operators page and click on **Openshift Container Storage** 
+      2. Go to storage cluster tab
+      3. Click on the **3 dots icon** 
+      4. Click on add capacity
+      5. Use the expand cluster modal if your capacity is about to runout.
+    review:
+      instructions: |-
+        ####  Verify that you have expanded your storage cluster. 
+
+        Does the status of the StorageCluster show as Ready?
+      failedTaskHelp: This task isn’t verified yet. Try the task again.
+    summary:
+      success: You have expanded the Openshift Container Storage operator!
+      failed: Try the steps again.
+  - title: Backing store & Bucket class
+    description: |-
+      **Backing Store**
+      Backing store is representing a storage target to be used as the underlying storage for the data in MCG buckets. These storage targets are used to store deduped+compressed+encrypted chunks of data (encryption keys are stored separately).
+
+      **To create a new Backing store:**
+
+      1. Go to installed operators page and click one Openshift Container Storage.
+      2. Go to backing store tab.
+      3. Click on **Create Backing Store**
+      4. Fill all required fields to finish creation process.
+
+      **Bucket class**
+
+      Bucket class policy determine the bucket's data location.
+      Data placement capabilities area built as a multi-tier structure, here are the Tiers bottom-up-
+
+      **Spread Tier** - list of backing-stores, aggregates the storage of multiple stores.
+
+      **Mirroring Tier** - list of spread-Tiers, async-mirroring to all mirros, with locality optimization.
+
+      **Create a new Bucket class:**
+      1. Go to installed operators page and click one Openshift Container Storage,
+      2. Go to bucket class tab.
+      3. Click on **Create Bucket Class**
+      4. Follow the wizard steps to  finish creation process.
+    review:
+      instructions: |-
+        ####  Verify that you have created bucket class and backing store. 
+
+        Does the status of the Backing Store and Bucket Class show as Ready?
+      failedTaskHelp: This task isn’t verified yet. Try the task again.
+    summary:
+      success: You have successfully created backing store and bucket class
+      failed: Try the steps again.
+  conclusion: Congrats, the Openshift Container Storage operator is ready to use.
