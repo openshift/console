@@ -20,7 +20,7 @@ const SnapshotRestoreModal = withHandlePromise((props: SnapshotRestoreModalProps
   const { snapshot, inProgress, errorMessage, handlePromise, close, cancel } = props;
   const snapshotName = getName(snapshot);
 
-  const submit = async (e) => {
+  const submit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     const restoreName = `${snapshotName}-restore-${getRandomChars()}`;
     const namespace = getNamespace(snapshot);
@@ -52,7 +52,7 @@ const SnapshotRestoreModal = withHandlePromise((props: SnapshotRestoreModalProps
       </ModalBody>
       <ModalFooter
         id="snapshot"
-        submitButtonText={t('kubevirt-plugin~{Restore}')}
+        submitButtonText={t('kubevirt-plugin~Restore')}
         errorMessage={errorMessage}
         isDisabled={inProgress}
         inProgress={inProgress}
