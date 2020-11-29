@@ -98,7 +98,7 @@
   "Reload Tolerations": "Reload Tolerations",
   "Restore Snapshot": "Restore Snapshot",
   "Are you sure you want to restore <1>{snapshotName}</1> snapshot?": "Are you sure you want to restore <1>{snapshotName}</1> snapshot?",
-  "{Restore}": "{Restore}",
+  "Restore": "Restore",
   "Windows tools: {{container}}": "Windows tools: {{container}}",
   "Container: {{container}}": "Container: {{container}}",
   "URL: {{url}}": "URL: {{url}}",
