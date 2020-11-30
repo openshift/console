@@ -28,17 +28,13 @@ import {
 } from './selectors/immutable/wizard-selectors';
 import { iGetCommonData } from './selectors/immutable/selectors';
 import { setActiveNamespace, getActiveNamespace } from '@console/internal/actions/ui';
-import {
-  getCreateVMLikeEntityLabel,
-  REVIEW_AND_CONFIRM,
-  WIZARD_CLOSE_PROMPT,
-} from './strings/strings';
 import { vmWizardActions } from './redux/actions';
 import { ActionType } from './redux/types';
 import { getGoToStep } from './selectors/selectors';
 import { iGetLoadError, iGetIsLoaded } from '../../utils/immutable';
 
 import './create-vm-wizard-footer.scss';
+import { useTranslation } from 'react-i18next';
 
 type WizardContext = {
   onNext: () => void;
@@ -72,6 +68,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
   setActiveNS,
   isInvalidUserTemplate,
 }) => {
+  const { t } = useTranslation();
   const [showError, setShowError, checkValidity] = useShowErrorToggler();
   const activeNS = getActiveNamespace();
 
@@ -92,7 +89,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
         const areMainTabsHidden = VM_WIZARD_DIFFICULT_TABS.some((tab) => steps[tab].isHidden);
         const isLastStepValid = steps[VMWizardTab.RESULT].isValid;
 
-        const { hasAllRequiredFilled, error: stepError } = steps[activeStepID];
+        const { hasAllRequiredFilled, errorKey, fieldKeys } = steps[activeStepID];
         const isValid =
           activeStepID === VMWizardTab.REVIEW
             ? !ALL_VM_WIZARD_TABS.filter((tab) => tab !== VMWizardTab.RESULT).some(
@@ -138,22 +135,25 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
                 if (isLastStep || isWizardEmpty) {
                   return true;
                 }
-                return WIZARD_CLOSE_PROMPT;
+                return t<string>(
+                  "kubevirt-plugin~Are you sure you want to navigate away from this form? Any data you've added will be lost.",
+                );
               }}
             />
             {!isValid && showError && (
               <Alert
                 key="error"
                 title={
-                  stepError
-                    ? getSimpleDialogUIError(hasAllRequiredFilled)
-                    : getDialogUIError(hasAllRequiredFilled)
+                  errorKey
+                    ? getSimpleDialogUIError(hasAllRequiredFilled, t)
+                    : getDialogUIError(hasAllRequiredFilled, t)
                 }
                 isInline
                 variant="danger"
                 className="kubevirt-create-vm-modal__footer-error"
               >
-                {stepError}
+                {t(errorKey)}
+                {fieldKeys?.length ? ` ${fieldKeys.map(t).join(', ')}` : ''}
               </Alert>
             )}
             {!isLastStep && (
@@ -175,8 +175,12 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
                 }
               >
                 {activeStepID === VMWizardTab.REVIEW
-                  ? getCreateVMLikeEntityLabel(isCreateTemplate, isProviderImport)
-                  : 'Next'}
+                  ? isProviderImport
+                    ? t('kubevirt-plugin~Import')
+                    : isCreateTemplate
+                    ? t('kubevirt-plugin~Create Virtual Machine template')
+                    : t('kubevirt-plugin~Create Virtual Machine')
+                  : t('kubevirt-plugin~Next')}
               </Button>
             )}
             {!isFinishingStep && !(isSimpleView && areMainTabsHidden) && (
@@ -201,7 +205,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
                   }
                 }}
               >
-                {REVIEW_AND_CONFIRM}
+                {t('kubevirt-plugin~Review and confirm')}
               </Button>
             )}
             {areMainTabsHidden && canNavigateEverywhere && (
@@ -211,7 +215,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
                 variant={ButtonVariant.secondary}
                 onClick={() => onEdit(activeStepID)}
               >
-                Edit
+                {t('kubevirt-plugin~Edit')}
               </Button>
             )}
             {!hideBackButton && (
@@ -223,7 +227,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
                 className={css(isBackButtonDisabled && 'pf-m-disabled')}
                 isDisabled={isBackButtonDisabled}
               >
-                Back
+                {t('kubevirt-plugin~Back')}
               </Button>
             )}
             {!activeStep.hideCancelButton && (
@@ -235,7 +239,12 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
                   if (
                     isLastStep ||
                     isWizardEmpty ||
-                    window.confirm(WIZARD_CLOSE_PROMPT) // eslint-disable-line no-alert
+                    // eslint-disable-next-line no-alert
+                    window.confirm(
+                      t(
+                        "kubevirt-plugin~Are you sure you want to navigate away from this form? Any data you've added will be lost.",
+                      ),
+                    )
                   ) {
                     onClose();
                   }

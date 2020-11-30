@@ -49,6 +49,7 @@ import { isVMExpectedRunning } from '../../../selectors/vm/selectors';
 import { isFlavorChanged } from '../../../selectors/vm-like/next-run-changes';
 import { VMWrapper } from '../../../k8s/wrapper/vm/vm-wrapper';
 import { VMIWrapper } from '../../../k8s/wrapper/vm/vmi-wrapper';
+import { useTranslation } from 'react-i18next';
 
 const getId = (field: string) => `vm-flavor-modal-${field}`;
 
@@ -72,6 +73,7 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
     vmis,
   } = props;
 
+  const { t } = useTranslation();
   const inProgress = props.inProgress || !loaded;
   const vm = asVM(vmLike);
   const underlyingTemplate = getLoadedData(template);
@@ -218,7 +220,7 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
         errorMessage={
           errorMessage ||
           loadError?.message ||
-          (showUIError ? getDialogUIError(hasAllRequiredFilled) : null)
+          (showUIError ? getDialogUIError(hasAllRequiredFilled, t) : null)
         }
         isSimpleError={showUIError}
         isDisabled={inProgress}

@@ -8,12 +8,13 @@ import { FormSelectPlaceholderOption } from '../../../form/form-select-placehold
 import { vmWizardActions } from '../../redux/actions';
 import { ImportProviderRenderableField, ImportProvidersField } from '../../types';
 import { ActionType } from '../../redux/types';
-import { getPlaceholder } from '../../utils/renderable-field-utils';
+import { getPlaceholderKey } from '../../utils/renderable-field-utils';
 import { VMWareImportProvider } from './providers/vmware-import-provider/vmware-import-provider';
 import { iGetImportProviders } from '../../selectors/immutable/import-providers';
 import { OvirtImportProvider } from './providers/ovirt-import-provider/ovirt-import-provider';
 
 import '../../create-vm-wizard-footer.scss';
+import { WithTranslation, withTranslation } from 'react-i18next';
 
 class ImportProvidersTabComponent extends React.Component<ImportProvidersTabComponentProps> {
   getField = (key: ImportProvidersField) => iGet(this.props.importProviders, key);
@@ -38,7 +39,7 @@ class ImportProvidersTabComponent extends React.Component<ImportProvidersTabComp
           <FormField>
             <FormSelect onChange={this.onChange(ImportProvidersField.PROVIDER)}>
               <FormSelectPlaceholderOption
-                placeholder={getPlaceholder(ImportProvidersField.PROVIDER)}
+                placeholder={this.props.t(getPlaceholderKey(ImportProvidersField.PROVIDER))}
                 isDisabled={!!this.getFieldValue(ImportProvidersField.PROVIDER)}
               />
               {immutableListToShallowJS(
@@ -60,7 +61,7 @@ const stateToProps = (state, { wizardReduxID }) => ({
   importProviders: iGetImportProviders(state, wizardReduxID),
 });
 
-type ImportProvidersTabComponentProps = {
+type ImportProvidersTabComponentProps = WithTranslation & {
   onFieldChange: (key: ImportProviderRenderableField, value: string) => void;
   importProviders: any;
   wizardReduxID: string;
@@ -76,4 +77,4 @@ const dispatchToProps = (dispatch, props) => ({
 export const ImportProvidersTab = connect(
   stateToProps,
   dispatchToProps,
-)(ImportProvidersTabComponent);
+)(withTranslation()(ImportProvidersTabComponent));

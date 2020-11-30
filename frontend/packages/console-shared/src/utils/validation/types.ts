@@ -6,6 +6,6 @@ export enum ValidationErrorType {
 }
 
 export type ValidationObject = {
-  message: string;
+  messageKey: string;
   type?: ValidationErrorType;
 };

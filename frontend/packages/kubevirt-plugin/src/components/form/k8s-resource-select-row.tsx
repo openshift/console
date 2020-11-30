@@ -3,6 +3,7 @@ import { FormSelect, FormSelectOption } from '@patternfly/react-core';
 import { FirehoseResult } from '@console/internal/components/utils';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { getName, ValidationErrorType, ValidationObject } from '@console/shared';
+import { useTranslation } from 'react-i18next';
 import { getLoadedData, getLoadError, isLoaded } from '../../utils';
 import { ignoreCaseSort } from '../../utils/sort';
 import { FormRow } from './form-row';
@@ -39,6 +40,7 @@ export const K8sResourceSelectRow: React.FC<K8sResourceSelectProps> = ({
   filter,
   getResourceLabel,
 }) => {
+  const { t } = useTranslation();
   const isLoading = !isLoaded(data);
   const loadError = getLoadError(data, model);
 
@@ -52,7 +54,7 @@ export const K8sResourceSelectRow: React.FC<K8sResourceSelectProps> = ({
   let missingError;
 
   if (name && !isLoading && !loadError && !loadedData.some((entity) => getName(entity) === name)) {
-    missingError = `Selected ${name} is not available`;
+    missingError = t('kubevirt-plugin~Selected {{name}} is not available', { name });
   } else {
     nameValue = name;
   }
@@ -62,7 +64,7 @@ export const K8sResourceSelectRow: React.FC<K8sResourceSelectProps> = ({
       title={title || model.label}
       fieldId={id}
       isLoading={isLoading}
-      validationMessage={loadError || missingError || (validation && validation.message)}
+      validationMessage={loadError || missingError || (validation && validation.messageKey)}
       validationType={
         loadError || missingError ? ValidationErrorType.Error : validation && validation.type
       }

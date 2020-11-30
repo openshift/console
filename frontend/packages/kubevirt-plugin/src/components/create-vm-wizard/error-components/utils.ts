@@ -1,9 +1,9 @@
+import * as _ from 'lodash';
 import { iGetVmSettings } from '../selectors/immutable/vm-settings';
 import { getEmptyRequiredFields, getInvalidFields } from '../redux/validations/utils';
-import { getFieldReadableTitle, sortFields } from '../utils/renderable-field-utils';
-import * as _ from 'lodash';
+import { getFieldTitleKey, sortFields } from '../utils/renderable-field-utils';
 import { VMWizardTab } from '../types';
-import { TabTitleResolver } from '../strings/strings';
+import { TabTitleKeyResolver } from '../strings/strings';
 import { Error } from './types';
 import { iGetNetworks } from '../selectors/immutable/networks';
 import { iGetIn, toJS } from '../../../utils/immutable';
@@ -23,24 +23,24 @@ export const computeVMSettingsErrors = (state, wizardReduxID) => {
 
   const errors = sortFields(
     _.uniqBy([...emptyRequiredFields, ...invalidFields], (field) => field.get('key')),
-  ).map((field) => {
+  ).map<Error>((field) => {
     const fieldKey = field.get('key');
     return {
       id: fieldKey,
       path: [
         {
           id: VMWizardTab.VM_SETTINGS,
-          name: TabTitleResolver[VMWizardTab.VM_SETTINGS],
+          nameKey: TabTitleKeyResolver[VMWizardTab.VM_SETTINGS],
         },
         {
           id: 'field',
-          name: getFieldReadableTitle(fieldKey),
+          nameKey: getFieldTitleKey(fieldKey),
           action: {
             goToStep: VMWizardTab.VM_SETTINGS,
           },
         },
       ],
-    } as Error;
+    };
   });
   return { hasAllRequiredFilled, isValid, errors };
 };
@@ -62,14 +62,14 @@ export const computeNetworkErrors = (state, wizardReduxID) => {
       nic.getIn(['networkInterface', 'name']),
     ),
     (nic) => nic.getIn(['networkInterface', 'name']),
-  ).map((nic) => {
+  ).map<Error>((nic) => {
     const validations = toJS(nic.getIn(['validation', 'validations']), {});
     return {
       id: `nic:${nic.get('id')}`,
       path: [
         {
           id: VMWizardTab.NETWORKING,
-          name: TabTitleResolver[VMWizardTab.NETWORKING],
+          nameKey: TabTitleKeyResolver[VMWizardTab.NETWORKING],
         },
         {
           id: 'nic',
@@ -96,7 +96,7 @@ export const computeNetworkErrors = (state, wizardReduxID) => {
           },
         },
       ],
-    } as Error;
+    };
   });
 
   const isValid = hasAllRequiredFilled && invalidNICs.length === 0;
@@ -121,7 +121,7 @@ export const computeStorageErrors = (state, wizardReduxID) => {
       storage.getIn(['disk', 'name']),
     ),
     (storage) => storage.getIn(['disk', 'name']),
-  ).map((iStorage) => {
+  ).map<Error>((iStorage) => {
     const validations = toJS(iStorage.getIn(['validation', 'validations']), {});
     const tab = VMWizardTab.STORAGE;
     return {
@@ -129,7 +129,7 @@ export const computeStorageErrors = (state, wizardReduxID) => {
       path: [
         {
           id: tab,
-          name: TabTitleResolver[tab],
+          nameKey: TabTitleKeyResolver[tab],
         },
         {
           id: 'disk',
@@ -156,7 +156,7 @@ export const computeStorageErrors = (state, wizardReduxID) => {
           },
         },
       ],
-    } as Error;
+    };
   });
 
   const isValid = hasAllRequiredFilled && invalidStorages.length === 0;

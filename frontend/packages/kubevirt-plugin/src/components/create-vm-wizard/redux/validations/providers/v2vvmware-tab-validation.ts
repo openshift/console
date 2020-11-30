@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { asValidationObject, ValidationErrorType } from '@console/shared';
-import { UpdateOptions, InternalActionType, ValidationConfig } from '../../types';
+import { UpdateOptions, InternalActionType, ValidationConfig, Validation } from '../../types';
 import {
   iGetVMwareData,
   isVMWareProvider,
@@ -21,7 +21,8 @@ const validationConfig: ValidationConfig<VMWareProviderField> = {
       const hostname = iGetFieldValue(field);
 
       if (hostname && /\s/.test(hostname)) {
-        return asValidationObject('Hostname must not contain white spaces');
+        // t('kubevirt-plugin~Hostname must not contain white spaces')
+        return asValidationObject('kubevirt-plugin~Hostname must not contain white spaces');
       }
       return null;
     },
@@ -38,7 +39,8 @@ const validationConfig: ValidationConfig<VMWareProviderField> = {
         const firmware = VMwareFirmware.fromString(parsedVM?.Config?.Firmware);
 
         if (!firmware?.isSupported()) {
-          return asValidationObject(`VM has unsupported firmware: ${firmware}`);
+          // t('kubevirt-plugin~VM has unsupported firmware: {{firmware}}')
+          return asValidationObject(`kubevirt-plugin~VM has unsupported firmware: ${firmware}`);
         }
       }
       return null;
@@ -74,9 +76,7 @@ export const validateVMwareSettings = (options: UpdateOptions) => {
   }
 };
 
-export const getV2VVMwareImportProvidersTabValidity = (
-  options: UpdateOptions,
-): { hasAllRequiredFilled: boolean; isValid: boolean; error: string } => {
+export const getV2VVMwareImportProvidersTabValidity = (options: UpdateOptions): Validation => {
   const { id, getState } = options;
   const state = getState();
 
@@ -89,19 +89,22 @@ export const getV2VVMwareImportProvidersTabValidity = (
   const hasLoadedVM = !!iGet(vmField, 'vm');
   const hasValidVM = iGetIn(vmField, ['validation', 'type']) !== ValidationErrorType.Error;
 
-  let error = null;
+  let errorKey: string;
 
   if (!hasSelectedVM) {
-    error = 'Please select a VM to import.';
+    // t('kubevirt-plugin~Please select a VM to import.')
+    errorKey = 'kubevirt-plugin~Please select a VM to import.';
   } else if (!hasLoadedVM) {
-    error = 'Please wait for a VM to load.';
+    // t('kubevirt-plugin~Please wait for a VM to load.')
+    errorKey = 'kubevirt-plugin~Please wait for a VM to load.';
   } else if (!hasValidVM) {
-    error = 'Please select a valid VM.';
+    // t('kubevirt-plugin~Please select a valid VM.')
+    errorKey = 'kubevirt-plugin~Please select a valid VM.';
   }
 
   return {
     hasAllRequiredFilled: hasSelectedVM,
     isValid: hasLoadedVM && hasValidVM,
-    error,
+    errorKey,
   };
 };

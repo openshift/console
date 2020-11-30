@@ -16,9 +16,11 @@ export type Action = {
 
 type Path = {
   id: string;
-  name: string;
-  action: Action;
+  name?: string;
+  nameKey?: string;
+  action?: Action;
 };
+
 export type Error = {
   path: Path[];
   id: string;

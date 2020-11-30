@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { InternalActionType, UpdateOptions, ValidationConfig } from '../../types';
+import { InternalActionType, UpdateOptions, Validation, ValidationConfig } from '../../types';
 import { OvirtProviderField, VMImportProvider } from '../../../types';
 import {
   hasOvirtSettingsChanged,
@@ -23,20 +23,26 @@ const validationConfig: ValidationConfig<OvirtProviderField> = {
 
       if (invalidStart && invalidEnding) {
         return asValidationObject(
-          `URL has to start with "https://" and end with "/ovirt-engine/api"`,
+          // t(`kubevirt-plugin~URL has to start with "https://" and end with "/ovirt-engine/api"`)
+          `kubevirt-plugin~URL has to start with "https://" and end with "/ovirt-engine/api"`,
           ValidationErrorType.Error,
         );
       }
 
       if (invalidEnding) {
         return asValidationObject(
-          `URL has to end with "/ovirt-engine/api"`,
+          // t(`kubevirt-plugin~URL has to end with "/ovirt-engine/api"`)
+          `kubevirt-plugin~URL has to end with "/ovirt-engine/api"`,
           ValidationErrorType.Error,
         );
       }
 
       if (invalidStart) {
-        return asValidationObject(`URL has to start with "https://"`, ValidationErrorType.Error);
+        // t(`kubevirt-plugin~URL has to start with "https://"`)
+        return asValidationObject(
+          `kubevirt-plugin~URL has to start with "https://"`,
+          ValidationErrorType.Error,
+        );
       }
 
       return null;
@@ -48,7 +54,11 @@ const validationConfig: ValidationConfig<OvirtProviderField> = {
       const username = iGetFieldValue(field);
 
       if (username && (!username.includes('@') || username.endsWith('@'))) {
-        return asValidationObject(`Username should end with "@profile"`, ValidationErrorType.Info);
+        // t(`kubevirt-plugin~Username should end with "@profile"`)
+        return asValidationObject(
+          `kubevirt-plugin~Username should end with "@profile"`,
+          ValidationErrorType.Info,
+        );
       }
 
       return null;
@@ -64,21 +74,24 @@ const validationConfig: ValidationConfig<OvirtProviderField> = {
 
       if (invalidHeader && invalidFooter) {
         return asValidationObject(
-          `Invalid CA PEM format. First line has to be "-----BEGIN CERTIFICATE-----" \n\n and last line has to be "-----END CERTIFICATE-----"`,
+          // t(`kubevirt-plugin~Invalid CA PEM format. First line has to be "-----BEGIN CERTIFICATE-----" \n\n and last line has to be "-----END CERTIFICATE-----"`)
+          `kubevirt-plugin~Invalid CA PEM format. First line has to be "-----BEGIN CERTIFICATE-----" \n\n and last line has to be "-----END CERTIFICATE-----"`,
           ValidationErrorType.Error,
         );
       }
 
       if (invalidFooter) {
         return asValidationObject(
-          `Invalid CA PEM format. Last line has to be "-----END CERTIFICATE-----"`,
+          // t(`kubevirt-plugin~Invalid CA PEM format. Last line has to be "-----END CERTIFICATE-----"`)
+          `kubevirt-plugin~Invalid CA PEM format. Last line has to be "-----END CERTIFICATE-----"`,
           ValidationErrorType.Error,
         );
       }
 
       if (invalidHeader) {
         return asValidationObject(
-          `Invalid CA PEM format. First line has to be "-----BEGIN CERTIFICATE-----"`,
+          // t(`kubevirt-plugin~Invalid CA PEM format. First line has to be "-----BEGIN CERTIFICATE-----"`)
+          `kubevirt-plugin~Invalid CA PEM format. First line has to be "-----BEGIN CERTIFICATE-----"`,
           ValidationErrorType.Error,
         );
       }
@@ -116,9 +129,7 @@ export const validateOvirtSettings = (options: UpdateOptions) => {
   }
 };
 
-export const getOvirtProviderProvidersTabValidity = (
-  options: UpdateOptions,
-): { hasAllRequiredFilled: boolean; isValid: boolean; error: string } => {
+export const getOvirtProviderProvidersTabValidity = (options: UpdateOptions): Validation => {
   const { id, getState } = options;
   const state = getState();
 
@@ -132,10 +143,12 @@ export const getOvirtProviderProvidersTabValidity = (
   return {
     hasAllRequiredFilled: hasSelectedVM,
     isValid: hasLoadedVM,
-    error: hasLoadedVM
+    // t('kubevirt-plugin~Please wait for a VM to load.')
+    // t('kubevirt-plugin~Please select a VM to import.')
+    errorKey: hasLoadedVM
       ? null
       : hasSelectedVM
-      ? 'Please wait for a VM to load.'
-      : 'Please select a VM to import.',
+      ? 'kubevirt-plugin~Please wait for a VM to load.'
+      : 'kubevirt-plugin~Please select a VM to import.',
   };
 };

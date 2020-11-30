@@ -24,6 +24,7 @@ import {
 } from '../../types';
 import { networkTypeParams, networkTypes } from '../../constants';
 import NetworkTypeOptions from './NetworkTypeOptions';
+import { useTranslation } from 'react-i18next';
 
 const buildConfig = (name, networkType, typeParamsData): NetworkAttachmentDefinitionConfig => {
   const config: NetworkAttachmentDefinitionConfig = {
@@ -121,9 +122,24 @@ const handleNameChange = (enteredName, fieldErrors, setName, setFieldErrors) => 
   const fieldErrorsUpdate = { ...fieldErrors };
   delete fieldErrorsUpdate.nameValidationMsg;
 
-  const nameValidation = validateDNS1123SubdomainValue(enteredName);
+  const nameValidation = validateDNS1123SubdomainValue(enteredName, {
+    // t('kubevirt-plugin~Network attachement definition name cannot be empty')
+    // t('kubevirt-plugin~Network attachement definition name name can contain only alphanumberic characters')
+    // t('kubevirt-plugin~Network attachement definition name cannot start/end with dash')
+    // t('kubevirt-plugin~Network attachement definition name cannot contain uppercase characters')
+    // t('kubevirt-plugin~Network attachement definition name is too long')
+    // t('kubevirt-plugin~Network attachement definition name is too short')
+    emptyMsg: 'kubevirt-plugin~Network attachement definition name cannot be empty',
+    errorMsg:
+      'kubevirt-plugin~Network attachement definition name can contain only alphanumberic characters',
+    dashMsg: 'kubevirt-plugin~Network attachement definition name cannot start/end with dash',
+    uppercaseMsg:
+      'kubevirt-plugin~Network attachement definition name cannot contain uppercase characters',
+    longMsg: 'kubevirt-plugin~Network attachement definition name is too long',
+    shortMsg: 'kubevirt-plugin~Network attachement definition name is too short',
+  });
   if (_.get(nameValidation, 'type', null) === ValidationErrorType.Error) {
-    fieldErrorsUpdate.nameValidationMsg = nameValidation.message;
+    fieldErrorsUpdate.nameValidationMsg = nameValidation.messageKey;
   }
 
   setName(enteredName);
@@ -179,6 +195,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
   const namespace = _.get(match, 'params.ns', 'default');
   const sriovNetNodePoliciesData = _.get(resources, 'sriovnetworknodepolicies.data', []);
 
+  const { t } = useTranslation();
   const [loading, setLoading] = React.useState(hasSriovNetNodePolicyCRD && !loaded);
   const [name, setName] = React.useState('');
   const [description, setDescription] = React.useState('');
@@ -230,7 +247,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
             value={name}
           />
           {fieldErrors.nameValidationMsg && (
-            <div className="text-secondary">{fieldErrors.nameValidationMsg}</div>
+            <div className="text-secondary">{t(fieldErrors.nameValidationMsg)}</div>
           )}
         </FormGroup>
 

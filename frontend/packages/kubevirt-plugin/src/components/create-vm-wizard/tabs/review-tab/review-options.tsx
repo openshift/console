@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { VMSettingsField, VMSettingsRenderableField } from '../../types';
 import { Checkbox, Form } from '@patternfly/react-core';
 import { getFieldId } from '../../utils/renderable-field-utils';
@@ -16,6 +17,7 @@ const ReviewOptionsConnected: React.FC<ReviewOptionsConnectedProps> = ({
   onFieldChange,
   iVMSettings,
 }) => {
+  const { t } = useTranslation();
   const onChange = (key: VMSettingsRenderableField) => (value) => onFieldChange(key, value);
 
   return (
@@ -29,7 +31,7 @@ const ReviewOptionsConnected: React.FC<ReviewOptionsConnectedProps> = ({
             className="kubevirt-create-vm-modal__start_vm_checkbox"
             id={getFieldId(VMSettingsField.START_VM)}
             onChange={onChange(VMSettingsField.START_VM)}
-            label="Start Virtual Machine on Creation"
+            label={t('kubevirt-plugin~Start Virtual Machine on Creation')}
           />
         </FormField>
       </FormFieldMemoRow>

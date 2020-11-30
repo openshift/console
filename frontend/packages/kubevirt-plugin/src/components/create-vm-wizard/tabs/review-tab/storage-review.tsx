@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Alert, AlertVariant } from '@patternfly/react-core';
+import { Trans, useTranslation } from 'react-i18next';
+import { Alert, AlertVariant, Stack, StackItem } from '@patternfly/react-core';
 import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
 import { Firehose, FirehoseResult, resourcePath } from '@console/internal/components/utils';
 import { StorageClassResourceKind } from '@console/internal/module/k8s';
@@ -21,44 +22,63 @@ type DefaultSCUsedProps = {
   defaultSCName: string;
 };
 
-const DefaultSCUsed: React.FC<DefaultSCUsedProps> = ({ defaultSCName }) => (
-  <p>
-    {`Default storage class `}
-    <Link
-      to={resourcePath(StorageClassModel.kind, defaultSCName)}
-      className="co-resource-item__resource-name"
-    >
-      {defaultSCName}
-    </Link>
-    {' will be used'}
-  </p>
-);
+const DefaultSCUsed: React.FC<DefaultSCUsedProps> = ({ defaultSCName }) => {
+  const { t } = useTranslation();
+  return (
+    <p>
+      <Trans t={t} ns="kubevirt-plugin">
+        Default storage class{' '}
+        <Link
+          to={resourcePath(StorageClassModel.kind, defaultSCName)}
+          className="co-resource-item__resource-name"
+        >
+          {{ defaultSCName }}
+        </Link>{' '}
+        will be used
+      </Trans>
+    </p>
+  );
+};
 
-const NoDefaultSC: React.FC = () => (
-  <p className="kubevirt-create-vm-modal__review-tab-storage-class-alert-p">
-    {`This virtual machine could experience issues. \n Please select a storage class or `}
-    <Link to={resourcePath(StorageClassModel.kind)} className="co-resource-item__resource-name">
-      create a default one
-    </Link>
-    .
-  </p>
-);
+const NoDefaultSC: React.FC = () => {
+  const { t } = useTranslation();
+  return (
+    <p className="kubevirt-create-vm-modal__review-tab-storage-class-alert-p">
+      <Stack>
+        <StackItem>{t('kubevirt-plugin~This virtual machine could experience issues')}</StackItem>
+        <StackItem>
+          <Trans t={t} ns="kubevirt-plugin">
+            Please select a storage class or{' '}
+            <Link
+              to={resourcePath(StorageClassModel.kind)}
+              className="co-resource-item__resource-name"
+            >
+              create a default one
+            </Link>
+            .
+          </Trans>
+        </StackItem>
+      </Stack>
+    </p>
+  );
+};
 
 const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
   storages,
   persistentVolumeClaims,
   storageClasses,
 }) => {
+  const { t } = useTranslation();
   const showStorages = storages.length > 0;
 
   const headers = [
-    { title: 'Name' },
-    { title: 'Source' },
-    { title: 'Size' },
-    { title: 'Interface' },
-    { title: 'Storage Class' },
-    { title: 'Access Mode' },
-    { title: 'Volume Mode' },
+    { title: t('kubevirt-plugin~Name') },
+    { title: t('kubevirt-plugin~Source') },
+    { title: t('kubevirt-plugin~Size') },
+    { title: t('kubevirt-plugin~Interface') },
+    { title: t('kubevirt-plugin~Storage Class') },
+    { title: t('kubevirt-plugin~Access Mode') },
+    { title: t('kubevirt-plugin~Volume Mode') },
   ];
 
   const pvcLookup = createLookup(persistentVolumeClaims, getName);
@@ -101,7 +121,7 @@ const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
         <>
           {hasStorageWithoutStorageClass && (
             <Alert
-              title={'Some disks do not have a storage class defined'}
+              title={t('kubevirt-plugin~Some disks do not have a storage class defined')}
               isInline
               variant={AlertVariant.warning}
               className="kubevirt-create-vm-modal__review-tab-storage-class-alert"
@@ -114,7 +134,7 @@ const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
             </Alert>
           )}
           <Table
-            aria-label="Storage Devices"
+            aria-label={t('kubevirt-plugin~Storage Devices')}
             variant={TableVariant.compact}
             cells={headers}
             rows={rows}
@@ -127,7 +147,7 @@ const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
       )}
       {!showStorages && (
         <p>
-          <strong>No disks found</strong>
+          <strong>{t('kubevirt-plugin~No disks found')}</strong>
         </p>
       )}
     </>

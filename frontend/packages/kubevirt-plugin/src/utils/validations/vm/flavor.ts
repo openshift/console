@@ -1,4 +1,4 @@
-import { ValidationObject, validateEmptyValue } from '@console/shared/src';
+import { ValidationObject, ValidationErrorType, asValidationObject } from '@console/shared/src';
 
 export const validateFlavor = (
   {
@@ -27,8 +27,17 @@ export const validateFlavor = (
     addRequired(unit);
     addRequired(size);
     addRequired(cpus);
-    validations.memory = validateEmptyValue(size, { subject: 'Memory' });
-    validations.cpus = validateEmptyValue(cpus, { subject: 'CPUs' });
+    validations.memory = size
+      ? null
+      : // t('kubevirt-plugin~Memory cannot be empty')
+        asValidationObject(
+          'kubevirt-plugin~Memory cannot be empty',
+          ValidationErrorType.TrivialError,
+        );
+    validations.cpus = cpus
+      ? null
+      : // t('kubevirt-plugin~CPU cannot be empty')
+        asValidationObject('kubevirt-plugin~CPU cannot be empty', ValidationErrorType.TrivialError);
   }
 
   return {

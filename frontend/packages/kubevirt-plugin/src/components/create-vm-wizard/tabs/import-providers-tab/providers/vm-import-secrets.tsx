@@ -2,6 +2,8 @@ import * as React from 'react';
 import { FormSelect, FormSelectOption } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import { getName, getUID } from '@console/shared/src';
+import { useTranslation } from 'react-i18next';
+
 import {
   iGetCommonData,
   iGetUID,
@@ -20,7 +22,7 @@ import { FormFieldRow } from '../../../form/form-field-row';
 import { FormField, FormFieldType } from '../../../form/form-field';
 import { iGet, iGetLoadedData, toJS } from '../../../../../utils/immutable';
 import { FormSelectPlaceholderOption } from '../../../../form/form-select-placeholder-option';
-import { getPlaceholder } from '../../../utils/renderable-field-utils';
+import { getPlaceholderKey } from '../../../utils/renderable-field-utils';
 import { iGetProviderField } from '../../../selectors/immutable/provider/common';
 
 const CONNECT_TO_NEW_INSTANCE = 'Connect to New Instance';
@@ -28,6 +30,7 @@ const CONNECT_TO_NEW_INSTANCE_ID = `30e4f40e-7ce1-4c90-98a1-14ef960b8549-${CONNE
 
 const VMImportSecretsConnected: React.FC<VMImportSecretsReviewProps> = React.memo(
   ({ secretField, secrets, onSecretChange, provider }) => {
+    const { t } = useTranslation();
     const onChange = (value) => {
       const isNewInstance = value === CONNECT_TO_NEW_INSTANCE_ID;
       const secret =
@@ -50,10 +53,12 @@ const VMImportSecretsConnected: React.FC<VMImportSecretsReviewProps> = React.mem
         <FormField>
           <FormSelect onChange={onChange}>
             <FormSelectPlaceholderOption
-              placeholder={getPlaceholder(
-                provider === VMImportProvider.OVIRT
-                  ? OvirtProviderField.OVIRT_ENGINE_SECRET_NAME
-                  : VMWareProviderField.VCENTER_SECRET_NAME,
+              placeholder={t(
+                getPlaceholderKey(
+                  provider === VMImportProvider.OVIRT
+                    ? OvirtProviderField.OVIRT_ENGINE_SECRET_NAME
+                    : VMWareProviderField.VCENTER_SECRET_NAME,
+                ),
               )}
               isDisabled={!!iGet(secretField, 'value')}
             />

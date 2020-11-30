@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { Button, ButtonVariant, SelectOption, Text, TextContent } from '@patternfly/react-core';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { FormFieldRow } from '../../form/form-field-row';
@@ -13,37 +14,72 @@ const ProvisionSourceDiskHelpMsg: React.FC<ProvisionSourceDiskHelpMsgProps> = ({
   provisionSourceValue,
   goToStorageStep,
 }) => {
-  const storageBtn = (
-    <Button
-      isDisabled={!goToStorageStep}
-      isInline
-      onClick={goToStorageStep}
-      variant={ButtonVariant.link}
-    >
-      <strong>Storage</strong>
-    </Button>
-  );
+  const { t } = useTranslation();
   const getStorageMsg = () => {
     switch (ProvisionSource.fromString(provisionSourceValue)) {
       case ProvisionSource.URL:
         return (
           <TextContent>
             <div className="pf-c-form__helper-text" aria-live="polite">
-              Enter URL here or edit the rootdisk in the {storageBtn} step.
+              <Trans ns="kubevirt-plugin" t={t}>
+                Enter URL here or edit the rootdisk in the{' '}
+                <strong>
+                  <Button
+                    isDisabled={!goToStorageStep}
+                    isInline
+                    onClick={goToStorageStep}
+                    variant={ButtonVariant.link}
+                  >
+                    Storage
+                  </Button>
+                </strong>{' '}
+                step.
+              </Trans>
             </div>
             <div className="pf-c-form__helper-text" aria-live="polite">
-              To boot this source from a CD-ROM edit the disk in the storage step and change to
-              type: CD-ROM
+              {t(
+                'kubevirt-plugin~To boot this source from a CD-ROM edit the disk in the storage step and change to type: CD-ROM',
+              )}
             </div>
           </TextContent>
         );
       case ProvisionSource.CONTAINER:
       case ProvisionSource.CONTAINER_EPHEMERAL:
         return (
-          <Text>Enter container image here or edit the rootdisk in the {storageBtn} step.</Text>
+          <Text>
+            <Trans ns="kubevirt-plugin" t={t}>
+              Enter container image here or edit the rootdisk in the{' '}
+              <strong>
+                <Button
+                  isDisabled={!goToStorageStep}
+                  isInline
+                  onClick={goToStorageStep}
+                  variant={ButtonVariant.link}
+                >
+                  Storage
+                </Button>
+              </strong>{' '}
+              step.
+            </Trans>
+          </Text>
         );
       case ProvisionSource.DISK:
-        return <>Choose PVC to clone by editing the rootdisk in the {storageBtn} step</>;
+        return (
+          <Trans ns="kubevirt-plugin" t={t}>
+            Choose PVC to clone by editing the rootdisk in the{' '}
+            <strong>
+              <Button
+                isDisabled={!goToStorageStep}
+                isInline
+                onClick={goToStorageStep}
+                variant={ButtonVariant.link}
+              >
+                Storage
+              </Button>
+            </strong>{' '}
+            step.
+          </Trans>
+        );
       default:
         return null;
     }
@@ -59,20 +95,23 @@ const ProvisionSourceDiskHelpMsg: React.FC<ProvisionSourceDiskHelpMsgProps> = ({
 const ProvisionSourceNetHelpMsg: React.FC<ProvisionSourceNetHelpMsgProps> = ({
   goToNetworkingStep,
 }) => {
-  const networkBtn = (
-    <Button
-      isDisabled={!goToNetworkingStep}
-      isInline
-      onClick={goToNetworkingStep}
-      variant={ButtonVariant.link}
-    >
-      <strong>Networking</strong>
-    </Button>
-  );
-
+  const { t } = useTranslation();
   return (
     <div className="pf-c-form__helper-text" aria-live="polite">
-      Add a network interface in the {networkBtn} step
+      <Trans ns="kubevirt-plugin" t={t}>
+        Add a network interface in the{' '}
+        <strong>
+          <Button
+            isDisabled={!goToNetworkingStep}
+            isInline
+            onClick={goToNetworkingStep}
+            variant={ButtonVariant.link}
+          >
+            Networking
+          </Button>
+        </strong>{' '}
+        step
+      </Trans>
     </div>
   );
 };

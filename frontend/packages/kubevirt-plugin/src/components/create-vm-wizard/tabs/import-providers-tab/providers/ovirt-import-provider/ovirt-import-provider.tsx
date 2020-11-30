@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import * as React from 'react';
 import { Checkbox, TextInput } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import {
   iGetOvirtData,
   isOvirtProvider,
@@ -34,6 +35,7 @@ const OvirtImportProviderConnected: React.FC<OvirtImportProviderProps> = ({
   ovirtData,
   onFieldChange,
 }) => {
+  const { t } = useTranslation();
   const getField = React.useCallback((key: OvirtProviderRenderableField) => iGet(ovirtData, key), [
     ovirtData,
   ]);
@@ -58,7 +60,7 @@ const OvirtImportProviderConnected: React.FC<OvirtImportProviderProps> = ({
             target="_blank"
             rel="noopener noreferrer"
           >
-            API entry point
+            {t('kubevirt-plugin~API entry point')}
           </a>
         }
       >

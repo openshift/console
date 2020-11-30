@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Checkbox, Form, TextArea, TextInput } from '@patternfly/react-core';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { iGet, iGetIn } from '../../../../utils/immutable';
 import { FormFieldMemoRow } from '../../form/form-field-row';
 import { FormField, FormFieldType } from '../../form/form-field';
@@ -43,6 +44,7 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
   vmSettings,
   onFieldChange,
 }) => {
+  const { t } = useTranslation();
   const getField = React.useCallback((key: VMSettingsField) => iGet(vmSettings, key), [vmSettings]);
   const getFieldValue = React.useCallback(
     (key: VMSettingsField) => iGetIn(vmSettings, [key, 'value']),
@@ -71,7 +73,7 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
           <TextInput onChange={onChange(VMSettingsField.TEMPLATE_PROVIDER)} />
         </FormField>
         <div className="pf-c-form__helper-text" aria-live="polite">
-          example: your company name
+          {t('kubevirt-plugin~example: your company name')}
         </div>
       </FormFieldMemoRow>
       <FormFieldMemoRow

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 import {
   EmptyState,
   EmptyStateBody,
@@ -10,7 +11,6 @@ import {
 } from '@patternfly/react-core';
 import { iGetCommonData } from '../../selectors/immutable/selectors';
 import { VMWizardProps, VMWizardTab } from '../../types';
-import { getVMLikeModelName } from '../../../../utils/utils';
 import { iGet, iGetIn } from '../../../../utils/immutable';
 import { iGetCreateVMWizardTabs } from '../../selectors/immutable/common';
 
@@ -19,13 +19,16 @@ const ErrorResultsComponent: React.FC<ErrorResultsProps> = ({
   mainError,
   className,
 }) => {
-  const modelName = getVMLikeModelName(isCreateTemplate);
+  const { t } = useTranslation();
+  const title = isCreateTemplate
+    ? t('kubevirt-plugin~Error creating virtual machine template')
+    : t('kubevirt-plugin~Error creating virtual machine');
 
   return (
     <EmptyState variant={EmptyStateVariant.full} className={className}>
       <EmptyStateIcon icon={ExclamationCircleIcon} color="#a30000" />
       <Title headingLevel="h5" size="lg" data-test-id="kubevirt-wizard-error-result">
-        {iGet(mainError, 'title') || `Error creating ${modelName}.`}
+        {iGet(mainError, 'title') || title}
       </Title>
       <EmptyStateBody>
         {iGet(mainError, 'message')}

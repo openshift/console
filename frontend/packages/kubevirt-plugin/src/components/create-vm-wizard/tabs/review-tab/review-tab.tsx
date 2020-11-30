@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { vmWizardActions } from '../../redux/actions';
 import { ActionType } from '../../redux/types';
 import { iGetVmSettings } from '../../selectors/immutable/vm-settings';
@@ -12,15 +13,18 @@ import { ReviewOptions } from './review-options';
 import './review-tab.scss';
 
 export const ReviewTabConnected: React.FC<ReviewTabProps> = (props) => {
+  const { t } = useTranslation();
   const { wizardReduxID } = props;
 
   return (
     <>
-      <h2 className="pf-c-title pf-m-xl">Review and confirm your settings</h2>
+      <h2 className="pf-c-title pf-m-xl">
+        {t('kubevirt-plugin~Review and confirm your settings')}
+      </h2>
 
       <section className="kubevirt-create-vm-modal__review-tab-section">
         <h3 className="kubevirt-create-vm-modal__review-tab-section__title pf-c-title pf-m-lg">
-          General
+          {t('kubevirt-plugin~General')}
         </h3>
         <GeneralReview
           wizardReduxID={wizardReduxID}
@@ -30,21 +34,21 @@ export const ReviewTabConnected: React.FC<ReviewTabProps> = (props) => {
 
       <section className="kubevirt-create-vm-modal__review-tab-section">
         <h3 className="kubevirt-create-vm-modal__review-tab-section__title pf-c-title pf-m-lg">
-          Networking
+          {t('kubevirt-plugin~Networking')}
         </h3>
         <NetworkingReview wizardReduxID={wizardReduxID} />
       </section>
 
       <section className="kubevirt-create-vm-modal__review-tab-section">
         <h3 className="kubevirt-create-vm-modal__review-tab-section__title pf-c-title pf-m-lg">
-          Storage
+          {t('kubevirt-plugin~Storage')}
         </h3>
         <StorageReview wizardReduxID={wizardReduxID} />
       </section>
 
       <section className="kubevirt-create-vm-modal__review-tab-section">
         <h3 className="kubevirt-create-vm-modal__review-tab-section__title pf-c-title pf-m-lg">
-          Advanced
+          {t('kubevirt-plugin~Advanced')}
         </h3>
         <AdvancedReviewTab wizardReduxID={wizardReduxID} />
       </section>

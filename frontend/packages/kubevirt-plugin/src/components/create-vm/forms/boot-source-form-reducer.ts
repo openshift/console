@@ -1,8 +1,8 @@
-import { ValidationObject } from '@console/shared';
+import { asValidationObject, ValidationObject } from '@console/shared';
 
 import {
-  validatePositiveInteger,
-  validateTrim,
+  isPositiveNumber,
+  validateContainer,
   validateURL,
 } from '../../../utils/validations/common';
 import { AccessMode } from '../../../constants';
@@ -110,9 +110,13 @@ export const bootFormReducer = (
     [action.type]: { value: action.payload },
   };
   let isValid: boolean;
-  const sizeValidation = validatePositiveInteger(`${newState.size?.value.value}`, {
-    subject: `Persistent Volume Claim size`,
-  });
+  // t('kubevirt-plugin~Size cannot not be empty')
+  // t('kubevirt-plugin~Size must be positive integer')
+  const sizeValidation = newState.size?.value.value
+    ? asValidationObject('kubevirt-plugin~Size cannot not be empty')
+    : isPositiveNumber(newState.size?.value.value)
+    ? null
+    : asValidationObject('kubevirt-plugin~Size must be positive integer');
   newState.size.validation = sizeValidation;
   switch (ProvisionSource.fromString(newState.dataSource?.value)) {
     case ProvisionSource.UPLOAD: {
@@ -121,18 +125,14 @@ export const bootFormReducer = (
     }
     case ProvisionSource.URL: {
       if (newState.url?.value) {
-        newState.url.validation = validateURL(newState.url?.value, {
-          subject: 'Import URL',
-        });
+        newState.url.validation = validateURL(newState.url?.value);
       }
       isValid = !!newState.url?.value && !newState.url?.validation && !newState.size.validation;
       break;
     }
     case ProvisionSource.CONTAINER: {
       if (newState.container?.value) {
-        newState.container.validation = validateTrim(newState.container?.value, {
-          subject: 'Container image',
-        });
+        newState.container.validation = validateContainer(newState.container?.value);
       }
       isValid =
         !!newState.container?.value && !newState.container?.validation && !newState.size.validation;

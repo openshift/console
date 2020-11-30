@@ -3,6 +3,7 @@ import * as classNames from 'classnames';
 import { ValidationErrorType, ValidationObject } from '@console/shared';
 
 import './validation-cell.scss';
+import { useTranslation } from 'react-i18next';
 
 export type SimpleCellProps = {
   children?: React.ReactNode;
@@ -15,6 +16,7 @@ export const ValidationCell: React.FC<SimpleCellProps> = ({
   validation,
   additionalLabel,
 }) => {
+  const { t } = useTranslation();
   return (
     <>
       <div
@@ -37,7 +39,7 @@ export const ValidationCell: React.FC<SimpleCellProps> = ({
             'kv-validation-cell__cell--warning': validation.type === ValidationErrorType.Warn,
           })}
         >
-          {validation.message}
+          {t(validation.messageKey)}
         </div>
       )}
     </>

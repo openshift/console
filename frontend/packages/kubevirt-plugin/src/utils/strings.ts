@@ -1,3 +1,5 @@
+import { TFunction } from 'i18next';
+
 export const COULD_NOT_LOAD_DATA = 'Could not load data';
 
 export const CREATED = 'created';
@@ -70,13 +72,15 @@ export const FLAVOR_LARGE_DESC =
   'Headroomed resources required to operate both the OS and the workload type selected';
 export const FLAVOR_CUSTOM_DESC = 'Enter CPU and Memory values';
 
-export const getDialogUIError = (hasAllRequiredFilled) =>
+export const getDialogUIError = (hasAllRequiredFilled, t: TFunction) =>
   hasAllRequiredFilled
-    ? 'Please correct the invalid fields.'
-    : 'Please fill in all required fields.';
+    ? t('kubevirt-plugin~Please correct the invalid fields.')
+    : t('kubevirt-plugin~Please fill in all required fields.');
 
-export const getSimpleDialogUIError = (hasAllRequiredFilled) =>
-  hasAllRequiredFilled ? 'Some fields are not correct' : 'Required fields not completed';
+export const getSimpleDialogUIError = (hasAllRequiredFilled, t: TFunction) =>
+  hasAllRequiredFilled
+    ? t('kubevirt-plugin~Some fields are not correct')
+    : t('kubevirt-plugin~Required fields not completed');
 
 export const getBooleanReadableValue = (value: boolean) => (value ? 'yes' : 'no');
 

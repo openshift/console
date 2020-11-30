@@ -189,7 +189,8 @@ export type VMWizardTabMetadata = {
   isPending?: boolean;
   canJumpTo?: boolean;
   hasAllRequiredFilled?: boolean;
-  error?: string;
+  errorKey?: string;
+  fieldKeys?: string[];
   isCreateDisabled?: boolean;
   isUpdateDisabled?: boolean;
   isDeleteDisabled?: boolean;

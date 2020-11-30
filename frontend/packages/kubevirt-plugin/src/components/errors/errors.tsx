@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Alert, AlertVariant, ExpandableSection } from '@patternfly/react-core';
 import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 
 import './errors.scss';
 
@@ -18,6 +19,7 @@ type ErrorsProps = {
 };
 
 export const Errors: React.FC<ErrorsProps> = ({ errors, endMargin }) => {
+  const { t } = useTranslation();
   return (
     <>
       {errors &&
@@ -38,8 +40,8 @@ export const Errors: React.FC<ErrorsProps> = ({ errors, endMargin }) => {
                 <div>
                   <div className="kubevirt-errors__detailed-message">{message}</div>
                   <ExpandableSection
-                    toggleTextCollapsed="View details"
-                    toggleTextExpanded="Hide details"
+                    toggleTextCollapsed={t('kubevirt-plugin~View details')}
+                    toggleTextExpanded={t('kubevirt-plugin~Hide details')}
                   >
                     <pre className="kubevirt-errors__expendable">{detail}</pre>
                   </ExpandableSection>

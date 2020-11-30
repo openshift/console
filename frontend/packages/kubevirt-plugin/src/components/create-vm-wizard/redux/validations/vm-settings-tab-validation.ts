@@ -1,21 +1,15 @@
 import * as _ from 'lodash';
 import {
   asValidationObject,
-  validateEmptyValue,
   ValidationErrorType,
   ValidationObject,
 } from '@console/shared/src/utils/validation';
 import { VMSettingsField, VMWizardProps, VMWizardTab } from '../../types';
 import { hasVmSettingsChanged, iGetVmSettings } from '../../selectors/immutable/vm-settings';
-import { iGetFieldKey, iGetFieldValue } from '../../selectors/immutable/field';
+import { iGetFieldValue } from '../../selectors/immutable/field';
 import { InternalActionType, UpdateOptions, ValidationConfig, Validator } from '../types';
 import { vmWizardInternalActions } from '../internal-actions';
 import { validateVmLikeEntityName } from '../../../../utils/validations/vm';
-import {
-  VIRTUAL_MACHINE_EXISTS,
-  VIRTUAL_MACHINE_TEMPLATE_EXISTS,
-} from '../../../../utils/validations/strings';
-import { getFieldTitle } from '../../utils/renderable-field-utils';
 import {
   iGet,
   iGetLoadedData,
@@ -28,16 +22,12 @@ import {
   iGetLoadedCommonData,
   immutableListToShallowMetadataJS,
 } from '../../selectors/immutable/selectors';
-import { validatePositiveInteger } from '../../../../utils/validations/common';
+import { isPositiveNumber } from '../../../../utils/validations/common';
 import { TemplateValidations } from '../../../../utils/validations/template/template-validations';
 import { combineIntegerValidationResults } from '../../../../utils/validations/template/utils';
 import { getFieldsValidity, getValidationUpdate } from './utils';
 import { getTemplateValidations } from '../../selectors/template';
 import { BinaryUnit, convertToBytes } from '../../../form/size-unit-utils';
-import {
-  VALIDATION_PXE_NAD_ERROR_INFO,
-  VALIDATION_PXE_NAD_MISSING_INFO,
-} from '../../strings/networking';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { UIValidation } from '../../../../types/ui/ui';
 
@@ -55,14 +45,30 @@ const validateVm: Validator = (field, options) => {
     iGetFieldValue(field),
     iGetCommonData(state, id, VMWizardProps.activeNamespace),
     immutableListToShallowMetadataJS(entities),
+    // t('kubevirt-plugin~Name is already used by another template')
+    // t('kubevirt-plugin~Name is already used by another virtual machine in this namespace')
     {
       existsErrorMessage: isCreateTemplate
-        ? VIRTUAL_MACHINE_TEMPLATE_EXISTS
-        : VIRTUAL_MACHINE_EXISTS,
-      subject: getFieldTitle(iGetFieldKey(field)),
+        ? 'kubevirt-plugin~Name is already used by another template'
+        : 'kubevirt-plugin~Name is already used by another virtual machine in this namespace',
       validations: immutableListToJS(iGet(field, 'validations')) as UIValidation[],
     },
   );
+};
+
+export const validateCPU: Validator = (field) => {
+  const cpu = iGetFieldValue(field);
+  if (!cpu) {
+    // t('kubevirt-plugin~CPU cannot not be empty')
+    return asValidationObject(
+      'kubevirt-plugin~CPU cannot not be empty',
+      ValidationErrorType.TrivialError,
+    );
+  }
+  // t('kubevirt-plugin~CPU must be positive integer')
+  return isPositiveNumber(cpu)
+    ? null
+    : asValidationObject('kubevirt-plugin~CPU must be positive integer');
 };
 
 export const validateOperatingSystem: Validator = (field) => {
@@ -70,20 +76,32 @@ export const validateOperatingSystem: Validator = (field) => {
   const guestFullName = iGet(field, 'guestFullName');
 
   if (os || !guestFullName) {
-    return validateEmptyValue(os, {
-      subject: getFieldTitle(iGetFieldKey(field)),
-    });
+    return os
+      ? null
+      : asValidationObject(
+          // t('kubevirt-plugin~Operating system cannot be empty')
+          'kubevirt-plugin~Operating system cannot be empty',
+          ValidationErrorType.TrivialError,
+        );
   }
 
-  return asValidationObject(`Select matching for: ${guestFullName}`, ValidationErrorType.Info);
+  // t('kubevirt-plugin~Select matching for: {{guestFullName}}')
+  return asValidationObject(
+    `kubevirt-plugin~Select matching for: ${guestFullName}`,
+    ValidationErrorType.Info,
+  );
 };
 
 const memoryValidation: Validator = (field, options): ValidationObject => {
   const memValue = iGetFieldValue(field);
   if (memValue == null || memValue === '' || BinaryUnit[memValue]) {
-    return validateEmptyValue(memValue, {
-      subject: getFieldTitle(iGetFieldKey(field)),
-    });
+    // t('kubevirt-plugin~Memory cannot not be empty')
+    return memValue
+      ? null
+      : asValidationObject(
+          'kubevirt-plugin~Memory cannot not be empty',
+          ValidationErrorType.TrivialError,
+        );
   }
   const { id, getState } = options;
   const state = getState();
@@ -107,18 +125,12 @@ const memoryValidation: Validator = (field, options): ValidationObject => {
   }
 
   if (memValue.match(/^[0-9.]+B$/)) {
-    return asValidationObject('Memory must be specified at least in KiB units');
+    // t('kubevirt-plugin~Memory must be specified at least in KiB units')
+    return asValidationObject('kubevirt-plugin~Memory must be specified at least in KiB units');
   }
 
   return null;
 };
-
-const asVMSettingsFieldValidator = (
-  validator: (value: string, opts: { subject: string }) => ValidationObject,
-) => (field) =>
-  validator(iGetFieldValue(field), {
-    subject: getFieldTitle(iGetFieldKey(field)),
-  });
 
 const validateSource: Validator = (field, options): ValidationObject => {
   const value = iGetFieldValue(field);
@@ -129,9 +141,15 @@ const validateSource: Validator = (field, options): ValidationObject => {
 
     const nads = iGetCommonData(state, id, VMWizardProps.nads);
     return iGetLoadError(nads)
-      ? asValidationObject(VALIDATION_PXE_NAD_ERROR_INFO)
+      ? asValidationObject(
+          // t('kubevirt-plugin~Error fetching available Network Attachment Definitions. PXE capable Network Attachment Definition is required to successfully create this virtual machine. Contact your system administrator for additional support.')
+          'kubevirt-plugin~Error fetching available Network Attachment Definitions. PXE capable Network Attachment Definition is required to successfully create this virtual machine. Contact your system administrator for additional support.',
+        )
       : iGetLoadedData(nads)?.size === 0
-      ? asValidationObject(VALIDATION_PXE_NAD_MISSING_INFO)
+      ? asValidationObject(
+          // t('kubevirt-plugin~No Network Attachment Definitions available. PXE capable Network Attachment Definition is required to successfully create this virtual machine. Contact your system administrator for additional support.')
+          'kubevirt-plugin~No Network Attachment Definitions available. PXE capable Network Attachment Definition is required to successfully create this virtual machine. Contact your system administrator for additional support.',
+        )
       : null;
   }
 
@@ -159,7 +177,7 @@ const validationConfig: ValidationConfig = {
   },
   [VMSettingsField.CPU]: {
     detectValueChanges: [VMSettingsField.CPU],
-    validator: asVMSettingsFieldValidator(validatePositiveInteger),
+    validator: validateCPU,
   },
   [VMSettingsField.MEMORY]: {
     detectValueChanges: [
@@ -192,7 +210,7 @@ export const setVmSettingsTabValidity = (options: UpdateOptions) => {
   const { id, dispatch, getState } = options;
   const state = getState();
   const vmSettings = iGetVmSettings(state, id);
-  const { hasAllRequiredFilled, isValid, error } = getFieldsValidity(vmSettings);
+  const { hasAllRequiredFilled, isValid, errorKey, fieldKeys } = getFieldsValidity(vmSettings);
 
   if (
     checkTabValidityChanged(
@@ -201,7 +219,8 @@ export const setVmSettingsTabValidity = (options: UpdateOptions) => {
       VMWizardTab.VM_SETTINGS,
       isValid,
       hasAllRequiredFilled,
-      error,
+      errorKey,
+      fieldKeys,
     )
   ) {
     dispatch(
@@ -210,7 +229,8 @@ export const setVmSettingsTabValidity = (options: UpdateOptions) => {
         VMWizardTab.VM_SETTINGS,
         isValid,
         hasAllRequiredFilled,
-        error,
+        errorKey,
+        fieldKeys,
       ),
     );
   }

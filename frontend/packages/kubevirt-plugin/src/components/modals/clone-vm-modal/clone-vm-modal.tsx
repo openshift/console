@@ -38,13 +38,13 @@ import {
   getVolumes,
   isVMExpectedRunning,
 } from '../../../selectors/vm';
-import { VIRTUAL_MACHINE_EXISTS } from '../../../utils/validations/strings';
 import { Errors } from '../../errors/errors';
 import { COULD_NOT_LOAD_DATA } from '../../../utils/strings';
 import { ConfigurationSummary } from './configuration-summary';
 
 import './_clone-vm-modal.scss';
 import { V1alpha1DataVolume } from 'packages/kubevirt-plugin/src/types/vm/disk/V1alpha1DataVolume';
+import { useTranslation } from 'react-i18next';
 
 export const CloneVMModal = withHandlePromise<CloneVMModalProps>((props) => {
   const {
@@ -63,6 +63,7 @@ export const CloneVMModal = withHandlePromise<CloneVMModalProps>((props) => {
     close,
     cancel,
   } = props;
+  const { t } = useTranslation();
   const asId = prefixedID.bind(null, 'clone-dialog-vm');
 
   const [name, setName] = React.useState(`${getName(vm)}-clone`);
@@ -82,8 +83,9 @@ export const CloneVMModal = withHandlePromise<CloneVMModalProps>((props) => {
   const dataVolumesData = getLoadedData<V1alpha1DataVolume[]>(dataVolumes, []);
 
   const nameError = validateVmLikeEntityName(name, namespace, getLoadedData(virtualMachines, []), {
-    existsErrorMessage: VIRTUAL_MACHINE_EXISTS,
-    subject: 'Name',
+    // t('kubevirt-plugin~Name is already used by another virtual machine in this namespace')
+    existsErrorMessage:
+      'kubevirt-plugin~Name is already used by another virtual machine in this namespace',
   });
 
   const dataVolumesValid = !(dataVolumesError || (requestsDataVolumes && !dataVolumes.loaded));
@@ -147,7 +149,7 @@ export const CloneVMModal = withHandlePromise<CloneVMModalProps>((props) => {
             validated={
               !(nameError && nameError.type === ValidationErrorType.Error) ? 'default' : 'error'
             }
-            helperTextInvalid={nameError && nameError.message}
+            helperTextInvalid={t(nameError.messageKey)}
           >
             <TextInput
               validated={

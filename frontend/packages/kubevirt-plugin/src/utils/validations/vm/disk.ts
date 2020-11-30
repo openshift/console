@@ -1,16 +1,13 @@
 import {
-  addMissingSubject,
   asValidationObject,
-  makeSentence,
   validateDNS1123SubdomainValue,
   ValidationErrorType,
   ValidationObject,
 } from '@console/shared';
-import { validateTrim, validateURL } from '../common';
+import { validateContainer, validateURL } from '../common';
 import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
 import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
-import { POSITIVE_SIZE_ERROR } from '../strings';
 import { StorageUISource } from '../../../components/modals/disk-modal/storage-ui-source';
 import { CombinedDisk } from '../../../k8s/wrapper/vm/combined-disk';
 import { PersistentVolumeClaimWrapper } from '../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
@@ -20,14 +17,24 @@ import { UIStorageValidation } from '../../../types/ui/storage';
 import { VolumeType } from '../../../constants';
 
 const validateDiskName = (name: string, usedDiskNames: Set<string>): ValidationObject => {
-  let validation = validateDNS1123SubdomainValue(name);
-
-  if (validation) {
-    validation.message = addMissingSubject(validation.message, 'Name');
-  }
+  let validation = validateDNS1123SubdomainValue(name, {
+    // t('kubevirt-plugin~Disk name cannot be empty')
+    // t('kubevirt-plugin~Disk name name can contain only alphanumberic characters')
+    // t('kubevirt-plugin~Disk name cannot start/end with dash')
+    // t('kubevirt-plugin~Disk name cannot contain uppercase characters')
+    // t('kubevirt-plugin~Disk name is too long')
+    // t('kubevirt-plugin~Disk name is too short')
+    emptyMsg: 'kubevirt-plugin~Disk name cannot be empty',
+    errorMsg: 'kubevirt-plugin~Disk name name can contain only alphanumberic characters',
+    dashMsg: 'kubevirt-plugin~Disk name cannot start/end with dash',
+    uppercaseMsg: 'kubevirt-plugin~Disk name cannot contain uppercase characters',
+    longMsg: 'kubevirt-plugin~Disk name is too long',
+    shortMsg: 'kubevirt-plugin~Disk name is too short',
+  });
 
   if (!validation && usedDiskNames && usedDiskNames.has(name)) {
-    validation = asValidationObject('Disk with this name already exists!');
+    // t('kubevirt-plugin~Disk with this name already exists!')
+    validation = asValidationObject('kubevirt-plugin~Disk with this name already exists!');
   }
 
   return validation;
@@ -35,17 +42,16 @@ const validateDiskName = (name: string, usedDiskNames: Set<string>): ValidationO
 
 const validatePVCName = (pvcName: string, usedPVCNames: Set<string>): ValidationObject => {
   if (usedPVCNames && usedPVCNames.has(pvcName)) {
-    asValidationObject('PVC with this name is already used by this VM!');
+    // t('kubevirt-plugin~PVC with this name is already used by this VM!')
+    asValidationObject('kubevirt-plugin~PVC with this name is already used by this VM!');
   }
 
   return null;
 };
 
 const getEmptyDiskSizeValidation = (): ValidationObject =>
-  asValidationObject(
-    makeSentence(addMissingSubject(POSITIVE_SIZE_ERROR, 'Size')),
-    ValidationErrorType.TrivialError,
-  );
+  // t('kubevirt-plugin~Size must be positive')
+  asValidationObject('kubevirt-plugin~Size must be positive', ValidationErrorType.TrivialError);
 
 export const validateDisk = (
   disk: DiskWrapper,
@@ -95,7 +101,7 @@ export const validateDisk = (
   if (source.requiresURL()) {
     const url = dataVolume && dataVolume.getURL();
     addRequired(url);
-    validations.url = validateURL(url, { subject: 'URL' });
+    validations.url = validateURL(url);
   }
 
   if (source.requiresContainerImage()) {
@@ -104,7 +110,7 @@ export const validateDisk = (
         ? volume.getContainerImage()
         : dataVolume?.getContainer();
     addRequired(container);
-    validations.container = validateTrim(container, { subject: 'Container' });
+    validations.container = validateContainer(container);
   }
 
   if (source.requiresDatavolume()) {

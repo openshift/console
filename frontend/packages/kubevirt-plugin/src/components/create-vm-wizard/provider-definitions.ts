@@ -1,7 +1,7 @@
 import { getVmWareInitialState } from './redux/initial-state/providers/vmware-initial-state';
 import { VMImportProvider } from './types';
 import { getVMWareProviderStateUpdater } from './redux/state-update/providers/vmware/vmware-state-update';
-import { UpdateOptions } from './redux/types';
+import { UpdateOptions, Validation } from './redux/types';
 import { cleanupVmWareProvider } from './redux/state-update/providers/vmware/vmware-cleanup';
 import {
   getV2VVMwareImportProvidersTabValidity,
@@ -21,9 +21,7 @@ type Provider = {
   name: string;
   getInitialState?: () => any;
   getStateUpdater?: (options: UpdateOptions) => any;
-  getImportProvidersTabValidity?: (
-    options: UpdateOptions,
-  ) => { hasAllRequiredFilled: boolean; isValid: boolean; error: string };
+  getImportProvidersTabValidity?: (options: UpdateOptions) => Validation;
   validate?: (options: UpdateOptions) => any;
   cleanup?: (options: UpdateOptions) => any;
 };

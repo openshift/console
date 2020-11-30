@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { getBooleanAsEnabledValue } from '../../../../utils/strings';
 import { iGetCloudInitNoCloudStorage } from '../../selectors/immutable/storage';
@@ -6,13 +7,14 @@ import { iGetCloudInitNoCloudStorage } from '../../selectors/immutable/storage';
 import './review-tab.scss';
 
 const AdvancedReviewConnected: React.FC<AdvancedReviewConnectedProps> = (props) => {
+  const { t } = useTranslation();
   const { cloudInitEnabled } = props;
 
   const cloudInitEnabledValue = getBooleanAsEnabledValue(cloudInitEnabled);
 
   return (
     <dl className="kubevirt-create-vm-modal__review-tab__data-list">
-      <dt>Cloud Init</dt>
+      <dt>{t('kubevirt-plugin~Cloud Init')}</dt>
       <dd id="wizard-review-cloud_init">{cloudInitEnabledValue}</dd>
     </dl>
   );

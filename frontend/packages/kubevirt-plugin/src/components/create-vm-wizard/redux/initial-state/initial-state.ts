@@ -61,7 +61,7 @@ export const getTabInitialState = (tabKey: VMWizardTab, data: CommonData): VMWiz
     // default state
     tabState = {
       value: {},
-      error: null,
+      errorKey: null,
       isPending: null,
       isValid: false,
       isLocked: false,

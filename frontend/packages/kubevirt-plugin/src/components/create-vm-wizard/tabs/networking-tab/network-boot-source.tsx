@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Form, FormSelect, FormSelectOption } from '@patternfly/react-core';
 import { ValidationErrorType } from '@console/shared';
 import { VMWizardNetwork } from '../../types';
-import { PXE_INFO, PXE_NIC_NOT_FOUND_ERROR, SELECT_PXE_NIC } from '../../strings/networking';
 import { FormRow } from '../../../form/form-row';
 import { FormSelectPlaceholderOption } from '../../../form/form-select-placeholder-option';
 import { ignoreCaseSort } from '../../../../utils/sort';
@@ -24,6 +24,7 @@ export const NetworkBootSource: React.FC<NetworkBootSourceProps> = ({
   networks,
   className,
 }) => {
+  const { t } = useTranslation();
   const pxeNetworks = networks
     .map(({ networkInterface, network, id }) => ({
       networkInterfaceWrapper: new NetworkInterfaceWrapper(networkInterface),
@@ -41,12 +42,15 @@ export const NetworkBootSource: React.FC<NetworkBootSourceProps> = ({
   return (
     <Form className={className}>
       <FormRow
-        title="Boot Source"
+        title={t('kubevirt-plugin~Boot Source')}
         fieldId={PXE_BOOTSOURCE_ID}
-        validationMessage={!hasPXENetworks && PXE_NIC_NOT_FOUND_ERROR}
+        validationMessage={
+          !hasPXENetworks &&
+          t('kubevirt-plugin~A PXE-capable network interface could not be found.')
+        }
         validationType={!hasPXENetworks && ValidationErrorType.Error}
         isRequired
-        help={PXE_INFO}
+        help={t('kubevirt-plugin~Pod network is not PXE bootable')}
       >
         <FormSelect
           id={PXE_BOOTSOURCE_ID}
@@ -55,7 +59,10 @@ export const NetworkBootSource: React.FC<NetworkBootSourceProps> = ({
           isRequired
           isDisabled={isDisabled}
         >
-          <FormSelectPlaceholderOption isDisabled placeholder={SELECT_PXE_NIC} />
+          <FormSelectPlaceholderOption
+            isDisabled
+            placeholder={t('kubevirt-plugin~--- Select PXE network interface ---')}
+          />
           {ignoreCaseSort(pxeNetworks, null, (n) => n.networkInterfaceWrapper.getName()).map(
             (network) => (
               <FormSelectOption

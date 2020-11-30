@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import {
   Alert,
@@ -38,6 +39,7 @@ const Errors: React.FC<ErrorsProps> = ({
   goToStep,
   setTabLocked,
 }) => {
+  const { t } = useTranslation();
   const onActionResolver = React.useCallback(
     (action: Action) => () => {
       if (action) {
@@ -86,27 +88,36 @@ const Errors: React.FC<ErrorsProps> = ({
 
   return (
     <Alert
-      title={hasAllRequiredFilled ? 'Some fields are incorrect' : 'Additional fields required'}
+      title={
+        hasAllRequiredFilled
+          ? t('kubevirt-plugin~Some fields are incorrect')
+          : t('kubevirt-plugin~Additional fields required')
+      }
       isInline
       variant={AlertVariant.danger}
       className="kv-create-vm-modal__wizard-errors"
     >
       <p>
-        {`The following fields must be ${
-          hasAllRequiredFilled ? 'fixed' : 'completed'
-        } before importing this virtual machine`}
+        {hasAllRequiredFilled
+          ? t(
+              'kubevirt-plugin~The following fields must be fixed before importing this virtual machine',
+            )
+          : t(
+              'kubevirt-plugin~The following fields must be completed before importing this virtual machine',
+            )}
       </p>
       <ul className="kv-create-vm-modal__wizard-errors-errors-list">
         {errors.map(({ id: errorID, path }) => (
           <li key={errorID}>
             <Breadcrumb className="kv-create-vm-modal__wizard-errors-errors-list-item">
-              {path.map(({ id, name, action }, idx) => {
+              {path.map(({ id, name, nameKey, action }, idx) => {
+                const componentText = nameKey ? t(nameKey) : name;
                 const component = action ? (
                   <Button isInline onClick={onActionResolver(action)} variant={ButtonVariant.link}>
-                    {name}
+                    {componentText}
                   </Button>
                 ) : (
-                  <>{name}</>
+                  <>{componentText}</>
                 );
                 return idx === path.length - 1 ? (
                   <BreadcrumbHeading key={id}>{component}</BreadcrumbHeading>

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { ValidationObject } from '@console/shared';
-import { getFieldHelp, getFieldId, getFieldTitle } from '../utils/renderable-field-utils';
+import { getFieldHelpKey, getFieldId, getFieldTitleKey } from '../utils/renderable-field-utils';
 import { iGetFieldValue, isFieldHidden, isFieldRequired } from '../selectors/immutable/field';
 import { iGet, iGetIn, iGetIsLoaded } from '../../../utils/immutable';
 import { FormRow } from '../../form/form-row';
@@ -14,6 +15,7 @@ const isLoading = (loadingResources?: { [k: string]: any }) =>
 
 export const FormFieldInnerRow: React.FC<FieldFormInnerRowProps> = React.memo(
   ({ field, fieldType, fieldHelp, children, loadingResources, validation, className }) => {
+    const { t } = useTranslation();
     const fieldKey = iGet(field, 'key');
     const loading = isLoading(loadingResources);
 
@@ -21,11 +23,13 @@ export const FormFieldInnerRow: React.FC<FieldFormInnerRowProps> = React.memo(
       <FormRow
         key={fieldKey}
         fieldId={getFieldId(fieldKey)}
-        title={fieldType === FormFieldType.INLINE_CHECKBOX ? undefined : getFieldTitle(fieldKey)}
-        help={fieldHelp || getFieldHelp(fieldKey, iGetFieldValue(field))}
+        title={
+          fieldType === FormFieldType.INLINE_CHECKBOX ? undefined : t(getFieldTitleKey(fieldKey))
+        }
+        help={fieldHelp || t(getFieldHelpKey(fieldKey, iGetFieldValue(field)))}
         isRequired={isFieldRequired(field)}
         isHidden={isFieldHidden(field)}
-        validationMessage={validation ? undefined : iGetIn(field, ['validation', 'message'])}
+        validationMessage={validation ? undefined : t(iGetIn(field, ['validation', 'messageKey']))}
         validationType={validation ? undefined : iGetIn(field, ['validation', 'type'])}
         isLoading={loading}
         validation={validation}
@@ -55,7 +59,7 @@ export const FormFieldInnerMemoRow = React.memo(
     prevProps.field === nextProps.field &&
     prevProps.fieldType === nextProps.fieldType &&
     _.get(prevProps.validation, ['type']) === _.get(nextProps.validation, ['type']) &&
-    _.get(prevProps.validation, ['message']) === _.get(nextProps.validation, ['message']) &&
+    _.get(prevProps.validation, ['messageKey']) === _.get(nextProps.validation, ['messageKey']) &&
     isLoading(prevProps.loadingResources) === isLoading(nextProps.loadingResources),
 );
 

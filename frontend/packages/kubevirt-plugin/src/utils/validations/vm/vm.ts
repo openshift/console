@@ -6,7 +6,7 @@ import {
   ValidationObject,
 } from '@console/shared';
 import { ProvisionSource } from '../../../constants/vm/provision-source';
-import { getValidationByType, validateEntityAlreadyExists } from '../common';
+import { validateEntityAlreadyExists } from '../common';
 import { UIValidation, UIValidationType } from '../../../types/ui/ui';
 
 export const validateVmLikeEntityName = (
@@ -15,26 +15,39 @@ export const validateVmLikeEntityName = (
   vmLikeEntities,
   {
     existsErrorMessage,
-    subject,
     validations,
-  }: { existsErrorMessage: string; subject: string; validations?: UIValidation[] } = {
+  }: { existsErrorMessage: string; validations?: UIValidation[] } = {
     existsErrorMessage: undefined,
-    subject: undefined,
     validations: undefined,
   },
 ): ValidationObject => {
-  const lenValidation = getValidationByType(validations, UIValidationType.LENGTH);
-  const dnsValidation = validateDNS1123SubdomainValue(value, {
-    subject,
-    min: lenValidation?.settings?.min,
-    max: lenValidation?.settings?.max,
-  });
+  const lenValidation = validations?.find((val) => val.type === UIValidationType.LENGTH);
+  const dnsValidation = validateDNS1123SubdomainValue(
+    value,
+    {
+      // t('kubevirt-plugin~VM name cannot be empty')
+      // t('kubevirt-plugin~VM name name can contain only alphanumberic characters')
+      // t('kubevirt-plugin~VM name cannot start/end with dash')
+      // t('kubevirt-plugin~VM name cannot contain uppercase characters')
+      // t('kubevirt-plugin~VM name is too long')
+      // t('kubevirt-plugin~VM name is too short')
+      emptyMsg: 'kubevirt-plugin~VM name cannot be empty',
+      errorMsg: 'kubevirt-plugin~VM name name can contain only alphanumberic characters',
+      dashMsg: 'kubevirt-plugin~VM name cannot start/end with dash',
+      uppercaseMsg: 'kubevirt-plugin~VM name cannot contain uppercase characters',
+      longMsg: 'kubevirt-plugin~VM name is too long',
+      shortMsg: 'kubevirt-plugin~VM name is too short',
+    },
+    {
+      min: lenValidation?.settings?.min,
+      max: lenValidation?.settings?.max,
+    },
+  );
 
   return dnsValidation && dnsValidation.type === ValidationErrorType.Error
     ? dnsValidation
     : validateEntityAlreadyExists(value, namespace, vmLikeEntities, {
         errorMessage: existsErrorMessage,
-        subject,
       });
 };
 
@@ -45,7 +58,10 @@ export const validateUserTemplateProvisionSource = (
     convertTemplateDataVolumesToAttachClonedDisk: true,
   });
 
+  // t('kubevirt-plugin~Could not select Provision Source. {{ error }}')
   return provisionSourceDetails.error
-    ? asValidationObject(`Could not select Provision Source. ${provisionSourceDetails.error}`)
+    ? asValidationObject(
+        `kubevirt-plugin~Could not select Provision Source. ${provisionSourceDetails.error}`,
+      )
     : null;
 };

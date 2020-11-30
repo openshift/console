@@ -1,15 +1,11 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Form, FormSelect, FormSelectOption } from '@patternfly/react-core';
 import { ValidationErrorType } from '@console/shared';
 import { VMWizardStorage } from '../../types';
 import { FormRow } from '../../../form/form-row';
 import { FormSelectPlaceholderOption } from '../../../form/form-select-placeholder-option';
 import { ignoreCaseSort } from '../../../../utils/sort';
-import {
-  NO_BOOTABLE_ATTACHED_DISK_ERROR,
-  SELECT_BOOTABLE_DISK,
-  BOOTABLE_ATTACHED_DISK_MESSAGE,
-} from '../../strings/storage';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
@@ -30,6 +26,7 @@ export const StorageBootSource: React.FC<StorageBootOrderProps> = ({
   storages,
   className,
 }) => {
+  const { t } = useTranslation();
   const selectedStorage = storages.find((storage) =>
     new DiskWrapper(storage.disk).isFirstBootableDevice(),
   );
@@ -48,8 +45,11 @@ export const StorageBootSource: React.FC<StorageBootOrderProps> = ({
         fieldId={STORAGE_BOOT_SOURCE}
         validationMessage={
           selectedStorage
-            ? !isBootSourceValid && NO_BOOTABLE_ATTACHED_DISK_ERROR
-            : BOOTABLE_ATTACHED_DISK_MESSAGE
+            ? !isBootSourceValid &&
+              t(
+                'kubevirt-plugin~This disk does not have a source defined and can not be used as a boot source',
+              )
+            : t('kubevirt-plugin~A boot source disk must have a source and can not be blank')
         }
         validationType={
           selectedStorage
@@ -65,7 +65,10 @@ export const StorageBootSource: React.FC<StorageBootOrderProps> = ({
           isRequired
           isDisabled={isDisabled}
         >
-          <FormSelectPlaceholderOption isDisabled placeholder={SELECT_BOOTABLE_DISK} />
+          <FormSelectPlaceholderOption
+            isDisabled
+            placeholder={t('kubevirt-plugin~--- Select Bootable Disk ---')}
+          />
           {ignoreCaseSort(storages, null, (storage) => storage.disk?.name).map((storage) => (
             <FormSelectOption key={storage.id} value={storage.id} label={storage.disk?.name} />
           ))}

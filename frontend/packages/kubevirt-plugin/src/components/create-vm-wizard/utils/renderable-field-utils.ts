@@ -1,4 +1,3 @@
-import { assureEndsWith, joinGrammaticallyListOfItems, makeSentence } from '@console/shared/src';
 import {
   ImportProvidersField,
   VMSettingsField,
@@ -7,10 +6,12 @@ import {
   RenderableField,
   OvirtProviderField,
 } from '../types';
-import { helpResolver, placeholderResolver, titleResolver } from '../strings/renderable-field';
-import * as _ from 'lodash';
+import {
+  helpKeyResolver,
+  placeholderKeyResolver,
+  titleKeyResolver,
+} from '../strings/renderable-field';
 import { iGetFieldKey } from '../selectors/immutable/field';
-import { pluralize } from '../../../utils/strings';
 
 const renderableFieldOrder: { [key in RenderableField]: number } = {
   [ImportProvidersField.PROVIDER]: 0,
@@ -84,11 +85,10 @@ const idResolver: RenderableFieldResolver = {
 };
 
 export const getFieldId = (key: RenderableField) => idResolver[key];
-export const getFieldTitle = (key: RenderableField) => titleResolver[key];
-export const getFieldReadableTitle = (key: RenderableField) => titleResolver[key];
-export const getPlaceholder = (key: RenderableField) => placeholderResolver[key];
-export const getFieldHelp = (key: RenderableField, value: string) => {
-  const resolveFunction = helpResolver[key];
+export const getFieldTitleKey = (key: RenderableField) => titleKeyResolver[key];
+export const getPlaceholderKey = (key: RenderableField) => placeholderKeyResolver[key];
+export const getFieldHelpKey = (key: RenderableField, value: string) => {
+  const resolveFunction = helpKeyResolver[key];
   return resolveFunction ? resolveFunction(value) : null;
 };
 
@@ -107,19 +107,3 @@ export const sortFields = (fields: any[]) =>
 
     return aValue - bValue;
   });
-
-export const describeFields = (describe: string, fields: object[]) => {
-  if (fields && fields.length > 0) {
-    const describedFields = _.compact(
-      sortFields(fields).map((field) => getFieldReadableTitle(iGetFieldKey(field))),
-    );
-    return makeSentence(
-      `${assureEndsWith(describe, ' ')}the following ${pluralize(
-        fields.length,
-        'field',
-      )}: ${joinGrammaticallyListOfItems(describedFields)}.`,
-      false,
-    );
-  }
-  return null;
-};
