@@ -6,35 +6,37 @@ Folder structure of cypress cucumber framework
 
 ```
 frontend/packages/dev-console/integration-tests/
-├── support              <--- cypress cucumber support configurations
-|   ├── commands         <--- add commands to Cypress 'cy.' global, other support configurations
+├── support                 <--- cypress cucumber support configurations
+|   ├── commands            <--- add commands to Cypress 'cy.' global, other support configurations
 |   |   └── index.ts
-|   |   └── app.ts       <--- hooks are added in this file
-|   ├── constants        <--- enums required for dev-console scripts
+|   |   └── app.ts          <--- hooks are added in this file
+|   ├── pageObjects         <--- helper objects
+|   |   └── add-fow-po.ts   <--- helper objects related to add page - git, catalog, container
+|   ├── constants           <--- enums required for dev-console scripts
 │   |   └── add.ts
 |   |   └── global.ts
-|   ├── pages            <--- helper objects and page functions
-│   |   ├── add-flow     <--- Add flow related helper objects and page functions
+|   ├── pages               <--- page functions
+│   |   ├── add-flow        <--- Add flow related helper objects and page functions
 |   |   |   └──add-page.ts
-|   |   └── app.ts       <--- Re-usable helper objects and page functions
-|   ├── step-definitions <--- cucumber step implementations
-│   |   ├── common       <--- Re-usable dev-console step definitions
+|   |   └── app.ts          <--- Re-usable helper objects and page functions
+|   ├── step-definitions    <--- cucumber step implementations
+│   |   ├── common          <--- Re-usable dev-console step definitions
 |   |       └──common.ts
 |   |       └──project-creation.ts
 ├── features
-|   ├──  addFlow         <--- Add flow gherkin scenarios
+|   ├──  addFlow            <--- Add flow gherkin scenarios
 |   |    └──create-from-git.feature
-|   ├──  topology        <--- Topology gherkin scenarios
+|   ├──  topology           <--- Topology gherkin scenarios
 |   |    └──chart-area-visual.feature
-|   ├──  pipelines       <--- Pipelines gherkin scenarios
+|   ├──  pipelines          <--- Pipelines gherkin scenarios
 |   |    └──create-from-builder-page.feature
-|   ├──  knative         <--- Knative gherkin scenarios
+|   ├──  knative            <--- Knative gherkin scenarios
 |   |    └──create-event-sources.feature
-|   ├──  helm            <--- Helm gherkin scenarios
+|   ├──  helm               <--- Helm gherkin scenarios
 |   |    └──helm-navigation.feature
-|   ├──  BestPractices.md <--- Gherkin script standards
-├── fixtures             <--- Test data required for scripts
-├── cypress.json         <--- cypress configuration file
+|   ├──  BestPractices.md   <--- Gherkin script standards
+├── fixtures                <--- Test data required for scripts
+├── cypress.json            <--- cypress configuration file
 
 ```
 

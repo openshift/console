@@ -33,7 +33,7 @@ export enum gitAdvancedOptions {
   HealthChecks = 'Health Checks',
 }
 
-export enum caatalogCards {
+export enum catalogCards {
   mariaDB = 'MariaDB',
   dotnetCoreExample = '.NET Core Example',
   cakePhp = 'CakePHP + MySQL',

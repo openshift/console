@@ -45,6 +45,7 @@ const TopologyPageToolbar: React.FC<TopologyPageToolbarProps> = observer(
           <Button
             variant="link"
             className="pf-m-plain odc-topology__view-switcher"
+            data-test-id="topology-switcher-view"
             onClick={() =>
               onViewChange(showGraphView ? TopologyViewType.list : TopologyViewType.graph)
             }
