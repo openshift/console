@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { PrometheusHealthHandler, SubsystemHealth } from '@console/plugin-sdk';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import { mapMetrics } from './mappers';
+import { mapMetrics, isInitState } from './mappers';
 
 export const getClusterInsightsComponentStatus = (
   response: PrometheusResponse,
@@ -20,6 +20,9 @@ export const getClusterInsightsComponentStatus = (
   const values = mapMetrics(response);
   if (_.isNil(values)) {
     return { state: HealthState.UNKNOWN, message: 'Not available' };
+  }
+  if (isInitState(values)) {
+    return { state: HealthState.PROGRESS, message: 'Issues pending' };
   }
   const issuesNumber = Object.values(values).reduce((acc, cur) => acc + cur, 0);
   const issueStr = `${issuesNumber} ${issuesNumber === 1 ? 'issue' : 'issues'} found`;

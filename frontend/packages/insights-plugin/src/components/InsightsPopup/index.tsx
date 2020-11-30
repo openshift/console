@@ -1,6 +1,13 @@
 import * as React from 'react';
 import { ChartDonut, ChartLegend, ChartLabel } from '@patternfly/react-charts';
-import { riskIcons, colorScale, legendColorScale, riskSorting, mapMetrics } from './mappers';
+import {
+  riskIcons,
+  colorScale,
+  legendColorScale,
+  riskSorting,
+  mapMetrics,
+  isInitState,
+} from './mappers';
 import { PrometheusHealthPopupProps } from '@console/plugin-sdk';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ExternalLink } from '@console/internal/components/utils';
@@ -19,15 +26,24 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
   );
   const numberOfIssues = Object.values(resource).reduce((acc, cur) => acc + cur, 0);
   const hasIssues = riskEntries.length > 0 && numberOfIssues > 0;
+  const isInit = isInitState(resource);
 
   return (
     <div className="co-insights__box">
+      {!isInit && (
+        <div className="co-status-popup__section">
+          Insights identifies and prioritizes risks to security, performance, availability, and
+          stability of your clusters.
+        </div>
+      )}
+      {isInit && (
+        <div className="co-status-popup__section">
+          Your cluster has been identified, and Insights analyzes your cluster. The results will be
+          displayed shortly.
+        </div>
+      )}
       <div className="co-status-popup__section">
-        Insights identifies and prioritizes risks to security, performance, availability, and
-        stability of your clusters.
-      </div>
-      <div className="co-status-popup__section">
-        {hasIssues && (
+        {hasIssues && !isInit && (
           <div>
             <ChartDonut
               data={riskEntries.map(([k, v]) => ({
@@ -66,10 +82,12 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
             />
           </div>
         )}
-        {!hasIssues && <div className="co-insights__no-rules">No Insights data to display.</div>}
+        {(!hasIssues || isInit) && (
+          <div className="co-insights__no-rules">No Insights data to display.</div>
+        )}
       </div>
       <div className="co-status-popup__section">
-        {hasIssues && (
+        {hasIssues && !isInit && (
           <>
             <h6 className="pf-c-title pf-m-md">Fixable issues</h6>
             <div>
@@ -80,7 +98,15 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
             </div>
           </>
         )}
-        {!hasIssues && (
+        {isInit && (
+          <div>
+            <ExternalLink
+              href={`https://cloud.redhat.com/openshift/details/${clusterID}`}
+              text="Go to OpenShift Cluster Manager"
+            />
+          </div>
+        )}
+        {!hasIssues && !isInit && (
           <ExternalLink
             href="https://docs.openshift.com/container-platform/latest/support/getting-support.html"
             text="More about Insights"
