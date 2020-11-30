@@ -6,7 +6,7 @@ require (
 	github.com/coreos/dex v2.3.0+incompatible
 	github.com/coreos/go-oidc v2.1.0+incompatible
 	github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f
-	github.com/gorilla/websocket v1.4.0
+	github.com/gorilla/websocket v1.4.2
 	github.com/graph-gophers/graphql-go v0.0.0-20200309224638-dae41bde9ef9
 	github.com/openshift/library-go v0.0.0-20200424095618-2aeb4725dadf
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
