@@ -20,6 +20,7 @@ export const filterTemplates = (
       metadata: {
         name: t.metadata.name,
         uid: t.metadata.uid,
+        namespace: t.metadata.namespace,
       },
       isCommon: false,
       variants: [t],
@@ -34,6 +35,7 @@ export const filterTemplates = (
         metadata: {
           name: t.metadata.name,
           uid: t.metadata.uid,
+          namespace: t.metadata.namespace,
         },
         isCommon: true,
         variants: [t],
