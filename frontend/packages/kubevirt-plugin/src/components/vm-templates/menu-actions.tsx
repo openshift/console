@@ -106,7 +106,11 @@ export const menuActionsCreator = (
   const templateItem: TemplateItem = isTemplateItem(template)
     ? template
     : {
-        metadata: { name: template.metadata.name, uid: template.metadata.uid },
+        metadata: {
+          name: template.metadata.name,
+          uid: template.metadata.uid,
+          namespace: template.metadata.namespace,
+        },
         isCommon: isCommonTemplate(template),
         variants: [template],
       };

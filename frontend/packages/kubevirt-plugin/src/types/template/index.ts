@@ -29,6 +29,7 @@ export type TemplateItem = {
   metadata: {
     name: string;
     uid: string;
+    namespace: string;
   };
   isCommon: boolean;
   variants: TemplateKind[];
