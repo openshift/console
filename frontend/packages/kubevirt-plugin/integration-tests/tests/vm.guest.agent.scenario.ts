@@ -120,7 +120,7 @@ describe('Tests involving guest agent', () => {
       expect(disksView.fileSystemsTable).toBeDefined();
     });
 
-    it('ID(CNV-5488) Verify alert when trying to delete vm while users are logged-in', async () => {
+    it('ID(CNV-5472) Warn user when deleting a VM which has a logged in user	', async () => {
       await vmLinux.navigateToDetail();
       await vmActions(VM_ACTION.Delete, false);
       await browser.wait(until.visibilityOf(vmView.vmDeleteAlert));
