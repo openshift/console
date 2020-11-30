@@ -84,6 +84,8 @@ export const catalogPO = {
   search: 'input[placeholder="Filter by keyword..."]',
   card: 'a.pf-c-card',
   groupBy: '[data-test-id="dropdown-button"]',
+  aToz: '[data-test-dropdown-menu="desc"]',
+  zToA: '[data-test-dropdown-menu="asc"]',
   cardType: 'span.pf-c-badge',
   create: 'button[type="submit"]',
   cancel: '[data-test-id="reset-button"]',
