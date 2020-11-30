@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { Node, SELECTION_EVENT } from '@patternfly/react-topology';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { Alert } from '@console/internal/components/monitoring/types';
@@ -39,6 +40,7 @@ const MonitoringAlertsDecorator: React.FC<MonitoringAlertsDecoratorType> = ({
   y,
   showMonitoringOverview,
 }) => {
+  const { t } = useTranslation();
   const firingAlerts = getFiringAlerts(monitoringAlerts);
   const severityAlertType = getSeverityAlertType(firingAlerts);
 
@@ -54,7 +56,11 @@ const MonitoringAlertsDecorator: React.FC<MonitoringAlertsDecoratorType> = ({
   if (shouldHideMonitoringAlertDecorator(severityAlertType)) return null;
 
   return (
-    <Tooltip key="monitoringAlert" content="Monitoring Alert" position={TooltipPosition.left}>
+    <Tooltip
+      key="monitoringAlert"
+      content={t('topology~Monitoring Alert')}
+      position={TooltipPosition.left}
+    >
       <Decorator x={x} y={y} radius={radius} onClick={showSidebar}>
         <g transform={`translate(-${radius / 2}, -${radius / 2})`}>
           <AlertSeverityIcon severityAlertType={severityAlertType} fontSize={radius} />

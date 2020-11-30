@@ -23,7 +23,8 @@ const healthChecksUrl = (model: K8sKind, obj: K8sResourceKind): string => {
 
 export const AddHealthChecks = (model: K8sKind, obj: K8sResourceKind): KebabOption => {
   return {
-    label: 'Add Health Checks',
+    // t('console-app~Add Health Checks')
+    labelKey: 'console-app~Add Health Checks',
     hidden: healthChecksAdded(obj),
     href: healthChecksUrl(model, obj),
     accessReview: {
@@ -38,7 +39,8 @@ export const AddHealthChecks = (model: K8sKind, obj: K8sResourceKind): KebabOpti
 
 export const EditHealthChecks = (model: K8sKind, obj: K8sResourceKind): KebabOption => {
   return {
-    label: 'Edit Health Checks',
+    // t('console-app~Edit Health Checks')
+    labelKey: 'console-app~Edit Health Checks',
     hidden: !healthChecksAdded(obj),
     href: healthChecksUrl(model, obj),
     accessReview: {

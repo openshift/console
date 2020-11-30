@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { Trans, useTranslation } from 'react-i18next';
 import {
   Toolbar,
   ToolbarGroup,
@@ -53,6 +54,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
   viewType,
   namespace,
 }) => {
+  const { t } = useTranslation();
   const { filters, setTopologyFilters: onFiltersChange } = React.useContext(FilterContext);
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
@@ -96,7 +98,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
         <ToolbarGroup variant={ToolbarGroupVariant['filter-group']}>
           <ToolbarItem>
             <TextFilter
-              placeholder="Find by name..."
+              placeholder={t('topology~Find by name...')}
               value={searchQuery}
               autoFocus
               onChange={onTextFilterChange}
@@ -106,10 +108,10 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
           {viewType === TopologyViewType.graph ? (
             <ToolbarItem>
               <Popover
-                aria-label="Find by name"
+                aria-label={t('topology~Find by name')}
                 position="left"
                 bodyContent={
-                  <>
+                  <Trans ns="topology">
                     Search results may appear outside of the visible area.{' '}
                     <Button
                       variant="link"
@@ -119,7 +121,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
                       Click here
                     </Button>{' '}
                     to fit to the screen.
-                  </>
+                  </Trans>
                 }
               >
                 <Button variant="link" className="odc-topology-filter-bar__info-icon">
@@ -131,7 +133,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
         </ToolbarGroup>
         {kialiLink && (
           <ToolbarItem className="odc-topology-filter-bar__kiali-link">
-            <ExternalLink href={kialiLink} text="Kiali" />
+            <ExternalLink href={kialiLink} text={t('topology~Kiali')} />
           </ToolbarItem>
         )}
       </ToolbarContent>

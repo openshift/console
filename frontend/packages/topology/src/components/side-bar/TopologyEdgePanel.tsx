@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { Edge, isNode, Node } from '@patternfly/react-topology';
 import { ActionsMenu } from '@console/internal/components/utils';
 import { TYPE_CONNECTS_TO, TYPE_SERVICE_BINDING, TYPE_TRAFFIC_CONNECTOR } from '../../const';
@@ -10,20 +11,24 @@ type TopologyEdgePanelProps = {
   edge: Edge;
 };
 
-const connectorTypeToTitle = (type: string): string => {
+const connectorTypeToTitleKey = (type: string): string => {
   switch (type) {
     case TYPE_CONNECTS_TO:
-      return 'Visual connector';
+      // t('topology~Visual connector')
+      return 'topology~Visual connector';
     case TYPE_SERVICE_BINDING:
-      return 'Binding connector';
+      // t('topology~Binding connector')
+      return 'topology~Binding connector';
     case TYPE_TRAFFIC_CONNECTOR:
-      return 'Traffic connector';
+      // t('topology~Traffic connector')
+      return 'topology~Traffic connector';
     default:
       return '';
   }
 };
 
 const TopologyEdgePanel: React.FC<TopologyEdgePanelProps> = ({ edge }) => {
+  const { t } = useTranslation();
   const nodes = edge
     .getController()
     .getElements()
@@ -34,7 +39,7 @@ const TopologyEdgePanel: React.FC<TopologyEdgePanelProps> = ({ edge }) => {
       <div className="overview__sidebar-pane-head resource-overview__heading">
         <h1 className="co-m-pane__heading">
           <div className="co-m-pane__name co-resource-item">
-            {connectorTypeToTitle(edge.getType())}
+            {t(connectorTypeToTitleKey(edge.getType()))}
           </div>
           <div className="co-actions">
             <ActionsMenu actions={edgeActions(edge, nodes)} />
@@ -50,7 +55,7 @@ const TopologyEdgePanel: React.FC<TopologyEdgePanelProps> = ({ edge }) => {
         )}
       >
         <li className="co-m-horizontal-nav__menu-item">
-          <button type="button">Resources</button>
+          <button type="button">{t('topology~Resources')}</button>
         </li>
       </ul>
       <TopologyEdgeResourcesPanel edge={edge} />

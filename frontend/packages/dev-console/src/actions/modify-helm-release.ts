@@ -10,7 +10,8 @@ export const deleteHelmRelease = (releaseName: string, namespace: string, redire
         blocking: true,
         resourceName: releaseName,
         resourceType: 'Helm Release',
-        actionLabel: 'Uninstall',
+        // t('devconsole~Uninstall')
+        actionLabelKey: 'devconsole~Uninstall',
         redirect,
         onSubmit: () => {
           return coFetchJSON.delete(

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   DataList,
@@ -67,6 +68,7 @@ const TopologyListViewNode: React.FC<TopologyListViewNodeProps & DispatchProps> 
   noPods = false,
   children,
 }) => {
+  const { t } = useTranslation();
   const [filtered] = useSearchFilter(item.getLabel());
   if (!item.isVisible) {
     return null;
@@ -82,7 +84,11 @@ const TopologyListViewNode: React.FC<TopologyListViewNodeProps & DispatchProps> 
     };
     const severityAlertType = getSeverityAlertType(alerts);
     alertIndicator = shouldHideMonitoringAlertDecorator(severityAlertType) ? null : (
-      <Tooltip key="monitoringAlert" content="Monitoring Alert" position={TooltipPosition.right}>
+      <Tooltip
+        key="monitoringAlert"
+        content={t('topology~Monitoring Alert')}
+        position={TooltipPosition.right}
+      >
         <Button
           variant="plain"
           className="odc-topology-list-view__alert-button"

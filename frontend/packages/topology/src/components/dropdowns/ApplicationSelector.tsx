@@ -4,12 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useFormikContext, FormikValues, useField } from 'formik';
 import { FormGroup, TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
 import { InputField, getFieldId, useFormikValidationFix } from '@console/shared';
-import {
-  CREATE_APPLICATION_KEY,
-  CREATE_APPLICATION_LABEL,
-  UNASSIGNED_KEY,
-  UNASSIGNED_LABEL,
-} from '../../const';
+import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '../../const';
 import { sanitizeApplicationValue } from '../../utils/application-utils';
 import ApplicationDropdown from './ApplicationDropdown';
 
@@ -64,11 +59,11 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
 
   const actionItems = [
     {
-      actionTitle: CREATE_APPLICATION_LABEL,
+      actionTitle: t('topology~Create Application'),
       actionKey: CREATE_APPLICATION_KEY,
     },
     {
-      actionTitle: UNASSIGNED_LABEL,
+      actionTitle: t('topology~no application group'),
       actionKey: UNASSIGNED_KEY,
     },
   ];
@@ -90,8 +85,7 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
           helperTextInvalid={errorMessage}
           validated={isValid ? 'default' : 'error'}
           helperText={t(
-            'topology~Select an application for your grouping or {{UNASSIGNED_LABEL}} to not use an application grouping.',
-            { UNASSIGNED_LABEL },
+            'topology~Select an application for your grouping or no application group to not use an application grouping.',
           )}
         >
           <ApplicationDropdown

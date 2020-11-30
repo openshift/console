@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { action } from 'mobx';
+import i18next from 'i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { errorModal } from '@console/internal/components/modals';
 import {
@@ -271,7 +272,7 @@ const edgeDragSourceSpec = (
     targetNode: Node,
     replaceTargetNode?: Node,
   ) => Promise<K8sResourceKind[] | K8sResourceKind>,
-  failureTitle: string = 'Error moving connection',
+  failureTitle?: string,
 ): DragSourceSpec<
   DragObjectWithType,
   DragSpecOperationType<EditableDragOperationType>,
@@ -295,8 +296,10 @@ const edgeDragSourceSpec = (
       dropResult &&
       canDropEdgeOnNode(monitor.getOperation()?.type, props.element, dropResult)
     ) {
+      const title =
+        failureTitle !== undefined ? failureTitle : i18next.t('topology~Error moving connection');
       callback(props.element.getSource(), dropResult, props.element.getTarget()).catch((error) => {
-        errorModal({ title: failureTitle, error: error.message, showIcon: true });
+        errorModal({ title, error: error.message, showIcon: true });
       });
     }
   },
@@ -333,7 +336,7 @@ const createVisualConnector = (source: Node, target: Node | Graph): React.ReactE
   }
 
   createConnection(source, target, null).catch((error) => {
-    errorModal({ title: 'Error creating connection', error: error.message });
+    errorModal({ title: i18next.t('topology~Error creating connection'), error: error.message });
   });
 
   return null;

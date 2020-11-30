@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   GroupVersionKind,
   K8sResourceKind,
@@ -42,9 +43,15 @@ const OperatorResources: React.FC<OperatorResourcesProps> = ({
   flatten,
   linkForResource,
 }) => {
+  const { t } = useTranslation();
   const manifestResources = flatten(resources);
   return (
-    <StatusBox data={manifestResources} loaded={loaded} loadError={loadError} label="Resources">
+    <StatusBox
+      data={manifestResources}
+      loaded={loaded}
+      loadError={loadError}
+      label={t('topology~Resources')}
+    >
       <TopologyGroupResourcesPanel
         manifestResources={manifestResources}
         releaseNamespace={namespace}

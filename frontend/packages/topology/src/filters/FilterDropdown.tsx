@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Radio,
   Select,
@@ -27,6 +28,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
   onChange,
   opened = false,
 }) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = React.useState(opened);
   const showGroups = filters?.find((f) => f.id === SHOW_GROUPS_FILTER_ID)?.value ?? true;
   const groupsExpanded = filters?.find((f) => f.id === EXPAND_GROUPS_FILTER_ID)?.value ?? true;
@@ -84,7 +86,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
             className="odc-topology-filter-dropdown__radio"
             id="showGroups"
             isChecked={showGroups}
-            label="Connectivity"
+            label={t('topology~Connectivity')}
             name="Connectivity"
             onChange={() => onShowGroupsChange(true)}
           />
@@ -92,7 +94,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
             className="odc-topology-filter-dropdown__radio"
             id="hideGroups"
             isChecked={!showGroups}
-            label="Consumption"
+            label={t('topology~Consumption')}
             name="Consumption"
             onChange={() => onShowGroupsChange(false)}
           />
@@ -103,7 +105,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
           <span className="odc-topology-filter-dropdown__expand-groups-switcher">
             <span className="pf-c-select__menu-group-title">Expand</span>
             <Switch
-              aria-label="Collapse Groups"
+              aria-label={t('topology~Collapse Groups')}
               isChecked={groupsExpanded}
               onChange={onGroupsExpandedChange}
               isDisabled={!showGroups}
@@ -117,7 +119,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
                 isDisabled={!groupsExpanded || !showGroups}
                 isChecked={filter.value}
               >
-                {filter.label}
+                {filter.labelKey ? t(filter.labelKey) : filter.label}
               </SelectOption>
             ))}
           </SelectGroup>
@@ -125,10 +127,10 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
       ) : null}
       {viewType === TopologyViewType.graph && showFilters.length ? (
         <div className="odc-topology-filter-dropdown__group">
-          <SelectGroup label="Show">
+          <SelectGroup label={t('topology~Show')}>
             {showFilters.map((filter) => (
               <SelectOption key={filter.id} value={filter.id} isChecked={filter.value}>
-                {filter.label}
+                {filter.labelKey ? t(filter.labelKey) : filter.label}
               </SelectOption>
             ))}
           </SelectGroup>
@@ -145,7 +147,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
       onToggle={onToggle}
       isOpen={isOpen}
       onSelect={onSelect}
-      placeholderText="Display Options"
+      placeholderText={t('topology~Display Options')}
       isGrouped
       isCheckboxSelectionBadgeHidden
     />

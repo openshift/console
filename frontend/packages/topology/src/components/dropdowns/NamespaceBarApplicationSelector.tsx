@@ -10,7 +10,6 @@ import {
 import { setActiveApplication } from '@console/internal/actions/ui';
 import { RootState } from '@console/internal/redux';
 import { getActiveNamespace, getActiveApplication } from '@console/internal/reducers/ui';
-import { UNASSIGNED_LABEL } from '../../const';
 import ApplicationDropdown from './ApplicationDropdown';
 
 interface NamespaceBarApplicationSelectorProps {
@@ -36,7 +35,7 @@ const NamespaceBarApplicationSelector: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   const allApplicationsTitle = t('topology~all applications');
-  const noApplicationsTitle = UNASSIGNED_LABEL;
+  const noApplicationsTitle = t('topology~no application group');
   const dropdownTitle: string =
     application === ALL_APPLICATIONS_KEY
       ? allApplicationsTitle

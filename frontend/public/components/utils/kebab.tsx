@@ -38,15 +38,20 @@ export const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] =>
 
   options.forEach((o) => {
     if (!o.hidden) {
-      if (o.path) {
-        const parts = o.path.split('/');
+      if (o.pathKey || o.path) {
+        const parts = o.pathKey ? o.pathKey.split('/') : o.path.split('/');
         parts.forEach((p, i) => {
           let subMenu = subs[p];
           if (!subs[p]) {
-            subMenu = {
-              label: p,
-              children: [],
-            };
+            subMenu = o.pathKey
+              ? {
+                  labelKey: p,
+                  children: [],
+                }
+              : {
+                  label: p,
+                  children: [],
+                };
             subs[p] = subMenu;
             if (i === 0) {
               menuOptions.push(subMenu);
@@ -107,6 +112,7 @@ type KebabSubMenuProps = {
 };
 
 const KebabSubMenu: React.FC<KebabSubMenuProps> = ({ option, onClick }) => {
+  const { t } = useTranslation();
   const [open, setOpen] = React.useState(false);
   const nodeRef = React.useRef(null);
   const subMenuRef = React.useRef(null);
@@ -119,7 +125,7 @@ const KebabSubMenu: React.FC<KebabSubMenuProps> = ({ option, onClick }) => {
       <button
         ref={nodeRef}
         className="oc-kebab__sub pf-c-dropdown__menu-item"
-        data-test-action={option.label}
+        data-test-action={option.labelKey || option.label}
         // mouse enter will open the sub menu
         onMouseEnter={() => setOpen(true)}
         onMouseLeave={(e) => {
@@ -136,7 +142,7 @@ const KebabSubMenu: React.FC<KebabSubMenuProps> = ({ option, onClick }) => {
           }
         }}
       >
-        {option.label}
+        {option.labelKey ? t(option.labelKey) : option.label}
         <AngleRightIcon className="oc-kebab__arrow" />
       </button>
       <Popper
@@ -552,6 +558,7 @@ export type KebabOption = {
   // a `/` separated string where each segment denotes a new sub menu entry
   // Eg. `Menu 1/Menu 2/Menu 3`
   path?: string;
+  pathKey?: string;
   icon?: React.ReactNode;
 };
 
@@ -572,7 +579,8 @@ export type ResourceKebabProps = {
 };
 
 type KebabSubMenu = {
-  label: string;
+  label?: string;
+  labelKey?: string;
   children: KebabMenuOption[];
 };
 

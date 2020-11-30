@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { Edge } from '@patternfly/react-topology';
 import { ConsoleLinkModel } from '@console/internal/models';
 import { K8sResourceKind, referenceFor, referenceForModel } from '@console/internal/module/k8s';
@@ -17,6 +18,7 @@ type TopologyEdgeResourcesPanelProps = {
 };
 
 const TopologyEdgeResourcesPanel: React.FC<TopologyEdgeResourcesPanelProps> = ({ edge }) => {
+  const { t } = useTranslation();
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
     kind: referenceForModel(ConsoleLinkModel),
@@ -31,7 +33,7 @@ const TopologyEdgeResourcesPanel: React.FC<TopologyEdgeResourcesPanelProps> = ({
 
   return (
     <div className="overview__sidebar-pane-body">
-      <SidebarSectionHeading text="Connections" />
+      <SidebarSectionHeading text={t('topology~Connections')} />
       <ul className="list-group">
         {_.map(resources, (resource) => {
           if (!resource) {
@@ -49,10 +51,10 @@ const TopologyEdgeResourcesPanel: React.FC<TopologyEdgeResourcesPanelProps> = ({
       </ul>
       {edge.getType() === TYPE_TRAFFIC_CONNECTOR && (
         <>
-          <SidebarSectionHeading text="Kiali Link" />
+          <SidebarSectionHeading text={t('topology~Kiali Link')} />
           <ExternalLink
             href={getNamespaceDashboardKialiLink(consoleLinks, namespace)}
-            text="Kiali Graph View"
+            text={t('topology~Kiali Graph View')}
           />
         </>
       )}

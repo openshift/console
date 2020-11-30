@@ -67,7 +67,7 @@ const WorkloadPodsNode: React.FC<WorkloadPodsNodeProps> = observer(
     const cy = height / 2;
     const editUrl = editURL || getEditURL(vcsURI, vcsRef, cheURL);
     const repoIcon = routeDecoratorIcon(editUrl, decoratorRadius, t, cheEnabled);
-    const tipContent = dropTooltip || `Create a visual connector`;
+    const tipContent = dropTooltip || t('topology~Create a visual connector');
     const showPodCountFilter = getFilterById(SHOW_POD_COUNT_FILTER_ID, filters);
     const showPodCount = showPodCountFilter?.value ?? false;
     const url = useRoutesURL(resourceObj);
@@ -91,7 +91,11 @@ const WorkloadPodsNode: React.FC<WorkloadPodsNodeProps> = observer(
             {...rest}
             attachments={[
               repoIcon && (
-                <Tooltip key="edit" content="Edit Source Code" position={TooltipPosition.right}>
+                <Tooltip
+                  key="edit"
+                  content={t('topology~Edit Source Code')}
+                  position={TooltipPosition.right}
+                >
                   <Decorator
                     x={cx + radius - decoratorRadius * 0.7}
                     y={cy + radius - decoratorRadius * 0.7}
@@ -106,7 +110,11 @@ const WorkloadPodsNode: React.FC<WorkloadPodsNodeProps> = observer(
                 </Tooltip>
               ),
               url && (
-                <Tooltip key="route" content="Open URL" position={TooltipPosition.right}>
+                <Tooltip
+                  key="route"
+                  content={t('topology~Open URL')}
+                  position={TooltipPosition.right}
+                >
                   <Decorator
                     x={cx + radius - decoratorRadius * 0.7}
                     y={cy + -radius + decoratorRadius * 0.7}
@@ -116,7 +124,10 @@ const WorkloadPodsNode: React.FC<WorkloadPodsNodeProps> = observer(
                     circleRef={urlAnchorRef}
                   >
                     <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
-                      <ExternalLinkAltIcon style={{ fontSize: decoratorRadius }} title="Open URL" />
+                      <ExternalLinkAltIcon
+                        style={{ fontSize: decoratorRadius }}
+                        title={t('topology~Open URL')}
+                      />
                     </g>
                   </Decorator>
                 </Tooltip>

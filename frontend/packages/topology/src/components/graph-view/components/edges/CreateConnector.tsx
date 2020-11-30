@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { DefaultCreateConnector, Point } from '@patternfly/react-topology';
 
 import './CreateConnector.scss';
@@ -17,6 +18,7 @@ const CreateConnector: React.FC<CreateConnectorProps> = ({
   dragging,
   hints,
 }) => {
+  const { t } = useTranslation();
   const [hover, setHover] = React.useState(false);
   const unsetHandle = React.useRef<number>();
 
@@ -39,7 +41,7 @@ const CreateConnector: React.FC<CreateConnectorProps> = ({
       endPoint={endPoint}
       dragging={dragging}
       hints={hints}
-      tipContents={hover && dragging ? 'Add Resources' : null}
+      tipContents={hover && dragging ? t('topology~Add Resources') : null}
     />
   );
 };

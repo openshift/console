@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import i18next from 'i18next';
 import {
   K8sKind,
   k8sGet,
@@ -28,7 +29,7 @@ import { isDynamicEventResourceKind } from '@console/knative-plugin/src/utils/fe
 import { checkAccess } from '@console/internal/components/utils';
 import { getBuildConfigsForResource } from '@console/shared';
 import { detectGitType } from '@console/dev-console/src/components/import/import-validation-utils';
-import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY, UNASSIGNED_LABEL } from '../const';
+import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '../const';
 import { listInstanceResources } from './connector-utils';
 
 export const sanitizeApplicationValue = (
@@ -37,7 +38,6 @@ export const sanitizeApplicationValue = (
 ): string => {
   switch (applicationType) {
     case UNASSIGNED_KEY:
-      return UNASSIGNED_LABEL;
     case CREATE_APPLICATION_KEY:
       return '';
     default:
@@ -75,11 +75,15 @@ export const updateResourceApplication = (
   application: string,
 ): Promise<any> => {
   if (!resource) {
-    return Promise.reject(new Error('Error: no resource provided to update application for.'));
+    return Promise.reject(
+      new Error(i18next.t('topology~Error: no resource provided to update application for.')),
+    );
   }
   if (!resourceKind) {
     return Promise.reject(
-      new Error('Error: invalid resource kind provided for updating application.'),
+      new Error(
+        i18next.t('topology~Error: invalid resource kind provided for updating application.'),
+      ),
     );
   }
 

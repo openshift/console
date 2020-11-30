@@ -66,7 +66,8 @@ export enum TopologyDisplayFilterType {
 export type TopologyDisplayOption = {
   type: TopologyDisplayFilterType;
   id: string;
-  label: string;
+  label?: string;
+  labelKey?: string;
   priority: number;
   value: boolean;
 };

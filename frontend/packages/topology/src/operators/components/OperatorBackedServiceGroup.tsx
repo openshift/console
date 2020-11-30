@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@patternfly/react-core';
 import {
   Node,
@@ -46,6 +47,7 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
   canDrop,
   dropTarget,
 }) => {
+  const { t } = useTranslation();
   const [hover, hoverRef] = useHover();
   const [innerHover, innerHoverRef] = useHover();
   const [{ dragging }, dragNodeRef] = useDragNode(noRegroupDragSourceSpec);
@@ -74,7 +76,7 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
       <NodeShadows />
       <Layer id={dragging || labelDragging ? undefined : 'groups2'}>
         <Tooltip
-          content="Create a binding connector"
+          content={t('topology~Create a binding connector')}
           trigger="manual"
           isVisible={dropTarget && canDrop}
           animationDuration={0}

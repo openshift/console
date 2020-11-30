@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Node } from '@patternfly/react-topology';
 import { DataListCell } from '@patternfly/react-core';
 import { formatCores } from '@console/internal/components/utils';
@@ -13,19 +14,22 @@ interface CpuCellComponentProps {
   totalCores: number;
 }
 
-const CpuCellComponent: React.FC<CpuCellComponentProps> = React.memo(({ cpuByPod, totalCores }) => (
-  <div className="odc-topology-list-view__metrics-cell__detail--cpu">
-    <MetricsTooltip metricLabel="CPU" byPod={cpuByPod}>
-      <span>
-        <span className="odc-topology-list-view__metrics-cell__metric-value">
-          {formatCores(totalCores)}
+const CpuCellComponent: React.FC<CpuCellComponentProps> = React.memo(({ cpuByPod, totalCores }) => {
+  const { t } = useTranslation();
+  return (
+    <div className="odc-topology-list-view__metrics-cell__detail--cpu">
+      <MetricsTooltip metricLabel={t('topology~CPU')} byPod={cpuByPod}>
+        <span>
+          <span className="odc-topology-list-view__metrics-cell__metric-value">
+            {formatCores(totalCores)}
+          </span>
+          &nbsp;
+          <span className="odc-topology-list-view__metrics-cell__metric-unit">cores</span>
         </span>
-        &nbsp;
-        <span className="odc-topology-list-view__metrics-cell__metric-unit">cores</span>
-      </span>
-    </MetricsTooltip>
-  </div>
-));
+      </MetricsTooltip>
+    </div>
+  );
+});
 
 type CpuCellProps = {
   item: Node;

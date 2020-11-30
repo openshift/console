@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import i18next from 'i18next';
 import {
   allModels,
   k8sGet,
@@ -87,7 +88,9 @@ export const updateItemAppConnectTo = (
   const model = getModel(referenceFor(item) || item.kind);
 
   if (!model) {
-    return Promise.reject(new Error(`Unable to retrieve model for: ${item.kind}`));
+    return Promise.reject(
+      new Error(i18next.t('topology~Unable to retrieve model for: {{kind}}', { kind: item.kind })),
+    );
   }
 
   const tags = _.toPairs(item.metadata.annotations);
@@ -247,7 +250,9 @@ const getSourceAndTargetForBinding = async (
   serviceBindingAvailable?: boolean,
 ): Promise<{ source: K8sResourceKind; target: K8sResourceKind }> => {
   if (!contextualSource) {
-    return Promise.reject(new Error('Cannot do a contextual binding without a source'));
+    return Promise.reject(
+      new Error(i18next.t('topology~Cannot do a contextual binding without a source')),
+    );
   }
   const linkingModelRefs = [
     referenceForModel(DeploymentConfigModel),
@@ -267,7 +272,14 @@ const getSourceAndTargetForBinding = async (
   const source: K8sResourceKind = await fetchResource(contextualSource, namespace);
   if (!source) {
     return Promise.reject(
-      new Error(`Cannot find resource (${contextualSource}) to do a contextual binding to`),
+      new Error(
+        i18next.t(
+          'topology~Cannot find resource ({{contextualSource}}) to do a contextual binding to',
+          {
+            contextualSource,
+          },
+        ),
+      ),
     );
   }
 

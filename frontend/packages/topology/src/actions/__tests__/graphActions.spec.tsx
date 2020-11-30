@@ -63,7 +63,9 @@ describe('graphActions: ', () => {
     );
     const actions = graphActions(graphData, connectorSource);
     expect(actions).toHaveLength(4);
-    expect(actions.filter((action) => action.label === 'Event Source')).toHaveLength(1);
+    expect(
+      actions.filter((action) => action.labelKey === 'knative-plugin~Event Source'),
+    ).toHaveLength(1);
   });
 
   it('should return the correct number of items when all permission are allowed and eventSource is enabled', () => {

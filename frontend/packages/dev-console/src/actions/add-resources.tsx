@@ -17,49 +17,61 @@ export const allCatalogImageResourceAccess = 'allCatalogImageResourceAccess';
 export const serviceBindingAvailable = 'serviceBindingAvailable';
 
 export const fromGit = createKebabAction(
-  'From Git',
+  // t('devconsole~From Git')
+  'devconsole~From Git',
   <GitAltIcon />,
   ImportOptions.GIT,
   allImportResourceAccess,
 );
 
 export const containerImage = createKebabAction(
-  'Container Image',
+  // t('devconsole~Container Image')
+  'devconsole~Container Image',
   <OsImageIcon />,
   ImportOptions.CONTAINER,
   allCatalogImageResourceAccess,
 );
 
 export const fromCatalog = createKebabAction(
-  'From Catalog',
+  // t('devconsole~From Catalog')
+  'devconsole~From Catalog',
   <CatalogIcon />,
   ImportOptions.CATALOG,
 );
 
 export const fromDockerfile = createKebabAction(
-  'From Dockerfile',
+  // t('devconsole~From Dockerfile')
+  'devconsole~From Dockerfile',
   <CubeIcon />,
   ImportOptions.DOCKERFILE,
   allImportResourceAccess,
 );
 
 export const fromDatabaseCatalog = createKebabAction(
-  'Database',
+  // t('devconsole~Database')
+  'devconsole~Database',
   <DatabaseIcon />,
   ImportOptions.DATABASE,
 );
 
-export const fromSamples = createKebabAction('Samples', <LaptopCodeIcon />, ImportOptions.SAMPLES);
+export const fromSamples = createKebabAction(
+  // t('devconsole~Samples')
+  'devconsole~Samples',
+  <LaptopCodeIcon />,
+  ImportOptions.SAMPLES,
+);
 
 export const fromOperatorBacked = createKebabAction(
-  'Operator Backed',
+  // t('devconsole~Operator Backed')
+  'devconsole~Operator Backed',
   <BoltIcon />,
   ImportOptions.OPERATORBACKED,
   serviceBindingAvailable,
 );
 
 export const fromHelmCharts = createKebabAction(
-  'Helm Charts',
+  // t('devconsole~Helm Charts')
+  'devconsole~Helm Charts',
   <HelmChartsIcon style={{ height: '1em', width: '1em' }} />,
   ImportOptions.HELMCHARTS,
 );

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { matchPath, match as RMatch } from 'react-router-dom';
 import { useQueryParams, useUserSettingsCompatibility } from '@console/shared/src';
+import { useTranslation } from 'react-i18next';
 import { removeQueryArgument, setQueryArgument } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -33,10 +34,11 @@ interface TopologyPageProps {
 const TopologyPage: React.FC<TopologyPageProps> = ({
   match,
   activeViewStorageKey = LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY,
-  title = 'Topology',
+  title,
   hideProjects = false,
   defaultViewType = TopologyViewType.graph,
 }) => {
+  const { t } = useTranslation();
   const [
     topologyViewState,
     setTopologyViewState,
@@ -85,7 +87,7 @@ const TopologyPage: React.FC<TopologyPageProps> = ({
   return (
     <DataModelProvider namespace={namespace}>
       <Helmet>
-        <title>Topology</title>
+        <title>{t('topology~Topology')}</title>
       </Helmet>
       <NamespacedPage
         variant={
@@ -100,12 +102,15 @@ const TopologyPage: React.FC<TopologyPageProps> = ({
           viewType === TopologyViewType.graph ? 'topology-graph-page' : 'topology-list-page'
         }
       >
-        <ProjectsExistWrapper title="Topology" projects={projects}>
+        <ProjectsExistWrapper title={t('topology~Topology')} projects={projects}>
           {namespace ? (
-            <TopologyDataRenderer viewType={viewType} title={title} />
+            <TopologyDataRenderer
+              viewType={viewType}
+              title={title !== undefined ? title : t('topology~Topology')}
+            />
           ) : (
-            <CreateProjectListPage title="Topology">
-              Select a project to view the topology
+            <CreateProjectListPage title={t('topology~Topology')}>
+              {t('topology~Select a project to view the topology')}
             </CreateProjectListPage>
           )}
         </ProjectsExistWrapper>

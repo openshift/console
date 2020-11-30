@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Trans } from 'react-i18next';
 import { confirmModal, errorModal } from '@console/internal/components/modals';
 import { Node } from '@patternfly/react-topology';
 import { updateTopologyResourceApplication } from './topology-utils';
@@ -10,21 +11,33 @@ export const moveNodeToGroup = (node: Node, targetGroup: Node): Promise<void> =>
   }
 
   if (sourceGroup) {
-    const title = targetGroup ? 'Move Component Node' : 'Remove Component Node from Application';
-    const message = (
-      <>
-        Are you sure you want to {targetGroup ? 'move' : 'remove'}{' '}
-        <strong>{node.getLabel()}</strong> from {sourceGroup.getLabel()}
-        {targetGroup ? ` to ${targetGroup.getLabel()}` : ''}?
-      </>
+    // t('topology~Move Component Node')
+    // t('topology~Remove Component Node from Application')
+    const titleKey = targetGroup
+      ? 'topology~Move Component Node'
+      : 'topology~Remove Component Node from Application';
+    const nodeLabel = node.getLabel();
+    const sourceLabel = sourceGroup.getLabel();
+    const targetLabel = targetGroup?.getLabel();
+    const message = targetGroup ? (
+      <Trans ns="topology">
+        Are you sure you want to move <strong>{{ nodeLabel }}</strong> from {{ sourceLabel }} to{' '}
+        {{ targetLabel }}?
+      </Trans>
+    ) : (
+      <Trans ns="topology">
+        Are you sure you want to remove <strong>{{ nodeLabel }}</strong> from {{ sourceLabel }}?
+      </Trans>
     );
-    const btnText = targetGroup ? 'Move' : 'Remove';
+    // t('topology~Move')
+    // t('topology~Remove')
+    const btnTextKey = targetGroup ? 'topology~Move' : 'topology~Remove';
 
     return new Promise((resolve, reject) => {
       confirmModal({
-        title,
+        titleKey,
         message,
-        btnText,
+        btnTextKey,
         close: () => {
           reject();
         },

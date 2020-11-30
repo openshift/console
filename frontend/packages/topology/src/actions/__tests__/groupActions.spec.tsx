@@ -23,8 +23,10 @@ describe('groupActions: ', () => {
   it('should return the correct menu and sub menu items when all permissions are allowed', () => {
     const actions = groupActions(graphData, application);
     expect(actions).toHaveLength(4);
-    expect(actions.filter((a) => !a.path)).toHaveLength(1);
-    expect(actions.filter((action) => action.path === `Add to Application`)).toHaveLength(3);
+    expect(actions.filter((a) => !a.pathKey)).toHaveLength(1);
+    expect(
+      actions.filter((action) => action.pathKey === `devconsole~Add to Application`),
+    ).toHaveLength(3);
   });
 
   it('should return the correct menu items when import permissions are allowed', () => {

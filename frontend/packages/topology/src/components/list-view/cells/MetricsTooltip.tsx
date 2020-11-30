@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@patternfly/react-core';
 import { truncateMiddle } from '@console/internal/components/utils';
 import { isMobile } from '../list-view-utils';
@@ -14,12 +15,17 @@ type MetricsTooltipProps = {
 };
 
 const MetricsTooltip: React.FC<MetricsTooltipProps> = ({ metricLabel, byPod, children }) => {
+  const { t } = useTranslation();
   const sortedMetrics = _.orderBy(byPod, ['value', 'name'], ['desc', 'asc']);
   const content: any[] = _.isEmpty(sortedMetrics)
-    ? [<React.Fragment key="no-metrics">No {metricLabel} metrics available.</React.Fragment>]
+    ? [
+        <React.Fragment key="no-metrics">
+          {t('topology~No {{metricLabel}} metrics available.', { metricLabel })}
+        </React.Fragment>,
+      ]
     : _.concat(
         <div className="odc-topology-list-view__metrics-cell__tooltip-title" key="#title">
-          {metricLabel} Usage by Pod
+          {t('topology~{{metricLabel}} Usage by Pod', { metricLabel })}
         </div>,
         sortedMetrics.map(({ name, formattedValue }) => (
           <div key={name} className="odc-topology-list-view__metrics-cell__metric-tooltip">
