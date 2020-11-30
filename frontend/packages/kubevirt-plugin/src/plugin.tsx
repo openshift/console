@@ -25,6 +25,7 @@ import {
 import { DashboardsStorageCapacityDropdownItem } from '@console/ceph-storage-plugin';
 import { TemplateModel, PodModel, PersistentVolumeClaimModel } from '@console/internal/models';
 import { getName } from '@console/shared/src/selectors/common';
+import '@console/internal/i18n.js';
 import * as models from './models';
 import { VMTemplateYAMLTemplates, VirtualMachineYAMLTemplates } from './models/templates';
 import { getKubevirtHealthState } from './components/dashboards-page/overview-dashboard/health';
