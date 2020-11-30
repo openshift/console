@@ -17,7 +17,7 @@ export const topologyPO = {
     sectionTitle: '[role="dialog"] h2',
     close: 'button[aria-label="Close"]',
     labelsList: '[data-test="label-list"]',
-    editAnnotations: '[data-test-id="edit-annotations"]',
+    editAnnotations: '[data-test="edit-annotations"]',
   },
   addStorage: {
     pvc: {

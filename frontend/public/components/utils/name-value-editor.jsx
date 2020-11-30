@@ -131,7 +131,7 @@ const NameValueEditor_ = withDragDropContext(
                 <div className="co-toolbar__group co-toolbar__group--left">
                   <Button
                     className="pf-m-link--align-left"
-                    data-test-id="pairs-list__add-btn"
+                    data-test="add-button"
                     onClick={this._append}
                     type="button"
                     variant="link"
@@ -493,6 +493,7 @@ const PairElement_ = DragSource(
                 'row',
                 isDragging ? 'pairs-list__row-dragging' : 'pairs-list__row',
               )}
+              data-test="pairs-list-row"
               ref={(node) => (this.node = node)}
             >
               {allowSorting && !readOnly && (
@@ -503,6 +504,7 @@ const PairElement_ = DragSource(
               <div className="col-xs-5 pairs-list__name-field">
                 <input
                   type="text"
+                  data-test="pairs-list-name"
                   className="pf-c-form-control"
                   placeholder={nameString}
                   value={pair[NameValueEditorPair.Name]}
@@ -513,6 +515,7 @@ const PairElement_ = DragSource(
               {_.isPlainObject(pair[NameValueEditorPair.Value]) ? (
                 <div className="col-xs-5 pairs-list__value-pair-field">
                   <ValueFromPair
+                    data-test="pairs-list-value"
                     pair={pair[NameValueEditorPair.Value]}
                     configMaps={configMaps}
                     secrets={secrets}
@@ -524,6 +527,7 @@ const PairElement_ = DragSource(
                 <div className="col-xs-5 pairs-list__value-field">
                   <input
                     type="text"
+                    data-test="pairs-list-value"
                     className="pf-c-form-control"
                     placeholder={valueString}
                     value={pair[NameValueEditorPair.Value] || ''}
@@ -537,7 +541,7 @@ const PairElement_ = DragSource(
                   <Tooltip content={toolTip || t('environment~Remove')}>
                     <Button
                       type="button"
-                      data-test-id="pairs-list__delete-btn"
+                      data-test="delete-button"
                       className={classNames({
                         'pairs-list__span-btns': allowSorting,
                       })}

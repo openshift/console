@@ -148,9 +148,6 @@ export const resourceTitle = $('[data-test-id="resource-title"]');
 
 export const nameFilter = $('.pf-c-form-control.co-text-filter');
 export const messageLbl = $('.cos-status-box');
-export const modalAnnotationsLink = $(
-  '[data-test-id=resource-summary] [data-test-id=edit-annotations]',
-);
 
 export const visitResource = async (resource: string, name: string) => {
   await browser.get(`${appHost}/k8s/ns/${testName}/${resource}/${name}`);

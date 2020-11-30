@@ -64,7 +64,7 @@ export const editAnnotations = element(by.css('[data-test-action="Edit Annotatio
 export const modalDialog = element(by.className('modal-content'));
 
 // Add a new annotation
-export const addAnnotations = element(by.css('[data-test-id="pairs-list__add-btn"]'));
+export const addAnnotations = element(by.css('[data-test="add-button"]'));
 
 // Save a new annotation
 export const saveAnnotations = element(by.css('[id="confirm-action"]'));

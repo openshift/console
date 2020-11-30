@@ -134,7 +134,7 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
         >
           {canUpdate ? (
             <Button
-              data-test-id="edit-annotations"
+              data-test="edit-annotations"
               type="button"
               isInline
               onClick={Kebab.factory.ModifyAnnotations(model, resource).callback}

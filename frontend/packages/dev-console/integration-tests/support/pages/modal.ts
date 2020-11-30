@@ -45,7 +45,7 @@ export const editLabels = {
 };
 
 export const editAnnotations = {
-  add: () => cy.byLegacyTestID('pairs-list__add-btn').click(),
+  add: () => cy.byTestID('add-button').click(),
   enterKey: (key: string) => {
     cy.get('input[placeholder="key"]')
       .last()
@@ -59,7 +59,7 @@ export const editAnnotations = {
   removeAnnotation: (annotationKey: string) => {
     cy.get(`div.row input[placeholder="key"]`).each(($el, index) => {
       if ($el.prop('value').includes(annotationKey)) {
-        cy.get('button[data-test-id="pairs-list__delete-btn"]')
+        cy.get('button[data-test="delete-button"]')
           .eq(index)
           .click();
       }
