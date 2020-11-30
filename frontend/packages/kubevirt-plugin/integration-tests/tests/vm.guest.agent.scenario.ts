@@ -2,6 +2,7 @@ import { execSync } from 'child_process';
 import { browser, ExpectedConditions as until } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import * as dashboardView from '../views/dashboard.view';
+import { detailViewAction as vmActions } from '@console/shared/src/test-utils/actions.view';
 import {
   click,
   deleteResource,
@@ -117,6 +118,13 @@ describe('Tests involving guest agent', () => {
         GUEST_AGENT_FIELD_TIMEOUT_SECS,
       );
       expect(disksView.fileSystemsTable).toBeDefined();
+    });
+
+    it('ID(CNV-5488) Verify alert when trying to delete vm while users are logged-in', async () => {
+      await vmLinux.navigateToDetail();
+      await vmActions(VM_ACTION.Delete, false);
+      await browser.wait(until.visibilityOf(vmView.vmDeleteAlert));
+      expect(vmView.vmDeleteAlert.getText()).toContain('1 User currently logged in to this VM');
     });
   });
 
