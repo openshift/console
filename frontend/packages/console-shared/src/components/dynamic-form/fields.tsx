@@ -88,7 +88,7 @@ export const FieldSet: React.FC<FieldSetProps> = ({
             className={classnames({ 'co-required': required })}
             htmlFor={`${idSchema.$id}_accordion-content`}
           >
-            {_.startCase(label)}
+            {label}
           </label>
         </AccordionToggle>
         {description && (
