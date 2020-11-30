@@ -65,6 +65,7 @@ export const MultilineUtilizationItem: React.FC<MultilineUtilizationItemProps> =
         height={70}
         byteDataType={byteDataType}
         showAllTooltip
+        ariaChartLabel={`View ${title || ''} Graph in Query Browser`}
       />
     );
 
@@ -135,7 +136,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
 
     const chart = (
       <AreaChart
-        title={title}
+        ariaChartLabel={`View ${title || ''} Graph in Query Browser`}
         data={data}
         loading={!error && isLoading}
         query={query}
