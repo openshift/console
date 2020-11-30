@@ -1,0 +1,93 @@
+@import '../../../../../../console-shared/src/styles/skeleton-screen.scss';
+
+.ceph-raw-usage {
+  &__container {
+    display: flex;
+    width: 100%;
+    margin-top: var(--pf-global--spacer--md);
+  }
+  &__legend {
+    flex-grow: 1;
+    padding-top: var(--pf-global--spacer--md);
+  }
+  &__chart {
+    flex-grow: 0.5;
+    max-height: 180px;
+  }
+  &--error {
+    margin-top: var(--pf-global--spacer--xs);
+    margin-bottom: var(--pf-global--spacer--xs);
+    width: 100%;
+    text-align: center;
+  }
+}
+
+.ceph-raw-card-legend {
+  &__container {
+    margin-bottom: 1em;
+    flex: 1 1 0;
+    display: flex;
+  }
+  &__color-square {
+    width: 15px;
+    height: 15px;
+  }
+  &__title {
+    margin-left: 6px;
+    line-height: 15px;
+    font-weight: bold;
+    &--pad {
+      padding-right: 30px;
+    }
+  }
+  &__index-block {
+    display: flex;
+  }
+  &__value-block {
+    display: flex;
+    flex-direction: row-reverse;
+    flex-grow: 0.25;
+  }
+  &__text {
+    line-height: 15px;
+    font-weight: bold;
+  }
+}
+
+/* Styles related to lodaing state */
+
+.skeleton-activity {
+  animation: $skeleton-animation;
+  background: $skeleton-color;
+  opacity: 0;
+  border-radius: 6px;
+  margin: 0.5rem 0.7em 0.5rem 0.7em;
+  height: 30px;
+  &::after {
+    background-repeat: no-repeat;
+    content: '';
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+}
+
+.ceph-raw-usage-loading {
+  &__legend {
+    flex-grow: 1;
+  }
+  &-legend__item {
+    min-width: 1em;
+    max-width: 18em;
+    flex-grow: 0.5;
+    min-height: 1em;
+    max-height: 2em;
+  }
+  &__chart {
+    flex-grow: 1;
+    min-width: 5em;
+    max-width: 10em;
+    min-height: 8em;
+    max-height: 10em;
+  }
+}
