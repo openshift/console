@@ -1,6 +1,6 @@
 import { When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { projectNameSpace } from '../../pages/app';
-import { addPageObj } from '../../pages/add-flow/add-page';
+import { cardTitle } from '../../pageObjects/add-flow-po';
 import { modal } from '../../../../../integration-tests-cypress/views/modal';
 
 When('user enters project name as {string} in Create Project modal', (projectName: string) => {
@@ -24,7 +24,7 @@ Then('topology page displays with message {string}', (message: string) => {
 });
 
 Then('topology page have cards from Add page', () => {
-  cy.get(addPageObj.cardTitle).should('be.visible');
+  cy.get(cardTitle).should('be.visible');
 });
 
 When('user selects the Create Project option from Projects dropdown on top navigation bar', () => {
