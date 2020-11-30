@@ -86,15 +86,20 @@ describe('Cluster Dashboard', () => {
       it('shows correct number of hits', (done) => {
         const hitsCountUI = clusterDashboardView.insightsPopover.$$('tspan').get(5);
         expect(hitsCountUI.isDisplayed()).toBe(true);
-        const pullSecret = JSON.parse(execSync('oc get secret/pull-secret -n openshift-config -o json').toString());
-        const dockerConfigJSON = JSON.parse(Buffer.from(pullSecret.data[".dockerconfigjson"], "base64").toString());
-        const token = dockerConfigJSON["auths"]["cloud.openshift.com"]["auth"];
-        const clusterId = JSON.parse(execSync('oc get clusterversion -o json').toString()).items[0].spec.clusterID;
+        const pullSecret = JSON.parse(
+          execSync('oc get secret/pull-secret -n openshift-config -o json').toString(),
+        );
+        const dockerConfigJSON = JSON.parse(
+          Buffer.from(pullSecret.data['.dockerconfigjson'], 'base64').toString(),
+        );
+        const token = dockerConfigJSON['auths']['cloud.openshift.com']['auth'];
+        const clusterId = JSON.parse(execSync('oc get clusterversion -o json').toString()).items[0]
+          .spec.clusterID;
         const options = {
           headers: {
             'User-Agent': `insights-operator/test cluster/${clusterId}`,
-            'Authorization': `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         };
         get(
           `https://cloud.redhat.com/api/insights-results-aggregator/v1/clusters/${clusterId}/report`,
@@ -104,8 +109,9 @@ describe('Cluster Dashboard', () => {
               const hitsCountAPI = JSON.parse(d).report.meta.count.toString();
               expect(hitsCountUI.getText()).toEqual(hitsCountAPI);
               done();
-          });
-        }).on('error', (e) => {
+            });
+          },
+        ).on('error', (e) => {
           pending();
         });
       });

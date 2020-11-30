@@ -12,5 +12,9 @@ export const eventsPauseButton = $('[data-test-id="events-pause-button"]');
 export const launcherCard = $('[data-test-id="launcher-card"]');
 export const resourceQuotasCard = $('[data-test-id="resource-quotas-card"]');
 export const insightsButton = element(by.xpath('.//button[normalize-space(.)="Insights"]'));
-export const insightsPopover = element(by.xpath('.//div[@role="dialog" and .//h6[normalize-space(.)="Insights status"]]'));
-export const insightsCloseButton = insightsPopover.element(by.xpath('.//button[@aria-label="Close"]'));
+export const insightsPopover = element(
+  by.xpath('.//div[@role="dialog" and .//h6[normalize-space(.)="Insights status"]]'),
+);
+export const insightsCloseButton = insightsPopover.element(
+  by.xpath('.//button[@aria-label="Close"]'),
+);
