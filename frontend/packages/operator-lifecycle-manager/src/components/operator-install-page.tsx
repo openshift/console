@@ -18,7 +18,13 @@ import {
   ResourceStatus,
   resourcePathFromModel,
 } from '@console/internal/components/utils';
-import { k8sPatch, modelFor, referenceForModel, referenceFor } from '@console/internal/module/k8s';
+import {
+  k8sPatch,
+  modelFor,
+  referenceForModel,
+  referenceFor,
+  K8sResourceKind,
+} from '@console/internal/module/k8s';
 import { errorModal } from '@console/internal/components/modals';
 import {
   ClusterServiceVersionModel,
@@ -32,7 +38,7 @@ import {
   InstallPlanKind,
   PackageManifestKind,
 } from '../types';
-import { StatusIconAndText } from '@console/shared';
+import { parseJSONAnnotation, StatusIconAndText } from '@console/shared';
 import {
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
@@ -40,43 +46,53 @@ import {
 } from '@console/shared/src/components/status/icons';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { InstallPlanPreview } from './install-plan';
+import { useTranslation } from 'react-i18next';
 
-const getInitializationResourceJSON = (
+const INITIALIZATION_RESOURCE_ANNOTATION = 'operatorframework.io/initialization-resource';
+const getInitializationResource = (
   obj: ClusterServiceVersionKind | InstallPlanKind | SubscriptionKind,
-) => {
-  return obj?.metadata?.annotations?.['operatorframework.io/initialization-resource'];
+) =>
+  parseJSONAnnotation(obj?.metadata?.annotations, INITIALIZATION_RESOURCE_ANNOTATION, (e) =>
+    errorModal({ errorMsg: e.message }),
+  );
+
+const ViewInstalledOperatorsButton: React.FC<ViewOperatorButtonProps> = ({ namespace }) => {
+  const { t } = useTranslation();
+  const singleNamespaceText = t('olm~View installed Operators in Namespace {{namespace}}', {
+    namespace,
+  });
+  const allNamespacesText = t('olm~View installed Operators in all Namespaces');
+  return (
+    <div className="co-operator-install-page__link">
+      <Link
+        data-test="view-installed-operators-btn"
+        to={resourcePathFromModel(ClusterServiceVersionModel, null, namespace)}
+      >
+        {namespace ? singleNamespaceText : allNamespacesText}
+      </Link>
+    </div>
+  );
 };
 
-const ViewInstalledOperatorsButton: React.FC<ViewOperatorButtonProps> = ({ namespace }) => (
-  <div className="co-operator-install-page__link">
-    <Link
-      data-test="view-installed-operators-btn"
-      to={resourcePathFromModel(ClusterServiceVersionModel, null, namespace)}
-    >
-      View Installed Operators in{' '}
-      {namespace ? (
-        <>
-          namespace <b>{namespace}</b>
-        </>
-      ) : (
-        <b>all namespaces</b>
-      )}
-    </Link>
-  </div>
-);
-
 const InstallFailedMessage: React.FC<InstallFailedMessageProps> = ({ namespace, csvName, obj }) => {
-  const initializationResourceMessage = getInitializationResourceJSON(obj)
-    ? "The required custom resource can be created in the Operator's details view."
-    : '';
-
+  const { t } = useTranslation();
   return (
     <>
-      <h2 className="co-clusterserviceversion-install__heading">Operator installation failed</h2>
-      <p>The operator did not install successfully. {initializationResourceMessage}</p>
+      <h2 className="co-clusterserviceversion-install__heading">
+        {t('olm~Operator installation failed')}
+      </h2>
+      <p>
+        {t('olm~The operator did not install successfully.')}
+        {obj?.metadata?.annotations?.[INITIALIZATION_RESOURCE_ANNOTATION] && (
+          <>
+            &nbsp;
+            {t("olm~The required custom resource can be created in the Operator's details view.")}
+          </>
+        )}
+      </p>
       <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
         <Link to={resourcePathFromModel(ClusterServiceVersionModel, csvName, namespace)}>
-          <Button variant="primary">View Error</Button>
+          <Button variant="primary">{t('olm~View error')}</Button>
         </Link>
         <ViewInstalledOperatorsButton namespace={namespace} />
       </ActionGroup>
@@ -89,52 +105,57 @@ const InstallNeedsApprovalMessage: React.FC<InstallNeedsApprovalMessageProps> = 
   subscriptionObj,
   installObj,
   approve,
-}) => (
-  <>
-    <h2 className="co-clusterserviceversion-install__heading">Manual approval required</h2>
-    <InstallPlanReview installPlan={installObj} />
-    <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
-      <Button variant="primary" onClick={approve}>
-        Approve
-      </Button>
-      <Link
-        to={`${resourcePathFromModel(
-          SubscriptionModel,
-          subscriptionObj?.metadata?.name,
-          namespace,
-        )}?showDelete=true`}
-      >
-        <Button className="co-clusterserviceversion__button" variant="secondary">
-          Deny
+}) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <h2 className="co-clusterserviceversion-install__heading">
+        {t('olm~Manual approval required')}
+      </h2>
+      <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
+        <InstallPlanReview installPlan={installObj} />
+        <Button variant="primary" onClick={approve}>
+          {t('olm~Approve')}
         </Button>
-      </Link>
-      <ViewInstalledOperatorsButton namespace={namespace} />
-    </ActionGroup>
-  </>
-);
+        <Link
+          to={`${resourcePathFromModel(
+            SubscriptionModel,
+            subscriptionObj?.metadata?.name,
+            namespace,
+          )}?showDelete=true`}
+        >
+          <Button className="co-clusterserviceversion__button" variant="secondary">
+            {t('olm~Deny')}
+          </Button>
+        </Link>
+        <ViewInstalledOperatorsButton namespace={namespace} />
+      </ActionGroup>
+    </>
+  );
+};
 
 export const CreateInitializationResourceButton: React.FC<InitializationResourceButtonProps> = ({
-  obj,
   disabled,
+  initializationResource,
+  obj,
   targetNamespace,
 }) => {
-  if (!getInitializationResourceJSON(obj)) {
-    return null;
-  }
-  let initializationResource = null;
-  try {
-    initializationResource = JSON.parse(getInitializationResourceJSON(obj));
-  } catch (error) {
-    const errorMsg = error.message;
-    errorModal({ errorMsg });
-  }
+  const { t } = useTranslation();
   const reference = referenceFor(initializationResource);
   const model = modelFor(reference);
   const initializationResourceNamespace = model?.namespaced
     ? initializationResource?.metadata?.namespace || targetNamespace
     : null;
   const kind = initializationResource?.kind;
-  return (
+  const button = (
+    <Button aria-disabled={disabled} isDisabled={disabled} variant="primary">
+      {t('olm~Create {{item}}', { item: kind })}
+    </Button>
+  );
+
+  return disabled ? (
+    button
+  ) : (
     <Link
       to={`${resourcePathFromModel(
         ClusterServiceVersionModel,
@@ -142,26 +163,16 @@ export const CreateInitializationResourceButton: React.FC<InitializationResource
         initializationResourceNamespace,
       )}/${reference}/~new?useInitializationResource`}
     >
-      <Button isDisabled={disabled} variant="primary">
-        Create {kind}
-      </Button>
+      {button}
     </Link>
   );
 };
 
 const InitializationResourceRequiredMessage: React.FC<InitializationResourceRequiredMessageProps> = ({
+  initializationResource,
   obj,
 }) => {
-  if (!getInitializationResourceJSON(obj)) {
-    return null;
-  }
-  let initializationResource = null;
-  try {
-    initializationResource = JSON.parse(getInitializationResourceJSON(obj));
-  } catch (error) {
-    const errorMsg = error.message;
-    errorModal({ errorMsg });
-  }
+  const { t } = useTranslation();
   const initializationResourceKind = initializationResource?.kind;
   const initializationResourceNamespace = initializationResource?.metadata?.namespace;
   const description = obj?.metadata?.annotations?.description;
@@ -174,7 +185,7 @@ const InitializationResourceRequiredMessage: React.FC<InitializationResourceRequ
           namepace={initializationResourceNamespace}
         />
         <ResourceStatus badgeAlt>
-          <StatusIconAndText icon={<RedExclamationCircleIcon />} title="Required" />
+          <StatusIconAndText icon={<RedExclamationCircleIcon />} title={t('olm~Required')} />
         </ResourceStatus>
       </span>
       <SyncMarkdownView content={description} />
@@ -187,49 +198,83 @@ const InstallSucceededMessage: React.FC<InstallSuccededMessageProps> = ({
   csvName,
   obj,
 }) => {
-  const initializationResourceMessage = getInitializationResourceJSON(obj)
-    ? 'The operator has installed successfully. Create the required custom resource to be able to use this operator.'
-    : '';
+  const { t } = useTranslation();
+  const initializationResource = getInitializationResource(obj);
   return (
     <>
       <h2 className="co-clusterserviceversion-install__heading">
-        Installed operator -{' '}
-        {getInitializationResourceJSON(obj) ? 'operand required' : 'ready for use'}
+        {t('olm~Installed operator')}
+        &nbsp; - &nbsp;
+        {initializationResource ? t('olm~operand required') : t('olm~ready for use')}
       </h2>
-      <span>{initializationResourceMessage}</span>
-      <InitializationResourceRequiredMessage obj={obj} />
+      {initializationResource && (
+        <>
+          <span>
+            {t(
+              'olm~The Operator has installed successfully. Create the required custom resource to be able to use this Operator.',
+            )}
+          </span>
+          <InitializationResourceRequiredMessage
+            initializationResource={initializationResource}
+            obj={obj}
+          />
+        </>
+      )}
       <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
-        {!getInitializationResourceJSON(obj) && (
+        {initializationResource ? (
+          <CreateInitializationResourceButton
+            initializationResource={initializationResource}
+            obj={obj}
+            targetNamespace={namespace}
+          />
+        ) : (
           <Link to={resourcePathFromModel(ClusterServiceVersionModel, csvName, namespace)}>
-            <Button variant="primary">View Operator</Button>
+            <Button variant="primary">{t('olm~View Operator')}</Button>
           </Link>
         )}
-        <CreateInitializationResourceButton obj={obj} targetNamespace={namespace} />
         <ViewInstalledOperatorsButton namespace={namespace} />
       </ActionGroup>
     </>
   );
 };
 const InstallingMessage: React.FC<InstallingMessageProps> = ({ namespace, obj }) => {
+  const { t } = useTranslation();
   const reason = (obj as ClusterServiceVersionKind)?.status?.reason || '';
   const message = (obj as ClusterServiceVersionKind)?.status?.message || '';
-  const initializationResourceMessage = getInitializationResourceJSON(obj)
-    ? 'Once the operator is installed the required custom resource will be available for creation.'
-    : '';
-  const installMessage = `The operator is being installed. This may take a few minutes. ${initializationResourceMessage}`;
+  const initializationResource = getInitializationResource(obj);
   return (
     <>
-      <h2 className="co-clusterserviceversion-install__heading">Installing operator</h2>
+      <h2 className="co-clusterserviceversion-install__heading">{t('olm~Installing Operator')}</h2>
       {reason && (
         <p className="text-muted">
           {reason}: {message}
         </p>
       )}
-      <p>{installMessage}</p>
-      <InitializationResourceRequiredMessage obj={obj} />
+      <p>
+        {t('olm~The Operator is being installed. This may take a few minutes.')}
+        {initializationResource && (
+          <>
+            &nbsp;
+            {t(
+              'olm~Once the Operator is installed the required custom resource will be available for creation.',
+            )}
+          </>
+        )}
+      </p>
+      {initializationResource && (
+        <InitializationResourceRequiredMessage
+          initializationResource={initializationResource}
+          obj={obj}
+        />
+      )}
       <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
-        {getInitializationResourceJSON(obj) && (
-          <CreateInitializationResourceButton obj={obj} targetNamespace={namespace} disabled />
+        {initializationResource && (
+          <CreateInitializationResourceButton
+            disabled
+            initializationResource={initializationResource}
+            obj={obj}
+            targetNamespace={namespace}
+          />
         )}
         <ViewInstalledOperatorsButton namespace={namespace} />
       </ActionGroup>
@@ -238,6 +283,7 @@ const InstallingMessage: React.FC<InstallingMessageProps> = ({ namespace, obj })
 };
 
 const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = (props) => {
+  const { t } = useTranslation();
   const { resources, targetNamespace, pkgNameWithVersion } = props;
 
   let loading = true;
@@ -333,13 +379,13 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = (props) => {
     <>
       <div className="co-operator-install-page__main">
         <Helmet>
-          <title>Installing Operator</title>
+          <title>{t('olm~Installing Operator')}</title>
         </Helmet>
         <Bullseye>
           <div id="operator-install-page">
             {loading && (
               <div className="co-operator-install-page__indicator">
-                Installing... <Spinner size="lg" />
+                {t('olm~Installing...')} <Spinner size="lg" />
               </div>
             )}
             {!loading && isStatusFailed && (
@@ -450,11 +496,13 @@ type InstallFailedMessageProps = {
   csvName: string;
 };
 type InitializationResourceRequiredMessageProps = {
-  obj: ClusterServiceVersionKind | InstallPlanKind;
+  initializationResource: K8sResourceKind;
+  obj: ClusterServiceVersionKind | InstallPlanKind | SubscriptionKind;
 };
 type InitializationResourceButtonProps = {
-  obj: ClusterServiceVersionKind | InstallPlanKind | SubscriptionKind;
   disabled?: boolean;
+  initializationResource: K8sResourceKind;
+  obj: ClusterServiceVersionKind | InstallPlanKind | SubscriptionKind;
   targetNamespace: string;
 };
 type ViewOperatorButtonProps = {

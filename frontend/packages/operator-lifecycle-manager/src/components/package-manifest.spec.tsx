@@ -4,8 +4,8 @@ import { TableRow, RowFunction } from '@console/internal/components/factory';
 import * as UIActions from '@console/internal/actions/ui';
 import { testPackageManifest, testCatalogSource } from '../../mocks';
 import {
-  PackageManifestTableHeader,
   PackageManifestTableRow,
+  PackageManifestTableHeader,
   PackageManifestTableHeaderWithCatalogSource,
 } from './package-manifest';
 import { ClusterServiceVersionLogo } from '.';

@@ -44,14 +44,14 @@ describe(`Interacting with CatalogSource page`, () => {
     cy.byTestSelector('details-item-value__Status').should('have.text', 'READY');
 
     // validate DisplayName field
-    cy.byTestSelector('details-item-label__Display Name').should('be.visible');
-    cy.byTestSelector('details-item-value__Display Name').should('have.text', 'Red Hat Operators');
+    cy.byTestSelector('details-item-label__Display name').should('be.visible');
+    cy.byTestSelector('details-item-value__Display name').should('have.text', 'Red Hat Operators');
 
     // validate RegistryPollInterval field
-    cy.byTestID('Registry Poll Interval')
+    cy.byTestID('Registry poll interval')
       .scrollIntoView()
       .should('be.visible');
-    cy.byTestSelector('details-item-value__Registry Poll Interval')
+    cy.byTestSelector('details-item-value__Registry poll interval')
       .scrollIntoView()
       .should('be.visible');
 
@@ -65,18 +65,18 @@ describe(`Interacting with CatalogSource page`, () => {
   });
 
   it('allows modifying registry poll interval', () => {
-    cy.byTestID('Registry Poll Interval-details-item__edit-button').click();
+    cy.byTestID('Registry poll interval-details-item__edit-button').click();
     modal.modalTitleShouldContain('Edit registry poll interval');
     cy.byLegacyTestID('dropdown-button').click();
     cy.byTestDropDownMenu('30m0s').click();
     modal.submit();
 
     // verify that registryPollInterval is updated
-    cy.byTestSelector('details-item-value__Registry Poll Interval').should('have.text', '30m0s');
+    cy.byTestSelector('details-item-value__Registry poll interval').should('have.text', '30m0s');
   });
 
   it(`lists all the package manifests for ${catalogSource} under Operators tab`, () => {
-    cy.byLegacyTestID('horizontal-link-catalog-source~Operators').click();
+    cy.byLegacyTestID('horizontal-link-olm~Operators').click();
     cy.get('[data-label=Name]').should('exist');
   });
 });

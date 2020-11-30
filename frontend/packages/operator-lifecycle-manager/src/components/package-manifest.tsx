@@ -16,6 +16,8 @@ import { PackageManifestModel, CatalogSourceModel } from '../models';
 import { PackageManifestKind, CatalogSourceKind } from '../types';
 import { ClusterServiceVersionLogo, visibilityLabel, iconFor, defaultChannelFor } from './index';
 import { sortable } from '@patternfly/react-table';
+import { Trans, useTranslation } from 'react-i18next';
+import i18n from '@console/internal/i18n';
 
 const tableColumnClasses = [
   '',
@@ -26,17 +28,17 @@ const tableColumnClasses = [
 
 export const PackageManifestTableHeader = () => [
   {
-    title: 'Name',
+    title: i18n.t('public~Name'),
     sortFunc: 'sortPackageManifestByDefaultChannelName',
     transforms: [sortable],
     props: { className: tableColumnClasses[0] },
   },
   {
-    title: 'Latest version',
+    title: i18n.t('public~Latest version'),
     props: { className: tableColumnClasses[1] },
   },
   {
-    title: 'Created',
+    title: i18n.t('public~Created'),
     sortField: 'metadata.creationTimestamp',
     transforms: [sortable],
     props: { className: tableColumnClasses[2] },
@@ -46,7 +48,7 @@ export const PackageManifestTableHeader = () => [
 export const PackageManifestTableHeaderWithCatalogSource = () => [
   ...PackageManifestTableHeader(),
   {
-    title: 'CatalogSource',
+    title: i18n.t('olm~CatalogSource'),
     sortField: 'status.catalogSource',
     transforms: [sortable],
     props: { className: tableColumnClasses[3] },
@@ -89,6 +91,16 @@ export const PackageManifestTableRow: RowFunction<
   );
 };
 
+const PackageManifestListEmptyMessage = () => {
+  const { t } = useTranslation();
+  return (
+    <MsgBox
+      title={t('olm~No PackageManifests Found')}
+      detail={t('olm~The CatalogSource author has not added any packages.')}
+    />
+  );
+};
+
 export const PackageManifestList = (props: PackageManifestListProps) => {
   const { customData } = props;
 
@@ -100,24 +112,19 @@ export const PackageManifestList = (props: PackageManifestListProps) => {
   return (
     <Table
       {...props}
-      aria-label="Package Manifests"
+      aria-label="PackageManifests"
       loaded={props.loaded}
       data={props.data || []}
       filters={props.filters}
       Header={TableHeader}
       Row={PackageManifestTableRow}
-      EmptyMsg={() => (
-        <MsgBox
-          title="No PackageManifests Found"
-          detail="The CatalogSource author has not added any packages."
-        />
-      )}
+      EmptyMsg={PackageManifestListEmptyMessage}
       virtualize
     />
   );
 };
 
-export const PackageManifestsPage: React.SFC<PackageManifestsPageProps> = (props) => {
+export const PackageManifestsPage: React.FC<PackageManifestsPageProps> = (props) => {
   const { catalogSource } = props;
   const namespace = _.get(props.match, 'params.ns');
 
@@ -125,11 +132,11 @@ export const PackageManifestsPage: React.SFC<PackageManifestsPageProps> = (props
   const flatten: Flatten = (resources) => _.get(resources.packageManifest, 'data', []);
 
   const helpText = (
-    <>
-      Catalogs are groups of Operators you can make available on the cluster. Use{' '}
-      <Link to="/operatorhub">OperatorHub</Link> to subscribe and grant namespaces access to use
-      installed Operators.
-    </>
+    <Trans ns="olm">
+      Catalogs are groups of Operators you can make available on the cluster. Use&nbsp;
+      <Link to="/operatorhub">OperatorHub</Link>
+      &nbsp;to subscribe and grant namespaces access to use installed Operators.
+    </Trans>
   );
 
   return (

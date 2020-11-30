@@ -27,39 +27,30 @@ import {
 import { CRDDescription, ClusterServiceVersionKind, ProvidedAPI } from '../types';
 import { providedAPIForReference } from './index';
 import { OperandLink } from './operand/operand-link';
+import { useTranslation } from 'react-i18next';
+import {
+  ConfigMapModel,
+  DeploymentModel,
+  PodModel,
+  ReplicaSetModel,
+  SecretModel,
+  ServiceModel,
+} from '@console/internal/models';
+
+const DEFAULT_RESOURCES: CRDDescription['resources'] = [
+  { kind: DeploymentModel.kind, version: DeploymentModel.apiVersion },
+  { kind: ServiceModel.kind, version: ServiceModel.apiVersion },
+  { kind: ReplicaSetModel.kind, version: ReplicaSetModel.apiVersion },
+  { kind: PodModel.kind, version: PodModel.apiVersion },
+  { kind: SecretModel.kind, version: SecretModel.apiVersion },
+  { kind: ConfigMapModel.kind, version: ConfigMapModel.apiVersion },
+];
 
 const tableColumnClasses = [
   classNames('col-lg-4', 'col-md-4', 'col-sm-4', 'col-xs-6'),
   classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'col-xs-6'),
   classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
   classNames('col-lg-4', 'col-md-4', 'col-sm-4', 'hidden-xs'),
-];
-
-export const ResourceTableHeader = () => [
-  {
-    title: 'Name',
-    sortField: 'metadata.name',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[0] },
-  },
-  {
-    title: 'Kind',
-    sortField: 'kind',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[1] },
-  },
-  {
-    title: 'Status',
-    sortField: 'status.phase',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[2] },
-  },
-  {
-    title: 'Created',
-    sortField: 'metadata.creationTimestamp',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[3] },
-  },
 ];
 
 export const ResourceTableRow: RowFunction<
@@ -73,7 +64,7 @@ export const ResourceTableRow: RowFunction<
     <TableData className={tableColumnClasses[0]}>{linkFor(obj, providedAPI)}</TableData>
     <TableData className={tableColumnClasses[1]}>{obj.kind}</TableData>
     <TableData className={tableColumnClasses[2]}>
-      <Status status={_.get(obj.status, 'phase', 'Created')} />
+      <Status status={obj?.status?.phase ?? 'Created'} />
     </TableData>
     <TableData className={tableColumnClasses[3]}>
       <Timestamp timestamp={obj.metadata.creationTimestamp} />
@@ -81,21 +72,51 @@ export const ResourceTableRow: RowFunction<
   </TableRow>
 );
 
-export const ResourceTable: React.FC<ResourceTableProps> = (props) => (
-  <Table
-    {...props}
-    aria-label="Operand Resources"
-    Header={ResourceTableHeader}
-    Row={ResourceTableRow}
-    EmptyMsg={() => (
-      <MsgBox
-        title="No Resources Found"
-        detail="There are no Kubernetes resources used by this operand."
-      />
-    )}
-    virtualize
-  />
-);
+export const ResourceTable: React.FC<ResourceTableProps> = (props) => {
+  const { t } = useTranslation();
+  const ResourceTableHeader = () => [
+    {
+      title: t('olm~Name'),
+      sortField: 'metadata.name',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: t('olm~Kind'),
+      sortField: 'kind',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: t('olm~Status'),
+      sortField: 'status.phase',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: t('olm~Created'),
+      sortField: 'metadata.creationTimestamp',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+  ];
+
+  return (
+    <Table
+      {...props}
+      aria-label={t('olm~Operand Resources')}
+      Header={ResourceTableHeader}
+      Row={ResourceTableRow}
+      EmptyMsg={() => (
+        <MsgBox
+          title={t('olm~No resources found')}
+          detail={t('olm~There are no Kubernetes resources used by this operand.')}
+        />
+      )}
+      virtualize
+    />
+  );
+};
 
 export const flattenCsvResources = (parentObj: K8sResourceKind) => (resources: {
   [kind: string]: { data: K8sResourceKind[] };
@@ -121,7 +142,7 @@ export const linkForCsvResource = (
   csvName?: string,
 ) =>
   obj.metadata.namespace &&
-  _.get(providedAPI, 'resources', []).some(({ kind, name }) => name && kind === obj.kind) ? (
+  (providedAPI?.resources ?? []).some(({ kind, name }) => name && kind === obj.kind) ? (
     <OperandLink obj={obj} csvName={csvName} />
   ) : (
     <ResourceLink
@@ -133,19 +154,13 @@ export const linkForCsvResource = (
   );
 
 export const Resources: React.FC<ResourcesProps> = (props) => {
+  const { t } = useTranslation();
   const providedAPI = providedAPIForReference(
     props.clusterServiceVersion,
     props.match.params.plural,
   );
 
-  const defaultResources = ['Deployment', 'Service', 'ReplicaSet', 'Pod', 'Secret', 'ConfigMap'];
-  const firehoseResources = _.get(
-    providedAPI,
-    'resources',
-    defaultResources.map((kind) => ({
-      kind,
-    })) as CRDDescription['resources'],
-  ).map(
+  const firehoseResources = (providedAPI?.resources ?? DEFAULT_RESOURCES).map(
     ({ name, kind, version }): FirehoseResource => {
       const group = name ? name.substring(name.indexOf('.') + 1) : '';
       const reference = group ? referenceForGroupVersionKind(group)(version)(kind) : kind;
@@ -160,7 +175,7 @@ export const Resources: React.FC<ResourcesProps> = (props) => {
 
   return (
     <MultiListPage
-      filterLabel="Resources by name"
+      filterLabel={t('olm~Resources by name')}
       resources={firehoseResources}
       rowFilters={[
         {
@@ -197,6 +212,5 @@ export type ResourceTableProps = {
   providedAPI: ProvidedAPI;
 };
 
-ResourceTableHeader.displayName = 'ResourceTableHeader';
 ResourceTable.displayName = 'ResourceTable';
 Resources.displayName = 'Resources';

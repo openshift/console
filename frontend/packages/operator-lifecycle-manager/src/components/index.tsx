@@ -197,7 +197,7 @@ export const OperatorsWithManualApproval: React.FC<OperatorsWithManualApprovalPr
     .map((sub, i) => (i > 0 ? [', ', sub] : sub));
   return (
     <>
-      {t('operator-hub-subscribe~operator', { count: subscriptions?.length })} {subs}
+      {t('olm~operator', { count: subscriptions?.length })} {subs}
     </>
   );
 };
@@ -206,7 +206,7 @@ export const NamespaceIncludesManualApproval: React.FC<NamespaceIncludesManualAp
   subscriptions,
   namespace,
 }) => (
-  <Trans ns="operator-hub-subscribe">
+  <Trans ns="olm">
     Installation namespace <strong>{{ namespace }}</strong> contains{' '}
     <OperatorsWithManualApproval subscriptions={subscriptions} /> installed with manual approval,
     and all operators installed in the same namespace will function as manual approval strategy. To
@@ -230,7 +230,7 @@ const InstallPlanCSVNames: React.FC<InstallPlanReviewProps> = ({ installPlan }) 
 
 export const InstallPlanReview: React.FC<InstallPlanReviewProps> = ({ installPlan }) => (
   <p>
-    <Trans ns="operator-install-page">
+    <Trans ns="olm">
       Review the manual install plan for operators <InstallPlanCSVNames installPlan={installPlan} />
       . Once approved, the following resources will be created in order to satisfy the requirements
       for the components specified in the plan. Click the resource name to view the resource in

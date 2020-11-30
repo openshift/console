@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Link, match as RouterMatch } from 'react-router-dom';
-import { connect } from 'react-redux';
 import * as classNames from 'classnames';
 import { sortable, wrappable } from '@patternfly/react-table';
 import { Helmet } from 'react-helmet';
@@ -59,7 +58,6 @@ import {
   ExternalLink,
   FirehoseResult,
   StatusBox,
-  Page,
   RequireCreatePermission,
   resourcePathFromModel,
   KebabOption,
@@ -69,7 +67,6 @@ import {
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
-import { RootState } from '@console/internal/redux';
 import {
   ClusterServiceVersionModel,
   SubscriptionModel,
@@ -104,12 +101,8 @@ import { ClusterServiceVersionLogo, referenceForProvidedAPI, providedAPIsForCSV 
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
 import { CreateInitializationResourceButton } from './operator-install-page';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-
-const clusterServiceVersionStateToProps = (state: RootState): ClusterServiceVersionStateProps => {
-  return {
-    activeNamespace: state.UI.get('activeNamespace'),
-  };
-};
+import { Trans, useTranslation } from 'react-i18next';
+import { useActiveNamespace } from '@console/shared/src/hooks/redux-selectors';
 
 const isSubscription = (obj) => referenceFor(obj) === referenceForModel(SubscriptionModel);
 const isCSV = (obj) => referenceFor(obj) === referenceForModel(ClusterServiceVersionModel);
@@ -124,69 +117,11 @@ const statusColumnClass = classNames('pf-m-hidden', 'pf-m-visible-on-lg');
 const lastUpdatedColumnClass = classNames('pf-m-hidden', 'pf-m-visible-on-2xl');
 const providedAPIsColumnClass = classNames('pf-m-hidden', 'pf-m-visible-on-xl');
 
-const nameHeader: Header = {
-  title: 'Name',
-  sortField: 'metadata.name',
-  transforms: [sortable],
-  props: { className: nameColumnClass },
-};
-
-const namespaceHeader: Header = {
-  title: 'Namespace',
-  sortFunc: 'getOperatorNamespace',
-  transforms: [sortable],
-  props: { className: namespaceColumnClass },
-};
-
-const managedNamespacesHeader: Header = {
-  title: 'Managed Namespaces',
-  sortFunc: 'formatTargetNamespaces',
-  transforms: [sortable, wrappable],
-  props: { className: managedNamespacesColumnClass },
-};
-
-const statusHeader: Header = {
-  title: 'Status',
-  props: { className: statusColumnClass },
-};
-
-const lastUpdatedHeader: Header = {
-  title: 'Last Updated',
-  props: { className: lastUpdatedColumnClass },
-};
-
-const providedAPIsHeader: Header = {
-  title: 'Provided APIs',
-  props: { className: providedAPIsColumnClass },
-};
-
-const kebabHeader: Header = {
-  title: '',
-  props: { className: Kebab.columnClass },
-};
-
-export const AllProjectsTableHeader = (): Header[] => [
-  nameHeader,
-  namespaceHeader,
-  managedNamespacesHeader,
-  statusHeader,
-  lastUpdatedHeader,
-  providedAPIsHeader,
-  kebabHeader,
-];
-export const SingleProjectTableHeader = (): Header[] => [
-  nameHeader,
-  managedNamespacesHeader,
-  statusHeader,
-  lastUpdatedHeader,
-  providedAPIsHeader,
-  kebabHeader,
-];
-
 const editSubscription = (sub: SubscriptionKind): KebabOption =>
   !_.isNil(sub)
     ? {
-        label: 'Edit Subscription',
+        // t('olm~Edit Subscription')
+        labelKey: 'olm~Edit Subscription',
         href: `${resourcePathFromModel(
           SubscriptionModel,
           sub.metadata.name,
@@ -198,7 +133,8 @@ const editSubscription = (sub: SubscriptionKind): KebabOption =>
 const uninstall = (sub: SubscriptionKind, csv?: ClusterServiceVersionKind): KebabOption =>
   !_.isNil(sub)
     ? {
-        label: 'Uninstall Operator',
+        // t('olm~Uninstall Operator')
+        labelKey: 'olm~Uninstall Operator',
         callback: () =>
           createUninstallOperatorModal({
             k8sKill,
@@ -226,14 +162,21 @@ const menuActionsForCSV = (
     : [() => editSubscription(subscription), () => uninstall(subscription, csv)];
 };
 
-const SourceMissingStatus = () => (
-  <>
-    <WarningStatus title="Cannot update" />
-    <span className="text-muted">Catalog source was removed.</span>
-  </>
-);
+const SourceMissingStatus: React.FC = () => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <WarningStatus title={t('olm~Cannot update')} />
+      <span className="text-muted">{t('olm~CatalogSource was removed.')}</span>
+    </>
+  );
+};
 
-const SubscriptionStatus = ({ muted = false, subscription }) => {
+const SubscriptionStatus: React.FC<{ muted?: boolean; subscription: SubscriptionKind }> = ({
+  muted = false,
+  subscription,
+}) => {
+  const { t } = useTranslation();
   if (!subscription) {
     return null;
   }
@@ -248,7 +191,7 @@ const SubscriptionStatus = ({ muted = false, subscription }) => {
       {muted ? (
         subscriptionStatus.title
       ) : (
-        <Status status={subscriptionStatus.status || 'Unknown'} />
+        <Status status={subscriptionStatus.status || t('olm~Unknown')} />
       )}
     </span>
   );
@@ -277,16 +220,17 @@ const ClusterServiceVersionStatus: React.FC<ClusterServiceVersionStatusProps> = 
 };
 
 const ManagedNamespaces: React.FC<ManagedNamespacesProps> = ({ obj }) => {
-  const { 'olm.targetNamespaces': olmTargetNamespaces = '' } = obj.metadata?.annotations || {};
+  const { t } = useTranslation();
+  const olmTargetNamespaces = obj?.metadata?.annotations?.['olm.targetNamespaces'] ?? '';
   const managedNamespaces = olmTargetNamespaces?.split(',') || [];
 
   if (managedNamespaces.length === 1 && managedNamespaces[0] === '') {
-    return <>All Namespaces</>;
+    return t('olm~All Namespaces');
   }
 
   switch (managedNamespaces.length) {
     case 0:
-      return <span className="text-muted">All Namespaces</span>;
+      return <span className="text-muted">{t('olm~All Namespaces')}</span>;
     case 1:
       return (
         <ResourceLink kind="Namespace" title={managedNamespaces[0]} name={managedNamespaces[0]} />
@@ -294,109 +238,109 @@ const ManagedNamespaces: React.FC<ManagedNamespacesProps> = ({ obj }) => {
     default:
       return (
         <Popover
-          headerContent="Managed Namespaces"
+          headerContent={t('olm~Managed Namespaces')}
           bodyContent={managedNamespaces.map((namespace) => (
             <ResourceLink kind="Namespace" title={namespace} name={namespace} />
           ))}
         >
           <Button variant="link" isInline>
-            {managedNamespaces.length} Namespaces
+            {t('olm~{{count}} Namespaces', { count: managedNamespaces.length })}
           </Button>
         </Popover>
       );
   }
 };
 
-export const NamespacedClusterServiceVersionTableRow = withFallback<
-  ClusterServiceVersionTableRowProps
->(({ activeNamespace, obj, rowKey, subscription, catalogSourceMissing, index, style }) => {
-  const { displayName, provider, version } = _.get(obj, 'spec');
-  const { 'olm.operatorNamespace': olmOperatorNamespace = '' } = obj.metadata?.annotations || {};
-  const [icon] = _.get(obj, 'spec.icon', []);
-  const route = resourceObjPath(obj, referenceFor(obj));
-  const uid = getUID(obj);
-  const providedAPIs = providedAPIsForCSV(obj);
-  return (
-    <TableRow id={uid} trKey={rowKey} index={index} style={style}>
-      {/* Name */}
-      <TableData className={nameColumnClass}>
-        <Link
-          to={route}
-          className="co-clusterserviceversion-link"
-          data-test-operator-row={displayName}
-        >
-          <ClusterServiceVersionLogo
-            icon={icon}
-            displayName={displayName}
-            version={version}
-            provider={provider}
-          />
-        </Link>
-      </TableData>
-
-      {/* Operator Namespace */}
-      {activeNamespace === ALL_NAMESPACES_KEY ? (
-        <TableData className={namespaceColumnClass}>
-          <ResourceLink kind="Namespace" title={olmOperatorNamespace} name={olmOperatorNamespace} />
-        </TableData>
-      ) : null}
-
-      {/* Managed Namespaces */}
-      <TableData className={managedNamespacesColumnClass}>
-        <ManagedNamespaces obj={obj} />
-      </TableData>
-
-      {/* Status */}
-      <TableData className={statusColumnClass}>
-        <div className="co-clusterserviceversion-row__status">
-          {catalogSourceMissing ? (
-            <SourceMissingStatus />
-          ) : (
-            <ClusterServiceVersionStatus obj={obj} subscription={subscription} />
-          )}
-        </div>
-      </TableData>
-
-      {/* Last Updated */}
-      <TableData className={lastUpdatedColumnClass}>
-        {obj.status == null ? '-' : <Timestamp timestamp={obj.status.lastUpdateTime} />}
-      </TableData>
-
-      {/* Provided APIs */}
-      <TableData className={providedAPIsColumnClass}>
-        {!_.isEmpty(providedAPIs)
-          ? _.take(providedAPIs, 4).map((desc) => (
-              <div key={referenceForProvidedAPI(desc)}>
-                <Link to={`${route}/${referenceForProvidedAPI(desc)}`} title={desc.name}>
-                  {desc.displayName || desc.kind}
-                </Link>
-              </div>
-            ))
-          : '-'}
-        {providedAPIs.length > 4 && (
-          <Link to={route} title={`View ${providedAPIs.length - 4} more...`}>
-            {`View ${providedAPIs.length - 4} more...`}
+export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionTableRowProps>(
+  ({ activeNamespace, obj, rowKey, subscription, catalogSourceMissing, index, style }) => {
+    const { displayName, provider, version } = obj.spec ?? {};
+    const olmOperatorNamespace = obj.metadata?.annotations?.['olm.operatorNamespace'] ?? '';
+    const [icon] = obj.spec.icon ?? [];
+    const route = resourceObjPath(obj, referenceFor(obj));
+    const uid = getUID(obj);
+    const providedAPIs = providedAPIsForCSV(obj);
+    return (
+      <TableRow id={uid} trKey={rowKey} index={index} style={style}>
+        {/* Name */}
+        <TableData className={nameColumnClass}>
+          <Link
+            to={route}
+            className="co-clusterserviceversion-link"
+            data-test-operator-row={displayName}
+          >
+            <ClusterServiceVersionLogo
+              icon={icon}
+              displayName={displayName}
+              version={version}
+              provider={provider}
+            />
           </Link>
-        )}
-      </TableData>
+        </TableData>
 
-      {/* Kebab */}
-      <TableData className={Kebab.columnClass}>
-        <ResourceKebab
-          resource={obj}
-          kind={referenceFor(obj)}
-          actions={menuActionsForCSV(obj, subscription)}
-        />
-      </TableData>
-    </TableRow>
-  );
-});
+        {/* Operator Namespace */}
+        {activeNamespace === ALL_NAMESPACES_KEY ? (
+          <TableData className={namespaceColumnClass}>
+            <ResourceLink
+              kind="Namespace"
+              title={olmOperatorNamespace}
+              name={olmOperatorNamespace}
+            />
+          </TableData>
+        ) : null}
 
-export const ClusterServiceVersionTableRow = connect(clusterServiceVersionStateToProps)(
-  NamespacedClusterServiceVersionTableRow,
+        {/* Managed Namespaces */}
+        <TableData className={managedNamespacesColumnClass}>
+          <ManagedNamespaces obj={obj} />
+        </TableData>
+
+        {/* Status */}
+        <TableData className={statusColumnClass}>
+          <div className="co-clusterserviceversion-row__status">
+            {catalogSourceMissing ? (
+              <SourceMissingStatus />
+            ) : (
+              <ClusterServiceVersionStatus obj={obj} subscription={subscription} />
+            )}
+          </div>
+        </TableData>
+
+        {/* Last Updated */}
+        <TableData className={lastUpdatedColumnClass}>
+          {obj.status == null ? '-' : <Timestamp timestamp={obj.status.lastUpdateTime} />}
+        </TableData>
+
+        {/* Provided APIs */}
+        <TableData className={providedAPIsColumnClass}>
+          {!_.isEmpty(providedAPIs)
+            ? _.take(providedAPIs, 4).map((desc) => (
+                <div key={referenceForProvidedAPI(desc)}>
+                  <Link to={`${route}/${referenceForProvidedAPI(desc)}`} title={desc.name}>
+                    {desc.displayName || desc.kind}
+                  </Link>
+                </div>
+              ))
+            : '-'}
+          {providedAPIs.length > 4 && (
+            <Link to={route} title={`View ${providedAPIs.length - 4} more...`}>
+              {`View ${providedAPIs.length - 4} more...`}
+            </Link>
+          )}
+        </TableData>
+
+        {/* Kebab */}
+        <TableData className={Kebab.columnClass}>
+          <ResourceKebab
+            resource={obj}
+            kind={referenceFor(obj)}
+            actions={menuActionsForCSV(obj, subscription)}
+          />
+        </TableData>
+      </TableRow>
+    );
+  },
 );
 
-const NamespacedSubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
+export const SubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
   activeNamespace,
   catalogSourceMissing,
   rowKey,
@@ -404,7 +348,8 @@ const NamespacedSubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
   index,
   style,
 }) => {
-  const csvName = _.get(obj, 'spec.name');
+  const { t } = useTranslation();
+  const csvName = obj?.spec?.name;
   const menuActions = [Kebab.factory.Edit, () => uninstall(obj)];
   const namespace = getNamespace(obj);
   const route = resourceObjPath(obj, referenceForModel(SubscriptionModel));
@@ -433,7 +378,7 @@ const NamespacedSubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
 
       {/* Managed Namespaces */}
       <TableData className={managedNamespacesColumnClass}>
-        <span className="text-muted">None</span>
+        <span className="text-muted">{t('olm~None')}</span>
       </TableData>
 
       {/* Status */}
@@ -448,7 +393,7 @@ const NamespacedSubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
 
       {/* Provided APIs */}
       <TableData className={providedAPIsColumnClass}>
-        <span className="text-muted">None</span>
+        <span className="text-muted">{t('olm~None')}</span>
       </TableData>
 
       {/* Kebab */}
@@ -458,10 +403,6 @@ const NamespacedSubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
     </TableRow>
   );
 };
-
-export const SubscriptionTableRow = connect(clusterServiceVersionStateToProps)(
-  NamespacedSubscriptionTableRow,
-);
 
 const InstalledOperatorTableRow: React.FC<InstalledOperatorTableRowProps> = ({
   obj,
@@ -495,36 +436,103 @@ const InstalledOperatorTableRow: React.FC<InstalledOperatorTableRowProps> = ({
   );
 };
 
-const NoOperatorsMatchFilterMsg = () => <MsgBox title="No Operators Found" />;
+const CSVListEmptyMsg = () => {
+  const { t } = useTranslation();
+  return <MsgBox title={t('olm~No Operators found')} />;
+};
 
-export const NamespacedClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps> = ({
-  activeNamespace,
+const CSVListNoDataEmptyMsg = () => {
+  const { t } = useTranslation();
+  const project = useActiveNamespace();
+  const noOperatorsInSingleNamespaceMessage = t(
+    'olm~No Operators are availalble for project {{project}}.',
+    { project },
+  );
+  const noOperatorsInAllNamespacesMessage = t('olm~No Operators are availalble.');
+  const detail = (
+    <>
+      <div>
+        {project === ALL_NAMESPACES_KEY
+          ? noOperatorsInAllNamespacesMessage
+          : noOperatorsInSingleNamespaceMessage}
+      </div>
+      <div>
+        <Trans ns="olm">
+          Discover and install Operators from the <a href="/operatorhub">OperatorHub</a>.
+        </Trans>
+      </div>
+    </>
+  );
+  return <MsgBox title={t('olm~No Operators found')} detail={detail} />;
+};
+
+export const ClusterServiceVersionList: React.FC<ClusterServiceVersionListProps> = ({
   subscriptions,
   catalogSources,
   data,
   ...rest
 }) => {
-  const noDataDetail = (
-    <>
-      <div>
-        No Operators are available
-        {activeNamespace !== ALL_NAMESPACES_KEY && (
-          <>
-            {' '}
-            for project{' '}
-            <span className="co-clusterserviceversion-empty__state__namespace">
-              {activeNamespace}
-            </span>
-          </>
-        )}
-        .
-      </div>
-      <div>
-        Discover and install Operators from the <a href="/operatorhub">OperatorHub</a>.
-      </div>
-    </>
-  );
-  const NoDataEmptyMsg = () => <MsgBox title="No Operators Found" detail={noDataDetail} />;
+  const { t } = useTranslation();
+  const activeNamespace = useActiveNamespace();
+  const nameHeader: Header = {
+    title: t('olm~Name'),
+    sortField: 'metadata.name',
+    transforms: [sortable],
+    props: { className: nameColumnClass },
+  };
+
+  const namespaceHeader: Header = {
+    title: t('olm~Namespace'),
+    sortFunc: 'getOperatorNamespace',
+    transforms: [sortable],
+    props: { className: namespaceColumnClass },
+  };
+
+  const managedNamespacesHeader: Header = {
+    title: t('olm~Managed Namespaces'),
+    sortFunc: 'formatTargetNamespaces',
+    transforms: [sortable, wrappable],
+    props: { className: managedNamespacesColumnClass },
+  };
+
+  const statusHeader: Header = {
+    title: t('olm~Status'),
+    props: { className: statusColumnClass },
+  };
+
+  const lastUpdatedHeader: Header = {
+    title: t('olm~Last updated'),
+    props: { className: lastUpdatedColumnClass },
+  };
+
+  const providedAPIsHeader: Header = {
+    title: t('olm~Provided APIs'),
+    props: { className: providedAPIsColumnClass },
+  };
+
+  const kebabHeader: Header = {
+    title: '',
+    props: { className: Kebab.columnClass },
+  };
+
+  const AllProjectsTableHeader = (): Header[] => [
+    nameHeader,
+    namespaceHeader,
+    managedNamespacesHeader,
+    statusHeader,
+    lastUpdatedHeader,
+    providedAPIsHeader,
+    kebabHeader,
+  ];
+
+  const SingleProjectTableHeader = (): Header[] => [
+    nameHeader,
+    managedNamespacesHeader,
+    statusHeader,
+    lastUpdatedHeader,
+    providedAPIsHeader,
+    kebabHeader,
+  ];
 
   const isCopiedCSV = (source: ClusterServiceVersionKind, kind: string) => {
     return (
@@ -560,22 +568,20 @@ export const NamespacedClusterServiceVersionList: React.SFC<ClusterServiceVersio
 
   const formatTargetNamespaces = (obj: ClusterServiceVersionKind | SubscriptionKind): string => {
     if (obj.kind === 'Subscription') {
-      return 'None';
+      return t('olm~None');
     }
-
     const namespaces = obj.metadata.annotations?.['olm.targetNamespaces']?.split(',') || [];
-
     if (namespaces.length === 1 && namespaces[0] === '') {
-      return 'All Namespaces';
+      return t('olm~All Namespaces');
     }
 
     switch (namespaces.length) {
       case 0:
-        return 'All Namespaces';
+        return t('olm~All Namespaces');
       case 1:
         return namespaces[0];
       default:
-        return `${namespaces.length} Namespaces`;
+        return t('olm~{{count}} Namespaces', { count: namespaces.length });
     }
   };
   const getOperatorNamespace = (
@@ -594,6 +600,7 @@ export const NamespacedClusterServiceVersionList: React.SFC<ClusterServiceVersio
       Header={allNamespaceActive ? AllProjectsTableHeader : SingleProjectTableHeader}
       Row={(rowArgs: RowFunctionArgs<ClusterServiceVersionKind | SubscriptionKind>) => (
         <InstalledOperatorTableRow
+          activeNamespace={activeNamespace}
           obj={rowArgs.obj}
           index={rowArgs.index}
           rowKey={rowArgs.key}
@@ -602,8 +609,8 @@ export const NamespacedClusterServiceVersionList: React.SFC<ClusterServiceVersio
           subscriptions={subscriptions.data}
         />
       )}
-      EmptyMsg={NoOperatorsMatchFilterMsg}
-      NoDataEmptyMsg={NoDataEmptyMsg}
+      EmptyMsg={CSVListEmptyMsg}
+      NoDataEmptyMsg={CSVListNoDataEmptyMsg}
       virtualize
       customSorts={{
         formatTargetNamespaces,
@@ -613,29 +620,27 @@ export const NamespacedClusterServiceVersionList: React.SFC<ClusterServiceVersio
   );
 };
 
-export const ClusterServiceVersionList = connect(clusterServiceVersionStateToProps)(
-  NamespacedClusterServiceVersionList,
-);
-
 export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProps> = (props) => {
-  const title = 'Installed Operators';
+  const { t } = useTranslation();
+  const title = t('olm~Installed Operators');
   const helpText = (
-    <>
-      Installed Operators are represented by Cluster Service Versions within this namespace. For
-      more information, see the{' '}
+    <Trans ns="olm">
+      Installed Operators are represented by ClusterServiceVersions within this Namespace. For more
+      information, see the{' '}
       <ExternalLink
         href={`${openshiftHelpBase}operators/understanding/olm-what-operators-are.html`}
-        text="Understanding Operators documentation"
-      />
-      . Or create an Operator and Cluster Service Version using the{' '}
-      <ExternalLink href="https://sdk.operatorframework.io/" text="Operator SDK" />.
-    </>
+      >
+        Understanding Operators documentation
+      </ExternalLink>
+      . Or create an Operator and ClusterServiceVersion using the{' '}
+      <ExternalLink href="https://sdk.operatorframework.io/">Operator SDK</ExternalLink>.
+    </Trans>
   );
 
   const flatten = ({ clusterServiceVersions, subscriptions }) =>
     [
-      ..._.get(clusterServiceVersions, 'data', []),
-      ..._.get(subscriptions, 'data', []).filter(
+      ...(clusterServiceVersions?.data ?? []),
+      ...(subscriptions?.data ?? []).filter(
         (sub) =>
           ['', sub.metadata.namespace].includes(props.namespace) &&
           _.isNil(_.get(sub, 'status.installedCSV')),
@@ -645,9 +650,7 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
         isCSV(obj) ||
         _.isUndefined(
           all.find(({ metadata }) =>
-            [_.get(obj, 'status.currentCSV'), _.get(obj, 'spec.startingCSV')].includes(
-              metadata.name,
-            ),
+            [obj?.status?.currentCSV, obj?.spec?.startingCSV].includes(metadata.name),
           ),
         ),
     );
@@ -704,6 +707,7 @@ export const MarkdownView = (props: {
 };
 
 export const CRDCard: React.FC<CRDCardProps> = ({ csv, crd, required, ...rest }) => {
+  const { t } = useTranslation();
   const reference = referenceForProvidedAPI(crd);
   const [model] = useK8sModel(reference);
   const canCreate = rest.canCreate ?? model?.verbs?.includes?.('create');
@@ -727,7 +731,7 @@ export const CRDCard: React.FC<CRDCardProps> = ({ csv, crd, required, ...rest })
           />
           {required && (
             <ResourceStatus badgeAlt>
-              <StatusIconAndText icon={<RedExclamationCircleIcon />} title="Required" />
+              <StatusIconAndText icon={<RedExclamationCircleIcon />} title={t('olm~Required')} />
             </ResourceStatus>
           )}
         </span>
@@ -740,7 +744,7 @@ export const CRDCard: React.FC<CRDCardProps> = ({ csv, crd, required, ...rest })
           <CardFooter>
             <Link to={createRoute}>
               <AddCircleOIcon className="co-icon-space-r" />
-              Create Instance
+              {t('olm~Create instance')}
             </Link>
           </CardFooter>
         </RequireCreatePermission>
@@ -764,6 +768,7 @@ export const CRDCardRow = ({ csv, providedAPIs }: CRDCardRowProps) => {
 };
 
 const InitializationResourceAlert: React.FC<InitializationResourceAlertProps> = (props) => {
+  const { t } = useTranslation();
   const { initializationResource, csv } = props;
 
   const initializationResourceKind = initializationResource?.kind;
@@ -794,11 +799,16 @@ const InitializationResourceAlert: React.FC<InitializationResourceAlertProps> = 
         isInline
         className="co-alert"
         variant="warning"
-        title={`${initializationResourceKind} Required`}
+        title={t('olm~{{initializationResourceKind}} required', { initializationResourceKind })}
       >
-        <p>Create a {initializationResourceKind} instance to use this operator.</p>
+        <p>
+          {t('olm~Create a {{initializationResourceKind}} instance to use this Operator.', {
+            initializationResourceKind,
+          })}
+        </p>
         <CreateInitializationResourceButton
           obj={props.csv}
+          initializationResource={initializationResource}
           targetNamespace={
             model?.namespaced
               ? initializationResource?.metadata.namespace || csv.metadata?.namespace
@@ -814,35 +824,40 @@ const InitializationResourceAlert: React.FC<InitializationResourceAlertProps> = 
 export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetailsProps> = (
   props,
 ) => {
+  const { t } = useTranslation();
   const { spec, metadata, status } = props.obj;
+  const providedAPIs = providedAPIsForCSV(props.obj);
   const {
     'marketplace.openshift.io/support-workflow': marketplaceSupportWorkflow,
     'olm.targetNamespaces': olmTargetNamespaces = '',
     'operatorframework.io/initialization-resource': initializationResourceJSON,
   } = metadata.annotations || {};
 
-  let initializationResource = null;
-  if (initializationResourceJSON) {
-    try {
-      initializationResource = JSON.parse(initializationResourceJSON);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error.message);
+  const initializationResource = React.useMemo(() => {
+    if (initializationResourceJSON) {
+      try {
+        return JSON.parse(initializationResourceJSON);
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(error.message);
+      }
     }
-  }
+    return null;
+  }, [initializationResourceJSON]);
 
-  let supportWorkflowUrl;
-  if (marketplaceSupportWorkflow) {
-    try {
-      const url = new URL(marketplaceSupportWorkflow);
-      url.searchParams.set('utm_source', 'openshift_console');
-      supportWorkflowUrl = url.toString();
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error.message);
+  const supportWorkflowUrl = React.useMemo(() => {
+    if (marketplaceSupportWorkflow) {
+      try {
+        const url = new URL(marketplaceSupportWorkflow);
+        url.searchParams.set('utm_source', 'openshift_console');
+        return url.toString();
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(error.message);
+      }
     }
-  }
-  const providedAPIs = providedAPIsForCSV(props.obj);
+    return null;
+  }, [marketplaceSupportWorkflow]);
 
   return (
     <>
@@ -866,32 +881,34 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                   csv={props.obj}
                 />
               )}
-              <SectionHeading text="Provided APIs" />
+              <SectionHeading text={t('olm~Provided APIs')} />
               <CRDCardRow csv={props.obj} providedAPIs={providedAPIs} />
-              <SectionHeading text="Description" />
-              <MarkdownView content={spec.description || 'Not available'} />
+              <SectionHeading text={t('olm~Description')} />
+              <MarkdownView content={spec.description || t('olm~Not available')} />
             </div>
             <div className="col-sm-3">
               <dl className="co-clusterserviceversion-details__field">
-                <dt>Provider</dt>
+                <dt>{t('olm~Provider')}</dt>
                 <dd>
-                  {spec.provider && spec.provider.name ? spec.provider.name : 'Not available'}
+                  {spec.provider && spec.provider.name
+                    ? spec.provider.name
+                    : t('olm~Not available')}
                 </dd>
                 {supportWorkflowUrl && (
                   <>
-                    <dt>Support</dt>
+                    <dt>{t('olm~Support')}</dt>
                     <dd>
-                      <ExternalLink href={supportWorkflowUrl} text="Get support" />
+                      <ExternalLink href={supportWorkflowUrl} text={t('olm~Get support')} />
                     </dd>
                   </>
                 )}
-                <dt>Created At</dt>
+                <dt>{t('olm~Created at')}</dt>
                 <dd>
                   <Timestamp timestamp={metadata.creationTimestamp} />
                 </dd>
               </dl>
               <dl className="co-clusterserviceversion-details__field">
-                <dt>Links</dt>
+                <dt>{t('olm~Links')}</dt>
                 {spec.links && spec.links.length > 0 ? (
                   spec.links.map((link) => (
                     <dd key={link.url} style={{ display: 'flex', flexDirection: 'column' }}>
@@ -904,11 +921,11 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                     </dd>
                   ))
                 ) : (
-                  <dd>Not available</dd>
+                  <dd>{t('olm~Not available')}</dd>
                 )}
               </dl>
               <dl className="co-clusterserviceversion-details__field">
-                <dt>Maintainers</dt>
+                <dt>{t('olm~Maintainers')}</dt>
                 {spec.maintainers && spec.maintainers.length > 0 ? (
                   spec.maintainers.map((maintainer) => (
                     <dd key={maintainer.email} style={{ display: 'flex', flexDirection: 'column' }}>
@@ -919,7 +936,7 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                     </dd>
                   ))
                 ) : (
-                  <dd>Not available</dd>
+                  <dd>{t('olm~Not available')}</dd>
                 )}
               </dl>
             </div>
@@ -927,25 +944,27 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="ClusterServiceVersion Details" />
+        <SectionHeading text={t('olm~ClusterServiceVersion details')} />
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-6">
               <ResourceSummary resource={props.obj}>
                 <dt>
                   <Popover
-                    headerContent={<div>Managed Namespaces</div>}
-                    bodyContent={<div>Operands in this Namespace are managed by the Operator.</div>}
+                    headerContent={<div>{t('olm~Managed Namespaces')}</div>}
+                    bodyContent={
+                      <div>{t('olm~Operands in this Namespace are managed by the Operator.')}</div>
+                    }
                     maxWidth="30rem"
                   >
                     <Button variant="plain" className="details-item__popover-button">
-                      Managed Namespaces
+                      {t('olm~Managed Namespaces')}
                     </Button>
                   </Popover>
                 </dt>
                 <dd>
                   {olmTargetNamespaces === '' ? (
-                    'All Namespaces'
+                    t('olm~All Namespaces')
                   ) : (
                     <ResourceLink
                       kind="Namespace"
@@ -957,13 +976,13 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
               </ResourceSummary>
             </div>
             <div className="col-sm-6">
-              <dt>Status</dt>
+              <dt>{t('olm~Status')}</dt>
               <dd>
-                <Status status={status ? status.phase : 'Unknown'} />
+                <Status status={status ? status.phase : t('olm~Unknown')} />
               </dd>
-              <dt>Status Reason</dt>
-              <dd>{status ? status.message : 'Unknown'}</dd>
-              <dt>Operator Deployments</dt>
+              <dt>{t('olm~Status reason')}</dt>
+              <dd>{status ? status.message : t('olm~Unknown')}</dd>
+              <dt>{t('olm~Operator Deployments')}</dt>
               {spec.install.spec.deployments.map(({ name }) => (
                 <dd key={name}>
                   <ResourceLink
@@ -973,9 +992,9 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                   />
                 </dd>
               ))}
-              {_.get(spec.install.spec, 'permissions') && (
+              {spec?.install?.spec?.permissions && (
                 <>
-                  <dt>Operator Service Accounts</dt>
+                  <dt>{t('olm~Operator ServiceAccounts')}</dt>
                   {spec.install.spec.permissions.map(({ serviceAccountName }) => (
                     <dd key={serviceAccountName}>
                       <ResourceLink
@@ -987,7 +1006,7 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                   ))}
                 </>
               )}
-              <dt>Operator Group</dt>
+              <dt>{t('olm~OperatorGroup')}</dt>
               <dd>
                 {operatorGroupFor(props.obj) ? (
                   <ResourceLink
@@ -1004,9 +1023,9 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="Conditions" />
+        <SectionHeading text={t('olm~Conditions')} />
         <Conditions
-          conditions={_.get(status, 'conditions', []).map((c) => ({
+          conditions={(status?.conditions ?? []).map((c) => ({
             ...c,
             type: c.phase,
             status: 'True',
@@ -1022,8 +1041,12 @@ export const CSVSubscription: React.FC<CSVSubscriptionProps> = ({
   subscriptions = [],
   ...rest
 }) => {
+  const { t } = useTranslation();
   const EmptyMsg = () => (
-    <MsgBox title="No Operator Subscription" detail="This Operator will not receive updates." />
+    <MsgBox
+      title={t('olm~No Operator Subscription')}
+      detail={t('olm~This Operator will not receive updates.')}
+    />
   );
 
   const subscription = React.useMemo(() => subscriptionForCSV(subscriptions, obj), [
@@ -1043,16 +1066,10 @@ export const CSVSubscription: React.FC<CSVSubscriptionProps> = ({
   );
 };
 
-const subscriptionPage = { href: 'subscription', name: 'Subscription', component: CSVSubscription };
-const allInstancesPage: Page = {
-  href: 'instances',
-  name: 'All Instances',
-  component: ProvidedAPIsPage,
-};
-
 export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsDetailsPageProps> = (
   props,
 ) => {
+  const { t } = useTranslation();
   const menuActions = (
     model,
     obj: ClusterServiceVersionKind,
@@ -1078,9 +1095,27 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
       return [
         navFactory.details(ClusterServiceVersionDetails),
         navFactory.editYaml(),
-        ...(canListSubscriptions ? [subscriptionPage] : []),
+        ...(canListSubscriptions
+          ? [
+              {
+                href: 'subscription',
+                // t('olm~Subscription')
+                nameKey: 'olm~Subscription',
+                component: CSVSubscription,
+              },
+            ]
+          : []),
         navFactory.events(ResourceEventStream),
-        ...(providedAPIs.length > 1 ? [allInstancesPage] : []),
+        ...(providedAPIs.length > 1
+          ? [
+              {
+                href: 'instances',
+                // t('olm~All instances')
+                nameKey: 'olm~All instances',
+                component: ProvidedAPIsPage,
+              },
+            ]
+          : []),
         ...providedAPIs.map((api: CRDDescription) => ({
           href: referenceForProvidedAPI(api),
           name: ['Details', 'YAML', 'Subscription', 'Events'].includes(api.displayName)
@@ -1106,7 +1141,7 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
           name: 'Installed Operators',
           path: getBreadcrumbPath(props.match),
         },
-        { name: 'Operator Details', path: props.match.url },
+        { name: t('olm~{{item}} details', { item: 'Operator' }), path: props.match.url },
       ]}
       resources={[
         { kind: referenceForModel(SubscriptionModel), isList: true, prop: 'subscriptions' },
@@ -1178,6 +1213,7 @@ export type ClusterServiceVersionDetailsProps = {
 };
 
 type InstalledOperatorTableRowProps = {
+  activeNamespace: string;
   obj: ClusterServiceVersionKind | SubscriptionKind;
   index: number;
   rowKey: string;
@@ -1217,10 +1253,6 @@ export type CSVSubscriptionProps = {
   subscriptions: SubscriptionKind[];
 };
 
-type ClusterServiceVersionStateProps = {
-  activeNamespace?: string;
-};
-
 type InitializationResourceAlertProps = {
   csv: ClusterServiceVersionKind;
   initializationResource: K8sResourceCommon;
@@ -1236,11 +1268,8 @@ type Header = {
 
 // TODO(alecmerdler): Find Webpack loader/plugin to add `displayName` to React components automagically
 ClusterServiceVersionList.displayName = 'ClusterServiceVersionList';
-NamespacedClusterServiceVersionList.displayName = 'ClusterServiceVersionList';
 ClusterServiceVersionsPage.displayName = 'ClusterServiceVersionsPage';
 ClusterServiceVersionTableRow.displayName = 'ClusterServiceVersionTableRow';
-SingleProjectTableHeader.displayName = 'SingleProjectClusterServiceVersionTableHeader';
-AllProjectsTableHeader.displayName = 'AllProjectsClusterServiceVersionTableHeader';
 CRDCard.displayName = 'CRDCard';
 ClusterServiceVersionsDetailsPage.displayName = 'ClusterServiceVersionsDetailsPage';
 ClusterServiceVersionDetails.displayName = 'ClusterServiceVersionDetails';

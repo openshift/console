@@ -11,7 +11,7 @@ import {
   Table,
   TableRow,
   TableData,
-  RowFunction,
+  RowFunctionArgs,
 } from '@console/internal/components/factory';
 import { Conditions } from '@console/internal/components/conditions';
 import {
@@ -27,7 +27,6 @@ import {
   HintBlock,
 } from '@console/internal/components/utils';
 import {
-  K8sResourceKind,
   referenceForModel,
   referenceForOwnerRef,
   k8sUpdate,
@@ -45,6 +44,7 @@ import { InstallPlanKind, InstallPlanApproval, Step } from '../types';
 import { requireOperatorGroup } from './operator-group';
 import { installPlanPreviewModal } from './modals/installplan-preview-modal';
 import { InstallPlanReview, referenceForStepResource } from './index';
+import { useTranslation } from 'react-i18next';
 
 const tableColumnClasses = [
   '',
@@ -62,43 +62,8 @@ const componentsTableColumnClasses = [
   classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
 ];
 
-export const InstallPlanTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Namespace',
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: 'Status',
-      sortField: 'status.phase',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Components',
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: 'Subscriptions',
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[5] },
-    },
-  ];
-};
-InstallPlanTableHeader.displayName = 'InstallPlanTableHeader';
-
-export const InstallPlanTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
+export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj, index, key, style }) => {
+  const { t } = useTranslation();
   const phaseFor = (phase: InstallPlanKind['status']['phase']) => <Status status={phase} />;
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
@@ -124,7 +89,7 @@ export const InstallPlanTableRow: RowFunction<K8sResourceKind> = ({ obj, index, 
 
       {/* Status */}
       <TableData className={tableColumnClasses[2]}>
-        {phaseFor(_.get(obj, 'status.phase') || 'Unknown')}
+        {phaseFor(obj.status?.phase ?? 'Unknown')}
       </TableData>
 
       {/* Components */}
@@ -132,7 +97,7 @@ export const InstallPlanTableRow: RowFunction<K8sResourceKind> = ({ obj, index, 
         <ul className="list-unstyled">
           {obj.spec.clusterServiceVersionNames.map((csvName) => (
             <li key={csvName}>
-              {_.get(obj, 'status.phase') === 'Complete' ? (
+              {obj.status?.phase === 'Complete' ? (
                 <ResourceLink
                   kind={referenceForModel(ClusterServiceVersionModel)}
                   name={csvName}
@@ -165,7 +130,7 @@ export const InstallPlanTableRow: RowFunction<K8sResourceKind> = ({ obj, index, 
                 />
               </li>
             </ul>
-          )) || <span className="text-muted">None</span>}
+          )) || <span className="text-muted">{t('olm~None')}</span>}
       </TableData>
 
       {/* Kebab */}
@@ -180,17 +145,59 @@ export const InstallPlanTableRow: RowFunction<K8sResourceKind> = ({ obj, index, 
   );
 };
 
-export const InstallPlansList = requireOperatorGroup((props: InstallPlansListProps) => {
-  const EmptyMsg = () => (
+const EmptyMsg: React.FC = () => {
+  const { t } = useTranslation();
+  return (
     <MsgBox
-      title="No Install Plans Found"
-      detail="Install Plans are created automatically by subscriptions or manually using the CLI."
+      title={t('olm~No InstallPlans found')}
+      detail={t(
+        'olm~InstallPlans are created automatically by subscriptions or manually using the CLI.',
+      )}
     />
   );
+};
+
+export const InstallPlansList = requireOperatorGroup((props: InstallPlansListProps) => {
+  const { t } = useTranslation();
+  const InstallPlanTableHeader = () => {
+    return [
+      {
+        title: t('olm~Name'),
+        sortField: 'metadata.name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[0] },
+      },
+      {
+        title: t('olm~Namespace'),
+        sortField: 'metadata.namespace',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[1] },
+      },
+      {
+        title: t('olm~Status'),
+        sortField: 'status.phase',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[2] },
+      },
+      {
+        title: t('olm~Components'),
+        props: { className: tableColumnClasses[3] },
+      },
+      {
+        title: t('olm~Subscriptions'),
+        props: { className: tableColumnClasses[4] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[5] },
+      },
+    ];
+  };
+
   return (
     <Table
       {...props}
-      aria-label="Install Plans"
+      aria-label={t('olm~InstallPlans')}
       Header={InstallPlanTableHeader}
       Row={InstallPlanTableRow}
       EmptyMsg={EmptyMsg}
@@ -202,14 +209,15 @@ const getCatalogSources = (
   installPlan: InstallPlanKind,
 ): { sourceName: string; sourceNamespace: string }[] =>
   _.reduce(
-    _.get(installPlan, 'status.plan') || [],
+    installPlan?.status?.plan || [],
     (accumulator, { resource: { sourceName, sourceNamespace } }) =>
       accumulator.add(fromJS({ sourceName, sourceNamespace })),
     ImmutableSet(),
   ).toJS();
 
-export const InstallPlansPage: React.SFC<InstallPlansPageProps> = (props) => {
-  const namespace = _.get(props.match, 'params.ns');
+export const InstallPlansPage: React.FC<InstallPlansPageProps> = (props) => {
+  const { t } = useTranslation();
+  const namespace = props.match?.params?.ns;
   return (
     <MultiListPage
       {...props}
@@ -229,14 +237,15 @@ export const InstallPlansPage: React.SFC<InstallPlansPageProps> = (props) => {
         },
       ]}
       flatten={(resources) => _.get(resources.installPlan, 'data', [])}
-      title="Install Plans"
+      title={t('olm~InstallPlans')}
       showTitle={false}
       ListComponent={InstallPlansList}
     />
   );
 };
 
-export const InstallPlanDetails: React.SFC<InstallPlanDetailsProps> = ({ obj }) => {
+export const InstallPlanDetails: React.FC<InstallPlanDetailsProps> = ({ obj }) => {
+  const { t } = useTranslation();
   const needsApproval =
     obj.spec.approval === InstallPlanApproval.Manual && obj.spec.approved === false;
 
@@ -244,23 +253,24 @@ export const InstallPlanDetails: React.SFC<InstallPlanDetailsProps> = ({ obj }) 
     <>
       {needsApproval && (
         <div className="co-m-pane__body">
-          <HintBlock title="Review Manual Install Plan">
+          <HintBlock title={t('olm~Review manual InstallPlan')}>
             <p>
-              Inspect the requirements for the components specified in this install plan before
-              approving.
+              {t(
+                'olm~Inspect the requirements for the components specified in this InstallPlan before approving.',
+              )}
             </p>
             <Link
               to={`/k8s/ns/${obj.metadata.namespace}/${referenceForModel(InstallPlanModel)}/${
                 obj.metadata.name
               }/components`}
             >
-              <Button variant="primary">Preview Install Plan</Button>
+              <Button variant="primary">{t('olm~Preview InstallPlan')}</Button>
             </Link>
           </HintBlock>
         </div>
       )}
       <div className="co-m-pane__body">
-        <SectionHeading text="Install Plan Details" />
+        <SectionHeading text={t('olm~InstallPlan details')} />
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-6">
@@ -268,11 +278,11 @@ export const InstallPlanDetails: React.SFC<InstallPlanDetailsProps> = ({ obj }) 
             </div>
             <div className="col-sm-6">
               <dl className="co-m-pane__details">
-                <dt>Status</dt>
+                <dt>{t('olm~Status')}</dt>
                 <dd>
-                  <Status status={_.get(obj.status, 'phase', 'Unknown')} />
+                  <Status status={obj.status?.phase ?? t('olm~Unknown')} />
                 </dd>
-                <dt>Components</dt>
+                <dt>{t('olm~Components')}</dt>
                 {(obj.spec.clusterServiceVersionNames || []).map((csvName) => (
                   <dd key={csvName}>
                     {obj.status.phase === 'Complete' ? (
@@ -290,7 +300,7 @@ export const InstallPlanDetails: React.SFC<InstallPlanDetailsProps> = ({ obj }) 
                     )}
                   </dd>
                 ))}
-                <dt>Catalog Sources</dt>
+                <dt>{t('olm~CatalogSources')}</dt>
                 {getCatalogSources(obj).map(({ sourceName, sourceNamespace }) => (
                   <dd key={`${sourceNamespace}-${sourceName}`}>
                     <ResourceLink
@@ -307,153 +317,138 @@ export const InstallPlanDetails: React.SFC<InstallPlanDetailsProps> = ({ obj }) 
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="Conditions" />
+        <SectionHeading text={t('olm~Conditions')} />
         <Conditions conditions={obj.status?.conditions} />
       </div>
     </>
   );
 };
 
-export class InstallPlanPreview extends React.Component<
-  InstallPlanPreviewProps,
-  InstallPlanPreviewState
-> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      needsApproval:
-        this.props.obj.spec.approval === InstallPlanApproval.Manual &&
-        this.props.obj.spec.approved === false,
-    };
-  }
+export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
+  obj,
+  hideApprovalBlock,
+}) => {
+  const { t } = useTranslation();
+  const [needsApproval, setNeedsApproval] = React.useState(
+    obj.spec.approval === InstallPlanApproval.Manual && obj.spec.approved === false,
+  );
+  const [error, setError] = React.useState();
+  const subscription = obj?.metadata?.ownerReferences.find(
+    (ref) => referenceForOwnerRef(ref) === referenceForModel(SubscriptionModel),
+  );
 
-  render() {
-    const { obj, hideApprovalBlock = false } = this.props;
-    const subscription = obj?.metadata?.ownerReferences.find(
-      (ref) => referenceForOwnerRef(ref) === referenceForModel(SubscriptionModel),
-    );
+  const plan = obj?.status?.plan || [];
+  const stepsByCSV = plan
+    .reduce(
+      (acc, step) => acc.update(step.resolving, [], (steps) => steps.concat([step])),
+      ImmutableMap<string, Step[]>(),
+    )
+    .toArray();
 
-    const plan = _.get(obj.status, 'plan') || [];
-    const stepsByCSV = plan
-      .reduce(
-        (acc, step) => acc.update(step.resolving, [], (steps) => steps.concat([step])),
-        ImmutableMap<string, Step[]>(),
-      )
-      .toArray();
+  const approve = () =>
+    k8sUpdate(InstallPlanModel, { ...obj, spec: { ...obj.spec, approved: true } })
+      .then(() => setNeedsApproval(false))
+      .catch(setError);
 
-    const approve = () =>
-      k8sUpdate(InstallPlanModel, { ...obj, spec: { ...obj.spec, approved: true } })
-        .then(() => this.setState({ needsApproval: false }))
-        .catch((error) => this.setState({ error }));
+  const stepStatus = (status: Step['status']) => (
+    <>
+      {status === 'Present' && <GreenCheckCircleIcon className="co-icon-space-r" />}
+      {status === 'Created' && <GreenCheckCircleIcon className="co-icon-space-r" />}
+      {status}
+    </>
+  );
 
-    const stepStatus = (status: Step['status']) => (
-      <>
-        {status === 'Present' && <GreenCheckCircleIcon className="co-icon-space-r" />}
-        {status === 'Created' && <GreenCheckCircleIcon className="co-icon-space-r" />}
-        {status}
-      </>
-    );
-
-    return plan.length > 0 ? (
-      <>
-        {this.state.error && (
-          <div className="co-clusterserviceversion-detail__error-box">{this.state.error}</div>
-        )}
-        {this.state.needsApproval && !hideApprovalBlock && (
-          <div className="co-m-pane__body">
-            <HintBlock title="Review Manual Install Plan">
-              <InstallPlanReview installPlan={obj} />
-              <div className="pf-c-form">
-                <div className="pf-c-form__actions">
-                  <Button
-                    variant="primary"
-                    isDisabled={!this.state.needsApproval}
-                    onClick={() => approve()}
-                  >
-                    {this.state.needsApproval ? 'Approve' : 'Approved'}
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    isDisabled={false}
-                    onClick={() =>
-                      history.push(
-                        `/k8s/ns/${obj.metadata.namespace}/${referenceForModel(
-                          SubscriptionModel,
-                        )}/${subscription.name}?showDelete=true`,
-                      )
-                    }
-                  >
-                    Deny
-                  </Button>
-                </div>
+  return plan.length > 0 ? (
+    <>
+      {error && <div className="co-clusterserviceversion-detail__error-box">{error}</div>}
+      {needsApproval && !hideApprovalBlock && (
+        <div className="co-m-pane__body">
+          <HintBlock title={t('olm~Review manual InstallPlan')}>
+            <InstallPlanReview installPlan={obj} />
+            <div className="pf-c-form">
+              <div className="pf-c-form__actions">
+                <Button variant="primary" isDisabled={!needsApproval} onClick={() => approve()}>
+                  {needsApproval ? t('olm~Approve') : t('olm~Approved')}
+                </Button>
+                <Button
+                  variant="secondary"
+                  isDisabled={false}
+                  onClick={() =>
+                    history.push(
+                      `/k8s/ns/${obj.metadata.namespace}/${referenceForModel(SubscriptionModel)}/${
+                        subscription.name
+                      }?showDelete=true`,
+                    )
+                  }
+                >
+                  {t('olm~Deny')}
+                </Button>
               </div>
-            </HintBlock>
-          </div>
-        )}
-        {stepsByCSV.map((steps) => (
-          <div key={steps[0].resolving} className="co-m-pane__body">
-            <SectionHeading text={steps[0].resolving} />
-            <div className="co-table-container">
-              <table className="pf-c-table pf-m-compact pf-m-border-rows">
-                <thead>
-                  <tr>
-                    <th className={componentsTableColumnClasses[0]}>Name</th>
-                    <th className={componentsTableColumnClasses[1]}>Kind</th>
-                    <th className={componentsTableColumnClasses[2]}>Status</th>
-                    <th className={componentsTableColumnClasses[3]}>API Version</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {steps.map((step) => (
-                    <tr key={`${referenceForStepResource(step.resource)}-${step.resource.name}`}>
-                      <td className={componentsTableColumnClasses[0]}>
-                        {['Present', 'Created'].includes(step.status) ? (
-                          <ResourceLink
-                            kind={referenceForStepResource(step.resource)}
-                            namespace={obj.metadata.namespace}
-                            name={step.resource.name}
-                            title={step.resource.name}
-                          />
-                        ) : (
-                          <>
-                            <ResourceIcon kind={referenceForStepResource(step.resource)} />
-                            <Button
-                              type="button"
-                              onClick={() =>
-                                installPlanPreviewModal({ stepResource: step.resource })
-                              }
-                              variant="link"
-                            >
-                              {step.resource.name}
-                            </Button>
-                          </>
-                        )}
-                      </td>
-                      <td className={componentsTableColumnClasses[1]}>{step.resource.kind}</td>
-                      <td className={componentsTableColumnClasses[2]}>{stepStatus(step.status)}</td>
-                      <td className={componentsTableColumnClasses[3]}>
-                        {apiVersionForReference(referenceForStepResource(step.resource))}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
             </div>
+          </HintBlock>
+        </div>
+      )}
+      {stepsByCSV.map((steps) => (
+        <div key={steps[0].resolving} className="co-m-pane__body">
+          <SectionHeading text={steps[0].resolving} />
+          <div className="co-table-container">
+            <table className="pf-c-table pf-m-compact pf-m-border-rows">
+              <thead>
+                <tr>
+                  <th className={componentsTableColumnClasses[0]}>{t('olm~Name')}</th>
+                  <th className={componentsTableColumnClasses[1]}>{t('olm~Kind')}</th>
+                  <th className={componentsTableColumnClasses[2]}>{t('olm~Status')}</th>
+                  <th className={componentsTableColumnClasses[3]}>{t('olm~API version')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {steps.map((step) => (
+                  <tr key={`${referenceForStepResource(step.resource)}-${step.resource.name}`}>
+                    <td className={componentsTableColumnClasses[0]}>
+                      {['Present', 'Created'].includes(step.status) ? (
+                        <ResourceLink
+                          kind={referenceForStepResource(step.resource)}
+                          namespace={obj.metadata.namespace}
+                          name={step.resource.name}
+                          title={step.resource.name}
+                        />
+                      ) : (
+                        <>
+                          <ResourceIcon kind={referenceForStepResource(step.resource)} />
+                          <Button
+                            type="button"
+                            onClick={() => installPlanPreviewModal({ stepResource: step.resource })}
+                            variant="link"
+                          >
+                            {step.resource.name}
+                          </Button>
+                        </>
+                      )}
+                    </td>
+                    <td className={componentsTableColumnClasses[1]}>{step.resource.kind}</td>
+                    <td className={componentsTableColumnClasses[2]}>{stepStatus(step.status)}</td>
+                    <td className={componentsTableColumnClasses[3]}>
+                      {apiVersionForReference(referenceForStepResource(step.resource))}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        ))}
-      </>
-    ) : (
-      <div className="co-m-pane__body">
-        <MsgBox
-          title="No Components Resolved"
-          detail="This install plan has not been fully resolved yet."
-        />
-      </div>
-    );
-  }
-}
+        </div>
+      ))}
+    </>
+  ) : (
+    <div className="co-m-pane__body">
+      <MsgBox
+        title={t('olm~No components resolved')}
+        detail={t('olm~This InstallPlan has not been fully resolved yet.')}
+      />
+    </div>
+  );
+};
 
-export const InstallPlanDetailsPage: React.SFC<InstallPlanDetailsPageProps> = (props) => (
+export const InstallPlanDetailsPage: React.FC<InstallPlanDetailsPageProps> = (props) => (
   <DetailsPage
     {...props}
     namespace={props.match.params.ns}
@@ -462,7 +457,8 @@ export const InstallPlanDetailsPage: React.SFC<InstallPlanDetailsPageProps> = (p
     pages={[
       navFactory.details(InstallPlanDetails),
       navFactory.editYaml(),
-      { href: 'components', name: 'Components', component: InstallPlanPreview },
+      // t('olm~Components')
+      { href: 'components', nameKey: 'olm~Components', component: InstallPlanPreview },
     ]}
     menuActions={[...Kebab.getExtensionsActionsForKind(InstallPlanModel), ...Kebab.factory.common]}
   />
@@ -493,5 +489,4 @@ export type InstallPlanPreviewState = {
   error?: string;
 };
 
-InstallPlansList.displayName = 'InstallPlansList';
 InstallPlansPage.displayName = 'InstallPlansPage';

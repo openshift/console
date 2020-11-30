@@ -82,7 +82,7 @@ describe(CatalogSourceDetailsPage.displayName, () => {
     expect(pages.length).toEqual(3);
     expect(pages[0].nameKey).toEqual(`${i18nNS}~Details`);
     expect(pages[1].nameKey).toEqual(`${i18nNS}~YAML`);
-    expect(pages[2].nameKey).toEqual(`catalog-source~Operators`);
+    expect(pages[2].nameKey).toEqual(`olm~Operators`);
 
     expect(pages[0].component).toEqual(CatalogSourceDetails);
     expect(pages[2].component).toEqual(CatalogSourceOperatorsPage);
