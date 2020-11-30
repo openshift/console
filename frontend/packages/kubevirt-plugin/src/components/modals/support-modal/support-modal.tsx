@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Stack, StackItem, Checkbox } from '@patternfly/react-core';
 import {
   createModalLauncher,
@@ -17,26 +18,29 @@ type SupportModalProps = ModalComponentProps & {
 };
 
 const SupportModal: React.FC<SupportModalProps> = ({ onConfirm, close }) => {
+  const { t } = useTranslation();
   const [doNotShow, setDoNotShow] = React.useState(false);
   return (
     <div className="modal-content">
       <ModalTitle>
         <BlueInfoCircleIcon className="co-icon-space-r" />
-        Template support
+        {t('kubevirt-plugin~Template support')}
       </ModalTitle>
       <ModalBody>
         <Stack hasGutter>
-          <StackItem>This template is not fully supported by Red Hat.</StackItem>
+          <StackItem>
+            {t('kubevirt-plugin~This template is not fully supported by Red Hat.')}
+          </StackItem>
           <StackItem>
             <ExternalLink
               href={SUPPORT_URL}
-              text="Learn more about Red Hat's third party support policy"
+              text={t("kubevirt-plugin~Learn more about Red Hat's third party support policy")}
             />
           </StackItem>
           <StackItem>
             <Checkbox
               id="support-warning"
-              label="Do not show this warning again"
+              label={t('kubevirt-plugin~Do not show this warning again')}
               onChange={setDoNotShow}
               isChecked={doNotShow}
             />
@@ -44,7 +48,7 @@ const SupportModal: React.FC<SupportModalProps> = ({ onConfirm, close }) => {
         </Stack>
       </ModalBody>
       <ModalFooter
-        submitButtonText="Continue"
+        submitButtonText={t('kubevirt-plugin~Continue')}
         onSubmit={() => {
           close();
           onConfirm(doNotShow);

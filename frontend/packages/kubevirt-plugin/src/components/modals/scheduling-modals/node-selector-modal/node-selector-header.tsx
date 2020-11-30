@@ -1,15 +1,16 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { GridItem, Text, TextVariants } from '@patternfly/react-core';
-import { LABEL_VALUE, LABEL_KEY } from '../../../LabelsList/consts';
 
 export const NodeSelectorHeader = () => {
+  const { t } = useTranslation();
   return (
     <>
       <GridItem span={6}>
-        <Text component={TextVariants.h4}>{LABEL_KEY}</Text>
+        <Text component={TextVariants.h4}>{t('kubevirt-plugin~Key')}</Text>
       </GridItem>
       <GridItem span={6}>
-        <Text component={TextVariants.h4}>{LABEL_VALUE}</Text>
+        <Text component={TextVariants.h4}>{t('kubevirt-plugin~Value')}</Text>
       </GridItem>
     </>
   );

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { TaintEffect } from '@console/internal/module/k8s';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { GridItem, TextInput, Button, FormSelect, FormSelectOption } from '@patternfly/react-core';
@@ -7,30 +8,31 @@ import { TolerationLabel } from './types';
 
 export const TolerationRow = ({ label, onChange, onDelete }: TolerationRowProps) => {
   const { id, key, value, effect } = label;
+  const { t } = useTranslation();
   return (
     <>
       <GridItem span={4}>
         <TextInput
           id={`toleration-${id}-key-input`}
           className="kv-label__key"
-          placeholder="taint key"
+          placeholder={t('kubevirt-plugin~taint key')}
           isRequired
           type="text"
           value={key}
           onChange={(newKey) => onChange({ ...label, key: newKey })}
-          aria-label="selector key"
+          aria-label={t('kubevirt-plugin~selector key')}
         />
       </GridItem>
       <GridItem span={4}>
         <TextInput
           id={`toleration-${id}-value-input`}
           className="kv-label__value"
-          placeholder="taint value"
+          placeholder={t('kubevirt-plugin~taint value')}
           isRequired
           type="text"
           value={value}
           onChange={(newValue) => onChange({ ...label, value: newValue })}
-          aria-label="selector value"
+          aria-label={t('kubevirt-plugin~selector value')}
         />
       </GridItem>
       <GridItem span={3}>
@@ -40,7 +42,7 @@ export const TolerationRow = ({ label, onChange, onDelete }: TolerationRowProps)
           isRequired
           value={effect}
           onChange={(v) => onChange({ ...label, effect: v as TaintEffect })}
-          aria-label="selector effect"
+          aria-label={t('kubevirt-plugin~selector effect')}
         >
           {TOLERATIONS_EFFECTS.map((effectOption) => (
             <FormSelectOption key={effectOption} value={effectOption} label={effectOption} />

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Form,
   FormSelect,
@@ -32,6 +33,7 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
   onAffinitySubmit,
   onCancel,
 }) => {
+  const { t } = useTranslation();
   const [focusedAffinity, setFocusedAffinity] = React.useState(affinity);
 
   const [
@@ -65,7 +67,7 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
     isTopologyDisabled,
     isTopologyInvalid,
     topologyValidationMessage,
-  } = getTopologyKeyValidation(focusedAffinity);
+  } = getTopologyKeyValidation(focusedAffinity, t);
 
   React.useEffect(() => {
     if (isTopologyDisabled && focusedAffinity.topologyKey !== 'kubernetes.io/hostname')
@@ -91,13 +93,13 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
       <ModalBody>
         <div className="scheduling-modals__desc-container">
           <Text className="scheduling-modals__desc" component={TextVariants.small}>
-            {
-              'Define an affinity rule. This rule will be added to the list of affinity rules applied to this workload.'
-            }
+            {t(
+              'kubevirt-plugin~Define an affinity rule. This rule will be added to the list of affinity rules applied to this workload.',
+            )}
           </Text>
         </div>
         <Form>
-          <FormRow title="Type" fieldId={'affinity-type'} isRequired>
+          <FormRow title={t('kubevirt-plugin~Type')} fieldId={'affinity-type'} isRequired>
             <FormSelect
               onChange={(value) =>
                 setFocusedAffinity({
@@ -120,7 +122,7 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
               })}
             </FormSelect>
           </FormRow>
-          <FormRow title="Condition" fieldId={'affinity-condition'} isRequired>
+          <FormRow title={t('kubevirt-plugin~Condition')} fieldId={'affinity-condition'} isRequired>
             <FormSelect
               onChange={(value) =>
                 setFocusedAffinity({
@@ -146,12 +148,12 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
           </FormRow>
           {focusedAffinity?.condition === AffinityCondition.preferred && (
             <FormRow
-              title="Weight"
+              title={t('kubevirt-plugin~Weight')}
               fieldId={'weight'}
               validationType={
                 isWeightInvalid ? ValidationErrorType.Error : ValidationErrorType.Info
               }
-              validationMessage="Weight must be a number between 1-100"
+              validationMessage={t('kubevirt-plugin~Weight must be a number between 1-100')}
               isRequired
             >
               <TextInput
@@ -167,7 +169,7 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
           )}
           {!isNodeAffinity && (
             <FormRow
-              title="Topology Key"
+              title={t('kubevirt-plugin~Topology Key')}
               fieldId={'topology-key'}
               validationType={
                 isTopologyInvalid ? ValidationErrorType.Error : ValidationErrorType.Info
@@ -185,43 +187,53 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
           )}
           <Divider component="div" />
           <FormRow
-            title={isNodeAffinity ? 'Node Labels' : 'Workload Labels'}
+            title={
+              isNodeAffinity
+                ? t('kubevirt-plugin~Node Labels')
+                : t('kubevirt-plugin~Workload Labels')
+            }
             fieldId={'expressions'}
             validationType={
               isExpressionsInvalid && initialAffinityChanged && ValidationErrorType.Error
             }
             validationMessage={
               isExpressionsInvalid && initialAffinityChanged && isNodeAffinity
-                ? 'Missing fields in node labels'
-                : 'Missing fields in workload labels'
+                ? t('kubevirt-plugin~Missing fields in node labels')
+                : t('kubevirt-plugin~Missing fields in workload labels')
             }
           >
             <div className="scheduling-modals__desc-container">
               {isNodeAffinity ? (
                 <>
                   <Text className="scheduling-modals__desc" component={TextVariants.small}>
-                    {'Select nodes that must have all the following expressions.'}
+                    {t(
+                      'kubevirt-plugin~Select nodes that must have all the following expressions.',
+                    )}
                   </Text>
                   <Text className="scheduling-modals__desc" component={TextVariants.small}>
-                    {
-                      'Label selectors let you select Nodes based on the value of one or more labels.'
-                    }
+                    {t(
+                      'kubevirt-plugin~Label selectors let you select Nodes based on the value of one or more labels.',
+                    )}
                   </Text>
                   <Text className="scheduling-modals__desc" component={TextVariants.small}>
-                    {'A list of matching nodes will be provided on label input below.'}
+                    {t(
+                      'kubevirt-plugin~A list of matching nodes will be provided on label input below.',
+                    )}
                   </Text>
                 </>
               ) : (
                 <>
                   <Text className="scheduling-modals__desc" component={TextVariants.small}>
-                    {'Select workloads that must have all the following expressions.'}
+                    {t(
+                      'kubevirt-plugin~Select workloads that must have all the following expressions.',
+                    )}
                   </Text>
                 </>
               )}
             </div>
             <AffinityExpressionList
               expressions={affinityExpressions}
-              addRowText="Add Expression"
+              addRowText={t('kubevirt-plugin~Add Expression')}
               onAdd={onLabelExpressionAdd}
               onChange={onExpressionChange}
               onDelete={onExpressionDelete}
@@ -232,35 +244,37 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
             <>
               <Divider component="div" />
               <FormRow
-                title="Node Fields"
+                title={t('kubevirt-plugin~Node Fields')}
                 fieldId={'fields'}
                 validationType={
                   isFieldsInvalid && initialAffinityChanged && ValidationErrorType.Error
                 }
                 validationMessage={
-                  isFieldsInvalid && initialAffinityChanged && 'Missing fields in node fields'
+                  isFieldsInvalid &&
+                  initialAffinityChanged &&
+                  t('kubevirt-plugin~Missing fields in node fields')
                 }
               >
                 <div className="scheduling-modals__desc-container">
                   <>
                     <Text className="scheduling-modals__desc" component={TextVariants.small}>
-                      {
-                        'Field selectors let you select Nodes based on the value of one or more resource fields.'
-                      }
+                      {t(
+                        'kubevirt-plugin~Field selectors let you select Nodes based on the value of one or more resource fields.',
+                      )}
                     </Text>
                     <Text className="scheduling-modals__desc" component={TextVariants.small}>
-                      {
-                        'Note that for Node field expressions, entering a full path is required in the Key field (e.g. `metadata.name: value`).'
-                      }
+                      {t(
+                        'kubevirt-plugin~Note that for Node field expressions, entering a full path is required in the Key field (e.g. `metadata.name: value`).',
+                      )}
                     </Text>
                     <Text className="scheduling-modals__desc" component={TextVariants.small}>
-                      {'Some fields may not be supported.'}
+                      {t('kubevirt-plugin~Some fields may not be supported.')}
                     </Text>
                   </>
                 </div>
                 <AffinityExpressionList
                   expressions={affinityFields}
-                  addRowText="Add Field"
+                  addRowText={t('kubevirt-plugin~Add Field')}
                   onAdd={onLabelFieldAdd}
                   onChange={onFieldChange}
                   onDelete={onFieldDelete}
@@ -293,7 +307,7 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
           })
         }
         onCancel={onCancel}
-        submitButtonText="Save Affinity rule"
+        submitButtonText={t('kubevirt-plugin~Save Affinity rule')}
         isDisabled={isAffinityInvalid}
       />
     </>

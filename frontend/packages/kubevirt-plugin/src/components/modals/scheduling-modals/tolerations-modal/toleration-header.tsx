@@ -1,18 +1,19 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { GridItem, Text, TextVariants } from '@patternfly/react-core';
-import { LABEL_VALUE, LABEL_TAINT_KEY } from '../../../LabelsList/consts';
 
 export const TolerationHeader = () => {
+  const { t } = useTranslation();
   return (
     <>
       <GridItem span={4}>
-        <Text component={TextVariants.h4}>{LABEL_TAINT_KEY}</Text>
+        <Text component={TextVariants.h4}>{t('kubevirt-plugin~Taint Key')}</Text>
       </GridItem>
       <GridItem span={4}>
-        <Text component={TextVariants.h4}>{LABEL_VALUE}</Text>
+        <Text component={TextVariants.h4}>{t('kubevirt-plugin~Value')}</Text>
       </GridItem>
       <GridItem span={4}>
-        <Text component={TextVariants.h4}>Effect</Text>
+        <Text component={TextVariants.h4}>{t('kubevirt-plugin~Effect')}</Text>
       </GridItem>
     </>
   );

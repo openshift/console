@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { PodKind } from '@console/internal/module/k8s';
 import {
   HourglassHalfIcon,
@@ -25,7 +26,6 @@ import { getVMLikeModel } from '../../selectors/vm';
 import { VMStatus as VMStatusEnum } from '../../constants/vm/vm-status';
 import { VMILikeEntityKind } from '../../types/vmLike';
 import { VMStatusBundle } from '../../statuses/vm/types';
-import { PENDING_CHANGES_POPOVER_MSG } from '../../strings/vm/status';
 import { saveAndRestartModal } from '../modals/save-and-restart-modal/save-and-restart-modal';
 import { history } from '@console/internal/components/utils/router';
 import { getVMTabURL } from '../../utils/url';
@@ -70,25 +70,33 @@ type PendingChangesPopoverContentProps = {
 
 // Use onMouseUp instead of onClick since PF4 popup prevents
 // child components to use onClick and onMouseDown
-const PendingChangesPopoverContent: React.FC<PendingChangesPopoverContentProps> = ({ vm, vmi }) => (
-  <VMStatusPopoverContent key="pcPopover" message={PENDING_CHANGES_POPOVER_MSG}>
-    <Button
-      key={`pcRestartBtn-${getName(vm)}`}
-      className="co-modal-btn-link--inline"
-      variant={ButtonVariant.secondary}
-      onMouseUp={() => saveAndRestartModal(vm, vmi)}
+const PendingChangesPopoverContent: React.FC<PendingChangesPopoverContentProps> = ({ vm, vmi }) => {
+  const { t } = useTranslation();
+  return (
+    <VMStatusPopoverContent
+      key="pcPopover"
+      message={t(
+        'kubevirt-plugin~This virtual machine has some pending changes that will apply after it is restarted.',
+      )}
     >
-      Restart
-    </Button>
-    <Button
-      key={`pcViewDetailsBtn-${getName(vm)}`}
-      variant={ButtonVariant.plain}
-      onMouseUp={() => history.push(getVMTabURL(vm, VMTabURLEnum.details))}
-    >
-      View Details
-    </Button>
-  </VMStatusPopoverContent>
-);
+      <Button
+        key={`pcRestartBtn-${getName(vm)}`}
+        className="co-modal-btn-link--inline"
+        variant={ButtonVariant.secondary}
+        onMouseUp={() => saveAndRestartModal(vm, vmi, t)}
+      >
+        {t('kubevirt-plugin~Restart')}
+      </Button>
+      <Button
+        key={`pcViewDetailsBtn-${getName(vm)}`}
+        variant={ButtonVariant.plain}
+        onMouseUp={() => history.push(getVMTabURL(vm, VMTabURLEnum.details))}
+      >
+        {t('kubevirt-plugin~View Details')}
+      </Button>
+    </VMStatusPopoverContent>
+  );
+};
 
 type ImporterPodsProps = {
   statuses: VMStatusBundle['importerPodsStatuses'];

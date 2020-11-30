@@ -1,9 +1,11 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ExpandableSection, Text, TextVariants } from '@patternfly/react-core';
 import { BootableDeviceType } from '../../../types';
-import { deviceLabel, deviceKey, bootOrderEmptyTitle, bootOrderEmptyMessage } from '../constants';
+import { deviceLabel, deviceKey } from '../constants';
 
 export const BootOrderEmptySummary: React.FC<BootOrderEmptySummaryProps> = ({ devices }) => {
+  const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
   const options = devices.filter((device) => !device.value.bootOrder);
   const onToggle = React.useCallback(() => setIsExpanded(!isExpanded), [isExpanded]);
@@ -14,14 +16,18 @@ export const BootOrderEmptySummary: React.FC<BootOrderEmptySummaryProps> = ({ de
   return (
     <>
       <Text component={TextVariants.p} className="kubevirt-boot-order-summary__empty-text">
-        {bootOrderEmptyTitle}
+        {t('kubevirt-plugin~No resource selected')}
       </Text>
       <Text component={TextVariants.small} className="text-secondary">
-        {bootOrderEmptyMessage}
+        {t('kubevirt-plugin~VM will attempt to boot from disks by order of apearance in YAML file')}
       </Text>
       {options.length > 0 && (
         <ExpandableSection
-          toggleText={isExpanded ? 'Hide default boot disks' : 'Show default boot disks'}
+          toggleText={
+            isExpanded
+              ? t('kubevirt-plugin~Hide default boot disks')
+              : t('kubevirt-plugin~Show default boot disks')
+          }
           onToggle={onToggle}
           isExpanded={isExpanded}
           className="kubevirt-boot-order-summary__expandable"

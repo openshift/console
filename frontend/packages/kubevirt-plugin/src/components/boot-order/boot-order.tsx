@@ -1,23 +1,17 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { Text, TextVariants } from '@patternfly/react-core';
 import { DNDDataList, DNDDataListItem } from '../dnd-list';
 import { BootableDeviceType } from '../../types';
 import { BootOrderEmpty } from './boot-order-empty';
 import { AddDevice } from './add-device';
-import {
-  addItemMessage,
-  addItemDisabledMessage,
-  bootOrderEmptyMessage,
-  bootOrderEmptyTitle,
-  deviceKey,
-  deviceLabel,
-  bootOrderAriaLabel,
-} from './constants';
+import { deviceKey, deviceLabel } from './constants';
 
 import './boot-order.scss';
 
 export const BootOrder = ({ devices, setDevices }: BootOrderProps) => {
+  const { t } = useTranslation();
   const sources = _.sortBy(
     devices.filter((device) => device.value.bootOrder),
     'value.bootOrder',
@@ -74,10 +68,12 @@ export const BootOrder = ({ devices, setDevices }: BootOrderProps) => {
     <>
       {showEmpty ? (
         <BootOrderEmpty
-          title={bootOrderEmptyTitle}
-          message={bootOrderEmptyMessage}
-          addItemMessage={addItemMessage}
-          addItemDisabledMessage={addItemDisabledMessage}
+          title={t('kubevirt-plugin~No resource selected')}
+          message={t(
+            'kubevirt-plugin~VM will attempt to boot from disks by order of apearance in YAML file',
+          )}
+          addItemMessage={t('kubevirt-plugin~Add source')}
+          addItemDisabledMessage={t('kubevirt-plugin~All sources selected')}
           addItemIsDisabled={options.length === 0}
           onClick={() => {
             setEditMode(true);
@@ -85,7 +81,7 @@ export const BootOrder = ({ devices, setDevices }: BootOrderProps) => {
         />
       ) : (
         <>
-          <DNDDataList id={dataListID} aria-label={bootOrderAriaLabel}>
+          <DNDDataList id={dataListID} aria-label={t('kubevirt-plugin~VM Boot Order List')}>
             {sources.map((source, index) => (
               <DNDDataListItem
                 index={index}

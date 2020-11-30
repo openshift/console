@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import {
@@ -17,6 +18,8 @@ import { V1NetworkInterface } from '../../../types/vm';
 export const DeleteNICModal = withHandlePromise((props: DeleteNICModalProps) => {
   const { vmLikeEntity, nic, inProgress, errorMessage, handlePromise, close, cancel } = props;
 
+  const { t } = useTranslation();
+
   const nicName = nic?.name;
 
   const submit = (e) => {
@@ -33,16 +36,19 @@ export const DeleteNICModal = withHandlePromise((props: DeleteNICModalProps) => 
   return (
     <form onSubmit={submit} className="modal-content">
       <ModalTitle>
-        <YellowExclamationTriangleIcon className="co-icon-space-r" /> Delete {nicName} NIC
+        <YellowExclamationTriangleIcon className="co-icon-space-r" />{' '}
+        {t('kubevirt-plugin~Delete {{nicName}} NIC', { nicName })}
       </ModalTitle>
       <ModalBody>
-        Are you sure you want to delete <strong className="co-break-word">{nicName}</strong> network
-        interface?
+        <Trans t={t} ns="kubevirt-plugin">
+          Are you sure you want to delete <strong className="co-break-word">{{ nicName }}</strong>{' '}
+          network interface?
+        </Trans>
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={errorMessage}
         inProgress={inProgress}
-        submitText="Delete"
+        submitText={t('kubevirt-plugin~Delete')}
         submitDanger
         cancel={cancel}
       />

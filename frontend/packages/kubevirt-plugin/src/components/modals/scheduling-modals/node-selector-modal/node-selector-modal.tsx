@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { ModalTitle, ModalBody, ModalComponentProps } from '@console/internal/components/factory';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 import {
@@ -114,17 +114,20 @@ export const NSModal = withHandlePromise(
           isSimpleError={!!loadError}
           onSubmit={onSubmit}
           onCancel={close}
-          submitButtonText="Save"
-          infoTitle={showCollisionAlert && 'Node Selector has been updated outside this flow.'}
+          submitButtonText={t('kubevirt-plugin~Save')}
+          infoTitle={
+            showCollisionAlert &&
+            t('kubevirt-plugin~Node Selector has been updated outside this flow.')
+          }
           infoMessage={
-            <>
+            <Trans t={t} i18nKey="nodeSelectorModal" ns="kubevirt-plugin">
               Saving these changes will override any Node Selector previously saved.
               <br />
               <Button variant={ButtonVariant.link} isInline onClick={onReload}>
                 Reload Node Selector
               </Button>
               .
-            </>
+            </Trans>
           }
         />
       </div>

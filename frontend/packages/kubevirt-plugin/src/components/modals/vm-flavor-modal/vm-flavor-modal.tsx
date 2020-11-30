@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { Form, FormSelect, FormSelectOption } from '@patternfly/react-core';
 import {
   Firehose,
@@ -142,7 +143,7 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
   };
 
   const saveAndRestart = () =>
-    isValid ? saveAndRestartModal(vm, vmi, saveChanges) : setShowUIError(true);
+    isValid ? saveAndRestartModal(vm, vmi, t, saveChanges) : setShowUIError(true);
 
   const submit = (e) => {
     e.preventDefault();
@@ -151,13 +152,13 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
 
   return (
     <div className="modal-content">
-      <ModalTitle>Edit Flavor</ModalTitle>
+      <ModalTitle>{t('kubevirt-plugin~Edit Flavor')}</ModalTitle>
       <ModalBody>
         {isVMExpectedRunning(vm) && (
           <ModalPendingChangesAlert isChanged={showPendingChangesWarning} />
         )}
         <Form>
-          <FormRow title="Flavor" fieldId={getId('flavor')} isRequired>
+          <FormRow title={t('kubevirt-plugin~Flavor')} fieldId={getId('flavor')} isRequired>
             <FormSelect
               onChange={(f) => {
                 if (isCustomFlavor(f)) {
@@ -182,7 +183,7 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
             <>
               <FormRow
                 key="cpu"
-                title="CPUs"
+                title={t('kubevirt-plugin~CPUs')}
                 fieldId={getId('cpu')}
                 isRequired
                 validation={cpusValidation}
@@ -195,11 +196,11 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
                   isPositive
                   onChange={(v) => setCpus(v)}
                   isFullWidth
-                  aria-label="CPU count"
+                  aria-label={t('kubevirt-plugin~CPU count')}
                 />
               </FormRow>
               <SizeUnitFormRow
-                title="Memory"
+                title={t('kubevirt-plugin~Memory')}
                 key="memory"
                 id={getId('memory')}
                 size={memSize}
@@ -227,7 +228,7 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
         inProgress={inProgress}
         isSaveAndRestart={showPendingChangesWarning}
         onSubmit={submit}
-        submitButtonText="Save"
+        submitButtonText={t('kubevirt-plugin~Save')}
         onCancel={(e) => {
           e.stopPropagation();
           cancel();

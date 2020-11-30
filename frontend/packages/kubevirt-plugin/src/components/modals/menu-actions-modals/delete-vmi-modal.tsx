@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { apiVersionForModel } from '@console/internal/module/k8s';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
@@ -21,6 +22,8 @@ import { VMIUsersAlert } from './vmi-users-alert';
 
 export const DeleteVMIModal = withHandlePromise((props: DeleteVMIProps) => {
   const { inProgress, errorMessage, handlePromise, close, cancel, vmi } = props;
+
+  const { t } = useTranslation();
 
   const vmiUpToDate = useUpToDateVMLikeEntity<VMIKind>(vmi);
   const [deleteDisks, setDeleteDisks] = React.useState<boolean>(true);
@@ -61,16 +64,19 @@ export const DeleteVMIModal = withHandlePromise((props: DeleteVMIProps) => {
   return (
     <form onSubmit={submit} className="modal-content">
       <ModalTitle>
-        <YellowExclamationTriangleIcon className="co-icon-space-r" /> Delete Virtual Machine
-        Instance?
+        <YellowExclamationTriangleIcon className="co-icon-space-r" />{' '}
+        {t('kubevirt-plugin~Delete Virtual Machine Instance?')}
       </ModalTitle>
       <ModalBody>
-        Are you sure you want to delete <strong className="co-break-word">{name}</strong> in
-        namespace <strong>{namespace}</strong>?
+        <Trans t={t} ns="kubevirt-plugin">
+          Are you sure you want to delete <strong className="co-break-word">{{ name }}</strong> in
+          namespace <strong>{{ namespace }}</strong>?
+        </Trans>
         {numOfAllResources > 0 && (
           <p>
-            The following resources will be deleted along with this virtual machine instance.
-            Unchecked items will not be deleted.
+            {t(
+              'kubevirt-plugin~The following resources will be deleted along with this virtual machine instance. Unchecked items will not be deleted.',
+            )}
           </p>
         )}
         {ownedVolumeResources.length > 0 && (
@@ -81,7 +87,9 @@ export const DeleteVMIModal = withHandlePromise((props: DeleteVMIProps) => {
                 onChange={() => setDeleteDisks(!deleteDisks)}
                 checked={deleteDisks}
               />
-              Delete Disks ({ownedVolumeResources.length}x)
+              {t('kubevirt-plugin~Delete Disks ({{ownedVolumeResourcesLength}}x)', {
+                ownedVolumeResourcesLength: ownedVolumeResources.length,
+              })}
             </label>
           </div>
         )}
@@ -89,14 +97,14 @@ export const DeleteVMIModal = withHandlePromise((props: DeleteVMIProps) => {
       <VMIUsersAlert
         vmi={vmiUpToDate}
         cancel={cancel}
-        alertTitle="Delete Virtual Machine Instance alert"
+        alertTitle={t('kubevirt-plugin~Delete Virtual Machine Instance alert')}
         alertHref={alertHref}
       />
       <ModalSubmitFooter
         errorMessage={errorMessage}
         submitDisabled={isInProgress}
         inProgress={isInProgress}
-        submitText="Delete"
+        submitText={t('kubevirt-plugin~Delete')}
         submitDanger
         cancel={cancel}
       />

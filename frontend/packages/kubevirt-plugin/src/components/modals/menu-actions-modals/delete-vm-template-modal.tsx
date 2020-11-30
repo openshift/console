@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { getName, getNamespace } from '@console/shared/src/selectors/common';
@@ -19,6 +20,9 @@ import { redirectToList } from './utils';
 
 export const DeleteVMTemplateModal = withHandlePromise((props: DeleteVMTemplateModalProps) => {
   const { inProgress, errorMessage, handlePromise, close, cancel, vmTemplate } = props;
+
+  const { t } = useTranslation();
+
   const vmTemplateUpToDate = useUpToDateVMLikeEntity<TemplateKind>(vmTemplate);
   const [deleteDisks, setDeleteDisks] = React.useState<boolean>(true);
 
@@ -56,16 +60,19 @@ export const DeleteVMTemplateModal = withHandlePromise((props: DeleteVMTemplateM
   return (
     <form onSubmit={submit} className="modal-content">
       <ModalTitle>
-        <YellowExclamationTriangleIcon className="co-icon-space-r" /> Delete Virtual Machine
-        Template?
+        <YellowExclamationTriangleIcon className="co-icon-space-r" />{' '}
+        {t('kubevirt-plugin~Delete Virtual Machine Template?')}
       </ModalTitle>
       <ModalBody>
-        Are you sure you want to delete <strong className="co-break-word">{name}</strong> in
-        namespace <strong>{namespace}</strong>?
+        <Trans t={t} ns="kubevirt-plugin">
+          Are you sure you want to delete <strong className="co-break-word">{{ name }}</strong> in
+          namespace <strong>{{ namespace }}</strong>?
+        </Trans>
         {numOfAllResources > 0 && (
           <p>
-            The following resources will be deleted along with this virtual machine template.
-            Unchecked items will not be deleted.
+            {t(
+              'kubevirt-plugin~The following resources will be deleted along with this virtual machine template. Unchecked items will not be deleted.',
+            )}
           </p>
         )}
         {ownedVolumeResources.length > 0 && (
@@ -76,7 +83,9 @@ export const DeleteVMTemplateModal = withHandlePromise((props: DeleteVMTemplateM
                 onChange={() => setDeleteDisks(!deleteDisks)}
                 checked={deleteDisks}
               />
-              Delete Disks ({ownedVolumeResources.length}x)
+              {t('kubevirt-plugin~Delete Disks ({{ownedVolumeResourcesLength}}x)', {
+                ownedVolumeResourcesLength: ownedVolumeResources.length,
+              })}
             </label>
           </div>
         )}
@@ -85,7 +94,7 @@ export const DeleteVMTemplateModal = withHandlePromise((props: DeleteVMTemplateM
         errorMessage={errorMessage}
         submitDisabled={isInProgress}
         inProgress={isInProgress}
-        submitText="Delete"
+        submitText={t('kubevirt-plugin~Delete')}
         submitDanger
         cancel={cancel}
       />

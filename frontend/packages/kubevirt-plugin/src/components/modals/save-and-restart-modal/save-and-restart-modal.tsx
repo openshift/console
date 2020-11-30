@@ -7,8 +7,10 @@ import { restartVM } from '../../../k8s/requests/vm';
 export const saveAndRestartModal = (vm: VMKind, vmi: VMIKind, saveChanges?: () => void) =>
   confirmVMIModal({
     vmi,
-    title: 'Restart Virtual Machine',
-    alertTitle: 'Restart Virtual Machine alert',
+    // t('kubevirt-plugin~Restart Virtual Machine')
+    titleKey: 'kubevirt-plugin~Restart Virtual Machine',
+    // t('kubevirt-plugin~Restart Virtual Machine alert')
+    alertTitleKey: 'kubevirt-plugin~Restart Virtual Machine alert',
     // t('kubevirt-plugin~restart')
     message: <ActionMessage obj={vm} actionKey="kubevirt-plugin~restart" />,
     // t('kubevirt-plugin~Restart')

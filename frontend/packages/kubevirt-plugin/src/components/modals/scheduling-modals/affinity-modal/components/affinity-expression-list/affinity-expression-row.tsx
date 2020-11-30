@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import {
   GridItem,
@@ -12,6 +13,7 @@ import {
 } from '@patternfly/react-core';
 import { EXPRESSION_OPERATORS } from '../../../shared/consts';
 import { AffinityLabel } from '../../types';
+
 import './affinity-expression-row.scss';
 
 export const AffinityExpressionRow = ({
@@ -20,6 +22,7 @@ export const AffinityExpressionRow = ({
   onDelete,
   rowID = 'affinity',
 }: AffinityExpressionRowProps) => {
+  const { t } = useTranslation();
   const { id, key, values = [], operator } = expression;
   const enableValueField = operator !== 'Exists' && operator !== 'DoesNotExist';
   const [isValuesExpanded, setIsValuesExpanded] = React.useState(false);
@@ -38,12 +41,12 @@ export const AffinityExpressionRow = ({
         <TextInput
           id={`${rowID}-${id}-key-input`}
           className="kv-affinity-expression-row__key-input"
-          placeholder="key"
+          placeholder={t('kubevirt-plugin~key')}
           isRequired
           type="text"
           value={key}
           onChange={(newKey) => onChange({ ...expression, key: newKey })}
-          aria-label="selector key"
+          aria-label={t('kubevirt-plugin~selector key')}
         />
       </GridItem>
       <GridItem span={2}>
@@ -53,7 +56,7 @@ export const AffinityExpressionRow = ({
           isRequired
           value={operator}
           onChange={(v) => onChange({ ...expression, operator: v as AffinityLabel['operator'] })}
-          aria-label="selector effect"
+          aria-label={t('kubevirt-plugin~selector effect')}
         >
           {EXPRESSION_OPERATORS.map((operatorOption) => (
             <FormSelectOption key={operatorOption} value={operatorOption} label={operatorOption} />
@@ -72,7 +75,7 @@ export const AffinityExpressionRow = ({
           onSelect={onSelect}
           selections={enableValueField ? values : []}
           aria-labelledby="values select"
-          placeholderText={enableValueField ? 'Enter Value' : ''}
+          placeholderText={enableValueField ? t('kubevirt-plugin~Enter Value') : ''}
         >
           {values?.map((option, index) => (
             // eslint-disable-next-line react/no-array-index-key

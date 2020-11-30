@@ -1,10 +1,11 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { BootableDeviceType } from '../../types';
 import { AddDeviceButton } from './add-device-button';
 import { AddDeviceFormSelect } from './add-device-form-select';
-import { addItemMessage, addItemDisabledMessage, addItemSelectLabel } from './constants';
 
 export const AddDevice = ({ devices, onAdd, isEditMode, setEditMode }: AddDeviceProps) => {
+  const { t } = useTranslation();
   const options = devices.filter((device) => !device.value.bootOrder);
 
   const canAddItem = options.length > 0;
@@ -17,15 +18,15 @@ export const AddDevice = ({ devices, onAdd, isEditMode, setEditMode }: AddDevice
         <AddDeviceFormSelect
           id={selectID}
           options={options}
-          label={addItemSelectLabel}
+          label={t('kubevirt-plugin~Please select a boot source')}
           onAdd={onAdd}
           onDelete={() => setEditMode(false)}
         />
       ) : (
         <AddDeviceButton
           id={buttontID}
-          message={addItemMessage}
-          disabledMessage={addItemDisabledMessage}
+          message={t('kubevirt-plugin~Add source')}
+          disabledMessage={t('kubevirt-plugin~All sources selected')}
           isDisabled={!canAddItem}
           onClick={() => setEditMode(true)}
         />

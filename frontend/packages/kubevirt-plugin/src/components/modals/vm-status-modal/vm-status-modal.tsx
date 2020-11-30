@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import {
   ModalComponentProps,
@@ -7,23 +8,23 @@ import {
   ModalBody,
 } from '@console/internal/components/factory';
 import { ModalFooter } from '../modal/modal-footer';
-import { PAUSED_VM_MODAL_MESSAGE } from '../../../strings/vm/messages';
 import { VMIKind } from '../../../types';
 import { unpauseVMI } from '../../../k8s/requests/vmi/actions';
-
-const modalTitle = 'Edit pause state';
 
 export const VMStatusModal = withHandlePromise(
   ({
     vmi,
-    title = modalTitle,
+    title = null,
     cancel,
     close,
     handlePromise,
     inProgress,
     errorMessage,
   }: VMStatusModalProps) => {
+    const { t } = useTranslation();
     const [showPatchError, setPatchError] = React.useState<boolean>(false);
+
+    const modalTitle = title || t('kubevirt-plugin~Edit pause state');
 
     const onSubmit = async (event) => {
       event.preventDefault();
@@ -37,14 +38,18 @@ export const VMStatusModal = withHandlePromise(
 
     return (
       <div className="modal-content">
-        <ModalTitle>{title}</ModalTitle>
-        <ModalBody>{PAUSED_VM_MODAL_MESSAGE}</ModalBody>
+        <ModalTitle>{modalTitle}</ModalTitle>
+        <ModalBody>
+          {t(
+            'kubevirt-plugin~This VM has been paused. If you wish to unpause it, please click the Unpause button below. For further details, please check with your system administrator.',
+          )}
+        </ModalBody>
         <ModalFooter
           errorMessage={showPatchError && errorMessage}
           inProgress={inProgress}
           onSubmit={onSubmit}
           onCancel={() => cancel()}
-          submitButtonText="Unpause"
+          submitButtonText={t('kubevirt-plugin~Unpause')}
         />
       </div>
     );
