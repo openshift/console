@@ -176,7 +176,7 @@ class App_ extends React.PureComponent {
           <GuidedTour />
           <ConsoleNotifier location="BannerBottom" />
         </QuickStartDrawer>
-        <div id="modal-container" />
+        <div id="modal-container" role="dialog" aria-modal="true" />
       </>
     );
 
