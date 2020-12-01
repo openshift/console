@@ -94,3 +94,4 @@ export const vmDetailAffinity = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'affinity'));
 export const vmDetailAffinityEditButton = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'affinity-edit'));
+export const vmDeleteAlert = $('[aria-label="Warning Alert"]');
