@@ -1,5 +1,6 @@
 import { CatalogItemProvider, CatalogItemType, Plugin } from '@console/plugin-sdk';
 import { builderImageProvider, helmChartProvider, templateProvider } from './providers';
+import { FLAG_OPENSHIFT_HELM } from '../../const';
 
 export type CatalogConsumedExtensions = CatalogItemProvider | CatalogItemType;
 
@@ -77,12 +78,18 @@ export const catalogPlugin: Plugin<CatalogConsumedExtensions> = [
         },
       ],
     },
+    flags: {
+      required: [FLAG_OPENSHIFT_HELM],
+    },
   },
   {
     type: 'Catalog/ItemProvider',
     properties: {
       type: 'HelmChart',
       provider: helmChartProvider,
+    },
+    flags: {
+      required: [FLAG_OPENSHIFT_HELM],
     },
   },
 ];

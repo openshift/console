@@ -25,6 +25,7 @@ import {
   OverviewTabSection,
   GuidedTour,
   PostFormSubmissionAction,
+  CustomFeatureFlag,
 } from '@console/plugin-sdk';
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
 import { FLAGS } from '@console/shared/src/constants';
@@ -42,7 +43,7 @@ import {
 import { doConnectsToBinding } from '@console/topology/src/utils/connector-utils';
 import * as models from './models';
 import { getKebabActionsForKind } from './utils/kebab-actions';
-import { FLAG_OPENSHIFT_GITOPS, INCONTEXT_ACTIONS_CONNECTS_TO } from './const';
+import { FLAG_OPENSHIFT_GITOPS, INCONTEXT_ACTIONS_CONNECTS_TO, FLAG_OPENSHIFT_HELM } from './const';
 import { AddAction } from './extensions/add-actions';
 import * as yamlIcon from './images/yaml.svg';
 import * as importGitIcon from './images/from-git.svg';
@@ -50,11 +51,13 @@ import * as dockerfileIcon from './images/dockerfile.svg';
 import { usePerspectiveDetection } from './utils/usePerspectiveDetection';
 import { getGuidedTour } from './components/guided-tour';
 import { CatalogConsumedExtensions, catalogPlugin } from './components/catalog/catalog-plugin';
+import { detectHelmChartRepositories } from './utils/helm-plugin-utils';
 
 type ConsumedExtensions =
   | ModelDefinition
   | ModelFeatureFlag
   | NavSection
+  | CustomFeatureFlag
   | HrefNavItem
   | ResourceClusterNavItem
   | ResourceNSNavItem
@@ -97,6 +100,12 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'resources',
       perspective: 'dev',
+    },
+  },
+  {
+    type: 'FeatureFlag/Custom',
+    properties: {
+      detect: detectHelmChartRepositories,
     },
   },
   {
@@ -211,7 +220,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       },
     },
     flags: {
-      required: [FLAGS.OPENSHIFT],
+      required: [FLAG_OPENSHIFT_HELM],
     },
   },
   {
@@ -448,6 +457,9 @@ const plugin: Plugin<ConsumedExtensions> = [
           )
         ).default,
     },
+    flags: {
+      required: [FLAG_OPENSHIFT_HELM],
+    },
   },
   {
     type: 'Page/Route',
@@ -460,6 +472,9 @@ const plugin: Plugin<ConsumedExtensions> = [
             './components/helm/HelmInstallUpgradePage' /* webpackChunkName: "dev-console-helm-install-upgrade" */
           )
         ).default,
+    },
+    flags: {
+      required: [FLAG_OPENSHIFT_HELM],
     },
   },
   {
@@ -474,6 +489,9 @@ const plugin: Plugin<ConsumedExtensions> = [
           )
         ).default,
     },
+    flags: {
+      required: [FLAG_OPENSHIFT_HELM],
+    },
   },
   {
     type: 'Page/Route',
@@ -487,6 +505,9 @@ const plugin: Plugin<ConsumedExtensions> = [
           )
         ).default,
     },
+    flags: {
+      required: [FLAG_OPENSHIFT_HELM],
+    },
   },
   {
     type: 'Page/Route',
@@ -499,6 +520,9 @@ const plugin: Plugin<ConsumedExtensions> = [
             './components/helm/HelmReleaseDetailsPage' /* webpackChunkName: "dev-console-helm-release-details" */
           )
         ).default,
+    },
+    flags: {
+      required: [FLAG_OPENSHIFT_HELM],
     },
   },
   {
@@ -762,6 +786,9 @@ const plugin: Plugin<ConsumedExtensions> = [
   },
   {
     type: 'AddAction',
+    flags: {
+      required: [FLAG_OPENSHIFT_HELM],
+    },
     properties: {
       id: 'helm',
       url: '/catalog?catalogType=HelmChart',
