@@ -543,29 +543,28 @@ func main() {
 		bridge.FlagFatalf("user-auth", "must be one of: oidc, openshift, disabled")
 	}
 
-	var resourceListerToken string
 	switch *fK8sAuth {
 	case "service-account":
 		bridge.ValidateFlagIs("k8s-mode", *fK8sMode, "in-cluster")
 		srv.StaticUser = &auth.User{
 			Token: k8sAuthServiceAccountBearerToken,
 		}
-		resourceListerToken = k8sAuthServiceAccountBearerToken
+		srv.ServiceAccountToken = k8sAuthServiceAccountBearerToken
 	case "bearer-token":
 		bridge.ValidateFlagNotEmpty("k8s-auth-bearer-token", *fK8sAuthBearerToken)
 		srv.StaticUser = &auth.User{
 			Token: *fK8sAuthBearerToken,
 		}
-		resourceListerToken = *fK8sAuthBearerToken
+		srv.ServiceAccountToken = *fK8sAuthBearerToken
 	case "oidc", "openshift":
 		bridge.ValidateFlagIs("user-auth", *fUserAuth, "oidc", "openshift")
-		resourceListerToken = k8sAuthServiceAccountBearerToken
+		srv.ServiceAccountToken = k8sAuthServiceAccountBearerToken
 	default:
 		bridge.FlagFatalf("k8s-mode", "must be one of: service-account, bearer-token, oidc, openshift")
 	}
 
 	srv.MonitoringDashboardConfigMapLister = server.NewResourceLister(
-		resourceListerToken,
+		srv.ServiceAccountToken,
 		&url.URL{
 			Scheme: k8sEndpoint.Scheme,
 			Host:   k8sEndpoint.Host,
@@ -583,7 +582,7 @@ func main() {
 	)
 
 	srv.KnativeEventSourceCRDLister = server.NewResourceLister(
-		resourceListerToken,
+		srv.ServiceAccountToken,
 		&url.URL{
 			Scheme: k8sEndpoint.Scheme,
 			Host:   k8sEndpoint.Host,
@@ -601,7 +600,7 @@ func main() {
 	)
 
 	srv.KnativeChannelCRDLister = server.NewResourceLister(
-		resourceListerToken,
+		srv.ServiceAccountToken,
 		&url.URL{
 			Scheme: k8sEndpoint.Scheme,
 			Host:   k8sEndpoint.Host,
