@@ -48,8 +48,8 @@ const AdvancedProperties: React.FC<Pick<ObjectFieldTemplateProps, 'properties'>>
   const { t } = useTranslation();
   return (
     <ExpandCollapse
-      textCollapsed={t('console-shared~Advanced Configuration')}
-      textExpanded={t('console-shared~Advanced Configuration')}
+      textCollapsed={t('console-shared~Advanced configuration')}
+      textExpanded={t('console-shared~Advanced configuration')}
     >
       {_.map(properties, (property) => property.content)}
     </ExpandCollapse>

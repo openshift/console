@@ -52,7 +52,7 @@ const PipelineResourceSection: React.FC = () => {
 
             return (
               <FormSection
-                title={t('pipelines-plugin~{{type}} Resources', { type: capitalize(type) })}
+                title={t('pipelines-plugin~{{type}} resources', { type: capitalize(type) })}
                 fullWidth
               >
                 {section.map((sectionData: ResourceSectionType) => {

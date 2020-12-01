@@ -71,7 +71,7 @@ const HIDE_QUICK_START_ADD_TILE_CONFIG_MAP_KEY = 'devconsole.addPage.quickStartT
 const ODCEmptyState: React.FC<Props> = ({ title, activeNamespace, hintBlock }) => {
   const { t } = useTranslation();
   const defaultHintBlockText = t(
-    'devconsole~Select a way to create an application, component or service from one of the options.',
+    'devconsole~Select a way to create an Application, component or service from one of the options.',
   );
   const addActionExtensions = useExtensions<AddAction>(
     isAddAction,

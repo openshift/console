@@ -28,9 +28,9 @@ const QuickSearchBar: React.FC<QuickSearchBarProps> = ({
       </InputGroupText>
       <TextInput
         type="search"
-        aria-label={t('topology~Quick Search Bar')}
+        aria-label={t('topology~Quick search bar')}
         className="odc-quick-search-bar__input"
-        placeholder={`${t('topology~Add to project')}...`}
+        placeholder={`${t('topology~Add to Project')}...`}
         onChange={onSearch}
         autoFocus={autoFocus}
         value={searchTerm}
@@ -41,7 +41,7 @@ const QuickSearchBar: React.FC<QuickSearchBarProps> = ({
         </InputGroupText>
       )}
       {itemsLoaded && showNoResults && (
-        <InputGroupText>-- {t('topology~No Results')}</InputGroupText>
+        <InputGroupText>-- {t('topology~No results')}</InputGroupText>
       )}
     </InputGroup>
   );

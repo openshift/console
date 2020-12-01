@@ -30,7 +30,7 @@ const ImageSearchSection: React.FC = () => {
   return (
     <FormSection
       title={t('devconsole~Image')}
-      subTitle={t('devconsole~Deploy an existing image from an image stream or image registry.')}
+      subTitle={t('devconsole~Deploy an existing Image from an Image Stream or Image registry.')}
     >
       <RadioGroupField
         name="registry"

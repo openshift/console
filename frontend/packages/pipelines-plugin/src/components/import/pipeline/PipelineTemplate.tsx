@@ -99,7 +99,7 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages }) =>
 
   if (noTemplateForRuntime) {
     const builderImageTitle =
-      builderImages?.[image.selected]?.title || t('pipelines-plugin~this builder image');
+      builderImages?.[image.selected]?.title || t('pipelines-plugin~this Builder Image');
     const resourceName = ReadableResourcesNames[resources];
     return (
       <Alert

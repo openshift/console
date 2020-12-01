@@ -30,7 +30,7 @@ const AddPage: React.FC<AddPageProps> = ({ match }) => {
               <ODCEmptyState title={t('devconsole~Add')} />
             ) : (
               <CreateProjectListPage title={t('devconsole~Add')}>
-                {t('devconsole~Select a project to start adding to it')}
+                {t('devconsole~Select a Project to start adding to it')}
               </CreateProjectListPage>
             )}
           </ProjectsExistWrapper>

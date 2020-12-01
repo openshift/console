@@ -30,14 +30,14 @@ const SecureRoute: React.FC = () => {
         <>
           <DropdownField
             name="route.tls.termination"
-            label={t('devconsole~TLS Termination')}
+            label={t('devconsole~TLS termination')}
             items={TerminationTypes}
             title={t('devconsole~Select termination type')}
             fullWidth
           />
           <DropdownField
             name="route.tls.insecureEdgeTerminationPolicy"
-            label={t('devconsole~Insecure Traffic')}
+            label={t('devconsole~Insecure traffic')}
             items={
               tls.termination === 'passthrough'
                 ? PassthroughInsecureTrafficTypes
@@ -71,7 +71,7 @@ const SecureRoute: React.FC = () => {
               />
               <DroppableFileInputField
                 name="route.tls.caCertificate"
-                label={t('devconsole~CA Certificate')}
+                label={t('devconsole~CA certificate')}
                 helpText={t(
                   'devconsole~The PEM format CA certificate chain. Upload file by dragging &amp; dropping, selecting it, or pasting from the clipboard.',
                 )}

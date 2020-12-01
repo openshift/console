@@ -47,7 +47,7 @@ const KafkaSourceNetSection: React.FC = () => {
         <>
           <SecretKeySelector
             name={`formData.data.${kafkaSource}.net.tls.caCert.secretKeyRef`}
-            label={t('knative-plugin~CA Certificate')}
+            label={t('knative-plugin~CA certificate')}
           />
           <SecretKeySelector
             name={`formData.data.${kafkaSource}.net.tls.cert.secretKeyRef`}

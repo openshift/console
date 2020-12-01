@@ -11,8 +11,8 @@ const RouteCheckbox: React.FC<RouteCheckboxProps> = ({ isDisabled }) => {
   return (
     <CheckboxField
       name="route.create"
-      label={t('devconsole~Create a route to the application')}
-      helpText={t('devconsole~Exposes your application at a public URL')}
+      label={t('devconsole~Create a Route to the Application')}
+      helpText={t('devconsole~Exposes your Application at a public URL')}
       isDisabled={isDisabled}
     />
   );

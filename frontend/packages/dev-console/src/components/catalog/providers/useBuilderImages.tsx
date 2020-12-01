@@ -40,7 +40,7 @@ const normalizeBuilderImages = (
 
     const detailsProperties = [
       {
-        label: t('devconsole~Sample Repository'),
+        label: t('devconsole~Sample repository'),
         value: (
           <ExternalLink href={sampleRepo} additionalClassName="co-break-all" text={sampleRepo} />
         ),
@@ -53,32 +53,32 @@ const normalizeBuilderImages = (
         <ul>
           <li>
             <Trans ns="devconsole" t={t}>
-              A <span className="co-catalog-item-details__kind-label">build config</span> to build
+              A <span className="co-catalog-item-details__kind-label">BuildConfig</span> to build
               source from a Git repository.
             </Trans>
           </li>
           <li>
             <Trans ns="devconsole" t={t}>
-              An <span className="co-catalog-item-details__kind-label">image stream</span> to track
-              built images.
+              An <span className="co-catalog-item-details__kind-label">ImageStream</span> to track
+              built Images.
             </Trans>
           </li>
           <li>
             <Trans ns="devconsole" t={t}>
-              A <span className="co-catalog-item-details__kind-label">deployment config</span> to
-              rollout new revisions when the image changes.
+              A <span className="co-catalog-item-details__kind-label">DeploymentConfig</span> to
+              rollout new revisions when the Image changes.
             </Trans>
           </li>
           <li>
             <Trans ns="devconsole" t={t}>
-              A <span className="co-catalog-item-details__kind-label">service</span> to expose your
-              workload inside the cluster.
+              A <span className="co-catalog-item-details__kind-label">Service</span> to expose your
+              workload inside the Cluster.
             </Trans>
           </li>
           <li>
             <Trans ns="devconsole" t={t}>
-              An optional <span className="co-catalog-item-details__kind-label">route</span> to
-              expose your workload outside the cluster.
+              An optional <span className="co-catalog-item-details__kind-label">Route</span> to
+              expose your workload outside the Cluster.
             </Trans>
           </li>
         </ul>

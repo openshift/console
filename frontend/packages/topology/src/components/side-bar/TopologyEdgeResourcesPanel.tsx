@@ -51,10 +51,10 @@ const TopologyEdgeResourcesPanel: React.FC<TopologyEdgeResourcesPanelProps> = ({
       </ul>
       {edge.getType() === TYPE_TRAFFIC_CONNECTOR && (
         <>
-          <SidebarSectionHeading text={t('topology~Kiali Link')} />
+          <SidebarSectionHeading text={t('topology~Kiali link')} />
           <ExternalLink
             href={getNamespaceDashboardKialiLink(consoleLinks, namespace)}
-            text={t('topology~Kiali Graph View')}
+            text={t('topology~Kiali Graph view')}
           />
         </>
       )}

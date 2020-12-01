@@ -65,7 +65,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
   return (
     <DataList
       className="odc-quick-search-list"
-      aria-label={t('topology~Quick Search List')}
+      aria-label={t('topology~Quick search list')}
       selectedDataListItemId={selectedItemId}
       onSelectDataListItem={(itemId) => itemId !== 'viewAll' && onSelectListItem(itemId)}
       isCompact

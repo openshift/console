@@ -45,14 +45,14 @@ const BuilderImageSelector: React.FC<BuilderImageSelectorProps> = ({
     <FormGroup fieldId={fieldId} label={t('devconsole~Builder Image')}>
       {isRecommending && !recommended && (
         <>
-          <LoadingInline /> {t('devconsole~Detecting recommended builder images...')}
+          <LoadingInline /> {t('devconsole~Detecting recommended Builder Images...')}
         </>
       )}
       {recommended && builderImages.hasOwnProperty(recommended) && (
         <>
-          <Alert variant="success" title={t('devconsole~Builder image(s) detected.')} isInline>
+          <Alert variant="success" title={t('devconsole~Builder Image(s) detected.')} isInline>
             <Trans ns="devconsole" t={t}>
-              Recommended builder images are represented by{' '}
+              Recommended Builder Images are represented by{' '}
               <StarIcon style={{ color: 'var(--pf-global--primary-color--100)' }} /> icon.
             </Trans>
           </Alert>
@@ -63,7 +63,7 @@ const BuilderImageSelector: React.FC<BuilderImageSelectorProps> = ({
         <>
           <Alert
             variant="warning"
-            title={t('devconsole~Unable to detect the builder image.')}
+            title={t('devconsole~Unable to detect the Builder Image.')}
             isInline
           >
             {t('devconsole~Select the most appropriate one from the list to continue.')}

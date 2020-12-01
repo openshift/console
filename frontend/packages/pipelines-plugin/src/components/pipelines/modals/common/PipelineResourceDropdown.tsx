@@ -60,7 +60,7 @@ const PipelineResourceDropdown: React.FC<PipelineResourceDropdownProps> = (props
   }, [canAutoSelect, name, availableResources, setFieldTouched, setFieldValue]);
 
   const options = [
-    { label: t('pipelines-plugin~Create Pipeline Resource'), value: CREATE_PIPELINE_RESOURCE },
+    { label: t('pipelines-plugin~Create Pipeline resource'), value: CREATE_PIPELINE_RESOURCE },
     ...availableResources.map((resource) => {
       const resourceName = resource.metadata.name;
       const url = _.find(resource.spec.params, ['name', 'url'])?.value || '';
@@ -80,7 +80,7 @@ const PipelineResourceDropdown: React.FC<PipelineResourceDropdownProps> = (props
         setFieldValue(name, value);
         setExpanded(false);
       }}
-      placeholderText={!loaded ? <LoadingInline /> : t('pipelines-plugin~Select Pipeline Resource')}
+      placeholderText={!loaded ? <LoadingInline /> : t('pipelines-plugin~Select Pipeline resource')}
       isDisabled={loaded && availableResources.length === 0}
     >
       {options.map(({ label, value }) => (

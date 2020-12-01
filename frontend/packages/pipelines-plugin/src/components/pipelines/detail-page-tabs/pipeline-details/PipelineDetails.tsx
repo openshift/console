@@ -31,7 +31,7 @@ const PipelineDetails: React.FC<PipelineDetailsProps> = ({
     }));
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text={t('pipelines-plugin~Pipeline Details')} />
+      <SectionHeading text={t('pipelines-plugin~Pipeline details')} />
       <PipelineVisualization pipeline={pipeline} />
       <div className="row">
         <div className="col-sm-6">

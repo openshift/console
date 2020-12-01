@@ -105,7 +105,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
           <span className="odc-topology-filter-dropdown__expand-groups-switcher">
             <span className="pf-c-select__menu-group-title">Expand</span>
             <Switch
-              aria-label={t('topology~Collapse Groups')}
+              aria-label={t('topology~Collapse groups')}
               isChecked={groupsExpanded}
               onChange={onGroupsExpandedChange}
               isDisabled={!showGroups}
@@ -147,7 +147,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
       onToggle={onToggle}
       isOpen={isOpen}
       onSelect={onSelect}
-      placeholderText={t('topology~Display Options')}
+      placeholderText={t('topology~Display options')}
       isGrouped
       isCheckboxSelectionBadgeHidden
     />

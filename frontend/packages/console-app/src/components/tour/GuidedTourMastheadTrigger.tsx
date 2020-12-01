@@ -18,7 +18,7 @@ const GuidedTourMastheadTrigger: React.FC<GuidedTourMastheadTriggerProps> = ({ c
       type="button"
       onClick={() => tourDispatch({ type: TourActions.start })}
     >
-      {t('tour~Guided Tour')}
+      {t('tour~Guided tour')}
     </button>
   );
 };

@@ -14,13 +14,13 @@ export const getEventSourceCatalogProviderData = (
   ({
     [EventSourceApiServerModel.kind]: {
       description: t(
-        'knative-plugin~This object can be used to connect an event sink, such as a service, channel, or broker to the Kubernetes API server. ApiServerSource watches for Kubernetes events and forwards them to the sink.',
+        'knative-plugin~This object can be used to connect an event sink, such as a Service, Channel, or Broker to the Kubernetes API server. ApiServerSource watches for Kubernetes events and forwards them to the sink.',
       ),
       provider: 'Red Hat',
     },
     [EventSourceContainerModel.kind]: {
       description: t(
-        'knative-plugin~Starts a user-provided container which will generate events and send messages to a sink URI. The sink URI is injected into the container as an environment variable. A ContainerSource is an easy way to implement your own event sources in Knative.',
+        'knative-plugin~Starts a user-provided Container which will generate events and send messages to a sink URI. The sink URI is injected into the Container as an environment variable. A ContainerSource is an easy way to implement your own event sources in Knative.',
       ),
       provider: 'Red Hat',
     },
@@ -38,7 +38,7 @@ export const getEventSourceCatalogProviderData = (
     },
     [EventSourceSinkBindingModel.kind]: {
       description: t(
-        'knative-plugin~Used to connect OpenShift managed applications like Deployments, StatefulSets, or Jobs to an event sink, for example, a Knative service, channel, or broker. SinkBinding is similar to a ContainerSource but works on existing OpenShift application resources, whereas the ContainerSource container lifecycle is fully managed by Openshift Serverless itself.',
+        'knative-plugin~Used to connect OpenShift managed applications like Deployments, StatefulSets, or Jobs to an event sink, for example, a Knative Service, Channel, or Broker. SinkBinding is similar to a ContainerSource but works on existing OpenShift Application resources, whereas the ContainerSource Container lifecycle is fully managed by OpenShift Serverless itself.',
       ),
       provider: 'Red Hat',
     },

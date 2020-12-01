@@ -53,7 +53,7 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
       children: createHelpText(
         DeploymentConfigModel,
         t(
-          'devconsole~A {{deploymentConfigLabel}} defines the template for a pod and manages deploying new images or configuration changes.',
+          'devconsole~A {{deploymentConfigLabel}} defines the template for a Pod and manages deploying new Images or configuration changes.',
           { deploymentConfigLabel: DeploymentConfigModel.label },
         ),
       ),

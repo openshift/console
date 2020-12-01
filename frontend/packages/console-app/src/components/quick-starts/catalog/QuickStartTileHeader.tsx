@@ -23,7 +23,7 @@ const QuickStartTileHeader: React.FC<QuickStartTileHeaderProps> = ({ status, dur
 
   const statusLocaleMap = {
     [QuickStartStatus.COMPLETE]: t('quickstart~Complete'),
-    [QuickStartStatus.IN_PROGRESS]: t('quickstart~In Progress'),
+    [QuickStartStatus.IN_PROGRESS]: t('quickstart~In progress'),
     [QuickStartStatus.NOT_STARTED]: t('quickstart~Not started'),
   };
 

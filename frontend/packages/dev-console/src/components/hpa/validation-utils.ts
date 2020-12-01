@@ -53,7 +53,7 @@ export const hpaValidationSchema = (t: TFunction) =>
                     .mixed()
                     .test(
                       'test-for-valid-utilization',
-                      t('devconsole~Average Utilization must be a positive number.'),
+                      t('devconsole~Average utilization must be a positive number.'),
                       function(avgUtilization) {
                         if (!avgUtilization) return true;
                         return /^\d+$/.test(String(avgUtilization));

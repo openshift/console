@@ -168,7 +168,7 @@ const ImageSearch: React.FC = () => {
       <InputField
         type={TextInputTypes.text}
         name="searchTerm"
-        placeholder={t('devconsole~Enter an image name')}
+        placeholder={t('devconsole~Enter an Image name')}
         helpText={getHelpText()}
         helpTextInvalid={helpTextInvalid}
         validated={validated}
@@ -183,7 +183,7 @@ const ImageSearch: React.FC = () => {
       />
       <div className="help-block" id="image-name-help">
         <Trans ns="devconsole" t={t}>
-          To deploy an image from a private repository, you must{' '}
+          To deploy an Image from a private repository, you must{' '}
           <Button
             variant="link"
             isInline
@@ -195,9 +195,9 @@ const ImageSearch: React.FC = () => {
               })
             }
           >
-            create an image pull secret
+            create an Image pull secret
           </Button>{' '}
-          with your image registry credentials.
+          with your Image registry credentials.
         </Trans>
       </div>
       {newImageSecret && alertVisible && (
@@ -212,7 +212,7 @@ const ImageSearch: React.FC = () => {
       <div className="odc-image-search__advanced-options">
         <CheckboxField
           name="allowInsecureRegistry"
-          label={t('devconsole~Allow images from insecure registries')}
+          label={t('devconsole~Allow Images from insecure registries')}
           onChange={(val: boolean) => {
             values.searchTerm && handleSearch(values.searchTerm, val);
           }}

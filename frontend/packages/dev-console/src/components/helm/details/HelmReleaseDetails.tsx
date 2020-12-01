@@ -97,7 +97,7 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
           name: t('devconsole~Helm Releases'),
           path: `/helm-releases/ns/${namespace}`,
         },
-        { name: t('devconsole~Helm Release Details'), path: `${match.url}` },
+        { name: t('devconsole~Helm Release details'), path: `${match.url}` },
       ]}
       title={title}
       kind={SecretReference}
@@ -110,12 +110,12 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
         },
         {
           href: 'history',
-          name: t('devconsole~Revision History'),
+          name: t('devconsole~Revision history'),
           component: HelmReleaseHistory,
         },
         {
           href: 'releasenotes',
-          name: t('devconsole~Release Notes'),
+          name: t('devconsole~Release notes'),
           component: HelmReleaseNotes,
         },
       ]}

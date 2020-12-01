@@ -49,7 +49,7 @@ const ProjectSelectPage: React.FC<ProjectSelectPageProps> = (props) => {
         <title>{kindObj.labelPlural}</title>
       </Helmet>
       <CreateProjectListPage title={kindObj.labelPlural} badge={getBadgeFromType(kindObj.badge)}>
-        {t('devconsole~Select a project to view the list of {{projectLabelPlural}}', {
+        {t('devconsole~Select a Project to view the list of {{projectLabelPlural}}', {
           projectLabelPlural: kindObj.labelPlural,
         })}
       </CreateProjectListPage>

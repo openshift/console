@@ -124,7 +124,7 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
                   icon={InfoCircleIcon}
                 />
                 <Title headingLevel="h2" size="md">
-                  {t('devconsole~No Metrics Found')}
+                  {t('devconsole~No metrics found')}
                 </Title>
                 <EmptyStateBody>
                   {t('devconsole~Deployment Configuration metrics are not yet supported.')}
@@ -153,7 +153,7 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
             isExpanded={expanded.includes('all-events')}
             id="all-events"
           >
-            {t('devconsole~All Events')}
+            {t('devconsole~All events')}
           </AccordionToggle>
           <AccordionContent id="all-events-content" isHidden={!expanded.includes('all-events')}>
             <MonitoringOverviewEvents events={events} />

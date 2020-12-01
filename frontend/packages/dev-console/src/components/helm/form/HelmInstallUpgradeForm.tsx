@@ -104,8 +104,8 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
     <FlexForm onSubmit={handleSubmit}>
       <FormHeader title={title} helpText={formHelpText} marginBottom="lg" />
       {chartError && (
-        <Alert variant="danger" isInline title={t('devconsole~Helm chart cannot be installed')}>
-          {t('devconsole~The Helm chart is currently unavailable. {{chartError}}', { chartError })}
+        <Alert variant="danger" isInline title={t('devconsole~Helm Chart cannot be installed')}>
+          {t('devconsole~The Helm Chart is currently unavailable. {{chartError}}', { chartError })}
         </Alert>
       )}
       <FormSection fullWidth>

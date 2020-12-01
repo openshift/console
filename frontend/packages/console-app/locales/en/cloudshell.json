@@ -1,5 +1,5 @@
 {
-  "Close Terminal?": "Close Terminal?",
+  "Close terminal?": "Close terminal?",
   "This will close the terminal session. Content in the terminal will not be restored on next session.": "This will close the terminal session. Content in the terminal will not be restored on next session.",
   "Yes": "Yes",
   "No": "No",
@@ -17,13 +17,13 @@
   "Open command line terminal": "Open command line terminal",
   "OpenShift command line terminal": "OpenShift command line terminal",
   "Failed to connect to your OpenShift command line terminal": "Failed to connect to your OpenShift command line terminal",
-  "Initialize Terminal": "Initialize Terminal",
+  "Initialize terminal": "Initialize terminal",
   "Start": "Start",
   "Cancel": "Cancel",
   "Project": "Project",
   "Select Project": "Select Project",
   "Create Project": "Create Project",
-  "This project will be used to initialize your command line terminal": "This project will be used to initialize your command line terminal",
-  "Project Name": "Project Name",
+  "This Project will be used to initialize your command line terminal": "This Project will be used to initialize your command line terminal",
+  "Project name": "Project name",
   "Connecting to your OpenShift command line terminal ...": "Connecting to your OpenShift command line terminal ..."
 }

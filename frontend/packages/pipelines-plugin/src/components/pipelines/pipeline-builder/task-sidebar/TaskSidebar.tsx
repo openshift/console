@@ -138,13 +138,13 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
 
         {inputResources && (
           <>
-            <h2>{t('pipelines-plugin~Input Resources')}</h2>
+            <h2>{t('pipelines-plugin~Input resources')}</h2>
             {inputResources.map(renderResource('inputs'))}
           </>
         )}
         {outputResources && (
           <>
-            <h2>{t('pipelines-plugin~Output Resources')}</h2>
+            <h2>{t('pipelines-plugin~Output resources')}</h2>
             {outputResources.map(renderResource('outputs'))}
           </>
         )}

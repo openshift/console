@@ -26,7 +26,7 @@ const CatalogPage: React.FC<CatalogPageProps> = ({ match }) => {
         </CatalogServiceProvider>
       ) : (
         <CreateProjectListPage title={t('devconsole~Developer Catalog')}>
-          {t('devconsole~Select a project to view the Developer Catalog')}
+          {t('devconsole~Select a Project to view the developer catalog')}
         </CreateProjectListPage>
       )}
     </NamespacedPage>

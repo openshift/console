@@ -49,7 +49,7 @@ export const deploymentValidationSchema = (t: TFunction) =>
     replicas: yup
       .number()
       .transform((cv) => (_.isNaN(cv) ? undefined : cv))
-      .test(isInteger(t('devconsole~Replicas must be an Integer.')))
+      .test(isInteger(t('devconsole~Replicas must be an integer.')))
       .min(0, t('devconsole~Replicas must be greater than or equal to 0.'))
       .max(
         Number.MAX_SAFE_INTEGER,
@@ -77,7 +77,7 @@ export const serverlessValidationSchema = (t: TFunction) =>
         minpods: yup
           .number()
           .transform((cv) => (_.isNaN(cv) ? undefined : cv))
-          .test(isInteger(t('devconsole~Min Pods must be an Integer.')))
+          .test(isInteger(t('devconsole~Min Pods must be an integer.')))
           .min(0, t('devconsole~Min Pods must be greater than or equal to 0.'))
           .max(
             Number.MAX_SAFE_INTEGER,
@@ -88,7 +88,7 @@ export const serverlessValidationSchema = (t: TFunction) =>
         maxpods: yup
           .number()
           .transform((cv) => (_.isNaN(cv) ? undefined : cv))
-          .test(isInteger(t('devconsole~Max Pods must be an Integer.')))
+          .test(isInteger(t('devconsole~Max Pods must be an integer.')))
           .min(1, t('devconsole~Max Pods must be greater than or equal to 1.'))
           .max(
             Number.MAX_SAFE_INTEGER,
@@ -106,22 +106,22 @@ export const serverlessValidationSchema = (t: TFunction) =>
         concurrencytarget: yup
           .number()
           .transform((cv) => (_.isNaN(cv) ? undefined : cv))
-          .test(isInteger(t('devconsole~Concurrency Target must be an Integer.')))
-          .min(0, t('devconsole~Concurrency Target must be greater than or equal to 0.'))
+          .test(isInteger(t('devconsole~Concurrency target must be an integer.')))
+          .min(0, t('devconsole~Concurrency target must be greater than or equal to 0.'))
           .max(
             Number.MAX_SAFE_INTEGER,
-            t('devconsole~Concurrency Target must be lesser than or equal to {{maxSafeInteger}}.', {
+            t('devconsole~Concurrency target must be lesser than or equal to {{maxSafeInteger}}.', {
               maxSafeInteger: Number.MAX_SAFE_INTEGER,
             }),
           ),
         concurrencylimit: yup
           .number()
           .transform((cv) => (_.isNaN(cv) ? undefined : cv))
-          .test(isInteger(t('devconsole~Concurrency Limit must be an Integer.')))
-          .min(0, t('devconsole~Concurrency Limit must be greater than or equal to 0.'))
+          .test(isInteger(t('devconsole~Concurrency limit must be an integer.')))
+          .min(0, t('devconsole~Concurrency limit must be greater than or equal to 0.'))
           .max(
             Number.MAX_SAFE_INTEGER,
-            t('devconsole~Concurrency Limit must be lesser than or equal to {{maxSafeInteger}}.', {
+            t('devconsole~Concurrency limit must be lesser than or equal to {{maxSafeInteger}}.', {
               maxSafeInteger: Number.MAX_SAFE_INTEGER,
             }),
           ),
@@ -259,7 +259,7 @@ export const gitValidationSchema = (t: TFunction) =>
       is: true,
       then: yup
         .string()
-        .required(t('devconsole~We failed to detect the git type. Please choose a git type.')),
+        .required(t('devconsole~We failed to detect the Git type. Please choose a Git type.')),
     }),
     showGitType: yup.boolean(),
   });
@@ -270,7 +270,7 @@ export const dockerValidationSchema = (t: TFunction) =>
     then: yup.object().shape({
       containerPort: yup
         .number()
-        .test(isInteger(t('devconsole~Container port should be an Integer'))),
+        .test(isInteger(t('devconsole~Container port should be an integer'))),
     }),
   });
 

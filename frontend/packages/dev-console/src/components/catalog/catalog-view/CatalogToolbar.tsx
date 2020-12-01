@@ -84,7 +84,7 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
                 menuClassName="dropdown-menu--text-wrap"
                 items={catalogGroupItems}
                 onChange={onGroupingChange}
-                titlePrefix={t('devconsole~Group By')}
+                titlePrefix={t('devconsole~Group by')}
                 title={catalogGroupItems[activeGrouping]}
               />
             )}

@@ -65,7 +65,7 @@ export const PageContents: React.FC<MonitoringPageProps> = ({
   if (canListRoleBindings && canCreateRoleBindings) {
     pages.push({
       href: 'access',
-      name: t('devconsole~Project Access'),
+      name: t('devconsole~Project access'),
       component: ProjectAccessPage,
     });
   }
@@ -84,7 +84,7 @@ export const PageContents: React.FC<MonitoringPageProps> = ({
     />
   ) : (
     <CreateProjectListPage title="Project Details">
-      {t('devconsole~Select a project to view its details')}
+      {t('devconsole~Select a Project to view its details')}
     </CreateProjectListPage>
   );
 };

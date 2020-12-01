@@ -26,7 +26,7 @@ const StatusCellResourceLink: React.FC<StatusCellResourceLinkProps> = ({
   const href = `${resourceObjPath(resource, resource.kind)}/pods`;
   return (
     <Link to={href}>
-      {t('topology~{{ready, number}} of {{count, number}} pod', { ready, count: desired })}
+      {t('topology~{{ready, number}} of {{count, number}} Pod', { ready, count: desired })}
     </Link>
   );
 };
@@ -53,7 +53,7 @@ const StatusCellResourceStatus: React.FC<StatusCellResourceStatus> = ({ obj, pod
     if (!filteredPods.length) {
       return null;
     }
-    return <Link to={href}>{t('topology~{{length}} pods', { length: filteredPods.length })}</Link>;
+    return <Link to={href}>{t('topology~{{length}} Pods', { length: filteredPods.length })}</Link>;
   }
 
   return podData.isRollingOut ? (

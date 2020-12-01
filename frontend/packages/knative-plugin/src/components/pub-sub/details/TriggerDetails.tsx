@@ -21,7 +21,7 @@ const TriggerDetails: React.FC<TriggerDetailsProps> = ({ obj: trigger }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('knative-plugin~Trigger Details')} />
+        <SectionHeading text={t('knative-plugin~Trigger details')} />
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={trigger} />

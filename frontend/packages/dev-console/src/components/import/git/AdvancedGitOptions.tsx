@@ -10,22 +10,22 @@ const AdvancedGitOptions: React.FC = () => {
   const { t } = useTranslation();
   return (
     <ExpandCollapse
-      textExpanded={t('devconsole~Hide Advanced Git Options')}
-      textCollapsed={t('devconsole~Show Advanced Git Options')}
+      textExpanded={t('devconsole~Hide advanced Git options')}
+      textCollapsed={t('devconsole~Show advanced Git options')}
     >
       <FormSection>
         <InputField
           type={TextInputTypes.text}
           name="git.ref"
-          label={t('devconsole~Git Reference')}
+          label={t('devconsole~Git reference')}
           helpText={t('devconsole~Optional branch, tag, or commit.')}
         />
         <InputField
           type={TextInputTypes.text}
           name="git.dir"
-          label={t('devconsole~Context Dir')}
+          label={t('devconsole~Context dir')}
           helpText={t(
-            'devconsole~Optional subdirectory for the application source code, used as a context directory for build.',
+            'devconsole~Optional subdirectory for the Application source code, used as a context directory for build.',
           )}
         />
         <SourceSecretSelector />

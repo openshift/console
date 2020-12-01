@@ -20,7 +20,7 @@ const PipelineGitOptions: React.FC<PipelineGitOptionsProps> = ({ prefixName }) =
         type={TextInputTypes.text}
         name={`${prefixName}.params.revision`}
         label={t('pipelines-plugin~Revision')}
-        helpText={t('pipelines-plugin~Please provide Revisions. i.e master')}
+        helpText={t('pipelines-plugin~Please provide revisions. i.e master')}
       />
     </>
   );

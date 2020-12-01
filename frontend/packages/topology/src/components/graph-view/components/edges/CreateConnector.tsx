@@ -41,7 +41,7 @@ const CreateConnector: React.FC<CreateConnectorProps> = ({
       endPoint={endPoint}
       dragging={dragging}
       hints={hints}
-      tipContents={hover && dragging ? t('topology~Add Resources') : null}
+      tipContents={hover && dragging ? t('topology~Add resources') : null}
     />
   );
 };

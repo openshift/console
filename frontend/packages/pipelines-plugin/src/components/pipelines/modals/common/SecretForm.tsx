@@ -88,7 +88,7 @@ const SecretForm: React.FC<FormikValues> = ({
           type={TextInputTypes.text}
           required
           name="secretName"
-          label={t('pipelines-plugin~Secret Name')}
+          label={t('pipelines-plugin~Secret name')}
           helpText={t('pipelines-plugin~Unique name of the new secret.')}
         />
       </div>
@@ -98,7 +98,7 @@ const SecretForm: React.FC<FormikValues> = ({
       <div className="form-group">
         <DropdownField
           name="type"
-          label={t('pipelines-plugin~Authentication Type')}
+          label={t('pipelines-plugin~Authentication type')}
           items={authTypes}
           title={authTypes[values.type]}
           onChange={(type: SecretType) => setValues(type)}

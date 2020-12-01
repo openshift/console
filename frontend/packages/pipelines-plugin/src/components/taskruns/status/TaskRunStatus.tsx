@@ -27,7 +27,7 @@ const TaskRunStatus: React.FC<TaskRunStatusProps> = ({ status, taskRun }) => {
               taskRun.metadata.namespace,
             )}/logs`}
           >
-            {t('pipelines-plugin~View Logs')}
+            {t('pipelines-plugin~View logs')}
           </Link>
         }
       />

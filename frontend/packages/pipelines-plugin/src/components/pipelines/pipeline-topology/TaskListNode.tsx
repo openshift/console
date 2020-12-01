@@ -64,7 +64,7 @@ const TaskListNode: React.FC<TaskListNodeProps> = ({ element, unselectedText }) 
           ) : (
             <Flex flexWrap={{ default: 'nowrap' }} spaceItems={{ default: 'spaceItemsNone' }}>
               <FlexItem className="odc-task-list-node__label" grow={{ default: 'grow' }}>
-                {unselectedText || t('pipelines-plugin~Select task')}
+                {unselectedText || t('pipelines-plugin~Select Task')}
               </FlexItem>
               <FlexItem>
                 <CaretDownIcon />

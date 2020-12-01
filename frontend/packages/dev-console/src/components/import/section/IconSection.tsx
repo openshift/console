@@ -20,9 +20,9 @@ const IconSection: React.FC = () => {
     <FormSection>
       <FormGroup
         fieldId="runtimeIcon"
-        label={t('devconsole~Runtime Icon')}
+        label={t('devconsole~Runtime icon')}
         helperText={t(
-          'devconsole~The icon represents your image in Topology view. A label will also be added to the resource defining the icon.',
+          'devconsole~The icon represents your Image in Topology view. A label will also be added to the resource defining the icon.',
         )}
       >
         <IconDropdown

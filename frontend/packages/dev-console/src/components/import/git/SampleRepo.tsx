@@ -12,7 +12,7 @@ const SampleRepo = (props) => {
   return (
     <FormHelperText isHidden={false}>
       <Button {...props} type="button" variant={ButtonVariant.link} isInline>
-        {t('devconsole~Try Sample')} <LevelUpAltIcon />
+        {t('devconsole~Try sample')} <LevelUpAltIcon />
       </Button>
     </FormHelperText>
   );

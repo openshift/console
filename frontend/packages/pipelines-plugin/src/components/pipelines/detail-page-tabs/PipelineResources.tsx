@@ -13,7 +13,7 @@ type PipelineResourcesParam = {
 const PipelineResources: React.FC<PipelineResourcesParam> = (props) => {
   const { t } = useTranslation();
   const {
-    addLabel = t('pipelines-plugin~Add Pipeline Resource'),
+    addLabel = t('pipelines-plugin~Add Pipeline resource'),
     fieldName,
     isReadOnly = false,
   } = props;
@@ -22,7 +22,7 @@ const PipelineResources: React.FC<PipelineResourcesParam> = (props) => {
     <MultiColumnField
       name={fieldName}
       addLabel={addLabel}
-      headers={[t('pipelines-plugin~Name'), t('pipelines-plugin~Resource Type')]}
+      headers={[t('pipelines-plugin~Name'), t('pipelines-plugin~Resource type')]}
       emptyValues={{ name: '', type: '' }}
       emptyMessage={emptyMessage}
       isReadOnly={isReadOnly}

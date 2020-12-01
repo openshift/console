@@ -83,7 +83,7 @@ const ConnectedTopologyOperatorBackedPanel: React.FC<PropsFromState &
   );
   const DetailsSection = () => (
     <div className="overview__sidebar-pane-body">
-      <SectionHeading text={t('topology~Operator Details')} />
+      <SectionHeading text={t('topology~Operator details')} />
       <ResourceSummary resource={resource} />
     </div>
   );

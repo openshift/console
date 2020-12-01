@@ -24,7 +24,7 @@ const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
   return (
     <Modal
       variant={ModalVariant.medium}
-      aria-label={t('topology~Quick Search')}
+      aria-label={t('topology~Quick search')}
       isOpen={isOpen}
       showClose={false}
       position="top"

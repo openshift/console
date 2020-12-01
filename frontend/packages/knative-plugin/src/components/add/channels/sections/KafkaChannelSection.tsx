@@ -16,9 +16,9 @@ const KafkaChannelSection: React.FC = () => {
       />
       <NumberSpinnerField
         name="data.kafkachannel.replicationFactor"
-        label={t('knative-plugin~Replication Factor')}
+        label={t('knative-plugin~Replication factor')}
         helpText={t(
-          'knative-plugin~The Replication Factor of a Kafka topic. By default is, set to 1.',
+          'knative-plugin~The Replication factor of a Kafka topic. By default is, set to 1.',
         )}
       />
     </FormSection>

@@ -36,10 +36,10 @@ const ServiceAccountDropdown: React.FC<ServiceAccountDropdownProps & StateProps>
   return (
     <ResourceDropdownField
       name={name}
-      label={t('knative-plugin~Service Account Name')}
+      label={t('knative-plugin~Service Account name')}
       resources={resources}
       dataSelector={['metadata', 'name']}
-      placeholder={t('knative-plugin~Select a Service Account Name')}
+      placeholder={t('knative-plugin~Select a Service Account name')}
       autocompleteFilter={autocompleteFilter}
       helpText={t('knative-plugin~The name of Service Account use to run this')}
       fullWidth

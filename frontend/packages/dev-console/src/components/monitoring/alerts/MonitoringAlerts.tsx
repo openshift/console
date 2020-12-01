@@ -72,7 +72,7 @@ export const MonitoringAlerts: React.FC<props> = ({ match, rules, filters, listS
       sortFunc: 'alertSeverityOrder',
     },
     {
-      title: t('devconsole~Alert State'),
+      title: t('devconsole~Alert state'),
       transforms: [sortable, cellWidth(15)],
       fieldName: 'alertState',
       sortFunc: 'alertingRuleStateOrder',

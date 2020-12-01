@@ -44,7 +44,7 @@ const HelmReleaseRollbackForm: React.FC<Props> = ({
   return (
     <Form onSubmit={handleSubmit}>
       <FormHeader title={title} helpText={formHelpText} />
-      <FormGroup fieldId="revision-list-field" label={t('devconsole~Revision History')} isRequired>
+      <FormGroup fieldId="revision-list-field" label={t('devconsole~Revision history')} isRequired>
         <Table
           data={releaseHistory}
           defaultSortField="version"

@@ -49,8 +49,8 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
   );
   const containersByKey = _.keyBy(containers, 'name');
   const pageTitle = healthCheckAdded
-    ? t('devconsole~Edit Health Checks')
-    : t('devconsole~Add Health Checks');
+    ? t('devconsole~Edit health checks')
+    : t('devconsole~Add health checks');
   const {
     kind,
     metadata: { name, namespace },
@@ -87,7 +87,7 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
               href={`${openshiftHelpBase}applications/application-health.html`}
               target="_blank"
             >
-              {t('devconsole~Learn More')} <ExternalLinkAltIcon />
+              {t('devconsole~Learn more')} <ExternalLinkAltIcon />
             </Button>
           </>
         }

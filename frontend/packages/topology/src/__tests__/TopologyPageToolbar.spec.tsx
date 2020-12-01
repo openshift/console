@@ -71,7 +71,7 @@ describe('TopologyPageToolbar tests', () => {
     const wrapper = shallow(
       <TopologyPageToolbar viewType={TopologyViewType.list} onViewChange={mockViewChange} />,
     );
-    expect(wrapper.find(Tooltip).props().content).toBe('topology~Topology View');
+    expect(wrapper.find(Tooltip).props().content).toBe('topology~Topology view');
   });
 
   it('should show the topology list icon when on topology page', () => {
@@ -83,7 +83,7 @@ describe('TopologyPageToolbar tests', () => {
     const wrapper = shallow(
       <TopologyPageToolbar viewType={TopologyViewType.graph} onViewChange={mockViewChange} />,
     );
-    expect(wrapper.find(Tooltip).props().content).toBe('topology~List View');
+    expect(wrapper.find(Tooltip).props().content).toBe('topology~List view');
   });
 
   it('should not contain view switcher when when no project is selected', () => {

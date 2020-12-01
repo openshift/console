@@ -68,7 +68,7 @@ const PipelineSection: React.FC<PipelineSectionProps> = ({ flags, builderImages 
             isInline
             variant="info"
             title={t(
-              'pipelines-plugin~Select a builder image and resource to see if there is a pipeline template available for this runtime.',
+              'pipelines-plugin~Select a Builder Image and resource to see if there is a pipeline template available for this runtime.',
             )}
           />
         )}

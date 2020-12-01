@@ -30,7 +30,7 @@ const EventSourcePage: React.FC<EventSourcePageProps> = ({ match, location }) =>
       </Helmet>
       <PageHeading title={t('knative-plugin~Create Event Source')}>
         {t(
-          'knative-plugin~Create an event source to register interest in a class of events from a particular system. Configure using the YAML and form views.',
+          'knative-plugin~Create an Event source to register interest in a class of events from a particular system. Configure using the YAML and form views.',
         )}
       </PageHeading>
       <PageBody flexLayout>

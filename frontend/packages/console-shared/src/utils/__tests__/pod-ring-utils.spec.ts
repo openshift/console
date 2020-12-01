@@ -52,7 +52,7 @@ describe('pod-ring utils:', () => {
       t,
     );
     expect(podRingLabelData.title).toEqual('1');
-    expect(podRingLabelData.subTitle).toEqual(`${i18nNS}~scaling to {{podSubTitle}}`);
+    expect(podRingLabelData.subTitle).toEqual(`${i18nNS}~Scaling to {{podSubTitle}}`);
     expect(podRingLabelData.longTitle).toBeFalsy();
     expect(podRingLabelData.longSubtitle).toBeTruthy();
     expect(podRingLabelData.reversed).toBeFalsy();
@@ -69,7 +69,7 @@ describe('pod-ring utils:', () => {
     );
 
     expect(podRingLabelData.title).toEqual('0');
-    expect(podRingLabelData.subTitle).toEqual(`${i18nNS}~scaling to {{podSubTitle}}`);
+    expect(podRingLabelData.subTitle).toEqual(`${i18nNS}~Scaling to {{podSubTitle}}`);
     expect(podRingLabelData.longTitle).toBeFalsy();
     expect(podRingLabelData.longSubtitle).toBeTruthy();
     expect(podRingLabelData.reversed).toBeFalsy();
@@ -85,7 +85,7 @@ describe('pod-ring utils:', () => {
       t,
     );
     expect(podRingLabelData.title).toEqual('0');
-    expect(podRingLabelData.subTitle).toEqual(`${i18nNS}~scaling to {{podSubTitle}}`);
+    expect(podRingLabelData.subTitle).toEqual(`${i18nNS}~Scaling to {{podSubTitle}}`);
     expect(podRingLabelData.longTitle).toBeFalsy();
     expect(podRingLabelData.longSubtitle).toBeTruthy();
     expect(podRingLabelData.reversed).toBeFalsy();

@@ -19,7 +19,7 @@ const GuidedTour: React.FC = () => {
       <StepComponent
         {...intro}
         showStepBadge={false}
-        nextButtonText={t('tour~Get Started')}
+        nextButtonText={t('tour~Get started')}
         backButtonText={t('tour~Skip tour')}
       />
     );

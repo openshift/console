@@ -107,7 +107,7 @@ const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) 
       fieldId={fieldId}
       helperText={
         !contextAvailable
-          ? t('knative-plugin~This resource will be the Sink for the Event Source.')
+          ? t('knative-plugin~This resource will be the sink for the Event source.')
           : ''
       }
       isRequired
@@ -170,7 +170,7 @@ const SinkSection: React.FC<SinkSectionProps> = ({ namespace, fullWidth }) => {
     <FormSection
       title={t('knative-plugin~Sink')}
       subTitle={t(
-        'knative-plugin~Add a Sink to route this Event Source to a Channel, Broker, Knative Service or another route.',
+        'knative-plugin~Add a sink to route this Event source to a Channel, Broker, Knative Service or another route.',
       )}
       extraMargin
       fullWidth={fullWidth}

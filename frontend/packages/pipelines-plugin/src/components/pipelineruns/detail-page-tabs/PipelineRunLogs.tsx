@@ -144,7 +144,7 @@ class PipelineRunLogsWithTranslation extends React.Component<
             </Nav>
           ) : (
             <div className="odc-pipeline-run-logs__nav">
-              {t('pipelines-plugin~No Task Runs Found')}
+              {t('pipelines-plugin~No task runs found')}
             </div>
           )}
         </div>
@@ -153,7 +153,7 @@ class PipelineRunLogsWithTranslation extends React.Component<
             <Firehose key={activeItem} resources={resources}>
               <LogsWrapperComponent
                 taskName={_.get(taskRunFromYaml, [activeItem, 'pipelineTaskName'], '-')}
-                downloadAllLabel={t('pipelines-plugin~Download All Task Logs')}
+                downloadAllLabel={t('pipelines-plugin~Download all task logs')}
                 onDownloadAll={downloadAllCallback}
               />
             </Firehose>
@@ -163,7 +163,7 @@ class PipelineRunLogsWithTranslation extends React.Component<
                 {_.get(
                   obj,
                   ['status', 'conditions', 0, 'message'],
-                  t('pipelines-plugin~No Logs Found'),
+                  t('pipelines-plugin~No logs found'),
                 )}
               </div>
             </div>

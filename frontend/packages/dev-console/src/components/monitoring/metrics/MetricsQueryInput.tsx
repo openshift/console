@@ -31,8 +31,8 @@ const ADD_NEW_QUERY = '#ADD_NEW_QUERY#';
 
 const MetricsQueryInput: React.FC = () => {
   const { t } = useTranslation();
-  const CUSTOM_QUERY = t('devconsole~Custom Query');
-  const DEFAULT_TITLE = t('devconsole~Select Query');
+  const CUSTOM_QUERY = t('devconsole~Custom query');
+  const DEFAULT_TITLE = t('devconsole~Select query');
   const params = getURLSearchParams();
   const query = params.query0;
   const items = metricsQuery(t);

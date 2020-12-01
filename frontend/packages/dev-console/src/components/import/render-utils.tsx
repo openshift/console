@@ -19,14 +19,14 @@ export const routeDecoratorIcon = (
       // Not a valid url and thus not safe to use
       return null;
     case GitTypes.github:
-      return <GithubIcon style={{ fontSize: radius }} title={t('devconsole~Edit Source Code')} />;
+      return <GithubIcon style={{ fontSize: radius }} title={t('devconsole~Edit source code')} />;
     case GitTypes.bitbucket:
       return (
-        <BitbucketIcon style={{ fontSize: radius }} title={t('devconsole~Edit Source Code')} />
+        <BitbucketIcon style={{ fontSize: radius }} title={t('devconsole~Edit source code')} />
       );
     case GitTypes.gitlab:
-      return <GitlabIcon style={{ fontSize: radius }} title={t('devconsole~Edit Source Code')} />;
+      return <GitlabIcon style={{ fontSize: radius }} title={t('devconsole~Edit source code')} />;
     default:
-      return <GitAltIcon style={{ fontSize: radius }} title={t('devconsole~Edit Source Code')} />;
+      return <GitAltIcon style={{ fontSize: radius }} title={t('devconsole~Edit source code')} />;
   }
 };

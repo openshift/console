@@ -13,7 +13,7 @@ const ScalingSection: React.FC = () => {
       <NumberSpinnerField
         name="deployment.replicas"
         label={t('devconsole~Replicas')}
-        helpText={t('devconsole~The number of instances of your image.')}
+        helpText={t('devconsole~The number of instances of your Image.')}
       />
     </FormSection>
   );

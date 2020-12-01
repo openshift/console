@@ -14,7 +14,7 @@ const EmptyStateQuery: React.FC = () => {
     <EmptyState variant={EmptyStateVariant.full}>
       <EmptyStateIcon icon={ChartLineIcon} />
       <EmptyStateBody>
-        {t('devconsole~Select a query or enter your own to view metrics for this project')}
+        {t('devconsole~Select a query or enter your own to view metrics for this Project')}
       </EmptyStateBody>
     </EmptyState>
   );

@@ -110,7 +110,7 @@ const TopologyPage: React.FC<TopologyPageProps> = ({
             />
           ) : (
             <CreateProjectListPage title={t('topology~Topology')}>
-              {t('topology~Select a project to view the topology')}
+              {t('topology~Select a Project to view the topology')}
             </CreateProjectListPage>
           )}
         </ProjectsExistWrapper>

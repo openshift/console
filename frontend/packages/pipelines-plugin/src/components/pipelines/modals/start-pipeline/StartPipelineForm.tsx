@@ -14,7 +14,7 @@ const StartPipelineForm: React.FC<FormikValues> = ({ values }) => {
       <PipelineParameterSection parameters={values.parameters} />
       <PipelineResourceSection />
       <PipelineWorkspacesSection />
-      <FormSection title={t('pipelines-plugin~Advanced Options')} fullWidth>
+      <FormSection title={t('pipelines-plugin~Advanced options')} fullWidth>
         <PipelineSecretSection namespace={values.namespace} />
       </FormSection>
     </>

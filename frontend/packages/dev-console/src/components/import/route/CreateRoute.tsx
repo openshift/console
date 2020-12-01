@@ -36,7 +36,7 @@ const CreateRoute: React.FC = () => {
       />
       <PortInputField
         name="route.unknownTargetPort"
-        label={t('devconsole~Target Port')}
+        label={t('devconsole~Target port')}
         placeholderText={placeholderPort.toString()}
         helpText={t('devconsole~Target port for traffic.')}
         options={portOptions}

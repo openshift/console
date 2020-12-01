@@ -18,7 +18,7 @@ const i18nNS = 'pipelines-plugin';
 describe('PipelineAction testing rerunPipeline create correct labels and callbacks', () => {
   it('expect label to be "Start Last Run" when latestRun is available', () => {
     const rerunAction = rerunPipelineAndRedirect(PipelineRunModel, samplePipelineRun);
-    expect(rerunAction.labelKey).toBe(`${i18nNS}~Start Last Run`);
+    expect(rerunAction.labelKey).toBe(`${i18nNS}~Start last run`);
     expect(rerunAction.callback).not.toBeNull();
   });
 });
@@ -84,14 +84,14 @@ describe('getPipelineKebabActions', () => {
     const pipelineKebabActions = getPipelineKebabActions(samplePipelineRun, false);
     expect(pipelineKebabActions.length).toBe(7);
     expect(pipelineKebabActions[1](PipelineRunModel, samplePipelineRun).labelKey).toBe(
-      `${i18nNS}~Start Last Run`,
+      `${i18nNS}~Start last run`,
     );
   });
   it('expect Start Last Run option is not present', () => {
     const pipelineKebabActions = getPipelineKebabActions(undefined, false);
     expect(pipelineKebabActions.length).toBe(6);
     expect(pipelineKebabActions[1](PipelineRunModel, samplePipelineRun).labelKey).not.toBe(
-      `${i18nNS}~Start Last Run`,
+      `${i18nNS}~Start last run`,
     );
   });
   it('expect Edit Pipeline option should be hidden when pipeline has inline taskSpec', () => {

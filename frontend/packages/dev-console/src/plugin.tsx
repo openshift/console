@@ -642,8 +642,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       url: '/samples',
       // t('devconsole~Samples')
       label: '%devconsole~Samples%',
-      // t('devconsole~Create an application from a code sample')
-      description: '%devconsole~Create an application from a code sample%',
+      // t('devconsole~Create an Application from a code sample')
+      description: '%devconsole~Create an Application from a code sample%',
       icon: <LaptopCodeIcon />,
       accessReview: [
         BuildConfigModel,
@@ -690,9 +690,9 @@ const plugin: Plugin<ConsumedExtensions> = [
       url: '/deploy-image',
       // t('devconsole~Container Image')
       label: '%devconsole~Container Image%',
-      // t('devconsole~Deploy an existing image from an image registry or image stream tag')
+      // t('devconsole~Deploy an existing Image from an Image registry or Image stream tag')
       description:
-        '%devconsole~Deploy an existing image from an image registry or image stream tag%',
+        '%devconsole~Deploy an existing Image from an Image registry or Image stream tag%',
       iconClass: 'pficon-image',
       accessReview: [
         BuildConfigModel,
@@ -765,9 +765,9 @@ const plugin: Plugin<ConsumedExtensions> = [
       url: '/catalog?category=databases',
       // t('devconsole~Database')
       label: '%devconsole~Database%',
-      // t('devconsole~Browse the catalog to discover database services to add to your application')
+      // t('devconsole~Browse the catalog to discover database services to add to your Application')
       description:
-        '%devconsole~Browse the catalog to discover database services to add to your application%',
+        '%devconsole~Browse the catalog to discover database services to add to your Application%',
       icon: <DatabaseIcon />,
     },
   },

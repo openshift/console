@@ -28,7 +28,7 @@ describe('Metrics Query Input', () => {
   it('should render Dropdown with default title', () => {
     const wrapper = shallow(<MetricsQueryInput />);
     expect(wrapper.find(Dropdown)).toHaveLength(1);
-    expect(wrapper.find(Dropdown).props().title).toEqual(`${I18N_NS}~Select Query`);
+    expect(wrapper.find(Dropdown).props().title).toEqual(`${I18N_NS}~Select query`);
   });
 
   it('should render Button with text "Show PromQL" and not render QueryInput', () => {
@@ -54,7 +54,7 @@ describe('Metrics Query Input', () => {
     expect(wrapper.find(QueryInput)).toHaveLength(1);
     expect(wrapper.find(Button).props().children).toEqual(`${I18N_NS}~Hide PromQL`);
     expect(wrapper.find(Button).props().isDisabled).toBe(true);
-    expect(wrapper.find(Dropdown).props().title).toEqual(`${I18N_NS}~Custom Query`);
+    expect(wrapper.find(Dropdown).props().title).toEqual(`${I18N_NS}~Custom query`);
   });
 
   it('Metric selection should update Dropdown title and show Button in enabled state', () => {
@@ -64,6 +64,6 @@ describe('Metrics Query Input', () => {
       .props()
       .onChange('PODS_BY_CPU');
     expect(wrapper.find(Button).props().isDisabled).toBe(false);
-    expect(wrapper.find(Dropdown).props().title).toEqual(`${I18N_NS}~CPU Usage`);
+    expect(wrapper.find(Dropdown).props().title).toEqual(`${I18N_NS}~CPU usage`);
   });
 });

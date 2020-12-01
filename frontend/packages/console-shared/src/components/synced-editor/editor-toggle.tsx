@@ -19,11 +19,11 @@ export const EditorToggle: React.FC<EditorToggleProps> = ({ value, onChange }) =
         items={[
           {
             value: EditorType.Form,
-            title: t('console-shared~Form View'),
+            title: t('console-shared~Form view'),
           },
           {
             value: EditorType.YAML,
-            title: t('console-shared~YAML View'),
+            title: t('console-shared~YAML view'),
           },
         ]}
         onChange={({ currentTarget }) => onChange(currentTarget.value as EditorType)}

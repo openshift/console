@@ -76,13 +76,13 @@ export const updateResourceApplication = (
 ): Promise<any> => {
   if (!resource) {
     return Promise.reject(
-      new Error(i18next.t('topology~Error: no resource provided to update application for.')),
+      new Error(i18next.t('topology~Error: no resource provided to update Application for.')),
     );
   }
   if (!resourceKind) {
     return Promise.reject(
       new Error(
-        i18next.t('topology~Error: invalid resource kind provided for updating application.'),
+        i18next.t('topology~Error: invalid resource kind provided for updating Application.'),
       ),
     );
   }

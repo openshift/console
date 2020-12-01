@@ -21,7 +21,7 @@ const TrafficSplittingModal: React.FC<Props> = (props) => {
   const { handleSubmit, cancel, isSubmitting, status } = props;
   return (
     <form className="modal-content" onSubmit={handleSubmit}>
-      <ModalTitle>{t('knative-plugin~Set Traffic Distribution')}</ModalTitle>
+      <ModalTitle>{t('knative-plugin~Set traffic distribution')}</ModalTitle>
       <ModalBody>
         <p>
           {t('knative-plugin~Set traffic distribution for the Revisions of the Knative Service')}

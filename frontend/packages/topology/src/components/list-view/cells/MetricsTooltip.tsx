@@ -25,7 +25,7 @@ const MetricsTooltip: React.FC<MetricsTooltipProps> = ({ metricLabel, byPod, chi
       ]
     : _.concat(
         <div className="odc-topology-list-view__metrics-cell__tooltip-title" key="#title">
-          {t('topology~{{metricLabel}} Usage by Pod', { metricLabel })}
+          {t('topology~{{metricLabel}} usage by Pod', { metricLabel })}
         </div>,
         sortedMetrics.map(({ name, formattedValue }) => (
           <div key={name} className="odc-topology-list-view__metrics-cell__metric-tooltip">

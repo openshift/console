@@ -58,9 +58,9 @@ const QuickStartsCatalogCard: React.FC<QuickStartsCatalogCardProps> = ({
 
   const actionDropdownItem = [
     <DropdownItem onClick={onRemove} key="action" component="button">
-      {t('console-shared~Remove quick starts card from view')}
+      {t('console-shared~Remove Quick Starts card from view')}
       <div className="odc-quick-start-catalog-card__remove-help-text text-muted co-pre-wrap">
-        {t('console-shared~You will be able to access this information through the Help menu.')}
+        {t('console-shared~You will be able to access this information through the help menu.')}
       </div>
     </DropdownItem>,
   ];

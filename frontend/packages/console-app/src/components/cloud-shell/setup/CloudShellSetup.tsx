@@ -62,7 +62,7 @@ const CloudShellSetup: React.FunctionComponent<Props> = ({
 
   return (
     <div className="co-m-pane__body" style={{ paddingBottom: 0 }}>
-      <h2>{t('cloudshell~Initialize Terminal')}</h2>
+      <h2>{t('cloudshell~Initialize terminal')}</h2>
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}

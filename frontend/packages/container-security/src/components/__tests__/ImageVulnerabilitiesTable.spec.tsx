@@ -31,8 +31,8 @@ describe('ImageVulnerabilitiesTable', () => {
       'container-security~Vulnerability',
       'container-security~Severity',
       'container-security~Package',
-      'container-security~Current Version',
-      'container-security~Fixed in Version',
+      'container-security~Current version',
+      'container-security~Fixed in version',
     ];
     const headers = wrapper
       .find(Table)

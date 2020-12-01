@@ -5,25 +5,25 @@ export const getHealthChecksProbeConfig = (probe: string, t: TFunction) => {
   switch (probe) {
     case HealthChecksProbeType.ReadinessProbe: {
       return {
-        formTitle: t('devconsole~Readiness Probe'),
+        formTitle: t('devconsole~Readiness probe'),
         formSubtitle: t(
-          "devconsole~A Readiness probe checks if the container is ready to handle requests. A failed readiness probe means that a container should not receive any traffic from a proxy, even if it's running.",
+          "devconsole~A readiness probe checks if the Container is ready to handle requests. A failed readiness probe means that a Container should not receive any traffic from a proxy, even if it's running.",
         ),
       };
     }
     case HealthChecksProbeType.LivenessProbe: {
       return {
-        formTitle: t('devconsole~Liveness Probe'),
+        formTitle: t('devconsole~Liveness probe'),
         formSubtitle: t(
-          'devconsole~A Liveness probe checks if the container is still running. If the liveness probe fails the container is killed.',
+          'devconsole~A liveness probe checks if the Container is still running. If the liveness probe fails the Container is killed.',
         ),
       };
     }
     case HealthChecksProbeType.StartupProbe: {
       return {
-        formTitle: t('devconsole~Startup Probe'),
+        formTitle: t('devconsole~Startup probe'),
         formSubtitle: t(
-          'devconsole~A Startup probe checks if the application within the container is started. If the startup probe fails the container is killed.',
+          'devconsole~A startup probe checks if the Application within the Container is started. If the startup probe fails the Container is killed.',
         ),
       };
     }

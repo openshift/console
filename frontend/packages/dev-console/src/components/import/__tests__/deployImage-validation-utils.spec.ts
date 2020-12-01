@@ -164,7 +164,7 @@ describe('Deploy Image ValidationUtils', () => {
       await deployValidationSchema(t)
         .validate(mockData)
         .catch((err) => {
-          expect(err.message).toBe('devconsole~Replicas must be an Integer.');
+          expect(err.message).toBe('devconsole~Replicas must be an integer.');
         });
     });
 

@@ -39,7 +39,7 @@ const TrafficSplittingFields: React.FC<Props> = ({ revisionItems, values }) => {
       <TrafficModalRevisionsDropdownField
         name="revisionName"
         revisionItems={items}
-        title={t('knative-plugin~Select a revision')}
+        title={t('knative-plugin~Select a Revision')}
       />
     </MultiColumnField>
   );

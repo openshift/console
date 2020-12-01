@@ -24,7 +24,7 @@ const PipelineRunsPage: React.FC<PipelineRunsPageProps> = (props) => {
       title={PipelineRunModel.labelPlural}
       badge={getBadgeFromType(PipelineRunModel.badge)}
     >
-      {t('pipelines-plugin~Select a project to view the list of {{pipelineRunLabel}}', {
+      {t('pipelines-plugin~Select a Project to view the list of {{pipelineRunLabel}}', {
         pipelineRunLabel: PipelineRunModel.labelPlural,
       })}
     </CreateProjectListPage>
