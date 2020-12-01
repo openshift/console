@@ -5,13 +5,14 @@ import { guidedTour } from '../../../../../integration-tests-cypress/views/guide
 import { nav } from '../../../../../integration-tests-cypress/views/nav';
 import { modal } from '../../../../../integration-tests-cypress/views/modal';
 import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
+import { adminNavigationMenu, perspectiveName } from '../../constants/staticText/global-text';
 
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);
   // Bug: 1890676 is created related to Accesibiity violation - Until bug fix, below line is commented to execute the scripts in CI
   // cy.testA11y('Developer perspective with guider tour modal');
   guidedTour.close();
-  nav.sidenav.switcher.shouldHaveText('Developer');
+  nav.sidenav.switcher.shouldHaveText(perspectiveName.developer);
   // Bug: 1890678 is created related to Accesibiity violation - Until bug fix, below line is commented to execute the scripts in CI
   // cy.testA11y('Developer perspective');
 });
@@ -66,9 +67,18 @@ Then('modal with {string} appears', (header: string) => {
 });
 
 Then('user will be redirected to Pipelines page', () => {
-  detailsPage.titleShouldContain('Pipelines');
+  detailsPage.titleShouldContain(adminNavigationMenu.pipelines);
 });
 
 When('user clicks create button', () => {
   cy.get('button[type="submit"]').click();
+});
+
+Given('user has selected namespace {string}', (projectName: string) => {
+  perspective.switchTo(switchPerspective.Developer);
+  guidedTour.close();
+  const d = new Date();
+  const timestamp = d.getTime();
+  projectNameSpace.selectOrCreateProject(`${projectName}-${timestamp}-ns`);
+  cy.log(`User has selected namespace "${projectName}-${timestamp}-ns"`);
 });
