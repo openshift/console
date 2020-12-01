@@ -1,0 +1,45 @@
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
+import { CatalogItem, CatalogExtensionHook } from '@console/plugin-sdk';
+import { K8sKind, referenceForModel } from '@console/internal/module/k8s';
+import { useEventSourceModels } from '../utils/fetch-dynamic-eventsources-utils';
+import { getEventSourceIcon } from '../utils/get-knative-icon';
+import { getEventSourceCatalogProviderData } from './event-source-data';
+
+const normalizeEventSources = (
+  eventSources: K8sKind[],
+  namespace: string,
+  t: TFunction,
+): CatalogItem[] => {
+  const normalizedEventSources: CatalogItem[] = eventSources.map((eventSource) => {
+    const { kind, label: name, id: uid } = eventSource;
+    const href = `/catalog/ns/${namespace}/eventsource?sourceKind=${kind}`;
+    const { description, provider } = getEventSourceCatalogProviderData(kind, t) ?? {};
+    return {
+      uid,
+      name,
+      description,
+      icon: { url: getEventSourceIcon(referenceForModel(eventSource)), class: null },
+      type: 'EventSource',
+      provider,
+      cta: { label: t('knative-plugin~Create Event Source'), href },
+    };
+  });
+  return normalizedEventSources;
+};
+
+const useEventSourceProvider: CatalogExtensionHook<CatalogItem[]> = ({
+  namespace,
+}): [CatalogItem[], boolean, any] => {
+  const { t } = useTranslation();
+  const { loaded, eventSourceModels } = useEventSourceModels();
+  const normalizedSources = React.useMemo(
+    () => (loaded ? normalizeEventSources(eventSourceModels, namespace, t) : []),
+
+    [loaded, namespace, t, eventSourceModels],
+  );
+  return [normalizedSources, loaded, undefined];
+};
+
+export default useEventSourceProvider;

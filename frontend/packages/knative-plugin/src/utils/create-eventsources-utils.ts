@@ -119,23 +119,6 @@ export const loadYamlData = (formData: EventSourceSyncFormData) => {
   return yamlDataObj;
 };
 
-export const getEventSourceResource = (
-  sourceFormData: EventSourceSyncFormData,
-): K8sResourceKind => {
-  switch (sourceFormData.formData.type) {
-    case EventSources.KafkaSource:
-      return getKafkaSourceResource(sourceFormData);
-    case EventSources.ContainerSource:
-    case EventSources.CronJobSource:
-    case EventSources.ApiServerSource:
-    case EventSources.SinkBinding:
-    case EventSources.PingSource:
-      return getEventSourcesDepResource(sourceFormData.formData);
-    default:
-      return loadYamlData(sourceFormData);
-  }
-};
-
 export const getCatalogEventSourceResource = (
   sourceFormData: EventSourceSyncFormData,
 ): K8sResourceKind => {

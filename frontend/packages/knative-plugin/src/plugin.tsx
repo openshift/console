@@ -14,6 +14,8 @@ import {
   YAMLTemplate,
   HrefNavItem,
   HorizontalNavTab,
+  CatalogItemProvider,
+  CatalogItemType,
 } from '@console/plugin-sdk';
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
 import { AddAction } from '@console/dev-console/src/extensions/add-actions';
@@ -28,11 +30,13 @@ import {
   FLAG_KNATIVE_EVENTING,
   FLAG_KNATIVE_EVENTING_CHANNEL,
   FLAG_KNATIVE_EVENTING_BROKER,
+  FLAG_CAMEL_KAMELETS,
 } from './const';
 import { getKebabActionsForKind } from './utils/kebab-actions';
 import { TopologyConsumedExtensions, topologyPlugin } from './topology/topology-plugin';
 import * as eventSourceIcon from './imgs/event-source.svg';
 import * as channelIcon from './imgs/channel.svg';
+import { eventSourceProvider, kameletsProvider } from './catalog';
 
 type ConsumedExtensions =
   | NavSection
@@ -49,7 +53,9 @@ type ConsumedExtensions =
   | ResourceDetailsPage
   | AddAction
   | TopologyConsumedExtensions
-  | HorizontalNavTab;
+  | HorizontalNavTab
+  | CatalogItemProvider
+  | CatalogItemType;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -112,6 +118,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.EventingChannelModel,
       flag: FLAG_KNATIVE_EVENTING_CHANNEL,
+    },
+  },
+  {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: models.CamelKameletModel,
+      flag: FLAG_CAMEL_KAMELETS,
     },
   },
   {
@@ -301,8 +314,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       path: [
         '/event-source/all-namespaces',
         '/event-source/ns/:ns',
-        '/extensible-catalog/all-namespaces/eventsource',
-        '/extensible-catalog/ns/:ns/eventsource',
+        '/catalog/all-namespaces/eventsource',
+        '/catalog/ns/:ns/eventsource',
       ],
       loader: async () =>
         (
@@ -410,7 +423,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     properties: {
       id: 'knative-event-source',
-      url: '/event-source',
+      url: '/catalog?catalogType=EventSource',
       // t('knative-plugin~Event Source')
       label: '%knative-plugin~Event Source%',
       // t('knative-plugin~Create an event source to register interest in a class of events from a particular system')
@@ -537,6 +550,49 @@ const plugin: Plugin<ConsumedExtensions> = [
             './components/eventing/triggers-list/TriggerListPage' /* webpackChunkName: "knative-triggers-page" */
           )
         ).default,
+    },
+  },
+  {
+    type: 'Catalog/ItemType',
+    properties: {
+      type: 'EventSource',
+      // t('knative-plugin~Event sources')
+      title: '%knative-plugin~Event Sources%',
+      // t('knative-plugin~Event sources are objects that link to an event producer and an event sink or consumer. Cluster administrators can customize the content made available in the catalog.')
+      catalogDescription:
+        '%knative-plugin~Event sources are objects that link to an event producer and an event sink or consumer. Cluster administrators can customize the content made available in the catalog.%',
+      // t('knative-plugin~**Event sources** are objects that link to an event producer and an event sink or consumer.')
+      typeDescription:
+        '%knative-plugin~**Event sources** are objects that link to an event producer and an event sink or consumer.%',
+      filters: [
+        {
+          label: '%knative-plugin~Provider%',
+          attribute: 'provider',
+        },
+      ],
+    },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
+    },
+  },
+  {
+    type: 'Catalog/ItemProvider',
+    properties: {
+      type: 'EventSource',
+      provider: eventSourceProvider,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
+    },
+  },
+  {
+    type: 'Catalog/ItemProvider',
+    properties: {
+      type: 'EventSource',
+      provider: kameletsProvider,
+    },
+    flags: {
+      required: [FLAG_CAMEL_KAMELETS],
     },
   },
   ...topologyPlugin,

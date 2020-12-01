@@ -164,12 +164,7 @@ const ItemSelectorField: React.FC<ItemSelectorFieldProps> = ({
               <Title headingLevel="h2" size="lg">
                 {t('console-shared~No results match the filter criteria')}
               </Title>
-              <EmptyStateBody>
-                {emptyStateMessage ||
-                  t(
-                    'console-shared~No Event Source types are being shown due to the filters being applied.',
-                  )}
-              </EmptyStateBody>
+              {emptyStateMessage && <EmptyStateBody>{emptyStateMessage}</EmptyStateBody>}
               <EmptyStatePrimary>
                 <Button variant="link" onClick={handleClearFilter}>
                   {t('console-shared~Clear filter')}

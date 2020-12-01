@@ -19,9 +19,7 @@ import { isPerspective, Perspective, useExtensions } from '@console/plugin-sdk';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { eventSourceValidationSchema } from './eventSource-validation-utils';
 import EventSourceForm from './EventSourceForm';
-import CatalogEventSourceForm from './CatalogEventSourceForm';
 import {
-  getEventSourceResource,
   getCatalogEventSourceResource,
   isKnownEventSource,
   getEventSourceData,
@@ -40,7 +38,6 @@ import EventSourceMetaDescription from './EventSourceMetadataDescription';
 interface EventSourceProps {
   namespace: string;
   eventSourceStatus: EventSourceListData;
-  showCatalog: boolean;
   contextSource?: string;
   selectedApplication?: string;
   sourceKind?: string;
@@ -56,7 +53,6 @@ type Props = EventSourceProps & StateProps;
 export const EventSource: React.FC<Props> = ({
   namespace,
   eventSourceStatus,
-  showCatalog,
   activeApplication,
   contextSource,
   perspective,
@@ -67,7 +63,7 @@ export const EventSource: React.FC<Props> = ({
   let sourceData = {};
   let selApiVersion = '';
   let selSourceName = '';
-  if (sourceKind && showCatalog) {
+  if (sourceKind) {
     const selDataModel = _.find(getEventSourceModels(), { kind: sourceKind });
     selApiVersion = selDataModel
       ? `${selDataModel?.apiGroup}/${selDataModel?.apiVersion}`
@@ -118,9 +114,7 @@ export const EventSource: React.FC<Props> = ({
   };
 
   const createResources = (rawFormData: any): Promise<K8sResourceKind> => {
-    const knEventSourceResource = showCatalog
-      ? getCatalogEventSourceResource(rawFormData)
-      : getEventSourceResource(rawFormData);
+    const knEventSourceResource = getCatalogEventSourceResource(rawFormData);
     if (knEventSourceResource?.kind && modelFor(referenceFor(knEventSourceResource))) {
       return k8sCreate(modelFor(referenceFor(knEventSourceResource)), knEventSourceResource);
     }
@@ -160,22 +154,14 @@ export const EventSource: React.FC<Props> = ({
       validateOnChange={false}
       validationSchema={eventSourceValidationSchema(t)}
     >
-      {(formikProps) =>
-        showCatalog ? (
-          <CatalogEventSourceForm
-            {...formikProps}
-            namespace={namespace}
-            eventSourceStatus={eventSourceStatus}
-            eventSourceMetaDescription={eventSourceMetaDescription}
-          />
-        ) : (
-          <EventSourceForm
-            {...formikProps}
-            namespace={namespace}
-            eventSourceStatus={eventSourceStatus}
-          />
-        )
-      }
+      {(formikProps) => (
+        <EventSourceForm
+          {...formikProps}
+          namespace={namespace}
+          eventSourceStatus={eventSourceStatus}
+          eventSourceMetaDescription={eventSourceMetaDescription}
+        />
+      )}
     </Formik>
   );
 };
