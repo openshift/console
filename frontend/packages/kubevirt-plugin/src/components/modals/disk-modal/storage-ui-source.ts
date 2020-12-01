@@ -5,12 +5,9 @@ import { DataVolumeSourceType, DiskType } from '../../../constants/vm/storage';
 import { getStringEnumValues } from '../../../utils/types';
 import { BinaryUnit } from '../../form/size-unit-utils';
 import {
-  UI_SOURCE_ATTACH_CLONED_DISK_DESC,
   UI_SOURCE_ATTACH_DISK_DESC,
-  UI_SOURCE_BLANK_DESC,
-  UI_SOURCE_CONTAINER_DESC,
+  UI_SOURCE_CONTAINER_EPHEMERAL_DESC,
   UI_SOURCE_IMPORT_DISK_DESC,
-  UI_SOURCE_URL_DESC,
 } from '../../../utils/strings';
 import {
   SelectDropdownData,
@@ -18,49 +15,18 @@ import {
 } from '../../../constants/select-dropdown-object-enum';
 
 export class StorageUISource extends SelectDropdownObjectEnum<string> {
-  static readonly BLANK = new StorageUISource(
-    'Blank',
-    {
-      volumeType: VolumeType.DATA_VOLUME,
-      dataVolumeSourceType: DataVolumeSourceType.BLANK,
-    },
-    {
-      description: UI_SOURCE_BLANK_DESC,
-      order: 1,
-    },
-  );
-  static readonly URL = new StorageUISource(
-    'URL',
-    {
-      volumeType: VolumeType.DATA_VOLUME,
-      dataVolumeSourceType: DataVolumeSourceType.HTTP,
-    },
-    {
-      label: 'Upload via URL',
-      description: UI_SOURCE_URL_DESC,
-      order: 2,
-    },
-  );
-  static readonly CONTAINER = new StorageUISource(
-    'Container',
+  static readonly BLANK = StorageUISource.fromDataVolume(DataVolumeSourceType.BLANK, 1);
+  static readonly URL = StorageUISource.fromDataVolume(DataVolumeSourceType.HTTP, 2);
+  static readonly CONTAINER = StorageUISource.fromDataVolume(DataVolumeSourceType.REGISTRY, 6);
+  static readonly ATTACH_CLONED_DISK = StorageUISource.fromDataVolume(DataVolumeSourceType.PVC, 4);
+  static readonly CONTAINER_EPHEMERAL = new StorageUISource(
+    'Container (ephemeral)',
     {
       volumeType: VolumeType.CONTAINER_DISK,
     },
     {
-      description: UI_SOURCE_CONTAINER_DESC,
-      order: 6,
-    },
-  );
-  static readonly ATTACH_CLONED_DISK = new StorageUISource(
-    'Attach Cloned Disk',
-    {
-      volumeType: VolumeType.DATA_VOLUME,
-      dataVolumeSourceType: DataVolumeSourceType.PVC,
-    },
-    {
-      label: 'Clone an existing PVC',
-      description: UI_SOURCE_ATTACH_CLONED_DISK_DESC,
-      order: 4,
+      description: UI_SOURCE_CONTAINER_EPHEMERAL_DESC,
+      order: 7,
     },
   );
   static readonly ATTACH_DISK = new StorageUISource(
@@ -83,7 +49,7 @@ export class StorageUISource extends SelectDropdownObjectEnum<string> {
     {
       label: 'Import an existing PVC',
       description: UI_SOURCE_IMPORT_DISK_DESC,
-      order: 7,
+      order: 8,
     },
   );
 
@@ -104,6 +70,18 @@ export class StorageUISource extends SelectDropdownObjectEnum<string> {
     }),
     {},
   );
+
+  private static fromDataVolume(dvType: DataVolumeSourceType, order: number) {
+    return new StorageUISource(
+      dvType.getValue(),
+      { volumeType: VolumeType.DATA_VOLUME, dataVolumeSourceType: dvType },
+      {
+        description: dvType.getDescription(),
+        label: dvType.toString(),
+        order,
+      },
+    );
+  }
 
   protected constructor(
     value: string,
@@ -155,7 +133,8 @@ export class StorageUISource extends SelectDropdownObjectEnum<string> {
 
   requiresNewPVC = () => this.hasNewPVC;
 
-  requiresContainerImage = () => this === StorageUISource.CONTAINER;
+  requiresContainerImage = () =>
+    [StorageUISource.CONTAINER, StorageUISource.CONTAINER_EPHEMERAL].includes(this);
 
   requiresURL = () => this === StorageUISource.URL;
 
@@ -171,12 +150,12 @@ export class StorageUISource extends SelectDropdownObjectEnum<string> {
 
   requiresAccessModes = () =>
     this !== StorageUISource.ATTACH_DISK &&
-    this !== StorageUISource.CONTAINER &&
+    this !== StorageUISource.CONTAINER_EPHEMERAL &&
     this !== StorageUISource.OTHER;
 
   requiresVolumeMode = () =>
     this !== StorageUISource.ATTACH_DISK &&
-    this !== StorageUISource.CONTAINER &&
+    this !== StorageUISource.CONTAINER_EPHEMERAL &&
     this !== StorageUISource.OTHER;
 
   requiresVolumeModeOrAccessModes = () => this.requiresAccessModes() || this.requiresVolumeMode();
@@ -186,7 +165,7 @@ export class StorageUISource extends SelectDropdownObjectEnum<string> {
   isPlainDataVolume = (isCreateTemplate: boolean) =>
     isCreateTemplate && this === StorageUISource.URL;
 
-  hasDynamicSize = () => this === StorageUISource.CONTAINER;
+  hasDynamicSize = () => this === StorageUISource.CONTAINER_EPHEMERAL;
 
   canBeChangedToThisSource = (diskType: DiskType) => {
     if (diskType === DiskType.CDROM) {

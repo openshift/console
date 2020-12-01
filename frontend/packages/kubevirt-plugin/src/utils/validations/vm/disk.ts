@@ -17,6 +17,7 @@ import { PersistentVolumeClaimWrapper } from '../../../k8s/wrapper/vm/persistent
 import { DiskType } from '../../../constants/vm/storage/disk-type';
 import { TemplateValidations } from '../template/template-validations';
 import { UIStorageValidation } from '../../../types/ui/storage';
+import { VolumeType } from '../../../constants';
 
 const validateDiskName = (name: string, usedDiskNames: Set<string>): ValidationObject => {
   let validation = validateDNS1123SubdomainValue(name);
@@ -98,7 +99,10 @@ export const validateDisk = (
   }
 
   if (source.requiresContainerImage()) {
-    const container = volume.getContainerImage();
+    const container =
+      volume.getType() === VolumeType.CONTAINER_DISK
+        ? volume.getContainerImage()
+        : dataVolume?.getContainer();
     addRequired(container);
     validations.container = validateTrim(container, { subject: 'Container' });
   }

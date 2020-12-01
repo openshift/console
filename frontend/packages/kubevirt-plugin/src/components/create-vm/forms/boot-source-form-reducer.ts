@@ -5,7 +5,8 @@ import {
   validateTrim,
   validateURL,
 } from '../../../utils/validations/common';
-import { AccessMode, DataVolumeSourceType } from '../../../constants';
+import { AccessMode } from '../../../constants';
+import { ProvisionSource } from '../../../constants/vm/provision-source';
 
 export type BootSourceState = {
   dataSource: {
@@ -109,12 +110,12 @@ export const bootFormReducer = (
     subject: `Persistent Volume Claim size`,
   });
   newState.size.validation = sizeValidation;
-  switch (DataVolumeSourceType.fromString(newState.dataSource?.value)) {
-    case DataVolumeSourceType.UPLOAD: {
+  switch (ProvisionSource.fromString(newState.dataSource?.value)) {
+    case ProvisionSource.UPLOAD: {
       isValid = !!newState.file?.value.name && !!newState.file?.value && !newState.size.validation;
       break;
     }
-    case DataVolumeSourceType.HTTP: {
+    case ProvisionSource.URL: {
       if (newState.url?.value) {
         newState.url.validation = validateURL(newState.url?.value, {
           subject: 'Import URL',
@@ -123,7 +124,7 @@ export const bootFormReducer = (
       isValid = !!newState.url?.value && !newState.url?.validation && !newState.size.validation;
       break;
     }
-    case DataVolumeSourceType.REGISTRY: {
+    case ProvisionSource.CONTAINER: {
       if (newState.container?.value) {
         newState.container.validation = validateTrim(newState.container?.value, {
           subject: 'Container image',
@@ -133,7 +134,7 @@ export const bootFormReducer = (
         !!newState.container?.value && !newState.container?.validation && !newState.size.validation;
       break;
     }
-    case DataVolumeSourceType.PVC: {
+    case ProvisionSource.DISK: {
       isValid = !!newState.pvcName?.value && !!newState.pvcNamespace?.value;
       break;
     }

@@ -16,7 +16,6 @@ import { createUploadPVC } from '../../../k8s/requests/cdi-upload/cdi-upload-req
 import {
   TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
   TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
-  DataVolumeSourceType,
 } from '../../../constants';
 import { getParameterValue } from '../../../selectors/selectors';
 import { DataVolumeModel } from '../../../models';
@@ -24,15 +23,15 @@ import { CDIUploadContextProps } from '../../cdi-upload-provider/cdi-upload-prov
 import { bootFormReducer, initBootFormState } from '../../create-vm/forms/boot-source-form-reducer';
 import { BootSourceForm } from '../../create-vm/forms/boot-source-form';
 import { getRootDataVolume } from '../../../k8s/requests/vm/create/simple-create';
+import { ProvisionSource } from '../../../constants/vm/provision-source';
 import { useErrorTranslation } from '../../../hooks/use-error-translation';
 
 const getAction = (t: TFunction, dataSource: string): string => {
-  switch (DataVolumeSourceType.fromString(dataSource)) {
-    case DataVolumeSourceType.HTTP:
-    case DataVolumeSourceType.REGISTRY:
-    case DataVolumeSourceType.S3:
+  switch (ProvisionSource.fromString(dataSource)) {
+    case ProvisionSource.URL:
+    case ProvisionSource.CONTAINER:
       return t('kubevirt-plugin~Save and import');
-    case DataVolumeSourceType.PVC:
+    case ProvisionSource.DISK:
       return t('kubevirt-plugin~Save and clone');
     default:
       return t('kubevirt-plugin~Save and upload');
@@ -109,7 +108,7 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
       .setNamespace(baseImageNamespace)
       .asResource();
     try {
-      if (dataSource?.value === DataVolumeSourceType.PVC.getValue()) {
+      if (dataSource?.value === ProvisionSource.DISK.getValue()) {
         const { token } = await createUploadPVC(dvObj);
         setAllocating(false);
         uploadData({
@@ -135,7 +134,7 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
 
   return (
     <div className="modal-content modal-content--no-inner-scroll">
-      <ModalTitle>{t('kubevirt-plugin~Add source to vendor template')}</ModalTitle>
+      <ModalTitle>{t('kubevirt-plugin~Add boot source to template')}</ModalTitle>
       {uploadAllowedLoading ? (
         <LoadingBox />
       ) : uploadAllowed ? (

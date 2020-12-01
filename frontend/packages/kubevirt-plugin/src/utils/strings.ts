@@ -21,13 +21,8 @@ export const CLOUD_INIT_MISSING_USERNAME =
 export const CLOUD_INIT_DOC_LINK = 'https://cloudinit.readthedocs.io/en/latest/index.html';
 
 // storage ui sources descriptions
-export const UI_SOURCE_BLANK_DESC = 'Create an empty disk (PVC)';
-export const UI_SOURCE_URL_DESC =
-  'Upload content via URL (HTTP or S3 endpoint). A new persistent volume claim (PVC) will be created';
-export const UI_SOURCE_CONTAINER_DESC = `Upload content from a container located in a registry accessible from the cluster. Example: ${EXAMPLE_CONTAINER}. The container disk is meant to be used only for read-only filesystems such
-as CD-ROMs or for small short-lived throw-away VMs. A new persistent volume claim (PVC) will be created`;
-export const UI_SOURCE_ATTACH_CLONED_DISK_DESC =
-  'Clone a persistent volume claim (PVC) already available in the cluster';
+export const UI_SOURCE_CONTAINER_EPHEMERAL_DESC = `Upload content from a container located in a registry accessible from the cluster. The container disk is meant to be used only for read-only filesystems such
+as CD-ROMs or for small short-lived throw-away VMs.`;
 export const UI_SOURCE_ATTACH_DISK_DESC =
   'Use a persistent volume claim (PVC) already available on the cluster';
 export const UI_SOURCE_IMPORT_DISK_DESC = 'TBD';
@@ -35,11 +30,6 @@ export const UI_SOURCE_IMPORT_DISK_DESC = 'TBD';
 // provision sources descriptions
 export const PROVISION_SOURCE_PXE_DESC =
   'Boot an operating system from a server on a network. Requires a PXE bootable network attachment definition';
-export const PROVISION_SOURCE_CONTAINER_DESC = `Link to a bootable operating system container located in a registry accessible from the cluster. Example: ${EXAMPLE_CONTAINER}. The container disk is meant to be used only for read-only filesystems such
-as CD-ROMs or for small short-lived throw-away VMs. This will show up as a disk in the Storage step`;
-export const PROVISION_SOURCE_URL_DESC =
-  'Link to an operating system image via URL (HTTP or S3 endpoint). A new persistent volume claim (PVC) will be created to store this image. This will show up as a disk in the Storage step';
-export const PROVISION_SOURCE_DISK_DESC = UI_SOURCE_ATTACH_DISK_DESC;
 
 // nics descriptions
 export const NIC_MODEL_E1000E_DESC =

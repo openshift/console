@@ -55,7 +55,7 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
 
   getURL = () => this.getIn(['spec', 'source', 'http', 'url']);
 
-  getContainer = () => this.getIn(['spec', 'source', 'registry', 'url']);
+  getContainer = () => this.getIn(['spec', 'source', 'registry', 'url'])?.replace('docker://', '');
 
   getSize = (): { value: number; unit: string } => {
     const parts = stringValueUnitSplit(getDataVolumeStorageSize(this.data as any) || '');
@@ -148,8 +148,9 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
   protected sanitize(type: DataVolumeSourceType, { name, namespace, url }: CombinedTypeData) {
     switch (type) {
       case DataVolumeSourceType.HTTP:
-      case DataVolumeSourceType.REGISTRY:
         return { url };
+      case DataVolumeSourceType.REGISTRY:
+        return { url: `docker://${url}` };
       case DataVolumeSourceType.PVC:
         return { name, namespace };
       case DataVolumeSourceType.BLANK:

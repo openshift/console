@@ -1,4 +1,5 @@
 import { createBasicLookup, getName } from '@console/shared/src';
+import { Set } from 'immutable';
 import { InternalActionType, UpdateOptions } from '../types';
 import {
   CloudInitField,
@@ -58,7 +59,7 @@ import { CloudInitDataHelper } from '../../../../k8s/wrapper/vm/cloud-init-data-
 import { getStorages } from '../../selectors/selectors';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { V1alpha1DataVolume } from '../../../../types/vm/disk/V1alpha1DataVolume';
-import { selectVM } from '../../../../selectors/vm-template/basic';
+import { isCommonTemplate, selectVM } from '../../../../selectors/vm-template/basic';
 import { convertToHighestUnitFromUnknown } from '../../../form/size-unit-utils';
 import { isCustomFlavor, toUIFlavor } from '../../../../selectors/vm-like/flavor';
 import { generateDataVolumeName } from '../../../../utils';
@@ -86,7 +87,7 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
     [VMSettingsField.WORKLOAD_PROFILE]: { value: null },
     [VMSettingsField.PROVISION_SOURCE_TYPE]: {
       value: isProviderImport || commonTemplateName ? undefined : null,
-    },
+    } as { value: string; sources?: any },
     [VMSettingsField.HOSTNAME]: { value: null },
     [VMSettingsField.CPU]: { value: null },
     [VMSettingsField.MEMORY]: { value: null },
@@ -145,10 +146,10 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
 
     // update provision source
     const { source } = getInitialData(state, id);
+    let sourceType: ProvisionSource;
     const hasCustomSource =
       source?.url || source?.container || (source?.pvcName && source?.pvcNamespace);
     if (hasCustomSource) {
-      let sourceType: ProvisionSource;
       if (source?.url) {
         sourceType = ProvisionSource.URL;
       } else if (source?.container) {
@@ -156,17 +157,21 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
       } else if (source?.pvcName && source?.pvcNamespace) {
         sourceType = ProvisionSource.DISK;
       }
-
-      vmSettingsUpdate[VMSettingsField.PROVISION_SOURCE_TYPE] = {
-        value: sourceType.getValue(),
-      };
     } else {
       const provisionSourceDetails = ProvisionSource.getProvisionSourceDetails(template, {
         convertTemplateDataVolumesToAttachClonedDisk: true,
       });
-      vmSettingsUpdate[VMSettingsField.PROVISION_SOURCE_TYPE] = {
-        value: provisionSourceDetails?.type ? provisionSourceDetails.type.getValue() : null,
-      };
+      sourceType = provisionSourceDetails?.type;
+    }
+
+    vmSettingsUpdate[VMSettingsField.PROVISION_SOURCE_TYPE] = {
+      value: sourceType?.getValue(),
+    };
+
+    if (!isCommonTemplate(template) && sourceType) {
+      vmSettingsUpdate[VMSettingsField.PROVISION_SOURCE_TYPE].sources = Set([
+        sourceType.getValue(),
+      ]);
     }
 
     // update hostname

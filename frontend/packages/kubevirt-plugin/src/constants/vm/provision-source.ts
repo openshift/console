@@ -14,13 +14,8 @@ import { StorageUISource } from '../../components/modals/disk-modal/storage-ui-s
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
-import { VolumeType } from './storage';
-import {
-  PROVISION_SOURCE_PXE_DESC,
-  PROVISION_SOURCE_CONTAINER_DESC,
-  PROVISION_SOURCE_URL_DESC,
-  PROVISION_SOURCE_DISK_DESC,
-} from '../../utils/strings';
+import { DataVolumeSourceType, VolumeType } from './storage';
+import { PROVISION_SOURCE_PXE_DESC } from '../../utils/strings';
 import { SelectDropdownObjectEnum } from '../select-dropdown-object-enum';
 
 type ProvisionSourceDetails = {
@@ -30,26 +25,27 @@ type ProvisionSourceDetails = {
 };
 
 export class ProvisionSource extends SelectDropdownObjectEnum<string> {
-  static readonly URL = new ProvisionSource('URL', {
-    label: 'URL (adds disk)',
-    description: PROVISION_SOURCE_URL_DESC,
-    order: 1,
-  });
-  static readonly DISK = new ProvisionSource('Disk', {
-    label: 'Existing PVC (adds disk)',
-    description: PROVISION_SOURCE_DISK_DESC,
-    order: 2,
-  });
-  static readonly CONTAINER = new ProvisionSource('Container', {
-    label: 'Container',
-    description: PROVISION_SOURCE_CONTAINER_DESC,
-    order: 3,
+  static readonly UPLOAD = ProvisionSource.fromDataVolume(DataVolumeSourceType.UPLOAD, 1);
+  static readonly URL = ProvisionSource.fromDataVolume(DataVolumeSourceType.HTTP, 2);
+  static readonly DISK = ProvisionSource.fromDataVolume(DataVolumeSourceType.PVC, 3);
+  static readonly CONTAINER = ProvisionSource.fromDataVolume(DataVolumeSourceType.REGISTRY, 4);
+  static readonly CONTAINER_EPHEMERAL = new ProvisionSource('CONTAINER-EPHEMERAL', {
+    label: 'Container (ephemeral)',
+    order: 5,
   });
   static readonly PXE = new ProvisionSource('PXE', {
     label: 'PXE (network boot - adds network interface)',
     description: PROVISION_SOURCE_PXE_DESC,
-    order: 4,
+    order: 6,
   });
+
+  private static fromDataVolume(dvType: DataVolumeSourceType, order: number) {
+    return new ProvisionSource(dvType.getValue(), {
+      description: dvType.getDescription(),
+      label: dvType.toString(),
+      order,
+    });
+  }
 
   private static readonly ALL = Object.freeze(
     ObjectEnum.getAllClassEnumProperties<ProvisionSource>(ProvisionSource),
@@ -63,7 +59,25 @@ export class ProvisionSource extends SelectDropdownObjectEnum<string> {
     {},
   );
 
-  static getAll = () => ProvisionSource.ALL;
+  static getAdvancedWizardSources = () => [
+    ProvisionSource.URL,
+    ProvisionSource.DISK,
+    ProvisionSource.CONTAINER,
+    ProvisionSource.PXE,
+  ];
+
+  static getBasicWizardSources = () => [
+    ProvisionSource.DISK,
+    ProvisionSource.URL,
+    ProvisionSource.CONTAINER,
+  ];
+
+  static getVMTemplateBaseImageSources = () => [
+    ProvisionSource.UPLOAD,
+    ProvisionSource.DISK,
+    ProvisionSource.URL,
+    ProvisionSource.CONTAINER,
+  ];
 
   static fromString = (source: string): ProvisionSource => ProvisionSource.stringMapper[source];
 
@@ -133,6 +147,11 @@ export class ProvisionSource extends SelectDropdownObjectEnum<string> {
         case StorageUISource.CONTAINER:
           return {
             type: ProvisionSource.CONTAINER,
+            source: dataVolumeWrapper.getContainer(),
+          };
+        case StorageUISource.CONTAINER_EPHEMERAL:
+          return {
+            type: ProvisionSource.CONTAINER_EPHEMERAL,
             source: volumeWrapper.getContainerImage(),
           };
         case StorageUISource.URL:

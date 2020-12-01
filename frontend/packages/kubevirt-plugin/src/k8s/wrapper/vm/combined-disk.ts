@@ -171,6 +171,9 @@ export class CombinedDisk {
   getContent = () => {
     switch (this.source) {
       case StorageUISource.CONTAINER: {
+        return this.dataVolumeWrapper?.getContainer();
+      }
+      case StorageUISource.CONTAINER_EPHEMERAL: {
         return this.volumeWrapper?.getContainerImage();
       }
       case StorageUISource.URL: {

@@ -41,7 +41,14 @@ import { useShowErrorToggler } from '../../../hooks/use-show-error-toggler';
 import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
 import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
 import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
-import { AccessMode, DiskBus, DiskType, VolumeMode } from '../../../constants/vm/storage';
+import {
+  AccessMode,
+  DataVolumeSourceType,
+  DiskBus,
+  DiskType,
+  VolumeMode,
+  VolumeType,
+} from '../../../constants/vm/storage';
 import { DEFAULT_SC_ANNOTATION } from '../../../constants/sc';
 import { getPvcStorageSize } from '../../../selectors/pvc/selectors';
 import { K8sResourceSelectRow } from '../../form/k8s-resource-select-row';
@@ -62,6 +69,8 @@ import { PendingChangesAlert } from '../../Alerts/PendingChangesAlert';
 import { FormPFSelect } from '../../form/form-pf-select';
 
 import './disk-modal.scss';
+import { URLSourceHelp } from '../../form/helper/url-source-help';
+import { ContainerSourceHelp } from '../../form/helper/container-source-help';
 
 export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   const {
@@ -123,7 +132,9 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   const [url, setURL] = React.useState<string>(dataVolume.getURL());
 
   const [containerImage, setContainerImage] = React.useState<string>(
-    volume.getContainerImage() || '',
+    volume.getType() === VolumeType.CONTAINER_DISK
+      ? volume.getContainerImage()
+      : dataVolume.getContainer() || '',
   );
 
   const [pvcName, setPVCName] = React.useState<string>(combinedDisk.getPVCNameBySource(source));
@@ -225,7 +236,12 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
         size,
         storageClassName: storageClassName || null, // || null is to enable merging
       })
-      .setType(source.getDataVolumeSourceType(), { name: pvcName, namespace, url })
+      .setType(source.getDataVolumeSourceType(), {
+        name: pvcName,
+        namespace,
+        url:
+          source.getDataVolumeSourceType() === DataVolumeSourceType.REGISTRY ? containerImage : url,
+      })
       .setVolumeMode(volumeMode || null)
       .setAccessModes(accessMode ? [accessMode] : null);
   }
@@ -402,8 +418,9 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                 isRequired
                 id={asId('url')}
                 value={url}
-                onChange={(v) => setURL(v)}
+                onChange={setURL}
               />
+              <URLSourceHelp />
             </FormRow>
           )}
           {source.requiresContainerImage() && (
@@ -420,8 +437,9 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                 isRequired
                 id={asId('container')}
                 value={containerImage}
-                onChange={(v) => setContainerImage(v)}
+                onChange={setContainerImage}
               />
+              <ContainerSourceHelp />
             </FormRow>
           )}
           {source.requiresNamespace() && (

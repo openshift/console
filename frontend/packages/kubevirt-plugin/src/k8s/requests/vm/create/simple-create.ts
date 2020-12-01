@@ -30,6 +30,7 @@ import { DataVolumeWrapper } from '../../../wrapper/vm/data-volume-wrapper';
 import { windowsToolsStorage } from '../../../../components/create-vm-wizard/redux/initial-state/storage-tab-initial-state';
 import { getEmptyInstallStorage } from '../../../../utils/storage';
 import { ignoreCaseSort } from '../../../../utils/sort';
+import { ProvisionSource } from '../../../../constants/vm/provision-source';
 
 type GetRootDataVolume = (args: {
   name: string;
@@ -60,8 +61,8 @@ export const getRootDataVolume: GetRootDataVolume = ({
   cdRom,
   accessMode,
 }) => {
-  const dataSourceType = DataVolumeSourceType.fromString(dataSource);
-  const size = dataSourceType === DataVolumeSourceType.PVC ? pvcSize : `${sizeValue}${sizeUnit}`;
+  const provisionSource = ProvisionSource.fromString(dataSource);
+  const size = provisionSource === ProvisionSource.DISK ? pvcSize : `${sizeValue}${sizeUnit}`;
   const dataVolume = new DataVolumeWrapper()
     .init({
       name,
@@ -70,8 +71,8 @@ export const getRootDataVolume: GetRootDataVolume = ({
       unit: '',
     })
     .setAccessModes([AccessMode.fromString(accessMode) || AccessMode.READ_WRITE_ONCE]);
-  dataVolume.setType(dataSourceType, {
-    url: dataSourceType === DataVolumeSourceType.REGISTRY ? `docker://${container}` : url,
+  dataVolume.setType(DataVolumeSourceType.fromString(provisionSource.getValue()), {
+    url: provisionSource === ProvisionSource.CONTAINER ? container : url,
     name: pvcName,
     namespace: pvcNamespace,
   });
@@ -147,7 +148,7 @@ export const createVM = async (
         cdRom: isCDRom,
         pvcName: sourceStatus.pvc.metadata.name,
         pvcNamespace: sourceStatus.pvc.metadata.namespace,
-        dataSource: DataVolumeSourceType.PVC.getValue(),
+        dataSource: ProvisionSource.DISK.getValue(),
         pvcSize: resources.requests.storage,
         storageClass: storageClassName,
       });

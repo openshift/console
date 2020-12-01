@@ -113,7 +113,7 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
         <BootOrderSummary devices={devices} />
       </VMDetailsItem>
       <VMDetailsItem
-        title={t('kubevirt-plugin~Provision Source')}
+        title={t('kubevirt-plugin~Boot source')}
         idValue={prefixedID(id, 'provisioning-source')}
       >
         <TemplateSource

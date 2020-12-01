@@ -4,15 +4,15 @@ import { SelectDropdownObjectEnum } from '../../select-dropdown-object-enum';
 
 export class DataVolumeSourceType extends SelectDropdownObjectEnum<string> {
   static readonly BLANK = new DataVolumeSourceType('blank', {
-    label: 'Blank',
-    description: 'Empty disk.',
+    label: 'Blank (creates PVC)',
+    description: 'Create an empty disk.',
   });
   static readonly HTTP = new DataVolumeSourceType('http', {
-    label: 'Import via HTTP URL (creates PVC)',
-    description: 'Import content via URL (HTTP endpoint).',
+    label: 'Import via URL (creates PVC)',
+    description: 'Import content via URL (HTTP or S3 endpoint).',
   });
   static readonly PVC = new DataVolumeSourceType('pvc', {
-    label: 'Clone existing PVC',
+    label: 'Clone existing PVC (creates PVC)',
     description:
       'Select an existing persistent volume claim already available on the cluster and clone it.',
   });
@@ -42,13 +42,6 @@ export class DataVolumeSourceType extends SelectDropdownObjectEnum<string> {
   );
 
   static getAll = () => DataVolumeSourceType.ALL;
-
-  static getBootSourceTypes = () => [
-    DataVolumeSourceType.UPLOAD,
-    DataVolumeSourceType.HTTP,
-    DataVolumeSourceType.REGISTRY,
-    DataVolumeSourceType.PVC,
-  ];
 
   static fromString = (model: string): DataVolumeSourceType =>
     DataVolumeSourceType.stringMapper[model];
