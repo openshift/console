@@ -259,7 +259,7 @@ const pages = [
   navFactory.editYaml(),
   {
     href: 'replicationcontrollers',
-    name: 'Replication Controllers',
+    name: 'ReplicationControllers',
     component: ReplicationControllersTab,
   },
   navFactory.pods(),
