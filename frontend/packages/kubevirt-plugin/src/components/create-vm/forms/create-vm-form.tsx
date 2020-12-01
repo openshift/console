@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { uniqueNamesGenerator, animals, adjectives } from 'unique-names-generator';
 import {
   Alert,
@@ -19,8 +20,7 @@ import {
   useAccessReview2,
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { alignWithDNS1123, BlueInfoCircleIcon, FLAGS } from '@console/shared';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { alignWithDNS1123, BlueInfoCircleIcon, FLAGS, useFlag } from '@console/shared';
 import { TemplateKind } from '@console/internal/module/k8s';
 
 import { DataVolumeModel, VirtualMachineModel } from '../../../models';
@@ -81,8 +81,8 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
   dispatch,
   customSource,
 }) => {
+  const { t } = useTranslation();
   const { name, nameValidation, namespace, startVM, template } = state;
-  const useProjects = useFlag(FLAGS.OPENSHIFT);
   const [vms, loaded] = useK8sWatchResource<VMKind[]>({
     kind: VirtualMachineModel.kind,
     namespace,
@@ -96,6 +96,8 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
     verb: 'create',
     namespace,
   });
+
+  const useProjects = useFlag(FLAGS.OPENSHIFT);
 
   React.useEffect(() => {
     if (!template) {
@@ -133,8 +135,8 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
 
   if (!cloneAllowed && namespace) {
     return (
-      <Alert variant="danger" isInline title="Permissions required">
-        You do not have permissions to clone base image into this namespace.
+      <Alert variant="danger" isInline title={t('kubevirt-plugin~Permissions required')}>
+        {t('kubevirt-plugin~You do not have permissions to clone base image into this namespace.')}
       </Alert>
     );
   }
@@ -154,9 +156,9 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
       }
       return aCPU - bCPU;
     })
-    .reduce((acc, t) => {
-      const flavor = getTemplateFlavorDesc(t);
-      acc[flavor] = t;
+    .reduce((acc, tmp) => {
+      const flavor = getTemplateFlavorDesc(tmp);
+      acc[flavor] = tmp;
       return acc;
     }, {});
 
@@ -194,19 +196,25 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
   return (
     <Stack hasGutter>
       <StackItem>
-        You are creating a virtual machine from the <b>{getTemplateName(template)}</b> template.
+        <Trans t={t} ns="kubevirt-plugin">
+          You are creating a virtual machine from the <b>{getTemplateName(template)}</b> template.
+        </Trans>
       </StackItem>
       <StackItem>
         <Form onSubmit={preventDefault}>
-          <FormRow fieldId="vm-namespace" title={useProjects ? 'Project' : 'Namespace'} isRequired>
+          <FormRow
+            fieldId="vm-namespace"
+            title={useProjects ? t('kubevirt-plugin~Project') : t('kubevirt-plugin~Namespace')}
+            isRequired
+          >
             <ProjectDropdown onChange={onNamespaceChange} project={namespace} />
           </FormRow>
           <FormRow
             fieldId="vm-name"
-            title="Virtual Machine Name"
+            title={t('kubevirt-plugin~Virtual Machine Name')}
             isRequired
             validation={nameValidation}
-            help="The name field is auto generated for quick create."
+            help={t('kubevirt-plugin~The name field is auto generated for quick create.')}
           >
             <TextInput
               isRequired
@@ -219,7 +227,7 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
               isDisabled={!namespace || !loaded}
             />
           </FormRow>
-          <FormRow fieldId="vm-flavor" title="Flavor" isRequired>
+          <FormRow fieldId="vm-flavor" title={t('kubevirt-plugin~Flavor')} isRequired>
             <FormPFSelect
               variant={SelectVariant.single}
               selections={[getTemplateFlavorDesc(template)]}
@@ -235,35 +243,38 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
           </FormRow>
           <Split hasGutter className="kubevirt-create-vm-desc">
             <SplitItem>
-              <FormRow fieldId="vm-storage" title="Storage">
+              <FormRow fieldId="vm-storage" title={t('kubevirt-plugin~Storage')}>
                 {getTemplateSizeRequirement(template, sourceStatus, customSource)}
               </FormRow>
             </SplitItem>
             <SplitItem>
               <FormRow
                 fieldId="vm-workload"
-                title="Workload profile"
+                title={t('kubevirt-plugin~Workload profile')}
                 help={helpResolver[VMSettingsField.WORKLOAD_PROFILE]()}
               >
-                {getWorkloadProfile(template) || 'Not available'}
+                {getWorkloadProfile(template) || t('kubevirt-plugin~Not available')}
               </FormRow>
             </SplitItem>
           </Split>
           {source && (
-            <FormRow fieldId="boot-source" title="Boot source">
+            <FormRow fieldId="boot-source" title={t('kubevirt-plugin~Boot source')}>
               <Stack hasGutter>
                 <StackItem>{source}</StackItem>
                 {cdRom && (
                   <StackItem>
                     <Stack>
                       <StackItem>
-                        <BlueInfoCircleIcon /> A new disk has been added to support this ISO source.
-                        Edit this disk by customizing the virtual machine.
+                        <BlueInfoCircleIcon className="co-icon-space-r" />
+                        {t(
+                          'kubevirt-plugin~A new disk has been added to support this ISO source. Edit this disk by customizing the virtual machine.',
+                        )}
                       </StackItem>
                       <StackItem>
-                        <ExpandableSection toggleText="Disk details">
-                          {ROOT_DISK_INSTALL_NAME} - Blank - 20GiB -{' '}
-                          {getDefaultDiskBus(template).toString()} - default storage class
+                        <ExpandableSection toggleText={t('kubevirt-plugin~Disk details')}>
+                          {ROOT_DISK_INSTALL_NAME} - {t('kubevirt-plugin~Blank')} - 20GiB -{' '}
+                          {getDefaultDiskBus(template).toString()} -{' '}
+                          {t('kubevirt-plugin~default Storage class')}
                         </ExpandableSection>
                       </StackItem>
                     </Stack>
@@ -276,7 +287,7 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
             <Checkbox
               isChecked={startVM}
               onChange={(value) => dispatch({ type: FORM_ACTION_TYPE.START_VM, payload: value })}
-              label="Start this virtual machine after creation"
+              label={t('kubevirt-plugin~Start this virtual machine after creation')}
               id="start-vm"
             />
           </FormRow>

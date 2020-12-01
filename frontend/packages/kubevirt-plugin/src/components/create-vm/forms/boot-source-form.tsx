@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { PersistentVolumeClaimKind, StorageClassResourceKind } from '@console/internal/module/k8s';
 import {
   FileUpload,
@@ -21,8 +22,6 @@ import {
   provisionerAccessModeMapping,
 } from '@console/internal/components/storage/shared';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { FLAGS } from '@console/shared';
-import { useFlag } from '@console/shared/src/hooks/flag';
 
 import { FormRow } from '../../form/form-row';
 import { ProjectDropdown } from '../../form/project-dropdown';
@@ -40,13 +39,12 @@ type BootSourceFormProps = {
 };
 
 export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch, withUpload }) => {
+  const { t } = useTranslation();
   const [storageClasses, scLoaded] = useK8sWatchResource<StorageClassResourceKind[]>({
     kind: StorageClassModel.kind,
     isList: true,
     namespaced: false,
   });
-
-  const useProjects = useFlag(FLAGS.OPENSHIFT);
 
   const defaultSCName = getDefaultStorageClass(storageClasses)?.metadata.name;
 
@@ -81,10 +79,10 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
   const isUpstream = window.SERVER_FLAGS.branding === 'okd';
   return (
     <Form onSubmit={preventDefault}>
-      <FormRow fieldId="form-data-source" title="Data source type" isRequired>
+      <FormRow fieldId="form-data-source" title={t('kubevirt-plugin~Data source type')} isRequired>
         <FormPFSelect
-          placeholderText="--- Select data source ---"
-          aria-label="Select data source"
+          placeholderText={t('kubevirt-plugin~--- Select data source ---')}
+          aria-label={t('kubevirt-plugin~Select data source')}
           onSelect={(e, value: DataVolumeSourceType) =>
             dispatch({
               type: BOOT_ACTION_TYPE.SET_DATA_SOURCE,
@@ -101,7 +99,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
         </FormPFSelect>
       </FormRow>
       {state.dataSource?.value === DataVolumeSourceType.UPLOAD.getValue() && (
-        <FormRow fieldId="form-ds-file" title="Upload source" isRequired>
+        <FormRow fieldId="form-ds-file" title={t('kubevirt-plugin~Upload source')} isRequired>
           <FileUpload
             id="file-upload"
             value={state.file?.value.value}
@@ -120,7 +118,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
       {state.dataSource?.value === DataVolumeSourceType.HTTP.getValue() && (
         <FormRow
           fieldId="form-ds-url"
-          title="Import URL"
+          title={t('kubevirt-plugin~Import URL')}
           isRequired
           validation={state.url?.validation}
         >
@@ -128,25 +126,27 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
             value={state.url?.value}
             type="text"
             onChange={(payload) => dispatch({ type: BOOT_ACTION_TYPE.SET_URL, payload })}
-            aria-label="import URL"
+            aria-label={t('kubevirt-plugin~Import URL')}
           />
           <div className="pf-c-form__helper-text" aria-live="polite">
-            Example: Visit the{' '}
-            <a
-              href={isUpstream ? FEDORA_IMAGE_LINK : RHEL_IMAGE_LINK}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <strong>{isUpstream ? 'Fedora' : 'RHEL'} cloud image list</strong>
-            </a>{' '}
-            and copy a url for the field above
+            <Trans t={t} ns="kubevirt-plugin">
+              Example: Visit the{' '}
+              <a
+                href={isUpstream ? FEDORA_IMAGE_LINK : RHEL_IMAGE_LINK}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <strong>{isUpstream ? 'Fedora' : 'RHEL'} cloud image list</strong>
+              </a>{' '}
+              and copy a url for the field above
+            </Trans>
           </div>
         </FormRow>
       )}
       {state.dataSource?.value === DataVolumeSourceType.REGISTRY.getValue() && (
         <FormRow
           fieldId="form-ds-container"
-          title="Container registry"
+          title={t('kubevirt-plugin~Container image')}
           isRequired
           validation={state.container?.validation}
         >
@@ -154,10 +154,10 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
             value={state.container?.value}
             type="text"
             onChange={(payload) => dispatch({ type: BOOT_ACTION_TYPE.SET_CONTAINER, payload })}
-            aria-label="Container registry"
+            aria-label={t('kubevirt-plugin~Container image')}
           />
           <div className="pf-c-form__helper-text" aria-live="polite">
-            Example: {EXAMPLE_CONTAINER}
+            {t('kubevirt-plugin~Example: {{example}}', { example: EXAMPLE_CONTAINER })}
           </div>
         </FormRow>
       )}
@@ -165,7 +165,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
         <>
           <FormRow
             fieldId="form-ds-pvc-ns"
-            title={`${PersistentVolumeClaimModel.label} ${useProjects ? 'project' : 'namespace'}`}
+            title={t('kubevirt-plugin~Persistent Volume Claim project')}
             isRequired
           >
             <ProjectDropdown
@@ -180,7 +180,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
           {state.pvcNamespace?.value && (
             <FormRow
               fieldId="form-ds-pvc"
-              title={`${PersistentVolumeClaimModel.label} name`}
+              title={t('kubevirt-plugin~Persistent Volume Claim name')}
               isRequired
             >
               <ListDropdown
@@ -197,7 +197,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
                     payload: pvc.spec.resources.requests.storage,
                   });
                 }}
-                placeholder={`--- Select ${PersistentVolumeClaimModel.label} ---`}
+                placeholder={t('kubevirt-plugin~--- Select Persistent Volume Claim ---')}
                 desc={PersistentVolumeClaimModel.label}
               />
             </FormRow>
@@ -210,17 +210,19 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
           onChange={(payload) => dispatch({ type: BOOT_ACTION_TYPE.SET_CD_ROM, payload })}
           label={
             <>
-              Mount this source as CD-ROM
+              {t('kubevirt-plugin~Mount this source as CD-ROM')}
               <Popover
                 position={PopoverPosition.top}
-                aria-label="cdrom help"
-                bodyContent="CD-ROM requires an additional disk for the operating system to be installed onto. This disk will be added and can be customized when creating the virtual machine."
+                aria-label={t('kubevirt-plugin~CDROM help')}
+                bodyContent={t(
+                  'kubevirt-plugin~CD-ROM requires an additional disk for the operating system to be installed onto. This disk will be added and can be customized when creating the virtual machine.',
+                )}
               >
                 <button
                   type="button"
                   onClick={preventDefault}
                   className="pf-c-form__group-label-help"
-                  aria-label="cdrom help"
+                  aria-label={t('kubevirt-plugin~CDROM help')}
                 >
                   <HelpIcon noVerticalAlign />
                 </button>
@@ -237,7 +239,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
       ].includes(DataVolumeSourceType.fromString(state.dataSource?.value)) && (
         <FormRow
           fieldId="form-ds-pvc-size"
-          title={`${PersistentVolumeClaimModel.label} size`}
+          title={t('kubevirt-plugin~Persistent Volume Claim size')}
           isRequired
           validation={state.size?.validation}
         >
@@ -252,24 +254,25 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
             inputID="request-size-input"
           >
             <div className="pf-c-form__helper-text" aria-live="polite">
-              Ensure your PVC size covers the requirements of the uncompressed image and any other
-              space requirements. More storage can be added later.
+              {t(
+                'kubevirt-plugin~Ensure your PVC size covers the requirements of the uncompressed image and any other space requirements. More storage can be added later.',
+              )}
             </div>
           </RequestSizeInput>
         </FormRow>
       )}
-      <ExpandableSection toggleText="Advanced">
-        <FormRow fieldId="form-ds-sc" title="Storage class" isRequired>
+      <ExpandableSection toggleText={t('kubevirt-plugin~Advanced')}>
+        <FormRow fieldId="form-ds-sc" title={t('kubevirt-plugin~Storage class')} isRequired>
           <FormSelect
             value={
               defaultSCName === state.storageClass?.value
-                ? `${state.storageClass?.value} (default)`
+                ? t('kubevirt-plugin~{{name}} (default)', { name: state.storageClass?.value })
                 : state.storageClass?.value
             }
             onChange={handleStorageClass}
             id="vm-select-sc"
             name="vm-select-sc"
-            aria-label="Select storage class"
+            aria-label={t('kubevirt-plugin~Select Storage Class')}
             isDisabled={!scLoaded}
           >
             {storageClasses.map((sc) => (
@@ -278,7 +281,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
                 value={sc.metadata.name}
                 label={
                   defaultSCName === sc.metadata.name
-                    ? `${sc.metadata.name} (default)`
+                    ? t('kubevirt-plugin~{{name}} (default)', { name: sc.metadata.name })
                     : sc.metadata.name
                 }
               />
@@ -286,9 +289,9 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
           </FormSelect>
           {!scLoaded && <LoadingInline />}
         </FormRow>
-        <FormRow fieldId="form-ds-access-mode" title="Access mode" isRequired>
+        <FormRow fieldId="form-ds-access-mode" title={t('kubevirt-plugin~Access mode')} isRequired>
           <FormPFSelect
-            aria-label="Select access mode"
+            aria-label={t('kubevirt-plugin~Select access mode')}
             onSelect={(e, value: AccessMode) =>
               dispatch({
                 type: BOOT_ACTION_TYPE.SET_ACCESS_MODE,

@@ -1,3 +1,4 @@
+import { TFunction } from 'i18next';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { ANNOTATIONS } from '@console/shared/src/constants/common';
 import { VMKind } from '../../types/vm';
@@ -31,18 +32,29 @@ export const getTemplateType = (
 ): typeof TEMPLATE_TYPE_BASE | typeof TEMPLATE_TYPE_VM =>
   template.isCommon ? TEMPLATE_TYPE_BASE : TEMPLATE_TYPE_VM;
 
-export const getTemplateProvider = (template: TemplateKind): string => {
+export const getTemplateProvider = (
+  t: TFunction,
+  template: TemplateKind,
+  withProviderPrefix = false,
+): string => {
   if (isCommonTemplate(template)) {
-    return 'Red Hat';
+    return withProviderPrefix
+      ? t('kubevirt-plugin~Provided by Red Hat')
+      : t('kubevirt-plugin~Red Hat');
   }
   const provider = getAnnotation(template, ANNOTATION_USER_PROVIDER);
-  return provider ? `${provider} (User)` : 'User';
+  if (provider) {
+    return withProviderPrefix
+      ? t('kubevirt-plugin~Provided by {{provider}} (User)', { provider })
+      : t('kubevirt-plugin~{{provider}} (User)', { provider });
+  }
+  return withProviderPrefix ? t('kubevirt-plugin~Provided by User') : t('kubevirt-plugin~User');
 };
 
-export const templateProviders: { id: ProvidedType; title: string }[] = [
-  { id: 'supported', title: 'Red Hat Supported' },
-  { id: 'provided', title: 'Red Hat Provided' },
-  { id: 'user', title: 'User Provided' },
+export const templateProviders = (t: TFunction): { id: ProvidedType; title: string }[] => [
+  { id: 'supported', title: t('kubevirt-plugin~Red Hat Supported') },
+  { id: 'provided', title: t('kubevirt-plugin~Red Hat Provided') },
+  { id: 'user', title: t('kubevirt-plugin~User Provided') },
 ];
 
 export type ProvidedType = 'supported' | 'provided' | 'user';

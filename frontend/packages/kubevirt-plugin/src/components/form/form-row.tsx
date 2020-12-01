@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormGroup, Popover, PopoverPosition } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
 import { LoadingInline } from '@console/internal/components/utils';
@@ -21,11 +22,12 @@ export const FormRow: React.FC<FormRowProps> = ({
   children,
   className,
 }) => {
+  const { t } = useTranslation();
   if (isHidden) {
     return null;
   }
   const type = (validation && validation.type) || validationType;
-  const message = (validation && validation.message) || validationMessage;
+  const message = t((validation && validation.message) || validationMessage);
 
   return (
     <FormGroup

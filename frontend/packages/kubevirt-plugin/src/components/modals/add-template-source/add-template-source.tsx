@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { k8sCreate, TemplateKind } from '@console/internal/module/k8s';
 import {
   ModalComponentProps,
@@ -7,7 +9,6 @@ import {
   createModalLauncher,
   ModalFooter,
 } from '@console/internal/components/factory';
-import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { Alert, Button, ActionGroup, Stack, StackItem } from '@patternfly/react-core';
 import { useAccessReview2, LoadingBox } from '@console/internal/components/utils';
 import { UploadPVCFormStatus } from '../../cdi-upload-provider/upload-pvc-form/upload-pvc-form-status';
@@ -23,17 +24,18 @@ import { CDIUploadContextProps } from '../../cdi-upload-provider/cdi-upload-prov
 import { bootFormReducer, initBootFormState } from '../../create-vm/forms/boot-source-form-reducer';
 import { BootSourceForm } from '../../create-vm/forms/boot-source-form';
 import { getRootDataVolume } from '../../../k8s/requests/vm/create/simple-create';
+import { useErrorTranslation } from '../../../hooks/use-error-translation';
 
-const getAction = (dataSource: string): string => {
+const getAction = (t: TFunction, dataSource: string): string => {
   switch (DataVolumeSourceType.fromString(dataSource)) {
     case DataVolumeSourceType.HTTP:
     case DataVolumeSourceType.REGISTRY:
     case DataVolumeSourceType.S3:
-      return 'import';
+      return t('kubevirt-plugin~Save and import');
     case DataVolumeSourceType.PVC:
-      return 'clone';
+      return t('kubevirt-plugin~Save and clone');
     default:
-      return 'upload';
+      return t('kubevirt-plugin~Save and upload');
   }
 };
 
@@ -41,21 +43,25 @@ type PermissionsErrorProps = {
   close: VoidFunction;
 };
 
-const PermissionsError: React.FC<PermissionsErrorProps> = ({ close }) => (
-  <>
-    <ModalBody>
-      <Alert variant="danger" isInline title="Permissions required">
-        You do not have permissions to upload template source data into this namespace. Contact your
-        system administrator for more information.
-      </Alert>
-    </ModalBody>
-    <ModalFooter inProgress={false}>
-      <Button type="button" data-test-id="modal-close-action" onClick={close}>
-        Close
-      </Button>
-    </ModalFooter>
-  </>
-);
+const PermissionsError: React.FC<PermissionsErrorProps> = ({ close }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <ModalBody>
+        <Alert variant="danger" isInline title={t('kubevirt-plugin~Permissions required')}>
+          {t(
+            'kubevirt-plugin~You do not have permissions to upload template source data into this namespace. Contact your system administrator for more information.',
+          )}
+        </Alert>
+      </ModalBody>
+      <ModalFooter inProgress={false}>
+        <Button type="button" data-test-id="modal-close-action" onClick={close}>
+          {t('kubevirt-plugin~Close')}
+        </Button>
+      </ModalFooter>
+    </>
+  );
+};
 
 type AddTemplateSourceModalProps = CDIUploadContextProps & {
   template: TemplateKind;
@@ -63,6 +69,7 @@ type AddTemplateSourceModalProps = CDIUploadContextProps & {
 
 export const AddTemplateSourceModal: React.FC<ModalComponentProps &
   AddTemplateSourceModalProps> = ({ cancel, uploadData, close, template, uploads }) => {
+  const { t } = useTranslation();
   const baseImageName = getParameterValue(template, TEMPLATE_BASE_IMAGE_NAME_PARAMETER);
   const baseImageNamespace = getParameterValue(template, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER);
   const upload = uploads.find(
@@ -70,7 +77,7 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
   );
   const [isAllocating, setAllocating] = React.useState(false);
   const [isSubmitting, setSubmitting] = React.useState(false);
-  const [error, setError] = React.useState<string>();
+  const [error, setError, setErrorKey, resetError] = useErrorTranslation();
   const [state, dispatch] = React.useReducer(bootFormReducer, initBootFormState);
 
   const [uploadAllowed, uploadAllowedLoading] = useAccessReview2({
@@ -82,6 +89,7 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
   const { dataSource, file, isValid } = state;
 
   const onSubmit = async () => {
+    resetError();
     setAllocating(true);
     setSubmitting(true);
     const dvObj = getRootDataVolume({
@@ -114,8 +122,11 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
         await k8sCreate(DataVolumeModel, dvObj);
       }
       close();
-    } catch ({ message }) {
-      setError(message || 'Could not create persistent volume claim.');
+    } catch (err) {
+      // t('kubevirt-plugin~Could not create Persistent volume claim')
+      err?.message
+        ? setError(err.message)
+        : setErrorKey('kubevirt-plugin~Could not create Persistent volume claim');
     } finally {
       setAllocating(false);
       setSubmitting(false);
@@ -124,7 +135,7 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
 
   return (
     <div className="modal-content modal-content--no-inner-scroll">
-      <ModalTitle>Add source to vendor template</ModalTitle>
+      <ModalTitle>{t('kubevirt-plugin~Add source to vendor template')}</ModalTitle>
       {uploadAllowedLoading ? (
         <LoadingBox />
       ) : uploadAllowed ? (
@@ -133,11 +144,11 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
             {!isSubmitting && (
               <Stack hasGutter>
                 <StackItem>
-                  This data can be found in{' '}
-                  <b>
-                    Storage &gt; {PersistentVolumeClaimModel.labelPlural} &gt; {baseImageName}
-                  </b>{' '}
-                  under the <b>{baseImageNamespace}</b> namespace.
+                  <Trans t={t} ns="kubevirt-plugin">
+                    This data can be found in{' '}
+                    <b>Storage &gt; Persistent volume claims &gt; {baseImageName}</b> under the{' '}
+                    <b>{baseImageNamespace}</b> project.
+                  </Trans>
                 </StackItem>
                 <StackItem>
                   <BootSourceForm state={state} dispatch={dispatch} withUpload />
@@ -151,7 +162,7 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
               allocateError={undefined}
               onErrorClick={() => {
                 setSubmitting(false);
-                setError(undefined);
+                resetError();
               }}
             />
           </ModalBody>
@@ -163,7 +174,7 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
                 data-test-id="modal-cancel-action"
                 onClick={cancel}
               >
-                Close
+                {t('kubevirt-plugin~Close')}
               </Button>
               <Button
                 variant="primary"
@@ -172,7 +183,7 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
                 id="confirm-action"
                 onClick={onSubmit}
               >
-                {`Save and ${getAction(dataSource?.value)}`}
+                {getAction(t, dataSource?.value)}
               </Button>
             </ActionGroup>
           </ModalFooter>

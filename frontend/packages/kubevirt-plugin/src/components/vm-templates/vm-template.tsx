@@ -242,7 +242,7 @@ const VMTemplateTableRow: RowFunction<TemplateItem, VMTemplateTableRowProps> = (
         <VMTemplateLabel template={template} />
         {pinned && <PinnedIcon />}
       </TableData>
-      <TableData className={dimensify()}>{getTemplateProvider(template)}</TableData>
+      <TableData className={dimensify()}>{getTemplateProvider(t, template)}</TableData>
       <TableData className={dimensify()}>
         <ResourceLink
           kind={NamespaceModel.kind}
@@ -308,13 +308,13 @@ type VirtualMachineTemplatesProps = React.ComponentProps<typeof Table> & {
 export const VMTemplateSupport: React.FC = () => {
   const { t } = useTranslation();
   return (
-    <>
+    <div>
       {t('kubevirt-plugin~Red Hat supported templates are labeled below.')}{' '}
       <ExternalLink
         href={SUPPORT_URL}
         text={t('kubevirt-plugin~Learn more about template support')}
       />
-    </>
+    </div>
   );
 };
 
@@ -369,12 +369,12 @@ const VirtualMachineTemplates: React.FC<VirtualMachineTemplatesProps> = (props) 
   );
 };
 
-const filters: RowFilter[] = [
+const filters = (t: TFunction): RowFilter[] => [
   {
-    filterGroupName: 'Provider',
+    filterGroupName: t('kubevirt-plugin~Provider'),
     type: 'template-provider',
     reducer: getTemplateProviderType,
-    items: templateProviders,
+    items: templateProviders(t),
     filter: (types, template: TemplateItem) => {
       const type = getTemplateProviderType(template);
       return types.selected.size === 0 || types.selected.has(type);
@@ -450,7 +450,7 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
       resources={resources}
       flatten={flatten}
       label={VM_TEMPLATE_LABEL_PLURAL}
-      rowFilters={filters}
+      rowFilters={filters(t)}
     />
   );
 };
