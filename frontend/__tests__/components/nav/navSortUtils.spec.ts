@@ -1,4 +1,4 @@
-import { getSortedNavItems } from '@console/internal/components/nav/perspective-nav';
+import { getSortedNavItems } from '@console/internal/components/nav/navSortUtils';
 import { LoadedExtension, NavItem, NavSection, SeparatorNavItem } from '@console/plugin-sdk/src';
 
 const mockNavItems: LoadedExtension<NavSection | NavItem | SeparatorNavItem>[] = [
