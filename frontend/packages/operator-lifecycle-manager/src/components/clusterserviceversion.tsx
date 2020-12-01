@@ -753,9 +753,6 @@ const crdCardRowStateToProps = ({ k8s }, { crdDescs }) => {
     crdDescs.map((desc) => k8s.getIn(['RESOURCES', 'models', referenceForProvidedAPI(desc)])),
   );
   return {
-    crdDescs: crdDescs.filter((desc) =>
-      models.find((m) => referenceForModel(m) === referenceForProvidedAPI(desc)),
-    ),
     createable: models
       .filter((m) => (m.verbs || []).includes('create'))
       .map((m) => referenceForModel(m)),
