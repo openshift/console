@@ -27,7 +27,7 @@ import {
 } from './filter-utils';
 import FilterDropdown from './FilterDropdown';
 import KindFilterDropdown from './KindFilterDropdown';
-import QuickSearchButton from './quick-search/QuickSearchButton';
+import QuickSearch from '../components/quick-search/QuickSearch';
 import { getNamespaceDashboardKialiLink } from '../utils/topology-utils';
 import { FilterContext } from './FilterProvider';
 
@@ -72,7 +72,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
     <Toolbar className="co-namespace-bar odc-topology-filter-bar">
       <ToolbarContent>
         <ToolbarItem>
-          <QuickSearchButton />
+          <QuickSearch namespace={namespace} />
         </ToolbarItem>
         <ToolbarGroup variant={ToolbarGroupVariant['filter-group']}>
           <ToolbarItem>

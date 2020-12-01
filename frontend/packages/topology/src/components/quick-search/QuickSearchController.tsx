@@ -1,0 +1,51 @@
+import { CatalogService } from '@console/dev-console/src/components/catalog/service/CatalogServiceProvider';
+import * as React from 'react';
+import QuickSearchButton from './QuickSearchButton';
+import QuickSearchModal from './QuickSearchModal';
+
+type QuickSearchControllerProps = CatalogService & {
+  namespace: string;
+};
+
+const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
+  namespace,
+  searchCatalog,
+  loaded,
+}) => {
+  const [isQuickSearchActive, setIsQuickSearchActive] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      const { nodeName } = e.target as Element;
+      if (nodeName === 'INPUT' || nodeName === 'TEXTAREA') {
+        return;
+      }
+
+      if (e.code === 'Space' && e.ctrlKey) {
+        e.preventDefault();
+        setIsQuickSearchActive(true);
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, []);
+
+  return (
+    <>
+      <QuickSearchButton onClick={() => setIsQuickSearchActive(true)} />
+      <QuickSearchModal
+        isOpen={isQuickSearchActive}
+        closeModal={() => setIsQuickSearchActive(false)}
+        namespace={namespace}
+        allCatalogItemsLoaded={loaded}
+        searchCatalog={searchCatalog}
+      />
+    </>
+  );
+};
+
+export default QuickSearchController;
