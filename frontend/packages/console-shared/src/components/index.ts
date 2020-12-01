@@ -21,3 +21,4 @@ export * from './modal';
 export * from './modals';
 export * from './hpa';
 export * from './multi-tab-list';
+export * from './spotlight';

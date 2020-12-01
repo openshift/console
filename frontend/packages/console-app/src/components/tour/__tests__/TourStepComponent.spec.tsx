@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import TourStepComponent from '../TourStepComponent';
-import { Popover, Modal } from '@console/shared';
-
-import { Spotlight } from '../Spotlight';
+import { Popover, Modal, Spotlight } from '@console/shared';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');
