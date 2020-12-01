@@ -30,7 +30,7 @@ type MenuAction = (kind: K8sKind, vmTemplate: TemplateItem, customData?: CustomD
 
 const vmTemplateEditAction: MenuAction = (kind, obj) => ({
   label: `Edit Virtual Machine Template`,
-  href: `/k8s/ns/${getNamespace(obj)}/vmtemplates/${getName(obj)}/yaml`,
+  href: `/k8s/ns/${getNamespace(obj)}/vmtemplates/${getName(obj)}`,
   accessReview: asAccessReview(kind, obj, 'update'),
 });
 
