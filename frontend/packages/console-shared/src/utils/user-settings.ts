@@ -48,20 +48,19 @@ export const createConfigMap = async (configMapData: K8sResourceKind): Promise<K
 };
 
 export const updateConfigMap = async (configMap: ConfigMapKind, key: string, value: string) => {
-  if (value !== configMap.data?.[key]) {
-    const patch = [
-      {
-        op: 'replace',
-        path: `/data/${key}`,
-        value,
-      },
-    ];
-    try {
-      await k8sPatch(ConfigMapModel, configMap, patch);
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error(err);
-    }
+  const operation = configMap.data?.hasOwnProperty(key) ? 'replace' : 'add';
+  const patch = [
+    {
+      op: operation,
+      path: `/data/${key}`,
+      value,
+    },
+  ];
+  try {
+    await k8sPatch(ConfigMapModel, configMap, patch);
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error(err);
   }
 };
 

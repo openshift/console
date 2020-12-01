@@ -22,7 +22,11 @@ import {
   NODE_POSITIONED_EVENT,
   GRAPH_POSITION_CHANGE_EVENT,
 } from '@patternfly/react-topology';
-import { STORAGE_PREFIX, useQueryParams } from '@console/shared';
+import {
+  useQueryParams,
+  withUserSettingsCompatibility,
+  WithUserSettingsCompatibilityProps,
+} from '@console/shared';
 import { useExtensions } from '@console/plugin-sdk';
 import { RootState } from '@console/internal/redux';
 import { isTopologyComponentFactory, TopologyComponentFactory } from '../../extensions/topology';
@@ -32,30 +36,14 @@ import { COLA_LAYOUT, layoutFactory } from './layouts/layoutFactory';
 import { componentFactory } from './components';
 import { odcElementFactory } from '../../elements';
 import TopologyControlBar from './TopologyControlBar';
+import { TOPOLOGY_LAYOUT_CONFIG_STORAGE_KEY, TOPOLOGY_LAYOUT_LOCAL_STORAGE_KEY } from '../../const';
 
 import './Topology.scss';
 
-const TOPOLOGY_LAYOUT_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/topology-layout`;
 const STORED_NODE_LAYOUT_FIELDS = ['id', 'x', 'y', 'collapsed', 'visible', 'style', 'shape'];
 
-type StoredLayout = {
-  nodes: NodeModel[];
-  layout: string;
-};
-
-const getStoredLayouts = (): { [namespace: string]: StoredLayout } => {
-  const storedLayoutsString = localStorage.getItem(TOPOLOGY_LAYOUT_LOCAL_STORAGE_KEY);
-  try {
-    return JSON.parse(storedLayoutsString) || {};
-  } catch (e) {
-    return {};
-  }
-};
-
-const getTopologyLayout = (namespace: string): StoredLayout => getStoredLayouts()[namespace];
-
 const setTopologyLayout = (namespace: string, nodes: NodeModel[], layout: string) => {
-  const currentStore = getStoredLayouts();
+  const currentStore = {};
   currentStore[namespace] = {
     nodes: nodes?.map((n) =>
       Object.keys(n).reduce((acc, key) => {
@@ -67,7 +55,7 @@ const setTopologyLayout = (namespace: string, nodes: NodeModel[], layout: string
     ),
     layout,
   };
-  localStorage.setItem(TOPOLOGY_LAYOUT_LOCAL_STORAGE_KEY, JSON.stringify(currentStore));
+  return currentStore;
 };
 
 interface TopologyGraphViewProps {
@@ -124,7 +112,10 @@ interface TopologyProps {
   setVisualization: (vis: Visualization) => void;
 }
 
-const Topology: React.FC<TopologyProps & StateProps & DispatchProps> = ({
+const Topology: React.FC<TopologyProps &
+  StateProps &
+  DispatchProps &
+  WithUserSettingsCompatibilityProps<object>> = ({
   model,
   application,
   namespace,
@@ -132,7 +123,10 @@ const Topology: React.FC<TopologyProps & StateProps & DispatchProps> = ({
   setVisualization,
   onGraphModelChange,
   getStoredGraphModel,
+  userSettingState: topologyLayoutData,
+  setUserSettingState: setTopologyLayoutData,
 }) => {
+  const topologyLayoutDataJson = topologyLayoutData || {};
   const applicationRef = React.useRef<string>(null);
   const [visualizationReady, setVisualizationReady] = React.useState<boolean>(false);
   const [dragHint, setDragHint] = React.useState<string>('');
@@ -148,7 +142,7 @@ const Topology: React.FC<TopologyProps & StateProps & DispatchProps> = ({
     [componentFactoryExtensions],
   );
   const createVisualization = () => {
-    const storedLayout = getTopologyLayout(namespace);
+    const storedLayout = topologyLayoutDataJson?.[namespace];
     const newVisualization = new Visualization();
     newVisualization.registerElementFactory(odcElementFactory);
     newVisualization.registerLayoutFactory(layoutFactory);
@@ -168,7 +162,10 @@ const Topology: React.FC<TopologyProps & StateProps & DispatchProps> = ({
 
     const onVisualizationLayoutChange = debounce(() => {
       const visModel = newVisualization.toModel();
-      setTopologyLayout(namespace, visModel.nodes, visModel.graph.layout);
+      const updatedLayoutData = setTopologyLayout(namespace, visModel.nodes, visModel.graph.layout);
+      setTopologyLayoutData((prevState) => {
+        return { ...prevState, ...updatedLayoutData };
+      });
     }, 200);
 
     newVisualization.addEventListener(NODE_POSITIONED_EVENT, onVisualizationLayoutChange);
@@ -206,7 +203,7 @@ const Topology: React.FC<TopologyProps & StateProps & DispatchProps> = ({
             data: visualization.getGraph()?.getData(),
           };
         }
-        const storedLayout = getTopologyLayout(namespace);
+        const storedLayout = topologyLayoutDataJson?.[namespace];
         if (storedLayout) {
           model.nodes.forEach((n) => {
             const storedNode = storedLayout.nodes.find((sn) => sn.id === n.id);
@@ -325,4 +322,10 @@ const TopologyDispatchToProps = (dispatch): DispatchProps => ({
 export default connect<StateProps, DispatchProps, TopologyProps>(
   TopologyStateToProps,
   TopologyDispatchToProps,
-)(React.memo(Topology));
+)(
+  withUserSettingsCompatibility<TopologyProps & WithUserSettingsCompatibilityProps<object>, object>(
+    TOPOLOGY_LAYOUT_CONFIG_STORAGE_KEY,
+    TOPOLOGY_LAYOUT_LOCAL_STORAGE_KEY,
+    {},
+  )(React.memo(Topology)),
+);

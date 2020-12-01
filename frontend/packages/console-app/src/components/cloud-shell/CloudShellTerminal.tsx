@@ -4,16 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { RootState } from '@console/internal/redux';
 import { StatusBox, LoadError } from '@console/internal/components/utils/status-box';
 import { UserKind } from '@console/internal/module/k8s';
+import { withUserSettingsCompatibility, WithUserSettingsCompatibilityProps } from '@console/shared';
 import CloudshellExec from './CloudShellExec';
 import TerminalLoadingBox from './TerminalLoadingBox';
-import {
-  TerminalInitData,
-  initTerminal,
-  getCloudShellNamespace,
-  setCloudShellNamespace,
-} from './cloud-shell-utils';
+import { TerminalInitData, initTerminal } from './cloud-shell-utils';
 import CloudShellSetup from './setup/CloudShellSetup';
 import useCloudShellWorkspace from './useCloudShellWorkspace';
+import { CLOUD_SHELL_NAMESPACE, CLOUD_SHELL_NAMESPACE_CONFIG_STORAGE_KEY } from './const';
 
 import './CloudShellTerminal.scss';
 
@@ -27,8 +24,13 @@ type Props = {
 
 type CloudShellTerminalProps = StateProps & Props;
 
-const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ user, onCancel }) => {
-  const [namespace, setNamespace] = React.useState(getCloudShellNamespace());
+const CloudShellTerminal: React.FC<CloudShellTerminalProps &
+  WithUserSettingsCompatibilityProps<string>> = ({
+  user,
+  onCancel,
+  userSettingState: namespace,
+  setUserSettingState: setNamespace,
+}) => {
   const [initData, setInitData] = React.useState<TerminalInitData>();
   const [initError, setInitError] = React.useState<string>();
 
@@ -46,9 +48,9 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ user, onCancel 
   React.useEffect(() => {
     if (loaded && !loadError) {
       // workspace may be undefined which is ok
-      setCloudShellNamespace(workspaceNamespace);
+      setNamespace(workspaceNamespace);
     }
-  }, [loaded, loadError, workspaceNamespace]);
+  }, [loaded, loadError, workspaceNamespace, setNamespace]);
 
   // clear the init data and error if the workspace changes
   React.useEffect(() => {
@@ -141,7 +143,6 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ user, onCancel 
     <CloudShellSetup
       onCancel={onCancel}
       onSubmit={(ns: string) => {
-        setCloudShellNamespace(ns);
         setNamespace(ns);
       }}
     />
@@ -155,4 +156,12 @@ const stateToProps = (state: RootState): StateProps => ({
   user: state.UI.get('user'),
 });
 
-export default connect(stateToProps)(CloudShellTerminal);
+export default connect<StateProps, null, Props>(stateToProps)(
+  withUserSettingsCompatibility<
+    CloudShellTerminalProps & WithUserSettingsCompatibilityProps<string>,
+    string
+  >(
+    CLOUD_SHELL_NAMESPACE_CONFIG_STORAGE_KEY,
+    CLOUD_SHELL_NAMESPACE,
+  )(CloudShellTerminal),
+);

@@ -95,7 +95,10 @@ export const useUserSettings = <T>(
 
   React.useEffect(() => {
     if (cfData && cfLoaded && settings !== undefined) {
-      updateConfigMap(cfData, keyRef.current, seralizeData(settings));
+      const value = seralizeData(settings);
+      if (value !== cfData.data?.[key]) {
+        updateConfigMap(cfData, keyRef.current, value);
+      }
     }
     // This effect should only be run on change of settings state.
     // eslint-disable-next-line react-hooks/exhaustive-deps
