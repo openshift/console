@@ -1,66 +1,50 @@
-import { ConfigMapModel, ProjectRequestModel, ProjectModel } from '@console/internal/models';
-import {
-  K8sResourceKind,
-  k8sGet,
-  k8sCreate,
-  k8sPatch,
-  ConfigMapKind,
-} from '@console/internal/module/k8s';
+import { coFetch } from '@console/internal/co-fetch';
+import { ConfigMapModel } from '@console/internal/models';
+import { ConfigMapKind, resourceURL } from '@console/internal/module/k8s';
 
-// can't create project with name prefix with 'openshift-*', once we have proxy need to update
-export const USER_SETTING_CONFIGMAP_NAMESPACE = 'console-user-settings';
+export const USER_SETTING_CONFIGMAP_NAMESPACE = 'openshift-console-user-settings';
 
-export const getProject = async (): Promise<boolean> => {
+export const createConfigMap = async (): Promise<ConfigMapKind> => {
   try {
-    await k8sGet(ProjectModel, USER_SETTING_CONFIGMAP_NAMESPACE);
-    return true;
+    const response = await coFetch('/api/console/user-settings', { method: 'POST' });
+    return response.json();
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error(err);
-    return false;
+    throw err;
   }
 };
 
-export const createProject = async () => {
-  try {
-    await k8sCreate(ProjectRequestModel, {
-      metadata: {
-        name: USER_SETTING_CONFIGMAP_NAMESPACE,
-      },
-    });
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error(err);
-  }
-};
-
-export const createConfigMap = async (configMapData: K8sResourceKind): Promise<K8sResourceKind> => {
-  try {
-    const configMapDataResp = await k8sCreate(ConfigMapModel, configMapData);
-    return configMapDataResp;
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error(err);
-    const error: Error & { response?: object } = new Error(err.message);
-    error.response = err.response;
-    throw error;
-  }
-};
-
-export const updateConfigMap = async (configMap: ConfigMapKind, key: string, value: string) => {
-  const operation = configMap.data?.hasOwnProperty(key) ? 'replace' : 'add';
-  const patch = [
-    {
-      op: operation,
-      path: `/data/${key}`,
-      value,
+export const updateConfigMap = async (
+  configMap: ConfigMapKind,
+  key: string,
+  value: string,
+): Promise<ConfigMapKind> => {
+  const url = resourceURL(ConfigMapModel, {
+    ns: configMap.metadata.namespace,
+    name: configMap.metadata.name,
+  });
+  const patch = {
+    data: {
+      [key]: value,
     },
-  ];
+  };
+  // Use JSON Merge Patch instead of normal JSON Patch because JSON Patch calls
+  // fail if there is no data defined.
   try {
-    await k8sPatch(ConfigMapModel, configMap, patch);
+    const response = await coFetch(url, {
+      method: 'PATCH',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/merge-patch+json;charset=UTF-8',
+      },
+      body: JSON.stringify(patch),
+    });
+    return response.json();
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error(err);
+    throw err;
   }
 };
 
