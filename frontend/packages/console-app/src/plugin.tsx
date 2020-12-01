@@ -48,6 +48,10 @@ import {
 import reducer from './redux/reducer';
 import * as models from './models';
 import { TourContext, useTourValuesForContext } from './components/tour/tour-context';
+import {
+  QuickStartContext,
+  useValuesForQuickStartContext,
+} from './components/quick-starts/utils/quick-start-context';
 import '@console/internal/i18n.js';
 
 type ConsumedExtensions =
@@ -274,6 +278,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       Provider: TourContext.Provider,
       useValueHook: useTourValuesForContext,
+    },
+  },
+  {
+    type: 'ContextProvider',
+    properties: {
+      Provider: QuickStartContext.Provider,
+      useValueHook: useValuesForQuickStartContext,
     },
   },
 ];

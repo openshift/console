@@ -2,9 +2,35 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { Button } from '@patternfly/react-core';
 import { QuickStartStatus } from '../../utils/quick-start-types';
-import { InternalQuickStartTileFooter as QuickStartTileFooter } from '../QuickStartTileFooter';
+import QuickStartTileFooter from '../QuickStartTileFooter';
+
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+jest.mock('react', () => {
+  const ActualReact = require.requireActual('react');
+  return {
+    ...ActualReact,
+    useContext: () => jest.fn(),
+  };
+});
+jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
+  useUserSettings: () => ['', () => {}],
+}));
 
 describe('QuickStartTileFooter', () => {
+  beforeEach(() => {
+    spyOn(React, 'useContext').and.returnValue({
+      activeQuickStartID: '',
+      setActiveQuickStart: () => {},
+      setQuickStartStatus: () => {},
+      resetQuickStart: () => {},
+    });
+  });
   it('should load proper footer links for completed tours', () => {
     const wrapper = shallow(
       <QuickStartTileFooter quickStartId="some-tour" status={QuickStartStatus.COMPLETE} />,

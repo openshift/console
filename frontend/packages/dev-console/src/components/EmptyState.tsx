@@ -66,6 +66,8 @@ interface EmptySProps {
 
 type Props = EmptySProps & StateProps;
 
+const HIDE_QUICK_START_ADD_TILE_CONFIG_MAP_KEY = 'devconsole.addPage.quickStartTile';
+
 const ODCEmptyState: React.FC<Props> = ({ title, activeNamespace, hintBlock }) => {
   const { t } = useTranslation();
   const defaultHintBlockText = t(
@@ -83,6 +85,7 @@ const ODCEmptyState: React.FC<Props> = ({ title, activeNamespace, hintBlock }) =
             <QuickStartsCatalogCard
               quickStarts={quickStarts}
               storageKey={HIDE_QUICK_START_ADD_TILE_STORAGE_KEY}
+              userSettingsKey={HIDE_QUICK_START_ADD_TILE_CONFIG_MAP_KEY}
             />
           )}
         </QuickStartsLoader>

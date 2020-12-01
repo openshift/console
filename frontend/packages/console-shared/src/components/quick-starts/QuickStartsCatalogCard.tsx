@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { connect, Dispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -17,54 +16,42 @@ import {
   Button,
 } from '@patternfly/react-core';
 import { ArrowRightIcon } from '@patternfly/react-icons';
-import { RootState } from '@console/internal/redux';
 import {
   QuickStart,
-  AllQuickStartStates,
   QuickStartStatus,
 } from '@console/app/src/components/quick-starts/utils/quick-start-types';
-import {
-  getActiveQuickStartID,
-  getAllQuickStartStates,
-} from '@console/app/src/redux/reducers/quick-start-reducer';
-import * as QuickStartActions from '@console/app/src/redux/actions/quick-start-actions';
 import { getQuickStartStatus } from '@console/app/src/components/quick-starts/utils/quick-start-utils';
-
+import {
+  QuickStartContext,
+  QuickStartContextValues,
+} from '@console/app/src/components/quick-starts/utils/quick-start-context';
+import { useUserSettingsCompatibility } from '../../hooks';
 import './QuickStartsCatalogCard.scss';
 
 type QuickStartsCatalogCardProps = {
   quickStarts: QuickStart[];
   storageKey: string;
-  onRemoveTile?: () => void;
+  userSettingsKey: string;
 };
 
-type StateProps = {
-  activeQuickStartID?: string;
-  allQuickStartStates?: AllQuickStartStates;
-};
-
-type DispatchProps = {
-  setActiveQuickStart?: (quickStartID: string, totalTasks: number) => void;
-};
-
-type Props = QuickStartsCatalogCardProps & DispatchProps & StateProps;
-
-const QuickStartsCatalogCard: React.FC<Props> = ({
-  setActiveQuickStart,
+const QuickStartsCatalogCard: React.FC<QuickStartsCatalogCardProps> = ({
   quickStarts,
-  allQuickStartStates,
-  onRemoveTile,
   storageKey,
+  userSettingsKey,
 }) => {
   const { t } = useTranslation();
-  const isQuickStartTileHidden = localStorage.getItem(storageKey) === 'true';
-  const [showTile, setShowTile] = React.useState<boolean>(!isQuickStartTileHidden);
+  const { allQuickStartStates, setActiveQuickStart } = React.useContext<QuickStartContextValues>(
+    QuickStartContext,
+  );
+  const [showTile, setShowTile, loaded] = useUserSettingsCompatibility(
+    userSettingsKey,
+    storageKey,
+    true,
+  );
   const [isOpen, setOpen] = React.useState<boolean>(false);
 
   const onRemove = () => {
-    localStorage.setItem(storageKey, 'true');
     setShowTile(false);
-    onRemoveTile && onRemoveTile();
   };
 
   const onToggle = () => setOpen(!isOpen);
@@ -103,11 +90,10 @@ const QuickStartsCatalogCard: React.FC<Props> = ({
   }
 
   if (quickStarts.length > 0 && slicedQuickStarts.length === 0) {
-    onRemoveTile && onRemoveTile();
     return null;
   }
 
-  return slicedQuickStarts.length > 0 && showTile ? (
+  return loaded && slicedQuickStarts.length > 0 && showTile ? (
     <GalleryItem>
       <Card className="odc-quick-start-catalog-card__card">
         <CardHeader>
@@ -163,19 +149,6 @@ const QuickStartsCatalogCard: React.FC<Props> = ({
   ) : null;
 };
 
-const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
-  setActiveQuickStart: (quickStartID: string, totalTasks: number) =>
-    dispatch(QuickStartActions.setActiveQuickStart(quickStartID, totalTasks)),
-});
-
-const mapStateToProps = (state: RootState): StateProps => ({
-  activeQuickStartID: getActiveQuickStartID(state),
-  allQuickStartStates: getAllQuickStartStates(state),
-});
-
 export const InternalQuickStartsCatalogCard = QuickStartsCatalogCard; // for testing
 
-export default connect<StateProps, DispatchProps, QuickStartsCatalogCardProps>(
-  mapStateToProps,
-  mapDispatchToProps,
-)(QuickStartsCatalogCard);
+export default QuickStartsCatalogCard;
