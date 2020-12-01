@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Stack, StackItem } from '@patternfly/react-core';
-import { getName, getNamespace } from '@console/shared';
+import { getNamespace } from '@console/shared';
 import { K8sKind, TemplateKind } from '@console/internal/module/k8s';
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
 
@@ -27,12 +27,6 @@ type CustomData = {
 };
 
 type MenuAction = (kind: K8sKind, vmTemplate: TemplateItem, customData?: CustomData) => KebabOption;
-
-const vmTemplateEditAction: MenuAction = (kind, obj) => ({
-  label: `Edit Virtual Machine Template`,
-  href: `/k8s/ns/${getNamespace(obj)}/vmtemplates/${getName(obj)}/yaml`,
-  accessReview: asAccessReview(kind, obj, 'update'),
-});
 
 const newTemplateFromCommon: MenuAction = (kind, vmTemplate, { namespace }) => ({
   label: `Create new Template from`,
@@ -120,7 +114,6 @@ export const menuActionsCreator = (
         vmTemplateCreateVMAction,
         Kebab.factory.ModifyLabels,
         Kebab.factory.ModifyAnnotations,
-        vmTemplateEditAction,
         menuActionDeleteVMTemplate,
       ];
 
