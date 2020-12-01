@@ -2,11 +2,9 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { CogsIcon } from '@patternfly/react-icons';
 import { FLAGS } from '@console/shared/src/constants';
-import { FLAG_DEVWORKSPACE } from './consts';
 import {
   Plugin,
   Perspective,
-  ModelFeatureFlag,
   ModelDefinition,
   RoutePage,
   DashboardsOverviewResourceActivity,
@@ -55,7 +53,6 @@ import '@console/internal/i18n.js';
 type ConsumedExtensions =
   | Perspective
   | ModelDefinition
-  | ModelFeatureFlag
   | RoutePage
   | DashboardsOverviewResourceActivity
   | DashboardsOverviewHealthURLSubsystem<any>
@@ -74,13 +71,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'ModelDefinition',
     properties: {
       models: _.values(models),
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: models.WorkspaceModel,
-      flag: FLAG_DEVWORKSPACE,
     },
   },
   {
