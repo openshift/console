@@ -15,10 +15,11 @@ import { getName } from '@console/shared';
 import { NooBaaBucketClassModel } from '../../models';
 import GeneralPage from './wizard-pages/general-page';
 import PlacementPolicyPage from './wizard-pages/placement-policy-page';
-import BackingStorePageWithFirehose from './wizard-pages/backingstore-page';
+import BackingStorePage from './wizard-pages/backingstore-page';
 import ReviewPage from './wizard-pages/review-page';
 import { initialState, reducer } from './state';
 import './create-bc.scss';
+import { PlacementPolicy } from '../../types';
 
 enum CreateStepsBC {
   GENERAL = 'GENERAL',
@@ -54,7 +55,7 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
           tiers: [
             {
               placement: state.tier1Policy,
-              backingStores: [...state.tier1BackingStore],
+              backingStores: state.tier1BackingStore.map(getName),
             },
           ],
         },
@@ -63,7 +64,7 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
     if (state.tier2Policy) {
       payload.spec.placementPolicy.tiers.push({
         placement: state.tier2Policy,
-        backingStores: [...state.tier2BackingStore],
+        backingStores: state.tier2BackingStore.map(getName),
       });
     }
     const promiseObj = k8sCreate(NooBaaBucketClassModel, payload);
@@ -84,8 +85,10 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
 
   const backingStoreNextConditions = () => {
     if (state.tier1BackingStore.length === 0) return false;
-    if (state.tier1Policy === 'Mirror' && state.tier1BackingStore.length < 2) return false;
-    if (state.tier2Policy === 'Mirror' && state.tier2BackingStore.length < 2) return false;
+    if (state.tier1Policy === PlacementPolicy.Mirror && state.tier1BackingStore.length < 2)
+      return false;
+    if (state.tier2Policy === PlacementPolicy.Mirror && state.tier2BackingStore.length < 2)
+      return false;
     if (!!state.tier2Policy && state.tier2BackingStore.length === 0) return false;
     return true;
   };
@@ -112,7 +115,7 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
     {
       id: CreateStepsBC.BACKINGSTORE,
       name: 'Backing Store',
-      component: <BackingStorePageWithFirehose state={state} dispatcher={dispatch} />,
+      component: <BackingStorePage state={state} dispatcher={dispatch} namespace={ns} />,
       enableNext: backingStoreNextConditions(),
     },
     {

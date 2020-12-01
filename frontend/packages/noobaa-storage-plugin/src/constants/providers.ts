@@ -8,12 +8,12 @@ export enum BC_PROVIDERS {
 }
 
 export const PROVIDERS_NOOBAA_MAP = {
-  [BC_PROVIDERS.AWS]: 'awsS3',
-  [BC_PROVIDERS.S3]: 's3Compatible',
-  [BC_PROVIDERS.AZURE]: 'azureBlob',
-  [BC_PROVIDERS.GCP]: 'googleCloudStorage',
-  [BC_PROVIDERS.PVC]: 'pvPool',
-  [BC_PROVIDERS.IBM]: 'ibmCos',
+  [BC_PROVIDERS.AWS]: 'awsS3' as const,
+  [BC_PROVIDERS.S3]: 's3Compatible' as const,
+  [BC_PROVIDERS.AZURE]: 'azureBlob' as const,
+  [BC_PROVIDERS.GCP]: 'googleCloudStorage' as const,
+  [BC_PROVIDERS.PVC]: 'pvPool' as const,
+  [BC_PROVIDERS.IBM]: 'ibmCos' as const,
 };
 
 export const BUCKET_LABEL_NOOBAA_MAP = {
@@ -25,12 +25,12 @@ export const BUCKET_LABEL_NOOBAA_MAP = {
 };
 
 export const NOOBAA_TYPE_MAP = {
-  [BC_PROVIDERS.AWS]: 'aws-s3',
-  [BC_PROVIDERS.S3]: 's3-compatible',
-  [BC_PROVIDERS.AZURE]: 'azure-blob',
-  [BC_PROVIDERS.GCP]: 'google-cloud-storage',
-  [BC_PROVIDERS.PVC]: 'pv-pool',
-  [BC_PROVIDERS.IBM]: 'ibm-cos',
+  [BC_PROVIDERS.AWS]: 'aws-s3' as const,
+  [BC_PROVIDERS.S3]: 's3-compatible' as const,
+  [BC_PROVIDERS.AZURE]: 'azure-blob' as const,
+  [BC_PROVIDERS.GCP]: 'google-cloud-storage' as const,
+  [BC_PROVIDERS.PVC]: 'pv-pool' as const,
+  [BC_PROVIDERS.IBM]: 'ibm-cos' as const,
 };
 
 export const AWS_REGIONS = [

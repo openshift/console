@@ -97,6 +97,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     location,
     textFilter = filterTypeMap[FilterType.NAME],
     labelFilter = filterTypeMap[FilterType.LABEL],
+    uniqueFilterName,
   } = props;
 
   const { t } = useTranslation();
@@ -114,6 +115,11 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     NAME: t('filter-toolbar~Name'),
     LABEL: t('filter-toolbar~Label'),
   };
+
+  // use unique name only when only when more than 1 table is in the view
+  const uniqTextFilter = uniqueFilterName ? `${uniqueFilterName}-${textFilter}` : textFilter;
+  const uniqlabelFilter = uniqueFilterName ? `${uniqueFilterName}-${labelFilter}` : labelFilter;
+
   const [inputText, setInputText] = React.useState('');
   const [filterType, setFilterType] = React.useState(FilterType.NAME);
   const [isOpen, setOpen] = React.useState(false);
@@ -150,8 +156,8 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   const { name: nameFilter, labels: labelFilters, rowFiltersFromURL: selectedRowFilters } = (() => {
     const rowFiltersFromURL: string[] = [];
     const params = new URLSearchParams(location.search);
-    const q = params.get(labelFilter);
-    const name = params.get(textFilter);
+    const q = params.get(uniqlabelFilter);
+    const name = params.get(uniqTextFilter);
     _.map(filterKeys, (f) => {
       const vals = params.get(f);
       if (vals) {
@@ -172,9 +178,9 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
 
   const updateLabelFilter = (filterValues: string[]) => {
     if (filterValues.length > 0) {
-      setQueryArgument(labelFilter, filterValues.join(','));
+      setQueryArgument(uniqlabelFilter, filterValues.join(','));
     } else {
-      removeQueryArgument(labelFilter);
+      removeQueryArgument(uniqlabelFilter);
     }
     setInputText('');
     applyFilter(filterValues, FilterType.LABEL);
@@ -182,9 +188,9 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
 
   const updateNameFilter = (filterValue: string) => {
     if (!_.isEmpty(filterValue)) {
-      setQueryArgument(textFilter, filterValue);
+      setQueryArgument(uniqTextFilter, filterValue);
     } else {
-      removeQueryArgument(textFilter);
+      removeQueryArgument(uniqTextFilter);
     }
     setInputText(filterValue);
     applyFilter(filterValue, FilterType.NAME);
@@ -411,6 +417,8 @@ type FilterToolbarProps = {
   columnLayout?: ColumnLayout;
   nameFilterPlaceholder?: string;
   labelFilterPlaceholder?: string;
+  // Used when multiple tables are in the same page
+  uniqueFilterName?: string;
 };
 
 export type RowFilter<R = any> = {

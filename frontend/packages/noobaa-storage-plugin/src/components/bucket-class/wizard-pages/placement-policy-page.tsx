@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Alert, AlertActionCloseButton, Button, Radio, Title, Form } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { Action, State } from '../state';
+import { PlacementPolicy } from '../../../types';
 
 const PlacementPolicyPage: React.FC<PlacementPolicyPageProps> = ({ dispatch, state }) => {
   const { tier1Policy, tier2Policy } = state;
@@ -48,11 +49,11 @@ const PlacementPolicyPage: React.FC<PlacementPolicyPageProps> = ({ dispatch, sta
           Tier 1 - Policy Type
         </Title>
         <Radio
-          value="Spread"
-          isChecked={tier1Policy === 'Spread'}
+          value={PlacementPolicy.Spread}
+          isChecked={tier1Policy === PlacementPolicy.Spread}
           onChange={onChange}
           id="radio-1"
-          label="Spread"
+          label={PlacementPolicy.Spread}
           name="placement-policy-1"
         />
         <p className="nb-create-bc-step-page-form__element--light-text">
@@ -60,15 +61,14 @@ const PlacementPolicyPage: React.FC<PlacementPolicyPageProps> = ({ dispatch, sta
           and does not include failure tolerance in case of resource failure.
         </p>
         <Radio
-          value="Mirror"
-          isChecked={tier1Policy === 'Mirror'}
+          value={PlacementPolicy.Mirror}
+          isChecked={tier1Policy === PlacementPolicy.Mirror}
           onChange={onChange}
           id="radio-2"
-          label="Mirror"
+          label={PlacementPolicy.Mirror}
           name="placement-policy-1"
         />
         <p className="nb-create-bc-step-page-form__element--light-text">
-          {' '}
           Full duplication of the data in each chosen resource, By default, a replica of one copy
           per location is used. includes failure tolerance in case of resource failure.
         </p>
@@ -77,7 +77,9 @@ const PlacementPolicyPage: React.FC<PlacementPolicyPageProps> = ({ dispatch, sta
         <Button
           variant="link"
           icon={<PlusCircleIcon />}
-          onClick={() => dispatch({ type: 'setPlacementPolicyTier2', value: 'Spread' })}
+          onClick={() =>
+            dispatch({ type: 'setPlacementPolicyTier2', value: PlacementPolicy.Spread })
+          }
           isInline
           data-testid="add-tier-btn"
         >
@@ -87,22 +89,22 @@ const PlacementPolicyPage: React.FC<PlacementPolicyPageProps> = ({ dispatch, sta
       {showTier2 && (
         <Form className="nb-create-bc-step-page-form">
           <Title headingLevel="h2" size="xl" className="nb-bc-step-page-form__title">
-            Tier 2 - Policy type{' '}
+            Tier 2 - Policy type
             <Button
               variant="link"
               icon={<MinusCircleIcon />}
-              onClick={() => dispatch({ type: 'setPlacementPolicyTier2', value: '' })}
+              onClick={() => dispatch({ type: 'setPlacementPolicyTier2', value: null })}
               isInline
             >
               Remove Tier
             </Button>
           </Title>
           <Radio
-            value="Spread"
-            isChecked={tier2Policy === 'Spread'}
+            value={PlacementPolicy.Spread}
+            isChecked={tier2Policy === PlacementPolicy.Spread}
             onChange={onChange}
             id="radio-3"
-            label="Spread"
+            label={PlacementPolicy.Spread}
             name="placement-policy-2"
           />
           <p className="nb-create-bc-step-page-form__element--light-text">
@@ -110,15 +112,14 @@ const PlacementPolicyPage: React.FC<PlacementPolicyPageProps> = ({ dispatch, sta
             case of resource failure.
           </p>
           <Radio
-            value="Mirror"
-            isChecked={tier2Policy === 'Mirror'}
+            value={PlacementPolicy.Mirror}
+            isChecked={tier2Policy === PlacementPolicy.Mirror}
             onChange={onChange}
             id="radio-4"
-            label="Mirror"
+            label={PlacementPolicy.Mirror}
             name="placement-policy-2"
           />
           <p className="nb-create-bc-step-page-form__element--light-text">
-            {' '}
             Full duplication of the data in each chosen resource, includes failure tolerance in
             cause of resource failure.
           </p>

@@ -12,6 +12,7 @@ import {
   RoutePage,
   YAMLTemplate,
   ProjectDashboardInventoryItem,
+  ClusterServiceVersionAction,
 } from '@console/plugin-sdk';
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -31,7 +32,8 @@ type ConsumedExtensions =
   | ResourceDetailsPage
   | YAMLTemplate
   | RoutePage
-  | ProjectDashboardInventoryItem;
+  | ProjectDashboardInventoryItem
+  | ClusterServiceVersionAction;
 
 const NOOBAA_FLAG = 'NOOBAA';
 
@@ -311,6 +313,19 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [NOOBAA_FLAG],
+    },
+  },
+  {
+    type: 'ClusterServiceVersion/Action',
+    properties: {
+      kind: models.NooBaaBucketClassModel.kind,
+      label: 'Edit Bucket Class Resources',
+      apiGroup: models.NooBaaBucketClassModel.apiGroup,
+      callback: (kind, obj) => () =>
+        import('./components/bucket-class/modals/edit-backingstore-modal')
+          .then((m) => m.default({ bucketClass: obj, modalClassName: 'nb-modal' }))
+          // eslint-disable-next-line no-console
+          .catch((e) => console.error(e)),
     },
   },
 ];
