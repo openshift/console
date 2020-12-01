@@ -15,7 +15,8 @@ const VMIDetailsPageInfoMessage: React.FC<InfoMessageHintBlockProps> = ({ name, 
   });
 
   const isOwnedByVM =
-    vmi && !!getOwnerReferences<VMIKind>(vmi).find(({ kind }) => kind === VirtualMachineModel.kind);
+    vmi &&
+    !!getOwnerReferences<VMIKind>(vmi)?.find(({ kind }) => kind === VirtualMachineModel.kind);
 
   const showMessage = isLoaded && !isOwnedByVM && vmi !== null;
 
