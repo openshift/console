@@ -5,6 +5,7 @@ import EmptyState from '@console/dev-console/src/components/EmptyState';
 import { ModelContext, ExtensibleModel } from '../../data-transforms/ModelContext';
 import TopologyView from './TopologyView';
 import { TopologyViewType } from '../../topology-types';
+import { FilterProvider } from '../../filters/FilterProvider';
 
 interface TopologyDataRendererProps {
   viewType: TopologyViewType;
@@ -49,7 +50,9 @@ const TopologyDataRenderer: React.FC<TopologyDataRendererProps> = observer(
         loadError={loadError}
         EmptyMsg={EmptyMsg}
       >
-        <TopologyView viewType={viewType} model={model} namespace={namespace} />
+        <FilterProvider>
+          <TopologyView viewType={viewType} model={model} namespace={namespace} />
+        </FilterProvider>
       </StatusBox>
     );
   },

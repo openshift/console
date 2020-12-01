@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import {
   Toolbar,
@@ -20,30 +19,24 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { TextFilter } from '@console/internal/components/factory';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { ConsoleLinkModel } from '@console/internal/models';
-import { setTopologyFilters } from '../redux/action';
-import { DisplayFilters, TopologyViewType } from '../topology-types';
+import { TopologyViewType } from '../topology-types';
 import {
   getSupportedTopologyFilters,
   getSupportedTopologyKinds,
-  getTopologyFilters,
   onSearchChange,
 } from './filter-utils';
 import FilterDropdown from './FilterDropdown';
 import KindFilterDropdown from './KindFilterDropdown';
 import QuickSearchButton from './quick-search/QuickSearchButton';
 import { getNamespaceDashboardKialiLink } from '../utils/topology-utils';
+import { FilterContext } from './FilterProvider';
 
 import './TopologyFilterBar.scss';
 
 type StateProps = {
-  filters: DisplayFilters;
   supportedFilters: string[];
   supportedKinds: { [key: string]: number };
   namespace: string;
-};
-
-type DispatchProps = {
-  onFiltersChange: (filters: DisplayFilters) => void;
 };
 
 type OwnProps = {
@@ -51,19 +44,16 @@ type OwnProps = {
   viewType: TopologyViewType;
 };
 
-type MergeProps = StateProps & DispatchProps & OwnProps;
-
-type TopologyFilterBarProps = MergeProps;
+type TopologyFilterBarProps = StateProps & OwnProps;
 
 const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
-  filters,
   supportedFilters,
   supportedKinds,
-  onFiltersChange,
   visualization,
   viewType,
   namespace,
 }) => {
+  const { filters, setTopologyFilters: onFiltersChange } = React.useContext(FilterContext);
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
     kind: referenceForModel(ConsoleLinkModel),
@@ -151,7 +141,6 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
 
 const mapStateToProps = (state: RootState): StateProps => {
   const states = {
-    filters: getTopologyFilters(state),
     supportedFilters: getSupportedTopologyFilters(state),
     supportedKinds: getSupportedTopologyKinds(state),
     namespace: getActiveNamespace(state),
@@ -159,28 +148,4 @@ const mapStateToProps = (state: RootState): StateProps => {
   return states;
 };
 
-const dispatchToProps = (dispatch: Dispatch): DispatchProps => ({
-  onFiltersChange: (filters: DisplayFilters) => {
-    dispatch(setTopologyFilters(filters));
-  },
-});
-
-const mergeProps = (
-  { filters, supportedFilters, supportedKinds, namespace }: StateProps,
-  { onFiltersChange }: DispatchProps,
-  { visualization, viewType }: OwnProps,
-): MergeProps => ({
-  filters,
-  supportedFilters,
-  supportedKinds,
-  namespace,
-  onFiltersChange,
-  visualization,
-  viewType,
-});
-
-export default connect<StateProps, DispatchProps, OwnProps, MergeProps>(
-  mapStateToProps,
-  dispatchToProps,
-  mergeProps,
-)(TopologyFilterBar);
+export default connect<StateProps>(mapStateToProps)(TopologyFilterBar);

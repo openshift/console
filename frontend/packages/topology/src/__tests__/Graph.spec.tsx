@@ -22,7 +22,6 @@ describe('Graph', () => {
         application={''}
         eventSourceEnabled
         onSelectTab={() => {}}
-        onFiltersChange={() => {}}
         onSupportedFiltersChange={() => {}}
         onSupportedKindsChange={() => {}}
       />,

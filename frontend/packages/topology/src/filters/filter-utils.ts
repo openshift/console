@@ -4,8 +4,6 @@ import {
   removeQueryArgument,
   setQueryArgument,
 } from '@console/internal/components/utils';
-import { getDefaultTopologyFilters } from '../redux/reducer';
-import { getAppliedFilters } from '../redux/action';
 import {
   DisplayFilters,
   TopologyDisplayFilterType,
@@ -24,11 +22,6 @@ export const onSearchChange = (searchQuery: string): void => {
   }
 };
 
-export const getTopologyFilters = (state: RootState): DisplayFilters => {
-  const topology = state?.plugins?.devconsole?.topology;
-  return topology ? topology.get('filters') : getDefaultTopologyFilters();
-};
-
 export const getSupportedTopologyFilters = (state: RootState): string[] => {
   const topology = state?.plugins?.devconsole?.topology;
   return topology ? topology.get('supportedFilters') : DEFAULT_TOPOLOGY_FILTERS.map((f) => f.id);
@@ -37,11 +30,6 @@ export const getSupportedTopologyFilters = (state: RootState): string[] => {
 export const getSupportedTopologyKinds = (state: RootState): { [key: string]: number } => {
   const topology = state?.plugins?.devconsole?.topology;
   return topology ? topology.get('supportedKinds') : {};
-};
-
-export const getAppliedTopologyFilters = (state: RootState): string[] => {
-  const topology = state?.plugins?.devconsole?.topology;
-  return topology ? topology.get('appliedFilters') : getAppliedFilters(DEFAULT_TOPOLOGY_FILTERS);
 };
 
 export const getTopologySearchQuery = () => getQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY) ?? '';
