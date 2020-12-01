@@ -15,7 +15,7 @@ const Actions = {
   delete: 'delete',
 };
 
-describe('Modal Annotations', () => {
+xdescribe('Modal Annotations', () => {
   beforeAll(async () => {
     await browser.get(`${appHost}/k8s/ns/${testName}/configmaps`);
     await crudView.isLoaded();
