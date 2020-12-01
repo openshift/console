@@ -412,7 +412,8 @@ func (s *Server) HTTPHandler() http.Handler {
 	}
 	kubeVersion, err := actions.GetKubeVersion(config)
 	if err != nil {
-		klog.Warningf("Failed to get cluster k8s version %s", err.Error())
+		kubeVersion = os.Getenv("KUBE_GIT_VERSION")
+		klog.Warningf("Failed to get cluster k8s version from api server %s, falling back to env var KUBE_GIT_VERSION", err.Error())
 	}
 
 	helmHandlers := helmhandlerspkg.New(s.K8sProxyConfig.Endpoint.String(), s.K8sClient.Transport, kubeVersion)
