@@ -60,7 +60,7 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
 
   let scNodeNames: string[] = []; // names of the nodes, backing the storage of selected storage class
   const { cpu, memory, zones } = getNodeInfo(nodes);
-  const scName: string = getName(storageClass);
+  const scName: string = state.storageClassName;
   const validations: Validation[] = validate(scName, enableMinimal, nodes);
   const nodesCount: number = nodes.length;
 
@@ -76,6 +76,7 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
 
   const handleStorageClass = (sc: StorageClassResourceKind) => {
     dispatch({ type: 'setStorageClass', value: sc });
+    dispatch({ type: 'setStorageClassName', name: getName(sc) });
   };
 
   const setNodes = (filteredData: NodeKind[]) =>
@@ -99,7 +100,7 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
               id="storage-class-dropdown"
               onChange={handleStorageClass}
               filter={filterSCWithNoProv}
-              selectedKey={getName(storageClass) || state.storageClassName || state.volumeSetName}
+              selectedKey={state.storageClassName}
               noSelection
               hideClassName="ocs-install-wizard__storage-class-label"
             />
