@@ -1,3 +1,4 @@
+import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { K8sResourceCommon } from '@console/internal/module/k8s';
 import {
@@ -5,7 +6,7 @@ import {
   OperatorHealth,
   GetOperatorStatusPriority,
 } from '@console/plugin-sdk';
-import { HealthState, healthStateMapping } from './states';
+import { HealthState, healthStateMapping, healthStateMessage } from './states';
 
 export const getMostImportantStatuses = (
   operatorStatuses: OperatorStatusWithResources[],
@@ -54,6 +55,7 @@ export const getOperatorsStatus = <R extends K8sResourceCommon>(
 
 export const getOperatorsHealthState = (
   healthStatuses: OperatorHealth[],
+  t: TFunction,
 ): { health: HealthState; detailMessage: string } => {
   if (healthStatuses.some((s) => s.health === HealthState.NOT_AVAILABLE)) {
     return { health: HealthState.NOT_AVAILABLE, detailMessage: undefined };
@@ -65,7 +67,7 @@ export const getOperatorsHealthState = (
     (a, b) => healthStateMapping[b.health].priority - healthStateMapping[a.health].priority,
   );
   const groupedStatuses = _.groupBy(sortedStatuses, (s) => s.health);
-  const statusKeys = Object.keys(groupedStatuses);
+  const statusKeys = Object.keys(groupedStatuses) as (keyof typeof HealthState)[];
   let finalCount = 0;
   groupedStatuses[statusKeys[0]].forEach((g) => {
     if (!_.isNil(g.count)) {
@@ -87,8 +89,8 @@ export const getOperatorsHealthState = (
 
   return {
     health: HealthState[statusKeys[0]],
-    detailMessage: healthStateMapping[statusKeys[0]].message
-      ? `${finalCount} ${healthStateMapping[statusKeys[0]].message.toLowerCase()}`
+    detailMessage: healthStateMessage(statusKeys[0], t)
+      ? `${finalCount} ${healthStateMessage(statusKeys[0], t).toLowerCase()}`
       : undefined,
   };
 };

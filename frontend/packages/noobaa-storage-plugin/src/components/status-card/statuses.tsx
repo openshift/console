@@ -24,7 +24,7 @@ const nooBaaStatus = {
   },
 };
 
-export const getNooBaaState: PrometheusHealthHandler = (responses, noobaa) => {
+export const getNooBaaState: PrometheusHealthHandler = (responses, _t, noobaa) => {
   const { response, error } = responses[0];
   const noobaaLoaded = noobaa?.loaded;
   const noobaaLoadError = noobaa?.loadError;

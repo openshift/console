@@ -1,3 +1,4 @@
+import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import {
   PrometheusHealthHandler,
@@ -9,6 +10,7 @@ import {
 import {
   HealthState,
   healthStateMapping,
+  healthStateMessage,
 } from '@console/shared/src/components/dashboard/status-card/states';
 import { coFetch } from '@console/internal/co-fetch';
 import {
@@ -48,11 +50,12 @@ export const getK8sHealthState: URLHealthHandler<string> = (k8sHealth, error, re
 export const getControlPlaneComponentHealth = (
   response: PrometheusResponse,
   error,
+  t: TFunction,
 ): SubsystemHealth => {
   if (error) {
     return {
       state: HealthState.NOT_AVAILABLE,
-      message: healthStateMapping[HealthState.NOT_AVAILABLE].message,
+      message: healthStateMessage(HealthState.NOT_AVAILABLE, t),
     };
   }
   if (!response) {
@@ -60,7 +63,7 @@ export const getControlPlaneComponentHealth = (
   }
   const value = response.data?.result?.[0]?.value?.[1];
   if (_.isNil(value)) {
-    return { state: HealthState.UNKNOWN, message: healthStateMapping[HealthState.UNKNOWN].message };
+    return { state: HealthState.UNKNOWN, message: healthStateMessage(HealthState.UNKNOWN, t) };
   }
   const perc = humanizePercentage(value);
   if (perc.value > 90) {
@@ -74,25 +77,26 @@ export const getControlPlaneComponentHealth = (
 
 export const getWorstStatus = (
   componentsHealth: SubsystemHealth[],
+  t: TFunction,
 ): { state: HealthState; message: string; count: number } => {
   const withPriority = componentsHealth.map((h) => healthStateMapping[h.state]);
   const mostImportantState = Math.max(...withPriority.map(({ priority }) => priority));
   const worstStatuses = withPriority.filter(({ priority }) => priority === mostImportantState);
   return {
     state: worstStatuses[0].health,
-    message: worstStatuses[0].message,
+    message: healthStateMessage(worstStatuses[0].health, t),
     count: worstStatuses.length,
   };
 };
 
-export const getControlPlaneHealth: PrometheusHealthHandler = (responses) => {
+export const getControlPlaneHealth: PrometheusHealthHandler = (responses, t) => {
   const componentsHealth = responses.map(({ response, error }) =>
-    getControlPlaneComponentHealth(response, error),
+    getControlPlaneComponentHealth(response, error, t),
   );
   if (componentsHealth.some((c) => c.state === HealthState.LOADING)) {
     return { state: HealthState.LOADING };
   }
-  const worstStatus = getWorstStatus(componentsHealth);
+  const worstStatus = getWorstStatus(componentsHealth, t);
 
   return {
     state: worstStatus.state,

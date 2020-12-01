@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import Status, {
   StatusPopupSection,
 } from '@console/shared/src/components/dashboard/status-card/StatusPopup';
@@ -22,11 +23,13 @@ export const ObjectServiceStatus: React.FC<ObjectServiceStatusProps> = ({
   MCGMetrics,
   statusType,
 }) => {
+  const { t } = useTranslation();
+
   const isMissing = !(RGWMetrics && MCGMetrics);
   const title = statusType === StatusType.HEALTH ? 'Object Service' : 'Data Resiliency';
   const popupTitle = statusType === StatusType.HEALTH ? 'Object Service Status' : 'Data Resiliency';
   const { state = HealthState.LOADING, message = '' } = !isMissing
-    ? getWorstStatus([RGWMetrics, MCGMetrics])
+    ? getWorstStatus([RGWMetrics, MCGMetrics], t)
     : {};
   return isMissing ? (
     <HealthItem
