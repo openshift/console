@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 import { CatalogItemHeader } from '@patternfly/react-catalog-view-extension';
-import { DEV_CATALOG_FILTER_KEY as filterKey, Modal, withQueryParams } from '@console/shared';
+import { Modal, withQueryParams } from '@console/shared';
 import { history } from '../utils/router';
 import { CatalogTileDetails } from './catalog-item-details';
 import { TileViewPage } from '../utils/tile-view-page';
@@ -110,7 +110,6 @@ const pageDescription =
 // Filter property white list
 const filterGroups = ['kind'];
 
-const filterPreference = ['kind'];
 const filterGroupNameMap: Record<string, string> = {
   kind: 'Type',
 };
@@ -212,10 +211,8 @@ export const CatalogTileViewPage = withQueryParams<CatalogTileViewPageProps>(
             // TODO(alecmerdler): Dynamic filters for each Operator and its provided APIs
             getAvailableFilters={getAvailableFilters}
             filterGroups={filterGroups}
-            storeFilterKey={filterKey}
             filterGroupNameMap={filterGroupNameMap}
             keywordCompare={keywordCompare}
-            filterRetentionPreference={filterPreference}
             renderTile={this.renderTile}
             pageDescription={pageDescription}
             emptyStateInfo="No developer catalog items are being shown due to the filters being applied."

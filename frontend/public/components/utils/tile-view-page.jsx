@@ -317,38 +317,9 @@ const determineAvailableFilters = (initialFilters, items, filterGroups) => {
   return filters;
 };
 
-const getActiveFilters = (
-  keywordFilter,
-  groupFilters,
-  activeFilters,
-  categoryFilter = null,
-  storeFilterKey = null,
-  filterRetentionPreference = null,
-) => {
+const getActiveFilters = (keywordFilter, groupFilters, activeFilters, categoryFilter = null) => {
   activeFilters.keyword.value = keywordFilter || '';
   activeFilters.keyword.active = !!keywordFilter;
-
-  const userFilters = storeFilterKey ? localStorage.getItem(storeFilterKey) : null;
-  if (userFilters) {
-    try {
-      const lastFilters = JSON.parse(userFilters);
-      if (lastFilters) {
-        if (filterRetentionPreference) {
-          _.each(filterRetentionPreference, (filterGroup) => {
-            if (!groupFilters || !groupFilters[filterGroup]) {
-              if (lastFilters[filterGroup]) {
-                activeFilters[filterGroup] = lastFilters[filterGroup];
-              }
-            }
-          });
-        }
-      }
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error('Failed parsing user filter settings.');
-    }
-  }
-
   if (categoryFilter) {
     // removing default and localstore filters if category filters are present over URL
     _.each(_.keys(activeFilters.kind), (key) =>
@@ -470,13 +441,7 @@ const clearFilterURLParams = (selectedCategoryId) => {
   setURLParams(params);
 };
 
-const getActiveValuesFromURL = (
-  availableFilters,
-  filterGroups,
-  groupByTypes,
-  storeFilterKey,
-  filterRetentionPreference,
-) => {
+const getActiveValuesFromURL = (availableFilters, filterGroups, groupByTypes) => {
   const searchParams = new URLSearchParams(window.location.search);
   const categoryParam = searchParams.get(FilterTypes.category);
   const keywordFilter = searchParams.get(FilterTypes.keyword);
@@ -506,8 +471,6 @@ const getActiveValuesFromURL = (
     groupFilters,
     availableFilters,
     categoryParam,
-    storeFilterKey,
-    filterRetentionPreference,
   );
 
   return { selectedCategoryId, activeFilters, groupBy };
@@ -555,23 +518,10 @@ export class TileViewPage extends React.Component {
   }
 
   componentDidMount() {
-    const {
-      items,
-      filterGroups,
-      getAvailableFilters,
-      groupByTypes,
-      storeFilterKey,
-      filterRetentionPreference,
-    } = this.props;
+    const { items, filterGroups, getAvailableFilters, groupByTypes } = this.props;
     const { categories } = this.state;
     const availableFilters = getAvailableFilters(defaultFilters, items, filterGroups);
-    const activeValues = getActiveValuesFromURL(
-      availableFilters,
-      filterGroups,
-      groupByTypes,
-      storeFilterKey,
-      filterRetentionPreference,
-    );
+    const activeValues = getActiveValuesFromURL(availableFilters, filterGroups, groupByTypes);
 
     this.setState({
       ...this.getUpdatedState(
@@ -668,18 +618,6 @@ export class TileViewPage extends React.Component {
     }
   }
 
-  storeFilters(filters) {
-    if (this.props.storeFilterKey && this.props.filterRetentionPreference) {
-      const storeFilters = {};
-      _.each(this.props.filterRetentionPreference, (filterGroup) => {
-        if (filters[filterGroup]) {
-          storeFilters[filterGroup] = filters[filterGroup];
-        }
-      });
-      localStorage.setItem(this.props.storeFilterKey, JSON.stringify(storeFilters));
-    }
-  }
-
   clearFilters() {
     const { filterGroups } = this.props;
     const { activeFilters, categories, selectedCategoryId } = this.state;
@@ -694,8 +632,6 @@ export class TileViewPage extends React.Component {
     if (!isModalOpen()) {
       this.filterByKeywordInput.focus({ preventScroll: true });
     }
-
-    this.storeFilters(clearedFilters);
   }
 
   selectCategory(categoryId) {
@@ -724,8 +660,6 @@ export class TileViewPage extends React.Component {
     const updatedFilters = updateActiveFilters(activeFilters, filterType, id, value);
 
     this.updateMountedState(this.getUpdatedState(categories, selectedCategoryId, updatedFilters));
-
-    this.storeFilters(updatedFilters);
   }
 
   onKeywordChange(value) {
@@ -963,10 +897,8 @@ TileViewPage.displayName = 'TileViewPage';
 TileViewPage.propTypes = {
   items: PropTypes.array,
   itemsSorter: PropTypes.func.isRequired,
-  storeFilterKey: PropTypes.string,
   getAvailableCategories: PropTypes.func.isRequired,
   getAvailableFilters: PropTypes.func,
-  filterRetentionPreference: PropTypes.array,
   filterGroups: PropTypes.array.isRequired,
   filterGroupNameMap: PropTypes.object,
   renderFilterGroup: PropTypes.func,

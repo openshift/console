@@ -11,7 +11,7 @@ import {
   setQueryArgument,
 } from '@console/internal/components/utils';
 import { CatalogItem, CatalogItemAttribute } from '@console/plugin-sdk';
-import { DEV_CATALOG_FILTER_KEY, useQueryParams } from '@console/shared';
+import { useQueryParams } from '@console/shared';
 
 import { CatalogService } from './service/CatalogServiceProvider';
 import CatalogView from './catalog-view/CatalogView';
@@ -47,8 +47,6 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
 
   const title = typeExtension?.properties.title ?? defaultTitle;
   const description = typeExtension?.properties.catalogDescription ?? defaultDescription;
-
-  const filterPreference: string[] = [];
 
   const filterGroups: string[] = React.useMemo(() => {
     return (
@@ -173,8 +171,6 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
                 filters={availableFilters}
                 filterGroups={filterGroups}
                 filterGroupNameMap={filterGroupNameMap}
-                filterStoreKey={DEV_CATALOG_FILTER_KEY}
-                filterRetentionPreference={filterPreference}
                 groupings={groupings}
                 renderTile={renderTile}
               />
