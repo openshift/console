@@ -13,6 +13,14 @@ jest.mock('react-i18next', () => {
   };
 });
 
+jest.mock('@console/shared', () => {
+  const ActualShared = require.requireActual('@console/shared');
+  return {
+    ...ActualShared,
+    useQueryParams: () => new Map(),
+  };
+});
+
 describe('QuickStartCatalog', () => {
   it('should load an emptybox if no QS exist', () => {
     const QuickStartCatalogProps = { quickStarts: [], onClick: jest.fn() };
