@@ -9,7 +9,7 @@ export const successAlert = $('.pf-c-alert.pf-m-inline.pf-m-success.co-alert');
 export const errorAlert = $('.pf-c-alert.pf-m-inline.pf-m-danger.co-alert.co-alert--scrollable');
 
 export const dropDownBtn = $$('.value-from');
-export const textFilter = $('[placeholder="Config Map or Secret"]');
+export const textFilter = $('[placeholder="ConfigMap or Secret"]');
 export const option = $$('[role="option"]');
 export const deleteButton = $$('.pf-c-button.pf-m-plain.pairs-list__span-btns');
 

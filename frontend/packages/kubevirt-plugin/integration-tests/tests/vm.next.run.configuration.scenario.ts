@@ -8,7 +8,7 @@ import {
   multusNAD,
 } from './mocks/mocks';
 import { VirtualMachine } from './models/virtualMachine';
-import { getRandStr, getSelectedOptionText, selectOptionByText } from './utils/utils';
+import { getRandStr, selectOptionByText } from './utils/utils';
 import {
   fillInput,
   click,
@@ -59,10 +59,9 @@ describe('Kubevirt VM Next Run Configuration', () => {
     await vm.detailViewAction(VM_ACTION.Stop);
   }, VM_BOOTUP_TIMEOUT_SECS);
 
-  it('Change Flavor from tiny to custom while VM is running.', async () => {
+  it('ID(CNV-5326) Change Flavor from tiny to custom while VM is running.', async () => {
     await vm.navigateToDetail();
     await vm.modalEditFlavor();
-    expect(await getSelectedOptionText(editFlavorView.flavorDropdown)).toEqual(Flavor.TINY);
     expect(await isPCInfoAlertPresent()).toBeTruthy();
     await selectOptionByText(editFlavorView.flavorDropdown, Flavor.CUSTOM);
     expect(await isPCAlertPresent()).toBeTruthy();
@@ -80,10 +79,9 @@ describe('Kubevirt VM Next Run Configuration', () => {
     expect(alertTabAttrs.includes('Flavor')).toBeTruthy();
   });
 
-  it('Change Custom Flavor while VM is running.', async () => {
+  it('ID(CNV-5327) Change Custom Flavor while VM is running.', async () => {
     await vm.navigateToDetail();
     await vm.modalEditFlavor();
-    expect(await getSelectedOptionText(editFlavorView.flavorDropdown)).toEqual(Flavor.CUSTOM);
     expect(await isPCInfoAlertPresent()).toBeTruthy();
     await fillInput(editFlavorView.cpusInput(), '2');
     expect(await isPCAlertPresent()).toBeTruthy();
@@ -99,25 +97,7 @@ describe('Kubevirt VM Next Run Configuration', () => {
     expect(alertTabAttrs.includes('Flavor')).toBeTruthy();
   });
 
-  it('Change Boot-Order while VM is running.', async () => {
-    await vm.navigateToDetail();
-    await vm.modalEditBootOrder();
-    expect(await isPCInfoAlertPresent()).toBeTruthy();
-    await click(bootOrderView.deleteDeviceButton(1));
-    expect(await isPCAlertPresent()).toBeTruthy();
-    await click(saveButton);
-
-    await isLoaded();
-    expect(await isPCAlertPresent()).toBeTruthy();
-
-    const alertTabs = await alertHeadings();
-    const alertTabAttrs = await alertValues();
-
-    expect(alertTabs.includes('Details')).toBeTruthy();
-    expect(alertTabAttrs.includes('Boot Order')).toBeTruthy();
-  });
-
-  it('Add Environment variable while VM is running.', async () => {
+  it('ID(CNV-5329) Add Environment variable while VM is running.', async () => {
     await vm.navigateToEnvironment();
     await vmEnv.addSource(configmapName);
     await isLoaded();
@@ -135,7 +115,7 @@ describe('Kubevirt VM Next Run Configuration', () => {
     expect(!!alertTabAttrs.find((val: string) => val.match(`${configmapName}-[a-z0-9]*-disk`)));
   });
 
-  it('Add Disk while VM is Running', async () => {
+  it('ID(CNV-5330) Add Disk while VM is Running', async () => {
     await vm.addDisk(hddDisk);
     expect(await vm.hasDisk(hddDisk)).toBeTruthy();
 
@@ -153,7 +133,7 @@ describe('Kubevirt VM Next Run Configuration', () => {
     ).toBeTruthy();
   });
 
-  it('Add NIC while VM is Running', async () => {
+  it('ID(CNV-5332) Add NIC while VM is Running', async () => {
     await vm.addNIC(multusNetworkInterface);
     expect(await vm.hasNIC(multusNetworkInterface)).toBeTruthy();
 
@@ -172,5 +152,23 @@ describe('Kubevirt VM Next Run Configuration', () => {
           row.includes(`${multusNetworkInterface.name}`) && row.includes('(pending restart)'),
       ),
     ).toBeTruthy();
+  });
+
+  it('ID(CNV-5328) Change Boot-Order while VM is running.', async () => {
+    await vm.navigateToDetail();
+    await vm.modalEditBootOrder();
+    expect(await isPCInfoAlertPresent()).toBeTruthy();
+    await click(bootOrderView.deleteDeviceButton(1));
+    expect(await isPCAlertPresent()).toBeTruthy();
+    await click(saveButton);
+
+    await isLoaded();
+    expect(await isPCAlertPresent()).toBeTruthy();
+
+    const alertTabs = await alertHeadings();
+    const alertTabAttrs = await alertValues();
+
+    expect(alertTabs.includes('Details')).toBeTruthy();
+    expect(alertTabAttrs.includes('Boot Order')).toBeTruthy();
   });
 });

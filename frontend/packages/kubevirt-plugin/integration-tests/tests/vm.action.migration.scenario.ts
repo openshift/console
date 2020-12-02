@@ -1,43 +1,42 @@
 import { browser } from 'protractor';
-import { testName } from '@console/internal-integration-tests/protractor.conf';
-import {
-  createResource,
-  deleteResource,
-  waitForStringInElement,
-} from '@console/shared/src/test-utils/utils';
+import { deleteResource, waitForStringInElement } from '@console/shared/src/test-utils/utils';
 import { getDetailActionDropdownOptions } from '@console/shared/src/test-utils/actions.view';
 import { vmDetailNode } from '../views/virtualMachine.view';
-import { getRandStr } from './utils/utils';
-import { getVMManifest } from './mocks/mocks';
+import { rwxRootDisk } from './mocks/mocks';
 import {
   VM_BOOTUP_TIMEOUT_SECS,
-  VM_ACTIONS_TIMEOUT_SECS,
   VM_MIGRATION_TIMEOUT_SECS,
   VM_IMPORT_TIMEOUT_SECS,
   PAGE_LOAD_TIMEOUT_SECS,
 } from './utils/constants/common';
 import { VM_ACTION, VM_STATUS } from './utils/constants/vm';
-import { VirtualMachine } from './models/virtualMachine';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
+import { VMBuilder } from './models/vmBuilder';
+import { getBasicVMBuilder } from './mocks/vmBuilderPresets';
 
 describe('Test VM Migration', () => {
-  let testVm;
-  let vm: VirtualMachine;
-
   const MIGRATE_VM = 'Migrate Virtual Machine';
   const CANCEL_MIGRATION = 'Cancel Virtual Machine Migration';
   const VM_BOOT_AND_MIGRATE_TIMEOUT = VM_BOOTUP_TIMEOUT_SECS + VM_MIGRATION_TIMEOUT_SECS;
 
-  beforeEach(async () => {
-    testVm = getVMManifest(ProvisionSource.URL, testName, `migrationvm-${getRandStr(4)}`);
-    vm = new VirtualMachine(testVm.metadata);
-    createResource(testVm);
-    await vm.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
-  }, VM_IMPORT_TIMEOUT_SECS);
+  const vm = new VMBuilder(getBasicVMBuilder())
+    .setProvisionSource(ProvisionSource.URL)
+    .setDisks([rwxRootDisk])
+    .generateNameForPrefix('vm-for-migration-test')
+    .build();
 
-  afterEach(() => {
-    deleteResource(testVm);
+  beforeAll(async () => {
+    await vm.create();
+    await vm.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
   });
+
+  afterAll(async () => {
+    deleteResource(vm.asResource());
+  });
+
+  afterEach(async () => {
+    await vm.detailViewAction(VM_ACTION.Stop);
+  }, VM_BOOT_AND_MIGRATE_TIMEOUT);
 
   it(
     'ID(CNV-2140) Migrate VM action button is displayed appropriately',
@@ -54,7 +53,7 @@ describe('Test VM Migration', () => {
       expect(await getDetailActionDropdownOptions()).not.toContain(MIGRATE_VM);
       expect(await getDetailActionDropdownOptions()).toContain(CANCEL_MIGRATION);
     },
-    VM_BOOTUP_TIMEOUT_SECS,
+    VM_BOOT_AND_MIGRATE_TIMEOUT,
   );
 
   it(
@@ -77,7 +76,6 @@ describe('Test VM Migration', () => {
   it(
     'ID(CNV-2132) Cancel ongoing VM migration',
     async () => {
-      await vm.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
       await vm.detailViewAction(VM_ACTION.Start);
       const sourceNode = await vm.getNode();
 
@@ -86,12 +84,12 @@ describe('Test VM Migration', () => {
       await vm.waitForStatus(VM_STATUS.Migrating, VM_MIGRATION_TIMEOUT_SECS);
 
       await vm.detailViewAction(VM_ACTION.Cancel, false);
-      await vm.waitForStatus(VM_STATUS.Running, VM_BOOTUP_TIMEOUT_SECS);
+      await vm.waitForStatus(VM_STATUS.Running, VM_BOOT_AND_MIGRATE_TIMEOUT);
       await browser.wait(
         waitForStringInElement(vmDetailNode(vm.namespace, vm.name), sourceNode),
         VM_MIGRATION_TIMEOUT_SECS,
       );
     },
-    VM_ACTIONS_TIMEOUT_SECS,
+    VM_BOOT_AND_MIGRATE_TIMEOUT,
   );
 });

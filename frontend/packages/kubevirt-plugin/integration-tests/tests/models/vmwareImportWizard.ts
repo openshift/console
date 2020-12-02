@@ -6,7 +6,7 @@ import { selectOptionByText, setCheckboxState } from '../utils/utils';
 import {
   IMPORT_WIZARD_CONN_TO_NEW_INSTANCE,
   IMPORT_WIZARD_CONN_NAME_PREFIX,
-  WIZARD_CREATE_SUCCESS,
+  WIZARD_STARTED_IMPORT,
   PAGE_LOAD_TIMEOUT_SECS,
 } from '../utils/constants/common';
 import * as view from '../../views/importWizard.view';
@@ -63,7 +63,7 @@ export class VmwareImportWizard extends ImportWizard {
 
   async waitForCreation() {
     await browser.wait(
-      until.textToBePresentInElement(wizardView.creationSuccessResult, WIZARD_CREATE_SUCCESS),
+      until.textToBePresentInElement(wizardView.creationSuccessResult, WIZARD_STARTED_IMPORT),
       PAGE_LOAD_TIMEOUT_SECS,
     );
   }

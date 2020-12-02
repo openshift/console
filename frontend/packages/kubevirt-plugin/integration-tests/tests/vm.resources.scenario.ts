@@ -16,6 +16,7 @@ import { nicModel, nicType } from '../views/dialogs/networkInterface.view';
 import { getInterfaces } from '../../src/selectors/vm/selectors';
 import { getVMIDisks } from '../../src/selectors/vmi/basic';
 import * as wizardView from '../views/wizard.view';
+import { dropDownList, dropDownItemMain } from '../views/uiResource.view';
 import {
   multusNAD,
   hddDisk,
@@ -26,11 +27,11 @@ import {
 } from './mocks/mocks';
 import { getBasicVMBuilder } from './mocks/vmBuilderPresets';
 import {
-  getSelectOptions,
+  getListTexts,
   getRandomMacAddress,
   createExampleVMViaYAML,
   getResourceObject,
-  selectOptionByText,
+  selectItemFromDropdown,
 } from './utils/utils';
 import {
   VM_BOOTUP_TIMEOUT_SECS,
@@ -143,18 +144,26 @@ describe('Test network type presets and options', () => {
     await wizard.processGeneralStep(vm.getData());
 
     // Default type for Pod Networking NIC is masquerade
-    expect(
-      wizardView.tableRowAttribute(defaultWizardPodNetworkingInterface.name, networkTabCol.type),
-    ).toEqual(NIC_TYPE.masquerade);
+    const podNic = await wizardView.tableRowAttribute(
+      defaultWizardPodNetworkingInterface.name,
+      networkTabCol.type,
+    );
+    expect(podNic.toLowerCase()).toEqual(NIC_TYPE.masquerade.toLowerCase());
 
     // All type options are available for Pod Networking
     await click(wizardView.addNICButton);
-    expect((await getSelectOptions(nicType)).sort()).toEqual(bindingMethods);
+    await click(nicType);
+    const actualBindingMethods = await getListTexts(dropDownList);
+    expect(actualBindingMethods.sort()).toEqual(bindingMethods);
+    await click(dropDownList.get(0));
     await click(wizardView.modalCancelButton);
     await wizard.addNIC(multusNetworkInterface);
     await wizardView.clickKebabAction(multusNetworkInterface.name, 'Edit');
     // expect masquerade is not available option
-    expect((await getSelectOptions(nicType)).sort()).toEqual(nonPodNetworkBindingMethods);
+    await click(nicType);
+    const actualNonPodBindingMethods = await getListTexts(dropDownList);
+    expect(actualNonPodBindingMethods.sort()).toEqual(nonPodNetworkBindingMethods);
+    await click(dropDownList.get(0));
     await click(wizardView.modalCancelButton);
     await wizard.closeWizard();
   });
@@ -177,7 +186,10 @@ describe('Test network type presets and options', () => {
 
       await click(createNICButton);
       await NICDialog.selectNetwork(multusNAD.metadata.name);
-      expect((await getSelectOptions(nicType)).sort()).toEqual(nonPodNetworkBindingMethods);
+      await click(nicType);
+      const actualNonPodBindingMethods = await getListTexts(dropDownList);
+      expect(actualNonPodBindingMethods.sort()).toEqual(nonPodNetworkBindingMethods);
+      await click(dropDownList.get(0));
       await exampleVM.navigateToListView();
     });
   });
@@ -190,7 +202,10 @@ describe('Test network type presets and options', () => {
     await wizard.processGeneralStep(vm.getData());
 
     await click(wizardView.addNICButton);
-    expect(await getSelectOptions(nicModel)).toEqual([NIC_MODEL.VirtIO, NIC_MODEL.e1000e]);
+    await click(nicModel);
+    const actualModels = await getListTexts(dropDownList);
+    expect(actualModels).toEqual([NIC_MODEL.VirtIO, NIC_MODEL.e1000e]);
+    await click(dropDownList.get(0));
 
     await click(wizardView.modalCancelButton);
     await wizard.closeWizard();
@@ -204,7 +219,7 @@ describe('Test network type presets and options', () => {
     await wizard.processGeneralStep(vm.getData());
 
     await click(wizardView.addNICButton);
-    await selectOptionByText(nicType, 'sriov');
+    await selectItemFromDropdown(nicType, dropDownItemMain(NIC_TYPE.sriov));
     expect(nicModel.isEnabled()).toBe(false);
 
     await click(wizardView.modalCancelButton);

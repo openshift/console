@@ -95,7 +95,7 @@ spec:
       terminationGracePeriodSeconds: 0
       volumes:
         - containerDisk:
-            image: 'kubevirt/fedora-cloud-registry-disk-demo:latest'
+            image: 'kubevirt/fedora-cloud-container-disk-demo:latest'
           name: rootdisk
         - containerDisk:
             image: kubevirt/virtio-container-disk
@@ -106,9 +106,9 @@ spec:
               password: fedora
               chpasswd: { expire: False }
               runcmd:
-              - ifconfig eth1 ${vmIP} netmask 255.255.255.0 up
               - dnf install -y qemu-guest-agent
               - systemctl start qemu-guest-agent
+              - ifconfig eth1 ${vmIP} netmask 255.255.255.0 up
           name: cloudinitdisk
 status: {}
 `;

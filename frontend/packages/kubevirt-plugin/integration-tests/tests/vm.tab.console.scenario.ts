@@ -39,7 +39,6 @@ describe('KubeVirt VM console - VNC/Serial', () => {
   const serialTestFile1 = 'serialTestFile1';
   const vncTestFile = 'vncTestFile';
   const vncTestFile1 = 'vncTestFile1';
-  const expectLoginScriptPath = `${KUBEVIRT_SCRIPTS_PATH}/expect-login.sh`;
   const expectFileExistsScriptPath = `${KUBEVIRT_SCRIPTS_PATH}/expect-file-exists.sh`;
 
   const logIntoConsole = async (consoleCanvas) => {
@@ -67,39 +66,11 @@ describe('KubeVirt VM console - VNC/Serial', () => {
   beforeAll(async () => {
     createResource(vmResource);
     await testVM.detailViewAction(VM_ACTION.Start);
-    // wait for the VM to boot up
-    execSync(`expect ${expectLoginScriptPath} ${testVM.name} ${testVM.namespace}`);
     await testVM.navigateToConsole();
   }, VM_BOOTUP_TIMEOUT_SECS);
 
   afterAll(async () => {
     deleteResource(vmResource);
-  });
-
-  it('ID(CNV-3609) Serial Console connects', async () => {
-    await selectDropdownOption(consoleTypeSelectorId, 'Serial Console');
-
-    // Wait for Loading span element to disappear
-    await browser.wait(waitForStringNotInElement(serialConsoleWrapper, 'Loading'));
-
-    // Ensure presence of control buttons
-    await browser.wait(until.presenceOf(serialReconnectButton), PAGE_LOAD_TIMEOUT_SECS);
-    await browser.wait(until.presenceOf(serialDisconnectButton), PAGE_LOAD_TIMEOUT_SECS);
-    await browser.wait(until.elementToBeClickable(serialDisconnectButton), PAGE_LOAD_TIMEOUT_SECS);
-
-    await browser.wait(until.presenceOf(serialConsole), PAGE_LOAD_TIMEOUT_SECS);
-
-    await checkTouchedFile(testVM, serialConsole, serialTestFile);
-  });
-
-  it('ID(CNV-872) VNC Console connects', async () => {
-    await selectDropdownOption(consoleTypeSelectorId, 'VNC Console');
-
-    // Wait for Connecting bar element to disappear
-    await browser.wait(until.invisibilityOf(vncConnectingBar));
-    await browser.wait(until.presenceOf(vncSendKeyButton), PAGE_LOAD_TIMEOUT_SECS);
-
-    await checkTouchedFile(testVM, vncConsole, vncTestFile);
   });
 
   it('ID(CNV-4660) Open VNC Console in new window', async () => {
@@ -133,5 +104,35 @@ describe('KubeVirt VM console - VNC/Serial', () => {
     await browser.switchTo().window(parentHandle);
     const getParentHandle = browser.getWindowHandle();
     expect(getParentHandle).toEqual(parentHandle);
+  });
+
+  it('ID(CNV-3609) Serial Console connects', async () => {
+    await selectDropdownOption(consoleTypeSelectorId, 'Serial Console');
+
+    // Wait for Loading span element to disappear
+    await browser.wait(waitForStringNotInElement(serialConsoleWrapper, 'Loading'));
+
+    // Ensure presence of control buttons
+    await browser.wait(until.presenceOf(serialReconnectButton), PAGE_LOAD_TIMEOUT_SECS);
+    await browser.wait(until.presenceOf(serialDisconnectButton), PAGE_LOAD_TIMEOUT_SECS);
+    await browser.wait(until.elementToBeClickable(serialDisconnectButton), PAGE_LOAD_TIMEOUT_SECS);
+
+    await browser.wait(until.presenceOf(serialConsole), PAGE_LOAD_TIMEOUT_SECS);
+
+    await checkTouchedFile(testVM, serialConsole, serialTestFile);
+  });
+
+  it('ID(CNV-872) VNC Console connects', async () => {
+    // WA for https://bugzilla.redhat.com/show_bug.cgi?id=1897003
+    await testVM.navigateToOverview();
+    await testVM.navigateToConsole();
+
+    await selectDropdownOption(consoleTypeSelectorId, 'VNC Console');
+
+    // Wait for Connecting bar element to disappear
+    await browser.wait(until.invisibilityOf(vncConnectingBar));
+    await browser.wait(until.presenceOf(vncSendKeyButton), PAGE_LOAD_TIMEOUT_SECS);
+
+    await checkTouchedFile(testVM, vncConsole, vncTestFile);
   });
 });

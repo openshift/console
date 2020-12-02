@@ -13,3 +13,4 @@ export const pvcKebabButton = $('[data-test-id="kebab-button"]');
 export const pvcDeleteButton = element(by.buttonText('Delete Persistent Volume Claim'));
 export const errorUploading = $('.pf-c-empty-state__body');
 export const disabled = $('.pf-c-dropdown__menu-item.pf-m-disabled');
+export const warnMessage = $('.pf-c-alert.pf-m-inline.pf-m-warning');

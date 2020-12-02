@@ -23,6 +23,13 @@ export class BaseVirtualMachine extends KubevirtUIResource<VMBuilderData> {
       until.textToBePresentInElement(vmView.vmDetailStatus(this.namespace, this.name), status),
       resolveTimeout(timeout, VM_BOOTUP_TIMEOUT_SECS),
     );
+    // TODO: uncomment below once https://github.com/openshift/console/pull/7306 is merged.
+    /*
+    if (status === VM_STATUS.Running) {
+      // wait for the VM to boot up
+      execSync(`expect ${EXPECT_LOGIN_SCRIPT_PATH} ${this.name} ${this.namespace}`);
+    }
+    */
   }
 
   protected hasResource(resources, resource) {

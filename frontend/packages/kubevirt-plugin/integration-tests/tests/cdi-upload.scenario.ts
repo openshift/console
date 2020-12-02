@@ -8,6 +8,7 @@ import {
   withResources,
 } from '@console/shared/src/test-utils/utils';
 import { errorMessage } from '@console/internal-integration-tests/views/crud.view';
+import { warnMessage } from '../views/pvc.view';
 import {
   CLONE_VM_TIMEOUT_SECS,
   CDI_UPLOAD_TIMEOUT_SECS,
@@ -84,7 +85,7 @@ describe('KubeVirt Auto Clone', () => {
       4 * CDI_UPLOAD_TIMEOUT_SECS,
     );
 
-    it('ID(CNV-4891) It shows an error when image format is not supported', async () => {
+    it('ID(CNV-4891) It shows a warning message when image format is not supported', async () => {
       const pvc: PVCData = {
         image: invalidImage,
         pvcName: `upload-pvc-${testName}-invalid`,
@@ -93,9 +94,10 @@ describe('KubeVirt Auto Clone', () => {
         storageClass: STORAGE_CLASS,
       };
 
-      await uploadForm.upload(pvc);
-      await browser.wait(until.presenceOf(errorMessage));
-      expect(errorMessage.getText()).toContain('not supported');
+      await uploadForm.openForm();
+      await uploadForm.fillAll(pvc);
+      await browser.wait(until.presenceOf(warnMessage));
+      expect(warnMessage.getText()).toContain('not supported');
     });
 
     it(
@@ -188,7 +190,7 @@ describe('KubeVirt Auto Clone', () => {
           },
         );
       },
-      VM_BOOTUP_TIMEOUT_SECS + CLONE_VM_TIMEOUT_SECS,
+      (VM_BOOTUP_TIMEOUT_SECS + CLONE_VM_TIMEOUT_SECS) * 2,
     );
 
     it(

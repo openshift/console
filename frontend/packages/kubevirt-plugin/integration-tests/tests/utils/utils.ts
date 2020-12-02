@@ -12,6 +12,7 @@ import {
   createYAMLLink,
   resourceTitle,
 } from '@console/internal-integration-tests/views/crud.view';
+import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
 import { click } from '@console/shared/src/test-utils/utils';
 import {
   isLoaded as yamlPageIsLoaded,
@@ -57,8 +58,9 @@ export async function createProject(name: string) {
 
 export async function createExampleVMViaYAML(getVMObj?: boolean) {
   let vm = null;
-  await browser.get(`${appHost}/k8s/ns/${testName}/virtualization`);
+  await clickNavLink(['Workloads', 'Virtualization']);
   await isLoaded();
+
   await click(createItemButton);
   await click(createYAMLLink);
   await yamlPageIsLoaded();
@@ -109,6 +111,17 @@ export async function getSelectOptions(selector: any): Promise<string[]> {
     }
   }
   return options;
+}
+
+export async function getListTexts(selector: any): Promise<string[]> {
+  const texts = [];
+  await selector.each((elem) => {
+    elem
+      .getText()
+      .then((text) => texts.push(text))
+      .catch((err) => Promise.reject(err));
+  });
+  return texts;
 }
 
 export function getRandStr(length: number) {

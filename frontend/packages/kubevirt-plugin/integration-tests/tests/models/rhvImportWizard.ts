@@ -6,9 +6,9 @@ import { selectOptionByText, setCheckboxState } from '../utils/utils';
 import { InstanceConfig, rhvConfig, VMImportConfig } from '../types/types';
 import {
   IMPORT_WIZARD_CONN_TO_NEW_INSTANCE,
-  RHV_WIZARD_CREATE_SUCCESS,
   PAGE_LOAD_TIMEOUT_SECS,
   IMPORT_WIZARD_CONN_NAME_PREFIX,
+  WIZARD_STARTED_IMPORT,
 } from '../utils/constants/common';
 import * as view from '../../views/importWizard.view';
 import * as rhvView from '../../views/rhvImportWizard.view';
@@ -72,7 +72,7 @@ export class RhvImportWizard extends ImportWizard {
 
   async waitForCreation() {
     await browser.wait(
-      until.textToBePresentInElement(wizardView.creationSuccessResult, RHV_WIZARD_CREATE_SUCCESS),
+      until.textToBePresentInElement(wizardView.creationSuccessResult, WIZARD_STARTED_IMPORT),
       PAGE_LOAD_TIMEOUT_SECS,
     );
   }

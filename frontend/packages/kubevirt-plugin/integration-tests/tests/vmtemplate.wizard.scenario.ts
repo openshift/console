@@ -82,7 +82,7 @@ describe('Create VM from Template using wizard', () => {
         name: vmtData.name,
         description: vmtData.description,
         os: vmtData.os,
-        profile: vmtData.workload,
+        profile: vmtData.workload.toLowerCase(),
         bootOrder: ['rootdisk (Disk)'],
         flavor: `${vmtData.flavor.flavor}: 1 vCPU, 1 GiB Memory`,
       };
