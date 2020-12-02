@@ -31,6 +31,13 @@ namespace ExtensionProperties {
         items provided by other providers. */
     priority?: number;
   }
+
+  export interface CatalogItemFilter {
+    /** Type ID for the catalog item type. */
+    type: string;
+    /** Filters items of a specific type. Value is a function that takes CatalogItem[] and returns a subset based on the filter criteria. */
+    filter: CodeRef<<T extends CatalogItem[]>(items: T) => T>;
+  }
 }
 
 export interface DevCatalogModel extends Extension<ExtensionProperties.DevCatalogModel> {
@@ -45,6 +52,10 @@ export interface CatalogItemProvider extends Extension<ExtensionProperties.Catal
   type: 'Catalog/ItemProvider';
 }
 
+export interface CatalogItemFilter extends Extension<ExtensionProperties.CatalogItemFilter> {
+  type: 'Catalog/ItemFilter';
+}
+
 export const isDevCatalogModel = (e: Extension): e is DevCatalogModel => {
   return e.type === 'DevCatalogModel';
 };
@@ -57,6 +68,10 @@ export const isCatalogItemProvider = (e: Extension): e is CatalogItemProvider =>
   return e.type === 'Catalog/ItemProvider';
 };
 
+export const isCatalogItemFilter = (e: Extension): e is CatalogItemFilter => {
+  return e.type === 'Catalog/ItemFilter';
+};
+
 export type CatalogExtensionHookResult<T> = [T, boolean, any];
 
 export type CatalogExtensionHookOptions = {
@@ -67,7 +82,7 @@ export type CatalogExtensionHook<T> = (
   options: CatalogExtensionHookOptions,
 ) => CatalogExtensionHookResult<T>;
 
-export type CatalogItem = {
+export type CatalogItem<T extends any = any> = {
   uid: string;
   type: string;
   name: string;
@@ -95,6 +110,10 @@ export type CatalogItem = {
     properties?: CatalogItemDetailsProperty[];
     descriptions?: CatalogItemDetailsDescription[];
   };
+  // Optional data attached by the provider.
+  // May be consumed by filters.
+  // `data` for each `type` of CatalogItem should implement the same interface.
+  data?: T;
 };
 
 export type CatalogItemDetailsProperty = {

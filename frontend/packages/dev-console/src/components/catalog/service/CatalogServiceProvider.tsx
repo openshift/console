@@ -31,6 +31,7 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
   const [
     catalogTypeExtensions,
     catalogProviderExtensions,
+    catalogFilterExtensions,
     extensionsResolved,
   ] = useCatalogExtensions(catalogType);
 
@@ -46,16 +47,20 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
     if (!loaded) {
       return [];
     }
-    const itemMap = _.flatten(catalogProviderExtensions.map((e) => extItemsMap[e.uid])).reduce(
-      (acc, item) => {
-        acc[item.uid] = item;
-        return acc;
-      },
-      {} as { [uid: string]: CatalogItem },
-    );
+
+    const itemMap = _.flatten(
+      catalogProviderExtensions.map((e) =>
+        catalogFilterExtensions
+          .filter((fe) => fe.properties.type === e.properties.type)
+          .reduce((acc, ext) => ext.properties.filter(acc), extItemsMap[e.uid]),
+      ),
+    ).reduce((acc, item) => {
+      acc[item.uid] = item;
+      return acc;
+    }, {} as { [uid: string]: CatalogItem });
 
     return _.sortBy(Object.values(itemMap), 'name');
-  }, [extItemsMap, loaded, catalogProviderExtensions]);
+  }, [extItemsMap, loaded, catalogProviderExtensions, catalogFilterExtensions]);
 
   const onValueResolved = React.useCallback((items, uid) => {
     setExtItemsMap((prev) => ({ ...prev, [uid]: items }));
